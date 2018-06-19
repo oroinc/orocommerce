@@ -5,9 +5,11 @@ Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
     precision1:
         unit: '@item'
         precision: '1'
+        sell: true
     precision2:
         unit: '@set'
         precision: '1'
+        sell: true
 
 Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     locvalue1:
@@ -19,6 +21,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
         owner: '@business_unit'
         sku: 'AA1'
         primaryUnitPrecision: '@precision1'
+        additionalUnitPrecisions: ['@precision2']
         addName: ['@locvalue1']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'

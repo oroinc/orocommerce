@@ -13,6 +13,7 @@ workflows:
                     - continue_to_shipping_address
                     - start_checkout_as_guest_system
                     - continue_checkout_as_guest
+                    - start_from_quickorderform
             enter_shipping_address:
                 order: 20
                 allowed_transitions:

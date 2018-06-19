@@ -236,6 +236,26 @@ class ProductTest extends \PHPUnit_Framework_TestCase
 
     public function testGetAvailableUnitsPrecision()
     {
+        list($kgPrecision, $itemPrecision) = $this->prepareUnitsPrecision();
+
+        $product = new Product();
+        $product->setPrimaryUnitPrecision($kgPrecision)->addUnitPrecision($itemPrecision);
+
+        $this->assertEquals(['kg' => 1, 'item' => 0], $product->getAvailableUnitsPrecision());
+    }
+
+    public function testGetSellUnitsPrecision()
+    {
+        list($kgPrecision, $itemPrecision) = $this->prepareUnitsPrecision();
+
+        $product = new Product();
+        $product->setPrimaryUnitPrecision($kgPrecision)->addUnitPrecision($itemPrecision);
+
+        $this->assertEquals(['kg' => 1], $product->getSellUnitsPrecision());
+    }
+
+    private function prepareUnitsPrecision()
+    {
         $kgUnit = new ProductUnit();
         $kgUnit->setCode('kg')->setDefaultPrecision(3);
         $itemUnit = new ProductUnit();
@@ -244,12 +264,9 @@ class ProductTest extends \PHPUnit_Framework_TestCase
         $kgPrecision = new ProductUnitPrecision();
         $kgPrecision->setUnit($kgUnit)->setPrecision(1);
         $itemPrecision = new ProductUnitPrecision();
-        $itemPrecision->setUnit($itemUnit)->setPrecision(0);
+        $itemPrecision->setUnit($itemUnit)->setPrecision(0)->setSell(false);
 
-        $product = new Product();
-        $product->setPrimaryUnitPrecision($kgPrecision)->addUnitPrecision($itemPrecision);
-
-        $this->assertEquals(['kg' => 1, 'item' => 0], $product->getAvailableUnitsPrecision());
+        return [$kgPrecision, $itemPrecision];
     }
 
     public function testGetAvailableUnits()

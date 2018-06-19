@@ -33,22 +33,22 @@ class RequestRepresentativesNotifier
     public function notifyRepresentatives(Request $request)
     {
         if ($request->getId()) {
-            foreach ($request->getCustomerUser()->getSalesRepresentatives() as $salesRepresentative) {
-                $this->processor->sendRFPNotification($request, $salesRepresentative);
-            }
+            $recipients = $request->getCustomerUser()->getSalesRepresentatives()->toArray();
 
             if ($this->shouldNotifySalesRepsOfCustomer($request)) {
-                foreach ($request->getCustomer()->getSalesRepresentatives() as $salesRepresentative) {
-                    $this->processor->sendRFPNotification($request, $salesRepresentative);
-                }
+                $recipients = array_merge($recipients, $request->getCustomer()->getSalesRepresentatives()->toArray());
             }
 
             if ($this->shouldNotifyOwnerOfCustomerUser($request)) {
-                $this->processor->sendRFPNotification($request, $request->getCustomerUser()->getOwner());
+                $recipients[] = $request->getCustomerUser()->getOwner();
             }
 
             if ($this->shouldNotifyOwnerOfCustomer($request)) {
-                $this->processor->sendRFPNotification($request, $request->getCustomer()->getOwner());
+                $recipients[] = $request->getCustomer()->getOwner();
+            }
+
+            foreach (array_unique($recipients, SORT_REGULAR) as $recipient) {
+                $this->processor->sendRFPNotification($request, $recipient);
             }
         }
     }

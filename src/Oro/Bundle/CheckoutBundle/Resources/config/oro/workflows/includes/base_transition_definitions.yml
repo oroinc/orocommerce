@@ -46,7 +46,6 @@ workflows:
                         parameters: [$.result.doShowConfirmation, true]
                 preconditions:
                     '@and':
-                        - '@not_empty': $init_context
                         - '@equal': [true, $.result.isAllowed]
                         - '@equal': [true, $.result.isCheckoutAllowed]
 
@@ -89,6 +88,24 @@ workflows:
                     - '@assign_value': [$payment_method, null]
                     - '@assign_value': [$payment_in_progress, false]
 
+                    - '@generate_checkout_state_snapshot':
+                        entity: $checkout
+                        attribute: $.result.actualCheckoutState
+                    - '@save_checkout_state':
+                        entity: $checkout
+                        state: $.result.actualCheckoutState
+                        attribute: $state_token
+                    - '@assign_value': [$internal_state_token, $state_token]
+
+            payment_error_definition:
+                actions:
+                    - '@assign_value': [$payment_method, null]
+                    - '@assign_value': [$payment_in_progress, false]
+                    - '@remove_entity':
+                        conditions:
+                            '@not_empty': $order
+                        parameters: [$order]
+                    - '@unset_value': [$.data.order]
                     - '@generate_checkout_state_snapshot':
                         entity: $checkout
                         attribute: $.result.actualCheckoutState

@@ -19,6 +19,7 @@ class QuickAddType extends AbstractType
     const PRODUCTS_FIELD_NAME = 'products';
     const COMPONENT_FIELD_NAME = 'component';
     const ADDITIONAL_FIELD_NAME = 'additional';
+    const TRANSITION_FIELD_NAME = 'transition';
 
     /** @var ProductsGrouperFactory */
     private $productsGrouperFactory;
@@ -57,6 +58,10 @@ class QuickAddType extends AbstractType
             )
             ->add(
                 self::ADDITIONAL_FIELD_NAME,
+                HiddenType::class
+            )
+            ->add(
+                self::TRANSITION_FIELD_NAME,
                 HiddenType::class
             );
 

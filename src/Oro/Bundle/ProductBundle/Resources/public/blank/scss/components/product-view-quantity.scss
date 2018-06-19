@@ -9,10 +9,27 @@
     &__unit {
         width: $product-view-quantity-unit-width;
         margin-right: $product-view-quantity-unit-margin-right;
+
+        display: $product-view-quantity-unit-display;
+
+        &--half {
+            width: $product-view-quantity-unit-half-width;
+        }
+    }
+
+    &__unit-label {
+        font-size: $product-view-quantity-unit-label-font-size;
+        text-align: $product-view-quantity-unit-label-text-align;
+        flex-grow: $product-view-quantity-unit-label-flex-grow;
+        align-self: $product-view-quantity-unit-label-align-self;
     }
 
     &__value {
         width: $product-view-quantity-value-width;
+
+        &--half {
+            width: $product-view-quantity-value-half-width;
+        }
     }
 
     &__value .input {
