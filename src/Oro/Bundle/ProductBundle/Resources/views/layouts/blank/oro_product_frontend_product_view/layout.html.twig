@@ -136,13 +136,15 @@
 {% endblock %}
 
 {% block _product_view_brand_container_widget %}
-    {% set attr = layout_attr_defaults(attr, {
-    '~class': ' product-view__brand'
-    }) %}
+    {% if block.children is not empty %}
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': ' product-view__brand'
+        }) %}
 
-    <div {{ block('block_attributes') }}>
-        {{ block_widget(block) }}
-    </div>
+        <div {{ block('block_attributes') }}>
+            {{ block_widget(block) }}
+        </div>
+    {% endif %}
 {% endblock %}
 
 {% block _product_view_additional_container_widget %}
