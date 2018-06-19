@@ -36,6 +36,7 @@ class CalculatePriceForCollectionListener
      */
     public function onQuickAddRowsCollectionReady(QuickAddRowsCollectionReadyEvent $quickAddRowsCollectionReadyEvent)
     {
+        // TODO: BB-14587
         /** @var CombinedPriceList $priceList */
         $priceList = $this->priceListRequestHandler->getPriceListByCustomer();
         if (!$priceList) {

@@ -4,8 +4,8 @@ namespace Oro\Bundle\OrderBundle\Pricing;
 
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
-use Oro\Bundle\PricingBundle\Model\PriceListTreeHandler;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
+use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteria;
 use Oro\Bundle\PricingBundle\Provider\MatchingPriceProvider;
 
 class PriceMatcher
@@ -13,17 +13,12 @@ class PriceMatcher
     /** @var MatchingPriceProvider */
     protected $provider;
 
-    /** @var PriceListTreeHandler */
-    protected $priceListTreeHandler;
-
     /**
      * @param MatchingPriceProvider $provider
-     * @param PriceListTreeHandler $priceListTreeHandler
      */
-    public function __construct(MatchingPriceProvider $provider, PriceListTreeHandler $priceListTreeHandler)
+    public function __construct(MatchingPriceProvider $provider)
     {
         $this->provider = $provider;
-        $this->priceListTreeHandler = $priceListTreeHandler;
     }
 
     /**
@@ -45,9 +40,10 @@ class PriceMatcher
             }
         );
 
-        $priceList = $this->priceListTreeHandler->getPriceList($order->getCustomer(), $order->getWebsite());
-
-        return $this->provider->getMatchingPrices($lineItems->toArray(), $priceList);
+        $scopeCriteria = new ProductPriceScopeCriteria();
+        $scopeCriteria->setCustomer($order->getCustomer());
+        $scopeCriteria->setWebsite($order->getWebsite());
+        return $this->provider->getMatchingPrices($lineItems->toArray(), $scopeCriteria);
     }
 
     /**

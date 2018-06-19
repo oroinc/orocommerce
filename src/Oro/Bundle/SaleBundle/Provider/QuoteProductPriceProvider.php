@@ -68,7 +68,7 @@ class QuoteProductPriceProvider
         $tierPrices = [];
 
         if ($productIds) {
-            $tierPrices = $this->productPriceProvider->getPriceByPriceListIdAndProductIds(
+            $tierPrices = $this->productPriceProvider->getPricesAsArrayByScopeCriteriaAndProductIds(
                 $this->getPriceScopeCriteria($quote),
                 $productIds
             );

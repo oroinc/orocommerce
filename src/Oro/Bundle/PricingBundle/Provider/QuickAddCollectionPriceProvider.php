@@ -94,6 +94,7 @@ class QuickAddCollectionPriceProvider
      */
     private function getPricesForCriteria(array $productPriceCriteria, CombinedPriceList $priceList)
     {
+        // TODO: BB-14587
         $prices = $this->productPriceProvider->getMatchedPrices($productPriceCriteria, $priceList->getId());
         $result = [];
         foreach ($prices as $key => $price) {

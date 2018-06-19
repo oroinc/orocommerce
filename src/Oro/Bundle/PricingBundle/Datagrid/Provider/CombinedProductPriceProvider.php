@@ -10,6 +10,9 @@ use Oro\Bundle\PricingBundle\Entity\Repository\CombinedProductPriceRepository;
 use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
 use Oro\Bundle\ProductBundle\Formatter\UnitValueFormatter;
 
+/**
+ * @todo BB-14587 remove this class, move it's logic if needed to ProductPriceProvider
+ */
 class CombinedProductPriceProvider implements CombinedProductPriceProviderInterface
 {
     /**

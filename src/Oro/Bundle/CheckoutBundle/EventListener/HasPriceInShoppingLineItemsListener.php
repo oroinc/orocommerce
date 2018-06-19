@@ -7,9 +7,8 @@ use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
-use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
-use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteria;
+use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaRequestHandler;
 use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
 use Oro\Component\Action\Event\ExtendableConditionEvent;
 
@@ -30,23 +29,23 @@ class HasPriceInShoppingLineItemsListener
     private $userCurrencyManager;
 
     /**
-     * @var PriceListRequestHandler
+     * @var ProductPriceScopeCriteriaRequestHandler
      */
-    private $priceListRequestHandler;
+    private $scopeCriteriaRequestHandler;
 
     /**
      * @param ProductPriceProviderInterface $productPriceProvider
      * @param UserCurrencyManager $userCurrencyManager
-     * @param PriceListRequestHandler $priceListRequestHandler
+     * @param ProductPriceScopeCriteriaRequestHandler $scopeCriteriaRequestHandler
      */
     public function __construct(
         ProductPriceProviderInterface $productPriceProvider,
         UserCurrencyManager $userCurrencyManager,
-        PriceListRequestHandler $priceListRequestHandler
+        ProductPriceScopeCriteriaRequestHandler $scopeCriteriaRequestHandler
     ) {
         $this->productPriceProvider = $productPriceProvider;
         $this->userCurrencyManager = $userCurrencyManager;
-        $this->priceListRequestHandler = $priceListRequestHandler;
+        $this->scopeCriteriaRequestHandler = $scopeCriteriaRequestHandler;
     }
 
     /**
@@ -122,10 +121,8 @@ class HasPriceInShoppingLineItemsListener
             );
         }
 
-        $searchScope = new ProductPriceScopeCriteria();
-        $searchScope->setCustomer($this->priceListRequestHandler->getCustomer());
-        $searchScope->setWebsite($this->priceListRequestHandler->getWebsite());
-        $prices = $this->productPriceProvider->getMatchedPrices($productsPricesCriteria, $searchScope);
+        $prices = $this->productPriceProvider
+            ->getMatchedPrices($productsPricesCriteria, $this->scopeCriteriaRequestHandler->getPriceScopeCriteria());
 
         return !empty(array_filter($prices));
     }

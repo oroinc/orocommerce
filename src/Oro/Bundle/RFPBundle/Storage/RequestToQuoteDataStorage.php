@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Model\PriceListTreeHandler;
+use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteria;
 use Oro\Bundle\PricingBundle\Provider\MatchingPriceProvider;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Bundle\RFPBundle\Entity\Request as RFPRequest;
@@ -30,9 +31,9 @@ class RequestToQuoteDataStorage
     private $priceListTreeHandler;
 
     /**
-     * @param ProductDataStorage    $storage
+     * @param ProductDataStorage $storage
      * @param MatchingPriceProvider $matchingPriceProvider
-     * @param PriceListTreeHandler  $priceListTreeHandler
+     * @param PriceListTreeHandler $priceListTreeHandler
      */
     public function __construct(
         ProductDataStorage $storage,
@@ -79,7 +80,7 @@ class RequestToQuoteDataStorage
             }
 
             $data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY][] = [
-                ProductDataStorage::PRODUCT_SKU_KEY =>  $requestProduct->getProductSku(),
+                ProductDataStorage::PRODUCT_SKU_KEY => $requestProduct->getProductSku(),
                 ProductDataStorage::PRODUCT_QUANTITY_KEY => null,
                 'commentCustomer' => $requestProduct->getComment(),
                 'requestProductItems' => $items,
@@ -151,6 +152,11 @@ class RequestToQuoteDataStorage
             ];
         }
 
-        return $this->matchingPriceProvider->getMatchingPrices($lineItems, $priceList);
+        $request = $requestProductItem->getRequestProduct()->getRequest();
+        $scopeCriteria = new ProductPriceScopeCriteria();
+        $scopeCriteria->setCustomer($request->getCustomer());
+        $scopeCriteria->setWebsite($request->getWebsite());
+
+        return $this->matchingPriceProvider->getMatchingPrices($lineItems, $scopeCriteria);
     }
 }

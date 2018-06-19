@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\PricingBundle\Layout\DataProvider;
 
-use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
@@ -15,7 +14,7 @@ class ProductUnitsWithoutPricesProvider
     protected $productUnits = [];
 
     /**
-     * @var PriceListRequestHandler
+     * @var FrontendProductPricesProvider
      */
     protected $pricesProvider;
 

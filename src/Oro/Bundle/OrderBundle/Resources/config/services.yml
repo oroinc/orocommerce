@@ -257,7 +257,6 @@ services:
         public: false
         arguments:
             - '@oro_pricing.provider.matching_price'
-            - '@oro_pricing.model.price_list_tree_handler'
 
     oro_order.order.total.total_helper:
         class: 'Oro\Bundle\OrderBundle\Total\TotalHelper'

@@ -65,13 +65,13 @@ class ProductPriceFormatter
                 $quantity = $priceData['quantity'];
                 $data = [
                     'price' => $priceData['price'],
-                    'currencyIsoCode' => $priceData['currency'],
+                    'currency' => $priceData['currency'],
                     'unit' => $unit,
                     'quantity' => $quantity
                 ];
 
                 $index = sprintf('%s_%s', $unit, $quantity);
-                $productData[$index] = $this->getFormattedProductPrice($data);
+                $productData[$index] = $this->formatProductPriceData($data);
             }
         }
         return $productData;
@@ -85,24 +85,24 @@ class ProductPriceFormatter
     {
         $data = [
             'price' => $price->getPrice()->getValue(),
-            'currencyIsoCode' => $price->getPrice()->getCurrency(),
+            'currency' => $price->getPrice()->getCurrency(),
             'unit' => $price->getUnit()->getCode(),
             'quantity' => $price->getQuantity()
         ];
 
-        return $this->getFormattedProductPrice($data);
+        return $this->formatProductPriceData($data);
     }
 
     /**
      * @param array $data
      * @return array
      */
-    private function getFormattedProductPrice(array $data)
+    public function formatProductPriceData(array $data)
     {
         return [
             'price' => $data['price'],
-            'currency' => $data['currencyIsoCode'],
-            'formatted_price' => $this->numberFormatter->formatCurrency($data['price'], $data['currencyIsoCode']),
+            'currency' => $data['currency'],
+            'formatted_price' => $this->numberFormatter->formatCurrency($data['price'], $data['currency']),
             'unit' => $data['unit'],
             'formatted_unit' => $this->unitLabelFormatter->format($data['unit']),
             'quantity' => $data['quantity'],

@@ -72,6 +72,7 @@ class FrontendProductPriceDatagridListener
             return;
         }
 
+        // TODO: BB-14587
         $priceList = $this->getPriceList();
         if (!$priceList) {
             return;
@@ -151,6 +152,7 @@ class FrontendProductPriceDatagridListener
     private function getPriceList()
     {
         if (!$this->priceList) {
+            // TODO: BB-14587
             $this->priceList = $this->priceListRequestHandler->getPriceListByCustomer();
         }
 

@@ -52,6 +52,9 @@ class MatchingPriceProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetMatchingPrices()
     {
+        // TODO: BB-14587 fix me
+        $this->markTestIncomplete('BB-14587');
+
         $productId = 1;
         $productUnitCode = 'unitCode';
         $qty = 5.5;

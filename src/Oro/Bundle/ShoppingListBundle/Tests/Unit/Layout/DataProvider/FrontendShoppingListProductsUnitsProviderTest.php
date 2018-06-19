@@ -3,8 +3,6 @@
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Layout\DataProvider;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
-use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
-use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
@@ -27,36 +25,10 @@ class FrontendShoppingListProductsUnitsProviderTest extends \PHPUnit_Framework_T
      */
     protected $registry;
 
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|PriceListRequestHandler
-     */
-    protected $requestHandler;
-
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|UserCurrencyManager
-     */
-    protected $userCurrencyManager;
-
     public function setUp()
     {
-        $this->registry = $this->getMockBuilder('Doctrine\Bundle\DoctrineBundle\Registry')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->requestHandler = $this
-            ->getMockBuilder('Oro\Bundle\PricingBundle\Model\PriceListRequestHandler')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->userCurrencyManager = $this->getMockBuilder('Oro\Bundle\PricingBundle\Manager\UserCurrencyManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->provider = new FrontendShoppingListProductsUnitsProvider(
-            $this->registry,
-            $this->requestHandler,
-            $this->userCurrencyManager
-        );
+        $this->registry = $this->createMock(Registry::class);
+        $this->provider = new FrontendShoppingListProductsUnitsProvider($this->registry);
     }
 
     /**

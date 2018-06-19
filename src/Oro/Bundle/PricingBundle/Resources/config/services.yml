@@ -125,7 +125,7 @@ services:
         arguments:
             - '@oro_pricing.provider.combined_product_price'
             - '@oro_pricing.user_currency_manager'
-            - '@oro_pricing.model.price_list_request_handler'
+            - '@oro_pricing.model.product_price_scope_criteria_request_handler'
 
     oro_pricing.pricing_strategy.abstract_price_combining_strategy:
         class: 'Oro\Bundle\PricingBundle\PricingStrategy\AbstractPriceCombiningStrategy'
@@ -422,8 +422,13 @@ services:
         class: 'Oro\Bundle\PricingBundle\Model\PriceListRequestHandler'
         arguments:
             - '@request_stack'
+            - '@doctrine'
+
+    oro_pricing.model.product_price_scope_criteria_request_handler:
+        class: 'Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaRequestHandler'
+        arguments:
+            - '@request_stack'
             - '@oro_security.token_accessor'
-            - '@oro_pricing.model.price_list_tree_handler'
             - '@doctrine'
             - '@oro_customer.provider.customer_user_relations_provider'
             - '@oro_website.manager'
@@ -1030,10 +1035,11 @@ services:
         arguments:
             - "%oro_product.entity.product.class%"
             - "@oro_product.website_search.repository.product"
-            - "@oro_pricing.model.price_list_request_handler"
+            - "@oro_pricing.model.product_price_scope_criteria_request_handler"
             - "@doctrine"
             - '@oro_pricing.formatter.product_price_formatter'
             - '@oro_pricing.user_currency_manager'
+            - '@oro_pricing.provider.combined_product_price'
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: oro_product_with_prices, acl_resource: oro_product_frontend_view }
 

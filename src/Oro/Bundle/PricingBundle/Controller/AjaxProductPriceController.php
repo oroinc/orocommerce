@@ -85,7 +85,7 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
         $lineItems = $request->get('items', []);
         $matchedPrices = $this->get('oro_pricing.provider.matching_price')->getMatchingPrices(
             $lineItems,
-            $this->get('oro_pricing.model.price_list_request_handler')->getPriceListByCustomer()
+            $this->get('oro_pricing.model.product_price_scope_criteria_request_handler')->getPriceScopeCriteria()
         );
 
         return new JsonResponse($matchedPrices);

@@ -44,7 +44,7 @@ class TierPriceEventListener
         $searchScope = new ProductPriceScopeCriteria();
         $searchScope->setCustomer($order->getCustomer());
         $searchScope->setWebsite($order->getWebsite());
-        $prices = $this->productPriceProvider->getPriceByPriceListIdAndProductIds(
+        $prices = $this->productPriceProvider->getPricesAsArrayByScopeCriteriaAndProductIds(
             $searchScope,
             array_filter($productIds->toArray()),
             $order->getCurrency()

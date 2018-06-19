@@ -4,12 +4,10 @@ namespace Oro\Bundle\PricingBundle\Autocomplete;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\FormBundle\Autocomplete\SearchHandlerInterface;
-use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
-use Oro\Bundle\PricingBundle\Entity\ProductPrice;
-use Oro\Bundle\PricingBundle\Entity\Repository\CombinedProductPriceRepository;
 use Oro\Bundle\PricingBundle\Formatter\ProductPriceFormatter;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
-use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
+use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaRequestHandler;
+use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Search\ProductRepository as ProductSearchRepository;
@@ -30,9 +28,9 @@ class ProductWithPricesSearchHandler implements SearchHandlerInterface
     private $registry;
 
     /**
-     * @var PriceListRequestHandler
+     * @var ProductPriceScopeCriteriaRequestHandler
      */
-    private $priceListRequestHandler;
+    private $scopeCriteriaRequestHandler;
 
     /**
      * @var ProductSearchRepository
@@ -50,27 +48,35 @@ class ProductWithPricesSearchHandler implements SearchHandlerInterface
     private $userCurrencyManager;
 
     /**
+     * @var ProductPriceProviderInterface
+     */
+    private $productPriceProvider;
+
+    /**
      * @param string $className
      * @param ProductSearchRepository $productSearchRepository
-     * @param PriceListRequestHandler $priceListRequestHandler
+     * @param ProductPriceScopeCriteriaRequestHandler $scopeCriteriaRequestHandler
      * @param ManagerRegistry $registry
      * @param ProductPriceFormatter $productPriceFormatter
      * @param UserCurrencyManager $userCurrencyManager
+     * @param ProductPriceProviderInterface $productPriceProvider
      */
     public function __construct(
         $className,
         ProductSearchRepository $productSearchRepository,
-        PriceListRequestHandler $priceListRequestHandler,
+        ProductPriceScopeCriteriaRequestHandler $scopeCriteriaRequestHandler,
         ManagerRegistry $registry,
         ProductPriceFormatter $productPriceFormatter,
-        UserCurrencyManager $userCurrencyManager
+        UserCurrencyManager $userCurrencyManager,
+        ProductPriceProviderInterface $productPriceProvider
     ) {
         $this->className = $className;
         $this->productSearchRepository = $productSearchRepository;
-        $this->priceListRequestHandler = $priceListRequestHandler;
+        $this->scopeCriteriaRequestHandler = $scopeCriteriaRequestHandler;
         $this->registry = $registry;
         $this->productPriceFormatter = $productPriceFormatter;
         $this->userCurrencyManager = $userCurrencyManager;
+        $this->productPriceProvider = $productPriceProvider;
     }
 
     /**
@@ -130,14 +136,14 @@ class ProductWithPricesSearchHandler implements SearchHandlerInterface
             $result['prices'] = [];
             $result['units'] = $product->getSellUnitsPrecision();
 
-            /** @var ProductPrice $price */
+            /** @var array $price */
             foreach ($item['prices'] as $price) {
-                $unit = $price->getUnit()->getCode();
+                $unit = $price['unit'];
                 if (!isset($result['prices'][$unit])) {
                     $result['prices'][$unit] = [];
                 }
 
-                $result['prices'][$unit][] = $this->productPriceFormatter->formatProductPrice($price);
+                $result['prices'][$unit][] = $this->productPriceFormatter->formatProductPriceData($price);
             }
         }
 
@@ -154,21 +160,16 @@ class ProductWithPricesSearchHandler implements SearchHandlerInterface
 
     /**
      * @param int[] $productIds
-     * @return ProductPrice[]
+     * @return array[]
      */
     private function findPrices(array $productIds)
     {
-        if (count($productIds) > 0) {
-            // TODO: BB-14587 replace with price provider
-            $prices = $this->getProductPriceRepository()
-                ->getFindByPriceListIdAndProductIdsQueryBuilder(
-                    $this->priceListRequestHandler->getPriceListByCustomer()->getId(),
-                    $productIds,
-                    true,
-                    $this->userCurrencyManager->getUserCurrency()
-                )
-                ->getQuery()
-                ->getResult();
+        if (\count($productIds) > 0) {
+            $prices = $this->productPriceProvider->getPricesAsArrayByScopeCriteriaAndProductIds(
+                $this->scopeCriteriaRequestHandler->getPriceScopeCriteria(),
+                $productIds,
+                $this->userCurrencyManager->getUserCurrency()
+            );
 
             return $prices;
         }
@@ -214,10 +215,10 @@ class ProductWithPricesSearchHandler implements SearchHandlerInterface
 
     /**
      * @param Product[] $products
-     * @param ProductPrice[] $prices
+     * @param array[] $prices
      * @return array
      */
-    private function buildItemsArray($products, $prices)
+    private function buildItemsArray($products, array $prices)
     {
         $items = [];
 
@@ -243,13 +244,5 @@ class ProductWithPricesSearchHandler implements SearchHandlerInterface
     private function getProductRepository()
     {
         return $this->registry->getRepository(Product::class);
-    }
-
-    /**
-     * @return CombinedProductPriceRepository
-     */
-    private function getProductPriceRepository()
-    {
-        return $this->registry->getRepository(CombinedProductPrice::class);
     }
 }

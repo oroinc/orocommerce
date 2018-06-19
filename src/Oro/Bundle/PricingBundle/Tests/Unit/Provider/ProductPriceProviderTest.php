@@ -78,7 +78,7 @@ class ProductPriceProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             $expectedData,
-            $this->provider->getPriceByPriceListIdAndProductIds($priceListId, $productIds)
+            $this->provider->getPricesAsArrayByScopeCriteriaAndProductIds($priceListId, $productIds)
         );
     }
 

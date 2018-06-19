@@ -43,10 +43,28 @@ class ProductPriceProvider implements ProductPriceProviderInterface
         $this->priceListTreeHandler = $priceListTreeHandler;
     }
 
+    public function getPricesAsArrayByScopeCriteriaAndProductIds(
+        ProductPriceScopeCriteriaInterface $scopeCriteria,
+        array $productIds,
+        $currency = null
+    ) {
+        $result = [];
+        foreach ($this->getPricesByScopeCriteriaAndProductIds($scopeCriteria, $productIds, $currency) as $price) {
+            $result[$price->getProduct()->getId()][] = [
+                'price' => $price->getPrice()->getValue(),
+                'currency' => $price->getPrice()->getCurrency(),
+                'quantity' => $price->getQuantity(),
+                'unit' => $price->getUnit()->getCode(),
+            ];
+        }
+
+        return $result;
+    }
+
     /**
      * {@inheritdoc}
      */
-    public function getPriceByPriceListIdAndProductIds(
+    protected function getPricesByScopeCriteriaAndProductIds(
         ProductPriceScopeCriteriaInterface $scopeCriteria,
         array $productIds,
         $currency = null

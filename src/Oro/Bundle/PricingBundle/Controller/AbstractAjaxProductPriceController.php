@@ -21,14 +21,13 @@ abstract class AbstractAjaxProductPriceController extends Controller
      */
     public function getProductPricesByCustomer(Request $request)
     {
-        $priceListId = $this->get('oro_pricing.model.price_list_request_handler')
-            ->getPriceListByCustomer()
-            ->getId();
+        $scopeCriteria = $this->get('oro_pricing.model.product_price_scope_criteria_request_handler')
+            ->getPriceScopeCriteria();
 
         return new JsonResponse(
             $this->get('oro_pricing.provider.combined_product_price')
-                ->getPriceByPriceListIdAndProductIds(
-                    $priceListId,
+                ->getPricesAsArrayByScopeCriteriaAndProductIds(
+                    $scopeCriteria,
                     $request->get('product_ids', []),
                     $request->get('currency')
                 )

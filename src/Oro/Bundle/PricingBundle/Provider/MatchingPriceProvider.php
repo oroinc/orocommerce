@@ -4,8 +4,8 @@ namespace Oro\Bundle\PricingBundle\Provider;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
+use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
@@ -43,14 +43,14 @@ class MatchingPriceProvider
 
     /**
      * @param array $lineItems
-     * @param BasePriceList $priceList
+     * @param ProductPriceScopeCriteriaInterface $priceScopeCriteria
      * @return array
      */
-    public function getMatchingPrices(array $lineItems, BasePriceList $priceList)
+    public function getMatchingPrices(array $lineItems, ProductPriceScopeCriteriaInterface $priceScopeCriteria)
     {
         $productsPriceCriteria = $this->prepareProductsPriceCriteria($lineItems);
 
-        $matchedPrice = $this->productPriceProvider->getMatchedPrices($productsPriceCriteria, $priceList->getId());
+        $matchedPrice = $this->productPriceProvider->getMatchedPrices($productsPriceCriteria, $priceScopeCriteria);
 
         return $this->formatMatchedPrices($matchedPrice);
     }

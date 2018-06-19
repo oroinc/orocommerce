@@ -7,6 +7,7 @@ use Oro\Bundle\InvoiceBundle\Entity\Invoice;
 use Oro\Bundle\InvoiceBundle\Entity\InvoiceLineItem;
 use Oro\Bundle\InvoiceBundle\Form\Type\InvoiceType;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
+use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
@@ -171,12 +172,13 @@ class InvoiceController extends Controller
         );
 
         if ($productIds) {
-            $tierPrices = $this->get('oro_pricing.provider.combined_product_price')
-                ->getPriceByPriceListIdAndProductIds(
-                    $this->get('oro_pricing.model.price_list_request_handler')->getPriceListByCustomer()->getId(),
-                    $productIds->toArray(),
-                    $invoice->getCurrency()
-                );
+            /** @var ProductPriceProviderInterface $priceProvider */
+            $priceProvider = $this->get('oro_pricing.provider.combined_product_price');
+            $tierPrices = $priceProvider->getPricesAsArrayByScopeCriteriaAndProductIds(
+                $this->get('oro_pricing.model.product_price_scope_criteria_request_handler')->getPriceScopeCriteria(),
+                $productIds->toArray(),
+                $invoice->getCurrency()
+            );
         }
 
         return $tierPrices;
@@ -206,9 +208,11 @@ class InvoiceController extends Controller
         );
 
         if ($productsPriceCriteria) {
-            $matchedPrices = $this->get('oro_pricing.provider.combined_product_price')->getMatchedPrices(
+            /** @var ProductPriceProviderInterface $priceProvider */
+            $priceProvider = $this->get('oro_pricing.provider.combined_product_price');
+            $matchedPrices = $priceProvider->getMatchedPrices(
                 $productsPriceCriteria->toArray(),
-                $this->get('oro_pricing.model.price_list_request_handler')->getPriceListByCustomer()
+                $this->get('oro_pricing.model.product_price_scope_criteria_request_handler')->getPriceScopeCriteria()
             );
         }
 
