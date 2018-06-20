@@ -213,3 +213,18 @@ oro_behat_extension:
         type: xpath
         locator: '//label[@class="control-label" and text()[contains(.,"Restrictions")]]/following-sibling::div[@class="controls"]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+
+    Apply Segment:
+      selector:
+        type: xpath
+        locator: '//li[@data-criteria="condition-segment" and contains(., "Apply segment")]'
+
+    Choose segment:
+      selector: 'li[data-criteria="condition-segment"] input'
+      class: Oro\Bundle\FormBundle\Tests\Behat\Element\Select2Entity
+
+    Featured Products:
+      selector: 'div.select2-drop-active div.select2-result-label:contains("Featured Products")'
+
+    Select2 results:
+      selector: 'div.select2-drop-active ul.select2-results'

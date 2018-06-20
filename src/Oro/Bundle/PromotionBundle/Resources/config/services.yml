@@ -343,6 +343,14 @@ services:
             - '@oro_promotion.discount.context_converter.registry'
             - '@oro_promotion.discount.strategy_provider'
             - '@oro_promotion.provider.promotion_discounts_provider'
+        calls:
+            - [setCache, ['@oro_promotion.promotion_executor.cache']]
+
+    oro_promotion.promotion_executor.cache:
+        public: false
+        parent: doctrine_cache.abstract.array
+        calls:
+            - [ setNamespace, [ 'oro_promotion_executor' ] ]
 
     oro_promotion.provider.matching_products_provider:
         class: Oro\Bundle\PromotionBundle\Provider\MatchingProductsProvider
@@ -717,3 +725,12 @@ services:
         decorates: oro_checkout.mapper.order_mapper
         arguments:
             - '@oro_promotion.mapper.order_mapper_decorator.inner'
+
+    oro_promotion.datagrid.extension.frontend_segment_datagrid:
+        class: Oro\Bundle\PromotionBundle\Datagrid\Extension\FrontendSegmentDatagridExtension
+        arguments:
+            - '@security.token_storage'
+            - '@oro_frontend.request.frontend_helper'
+            - '@oro_entity.doctrine_helper'
+        tags:
+            - { name: oro_datagrid.extension }

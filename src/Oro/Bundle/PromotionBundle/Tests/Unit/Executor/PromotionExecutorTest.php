@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\Executor;
 
+use Doctrine\Common\Cache\Cache;
 use Oro\Bundle\PromotionBundle\Discount\Converter\DiscountContextConverterInterface;
 use Oro\Bundle\PromotionBundle\Discount\DiscountContext;
 use Oro\Bundle\PromotionBundle\Discount\DiscountInterface;
@@ -28,6 +29,11 @@ class PromotionExecutorTest extends \PHPUnit_Framework_TestCase
     private $promotionDiscountsProvider;
 
     /**
+     * @var Cache|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $cache;
+
+    /**
      * @var PromotionExecutor
      */
     private $executor;
@@ -37,12 +43,14 @@ class PromotionExecutorTest extends \PHPUnit_Framework_TestCase
         $this->discountContextConverter = $this->createMock(DiscountContextConverterInterface::class);
         $this->discountStrategyProvider = $this->createMock(StrategyProvider::class);
         $this->promotionDiscountsProvider = $this->createMock(PromotionDiscountsProviderInterface::class);
+        $this->cache = $this->createMock(Cache::class);
 
         $this->executor = new PromotionExecutor(
             $this->discountContextConverter,
             $this->discountStrategyProvider,
             $this->promotionDiscountsProvider
         );
+        $this->executor->setCache($this->cache);
     }
 
     public function testExecuteNoDiscounts()
@@ -71,6 +79,18 @@ class PromotionExecutorTest extends \PHPUnit_Framework_TestCase
         $sourceEntity = new \stdClass();
         $discountContext = new DiscountContext();
 
+        $cacheKey = md5(serialize($sourceEntity));
+        $this->cache->expects($this->once())
+            ->method('contains')
+            ->with($cacheKey)
+            ->willReturn(false);
+        $this->cache->expects($this->never())
+            ->method('fetch')
+            ->with($cacheKey);
+        $this->cache->expects($this->once())
+            ->method('save')
+            ->with($cacheKey, $this->isInstanceOf(DiscountContext::class));
+
         $this->discountContextConverter->expects($this->once())
             ->method('convert')
             ->with($sourceEntity)
@@ -95,6 +115,34 @@ class PromotionExecutorTest extends \PHPUnit_Framework_TestCase
             ->willReturn($modifiedContext);
 
         $this->assertSame($modifiedContext, $this->executor->execute($sourceEntity));
+    }
+
+    public function testExecuteWithCache()
+    {
+        $sourceEntity = new \stdClass();
+        $discountContext = new DiscountContext();
+
+        $cacheKey = md5(serialize($sourceEntity));
+        $this->cache->expects($this->once())
+            ->method('contains')
+            ->with($cacheKey)
+            ->willReturn(true);
+        $this->cache->expects($this->once())
+            ->method('fetch')
+            ->with($cacheKey)
+            ->willReturn($discountContext);
+        $this->cache->expects($this->never())
+            ->method('save')
+            ->with($cacheKey, $this->isInstanceOf(DiscountContext::class));
+
+        $this->discountContextConverter->expects($this->never())
+            ->method('convert');
+        $this->promotionDiscountsProvider->expects($this->never())
+            ->method('getDiscounts');
+        $this->discountStrategyProvider->expects($this->never())
+            ->method('getActiveStrategy');
+
+        $this->assertSame($discountContext, $this->executor->execute($sourceEntity));
     }
 
     /**
