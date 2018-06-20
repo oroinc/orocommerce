@@ -5,10 +5,9 @@ namespace Oro\Bundle\PricingBundle\EventListener;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\DataGridBundle\Extension\Formatter\Property\PropertyInterface;
-use Oro\Bundle\PricingBundle\Datagrid\Provider\CombinedProductPriceProviderInterface;
-use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
+use Oro\Bundle\PricingBundle\Datagrid\Provider\CombinedProductPriceProvider;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
-use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
+use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaRequestHandler;
 use Oro\Bundle\SearchBundle\Datagrid\Event\SearchResultAfter;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -19,9 +18,9 @@ class FrontendProductPriceDatagridListener
     const COLUMN_MINIMAL_PRICE_SORT = 'minimal_price_sort';
 
     /**
-     * @var PriceListRequestHandler
+     * @var ProductPriceScopeCriteriaRequestHandler
      */
-    private $priceListRequestHandler;
+    private $scopeCriteriaRequestHandler;
 
     /**
      * @var UserCurrencyManager
@@ -29,12 +28,7 @@ class FrontendProductPriceDatagridListener
     private $currencyManager;
 
     /**
-     * @var CombinedPriceList
-     */
-    private $priceList;
-
-    /**
-     * @var CombinedProductPriceProviderInterface
+     * @var CombinedProductPriceProvider
      */
     private $combinedProductPriceProvider;
 
@@ -44,18 +38,18 @@ class FrontendProductPriceDatagridListener
     private $translator;
 
     /**
-     * @param PriceListRequestHandler $priceListRequestHandler
+     * @param ProductPriceScopeCriteriaRequestHandler $scopeCriteriaRequestHandler
      * @param UserCurrencyManager $currencyManager
-     * @param CombinedProductPriceProviderInterface $combinedProductPriceProvider
+     * @param CombinedProductPriceProvider $combinedProductPriceProvider
      * @param TranslatorInterface $translator
      */
     public function __construct(
-        PriceListRequestHandler $priceListRequestHandler,
+        ProductPriceScopeCriteriaRequestHandler $scopeCriteriaRequestHandler,
         UserCurrencyManager $currencyManager,
-        CombinedProductPriceProviderInterface $combinedProductPriceProvider,
+        CombinedProductPriceProvider $combinedProductPriceProvider,
         TranslatorInterface $translator
     ) {
-        $this->priceListRequestHandler = $priceListRequestHandler;
+        $this->scopeCriteriaRequestHandler = $scopeCriteriaRequestHandler;
         $this->currencyManager = $currencyManager;
         $this->combinedProductPriceProvider = $combinedProductPriceProvider;
         $this->translator = $translator;
@@ -68,18 +62,15 @@ class FrontendProductPriceDatagridListener
     {
         /** @var ResultRecord[] $records */
         $records = $event->getRecords();
-        if (count($records) === 0) {
+        if (\count($records) === 0) {
             return;
         }
 
-        // TODO: BB-14587
-        $priceList = $this->getPriceList();
-        if (!$priceList) {
-            return;
-        }
-
-        $resultProductPrices = $this->combinedProductPriceProvider
-            ->getCombinedPricesForProductsByPriceList($records, $priceList, $this->currencyManager->getUserCurrency());
+        $resultProductPrices = $this->combinedProductPriceProvider->getCombinedPricesForProductsByPriceList(
+            $records,
+            $this->scopeCriteriaRequestHandler->getPriceScopeCriteria(),
+            $this->currencyManager->getUserCurrency()
+        );
 
         foreach ($records as $record) {
             $productId = $record->getValue('id');
@@ -144,18 +135,5 @@ class FrontendProductPriceDatagridListener
             self::COLUMN_MINIMAL_PRICE_SORT,
             ['data_name' => 'minimal_price_CPL_ID_CURRENCY', 'type' => 'decimal']
         );
-    }
-
-    /**
-     * @return CombinedPriceList
-     */
-    private function getPriceList()
-    {
-        if (!$this->priceList) {
-            // TODO: BB-14587
-            $this->priceList = $this->priceListRequestHandler->getPriceListByCustomer();
-        }
-
-        return $this->priceList;
     }
 }

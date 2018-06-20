@@ -3,54 +3,32 @@
 namespace Oro\Bundle\PricingBundle\Datagrid\Provider;
 
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecordInterface;
-use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
-use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
-use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
-use Oro\Bundle\PricingBundle\Entity\Repository\CombinedProductPriceRepository;
-use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
-use Oro\Bundle\ProductBundle\Formatter\UnitValueFormatter;
+use Oro\Bundle\PricingBundle\Formatter\ProductPriceFormatter;
+use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaInterface;
+use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
 
-/**
- * @todo BB-14587 remove this class, move it's logic if needed to ProductPriceProvider
- */
-class CombinedProductPriceProvider implements CombinedProductPriceProviderInterface
+class CombinedProductPriceProvider
 {
     /**
-     * @var CombinedProductPriceRepository
+     * @var ProductPriceProviderInterface
      */
-    private $combinedProductPriceRepository;
+    private $productPriceProvider;
 
     /**
-     * @var NumberFormatter
+     * @var ProductPriceFormatter
      */
-    private $numberFormatter;
+    private $priceFormatter;
 
     /**
-     * @var UnitLabelFormatter
-     */
-    private $unitLabelFormatter;
-
-    /**
-     * @var UnitValueFormatter
-     */
-    private $unitValueFormatter;
-
-    /**
-     * @param CombinedProductPriceRepository $combinedProductPriceRepository
-     * @param NumberFormatter                $numberFormatter
-     * @param UnitLabelFormatter             $unitLabelFormatter
-     * @param UnitValueFormatter             $unitValueFormatter
+     * @param ProductPriceProviderInterface $productPriceProvider
+     * @param ProductPriceFormatter $priceFormatter
      */
     public function __construct(
-        CombinedProductPriceRepository $combinedProductPriceRepository,
-        NumberFormatter $numberFormatter,
-        UnitLabelFormatter $unitLabelFormatter,
-        UnitValueFormatter $unitValueFormatter
+        ProductPriceProviderInterface $productPriceProvider,
+        ProductPriceFormatter $priceFormatter
     ) {
-        $this->combinedProductPriceRepository = $combinedProductPriceRepository;
-        $this->numberFormatter                = $numberFormatter;
-        $this->unitLabelFormatter             = $unitLabelFormatter;
-        $this->unitValueFormatter             = $unitValueFormatter;
+        $this->productPriceProvider = $productPriceProvider;
+        $this->priceFormatter = $priceFormatter;
     }
 
     /**
@@ -58,9 +36,57 @@ class CombinedProductPriceProvider implements CombinedProductPriceProviderInterf
      */
     public function getCombinedPricesForProductsByPriceList(
         array $productRecords,
-        CombinedPriceList $priceList,
+        ProductPriceScopeCriteriaInterface $scopeCriteria,
         $currency
     ) {
+        $productIds = $this->getProductIds($productRecords);
+        $prices = $this->getPrices($scopeCriteria, $currency, $productIds);
+
+        $resultProductPrices = [];
+        foreach ($prices as $productId => $productPrices) {
+            foreach ($productPrices as $price) {
+                $index = sprintf('%s_%s', $price['unit'], $price['quantity']);
+                if (isset($resultProductPrices[$productId][$index])) {
+                    continue;
+                }
+
+                $resultProductPrices[$productId][$index] = $this->priceFormatter->formatProductPriceData($price);
+            }
+        }
+
+        return $resultProductPrices;
+    }
+
+    /**
+     * @param ProductPriceScopeCriteriaInterface $scopeCriteria
+     * @param string $currency
+     * @param array $productIds
+     * @return array
+     */
+    protected function getPrices(ProductPriceScopeCriteriaInterface $scopeCriteria, $currency, $productIds): array
+    {
+        $prices = $this->productPriceProvider
+            ->getPricesAsArrayByScopeCriteriaAndProductIds($scopeCriteria, $productIds, $currency);
+
+        foreach ($prices as &$productPrices) {
+            usort($productPrices, function (array $a, array $b) {
+                if ($a['unit'] !== $b['unit']) {
+                    return $a['unit'] > $b['unit'];
+                }
+
+                return $a['quantity'] > $b['quantity'];
+            });
+        }
+
+        return $prices;
+    }
+
+    /**
+     * @param array|ResultRecordInterface[] $productRecords
+     * @return array
+     */
+    protected function getProductIds(array $productRecords): array
+    {
         $productIds = array_map(
             function (ResultRecordInterface $record) {
                 return $record->getValue('id');
@@ -68,54 +94,6 @@ class CombinedProductPriceProvider implements CombinedProductPriceProviderInterf
             $productRecords
         );
 
-        // TODO: BB-14587 replace with price provider
-        $combinedPrices = $this->combinedProductPriceRepository
-            ->getPricesForProductsByPriceList($priceList, $productIds, $currency);
-
-        // TODO: BB-14587 replace CombinedProductPrice with ProductPriceModel
-        $resultProductPrices = [];
-        usort($combinedPrices, function (CombinedProductPrice $a, CombinedProductPrice $b) {
-            if ($a->getProductUnitCode() !==  $b->getProductUnitCode()) {
-                return $a->getProductUnitCode() > $b->getProductUnitCode();
-            }
-
-            return  $a->getQuantity() > $b->getQuantity();
-        });
-        foreach ($combinedPrices as $price) {
-            $index = sprintf('%s_%s', $price->getProductUnitCode(), $price->getQuantity());
-
-            $productId = $price->getProduct()->getId();
-            if (isset($resultProductPrices[$productId][$index])) {
-                continue;
-            }
-
-            $resultProductPrices[$productId][$index] = $this->prepareResultPrice($price);
-        }
-
-        return $resultProductPrices;
-    }
-
-    /**
-     * @param CombinedProductPrice $price
-     * @return array
-     */
-    private function prepareResultPrice(CombinedProductPrice $price)
-    {
-        $priceValue      = $price->getPrice()->getValue();
-        $unitCode        = $price->getUnit()->getCode();
-        $quantity        = $price->getQuantity();
-        $currencyIsoCode = $price->getPrice()->getCurrency();
-
-        $resultPrices = [
-            'price'              => $priceValue,
-            'currency'           => $currencyIsoCode,
-            'formatted_price'    => $this->numberFormatter->formatCurrency($priceValue, $currencyIsoCode),
-            'unit'               => $unitCode,
-            'formatted_unit'     => $this->unitLabelFormatter->format($unitCode),
-            'quantity'           => $quantity,
-            'quantity_with_unit' => $this->unitValueFormatter->formatCode($quantity, $unitCode)
-        ];
-
-        return $resultPrices;
+        return $productIds;
     }
 }
