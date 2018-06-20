@@ -85,16 +85,6 @@ class UserCurrencyManager
     }
 
     /**
-     * @return null|string
-     * @deprecated Will be removed in 3.0
-     */
-    public function getLoggedUserCurrentWebsiteCurrency()
-    {
-        $website = $this->websiteManager->getCurrentWebsite();
-        return $website ? $this->getLoggedUserCurrencyForWebsite($website) : null;
-    }
-
-    /**
      * @param Website $website
      * @return string|null
      */
