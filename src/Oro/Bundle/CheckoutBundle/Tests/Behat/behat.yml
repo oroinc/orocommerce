@@ -159,6 +159,9 @@ oro_behat_extension:
           Zip/Postal Code: 'oro_workflow_transition[billing_address][postalCode]'
           Ship to this address: 'oro_workflow_transition[ship_to_billing_address]'
 
+    Shipping Country:
+      selector: 'select[name="oro_workflow_transition[shipping_address][country]"]'
+
     Shipping Information Form:
       selector: 'form[name="oro_workflow_transition"]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
