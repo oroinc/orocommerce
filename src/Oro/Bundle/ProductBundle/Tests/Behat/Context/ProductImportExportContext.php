@@ -46,7 +46,7 @@ class ProductImportExportContext extends OroFeatureContext implements KernelAwar
      */
     public function exportedFileWithProductsContainsAtLeastFollowingData(TableNode $expectedEntities)
     {
-        $this->importExportContext->exportedFileContainsAtLeastFollowingColumns(
+        $this->importExportContext->exportedFileWithProcessorContainsAtLeastFollowingColumns(
             self::PRODUCT_ENTITY,
             $expectedEntities,
             self::PRODUCT_PROCESSOR
