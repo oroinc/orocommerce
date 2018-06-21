@@ -299,6 +299,35 @@ class UserCurrencyManagerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('EUR', $this->userCurrencyManager->getUserCurrency($website));
     }
 
+    public function testGetLoggedUserCurrentWebsiteCurrencyWithoutWebsite()
+    {
+        $this->websiteManager->expects($this->once())->method('getCurrentWebsite')->willReturn(null);
+        $this->assertNull($this->userCurrencyManager->getLoggedUserCurrentWebsiteCurrency());
+    }
+
+    public function testGetLoggedUserCurrentWebsiteCurrency()
+    {
+        /** @var Website $website */
+        $website = $this->getEntity('Oro\Bundle\WebsiteBundle\Entity\Website', ['id' => 1]);
+        $this->websiteManager->expects($this->once())->method('getCurrentWebsite')->willReturn($website);
+
+        $userWebsiteSettings = new CustomerUserSettings($website);
+        $userWebsiteSettings->setCurrency('EUR');
+
+        $user = new CustomerUser();
+        $user->setWebsiteSettings($userWebsiteSettings);
+
+        $token = $this->createMock(TokenInterface::class);
+        $token->expects($this->once())
+            ->method('getUser')
+            ->willReturn($user);
+        $this->tokenStorage->expects($this->once())
+            ->method('getToken')
+            ->willReturn($token);
+
+        $this->assertEquals('EUR', $this->userCurrencyManager->getLoggedUserCurrentWebsiteCurrency());
+    }
+
     public function testSaveSelectedCurrencyLoggedUser()
     {
         $currency = 'USD';
