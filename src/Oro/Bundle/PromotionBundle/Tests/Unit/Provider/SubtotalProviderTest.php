@@ -124,7 +124,7 @@ class SubtotalProviderTest extends \PHPUnit_Framework_TestCase
             ->method('round')
             ->willReturnArgument(0);
         $this->currencyManager->expects($this->once())
-            ->method('getLoggedUserCurrentWebsiteCurrency')
+            ->method('getUserCurrency')
             ->willReturn('EUR');
 
         $expected = [
