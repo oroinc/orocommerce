@@ -1,4 +1,9 @@
+{# Backward compatibility layer#}
 {% macro transitionAttrbiutes(transitionData, checkout) %}
+{{ _self.transitionAttributes(transitionData) }}
+{% endmacro %}
+
+{% macro transitionAttributes(transitionData, checkout) %}
 {% spaceless %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
     {# Simplified transitions handler specific for checkout logic #}
@@ -53,7 +58,7 @@
         })
     %}
     <a href="{{ transitionUrl }}"
-        {{ _self.transitionAttrbiutes(transitionData, checkout) }}
+        {{ _self.transitionAttributes(transitionData, checkout) }}
         {{ _self.conditionMessages(transitionData) }}
     >
         <i class="fa-angle-left"></i>{{ 'oro.checkout.workflow.b2b_flow_checkout.transition.back.label'|trans }}
@@ -68,7 +73,7 @@
                 class="btn {% if transitionData.isAllowed %}btn--info{% endif %} btn--size-m checkout-form__submit"
                 disabled="disabled"
                 autocomplete="off"
-                {{ _self.transitionAttrbiutes(transitionData, checkout) }}
+                {{ _self.transitionAttributes(transitionData, checkout) }}
             >
                 {{ transitionData.transition.label|trans({},'workflows') }}&nbsp;<i class="fa-angle-right"></i>
             </button>
@@ -95,7 +100,7 @@
        data-title="{{ transitionLabel }}"
        data-html="true"
        data-container="body"
-       {{ _self.transitionAttrbiutes(transitionData, checkout) }}
+       {{ _self.transitionAttributes(transitionData, checkout) }}
     >
         <i class="fa-pencil fa--no-offset tooltip-trigger"></i>
     </a>
