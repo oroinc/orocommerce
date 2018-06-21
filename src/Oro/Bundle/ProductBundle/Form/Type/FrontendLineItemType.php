@@ -9,9 +9,11 @@ use Oro\Bundle\ProductBundle\Visibility\ProductUnitFieldsSettingsInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for line item on frontend
+ */
 class FrontendLineItemType extends AbstractType
 {
     use ProductAwareTrait;
@@ -62,11 +64,13 @@ class FrontendLineItemType extends AbstractType
                     'product_unit_field' => 'unit',
                 ]
             );
-
-        $builder->addEventListener(FormEvents::POST_SET_DATA, [$this, 'checkUnitSelectionVisibility']);
     }
 
     /**
+     * This method was saved for backward compatibility, if someone extended this form type.
+     *
+     * @deprecated since 1.6. Unit field options are controlled via js now.
+     *
      * @param FormEvent $event
      */
     public function checkUnitSelectionVisibility(FormEvent $event)
