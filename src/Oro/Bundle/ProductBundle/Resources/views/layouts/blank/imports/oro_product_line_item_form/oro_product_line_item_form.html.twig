@@ -8,7 +8,7 @@
 
 {% block __oro_product_line_item_form__line_item_form_fields_widget %}
     {% set class_prefix = 'line_item_form_fields' %}
-    
+
     {% set unitAttr = {} %}
     {% if skipInputWidgets is not defined %}
         {% set skipInputWidgets = true %}
@@ -137,7 +137,7 @@
         {% set attr = layout_attr_defaults(attr, {
             '~class': " btn btn--info full"
         }) %}
-        
+
         {{ parent_block_widget(block) }}
     {% endif %}
 {% endblock %}

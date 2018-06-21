@@ -33,26 +33,13 @@ class FrontendLineItemTypeTest extends FormIntegrationTestCase
     ];
 
     /**
-     * @var ProductUnitFieldsSettingsInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $productUnitFieldsSettings;
-
-    /**
      * {@inheritdoc}
      */
     protected function setUp()
     {
-        $this->productUnitFieldsSettings = $this
-            ->getMockBuilder(ProductUnitFieldsSettingsInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->productUnitFieldsSettings->expects($this->any())
-            ->method('isProductUnitSelectionVisible')
-            ->willReturn(true);
-
-        $this->type = new FrontendLineItemType($this->productUnitFieldsSettings);
         parent::setUp();
+
+        $this->type = new FrontendLineItemType();
     }
 
     /**
