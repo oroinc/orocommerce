@@ -297,13 +297,6 @@ class UserCurrencyManagerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('EUR', $this->userCurrencyManager->getUserCurrency($website));
     }
 
-    public function testGetUserCurrencyWithoutFallbackToDefault()
-    {
-        $this->websiteManager->expects($this->once())->method('getCurrentWebsite')->willReturn(null);
-        $this->currencyProvider->expects($this->never())->method('getDefaultCurrency');
-        $this->assertNull($this->userCurrencyManager->getUserCurrency(null, false));
-    }
-
     public function testSaveSelectedCurrencyLoggedUser()
     {
         $currency = 'USD';
