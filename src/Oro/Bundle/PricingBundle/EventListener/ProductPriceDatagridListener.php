@@ -283,6 +283,8 @@ class ProductPriceDatagridListener implements FeatureToggleableInterface
         }, $records);
 
         $priceList = $this->getPriceList();
+        // TODO: BB-14587 this listener may add prices data to grid when external sources are used. >
+        // TODO < With disabled filtering and sorting (Possible improvement)
         return $priceRepository->findByPriceListIdAndProductIds(
             $this->shardManager,
             $priceList->getId(),

@@ -7,6 +7,7 @@ use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
 use Oro\Bundle\PricingBundle\DependencyInjection\Configuration;
 use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
+use Oro\Bundle\PricingBundle\Entity\Repository\CombinedProductPriceRepository;
 use Oro\Bundle\PricingBundle\Placeholder\CPLIdPlaceholder;
 use Oro\Bundle\PricingBundle\Placeholder\CurrencyPlaceholder;
 use Oro\Bundle\PricingBundle\Placeholder\UnitPlaceholder;
@@ -66,6 +67,7 @@ class WebsiteSearchProductPriceIndexerListener implements FeatureToggleableInter
             return;
         }
 
+        /** @var CombinedProductPriceRepository $repository */
         $repository = $this->doctrine->getManagerForClass(CombinedProductPrice::class)
             ->getRepository(CombinedProductPrice::class);
         $configCpl = $this->configManager->get(Configuration::getConfigKeyToPriceList());

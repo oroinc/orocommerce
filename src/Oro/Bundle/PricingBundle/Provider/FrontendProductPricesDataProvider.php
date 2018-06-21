@@ -68,7 +68,7 @@ class FrontendProductPricesDataProvider
      */
     public function getProductsAllPrices(array $lineItems)
     {
-        $prices = $this->productPriceProvider->getPricesAsArrayByScopeCriteriaAndProductIds(
+        $prices = $this->productPriceProvider->getPricesByScopeCriteriaAndProductIds(
             $this->scopeCriteriaRequestHandler->getPriceScopeCriteria(),
             array_map(function (ProductHolderInterface $lineItem) {
                 return $lineItem->getProduct()->getId();

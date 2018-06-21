@@ -4,7 +4,6 @@ namespace Oro\Bundle\RFPBundle\Storage;
 
 use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Model\PriceListTreeHandler;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteria;
 use Oro\Bundle\PricingBundle\Provider\MatchingPriceProvider;
@@ -26,11 +25,6 @@ class RequestToQuoteDataStorage
     private $matchingPriceProvider;
 
     /**
-     * @var PriceListTreeHandler
-     */
-    private $priceListTreeHandler;
-
-    /**
      * @param ProductDataStorage $storage
      * @param MatchingPriceProvider $matchingPriceProvider
      * @param PriceListTreeHandler $priceListTreeHandler
@@ -42,7 +36,6 @@ class RequestToQuoteDataStorage
     ) {
         $this->storage = $storage;
         $this->matchingPriceProvider = $matchingPriceProvider;
-        $this->priceListTreeHandler = $priceListTreeHandler;
     }
 
     /**
@@ -114,17 +107,12 @@ class RequestToQuoteDataStorage
      */
     private function getListedPrice(RequestProductItem $requestProductItem)
     {
-        $request = $requestProductItem->getRequestProduct()->getRequest();
-
         $value = null;
         $currency = null;
 
-        $priceList = $this->priceListTreeHandler->getPriceList($request->getCustomer(), $request->getWebsite());
-        if ($priceList) {
-            $matchingPrices = $this->getMatchingPrices($requestProductItem, $priceList);
-            if ($matchingPrices) {
-                list($value, $currency) = array_values(current($matchingPrices));
-            }
+        $matchingPrices = $this->getMatchingPrices($requestProductItem);
+        if ($matchingPrices) {
+            list($value, $currency) = array_values(current($matchingPrices));
         }
 
         return Price::create($value, $currency);
@@ -132,18 +120,22 @@ class RequestToQuoteDataStorage
 
     /**
      * @param RequestProductItem $requestProductItem
-     * @param CombinedPriceList  $priceList
      *
      * @return array
      */
-    private function getMatchingPrices(RequestProductItem $requestProductItem, CombinedPriceList $priceList)
+    private function getMatchingPrices(RequestProductItem $requestProductItem)
     {
         if (!$requestProductItem->getProduct()) {
             return [];
         }
 
+        $request = $requestProductItem->getRequestProduct()->getRequest();
+        $scopeCriteria = new ProductPriceScopeCriteria();
+        $scopeCriteria->setCustomer($request->getCustomer());
+        $scopeCriteria->setWebsite($request->getWebsite());
+
         $lineItems = [];
-        foreach ($priceList->getCurrencies() as $enabledCurrency) {
+        foreach ($this->matchingPriceProvider->getSupportedCurrencies($scopeCriteria) as $enabledCurrency) {
             $lineItems[] = [
                 'product' => $requestProductItem->getProduct()->getId(),
                 'unit' => $requestProductItem->getProductUnitCode(),
@@ -151,11 +143,6 @@ class RequestToQuoteDataStorage
                 'currency' => $enabledCurrency,
             ];
         }
-
-        $request = $requestProductItem->getRequestProduct()->getRequest();
-        $scopeCriteria = new ProductPriceScopeCriteria();
-        $scopeCriteria->setCustomer($request->getCustomer());
-        $scopeCriteria->setWebsite($request->getWebsite());
 
         return $this->matchingPriceProvider->getMatchingPrices($lineItems, $scopeCriteria);
     }

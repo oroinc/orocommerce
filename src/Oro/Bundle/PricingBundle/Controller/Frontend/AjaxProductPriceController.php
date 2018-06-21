@@ -3,6 +3,9 @@
 namespace Oro\Bundle\PricingBundle\Controller\Frontend;
 
 use Oro\Bundle\PricingBundle\Controller\AbstractAjaxProductPriceController;
+use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaRequestHandler;
+use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
+use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -39,6 +42,9 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
     }
 
     /**
+     * @todo BB-14587 Do we really need this route? >
+     * @todo < It's mentioned in ororfp/js/app/views/line-item-view unitLoaderRouteName which is never used
+     *
      * @Route("/get-product-units-by-currency", name="oro_pricing_frontend_units_by_pricelist")
      * @Method({"GET"})
      *
@@ -46,12 +52,29 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
      */
     public function getProductUnitsByCurrencyAction(Request $request)
     {
-        // TODO: BB-14587
-        return $this->getProductUnitsByCurrency(
-            $this->get('oro_pricing.model.price_list_request_handler')->getPriceListByCustomer(),
-            $request,
-            $this->getParameter('oro_pricing.entity.combined_product_price.class')
-        );
+        /** @var ProductPriceScopeCriteriaRequestHandler $scopeCriteriaRequestHandler */
+        $scopeCriteriaRequestHandler = $this->container
+            ->get('oro_pricing.model.product_price_scope_criteria_request_handler');
+        $scopeCriteria = $scopeCriteriaRequestHandler->getPriceScopeCriteria();
+
+        /** @var ProductPriceProviderInterface $priceProvider */
+        $priceProvider = $this->container->get('oro_pricing.provider.product_price');
+
+        /** @var ProductUnitLabelFormatter $unitFormatter */
+        $unitFormatter = $this->container->get('oro_product.formatter.product_unit_label');
+
+        $productId = $request->get('id');
+        $currency = $request->get('currency');
+        $prices = $priceProvider->getPricesByScopeCriteriaAndProductIds($scopeCriteria, [$productId], $currency);
+
+        $units = [];
+        if (!empty($prices[$productId])) {
+            $units = array_map(function (array $price) {
+                return $price['unit'];
+            }, $prices[$productId]);
+        }
+
+        return new JsonResponse(['units' => $unitFormatter->formatChoices($units)]);
     }
 
     /**

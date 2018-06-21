@@ -193,7 +193,7 @@ class FrontendProductPricesProvider
             $products
         );
 
-        $prices = $this->productPriceProvider->getPricesAsArrayByScopeCriteriaAndProductIds(
+        $prices = $this->productPriceProvider->getPricesByScopeCriteriaAndProductIds(
             $this->scopeCriteriaRequestHandler->getPriceScopeCriteria(),
             $productsIds,
             $this->userCurrencyManager->getUserCurrency()
@@ -212,17 +212,17 @@ class FrontendProductPricesProvider
 
     /**
      * @param Product[] $products
-     * @param array $productPrices
+     * @param array $prices
      */
-    protected function setProductsPrices($products, $productPrices)
+    protected function setProductsPrices($products, $prices)
     {
-        $productsPrices = [];
-        foreach ($productPrices as $productId => $prices) {
+        $productsPricesByUnit = [];
+        foreach ($prices as $productId => $productPrices) {
             foreach ($productPrices as $price) {
-                $productsPrices[$productId][$price['unit']][] = $price;
+                $productsPricesByUnit[$productId][$price['unit']][] = $price;
             }
         }
-        $productsPrices = $this->productPriceFormatter->formatProducts($productsPrices);
+        $productsPricesByUnit = $this->productPriceFormatter->formatProducts($productsPricesByUnit);
 
         foreach ($products as $product) {
             $unitPrecisions = $product->getUnitPrecisions();
@@ -232,7 +232,7 @@ class FrontendProductPricesProvider
             }
 
             $this->productPrices[$product->getId()] = array_filter(
-                isset($productsPrices[$product->getId()]) ? $productsPrices[$product->getId()] : [],
+                isset($productsPricesByUnit[$product->getId()]) ? $productsPricesByUnit[$product->getId()] : [],
                 function ($price) use ($unitsToSell) {
                     return !empty($unitsToSell[$price['unit']]);
                 }

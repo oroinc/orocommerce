@@ -173,8 +173,8 @@ class InvoiceController extends Controller
 
         if ($productIds) {
             /** @var ProductPriceProviderInterface $priceProvider */
-            $priceProvider = $this->get('oro_pricing.provider.combined_product_price');
-            $tierPrices = $priceProvider->getPricesAsArrayByScopeCriteriaAndProductIds(
+            $priceProvider = $this->get('oro_pricing.provider.product_price');
+            $tierPrices = $priceProvider->getPricesByScopeCriteriaAndProductIds(
                 $this->get('oro_pricing.model.product_price_scope_criteria_request_handler')->getPriceScopeCriteria(),
                 $productIds->toArray(),
                 $invoice->getCurrency()
@@ -209,7 +209,7 @@ class InvoiceController extends Controller
 
         if ($productsPriceCriteria) {
             /** @var ProductPriceProviderInterface $priceProvider */
-            $priceProvider = $this->get('oro_pricing.provider.combined_product_price');
+            $priceProvider = $this->get('oro_pricing.provider.product_price');
             $matchedPrices = $priceProvider->getMatchedPrices(
                 $productsPriceCriteria->toArray(),
                 $this->get('oro_pricing.model.product_price_scope_criteria_request_handler')->getPriceScopeCriteria()

@@ -305,18 +305,18 @@ abstract class BaseProductPriceRepository extends EntityRepository
      * @param ShardManager $shardManager
      * @param int $priceListId
      * @param array $productIds
-     * @param array $productUnitCodes
-     * @param array $currencies
+     * @param array|null $productUnitCodes
+     * @param array|null $currencies
      * @return array
      */
     public function getPricesBatch(
         ShardManager $shardManager,
         $priceListId,
         array $productIds,
-        array $productUnitCodes,
-        array $currencies = []
+        array $productUnitCodes = null,
+        array $currencies = null
     ) {
-        if (!$productIds || !$productUnitCodes) {
+        if (!$productIds) {
             return [];
         }
 
@@ -334,15 +334,18 @@ abstract class BaseProductPriceRepository extends EntityRepository
             ->from($this->_entityName, 'price')
             ->where(
                 $qb->expr()->eq('IDENTITY(price.priceList)', ':priceListId'),
-                $qb->expr()->in('IDENTITY(price.product)', ':productIds'),
-                $qb->expr()->in('IDENTITY(price.unit)', ':productUnitCodes')
+                $qb->expr()->in('IDENTITY(price.product)', ':productIds')
             )
             ->setParameter('priceListId', $priceListId)
             ->setParameter('productIds', $productIds)
-            ->setParameter('productUnitCodes', $productUnitCodes)
             ->addOrderBy('IDENTITY(price.unit)')
             ->addOrderBy('price.quantity');
 
+        if ($productUnitCodes) {
+            $qb
+                ->andWhere($qb->expr()->in('IDENTITY(price.unit)', ':productUnitCodes'))
+                ->setParameter('productUnitCodes', $productUnitCodes);
+        }
         if ($currencies) {
             $qb
                 ->andWhere($qb->expr()->in('price.currency', ':currencies'))
@@ -358,6 +361,8 @@ abstract class BaseProductPriceRepository extends EntityRepository
     }
 
     /**
+     * @todo: BB-14587 remove me, I'm not used anymore
+     *
      * @param ShardManager $shardManager
      * @param BasePriceList $priceList
      * @param Product $product
@@ -380,6 +385,8 @@ abstract class BaseProductPriceRepository extends EntityRepository
     }
 
     /**
+     * @todo: BB-14587 remove me, I'm not used anymore
+     *
      * @param BasePriceList $priceList
      * @param Product $product
      * @param string|null $currency
@@ -411,6 +418,8 @@ abstract class BaseProductPriceRepository extends EntityRepository
     }
 
     /**
+     * @todo: BB-14587 remove me, I'm not used anymore
+     *
      * @param ShardManager $shardManager
      * @param BasePriceList $priceList
      * @param Collection $products

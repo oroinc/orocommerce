@@ -56,6 +56,15 @@ class MatchingPriceProvider
     }
 
     /**
+     * @param ProductPriceScopeCriteriaInterface $priceScopeCriteria
+     * @return array|string[]
+     */
+    public function getSupportedCurrencies(ProductPriceScopeCriteriaInterface $priceScopeCriteria)
+    {
+        return $this->productPriceProvider->getSupportedCurrencies($priceScopeCriteria);
+    }
+
+    /**
      * @param Price[] $matchedPrice
      * @return array
      */

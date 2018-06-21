@@ -90,7 +90,7 @@ services:
         class: 'Oro\Bundle\RFPBundle\Form\Extension\OrderDataStorageExtension'
         arguments:
             - '@request_stack'
-            - '@oro_pricing.provider.combined_product_price'
+            - '@oro_pricing.provider.product_price'
         calls:
             - [setExtendedType, ['Oro\Bundle\OrderBundle\Form\Type\OrderType']]
         tags:

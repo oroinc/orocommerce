@@ -2,94 +2,72 @@
 
 namespace Oro\Bundle\PricingBundle\Provider;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
-use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
-use Oro\Bundle\PricingBundle\Entity\Repository\CombinedProductPriceRepository;
-use Oro\Bundle\PricingBundle\Model\PriceListTreeHandler;
+use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
+use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaInterface;
-use Oro\Bundle\PricingBundle\Sharding\ShardManager;
+use Oro\Bundle\PricingBundle\Storage\ProductPriceStorageInterface;
 
 class ProductPriceProvider implements ProductPriceProviderInterface
 {
     /**
-     * @var ShardManager
+     * @var ProductPriceStorageInterface
      */
-    protected $shardManager;
+    protected $priceStorage;
 
     /**
-     * @var ManagerRegistry
+     * @var UserCurrencyManager
      */
-    protected $registry;
+    protected $currencyManager;
 
     /**
-     * @var PriceListTreeHandler
+     * @param ProductPriceStorageInterface $priceStorage
+     * @param UserCurrencyManager $currencyManager
      */
-    protected $priceListTreeHandler;
-
-    /**
-     * @param ManagerRegistry $registry
-     * @param ShardManager $shardManager
-     * @param PriceListTreeHandler $priceListTreeHandler
-     */
-    public function __construct(
-        ManagerRegistry $registry,
-        ShardManager $shardManager,
-        PriceListTreeHandler $priceListTreeHandler
-    ) {
-        $this->registry = $registry;
-        $this->shardManager = $shardManager;
-        $this->priceListTreeHandler = $priceListTreeHandler;
-    }
-
-    public function getPricesAsArrayByScopeCriteriaAndProductIds(
-        ProductPriceScopeCriteriaInterface $scopeCriteria,
-        array $productIds,
-        $currency = null
-    ) {
-        $result = [];
-        foreach ($this->getPricesByScopeCriteriaAndProductIds($scopeCriteria, $productIds, $currency) as $price) {
-            $result[$price->getProduct()->getId()][] = [
-                'price' => $price->getPrice()->getValue(),
-                'currency' => $price->getPrice()->getCurrency(),
-                'quantity' => $price->getQuantity(),
-                'unit' => $price->getUnit()->getCode(),
-            ];
-        }
-
-        return $result;
+    public function __construct(ProductPriceStorageInterface $priceStorage, UserCurrencyManager $currencyManager)
+    {
+        $this->priceStorage = $priceStorage;
+        $this->currencyManager = $currencyManager;
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function getPricesByScopeCriteriaAndProductIds(
+    public function getSupportedCurrencies(ProductPriceScopeCriteriaInterface $scopeCriteria)
+    {
+        return array_intersect(
+            $this->currencyManager->getAvailableCurrencies(),
+            $this->priceStorage->getSupportedCurrencies($scopeCriteria)
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getPricesByScopeCriteriaAndProductIds(
         ProductPriceScopeCriteriaInterface $scopeCriteria,
         array $productIds,
-        $currency = null
+        $currency = null,
+        $unitCode = null
     ) {
         $result = [];
-        $priceList = $this->getPriceListByScopeCriteria($scopeCriteria);
-        if (!$priceList) {
-            return $result;
+        $currencies = null;
+        if ($currency) {
+            // TODO: BB-14587 CHECK THIS LOGIC!!! Currency may change here, >
+            // TODO < if passed currency is not allowed then it will be replaced with user selected
+            $currencies = $this->getAllowedCurrencies($scopeCriteria, [$currency]);
         }
 
-        $prices = $this->getRepository()->findByPriceListIdAndProductIds(
-            $this->shardManager,
-            $priceList->getId(),
-            $productIds,
-            true,
-            $currency
-        );
+        $productUnitCodes = $unitCode ? [$unitCode] : null;
+        $prices = $this->priceStorage->getPrices($scopeCriteria, $productIds, $productUnitCodes, $currencies);
 
         if ($prices) {
             foreach ($prices as $price) {
-                $result[$price->getProduct()->getId()][] = [
-                    'price' => $price->getPrice()->getValue(),
-                    'currency' => $price->getPrice()->getCurrency(),
-                    'quantity' => $price->getQuantity(),
-                    'unit' => $price->getUnit()->getCode(),
+                $result[$price['id']][] = [
+                    'price' => $price['value'],
+                    'currency' => $price['currency'],
+                    'quantity' => $price['quantity'],
+                    'unit' => $price['code']
                 ];
             }
         }
@@ -100,32 +78,26 @@ class ProductPriceProvider implements ProductPriceProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function getMatchedPrices(array $productsPriceCriteria, ProductPriceScopeCriteriaInterface $scopeCriteria)
+    public function getMatchedPrices(array $productPriceCriterias, ProductPriceScopeCriteriaInterface $scopeCriteria)
     {
-        $priceList = $this->getPriceListByScopeCriteria($scopeCriteria);
-        if (!$priceList) {
-            return [];
-        }
-
         $productIds = [];
         $productUnitCodes = [];
-
-        foreach ($productsPriceCriteria as $productPriceCriteria) {
-            $productIds[] = $productPriceCriteria->getProduct()->getId();
-            $productUnitCodes[] = $productPriceCriteria->getProductUnit()->getCode();
-        }
-
-        $prices = $this->getRepository()->getPricesBatch(
-            $this->shardManager,
-            $priceList->getId(),
-            $productIds,
-            $productUnitCodes,
-            []
-        );
-
+        $currencies = [];
         $result = [];
 
-        foreach ($productsPriceCriteria as $productPriceCriteria) {
+        /** @var ProductPriceCriteria $productPriceCriteria */
+        foreach ($productPriceCriterias as $productPriceCriteria) {
+            $productIds[] = $productPriceCriteria->getProduct()->getId();
+            $productUnitCodes[] = $productPriceCriteria->getProductUnit()->getCode();
+            $currencies[] = $productPriceCriteria->getCurrency();
+        }
+
+        // TODO: BB-14587 CHECK THIS LOGIC!!! Currency may change here, >
+        // TODO < if passed currencies are not allowed then them will be replaced with user selected one.
+        $currencies = $this->getAllowedCurrencies($scopeCriteria, $currencies);
+
+        $prices = $this->priceStorage->getPrices($scopeCriteria, $productIds, $productUnitCodes, $currencies);
+        foreach ($productPriceCriterias as $productPriceCriteria) {
             $id = $productPriceCriteria->getProduct()->getId();
             $code = $productPriceCriteria->getProductUnit()->getCode();
             $quantity = $productPriceCriteria->getQuantity();
@@ -161,9 +133,11 @@ class ProductPriceProvider implements ProductPriceProviderInterface
      */
     protected function recalculatePricePerUnit($price, $quantityPerAmount, $precision)
     {
-        return $precision > 0 ?
-            $price / $quantityPerAmount :
-            $price;
+        if ($precision > 0 && $quantityPerAmount !== 0.0) {
+            return $price / $quantityPerAmount;
+        }
+
+        return $price;
     }
 
     /**
@@ -188,21 +162,19 @@ class ProductPriceProvider implements ProductPriceProviderInterface
     }
 
     /**
-     * @return CombinedProductPriceRepository
-     */
-    protected function getRepository()
-    {
-        return $this->registry
-            ->getManagerForClass(CombinedProductPrice::class)
-            ->getRepository(CombinedProductPrice::class);
-    }
-
-    /**
+     * Restrict currencies list to getSupportedCurrencies. If no supported pass User Currency
+     *
      * @param ProductPriceScopeCriteriaInterface $scopeCriteria
-     * @return null|CombinedPriceList
+     * @param array $currencies
+     * @return array
      */
-    protected function getPriceListByScopeCriteria(ProductPriceScopeCriteriaInterface $scopeCriteria)
+    protected function getAllowedCurrencies(ProductPriceScopeCriteriaInterface $scopeCriteria, array $currencies): array
     {
-        return $this->priceListTreeHandler->getPriceList($scopeCriteria->getCustomer(), $scopeCriteria->getWebsite());
+        $currencies = array_intersect($currencies, $this->getSupportedCurrencies($scopeCriteria));
+        if (!$currencies) {
+            $currencies = [$this->currencyManager->getUserCurrency($scopeCriteria->getWebsite())];
+        }
+
+        return $currencies;
     }
 }

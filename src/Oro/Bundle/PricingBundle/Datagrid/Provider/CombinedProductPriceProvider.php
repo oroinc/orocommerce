@@ -66,7 +66,7 @@ class CombinedProductPriceProvider
     protected function getPrices(ProductPriceScopeCriteriaInterface $scopeCriteria, $currency, $productIds): array
     {
         $prices = $this->productPriceProvider
-            ->getPricesAsArrayByScopeCriteriaAndProductIds($scopeCriteria, $productIds, $currency);
+            ->getPricesByScopeCriteriaAndProductIds($scopeCriteria, $productIds, $currency);
 
         foreach ($prices as &$productPrices) {
             usort($productPrices, function (array $a, array $b) {

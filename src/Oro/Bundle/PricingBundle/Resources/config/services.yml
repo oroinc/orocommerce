@@ -81,13 +81,23 @@ services:
             - '@oro_website.manager'
             - '@oro_customer_user.manager'
 
-    oro_pricing.provider.combined_product_price:
-        class: 'Oro\Bundle\PricingBundle\Provider\ProductPriceProvider'
+    oro_pricing.storage.prices:
+        class: 'Oro\Bundle\PricingBundle\Storage\CombinedProductPriceORMStorage'
         public: false
         arguments:
             - '@doctrine'
             - '@oro_pricing.shard_manager'
             - '@oro_pricing.model.price_list_tree_handler'
+
+    oro_pricing.provider.combined_product_price:
+        alias: oro_pricing.provider.product_price
+
+    oro_pricing.provider.product_price:
+        class: 'Oro\Bundle\PricingBundle\Provider\ProductPriceProvider'
+        public: false
+        arguments:
+            - '@oro_pricing.storage.prices'
+            - '@oro_pricing.user_currency_manager'
 
     oro_pricing.provider.combined_price_list:
         class: 'Oro\Bundle\PricingBundle\Provider\CombinedPriceListProvider'
@@ -123,7 +133,7 @@ services:
         class: 'Oro\Bundle\PricingBundle\Provider\FrontendProductPricesDataProvider'
         public: false
         arguments:
-            - '@oro_pricing.provider.combined_product_price'
+            - '@oro_pricing.provider.product_price'
             - '@oro_pricing.user_currency_manager'
             - '@oro_pricing.model.product_price_scope_criteria_request_handler'
 
@@ -713,7 +723,7 @@ services:
     oro_pricing.provider.matching_price:
         class: 'Oro\Bundle\PricingBundle\Provider\MatchingPriceProvider'
         arguments:
-            - '@oro_pricing.provider.combined_product_price'
+            - '@oro_pricing.provider.product_price'
             - '@oro_entity.doctrine_helper'
             - '%oro_product.entity.product.class%'
             - '%oro_product.entity.product_unit.class%'
@@ -750,7 +760,7 @@ services:
         arguments:
             - '@translator'
             - '@oro_currency.rounding.price_rounding_service'
-            - '@oro_pricing.provider.combined_product_price'
+            - '@oro_pricing.provider.product_price'
             - '@oro_entity.doctrine_helper'
             - '@oro_pricing.subtotal_processor.provider.arguments'
         calls:
@@ -1002,13 +1012,13 @@ services:
         class: Oro\Bundle\PricingBundle\Datagrid\Provider\CombinedProductPriceProvider
         public: false
         arguments:
-            - '@oro_pricing.provider.combined_product_price'
+            - '@oro_pricing.provider.product_price'
             - '@oro_pricing.formatter.product_price_formatter'
 
     oro_pricing.provider.quick_add_collection_price_provider:
         class: 'Oro\Bundle\PricingBundle\Provider\QuickAddCollectionPriceProvider'
         arguments:
-            - '@oro_pricing.provider.combined_product_price'
+            - '@oro_pricing.provider.product_price'
             - '@oro_pricing.user_currency_manager'
             - '@oro_entity.doctrine_helper'
             - '@oro_pricing.rounding.price_rounding_service'
@@ -1024,7 +1034,7 @@ services:
         class: 'Oro\Bundle\PricingBundle\EventListener\CalculatePriceForCollectionListener'
         arguments:
             - '@oro_pricing.provider.quick_add_collection_price_provider'
-            - '@oro_pricing.model.price_list_request_handler'
+            - '@oro_pricing.model.product_price_scope_criteria_request_handler'
         tags:
             - { name: kernel.event_listener, event: oro_product.quick_add_rows_collection_ready, method: onQuickAddRowsCollectionReady }
 
@@ -1038,7 +1048,7 @@ services:
             - "@doctrine"
             - '@oro_pricing.formatter.product_price_formatter'
             - '@oro_pricing.user_currency_manager'
-            - '@oro_pricing.provider.combined_product_price'
+            - '@oro_pricing.provider.product_price'
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: oro_product_with_prices, acl_resource: oro_product_frontend_view }
 

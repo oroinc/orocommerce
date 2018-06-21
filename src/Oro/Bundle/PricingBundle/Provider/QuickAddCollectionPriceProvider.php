@@ -4,9 +4,9 @@ namespace Oro\Bundle\PricingBundle\Provider;
 
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
+use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaInterface;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Model\QuickAddField;
 use Oro\Bundle\ProductBundle\Model\QuickAddRow;
@@ -54,17 +54,20 @@ class QuickAddCollectionPriceProvider
 
     /**
      * @param QuickAddRowCollection $quickAddRowCollection
-     * @param CombinedPriceList $priceList
+     * @param ProductPriceScopeCriteriaInterface $scopeCriteria
+     * @throws \Oro\Bundle\CurrencyBundle\Exception\InvalidRoundingTypeException
      */
-    public function addPrices(QuickAddRowCollection $quickAddRowCollection, CombinedPriceList $priceList)
-    {
+    public function addPrices(
+        QuickAddRowCollection $quickAddRowCollection,
+        ProductPriceScopeCriteriaInterface $scopeCriteria
+    ) {
         $rowsPriceCriteria = $this->buildQuickAddRowPriceCriteria($quickAddRowCollection);
 
-        $productPrices = $this->getPricesForCriteria($rowsPriceCriteria, $priceList);
+        $productPrices = $this->getPricesForCriteria($rowsPriceCriteria, $scopeCriteria);
 
         $collectionSubtotal = [
             'value' => null,
-            'currency'  => $this->currencyManager->getUserCurrency()
+            'currency' => $this->currencyManager->getUserCurrency()
         ];
 
         /** @var QuickAddRow $quickAddRow */
@@ -88,14 +91,14 @@ class QuickAddCollectionPriceProvider
 
     /**
      * @param ProductPriceCriteria[] $productPriceCriteria
-     * @param CombinedPriceList $priceList
-     *
+     * @param ProductPriceScopeCriteriaInterface $scopeCriteria
      * @return array
      */
-    private function getPricesForCriteria(array $productPriceCriteria, CombinedPriceList $priceList)
-    {
-        // TODO: BB-14587
-        $prices = $this->productPriceProvider->getMatchedPrices($productPriceCriteria, $priceList->getId());
+    private function getPricesForCriteria(
+        array $productPriceCriteria,
+        ProductPriceScopeCriteriaInterface $scopeCriteria
+    ) {
+        $prices = $this->productPriceProvider->getMatchedPrices($productPriceCriteria, $scopeCriteria);
         $result = [];
         foreach ($prices as $key => $price) {
             $identifier = explode('-', $key);

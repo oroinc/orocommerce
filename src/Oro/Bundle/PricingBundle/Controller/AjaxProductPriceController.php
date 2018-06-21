@@ -23,8 +23,8 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
     /**
      * @Route("/get-product-prices-by-customer", name="oro_pricing_price_by_customer")
      * @Method({"GET"})
-     *
-     * {@inheritdoc}
+     * @param Request $request
+     * @return JsonResponse
      */
     public function getProductPricesByCustomerAction(Request $request)
     {

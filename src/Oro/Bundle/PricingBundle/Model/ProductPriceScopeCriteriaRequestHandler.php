@@ -94,7 +94,7 @@ class ProductPriceScopeCriteriaRequestHandler
     /**
      * @return null|Customer
      */
-    public function getCustomer()
+    protected function getCustomer()
     {
         $user = $this->tokenAccessor->getUser();
 
@@ -116,7 +116,7 @@ class ProductPriceScopeCriteriaRequestHandler
     /**
      * @return null|Website
      */
-    public function getWebsite()
+    protected function getWebsite()
     {
         $website = null;
 
