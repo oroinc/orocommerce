@@ -407,29 +407,45 @@
     </div>
 {% endblock %}
 
+{% block single_page_transition_container_widget %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% import 'OroCheckoutBundle:layouts/default:layout.html.twig' as _layout %}
+
+    <div {{ _layout.transitionAttributes(transitionData, checkout) }}>
+        <div {{ UI.renderPageComponentAttributes({
+            module: 'orocheckout/js/app/components/shipping-transition-button-component',
+            options: {
+                'enabled': transitionData.isAllowed
+            }
+        }) }}>
+            <div {{ block('block_attributes') }}>
+                {{ block_widget(block) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
 {% block _checkout_button_continue_right_widget %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
     {% if transitionData is defined and transitionData %}
         {% import 'OroCheckoutBundle:layouts/default:layout.html.twig' as _layout %}
         <div class="order-checkout-widget text-right">
-            <button type="submit"
-                    class="btn {% if transitionData.isAllowed %}btn--info{% endif %} btn--size-m checkout__submit-btn"
-                    disabled="disabled"
-                    autocomplete="off"
-                    {{ _layout.transitionAttrbiutes(transitionData, checkout) }}
-                    {{ _layout.conditionMessages(transitionData) }}
-            >
+            <span {{ _layout.conditionMessages(transitionData) }}>
+                <button type="submit"
+                        class="btn {% if transitionData.isAllowed %}btn--info{% endif %} btn--size-m checkout__submit-btn"
+                        disabled="disabled"
+                        autocomplete="off"
+                        {{ UI.renderPageComponentAttributes({
+                            module: 'oroui/js/app/components/view-component',
+                            options: {
+                                view: 'orocheckout/js/app/views/single-page-transition-button-view',
+                                enabled: transitionData.isAllowed
+                            }
+                        }) }}
+                >
                 {{ transitionData.transition.label|trans({},'workflows') }}
-            </button>
+                </button>
+            </span>
         </div>
-
-        <div {{ UI.renderPageComponentAttributes({
-            module: 'orocheckout/js/app/components/shipping-transition-button-component',
-            options: {
-                _sourceElement: '.checkout__submit-btn',
-                'enabled': transitionData.isAllowed,
-                'hasForm': transitionData.transition.hasForm()
-            }
-        }) }}></div>
     {% endif %}
 {% endblock %}
