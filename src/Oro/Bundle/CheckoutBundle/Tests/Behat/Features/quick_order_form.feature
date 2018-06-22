@@ -1,5 +1,6 @@
 @community-edition-only
 @ticket-BB-7523
+@ticket-BB-13978
 @fixture-OroCheckoutBundle:Products_quick_order_form_ce.yml
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
@@ -11,6 +12,9 @@ Feature: Quick order form
   In order to provide customers with ability to quickly start an order
   As customer
   I need to be able to enter products' skus and quantities and start checkout
+
+  Scenario: Feature Background
+    Given I enable the existing localizations
 
   Scenario: Submit forms with empty fields to check validation error
     Given I login as AmandaRCole@example.org buyer
@@ -299,6 +303,21 @@ Feature: Quick order form
     Then I should see that "UiDialog Title" contains "Import Validation"
     And I should see text matching "We have not been able to identify any product references in the uploaded file."
     And I close ui dialog
+
+  Scenario: Check product name is localized in Import Validation popup
+    Given I press "Localization Switcher"
+    And I select "Localization 1" localization
+    And I click "Quick Order Form"
+    And I click "Get Directions"
+    And I should see that "UiDialog Title" contains "Import Excel .CSV File"
+    And I download "the CSV template"
+    And I close ui dialog
+    And I fill quick order template with data:
+      | Item Number | Quantity | Unit |
+      | PSKU1       | 1        | item |
+    When I import file for quick order
+    Then I should see "UiDialog" with elements:
+      | Content | Product1 (Localization1) |
 
   #@todo check with Serhii Polishchuk how can we manipulate xlsx files
 # Scenario: Verify user is able to upload .xlsx file

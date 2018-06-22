@@ -694,11 +694,22 @@ oro_behat_extension:
         type: xpath
         locator: '//div[contains(concat(" ", @class, " "), " embedded-list ")]/h2/span[text()="Featured Products"]/../../div'
 
+    Top Selling Items Block:
+      selector:
+        type: xpath
+        locator: '//div[contains(concat(" ", @class, " "), " embedded-list ")]/h2/span[text()="Top Selling Items"]/../../div'
+
     Related Products Block:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
         type: xpath
         locator: '//div[contains(concat(" ", @class, " "), " embedded-list ")]/h2/span[text()="Related Products"]/../../div'
+
+    Upsell Products Block:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        type: xpath
+        locator: '//div[contains(concat(" ", @class, " "), " embedded-list ")]/h2/span[text()="Up-sell Products"]/../../div'
 
     EmbeddedProduct:
       selector: 'div.product-item'
@@ -815,6 +826,11 @@ oro_behat_extension:
         type: 'xpath'
         locator: '//div[contains (@id,"oro_product_prices-uid")]/../a'
 
+    Product Preview Image:
+      selector:
+        type: xpath
+        locator: '//img[contains(@class, "product-item__preview-image")]'
+
   pages:
     Product View:
       class: Oro\Bundle\ProductBundle\Tests\Behat\Page\ProductView
@@ -859,6 +875,8 @@ oro_behat_extension:
         - OroUserBundle::FeatureContext
         - OroNavigationBundle::FeatureContext
         - OroNavigationBundle::PinbarContext
+        - OroLocaleBundle::LocalizationContext
+        - OroFrontendLocalizationBundle::LocalizationSwitcherContext
       paths:
         - '@OroProductBundle/Tests/Behat/Features/related-items'
     OroProductBundleOther:
@@ -880,5 +898,7 @@ oro_behat_extension:
         - OroShoppingListBundle::ShoppingListContext
         - OroShoppingListBundle::FeatureContext
         - OroShippingBundle::FeatureContext
+        - OroLocaleBundle::LocalizationContext
+        - OroFrontendLocalizationBundle::LocalizationSwitcherContext
       paths:
         - '@OroProductBundle/Tests/Behat/Features/other'
