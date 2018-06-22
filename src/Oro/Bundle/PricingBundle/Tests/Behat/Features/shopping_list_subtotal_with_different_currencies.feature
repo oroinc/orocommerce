@@ -23,7 +23,6 @@ Feature: Shopping list subtotal with different currencies
     And I should see "Configuration saved" flash message
     Then I proceed as the Buyer
     And I login as AmandaRCole@example.org buyer
-    And I am on homepage
     And type "PSKU1" in "search"
     And I click "Search Button"
     And I click "Add to Shopping List" for "PSKU1" product
@@ -61,3 +60,4 @@ Feature: Shopping list subtotal with different currencies
     And I should not see "Total $13.00"
     And I should see "Subtotal €10.00"
     And I should see "Total €10.00"
+
