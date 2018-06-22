@@ -3,6 +3,8 @@
 @ticket-BB-11433
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroAuthorizeNetBundle:AuthorizeNetFixture.yml
+@ticket-BB-14390
+
 Feature: Process order submission with PayPal PayFlow Gateway and Authorize & Capture payment action on Single Page Checkout
   ToDo: BAP-16103 Add missing descriptions to the Behat features
   Scenario: Create new PayPal PayFlow Gateway Integration
