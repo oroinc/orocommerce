@@ -83,7 +83,7 @@
 
     {% set generalBlock = {
         'title': 'oro.product.sections.general'|trans,
-        'class': 'active',
+        'class': 'nav-item active',
         'subblocks': [{
             'title': '',
             'data': generalData
@@ -111,6 +111,7 @@
     {% if additionalData is not empty %}
         {% set dataBlocks = dataBlocks|merge([{
             'title': 'oro.product.sections.additional'|trans,
+            'class': 'nav-item',
             'subblocks': [{
                 'title': '',
                 'useSpan': false,
@@ -122,6 +123,7 @@
     {% set dataBlocks = dataBlocks|merge({
         'inventory': {
             'title': 'oro.product.sections.inventory'|trans,
+            'class': 'nav-item',
             'priority': 5,
             'subblocks': [{
                 'title': '',
@@ -135,6 +137,7 @@
     {% set dataBlocks = dataBlocks|merge({
         'images': {
             'title': 'oro.product.sections.images'|trans,
+            'class': 'nav-item',
             'priority': 0,
             'subblocks': [{
                 'title': '',
@@ -148,6 +151,7 @@
     {% set dataBlocks = dataBlocks|merge({
         'design': {
             'title': 'oro.product.sections.design'|trans,
+            'class': 'nav-item',
             'priority': 0,
             'subblocks': [{
                 'title': '',
@@ -174,6 +178,7 @@
         {% set variantLinksForm = form.variantLinks %}
         {% set dataBlocks = dataBlocks|merge([{
             'title' : 'oro.product.sections.productVariants'|trans,
+            'class': 'nav-item',
             'subblocks': [{
                 'title' : null,
                 'useSpan': false,

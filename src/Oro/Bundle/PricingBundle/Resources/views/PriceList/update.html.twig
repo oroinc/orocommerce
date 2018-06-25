@@ -38,7 +38,7 @@
     {% set dataBlocks = [
         {
             'title': 'oro.pricing.sections.general'|trans,
-            'class': 'active',
+            'class': 'nav-item active',
             'subblocks': [{
                 'title': '',
                 'data': [
@@ -51,7 +51,7 @@
         },
         {
             'title': 'oro.pricing.sections.product_assignment'|trans,
-            'class': 'active',
+            'class': 'nav-item active',
             'subblocks': [{
                 'title': '',
                 'data': [
@@ -61,7 +61,7 @@
         },
         {
             'title': 'oro.pricing.sections.price_rules'|trans,
-            'class': 'active',
+            'class': 'nav-item active',
             'subblocks': [{
                 'title': '',
                 'data': [
@@ -78,6 +78,7 @@
         {% if additionalData is not empty %}
             {% set dataBlocks = dataBlocks|merge([{
                 'title': 'oro.pricing.sections.additional'|trans,
+                'class': 'nav-item',
                 'subblocks': [{
                     'title': '',
                     'useSpan': false,

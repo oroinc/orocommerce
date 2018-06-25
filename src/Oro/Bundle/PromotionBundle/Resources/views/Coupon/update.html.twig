@@ -41,7 +41,7 @@
     {% set dataBlocks = [
         {
             'title': 'oro.promotion.coupon.sections.general'|trans,
-            'class': 'active',
+            'class': 'nav-item active',
             'subblocks': [
                 {
                     'data': [
@@ -64,6 +64,7 @@
     {% if additionalData is not empty %}
         {% set dataBlocks = dataBlocks|merge([{
             'title': 'oro.promotion.coupon.sections.additional'|trans,
+            'class': 'nav-item',
             'subblocks': [{
                 'title': '',
                 'useSpan': false,
