@@ -14,22 +14,22 @@ use Symfony\Component\Routing\RequestContext;
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class SluggableUrlGeneratorTest extends \PHPUnit_Framework_TestCase
+class SluggableUrlGeneratorTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var UrlGeneratorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var UrlGeneratorInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $baseGenerator;
 
     /**
-     * @var ContextUrlProviderRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var ContextUrlProviderRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     private $contextUrlProvider;
 
     /**
-     * @var UserLocalizationManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var UserLocalizationManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $userLocalizationManager;
 
@@ -39,7 +39,7 @@ class SluggableUrlGeneratorTest extends \PHPUnit_Framework_TestCase
     private $generator;
 
     /**
-     * @var SluggableUrlProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var SluggableUrlProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $sluggableUrlProvider;
 
@@ -60,7 +60,7 @@ class SluggableUrlGeneratorTest extends \PHPUnit_Framework_TestCase
 
     public function testSetContext()
     {
-        /** @var RequestContext|\PHPUnit_Framework_MockObject_MockObject $context */
+        /** @var RequestContext|\PHPUnit\Framework\MockObject\MockObject $context */
         $context = $this->getMockBuilder(RequestContext::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -73,7 +73,7 @@ class SluggableUrlGeneratorTest extends \PHPUnit_Framework_TestCase
 
     public function testGetContext()
     {
-        /** @var RequestContext|\PHPUnit_Framework_MockObject_MockObject $context */
+        /** @var RequestContext|\PHPUnit\Framework\MockObject\MockObject $context */
         $context = $this->getMockBuilder(RequestContext::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -436,7 +436,7 @@ class SluggableUrlGeneratorTest extends \PHPUnit_Framework_TestCase
      */
     private function assertRequestContextCalled($baseUrl)
     {
-        /** @var RequestContext|\PHPUnit_Framework_MockObject_MockObject $context */
+        /** @var RequestContext|\PHPUnit\Framework\MockObject\MockObject $context */
         $context = $this->getMockBuilder(RequestContext::class)
             ->disableOriginalConstructor()
             ->getMock();

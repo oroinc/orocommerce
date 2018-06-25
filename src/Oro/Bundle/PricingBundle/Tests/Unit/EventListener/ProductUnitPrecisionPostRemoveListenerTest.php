@@ -13,12 +13,12 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class ProductUnitPrecisionPostRemoveListenerTest extends \PHPUnit_Framework_TestCase
+class ProductUnitPrecisionPostRemoveListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var ShardManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShardManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $shardManager;
 

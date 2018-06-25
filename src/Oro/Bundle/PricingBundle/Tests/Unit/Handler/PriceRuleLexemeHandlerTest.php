@@ -14,17 +14,17 @@ use Oro\Component\Expression\ExpressionParser;
 use Oro\Component\Expression\FieldsProviderInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class PriceRuleLexemeHandlerTest extends \PHPUnit_Framework_TestCase
+class PriceRuleLexemeHandlerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $doctrineHelper;
 
     /**
-     * @var ExpressionParser|\PHPUnit_Framework_MockObject_MockObject
+     * @var ExpressionParser|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $parser;
 
@@ -34,7 +34,7 @@ class PriceRuleLexemeHandlerTest extends \PHPUnit_Framework_TestCase
     protected $priceRuleLexemeHandler;
 
     /**
-     * @var FieldsProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var FieldsProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $fieldsProvider;
 
@@ -105,7 +105,7 @@ class PriceRuleLexemeHandlerTest extends \PHPUnit_Framework_TestCase
                 ]
             ]);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|PriceRuleLexemeRepository $lexemeRepository */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|PriceRuleLexemeRepository $lexemeRepository */
         $lexemeRepository = $this->getMockBuilder(PriceRuleLexemeRepository::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -126,7 +126,7 @@ class PriceRuleLexemeHandlerTest extends \PHPUnit_Framework_TestCase
         $msrpId = '42';
         $msrpPriceAttribute = $this->getEntity(PriceAttributePriceList::class, ['id' => $msrpId]);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|PriceRuleLexemeRepository $priceAttributeRepository */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|PriceRuleLexemeRepository $priceAttributeRepository */
         $priceAttributeRepository = $this->getMockBuilder(PriceRuleLexemeRepository::class)
             ->disableOriginalConstructor()
             ->getMock();

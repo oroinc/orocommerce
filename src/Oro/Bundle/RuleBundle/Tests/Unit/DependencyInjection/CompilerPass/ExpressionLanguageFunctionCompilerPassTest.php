@@ -7,15 +7,15 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
 
-class ExpressionLanguageFunctionCompilerPassTest extends \PHPUnit_Framework_TestCase
+class ExpressionLanguageFunctionCompilerPassTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ContainerBuilder|\PHPUnit_Framework_MockObject_MockObject
+     * @var ContainerBuilder|\PHPUnit\Framework\MockObject\MockObject
      */
     private $containerBuilderMock;
 
     /**
-     * @var Definition|\PHPUnit_Framework_MockObject_MockObject
+     * @var Definition|\PHPUnit\Framework\MockObject\MockObject
      */
     private $definitionMock;
 

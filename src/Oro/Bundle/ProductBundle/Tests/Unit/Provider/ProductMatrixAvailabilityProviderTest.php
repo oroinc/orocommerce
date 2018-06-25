@@ -9,11 +9,11 @@ use Oro\Bundle\ProductBundle\Provider\ProductMatrixAvailabilityProvider;
 use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class ProductMatrixAvailabilityProviderTest extends \PHPUnit_Framework_TestCase
+class ProductMatrixAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /** @var ProductVariantAvailabilityProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ProductVariantAvailabilityProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $productVariantAvailability;
 
     /** @var ProductMatrixAvailabilityProvider */

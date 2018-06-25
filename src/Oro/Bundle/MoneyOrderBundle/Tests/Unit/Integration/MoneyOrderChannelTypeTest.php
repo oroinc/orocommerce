@@ -4,7 +4,7 @@ namespace Oro\Bundle\MoneyOrderBundle\Tests\Unit\Integration;
 
 use Oro\Bundle\MoneyOrderBundle\Integration\MoneyOrderChannelType;
 
-class MoneyOrderChannelTypeTest extends \PHPUnit_Framework_TestCase
+class MoneyOrderChannelTypeTest extends \PHPUnit\Framework\TestCase
 {
     /** @var MoneyOrderChannelType */
     private $channel;

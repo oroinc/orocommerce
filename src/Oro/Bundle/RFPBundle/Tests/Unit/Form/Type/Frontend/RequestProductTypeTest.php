@@ -32,7 +32,7 @@ class RequestProductTypeTest extends AbstractTest
     protected $formType;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface
+     * @var \PHPUnit\Framework\MockObject\MockObject|TranslatorInterface
      */
     protected $translator;
 
@@ -51,7 +51,7 @@ class RequestProductTypeTest extends AbstractTest
 
     public function testConfigureOptions()
     {
-        /* @var $resolver \PHPUnit_Framework_MockObject_MockObject|OptionsResolver */
+        /* @var $resolver \PHPUnit\Framework\MockObject\MockObject|OptionsResolver */
         $resolver = $this->createMock('Symfony\Component\OptionsResolver\OptionsResolver');
         $resolver->expects(static::once())
             ->method('setDefaults')
@@ -142,7 +142,7 @@ class RequestProductTypeTest extends AbstractTest
      */
     protected function getExtensions()
     {
-        /* @var $productUnitLabelFormatter ProductUnitLabelFormatter|\PHPUnit_Framework_MockObject_MockObject */
+        /* @var $productUnitLabelFormatter ProductUnitLabelFormatter|\PHPUnit\Framework\MockObject\MockObject */
         $productUnitLabelFormatter = $this->getMockBuilder(
             'Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter'
         )

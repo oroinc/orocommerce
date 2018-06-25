@@ -19,22 +19,22 @@ use Oro\Component\Testing\Unit\EntityTrait;
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class ReindexProductOrderListenerTest extends \PHPUnit_Framework_TestCase
+class ReindexProductOrderListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     const WEBSITE_ID = 333;
 
-    /** @var PreUpdateEventArgs|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var PreUpdateEventArgs|\PHPUnit\Framework\MockObject\MockObject */
     protected $event;
 
-    /** @var ProductReindexManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ProductReindexManager|\PHPUnit\Framework\MockObject\MockObject */
     protected $reindexManager;
 
     /** @var ReindexProductOrderListener */
     protected $listener;
 
-    /** @var FeatureChecker|\PHPUnit_Framework_MockObject_MockObject  */
+    /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject  */
     protected $featureChecker;
 
     /** @var  Website */

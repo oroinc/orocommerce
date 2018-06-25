@@ -8,18 +8,18 @@ use Oro\Bundle\OrderBundle\DependencyInjection\Configuration;
 use Oro\Bundle\OrderBundle\Tests\Unit\Stub\PreviouslyPurchasedConfigProviderStub as PreviouslyPurchasedConfigProvider;
 use Oro\Bundle\SearchBundle\Formatter\DateTimeFormatter;
 
-class PreviouslyPurchasedConfigProviderTest extends \PHPUnit_Framework_TestCase
+class PreviouslyPurchasedConfigProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
     protected $configManager;
 
     /** @var PreviouslyPurchasedConfigProvider */
     protected $provider;
 
-    /** @var  LocaleSettings|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var  LocaleSettings|\PHPUnit\Framework\MockObject\MockObject */
     protected $localeSettings;
 
-    /** @var DateTimeFormatter|\PHPUnit_Framework_MockObject_MockObject  */
+    /** @var DateTimeFormatter|\PHPUnit\Framework\MockObject\MockObject  */
     protected $dateTimeFormatter;
 
     /**

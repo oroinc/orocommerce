@@ -13,7 +13,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\OroProductBundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-class OroProductBundleTest extends \PHPUnit_Framework_TestCase
+class OroProductBundleTest extends \PHPUnit\Framework\TestCase
 {
     public function testBuild()
     {

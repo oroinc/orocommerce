@@ -9,7 +9,7 @@ use Oro\Bundle\CustomerBundle\Mailer\Processor;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-class CustomerUserResetPasswordListenerTest extends \PHPUnit_Framework_TestCase
+class CustomerUserResetPasswordListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var CustomerUserResetPasswordListener
@@ -22,7 +22,7 @@ class CustomerUserResetPasswordListenerTest extends \PHPUnit_Framework_TestCase
     private $request;
 
     /**
-     * @var RequestStack|\PHPUnit_Framework_MockObject_MockObject
+     * @var RequestStack|\PHPUnit\Framework\MockObject\MockObject
      */
     private $requestStack;
 

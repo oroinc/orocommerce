@@ -19,37 +19,37 @@ use Oro\Component\MessageQueue\Util\JSON;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Psr\Log\LoggerInterface;
 
-class ContentNodeSlugsProcessorTest extends \PHPUnit_Framework_TestCase
+class ContentNodeSlugsProcessorTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $registry;
 
     /**
-     * @var DefaultVariantScopesResolver|\PHPUnit_Framework_MockObject_MockObject
+     * @var DefaultVariantScopesResolver|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $defaultVariantScopesResolver;
 
     /**
-     * @var SlugGenerator|\PHPUnit_Framework_MockObject_MockObject
+     * @var SlugGenerator|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $slugGenerator;
 
     /**
-     * @var MessageProducerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $messageProducer;
 
     /**
-     * @var ResolveNodeSlugsMessageFactory|\PHPUnit_Framework_MockObject_MockObject
+     * @var ResolveNodeSlugsMessageFactory|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $messageFactory;
 
     /**
-     * @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $logger;
 
@@ -111,13 +111,13 @@ class ContentNodeSlugsProcessorTest extends \PHPUnit_Framework_TestCase
             ResolveNodeSlugsMessageFactory::CREATE_REDIRECT => true
         ];
 
-        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
+        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message **/
         $message = $this->createMock(MessageInterface::class);
         $message->expects($this->once())
             ->method('getBody')
             ->willReturn(JSON::encode($body));
 
-        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
+        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session **/
         $session = $this->createMock(SessionInterface::class);
 
         $this->messageFactory->expects($this->once())
@@ -150,13 +150,13 @@ class ContentNodeSlugsProcessorTest extends \PHPUnit_Framework_TestCase
             ResolveNodeSlugsMessageFactory::CREATE_REDIRECT => true
         ];
 
-        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
+        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message **/
         $message = $this->createMock(MessageInterface::class);
         $message->expects($this->once())
             ->method('getBody')
             ->willReturn(JSON::encode($body));
 
-        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
+        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session **/
         $session = $this->createMock(SessionInterface::class);
 
         $this->messageFactory->expects($this->once())
@@ -185,13 +185,13 @@ class ContentNodeSlugsProcessorTest extends \PHPUnit_Framework_TestCase
             ResolveNodeSlugsMessageFactory::CREATE_REDIRECT => true
         ];
 
-        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
+        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message **/
         $message = $this->createMock(MessageInterface::class);
         $message->expects($this->once())
             ->method('getBody')
             ->willReturn(JSON::encode($body));
 
-        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
+        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session **/
         $session = $this->createMock(SessionInterface::class);
 
         $this->messageFactory->expects($this->once())

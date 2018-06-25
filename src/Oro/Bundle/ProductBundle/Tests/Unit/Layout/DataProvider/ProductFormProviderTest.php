@@ -19,7 +19,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class ProductFormProviderTest extends \PHPUnit_Framework_TestCase
+class ProductFormProviderTest extends \PHPUnit\Framework\TestCase
 {
     const PRODUCT_VARIANTS_GET_AVAILABLE_VARIANTS = 'product_variants_get_available_variants_url';
 
@@ -28,13 +28,13 @@ class ProductFormProviderTest extends \PHPUnit_Framework_TestCase
     /** @var ProductFormProvider */
     protected $provider;
 
-    /** @var FormFactoryInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var FormFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $formFactory;
 
-    /** @var UrlGeneratorInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var UrlGeneratorInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $router;
 
-    /** @var ProductVariantAvailabilityProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ProductVariantAvailabilityProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $productVariantAvailabilityProvider;
 
     protected function setUp()

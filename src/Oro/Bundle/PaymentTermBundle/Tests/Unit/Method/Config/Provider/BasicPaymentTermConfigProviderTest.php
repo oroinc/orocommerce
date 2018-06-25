@@ -11,7 +11,7 @@ use Oro\Bundle\PaymentTermBundle\Method\Config\PaymentTermConfigInterface;
 use Oro\Bundle\PaymentTermBundle\Method\Config\Provider\Basic\BasicPaymentTermConfigProvider;
 use Psr\Log\LoggerInterface;
 
-class BasicPaymentTermConfigProviderTest extends \PHPUnit_Framework_TestCase
+class BasicPaymentTermConfigProviderTest extends \PHPUnit\Framework\TestCase
 {
     const IDENTIFIER1 = 'payment_method_1';
     const IDENTIFIER2 = 'payment_method_2';
@@ -22,7 +22,7 @@ class BasicPaymentTermConfigProviderTest extends \PHPUnit_Framework_TestCase
     private $testedProvider;
 
     /**
-     * @var PaymentTermConfigBySettingsFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var PaymentTermConfigBySettingsFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $paymentTermConfigBySettingsFactoryMock;
 
@@ -32,11 +32,11 @@ class BasicPaymentTermConfigProviderTest extends \PHPUnit_Framework_TestCase
     private $configs;
 
     /**
-     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $doctrine;
     /**
-     * @var PaymentTermSettingsRepository|\PHPUnit_Framework_MockObject_MockObject
+     * @var PaymentTermSettingsRepository|\PHPUnit\Framework\MockObject\MockObject
      */
     private $paymentTermSettingsRepositoryMock;
 
@@ -68,7 +68,7 @@ class BasicPaymentTermConfigProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->doctrine->expects(static::once())->method('getManagerForClass')->willReturn($objectManager);
 
-        /** @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject $logger */
+        /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject $logger */
         $logger = $this->createMock(LoggerInterface::class);
 
         $configOneMock
@@ -109,7 +109,7 @@ class BasicPaymentTermConfigProviderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return PaymentTermSettings|\PHPUnit_Framework_MockObject_MockObject
+     * @return PaymentTermSettings|\PHPUnit\Framework\MockObject\MockObject
      */
     private function createPaymentTermSettingsMock()
     {
@@ -117,7 +117,7 @@ class BasicPaymentTermConfigProviderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return PaymentTermConfigInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return PaymentTermConfigInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private function createConfigMock()
     {

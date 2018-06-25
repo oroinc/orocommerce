@@ -9,7 +9,7 @@ use Oro\Bundle\OrderBundle\Validator\Constraints\LineItemProductValidator;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
-class LineItemProductTest extends \PHPUnit_Framework_TestCase
+class LineItemProductTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var LineItemProduct
@@ -32,7 +32,7 @@ class LineItemProductTest extends \PHPUnit_Framework_TestCase
      */
     public function testValidateException()
     {
-        /** @var ExecutionContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
+        /** @var ExecutionContextInterface|\PHPUnit\Framework\MockObject\MockObject $context */
         $context = $this->createMock(ExecutionContextInterface::class);
         $validator = $this->getValidator();
         $validator->initialize($context);
@@ -50,7 +50,7 @@ class LineItemProductTest extends \PHPUnit_Framework_TestCase
             $expectedViolationMessages = [$expectedViolationMessages];
         }
 
-        /** @var ExecutionContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
+        /** @var ExecutionContextInterface|\PHPUnit\Framework\MockObject\MockObject $context */
         $context = $this->createMock(ExecutionContextInterface::class);
         $validator = $this->getValidator();
         $validator->initialize($context);

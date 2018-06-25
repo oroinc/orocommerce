@@ -10,18 +10,18 @@ use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Psr\Log\LoggerInterface;
 
-class RecalculateCheckoutSubtotalsProcessorTest extends \PHPUnit_Framework_TestCase
+class RecalculateCheckoutSubtotalsProcessorTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var CheckoutSubtotalUpdater|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var CheckoutSubtotalUpdater|\PHPUnit\Framework\MockObject\MockObject */
     protected $checkoutSubtotalUpdater;
 
-    /** @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $logger;
 
-    /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $message;
 
-    /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $session;
 
     /** @var RecalculateCheckoutSubtotalsProcessor */

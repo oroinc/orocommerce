@@ -6,7 +6,7 @@ use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Fallback\Provider\ParentCategoryFallbackProvider;
 use Oro\Bundle\EntityBundle\Exception\Fallback\InvalidFallbackArgumentException;
 
-class ParentCategoryFallbackProviderTest extends \PHPUnit_Framework_TestCase
+class ParentCategoryFallbackProviderTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var ParentCategoryFallbackProvider

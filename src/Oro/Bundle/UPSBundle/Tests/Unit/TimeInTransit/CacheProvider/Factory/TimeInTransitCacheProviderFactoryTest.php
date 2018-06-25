@@ -8,7 +8,7 @@ use Oro\Bundle\UPSBundle\Entity\UPSTransport as UPSSettings;
 use Oro\Bundle\UPSBundle\TimeInTransit\CacheProvider\Factory\TimeInTransitCacheProviderFactory;
 use Oro\Bundle\UPSBundle\TimeInTransit\CacheProvider\TimeInTransitCacheProvider;
 
-class TimeInTransitCacheProviderFactoryTest extends \PHPUnit_Framework_TestCase
+class TimeInTransitCacheProviderFactoryTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var TimeInTransitCacheProviderFactory
@@ -16,12 +16,12 @@ class TimeInTransitCacheProviderFactoryTest extends \PHPUnit_Framework_TestCase
     private $timeInTransitCacheProviderFactory;
 
     /**
-     * @var CacheProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var CacheProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     private $cacheProvider;
 
     /**
-     * @var LifetimeProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var LifetimeProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $lifetimeProvider;
 
@@ -84,7 +84,7 @@ class TimeInTransitCacheProviderFactoryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return UPSSettings|\PHPUnit_Framework_MockObject_MockObject
+     * @return UPSSettings|\PHPUnit\Framework\MockObject\MockObject
      */
     private function createSettingsMock()
     {

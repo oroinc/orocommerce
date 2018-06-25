@@ -10,7 +10,7 @@ use Oro\Bundle\RuleBundle\Entity\Rule;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-class PaymentMethodsConfigsRuleTest extends \PHPUnit_Framework_TestCase
+class PaymentMethodsConfigsRuleTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 

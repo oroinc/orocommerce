@@ -5,7 +5,7 @@ namespace Oro\Bundle\UPSBundle\Tests\Unit\Model;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\UPSBundle\Model\PriceResponse;
 
-class PriceResponseTest extends \PHPUnit_Framework_TestCase
+class PriceResponseTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var PriceResponse

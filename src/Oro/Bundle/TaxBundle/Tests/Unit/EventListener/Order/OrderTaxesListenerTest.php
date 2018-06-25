@@ -15,23 +15,23 @@ use Oro\Bundle\TaxBundle\Provider\TaxProviderInterface;
 use Oro\Bundle\TaxBundle\Provider\TaxProviderRegistry;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class OrderTaxesListenerTest extends \PHPUnit_Framework_TestCase
+class OrderTaxesListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /** @var OrderTaxesListener */
     protected $listener;
 
-    /** @var TaxProviderInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var TaxProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $taxProvider;
 
-    /** @var OrderEvent|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var OrderEvent|\PHPUnit\Framework\MockObject\MockObject */
     protected $event;
 
-    /** @var PriceMatcher|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var PriceMatcher|\PHPUnit\Framework\MockObject\MockObject */
     protected $priceMatcher;
 
-    /** @var TaxationSettingsProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var TaxationSettingsProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $taxationSettingsProvider;
 
     protected function setUp()

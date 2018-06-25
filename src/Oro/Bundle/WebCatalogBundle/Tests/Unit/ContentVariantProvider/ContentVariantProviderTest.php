@@ -8,10 +8,10 @@ use Oro\Bundle\WebCatalogBundle\ContentVariantProvider\ContentVariantProviderReg
 use Oro\Component\WebCatalog\ContentVariantProviderInterface;
 use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
 
-class ContentVariantProviderTest extends \PHPUnit_Framework_TestCase
+class ContentVariantProviderTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ContentVariantProviderRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var ContentVariantProviderRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $providerRegistry;
 

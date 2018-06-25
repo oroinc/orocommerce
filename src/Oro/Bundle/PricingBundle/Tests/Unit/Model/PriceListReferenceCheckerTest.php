@@ -9,12 +9,12 @@ use Oro\Bundle\PricingBundle\Entity\Repository\PriceRuleLexemeRepository;
 use Oro\Bundle\PricingBundle\Model\PriceListReferenceChecker;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class PriceListReferenceCheckerTest extends \PHPUnit_Framework_TestCase
+class PriceListReferenceCheckerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $registry;
 

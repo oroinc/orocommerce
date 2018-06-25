@@ -10,7 +10,7 @@ use Oro\Bundle\PricingBundle\Form\PriceListWithPriorityCollectionHandler;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
-class PriceListWithPriorityCollectionHandlerTest extends \PHPUnit_Framework_TestCase
+class PriceListWithPriorityCollectionHandlerTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var PriceListWithPriorityCollectionHandler
@@ -18,7 +18,7 @@ class PriceListWithPriorityCollectionHandlerTest extends \PHPUnit_Framework_Test
     protected $handler;
 
     /**
-     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject $doctrineHelper
+     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject $doctrineHelper
      */
     protected $doctrineHelper;
 

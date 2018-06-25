@@ -8,15 +8,15 @@ use Oro\Bundle\ApiBundle\Processor\Context;
 use Oro\Bundle\ProductBundle\Api\Processor\RelatedItemAclCheck;
 use Oro\Component\EntitySerializer\DoctrineHelper;
 
-class RelatedItemAclCheckTest extends \PHPUnit_Framework_TestCase
+class RelatedItemAclCheckTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     private $doctrineHelper;
 
     /**
-     * @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $entityManager;
 
@@ -59,7 +59,7 @@ class RelatedItemAclCheckTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param QueryBuilder $qb
-     * @return Context|\PHPUnit_Framework_MockObject_MockObject
+     * @return Context|\PHPUnit\Framework\MockObject\MockObject
      */
     private function createContextWithQuery(QueryBuilder $qb)
     {

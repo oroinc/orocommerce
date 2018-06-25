@@ -6,7 +6,7 @@ use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\WorkflowState\Mapper\CheckoutStateDiffMapperInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-abstract class AbstractCheckoutDiffMapperTest extends \PHPUnit_Framework_TestCase
+abstract class AbstractCheckoutDiffMapperTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 

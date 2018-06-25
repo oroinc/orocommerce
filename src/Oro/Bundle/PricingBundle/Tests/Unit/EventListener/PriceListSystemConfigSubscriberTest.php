@@ -10,17 +10,17 @@ use Oro\Bundle\PricingBundle\Model\PriceListRelationTriggerHandler;
 use Oro\Bundle\PricingBundle\SystemConfig\PriceListConfigConverter;
 use Oro\Bundle\PricingBundle\Tests\Unit\SystemConfig\ConfigsGeneratorTrait;
 
-class PriceListSystemConfigSubscriberTest extends \PHPUnit_Framework_TestCase
+class PriceListSystemConfigSubscriberTest extends \PHPUnit\Framework\TestCase
 {
     use ConfigsGeneratorTrait;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|PriceListConfigConverter
+     * @var \PHPUnit\Framework\MockObject\MockObject|PriceListConfigConverter
      */
     protected $converterMock;
 
     /**
-     * @var PriceListRelationTriggerHandler|\PHPUnit_Framework_MockObject_MockObject
+     * @var PriceListRelationTriggerHandler|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $changeTriggerHandler;
 
@@ -49,7 +49,7 @@ class PriceListSystemConfigSubscriberTest extends \PHPUnit_Framework_TestCase
 
     public function testFormPreSet()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|ConfigManager $configManager */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|ConfigManager $configManager */
         $configManager = $this->getConfigManager();
         $settings = [
             'oro_pricing___default_price_lists' => [
@@ -167,11 +167,11 @@ class PriceListSystemConfigSubscriberTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return ConfigManager|\PHPUnit_Framework_MockObject_MockObject
+     * @return ConfigManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function getConfigManager()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|ConfigManager $configManager */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|ConfigManager $configManager */
         $configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
             ->disableOriginalConstructor()
             ->getMock();

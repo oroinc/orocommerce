@@ -5,10 +5,10 @@ namespace Oro\Bundle\RedirectBundle\Tests\Unit\Routing;
 use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 use Oro\Bundle\RedirectBundle\Routing\MatchedUrlDecisionMaker;
 
-class MatchedUrlDecisionMakerTest extends \PHPUnit_Framework_TestCase
+class MatchedUrlDecisionMakerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var FrontendHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var FrontendHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $frontendHelper;
 

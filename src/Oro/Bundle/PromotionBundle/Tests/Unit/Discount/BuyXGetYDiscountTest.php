@@ -10,7 +10,7 @@ use Oro\Bundle\PromotionBundle\Discount\DiscountLineItem;
 use Oro\Bundle\PromotionBundle\Discount\DiscountProductUnitCodeAwareInterface;
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 
-class BuyXGetYDiscountTest extends \PHPUnit_Framework_TestCase
+class BuyXGetYDiscountTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var BuyXGetYDiscount

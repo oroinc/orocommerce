@@ -5,7 +5,7 @@ namespace Oro\Bundle\ShippingBundle\Tests\Unit\Validator\Constraints;
 use Oro\Bundle\ShippingBundle\Validator\Constraints\ShippingRuleEnable;
 use Oro\Bundle\ShippingBundle\Validator\Constraints\ShippingRuleEnableValidator;
 
-class ShippingRuleEnableTest extends \PHPUnit_Framework_TestCase
+class ShippingRuleEnableTest extends \PHPUnit\Framework\TestCase
 {
     public function testValidatedBy()
     {

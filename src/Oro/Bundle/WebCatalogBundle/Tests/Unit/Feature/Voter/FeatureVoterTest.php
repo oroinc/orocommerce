@@ -7,10 +7,10 @@ use Oro\Bundle\FeatureToggleBundle\Checker\Voter\VoterInterface;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Oro\Bundle\WebCatalogBundle\Feature\Voter\FeatureVoter;
 
-class FeatureVoterTest extends \PHPUnit_Framework_TestCase
+class FeatureVoterTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $configManager;
 

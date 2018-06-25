@@ -28,41 +28,41 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class CombinedPriceListsBuilderFacadeTest extends \PHPUnit_Framework_TestCase
+class CombinedPriceListsBuilderFacadeTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|DoctrineHelper */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|DoctrineHelper */
     protected $doctrineHelper;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|CustomerCombinedPriceListsBuilder */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|CustomerCombinedPriceListsBuilder */
     protected $customerCombinedPriceListBuilder;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|CustomerGroupCombinedPriceListsBuilder */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|CustomerGroupCombinedPriceListsBuilder */
     protected $customerGroupCombinedPriceListBuilder;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|WebsiteCombinedPriceListsBuilder */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|WebsiteCombinedPriceListsBuilder */
     protected $websiteCombinedPriceListBuilder;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|CombinedPriceListsBuilder */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|CombinedPriceListsBuilder */
     protected $combinedPriceListBuilder;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|EventDispatcherInterface */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|EventDispatcherInterface */
     protected $dispatcher;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|StrategyRegister */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|StrategyRegister */
     protected $strategyRegister;
 
     /** @var CombinedPriceListsBuilderFacade */
     protected $facade;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|PriceListToWebsiteRepository */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|PriceListToWebsiteRepository */
     protected $priceListToWebsiteRepo;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|PriceListToCustomerGroupRepository */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|PriceListToCustomerGroupRepository */
     protected $priceListToCustomerGroupRepo;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|PriceListToCustomerRepository */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|PriceListToCustomerRepository */
     protected $priceListToCustomerRepo;
 
     public function setUp()
@@ -101,7 +101,7 @@ class CombinedPriceListsBuilderFacadeTest extends \PHPUnit_Framework_TestCase
 
         $startTimestamp = time();
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|PriceCombiningStrategyInterface $strategy */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|PriceCombiningStrategyInterface $strategy */
         $strategy = $this->createMock(PriceCombiningStrategyInterface::class);
         $this->strategyRegister->expects($this->once())->method('getCurrentStrategy')
             ->willReturn($strategy);

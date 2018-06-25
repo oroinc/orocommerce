@@ -10,10 +10,10 @@ use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Oro\Bundle\InventoryBundle\EventListener\InventoryLevelsImportListener;
 use Oro\Bundle\InventoryBundle\ImportExport\Strategy\InventoryLevelStrategy;
 
-class InventoryLevelsImportListenerTest extends \PHPUnit_Framework_TestCase
+class InventoryLevelsImportListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var InventoryLevelStrategy|\PHPUnit_Framework_MockObject_MockObject
+     * @var InventoryLevelStrategy|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $inventoryLevelStrategy;
 

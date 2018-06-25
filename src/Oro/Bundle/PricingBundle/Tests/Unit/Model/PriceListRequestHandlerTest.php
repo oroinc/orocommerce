@@ -25,55 +25,55 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 /**
  * @SuppressWarnings(PHPMD)
  */
-class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
+class PriceListRequestHandlerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|SessionInterface
+     * @var \PHPUnit\Framework\MockObject\MockObject|SessionInterface
      */
     protected $session;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|TokenAccessorInterface
+     * @var \PHPUnit\Framework\MockObject\MockObject|TokenAccessorInterface
      */
     protected $tokenAccessor;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|PriceListTreeHandler
+     * @var \PHPUnit\Framework\MockObject\MockObject|PriceListTreeHandler
      */
     protected $priceListTreeHandler;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|Request
+     * @var \PHPUnit\Framework\MockObject\MockObject|Request
      */
     protected $request;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|RequestStack
+     * @var \PHPUnit\Framework\MockObject\MockObject|RequestStack
      */
     protected $requestStack;
 
     /**
-     * @var PriceListRepository|\PHPUnit_Framework_MockObject_MockObject
+     * @var PriceListRepository|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $repository;
 
     /**
-     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $registry;
 
     /**
-     * @var EntityManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var EntityManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $em;
 
     /**
-     * @var CustomerUserRelationsProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var CustomerUserRelationsProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $relationsProvider;
 
     /**
-     * @var WebsiteManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var WebsiteManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $websiteManager;
 

@@ -5,7 +5,7 @@ namespace Oro\Bundle\ShippingBundle\Tests\Unit\Model;
 use Oro\Bundle\ShippingBundle\Model\DimensionsValue;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-class DimensionsValueTest extends \PHPUnit_Framework_TestCase
+class DimensionsValueTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 

@@ -13,15 +13,15 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
-class SeoDataProviderTest extends \PHPUnit_Framework_TestCase
+class SeoDataProviderTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var LocalizationHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var LocalizationHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $localizationHelper;
 
     /**
-     * @var RequestStack|\PHPUnit_Framework_MockObject_MockObject
+     * @var RequestStack|\PHPUnit\Framework\MockObject\MockObject
      */
     private $requestStack;
 

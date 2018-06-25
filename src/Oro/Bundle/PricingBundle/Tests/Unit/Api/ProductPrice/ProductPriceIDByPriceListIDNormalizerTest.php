@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 class ProductPriceIDByPriceListIDNormalizerTest extends TestCase
 {
     /**
-     * @var PriceListIDContextStorageInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var PriceListIDContextStorageInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $priceListIDContextStorage;
 

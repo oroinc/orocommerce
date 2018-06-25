@@ -12,20 +12,20 @@ use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class CheckoutShipUntilFormExtensionTest extends \PHPUnit_Framework_TestCase
+class CheckoutShipUntilFormExtensionTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ProductUpcomingProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProductUpcomingProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $provider;
 
     /**
-     * @var CheckoutLineItemsManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var CheckoutLineItemsManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $checkoutLineItemsManager;
 
     /**
-     * @var DateTimeFormatter|\PHPUnit_Framework_MockObject_MockObject
+     * @var DateTimeFormatter|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $dateTimeFormatter;
 

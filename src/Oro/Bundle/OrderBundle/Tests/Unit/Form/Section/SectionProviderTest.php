@@ -7,7 +7,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormRegistryInterface;
 use Symfony\Component\Form\FormTypeInterface;
 
-class SectionProviderTest extends \PHPUnit_Framework_TestCase
+class SectionProviderTest extends \PHPUnit\Framework\TestCase
 {
     const FORM_CLASS = 'form\class';
     const FORM_NAME = 'form_name';

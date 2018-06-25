@@ -59,28 +59,28 @@ class OrderTypeTest extends TypeTestCase
 {
     use QuantityTypeTrait;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|OrderAddressSecurityProvider */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|OrderAddressSecurityProvider */
     private $orderAddressSecurityProvider;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|OrderCurrencyHandler */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|OrderCurrencyHandler */
     private $orderCurrencyHandler;
 
     /** @var OrderType */
     private $type;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|TotalProcessorProvider */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|TotalProcessorProvider */
     protected $totalsProvider;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|LineItemSubtotalProvider */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|LineItemSubtotalProvider */
     protected $lineItemSubtotalProvider;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|DiscountSubtotalProvider */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|DiscountSubtotalProvider */
     protected $discountSubtotalProvider;
 
-    /** @var PriceMatcher|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var PriceMatcher|\PHPUnit\Framework\MockObject\MockObject */
     protected $priceMatcher;
 
-    /** @var RateConverterInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var RateConverterInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $rateConverter;
 
     /** @var ValidatorInterface  */
@@ -137,7 +137,7 @@ class OrderTypeTest extends TypeTestCase
 
     public function testConfigureOptions()
     {
-        /* @var $resolver \PHPUnit_Framework_MockObject_MockObject|OptionsResolver */
+        /* @var $resolver \PHPUnit\Framework\MockObject\MockObject|OptionsResolver */
         $resolver = $this->createMock(OptionsResolver::class);
         $resolver->expects($this->once())
             ->method('setDefaults')
@@ -328,7 +328,7 @@ class OrderTypeTest extends TypeTestCase
         $entityType = $this->prepareProductEntityType();
         $priceType = $this->preparePriceType();
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|ProductUnitsProvider $productUnitsProvider */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|ProductUnitsProvider $productUnitsProvider */
         $productUnitsProvider = $this->createMock(ProductUnitsProvider::class);
         $productUnitsProvider->expects($this->any())
             ->method('getAvailableProductUnits')

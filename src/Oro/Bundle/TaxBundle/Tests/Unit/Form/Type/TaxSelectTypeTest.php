@@ -6,7 +6,7 @@ use Oro\Bundle\FormBundle\Form\Type\OroEntitySelectOrCreateInlineType;
 use Oro\Bundle\TaxBundle\Form\Type\TaxSelectType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class TaxSelectTypeTest extends \PHPUnit_Framework_TestCase
+class TaxSelectTypeTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var TaxSelectType

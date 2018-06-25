@@ -13,12 +13,12 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
 
-class EnabledTypeConfigsValidationGroupValidatorTest extends \PHPUnit_Framework_TestCase
+class EnabledTypeConfigsValidationGroupValidatorTest extends \PHPUnit\Framework\TestCase
 {
     /** @var UniqueProductUnitShippingOptions */
     protected $constraint;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|ExecutionContextInterface */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|ExecutionContextInterface */
     protected $context;
 
     /** @var UniqueProductUnitShippingOptionsValidator */

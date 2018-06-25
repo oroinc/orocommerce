@@ -9,20 +9,20 @@ use Oro\Bundle\ShippingBundle\Model\Dimensions;
 use Oro\Bundle\ShippingBundle\Model\Weight;
 use Oro\Bundle\ShippingBundle\Provider\MeasureUnitConversion;
 
-class MeasureUnitConversionTest extends \PHPUnit_Framework_TestCase
+class MeasureUnitConversionTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $configManager;
 
     /**
-     * @var |\PHPUnit_Framework_MockObject_MockObject
+     * @var |\PHPUnit\Framework\MockObject\MockObject
      */
     protected $lengthConfigEntryName;
 
     /**
-     * @var |\PHPUnit_Framework_MockObject_MockObject
+     * @var |\PHPUnit\Framework\MockObject\MockObject
      */
     protected $weightConfigEntryName;
 
@@ -148,7 +148,7 @@ class MeasureUnitConversionTest extends \PHPUnit_Framework_TestCase
 
     public function testIsDimensionsWithEmptyUnit()
     {
-        /** @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject $configManager */
+        /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject $configManager */
         $configManager = $this->createMock(ConfigManager::class);
         $configManager->expects($this->never())
             ->method($this->anything());
@@ -184,7 +184,7 @@ class MeasureUnitConversionTest extends \PHPUnit_Framework_TestCase
 
     public function testIsWeightWithEmptyUnit()
     {
-        /** @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject $configManager */
+        /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject $configManager */
         $configManager = $this->createMock(ConfigManager::class);
         $configManager->expects($this->never())
             ->method($this->anything());

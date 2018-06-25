@@ -7,7 +7,7 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\PricingBundle\Builder\CombinedPriceListGarbageCollector;
 use Oro\Bundle\PricingBundle\Model\CombinedPriceListTriggerHandler;
 
-class CombinedPriceListGarbageCollectorTest extends \PHPUnit_Framework_TestCase
+class CombinedPriceListGarbageCollectorTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var string
@@ -15,7 +15,7 @@ class CombinedPriceListGarbageCollectorTest extends \PHPUnit_Framework_TestCase
     protected $combinedPriceListClass;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ConfigManager
+     * @var \PHPUnit\Framework\MockObject\MockObject|ConfigManager
      */
     protected $configManager;
 
@@ -25,12 +25,12 @@ class CombinedPriceListGarbageCollectorTest extends \PHPUnit_Framework_TestCase
     protected $garbageCollector;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|Registry
+     * @var \PHPUnit\Framework\MockObject\MockObject|Registry
      */
     protected $registry;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|CombinedPriceListTriggerHandler
+     * @var \PHPUnit\Framework\MockObject\MockObject|CombinedPriceListTriggerHandler
      */
     protected $triggerHandler;
 
@@ -103,7 +103,7 @@ class CombinedPriceListGarbageCollectorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return Registry|\PHPUnit_Framework_MockObject_MockObject
+     * @return Registry|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function assertRepositoryCall()
     {

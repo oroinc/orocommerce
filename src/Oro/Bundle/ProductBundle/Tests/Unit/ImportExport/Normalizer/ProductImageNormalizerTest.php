@@ -13,10 +13,10 @@ use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProductImage;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class ProductImageNormalizerTest extends \PHPUnit_Framework_TestCase
+class ProductImageNormalizerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var FieldHelper|\PHPUnit_Framework_MockObject_MockObject $fieldHelper
+     * @var FieldHelper|\PHPUnit\Framework\MockObject\MockObject $fieldHelper
      */
     protected $fieldHelper;
 
@@ -26,28 +26,28 @@ class ProductImageNormalizerTest extends \PHPUnit_Framework_TestCase
     protected $productImageNormalizer;
 
     /**
-     * @var FileLocator|\PHPUnit_Framework_MockObject_MockObject $fileLocator
+     * @var FileLocator|\PHPUnit\Framework\MockObject\MockObject $fileLocator
      */
     protected $fileLocator;
 
     /**
-     * @var ImageTypeProvider|\PHPUnit_Framework_MockObject_MockObject $imageTypeProvider
+     * @var ImageTypeProvider|\PHPUnit\Framework\MockObject\MockObject $imageTypeProvider
      */
     protected $imageTypeProvider;
 
     /**
-     * @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $eventDispatcher;
 
     protected function setUp()
     {
-        /** @var ImageTypeProvider|\PHPUnit_Framework_MockObject_MockObject $imageTypeProvider * */
+        /** @var ImageTypeProvider|\PHPUnit\Framework\MockObject\MockObject $imageTypeProvider * */
         $this->imageTypeProvider = $this->getMockBuilder(ImageTypeProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        /** @var FileLocator|\PHPUnit_Framework_MockObject_MockObject $fileLocator * */
+        /** @var FileLocator|\PHPUnit\Framework\MockObject\MockObject $fileLocator * */
         $this->fileLocator = $this->getMockBuilder(FileLocator::class)
             ->disableOriginalConstructor()
             ->getMock();

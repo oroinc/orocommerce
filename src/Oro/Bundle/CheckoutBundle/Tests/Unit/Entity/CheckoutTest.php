@@ -21,7 +21,7 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class CheckoutTest extends \PHPUnit_Framework_TestCase
+class CheckoutTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
     use EntityTrait;

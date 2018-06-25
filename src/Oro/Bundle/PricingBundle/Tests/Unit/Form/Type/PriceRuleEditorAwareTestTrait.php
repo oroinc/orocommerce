@@ -24,7 +24,7 @@ trait PriceRuleEditorAwareTestTrait
     protected function getPriceRuleEditorExtension()
     {
         /** @var FormIntegrationTestCase $this */
-        /** @var AutocompleteFieldsProvider|\PHPUnit_Framework_MockObject_MockObject $autocompleteFiledsProvider */
+        /** @var AutocompleteFieldsProvider|\PHPUnit\Framework\MockObject\MockObject $autocompleteFiledsProvider */
         $autocompleteFiledsProvider = $this->getMockBuilder(AutocompleteFieldsProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -35,12 +35,12 @@ trait PriceRuleEditorAwareTestTrait
         $priceListSelectForm->expects($this->any())
             ->method('createView')
             ->willReturn($priceListSelectFormView);
-        /** @var FormFactoryInterface|\PHPUnit_Framework_MockObject_MockObject $formFactory */
+        /** @var FormFactoryInterface|\PHPUnit\Framework\MockObject\MockObject $formFactory */
         $formFactory = $this->createMock(FormFactoryInterface::class);
         $formFactory->expects($this->any())
             ->method('createNamed')
             ->willReturn($priceListSelectForm);
-        /** @var \Twig_Environment|\PHPUnit_Framework_MockObject_MockObject $twig */
+        /** @var \Twig_Environment|\PHPUnit\Framework\MockObject\MockObject $twig */
         $twig = $this->getMockBuilder(\Twig_Environment::class)
             ->disableOriginalConstructor()
             ->getMock();

@@ -8,15 +8,15 @@ use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule;
 use Oro\Bundle\PaymentBundle\RuleFiltration\Basic\BasicMethodsConfigsRulesFiltrationService;
 use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
 
-class BasicMethodsConfigsRulesFiltrationServiceTest extends \PHPUnit_Framework_TestCase
+class BasicMethodsConfigsRulesFiltrationServiceTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var RuleFiltrationServiceInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var RuleFiltrationServiceInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $filtrationService;
 
     /**
-     * @var PaymentContextToRulesValueConverterInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var PaymentContextToRulesValueConverterInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $paymentContextToRuleValuesConverter;
 
@@ -79,7 +79,7 @@ class BasicMethodsConfigsRulesFiltrationServiceTest extends \PHPUnit_Framework_T
     }
 
     /**
-     * @return PaymentContextInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return PaymentContextInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private function createContextMock()
     {
@@ -87,7 +87,7 @@ class BasicMethodsConfigsRulesFiltrationServiceTest extends \PHPUnit_Framework_T
     }
 
     /**
-     * @return PaymentMethodsConfigsRule|\PHPUnit_Framework_MockObject_MockObject
+     * @return PaymentMethodsConfigsRule|\PHPUnit\Framework\MockObject\MockObject
      */
     private function createPaymentMethodsConfigsRule()
     {

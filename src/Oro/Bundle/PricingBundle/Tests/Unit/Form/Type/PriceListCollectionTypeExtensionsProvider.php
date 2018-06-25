@@ -16,7 +16,7 @@ use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Validator\Validation;
 
-class PriceListCollectionTypeExtensionsProvider extends \PHPUnit_Framework_TestCase
+class PriceListCollectionTypeExtensionsProvider extends \PHPUnit\Framework\TestCase
 {
     /**
      * @return array

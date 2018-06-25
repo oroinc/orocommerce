@@ -23,17 +23,17 @@ class EmptyMatrixGridManagerTest extends TestCase
     use EntityTrait;
 
     /**
-     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     private $doctrineHelper;
 
     /**
-     * @var LineItemByShoppingListAndProductFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var LineItemByShoppingListAndProductFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $lineItemFactory;
 
     /**
-     * @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $configManager;
 

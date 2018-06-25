@@ -5,7 +5,7 @@ namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Engine;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\WebsiteSearchBundle\Engine\Mapper;
 
-class MapperTest extends \PHPUnit_Framework_TestCase
+class MapperTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var Mapper

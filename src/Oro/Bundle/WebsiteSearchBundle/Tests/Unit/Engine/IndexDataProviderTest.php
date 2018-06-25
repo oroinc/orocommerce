@@ -17,24 +17,24 @@ use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderInterface;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\WebsiteIdPlaceholder;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class IndexDataProviderTest extends \PHPUnit_Framework_TestCase
+class IndexDataProviderTest extends \PHPUnit\Framework\TestCase
 {
     /** @var IndexDataProvider */
     protected $indexDataProvider;
 
-    /** @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $eventDispatcher;
 
-    /** @var EntityAliasResolver|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var EntityAliasResolver|\PHPUnit\Framework\MockObject\MockObject */
     protected $aliasResolver;
 
-    /** @var PlaceholderInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var PlaceholderInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $placeholder;
 
-    /** @var HtmlTagHelper|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var HtmlTagHelper|\PHPUnit\Framework\MockObject\MockObject */
     protected $tagHelper;
 
-    /** @var PlaceholderHelper|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var PlaceholderHelper|\PHPUnit\Framework\MockObject\MockObject */
     protected $placeholderHelper;
 
     protected function setUp()

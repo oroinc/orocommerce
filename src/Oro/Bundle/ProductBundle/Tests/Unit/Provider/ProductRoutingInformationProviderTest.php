@@ -9,7 +9,7 @@ use Oro\Bundle\RedirectBundle\Provider\RoutingInformationProviderInterface;
 use Oro\Component\Routing\RouteData;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class ProductRoutingInformationProviderTest extends \PHPUnit_Framework_TestCase
+class ProductRoutingInformationProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
@@ -19,7 +19,7 @@ class ProductRoutingInformationProviderTest extends \PHPUnit_Framework_TestCase
     protected $provider;
 
     /**
-     * @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $configManager;
 

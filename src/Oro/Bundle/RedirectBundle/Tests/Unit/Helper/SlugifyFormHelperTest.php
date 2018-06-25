@@ -5,7 +5,7 @@ namespace Oro\Bundle\RedirectBundle\Tests\Unit\Helper;
 use Oro\Bundle\RedirectBundle\Helper\SlugifyFormHelper;
 use Symfony\Component\Form\FormView;
 
-class SlugifyFormHelperTest extends \PHPUnit_Framework_TestCase
+class SlugifyFormHelperTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var SlugifyFormHelper

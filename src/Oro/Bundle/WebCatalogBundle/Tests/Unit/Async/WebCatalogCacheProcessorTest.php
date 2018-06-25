@@ -20,32 +20,32 @@ use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Psr\Log\LoggerInterface;
 
-class WebCatalogCacheProcessorTest extends \PHPUnit_Framework_TestCase
+class WebCatalogCacheProcessorTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var JobRunner|\PHPUnit_Framework_MockObject_MockObject
+     * @var JobRunner|\PHPUnit\Framework\MockObject\MockObject
      */
     private $jobRunner;
 
     /**
-     * @var MessageProducerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $producer;
 
     /**
-     * @var ScopeMatcher|\PHPUnit_Framework_MockObject_MockObject
+     * @var ScopeMatcher|\PHPUnit\Framework\MockObject\MockObject
      */
     private $scopeMatcher;
 
     /**
-     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     private $registry;
 
     /**
-     * @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $logger;
 
@@ -82,7 +82,7 @@ class WebCatalogCacheProcessorTest extends \PHPUnit_Framework_TestCase
 
     public function testProcessException()
     {
-        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session */
+        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session */
         $session = $this->createMock(SessionInterface::class);
         $message = $this->createMessage('');
 
@@ -106,7 +106,7 @@ class WebCatalogCacheProcessorTest extends \PHPUnit_Framework_TestCase
 
     public function testProcessSingleWebCatalog()
     {
-        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session */
+        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session */
         $session = $this->createMock(SessionInterface::class);
         $message = $this->createMessage('1');
 
@@ -115,7 +115,7 @@ class WebCatalogCacheProcessorTest extends \PHPUnit_Framework_TestCase
         /** @var ContentNode $rootNode */
         $rootNode = $this->getEntity(ContentNode::class, ['id' => 2]);
 
-        /** @var WebCatalogRepository|\PHPUnit_Framework_MockObject_MockObject $webCatalogRepository */
+        /** @var WebCatalogRepository|\PHPUnit\Framework\MockObject\MockObject $webCatalogRepository */
         $webCatalogRepository = $this->getMockBuilder(WebCatalogRepository::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -131,7 +131,7 @@ class WebCatalogCacheProcessorTest extends \PHPUnit_Framework_TestCase
 
     public function testProcessWebCatalogWithRemovedRoot()
     {
-        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session */
+        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session */
         $session = $this->createMock(SessionInterface::class);
         $message = $this->createMessage('1');
 
@@ -139,7 +139,7 @@ class WebCatalogCacheProcessorTest extends \PHPUnit_Framework_TestCase
         $webCatalog = $this->getEntity(WebCatalog::class, ['id' => 1]);
         $rootNode = null;
 
-        /** @var WebCatalogRepository|\PHPUnit_Framework_MockObject_MockObject $webCatalogRepository */
+        /** @var WebCatalogRepository|\PHPUnit\Framework\MockObject\MockObject $webCatalogRepository */
         $webCatalogRepository = $this->getMockBuilder(WebCatalogRepository::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -150,7 +150,7 @@ class WebCatalogCacheProcessorTest extends \PHPUnit_Framework_TestCase
 
         $this->assertRepositoryCalls($webCatalogRepository, $webCatalog, $rootNode);
 
-        /** @var Job|\PHPUnit_Framework_MockObject_MockObject $job */
+        /** @var Job|\PHPUnit\Framework\MockObject\MockObject $job */
         $this->assertUniqueJobExecuted();
         $this->jobRunner->expects($this->never())
             ->method('createDelayed');
@@ -165,7 +165,7 @@ class WebCatalogCacheProcessorTest extends \PHPUnit_Framework_TestCase
 
     public function testProcessAllWebCatalogs()
     {
-        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session */
+        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session */
         $session = $this->createMock(SessionInterface::class);
         $message = $this->createMessage('');
 
@@ -174,7 +174,7 @@ class WebCatalogCacheProcessorTest extends \PHPUnit_Framework_TestCase
         /** @var ContentNode $rootNode */
         $rootNode = $this->getEntity(ContentNode::class, ['id' => 2]);
 
-        /** @var WebCatalogRepository|\PHPUnit_Framework_MockObject_MockObject $webCatalogRepository */
+        /** @var WebCatalogRepository|\PHPUnit\Framework\MockObject\MockObject $webCatalogRepository */
         $webCatalogRepository = $this->getMockBuilder(WebCatalogRepository::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -188,7 +188,7 @@ class WebCatalogCacheProcessorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param WebCatalogRepository|\PHPUnit_Framework_MockObject_MockObject $webCatalogRepository
+     * @param WebCatalogRepository|\PHPUnit\Framework\MockObject\MockObject $webCatalogRepository
      * @param WebCatalog $webCatalog
      * @param ContentNode $rootNode
      */
@@ -226,11 +226,11 @@ class WebCatalogCacheProcessorTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param string $body
-     * @return MessageInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return MessageInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private function createMessage($body)
     {
-        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message */
+        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message */
         $message = $this->createMock(MessageInterface::class);
         $message->expects($this->any())
             ->method('getBody')
@@ -243,13 +243,13 @@ class WebCatalogCacheProcessorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param WebCatalogRepository|\PHPUnit_Framework_MockObject_MockObject $webCatalogRepository
+     * @param WebCatalogRepository|\PHPUnit\Framework\MockObject\MockObject $webCatalogRepository
      * @param WebCatalog $webCatalog
      * @param ContentNode|null $rootNode
      */
     private function assertRepositoryCalls($webCatalogRepository, WebCatalog $webCatalog, ContentNode $rootNode = null)
     {
-        /** @var ContentNodeRepository|\PHPUnit_Framework_MockObject_MockObject $contentNodeRepo */
+        /** @var ContentNodeRepository|\PHPUnit\Framework\MockObject\MockObject $contentNodeRepo */
         $contentNodeRepo = $this->getMockBuilder(ContentNodeRepository::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -276,7 +276,7 @@ class WebCatalogCacheProcessorTest extends \PHPUnit_Framework_TestCase
 
     private function assertUniqueJobExecuted()
     {
-        /** @var Job|\PHPUnit_Framework_MockObject_MockObject $job */
+        /** @var Job|\PHPUnit\Framework\MockObject\MockObject $job */
         $job = $this->getMockBuilder(Job::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -298,7 +298,7 @@ class WebCatalogCacheProcessorTest extends \PHPUnit_Framework_TestCase
      */
     private function assertChildJobCreated(WebCatalog $webCatalog, Scope $scope)
     {
-        /** @var Job|\PHPUnit_Framework_MockObject_MockObject $job */
+        /** @var Job|\PHPUnit\Framework\MockObject\MockObject $job */
         $childJob = $this->getMockBuilder(Job::class)
             ->disableOriginalConstructor()
             ->getMock();

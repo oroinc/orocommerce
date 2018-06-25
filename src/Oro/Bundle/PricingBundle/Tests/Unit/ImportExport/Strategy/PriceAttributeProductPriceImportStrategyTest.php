@@ -22,7 +22,7 @@ class PriceAttributeProductPriceImportStrategyTest extends TestCase
     const CURRENCY = 'USD';
 
     /**
-     * @var FieldHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var FieldHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     private $fieldHelper;
 

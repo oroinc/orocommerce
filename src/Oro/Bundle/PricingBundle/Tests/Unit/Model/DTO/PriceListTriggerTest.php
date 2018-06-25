@@ -4,7 +4,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Model\DTO;
 
 use Oro\Bundle\PricingBundle\Model\DTO\PriceListTrigger;
 
-class PriceListTriggerTest extends \PHPUnit_Framework_TestCase
+class PriceListTriggerTest extends \PHPUnit\Framework\TestCase
 {
     public function testGetProduct()
     {

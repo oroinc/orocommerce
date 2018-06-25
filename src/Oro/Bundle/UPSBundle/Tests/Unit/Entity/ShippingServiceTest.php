@@ -6,7 +6,7 @@ use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\UPSBundle\Entity\ShippingService;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-class ShippingServiceTest extends \PHPUnit_Framework_TestCase
+class ShippingServiceTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 

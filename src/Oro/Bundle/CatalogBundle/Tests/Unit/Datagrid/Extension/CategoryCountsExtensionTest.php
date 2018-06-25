@@ -21,29 +21,29 @@ use Oro\Bundle\SearchBundle\Query\SearchQueryInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\TestUtils\Mocks\ServiceLink;
 
-class CategoryCountsExtensionTest extends \PHPUnit_Framework_TestCase
+class CategoryCountsExtensionTest extends \PHPUnit\Framework\TestCase
 {
     const CATEGORY_ID = 42;
     const GRID_NAME = 'grid1';
 
     use EntityTrait;
 
-    /** @var Manager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var Manager|\PHPUnit\Framework\MockObject\MockObject */
     protected $datagridManager;
 
-    /** @var CategoryRepository|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var CategoryRepository|\PHPUnit\Framework\MockObject\MockObject */
     protected $categoryRepository;
 
-    /** @var ProductRepository|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ProductRepository|\PHPUnit\Framework\MockObject\MockObject */
     protected $productSearchRepository;
 
-    /** @var CategoryCountsCache|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var CategoryCountsCache|\PHPUnit\Framework\MockObject\MockObject */
     protected $cache;
 
-    /** @var DatagridInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var DatagridInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $datagrid;
 
-    /** @var SearchQueryInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var SearchQueryInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $searchQuery;
 
     /** @var CategoryCountsExtension */
@@ -61,7 +61,7 @@ class CategoryCountsExtensionTest extends \PHPUnit_Framework_TestCase
 
         $this->searchQuery = $this->createMock(SearchQueryInterface::class);
 
-        /** @var SearchDatasource|\PHPUnit_Framework_MockObject_MockObject $searchDatasource */
+        /** @var SearchDatasource|\PHPUnit\Framework\MockObject\MockObject $searchDatasource */
         $searchDatasource = $this->createMock(SearchDatasource::class);
         $searchDatasource->expects($this->any())
             ->method('getSearchQuery')
@@ -81,7 +81,7 @@ class CategoryCountsExtensionTest extends \PHPUnit_Framework_TestCase
             ->with(Category::class)
             ->willReturn($this->categoryRepository);
 
-        /** @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject $registry */
+        /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject $registry */
         $registry = $this->createMock(ManagerRegistry::class);
         $registry->expects($this->any())
             ->method('getManagerForClass')

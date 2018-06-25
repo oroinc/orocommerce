@@ -27,12 +27,12 @@ class InventoryLevelGridTypeTest extends FormIntegrationTestCase
     protected $type;
 
     /**
-     * @var FormFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var FormFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $formFactory;
 
     /**
-     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $doctrineHelper;
 

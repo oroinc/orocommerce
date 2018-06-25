@@ -5,7 +5,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Menu\Frontend;
 use Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry;
 use Oro\Bundle\ProductBundle\Menu\Frontend\QuickAddMenuBuilder;
 
-class QuickAddMenuBuilderTest extends \PHPUnit_Framework_TestCase
+class QuickAddMenuBuilderTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var QuickAddMenuBuilder
@@ -13,7 +13,7 @@ class QuickAddMenuBuilderTest extends \PHPUnit_Framework_TestCase
     protected $builder;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ComponentProcessorRegistry
+     * @var \PHPUnit\Framework\MockObject\MockObject|ComponentProcessorRegistry
      */
     protected $componentRegistry;
 
@@ -40,7 +40,7 @@ class QuickAddMenuBuilderTest extends \PHPUnit_Framework_TestCase
         $this->componentRegistry->expects($this->once())
             ->method('hasAllowedProcessor')->willReturn($hasAllowedProcessor);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|\Knp\Menu\ItemInterface $menu */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|\Knp\Menu\ItemInterface $menu */
         $menu = $this->createMock('Knp\Menu\ItemInterface');
 
         if ($hasAllowedProcessor) {

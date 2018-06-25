@@ -7,7 +7,7 @@ use Oro\Bundle\PaymentBundle\Provider\AddressExtractor;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
-class AddressExtractorTest extends \PHPUnit_Framework_TestCase
+class AddressExtractorTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 

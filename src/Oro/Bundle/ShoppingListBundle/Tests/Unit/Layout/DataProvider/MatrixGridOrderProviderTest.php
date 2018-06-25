@@ -17,27 +17,27 @@ use Oro\Bundle\ShoppingListBundle\Model\MatrixCollectionColumn;
 use Oro\Bundle\ShoppingListBundle\Model\MatrixCollectionRow;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class MatrixGridOrderProviderTest extends \PHPUnit_Framework_TestCase
+class MatrixGridOrderProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var MatrixGridOrderManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var MatrixGridOrderManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $matrixGridManager;
 
     /**
-     * @var TotalProcessorProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var TotalProcessorProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     private $totalProvider;
 
     /**
-     * @var NumberFormatter|\PHPUnit_Framework_MockObject_MockObject
+     * @var NumberFormatter|\PHPUnit\Framework\MockObject\MockObject
      */
     private $numberFormatter;
 
     /**
-     * @var ShoppingListManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShoppingListManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $shoppingListManager;
 

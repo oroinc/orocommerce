@@ -9,18 +9,18 @@ use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatter;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Symfony\Component\Translation\TranslatorInterface;
 
-class UpcomingLabelCheckoutLineItemValidatorTest extends \PHPUnit_Framework_TestCase
+class UpcomingLabelCheckoutLineItemValidatorTest extends \PHPUnit\Framework\TestCase
 {
     /** @var  UpcomingLabelCheckoutLineItemValidator */
     protected $validator;
 
-    /** @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $translator;
 
-    /** @var ProductUpcomingProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ProductUpcomingProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $provider;
 
-    /** @var DateTimeFormatter|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var DateTimeFormatter|\PHPUnit\Framework\MockObject\MockObject */
     protected $dateFormatter;
 
     protected function setUp()

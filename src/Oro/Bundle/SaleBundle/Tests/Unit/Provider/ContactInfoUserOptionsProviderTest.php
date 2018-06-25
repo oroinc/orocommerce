@@ -7,15 +7,15 @@ use Oro\Bundle\SaleBundle\Provider\ContactInfoAvailableUserOptionsProvider;
 use Oro\Bundle\SaleBundle\Provider\ContactInfoSourceOptionsProvider;
 use Oro\Bundle\SaleBundle\Provider\ContactInfoUserOptionsProvider;
 
-class ContactInfoUserOptionsProviderTest extends \PHPUnit_Framework_TestCase
+class ContactInfoUserOptionsProviderTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ContactInfoSourceOptionsProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var ContactInfoSourceOptionsProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     private $customerOptionProvider;
 
     /**
-     * @var ContactInfoAvailableUserOptionsProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var ContactInfoAvailableUserOptionsProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     private $availableUserOptionsProvider;
 
@@ -25,7 +25,7 @@ class ContactInfoUserOptionsProviderTest extends \PHPUnit_Framework_TestCase
     private $provider;
 
     /**
-     * @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $configManager;
 

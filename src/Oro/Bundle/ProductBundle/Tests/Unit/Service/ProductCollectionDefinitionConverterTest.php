@@ -6,13 +6,13 @@ use Oro\Bundle\FilterBundle\Form\Type\Filter\NumberFilterType;
 use Oro\Bundle\ProductBundle\Service\ProductCollectionDefinitionConverter;
 use Oro\Bundle\QueryDesignerBundle\QueryDesigner\SegmentFiltersPurifier;
 
-class ProductCollectionDefinitionConverterTest extends \PHPUnit_Framework_TestCase
+class ProductCollectionDefinitionConverterTest extends \PHPUnit\Framework\TestCase
 {
     const EXCLUDED_IDS = '1,111';
     const INCLUDED_IDS = '2,7';
 
     /**
-     * @var SegmentFiltersPurifier|\PHPUnit_Framework_MockObject_MockObject
+     * @var SegmentFiltersPurifier|\PHPUnit\Framework\MockObject\MockObject
      */
     private $filtersPurifier;
 

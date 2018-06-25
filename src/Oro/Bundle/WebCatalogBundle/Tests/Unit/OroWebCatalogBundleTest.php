@@ -11,7 +11,7 @@ use Oro\Bundle\WebCatalogBundle\OroWebCatalogBundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\KernelInterface;
 
-class OroWebCatalogBundleTest extends \PHPUnit_Framework_TestCase
+class OroWebCatalogBundleTest extends \PHPUnit\Framework\TestCase
 {
     public function testBuild()
     {

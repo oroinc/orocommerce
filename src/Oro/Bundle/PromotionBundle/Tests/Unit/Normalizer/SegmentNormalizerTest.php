@@ -8,7 +8,7 @@ use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Bundle\SegmentBundle\Entity\SegmentType;
 use Symfony\Component\OptionsResolver\Exception\MissingOptionsException;
 
-class SegmentNormalizerTest extends \PHPUnit_Framework_TestCase
+class SegmentNormalizerTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var SegmentNormalizer

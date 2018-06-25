@@ -20,20 +20,20 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Symfony\Component\Translation\TranslatorInterface;
 
-class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
+class ProductPriceDatagridListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ShardManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShardManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $shardManager;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface
+     * @var \PHPUnit\Framework\MockObject\MockObject|TranslatorInterface
      */
     protected $translator;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|PriceListRequestHandler
+     * @var \PHPUnit\Framework\MockObject\MockObject|PriceListRequestHandler
      */
     protected $priceListRequestHandler;
     
@@ -43,7 +43,7 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
     protected $listener;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|DoctrineHelper
+     * @var \PHPUnit\Framework\MockObject\MockObject|DoctrineHelper
      */
     protected $doctrineHelper;
 
@@ -113,7 +113,7 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
         $this->setUpRepository();
         $this->setUpPriceListRequestHandler($priceListId, $priceCurrencies);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $datagrid */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|DatagridInterface $datagrid */
         $datagrid = $this->createMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
         $config = DatagridConfiguration::create([]);
 
@@ -302,7 +302,7 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
                 ->willReturn($prices);
         }
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $datagrid */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|DatagridInterface $datagrid */
         $datagrid = $this->createMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
         $event = new OrmResultAfter($datagrid, $sourceResultRecords);
         $this->listener->onResultAfter($event);
@@ -390,7 +390,7 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|ProductPriceRepository
+     * @return \PHPUnit\Framework\MockObject\MockObject|ProductPriceRepository
      */
     protected function setUpRepository()
     {

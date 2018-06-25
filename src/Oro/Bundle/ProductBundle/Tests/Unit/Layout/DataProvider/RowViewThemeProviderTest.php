@@ -5,10 +5,10 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Layout\DataProvider;
 use Oro\Bundle\ProductBundle\DataGrid\DataGridThemeHelper;
 use Oro\Bundle\ProductBundle\Layout\DataProvider\RowViewThemeProvider;
 
-class RowViewThemeProviderTest extends \PHPUnit_Framework_TestCase
+class RowViewThemeProviderTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var DataGridThemeHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var DataGridThemeHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $themeHelper;
 

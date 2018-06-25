@@ -14,17 +14,17 @@ use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
-class CombinedPriceListTriggerHandlerTest extends \PHPUnit_Framework_TestCase
+class CombinedPriceListTriggerHandlerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var Registry|\PHPUnit_Framework_MockObject_MockObject
+     * @var Registry|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $registry;
 
     /**
-     * @var EventDispatcher|\PHPUnit_Framework_MockObject_MockObject
+     * @var EventDispatcher|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $eventDispatcher;
 
@@ -34,7 +34,7 @@ class CombinedPriceListTriggerHandlerTest extends \PHPUnit_Framework_TestCase
     protected $triggerHandler;
 
     /**
-     * @var CombinedProductPriceRepository|\PHPUnit_Framework_MockObject_MockObject
+     * @var CombinedProductPriceRepository|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $repository;
 

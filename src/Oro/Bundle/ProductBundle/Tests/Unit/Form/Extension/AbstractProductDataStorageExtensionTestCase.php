@@ -19,17 +19,17 @@ use Symfony\Component\HttpFoundation\RequestStack;
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
-abstract class AbstractProductDataStorageExtensionTestCase extends \PHPUnit_Framework_TestCase
+abstract class AbstractProductDataStorageExtensionTestCase extends \PHPUnit\Framework\TestCase
 {
     use LoggerAwareTraitTestTrait;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|ProductDataStorage */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|ProductDataStorage */
     protected $storage;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|DoctrineHelper */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|DoctrineHelper */
     protected $doctrineHelper;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|Request */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|Request */
     protected $request;
 
     /** @var ProductDataStorageExtensionStub */
@@ -60,7 +60,7 @@ abstract class AbstractProductDataStorageExtensionTestCase extends \PHPUnit_Fram
             ->getMock();
 
         $this->request = $this->createMock('Symfony\Component\HttpFoundation\Request');
-        /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
+        /** @var RequestStack|\PHPUnit\Framework\MockObject\MockObject $requestStack */
         $requestStack = $this->createMock('Symfony\Component\HttpFoundation\RequestStack');
         $requestStack->expects($this->any())->method('getCurrentRequest')->willReturn($this->request);
 
@@ -202,7 +202,7 @@ abstract class AbstractProductDataStorageExtensionTestCase extends \PHPUnit_Fram
      */
     protected function assertMetadataCalled(array $mappings = [])
     {
-        /** @var ClassMetadata|\PHPUnit_Framework_MockObject_MockObject $metadata */
+        /** @var ClassMetadata|\PHPUnit\Framework\MockObject\MockObject $metadata */
         $metadata = $this->getMockBuilder('Doctrine\ORM\Mapping\ClassMetadata')
             ->disableOriginalConstructor()
             ->getMock();
@@ -310,7 +310,7 @@ abstract class AbstractProductDataStorageExtensionTestCase extends \PHPUnit_Fram
 
     /**
      * @param bool $expectsAddEventListener
-     * @return \PHPUnit_Framework_MockObject_MockObject|FormBuilderInterface
+     * @return \PHPUnit\Framework\MockObject\MockObject|FormBuilderInterface
      */
     protected function getBuilderMock($expectsAddEventListener = false)
     {

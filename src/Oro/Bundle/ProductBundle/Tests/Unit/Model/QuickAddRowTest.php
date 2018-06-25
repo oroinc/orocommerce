@@ -5,7 +5,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Model;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Model\QuickAddRow;
 
-class QuickAddRowTest extends \PHPUnit_Framework_TestCase
+class QuickAddRowTest extends \PHPUnit\Framework\TestCase
 {
     const INDEX = 1;
     const SKU = 'SKU1';

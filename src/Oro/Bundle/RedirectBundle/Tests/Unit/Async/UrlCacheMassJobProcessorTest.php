@@ -17,29 +17,29 @@ use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Psr\Log\LoggerInterface;
 
-class UrlCacheMassJobProcessorTest extends \PHPUnit_Framework_TestCase
+class UrlCacheMassJobProcessorTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     const MESSAGE_ID = 'some_message_id';
 
     /**
-     * @var TestJobRunner|\PHPUnit_Framework_MockObject_MockObject
+     * @var TestJobRunner|\PHPUnit\Framework\MockObject\MockObject
      */
     private $jobRunner;
 
     /**
-     * @var MessageProducerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $producer;
 
     /**
-     * @var SlugRepository|\PHPUnit_Framework_MockObject_MockObject
+     * @var SlugRepository|\PHPUnit\Framework\MockObject\MockObject
      */
     private $repository;
 
     /**
-     * @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $logger;
 
@@ -49,7 +49,7 @@ class UrlCacheMassJobProcessorTest extends \PHPUnit_Framework_TestCase
     private $processor;
 
     /**
-     * @var UrlCacheInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var UrlCacheInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $cache;
 
@@ -79,11 +79,11 @@ class UrlCacheMassJobProcessorTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param array $data
-     * @return MessageInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return MessageInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private function createMessage(array $data = [])
     {
-        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
+        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message **/
         $message = $this->createMock(MessageInterface::class);
         $message->expects($this->any())
             ->method('getMessageId')
@@ -98,7 +98,7 @@ class UrlCacheMassJobProcessorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return SessionInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return SessionInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private function createSession()
     {
@@ -159,7 +159,7 @@ class UrlCacheMassJobProcessorTest extends \PHPUnit_Framework_TestCase
                 ['route_name' => 'route1', 'entity_ids' => [1, 3], 'jobId' => null]
             );
 
-        /** @var UrlCacheAllCapabilities|\PHPUnit_Framework_MockObject_MockObject $cache */
+        /** @var UrlCacheAllCapabilities|\PHPUnit\Framework\MockObject\MockObject $cache */
         $cache = $this->createMock(UrlCacheAllCapabilities::class);
         $cache->expects($this->once())
             ->method('deleteAll');
@@ -258,7 +258,7 @@ class UrlCacheMassJobProcessorTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        /** @var JobRunner|\PHPUnit_Framework_MockObject_MockObject $jobRunner */
+        /** @var JobRunner|\PHPUnit\Framework\MockObject\MockObject $jobRunner */
         $jobRunner
             ->expects($this->once())
             ->method('runUnique')
@@ -308,7 +308,7 @@ class UrlCacheMassJobProcessorTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $exception = new \Exception();
-        /** @var JobRunner|\PHPUnit_Framework_MockObject_MockObject $jobRunner */
+        /** @var JobRunner|\PHPUnit\Framework\MockObject\MockObject $jobRunner */
         $jobRunner
             ->expects($this->once())
             ->method('runUnique')

@@ -18,12 +18,12 @@ class FrontendPriceFormExtensionTest extends FormIntegrationTestCase
     use EntityTrait;
 
     /**
-     * @var FrontendHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var FrontendHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     private $frontendHelper;
 
     /**
-     * @var UserCurrencyManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var UserCurrencyManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $userCurrencyManager;
 

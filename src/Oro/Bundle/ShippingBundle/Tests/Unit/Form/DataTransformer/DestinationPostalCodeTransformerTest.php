@@ -6,7 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestinationPostalCode;
 use Oro\Bundle\ShippingBundle\Form\DataTransformer\DestinationPostalCodeTransformer;
 
-class DestinationPostalCodeTransformerTest extends \PHPUnit_Framework_TestCase
+class DestinationPostalCodeTransformerTest extends \PHPUnit\Framework\TestCase
 {
     /** @var DestinationPostalCodeTransformer */
     private $transformer;

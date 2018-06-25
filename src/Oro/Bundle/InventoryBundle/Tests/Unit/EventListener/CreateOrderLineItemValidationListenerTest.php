@@ -20,30 +20,30 @@ use Oro\Bundle\WorkflowBundle\Entity\WorkflowStep;
 use Symfony\Component\Translation\Translator;
 use Symfony\Component\Translation\TranslatorInterface;
 
-class CreateOrderLineItemValidationListenerTest extends \PHPUnit_Framework_TestCase
+class CreateOrderLineItemValidationListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var InventoryQuantityManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var InventoryQuantityManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $inventoryQuantityManager;
 
     /**
-     * @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $translator;
 
     /**
-     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $doctrineHelper;
 
     /**
-     * @var CreateOrderLineItemValidationListener|\PHPUnit_Framework_MockObject_MockObject
+     * @var CreateOrderLineItemValidationListener|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $createOrderLineItemValidationListener;
 
     /**
-     * @var CheckoutLineItemsManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var CheckoutLineItemsManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $checkoutLineItemsManager;
 
@@ -120,7 +120,7 @@ class CreateOrderLineItemValidationListenerTest extends \PHPUnit_Framework_TestC
 
     public function testWrongContext()
     {
-        /** @var LineItemValidateEvent|\PHPUnit_Framework_MockObject_MockObject $event */
+        /** @var LineItemValidateEvent|\PHPUnit\Framework\MockObject\MockObject $event */
         $event = $this->getMockBuilder(LineItemValidateEvent::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -161,7 +161,7 @@ class CreateOrderLineItemValidationListenerTest extends \PHPUnit_Framework_TestC
 
     /**
      * @param string $stepName
-     * @return LineItemValidateEvent|\PHPUnit_Framework_MockObject_MockObject
+     * @return LineItemValidateEvent|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function prepareEvent($stepName = 'order_review')
     {

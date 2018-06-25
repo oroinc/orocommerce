@@ -4,7 +4,7 @@ namespace Oro\Bundle\PayPalBundle\Tests\Unit\PayPal\Payflow\Processor;
 
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Processor\FallbackProcessor;
 
-class FallbackProcessorTest extends \PHPUnit_Framework_TestCase
+class FallbackProcessorTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var FallbackProcessor

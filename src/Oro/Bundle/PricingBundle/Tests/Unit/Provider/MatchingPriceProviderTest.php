@@ -12,17 +12,17 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class MatchingPriceProviderTest extends \PHPUnit_Framework_TestCase
+class MatchingPriceProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     const PRODUCT_CLASS = 'ProductClass';
     const PRODUCT_UNIT_CLASS = 'ProductUnitClass';
 
-    /** @var ProductPriceProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ProductPriceProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $productPriceProvider;
 
-    /** @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
     protected $doctrineHelper;
 
     /** @var MatchingPriceProvider */

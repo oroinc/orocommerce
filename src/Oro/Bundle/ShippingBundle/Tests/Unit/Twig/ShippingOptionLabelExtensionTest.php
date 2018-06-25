@@ -6,17 +6,17 @@ use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
 use Oro\Bundle\ShippingBundle\Twig\ShippingOptionLabelExtension;
 use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
 
-class ShippingOptionLabelExtensionTest extends \PHPUnit_Framework_TestCase
+class ShippingOptionLabelExtensionTest extends \PHPUnit\Framework\TestCase
 {
     use TwigExtensionTestCaseTrait;
 
-    /** @var UnitLabelFormatter|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var UnitLabelFormatter|\PHPUnit\Framework\MockObject\MockObject */
     protected $lengthUnitLabelFormatter;
 
-    /** @var UnitLabelFormatter|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var UnitLabelFormatter|\PHPUnit\Framework\MockObject\MockObject */
     protected $weightUnitLabelFormatter;
 
-    /** @var UnitLabelFormatter|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var UnitLabelFormatter|\PHPUnit\Framework\MockObject\MockObject */
     protected $freightClassLabelFormatter;
 
     /** @var ShippingOptionLabelExtension */

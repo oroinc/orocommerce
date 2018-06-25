@@ -7,7 +7,7 @@ use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
 use Oro\Component\ConfigExpression\Condition\AbstractCondition;
 
-class PaymentMethodSupportsTest extends \PHPUnit_Framework_TestCase
+class PaymentMethodSupportsTest extends \PHPUnit\Framework\TestCase
 {
     const PAYMENT_METHOD_KEY = 'payment_method';
     const ACTION_NAME_KEY = 'action';
@@ -27,7 +27,7 @@ class PaymentMethodSupportsTest extends \PHPUnit_Framework_TestCase
     /** @var PaymentMethodSupports */
     protected $condition;
 
-    /** @var PaymentMethodProviderInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var PaymentMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $paymentMethodProvider;
 
     public function setUp()
@@ -68,7 +68,7 @@ class PaymentMethodSupportsTest extends \PHPUnit_Framework_TestCase
         $context = new \stdClass();
         $errors = $this->getMockForAbstractClass('Doctrine\Common\Collections\Collection');
 
-        /** @var PaymentMethodInterface | \PHPUnit_Framework_MockObject_MockObject $paymentMethod */
+        /** @var PaymentMethodInterface | \PHPUnit\Framework\MockObject\MockObject $paymentMethod */
         $paymentMethod = $this->createMock('Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface');
         $paymentMethod->expects($this->once())
             ->method('supports')

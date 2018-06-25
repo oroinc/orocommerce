@@ -6,7 +6,7 @@ use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\CommunicationErrorsStatusMap
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\Response;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\ResponseStatusMap;
 
-class ResponseTest extends \PHPUnit_Framework_TestCase
+class ResponseTest extends \PHPUnit\Framework\TestCase
 {
     public function testIsSuccessful()
     {

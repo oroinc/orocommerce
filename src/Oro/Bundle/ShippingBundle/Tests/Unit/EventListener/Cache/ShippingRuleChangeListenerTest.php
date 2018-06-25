@@ -12,27 +12,27 @@ use Oro\Bundle\ShippingBundle\EventListener\Cache\ShippingRuleChangeListener;
 use Oro\Bundle\ShippingBundle\Provider\Cache\ShippingPriceCache;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class ShippingRuleChangeListenerTest extends \PHPUnit_Framework_TestCase
+class ShippingRuleChangeListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ShippingPriceCache
+     * @var \PHPUnit\Framework\MockObject\MockObject|ShippingPriceCache
      */
     protected $priceCache;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|LifecycleEventArgs
+     * @var \PHPUnit\Framework\MockObject\MockObject|LifecycleEventArgs
      */
     protected $args;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|EntityRepository
+     * @var \PHPUnit\Framework\MockObject\MockObject|EntityRepository
      */
     protected $repository;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|EntityManager
+     * @var \PHPUnit\Framework\MockObject\MockObject|EntityManager
      */
     protected $em;
 

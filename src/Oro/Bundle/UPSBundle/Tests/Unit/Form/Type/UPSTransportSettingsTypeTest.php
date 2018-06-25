@@ -33,12 +33,12 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
     const DATA_CLASS = 'Oro\Bundle\UPSBundle\Entity\UPSTransport';
 
     /**
-     * @var TransportInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var TransportInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $transport;
 
     /**
-     * @var ShippingOriginProvider |\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingOriginProvider |\PHPUnit\Framework\MockObject\MockObject
      */
     protected $shippingOriginProvider;
 
@@ -48,13 +48,13 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
     protected $formType;
 
     /**
-     * @var SymmetricCrypterInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var SymmetricCrypterInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $crypter;
 
     protected function setUp()
     {
-        /** @var ShippingOriginProvider|\PHPUnit_Framework_MockObject_MockObject $shippingOriginProvider */
+        /** @var ShippingOriginProvider|\PHPUnit\Framework\MockObject\MockObject $shippingOriginProvider */
         $this->shippingOriginProvider = $this->getMockBuilder(ShippingOriginProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -106,7 +106,7 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
             'entity'
         );
 
-        /** @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject $registry */
+        /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject $registry */
         $registry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
         $localizedFallbackValue = new LocalizedFallbackValueCollectionType($registry);
 
@@ -233,7 +233,7 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
 
     public function testConfigureOptions()
     {
-        /** @var OptionsResolver|\PHPUnit_Framework_MockObject_MockObject $resolver */
+        /** @var OptionsResolver|\PHPUnit\Framework\MockObject\MockObject $resolver */
         $resolver = $this->createMock('Symfony\Component\OptionsResolver\OptionsResolver');
         $resolver->expects(static::once())
             ->method('setDefaults')

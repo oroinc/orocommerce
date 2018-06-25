@@ -6,7 +6,7 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderDiscount;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-class OrderDiscountTest extends \PHPUnit_Framework_TestCase
+class OrderDiscountTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 

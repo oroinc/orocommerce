@@ -5,10 +5,10 @@ use Oro\Bundle\WebsiteSearchBundle\DependencyInjection\Compiler\WebsiteSearchCom
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
-class WebsiteSearchCompilerPassTest extends \PHPUnit_Framework_TestCase
+class WebsiteSearchCompilerPassTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ContainerBuilder|\PHPUnit_Framework_MockObject_MockObject $containerBuilder
+     * @var ContainerBuilder|\PHPUnit\Framework\MockObject\MockObject $containerBuilder
      */
     private $containerBuilder;
 

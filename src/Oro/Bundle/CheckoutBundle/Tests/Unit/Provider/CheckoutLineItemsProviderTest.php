@@ -6,7 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CheckoutBundle\Provider\CheckoutLineItemsProvider;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 
-class CheckoutLineItemsProviderTest extends \PHPUnit_Framework_TestCase
+class CheckoutLineItemsProviderTest extends \PHPUnit\Framework\TestCase
 {
     /** @var CheckoutLineItemsProvider */
     protected $provider;
@@ -42,7 +42,7 @@ class CheckoutLineItemsProviderTest extends \PHPUnit_Framework_TestCase
      * @param string $productSku
      * @param string $productUnitCode
      * @param int $quantity
-     * @return ProductLineItemInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return ProductLineItemInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function getCheckoutLineItem($productSku, $productUnitCode, $quantity)
     {
@@ -53,7 +53,7 @@ class CheckoutLineItemsProviderTest extends \PHPUnit_Framework_TestCase
      * @param string $productSku
      * @param string $productUnitCode
      * @param int $quantity
-     * @return ProductLineItemInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return ProductLineItemInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function getProductLineItem($productSku, $productUnitCode, $quantity)
     {
@@ -65,7 +65,7 @@ class CheckoutLineItemsProviderTest extends \PHPUnit_Framework_TestCase
      * @param string $productSku
      * @param string $productUnitCode
      * @param int $quantity
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     protected function getLineItem($class, $productSku, $productUnitCode, $quantity)
     {

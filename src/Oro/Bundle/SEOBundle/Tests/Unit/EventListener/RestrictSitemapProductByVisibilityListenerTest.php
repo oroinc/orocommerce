@@ -8,13 +8,13 @@ use Oro\Bundle\SEOBundle\EventListener\RestrictSitemapProductByVisibilityListene
 use Oro\Bundle\VisibilityBundle\Model\ProductVisibilityQueryBuilderModifier;
 use Oro\Component\Website\WebsiteInterface;
 
-class RestrictSitemapProductByVisibilityListenerTest extends \PHPUnit_Framework_TestCase
+class RestrictSitemapProductByVisibilityListenerTest extends \PHPUnit\Framework\TestCase
 {
     public function testRestrictQueryBuilder()
     {
-        /** @var QueryBuilder|\PHPUnit_Framework_MockObject_MockObject $queryBuilder */
+        /** @var QueryBuilder|\PHPUnit\Framework\MockObject\MockObject $queryBuilder */
         $queryBuilder = $this->createMock(QueryBuilder::class);
-        /** @var ProductVisibilityQueryBuilderModifier|\PHPUnit_Framework_MockObject_MockObject $queryModifier */
+        /** @var ProductVisibilityQueryBuilderModifier|\PHPUnit\Framework\MockObject\MockObject $queryModifier */
         $queryModifier = $this->createMock(ProductVisibilityQueryBuilderModifier::class);
         $queryModifier->expects($this->once())
             ->method('restrictForAnonymous')

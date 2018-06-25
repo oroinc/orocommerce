@@ -7,7 +7,7 @@ use Oro\Bundle\TaxBundle\Entity\ProductTaxCode;
 use Oro\Bundle\TaxBundle\Model\TaxCodeInterface;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-class ProductTaxCodeTest extends \PHPUnit_Framework_TestCase
+class ProductTaxCodeTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 

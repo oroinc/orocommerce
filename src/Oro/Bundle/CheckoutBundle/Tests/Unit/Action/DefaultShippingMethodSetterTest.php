@@ -9,12 +9,12 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodViewCollection;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class DefaultShippingMethodSetterTest extends \PHPUnit_Framework_TestCase
+class DefaultShippingMethodSetterTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var CheckoutShippingMethodsProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var CheckoutShippingMethodsProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $checkoutShippingMethodsProviderMock;
 

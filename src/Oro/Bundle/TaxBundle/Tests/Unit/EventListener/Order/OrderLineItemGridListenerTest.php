@@ -8,12 +8,12 @@ use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\TaxBundle\EventListener\Order\OrderLineItemGridListener;
 use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 
-class OrderLineItemGridListenerTest extends \PHPUnit_Framework_TestCase
+class OrderLineItemGridListenerTest extends \PHPUnit\Framework\TestCase
 {
     /** @var OrderLineItemGridListener */
     protected $listener;
 
-    /** @var TaxationSettingsProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var TaxationSettingsProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $settingsProvider;
 
     protected function setUp()
@@ -31,7 +31,7 @@ class OrderLineItemGridListenerTest extends \PHPUnit_Framework_TestCase
     {
         $gridConfig = DatagridConfiguration::create(['name' => 'order-line-items-grid']);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $dataGrid */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|DatagridInterface $dataGrid */
         $dataGrid = $this->createMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
         $event = new BuildBefore($dataGrid, $gridConfig);
 
@@ -44,7 +44,7 @@ class OrderLineItemGridListenerTest extends \PHPUnit_Framework_TestCase
     {
         $gridConfig = DatagridConfiguration::create(['name' => 'order-line-items-grid']);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $dataGrid */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|DatagridInterface $dataGrid */
         $dataGrid = $this->createMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
         $event = new BuildBefore($dataGrid, $gridConfig);
 
@@ -61,7 +61,7 @@ class OrderLineItemGridListenerTest extends \PHPUnit_Framework_TestCase
         $from = ['alias' => 'orders', 'table' => 'Oro\Bundle\OrderBundle\Entity\OrderLineItem'];
         $gridConfig->offsetSetByPath('[source][query][from]', [$from]);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $dataGrid */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|DatagridInterface $dataGrid */
         $dataGrid = $this->createMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
         $event = new BuildBefore($dataGrid, $gridConfig);
 

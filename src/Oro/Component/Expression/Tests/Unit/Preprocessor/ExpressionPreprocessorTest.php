@@ -5,7 +5,7 @@ namespace Oro\Component\Expression\Tests\Unit\Preprocessor;
 use Oro\Component\Expression\Preprocessor\ExpressionPreprocessor;
 use Oro\Component\Expression\Preprocessor\ExpressionPreprocessorInterface;
 
-class ExpressionPreprocessorTest extends \PHPUnit_Framework_TestCase
+class ExpressionPreprocessorTest extends \PHPUnit\Framework\TestCase
 {
     public function testProcessMaxIterationsExceeded()
     {

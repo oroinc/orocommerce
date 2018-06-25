@@ -9,12 +9,12 @@ use Oro\Bundle\CheckoutBundle\Model\TransitionData;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\Transition;
 
-class SinglePageTransitionProviderTest extends \PHPUnit_Framework_TestCase
+class SinglePageTransitionProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var \PHPUnit_Framework_MockObject_MockObject|TransitionProviderInterface */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|TransitionProviderInterface */
     protected $baseProvider;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|SinglePageTransitionProvider */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|SinglePageTransitionProvider */
     protected $provider;
 
     protected function setUp()

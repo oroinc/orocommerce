@@ -13,20 +13,20 @@ use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class TaxationSettingsProviderTest extends \PHPUnit_Framework_TestCase
+class TaxationSettingsProviderTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $configManager;
 
     /**
-     * @var TaxBaseExclusionFactory|\PHPUnit_Framework_MockObject_MockObject
+     * @var TaxBaseExclusionFactory|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $taxBaseExclusionFactory;
 
     /**
-     * @var AddressModelFactory|\PHPUnit_Framework_MockObject_MockObject
+     * @var AddressModelFactory|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $addressModelFactory;
 

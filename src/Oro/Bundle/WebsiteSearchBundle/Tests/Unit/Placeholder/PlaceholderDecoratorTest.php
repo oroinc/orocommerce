@@ -6,12 +6,12 @@ use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderDecorator;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderInterface;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderRegistry;
 
-class PlaceholderDecoratorTest extends \PHPUnit_Framework_TestCase
+class PlaceholderDecoratorTest extends \PHPUnit\Framework\TestCase
 {
     /** @var PlaceholderDecorator */
     protected $placeholder;
 
-    /** @var PlaceholderRegistry|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var PlaceholderRegistry|\PHPUnit\Framework\MockObject\MockObject */
     protected $registry;
 
     /**

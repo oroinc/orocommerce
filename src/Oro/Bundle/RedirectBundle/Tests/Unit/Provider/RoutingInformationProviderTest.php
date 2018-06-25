@@ -7,11 +7,11 @@ use Oro\Bundle\RedirectBundle\Provider\RoutingInformationProvider;
 use Oro\Bundle\RedirectBundle\Provider\RoutingInformationProviderInterface;
 use Oro\Component\Routing\RouteData;
 
-class RoutingInformationProviderTest extends \PHPUnit_Framework_TestCase
+class RoutingInformationProviderTest extends \PHPUnit\Framework\TestCase
 {
     public function testIsSupported()
     {
-        /** @var RoutingInformationProviderInterface|\PHPUnit_Framework_MockObject_MockObject $provider */
+        /** @var RoutingInformationProviderInterface|\PHPUnit\Framework\MockObject\MockObject $provider */
         $provider = $this->createMock(RoutingInformationProviderInterface::class);
         $provider->expects($this->once())
             ->method('isSupported')
@@ -25,7 +25,7 @@ class RoutingInformationProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testIsNotSupported()
     {
-        /** @var RoutingInformationProviderInterface|\PHPUnit_Framework_MockObject_MockObject $provider */
+        /** @var RoutingInformationProviderInterface|\PHPUnit\Framework\MockObject\MockObject $provider */
         $provider = $this->createMock(RoutingInformationProviderInterface::class);
         $provider->expects($this->once())
             ->method('isSupported')
@@ -46,13 +46,13 @@ class RoutingInformationProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetRouteData()
     {
-        /** @var RoutingInformationProviderInterface|\PHPUnit_Framework_MockObject_MockObject $provider */
+        /** @var RoutingInformationProviderInterface|\PHPUnit\Framework\MockObject\MockObject $provider */
         $provider = $this->createMock(RoutingInformationProviderInterface::class);
         $provider->expects($this->once())
             ->method('isSupported')
             ->willReturn(true);
 
-        /** @var RouteData|\PHPUnit_Framework_MockObject_MockObject $routeData */
+        /** @var RouteData|\PHPUnit\Framework\MockObject\MockObject $routeData */
         $routeData = $this->getMockBuilder(RouteData::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -68,7 +68,7 @@ class RoutingInformationProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetUrlPrefix()
     {
-        /** @var RoutingInformationProviderInterface|\PHPUnit_Framework_MockObject_MockObject $provider */
+        /** @var RoutingInformationProviderInterface|\PHPUnit\Framework\MockObject\MockObject $provider */
         $provider = $this->createMock(RoutingInformationProviderInterface::class);
         $provider->expects($this->once())
             ->method('isSupported')
@@ -87,7 +87,7 @@ class RoutingInformationProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetEntityClasses()
     {
-        /** @var RoutingInformationProviderInterface|\PHPUnit_Framework_MockObject_MockObject $provider */
+        /** @var RoutingInformationProviderInterface|\PHPUnit\Framework\MockObject\MockObject $provider */
         $provider = $this->createMock(RoutingInformationProviderInterface::class);
         $registry = new RoutingInformationProvider();
         $registry->registerProvider($provider, 'stdClass');
@@ -96,7 +96,7 @@ class RoutingInformationProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testUnsupportedEntityException()
     {
-        /** @var RoutingInformationProviderInterface|\PHPUnit_Framework_MockObject_MockObject $provider */
+        /** @var RoutingInformationProviderInterface|\PHPUnit\Framework\MockObject\MockObject $provider */
         $provider = $this->createMock(RoutingInformationProviderInterface::class);
         $provider->expects($this->once())
             ->method('isSupported')

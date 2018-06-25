@@ -7,7 +7,7 @@ use Oro\Component\Expression\Node\NameNode;
 use Oro\Component\Expression\Node\NodeInterface;
 use Oro\Component\Expression\QueryExpressionConverter\NameNodeConverter;
 
-class NameNodeConverterTest extends \PHPUnit_Framework_TestCase
+class NameNodeConverterTest extends \PHPUnit\Framework\TestCase
 {
     public function testConvertUnsupported()
     {

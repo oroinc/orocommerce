@@ -20,32 +20,32 @@ use Symfony\Component\Translation\TranslatorInterface;
 class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
 {
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ShoppingListManager
+     * @var \PHPUnit\Framework\MockObject\MockObject|ShoppingListManager
      */
     protected $shoppingListManager;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ShoppingListLimitManager
+     * @var \PHPUnit\Framework\MockObject\MockObject|ShoppingListLimitManager
      */
     protected $shoppingListLimitManager;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ActionGroupRegistry
+     * @var \PHPUnit\Framework\MockObject\MockObject|ActionGroupRegistry
      */
     protected $actionGroupRegistry;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ActionGroup
+     * @var \PHPUnit\Framework\MockObject\MockObject|ActionGroup
      */
     protected $actionGroup;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface
+     * @var \PHPUnit\Framework\MockObject\MockObject|TranslatorInterface
      */
     protected $translator;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|DateTimeFormatter
+     * @var \PHPUnit\Framework\MockObject\MockObject|DateTimeFormatter
      */
     protected $dateFormatter;
 
@@ -448,7 +448,7 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
             ->with('error')
             ->willReturn($flashBag);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|Session $session */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|Session $session */
         $session = $this->getMockBuilder('Symfony\Component\HttpFoundation\Session\Session')
             ->disableOriginalConstructor()
             ->getMock();

@@ -27,7 +27,7 @@ class SearchMultiEnumFilterTest extends AbstractSearchEnumFilterTest
             'value2'
         ];
 
-        /** @var SearchFilterDatasourceAdapter|\PHPUnit_Framework_MockObject_MockObject $ds */
+        /** @var SearchFilterDatasourceAdapter|\PHPUnit\Framework\MockObject\MockObject $ds */
         $ds = $this->createMock(SearchFilterDatasourceAdapter::class);
         $ds->expects($this->once())
             ->method('addRestriction')

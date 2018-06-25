@@ -8,10 +8,10 @@ use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface;
 
-class BasicMethodTypeLabelsProviderTest extends \PHPUnit_Framework_TestCase
+class BasicMethodTypeLabelsProviderTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ShippingMethodProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $methodProvider;
 

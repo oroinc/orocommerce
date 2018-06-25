@@ -13,7 +13,7 @@ use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormConfigBuilder;
 use Symfony\Component\Form\Test\FormInterface;
 
-class DiscountConfigurationDataMapperTest extends \PHPUnit_Framework_TestCase
+class DiscountConfigurationDataMapperTest extends \PHPUnit\Framework\TestCase
 {
     const ANY_FIELD = 'anyField';
 
@@ -23,7 +23,7 @@ class DiscountConfigurationDataMapperTest extends \PHPUnit_Framework_TestCase
     private $dataMapper;
 
     /**
-     * @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $dispatcher;
 
@@ -41,7 +41,7 @@ class DiscountConfigurationDataMapperTest extends \PHPUnit_Framework_TestCase
         $amountDiscountValueForm = $this->createMock(FormInterface::class);
         $amountDiscountValueForm->expects($this->never())
             ->method('getConfig');
-        /** @var FormInterface[]|\PHPUnit_Framework_MockObject_MockObject[] $forms */
+        /** @var FormInterface[]|\PHPUnit\Framework\MockObject\MockObject[] $forms */
         $forms = new \ArrayIterator([$amountDiscountValueForm]);
 
         $this->dataMapper->mapDataToForms(null, $forms);
@@ -50,9 +50,9 @@ class DiscountConfigurationDataMapperTest extends \PHPUnit_Framework_TestCase
     public function testMapDataToFormsWithInvalidData()
     {
         $data = 'any not acceptable';
-        /** @var DiscountConfigurationDataMapper|\PHPUnit_Framework_MockObject_MockObject $dataMapper */
+        /** @var DiscountConfigurationDataMapper|\PHPUnit\Framework\MockObject\MockObject $dataMapper */
         $amountDiscountValueForm = $this->createMock(FormInterface::class);
-        /** @var FormInterface[]|\PHPUnit_Framework_MockObject_MockObject[] $forms */
+        /** @var FormInterface[]|\PHPUnit\Framework\MockObject\MockObject[] $forms */
         $forms = new \ArrayIterator([$amountDiscountValueForm]);
 
         $this->expectException(UnexpectedTypeException::class);
@@ -64,7 +64,7 @@ class DiscountConfigurationDataMapperTest extends \PHPUnit_Framework_TestCase
         $amountDiscountValueForm = $this->createMock(FormInterface::class);
         $amountDiscountValueForm->expects($this->never())
             ->method('getConfig');
-        /** @var FormInterface[]|\PHPUnit_Framework_MockObject_MockObject[] $forms */
+        /** @var FormInterface[]|\PHPUnit\Framework\MockObject\MockObject[] $forms */
         $forms = new \ArrayIterator([$amountDiscountValueForm]);
 
         $data = null;
@@ -75,7 +75,7 @@ class DiscountConfigurationDataMapperTest extends \PHPUnit_Framework_TestCase
     {
         $data = 'any not acceptable';
         $amountDiscountValueForm = $this->createMock(FormInterface::class);
-        /** @var FormInterface[]|\PHPUnit_Framework_MockObject_MockObject[] $forms */
+        /** @var FormInterface[]|\PHPUnit\Framework\MockObject\MockObject[] $forms */
         $forms = new \ArrayIterator([$amountDiscountValueForm]);
 
         $this->expectException(UnexpectedTypeException::class);
@@ -199,7 +199,7 @@ class DiscountConfigurationDataMapperTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return FormInterface[]|\PHPUnit_Framework_MockObject_MockObject[]
+     * @return FormInterface[]|\PHPUnit\Framework\MockObject\MockObject[]
      */
     private function getForms()
     {
@@ -229,7 +229,7 @@ class DiscountConfigurationDataMapperTest extends \PHPUnit_Framework_TestCase
             ->setMethods(['setData', 'getData'])
             ->getMock();
 
-        /** @var FormInterface[]|\PHPUnit_Framework_MockObject_MockObject[] $forms */
+        /** @var FormInterface[]|\PHPUnit\Framework\MockObject\MockObject[] $forms */
         $forms = new \ArrayIterator([
             DiscountOptionsType::AMOUNT_DISCOUNT_VALUE_FIELD => $amountDiscountValueForm,
             DiscountOptionsType::PERCENT_DISCOUNT_VALUE_FIELD => $percentDiscountValueForm,
@@ -240,7 +240,7 @@ class DiscountConfigurationDataMapperTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param \PHPUnit_Framework_MockObject_MockObject[]|FormInterface[] $forms
+     * @param \PHPUnit\Framework\MockObject\MockObject[]|FormInterface[] $forms
      */
     private function addTypeForm(&$forms)
     {

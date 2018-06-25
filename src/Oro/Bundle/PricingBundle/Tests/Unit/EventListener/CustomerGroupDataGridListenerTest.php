@@ -30,11 +30,11 @@ class CustomerGroupDataGridListenerTest extends AbstractPriceListRelationDataGri
     protected function createRelation()
     {
         $relation = new PriceListToCustomerGroup();
-        /** @var CustomerGroup|\PHPUnit_Framework_MockObject_MockObject $customerGroup */
+        /** @var CustomerGroup|\PHPUnit\Framework\MockObject\MockObject $customerGroup */
         $customerGroup = $this->createMock('Oro\Bundle\CustomerBundle\Entity\CustomerGroup');
-        /** @var PriceList|\PHPUnit_Framework_MockObject_MockObject $priceList */
+        /** @var PriceList|\PHPUnit\Framework\MockObject\MockObject $priceList */
         $priceList = $this->createMock('Oro\Bundle\PricingBundle\Entity\PriceList');
-        /** @var Website|\PHPUnit_Framework_MockObject_MockObject $website */
+        /** @var Website|\PHPUnit\Framework\MockObject\MockObject $website */
         $website = $this->createMock('Oro\Bundle\WebsiteBundle\Entity\Website');
         $website->method('getId')->willReturn(1);
         $relation->setCustomerGroup($customerGroup);

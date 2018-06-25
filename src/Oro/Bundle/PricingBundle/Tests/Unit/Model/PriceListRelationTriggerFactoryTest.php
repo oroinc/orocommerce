@@ -11,7 +11,7 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
-class PriceListRelationTriggerFactoryTest extends \PHPUnit_Framework_TestCase
+class PriceListRelationTriggerFactoryTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var PriceListRelationTriggerFactory
@@ -19,7 +19,7 @@ class PriceListRelationTriggerFactoryTest extends \PHPUnit_Framework_TestCase
     private $factory;
 
     /**
-     * @var RegistryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var RegistryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $registry;
 
@@ -78,7 +78,7 @@ class PriceListRelationTriggerFactoryTest extends \PHPUnit_Framework_TestCase
     {
         $body = json_encode([]);
 
-        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message */
+        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message */
         $message = $this->createMock(MessageInterface::class);
         $message->method('getBody')->willReturn($body);
 

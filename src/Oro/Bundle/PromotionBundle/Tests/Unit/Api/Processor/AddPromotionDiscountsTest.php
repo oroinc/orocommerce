@@ -16,17 +16,17 @@ use PHPUnit\Framework\TestCase;
 class AddPromotionDiscountsTest extends TestCase
 {
     /**
-     * @var AppliedDiscountsProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var AppliedDiscountsProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     private $appliedDiscountsProvider;
 
     /**
-     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     private $doctrineHelper;
 
     /**
-     * @var CustomizeLoadedDataContext|\PHPUnit_Framework_MockObject_MockObject
+     * @var CustomizeLoadedDataContext|\PHPUnit\Framework\MockObject\MockObject
      */
     private $context;
 

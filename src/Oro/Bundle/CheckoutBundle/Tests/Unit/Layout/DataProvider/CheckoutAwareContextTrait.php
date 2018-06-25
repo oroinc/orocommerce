@@ -11,7 +11,7 @@ trait CheckoutAwareContextTrait
     /**
      * @param Checkout $checkout
      * @param WorkflowItem $workflowItem
-     * @return ContextInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return ContextInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function prepareContext(Checkout $checkout, WorkflowItem $workflowItem)
     {

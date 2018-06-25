@@ -5,7 +5,7 @@ namespace Oro\Bundle\SEOBundle\Tests\Unit\Entity;
 use Oro\Bundle\SEOBundle\Entity\WebCatalogProductLimitation;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-class WebCatalogProductLimitationTest extends \PHPUnit_Framework_TestCase
+class WebCatalogProductLimitationTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 

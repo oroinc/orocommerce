@@ -5,7 +5,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Model;
 use Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorInterface;
 use Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry;
 
-class ComponentProcessorRegistryTest extends \PHPUnit_Framework_TestCase
+class ComponentProcessorRegistryTest extends \PHPUnit\Framework\TestCase
 {
     public function testRegistry()
     {
@@ -26,7 +26,7 @@ class ComponentProcessorRegistryTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param string $name
-     * @return \PHPUnit_Framework_MockObject_MockObject|ComponentProcessorInterface
+     * @return \PHPUnit\Framework\MockObject\MockObject|ComponentProcessorInterface
      */
     protected function getProcessorMock($name)
     {

@@ -4,7 +4,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Helper\ProductGrouper;
 
 use Oro\Bundle\ProductBundle\Helper\ProductGrouper\ArrayProductsGrouper;
 
-class ArrayProductsGrouperTest extends \PHPUnit_Framework_TestCase
+class ArrayProductsGrouperTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var ArrayProductsGrouper

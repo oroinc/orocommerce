@@ -4,7 +4,7 @@ namespace Oro\Bundle\UPSBundle\Tests\Unit\TimeInTransit\Result;
 
 use Oro\Bundle\UPSBundle\TimeInTransit\Result\EstimatedArrival;
 
-class EstimatedArrivalTest extends \PHPUnit_Framework_TestCase
+class EstimatedArrivalTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @internal

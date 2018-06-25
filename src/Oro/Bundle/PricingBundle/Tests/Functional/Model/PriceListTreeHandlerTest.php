@@ -23,7 +23,7 @@ class PriceListTreeHandlerTest extends WebTestCase
     protected $handler;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|WebsiteManager
+     * @var \PHPUnit\Framework\MockObject\MockObject|WebsiteManager
      */
     protected $websiteManager;
 

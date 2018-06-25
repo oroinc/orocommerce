@@ -6,13 +6,13 @@ use Oro\Bundle\CMSBundle\Widget\WidgetInterface;
 use Oro\Bundle\CMSBundle\Widget\WidgetRegistry;
 use Psr\Log\LoggerInterface;
 
-class WidgetRegistryTest extends \PHPUnit_Framework_TestCase
+class WidgetRegistryTest extends \PHPUnit\Framework\TestCase
 {
     const WIDGET_ALIAS = 'widget_alias';
     /** @var WidgetRegistry */
     private $registry;
 
-    /** @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $logger;
 
     protected function setUp()
@@ -24,7 +24,7 @@ class WidgetRegistryTest extends \PHPUnit_Framework_TestCase
     public function testGetWidget()
     {
         $renderedContent = '<div>rendered content</div>';
-        /** @var WidgetInterface|\PHPUnit_Framework_MockObject_MockObject $widget */
+        /** @var WidgetInterface|\PHPUnit\Framework\MockObject\MockObject $widget */
         $widget = $this->createMock(WidgetInterface::class);
         $widget->expects($this->once())
             ->method('render')

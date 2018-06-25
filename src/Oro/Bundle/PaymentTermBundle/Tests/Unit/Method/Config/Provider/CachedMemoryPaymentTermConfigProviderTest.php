@@ -6,7 +6,7 @@ use Oro\Bundle\PaymentTermBundle\Method\Config\PaymentTermConfigInterface;
 use Oro\Bundle\PaymentTermBundle\Method\Config\Provider\Cached\Memory\CachedMemoryPaymentTermConfigProvider;
 use Oro\Bundle\PaymentTermBundle\Method\Config\Provider\PaymentTermConfigProviderInterface;
 
-class CachedMemoryPaymentTermConfigProviderTest extends \PHPUnit_Framework_TestCase
+class CachedMemoryPaymentTermConfigProviderTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var CachedMemoryPaymentTermConfigProvider
@@ -14,7 +14,7 @@ class CachedMemoryPaymentTermConfigProviderTest extends \PHPUnit_Framework_TestC
     private $testedProvider;
 
     /**
-     * @var PaymentTermConfigProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var PaymentTermConfigProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $paymentTermConfigProviderMock;
 
@@ -25,7 +25,7 @@ class CachedMemoryPaymentTermConfigProviderTest extends \PHPUnit_Framework_TestC
     }
 
     /**
-     * @return PaymentTermConfigInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return PaymentTermConfigInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private function createConfigMock()
     {

@@ -15,7 +15,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
 
-class LoginOnCheckoutListenerTest extends \PHPUnit_Framework_TestCase
+class LoginOnCheckoutListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var LoginOnCheckoutListener
@@ -23,22 +23,22 @@ class LoginOnCheckoutListenerTest extends \PHPUnit_Framework_TestCase
     private $listener;
 
     /**
-     * @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $logger;
 
     /**
-     * @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $configManager;
 
     /**
-     * @var CheckoutManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var CheckoutManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $checkoutManager;
 
     /**
-     * @var InteractiveLoginEvent|\PHPUnit_Framework_MockObject_MockObject
+     * @var InteractiveLoginEvent|\PHPUnit\Framework\MockObject\MockObject
      */
     private $event;
 
@@ -48,7 +48,7 @@ class LoginOnCheckoutListenerTest extends \PHPUnit_Framework_TestCase
     private $request;
 
     /**
-     * @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $eventDispatcher;
 

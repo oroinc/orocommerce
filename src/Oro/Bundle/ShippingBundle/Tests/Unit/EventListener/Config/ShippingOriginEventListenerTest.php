@@ -10,15 +10,15 @@ use Oro\Bundle\ShippingBundle\EventListener\Config\ShippingOriginEventListener;
 use Oro\Bundle\ShippingBundle\Factory\ShippingOriginModelFactory;
 use Oro\Bundle\ShippingBundle\Model\ShippingOrigin;
 
-class ShippingOriginEventListenerTest extends \PHPUnit_Framework_TestCase
+class ShippingOriginEventListenerTest extends \PHPUnit\Framework\TestCase
 {
     /** @var ShippingOriginEventListener */
     protected $listener;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|ShippingOriginModelFactory */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|ShippingOriginModelFactory */
     protected $shippingOriginModelFactory;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|ConfigManager */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|ConfigManager */
     protected $configManager;
 
     /** @var array */

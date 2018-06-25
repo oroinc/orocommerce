@@ -14,18 +14,18 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-class QuoteUpdateHandlerEventListenerTest extends \PHPUnit_Framework_TestCase
+class QuoteUpdateHandlerEventListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var WebsiteManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var WebsiteManager|\PHPUnit\Framework\MockObject\MockObject */
     private $websiteManager;
 
-    /** @var QuoteRequestHandler|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var QuoteRequestHandler|\PHPUnit\Framework\MockObject\MockObject */
     private $quoteRequestHandler;
 
     /** @var QuoteUpdateHandlerEventListener */
     private $listener;
 
-    /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var RequestStack|\PHPUnit\Framework\MockObject\MockObject */
     private $requestStack;
 
     /** @var FormProcessEvent */
@@ -46,7 +46,7 @@ class QuoteUpdateHandlerEventListenerTest extends \PHPUnit_Framework_TestCase
             $this->requestStack
         );
 
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock(FormInterface::class);
 
         $this->quote = new Quote();

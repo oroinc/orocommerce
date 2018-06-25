@@ -13,12 +13,12 @@ use Oro\Bundle\PromotionBundle\Entity\Repository\PromotionRepository;
 use Oro\Bundle\PromotionBundle\Layout\DataProvider\AppliedCouponsDataProvider;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class AppliedCouponsDataProviderTest extends \PHPUnit_Framework_TestCase
+class AppliedCouponsDataProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var ManagerRegistry|\ PHPUnit_Framework_MockObject_MockObject
+     * @var ManagerRegistry|\ \PHPUnit\Framework\MockObject\MockObject
      */
     private $registry;
 
@@ -36,7 +36,7 @@ class AppliedCouponsDataProviderTest extends \PHPUnit_Framework_TestCase
     public function testGetAppliedCoupons()
     {
         $coupons = $this->createMock(Collection::class);
-        /** @var AppliedCouponsAwareInterface|\PHPUnit_Framework_MockObject_MockObject $entity */
+        /** @var AppliedCouponsAwareInterface|\PHPUnit\Framework\MockObject\MockObject $entity */
         $entity = $this->createMock(AppliedCouponsAwareInterface::class);
         $entity->expects($this->once())
             ->method('getAppliedCoupons')
@@ -54,7 +54,7 @@ class AppliedCouponsDataProviderTest extends \PHPUnit_Framework_TestCase
         $coupons->expects($this->once())
             ->method('isEmpty')
             ->willReturn($isEmpty);
-        /** @var AppliedCouponsAwareInterface|\PHPUnit_Framework_MockObject_MockObject $entity */
+        /** @var AppliedCouponsAwareInterface|\PHPUnit\Framework\MockObject\MockObject $entity */
         $entity = $this->createMock(AppliedCouponsAwareInterface::class);
         $entity->expects($this->once())
             ->method('getAppliedCoupons')
@@ -82,7 +82,7 @@ class AppliedCouponsDataProviderTest extends \PHPUnit_Framework_TestCase
                 $this->getEntity(AppliedCoupon::class, ['sourcePromotionId' => 5])
             ]
         );
-        /** @var AppliedCouponsAwareInterface|\PHPUnit_Framework_MockObject_MockObject $entity */
+        /** @var AppliedCouponsAwareInterface|\PHPUnit\Framework\MockObject\MockObject $entity */
         $entity = $this->createMock(AppliedCouponsAwareInterface::class);
         $entity->expects($this->once())
             ->method('getAppliedCoupons')

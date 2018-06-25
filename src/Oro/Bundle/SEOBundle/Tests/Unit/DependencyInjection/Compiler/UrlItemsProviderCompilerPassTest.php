@@ -8,7 +8,7 @@ use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Exception\LogicException;
 use Symfony\Component\DependencyInjection\Reference;
 
-class UrlItemsProviderCompilerPassTest extends \PHPUnit_Framework_TestCase
+class UrlItemsProviderCompilerPassTest extends \PHPUnit\Framework\TestCase
 {
     const PROVIDER_REGISTRY = 'test_service_registry';
     const TAG = 'test_tag';
@@ -19,7 +19,7 @@ class UrlItemsProviderCompilerPassTest extends \PHPUnit_Framework_TestCase
     private $compilerPass;
 
     /**
-     * @var ContainerBuilder|\PHPUnit_Framework_MockObject_MockObject
+     * @var ContainerBuilder|\PHPUnit\Framework\MockObject\MockObject
      */
     private $containerBuilder;
 

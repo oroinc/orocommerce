@@ -10,7 +10,7 @@ use Oro\Bundle\LayoutBundle\Model\ThemeImageTypeDimension;
 use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\Provider\WatermarkImageFilterProvider;
 
-class WatermarkImageFilterProviderTest extends \PHPUnit_Framework_TestCase
+class WatermarkImageFilterProviderTest extends \PHPUnit\Framework\TestCase
 {
     const IMAGE_ID = 1;
     const SIZE = 50;

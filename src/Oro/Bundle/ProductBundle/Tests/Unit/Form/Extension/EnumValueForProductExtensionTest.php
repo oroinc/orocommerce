@@ -16,28 +16,28 @@ use Symfony\Component\Form\FormConfigInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 
-class EnumValueForProductExtensionTest extends \PHPUnit_Framework_TestCase
+class EnumValueForProductExtensionTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     const ENUM_FIELD_NAME = 'enumField';
 
-    /** @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $doctrineHelper;
 
     /** @var EnumValueForProductExtension */
     private $extension;
 
-    /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+    /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
     private $form;
 
-    /** @var FormConfigInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var FormConfigInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $configInterface;
 
-    /** @var ProductRepository|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ProductRepository|\PHPUnit\Framework\MockObject\MockObject */
     private $productRepository;
 
-    /** @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
     private $configManager;
 
     /**
@@ -302,7 +302,7 @@ class EnumValueForProductExtensionTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|ConfigProvider
+     * @return \PHPUnit\Framework\MockObject\MockObject|ConfigProvider
      */
     private function getAttributeProvider()
     {

@@ -5,7 +5,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Provider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Provider\BrandStatusProvider;
 
-class BrandStatusProviderTest extends \PHPUnit_Framework_TestCase
+class BrandStatusProviderTest extends \PHPUnit\Framework\TestCase
 {
     /** @var BrandStatusProvider $brandStatusProvider */
     protected $brandStatusProvider;

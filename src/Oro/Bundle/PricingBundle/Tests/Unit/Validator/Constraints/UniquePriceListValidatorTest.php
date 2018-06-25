@@ -8,7 +8,7 @@ use Oro\Bundle\PricingBundle\Validator\Constraints\UniquePriceList;
 use Oro\Bundle\PricingBundle\Validator\Constraints\UniquePriceListValidator;
 use Symfony\Component\Validator\Context\ExecutionContext;
 
-class UniquePriceListValidatorTest extends \PHPUnit_Framework_TestCase
+class UniquePriceListValidatorTest extends \PHPUnit\Framework\TestCase
 {
     use ConfigsGeneratorTrait;
 
@@ -81,7 +81,7 @@ class UniquePriceListValidatorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|ExecutionContext $context
+     * @return \PHPUnit\Framework\MockObject\MockObject|ExecutionContext $context
      */
     protected function getContextMock()
     {
@@ -92,7 +92,7 @@ class UniquePriceListValidatorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     protected function getBuilderMock()
     {

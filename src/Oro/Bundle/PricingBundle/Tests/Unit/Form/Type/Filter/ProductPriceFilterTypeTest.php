@@ -17,7 +17,7 @@ use Symfony\Component\Form\Forms;
 class ProductPriceFilterTypeTest extends NumberRangeFilterTypeTest
 {
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry
+     * @var \PHPUnit\Framework\MockObject\MockObject|ManagerRegistry
      */
     protected $registry;
 
@@ -29,7 +29,7 @@ class ProductPriceFilterTypeTest extends NumberRangeFilterTypeTest
         $translator = $this->createMockTranslator();
         $this->formExtensions[] = new CustomFormExtension([new NumberRangeFilterType($translator)]);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|ProductUnitLabelFormatter $formatter */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|ProductUnitLabelFormatter $formatter */
         $formatter = $this->getMockBuilder('Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter')
             ->disableOriginalConstructor()
             ->getMock();
@@ -57,17 +57,17 @@ class ProductPriceFilterTypeTest extends NumberRangeFilterTypeTest
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry
+     * @return \PHPUnit\Framework\MockObject\MockObject|ManagerRegistry
      */
     public function getRegistry()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|ProductUnit $productUnitMock */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|ProductUnit $productUnitMock */
         $productUnitMock = $this->createMock('Oro\Bundle\ProductBundle\Entity\ProductUnit');
         $productUnitMock->expects($this->any())
             ->method('getCode')
             ->will($this->returnValue('item'));
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|ObjectRepository $productUnitRepository */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|ObjectRepository $productUnitRepository */
         $productUnitRepository = $this
             ->getMockBuilder(
                 'Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository'
@@ -79,7 +79,7 @@ class ProductPriceFilterTypeTest extends NumberRangeFilterTypeTest
             ->method('getAllUnitCodes')
             ->willReturn(['item']);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|EntityManager $entityManager */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|EntityManager $entityManager */
         $entityManager = $this->getMockBuilder('Doctrine\ORM\EntityManager')
             ->disableOriginalConstructor()
             ->getMock();

@@ -16,25 +16,25 @@ use Oro\Bundle\UPSBundle\TimeInTransit\Result\TimeInTransitResultInterface;
 use Oro\Bundle\UPSBundle\TimeInTransit\TimeInTransitProvider;
 use Psr\Log\LoggerInterface;
 
-class TimeInTransitProviderTest extends \PHPUnit_Framework_TestCase
+class TimeInTransitProviderTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var TimeInTransitRequestFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var TimeInTransitRequestFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $requestFactory;
 
     /**
-     * @var UpsClientFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var UpsClientFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $clientFactory;
 
     /**
-     * @var TimeInTransitResultFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var TimeInTransitResultFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $resultFactory;
 
     /**
-     * @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $logger;
 

@@ -23,7 +23,7 @@ use Symfony\Component\PropertyAccess\PropertyPathInterface;
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class ProductVariantCustomFieldsDatagridListenerTest extends \PHPUnit_Framework_TestCase
+class ProductVariantCustomFieldsDatagridListenerTest extends \PHPUnit\Framework\TestCase
 {
     use PropertyAccessTrait;
 
@@ -50,16 +50,16 @@ class ProductVariantCustomFieldsDatagridListenerTest extends \PHPUnit_Framework_
     /** @var ProductVariantCustomFieldsDatagridListener */
     private $listener;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|ProductRepository */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|ProductRepository */
     private $productRepository;
 
     /** @var ParameterBag */
     private $parameterBag;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|CustomFieldProvider */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|CustomFieldProvider */
     protected $customFieldProvider;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|VariantFieldProvider */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|VariantFieldProvider */
     protected $variantFieldProvider;
 
     /** @var array|string[] */
@@ -78,7 +78,7 @@ class ProductVariantCustomFieldsDatagridListenerTest extends \PHPUnit_Framework_
     ];
 
     /**
-     * @var $doctrineHelper \PHPUnit_Framework_MockObject_MockObject|DoctrineHelper $doctrineHelper
+     * @var $doctrineHelper \PHPUnit\Framework\MockObject\MockObject|DoctrineHelper $doctrineHelper
      */
     protected $doctrineHelper;
 
@@ -512,7 +512,7 @@ class ProductVariantCustomFieldsDatagridListenerTest extends \PHPUnit_Framework_
 
     /**
      * @param DatagridConfiguration $config
-     * @return DatagridInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return DatagridInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private function prepareDatagrid(DatagridConfiguration $config = null)
     {

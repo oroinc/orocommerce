@@ -6,7 +6,7 @@ use Oro\Bundle\PayPalBundle\Entity\PayPalSettings;
 use Oro\Bundle\PayPalBundle\Form\Type\PayPalSettingsType;
 use Oro\Bundle\PayPalBundle\Integration\PayPalPayflowGatewayTransport;
 
-class PayPalPayflowGatewayTransportTest extends \PHPUnit_Framework_TestCase
+class PayPalPayflowGatewayTransportTest extends \PHPUnit\Framework\TestCase
 {
     /** @var PayPalPayflowGatewayTransport */
     private $transport;

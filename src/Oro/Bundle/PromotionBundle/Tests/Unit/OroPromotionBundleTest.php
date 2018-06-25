@@ -12,7 +12,7 @@ use Oro\Bundle\PromotionBundle\OroPromotionBundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\KernelInterface;
 
-class OroPromotionBundleTest extends \PHPUnit_Framework_TestCase
+class OroPromotionBundleTest extends \PHPUnit\Framework\TestCase
 {
     public function testBuild()
     {

@@ -18,13 +18,13 @@ use Symfony\Component\HttpFoundation\RequestStack;
  */
 class FormViewListenerTest extends FormViewListenerTestCase
 {
-    /** @var Request|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var Request|\PHPUnit\Framework\MockObject\MockObject */
     protected $request;
 
-    /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var RequestStack|\PHPUnit\Framework\MockObject\MockObject */
     protected $requestStack;
 
-    /** @var ShippingOriginProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ShippingOriginProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $shippingOriginProvider;
 
     /** @var FormViewListener */
@@ -172,7 +172,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
 
         $renderedHtml = 'rendered_html';
 
-        /** @var \Twig_Environment|\PHPUnit_Framework_MockObject_MockObject $twig */
+        /** @var \Twig_Environment|\PHPUnit\Framework\MockObject\MockObject $twig */
         $twig = $this->getMockBuilder('\Twig_Environment')->disableOriginalConstructor()->getMock();
         $twig->expects($this->once())
             ->method('render')
@@ -200,7 +200,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
     {
         $renderedHtml = 'rendered_html';
 
-        /** @var \Twig_Environment|\PHPUnit_Framework_MockObject_MockObject $twig */
+        /** @var \Twig_Environment|\PHPUnit\Framework\MockObject\MockObject $twig */
         $twig = $this->getMockBuilder('\Twig_Environment')->disableOriginalConstructor()->getMock();
         $twig->expects($this->once())->method('render')->willReturn($renderedHtml);
 

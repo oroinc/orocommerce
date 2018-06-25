@@ -17,27 +17,27 @@ use Oro\Bundle\RedirectBundle\Tests\Unit\Entity\SluggableEntityStub;
 use Oro\Component\Routing\RouteData;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class SlugEntityGeneratorTest extends \PHPUnit_Framework_TestCase
+class SlugEntityGeneratorTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var RoutingInformationProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var RoutingInformationProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $routingInformationProvider;
 
     /**
-     * @var UniqueSlugResolver|\PHPUnit_Framework_MockObject_MockObject
+     * @var UniqueSlugResolver|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $slugResolver;
 
     /**
-     * @var RedirectGenerator|\PHPUnit_Framework_MockObject_MockObject
+     * @var RedirectGenerator|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $redirectGenerator;
 
     /**
-     * @var UrlCacheInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var UrlCacheInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $urlStorageCache;
 

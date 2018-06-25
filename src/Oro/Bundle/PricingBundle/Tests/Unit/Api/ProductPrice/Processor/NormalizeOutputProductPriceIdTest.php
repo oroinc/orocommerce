@@ -10,12 +10,12 @@ use PHPUnit\Framework\TestCase;
 class NormalizeOutputProductPriceIdTest extends TestCase
 {
     /**
-     * @var ProductPriceIDByContextNormalizerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProductPriceIDByContextNormalizerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $normalizer;
 
     /**
-     * @var ContextInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ContextInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $context;
 

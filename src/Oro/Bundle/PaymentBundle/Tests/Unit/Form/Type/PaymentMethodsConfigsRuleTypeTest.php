@@ -43,12 +43,12 @@ class PaymentMethodsConfigsRuleTypeTest extends AddressFormExtensionTestCase
     protected $formType;
 
     /**
-     * @var PaymentMethodProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var PaymentMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $paymentMethodProvider;
 
     /**
-     * @var CompositePaymentMethodViewProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var CompositePaymentMethodViewProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $compositePaymentMethodViewProvider;
 
@@ -189,13 +189,13 @@ class PaymentMethodsConfigsRuleTypeTest extends AddressFormExtensionTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        /** @var PaymentMethodInterface|\PHPUnit_Framework_MockObject_MockObject $paymentMethod */
+        /** @var PaymentMethodInterface|\PHPUnit\Framework\MockObject\MockObject $paymentMethod */
         $paymentMethod = $this->getMockBuilder(PaymentMethodInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
         $paymentMethod->expects(static::any())->method('getIdentifier')->willReturn(self::PAYMENT_TYPE);
 
-        /** @var PaymentMethodViewInterface|\PHPUnit_Framework_MockObject_MockObject $paymentMethodView */
+        /** @var PaymentMethodViewInterface|\PHPUnit\Framework\MockObject\MockObject $paymentMethodView */
         $paymentMethodView = $this->getMockBuilder(PaymentMethodViewInterface::class)
             ->disableOriginalConstructor()
             ->getMock();

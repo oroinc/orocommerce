@@ -10,15 +10,15 @@ use Oro\Bundle\CheckoutBundle\Mapper\MapperInterface;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 
-class CheckoutToOrderConverterTest extends \PHPUnit_Framework_TestCase
+class CheckoutToOrderConverterTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var CheckoutLineItemsManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var CheckoutLineItemsManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $checkoutLineItemsManager;
 
     /**
-     * @var MapperInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var MapperInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $mapper;
 

@@ -8,7 +8,7 @@ use Oro\Bundle\InvoiceBundle\Doctrine\ORM\SimpleInvoiceNumberGenerator;
 use Oro\Bundle\InvoiceBundle\Entity\Invoice;
 use Oro\Bundle\InvoiceBundle\EventListener\ORM\InvoiceEventListener;
 
-class InvoiceEventListenerTest extends \PHPUnit_Framework_TestCase
+class InvoiceEventListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var InvoiceEventListener
@@ -52,7 +52,7 @@ class InvoiceEventListenerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|EntityManager
+     * @return \PHPUnit\Framework\MockObject\MockObject|EntityManager
      */
     protected function getObjectManager()
     {
@@ -62,7 +62,7 @@ class InvoiceEventListenerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|SimpleInvoiceNumberGenerator
+     * @return \PHPUnit\Framework\MockObject\MockObject|SimpleInvoiceNumberGenerator
      */
     protected function getInvoiceNumberGenerator()
     {

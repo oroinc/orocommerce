@@ -22,20 +22,20 @@ use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class SluggableEntityListenerTest extends \PHPUnit_Framework_TestCase
+class SluggableEntityListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var MessageFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var MessageFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $messageFactory;
 
     /**
-     * @var MessageProducerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $messageProducer;
 
     /**
-     * @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $configManager;
 
@@ -59,7 +59,7 @@ class SluggableEntityListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testPostPersistDisabledDirectUrl()
     {
-        /** @var LifecycleEventArgs|\PHPUnit_Framework_MockObject_MockObject $args **/
+        /** @var LifecycleEventArgs|\PHPUnit\Framework\MockObject\MockObject $args **/
         $args = $this->getMockBuilder(LifecycleEventArgs::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -80,7 +80,7 @@ class SluggableEntityListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testPostPersistNotSluggableEntity()
     {
-        /** @var LifecycleEventArgs|\PHPUnit_Framework_MockObject_MockObject $args **/
+        /** @var LifecycleEventArgs|\PHPUnit\Framework\MockObject\MockObject $args **/
         $args = $this->getMockBuilder(LifecycleEventArgs::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -118,14 +118,14 @@ class SluggableEntityListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testPostPersist()
     {
-        /** @var LifecycleEventArgs|\PHPUnit_Framework_MockObject_MockObject $args **/
+        /** @var LifecycleEventArgs|\PHPUnit\Framework\MockObject\MockObject $args **/
         $args = $this->getMockBuilder(LifecycleEventArgs::class)
             ->disableOriginalConstructor()
             ->getMock();
 
         $entityId = 1;
 
-        /** @var SluggableInterface|\PHPUnit_Framework_MockObject_MockObject $entity */
+        /** @var SluggableInterface|\PHPUnit\Framework\MockObject\MockObject $entity */
         $entity = $this->createMock(SluggableInterface::class);
         $entity->expects($this->once())
             ->method('getId')
@@ -149,7 +149,7 @@ class SluggableEntityListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testOnFlushDisabledDirectUrl()
     {
-        /** @var OnFlushEventArgs|\PHPUnit_Framework_MockObject_MockObject $event **/
+        /** @var OnFlushEventArgs|\PHPUnit\Framework\MockObject\MockObject $event **/
         $event = $this->getMockBuilder(OnFlushEventArgs::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -167,7 +167,7 @@ class SluggableEntityListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testOnFlushNoChangedSlugs()
     {
-        /** @var OnFlushEventArgs|\PHPUnit_Framework_MockObject_MockObject $event **/
+        /** @var OnFlushEventArgs|\PHPUnit\Framework\MockObject\MockObject $event **/
         $event = $this->getMockBuilder(OnFlushEventArgs::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -177,12 +177,12 @@ class SluggableEntityListenerTest extends \PHPUnit_Framework_TestCase
             ->with('oro_redirect.enable_direct_url')
             ->willReturn(true);
 
-        /** @var UnitOfWork|\PHPUnit_Framework_MockObject_MockObject $uow */
+        /** @var UnitOfWork|\PHPUnit\Framework\MockObject\MockObject $uow */
         $uow = $this->getMockBuilder(UnitOfWork::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $em */
+        /** @var EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject $em */
         $em = $this->createMock(EntityManagerInterface::class);
         $em->expects($this->any())
             ->method('getUnitOfWork')
@@ -211,7 +211,7 @@ class SluggableEntityListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testOnFlushChangedSlugWithoutChangedPrototypesUp()
     {
-        /** @var OnFlushEventArgs|\PHPUnit_Framework_MockObject_MockObject $event **/
+        /** @var OnFlushEventArgs|\PHPUnit\Framework\MockObject\MockObject $event **/
         $event = $this->getMockBuilder(OnFlushEventArgs::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -221,12 +221,12 @@ class SluggableEntityListenerTest extends \PHPUnit_Framework_TestCase
             ->with('oro_redirect.enable_direct_url')
             ->willReturn(true);
 
-        /** @var UnitOfWork|\PHPUnit_Framework_MockObject_MockObject $uow */
+        /** @var UnitOfWork|\PHPUnit\Framework\MockObject\MockObject $uow */
         $uow = $this->getMockBuilder(UnitOfWork::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $em */
+        /** @var EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject $em */
         $em = $this->createMock(EntityManagerInterface::class);
         $em->expects($this->any())
             ->method('getUnitOfWork')
@@ -257,7 +257,7 @@ class SluggableEntityListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testOnFlushChangedSlugWithChangedPrototypesIns()
     {
-        /** @var OnFlushEventArgs|\PHPUnit_Framework_MockObject_MockObject $event **/
+        /** @var OnFlushEventArgs|\PHPUnit\Framework\MockObject\MockObject $event **/
         $event = $this->getMockBuilder(OnFlushEventArgs::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -287,11 +287,11 @@ class SluggableEntityListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testOnFlushChangedSlugWithChangedPrototypesDel()
     {
-        /** @var SluggableInterface|\PHPUnit_Framework_MockObject_MockObject $entity */
+        /** @var SluggableInterface|\PHPUnit\Framework\MockObject\MockObject $entity */
         $entity = $this->createMock(SluggableInterface::class);
         $entityId = 1;
 
-        /** @var OnFlushEventArgs|\PHPUnit_Framework_MockObject_MockObject $event **/
+        /** @var OnFlushEventArgs|\PHPUnit\Framework\MockObject\MockObject $event **/
         $event = $this->getMockBuilder(OnFlushEventArgs::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -464,12 +464,12 @@ class SluggableEntityListenerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param OnFlushEventArgs|\PHPUnit_Framework_MockObject_MockObject $event
-     * @return SluggableInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @param OnFlushEventArgs|\PHPUnit\Framework\MockObject\MockObject $event
+     * @return SluggableInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function prepareSluggableEntity($event)
     {
-        /** @var SluggableInterface|\PHPUnit_Framework_MockObject_MockObject $entity */
+        /** @var SluggableInterface|\PHPUnit\Framework\MockObject\MockObject $entity */
         $entity = $this->createMock(SluggableInterface::class);
 
         $uow  = $this->prepareUow($event, $entity);
@@ -492,18 +492,18 @@ class SluggableEntityListenerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param OnFlushEventArgs|\PHPUnit_Framework_MockObject_MockObject $event
-     * @param SluggableInterface|\PHPUnit_Framework_MockObject_MockObject $entity
-     * @return UnitOfWork|\PHPUnit_Framework_MockObject_MockObject
+     * @param OnFlushEventArgs|\PHPUnit\Framework\MockObject\MockObject $event
+     * @param SluggableInterface|\PHPUnit\Framework\MockObject\MockObject $entity
+     * @return UnitOfWork|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function prepareUow($event, $entity)
     {
-        /** @var UnitOfWork|\PHPUnit_Framework_MockObject_MockObject $uow */
+        /** @var UnitOfWork|\PHPUnit\Framework\MockObject\MockObject $uow */
         $uow = $this->getMockBuilder(UnitOfWork::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $em */
+        /** @var EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject $em */
         $em = $this->createMock(EntityManagerInterface::class);
         $em->expects($this->any())
             ->method('getUnitOfWork')

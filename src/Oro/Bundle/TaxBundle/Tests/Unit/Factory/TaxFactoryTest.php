@@ -7,7 +7,7 @@ use Oro\Bundle\TaxBundle\Factory\TaxFactory;
 use Oro\Bundle\TaxBundle\Mapper\TaxMapperInterface;
 use Oro\Bundle\TaxBundle\Model\Taxable;
 
-class TaxFactoryTest extends \PHPUnit_Framework_TestCase
+class TaxFactoryTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var TaxFactory
@@ -26,7 +26,7 @@ class TaxFactoryTest extends \PHPUnit_Framework_TestCase
 
     public function testAddMapperAndCreate()
     {
-        /** @var TaxMapperInterface|\PHPUnit_Framework_MockObject_MockObject $mapper */
+        /** @var TaxMapperInterface|\PHPUnit\Framework\MockObject\MockObject $mapper */
         $mapper = $this->createMock('Oro\Bundle\TaxBundle\Mapper\TaxMapperInterface');
         $mapper
             ->expects($this->once())
@@ -69,7 +69,7 @@ class TaxFactoryTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertFalse($this->factory->supports(new \stdClass()));
 
-        /** @var TaxMapperInterface|\PHPUnit_Framework_MockObject_MockObject $mapper */
+        /** @var TaxMapperInterface|\PHPUnit\Framework\MockObject\MockObject $mapper */
         $mapper = $this->createMock('Oro\Bundle\TaxBundle\Mapper\TaxMapperInterface');
         $mapper
             ->expects($this->once())

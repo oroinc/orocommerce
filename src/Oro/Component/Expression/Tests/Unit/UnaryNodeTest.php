@@ -5,11 +5,11 @@ namespace Oro\Component\Expression\Tests\Unit;
 use Oro\Component\Expression\Node\NodeInterface;
 use Oro\Component\Expression\Node\UnaryNode;
 
-class UnaryNodeTest extends \PHPUnit_Framework_TestCase
+class UnaryNodeTest extends \PHPUnit\Framework\TestCase
 {
     public function testNode()
     {
-        /** @var NodeInterface|\PHPUnit_Framework_MockObject_MockObject $subnode */
+        /** @var NodeInterface|\PHPUnit\Framework\MockObject\MockObject $subnode */
         $subnode = $this->createMock(NodeInterface::class);
         $subnode->expects($this->any())
             ->method('getNodes')
@@ -26,7 +26,7 @@ class UnaryNodeTest extends \PHPUnit_Framework_TestCase
 
     public function testIsBooleanTrue()
     {
-        /** @var NodeInterface|\PHPUnit_Framework_MockObject_MockObject $subnode */
+        /** @var NodeInterface|\PHPUnit\Framework\MockObject\MockObject $subnode */
         $subnode = $this->createMock(NodeInterface::class);
         $subnode->expects($this->once())
             ->method('isBoolean')
@@ -38,7 +38,7 @@ class UnaryNodeTest extends \PHPUnit_Framework_TestCase
 
     public function testIsBooleanIsNotNot()
     {
-        /** @var NodeInterface|\PHPUnit_Framework_MockObject_MockObject $subnode */
+        /** @var NodeInterface|\PHPUnit\Framework\MockObject\MockObject $subnode */
         $subnode = $this->createMock(NodeInterface::class);
         $subnode->expects($this->any())
             ->method('isBoolean')
@@ -50,7 +50,7 @@ class UnaryNodeTest extends \PHPUnit_Framework_TestCase
 
     public function testIsBooleanFalseSub()
     {
-        /** @var NodeInterface|\PHPUnit_Framework_MockObject_MockObject $subnode */
+        /** @var NodeInterface|\PHPUnit\Framework\MockObject\MockObject $subnode */
         $subnode = $this->createMock(NodeInterface::class);
         $subnode->expects($this->any())
             ->method('isBoolean')

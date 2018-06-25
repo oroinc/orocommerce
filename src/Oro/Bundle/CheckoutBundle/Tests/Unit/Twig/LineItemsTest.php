@@ -12,14 +12,14 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
 
-class LineItemsTest extends \PHPUnit_Framework_TestCase
+class LineItemsTest extends \PHPUnit\Framework\TestCase
 {
     use TwigExtensionTestCaseTrait;
 
-    /** @var TotalProcessorProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var TotalProcessorProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $totalsProvider;
 
-    /** @var LineItemSubtotalProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var LineItemSubtotalProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $lineItemSubtotalProvider;
 
     /** @var LineItemsExtension */

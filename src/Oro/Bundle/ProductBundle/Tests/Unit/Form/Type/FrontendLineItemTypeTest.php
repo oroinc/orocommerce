@@ -194,11 +194,11 @@ class FrontendLineItemTypeTest extends FormIntegrationTestCase
     /**
      * @param ProductLineItem $lineItem
      *
-     * @return \PHPUnit_Framework_MockObject_MockObject|FormInterface
+     * @return \PHPUnit\Framework\MockObject\MockObject|FormInterface
      */
     protected function getForm(ProductLineItem $lineItem)
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|FormInterface $form */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|FormInterface $form */
         $form = $this->getMockBuilder('Symfony\Component\Form\FormInterface')
             ->disableOriginalConstructor()
             ->getMock();

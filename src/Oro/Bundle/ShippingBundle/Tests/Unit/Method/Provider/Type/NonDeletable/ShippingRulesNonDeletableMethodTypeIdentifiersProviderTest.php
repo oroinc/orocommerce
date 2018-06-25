@@ -8,10 +8,10 @@ use Oro\Bundle\ShippingBundle\Method\Provider\Type\NonDeletable\ShippingRulesNon
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface;
 
-class ShippingRulesNonDeletableMethodTypeIdentifiersProviderTest extends \PHPUnit_Framework_TestCase
+class ShippingRulesNonDeletableMethodTypeIdentifiersProviderTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ShippingMethodTypeConfigRepository|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingMethodTypeConfigRepository|\PHPUnit\Framework\MockObject\MockObject
      */
     private $methodTypeConfigRepository;
 
@@ -78,7 +78,7 @@ class ShippingRulesNonDeletableMethodTypeIdentifiersProviderTest extends \PHPUni
     }
 
     /**
-     * @return ShippingMethodInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return ShippingMethodInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private function createMethodMock()
     {

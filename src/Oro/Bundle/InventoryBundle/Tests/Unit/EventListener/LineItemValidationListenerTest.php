@@ -10,10 +10,10 @@ use Oro\Bundle\InventoryBundle\Validator\QuantityToOrderValidatorService;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Event\LineItemValidateEvent;
 
-class LineItemValidationListenerTest extends \PHPUnit_Framework_TestCase
+class LineItemValidationListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var QuantityToOrderValidatorService|\PHPUnit_Framework_MockObject_MockObject
+     * @var QuantityToOrderValidatorService|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $quantityValidator;
 
@@ -23,7 +23,7 @@ class LineItemValidationListenerTest extends \PHPUnit_Framework_TestCase
     protected $lineItemValidationListener;
 
     /**
-     * @var LineItemValidateEvent|\PHPUnit_Framework_MockObject_MockObject $event *
+     * @var LineItemValidateEvent|\PHPUnit\Framework\MockObject\MockObject $event *
      */
     protected $event;
 

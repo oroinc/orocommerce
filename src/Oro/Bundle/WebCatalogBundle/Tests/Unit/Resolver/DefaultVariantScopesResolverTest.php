@@ -11,12 +11,12 @@ use Oro\Bundle\WebCatalogBundle\Entity\Repository\ContentNodeRepository;
 use Oro\Bundle\WebCatalogBundle\Resolver\DefaultVariantScopesResolver;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class DefaultVariantScopesResolverTest extends \PHPUnit_Framework_TestCase
+class DefaultVariantScopesResolverTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $registry;
 

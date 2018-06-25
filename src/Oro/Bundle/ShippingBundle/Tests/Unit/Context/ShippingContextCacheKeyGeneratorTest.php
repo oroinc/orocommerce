@@ -19,7 +19,7 @@ use Oro\Bundle\ShippingBundle\Model\Weight;
 use Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\ShippingAddressStub;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class ShippingContextCacheKeyGeneratorTest extends \PHPUnit_Framework_TestCase
+class ShippingContextCacheKeyGeneratorTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
