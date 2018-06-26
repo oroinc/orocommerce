@@ -7,7 +7,7 @@ use Oro\Bundle\PricingBundle\Formatter\ProductPriceFormatter;
 use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 use Oro\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter;
 
-class ProductPriceFormatterTest extends \PHPUnit_Framework_TestCase
+class ProductPriceFormatterTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var ProductPriceFormatter
@@ -15,17 +15,17 @@ class ProductPriceFormatterTest extends \PHPUnit_Framework_TestCase
     protected $formatter;
 
     /**
-     * @var NumberFormatter|\PHPUnit_Framework_MockObject_MockObject
+     * @var NumberFormatter|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $numberFormatter;
 
     /**
-     * @var ProductUnitLabelFormatter|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProductUnitLabelFormatter|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $unitLabelFormatter;
 
     /**
-     * @var ProductUnitValueFormatter|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProductUnitValueFormatter|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $unitValueFormatter;
 

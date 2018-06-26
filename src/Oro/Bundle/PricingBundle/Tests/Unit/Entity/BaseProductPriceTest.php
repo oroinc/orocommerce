@@ -9,7 +9,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-class BaseProductPriceTest extends \PHPUnit_Framework_TestCase
+class BaseProductPriceTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 

@@ -9,7 +9,7 @@ use Oro\Bundle\TaxBundle\Entity\TaxJurisdiction;
 use Oro\Bundle\TaxBundle\Entity\TaxRule;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-class TaxRuleTest extends \PHPUnit_Framework_TestCase
+class TaxRuleTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 

@@ -49,10 +49,10 @@ class OrderDiscountOptionsTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
-        /** @var ConfigProvider|\PHPUnit_Framework_MockObject_MockObject $configProvider */
+        /** @var ConfigProvider|\PHPUnit\Framework\MockObject\MockObject $configProvider */
         $configProvider = $this->createMock(ConfigProvider::class);
 
-        /** @var Translator|\PHPUnit_Framework_MockObject_MockObject $translator */
+        /** @var Translator|\PHPUnit\Framework\MockObject\MockObject $translator */
         $translator = $this->createMock(Translator::class);
 
         return [

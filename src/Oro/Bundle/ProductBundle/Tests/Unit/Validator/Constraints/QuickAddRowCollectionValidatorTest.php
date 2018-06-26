@@ -15,7 +15,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class QuickAddRowCollectionValidatorTest extends AbstractConstraintValidatorTest
 {
     /**
-     * @var QuickAddRowCollection|\PHPUnit_Framework_MockObject_MockObject
+     * @var QuickAddRowCollection|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $constraint;
 
@@ -31,7 +31,7 @@ class QuickAddRowCollectionValidatorTest extends AbstractConstraintValidatorTest
 
     protected function setUp()
     {
-        \PHPUnit_Framework_Error_Warning::$enabled = false;
+        \PHPUnit\Framework\Error\Warning::$enabled = false;
         $this->validatorInterface = $this->getMockBuilder(ValidatorInterface::class)
             ->disableOriginalConstructor()
             ->getMock();

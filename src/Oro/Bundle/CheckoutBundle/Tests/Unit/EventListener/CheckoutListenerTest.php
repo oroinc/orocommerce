@@ -15,15 +15,15 @@ use Oro\Bundle\UserBundle\Provider\DefaultUserProvider;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 
-class CheckoutListenerTest extends \PHPUnit_Framework_TestCase
+class CheckoutListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var DefaultUserProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var DefaultUserProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $defaultUserProvider;
 
-    /** @var TokenAccessorInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var TokenAccessorInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $tokenAccessor;
 
-    /** @var WebsiteManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var WebsiteManager|\PHPUnit\Framework\MockObject\MockObject */
     private $websiteManager;
 
     /** @var CheckoutListener */
@@ -53,7 +53,7 @@ class CheckoutListenerTest extends \PHPUnit_Framework_TestCase
                 ['completedData' => [null, $checkout->getCompletedData()]]
             );
 
-        /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $em */
+        /** @var EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject $em */
         $em = $this->createMock(EntityManagerInterface::class);
         $em->expects($this->once())->method('getUnitOfWork')->willReturn($uow);
 

@@ -10,22 +10,22 @@ use Oro\Bundle\ProductBundle\Validator\Constraints\ProductBySku;
 use Oro\Bundle\ProductBundle\Validator\Constraints\ProductBySkuValidator;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
-class ProductBySkuValidatorTest extends \PHPUnit_Framework_TestCase
+class ProductBySkuValidatorTest extends \PHPUnit\Framework\TestCase
 {
     const PRODUCT_CLASS = 'OroProductBundle:Product';
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry
+     * @var \PHPUnit\Framework\MockObject\MockObject|ManagerRegistry
      */
     protected $registry;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ExecutionContextInterface
+     * @var \PHPUnit\Framework\MockObject\MockObject|ExecutionContextInterface
      */
     protected $context;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ProductBySku
+     * @var \PHPUnit\Framework\MockObject\MockObject|ProductBySku
      */
     protected $constraint;
 
@@ -111,7 +111,7 @@ class ProductBySkuValidatorTest extends \PHPUnit_Framework_TestCase
             ->willReturn($form);
 
         if (!$useOptions) {
-            /** @var \PHPUnit_Framework_MockObject_MockObject|ProductRepository */
+            /** @var \PHPUnit\Framework\MockObject\MockObject|ProductRepository */
             $repository = $this
                 ->getMockBuilder('Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository')
                 ->disableOriginalConstructor()

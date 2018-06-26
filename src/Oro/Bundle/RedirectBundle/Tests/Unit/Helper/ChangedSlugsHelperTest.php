@@ -16,12 +16,12 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-class ChangedSlugsHelperTest extends \PHPUnit_Framework_TestCase
+class ChangedSlugsHelperTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var FormFactory|\PHPUnit_Framework_MockObject_MockObject
+     * @var FormFactory|\PHPUnit\Framework\MockObject\MockObject
      */
     private $formFactory;
 
@@ -31,12 +31,12 @@ class ChangedSlugsHelperTest extends \PHPUnit_Framework_TestCase
     private $request;
 
     /**
-     * @var SlugEntityGenerator|\PHPUnit_Framework_MockObject_MockObject
+     * @var SlugEntityGenerator|\PHPUnit\Framework\MockObject\MockObject
      */
     private $slugGenerator;
 
     /**
-     * @var SlugUrlDiffer|\PHPUnit_Framework_MockObject_MockObject
+     * @var SlugUrlDiffer|\PHPUnit\Framework\MockObject\MockObject
      */
     private $slugUrlDiffer;
 

@@ -13,7 +13,7 @@ use Oro\Bundle\TaxBundle\Resolver\RowTotalResolver;
 use Oro\Bundle\TaxBundle\Resolver\UnitResolver;
 use Oro\Bundle\TaxBundle\Tests\ResultComparatorTrait;
 
-abstract class AbstractItemResolverTestCase extends \PHPUnit_Framework_TestCase
+abstract class AbstractItemResolverTestCase extends \PHPUnit\Framework\TestCase
 {
     use ResultComparatorTrait;
 
@@ -21,17 +21,17 @@ abstract class AbstractItemResolverTestCase extends \PHPUnit_Framework_TestCase
     protected $resolver;
 
     /**
-     * @var UnitResolver|\PHPUnit_Framework_MockObject_MockObject
+     * @var UnitResolver|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $unitResolver;
 
     /**
-     * @var RowTotalResolver|\PHPUnit_Framework_MockObject_MockObject
+     * @var RowTotalResolver|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $rowTotalResolver;
 
     /**
-     * @var MatcherInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var MatcherInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $matcher;
 

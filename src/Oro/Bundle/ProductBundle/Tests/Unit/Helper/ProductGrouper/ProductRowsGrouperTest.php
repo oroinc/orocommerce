@@ -5,7 +5,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Helper\ProductGrouper;
 use Oro\Bundle\ProductBundle\Helper\ProductGrouper\ProductRowsGrouper;
 use Oro\Bundle\ProductBundle\Model\ProductRow;
 
-class ProductRowsGrouperTest extends \PHPUnit_Framework_TestCase
+class ProductRowsGrouperTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var ProductRowsGrouper

@@ -25,7 +25,7 @@ class WebCatalogScopeExtensionTest extends FormIntegrationTestCase
     protected $extension;
 
     /**
-     * @var ScopeManager|\PHPUnit_Framework_MockObject_MockObject $scopeManager
+     * @var ScopeManager|\PHPUnit\Framework\MockObject\MockObject $scopeManager
      */
     protected $scopeManager;
 

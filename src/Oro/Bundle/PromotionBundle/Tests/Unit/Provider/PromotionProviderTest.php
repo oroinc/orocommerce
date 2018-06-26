@@ -18,27 +18,27 @@ use Oro\Bundle\PromotionBundle\RuleFiltration\AbstractSkippableFiltrationService
 use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class PromotionProviderTest extends \PHPUnit_Framework_TestCase
+class PromotionProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     private $registry;
 
     /**
-     * @var RuleFiltrationServiceInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var RuleFiltrationServiceInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $ruleFiltrationService;
 
     /**
-     * @var ContextDataConverterInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ContextDataConverterInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $contextDataConverter;
 
     /**
-     * @var AppliedPromotionMapper|\PHPUnit_Framework_MockObject_MockObject
+     * @var AppliedPromotionMapper|\PHPUnit\Framework\MockObject\MockObject
      */
     private $promotionMapper;
 
@@ -82,7 +82,7 @@ class PromotionProviderTest extends \PHPUnit_Framework_TestCase
                 $appliedPromotion2
             );
 
-        /** @var AppliedPromotionsAwareInterface|\PHPUnit_Framework_MockObject_MockObject $sourceEntity */
+        /** @var AppliedPromotionsAwareInterface|\PHPUnit\Framework\MockObject\MockObject $sourceEntity */
         $sourceEntity = $this->createMock(AppliedPromotionsAwareInterface::class);
         $sourceEntity->expects($this->any())
             ->method('getAppliedPromotions')
@@ -115,7 +115,7 @@ class PromotionProviderTest extends \PHPUnit_Framework_TestCase
     public function testIsPromotionAppliedWhenPromotionIsApplied()
     {
         $sourceEntity = new \stdClass();
-        /** @var PromotionDataInterface|\PHPUnit_Framework_MockObject_MockObject $promotion */
+        /** @var PromotionDataInterface|\PHPUnit\Framework\MockObject\MockObject $promotion */
         $promotion = $this->createMock(PromotionDataInterface::class);
         $promotion->expects($this->any())
             ->method('getId')
@@ -141,13 +141,13 @@ class PromotionProviderTest extends \PHPUnit_Framework_TestCase
     public function testIsPromotionAppliedWhenPromotionIsNotApplied()
     {
         $sourceEntity = new \stdClass();
-        /** @var PromotionDataInterface|\PHPUnit_Framework_MockObject_MockObject $anotherPromotion */
+        /** @var PromotionDataInterface|\PHPUnit\Framework\MockObject\MockObject $anotherPromotion */
         $anotherPromotion = $this->createMock(PromotionDataInterface::class);
         $anotherPromotion->expects($this->any())
             ->method('getId')
             ->willReturn(7);
 
-        /** @var PromotionDataInterface|\PHPUnit_Framework_MockObject_MockObject $promotion */
+        /** @var PromotionDataInterface|\PHPUnit\Framework\MockObject\MockObject $promotion */
         $promotion = $this->createMock(PromotionDataInterface::class);
         $promotion->expects($this->any())
             ->method('getId')
@@ -174,7 +174,7 @@ class PromotionProviderTest extends \PHPUnit_Framework_TestCase
     {
         $sourceEntity = new \stdClass();
 
-        /** @var PromotionDataInterface|\PHPUnit_Framework_MockObject_MockObject $promotion */
+        /** @var PromotionDataInterface|\PHPUnit\Framework\MockObject\MockObject $promotion */
         $promotion = $this->createMock(PromotionDataInterface::class);
         $promotion->expects($this->any())
             ->method('getId')
@@ -199,7 +199,7 @@ class PromotionProviderTest extends \PHPUnit_Framework_TestCase
         $sourceEntity = new \stdClass();
 
         /** @var Promotion $promotion */
-        /** @var PromotionDataInterface|\PHPUnit_Framework_MockObject_MockObject $promotion */
+        /** @var PromotionDataInterface|\PHPUnit\Framework\MockObject\MockObject $promotion */
         $promotion = $this->createMock(PromotionDataInterface::class);
         $promotion->expects($this->any())
             ->method('getId')
@@ -225,7 +225,7 @@ class PromotionProviderTest extends \PHPUnit_Framework_TestCase
         $skippedFilters = ['SomeFilterClass'];
 
         /** @var Promotion $promotion */
-        /** @var PromotionDataInterface|\PHPUnit_Framework_MockObject_MockObject $promotion */
+        /** @var PromotionDataInterface|\PHPUnit\Framework\MockObject\MockObject $promotion */
         $promotion = $this->createMock(PromotionDataInterface::class);
         $promotion->expects($this->any())
             ->method('getId')

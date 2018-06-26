@@ -14,7 +14,7 @@ use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
 
-class ProductSearchIndexListenerTest extends \PHPUnit_Framework_TestCase
+class ProductSearchIndexListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @SuppressWarnings(ExcessiveMethodLength)
@@ -24,7 +24,7 @@ class ProductSearchIndexListenerTest extends \PHPUnit_Framework_TestCase
         $entityIds     = [1, 2];
         $localizations = $this->getLocalizations();
         $entities      = $this->getProductEntities($entityIds, $localizations);
-        /** @var IndexEntityEvent|\PHPUnit_Framework_MockObject_MockObject $event */
+        /** @var IndexEntityEvent|\PHPUnit\Framework\MockObject\MockObject $event */
         $event = $this->getMockBuilder(IndexEntityEvent::class)
             ->disableOriginalConstructor()->getMock();
 
@@ -35,7 +35,7 @@ class ProductSearchIndexListenerTest extends \PHPUnit_Framework_TestCase
         $event->expects($this->once())
             ->method('getContext')
             ->willReturn([]);
-        /** @var AbstractWebsiteLocalizationProvider|\PHPUnit_Framework_MockObject_MockObject $localizationProvider */
+        /** @var AbstractWebsiteLocalizationProvider|\PHPUnit\Framework\MockObject\MockObject $localizationProvider */
         $localizationProvider = $this->getMockBuilder(AbstractWebsiteLocalizationProvider::class)
             ->disableOriginalConstructor()->getMock();
 
@@ -84,12 +84,12 @@ class ProductSearchIndexListenerTest extends \PHPUnit_Framework_TestCase
                 ]
             );
 
-        /** @var WebsiteContextManager|\PHPUnit_Framework_MockObject_MockObject $websiteContextManager */
+        /** @var WebsiteContextManager|\PHPUnit\Framework\MockObject\MockObject $websiteContextManager */
         $websiteContextManager = $this->getMockBuilder(WebsiteContextManager::class)
             ->disableOriginalConstructor()
             ->getMock();
         $category = $this->prepareCategory(777, $localizations);
-        /** @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject $doctrineHelper */
+        /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject $doctrineHelper */
         $doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -121,7 +121,7 @@ class ProductSearchIndexListenerTest extends \PHPUnit_Framework_TestCase
     /**
      * @param array          $entityIds
      * @param Localization[] $localizations
-     * @return \Oro\Bundle\ProductBundle\Entity\Product[]|\PHPUnit_Framework_MockObject_MockObject[]
+     * @return \Oro\Bundle\ProductBundle\Entity\Product[]|\PHPUnit\Framework\MockObject\MockObject[]
      */
     private function getProductEntities($entityIds, $localizations)
     {
@@ -170,7 +170,7 @@ class ProductSearchIndexListenerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return Localization[]|\PHPUnit_Framework_MockObject_MockObject[]
+     * @return Localization[]|\PHPUnit\Framework\MockObject\MockObject[]
      */
     private function getLocalizations()
     {
@@ -199,7 +199,7 @@ class ProductSearchIndexListenerTest extends \PHPUnit_Framework_TestCase
     /**
      * @param integer $categoryId
      * @param array $localizations
-     * @return Category|\PHPUnit_Framework_MockObject_MockObject
+     * @return Category|\PHPUnit\Framework\MockObject\MockObject
      */
     private function prepareCategory($categoryId, $localizations)
     {

@@ -101,7 +101,7 @@ abstract class AbstractProductSelectTypeTest extends WebTestCase
     {
         $requestStack = new RequestStack();
 
-        /** @var ProductManager|\PHPUnit_Framework_MockObject_MockObject $productManager */
+        /** @var ProductManager|\PHPUnit\Framework\MockObject\MockObject $productManager */
         $productManager = $this->getMockBuilder('Oro\Bundle\ProductBundle\Entity\Manager\ProductManager')
             ->disableOriginalConstructor()
             ->getMock();

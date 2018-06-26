@@ -5,7 +5,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\ProductVariant\Registry;
 use Oro\Bundle\ProductBundle\ProductVariant\Registry\ProductVariantFieldValueHandlerInterface;
 use Oro\Bundle\ProductBundle\ProductVariant\Registry\ProductVariantFieldValueHandlerRegistry;
 
-class ProductVariantFieldValueHandlerRegistryTest extends \PHPUnit_Framework_TestCase
+class ProductVariantFieldValueHandlerRegistryTest extends \PHPUnit\Framework\TestCase
 {
     /** @var ProductVariantFieldValueHandlerRegistry */
     protected $registry;
@@ -68,7 +68,7 @@ class ProductVariantFieldValueHandlerRegistryTest extends \PHPUnit_Framework_Tes
 
     /**
      * @param string $type
-     * @return ProductVariantFieldValueHandlerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return ProductVariantFieldValueHandlerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private function createHandler($type)
     {

@@ -23,12 +23,12 @@ class PriceRuleTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|CurrencyProviderInterface $currencyProvider */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|CurrencyProviderInterface $currencyProvider */
         $currencyProvider = $this->getMockBuilder(CurrencyProviderInterface::class)
             ->disableOriginalConstructor()->getMockForAbstractClass();
         $currencyProvider->method('getCurrencyList')->willReturn(['USD', 'EUR']);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|LocaleSettings $localeSettings */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|LocaleSettings $localeSettings */
         $localeSettings = $this->getMockBuilder(LocaleSettings::class)->disableOriginalConstructor()->getMock();
 
         return [

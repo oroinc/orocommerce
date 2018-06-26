@@ -5,7 +5,7 @@ namespace Oro\Bundle\SEOBundle\Tests\Unit\Sitemap\Storage;
 use Oro\Bundle\SEOBundle\Model\DTO\UrlItem;
 use Oro\Bundle\SEOBundle\Sitemap\Storage\XmlSitemapUrlsStorage;
 
-class XmlSitemapUrlsStorageTest extends \PHPUnit_Framework_TestCase
+class XmlSitemapUrlsStorageTest extends \PHPUnit\Framework\TestCase
 {
     public function testStorageWhenNoUrlItemsWereAdded()
     {

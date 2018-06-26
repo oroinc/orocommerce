@@ -13,20 +13,20 @@ use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Psr\Log\LoggerInterface;
 
-class DirectUrlRemoveProcessorTest extends \PHPUnit_Framework_TestCase
+class DirectUrlRemoveProcessorTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     private $registry;
 
     /**
-     * @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $logger;
 
     /**
-     * @var MessageProducerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $producer;
 
@@ -46,13 +46,13 @@ class DirectUrlRemoveProcessorTest extends \PHPUnit_Framework_TestCase
 
     public function testProcessExceptionOutsideTransaction()
     {
-        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
+        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message **/
         $message = $this->createMock(MessageInterface::class);
 
-        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
+        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session **/
         $session = $this->createMock(SessionInterface::class);
 
-        /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $em */
+        /** @var EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject $em */
         $em = $this->createMock(EntityManagerInterface::class);
 
         $messageData = \stdClass::class;
@@ -84,7 +84,7 @@ class DirectUrlRemoveProcessorTest extends \PHPUnit_Framework_TestCase
 
     public function testProcessExceptionInTransaction()
     {
-        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
+        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message **/
         $message = $this->createMock(MessageInterface::class);
         $messageData = \stdClass::class;
         $messageBody = json_encode($messageData);
@@ -92,10 +92,10 @@ class DirectUrlRemoveProcessorTest extends \PHPUnit_Framework_TestCase
             ->method('getBody')
             ->willReturn($messageBody);
 
-        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
+        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session **/
         $session = $this->createMock(SessionInterface::class);
 
-        /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $em */
+        /** @var EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject $em */
         $em = $this->createMock(EntityManagerInterface::class);
         $em->expects($this->once())
             ->method('beginTransaction');
@@ -134,10 +134,10 @@ class DirectUrlRemoveProcessorTest extends \PHPUnit_Framework_TestCase
 
     public function testProcessNoEntityManagerFound()
     {
-        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
+        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message **/
         $message = $this->createMock(MessageInterface::class);
 
-        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
+        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session **/
         $session = $this->createMock(SessionInterface::class);
 
         $messageData = \stdClass::class;
@@ -162,7 +162,7 @@ class DirectUrlRemoveProcessorTest extends \PHPUnit_Framework_TestCase
 
     public function testProcess()
     {
-        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
+        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message **/
         $message = $this->createMock(MessageInterface::class);
         $messageData = \stdClass::class;
         $messageBody = json_encode($messageData);
@@ -170,10 +170,10 @@ class DirectUrlRemoveProcessorTest extends \PHPUnit_Framework_TestCase
             ->method('getBody')
             ->willReturn($messageBody);
 
-        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
+        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session **/
         $session = $this->createMock(SessionInterface::class);
 
-        /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $em */
+        /** @var EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject $em */
         $em = $this->createMock(EntityManagerInterface::class);
         $em->expects($this->once())
             ->method('beginTransaction');

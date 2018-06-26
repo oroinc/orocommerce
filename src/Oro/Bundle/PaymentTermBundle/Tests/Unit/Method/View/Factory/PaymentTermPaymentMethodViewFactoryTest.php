@@ -8,10 +8,10 @@ use Oro\Bundle\PaymentTermBundle\Method\View\PaymentTermView;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider;
 use Symfony\Component\Translation\TranslatorInterface;
 
-class PaymentTermPaymentMethodViewFactoryTest extends \PHPUnit_Framework_TestCase
+class PaymentTermPaymentMethodViewFactoryTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var PaymentTermProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var PaymentTermProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $paymentTermProvider;
 
@@ -37,7 +37,7 @@ class PaymentTermPaymentMethodViewFactoryTest extends \PHPUnit_Framework_TestCas
 
     public function testCreate()
     {
-        /** @var PaymentTermConfigInterface|\PHPUnit_Framework_MockObject_MockObject $config */
+        /** @var PaymentTermConfigInterface|\PHPUnit\Framework\MockObject\MockObject $config */
         $config = $this->createMock(PaymentTermConfigInterface::class);
 
         $view = new PaymentTermView(

@@ -9,25 +9,25 @@ use Oro\Bundle\ShippingBundle\Context\Builder\Basic\Factory\BasicShippingContext
 use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\ShippingLineItemCollectionInterface;
 use Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider;
 
-class BasicShippingContextBuilderFactoryTest extends \PHPUnit_Framework_TestCase
+class BasicShippingContextBuilderFactoryTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ShippingLineItemCollectionInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingLineItemCollectionInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $lineItemsCollectionMock;
 
     /**
-     * @var Price|\PHPUnit_Framework_MockObject_MockObject
+     * @var Price|\PHPUnit\Framework\MockObject\MockObject
      */
     private $subtotalMock;
 
     /**
-     * @var Checkout|\PHPUnit_Framework_MockObject_MockObject
+     * @var Checkout|\PHPUnit\Framework\MockObject\MockObject
      */
     private $sourceEntityMock;
 
     /**
-     * @var ShippingOriginProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingOriginProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     private $shippingOriginProviderMock;
 

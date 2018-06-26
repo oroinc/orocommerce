@@ -9,12 +9,12 @@ use Oro\Bundle\SaleBundle\Tests\Unit\Stub\QuoteStub as Quote;
 use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
-class FrontendQuotePermissionVoterTest extends \PHPUnit_Framework_TestCase
+class FrontendQuotePermissionVoterTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var TokenInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var TokenInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $token;
 
-    /** @var CurrentApplicationProviderInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var CurrentApplicationProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $applicationProvider;
 
     /** @var FrontendQuotePermissionVoter */

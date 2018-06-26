@@ -14,18 +14,18 @@ use Oro\Bundle\ProductBundle\Api\Processor\AddImagePathToFile;
 use Oro\Bundle\ProductBundle\Entity\ProductImageType;
 use Oro\Bundle\ProductBundle\Tests\Unit\Api\Processor\Stub\ProductImageStub;
 
-class AddImagePathToFileTest extends \PHPUnit_Framework_TestCase
+class AddImagePathToFileTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var AttachmentManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var AttachmentManager|\PHPUnit\Framework\MockObject\MockObject */
     protected $attachmentManager;
 
-    /** @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
     protected $doctrineHelper;
 
-    /** @var ImageTypeProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ImageTypeProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $typeProvider;
 
-    /** @var EntityRepository|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var EntityRepository|\PHPUnit\Framework\MockObject\MockObject */
     protected $repo;
 
     /** @var CustomizeLoadedDataContext */

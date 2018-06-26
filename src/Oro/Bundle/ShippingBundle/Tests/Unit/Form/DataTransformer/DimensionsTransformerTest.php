@@ -6,7 +6,7 @@ use Oro\Bundle\ShippingBundle\Entity\LengthUnit;
 use Oro\Bundle\ShippingBundle\Form\DataTransformer\DimensionsTransformer;
 use Oro\Bundle\ShippingBundle\Model\Dimensions;
 
-class DimensionsTransformerTest extends \PHPUnit_Framework_TestCase
+class DimensionsTransformerTest extends \PHPUnit\Framework\TestCase
 {
     /** @var DimensionsTransformer */
     protected $transformer;

@@ -6,7 +6,7 @@ use Oro\Bundle\ProductBundle\Exception\ConfigProviderNotFoundException;
 use Oro\Bundle\ProductBundle\RelatedItem\AbstractRelatedItemConfigProvider;
 use Oro\Bundle\ProductBundle\RelatedItem\Helper\RelatedItemConfigHelper;
 
-class RelatedItemConfigHelperTest extends \PHPUnit_Framework_TestCase
+class RelatedItemConfigHelperTest extends \PHPUnit\Framework\TestCase
 {
     /** @var RelatedItemConfigHelper */
     private $helper;
@@ -98,11 +98,11 @@ class RelatedItemConfigHelperTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param $isEnabled
-     * @return AbstractRelatedItemConfigProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @return AbstractRelatedItemConfigProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     private function getProviderMock($isEnabled)
     {
-        /** @var AbstractRelatedItemConfigProvider|\PHPUnit_Framework_MockObject_MockObject $provider */
+        /** @var AbstractRelatedItemConfigProvider|\PHPUnit\Framework\MockObject\MockObject $provider */
         $provider = $this->createMock(AbstractRelatedItemConfigProvider::class);
         $provider->expects($this->any())->method('isEnabled')->willReturn($isEnabled);
 

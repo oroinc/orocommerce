@@ -15,26 +15,26 @@ use Oro\Component\Testing\Unit\EntityTrait;
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class RequestRepresentativesNotifierTest extends \PHPUnit_Framework_TestCase
+class RequestRepresentativesNotifierTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /** @var Processor|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var Processor|\PHPUnit\Framework\MockObject\MockObject */
     protected $processor;
 
-    /** @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
     protected $configManager;
 
     /** @var RequestRepresentativesNotifier */
     protected $requestToQuoteRepresentativesNotifier;
 
-    /** @var Request|\PHPUnit_Framework_MockObject_MockObject $request * */
+    /** @var Request|\PHPUnit\Framework\MockObject\MockObject $request * */
     protected $request;
 
-    /** @var  CustomerUser|\PHPUnit_Framework_MockObject_MockObject $customerUser */
+    /** @var  CustomerUser|\PHPUnit\Framework\MockObject\MockObject $customerUser */
     protected $customerUser;
 
-    /** @var  Customer|\PHPUnit_Framework_MockObject_MockObject $customerUser */
+    /** @var  Customer|\PHPUnit\Framework\MockObject\MockObject $customerUser */
     protected $customer;
 
     /** @var  User $owner */

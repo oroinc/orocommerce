@@ -7,10 +7,10 @@ use Oro\Bundle\SEOBundle\Sitemap\Website\WebsiteUrlProvidersServiceIndex;
 use Oro\Component\SEO\Provider\UrlItemsProviderInterface;
 use Oro\Component\Website\WebsiteInterface;
 
-class WebsiteUrlProvidersServiceIndexTest extends \PHPUnit_Framework_TestCase
+class WebsiteUrlProvidersServiceIndexTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var UrlItemsProviderRegistryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var UrlItemsProviderRegistryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $urlItemsProviderRegistry;
 

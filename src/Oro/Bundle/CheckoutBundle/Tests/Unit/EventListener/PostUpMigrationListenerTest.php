@@ -5,7 +5,7 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\EventListener;
 use Oro\Bundle\CheckoutBundle\EventListener\PostUpMigrationListener;
 use Oro\Bundle\CheckoutBundle\Migrations\Schema\RemoveWorkflowFieldsMigration;
 
-class PostUpMigrationListenerTest extends \PHPUnit_Framework_TestCase
+class PostUpMigrationListenerTest extends \PHPUnit\Framework\TestCase
 {
     public function testOnPostUp()
     {

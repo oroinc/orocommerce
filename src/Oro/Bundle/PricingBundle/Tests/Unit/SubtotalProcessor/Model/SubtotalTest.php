@@ -7,7 +7,7 @@ use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
 
-class SubtotalTest extends \PHPUnit_Framework_TestCase
+class SubtotalTest extends \PHPUnit\Framework\TestCase
 {
     public function testProperties()
     {

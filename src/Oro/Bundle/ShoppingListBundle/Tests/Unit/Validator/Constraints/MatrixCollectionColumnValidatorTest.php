@@ -13,10 +13,10 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
 
-class MatrixCollectionColumnValidatorTest extends \PHPUnit_Framework_TestCase
+class MatrixCollectionColumnValidatorTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ExecutionContextInterface
+     * @var \PHPUnit\Framework\MockObject\MockObject|ExecutionContextInterface
      */
     protected $context;
 
@@ -78,7 +78,7 @@ class MatrixCollectionColumnValidatorTest extends \PHPUnit_Framework_TestCase
         $unitPrecision = new ProductUnitPrecision();
         $unitPrecision->setPrecision($validPrecision);
 
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $parentForm */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $parentForm */
         $rootForm = $this->createMock(FormInterface::class);
 
         $this->context->expects($this->once())

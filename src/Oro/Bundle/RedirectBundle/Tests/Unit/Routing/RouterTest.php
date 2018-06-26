@@ -12,20 +12,20 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\Matcher\UrlMatcherInterface;
 use Symfony\Component\Routing\RouteCollection;
 
-class RouterTest extends \PHPUnit_Framework_TestCase
+class RouterTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var MatchedUrlDecisionMaker|\PHPUnit_Framework_MockObject_MockObject
+     * @var MatchedUrlDecisionMaker|\PHPUnit\Framework\MockObject\MockObject
      */
     private $urlDecisionMaker;
 
     /**
-     * @var ContainerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ContainerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $container;
 
     /**
-     * @var Router|\PHPUnit_Framework_MockObject_MockObject
+     * @var Router|\PHPUnit\Framework\MockObject\MockObject
      */
     private $router;
 
@@ -137,7 +137,7 @@ class RouterTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     protected function getLoaderMock()
     {

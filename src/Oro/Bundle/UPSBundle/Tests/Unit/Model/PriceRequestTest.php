@@ -7,7 +7,7 @@ use Oro\Bundle\UPSBundle\Model\Package;
 use Oro\Bundle\UPSBundle\Model\PriceRequest;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-class PriceRequestTest extends \PHPUnit_Framework_TestCase
+class PriceRequestTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 

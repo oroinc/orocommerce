@@ -1,18 +1,7 @@
-define([
-    'oroui/js/app/controllers/base/controller'
-], function(BaseController) {
+define(function(require) {
     'use strict';
 
-    /**
-     * Init ContentManager's handlers
-     */
-    BaseController.loadBeforeAction([
-        'jquery', 'jquery.validate'
-    ], function($) {
-        var constraints = [
-            'orosale/js/validator/quote-product-offer-quantity'
-        ];
+    var $ = require('jquery.validate');
 
-        $.validator.loadMethod(constraints);
-    });
+    $.validator.loadMethod('orosale/js/validator/quote-product-offer-quantity');
 });

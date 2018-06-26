@@ -18,22 +18,22 @@ use Oro\Bundle\WebCatalogBundle\ContentNodeUtils\ContentNodeTreeResolverInterfac
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class ContentNodeTreeDumperTest extends \PHPUnit_Framework_TestCase
+class ContentNodeTreeDumperTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var ContentNodeTreeResolver|\PHPUnit_Framework_MockObject_MockObject
+     * @var ContentNodeTreeResolver|\PHPUnit\Framework\MockObject\MockObject
      */
     private $nodeTreeResolver;
 
     /**
-     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     private $doctrineHelper;
 
     /**
-     * @var Cache|\PHPUnit_Framework_MockObject_MockObject
+     * @var Cache|\PHPUnit\Framework\MockObject\MockObject
      */
     private $cache;
 

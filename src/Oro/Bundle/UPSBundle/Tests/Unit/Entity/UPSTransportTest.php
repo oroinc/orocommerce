@@ -10,7 +10,7 @@ use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
-class UPSTransportTest extends \PHPUnit_Framework_TestCase
+class UPSTransportTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
     use EntityTrait;

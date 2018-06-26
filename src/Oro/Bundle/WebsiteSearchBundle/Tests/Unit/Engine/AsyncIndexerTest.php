@@ -12,7 +12,7 @@ use Oro\Component\MessageQueue\Client\Message;
 use Oro\Component\MessageQueue\Client\MessagePriority;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 
-class AsyncIndexerTest extends \PHPUnit_Framework_TestCase
+class AsyncIndexerTest extends \PHPUnit\Framework\TestCase
 {
     const WEBSITE_ID = 1;
 
@@ -22,17 +22,17 @@ class AsyncIndexerTest extends \PHPUnit_Framework_TestCase
     private $indexer;
 
     /**
-     * @var MessageProducerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $messageProducer;
 
     /**
-     * @var IndexerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var IndexerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $baseIndexer;
 
     /**
-     * @var IndexerInputValidator|\PHPUnit_Framework_MockObject_MockObject
+     * @var IndexerInputValidator|\PHPUnit\Framework\MockObject\MockObject
      */
     private $inputValidator;
 

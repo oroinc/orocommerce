@@ -15,7 +15,7 @@ class CustomerTaxCodeGridListenerTest extends AbstractTaxCodeGridListenerTest
         $gridConfig = DatagridConfiguration::create(['name' => 'customers-grid']);
         $gridConfig->offsetSetByPath('[source][query][from]', [['alias' => 'customers']]);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $dataGrid */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|DatagridInterface $dataGrid */
         $dataGrid = $this->createMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
         $event = new BuildBefore($dataGrid, $gridConfig);
 

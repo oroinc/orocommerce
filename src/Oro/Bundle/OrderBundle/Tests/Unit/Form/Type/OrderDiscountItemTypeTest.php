@@ -24,7 +24,7 @@ class OrderDiscountItemTypeTest extends FormIntegrationTestCase
     protected $formType;
 
     /**
-     * @var TotalHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var TotalHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $totalHelper;
 
@@ -39,7 +39,7 @@ class OrderDiscountItemTypeTest extends FormIntegrationTestCase
     public function testBuildView()
     {
         $view = new FormView();
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock('Symfony\Component\Form\FormInterface');
 
         $options = [

@@ -7,15 +7,15 @@ use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 use Oro\Bundle\ShippingBundle\Context\LineItem\Builder\Basic\BasicShippingLineItemBuilder;
 use Oro\Bundle\ShippingBundle\Context\LineItem\Builder\Basic\Factory\BasicShippingLineItemBuilderFactory;
 
-class BasicShippingLineItemBuilderFactoryTest extends \PHPUnit_Framework_TestCase
+class BasicShippingLineItemBuilderFactoryTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ProductUnit|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProductUnit|\PHPUnit\Framework\MockObject\MockObject
      */
     private $productUnitMock;
 
     /**
-     * @var ProductHolderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProductHolderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $productHolderMock;
 

@@ -7,9 +7,9 @@ use Oro\Bundle\CheckoutBundle\Factory\CheckoutLineItemsFactory;
 use Oro\Bundle\CheckoutBundle\Model\CheckoutLineItemConverterInterface;
 use Oro\Bundle\CheckoutBundle\Model\CheckoutLineItemConverterRegistry;
 
-class CheckoutLineItemsFactoryTest extends \PHPUnit_Framework_TestCase
+class CheckoutLineItemsFactoryTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var CheckoutLineItemConverterRegistry|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var CheckoutLineItemConverterRegistry|\PHPUnit\Framework\MockObject\MockObject */
     protected $registry;
 
     /** @var CheckoutLineItemsFactory */

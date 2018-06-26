@@ -14,7 +14,7 @@ use Oro\Bundle\ProductBundle\EventListener\FrontendProductDatagridListener;
 use Oro\Bundle\SearchBundle\Datagrid\Event\SearchResultAfter;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
+class FrontendProductDatagridListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
@@ -24,12 +24,12 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
     protected $listener;
 
     /**
-     * @var DataGridThemeHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var DataGridThemeHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $themeHelper;
 
     /**
-     * @var CacheManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var CacheManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $imagineCacheManager;
 
@@ -140,7 +140,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
         }
 
         /**
-         * @var SearchResultAfter|\PHPUnit_Framework_MockObject_MockObject $event
+         * @var SearchResultAfter|\PHPUnit\Framework\MockObject\MockObject $event
          */
         $event = $this->getMockBuilder(SearchResultAfter::class)
             ->disableOriginalConstructor()
@@ -150,7 +150,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
             ->willReturn($records);
 
         /**
-         * @var Datagrid|\PHPUnit_Framework_MockObject_MockObject $datagrid
+         * @var Datagrid|\PHPUnit\Framework\MockObject\MockObject $datagrid
          */
         $datagrid = $this->getMockBuilder(Datagrid::class)
             ->disableOriginalConstructor()->getMock();
@@ -266,14 +266,14 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
      */
     public function testOnResultAfterViewWithoutImage($themeName)
     {
-        /** @var SearchResultAfter|\PHPUnit_Framework_MockObject_MockObject $event */
+        /** @var SearchResultAfter|\PHPUnit\Framework\MockObject\MockObject $event */
         $event = $this->getMockBuilder(SearchResultAfter::class)
             ->disableOriginalConstructor()->getMock();
         $event->expects($this->once())
             ->method('getRecords')
             ->willReturn([]);
 
-        /** @var Datagrid|\PHPUnit_Framework_MockObject_MockObject $datagrid */
+        /** @var Datagrid|\PHPUnit\Framework\MockObject\MockObject $datagrid */
         $datagrid = $this->getMockBuilder(Datagrid::class)
             ->disableOriginalConstructor()->getMock();
 

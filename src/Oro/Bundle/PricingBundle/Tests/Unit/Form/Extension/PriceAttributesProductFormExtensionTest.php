@@ -27,7 +27,7 @@ class PriceAttributesProductFormExtensionTest extends FormIntegrationTestCase
     use EntityTrait;
 
     /**
-     * @var RegistryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var RegistryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $registry;
 

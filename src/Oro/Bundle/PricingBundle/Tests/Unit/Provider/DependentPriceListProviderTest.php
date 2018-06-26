@@ -8,11 +8,11 @@ use Oro\Bundle\PricingBundle\Model\PriceRuleLexemeTriggerHandler;
 use Oro\Bundle\PricingBundle\Provider\DependentPriceListProvider;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class DependentPriceListProviderTest extends \PHPUnit_Framework_TestCase
+class DependentPriceListProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /** @var PriceRuleLexemeTriggerHandler|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var PriceRuleLexemeTriggerHandler|\PHPUnit\Framework\MockObject\MockObject */
     protected $priceRuleLexemeTriggerHandler;
 
     /** @var DependentPriceListProvider */

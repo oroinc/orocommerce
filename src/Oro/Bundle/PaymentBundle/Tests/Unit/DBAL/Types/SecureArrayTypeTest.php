@@ -6,7 +6,7 @@ use Oro\Bundle\PaymentBundle\DBAL\Types\SecureArrayType;
 use Oro\Bundle\SecurityBundle\Encoder\Mcrypt;
 use Oro\Component\TestUtils\ORM\Mocks\DatabasePlatformMock;
 
-class SecureArrayTypeTest extends \PHPUnit_Framework_TestCase
+class SecureArrayTypeTest extends \PHPUnit\Framework\TestCase
 {
     /** @var SecureArrayType */
     protected $type;
@@ -115,7 +115,7 @@ class SecureArrayTypeTest extends \PHPUnit_Framework_TestCase
 
     public function testTextIsUsedToStoreData()
     {
-        /** @var DatabasePlatformMock|\PHPUnit_Framework_MockObject_MockObject $platform */
+        /** @var DatabasePlatformMock|\PHPUnit\Framework\MockObject\MockObject $platform */
         $platform = $this->createMock('Oro\Component\TestUtils\ORM\Mocks\DatabasePlatformMock');
 
         $platform->expects($this->once())->method('getClobTypeDeclarationSQL');
@@ -125,7 +125,7 @@ class SecureArrayTypeTest extends \PHPUnit_Framework_TestCase
 
     public function testRequiresSQLCommentHint()
     {
-        /** @var DatabasePlatformMock|\PHPUnit_Framework_MockObject_MockObject $platform */
+        /** @var DatabasePlatformMock|\PHPUnit\Framework\MockObject\MockObject $platform */
         $platform = $this->createMock('Oro\Component\TestUtils\ORM\Mocks\DatabasePlatformMock');
         $this->assertTrue($this->type->requiresSQLCommentHint($platform));
     }

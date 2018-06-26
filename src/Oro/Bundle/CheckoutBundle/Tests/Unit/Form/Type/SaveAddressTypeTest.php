@@ -12,7 +12,7 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 class SaveAddressTypeTest extends FormIntegrationTestCase
 {
     /**
-     * @var  AuthorizationCheckerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var  AuthorizationCheckerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $authorizationChecker;
 

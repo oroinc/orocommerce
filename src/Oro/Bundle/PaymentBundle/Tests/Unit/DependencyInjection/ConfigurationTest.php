@@ -8,7 +8,7 @@ use Symfony\Component\Config\Definition\Processor;
 /**
  * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
  */
-class ConfigurationTest extends \PHPUnit_Framework_TestCase
+class ConfigurationTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Test Configuration

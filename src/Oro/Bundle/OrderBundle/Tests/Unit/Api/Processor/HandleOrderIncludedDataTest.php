@@ -10,7 +10,7 @@ use Oro\Bundle\OrderBundle\Provider\SkuCachedProductProvider;
 class HandleOrderIncludedDataTest extends FormProcessorTestCase
 {
     /**
-     * @var SkuCachedProductProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var SkuCachedProductProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $skuCachedProductProviderMock;
 

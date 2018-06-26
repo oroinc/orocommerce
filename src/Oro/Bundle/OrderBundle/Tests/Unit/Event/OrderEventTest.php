@@ -5,7 +5,7 @@ namespace Oro\Bundle\OrderBundle\Tests\Unit\Event;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Event\OrderEvent;
 
-class OrderEventTest extends \PHPUnit_Framework_TestCase
+class OrderEventTest extends \PHPUnit\Framework\TestCase
 {
     public function testEvent()
     {

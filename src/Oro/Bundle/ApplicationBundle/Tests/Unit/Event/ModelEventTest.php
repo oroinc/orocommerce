@@ -5,7 +5,7 @@ namespace Oro\Bundle\ApplicationBundle\Tests\Unit\Event;
 use Oro\Bundle\ApplicationBundle\Event\ModelEvent;
 use Oro\Bundle\ApplicationBundle\Tests\Unit\Stub\TestModel;
 
-class ModelEventTest extends \PHPUnit_Framework_TestCase
+class ModelEventTest extends \PHPUnit\Framework\TestCase
 {
     public function testModelAccessors()
     {

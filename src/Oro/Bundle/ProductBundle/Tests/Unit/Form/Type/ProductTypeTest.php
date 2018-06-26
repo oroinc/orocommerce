@@ -67,12 +67,12 @@ class ProductTypeTest extends FormIntegrationTestCase
     protected $type;
 
     /**
-     * @var UrlGeneratorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var UrlGeneratorInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $urlGenerator;
 
     /**
-     * @var ChainDefaultProductUnitProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var ChainDefaultProductUnitProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $defaultProductUnitProvider;
 
@@ -101,7 +101,7 @@ class ProductTypeTest extends FormIntegrationTestCase
     protected $images = [];
 
     /**
-     * @var ProductUnitLabelFormatter|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProductUnitLabelFormatter|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $productUnitLabelFormatter;
 
@@ -162,22 +162,22 @@ class ProductTypeTest extends FormIntegrationTestCase
 
         $stubEnumSelectType = new EnumSelectTypeStub();
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|ConfigProvider $configProvider */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|ConfigProvider $configProvider */
         $configProvider = $this->getMockBuilder(ConfigProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
-        /** @var \PHPUnit_Framework_MockObject_MockObject|Translator $translator */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|Translator $translator */
         $translator = $this->getMockBuilder(Translator::class)
             ->disableOriginalConstructor()
             ->getMock();
-        /** @var \PHPUnit_Framework_MockObject_MockObject|ImageTypeProvider $imageTypeProvider*/
+        /** @var \PHPUnit\Framework\MockObject\MockObject|ImageTypeProvider $imageTypeProvider*/
         $imageTypeProvider = $this->getMockBuilder(ImageTypeProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
         $imageTypeProvider->expects($this->any())
             ->method('getImageTypes')
             ->willReturn([]);
-        /** @var \PHPUnit_Framework_MockObject_MockObject|VariantFieldProvider $variantFieldProvider */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|VariantFieldProvider $variantFieldProvider */
         $variantFieldProvider = $this->getMockBuilder(VariantFieldProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -185,14 +185,14 @@ class ProductTypeTest extends FormIntegrationTestCase
         $variantFieldProvider->expects($this->any())
             ->method('getVariantFields')
             ->willReturn($variantFields);
-        /** @var \PHPUnit_Framework_MockObject_MockObject|EntityFallbackResolver $entityFallbackResolver */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|EntityFallbackResolver $entityFallbackResolver */
         $entityFallbackResolver = $this->getMockBuilder(EntityFallbackResolver::class)
             ->disableOriginalConstructor()
             ->getMock();
         $entityFallbackResolver->expects($this->any())
             ->method('getFallbackConfig')
             ->willReturn([]);
-        /** @var \PHPUnit_Framework_MockObject_MockObject|PageTemplatesManager $pageTemplatesManager */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|PageTemplatesManager $pageTemplatesManager */
         $pageTemplatesManager = $this->getMockBuilder(PageTemplatesManager::class)
             ->disableOriginalConstructor()
             ->getMock();

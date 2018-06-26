@@ -12,14 +12,14 @@ use Symfony\Component\Form\FormView;
 class TransitionFormProvider extends AbstractFormProvider
 {
     /**
-     * @var TransitionProvider
+     * @var TransitionProviderInterface
      */
     private $transitionProvider;
 
     /**
      * @var TransitionProvider
      */
-    public function setTransitionProvider(TransitionProvider $transitionProvider)
+    public function setTransitionProvider(TransitionProviderInterface $transitionProvider)
     {
         $this->transitionProvider = $transitionProvider;
     }

@@ -16,22 +16,22 @@ use Oro\Bundle\PromotionBundle\Tests\Unit\Discount\Stub\DiscountStub;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class PromotionDiscountsProviderTest extends \PHPUnit_Framework_TestCase
+class PromotionDiscountsProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var PromotionProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var PromotionProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     private $promotionProvider;
 
     /**
-     * @var DiscountFactory|\PHPUnit_Framework_MockObject_MockObject
+     * @var DiscountFactory|\PHPUnit\Framework\MockObject\MockObject
      */
     private $discountFactory;
 
     /**
-     * @var MatchingProductsProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var MatchingProductsProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     private $matchingProductsProvider;
 

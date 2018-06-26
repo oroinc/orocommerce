@@ -9,15 +9,15 @@ use Oro\Bundle\PaymentBundle\Entity\Repository\PaymentTransactionRepository;
 use Oro\Bundle\PaymentBundle\Method\Event\MethodRenamingEvent;
 use Oro\Bundle\PaymentBundle\Method\EventListener\MethodRenamingListener;
 
-class MethodRenamingListenerTest extends \PHPUnit_Framework_TestCase
+class MethodRenamingListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var PaymentMethodConfigRepository|\PHPUnit_Framework_MockObject_MockObject
+     * @var PaymentMethodConfigRepository|\PHPUnit\Framework\MockObject\MockObject
      */
     private $paymentMethodConfigRepository;
 
     /**
-     * @var PaymentTransactionRepository|\PHPUnit_Framework_MockObject_MockObject
+     * @var PaymentTransactionRepository|\PHPUnit\Framework\MockObject\MockObject
      */
     private $paymentTransactionRepository;
 
@@ -41,7 +41,7 @@ class MethodRenamingListenerTest extends \PHPUnit_Framework_TestCase
         $oldId = 'old_name';
         $newId = 'new_name';
 
-        /** @var MethodRenamingEvent|\PHPUnit_Framework_MockObject_MockObject $event */
+        /** @var MethodRenamingEvent|\PHPUnit\Framework\MockObject\MockObject $event */
         $event = $this->createMock(MethodRenamingEvent::class);
         $event->expects(static::any())
             ->method('getOldMethodIdentifier')

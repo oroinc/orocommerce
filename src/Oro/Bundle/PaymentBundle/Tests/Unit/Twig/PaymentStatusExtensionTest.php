@@ -6,11 +6,11 @@ use Oro\Bundle\PaymentBundle\Formatter\PaymentStatusLabelFormatter;
 use Oro\Bundle\PaymentBundle\Twig\PaymentStatusExtension;
 use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
 
-class PaymentStatusExtensionTest extends \PHPUnit_Framework_TestCase
+class PaymentStatusExtensionTest extends \PHPUnit\Framework\TestCase
 {
     use TwigExtensionTestCaseTrait;
 
-    /** @var PaymentStatusLabelFormatter|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var PaymentStatusLabelFormatter|\PHPUnit\Framework\MockObject\MockObject */
     protected $paymentStatusLabelFormatter;
 
     /** @var PaymentStatusExtension */

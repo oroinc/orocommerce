@@ -6,7 +6,7 @@ use Oro\Bundle\WebsiteSearchBundle\Entity\IndexDatetime;
 use Oro\Bundle\WebsiteSearchBundle\Entity\Item;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-class IndexDatetimeTest extends \PHPUnit_Framework_TestCase
+class IndexDatetimeTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 

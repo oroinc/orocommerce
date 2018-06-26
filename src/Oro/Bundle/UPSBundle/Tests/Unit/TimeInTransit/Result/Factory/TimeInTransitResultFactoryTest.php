@@ -9,7 +9,7 @@ use Oro\Bundle\UPSBundle\TimeInTransit\Result\Factory\EstimatedArrivalFactoryInt
 use Oro\Bundle\UPSBundle\TimeInTransit\Result\Factory\TimeInTransitResultFactory;
 use Oro\Bundle\UPSBundle\TimeInTransit\Result\TimeInTransitResult;
 
-class TimeInTransitResultFactoryTest extends \PHPUnit_Framework_TestCase
+class TimeInTransitResultFactoryTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @internal
@@ -102,7 +102,7 @@ class TimeInTransitResultFactoryTest extends \PHPUnit_Framework_TestCase
     const TRANSACTION_IDENTIFIER = 'sample id';
 
     /**
-     * @var EstimatedArrivalFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var EstimatedArrivalFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $estimatedArrivalFactory;
 
@@ -236,7 +236,7 @@ class TimeInTransitResultFactoryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return RestResponseInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return RestResponseInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private function getRestResponseWithMalformedDate()
     {
@@ -316,7 +316,7 @@ class TimeInTransitResultFactoryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return RestResponseInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return RestResponseInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private function getSuccessRestResponse()
     {
@@ -386,7 +386,7 @@ class TimeInTransitResultFactoryTest extends \PHPUnit_Framework_TestCase
      * @param string $code
      * @param string $description
      *
-     * @return RestResponseInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return RestResponseInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private function getFaultRestResponse($code, $description)
     {
@@ -411,7 +411,7 @@ class TimeInTransitResultFactoryTest extends \PHPUnit_Framework_TestCase
     /**
      * @param array|null $data
      *
-     * @return RestResponseInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return RestResponseInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private function createRestResponse($data)
     {

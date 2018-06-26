@@ -10,18 +10,18 @@ use Oro\Bundle\PaymentBundle\Tests\Unit\Context\PaymentContextMockTrait;
 use Oro\Bundle\PaymentBundle\Tests\Unit\Entity\PaymentMethodsConfigsRuleMockTrait;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
-class BasicMethodsConfigsRulesByContextProviderTest extends \PHPUnit_Framework_TestCase
+class BasicMethodsConfigsRulesByContextProviderTest extends \PHPUnit\Framework\TestCase
 {
     use PaymentMethodsConfigsRuleMockTrait;
     use PaymentContextMockTrait;
 
     /**
-     * @var PaymentMethodsConfigsRuleRepository|\PHPUnit_Framework_MockObject_MockObject
+     * @var PaymentMethodsConfigsRuleRepository|\PHPUnit\Framework\MockObject\MockObject
      */
     private $repository;
 
     /**
-     * @var MethodsConfigsRulesFiltrationServiceInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var MethodsConfigsRulesFiltrationServiceInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $filtrationService;
 
@@ -109,7 +109,7 @@ class BasicMethodsConfigsRulesByContextProviderTest extends \PHPUnit_Framework_T
     }
 
     /**
-     * @return AddressInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return AddressInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private function createAddressMock()
     {
@@ -117,7 +117,7 @@ class BasicMethodsConfigsRulesByContextProviderTest extends \PHPUnit_Framework_T
     }
 
     /**
-     * @return Website|\PHPUnit_Framework_MockObject_MockObject
+     * @return Website|\PHPUnit\Framework\MockObject\MockObject
      */
     private function createWebsiteMock()
     {

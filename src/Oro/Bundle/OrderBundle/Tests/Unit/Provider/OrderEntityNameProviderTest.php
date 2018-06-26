@@ -6,7 +6,7 @@ use Oro\Bundle\EntityBundle\Provider\EntityNameProviderInterface;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Provider\OrderEntityNameProvider;
 
-class OrderEntityNameProviderTest extends \PHPUnit_Framework_TestCase
+class OrderEntityNameProviderTest extends \PHPUnit\Framework\TestCase
 {
     /** @var OrderEntityNameProvider */
     protected $provider;

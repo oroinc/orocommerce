@@ -11,17 +11,17 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class PriceListTriggerHandlerTest extends \PHPUnit_Framework_TestCase
+class PriceListTriggerHandlerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var PriceListTriggerFactory|\PHPUnit_Framework_MockObject_MockObject
+     * @var PriceListTriggerFactory|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $triggerFactory;
 
     /**
-     * @var MessageProducerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $messageProducer;
 

@@ -8,7 +8,7 @@ use Oro\Bundle\ProductBundle\Twig\ProductExtension;
 use Oro\Bundle\ProductBundle\Twig\ProductImageExtension;
 use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
 
-class ProductImageExtensionTest extends \PHPUnit_Framework_TestCase
+class ProductImageExtensionTest extends \PHPUnit\Framework\TestCase
 {
     use TwigExtensionTestCaseTrait;
 

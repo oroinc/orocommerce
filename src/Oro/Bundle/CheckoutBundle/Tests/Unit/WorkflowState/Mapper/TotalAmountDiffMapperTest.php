@@ -9,7 +9,7 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 class TotalAmountDiffMapperTest extends AbstractCheckoutDiffMapperTest
 {
     /**
-     * @var TotalProcessorProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var TotalProcessorProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $totalProcessorProvider;
 

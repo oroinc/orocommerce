@@ -22,7 +22,7 @@ use Oro\Component\Testing\Unit\EntityTestCaseTrait;
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
-class ProductTest extends \PHPUnit_Framework_TestCase
+class ProductTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 

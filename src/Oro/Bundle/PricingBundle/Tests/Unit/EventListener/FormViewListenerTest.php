@@ -17,7 +17,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 class FormViewListenerTest extends FormViewListenerTestCase
 {
     /**
-     * @var PriceAttributePricesProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var PriceAttributePricesProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $priceAttributePricesProvider;
 
@@ -38,7 +38,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
 
         $priceList = new PriceAttributePriceList();
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|EntityRepository $priceAttributePriceListRepository */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|EntityRepository $priceAttributePriceListRepository */
         $priceAttributePriceListRepository = $this->createMock(EntityRepository::class);
 
         $priceAttributePriceListRepository->expects($this->once())
@@ -54,7 +54,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
             ->with($priceList, $product)
             ->willReturn(['Test' => ['item' => ['USD' => 100]]]);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $environment */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|\Twig_Environment $environment */
         $environment = $this->createMock(\Twig_Environment::class);
         $environment->expects($this->at(0))
             ->method('render')
@@ -91,7 +91,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
         $formView = new FormView();
         $templateHtml = 'template_html';
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $environment */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|\Twig_Environment $environment */
         $environment = $this->createMock(\Twig_Environment::class);
         $environment->expects($this->once())
             ->method('render')

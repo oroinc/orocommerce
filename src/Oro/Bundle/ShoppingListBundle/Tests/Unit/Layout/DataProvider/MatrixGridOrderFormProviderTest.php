@@ -15,17 +15,17 @@ use Symfony\Component\Form\FormRenderer;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class MatrixGridOrderFormProviderTest extends \PHPUnit_Framework_TestCase
+class MatrixGridOrderFormProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /** @var FormFactoryInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var FormFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $formFactory;
 
-    /** @var UrlGeneratorInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var UrlGeneratorInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $router;
 
-    /** @var MatrixGridOrderManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var MatrixGridOrderManager|\PHPUnit\Framework\MockObject\MockObject */
     private $matrixOrderManager;
 
     /** @var MatrixGridOrderFormProvider */

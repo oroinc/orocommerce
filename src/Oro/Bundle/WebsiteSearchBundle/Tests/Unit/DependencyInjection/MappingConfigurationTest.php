@@ -5,7 +5,7 @@ namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\DependencyInjection;
 use Oro\Bundle\WebsiteSearchBundle\DependencyInjection\MappingConfiguration;
 use Symfony\Component\Config\Definition\Processor;
 
-class MappingConfigurationTest extends \PHPUnit_Framework_TestCase
+class MappingConfigurationTest extends \PHPUnit\Framework\TestCase
 {
     public function testGetConfigTreeBuilder()
     {

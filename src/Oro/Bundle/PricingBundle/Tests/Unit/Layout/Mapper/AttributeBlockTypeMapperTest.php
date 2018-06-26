@@ -6,12 +6,12 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\PricingBundle\Layout\Mapper\AttributeBlockTypeMapper;
 
-class AttributeBlockTypeMapperTest extends \PHPUnit_Framework_TestCase
+class AttributeBlockTypeMapperTest extends \PHPUnit\Framework\TestCase
 {
     /** @var AttributeBlockTypeMapper */
     private $mapper;
 
-    /** @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
     private $registry;
 
     /**

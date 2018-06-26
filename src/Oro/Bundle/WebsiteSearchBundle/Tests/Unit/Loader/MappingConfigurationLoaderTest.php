@@ -8,7 +8,7 @@ use Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Loader\Fixture\Bundle\TestBundle2\
 use Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Loader\Fixture\Bundle\TestBundle3\TestBundle3;
 use Oro\Component\Config\CumulativeResourceManager;
 
-class MappingConfigurationLoaderTest extends \PHPUnit_Framework_TestCase
+class MappingConfigurationLoaderTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var MappingConfigurationLoader

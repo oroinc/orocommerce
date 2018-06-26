@@ -4,7 +4,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Search;
 
 use Oro\Bundle\ProductBundle\Search\ProductIndexFieldsProvider;
 
-class ProductIndexFieldsProviderTest extends \PHPUnit_Framework_TestCase
+class ProductIndexFieldsProviderTest extends \PHPUnit\Framework\TestCase
 {
     /** @var ProductIndexFieldsProvider */
     protected $provider;

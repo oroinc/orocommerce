@@ -6,10 +6,10 @@ use Oro\Bundle\PricingBundle\NotificationMessage\Message;
 use Oro\Bundle\PricingBundle\NotificationMessage\Renderer\FlashMessageRenderer;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 
-class FlashMessageRendererTest extends \PHPUnit_Framework_TestCase
+class FlashMessageRendererTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var FlashBagInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var FlashBagInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $flashBag;
 
@@ -26,7 +26,7 @@ class FlashMessageRendererTest extends \PHPUnit_Framework_TestCase
 
     public function testRenderDefaultStatus()
     {
-        /** @var Message|\PHPUnit_Framework_MockObject_MockObject $message **/
+        /** @var Message|\PHPUnit\Framework\MockObject\MockObject $message **/
         $message = $this->getMockBuilder(Message::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -47,7 +47,7 @@ class FlashMessageRendererTest extends \PHPUnit_Framework_TestCase
 
     public function testRenderKnownStatus()
     {
-        /** @var Message|\PHPUnit_Framework_MockObject_MockObject $message **/
+        /** @var Message|\PHPUnit\Framework\MockObject\MockObject $message **/
         $message = $this->getMockBuilder(Message::class)
             ->disableOriginalConstructor()
             ->getMock();

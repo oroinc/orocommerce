@@ -7,11 +7,11 @@ use Oro\Bundle\ShippingBundle\Entity\LengthUnit;
 use Oro\Bundle\ShippingBundle\Twig\DimensionsUnitValueExtension;
 use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
 
-class DimensionsUnitValueExtensionTest extends \PHPUnit_Framework_TestCase
+class DimensionsUnitValueExtensionTest extends \PHPUnit\Framework\TestCase
 {
     use TwigExtensionTestCaseTrait;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    /** @var \PHPUnit\Framework\MockObject\MockObject */
     private $formatter;
 
     /** @var DimensionsUnitValueExtension */

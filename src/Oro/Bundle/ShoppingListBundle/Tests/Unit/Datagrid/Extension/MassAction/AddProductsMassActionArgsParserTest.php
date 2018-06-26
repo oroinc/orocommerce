@@ -10,7 +10,7 @@ use Oro\Bundle\ShoppingListBundle\Datagrid\Extension\MassAction\AddProductsMassA
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class AddProductsMassActionArgsParserTest extends \PHPUnit_Framework_TestCase
+class AddProductsMassActionArgsParserTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 

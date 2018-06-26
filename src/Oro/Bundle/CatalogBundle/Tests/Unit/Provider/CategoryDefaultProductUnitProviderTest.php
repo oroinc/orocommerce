@@ -9,7 +9,7 @@ use Oro\Bundle\CatalogBundle\Provider\CategoryDefaultProductUnitProvider;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 
-class CategoryDefaultProductUnitProviderTest extends \PHPUnit_Framework_TestCase
+class CategoryDefaultProductUnitProviderTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var CategoryDefaultProductUnitProvider

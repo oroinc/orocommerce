@@ -17,7 +17,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
      */
     protected $listener;
 
-    /** @var  Request|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var  Request|\PHPUnit\Framework\MockObject\MockObject */
     protected $request;
 
     /**
@@ -27,7 +27,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
     {
         parent::setUp();
         $this->request = $this->getRequest();
-        /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
+        /** @var RequestStack|\PHPUnit\Framework\MockObject\MockObject $requestStack */
         $requestStack = $this->createMock('Symfony\Component\HttpFoundation\RequestStack');
         $requestStack->expects($this->any())->method('getCurrentRequest')->willReturn($this->request);
         $this->listener = new FormViewListener($this->translator, $this->doctrineHelper, $requestStack);
@@ -48,7 +48,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
             ->method('getEntityReference')
             ->willReturn($customerUser);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $env */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|\Twig_Environment $env */
         $env = $this->getMockBuilder('\Twig_Environment')
             ->disableOriginalConstructor()
             ->getMock();
@@ -67,7 +67,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
 
     public function testOnCustomerUserViewWithEmptyRequest()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|BeforeListRenderEvent $event */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|BeforeListRenderEvent $event */
         $event = $this->getMockBuilder('Oro\Bundle\UIBundle\Event\BeforeListRenderEvent')
             ->disableOriginalConstructor()
             ->getMock();
@@ -89,7 +89,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
             ->method('getEntityReference')
             ->willReturn($customer);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $env */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|\Twig_Environment $env */
         $env = $this->getMockBuilder('\Twig_Environment')
             ->disableOriginalConstructor()
             ->getMock();
@@ -117,7 +117,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
             ->method('getEntityReference')
             ->willReturn($customer);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|BeforeListRenderEvent $event */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|BeforeListRenderEvent $event */
         $event = $this->getMockBuilder('Oro\Bundle\UIBundle\Event\BeforeListRenderEvent')
             ->disableOriginalConstructor()
             ->getMock();
@@ -135,7 +135,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
             ->method('getEntityReference')
             ->willReturn(null);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|BeforeListRenderEvent $event */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|BeforeListRenderEvent $event */
         $event = $this->getMockBuilder('Oro\Bundle\UIBundle\Event\BeforeListRenderEvent')
             ->disableOriginalConstructor()
             ->getMock();
@@ -146,7 +146,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
 
     public function testOnCustomerViewWithEmptyRequest()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|BeforeListRenderEvent $event */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|BeforeListRenderEvent $event */
         $event = $this->getMockBuilder('Oro\Bundle\UIBundle\Event\BeforeListRenderEvent')
             ->disableOriginalConstructor()
             ->getMock();

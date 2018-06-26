@@ -4,7 +4,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Search;
 
 use Oro\Bundle\ProductBundle\Search\ProductIndexDataModel;
 
-class ProductIndexDataModelTest extends \PHPUnit_Framework_TestCase
+class ProductIndexDataModelTest extends \PHPUnit\Framework\TestCase
 {
     public function testGetters()
     {

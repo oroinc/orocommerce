@@ -17,17 +17,17 @@ use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class ContentNodeTreeResolverTest extends \PHPUnit_Framework_TestCase
+class ContentNodeTreeResolverTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     private $doctrineHelper;
 
     /**
-     * @var ScopeMatcher|\PHPUnit_Framework_MockObject_MockObject
+     * @var ScopeMatcher|\PHPUnit\Framework\MockObject\MockObject
      */
     private $scopeMatcher;
 
@@ -164,7 +164,7 @@ class ContentNodeTreeResolverTest extends \PHPUnit_Framework_TestCase
             ->method('getBestMatchByScope')
             ->willReturn($defaultVariant);
 
-        /** @var ClassMetadata|\PHPUnit_Framework_MockObject_MockObject $metadata */
+        /** @var ClassMetadata|\PHPUnit\Framework\MockObject\MockObject $metadata */
         $metadata = $this->getMockBuilder(ClassMetadata::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -173,7 +173,7 @@ class ContentNodeTreeResolverTest extends \PHPUnit_Framework_TestCase
         $metadata->expects($this->any())->method('getFieldValue')
             ->willReturnOnConsecutiveCalls(2, 'test_type', (new ArrayCollection([$slug])), ['anything']);
 
-        /** @var ClassMetadata|\PHPUnit_Framework_MockObject_MockObject $childMetadata */
+        /** @var ClassMetadata|\PHPUnit\Framework\MockObject\MockObject $childMetadata */
         $childMetadata = $this->getMockBuilder(ClassMetadata::class)
             ->disableOriginalConstructor()
             ->getMock();

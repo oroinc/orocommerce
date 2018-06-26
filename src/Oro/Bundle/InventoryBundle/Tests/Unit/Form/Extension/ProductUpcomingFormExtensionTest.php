@@ -10,14 +10,14 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormInterface;
 
-class ProductUpcomingFormExtensionTest extends \PHPUnit_Framework_TestCase
+class ProductUpcomingFormExtensionTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var ProductUpcomingFormExtension
      */
     protected $productFormExtension;
 
-    /** @var FormBuilderInterface|\PHPUnit_Framework_MockObject_MockObject $builder * */
+    /** @var FormBuilderInterface|\PHPUnit\Framework\MockObject\MockObject $builder * */
     protected $builder;
 
     /**

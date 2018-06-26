@@ -12,17 +12,17 @@ use Oro\Bundle\WebCatalogBundle\Entity\Repository\ContentNodeRepository;
 use Oro\Bundle\WebCatalogBundle\Model\ResolveNodeSlugsMessageFactory;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class ResolveNodeSlugsMessageFactoryTest extends \PHPUnit_Framework_TestCase
+class ResolveNodeSlugsMessageFactoryTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $doctrineHelper;
 
     /**
-     * @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $configManager;
 

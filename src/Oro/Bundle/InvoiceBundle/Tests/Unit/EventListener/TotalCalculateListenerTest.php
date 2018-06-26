@@ -9,9 +9,9 @@ use Oro\Bundle\PricingBundle\Event\TotalCalculateBeforeEvent;
 use Symfony\Component\Form\FormFactory;
 use Symfony\Component\HttpFoundation\Request;
 
-class TotalCalculateListenerTest extends \PHPUnit_Framework_TestCase
+class TotalCalculateListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var \PHPUnit_Framework_MockObject_MockObject|FormFactory */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|FormFactory */
     protected $formFactory;
 
     /** @var TotalCalculateListener */

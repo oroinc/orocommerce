@@ -8,7 +8,7 @@ use Oro\Bundle\PromotionBundle\Entity\AppliedPromotion;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class AppliedDiscountTest extends \PHPUnit_Framework_TestCase
+class AppliedDiscountTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
     use EntityTestCaseTrait;

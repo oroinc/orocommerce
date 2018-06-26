@@ -13,7 +13,7 @@ use Oro\Bundle\PromotionBundle\Tests\Unit\Entity\Stub\Order;
 use Oro\Bundle\PromotionBundle\Twig\AppliedPromotionsExtension;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class AppliedPromotionsExtensionTest extends \PHPUnit_Framework_TestCase
+class AppliedPromotionsExtensionTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
@@ -28,7 +28,7 @@ class AppliedPromotionsExtensionTest extends \PHPUnit_Framework_TestCase
     const TYPE = 'order';
 
     /**
-     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     private $registry;
 

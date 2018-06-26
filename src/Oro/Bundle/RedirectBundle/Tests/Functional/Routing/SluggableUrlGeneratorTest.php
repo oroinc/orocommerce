@@ -48,7 +48,7 @@ class SluggableUrlGeneratorTest extends WebTestCase
         $localizedSlug = $this->getReference(LoadSlugsData::SLUG_URL_LOCALIZATION_2);
 
         $localization = $this->getEntity(Localization::class, ['id' => $localizedSlug->getLocalization()->getId()]);
-        /** @var UserLocalizationManager|\PHPUnit_Framework_MockObject_MockObject $localizationManager */
+        /** @var UserLocalizationManager|\PHPUnit\Framework\MockObject\MockObject $localizationManager */
         $localizationManager = $this->createMock(UserLocalizationManager::class);
         $localizationManager->expects($this->exactly(2))
             ->method('getCurrentLocalization')
@@ -80,7 +80,7 @@ class SluggableUrlGeneratorTest extends WebTestCase
         $defaultSlug = $this->getReference(LoadSlugsData::SLUG_URL_PAGE_2);
 
         $localization = $this->getEntity(Localization::class, ['id' => 1]);
-        /** @var UserLocalizationManager|\PHPUnit_Framework_MockObject_MockObject $localizationManager */
+        /** @var UserLocalizationManager|\PHPUnit\Framework\MockObject\MockObject $localizationManager */
         $localizationManager = $this->createMock(UserLocalizationManager::class);
         $localizationManager->expects($this->any())
             ->method('getCurrentLocalization')
@@ -105,7 +105,7 @@ class SluggableUrlGeneratorTest extends WebTestCase
         $slug = $this->getReference(LoadSlugsData::PAGE_3_LOCALIZED_EN_CA);
 
         $localization = $this->getEntity(Localization::class, ['id' => $slug->getLocalization()->getId()]);
-        /** @var UserLocalizationManager|\PHPUnit_Framework_MockObject_MockObject $localizationManager */
+        /** @var UserLocalizationManager|\PHPUnit\Framework\MockObject\MockObject $localizationManager */
         $localizationManager = $this->createMock(UserLocalizationManager::class);
         $localizationManager->expects($this->any())
             ->method('getCurrentLocalization')

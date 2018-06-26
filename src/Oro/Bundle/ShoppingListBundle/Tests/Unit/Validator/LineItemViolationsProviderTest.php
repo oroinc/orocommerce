@@ -8,10 +8,10 @@ use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class LineItemViolationsProviderTest extends \PHPUnit_Framework_TestCase
+class LineItemViolationsProviderTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ValidatorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ValidatorInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $validator;
 
@@ -61,7 +61,7 @@ class LineItemViolationsProviderTest extends \PHPUnit_Framework_TestCase
             ->method('getCause')
             ->willReturn('error');
 
-        /** @var ConstraintViolationListInterface|\PHPUnit_Framework_MockObject_MockObject $errorList */
+        /** @var ConstraintViolationListInterface|\PHPUnit\Framework\MockObject\MockObject $errorList */
         $errorList = new ConstraintViolationList();
         $errorList->add($constraintViolation);
 
@@ -86,7 +86,7 @@ class LineItemViolationsProviderTest extends \PHPUnit_Framework_TestCase
             ->method('getCause')
             ->willReturn('warning');
 
-        /** @var ConstraintViolationListInterface|\PHPUnit_Framework_MockObject_MockObject $errorList */
+        /** @var ConstraintViolationListInterface|\PHPUnit\Framework\MockObject\MockObject $errorList */
         $errorList = new ConstraintViolationList();
         $errorList->add($constraintViolation);
 

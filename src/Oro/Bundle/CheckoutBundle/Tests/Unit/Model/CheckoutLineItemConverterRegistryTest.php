@@ -7,9 +7,9 @@ use Oro\Bundle\CheckoutBundle\Model\CheckoutLineItemConverterInterface;
 use Oro\Bundle\CheckoutBundle\Model\CheckoutLineItemConverterRegistry;
 use Psr\Log\LoggerInterface;
 
-class CheckoutLineItemConverterRegistryTest extends \PHPUnit_Framework_TestCase
+class CheckoutLineItemConverterRegistryTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $logger;
 
     /** @var CheckoutLineItemConverterRegistry */

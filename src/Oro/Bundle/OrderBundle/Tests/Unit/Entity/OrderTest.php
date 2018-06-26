@@ -21,7 +21,7 @@ use Oro\Component\Testing\Unit\EntityTrait;
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class OrderTest extends \PHPUnit_Framework_TestCase
+class OrderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
     use EntityTrait;
@@ -115,7 +115,7 @@ class OrderTest extends \PHPUnit_Framework_TestCase
     {
         $order = new Order();
 
-        /** @var Customer|\PHPUnit_Framework_MockObject_MockObject $customer */
+        /** @var Customer|\PHPUnit\Framework\MockObject\MockObject $customer */
         $customer = $this->createMock('Oro\Bundle\CustomerBundle\Entity\Customer');
         $customer->expects($this->any())
             ->method('getId')

@@ -6,11 +6,11 @@ use Oro\Bundle\ShippingBundle\Formatter\DimensionsValueFormatter;
 use Oro\Bundle\ShippingBundle\Model\DimensionsValue;
 use Symfony\Component\Translation\TranslatorInterface;
 
-class DimensionsValueFormatterTest extends \PHPUnit_Framework_TestCase
+class DimensionsValueFormatterTest extends \PHPUnit\Framework\TestCase
 {
     const TRANSLATION_PREFIX = 'oro.length_unit';
 
-    /** @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $translator;
 
     /** @var DimensionsValueFormatter */

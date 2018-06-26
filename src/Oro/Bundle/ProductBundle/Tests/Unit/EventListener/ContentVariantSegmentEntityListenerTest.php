@@ -8,12 +8,12 @@ use Oro\Bundle\ProductBundle\EventListener\ProductCollectionVariantReindexMessag
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class ContentVariantSegmentEntityListenerTest extends \PHPUnit_Framework_TestCase
+class ContentVariantSegmentEntityListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var ProductCollectionVariantReindexMessageSendListener|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProductCollectionVariantReindexMessageSendListener|\PHPUnit\Framework\MockObject\MockObject
      */
     private $reindexEventListener;
 
@@ -52,7 +52,7 @@ class ContentVariantSegmentEntityListenerTest extends \PHPUnit_Framework_TestCas
         $this->reindexEventListener
             ->expects($this->never())
             ->method('scheduleSegment');
-        /** @var PreUpdateEventArgs|\PHPUnit_Framework_MockObject_MockObject $event */
+        /** @var PreUpdateEventArgs|\PHPUnit\Framework\MockObject\MockObject $event */
         $event = $this->createMock(PreUpdateEventArgs::class);
         $event->expects($this->once())
             ->method('hasChangedField')
@@ -71,7 +71,7 @@ class ContentVariantSegmentEntityListenerTest extends \PHPUnit_Framework_TestCas
             ->expects($this->once())
             ->method('scheduleSegment')
             ->with($segment);
-        /** @var PreUpdateEventArgs|\PHPUnit_Framework_MockObject_MockObject $event */
+        /** @var PreUpdateEventArgs|\PHPUnit\Framework\MockObject\MockObject $event */
         $event = $this->createMock(PreUpdateEventArgs::class);
         $event->expects($this->once())
             ->method('hasChangedField')

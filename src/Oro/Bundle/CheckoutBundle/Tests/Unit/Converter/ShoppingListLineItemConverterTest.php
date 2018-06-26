@@ -10,7 +10,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
-class ShoppingListLineItemConverterTest extends \PHPUnit_Framework_TestCase
+class ShoppingListLineItemConverterTest extends \PHPUnit\Framework\TestCase
 {
     /** @var ShoppingListLineItemConverter */
     protected $converter;
@@ -47,7 +47,7 @@ class ShoppingListLineItemConverterTest extends \PHPUnit_Framework_TestCase
 
     public function testConvert()
     {
-        /** @var ShoppingList|\PHPUnit_Framework_MockObject_MockObject $shoppingList */
+        /** @var ShoppingList|\PHPUnit\Framework\MockObject\MockObject $shoppingList */
         $shoppingList = $this->createMock(ShoppingList::class);
         $lineItemMock = $this->createMock(LineItem::class);
 

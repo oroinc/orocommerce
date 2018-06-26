@@ -6,10 +6,10 @@ use Oro\Bundle\PaymentBundle\Context\Factory\CompositeSupportsEntityPaymentConte
 use Oro\Bundle\PaymentBundle\Context\Factory\TransactionPaymentContextFactory;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 
-class TransactionPaymentContextFactoryTest extends \PHPUnit_Framework_TestCase
+class TransactionPaymentContextFactoryTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var CompositeSupportsEntityPaymentContextFactory|\PHPUnit_Framework_MockObject_MockObject
+     * @var CompositeSupportsEntityPaymentContextFactory|\PHPUnit\Framework\MockObject\MockObject
      */
     private $compositeFactory;
 
@@ -88,7 +88,7 @@ class TransactionPaymentContextFactoryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return PaymentTransaction|\PHPUnit_Framework_MockObject_MockObject
+     * @return PaymentTransaction|\PHPUnit\Framework\MockObject\MockObject
      */
     private function createPaymentTransactionMock()
     {

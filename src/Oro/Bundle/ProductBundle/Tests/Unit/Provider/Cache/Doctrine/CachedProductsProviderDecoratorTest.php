@@ -7,17 +7,17 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Provider\Cache\Doctrine\CachedProductsProviderDecorator;
 use Oro\Bundle\ProductBundle\Provider\ProductsProviderInterface;
 
-class CachedProductsProviderDecoratorTest extends \PHPUnit_Framework_TestCase
+class CachedProductsProviderDecoratorTest extends \PHPUnit\Framework\TestCase
 {
     const CACHE_KEY = 'cached_products_provider_decorator';
 
     /**
-     * @var ProductsProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProductsProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $decoratedProvider;
 
     /**
-     * @var Cache|\PHPUnit_Framework_MockObject_MockObject
+     * @var Cache|\PHPUnit\Framework\MockObject\MockObject
      */
     private $cache;
 
@@ -112,7 +112,7 @@ class CachedProductsProviderDecoratorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return Product|\PHPUnit_Framework_MockObject_MockObject
+     * @return Product|\PHPUnit\Framework\MockObject\MockObject
      */
     private function getProductMock()
     {

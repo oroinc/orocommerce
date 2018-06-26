@@ -13,10 +13,10 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
 abstract class AbstractShippingOptionSelectTypeTest extends FormIntegrationTestCase
 {
-    /** @var \PHPUnit_Framework_MockObject_MockObject|MeasureUnitProvider */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|MeasureUnitProvider */
     protected $provider;
 
-    /** @var UnitLabelFormatter|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var UnitLabelFormatter|\PHPUnit\Framework\MockObject\MockObject */
     protected $formatter;
 
     /** @var AbstractShippingOptionSelectType */
@@ -198,11 +198,11 @@ abstract class AbstractShippingOptionSelectTypeTest extends FormIntegrationTestC
 
     /**
      * @param string $code
-     * @return MeasureUnitInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return MeasureUnitInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function createUnit($code)
     {
-        /** @var MeasureUnitInterface|\PHPUnit_Framework_MockObject_MockObject $unit */
+        /** @var MeasureUnitInterface|\PHPUnit\Framework\MockObject\MockObject $unit */
         $unit = $this->createMock('Oro\Bundle\ProductBundle\Entity\MeasureUnitInterface');
         $unit->expects($this->any())
             ->method('getCode')

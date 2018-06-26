@@ -11,15 +11,15 @@ use Symfony\Component\Filesystem\Filesystem;
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class SitemapFilesystemAdapterTest extends \PHPUnit_Framework_TestCase
+class SitemapFilesystemAdapterTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var Filesystem|\PHPUnit_Framework_MockObject_MockObject
+     * @var Filesystem|\PHPUnit\Framework\MockObject\MockObject
      */
     private $filesystem;
 
     /**
-     * @var SitemapFileWriterInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var SitemapFileWriterInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $fileWriter;
 
@@ -53,7 +53,7 @@ class SitemapFilesystemAdapterTest extends \PHPUnit_Framework_TestCase
         $website = $this->getConfiguredWebsite();
 
         $content = 'test';
-        /** @var SitemapStorageInterface|\PHPUnit_Framework_MockObject_MockObject $storage */
+        /** @var SitemapStorageInterface|\PHPUnit\Framework\MockObject\MockObject $storage */
         $storage = $this->createMock(SitemapStorageInterface::class);
         $storage->expects($this->once())
             ->method('getContents')
@@ -77,7 +77,7 @@ class SitemapFilesystemAdapterTest extends \PHPUnit_Framework_TestCase
 
     public function testDumpSitemapStorageWithoutItems()
     {
-        /** @var SitemapStorageInterface|\PHPUnit_Framework_MockObject_MockObject $storage */
+        /** @var SitemapStorageInterface|\PHPUnit\Framework\MockObject\MockObject $storage */
         $storage = $this->createMock(SitemapStorageInterface::class);
         $storage->expects($this->once())
             ->method('getUrlItemsCount')
@@ -272,11 +272,11 @@ class SitemapFilesystemAdapterTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return WebsiteInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return WebsiteInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private function getConfiguredWebsite()
     {
-        /** @var WebsiteInterface|\PHPUnit_Framework_MockObject_MockObject $website */
+        /** @var WebsiteInterface|\PHPUnit\Framework\MockObject\MockObject $website */
         $website = $this->createMock(WebsiteInterface::class);
         $website->expects($this->any())
             ->method('getId')

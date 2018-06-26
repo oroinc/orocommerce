@@ -4,7 +4,7 @@ namespace Oro\Bundle\PayPalBundle\Tests\Unit\Integration;
 
 use Oro\Bundle\PayPalBundle\Integration\PayPalPaymentsProChannelType;
 
-class PayPalPaymentsProChannelTypeTest extends \PHPUnit_Framework_TestCase
+class PayPalPaymentsProChannelTypeTest extends \PHPUnit\Framework\TestCase
 {
     /** @var PayPalPaymentsProChannelType */
     private $channel;

@@ -123,25 +123,25 @@ class ShippingDiscountOptionsTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
-        /** @var ConfigProvider|\PHPUnit_Framework_MockObject_MockObject $configProvider */
+        /** @var ConfigProvider|\PHPUnit\Framework\MockObject\MockObject $configProvider */
         $configProvider = $this->createMock(ConfigProvider::class);
 
-        /** @var Translator|\PHPUnit_Framework_MockObject_MockObject $translator */
+        /** @var Translator|\PHPUnit\Framework\MockObject\MockObject $translator */
         $translator = $this->createMock(Translator::class);
 
-        /** @var LocaleSettings|\PHPUnit_Framework_MockObject_MockObject $localeSettings */
+        /** @var LocaleSettings|\PHPUnit\Framework\MockObject\MockObject $localeSettings */
         $localeSettings = $this->createMock(LocaleSettings::class);
 
-        /** @var NumberFormatter|\PHPUnit_Framework_MockObject_MockObject $numberFormatter */
+        /** @var NumberFormatter|\PHPUnit\Framework\MockObject\MockObject $numberFormatter */
         $numberFormatter = $this->createMock(NumberFormatter::class);
 
-        /** @var ShippingMethodProviderInterface|\PHPUnit_Framework_MockObject_MockObject $provider */
+        /** @var ShippingMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject $provider */
         $provider = $this->createMock(ShippingMethodProviderInterface::class);
 
-        /** @var ShippingMethodIconProviderInterface|\PHPUnit_Framework_MockObject_MockObject $iconProvider */
+        /** @var ShippingMethodIconProviderInterface|\PHPUnit\Framework\MockObject\MockObject $iconProvider */
         $iconProvider = $this->createMock(ShippingMethodIconProviderInterface::class);
 
-        /** @var Packages|\PHPUnit_Framework_MockObject_MockObject $assetHelper */
+        /** @var Packages|\PHPUnit\Framework\MockObject\MockObject $assetHelper */
         $assetHelper = $this->createMock(Packages::class);
 
         $flatRatePrimaryShippingType = (new ShippingMethodTypeStub())->setIdentifier('primary');

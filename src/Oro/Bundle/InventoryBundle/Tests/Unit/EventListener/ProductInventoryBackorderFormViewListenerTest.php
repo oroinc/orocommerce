@@ -14,12 +14,12 @@ use Symfony\Component\HttpFoundation\RequestStack;
 class ProductInventoryBackorderFormViewListenerTest extends FormViewListenerTestCase
 {
     /**
-     * @var RequestStack|\PHPUnit_Framework_MockObject_MockObject
+     * @var RequestStack|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $requestStack;
 
     /**
-     * @var Request|\PHPUnit_Framework_MockObject_MockObject
+     * @var Request|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $request;
 
@@ -28,11 +28,11 @@ class ProductInventoryBackorderFormViewListenerTest extends FormViewListenerTest
      */
     protected $productBackOrderFormViewListener;
 
-    /** @var BeforeListRenderEvent|\PHPUnit_Framework_MockObject_MockObject * */
+    /** @var BeforeListRenderEvent|\PHPUnit\Framework\MockObject\MockObject * */
     protected $event;
 
     /**
-     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $doctrine;
 

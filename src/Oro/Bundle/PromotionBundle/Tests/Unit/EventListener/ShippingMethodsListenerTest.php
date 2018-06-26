@@ -14,12 +14,12 @@ use Oro\Bundle\ShippingBundle\Method\ShippingMethodViewCollection;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class ShippingMethodsListenerTest extends \PHPUnit_Framework_TestCase
+class ShippingMethodsListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var PromotionExecutor|\PHPUnit_Framework_MockObject_MockObject
+     * @var PromotionExecutor|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $promotionExecutor;
 

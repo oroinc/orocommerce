@@ -7,7 +7,7 @@ use Oro\Bundle\PaymentTermBundle\Form\Type\PaymentTermSelectType;
 use Oro\Bundle\PaymentTermBundle\Form\Type\PaymentTermType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class PaymentTermSelectTypeTest extends \PHPUnit_Framework_TestCase
+class PaymentTermSelectTypeTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var PaymentTermSelectType

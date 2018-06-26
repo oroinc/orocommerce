@@ -27,7 +27,7 @@ class CustomerGroupFormViewListenerTest extends AbstractCustomerFormViewListener
     }
 
     /**
-     * @return PriceListToCustomerGroup[]|\PHPUnit_Framework_MockObject_MockObject[]
+     * @return PriceListToCustomerGroup[]|\PHPUnit\Framework\MockObject\MockObject[]
      */
     protected function setRepositoryExpectations()
     {

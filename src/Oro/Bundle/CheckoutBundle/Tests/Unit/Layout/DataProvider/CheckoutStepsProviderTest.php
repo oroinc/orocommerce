@@ -7,7 +7,7 @@ use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class CheckoutStepsProviderTest extends \PHPUnit_Framework_TestCase
+class CheckoutStepsProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
@@ -17,7 +17,7 @@ class CheckoutStepsProviderTest extends \PHPUnit_Framework_TestCase
     protected $provider;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|WorkflowManager
+     * @var \PHPUnit\Framework\MockObject\MockObject|WorkflowManager
      */
     protected $workflowManager;
 
@@ -38,7 +38,7 @@ class CheckoutStepsProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetSteps($displayOrdered, array $expected)
     {
-        /** @var WorkflowItem|\PHPUnit_Framework_MockObject_MockObject $workflowItem */
+        /** @var WorkflowItem|\PHPUnit\Framework\MockObject\MockObject $workflowItem */
         $workflowItem  = $this->getMockBuilder('Oro\Bundle\WorkflowBundle\Entity\WorkflowItem')
             ->disableOriginalConstructor()
             ->getMock();

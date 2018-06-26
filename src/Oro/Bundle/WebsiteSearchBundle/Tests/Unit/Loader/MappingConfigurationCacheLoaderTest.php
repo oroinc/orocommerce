@@ -8,7 +8,7 @@ use Oro\Bundle\WebsiteSearchBundle\Loader\MappingConfigurationCacheLoader;
 use Oro\Bundle\WebsiteSearchBundle\Provider\ResourcesHashProvider;
 use Oro\Component\Config\CumulativeResourceInfo;
 
-class MappingConfigurationCacheLoaderTest extends \PHPUnit_Framework_TestCase
+class MappingConfigurationCacheLoaderTest extends \PHPUnit\Framework\TestCase
 {
     const GET_HASH_RESULT = 'some_hash';
 
@@ -28,12 +28,12 @@ class MappingConfigurationCacheLoaderTest extends \PHPUnit_Framework_TestCase
     ];
 
     /**
-     * @var ResourcesHashProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var ResourcesHashProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     private $resourceHashProvider;
 
     /**
-     * @var CacheProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var CacheProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     private $cacheProvider;
 
@@ -43,7 +43,7 @@ class MappingConfigurationCacheLoaderTest extends \PHPUnit_Framework_TestCase
     private $configurationCacheLoader;
 
     /**
-     * @var ConfigurationLoaderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ConfigurationLoaderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $configurationLoader;
 

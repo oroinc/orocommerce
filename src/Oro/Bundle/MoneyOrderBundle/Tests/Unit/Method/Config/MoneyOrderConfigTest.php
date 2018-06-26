@@ -4,7 +4,7 @@ namespace Oro\Bundle\MoneyOrderBundle\Tests\Unit\Method\Config;
 
 use Oro\Bundle\MoneyOrderBundle\Method\Config\MoneyOrderConfig;
 
-class MoneyOrderConfigTest extends \PHPUnit_Framework_TestCase
+class MoneyOrderConfigTest extends \PHPUnit\Framework\TestCase
 {
     public function testGetters()
     {

@@ -7,7 +7,7 @@ use Oro\Bundle\InventoryBundle\Tests\Unit\Form\Extension\Stub\ProductStub;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 
-abstract class ProductInventoryTest extends \PHPUnit_Framework_TestCase
+abstract class ProductInventoryTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var AbstractTypeExtension
@@ -19,7 +19,7 @@ abstract class ProductInventoryTest extends \PHPUnit_Framework_TestCase
      */
     public function testBuildForm(ProductStub $product, $expectedFallBackId)
     {
-        /** @var FormBuilderInterface|\PHPUnit_Framework_MockObject_MockObject $builder * */
+        /** @var FormBuilderInterface|\PHPUnit\Framework\MockObject\MockObject $builder * */
         $builder = $this->createMock(FormBuilderInterface::class);
 
         $builder->expects($this->once())

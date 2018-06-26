@@ -11,12 +11,12 @@ use Oro\Bundle\PaymentBundle\Provider\ExtractOptionsProvider;
 use Oro\Bundle\PaymentBundle\Tests\Unit\Method\EntityStub;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class ExtractOptionsProviderTest extends \PHPUnit_Framework_TestCase
+class ExtractOptionsProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $dispatcherMock;
 
-    /** @var EntityAliasResolver|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var EntityAliasResolver|\PHPUnit\Framework\MockObject\MockObject */
     private $aliasProviderMock;
 
     /** @var ExtractOptionsProvider */
@@ -50,7 +50,7 @@ class ExtractOptionsProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetLineItemPaymentOptions()
     {
-        /** @var AbstractAddress|\PHPUnit_Framework_MockObject_MockObject $abstractAddressMock */
+        /** @var AbstractAddress|\PHPUnit\Framework\MockObject\MockObject $abstractAddressMock */
         $abstractAddressMock = $this->getMockBuilder(AbstractAddress::class)->getMock();
         $entity = new EntityStub($abstractAddressMock);
         $event = new ExtractLineItemPaymentOptionsEvent($entity, []);

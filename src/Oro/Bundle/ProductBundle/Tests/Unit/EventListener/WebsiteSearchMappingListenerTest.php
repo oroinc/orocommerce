@@ -14,18 +14,18 @@ use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\WebsiteSearchBundle\Attribute\Type\EnumSearchableAttributeType;
 use Oro\Bundle\WebsiteSearchBundle\Event\WebsiteSearchMappingEvent;
 
-class WebsiteSearchMappingListenerTest extends \PHPUnit_Framework_TestCase
+class WebsiteSearchMappingListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var AttributeManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var AttributeManager|\PHPUnit\Framework\MockObject\MockObject */
     protected $attributeManager;
 
-    /** @var AttributeTypeRegistry|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var AttributeTypeRegistry|\PHPUnit\Framework\MockObject\MockObject */
     protected $attributeTypeRegistry;
 
-    /** @var AttributeConfigurationProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var AttributeConfigurationProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $configurationProvider;
 
-    /** @var ProductIndexFieldsProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ProductIndexFieldsProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $fieldsProvider;
 
     /** @var WebsiteSearchMappingListener */

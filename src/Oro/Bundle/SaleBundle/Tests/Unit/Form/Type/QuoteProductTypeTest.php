@@ -38,22 +38,22 @@ class QuoteProductTypeTest extends AbstractTest
     protected $formType;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface
+     * @var \PHPUnit\Framework\MockObject\MockObject|TranslatorInterface
      */
     protected $translator;
 
     /**
-     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $registry;
 
     /**
-     * @var ObjectManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ObjectManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $manager;
 
     /**
-     * @var ProductUnitRepository|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProductUnitRepository|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $repository;
 
@@ -84,7 +84,7 @@ class QuoteProductTypeTest extends AbstractTest
             ->willReturn($this->manager)
         ;
 
-        /* @var $productUnitLabelFormatter \PHPUnit_Framework_MockObject_MockObject|ProductUnitLabelFormatter */
+        /* @var $productUnitLabelFormatter \PHPUnit\Framework\MockObject\MockObject|ProductUnitLabelFormatter */
         $productUnitLabelFormatter = $this->getMockBuilder(
             'Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter'
         )
@@ -121,7 +121,7 @@ class QuoteProductTypeTest extends AbstractTest
 
     public function testConfigureOptions()
     {
-        /* @var $resolver \PHPUnit_Framework_MockObject_MockObject|OptionsResolver */
+        /* @var $resolver \PHPUnit\Framework\MockObject\MockObject|OptionsResolver */
         $resolver = $this->createMock('Symfony\Component\OptionsResolver\OptionsResolver');
         $resolver->expects($this->once())
             ->method('setDefaults')
@@ -157,7 +157,7 @@ class QuoteProductTypeTest extends AbstractTest
 
         $view->vars = $inputData['vars'];
 
-        /* @var $form \PHPUnit_Framework_MockObject_MockObject|FormInterface */
+        /* @var $form \PHPUnit\Framework\MockObject\MockObject|FormInterface */
         $form = $this->createMock('Symfony\Component\Form\FormInterface');
 
         $this->formType->finishView($view, $form, $inputData['options']);
@@ -377,7 +377,7 @@ class QuoteProductTypeTest extends AbstractTest
     /**
      * @param int $id
      * @param array $units
-     * @return \PHPUnit_Framework_MockObject_MockObject|Product
+     * @return \PHPUnit\Framework\MockObject\MockObject|Product
      */
     protected function createProduct($id, array $units = [])
     {
@@ -551,7 +551,7 @@ class QuoteProductTypeTest extends AbstractTest
      * @param Product $replacement
      * @param string $replacementSku
      * @param int $type
-     * @return \PHPUnit_Framework_MockObject_MockObject|QuoteProduct
+     * @return \PHPUnit\Framework\MockObject\MockObject|QuoteProduct
      */
     protected function createQuoteProduct(
         $id,
@@ -561,7 +561,7 @@ class QuoteProductTypeTest extends AbstractTest
         $replacementSku = null,
         $type = QuoteProduct::TYPE_OFFER
     ) {
-        /* @var $quoteProduct \PHPUnit_Framework_MockObject_MockObject|QuoteProduct */
+        /* @var $quoteProduct \PHPUnit\Framework\MockObject\MockObject|QuoteProduct */
         $quoteProduct = $this->createMock('Oro\Bundle\SaleBundle\Entity\QuoteProduct');
         $quoteProduct
             ->expects($this->any())

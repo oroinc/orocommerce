@@ -6,7 +6,7 @@ use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Entity\BasePriceListCurrency;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-class BasePriceListCurrencyTest extends \PHPUnit_Framework_TestCase
+class BasePriceListCurrencyTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 

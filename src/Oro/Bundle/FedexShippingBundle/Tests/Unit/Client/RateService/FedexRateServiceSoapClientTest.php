@@ -14,12 +14,12 @@ use PHPUnit\Framework\TestCase;
 class FedexRateServiceSoapClientTest extends TestCase
 {
     /**
-     * @var SoapClientInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var SoapClientInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $soapClient;
 
     /**
-     * @var FedexRateServiceResponseFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var FedexRateServiceResponseFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $responseFactory;
 

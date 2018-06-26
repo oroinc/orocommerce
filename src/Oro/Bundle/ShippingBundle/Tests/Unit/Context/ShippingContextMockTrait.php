@@ -5,7 +5,7 @@ namespace Oro\Bundle\ShippingBundle\Tests\Unit\Context;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 
 /**
- * @method \PHPUnit_Framework_MockObject_MockObject createMock(string $originalClassName)
+ * @method \PHPUnit\Framework\MockObject\MockObject createMock(string $originalClassName)
  */
 trait ShippingContextMockTrait
 {

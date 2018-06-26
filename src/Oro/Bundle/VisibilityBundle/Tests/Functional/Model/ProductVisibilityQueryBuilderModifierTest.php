@@ -31,7 +31,7 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
     protected $modifier;
 
     /**
-     * @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $configManager;
 

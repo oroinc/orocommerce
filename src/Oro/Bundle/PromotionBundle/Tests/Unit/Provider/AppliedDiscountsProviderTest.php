@@ -10,7 +10,7 @@ use Oro\Bundle\PromotionBundle\Provider\AppliedDiscountsProvider;
 use Oro\Bundle\PromotionBundle\Tests\Unit\Entity\Stub\Order;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class AppliedDiscountsProviderTest extends \PHPUnit_Framework_TestCase
+class AppliedDiscountsProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 

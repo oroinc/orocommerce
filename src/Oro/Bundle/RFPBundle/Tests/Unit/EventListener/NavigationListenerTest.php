@@ -9,12 +9,12 @@ use Oro\Bundle\NavigationBundle\Event\ConfigureMenuEvent;
 use Oro\Bundle\RFPBundle\EventListener\NavigationListener;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
-class NavigationListenerTest extends \PHPUnit_Framework_TestCase
+class NavigationListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var AuthorizationCheckerInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var AuthorizationCheckerInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $authorizationChecker;
 
-    /** @var FeatureChecker|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject */
     private $featureChecker;
 
     /** @var NavigationListener */

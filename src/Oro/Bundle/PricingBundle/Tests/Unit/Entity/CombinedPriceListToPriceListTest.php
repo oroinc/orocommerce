@@ -7,7 +7,7 @@ use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-class CombinedPriceListToPriceListTest extends \PHPUnit_Framework_TestCase
+class CombinedPriceListToPriceListTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 

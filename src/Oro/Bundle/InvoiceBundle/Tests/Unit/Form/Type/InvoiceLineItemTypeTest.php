@@ -31,7 +31,7 @@ class InvoiceLineItemTypeTest extends FormIntegrationTestCase
     protected $formType;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ProductUnitsProvider
+     * @var \PHPUnit\Framework\MockObject\MockObject|ProductUnitsProvider
      */
     protected $productUnitsProvider;
 
@@ -194,7 +194,7 @@ class InvoiceLineItemTypeTest extends FormIntegrationTestCase
 
         $view->vars = $inputData['vars'];
 
-        /* @var $form FormInterface|\PHPUnit_Framework_MockObject_MockObject */
+        /* @var $form FormInterface|\PHPUnit\Framework\MockObject\MockObject */
         $form = $this->createMock('Symfony\Component\Form\FormInterface');
 
         $this->formType->finishView($view, $form, []);
@@ -264,7 +264,7 @@ class InvoiceLineItemTypeTest extends FormIntegrationTestCase
 
     /**
      * @param array $units
-     * @return Product|\PHPUnit_Framework_MockObject_MockObject
+     * @return Product|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function createProduct(array $units = [])
     {

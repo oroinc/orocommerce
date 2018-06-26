@@ -17,40 +17,40 @@ use Oro\Bundle\UPSBundle\Method\UPSShippingMethod;
 use Oro\Bundle\UPSBundle\Method\UPSShippingMethodType;
 use Oro\Bundle\UPSBundle\Provider\UPSTransport;
 
-class UPSShippingMethodFactoryTest extends \PHPUnit_Framework_TestCase
+class UPSShippingMethodFactoryTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var UPSTransport|\PHPUnit_Framework_MockObject_MockObject
+     * @var UPSTransport|\PHPUnit\Framework\MockObject\MockObject
      */
     private $transport;
 
     /**
-     * @var PriceRequestFactory|\PHPUnit_Framework_MockObject_MockObject
+     * @var PriceRequestFactory|\PHPUnit\Framework\MockObject\MockObject
      */
     private $priceRequestFactory;
 
     /**
-     * @var LocalizationHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var LocalizationHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     private $localizationHelper;
 
     /**
-     * @var ShippingPriceCache|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingPriceCache|\PHPUnit\Framework\MockObject\MockObject
      */
     private $shippingPriceCache;
 
     /**
-     * @var IntegrationIdentifierGeneratorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var IntegrationIdentifierGeneratorInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $integrationIdentifierGenerator;
 
     /**
-     * @var UPSShippingMethodTypeFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var UPSShippingMethodTypeFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $methodTypeFactory;
 
     /**
-     * @var IntegrationIconProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var IntegrationIconProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $integrationIconProvider;
 
@@ -89,14 +89,14 @@ class UPSShippingMethodFactoryTest extends \PHPUnit_Framework_TestCase
         $identifier = 'ups_1';
         $labelsCollection = $this->createMock(Collection::class);
 
-        /** @var UPSSettings|\PHPUnit_Framework_MockObject_MockObject $settings */
+        /** @var UPSSettings|\PHPUnit\Framework\MockObject\MockObject $settings */
         $settings = $this->createMock(UPSSettings::class);
 
         $settings->expects($this->once())
             ->method('getLabels')
             ->willReturn($labelsCollection);
 
-        /** @var Channel|\PHPUnit_Framework_MockObject_MockObject $channel */
+        /** @var Channel|\PHPUnit\Framework\MockObject\MockObject $channel */
         $channel = $this->createMock(Channel::class);
         $channel->expects($this->any())
             ->method('getTransport')

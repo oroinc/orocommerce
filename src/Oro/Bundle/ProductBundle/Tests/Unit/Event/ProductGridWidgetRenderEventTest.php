@@ -4,7 +4,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Event;
 
 use Oro\Bundle\ProductBundle\Event\ProductGridWidgetRenderEvent;
 
-class ProductGridWidgetRenderEventTest extends \PHPUnit_Framework_TestCase
+class ProductGridWidgetRenderEventTest extends \PHPUnit\Framework\TestCase
 {
     public function testEvent()
     {

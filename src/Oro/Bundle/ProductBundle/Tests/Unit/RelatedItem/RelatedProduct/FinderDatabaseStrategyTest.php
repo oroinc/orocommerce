@@ -104,8 +104,8 @@ class FinderDatabaseStrategyTest extends AbstractFinderDatabaseStrategyTest
 
     /**
      * @param Product $product
-     * @param bool|\PHPUnit_Framework_Constraint_IsAnything $bidirectional
-     * @param null|int|\PHPUnit_Framework_Constraint_IsAnything $limit
+     * @param bool|\PHPUnit\Framework\Constraint\IsAnything $bidirectional
+     * @param null|int|\PHPUnit\Framework\Constraint\IsAnything $limit
      * @param array $related
      */
     protected function andProductRepositoryShouldFindRelated(

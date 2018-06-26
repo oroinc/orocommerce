@@ -17,17 +17,17 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class CheckoutTotalsProviderTest extends \PHPUnit_Framework_TestCase
+class CheckoutTotalsProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var CheckoutToOrderConverter|\PHPUnit_Framework_MockObject_MockObject
+     * @var CheckoutToOrderConverter|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $checkoutToOrderConverter;
 
     /**
-     * @var TotalProcessorProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var TotalProcessorProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $totalsProvider;
 
@@ -37,7 +37,7 @@ class CheckoutTotalsProviderTest extends \PHPUnit_Framework_TestCase
     protected $provider;
 
     /**
-     * @var CheckoutShippingMethodsProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var CheckoutShippingMethodsProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $checkoutShippingMethodsProvider;
 

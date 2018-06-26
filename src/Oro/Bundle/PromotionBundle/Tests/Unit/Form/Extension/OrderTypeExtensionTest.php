@@ -13,7 +13,7 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 
-class OrderTypeExtensionTest extends \PHPUnit_Framework_TestCase
+class OrderTypeExtensionTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
@@ -29,7 +29,7 @@ class OrderTypeExtensionTest extends \PHPUnit_Framework_TestCase
 
     public function testBuildForm()
     {
-        /** @var FormBuilderInterface|\PHPUnit_Framework_MockObject_MockObject $builder * */
+        /** @var FormBuilderInterface|\PHPUnit\Framework\MockObject\MockObject $builder * */
         $builder = $this->createMock(FormBuilderInterface::class);
 
         $builder->expects($this->once())
@@ -46,7 +46,7 @@ class OrderTypeExtensionTest extends \PHPUnit_Framework_TestCase
     public function testPostSetData()
     {
         $order = $this->getEntity(Order::class, ['id' => 777]);
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock(FormInterface::class);
         $form->expects($this->once())
             ->method('add')

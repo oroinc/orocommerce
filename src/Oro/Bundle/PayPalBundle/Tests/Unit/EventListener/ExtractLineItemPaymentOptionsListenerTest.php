@@ -9,17 +9,17 @@ use Oro\Bundle\PaymentBundle\Event\ExtractLineItemPaymentOptionsEvent;
 use Oro\Bundle\PaymentBundle\Model\LineItemOptionModel;
 use Oro\Bundle\PayPalBundle\EventListener\ExtractLineItemPaymentOptionsListener;
 
-class ExtractLineItemPaymentOptionsListenerTest extends \PHPUnit_Framework_TestCase
+class ExtractLineItemPaymentOptionsListenerTest extends \PHPUnit\Framework\TestCase
 {
     /** @var ExtractLineItemPaymentOptionsListener */
     private $listener;
 
-    /** @var RoundingServiceInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var RoundingServiceInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $rounder;
 
     public function setUp()
     {
-        /** @var NumberFormatter|\PHPUnit_Framework_MockObject_MockObject $numberFormatter */
+        /** @var NumberFormatter|\PHPUnit\Framework\MockObject\MockObject $numberFormatter */
         $numberFormatter = $this->getMockBuilder(NumberFormatter::class)
             ->disableOriginalConstructor()
             ->getMock();

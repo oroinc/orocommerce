@@ -6,7 +6,7 @@ use Oro\Bundle\ProductBundle\Validator\Constraints\NotEmptyConfigurableAttribute
 use Oro\Bundle\ProductBundle\Validator\Constraints\NotEmptyConfigurableAttributesValidator;
 use Symfony\Component\Validator\Constraint;
 
-class NotEmptyConfigurableAttributesTest extends \PHPUnit_Framework_TestCase
+class NotEmptyConfigurableAttributesTest extends \PHPUnit\Framework\TestCase
 {
     /** @var NotEmptyConfigurableAttributes */
     private $constraint;
