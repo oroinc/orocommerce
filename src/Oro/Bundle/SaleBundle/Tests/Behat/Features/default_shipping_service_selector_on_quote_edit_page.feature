@@ -11,8 +11,14 @@
 Feature: Default Shipping Service Selector on Quote Edit page
   ToDo: BAP-16103 Add missing descriptions to the Behat features
 
+  Scenario: Create sessions
+    Given sessions active:
+      | Admin | first_session  |
+      | Buyer | second_session |
+
   Scenario: Create a quote and finished checkout with Flat Rate Shipping Method
     Given There are products in the system available for order
+    And I proceed as the Buyer
     And I signed in as AmandaRCole@example.org on the store frontend
     And I click "Quick Order Form"
     And I fill "QuickAddForm" with:
@@ -28,7 +34,8 @@ Feature: Default Shipping Service Selector on Quote Edit page
     And I fill in "PO Number" with "PONUMBER1"
     And I click "Submit Request"
 
-    Then I login as administrator
+    Then I proceed as the Admin
+    And I login as administrator
     And I go to Sales/ Requests For Quote
     And I open RFQ view page on backend with id "1"
     And I click "Create Quote"
@@ -40,7 +47,8 @@ Feature: Default Shipping Service Selector on Quote Edit page
     And I click "Send to Customer"
     And I click "Send" in modal window
 
-    Then I am on homepage
+    Then I proceed as the Buyer
+    And I am on homepage
     And I click "Account"
     And I click "Quotes"
     And I click on View in grid
