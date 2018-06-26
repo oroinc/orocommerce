@@ -16,17 +16,17 @@ use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
-class CheckoutLineItemsManagerTest extends \PHPUnit_Framework_TestCase
+class CheckoutLineItemsManagerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var CheckoutLineItemsConverter|\PHPUnit_Framework_MockObject_MockObject
+     * @var CheckoutLineItemsConverter|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $checkoutLineItemsConverter;
 
     /**
-     * @var AuthorizationCheckerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var AuthorizationCheckerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $authorizationChecker;
 
@@ -41,7 +41,7 @@ class CheckoutLineItemsManagerTest extends \PHPUnit_Framework_TestCase
     protected $currencyManager;
 
     /**
-     * @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $configManager;
 
@@ -74,7 +74,7 @@ class CheckoutLineItemsManagerTest extends \PHPUnit_Framework_TestCase
 
     public function testAddProvider()
     {
-        /** @var CheckoutDataProviderInterface|\PHPUnit_Framework_MockObject_MockObject $provider */
+        /** @var CheckoutDataProviderInterface|\PHPUnit\Framework\MockObject\MockObject $provider */
         $provider = $this->createMock('Oro\Component\Checkout\DataProvider\CheckoutDataProviderInterface');
 
         $this->checkoutLineItemsManager->addProvider($provider);
@@ -272,11 +272,11 @@ class CheckoutLineItemsManagerTest extends \PHPUnit_Framework_TestCase
      * @param Checkout $entity
      * @param array $returnData
      * @param bool $isSupported
-     * @return CheckoutDataProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return CheckoutDataProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function getProvider(Checkout $entity, array $returnData, $isSupported = true)
     {
-        /** @var CheckoutDataProviderInterface|\PHPUnit_Framework_MockObject_MockObject $provider */
+        /** @var CheckoutDataProviderInterface|\PHPUnit\Framework\MockObject\MockObject $provider */
         $provider = $this->createMock('Oro\Component\Checkout\DataProvider\CheckoutDataProviderInterface');
 
         $provider->expects($this->once())

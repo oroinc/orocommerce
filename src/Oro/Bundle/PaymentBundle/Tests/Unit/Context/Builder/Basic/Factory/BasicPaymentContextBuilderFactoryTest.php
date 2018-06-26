@@ -9,25 +9,25 @@ use Oro\Bundle\PaymentBundle\Context\Builder\Basic\Factory\BasicPaymentContextBu
 use Oro\Bundle\PaymentBundle\Context\LineItem\Collection\Factory\PaymentLineItemCollectionFactoryInterface;
 use Oro\Bundle\PaymentBundle\Context\LineItem\Collection\PaymentLineItemCollectionInterface;
 
-class BasicPaymentContextBuilderFactoryTest extends \PHPUnit_Framework_TestCase
+class BasicPaymentContextBuilderFactoryTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var PaymentLineItemCollectionInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var PaymentLineItemCollectionInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $lineItemsCollectionMock;
 
     /**
-     * @var Price|\PHPUnit_Framework_MockObject_MockObject
+     * @var Price|\PHPUnit\Framework\MockObject\MockObject
      */
     private $subtotalMock;
 
     /**
-     * @var Checkout|\PHPUnit_Framework_MockObject_MockObject
+     * @var Checkout|\PHPUnit\Framework\MockObject\MockObject
      */
     private $sourceEntityMock;
 
     /**
-     * @var PaymentLineItemCollectionFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var PaymentLineItemCollectionFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $paymentLineItemCollectionFactoryMock;
 

@@ -6,15 +6,15 @@ use Oro\Bundle\PaymentBundle\Formatter\PaymentMethodLabelFormatter;
 use Oro\Bundle\PaymentBundle\Method\View\CompositePaymentMethodViewProvider;
 use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
 
-class PaymentMethodLabelFormatterTest extends \PHPUnit_Framework_TestCase
+class PaymentMethodLabelFormatterTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var CompositePaymentMethodViewProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var CompositePaymentMethodViewProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $paymentMethodViewProvider;
 
     /**
-     * @var PaymentMethodViewInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var PaymentMethodViewInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $paymentMethodView;
 

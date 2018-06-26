@@ -7,15 +7,15 @@ use Oro\Bundle\CheckoutBundle\Factory\CheckoutPaymentContextFactory;
 use Oro\Bundle\CheckoutBundle\Layout\DataProvider\CheckoutPaymentContextProvider;
 use Oro\Bundle\PaymentBundle\Context\PaymentContext;
 
-class CheckoutPaymentContextProviderTest extends \PHPUnit_Framework_TestCase
+class CheckoutPaymentContextProviderTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var CheckoutPaymentContextFactory| \PHPUnit_Framework_MockObject_MockObject
+     * @var CheckoutPaymentContextFactory| \PHPUnit\Framework\MockObject\MockObject
      */
     protected $paymentContextFactory;
 
     /**
-     * @var Checkout| \PHPUnit_Framework_MockObject_MockObject
+     * @var Checkout| \PHPUnit\Framework\MockObject\MockObject
      */
     protected $checkout;
 

@@ -1,3 +1,4 @@
+@ticket-BB-13978
 @fixture-OroProductBundle:new_arrivals_block.yml
 @regression
 Feature: New Arrivals displayed on the main front page in blank theme

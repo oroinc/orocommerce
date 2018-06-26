@@ -13,13 +13,13 @@ use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions;
 use Oro\Bundle\ShippingBundle\EventListener\Datagrid\ProductShippingOptionsDatagridListener;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class ProductShippingOptionsDatagridListenerTest extends \PHPUnit_Framework_TestCase
+class ProductShippingOptionsDatagridListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     const PRODUCT_SHIPPING_OPTIONS_CLASS = 'Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions';
 
-    /** @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
     protected $doctrineHelper;
 
     /** @var DatagridConfiguration */
@@ -55,7 +55,7 @@ class ProductShippingOptionsDatagridListenerTest extends \PHPUnit_Framework_Test
 
     public function testOnBuildBefore()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $datagrid */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|DatagridInterface $datagrid */
         $datagrid = $this->createMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
 
         $this->listener->setProductShippingOptionsClass(static::PRODUCT_SHIPPING_OPTIONS_CLASS);
@@ -86,7 +86,7 @@ class ProductShippingOptionsDatagridListenerTest extends \PHPUnit_Framework_Test
      */
     public function testOnResultAfter(array $sourceResults = [], array $expectedResults = [])
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|ObjectRepository $repository */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|ObjectRepository $repository */
         $repository = $this->createMock('Doctrine\Common\Persistence\ObjectRepository');
         $repository->expects($this->once())
             ->method('findBy')
@@ -106,7 +106,7 @@ class ProductShippingOptionsDatagridListenerTest extends \PHPUnit_Framework_Test
             ->with(self::PRODUCT_SHIPPING_OPTIONS_CLASS)
             ->willReturn($repository);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $datagrid */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|DatagridInterface $datagrid */
         $datagrid = $this->createMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
 
         $event = new OrmResultAfter($datagrid, $sourceResults);

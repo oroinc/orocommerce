@@ -4,7 +4,7 @@ namespace Oro\Bundle\PaymentBundle\Tests\Unit\Method\Event;
 
 use Oro\Bundle\PaymentBundle\Method\Event\MethodRenamingEvent;
 
-class MethodRenamingEventTest extends \PHPUnit_Framework_TestCase
+class MethodRenamingEventTest extends \PHPUnit\Framework\TestCase
 {
     public function testGetters()
     {

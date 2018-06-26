@@ -7,9 +7,9 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormFactory;
 
-class BooleanTypeHandlerTest extends \PHPUnit_Framework_TestCase
+class BooleanTypeHandlerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var FormFactory|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var FormFactory|\PHPUnit\Framework\MockObject\MockObject */
     protected $formFactory;
 
     /** @var BooleanTypeHandler */
@@ -46,8 +46,6 @@ class BooleanTypeHandlerTest extends \PHPUnit_Framework_TestCase
                         'No' => false,
                         'Yes' => true,
                     ],
-                    // TODO: Remove 'choices_as_values' option in scope of BAP-15236
-                    'choices_as_values' => true,
                     'auto_initialize' => false,
                 ], $options);
 

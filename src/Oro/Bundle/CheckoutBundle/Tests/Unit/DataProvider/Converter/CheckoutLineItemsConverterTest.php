@@ -10,7 +10,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
-class CheckoutLineItemsConverterTest extends \PHPUnit_Framework_TestCase
+class CheckoutLineItemsConverterTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var CheckoutLineItemsConverter

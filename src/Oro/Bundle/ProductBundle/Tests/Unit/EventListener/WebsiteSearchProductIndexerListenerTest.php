@@ -25,7 +25,7 @@ use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderValue;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCase
+class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
@@ -37,22 +37,22 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCas
      */
     private $listener;
 
-    /** @var WebsiteContextManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var WebsiteContextManager|\PHPUnit\Framework\MockObject\MockObject */
     private $websiteContextManager;
 
-    /** @var AbstractWebsiteLocalizationProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var AbstractWebsiteLocalizationProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $websiteLocalizationProvider;
 
-    /** @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
     private $registry;
 
-    /** @var AttachmentManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var AttachmentManager|\PHPUnit\Framework\MockObject\MockObject */
     private $attachmentManager;
 
-    /** @var AttributeManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var AttributeManager|\PHPUnit\Framework\MockObject\MockObject */
     private $attributeManager;
 
-    /** @var WebsiteSearchProductIndexDataProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var WebsiteSearchProductIndexDataProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $dataProvider;
 
     protected function setUp()
@@ -340,7 +340,7 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCas
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     private function getImageFileEntities()
     {

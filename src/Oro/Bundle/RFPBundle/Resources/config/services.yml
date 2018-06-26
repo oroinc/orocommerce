@@ -59,6 +59,8 @@ services:
         class: 'Oro\Bundle\RFPBundle\Storage\RequestToQuoteDataStorage'
         arguments:
             - "@oro_product.storage.product_data_storage"
+            - "@oro_pricing.provider.matching_price"
+            - "@oro_pricing.model.price_list_tree_handler"
 
     oro_rfp.service.request_update_handler:
         class: 'Oro\Bundle\RFPBundle\Form\Handler\RequestUpdateHandler'

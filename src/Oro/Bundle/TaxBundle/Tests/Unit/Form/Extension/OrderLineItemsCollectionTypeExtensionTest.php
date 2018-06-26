@@ -12,17 +12,17 @@ use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 
-class OrderLineItemsCollectionTypeExtensionTest extends \PHPUnit_Framework_TestCase
+class OrderLineItemsCollectionTypeExtensionTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var TaxationSettingsProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var TaxationSettingsProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     private $taxationSettingsProvider;
 
     /**
-     * @var TaxValueManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var TaxValueManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $taxValueManager;
 
@@ -89,7 +89,7 @@ class OrderLineItemsCollectionTypeExtensionTest extends \PHPUnit_Framework_TestC
             ->method('preloadTaxValues')
             ->with(OrderLineItem::class, $expectedIds);
 
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock(FormInterface::class);
         $form
             ->expects($this->once())

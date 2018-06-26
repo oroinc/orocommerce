@@ -9,7 +9,7 @@ use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-class PaymentTransactionTest extends \PHPUnit_Framework_TestCase
+class PaymentTransactionTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 

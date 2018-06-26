@@ -11,17 +11,17 @@ use Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\PriceAwareShippingMethodS
 use Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\ShippingMethodStub;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class EnabledMethodsShippingPriceProviderDecoratorTest extends \PHPUnit_Framework_TestCase
+class EnabledMethodsShippingPriceProviderDecoratorTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var ShippingPriceProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingPriceProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $shippingPriceProvider;
 
     /**
-     * @var ShippingMethodProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $shippingMethodProvider;
 

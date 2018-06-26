@@ -14,8 +14,6 @@ class OffersTypeTest extends FormIntegrationTestCase
         $form = $this->factory->create(OffersType::class);
         $this->assertFalse($form->getConfig()->getOption('mapped'));
         $this->assertTrue($form->getConfig()->getOption('expanded'));
-        // TODO: Remove assert below in scope of BAP-15236
-        $this->assertTrue($form->getConfig()->getOption('choices_as_values'));
         $this->assertInternalType('array', $form->getConfig()->getOption('offers'));
         $this->assertInternalType('array', $form->getConfig()->getOption('choices'));
     }
@@ -26,8 +24,6 @@ class OffersTypeTest extends FormIntegrationTestCase
         $form = $this->factory->create(OffersType::class, null, ['offers' => $offers]);
         $this->assertFalse($form->getConfig()->getOption('mapped'));
         $this->assertTrue($form->getConfig()->getOption('expanded'));
-        // TODO: Remove assert below in scope of BAP-15236
-        $this->assertTrue($form->getConfig()->getOption('choices_as_values'));
         $this->assertInternalType('array', $form->getConfig()->getOption('offers'));
         $this->assertEquals($offers, $form->getConfig()->getOption('offers'));
         $this->assertInternalType('array', $form->getConfig()->getOption('choices'));
@@ -43,8 +39,6 @@ class OffersTypeTest extends FormIntegrationTestCase
         $form = $this->factory->create(OffersType::class, null, ['offers' => 1]);
         $this->assertFalse($form->getConfig()->getOption('mapped'));
         $this->assertTrue($form->getConfig()->getOption('expanded'));
-        // TODO: Remove assert below in scope of BAP-15236
-        $this->assertTrue($form->getConfig()->getOption('choices_as_values'));
         $this->assertInternalType('array', $form->getConfig()->getOption('offers'));
         $this->assertInternalType('array', $form->getConfig()->getOption('choices'));
     }
@@ -54,7 +48,7 @@ class OffersTypeTest extends FormIntegrationTestCase
         $view = new FormView();
         $formType = new OffersType();
 
-        /* @var $form FormInterface|\PHPUnit_Framework_MockObject_MockObject */
+        /* @var $form FormInterface|\PHPUnit\Framework\MockObject\MockObject */
         $form = $this->createMock('Symfony\Component\Form\FormInterface');
 
         $formType->finishView($view, $form, ['offers' => []]);

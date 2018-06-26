@@ -8,7 +8,7 @@ use Oro\Component\Expression\QueryExpressionBuilder;
 use Oro\Component\Expression\QueryExpressionConverter\QueryExpressionConverterInterface;
 use Oro\Component\Expression\Tests\Unit\Stub\QueryExpressionConverterConverterAwareInterface;
 
-class QueryExpressionBuilderTest extends \PHPUnit_Framework_TestCase
+class QueryExpressionBuilderTest extends \PHPUnit\Framework\TestCase
 {
     public function testConvertUnsupportedNode()
     {

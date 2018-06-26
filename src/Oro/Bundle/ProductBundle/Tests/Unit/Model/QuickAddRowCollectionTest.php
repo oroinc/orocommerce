@@ -12,7 +12,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
-class QuickAddRowCollectionTest extends \PHPUnit_Framework_TestCase
+class QuickAddRowCollectionTest extends \PHPUnit\Framework\TestCase
 {
     const SKU1 = 'SKU1';
     const SKU2 = 'SKU2';

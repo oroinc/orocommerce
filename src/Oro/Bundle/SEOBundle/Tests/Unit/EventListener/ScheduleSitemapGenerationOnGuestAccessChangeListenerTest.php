@@ -6,10 +6,10 @@ use Oro\Bundle\ConfigBundle\Event\ConfigUpdateEvent;
 use Oro\Bundle\SEOBundle\Async\SitemapGenerationScheduler;
 use Oro\Bundle\SEOBundle\EventListener\ScheduleSitemapGenerationOnGuestAccessChangeListener;
 
-class ScheduleSitemapGenerationOnGuestAccessChangeListenerTest extends \PHPUnit_Framework_TestCase
+class ScheduleSitemapGenerationOnGuestAccessChangeListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var SitemapGenerationScheduler|\PHPUnit_Framework_MockObject_MockObject
+     * @var SitemapGenerationScheduler|\PHPUnit\Framework\MockObject\MockObject
      */
     private $scheduleSitemapGenerationProvider;
 
@@ -28,7 +28,7 @@ class ScheduleSitemapGenerationOnGuestAccessChangeListenerTest extends \PHPUnit_
 
     public function testOnConfigUpdate()
     {
-        /** @var ConfigUpdateEvent|\PHPUnit_Framework_MockObject_MockObject $event **/
+        /** @var ConfigUpdateEvent|\PHPUnit\Framework\MockObject\MockObject $event **/
         $event = $this->createMock(ConfigUpdateEvent::class);
 
         $event->expects(static::once())
@@ -44,7 +44,7 @@ class ScheduleSitemapGenerationOnGuestAccessChangeListenerTest extends \PHPUnit_
 
     public function testOnConfigUpdateFalse()
     {
-        /** @var ConfigUpdateEvent|\PHPUnit_Framework_MockObject_MockObject $event **/
+        /** @var ConfigUpdateEvent|\PHPUnit\Framework\MockObject\MockObject $event **/
         $event = $this->createMock(ConfigUpdateEvent::class);
 
         $event->expects(static::once())

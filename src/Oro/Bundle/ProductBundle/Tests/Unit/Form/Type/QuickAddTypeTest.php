@@ -100,6 +100,7 @@ class QuickAddTypeTest extends FormIntegrationTestCase
                     ],
                     QuickAddType::COMPONENT_FIELD_NAME => 'component',
                     QuickAddType::ADDITIONAL_FIELD_NAME => 'additional',
+                    QuickAddType::TRANSITION_FIELD_NAME => 'start_from_quickorderform',
                 ],
                 'expectedData' => [
                     QuickAddType::PRODUCTS_FIELD_NAME => [
@@ -107,6 +108,7 @@ class QuickAddTypeTest extends FormIntegrationTestCase
                     ],
                     QuickAddType::COMPONENT_FIELD_NAME => 'component',
                     QuickAddType::ADDITIONAL_FIELD_NAME => 'additional',
+                    QuickAddType::TRANSITION_FIELD_NAME => 'start_from_quickorderform',
                 ],
             ],
         ];
@@ -121,7 +123,7 @@ class QuickAddTypeTest extends FormIntegrationTestCase
 
     public function testConfigureOptions()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|OptionsResolver $resolver */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|OptionsResolver $resolver */
         $resolver = $this->createMock('Symfony\Component\OptionsResolver\OptionsResolver');
         $resolver->expects($this->once())
             ->method('setDefaults')

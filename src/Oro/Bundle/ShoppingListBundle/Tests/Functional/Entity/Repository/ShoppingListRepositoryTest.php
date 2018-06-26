@@ -106,7 +106,9 @@ class ShoppingListRepositoryTest extends WebTestCase
      */
     public function getCustomerUser()
     {
-        return $this->getContainer()->get('doctrine')->getRepository(CustomerUser::class)
+        return $this->getContainer()
+            ->get('doctrine')
+            ->getRepository(CustomerUser::class)
             ->findOneBy(['username' => LoadCustomerUserData::AUTH_USER]);
     }
 
@@ -133,12 +135,33 @@ class ShoppingListRepositoryTest extends WebTestCase
         );
     }
 
-    public function testCountUserShoppingLists()
+    public function testCountUserShoppingListsForDefaultWebsite()
     {
         $user = $this->getCustomerUser();
 
-        $count = $this->getRepository()->countUserShoppingLists($user->getId(), $user->getOrganization()->getId());
+        $doctrineHelper = $this->getContainer()->get('oro_entity.doctrine_helper');
+        $website = $doctrineHelper->getEntityRepositoryForClass(Website::class)->getDefaultWebsite();
+        $count = $this->getRepository()->countUserShoppingLists(
+            $user->getId(),
+            $user->getOrganization()->getId(),
+            $website
+        );
 
-        $this->assertEquals(7, $count);
+        $this->assertEquals(6, $count);
+    }
+
+    public function testCountUserShoppingListsForCertainWebsite()
+    {
+        $user = $this->getCustomerUser();
+
+        /** @var Website $website */
+        $website = $this->getReference(LoadWebsiteData::WEBSITE3);
+        $count = $this->getRepository()->countUserShoppingLists(
+            $user->getId(),
+            $user->getOrganization()->getId(),
+            $website
+        );
+
+        $this->assertEquals(1, $count);
     }
 }

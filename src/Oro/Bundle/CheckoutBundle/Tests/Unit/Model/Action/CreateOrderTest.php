@@ -13,7 +13,7 @@ use Oro\Component\ConfigExpression\ContextAccessor;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\PropertyAccess\PropertyPath;
 
-class CreateOrderTest extends \PHPUnit_Framework_TestCase
+class CreateOrderTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var ContextAccessor
@@ -21,7 +21,7 @@ class CreateOrderTest extends \PHPUnit_Framework_TestCase
     protected $contextAccessor;
 
     /**
-     * @var MapperInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var MapperInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $mapper;
 
@@ -35,7 +35,7 @@ class CreateOrderTest extends \PHPUnit_Framework_TestCase
         $this->contextAccessor = new ContextAccessor();
         $this->mapper = $this->createMock(MapperInterface::class);
 
-        /** @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject $eventDispatcher */
+        /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject $eventDispatcher */
         $eventDispatcher = $this
             ->getMockBuilder(EventDispatcherInterface::class)
             ->getMock();

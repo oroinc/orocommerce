@@ -12,12 +12,12 @@ use PHPUnit\Framework\TestCase;
 class StorePriceListInContextByProductPriceTest extends TestCase
 {
     /**
-     * @var PriceListIDContextStorageInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var PriceListIDContextStorageInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $priceListIDContextStorage;
 
     /**
-     * @var ContextInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ContextInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $context;
 

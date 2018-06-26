@@ -172,7 +172,7 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
         $testEntity->setId(123456);
 
         $this->indexer->delete($testEntity, [
-            AbstractIndexer::CONTEXT_CURRENT_WEBSITE_ID_KEY => $this->getDefaultWebsiteId()
+            AbstractIndexer::CONTEXT_WEBSITE_IDS => [$this->getDefaultWebsiteId()]
         ]);
 
         $this->assertItemsCount(8);
@@ -189,7 +189,7 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
             ->expects($this->never())
             ->method('getEntityAlias');
 
-        $this->indexer->delete([], [AbstractIndexer::CONTEXT_CURRENT_WEBSITE_ID_KEY => $this->getDefaultWebsiteId()]);
+        $this->indexer->delete([], [AbstractIndexer::CONTEXT_WEBSITE_IDS => [$this->getDefaultWebsiteId()]]);
 
         $this->assertItemsCount(8);
         $this->assertEntityCount(6, IndexInteger::class);
@@ -217,7 +217,7 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
                 $product1,
                 $product2,
             ],
-            [AbstractIndexer::CONTEXT_CURRENT_WEBSITE_ID_KEY => $this->getDefaultWebsiteId()]
+            [AbstractIndexer::CONTEXT_WEBSITE_IDS => [$this->getDefaultWebsiteId()]]
         );
 
         $this->assertItemsCount(6);
@@ -246,40 +246,7 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
                 $product1,
                 $product2,
             ],
-            [AbstractIndexer::CONTEXT_CURRENT_WEBSITE_ID_KEY => $this->getDefaultWebsiteId()]
-        );
-
-        $this->assertItemsCount(6);
-        $this->assertEntityCount(3, IndexInteger::class);
-        $this->assertEntityCount(5, IndexText::class);
-        $this->assertEntityCount(1, IndexDatetime::class);
-        $this->assertEntityCount(1, IndexDecimal::class);
-    }
-
-    public function testDeleteForSpecificWebsiteAndEntitiesWithoutMappingConfigurationOrNotManageable()
-    {
-        $this->loadFixtures([LoadItemData::class]);
-
-        $this->mappingProviderMock
-            ->expects($this->exactly(3))
-            ->method('isClassSupported')
-            ->withConsecutive([TestProduct::class], [TestProduct::class], [TestDepartment::class])
-            ->willReturnOnConsecutiveCalls(true, true, false);
-
-        $this->setEntityAliasExpectation();
-
-        $product1 = $this->getReference(LoadProductsToIndex::REFERENCE_PRODUCT1);
-        $product2 = $this->getReference(LoadProductsToIndex::REFERENCE_PRODUCT2);
-
-        $this->indexer->delete(
-            [
-                $product1,
-                $product2,
-                new \stdClass(),
-                new \stdClass(),
-                new TestDepartment()
-            ],
-            [AbstractIndexer::CONTEXT_CURRENT_WEBSITE_ID_KEY => $this->getDefaultWebsiteId()]
+            [AbstractIndexer::CONTEXT_WEBSITE_IDS => [$this->getDefaultWebsiteId()]]
         );
 
         $this->assertItemsCount(6);
@@ -298,9 +265,7 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
             ->with(TestProduct::class)
             ->willReturn(true);
 
-        $this->mappingProviderMock
-            ->expects($this->never())
-            ->method('getEntityAlias');
+        $this->setEntityAliasExpectation();
 
         $product1 = $this->getReference(LoadProductsToIndex::REFERENCE_PRODUCT1);
         $product2 = $this->getReference(LoadProductsToIndex::REFERENCE_PRODUCT2);
@@ -337,7 +302,7 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
     {
         $this->loadFixtures([LoadProductsToIndex::class]);
         $this->mappingProviderMock
-            ->expects($this->exactly(6))
+            ->expects($this->any())
             ->method('isClassSupported')
             ->with(TestProduct::class)
             ->willReturn(true);
@@ -375,7 +340,7 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
 
         $this->setEntityAliasExpectation();
 
-        $context = [AbstractIndexer::CONTEXT_CURRENT_WEBSITE_ID_KEY => $this->getDefaultWebsiteId()];
+        $context = [AbstractIndexer::CONTEXT_WEBSITE_IDS => [$this->getDefaultWebsiteId()]];
         $this->assertItemsCount(8);
         $this->indexer->resetIndex(null, $context);
         $this->assertItemsCount(4);
@@ -390,7 +355,7 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
         $this->setListener();
 
         $this->mappingProviderMock
-            ->expects($this->exactly(1))
+            ->expects($this->any())
             ->method('getEntityClasses')
             ->willReturn([TestProduct::class]);
 

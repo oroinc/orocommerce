@@ -8,9 +8,9 @@ use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
 use Oro\Bundle\PayPalBundle\EventListener\Callback\PayflowIPCheckListener;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-class PayflowIPCheckListenerTest extends \PHPUnit_Framework_TestCase
+class PayflowIPCheckListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var PaymentMethodProviderInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var PaymentMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $paymentMethodProvider;
 
     public function setUp()
@@ -57,11 +57,11 @@ class PayflowIPCheckListenerTest extends \PHPUnit_Framework_TestCase
         $masterRequest = $this->createMock('Symfony\Component\HttpFoundation\Request');
         $masterRequest->method('getClientIp')->will($this->returnValue($remoteAddress));
 
-        /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
+        /** @var RequestStack|\PHPUnit\Framework\MockObject\MockObject $requestStack */
         $requestStack = $this->createMock('Symfony\Component\HttpFoundation\RequestStack');
         $requestStack->method('getMasterRequest')->will($this->returnValue($masterRequest));
 
-        /** @var CallbackNotifyEvent|\PHPUnit_Framework_MockObject_MockObject $event */
+        /** @var CallbackNotifyEvent|\PHPUnit\Framework\MockObject\MockObject $event */
         $event = $this->createMock('Oro\Bundle\PaymentBundle\Event\CallbackNotifyEvent');
 
         $event
@@ -98,11 +98,11 @@ class PayflowIPCheckListenerTest extends \PHPUnit_Framework_TestCase
         $masterRequest = $this->createMock('Symfony\Component\HttpFoundation\Request');
         $masterRequest->method('getClientIp')->will($this->returnValue($remoteAddress));
 
-        /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
+        /** @var RequestStack|\PHPUnit\Framework\MockObject\MockObject $requestStack */
         $requestStack = $this->createMock('Symfony\Component\HttpFoundation\RequestStack');
         $requestStack->method('getMasterRequest')->will($this->returnValue($masterRequest));
 
-        /** @var CallbackNotifyEvent|\PHPUnit_Framework_MockObject_MockObject $event */
+        /** @var CallbackNotifyEvent|\PHPUnit\Framework\MockObject\MockObject $event */
         $event = $this->createMock('Oro\Bundle\PaymentBundle\Event\CallbackNotifyEvent');
         $event
             ->expects($this->once())
@@ -133,11 +133,11 @@ class PayflowIPCheckListenerTest extends \PHPUnit_Framework_TestCase
 
         $masterRequest = null;
 
-        /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
+        /** @var RequestStack|\PHPUnit\Framework\MockObject\MockObject $requestStack */
         $requestStack = $this->createMock('Symfony\Component\HttpFoundation\RequestStack');
         $requestStack->method('getMasterRequest')->will($this->returnValue($masterRequest));
 
-        /** @var CallbackNotifyEvent|\PHPUnit_Framework_MockObject_MockObject $event */
+        /** @var CallbackNotifyEvent|\PHPUnit\Framework\MockObject\MockObject $event */
         $event = $this->createMock('Oro\Bundle\PaymentBundle\Event\CallbackNotifyEvent');
         $event
             ->expects($this->once())

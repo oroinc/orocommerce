@@ -23,52 +23,52 @@ use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Website\WebsiteInterface;
 use Psr\Log\LoggerInterface;
 
-class GenerateSitemapProcessorTest extends \PHPUnit_Framework_TestCase
+class GenerateSitemapProcessorTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var JobRunner|\PHPUnit_Framework_MockObject_MockObject
+     * @var JobRunner|\PHPUnit\Framework\MockObject\MockObject
      */
     private $jobRunner;
 
     /**
-     * @var DependentJobService|\PHPUnit_Framework_MockObject_MockObject
+     * @var DependentJobService|\PHPUnit\Framework\MockObject\MockObject
      */
     private $dependentJobService;
 
     /**
-     * @var MessageProducerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $producer;
 
     /**
-     * @var WebsiteUrlProvidersServiceInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var WebsiteUrlProvidersServiceInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $websiteUrlProvidersService;
 
     /**
-     * @var WebsiteProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var WebsiteProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $websiteProvider;
 
     /**
-     * @var SitemapIndexMessageFactory|\PHPUnit_Framework_MockObject_MockObject
+     * @var SitemapIndexMessageFactory|\PHPUnit\Framework\MockObject\MockObject
      */
     private $indexMessageFactory;
 
     /**
-     * @var SitemapMessageFactory|\PHPUnit_Framework_MockObject_MockObject
+     * @var SitemapMessageFactory|\PHPUnit\Framework\MockObject\MockObject
      */
     private $messageFactory;
 
     /**
-     * @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $logger;
 
     /**
-     * @var CanonicalUrlGenerator|\PHPUnit_Framework_MockObject_MockObject
+     * @var CanonicalUrlGenerator|\PHPUnit\Framework\MockObject\MockObject
      */
     private $canonicalUrlGenerator;
 
@@ -114,7 +114,7 @@ class GenerateSitemapProcessorTest extends \PHPUnit_Framework_TestCase
 
     public function testProcessWhenThrowsInvalidArgumentException()
     {
-        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session */
+        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session */
         $session = $this->createMock(SessionInterface::class);
 
         $messageId = 777;
@@ -134,7 +134,7 @@ class GenerateSitemapProcessorTest extends \PHPUnit_Framework_TestCase
         $exception = new InvalidArgumentException();
         $this->indexMessageFactory->expects($this->once())
             ->method('createMessage')
-            ->with($website, $this->isType(\PHPUnit_Framework_Constraint_IsType::TYPE_INT))
+            ->with($website, $this->isType(\PHPUnit\Framework\Constraint\IsType::TYPE_INT))
             ->willThrowException($exception);
         $this->dependentJobService->expects($this->never())
             ->method('saveDependentJob');
@@ -153,9 +153,9 @@ class GenerateSitemapProcessorTest extends \PHPUnit_Framework_TestCase
 
     public function testProcessWhenThrowsException()
     {
-        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session */
+        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session */
         $session = $this->createMock(SessionInterface::class);
-        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message */
+        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message */
 
         $messageId = 777;
         $data = ['key' => 'value'];
@@ -172,7 +172,7 @@ class GenerateSitemapProcessorTest extends \PHPUnit_Framework_TestCase
             ->willReturn($dependentJobContext);
         $this->indexMessageFactory->expects($this->once())
             ->method('createMessage')
-            ->with($website, $this->isType(\PHPUnit_Framework_Constraint_IsType::TYPE_INT))
+            ->with($website, $this->isType(\PHPUnit\Framework\Constraint\IsType::TYPE_INT))
             ->willReturn(['some data']);
 
         $exception = new \Exception();
@@ -196,7 +196,7 @@ class GenerateSitemapProcessorTest extends \PHPUnit_Framework_TestCase
 
     public function testProcess()
     {
-        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session */
+        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session */
         $session = $this->createMock(SessionInterface::class);
 
         $messageId = 777;
@@ -216,11 +216,11 @@ class GenerateSitemapProcessorTest extends \PHPUnit_Framework_TestCase
             ->method('createMessage');
         $this->indexMessageFactory->expects($this->at(0))
             ->method('createMessage')
-            ->with($websites[0], $this->isType(\PHPUnit_Framework_Constraint_IsType::TYPE_INT))
+            ->with($websites[0], $this->isType(\PHPUnit\Framework\Constraint\IsType::TYPE_INT))
             ->willReturn(['some data']);
         $this->indexMessageFactory->expects($this->at(1))
             ->method('createMessage')
-            ->with($websites[1], $this->isType(\PHPUnit_Framework_Constraint_IsType::TYPE_INT))
+            ->with($websites[1], $this->isType(\PHPUnit\Framework\Constraint\IsType::TYPE_INT))
             ->willReturn(['some data']);
         $this->dependentJobService->expects($this->once())
             ->method('saveDependentJob')
@@ -238,7 +238,7 @@ class GenerateSitemapProcessorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return WebsiteInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return WebsiteInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private function getWebsite()
     {
@@ -252,7 +252,7 @@ class GenerateSitemapProcessorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return WebsiteInterface[]|\PHPUnit_Framework_MockObject_MockObject[]
+     * @return WebsiteInterface[]|\PHPUnit\Framework\MockObject\MockObject[]
      */
     private function getWebsites()
     {
@@ -269,7 +269,7 @@ class GenerateSitemapProcessorTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param int $websiteId
-     * @return WebsiteInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return WebsiteInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private function createWebsiteMock($websiteId)
     {
@@ -360,7 +360,7 @@ class GenerateSitemapProcessorTest extends \PHPUnit_Framework_TestCase
     /**
      * @param int $messageId
      * @param array $data
-     * @return MessageInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return MessageInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private function getMessage($messageId, array $data = [])
     {

@@ -7,20 +7,20 @@ use Oro\Bundle\SEOBundle\Sitemap\Provider\UrlItemsProviderRegistryInterface;
 use Oro\Bundle\SEOBundle\Sitemap\Website\WebsiteUrlProvidersService;
 use Oro\Component\Website\WebsiteInterface;
 
-class WebsiteUrlProvidersServiceTest extends \PHPUnit_Framework_TestCase
+class WebsiteUrlProvidersServiceTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $configManager;
 
     /**
-     * @var UrlItemsProviderRegistryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var UrlItemsProviderRegistryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $urlItemsProviderRegistry;
 
     /**
-     * @var UrlItemsProviderRegistryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var UrlItemsProviderRegistryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $accessDeniedProviderRegistry;
 

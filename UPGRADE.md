@@ -24,6 +24,6 @@ Format of sluggable urls cache was changed, added support of localized slugs. Ca
 * To upgrade OroCommerce from **1.0** to **1.1** use the following command:
 
   ```bash
-  php app/console oro:platform:update --env=prod --force
+  php bin/console oro:platform:update --env=prod --force
   ```
 

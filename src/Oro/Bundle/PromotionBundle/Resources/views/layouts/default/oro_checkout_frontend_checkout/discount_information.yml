@@ -1,7 +1,7 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'discount_information.html.twig'
+            themes: 'OroPromotionBundle:layouts:default/oro_checkout_frontend_checkout/discount_information.html.twig'
         - '@setOption':
             id: 'checkout_order_summary_line_items'
             optionName: 'lineItemDiscounts'

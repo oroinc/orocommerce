@@ -5,7 +5,7 @@ namespace Oro\Bundle\PayPalBundle\Tests\Unit\PayPal\Payflow\Processor;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\OptionsResolver;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Processor\PayPalCA;
 
-class PayPalCATest extends \PHPUnit_Framework_TestCase
+class PayPalCATest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var PayPalCA

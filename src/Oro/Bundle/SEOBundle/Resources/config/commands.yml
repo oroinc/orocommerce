@@ -1,0 +1,6 @@
+services:
+    Oro\Bundle\SEOBundle\Command\GenerateSitemapCommand:
+        public: false
+        class: Oro\Bundle\SEOBundle\Command\GenerateSitemapCommand
+        tags:
+            - { name: console.command }

@@ -10,7 +10,7 @@ use Oro\Bundle\UserBundle\Tests\Unit\Mailer\AbstractProcessorTest;
 class ProcessorTest extends AbstractProcessorTest
 {
     /**
-     * @var Processor|\PHPUnit_Framework_MockObject_MockObject
+     * @var Processor|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $mailProcessor;
 

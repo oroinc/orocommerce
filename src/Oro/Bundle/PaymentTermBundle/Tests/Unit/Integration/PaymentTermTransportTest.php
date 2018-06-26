@@ -6,7 +6,7 @@ use Oro\Bundle\PaymentTermBundle\Entity\PaymentTermSettings;
 use Oro\Bundle\PaymentTermBundle\Form\Type\PaymentTermSettingsType;
 use Oro\Bundle\PaymentTermBundle\Integration\PaymentTermTransport;
 
-class PaymentTermTransportTest extends \PHPUnit_Framework_TestCase
+class PaymentTermTransportTest extends \PHPUnit\Framework\TestCase
 {
     /** @var PaymentTermTransport */
     private $transport;

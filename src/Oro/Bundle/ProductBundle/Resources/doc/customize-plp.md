@@ -34,7 +34,7 @@ layout:
 
     actions:
         - '@setBlockTheme':
-            themes: 'static_block.html.twig'
+            themes: 'AcmeProductBundle:layouts:default/oro_product_frontend_product_index/static_block.html.twig'
 
         - '@addTree':
             items:
@@ -160,8 +160,8 @@ layout:
     actions:
         - '@setBlockTheme':
             themes:
-                - 'products.html.twig'
-                - 'static_block.html.twig'
+                - 'AcmeProductBundle:layouts:default/oro_product_frontend_product_index/products.html.twig'
+                - 'AcmeProductBundle:layouts:default/oro_product_frontend_product_index/static_block.html.twig'
 
         - '@addTree':
             items:
@@ -230,7 +230,7 @@ layout:
 
     actions:
         - '@setBlockTheme':
-            themes: 'products.html.twig'
+            themes: 'AcmeProductBundle:layouts:default/oro_product_frontend_product_index/products.html.twig'
         - '@addTree':
             items:
                 product_index_page:

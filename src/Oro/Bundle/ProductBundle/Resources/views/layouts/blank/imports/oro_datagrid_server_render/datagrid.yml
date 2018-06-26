@@ -7,8 +7,8 @@ layout:
     actions:
         - '@setBlockTheme':
             themes:
-                - 'server_render_datagrid.html.twig'
-                - 'server_render_datagrid_toolbar.html.twig'
+                - 'OroProductBundle:layouts:blank/imports/oro_datagrid_server_render/server_render_datagrid.html.twig'
+                - 'OroProductBundle:layouts:blank/imports/oro_datagrid_server_render/server_render_datagrid_toolbar.html.twig'
 
         - '@removeOption':
             id: __datagrid

@@ -10,7 +10,7 @@ layout:
 
     actions:
         - '@setBlockTheme':
-            themes: 'quick_add_import_result.html.twig'
+            themes: 'OroProductBundle:layouts:default/oro_product_frontend_quick_add_import/dialog/quick_add_import_result.html.twig'
         - '@setOption':
             id: widget_content
             optionName: 'attr.data-page-component-module'

@@ -15,20 +15,20 @@ use Oro\Bundle\ProductBundle\Provider\GridCountProvider;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
-class GridCountProviderTest extends \PHPUnit_Framework_TestCase
+class GridCountProviderTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ManagerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ManagerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $gridManager;
 
     /**
-     * @var AuthorizationCheckerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var AuthorizationCheckerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $authorizationChecker;
 
     /**
-     * @var Pager|\PHPUnit_Framework_MockObject_MockObject
+     * @var Pager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $pager;
 
@@ -154,9 +154,9 @@ class GridCountProviderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param \PHPUnit_Framework_MockObject_MockObject $dataSource
+     * @param \PHPUnit\Framework\MockObject\MockObject $dataSource
      */
-    private function assertDatasourceCalls(\PHPUnit_Framework_MockObject_MockObject $dataSource)
+    private function assertDatasourceCalls(\PHPUnit\Framework\MockObject\MockObject $dataSource)
     {
         $parameters = $this->createMock(ParameterBag::class);
         $parameters->expects($this->once())

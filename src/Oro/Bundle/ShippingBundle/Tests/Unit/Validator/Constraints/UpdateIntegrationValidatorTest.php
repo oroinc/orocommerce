@@ -26,12 +26,12 @@ use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
 class UpdateIntegrationValidatorTest extends TestCase
 {
     /**
-     * @var IntegrationShippingMethodFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var IntegrationShippingMethodFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $shippingMethodFactory;
 
     /**
-     * @var ShippingMethodValidatorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingMethodValidatorInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $shippingMethodValidator;
 
@@ -41,12 +41,12 @@ class UpdateIntegrationValidatorTest extends TestCase
     private $violationPath;
 
     /**
-     * @var ExecutionContextInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ExecutionContextInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $context;
 
     /**
-     * @var Constraint|\PHPUnit_Framework_MockObject_MockObject
+     * @var Constraint|\PHPUnit\Framework\MockObject\MockObject
      */
     private $constraint;
 

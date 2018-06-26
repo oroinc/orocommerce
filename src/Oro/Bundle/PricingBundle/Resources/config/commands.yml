@@ -1,0 +1,24 @@
+services:
+    Oro\Bundle\PricingBundle\Command\CombinedPriceListScheduleCommand:
+        public: false
+        class: Oro\Bundle\PricingBundle\Command\CombinedPriceListScheduleCommand
+        tags:
+            - { name: console.command }
+
+    Oro\Bundle\PricingBundle\Command\PriceListImportCommand:
+        public: false
+        class: Oro\Bundle\PricingBundle\Command\PriceListImportCommand
+        tags:
+            - { name: console.command }
+
+    Oro\Bundle\PricingBundle\Command\PriceListRecalculateCommand:
+        public: false
+        class: Oro\Bundle\PricingBundle\Command\PriceListRecalculateCommand
+        tags:
+            - { name: console.command }
+
+    Oro\Bundle\PricingBundle\Command\PriceListStorageReorganizeCommand:
+        public: false
+        class: Oro\Bundle\PricingBundle\Command\PriceListStorageReorganizeCommand
+        tags:
+            - { name: console.command }

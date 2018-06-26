@@ -63,7 +63,7 @@ class FinderDatabaseStrategyTest extends AbstractFinderDatabaseStrategyTest
 
     /**
      * @param Product $product
-     * @param null|int|\PHPUnit_Framework_Constraint_IsAnything $limit
+     * @param null|int|\PHPUnit\Framework\Constraint\IsAnything $limit
      * @param array $upsell
      */
     protected function andProductRepositoryShouldFindUpsell(Product $product, $limit, array $upsell)

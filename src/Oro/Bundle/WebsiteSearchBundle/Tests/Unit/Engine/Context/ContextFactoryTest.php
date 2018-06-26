@@ -6,7 +6,7 @@ use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Engine\Context\ContextFactory;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 
-class ContextFactoryTest extends \PHPUnit_Framework_TestCase
+class ContextFactoryTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @dataProvider dataProviderCreateForReindexation

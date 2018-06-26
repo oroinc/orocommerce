@@ -7,7 +7,7 @@ use Oro\Bundle\PromotionBundle\CouponGeneration\Options\CouponGenerationOptions;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-class CouponGenerationOptionsTest extends \PHPUnit_Framework_TestCase
+class CouponGenerationOptionsTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 

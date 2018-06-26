@@ -13,17 +13,17 @@ use Oro\Component\Testing\Unit\EntityTrait;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\Event;
 
-class ShoppingListLimitListenerTest extends \PHPUnit_Framework_TestCase
+class ShoppingListLimitListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var ShoppingListLimitManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShoppingListLimitManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $shoppingListLimitManager;
 
     /**
-     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     private $doctrineHelper;
 
@@ -33,7 +33,7 @@ class ShoppingListLimitListenerTest extends \PHPUnit_Framework_TestCase
     private $listener;
 
     /**
-     * @var LoginOnCheckoutEvent|\PHPUnit_Framework_MockObject_MockObject
+     * @var LoginOnCheckoutEvent|\PHPUnit\Framework\MockObject\MockObject
      */
     private $event;
 
@@ -113,7 +113,7 @@ class ShoppingListLimitListenerTest extends \PHPUnit_Framework_TestCase
             ->method('getEntityManager')
             ->willReturn($em);
 
-        /** @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject $logger */
+        /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject $logger */
         $logger = $this->createMock(LoggerInterface::class);
         $logger->expects($this->once())
             ->method('error');

@@ -17,19 +17,19 @@ abstract class AbstractCustomerViewListenerTest extends FormViewListenerTestCase
     const RENDER_HTML = 'render_html';
     const TRANSLATED_TEXT = 'translated_text';
 
-    /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var RequestStack|\PHPUnit\Framework\MockObject\MockObject */
     protected $requestStack;
 
-    /** @var Request|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var Request|\PHPUnit\Framework\MockObject\MockObject */
     protected $request;
 
-    /** @var \Twig_Environment|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var \Twig_Environment|\PHPUnit\Framework\MockObject\MockObject */
     protected $env;
 
-    /** @var BeforeListRenderEvent|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var BeforeListRenderEvent|\PHPUnit\Framework\MockObject\MockObject */
     protected $event;
 
-    /** @var ScrollData|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ScrollData|\PHPUnit\Framework\MockObject\MockObject */
     protected $scrollData;
 
     /** * @var CustomerViewListener */

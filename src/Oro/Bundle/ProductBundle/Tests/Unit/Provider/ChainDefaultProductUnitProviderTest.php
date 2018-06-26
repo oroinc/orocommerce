@@ -6,7 +6,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Provider\ChainDefaultProductUnitProvider;
 use Oro\Bundle\ProductBundle\Provider\DefaultProductUnitProviderInterface;
 
-class ChainDefaultProductUnitProviderTest extends \PHPUnit_Framework_TestCase
+class ChainDefaultProductUnitProviderTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var ChainDefaultProductUnitProvider

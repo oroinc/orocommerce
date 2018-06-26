@@ -19,22 +19,22 @@ use Oro\Bundle\SegmentBundle\Entity\SegmentType;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\OptionsResolver\Exception\MissingOptionsException;
 
-class AppliedPromotionNormalizerTest extends \PHPUnit_Framework_TestCase
+class AppliedPromotionNormalizerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var RuleNormalizer|\PHPUnit_Framework_MockObject_MockObject
+     * @var RuleNormalizer|\PHPUnit\Framework\MockObject\MockObject
      */
     private $ruleNormalizer;
 
     /**
-     * @var ScopeNormalizer|\PHPUnit_Framework_MockObject_MockObject
+     * @var ScopeNormalizer|\PHPUnit\Framework\MockObject\MockObject
      */
     private $scopeNormalizer;
 
     /**
-     * @var SegmentNormalizer|\PHPUnit_Framework_MockObject_MockObject
+     * @var SegmentNormalizer|\PHPUnit\Framework\MockObject\MockObject
      */
     private $segmentNormalizer;
 

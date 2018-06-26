@@ -11,7 +11,7 @@ use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\RadioType;
 use Symfony\Component\Form\FormEvent;
 
-class ProductImageTypesSubscriberTest extends \PHPUnit_Framework_TestCase
+class ProductImageTypesSubscriberTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var array

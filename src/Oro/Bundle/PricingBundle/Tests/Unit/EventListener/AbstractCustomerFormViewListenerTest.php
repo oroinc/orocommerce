@@ -16,12 +16,12 @@ use Symfony\Component\HttpFoundation\RequestStack;
 abstract class AbstractCustomerFormViewListenerTest extends FormViewListenerTestCase
 {
     /**
-     * @var WebsiteProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var WebsiteProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $websiteProvider;
 
     /**
-     * @return BasePriceListRelation[]|\PHPUnit_Framework_MockObject_MockObject[]
+     * @return BasePriceListRelation[]|\PHPUnit\Framework\MockObject\MockObject[]
      */
     abstract protected function setRepositoryExpectations();
 
@@ -65,13 +65,13 @@ abstract class AbstractCustomerFormViewListenerTest extends FormViewListenerTest
 
     public function testOnViewNoRequest()
     {
-        /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
+        /** @var RequestStack|\PHPUnit\Framework\MockObject\MockObject $requestStack */
         $requestStack = $this->createMock('Symfony\Component\HttpFoundation\RequestStack');
 
         $this->doctrineHelper->expects($this->never())
             ->method('getEntityReference');
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $env */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|\Twig_Environment $env */
         $env = $this->createMock('\Twig_Environment');
         $event = $this->createEvent($env);
         $this->processEvent($requestStack, $event);
@@ -87,7 +87,7 @@ abstract class AbstractCustomerFormViewListenerTest extends FormViewListenerTest
 
         $priceLists = $this->setRepositoryExpectations();
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $environment */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|\Twig_Environment $environment */
         $environment = $this->createMock('\Twig_Environment');
         $environment->expects($this->once())
             ->method('render')
@@ -115,10 +115,10 @@ abstract class AbstractCustomerFormViewListenerTest extends FormViewListenerTest
         $formView = new FormView();
         $templateHtml = 'template_html';
 
-        /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
+        /** @var RequestStack|\PHPUnit\Framework\MockObject\MockObject $requestStack */
         $requestStack = $this->createMock('Symfony\Component\HttpFoundation\RequestStack');
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $environment */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|\Twig_Environment $environment */
         $environment = $this->createMock('\Twig_Environment');
         $environment->expects($this->once())
             ->method('render')
@@ -157,11 +157,11 @@ abstract class AbstractCustomerFormViewListenerTest extends FormViewListenerTest
 
     /**
      * @param Request $request
-     * @return \PHPUnit_Framework_MockObject_MockObject|RequestStack
+     * @return \PHPUnit\Framework\MockObject\MockObject|RequestStack
      */
     protected function getRequestStack(Request $request)
     {
-        /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
+        /** @var RequestStack|\PHPUnit\Framework\MockObject\MockObject $requestStack */
         $requestStack = $this->createMock('Symfony\Component\HttpFoundation\RequestStack');
         $requestStack->expects($this->once())->method('getCurrentRequest')->willReturn($request);
         return $requestStack;

@@ -7,10 +7,10 @@ use Oro\Bundle\ProductBundle\Tests\Unit\Storage\Stub\StubAbstractSessionDataStor
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
-class AbstractSessionDataStorageTest extends \PHPUnit_Framework_TestCase
+class AbstractSessionDataStorageTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|SessionInterface
+     * @var \PHPUnit\Framework\MockObject\MockObject|SessionInterface
      */
     protected $session;
 
@@ -20,7 +20,7 @@ class AbstractSessionDataStorageTest extends \PHPUnit_Framework_TestCase
     protected $storage;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|AttributeBagInterface
+     * @var \PHPUnit\Framework\MockObject\MockObject|AttributeBagInterface
      */
     protected $sessionBag;
 

@@ -9,15 +9,15 @@ use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 
-class PaymentStatusProviderTest extends \PHPUnit_Framework_TestCase
+class PaymentStatusProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var PaymentTransactionProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var PaymentTransactionProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $paymentTransactionProvider;
 
     /** @var PaymentStatusProvider */
     protected $provider;
 
-    /** @var TotalProcessorProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var TotalProcessorProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $totalProcessorProvider;
 
     protected function setUp()

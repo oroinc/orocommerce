@@ -6,7 +6,7 @@ use Oro\Bundle\PaymentBundle\Context\LineItem\Collection\Doctrine\Factory\Doctri
 use Oro\Bundle\PaymentBundle\Context\PaymentLineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 
-class DoctrinePaymentLineItemCollectionFactoryTest extends \PHPUnit_Framework_TestCase
+class DoctrinePaymentLineItemCollectionFactoryTest extends \PHPUnit\Framework\TestCase
 {
     public function testFactory()
     {

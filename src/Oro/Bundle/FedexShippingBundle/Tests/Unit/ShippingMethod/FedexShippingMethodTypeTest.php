@@ -27,17 +27,17 @@ class FedexShippingMethodTypeTest extends TestCase
     const LABEL = 'label';
 
     /**
-     * @var FedexRateServiceRequestSettingsFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var FedexRateServiceRequestSettingsFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $rateServiceRequestSettingsFactory;
 
     /**
-     * @var FedexRequestByRateServiceSettingsFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var FedexRequestByRateServiceSettingsFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $rateServiceRequestFactory;
 
     /**
-     * @var FedexRateServiceBySettingsClientInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var FedexRateServiceBySettingsClientInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $rateServiceClient;
 

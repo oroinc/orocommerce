@@ -30,8 +30,6 @@ system_configuration:
             search_type: choice
             options:
                 label: oro.rfp.system_configuration.fields.notification.sales_reps.label
-                # TODO: remove 'choices_as_values' option below in scope of BAP-15236
-                choices_as_values: true
                 choices:
                     oro.rfp.system_configuration.fields.notification.sales_reps.always_notify_sale_reps_of_customer: always
                     oro.rfp.system_configuration.fields.notification.sales_reps.if_no_sales_reps_assigned: noSaleReps
@@ -43,8 +41,6 @@ system_configuration:
             search_type: choice
             options:
                 label: oro.rfp.system_configuration.fields.notification.customer_user_record.label
-                # TODO: remove 'choices_as_values' option below in scope of BAP-15236
-                choices_as_values: true
                 choices:
                     oro.rfp.system_configuration.fields.notification.customer_user_record.always_notify_owner: always
                     oro.rfp.system_configuration.fields.notification.customer_user_record.if_no_sales_reps_assigned: noSaleReps
@@ -56,8 +52,6 @@ system_configuration:
             search_type: choice
             options:
                 label: oro.rfp.system_configuration.fields.notification.customer.label
-                # TODO: remove 'choices_as_values' option below in scope of BAP-15236
-                choices_as_values: true
                 choices:
                     oro.rfp.system_configuration.fields.notification.customer.always_notify_owner: always
                     oro.rfp.system_configuration.fields.notification.customer.if_no_sales_reps_assigned: noSaleReps

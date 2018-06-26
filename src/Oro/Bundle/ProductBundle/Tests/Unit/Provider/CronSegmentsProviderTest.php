@@ -6,10 +6,10 @@ use Oro\Bundle\ProductBundle\Provider\ContentVariantSegmentProvider;
 use Oro\Bundle\ProductBundle\Provider\CronSegmentsProvider;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 
-class CronSegmentsProviderTest extends \PHPUnit_Framework_TestCase
+class CronSegmentsProviderTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ContentVariantSegmentProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var ContentVariantSegmentProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     private $contentVariantSegmentProvider;
 

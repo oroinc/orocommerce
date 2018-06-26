@@ -8,7 +8,7 @@ use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
 
-class WebsiteSearchProductVisibilityIndexerListenerTest extends \PHPUnit_Framework_TestCase
+class WebsiteSearchProductVisibilityIndexerListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var WebsiteSearchProductVisibilityIndexerListener
@@ -16,12 +16,12 @@ class WebsiteSearchProductVisibilityIndexerListenerTest extends \PHPUnit_Framewo
     private $listener;
 
     /**
-     * @var ProductVisibilityIndexer|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProductVisibilityIndexer|\PHPUnit\Framework\MockObject\MockObject
      */
     private $visibilityIndexer;
 
     /**
-     * @var WebsiteContextManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var WebsiteContextManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $websiteContextManager;
 

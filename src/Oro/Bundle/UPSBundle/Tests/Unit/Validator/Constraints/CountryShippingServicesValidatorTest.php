@@ -11,7 +11,7 @@ use Oro\Bundle\UPSBundle\Validator\Constraints\CountryShippingServicesValidator;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
 
-class CountryShippingServicesValidatorTest extends \PHPUnit_Framework_TestCase
+class CountryShippingServicesValidatorTest extends \PHPUnit\Framework\TestCase
 {
     const ALIAS = 'oro_ups_country_shipping_services_validator';
 
@@ -21,12 +21,12 @@ class CountryShippingServicesValidatorTest extends \PHPUnit_Framework_TestCase
     const VIOLATION_PATH = 'applicableShippingServices';
 
     /**
-     * @var CountryShippingServicesConstraint|\PHPUnit_Framework_MockObject_MockObject
+     * @var CountryShippingServicesConstraint|\PHPUnit\Framework\MockObject\MockObject
      */
     private $constraint;
 
     /**
-     * @var ExecutionContextInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ExecutionContextInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $context;
 
@@ -169,7 +169,7 @@ class CountryShippingServicesValidatorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return UPSTransport|\PHPUnit_Framework_MockObject_MockObject
+     * @return UPSTransport|\PHPUnit\Framework\MockObject\MockObject
      */
     private function createSettingsMock()
     {
@@ -177,7 +177,7 @@ class CountryShippingServicesValidatorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return ShippingService|\PHPUnit_Framework_MockObject_MockObject
+     * @return ShippingService|\PHPUnit\Framework\MockObject\MockObject
      */
     private function createShippingServiceMock()
     {
@@ -185,7 +185,7 @@ class CountryShippingServicesValidatorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return Transport|\PHPUnit_Framework_MockObject_MockObject
+     * @return Transport|\PHPUnit\Framework\MockObject\MockObject
      */
     private function createTransportMock()
     {

@@ -7,10 +7,10 @@ use Oro\Bundle\DataGridBundle\Tools\DatagridRouteHelper;
 use Oro\Bundle\ShippingBundle\Tools\FilteredDatagridRouteHelper;
 use Symfony\Component\Routing\RouterInterface;
 
-class FilteredDatagridRouteHelperTest extends \PHPUnit_Framework_TestCase
+class FilteredDatagridRouteHelperTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var DatagridRouteHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var DatagridRouteHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $datagridRouteHelper;
 

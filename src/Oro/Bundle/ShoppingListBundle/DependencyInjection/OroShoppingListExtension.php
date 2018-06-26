@@ -25,6 +25,7 @@ class OroShoppingListExtension extends Extension
         $loader->load('listeners.yml');
         $loader->load('mass_action.yml');
         $loader->load('block_types.yml');
+        $loader->load('commands.yml');
 
         $container->prependExtensionConfig($this->getAlias(), array_intersect_key($config, array_flip(['settings'])));
     }

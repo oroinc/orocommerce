@@ -20,7 +20,7 @@ class WebsitePropertyTypeTest extends FormIntegrationTestCase
     const WEBSITE_CLASS = 'Oro\Bundle\WebsiteBundle\Entity\Website';
 
     /**
-     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $registry;
 
@@ -39,7 +39,7 @@ class WebsitePropertyTypeTest extends FormIntegrationTestCase
         $websiteCollection = new WebsiteCollectionType($this->registry);
         $websiteCollection->setWebsiteClass(self::WEBSITE_CLASS);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface $translator */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|TranslatorInterface $translator */
         $translator = $this->createMock('Symfony\Component\Translation\TranslatorInterface');
 
         return [

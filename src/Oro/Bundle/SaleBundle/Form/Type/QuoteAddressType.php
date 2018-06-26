@@ -79,8 +79,6 @@ class QuoteAddressType extends AbstractType
                     'label' => false,
                     'required' => false,
                     'mapped' => false,
-                    // TODO: remove 'choices_as_values' option below in scope of BAP-15236
-                    'choices_as_values' => true,
                     'choices' => $this->getChoices($addresses),
                     'configs' => ['placeholder' => 'oro.quote.form.address.choose'],
                     'attr' => [

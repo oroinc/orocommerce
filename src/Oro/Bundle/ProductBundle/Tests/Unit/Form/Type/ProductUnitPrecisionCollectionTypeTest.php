@@ -6,7 +6,7 @@ use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitPrecisionCollectionType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitPrecisionType;
 
-class ProductUnitPrecisionCollectionTypeTest extends \PHPUnit_Framework_TestCase
+class ProductUnitPrecisionCollectionTypeTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var ProductUnitPrecisionCollectionType

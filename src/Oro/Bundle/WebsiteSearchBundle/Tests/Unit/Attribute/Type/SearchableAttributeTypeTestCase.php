@@ -9,7 +9,7 @@ use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\TestFrameworkBundle\Entity\Item;
 use Oro\Bundle\WebsiteSearchBundle\Attribute\Type\SearchableAttributeTypeInterface;
 
-abstract class SearchableAttributeTypeTestCase extends \PHPUnit_Framework_TestCase
+abstract class SearchableAttributeTypeTestCase extends \PHPUnit\Framework\TestCase
 {
     const CLASS_NAME = Item::class;
     const FIELD_NAME = 'test_field_name';
@@ -20,7 +20,7 @@ abstract class SearchableAttributeTypeTestCase extends \PHPUnit_Framework_TestCa
     /** @var Localization */
     protected $localization;
 
-    /** @var AttributeTypeInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var AttributeTypeInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $attributeType;
 
     protected function setUp()

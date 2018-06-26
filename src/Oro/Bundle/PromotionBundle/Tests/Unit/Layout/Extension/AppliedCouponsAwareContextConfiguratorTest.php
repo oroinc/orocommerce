@@ -6,7 +6,7 @@ use Oro\Bundle\PromotionBundle\Entity\AppliedCouponsAwareInterface;
 use Oro\Bundle\PromotionBundle\Layout\Extension\AppliedCouponsAwareContextConfigurator;
 use Oro\Component\Layout\LayoutContext;
 
-class AppliedCouponsAwareContextConfiguratorTest extends \PHPUnit_Framework_TestCase
+class AppliedCouponsAwareContextConfiguratorTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @dataProvider contextDataProvider

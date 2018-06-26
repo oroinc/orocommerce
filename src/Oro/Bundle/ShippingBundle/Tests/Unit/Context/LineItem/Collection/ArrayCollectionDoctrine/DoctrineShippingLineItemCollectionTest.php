@@ -5,7 +5,7 @@ namespace Oro\Bundle\ShippingBundle\Tests\Unit\Context\LineItem\Collection\Array
 use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Doctrine\DoctrineShippingLineItemCollection;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItem;
 
-class DoctrineShippingLineItemCollectionTest extends \PHPUnit_Framework_TestCase
+class DoctrineShippingLineItemCollectionTest extends \PHPUnit\Framework\TestCase
 {
     public function testCollection()
     {

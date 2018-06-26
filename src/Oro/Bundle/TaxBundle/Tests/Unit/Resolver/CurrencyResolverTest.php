@@ -9,7 +9,7 @@ use Oro\Bundle\TaxBundle\Model\TaxResultElement;
 use Oro\Bundle\TaxBundle\Resolver\CurrencyResolver;
 use Oro\Bundle\TaxBundle\Tests\ResultComparatorTrait;
 
-class CurrencyResolverTest extends \PHPUnit_Framework_TestCase
+class CurrencyResolverTest extends \PHPUnit\Framework\TestCase
 {
     use ResultComparatorTrait;
 

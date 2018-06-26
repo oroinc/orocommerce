@@ -76,7 +76,7 @@ oro:
             fields:
                 web_catalog:
                     label: Web Catalog
-                    tooltip: Assign Web Catalog to Store Front
+                    tooltip: Assign a web catalog to the storefront
 
     scope:
         web_catalog.label: Web Catalog

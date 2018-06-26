@@ -11,10 +11,10 @@ use Oro\Component\DependencyInjection\ServiceLink;
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class FieldsProviderTest extends \PHPUnit_Framework_TestCase
+class FieldsProviderTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var EntityFieldProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var EntityFieldProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $entityFieldProvider;
 
@@ -24,12 +24,12 @@ class FieldsProviderTest extends \PHPUnit_Framework_TestCase
     protected $fieldsProvider;
 
     /**
-     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $registry;
 
     /**
-     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $doctrineHelper;
 
@@ -45,7 +45,7 @@ class FieldsProviderTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         /**
-         * @var \PHPUnit_Framework_MockObject_MockObject|ServiceLink
+         * @var \PHPUnit\Framework\MockObject\MockObject|ServiceLink
          */
         $entityFieldProviderLink = $this
             ->getMockBuilder('Oro\Component\DependencyInjection\ServiceLink')

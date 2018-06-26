@@ -14,7 +14,7 @@ use Oro\Bundle\PricingBundle\Provider\CombinedPriceListProvider;
 use Oro\Bundle\PricingBundle\Provider\PriceListCollectionProvider;
 use Oro\Bundle\PricingBundle\Resolver\CombinedPriceListScheduleResolver;
 
-class CombinedPriceListsBuilderTest extends \PHPUnit_Framework_TestCase
+class CombinedPriceListsBuilderTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var CombinedPriceListsBuilder
@@ -22,42 +22,42 @@ class CombinedPriceListsBuilderTest extends \PHPUnit_Framework_TestCase
     protected $builder;
 
     /**
-     * @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $configManager;
 
     /**
-     * @var CombinedPriceListGarbageCollector|\PHPUnit_Framework_MockObject_MockObject
+     * @var CombinedPriceListGarbageCollector|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $garbageCollector;
 
     /**
-     * @var PriceListCollectionProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var PriceListCollectionProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $priceListCollectionProvider;
 
     /**
-     * @var CombinedPriceListProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var CombinedPriceListProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $combinedPriceListProvider;
 
     /**
-     * @var WebsiteCombinedPriceListsBuilder|\PHPUnit_Framework_MockObject_MockObject
+     * @var WebsiteCombinedPriceListsBuilder|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $websiteBuilder;
 
     /**
-     * @var CombinedPriceListScheduleResolver|\PHPUnit_Framework_MockObject_MockObject
+     * @var CombinedPriceListScheduleResolver|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $cplScheduleResolver;
 
     /**
-     * @var MergePricesCombiningStrategy|\PHPUnit_Framework_MockObject_MockObject
+     * @var MergePricesCombiningStrategy|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $priceResolver;
 
     /**
-     * @var CombinedPriceListTriggerHandler|\PHPUnit_Framework_MockObject_MockObject
+     * @var CombinedPriceListTriggerHandler|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $triggerHandler;
 

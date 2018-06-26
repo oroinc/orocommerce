@@ -7,12 +7,12 @@ use Oro\Bundle\FeatureToggleBundle\Checker\Voter\VoterInterface;
 use Oro\Bundle\ProductBundle\Voter\GuestQuickOrderFormVoter;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
-class GuestQuickOrderFormVoterTest extends \PHPUnit_Framework_TestCase
+class GuestQuickOrderFormVoterTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var VoterInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var VoterInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $configVoter;
 
-    /** @var TokenStorageInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var TokenStorageInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $tokenStorage;
 
     /** @var GuestQuickOrderFormVoter */

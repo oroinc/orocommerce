@@ -6,10 +6,10 @@ use Oro\Bundle\RedirectBundle\Async\Topics;
 use Oro\Bundle\RedirectBundle\Cache\SlugUrlCacheWarmer;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 
-class SlugUrlCacheWarmerTest extends \PHPUnit_Framework_TestCase
+class SlugUrlCacheWarmerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var MessageProducerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $messageProducer;
 

@@ -108,11 +108,11 @@ Feature: Guest Shopping Lists
   Scenario: Create Shopping List as unauthorized user from product view page
     Given I am on homepage
     Then I should see "Shopping list"
-    When type "PSKU1" in "search"
+    When type "SKU003" in "search"
     And I click "Search Button"
-    Then I should see "Product1"
+    Then I should see "Product3"
     And I should see "Add to Shopping List"
-    When I click "View Details" for "PSKU1" product
+    When I click "View Details" for "SKU003" product
     Then I should see "Add to Shopping List"
     When I click "Add to Shopping List"
     Then I should see "Product has been added to" flash message
@@ -125,7 +125,8 @@ Feature: Guest Shopping Lists
       | Unit     | each |
     And I click "Update Shopping List"
     Then I should see "Record has been successfully updated" flash message
-    And I click "NewCategory"
+    Then type "SKU003" in "search"
+    And I click "Search Button"
     Then I should see "In shopping list"
 
   Scenario: Add more products to shopping list from list page (search)
@@ -138,7 +139,7 @@ Feature: Guest Shopping Lists
   Scenario: Check added products available in Guest Shopping List
     Given I click "Shopping List"
     Then  I should see "Control Product"
-    And  I should see "Product1"
+    And  I should see "Product3"
     And I should not see following buttons:
       | Delete        |
       | Create Order  |

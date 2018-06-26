@@ -128,24 +128,27 @@
 
     {% set dataBlocks = [{
         'title': 'oro.order.sections.general'|trans,
-        'class': 'active',
+        'class': 'nav-item active',
         'subblocks': [{'data' : [quoteInformationWidget]}]
     }] %}
 
     {% if entity.quoteProducts | length %}
         {% set dataBlocks = dataBlocks|merge([{
             'title': 'oro.sale.quote.sections.quote_products'|trans,
+            'class': 'nav-item',
             'subblocks': [{'data' : {'products' : quoteProducts}}]
         }]) %}
     {% endif %}
 
     {% set dataBlocks = dataBlocks|merge([{
         'title': 'oro.sale.quote.sections.shipping_address'|trans,
+        'class': 'nav-item',
         'subblocks': [{'data' : [shippingAddress]}]
     }]) %}
 
     {% set dataBlocks = dataBlocks|merge([{
         'title': 'oro.sale.quote.sections.shipping_information'|trans,
+        'class': 'nav-item',
         'subblocks': [{'data' : [shippingInformation]}]
     }]) %}
 

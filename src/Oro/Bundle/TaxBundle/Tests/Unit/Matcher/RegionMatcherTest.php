@@ -15,7 +15,7 @@ use Oro\Bundle\TaxBundle\Model\TaxCodes;
 class RegionMatcherTest extends AbstractMatcherTest
 {
     /**
-     * @var CountryMatcher|\PHPUnit_Framework_MockObject_MockObject
+     * @var CountryMatcher|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $countryMatcher;
     

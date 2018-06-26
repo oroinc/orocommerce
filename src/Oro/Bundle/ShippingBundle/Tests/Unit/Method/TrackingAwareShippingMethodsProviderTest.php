@@ -7,10 +7,10 @@ use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
 use Oro\Bundle\ShippingBundle\Method\TrackingAwareShippingMethodsProvider;
 use Oro\Bundle\ShippingBundle\Tests\Unit\Method\Stub\TrackingAwareShippingMethodStub;
 
-class TrackingAwareShippingMethodsProviderTest extends \PHPUnit_Framework_TestCase
+class TrackingAwareShippingMethodsProviderTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ShippingMethodProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $shippingMethodProvider;
 
@@ -86,7 +86,7 @@ class TrackingAwareShippingMethodsProviderTest extends \PHPUnit_Framework_TestCa
      * @param string $class
      * @param string $identifier
      *
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     protected function mockShippingMethod($class, $identifier)
     {

@@ -7,11 +7,11 @@ use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\WebsiteIdPlaceholder;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class WebsiteIdPlaceholderTest extends \PHPUnit_Framework_TestCase
+class WebsiteIdPlaceholderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /** @var WebsiteManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var WebsiteManager|\PHPUnit\Framework\MockObject\MockObject */
     private $websiteManager;
 
     /** @var WebsiteIdPlaceholder */

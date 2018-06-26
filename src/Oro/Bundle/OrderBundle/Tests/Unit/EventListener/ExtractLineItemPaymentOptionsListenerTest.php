@@ -11,12 +11,12 @@ use Oro\Bundle\PaymentBundle\Model\LineItemOptionModel;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
 
-class ExtractLineItemPaymentOptionsListenerTest extends \PHPUnit_Framework_TestCase
+class ExtractLineItemPaymentOptionsListenerTest extends \PHPUnit\Framework\TestCase
 {
     /** @var ExtractLineItemPaymentOptionsListener */
     private $listener;
 
-    /** @var HtmlTagHelper|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var HtmlTagHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $htmlTagHelper;
 
     public function setUp()

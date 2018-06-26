@@ -9,12 +9,12 @@ use Oro\Bundle\RedirectBundle\Generator\DTO\SlugUrl;
 use Oro\Bundle\RedirectBundle\Generator\UniqueSlugResolver;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class UniqueSlugResolverTest extends \PHPUnit_Framework_TestCase
+class UniqueSlugResolverTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var SlugRepository|\PHPUnit_Framework_MockObject_MockObject
+     * @var SlugRepository|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $repository;
 
@@ -36,7 +36,7 @@ class UniqueSlugResolverTest extends \PHPUnit_Framework_TestCase
         $slug = '/test';
         $slugUrl = new SlugUrl($slug);
 
-        /** @var SluggableInterface|\PHPUnit_Framework_MockObject_MockObject $entity **/
+        /** @var SluggableInterface|\PHPUnit\Framework\MockObject\MockObject $entity **/
         $entity = $this->createMock(SluggableInterface::class);
 
         $this->repository->expects($this->once())
@@ -55,7 +55,7 @@ class UniqueSlugResolverTest extends \PHPUnit_Framework_TestCase
 
         $slugUrl = new SlugUrl($slug);
 
-        /** @var SluggableInterface|\PHPUnit_Framework_MockObject_MockObject $entity **/
+        /** @var SluggableInterface|\PHPUnit\Framework\MockObject\MockObject $entity **/
         $entity = $this->createMock(SluggableInterface::class);
 
         $this->repository->expects($this->once())
@@ -79,7 +79,7 @@ class UniqueSlugResolverTest extends \PHPUnit_Framework_TestCase
 
         $slugUrl = new SlugUrl($slug);
 
-        /** @var SluggableInterface|\PHPUnit_Framework_MockObject_MockObject $entity **/
+        /** @var SluggableInterface|\PHPUnit\Framework\MockObject\MockObject $entity **/
         $entity = $this->createMock(SluggableInterface::class);
 
         $this->repository->expects($this->any())

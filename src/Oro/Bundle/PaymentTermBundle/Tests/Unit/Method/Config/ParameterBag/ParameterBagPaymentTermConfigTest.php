@@ -4,7 +4,7 @@ namespace Oro\Bundle\PaymentTermBundle\Tests\Unit\Method\Config;
 
 use Oro\Bundle\PaymentTermBundle\Method\Config\ParameterBag\ParameterBagPaymentTermConfig;
 
-class ParameterBagPaymentTermConfigTest extends \PHPUnit_Framework_TestCase
+class ParameterBagPaymentTermConfigTest extends \PHPUnit\Framework\TestCase
 {
     public function testGetters()
     {

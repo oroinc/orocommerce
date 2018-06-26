@@ -76,6 +76,10 @@ class OrderMapper implements MapperInterface
         $result = [];
         $mapFields = $this->getMapFields();
         foreach ($mapFields as $field) {
+            if (false !== strpos($field, ':')) {// Bypass relations in form ClassName::fieldName.
+                continue;
+            }
+
             try {
                 $value = $this->propertyAccessor->getValue($entity, $field);
                 $result[$field] = $value;

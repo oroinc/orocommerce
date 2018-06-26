@@ -17,17 +17,17 @@ use Oro\Bundle\WebCatalogBundle\Model\ResolveNodeSlugsMessageFactory;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class ContentNodeListenerTest extends \PHPUnit_Framework_TestCase
+class ContentNodeListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var ContentNodeMaterializedPathModifier|\PHPUnit_Framework_MockObject_MockObject
+     * @var ContentNodeMaterializedPathModifier|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $modifier;
 
     /**
-     * @var ExtraActionEntityStorageInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ExtraActionEntityStorageInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $storage;
 
@@ -37,12 +37,12 @@ class ContentNodeListenerTest extends \PHPUnit_Framework_TestCase
     protected $contentNodeListener;
 
     /**
-     * @var MessageProducerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $messageProducer;
 
     /**
-     * @var ResolveNodeSlugsMessageFactory|\PHPUnit_Framework_MockObject_MockObject
+     * @var ResolveNodeSlugsMessageFactory|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $messageFactory;
 
@@ -86,7 +86,7 @@ class ContentNodeListenerTest extends \PHPUnit_Framework_TestCase
         /** @var ContentNode $contentNode */
         $contentNode = $this->getEntity(ContentNode::class, ['id' => 42]);
 
-        /** @var PreUpdateEventArgs|\PHPUnit_Framework_MockObject_MockObject $args */
+        /** @var PreUpdateEventArgs|\PHPUnit\Framework\MockObject\MockObject $args */
         $args = $this->getMockBuilder(PreUpdateEventArgs::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -132,7 +132,7 @@ class ContentNodeListenerTest extends \PHPUnit_Framework_TestCase
             ->method('send')
             ->with(Topics::RESOLVE_NODE_SLUGS, []);
 
-        /** @var AfterFormProcessEvent|\PHPUnit_Framework_MockObject_MockObject $event */
+        /** @var AfterFormProcessEvent|\PHPUnit\Framework\MockObject\MockObject $event */
         $event = $this->getMockBuilder(AfterFormProcessEvent::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -168,7 +168,7 @@ class ContentNodeListenerTest extends \PHPUnit_Framework_TestCase
                 ]
             );
 
-        /** @var UnitOfWork|\PHPUnit_Framework_MockObject_MockObject $uow */
+        /** @var UnitOfWork|\PHPUnit\Framework\MockObject\MockObject $uow */
         $uow = $this->getMockBuilder(UnitOfWork::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -176,13 +176,13 @@ class ContentNodeListenerTest extends \PHPUnit_Framework_TestCase
             ->method('isScheduledForDelete')
             ->with($parentNode)
             ->willReturn(false);
-        /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $em */
+        /** @var EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject $em */
         $em = $this->createMock(EntityManagerInterface::class);
         $em->expects($this->once())
             ->method('getUnitOfWork')
             ->willReturn($uow);
 
-        /** @var LifecycleEventArgs|\PHPUnit_Framework_MockObject_MockObject $event */
+        /** @var LifecycleEventArgs|\PHPUnit\Framework\MockObject\MockObject $event */
         $event = $this->getMockBuilder(LifecycleEventArgs::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -209,7 +209,7 @@ class ContentNodeListenerTest extends \PHPUnit_Framework_TestCase
         $this->messageProducer->expects($this->once())
             ->method('send')
             ->with(Topics::CALCULATE_WEB_CATALOG_CACHE, 42);
-        /** @var LifecycleEventArgs|\PHPUnit_Framework_MockObject_MockObject $event */
+        /** @var LifecycleEventArgs|\PHPUnit\Framework\MockObject\MockObject $event */
         $event = $this->getMockBuilder(LifecycleEventArgs::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -230,7 +230,7 @@ class ContentNodeListenerTest extends \PHPUnit_Framework_TestCase
         $this->messageProducer->expects($this->never())
             ->method('send');
 
-        /** @var UnitOfWork|\PHPUnit_Framework_MockObject_MockObject $uow */
+        /** @var UnitOfWork|\PHPUnit\Framework\MockObject\MockObject $uow */
         $uow = $this->getMockBuilder(UnitOfWork::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -238,13 +238,13 @@ class ContentNodeListenerTest extends \PHPUnit_Framework_TestCase
             ->method('isScheduledForDelete')
             ->with($parentNode)
             ->willReturn(true);
-        /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $em */
+        /** @var EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject $em */
         $em = $this->createMock(EntityManagerInterface::class);
         $em->expects($this->once())
             ->method('getUnitOfWork')
             ->willReturn($uow);
 
-        /** @var LifecycleEventArgs|\PHPUnit_Framework_MockObject_MockObject $event */
+        /** @var LifecycleEventArgs|\PHPUnit\Framework\MockObject\MockObject $event */
         $event = $this->getMockBuilder(LifecycleEventArgs::class)
             ->disableOriginalConstructor()
             ->getMock();

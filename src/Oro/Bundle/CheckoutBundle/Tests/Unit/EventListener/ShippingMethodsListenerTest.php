@@ -16,12 +16,12 @@ use Oro\Bundle\ShippingBundle\Provider\MethodsConfigsRule\Context\MethodsConfigs
 class ShippingMethodsListenerTest extends AbstractMethodsListenerTest
 {
     /**
-     * @var MethodsConfigsRulesByContextProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var MethodsConfigsRulesByContextProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $configsRuleProvider;
 
     /**
-     * @var CheckoutShippingContextFactory|\PHPUnit_Framework_MockObject_MockObject
+     * @var CheckoutShippingContextFactory|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $contextFactory;
 

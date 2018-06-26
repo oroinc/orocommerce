@@ -24,7 +24,7 @@ use PHPUnit\Framework\TestCase;
 class ConvertToFedexUnitsShippingLineItemCollectionModifierTest extends TestCase
 {
     /**
-     * @var MeasureUnitConversion|\PHPUnit_Framework_MockObject_MockObject
+     * @var MeasureUnitConversion|\PHPUnit\Framework\MockObject\MockObject
      */
     private $measureUnitConverter;
 

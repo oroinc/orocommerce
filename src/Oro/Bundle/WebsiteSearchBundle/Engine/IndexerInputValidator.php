@@ -6,6 +6,9 @@ use Oro\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface;
 use Oro\Bundle\WebsiteSearchBundle\Engine\Context\ContextTrait;
 use Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchMappingProvider;
 
+/**
+ * Validates Elasticsearch parameters, parses them and returns list of affected entities and websites
+ */
 class IndexerInputValidator
 {
     use ContextTrait;
@@ -29,7 +32,7 @@ class IndexerInputValidator
     }
 
     /**
-     * @param string|array $classOrClasses
+     * @param string|array|null $classOrClasses
      * @param array $context
      * $context = [
      *     'entityIds' int[] Array of entities ids to reindex
@@ -38,7 +41,7 @@ class IndexerInputValidator
      *
      * @return array
      */
-    public function validateReindexRequest(
+    public function validateRequestParameters(
         $classOrClasses,
         array $context
     ) {
@@ -68,13 +71,13 @@ class IndexerInputValidator
     }
 
     /**
-     * @param string $class
+     * @param string|null $class
      * @return array
      */
     private function getEntitiesToIndex($class = null)
     {
-        $entityClasses = (array)$class;
-        if ($entityClasses) {
+        if ($class) {
+            $entityClasses = (array)$class;
             foreach ($entityClasses as $entityClass) {
                 $this->ensureEntityClassIsSupported($entityClass);
             }

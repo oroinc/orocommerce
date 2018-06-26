@@ -8,14 +8,14 @@ use Oro\Bundle\OrderBundle\EventListener\Order\OrderTotalEventListener;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use Symfony\Component\Form\FormInterface;
 
-class OrderTotalEventListenerTest extends \PHPUnit_Framework_TestCase
+class OrderTotalEventListenerTest extends \PHPUnit\Framework\TestCase
 {
     use SubtotalTrait;
 
     /** @var OrderTotalEventListener */
     protected $listener;
 
-    /** @var TotalProcessorProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var TotalProcessorProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $totalProvider;
 
     protected function setUp()
@@ -35,7 +35,7 @@ class OrderTotalEventListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testOnOrderEvent()
     {
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock('Symfony\Component\Form\FormInterface');
 
         $order = new Order();

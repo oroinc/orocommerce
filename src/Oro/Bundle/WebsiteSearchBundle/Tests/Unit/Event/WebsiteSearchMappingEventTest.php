@@ -4,7 +4,7 @@ namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Event;
 
 use Oro\Bundle\WebsiteSearchBundle\Event\WebsiteSearchMappingEvent;
 
-class WebsiteSearchMappingEventTest extends \PHPUnit_Framework_TestCase
+class WebsiteSearchMappingEventTest extends \PHPUnit\Framework\TestCase
 {
     /** @var WebsiteSearchMappingEvent */
     protected $event;

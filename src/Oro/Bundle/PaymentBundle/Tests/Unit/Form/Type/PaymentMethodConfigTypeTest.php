@@ -17,12 +17,12 @@ class PaymentMethodConfigTypeTest extends FormIntegrationTestCase
     protected $formType;
 
     /**
-     * @var PaymentMethodProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var PaymentMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $paymentMethodProvider;
 
     /**
-     * @var CompositePaymentMethodViewProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var CompositePaymentMethodViewProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $paymentMethodViewProvider;
 

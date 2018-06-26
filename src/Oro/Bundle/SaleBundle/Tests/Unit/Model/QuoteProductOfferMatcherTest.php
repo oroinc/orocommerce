@@ -7,7 +7,7 @@ use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use Oro\Bundle\SaleBundle\Model\QuoteProductOfferMatcher;
 
-class QuoteProductOfferMatcherTest extends \PHPUnit_Framework_TestCase
+class QuoteProductOfferMatcherTest extends \PHPUnit\Framework\TestCase
 {
     /** @var QuoteProductOfferMatcher */
     protected $matcher;

@@ -7,7 +7,7 @@ use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
 use Oro\Bundle\CheckoutBundle\Event\CheckoutEntityEvent;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-class CheckoutEntityEventTest extends \PHPUnit_Framework_TestCase
+class CheckoutEntityEventTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 

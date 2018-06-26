@@ -12,10 +12,10 @@ use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 
-class RequestListenerTest extends \PHPUnit_Framework_TestCase
+class RequestListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $registry;
 
@@ -32,7 +32,7 @@ class RequestListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testOnKernelRequestSubRequest()
     {
-        /** @var GetResponseEvent|\PHPUnit_Framework_MockObject_MockObject $event */
+        /** @var GetResponseEvent|\PHPUnit\Framework\MockObject\MockObject $event */
         $event = $this->getMockBuilder(GetResponseEvent::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -47,7 +47,7 @@ class RequestListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testOnKernelRequestNotSlug()
     {
-        /** @var GetResponseEvent|\PHPUnit_Framework_MockObject_MockObject $event */
+        /** @var GetResponseEvent|\PHPUnit\Framework\MockObject\MockObject $event */
         $event = $this->getMockBuilder(GetResponseEvent::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -68,7 +68,7 @@ class RequestListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testOnKernelRequest()
     {
-        /** @var GetResponseEvent|\PHPUnit_Framework_MockObject_MockObject $event */
+        /** @var GetResponseEvent|\PHPUnit\Framework\MockObject\MockObject $event */
         $event = $this->getMockBuilder(GetResponseEvent::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -77,7 +77,7 @@ class RequestListenerTest extends \PHPUnit_Framework_TestCase
             ->willReturn(true);
         $request = Request::create('/');
 
-        /** @var Slug|\PHPUnit_Framework_MockObject_MockObject $slug */
+        /** @var Slug|\PHPUnit\Framework\MockObject\MockObject $slug */
         $slug = $this->getMockBuilder(Slug::class)
             ->disableOriginalConstructor()
             ->getMock();

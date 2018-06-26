@@ -23,10 +23,10 @@ class QuoteAddressManagerTest extends AbstractAddressManagerTest
     /** @var QuoteAddressManager */
     protected $manager;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|QuoteAddressProvider */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|QuoteAddressProvider */
     protected $provider;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|ManagerRegistry */
     protected $registry;
 
     protected function setUp()

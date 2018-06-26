@@ -6,7 +6,7 @@ layout:
             namespace: two_column_upsell
     actions:
         - '@setBlockTheme':
-            themes: 'upsell_products.html.twig'
+            themes: 'OroProductBundle:layouts:default/oro_product_frontend_product_view/page_template/two-columns/upsell_products.html.twig'
         - '@setOption':
             id: two_column_upsell_products
             optionName: items

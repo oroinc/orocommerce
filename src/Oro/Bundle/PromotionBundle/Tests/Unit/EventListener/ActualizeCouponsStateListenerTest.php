@@ -14,17 +14,17 @@ use Oro\Bundle\PromotionBundle\Tests\Unit\CouponsTrait;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-class ActualizeCouponsStateListenerTest extends \PHPUnit_Framework_TestCase
+class ActualizeCouponsStateListenerTest extends \PHPUnit\Framework\TestCase
 {
     use CouponsTrait;
 
     /**
-     * @var RegistryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var RegistryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $registry;
 
     /**
-     * @var EntityCouponsProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var EntityCouponsProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     private $entityCouponsProvider;
 

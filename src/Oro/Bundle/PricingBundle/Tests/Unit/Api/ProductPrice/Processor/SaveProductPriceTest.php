@@ -11,12 +11,12 @@ use PHPUnit\Framework\TestCase;
 class SaveProductPriceTest extends TestCase
 {
     /**
-     * @var PriceManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var PriceManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $priceManager;
 
     /**
-     * @var SingleItemContext|\PHPUnit_Framework_MockObject_MockObject
+     * @var SingleItemContext|\PHPUnit\Framework\MockObject\MockObject
      */
     private $context;
 

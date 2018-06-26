@@ -12,22 +12,22 @@ use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-class OrderShippingTrackingHandlerTest extends \PHPUnit_Framework_TestCase
+class OrderShippingTrackingHandlerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|FormInterface
+     * @var \PHPUnit\Framework\MockObject\MockObject|FormInterface
      */
     protected $form;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ObjectManager
+     * @var \PHPUnit\Framework\MockObject\MockObject|ObjectManager
      */
     protected $manager;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|Order
+     * @var \PHPUnit\Framework\MockObject\MockObject|Order
      */
     protected $order;
 
@@ -44,7 +44,7 @@ class OrderShippingTrackingHandlerTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->manager = $this->createMock('Doctrine\Common\Persistence\ObjectManager');
-        /** @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry $managerRegistry */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|ManagerRegistry $managerRegistry */
         $managerRegistry = $this->getMockBuilder('Doctrine\Bundle\DoctrineBundle\Registry')
             ->disableOriginalConstructor()
             ->getMock();

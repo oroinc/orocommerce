@@ -12,7 +12,7 @@ use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class DiscountContextTest extends \PHPUnit_Framework_TestCase
+class DiscountContextTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 
@@ -108,12 +108,12 @@ class DiscountContextTest extends \PHPUnit_Framework_TestCase
 
     public function testGetTotalLineItemsDiscount()
     {
-        /** @var DiscountLineItem|\PHPUnit_Framework_MockObject_MockObject $lineItem1 */
+        /** @var DiscountLineItem|\PHPUnit\Framework\MockObject\MockObject $lineItem1 */
         $lineItem1 = $this->createMock(DiscountLineItem::class);
         $lineItem1->expects($this->once())
             ->method('getDiscountTotal')
             ->willReturn(10.5);
-        /** @var DiscountLineItem|\PHPUnit_Framework_MockObject_MockObject $lineItem2 */
+        /** @var DiscountLineItem|\PHPUnit\Framework\MockObject\MockObject $lineItem2 */
         $lineItem2 = $this->createMock(DiscountLineItem::class);
         $lineItem2->expects($this->once())
             ->method('getDiscountTotal')

@@ -117,7 +117,7 @@ services:
             - [setActionGroupRegistry, ['@oro_action.action_group_registry']]
             - [setTranslator, ['@translator']]
             - [setDateFormatter, ['@oro_locale.formatter.date_time']]
-            - [setActionGroupName, ['start_shoppinglist_checkout']]
+            - [setActionGroupName, ['start_quickorder_checkout']]
         tags:
             - { name: oro_product.quick_add_processor }
 
@@ -387,6 +387,7 @@ services:
             - '@oro_config.manager'
             - '@oro_security.token_accessor'
             - '@oro_entity.doctrine_helper'
+            - '@oro_website.manager'
 
     oro_shopping_list.twig.shopping_list_limit_extension:
         class: 'Oro\Bundle\ShoppingListBundle\Twig\ShoppingListLimitExtension'

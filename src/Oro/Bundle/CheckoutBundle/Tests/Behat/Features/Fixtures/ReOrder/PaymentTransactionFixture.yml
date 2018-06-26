@@ -14,9 +14,9 @@ Oro\Bundle\PaymentBundle\Entity\PaymentTransaction:
         active: false
         successful: true
         transactionOptions:
-            successUrl: '\/app.php\/customer\/checkout\/1?transition=finish_checkout'
-            failureUrl: '\/app.php\/customer\/checkout\/1?transition=payment_error'
-            failedShippingAddressUrl: '\/app.php\/customer\/checkout\/1?transition=back_to_shipping_address_on_fail_address'
+            successUrl: '\/index.php\/customer\/checkout\/1?transition=finish_checkout'
+            failureUrl: '\/index.php\/customer\/checkout\/1?transition=payment_error'
+            failedShippingAddressUrl: '\/index.php\/customer\/checkout\/1?transition=back_to_shipping_address_on_fail_address'
             checkoutId: 1
             additionalData: null
     paymentTransaction2:
@@ -34,8 +34,8 @@ Oro\Bundle\PaymentBundle\Entity\PaymentTransaction:
         active: false
         successful: true
         transactionOptions:
-            successUrl: '\/app.php\/customer\/checkout\/2?transition=finish_checkout'
-            failureUrl: '\/app.php\/customer\/checkout\/2?transition=payment_error'
-            failedShippingAddressUrl: '\/app.php\/customer\/checkout\/1?transition=back_to_shipping_address_on_fail_address'
+            successUrl: '\/index.php\/customer\/checkout\/2?transition=finish_checkout'
+            failureUrl: '\/index.php\/customer\/checkout\/2?transition=payment_error'
+            failedShippingAddressUrl: '\/index.php\/customer\/checkout\/1?transition=back_to_shipping_address_on_fail_address'
             checkoutId: 2
             additionalData: null

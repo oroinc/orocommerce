@@ -6,12 +6,12 @@ use Oro\Bundle\CMSBundle\DependencyInjection\Compiler\WidgetTagPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 
-class WidgetTagPassTest extends \PHPUnit_Framework_TestCase
+class WidgetTagPassTest extends \PHPUnit\Framework\TestCase
 {
     /** @var WidgetTagPass */
     private $pass;
 
-    /** @var ContainerBuilder|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ContainerBuilder|\PHPUnit\Framework\MockObject\MockObject */
     private $container;
 
     protected function setUp()
@@ -121,7 +121,7 @@ class WidgetTagPassTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Definition
+     * @return \PHPUnit\Framework\MockObject\MockObject|Definition
      */
     private function getDefinitionMock()
     {

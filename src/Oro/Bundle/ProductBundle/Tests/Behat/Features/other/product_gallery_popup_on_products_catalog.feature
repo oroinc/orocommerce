@@ -1,4 +1,6 @@
+@ticket-BB-13978
 @fixture-OroProductBundle:product_listing_images.yml
+
 Feature: Product Gallery Popup On Products Catalog
   ToDo: BAP-16103 Add missing descriptions to the Behat features
     
@@ -6,6 +8,7 @@ Feature: Product Gallery Popup On Products Catalog
         Given sessions active:
             | Admin |first_session  |
             | User  |second_session |
+        # Load images to product to make it show in Top Selling Items Block
         And I proceed as the Admin
         And login as administrator
         And I go to Products/ Products
@@ -16,6 +19,8 @@ Feature: Product Gallery Popup On Products Catalog
             | cat2.jpg |       |         | 1          |
         And I save and close form
         Then I should see "Product has been saved" flash message
+        # Enable localizations
+        And I enable the existing localizations
 
     Scenario: Default state - "Enable Image Preview On Product Listing" is On
         Given I proceed as the User
@@ -27,6 +32,14 @@ Feature: Product Gallery Popup On Products Catalog
         And I should see an "Popup Gallery Widget" element
         And I click "Popup Gallery Widget Close"
         Then I should not see an "Popup Gallery Widget" element
+
+    Scenario: Check that alt attribute in product image is localized
+        Given I press "Localization Switcher"
+        And I select "Localization 1" localization
+        And I should see preview image with alt "Product1 (Localization 1)" for "PSKU1" product
+        And I hover on "Product Item Preview"
+        When I click "Product Item Gallery Trigger"
+        Then I should see gallery image with alt "Product1 (Localization 1)"
 
     Scenario: "Enable Image Preview On Product Listing" is Off
         Given I proceed as the Admin

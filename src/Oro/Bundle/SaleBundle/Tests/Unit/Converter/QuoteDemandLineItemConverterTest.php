@@ -13,7 +13,7 @@ use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductDemand;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
 
-class QuoteDemandLineItemConverterTest extends \PHPUnit_Framework_TestCase
+class QuoteDemandLineItemConverterTest extends \PHPUnit\Framework\TestCase
 {
     /** @var QuoteDemandLineItemConverter */
     protected $converter;
@@ -50,7 +50,7 @@ class QuoteDemandLineItemConverterTest extends \PHPUnit_Framework_TestCase
 
     public function testConvert()
     {
-        /** @var QuoteDemand|\PHPUnit_Framework_MockObject_MockObject $quoteDemand */
+        /** @var QuoteDemand|\PHPUnit\Framework\MockObject\MockObject $quoteDemand */
         $quoteDemand = $this->createMock(QuoteDemand::class);
         $quoteProductDemand = $this->createMock(QuoteProductDemand::class);
         $quoteProductOffer = $this->createMock(QuoteProductOffer::class);

@@ -98,8 +98,6 @@ class OrderDiscountItemType extends AbstractType
                 'type',
                 ChoiceType::class,
                 [
-                    // TODO: remove 'choices_as_values' option below in scope of BAP-15236
-                    'choices_as_values' => true,
                     'choices' => [
                         $options['currency'] => OrderDiscount::TYPE_AMOUNT,
                         'oro.order.order_discount.types.percent' => OrderDiscount::TYPE_PERCENT,

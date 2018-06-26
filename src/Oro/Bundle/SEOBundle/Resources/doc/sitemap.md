@@ -196,5 +196,5 @@ All sitemap files are compressed with gzip utility and have *.gz* file extension
 The *DumpRobotsTxtListener.php* listener creates the *Robots.txt* file automatically based on the generated sitemaps.
 
 **Sitemap generation**
-The `oro:cron:sitemap:generate` command generates sitemap files for all providers into the `web/sitemaps/actual/` folder and logs the sitemap location in the *robots.txt* file.
+The `oro:cron:sitemap:generate` command generates sitemap files for all providers into the `public/sitemaps/actual/` folder and logs the sitemap location in the *robots.txt* file.
 Sitemap generation is a deferred process that is executed using the `SitemapGenerationProcessor.php` queue processor. For time-based sitemap generation on the predefined schedule, Oro application uses cron jobs.

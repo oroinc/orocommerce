@@ -11,26 +11,26 @@ use Oro\Bundle\CheckoutBundle\EventListener\ShoppingListListener;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class ShoppingListListenerTest extends \PHPUnit_Framework_TestCase
+class ShoppingListListenerTest extends \PHPUnit\Framework\TestCase
 {
     const CHECKOUT_CLASS_NAME = 'Oro\Bundle\CheckoutBundle\Entity\Checkout';
     const CHECKOUT_SOURCE_CLASS_NAME = 'Oro\Bundle\CheckoutBundle\Entity\CheckoutSource';
 
     use EntityTrait;
 
-    /** @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
     protected $registry;
 
-    /** @var ObjectRepository|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ObjectRepository|\PHPUnit\Framework\MockObject\MockObject */
     protected $checkoutRepository;
 
-    /** @var ObjectManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ObjectManager|\PHPUnit\Framework\MockObject\MockObject */
     protected $checkoutEntityManager;
 
-    /** @var ObjectRepository|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ObjectRepository|\PHPUnit\Framework\MockObject\MockObject */
     protected $checkoutSourceRepository;
 
-    /** @var ObjectManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ObjectManager|\PHPUnit\Framework\MockObject\MockObject */
     protected $checkoutSourceEntityManager;
 
     /** @var ShoppingListListener */

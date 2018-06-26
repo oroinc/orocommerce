@@ -6,12 +6,12 @@ use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
 use Oro\Component\ChainProcessor\ContextInterface;
 
-abstract class AbstractUpdateLexemesTest extends \PHPUnit_Framework_TestCase
+abstract class AbstractUpdateLexemesTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @param PriceRule|null $priceRule
      *
-     * @return ContextInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return ContextInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function createContextMock(PriceRule $priceRule = null)
     {
@@ -32,7 +32,7 @@ abstract class AbstractUpdateLexemesTest extends \PHPUnit_Framework_TestCase
     /**
      * @param PriceList|null $priceList
      *
-     * @return PriceRule|\PHPUnit_Framework_MockObject_MockObject
+     * @return PriceRule|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function createPriceRuleMock(PriceList $priceList = null)
     {
@@ -51,7 +51,7 @@ abstract class AbstractUpdateLexemesTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return PriceList|\PHPUnit_Framework_MockObject_MockObject
+     * @return PriceList|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function createPriceListMock()
     {

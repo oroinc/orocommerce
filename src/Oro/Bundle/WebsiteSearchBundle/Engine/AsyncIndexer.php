@@ -7,6 +7,10 @@ use Oro\Component\MessageQueue\Client\Message;
 use Oro\Component\MessageQueue\Client\MessagePriority;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 
+/**
+ * Asynchronous indexer for website search engine
+ * Used to redirect indexation requests to message queue
+ */
 class AsyncIndexer implements IndexerInterface
 {
     const TOPIC_SAVE = 'oro.website.search.indexer.save';
@@ -109,7 +113,7 @@ class AsyncIndexer implements IndexerInterface
      */
     public function reindex($class = null, array $context = [])
     {
-        $this->inputValidator->validateReindexRequest(
+        $this->inputValidator->validateRequestParameters(
             $class,
             $context
         );

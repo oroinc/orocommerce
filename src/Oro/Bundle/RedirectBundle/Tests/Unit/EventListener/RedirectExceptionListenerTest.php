@@ -13,20 +13,20 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class RedirectExceptionListenerTest extends \PHPUnit_Framework_TestCase
+class RedirectExceptionListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var RedirectRepository|\PHPUnit_Framework_MockObject_MockObject
+     * @var RedirectRepository|\PHPUnit\Framework\MockObject\MockObject
      */
     private $repository;
 
     /**
-     * @var ScopeManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ScopeManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $scopeManager;
 
     /**
-     * @var MatchedUrlDecisionMaker|\PHPUnit_Framework_MockObject_MockObject
+     * @var MatchedUrlDecisionMaker|\PHPUnit\Framework\MockObject\MockObject
      */
     private $matchedUrlDecisionMaker;
 
@@ -159,7 +159,7 @@ class RedirectExceptionListenerTest extends \PHPUnit_Framework_TestCase
      * @param bool $hasResponse
      * @param bool $isMaster
      * @param \Exception $exception
-     * @return GetResponseForExceptionEvent|\PHPUnit_Framework_MockObject_MockObject
+     * @return GetResponseForExceptionEvent|\PHPUnit\Framework\MockObject\MockObject
      */
     private function getEvent(Request $request, $hasResponse, $isMaster, \Exception  $exception)
     {

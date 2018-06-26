@@ -9,22 +9,22 @@ use Doctrine\ORM\Query\AST\GroupByClause;
 use Doctrine\ORM\Query\AST\PathExpression;
 use Oro\Bundle\InventoryBundle\ORM\Query\ResultIterator\SelectIdentifierWalker;
 
-class SelectIdentifierWalkerTest extends \PHPUnit_Framework_TestCase
+class SelectIdentifierWalkerTest extends \PHPUnit\Framework\TestCase
 {
     use SqlWalkerHelperTrait;
 
     /**
-     * @var AbstractQuery|\PHPUnit_Framework_MockObject_MockObject
+     * @var AbstractQuery|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $query;
 
     /**
-     * @var |\PHPUnit_Framework_MockObject_MockObject
+     * @var |\PHPUnit\Framework\MockObject\MockObject
      */
     protected $parserResult;
 
     /**
-     * @var |\PHPUnit_Framework_MockObject_MockObject
+     * @var |\PHPUnit\Framework\MockObject\MockObject
      */
     protected $queryComponents = [];
 
@@ -34,12 +34,12 @@ class SelectIdentifierWalkerTest extends \PHPUnit_Framework_TestCase
     protected $selectIdentifierWalker;
 
     /**
-     * @var Connection|\PHPUnit_Framework_MockObject_MockObject
+     * @var Connection|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $connection;
 
     /**
-     * @var EntityManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var EntityManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $em;
 

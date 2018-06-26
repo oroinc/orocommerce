@@ -10,7 +10,7 @@ use Oro\Bundle\PromotionBundle\Entity\Repository\PromotionRepository;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
-class PromotionMatchedProductSegmentVoterTest extends \PHPUnit_Framework_TestCase
+class PromotionMatchedProductSegmentVoterTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var PromotionMatchedProductSegmentVoter
@@ -18,7 +18,7 @@ class PromotionMatchedProductSegmentVoterTest extends \PHPUnit_Framework_TestCas
     private $voter;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|DoctrineHelper
+     * @var \PHPUnit\Framework\MockObject\MockObject|DoctrineHelper
      */
     private $doctrineHelper;
 
@@ -173,7 +173,7 @@ class PromotionMatchedProductSegmentVoterTest extends \PHPUnit_Framework_TestCas
     /**
      * @param int $segmentId
      * @param Segment $segment
-     * @param PromotionRepository|\PHPUnit_Framework_MockObject_MockObject $repository
+     * @param PromotionRepository|\PHPUnit\Framework\MockObject\MockObject $repository
      * @param null|Promotion $foundPromo
      */
     private function assertRepositoryCalls(

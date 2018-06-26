@@ -13,35 +13,35 @@ use Oro\Bundle\ShippingBundle\Method\Validator\ShippingMethodValidatorInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
-class EnabledShippingMethodsByRulesShippingMethodValidatorDecoratorTest extends \PHPUnit_Framework_TestCase
+class EnabledShippingMethodsByRulesShippingMethodValidatorDecoratorTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ShippingMethodValidatorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingMethodValidatorInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $parentShippingMethodValidator;
 
     /**
-     * @var Common\CommonShippingMethodValidatorResultErrorFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var Common\CommonShippingMethodValidatorResultErrorFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $errorFactory;
 
     /**
-     * @var NonDeletableMethodTypeIdentifiersProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var NonDeletableMethodTypeIdentifiersProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $nonDeletableTypeIdentifiersProvider;
 
     /**
-     * @var MethodTypeLabelsProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var MethodTypeLabelsProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $methodTypeLabelsProvider;
 
     /**
-     * @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $translator;
 
     /**
-     * @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $logger;
 
@@ -197,12 +197,12 @@ class EnabledShippingMethodsByRulesShippingMethodValidatorDecoratorTest extends 
     }
 
     /**
-     * @param \PHPUnit_Framework_MockObject_MockObject $result
+     * @param \PHPUnit\Framework\MockObject\MockObject $result
      * @param string                                         $translatedMessage
      *
-     * @return Validator\Result\Error\Collection\ShippingMethodValidatorResultErrorCollectionInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return Validator\Result\Error\Collection\ShippingMethodValidatorResultErrorCollectionInterface|\PHPUnit\Framework\MockObject\MockObject
      */
-    private function createErrorCollectionMock(\PHPUnit_Framework_MockObject_MockObject $result, $translatedMessage)
+    private function createErrorCollectionMock(\PHPUnit\Framework\MockObject\MockObject $result, $translatedMessage)
     {
         $errorCollection = $this->createMock(
             Validator\Result\Error\Collection\ShippingMethodValidatorResultErrorCollectionInterface::class
@@ -250,13 +250,13 @@ class EnabledShippingMethodsByRulesShippingMethodValidatorDecoratorTest extends 
     }
 
     /**
-     * @param \PHPUnit_Framework_MockObject_MockObject                                                $result
+     * @param \PHPUnit\Framework\MockObject\MockObject                                                $result
      * @param Validator\Result\Error\Collection\ShippingMethodValidatorResultErrorCollectionInterface $errorCollection
      *
-     * @return ShippingMethodValidatorResultInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return ShippingMethodValidatorResultInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private function createErrorResultMock(
-        \PHPUnit_Framework_MockObject_MockObject $result,
+        \PHPUnit\Framework\MockObject\MockObject $result,
         Validator\Result\Error\Collection\ShippingMethodValidatorResultErrorCollectionInterface $errorCollection
     ) {
         $resultFactory = $this->createMock(
@@ -298,7 +298,7 @@ class EnabledShippingMethodsByRulesShippingMethodValidatorDecoratorTest extends 
     }
 
     /**
-     * @return ShippingMethodInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return ShippingMethodInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private function getShippingMethodMock()
     {

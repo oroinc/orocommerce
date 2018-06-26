@@ -7,14 +7,14 @@ use Oro\Bundle\ConfigBundle\Event\ConfigUpdateEvent;
 use Oro\Bundle\OrderBundle\EventListener\PreviouslyPurchasedFeatureToggleListener;
 use Oro\Bundle\ProductBundle\Search\Reindex\ProductReindexManager;
 
-class PreviouslyPurchasedFeatureToggleListenerTest extends \PHPUnit_Framework_TestCase
+class PreviouslyPurchasedFeatureToggleListenerTest extends \PHPUnit\Framework\TestCase
 {
     const CONFIG_KEY = 'oro_order.enable_purchase_history';
 
     /** @var PreviouslyPurchasedFeatureToggleListener */
     protected $listener;
 
-    /** @var ProductReindexManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ProductReindexManager|\PHPUnit\Framework\MockObject\MockObject */
     protected $reindexManager;
 
     /**

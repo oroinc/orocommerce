@@ -29,10 +29,10 @@ class WebsiteSearchMappingProviderTest extends AbstractSearchMappingProviderTest
         ]
     ];
 
-    /** @var ConfigurationLoaderInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ConfigurationLoaderInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $mappingConfigurationLoader;
 
-    /** @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $eventDispatcher;
 
     protected function setUp()

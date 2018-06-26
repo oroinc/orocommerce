@@ -20,17 +20,17 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class ChoicesProductPrimaryUnitSelectionOwnerTypeExtensionTest extends FormIntegrationTestCase
 {
     /**
-     * @var string|\PHPUnit_Framework_MockObject_MockObject
+     * @var string|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $childName;
 
     /**
-     * @var string|\PHPUnit_Framework_MockObject_MockObject
+     * @var string|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $extendedType;
 
     /**
-     * @var ProductUnitFieldsSettingsInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProductUnitFieldsSettingsInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $productFormUnitFieldsSettings;
 
@@ -57,7 +57,7 @@ class ChoicesProductPrimaryUnitSelectionOwnerTypeExtensionTest extends FormInteg
 
     public function testBuildForm()
     {
-        /** @var FormBuilderInterface|\PHPUnit_Framework_MockObject_MockObject $builder */
+        /** @var FormBuilderInterface|\PHPUnit\Framework\MockObject\MockObject $builder */
         $builder = $this->createMock(FormBuilderInterface::class);
         $builder->expects($this->once())
             ->method('addEventListener');
@@ -67,9 +67,6 @@ class ChoicesProductPrimaryUnitSelectionOwnerTypeExtensionTest extends FormInteg
 
     public function testBuildFormIntegration()
     {
-        //@TODO unskipp in scope BAP-16496
-        $this->markTestSkipped('Unskipp in scope BAP-16496');
-
         $choices = ['choice1', 'choice2'];
         $this->productFormUnitFieldsSettings
             ->method('getAvailablePrimaryUnitChoices')
@@ -89,7 +86,7 @@ class ChoicesProductPrimaryUnitSelectionOwnerTypeExtensionTest extends FormInteg
 
     public function testSetAvailableUnitsThrowsException()
     {
-        /** @var FormEvent|\PHPUnit_Framework_MockObject_MockObject $event * */
+        /** @var FormEvent|\PHPUnit\Framework\MockObject\MockObject $event * */
         $event = $this->getMockBuilder(FormEvent::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -120,9 +117,8 @@ class ChoicesProductPrimaryUnitSelectionOwnerTypeExtensionTest extends FormInteg
         $formatter = $this->createMock(ProductUnitLabelFormatter::class);
         $productUnitSelectType = new ProductUnitSelectType($formatter);
         $type = $this->createMock(FormTypeInterface::class);
-        $type->method('getName')->willReturn('entity');
-        //@TODO remove setDefaultOptions in scope BAP-16496
-        $type->method('setDefaultOptions')->willReturnCallback(
+        $type->method('getBlockPrefix')->willReturn('entity');
+        $type->method('configureOptions')->willReturnCallback(
             function (OptionsResolver $resolver) {
                 $resolver->setDefined(['auto_initialize', 'choice_loader', 'choices']);
             }

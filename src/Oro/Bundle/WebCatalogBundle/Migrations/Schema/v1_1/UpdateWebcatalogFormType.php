@@ -21,7 +21,8 @@ class UpdateWebcatalogFormType implements Migration
                 WebCatalog::class,
                 'form',
                 'form_type',
-                WebCatalogSelectType::class
+                WebCatalogSelectType::class,
+                'oro_web_catalog_select'
             )
         );
     }

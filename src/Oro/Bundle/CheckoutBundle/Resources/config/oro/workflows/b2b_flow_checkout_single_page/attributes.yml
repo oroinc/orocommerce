@@ -1,0 +1,5 @@
+workflows:
+    b2b_flow_checkout_single_page:
+        attributes:
+            saveStateUrl:
+                type: string

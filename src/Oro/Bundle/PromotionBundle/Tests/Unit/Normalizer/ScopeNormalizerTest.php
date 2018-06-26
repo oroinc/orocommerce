@@ -9,12 +9,12 @@ use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\OptionsResolver\Exception\MissingOptionsException;
 
-class ScopeNormalizerTest extends \PHPUnit_Framework_TestCase
+class ScopeNormalizerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $registry;
 

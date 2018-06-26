@@ -12,7 +12,7 @@ use Symfony\Component\Form\Test\FormIntegrationTestCase;
 abstract class AbstractQuoteToProductTestCase extends FormIntegrationTestCase
 {
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|QuoteProductOfferMatcher
+     * @return \PHPUnit\Framework\MockObject\MockObject|QuoteProductOfferMatcher
      */
     protected function getMatcher()
     {
@@ -36,7 +36,7 @@ abstract class AbstractQuoteToProductTestCase extends FormIntegrationTestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|RoundingServiceInterface
+     * @return \PHPUnit\Framework\MockObject\MockObject|RoundingServiceInterface
      */
     protected function getRoundingService()
     {

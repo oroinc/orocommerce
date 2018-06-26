@@ -19,20 +19,20 @@ use Symfony\Component\Form\FormInterface;
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
-class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
+class ProductFormExtensionTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /** @var ProductFormExtension */
     protected $extension;
 
-    /** @var ObjectManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ObjectManager|\PHPUnit\Framework\MockObject\MockObject */
     protected $manager;
 
-    /** @var ObjectRepository|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ObjectRepository|\PHPUnit\Framework\MockObject\MockObject */
     protected $repo;
 
-    /** @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
     protected $registry;
 
     protected function setUp()
@@ -63,7 +63,7 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
      */
     public function testBuildForm($product)
     {
-        /** @var FormBuilderInterface|\PHPUnit_Framework_MockObject_MockObject $builder */
+        /** @var FormBuilderInterface|\PHPUnit\Framework\MockObject\MockObject $builder */
         $builder = $this->createMock('Symfony\Component\Form\FormBuilderInterface');
         $builder->expects($this->once())
             ->method('add')
@@ -111,7 +111,7 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
     {
         $event = $this->createEvent($product);
 
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $event->getForm()->get(ProductFormExtension::FORM_ELEMENT_NAME);
 
         $form->expects($product ? $this->once() : $this->never())->method('setData');
@@ -122,7 +122,7 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
     public function testOnPostSubmitEmptyProduct()
     {
         $event = $this->createEvent();
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $event->getForm()->get(ProductFormExtension::FORM_ELEMENT_NAME);
 
         $form->expects($this->never())->method('getData');
@@ -135,7 +135,7 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
         $product = $this->createMockProduct();
 
         $event = $this->createEvent($this->createMockProduct());
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $event->getForm()->get(ProductFormExtension::FORM_ELEMENT_NAME);
 
         $event->getForm()->expects($this->once())->method('isValid')->willReturn(true);
@@ -165,7 +165,7 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
     public function testOnPostSubmitInvalidData()
     {
         $event = $this->createEvent($this->createMockProduct());
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $event->getForm()->get(ProductFormExtension::FORM_ELEMENT_NAME);
 
         $event->getForm()->expects($this->once())->method('isValid')->willReturn(false);
@@ -202,11 +202,11 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
                 ]
             );
 
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $event->getForm();
         $form->expects($this->once())->method('getData')->willReturn($product);
 
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $childForm */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $childForm */
         $childForm = $form->get(ProductFormExtension::FORM_ELEMENT_NAME);
         $childForm->expects($this->once())
             ->method('getData')
@@ -235,7 +235,7 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
         $event = $this->createEvent();
         $event->expects($this->never())->method('setData');
 
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $event->getForm();
         $form->expects($this->once())->method('getData')->willReturn($product);
 
@@ -245,20 +245,20 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
     /**
      * @param object|null $data
      *
-     * @return FormEvent|\PHPUnit_Framework_MockObject_MockObject
+     * @return FormEvent|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function createEvent($data = null)
     {
         $form = $this->createMock('Symfony\Component\Form\FormInterface');
 
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $mainForm */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $mainForm */
         $mainForm = $this->createMock('Symfony\Component\Form\FormInterface');
         $mainForm->expects($this->any())
             ->method('get')
             ->with(ProductFormExtension::FORM_ELEMENT_NAME)
             ->willReturn($form);
 
-        /** @var FormEvent|\PHPUnit_Framework_MockObject_MockObject $event */
+        /** @var FormEvent|\PHPUnit\Framework\MockObject\MockObject $event */
         $event = $this->getMockBuilder('Symfony\Component\Form\FormEvent')->disableOriginalConstructor()->getMock();
         $event->expects($this->any())->method('getForm')->willReturn($mainForm);
         $event->expects($this->any())->method('getData')->willReturn($data);

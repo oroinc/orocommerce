@@ -11,18 +11,18 @@ use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProvider as PaymentBundleMethodProvider;
 
-class PaymentMethodProviderTest extends \PHPUnit_Framework_TestCase
+class PaymentMethodProviderTest extends \PHPUnit\Framework\TestCase
 {
     /** @var PaymentMethodProvider */
     protected $provider;
 
-    /** @var CheckoutPaymentContextFactory|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var CheckoutPaymentContextFactory|\PHPUnit\Framework\MockObject\MockObject */
     protected $contextFactory;
 
-    /** @var CheckoutRepository|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var CheckoutRepository|\PHPUnit\Framework\MockObject\MockObject */
     protected $repository;
 
-    /** @var PaymentBundleMethodProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var PaymentBundleMethodProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $paymentBundleMethodProvider;
 
     /** @var PaymentTransaction */

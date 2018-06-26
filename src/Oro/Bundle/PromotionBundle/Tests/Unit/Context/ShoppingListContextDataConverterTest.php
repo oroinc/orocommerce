@@ -20,30 +20,30 @@ use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
-class ShoppingListContextDataConverterTest extends \PHPUnit_Framework_TestCase
+class ShoppingListContextDataConverterTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var CriteriaDataProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var CriteriaDataProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     private $criteriaDataProvider;
 
     /**
-     * @var LineItemsToDiscountLineItemsConverter|\PHPUnit_Framework_MockObject_MockObject
+     * @var LineItemsToDiscountLineItemsConverter|\PHPUnit\Framework\MockObject\MockObject
      */
     private $lineItemsConverter;
 
     /**
-     * @var UserCurrencyManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var UserCurrencyManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $userCurrencyManager;
 
     /**
-     * @var ScopeManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ScopeManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $scopeManager;
 
     /**
-     * @var LineItemNotPricedSubtotalProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var LineItemNotPricedSubtotalProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     private $lineItemNotPricedSubtotalProvider;
 

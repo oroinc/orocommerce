@@ -12,26 +12,26 @@ use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class PriceManagerTest extends \PHPUnit_Framework_TestCase
+class PriceManagerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /** @var ClassMetadata|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ClassMetadata|\PHPUnit\Framework\MockObject\MockObject */
     protected $classMetadata;
 
-    /** @var UnitOfWork|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var UnitOfWork|\PHPUnit\Framework\MockObject\MockObject */
     protected $unitOfWork;
 
-    /** @var ProductPriceRepository|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ProductPriceRepository|\PHPUnit\Framework\MockObject\MockObject */
     protected $repository;
 
-    /** @var EntityManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var EntityManager|\PHPUnit\Framework\MockObject\MockObject */
     protected $entityManager;
 
-    /** @var ShardManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ShardManager|\PHPUnit\Framework\MockObject\MockObject */
     protected $shardManager;
 
-    /** @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $eventDispatcher;
 
     /** @var PriceManager */

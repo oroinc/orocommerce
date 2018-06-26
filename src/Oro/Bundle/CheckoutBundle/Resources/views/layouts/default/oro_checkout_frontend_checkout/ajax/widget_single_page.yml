@@ -5,7 +5,7 @@ layout:
 
     actions:
         - '@setBlockTheme':
-            themes: '../templates/single_page.html.twig'
+            themes: 'OroCheckoutBundle:layouts:default/oro_checkout_frontend_checkout/templates/single_page.html.twig'
 
         - '@addTree':
             items:
@@ -23,7 +23,7 @@ layout:
                         attr:
                             class: 'checkout-billing-address'
                         checkout: '=data["checkout"]'
-                        form: '=data["oro_checkout_transition_form"].getTransitionFormView(data["workflowItem"])'
+                        form: '=data["oro_checkout_single_page_transition_form"].getTransitionFormView(data["workflowItem"])'
                         workflowItem: '=data["workflowItem"]'
 
                 shipping_address:
@@ -32,7 +32,7 @@ layout:
                         attr:
                             class: 'checkout-shipping-address'
                         checkout: '=data["checkout"]'
-                        form: '=data["oro_checkout_transition_form"].getTransitionFormView(data["workflowItem"])'
+                        form: '=data["oro_checkout_single_page_transition_form"].getTransitionFormView(data["workflowItem"])'
                         workflowItem: '=data["workflowItem"]'
 
                 shipping_methods_wrapper:
@@ -44,7 +44,7 @@ layout:
                     blockType: checkout_form_fields
                     options:
                         checkout: '=data["checkout"]'
-                        form: '=data["oro_checkout_transition_form"].getTransitionFormView(data["workflowItem"])'
+                        form: '=data["oro_checkout_single_page_transition_form"].getTransitionFormView(data["workflowItem"])'
                         workflowItem: '=data["workflowItem"]'
 
                 shipping_methods:
@@ -70,7 +70,7 @@ layout:
                     blockType: checkout_form_fields
                     options:
                         checkout: '=data["checkout"]'
-                        form: '=data["oro_checkout_transition_form"].getTransitionFormView(data["workflowItem"])'
+                        form: '=data["oro_checkout_single_page_transition_form"].getTransitionFormView(data["workflowItem"])'
                         workflowItem: '=data["workflowItem"]'
 
                 payment_methods:
@@ -94,7 +94,7 @@ layout:
                     blockType: checkout_form_fields
                     options:
                         checkout: '=data["checkout"]'
-                        form: '=data["oro_checkout_transition_form"].getTransitionFormView(data["workflowItem"])'
+                        form: '=data["oro_checkout_single_page_transition_form"].getTransitionFormView(data["workflowItem"])'
                         workflowItem: '=data["workflowItem"]'
 
             tree:
@@ -127,14 +127,28 @@ layout:
             siblingId: checkout_order_summary_line_items_container
             options:
                 checkout: '=data["checkout"]'
-                form: '=data["oro_checkout_transition_form"].getTransitionFormView(data["workflowItem"])'
+                form: '=data["oro_checkout_single_page_transition_form"].getTransitionFormView(data["workflowItem"])'
                 workflowItem: '=data["workflowItem"]'
 
         - '@add':
+            id: checkout_button_continue_right_container
+            blockType: single_page_transition_container
+            parentId: checkout_order_summary_totals_sticky_container
+            siblingId: checkout_order_summary_totals
+            options:
+                transitionData: '=data["oro_checkout_single_page_transition"].getContinueTransition(data["workflowItem"])'
+                checkout: '=data["checkout"]'
+        - '@add':
+            id: checkout_button_continue_right_wrapper
+            blockType: layout_subtree_update
+            parentId: checkout_button_continue_right_container
+            options:
+                reloadEvents: ['shipping-methods:refresh']
+                showLoading: false
+        - '@add':
             id: checkout_button_continue_right
             blockType: checkout_transition_continue
-            parentId: checkout_order_summary_totals_container
-            siblingId: checkout_order_summary_totals
+            parentId: checkout_button_continue_right_wrapper
             options:
                 transitionData: '=data["oro_checkout_transition"].getContinueTransition(data["workflowItem"])'
                 checkout: '=data["checkout"]'

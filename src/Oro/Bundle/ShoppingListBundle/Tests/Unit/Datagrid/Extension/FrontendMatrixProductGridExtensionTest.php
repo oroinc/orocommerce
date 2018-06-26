@@ -21,35 +21,35 @@ use Oro\Bundle\ShoppingListBundle\Layout\DataProvider\MatrixGridOrderProvider;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class FrontendMatrixProductGridExtensionTest extends \PHPUnit_Framework_TestCase
+class FrontendMatrixProductGridExtensionTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /** @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $doctrineHelper;
 
-    /** @var ShoppingListManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ShoppingListManager|\PHPUnit\Framework\MockObject\MockObject */
     private $shoppingListManager;
 
-    /** @var MatrixGridOrderFormProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var MatrixGridOrderFormProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $matrixGridOrderFormProvider;
 
-    /** @var ProductFormAvailabilityProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ProductFormAvailabilityProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $productFormAvailabilityProvider;
 
-    /** @var FrontendProductPricesProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var FrontendProductPricesProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $frontendProductPricesProvider;
 
     /** @var FrontendMatrixProductGridExtension */
     private $gridExtension;
 
-    /** @var DatagridConfiguration|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var DatagridConfiguration|\PHPUnit\Framework\MockObject\MockObject */
     private $datagridConfiguration;
 
-    /** @var MatrixGridOrderProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var MatrixGridOrderProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $matrixGridOrderProvider;
 
-    /** @var DataGridThemeHelper|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var DataGridThemeHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $dataGridThemeHelper;
 
     /**

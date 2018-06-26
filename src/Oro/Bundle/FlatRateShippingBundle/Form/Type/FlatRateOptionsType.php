@@ -52,8 +52,6 @@ class FlatRateOptionsType extends AbstractType
                 'constraints' => [new Type(['type' => 'numeric'])]
             ], $priceOptions))
             ->add(FlatRateMethodType::TYPE_OPTION, ChoiceType::class, [
-                // TODO: remove 'choices_as_values' option below in scope of BAP-15236
-                'choices_as_values' => true,
                 'choices' => [
                     'oro.flat_rate.method.processing_type.per_item.label'
                         => FlatRateMethodType::PER_ITEM_TYPE,

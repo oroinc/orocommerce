@@ -7,7 +7,7 @@ use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-class SlugPrototypesWithRedirectTest extends \PHPUnit_Framework_TestCase
+class SlugPrototypesWithRedirectTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 

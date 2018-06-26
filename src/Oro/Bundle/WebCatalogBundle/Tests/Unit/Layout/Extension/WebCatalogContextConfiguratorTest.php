@@ -6,13 +6,13 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\WebCatalogBundle\Layout\Extension\WebCatalogContextConfigurator;
 use Oro\Component\Layout\LayoutContext;
 
-class WebCatalogContextConfiguratorTest extends \PHPUnit_Framework_TestCase
+class WebCatalogContextConfiguratorTest extends \PHPUnit\Framework\TestCase
 {
     /** @var WebCatalogContextConfigurator */
     protected $contextConfigurator;
 
     /**
-     * @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $configManager;
 

@@ -11,7 +11,7 @@ use Oro\Bundle\MoneyOrderBundle\Method\Config\Factory\MoneyOrderConfigFactory;
 use Oro\Bundle\MoneyOrderBundle\Method\Config\Factory\MoneyOrderConfigFactoryInterface;
 use Oro\Bundle\MoneyOrderBundle\Method\Config\MoneyOrderConfig;
 
-class MoneyOrderConfigFactoryTest extends \PHPUnit_Framework_TestCase
+class MoneyOrderConfigFactoryTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var MoneyOrderConfigFactoryInterface
@@ -19,12 +19,12 @@ class MoneyOrderConfigFactoryTest extends \PHPUnit_Framework_TestCase
     private $testedFactory;
 
     /**
-     * @var LocalizationHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var LocalizationHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     private $localizationHelperMock;
 
     /**
-     * @var IntegrationIdentifierGeneratorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var IntegrationIdentifierGeneratorInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $integrationIdentifierGeneratorMock;
 
@@ -118,7 +118,7 @@ class MoneyOrderConfigFactoryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return MoneyOrderSettings|\PHPUnit_Framework_MockObject_MockObject
+     * @return MoneyOrderSettings|\PHPUnit\Framework\MockObject\MockObject
      */
     private function createMoneyOrderSettingsMock()
     {
@@ -126,7 +126,7 @@ class MoneyOrderConfigFactoryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return Channel|\PHPUnit_Framework_MockObject_MockObject
+     * @return Channel|\PHPUnit\Framework\MockObject\MockObject
      */
     private function createChannelMock()
     {
@@ -134,7 +134,7 @@ class MoneyOrderConfigFactoryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return Collection|\PHPUnit_Framework_MockObject_MockObject
+     * @return Collection|\PHPUnit\Framework\MockObject\MockObject
      */
     private function createLabelsCollectionMock()
     {

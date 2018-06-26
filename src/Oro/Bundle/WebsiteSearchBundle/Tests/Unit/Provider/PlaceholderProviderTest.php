@@ -7,20 +7,20 @@ use Oro\Bundle\TestFrameworkBundle\Entity\TestProduct;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderInterface;
 use Oro\Bundle\WebsiteSearchBundle\Provider\PlaceholderProvider;
 
-class PlaceholderProviderTest extends \PHPUnit_Framework_TestCase
+class PlaceholderProviderTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var PlaceholderProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var PlaceholderProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     private $provider;
 
     /**
-     * @var PlaceholderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var PlaceholderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $placeholder;
 
     /**
-     * @var AbstractSearchMappingProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var AbstractSearchMappingProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     private $mappingProvider;
 

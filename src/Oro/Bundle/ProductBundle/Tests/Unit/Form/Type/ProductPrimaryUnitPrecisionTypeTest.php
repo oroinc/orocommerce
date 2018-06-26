@@ -30,7 +30,7 @@ class ProductPrimaryUnitPrecisionTypeTest extends FormIntegrationTestCase
     protected $units = ['item', 'kg'];
 
     /**
-     * @var ProductUnitLabelFormatter|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProductUnitLabelFormatter|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $productUnitLabelFormatter;
 

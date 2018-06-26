@@ -8,12 +8,12 @@ use Oro\Bundle\TaxBundle\Model\Result;
 use Oro\Bundle\TaxBundle\Provider\TaxProviderInterface;
 use Oro\Bundle\TaxBundle\Provider\TaxProviderRegistry;
 
-class TaxProviderTest extends \PHPUnit_Framework_TestCase
+class TaxProviderTest extends \PHPUnit\Framework\TestCase
 {
     /** @var TaxProvider */
     protected $provider;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|TaxProviderInterface */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|TaxProviderInterface */
     protected $taxProvider;
 
     protected function setUp()

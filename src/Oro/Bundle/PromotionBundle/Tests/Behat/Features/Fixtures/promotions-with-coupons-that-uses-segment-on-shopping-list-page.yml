@@ -1,0 +1,105 @@
+include:
+    - shopping_list.yml
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    precision3:
+        unit: '@item'
+        precision: '0'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    featuredProduct:
+        sku: 'SKU3'
+        primaryUnitPrecision: '@precision3'
+        addName: ['@featuredProductLabel']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        organization: '@organization'
+        attributeFamily: '@productAttributeFamily'
+        featured: true
+
+Oro\Bundle\PricingBundle\Entity\ProductPrice:
+    productPrice3:
+        pricelist: '@pricelist'
+        product: '@featuredProduct'
+        productSku: 'SKU3'
+        quantity: 5
+        unit: '@item'
+        value: 5
+        currency: 'USD'
+
+Oro\Bundle\PricingBundle\Entity\CombinedProductPrice:
+   combinedProductPrice3:
+        pricelist: '@combinedPriceList'
+        product: '@featuredProduct'
+        productSku: 'SKU3'
+        quantity: 5
+        unit: '@item'
+        value: 2
+        currency: 'USD'
+
+Oro\Bundle\ShoppingListBundle\Entity\LineItem:
+    lineitem3:
+        product: '@featuredProduct'
+        quantity: '5'
+        unit: '@item'
+        customerUser: '@amanda'
+        shoppingList: '@shoppinglist'
+        organization: '@organization'
+
+Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal:
+    shoppingListTotal:
+        __construct: ['@shoppinglist','USD']
+        shoppingList: '@shoppinglist'
+        currency: 'USD'
+        subtotalValue: '30'
+        valid: true
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    promotionWithSegmentLabel:
+        string: 'Promotion that uses segment in query'
+    featuredProductLabel:
+        string: 'Product 3'
+
+Oro\Bundle\PromotionBundle\Entity\Coupon:
+    couponForPromotionWithSegment:
+        owner: '@business_unit'
+        organization: '@organization'
+        code: 'mycoupon'
+        promotion: '@promotionWithSegment'
+        enabled: true
+        usesPerPerson: 100
+        usesPerCoupon: 100
+
+Oro\Bundle\SegmentBundle\Entity\Segment:
+    promotionSegment:
+        name: 'Promotion Matching Products #1'
+        type: 'dynamic'
+        entity: 'Oro\Bundle\ProductBundle\Entity\Product'
+        definition: '{"filters":[],"columns":[{"name":"id","label":"id","sorting":null,"func":null},{"name":"sku","label":"sku","sorting":null,"func":null}]}'
+        organization: '@organization'
+        owner: '@business_unit'
+
+Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration:
+    promotionWithSegmentDiscountConfig:
+        type: 'order'
+        options:
+            discount_type: 'amount'
+            discount_currency: 'USD'
+            discount_value: 1
+
+Oro\Bundle\RuleBundle\Entity\Rule:
+    promotionWithSegmentRule:
+        enabled: true
+        sortOrder: 1
+        name: 'Promotion that uses segment in query'
+
+Oro\Bundle\PromotionBundle\Entity\Promotion:
+    promotionWithSegment:
+        addLabel: ['@promotionWithSegmentLabel']
+        addScope: [1]
+        productsSegment: '@promotionSegment'
+        rule: '@promotionWithSegmentRule'
+        discountConfiguration: '@promotionWithSegmentDiscountConfig'
+        organization: '@organization'
+        owner: '@admin'
+        useCoupons: true

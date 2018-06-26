@@ -7,17 +7,17 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ShippingBundle\Entity\WeightUnit;
 use Oro\Bundle\ShippingBundle\Provider\MeasureUnitProvider;
 
-class MeasureUnitProviderTest extends \PHPUnit_Framework_TestCase
+class MeasureUnitProviderTest extends \PHPUnit\Framework\TestCase
 {
     const CONFIG_ENTRY_NAME = 'oro_shipping.weight_units';
 
-    /** @var ObjectRepository|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ObjectRepository|\PHPUnit\Framework\MockObject\MockObject */
     protected $repository;
 
-    /** @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
     protected $configManager;
 
-    /** @var MeasureUnitProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var MeasureUnitProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $provider;
 
     protected function setUp()

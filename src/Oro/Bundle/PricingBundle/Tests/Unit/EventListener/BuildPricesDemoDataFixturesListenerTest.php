@@ -11,22 +11,23 @@ use Oro\Bundle\PricingBundle\Builder\ProductPriceBuilder;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
 use Oro\Bundle\PricingBundle\EventListener\BuildPricesDemoDataFixturesListener;
+use PHPUnit\Framework\MockObject\MockObject;
 
 class BuildPricesDemoDataFixturesListenerTest extends DemoDataFixturesListenerTestCase
 {
-    /** @var CombinedPriceListsBuilderFacade|\PHPUnit_Framework_MockObject_MockObject CombinedPriceListsBuilderFacade */
+    /** @var CombinedPriceListsBuilderFacade|MockObject CombinedPriceListsBuilderFacade */
     protected $combinedPriceListsBuilderFacade;
 
-    /** @var ProductPriceBuilder|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ProductPriceBuilder|MockObject */
     protected $priceBuilder;
 
-    /** @var PriceListProductAssignmentBuilder|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var PriceListProductAssignmentBuilder|MockObject */
     protected $assignmentBuilder;
 
-    /** @var ObjectManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ObjectManager|MockObject */
     protected $objectManager;
 
-    /** @var PriceListRepository|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var PriceListRepository|MockObject */
     protected $priceListRepository;
 
     /**
@@ -86,11 +87,11 @@ class BuildPricesDemoDataFixturesListenerTest extends DemoDataFixturesListenerTe
             ->willReturn([$priceList]);
 
         $this->assignmentBuilder->expects($this->once())
-            ->method('buildByPriceList')
+            ->method('buildByPriceListWithoutEventDispatch')
             ->with($priceList);
 
         $this->priceBuilder->expects($this->once())
-            ->method('buildByPriceList')
+            ->method('buildByPriceListWithoutTriggers')
             ->with($priceList);
 
         $this->combinedPriceListsBuilderFacade->expects($this->once())
@@ -115,10 +116,12 @@ class BuildPricesDemoDataFixturesListenerTest extends DemoDataFixturesListenerTe
             ->method('getPriceListsWithRules');
 
         $this->assignmentBuilder->expects($this->never())
-            ->method('buildByPriceList');
+            ->method('buildByPriceListWithoutEventDispatch');
 
         $this->priceBuilder->expects($this->never())
-            ->method('buildByPriceList');
+            ->method('buildByPriceListWithoutTriggers');
+        $this->priceBuilder->expects($this->never())
+            ->method('flush');
 
         $this->listener->onPostLoad($this->event);
     }

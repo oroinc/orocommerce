@@ -4,7 +4,7 @@ namespace Oro\Bundle\PayPalBundle\Tests\Unit\PayPal\Payflow\Option;
 
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
 
-abstract class AbstractOptionTest extends \PHPUnit_Framework_TestCase
+abstract class AbstractOptionTest extends \PHPUnit\Framework\TestCase
 {
     /** @var Option\AbstractOption[] */
     protected $options;

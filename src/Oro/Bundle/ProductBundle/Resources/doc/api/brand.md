@@ -12,8 +12,6 @@ Retrieve a specific brand record.
 
 Retrieve a collection of brand records.
 
-The list of records that will be returned, could be limited by filters.
-
 {@inheritdoc}
 
 ### create
@@ -26,8 +24,6 @@ The created record is returned in the response.
 
 {@request:json_api}
 Example:
-
-`</admin/api/brands>`
 
 ```JSON
 {
@@ -70,14 +66,13 @@ Example:
 ### update
 
 Edit a specific brand record.
+
 The updated record is returned in the response.
 
 {@inheritdoc}
 
 {@request:json_api}
 Example:
-
-`</admin/api/brands/3>`
 
 ```JSON
 {
@@ -120,8 +115,6 @@ Delete a specific brand record.
 ### delete_list
 
 Delete a collection of brand records.
-
-The list of records that will be deleted, could be limited by filters.
 
 {@inheritdoc}
 
@@ -182,8 +175,6 @@ Replace the ID's of service records that store the brand description localized d
 {@request:json_api}
 Example:
 
-`</admin/api/brands/1/relationships/descriptions>`
-
 ```JSON
 {
   "data": [
@@ -203,8 +194,6 @@ Set relationship with the service records that store the description localized d
 {@request:json_api}
 Example:
 
-`</admin/api/brands/1/relationships/descriptions>`
-
 ```JSON
 {
   "data": [
@@ -223,8 +212,6 @@ Remove service records that store the description localized data from the brand 
 
 {@request:json_api}
 Example:
-
-`</admin/api/brands/1/relationships/descriptions>`
 
 ```JSON
 {
@@ -255,8 +242,6 @@ Replace the ID's of service records that store the brand meta descriptions local
 {@request:json_api}
 Example:
 
-`</admin/api/brands/1/relationships/metaDescriptions>`
-
 ```JSON
 {
   "data": [
@@ -276,8 +261,6 @@ Set relationship with the service records that store the meta descriptions local
 {@request:json_api}
 Example:
 
-`</admin/api/brands/1/relationships/metaDescriptions>`
-
 ```JSON
 {
   "data": [
@@ -296,8 +279,6 @@ Remove service records that store the meta descriptions localized data from the 
 
 {@request:json_api}
 Example:
-
-`</admin/api/brands/1/relationships/metaDescriptions>`
 
 ```JSON
 {
@@ -328,8 +309,6 @@ Replace the ID's of service records that store the brand meta keywords localized
 {@request:json_api}
 Example:
 
-`</admin/api/brands/1/relationships/metaKeywords>`
-
 ```JSON
 {
   "data": [
@@ -349,8 +328,6 @@ Set relationship with the service records that store the meta keywords localized
 {@request:json_api}
 Example:
 
-`</admin/api/brands/1/relationships/metaKeywords>`
-
 ```JSON
 {
   "data": [
@@ -369,8 +346,6 @@ Remove service records that store the meta keywords localized data from the bran
 
 {@request:json_api}
 Example:
-
-`</admin/api/brands/1/relationships/metaKeywords>`
 
 ```JSON
 {
@@ -401,8 +376,6 @@ Replace the ID's of service records that store the brand meta titles localized d
 {@request:json_api}
 Example:
 
-`</admin/api/brands/1/relationships/metaTitles>`
-
 ```JSON
 {
   "data": [
@@ -422,8 +395,6 @@ Set relationship with the service records that store the meta titles localized d
 {@request:json_api}
 Example:
 
-`</admin/api/brands/1/relationships/metaTitles>`
-
 ```JSON
 {
   "data": [
@@ -442,8 +413,6 @@ Remove service records that store the meta titles localized data from the brand 
 
 {@request:json_api}
 Example:
-
-`</admin/api/brands/1/relationships/metaTitles>`
 
 ```JSON
 {
@@ -474,8 +443,6 @@ Replace the ID's of service records that store the brand names localized data.
 {@request:json_api}
 Example:
 
-`</admin/api/brands/1/relationships/names>`
-
 ```JSON
 {
   "data": [
@@ -495,8 +462,6 @@ Set relationship with the service records that store the names localized data fo
 {@request:json_api}
 Example:
 
-`</admin/api/brands/1/relationships/names>`
-
 ```JSON
 {
   "data": [
@@ -515,8 +480,6 @@ Remove service records that store the names localized data from the brand record
 
 {@request:json_api}
 Example:
-
-`</admin/api/brands/1/relationships/names>`
 
 ```JSON
 {
@@ -547,8 +510,6 @@ Replace the ID's of service records that store the brand short descriptions loca
 {@request:json_api}
 Example:
 
-`</admin/api/brands/1/relationships/shortDescriptions>`
-
 ```JSON
 {
   "data": [
@@ -568,8 +529,6 @@ Set relationship with the service records that store the short descriptions loca
 {@request:json_api}
 Example:
 
-`</admin/api/brands/1/relationships/shortDescriptions>`
-
 ```JSON
 {
   "data": [
@@ -588,8 +547,6 @@ Remove service records that store the short descriptions localized data from the
 
 {@request:json_api}
 Example:
-
-`</admin/api/brands/1/relationships/shortDescriptions>`
 
 ```JSON
 {
@@ -620,8 +577,6 @@ Replace the ID's of service records that store the brand slug prototypes localiz
 {@request:json_api}
 Example:
 
-`</admin/api/brands/1/relationships/slugPrototypes>`
-
 ```JSON
 {
   "data": [
@@ -641,8 +596,6 @@ Set relationship with the service records that store the slug prototypes localiz
 {@request:json_api}
 Example:
 
-`</admin/api/brands/1/relationships/slugPrototypes>`
-
 ```JSON
 {
   "data": [
@@ -661,8 +614,6 @@ Remove service records that store the slug prototypes localized data from the br
 
 {@request:json_api}
 Example:
-
-`</admin/api/brands/1/relationships/slugPrototypes>`
 
 ```JSON
 {
@@ -693,8 +644,6 @@ Replace the organization a specific brand record belongs to.
 {@request:json_api}
 Example:
 
-`</admin/api/brands/1/relationships/organization>`
-
 ```JSON
 {
   "data": {
@@ -721,8 +670,6 @@ Replace the owner of a specific brand record.
 
 {@request:json_api}
 Example:
-
-`</admin/api/brands/1/relationships/owner>`
 
 ```JSON
 {

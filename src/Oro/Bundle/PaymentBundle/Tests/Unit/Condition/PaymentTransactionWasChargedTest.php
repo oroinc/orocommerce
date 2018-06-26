@@ -7,10 +7,10 @@ use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Entity\Repository\PaymentTransactionRepository;
 
-class PaymentTransactionWasChargedTest extends \PHPUnit_Framework_TestCase
+class PaymentTransactionWasChargedTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var PaymentTransactionRepository|\PHPUnit_Framework_MockObject_MockObject
+     * @var PaymentTransactionRepository|\PHPUnit\Framework\MockObject\MockObject
      */
     private $transactionRepository;
 

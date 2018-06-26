@@ -8,10 +8,10 @@ use Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\CacheBuilder as Product
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category\CacheBuilder as CategoryCaseCacheBuilder;
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\ProductCaseCacheBuilderInterface;
 
-abstract class AbstractCacheBuilderTest extends \PHPUnit_Framework_TestCase
+abstract class AbstractCacheBuilderTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var CacheBuilderInterface[]|\PHPUnit_Framework_MockObject_MockObject[]
+     * @var CacheBuilderInterface[]|\PHPUnit\Framework\MockObject\MockObject[]
      */
     protected $builders;
 

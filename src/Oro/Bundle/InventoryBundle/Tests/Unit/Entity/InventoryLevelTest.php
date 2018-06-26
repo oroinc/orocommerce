@@ -7,7 +7,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-class InventoryLevelTest extends \PHPUnit_Framework_TestCase
+class InventoryLevelTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 

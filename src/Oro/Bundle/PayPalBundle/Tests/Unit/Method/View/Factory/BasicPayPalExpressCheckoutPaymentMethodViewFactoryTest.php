@@ -6,7 +6,7 @@ use Oro\Bundle\PayPalBundle\Method\Config\PayPalExpressCheckoutConfigInterface;
 use Oro\Bundle\PayPalBundle\Method\View\Factory\BasicPayPalExpressCheckoutPaymentMethodViewFactory;
 use Oro\Bundle\PayPalBundle\Method\View\PayPalExpressCheckoutPaymentMethodView;
 
-class BasicPayPalExpressCheckoutPaymentMethodViewFactoryTest extends \PHPUnit_Framework_TestCase
+class BasicPayPalExpressCheckoutPaymentMethodViewFactoryTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var BasicPayPalExpressCheckoutPaymentMethodViewFactory

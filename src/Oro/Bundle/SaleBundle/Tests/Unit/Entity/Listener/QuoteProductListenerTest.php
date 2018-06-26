@@ -7,15 +7,15 @@ use Oro\Bundle\SaleBundle\Entity\Listener\QuoteProductListener;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-class QuoteProductListenerTest extends \PHPUnit_Framework_TestCase
+class QuoteProductListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var  \PHPUnit_Framework_MockObject_MockObject|RequestStack $listener*/
+    /** @var  \PHPUnit\Framework\MockObject\MockObject|RequestStack $listener*/
     private $requestStack;
 
-    /** @var  \PHPUnit_Framework_MockObject_MockObject|Request $listener*/
+    /** @var  \PHPUnit\Framework\MockObject\MockObject|Request $listener*/
     private $request;
 
-    /** @var  \PHPUnit_Framework_MockObject_MockObject|PreUpdateEventArgs $event*/
+    /** @var  \PHPUnit\Framework\MockObject\MockObject|PreUpdateEventArgs $event*/
     private $event;
 
     /** @var  QuoteProductListener $listener*/

@@ -5,9 +5,9 @@ namespace Oro\Bundle\ShippingBundle\Tests\Unit\DependencyInjection\CompilerPass;
 use Oro\Bundle\ShippingBundle\DependencyInjection\CompilerPass\FreightClassExtensionPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-class FreightClassExtensionPassTest extends \PHPUnit_Framework_TestCase
+class FreightClassExtensionPassTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var \PHPUnit_Framework_MockObject_MockObject|ContainerBuilder */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|ContainerBuilder */
     protected $container;
 
     /** @var FreightClassExtensionPass */

@@ -4,7 +4,7 @@ namespace Oro\Bundle\RFPBundle\Tests\Unit\Storage;
 
 use Oro\Bundle\RFPBundle\Storage\OffersFormStorage;
 
-class OffersFormStorageTest extends \PHPUnit_Framework_TestCase
+class OffersFormStorageTest extends \PHPUnit\Framework\TestCase
 {
     /** @var OffersFormStorage */
     protected $storage;

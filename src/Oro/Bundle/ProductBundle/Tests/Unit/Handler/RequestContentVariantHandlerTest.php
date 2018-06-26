@@ -7,10 +7,10 @@ use Oro\Bundle\ProductBundle\Handler\RequestContentVariantHandler;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-class RequestContentVariantHandlerTest extends \PHPUnit_Framework_TestCase
+class RequestContentVariantHandlerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var RequestStack|\PHPUnit_Framework_MockObject_MockObject
+     * @var RequestStack|\PHPUnit\Framework\MockObject\MockObject
      */
     private $requestStack;
 

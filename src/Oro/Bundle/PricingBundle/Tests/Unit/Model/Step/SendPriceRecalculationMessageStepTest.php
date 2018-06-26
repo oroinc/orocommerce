@@ -15,7 +15,7 @@ use Oro\Bundle\PricingBundle\Model\Step\SendPriceRecalculationMessageStep;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class SendPriceRecalculationMessageStepTest extends \PHPUnit_Framework_TestCase
+class SendPriceRecalculationMessageStepTest extends \PHPUnit\Framework\TestCase
 {
     public function testExecute()
     {
@@ -41,7 +41,7 @@ class SendPriceRecalculationMessageStepTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|PriceRuleLexemeTriggerHandler
+     * @return \PHPUnit\Framework\MockObject\MockObject|PriceRuleLexemeTriggerHandler
      */
     private function createLexemeTriggerHandlerMock()
     {
@@ -54,7 +54,7 @@ class SendPriceRecalculationMessageStepTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param $priceList
-     * @return \PHPUnit_Framework_MockObject_MockObject|RegistryInterface
+     * @return \PHPUnit\Framework\MockObject\MockObject|RegistryInterface
      */
     private function createRegistryMock($priceList)
     {
@@ -70,7 +70,7 @@ class SendPriceRecalculationMessageStepTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param $priceList
-     * @return \PHPUnit_Framework_MockObject_MockObject|PriceListTriggerHandler
+     * @return \PHPUnit\Framework\MockObject\MockObject|PriceListTriggerHandler
      */
     private function createPriceListTriggerHandler($priceList)
     {
@@ -84,7 +84,7 @@ class SendPriceRecalculationMessageStepTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|EventDispatcherInterface
+     * @return \PHPUnit\Framework\MockObject\MockObject|EventDispatcherInterface
      */
     private function createEventDispatcher()
     {
@@ -93,7 +93,7 @@ class SendPriceRecalculationMessageStepTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return JobRepositoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return JobRepositoryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private function createJobRepository()
     {

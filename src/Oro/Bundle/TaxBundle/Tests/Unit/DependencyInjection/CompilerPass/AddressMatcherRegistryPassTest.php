@@ -6,7 +6,7 @@ use Oro\Bundle\TaxBundle\DependencyInjection\CompilerPass\AddressMatcherRegistry
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
-class AddressMatcherRegistryPassTest extends \PHPUnit_Framework_TestCase
+class AddressMatcherRegistryPassTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var AddressMatcherRegistryPass
@@ -14,7 +14,7 @@ class AddressMatcherRegistryPassTest extends \PHPUnit_Framework_TestCase
     protected $compilerPass;
 
     /**
-     * @var ContainerBuilder|\PHPUnit_Framework_MockObject_MockObject
+     * @var ContainerBuilder|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $containerBuilder;
 

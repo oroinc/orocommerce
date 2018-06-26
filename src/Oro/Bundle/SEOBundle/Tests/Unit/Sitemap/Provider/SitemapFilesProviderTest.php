@@ -10,17 +10,17 @@ use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Website\WebsiteInterface;
 use Symfony\Component\Finder\Finder;
 
-class SitemapFilesProviderTest extends \PHPUnit_Framework_TestCase
+class SitemapFilesProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var SitemapFilesystemAdapter|\PHPUnit_Framework_MockObject_MockObject
+     * @var SitemapFilesystemAdapter|\PHPUnit\Framework\MockObject\MockObject
      */
     private $filesystemAdapter;
 
     /**
-     * @var CanonicalUrlGenerator|\PHPUnit_Framework_MockObject_MockObject
+     * @var CanonicalUrlGenerator|\PHPUnit\Framework\MockObject\MockObject
      */
     private $canonicalUrlGenerator;
 
@@ -53,7 +53,7 @@ class SitemapFilesProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetUrlItemsNoFiles()
     {
-        /** @var WebsiteInterface|\PHPUnit_Framework_MockObject_MockObject $website */
+        /** @var WebsiteInterface|\PHPUnit\Framework\MockObject\MockObject $website */
         $website = $this->createMock(WebsiteInterface::class);
         $version = '1';
 
@@ -70,7 +70,7 @@ class SitemapFilesProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetUrlItems()
     {
-        /** @var WebsiteInterface|\PHPUnit_Framework_MockObject_MockObject $website */
+        /** @var WebsiteInterface|\PHPUnit\Framework\MockObject\MockObject $website */
         $website = $this->createMock(WebsiteInterface::class);
         $website->expects($this->any())
             ->method('getId')
@@ -89,7 +89,7 @@ class SitemapFilesProviderTest extends \PHPUnit_Framework_TestCase
             ->method('getMTime')
             ->willReturn(time());
 
-        /** @var Finder|\PHPUnit_Framework_MockObject_MockObject $finder */
+        /** @var Finder|\PHPUnit\Framework\MockObject\MockObject $finder */
         $finder = $this->getMockBuilder(Finder::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -122,10 +122,10 @@ class SitemapFilesProviderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param \PHPUnit_Framework_MockObject_MockObject $mock
+     * @param \PHPUnit\Framework\MockObject\MockObject $mock
      * @param array $items
      */
-    private function configureIteratorMock(\PHPUnit_Framework_MockObject_MockObject $mock, array $items)
+    private function configureIteratorMock(\PHPUnit\Framework\MockObject\MockObject $mock, array $items)
     {
         $iterator = new \ArrayIterator($items);
 

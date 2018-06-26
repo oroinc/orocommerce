@@ -8,14 +8,14 @@ use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class ProductReindexManagerTest extends \PHPUnit_Framework_TestCase
+class ProductReindexManagerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     const PRODUCT_ID = 1;
     const WEBSITE_ID = 777;
     
-    /** @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $eventDispatcher;
 
     /** @var ProductReindexManager */
@@ -42,7 +42,7 @@ class ProductReindexManagerTest extends \PHPUnit_Framework_TestCase
     public function testReindexProduct()
     {
         $event = $this->getReindexationEvents(self::PRODUCT_ID, self::WEBSITE_ID);
-        /** @var $product Product|\PHPUnit_Framework_MockObject_MockObject */
+        /** @var $product Product|\PHPUnit\Framework\MockObject\MockObject */
         $product = $this->getEntity(Product::class, [ 'id' => self::PRODUCT_ID ]);
         $this->eventDispatcher->expects($this->once())
             ->method('dispatch')

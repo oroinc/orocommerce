@@ -9,7 +9,7 @@ use Oro\Bundle\WebsiteSearchBundle\Engine\AsyncMessaging\ReindexMessageGranulari
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 use Oro\Bundle\WebsiteSearchBundle\EventListener\ReindexRequestListener;
 
-class ReindexRequestListenerTest extends \PHPUnit_Framework_TestCase
+class ReindexRequestListenerTest extends \PHPUnit\Framework\TestCase
 {
     const TEST_CLASSNAME = 'testClass';
     const TEST_WEBSITE_ID = 1234;
@@ -20,17 +20,17 @@ class ReindexRequestListenerTest extends \PHPUnit_Framework_TestCase
     protected $listener;
 
     /**
-     * @var IndexerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var IndexerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $regularIndexerMock;
 
     /**
-     * @var IndexerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var IndexerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $asyncIndexerMock;
 
     /**
-     * @var ReindexMessageGranularizer|\PHPUnit_Framework_MockObject_MockObject
+     * @var ReindexMessageGranularizer|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $granularizer;
 

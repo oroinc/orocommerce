@@ -7,10 +7,10 @@ use Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository;
 use Oro\Bundle\CheckoutBundle\Payment\Method\EventListener\MethodRenamingListener;
 use Oro\Bundle\PaymentBundle\Method\Event\MethodRenamingEvent;
 
-class MethodRenamingListenerTest extends \PHPUnit_Framework_TestCase
+class MethodRenamingListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var CheckoutRepository|\PHPUnit_Framework_MockObject_MockObject
+     * @var CheckoutRepository|\PHPUnit\Framework\MockObject\MockObject
      */
     private $checkoutRepository;
 
@@ -30,7 +30,7 @@ class MethodRenamingListenerTest extends \PHPUnit_Framework_TestCase
         $oldId = 'old_name';
         $newId = 'new_name';
 
-        /** @var MethodRenamingEvent|\PHPUnit_Framework_MockObject_MockObject $event */
+        /** @var MethodRenamingEvent|\PHPUnit\Framework\MockObject\MockObject $event */
         $event = $this->createMock(MethodRenamingEvent::class);
         $event->expects(static::once())
             ->method('getOldMethodIdentifier')

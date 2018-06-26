@@ -8,20 +8,20 @@ use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 
-class PriceListFilterTest extends \PHPUnit_Framework_TestCase
+class PriceListFilterTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|FormFactoryInterface
+     * @var \PHPUnit\Framework\MockObject\MockObject|FormFactoryInterface
      */
     protected $formFactory;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|FormInterface
+     * @var \PHPUnit\Framework\MockObject\MockObject|FormInterface
      */
     protected $form;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|FilterUtility
+     * @var \PHPUnit\Framework\MockObject\MockObject|FilterUtility
      */
     protected $filterUtility;
 

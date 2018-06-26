@@ -11,7 +11,7 @@ use Oro\Component\Testing\Unit\EntityTrait;
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class SingleUnitModeServiceTest extends \PHPUnit_Framework_TestCase
+class SingleUnitModeServiceTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
@@ -21,12 +21,12 @@ class SingleUnitModeServiceTest extends \PHPUnit_Framework_TestCase
     protected $unitModeProvider;
 
     /**
-     * @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $configManager;
 
     /**
-     * @var DefaultProductUnitProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var DefaultProductUnitProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $unitProvider;
 

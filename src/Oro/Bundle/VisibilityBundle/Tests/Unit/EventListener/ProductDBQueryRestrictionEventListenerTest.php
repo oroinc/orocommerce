@@ -8,15 +8,15 @@ use Oro\Bundle\ProductBundle\Event\ProductDBQueryRestrictionEvent;
 use Oro\Bundle\VisibilityBundle\EventListener\ProductDBQueryRestrictionEventListener;
 use Oro\Bundle\VisibilityBundle\Model\ProductVisibilityQueryBuilderModifier;
 
-class ProductDBQueryRestrictionEventListenerTest extends \PHPUnit_Framework_TestCase
+class ProductDBQueryRestrictionEventListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var FrontendHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var FrontendHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     private $frontendHelper;
 
     /**
-     * @var ProductVisibilityQueryBuilderModifier|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProductVisibilityQueryBuilderModifier|\PHPUnit\Framework\MockObject\MockObject
      */
     private $modifier;
 
@@ -88,7 +88,7 @@ class ProductDBQueryRestrictionEventListenerTest extends \PHPUnit_Framework_Test
     }
 
     /**
-     * @return ProductDBQueryRestrictionEvent|\PHPUnit_Framework_MockObject_MockObject
+     * @return ProductDBQueryRestrictionEvent|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function getEventMock()
     {

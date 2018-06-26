@@ -9,7 +9,7 @@ use Oro\Bundle\PricingBundle\DependencyInjection\OroPricingExtension;
 use Oro\Bundle\PricingBundle\OroPricingBundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-class OroPricingBundleTest extends \PHPUnit_Framework_TestCase
+class OroPricingBundleTest extends \PHPUnit\Framework\TestCase
 {
     public function testGetContainerExtension()
     {

@@ -16,7 +16,7 @@ use Oro\Component\Testing\Unit\PreloadedExtension;
 class OrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
 {
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ProductUnitsProvider
+     * @var \PHPUnit\Framework\MockObject\MockObject|ProductUnitsProvider
      */
     protected $productUnitsProvider;
 

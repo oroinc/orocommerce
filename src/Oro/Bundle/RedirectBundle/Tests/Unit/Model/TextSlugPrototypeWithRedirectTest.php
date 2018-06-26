@@ -8,7 +8,7 @@ use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
 use Oro\Bundle\RedirectBundle\Model\TextSlugPrototypeWithRedirect;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-class TextSlugPrototypeWithRedirectTest extends \PHPUnit_Framework_TestCase
+class TextSlugPrototypeWithRedirectTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 

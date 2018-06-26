@@ -10,7 +10,7 @@ use Oro\Bundle\PricingBundle\Model\PriceListRelationTriggerHandler;
 class HandlePriceListStatusChangeTest extends UpdateProcessorTestCase
 {
     /**
-     * @var PriceListRelationTriggerHandler|\PHPUnit_Framework_MockObject_MockObject
+     * @var PriceListRelationTriggerHandler|\PHPUnit\Framework\MockObject\MockObject
      */
     private $priceListChangesHandler;
 

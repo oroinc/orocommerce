@@ -25,7 +25,7 @@ use Symfony\Component\Routing\RouterInterface;
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
-class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit_Framework_TestCase
+class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
 {
     const CONFIG_PREFIX = 'payflow_express_checkout_';
     const PRODUCTION_REDIRECT_URL = 'https://www.paypal.com/webscr?cmd=_express-checkout&useraction=commit&token=%s';
@@ -36,25 +36,25 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit_Framework_TestCase
     const SHIPPING_COST = 1;
     const DISCOUNT_AMOUNT = 5.5;
 
-    /** @var Gateway|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var Gateway|\PHPUnit\Framework\MockObject\MockObject */
     protected $gateway;
 
-    /** @var RouterInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var RouterInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $router;
 
     /** @var PayPalExpressCheckoutPaymentMethod */
     protected $expressCheckout;
 
-    /** @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
     protected $doctrineHelper;
 
-    /** @var PayPalExpressCheckoutConfigInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var PayPalExpressCheckoutConfigInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $paymentConfig;
 
-    /** @var ExtractOptionsProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ExtractOptionsProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $optionsProvider;
 
-    /** @var SurchargeProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var SurchargeProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $surchargeProvider;
 
     /** @var PropertyAccessor */
@@ -161,7 +161,7 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit_Framework_TestCase
 
     public function testIsApplicable()
     {
-        /** @var PaymentContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
+        /** @var PaymentContextInterface|\PHPUnit\Framework\MockObject\MockObject $context */
         $context = $this->createMock(PaymentContextInterface::class);
         $this->assertTrue($this->expressCheckout->isApplicable($context));
     }
@@ -925,7 +925,7 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit_Framework_TestCase
      */
     protected function getEntity()
     {
-        /** @var AbstractAddress|\PHPUnit_Framework_MockObject_MockObject $abstractAddressMock */
+        /** @var AbstractAddress|\PHPUnit\Framework\MockObject\MockObject $abstractAddressMock */
         $abstractAddressMock = $this->getMockBuilder(AbstractAddress::class)->getMock();
 
         return new EntityStub($abstractAddressMock);

@@ -5,7 +5,7 @@ namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Placeholder;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderInterface;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderRegistry;
 
-class PlaceholderRegistryTest extends \PHPUnit_Framework_TestCase
+class PlaceholderRegistryTest extends \PHPUnit\Framework\TestCase
 {
     /** @var PlaceholderRegistry */
     private $registry;
@@ -82,7 +82,7 @@ class PlaceholderRegistryTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param string $placeholderName
-     * @return PlaceholderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return PlaceholderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private function preparePlaceholder($placeholderName)
     {

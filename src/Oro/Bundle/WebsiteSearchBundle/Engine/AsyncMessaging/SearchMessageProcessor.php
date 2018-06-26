@@ -2,6 +2,9 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Engine\AsyncMessaging;
 
+use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
+use Oro\Bundle\EntityBundle\ORM\DatabaseExceptionHelper;
 use Oro\Bundle\SearchBundle\Engine\IndexerInterface;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AsyncIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Engine\IndexerInputValidator;
@@ -12,7 +15,11 @@ use Oro\Component\MessageQueue\Job\JobRunner;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\MessageQueue\Util\JSON;
+use Psr\Log\LoggerInterface;
 
+/**
+ * Performs actual indexation operations requested via Oro\Bundle\WebsiteSearchBundle\Engine\AsyncIndexer
+ */
 class SearchMessageProcessor implements MessageProcessorInterface
 {
     /**
@@ -41,30 +48,74 @@ class SearchMessageProcessor implements MessageProcessorInterface
     private $reindexMessageGranularizer;
 
     /**
+     * @var DatabaseExceptionHelper
+     */
+    private $databaseExceptionHelper;
+
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
      * @param IndexerInterface $indexer
      * @param JobRunner $jobRunner
      * @param MessageProducerInterface $messageProducer
      * @param IndexerInputValidator $indexerInputValidator
      * @param ReindexMessageGranularizer $reindexMessageGranularizer
+     * @param DatabaseExceptionHelper $databaseExceptionHelper
+     * @param LoggerInterface $logger
      */
     public function __construct(
         IndexerInterface $indexer,
         JobRunner $jobRunner,
         MessageProducerInterface $messageProducer,
         IndexerInputValidator $indexerInputValidator,
-        ReindexMessageGranularizer $reindexMessageGranularizer
+        ReindexMessageGranularizer $reindexMessageGranularizer,
+        DatabaseExceptionHelper $databaseExceptionHelper,
+        LoggerInterface $logger
     ) {
         $this->indexer                    = $indexer;
         $this->jobRunner                  = $jobRunner;
         $this->messageProducer            = $messageProducer;
         $this->inputValidator             = $indexerInputValidator;
         $this->reindexMessageGranularizer = $reindexMessageGranularizer;
+        $this->databaseExceptionHelper    = $databaseExceptionHelper;
+        $this->logger                     = $logger;
     }
 
     /**
      * {@inheritdoc}
      */
     public function process(MessageInterface $message, SessionInterface $session)
+    {
+        try {
+            $result = $this->processMessage($message);
+        } catch (\Exception $e) {
+            $this->logger->error(
+                'An unexpected exception occurred during indexation',
+                ['exception' => $e]
+            );
+
+            $driverException = $this->databaseExceptionHelper->getDriverException($e);
+            if (($driverException && $this->databaseExceptionHelper->isDeadlock($driverException))
+                || $e instanceof UniqueConstraintViolationException
+                || $e instanceof ForeignKeyConstraintViolationException) {
+                $result = static::REQUEUE;
+            } else {
+                $result = static::REJECT;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param MessageInterface $message
+     *
+     * @return string
+     */
+    private function processMessage(MessageInterface $message)
     {
         $data = JSON::decode($message->getBody());
 
@@ -73,7 +124,6 @@ class SearchMessageProcessor implements MessageProcessorInterface
         if (!empty($data['jobId'])) {
             return $result;
         }
-
         switch ($message->getProperty(MessageQueConfig::PARAMETER_TOPIC_NAME)) {
             case AsyncIndexer::TOPIC_SAVE:
                 $this->indexer->save($data['entity'], $data['context']);
@@ -111,7 +161,7 @@ class SearchMessageProcessor implements MessageProcessorInterface
     {
         if (!empty($data['granulize'])) {
             list($entityClassesToIndex, $websiteIdsToIndex) =
-                $this->inputValidator->validateReindexRequest($data['class'], $data['context']);
+                $this->inputValidator->validateRequestParameters($data['class'], $data['context']);
 
             $reindexMsgData = $this->reindexMessageGranularizer->process(
                 $entityClassesToIndex,
@@ -124,7 +174,7 @@ class SearchMessageProcessor implements MessageProcessorInterface
             $batchSize = count($entityClassesToIndex) * count($websiteIdsToIndex);
             // As granulizer returns iterable but not countable we can't count messages, buffer used instead
             // in order to process data without triggering new messages when it's smaller than batch size
-            $buffer = [];
+            $buffer       = [];
             $enableBuffer = true;
             foreach ($reindexMsgData as $msgData) {
                 if ($enableBuffer) {
@@ -140,7 +190,7 @@ class SearchMessageProcessor implements MessageProcessorInterface
                             $bufferMsgData
                         );
                     }
-                    $buffer = [];
+                    $buffer       = [];
                     $enableBuffer = false;
                 }
                 $this->messageProducer->send(

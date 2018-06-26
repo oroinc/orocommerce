@@ -9,12 +9,12 @@ use Oro\Component\Tree\Entity\Repository\NestedTreeRepository;
 use Oro\Component\Tree\Tests\Unit\Stubs\EntityStub;
 use Oro\Component\Tree\Tests\Unit\Stubs\Handler\TreeHandlerStub;
 
-class AbstractTreeHandlerTest extends \PHPUnit_Framework_TestCase
+class AbstractTreeHandlerTest extends \PHPUnit\Framework\TestCase
 {
     /** @var TreeHandlerStub */
     protected $treeHandler;
 
-    /** @var EntityManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var EntityManager|\PHPUnit\Framework\MockObject\MockObject */
     protected $em;
 
     /**
@@ -22,10 +22,10 @@ class AbstractTreeHandlerTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        /** @var EntityManager|\PHPUnit_Framework_MockObject_MockObject $em */
+        /** @var EntityManager|\PHPUnit\Framework\MockObject\MockObject $em */
         $this->em = $this->getMockBuilder(EntityManager::class)->disableOriginalConstructor()->getMock();
 
-        /** @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject */
+        /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
         $registry = $this->getMockBuilder(ManagerRegistry::class)->getMock();
         $registry
             ->expects($this->any())
@@ -51,7 +51,7 @@ class AbstractTreeHandlerTest extends \PHPUnit_Framework_TestCase
             $nodes = array_merge([$root], $nodes);
         }
 
-        /** @var NestedTreeRepository|\PHPUnit_Framework_MockObject_MockObject $repository */
+        /** @var NestedTreeRepository|\PHPUnit\Framework\MockObject\MockObject $repository */
         $repository = $this->getMockBuilder(NestedTreeRepository::class)->disableOriginalConstructor()->getMock();
         $repository->expects($this->once())
             ->method('getChildren')
@@ -85,7 +85,7 @@ class AbstractTreeHandlerTest extends \PHPUnit_Framework_TestCase
             $nodes = array_merge([$root], $nodes);
         }
 
-        /** @var NestedTreeRepository|\PHPUnit_Framework_MockObject_MockObject $repository */
+        /** @var NestedTreeRepository|\PHPUnit\Framework\MockObject\MockObject $repository */
         $repository = $this->getMockBuilder(NestedTreeRepository::class)->disableOriginalConstructor()->getMock();
         $repository->expects($this->once())
             ->method('getChildren')

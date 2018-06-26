@@ -12,18 +12,18 @@ use Oro\Bundle\WorkflowBundle\Model\Workflow;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
-class FrontendRequestVoterTest extends \PHPUnit_Framework_TestCase
+class FrontendRequestVoterTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
     protected $doctrineHelper;
 
-    /** @var ApplicationProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ApplicationProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $applicationProvider;
 
-    /** @var WorkflowManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var WorkflowManager|\PHPUnit\Framework\MockObject\MockObject */
     protected $workflowManager;
 
-    /** @var TokenInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var TokenInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $token;
 
     /** @var FrontendRequestVoter */
