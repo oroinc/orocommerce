@@ -320,8 +320,9 @@ define(function(require) {
                 success: function(response) {
                     mediator.execute('hideLoading');
                     if (response && response.message) {
+                        var isSuccessful = response.hasOwnProperty('successful') && response.successful;
                         mediator.execute(
-                            'showFlashMessage', (response.hasOwnProperty('successful') ? 'success' : 'error'),
+                            'showFlashMessage', (isSuccessful ? 'success' : 'error'),
                             response.message
                         );
                     }
