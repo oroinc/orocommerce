@@ -6,6 +6,9 @@ define(function(require) {
     var ElementsHelper = require('orofrontend/js/app/elements-helper');
     var layout = require('oroui/js/layout');
     var mediator = require('oroui/js/mediator');
+    var numberFormatter = require('orolocale/js/formatter/number');
+    var numeral = require('numeral');
+    var localeSettings = require('orolocale/js/locale-settings');
     var BaseModel = require('oroui/js/app/models/base/model');
     var PricesHelper = require('oropricing/js/app/prices-helper');
     var _ = require('underscore');
@@ -13,6 +16,7 @@ define(function(require) {
 
     BaseProductPricesView = BaseView.extend(_.extend({}, ElementsHelper, {
         unitTemplate: require('tpl!oropricing/templates/product/unit.html'),
+        priceTemplate: require('tpl!oropricing/templates/product/price.html'),
 
         keepElement: true,
 
@@ -228,7 +232,12 @@ define(function(require) {
             } else {
                 this.getElement('unit').html(this.unitTemplate({price: price}));
 
-                this.getElement('priceValue').text(price.formatted_price);
+                this.getElement('priceValue').html(this.priceTemplate({
+                    price: price,
+                    numberFormatter: numberFormatter,
+                    localeSettings: localeSettings,
+                    numeral: numeral
+                }));
 
                 this.getElement('priceNotFound').addClass('hidden');
                 this.getElement('price').removeClass('hidden');

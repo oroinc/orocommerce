@@ -50,7 +50,7 @@ Feature: Product frontend single unit mode
     When I click "Search Button"
     And I click "View Details" for "PSKU2" product
     Then I should see an "Default Page Prices" element
-    And I should see "Each 1 $ 20.00" in the "Default Page Prices" element
+    And I should see "Each 1 $20.00" in the "Default Page Prices" element
 
   Scenario: Enable "Short page" view mode for product units
     Given I proceed as the Admin
