@@ -442,7 +442,7 @@ Feature: Backoffice Quote Flow with Approvals
       | Customer Status | N/A      |
 
   Scenario: Create a Quote from RFQ: Internal status: Draft, customer status: N/A, invisible for customer
-    Given I signed in as AmandaRCole@example.org on the store frontend
+    Given I signed in as AmandaRCole@example.org on the store frontend in old session
     And request a quote from shopping list "Shopping List 1" with data:
       | PO Number | PO35 |
 
