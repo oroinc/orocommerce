@@ -626,8 +626,8 @@ Feature: Commerce smoke e2e
     And should see "Listed Price: $80.00 / item" for "Lenovo_Vibe_sku" product
     And click "Add to Shopping List" for "Lenovo_Vibe_sku" product
     When click "View Details" for "Xiaomi_Redmi_3S_sku" product
-    Then should see "1 $ 120.00"
-    And should see "10 $ 135.00"
+    Then should see "1 $120.00"
+    And should see "10 $135.00"
     When I hover on "Shopping Cart"
     And click "Shopping List"
     Then should see "Subtotal $900.00"
