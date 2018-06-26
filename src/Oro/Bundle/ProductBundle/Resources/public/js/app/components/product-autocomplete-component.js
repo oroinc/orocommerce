@@ -87,7 +87,7 @@ define(function(require) {
                 url: routing.generate(this.options.productBySkuRoute),
                 method: 'get',
                 data: {
-                    name: 'oro_product_with_prices',
+                    name: 'oro_product_visibility_limited_with_prices',
                     per_page: 1,
                     query: val
                 },
@@ -95,8 +95,11 @@ define(function(require) {
                 success: function(response) {
                     self.resetProduct();
 
-                    var item = response.results[0];
-                    if (item && (item.sku.toUpperCase() === val.toUpperCase())) {
+                    var needleSku = val.toUpperCase();
+                    var item = _.find(response.results, function(resultItem) {
+                        return resultItem.sku.toUpperCase() === needleSku;
+                    });
+                    if (item) {
                         self.product.sku = item.sku;
                         self.product.name = item['defaultName.string'];
                         self.product.displayName = [self.product.sku, self.product.name].join(' - ');
