@@ -1,5 +1,5 @@
 @regression
-@ticket-BB-14550
+@ticket-BB-14600
 @fixture-OroCustomerBundle:CustomerUserAmandaRCole.yml
 
 Feature: Configurable product in quick order form
