@@ -2,7 +2,7 @@
 @ticket-BB-14550
 @fixture-OroCustomerBundle:CustomerUserAmandaRCole.yml
 
-Feature: Commerce smoke e2e
+Feature: Configurable product in quick order form
   As a user I should check that configurable products are not available in quick order form autocomplete
   I need to create configurable product with and without simple products
   And check their availability in quick order form autocomplete
