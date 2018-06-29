@@ -10,6 +10,7 @@ oro_behat_extension:
             - '@oro_entity.entity_alias_resolver'
             - '@oro_importexport.processor.registry'
         - OroApplicationBundle::CommerceMainContext
+        - OroProductBundle::QuickOrderFormContext
         - OroCheckoutBundle::FeatureContext
         - OroSecurityBundle::ACLContext
         - OroProductBundle::FeatureContext
