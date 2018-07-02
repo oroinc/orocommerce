@@ -119,7 +119,41 @@ class ProductRepositoryTest extends WebTestCase
         $this->assertTrue(count($productsFromSearch) > 0);
 
         foreach ($productsFromOrm as $productFromOrm) {
-            $found = $foundName = false;
+            $found = false;
+
+            foreach ($productsFromSearch as $productFromSearch) {
+                if ($productFromSearch->getSelectedData()['sku'] === $productFromOrm['sku']) {
+                    $found = true;
+                }
+            }
+
+            $this->assertTrue($found, 'Product with sku `' . $productFromOrm['sku'] . '` not found.');
+        }
+    }
+
+    public function testGetSearchQueryBySkuOrName()
+    {
+        /** @var ProductRepository $ormRepository */
+        $ormRepository = $this->client->getContainer()
+            ->get('doctrine')
+            ->getRepository(Product::class);
+
+        /** @var ProductSearchRepository $searchRepository */
+        $searchRepository = $this->client->getContainer()
+            ->get('oro_product.website_search.repository.product');
+
+        $productsFromOrm = $ormRepository->createQueryBuilder('p')
+            ->where('p.sku = :sku')
+            ->setParameter('sku', 'product-8')
+            ->getQuery()
+            ->getResult(Query::HYDRATE_ARRAY);
+
+        $productsFromSearch = $searchRepository->getSearchQueryBySkuOrName('product-8')->getResult()->getElements();
+
+        $this->assertTrue(count($productsFromSearch) > 0);
+
+        foreach ($productsFromOrm as $productFromOrm) {
+            $found = false;
 
             foreach ($productsFromSearch as $productFromSearch) {
                 if ($productFromSearch->getSelectedData()['sku'] === $productFromOrm['sku']) {
