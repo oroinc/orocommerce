@@ -1,6 +1,6 @@
 {# Backward compatibility layer#}
 {% macro transitionAttrbiutes(transitionData, checkout) %}
-{{ _self.transitionAttributes(transitionData) }}
+{{ _self.transitionAttributes(transitionData, checkout) }}
 {% endmacro %}
 
 {% macro transitionAttributes(transitionData, checkout) %}
