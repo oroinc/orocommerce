@@ -7,10 +7,10 @@ use Oro\Bundle\CronBundle\Entity\Manager\DeferredScheduler;
 use Oro\Bundle\SEOBundle\Command\GenerateSitemapCommand;
 use Oro\Bundle\SEOBundle\EventListener\UpdateCronDefinitionConfigListener;
 
-class UpdateCronDefinitionConfigListenerTest extends \PHPUnit_Framework_TestCase
+class UpdateCronDefinitionConfigListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var DeferredScheduler|\PHPUnit_Framework_MockObject_MockObject
+     * @var DeferredScheduler|\PHPUnit\Framework\MockObject\MockObject
      */
     private $deferredScheduler;
 

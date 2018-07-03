@@ -6,7 +6,7 @@ use Oro\Bundle\PricingBundle\Provider\PriceListDefaultValueProvider;
 use Oro\Bundle\PricingBundle\Provider\PriceListProvider;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 
-class PriceListDefaultValueProviderTest extends \PHPUnit_Framework_TestCase
+class PriceListDefaultValueProviderTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var PriceListDefaultValueProvider
@@ -14,12 +14,12 @@ class PriceListDefaultValueProviderTest extends \PHPUnit_Framework_TestCase
     private $priceListDefaultValueProvider;
 
     /**
-     * @var PriceListProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var PriceListProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     private $priceListProvider;
 
     /**
-     * @var ShardManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShardManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $shardManager;
 

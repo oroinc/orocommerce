@@ -10,14 +10,14 @@ use Symfony\Component\Form\FormErrorIterator;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 
-class CheckoutWorkflowStateExtensionTest extends \PHPUnit_Framework_TestCase
+class CheckoutWorkflowStateExtensionTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var CheckoutWorkflowStateExtension
      */
     protected $checkoutWorkflowExtension;
 
-    /** @var CheckoutErrorHandler|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var CheckoutErrorHandler|\PHPUnit\Framework\MockObject\MockObject */
     protected $checkoutErrorHandler;
 
     protected function setUp()
@@ -78,11 +78,11 @@ class CheckoutWorkflowStateExtensionTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return FormInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return FormInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function createForm()
     {
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->getMockBuilder(FormInterface::class)
             ->disableOriginalConstructor()
             ->getMock();

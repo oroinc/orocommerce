@@ -7,12 +7,12 @@ use Oro\Bundle\TaxBundle\Model\Taxable;
 use Oro\Bundle\TaxBundle\Resolver\CustomerAddressItemResolver;
 use Oro\Bundle\TaxBundle\Resolver\CustomerAddressResolver;
 
-class CustomerAddressResolverTest extends \PHPUnit_Framework_TestCase
+class CustomerAddressResolverTest extends \PHPUnit\Framework\TestCase
 {
     /** @var CustomerAddressResolver */
     protected $resolver;
 
-    /** @var CustomerAddressItemResolver|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var CustomerAddressItemResolver|\PHPUnit\Framework\MockObject\MockObject */
     protected $itemResolver;
 
     /** {@inheritdoc} */

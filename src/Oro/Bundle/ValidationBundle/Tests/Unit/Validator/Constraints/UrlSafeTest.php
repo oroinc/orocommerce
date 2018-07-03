@@ -8,12 +8,12 @@ use Symfony\Component\Validator\Constraints\RegexValidator;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
 
-class UrlSafeTest extends \PHPUnit_Framework_TestCase
+class UrlSafeTest extends \PHPUnit\Framework\TestCase
 {
     /** @var UrlSafe */
     protected $constraint;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|ExecutionContextInterface */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|ExecutionContextInterface */
     protected $context;
 
     /** @var RegexValidator */

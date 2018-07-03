@@ -12,15 +12,15 @@ use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Templating\EngineInterface;
 
-class OrderDiscountEventListenerTest extends \PHPUnit_Framework_TestCase
+class OrderDiscountEventListenerTest extends \PHPUnit\Framework\TestCase
 {
     /** @var OrderAddressEventListener */
     protected $listener;
 
-    /** @var EngineInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var EngineInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $twigEngine;
 
-    /** @var FormFactoryInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var FormFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $formFactory;
 
     protected function setUp()
@@ -37,7 +37,7 @@ class OrderDiscountEventListenerTest extends \PHPUnit_Framework_TestCase
         $viewHtml = "any html";
         $fieldName = OrderType::DISCOUNTS_FIELD_NAME;
 
-        /** @var Form|\PHPUnit_Framework_MockObject_MockObject $form */
+        /** @var Form|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = static::createMock(Form::class);
         $form->expects(static::once())
             ->method('has')
@@ -63,7 +63,7 @@ class OrderDiscountEventListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testDoNothingIfNoSubmission()
     {
-        /** @var OrderEvent|\PHPUnit_Framework_MockObject_MockObject $event */
+        /** @var OrderEvent|\PHPUnit\Framework\MockObject\MockObject $event */
         $event = static::createMock(OrderEvent::class);
         $event->expects(static::never())
             ->method('getForm');

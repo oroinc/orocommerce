@@ -15,27 +15,27 @@ use Oro\Component\ConfigExpression\ContextAccessor;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\PropertyAccess\PropertyPathInterface;
 
-class PriceListBackgroundRecalculateActionTest extends \PHPUnit_Framework_TestCase
+class PriceListBackgroundRecalculateActionTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var ContextAccessor|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ContextAccessor|\PHPUnit\Framework\MockObject\MockObject */
     protected $contextAccessor;
 
-    /** @var PriceListProductAssignmentBuilder|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var PriceListProductAssignmentBuilder|\PHPUnit\Framework\MockObject\MockObject */
     protected $assignmentBuilder;
 
-    /** @var ProductPriceBuilder|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ProductPriceBuilder|\PHPUnit\Framework\MockObject\MockObject */
     protected $productPriceBuilder;
 
-    /** @var DependentPriceListProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var DependentPriceListProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $dependentPriceListProvider;
 
-    /** @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
     protected $doctrineHelper;
 
     /** @var PriceListBackgroundRecalculateAction */
     protected $action;
 
-    /** @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $eventDispatcher;
 
     public function setUp()
@@ -59,7 +59,7 @@ class PriceListBackgroundRecalculateActionTest extends \PHPUnit_Framework_TestCa
 
     public function testInitializeFail()
     {
-        $this->setExpectedException(InvalidParameterException::class);
+        $this->expectException(InvalidParameterException::class);
         $this->action->initialize([
             PriceListBackgroundRecalculateAction::OPTION_KEY_PRICE_LIST => null
         ]);
@@ -78,7 +78,7 @@ class PriceListBackgroundRecalculateActionTest extends \PHPUnit_Framework_TestCa
             ->with($context, $priceListOption)
             ->willReturn(new \stdClass());
 
-        $this->setExpectedException(InvalidParameterException::class);
+        $this->expectException(InvalidParameterException::class);
         $this->action->execute($context);
     }
 

@@ -77,6 +77,7 @@ class LoadContentNodesData extends AbstractFixture implements DependentFixtureIn
                 $title->setString($nodeReference);
                 $node->addTitle($title);
                 $node->addSlugPrototype((new LocalizedFallbackValue())->setString($nodeReference));
+                $node->addLocalizedUrl((new LocalizedFallbackValue())->setString('/' . $nodeReference));
                 if (!empty($nodeData['parent'])) {
                     /** @var ContentNode $parentNode */
                     $parentNode = $this->getReference($nodeData['parent']);

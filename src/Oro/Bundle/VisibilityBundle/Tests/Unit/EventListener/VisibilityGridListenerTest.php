@@ -21,18 +21,18 @@ use Oro\Bundle\VisibilityBundle\EventListener\VisibilityGridListener;
 use Oro\Bundle\VisibilityBundle\Provider\VisibilityChoicesProvider;
 use Oro\Component\TestUtils\ORM\Mocks\EntityManagerMock;
 
-class VisibilityGridListenerTest extends \PHPUnit_Framework_TestCase
+class VisibilityGridListenerTest extends \PHPUnit\Framework\TestCase
 {
     const CUSTOMER_CATEGORY_VISIBILITY_GRID = 'customer-category-visibility-grid';
     const CUSTOMER_GROUP_PRODUCT_VISIBILITY_GRID = 'customer-group-product-visibility-grid';
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry
+     * @var \PHPUnit\Framework\MockObject\MockObject|ManagerRegistry
      */
     protected $registry;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|VisibilityChoicesProvider
+     * @var \PHPUnit\Framework\MockObject\MockObject|VisibilityChoicesProvider
      */
     protected $visibilityChoicesProvider;
 
@@ -50,7 +50,7 @@ class VisibilityGridListenerTest extends \PHPUnit_Framework_TestCase
     ];
 
     /**
-     * @var ScopeManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ScopeManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $scopeManager;
 
@@ -199,7 +199,7 @@ class VisibilityGridListenerTest extends \PHPUnit_Framework_TestCase
      */
     protected function getEntityManager()
     {
-        /** @var Connection|\PHPUnit_Framework_MockObject_MockObject $connection */
+        /** @var Connection|\PHPUnit\Framework\MockObject\MockObject $connection */
         $connection = $this->getMockBuilder(Connection::class)->disableOriginalConstructor()->getMock();
 
         return EntityManagerMock::create($connection);

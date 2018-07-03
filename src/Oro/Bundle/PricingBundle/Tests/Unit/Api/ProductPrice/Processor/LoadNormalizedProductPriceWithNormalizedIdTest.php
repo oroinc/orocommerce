@@ -12,12 +12,12 @@ use Oro\Component\ChainProcessor\ActionProcessorInterface;
 class LoadNormalizedProductPriceWithNormalizedIdTest extends FormProcessorTestCase
 {
     /**
-     * @var ActionProcessorBagInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ActionProcessorBagInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $processorBag;
 
     /**
-     * @var ProductPriceIDByContextNormalizerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProductPriceIDByContextNormalizerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $normalizer;
 

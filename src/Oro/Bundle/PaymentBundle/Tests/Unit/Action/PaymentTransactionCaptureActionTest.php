@@ -40,7 +40,7 @@ class PaymentTransactionCaptureActionTest extends AbstractActionTest
             $responseValue = $this->throwException($data['response']);
         }
 
-        /** @var PaymentMethodInterface|\PHPUnit_Framework_MockObject_MockObject $paymentMethod */
+        /** @var PaymentMethodInterface|\PHPUnit\Framework\MockObject\MockObject $paymentMethod */
         $paymentMethod = $this->createMock(PaymentMethodInterface::class);
         $paymentMethod->expects(static::once())
             ->method('execute')

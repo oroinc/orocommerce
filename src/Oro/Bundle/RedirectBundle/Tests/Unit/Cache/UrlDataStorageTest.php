@@ -4,7 +4,7 @@ namespace Oro\Bundle\RedirectBundle\Tests\Cache;
 
 use Oro\Bundle\RedirectBundle\Cache\UrlDataStorage;
 
-class UrlDataStorageTest extends \PHPUnit_Framework_TestCase
+class UrlDataStorageTest extends \PHPUnit\Framework\TestCase
 {
     public function testGetUrlForNotExistentUrl()
     {

@@ -4,8 +4,14 @@ Feature: Guest shopping list merging functionality
   As a guest I have a possibility to fill one shopping list and it should be added (or merged depending on limit)
   to customer user on login
 
+  Scenario: Create sessions
+    Given sessions active:
+      | Admin | first_session  |
+      | Buyer | second_session |
+
   Scenario: Set limit to One shopping list in configuration
-    Given I login as administrator
+    Given I proceed as the Admin
+    And I login as administrator
     And I go to System/Configuration
     And I follow "Commerce/Sales/Shopping List" on configuration sidebar
     And uncheck "Use default" for "Shopping List Limit" field
@@ -16,9 +22,10 @@ Feature: Guest shopping list merging functionality
     And I should see "Configuration saved" flash message
 
   Scenario: Check no customer shopping lists by default
-    Given I signed in as AmandaRCole@example.org on the store frontend
+    Given I proceed as the Buyer
+    And I signed in as AmandaRCole@example.org on the store frontend
     And I should see "No Shopping Lists"
-    And click "Sign Out"
+    And I click "Sign Out"
 
   Scenario: Create shopping list as a guest
     Given I am on homepage
@@ -34,7 +41,7 @@ Feature: Guest shopping list merging functionality
     And I should see "In shopping list"
 
   Scenario: Check guest shopping list was added to customer
-    Given I signed in as AmandaRCole@example.org on the store frontend
+    Given I signed in as AmandaRCole@example.org on the store frontend in old session
     And I should see "Shopping List"
     And I open shopping list widget
     And I click "View Details"
@@ -51,7 +58,7 @@ Feature: Guest shopping list merging functionality
     Then I should see "Product has been added to" flash message
 
   Scenario: Check guest shopping list was merged to existing customer shopping list
-    Given I signed in as AmandaRCole@example.org on the store frontend
+    Given I signed in as AmandaRCole@example.org on the store frontend in old session
     And I should see "Shopping List"
     And I open shopping list widget
     And I click "View Details"

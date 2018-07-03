@@ -7,7 +7,7 @@ use Oro\Bundle\PromotionBundle\Validator\Constraints\CouponCodeLength;
 use Oro\Bundle\PromotionBundle\Validator\Constraints\CouponCodeLengthValidator;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
-class CouponCodeLengthValidatorTest extends \PHPUnit_Framework_TestCase
+class CouponCodeLengthValidatorTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var CouponCodeLengthValidator
@@ -15,7 +15,7 @@ class CouponCodeLengthValidatorTest extends \PHPUnit_Framework_TestCase
     protected $validator;
 
     /**
-     * @var ExecutionContextInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ExecutionContextInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $context;
 

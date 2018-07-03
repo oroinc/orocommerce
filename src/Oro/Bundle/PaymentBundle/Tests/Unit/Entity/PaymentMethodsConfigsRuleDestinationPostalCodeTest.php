@@ -6,7 +6,7 @@ use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRuleDestination;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRuleDestinationPostalCode;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-class PaymentMethodsConfigsRuleDestinationPostalCodeTest extends \PHPUnit_Framework_TestCase
+class PaymentMethodsConfigsRuleDestinationPostalCodeTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 

@@ -7,7 +7,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Entity\ProductImageType;
 use Oro\Bundle\ProductBundle\Helper\ProductImageHelper;
 
-class ProductImageHelperTest extends \PHPUnit_Framework_TestCase
+class ProductImageHelperTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var ProductImageHelper $productImageHelper

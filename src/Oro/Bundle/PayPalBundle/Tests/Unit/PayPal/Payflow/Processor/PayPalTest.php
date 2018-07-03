@@ -4,7 +4,7 @@ namespace Oro\Bundle\PayPalBundle\Tests\Unit\PayPal\Payflow\Processor;
 
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Processor\PayPal;
 
-class PayPalTest extends \PHPUnit_Framework_TestCase
+class PayPalTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var PayPal

@@ -14,10 +14,10 @@ use Oro\Component\Expression\Node\NodeInterface;
 use Oro\Component\Expression\Node\RelationNode;
 use Oro\Component\Expression\Node\ValueNode;
 
-class AssignedProductsConverterTest extends \PHPUnit_Framework_TestCase
+class AssignedProductsConverterTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var FieldsProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var FieldsProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $fieldsProvider;
 

@@ -6,14 +6,14 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Layout\DataProvider\ProductStickersProvider;
 
-class ProductStickersProviderTest extends \PHPUnit_Framework_TestCase
+class ProductStickersProviderTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var ProductStickersProvider
      */
     protected $productStickersProvider;
     /**
-     * @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $configManager;
 
@@ -25,7 +25,7 @@ class ProductStickersProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetStickers()
     {
-        /** @var Product|\PHPUnit_Framework_MockObject_MockObject $newArrivalProduct */
+        /** @var Product|\PHPUnit\Framework\MockObject\MockObject $newArrivalProduct */
         $newArrivalProduct = $this->createMock(Product::class);
         $newArrivalProduct->method('isNewArrival')->willReturn(true);
         $stickers = $this->productStickersProvider->getStickers($newArrivalProduct);
@@ -35,7 +35,7 @@ class ProductStickersProviderTest extends \PHPUnit_Framework_TestCase
             ],
             $stickers
         );
-        /** @var Product|\PHPUnit_Framework_MockObject_MockObject $product */
+        /** @var Product|\PHPUnit\Framework\MockObject\MockObject $product */
         $product = $this->createMock(Product::class);
         $product->method('isNewArrival')->willReturn(false);
         $stickers = $this->productStickersProvider->getStickers($product);

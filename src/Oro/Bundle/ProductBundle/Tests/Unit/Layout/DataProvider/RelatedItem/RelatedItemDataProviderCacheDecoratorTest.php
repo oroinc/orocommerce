@@ -7,12 +7,12 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Layout\DataProvider\RelatedItem\RelatedItemDataProviderCacheDecorator;
 use Oro\Bundle\ProductBundle\Layout\DataProvider\RelatedItem\RelatedItemDataProviderInterface;
 
-class RelatedItemDataProviderCacheDecoratorTest extends \PHPUnit_Framework_TestCase
+class RelatedItemDataProviderCacheDecoratorTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var RelatedItemDataProviderInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var RelatedItemDataProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $dataProvider;
 
-    /** @var Cache|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var Cache|\PHPUnit\Framework\MockObject\MockObject */
     private $cache;
 
     /** @var RelatedItemDataProviderCacheDecorator */

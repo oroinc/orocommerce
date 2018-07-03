@@ -21,7 +21,7 @@ use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Form\FormConfigInterface;
 use Symfony\Component\Form\FormInterface;
 
-class VisibilityFormFieldDataProviderTest extends \PHPUnit_Framework_TestCase
+class VisibilityFormFieldDataProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
@@ -31,17 +31,17 @@ class VisibilityFormFieldDataProviderTest extends \PHPUnit_Framework_TestCase
     protected $dataProvider;
 
     /**
-     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $registry;
 
     /**
-     * @var ScopeManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ScopeManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $scopeManager;
 
     /**
-     * @var FormScopeCriteriaResolver|\PHPUnit_Framework_MockObject_MockObject
+     * @var FormScopeCriteriaResolver|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $formScopeCriteriaResolver;
 

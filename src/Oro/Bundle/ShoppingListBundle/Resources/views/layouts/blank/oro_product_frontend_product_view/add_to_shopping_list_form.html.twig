@@ -2,7 +2,10 @@
     {% set attr = layout_attr_defaults(attr, {
         '~class': " form__col"
     }) %}
-    <div {{ block('block_attributes') }}>
-        {{ block_widget(block) }}
-    </div>
+    {% set children = block_widget(block) %}
+    {% if children|trim|length %}
+        <div {{ block('block_attributes') }}>
+            {{ children|raw }}
+        </div>
+    {% endif %}
 {% endblock %}

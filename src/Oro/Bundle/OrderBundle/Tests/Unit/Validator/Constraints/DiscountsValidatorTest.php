@@ -12,12 +12,12 @@ use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Context\ExecutionContext;
 use Symfony\Component\Validator\Violation\ConstraintViolationBuilder;
 
-class DiscountsValidatorTest extends \PHPUnit_Framework_TestCase
+class DiscountsValidatorTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var ExecutionContext|\PHPUnit_Framework_MockObject_MockObject
+     * @var ExecutionContext|\PHPUnit\Framework\MockObject\MockObject
      */
     private $context;
 
@@ -36,7 +36,7 @@ class DiscountsValidatorTest extends \PHPUnit_Framework_TestCase
 
     public function testValidateWithNull()
     {
-        /** @var Constraint|\PHPUnit_Framework_MockObject_MockObject $constraint **/
+        /** @var Constraint|\PHPUnit\Framework\MockObject\MockObject $constraint **/
         $constraint = $this->createMock(Constraint::class);
 
         $this->context
@@ -48,7 +48,7 @@ class DiscountsValidatorTest extends \PHPUnit_Framework_TestCase
 
     public function testValidateWithNotOrderValue()
     {
-        /** @var Constraint|\PHPUnit_Framework_MockObject_MockObject $constraint **/
+        /** @var Constraint|\PHPUnit\Framework\MockObject\MockObject $constraint **/
         $constraint = $this->createMock(Constraint::class);
 
         $this->expectException(\InvalidArgumentException::class);
@@ -65,7 +65,7 @@ class DiscountsValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function testValidate(Order $order)
     {
-        /** @var Constraint|\PHPUnit_Framework_MockObject_MockObject $constraint **/
+        /** @var Constraint|\PHPUnit\Framework\MockObject\MockObject $constraint **/
         $constraint = $this->getMockBuilder(Constraint::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -106,7 +106,7 @@ class DiscountsValidatorTest extends \PHPUnit_Framework_TestCase
 
         $this->setContextValue($value);
 
-        /** @var Constraint|\PHPUnit_Framework_MockObject_MockObject $constraint **/
+        /** @var Constraint|\PHPUnit\Framework\MockObject\MockObject $constraint **/
         $constraint = $this->createMock(Constraint::class);
 
         $violationsList = new ConstraintViolationList();
@@ -142,7 +142,7 @@ class DiscountsValidatorTest extends \PHPUnit_Framework_TestCase
 
         $this->setContextValue($value);
 
-        /** @var Constraint|\PHPUnit_Framework_MockObject_MockObject $constraint **/
+        /** @var Constraint|\PHPUnit\Framework\MockObject\MockObject $constraint **/
         $constraint = $this->createMock(Constraint::class);
 
         $violationsList = new ConstraintViolationList([new ConstraintViolationStub($constraint, $value)]);

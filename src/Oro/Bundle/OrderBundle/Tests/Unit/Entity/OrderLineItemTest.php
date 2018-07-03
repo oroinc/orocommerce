@@ -10,7 +10,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-class OrderLineItemTest extends \PHPUnit_Framework_TestCase
+class OrderLineItemTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 

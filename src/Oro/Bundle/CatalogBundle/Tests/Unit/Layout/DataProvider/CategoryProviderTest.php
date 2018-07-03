@@ -14,25 +14,25 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 
-class CategoryProviderTest extends \PHPUnit_Framework_TestCase
+class CategoryProviderTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var RequestProductHandler|\PHPUnit_Framework_MockObject_MockObject
+     * @var RequestProductHandler|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $requestProductHandler;
 
     /**
-     * @var CategoryRepository|\PHPUnit_Framework_MockObject_MockObject
+     * @var CategoryRepository|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $categoryRepository;
 
     /**
-     * @var CategoryTreeProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var CategoryTreeProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $categoryTreeProvider;
 
     /**
-     * @var LocalizationHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var LocalizationHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $localizationHelper;
 

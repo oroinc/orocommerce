@@ -5,7 +5,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\DependencyInjection\CompilerPass;
 use Oro\Bundle\ProductBundle\DependencyInjection\CompilerPass\ComponentProcessorPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-class ComponentProcessorPassTest extends \PHPUnit_Framework_TestCase
+class ComponentProcessorPassTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var ComponentProcessorPass
@@ -13,7 +13,7 @@ class ComponentProcessorPassTest extends \PHPUnit_Framework_TestCase
     protected $compilerPass;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ContainerBuilder
+     * @var \PHPUnit\Framework\MockObject\MockObject|ContainerBuilder
      */
     protected $container;
 

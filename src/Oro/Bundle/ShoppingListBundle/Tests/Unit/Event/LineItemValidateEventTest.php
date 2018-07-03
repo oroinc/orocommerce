@@ -4,10 +4,10 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Event;
 
 use Oro\Bundle\ShoppingListBundle\Event\LineItemValidateEvent;
 
-class LineItemValidateEventTest extends \PHPUnit_Framework_TestCase
+class LineItemValidateEventTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var |\PHPUnit_Framework_MockObject_MockObject
+     * @var |\PHPUnit\Framework\MockObject\MockObject
      */
     protected $lineItems;
 

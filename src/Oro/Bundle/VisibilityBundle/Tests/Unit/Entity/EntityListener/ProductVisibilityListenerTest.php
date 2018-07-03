@@ -7,12 +7,12 @@ use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Bundle\VisibilityBundle\Model\VisibilityMessageHandler;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class ProductVisibilityListenerTest extends \PHPUnit_Framework_TestCase
+class ProductVisibilityListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var VisibilityMessageHandler|\PHPUnit_Framework_MockObject_MockObject
+     * @var VisibilityMessageHandler|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $visibilityChangeMessageHandler;
 
@@ -33,7 +33,7 @@ class ProductVisibilityListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testPostPersist()
     {
-        /** @var VisibilityInterface|\PHPUnit_Framework_MockObject_MockObject $visibility * */
+        /** @var VisibilityInterface|\PHPUnit\Framework\MockObject\MockObject $visibility * */
         $visibility = $this->createMock(VisibilityInterface::class);
 
         $this->visibilityChangeMessageHandler->expects($this->once())
@@ -44,7 +44,7 @@ class ProductVisibilityListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testPreUpdate()
     {
-        /** @var VisibilityInterface|\PHPUnit_Framework_MockObject_MockObject $visibility * */
+        /** @var VisibilityInterface|\PHPUnit\Framework\MockObject\MockObject $visibility * */
         $visibility = $this->createMock(VisibilityInterface::class);
 
         $this->visibilityChangeMessageHandler->expects($this->once())
@@ -56,7 +56,7 @@ class ProductVisibilityListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testPreRemove()
     {
-        /** @var VisibilityInterface|\PHPUnit_Framework_MockObject_MockObject $visibility * */
+        /** @var VisibilityInterface|\PHPUnit\Framework\MockObject\MockObject $visibility * */
         $visibility = $this->createMock(VisibilityInterface::class);
 
         $this->visibilityChangeMessageHandler->expects($this->once())

@@ -9,10 +9,10 @@ use Oro\Bundle\OrderBundle\Provider\SkuCachedProductProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Component\ChainProcessor\ContextInterface;
 
-class UpdateRequestDataForOrderLineItemTest extends \PHPUnit_Framework_TestCase
+class UpdateRequestDataForOrderLineItemTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var SkuCachedProductProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var SkuCachedProductProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $skuCachedProductProviderMock;
 
@@ -29,7 +29,7 @@ class UpdateRequestDataForOrderLineItemTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return FormContext|\PHPUnit_Framework_MockObject_MockObject
+     * @return FormContext|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function createContextMock()
     {
@@ -37,7 +37,7 @@ class UpdateRequestDataForOrderLineItemTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return OrderLineItem|\PHPUnit_Framework_MockObject_MockObject
+     * @return OrderLineItem|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function createOrderLineItemMock()
     {
@@ -45,7 +45,7 @@ class UpdateRequestDataForOrderLineItemTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return Product|\PHPUnit_Framework_MockObject_MockObject
+     * @return Product|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function createProductMock()
     {

@@ -6,7 +6,7 @@ use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\RuleBundle\Datagrid\RuleActionsVisibilityProvider;
 use Oro\Bundle\RuleBundle\Entity\Rule;
 
-class RuleActionsVisibilityProviderTest extends \PHPUnit_Framework_TestCase
+class RuleActionsVisibilityProviderTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var RuleActionsVisibilityProvider

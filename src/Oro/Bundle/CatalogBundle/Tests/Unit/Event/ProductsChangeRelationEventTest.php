@@ -6,7 +6,7 @@ use Oro\Bundle\CatalogBundle\Event\ProductsChangeRelationEvent;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class ProductsChangeRelationEventTest extends \PHPUnit_Framework_TestCase
+class ProductsChangeRelationEventTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 

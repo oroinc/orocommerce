@@ -14,60 +14,60 @@ use Oro\Bundle\ShippingBundle\Model\ShippingOrigin;
 use Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
-class BasicShippingContextBuilderTest extends \PHPUnit_Framework_TestCase
+class BasicShippingContextBuilderTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var Customer|\PHPUnit_Framework_MockObject_MockObject
+     * @var Customer|\PHPUnit\Framework\MockObject\MockObject
      */
     private $customerMock;
 
     /**
-     * @var CustomerUser|\PHPUnit_Framework_MockObject_MockObject
+     * @var CustomerUser|\PHPUnit\Framework\MockObject\MockObject
      */
     private $customerUserMock;
 
     /**
-     * @var ShippingLineItemCollectionInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingLineItemCollectionInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $lineItemsCollectionMock;
 
     /**
-     * @var AddressInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var AddressInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $billingAddressMock;
 
     /**
-     * @var AddressInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var AddressInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $shippingAddressMock;
 
     /**
-     * @var AddressInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var AddressInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $shippingOriginMock;
 
     /**
-     * @var Price|\PHPUnit_Framework_MockObject_MockObject
+     * @var Price|\PHPUnit\Framework\MockObject\MockObject
      */
     private $subtotalMock;
 
     /**
-     * @var Checkout|\PHPUnit_Framework_MockObject_MockObject
+     * @var Checkout|\PHPUnit\Framework\MockObject\MockObject
      */
     private $sourceEntityMock;
 
     /**
-     * @var ShippingOriginProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingOriginProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     private $shippingOriginProviderMock;
 
     /**
-     * @var ShippingOrigin|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingOrigin|\PHPUnit\Framework\MockObject\MockObject
      */
     private $defaultShippingOriginMock;
 
     /**
-     * @var Website|\PHPUnit_Framework_MockObject_MockObject
+     * @var Website|\PHPUnit\Framework\MockObject\MockObject
      */
     private $websiteMock;
 

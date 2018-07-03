@@ -7,7 +7,7 @@ use Doctrine\Common\Persistence\ObjectRepository;
 use Oro\Bundle\PricingBundle\Builder\CombinedPriceListActivationPlanBuilder;
 use Oro\Bundle\PricingBundle\Provider\CombinedPriceListProvider;
 
-class CombinedPriceListProviderTest extends \PHPUnit_Framework_TestCase
+class CombinedPriceListProviderTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var CombinedPriceListProvider
@@ -15,17 +15,17 @@ class CombinedPriceListProviderTest extends \PHPUnit_Framework_TestCase
     protected $provider;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|CombinedPriceListActivationPlanBuilder
+     * @var \PHPUnit\Framework\MockObject\MockObject|CombinedPriceListActivationPlanBuilder
      */
     protected $planBuilder;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry
+     * @var \PHPUnit\Framework\MockObject\MockObject|ManagerRegistry
      */
     protected $registry;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ObjectRepository
+     * @var \PHPUnit\Framework\MockObject\MockObject|ObjectRepository
      */
     protected $repository;
 
@@ -129,7 +129,7 @@ class CombinedPriceListProviderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|\Symfony\Bridge\Doctrine\RegistryInterface
+     * @return \PHPUnit\Framework\MockObject\MockObject|\Symfony\Bridge\Doctrine\RegistryInterface
      */
     protected function getRegistryMockWithRepository()
     {
@@ -188,7 +188,7 @@ class CombinedPriceListProviderTest extends \PHPUnit_Framework_TestCase
 
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|\Symfony\Bridge\Doctrine\RegistryInterface
+     * @return \PHPUnit\Framework\MockObject\MockObject|\Symfony\Bridge\Doctrine\RegistryInterface
      */
     protected function getRegistryMock()
     {

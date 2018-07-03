@@ -29,17 +29,17 @@ class FedexShippingMethodTest extends TestCase
     const ENABLED = true;
 
     /**
-     * @var FedexRateServiceRequestSettingsFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var FedexRateServiceRequestSettingsFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $rateServiceRequestSettingsFactory;
 
     /**
-     * @var FedexRequestByRateServiceSettingsFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var FedexRequestByRateServiceSettingsFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $rateServiceRequestFactory;
 
     /**
-     * @var FedexRateServiceBySettingsClientInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var FedexRateServiceBySettingsClientInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $rateServiceClient;
 
@@ -173,7 +173,7 @@ class FedexShippingMethodTest extends TestCase
     /**
      * @param string $identifier
      *
-     * @return \PHPUnit_Framework_MockObject_MockObject|ShippingMethodTypeInterface
+     * @return \PHPUnit\Framework\MockObject\MockObject|ShippingMethodTypeInterface
      */
     private function createMethodType(string $identifier)
     {
@@ -204,7 +204,7 @@ class FedexShippingMethodTest extends TestCase
     /**
      * @param int $id
      *
-     * @return ShippingServiceRule|\PHPUnit_Framework_MockObject_MockObject
+     * @return ShippingServiceRule|\PHPUnit\Framework\MockObject\MockObject
      */
     private function createShippingServiceRule(int $id)
     {

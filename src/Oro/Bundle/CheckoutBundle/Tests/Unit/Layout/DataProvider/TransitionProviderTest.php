@@ -12,15 +12,15 @@ use Oro\Bundle\WorkflowBundle\Model\Transition;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 use Oro\Bundle\WorkflowBundle\Resolver\TransitionOptionsResolver;
 
-class TransitionProviderTest extends \PHPUnit_Framework_TestCase
+class TransitionProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var \PHPUnit_Framework_MockObject_MockObject|WorkflowManager */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|WorkflowManager */
     protected $workflowManager;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|TransitionProvider */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|TransitionProvider */
     protected $provider;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|TransitionOptionsResolver */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|TransitionOptionsResolver */
     protected $optionsResolver;
 
     protected function setUp()

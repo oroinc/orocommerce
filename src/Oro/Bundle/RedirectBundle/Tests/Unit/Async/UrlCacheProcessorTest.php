@@ -10,15 +10,15 @@ use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\MessageQueue\Util\JSON;
 use Psr\Log\LoggerInterface;
 
-class UrlCacheProcessorTest extends \PHPUnit_Framework_TestCase
+class UrlCacheProcessorTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var SluggableUrlDumper|\PHPUnit_Framework_MockObject_MockObject
+     * @var SluggableUrlDumper|\PHPUnit\Framework\MockObject\MockObject
      */
     private $dumper;
 
     /**
-     * @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $logger;
 
@@ -46,9 +46,9 @@ class UrlCacheProcessorTest extends \PHPUnit_Framework_TestCase
      */
     public function testProcessInvalidMessage(array $data)
     {
-        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session */
+        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session */
         $session = $this->createMock(SessionInterface::class);
-        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message */
+        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message */
         $message = $this->createMock(MessageInterface::class);
 
         $message->expects($this->atLeastOnce())
@@ -77,9 +77,9 @@ class UrlCacheProcessorTest extends \PHPUnit_Framework_TestCase
 
     public function testProcessInvalidMessageOnGetEntity()
     {
-        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session */
+        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session */
         $session = $this->createMock(SessionInterface::class);
-        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message */
+        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message */
         $message = $this->createMock(MessageInterface::class);
 
         $message->expects($this->atLeastOnce())
@@ -99,11 +99,11 @@ class UrlCacheProcessorTest extends \PHPUnit_Framework_TestCase
 
     public function testProcess()
     {
-        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session */
+        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session */
         $session = $this->createMock(SessionInterface::class);
 
         $data = ['route_name' => 'test', 'entity_ids' => [1]];
-        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message */
+        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message */
         $message = $this->createMock(MessageInterface::class);
 
         $message->expects($this->atLeastOnce())

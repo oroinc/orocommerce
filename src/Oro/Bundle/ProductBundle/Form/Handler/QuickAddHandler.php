@@ -133,11 +133,13 @@ class QuickAddHandler
 
             $formData = $request->request->get(QuickAddType::NAME);
             $additionalData = $formData[QuickAddType::ADDITIONAL_FIELD_NAME] ?? null;
+            $transitionName = $formData[QuickAddType::TRANSITION_FIELD_NAME] ?? null;
 
             $response = $processor->process(
                 [
                     ProductDataStorage::ENTITY_ITEMS_DATA_KEY => $products,
                     ProductDataStorage::ADDITIONAL_DATA_KEY => $additionalData,
+                    ProductDataStorage::TRANSITION_NAME_KEY => $transitionName,
                 ],
                 $request
             );

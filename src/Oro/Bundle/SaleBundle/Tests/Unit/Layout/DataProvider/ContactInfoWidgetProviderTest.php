@@ -7,7 +7,7 @@ use Oro\Bundle\SaleBundle\Model\ContactInfo;
 use Oro\Bundle\SaleBundle\Provider\ContactInfoProviderInterface;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 
-class ContactInfoWidgetProviderTest extends \PHPUnit_Framework_TestCase
+class ContactInfoWidgetProviderTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var ContactInfoWidgetProvider
@@ -15,12 +15,12 @@ class ContactInfoWidgetProviderTest extends \PHPUnit_Framework_TestCase
     private $widgetProvider;
 
     /**
-     * @var TokenAccessorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var TokenAccessorInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $tokenAccessor;
 
     /**
-     * @var ContactInfoProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ContactInfoProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $contactInfoProvider;
 

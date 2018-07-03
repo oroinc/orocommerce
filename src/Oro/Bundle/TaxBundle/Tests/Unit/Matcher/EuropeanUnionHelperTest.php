@@ -4,7 +4,7 @@ namespace Oro\Bundle\TaxBundle\Tests\Unit\Matcher;
 
 use Oro\Bundle\TaxBundle\Matcher\EuropeanUnionHelper;
 
-class EuropeanUnionHelperTest extends \PHPUnit_Framework_TestCase
+class EuropeanUnionHelperTest extends \PHPUnit\Framework\TestCase
 {
     public function testIsEuropeanUnionCountry()
     {

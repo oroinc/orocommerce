@@ -15,32 +15,32 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class UserCurrencyManagerTest extends \PHPUnit_Framework_TestCase
+class UserCurrencyManagerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var Session|\PHPUnit_Framework_MockObject_MockObject
+     * @var Session|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $session;
 
     /**
-     * @var TokenStorageInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var TokenStorageInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $tokenStorage;
 
     /**
-     * @var CurrencyProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var CurrencyProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $currencyProvider;
 
     /**
-     * @var WebsiteManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var WebsiteManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $websiteManager;
 
     /**
-     * @var BaseUserManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var BaseUserManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $userManager;
 
@@ -297,17 +297,10 @@ class UserCurrencyManagerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('EUR', $this->userCurrencyManager->getUserCurrency($website));
     }
 
-    public function testGetUserCurrencyWithoutFallbackToDefault()
-    {
-        $this->websiteManager->expects($this->once())->method('getCurrentWebsite')->willReturn(null);
-        $this->currencyProvider->expects($this->never())->method('getDefaultCurrency');
-        $this->assertNull($this->userCurrencyManager->getUserCurrency(null, false));
-    }
-
     public function testSaveSelectedCurrencyLoggedUser()
     {
         $currency = 'USD';
-        /** @var Website|\PHPUnit_Framework_MockObject_MockObject $website */
+        /** @var Website|\PHPUnit\Framework\MockObject\MockObject $website */
         $website = $this->createMock('Oro\Bundle\WebsiteBundle\Entity\Website');
 
         $user = $this->getMockBuilder('Oro\Bundle\CustomerBundle\Entity\CustomerUser')

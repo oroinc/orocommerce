@@ -8,14 +8,14 @@ use Oro\Bundle\TaxBundle\Entity\TaxRule;
 use Oro\Bundle\TaxBundle\Matcher\AbstractMatcher;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-abstract class AbstractMatcherTest extends \PHPUnit_Framework_TestCase
+abstract class AbstractMatcherTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     const TAX_RULE_CLASS = 'Oro\Bundle\TaxBundle\Entity\TaxRule';
 
     /**
-     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $doctrineHelper;
 
@@ -25,7 +25,7 @@ abstract class AbstractMatcherTest extends \PHPUnit_Framework_TestCase
     protected $matcher;
 
     /**
-     * @var TaxRuleRepository|\PHPUnit_Framework_MockObject_MockObject
+     * @var TaxRuleRepository|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $taxRuleRepository;
 

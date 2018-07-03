@@ -20,30 +20,30 @@ use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Psr\Log\LoggerInterface;
 
-class SluggableEntitiesProcessorTest extends \PHPUnit_Framework_TestCase
+class SluggableEntitiesProcessorTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     private $doctrine;
 
     /**
-     * @var JobRunner|\PHPUnit_Framework_MockObject_MockObject
+     * @var JobRunner|\PHPUnit\Framework\MockObject\MockObject
      */
     private $jobRunner;
 
     /**
-     * @var MessageProducerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $producer;
 
     /**
-     * @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $logger;
 
     /**
-     * @var MessageFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var MessageFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $messageFactory;
 
@@ -114,7 +114,7 @@ class SluggableEntitiesProcessorTest extends \PHPUnit_Framework_TestCase
             ->method('getMessageId')
             ->willReturn('mid-42');
 
-        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
+        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session **/
         $session = $this->createMock(SessionInterface::class);
 
         $this->doctrine->expects($this->once())
@@ -126,7 +126,7 @@ class SluggableEntitiesProcessorTest extends \PHPUnit_Framework_TestCase
             ->method('error')
             ->with(sprintf('Entity manager is not defined for class: "%s"', $class));
 
-        /** @var Job|\PHPUnit_Framework_MockObject_MockObject $job */
+        /** @var Job|\PHPUnit\Framework\MockObject\MockObject $job */
         $job = $this->getMockBuilder(Job::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -154,7 +154,7 @@ class SluggableEntitiesProcessorTest extends \PHPUnit_Framework_TestCase
             ->method('getMessageId')
             ->willReturn('mid-42');
 
-        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
+        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session **/
         $session = $this->createMock(SessionInterface::class);
 
         $countQb = $this->assertCountQueryCalled();
@@ -179,11 +179,11 @@ class SluggableEntitiesProcessorTest extends \PHPUnit_Framework_TestCase
                 ['className' => $class, 'id' => [42], 'jobId' => 123]
             );
 
-        /** @var Job|\PHPUnit_Framework_MockObject_MockObject $job */
+        /** @var Job|\PHPUnit\Framework\MockObject\MockObject $job */
         $job = $this->getMockBuilder(Job::class)
             ->disableOriginalConstructor()
             ->getMock();
-        /** @var Job|\PHPUnit_Framework_MockObject_MockObject $job */
+        /** @var Job|\PHPUnit\Framework\MockObject\MockObject $job */
         $childJob = $this->getMockBuilder(Job::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -222,7 +222,7 @@ class SluggableEntitiesProcessorTest extends \PHPUnit_Framework_TestCase
         $createRedirect = true;
         $message = $this->assertMessageDataCalls($class, $createRedirect);
 
-        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
+        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session **/
         $session = $this->createMock(SessionInterface::class);
 
         $countQb = $this->assertCountQueryCalled(5);
@@ -238,7 +238,7 @@ class SluggableEntitiesProcessorTest extends \PHPUnit_Framework_TestCase
                 [['id' => 4], ['id' => 5]]
             );
 
-        /** @var QueryBuilder|\PHPUnit_Framework_MockObject_MockObject $idsQb */
+        /** @var QueryBuilder|\PHPUnit\Framework\MockObject\MockObject $idsQb */
         $idsQb = $this->getMockBuilder(QueryBuilder::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -308,11 +308,11 @@ class SluggableEntitiesProcessorTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param int $count
-     * @return QueryBuilder|\PHPUnit_Framework_MockObject_MockObject
+     * @return QueryBuilder|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function assertCountQueryCalled($count = 1)
     {
-        /** @var QueryBuilder|\PHPUnit_Framework_MockObject_MockObject $countQb */
+        /** @var QueryBuilder|\PHPUnit\Framework\MockObject\MockObject $countQb */
         $countQb = $this->getMockBuilder(QueryBuilder::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -334,7 +334,7 @@ class SluggableEntitiesProcessorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return QueryBuilder|\PHPUnit_Framework_MockObject_MockObject
+     * @return QueryBuilder|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function assertIdsQueryCalled()
     {
@@ -346,7 +346,7 @@ class SluggableEntitiesProcessorTest extends \PHPUnit_Framework_TestCase
             ->method('getArrayResult')
             ->willReturn([['id' => 42]]);
 
-        /** @var QueryBuilder|\PHPUnit_Framework_MockObject_MockObject $idsQb */
+        /** @var QueryBuilder|\PHPUnit\Framework\MockObject\MockObject $idsQb */
         $idsQb = $this->getMockBuilder(QueryBuilder::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -376,11 +376,11 @@ class SluggableEntitiesProcessorTest extends \PHPUnit_Framework_TestCase
     /**
      * @param string $class
      * @param bool $createRedirect
-     * @return MessageInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return MessageInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private function assertMessageDataCalls($class, $createRedirect)
     {
-        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message * */
+        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message * */
         $message = $this->createMock(MessageInterface::class);
         $messageData = [
             DirectUrlMessageFactory::class => $class,
@@ -407,14 +407,14 @@ class SluggableEntitiesProcessorTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param string $class
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     private function configureRepositoryCalls($class)
     {
-        /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $em */
+        /** @var EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject $em */
         $em = $this->createMock(EntityManagerInterface::class);
 
-        /** @var ClassMetadata|\PHPUnit_Framework_MockObject_MockObject $classMetadata */
+        /** @var ClassMetadata|\PHPUnit\Framework\MockObject\MockObject $classMetadata */
         $classMetadata = $this->getMockBuilder(ClassMetadata::class)
             ->disableOriginalConstructor()
             ->getMock();

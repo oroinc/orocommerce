@@ -8,9 +8,9 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\TaxBundle\Factory\AddressModelFactory;
 use Oro\Bundle\TaxBundle\Model\Address;
 
-class AddressModelFactoryTest extends \PHPUnit_Framework_TestCase
+class AddressModelFactoryTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var \PHPUnit_Framework_MockObject_MockObject|DoctrineHelper */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|DoctrineHelper */
     protected $doctrineHelper;
 
     /**

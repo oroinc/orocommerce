@@ -48,16 +48,16 @@ class QuoteTypeTest extends AbstractTest
     /** @var QuoteType */
     protected $formType;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|QuoteAddressSecurityProvider */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|QuoteAddressSecurityProvider */
     protected $quoteAddressSecurityProvider;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|ConfigManager */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|ConfigManager */
     protected $configManager;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|QuoteFormSubscriber */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|QuoteFormSubscriber */
     protected $quoteFormSubscriber;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|SecurityFacade */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|SecurityFacade */
     protected $securityFacade;
 
     /**
@@ -106,7 +106,7 @@ class QuoteTypeTest extends AbstractTest
             ->method('isGranted')
             ->with('oro_quote_add_free_form_items')
             ->willReturn(false);
-        /* @var $resolver \PHPUnit_Framework_MockObject_MockObject|OptionsResolver */
+        /* @var $resolver \PHPUnit\Framework\MockObject\MockObject|OptionsResolver */
         $resolver = $this->createMock('Symfony\Component\OptionsResolver\OptionsResolver');
         $resolver->expects($this->once())
             ->method('setDefaults')
@@ -347,7 +347,7 @@ class QuoteTypeTest extends AbstractTest
 
     public function testBuildFormWithPaymentTerm()
     {
-        /** @var FormBuilderInterface|\PHPUnit_Framework_MockObject_MockObject $builder */
+        /** @var FormBuilderInterface|\PHPUnit\Framework\MockObject\MockObject $builder */
         $builder = $this->createMock(FormBuilderInterface::class);
         $quote = new Quote();
         $customerGroup = new CustomerGroup();
@@ -367,7 +367,7 @@ class QuoteTypeTest extends AbstractTest
 
     public function testBuildFormWithNoPaymentTerm()
     {
-        /** @var FormBuilderInterface|\PHPUnit_Framework_MockObject_MockObject $builder */
+        /** @var FormBuilderInterface|\PHPUnit\Framework\MockObject\MockObject $builder */
         $builder = $this->createMock(FormBuilderInterface::class);
         $quote = new Quote();
 
@@ -388,16 +388,16 @@ class QuoteTypeTest extends AbstractTest
      */
     protected function getExtensions()
     {
-        /* @var $translator \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface */
+        /* @var $translator \PHPUnit\Framework\MockObject\MockObject|TranslatorInterface */
         $translator = $this->getMockBuilder('Symfony\Component\Translation\TranslatorInterface')
             ->disableOriginalConstructor()
             ->getMock()
         ;
 
-        /* @var $registry ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject */
+        /* @var $registry ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
         $registry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
 
-        /* @var $productUnitLabelFormatter \PHPUnit_Framework_MockObject_MockObject|ProductUnitLabelFormatter */
+        /* @var $productUnitLabelFormatter \PHPUnit\Framework\MockObject\MockObject|ProductUnitLabelFormatter */
         $productUnitLabelFormatter = $this->getMockBuilder(
             'Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter'
         )

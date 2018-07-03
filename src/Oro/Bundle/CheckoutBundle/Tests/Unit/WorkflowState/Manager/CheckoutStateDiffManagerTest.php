@@ -6,7 +6,7 @@ use Oro\Bundle\CheckoutBundle\WorkflowState\Manager\CheckoutStateDiffManager;
 use Oro\Bundle\CheckoutBundle\WorkflowState\Mapper\CheckoutStateDiffMapperInterface;
 use Oro\Bundle\CheckoutBundle\WorkflowState\Mapper\CheckoutStateDiffMapperRegistry;
 
-class CheckoutStateDiffManagerTest extends \PHPUnit_Framework_TestCase
+class CheckoutStateDiffManagerTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var CheckoutStateDiffManager
@@ -14,7 +14,7 @@ class CheckoutStateDiffManagerTest extends \PHPUnit_Framework_TestCase
     protected $checkoutStateDiffManager;
 
     /**
-     * @var CheckoutStateDiffMapperRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var CheckoutStateDiffMapperRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $mapperRegistry;
 
@@ -340,7 +340,7 @@ class CheckoutStateDiffManagerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param string $name
-     * @return CheckoutStateDiffMapperInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return CheckoutStateDiffMapperInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function getBaseMapperMock($name)
     {

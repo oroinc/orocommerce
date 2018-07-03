@@ -7,19 +7,19 @@ use Oro\Bundle\WebsiteSearchBundle\Engine\Context\ContextTrait;
 use Oro\Bundle\WebsiteSearchBundle\Engine\IndexerInputValidator;
 use Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchMappingProvider;
 
-class IndexerInputValidatorTest extends \PHPUnit_Framework_TestCase
+class IndexerInputValidatorTest extends \PHPUnit\Framework\TestCase
 {
     use ContextTrait;
 
     const WEBSITE_ID = 1;
 
     /**
-     * @var WebsiteSearchMappingProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var WebsiteSearchMappingProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     private $mappingProvider;
 
     /**
-     * @var WebsiteProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var WebsiteProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $websiteProvider;
 

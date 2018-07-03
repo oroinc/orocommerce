@@ -6,7 +6,7 @@ use Oro\Bundle\ProductBundle\Validator\Constraints\UniqueVariantLinksSimpleProdu
 use Oro\Bundle\ProductBundle\Validator\Constraints\UniqueVariantLinksSimpleProductValidator;
 use Symfony\Component\Validator\Constraint;
 
-class UniqueVariantLinksSimpleProductTest extends \PHPUnit_Framework_TestCase
+class UniqueVariantLinksSimpleProductTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var UniqueVariantLinksSimpleProduct

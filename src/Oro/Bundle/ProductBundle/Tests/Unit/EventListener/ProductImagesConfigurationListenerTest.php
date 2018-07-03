@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Translation\TranslatorInterface;
 
-class ProductImagesConfigurationListenerTest extends \PHPUnit_Framework_TestCase
+class ProductImagesConfigurationListenerTest extends \PHPUnit\Framework\TestCase
 {
     const MESSAGE = 'message';
 

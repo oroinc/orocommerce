@@ -13,12 +13,12 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 class DefaultPriceListFilterTypeTest extends AbstractTypeTestCase
 {
     /**
-     * @var PriceListProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var PriceListProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $provider;
 
     /**
-     * @var ShardManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShardManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $shardManager;
 

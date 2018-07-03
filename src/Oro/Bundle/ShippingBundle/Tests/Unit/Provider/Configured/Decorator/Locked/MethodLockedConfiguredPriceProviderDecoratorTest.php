@@ -12,10 +12,10 @@ use Oro\Bundle\ShippingBundle\Provider\Price\Configured\ShippingConfiguredPriceP
 
 // @codingStandardsIgnoreEnd
 
-class MethodLockedConfiguredPriceProviderDecoratorTest extends \PHPUnit_Framework_TestCase
+class MethodLockedConfiguredPriceProviderDecoratorTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ShippingConfiguredPriceProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingConfiguredPriceProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $parentProviderMock;
 
@@ -194,7 +194,7 @@ class MethodLockedConfiguredPriceProviderDecoratorTest extends \PHPUnit_Framewor
     }
 
     /**
-     * @return ShippingContext|\PHPUnit_Framework_MockObject_MockObject
+     * @return ShippingContext|\PHPUnit\Framework\MockObject\MockObject
      */
     private function getShippingContextMock()
     {
@@ -202,7 +202,7 @@ class MethodLockedConfiguredPriceProviderDecoratorTest extends \PHPUnit_Framewor
     }
 
     /**
-     * @return ComposedShippingMethodConfigurationInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return ComposedShippingMethodConfigurationInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private function getConfigurationMock()
     {

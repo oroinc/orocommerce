@@ -7,10 +7,10 @@ use Oro\Bundle\SEOBundle\Manager\RobotsTxtIndexingRulesBySitemapManager;
 use Oro\Bundle\SEOBundle\Sitemap\Event\OnSitemapDumpFinishEvent;
 use Oro\Component\Website\WebsiteInterface;
 
-class RobotsGuestAccessOnSitemapDumpListenerTest extends \PHPUnit_Framework_TestCase
+class RobotsGuestAccessOnSitemapDumpListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var RobotsTxtIndexingRulesBySitemapManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var RobotsTxtIndexingRulesBySitemapManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $robotsTxtIndexingRulesManager;
 

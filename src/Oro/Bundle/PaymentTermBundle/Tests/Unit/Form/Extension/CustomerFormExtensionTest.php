@@ -15,7 +15,7 @@ use Symfony\Component\Form\ResolvedFormTypeInterface;
 use Symfony\Component\Form\Tests\Fixtures\Type;
 use Symfony\Component\Translation\TranslatorInterface;
 
-class CustomerFormExtensionTest extends \PHPUnit_Framework_TestCase
+class CustomerFormExtensionTest extends \PHPUnit\Framework\TestCase
 {
     /** @var CustomerFormExtension */
     protected $extension;
@@ -23,10 +23,10 @@ class CustomerFormExtensionTest extends \PHPUnit_Framework_TestCase
     /** @var TranslatorInterface */
     protected $translator;
 
-    /** @var PaymentTermProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var PaymentTermProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $paymentTermProvider;
 
-    /** @var PaymentTermAssociationProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var PaymentTermAssociationProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $paymentTermAssociationProvider;
 
     protected function setUp()

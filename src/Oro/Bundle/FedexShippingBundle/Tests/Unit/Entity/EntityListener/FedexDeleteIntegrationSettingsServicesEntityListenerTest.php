@@ -27,17 +27,17 @@ class FedexDeleteIntegrationSettingsServicesEntityListenerTest extends TestCase
     const METHOD_ID = 'method';
 
     /**
-     * @var IntegrationIdentifierGeneratorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var IntegrationIdentifierGeneratorInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $integrationIdentifierGenerator;
 
     /**
-     * @var FedexMethodTypeIdentifierGeneratorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var FedexMethodTypeIdentifierGeneratorInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $typeIdentifierGenerator;
 
     /**
-     * @var MethodTypeRemovalEventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var MethodTypeRemovalEventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $typeRemovalEventDispatcher;
 
@@ -119,7 +119,7 @@ class FedexDeleteIntegrationSettingsServicesEntityListenerTest extends TestCase
     /**
      * @param FedexShippingService[] $deletedServices
      *
-     * @return FedexIntegrationSettings|\PHPUnit_Framework_MockObject_MockObject
+     * @return FedexIntegrationSettings|\PHPUnit\Framework\MockObject\MockObject
      */
     private function createSettings(array $deletedServices)
     {
@@ -143,7 +143,7 @@ class FedexDeleteIntegrationSettingsServicesEntityListenerTest extends TestCase
      * @param Channel|null             $channel
      * @param FedexIntegrationSettings $settings
      *
-     * @return LifecycleEventArgs|\PHPUnit_Framework_MockObject_MockObject
+     * @return LifecycleEventArgs|\PHPUnit\Framework\MockObject\MockObject
      */
     private function createArgs(Channel $channel = null, FedexIntegrationSettings $settings)
     {

@@ -10,7 +10,7 @@ use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use Oro\Bundle\SaleBundle\Quote\Pricing\QuotePriceComparator;
 
-class QuotePriceComparatorTest extends \PHPUnit_Framework_TestCase
+class QuotePriceComparatorTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @dataProvider isPriceChangedDataProvider
@@ -78,7 +78,7 @@ class QuotePriceComparatorTest extends \PHPUnit_Framework_TestCase
      * @param string $currency
      * @param float $price
      *
-     * @return Quote|\PHPUnit_Framework_MockObject_MockObject
+     * @return Quote|\PHPUnit\Framework\MockObject\MockObject
      */
     private function getQuote($sku, $unit, $qty, $currency, $price)
     {

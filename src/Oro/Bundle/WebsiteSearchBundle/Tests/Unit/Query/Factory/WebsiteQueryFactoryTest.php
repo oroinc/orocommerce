@@ -8,12 +8,12 @@ use Oro\Bundle\SearchBundle\Query\SearchQueryInterface;
 use Oro\Bundle\WebsiteSearchBundle\Query\Factory\WebsiteQueryFactory;
 use Oro\Bundle\WebsiteSearchBundle\Query\WebsiteSearchQuery;
 
-class WebsiteQueryFactoryTest extends \PHPUnit_Framework_TestCase
+class WebsiteQueryFactoryTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var QueryFactoryInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var QueryFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $queryFactory;
 
-    /** @var EngineInterface|\PHPUnit_Framework_MockObject_MockBuilder */
+    /** @var EngineInterface|\PHPUnit\Framework\MockObject\MockBuilder */
     protected $engine;
 
     public function setUp()

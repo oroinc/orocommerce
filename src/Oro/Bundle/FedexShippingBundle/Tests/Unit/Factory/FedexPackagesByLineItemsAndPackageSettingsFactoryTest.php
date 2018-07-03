@@ -16,12 +16,12 @@ use PHPUnit\Framework\TestCase;
 class FedexPackagesByLineItemsAndPackageSettingsFactoryTest extends TestCase
 {
     /**
-     * @var ShippingPackagesByLineItemBuilderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingPackagesByLineItemBuilderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $packagesBuilder;
 
     /**
-     * @var FedexPackageByShippingPackageOptionsFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var FedexPackageByShippingPackageOptionsFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $fedexPackageFactory;
 

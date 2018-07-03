@@ -6,7 +6,7 @@ use Oro\Bundle\FlatRateShippingBundle\Entity\FlatRateSettings;
 use Oro\Bundle\FlatRateShippingBundle\Form\Type\FlatRateSettingsType;
 use Oro\Bundle\FlatRateShippingBundle\Integration\FlatRateTransport;
 
-class FlatRateTransportTest extends \PHPUnit_Framework_TestCase
+class FlatRateTransportTest extends \PHPUnit\Framework\TestCase
 {
     /** @var FlatRateTransport */
     private $transport;

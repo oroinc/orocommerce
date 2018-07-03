@@ -27,7 +27,7 @@ class QuoteDataStorageExtensionTest extends AbstractProductDataStorageExtensionT
     {
         parent::setUp();
 
-        /* @var $requestStack RequestStack|\PHPUnit_Framework_MockObject_MockObject */
+        /* @var $requestStack RequestStack|\PHPUnit\Framework\MockObject\MockObject */
         $requestStack = $this->createMock('Symfony\Component\HttpFoundation\RequestStack');
         $this->request = $this->createMock('Symfony\Component\HttpFoundation\Request');
 

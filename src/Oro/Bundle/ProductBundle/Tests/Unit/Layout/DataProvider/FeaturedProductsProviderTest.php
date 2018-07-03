@@ -80,7 +80,7 @@ class FeaturedProductsProviderTest extends AbstractSegmentProductsProviderTest
             ->with('oro_product.featured_products_segment_id')
             ->willReturn(1);
 
-        /** @var TokenInterface|\PHPUnit_Framework_MockObject_MockObject $token */
+        /** @var TokenInterface|\PHPUnit\Framework\MockObject\MockObject $token */
         $token = $this->createMock(TokenInterface::class);
         $token->expects($this->once())
             ->method('getUser')

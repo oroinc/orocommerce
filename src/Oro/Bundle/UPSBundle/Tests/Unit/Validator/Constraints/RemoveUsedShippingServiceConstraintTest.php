@@ -5,7 +5,7 @@ namespace Oro\Bundle\UPSBundle\Tests\Unit\Validator\Constraints;
 use Oro\Bundle\UPSBundle\Validator\Constraints\RemoveUsedShippingServiceConstraint;
 use Symfony\Component\Validator\Constraint;
 
-class RemoveUsedShippingServiceConstraintTest extends \PHPUnit_Framework_TestCase
+class RemoveUsedShippingServiceConstraintTest extends \PHPUnit\Framework\TestCase
 {
     public function testValidatedBy()
     {

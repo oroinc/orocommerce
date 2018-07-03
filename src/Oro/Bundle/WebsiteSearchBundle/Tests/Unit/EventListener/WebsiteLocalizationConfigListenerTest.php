@@ -7,7 +7,7 @@ use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 use Oro\Bundle\WebsiteSearchBundle\EventListener\WebsiteLocalizationConfigListener;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class WebsiteLocalizationConfigListenerTest extends \PHPUnit_Framework_TestCase
+class WebsiteLocalizationConfigListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @dataProvider dataProviderForListenerWillProcessOnlyLocalizationChanges
@@ -83,7 +83,7 @@ class WebsiteLocalizationConfigListenerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|EventDispatcherInterface
+     * @return \PHPUnit\Framework\MockObject\MockObject|EventDispatcherInterface
      */
     private function getEventDispatcherMock()
     {

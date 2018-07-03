@@ -11,9 +11,9 @@ use Oro\Bundle\WebCatalogBundle\Provider\CacheableWebCatalogUsageProvider;
 use Oro\Bundle\WebCatalogBundle\Provider\WebCatalogUsageProvider;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
-class WebCatalogUsageListenerTest extends \PHPUnit_Framework_TestCase
+class WebCatalogUsageListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var \PHPUnit_Framework_MockObject_MockObject|CacheableWebCatalogUsageProvider */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|CacheableWebCatalogUsageProvider */
     private $cacheableProvider;
 
     /** @var WebCatalogUsageListener */

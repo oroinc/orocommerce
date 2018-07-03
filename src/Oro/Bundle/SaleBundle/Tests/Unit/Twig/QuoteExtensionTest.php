@@ -15,7 +15,7 @@ use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
 /**
  * @SuppressWarnings(PHPMD.NPathComplexity)
  */
-class QuoteExtensionTest extends \PHPUnit_Framework_TestCase
+class QuoteExtensionTest extends \PHPUnit\Framework\TestCase
 {
     use TwigExtensionTestCaseTrait;
 
@@ -24,10 +24,10 @@ class QuoteExtensionTest extends \PHPUnit_Framework_TestCase
     /** @var QuoteExtension */
     protected $extension;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|QuoteProductFormatter */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|QuoteProductFormatter */
     protected $quoteProductFormatter;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|ConfigManager */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|ConfigManager */
     protected $configManager;
 
     /**

@@ -6,7 +6,7 @@ use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Oro\Bundle\InventoryBundle\Form\Extension\InventoryLevelExportTemplateTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 
-class InventoryLevelExportTemplateTypeExtensionTest extends \PHPUnit_Framework_TestCase
+class InventoryLevelExportTemplateTypeExtensionTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var InventoryLevelExportTemplateTypeExtension
@@ -63,7 +63,7 @@ class InventoryLevelExportTemplateTypeExtensionTest extends \PHPUnit_Framework_T
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|FormBuilderInterface
+     * @return \PHPUnit\Framework\MockObject\MockObject|FormBuilderInterface
      */
     protected function getBuilderMock()
     {

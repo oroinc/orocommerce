@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Translation\TranslatorInterface;
 
-class FormViewListenerTest extends \PHPUnit_Framework_TestCase
+class FormViewListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var FormViewListener
@@ -19,12 +19,12 @@ class FormViewListenerTest extends \PHPUnit_Framework_TestCase
     protected $listener;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|DoctrineHelper
+     * @var \PHPUnit\Framework\MockObject\MockObject|DoctrineHelper
      */
     protected $doctrineHelper;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|RequestStack
+     * @var \PHPUnit\Framework\MockObject\MockObject|RequestStack
      */
     protected $requestStack;
 
@@ -33,7 +33,7 @@ class FormViewListenerTest extends \PHPUnit_Framework_TestCase
      */
     public function setUp()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface $translator */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|TranslatorInterface $translator */
         $translator = $this->createMock('Symfony\Component\Translation\TranslatorInterface');
 
         $this->doctrineHelper = $this->getDoctrineHelper();
@@ -69,7 +69,7 @@ class FormViewListenerTest extends \PHPUnit_Framework_TestCase
             ->with('OroCatalogBundle:Category')
             ->willReturn(new Category());
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $env */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|\Twig_Environment $env */
         $env = $this->getMockBuilder('\Twig_Environment')
             ->disableOriginalConstructor()
             ->getMock();
@@ -85,7 +85,7 @@ class FormViewListenerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|DoctrineHelper
+     * @return \PHPUnit\Framework\MockObject\MockObject|DoctrineHelper
      */
     protected function getDoctrineHelper()
     {
@@ -97,11 +97,11 @@ class FormViewListenerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return BeforeListRenderEvent|\PHPUnit_Framework_MockObject_MockObject
+     * @return BeforeListRenderEvent|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function getBeforeListRenderEvent()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|BeforeListRenderEvent $event */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|BeforeListRenderEvent $event */
         $event = $this->getMockBuilder('Oro\Bundle\UIBundle\Event\BeforeListRenderEvent')
             ->disableOriginalConstructor()
             ->getMock();
@@ -110,11 +110,11 @@ class FormViewListenerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|ScrollData
+     * @return \PHPUnit\Framework\MockObject\MockObject|ScrollData
      */
     protected function getScrollData()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|ScrollData $scrollData */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|ScrollData $scrollData */
         $scrollData = $this->createMock('Oro\Bundle\UIBundle\View\ScrollData');
 
         $scrollData->expects($this->once())
@@ -130,7 +130,7 @@ class FormViewListenerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Request
+     * @return \PHPUnit\Framework\MockObject\MockObject|Request
      */
     protected function getRequest()
     {

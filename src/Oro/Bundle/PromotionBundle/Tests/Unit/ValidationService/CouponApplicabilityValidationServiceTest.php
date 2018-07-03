@@ -13,22 +13,22 @@ use Oro\Bundle\PromotionBundle\ValidationService\CouponApplicabilityValidationSe
 use Oro\Bundle\PromotionBundle\ValidationService\CouponValidationService;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class CouponApplicabilityValidationServiceTest extends \PHPUnit_Framework_TestCase
+class CouponApplicabilityValidationServiceTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var CouponValidationService|\PHPUnit_Framework_MockObject_MockObject
+     * @var CouponValidationService|\PHPUnit\Framework\MockObject\MockObject
      */
     private $couponValidationService;
 
     /**
-     * @var PromotionProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var PromotionProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     private $promotionProvider;
 
     /**
-     * @var EntityCouponsProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var EntityCouponsProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     private $entityCouponsProvider;
 

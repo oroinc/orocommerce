@@ -8,19 +8,19 @@ use Oro\Bundle\CheckoutBundle\EventListener\RemoveCheckoutWorkflowStatesListener
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class RemoveCheckoutWorkflowStatesListenerTest extends \PHPUnit_Framework_TestCase
+class RemoveCheckoutWorkflowStatesListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     const CHECKOUT_WORKFLOW_STATE_CLASS = 'Oro\Bundle\CheckoutBundle\Entity\CheckoutWorkflowState';
 
     /**
-     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $doctrineHelper;
 
     /**
-     * @var CheckoutWorkflowStateRepository|\PHPUnit_Framework_MockObject_MockObject
+     * @var CheckoutWorkflowStateRepository|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $checkoutWorkflowStateRepository;
 

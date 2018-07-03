@@ -13,7 +13,7 @@ use Symfony\Component\Form\FormInterface;
 class ContactInfoUserAvailableOptionsTypeTest extends FormIntegrationTestCase
 {
     /**
-     * @var ContactInfoSourceOptionsProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var ContactInfoSourceOptionsProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     private $optionProvider;
 

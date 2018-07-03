@@ -6,10 +6,10 @@ use Oro\Bundle\SEOBundle\Async\SitemapGenerationScheduler;
 use Oro\Bundle\SEOBundle\Async\Topics;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 
-class SitemapGenerationSchedulerTest extends \PHPUnit_Framework_TestCase
+class SitemapGenerationSchedulerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var MessageProducerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $messageProducer;
 

@@ -13,17 +13,17 @@ use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class AttributeFormViewListenerTest extends \PHPUnit_Framework_TestCase
+class AttributeFormViewListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var \Twig_Environment|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Twig_Environment|\PHPUnit\Framework\MockObject\MockObject
      */
     private $environment;
 
     /**
-     * @var AttributeManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var AttributeManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $attributeManager;
 

@@ -16,26 +16,26 @@ use Oro\Bundle\ProductBundle\Validator\Constraints\AttributeFamilyUsageInVariant
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
-class AttributeFamilyUsageInVariantFieldValidatorTest extends \PHPUnit_Framework_TestCase
+class AttributeFamilyUsageInVariantFieldValidatorTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /** @var AttributeManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var AttributeManager|\PHPUnit\Framework\MockObject\MockObject */
     private $attributeManager;
 
-    /** @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $doctrineHelper;
 
     /** @var AttributeFamilyUsageInVariantFieldValidator */
     private $validator;
 
-    /** @var ExecutionContextInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ExecutionContextInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $context;
 
-    /** @var AttributeGroupRelationRepository|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var AttributeGroupRelationRepository|\PHPUnit\Framework\MockObject\MockObject */
     private $attributeRelationRepository;
 
-    /** @var ProductRepository|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ProductRepository|\PHPUnit\Framework\MockObject\MockObject */
     private $productRepository;
 
     /**

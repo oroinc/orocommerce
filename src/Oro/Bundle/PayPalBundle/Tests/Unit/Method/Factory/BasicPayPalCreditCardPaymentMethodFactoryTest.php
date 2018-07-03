@@ -8,7 +8,7 @@ use Oro\Bundle\PayPalBundle\Method\PayPalCreditCardPaymentMethod;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway;
 use Symfony\Component\Routing\RouterInterface;
 
-class BasicPayPalCreditCardPaymentMethodFactoryTest extends \PHPUnit_Framework_TestCase
+class BasicPayPalCreditCardPaymentMethodFactoryTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var Gateway

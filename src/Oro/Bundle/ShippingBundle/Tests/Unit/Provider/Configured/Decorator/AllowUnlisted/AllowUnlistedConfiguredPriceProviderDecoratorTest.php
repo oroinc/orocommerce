@@ -13,15 +13,15 @@ use Oro\Bundle\ShippingBundle\Provider\Price\Configured\ShippingConfiguredPriceP
 
 // @codingStandardsIgnoreEnd
 
-class AllowUnlistedConfiguredPriceProviderDecoratorTest extends \PHPUnit_Framework_TestCase
+class AllowUnlistedConfiguredPriceProviderDecoratorTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ShippingConfiguredPriceProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingConfiguredPriceProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $parentProviderMock;
 
     /**
-     * @var ShippingMethodViewFactory|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingMethodViewFactory|\PHPUnit\Framework\MockObject\MockObject
      */
     private $shippingMethodViewFactory;
 
@@ -288,7 +288,7 @@ class AllowUnlistedConfiguredPriceProviderDecoratorTest extends \PHPUnit_Framewo
     }
 
     /**
-     * @return ShippingContext|\PHPUnit_Framework_MockObject_MockObject
+     * @return ShippingContext|\PHPUnit\Framework\MockObject\MockObject
      */
     private function getShippingContextMock()
     {
@@ -296,7 +296,7 @@ class AllowUnlistedConfiguredPriceProviderDecoratorTest extends \PHPUnit_Framewo
     }
 
     /**
-     * @return ComposedShippingMethodConfigurationInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return ComposedShippingMethodConfigurationInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private function getConfigurationMock()
     {

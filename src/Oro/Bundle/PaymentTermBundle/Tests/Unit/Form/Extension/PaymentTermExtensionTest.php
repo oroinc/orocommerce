@@ -15,14 +15,14 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\ResolvedFormTypeInterface;
 
-class PaymentTermExtensionTest extends \PHPUnit_Framework_TestCase
+class PaymentTermExtensionTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /** @var PaymentTermExtension */
     protected $extension;
 
-    /** @var PaymentTermProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var PaymentTermProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $paymentTermProvider;
 
     protected function setUp()
@@ -40,7 +40,7 @@ class PaymentTermExtensionTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param FormBuilderInterface|\PHPUnit_Framework_MockObject_MockObject $builder
+     * @param FormBuilderInterface|\PHPUnit\Framework\MockObject\MockObject $builder
      * @param FormEvent $formEvent
      */
     private function addCallbackAssert(FormBuilderInterface $builder, FormEvent $formEvent)

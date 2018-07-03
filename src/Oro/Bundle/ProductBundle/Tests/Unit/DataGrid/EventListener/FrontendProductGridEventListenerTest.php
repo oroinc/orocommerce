@@ -31,23 +31,23 @@ use Oro\Bundle\WebsiteSearchBundle\Placeholder\EnumIdPlaceholder;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
 use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
 
-class FrontendProductGridEventListenerTest extends \PHPUnit_Framework_TestCase
+class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
 {
     const LABEL = 'oro.test.label';
 
-    /** @var AttributeManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var AttributeManager|\PHPUnit\Framework\MockObject\MockObject */
     protected $attributeManager;
 
-    /** @var AttributeTypeRegistry|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var AttributeTypeRegistry|\PHPUnit\Framework\MockObject\MockObject */
     protected $attributeTypeRegistry;
 
-    /** @var ConfigProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ConfigProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $extendConfigProvider;
 
-    /** @var ConfigProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ConfigProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $attributeConfigProvider;
 
-    /** @var ClassMetadata|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ClassMetadata|\PHPUnit\Framework\MockObject\MockObject */
     protected $metadata;
 
     /** @var FrontendProductGridEventListener */
@@ -68,7 +68,7 @@ class FrontendProductGridEventListenerTest extends \PHPUnit_Framework_TestCase
         $this->extendConfigProvider = $this->createMock(ConfigProvider::class);
         $this->attributeConfigProvider = $this->createMock(ConfigProvider::class);
 
-        /** @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject $configManager */
+        /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject $configManager */
         $configManager = $this->createMock(ConfigManager::class);
         $configManager->expects($this->any())
             ->method('getProvider')
@@ -85,7 +85,7 @@ class FrontendProductGridEventListenerTest extends \PHPUnit_Framework_TestCase
             ->method('getAssociationMapping')
             ->willReturn(['targetEntity' => StubEnumValue::class]);
 
-        /** @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject $doctrineHelper */
+        /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject $doctrineHelper */
         $doctrineHelper = $this->createMock(DoctrineHelper::class);
         $doctrineHelper->expects($this->any())
             ->method('getEntityMetadata')
@@ -171,7 +171,7 @@ class FrontendProductGridEventListenerTest extends \PHPUnit_Framework_TestCase
             new Type\MultiEnumAttributeType()
         );
 
-        /** @var EntityNameResolver|\PHPUnit_Framework_MockObject_MockObject $entityNameResolver */
+        /** @var EntityNameResolver|\PHPUnit\Framework\MockObject\MockObject $entityNameResolver */
         $entityNameResolver = $this->createMock(EntityNameResolver::class);
         $entityNameResolver->expects($this->any())
             ->method('getName')
@@ -181,7 +181,7 @@ class FrontendProductGridEventListenerTest extends \PHPUnit_Framework_TestCase
                 }
             );
 
-        /** @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject $doctrineHelper */
+        /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject $doctrineHelper */
         $doctrineHelper = $this->createMock(DoctrineHelper::class);
 
         $manyToManyAttribute = new FieldConfigModel('names');

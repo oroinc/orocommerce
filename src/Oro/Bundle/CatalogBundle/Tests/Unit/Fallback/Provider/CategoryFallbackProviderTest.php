@@ -10,15 +10,15 @@ use Oro\Bundle\EntityBundle\Fallback\Provider\SystemConfigFallbackProvider;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
-class CategoryFallbackProviderTest extends \PHPUnit_Framework_TestCase
+class CategoryFallbackProviderTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $doctrineHelper;
 
     /**
-     * @var SystemConfigFallbackProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var SystemConfigFallbackProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $systemConfigFallbackProvider;
 

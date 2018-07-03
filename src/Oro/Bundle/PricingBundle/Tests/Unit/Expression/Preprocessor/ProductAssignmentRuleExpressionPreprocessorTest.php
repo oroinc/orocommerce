@@ -7,10 +7,10 @@ use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Expression\Preprocessor\ProductAssignmentRuleExpressionPreprocessor;
 
-class ProductAssignmentRuleExpressionPreprocessorTest extends \PHPUnit_Framework_TestCase
+class ProductAssignmentRuleExpressionPreprocessorTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $em;
 

@@ -5,7 +5,7 @@ namespace Oro\Bundle\SaleBundle\Tests\Unit\Model;
 use Oro\Bundle\SaleBundle\Model\ContactInfo;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-class ContactInfoTest extends \PHPUnit_Framework_TestCase
+class ContactInfoTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 

@@ -10,15 +10,15 @@ use Oro\Component\Expression\Preprocessor\ExpressionPreprocessorInterface;
 use Symfony\Component\ExpressionLanguage\SyntaxError;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
-class LogicalExpressionValidatorTest extends \PHPUnit_Framework_TestCase
+class LogicalExpressionValidatorTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ExpressionParser|\PHPUnit_Framework_MockObject_MockObject
+     * @var ExpressionParser|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $expressionParser;
 
     /**
-     * @var ExpressionPreprocessorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ExpressionPreprocessorInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $preprocessor;
 
@@ -40,7 +40,7 @@ class LogicalExpressionValidatorTest extends \PHPUnit_Framework_TestCase
     {
         $constraint = new LogicalExpression();
         $constraint->logicalExpressionsAllowed = true;
-        /** @var ExecutionContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
+        /** @var ExecutionContextInterface|\PHPUnit\Framework\MockObject\MockObject $context */
         $context = $this->createMock(ExecutionContextInterface::class);
         $context->expects($this->never())
             ->method($this->anything());
@@ -70,7 +70,7 @@ class LogicalExpressionValidatorTest extends \PHPUnit_Framework_TestCase
     {
         $constraint = new LogicalExpression();
         $constraint->logicalExpressionsAllowed = false;
-        /** @var ExecutionContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
+        /** @var ExecutionContextInterface|\PHPUnit\Framework\MockObject\MockObject $context */
         $context = $this->createMock(ExecutionContextInterface::class);
         $context->expects($this->never())
             ->method($this->anything());
@@ -100,7 +100,7 @@ class LogicalExpressionValidatorTest extends \PHPUnit_Framework_TestCase
     {
         $constraint = new LogicalExpression();
         $constraint->logicalExpressionsAllowed = true;
-        /** @var ExecutionContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
+        /** @var ExecutionContextInterface|\PHPUnit\Framework\MockObject\MockObject $context */
         $context = $this->createMock(ExecutionContextInterface::class);
         $context->expects($this->once())
             ->method('addViolation');
@@ -130,7 +130,7 @@ class LogicalExpressionValidatorTest extends \PHPUnit_Framework_TestCase
     {
         $constraint = new LogicalExpression();
         $constraint->logicalExpressionsAllowed = false;
-        /** @var ExecutionContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
+        /** @var ExecutionContextInterface|\PHPUnit\Framework\MockObject\MockObject $context */
         $context = $this->createMock(ExecutionContextInterface::class);
         $context->expects($this->once())
             ->method('addViolation');
@@ -161,7 +161,7 @@ class LogicalExpressionValidatorTest extends \PHPUnit_Framework_TestCase
         $constraint = new LogicalExpression();
         $constraint->logicalExpressionsAllowed = true;
 
-        /** @var ExecutionContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
+        /** @var ExecutionContextInterface|\PHPUnit\Framework\MockObject\MockObject $context */
         $context = $this->createMock(ExecutionContextInterface::class);
         $context->expects($this->never())
             ->method($this->anything());

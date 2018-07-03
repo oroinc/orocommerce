@@ -7,11 +7,11 @@ use Oro\Bundle\ProductBundle\Twig\ProductUnitFieldsSettingsExtension;
 use Oro\Bundle\ProductBundle\Visibility\ProductUnitFieldsSettingsInterface;
 use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
 
-class ProductUnitFieldsSettingsExtensionTest extends \PHPUnit_Framework_TestCase
+class ProductUnitFieldsSettingsExtensionTest extends \PHPUnit\Framework\TestCase
 {
     use TwigExtensionTestCaseTrait;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    /** @var \PHPUnit\Framework\MockObject\MockObject */
     protected $productUnitFieldsSettings;
 
     /** @var ProductUnitFieldsSettingsExtension */

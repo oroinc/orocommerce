@@ -7,9 +7,9 @@ use Oro\Bundle\PaymentBundle\Event\TransactionCompleteEvent;
 use Oro\Bundle\PaymentBundle\EventListener\PaymentTransactionListener;
 use Oro\Bundle\PaymentBundle\Manager\PaymentStatusManager;
 
-class PaymentTransactionListenerTest extends \PHPUnit_Framework_TestCase
+class PaymentTransactionListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var PaymentStatusManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var PaymentStatusManager|\PHPUnit\Framework\MockObject\MockObject */
     protected $managerMock;
 
     /** @var TransactionCompleteEvent */

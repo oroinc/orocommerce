@@ -14,17 +14,17 @@ use Oro\Bundle\PromotionBundle\Layout\DataProvider\DTO\ObjectStorage;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class DiscountsInformationDataProviderTest extends \PHPUnit_Framework_TestCase
+class DiscountsInformationDataProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var PromotionExecutor|\PHPUnit_Framework_MockObject_MockObject
+     * @var PromotionExecutor|\PHPUnit\Framework\MockObject\MockObject
      */
     private $promotionExecutor;
 
     /**
-     * @var UserCurrencyManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var UserCurrencyManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $currencyManager;
 

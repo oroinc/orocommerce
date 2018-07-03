@@ -10,7 +10,7 @@ use Oro\Bundle\PricingBundle\Model\FrontendProductListModifier;
 use Oro\Bundle\ProductBundle\Event\ProductDBQueryRestrictionEvent;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
-class ProductSelectPriceListAwareListenerTest extends \PHPUnit_Framework_TestCase
+class ProductSelectPriceListAwareListenerTest extends \PHPUnit\Framework\TestCase
 {
     const PRICE_LIST_ID = 42;
 
@@ -20,22 +20,22 @@ class ProductSelectPriceListAwareListenerTest extends \PHPUnit_Framework_TestCas
     protected $listener;
 
     /**
-     * @var FrontendProductListModifier|\PHPUnit_Framework_MockObject_MockObject
+     * @var FrontendProductListModifier|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $modifier;
 
     /**
-     * @var ProductDBQueryRestrictionEvent|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProductDBQueryRestrictionEvent|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $event;
 
     /**
-     * @var QueryBuilder|\PHPUnit_Framework_MockObject_MockObject
+     * @var QueryBuilder|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $queryBuilder;
 
     /**
-     * @var Registry|\PHPUnit_Framework_MockObject_MockObject
+     * @var Registry|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $registry;
 

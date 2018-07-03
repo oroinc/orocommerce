@@ -8,7 +8,7 @@ use Oro\Bundle\CatalogBundle\Model\CategoryMaterializedPathModifier;
 use Oro\Bundle\CommerceEntityBundle\Storage\ExtraActionEntityStorageInterface;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
-class CategoryMaterializedPathModifierTest extends \PHPUnit_Framework_TestCase
+class CategoryMaterializedPathModifierTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var CategoryMaterializedPathModifier
@@ -16,12 +16,12 @@ class CategoryMaterializedPathModifierTest extends \PHPUnit_Framework_TestCase
     protected $modifier;
 
     /**
-     * @var ExtraActionEntityStorageInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ExtraActionEntityStorageInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $doctrineHelper;
 
     /**
-     * @var CategoryRepository|\PHPUnit_Framework_MockObject_MockObject
+     * @var CategoryRepository|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $repository;
     /**

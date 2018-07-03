@@ -6,7 +6,7 @@ use Oro\Bundle\ApiBundle\Processor\ContextInterface;
 use Oro\Bundle\ApiBundle\Processor\FormContext;
 use Oro\Bundle\RFPBundle\Api\Processor\UpdateRequestDataForRequestEntity;
 
-class UpdateRequestDataForRequestEntityTest extends \PHPUnit_Framework_TestCase
+class UpdateRequestDataForRequestEntityTest extends \PHPUnit\Framework\TestCase
 {
     /** @var UpdateRequestDataForRequestEntity */
     protected $processor;
@@ -21,7 +21,7 @@ class UpdateRequestDataForRequestEntityTest extends \PHPUnit_Framework_TestCase
 
     public function testProcessWithoutRequestData()
     {
-        /** @var FormContext|\PHPUnit_Framework_MockObject_MockObject $context */
+        /** @var FormContext|\PHPUnit\Framework\MockObject\MockObject $context */
         $context = $this->createMock(FormContext::class);
         $context->expects($this->any())->method('getRequestData')->willReturn([]);
         $context->expects($this->never())->method('setRequestData');
@@ -43,7 +43,7 @@ class UpdateRequestDataForRequestEntityTest extends \PHPUnit_Framework_TestCase
             'firstName' => 'testName'
         ];
 
-        /** @var FormContext|\PHPUnit_Framework_MockObject_MockObject $context */
+        /** @var FormContext|\PHPUnit\Framework\MockObject\MockObject $context */
         $context = $this->createMock(FormContext::class);
         $context->expects($this->any())->method('getRequestData')->willReturn($requestData);
         $context->expects($this->once())->method('setRequestData')->with($this->identicalTo($expectedData));

@@ -19,7 +19,7 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class ShoppingListLimitManagerTest extends \PHPUnit_Framework_TestCase
+class ShoppingListLimitManagerTest extends \PHPUnit\Framework\TestCase
 {
     const USER_ID = 777;
     const ORGANIZATION_ID = 555;
@@ -30,19 +30,19 @@ class ShoppingListLimitManagerTest extends \PHPUnit_Framework_TestCase
     /** @var ShoppingListLimitManager */
     private $shoppingListLimitManager;
 
-    /** @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
     private $configManager;
 
-    /** @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $doctrineHelper;
 
-    /** @var TokenAccessor|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var TokenAccessor|\PHPUnit\Framework\MockObject\MockObject */
     private $tokenAccessor;
 
-    /** @var TokenInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var TokenInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $token;
 
-    /** @var WebsiteManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var WebsiteManager|\PHPUnit\Framework\MockObject\MockObject */
     private $websiteManager;
 
     /**

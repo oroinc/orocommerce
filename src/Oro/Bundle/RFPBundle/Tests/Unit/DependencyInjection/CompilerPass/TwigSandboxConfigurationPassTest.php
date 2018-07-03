@@ -8,12 +8,12 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
 
-class TwigSandboxConfigurationPassTest extends \PHPUnit_Framework_TestCase
+class TwigSandboxConfigurationPassTest extends \PHPUnit\Framework\TestCase
 {
     /** @var CompilerPassInterface */
     private $compilerPass;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|ContainerBuilder */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|ContainerBuilder */
     private $containerBuilder;
 
     /**

@@ -9,7 +9,7 @@ use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
 class DuplicateFiltrationServiceTest extends AbstractSkippableFiltrationServiceTest
 {
     /**
-     * @var RuleFiltrationServiceInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var RuleFiltrationServiceInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $filtrationService;
 
@@ -59,7 +59,7 @@ class DuplicateFiltrationServiceTest extends AbstractSkippableFiltrationServiceT
 
     /**
      * @param int $id
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     private function getRuleOwner($id)
     {

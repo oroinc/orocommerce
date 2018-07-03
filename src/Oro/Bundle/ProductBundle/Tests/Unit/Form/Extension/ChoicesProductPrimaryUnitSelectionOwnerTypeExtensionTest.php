@@ -20,17 +20,17 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class ChoicesProductPrimaryUnitSelectionOwnerTypeExtensionTest extends FormIntegrationTestCase
 {
     /**
-     * @var string|\PHPUnit_Framework_MockObject_MockObject
+     * @var string|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $childName;
 
     /**
-     * @var string|\PHPUnit_Framework_MockObject_MockObject
+     * @var string|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $extendedType;
 
     /**
-     * @var ProductUnitFieldsSettingsInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProductUnitFieldsSettingsInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $productFormUnitFieldsSettings;
 
@@ -57,7 +57,7 @@ class ChoicesProductPrimaryUnitSelectionOwnerTypeExtensionTest extends FormInteg
 
     public function testBuildForm()
     {
-        /** @var FormBuilderInterface|\PHPUnit_Framework_MockObject_MockObject $builder */
+        /** @var FormBuilderInterface|\PHPUnit\Framework\MockObject\MockObject $builder */
         $builder = $this->createMock(FormBuilderInterface::class);
         $builder->expects($this->once())
             ->method('addEventListener');
@@ -86,7 +86,7 @@ class ChoicesProductPrimaryUnitSelectionOwnerTypeExtensionTest extends FormInteg
 
     public function testSetAvailableUnitsThrowsException()
     {
-        /** @var FormEvent|\PHPUnit_Framework_MockObject_MockObject $event * */
+        /** @var FormEvent|\PHPUnit\Framework\MockObject\MockObject $event * */
         $event = $this->getMockBuilder(FormEvent::class)
             ->disableOriginalConstructor()
             ->getMock();

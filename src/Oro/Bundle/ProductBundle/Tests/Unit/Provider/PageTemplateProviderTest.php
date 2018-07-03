@@ -9,15 +9,15 @@ use Oro\Component\Layout\Extension\Theme\Model\PageTemplate;
 use Oro\Component\Layout\Extension\Theme\Model\Theme;
 use Oro\Component\Layout\Extension\Theme\Model\ThemeManager;
 
-class PageTemplateProviderTest extends \PHPUnit_Framework_TestCase
+class PageTemplateProviderTest extends \PHPUnit\Framework\TestCase
 {
     /** @var PageTemplateProvider */
     private $pageTemplateProvider;
 
-    /** @var ThemeManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ThemeManager|\PHPUnit\Framework\MockObject\MockObject */
     private $themeManagerMock;
 
-    /** @var EntityFallbackResolver|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var EntityFallbackResolver|\PHPUnit\Framework\MockObject\MockObject */
     private $fallbackResolverMock;
 
     /** @var Product */

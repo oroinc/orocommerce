@@ -10,11 +10,11 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Layout\DataProvider\ConfigurableProductProvider;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class OrderLineItemEventListenerTest extends \PHPUnit_Framework_TestCase
+class OrderLineItemEventListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /** @var ConfigurableProductProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ConfigurableProductProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $configurableProductProvider;
 
     /** @var OrderLineItemEventListener */
@@ -127,7 +127,7 @@ class OrderLineItemEventListenerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return LifecycleEventArgs|\PHPUnit_Framework_MockObject_MockObject
+     * @return LifecycleEventArgs|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function getLifecycleEventArgs()
     {
@@ -135,7 +135,7 @@ class OrderLineItemEventListenerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return PreUpdateEventArgs|\PHPUnit_Framework_MockObject_MockObject
+     * @return PreUpdateEventArgs|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function getPreUpdateEventArgs()
     {

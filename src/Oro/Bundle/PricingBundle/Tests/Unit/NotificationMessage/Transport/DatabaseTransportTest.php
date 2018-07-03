@@ -9,10 +9,10 @@ use Oro\Bundle\PricingBundle\Entity\Repository\NotificationMessageRepository;
 use Oro\Bundle\PricingBundle\NotificationMessage\Message;
 use Oro\Bundle\PricingBundle\NotificationMessage\Transport\DatabaseTransport;
 
-class DatabaseTransportTest extends \PHPUnit_Framework_TestCase
+class DatabaseTransportTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $registry;
 

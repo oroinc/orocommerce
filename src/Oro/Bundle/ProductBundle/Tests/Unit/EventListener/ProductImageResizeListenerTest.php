@@ -8,7 +8,7 @@ use Oro\Bundle\ProductBundle\Event\ProductImageResizeEvent;
 use Oro\Bundle\ProductBundle\EventListener\ProductImageResizeListener;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 
-class ProductImageResizeListenerTest extends \PHPUnit_Framework_TestCase
+class ProductImageResizeListenerTest extends \PHPUnit\Framework\TestCase
 {
     const PRODUCT_IMAGE_ID = 1;
     const FORCE_OPTION = false;
@@ -19,7 +19,7 @@ class ProductImageResizeListenerTest extends \PHPUnit_Framework_TestCase
     protected $listener;
 
     /**
-     * @var MessageProducerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $producer;
 

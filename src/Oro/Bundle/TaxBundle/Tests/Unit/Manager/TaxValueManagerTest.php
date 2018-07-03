@@ -8,7 +8,7 @@ use Oro\Bundle\TaxBundle\Entity\TaxValue;
 use Oro\Bundle\TaxBundle\Manager\TaxValueManager;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class TaxValueManagerTest extends \PHPUnit_Framework_TestCase
+class TaxValueManagerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
@@ -18,7 +18,7 @@ class TaxValueManagerTest extends \PHPUnit_Framework_TestCase
     /** @var  TaxValueManager */
     protected $manager;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|DoctrineHelper */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|DoctrineHelper */
     protected $doctrineHelper;
 
     protected function setUp()

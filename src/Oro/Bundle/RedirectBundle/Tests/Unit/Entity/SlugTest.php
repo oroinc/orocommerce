@@ -9,7 +9,7 @@ use Oro\Bundle\RedirectBundle\Helper\UrlParameterHelper;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-class SlugTest extends \PHPUnit_Framework_TestCase
+class SlugTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
     

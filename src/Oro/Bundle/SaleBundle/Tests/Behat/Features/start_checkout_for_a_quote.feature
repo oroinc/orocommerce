@@ -6,19 +6,27 @@ Feature: Start checkout for a quote
   As customer
   I need to be able to start checkout for a quote
 
+  Scenario: Create sessions
+    Given sessions active:
+      | Admin | first_session  |
+      | Buyer | second_session |
+
   Scenario: FrontOffice scenario background
-    Given I login as AmandaRCole@example.org buyer
+    Given I proceed as the Buyer
+    And I login as AmandaRCole@example.org buyer
     And I request a quote from shopping list "Shopping List 1" with data:
       | PO Number | PONUMBER1 |
 
   Scenario: BackOffice scenario background
-    Given I login as administrator
+    Given I proceed as the Admin
+    And I login as administrator
     And I create a quote from RFQ with PO Number "PONUMBER1"
     And I click "Send to Customer"
     And I click "Send"
 
   Scenario: Verify "All Quotes" grid
-    Given I am on homepage
+    Given I proceed as the Buyer
+    And I am on homepage
     When I click "Quotes"
     Then I shouldn't see "Status" column in frontend grid
     And I shouldn't see "Status" filter in frontend grid

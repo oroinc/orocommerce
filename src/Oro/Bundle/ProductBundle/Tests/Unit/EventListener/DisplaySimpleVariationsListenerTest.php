@@ -6,14 +6,14 @@ use Oro\Bundle\ConfigBundle\Event\ConfigUpdateEvent;
 use Oro\Bundle\ProductBundle\EventListener\Config\DisplaySimpleVariationsListener;
 use Oro\Component\Cache\Layout\DataProviderCacheCleaner;
 
-class DisplaySimpleVariationsListenerTest extends \PHPUnit_Framework_TestCase
+class DisplaySimpleVariationsListenerTest extends \PHPUnit\Framework\TestCase
 {
     const CONFIG_KEY = 'oro_product.display_simple_variations';
 
-    /** @var  DataProviderCacheCleaner|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var  DataProviderCacheCleaner|\PHPUnit\Framework\MockObject\MockObject */
     protected $cacheClearer;
 
-    /** @var  DataProviderCacheCleaner|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var  DataProviderCacheCleaner|\PHPUnit\Framework\MockObject\MockObject */
     protected $categoryCacheClearer;
 
     /** @var  DisplaySimpleVariationsListener */

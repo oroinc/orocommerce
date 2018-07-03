@@ -16,10 +16,10 @@ use Oro\Bundle\PromotionBundle\Discount\DiscountLineItem;
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class DisabledDiscountLineItemDecoratorTest extends \PHPUnit_Framework_TestCase
+class DisabledDiscountLineItemDecoratorTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var DiscountLineItem|\PHPUnit_Framework_MockObject_MockObject
+     * @var DiscountLineItem|\PHPUnit\Framework\MockObject\MockObject
      */
     private $lineItem;
 
@@ -202,7 +202,7 @@ class DisabledDiscountLineItemDecoratorTest extends \PHPUnit_Framework_TestCase
 
     public function testAddDiscount()
     {
-        /** @var DiscountInterface|\PHPUnit_Framework_MockObject_MockObject $discount **/
+        /** @var DiscountInterface|\PHPUnit\Framework\MockObject\MockObject $discount **/
         $discount = $this->createMock(DiscountInterface::class);
 
         $this->lineItem
@@ -215,7 +215,7 @@ class DisabledDiscountLineItemDecoratorTest extends \PHPUnit_Framework_TestCase
 
     public function testGetDiscounts()
     {
-        /** @var DiscountInterface|\PHPUnit_Framework_MockObject_MockObject $discount **/
+        /** @var DiscountInterface|\PHPUnit\Framework\MockObject\MockObject $discount **/
         $discount = $this->createMock(DiscountInterface::class);
 
         $this->lineItem
@@ -252,7 +252,7 @@ class DisabledDiscountLineItemDecoratorTest extends \PHPUnit_Framework_TestCase
 
     public function testAddDiscountInformation()
     {
-        /** @var DiscountInformation|\PHPUnit_Framework_MockObject_MockObject $discountInformation **/
+        /** @var DiscountInformation|\PHPUnit\Framework\MockObject\MockObject $discountInformation **/
         $discountInformation = $this->createMock(DiscountInformation::class);
 
         $this->lineItem
@@ -265,7 +265,7 @@ class DisabledDiscountLineItemDecoratorTest extends \PHPUnit_Framework_TestCase
 
     public function testGetDiscountsInformation()
     {
-        /** @var DiscountInformation|\PHPUnit_Framework_MockObject_MockObject $discountInformation **/
+        /** @var DiscountInformation|\PHPUnit\Framework\MockObject\MockObject $discountInformation **/
         $discountInformation = $this->createMock(DiscountInformation::class);
 
         $this->lineItem

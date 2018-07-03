@@ -5,7 +5,7 @@ namespace Oro\Bundle\PaymentBundle\Test\Unit\Context\Factory;
 use Oro\Bundle\PaymentBundle\Context\Factory\CompositeSupportsEntityPaymentContextFactory;
 use Oro\Bundle\PaymentBundle\Context\Factory\SupportsEntityPaymentContextFactoryInterface;
 
-class CompositeSupportsEntityPaymentContextFactoryTest extends \PHPUnit_Framework_TestCase
+class CompositeSupportsEntityPaymentContextFactoryTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var CompositeSupportsEntityPaymentContextFactory

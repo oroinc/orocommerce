@@ -7,10 +7,10 @@ use Oro\Bundle\SEOBundle\EventListener\ProductUrlItemsProviderStartListener;
 use Oro\Bundle\SEOBundle\Limiter\WebCatalogProductLimiter;
 use Oro\Component\Website\WebsiteInterface;
 
-class ProductUrlItemsProviderStartListenerTest extends \PHPUnit_Framework_TestCase
+class ProductUrlItemsProviderStartListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var WebCatalogProductLimiter|\PHPUnit_Framework_MockObject_MockObject
+     * @var WebCatalogProductLimiter|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $webCatalogProductLimiter;
 

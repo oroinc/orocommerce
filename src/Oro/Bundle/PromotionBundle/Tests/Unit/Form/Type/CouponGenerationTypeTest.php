@@ -12,7 +12,7 @@ use Symfony\Component\Form\Test\FormIntegrationTestCase;
 class CouponGenerationTypeTest extends FormIntegrationTestCase
 {
     /**
-     * @var TokenAccessorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var TokenAccessorInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $tokenAccessor;
 

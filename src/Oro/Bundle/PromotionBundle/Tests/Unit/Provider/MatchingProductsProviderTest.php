@@ -8,10 +8,10 @@ use Oro\Bundle\PromotionBundle\Provider\MatchingProductsProvider;
 use Oro\Bundle\SegmentBundle\Entity\Manager\SegmentManager;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 
-class MatchingProductsProviderTest extends \PHPUnit_Framework_TestCase
+class MatchingProductsProviderTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var SegmentManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var SegmentManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $segmentManager;
 

@@ -7,15 +7,15 @@ use Oro\Bundle\PromotionBundle\Discount\Strategy\StrategyInterface;
 use Oro\Bundle\PromotionBundle\Discount\Strategy\StrategyProvider;
 use Oro\Bundle\PromotionBundle\Discount\Strategy\StrategyRegistry;
 
-class StrategyProviderTest extends \PHPUnit_Framework_TestCase
+class StrategyProviderTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var StrategyRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var StrategyRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     private $strategyRegistry;
 
     /**
-     * @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $configManager;
 

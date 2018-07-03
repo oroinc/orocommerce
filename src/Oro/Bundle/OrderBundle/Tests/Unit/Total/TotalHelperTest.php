@@ -11,21 +11,21 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 
-class TotalHelperTest extends \PHPUnit_Framework_TestCase
+class TotalHelperTest extends \PHPUnit\Framework\TestCase
 {
     /** @var  TotalHelper */
     protected $helper;
 
-    /** @var TotalProcessorProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var TotalProcessorProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $totalProvider;
 
-    /** @var LineItemSubtotalProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var LineItemSubtotalProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $lineItemSubtotalProvider;
 
-    /** @var DiscountSubtotalProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var DiscountSubtotalProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $discountSubtotalProvider;
 
-    /** @var RateConverterInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var RateConverterInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $rateConverter;
 
     protected function setUp()

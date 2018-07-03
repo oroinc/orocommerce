@@ -6,7 +6,7 @@ use Oro\Bundle\TaxBundle\Entity\TaxValue;
 use Oro\Bundle\TaxBundle\Model\Result;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-class TaxValueTest extends \PHPUnit_Framework_TestCase
+class TaxValueTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 

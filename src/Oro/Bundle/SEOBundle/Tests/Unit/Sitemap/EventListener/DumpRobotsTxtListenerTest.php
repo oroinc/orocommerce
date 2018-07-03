@@ -13,7 +13,7 @@ use Oro\Bundle\SEOBundle\Sitemap\Storage\SitemapStorageFactory;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Website\WebsiteInterface;
 
-class DumpRobotsTxtListenerTest extends \PHPUnit_Framework_TestCase
+class DumpRobotsTxtListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
@@ -22,17 +22,17 @@ class DumpRobotsTxtListenerTest extends \PHPUnit_Framework_TestCase
     const SITEMAP_DIR = 'sitemap';
 
     /**
-     * @var RobotsTxtSitemapManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var RobotsTxtSitemapManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $robotsTxtSitemapManager;
 
     /**
-     * @var CanonicalUrlGenerator|\PHPUnit_Framework_MockObject_MockObject
+     * @var CanonicalUrlGenerator|\PHPUnit\Framework\MockObject\MockObject
      */
     private $canonicalUrlGenerator;
 
     /**
-     * @var SitemapFilesystemAdapter|\PHPUnit_Framework_MockObject_MockObject
+     * @var SitemapFilesystemAdapter|\PHPUnit\Framework\MockObject\MockObject
      */
     private $sitemapFilesystemAdapter;
 
@@ -145,7 +145,7 @@ class DumpRobotsTxtListenerTest extends \PHPUnit_Framework_TestCase
      */
     private function createWebsite($websiteId, $isDefault)
     {
-        /** @var WebsiteInterface|\PHPUnit_Framework_MockObject_MockObject $website */
+        /** @var WebsiteInterface|\PHPUnit\Framework\MockObject\MockObject $website */
         $website = $this->createMock(WebsiteInterface::class);
         $website
             ->expects($this->any())

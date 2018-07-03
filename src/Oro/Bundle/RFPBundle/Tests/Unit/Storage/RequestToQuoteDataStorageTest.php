@@ -22,12 +22,12 @@ use Oro\Component\Testing\Unit\EntityTrait;
 /**
  * Unit tests for RequestToQuoteDataStorage
  */
-class RequestToQuoteDataStorageTest extends \PHPUnit_Framework_TestCase
+class RequestToQuoteDataStorageTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var ProductDataStorage|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProductDataStorage|\PHPUnit\Framework\MockObject\MockObject
      */
     private $storage;
 
@@ -37,12 +37,12 @@ class RequestToQuoteDataStorageTest extends \PHPUnit_Framework_TestCase
     private $requestDataStorage;
 
     /**
-     * @var MatchingPriceProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var MatchingPriceProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     private $matchingPriceProvider;
 
     /**
-     * @var PriceListTreeHandler|\PHPUnit_Framework_MockObject_MockObject
+     * @var PriceListTreeHandler|\PHPUnit\Framework\MockObject\MockObject
      */
     private $priceListTreeHandler;
 
@@ -426,7 +426,7 @@ class RequestToQuoteDataStorageTest extends \PHPUnit_Framework_TestCase
     /**
      * @param array $currencies
      *
-     * @return CombinedPriceList|\PHPUnit_Framework_MockObject_MockObject
+     * @return CombinedPriceList|\PHPUnit\Framework\MockObject\MockObject
      */
     private function getPriceList(array $currencies)
     {

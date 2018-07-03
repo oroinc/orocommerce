@@ -11,22 +11,22 @@ use Oro\Bundle\PayPalBundle\Method\View\PayPalCreditCardPaymentMethodView;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Form\FormFactoryInterface;
 
-class PayPalCreditCardPaymentMethodViewTest extends \PHPUnit_Framework_TestCase
+class PayPalCreditCardPaymentMethodViewTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     const ALLOWED_CC_TYPES = ['visa', 'mastercard'];
 
-    /** @var FormFactoryInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var FormFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $formFactory;
 
     /** @var PayPalCreditCardPaymentMethodView */
     protected $methodView;
 
-    /** @var  PaymentTransactionProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var  PaymentTransactionProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $paymentTransactionProvider;
 
-    /** @var PayPalCreditCardConfigInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var PayPalCreditCardConfigInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $paymentConfig;
 
     protected function setUp()
@@ -183,7 +183,7 @@ class PayPalCreditCardPaymentMethodViewTest extends \PHPUnit_Framework_TestCase
     /**
      * @param $zeroAmountAuthEnabled
      * @param $requireCvvEntryEnabled
-     * @return array|\PHPUnit_Framework_MockObject_MockObject[]
+     * @return array|\PHPUnit\Framework\MockObject\MockObject[]
      */
     protected function prepareMocks($zeroAmountAuthEnabled, $requireCvvEntryEnabled)
     {
@@ -214,7 +214,7 @@ class PayPalCreditCardPaymentMethodViewTest extends \PHPUnit_Framework_TestCase
             ->method('getAllowedCreditCards')
             ->willReturn(self::ALLOWED_CC_TYPES);
 
-        /** @var PaymentContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
+        /** @var PaymentContextInterface|\PHPUnit\Framework\MockObject\MockObject $context */
         $context = $this->createMock(PaymentContextInterface::class);
 
         return array($formView, $context);

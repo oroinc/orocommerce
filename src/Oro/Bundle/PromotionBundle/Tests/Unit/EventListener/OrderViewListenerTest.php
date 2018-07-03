@@ -9,9 +9,9 @@ use Oro\Bundle\UIBundle\View\ScrollData;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Translation\TranslatorInterface;
 
-class OrderViewListenerTest extends \PHPUnit_Framework_TestCase
+class OrderViewListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $translator;
 
     /** @var OrderViewListener */
@@ -25,7 +25,7 @@ class OrderViewListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testOnViewWhenNoDiscountBlockExist()
     {
-        /** @var \Twig_Environment|\PHPUnit_Framework_MockObject_MockObject $environment */
+        /** @var \Twig_Environment|\PHPUnit\Framework\MockObject\MockObject $environment */
         $environment = $this->createMock(\Twig_Environment::class);
         $environment
             ->expects($this->never())
@@ -47,7 +47,7 @@ class OrderViewListenerTest extends \PHPUnit_Framework_TestCase
 
         $existingTemplate = 'Existing View template';
         $template = 'View template';
-        /** @var \Twig_Environment|\PHPUnit_Framework_MockObject_MockObject $environment */
+        /** @var \Twig_Environment|\PHPUnit\Framework\MockObject\MockObject $environment */
         $environment = $this->createMock(\Twig_Environment::class);
         $environment
             ->expects($this->once())
@@ -78,7 +78,7 @@ class OrderViewListenerTest extends \PHPUnit_Framework_TestCase
     {
         $formView = $this->createMock(FormView::class);
 
-        /** @var \Twig_Environment|\PHPUnit_Framework_MockObject_MockObject $environment */
+        /** @var \Twig_Environment|\PHPUnit\Framework\MockObject\MockObject $environment */
         $environment = $this->createMock(\Twig_Environment::class);
         $environment
             ->expects($this->never())
@@ -105,7 +105,7 @@ class OrderViewListenerTest extends \PHPUnit_Framework_TestCase
 
         $formView = $this->createMock(FormView::class);
 
-        /** @var \Twig_Environment|\PHPUnit_Framework_MockObject_MockObject $environment */
+        /** @var \Twig_Environment|\PHPUnit\Framework\MockObject\MockObject $environment */
         $environment = $this->createMock(\Twig_Environment::class);
         $environment->expects($this->once())
             ->method('render')

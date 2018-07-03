@@ -8,7 +8,7 @@ use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\TaxBundle\Model\Taxable;
 use Oro\Bundle\TaxBundle\Resolver\SellerResolver\USSalesTaxResolver\DigitalItemResolver;
 
-class DigitalItemResolverTest extends \PHPUnit_Framework_TestCase
+class DigitalItemResolverTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var DigitalItemResolver

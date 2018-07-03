@@ -16,28 +16,28 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class ReindexProductLineItemListenerTest extends \PHPUnit_Framework_TestCase
+class ReindexProductLineItemListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     const WEBSITE_ID = 1;
 
-    /** @var PreUpdateEventArgs|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var PreUpdateEventArgs|\PHPUnit\Framework\MockObject\MockObject */
     protected $event;
 
-    /** @var ProductReindexManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ProductReindexManager|\PHPUnit\Framework\MockObject\MockObject */
     protected $reindexManager;
 
     /** @var ReindexProductLineItemListener */
     protected $listener;
 
-    /** @var OrderLineItem|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var OrderLineItem|\PHPUnit\Framework\MockObject\MockObject */
     protected $lineItem;
 
     /** @var  OrderStub */
     protected $order;
 
-    /** @var FeatureChecker|\PHPUnit_Framework_MockObject_MockObject  */
+    /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject  */
     protected $featureChecker;
 
     /** @var  Website */

@@ -5,12 +5,12 @@ namespace Oro\Bundle\TaxBundle\Tests\Unit\Provider;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\TaxBundle\Provider\AddressResolverSettingsProvider;
 
-class AddressResolverSettingsProviderTest extends \PHPUnit_Framework_TestCase
+class AddressResolverSettingsProviderTest extends \PHPUnit\Framework\TestCase
 {
     /** @var AddressResolverSettingsProvider */
     protected $provider;
 
-    /** @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
     protected $config;
 
     protected function setUp()

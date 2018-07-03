@@ -2,6 +2,8 @@
 @ticket-BB-8806
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroAuthorizeNetBundle:AuthorizeNetFixture.yml
+@ticket-BB-14390
+
 Feature: Process order submission with PayPal PayFlow Gateway and Authorize & Capture payment action
   ToDo: BAP-16103 Add missing descriptions to the Behat features
   Scenario: Create new PayPal PayFlow Gateway Integration
@@ -88,8 +90,4 @@ Feature: Process order submission with PayPal PayFlow Gateway and Authorize & Ca
 
     Then I operate as the Admin
     And I go to Sales/Orders
-    And I click View Payment declined in grid
-    Then I should see following "Transactions History Grid" grid:
-      | Id | Payment Method | Type      | Amount | Successful |
-      | 3  | PayPalFlow     | Authorize | $13.00 | No         |
-    And I should not see "Transaction Capture Button"
+    Then there is no "Payment declined" in grid

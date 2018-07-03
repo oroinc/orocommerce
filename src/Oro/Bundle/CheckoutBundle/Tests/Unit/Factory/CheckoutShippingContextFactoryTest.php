@@ -21,35 +21,35 @@ use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Doctrine\DoctrineShipp
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItem;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
-class CheckoutShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
+class CheckoutShippingContextFactoryTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var CheckoutShippingContextFactory|\PHPUnit_Framework_MockObject_MockObject
+     * @var CheckoutShippingContextFactory|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $factory;
 
     /**
-     * @var CheckoutLineItemsManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var CheckoutLineItemsManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $checkoutLineItemsManager;
 
     /**
-     * @var TotalProcessorProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var TotalProcessorProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $totalProcessorProvider;
 
     /**
-     * @var OrderShippingLineItemConverterInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var OrderShippingLineItemConverterInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $shippingLineItemConverter;
 
     /**
-     * @var ShippingContextBuilderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingContextBuilderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $contextBuilderMock;
 
     /**
-     * @var ShippingContextBuilderFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingContextBuilderFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $shippingContextBuilderFactoryMock;
 

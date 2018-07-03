@@ -6,13 +6,13 @@ use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\ProductBundle\Event\ProductDBQueryRestrictionEvent;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
-class ProductDBQueryRestrictionEventTest extends \PHPUnit_Framework_TestCase
+class ProductDBQueryRestrictionEventTest extends \PHPUnit\Framework\TestCase
 {
     public function testEvent()
     {
         $dataParameters = new ParameterBag(['test']);
 
-        /** @var QueryBuilder|\PHPUnit_Framework_MockObject_MockObject $queryBuilder */
+        /** @var QueryBuilder|\PHPUnit\Framework\MockObject\MockObject $queryBuilder */
         $queryBuilder = $this->getMockBuilder('Doctrine\ORM\QueryBuilder')
             ->disableOriginalConstructor()
             ->getMock();

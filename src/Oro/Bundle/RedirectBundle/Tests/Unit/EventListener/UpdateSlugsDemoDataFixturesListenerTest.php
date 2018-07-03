@@ -21,28 +21,28 @@ use Oro\Bundle\TestFrameworkBundle\Entity\Item;
 
 class UpdateSlugsDemoDataFixturesListenerTest extends DemoDataFixturesListenerTestCase
 {
-    /** @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
     protected $configManager;
 
-    /** @var SlugEntityGenerator|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var SlugEntityGenerator|\PHPUnit\Framework\MockObject\MockObject */
     protected $generator;
 
-    /** @var UrlStorageCache|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var UrlStorageCache|\PHPUnit\Framework\MockObject\MockObject */
     protected $urlStorageCache;
 
-    /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $entityManager;
 
-    /** @var EntityRepository|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var EntityRepository|\PHPUnit\Framework\MockObject\MockObject */
     protected $redirectRepository;
 
-    /** @var EntityRepository|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var EntityRepository|\PHPUnit\Framework\MockObject\MockObject */
     protected $sluggableRepository;
 
-    /** @var EntityRepository|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var EntityRepository|\PHPUnit\Framework\MockObject\MockObject */
     protected $slugRepository;
 
-    /** @var ClassMetadataFactory|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ClassMetadataFactory|\PHPUnit\Framework\MockObject\MockObject */
     protected $metadataFactory;
 
     /**
@@ -285,7 +285,7 @@ class UpdateSlugsDemoDataFixturesListenerTest extends DemoDataFixturesListenerTe
 
     /**
      * @param string $className
-     * @return ClassMetadata|\PHPUnit_Framework_MockObject_MockObject
+     * @return ClassMetadata|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function getMetadata($className)
     {

@@ -7,7 +7,7 @@ use Oro\Bundle\WebsiteBundle\Form\Type\WebsiteScopedDataType;
 use Oro\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class WebsiteScopedTypeMockProvider extends \PHPUnit_Framework_TestCase
+class WebsiteScopedTypeMockProvider extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
@@ -35,7 +35,7 @@ class WebsiteScopedTypeMockProvider extends \PHPUnit_Framework_TestCase
             ->method('getAllWebsites')
             ->willReturn([$website]);
 
-        /** @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject $registry */
+        /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject $registry */
         $registry = $this->getMockBuilder('\Doctrine\Common\Persistence\ManagerRegistry')
             ->disableOriginalConstructor()
             ->getMock();
@@ -50,7 +50,7 @@ class WebsiteScopedTypeMockProvider extends \PHPUnit_Framework_TestCase
             ->with('Oro\Bundle\WebsiteBundle\Entity\Website')
             ->willReturn($em);
 
-        /** @var WebsiteProviderInterface|\PHPUnit_Framework_MockObject_MockObject $websiteProvider */
+        /** @var WebsiteProviderInterface|\PHPUnit\Framework\MockObject\MockObject $websiteProvider */
         $websiteProvider = $this->createMock('Oro\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface');
         $websiteProvider->expects($this->any())
             ->method('getWebsites')

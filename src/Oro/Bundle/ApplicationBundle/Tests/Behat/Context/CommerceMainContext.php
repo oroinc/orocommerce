@@ -34,9 +34,39 @@ class CommerceMainContext extends OroFeatureContext implements
      */
     public function loginAsBuyer($email)
     {
+        //quick way to logout user (delete all cookies)
+        $driver = $this->getSession()->getDriver();
+        $driver->reset();
+
+        $this->login($email);
+    }
+
+    /**
+     * This function should be used for user login when cookie should not be removed
+     *
+     * Example1: Given I login as AmandaRCole@example.org buyer in old session
+     * Example2: Given I signed in as AmandaRCole@example.org on the store frontend in old session
+     *
+     * @Given /^I login as (?P<email>\S+) buyer in old session$/
+     * @Given /^I signed in as (?P<email>\S+) on the store frontend in old session$/
+     *
+     * @param string $email
+     */
+    public function loginAsBuyerInOldSession($email)
+    {
         $this->visitPath($this->getUrl('oro_customer_customer_user_security_logout'));
+
+        $this->login($email);
+    }
+
+    /**
+     * @param string $email
+     */
+    protected function login($email)
+    {
         $this->visitPath($this->getUrl('oro_customer_customer_user_security_login'));
         $this->waitForAjax();
+
         /** @var OroForm $form */
         $form = $this->createElement('OroForm');
         $table = new TableNode([

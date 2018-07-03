@@ -21,7 +21,4 @@ config:
         'oroshoppinglist/js/shoppinglist-collection-service': 'bundles/oroshoppinglist/js/shoppinglist-collection-service.js'
         'oroshoppinglist/js/app/components/shoppinglist-owner-inline-editable-view-component': 'bundles/oroshoppinglist/js/app/components/shoppinglist-owner-inline-editable-view-component.js'
         'oroshoppinglist/js/app/components/shoppinglist-create-order-button-component': 'bundles/oroshoppinglist/js/app/components/shoppinglist-create-order-button-component.js'
-        'oroshoppinglist/js/app/modules/shoppinglist-module': 'bundles/oroshoppinglist/js/app/modules/shoppinglist-module.js'
         'oroshoppinglist/js/shoppinglist-request-quote-confirmation': 'bundles/oroshoppinglist/js/shoppinglist-request-quote-confirmation.js'
-    appmodules:
-        - oroshoppinglist/js/app/modules/shoppinglist-module

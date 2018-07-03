@@ -18,7 +18,7 @@ use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderValue;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class WebsiteSearchCategoryIndexerListenerTest extends \PHPUnit_Framework_TestCase
+class WebsiteSearchCategoryIndexerListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
     const NAME_DEFAULT_LOCALE = 'name default';
@@ -34,22 +34,22 @@ class WebsiteSearchCategoryIndexerListenerTest extends \PHPUnit_Framework_TestCa
     private $listener;
 
     /**
-     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     private $doctrineHelper;
 
     /**
-     * @var AbstractWebsiteLocalizationProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var AbstractWebsiteLocalizationProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     private $websiteLocalizationProvider;
 
     /**
-     * @var WebsiteContextManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var WebsiteContextManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $websiteContextManager;
 
     /**
-     * @var CategoryRepository|\PHPUnit_Framework_MockObject_MockObject
+     * @var CategoryRepository|\PHPUnit\Framework\MockObject\MockObject
      */
     private $repository;
 

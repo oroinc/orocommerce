@@ -6,10 +6,10 @@ use Oro\Bundle\ShippingBundle\Method\Event\BasicMethodRenamingEventDispatcher;
 use Oro\Bundle\ShippingBundle\Method\Event\MethodRenamingEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class BasicMethodRenamingEventDispatcherTest extends \PHPUnit_Framework_TestCase
+class BasicMethodRenamingEventDispatcherTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $eventDispatcher;
 

@@ -14,20 +14,20 @@ use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Doctrine\DoctrineShipp
 use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Factory\ShippingLineItemCollectionFactoryInterface;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItem;
 
-abstract class AbstractOffersQuoteToShippingLineItemConverterTest extends \PHPUnit_Framework_TestCase
+abstract class AbstractOffersQuoteToShippingLineItemConverterTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ShippingLineItemCollectionFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingLineItemCollectionFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $shippingLineItemCollectionFactory;
 
     /**
-     * @var ShippingLineItemBuilderFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingLineItemBuilderFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $shippingLineItemBuilderFactory;
 
     /**
-     * @var ShippingLineItemBuilderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingLineItemBuilderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $builderMock;
 
@@ -47,7 +47,7 @@ abstract class AbstractOffersQuoteToShippingLineItemConverterTest extends \PHPUn
     }
 
     /**
-     * @return QuoteProductOffer|\PHPUnit_Framework_MockObject_MockObject
+     * @return QuoteProductOffer|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function getQuoteProductOfferMock()
     {
@@ -58,7 +58,7 @@ abstract class AbstractOffersQuoteToShippingLineItemConverterTest extends \PHPUn
     }
 
     /**
-     * @return Quote|\PHPUnit_Framework_MockObject_MockObject
+     * @return Quote|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function getQuoteMock()
     {
@@ -70,8 +70,8 @@ abstract class AbstractOffersQuoteToShippingLineItemConverterTest extends \PHPUn
 
     /**
      * @param int                                                                       $quantity
-     * @param QuoteProductDemand|\PHPUnit_Framework_MockObject_MockObject               $quoteProductOfferMock
-     * @param ShippingLineItemBuilderInterface|\PHPUnit_Framework_MockObject_MockObject $builderMock
+     * @param QuoteProductDemand|\PHPUnit\Framework\MockObject\MockObject               $quoteProductOfferMock
+     * @param ShippingLineItemBuilderInterface|\PHPUnit\Framework\MockObject\MockObject $builderMock
      *
      * @return DoctrineShippingLineItemCollection
      */

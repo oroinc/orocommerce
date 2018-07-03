@@ -11,7 +11,7 @@ use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
 use Symfony\Component\Form\FormView;
 
-class ProductExtensionTest extends \PHPUnit_Framework_TestCase
+class ProductExtensionTest extends \PHPUnit\Framework\TestCase
 {
     use TwigExtensionTestCaseTrait, EntityTrait;
 
@@ -21,10 +21,10 @@ class ProductExtensionTest extends \PHPUnit_Framework_TestCase
     /** @var ProductExtension */
     protected $extension;
 
-    /** @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
     protected $doctrineHelper;
 
-    /** @var FinderDatabaseStrategy|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var FinderDatabaseStrategy|\PHPUnit\Framework\MockObject\MockObject */
     protected $finderDatabaseStrategy;
 
     protected function setUp()

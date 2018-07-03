@@ -19,15 +19,15 @@ use Oro\Bundle\PricingBundle\EventListener\PriceAttributeProductPriceDatagridLis
 use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
-class PriceAttributeProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
+class PriceAttributeProductPriceDatagridListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var PriceListRequestHandler|\PHPUnit_Framework_MockObject_MockObject
+     * @var PriceListRequestHandler|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $priceListRequestHandler;
 
     /**
-     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $doctrineHelper;
 
@@ -54,7 +54,7 @@ class PriceAttributeProductPriceDatagridListenerTest extends \PHPUnit_Framework_
 
     public function testOnBuildBeforeWithoutCurrency()
     {
-        /* @var BuildBefore|\PHPUnit_Framework_MockObject_MockObject $event */
+        /* @var BuildBefore|\PHPUnit\Framework\MockObject\MockObject $event */
         $event = $this->getMockBuilder(BuildBefore::class)->disableOriginalConstructor()->getMock();
         $this->setRequestHandlerExpectations([]);
         $this->doctrineHelper->expects($this->never())->method('getEntityRepository');
@@ -148,7 +148,7 @@ class PriceAttributeProductPriceDatagridListenerTest extends \PHPUnit_Framework_
 
     public function testOnResultAfterWithoutCurrency()
     {
-        /* @var OrmResultAfter|\PHPUnit_Framework_MockObject_MockObject $event */
+        /* @var OrmResultAfter|\PHPUnit\Framework\MockObject\MockObject $event */
         $event = $this->getMockBuilder(OrmResultAfter::class)->disableOriginalConstructor()->getMock();
         $this->setRequestHandlerExpectations([]);
         $this->doctrineHelper->expects($this->never())->method('getEntityRepository');

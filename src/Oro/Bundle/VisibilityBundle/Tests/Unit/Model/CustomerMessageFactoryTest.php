@@ -10,12 +10,12 @@ use Oro\Bundle\VisibilityBundle\Model\CustomerMessageFactory;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
-class CustomerMessageFactoryTest extends \PHPUnit_Framework_TestCase
+class CustomerMessageFactoryTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var RegistryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var RegistryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $registry;
 

@@ -8,20 +8,20 @@ use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\ProductBundle\EventListener\UnitVisibilityModeDataGridListener;
 use Oro\Bundle\ProductBundle\Service\SingleUnitModeService;
 
-class UnitVisibilityModeDataGridListenerTest extends \PHPUnit_Framework_TestCase
+class UnitVisibilityModeDataGridListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var SingleUnitModeService|\PHPUnit_Framework_MockObject_MockObject
+     * @var SingleUnitModeService|\PHPUnit\Framework\MockObject\MockObject
      */
     private $singleModeProvider;
 
     /**
-     * @var BuildBefore|\PHPUnit_Framework_MockObject_MockObject
+     * @var BuildBefore|\PHPUnit\Framework\MockObject\MockObject
      */
     private $eventMock;
 
     /**
-     * @var DatagridInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var DatagridInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $dataGridMock;
 

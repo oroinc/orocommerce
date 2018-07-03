@@ -6,7 +6,7 @@ use Oro\Bundle\ShippingBundle\Event\ShippingMethodConfigDataEvent;
 use Oro\Bundle\ShippingBundle\EventListener\ShippingRuleViewMethodTemplateListener;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
 
-class ShippingRuleViewMethodTemplateListenerTest extends \PHPUnit_Framework_TestCase
+class ShippingRuleViewMethodTemplateListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @internal
@@ -14,7 +14,7 @@ class ShippingRuleViewMethodTemplateListenerTest extends \PHPUnit_Framework_Test
     const TEMPLATE = 'FooBundle::bar.html.twig';
 
     /**
-     * @var ShippingMethodProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $provider;
 

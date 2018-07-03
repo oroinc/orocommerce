@@ -8,12 +8,12 @@ use Oro\Bundle\PricingBundle\Entity\EntityListener\PriceRuleLexemeEntityListener
 use Oro\Bundle\PricingBundle\Entity\PriceRuleLexeme;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceRuleLexemeRepository;
 
-class PriceRuleLexemeEntityListenerTest extends \PHPUnit_Framework_TestCase
+class PriceRuleLexemeEntityListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var PriceRuleLexemeRepository|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var PriceRuleLexemeRepository|\PHPUnit\Framework\MockObject\MockObject */
     protected $repository;
 
-    /** @var EntityManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var EntityManager|\PHPUnit\Framework\MockObject\MockObject */
     protected $entityManager;
 
     /** @var PriceRuleLexemeEntityListener */

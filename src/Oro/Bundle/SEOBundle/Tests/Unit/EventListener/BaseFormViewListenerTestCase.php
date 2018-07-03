@@ -10,11 +10,11 @@ abstract class BaseFormViewListenerTestCase extends FormViewListenerTestCase
     /**
      * @param object $entityObject
      * @param string $labelPrefix
-     * @return \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment
+     * @return \PHPUnit\Framework\MockObject\MockObject|\Twig_Environment
      */
     protected function getEnvironmentForView($entityObject, $labelPrefix)
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $env */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|\Twig_Environment $env */
         $env = $this->getMockBuilder(\Twig_Environment::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -51,11 +51,11 @@ abstract class BaseFormViewListenerTestCase extends FormViewListenerTestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment
+     * @return \PHPUnit\Framework\MockObject\MockObject|\Twig_Environment
      */
     protected function getEnvironmentForEdit()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $env */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|\Twig_Environment $env */
         $env = $this->getMockBuilder(\Twig_Environment::class)
             ->disableOriginalConstructor()
             ->getMock();

@@ -13,17 +13,17 @@ use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Bundle\FrameworkBundle\Tests\Templating\Helper\Fixtures\StubTranslator;
 use Symfony\Component\Routing\RouterInterface;
 
-class ValueRenderEventListenerTest extends \PHPUnit_Framework_TestCase
+class ValueRenderEventListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /** @var ValueRenderEventListener */
     private $valueRenderEventListener;
 
-    /** @var PaymentTermAssociationProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var PaymentTermAssociationProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $associationProvider;
 
-    /** @var RouterInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var RouterInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $router;
 
     protected function setUp()

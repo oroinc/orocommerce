@@ -11,21 +11,21 @@ use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\Partner;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Processor\ProcessorRegistry;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Request\RequestRegistry;
 
-class GatewayTest extends \PHPUnit_Framework_TestCase
+class GatewayTest extends \PHPUnit\Framework\TestCase
 {
     /** @var Gateway */
     protected $gateway;
 
-    /** @var ProcessorRegistry|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ProcessorRegistry|\PHPUnit\Framework\MockObject\MockObject */
     protected $processorRegistry;
 
-    /** @var RequestRegistry|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var RequestRegistry|\PHPUnit\Framework\MockObject\MockObject */
     protected $requestRegistry;
 
-    /** @var ClientInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ClientInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $client;
 
-    /** @var HostAddressProviderInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var HostAddressProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $hostAddressProvider;
 
     protected function setUp()

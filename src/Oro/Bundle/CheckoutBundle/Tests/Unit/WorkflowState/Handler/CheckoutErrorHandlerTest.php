@@ -8,7 +8,7 @@ use Symfony\Component\Form\FormErrorIterator;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
 
-class CheckoutErrorHandlerTest extends \PHPUnit_Framework_TestCase
+class CheckoutErrorHandlerTest extends \PHPUnit\Framework\TestCase
 {
     /** @var FlashBag */
     protected $flashBag;
@@ -145,11 +145,11 @@ class CheckoutErrorHandlerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param string $name
-     * @return FormInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return FormInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function createForm($name)
     {
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->getMockBuilder(FormInterface::class)
             ->disableOriginalConstructor()
             ->getMock();

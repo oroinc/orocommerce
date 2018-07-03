@@ -14,20 +14,20 @@ use Oro\Bundle\SaleBundle\Notification\NotificationHelper;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\HttpFoundation\Request;
 
-class NotificationHelperTest extends \PHPUnit_Framework_TestCase
+class NotificationHelperTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     const QUOTE_CLASS_NAME = 'Oro\Bundle\SaleBundle\Entity\Quote';
     const EMAIL_TEMPLATE_CLASS_NAME = 'Oro\Bundle\EmailBundle\Entity\EmailTemplate';
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|ManagerRegistry */
     protected $registry;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|EmailModelBuilder */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|EmailModelBuilder */
     protected $emailModelBuilder;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|Processor */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|Processor */
     protected $emailProcessor;
 
     /** @var NotificationHelper */
@@ -97,11 +97,11 @@ class NotificationHelperTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param string $className
-     * @return \PHPUnit_Framework_MockObject_MockObject|ObjectManager
+     * @return \PHPUnit\Framework\MockObject\MockObject|ObjectManager
      */
     protected function assertManagerCalled($className)
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|ObjectManager $manager */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|ObjectManager $manager */
         $manager = $this->createMock('Doctrine\Common\Persistence\ObjectManager');
 
         $this->registry->expects($this->once())
@@ -117,10 +117,10 @@ class NotificationHelperTest extends \PHPUnit_Framework_TestCase
      */
     protected function assertRepositoryCalled($className)
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|ObjectRepository $repository */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|ObjectRepository $repository */
         $repository = $this->createMock('Doctrine\Common\Persistence\ObjectRepository');
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|ObjectManager $manager */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|ObjectManager $manager */
         $manager = $this->assertManagerCalled($className);
         $manager->expects($this->once())
             ->method('getRepository')

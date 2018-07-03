@@ -7,7 +7,7 @@ use Oro\Bundle\PricingBundle\Entity\PriceListCustomerGroupFallback;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-class PriceListCustomerGroupFallbackTest extends \PHPUnit_Framework_TestCase
+class PriceListCustomerGroupFallbackTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 

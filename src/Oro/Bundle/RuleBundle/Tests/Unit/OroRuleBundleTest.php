@@ -6,10 +6,10 @@ use Oro\Bundle\RuleBundle\DependencyInjection\CompilerPass\ExpressionLanguageFun
 use Oro\Bundle\RuleBundle\OroRuleBundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-class OroRuleBundleTest extends \PHPUnit_Framework_TestCase
+class OroRuleBundleTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ContainerBuilder|\PHPUnit_Framework_MockObject_MockObject
+     * @var ContainerBuilder|\PHPUnit\Framework\MockObject\MockObject
      */
     private $containerBuilderMock;
 

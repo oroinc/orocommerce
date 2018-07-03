@@ -9,10 +9,10 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Violation\ConstraintViolationBuilder;
 use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
 
-class LineItemCollectionValidatorTest extends \PHPUnit_Framework_TestCase
+class LineItemCollectionValidatorTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $eventDispatcher;
 
@@ -22,7 +22,7 @@ class LineItemCollectionValidatorTest extends \PHPUnit_Framework_TestCase
     protected $lineItemCollectionValidator;
 
     /** @var
-     * Constraint|\PHPUnit_Framework_MockObject_MockObject $constraint
+     * Constraint|\PHPUnit\Framework\MockObject\MockObject $constraint
      */
     protected $constraint;
 

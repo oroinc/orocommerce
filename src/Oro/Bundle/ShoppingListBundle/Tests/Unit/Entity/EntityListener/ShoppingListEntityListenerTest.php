@@ -9,12 +9,12 @@ use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Provider\DefaultUserProvider;
 
-class ShoppingListEntityListenerTest extends \PHPUnit_Framework_TestCase
+class ShoppingListEntityListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var DefaultUserProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var DefaultUserProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $defaultUserProvider;
 
-    /** @var TokenAccessorInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var TokenAccessorInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $tokenAccessor;
 
     /** @var ShoppingListEntityListener */

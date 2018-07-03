@@ -20,25 +20,25 @@ use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Psr\Log\LoggerInterface;
 
-class SearchMessageProcessorTest extends \PHPUnit_Framework_TestCase
+class SearchMessageProcessorTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var IndexerInterface|\PHPUnit_Framework_MockObject_MockObject $indexer
+     * @var IndexerInterface|\PHPUnit\Framework\MockObject\MockObject $indexer
      */
     private $indexer;
 
     /**
-     * @var MessageProducerInterface|\PHPUnit_Framework_MockObject_MockObject $indexer
+     * @var MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject $indexer
      */
     private $messageProducer;
 
     /**
-     * @var IndexerInputValidator|\PHPUnit_Framework_MockObject_MockObject $indexer
+     * @var IndexerInputValidator|\PHPUnit\Framework\MockObject\MockObject $indexer
      */
     private $indexerInputValidator;
 
     /**
-     * @var ReindexMessageGranularizer|\PHPUnit_Framework_MockObject_MockObject $indexer
+     * @var ReindexMessageGranularizer|\PHPUnit\Framework\MockObject\MockObject $indexer
      */
     private $reindexMessageGranularizer;
 
@@ -48,17 +48,17 @@ class SearchMessageProcessorTest extends \PHPUnit_Framework_TestCase
     private $processor;
 
     /**
-     * @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $session;
 
     /**
-     * @var DatabaseExceptionHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var DatabaseExceptionHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     private $databaseExceptionHelper;
 
     /**
-     * @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $logger;
 
@@ -105,7 +105,7 @@ class SearchMessageProcessorTest extends \PHPUnit_Framework_TestCase
      */
     public function testProcessingMessage($messageBody, $topic, $expectedMethod)
     {
-        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message */
+        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message */
         $message = $this->createMock(MessageInterface::class);
 
         $message->method('getBody')
@@ -135,7 +135,7 @@ class SearchMessageProcessorTest extends \PHPUnit_Framework_TestCase
         array $websiteIdsToIndex,
         array $granulizedMessages
     ) {
-        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message */
+        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message */
         $message = $this->createMock(MessageInterface::class);
 
         $message->method('getBody')
@@ -178,7 +178,7 @@ class SearchMessageProcessorTest extends \PHPUnit_Framework_TestCase
         array $websiteIdsToIndex,
         array $granulizedMessages
     ) {
-        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message */
+        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message */
         $message = $this->createMock(MessageInterface::class);
 
         $message->method('getBody')
@@ -211,7 +211,7 @@ class SearchMessageProcessorTest extends \PHPUnit_Framework_TestCase
     {
         $messageBody = ['class' => null, 'context' => []];
 
-        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message */
+        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message */
         $message = $this->createMock(MessageInterface::class);
 
         $message->method('getBody')
@@ -224,7 +224,7 @@ class SearchMessageProcessorTest extends \PHPUnit_Framework_TestCase
         $message->method('getMessageId')
             ->willReturn(1);
 
-        /** @var JobRunner|\PHPUnit_Framework_MockObject_MockObject $jobRunner */
+        /** @var JobRunner|\PHPUnit\Framework\MockObject\MockObject $jobRunner */
         $jobRunner = $this->createMock(JobRunner::class);
 
         $jobRunner->expects($this->never())
@@ -235,7 +235,7 @@ class SearchMessageProcessorTest extends \PHPUnit_Framework_TestCase
 
     public function testRejectOnUnsupportedTopic()
     {
-        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message */
+        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message */
         $message = $this->createMock(MessageInterface::class);
 
         $message->method('getBody')
@@ -252,7 +252,7 @@ class SearchMessageProcessorTest extends \PHPUnit_Framework_TestCase
     {
         $messageBody = ['class' => null, 'context' => [], 'jobId' => 1];
 
-        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message */
+        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message */
         $message = $this->createMock(MessageInterface::class);
 
         $message->method('getBody')
@@ -567,7 +567,7 @@ class SearchMessageProcessorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param \Exception|\PHPUnit_Framework_MockObject_MockObject $exception
+     * @param \Exception|\PHPUnit\Framework\MockObject\MockObject $exception
      * @param bool   $isDeadlock
      * @param string $result
      *
@@ -579,7 +579,7 @@ class SearchMessageProcessorTest extends \PHPUnit_Framework_TestCase
             'class' => '\StdClass',
             'context' => []
         ];
-        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message */
+        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message */
         $message = $this->createMock(MessageInterface::class);
         $message->method('getBody')
             ->will($this->returnValue(json_encode($messageBody)));

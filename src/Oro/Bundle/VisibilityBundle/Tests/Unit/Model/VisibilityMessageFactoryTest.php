@@ -12,12 +12,12 @@ use Oro\Bundle\VisibilityBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\VisibilityBundle\Model\VisibilityMessageFactory;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class VisibilityMessageFactoryTest extends \PHPUnit_Framework_TestCase
+class VisibilityMessageFactoryTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $registry;
 

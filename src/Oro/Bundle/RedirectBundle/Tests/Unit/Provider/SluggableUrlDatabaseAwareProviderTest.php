@@ -12,15 +12,15 @@ use Oro\Bundle\RedirectBundle\Routing\SluggableUrlGenerator;
 use Oro\Bundle\RedirectBundle\Tests\Unit\Stub\UrlCacheAllCapabilities;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 
-class SluggableUrlDatabaseAwareProviderTest extends \PHPUnit_Framework_TestCase
+class SluggableUrlDatabaseAwareProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
     protected $registry;
 
-    /** @var SluggableUrlCacheAwareProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var SluggableUrlCacheAwareProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $cacheProvider;
 
-    /** @var UrlCacheInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var UrlCacheInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $cache;
 
     protected function setUp()
@@ -32,7 +32,7 @@ class SluggableUrlDatabaseAwareProviderTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider cacheDataProvider
-     * @param UrlCacheInterface|\PHPUnit_Framework_MockObject_MockObject $cache
+     * @param UrlCacheInterface|\PHPUnit\Framework\MockObject\MockObject $cache
      */
     public function testGetUrlWithoutCacheUrl(UrlCacheInterface $cache)
     {

@@ -7,7 +7,7 @@ use Oro\Bundle\SaleBundle\Quote\Calculable\ParameterBag\Factory\ParameterBagCalc
 use Oro\Bundle\SaleBundle\Quote\Calculable\ParameterBag\ParameterBagCalculableQuote;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface;
 
-class ParameterBagCalculableQuoteFactoryTest extends \PHPUnit_Framework_TestCase
+class ParameterBagCalculableQuoteFactoryTest extends \PHPUnit\Framework\TestCase
 {
     public function testCreateCalculableQuote()
     {
@@ -32,7 +32,7 @@ class ParameterBagCalculableQuoteFactoryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return ShippingLineItemInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return ShippingLineItemInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private function getShippingLineItemMock()
     {

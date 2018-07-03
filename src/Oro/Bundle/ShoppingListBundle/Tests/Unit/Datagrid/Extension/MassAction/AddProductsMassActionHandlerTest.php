@@ -16,7 +16,7 @@ use Oro\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemHandler;
 use Oro\Bundle\ShoppingListBundle\Tests\Unit\Entity\Stub\ShoppingListStub;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
+class AddProductsMassActionHandlerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
@@ -28,13 +28,13 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
     /** @var  MassActionHandlerArgs */
     protected $args;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|ShoppingListLineItemHandler */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|ShoppingListLineItemHandler */
     protected $shoppingListItemHandler;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|ManagerRegistry */
     protected $managerRegistry;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|ProductShoppingListsDataProvider */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|ProductShoppingListsDataProvider */
     protected $productShoppingListsDataProvider;
 
     protected function setUp()
@@ -236,7 +236,7 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|MassActionHandlerArgs
+     * @return \PHPUnit\Framework\MockObject\MockObject|MassActionHandlerArgs
      */
     protected function getMassActionArgs()
     {
@@ -249,7 +249,7 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return MessageGenerator|\PHPUnit_Framework_MockObject_MockObject
+     * @return MessageGenerator|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function getMessageGenerator()
     {

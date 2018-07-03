@@ -13,7 +13,7 @@ use PHPUnit\Framework\TestCase;
 class ResetPriceRuleFieldOnUpdateTest extends TestCase
 {
     /**
-     * @var ContextInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ContextInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $context;
 

@@ -20,17 +20,17 @@ class StorePriceListInContextByFilterTest extends TestCase
     const PRICE_LIST_ID = 21;
 
     /**
-     * @var PriceListIDContextStorageInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var PriceListIDContextStorageInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $priceListIDContextStorage;
 
     /**
-     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     private $doctrineHelper;
 
     /**
-     * @var Context|\PHPUnit_Framework_MockObject_MockObject
+     * @var Context|\PHPUnit\Framework\MockObject\MockObject
      */
     private $context;
 
@@ -144,7 +144,7 @@ class StorePriceListInContextByFilterTest extends TestCase
     }
 
     /**
-     * @return FilterValueAccessorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return FilterValueAccessorInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private function createFilterValuesMock()
     {

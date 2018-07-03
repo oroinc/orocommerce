@@ -13,7 +13,7 @@ use Oro\Component\TestUtils\ORM\OrmTestCase;
 
 class FrontendQuoteDatagridListenerTest extends OrmTestCase
 {
-    /** @var DatagridInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var DatagridInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $datagrid;
 
     /** @var FrontendQuoteDatagridListener */

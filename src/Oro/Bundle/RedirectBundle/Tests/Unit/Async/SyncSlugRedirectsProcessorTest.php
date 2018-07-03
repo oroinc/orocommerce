@@ -19,22 +19,22 @@ use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Psr\Log\LoggerInterface;
 
-class SyncSlugRedirectsProcessorTest extends \PHPUnit_Framework_TestCase
+class SyncSlugRedirectsProcessorTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $registry;
 
     /**
-     * @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $logger;
 
     /**
-     * @var DatabaseExceptionHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var DatabaseExceptionHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $databaseExceptionHelper;
 
@@ -59,13 +59,13 @@ class SyncSlugRedirectsProcessorTest extends \PHPUnit_Framework_TestCase
 
     public function testProcessRejectInvalidMessage()
     {
-        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
+        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message **/
         $message = $this->createMock(MessageInterface::class);
         $message->expects($this->once())
             ->method('getBody')
             ->willReturn(json_encode([]));
 
-        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
+        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session **/
         $session = $this->createMock(SessionInterface::class);
 
         $this->logger->expects($this->once())
@@ -82,13 +82,13 @@ class SyncSlugRedirectsProcessorTest extends \PHPUnit_Framework_TestCase
     {
         $slugId = 42;
 
-        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
+        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message **/
         $message = $this->createMock(MessageInterface::class);
         $message->expects($this->once())
             ->method('getBody')
             ->willReturn(json_encode(['slugId' => $slugId]));
 
-        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
+        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session **/
         $session = $this->createMock(SessionInterface::class);
 
         $slugRepository = $this->createMock(SlugRepository::class);
@@ -132,18 +132,18 @@ class SyncSlugRedirectsProcessorTest extends \PHPUnit_Framework_TestCase
     {
         $slugId = 42;
 
-        /** @var AbstractDriverException|\PHPUnit_Framework_MockObject_MockObject $exception */
+        /** @var AbstractDriverException|\PHPUnit\Framework\MockObject\MockObject $exception */
         $exception = $this->getMockBuilder(AbstractDriverException::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
+        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message **/
         $message = $this->createMock(MessageInterface::class);
         $message->expects($this->once())
             ->method('getBody')
             ->willReturn(json_encode(['slugId' => $slugId]));
 
-        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
+        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session **/
         $session = $this->createMock(SessionInterface::class);
 
         $slugRepository = $this->createMock(SlugRepository::class);
@@ -202,13 +202,13 @@ class SyncSlugRedirectsProcessorTest extends \PHPUnit_Framework_TestCase
 
         $redirect = $this->getEntity(Redirect::class, ['id' => 123]);
 
-        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
+        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message **/
         $message = $this->createMock(MessageInterface::class);
         $message->expects($this->once())
             ->method('getBody')
             ->willReturn(json_encode(['slugId' => $slugId]));
 
-        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
+        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session **/
         $session = $this->createMock(SessionInterface::class);
 
         $slugRepository = $this->createMock(SlugRepository::class);
