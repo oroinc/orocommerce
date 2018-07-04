@@ -42,6 +42,10 @@ Oro\Bundle\ProductBundle\Entity\Product:
             name: primary_unit
             type: text
 
+        -
+            name: attribute_family_id
+            type: integer
+
 Oro\Bundle\ProductBundle\Entity\Brand:
     alias: oro_brand_WEBSITE_ID
     fields:

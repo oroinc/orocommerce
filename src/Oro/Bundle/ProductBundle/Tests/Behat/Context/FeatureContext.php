@@ -1148,6 +1148,16 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
+     * Activate filter block in frontend product grid
+     *
+     * @When /^(?:|I )check that filter block visible in frontend product grid$/
+     */
+    public function enableGridFilters()
+    {
+        $this->getGridFilters();
+    }
+
+    /**
      * Select a value for product attribute on product update form
      * Example: I fill in product attribute "Color" with "Red"
      *
