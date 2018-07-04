@@ -7,12 +7,12 @@ use Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchMappingProvider;
 use Oro\Bundle\WebsiteSearchBundle\Resolver\EntityDependenciesResolver;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class EntityDependenciesResolverTest extends \PHPUnit_Framework_TestCase
+class EntityDependenciesResolverTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var WebsiteSearchMappingProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var WebsiteSearchMappingProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $mappingProvider;
 
-    /** @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $eventDispatcher;
 
     /** @var EntityDependenciesResolver */

@@ -6,7 +6,7 @@ use Oro\Bundle\WebsiteSearchBundle\Entity\IndexInteger;
 use Oro\Bundle\WebsiteSearchBundle\Entity\Item;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-class IndexIntegerTest extends \PHPUnit_Framework_TestCase
+class IndexIntegerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 

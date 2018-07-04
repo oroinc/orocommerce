@@ -5,7 +5,7 @@ namespace Oro\Bundle\RedirectBundle\Tests\Unit\Form\DataTransformer;
 use Oro\Bundle\RedirectBundle\Form\DataTransformer\PrefixWithRedirectToStringTransformer;
 use Oro\Bundle\RedirectBundle\Model\PrefixWithRedirect;
 
-class PrefixWithRedirectToStringTransformerTest extends \PHPUnit_Framework_TestCase
+class PrefixWithRedirectToStringTransformerTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var PrefixWithRedirectToStringTransformer

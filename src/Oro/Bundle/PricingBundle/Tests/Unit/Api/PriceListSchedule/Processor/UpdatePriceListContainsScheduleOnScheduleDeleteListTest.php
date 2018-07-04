@@ -13,12 +13,12 @@ use Oro\Component\ChainProcessor\ProcessorInterface;
 class UpdatePriceListContainsScheduleOnScheduleDeleteListTest extends DeleteListProcessorTestCase
 {
     /**
-     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     private $doctrineHelper;
 
     /**
-     * @var ProcessorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProcessorInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $deleteHandler;
 

@@ -4,7 +4,7 @@ layout:
 
     actions:
         - '@setBlockTheme':
-            themes: 'product_index.html.twig'
+            themes: 'OroCatalogBundle:layouts:blank/oro_catalog_frontend_product_allproducts/product_index.html.twig'
 
         - '@setOption':
             id: product_datagrid

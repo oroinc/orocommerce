@@ -5,7 +5,7 @@ namespace Oro\Bundle\ShippingBundle\Tests\Unit\DependencyInjection\CompilerPass;
 use Oro\Bundle\ShippingBundle\DependencyInjection\CompilerPass\ShippingMethodsCompilerPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-class ShippingMethodsCompilerPassTest extends \PHPUnit_Framework_TestCase
+class ShippingMethodsCompilerPassTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var ShippingMethodsCompilerPass
@@ -13,7 +13,7 @@ class ShippingMethodsCompilerPassTest extends \PHPUnit_Framework_TestCase
     protected $compilerPass;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ContainerBuilder
+     * @var \PHPUnit\Framework\MockObject\MockObject|ContainerBuilder
      */
     protected $container;
 

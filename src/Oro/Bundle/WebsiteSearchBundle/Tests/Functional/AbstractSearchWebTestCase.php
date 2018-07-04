@@ -45,7 +45,7 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
     protected $doctrineHelper;
 
     /**
-     * @var AbstractSearchMappingProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var AbstractSearchMappingProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $mappingProviderMock;
 
@@ -268,13 +268,6 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
         $this->mappingProviderMock
             ->expects($this->any())
             ->method('isClassSupported')
-            ->withConsecutive(
-                [TestProduct::class],
-                [TestProduct::class],
-                [TestProduct::class],
-                [TestEmployee::class],
-                [TestEmployee::class]
-            )
             ->willReturn(true);
 
         $this->setEntityAliasExpectation();
@@ -363,6 +356,7 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
     {
         $this->loadFixtures([LoadProductsToIndex::class]);
 
+        $this->setEntityAliasExpectation();
         $this->setClassSupportedExpectation(TestProduct::class, true);
         $this->setGetEntityConfigExpectation();
 

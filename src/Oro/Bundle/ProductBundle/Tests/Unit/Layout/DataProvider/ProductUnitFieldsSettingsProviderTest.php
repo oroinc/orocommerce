@@ -5,10 +5,10 @@ namespace Oro\Bundle\ProductBundle\Layout\DataProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Visibility\ProductUnitFieldsSettingsInterface;
 
-class ProductUnitFieldsSettingsProviderTest extends \PHPUnit_Framework_TestCase
+class ProductUnitFieldsSettingsProviderTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ProductUnitFieldsSettingsInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProductUnitFieldsSettingsInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $unitVisibility;
 

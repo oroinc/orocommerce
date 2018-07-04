@@ -8,7 +8,7 @@ use Oro\Bundle\PricingBundle\Model\DTO\PriceListRelationTrigger;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-class PriceListRelationTriggerTest extends \PHPUnit_Framework_TestCase
+class PriceListRelationTriggerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 
@@ -27,13 +27,13 @@ class PriceListRelationTriggerTest extends \PHPUnit_Framework_TestCase
 
     public function testToArray()
     {
-        /** @var Website|\PHPUnit_Framework_MockObject_MockObject $website */
+        /** @var Website|\PHPUnit\Framework\MockObject\MockObject $website */
         $website = $this->createMock(Website::class);
         $website->method('getId')->willReturn(1);
-        /** @var Customer|\PHPUnit_Framework_MockObject_MockObject $customer */
+        /** @var Customer|\PHPUnit\Framework\MockObject\MockObject $customer */
         $customer = $this->createMock(Customer::class);
         $customer->method('getId')->willReturn(1);
-        /** @var CustomerGroup|\PHPUnit_Framework_MockObject_MockObject $customerGroup */
+        /** @var CustomerGroup|\PHPUnit\Framework\MockObject\MockObject $customerGroup */
         $customerGroup = $this->createMock(CustomerGroup::class);
         $customerGroup->method('getId')->willReturn(1);
         $trigger = new PriceListRelationTrigger();

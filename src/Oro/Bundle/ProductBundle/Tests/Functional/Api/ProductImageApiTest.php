@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Api;
 
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 
@@ -18,52 +19,87 @@ class ProductImageApiTest extends RestJsonApiTestCase
     }
 
     /**
-     * @param array $parameters
-     * @param string $expectedDataFileName
+     * @param array $expectedData
+     * @param int   $fileId
      *
-     * @dataProvider getListDataProvider
-     */
-    public function testGetList(array $parameters, $expectedDataFileName)
-    {
-        $response = $this->cget(['entity' => 'productimages'], $parameters);
-
-        $this->assertResponseContains($expectedDataFileName, $response);
-    }
-
-    /**
      * @return array
      */
-    public function getListDataProvider()
+    private static function updateExpectedData(array $expectedData, $fileId)
     {
-        return [
-            'filter by Product' => [
-                'parameters' => [
-                    'filter' => [
-                        'product' => '@product-1->id',
-                    ],
-                ],
-                'expectedDataFileName' => 'cget_product_image_filter_by_product.yml',
-            ],
-        ];
+        array_walk_recursive(
+            $expectedData,
+            function (&$val) use ($fileId) {
+                if (is_string($val)) {
+                    $val = str_replace('{fileId}', (string)$fileId, $val);
+                }
+            }
+        );
+
+        return self::processTemplateData($expectedData);
+    }
+
+    public function testGetList()
+    {
+        $response = $this->cget(
+            ['entity' => 'productimages'],
+            ['filter' => ['product' => '@product-1->id']]
+        );
+
+        $this->assertResponseContains('cget_product_image_filter_by_product.yml', $response);
+    }
+
+    public function testGetWithIncludedImage()
+    {
+        /** @var Product $product */
+        $product = $this->getReference(LoadProductData::PRODUCT_1);
+        /** @var ProductImage $productImage */
+        $productImage = $product->getImages()->first();
+        $productImageId = $productImage->getId();
+        $fileId = $productImage->getImage()->getId();
+
+        $response = $this->get(
+            ['entity' => 'productimages', 'id' => (string)$productImageId],
+            ['include' => 'image']
+        );
+
+        $expectedData = self::updateExpectedData(
+            $this->loadResponseData('get_product_image_include.yml'),
+            $fileId
+        );
+        $this->assertResponseContains($expectedData, $response);
+    }
+
+    public function testGetWithIncludedImageAndOnlyFilePathIsRequested()
+    {
+        /** @var Product $product */
+        $product = $this->getReference(LoadProductData::PRODUCT_1);
+        /** @var ProductImage $productImage */
+        $productImage = $product->getImages()->first();
+        $productImageId = $productImage->getId();
+        $fileId = $productImage->getImage()->getId();
+
+        $response = $this->get(
+            ['entity' => 'productimages', 'id' => (string)$productImageId],
+            ['include' => 'image', 'fields[files]' => 'filePath']
+        );
+
+        $expectedData = self::updateExpectedData(
+            $this->loadResponseData('get_product_image_include_path_only.yml'),
+            $fileId
+        );
+        $this->assertResponseContains($expectedData, $response);
     }
 
     public function testDeleteAction()
     {
+        /** @var Product $product */
         $product = $this->getReference(LoadProductData::PRODUCT_1);
-        $firstProductImageId = (string) $product
-            ->getImages()
-            ->first()
-            ->getId();
+        $productImageId = $product->getImages()->first()->getId();
 
-        $this->delete(
-            [
-                'entity' => 'productimages',
-                'id' => $firstProductImageId
-            ]
-        );
+        $this->delete(['entity' => 'productimages', 'id' => (string)$productImageId]);
 
-        $this->assertNull(
-            $this->getEntityManager()->find(ProductImage::class, $firstProductImageId)
+        self::assertNull(
+            $this->getEntityManager()->find(ProductImage::class, $productImageId)
         );
     }
 }

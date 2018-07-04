@@ -5,7 +5,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Event;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Event\ProductImageResizeEvent;
 
-class ProductImageResizeEventTest extends \PHPUnit_Framework_TestCase
+class ProductImageResizeEventTest extends \PHPUnit\Framework\TestCase
 {
     const PRODUCT_IMAGE_ID = 1;
 

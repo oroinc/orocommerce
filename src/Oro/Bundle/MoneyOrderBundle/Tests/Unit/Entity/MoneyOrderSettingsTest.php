@@ -6,7 +6,7 @@ use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\MoneyOrderBundle\Entity\MoneyOrderSettings;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-class MoneyOrderSettingsTest extends \PHPUnit_Framework_TestCase
+class MoneyOrderSettingsTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 

@@ -6,7 +6,7 @@ use Oro\Bundle\CheckoutBundle\Datagrid\CheckoutGridCustomerUserNameListener;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CustomerBundle\Security\CustomerUserProvider;
 
-class CheckoutGridCustomerUserNameListenerTest extends \PHPUnit_Framework_TestCase
+class CheckoutGridCustomerUserNameListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var CheckoutGridCustomerUserNameListener
@@ -14,7 +14,7 @@ class CheckoutGridCustomerUserNameListenerTest extends \PHPUnit_Framework_TestCa
     protected $testable;
 
     /**
-     * @var CustomerUserProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var CustomerUserProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $provider;
 

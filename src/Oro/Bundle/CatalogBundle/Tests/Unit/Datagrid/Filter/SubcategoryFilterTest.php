@@ -17,14 +17,14 @@ use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 
-class SubcategoryFilterTest extends \PHPUnit_Framework_TestCase
+class SubcategoryFilterTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /** @var FormFactoryInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var FormFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $formFactory;
 
-    /** @var FilterUtility|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var FilterUtility|\PHPUnit\Framework\MockObject\MockObject */
     protected $filterUtility;
 
     /** @var SubcategoryFilter */
@@ -97,7 +97,7 @@ class SubcategoryFilterTest extends \PHPUnit_Framework_TestCase
         $formView->children['type'] = $typeFormView;
         $formView->children['value'] = $valueFormView;
 
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock(FormInterface::class);
         $form->expects($this->any())
             ->method('createView')
@@ -139,7 +139,7 @@ class SubcategoryFilterTest extends \PHPUnit_Framework_TestCase
         $fieldName = 'field';
         $value = new ArrayCollection([$category1, $category2]);
 
-        /** @var SearchFilterDatasourceAdapter|\PHPUnit_Framework_MockObject_MockObject $ds */
+        /** @var SearchFilterDatasourceAdapter|\PHPUnit\Framework\MockObject\MockObject $ds */
         $ds = $this->createMock(SearchFilterDatasourceAdapter::class);
         $ds->expects($this->once())
             ->method('addRestriction')

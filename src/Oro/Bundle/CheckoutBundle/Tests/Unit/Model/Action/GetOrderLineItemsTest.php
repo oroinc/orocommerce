@@ -12,7 +12,7 @@ use Oro\Component\ConfigExpression\ContextAccessor;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\PropertyAccess\PropertyPath;
 
-class GetOrderLineItemsTest extends \PHPUnit_Framework_TestCase
+class GetOrderLineItemsTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var ContextAccessor
@@ -20,7 +20,7 @@ class GetOrderLineItemsTest extends \PHPUnit_Framework_TestCase
     protected $contextAccessor;
 
     /**
-     * @var CheckoutLineItemsManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var CheckoutLineItemsManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $checkoutLineItemsManager;
 
@@ -37,7 +37,7 @@ class GetOrderLineItemsTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        /** @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject $eventDispatcher $eventDispatcher */
+        /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject $eventDispatcher $eventDispatcher */
         $eventDispatcher = $this->createMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
 
         $this->action = new GetOrderLineItems($this->contextAccessor, $this->checkoutLineItemsManager);

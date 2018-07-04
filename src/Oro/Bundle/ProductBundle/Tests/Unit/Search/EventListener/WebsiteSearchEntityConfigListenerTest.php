@@ -13,12 +13,12 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Search\EventListener\WebsiteSearchEntityConfigListener;
 use Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchMappingProvider;
 
-class WebsiteSearchEntityConfigListenerTest extends \PHPUnit_Framework_TestCase
+class WebsiteSearchEntityConfigListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var WebsiteSearchMappingProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var WebsiteSearchMappingProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $mappingProvider;
 
-    /** @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
     protected $configManager;
 
     /** @var WebsiteSearchEntityConfigListener */
@@ -60,11 +60,11 @@ class WebsiteSearchEntityConfigListenerTest extends \PHPUnit_Framework_TestCase
     {
         $fieldName = 'field1';
 
-        /** @var ConfigIdInterface|\PHPUnit_Framework_MockObject_MockObject $configId */
+        /** @var ConfigIdInterface|\PHPUnit\Framework\MockObject\MockObject $configId */
         $configId = $this->createMock(ConfigIdInterface::class);
         $config = new Config($configId, ['is_attribute' => true]);
 
-        /** @var ConfigProvider|\PHPUnit_Framework_MockObject_MockObject $attributeConfigProvider */
+        /** @var ConfigProvider|\PHPUnit\Framework\MockObject\MockObject $attributeConfigProvider */
         $provider = $this->createMock(ConfigProvider::class);
         $provider->expects($this->once())
             ->method('getConfig')

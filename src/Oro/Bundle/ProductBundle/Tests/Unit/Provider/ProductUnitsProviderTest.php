@@ -10,7 +10,7 @@ use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 use Oro\Bundle\ProductBundle\Provider\ProductUnitsProvider;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class ProductUnitsProviderTest extends \PHPUnit_Framework_TestCase
+class ProductUnitsProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
@@ -20,7 +20,7 @@ class ProductUnitsProviderTest extends \PHPUnit_Framework_TestCase
     protected $productUnitsProvider;
 
     /**
-     * @var ProductUnitLabelFormatter|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProductUnitLabelFormatter|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $formatter;
 

@@ -10,13 +10,13 @@ use Oro\Bundle\ProductBundle\Validator\Constraints\EmptyVariantFieldInSimpleProd
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
-class EmptyVariantFieldInSimpleProductForVariantLinksValidatorTest extends \PHPUnit_Framework_TestCase
+class EmptyVariantFieldInSimpleProductForVariantLinksValidatorTest extends \PHPUnit\Framework\TestCase
 {
     const VARIANT_FIELD_KEY_COLOR = 'color';
     const VARIANT_FIELD_KEY_SIZE = 'size';
     const MESSAGE = 'oro.product.product_variant_field.unique_variant_links_when_empty_variant_field_in_simple';
 
-    /** @var ExecutionContextInterface| \PHPUnit_Framework_MockObject_MockObject */
+    /** @var ExecutionContextInterface| \PHPUnit\Framework\MockObject\MockObject */
     private $context;
 
     /** @var EmptyVariantFieldInSimpleProductForVariantLinksValidator */

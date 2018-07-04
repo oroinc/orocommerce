@@ -7,9 +7,6 @@ use Oro\Bundle\CurrencyBundle\Provider\CurrencyProviderInterface;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\CurrencyBundle\Utils\CurrencyNameHelper;
 use Oro\Bundle\FormBundle\Form\Extension\AdditionalAttrExtension;
-use Oro\Bundle\FormBundle\Form\Type\CollectionType;
-use Oro\Bundle\FormBundle\Form\Type\OroChoiceType;
-use Oro\Bundle\FormBundle\Form\Type\Select2Type;
 use Oro\Bundle\FormBundle\Tests\Unit\Stub\StripTagsExtensionStub;
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 use Oro\Bundle\RuleBundle\Entity\Rule;
@@ -67,17 +64,17 @@ class ShippingMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
     protected $shippingMethodProvider;
 
     /**
-     * @var ShippingMethodChoicesProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingMethodChoicesProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $choicesProvider;
 
     /**
-     * @var ShippingMethodIconProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingMethodIconProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $iconProvider;
 
     /**
-     * @var AssetHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var AssetHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $assetHelper;
 
@@ -104,7 +101,7 @@ class ShippingMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
         $this->methodConfigCollectionSubscriber
             ->setFactory($this->factory)->setMethodRegistry($this->shippingMethodProvider);
 
-        /** @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject $translator */
+        /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject $translator */
         $translator = $this->createMock(TranslatorInterface::class);
         $translator->expects(static::any())
             ->method('trans')
@@ -235,7 +232,7 @@ class ShippingMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
             ->method('getCurrencyList')
             ->willReturn(['USD']);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|TranslatableEntityType $registry */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|TranslatableEntityType $registry */
         $translatableEntity = $this->getMockBuilder('Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType')
             ->setMethods(['configureOptions', 'buildForm'])
             ->disableOriginalConstructor()
@@ -255,15 +252,9 @@ class ShippingMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
                         $this->getMockBuilder(LocaleSettings::class)->disableOriginalConstructor()->getMock(),
                         $this->getMockBuilder(CurrencyNameHelper::class)->disableOriginalConstructor()->getMock()
                     ),
-                    CollectionType::class => new CollectionType(),
                     ShippingMethodsConfigsRuleDestinationType::class => new ShippingMethodsConfigsRuleDestinationType(
                         new AddressCountryAndRegionSubscriberStub()
                     ),
-                    'oro_select2_choice' => new Select2Type(
-                        'choice',
-                        'oro_select2_choice'
-                    ),
-                    OroChoiceType::class => new OroChoiceType(),
                     ShippingMethodSelectType::class => new ShippingMethodSelectType(
                         $this->choicesProvider,
                         $this->iconProvider,

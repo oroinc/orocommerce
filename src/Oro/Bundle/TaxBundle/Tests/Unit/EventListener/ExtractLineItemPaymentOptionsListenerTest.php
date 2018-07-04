@@ -12,14 +12,14 @@ use Oro\Bundle\TaxBundle\Provider\TaxProviderInterface;
 use Oro\Bundle\TaxBundle\Provider\TaxProviderRegistry;
 use Symfony\Component\Translation\TranslatorInterface;
 
-class ExtractLineItemPaymentOptionsListenerTest extends \PHPUnit_Framework_TestCase
+class ExtractLineItemPaymentOptionsListenerTest extends \PHPUnit\Framework\TestCase
 {
     const TAX_AMOUNT = 1.23;
 
-    /** @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $translator;
 
-    /** @var TaxProviderInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var TaxProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $taxProvider;
 
     /** @var ExtractLineItemPaymentOptionsListener */

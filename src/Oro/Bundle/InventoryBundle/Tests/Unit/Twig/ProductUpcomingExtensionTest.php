@@ -7,7 +7,7 @@ use Oro\Bundle\InventoryBundle\Twig\ProductUpcomingExtension;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
 
-class ProductUpcomingExtensionTest extends \PHPUnit_Framework_TestCase
+class ProductUpcomingExtensionTest extends \PHPUnit\Framework\TestCase
 {
     use TwigExtensionTestCaseTrait;
 
@@ -17,7 +17,7 @@ class ProductUpcomingExtensionTest extends \PHPUnit_Framework_TestCase
     protected $productUpcomingExtension;
 
     /**
-     * @var ProductUpcomingProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProductUpcomingProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $provider;
 

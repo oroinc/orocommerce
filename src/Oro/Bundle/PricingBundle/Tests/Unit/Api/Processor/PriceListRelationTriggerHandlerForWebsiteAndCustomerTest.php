@@ -129,7 +129,7 @@ class PriceListRelationTriggerHandlerForWebsiteAndCustomerTest extends BaseTestC
     /**
      * @param int $id
      *
-     * @return Customer|\PHPUnit_Framework_MockObject_MockObject
+     * @return Customer|\PHPUnit\Framework\MockObject\MockObject
      */
     private function createCustomer(int $id)
     {

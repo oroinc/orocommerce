@@ -4,7 +4,7 @@ namespace Oro\Bundle\ProductBundle\Test\Validator\Constraints;
 
 use Oro\Bundle\ProductBundle\Validator\Constraints\ProductBySku;
 
-class ProductBySkuTest extends \PHPUnit_Framework_TestCase
+class ProductBySkuTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var ProductBySku

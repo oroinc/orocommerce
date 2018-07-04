@@ -35,7 +35,7 @@ class OroPromotionBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_3';
+        return 'v1_4';
     }
 
     /**
@@ -276,8 +276,8 @@ class OroPromotionBundleInstaller implements
         $table->addColumn('active', 'boolean', ['default' => '1']);
         $table->addColumn('type', 'string', ['length' => 255]);
         $table->addColumn('promotion_name', 'text', []);
-        $table->addColumn('config_options', 'json_array', []);
-        $table->addColumn('promotion_data', 'json_array', []);
+        $table->addColumn('config_options', 'json_array', ['comment' => '(DC2Type:json_array)']);
+        $table->addColumn('promotion_data', 'json_array', ['comment' => '(DC2Type:json_array)']);
         $table->addColumn('created_at', 'datetime', []);
         $table->addColumn('updated_at', 'datetime', []);
         $table->setPrimaryKey(['id']);

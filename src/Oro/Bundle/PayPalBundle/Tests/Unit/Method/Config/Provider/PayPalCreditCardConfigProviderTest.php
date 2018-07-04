@@ -13,12 +13,12 @@ use Oro\Bundle\PayPalBundle\Method\Config\Provider\PayPalCreditCardConfigProvide
 use Oro\Component\Testing\Unit\EntityTrait;
 use Psr\Log\LoggerInterface;
 
-class PayPalCreditCardConfigProviderTest extends \PHPUnit_Framework_TestCase
+class PayPalCreditCardConfigProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $doctrine;
 
@@ -68,13 +68,13 @@ class PayPalCreditCardConfigProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->doctrine->expects(static::once())->method('getManagerForClass')->willReturn($objectManager);
 
-        /** @var PayPalCreditCardConfigFactory|\PHPUnit_Framework_MockObject_MockObject $factory */
+        /** @var PayPalCreditCardConfigFactory|\PHPUnit\Framework\MockObject\MockObject $factory */
         $factory = $this->createMock(PayPalCreditCardConfigFactory::class);
         $factory->expects(static::exactly(2))
             ->method('createConfig')
             ->willReturn($config);
         
-        /** @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject $logger */
+        /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject $logger */
         $logger = $this->createMock(LoggerInterface::class);
 
         $this->payPalConfigProvider = new PayPalCreditCardConfigProvider(

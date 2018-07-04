@@ -12,7 +12,7 @@ use Oro\Bundle\TaxBundle\Model\TaxResultElement;
 use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 use Oro\Bundle\TaxBundle\Resolver\RowTotalResolver;
 
-class RowTotalResolverTest extends \PHPUnit_Framework_TestCase
+class RowTotalResolverTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var RowTotalResolver
@@ -20,12 +20,12 @@ class RowTotalResolverTest extends \PHPUnit_Framework_TestCase
     protected $resolver;
 
     /**
-     * @var Calculator| \PHPUnit_Framework_MockObject_MockObject
+     * @var Calculator| \PHPUnit\Framework\MockObject\MockObject
      */
     protected $calculator;
 
     /**
-     * @var TaxationSettingsProvider| \PHPUnit_Framework_MockObject_MockObject
+     * @var TaxationSettingsProvider| \PHPUnit\Framework\MockObject\MockObject
      */
     protected $settingsProvider;
 

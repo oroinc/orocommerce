@@ -15,7 +15,7 @@ use Oro\Bundle\ShippingBundle\Method\Configuration\Composed\ComposedShippingMeth
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodViewCollection;
 use Oro\Bundle\ShippingBundle\Provider\Price\Configured\ShippingConfiguredPriceProviderInterface;
 
-class QuoteCheckoutShippingMethodsProviderChainElementTest extends \PHPUnit_Framework_TestCase
+class QuoteCheckoutShippingMethodsProviderChainElementTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var QuoteCheckoutShippingMethodsProviderChainElement
@@ -23,17 +23,17 @@ class QuoteCheckoutShippingMethodsProviderChainElementTest extends \PHPUnit_Fram
     private $testedMethodsProvider;
 
     /**
-     * @var CheckoutShippingContextFactory|\PHPUnit_Framework_MockObject_MockObject
+     * @var CheckoutShippingContextFactory|\PHPUnit\Framework\MockObject\MockObject
      */
     private $checkoutShippingContextFactoryMock;
 
     /**
-     * @var ShippingConfiguredPriceProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingConfiguredPriceProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $shippingConfiguredPriceProviderMock;
 
     /**
-     * @var QuoteShippingConfigurationFactory|\PHPUnit_Framework_MockObject_MockObject
+     * @var QuoteShippingConfigurationFactory|\PHPUnit\Framework\MockObject\MockObject
      */
     private $quoteShippingConfigurationFactoryMock;
 
@@ -291,7 +291,7 @@ class QuoteCheckoutShippingMethodsProviderChainElementTest extends \PHPUnit_Fram
     }
 
     /**
-     * @return CheckoutShippingMethodsProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return CheckoutShippingMethodsProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private function getSuccessorMock()
     {
@@ -301,7 +301,7 @@ class QuoteCheckoutShippingMethodsProviderChainElementTest extends \PHPUnit_Fram
     }
 
     /**
-     * @return ComposedShippingMethodConfigurationInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return ComposedShippingMethodConfigurationInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private function getConfigurationMock()
     {
@@ -311,7 +311,7 @@ class QuoteCheckoutShippingMethodsProviderChainElementTest extends \PHPUnit_Fram
     }
 
     /**
-     * @return QuoteDemand|\PHPUnit_Framework_MockObject_MockObject
+     * @return QuoteDemand|\PHPUnit\Framework\MockObject\MockObject
      */
     private function getQuoteDemandMock()
     {
@@ -321,7 +321,7 @@ class QuoteCheckoutShippingMethodsProviderChainElementTest extends \PHPUnit_Fram
     }
 
     /**
-     * @return Quote|\PHPUnit_Framework_MockObject_MockObject
+     * @return Quote|\PHPUnit\Framework\MockObject\MockObject
      */
     private function getQuoteMock()
     {
@@ -331,7 +331,7 @@ class QuoteCheckoutShippingMethodsProviderChainElementTest extends \PHPUnit_Fram
     }
 
     /**
-     * @return Checkout|\PHPUnit_Framework_MockObject_MockObject
+     * @return Checkout|\PHPUnit\Framework\MockObject\MockObject
      */
     private function getCheckoutMock()
     {
@@ -341,7 +341,7 @@ class QuoteCheckoutShippingMethodsProviderChainElementTest extends \PHPUnit_Fram
     }
 
     /**
-     * @return ShippingContext|\PHPUnit_Framework_MockObject_MockObject
+     * @return ShippingContext|\PHPUnit\Framework\MockObject\MockObject
      */
     private function getShippingContextMock()
     {

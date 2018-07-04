@@ -13,3 +13,4 @@ config:
         'orocheckout/js/app/views/checkout-content-view': 'bundles/orocheckout/js/app/views/checkout-content-view.js'
         'orocheckout/js/app/views/checkout-inner-content-view': 'bundles/orocheckout/js/app/views/checkout-inner-content-view.js'
         'orocheckout/js/app/views/late-checkout-registration-view': 'bundles/orocheckout/js/app/views/late-checkout-registration-view.js'
+        'orocheckout/js/app/views/single-page-transition-button-view': 'bundles/orocheckout/js/app/views/single-page-transition-button-view.js'

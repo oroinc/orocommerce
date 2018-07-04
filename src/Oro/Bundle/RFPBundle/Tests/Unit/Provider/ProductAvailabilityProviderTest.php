@@ -6,7 +6,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\RFPBundle\Provider\ProductAvailabilityProvider;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class ProductAvailabilityProviderTest extends \PHPUnit_Framework_TestCase
+class ProductAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 

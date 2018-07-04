@@ -9,7 +9,7 @@ use Oro\Component\ConfigExpression\Tests\Unit\Fixtures;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\PropertyAccess\PropertyPath;
 
-class AddStringSuffixActionTest extends \PHPUnit_Framework_TestCase
+class AddStringSuffixActionTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var AddStringSuffixAction

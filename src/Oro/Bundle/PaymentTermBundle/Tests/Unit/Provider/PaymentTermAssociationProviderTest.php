@@ -12,15 +12,15 @@ use Oro\Bundle\PaymentTermBundle\Tests\Unit\PaymentTermAwareStub;
 use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
-class PaymentTermAssociationProviderTest extends \PHPUnit_Framework_TestCase
+class PaymentTermAssociationProviderTest extends \PHPUnit\Framework\TestCase
 {
     /** @var PaymentTermAssociationProvider */
     private $paymentTermAssociationProvider;
 
-    /** @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $doctrineHelper;
 
-    /** @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $configProvider;
 
     protected function setUp()

@@ -16,17 +16,17 @@ use PHPUnit\Framework\TestCase;
 class EnableShardingOnConfigTest extends TestCase
 {
     /**
-     * @var ShardManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShardManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $shardManager;
 
     /**
-     * @var PriceListIDContextStorageInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var PriceListIDContextStorageInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $priceListIDContextStorage;
 
     /**
-     * @var Context|\PHPUnit_Framework_MockObject_MockObject
+     * @var Context|\PHPUnit\Framework\MockObject\MockObject
      */
     private $context;
 

@@ -12,24 +12,25 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormFactory;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormRegistryInterface;
+use Symfony\Component\Form\FormTypeInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-class TotalCalculateListenerTest extends \PHPUnit_Framework_TestCase
+class TotalCalculateListenerTest extends \PHPUnit\Framework\TestCase
 {
     const FORM_DATA = ['field' => 'value'];
 
     /**
-     * @var FormFactory|\PHPUnit_Framework_MockObject_MockObject
+     * @var FormFactory|\PHPUnit\Framework\MockObject\MockObject
      */
     private $formFactory;
 
     /**
-     * @var CurrentApplicationProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var CurrentApplicationProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $applicationProvider;
 
     /**
-     * @var FormRegistryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var FormRegistryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $formRegistry;
 
@@ -119,8 +120,7 @@ class TotalCalculateListenerTest extends \PHPUnit_Framework_TestCase
      */
     private function configureFormRegistry($className, $formName)
     {
-        //@TODO revert to FormTypeInterface in scope BAP-15236
-        $formType = $this->createMock(AbstractType::class);
+        $formType = $this->createMock(FormTypeInterface::class);
         $formType
             ->expects($this->any())
             ->method('getBlockPrefix')

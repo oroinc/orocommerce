@@ -11,22 +11,22 @@ use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class ConfigurableProductProviderTest extends \PHPUnit_Framework_TestCase
+class ConfigurableProductProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var CustomFieldProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var CustomFieldProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $customFieldProvider;
 
     /**
-     * @var ProductVariantAvailabilityProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProductVariantAvailabilityProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $productVariantAvailabilityProvider;
 
     /**
-     * @var ProductVariantFieldValueHandlerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProductVariantFieldValueHandlerRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $productVariantFieldValueHandlerRegistry;
 
@@ -100,7 +100,7 @@ class ConfigurableProductProviderTest extends \PHPUnit_Framework_TestCase
         $parentProduct->setVariantFields(['size']);
         $lineItem->setParentProduct($parentProduct);
 
-        /** @var Product|\PHPUnit_Framework_MockObject_MockObject */
+        /** @var Product|\PHPUnit\Framework\MockObject\MockObject */
         $simpleProduct = $this->getMockBuilder(Product::class)
             ->disableOriginalConstructor()
             ->setMethods(['getId', 'getSize'])

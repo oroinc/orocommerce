@@ -9,15 +9,15 @@ use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Bundle\SearchBundle\Query\Result\Item;
 use Oro\Bundle\SearchBundle\Query\SearchQueryInterface;
 
-class ComponentProcessorFilterTest extends \PHPUnit_Framework_TestCase
+class ComponentProcessorFilterTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ComponentProcessorFilter|\PHPUnit_Framework_MockObject_MockObject
+     * @var ComponentProcessorFilter|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $filter;
 
     /**
-     * @var ProductRepository|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProductRepository|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $productRepository;
 
@@ -27,7 +27,7 @@ class ComponentProcessorFilterTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return ProductRepository|\PHPUnit_Framework_MockObject_MockObject
+     * @return ProductRepository|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function getProductRepository()
     {

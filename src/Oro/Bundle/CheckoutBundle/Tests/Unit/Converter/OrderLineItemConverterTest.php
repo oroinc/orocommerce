@@ -16,19 +16,19 @@ use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
-class OrderLineItemConverterTest extends \PHPUnit_Framework_TestCase
+class OrderLineItemConverterTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     const CONFIG_PATH = 'oro_product.general_frontend_product_visibility';
 
-    /** @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
     protected $configManager;
 
-    /** @var InventoryQuantityProviderInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var InventoryQuantityProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $quantityProvider;
 
-    /** @var AuthorizationCheckerInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var AuthorizationCheckerInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $authorizationChecker;
 
     /** @var OrderLineItemConverter */

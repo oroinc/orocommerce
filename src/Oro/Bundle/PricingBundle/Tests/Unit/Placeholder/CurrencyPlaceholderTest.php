@@ -5,7 +5,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Placeholder;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\Placeholder\CurrencyPlaceholder;
 
-class CurrencyPlaceholderTest extends \PHPUnit_Framework_TestCase
+class CurrencyPlaceholderTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var CurrencyPlaceholder
@@ -13,7 +13,7 @@ class CurrencyPlaceholderTest extends \PHPUnit_Framework_TestCase
     private $placeholder;
 
     /**
-     * @var UserCurrencyManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var UserCurrencyManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $currencyManager;
 

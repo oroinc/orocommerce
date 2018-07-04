@@ -1,7 +1,7 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'notification.html.twig'
+            themes: 'OroCustomThemeBundle:layouts:custom/page/notification.html.twig'
         - '@changeBlockType':
             id: sticky_element_notification
             blockType: container

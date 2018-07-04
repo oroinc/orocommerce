@@ -3,7 +3,6 @@
 namespace Oro\Bundle\VisibilityBundle\Async\Visibility;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\DBAL\Driver\DriverException;
 use Doctrine\ORM\EntityManager;
 use Oro\Bundle\EntityBundle\ORM\DatabaseExceptionHelper;
 use Oro\Bundle\VisibilityBundle\Model\Exception\InvalidArgumentException;
@@ -16,6 +15,9 @@ use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\MessageQueue\Util\JSON;
 use Psr\Log\LoggerInterface;
 
+/**
+ * Resolves visibility by Entity
+ */
 abstract class AbstractVisibilityProcessor implements MessageProcessorInterface
 {
     /**
@@ -95,7 +97,8 @@ abstract class AbstractVisibilityProcessor implements MessageProcessorInterface
                 ['exception' => $e]
             );
 
-            if ($e instanceof DriverException && $this->databaseExceptionHelper->isDeadlock($e)) {
+            $driverException = $this->databaseExceptionHelper->getDriverException($e);
+            if ($driverException && $this->databaseExceptionHelper->isDeadlock($driverException)) {
                 return self::REQUEUE;
             } else {
                 return self::REJECT;

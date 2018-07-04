@@ -67,7 +67,6 @@ class SectionProvider
     {
         $formType = $this->formRegistry->getType($formTypeClass);
 
-        // TODO replace with getBlockPrefix in scope of BAP-15236
         return $formType->getBlockPrefix();
     }
 }

@@ -11,20 +11,20 @@ use Oro\Bundle\CatalogBundle\Tests\Unit\Entity\Stub\Category;
 use Oro\Bundle\CatalogBundle\Tests\Unit\Entity\Stub\Product;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class ProductsChangeRelationListenerTest extends \PHPUnit_Framework_TestCase
+class ProductsChangeRelationListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $em;
 
     /**
-     * @var UnitOfWork|\PHPUnit_Framework_MockObject_MockObject
+     * @var UnitOfWork|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $unitOfWork;
 
     /**
-     * @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $eventDispatcher;
 

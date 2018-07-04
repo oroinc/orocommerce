@@ -5,7 +5,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Provider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Provider\ProductTypeProvider;
 
-class ProductTypeProviderTest extends \PHPUnit_Framework_TestCase
+class ProductTypeProviderTest extends \PHPUnit\Framework\TestCase
 {
     /** @var ProductTypeProvider */
     protected $productTypeProvider;

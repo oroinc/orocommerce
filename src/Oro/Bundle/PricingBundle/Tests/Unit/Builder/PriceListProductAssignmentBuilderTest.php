@@ -17,30 +17,30 @@ use Oro\Bundle\PricingBundle\Event\AssignmentBuilderBuildEvent;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class PriceListProductAssignmentBuilderTest extends \PHPUnit_Framework_TestCase
+class PriceListProductAssignmentBuilderTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ShardManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShardManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $shardManager;
 
     /**
-     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $registry;
 
     /**
-     * @var InsertFromSelectQueryExecutor|\PHPUnit_Framework_MockObject_MockObject
+     * @var InsertFromSelectQueryExecutor|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $insertFromSelectQueryExecutor;
 
     /**
-     * @var ProductAssignmentRuleCompiler|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProductAssignmentRuleCompiler|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $ruleCompiler;
 
     /**
-     * @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $eventDispatcher;
 
@@ -72,7 +72,7 @@ class PriceListProductAssignmentBuilderTest extends \PHPUnit_Framework_TestCase
 
     public function testBuildByPriceListNoAssignmentRules()
     {
-        /** @var PriceList|\PHPUnit_Framework_MockObject_MockObject $priceList */
+        /** @var PriceList|\PHPUnit\Framework\MockObject\MockObject $priceList */
         $priceList = $this->createMock(PriceList::class);
 
         $this->assertClearGeneratedPricesCall($priceList);
@@ -86,7 +86,7 @@ class PriceListProductAssignmentBuilderTest extends \PHPUnit_Framework_TestCase
     {
         $fields = ['product', 'priceList', 'manual'];
 
-        /** @var PriceList|\PHPUnit_Framework_MockObject_MockObject $priceList */
+        /** @var PriceList|\PHPUnit\Framework\MockObject\MockObject $priceList */
         $priceList = $this->createMock(PriceList::class);
         $priceList->expects($this->once())
             ->method('getProductAssignmentRule')
@@ -128,7 +128,7 @@ class PriceListProductAssignmentBuilderTest extends \PHPUnit_Framework_TestCase
         $fields = ['product', 'priceList', 'manual'];
         $productId = 1;
 
-        /** @var PriceList|\PHPUnit_Framework_MockObject_MockObject $priceList */
+        /** @var PriceList|\PHPUnit\Framework\MockObject\MockObject $priceList */
         $priceList = $this->createMock(PriceList::class);
         $priceList->expects($this->once())
             ->method('getProductAssignmentRule')
@@ -203,7 +203,7 @@ class PriceListProductAssignmentBuilderTest extends \PHPUnit_Framework_TestCase
             ->method('getOrderedFields')
             ->willReturn($fields);
 
-        /** @var PriceList|\PHPUnit_Framework_MockObject_MockObject $priceList */
+        /** @var PriceList|\PHPUnit\Framework\MockObject\MockObject $priceList */
         $priceList = $this->createMock(PriceList::class);
         $priceList->expects($this->once())
             ->method('getProductAssignmentRule')

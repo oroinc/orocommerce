@@ -143,7 +143,7 @@ services:
             - [setRelatedItemsHandler, ['@oro_product.service.related_items_handler']]
 
     oro_product.storage.product_data_bag:
-        class: '%session.attribute_bag.class%'
+        class: Symfony\Component\HttpFoundation\Session\Attribute\AttributeBag
         public: false
         arguments:
             - '_product_data_bag'
@@ -476,6 +476,15 @@ services:
             - [setSearchRepository,["@oro_product.website_search.repository.product"]]
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: "oro_product_visibility_limited" }
+
+    oro_product.autocomplete.oro_product_visibility_limited_with_prices.search_handler:
+        class: 'Oro\Bundle\ProductBundle\Autocomplete\ProductVisibilityLimitedWithPricesSearchHandler'
+        public: false
+        arguments:
+            - '@oro_pricing.form.autocomplete.product_with_prices.search_handler'
+            - '@oro_product.autocomplete.product_visibility_limited.search_handler'
+        tags:
+            - { name: oro_form.autocomplete.search_handler, alias: "oro_product_visibility_limited_with_prices" }
 
     oro_product.product.manager:
         class: 'Oro\Bundle\ProductBundle\Entity\Manager\ProductManager'
@@ -1102,16 +1111,6 @@ services:
         arguments:
             - '@oro_product.provider.content_variant_segment_provider'
             - '@?oro_web_catalog.provider.web_catalog_usage_provider'
-
-    oro_product.command.product_collections_index_cron_command:
-        class: Oro\Bundle\ProductBundle\Command\ProductCollectionsIndexCronCommand
-        calls:
-            - ['setMessageProducer', ['@oro_message_queue.client.message_producer']]
-            - ['setMessageFactory', ['@oro_product.model.segment_message_factory']]
-            - ['setSegmentProvider', ['@oro_product.provider.segment_with_relations_provider']]
-            - ['setProductCollectionHelper', ['@oro_product.helper.product_collection_segment']]
-        tags:
-            - { name: console.command }
 
     oro_product.event_listener.product_collection_aware_content_variant_entity_listener:
         public: false

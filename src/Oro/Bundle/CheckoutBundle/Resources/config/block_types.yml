@@ -145,3 +145,16 @@ services:
             - [setName, ['checkout_sidebar']]
         tags:
             - { name: layout.block_type, alias: checkout_sidebar }
+
+    oro_checkout.layout.single_page_transition_container:
+        parent: oro_layout.block_type.abstract_configurable_container
+        calls:
+            -
+                - setOptionsConfig
+                -
+                    -
+                        transitionData: {required: true}
+                        checkout: {required: true}
+            - [setName, ['single_page_transition_container']]
+        tags:
+            - { name: layout.block_type, alias: single_page_transition_container }

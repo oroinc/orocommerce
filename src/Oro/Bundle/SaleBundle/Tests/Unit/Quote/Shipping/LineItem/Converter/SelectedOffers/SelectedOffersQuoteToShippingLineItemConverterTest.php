@@ -16,17 +16,17 @@ use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Doctrine\DoctrineShipp
 class SelectedOffersQuoteToShippingLineItemConverterTest extends AbstractOffersQuoteToShippingLineItemConverterTest
 {
     /**
-     * @var QuoteProductDemand|\PHPUnit_Framework_MockObject_MockObject
+     * @var QuoteProductDemand|\PHPUnit\Framework\MockObject\MockObject
      */
     private $demandProduct;
     
     /**
-     * @var QuoteDemand|\PHPUnit_Framework_MockObject_MockObject
+     * @var QuoteDemand|\PHPUnit\Framework\MockObject\MockObject
      */
     private $quoteDemand;
     
     /**
-     * @var Quote|\PHPUnit_Framework_MockObject_MockObject
+     * @var Quote|\PHPUnit\Framework\MockObject\MockObject
      */
     private $quoteMock;
     
@@ -135,7 +135,7 @@ class SelectedOffersQuoteToShippingLineItemConverterTest extends AbstractOffersQ
 
     /**
      * @param int                                                        $quantity
-     * @param QuoteProductOffer|\PHPUnit_Framework_MockObject_MockObject $quoteProductOfferMock
+     * @param QuoteProductOffer|\PHPUnit\Framework\MockObject\MockObject $quoteProductOfferMock
      */
     private function mockDemandProduct($quantity, $quoteProductOfferMock)
     {

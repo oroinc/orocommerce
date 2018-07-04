@@ -15,37 +15,37 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\VirtualFields\VirtualFieldsProductDecoratorFactory;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class BasicPaymentContextToRulesValueConverterTest extends \PHPUnit_Framework_TestCase
+class BasicPaymentContextToRulesValueConverterTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var AddressInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var AddressInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $shippingAddressMock;
 
     /**
-     * @var AddressInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var AddressInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $billingAddressMock;
 
     /**
-     * @var AddressInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var AddressInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $shippingOriginMock;
 
     /**
-     * @var Customer|\PHPUnit_Framework_MockObject_MockObject
+     * @var Customer|\PHPUnit\Framework\MockObject\MockObject
      */
     private $customerMock;
 
     /**
-     * @var CustomerUser|\PHPUnit_Framework_MockObject_MockObject
+     * @var CustomerUser|\PHPUnit\Framework\MockObject\MockObject
      */
     private $customerUserMock;
 
     /**
-     * @var Price|\PHPUnit_Framework_MockObject_MockObject
+     * @var Price|\PHPUnit\Framework\MockObject\MockObject
      */
     private $subtotalMock;
 

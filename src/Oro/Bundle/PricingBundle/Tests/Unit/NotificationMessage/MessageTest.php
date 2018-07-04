@@ -4,7 +4,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\NotificationMessage;
 
 use Oro\Bundle\PricingBundle\NotificationMessage\Message;
 
-class MessageTest extends \PHPUnit_Framework_TestCase
+class MessageTest extends \PHPUnit\Framework\TestCase
 {
     public function testMessageRequiredFields()
     {

@@ -10,18 +10,18 @@ use Oro\Bundle\ShippingBundle\Tests\Unit\Context\ShippingContextMockTrait;
 use Oro\Bundle\ShippingBundle\Tests\Unit\Entity\ShippingMethodsConfigsRuleMockTrait;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
-class RegardlessDestinationMethodsConfigsRulesByContextProviderTest extends \PHPUnit_Framework_TestCase
+class RegardlessDestinationMethodsConfigsRulesByContextProviderTest extends \PHPUnit\Framework\TestCase
 {
     use ShippingContextMockTrait;
     use ShippingMethodsConfigsRuleMockTrait;
 
     /**
-     * @var ShippingMethodsConfigsRuleRepository|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingMethodsConfigsRuleRepository|\PHPUnit\Framework\MockObject\MockObject
      */
     private $repository;
 
     /**
-     * @var MethodsConfigsRulesFiltrationServiceInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var MethodsConfigsRulesFiltrationServiceInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $filtrationService;
 
@@ -112,7 +112,7 @@ class RegardlessDestinationMethodsConfigsRulesByContextProviderTest extends \PHP
     }
 
     /**
-     * @return AddressInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return AddressInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private function createAddressMock()
     {
@@ -120,7 +120,7 @@ class RegardlessDestinationMethodsConfigsRulesByContextProviderTest extends \PHP
     }
 
     /**
-     * @return Website|\PHPUnit_Framework_MockObject_MockObject
+     * @return Website|\PHPUnit\Framework\MockObject\MockObject
      */
     private function createWebsiteMock()
     {

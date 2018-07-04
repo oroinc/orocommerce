@@ -12,8 +12,6 @@ Retrieve a specific order address record.
 
 Retrieve a collection of order address records.
 
-The list of records that will be returned, could be limited by filters.
-
 {@inheritdoc}
 
 ### create
@@ -26,8 +24,6 @@ The created record is returned in the response.
 
 {@request:json_api}
 Example:
-
-`</admin/api/orderaddresses>`
 
 ```JSON
 {
@@ -72,8 +68,6 @@ The updated record is returned in the response.
 {@request:json_api}
 Example:
 
-`</admin/api/orderaddresses/1>`
-
 ```JSON
 {
   "data": {
@@ -116,8 +110,6 @@ Delete a specific order address record.
 ### delete_list
 
 Delete a collection of order address records.
-
-The list of records that will be deleted, could be limited by filters.
 
 {@inheritdoc}
 
@@ -255,8 +247,6 @@ Replace country assigned to a specific address record.
 {@request:json_api}
 Example:
 
-`</admin/api/orderaddresses/1/relationships/country>`
-
 ```JSON
 {
   "data": {
@@ -284,8 +274,6 @@ Replace region assigned to a specific region record.
 {@request:json_api}
 Example:
 
-`</admin/api/orderaddresses/1/relationships/region>`
-
 ```JSON
 {
   "data": {
@@ -312,8 +300,6 @@ Replace the customer user address assigned to a specific order address record.
 
 {@request:json_api}
 Example:
-
-`</admin/api/orderaddresses/1/relationships/customerUserAddress>`
 
 ```JSON
 {

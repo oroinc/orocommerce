@@ -12,20 +12,20 @@ use Oro\Bundle\VisibilityBundle\Model\MessageFactoryInterface;
 use Oro\Component\MessageQueue\Client\Message;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 
-class CustomerListenerTest extends \PHPUnit_Framework_TestCase
+class CustomerListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var MessageFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var MessageFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $factory;
 
     /**
-     * @var MessageProducerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $producer;
 
     /**
-     * @var CustomerPartialUpdateDriverInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var CustomerPartialUpdateDriverInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $driver;
 
@@ -101,7 +101,7 @@ class CustomerListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testPreUpdate()
     {
-        /** @var PreUpdateEventArgs|\PHPUnit_Framework_MockObject_MockObject $args */
+        /** @var PreUpdateEventArgs|\PHPUnit\Framework\MockObject\MockObject $args */
         $args = $this->getMockBuilder(PreUpdateEventArgs::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -124,7 +124,7 @@ class CustomerListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testPreUpdateWithDisabledListener()
     {
-        /* @var $args PreUpdateEventArgs|\PHPUnit_Framework_MockObject_MockObject */
+        /* @var $args PreUpdateEventArgs|\PHPUnit\Framework\MockObject\MockObject */
         $args = $this->createMock(PreUpdateEventArgs::class);
         $args->expects($this->once())
             ->method('hasChangedField')

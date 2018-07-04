@@ -7,7 +7,7 @@ use Oro\Bundle\PromotionBundle\Layout\DataProvider\DTO\ObjectStorage;
 use Oro\Bundle\PromotionBundle\Layout\DataProvider\DTO\UnsupportedObjectException;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class ObjectStorageTest extends \PHPUnit_Framework_TestCase
+class ObjectStorageTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 

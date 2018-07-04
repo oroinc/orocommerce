@@ -19,7 +19,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
  * @ORM\Entity
  * @ORM\Table(name="unique_entity_validator_test")
  */
-class UniqueEntityValidatorTest extends \PHPUnit_Framework_TestCase
+class UniqueEntityValidatorTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var UniqueEntityValidator
@@ -27,7 +27,7 @@ class UniqueEntityValidatorTest extends \PHPUnit_Framework_TestCase
     protected $validator;
 
     /**
-     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $registry;
 

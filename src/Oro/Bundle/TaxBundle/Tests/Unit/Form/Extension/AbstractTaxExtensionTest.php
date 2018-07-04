@@ -12,17 +12,17 @@ use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormInterface;
 
-abstract class AbstractTaxExtensionTest extends \PHPUnit_Framework_TestCase
+abstract class AbstractTaxExtensionTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $doctrineHelper;
 
     /**
-     * @var EntityRepository|\PHPUnit_Framework_MockObject_MockObject
+     * @var EntityRepository|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $entityRepository;
 
@@ -75,7 +75,7 @@ abstract class AbstractTaxExtensionTest extends \PHPUnit_Framework_TestCase
     {
         $taxCodeForm = $this->createMock('Symfony\Component\Form\FormInterface');
 
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $mainForm */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $mainForm */
         $mainForm = $this->createMock('Symfony\Component\Form\FormInterface');
         $mainForm->expects($this->any())
             ->method('get')
@@ -88,7 +88,7 @@ abstract class AbstractTaxExtensionTest extends \PHPUnit_Framework_TestCase
     /**
      * @param int|null $id
      *
-     * @return object|\PHPUnit_Framework_MockObject_MockObject
+     * @return object|\PHPUnit\Framework\MockObject\MockObject
      */
     abstract protected function createTaxCodeTarget($id = null);
 
@@ -106,13 +106,13 @@ abstract class AbstractTaxExtensionTest extends \PHPUnit_Framework_TestCase
      */
     protected function assertTaxCodeAdd(FormEvent $event, AbstractTaxCode $taxCode)
     {
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $mainForm */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $mainForm */
         $mainForm = $event->getForm();
         $mainForm->expects($this->once())
             ->method('isValid')
             ->willReturn(true);
 
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $taxCodeForm */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $taxCodeForm */
         $taxCodeForm = $mainForm->get('taxCode');
         $taxCodeForm->expects($this->once())
             ->method('getData')
@@ -122,7 +122,7 @@ abstract class AbstractTaxExtensionTest extends \PHPUnit_Framework_TestCase
     public function testOnPostSubmitNoEntity()
     {
         $event = $this->createEvent(null);
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $mainForm */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $mainForm */
         $mainForm = $event->getForm();
         $mainForm->expects($this->never())
             ->method('isValid');
@@ -134,13 +134,13 @@ abstract class AbstractTaxExtensionTest extends \PHPUnit_Framework_TestCase
     public function testOnPostSubmitInvalidForm()
     {
         $event = $this->createEvent($this->createTaxCodeTarget());
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $mainForm */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $mainForm */
         $mainForm = $event->getForm();
         $mainForm->expects($this->once())
             ->method('isValid')
             ->willReturn(false);
 
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $taxCodeForm */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $taxCodeForm */
         $taxCodeForm = $mainForm->get('taxCode');
         $taxCodeForm->expects($this->never())
             ->method('getData');

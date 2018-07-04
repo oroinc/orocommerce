@@ -102,17 +102,13 @@ class PriceRuleProcessor implements MessageProcessorInterface, TopicSubscriberIn
             $messageData = JSON::decode($message->getBody());
             $trigger = $this->triggerFactory->createFromArray($messageData);
 
-            $this->messenger->remove(
-                NotificationMessages::CHANNEL_PRICE_LIST,
-                NotificationMessages::TOPIC_PRICE_RULES_BUILD,
-                PriceList::class,
-                $trigger->getPriceList()->getId()
-            );
+            $repository = $em->getRepository(PriceList::class);
+            foreach ($trigger->getProducts() as $plId => $plProducts) {
+                $this->processPriceList($repository->find($plId), $plProducts);
+            }
 
-            $priceList = $trigger->getPriceList();
-            $startTime = $priceList->getUpdatedAt();
-            $this->priceBuilder->buildByPriceList($priceList, $trigger->getProducts());
-            $this->updatePriceListActuality($priceList, $startTime);
+            $this->priceBuilder->flush();
+
             $em->commit();
         } catch (InvalidArgumentException $e) {
             $em->rollback();
@@ -125,21 +121,48 @@ class PriceRuleProcessor implements MessageProcessorInterface, TopicSubscriberIn
                 'Unexpected exception occurred during Price Rule build',
                 ['exception' => $e]
             );
-            if ($trigger && $trigger->getPriceList()) {
-                $this->messenger->send(
-                    NotificationMessages::CHANNEL_PRICE_LIST,
-                    NotificationMessages::TOPIC_PRICE_RULES_BUILD,
-                    Message::STATUS_ERROR,
-                    $this->translator->trans('oro.pricing.notification.price_list.error.price_rule_build'),
-                    PriceList::class,
-                    $trigger->getPriceList()->getId()
-                );
+            if ($trigger && !empty($plId)) {
+                $this->onFailedPriceListId($plId);
             }
 
             return self::REJECT;
         }
 
         return self::ACK;
+    }
+
+    /**
+     * @param PriceList $priceList
+     * @param array $products
+     */
+    private function processPriceList(PriceList $priceList, array $products)
+    {
+        $this->messenger->remove(
+            NotificationMessages::CHANNEL_PRICE_LIST,
+            NotificationMessages::TOPIC_PRICE_RULES_BUILD,
+            PriceList::class,
+            $priceList->getId()
+        );
+
+        $startTime = $priceList->getUpdatedAt();
+
+        $this->priceBuilder->buildByPriceListWithoutTriggerSend($priceList, $products);
+        $this->updatePriceListActuality($priceList, $startTime);
+    }
+
+    /**
+     * @param int $priceListId
+     */
+    private function onFailedPriceListId($priceListId)
+    {
+        $this->messenger->send(
+            NotificationMessages::CHANNEL_PRICE_LIST,
+            NotificationMessages::TOPIC_PRICE_RULES_BUILD,
+            Message::STATUS_ERROR,
+            $this->translator->trans('oro.pricing.notification.price_list.error.price_rule_build'),
+            PriceList::class,
+            $priceListId
+        );
     }
 
     /**

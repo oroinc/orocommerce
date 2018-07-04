@@ -22,22 +22,22 @@ use Oro\Bundle\ShippingBundle\Tests\Unit\Context\AbstractShippingLineItemTest;
 class ShippingOptionsLineItemCollectionFactoryDecoratorTest extends AbstractShippingLineItemTest
 {
     /**
-     * @var ShippingLineItemCollectionFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingLineItemCollectionFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $decoratedFactory;
 
     /**
-     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     private $doctrineHelper;
 
     /**
-     * @var ProductShippingOptionsRepository|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProductShippingOptionsRepository|\PHPUnit\Framework\MockObject\MockObject
      */
     private $repository;
 
     /**
-     * @var LineItemBuilderByLineItemFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var LineItemBuilderByLineItemFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $builderByLineItemFactory;
 
@@ -140,7 +140,7 @@ class ShippingOptionsLineItemCollectionFactoryDecoratorTest extends AbstractShip
     }
 
     /**
-     * @return ShippingLineItemCollectionInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return ShippingLineItemCollectionInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private function createShippingLineItemCollectionMock()
     {
@@ -188,7 +188,7 @@ class ShippingOptionsLineItemCollectionFactoryDecoratorTest extends AbstractShip
      * @param Weight     $weight
      * @param Dimensions $dimensions
      *
-     * @return ProductShippingOptions|\PHPUnit_Framework_MockObject_MockObject
+     * @return ProductShippingOptions|\PHPUnit\Framework\MockObject\MockObject
      */
     private function createShippingOptionsMock(Product $product, Weight $weight, Dimensions $dimensions)
     {

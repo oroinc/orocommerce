@@ -9,10 +9,10 @@ use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
 use Oro\Bundle\ProductBundle\Provider\QuickAddCollectionProvider;
 use Oro\Bundle\RFPBundle\Event\FormSubmitCheckEvent;
 
-class RFPOperationListenerTest extends \PHPUnit_Framework_TestCase
+class RFPOperationListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var QuickAddCollectionProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var QuickAddCollectionProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $collectionProvider;
 

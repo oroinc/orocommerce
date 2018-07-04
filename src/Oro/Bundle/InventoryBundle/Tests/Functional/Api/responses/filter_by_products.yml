@@ -112,11 +112,11 @@ included:
             owner:
                 data:
                     type: businessunits
-                    id: '1'
+                    id: '<toString(@business_unit->id)>'
             organization:
                 data:
                     type: organizations
-                    id: '1'
+                    id: '<toString(@organization->id)>'
             unitPrecisions:
                 data:
                     -
@@ -151,7 +151,7 @@ included:
             unit:
                 data:
                     type: productunits
-                    id: liter
+                    id: '<toString(@product_unit.liter->code)>'
     -
         type: productunitprecisions
         id: '<toString(@product_unit_precision.product-1.bottle->id)>'
@@ -167,7 +167,7 @@ included:
             unit:
                 data:
                     type: productunits
-                    id: bottle
+                    id: '<toString(@product_unit.bottle->code)>'
     -
         type: products
         id: '<toString(@product-2->id)>'
@@ -182,11 +182,11 @@ included:
             owner:
                 data:
                     type: businessunits
-                    id: '1'
+                    id: '<toString(@business_unit->id)>'
             organization:
                 data:
                     type: organizations
-                    id: '1'
+                    id: '<toString(@organization->id)>'
             unitPrecisions:
                 data:
                     -
@@ -211,6 +211,22 @@ included:
                     id: in_stock
     -
         type: productunitprecisions
+        id: '<toString(@product_unit_precision.product-2.milliliter->id)>'
+        attributes:
+            precision: 0
+            conversionRate: 1
+            sell: true
+        relationships:
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-2->id)>'
+            unit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit.milliliter->code)>'
+    -
+        type: productunitprecisions
         id: '<toString(@product_unit_precision.product-2.liter->id)>'
         attributes:
             precision: 3
@@ -224,7 +240,7 @@ included:
             unit:
                 data:
                     type: productunits
-                    id: liter
+                    id: '<toString(@product_unit.liter->code)>'
     -
         type: productunitprecisions
         id: '<toString(@product_unit_precision.product-2.bottle->id)>'
@@ -240,7 +256,7 @@ included:
             unit:
                 data:
                     type: productunits
-                    id: bottle
+                    id: '<toString(@product_unit.bottle->code)>'
     -
         type: productunitprecisions
         id: '<toString(@product_unit_precision.product-2.box->id)>'
@@ -256,7 +272,7 @@ included:
             unit:
                 data:
                     type: productunits
-                    id: box
+                    id: '<toString(@product_unit.box->code)>'
     -
         type: productunitprecisions
         id: '<toString(@product_unit_precision.product-1.milliliter->id)>'
@@ -272,4 +288,4 @@ included:
             unit:
                 data:
                     type: productunits
-                    id: milliliter
+                    id: '<toString(@product_unit.milliliter->code)>'

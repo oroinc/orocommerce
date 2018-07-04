@@ -5,7 +5,7 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Validator\Constraints;
 use Oro\Bundle\ShoppingListBundle\Validator\Constraints\MatrixCollectionColumn;
 use Oro\Bundle\ShoppingListBundle\Validator\Constraints\MatrixCollectionColumnValidator;
 
-class MatrixCollectionColumnTest extends \PHPUnit_Framework_TestCase
+class MatrixCollectionColumnTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var MatrixCollectionColumn

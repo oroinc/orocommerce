@@ -6,14 +6,14 @@ use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 use Oro\Bundle\ProductBundle\Twig\ProductUnitLabelExtension;
 use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
 
-class ProductUnitLabelExtensionTest extends \PHPUnit_Framework_TestCase
+class ProductUnitLabelExtensionTest extends \PHPUnit\Framework\TestCase
 {
     use TwigExtensionTestCaseTrait;
 
     /** @var ProductUnitLabelExtension */
     protected $extension;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|ProductUnitLabelFormatter */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|ProductUnitLabelFormatter */
     protected $formatter;
 
     /**

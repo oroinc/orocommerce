@@ -9,10 +9,10 @@ use Oro\Bundle\ProductBundle\EventListener\ProductSearchQueryRestrictionEventLis
 use Oro\Bundle\ProductBundle\Model\ProductVisibilitySearchQueryModifier;
 use Oro\Bundle\SearchBundle\Query\Query;
 
-abstract class AbstractProductSearchQueryRestrictionEventListenerTest extends \PHPUnit_Framework_TestCase
+abstract class AbstractProductSearchQueryRestrictionEventListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $configManager;
 
@@ -22,7 +22,7 @@ abstract class AbstractProductSearchQueryRestrictionEventListenerTest extends \P
     protected $frontendConfigPath = '/front/end/cfg/path';
 
     /**
-     * @var ProductVisibilitySearchQueryModifier|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProductVisibilitySearchQueryModifier|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $modifier;
 
@@ -37,7 +37,7 @@ abstract class AbstractProductSearchQueryRestrictionEventListenerTest extends \P
     protected $statuses = ['in_stock'];
 
     /**
-     * @var FrontendHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var FrontendHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $frontendHelper;
 
@@ -54,11 +54,11 @@ abstract class AbstractProductSearchQueryRestrictionEventListenerTest extends \P
     }
 
     /**
-     * @return FrontendHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @return FrontendHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function getFrontendHelper()
     {
-        /** @var FrontendHelper|\PHPUnit_Framework_MockObject_MockObject $frontendHelper */
+        /** @var FrontendHelper|\PHPUnit\Framework\MockObject\MockObject $frontendHelper */
         $frontendHelper = $this->getMockBuilder(FrontendHelper::class)
             ->disableOriginalConstructor()->getMock();
 
@@ -66,11 +66,11 @@ abstract class AbstractProductSearchQueryRestrictionEventListenerTest extends \P
     }
 
     /**
-     * @return ProductVisibilitySearchQueryModifier|\PHPUnit_Framework_MockObject_MockObject
+     * @return ProductVisibilitySearchQueryModifier|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function getQueryModifier()
     {
-        /** @var ProductVisibilitySearchQueryModifier|\PHPUnit_Framework_MockObject_MockObject $queryModifier */
+        /** @var ProductVisibilitySearchQueryModifier|\PHPUnit\Framework\MockObject\MockObject $queryModifier */
         $queryModifier = $this->getMockBuilder(ProductVisibilitySearchQueryModifier::class)->getMock();
 
         return $queryModifier;

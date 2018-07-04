@@ -6,7 +6,7 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderShippingTracking;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-class OrderShippingTrackingTest extends \PHPUnit_Framework_TestCase
+class OrderShippingTrackingTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 

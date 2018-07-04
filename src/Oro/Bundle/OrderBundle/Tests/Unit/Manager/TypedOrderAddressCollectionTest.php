@@ -9,7 +9,7 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
 use Oro\Bundle\OrderBundle\Manager\TypedOrderAddressCollection;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class TypedOrderAddressCollectionTest extends \PHPUnit_Framework_TestCase
+class TypedOrderAddressCollectionTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
@@ -181,7 +181,7 @@ class TypedOrderAddressCollectionTest extends \PHPUnit_Framework_TestCase
      */
     protected function getAddress($frontendOwner, $type, $class = null)
     {
-        /** @var AbstractDefaultTypedAddress|\PHPUnit_Framework_MockObject_MockObject $address */
+        /** @var AbstractDefaultTypedAddress|\PHPUnit\Framework\MockObject\MockObject $address */
         $address = $this->createMock($class ?: AbstractDefaultTypedAddress::class);
         $address->expects($this->any())
             ->method('getFrontendOwner')

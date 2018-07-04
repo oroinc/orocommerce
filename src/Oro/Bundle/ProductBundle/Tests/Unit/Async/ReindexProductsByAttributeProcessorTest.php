@@ -18,26 +18,26 @@ use Oro\Component\Testing\Unit\EntityTrait;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class ReindexProductsByAttributeProcessorTest extends \PHPUnit_Framework_TestCase
+class ReindexProductsByAttributeProcessorTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /** @var JobRunner|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var JobRunner|\PHPUnit\Framework\MockObject\MockObject */
     private $jobRunner;
 
-    /** @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $logger;
 
-    /** @var ProductRepository|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ProductRepository|\PHPUnit\Framework\MockObject\MockObject */
     private $repository;
 
-    /** @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $dispatcher;
 
-    /** @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
     private $registry;
 
-    /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $session;
 
     /** @var ReindexProductsByAttributeProcessor */
@@ -100,7 +100,7 @@ class ReindexProductsByAttributeProcessorTest extends \PHPUnit_Framework_TestCas
 
     /**
      * @param array $productIds
-     * @param \PHPUnit_Framework_MockObject_Matcher_InvokedCount $dispatchExpected
+     * @param \PHPUnit\Framework\MockObject\Matcher\InvokedCount $dispatchExpected
      *
      * @dataProvider getProductIds
      */
@@ -117,7 +117,7 @@ class ReindexProductsByAttributeProcessorTest extends \PHPUnit_Framework_TestCas
             ->with($attributeId)
             ->willReturn($productIds);
 
-        /** @var ObjectManager|\PHPUnit_Framework_MockObject_MockObject $registry */
+        /** @var ObjectManager|\PHPUnit\Framework\MockObject\MockObject $registry */
         $manager = $this->createMock(ObjectManager::class);
         $manager->expects($this->any())
             ->method('getRepository')
@@ -139,6 +139,49 @@ class ReindexProductsByAttributeProcessorTest extends \PHPUnit_Framework_TestCas
         $this->assertEquals(MessageProcessorInterface::ACK, $result);
     }
 
+    public function testProcessWithExceptionDuringReindexEventDispatching()
+    {
+        $attributeId = 1;
+        $messageBody = ['attributeId' => $attributeId];
+        $message = $this->getMessage($messageBody);
+
+        $this->mockRunUniqueJob();
+
+        $this->repository->expects($this->once())
+            ->method('getProductIdsByAttributeId')
+            ->with($attributeId)
+            ->willReturn([1]);
+
+        /** @var ObjectManager|\PHPUnit\Framework\MockObject\MockObject $registry */
+        $manager = $this->createMock(ObjectManager::class);
+        $manager->expects($this->any())
+            ->method('getRepository')
+            ->with(Product::class)
+            ->willReturn($this->repository);
+        $this->registry->expects($this->any())
+            ->method('getManagerForClass')
+            ->with(Product::class)
+            ->willReturn($manager);
+
+        $exception = new \Exception();
+        $this->dispatcher->expects($this->once())
+            ->method('dispatch')
+            ->willThrowException($exception);
+
+        $this->logger->expects($this->once())
+            ->method('error')
+            ->with(
+                'Unexpected exception occurred during triggering update of search index ',
+                [
+                    'exception' => $exception,
+                    'topic' => Topics::REINDEX_PRODUCTS_BY_ATTRIBUTE
+                ]
+            );
+
+        $result = $this->processor->process($message, $this->session);
+        $this->assertEquals(MessageProcessorInterface::REJECT, $result);
+    }
+
     /**
      * @return array
      */
@@ -158,7 +201,7 @@ class ReindexProductsByAttributeProcessorTest extends \PHPUnit_Framework_TestCas
 
     /**
      * @param array $body
-     * @return MessageInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return MessageInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private function getMessage(array $body = [])
     {

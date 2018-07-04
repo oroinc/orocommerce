@@ -9,10 +9,10 @@ use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\PricingBundle\ORM\InsertFromSelectShardQueryExecutor;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 
-class ProductPriceDuplicatorTest extends \PHPUnit_Framework_TestCase
+class ProductPriceDuplicatorTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $registry;
 
@@ -22,17 +22,17 @@ class ProductPriceDuplicatorTest extends \PHPUnit_Framework_TestCase
     protected $priceDuplicator;
 
     /**
-     * @var InsertFromSelectShardQueryExecutor|\PHPUnit_Framework_MockObject_MockObject
+     * @var InsertFromSelectShardQueryExecutor|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $insertExecutor;
 
     /**
-     * @var ObjectManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ObjectManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $manager;
 
     /**
-     * @var ProductPriceRepository|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProductPriceRepository|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $repository;
 
@@ -88,7 +88,7 @@ class ProductPriceDuplicatorTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param $className
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     protected function getMockWithoutConstructor($className)
     {

@@ -22,23 +22,23 @@ use Symfony\Component\Routing\RouterInterface;
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class PayPalCreditCardPaymentMethodTest extends \PHPUnit_Framework_TestCase
+class PayPalCreditCardPaymentMethodTest extends \PHPUnit\Framework\TestCase
 {
     use ConfigTestTrait, EntityTrait;
 
     const PROXY_HOST = '112.33.44.55';
     const PROXY_PORT = 7777;
 
-    /** @var Gateway|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var Gateway|\PHPUnit\Framework\MockObject\MockObject */
     protected $gateway;
 
-    /** @var RouterInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var RouterInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $router;
 
     /** @var PayPalCreditCardPaymentMethod */
     protected $method;
 
-    /** @var PayPalCreditCardConfigInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var PayPalCreditCardConfigInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $paymentConfig;
 
     protected function setUp()
@@ -904,7 +904,7 @@ class PayPalCreditCardPaymentMethodTest extends \PHPUnit_Framework_TestCase
 
     public function testIsApplicable()
     {
-        /** @var PaymentContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
+        /** @var PaymentContextInterface|\PHPUnit\Framework\MockObject\MockObject $context */
         $context = $this->createMock(PaymentContextInterface::class);
         $this->assertTrue($this->method->isApplicable($context));
     }

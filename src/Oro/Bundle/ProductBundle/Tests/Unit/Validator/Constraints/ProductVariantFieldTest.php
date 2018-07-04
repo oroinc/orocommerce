@@ -6,7 +6,7 @@ use Oro\Bundle\ProductBundle\Validator\Constraints\ProductVariantField;
 use Oro\Bundle\ProductBundle\Validator\Constraints\ProductVariantFieldValidator;
 use Symfony\Component\Validator\Constraint;
 
-class ProductVariantFieldTest extends \PHPUnit_Framework_TestCase
+class ProductVariantFieldTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var ProductVariantField

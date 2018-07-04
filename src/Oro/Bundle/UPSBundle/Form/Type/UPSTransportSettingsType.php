@@ -127,8 +127,6 @@ class UPSTransportSettingsType extends AbstractType
             [
                 'label' => 'oro.ups.transport.pickup_type.label',
                 'required' => true,
-                // TODO: remove 'choices_as_values' option below in scope of BAP-15236
-                'choices_as_values' => true,
                 'choices' => [
                     'oro.ups.transport.pickup_type.regular_daily.label' => UPSTransport::PICKUP_TYPE_REGULAR_DAILY,
                     'oro.ups.transport.pickup_type.customer_counter.label' =>
@@ -145,8 +143,6 @@ class UPSTransportSettingsType extends AbstractType
             [
                 'label' => 'oro.ups.transport.unit_of_weight.label',
                 'required' => true,
-                // TODO: remove 'choices_as_values' option below in scope of BAP-15236
-                'choices_as_values' => true,
                 'choices' => [
                     'oro.ups.transport.unit_of_weight.lbs.label' => UPSTransport::UNIT_OF_WEIGHT_LBS,
                     'oro.ups.transport.unit_of_weight.kgs.label' => UPSTransport::UNIT_OF_WEIGHT_KGS,

@@ -4,7 +4,7 @@ namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Event;
 
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 
-class ReindexationRequestEventTest extends \PHPUnit_Framework_TestCase
+class ReindexationRequestEventTest extends \PHPUnit\Framework\TestCase
 {
     public function testInitialization()
     {

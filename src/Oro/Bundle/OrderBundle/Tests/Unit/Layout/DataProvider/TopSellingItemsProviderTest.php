@@ -8,7 +8,7 @@ use Oro\Bundle\OrderBundle\Layout\DataProvider\TopSellingItemsProvider;
 use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 
-class TopSellingItemsProviderTest extends \PHPUnit_Framework_TestCase
+class TopSellingItemsProviderTest extends \PHPUnit\Framework\TestCase
 {
     public function testGetAllWithDefaultQuantity()
     {
@@ -26,8 +26,8 @@ class TopSellingItemsProviderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param ProductRepository|\PHPUnit_Framework_MockObject_MockObject $productRepository
-     * @param ProductManager|\PHPUnit_Framework_MockObject_MockObject    $productManager
+     * @param ProductRepository|\PHPUnit\Framework\MockObject\MockObject $productRepository
+     * @param ProductManager|\PHPUnit\Framework\MockObject\MockObject    $productManager
      *
      * @return TopSellingItemsProvider
      */
@@ -37,7 +37,7 @@ class TopSellingItemsProviderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     protected function createProductRepository()
     {
@@ -45,7 +45,7 @@ class TopSellingItemsProviderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     protected function createProductManager()
     {
@@ -53,7 +53,7 @@ class TopSellingItemsProviderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     protected function createQueryBuilder()
     {
@@ -66,7 +66,7 @@ class TopSellingItemsProviderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     protected function createQuery()
     {

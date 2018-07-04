@@ -5,7 +5,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\DataTransformer;
 use Oro\Bundle\ProductBundle\Form\DataTransformer\ProductCollectionTransformer;
 use Oro\Bundle\ProductBundle\Model\ProductRow;
 
-class ProductCollectionTransformerTest extends \PHPUnit_Framework_TestCase
+class ProductCollectionTransformerTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var ProductCollectionTransformer

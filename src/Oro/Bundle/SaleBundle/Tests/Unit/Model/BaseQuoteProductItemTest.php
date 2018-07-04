@@ -8,7 +8,7 @@ use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
 use Oro\Bundle\SaleBundle\Model\BaseQuoteProductItem;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-class BaseQuoteProductItemTest extends \PHPUnit_Framework_TestCase
+class BaseQuoteProductItemTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 

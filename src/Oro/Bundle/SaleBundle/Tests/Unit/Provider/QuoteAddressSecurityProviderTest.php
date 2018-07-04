@@ -12,18 +12,18 @@ use Symfony\Component\Finder\Finder;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Yaml\Parser;
 
-class QuoteAddressSecurityProviderTest extends \PHPUnit_Framework_TestCase
+class QuoteAddressSecurityProviderTest extends \PHPUnit\Framework\TestCase
 {
     /** @var QuoteAddressSecurityProvider */
     protected $provider;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|AuthorizationCheckerInterface */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|AuthorizationCheckerInterface */
     protected $authorizationChecker;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|TokenAccessorInterface */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|TokenAccessorInterface */
     protected $tokenAccessor;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|QuoteAddressProvider */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|QuoteAddressProvider */
     protected $quoteAddressProvider;
 
     protected function setUp()

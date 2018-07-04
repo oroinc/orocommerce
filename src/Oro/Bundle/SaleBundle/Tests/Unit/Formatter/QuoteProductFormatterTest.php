@@ -16,7 +16,7 @@ use Symfony\Component\Translation\TranslatorInterface;
 /**
  * @SuppressWarnings(PHPMD.NPathComplexity)
  */
-class QuoteProductFormatterTest extends \PHPUnit_Framework_TestCase
+class QuoteProductFormatterTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var QuoteProductFormatter
@@ -24,22 +24,22 @@ class QuoteProductFormatterTest extends \PHPUnit_Framework_TestCase
     protected $formatter;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface
+     * @var \PHPUnit\Framework\MockObject\MockObject|TranslatorInterface
      */
     protected $translator;
 
     /**
-      * @var \PHPUnit_Framework_MockObject_MockObject|ProductUnitValueFormatter
+      * @var \PHPUnit\Framework\MockObject\MockObject|ProductUnitValueFormatter
       */
     protected $productUnitValueFormatter;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ProductUnitLabelFormatter
+     * @var \PHPUnit\Framework\MockObject\MockObject|ProductUnitLabelFormatter
      */
     protected $productUnitLabelFormatter;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|NumberFormatter
+     * @var \PHPUnit\Framework\MockObject\MockObject|NumberFormatter
      */
     protected $numberFormatter;
 

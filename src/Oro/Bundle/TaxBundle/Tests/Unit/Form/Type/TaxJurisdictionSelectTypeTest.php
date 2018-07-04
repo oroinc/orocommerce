@@ -6,7 +6,7 @@ use Oro\Bundle\FormBundle\Form\Type\OroEntitySelectOrCreateInlineType;
 use Oro\Bundle\TaxBundle\Form\Type\TaxJurisdictionSelectType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class TaxJurisdictionSelectTypeTest extends \PHPUnit_Framework_TestCase
+class TaxJurisdictionSelectTypeTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var TaxJurisdictionSelectType

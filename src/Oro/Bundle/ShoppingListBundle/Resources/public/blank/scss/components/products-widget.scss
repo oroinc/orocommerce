@@ -1,9 +1,10 @@
-// @theme: blank;
+/* @theme: blank; */
 
 .product-item__qty {
-    &__current-grid > div {
+    &__current-grid {
         display: flex;
-
+        flex-wrap: wrap;
+        align-items: center;
         justify-content: space-between;
     }
 

@@ -9,7 +9,7 @@ use Oro\Bundle\WebsiteSearchBundle\Entity\IndexText;
 use Oro\Bundle\WebsiteSearchBundle\Entity\Item;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-class ItemTest extends \PHPUnit_Framework_TestCase
+class ItemTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 

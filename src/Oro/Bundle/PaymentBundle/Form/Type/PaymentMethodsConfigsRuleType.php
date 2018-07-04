@@ -65,8 +65,6 @@ class PaymentMethodsConfigsRuleType extends AbstractType
             ])
             ->add('method', ChoiceType::class, [
                 'mapped'  => false,
-                // TODO: remove 'choices_as_values' option below in scope of BAP-15236
-                'choices_as_values' => true,
                 'choices' => $this->getMethods(),
             ]);
 

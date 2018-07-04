@@ -4,7 +4,7 @@ namespace Oro\Bundle\PaymentBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\PaymentBundle\Provider\DefaultPaymentResultMessageProvider;
 
-class DefaultPaymentResultMessageProviderTest extends \PHPUnit_Framework_TestCase
+class DefaultPaymentResultMessageProviderTest extends \PHPUnit\Framework\TestCase
 {
     public function testGetErrorMessage()
     {

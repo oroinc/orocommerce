@@ -12,15 +12,15 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 
-class CriteriaDataProviderTest extends \PHPUnit_Framework_TestCase
+class CriteriaDataProviderTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var CustomerUserRelationsProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var CustomerUserRelationsProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     private $relationsProvider;
 
     /**
-     * @var WebsiteManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var WebsiteManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $websiteManager;
 
@@ -42,7 +42,7 @@ class CriteriaDataProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetCustomerUser()
     {
-        /** @var CustomerOwnerAwareInterface|\PHPUnit_Framework_MockObject_MockObject $entity */
+        /** @var CustomerOwnerAwareInterface|\PHPUnit\Framework\MockObject\MockObject $entity */
         $entity = $this->createMock(CustomerOwnerAwareInterface::class);
 
         $customerUser = $this->createMock(CustomerUser::class);
@@ -55,7 +55,7 @@ class CriteriaDataProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetCustomerFromRelationProvider()
     {
-        /** @var CustomerOwnerAwareInterface|\PHPUnit_Framework_MockObject_MockObject $entity */
+        /** @var CustomerOwnerAwareInterface|\PHPUnit\Framework\MockObject\MockObject $entity */
         $entity = $this->createMock(CustomerOwnerAwareInterface::class);
 
         $customerUser = $this->createMock(CustomerUser::class);
@@ -75,7 +75,7 @@ class CriteriaDataProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetCustomerFromEntity()
     {
-        /** @var CustomerOwnerAwareInterface|\PHPUnit_Framework_MockObject_MockObject $entity */
+        /** @var CustomerOwnerAwareInterface|\PHPUnit\Framework\MockObject\MockObject $entity */
         $entity = $this->createMock(CustomerOwnerAwareInterface::class);
 
         $customerUser = $this->createMock(CustomerUser::class);
@@ -96,7 +96,7 @@ class CriteriaDataProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetCustomerGroupFromCustomer()
     {
-        /** @var CustomerOwnerAwareInterface|\PHPUnit_Framework_MockObject_MockObject $entity */
+        /** @var CustomerOwnerAwareInterface|\PHPUnit\Framework\MockObject\MockObject $entity */
         $entity = $this->createMock(CustomerOwnerAwareInterface::class);
 
         $customerUser = $this->createMock(CustomerUser::class);
@@ -122,7 +122,7 @@ class CriteriaDataProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetCustomerGroupFromRelationProvider()
     {
-        /** @var CustomerOwnerAwareInterface|\PHPUnit_Framework_MockObject_MockObject $entity */
+        /** @var CustomerOwnerAwareInterface|\PHPUnit\Framework\MockObject\MockObject $entity */
         $entity = $this->createMock(CustomerOwnerAwareInterface::class);
 
         $customerUser = $this->createMock(CustomerUser::class);
@@ -150,7 +150,7 @@ class CriteriaDataProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetWebsiteFromEntity()
     {
-        /** @var WebsiteAwareInterface|\PHPUnit_Framework_MockObject_MockObject $entity */
+        /** @var WebsiteAwareInterface|\PHPUnit\Framework\MockObject\MockObject $entity */
         $entity = $this->createMock(WebsiteAwareInterface::class);
         $website = new Website();
         $entity->expects($this->once())
@@ -164,7 +164,7 @@ class CriteriaDataProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetWebsiteFromWebsiteManager()
     {
-        /** @var WebsiteAwareInterface|\PHPUnit_Framework_MockObject_MockObject $entity */
+        /** @var WebsiteAwareInterface|\PHPUnit\Framework\MockObject\MockObject $entity */
         $entity = $this->createMock(WebsiteAwareInterface::class);
         $website = new Website();
         $entity->expects($this->once())

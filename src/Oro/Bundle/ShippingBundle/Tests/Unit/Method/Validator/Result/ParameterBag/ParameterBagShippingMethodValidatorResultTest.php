@@ -5,7 +5,7 @@ namespace Oro\Bundle\ShippingBundle\Tests\Unit\Method\Validator\Result\Parameter
 use Oro\Bundle\ShippingBundle\Method\Validator\Result\Factory\Common;
 use Oro\Bundle\ShippingBundle\Method\Validator\Result\ParameterBag\ParameterBagShippingMethodValidatorResult;
 
-class ParameterBagShippingMethodValidatorResultTest extends \PHPUnit_Framework_TestCase
+class ParameterBagShippingMethodValidatorResultTest extends \PHPUnit\Framework\TestCase
 {
     public function testCreateCommonFactory()
     {

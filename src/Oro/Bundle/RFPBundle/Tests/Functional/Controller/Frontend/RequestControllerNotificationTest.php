@@ -68,6 +68,17 @@ class RequestControllerNotificationTest extends WebTestCase
         $this->getContainer()->get('swiftmailer.plugin.messagelogger')->clear();
     }
 
+    public function testNotifyOnlyUniqueUsers()
+    {
+        $customerUser = $this->getReference(LoadUserData::ACCOUNT1_USER1);
+        $saleRep = $customerUser->getOwner();
+        $customerUser->addSalesRepresentative($saleRep);
+        $this->em->flush();
+        $this->createRequest();
+
+        $this->assertEmailSent([$saleRep], 1);
+    }
+
     public function testCreateRequestEmailNotification()
     {
         $saleRep1 = $this->getReference(LoadUserData::USER1);
@@ -78,7 +89,7 @@ class RequestControllerNotificationTest extends WebTestCase
         $this->em->flush();
         $this->createRequest();
 
-        $this->assertEmailSent([$saleRep1, $saleRep2], 4);
+        $this->assertEmailSent([$saleRep1, $saleRep2], 3);
     }
 
     public function testCreateRequestEmailNotifySalesRepsOfCustomer()
@@ -90,7 +101,7 @@ class RequestControllerNotificationTest extends WebTestCase
         $customer->addSalesRepresentative($saleRep2);
         $this->em->flush();
         $this->createRequest();
-        $this->assertEmailSent([$saleRep1, $saleRep2], 4);
+        $this->assertEmailSent([$saleRep1, $saleRep2], 3);
     }
 
     public function testCreateRequestShouldNotNotifyCustomerSalesReps()
@@ -112,7 +123,7 @@ class RequestControllerNotificationTest extends WebTestCase
         $this->configManager->flush($this->website);
 
         $this->createRequest();
-        $this->assertEmailSent([$saleRep2], 3);
+        $this->assertEmailSent([$saleRep2], 2);
     }
 
     public function testCreateRequestShouldNotifyCustomerOwner()
@@ -125,7 +136,7 @@ class RequestControllerNotificationTest extends WebTestCase
         $this->createRequest();
         $owner = $this->getReference(LoadUserData::USER1);
         // should notify owner
-        $this->assertEmailSent([$owner], 2);
+        $this->assertEmailSent([$owner], 1);
     }
 
     public function testCreateRequestShouldNotNotifyCustomerOwner()
@@ -146,7 +157,7 @@ class RequestControllerNotificationTest extends WebTestCase
 
         $this->createRequest();
         // should notify only sale representative, not owner
-        $this->assertEmailSent([$saleRepresentative], 3);
+        $this->assertEmailSent([$saleRepresentative], 2);
     }
 
     public function testCreateRequestShouldNotifyCustomerUserOwner()
@@ -159,7 +170,7 @@ class RequestControllerNotificationTest extends WebTestCase
         $this->createRequest();
         $owner = $this->getReference(LoadUserData::USER1);
         // should notify owner
-        $this->assertEmailSent([$owner], 2);
+        $this->assertEmailSent([$owner], 1);
     }
 
     public function testCreateRequestShouldNotNotifyCustomerUserOwner()

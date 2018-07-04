@@ -7,6 +7,10 @@ use Oro\Bundle\SearchBundle\Query\Result\Item;
 use Oro\Bundle\SearchBundle\Query\SearchQueryInterface;
 use Oro\Bundle\WebsiteSearchBundle\Query\WebsiteSearchRepository;
 
+/**
+ * Website search engine repository for OroProductBundle:Product entity
+ * This repository encapsulates Product related operations
+ */
 class ProductRepository extends WebsiteSearchRepository
 {
     /**
@@ -87,6 +91,19 @@ class ProductRepository extends WebsiteSearchRepository
      */
     public function findBySkuOrName($search, $firstResult = 0, $maxResults = null)
     {
+        $query = $this->getSearchQueryBySkuOrName($search, $firstResult, $maxResults);
+
+        return $query->getResult()->getElements();
+    }
+
+    /**
+     * @param string $search
+     * @param int $firstResult
+     * @param int $maxResults
+     * @return SearchQueryInterface
+     */
+    public function getSearchQueryBySkuOrName($search, $firstResult = 0, $maxResults = null)
+    {
         $query = $this->createQuery();
 
         $query->addSelect('integer.product_id');
@@ -107,6 +124,6 @@ class ProductRepository extends WebsiteSearchRepository
             $query->setMaxResults($maxResults);
         }
 
-        return $query->getResult()->getElements();
+        return $query;
     }
 }

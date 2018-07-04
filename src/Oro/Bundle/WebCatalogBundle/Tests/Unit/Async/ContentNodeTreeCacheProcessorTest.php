@@ -16,25 +16,25 @@ use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\MessageQueue\Util\JSON;
 use Psr\Log\LoggerInterface;
 
-class ContentNodeTreeCacheProcessorTest extends \PHPUnit_Framework_TestCase
+class ContentNodeTreeCacheProcessorTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ContentNodeTreeDumper|\PHPUnit_Framework_MockObject_MockObject
+     * @var ContentNodeTreeDumper|\PHPUnit\Framework\MockObject\MockObject
      */
     private $dumper;
 
     /**
-     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     private $registry;
 
     /**
-     * @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $logger;
 
     /**
-     * @var JobRunner|\PHPUnit_Framework_MockObject_MockObject
+     * @var JobRunner|\PHPUnit\Framework\MockObject\MockObject
      */
     private $jobRunner;
 
@@ -76,12 +76,12 @@ class ContentNodeTreeCacheProcessorTest extends \PHPUnit_Framework_TestCase
      */
     public function testShouldRejectOnInvalidMessage(array $messageData)
     {
-        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message */
+        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message */
         $message = $this->createMock(MessageInterface::class);
         $message->expects($this->any())
             ->method('getBody')
             ->willReturn(JSON::encode($messageData));
-        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session */
+        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session */
         $session = $this->createMock(SessionInterface::class);
 
         $this->logger
@@ -91,7 +91,7 @@ class ContentNodeTreeCacheProcessorTest extends \PHPUnit_Framework_TestCase
                 'Unexpected exception occurred during queue message processing'
             );
 
-        /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $em */
+        /** @var EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject $em */
         $em = $this->createMock(EntityManagerInterface::class);
         $em->expects($this->any())
             ->method('find')
@@ -157,7 +157,7 @@ class ContentNodeTreeCacheProcessorTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldProcessMessageIfAllRequiredInfoAvailable()
     {
-        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message */
+        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message */
         $message = $this->createMock(MessageInterface::class);
         $message->expects($this->any())
             ->method('getBody')
@@ -168,7 +168,7 @@ class ContentNodeTreeCacheProcessorTest extends \PHPUnit_Framework_TestCase
                     'contentNode' => 3
                 ])
             );
-        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session */
+        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session */
         $session = $this->createMock(SessionInterface::class);
 
         $this->logger
@@ -195,7 +195,7 @@ class ContentNodeTreeCacheProcessorTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldCatchAndLogException()
     {
-        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message */
+        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message */
         $message = $this->createMock(MessageInterface::class);
         $message->expects($this->any())
             ->method('getBody')
@@ -206,7 +206,7 @@ class ContentNodeTreeCacheProcessorTest extends \PHPUnit_Framework_TestCase
                     'contentNode' => 3
                 ])
             );
-        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session */
+        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session */
         $session = $this->createMock(SessionInterface::class);
 
         $this->jobRunner->expects($this->once())
@@ -241,14 +241,14 @@ class ContentNodeTreeCacheProcessorTest extends \PHPUnit_Framework_TestCase
      */
     protected function configureEntityManager(Scope $scope, $scopeId, ContentNode $node, $nodeId)
     {
-        /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $scopeObjectManager */
+        /** @var EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject $scopeObjectManager */
         $scopeObjectManager = $this->createMock(EntityManagerInterface::class);
         $scopeObjectManager->expects($this->any())
             ->method('find')
             ->with(Scope::class, $scopeId)
             ->willReturn($scope);
 
-        /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $nodeObjectManager */
+        /** @var EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject $nodeObjectManager */
         $nodeObjectManager = $this->createMock(EntityManagerInterface::class);
         $nodeObjectManager->expects($this->any())
             ->method('find')

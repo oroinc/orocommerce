@@ -370,6 +370,7 @@
 {% block _shopping_list_line_items_list_quantity_form_widget %}
     {% set isProductUnitSelectionVisible = parent.productsUnitSelectionVisibilities[lineItem.product.id]|default({}) is not empty ? parent.productsUnitSelectionVisibilities[lineItem.product.id] : null %}
     {% set isLineItemUnitVisible = parent.lineItemsUnitVisibilities[lineItem.id]|default({}) is not empty ? parent.lineItemsUnitVisibilities[lineItem.id] : null %}
+    {% set hasProductUnits = parent.productsUnits[lineItem.product.id] is defined %}
     <form action="#" class="product__qty-container cart-table__form">
         <div class="product__qty-input product__qty-input_inline product__qty-input_more-info">
             <div class="product__qty-input__count-option">
@@ -380,21 +381,19 @@
             </div>
         </div>
         <div class="product__select">
-            {% if isProductUnitSelectionVisible %}
+            {% if isProductUnitSelectionVisible and hasProductUnits and parent.productsUnits[lineItem.product.id]|length > 1 %}
                 <select class="select select--full" name="product_unit" data-name="field__unit" required>
-                    {% if parent.productsUnits[lineItem.product.id] is defined %}
-                        {% for unit in parent.productsUnits[lineItem.product.id]|keys %}
-                            <option value="{{ unit }}" {% if unit == lineItem.unit.code %}selected="selected"{% endif %}>{{ unit|oro_format_product_unit_label}}</option>
-                        {% endfor %}
-                        {% if lineItem.unit.code not in parent.productsUnits[lineItem.product.id]|keys %}
-                            <option value="{{ lineItem.unit.code }}" selected="selected" disabled="disabled">{{ lineItem.unit.code|oro_format_product_unit_label}}</option>
-                        {% endif %}
+                    {% for unit in parent.productsUnits[lineItem.product.id]|keys %}
+                        <option value="{{ unit }}" {% if unit == lineItem.unit.code %}selected="selected"{% endif %}>{{ unit|oro_format_product_unit_label}}</option>
+                    {% endfor %}
+                    {% if lineItem.unit.code not in parent.productsUnits[lineItem.product.id]|keys %}
+                        <option value="{{ lineItem.unit.code }}" selected="selected" disabled="disabled">{{ lineItem.unit.code|oro_format_product_unit_label}}</option>
                     {% endif %}
                 </select>
             {% else %}
                 <input type="hidden" name="product_unit" value="{{ lineItem.unit.code }}" data-name="field__unit" />
                 {% if isLineItemUnitVisible %}
-                    {{ lineItem.unit.code|oro_format_product_unit_label}}
+                    <div class="product__static-unit">{{ lineItem.unit.code|oro_format_product_unit_label}}</div>
                 {% endif %}
             {% endif %}
         </div>
@@ -531,49 +530,25 @@
 {% block _shopping_list_line_items_list_errors_widget %}
     {% if oro_inventory_product_is_upcoming(mainProduct) %}
         {% set availableDate = oro_inventory_product_availability_date(mainProduct) %}
-        <tr class="error-row">
-            <td colspan="6">
-                <div class="notification--warning">
-                    <i class="fa-exclamation-circle"></i>
-                    <span class="notification__text">
-                    {% if availableDate is not null %}
-                        {{ 'oro.inventory.is_upcoming.notification_with_date'|trans ~ availableDate|oro_format_date({'timeZone': oro_timezone()}) }}
-                    {% else %}
-                        {{ 'oro.inventory.is_upcoming.notification'|trans }}
-                    {% endif %}
-                    </span>
-                </div>
-            </td>
-        </tr>
+        <div class="notification--warning">
+            <i class="fa-exclamation-circle"></i>
+            <span class="notification__text">
+            {% if availableDate is not null %}
+                {{ 'oro.inventory.is_upcoming.notification_with_date'|trans ~ availableDate|oro_format_date({'timeZone': oro_timezone()}) }}
+            {% else %}
+                {{ 'oro.inventory.is_upcoming.notification'|trans }}
+            {% endif %}
+            </span>
+        </div>
     {% endif %}
+
     {% set errorPath = 'product.' ~ lineItem.productSku %}
     {% if parent.lineItemErrors is iterable and parent.lineItemErrors[errorPath] is defined and parent.lineItemErrors[errorPath] is iterable %}
-        {% import 'OroUIBundle::macros.html.twig' as UI %}
-
-        {% set flashMessages = [] %}
-
+        <div class="shopping-list-line-items__error">
         {% for error in parent.lineItemErrors[errorPath] %}
-            {% set flashMessages = flashMessages|merge([{
-                type: 'error',
-                message: error.message,
-                options: {
-                    style: 'validation',
-                    container: '#product-error-' ~ lineItem.productSku
-                }
-            }]) %}
-            <div class="shopping-list-line-items__error">
-                <div id="product-error-{{ lineItem.productSku }}"></div>
-            </div>
+            <span class="validation-error">{{ error.message }}</span>
         {% endfor %}
-
-        {% set flashMessageViewOptions = {
-            view: 'oroui/js/app/views/flash-message-view',
-            options: {
-                messages: flashMessages
-            }
-        } %}
-
-        <div {{ UI.renderPageComponentAttributes(flashMessageViewOptions) }}></div>
+        </div>
     {% endif %}
 {% endblock %}
 

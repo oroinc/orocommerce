@@ -4,7 +4,7 @@ namespace Oro\Bundle\UPSBundle\Tests\Unit\Client\Url\Provider\Basic;
 
 use Oro\Bundle\UPSBundle\Client\Url\Provider\Basic\BasicUpsClientUrlProvider;
 
-class BasicUpsClientUrlProviderTest extends \PHPUnit_Framework_TestCase
+class BasicUpsClientUrlProviderTest extends \PHPUnit\Framework\TestCase
 {
     const TEST_URL = 'test_url';
     const PROD_URL = 'prod_url';

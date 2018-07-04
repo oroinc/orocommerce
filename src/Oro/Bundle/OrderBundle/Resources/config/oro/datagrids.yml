@@ -149,7 +149,6 @@ datagrids:
                     data_name: payment_status.paymentStatus
                     options:
                         field_options:
-                            choices_as_values: true
                             choices: "@oro_payment.formatter.payment_status_label->getAvailableStatuses"
                 identifier:
                     type:      string
@@ -334,7 +333,6 @@ datagrids:
                     data_name: payment_status.paymentStatus
                     options:
                         field_options:
-                            choices_as_values: true
                             choices: "@oro_payment.formatter.payment_status_label->getAvailableStatuses"
                 totalDiscountsAmount:
                     type:      number
@@ -709,8 +707,6 @@ datagrids:
                     data_name:          productId
                     options:
                         field_options:
-                            # TODO: remove 'choices_as_values' option below in scope of BAP-15236
-                            choices_as_values: true
                             choices:
                                 No: 0
                                 Yes: 1
@@ -727,8 +723,6 @@ datagrids:
                     joined_table:       joinedTableAlias
                     options:
                         field_options:
-                            # TODO: remove 'choices_as_values' option below in scope of BAP-15236
-                            choices_as_values: true
                             choices:
                                 Day:     day
                                 Month:   month

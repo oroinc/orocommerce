@@ -11,15 +11,15 @@ use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionResponse;
 use Oro\Bundle\ProductBundle\DataGrid\Extension\MassAction\TriggerEventForSelectedProductIdsMassActionHandler;
 use Symfony\Component\Translation\TranslatorInterface;
 
-class TriggerEventForSelectedProductIdsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
+class TriggerEventForSelectedProductIdsMassActionHandlerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $configManager;
 
     /**
-     * @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $translator;
 
@@ -45,11 +45,11 @@ class TriggerEventForSelectedProductIdsMassActionHandlerTest extends \PHPUnit_Fr
             ->method('get')
             ->with('oro_product.product_collections_mass_action_limitation')
             ->willReturn($limit);
-        /** @var MassActionInterface|\PHPUnit_Framework_MockObject_MockObject $massAction */
+        /** @var MassActionInterface|\PHPUnit\Framework\MockObject\MockObject $massAction */
         $massAction = $this->createMock(MassActionInterface::class);
-        /** @var DatagridInterface|\PHPUnit_Framework_MockObject_MockObject $datagrid */
+        /** @var DatagridInterface|\PHPUnit\Framework\MockObject\MockObject $datagrid */
         $datagrid = $this->createMock(DatagridInterface::class);
-        /** @var IterableResult|\PHPUnit_Framework_MockObject_MockObject $iterableResult */
+        /** @var IterableResult|\PHPUnit\Framework\MockObject\MockObject $iterableResult */
         $iterableResult = $this->createMock(IterableResult::class);
         $iterableResult->expects($this->once())
             ->method('count')
@@ -73,11 +73,11 @@ class TriggerEventForSelectedProductIdsMassActionHandlerTest extends \PHPUnit_Fr
             ->method('get')
             ->with('oro_product.product_collections_mass_action_limitation')
             ->willReturn(100);
-        /** @var MassActionInterface|\PHPUnit_Framework_MockObject_MockObject $massAction */
+        /** @var MassActionInterface|\PHPUnit\Framework\MockObject\MockObject $massAction */
         $massAction = $this->createMock(MassActionInterface::class);
-        /** @var DatagridInterface|\PHPUnit_Framework_MockObject_MockObject $datagrid */
+        /** @var DatagridInterface|\PHPUnit\Framework\MockObject\MockObject $datagrid */
         $datagrid = $this->createMock(DatagridInterface::class);
-        /** @var IterableResult|\PHPUnit_Framework_MockObject_MockObject $iterableResult */
+        /** @var IterableResult|\PHPUnit\Framework\MockObject\MockObject $iterableResult */
         $iterableResult = $this->createMock(IterableResult::class);
         $translatedMessage = 'some translated message';
         $this->translator->expects($this->once())
@@ -98,11 +98,11 @@ class TriggerEventForSelectedProductIdsMassActionHandlerTest extends \PHPUnit_Fr
             ->method('get')
             ->with('oro_product.product_collections_mass_action_limitation')
             ->willReturn(100);
-        /** @var MassActionInterface|\PHPUnit_Framework_MockObject_MockObject $massAction */
+        /** @var MassActionInterface|\PHPUnit\Framework\MockObject\MockObject $massAction */
         $massAction = $this->createMock(MassActionInterface::class);
-        /** @var DatagridInterface|\PHPUnit_Framework_MockObject_MockObject $datagrid */
+        /** @var DatagridInterface|\PHPUnit\Framework\MockObject\MockObject $datagrid */
         $datagrid = $this->createMock(DatagridInterface::class);
-        /** @var IterableResult|\PHPUnit_Framework_MockObject_MockObject $iterableResult */
+        /** @var IterableResult|\PHPUnit\Framework\MockObject\MockObject $iterableResult */
         $iterableResult = $this->createMock(IterableResult::class);
         $iterableResult->expects($this->once())
             ->method('count')

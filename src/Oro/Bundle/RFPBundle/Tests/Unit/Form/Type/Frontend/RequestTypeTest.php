@@ -49,7 +49,7 @@ class RequestTypeTest extends AbstractTest
      */
     public function testConfigureOptions()
     {
-        /* @var $resolver OptionsResolver|\PHPUnit_Framework_MockObject_MockObject */
+        /* @var $resolver OptionsResolver|\PHPUnit\Framework\MockObject\MockObject */
         $resolver = $this->createMock('Symfony\Component\OptionsResolver\OptionsResolver');
 
         $resolver->expects(static::once())
@@ -193,7 +193,7 @@ class RequestTypeTest extends AbstractTest
      */
     protected function getExtensions()
     {
-        /* @var $productUnitLabelFormatter ProductUnitLabelFormatter|\PHPUnit_Framework_MockObject_MockObject */
+        /* @var $productUnitLabelFormatter ProductUnitLabelFormatter|\PHPUnit\Framework\MockObject\MockObject */
         $productUnitLabelFormatter = $this->getMockBuilder(
             'Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter'
         )

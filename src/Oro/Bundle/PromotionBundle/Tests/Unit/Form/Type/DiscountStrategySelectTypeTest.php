@@ -8,10 +8,10 @@ use Oro\Bundle\PromotionBundle\Form\Type\DiscountStrategySelectType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class DiscountStrategySelectTypeTest extends \PHPUnit_Framework_TestCase
+class DiscountStrategySelectTypeTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var StrategyRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var StrategyRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     private $strategyRegistry;
 
@@ -44,12 +44,11 @@ class DiscountStrategySelectTypeTest extends \PHPUnit_Framework_TestCase
             ->method('getStrategies')
             ->willReturn(['test' => $strategy]);
 
-        /* @var $resolver OptionsResolver|\PHPUnit_Framework_MockObject_MockObject */
+        /* @var $resolver OptionsResolver|\PHPUnit\Framework\MockObject\MockObject */
         $resolver = $this->createMock(OptionsResolver::class);
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with([
-                'choices_as_values' => true,
                 'choices' => ['test_strategy' => 'test'],
             ]);
 

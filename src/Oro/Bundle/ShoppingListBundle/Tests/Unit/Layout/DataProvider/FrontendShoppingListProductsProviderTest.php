@@ -12,17 +12,17 @@ use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Layout\DataProvider\FrontendShoppingListProductsProvider;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class FrontendShoppingListProductsProviderTest extends \PHPUnit_Framework_TestCase
+class FrontendShoppingListProductsProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var LineItemRepository|\PHPUnit_Framework_MockObject_MockObject
+     * @var LineItemRepository|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $lineItemRepository;
 
     /**
-     * @var FrontendProductPricesDataProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var FrontendProductPricesDataProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $frontendProductPricesDataProvider;
 
@@ -32,12 +32,12 @@ class FrontendShoppingListProductsProviderTest extends \PHPUnit_Framework_TestCa
     protected $provider;
 
     /**
-     * @var ShoppingListLineItemsDataProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShoppingListLineItemsDataProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $shoppingListLineItemsDataProvider;
 
     /**
-     * @var ProductPriceFormatter|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProductPriceFormatter|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $productPriceFormatter;
 

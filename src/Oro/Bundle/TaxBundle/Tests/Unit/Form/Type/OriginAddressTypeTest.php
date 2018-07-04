@@ -134,7 +134,7 @@ class OriginAddressTypeTest extends AbstractAddressTestCase
 
     public function testFinishViewWithoutParent()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|FormInterface $formMock */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|FormInterface $formMock */
         $formMock = $this->createMock('Symfony\Component\Form\FormInterface');
 
         $formView = new FormView();
@@ -143,10 +143,10 @@ class OriginAddressTypeTest extends AbstractAddressTestCase
 
     public function testFinishViewWithoutUseDefault()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|FormInterface $formMock */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|FormInterface $formMock */
         $formMock = $this->createMock('Symfony\Component\Form\FormInterface');
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|FormInterface $parent */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|FormInterface $parent */
         $parent = $this->createMock('Symfony\Component\Form\FormInterface');
         $parent->expects($this->once())->method('has')->willReturn(false);
 
@@ -158,14 +158,14 @@ class OriginAddressTypeTest extends AbstractAddressTestCase
 
     public function testFinishView()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|FormInterface $formMock */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|FormInterface $formMock */
         $formMock = $this->createMock('Symfony\Component\Form\FormInterface');
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|FormInterface $useDefault */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|FormInterface $useDefault */
         $useDefault = $this->createMock('Symfony\Component\Form\FormInterface');
         $useDefault->expects($this->once())->method('getData')->willReturn(true);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|FormInterface $parent */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|FormInterface $parent */
         $parent = $this->createMock('Symfony\Component\Form\FormInterface');
         $parent->expects($this->once())->method('has')->willReturn(true);
         $parent->expects($this->once())->method('get')->willReturn($useDefault);

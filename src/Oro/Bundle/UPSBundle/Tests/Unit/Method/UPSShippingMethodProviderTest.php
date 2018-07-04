@@ -6,14 +6,14 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ShippingBundle\Method\Factory\IntegrationShippingMethodFactoryInterface;
 use Oro\Bundle\UPSBundle\Method\UPSShippingMethodProvider;
 
-class UPSShippingMethodProviderTest extends \PHPUnit_Framework_TestCase
+class UPSShippingMethodProviderTest extends \PHPUnit\Framework\TestCase
 {
     const CHANNEL_TYPE = 'channel_type';
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|IntegrationShippingMethodFactoryInterface */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|IntegrationShippingMethodFactoryInterface */
     private $methodBuilder;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|DoctrineHelper */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|DoctrineHelper */
     private $doctrineHelper;
 
     public function setUp()

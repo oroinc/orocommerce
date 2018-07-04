@@ -5,19 +5,19 @@ namespace Oro\Bundle\PaymentBundle\Tests\Unit\Method\View\Provider;
 use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
 use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewProviderInterface;
 
-abstract class AbstractMethodViewProviderTest extends \PHPUnit_Framework_TestCase
+abstract class AbstractMethodViewProviderTest extends \PHPUnit\Framework\TestCase
 {
     const IDENTIFIER1 = 'test1';
     const IDENTIFIER2 = 'test2';
     const WRONG_IDENTIFIER = 'wrong';
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
+     * @var \PHPUnit\Framework\MockObject\MockObject
      */
     protected $factory;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
+     * @var \PHPUnit\Framework\MockObject\MockObject
      */
     protected $configProvider;
 
@@ -149,7 +149,7 @@ abstract class AbstractMethodViewProviderTest extends \PHPUnit_Framework_TestCas
     /**
      * @param string $identifier
      *
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     protected function buildPaymentConfig($identifier)
     {

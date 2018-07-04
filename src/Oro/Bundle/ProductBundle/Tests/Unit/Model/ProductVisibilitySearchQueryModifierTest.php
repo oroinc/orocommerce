@@ -6,7 +6,7 @@ use Oro\Bundle\ProductBundle\Model\ProductVisibilitySearchQueryModifier;
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
 use Oro\Bundle\SearchBundle\Query\Query;
 
-class ProductVisibilitySearchQueryModifierTest extends \PHPUnit_Framework_TestCase
+class ProductVisibilitySearchQueryModifierTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var ProductVisibilitySearchQueryModifier

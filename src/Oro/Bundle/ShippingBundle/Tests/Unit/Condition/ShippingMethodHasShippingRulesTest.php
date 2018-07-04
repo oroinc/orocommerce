@@ -8,17 +8,17 @@ use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 use Oro\Component\ConfigExpression\ContextAccessorInterface;
 use Symfony\Component\PropertyAccess\PropertyPathInterface;
 
-class ShippingMethodHasShippingRulesTest extends \PHPUnit_Framework_TestCase
+class ShippingMethodHasShippingRulesTest extends \PHPUnit\Framework\TestCase
 {
     const PROPERTY_PATH_NAME = 'testPropertyPath';
 
     /**
-     * @var ShippingMethodsConfigsRuleRepository|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingMethodsConfigsRuleRepository|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $repository;
 
     /**
-     * @var PropertyPathInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var PropertyPathInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $propertyPath;
 
@@ -127,7 +127,7 @@ class ShippingMethodHasShippingRulesTest extends \PHPUnit_Framework_TestCase
 
     public function testSetContextAccessor()
     {
-        /** @var ContextAccessorInterface|\PHPUnit_Framework_MockObject_MockObject $contextAccessor * */
+        /** @var ContextAccessorInterface|\PHPUnit\Framework\MockObject\MockObject $contextAccessor * */
         $contextAccessor = $this->getMockBuilder(ContextAccessorInterface::class)
             ->disableOriginalConstructor()
             ->getMock();

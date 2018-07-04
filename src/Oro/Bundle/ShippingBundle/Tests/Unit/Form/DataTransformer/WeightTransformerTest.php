@@ -6,7 +6,7 @@ use Oro\Bundle\ShippingBundle\Entity\WeightUnit;
 use Oro\Bundle\ShippingBundle\Form\DataTransformer\WeightTransformer;
 use Oro\Bundle\ShippingBundle\Model\Weight;
 
-class WeightTransformerTest extends \PHPUnit_Framework_TestCase
+class WeightTransformerTest extends \PHPUnit\Framework\TestCase
 {
     /** @var WeightTransformer */
     protected $transformer;

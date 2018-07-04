@@ -7,7 +7,7 @@ use Oro\Bundle\CheckoutBundle\Condition\IsWorkflowStartFromShoppingListAllowed;
 use Oro\Component\ConfigExpression\ContextAccessor;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class StartCheckoutTransitionActionTest extends \PHPUnit_Framework_TestCase
+class StartCheckoutTransitionActionTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var StartCheckoutTransitionAction
@@ -15,17 +15,17 @@ class StartCheckoutTransitionActionTest extends \PHPUnit_Framework_TestCase
     private $action;
 
     /**
-     * @var IsWorkflowStartFromShoppingListAllowed|\PHPUnit_Framework_MockObject_MockObject
+     * @var IsWorkflowStartFromShoppingListAllowed|\PHPUnit\Framework\MockObject\MockObject
      */
     private $isWorkflowStartFromShoppingListAllowed;
 
     /**
-     * @var ContextAccessor|\PHPUnit_Framework_MockObject_MockObject
+     * @var ContextAccessor|\PHPUnit\Framework\MockObject\MockObject
      */
     private $contextAccessor;
 
     /**
-     * @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $eventDispatcher;
 

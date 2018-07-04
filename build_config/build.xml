@@ -12,8 +12,6 @@
         <echo>                      (clean prepare-reportdir run-code-standards)</echo>
         <echo> functional-tests     Run functional tests.</echo>
         <echo>                      (clean prepare install install-admin-fixture run-functional-tests)</echo>
-        <echo> selenium-tests       Run Selenium tests.</echo>
-        <echo>                      (clean prepare install install-admin-fixture install-test-fixtures run-selenium-tests)</echo>
         <echo/>
         <echo>Build artifacts are created within the "build" directory. All normally</echo>
         <echo>generated reports and logs can be found in "build/reports"</echo>
@@ -195,9 +193,6 @@
 
     <target name="functional-tests" description="Run functional tests."
             depends="clean,prepare,install,install-admin-fixture,run-functional-tests"/>
-
-    <target name="selenium-tests" description="Run Selenium tests."
-            depends="clean,prepare,install,install-admin-fixture,install-test-fixtures,run-selenium-tests"/>
 
     <!-- END High Level Targets -->
 
@@ -544,10 +539,6 @@
 
     <target name="run-functional-tests" extensionOf="run-all-tests">
         <phpunit suite="${testsuite}" defaultsuite="Project Functional Tests"/>
-    </target>
-
-    <target name="run-selenium-tests" extensionOf="run-all-tests">
-        <phpunit suite="${testsuite}" defaultsuite="Project Selenium Tests"/>
     </target>
 
     <!-- Check code standards -->

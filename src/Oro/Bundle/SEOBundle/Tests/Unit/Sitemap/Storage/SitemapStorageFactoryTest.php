@@ -7,7 +7,7 @@ use Oro\Bundle\SEOBundle\Sitemap\Storage\SitemapStorageFactory;
 use Oro\Bundle\SEOBundle\Sitemap\Storage\XmlSitemapIndexStorage;
 use Oro\Bundle\SEOBundle\Sitemap\Storage\XmlSitemapUrlsStorage;
 
-class SitemapStorageFactoryTest extends \PHPUnit_Framework_TestCase
+class SitemapStorageFactoryTest extends \PHPUnit\Framework\TestCase
 {
     public function testCreateUrlsStorage()
     {

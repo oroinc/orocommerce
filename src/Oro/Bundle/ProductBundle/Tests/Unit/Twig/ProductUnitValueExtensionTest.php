@@ -7,11 +7,11 @@ use Oro\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter;
 use Oro\Bundle\ProductBundle\Twig\ProductUnitValueExtension;
 use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
 
-class ProductUnitValueExtensionTest extends \PHPUnit_Framework_TestCase
+class ProductUnitValueExtensionTest extends \PHPUnit\Framework\TestCase
 {
     use TwigExtensionTestCaseTrait;
 
-    /** @var ProductUnitValueFormatter|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ProductUnitValueFormatter|\PHPUnit\Framework\MockObject\MockObject */
     protected $formatter;
 
     /** @var ProductUnitValueExtension */

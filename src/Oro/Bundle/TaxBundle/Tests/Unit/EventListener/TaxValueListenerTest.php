@@ -8,9 +8,9 @@ use Oro\Bundle\TaxBundle\Entity\TaxValue;
 use Oro\Bundle\TaxBundle\EventListener\TaxValueListener;
 use Oro\Bundle\TaxBundle\Manager\TaxValueManager;
 
-class TaxValueListenerTest extends \PHPUnit_Framework_TestCase
+class TaxValueListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var TaxValueManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var TaxValueManager|\PHPUnit\Framework\MockObject\MockObject */
     protected $taxValueManager;
 
     /** @var TaxValueListener */

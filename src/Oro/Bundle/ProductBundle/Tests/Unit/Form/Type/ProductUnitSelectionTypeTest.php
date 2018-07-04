@@ -43,7 +43,7 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
     protected $labels = [];
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface
+     * @var \PHPUnit\Framework\MockObject\MockObject|TranslatorInterface
      */
     protected $translator;
 
@@ -89,7 +89,7 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
 
     public function testConfigureOptions()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|OptionsResolver $resolver */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|OptionsResolver $resolver */
         $resolver = $this->createMock(OptionsResolver::class);
         $resolver->expects($this->exactly(2))
             ->method('setDefaults')
@@ -502,7 +502,7 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
      * @param $productUnitCode
      * @param ProductUnit $productUnit
      * @param ProductHolderInterface $productHolder
-     * @return ProductUnitHolderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return ProductUnitHolderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function createProductUnitHolder(
         $id,
@@ -510,7 +510,7 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
         ProductUnit $productUnit = null,
         ProductHolderInterface $productHolder = null
     ) {
-        /* @var $productUmitHolder \PHPUnit_Framework_MockObject_MockObject|ProductUnitHolderInterface */
+        /* @var $productUmitHolder \PHPUnit\Framework\MockObject\MockObject|ProductUnitHolderInterface */
         $productUnitHolder = $this->createMock('Oro\Bundle\ProductBundle\Model\ProductUnitHolderInterface');
         $productUnitHolder
             ->expects(static::any())
@@ -535,11 +535,11 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
     /**
      * @param string $productSku
      * @param Product $product
-     * @return \PHPUnit_Framework_MockObject_MockObject|ProductHolderInterface
+     * @return \PHPUnit\Framework\MockObject\MockObject|ProductHolderInterface
      */
     protected function createProductHolder($productSku, Product $product = null)
     {
-        /* @var $productHolder \PHPUnit_Framework_MockObject_MockObject|ProductHolderInterface */
+        /* @var $productHolder \PHPUnit\Framework\MockObject\MockObject|ProductHolderInterface */
         $productHolder = $this->createMock('Oro\Bundle\ProductBundle\Model\ProductHolderInterface');
 
         $productHolder
@@ -572,11 +572,11 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
     ) {
         $form = $this->factory->create(ProductUnitSelectionType::class, $productUnitHolder, $options);
 
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $parentForm */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $parentForm */
         $parentForm = $this->createMock('Symfony\Component\Form\FormInterface');
         $parentForm->expects($this->any())->method('has')->willReturn($expectedFieldOverride);
 
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $productForm */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $productForm */
         $productForm = $this->createMock('Symfony\Component\Form\FormInterface');
         $form->setParent($parentForm);
 
@@ -592,8 +592,6 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
                         function (array $options) use ($productUnit) {
                             $this->assertArrayHasKey('choices_updated', $options);
                             $this->assertTrue($options['choices_updated']);
-                            $this->assertArrayHasKey('choices_as_values', $options);
-                            $this->assertTrue($options['choices_as_values']);
 
                             $this->assertArrayHasKey('choices', $options);
                             $this->assertEquals([$productUnit->getCode() => 0], $options['choices']);
@@ -649,7 +647,7 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
 
     /**
      * @param string $code
-     * @return \PHPUnit_Framework_MockObject_MockObject|ProductHolderInterface
+     * @return \PHPUnit\Framework\MockObject\MockObject|ProductHolderInterface
      */
     protected function getProductHolder($code = 'sku')
     {
@@ -662,7 +660,7 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
 
     /**
      * @param string $code
-     * @return \PHPUnit_Framework_MockObject_MockObject|ProductUnitHolderInterface
+     * @return \PHPUnit\Framework\MockObject\MockObject|ProductUnitHolderInterface
      */
     protected function getProductUnitHolder($code = 'sku')
     {

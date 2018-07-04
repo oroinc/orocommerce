@@ -11,7 +11,7 @@ use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
-class CPLIdPlaceholderTest extends \PHPUnit_Framework_TestCase
+class CPLIdPlaceholderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
@@ -21,12 +21,12 @@ class CPLIdPlaceholderTest extends \PHPUnit_Framework_TestCase
     private $placeholder;
 
     /**
-     * @var PriceListTreeHandler|\PHPUnit_Framework_MockObject_MockObject
+     * @var PriceListTreeHandler|\PHPUnit\Framework\MockObject\MockObject
      */
     private $priceListTreeHandler;
 
     /**
-     * @var TokenStorageInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var TokenStorageInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $tokenStorage;
 

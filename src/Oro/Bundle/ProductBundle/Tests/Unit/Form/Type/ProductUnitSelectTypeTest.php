@@ -23,7 +23,7 @@ class ProductUnitSelectTypeTest extends FormIntegrationTestCase
     private $formType;
 
     /**
-     * @var ProductUnitLabelFormatter|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProductUnitLabelFormatter|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $productUnitLabelFormatter;
 
@@ -123,7 +123,7 @@ class ProductUnitSelectTypeTest extends FormIntegrationTestCase
 
     public function testConfigureOptions()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|OptionsResolver $resolver */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|OptionsResolver $resolver */
         $resolver = $this->createMock(OptionsResolver::class);
         $resolver->expects($this->exactly(2))
             ->method('setDefaults')

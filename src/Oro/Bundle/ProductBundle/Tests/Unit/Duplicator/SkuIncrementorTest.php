@@ -6,7 +6,7 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Duplicator\SkuIncrementor;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
-class SkuIncrementorTest extends \PHPUnit_Framework_TestCase
+class SkuIncrementorTest extends \PHPUnit\Framework\TestCase
 {
     const PRODUCT_CLASS = 'OroProductBundle:Product';
 
@@ -16,7 +16,7 @@ class SkuIncrementorTest extends \PHPUnit_Framework_TestCase
     protected $service;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|DoctrineHelper
+     * @var \PHPUnit\Framework\MockObject\MockObject|DoctrineHelper
      */
     protected $doctrineHelper;
 
@@ -90,7 +90,7 @@ class SkuIncrementorTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param string $existingSku
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     private function getProductRepositoryMock($existingSku)
     {

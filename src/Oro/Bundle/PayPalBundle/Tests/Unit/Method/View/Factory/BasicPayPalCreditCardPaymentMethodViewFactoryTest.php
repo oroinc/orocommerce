@@ -8,7 +8,7 @@ use Oro\Bundle\PayPalBundle\Method\View\Factory\BasicPayPalCreditCardPaymentMeth
 use Oro\Bundle\PayPalBundle\Method\View\PayPalCreditCardPaymentMethodView;
 use Symfony\Component\Form\FormFactoryInterface;
 
-class BasicPayPalCreditCardPaymentMethodViewFactoryTest extends \PHPUnit_Framework_TestCase
+class BasicPayPalCreditCardPaymentMethodViewFactoryTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var FormFactoryInterface

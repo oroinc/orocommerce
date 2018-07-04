@@ -17,17 +17,17 @@ use Oro\Component\Testing\Unit\EntityTrait;
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
-class CategoryTreeHandlerListenerTest extends \PHPUnit_Framework_TestCase
+class CategoryTreeHandlerListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var CategoryVisibilityResolverInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var CategoryVisibilityResolverInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $categoryVisibilityResolver;
 
     /**
-     * @var CustomerUserRelationsProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var CustomerUserRelationsProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $customerUserRelationsProvider;
 

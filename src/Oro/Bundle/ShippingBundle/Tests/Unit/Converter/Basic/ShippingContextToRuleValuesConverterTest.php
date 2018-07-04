@@ -17,7 +17,7 @@ use Oro\Bundle\ShippingBundle\ExpressionLanguage\DecoratedProductLineItemFactory
 use Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\ShippingAddressStub;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class ShippingContextToRuleValuesConverterTest extends \PHPUnit_Framework_TestCase
+class ShippingContextToRuleValuesConverterTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 

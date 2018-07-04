@@ -14,25 +14,25 @@ use Oro\Bundle\UPSBundle\Connection\Validator\UpsConnectionValidator;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
 use Psr\Log\LoggerInterface;
 
-class UpsConnectionValidatorTest extends \PHPUnit_Framework_TestCase
+class UpsConnectionValidatorTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var UpsConnectionValidatorRequestFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var UpsConnectionValidatorRequestFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $requestFactory;
 
     /**
-     * @var UpsClientFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var UpsClientFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $clientFactory;
 
     /**
-     * @var UpsConnectionValidatorResultFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var UpsConnectionValidatorResultFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $resultFactory;
 
     /**
-     * @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $logger;
 

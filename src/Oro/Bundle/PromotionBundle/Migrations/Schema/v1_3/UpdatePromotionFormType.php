@@ -21,7 +21,8 @@ class UpdatePromotionFormType implements Migration
                 Promotion::class,
                 'form',
                 'form_type',
-                PromotionSelectType::class
+                PromotionSelectType::class,
+                'oro_promotion_select'
             )
         );
     }

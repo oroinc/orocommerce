@@ -4,7 +4,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Event;
 
 use Oro\Bundle\PricingBundle\Event\AbstractProductPricesRemoveEvent;
 
-class AbstractProductPricesRemoveEventTest extends \PHPUnit_Framework_TestCase
+class AbstractProductPricesRemoveEventTest extends \PHPUnit\Framework\TestCase
 {
     public function testEvent()
     {

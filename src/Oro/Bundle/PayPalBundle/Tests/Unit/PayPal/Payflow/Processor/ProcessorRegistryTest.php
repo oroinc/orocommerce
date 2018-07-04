@@ -5,7 +5,7 @@ namespace Oro\Bundle\PayPalBundle\Tests\Unit\PayPal\Payflow\Processor;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\Partner;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Processor\ProcessorRegistry;
 
-class ProcessorRegistryTest extends \PHPUnit_Framework_TestCase
+class ProcessorRegistryTest extends \PHPUnit\Framework\TestCase
 {
     /** @var ProcessorRegistry */
     protected $registry;

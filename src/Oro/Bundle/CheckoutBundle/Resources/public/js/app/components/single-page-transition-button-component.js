@@ -38,16 +38,12 @@ define(function(require) {
                 this.$form.on('change', _.bind(this.onFormChange, this));
             }
             if (this.$form) {
-                this.$el.on('click', _.bind(this.submit, this));
+                mediator.on('single-page:transition-button:submit', _.bind(this.submit, this));
             }
             this.createAjaxData();
         },
 
-        /**
-         * @param {jQuery.Event} e
-         */
-        submit: function(e) {
-            e.preventDefault();
+        submit: function() {
             this.$form.trigger('submit');
         },
 
@@ -132,21 +128,6 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
-         */
-        dispose: function() {
-            if (this.disposed) {
-                return;
-            }
-
-            if (this.$form) {
-                this.$el.off('click', _.bind(this.submit, this));
-            }
-
-            SinglePageTransitionButtonComponent.__super__.dispose.call(this);
-        },
-
-        /**
          * @param {jQuery.Element} $target
          * @param {Object} response
          */
@@ -156,6 +137,14 @@ define(function(require) {
             if (!_.isEmpty(this.reloadEvents) && (responseData.stateSaved || false)) {
                 var eventCount = this.reloadEvents.length;
 
+                // Ensure button view is initialized
+                var viewInitializedPromise = $.Deferred(function(deferred) {
+                    mediator.on('single-page:transition-button:initialized', function() {
+                        deferred.resolve();
+                        mediator.off('single-page:transition-button:initialized', null, this); // Call handler once
+                    }, self);
+                }).promise();
+
                 _.each(this.reloadEvents, function(eventName) {
                     mediator.trigger(
                         eventName,
@@ -164,7 +153,10 @@ define(function(require) {
                                 eventCount--;
 
                                 if (eventCount < 1) {
-                                    mediator.trigger('checkout:transition-button:enable');
+                                    viewInitializedPromise.done(function() {
+                                        mediator.trigger('checkout:transition-button:enable');
+                                    });
+
                                     self.reloadEvents = [];
                                     self.buttonDisabled = false;
                                 }

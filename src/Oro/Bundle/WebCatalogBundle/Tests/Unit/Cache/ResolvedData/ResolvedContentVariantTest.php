@@ -6,7 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\WebCatalogBundle\Cache\ResolvedData\ResolvedContentVariant;
 
-class ResolvedContentVariantTest extends \PHPUnit_Framework_TestCase
+class ResolvedContentVariantTest extends \PHPUnit\Framework\TestCase
 {
     public function testAccessors()
     {

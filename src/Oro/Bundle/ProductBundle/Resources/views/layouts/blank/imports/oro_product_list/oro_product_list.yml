@@ -5,7 +5,7 @@ layout:
             root: __products
     actions:
         - '@setBlockTheme':
-            themes: 'oro_product_list.html.twig'
+            themes: 'OroProductBundle:layouts:blank/imports/oro_product_list/oro_product_list.html.twig'
         - '@add':
             id: __products
             parentId: __root

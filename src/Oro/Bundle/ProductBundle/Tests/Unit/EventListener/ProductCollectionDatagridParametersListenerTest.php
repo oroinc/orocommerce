@@ -10,7 +10,7 @@ use Oro\Bundle\DataGridBundle\Datasource\Orm\OrmDatasource;
 use Oro\Bundle\DataGridBundle\Event\BuildAfter;
 use Oro\Bundle\ProductBundle\EventListener\ProductCollectionDatagridParametersListener;
 
-class ProductCollectionDatagridParametersListenerTest extends \PHPUnit_Framework_TestCase
+class ProductCollectionDatagridParametersListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var ProductCollectionDatagridParametersListener
@@ -24,14 +24,14 @@ class ProductCollectionDatagridParametersListenerTest extends \PHPUnit_Framework
 
     public function testOnBuildAfterWhenWrongDatasource()
     {
-        /** @var DatasourceInterface|\PHPUnit_Framework_MockObject_MockObject $datasource */
+        /** @var DatasourceInterface|\PHPUnit\Framework\MockObject\MockObject $datasource */
         $datasource = $this->getMockBuilder(DatasourceInterface::class)
             ->setMethods(['process', 'getResults', 'getQueryBuilder'])
             ->getMock();
         $datasource->expects($this->never())
             ->method('getQueryBuilder');
 
-        /** @var DatagridInterface|\PHPUnit_Framework_MockObject_MockObject $datagrid */
+        /** @var DatagridInterface|\PHPUnit\Framework\MockObject\MockObject $datagrid */
         $datagrid = $this->createMock(DatagridInterface::class);
         $datagrid->expects($this->once())
             ->method('getDatasource')
@@ -53,7 +53,7 @@ class ProductCollectionDatagridParametersListenerTest extends \PHPUnit_Framework
             ->method('getQueryBuilder')
             ->willReturn($queryBuilder);
 
-        /** @var DatagridInterface|\PHPUnit_Framework_MockObject_MockObject $datagrid */
+        /** @var DatagridInterface|\PHPUnit\Framework\MockObject\MockObject $datagrid */
         $datagrid = $this->createMock(DatagridInterface::class);
         $datagrid->expects($this->once())
             ->method('getDatasource')
@@ -82,7 +82,7 @@ class ProductCollectionDatagridParametersListenerTest extends \PHPUnit_Framework
             ->method('getQueryBuilder')
             ->willReturn($queryBuilder);
 
-        /** @var DatagridInterface|\PHPUnit_Framework_MockObject_MockObject $datagrid */
+        /** @var DatagridInterface|\PHPUnit\Framework\MockObject\MockObject $datagrid */
         $datagrid = $this->createMock(DatagridInterface::class);
         $datagrid->expects($this->once())
             ->method('getDatasource')

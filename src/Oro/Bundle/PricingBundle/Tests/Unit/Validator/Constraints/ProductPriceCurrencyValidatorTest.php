@@ -11,7 +11,7 @@ use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
 
-class ProductPriceCurrencyValidatorTest extends \PHPUnit_Framework_TestCase
+class ProductPriceCurrencyValidatorTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var ProductPriceCurrency
@@ -19,7 +19,7 @@ class ProductPriceCurrencyValidatorTest extends \PHPUnit_Framework_TestCase
     protected $constraint;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ExecutionContextInterface
+     * @var \PHPUnit\Framework\MockObject\MockObject|ExecutionContextInterface
      */
     protected $context;
 

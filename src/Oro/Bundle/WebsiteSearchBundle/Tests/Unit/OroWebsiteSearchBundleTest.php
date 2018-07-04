@@ -7,7 +7,7 @@ use Oro\Bundle\WebsiteSearchBundle\DependencyInjection\OroWebsiteSearchExtension
 use Oro\Bundle\WebsiteSearchBundle\OroWebsiteSearchBundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-class OroWebsiteSearchBundleTest extends \PHPUnit_Framework_TestCase
+class OroWebsiteSearchBundleTest extends \PHPUnit\Framework\TestCase
 {
     public function testGetContainerExtension()
     {

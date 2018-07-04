@@ -5,7 +5,7 @@ namespace Oro\Bundle\CMSBundle\Tests\Unit\ContentBlockView\Model;
 use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\CMSBundle\ContentBlock\Model\ContentBlockView;
 
-class ContentBlockViewTest extends \PHPUnit_Framework_TestCase
+class ContentBlockViewTest extends \PHPUnit\Framework\TestCase
 {
     public function testGetters()
     {

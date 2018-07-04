@@ -7,15 +7,15 @@ use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
-class IsWorkflowStartFromShoppingListAllowedTest extends \PHPUnit_Framework_TestCase
+class IsWorkflowStartFromShoppingListAllowedTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var FeatureChecker|\PHPUnit_Framework_MockObject_MockObject
+     * @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject
      */
     private $featureChecker;
 
     /**
-     * @var TokenStorageInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var TokenStorageInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $tokenStorage;
 

@@ -10,17 +10,17 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 use Oro\Bundle\ProductBundle\Rounding\QuantityRoundingService;
 
-class BaseInventoryLevelNormalizerTestCase extends \PHPUnit_Framework_TestCase
+class BaseInventoryLevelNormalizerTestCase extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var InventoryLevelNormalizer
      */
     protected $inventoryLevelNormalizer;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|ProductUnitLabelFormatter */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|ProductUnitLabelFormatter */
     protected $formatter;
 
-    /** @var  \PHPUnit_Framework_MockObject_MockObject|QuantityRoundingService */
+    /** @var  \PHPUnit\Framework\MockObject\MockObject|QuantityRoundingService */
     protected $roundingService;
 
     protected function setUp()

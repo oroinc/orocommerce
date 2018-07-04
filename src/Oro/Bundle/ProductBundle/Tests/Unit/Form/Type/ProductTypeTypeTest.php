@@ -15,7 +15,7 @@ class ProductTypeTypeTest extends FormIntegrationTestCase
     /** @var ProductTypeType */
     protected $productTypeType;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|ProductTypeProvider */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|ProductTypeProvider */
     protected $productTypeProvider;
 
     public function setup()

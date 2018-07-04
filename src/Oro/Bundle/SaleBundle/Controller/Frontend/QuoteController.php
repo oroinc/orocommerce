@@ -97,7 +97,7 @@ class QuoteController extends Controller
         $form = $this->createForm(QuoteDemandType::class, $quoteDemand);
         if ($request->isMethod(Request::METHOD_POST)) {
             $form->handleRequest($request);
-            if ($form->isValid()) {
+            if ($form->isSubmitted() && $form->isValid()) {
                 $actionGroupRegistry = $this->get('oro_action.action_group_registry');
                 $actionGroup = $actionGroupRegistry
                     ->findByName('oro_sale_frontend_quote_accept_and_submit_to_order');

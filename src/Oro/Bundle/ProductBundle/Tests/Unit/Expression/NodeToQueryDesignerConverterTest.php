@@ -8,7 +8,7 @@ use Oro\Bundle\ProductBundle\Model\NodeExpressionQueryDesigner;
 use Oro\Component\Expression\ColumnInformationProviderInterface;
 use Oro\Component\Expression\Node\NodeInterface;
 
-class NodeToQueryDesignerConverterTest extends \PHPUnit_Framework_TestCase
+class NodeToQueryDesignerConverterTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var NodeToQueryDesignerConverter
@@ -22,15 +22,15 @@ class NodeToQueryDesignerConverterTest extends \PHPUnit_Framework_TestCase
 
     public function testConvert()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|NodeInterface $subNode */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|NodeInterface $subNode */
         $subNode = $this->createMock(NodeInterface::class);
-        /** @var \PHPUnit_Framework_MockObject_MockObject|NodeInterface $node */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|NodeInterface $node */
         $node = $this->createMock(NodeInterface::class);
         $node->expects($this->once())
             ->method('getNodes')
             ->willReturn([$subNode]);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|ColumnInformationProviderInterface $columnInfoProvider */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|ColumnInformationProviderInterface $columnInfoProvider */
         $columnInfoProvider = $this->createMock(ColumnInformationProviderInterface::class);
         $columnInfoProvider->expects($this->once())
             ->method('fillColumnInformation')

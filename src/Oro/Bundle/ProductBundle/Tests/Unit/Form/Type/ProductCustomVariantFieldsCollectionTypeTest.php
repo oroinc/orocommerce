@@ -20,7 +20,7 @@ class ProductCustomVariantFieldsCollectionTypeTest extends FormIntegrationTestCa
     protected $formType;
 
     /**
-     * @var VariantFieldProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var VariantFieldProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $variantFieldProvider;
 

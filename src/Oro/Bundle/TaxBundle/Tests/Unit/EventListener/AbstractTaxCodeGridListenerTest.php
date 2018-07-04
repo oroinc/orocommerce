@@ -7,7 +7,7 @@ use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
-abstract class AbstractTaxCodeGridListenerTest extends \PHPUnit_Framework_TestCase
+abstract class AbstractTaxCodeGridListenerTest extends \PHPUnit\Framework\TestCase
 {
     /** @var object */
     protected $listener;

@@ -10,17 +10,17 @@ use Oro\Bundle\PaymentBundle\Twig\PaymentMethodExtension;
 use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class PaymentMethodExtensionTest extends \PHPUnit_Framework_TestCase
+class PaymentMethodExtensionTest extends \PHPUnit\Framework\TestCase
 {
     use TwigExtensionTestCaseTrait;
 
-    /** @var PaymentTransactionProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var PaymentTransactionProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $paymentTransactionProvider;
 
-    /** @var PaymentMethodLabelFormatter|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var PaymentMethodLabelFormatter|\PHPUnit\Framework\MockObject\MockObject */
     protected $paymentMethodLabelFormatter;
 
-    /** @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $dispatcher;
 
     /** @var PaymentMethodExtension */

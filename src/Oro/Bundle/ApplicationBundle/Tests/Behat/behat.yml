@@ -11,6 +11,7 @@ oro_behat_extension:
             - '@oro_importexport.processor.registry'
         - OroApplicationBundle::CommerceMainContext
         - OroCheckoutBundle::FeatureContext
+        - OroProductBundle::QuickOrderFormContext
         - OroSecurityBundle::ACLContext
         - OroProductBundle::FeatureContext
         - OroProductBundle::FrontendProductGridContext

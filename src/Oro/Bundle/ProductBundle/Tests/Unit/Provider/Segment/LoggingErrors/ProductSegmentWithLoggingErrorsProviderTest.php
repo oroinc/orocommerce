@@ -9,15 +9,15 @@ use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Bundle\SegmentBundle\Entity\SegmentType;
 use Psr\Log\LoggerInterface;
 
-class ProductSegmentWithLoggingErrorsProviderTest extends \PHPUnit_Framework_TestCase
+class ProductSegmentWithLoggingErrorsProviderTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var SegmentManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var SegmentManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $segmentManager;
 
     /**
-     * @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $logger;
 

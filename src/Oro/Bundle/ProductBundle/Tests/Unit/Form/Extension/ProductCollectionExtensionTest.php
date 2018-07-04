@@ -11,15 +11,15 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
-class ProductCollectionExtensionTest extends \PHPUnit_Framework_TestCase
+class ProductCollectionExtensionTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $translator;
 
     /**
-     * @var |\PHPUnit_Framework_MockObject_MockObject
+     * @var |\PHPUnit\Framework\MockObject\MockObject
      */
     private $extendedType;
 
@@ -36,7 +36,7 @@ class ProductCollectionExtensionTest extends \PHPUnit_Framework_TestCase
 
     public function testBuildForm()
     {
-        /** @var FormBuilderInterface|\PHPUnit_Framework_MockObject_MockObject $builder **/
+        /** @var FormBuilderInterface|\PHPUnit\Framework\MockObject\MockObject $builder **/
         $builder = $this->createMock(FormBuilderInterface::class);
         $builder
             ->expects($this->once())
@@ -52,7 +52,7 @@ class ProductCollectionExtensionTest extends \PHPUnit_Framework_TestCase
      */
     public function testOnPostSubmitNoValidationError(array $forms)
     {
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form **/
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form **/
         $form = $this->createMock(FormInterface::class);
         $form
             ->expects($this->once())
@@ -124,7 +124,7 @@ class ProductCollectionExtensionTest extends \PHPUnit_Framework_TestCase
             ->method('addError')
             ->with($expectedFormError);
 
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock(FormInterface::class);
         $form
             ->expects($this->any())
@@ -144,12 +144,12 @@ class ProductCollectionExtensionTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param string $segmentName
-     * @param \PHPUnit_Framework_MockObject_MockObject|null $productCollectionSegmentNameForm
-     * @return \PHPUnit_Framework_MockObject_MockObject|FormInterface
+     * @param \PHPUnit\Framework\MockObject\MockObject|null $productCollectionSegmentNameForm
+     * @return \PHPUnit\Framework\MockObject\MockObject|FormInterface
      */
     private function createProductCollectionForm(
         $segmentName,
-        \PHPUnit_Framework_MockObject_MockObject $productCollectionSegmentNameForm = null
+        \PHPUnit\Framework\MockObject\MockObject $productCollectionSegmentNameForm = null
     ) {
         if (!$productCollectionSegmentNameForm) {
             $productCollectionSegmentNameForm = $this->createMock(FormInterface::class);
@@ -194,11 +194,11 @@ class ProductCollectionExtensionTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|FormInterface
+     * @return \PHPUnit\Framework\MockObject\MockObject|FormInterface
      */
     private function createNoProductCollectionSegmentChildForm()
     {
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock(FormInterface::class);
         $form
             ->expects($this->any())
@@ -211,11 +211,11 @@ class ProductCollectionExtensionTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|FormInterface
+     * @return \PHPUnit\Framework\MockObject\MockObject|FormInterface
      */
     private function createNoProductCollectionSegmentNameChildForm()
     {
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $noProductCollectionSegmentChildForm */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $noProductCollectionSegmentChildForm */
         $productCollectionSegmentForm = $this->createMock(FormInterface::class);
         $productCollectionSegmentForm
             ->expects($this->any())
@@ -224,7 +224,7 @@ class ProductCollectionExtensionTest extends \PHPUnit_Framework_TestCase
                 ['name', false]
             ]);
 
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $noProductCollectionSegmentChildForm */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $noProductCollectionSegmentChildForm */
         $form = $this->createMock(FormInterface::class);
         $form
             ->expects($this->any())

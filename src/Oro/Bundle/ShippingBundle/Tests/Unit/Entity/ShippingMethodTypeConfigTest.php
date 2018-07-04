@@ -6,7 +6,7 @@ use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-class ShippingMethodTypeConfigTest extends \PHPUnit_Framework_TestCase
+class ShippingMethodTypeConfigTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 

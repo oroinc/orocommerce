@@ -42,8 +42,7 @@ class PriceListCurrencyEntityListenerTest extends WebTestCase
         self::assertMessageSent(
             Topics::RESOLVE_PRICE_RULES,
             [
-                PriceListTriggerFactory::PRICE_LIST => $priceList->getId(),
-                PriceListTriggerFactory::PRODUCT => []
+                PriceListTriggerFactory::PRODUCT => [$priceList->getId() => []]
             ]
         );
     }
@@ -63,8 +62,7 @@ class PriceListCurrencyEntityListenerTest extends WebTestCase
         self::assertMessageSent(
             Topics::RESOLVE_PRICE_RULES,
             [
-                PriceListTriggerFactory::PRICE_LIST => $priceList->getId(),
-                PriceListTriggerFactory::PRODUCT => []
+                PriceListTriggerFactory::PRODUCT => [$priceList->getId() => []]
             ]
         );
     }

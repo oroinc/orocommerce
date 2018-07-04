@@ -174,7 +174,7 @@ class AjaxLineItemController extends AbstractLineItemController
         $form->handleRequest($request);
 
         $response = [];
-        if ($form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid()) {
             $parameters = $this->get('oro_datagrid.mass_action.parameters_parser')->parse($request);
             $requestData = array_merge($request->query->all(), $request->request->all());
 

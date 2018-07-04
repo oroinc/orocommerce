@@ -9,7 +9,6 @@ use Oro\Bundle\ProductBundle\Form\Type\FrontendLineItemType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use Oro\Bundle\ProductBundle\Model\ProductLineItem;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
-use Oro\Bundle\ProductBundle\Visibility\ProductUnitFieldsSettingsInterface;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
@@ -33,26 +32,13 @@ class FrontendLineItemTypeTest extends FormIntegrationTestCase
     ];
 
     /**
-     * @var ProductUnitFieldsSettingsInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $productUnitFieldsSettings;
-
-    /**
      * {@inheritdoc}
      */
     protected function setUp()
     {
-        $this->productUnitFieldsSettings = $this
-            ->getMockBuilder(ProductUnitFieldsSettingsInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->productUnitFieldsSettings->expects($this->any())
-            ->method('isProductUnitSelectionVisible')
-            ->willReturn(true);
-
-        $this->type = new FrontendLineItemType($this->productUnitFieldsSettings);
         parent::setUp();
+
+        $this->type = new FrontendLineItemType();
     }
 
     /**
@@ -207,11 +193,11 @@ class FrontendLineItemTypeTest extends FormIntegrationTestCase
     /**
      * @param ProductLineItem $lineItem
      *
-     * @return \PHPUnit_Framework_MockObject_MockObject|FormInterface
+     * @return \PHPUnit\Framework\MockObject\MockObject|FormInterface
      */
     protected function getForm(ProductLineItem $lineItem)
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|FormInterface $form */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|FormInterface $form */
         $form = $this->getMockBuilder('Symfony\Component\Form\FormInterface')
             ->disableOriginalConstructor()
             ->getMock();

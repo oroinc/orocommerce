@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\CatalogBundle\Visibility;
 
-class BasicCategoryDefaultProductUnitOptionsVisibilityTest extends \PHPUnit_Framework_TestCase
+class BasicCategoryDefaultProductUnitOptionsVisibilityTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var BasicCategoryDefaultProductUnitOptionsVisibility

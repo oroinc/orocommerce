@@ -5,18 +5,13 @@ namespace Oro\Bundle\ShippingBundle\Tests\Unit\Form\Type;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\AddressBundle\Form\EventListener\AddressCountryAndRegionSubscriber;
-use Oro\Bundle\FormBundle\Form\Extension\AdditionalAttrExtension;
-use Oro\Bundle\FormBundle\Tests\Unit\Stub\StripTagsExtensionStub;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestination;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestinationPostalCode;
 use Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodsConfigsRuleDestinationType;
-use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
-use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
 use Oro\Component\Testing\Unit\AddressFormExtensionTestCase;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
 use Oro\Component\Testing\Unit\PreloadedExtension;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormBuilderInterface;
 
 class ShippingMethodsConfigsRuleDestinationTypeTest extends AddressFormExtensionTestCase
@@ -153,18 +148,17 @@ class ShippingMethodsConfigsRuleDestinationTypeTest extends AddressFormExtension
      */
     protected function getExtensions()
     {
-        return [
-            new PreloadedExtension(
-                [
-                    ShippingMethodsConfigsRuleDestinationType::class => $this->formType,
-                    TranslatableEntityType::class => $this->getTranslatableEntity()
-                ],
-                [FormType::class => [
-                    new AdditionalAttrExtension(),
-                    new StripTagsExtensionStub($this->createMock(HtmlTagHelper::class))
-                ]]
-            ),
-            $this->getValidatorExtension(true)
-        ];
+        return array_merge(
+            parent::getExtensions(),
+            [
+                new PreloadedExtension(
+                    [
+                        ShippingMethodsConfigsRuleDestinationType::class => $this->formType,
+                    ],
+                    []
+                ),
+                $this->getValidatorExtension(true)
+            ]
+        );
     }
 }

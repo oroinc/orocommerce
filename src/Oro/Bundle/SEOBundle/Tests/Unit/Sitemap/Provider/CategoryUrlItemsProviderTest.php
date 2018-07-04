@@ -10,25 +10,25 @@ use Oro\Bundle\SEOBundle\Sitemap\Provider\CategoryUrlItemsProvider;
 use Oro\Component\Website\WebsiteInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class CategoryUrlItemsProviderTest extends \PHPUnit_Framework_TestCase
+class CategoryUrlItemsProviderTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $eventDispatcher;
 
     /**
-     * @var CanonicalUrlGenerator|\PHPUnit_Framework_MockObject_MockObject
+     * @var CanonicalUrlGenerator|\PHPUnit\Framework\MockObject\MockObject
      */
     private $canonicalUrlGenerator;
 
     /**
-     * @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $configManager;
 
     /**
-     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     private $registry;
 
@@ -62,7 +62,7 @@ class CategoryUrlItemsProviderTest extends \PHPUnit_Framework_TestCase
         $website = $this->createMock(WebsiteInterface::class);
         $version = '1';
 
-        /** @var FeatureChecker|\PHPUnit_Framework_MockObject_MockObject $featureChecker */
+        /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject $featureChecker */
         $featureChecker = $this->createMock(FeatureChecker::class);
 
         $this->urlItemsProvider->setFeatureChecker($featureChecker);

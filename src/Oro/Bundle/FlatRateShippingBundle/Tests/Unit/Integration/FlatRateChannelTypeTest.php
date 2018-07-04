@@ -4,7 +4,7 @@ namespace Oro\Bundle\FlatRateShippingBundle\Tests\Unit\Integration;
 
 use Oro\Bundle\FlatRateShippingBundle\Integration\FlatRateChannelType;
 
-class FlatRateChannelTypeTest extends \PHPUnit_Framework_TestCase
+class FlatRateChannelTypeTest extends \PHPUnit\Framework\TestCase
 {
     /** @var FlatRateChannelType */
     private $channel;

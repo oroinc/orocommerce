@@ -4,7 +4,7 @@ namespace Oro\Component\Expression\Tests\Unit;
 
 use Oro\Component\Expression\Node\ValueNode;
 
-class ValueNodeTest extends \PHPUnit_Framework_TestCase
+class ValueNodeTest extends \PHPUnit\Framework\TestCase
 {
     public function testNode()
     {

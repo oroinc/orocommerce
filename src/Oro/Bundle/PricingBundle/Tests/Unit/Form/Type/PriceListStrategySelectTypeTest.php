@@ -8,15 +8,15 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
 
-class PriceListStrategySelectTypeTest extends \PHPUnit_Framework_TestCase
+class PriceListStrategySelectTypeTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|StrategyRegister
+     * @var \PHPUnit\Framework\MockObject\MockObject|StrategyRegister
      */
     protected $strategyRegister;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface
+     * @var \PHPUnit\Framework\MockObject\MockObject|TranslatorInterface
      */
     protected $translator;
 
@@ -67,14 +67,13 @@ class PriceListStrategySelectTypeTest extends \PHPUnit_Framework_TestCase
             ->method('getStrategies')
             ->will($this->returnValue($strategies));
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|OptionsResolver $resolver */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|OptionsResolver $resolver */
         $resolver = $this->getMockBuilder(OptionsResolver::class)
             ->disableOriginalConstructor()
             ->getMock();
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with([
-                'choices_as_values' => true,
                 'choices' => $expectedChoices,
             ]);
 

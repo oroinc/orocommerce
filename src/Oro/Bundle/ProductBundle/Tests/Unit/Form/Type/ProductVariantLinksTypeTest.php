@@ -28,7 +28,7 @@ class ProductVariantLinksTypeTest extends FormIntegrationTestCase
     ];
 
     /**
-     * @var ProductVariantLinksDataTransformer|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProductVariantLinksDataTransformer|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $transformer;
 

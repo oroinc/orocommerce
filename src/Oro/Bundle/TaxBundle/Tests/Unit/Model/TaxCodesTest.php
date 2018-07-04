@@ -6,7 +6,7 @@ use Oro\Bundle\TaxBundle\Model\TaxCode;
 use Oro\Bundle\TaxBundle\Model\TaxCodeInterface;
 use Oro\Bundle\TaxBundle\Model\TaxCodes;
 
-class TaxCodesTest extends \PHPUnit_Framework_TestCase
+class TaxCodesTest extends \PHPUnit\Framework\TestCase
 {
     public function testGetAvailableTypes()
     {

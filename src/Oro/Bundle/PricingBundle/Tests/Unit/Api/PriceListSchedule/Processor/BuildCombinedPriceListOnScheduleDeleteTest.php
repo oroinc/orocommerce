@@ -12,12 +12,12 @@ use Oro\Component\ChainProcessor\ProcessorInterface;
 class BuildCombinedPriceListOnScheduleDeleteTest extends DeleteProcessorTestCase
 {
     /**
-     * @var CombinedPriceListActivationPlanBuilder|\PHPUnit_Framework_MockObject_MockObject
+     * @var CombinedPriceListActivationPlanBuilder|\PHPUnit\Framework\MockObject\MockObject
      */
     private $combinedPriceListBuilder;
 
     /**
-     * @var ProcessorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProcessorInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $deleteHandler;
 

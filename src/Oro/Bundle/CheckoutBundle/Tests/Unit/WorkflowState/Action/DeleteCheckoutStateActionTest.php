@@ -7,12 +7,12 @@ use Oro\Bundle\CheckoutBundle\WorkflowState\Storage\CheckoutDiffStorageInterface
 use Oro\Component\ConfigExpression\ContextAccessor;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class DeleteCheckoutStateActionTest extends \PHPUnit_Framework_TestCase
+class DeleteCheckoutStateActionTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var ContextAccessor|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ContextAccessor|\PHPUnit\Framework\MockObject\MockObject */
     protected $contextAccessor;
 
-    /** @var CheckoutDiffStorageInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var CheckoutDiffStorageInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $diffStorage;
 
     /** @var DeleteCheckoutStateAction */

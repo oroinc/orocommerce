@@ -9,7 +9,7 @@ use Oro\Bundle\OrderBundle\EventListener\ExtractAddressOptionsListener;
 use Oro\Bundle\PaymentBundle\Event\ExtractAddressOptionsEvent;
 use Oro\Bundle\PaymentBundle\Model\AddressOptionModel;
 
-class ExtractAddressOptionsListenerTest extends \PHPUnit_Framework_TestCase
+class ExtractAddressOptionsListenerTest extends \PHPUnit\Framework\TestCase
 {
     /** @var ExtractAddressOptionsListener */
     private $listener;

@@ -10,7 +10,7 @@ use Oro\Bundle\TaxBundle\Model\Taxable;
 use Oro\Bundle\TaxBundle\Model\TaxResultElement;
 use Oro\Bundle\TaxBundle\Transformer\TaxValueToResultTransformer;
 
-class TaxValueToResultTransformerTest extends \PHPUnit_Framework_TestCase
+class TaxValueToResultTransformerTest extends \PHPUnit\Framework\TestCase
 {
     const TOTAL_INCLUDING_TAX = 20;
     const TOTAL_EXCLUDING_TAX = 22;
@@ -36,7 +36,7 @@ class TaxValueToResultTransformerTest extends \PHPUnit_Framework_TestCase
      */
     protected $taxValueToResultTransformer;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|TaxValueManager */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|TaxValueManager */
     protected $taxValueManager;
 
     public function setUp()

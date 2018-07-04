@@ -8,7 +8,7 @@ use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Model\PriceListReferenceChecker;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
-class PriceListVoterTest extends \PHPUnit_Framework_TestCase
+class PriceListVoterTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var PriceListVoter
@@ -16,12 +16,12 @@ class PriceListVoterTest extends \PHPUnit_Framework_TestCase
     protected $voter;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|DoctrineHelper
+     * @var \PHPUnit\Framework\MockObject\MockObject|DoctrineHelper
      */
     protected $doctrineHelper;
 
     /**
-     * @var PriceListReferenceChecker|\PHPUnit_Framework_MockObject_MockObject
+     * @var PriceListReferenceChecker|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $priceListReferenceChecker;
 
@@ -60,7 +60,7 @@ class PriceListVoterTest extends \PHPUnit_Framework_TestCase
             ->with($object, false)
             ->will($this->returnValue(1));
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|TokenInterface $token */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|TokenInterface $token */
         $token = $this->createMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
         $this->assertEquals(
             $expected,

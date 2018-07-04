@@ -19,25 +19,25 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Symfony\Component\Translation\TranslatorInterface;
 
-class ProductPriceAttributesGridListenerTest extends \PHPUnit_Framework_TestCase
+class ProductPriceAttributesGridListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $doctrineHelper;
 
     /**
-     * @var PriceAttributePricesProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var PriceAttributePricesProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $priceAttributePricesProvider;
 
     /**
-     * @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $translator;
 
     /**
-     * @var DatagridInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var DatagridInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $datagrid;
 

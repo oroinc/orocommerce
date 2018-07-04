@@ -9,19 +9,19 @@ use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-abstract class AbstractProductImportEventListenerTest extends \PHPUnit_Framework_TestCase
+abstract class AbstractProductImportEventListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     const CATEGORY_CLASS = 'Oro\Bundle\CatalogBundle\Entity\Category';
 
     /**
-     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $registry;
 
     /**
-     * @var ObjectRepository|\PHPUnit_Framework_MockObject_MockObject
+     * @var ObjectRepository|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $categoryRepository;
 

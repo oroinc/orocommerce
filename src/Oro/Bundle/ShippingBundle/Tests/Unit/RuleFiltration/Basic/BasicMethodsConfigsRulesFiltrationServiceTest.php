@@ -8,15 +8,15 @@ use Oro\Bundle\ShippingBundle\Converter\ShippingContextToRulesValuesConverterInt
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 use Oro\Bundle\ShippingBundle\RuleFiltration\Basic\BasicMethodsConfigsRulesFiltrationService;
 
-class BasicMethodsConfigsRulesFiltrationServiceTest extends \PHPUnit_Framework_TestCase
+class BasicMethodsConfigsRulesFiltrationServiceTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var RuleFiltrationServiceInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var RuleFiltrationServiceInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $filtrationService;
 
     /**
-     * @var ShippingContextToRulesValuesConverterInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingContextToRulesValuesConverterInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $shippingContextToRuleValuesConverter;
 
@@ -79,7 +79,7 @@ class BasicMethodsConfigsRulesFiltrationServiceTest extends \PHPUnit_Framework_T
     }
 
     /**
-     * @return ShippingContextInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return ShippingContextInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private function createContextMock()
     {
@@ -87,7 +87,7 @@ class BasicMethodsConfigsRulesFiltrationServiceTest extends \PHPUnit_Framework_T
     }
 
     /**
-     * @return ShippingMethodsConfigsRule|\PHPUnit_Framework_MockObject_MockObject
+     * @return ShippingMethodsConfigsRule|\PHPUnit\Framework\MockObject\MockObject
      */
     private function createShippingMethodsConfigsRule()
     {

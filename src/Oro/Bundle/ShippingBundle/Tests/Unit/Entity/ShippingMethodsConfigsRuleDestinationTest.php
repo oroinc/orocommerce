@@ -11,7 +11,7 @@ use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestinationPostal
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class ShippingMethodsConfigsRuleDestinationTest extends \PHPUnit_Framework_TestCase
+class ShippingMethodsConfigsRuleDestinationTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
     use EntityTrait;
@@ -163,7 +163,7 @@ class ShippingMethodsConfigsRuleDestinationTest extends \PHPUnit_Framework_TestC
      * @param string $name
      * @param string $iso2
      * @param string $iso3
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     protected function createMockCountry($name = 'CountryName', $iso2 = 'CountryIso2', $iso3 = 'CountryIso3')
     {
@@ -189,7 +189,7 @@ class ShippingMethodsConfigsRuleDestinationTest extends \PHPUnit_Framework_TestC
     /**
      * @param string $name
      * @param string $code
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     protected function createMockRegion($name = 'RegionName', $code = 'RegionCode')
     {

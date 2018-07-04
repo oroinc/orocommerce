@@ -9,12 +9,12 @@ use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway\Host\HostAddressProvider;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\NVP\EncoderInterface;
 
-class NVPClientTest extends \PHPUnit_Framework_TestCase
+class NVPClientTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var ClientInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ClientInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $httpClient;
 
-    /** @var EncoderInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var EncoderInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $encoder;
 
     /** @var NVPClient */

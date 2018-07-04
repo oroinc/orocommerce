@@ -4,7 +4,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Event\CombinedPriceList;
 
 use Oro\Bundle\PricingBundle\Event\CombinedPriceList\CustomerCPLUpdateEvent;
 
-class CustomerCPLUpdateEventTest extends \PHPUnit_Framework_TestCase
+class CustomerCPLUpdateEventTest extends \PHPUnit\Framework\TestCase
 {
     public function testEvent()
     {

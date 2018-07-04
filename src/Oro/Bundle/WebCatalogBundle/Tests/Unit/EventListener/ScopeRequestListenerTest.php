@@ -11,20 +11,20 @@ use Oro\Bundle\WebCatalogBundle\EventListener\ScopeRequestListener;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 
-class ScopeRequestListenerTest extends \PHPUnit_Framework_TestCase
+class ScopeRequestListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ScopeManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ScopeManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $scopeManager;
 
     /**
-     * @var SlugRepository|\PHPUnit_Framework_MockObject_MockObject
+     * @var SlugRepository|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $repository;
 
     /**
-     * @var MatchedUrlDecisionMaker|\PHPUnit_Framework_MockObject_MockObject
+     * @var MatchedUrlDecisionMaker|\PHPUnit\Framework\MockObject\MockObject
      */
     private $matchedUrlDecisionMaker;
 
@@ -54,7 +54,7 @@ class ScopeRequestListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testOnKernelRequestSubRequest()
     {
-        /** @var GetResponseEvent|\PHPUnit_Framework_MockObject_MockObject $event */
+        /** @var GetResponseEvent|\PHPUnit\Framework\MockObject\MockObject $event */
         $event = $this->getMockBuilder(GetResponseEvent::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -78,7 +78,7 @@ class ScopeRequestListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testOnKernelHasAttribute()
     {
-        /** @var GetResponseEvent|\PHPUnit_Framework_MockObject_MockObject $event */
+        /** @var GetResponseEvent|\PHPUnit\Framework\MockObject\MockObject $event */
         $event = $this->getMockBuilder(GetResponseEvent::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -104,7 +104,7 @@ class ScopeRequestListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testOnKernelRequestNotMatchedRequest()
     {
-        /** @var GetResponseEvent|\PHPUnit_Framework_MockObject_MockObject $event */
+        /** @var GetResponseEvent|\PHPUnit\Framework\MockObject\MockObject $event */
         $event = $this->getMockBuilder(GetResponseEvent::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -134,7 +134,7 @@ class ScopeRequestListenerTest extends \PHPUnit_Framework_TestCase
     {
         $request = Request::create('/');
 
-        /** @var GetResponseEvent|\PHPUnit_Framework_MockObject_MockObject $event */
+        /** @var GetResponseEvent|\PHPUnit\Framework\MockObject\MockObject $event */
         $event = $this->getMockBuilder(GetResponseEvent::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -147,7 +147,7 @@ class ScopeRequestListenerTest extends \PHPUnit_Framework_TestCase
 
         $scope = new StubScope(['id' => 42]);
 
-        /** @var ScopeCriteria|\PHPUnit_Framework_MockObject_MockObject $criteria */
+        /** @var ScopeCriteria|\PHPUnit\Framework\MockObject\MockObject $criteria */
         $criteria = $this->createMock(ScopeCriteria::class);
         $this->scopeManager->expects($this->once())
             ->method('getCriteria')
@@ -173,7 +173,7 @@ class ScopeRequestListenerTest extends \PHPUnit_Framework_TestCase
     {
         $request = Request::create('/');
 
-        /** @var GetResponseEvent|\PHPUnit_Framework_MockObject_MockObject $event */
+        /** @var GetResponseEvent|\PHPUnit\Framework\MockObject\MockObject $event */
         $event = $this->getMockBuilder(GetResponseEvent::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -184,7 +184,7 @@ class ScopeRequestListenerTest extends \PHPUnit_Framework_TestCase
             ->method('getRequest')
             ->willReturn($request);
 
-        /** @var ScopeCriteria|\PHPUnit_Framework_MockObject_MockObject $criteria */
+        /** @var ScopeCriteria|\PHPUnit\Framework\MockObject\MockObject $criteria */
         $criteria = $this->createMock(ScopeCriteria::class);
         $this->scopeManager->expects($this->once())
             ->method('getCriteria')

@@ -7,6 +7,9 @@ use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\Provider\WebsiteCurrencyProvider;
 use Oro\Bundle\WebsiteBundle\Entity\WebsiteBasedCurrencyAwareInterface;
 
+/**
+ * Base class for subtotal calculations for different entities
+ */
 abstract class AbstractSubtotalProvider
 {
     /**
@@ -37,10 +40,13 @@ abstract class AbstractSubtotalProvider
         if ($entity instanceof CurrencyAwareInterface && $entity->getCurrency()) {
             return $entity->getCurrency();
         }
+        if ($currency = $this->currencyManager->getUserCurrency()) {
+            return $currency;
+        }
         if ($entity instanceof WebsiteBasedCurrencyAwareInterface && $entity->getWebsite()) {
             return $this->websiteCurrencyProvider->getWebsiteDefaultCurrency($entity->getWebsite()->getId());
         }
-        return $this->currencyManager->getUserCurrency();
+        return $this->currencyManager->getDefaultCurrency();
     }
 
     /**

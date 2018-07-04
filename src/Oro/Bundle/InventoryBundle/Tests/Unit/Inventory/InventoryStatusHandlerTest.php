@@ -11,20 +11,20 @@ use Oro\Bundle\InventoryBundle\Tests\Unit\Inventory\Stub\InventoryStatusStub;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product as ProductStub;
 
-class InventoryStatusHandlerTest extends \PHPUnit_Framework_TestCase
+class InventoryStatusHandlerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var EntityFallbackResolver|\PHPUnit_Framework_MockObject_MockObject
+     * @var EntityFallbackResolver|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $entityFallbackResolver;
 
     /**
-     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $doctrineHelper;
 
     /**
-     * @var InventoryStatusHandler|\PHPUnit_Framework_MockObject_MockObject
+     * @var InventoryStatusHandler|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $inventoryStatusHandler;
 

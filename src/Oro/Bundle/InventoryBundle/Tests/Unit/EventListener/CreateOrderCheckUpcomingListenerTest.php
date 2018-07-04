@@ -10,10 +10,10 @@ use Oro\Component\Action\Event\ExtendableConditionEvent;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class CreateOrderCheckUpcomingListenerTest extends \PHPUnit_Framework_TestCase
+class CreateOrderCheckUpcomingListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ValidatorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ValidatorInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $validator;
 
@@ -23,7 +23,7 @@ class CreateOrderCheckUpcomingListenerTest extends \PHPUnit_Framework_TestCase
     protected $listener;
 
     /**
-     * @var ConstraintViolationListInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ConstraintViolationListInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $violations;
 

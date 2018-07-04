@@ -18,22 +18,22 @@ use Oro\Bundle\ProductBundle\Visibility\SingleUnitModeProductUnitFieldsSettingsD
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class SingleUnitModeProductUnitFieldsSettingsDecoratorTest extends \PHPUnit_Framework_TestCase
+class SingleUnitModeProductUnitFieldsSettingsDecoratorTest extends \PHPUnit\Framework\TestCase
 {
     const TEST_UNIT_CODE = 'each';
     const TEST_DEFAULT_UNIT_CODE = 'set';
     /**
-     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     private $doctrineHelper;
 
     /**
-     * @var ProductUnitFieldsSettingsInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProductUnitFieldsSettingsInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $decoratedSettings;
 
     /**
-     * @var SingleUnitModeServiceInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var SingleUnitModeServiceInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $singleUnitService;
 
@@ -43,7 +43,7 @@ class SingleUnitModeProductUnitFieldsSettingsDecoratorTest extends \PHPUnit_Fram
     private $settings;
 
     /**
-     * @var ProductUnitRepository|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProductUnitRepository|\PHPUnit\Framework\MockObject\MockObject
      */
     private $productUnitRepo;
 
@@ -96,7 +96,7 @@ class SingleUnitModeProductUnitFieldsSettingsDecoratorTest extends \PHPUnit_Fram
         array $additionalUnits,
         $expectedVisibility
     ) {
-        /** @var Product|\PHPUnit_Framework_MockObject_MockObject $product */
+        /** @var Product|\PHPUnit\Framework\MockObject\MockObject $product */
         $product = $this->createMock(Product::class);
 
         $this->singleUnitService->expects($this->once())
@@ -172,7 +172,7 @@ class SingleUnitModeProductUnitFieldsSettingsDecoratorTest extends \PHPUnit_Fram
         array $additionalUnits,
         $expectedVisibility
     ) {
-        /** @var Product|\PHPUnit_Framework_MockObject_MockObject $product */
+        /** @var Product|\PHPUnit\Framework\MockObject\MockObject $product */
         $product = $this->createMock(Product::class);
 
         $this->singleUnitService->expects($this->once())

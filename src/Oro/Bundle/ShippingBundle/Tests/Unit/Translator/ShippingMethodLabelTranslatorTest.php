@@ -6,12 +6,12 @@ use Oro\Bundle\ShippingBundle\Formatter\ShippingMethodLabelFormatter;
 use Oro\Bundle\ShippingBundle\Translator\ShippingMethodLabelTranslator;
 use Symfony\Component\Translation\TranslatorInterface;
 
-class ShippingMethodLabelTranslatorTest extends \PHPUnit_Framework_TestCase
+class ShippingMethodLabelTranslatorTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var ShippingMethodLabelFormatter|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ShippingMethodLabelFormatter|\PHPUnit\Framework\MockObject\MockObject */
     private $formatter;
 
-    /** @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $translator;
 
     /** @var ShippingMethodLabelTranslator */

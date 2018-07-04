@@ -56,7 +56,7 @@ services:
             - [setProductImageClass, ['%oro_product.entity.product_image.class%']]
             - [setImageTypeProvider, ['@oro_layout.provider.image_type']]
             - [setFileLocator, ['@file_locator']]
-            - [setProductImageDir, ['%kernel.root_dir%/import_export/product_images/']]
+            - [setProductImageDir, ['%kernel.project_dir%/var/import_export/product_images/']]
         tags:
             - { name: oro_importexport.normalizer }
 

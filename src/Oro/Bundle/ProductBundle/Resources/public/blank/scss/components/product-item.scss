@@ -1,4 +1,4 @@
-// @theme: blank;
+/* @theme: blank; */
 
 .product-item {
     @include clearfix();
@@ -301,10 +301,6 @@
         &--list-view,
         &--no-image-view {
             @include clearfix();
-
-            .product-item__qty__current-grid {
-                @include clearfix();
-            }
 
             .validation-failed {
                 position: absolute;

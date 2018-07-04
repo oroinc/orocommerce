@@ -41,7 +41,8 @@ class UpdatePaymentTermAssociationsFormTypes implements Migration, PaymentTermEx
                 $associationName,
                 'form',
                 'form_type',
-                PaymentTermSelectType::class
+                PaymentTermSelectType::class,
+                'oro_payment_term_select'
             )
         );
     }

@@ -203,6 +203,7 @@ oro_behat_extension:
         - OroFormBundle::FormContext
         - OroProductBundle::FeatureContext
         - OroProductBundle::FrontendProductGridContext
+        - OroProductBundle::QuickOrderFormContext
         - OroRedirectBundle::SlugPrototypesContext
         - OroSEOBundle::FeatureContext
         - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
@@ -212,5 +213,8 @@ oro_behat_extension:
         - OroNavigationBundle::FeatureContext
         - OroCustomerBundle::ACLContext
         - OroShoppingListBundle::ShoppingListContext
+        - OroCustomerBundle::RegistrationInstructionFeatureContext
+        - OroLocaleBundle::LocalizationContext
+        - OroFrontendLocalizationBundle::LocalizationSwitcherContext
       paths:
         - '@OroShoppingListBundle/Tests/Behat/Features'

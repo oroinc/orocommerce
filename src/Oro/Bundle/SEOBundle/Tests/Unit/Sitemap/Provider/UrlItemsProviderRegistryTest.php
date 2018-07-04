@@ -5,7 +5,7 @@ namespace Oro\Bundle\SEOBundle\Tests\Unit\Sitemap\Provider;
 use Oro\Bundle\SEOBundle\Sitemap\Provider\UrlItemsProviderRegistry;
 use Oro\Component\SEO\Provider\UrlItemsProviderInterface;
 
-class UrlItemsProviderRegistryTest extends \PHPUnit_Framework_TestCase
+class UrlItemsProviderRegistryTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var UrlItemsProviderRegistry
@@ -42,7 +42,7 @@ class UrlItemsProviderRegistryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return UrlItemsProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return UrlItemsProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private function getProviderMock()
     {

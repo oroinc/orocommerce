@@ -19,17 +19,17 @@ use Oro\Bundle\SearchBundle\Datagrid\Event\SearchResultAfter;
 use Oro\Bundle\SearchBundle\Query\SearchQueryInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class ProductDatagridLowInventoryListenerTest extends \PHPUnit_Framework_TestCase
+class ProductDatagridLowInventoryListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var LowInventoryProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var LowInventoryProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     private $lowInventoryProvider;
 
     /**
-     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     private $doctrineHelper;
 
@@ -78,7 +78,7 @@ class ProductDatagridLowInventoryListenerTest extends \PHPUnit_Framework_TestCas
 
     public function testOnResultAfterNoLowInventory()
     {
-        /** @var DatagridInterface|\PHPUnit_Framework_MockObject_MockObject $dataGrid */
+        /** @var DatagridInterface|\PHPUnit\Framework\MockObject\MockObject $dataGrid */
         $dataGrid = $this->createMock(DatagridInterface::class);
 
         $product1 = $this->getProductEntity(777);
@@ -109,7 +109,7 @@ class ProductDatagridLowInventoryListenerTest extends \PHPUnit_Framework_TestCas
         /** @var SearchQueryInterface $query */
         $query = $this->createMock(SearchQueryInterface::class);
 
-        /** @var SearchResultAfter|\PHPUnit_Framework_MockObject_MockObject $event */
+        /** @var SearchResultAfter|\PHPUnit\Framework\MockObject\MockObject $event */
         $event = new SearchResultAfter($dataGrid, $query, [$record]);
 
         $this->listener->onResultAfter($event);
@@ -119,7 +119,7 @@ class ProductDatagridLowInventoryListenerTest extends \PHPUnit_Framework_TestCas
 
     public function testOnResultAfterNoRecords()
     {
-        /** @var DatagridInterface|\PHPUnit_Framework_MockObject_MockObject $datagrid */
+        /** @var DatagridInterface|\PHPUnit\Framework\MockObject\MockObject $datagrid */
         $datagrid = $this->createMock(DatagridInterface::class);
 
         $productRepository = $this->createMock(ProductRepository::class);
@@ -137,7 +137,7 @@ class ProductDatagridLowInventoryListenerTest extends \PHPUnit_Framework_TestCas
         /** @var SearchQueryInterface $query */
         $query = $this->createMock(SearchQueryInterface::class);
 
-        /** @var SearchResultAfter|\PHPUnit_Framework_MockObject_MockObject $event */
+        /** @var SearchResultAfter|\PHPUnit\Framework\MockObject\MockObject $event */
         $event = new SearchResultAfter($datagrid, $query, []);
 
         $this->listener->onResultAfter($event);
@@ -145,7 +145,7 @@ class ProductDatagridLowInventoryListenerTest extends \PHPUnit_Framework_TestCas
 
     public function testOnResultAfter()
     {
-        /** @var DatagridInterface|\PHPUnit_Framework_MockObject_MockObject $datagrid */
+        /** @var DatagridInterface|\PHPUnit\Framework\MockObject\MockObject $datagrid */
         $datagrid = $this->createMock(DatagridInterface::class);
 
         $product1 = $this->getProductEntity(777);
@@ -197,7 +197,7 @@ class ProductDatagridLowInventoryListenerTest extends \PHPUnit_Framework_TestCas
         /** @var SearchQueryInterface $query */
         $query = $this->createMock(SearchQueryInterface::class);
 
-        /** @var SearchResultAfter|\PHPUnit_Framework_MockObject_MockObject $event */
+        /** @var SearchResultAfter|\PHPUnit\Framework\MockObject\MockObject $event */
         $event = new SearchResultAfter(
             $datagrid,
             $query,

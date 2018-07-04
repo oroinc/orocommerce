@@ -14,7 +14,7 @@ class BrandStatusTypeTest extends FormIntegrationTestCase
     /** @var  BrandStatusType $brandStatusType */
     protected $brandStatusType;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|BrandStatusProvider $brandStatusProvider */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|BrandStatusProvider $brandStatusProvider */
     protected $brandStatusProvider;
 
     public function setup()

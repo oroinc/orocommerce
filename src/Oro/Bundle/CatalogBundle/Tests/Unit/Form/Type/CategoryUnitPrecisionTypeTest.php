@@ -28,7 +28,7 @@ class CategoryUnitPrecisionTypeTest extends FormIntegrationTestCase
     protected $formType;
 
     /**
-     * @var CategoryDefaultProductUnitOptionsVisibilityInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var CategoryDefaultProductUnitOptionsVisibilityInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $defaultProductOptionsVisibility;
 

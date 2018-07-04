@@ -10,13 +10,13 @@ use Oro\Bundle\WorkflowBundle\Entity\WorkflowDefinition;
 use Oro\Bundle\WorkflowBundle\Event\WorkflowChangesEvent;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class CheckoutWorkflowListenerTest extends \PHPUnit_Framework_TestCase
+class CheckoutWorkflowListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     const ENTITY_CLASS = 'stdClass';
 
-    /** @var CheckoutRepository|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var CheckoutRepository|\PHPUnit\Framework\MockObject\MockObject */
     protected $repository;
 
     /** @var CheckoutWorkflowListener */
@@ -34,7 +34,7 @@ class CheckoutWorkflowListenerTest extends \PHPUnit_Framework_TestCase
             ->with(self::ENTITY_CLASS)
             ->willReturn($this->repository);
 
-        /** @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject $registry */
+        /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject $registry */
         $registry = $this->createMock(ManagerRegistry::class);
         $registry->expects($this->any())
             ->method('getManagerForClass')

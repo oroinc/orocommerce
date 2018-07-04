@@ -4,7 +4,7 @@ namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Placeholder;
 
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\EnumIdPlaceholder;
 
-class EnumIdPlaceholderTest extends \PHPUnit_Framework_TestCase
+class EnumIdPlaceholderTest extends \PHPUnit\Framework\TestCase
 {
     /** @var EnumIdPlaceholder */
     protected $placeholder;

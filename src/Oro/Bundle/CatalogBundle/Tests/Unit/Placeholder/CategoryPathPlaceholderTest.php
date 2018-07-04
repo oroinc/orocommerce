@@ -4,7 +4,7 @@ namespace Oro\Bundle\CatalogBundle\Tests\Unit\Placeholder;
 
 use Oro\Bundle\CatalogBundle\Placeholder\CategoryPathPlaceholder;
 
-class CategoryPathPlaceholderTest extends \PHPUnit_Framework_TestCase
+class CategoryPathPlaceholderTest extends \PHPUnit\Framework\TestCase
 {
     /** @var CategoryPathPlaceholder */
     protected $placeholder;

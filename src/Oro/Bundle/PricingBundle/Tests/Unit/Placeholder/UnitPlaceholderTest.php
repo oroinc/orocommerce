@@ -4,7 +4,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Placeholder;
 
 use Oro\Bundle\PricingBundle\Placeholder\UnitPlaceholder;
 
-class UnitPlaceholderTest extends \PHPUnit_Framework_TestCase
+class UnitPlaceholderTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var UnitPlaceholder

@@ -5,7 +5,7 @@ namespace Oro\Bundle\PayPalBundle\Tests\Unit\PayPal\Payflow\ExpressCheckout\Opti
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\OptionInterface;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\OptionsResolver;
 
-class OptionsResolverTest extends \PHPUnit_Framework_TestCase
+class OptionsResolverTest extends \PHPUnit\Framework\TestCase
 {
     /** @var OptionsResolver */
     protected $resolver;
@@ -25,7 +25,7 @@ class OptionsResolverTest extends \PHPUnit_Framework_TestCase
 
     public function testAddOption()
     {
-        /** @var OptionInterface|\PHPUnit_Framework_MockObject_MockObject $option */
+        /** @var OptionInterface|\PHPUnit\Framework\MockObject\MockObject $option */
         $option = $this->createMock('Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\OptionInterface');
         $option
             ->expects($this->once())
@@ -37,7 +37,7 @@ class OptionsResolverTest extends \PHPUnit_Framework_TestCase
 
     public function testAddNotApplicableDependentOption()
     {
-        /** @var OptionInterface|\PHPUnit_Framework_MockObject_MockObject $option */
+        /** @var OptionInterface|\PHPUnit\Framework\MockObject\MockObject $option */
         $option = $this->createMock('Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\OptionsDependentInterface');
         $option
             ->expects($this->once())
@@ -60,7 +60,7 @@ class OptionsResolverTest extends \PHPUnit_Framework_TestCase
 
     public function testAddApplicableDependentOption()
     {
-        /** @var OptionInterface|\PHPUnit_Framework_MockObject_MockObject $option */
+        /** @var OptionInterface|\PHPUnit\Framework\MockObject\MockObject $option */
         $option = $this->createMock('Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\OptionsDependentInterface');
         $option
             ->expects($this->once())
@@ -89,7 +89,7 @@ class OptionsResolverTest extends \PHPUnit_Framework_TestCase
      */
     public function testAddOptionInResolveAction()
     {
-        /** @var OptionInterface|\PHPUnit_Framework_MockObject_MockObject $option */
+        /** @var OptionInterface|\PHPUnit\Framework\MockObject\MockObject $option */
         $option = $this->createMock('Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\OptionsDependentInterface');
         $option
             ->expects($this->once())
@@ -107,7 +107,7 @@ class OptionsResolverTest extends \PHPUnit_Framework_TestCase
             ->method('configureDependentOption')
             ->with($this->resolver, [])
             ->willReturnCallback(function (OptionsResolver $resolver, array $options) {
-                /** @var OptionInterface|\PHPUnit_Framework_MockObject_MockObject $option */
+                /** @var OptionInterface|\PHPUnit\Framework\MockObject\MockObject $option */
                 $option = $this->createMock('Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\OptionsDependentInterface');
                 $resolver->addOption($option);
             });

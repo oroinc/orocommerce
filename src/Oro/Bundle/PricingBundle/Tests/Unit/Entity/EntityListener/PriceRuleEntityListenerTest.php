@@ -11,17 +11,17 @@ use Oro\Bundle\PricingBundle\Entity\PriceRule;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerHandler;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class PriceRuleEntityListenerTest extends \PHPUnit_Framework_TestCase
+class PriceRuleEntityListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var Cache|\PHPUnit_Framework_MockObject_MockObject
+     * @var Cache|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $cache;
 
     /**
-     * @var PriceListTriggerHandler|\PHPUnit_Framework_MockObject_MockObject
+     * @var PriceListTriggerHandler|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $priceRuleChangeTriggerHandler;
 

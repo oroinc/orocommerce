@@ -13,32 +13,32 @@ use Oro\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
 use Oro\Component\Action\Event\ExtendableConditionEvent;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-abstract class AbstractMethodsListenerTest extends \PHPUnit_Framework_TestCase
+abstract class AbstractMethodsListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var OrderAddressSecurityProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var OrderAddressSecurityProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $orderAddressSecurityProvider;
 
     /**
-     * @var OrderAddressManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var OrderAddressManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $orderAddressManager;
 
     /**
-     * @var OrderAddressProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var OrderAddressProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $addressProvider;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
+     * @var \PHPUnit\Framework\MockObject\MockObject
      */
     protected $configsRuleProvider;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
+     * @var \PHPUnit\Framework\MockObject\MockObject
      */
     protected $contextFactory;
 
@@ -251,7 +251,7 @@ abstract class AbstractMethodsListenerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     abstract protected function createContext();
 

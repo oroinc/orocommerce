@@ -7,13 +7,13 @@ use Oro\Bundle\PaymentBundle\Layout\DataProvider\PaymentMethodWidgetProvider;
 use Oro\Bundle\PaymentBundle\Method\View\CompositePaymentMethodViewProvider;
 use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
 
-class PaymentMethodWidgetProviderTest extends \PHPUnit_Framework_TestCase
+class PaymentMethodWidgetProviderTest extends \PHPUnit\Framework\TestCase
 {
     const PAYMENT_METHOD_IDENTIFIER = 'payment_method_identifier';
     const PAYMENT_METHOD_WIDGET = '_payment_method_widget';
 
     /**
-     * @var CompositePaymentMethodViewProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var CompositePaymentMethodViewProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $paymentMethodViewProvider;
 

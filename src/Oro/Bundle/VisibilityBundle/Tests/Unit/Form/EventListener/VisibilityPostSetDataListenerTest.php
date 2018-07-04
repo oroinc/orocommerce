@@ -16,17 +16,17 @@ use Symfony\Component\Form\FormConfigInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\Test\FormInterface;
 
-class VisibilityPostSetDataListenerTest extends \PHPUnit_Framework_TestCase
+class VisibilityPostSetDataListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var VisibilityPostSetDataListener|\PHPUnit_Framework_MockObject_MockObject
+     * @var VisibilityPostSetDataListener|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $listener;
 
     /**
-     * @var VisibilityFormFieldDataProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var VisibilityFormFieldDataProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $fieldDataProvider;
 

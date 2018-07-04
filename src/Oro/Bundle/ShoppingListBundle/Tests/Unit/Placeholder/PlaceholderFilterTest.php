@@ -5,7 +5,7 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Placeholder;
 use Oro\Bundle\ShoppingListBundle\Placeholder\PlaceholderFilter;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
-class PlaceholderFilterTest extends \PHPUnit_Framework_TestCase
+class PlaceholderFilterTest extends \PHPUnit\Framework\TestCase
 {
     public function testUserCanCreateLineItem()
     {

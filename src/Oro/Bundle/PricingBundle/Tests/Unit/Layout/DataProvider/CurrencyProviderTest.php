@@ -5,7 +5,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Layout\DataProvider;
 use Oro\Bundle\PricingBundle\Layout\DataProvider\CurrencyProvider;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 
-class CurrencyProviderTest extends \PHPUnit_Framework_TestCase
+class CurrencyProviderTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var CurrencyProvider
@@ -13,7 +13,7 @@ class CurrencyProviderTest extends \PHPUnit_Framework_TestCase
     protected $provider;
 
     /**
-     * @var UserCurrencyManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var UserCurrencyManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $userCurrencyManager;
 

@@ -3,7 +3,6 @@
 namespace Oro\Bundle\PricingBundle\Async;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\DBAL\Driver\DriverException;
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\EntityBundle\ORM\DatabaseExceptionHelper;
 use Oro\Bundle\PricingBundle\Builder\CombinedPriceListsBuilderFacade;
@@ -109,7 +108,8 @@ class CombinedPriceListProcessor implements MessageProcessorInterface, TopicSubs
                 ['exception' => $e]
             );
 
-            if ($e instanceof DriverException && $this->databaseExceptionHelper->isDeadlock($e)) {
+            $driverException = $this->databaseExceptionHelper->getDriverException($e);
+            if ($driverException && $this->databaseExceptionHelper->isDeadlock($driverException)) {
                 return self::REQUEUE;
             } else {
                 return self::REJECT;

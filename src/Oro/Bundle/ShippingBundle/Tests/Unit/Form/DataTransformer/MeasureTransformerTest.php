@@ -6,9 +6,9 @@ use Doctrine\Common\Persistence\ObjectRepository;
 use Oro\Bundle\ProductBundle\Entity\MeasureUnitInterface;
 use Oro\Bundle\ShippingBundle\Form\DataTransformer\MeasureTransformer;
 
-class MeasureTransformerTest extends \PHPUnit_Framework_TestCase
+class MeasureTransformerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var \PHPUnit_Framework_MockObject_MockObject|ObjectRepository */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|ObjectRepository */
     protected $repository;
 
     /** @var MeasureTransformer */
@@ -88,11 +88,11 @@ class MeasureTransformerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param string $code
-     * @return MeasureUnitInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return MeasureUnitInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function createUnit($code = null)
     {
-        /** @var MeasureUnitInterface|\PHPUnit_Framework_MockObject_MockObject $unit */
+        /** @var MeasureUnitInterface|\PHPUnit\Framework\MockObject\MockObject $unit */
         $unit = $this->createMock('Oro\Bundle\ProductBundle\Entity\MeasureUnitInterface');
         $unit->expects($this->any())
             ->method('getCode')

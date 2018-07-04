@@ -10,7 +10,7 @@ use Oro\Bundle\ShippingBundle\Context\ShippingContextCacheKeyGenerator;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class ShippingPriceCacheTest extends \PHPUnit_Framework_TestCase
+class ShippingPriceCacheTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
@@ -20,12 +20,12 @@ class ShippingPriceCacheTest extends \PHPUnit_Framework_TestCase
     protected $cache;
 
     /**
-     * @var CacheProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var CacheProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $cacheProvider;
 
     /**
-     * @var ShippingContextCacheKeyGenerator|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingContextCacheKeyGenerator|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $keyGenerator;
 

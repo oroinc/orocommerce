@@ -15,20 +15,20 @@ use Oro\Bundle\TaxBundle\Provider\TaxProviderInterface;
 use Oro\Bundle\TaxBundle\Provider\TaxProviderRegistry;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class EntityTaxListenerTest extends \PHPUnit_Framework_TestCase
+class EntityTaxListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /** @var TaxProviderInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var TaxProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $taxProvider;
 
     /** @var EntityTaxListener */
     protected $listener;
 
-    /** @var EntityManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var EntityManager|\PHPUnit\Framework\MockObject\MockObject */
     protected $entityManager;
 
-    /** @var ClassMetadata|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ClassMetadata|\PHPUnit\Framework\MockObject\MockObject */
     protected $metadata;
 
     protected function setUp()
@@ -163,10 +163,10 @@ class EntityTaxListenerTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUpPrePersist(Order $order, TaxValue $taxValue)
     {
-        /** @var EntityManager|\PHPUnit_Framework_MockObject_MockObject $entityManager */
+        /** @var EntityManager|\PHPUnit\Framework\MockObject\MockObject $entityManager */
         $entityManager = $this->createMock(EntityManager::class);
 
-        /** @var ClassMetadata|\PHPUnit_Framework_MockObject_MockObject $metadata */
+        /** @var ClassMetadata|\PHPUnit\Framework\MockObject\MockObject $metadata */
         $metadata = $this->createMock(ClassMetadata::class);
 
         $entityManager->expects($this->any())->method('getClassMetadata')->willReturn($metadata);
@@ -192,10 +192,10 @@ class EntityTaxListenerTest extends \PHPUnit_Framework_TestCase
         $orderId = 1;
         $this->setValue($order, 'id', $orderId);
 
-        /** @var EntityManager|\PHPUnit_Framework_MockObject_MockObject $entityManager */
+        /** @var EntityManager|\PHPUnit\Framework\MockObject\MockObject $entityManager */
         $entityManager = $this->createMock(EntityManager::class);
 
-        /** @var ClassMetadata|\PHPUnit_Framework_MockObject_MockObject $metadata */
+        /** @var ClassMetadata|\PHPUnit\Framework\MockObject\MockObject $metadata */
         $metadata = $this->createMock(ClassMetadata::class);
 
         $entityManager->expects($this->any())->method('getClassMetadata')->willReturn($metadata);

@@ -12,24 +12,24 @@ use Oro\Bundle\MoneyOrderBundle\Method\Config\Provider\MoneyOrderConfigProvider;
 use Oro\Bundle\MoneyOrderBundle\Method\Config\Provider\MoneyOrderConfigProviderInterface;
 use Psr\Log\LoggerInterface;
 
-class MoneyOrderConfigProviderTest extends \PHPUnit_Framework_TestCase
+class MoneyOrderConfigProviderTest extends \PHPUnit\Framework\TestCase
 {
     const IDENTIFIER1 = 'payment_method_1';
     const IDENTIFIER2 = 'payment_method_2';
     const WRONG_IDENTIFIER = 'wrongpayment_method';
 
     /**
-     * @var MoneyOrderConfigFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var MoneyOrderConfigFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $configFactory;
 
     /**
-     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $doctrine;
 
     /**
-     * @var MoneyOrderSettingsRepository|\PHPUnit_Framework_MockObject_MockObject
+     * @var MoneyOrderSettingsRepository|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $settingsRepository;
 
@@ -79,7 +79,7 @@ class MoneyOrderConfigProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->doctrine->expects(static::once())->method('getManagerForClass')->willReturn($objectManager);
 
-        /** @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject $logger */
+        /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject $logger */
         $logger = $this->createMock(LoggerInterface::class);
 
         $this->configFactory
@@ -101,7 +101,7 @@ class MoneyOrderConfigProviderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return MoneyOrderSettings|\PHPUnit_Framework_MockObject_MockObject
+     * @return MoneyOrderSettings|\PHPUnit\Framework\MockObject\MockObject
      */
     private function createMoneyOrderSettingsMock()
     {
@@ -109,7 +109,7 @@ class MoneyOrderConfigProviderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return MoneyOrderConfigInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return MoneyOrderConfigInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private function createConfigMock()
     {

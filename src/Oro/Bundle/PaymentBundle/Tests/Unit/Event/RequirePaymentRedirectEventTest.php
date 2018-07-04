@@ -5,9 +5,9 @@ namespace Oro\Bundle\PaymentBundle\Tests\Unit\Event;
 use Oro\Bundle\PaymentBundle\Event\RequirePaymentRedirectEvent;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 
-class RequirePaymentRedirectEventTest extends \PHPUnit_Framework_TestCase
+class RequirePaymentRedirectEventTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var PaymentMethodInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var PaymentMethodInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $paymentMethod;
 
     /** @var RequirePaymentRedirectEvent */
