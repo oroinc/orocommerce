@@ -10,10 +10,10 @@ interface TimeInTransitProviderInterface
 {
     /**
      * @param UPSTransport     $transport
-     * @param AddressInterface $shipFromAddress
-     * @param AddressInterface $shipToAddress
-     * @param \DateTime        $pickupDate
-     * @param int              $weight
+     * @param AddressInterface $shipFromAddress Origin address
+     * @param AddressInterface $shipToAddress Destination address
+     * @param \DateTime        $pickupDate Pickup date should be specified in the timezone specific for origin address
+     * @param int              $weight Weight in unit of weight which is specified in provided UPSTransport
      *
      * @return TimeInTransitResultInterface
      */
