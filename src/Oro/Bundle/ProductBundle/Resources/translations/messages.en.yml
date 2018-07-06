@@ -271,8 +271,10 @@ oro:
             images: Images
             design: Design
             related_items: Related Items
+            filters_sorters: Filters and Sorters
             upsell_products: Up-sell Products
             related_products: Related Products
+            limit_filters_sorters: Limit Filters and Sorters
             upsellItems: Up-sell items
 
         tabs:
@@ -326,6 +328,8 @@ oro:
                 configurable_products.title: 'Configurable Products'
                 configurable_products_matrix_form.title: 'Configurable Product Display Options'
                 configurable_products_variations.title: 'Variations'
+                filters_sorters.title: 'Filters and Sorters'
+                limit_filters_sorters.title: 'Limit Filters and Sorters'
             fields:
                 brand_direct_url_prefix.label: 'Brand URL Prefix'
                 enable_related_products.label: 'Enable Related Products'
@@ -468,6 +472,9 @@ oro:
                         variations of a configurable product. It does not affect standalone simple products.
                     everywhere.label: 'Everywhere'
                     hide_completely.label: 'Hide completely'
+                limit_filters_sorters_on_product_listing:
+                    label: 'Hide unrelated product filters and sorting options.'
+                    tooltip: 'Limit filters and sorting options on the product catalog page to display only those attributes that are relevant to the selected product family in the current product collection.'
             notice:
                 product_image_watermark: >
                    The updated product image watermark settings will be used for the newly uploaded images only.
@@ -795,6 +802,9 @@ oro:
                 message: Enter item numbers in Column A and quantities needed in Column B. Please do not include any prefixes, dashes, or other punctuation in the item numbers.
             save_the_file:
                 message: Save the file on your computer. CSV format (.csv) is recommended and click Upload.
+        limit_filters_sorters_on_product_listing:
+            label: 'Hide unrelated product filters and sorting options.'
+            description: 'Limit filters and sorting options on the product catalog page to display only those attributes that are relevant to the selected product family in the current product collection.'
 
     importexport:
         export:
