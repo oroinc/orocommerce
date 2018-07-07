@@ -126,7 +126,10 @@
     }) %}
     <h3 {{ block('block_attributes') }} itemprop="productID" content="{{ product.id }}">
         <a href="{{ path('oro_product_frontend_product_view', {id: product.id}) }}"
-           class="view-product" itemprop="url"><span itemprop="name">{{ product.names|localized_value|e }}</span></a>
+           class="view-product"
+           itemprop="url"
+           title="{{ product.names|localized_value|e }}"
+           data-page-component-line-clamp><span itemprop="name">{{ product.names|localized_value|e }}</span></a>
     </h3>
 {% endblock %}
 
