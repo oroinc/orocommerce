@@ -1,27 +1,29 @@
+/* @theme: admin.oro; */
+
 .product-container {
-  .content-with-sidebar {
-    &--header {
-      flex-shrink: 0;
-    }
-
-    &--sidebar {
-      display: flex;
-      flex-direction: column;
-    }
-
-    &--sidebar-content {
-      overflow: auto;
-      flex-grow: 1;
-
-      .control-group-checkbox {
-        label {
-          float: left;
+    .content-with-sidebar {
+        &--header {
+            flex-shrink: 0;
         }
 
-        input {
-          margin: 0 10px !important;
+        &--sidebar {
+            display: flex;
+            flex-direction: column;
         }
-      }
-    } 
-  }
+
+        &--sidebar-content {
+            overflow: auto;
+            flex-grow: 1;
+
+            .control-group-checkbox {
+                label {
+                    float: left;
+                }
+
+                input {
+                    margin: 0 10px !important;
+                }
+            }
+        }
+    }
 }
