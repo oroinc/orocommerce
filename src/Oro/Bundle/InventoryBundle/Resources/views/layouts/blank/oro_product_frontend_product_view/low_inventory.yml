@@ -10,3 +10,4 @@ layout:
             options:
                 vars:
                     product: '=data["product"]'
+                    visible: '=data["low_inventory"].isLowInventoryProduct(data["product"])'

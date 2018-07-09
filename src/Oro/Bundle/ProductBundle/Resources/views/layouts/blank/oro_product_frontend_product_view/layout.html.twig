@@ -82,14 +82,19 @@
 {% endblock %}
 
 {% block _product_view_specification_container_widget %}
-    {% set attr = layout_attr_defaults(attr, {
-        '~class': ' product-view__specification',
-        'data-role': 'layout-subtree-loading-container'
-    }) %}
-
-    <div {{ block('block_attributes') }}>
-        {{ block_widget(block) }}
-    </div>
+    {% if block.children is not empty %}
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': ' product-view__specification',
+            'data-role': 'layout-subtree-loading-container'
+        }) %}
+        {% set children = block_widget(block) %}
+    
+        {% if children|trim|length %}
+            <div {{ block('block_attributes') }}>
+                {{ children|raw }}
+            </div>
+        {% endif %}
+    {% endif %}
 {% endblock %}
 
 {% block _product_view_description_container_widget %}
@@ -131,13 +136,15 @@
 {% endblock %}
 
 {% block _product_view_brand_container_widget %}
-    {% set attr = layout_attr_defaults(attr, {
-    '~class': ' product-view__brand'
-    }) %}
+    {% if block.children is not empty %}
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': ' product-view__brand'
+        }) %}
 
-    <div {{ block('block_attributes') }}>
-        {{ block_widget(block) }}
-    </div>
+        <div {{ block('block_attributes') }}>
+            {{ block_widget(block) }}
+        </div>
+    {% endif %}
 {% endblock %}
 
 {% block _product_view_additional_container_widget %}
@@ -191,7 +198,10 @@
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' line-item-form',
     }) %}
-    <div {{ block('block_attributes') }}>
-    {{ block_widget(block, {attr: attr}) }}
-    </div>
+    {% set children = block_widget(block, {attr: attr}) %}
+    {% if children|trim|length %}
+        <div {{ block('block_attributes') }}>
+            {{ children|raw }}
+        </div>
+    {% endif %}
 {% endblock %}
