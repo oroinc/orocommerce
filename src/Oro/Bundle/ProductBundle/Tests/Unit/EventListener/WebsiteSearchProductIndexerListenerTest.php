@@ -318,6 +318,12 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
                     'all_text' => false
                 ]
             ],
+            'attribute_family_id' => [
+                [
+                    'value' => $attributeFamilyId,
+                    'all_text' => false
+                ]
+            ]
         ];
 
         $this->assertEquals($expected, $event->getEntitiesData());

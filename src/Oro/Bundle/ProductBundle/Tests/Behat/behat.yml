@@ -468,6 +468,9 @@ oro_behat_extension:
       selector: 'div[data-page-component-name="frontend-catalog-allproducts-grid"], div[data-page-component-name="frontend-product-search-grid"], div[data-page-component-name="order-products-previously-purchased-grid"]'
       class: Oro\Bundle\ProductBundle\Tests\Behat\Element\FrontendProductGrid
 
+    ProductFrontendGridFiltersBlock:
+      selector: 'div.filter-container'
+
     ProductFrontendGridFiltersButton:
       selector: 'div.filter-container > button.select-filter-widget'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFiltersButton

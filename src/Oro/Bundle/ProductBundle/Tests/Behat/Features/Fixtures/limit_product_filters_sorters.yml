@@ -1,0 +1,56 @@
+include:
+    - '@OroCustomerBundle:BuyerCustomerFixture.yml'
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    locvalue1:
+        string: 'Product1'
+    locvalue2:
+        string: 'Product2'
+    locvalue3:
+        string: 'Product3'
+    localNewCategory:
+        string: 'New Category'
+
+    newProductAttributeFamily:
+        string: 'New Product Attribute Family'
+
+Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily:
+    newAttributeFamily:
+        entityClass: 'Oro\Bundle\ProductBundle\Entity\Product'
+        code: 'new_product_attribute_family_code'
+        addLabel: ['@newProductAttributeFamily']
+        organization: '@organization'
+        owner: '@admin'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product1:
+        sku: 'SKU1'
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        organization: '@organization'
+        attributeFamily: '@defaultProductFamily'
+        addName: ['@locvalue1']
+    product2:
+        sku: 'SKU2'
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'disabled'
+        organization: '@organization'
+        attributeFamily: '@newAttributeFamily'
+        addName: ['@locvalue2']
+    product3:
+        sku: 'SKU3'
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        organization: '@organization'
+        attributeFamily: '@newAttributeFamily'
+        addName: ['@locvalue3']
+
+Doctrine\Common\Collections\ArrayCollection(local):
+    products:
+        __construct: [['@product1', '@product2']]
+
+Oro\Bundle\CatalogBundle\Entity\Category:
+    newCategoryProducts:
+        addTitle: ['@localNewCategory']
+        setParentCategory: [1]
+        setProducts: ['@products']
