@@ -1,30 +1,39 @@
+@regression
 @ticket-BB-8806
 @ticket-BB-11433
+@ticket-BB-14390
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroAuthorizeNetBundle:AuthorizeNetFixture.yml
-@ticket-BB-14390
 
 Feature: Process order submission with PayPal PayFlow Gateway and Authorize & Capture payment action on Single Page Checkout
-  ToDo: BAP-16103 Add missing descriptions to the Behat features
+  In order to purchase goods using PayPal PayFlow Gateway payment system
+  As a Buyer
+  I want to enter and complete Single Page Checkout with payment via PayPal
+
+  Scenario: Feature Background
+    Given sessions active:
+      | Admin | first_session  |
+      | Buyer | second_session |
+
   Scenario: Create new PayPal PayFlow Gateway Integration
-    Given I login as AmandaRCole@example.org the "Buyer" at "first_session" session
-    And I login as administrator and use in "second_session" as "Admin"
+    Given I proceed as the Admin
+    And I login as administrator
     When I go to System/Integrations/Manage Integrations
     And I click "Create Integration"
     And I select "PayPal Payflow Gateway" from "Type"
     And I fill PayPal integration fields with next data:
-      | Name                         | PayPalFlow           |
-      | Label                        | PayPalFlow           |
-      | Short Label                  | PPlFlow              |
-      | Allowed Credit Card Types    | Mastercard           |
-      | Partner                      | PayPal               |
-      | Vendor                       | qwerty123456         |
-      | User                         | qwer12345            |
-      | Password                     | qwer123423r23r       |
-      | Payment Action               | Authorize            |
-      | Express Checkout Name        | ExpressPayPal        |
-      | Express Checkout Label       | ExpressPayPal        |
-      | Express Checkout Short Label | ExprPPl              |
+      | Name                         | PayPalFlow     |
+      | Label                        | PayPalFlow     |
+      | Short Label                  | PPlFlow        |
+      | Allowed Credit Card Types    | Mastercard     |
+      | Partner                      | PayPal         |
+      | Vendor                       | qwerty123456   |
+      | User                         | qwer12345      |
+      | Password                     | qwer123423r23r |
+      | Payment Action               | Authorize      |
+      | Express Checkout Name        | ExpressPayPal  |
+      | Express Checkout Label       | ExpressPayPal  |
+      | Express Checkout Short Label | ExprPPl        |
     And I save and close form
     Then I should see "Integration saved" flash message
     And I should see PayPalFlow in grid
@@ -37,7 +46,7 @@ Feature: Process order submission with PayPal PayFlow Gateway and Authorize & Ca
     And I fill in "Sort Order" with "1"
     And I select "PayPalFlow" from "Method"
     And I press "Add Method Button"
-    And I save and close form
+    When I save and close form
     Then I should see "Payment rule has been saved" flash message
 
   Scenario: Enable SinglePage checkout
@@ -49,6 +58,7 @@ Feature: Process order submission with PayPal PayFlow Gateway and Authorize & Ca
   Scenario: Successful order payment with PayPal PayFlow Gateway
     Given There are products in the system available for order
     And I operate as the Buyer
+    And I signed in as AmandaRCole@example.org on the store frontend
     When I open page with shopping list List 1
     And I press "Create Order"
     And I select "Fifth avenue, 10115 Berlin, Germany" from "Select Billing Address"
@@ -62,7 +72,7 @@ Feature: Process order submission with PayPal PayFlow Gateway and Authorize & Ca
     And I press "Submit Order"
     Then I see the "Thank You" page with "Thank You For Your Purchase!" title
 
-    Then I operate as the Admin
+    When I operate as the Admin
     And I go to Sales/Orders
     And I click View Payment authorized in grid
     And I click "Capture"
@@ -86,6 +96,6 @@ Feature: Process order submission with PayPal PayFlow Gateway and Authorize & Ca
     Then I should see only following flash messages:
       | We were unable to process your payment. Please verify your payment information and try again. |
 
-    Then I operate as the Admin
+    When I operate as the Admin
     And I go to Sales/Orders
     Then there is no "Payment declined" in grid

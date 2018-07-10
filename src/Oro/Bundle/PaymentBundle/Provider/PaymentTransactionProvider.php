@@ -20,17 +20,17 @@ class PaymentTransactionProvider
 {
     use LoggerAwareTrait;
 
-    /** @var EventDispatcherInterface */
-    protected $dispatcher;
-
     /** @var DoctrineHelper */
     protected $doctrineHelper;
+
+    /** @var CustomerUserProvider */
+    protected $customerUserProvider;
 
     /** @var string */
     protected $paymentTransactionClass;
 
-    /** @var CustomerUserProvider */
-    protected $customerUserProvider;
+    /** @var EventDispatcherInterface */
+    protected $dispatcher;
 
     /**
      * @param DoctrineHelper $doctrineHelper
@@ -45,9 +45,9 @@ class PaymentTransactionProvider
         $paymentTransactionClass
     ) {
         $this->doctrineHelper = $doctrineHelper;
+        $this->customerUserProvider = $customerUserProvider;
         $this->paymentTransactionClass = $paymentTransactionClass;
         $this->dispatcher = $dispatcher;
-        $this->customerUserProvider = $customerUserProvider;
     }
 
     /**
@@ -140,7 +140,7 @@ class PaymentTransactionProvider
      */
     public function getActiveValidatePaymentTransaction($paymentMethod)
     {
-        $customerUser = $this->customerUserProvider->getLoggedUserIncludingGuest();
+        $customerUser = $this->customerUserProvider->getLoggedUser(true);
         if (!$customerUser) {
             return null;
         }
@@ -173,7 +173,7 @@ class PaymentTransactionProvider
             ->setAction($type)
             ->setEntityClass($className)
             ->setEntityIdentifier($identifier)
-            ->setFrontendOwner($this->customerUserProvider->getLoggedUserIncludingGuest());
+            ->setFrontendOwner($this->customerUserProvider->getLoggedUser(true));
 
         return $paymentTransaction;
     }
@@ -193,7 +193,7 @@ class PaymentTransactionProvider
             ->setEntityIdentifier($parentPaymentTransaction->getEntityIdentifier())
             ->setAmount($parentPaymentTransaction->getAmount())
             ->setCurrency($parentPaymentTransaction->getCurrency())
-            ->setFrontendOwner($this->customerUserProvider->getLoggedUserIncludingGuest())
+            ->setFrontendOwner($this->customerUserProvider->getLoggedUser(true))
             ->setSourcePaymentTransaction($parentPaymentTransaction);
 
         return $paymentTransaction;

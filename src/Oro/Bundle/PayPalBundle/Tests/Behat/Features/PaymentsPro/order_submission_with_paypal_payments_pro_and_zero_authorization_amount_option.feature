@@ -1,3 +1,4 @@
+@regression
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroAuthorizeNetBundle:AuthorizeNetFixture.yml
 Feature: Order submission with PayPal Payments Pro and zero "authorization amount" option

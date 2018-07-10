@@ -1,11 +1,18 @@
+@regression
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroAuthorizeNetBundle:AuthorizeNetFixture.yml
 
 Feature: Process order submission with PayPal Payments Pro and Authorize & Capture payment action on Single Page Checkout
   ToDo: BAP-16103 Add missing descriptions to the Behat features
+
+  Scenario: Feature Background
+    Given sessions active:
+      | Admin | first_session  |
+      | Guest | second_session |
+
   Scenario: Create new PayPal Payments Pro Integration
-    Given I login as AmandaRCole@example.org the "Buyer" at "first_session" session
-    And I login as administrator and use in "second_session" as "Admin"
+    Given I operate as the Admin
+    And I login as administrator
     When I go to System/Integrations/Manage Integrations
     And I click "Create Integration"
     And I select "PayPal Payments Pro" from "Type"
@@ -34,7 +41,7 @@ Feature: Process order submission with PayPal Payments Pro and Authorize & Captu
     And I fill in "Sort Order" with "1"
     And I select "PayPalPro" from "Method"
     And I press "Add Method Button"
-    And I save and close form
+    When I save and close form
     Then I should see "Payment rule has been saved" flash message
 
   Scenario: Enable SinglePage checkout
@@ -46,6 +53,7 @@ Feature: Process order submission with PayPal Payments Pro and Authorize & Captu
   Scenario: Successful order payment with PayPal Payments Pro
     Given There are products in the system available for order
     And I operate as the Buyer
+    And I signed in as AmandaRCole@example.org on the store frontend
     When I open page with shopping list List 1
     And I press "Create Order"
     And I select "Fifth avenue, 10115 Berlin, Germany" from "Select Billing Address"
@@ -60,10 +68,10 @@ Feature: Process order submission with PayPal Payments Pro and Authorize & Captu
     Then I see the "Thank You" page with "Thank You For Your Purchase!" title
 
   Scenario: Successful capture
-    Then I operate as the Admin
+    Given I operate as the Admin
     And I go to Sales/Orders
     And I click View Payment authorized in grid
-    And I click "Capture"
+    When I click "Capture"
     Then I should see "Charge The Customer" in the "UiWindow Title" element
     When I click "Yes, Charge" in modal window
     Then I should see "The payment of $13.00 has been captured successfully" flash message
@@ -84,6 +92,6 @@ Feature: Process order submission with PayPal Payments Pro and Authorize & Captu
     Then I should see only following flash messages:
       | We were unable to process your payment. Please verify your payment information and try again. |
 
-    Then I operate as the Admin
+    When I operate as the Admin
     And I go to Sales/Orders
     Then there is no "Payment declined" in grid
