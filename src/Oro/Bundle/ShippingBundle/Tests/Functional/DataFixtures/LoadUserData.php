@@ -29,15 +29,6 @@ class LoadUserData extends AbstractLoadMultipleUserData implements ContainerAwar
                     ],
                 ],
             ],
-            [
-                'class' => 'oro_rule.entity.rule.class',
-                'acls'  => [
-                    [
-                        AbstractLoadMultipleUserData::ACL_PERMISSION => 'VIEW',
-                        AbstractLoadMultipleUserData::ACL_LEVEL => 'SYSTEM',
-                    ],
-                ],
-            ],
         ],
         self::ROLE_EDIT => [
             [
