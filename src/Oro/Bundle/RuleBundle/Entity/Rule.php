@@ -27,10 +27,6 @@ use Oro\Bundle\RuleBundle\Model\ExtendRule;
  *          "dataaudit"={
  *              "auditable"=true
  *          },
- *          "security"={
- *              "type"="ACL",
- *              "group_name"=""
- *          }
  *      }
  * )
  */
