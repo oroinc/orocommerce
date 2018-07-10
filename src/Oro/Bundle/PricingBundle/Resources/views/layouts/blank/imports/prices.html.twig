@@ -8,22 +8,24 @@
             product: product,
             isPriceUnitsVisible: isPriceUnitsVisible
         }) %}
+
+        {% if productPrices|length %}
+            {% set attr = layout_attr_defaults(attr, {
+                'data-page-component-module': 'oroui/js/app/components/view-component',
+                '~data-page-component-options': {
+                    view: 'oropricing/js/app/views/base-product-prices-view',
+                    changeQuantity: true,
+                    modelAttr: {
+                        prices: productPrices
+                    }
+                },
+            }) %}
+
+            <div {{ block('block_attributes') }}>
+                {{ block_widget(block) }}
+            </div>
+        {% endif %}
     {% endif %}
-
-    {% set attr = layout_attr_defaults(attr, {
-        'data-page-component-module': 'oroui/js/app/components/view-component',
-        '~data-page-component-options': {
-            view: 'oropricing/js/app/views/base-product-prices-view',
-            changeQuantity: true,
-            modelAttr: {
-                prices: productPrices
-            }
-        },
-    }) %}
-
-    <div {{ block('block_attributes') }}>
-        {{ block_widget(block) }}
-    </div>
 {% endblock %}
 
 {% block product_price %}
@@ -182,17 +184,20 @@
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' product-prices'
     }) %}
-    <div {{ block('block_attributes') }}>
-        <table class="product-prices__table">
-            <thead class="product-prices__thead">
-                <tr class="product-prices__tr">
-                    <th style="width: 40%" class="product-prices__th text-uppercase">{{ 'oro.pricing.frontend.product.quantity.short_label'|trans }}</th>{# qty #}
-                    <th style="width: 60%" class="product-prices__th">{{ 'oro.pricing.frontend.product.unit_price.long_label'|trans }}</th>{# Unit Price #}
-                </tr>
-            </thead>
-            {{ block_widget(block) }}
-        </table>
-    </div>
+
+    {% if productPrices|length %}
+        <div {{ block('block_attributes') }}>
+            <table class="product-prices__table">
+                <thead class="product-prices__thead">
+                    <tr class="product-prices__tr">
+                        <th style="width: 40%" class="product-prices__th text-uppercase">{{ 'oro.pricing.frontend.product.quantity.short_label'|trans }}</th>{# qty #}
+                        <th style="width: 60%" class="product-prices__th">{{ 'oro.pricing.frontend.product.unit_price.long_label'|trans }}</th>{# Unit Price #}
+                    </tr>
+                </thead>
+                {{ block_widget(block) }}
+            </table>
+        </div>
+    {% endif %}
 {% endblock %}
 
 {% block product_price_table_body %}
