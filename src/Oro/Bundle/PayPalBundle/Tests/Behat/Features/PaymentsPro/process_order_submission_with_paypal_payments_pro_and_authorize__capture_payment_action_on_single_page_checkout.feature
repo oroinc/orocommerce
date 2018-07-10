@@ -8,7 +8,7 @@ Feature: Process order submission with PayPal Payments Pro and Authorize & Captu
   Scenario: Feature Background
     Given sessions active:
       | Admin | first_session  |
-      | Guest | second_session |
+      | Buyer | second_session |
 
   Scenario: Create new PayPal Payments Pro Integration
     Given I operate as the Admin
