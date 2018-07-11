@@ -444,8 +444,8 @@ class ShoppingListManager
     {
         if (!$this->customerUser) {
             $token = $this->tokenStorage->getToken();
-            if ($token) {
-                $this->customerUser = $token->getUser();
+            if ($token && ($customerUser = $token->getUser()) instanceof CustomerUser) {
+                $this->customerUser = $customerUser;
             }
         }
 

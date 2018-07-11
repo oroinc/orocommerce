@@ -1,0 +1,150 @@
+include:
+    - '@OroCustomerBundle:BuyerCustomerFixture.yml'
+
+Oro\Bundle\CustomerBundle\Entity\Customer:
+    customer1:
+        name: 'first customer'
+        organization: '@organization'
+        owner: '@admin'
+        payment_term_7c4f1e8e: '@paymentTerm'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerUser:
+    nancy:
+        email: 'NancyJSallee@example.org'
+        username: 'NancyJSallee@example.org'
+        password: 'RQ0+FN3TZyBpB4W6FenR4kTugMt0LW6Gcq9hsMkC5hwkA+C9UQBvt2th0RXEbVMG3DcV7LXi+26CjK8L2EkLVQ=='
+        salt: '687ji8ylggkck4wg8gggkooo44gks8g'
+        firstName: 'Nancy'
+        lastName: 'Sallee'
+        enabled: '1'
+        confirmed: '1'
+        customer: '@customer1'
+        organization: '@organization'
+        role: ['@buyer']
+        owner: '@admin'
+        website: '@website1'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress:
+    nancyAddress1:
+        region: 'US-NY'
+        frontendOwner: '@nancy'
+        country: 'US'
+        owner: '@admin'
+        systemOrganization: '@organization'
+        primary: false
+        label: 'Address 4'
+        street: '2849 Junkins Avenue'
+        city: 'Albany'
+        postalCode: '31707'
+        organization: '@organization'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerUserAddressToAddressType:
+    nancyAddress1ShippingDefault:
+        address: '@nancyAddress1'
+        type: 'shipping'
+        default: true
+    nancyAddress1BillingDefault:
+        address: '@nancyAddress1'
+        type: 'billing'
+        default: true
+
+Oro\Bundle\CustomerBundle\Entity\CustomerAddress:
+    customerAddress1:
+        region: 'US-FL'
+        frontendOwner: '@customer1'
+        country: 'US'
+        owner: '@admin'
+        systemOrganization: '@organization'
+        primary: false
+        label: 'Address 1'
+        street: '801 Scenic Hwy'
+        city: 'Haines City'
+        postalCode: '33844'
+        organization: '@organization'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerAddressToAddressType:
+    customerAddress1ShippingDefault:
+        address: '@customerAddress1'
+        type: 'shipping'
+        default: true
+
+Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
+    shoppinglist6:
+        label: 'Shopping List 6'
+        customerUser: '@nancy'
+        organization: '@organization'
+        website: '@website1'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    precision1:
+        unit: '@item'
+        precision: '1'
+        sell: true
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    locvalue1:
+        string: Product1
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product1:
+        type: 'simple'
+        attributeFamily: '@defaultProductFamily'
+        organization: '@organization'
+        owner: '@business_unit'
+        sku: 'AA1'
+        primaryUnitPrecision: '@precision1'
+        addName: ['@locvalue1']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+
+Oro\Bundle\ShoppingListBundle\Entity\LineItem:
+    lineitem7:
+       product: '@product1'
+       quantity: '1'
+       unit: '@item'
+       customerUser: '@nancy'
+       shoppingList: '@shoppinglist6'
+       organization: '@organization'
+
+Oro\Bundle\CurrencyBundle\Entity\Price(local):
+    price:
+        value: '10'
+        currency: 'USD'
+
+Oro\Bundle\PricingBundle\Entity\PriceListToCustomer:
+    priceListToCustomer:
+        customer: '@customer1'
+        pricelist: '@pricelist1'
+        website: '@website1'
+        sortOrder: 200
+
+Oro\Bundle\PricingBundle\Entity\ProductPrice:
+    productPrice:
+        pricelist: '@pricelist1'
+        product: '@product1'
+        productSku: 'AA1'
+        quantity: 1
+        unit: '@item'
+        value: 10
+        currency: 'USD'
+
+Oro\Bundle\PricingBundle\Entity\CombinedProductPrice:
+   combinedProductPrice:
+        pricelist: '@combinedPriceList'
+        product: '@product1'
+        productSku: 'AA1'
+        quantity: 1
+        unit: '@item'
+        value: 10
+        currency: 'USD'
+
+Oro\Bundle\PricingBundle\Entity\CombinedPriceListToCustomer:
+    combinedPriceListToCustomer:
+        pricelist: '@combinedPriceList'
+        customer: '@customer1'
+        website: '@website1'
+
+Oro\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite:
+    combinedPriceListToWebsite:
+        pricelist: '@combinedPriceList'
+        website: '@website1'
