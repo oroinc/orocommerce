@@ -204,6 +204,10 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                     'value' => Configuration::DISPLAY_SIMPLE_VARIATIONS_HIDE_COMPLETELY,
                     'scope' => 'app',
                 ],
+                Configuration::LIMIT_FILTERS_SORTERS_ON_PRODUCT_LISTING => [
+                    'value' => true,
+                    'scope' => 'app'
+                ]
             ]
         ];
 

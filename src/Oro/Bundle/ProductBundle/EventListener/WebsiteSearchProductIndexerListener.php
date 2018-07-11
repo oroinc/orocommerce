@@ -115,6 +115,14 @@ class WebsiteSearchProductIndexerListener
             $event->addField($product->getId(), 'type', $product->getType());
             $event->addField($product->getId(), 'is_variant', (int)$product->isVariant());
 
+            if ($product->getAttributeFamily() instanceof AttributeFamily) {
+                $event->addField(
+                    $product->getId(),
+                    'attribute_family_id',
+                    $product->getAttributeFamily()->getId()
+                );
+            }
+
             $this->processImages($event, $productImages, $product->getId());
 
             if (isset($primaryUnits[$product->getId()])) {
