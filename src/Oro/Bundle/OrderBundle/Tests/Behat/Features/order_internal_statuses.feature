@@ -17,7 +17,7 @@ Feature: Order Internal Statuses
     And I should not see following page actions:
       | ARCHIVE |
 
-    When I click on page action "MARK AS SHIPPED"
+    When I click on page action "Mark As Shipped"
     Then I should see "Order #SimpleOrder has been marked as shipped." flash message
     And I should see that order internal status is "Shipped"
     And I should see available page actions:
@@ -72,7 +72,7 @@ Feature: Order Internal Statuses
 #    And I should see following records in grid:
 #      | SimpleOrder | Shipped |
 
-  Scenario: Verify internal statuses flow Open => CANCELled => Closed => Archived
+  Scenario: Verify internal statuses flow Open => Cancelled => Closed => Archived
     Given I go to Sales/Orders
     When I click view "SecondOrder" in grid
     Then I should see that order internal status is "Open"
@@ -83,9 +83,9 @@ Feature: Order Internal Statuses
     And I should not see following page actions:
       | ARCHIVE |
 
-    When I click on page action "CANCEL"
+    When I click on page action "Cancel"
     Then I should see "Order #SecondOrder has been cancelled." flash message
-    And I should see that order internal status is "CANCELled"
+    And I should see that order internal status is "Cancelled"
     And I should see available page actions:
       | CLOSE |
     And I should not see following page actions:
@@ -97,7 +97,7 @@ Feature: Order Internal Statuses
     Then I should see "Order #SecondOrder has been closed." flash message
     And I should see that order internal status is "Closed"
     And I should see available page actions:
-      | Archive |
+      | ARCHIVE |
     And I should not see following page actions:
       | CANCEL          |
       | CLOSE           |
