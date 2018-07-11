@@ -5,7 +5,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectType;
-use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as EntityTypeStub;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -23,7 +23,7 @@ class ProductUnitSelectTypeTest extends FormIntegrationTestCase
     private $formType;
 
     /**
-     * @var ProductUnitLabelFormatter|\PHPUnit\Framework\MockObject\MockObject
+     * @var UnitLabelFormatter|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $productUnitLabelFormatter;
 
@@ -32,7 +32,7 @@ class ProductUnitSelectTypeTest extends FormIntegrationTestCase
      */
     protected function setUp()
     {
-        $this->productUnitLabelFormatter = $this->getMockBuilder(ProductUnitLabelFormatter::class)
+        $this->productUnitLabelFormatter = $this->getMockBuilder(UnitLabelFormatter::class)
             ->disableOriginalConstructor()
             ->getMock();
 

@@ -7,7 +7,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
 use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 use Oro\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitHolderTypeStub;
@@ -61,7 +61,8 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
                     return isset($params['{title}']) ? $id . ':' . $params['{title}'] : $id;
                 }
             );
-        $productUnitLabelFormatter = new ProductUnitLabelFormatter($this->translator);
+        $productUnitLabelFormatter = new UnitLabelFormatter($this->translator);
+        $productUnitLabelFormatter->setTranslationPrefix('oro.product_unit');
         $this->formType = new ProductUnitSelectionType($productUnitLabelFormatter, $this->translator);
         $this->formType->setEntityClass('Oro\Bundle\ProductBundle\Entity\ProductUnit');
 

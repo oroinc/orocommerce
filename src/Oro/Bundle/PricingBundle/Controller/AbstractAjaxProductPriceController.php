@@ -6,7 +6,7 @@ use Doctrine\ORM\EntityManager;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -55,7 +55,7 @@ abstract class AbstractAjaxProductPriceController extends Controller
     }
 
     /**
-     * @return ProductUnitLabelFormatter
+     * @return UnitLabelFormatter
      */
     protected function getProductUnitFormatter()
     {

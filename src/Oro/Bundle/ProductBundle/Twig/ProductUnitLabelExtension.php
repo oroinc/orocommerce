@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Twig;
 
-use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class ProductUnitLabelExtension extends \Twig_Extension
@@ -21,7 +21,7 @@ class ProductUnitLabelExtension extends \Twig_Extension
     }
 
     /**
-     * @return ProductUnitLabelFormatter
+     * @return UnitLabelFormatter
      */
     protected function getFormatter()
     {

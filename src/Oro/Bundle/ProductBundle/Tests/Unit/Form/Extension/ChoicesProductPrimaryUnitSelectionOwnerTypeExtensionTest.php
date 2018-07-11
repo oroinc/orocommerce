@@ -6,7 +6,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Form\Extension\ChoicesProductPrimaryUnitSelectionOwnerTypeExtension;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectType;
-use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
 use Oro\Bundle\ProductBundle\Visibility\ProductUnitFieldsSettingsInterface;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
@@ -114,7 +114,8 @@ class ChoicesProductPrimaryUnitSelectionOwnerTypeExtensionTest extends FormInteg
      */
     protected function getExtensions()
     {
-        $formatter = $this->createMock(ProductUnitLabelFormatter::class);
+        /** @var UnitLabelFormatter|\PHPUnit_Framework_MockObject_MockObject $formatter */
+        $formatter = $this->createMock(UnitLabelFormatter::class);
         $productUnitSelectType = new ProductUnitSelectType($formatter);
         $type = $this->createMock(FormTypeInterface::class);
         $type->method('getBlockPrefix')->willReturn('entity');

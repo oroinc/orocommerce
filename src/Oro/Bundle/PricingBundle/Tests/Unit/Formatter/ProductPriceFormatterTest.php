@@ -4,7 +4,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Formatter;
 
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use Oro\Bundle\PricingBundle\Formatter\ProductPriceFormatter;
-use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
 use Oro\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter;
 
 class ProductPriceFormatterTest extends \PHPUnit\Framework\TestCase
@@ -20,7 +20,7 @@ class ProductPriceFormatterTest extends \PHPUnit\Framework\TestCase
     protected $numberFormatter;
 
     /**
-     * @var ProductUnitLabelFormatter|\PHPUnit\Framework\MockObject\MockObject
+     * @var UnitLabelFormatter::class|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $unitLabelFormatter;
 
@@ -39,7 +39,7 @@ class ProductPriceFormatterTest extends \PHPUnit\Framework\TestCase
                 return sprintf('%.2f %s formatted_price', $price, $currencyIsoCode);
             }));
         $this->unitLabelFormatter = $this
-            ->getMockBuilder('Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter')
+            ->getMockBuilder(UnitLabelFormatter::class)
             ->disableOriginalConstructor()->getMock();
         $this->unitLabelFormatter->expects($this->any())
             ->method('format')

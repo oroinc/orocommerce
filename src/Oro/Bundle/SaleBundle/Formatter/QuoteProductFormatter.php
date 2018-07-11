@@ -3,8 +3,8 @@
 namespace Oro\Bundle\SaleBundle\Formatter;
 
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
-use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 use Oro\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter;
+use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
 use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductRequest;
@@ -24,7 +24,7 @@ class QuoteProductFormatter
     protected $productUnitValueFormatter;
 
     /**
-     * @var ProductUnitLabelFormatter
+     * @var UnitLabelFormatter
      */
     protected $productUnitLabelFormatter;
 
@@ -37,13 +37,13 @@ class QuoteProductFormatter
      * @param TranslatorInterface $translator
      * @param NumberFormatter $numberFormatter
      * @param ProductUnitValueFormatter $productUnitValueFormatter
-     * @param ProductUnitLabelFormatter $productUnitLabelFormatter
+     * @param UnitLabelFormatter $productUnitLabelFormatter
      */
     public function __construct(
         TranslatorInterface $translator,
         NumberFormatter $numberFormatter,
         ProductUnitValueFormatter $productUnitValueFormatter,
-        ProductUnitLabelFormatter $productUnitLabelFormatter
+        UnitLabelFormatter $productUnitLabelFormatter
     ) {
         $this->translator                   = $translator;
         $this->numberFormatter              = $numberFormatter;

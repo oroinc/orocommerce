@@ -46,8 +46,10 @@ services:
         class: 'Oro\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter'
 
     oro_product.formatter.product_unit_label:
-        parent: oro_product.formatter.unit_label
-        class: 'Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter'
+        parent: 'oro_product.formatter.unit_label'
+        public: true
+        calls:
+            - ['setTranslationPrefix', ['oro.product_unit']]
 
     oro_product.twig.product_unit_value:
         class: 'Oro\Bundle\ProductBundle\Twig\ProductUnitValueExtension'
