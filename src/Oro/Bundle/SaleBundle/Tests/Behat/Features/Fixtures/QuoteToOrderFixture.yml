@@ -1,24 +1,5 @@
-Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
-    productName1:
-        string: 'Product1'
-
-Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
-    precision1:
-        unit: '@item'
-        precision: '1'
-        sell: true
-
-Oro\Bundle\ProductBundle\Entity\Product:
-    product1:
-        sku: 'psku1'
-        type: 'simple'
-        organization: '@organization'
-        owner: '@business_unit'
-        primaryUnitPrecision: '@precision1'
-        attributeFamily: '@defaultProductFamily'
-        addName: ['@productName1']
-        inventoryStatus: '@enumInventoryStatuses'
-        status: 'enabled'
+include:
+    -  '@OroSaleBundle:QuoteProductFixture.yml'
 
 Oro\Bundle\SaleBundle\Entity\Quote:
     quote1:
