@@ -109,39 +109,6 @@
     }
 }
 
-.product-price-filter-criteria {
-    margin-bottom: 7px;
-
-    .btn-group {
-        margin-bottom: 0;
-    }
-
-    .filter-end {
-        input[type="text"] {
-            border-right-width: 1px !important;
-        }
-    }
-
-    .product-price-filter {
-        display: inline;
-
-        .product-price-unit-filter {
-            float: none !important;
-
-            .dropdown-toggle {
-                border-radius: 3px !important;
-            }
-        }
-    }
-
-    .filter-update {
-        left: auto !important;
-        position: relative !important;
-        float: right;
-        margin: 8px 0;
-    }
-}
-
 .pricing-price-list {
     .add-list-item {
         margin-top: 10px;

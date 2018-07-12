@@ -3,25 +3,26 @@
 .product-container {
     .content-with-sidebar {
         &--header {
-            flex-shrink: 0;
+            flex-shrink: $product-container-header-flex-shrink;
         }
 
         &--sidebar {
-            display: flex;
-            flex-direction: column;
+            display: $product-container-sidebar-display;
+            flex-direction: $product-container-sidebar-flex-direction;
         }
 
         &--sidebar-content {
-            overflow: auto;
-            flex-grow: 1;
+            overflow: $product-container-sidebar-content-overflow;
+            flex-grow: $product-container-sidebar-content-flex-grow;
 
             .control-group-checkbox {
-                label {
-                    float: left;
+                label:not(.empty-label) {
+                    float: $product-container-control-group-checkbox-label-float;
                 }
 
-                input {
-                    margin: 0 10px !important;
+                input,
+                .checkbox-view {
+                    margin: $product-container-control-group-checkbox-input-offset;
                 }
             }
         }
