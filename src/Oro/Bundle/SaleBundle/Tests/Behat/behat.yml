@@ -95,3 +95,7 @@ oro_behat_extension:
       selector:
         locator: '//td[contains(text(),"DPD Classic")]/../td/label[contains(text(),"DPD")]'
         type: xpath
+
+    Quote Line Item Grid:
+      selector: '.quote-line-items'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\FrontendTableGrid

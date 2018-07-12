@@ -2,7 +2,10 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Unit\Form\Type;
 
+use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
+use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\PreloadedExtension;
+use Symfony\Component\Form\Test\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
@@ -175,7 +178,7 @@ class QuoteProductOfferTypeTest extends AbstractTest
                 'defaultData'   => $this->getQuoteProductOffer(5),
             ],
             'empty price' => [
-                'isValid'       => false,
+                'isValid'       => true, //Quote can be create with empty price,
                 'submittedData' => [
                     'quantity'      => 44,
                     'productUnit'   => 'kg',
@@ -279,5 +282,41 @@ class QuoteProductOfferTypeTest extends AbstractTest
             ),
             $this->getValidatorExtension(true),
         ];
+    }
+
+    public function testOnPreSetData()
+    {
+        /** @var $formMock FormInterface|\PHPUnit_Framework_MockObject_MockObject */
+        $formMock = $this->createMock(FormInterface::class);
+        $event = new FormEvent($formMock, new QuoteProductOffer());
+
+        $formMock->expects($this->once())
+            ->method('add')
+            ->with(
+                'price',
+                PriceType::class,
+                [
+                    'currency_empty_value' => null,
+                    'error_bubbling' => false,
+                    'required' => true,
+                    'label' => 'oro.sale.quoteproductoffer.price.label',
+                    //Price value may be not set by user while creating quote
+                    'validation_groups' => [PriceType::OPTIONAL_VALIDATION_GROUP],
+                    'match_price_on_null' => false
+                ]
+            );
+
+        $this->formType->onPreSetData($event);
+    }
+
+    public function testOnPreSetDataNoEntity()
+    {
+        /** @var $formMock FormInterface|\PHPUnit_Framework_MockObject_MockObject */
+        $formMock = $this->createMock(FormInterface::class);
+        $event = new FormEvent($formMock, null);
+
+        $formMock->expects($this->never())->method('add');
+
+        $this->formType->onPreSetData($event);
     }
 }

@@ -317,4 +317,30 @@ class QuoteProductPriceProviderTest extends \PHPUnit_Framework_TestCase
         }
         return $quoteProduct;
     }
+
+    public function testHasEmptyPriceTrue()
+    {
+        $quote = new Quote();
+        $quoteProduct = $this->getQuoteProduct();
+        $quote->addQuoteProduct($quoteProduct);
+        $this->assertTrue($this->quoteProductPriceProvider->hasEmptyPrice($quote));
+    }
+
+    public function testHasEmptyPriceFalse()
+    {
+        $quote = new Quote();
+        $quoteProduct = new QuoteProduct();
+        $productUnit = new ProductUnit();
+        $productUnit->setCode('kg');
+        $price = new Price();
+        $price->setCurrency('USD');
+        $price->setValue(12.345);
+        $quoteProductOffer = new QuoteProductOffer();
+        $quoteProductOffer->setProductUnit($productUnit);
+        $quoteProductOffer->setQuantity(1);
+        $quoteProductOffer->setPrice($price);
+        $quoteProduct->addQuoteProductOffer($quoteProductOffer);
+        $quote->addQuoteProduct($quoteProduct);
+        $this->assertFalse($this->quoteProductPriceProvider->hasEmptyPrice($quote));
+    }
 }
