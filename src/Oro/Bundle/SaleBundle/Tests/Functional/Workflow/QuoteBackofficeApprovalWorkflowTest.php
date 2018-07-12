@@ -60,7 +60,7 @@ class QuoteBackofficeApprovalWorkflowTest extends BaseQuoteBackofficeWorkflowTes
         $this->assertSubmitForReviewAndReview();
         $this->transitWithForm('Return', ['oro_workflow_transition[comment]' => 'test submit comment']);
         $this->setCapabilityPermission('oro_quote_review_and_approve', false);
-        $this->assertButtonsAvailable(['Edit', 'Clone', 'Delete', 'Submit for Review']);
+        $this->assertButtonsAvailable(['Edit', 'Clone', 'Delete', 'Submit for Review', 'Send to Customer']);
     }
 
     public function testReviewSendToCustomer()
@@ -105,7 +105,7 @@ class QuoteBackofficeApprovalWorkflowTest extends BaseQuoteBackofficeWorkflowTes
         } else {
             $this->manager->startWorkflow(static::WORKFLOW_NAME, $this->quote);
         }
-        $this->assertButtonsAvailable(['Edit', 'Clone', 'Delete', 'Submit for Review']);
+        $this->assertButtonsAvailable(['Edit', 'Clone', 'Delete', 'Submit for Review', 'Send to Customer']);
         $this->transitWithForm('Submit for Review', ['oro_workflow_transition[comment]' => 'test submit comment']);
         $this->assertStatuses('submitted_for_review', 'open');
         $this->assertButtonsAvailable([]);
