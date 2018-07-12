@@ -3,8 +3,8 @@
 namespace Oro\Bundle\SaleBundle\Formatter;
 
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
-use Oro\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter;
-use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
+use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
+use Oro\Bundle\ProductBundle\Formatter\UnitValueFormatterInterface;
 use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductRequest;
@@ -19,12 +19,12 @@ class QuoteProductFormatter
     protected $translator;
 
     /**
-     * @var ProductUnitValueFormatter
+     * @var UnitValueFormatterInterface
      */
     protected $productUnitValueFormatter;
 
     /**
-     * @var UnitLabelFormatter
+     * @var UnitLabelFormatterInterface
      */
     protected $productUnitLabelFormatter;
 
@@ -36,14 +36,14 @@ class QuoteProductFormatter
     /**
      * @param TranslatorInterface $translator
      * @param NumberFormatter $numberFormatter
-     * @param ProductUnitValueFormatter $productUnitValueFormatter
-     * @param UnitLabelFormatter $productUnitLabelFormatter
+     * @param UnitValueFormatterInterface $productUnitValueFormatter
+     * @param UnitLabelFormatterInterface $productUnitLabelFormatter
      */
     public function __construct(
         TranslatorInterface $translator,
         NumberFormatter $numberFormatter,
-        ProductUnitValueFormatter $productUnitValueFormatter,
-        UnitLabelFormatter $productUnitLabelFormatter
+        UnitValueFormatterInterface $productUnitValueFormatter,
+        UnitLabelFormatterInterface $productUnitLabelFormatter
     ) {
         $this->translator                   = $translator;
         $this->numberFormatter              = $numberFormatter;

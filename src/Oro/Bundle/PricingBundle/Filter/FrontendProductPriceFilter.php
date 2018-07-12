@@ -6,7 +6,7 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\FilterBundle\Filter\FilterUtility;
 use Oro\Bundle\PricingBundle\Form\Type\Filter\ProductPriceFilterType;
 use Oro\Bundle\PricingBundle\Placeholder\UnitPlaceholder;
-use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
+use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Oro\Bundle\SearchBundle\Datagrid\Filter\SearchNumberRangeFilter;
 
 /**
@@ -15,7 +15,7 @@ use Oro\Bundle\SearchBundle\Datagrid\Filter\SearchNumberRangeFilter;
 class FrontendProductPriceFilter extends SearchNumberRangeFilter
 {
     /**
-     * @var UnitLabelFormatter
+     * @var UnitLabelFormatterInterface
      */
     protected $formatter;
 
@@ -34,7 +34,7 @@ class FrontendProductPriceFilter extends SearchNumberRangeFilter
     }
 
     /**
-     * @param UnitLabelFormatter $formatter
+     * @param UnitLabelFormatterInterface $formatter
      */
     public function setFormatter($formatter)
     {

@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Twig;
 
-use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
+use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Oro\Bundle\ProductBundle\Twig\ProductUnitLabelExtension;
 use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
 
@@ -13,7 +13,7 @@ class ProductUnitLabelExtensionTest extends \PHPUnit\Framework\TestCase
     /** @var ProductUnitLabelExtension */
     protected $extension;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject|UnitLabelFormatter */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|UnitLabelFormatterInterface */
     protected $formatter;
 
     /**
@@ -21,7 +21,7 @@ class ProductUnitLabelExtensionTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp()
     {
-        $this->formatter = $this->getMockBuilder(UnitLabelFormatter::class)
+        $this->formatter = $this->getMockBuilder(UnitLabelFormatterInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
 

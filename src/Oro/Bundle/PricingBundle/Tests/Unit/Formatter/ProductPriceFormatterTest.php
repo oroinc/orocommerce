@@ -4,8 +4,8 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Formatter;
 
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use Oro\Bundle\PricingBundle\Formatter\ProductPriceFormatter;
-use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
-use Oro\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter;
+use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
+use Oro\Bundle\ProductBundle\Formatter\UnitValueFormatterInterface;
 
 class ProductPriceFormatterTest extends \PHPUnit\Framework\TestCase
 {
@@ -20,12 +20,12 @@ class ProductPriceFormatterTest extends \PHPUnit\Framework\TestCase
     protected $numberFormatter;
 
     /**
-     * @var UnitLabelFormatter::class|\PHPUnit\Framework\MockObject\MockObject
+     * @var UnitLabelFormatterInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $unitLabelFormatter;
 
     /**
-     * @var ProductUnitValueFormatter|\PHPUnit\Framework\MockObject\MockObject
+     * @var UnitValueFormatterInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $unitValueFormatter;
 
@@ -39,7 +39,7 @@ class ProductPriceFormatterTest extends \PHPUnit\Framework\TestCase
                 return sprintf('%.2f %s formatted_price', $price, $currencyIsoCode);
             }));
         $this->unitLabelFormatter = $this
-            ->getMockBuilder(UnitLabelFormatter::class)
+            ->getMockBuilder(UnitLabelFormatterInterface::class)
             ->disableOriginalConstructor()->getMock();
         $this->unitLabelFormatter->expects($this->any())
             ->method('format')
@@ -47,7 +47,7 @@ class ProductPriceFormatterTest extends \PHPUnit\Framework\TestCase
                 return sprintf('%s formatted_unit', $unit);
             }));
         $this->unitValueFormatter = $this
-            ->getMockBuilder('Oro\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter')
+            ->getMockBuilder(UnitValueFormatterInterface::class)
             ->disableOriginalConstructor()->getMock();
         $this->unitValueFormatter->expects($this->any())
             ->method('formatCode')

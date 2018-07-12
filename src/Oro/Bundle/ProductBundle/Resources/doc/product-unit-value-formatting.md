@@ -38,7 +38,7 @@ Possible format placeholders:
 PHP Name Formatter
 ==================
 
-**Class:** Oro\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter
+**Class:** Oro\Bundle\ProductBundle\Formatter\UnitValueFormatter
 
 **Service id:** oro_product.formatter.product_unit_value
 

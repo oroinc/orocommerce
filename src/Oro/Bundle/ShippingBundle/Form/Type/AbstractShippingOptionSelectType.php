@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ShippingBundle\Form\Type;
 
-use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
+use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Oro\Bundle\ShippingBundle\Provider\MeasureUnitProvider;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -19,7 +19,7 @@ abstract class AbstractShippingOptionSelectType extends AbstractType
     /** @var MeasureUnitProvider */
     protected $unitProvider;
 
-    /** @var UnitLabelFormatter */
+    /** @var UnitLabelFormatterInterface */
     protected $formatter;
 
     /** @var string */
@@ -27,9 +27,9 @@ abstract class AbstractShippingOptionSelectType extends AbstractType
 
     /**
      * @param MeasureUnitProvider $unitProvider
-     * @param UnitLabelFormatter $formatter
+     * @param UnitLabelFormatterInterface $formatter
      */
-    public function __construct(MeasureUnitProvider $unitProvider, UnitLabelFormatter $formatter)
+    public function __construct(MeasureUnitProvider $unitProvider, UnitLabelFormatterInterface $formatter)
     {
         $this->unitProvider = $unitProvider;
         $this->formatter = $formatter;

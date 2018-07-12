@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ShippingBundle\Twig;
 
-use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
+use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class ShippingOptionLabelExtension extends \Twig_Extension
@@ -21,7 +21,7 @@ class ShippingOptionLabelExtension extends \Twig_Extension
     }
 
     /**
-     * @return UnitLabelFormatter
+     * @return UnitLabelFormatterInterface
      */
     protected function getLengthUnitLabelFormatter()
     {
@@ -29,7 +29,7 @@ class ShippingOptionLabelExtension extends \Twig_Extension
     }
 
     /**
-     * @return UnitLabelFormatter
+     * @return UnitLabelFormatterInterface
      */
     protected function getWeightUnitLabelFormatter()
     {
@@ -37,7 +37,7 @@ class ShippingOptionLabelExtension extends \Twig_Extension
     }
 
     /**
-     * @return UnitLabelFormatter
+     * @return UnitLabelFormatterInterface
      */
     protected function getFreightClassLabelFormatter()
     {

@@ -5,8 +5,8 @@ namespace Oro\Bundle\SaleBundle\Tests\Unit\Formatter;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
-use Oro\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter;
+use Oro\Bundle\ProductBundle\Formatter\UnitValueFormatterInterface;
+use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductRequest;
@@ -29,12 +29,12 @@ class QuoteProductFormatterTest extends \PHPUnit\Framework\TestCase
     protected $translator;
 
     /**
-      * @var \PHPUnit\Framework\MockObject\MockObject|ProductUnitValueFormatter
+      * @var \PHPUnit\Framework\MockObject\MockObject|UnitValueFormatterInterface
       */
     protected $productUnitValueFormatter;
 
     /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|UnitLabelFormatter
+     * @var \PHPUnit\Framework\MockObject\MockObject|UnitLabelFormatterInterface
      */
     protected $productUnitLabelFormatter;
 
@@ -55,13 +55,13 @@ class QuoteProductFormatterTest extends \PHPUnit\Framework\TestCase
             ->getMock();
 
         $this->productUnitValueFormatter = $this->getMockBuilder(
-            'Oro\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter'
+            UnitValueFormatterInterface::class
         )
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->productUnitLabelFormatter = $this->getMockBuilder(
-            UnitLabelFormatter::class
+            UnitLabelFormatterInterface::class
         )
             ->disableOriginalConstructor()
             ->getMock();

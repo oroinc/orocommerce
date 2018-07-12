@@ -3,7 +3,7 @@
 namespace Oro\Bundle\ShippingBundle\Twig;
 
 use Oro\Bundle\ProductBundle\Entity\MeasureUnitInterface;
-use Oro\Bundle\ProductBundle\Formatter\UnitValueFormatter;
+use Oro\Bundle\ProductBundle\Formatter\UnitValueFormatterInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class WeightUnitValueExtension extends \Twig_Extension
@@ -22,7 +22,7 @@ class WeightUnitValueExtension extends \Twig_Extension
     }
 
     /**
-     * @return UnitValueFormatter
+     * @return UnitValueFormatterInterface
      */
     protected function getFormatter()
     {

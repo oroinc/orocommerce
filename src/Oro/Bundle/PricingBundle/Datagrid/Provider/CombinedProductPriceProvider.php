@@ -7,8 +7,8 @@ use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedProductPriceRepository;
-use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
-use Oro\Bundle\ProductBundle\Formatter\UnitValueFormatter;
+use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
+use Oro\Bundle\ProductBundle\Formatter\UnitValueFormatterInterface;
 
 class CombinedProductPriceProvider implements CombinedProductPriceProviderInterface
 {
@@ -23,26 +23,26 @@ class CombinedProductPriceProvider implements CombinedProductPriceProviderInterf
     private $numberFormatter;
 
     /**
-     * @var UnitLabelFormatter
+     * @var UnitLabelFormatterInterface
      */
     private $unitLabelFormatter;
 
     /**
-     * @var UnitValueFormatter
+     * @var UnitValueFormatterInterface
      */
     private $unitValueFormatter;
 
     /**
      * @param CombinedProductPriceRepository $combinedProductPriceRepository
      * @param NumberFormatter                $numberFormatter
-     * @param UnitLabelFormatter             $unitLabelFormatter
-     * @param UnitValueFormatter             $unitValueFormatter
+     * @param UnitLabelFormatterInterface    $unitLabelFormatter
+     * @param UnitValueFormatterInterface    $unitValueFormatter
      */
     public function __construct(
         CombinedProductPriceRepository $combinedProductPriceRepository,
         NumberFormatter $numberFormatter,
-        UnitLabelFormatter $unitLabelFormatter,
-        UnitValueFormatter $unitValueFormatter
+        UnitLabelFormatterInterface $unitLabelFormatter,
+        UnitValueFormatterInterface $unitValueFormatter
     ) {
         $this->combinedProductPriceRepository = $combinedProductPriceRepository;
         $this->numberFormatter                = $numberFormatter;

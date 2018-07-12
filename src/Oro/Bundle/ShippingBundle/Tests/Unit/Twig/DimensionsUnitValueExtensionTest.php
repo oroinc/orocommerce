@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Twig;
 
-use Oro\Bundle\ProductBundle\Formatter\UnitValueFormatter;
+use Oro\Bundle\ProductBundle\Formatter\UnitValueFormatterInterface;
 use Oro\Bundle\ShippingBundle\Entity\LengthUnit;
 use Oro\Bundle\ShippingBundle\Twig\DimensionsUnitValueExtension;
 use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
@@ -19,7 +19,7 @@ class DimensionsUnitValueExtensionTest extends \PHPUnit\Framework\TestCase
 
     public function setUp()
     {
-        $this->formatter = $this->getMockBuilder(UnitValueFormatter::class)
+        $this->formatter = $this->getMockBuilder(UnitValueFormatterInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
 

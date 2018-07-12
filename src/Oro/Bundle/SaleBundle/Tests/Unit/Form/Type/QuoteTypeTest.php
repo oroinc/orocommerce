@@ -18,7 +18,7 @@ use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub
 use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
-use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
+use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
 use Oro\Bundle\SaleBundle\Entity\Quote;
@@ -397,9 +397,9 @@ class QuoteTypeTest extends AbstractTest
         /* @var $registry ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
         $registry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
 
-        /* @var $productUnitLabelFormatter \PHPUnit\Framework\MockObject\MockObject|UnitLabelFormatter */
+        /* @var $productUnitLabelFormatter \PHPUnit\Framework\MockObject\MockObject|UnitLabelFormatterInterface */
         $productUnitLabelFormatter = $this->getMockBuilder(
-            UnitLabelFormatter::class
+            UnitLabelFormatterInterface::class
         )
             ->disableOriginalConstructor()
             ->getMock();

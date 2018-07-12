@@ -9,13 +9,13 @@ use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
+use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Oro\Bundle\ProductBundle\Rounding\QuantityRoundingService;
 
 class InventoryLevelNormalizer extends ConfigurableEntityNormalizer
 {
     /**
-     * @var UnitLabelFormatter
+     * @var UnitLabelFormatterInterface
      */
     private $formatter;
 
@@ -26,12 +26,12 @@ class InventoryLevelNormalizer extends ConfigurableEntityNormalizer
 
     /**
      * @param FieldHelper $fieldHelper
-     * @param UnitLabelFormatter $formatter
+     * @param UnitLabelFormatterInterface $formatter
      * @param QuantityRoundingService $roundingService
      */
     public function __construct(
         FieldHelper $fieldHelper,
-        UnitLabelFormatter $formatter,
+        UnitLabelFormatterInterface $formatter,
         QuantityRoundingService $roundingService
     ) {
         parent::__construct($fieldHelper);

@@ -4,8 +4,8 @@ namespace Oro\Bundle\PricingBundle\Formatter;
 
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use Oro\Bundle\PricingBundle\Entity\BaseProductPrice;
-use Oro\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter;
-use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
+use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
+use Oro\Bundle\ProductBundle\Formatter\UnitValueFormatterInterface;
 
 class ProductPriceFormatter
 {
@@ -15,24 +15,24 @@ class ProductPriceFormatter
     protected $numberFormatter;
 
     /**
-     * @var UnitLabelFormatter
+     * @var UnitLabelFormatterInterface
      */
     protected $unitLabelFormatter;
 
     /**
-     * @var ProductUnitValueFormatter
+     * @var UnitValueFormatterInterface
      */
     protected $unitValueFormatter;
 
     /**
      * @param NumberFormatter $numberFormatter
-     * @param UnitLabelFormatter $unitLabelFormatter
-     * @param ProductUnitValueFormatter $unitValueFormatter
+     * @param UnitLabelFormatterInterface $unitLabelFormatter
+     * @param UnitValueFormatterInterface $unitValueFormatter
      */
     public function __construct(
         NumberFormatter $numberFormatter,
-        UnitLabelFormatter $unitLabelFormatter,
-        ProductUnitValueFormatter $unitValueFormatter
+        UnitLabelFormatterInterface $unitLabelFormatter,
+        UnitValueFormatterInterface $unitValueFormatter
     ) {
         $this->numberFormatter = $numberFormatter;
         $this->unitLabelFormatter = $unitLabelFormatter;

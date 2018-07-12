@@ -4,7 +4,7 @@ namespace Oro\Bundle\ProductBundle\Form\Type;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
+use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Oro\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\ChoiceList\View\ChoiceView;
@@ -27,7 +27,7 @@ class ProductUnitSelectionType extends AbstractProductAwareType
     protected $translator;
 
     /**
-     * @var UnitLabelFormatter
+     * @var UnitLabelFormatterInterface
      */
     protected $productUnitFormatter;
 
@@ -37,10 +37,10 @@ class ProductUnitSelectionType extends AbstractProductAwareType
     protected $entityClass;
 
     /**
-     * @param UnitLabelFormatter $productUnitFormatter
+     * @param UnitLabelFormatterInterface $productUnitFormatter
      * @param TranslatorInterface $translator
      */
-    public function __construct(UnitLabelFormatter $productUnitFormatter, TranslatorInterface $translator)
+    public function __construct(UnitLabelFormatterInterface $productUnitFormatter, TranslatorInterface $translator)
     {
         $this->productUnitFormatter = $productUnitFormatter;
         $this->translator = $translator;

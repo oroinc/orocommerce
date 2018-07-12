@@ -4,7 +4,7 @@ namespace Oro\Bundle\ProductBundle\Provider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
-use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
+use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 
 class ProductUnitsProvider
 {
@@ -14,15 +14,15 @@ class ProductUnitsProvider
     protected $registry;
 
     /**
-     * @var  UnitLabelFormatter
+     * @var  UnitLabelFormatterInterface
      */
     protected $formatter;
 
     /**
      * @param ManagerRegistry $registry
-     * @param UnitLabelFormatter $formatter
+     * @param UnitLabelFormatterInterface $formatter
      */
-    public function __construct(ManagerRegistry $registry, UnitLabelFormatter $formatter)
+    public function __construct(ManagerRegistry $registry, UnitLabelFormatterInterface $formatter)
     {
         $this->registry = $registry;
         $this->formatter = $formatter;

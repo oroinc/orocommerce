@@ -4,7 +4,7 @@ namespace Oro\Bundle\ProductBundle\Controller;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
-use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
+use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
@@ -51,7 +51,7 @@ abstract class AbstractAjaxProductUnitController extends Controller
     }
 
     /**
-     * @return UnitLabelFormatter
+     * @return UnitLabelFormatterInterface
      */
     protected function getProductUnitFormatter()
     {

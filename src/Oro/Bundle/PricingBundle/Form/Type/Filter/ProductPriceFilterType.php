@@ -4,7 +4,7 @@ namespace Oro\Bundle\PricingBundle\Form\Type\Filter;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\FilterBundle\Form\Type\Filter\NumberRangeFilterType;
-use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
+use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -26,19 +26,19 @@ class ProductPriceFilterType extends AbstractType
     protected $registry;
 
     /**
-     * @var UnitLabelFormatter
+     * @var UnitLabelFormatterInterface
      */
     protected $formatter;
 
     /**
      * @param TranslatorInterface $translator
      * @param ManagerRegistry     $registry
-     * @param UnitLabelFormatter  $formatter
+     * @param UnitLabelFormatterInterface  $formatter
      */
     public function __construct(
         TranslatorInterface $translator,
         ManagerRegistry $registry,
-        UnitLabelFormatter $formatter
+        UnitLabelFormatterInterface $formatter
     ) {
         $this->translator = $translator;
         $this->registry = $registry;

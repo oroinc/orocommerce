@@ -5,7 +5,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Filter;
 use Oro\Bundle\FilterBundle\Filter\FilterUtility;
 use Oro\Bundle\PricingBundle\Filter\ProductPriceFilter;
 use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
-use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
+use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Symfony\Component\Form\ChoiceList\View\ChoiceView;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormView;
@@ -34,7 +34,7 @@ class ProductPriceFilterTest extends \PHPUnit\Framework\TestCase
     protected $productPriceFilter;
 
     /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|UnitLabelFormatter
+     * @var \PHPUnit\Framework\MockObject\MockObject|UnitLabelFormatterInterface
      */
     protected $formatter;
 
@@ -58,7 +58,7 @@ class ProductPriceFilterTest extends \PHPUnit\Framework\TestCase
             ->method('getExcludeParams')
             ->willReturn([]);
 
-        $this->formatter = $this->getMockBuilder(UnitLabelFormatter::class)
+        $this->formatter = $this->getMockBuilder(UnitLabelFormatterInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
 

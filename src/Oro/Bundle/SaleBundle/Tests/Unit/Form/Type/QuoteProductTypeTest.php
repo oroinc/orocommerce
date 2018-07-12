@@ -13,7 +13,7 @@ use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
-use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
+use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
@@ -84,9 +84,9 @@ class QuoteProductTypeTest extends AbstractTest
             ->willReturn($this->manager)
         ;
 
-        /* @var $productUnitLabelFormatter \PHPUnit\Framework\MockObject\MockObject|UnitLabelFormatter */
+        /* @var $productUnitLabelFormatter \PHPUnit\Framework\MockObject\MockObject|UnitLabelFormatterInterface */
         $productUnitLabelFormatter = $this->getMockBuilder(
-            UnitLabelFormatter::class
+            UnitLabelFormatterInterface::class
         )
             ->disableOriginalConstructor()
             ->getMock();

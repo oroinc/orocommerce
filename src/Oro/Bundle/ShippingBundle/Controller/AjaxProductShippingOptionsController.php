@@ -4,7 +4,7 @@ namespace Oro\Bundle\ShippingBundle\Controller;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\Type\ProductType;
-use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
+use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions;
 use Oro\Bundle\ShippingBundle\Form\Extension\ProductFormExtension;
@@ -47,7 +47,7 @@ class AjaxProductShippingOptionsController extends Controller
         /* @var $provider FreightClassesProvider */
         $provider = $this->get('oro_shipping.provider.measure_units.freight');
 
-        /* @var $formatter UnitLabelFormatter */
+        /* @var $formatter UnitLabelFormatterInterface */
         $formatter = $this->get('oro_shipping.formatter.freight_class_label');
 
         $units = $provider->getFreightClasses($activeShippingOptions);

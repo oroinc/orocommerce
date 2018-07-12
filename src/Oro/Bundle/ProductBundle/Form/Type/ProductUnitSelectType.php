@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Form\Type;
 
-use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
+use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\ChoiceList\View\ChoiceView;
 use Symfony\Component\Form\FormInterface;
@@ -19,14 +19,14 @@ class ProductUnitSelectType extends AbstractProductAwareType
     private $entityClass;
 
     /**
-     * @var UnitLabelFormatter
+     * @var UnitLabelFormatterInterface
      */
     private $productUnitFormatter;
 
     /**
-     * @param UnitLabelFormatter $productUnitLabelFormatter
+     * @param UnitLabelFormatterInterface $productUnitLabelFormatter
      */
-    public function __construct(UnitLabelFormatter $productUnitLabelFormatter)
+    public function __construct(UnitLabelFormatterInterface $productUnitLabelFormatter)
     {
         $this->productUnitFormatter = $productUnitLabelFormatter;
     }

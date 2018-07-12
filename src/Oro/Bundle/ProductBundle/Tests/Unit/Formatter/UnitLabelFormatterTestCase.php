@@ -3,7 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Formatter;
 
 use Oro\Bundle\ProductBundle\Entity\MeasureUnitInterface;
-use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
+use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
 abstract class UnitLabelFormatterTestCase extends \PHPUnit\Framework\TestCase
@@ -13,7 +13,7 @@ abstract class UnitLabelFormatterTestCase extends \PHPUnit\Framework\TestCase
     /** @var \PHPUnit\Framework\MockObject\MockObject|TranslatorInterface */
     protected $translator;
 
-    /** @var UnitLabelFormatter */
+    /** @var UnitLabelFormatterInterface */
     protected $formatter;
 
     protected function setUp()

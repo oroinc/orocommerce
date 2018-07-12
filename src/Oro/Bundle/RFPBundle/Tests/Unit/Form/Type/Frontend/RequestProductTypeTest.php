@@ -9,7 +9,7 @@ use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub
 use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
-use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
+use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 use Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestProductType;
@@ -142,9 +142,9 @@ class RequestProductTypeTest extends AbstractTest
      */
     protected function getExtensions()
     {
-        /* @var $productUnitLabelFormatter UnitLabelFormatter|\PHPUnit\Framework\MockObject\MockObject */
+        /* @var $productUnitLabelFormatterInterface UnitLabelFormatter|\PHPUnit\Framework\MockObject\MockObject */
         $productUnitLabelFormatter = $this->getMockBuilder(
-            UnitLabelFormatter::class
+            UnitLabelFormatterInterface::class
         )
             ->disableOriginalConstructor()
             ->getMock();

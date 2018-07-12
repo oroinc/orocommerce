@@ -7,7 +7,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Form\Extension\IntegerExtension;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitPrecisionType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectType;
-use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
+use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as EntityTypeStub;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -25,7 +25,7 @@ class ProductUnitPrecisionTypeTest extends FormIntegrationTestCase
     protected $formType;
 
     /**
-     * @var UnitLabelFormatter|\PHPUnit\Framework\MockObject\MockObject
+     * @var UnitLabelFormatterInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $productUnitLabelFormatter;
 
@@ -36,7 +36,7 @@ class ProductUnitPrecisionTypeTest extends FormIntegrationTestCase
     {
         $this->formType = new ProductUnitPrecisionType();
         $this->formType->setDataClass(ProductUnitPrecision::class);
-        $this->productUnitLabelFormatter = $this->getMockBuilder(UnitLabelFormatter::class)
+        $this->productUnitLabelFormatter = $this->getMockBuilder(UnitLabelFormatterInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
 
