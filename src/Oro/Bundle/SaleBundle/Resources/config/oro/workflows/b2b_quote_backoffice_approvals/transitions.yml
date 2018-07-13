@@ -2,7 +2,7 @@ workflows:
     b2b_quote_backoffice_approvals:
         transitions:
             send_to_customer_transition:
-                is_unavailable_hidden: true
+                is_unavailable_hidden: false
 
             submit_for_review_transition:
                 step_to: submitted_for_review

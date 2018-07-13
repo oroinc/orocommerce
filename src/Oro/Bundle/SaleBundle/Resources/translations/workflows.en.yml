@@ -23,6 +23,8 @@ oro.workflow:
                 label: 'Email'
             append_signature:
                 label: 'Append Email Signature'
+            has_empty_price:
+                label: 'Has empty price'
         transition:
             edit_transition:
                 label: 'Edit'
@@ -105,6 +107,8 @@ oro.workflow:
                 label: 'Comment'
             approved:
                 label: 'Approved'
+            has_empty_price:
+                label: 'Has empty price'
         transition:
             edit_transition:
                 label: 'Edit'

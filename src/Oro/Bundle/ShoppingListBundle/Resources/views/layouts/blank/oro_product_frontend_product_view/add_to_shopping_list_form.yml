@@ -9,7 +9,7 @@ layout:
             themes: 'OroShoppingListBundle:layouts:blank/oro_product_frontend_product_view/add_to_shopping_list_form.html.twig'
         - '@add':
             id: line_item_form_shopping_lists
-            parentId: product_view_line_item_container
+            parentId: line_item_form
             blockType: container
             siblingId: ~
             prepend: true
