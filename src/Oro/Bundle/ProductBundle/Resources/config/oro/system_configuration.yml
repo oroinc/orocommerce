@@ -69,6 +69,11 @@ system_configuration:
             title: oro.product.system_configuration.groups.configurable_products_with_matrix_form.title
         configurable_products_variations:
             title: oro.product.system_configuration.groups.configurable_products_variations.title
+        filters_sorters:
+            title: oro.product.system_configuration.groups.filters_sorters.title
+            icon: 'fa-list'
+        limit_filters_sorters:
+            title: oro.product.system_configuration.groups.limit_filters_sorters.title
 
     fields:
         oro_product.related_products_enabled:
@@ -506,6 +511,14 @@ system_configuration:
                     oro.product.system_configuration.fields.display_simple_variations.everywhere.label: everywhere
                     oro.product.system_configuration.fields.display_simple_variations.hide_completely.label: hide_completely
 
+        oro_product.limit_filters_sorters_on_product_listing:
+            data_type: boolean
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
+            priority: 10
+            options:
+                label: oro.product.system_configuration.fields.limit_filters_sorters_on_product_listing.label
+                tooltip: oro.product.system_configuration.fields.limit_filters_sorters_on_product_listing.tooltip
+
     tree:
         system_configuration:
             platform:
@@ -522,6 +535,12 @@ system_configuration:
                 children:
                     catalog:
                         children:
+                            filters_sorters:
+                                priority: 90
+                                children:
+                                    limit_filters_sorters:
+                                        children:
+                                            - oro_product.limit_filters_sorters_on_product_listing
                             related_items:
                                 priority: 100
                                 children:

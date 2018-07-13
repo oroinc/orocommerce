@@ -5,9 +5,6 @@ namespace Oro\Bundle\RFPBundle\Tests\Unit\Storage;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
-use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
-use Oro\Bundle\PricingBundle\Model\PriceListTreeHandler;
-use Oro\Bundle\PricingBundle\Provider\MatchingPriceProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
@@ -36,27 +33,11 @@ class RequestToQuoteDataStorageTest extends \PHPUnit\Framework\TestCase
      */
     private $requestDataStorage;
 
-    /**
-     * @var MatchingPriceProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $matchingPriceProvider;
-
-    /**
-     * @var PriceListTreeHandler|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $priceListTreeHandler;
 
     protected function setUp()
     {
         $this->storage = $this->createMock(ProductDataStorage::class);
-        $this->matchingPriceProvider = $this->createMock(MatchingPriceProvider::class);
-        $this->priceListTreeHandler = $this->createMock(PriceListTreeHandler::class);
-
-        $this->requestDataStorage = new RequestToQuoteDataStorage(
-            $this->storage,
-            $this->matchingPriceProvider,
-            $this->priceListTreeHandler
-        );
+        $this->requestDataStorage = new RequestToQuoteDataStorage($this->storage);
     }
 
     /**
@@ -84,10 +65,6 @@ class RequestToQuoteDataStorageTest extends \PHPUnit\Framework\TestCase
                 ProductDataStorage::ENTITY_DATA_KEY => $entityData,
                 ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [$entityItemData, $entityItemData],
             ]);
-
-        $this->priceListTreeHandler
-            ->expects(self::never())
-            ->method('getPriceList');
 
         $this->requestDataStorage->saveToStorage($rfpRequest);
     }
@@ -132,19 +109,15 @@ class RequestToQuoteDataStorageTest extends \PHPUnit\Framework\TestCase
      * @param array $entityData
      * @param array $entityItemData
      */
-    public function testSaveToStorageWhenNoTargetPrice(
+    public function testSaveToStorageWhenNoTargetPriceSet(
         array $rfpRequestData,
         array $entityData,
         array $entityItemData
     ) {
-        $expectedPrice = Price::create(100, 'USD');
         $rfpRequest = $this->createRFPRequest($rfpRequestData);
         $rfpRequest->addRequestProduct($this->createRequestProduct($rfpRequestData['requestProductData']));
 
-        $entityItemData['requestProductItems'][0]['price'] = $expectedPrice;
-
-        $priceList = $this->getPriceList([$expectedPrice->getCurrency()]);
-        $this->mockPriceListTreeHandler($rfpRequest->getCustomer(), $rfpRequest->getWebsite(), $priceList);
+        $entityItemData['requestProductItems'][0]['price'] = null;
 
         $this->storage
             ->expects(self::once())
@@ -153,109 +126,6 @@ class RequestToQuoteDataStorageTest extends \PHPUnit\Framework\TestCase
                 ProductDataStorage::ENTITY_DATA_KEY => $entityData,
                 ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [$entityItemData],
             ]);
-
-        $lineItems = [
-            [
-                'product' => 1,
-                'unit' => $rfpRequestData['requestProductData']['unitCode'],
-                'qty' => $rfpRequestData['requestProductData']['quantity'],
-                'currency' => $expectedPrice->getCurrency(),
-            ]
-        ];
-
-        $this->matchingPriceProvider
-            ->expects(self::once())
-            ->method('getMatchingPrices')
-            ->with($lineItems, $priceList)
-            ->willReturn([
-                [
-                    'value' => $expectedPrice->getValue(),
-                    'currency' => $expectedPrice->getCurrency(),
-                ]
-            ]);
-
-        $this->requestDataStorage->saveToStorage($rfpRequest);
-    }
-
-    /**
-     * @dataProvider saveToStorageDataProviderWhenNoTargetPrice
-     *
-     * @param array $rfpRequestData
-     * @param array $entityData
-     * @param array $entityItemData
-     */
-    public function testSaveToStorageWhenNoTargetPriceAndPriceList(
-        array $rfpRequestData,
-        array $entityData,
-        array $entityItemData
-    ) {
-        $expectedPrice = Price::create(null, null);
-        $rfpRequest = $this->createRFPRequest($rfpRequestData);
-        $rfpRequest->addRequestProduct($this->createRequestProduct($rfpRequestData['requestProductData']));
-
-        $entityItemData['requestProductItems'][0]['price'] = $expectedPrice;
-
-        $this->storage
-            ->expects(self::once())
-            ->method('set')
-            ->with([
-                ProductDataStorage::ENTITY_DATA_KEY => $entityData,
-                ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [$entityItemData],
-            ]);
-
-        $this->priceListTreeHandler
-            ->expects(self::once())
-            ->method('getPriceList')
-            ->with($rfpRequest->getCustomer(), $rfpRequest->getWebsite())
-            ->willReturn(null);
-
-        $this->requestDataStorage->saveToStorage($rfpRequest);
-    }
-
-    /**
-     * @dataProvider saveToStorageDataProviderWhenNoTargetPrice
-     *
-     * @param array $rfpRequestData
-     * @param array $entityData
-     * @param array $entityItemData
-     */
-    public function testSaveToStorageWhenNoTargetPriceMatchingPrices(
-        array $rfpRequestData,
-        array $entityData,
-        array $entityItemData
-    ) {
-        $expectedPrice = Price::create(null, null);
-        $rfpRequest = $this->createRFPRequest($rfpRequestData);
-        $rfpRequest->addRequestProduct($this->createRequestProduct($rfpRequestData['requestProductData']));
-
-        $entityItemData['requestProductItems'][0]['price'] = $expectedPrice;
-
-        $this->storage
-            ->expects(self::once())
-            ->method('set')
-            ->with([
-                ProductDataStorage::ENTITY_DATA_KEY => $entityData,
-                ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [$entityItemData],
-            ]);
-
-        $priceList = $this->getPriceList([$expectedPrice->getCurrency()]);
-
-        $this->mockPriceListTreeHandler($rfpRequest->getCustomer(), $rfpRequest->getWebsite(), $priceList);
-
-        $lineItems = [
-            [
-                'product' => 1,
-                'unit' => $rfpRequestData['requestProductData']['unitCode'],
-                'qty' => $rfpRequestData['requestProductData']['quantity'],
-                'currency' => $expectedPrice->getCurrency(),
-            ]
-        ];
-
-        $this->matchingPriceProvider
-            ->expects(self::once())
-            ->method('getMatchingPrices')
-            ->with($lineItems, $priceList)
-            ->willReturn([]);
 
         $this->requestDataStorage->saveToStorage($rfpRequest);
     }
@@ -421,35 +291,5 @@ class RequestToQuoteDataStorageTest extends \PHPUnit\Framework\TestCase
             ]
         ];
         return $entityItemData;
-    }
-
-    /**
-     * @param array $currencies
-     *
-     * @return CombinedPriceList|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function getPriceList(array $currencies)
-    {
-        $priceList = $this->createMock(CombinedPriceList::class);
-        $priceList
-            ->expects(self::once())
-            ->method('getCurrencies')
-            ->willReturn($currencies);
-
-        return $priceList;
-    }
-
-    /**
-     * @param Customer          $customer
-     * @param Website           $website
-     * @param CombinedPriceList $priceList
-     */
-    private function mockPriceListTreeHandler(Customer $customer, Website $website, CombinedPriceList $priceList): void
-    {
-        $this->priceListTreeHandler
-            ->expects(self::once())
-            ->method('getPriceList')
-            ->with($customer, $website)
-            ->willReturn($priceList);
     }
 }

@@ -9,7 +9,6 @@ use Oro\Bundle\ProductBundle\Form\Type\FrontendLineItemType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use Oro\Bundle\ProductBundle\Model\ProductLineItem;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
-use Oro\Bundle\ProductBundle\Visibility\ProductUnitFieldsSettingsInterface;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
