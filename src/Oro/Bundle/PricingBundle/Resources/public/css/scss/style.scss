@@ -1,0 +1,210 @@
+/* @theme: admin.oro; */
+
+.product-price-collection {
+    .small-row > div > div {
+        float: left;
+    }
+
+    .grouped-fields {
+        width: 100%;
+        padding-top: 7px;
+        display: inline-block;
+    }
+
+    .group-label {
+        width: 75px;
+    }
+
+    .col-widget {
+        width: 100px;
+        margin-right: 22px;
+    }
+
+    input[type="text"].quantity,
+    input[type="text"].price-value,
+    .entity-create-or-select-container {
+        margin-left: 4px;
+        width: 100px;
+    }
+
+    .price-currency {
+        margin-left: 5px;
+        width: 100px;
+    }
+
+    .price-currency-div {
+        .selector,
+        span {
+            width: 170px !important;
+        }
+    }
+
+    .unit {
+        width: 156px !important;
+    }
+
+    .oro-multiselect-holder {
+        padding-left: 10px;
+    }
+
+    .entity-create-or-select-container {
+        margin-left: 4px;
+        width: 294px;
+    }
+
+    .oro-item-collection {
+        .row-oro {
+            position: relative;
+            padding: 10px 10px 10px 40px;
+            margin-bottom: 10px;
+            border: 1px solid #e6e6e6;
+            background: #f8f8f8;
+            border-radius: 4px;
+        }
+
+        .removeRow {
+            position: absolute;
+            width: 28px;
+            top: 4px;
+            right: 4px;
+            text-decoration: none;
+        }
+    }
+
+    div[data-validation-optional-group=""] {
+        padding-right: 20px;
+        display: inline-block;
+    }
+
+    .oro-multiselect-holder {
+        padding-right: 50px !important;
+    }
+
+    .form-horizontal {
+        max-width: none;
+    }
+}
+
+.product-container {
+    .sidebar-items {
+        .control-label {
+            font-weight: 700;
+        }
+    }
+
+    .grid-container {
+        .product-price-unit-with-margin {
+            margin-top: 5px !important;
+        }
+
+        .string-cell {
+            tbody {
+                td {
+                    padding: 0 !important;
+                    height: 10px !important;
+                    border: 0 !important;
+                }
+            }
+        }
+    }
+}
+
+.pricing-price-list {
+    .add-list-item {
+        margin-top: 10px;
+    }
+
+    table {
+        width: auto;
+    }
+
+    td {
+        vertical-align: top;
+    }
+
+    td {
+        span {
+            &.validation-failed {
+                white-space: nowrap;
+                width: 50px;
+            }
+        }
+    }
+
+    .entity-select-btn {
+        display: inline-block;
+        float: none;
+    }
+
+    input {
+        &.priority {
+            width: 50px !important;
+        }
+    }
+
+    .controls {
+        margin-left: 10px !important;
+    }
+}
+
+.price-list-grid-form {
+    min-width: 463px;
+}
+
+.price-list-collection-as-widget {
+    padding: 0 10px 10px;
+}
+
+.tab-content > .tab-pane.price-list-by-customer-grid {
+    padding: 0 20px;
+}
+
+@media screen and (min-width: 1470px) {
+    #product_prices {
+        .control-group {
+            max-width: none;
+        }
+    }
+
+    .group-label {
+        label {
+            line-height: 25px;
+            vertical-align: middle;
+        }
+    }
+
+    .product-price-collection {
+        .small-row {
+            display: inline-block;
+        }
+
+        .col-widget {
+            width: auto;
+            margin-right: 5px;
+        }
+
+        .group-label {
+            width: auto !important;
+        }
+
+        .grouped-fields {
+            margin-left: 25px;
+        }
+    }
+}
+
+.form-dialog .product-product .select2-drop-below + span.validation-failed {
+    visibility: hidden;
+}
+
+.allow-merge-block {
+    margin-top: 5px;
+
+    .merge-allowed-checkbox {
+        margin-bottom: 5px;
+    }
+
+    .merge-allowed-label {
+        margin-left: 7px;
+    }
+}
