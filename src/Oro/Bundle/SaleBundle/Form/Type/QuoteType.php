@@ -15,7 +15,6 @@ use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 use Oro\Bundle\OrderBundle\EventListener\PossibleShippingMethodEventListener;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\UserBundle\Form\Type\UserMultiSelectType;
 use Oro\Bundle\UserBundle\Form\Type\UserSelectType;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -27,6 +26,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\Exception\AccessException;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class QuoteType extends AbstractType
 {
@@ -44,25 +44,25 @@ class QuoteType extends AbstractType
     /** @var EventSubscriberInterface */
     protected $quoteFormSubscriber;
 
-    /** @var SecurityFacade */
-    protected $securityFacade;
+    /** @var AuthorizationCheckerInterface */
+    protected $authorizationChecker;
 
     /**
      * @param QuoteAddressSecurityProvider $quoteAddressSecurityProvider
      * @param ConfigManager $configManager
      * @param EventSubscriberInterface $quoteFormSubscriber
-     * @param SecurityFacade $securityFacade
+     * @param AuthorizationCheckerInterface $authorizationChecker
      */
     public function __construct(
         QuoteAddressSecurityProvider $quoteAddressSecurityProvider,
         ConfigManager $configManager,
         EventSubscriberInterface $quoteFormSubscriber,
-        SecurityFacade $securityFacade
+        AuthorizationCheckerInterface $authorizationChecker
     ) {
         $this->quoteAddressSecurityProvider = $quoteAddressSecurityProvider;
         $this->configManager = $configManager;
         $this->quoteFormSubscriber = $quoteFormSubscriber;
-        $this->securityFacade = $securityFacade;
+        $this->authorizationChecker = $authorizationChecker;
     }
 
     /**
@@ -199,8 +199,8 @@ class QuoteType extends AbstractType
         $resolver->setDefaults([
             'data_class' => $this->dataClass,
             'csrf_token_id' => 'sale_quote',
-            'allow_prices_override' => $this->securityFacade->isGranted('oro_quote_prices_override'),
-            'allow_add_free_form_items' => $this->securityFacade->isGranted('oro_quote_add_free_form_items'),
+            'allow_prices_override' => $this->authorizationChecker->isGranted('oro_quote_prices_override'),
+            'allow_add_free_form_items' => $this->authorizationChecker->isGranted('oro_quote_add_free_form_items'),
         ]);
     }
 

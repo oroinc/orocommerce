@@ -29,7 +29,6 @@ use Oro\Bundle\SaleBundle\Form\Type\QuoteProductRequestType;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteProductType;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteType;
 use Oro\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\TestFrameworkBundle\Test\Form\MutableFormEventSubscriber;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Form\Type\UserMultiSelectType;
@@ -39,6 +38,7 @@ use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
 class QuoteTypeTest extends AbstractTest
@@ -57,8 +57,8 @@ class QuoteTypeTest extends AbstractTest
     /** @var \PHPUnit\Framework\MockObject\MockObject|QuoteFormSubscriber */
     protected $quoteFormSubscriber;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject|SecurityFacade */
-    protected $securityFacade;
+    /** @var \PHPUnit\Framework\MockObject\MockObject|AuthorizationCheckerInterface */
+    protected $authorizationChecker;
 
     /**
      * {@inheritdoc}
@@ -81,7 +81,7 @@ class QuoteTypeTest extends AbstractTest
             ->with('oro_currency.default_currency')
             ->willReturn('USD');
 
-        $this->securityFacade = $this->createMock(SecurityFacade::class);
+        $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
 
         $this->configureQuoteProductOfferFormatter();
 
@@ -89,7 +89,7 @@ class QuoteTypeTest extends AbstractTest
             $this->quoteAddressSecurityProvider,
             $this->configManager,
             $this->quoteFormSubscriber,
-            $this->securityFacade
+            $this->authorizationChecker
         );
 
         $this->formType->setDataClass(Quote::class);
@@ -98,11 +98,11 @@ class QuoteTypeTest extends AbstractTest
 
     public function testConfigureOptions()
     {
-        $this->securityFacade->expects($this->at(0))
+        $this->authorizationChecker->expects($this->at(0))
             ->method('isGranted')
             ->with('oro_quote_prices_override')
             ->willReturn(true);
-        $this->securityFacade->expects($this->at(1))
+        $this->authorizationChecker->expects($this->at(1))
             ->method('isGranted')
             ->with('oro_quote_add_free_form_items')
             ->willReturn(false);
