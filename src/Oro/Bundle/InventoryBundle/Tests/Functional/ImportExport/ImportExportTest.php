@@ -40,11 +40,6 @@ class ImportExportTest extends AbstractImportExportTestCase
         'Unit',
     ];
 
-    /**
-     * @var string
-     */
-    protected $file;
-
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
@@ -122,8 +117,8 @@ class ImportExportTest extends AbstractImportExportTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        $this->file = $this->getImportTemplate();
-        $this->assertTrue(file_exists($this->file));
+        $file = $this->getImportTemplate();
+        $this->assertTrue(file_exists($file));
 
         /** @var Form $form */
         $form = $crawler->selectButton('Submit')->form();
@@ -134,7 +129,7 @@ class ImportExportTest extends AbstractImportExportTestCase
             $form->getFormNode()->getAttribute('action') . '&_widgetContainer=dialog'
         );
 
-        $form['oro_importexport_import[file]']->upload($this->file);
+        $form['oro_importexport_import[file]']->upload($file);
         $form['oro_importexport_import[processorAlias]'] = $strategy;
 
         $this->client->followRedirects(true);
@@ -162,13 +157,12 @@ class ImportExportTest extends AbstractImportExportTestCase
                 ProcessorRegistry::TYPE_EXPORT_TEMPLATE
             );
 
-        $chains = explode('/', $result['url']);
+        //$chains = explode('/', $result['url']);
 
         return $this
             ->getContainer()
-            ->get('oro_importexport.file.file_system_operator')
-            ->getTemporaryFile(end($chains))
-            ->getRealPath();
+            ->get('oro_importexport.file.file_manager')
+            ->writeToTmpLocalStorage($result['file']);
     }
 
     public function testExportInventoryStatusesOnly()
