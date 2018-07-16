@@ -94,7 +94,6 @@ services:
 
     oro_pricing.provider.product_price:
         class: 'Oro\Bundle\PricingBundle\Provider\ProductPriceProvider'
-        public: false
         arguments:
             - '@oro_pricing.storage.prices'
             - '@oro_pricing.user_currency_manager'
