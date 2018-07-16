@@ -93,7 +93,7 @@ class FreightClassesProviderTest extends MeasureUnitProviderTest
 
     /**
      * @param array $classes
-     * @return FreightClassesExtensionInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return FreightClassesExtensionInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function getClassesExtension(array $classes)
     {

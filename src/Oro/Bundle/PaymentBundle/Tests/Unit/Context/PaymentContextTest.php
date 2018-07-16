@@ -11,45 +11,45 @@ use Oro\Bundle\PaymentBundle\Context\LineItem\Collection\PaymentLineItemCollecti
 use Oro\Bundle\PaymentBundle\Context\PaymentContext;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
-class PaymentContextTest extends \PHPUnit_Framework_TestCase
+class PaymentContextTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var Customer|\PHPUnit_Framework_MockObject_MockObject
+     * @var Customer|\PHPUnit\Framework\MockObject\MockObject
      */
     private $customerMock;
 
     /**
-     * @var CustomerUser|\PHPUnit_Framework_MockObject_MockObject
+     * @var CustomerUser|\PHPUnit\Framework\MockObject\MockObject
      */
     private $customerUserMock;
 
     /**
-     * @var PaymentLineItemCollectionInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var PaymentLineItemCollectionInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $lineItemsCollectionMock;
 
     /**
-     * @var AddressInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var AddressInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $billingAddressMock;
 
     /**
-     * @var AddressInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var AddressInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $shippingAddressMock;
 
     /**
-     * @var Price|\PHPUnit_Framework_MockObject_MockObject
+     * @var Price|\PHPUnit\Framework\MockObject\MockObject
      */
     private $subtotalMock;
 
     /**
-     * @var Checkout|\PHPUnit_Framework_MockObject_MockObject
+     * @var Checkout|\PHPUnit\Framework\MockObject\MockObject
      */
     private $sourceEntityMock;
 
     /**
-     * @var Website|\PHPUnit_Framework_MockObject_MockObject
+     * @var Website|\PHPUnit\Framework\MockObject\MockObject
      */
     private $websiteMock;
 

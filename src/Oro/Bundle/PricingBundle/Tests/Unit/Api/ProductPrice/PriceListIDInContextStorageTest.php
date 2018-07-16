@@ -11,7 +11,7 @@ class PriceListIDInContextStorageTest extends TestCase
     const ID = 57;
 
     /**
-     * @var ContextInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ContextInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $context;
 

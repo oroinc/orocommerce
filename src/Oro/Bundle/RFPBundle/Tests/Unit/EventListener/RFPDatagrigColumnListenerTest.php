@@ -8,7 +8,7 @@ use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\RFPBundle\EventListener\RFPDatagridColumnListener;
 use Oro\Bundle\WorkflowBundle\Datagrid\WorkflowStepColumnListener;
 
-class RFPDatagrigColumnListenerTest extends \PHPUnit_Framework_TestCase
+class RFPDatagrigColumnListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @dataProvider buildBeforeDataProvider

@@ -6,7 +6,7 @@ use Oro\Bundle\CatalogBundle\EventListener\AbstractProductImportEventListener;
 use Oro\Bundle\CatalogBundle\EventListener\ProductDataConverterEventListener;
 use Oro\Bundle\ProductBundle\ImportExport\Event\ProductDataConverterEvent;
 
-class ProductDataConverterEventListenerTest extends \PHPUnit_Framework_TestCase
+class ProductDataConverterEventListenerTest extends \PHPUnit\Framework\TestCase
 {
     /** @var ProductDataConverterEventListener */
     protected $listener;

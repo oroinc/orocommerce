@@ -19,26 +19,26 @@ use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
-class UserLocalizationManagerTest extends \PHPUnit_Framework_TestCase
+class UserLocalizationManagerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /** @var Session|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var Session|\PHPUnit\Framework\MockObject\MockObject */
     private $session;
 
-    /** @var TokenStorageInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var TokenStorageInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $tokenStorage;
 
-    /** @var WebsiteManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var WebsiteManager|\PHPUnit\Framework\MockObject\MockObject */
     private $websiteManager;
 
-    /** @var BaseUserManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var BaseUserManager|\PHPUnit\Framework\MockObject\MockObject */
     private $userManager;
 
-    /** @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
     private $configManager;
 
-    /** @var LocalizationManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var LocalizationManager|\PHPUnit\Framework\MockObject\MockObject */
     private $localizationManager;
 
     /** @var UserLocalizationManager */
@@ -311,7 +311,7 @@ class UserLocalizationManagerTest extends \PHPUnit_Framework_TestCase
 
     public function testSetCurrentLocalizationNotLoggedUserAndSessionWasStarted()
     {
-        /** @var Localization|\PHPUnit_Framework_MockObject_MockObject $localization */
+        /** @var Localization|\PHPUnit\Framework\MockObject\MockObject $localization */
         $localization = $this->getEntity(Localization::class, ['id' => 1]);
         $sessionLocalizations = [2 => 3];
         /** @var Website $website **/
@@ -339,7 +339,7 @@ class UserLocalizationManagerTest extends \PHPUnit_Framework_TestCase
 
     public function testSetCurrentLocalizationNotLoggedUserAndSessionWasNotStarted()
     {
-        /** @var Localization|\PHPUnit_Framework_MockObject_MockObject $localization */
+        /** @var Localization|\PHPUnit\Framework\MockObject\MockObject $localization */
         $localization = $this->getEntity(Localization::class, ['id' => 1]);
         /** @var Website $website **/
         $website = $this->getEntity(Website::class, ['id' => 4]);

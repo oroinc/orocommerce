@@ -9,7 +9,7 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 
-class AddSchedulesToPriceListApiFormSubscriberTest extends \PHPUnit_Framework_TestCase
+class AddSchedulesToPriceListApiFormSubscriberTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var AddSchedulesToPriceListApiFormSubscriber

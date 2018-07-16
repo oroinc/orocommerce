@@ -6,7 +6,7 @@ use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\SEOBundle\Event\RestrictSitemapEntitiesEvent;
 use Oro\Component\Website\WebsiteInterface;
 
-class RestrictSitemapEntitiesEventTest extends \PHPUnit_Framework_TestCase
+class RestrictSitemapEntitiesEventTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var RestrictSitemapEntitiesEvent
@@ -15,7 +15,7 @@ class RestrictSitemapEntitiesEventTest extends \PHPUnit_Framework_TestCase
 
     public function testEventWithWebsite()
     {
-        /** @var QueryBuilder|\PHPUnit_Framework_MockObject_MockObject $qb */
+        /** @var QueryBuilder|\PHPUnit\Framework\MockObject\MockObject $qb */
         $qb = $this->getMockBuilder(QueryBuilder::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -35,7 +35,7 @@ class RestrictSitemapEntitiesEventTest extends \PHPUnit_Framework_TestCase
 
     public function testEventWithoutWebsite()
     {
-        /** @var QueryBuilder|\PHPUnit_Framework_MockObject_MockObject $qb */
+        /** @var QueryBuilder|\PHPUnit\Framework\MockObject\MockObject $qb */
         $qb = $this->getMockBuilder(QueryBuilder::class)
             ->disableOriginalConstructor()
             ->getMock();

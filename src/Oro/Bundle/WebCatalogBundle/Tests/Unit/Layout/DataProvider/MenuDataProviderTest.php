@@ -21,32 +21,32 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-class MenuDataProviderTest extends \PHPUnit_Framework_TestCase
+class MenuDataProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $registry;
 
     /**
-     * @var WebCatalogProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var WebCatalogProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $webCatalogProvider;
 
     /**
-     * @var RequestStack|\PHPUnit_Framework_MockObject_MockObject
+     * @var RequestStack|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $requestStack;
 
     /**
-     * @var ContentNodeTreeResolverInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ContentNodeTreeResolverInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $contentNodeTreeResolverFacade;
 
     /**
-     * @var LocalizationHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var LocalizationHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $localizationHelper;
 

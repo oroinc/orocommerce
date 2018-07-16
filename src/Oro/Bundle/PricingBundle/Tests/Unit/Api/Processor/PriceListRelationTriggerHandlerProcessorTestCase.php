@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 abstract class PriceListRelationTriggerHandlerProcessorTestCase extends TestCase
 {
     /**
-     * @var PriceListRelationTriggerHandler|\PHPUnit_Framework_MockObject_MockObject
+     * @var PriceListRelationTriggerHandler|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $relationChangesHandler;
 
@@ -22,7 +22,7 @@ abstract class PriceListRelationTriggerHandlerProcessorTestCase extends TestCase
     /**
      * @param mixed $result
      *
-     * @return ContextInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return ContextInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function createContext($result)
     {
@@ -37,7 +37,7 @@ abstract class PriceListRelationTriggerHandlerProcessorTestCase extends TestCase
     /**
      * @param int $id
      *
-     * @return Website|\PHPUnit_Framework_MockObject_MockObject
+     * @return Website|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function createWebsite(int $id)
     {

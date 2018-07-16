@@ -12,7 +12,7 @@ use Oro\Bundle\UPSBundle\Tests\Unit\Cache\Stub\PriceRequestAddressStub;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class ShippingPriceCacheKeyTest extends \PHPUnit_Framework_TestCase
+class ShippingPriceCacheKeyTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
     use EntityTestCaseTrait;

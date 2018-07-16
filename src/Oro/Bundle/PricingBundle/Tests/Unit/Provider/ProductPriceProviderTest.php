@@ -12,12 +12,12 @@ use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
-class ProductPriceProviderTest extends \PHPUnit_Framework_TestCase
+class ProductPriceProviderTest extends \PHPUnit\Framework\TestCase
 {
     const CLASS_NAME = '\stdClass';
 
     /**
-     * @var ShardManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShardManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $shardManager;
 
@@ -27,7 +27,7 @@ class ProductPriceProviderTest extends \PHPUnit_Framework_TestCase
     protected $provider;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry
+     * @var \PHPUnit\Framework\MockObject\MockObject|ManagerRegistry
      */
     protected $registry;
 

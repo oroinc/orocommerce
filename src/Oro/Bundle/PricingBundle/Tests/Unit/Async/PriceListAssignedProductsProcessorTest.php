@@ -23,12 +23,12 @@ class PriceListAssignedProductsProcessorTest extends AbstractPriceProcessorTest
     use EntityTrait;
 
     /**
-     * @var PriceListProductAssignmentBuilder|\PHPUnit_Framework_MockObject_MockObject
+     * @var PriceListProductAssignmentBuilder|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $assignmentBuilder;
 
     /**
-     * @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $translator;
 
@@ -56,7 +56,7 @@ class PriceListAssignedProductsProcessorTest extends AbstractPriceProcessorTest
 
     public function testProcessInvalidArgumentException()
     {
-        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session * */
+        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session * */
         $session = $this->createMock(SessionInterface::class);
 
         $message = $this->prepareMessageForProcessInvalidArgumentException();
@@ -70,7 +70,7 @@ class PriceListAssignedProductsProcessorTest extends AbstractPriceProcessorTest
 
         $message = $this->prepareMessageForProcessExceptionWithoutTrigger($exception);
 
-        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
+        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session **/
         $session = $this->createMock(SessionInterface::class);
 
         $this->logger->expects($this->once())
@@ -100,7 +100,7 @@ class PriceListAssignedProductsProcessorTest extends AbstractPriceProcessorTest
         $productIds = [2];
         $trigger = new PriceListTrigger([$priceList->getId() => $productIds]);
 
-        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
+        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session **/
         $session = $this->createMock(SessionInterface::class);
 
         $this->triggerFactory->expects($this->once())
@@ -160,13 +160,13 @@ class PriceListAssignedProductsProcessorTest extends AbstractPriceProcessorTest
         $productId = 2;
         $trigger = new PriceListTrigger([$priceList->getId() => [$productId]]);
 
-        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
+        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message **/
         $message = $this->createMock(MessageInterface::class);
         $message->expects($this->any())
             ->method('getBody')
             ->willReturn($body);
 
-        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
+        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session **/
         $session = $this->createMock(SessionInterface::class);
 
         $this->triggerFactory->expects($this->once())
@@ -206,13 +206,13 @@ class PriceListAssignedProductsProcessorTest extends AbstractPriceProcessorTest
             ->with($priceList->getId())
             ->willReturn($priceList);
 
-        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
+        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message **/
         $message = $this->createMock(MessageInterface::class);
         $message->expects($this->any())
             ->method('getBody')
             ->willReturn(json_encode($data));
 
-        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
+        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session **/
         $session = $this->createMock(SessionInterface::class);
 
         $this->triggerFactory->expects($this->once())
@@ -237,7 +237,7 @@ class PriceListAssignedProductsProcessorTest extends AbstractPriceProcessorTest
     }
 
     /**
-     * @return PriceListRepository|\PHPUnit_Framework_MockObject_MockObject
+     * @return PriceListRepository|\PHPUnit\Framework\MockObject\MockObject
      */
     private function assertEntityManagerCalled()
     {

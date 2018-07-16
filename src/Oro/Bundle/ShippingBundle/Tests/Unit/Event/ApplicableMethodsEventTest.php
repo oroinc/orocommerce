@@ -5,7 +5,7 @@ namespace Oro\Bundle\ShippingBundle\Tests\Unit\Event;
 use Oro\Bundle\ShippingBundle\Event\ApplicableMethodsEvent;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodViewCollection;
 
-class ApplicableMethodsEventTest extends \PHPUnit_Framework_TestCase
+class ApplicableMethodsEventTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var ApplicableMethodsEvent

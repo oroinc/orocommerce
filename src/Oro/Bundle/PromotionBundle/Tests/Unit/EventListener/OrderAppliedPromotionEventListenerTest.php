@@ -15,22 +15,22 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\ResolvedFormTypeInterface;
 use Symfony\Component\Templating\EngineInterface;
 
-class OrderAppliedPromotionEventListenerTest extends \PHPUnit_Framework_TestCase
+class OrderAppliedPromotionEventListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var EngineInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var EngineInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $engine;
 
     /**
-     * @var FormFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var FormFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $formFactory;
 
     /**
-     * @var AppliedPromotionManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var AppliedPromotionManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $appliedPromotionManager;
 
@@ -53,7 +53,7 @@ class OrderAppliedPromotionEventListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testOnOrderEventWhenNoAppliedDiscounts()
     {
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock(FormInterface::class);
         $form->expects($this->once())
             ->method('has')
@@ -72,7 +72,7 @@ class OrderAppliedPromotionEventListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testOnOrderEventWhenNoSubmittedData()
     {
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock(FormInterface::class);
         $form->expects($this->once())
             ->method('has')
@@ -91,7 +91,7 @@ class OrderAppliedPromotionEventListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testOnOrderEvent()
     {
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock(FormInterface::class);
         $form->expects($this->once())
             ->method('has')

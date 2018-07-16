@@ -10,10 +10,10 @@ use Oro\Bundle\DataGridBundle\Event\BuildAfter;
 use Oro\Bundle\PromotionBundle\EventListener\SelectCouponGridListener;
 use Oro\Bundle\PromotionBundle\Model\CouponApplicabilityQueryBuilderModifier;
 
-class SelectCouponGridListenerTest extends \PHPUnit_Framework_TestCase
+class SelectCouponGridListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var CouponApplicabilityQueryBuilderModifier|\PHPUnit_Framework_MockObject_MockObject
+     * @var CouponApplicabilityQueryBuilderModifier|\PHPUnit\Framework\MockObject\MockObject
      */
     private $modifier;
 
@@ -34,7 +34,7 @@ class SelectCouponGridListenerTest extends \PHPUnit_Framework_TestCase
     public function testOnBuildAfterWhenWrongDatasource()
     {
         $datasource = $this->createMock(DatasourceInterface::class);
-        /** @var DatagridInterface|\PHPUnit_Framework_MockObject_MockObject $datagrid */
+        /** @var DatagridInterface|\PHPUnit\Framework\MockObject\MockObject $datagrid */
         $datagrid = $this->createMock(DatagridInterface::class);
         $datagrid->expects($this->once())
             ->method('getDatasource')
@@ -53,7 +53,7 @@ class SelectCouponGridListenerTest extends \PHPUnit_Framework_TestCase
         $datasource->expects($this->once())
             ->method('getQueryBuilder')
             ->willReturn($queryBuilder);
-        /** @var DatagridInterface|\PHPUnit_Framework_MockObject_MockObject $datagrid */
+        /** @var DatagridInterface|\PHPUnit\Framework\MockObject\MockObject $datagrid */
         $datagrid = $this->createMock(DatagridInterface::class);
         $datagrid->expects($this->once())
             ->method('getDatasource')

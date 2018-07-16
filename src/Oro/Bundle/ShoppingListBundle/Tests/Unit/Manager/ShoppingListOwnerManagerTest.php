@@ -16,15 +16,15 @@ use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListOwnerManager;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
-class ShoppingListOwnerManagerTest extends \PHPUnit_Framework_TestCase
+class ShoppingListOwnerManagerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var AclHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var AclHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $aclHelper;
 
     /**
-     * @var RegistryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var RegistryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $registry;
 
@@ -169,7 +169,7 @@ class ShoppingListOwnerManagerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     protected function getQueryBuilder()
     {

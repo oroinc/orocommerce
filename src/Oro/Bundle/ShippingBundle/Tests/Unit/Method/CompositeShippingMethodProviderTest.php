@@ -6,7 +6,7 @@ use Oro\Bundle\ShippingBundle\Method\CompositeShippingMethodProvider;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
 
-class CompositeShippingMethodProviderTest extends \PHPUnit_Framework_TestCase
+class CompositeShippingMethodProviderTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var CompositeShippingMethodProvider
@@ -14,7 +14,7 @@ class CompositeShippingMethodProviderTest extends \PHPUnit_Framework_TestCase
     protected $shippingMethodProvider;
 
     /**
-     * @var ShippingMethodProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $provider;
 

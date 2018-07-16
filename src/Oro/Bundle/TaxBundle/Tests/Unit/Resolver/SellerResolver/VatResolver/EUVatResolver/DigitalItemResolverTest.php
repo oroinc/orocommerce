@@ -14,24 +14,24 @@ use Oro\Bundle\TaxBundle\Resolver\RowTotalResolver;
 use Oro\Bundle\TaxBundle\Resolver\SellerResolver\VatResolver\EUVatResolver\DigitalItemResolver;
 use Oro\Bundle\TaxBundle\Resolver\UnitResolver;
 
-class DigitalItemResolverTest extends \PHPUnit_Framework_TestCase
+class DigitalItemResolverTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var UnitResolver|\PHPUnit_Framework_MockObject_MockObject
+     * @var UnitResolver|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $unitResolver;
 
     /**
-     * @var RowTotalResolver|\PHPUnit_Framework_MockObject_MockObject
+     * @var RowTotalResolver|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $rowTotalResolver;
 
     /**
-     * @var CountryMatcher|\PHPUnit_Framework_MockObject_MockObject
+     * @var CountryMatcher|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $matcher;
 
-    /** @var  DigitalItemResolver|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var  DigitalItemResolver|\PHPUnit\Framework\MockObject\MockObject */
     protected $resolver;
 
     public function setUp()

@@ -8,9 +8,9 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ShippingBundle\Factory\ShippingOriginModelFactory;
 use Oro\Bundle\ShippingBundle\Model\ShippingOrigin;
 
-class ShippingOriginModelFactoryTest extends \PHPUnit_Framework_TestCase
+class ShippingOriginModelFactoryTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var \PHPUnit_Framework_MockObject_MockObject|DoctrineHelper */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|DoctrineHelper */
     protected $doctrineHelper;
 
     /** @var ShippingOriginModelFactory */

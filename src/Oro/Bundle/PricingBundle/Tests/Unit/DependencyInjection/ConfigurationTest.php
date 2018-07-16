@@ -9,7 +9,7 @@ use Oro\Bundle\PricingBundle\PricingStrategy\MinimalPricesCombiningStrategy;
 use Oro\DBAL\Types\MoneyType;
 use Symfony\Component\Config\Definition\Processor;
 
-class ConfigurationTest extends \PHPUnit_Framework_TestCase
+class ConfigurationTest extends \PHPUnit\Framework\TestCase
 {
     public function testGetConfigTreeBuilder()
     {

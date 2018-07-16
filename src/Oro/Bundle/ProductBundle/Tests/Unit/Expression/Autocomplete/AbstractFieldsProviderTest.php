@@ -6,24 +6,24 @@ use Oro\Component\Expression\ExpressionParser;
 use Oro\Component\Expression\FieldsProviderInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
-abstract class AbstractFieldsProviderTest extends \PHPUnit_Framework_TestCase
+abstract class AbstractFieldsProviderTest extends \PHPUnit\Framework\TestCase
 {
     const CLASS_NAME = 'className';
     const IS_RELATION = 'isRelation';
     const FIELDS = 'fields';
 
     /**
-     * @var ExpressionParser|\PHPUnit_Framework_MockObject_MockObject
+     * @var ExpressionParser|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $expressionParser;
 
     /**
-     * @var FieldsProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var FieldsProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $fieldsProvider;
 
     /**
-     * @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $translator;
 

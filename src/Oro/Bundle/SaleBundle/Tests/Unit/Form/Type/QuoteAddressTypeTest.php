@@ -25,19 +25,19 @@ class QuoteAddressTypeTest extends AbstractAddressTypeTest
     /** @var QuoteAddressType */
     protected $formType;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|AddressFormatter */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|AddressFormatter */
     protected $addressFormatter;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|QuoteAddressSecurityProvider */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|QuoteAddressSecurityProvider */
     protected $quoteAddressSecurityProvider;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|QuoteAddressManager */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|QuoteAddressManager */
     protected $quoteAddressManager;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|Serializer */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|Serializer */
     protected $serializer;
 
-    /** @var TypedOrderAddressCollection|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var TypedOrderAddressCollection|\PHPUnit\Framework\MockObject\MockObject */
     protected $addressCollection;
 
     protected function setUp()
@@ -93,7 +93,7 @@ class QuoteAddressTypeTest extends AbstractAddressTypeTest
 
     public function testConfigureOptions()
     {
-        /* @var $resolver \PHPUnit_Framework_MockObject_MockObject|OptionsResolver */
+        /* @var $resolver \PHPUnit\Framework\MockObject\MockObject|OptionsResolver */
         $resolver = $this->createMock('Symfony\Component\OptionsResolver\OptionsResolver');
         $resolver->expects($this->once())->method('setDefaults')->with($this->isType('array'))
             ->will($this->returnSelf());

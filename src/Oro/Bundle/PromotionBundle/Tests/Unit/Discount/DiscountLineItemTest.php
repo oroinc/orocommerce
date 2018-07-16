@@ -11,7 +11,7 @@ use Oro\Bundle\PromotionBundle\Discount\DiscountInterface;
 use Oro\Bundle\PromotionBundle\Discount\DiscountLineItem;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-class DiscountLineItemTest extends \PHPUnit_Framework_TestCase
+class DiscountLineItemTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 

@@ -9,7 +9,7 @@ use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseCategoryVisibility
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerGroupCategoryVisibilityResolved;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-class CustomerGroupCategoryVisibilityResolvedTest extends \PHPUnit_Framework_TestCase
+class CustomerGroupCategoryVisibilityResolvedTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 

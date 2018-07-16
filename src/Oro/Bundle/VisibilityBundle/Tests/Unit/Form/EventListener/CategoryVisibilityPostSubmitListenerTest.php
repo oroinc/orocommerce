@@ -10,7 +10,7 @@ use Oro\Bundle\VisibilityBundle\Form\EventListener\CategoryVisibilityPostSubmitL
 use Oro\Bundle\VisibilityBundle\Form\EventListener\VisibilityFormPostSubmitDataHandler;
 use Symfony\Component\Form\Test\FormInterface;
 
-class CategoryVisibilityPostSubmitListenerTest extends \PHPUnit_Framework_TestCase
+class CategoryVisibilityPostSubmitListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var CategoryVisibilityPostSubmitListener
@@ -18,12 +18,12 @@ class CategoryVisibilityPostSubmitListenerTest extends \PHPUnit_Framework_TestCa
     protected $listener;
 
     /**
-     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $registry;
 
     /**
-     * @var VisibilityFormPostSubmitDataHandler|\PHPUnit_Framework_MockObject_MockObject
+     * @var VisibilityFormPostSubmitDataHandler|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $dataHandler;
 

@@ -14,7 +14,7 @@ use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class ShoppingListTest extends \PHPUnit_Framework_TestCase
+class ShoppingListTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
     use EntityTrait;

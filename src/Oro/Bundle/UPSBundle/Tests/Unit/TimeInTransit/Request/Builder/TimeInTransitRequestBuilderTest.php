@@ -7,7 +7,7 @@ use Oro\Bundle\LocaleBundle\Tests\Unit\Formatter\Stubs\AddressStub;
 use Oro\Bundle\UPSBundle\Client\Request\UpsClientRequest;
 use Oro\Bundle\UPSBundle\TimeInTransit\Request\Builder\TimeInTransitRequestBuilder;
 
-class TimeInTransitRequestBuilderTest extends \PHPUnit_Framework_TestCase
+class TimeInTransitRequestBuilderTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @internal

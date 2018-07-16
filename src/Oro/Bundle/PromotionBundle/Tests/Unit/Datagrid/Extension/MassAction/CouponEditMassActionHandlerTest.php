@@ -14,12 +14,12 @@ use Symfony\Component\Translation\TranslatorInterface;
 class CouponEditMassActionHandlerTest extends AbstractCouponMassActionHandlerTest
 {
     /**
-     * @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $translator;
 
     /**
-     * @var FormFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var FormFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $formFactory;
 
@@ -55,7 +55,7 @@ class CouponEditMassActionHandlerTest extends AbstractCouponMassActionHandlerTes
             ->method('getData')
             ->willReturn($requestData);
 
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock(FormInterface::class);
         $form->expects($this->any())
             ->method('submit')

@@ -6,7 +6,7 @@ use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Oro\Bundle\PromotionBundle\Entity\PromotionSchedule;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-class PromotionScheduleTest extends \PHPUnit_Framework_TestCase
+class PromotionScheduleTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 

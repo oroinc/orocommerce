@@ -14,13 +14,13 @@ class EnumTypeHandlerTest extends WebTestCase
 {
     const FIELD_NAME = 'test_field';
 
-    /** @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
     private $configManager;
 
     /** @var EnumTypeHandler */
     private $handler;
 
-    /** @var QueryBuilder|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var QueryBuilder|\PHPUnit\Framework\MockObject\MockObject */
     private $qb;
 
     protected function setUp()

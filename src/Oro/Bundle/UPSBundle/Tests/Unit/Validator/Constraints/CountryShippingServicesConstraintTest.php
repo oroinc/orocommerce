@@ -5,7 +5,7 @@ namespace Oro\Bundle\UPSBundle\Tests\Unit\Validator\Constraints;
 use Oro\Bundle\UPSBundle\Validator\Constraints\CountryShippingServicesConstraint;
 use Symfony\Component\Validator\Constraint;
 
-class CountryShippingServicesConstraintTest extends \PHPUnit_Framework_TestCase
+class CountryShippingServicesConstraintTest extends \PHPUnit\Framework\TestCase
 {
     public function testValidatedBy()
     {

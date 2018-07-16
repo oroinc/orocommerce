@@ -11,17 +11,17 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class ShoppingListFormProviderTest extends \PHPUnit_Framework_TestCase
+class ShoppingListFormProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /** @var ShoppingListFormProvider */
     protected $dataProvider;
 
-    /** @var FormFactoryInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var FormFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $formFactory;
 
-    /** @var UrlGeneratorInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var UrlGeneratorInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $router;
 
     protected function setUp()

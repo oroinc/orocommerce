@@ -5,7 +5,7 @@ namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\ContentVariantProvider;
 use Oro\Bundle\WebCatalogBundle\ContentVariantProvider\ContentVariantProviderRegistry;
 use Oro\Component\WebCatalog\ContentVariantProviderInterface;
 
-class ContentVariantProviderRegistryTest extends \PHPUnit_Framework_TestCase
+class ContentVariantProviderRegistryTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var ContentVariantProviderRegistry
@@ -19,7 +19,7 @@ class ContentVariantProviderRegistryTest extends \PHPUnit_Framework_TestCase
 
     public function testAddContentVariantProvider()
     {
-        /** @var ContentVariantProviderInterface|\PHPUnit_Framework_MockObject_MockObject $provider */
+        /** @var ContentVariantProviderInterface|\PHPUnit\Framework\MockObject\MockObject $provider */
         $provider = $this->createMock(ContentVariantProviderInterface::class);
         $this->registry->addProvider($provider);
 
@@ -28,10 +28,10 @@ class ContentVariantProviderRegistryTest extends \PHPUnit_Framework_TestCase
 
     public function testGetProviders()
     {
-        /** @var ContentVariantProviderInterface|\PHPUnit_Framework_MockObject_MockObject $provider1 */
+        /** @var ContentVariantProviderInterface|\PHPUnit\Framework\MockObject\MockObject $provider1 */
         $provider1 = $this->createMock(ContentVariantProviderInterface::class);
 
-        /** @var ContentVariantProviderInterface|\PHPUnit_Framework_MockObject_MockObject $provider2 */
+        /** @var ContentVariantProviderInterface|\PHPUnit\Framework\MockObject\MockObject $provider2 */
         $provider2 = $this->createMock(ContentVariantProviderInterface::class);
 
         $this->registry->addProvider($provider1);

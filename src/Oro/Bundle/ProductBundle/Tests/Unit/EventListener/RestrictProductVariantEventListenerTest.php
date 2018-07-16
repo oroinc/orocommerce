@@ -9,20 +9,20 @@ use Oro\Bundle\ProductBundle\Event\RestrictProductVariantEvent;
 use Oro\Bundle\ProductBundle\EventListener\RestrictProductVariantEventListener;
 use Oro\Bundle\ProductBundle\Model\ProductVisibilityQueryBuilderModifier;
 
-class RestrictProductVariantEventListenerTest extends \PHPUnit_Framework_TestCase
+class RestrictProductVariantEventListenerTest extends \PHPUnit\Framework\TestCase
 {
     const CONFIG_PATH = 'oro_product.general_frontend_product_visibility';
 
-    /** @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
     private $configManager;
 
-    /** @var ProductVisibilityQueryBuilderModifier|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ProductVisibilityQueryBuilderModifier|\PHPUnit\Framework\MockObject\MockObject */
     private $modifier;
 
     /** @var RestrictProductVariantEventListener */
     private $listener;
 
-    /** @var RestrictProductVariantEvent|\PHPUnit_Framework_MockObject_MockObject*/
+    /** @var RestrictProductVariantEvent|\PHPUnit\Framework\MockObject\MockObject*/
     private $event;
 
     /**

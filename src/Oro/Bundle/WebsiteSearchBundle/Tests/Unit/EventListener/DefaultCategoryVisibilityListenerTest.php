@@ -8,7 +8,7 @@ use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 use Oro\Bundle\WebsiteSearchBundle\EventListener\DefaultCategoryVisibilityListener;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class DefaultCategoryVisibilityListenerTest extends \PHPUnit_Framework_TestCase
+class DefaultCategoryVisibilityListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var DefaultCategoryVisibilityListener
@@ -16,12 +16,12 @@ class DefaultCategoryVisibilityListenerTest extends \PHPUnit_Framework_TestCase
     protected $listener;
 
     /**
-     * @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $eventDispatcher;
 
     /**
-     * @var ConfigUpdateEvent|\PHPUnit_Framework_MockObject_MockObject
+     * @var ConfigUpdateEvent|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $event;
 

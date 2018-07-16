@@ -7,7 +7,7 @@ use Oro\Bundle\ImportExportBundle\Converter\RelationCalculator;
 use Oro\Bundle\ProductBundle\ImportExport\DataConverter\ProductDataConverter;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class ProductDataConverterTest extends \PHPUnit_Framework_TestCase
+class ProductDataConverterTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var ProductDataConverter
@@ -15,12 +15,12 @@ class ProductDataConverterTest extends \PHPUnit_Framework_TestCase
     protected $dataConverter;
 
     /**
-     * @var FieldHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var FieldHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $fieldHelper;
 
     /**
-     * @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $eventDispatcher;
 
@@ -30,7 +30,7 @@ class ProductDataConverterTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|RelationCalculator $relationCalculator */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|RelationCalculator $relationCalculator */
         $relationCalculator = $this->getMockBuilder('Oro\Bundle\ImportExportBundle\Converter\RelationCalculator')
             ->disableOriginalConstructor()
             ->getMock();

@@ -10,7 +10,7 @@ use Oro\Bundle\ShippingBundle\Context\ShippingContext;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItem;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class FlatRateMethodTypeTest extends \PHPUnit_Framework_TestCase
+class FlatRateMethodTypeTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 

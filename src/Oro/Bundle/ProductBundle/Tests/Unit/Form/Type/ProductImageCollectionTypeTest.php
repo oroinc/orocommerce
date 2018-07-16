@@ -23,7 +23,7 @@ class ProductImageCollectionTypeTest extends FormIntegrationTestCase
     protected $formType;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ImageTypeProvider
+     * @var \PHPUnit\Framework\MockObject\MockObject|ImageTypeProvider
      */
     protected $imageTypeProvider;
 

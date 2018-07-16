@@ -12,26 +12,26 @@ use Oro\Bundle\ProductBundle\RelatedItem\RelatedProduct\RelatedProductsConfigPro
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class AssignerDatabaseStrategyTest extends \PHPUnit_Framework_TestCase
+class AssignerDatabaseStrategyTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /** @var AssignerDatabaseStrategy */
     protected $assigner;
 
-    /** @var RelatedProductsConfigProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var RelatedProductsConfigProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $configProvider;
 
-    /** @var UnitOfWork|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var UnitOfWork|\PHPUnit\Framework\MockObject\MockObject */
     protected $unitOfWork;
 
-    /** @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $doctrineHelper;
 
-    /** @var EntityManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var EntityManager|\PHPUnit\Framework\MockObject\MockObject */
     protected $entityManager;
 
-    /** @var RelatedProductRepository|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var RelatedProductRepository|\PHPUnit\Framework\MockObject\MockObject */
     protected $relatedProductsRepository;
 
     protected function setUp()

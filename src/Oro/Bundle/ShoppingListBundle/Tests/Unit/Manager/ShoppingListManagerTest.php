@@ -34,7 +34,7 @@ use Symfony\Component\Translation\TranslatorInterface;
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
+class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
 {
     const CURRENCY_EUR = 'EUR';
     use EntityTrait;
@@ -75,12 +75,12 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
     protected $aclHelper;
 
     /**
-     * @var TokenInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var TokenInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $securityToken;
 
     /**
-     * @var ShoppingListTotalManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShoppingListTotalManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $totalManager;
 
@@ -90,12 +90,12 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
     protected $cache;
 
     /**
-     * @var ProductVariantAvailabilityProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProductVariantAvailabilityProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $productVariantProvider;
 
     /**
-     * @var GuestShoppingListManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var GuestShoppingListManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $guestShoppingListManager;
 
@@ -280,7 +280,7 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
             $this->shoppingListOne->addLineItem($lineItem);
         }
 
-        /** @var ObjectManager|\PHPUnit_Framework_MockObject_MockObject $manager */
+        /** @var ObjectManager|\PHPUnit\Framework\MockObject\MockObject $manager */
         $manager = $this->registry->getManagerForClass('OroShoppingListBundle:LineItem');
         $manager->expects($this->exactly(count($relatedLineItems)))
             ->method('remove')
@@ -291,7 +291,7 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
             );
         $manager->expects($expectedFlush ? $this->once() : $this->never())->method('flush');
 
-        /** @var LineItemRepository|\PHPUnit_Framework_MockObject_MockObject $repository */
+        /** @var LineItemRepository|\PHPUnit\Framework\MockObject\MockObject $repository */
         $repository = $manager->getRepository('OroShoppingListBundle:LineItem');
         $repository->expects($this->once())
             ->method('getItemsByShoppingListAndProducts')
@@ -370,7 +370,7 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
             ->with($product)
             ->willReturn($simpleProducts);
 
-        /** @var ObjectManager|\PHPUnit_Framework_MockObject_MockObject $manager */
+        /** @var ObjectManager|\PHPUnit\Framework\MockObject\MockObject $manager */
         $manager = $this->registry->getManagerForClass('OroShoppingListBundle:LineItem');
         $manager->expects($this->exactly(count($lineItems)))
             ->method('remove');
@@ -378,7 +378,7 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
         $products = $simpleProducts;
         $products[] = $product;
 
-        /** @var LineItemRepository|\PHPUnit_Framework_MockObject_MockObject $repository */
+        /** @var LineItemRepository|\PHPUnit\Framework\MockObject\MockObject $repository */
         $repository = $manager->getRepository('OroShoppingListBundle:LineItem');
         $repository->expects($this->once())
             ->method('getItemsByShoppingListAndProducts')
@@ -448,7 +448,7 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
         $shoppingList2 = $this->getShoppingList(20, false);
         $shoppingList3 = $this->getShoppingList(30, true);
 
-        /* @var $repository ShoppingListRepository|\PHPUnit_Framework_MockObject_MockObject */
+        /* @var $repository ShoppingListRepository|\PHPUnit\Framework\MockObject\MockObject */
         $repository = $this->getMockBuilder('Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository')
             ->disableOriginalConstructor()
             ->getMock();
@@ -457,7 +457,7 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
             ->with($this->aclHelper)
             ->willReturn([$shoppingList3, $shoppingList1, $shoppingList2]);
 
-        /* @var $entityManager EntityManager|\PHPUnit_Framework_MockObject_MockObject */
+        /* @var $entityManager EntityManager|\PHPUnit\Framework\MockObject\MockObject */
         $entityManager = $this->getMockBuilder('Doctrine\ORM\EntityManager')
             ->disableOriginalConstructor()
             ->getMock();
@@ -466,7 +466,7 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
             ->method('getRepository')
             ->willReturn($repository);
 
-        /* @var $registry ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject */
+        /* @var $registry ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
         $registry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
         $registry->expects($this->once())
             ->method('getManagerForClass')
@@ -494,17 +494,17 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param CustomerUser $customerUser
-     * @return \PHPUnit_Framework_MockObject_MockObject|TokenStorageInterface
+     * @return \PHPUnit\Framework\MockObject\MockObject|TokenStorageInterface
      */
     protected function getTokenStorage(CustomerUser $customerUser)
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|TokenInterface $securityToken */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|TokenInterface $securityToken */
         $this->securityToken = $this->createMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
         $this->securityToken->expects($this->any())
             ->method('getUser')
             ->willReturn($customerUser);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|TokenStorageInterface $tokenStorage */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|TokenStorageInterface $tokenStorage */
         $tokenStorage = $this
             ->createMock('Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface');
         $tokenStorage->expects($this->any())
@@ -515,7 +515,7 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface
+     * @return \PHPUnit\Framework\MockObject\MockObject|TranslatorInterface
      */
     protected function getTranslator()
     {
@@ -523,11 +523,11 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|QuantityRoundingService
+     * @return \PHPUnit\Framework\MockObject\MockObject|QuantityRoundingService
      */
     protected function getRoundingService()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|QuantityRoundingService $roundingService */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|QuantityRoundingService $roundingService */
         $roundingService = $this->getMockBuilder('Oro\Bundle\ProductBundle\Rounding\QuantityRoundingService')
             ->disableOriginalConstructor()
             ->getMock();
@@ -546,17 +546,17 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry
+     * @return \PHPUnit\Framework\MockObject\MockObject|ManagerRegistry
      */
     protected function getManagerRegistry()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|ShoppingListRepository $shoppingListRepository */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|ShoppingListRepository $shoppingListRepository */
         $shoppingListRepository = $this
             ->getMockBuilder('Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository')
             ->disableOriginalConstructor()
             ->getMock();
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|LineItemRepository $lineItemRepository */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|LineItemRepository $lineItemRepository */
         $lineItemRepository = $this
             ->getMockBuilder('Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository')
             ->disableOriginalConstructor()
@@ -578,7 +578,7 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
                 return null;
             });
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|EntityManager $entityManager */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|EntityManager $entityManager */
         $entityManager = $this->getMockBuilder('Doctrine\ORM\EntityManager')
             ->disableOriginalConstructor()
             ->getMock();
@@ -601,7 +601,7 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
                 }
             });
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry $managerRegistry */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|ManagerRegistry $managerRegistry */
         $managerRegistry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
         $managerRegistry->expects($this->any())
             ->method('getManagerForClass')
@@ -611,7 +611,7 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|ShoppingListTotalManager
+     * @return \PHPUnit\Framework\MockObject\MockObject|ShoppingListTotalManager
      */
     protected function getShoppingListTotalManager()
     {
@@ -621,7 +621,7 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|UserCurrencyManager
+     * @return \PHPUnit\Framework\MockObject\MockObject|UserCurrencyManager
      */
     protected function getUserCurrencyManager()
     {
@@ -637,7 +637,7 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|WebsiteManager
+     * @return \PHPUnit\Framework\MockObject\MockObject|WebsiteManager
      */
     protected function getWebsiteManager()
     {
@@ -670,7 +670,7 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|AclHelper
+     * @return \PHPUnit\Framework\MockObject\MockObject|AclHelper
      */
     protected function getAclHelperMock()
     {

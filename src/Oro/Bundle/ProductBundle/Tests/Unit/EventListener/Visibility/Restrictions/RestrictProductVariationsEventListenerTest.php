@@ -13,12 +13,12 @@ use Oro\Bundle\ProductBundle\EventListener\Visibility\Restrictions\RestrictProdu
 use Oro\Bundle\SearchBundle\Query\Query;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
-class RestrictProductVariationsEventListenerTest extends \PHPUnit_Framework_TestCase
+class RestrictProductVariationsEventListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var ConfigManager | \PHPUnit_Framework_MockObject_MockObject */
+    /** @var ConfigManager | \PHPUnit\Framework\MockObject\MockObject */
     private $configManager;
 
-    /** @var FrontendHelper | \PHPUnit_Framework_MockObject_MockObject */
+    /** @var FrontendHelper | \PHPUnit\Framework\MockObject\MockObject */
     private $frontendHelper;
 
     /** @var RestrictProductVariationsEventListener */

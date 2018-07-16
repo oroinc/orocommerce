@@ -8,7 +8,7 @@ use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-class CheckoutSubtotalTest extends \PHPUnit_Framework_TestCase
+class CheckoutSubtotalTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 

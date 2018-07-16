@@ -6,10 +6,10 @@ use Oro\Bundle\ShippingBundle\Method\Event\BasicMethodTypeRemovalEventDispatcher
 use Oro\Bundle\ShippingBundle\Method\Event\MethodTypeRemovalEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class BasicMethodTypeRemovalEventDispatcherTest extends \PHPUnit_Framework_TestCase
+class BasicMethodTypeRemovalEventDispatcherTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $eventDispatcher;
 

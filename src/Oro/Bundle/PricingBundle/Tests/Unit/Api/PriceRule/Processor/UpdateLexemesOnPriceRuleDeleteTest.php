@@ -12,12 +12,12 @@ use Oro\Component\ChainProcessor\ProcessorInterface;
 class UpdateLexemesOnPriceRuleDeleteTest extends DeleteProcessorTestCase
 {
     /**
-     * @var PriceRuleLexemeHandler|\PHPUnit_Framework_MockObject_MockObject
+     * @var PriceRuleLexemeHandler|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $priceRuleLexemesHandlerMock;
 
     /**
-     * @var ProcessorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProcessorInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $deleteProcessorMock;
 
@@ -92,7 +92,7 @@ class UpdateLexemesOnPriceRuleDeleteTest extends DeleteProcessorTestCase
     /**
      * @param PriceList|null $priceList
      *
-     * @return PriceRule|\PHPUnit_Framework_MockObject_MockObject
+     * @return PriceRule|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function createPriceRuleMock(PriceList $priceList = null)
     {
@@ -111,7 +111,7 @@ class UpdateLexemesOnPriceRuleDeleteTest extends DeleteProcessorTestCase
     }
 
     /**
-     * @return PriceList|\PHPUnit_Framework_MockObject_MockObject
+     * @return PriceList|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function createPriceListMock()
     {

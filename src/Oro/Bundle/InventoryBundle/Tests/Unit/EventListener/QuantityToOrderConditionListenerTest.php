@@ -26,12 +26,12 @@ use Oro\Component\Testing\Unit\EntityTrait;
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class QuantityToOrderConditionListenerTest extends \PHPUnit_Framework_TestCase
+class QuantityToOrderConditionListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var QuantityToOrderValidatorService|\PHPUnit_Framework_MockObject_MockObject
+     * @var QuantityToOrderValidatorService|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $validatorService;
 
@@ -219,7 +219,7 @@ class QuantityToOrderConditionListenerTest extends \PHPUnit_Framework_TestCase
 
         $workflowItem->setEntity($checkout);
 
-        /** @var ExtendableConditionEvent|\PHPUnit_Framework_MockObject_MockObject $event * */
+        /** @var ExtendableConditionEvent|\PHPUnit\Framework\MockObject\MockObject $event * */
         $event = $this->createMock(ExtendableConditionEvent::class);
         $event->expects($this->once())
             ->method('getContext')

@@ -14,7 +14,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class PriceMatcherTest extends \PHPUnit_Framework_TestCase
+class PriceMatcherTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
@@ -23,10 +23,10 @@ class PriceMatcherTest extends \PHPUnit_Framework_TestCase
      */
     protected $matcher;
 
-    /** @var MatchingPriceProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var MatchingPriceProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $provider;
 
-    /** @var PriceListTreeHandler|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var PriceListTreeHandler|\PHPUnit\Framework\MockObject\MockObject */
     protected $priceListTreeHandler;
 
     protected function setUp()

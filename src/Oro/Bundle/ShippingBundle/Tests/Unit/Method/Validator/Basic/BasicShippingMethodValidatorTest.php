@@ -7,10 +7,10 @@ use Oro\Bundle\ShippingBundle\Method\Validator\Basic\BasicShippingMethodValidato
 use Oro\Bundle\ShippingBundle\Method\Validator\Result\Factory\Common;
 use Oro\Bundle\ShippingBundle\Method\Validator\Result\ShippingMethodValidatorResultInterface;
 
-class BasicShippingMethodValidatorTest extends \PHPUnit_Framework_TestCase
+class BasicShippingMethodValidatorTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var Common\CommonShippingMethodValidatorResultFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var Common\CommonShippingMethodValidatorResultFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $commonShippingMethodValidatorResultFactory;
 

@@ -11,13 +11,13 @@ use Oro\Bundle\VisibilityBundle\EventListener\ChangeVisibilityDemoDataFixturesLi
 
 class ChangeVisibilityDemoDataFixturesListenerTest extends DemoDataFixturesListenerTestCase
 {
-    /** @var CustomerPartialUpdateDriverInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var CustomerPartialUpdateDriverInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $partialUpdateDriver;
 
-    /** @var ObjectManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ObjectManager|\PHPUnit\Framework\MockObject\MockObject */
     protected $objectManager;
 
-    /** @var EntityRepository|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var EntityRepository|\PHPUnit\Framework\MockObject\MockObject */
     protected $entityRepository;
 
     /**

@@ -10,7 +10,7 @@ use Oro\Bundle\TaxBundle\Model\Result;
 use Oro\Bundle\TaxBundle\Model\ResultElement;
 use Oro\Bundle\TaxBundle\Resolver\UnitResolver;
 
-class UnitResolverTest extends \PHPUnit_Framework_TestCase
+class UnitResolverTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var UnitResolver
@@ -18,7 +18,7 @@ class UnitResolverTest extends \PHPUnit_Framework_TestCase
     protected $resolver;
 
     /**
-     * @var Calculator| \PHPUnit_Framework_MockObject_MockObject
+     * @var Calculator| \PHPUnit\Framework\MockObject\MockObject
      */
     protected $calculator;
 

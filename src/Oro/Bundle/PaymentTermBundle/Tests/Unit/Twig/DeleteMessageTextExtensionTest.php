@@ -7,11 +7,11 @@ use Oro\Bundle\PaymentTermBundle\Twig\DeleteMessageTextExtension;
 use Oro\Bundle\PaymentTermBundle\Twig\DeleteMessageTextGenerator;
 use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
 
-class DeleteMessageTextExtensionTest extends \PHPUnit_Framework_TestCase
+class DeleteMessageTextExtensionTest extends \PHPUnit\Framework\TestCase
 {
     use TwigExtensionTestCaseTrait;
 
-    /** @var DeleteMessageTextGenerator|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var DeleteMessageTextGenerator|\PHPUnit\Framework\MockObject\MockObject */
     protected $deleteMessageTextGenerator;
 
     /** @var DeleteMessageTextExtension */

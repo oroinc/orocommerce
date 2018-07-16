@@ -6,7 +6,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Provider\ProductContentVariantProvider;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\ContentNodeStub;
 
-class ProductContentVariantProviderTest extends \PHPUnit_Framework_TestCase
+class ProductContentVariantProviderTest extends \PHPUnit\Framework\TestCase
 {
     /** @var ProductContentVariantProvider */
     private $provider;

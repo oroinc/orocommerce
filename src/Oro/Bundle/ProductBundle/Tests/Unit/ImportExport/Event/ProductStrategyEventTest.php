@@ -5,7 +5,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\ImportExport\Event;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\ImportExport\Event\ProductStrategyEvent;
 
-class ProductStrategyEventTest extends \PHPUnit_Framework_TestCase
+class ProductStrategyEventTest extends \PHPUnit\Framework\TestCase
 {
     public function testEvent()
     {

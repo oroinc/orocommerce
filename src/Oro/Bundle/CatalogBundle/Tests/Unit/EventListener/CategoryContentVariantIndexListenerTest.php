@@ -22,11 +22,11 @@ use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class CategoryContentVariantIndexListenerTest extends \PHPUnit_Framework_TestCase
+class CategoryContentVariantIndexListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /** @var ProductIndexScheduler|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ProductIndexScheduler|\PHPUnit\Framework\MockObject\MockObject */
     private $indexScheduler;
 
     /** @var PropertyAccessorInterface */
@@ -35,10 +35,10 @@ class CategoryContentVariantIndexListenerTest extends \PHPUnit_Framework_TestCas
     /** @var CategoryContentVariantIndexListener */
     private $listener;
 
-    /** @var FieldUpdatesChecker|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var FieldUpdatesChecker|\PHPUnit\Framework\MockObject\MockObject */
     private $fieldUpdatesChecker;
 
-    /** @var WebCatalogUsageProviderInterface|\PHPUnit_Framework_MockObject_MockObject  */
+    /** @var WebCatalogUsageProviderInterface|\PHPUnit\Framework\MockObject\MockObject  */
     private $provider;
 
     /** @var EntityManagerMockBuilder */

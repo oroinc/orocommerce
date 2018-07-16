@@ -13,7 +13,7 @@ use Oro\Bundle\PricingBundle\Model\PriceListRelationTriggerHandler;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Form\Test\FormInterface;
 
-class PriceListListenerTest extends \PHPUnit_Framework_TestCase
+class PriceListListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
@@ -28,17 +28,17 @@ class PriceListListenerTest extends \PHPUnit_Framework_TestCase
     protected $listener;
 
     /**
-     * @var CombinedPriceListActivationPlanBuilder|\PHPUnit_Framework_MockObject_MockObject
+     * @var CombinedPriceListActivationPlanBuilder|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $builder;
 
     /**
-     * @var PriceListRelationTriggerHandler|\PHPUnit_Framework_MockObject_MockObject
+     * @var PriceListRelationTriggerHandler|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $triggerHandler;
 
     /**
-     * @var PriceRuleLexemeHandler|\PHPUnit_Framework_MockObject_MockObject
+     * @var PriceRuleLexemeHandler|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $priceRuleLexemeHandler;
 

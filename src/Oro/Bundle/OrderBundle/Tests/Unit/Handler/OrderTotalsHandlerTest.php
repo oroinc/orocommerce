@@ -10,15 +10,15 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
-class OrderTotalsHandlerTest extends \PHPUnit_Framework_TestCase
+class OrderTotalsHandlerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|TotalProcessorProvider
+     * @var \PHPUnit\Framework\MockObject\MockObject|TotalProcessorProvider
      */
     protected $totalsProvider;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|LineItemSubtotalProvider
+     * @var \PHPUnit\Framework\MockObject\MockObject|LineItemSubtotalProvider
      */
     protected $lineItemSubtotalProvider;
 

@@ -7,7 +7,7 @@ use Oro\Bundle\MoneyOrderBundle\Method\View\Factory\MoneyOrderPaymentMethodViewF
 use Oro\Bundle\MoneyOrderBundle\Method\View\Factory\MoneyOrderPaymentMethodViewFactoryInterface;
 use Oro\Bundle\MoneyOrderBundle\Method\View\MoneyOrderView;
 
-class MoneyOrderPaymentMethodViewFactoryTest extends \PHPUnit_Framework_TestCase
+class MoneyOrderPaymentMethodViewFactoryTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var MoneyOrderPaymentMethodViewFactoryInterface
@@ -21,7 +21,7 @@ class MoneyOrderPaymentMethodViewFactoryTest extends \PHPUnit_Framework_TestCase
 
     public function testCreate()
     {
-        /** @var MoneyOrderConfigInterface|\PHPUnit_Framework_MockObject_MockObject $config */
+        /** @var MoneyOrderConfigInterface|\PHPUnit\Framework\MockObject\MockObject $config */
         $config = $this->createMock(MoneyOrderConfigInterface::class);
 
         $method = new MoneyOrderView($config);

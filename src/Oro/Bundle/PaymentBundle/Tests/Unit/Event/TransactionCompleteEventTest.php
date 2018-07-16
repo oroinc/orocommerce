@@ -5,7 +5,7 @@ namespace Oro\Bundle\PaymentBundle\Tests\Unit\Event;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Event\TransactionCompleteEvent;
 
-class TransactionCompleteEventTest extends \PHPUnit_Framework_TestCase
+class TransactionCompleteEventTest extends \PHPUnit\Framework\TestCase
 {
     public function testGetTransaction()
     {

@@ -7,10 +7,10 @@ use Oro\Bundle\ShippingBundle\Checker\ShippingRuleEnabledChecker;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 
-class ShippingRuleEnabledCheckerTest extends \PHPUnit_Framework_TestCase
+class ShippingRuleEnabledCheckerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ShippingMethodEnabledByIdentifierCheckerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingMethodEnabledByIdentifierCheckerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $methodEnabledChecker;
 
@@ -47,7 +47,7 @@ class ShippingRuleEnabledCheckerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return ShippingMethodsConfigsRule|\PHPUnit_Framework_MockObject_MockObject
+     * @return ShippingMethodsConfigsRule|\PHPUnit\Framework\MockObject\MockObject
      */
     private function getRuleMock()
     {

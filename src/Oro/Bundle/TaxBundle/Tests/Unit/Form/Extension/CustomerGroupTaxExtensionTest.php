@@ -53,7 +53,7 @@ class CustomerGroupTaxExtensionTest extends AbstractCustomerTaxExtensionTest
 
     /**
      * @param int|null $id
-     * @return CustomerGroup|\PHPUnit_Framework_MockObject_MockObject
+     * @return CustomerGroup|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function createTaxCodeTarget($id = null)
     {

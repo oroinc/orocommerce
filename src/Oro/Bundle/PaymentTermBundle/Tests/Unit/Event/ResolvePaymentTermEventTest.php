@@ -6,7 +6,7 @@ use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentTermBundle\Event\ResolvePaymentTermEvent;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-class ResolvePaymentTermEventTest extends \PHPUnit_Framework_TestCase
+class ResolvePaymentTermEventTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 

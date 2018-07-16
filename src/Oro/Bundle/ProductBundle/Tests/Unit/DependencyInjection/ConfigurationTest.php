@@ -8,7 +8,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\Processor;
 
-class ConfigurationTest extends \PHPUnit_Framework_TestCase
+class ConfigurationTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Test Configuration
@@ -204,6 +204,10 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                     'value' => Configuration::DISPLAY_SIMPLE_VARIATIONS_HIDE_COMPLETELY,
                     'scope' => 'app',
                 ],
+                Configuration::LIMIT_FILTERS_SORTERS_ON_PRODUCT_LISTING => [
+                    'value' => true,
+                    'scope' => 'app'
+                ]
             ]
         ];
 

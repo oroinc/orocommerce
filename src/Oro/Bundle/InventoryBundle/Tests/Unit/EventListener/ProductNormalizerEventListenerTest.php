@@ -7,12 +7,12 @@ use Oro\Bundle\InventoryBundle\Provider\ProductUpcomingProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\ImportExport\Event\ProductNormalizerEvent;
 
-class ProductNormalizerEventListenerTest extends \PHPUnit_Framework_TestCase
+class ProductNormalizerEventListenerTest extends \PHPUnit\Framework\TestCase
 {
     /** @var  ProductNormalizerEventListener */
     protected $listener;
 
-    /** @var  ProductUpcomingProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var  ProductUpcomingProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $productUpcomingProvider;
 
     protected function setUp()

@@ -17,7 +17,7 @@ use Oro\Component\Testing\Unit\EntityTestCaseTrait;
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
-class BrandTest extends \PHPUnit_Framework_TestCase
+class BrandTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 

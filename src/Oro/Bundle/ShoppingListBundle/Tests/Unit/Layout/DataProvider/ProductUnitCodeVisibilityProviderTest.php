@@ -10,12 +10,12 @@ use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Layout\DataProvider\ProductUnitCodeVisibilityProvider;
 
-class ProductUnitCodeVisibilityProviderTest extends \PHPUnit_Framework_TestCase
+class ProductUnitCodeVisibilityProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var \PHPUnit_Framework_MockObject_MockObject|ProductUnitFieldsSettingsInterface */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|ProductUnitFieldsSettingsInterface */
     private $productUnitFieldsSettings;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|UnitVisibilityInterface */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|UnitVisibilityInterface */
     private $unitVisibility;
 
     /** @var ProductUnitCodeVisibilityProvider $unitModeProvider */

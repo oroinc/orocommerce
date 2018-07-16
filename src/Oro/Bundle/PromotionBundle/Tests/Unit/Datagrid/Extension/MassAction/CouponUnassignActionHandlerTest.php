@@ -10,7 +10,7 @@ use Symfony\Component\Translation\TranslatorInterface;
 class CouponUnassignActionHandlerTest extends AbstractCouponMassActionHandlerTest
 {
     /**
-     * @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $translator;
 

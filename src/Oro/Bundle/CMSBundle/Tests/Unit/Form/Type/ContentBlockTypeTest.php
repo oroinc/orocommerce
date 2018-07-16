@@ -29,7 +29,7 @@ class ContentBlockTypeTest extends FormIntegrationTestCase
     protected function getExtensions()
     {
         /**
-         * @var \Oro\Bundle\ConfigBundle\Config\ConfigManager|\PHPUnit_Framework_MockObject_MockObject $configManager
+         * @var \Oro\Bundle\ConfigBundle\Config\ConfigManager|\PHPUnit\Framework\MockObject\MockObject $configManager
          */
         $configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
             ->disableOriginalConstructor()
@@ -196,11 +196,11 @@ class ContentBlockTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|ConstraintValidatorFactoryInterface
+     * @return \PHPUnit\Framework\MockObject\MockObject|ConstraintValidatorFactoryInterface
      */
     protected function getConstraintValidatorFactory()
     {
-        /* @var $factory \PHPUnit_Framework_MockObject_MockObject|ConstraintValidatorFactoryInterface */
+        /* @var $factory \PHPUnit\Framework\MockObject\MockObject|ConstraintValidatorFactoryInterface */
         $factory = $this->createMock('Symfony\Component\Validator\ConstraintValidatorFactoryInterface');
         $factory->expects($this->any())
             ->method('getInstance')

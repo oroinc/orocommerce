@@ -4,7 +4,7 @@ namespace Oro\Bundle\PayPalBundle\Tests\Unit\PayPal\Payflow\NVP;
 
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\NVP\Encoder;
 
-class EncoderTest extends \PHPUnit_Framework_TestCase
+class EncoderTest extends \PHPUnit\Framework\TestCase
 {
     /** @var Encoder */
     protected $encoder;

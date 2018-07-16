@@ -9,15 +9,15 @@ use Oro\Bundle\ProductBundle\Validator\Constraints\ProductVariantField;
 use Oro\Bundle\ProductBundle\Validator\Constraints\ProductVariantFieldValidator;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
-class ProductVariantFieldValidatorTest extends \PHPUnit_Framework_TestCase
+class ProductVariantFieldValidatorTest extends \PHPUnit\Framework\TestCase
 {
     /** @var ProductVariantFieldValidator */
     protected $service;
 
-    /** @var  CustomFieldProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var  CustomFieldProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $customFieldProvider;
 
-    /** @var ExecutionContextInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ExecutionContextInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $context;
 
     /** @var array */

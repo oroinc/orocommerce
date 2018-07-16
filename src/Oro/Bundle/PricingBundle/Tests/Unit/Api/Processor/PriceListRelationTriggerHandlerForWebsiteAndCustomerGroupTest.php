@@ -130,7 +130,7 @@ class PriceListRelationTriggerHandlerForWebsiteAndCustomerGroupTest extends Base
     /**
      * @param int $id
      *
-     * @return CustomerGroup|\PHPUnit_Framework_MockObject_MockObject
+     * @return CustomerGroup|\PHPUnit\Framework\MockObject\MockObject
      */
     private function createCustomerGroup(int $id)
     {

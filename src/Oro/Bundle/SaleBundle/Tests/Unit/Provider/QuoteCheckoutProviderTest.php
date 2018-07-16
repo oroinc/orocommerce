@@ -12,18 +12,18 @@ use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
 use Oro\Bundle\SaleBundle\Entity\Repository\QuoteDemandRepository;
 use Oro\Bundle\SaleBundle\Provider\QuoteCheckoutProvider;
 
-class QuoteCheckoutProviderTest extends \PHPUnit_Framework_TestCase
+class QuoteCheckoutProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
     protected $managerRegistry;
 
-    /** @var EntityManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var EntityManager|\PHPUnit\Framework\MockObject\MockObject */
     protected $entityManager;
 
-    /** @var QuoteDemandRepository|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var QuoteDemandRepository|\PHPUnit\Framework\MockObject\MockObject */
     protected $quoteDemandRepository;
 
-    /** @var CheckoutRepository|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var CheckoutRepository|\PHPUnit\Framework\MockObject\MockObject */
     protected $checkoutRepository;
 
     /** @var QuoteCheckoutProvider */
@@ -49,9 +49,9 @@ class QuoteCheckoutProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetCheckoutByQuote(QuoteDemand $quoteDemand = null)
     {
-        /** @var Quote|\PHPUnit_Framework_MockObject_MockObject $quote */
+        /** @var Quote|\PHPUnit\Framework\MockObject\MockObject $quote */
         $quote = $this->createMock(Quote::class);
-        /** @var CustomerUser|\PHPUnit_Framework_MockObject_MockObject $customerUser */
+        /** @var CustomerUser|\PHPUnit\Framework\MockObject\MockObject $customerUser */
         $customerUser = $this->createMock(CustomerUser::class);
         $workflowName = 'test_workflow';
 

@@ -11,17 +11,17 @@ use Oro\Bundle\RedirectBundle\Generator\RedirectGenerator;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 
-class RedirectGeneratorTest extends \PHPUnit_Framework_TestCase
+class RedirectGeneratorTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $registry;
 
     /**
-     * @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $configManager;
 
@@ -112,7 +112,7 @@ class RedirectGeneratorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private function getEntityManagerMock()
     {

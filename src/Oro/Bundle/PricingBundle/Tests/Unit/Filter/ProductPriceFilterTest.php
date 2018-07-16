@@ -11,20 +11,20 @@ use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\Test\FormInterface;
 
-class ProductPriceFilterTest extends \PHPUnit_Framework_TestCase
+class ProductPriceFilterTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|FormFactoryInterface
+     * @var \PHPUnit\Framework\MockObject\MockObject|FormFactoryInterface
      */
     protected $formFactory;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|FormInterface
+     * @var \PHPUnit\Framework\MockObject\MockObject|FormInterface
      */
     protected $form;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|FilterUtility
+     * @var \PHPUnit\Framework\MockObject\MockObject|FilterUtility
      */
     protected $filterUtility;
 
@@ -34,12 +34,12 @@ class ProductPriceFilterTest extends \PHPUnit_Framework_TestCase
     protected $productPriceFilter;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ProductUnitLabelFormatter
+     * @var \PHPUnit\Framework\MockObject\MockObject|ProductUnitLabelFormatter
      */
     protected $formatter;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|PriceListRequestHandler
+     * @var \PHPUnit\Framework\MockObject\MockObject|PriceListRequestHandler
      */
     protected $requestHandler;
 

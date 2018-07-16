@@ -9,15 +9,15 @@ use Oro\Bundle\UserBundle\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
-class CurrentLocalizationExtensionTest extends \PHPUnit_Framework_TestCase
+class CurrentLocalizationExtensionTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var TokenStorageInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var TokenStorageInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $tokenStorage;
 
-    /** @var TokenInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var TokenInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $token;
 
-    /** @var UserLocalizationManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var UserLocalizationManager|\PHPUnit\Framework\MockObject\MockObject */
     protected $localizationManager;
 
     /** @var CurrentLocalizationExtension */

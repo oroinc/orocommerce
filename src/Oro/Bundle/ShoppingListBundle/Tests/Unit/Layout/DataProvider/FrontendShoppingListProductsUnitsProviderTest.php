@@ -3,13 +3,15 @@
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Layout\DataProvider;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
+use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
+use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Layout\DataProvider\FrontendShoppingListProductsUnitsProvider;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class FrontendShoppingListProductsUnitsProviderTest extends \PHPUnit_Framework_TestCase
+class FrontendShoppingListProductsUnitsProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
@@ -21,9 +23,19 @@ class FrontendShoppingListProductsUnitsProviderTest extends \PHPUnit_Framework_T
     protected $provider;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|Registry
+     * @var \PHPUnit\Framework\MockObject\MockObject|Registry
      */
     protected $registry;
+
+    /**
+     * @var \PHPUnit\Framework\MockObject\MockObject|PriceListRequestHandler
+     */
+    protected $requestHandler;
+
+    /**
+     * @var \PHPUnit\Framework\MockObject\MockObject|UserCurrencyManager
+     */
+    protected $userCurrencyManager;
 
     public function setUp()
     {

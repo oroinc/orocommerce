@@ -28,17 +28,17 @@ class ShippingMethodSelectTypeTest extends FormIntegrationTestCase
     ];
 
     /**
-     * @var ShippingMethodIconProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingMethodIconProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $iconProvider;
 
     /**
-     * @var ShippingMethodChoicesProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingMethodChoicesProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $choicesProvider;
 
     /**
-     * @var AssetHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var AssetHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $assetHelper;
 

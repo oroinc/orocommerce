@@ -17,7 +17,7 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-class OrderDataStorageExtensionTest extends \PHPUnit_Framework_TestCase
+class OrderDataStorageExtensionTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
@@ -27,22 +27,22 @@ class OrderDataStorageExtensionTest extends \PHPUnit_Framework_TestCase
     protected $extension;
 
     /**
-     * @var RequestStack|\PHPUnit_Framework_MockObject_MockObject
+     * @var RequestStack|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $requestStack;
 
     /**
-     * @var ProductPriceProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProductPriceProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $productPriceProvider;
 
     /**
-     * @var PriceListTreeHandler|\PHPUnit_Framework_MockObject_MockObject
+     * @var PriceListTreeHandler|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $priceListTreeHandler;
 
     /**
-     * @var FeatureChecker|\PHPUnit_Framework_MockObject_MockObject
+     * @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $featureChecker;
 
@@ -94,7 +94,7 @@ class OrderDataStorageExtensionTest extends \PHPUnit_Framework_TestCase
             ->with('test')
             ->willReturn(true);
 
-        /** @var Request|\PHPUnit_Framework_MockObject_MockObject $request */
+        /** @var Request|\PHPUnit\Framework\MockObject\MockObject $request */
         $request = $this->createMock('Symfony\Component\HttpFoundation\Request');
         $request->expects($this->once())
             ->method('get')
@@ -233,7 +233,7 @@ class OrderDataStorageExtensionTest extends \PHPUnit_Framework_TestCase
         $builder = $this->getBuilderMock();
         $builder->expects($this->never())
             ->method('addEventListener');
-        /** @var Request|\PHPUnit_Framework_MockObject_MockObject $request */
+        /** @var Request|\PHPUnit\Framework\MockObject\MockObject $request */
         $request = $this->createMock('Symfony\Component\HttpFoundation\Request');
         $request->expects($this->once())
             ->method('get')
@@ -268,7 +268,7 @@ class OrderDataStorageExtensionTest extends \PHPUnit_Framework_TestCase
         $builder->expects($this->never())
             ->method('addEventListener');
 
-        /** @var Request|\PHPUnit_Framework_MockObject_MockObject $request */
+        /** @var Request|\PHPUnit\Framework\MockObject\MockObject $request */
         $request = $this->createMock(Request::class);
         $this->requestStack->expects($this->once())
             ->method('getCurrentRequest')
@@ -278,7 +278,7 @@ class OrderDataStorageExtensionTest extends \PHPUnit_Framework_TestCase
 
 
     /**
-     * @return FormBuilderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return FormBuilderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function getBuilderMock()
     {

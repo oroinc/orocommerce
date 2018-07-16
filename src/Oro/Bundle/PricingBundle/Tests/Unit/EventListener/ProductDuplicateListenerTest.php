@@ -13,15 +13,15 @@ use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Event\ProductDuplicateAfterEvent;
 
-class ProductDuplicateListenerTest extends \PHPUnit_Framework_TestCase
+class ProductDuplicateListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ShardManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShardManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $shardManager;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|DoctrineHelper
+     * @var \PHPUnit\Framework\MockObject\MockObject|DoctrineHelper
      */
     protected $doctrineHelper;
 
@@ -36,17 +36,17 @@ class ProductDuplicateListenerTest extends \PHPUnit_Framework_TestCase
     protected $listener;
 
     /**
-     * @var ProductPriceRepository|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProductPriceRepository|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $productPriceRepository;
 
     /**
-     * @var ObjectManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ObjectManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $objectManager;
 
     /**
-     * @var PriceManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var PriceManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $priceManager;
 

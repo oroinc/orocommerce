@@ -7,7 +7,7 @@ use Oro\Bundle\OrderBundle\Provider\OrderStatusesProviderInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Symfony\Component\Config\Definition\Processor;
 
-class ConfigurationTest extends \PHPUnit_Framework_TestCase
+class ConfigurationTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Test Configuration

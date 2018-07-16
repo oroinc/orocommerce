@@ -17,7 +17,7 @@ use Oro\Bundle\SearchBundle\Query\SearchQueryInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Translation\TranslatorInterface;
 
-class FrontendProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
+class FrontendProductPriceDatagridListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
@@ -27,17 +27,17 @@ class FrontendProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCa
     private $listener;
 
     /**
-     * @var ProductPriceScopeCriteriaRequestHandler|\PHPUnit_Framework_MockObject_MockObject
+     * @var \PHPUnit\Framework\MockObject\MockObject|ProductPriceScopeCriteriaRequestHandler
      */
     private $scopeCriteriaRequestHandler;
 
     /**
-     * @var UserCurrencyManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var UserCurrencyManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $currencyManager;
 
     /**
-     * @var CombinedProductPriceProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var CombinedProductPriceProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     private $combinedProductPriceProvider;
 
@@ -93,7 +93,7 @@ class FrontendProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCa
     {
         $this->setUpPriceListRequestHandler($priceCurrencies);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $datagrid */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|DatagridInterface $datagrid */
         $datagrid = $this->createMock(DatagridInterface::class);
         $config = DatagridConfiguration::create([]);
 

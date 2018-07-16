@@ -19,12 +19,12 @@ class CouponFiltrationServiceTest extends AbstractSkippableFiltrationServiceTest
     use EntityTrait;
 
     /**
-     * @var RuleFiltrationServiceInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var RuleFiltrationServiceInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $filtrationService;
 
     /**
-     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     private $registry;
 
@@ -122,7 +122,7 @@ class CouponFiltrationServiceTest extends AbstractSkippableFiltrationServiceTest
                 return $ruleOwners;
             });
 
-        /** @var CouponRepository|\PHPUnit_Framework_MockObject_MockObject $repository */
+        /** @var CouponRepository|\PHPUnit\Framework\MockObject\MockObject $repository */
         $repository = $this->createMock(CouponRepository::class);
         $repository
             ->expects($this->once())
@@ -130,7 +130,7 @@ class CouponFiltrationServiceTest extends AbstractSkippableFiltrationServiceTest
             ->with([$appliedPromotionWithCoupon, $appliedPromotionWithoutCoupon], ['XYZ'])
             ->willReturn([5]);
 
-        /** @var EntityManager|\PHPUnit_Framework_MockObject_MockObject $entityManager */
+        /** @var EntityManager|\PHPUnit\Framework\MockObject\MockObject $entityManager */
         $entityManager = $this->createMock(EntityManager::class);
 
         $entityManager

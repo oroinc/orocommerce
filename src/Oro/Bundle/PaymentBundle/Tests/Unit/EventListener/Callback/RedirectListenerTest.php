@@ -12,18 +12,18 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\HttpFoundation\Session\Session;
 
-class RedirectListenerTest extends \PHPUnit_Framework_TestCase
+class RedirectListenerTest extends \PHPUnit\Framework\TestCase
 {
     /** @var RedirectListener */
     protected $listener;
 
-    /** @var Session|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var Session|\PHPUnit\Framework\MockObject\MockObject */
     protected $session;
 
     /** @var PaymentTransaction */
     protected $paymentTransaction;
 
-    /** @var PaymentResultMessageProviderInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var PaymentResultMessageProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $messageProvider;
 
 
@@ -107,7 +107,7 @@ class RedirectListenerTest extends \PHPUnit_Framework_TestCase
         $event = new CallbackErrorEvent();
         $event->setPaymentTransaction($this->paymentTransaction);
 
-        /** @var FlashBagInterface|\PHPUnit_Framework_MockObject_MockObject $flashBag */
+        /** @var FlashBagInterface|\PHPUnit\Framework\MockObject\MockObject $flashBag */
         $flashBag = $this->createMock('Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface');
 
         $flashBag->expects($this->once())

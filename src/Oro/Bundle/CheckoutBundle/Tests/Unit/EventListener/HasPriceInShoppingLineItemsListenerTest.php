@@ -21,7 +21,7 @@ use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Component\Action\Event\ExtendableConditionEvent;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class HasPriceInShoppingLineItemsListenerTest extends \PHPUnit_Framework_TestCase
+class HasPriceInShoppingLineItemsListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
@@ -31,17 +31,17 @@ class HasPriceInShoppingLineItemsListenerTest extends \PHPUnit_Framework_TestCas
     const CURRENCY = 'USD';
 
     /**
-     * @var ProductPriceProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProductPriceProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $productPriceProvider;
 
     /**
-     * @var UserCurrencyManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var UserCurrencyManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $userCurrencyManager;
 
     /**
-     * @var ProductPriceScopeCriteriaRequestHandler|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProductPriceScopeCriteriaRequestHandler|\PHPUnit\Framework\MockObject\MockObject
      */
     private $scopeCriteriaRequestHandler;
 

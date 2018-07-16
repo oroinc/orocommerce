@@ -8,10 +8,10 @@ use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
 
-class NotBlankOneOfValidatorTest extends \PHPUnit_Framework_TestCase
+class NotBlankOneOfValidatorTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ExecutionContextInterface
+     * @var \PHPUnit\Framework\MockObject\MockObject|ExecutionContextInterface
      */
     protected $context;
 
@@ -26,7 +26,7 @@ class NotBlankOneOfValidatorTest extends \PHPUnit_Framework_TestCase
     protected $constraint;
 
     /**
-     * @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $translator;
 

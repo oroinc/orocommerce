@@ -37,12 +37,12 @@ abstract class AbstractTest extends FormIntegrationTestCase
     protected $formType;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|QuoteProductFormatter
+     * @var \PHPUnit\Framework\MockObject\MockObject|QuoteProductFormatter
      */
     protected $quoteProductFormatter;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|QuoteProductOfferFormatter
+     * @var \PHPUnit\Framework\MockObject\MockObject|QuoteProductOfferFormatter
      */
     protected $quoteProductOfferFormatter;
 
@@ -266,7 +266,7 @@ abstract class AbstractTest extends FormIntegrationTestCase
     /**
      * @param string $className
      * @param array $fields
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     protected function getMockEntity($className, array $fields = [])
     {

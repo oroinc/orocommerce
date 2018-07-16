@@ -9,14 +9,14 @@ use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Tests\Unit\Method\ConfigTestTrait;
 
-class MoneyOrderTest extends \PHPUnit_Framework_TestCase
+class MoneyOrderTest extends \PHPUnit\Framework\TestCase
 {
     use ConfigTestTrait;
 
     /** @var MoneyOrder */
     protected $method;
 
-    /** @var MoneyOrderConfigInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var MoneyOrderConfigInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $config;
 
     protected function setUp()
@@ -73,7 +73,7 @@ class MoneyOrderTest extends \PHPUnit_Framework_TestCase
 
     public function testIsApplicable()
     {
-        /** @var PaymentContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
+        /** @var PaymentContextInterface|\PHPUnit\Framework\MockObject\MockObject $context */
         $context = $this->createMock(PaymentContextInterface::class);
         $this->assertTrue($this->method->isApplicable($context));
     }

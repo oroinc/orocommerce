@@ -6,11 +6,11 @@ use Oro\Bundle\ProductBundle\Entity\MeasureUnitInterface;
 use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
 use Symfony\Component\Translation\TranslatorInterface;
 
-abstract class UnitLabelFormatterTestCase extends \PHPUnit_Framework_TestCase
+abstract class UnitLabelFormatterTestCase extends \PHPUnit\Framework\TestCase
 {
     const TRANSLATION_PREFIX = '';
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|TranslatorInterface */
     protected $translator;
 
     /** @var UnitLabelFormatter */

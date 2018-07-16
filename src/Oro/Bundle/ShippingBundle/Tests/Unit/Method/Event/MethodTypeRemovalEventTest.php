@@ -4,7 +4,7 @@ namespace Oro\Bundle\ShippingBundle\Tests\Unit\Method\Event;
 
 use Oro\Bundle\ShippingBundle\Method\Event\MethodTypeRemovalEvent;
 
-class MethodTypeRemovalEventTest extends \PHPUnit_Framework_TestCase
+class MethodTypeRemovalEventTest extends \PHPUnit\Framework\TestCase
 {
     public function testGetters()
     {

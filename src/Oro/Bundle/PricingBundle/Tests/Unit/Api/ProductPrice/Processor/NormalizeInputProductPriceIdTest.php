@@ -16,22 +16,22 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class NormalizeInputProductPriceIdTest extends TestCase
 {
     /**
-     * @var PriceListIDContextStorageInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var PriceListIDContextStorageInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $priceListIDContextStorage;
 
     /**
-     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     private $doctrineHelper;
 
     /**
-     * @var ValidatorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ValidatorInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $validator;
 
     /**
-     * @var SingleItemContext|\PHPUnit_Framework_MockObject_MockObject
+     * @var SingleItemContext|\PHPUnit\Framework\MockObject\MockObject
      */
     private $context;
 

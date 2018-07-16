@@ -246,7 +246,7 @@ class QuantityTypeTest extends FormIntegrationTestCase
 
     /**
      * @param Product|null $product
-     * @return \PHPUnit_Framework_MockObject_MockObject|ProductHolderInterface
+     * @return \PHPUnit\Framework\MockObject\MockObject|ProductHolderInterface
      */
     protected function getProductHolder(Product $product = null)
     {

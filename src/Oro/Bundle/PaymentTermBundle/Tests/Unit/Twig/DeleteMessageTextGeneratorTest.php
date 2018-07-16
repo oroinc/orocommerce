@@ -10,17 +10,17 @@ use Oro\Bundle\PaymentTermBundle\Twig\DeleteMessageTextGenerator;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Routing\RouterInterface;
 
-class DeleteMessageTextGeneratorTest extends \PHPUnit_Framework_TestCase
+class DeleteMessageTextGeneratorTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /** @var DeleteMessageTextGenerator */
     protected $extension;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|RouterInterface */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|RouterInterface */
     protected $router;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|PaymentTermManager */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|PaymentTermManager */
     protected $paymentTermManager;
 
     protected function setUp()
@@ -35,7 +35,7 @@ class DeleteMessageTextGeneratorTest extends \PHPUnit_Framework_TestCase
                 }
             );
 
-        /** @var \Twig_Environment|\PHPUnit_Framework_MockObject_MockObject $twig */
+        /** @var \Twig_Environment|\PHPUnit\Framework\MockObject\MockObject $twig */
         $twig = $this->getMockBuilder('\Twig_Environment')
             ->disableOriginalConstructor()
             ->getMock();

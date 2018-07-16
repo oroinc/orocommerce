@@ -13,28 +13,28 @@ use Oro\Component\SEO\Provider\UrlItemsProviderInterface;
 use Oro\Component\Website\WebsiteInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class SitemapDumperTest extends \PHPUnit_Framework_TestCase
+class SitemapDumperTest extends \PHPUnit\Framework\TestCase
 {
     const PRODUCT_PROVIDER_TYPE = 'product';
     const STORAGE_TYPE = 'url';
 
     /**
-     * @var WebsiteUrlProvidersServiceInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var WebsiteUrlProvidersServiceInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $websiteUrlProvidersService;
 
     /**
-     * @var SitemapFilesystemAdapter|\PHPUnit_Framework_MockObject_MockObject
+     * @var SitemapFilesystemAdapter|\PHPUnit\Framework\MockObject\MockObject
      */
     private $filesystemAdapter;
 
     /**
-     * @var SitemapStorageFactory|\PHPUnit_Framework_MockObject_MockObject
+     * @var SitemapStorageFactory|\PHPUnit\Framework\MockObject\MockObject
      */
     private $sitemapStorageFactory;
 
     /**
-     * @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $eventDispatcher;
 
@@ -72,7 +72,7 @@ class SitemapDumperTest extends \PHPUnit_Framework_TestCase
         $website = $this->createMock(WebsiteInterface::class);
         $version = 1;
 
-        /** @var UrlItemsProviderInterface|\PHPUnit_Framework_MockObject_MockObject $provider */
+        /** @var UrlItemsProviderInterface|\PHPUnit\Framework\MockObject\MockObject $provider */
         $provider = $this->createMock(UrlItemsProviderInterface::class);
         $urlItem = new UrlItem('http://somedomain.com/firsturi');
         $provider->expects($this->once())
@@ -86,7 +86,7 @@ class SitemapDumperTest extends \PHPUnit_Framework_TestCase
             ->with($website)
             ->willReturn($providers);
 
-        /** @var SitemapStorageInterface|\PHPUnit_Framework_MockObject_MockObject $urlsStorage */
+        /** @var SitemapStorageInterface|\PHPUnit\Framework\MockObject\MockObject $urlsStorage */
         $urlsStorage = $this->createMock(SitemapStorageInterface::class);
         $urlsStorage->expects($this->once())
             ->method('addUrlItem')

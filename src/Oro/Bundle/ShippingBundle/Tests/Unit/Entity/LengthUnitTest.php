@@ -5,7 +5,7 @@ namespace Oro\Bundle\ShippingBundle\Tests\Unit\Entity;
 use Oro\Bundle\ShippingBundle\Entity\LengthUnit;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-class LengthUnitTest extends \PHPUnit_Framework_TestCase
+class LengthUnitTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 

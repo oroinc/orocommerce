@@ -7,15 +7,15 @@ use Oro\Bundle\PaymentBundle\Context\LineItem\Builder\Basic\Factory\BasicPayment
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 
-class BasicPaymentLineItemBuilderFactoryTest extends \PHPUnit_Framework_TestCase
+class BasicPaymentLineItemBuilderFactoryTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ProductUnit|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProductUnit|\PHPUnit\Framework\MockObject\MockObject
      */
     private $productUnitMock;
 
     /**
-     * @var ProductHolderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProductHolderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $productHolderMock;
 

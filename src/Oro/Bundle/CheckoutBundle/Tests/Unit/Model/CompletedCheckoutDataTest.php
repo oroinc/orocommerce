@@ -5,7 +5,7 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Model;
 use Oro\Bundle\CheckoutBundle\Model\CompletedCheckoutData;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-class CompletedCheckoutDataTest extends \PHPUnit_Framework_TestCase
+class CompletedCheckoutDataTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 

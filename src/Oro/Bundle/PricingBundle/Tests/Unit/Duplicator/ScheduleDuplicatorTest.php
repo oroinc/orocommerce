@@ -6,7 +6,7 @@ use Oro\Bundle\PricingBundle\Duplicator\ScheduleDuplicator;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListSchedule;
 
-class ScheduleDuplicatorTest extends \PHPUnit_Framework_TestCase
+class ScheduleDuplicatorTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var ScheduleDuplicator

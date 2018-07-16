@@ -19,11 +19,11 @@ use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Validator\Context\ExecutionContext;
 
-class PriceForProductUnitExistsValidatorTest extends \PHPUnit_Framework_TestCase
+class PriceForProductUnitExistsValidatorTest extends \PHPUnit\Framework\TestCase
 {
     public function testValidationWithError()
     {
-        /** @var ExecutionContext|\PHPUnit_Framework_MockObject_MockObject $context */
+        /** @var ExecutionContext|\PHPUnit\Framework\MockObject\MockObject $context */
         $context = $this->getMockBuilder(ExecutionContext::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -41,7 +41,7 @@ class PriceForProductUnitExistsValidatorTest extends \PHPUnit_Framework_TestCase
         $repository = $this->createMock(ObjectRepository::class);
         $em = $this->createMock(ObjectManager::class);
         $em->method('getRepository')->willReturn($repository);
-        /** @var RegistryInterface|\PHPUnit_Framework_MockObject_MockObject $registry */
+        /** @var RegistryInterface|\PHPUnit\Framework\MockObject\MockObject $registry */
         $registry = $this->createMock(RegistryInterface::class);
         $registry->method('getManagerForClass')->willReturn($em);
 
@@ -89,7 +89,7 @@ class PriceForProductUnitExistsValidatorTest extends \PHPUnit_Framework_TestCase
 
     public function testValidationWithoutErrorsWhenEmptyPriceValue()
     {
-        /** @var ExecutionContext|\PHPUnit_Framework_MockObject_MockObject $context */
+        /** @var ExecutionContext|\PHPUnit\Framework\MockObject\MockObject $context */
         $context = $this->getMockBuilder(ExecutionContext::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -107,7 +107,7 @@ class PriceForProductUnitExistsValidatorTest extends \PHPUnit_Framework_TestCase
         $repository = $this->createMock(ObjectRepository::class);
         $em = $this->createMock(ObjectManager::class);
         $em->method('getRepository')->willReturn($repository);
-        /** @var RegistryInterface|\PHPUnit_Framework_MockObject_MockObject $registry */
+        /** @var RegistryInterface|\PHPUnit\Framework\MockObject\MockObject $registry */
         $registry = $this->createMock(RegistryInterface::class);
         $registry->method('getManagerForClass')->willReturn($em);
 
@@ -155,7 +155,7 @@ class PriceForProductUnitExistsValidatorTest extends \PHPUnit_Framework_TestCase
 
     public function testValidationWithoutErrorsWhenHaveNoPricesInDb()
     {
-        /** @var ExecutionContext|\PHPUnit_Framework_MockObject_MockObject $context */
+        /** @var ExecutionContext|\PHPUnit\Framework\MockObject\MockObject $context */
         $context = $this->getMockBuilder(ExecutionContext::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -173,7 +173,7 @@ class PriceForProductUnitExistsValidatorTest extends \PHPUnit_Framework_TestCase
         $repository = $this->createMock(ObjectRepository::class);
         $em = $this->createMock(ObjectManager::class);
         $em->method('getRepository')->willReturn($repository);
-        /** @var RegistryInterface|\PHPUnit_Framework_MockObject_MockObject $registry */
+        /** @var RegistryInterface|\PHPUnit\Framework\MockObject\MockObject $registry */
         $registry = $this->createMock(RegistryInterface::class);
         $registry->method('getManagerForClass')->willReturn($em);
 
@@ -221,7 +221,7 @@ class PriceForProductUnitExistsValidatorTest extends \PHPUnit_Framework_TestCase
     /**
      * @param $elements
      * @param Product $product
-     * @return PersistentCollection|\PHPUnit_Framework_MockObject_MockObject
+     * @return PersistentCollection|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function createPersistentCollectionForUnitPrecisions($elements)
     {

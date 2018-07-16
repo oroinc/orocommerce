@@ -13,15 +13,15 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
 use Symfony\Component\HttpFoundation\Session\Session;
 
-class RedirectListenerTest extends \PHPUnit_Framework_TestCase
+class RedirectListenerTest extends \PHPUnit\Framework\TestCase
 {
     /** @var RedirectListener */
     protected $listener;
 
-    /** @var Session|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var Session|\PHPUnit\Framework\MockObject\MockObject */
     protected $session;
 
-    /** @var PaymentMethodProviderInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var PaymentMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $paymentMethodProvider;
 
     protected function setUp()

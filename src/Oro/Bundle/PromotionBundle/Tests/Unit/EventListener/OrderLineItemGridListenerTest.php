@@ -8,10 +8,10 @@ use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\PromotionBundle\EventListener\OrderLineItemGridListener;
 use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 
-class OrderLineItemGridListenerTest extends \PHPUnit_Framework_TestCase
+class OrderLineItemGridListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var TaxationSettingsProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var TaxationSettingsProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $taxationSettingsProvider;
 
@@ -32,7 +32,7 @@ class OrderLineItemGridListenerTest extends \PHPUnit_Framework_TestCase
         $from = ['alias' => 'orders', 'table' => 'Oro\Bundle\OrderBundle\Entity\OrderLineItem'];
         $gridConfig->offsetSetByPath('[source][query][from]', [$from]);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $dataGrid */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|DatagridInterface $dataGrid */
         $dataGrid = $this->createMock(DatagridInterface::class);
         $event = new BuildBefore($dataGrid, $gridConfig);
 
@@ -108,7 +108,7 @@ class OrderLineItemGridListenerTest extends \PHPUnit_Framework_TestCase
         $from = ['alias' => 'orders', 'table' => 'Oro\Bundle\OrderBundle\Entity\OrderLineItem'];
         $gridConfig->offsetSetByPath('[source][query][from]', [$from]);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $dataGrid */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|DatagridInterface $dataGrid */
         $dataGrid = $this->createMock(DatagridInterface::class);
         $event = new BuildBefore($dataGrid, $gridConfig);
 

@@ -23,37 +23,37 @@ use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Psr\Log\LoggerInterface;
 
-class ReindexProductCollectionProcessorTest extends \PHPUnit_Framework_TestCase
+class ReindexProductCollectionProcessorTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var JobRunner|\PHPUnit_Framework_MockObject_MockObject
+     * @var JobRunner|\PHPUnit\Framework\MockObject\MockObject
      */
     private $jobRunner;
 
     /**
-     * @var MessageProducerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $producer;
 
     /**
-     * @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $logger;
 
     /**
-     * @var ReindexMessageGranularizer|\PHPUnit_Framework_MockObject_MockObject
+     * @var ReindexMessageGranularizer|\PHPUnit\Framework\MockObject\MockObject
      */
     private $reindexMessageGranularizer;
 
     /**
-     * @var SegmentMessageFactory|\PHPUnit_Framework_MockObject_MockObject
+     * @var SegmentMessageFactory|\PHPUnit\Framework\MockObject\MockObject
      */
     private $messageFactory;
 
     /**
-     * @var SegmentSnapshotDeltaProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var SegmentSnapshotDeltaProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     private $productCollectionDeltaProvider;
 
@@ -294,7 +294,7 @@ class ReindexProductCollectionProcessorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message
+     * @param MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message
      * @param Segment $segment
      * @return string
      */
@@ -361,7 +361,7 @@ class ReindexProductCollectionProcessorTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param array $body
-     * @return MessageInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return MessageInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private function getMessage(array $body = [])
     {
@@ -374,7 +374,7 @@ class ReindexProductCollectionProcessorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return SessionInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return SessionInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private function getSession()
     {

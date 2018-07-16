@@ -18,14 +18,14 @@ use Oro\Bundle\ShoppingListBundle\Tests\Unit\Manager\Stub\ProductWithInSaleAndDi
 use Oro\Bundle\ShoppingListBundle\Tests\Unit\Manager\Stub\ProductWithSizeAndColor;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class MatrixGridOrderManagerTest extends \PHPUnit_Framework_TestCase
+class MatrixGridOrderManagerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /** @var ProductVariantAvailabilityProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ProductVariantAvailabilityProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $variantAvailability;
 
-    /** @var EmptyMatrixGridInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var EmptyMatrixGridInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $emptyMatrixGridManager;
 
     /** @var MatrixGridOrderManager */

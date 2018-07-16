@@ -112,6 +112,13 @@ define(function(require) {
                 return;
             }
 
+            var priceValueSetByUser = this.getElement('priceValue').val();
+
+            // Do not show default price if user did not set price. 0 (zero) price is considered as set price
+            if (!priceValueSetByUser && !this.getElement('priceValue').data('match-price-on-null')) {
+                return;
+            }
+
             var $priceOverridden = this.createElementByTemplate('priceOverridden');
 
             layout.initPopover($priceOverridden);

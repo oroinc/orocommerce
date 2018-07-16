@@ -7,7 +7,7 @@ use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\InventoryBundle\Tests\Unit\Inventory\Stub\InventoryStatusStub;
 use Oro\Bundle\ProductBundle\Provider\ProductInventoryStatusProvider;
 
-class ProductInventoryStatusProviderTest extends \PHPUnit_Framework_TestCase
+class ProductInventoryStatusProviderTest extends \PHPUnit\Framework\TestCase
 {
     public function testGetAvailableProductInventoryStatuses()
     {

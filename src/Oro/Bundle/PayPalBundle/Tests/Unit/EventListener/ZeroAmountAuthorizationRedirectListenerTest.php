@@ -8,9 +8,9 @@ use Oro\Bundle\PayPalBundle\EventListener\ZeroAmountAuthorizationRedirectListene
 use Oro\Bundle\PayPalBundle\Method\Config\PayPalCreditCardConfigInterface;
 use Oro\Bundle\PayPalBundle\Method\Config\Provider\PayPalCreditCardConfigProviderInterface;
 
-class ZeroAmountAuthorizationRedirectListenerTest extends \PHPUnit_Framework_TestCase
+class ZeroAmountAuthorizationRedirectListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var PayPalCreditCardConfigProviderInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var PayPalCreditCardConfigProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $config;
 
     /** @var ZeroAmountAuthorizationRedirectListener */
@@ -96,7 +96,7 @@ class ZeroAmountAuthorizationRedirectListenerTest extends \PHPUnit_Framework_Tes
     }
 
     /**
-     * @return PaymentMethodInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return PaymentMethodInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private function mockPaymentMethod()
     {

@@ -5,10 +5,10 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\NotificationMessage\Event;
 use Oro\Bundle\PricingBundle\NotificationMessage\Event\MessageEvent;
 use Oro\Bundle\PricingBundle\NotificationMessage\Message;
 
-class MessageEventTest extends \PHPUnit_Framework_TestCase
+class MessageEventTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var Message|\PHPUnit_Framework_MockObject_MockObject
+     * @var Message|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $message;
 
@@ -32,7 +32,7 @@ class MessageEventTest extends \PHPUnit_Framework_TestCase
 
     public function testSetMessage()
     {
-        /** @var Message|\PHPUnit_Framework_MockObject_MockObject $message **/
+        /** @var Message|\PHPUnit\Framework\MockObject\MockObject $message **/
         $message = $this->getMockBuilder(Message::class)
             ->disableOriginalConstructor()
             ->getMock();

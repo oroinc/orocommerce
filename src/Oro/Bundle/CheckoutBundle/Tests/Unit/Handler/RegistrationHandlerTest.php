@@ -11,7 +11,7 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Translation\TranslatorInterface;
 
-class RegistrationHandlerTest extends \PHPUnit_Framework_TestCase
+class RegistrationHandlerTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var RegistrationHandler
@@ -19,27 +19,27 @@ class RegistrationHandlerTest extends \PHPUnit_Framework_TestCase
     private $registrationHandler;
 
     /**
-     * @var FrontendCustomerUserRegistrationFormProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var FrontendCustomerUserRegistrationFormProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     private $registrationFormProvider;
 
     /**
-     * @var CustomerUserManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var CustomerUserManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $customerUserManager;
 
     /**
-     * @var FrontendCustomerUserHandler|\PHPUnit_Framework_MockObject_MockObject
+     * @var FrontendCustomerUserHandler|\PHPUnit\Framework\MockObject\MockObject
      */
     private $customerUserHandler;
 
     /**
-     * @var UpdateHandlerFacade|\PHPUnit_Framework_MockObject_MockObject
+     * @var UpdateHandlerFacade|\PHPUnit\Framework\MockObject\MockObject
      */
     private $updateHandlerFacade;
 
     /**
-     * @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $translator;
 

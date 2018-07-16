@@ -17,15 +17,15 @@ use Symfony\Component\Form\FormInterface;
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
-class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
+class ProductFormExtensionTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var CategoryRepository|\PHPUnit_Framework_MockObject_MockObject
+     * @var CategoryRepository|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $categoryRepository;
 
     /**
-     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $registry;
 
@@ -69,7 +69,7 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
 
     public function testBuildForm()
     {
-        /** @var FormBuilderInterface|\PHPUnit_Framework_MockObject_MockObject $builder */
+        /** @var FormBuilderInterface|\PHPUnit\Framework\MockObject\MockObject $builder */
         $builder = $this->createMock('Symfony\Component\Form\FormBuilderInterface');
         $builder->expects($this->once())
             ->method('add')
@@ -132,7 +132,7 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
             ->with($product)
             ->willReturn($category);
 
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $categoryForm */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $categoryForm */
         $categoryForm = $event->getForm()->get('category');
         $categoryForm->expects($this->once())
             ->method('setData')
@@ -144,7 +144,7 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
     public function testOnPostSubmitNoProduct()
     {
         $event = $this->createEvent(null);
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $mainForm */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $mainForm */
         $mainForm = $event->getForm();
         $mainForm->expects($this->never())
             ->method('isValid');
@@ -155,13 +155,13 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
     public function testOnPostSubmitInvalidForm()
     {
         $event = $this->createEvent($this->createProduct());
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $mainForm */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $mainForm */
         $mainForm = $event->getForm();
         $mainForm->expects($this->once())
             ->method('isValid')
             ->willReturn(false);
 
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $categoryForm */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $categoryForm */
         $categoryForm = $mainForm->get('category');
         $categoryForm->expects($this->never())
             ->method('getData');
@@ -218,7 +218,7 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
     {
         $categoryForm = $this->createMock('Symfony\Component\Form\FormInterface');
 
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $mainForm */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $mainForm */
         $mainForm = $this->createMock('Symfony\Component\Form\FormInterface');
         $mainForm->expects($this->any())
             ->method('get')
@@ -272,13 +272,13 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
      */
     protected function assertCategoryAdd(FormEvent $event, Category $category)
     {
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $mainForm */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $mainForm */
         $mainForm = $event->getForm();
         $mainForm->expects($this->once())
             ->method('isValid')
             ->willReturn(true);
 
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $categoryForm */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $categoryForm */
         $categoryForm = $mainForm->get('category');
         $categoryForm->expects($this->once())
             ->method('getData')

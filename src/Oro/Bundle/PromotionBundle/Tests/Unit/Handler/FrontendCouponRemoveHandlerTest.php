@@ -13,17 +13,17 @@ use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
-class FrontendCouponRemoveHandlerTest extends \PHPUnit_Framework_TestCase
+class FrontendCouponRemoveHandlerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var AuthorizationCheckerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var AuthorizationCheckerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $authorizationChecker;
 
     /**
-     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     private $registry;
 

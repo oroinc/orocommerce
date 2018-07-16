@@ -7,9 +7,9 @@ use Oro\Bundle\ProductBundle\Entity\EntityListener\SegmentEntityListener;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Component\Cache\Layout\DataProviderCacheCleaner;
 
-class SegmentEntityListenerTest extends \PHPUnit_Framework_TestCase
+class SegmentEntityListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var DataProviderCacheCleaner|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var DataProviderCacheCleaner|\PHPUnit\Framework\MockObject\MockObject */
     private $productCacheCleaner;
 
     /** @var SegmentEntityListener */

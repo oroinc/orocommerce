@@ -10,20 +10,20 @@ use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToProductRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
-class PriceListToProductDuplicatorTest extends \PHPUnit_Framework_TestCase
+class PriceListToProductDuplicatorTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var RegistryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var RegistryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $registry;
 
     /**
-     * @var ObjectManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ObjectManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $manager;
 
     /**
-     * @var InsertFromSelectQueryExecutor|\PHPUnit_Framework_MockObject_MockObject
+     * @var InsertFromSelectQueryExecutor|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $insertQueryExecutor;
 
@@ -49,16 +49,16 @@ class PriceListToProductDuplicatorTest extends \PHPUnit_Framework_TestCase
 
     public function testDuplicate()
     {
-        /** @var PriceList|\PHPUnit_Framework_MockObject_MockObject $sourcePriceList **/
+        /** @var PriceList|\PHPUnit\Framework\MockObject\MockObject $sourcePriceList **/
         $sourcePriceList = $this->createMock(PriceList::class);
 
-        /** @var PriceList|\PHPUnit_Framework_MockObject_MockObject $targetPriceList **/
+        /** @var PriceList|\PHPUnit\Framework\MockObject\MockObject $targetPriceList **/
         $targetPriceList = $this->createMock(PriceList::class);
 
         $entityName = PriceListToProduct::class;
         $this->priceListToProductDuplicator->setEntityName($entityName);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject $repository */
+        /** @var \PHPUnit\Framework\MockObject\MockObject $repository */
         $repository = $this->getMockBuilder(PriceListToProductRepository::class)
             ->disableOriginalConstructor()
             ->getMock();

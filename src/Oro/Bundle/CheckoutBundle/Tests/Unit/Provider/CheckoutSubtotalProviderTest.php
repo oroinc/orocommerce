@@ -22,16 +22,16 @@ class CheckoutSubtotalProviderTest extends AbstractSubtotalProviderTest
 {
     use EntityTrait;
 
-    /** @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $translator;
 
-    /** @var RoundingServiceInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var RoundingServiceInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $roundingService;
 
-    /** @var ProductPriceProviderInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ProductPriceProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $productPriceProvider;
 
-    /** @var PriceListTreeHandler|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var PriceListTreeHandler|\PHPUnit\Framework\MockObject\MockObject */
     protected $priceListTreeHandler;
 
     /** @var CheckoutSubtotalProvider */
@@ -165,7 +165,7 @@ class CheckoutSubtotalProviderTest extends AbstractSubtotalProviderTest
     /**
      * @param string $code
      * @param int $precision
-     * @return ProductUnit|\PHPUnit_Framework_MockObject_MockObject
+     * @return ProductUnit|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function prepareProductUnit($code, $precision)
     {
@@ -181,7 +181,7 @@ class CheckoutSubtotalProviderTest extends AbstractSubtotalProviderTest
     }
 
     /**
-     * @return Product|\PHPUnit_Framework_MockObject_MockObject
+     * @return Product|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function prepareProduct()
     {

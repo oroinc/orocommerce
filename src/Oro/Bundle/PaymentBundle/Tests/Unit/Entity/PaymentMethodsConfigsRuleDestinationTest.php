@@ -11,18 +11,18 @@ use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRuleDestinationPostalCo
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class PaymentMethodsConfigsRuleDestinationTest extends \PHPUnit_Framework_TestCase
+class PaymentMethodsConfigsRuleDestinationTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
     use EntityTrait;
 
     /**
-     * @var Region|\PHPUnit_Framework_MockObject_MockObject
+     * @var Region|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $region;
 
     /**
-     * @var Country|\PHPUnit_Framework_MockObject_MockObject
+     * @var Country|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $country;
 
@@ -154,7 +154,7 @@ class PaymentMethodsConfigsRuleDestinationTest extends \PHPUnit_Framework_TestCa
      * @param string $name
      * @param string $iso2
      * @param string $iso3
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     protected function createMockCountry($name = 'CountryName', $iso2 = 'CountryIso2', $iso3 = 'CountryIso3')
     {
@@ -180,7 +180,7 @@ class PaymentMethodsConfigsRuleDestinationTest extends \PHPUnit_Framework_TestCa
     /**
      * @param string $name
      * @param string $code
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     protected function createMockRegion($name = 'RegionName', $code = 'RegionCode')
     {
@@ -200,7 +200,7 @@ class PaymentMethodsConfigsRuleDestinationTest extends \PHPUnit_Framework_TestCa
 
     /**
      * @param array $names
-     * @return ArrayCollection|\PHPUnit_Framework_MockObject_MockObject[]
+     * @return ArrayCollection|\PHPUnit\Framework\MockObject\MockObject[]
      */
     protected function createMockPostalCodes($names)
     {

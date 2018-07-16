@@ -6,12 +6,12 @@ use Doctrine\Common\Cache\CacheProvider;
 use Oro\Bundle\CatalogBundle\Datagrid\Cache\CategoryCountsCache;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessor;
 
-class CategoryCountsCacheTest extends \PHPUnit_Framework_TestCase
+class CategoryCountsCacheTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var CacheProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var CacheProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $cacheProvider;
 
-    /** @var TokenAccessor|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var TokenAccessor|\PHPUnit\Framework\MockObject\MockObject */
     protected $tokenAccessor;
 
     /** @var CategoryCountsCache */

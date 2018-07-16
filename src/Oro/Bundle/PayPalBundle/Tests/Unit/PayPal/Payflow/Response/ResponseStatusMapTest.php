@@ -4,7 +4,7 @@ namespace Oro\Bundle\PayPalBundle\Tests\Unit\PayPal\Payflow\Response;
 
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\ResponseStatusMap;
 
-class ResponseStatusMapTest extends \PHPUnit_Framework_TestCase
+class ResponseStatusMapTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @dataProvider testGetMessageByStatusDataProvider

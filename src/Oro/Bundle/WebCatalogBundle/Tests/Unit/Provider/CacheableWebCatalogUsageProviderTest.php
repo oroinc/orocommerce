@@ -6,9 +6,9 @@ use Oro\Bundle\WebCatalogBundle\Provider\CacheableWebCatalogUsageProvider;
 use Oro\Component\WebCatalog\Entity\WebCatalogInterface;
 use Oro\Component\WebCatalog\Provider\WebCatalogUsageProviderInterface;
 
-class CacheableWebCatalogUsageProviderTest extends \PHPUnit_Framework_TestCase
+class CacheableWebCatalogUsageProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var \PHPUnit_Framework_MockObject_MockObject|WebCatalogUsageProviderInterface */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|WebCatalogUsageProviderInterface */
     private $provider;
 
     /** @var CacheableWebCatalogUsageProvider */

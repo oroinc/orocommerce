@@ -135,7 +135,7 @@
                     <span class="request-form-quantity">
                         <span class="request-form-quantity__label">{{ 'oro.rfp.frontend.request.lineitem.qty'|trans|e('html')|raw }}:</span>
                         <span class="request-form-quantity__total"><%- line.quantity %></span>
-                        <span class="request-form-quantity__units"><%- line.unit %></span>
+                        <span class="request-form-quantity__units"><%- _.__('oro.product.product_unit.' + line.unit + '.label.full') %></span>
                     </span>
                 </div>
                 <div class="request-form-product__item request-form-product__item--target">

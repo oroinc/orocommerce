@@ -12,16 +12,16 @@ use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 
-class LocalizationVoterTest extends \PHPUnit_Framework_TestCase
+class LocalizationVoterTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     const ENTITY_CLASS = Localization::class;
 
-    /** @var LocalizationRepository|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var LocalizationRepository|\PHPUnit\Framework\MockObject\MockObject */
     protected $repository;
 
-    /** @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
     protected $doctrineHelper;
 
     /** @var LocalizationVoter */
@@ -141,7 +141,7 @@ class LocalizationVoterTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|TokenInterface
+     * @return \PHPUnit\Framework\MockObject\MockObject|TokenInterface
      */
     protected function getToken()
     {

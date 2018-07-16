@@ -13,22 +13,22 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-class ProductPriceHandlerTest extends \PHPUnit_Framework_TestCase
+class ProductPriceHandlerTest extends \PHPUnit\Framework\TestCase
 {
     const FORM_DATA = ['field' => 'value'];
 
     /**
-     * @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $eventDispatcher;
 
     /**
-     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     private $doctrineHelper;
 
     /**
-     * @var FormInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var FormInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $form;
 
@@ -43,7 +43,7 @@ class ProductPriceHandlerTest extends \PHPUnit_Framework_TestCase
     private $handler;
 
     /**
-     * @var PriceManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var PriceManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $priceManager;
 
@@ -91,7 +91,7 @@ class ProductPriceHandlerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param $entity
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     protected function formHandlerMock($entity)
     {

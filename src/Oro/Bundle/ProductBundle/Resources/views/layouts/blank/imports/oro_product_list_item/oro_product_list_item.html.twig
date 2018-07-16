@@ -6,7 +6,8 @@
 
     {% set modelAttr = product.jsonSerialize() %}
     {% set modelAttr = modelAttr|merge({
-        'imageUrl': productImageUrl
+        'imageUrl': productImageUrl,
+        'name': product.names|localized_value|e
     }) %}
 
     {% set attr = layout_attr_defaults(attr, {
@@ -62,7 +63,7 @@
             ajaxRoute: 'oro_product_frontend_ajax_images_by_id',
             id: product.id,
             galleryFilter: 'product_gallery_popup',
-            alt: (product.name|e)
+            alt: product.names|localized_value|e
         } %}
 
         {% set attr = layout_attr_defaults(attr, {
@@ -106,7 +107,7 @@
     {% set productImage = product.imagesByType('listing').first.image|default(null) %}
 
     <picture {{ block('block_attributes') }}>
-        <img src="{{ Image.url(productImage, product_image_size) }}" {{ UI.attributes(attrImage) }} alt="{{ product.name }}" itemprop="image">
+        <img src="{{ Image.url(productImage, product_image_size) }}" {{ UI.attributes(attrImage) }} alt="{{ product.names|localized_value|e }}" itemprop="image">
     </picture>
 {% endblock %}
 
@@ -125,7 +126,10 @@
     }) %}
     <h3 {{ block('block_attributes') }} itemprop="productID" content="{{ product.id }}">
         <a href="{{ path('oro_product_frontend_product_view', {id: product.id}) }}"
-           class="view-product" itemprop="url"><span itemprop="name">{{ product.name }}</span></a>
+           class="view-product"
+           itemprop="url"
+           title="{{ product.names|localized_value|e }}"
+           data-page-component-line-clamp><span itemprop="name">{{ product.names|localized_value|e }}</span></a>
     </h3>
 {% endblock %}
 

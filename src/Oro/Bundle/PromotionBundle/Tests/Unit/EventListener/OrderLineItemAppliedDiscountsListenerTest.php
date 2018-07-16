@@ -15,25 +15,25 @@ use Oro\Bundle\TaxBundle\Provider\TaxProviderInterface;
 use Oro\Bundle\TaxBundle\Provider\TaxProviderRegistry;
 use Symfony\Component\Form\FormInterface;
 
-class OrderLineItemAppliedDiscountsListenerTest extends \PHPUnit_Framework_TestCase
+class OrderLineItemAppliedDiscountsListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var TaxProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var TaxProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $taxProvider;
 
     /**
-     * @var TaxationSettingsProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var TaxationSettingsProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $taxationSettingsProvider;
 
     /**
-     * @var LineItemSubtotalProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var LineItemSubtotalProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $lineItemSubtotalProvider;
 
     /**
-     * @var AppliedDiscountsProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var AppliedDiscountsProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $appliedDiscountsProvider;
 

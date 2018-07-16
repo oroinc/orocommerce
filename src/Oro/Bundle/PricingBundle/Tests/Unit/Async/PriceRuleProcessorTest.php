@@ -26,7 +26,7 @@ class PriceRuleProcessorTest extends AbstractPriceProcessorTest
     use EntityTrait;
 
     /**
-     * @var ProductPriceBuilder|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProductPriceBuilder|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $priceBuilder;
 
@@ -36,12 +36,12 @@ class PriceRuleProcessorTest extends AbstractPriceProcessorTest
     protected $priceRuleProcessor;
 
     /**
-     * @var Messenger|\PHPUnit_Framework_MockObject_MockObject
+     * @var Messenger|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $messenger;
 
     /**
-     * @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $translator;
 
@@ -73,7 +73,7 @@ class PriceRuleProcessorTest extends AbstractPriceProcessorTest
     {
         $message = $this->prepareMessageForProcessInvalidArgumentException();
 
-        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
+        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session **/
         $session = $this->createMock(SessionInterface::class);
 
         $this->assertEquals(MessageProcessorInterface::REJECT, $this->priceRuleProcessor->process($message, $session));
@@ -85,7 +85,7 @@ class PriceRuleProcessorTest extends AbstractPriceProcessorTest
 
         $message = $this->prepareMessageForProcessExceptionWithoutTrigger($exception);
 
-        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
+        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session **/
         $session = $this->createMock(SessionInterface::class);
 
         $this->logger->expects($this->once())
@@ -115,7 +115,7 @@ class PriceRuleProcessorTest extends AbstractPriceProcessorTest
         $productIds = [2];
         $trigger = new PriceListTrigger([$priceList->getId() => $productIds]);
 
-        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
+        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session **/
         $session = $this->createMock(SessionInterface::class);
 
         $this->triggerFactory->expects($this->once())
@@ -170,13 +170,13 @@ class PriceRuleProcessorTest extends AbstractPriceProcessorTest
         $productId = 2;
         $trigger = new PriceListTrigger([$priceList->getId() => [$productId]]);
 
-        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
+        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message **/
         $message = $this->createMock(MessageInterface::class);
         $message->expects($this->any())
             ->method('getBody')
             ->willReturn($body);
 
-        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
+        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session **/
         $session = $this->createMock(SessionInterface::class);
 
         $this->triggerFactory->expects($this->once())
@@ -249,20 +249,20 @@ class PriceRuleProcessorTest extends AbstractPriceProcessorTest
                 $priceList->getId()
             );
 
-        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
+        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message **/
         $message = $this->createMock(MessageInterface::class);
         $message->expects($this->any())
             ->method('getBody')
             ->willReturn(json_encode($data));
 
-        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
+        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session **/
         $session = $this->createMock(SessionInterface::class);
 
         $this->assertEquals(MessageProcessorInterface::ACK, $this->priceRuleProcessor->process($message, $session));
     }
 
     /**
-     * @return PriceListRepository|\PHPUnit_Framework_MockObject_MockObject
+     * @return PriceListRepository|\PHPUnit\Framework\MockObject\MockObject
      */
     private function assertEntityManagerCalled()
     {

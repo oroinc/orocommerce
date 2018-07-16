@@ -5,7 +5,7 @@ namespace Oro\Bundle\TaxBundle\Tests\Unit\ImportExport\Serializer;
 use Oro\Bundle\TaxBundle\Entity\ProductTaxCode;
 use Oro\Bundle\TaxBundle\ImportExport\Serializer\TaxCodeNormalizer;
 
-class TaxCodeNormalizerTest extends \PHPUnit_Framework_TestCase
+class TaxCodeNormalizerTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @dataProvider normalizeDataProvider

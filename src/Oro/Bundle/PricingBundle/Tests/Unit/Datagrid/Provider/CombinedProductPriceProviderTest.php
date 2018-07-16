@@ -15,7 +15,7 @@ use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
 use Oro\Bundle\ProductBundle\Formatter\UnitValueFormatter;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class CombinedProductPriceProviderTest extends \PHPUnit_Framework_TestCase
+class CombinedProductPriceProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 

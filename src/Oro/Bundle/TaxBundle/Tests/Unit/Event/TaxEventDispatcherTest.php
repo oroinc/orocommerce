@@ -7,11 +7,11 @@ use Oro\Bundle\TaxBundle\Event\TaxEventDispatcher;
 use Oro\Bundle\TaxBundle\Model\Taxable;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class TaxEventDispatcherTest extends \PHPUnit_Framework_TestCase
+class TaxEventDispatcherTest extends \PHPUnit\Framework\TestCase
 {
     public function testDispatch()
     {
-        /** @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject $eventDispatcher */
+        /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject $eventDispatcher */
         $eventDispatcher = $this->createMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
 
         $taxDispatcher = new TaxEventDispatcher($eventDispatcher);

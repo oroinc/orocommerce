@@ -6,9 +6,9 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\WebsiteSearchBundle\Event\RestrictIndexEntityEvent;
 
-class RestrictIndexEntitiesEventTest extends \PHPUnit_Framework_TestCase
+class RestrictIndexEntitiesEventTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var QueryBuilder|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var QueryBuilder|\PHPUnit\Framework\MockObject\MockObject */
     protected $qb;
 
     /** @var string */

@@ -7,11 +7,11 @@ use Oro\Bundle\ShippingBundle\Entity\WeightUnit;
 use Oro\Bundle\ShippingBundle\Twig\WeightUnitValueExtension;
 use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
 
-class WeightUnitValueExtensionTest extends \PHPUnit_Framework_TestCase
+class WeightUnitValueExtensionTest extends \PHPUnit\Framework\TestCase
 {
     use TwigExtensionTestCaseTrait;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    /** @var \PHPUnit\Framework\MockObject\MockObject */
     private $formatter;
 
     /** @var WeightUnitValueExtension */

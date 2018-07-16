@@ -11,25 +11,25 @@ use Oro\Bundle\PromotionBundle\Discount\Strategy\StrategyProvider;
 use Oro\Bundle\PromotionBundle\Executor\PromotionExecutor;
 use Oro\Bundle\PromotionBundle\Provider\PromotionDiscountsProviderInterface;
 
-class PromotionExecutorTest extends \PHPUnit_Framework_TestCase
+class PromotionExecutorTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var DiscountContextConverterInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var DiscountContextConverterInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $discountContextConverter;
 
     /**
-     * @var StrategyProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var StrategyProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     private $discountStrategyProvider;
 
     /**
-     * @var PromotionDiscountsProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var PromotionDiscountsProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $promotionDiscountsProvider;
 
     /**
-     * @var Cache|\PHPUnit_Framework_MockObject_MockObject
+     * @var Cache|\PHPUnit\Framework\MockObject\MockObject
      */
     private $cache;
 

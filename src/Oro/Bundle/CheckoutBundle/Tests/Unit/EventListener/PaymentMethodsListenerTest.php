@@ -16,12 +16,12 @@ use Oro\Bundle\PaymentBundle\Provider\MethodsConfigsRule\Context\MethodsConfigsR
 class PaymentMethodsListenerTest extends AbstractMethodsListenerTest
 {
     /**
-     * @var MethodsConfigsRulesByContextProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var MethodsConfigsRulesByContextProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $configsRuleProvider;
 
     /**
-     * @var CheckoutPaymentContextFactory|\PHPUnit_Framework_MockObject_MockObject
+     * @var CheckoutPaymentContextFactory|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $contextFactory;
 

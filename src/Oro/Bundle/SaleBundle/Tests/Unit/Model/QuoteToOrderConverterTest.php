@@ -31,7 +31,7 @@ use Oro\Bundle\UserBundle\Entity\User;
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
-class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
+class QuoteToOrderConverterTest extends \PHPUnit\Framework\TestCase
 {
     const CURRENCY = 'USD';
 
@@ -39,19 +39,19 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
     const ACCOUNT_USER_FIRST_NAME = 'TestFirstName';
     const ACCOUNT_USER_LAST_NAME = 'TestLastName';
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|OrderCurrencyHandler */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|OrderCurrencyHandler */
     protected $orderCurrencyHandler;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|TotalProcessorProvider */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|TotalProcessorProvider */
     protected $totalsProvider;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|LineItemSubtotalProvider */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|LineItemSubtotalProvider */
     protected $subTotalLineItemProvider;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|OrderTotalsHandler */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|OrderTotalsHandler */
     protected $orderTotalsHelper;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|ManagerRegistry */
     protected $registry;
 
     /** @var QuoteToOrderConverter */
@@ -547,7 +547,7 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
 
     protected function assertDoctrineCalled()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|ObjectManager $manager */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|ObjectManager $manager */
         $manager = $this->createMock('Doctrine\Common\Persistence\ObjectManager');
         $manager->expects($this->once())
             ->method('persist')

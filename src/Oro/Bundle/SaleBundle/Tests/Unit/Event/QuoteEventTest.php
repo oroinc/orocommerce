@@ -5,7 +5,7 @@ namespace Oro\Bundle\SaleBundle\Tests\Unit\Event;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Event\QuoteEvent;
 
-class QuoteEventTest extends \PHPUnit_Framework_TestCase
+class QuoteEventTest extends \PHPUnit\Framework\TestCase
 {
     public function testGetters()
     {

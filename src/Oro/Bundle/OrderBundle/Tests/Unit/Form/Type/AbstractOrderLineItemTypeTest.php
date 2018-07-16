@@ -30,7 +30,7 @@ abstract class AbstractOrderLineItemTypeTest extends FormIntegrationTestCase
      */
     protected $formType;
 
-    /** @var SectionProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var SectionProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $sectionProvider;
 
     protected function setUp()
@@ -79,7 +79,7 @@ abstract class AbstractOrderLineItemTypeTest extends FormIntegrationTestCase
         $formType = $this->getFormType();
 
         $view = new FormView();
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock('Symfony\Component\Form\FormInterface');
         $formType->finishView($view, $form, []);
     }
@@ -130,7 +130,7 @@ abstract class AbstractOrderLineItemTypeTest extends FormIntegrationTestCase
     public function assertDefaultBuildViewCalled()
     {
         $view = new FormView();
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock('Symfony\Component\Form\FormInterface');
 
         $possibleOptions = [
@@ -167,7 +167,7 @@ abstract class AbstractOrderLineItemTypeTest extends FormIntegrationTestCase
             ->willReturn($this->getExpectedSections());
 
         $view = new FormView();
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock('Symfony\Component\Form\FormInterface');
         $this->formType->finishView($view, $form, []);
 

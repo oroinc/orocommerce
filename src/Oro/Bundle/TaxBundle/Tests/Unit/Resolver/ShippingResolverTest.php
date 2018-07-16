@@ -16,7 +16,7 @@ use Oro\Bundle\TaxBundle\Model\TaxCodes;
 use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 use Oro\Bundle\TaxBundle\Resolver\ShippingResolver;
 
-class ShippingResolverTest extends \PHPUnit_Framework_TestCase
+class ShippingResolverTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var ShippingResolver
@@ -24,22 +24,22 @@ class ShippingResolverTest extends \PHPUnit_Framework_TestCase
     protected $resolver;
 
     /**
-     * @var TaxCalculatorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var TaxCalculatorInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $excTaxCalculator;
 
     /**
-     * @var TaxCalculatorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var TaxCalculatorInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $incTaxCalculator;
 
     /**
-     * @var MatcherInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var MatcherInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $matcher;
 
     /**
-     * @var TaxationSettingsProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var TaxationSettingsProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $taxationSettingsProvider;
 

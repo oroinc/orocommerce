@@ -14,17 +14,17 @@ use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 
-class SlugListenerTest extends \PHPUnit_Framework_TestCase
+class SlugListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $registry;
 
     /**
-     * @var MessageProducerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $messageProducer;
 
@@ -45,12 +45,12 @@ class SlugListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testOnFlushNoChangedSlugs()
     {
-        /** @var UnitOfWork|\PHPUnit_Framework_MockObject_MockObject $uow */
+        /** @var UnitOfWork|\PHPUnit\Framework\MockObject\MockObject $uow */
         $uow = $this->getMockBuilder(UnitOfWork::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $em */
+        /** @var EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject $em */
         $em = $this->createMock(EntityManagerInterface::class);
         $em->expects($this->any())
             ->method('getUnitOfWork')
@@ -72,12 +72,12 @@ class SlugListenerTest extends \PHPUnit_Framework_TestCase
     {
         $updatedSlug = $this->getEntity(Slug::class, ['id' => 123]);
 
-        /** @var UnitOfWork|\PHPUnit_Framework_MockObject_MockObject $uow */
+        /** @var UnitOfWork|\PHPUnit\Framework\MockObject\MockObject $uow */
         $uow = $this->getMockBuilder(UnitOfWork::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $em */
+        /** @var EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject $em */
         $em = $this->createMock(EntityManagerInterface::class);
         $em->expects($this->any())
             ->method('getUnitOfWork')

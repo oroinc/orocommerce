@@ -11,7 +11,7 @@ use Oro\Bundle\ShippingBundle\Context\ShippingContext;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodViewCollection;
 use Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider;
 
-class PriceCheckoutShippingMethodsProviderChainElementTest extends \PHPUnit_Framework_TestCase
+class PriceCheckoutShippingMethodsProviderChainElementTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var PriceCheckoutShippingMethodsProviderChainElement
@@ -19,12 +19,12 @@ class PriceCheckoutShippingMethodsProviderChainElementTest extends \PHPUnit_Fram
     private $testedMethodsProvider;
 
     /**
-     * @var ShippingPriceProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingPriceProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     private $shippingPriceProviderMock;
 
     /**
-     * @var CheckoutShippingContextFactory|\PHPUnit_Framework_MockObject_MockObject
+     * @var CheckoutShippingContextFactory|\PHPUnit\Framework\MockObject\MockObject
      */
     private $shippingContextFactoryMock;
 
@@ -170,7 +170,7 @@ class PriceCheckoutShippingMethodsProviderChainElementTest extends \PHPUnit_Fram
     }
 
     /**
-     * @return CheckoutShippingMethodsProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return CheckoutShippingMethodsProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private function getSuccessorMock()
     {
@@ -180,7 +180,7 @@ class PriceCheckoutShippingMethodsProviderChainElementTest extends \PHPUnit_Fram
     }
 
     /**
-     * @return Checkout|\PHPUnit_Framework_MockObject_MockObject
+     * @return Checkout|\PHPUnit\Framework\MockObject\MockObject
      */
     private function getCheckoutMock()
     {
@@ -190,7 +190,7 @@ class PriceCheckoutShippingMethodsProviderChainElementTest extends \PHPUnit_Fram
     }
 
     /**
-     * @return ShippingContext|\PHPUnit_Framework_MockObject_MockObject
+     * @return ShippingContext|\PHPUnit\Framework\MockObject\MockObject
      */
     private function getShippingContextMock()
     {

@@ -11,6 +11,9 @@ use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
 
+/**
+ * Handles logic for getting prices for certain quote
+ */
 class QuoteProductPriceProvider
 {
     /**
@@ -155,5 +158,28 @@ class QuoteProductPriceProvider
         $searchScope->setWebsite($quote->getWebsite());
 
         return $searchScope;
+    }
+
+    /**
+     * Checks whatever quote has line items with no prices set
+     * @param Quote $quote
+     * @return bool
+     */
+    public function hasEmptyPrice(Quote $quote)
+    {
+        foreach ($quote->getQuoteProducts() as $quoteProduct) {
+            $product = $quoteProduct->getProduct();
+            if (!$product) {
+                continue;
+            }
+
+            foreach ($quoteProduct->getQuoteProductOffers() as $quoteProductOffer) {
+                if ($quoteProductOffer->getPrice() === null || $quoteProductOffer->getPrice()->getValue() === null) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 }

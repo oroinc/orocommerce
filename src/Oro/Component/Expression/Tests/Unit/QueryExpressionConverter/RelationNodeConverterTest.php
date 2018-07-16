@@ -7,7 +7,7 @@ use Oro\Component\Expression\Node\NodeInterface;
 use Oro\Component\Expression\Node\RelationNode;
 use Oro\Component\Expression\QueryExpressionConverter\RelationNodeConverter;
 
-class RelationNodeConverterTest extends \PHPUnit_Framework_TestCase
+class RelationNodeConverterTest extends \PHPUnit\Framework\TestCase
 {
     public function testConvertUnsupported()
     {

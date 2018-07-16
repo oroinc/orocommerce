@@ -17,7 +17,7 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
-class OrderMapperTest extends \PHPUnit_Framework_TestCase
+class OrderMapperTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
@@ -27,12 +27,12 @@ class OrderMapperTest extends \PHPUnit_Framework_TestCase
     protected $mapper;
 
     /**
-     * @var EntityFieldProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var EntityFieldProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $provider;
 
     /**
-     * @var PaymentTermAssociationProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var PaymentTermAssociationProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $paymentTermAssociationProvider;
 

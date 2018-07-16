@@ -8,12 +8,12 @@ use Oro\Bundle\TaxBundle\Factory\TaxBaseExclusionFactory;
 use Oro\Bundle\TaxBundle\Form\DataTransformer\TaxBaseExclusionTransformer;
 use Oro\Bundle\TaxBundle\Model\TaxBaseExclusion;
 
-class TaxBaseExclusionTransformerTest extends \PHPUnit_Framework_TestCase
+class TaxBaseExclusionTransformerTest extends \PHPUnit\Framework\TestCase
 {
     /** @var TaxBaseExclusionTransformer */
     protected $transformer;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|TaxBaseExclusionFactory */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|TaxBaseExclusionFactory */
     protected $taxBaseExclusionFactory;
 
     protected function setUp()

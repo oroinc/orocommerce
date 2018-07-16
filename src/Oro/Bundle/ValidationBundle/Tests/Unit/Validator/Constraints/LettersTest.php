@@ -8,12 +8,12 @@ use Symfony\Component\Validator\Constraints\RegexValidator;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
 
-class LettersTest extends \PHPUnit_Framework_TestCase
+class LettersTest extends \PHPUnit\Framework\TestCase
 {
     /** @var Letters */
     protected $constraint;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|ExecutionContextInterface */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|ExecutionContextInterface */
     protected $context;
 
     /** @var RegexValidator */

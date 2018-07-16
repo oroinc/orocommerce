@@ -6,10 +6,10 @@ use Oro\Bundle\OrderBundle\Formatter\ShippingTrackingFormatter;
 use Oro\Bundle\OrderBundle\Tests\Unit\Formatter\Stub\ShippingMethodStub;
 use Oro\Bundle\ShippingBundle\Method\TrackingAwareShippingMethodsProviderInterface;
 
-class ShippingTrackingFormatterTest extends \PHPUnit_Framework_TestCase
+class ShippingTrackingFormatterTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|TrackingAwareShippingMethodsProviderInterface
+     * @var \PHPUnit\Framework\MockObject\MockObject|TrackingAwareShippingMethodsProviderInterface
      */
     protected $trackingAwareShippingMethodsProvider;
 
@@ -29,7 +29,7 @@ class ShippingTrackingFormatterTest extends \PHPUnit_Framework_TestCase
      * @param string|null $trackingLink
      * @param string|null $label
      * @param bool $trackingAware
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     protected function shippingMethodMock($trackingLink, $label, $trackingAware = true)
     {

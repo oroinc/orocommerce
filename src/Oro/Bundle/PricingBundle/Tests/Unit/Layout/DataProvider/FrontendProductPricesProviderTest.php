@@ -18,12 +18,12 @@ use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class FrontendProductPricesProviderTest extends \PHPUnit_Framework_TestCase
+class FrontendProductPricesProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var ShardManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShardManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $shardManager;
 
@@ -33,27 +33,27 @@ class FrontendProductPricesProviderTest extends \PHPUnit_Framework_TestCase
     protected $provider;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|DoctrineHelper
+     * @var \PHPUnit\Framework\MockObject\MockObject|DoctrineHelper
      */
     protected $doctrineHelper;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|PriceListRequestHandler
+     * @var \PHPUnit\Framework\MockObject\MockObject|PriceListRequestHandler
      */
     protected $priceListRequestHandler;
 
     /**
-     * @var UserCurrencyManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var UserCurrencyManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $userCurrencyManager;
 
     /**
-     * @var ProductPriceFormatter|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProductPriceFormatter|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $productPriceFormatter;
 
     /**
-     * @var ProductVariantAvailabilityProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProductVariantAvailabilityProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     private $productVariantAvailabilityProvider;
 

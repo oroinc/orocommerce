@@ -14,17 +14,17 @@ use Oro\Bundle\WebCatalogBundle\Entity\Repository\WebCatalogRepository;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class ScopeMatcherTest extends \PHPUnit_Framework_TestCase
+class ScopeMatcherTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     private $registry;
 
     /**
-     * @var ScopeManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ScopeManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $scopeManager;
 
@@ -71,7 +71,7 @@ class ScopeMatcherTest extends \PHPUnit_Framework_TestCase
         $scope = $this->getEntity(Scope::class, ['id' => 2]);
         $scopes = [$scope];
 
-        /** @var ScopeCriteria|\PHPUnit_Framework_MockObject_MockObject $scopeCriteria */
+        /** @var ScopeCriteria|\PHPUnit\Framework\MockObject\MockObject $scopeCriteria */
         $scopeCriteria = $this->getMockBuilder(ScopeCriteria::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -98,7 +98,7 @@ class ScopeMatcherTest extends \PHPUnit_Framework_TestCase
         /** @var Scope $scope */
         $scope = $this->getEntity(Scope::class, ['id' => 2]);
 
-        /** @var ScopeCriteria|\PHPUnit_Framework_MockObject_MockObject $scopeCriteria */
+        /** @var ScopeCriteria|\PHPUnit\Framework\MockObject\MockObject $scopeCriteria */
         $scopeCriteria = $this->getMockBuilder(ScopeCriteria::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -128,7 +128,7 @@ class ScopeMatcherTest extends \PHPUnit_Framework_TestCase
         $scope2 = $this->getEntity(Scope::class, ['id' => 2]);
         $scopes = [$scope1, $scope2];
 
-        /** @var ScopeCriteria|\PHPUnit_Framework_MockObject_MockObject $scopeCriteria */
+        /** @var ScopeCriteria|\PHPUnit\Framework\MockObject\MockObject $scopeCriteria */
         $scopeCriteria = $this->getMockBuilder(ScopeCriteria::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -162,7 +162,7 @@ class ScopeMatcherTest extends \PHPUnit_Framework_TestCase
         $scope3 = $this->getEntity(Scope::class, ['id' => 3]);
         $scopes = [$scope1, $scope2];
 
-        /** @var ScopeCriteria|\PHPUnit_Framework_MockObject_MockObject $scopeCriteria */
+        /** @var ScopeCriteria|\PHPUnit\Framework\MockObject\MockObject $scopeCriteria */
         $scopeCriteria = $this->getMockBuilder(ScopeCriteria::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -199,7 +199,7 @@ class ScopeMatcherTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|WebCatalogRepository
+     * @return \PHPUnit\Framework\MockObject\MockObject|WebCatalogRepository
      */
     protected function getWebCatalogRepositoryMock()
     {

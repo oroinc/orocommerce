@@ -7,7 +7,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Provider\ProductCollectionContentVariantProvider;
 use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
 
-class ProductCollectionContentVariantProviderTest extends \PHPUnit_Framework_TestCase
+class ProductCollectionContentVariantProviderTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var ProductsContentVariantProvider

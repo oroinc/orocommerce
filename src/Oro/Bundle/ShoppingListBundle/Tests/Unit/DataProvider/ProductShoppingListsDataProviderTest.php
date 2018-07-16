@@ -13,14 +13,14 @@ use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class ProductShoppingListsDataProviderTest extends \PHPUnit_Framework_TestCase
+class ProductShoppingListsDataProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /** @var ShoppingListManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ShoppingListManager|\PHPUnit\Framework\MockObject\MockObject */
     protected $shoppingListManager;
 
-    /** @var LineItemRepository|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var LineItemRepository|\PHPUnit\Framework\MockObject\MockObject */
     protected $lineItemRepository;
 
     /** @var AclHelper */

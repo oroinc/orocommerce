@@ -25,30 +25,30 @@ use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class PriceRuleRelationExpressionsValidatorTest extends \PHPUnit_Framework_TestCase
+class PriceRuleRelationExpressionsValidatorTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var PriceRuleRelationExpressionsValidator|\PHPUnit_Framework_MockObject_MockObject
+     * @var PriceRuleRelationExpressionsValidator|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $validator;
 
     /**
-     * @var ExpressionParser|\PHPUnit_Framework_MockObject_MockObject
+     * @var ExpressionParser|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $parser;
 
     /**
-     * @var FieldsProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var FieldsProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $fieldsProvider;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ExecutionContextInterface
+     * @var \PHPUnit\Framework\MockObject\MockObject|ExecutionContextInterface
      */
     protected $context;
 
     /**
-     * @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $translator;
 
@@ -201,7 +201,7 @@ class PriceRuleRelationExpressionsValidatorTest extends \PHPUnit_Framework_TestC
 
     public function testValidateWithSyntaxError()
     {
-        /** @var ExecutionContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
+        /** @var ExecutionContextInterface|\PHPUnit\Framework\MockObject\MockObject $context */
         $context = $this->createMock(ExecutionContextInterface::class);
         $context->expects($this->never())
             ->method($this->anything());

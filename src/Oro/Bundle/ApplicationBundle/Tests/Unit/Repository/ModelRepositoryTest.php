@@ -12,24 +12,24 @@ use Oro\Bundle\ApplicationBundle\Tests\Unit\Stub\TestModel;
 use Oro\Bundle\ApplicationBundle\Tests\Unit\Stub\TestMultiEntityModel;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class ModelRepositoryTest extends \PHPUnit_Framework_TestCase
+class ModelRepositoryTest extends \PHPUnit\Framework\TestCase
 {
     const MODEL_CLASS = 'Oro\Bundle\ApplicationBundle\Tests\Unit\Stub\TestModel';
     const MULTI_ENTITY_MODEL_CLASS = 'Oro\Bundle\ApplicationBundle\Tests\Unit\Stub\TestMultiEntityModel';
     const ENTITY_CLASS = 'Oro\Bundle\ApplicationBundle\Tests\Unit\Stub\TestEntity';
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry
+     * @var \PHPUnit\Framework\MockObject\MockObject|ManagerRegistry
      */
     protected $managerRegistry;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|EventDispatcherInterface
+     * @var \PHPUnit\Framework\MockObject\MockObject|EventDispatcherInterface
      */
     protected $eventDispatcher;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ModelFactoryInterface
+     * @var \PHPUnit\Framework\MockObject\MockObject|ModelFactoryInterface
      */
     protected $modelFactory;
 

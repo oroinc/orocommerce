@@ -14,7 +14,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Model\ProductLineItem;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class FrontendProductPricesDataProviderTest extends \PHPUnit_Framework_TestCase
+class FrontendProductPricesDataProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
@@ -26,17 +26,17 @@ class FrontendProductPricesDataProviderTest extends \PHPUnit_Framework_TestCase
     protected $provider;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ProductPriceProviderInterface
+     * @var \PHPUnit\Framework\MockObject\MockObject|ProductPriceProviderInterface
      */
     protected $productPriceProvider;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|UserCurrencyManager
+     * @var \PHPUnit\Framework\MockObject\MockObject|UserCurrencyManager
      */
     protected $userCurrencyManager;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|PriceListRequestHandler
+     * @var \PHPUnit\Framework\MockObject\MockObject|PriceListRequestHandler
      */
     protected $priceListRequestHandler;
 

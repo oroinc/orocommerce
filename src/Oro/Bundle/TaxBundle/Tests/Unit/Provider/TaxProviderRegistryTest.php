@@ -6,10 +6,10 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\TaxBundle\Provider\TaxProviderInterface;
 use Oro\Bundle\TaxBundle\Provider\TaxProviderRegistry;
 
-class TaxProviderRegistryTest extends \PHPUnit_Framework_TestCase
+class TaxProviderRegistryTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $configManager;
 
@@ -116,7 +116,7 @@ class TaxProviderRegistryTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param string $name
-     * @return TaxProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return TaxProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function getProviderMock($name)
     {

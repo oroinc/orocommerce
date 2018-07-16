@@ -7,14 +7,14 @@ use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProvider;
 
-class HasApplicablePaymentMethodsTest extends \PHPUnit_Framework_TestCase
+class HasApplicablePaymentMethodsTest extends \PHPUnit\Framework\TestCase
 {
     const METHOD = 'Method';
 
     /** @var HasApplicablePaymentMethods */
     protected $condition;
 
-    /** @var PaymentMethodProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var PaymentMethodProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $paymentMethodProvider;
 
     protected function setUp()
@@ -57,7 +57,7 @@ class HasApplicablePaymentMethodsTest extends \PHPUnit_Framework_TestCase
         $context = $this->getMockBuilder(PaymentContextInterface::class)
             ->getMockForAbstractClass();
 
-        /** @var PaymentMethodInterface|\PHPUnit_Framework_MockObject_MockObject $paymentMethod */
+        /** @var PaymentMethodInterface|\PHPUnit\Framework\MockObject\MockObject $paymentMethod */
         $paymentMethod = $this->createMock(PaymentMethodInterface::class);
 
         $this->paymentMethodProvider->expects(static::once())

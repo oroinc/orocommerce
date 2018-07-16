@@ -17,12 +17,12 @@ use Oro\Bundle\ShoppingListBundle\DataProvider\ProductShoppingListsDataProvider;
 use Oro\Bundle\ShoppingListBundle\EventListener\FrontendProductDatagridListener;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
+class FrontendProductDatagridListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var ProductShoppingListsDataProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProductShoppingListsDataProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     private $productShoppingListsDataProvider;
 
@@ -32,7 +32,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
     private $listener;
 
     /**
-     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     private $doctrineHelper;
 
@@ -73,7 +73,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testOnResultAfterNoShoppingList()
     {
-        /** @var DatagridInterface|\PHPUnit_Framework_MockObject_MockObject $datagrid */
+        /** @var DatagridInterface|\PHPUnit\Framework\MockObject\MockObject $datagrid */
         $datagrid = $this->createMock(DatagridInterface::class);
 
         $record = new ResultRecord(['id' => 777]);
@@ -99,7 +99,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
         /** @var SearchQueryInterface $query */
         $query = $this->createMock(SearchQueryInterface::class);
 
-        /** @var SearchResultAfter|\PHPUnit_Framework_MockObject_MockObject $event */
+        /** @var SearchResultAfter|\PHPUnit\Framework\MockObject\MockObject $event */
         $event = new SearchResultAfter($datagrid, $query, [$record]);
 
         $this->listener->onResultAfter($event);
@@ -109,7 +109,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testOnResultAfterNoRecords()
     {
-        /** @var DatagridInterface|\PHPUnit_Framework_MockObject_MockObject $datagrid */
+        /** @var DatagridInterface|\PHPUnit\Framework\MockObject\MockObject $datagrid */
         $datagrid = $this->createMock(DatagridInterface::class);
 
         $this->productShoppingListsDataProvider
@@ -120,7 +120,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
         /** @var SearchQueryInterface $query */
         $query = $this->createMock(SearchQueryInterface::class);
 
-        /** @var SearchResultAfter|\PHPUnit_Framework_MockObject_MockObject $event */
+        /** @var SearchResultAfter|\PHPUnit\Framework\MockObject\MockObject $event */
         $event = new SearchResultAfter($datagrid, $query, []);
 
         $this->listener->onResultAfter($event);
@@ -128,7 +128,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testOnResultAfter()
     {
-        /** @var DatagridInterface|\PHPUnit_Framework_MockObject_MockObject $datagrid */
+        /** @var DatagridInterface|\PHPUnit\Framework\MockObject\MockObject $datagrid */
         $datagrid = $this->createMock(DatagridInterface::class);
 
         $record1 = new ResultRecord(['id' => 777]);
@@ -161,7 +161,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
         /** @var SearchQueryInterface $query */
         $query = $this->createMock(SearchQueryInterface::class);
 
-        /** @var SearchResultAfter|\PHPUnit_Framework_MockObject_MockObject $event */
+        /** @var SearchResultAfter|\PHPUnit\Framework\MockObject\MockObject $event */
         $event = new SearchResultAfter($datagrid, $query, [$record1, $record2, $record3]);
 
         $this->listener->onResultAfter($event);

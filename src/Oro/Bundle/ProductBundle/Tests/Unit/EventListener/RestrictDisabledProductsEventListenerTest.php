@@ -12,15 +12,15 @@ use Oro\Bundle\ProductBundle\Model\ProductVisibilitySearchQueryModifier;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
-class RestrictDisabledProductsEventListenerTest extends \PHPUnit_Framework_TestCase
+class RestrictDisabledProductsEventListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ProductVisibilityQueryBuilderModifier
+     * @var \PHPUnit\Framework\MockObject\MockObject|ProductVisibilityQueryBuilderModifier
      */
     private $queryBuilderModifier;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ProductVisibilitySearchQueryModifier
+     * @var \PHPUnit\Framework\MockObject\MockObject|ProductVisibilitySearchQueryModifier
      */
     private $searchQueryModifier;
 
@@ -49,7 +49,7 @@ class RestrictDisabledProductsEventListenerTest extends \PHPUnit_Framework_TestC
 
     public function testOnDBQuery()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|QueryBuilder $qb */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|QueryBuilder $qb */
         $qb = $this->getMockBuilder(QueryBuilder::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -64,7 +64,7 @@ class RestrictDisabledProductsEventListenerTest extends \PHPUnit_Framework_TestC
 
     public function testOnSearchQuery()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|Query $query */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|Query $query */
         $query = $this->getMockBuilder(Query::class)
             ->disableOriginalConstructor()
             ->getMock();

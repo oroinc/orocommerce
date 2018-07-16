@@ -64,17 +64,17 @@ class ShippingMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
     protected $shippingMethodProvider;
 
     /**
-     * @var ShippingMethodChoicesProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingMethodChoicesProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $choicesProvider;
 
     /**
-     * @var ShippingMethodIconProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingMethodIconProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $iconProvider;
 
     /**
-     * @var AssetHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var AssetHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $assetHelper;
 
@@ -101,7 +101,7 @@ class ShippingMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
         $this->methodConfigCollectionSubscriber
             ->setFactory($this->factory)->setMethodRegistry($this->shippingMethodProvider);
 
-        /** @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject $translator */
+        /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject $translator */
         $translator = $this->createMock(TranslatorInterface::class);
         $translator->expects(static::any())
             ->method('trans')
@@ -232,7 +232,7 @@ class ShippingMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
             ->method('getCurrencyList')
             ->willReturn(['USD']);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|TranslatableEntityType $registry */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|TranslatableEntityType $registry */
         $translatableEntity = $this->getMockBuilder('Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType')
             ->setMethods(['configureOptions', 'buildForm'])
             ->disableOriginalConstructor()

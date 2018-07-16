@@ -7,7 +7,7 @@ use Oro\Bundle\InvoiceBundle\Validator\Constraints\InvoicePaymentDueDate;
 use Oro\Bundle\InvoiceBundle\Validator\Constraints\InvoicePaymentDueDateValidator;
 use Symfony\Component\Validator\Context\ExecutionContext;
 
-class InvoicePaymentDueDateValidatorTest extends \PHPUnit_Framework_TestCase
+class InvoicePaymentDueDateValidatorTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var  InvoicePaymentDueDate
@@ -61,7 +61,7 @@ class InvoicePaymentDueDateValidatorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|ExecutionContext
+     * @return \PHPUnit\Framework\MockObject\MockObject|ExecutionContext
      */
     protected function getContextMock()
     {
@@ -72,7 +72,7 @@ class InvoicePaymentDueDateValidatorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     protected function getBuilderMock()
     {

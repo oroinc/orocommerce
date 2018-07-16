@@ -9,7 +9,7 @@ use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderValue;
 
-class ProductVisibilityIndexerTest extends \PHPUnit_Framework_TestCase
+class ProductVisibilityIndexerTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var ProductVisibilityIndexer
@@ -17,7 +17,7 @@ class ProductVisibilityIndexerTest extends \PHPUnit_Framework_TestCase
     private $indexer;
 
     /**
-     * @var ProductVisibilityProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProductVisibilityProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     private $visibilityProvider;
 

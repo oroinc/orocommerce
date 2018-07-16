@@ -14,17 +14,17 @@ use Oro\Component\Testing\Unit\EntityTrait;
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class RelatedItemDataProviderTest extends \PHPUnit_Framework_TestCase
+class RelatedItemDataProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /** @var RestrictedProductRepository|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var RestrictedProductRepository|\PHPUnit\Framework\MockObject\MockObject */
     private $restrictedRepository;
 
-    /** @var RelatedProductsConfigProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var RelatedProductsConfigProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $configProvider;
 
-    /** @var FinderStrategyInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var FinderStrategyInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $finder;
 
     /** @var FakeUserAgentProvider */

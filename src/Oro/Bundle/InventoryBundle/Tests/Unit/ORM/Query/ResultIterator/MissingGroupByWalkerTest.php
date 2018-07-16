@@ -7,22 +7,22 @@ use Doctrine\ORM\Query\AST\PathExpression;
 use Doctrine\ORM\Query\AST\SelectStatement;
 use Oro\Bundle\InventoryBundle\ORM\Query\ResultIterator\MissingGroupByWalker;
 
-class MissingGroupByWalkerTest extends \PHPUnit_Framework_TestCase
+class MissingGroupByWalkerTest extends \PHPUnit\Framework\TestCase
 {
     use SqlWalkerHelperTrait;
 
     /**
-     * @var |\PHPUnit_Framework_MockObject_MockObject
+     * @var |\PHPUnit\Framework\MockObject\MockObject
      */
     protected $query;
 
     /**
-     * @var |\PHPUnit_Framework_MockObject_MockObject
+     * @var |\PHPUnit\Framework\MockObject\MockObject
      */
     protected $parserResult;
 
     /**
-     * @var |\PHPUnit_Framework_MockObject_MockObject
+     * @var |\PHPUnit\Framework\MockObject\MockObject
      */
     protected $queryComponents;
 

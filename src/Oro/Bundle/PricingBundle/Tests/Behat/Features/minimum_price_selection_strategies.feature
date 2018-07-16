@@ -42,7 +42,7 @@ Feature: Minimum Price Selection Strategies
     And I am on the homepage
     And I click "NewCategory"
     And I click "View Details" for "product2" product
-    And I should see "$ 1.00"
+    And I should see "$1.00"
 
   Scenario: Add new price to product price
     Given I operate as the Admin
@@ -60,7 +60,7 @@ Feature: Minimum Price Selection Strategies
     And I am on the homepage
     And I click "NewCategory"
     And I click "View Details" for "PSKU1" product
-    And I should see "$ 7.00"
+    And I should see "$7.00"
 
   Scenario: Price for Customer
     Given I operate as the Admin
@@ -71,7 +71,7 @@ Feature: Minimum Price Selection Strategies
     Then I should see "Customer has been saved" flash message
     When I continue as the Buyer
     And I reload the page
-    And I should see "$ 6.00"
+    And I should see "$6.00"
 
   Scenario: Change price list for customer
     Given I operate as the Admin
@@ -82,7 +82,7 @@ Feature: Minimum Price Selection Strategies
     Then I should see "Customer has been saved" flash message
     When I continue as the Buyer
     And I reload the page
-    And I should see "$ 7.00"
+    And I should see "$7.00"
 
   Scenario: Price fallback user on group
     Given I operate as the Admin
@@ -93,7 +93,7 @@ Feature: Minimum Price Selection Strategies
     Then I should see "Customer group has been saved" flash message
     When I continue as the Buyer
     And I reload the page
-    And I should see "$ 5.00"
+    And I should see "$5.00"
 
   Scenario: Price fallback user on website
     Given I operate as the Admin
@@ -104,7 +104,7 @@ Feature: Minimum Price Selection Strategies
     Then I should see "Website has been saved" flash message
     When I continue as the Buyer
     And I reload the page
-    And I should see "$ 4.00"
+    And I should see "$4.00"
 
   Scenario: Change group of customer
     Given I operate as the Admin
@@ -121,8 +121,8 @@ Feature: Minimum Price Selection Strategies
     Then I should see "Customer has been saved" flash message
     When I continue as the Buyer
     And I reload the page
-    And I should see "$ 4.00"
-    And I should see "$ 10.00"
+    And I should see "$4.00"
+    And I should see "$10.00"
 
   Scenario: Pricing strategy changing
     Given I operate as the Admin
@@ -135,8 +135,8 @@ Feature: Minimum Price Selection Strategies
     Then I should see "Configuration saved" flash message
     When I continue as the Buyer
     And I reload the page
-    And I should see "$ 7.00"
-    And I should see "$ 10.00"
+    And I should see "$7.00"
+    And I should see "$10.00"
 
   Scenario: Remove group
     Given I operate as the Admin
@@ -146,8 +146,8 @@ Feature: Minimum Price Selection Strategies
     Then I should see "Customer Group deleted" flash message
     When I continue as the Buyer
     And I reload the page
-    And I should see "$ 7.00"
-    And I should not see "$ 10.00"
+    And I should see "$7.00"
+    And I should not see "$10.00"
 
   Scenario: Unassign price list from customer
     Given I operate as the Admin
@@ -158,7 +158,7 @@ Feature: Minimum Price Selection Strategies
     Then I should see "Customer has been saved" flash message
     When I continue as the Buyer
     And I reload the page
-    And I should not see "$ 5.00"
+    And I should not see "$5.00"
 
   Scenario: Unassign price list from group
     Given I operate as the Admin
@@ -169,7 +169,7 @@ Feature: Minimum Price Selection Strategies
     Then I should see "Customer group has been saved" flash message
     When I continue as the Buyer
     And I reload the page
-    And I should see "$ 4.00"
+    And I should see "$4.00"
 
   Scenario: Unassign price list from website
     Given I operate as the Admin
@@ -180,5 +180,5 @@ Feature: Minimum Price Selection Strategies
     Then I should see "Website has been saved" flash message
     When I continue as the Buyer
     And I reload the page
-    And I should see "$ 7.00"
+    And I should see "$7.00"
 

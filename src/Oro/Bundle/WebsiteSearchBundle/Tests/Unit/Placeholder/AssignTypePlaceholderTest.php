@@ -4,7 +4,7 @@ namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Placeholder;
 
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\AssignTypePlaceholder;
 
-class AssignTypePlaceholderTest extends \PHPUnit_Framework_TestCase
+class AssignTypePlaceholderTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var AssignTypePlaceholder

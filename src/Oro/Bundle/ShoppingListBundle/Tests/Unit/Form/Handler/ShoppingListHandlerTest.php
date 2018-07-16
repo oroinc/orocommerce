@@ -12,21 +12,21 @@ use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use Symfony\Component\Form\Test\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-class ShoppingListHandlerTest extends \PHPUnit_Framework_TestCase
+class ShoppingListHandlerTest extends \PHPUnit\Framework\TestCase
 {
     const FORM_DATA = ['field' => 'value'];
 
     const SHOPPING_LIST_SHORTCUT = 'OroShoppingListBundle:ShoppingList';
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|FormInterface */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|FormInterface */
     protected $form;
-    /** @var \PHPUnit_Framework_MockObject_MockObject|Request */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|Request */
     protected $request;
-    /** @var \PHPUnit_Framework_MockObject_MockObject|Registry */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|Registry */
     protected $registry;
-    /** @var \PHPUnit_Framework_MockObject_MockObject|ShoppingList */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|ShoppingList */
     protected $shoppingList;
-    /** @var \PHPUnit_Framework_MockObject_MockObject|ShoppingListManager */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|ShoppingListManager */
     protected $manager;
 
     protected function setUp()
@@ -104,7 +104,7 @@ class ShoppingListHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('isValid')
             ->will($this->returnValue(true));
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|ObjectManager $manager */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|ObjectManager $manager */
         $manager = $this->createMock('Doctrine\Common\Persistence\ObjectManager');
 
         $manager->expects($this->once())

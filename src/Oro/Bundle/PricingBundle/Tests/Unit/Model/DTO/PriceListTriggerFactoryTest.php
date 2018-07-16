@@ -8,7 +8,7 @@ use Oro\Bundle\PricingBundle\Model\PriceListTriggerFactory;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class PriceListTriggerFactoryTest extends \PHPUnit_Framework_TestCase
+class PriceListTriggerFactoryTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
@@ -24,7 +24,7 @@ class PriceListTriggerFactoryTest extends \PHPUnit_Framework_TestCase
 
     public function testCreate()
     {
-        /** @var Product|\PHPUnit_Framework_MockObject_MockObject $product **/
+        /** @var Product|\PHPUnit\Framework\MockObject\MockObject $product **/
         $product = $this->getEntity(Product::class, ['id' => 2002]);
 
         $trigger = $this->priceRuleTriggerFactory->create([1001 => [$product]]);

@@ -7,7 +7,7 @@ use Oro\Bundle\ProductBundle\Model\QuickAddField;
 use Oro\Bundle\ProductBundle\Model\QuickAddRow;
 use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
 
-class QuickAddRowGrouperTest extends \PHPUnit_Framework_TestCase
+class QuickAddRowGrouperTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var QuickAddRowGrouper

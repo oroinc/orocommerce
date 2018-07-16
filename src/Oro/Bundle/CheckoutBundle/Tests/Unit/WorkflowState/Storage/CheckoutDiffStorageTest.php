@@ -8,12 +8,12 @@ use Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutWorkflowStateRepository;
 use Oro\Bundle\CheckoutBundle\WorkflowState\Storage\CheckoutDiffStorage;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
-class CheckoutDiffStorageTest extends \PHPUnit_Framework_TestCase
+class CheckoutDiffStorageTest extends \PHPUnit\Framework\TestCase
 {
     const STORAGE_ENTITY_CLASS = 'Oro\Bundle\CheckoutBundle\Entity\CheckoutWorkflowState';
 
     /**
-     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     private $doctrineHelper;
 
@@ -53,7 +53,7 @@ class CheckoutDiffStorageTest extends \PHPUnit_Framework_TestCase
         $this->prepareSingleEntityIdentifier($entityId);
         $this->prepareEntityClass('stdClass');
 
-        /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $em */
+        /** @var EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject $em */
         $em = $this->createMock(EntityManagerInterface::class);
 
         $this->doctrineHelper->expects($this->once())
@@ -84,7 +84,7 @@ class CheckoutDiffStorageTest extends \PHPUnit_Framework_TestCase
         $this->prepareSingleEntityIdentifier($entityId);
         $this->prepareEntityClass('stdClass');
 
-        /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $em */
+        /** @var EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject $em */
         $em = $this->createMock(EntityManagerInterface::class);
 
         $this->doctrineHelper->expects($this->once())
@@ -191,7 +191,7 @@ class CheckoutDiffStorageTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return CheckoutWorkflowStateRepository|\PHPUnit_Framework_MockObject_MockObject
+     * @return CheckoutWorkflowStateRepository|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function prepareEntityRepository()
     {

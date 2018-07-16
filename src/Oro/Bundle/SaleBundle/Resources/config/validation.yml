@@ -71,7 +71,6 @@ Oro\Bundle\SaleBundle\Entity\QuoteProductOffer:
             - NotBlank:
                 groups: [ Import ]
         price:
-            - NotBlank: ~
             - Valid: ~
 
 Oro\Bundle\SaleBundle\Entity\QuoteAddress:

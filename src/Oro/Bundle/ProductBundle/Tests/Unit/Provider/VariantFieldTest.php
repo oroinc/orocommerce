@@ -4,7 +4,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\ProductBundle\Provider\VariantField;
 
-class VariantFieldTest extends \PHPUnit_Framework_TestCase
+class VariantFieldTest extends \PHPUnit\Framework\TestCase
 {
     public function testAccessors()
     {

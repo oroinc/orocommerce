@@ -5,7 +5,7 @@ namespace Oro\Bundle\InventoryBundle\Tests\Model\Data;
 use Oro\Bundle\InventoryBundle\Model\Data\ProductUnitTransformer;
 use Oro\Bundle\ProductBundle\Provider\ProductUnitsProvider;
 
-class ProductUnitTransformerTest extends \PHPUnit_Framework_TestCase
+class ProductUnitTransformerTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @dataProvider productUnitsProvider

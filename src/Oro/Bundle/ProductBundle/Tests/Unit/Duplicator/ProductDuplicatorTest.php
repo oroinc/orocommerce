@@ -20,7 +20,7 @@ use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class ProductDuplicatorTest extends \PHPUnit_Framework_TestCase
+class ProductDuplicatorTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
@@ -39,37 +39,37 @@ class ProductDuplicatorTest extends \PHPUnit_Framework_TestCase
     const SHORT_DESCRIPTION_CUSTOM_LOCALE = 'short description custom';
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|EntityManager
+     * @var \PHPUnit\Framework\MockObject\MockObject|EntityManager
      */
     protected $objectManager;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|DoctrineHelper
+     * @var \PHPUnit\Framework\MockObject\MockObject|DoctrineHelper
      */
     protected $doctrineHelper;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|EventDispatcherInterface
+     * @var \PHPUnit\Framework\MockObject\MockObject|EventDispatcherInterface
      */
     protected $eventDispatcher;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|SkuIncrementorInterface
+     * @var \PHPUnit\Framework\MockObject\MockObject|SkuIncrementorInterface
      */
     protected $skuIncrementor;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|FileManager
+     * @var \PHPUnit\Framework\MockObject\MockObject|FileManager
      */
     protected $fileManager;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|AttachmentProvider
+     * @var \PHPUnit\Framework\MockObject\MockObject|AttachmentProvider
      */
     protected $attachmentProvider;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|Connection
+     * @var \PHPUnit\Framework\MockObject\MockObject|Connection
      */
     protected $connection;
 

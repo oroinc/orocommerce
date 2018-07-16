@@ -13,18 +13,18 @@ use Symfony\Component\Finder\Finder;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Yaml\Parser;
 
-class OrderAddressSecurityProviderTest extends \PHPUnit_Framework_TestCase
+class OrderAddressSecurityProviderTest extends \PHPUnit\Framework\TestCase
 {
     /** @var OrderAddressSecurityProvider */
     protected $provider;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|AuthorizationCheckerInterface */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|AuthorizationCheckerInterface */
     protected $authorizationChecker;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|TokenAccessorInterface */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|TokenAccessorInterface */
     protected $tokenAccessor;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|OrderAddressProvider */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|OrderAddressProvider */
     protected $orderAddressProvider;
 
     protected function setUp()

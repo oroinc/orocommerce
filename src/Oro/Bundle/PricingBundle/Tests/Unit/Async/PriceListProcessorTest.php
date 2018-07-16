@@ -26,42 +26,42 @@ use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Psr\Log\LoggerInterface;
 
-class PriceListProcessorTest extends \PHPUnit_Framework_TestCase
+class PriceListProcessorTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var PriceListTriggerFactory|\PHPUnit_Framework_MockObject_MockObject
+     * @var PriceListTriggerFactory|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $triggerFactory;
 
     /**
-     * @var CombinedPriceListTriggerHandler|\PHPUnit_Framework_MockObject_MockObject
+     * @var CombinedPriceListTriggerHandler|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $triggerHandler;
 
     /**
-     * @var CombinedPriceListsBuilderFacade|\PHPUnit_Framework_MockObject_MockObject
+     * @var CombinedPriceListsBuilderFacade|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $combinedPriceListsBuilderFacade;
 
     /**
-     * @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $logger;
 
     /**
-     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $registry;
 
     /**
-     * @var CombinedPriceListRepository|\PHPUnit_Framework_MockObject_MockObject
+     * @var CombinedPriceListRepository|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $repository;
 
     /**
-     * @var DatabaseExceptionHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var DatabaseExceptionHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $databaseExceptionHelper;
 
@@ -125,13 +125,13 @@ class PriceListProcessorTest extends \PHPUnit_Framework_TestCase
             ->with(CombinedPriceList::class)
             ->willReturn($em);
 
-        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
+        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message **/
         $message = $this->createMock(MessageInterface::class);
         $message->expects($this->any())
             ->method('getBody')
             ->willReturn($body);
 
-        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
+        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session **/
         $session = $this->createMock(SessionInterface::class);
 
         $this->logger->expects($this->once())
@@ -171,13 +171,13 @@ class PriceListProcessorTest extends \PHPUnit_Framework_TestCase
             ->with(CombinedPriceList::class)
             ->willReturn($em);
 
-        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
+        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message **/
         $message = $this->createMock(MessageInterface::class);
         $message->expects($this->any())
             ->method('getBody')
             ->willThrowException($exception);
 
-        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
+        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session **/
         $session = $this->createMock(SessionInterface::class);
 
         $this->logger->expects($this->once())
@@ -216,7 +216,7 @@ class PriceListProcessorTest extends \PHPUnit_Framework_TestCase
             ->with(CombinedPriceList::class)
             ->willReturn($em);
 
-        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
+        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message **/
         $message = $this->createMock(MessageInterface::class);
         $message->expects($this->any())
             ->method('getBody')
@@ -226,7 +226,7 @@ class PriceListProcessorTest extends \PHPUnit_Framework_TestCase
             ->method('error')
             ->with('Unexpected exception occurred during Combined Price Lists build', ['exception' => $exception]);
 
-        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
+        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session **/
         $session = $this->createMock(SessionInterface::class);
 
         $this->databaseExceptionHelper->expects($this->never())
@@ -249,13 +249,13 @@ class PriceListProcessorTest extends \PHPUnit_Framework_TestCase
         $productIds = [2];
         $trigger = new PriceListTrigger([$priceList->getId() => $productIds]);
 
-        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
+        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message **/
         $message = $this->createMock(MessageInterface::class);
         $message->expects($this->any())
             ->method('getBody')
             ->willReturn($body);
 
-        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
+        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session **/
         $session = $this->createMock(SessionInterface::class);
 
         $this->triggerFactory->expects($this->once())
@@ -293,13 +293,13 @@ class PriceListProcessorTest extends \PHPUnit_Framework_TestCase
 
         $data = [PriceListTriggerFactory::PRODUCT => [$priceListId => [$productId]]];
 
-        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
+        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message **/
         $message = $this->createMock(MessageInterface::class);
         $message->expects($this->any())
             ->method('getBody')
             ->willReturn(json_encode($data));
 
-        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
+        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session **/
         $session = $this->createMock(SessionInterface::class);
 
         $this->triggerFactory->expects($this->once())
@@ -328,7 +328,7 @@ class PriceListProcessorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return CombinedPriceListToPriceListRepository|\PHPUnit_Framework_MockObject_MockObject
+     * @return CombinedPriceListToPriceListRepository|\PHPUnit\Framework\MockObject\MockObject
      */
     private function assertEntityManagerCalled()
     {

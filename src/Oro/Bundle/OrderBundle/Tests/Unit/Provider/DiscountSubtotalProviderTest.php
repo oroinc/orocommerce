@@ -20,22 +20,22 @@ class DiscountSubtotalProviderTest extends AbstractSubtotalProviderTest
     protected $provider;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface
+     * @var \PHPUnit\Framework\MockObject\MockObject|TranslatorInterface
      */
     protected $translator;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|RoundingServiceInterface
+     * @var \PHPUnit\Framework\MockObject\MockObject|RoundingServiceInterface
      */
     protected $roundingService;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|LineItemSubtotalProvider
+     * @var \PHPUnit\Framework\MockObject\MockObject|LineItemSubtotalProvider
      */
     protected $lineItemSubtotal;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|TokenAccessorInterface
+     * @var \PHPUnit\Framework\MockObject\MockObject|TokenAccessorInterface
      */
     protected $tokenAccessor;
 

@@ -8,12 +8,12 @@ use Oro\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Website\WebsiteInterface;
 
-class SitemapIndexMessageFactoryTest extends \PHPUnit_Framework_TestCase
+class SitemapIndexMessageFactoryTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var WebsiteRepository|\PHPUnit_Framework_MockObject_MockObject
+     * @var WebsiteRepository|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $websiteRepository;
 
@@ -103,7 +103,7 @@ class SitemapIndexMessageFactoryTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param int $websiteId
-     * @return WebsiteInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return WebsiteInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private function createWebsiteMock($websiteId)
     {

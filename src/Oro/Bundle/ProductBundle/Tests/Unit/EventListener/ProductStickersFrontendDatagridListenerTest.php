@@ -8,7 +8,7 @@ use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\ProductBundle\EventListener\ProductStickersFrontendDatagridListener;
 use Oro\Bundle\SearchBundle\Datagrid\Event\SearchResultAfter;
 
-class ProductStickersFrontendDatagridListenerTest extends \PHPUnit_Framework_TestCase
+class ProductStickersFrontendDatagridListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var ProductStickersFrontendDatagridListener
@@ -78,7 +78,7 @@ class ProductStickersFrontendDatagridListenerTest extends \PHPUnit_Framework_Tes
     }
 
     /**
-     * @return PreBuild|\PHPUnit_Framework_MockObject_MockObject
+     * @return PreBuild|\PHPUnit\Framework\MockObject\MockObject
      */
     private function createPreBuildEventMock()
     {
@@ -86,7 +86,7 @@ class ProductStickersFrontendDatagridListenerTest extends \PHPUnit_Framework_Tes
     }
 
     /**
-     * @return SearchResultAfter|\PHPUnit_Framework_MockObject_MockObject
+     * @return SearchResultAfter|\PHPUnit\Framework\MockObject\MockObject
      */
     private function createSearchResultAfterEventMock()
     {
@@ -94,7 +94,7 @@ class ProductStickersFrontendDatagridListenerTest extends \PHPUnit_Framework_Tes
     }
 
     /**
-     * @return DatagridConfiguration|\PHPUnit_Framework_MockObject_MockObject
+     * @return DatagridConfiguration|\PHPUnit\Framework\MockObject\MockObject
      */
     private function createDatagridConfigurationMock()
     {
@@ -102,7 +102,7 @@ class ProductStickersFrontendDatagridListenerTest extends \PHPUnit_Framework_Tes
     }
 
     /**
-     * @return ResultRecord|\PHPUnit_Framework_MockObject_MockObject
+     * @return ResultRecord|\PHPUnit\Framework\MockObject\MockObject
      */
     private function createResultRecordMock()
     {

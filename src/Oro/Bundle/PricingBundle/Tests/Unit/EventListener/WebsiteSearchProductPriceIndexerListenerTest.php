@@ -12,7 +12,7 @@ use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
-class WebsiteSearchProductPriceIndexerListenerTest extends \PHPUnit_Framework_TestCase
+class WebsiteSearchProductPriceIndexerListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var WebsiteSearchProductPriceIndexerListener
@@ -20,22 +20,22 @@ class WebsiteSearchProductPriceIndexerListenerTest extends \PHPUnit_Framework_Te
     private $listener;
 
     /**
-     * @var WebsiteContextManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var WebsiteContextManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $websiteContextManager;
 
     /**
-     * @var RegistryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var RegistryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $doctrine;
 
     /**
-     * @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $configManager;
 
     /**
-     * @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $manager;
 
