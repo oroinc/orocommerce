@@ -42,16 +42,16 @@ services:
             - "@translator"
 
     oro_product.formatter.product_unit_value:
-        parent: 'oro_product.formatter.unit_value'
+        parent: oro_product.formatter.unit_value
         public: true
         calls:
-            - ['setTranslationPrefix', ['oro.product_unit']]
+            - [setTranslationPrefix, ['oro.product_unit']]
 
     oro_product.formatter.product_unit_label:
-        parent: 'oro_product.formatter.unit_label'
+        parent: oro_product.formatter.unit_label
         public: true
         calls:
-            - ['setTranslationPrefix', ['oro.product_unit']]
+            - [setTranslationPrefix, ['oro.product_unit']]
 
     oro_product.twig.product_unit_value:
         class: 'Oro\Bundle\ProductBundle\Twig\ProductUnitValueExtension'
