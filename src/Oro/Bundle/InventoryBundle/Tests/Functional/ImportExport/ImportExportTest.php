@@ -157,8 +157,6 @@ class ImportExportTest extends AbstractImportExportTestCase
                 ProcessorRegistry::TYPE_EXPORT_TEMPLATE
             );
 
-        //$chains = explode('/', $result['url']);
-
         return $this
             ->getContainer()
             ->get('oro_importexport.file.file_manager')

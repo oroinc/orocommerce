@@ -355,7 +355,6 @@ class ImportExportTest extends WebTestCase
             );
 
         $result = json_decode($result->getContent(), true);
-        //$chains = explode('/', $result['url']);
 
         return $this
             ->getContainer()
