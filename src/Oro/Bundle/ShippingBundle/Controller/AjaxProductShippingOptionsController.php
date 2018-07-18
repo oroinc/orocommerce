@@ -16,6 +16,10 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * Handles /freight-classes request
+ * returns formatted units choices
+ */
 class AjaxProductShippingOptionsController extends Controller
 {
     /**

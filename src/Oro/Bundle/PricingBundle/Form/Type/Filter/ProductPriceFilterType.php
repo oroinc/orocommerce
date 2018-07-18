@@ -11,6 +11,10 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
 
+/**
+ * Builds form for ProductPriceFilter
+ * adds 'unit' Choice field with choices from OroProductBundle:ProductUnit repository
+ */
 class ProductPriceFilterType extends AbstractType
 {
     const NAME = 'oro_pricing_product_price_filter';

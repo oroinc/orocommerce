@@ -9,6 +9,10 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Extends AbstractProductAwareType behavior by formatting
+ * view choices values using UnitLabelFormatterInterface
+ */
 class ProductUnitSelectType extends AbstractProductAwareType
 {
     const NAME = 'oro_product_unit_select';

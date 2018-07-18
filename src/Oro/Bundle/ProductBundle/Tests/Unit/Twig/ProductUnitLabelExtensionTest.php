@@ -25,11 +25,7 @@ class ProductUnitLabelExtensionTest extends \PHPUnit\Framework\TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $container = self::getContainerBuilder()
-            ->add('oro_product.formatter.product_unit_label', $this->formatter)
-            ->getContainer($this);
-
-        $this->extension = new ProductUnitLabelExtension($container);
+        $this->extension = new ProductUnitLabelExtension($this->formatter);
     }
 
     /**

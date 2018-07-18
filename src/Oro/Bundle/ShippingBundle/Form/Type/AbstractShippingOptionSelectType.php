@@ -12,6 +12,10 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Base FormBuilder for ShippingOption forms
+ * handles common 'choices' formatting logic
+ */
 abstract class AbstractShippingOptionSelectType extends AbstractType
 {
     const NAME = '';

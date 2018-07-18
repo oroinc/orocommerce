@@ -10,6 +10,10 @@ use Oro\Bundle\PricingBundle\Entity\Repository\CombinedProductPriceRepository;
 use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Oro\Bundle\ProductBundle\Formatter\UnitValueFormatterInterface;
 
+/**
+ * Realization of CombinedProductPriceProviderInterface
+ * Provides CombinedProductPrice formatted variables (price, unit, quantity_with_unit) for views
+ */
 class CombinedProductPriceProvider implements CombinedProductPriceProviderInterface
 {
     /**

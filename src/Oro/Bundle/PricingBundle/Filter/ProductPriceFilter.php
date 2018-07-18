@@ -13,6 +13,10 @@ use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 use Symfony\Component\Form\FormFactoryInterface;
 
+/**
+ * Applies a filter restrictions to a data source (use public method apply())
+ * More details: Modifies dbSource query by applying restriction constraints (WHERE type = $data['type'])
+ */
 class ProductPriceFilter extends NumberRangeFilter
 {
     /**

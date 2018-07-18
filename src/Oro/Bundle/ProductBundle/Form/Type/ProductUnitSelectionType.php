@@ -17,6 +17,13 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
 
+/**
+ * Extends AbstractProductAwareType behavior by:
+ * validating units
+ * setAcceptable units
+ * formatting view choices values using UnitLabelFormatterInterface
+ *
+ */
 class ProductUnitSelectionType extends AbstractProductAwareType
 {
     const NAME = 'oro_product_unit_selection';

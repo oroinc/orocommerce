@@ -11,6 +11,11 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * Base class for AjaxProductPriceControllers (backend and frontend)
+ * Is used to handle common logic for ProductPrice related actions
+ * see method descriptions for more details
+ */
 abstract class AbstractAjaxProductPriceController extends Controller
 {
     /**

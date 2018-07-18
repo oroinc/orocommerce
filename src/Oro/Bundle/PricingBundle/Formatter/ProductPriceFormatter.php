@@ -7,6 +7,9 @@ use Oro\Bundle\PricingBundle\Entity\BaseProductPrice;
 use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Oro\Bundle\ProductBundle\Formatter\UnitValueFormatterInterface;
 
+/**
+ * Used to create formatted array of BaseProductPrice variables
+ */
 class ProductPriceFormatter
 {
     /**

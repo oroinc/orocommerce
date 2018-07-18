@@ -18,6 +18,9 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
 
+/**
+ * Builds QuoteProductType form
+ */
 class QuoteProductType extends AbstractType
 {
     const NAME = 'oro_sale_quote_product';

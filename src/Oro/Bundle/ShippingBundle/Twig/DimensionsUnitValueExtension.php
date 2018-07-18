@@ -6,6 +6,15 @@ use Oro\Bundle\ProductBundle\Entity\MeasureUnitInterface;
 use Oro\Bundle\ProductBundle\Formatter\UnitValueFormatterInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * Adds Twig filters [
+ * oro_dimensions_unit_format_value,
+ * oro_dimensions_unit_format_value_short
+ * oro_dimensions_unit_format_code
+ * ]
+ *
+ * delegates formatting to UnitValueFormatter
+ */
 class DimensionsUnitValueExtension extends \Twig_Extension
 {
     const NAME = 'oro_dimensions_unit_value';

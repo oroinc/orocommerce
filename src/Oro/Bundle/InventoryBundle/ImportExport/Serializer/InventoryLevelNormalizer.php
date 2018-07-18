@@ -12,6 +12,9 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Oro\Bundle\ProductBundle\Rounding\QuantityRoundingService;
 
+/**
+ * Normalizes InventoryLevel class instances (depends on mode)
+ */
 class InventoryLevelNormalizer extends ConfigurableEntityNormalizer
 {
     /**

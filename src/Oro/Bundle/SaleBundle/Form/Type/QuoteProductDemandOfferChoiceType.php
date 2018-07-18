@@ -10,6 +10,9 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
 
+/**
+ * Extends Choice type behavior by modifying 'choice_label' using translator and unitValueFormatter
+ */
 class QuoteProductDemandOfferChoiceType extends AbstractType
 {
     const NAME = 'oro_sale_quote_product_demand_offer_choice';

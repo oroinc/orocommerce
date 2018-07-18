@@ -11,6 +11,10 @@ use Oro\Bundle\SaleBundle\Entity\QuoteProductRequest;
 use Oro\Bundle\SaleBundle\Model\BaseQuoteProductItem;
 use Symfony\Component\Translation\TranslatorInterface;
 
+/**
+ * Facade for formatting operations
+ * use translator to translate variables, delegates formatting responsibility to internal formatters
+ */
 class QuoteProductFormatter
 {
     /**
