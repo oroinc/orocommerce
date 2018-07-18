@@ -28,6 +28,9 @@ use Symfony\Component\OptionsResolver\Exception\AccessException;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
+/**
+ * Builds Form for create/update actions on Oro\Bundle\SaleBundle\Entity\Quote entity
+ */
 class QuoteType extends AbstractType
 {
     const NAME = 'oro_sale_quote';
