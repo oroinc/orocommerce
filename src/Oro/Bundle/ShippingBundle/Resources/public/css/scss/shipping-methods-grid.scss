@@ -25,7 +25,7 @@
 
         &.expanded {
             .fa-plus-square-o:before {
-                content: '\f147';
+                content: $fa-var-minus-square-o;
             }
         }
     }
@@ -59,7 +59,7 @@
 
         &:after {
             color: #bbb;
-            content: '\f1f8';
+            content: $fa-var-trash;
         }
     }
 }
@@ -67,7 +67,7 @@
 .shipping-method-config {
     &.expanded {
         .fa-plus-square-o:before {
-            content: '\f147';
+            content: $fa-var-minus-square-o;
         }
     }
 
