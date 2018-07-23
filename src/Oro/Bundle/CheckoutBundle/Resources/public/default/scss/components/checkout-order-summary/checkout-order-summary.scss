@@ -3,6 +3,7 @@
 @mixin update-checkout-blocks() {
     .checkout-order-summary__totals {
         float: none;
+        padding-top: 20px;
     }
 }
 

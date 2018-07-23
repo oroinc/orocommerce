@@ -45,7 +45,8 @@
 
 {% block _single_page_checkout_sticky_panel_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        id: 'single-page-checkout-sticky'
+        id: 'single-page-checkout-sticky',
+        '~class': 'single-page-checkout-sticky'
     }) %}
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
@@ -374,8 +375,10 @@
         'data-sticky': {
             isSticky: true,
             affixed: true,
-            autoWidth: true,
+            autoWidth: false,
             placeholderId: 'single-page-checkout-sticky-totals',
+            toggleClass: 'checkout-order-summary-totals-sticky',
+            moveToPanel: false,
             viewport: {
                 minScreenType: 'desktop'
             }

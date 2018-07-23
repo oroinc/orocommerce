@@ -129,7 +129,13 @@ layout:
                 checkout: '=data["checkout"]'
                 form: '=data["oro_checkout_single_page_transition_form"].getTransitionFormView(data["workflowItem"])'
                 workflowItem: '=data["workflowItem"]'
-
+        - '@add':
+            id: checkout_order_summary_totals_sticky_container
+            blockType: container
+            parentId: checkout_order_summary_totals_container
+        - '@move':
+            id: checkout_order_summary_totals
+            parentId: checkout_order_summary_totals_sticky_container
         - '@add':
             id: checkout_button_continue_right_container
             blockType: single_page_transition_container

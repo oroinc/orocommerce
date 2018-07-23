@@ -21,6 +21,8 @@ $checkout-body-margin: 0 (-$offset-x-m) !default;
 $checkout-approval-wrapper-margin: 0 $offset-x-m !default;
 $checkout-approval-note-margin: $offset-x-s 0 !default;
 
+$checkout-submit-tooltip-arrow-width: 0 !default;
+
 $checkout-summary-grid-container-shadow-background: linear-gradient(to bottom, rgba(245,245,245,0) 0%, rgba(245,245,245,1) 100%) !default;
 
 
@@ -29,6 +31,9 @@ $checkout-tablet-padding: $offset-y !default;
 $checkout-tablet-border-radius: 0 !default;
 
 $checkout-approval-wrapper-tablet-margin: $offset-y-m !default;
+
+$checkout-submit-tooltip-left: auto !default;
+$checkout-submit-tooltip-right: 65px !default;
 
 //Tablet small
 $checkout-submit-btn-tablet-small-width: 100% !default;
