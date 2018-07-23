@@ -38,6 +38,16 @@ class FrontendProductPriceDatagridListener
     private $translator;
 
     /**
+     * @var string
+     */
+    private $priceColumnNameFilter = WebsiteSearchProductPriceIndexerListener::MP_ALIAS;
+
+    /**
+     * @var string
+     */
+    private $priceColumnNameSorter = 'minimal_price_CPL_ID_CURRENCY';
+
+    /**
      * @param ProductPriceScopeCriteriaRequestHandler $scopeCriteriaRequestHandler
      * @param UserCurrencyManager $currencyManager
      * @param CombinedProductPriceProvider $combinedProductPriceProvider
@@ -53,6 +63,22 @@ class FrontendProductPriceDatagridListener
         $this->currencyManager = $currencyManager;
         $this->combinedProductPriceProvider = $combinedProductPriceProvider;
         $this->translator = $translator;
+    }
+
+    /**
+     * @param string $columnName
+     */
+    public function setPriceColumnNameForFilter($columnName)
+    {
+        $this->priceColumnNameFilter = $columnName;
+    }
+
+    /**
+     * @param string $columnName
+     */
+    public function setPriceColumnNameForSorter($columnName)
+    {
+        $this->priceColumnNameSorter = $columnName;
     }
 
     /**
@@ -117,7 +143,7 @@ class FrontendProductPriceDatagridListener
             [
                 self::COLUMN_MINIMAL_PRICE => [
                     'type' => 'frontend-product-price',
-                    'data_name' => WebsiteSearchProductPriceIndexerListener::MP_ALIAS,
+                    'data_name' => $this->priceColumnNameFilter
                 ],
             ]
         );
@@ -133,7 +159,7 @@ class FrontendProductPriceDatagridListener
 
         $config->addSorter(
             self::COLUMN_MINIMAL_PRICE_SORT,
-            ['data_name' => 'minimal_price_CPL_ID_CURRENCY', 'type' => 'decimal']
+            ['data_name' => $this->priceColumnNameSorter, 'type' => 'decimal']
         );
     }
 }

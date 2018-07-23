@@ -26,7 +26,7 @@ class ProductPriceScopeCriteria implements ProductPriceScopeCriteriaInterface
     /**
      * @return Customer
      */
-    public function getCustomer(): Customer
+    public function getCustomer()
     {
         return $this->customer;
     }
@@ -64,7 +64,7 @@ class ProductPriceScopeCriteria implements ProductPriceScopeCriteriaInterface
     /**
      * @return CustomerGroup
      */
-    public function getCustomerGroup(): CustomerGroup
+    public function getCustomerGroup()
     {
         return $this->customerGroup;
     }

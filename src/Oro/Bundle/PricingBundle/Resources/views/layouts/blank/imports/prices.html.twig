@@ -32,20 +32,25 @@
 {% block product_price %}
     {% set buttonsId = id|replace({'_price': ''}) ~ '_line_item_form_buttons' %}
     {% if blocks[buttonsId] is defined and blocks[buttonsId].children is not empty %}
-        {% if productPrices %}
+        {#{% if productPrices %}#} {# TODO BB-14587 #}
             {% set attr = layout_attr_defaults(attr, {
                 '~class': ' product-price__main'
             }) %}
             <div {{ block('block_attributes') }}>
                 {{ block_widget(block) }}
             </div>
-        {% else %}
-            {{ 'oro.pricing.frontend.product_prices.empty_prices'|trans }}
-        {% endif %}
+        {#{% else %}#} {# TODO BB-14587 #}
+            {#{{ 'oro.pricing.frontend.product_prices.empty_prices'|trans }}#}
+        {#{% endif %}#}
     {% endif %}
 {% endblock %}
 
 {% block product_price_value %}
+    {% if productPrices is empty %} {# TODO BB-14587 #}
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': ' hidden'
+        }) %}
+    {% endif %} {# TODO BB-14587 #}
     <div {{ block('block_attributes') }}
             data-name="price">
         <span class="product-price__label">{{ 'oro.pricing.frontend.pricelist.index.your_price'|trans }}</span>
@@ -78,9 +83,11 @@
 {% endblock %}
 
 {% block product_price_not_found %}
-    {% set attr = layout_attr_defaults(attr, {
-        '~class': ' hidden'
-    }) %}
+    {% if productPrices %} {# TODO BB-14587 #}
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': ' hidden'
+        }) %}
+    {% endif %} {# TODO BB-14587 #}
     {% if not is_configurable_product_type(product.type) %}
         <div {{ block('block_attributes') }}
                 data-name="price-not-found">
@@ -94,7 +101,7 @@
 {% endblock %}
 
 {% block product_price_hint %}
-    {% if productPrices %}
+    {#{% if productPrices %}#} {# TODO BB-14587 #}
         {% set attr = layout_attr_defaults(attr, {
         'data-name': 'prices-hint',
         'data-placement': 'bottom',
@@ -103,7 +110,7 @@
         'data-container': 'body',
         'data-class': 'prices-hint-content'
         }) %}
-    {% endif %}
+    {#{% endif %}#} {# TODO BB-14587 #}
 
     <div {{ block('block_attributes') }}
             class="product-price__hint">
