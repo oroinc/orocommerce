@@ -10,6 +10,9 @@ use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
 
 class PaymentMethodViewsProvider
 {
+    /** @var array */
+    private $paymentViewsPerContextCache = [];
+
     /**
      * @var PaymentMethodViewProviderInterface
      */
@@ -47,8 +50,12 @@ class PaymentMethodViewsProvider
      */
     public function getViews(PaymentContextInterface $context)
     {
-        $methods = $this->paymentMethodProvider->getApplicablePaymentMethods($context);
+        $contextHash = md5(serialize($context));
+        if (isset($this->paymentViewsPerContextCache[$contextHash])) {
+            return $this->paymentViewsPerContextCache[$contextHash];
+        }
 
+        $methods = $this->paymentMethodProvider->getApplicablePaymentMethods($context);
         if (count($methods) === 0) {
             return [];
         }
@@ -67,7 +74,8 @@ class PaymentMethodViewsProvider
             ];
         }
 
-        return $paymentMethodViews;
+        $this->paymentViewsPerContextCache[$contextHash] = $paymentMethodViews;
+        return $this->paymentViewsPerContextCache[$contextHash];
     }
 
     /**

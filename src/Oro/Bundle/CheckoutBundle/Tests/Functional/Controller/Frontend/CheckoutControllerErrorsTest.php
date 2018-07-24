@@ -158,7 +158,6 @@ class CheckoutControllerErrorsTest extends CheckoutControllerTestCase
 
         //Order Review step
         $crawler = $this->goToOrderReviewStepFromPaymentWithPaymentTerm($crawler); //order content has changed
-        $crawler = $this->goToOrderReviewStepFromPaymentWithPaymentTerm($crawler);
         static::assertContains(self::ORDER_REVIEW_SIGN, $crawler->html());
 
         $this->disableAllShippingRules();

@@ -89,8 +89,8 @@ workflows:
                         saveStateUrl: $.result.saveStateUrl
                         targetEvents:
                             '.checkout-billing-address, .checkout-shipping-address':
-                                - 'payment-methods:refresh'
                                 - 'shipping-methods:refresh'
+                                - 'payment-methods:refresh'
                         ignoreTargets:
                             - '.checkout-payment-methods .checkout-form__payment-container'
                         enableOnLoad: false

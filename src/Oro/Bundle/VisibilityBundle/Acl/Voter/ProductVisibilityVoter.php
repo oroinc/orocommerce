@@ -53,9 +53,13 @@ class ProductVisibilityVoter extends AbstractEntityVoter
             /** @var $repository ProductRepository */
             $qb = $repository->getProductsQueryBuilder([$identifier]);
             $this->modifier->modify($qb);
-            $product = $qb->getQuery()->getOneOrNullResult();
 
-            if ($product) {
+            $qb
+                ->resetDQLPart('select')
+                ->select('1')
+                ->setMaxResults(1);
+
+            if (!empty($qb->getQuery()->getScalarResult())) {
                 return self::ACCESS_GRANTED;
             }
 

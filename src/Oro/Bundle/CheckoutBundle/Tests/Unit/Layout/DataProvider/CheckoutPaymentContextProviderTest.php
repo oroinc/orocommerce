@@ -48,5 +48,16 @@ class CheckoutPaymentContextProviderTest extends \PHPUnit_Framework_TestCase
 
         $paymentContext = $this->provider->getContext($this->checkout);
         $this->assertEquals($context, $paymentContext);
+
+        return $context;
+    }
+
+    public function testGetPaymentStatusCached()
+    {
+        $context = $this->testGetPaymentStatus();
+
+        $paymentContext = $this->provider->getContext($this->checkout);
+
+        $this->assertEquals($context, $paymentContext);
     }
 }

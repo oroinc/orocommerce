@@ -149,7 +149,7 @@ layout:
             blockType: layout_subtree_update
             parentId: checkout_button_continue_right_container
             options:
-                reloadEvents: ['shipping-methods:refresh']
+                reloadEvents: ['payment-methods:refresh']
                 showLoading: false
         - '@add':
             id: checkout_button_continue_right

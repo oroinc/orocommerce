@@ -52,6 +52,22 @@ class CheckoutToOrderConverterTest extends \PHPUnit_Framework_TestCase
             ->method('map')
             ->with($checkout, ['lineItems' => $lineItems])
             ->willReturn($order);
+
+        $this->assertSame($order, $this->converter->getOrder($checkout));
+
+        return $order;
+    }
+
+    /**
+     * Test that result of the 2nd call of the service with arguments
+     * that has the same hash will be returned from the cache
+     */
+    public function testGetOrderCached()
+    {
+        $checkout = new Checkout();
+
+        $order = $this->testGetOrder();
+
         $this->assertSame($order, $this->converter->getOrder($checkout));
     }
 }

@@ -566,7 +566,7 @@ class ShippingPriceProviderTest extends \PHPUnit_Framework_TestCase
             ShippingContext::FIELD_CURRENCY => 'USD'
         ]);
 
-        $this->shippingRulesProvider->expects(static::exactly(2))
+        $this->shippingRulesProvider->expects($this->once())
             ->method('getShippingMethodsConfigsRules')
             ->with($context)
             ->willReturn([

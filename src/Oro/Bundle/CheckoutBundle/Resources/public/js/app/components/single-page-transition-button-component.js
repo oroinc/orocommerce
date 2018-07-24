@@ -11,7 +11,7 @@ define(function(require) {
             saveStateUrl: null,
             targetEvents: {},
             ignoreTargets: {},
-            changeTimeout: 1500
+            changeTimeout: 500
         }),
 
         lastSavedData: '',
