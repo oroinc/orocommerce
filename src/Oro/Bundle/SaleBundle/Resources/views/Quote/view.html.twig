@@ -74,7 +74,11 @@
                                 {% if quoteProductOffer.allowIncrements %}{{ 'oro.sale.quoteproductoffer.allow_increments.label'|trans }}{% endif %}
                             </td>
                             <td class="quote-line_item-price quote-line_item-price-{% if loop.first %}first{% else %}not_first{% endif %}">
-                                {{ quoteProductOffer.price|oro_format_price }}
+                                {% if quoteProductOffer.price %}
+                                    {{ quoteProductOffer.price|oro_format_price }}
+                                {% else %}
+                                    {{ 'N/A'|trans }}
+                                {% endif %}
                             </td>
                             {% if loop.first %}
                                 <td  class="quote-line_item-target_notes" rowspan="{{ numSubItems }}">{{ quoteProduct.commentCustomer }}</td>
@@ -128,24 +132,27 @@
 
     {% set dataBlocks = [{
         'title': 'oro.order.sections.general'|trans,
-        'class': 'active',
+        'class': 'nav-item active',
         'subblocks': [{'data' : [quoteInformationWidget]}]
     }] %}
 
     {% if entity.quoteProducts | length %}
         {% set dataBlocks = dataBlocks|merge([{
             'title': 'oro.sale.quote.sections.quote_products'|trans,
+            'class': 'nav-item',
             'subblocks': [{'data' : {'products' : quoteProducts}}]
         }]) %}
     {% endif %}
 
     {% set dataBlocks = dataBlocks|merge([{
         'title': 'oro.sale.quote.sections.shipping_address'|trans,
+        'class': 'nav-item',
         'subblocks': [{'data' : [shippingAddress]}]
     }]) %}
 
     {% set dataBlocks = dataBlocks|merge([{
         'title': 'oro.sale.quote.sections.shipping_information'|trans,
+        'class': 'nav-item',
         'subblocks': [{'data' : [shippingInformation]}]
     }]) %}
 

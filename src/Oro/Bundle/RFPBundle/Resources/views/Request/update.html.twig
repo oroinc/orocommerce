@@ -38,7 +38,7 @@
     {% set dataBlocks = [
         {
             'title': 'oro.rfp.sections.general'|trans,
-            'class': 'active',
+            'class': 'nav-item active',
             'subblocks': [{
                 'title': '',
                 'data': [
@@ -60,6 +60,7 @@
         },
         {
             'title': 'oro.rfp.sections.request_products'|trans,
+            'class': 'nav-item',
             'subblocks': [{
                 'title': '',
                 'data': [
@@ -77,6 +78,7 @@
     {% if additionalData is not empty %}
         {% set dataBlocks = dataBlocks|merge([{
             'title': 'oro.rfp.sections.additional'|trans,
+            'class': 'nav-item',
             'subblocks': [{
                 'title': '',
                 'useSpan': false,

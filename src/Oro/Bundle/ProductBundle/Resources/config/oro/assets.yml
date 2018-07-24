@@ -1,5 +1,4 @@
 assets:
     css:
         'oroproduct':
-            - 'bundles/oroproduct/css/style.scss'
-            - 'bundles/oroproduct/css/grid-sidebar.scss'
+            - 'bundles/oroproduct/css/scss/main.scss'

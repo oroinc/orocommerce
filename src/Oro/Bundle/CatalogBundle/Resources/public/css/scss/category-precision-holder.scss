@@ -1,0 +1,21 @@
+/* @theme: admin.oro; */
+
+.category-precision-holder {
+    tr {
+        vertical-align: top;
+    }
+
+    &__unit {
+        width: 115px;
+
+        .unit {
+            width: 115px;
+        }
+    }
+
+    input {
+        &.precision {
+            width: 40px;
+        }
+    }
+}

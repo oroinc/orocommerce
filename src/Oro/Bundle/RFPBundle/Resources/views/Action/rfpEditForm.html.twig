@@ -24,7 +24,7 @@
     {% set dataBlocks = [
         {
             'title': 'oro.rfp.sections.general'|trans,
-            'class': 'active',
+            'class': 'nav-item active',
             'subblocks': [{
                 'data': [
                     form_row(form.request.firstName),
@@ -45,6 +45,7 @@
         },
         {
             'title': 'oro.rfp.sections.request_products'|trans,
+            'class': 'nav-item',
             'subblocks': [{
                 'title': '',
                 'data': [
