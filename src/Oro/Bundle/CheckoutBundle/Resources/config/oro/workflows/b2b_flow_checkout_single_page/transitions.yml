@@ -76,6 +76,8 @@ workflows:
                                 data: $internal_state_token
                         visitor_email:
                             form_type: oro_customer_visitor_email_address
+                            options:
+                                required: true
 
             create_order:
                 step_to: checkout
@@ -157,3 +159,5 @@ workflows:
                                 data: $internal_state_token
                         visitor_email:
                             form_type: oro_customer_visitor_email_address
+                            options:
+                                required: true

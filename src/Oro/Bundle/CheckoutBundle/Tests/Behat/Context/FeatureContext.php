@@ -285,4 +285,16 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
             $parsedUrl['path']
         );
     }
+
+    /**
+     * @Then /^(?:|I )should see "(?P<field>(?:[^"]|\\")*)" button enabled$/
+     */
+    public function iShouldSeeButtonEnabled($field)
+    {
+        $this->spin(function () use ($field) {
+            $button = $this->elementFactory->createElement($field);
+
+            return !$button->hasAttribute('disabled');
+        }, 5);
+    }
 }
