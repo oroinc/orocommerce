@@ -155,18 +155,24 @@
            class="main-menu__link">
             <span class="main-menu__text">{{ category.label }}</span>
             {% if hasSublist %}
-                <span class="main-menu__taptick">
-                    <i class="fa-angle-down fa--no-offset"></i>
+                <span class="main-menu__taptick" aria-hidden="true">
+                    <span class="fa-angle-down fa--no-offset"></span>
                 </span>
             {% endif %}
         </a>
         {% if hasSublist %}
+            {% set togglerId = 'dropdown-'|uniqid %}
             <button class="main-menu__button-arrow"
                     data-toggle="dropdown"
                     data-go-to="next"
+                    id="{{ togglerId }}"
+                    aria-haspopup="true"
+                    aria-expanded="false"
+                    aria-label="{{ category.label }}"
             >
-                <i class="fa-angle-down fa--no-offset"></i>
+                <span class="fa-angle-down fa--no-offset" aria-hidden="true"></span>
             </button>
+            {% do block|merge_context({'togglerId': togglerId}) %}
             {{ block(sub_block) }}
         {% endif %}
     </li>
@@ -175,7 +181,8 @@
 {% block _web_catalog_menu_main_menu_sub_block_simple %}
     <div class="main-menu__sublist-container"
          data-header-row-toggle
-         data-scroll="true">
+         data-scroll="true"
+         aria-labelledby="{{ togglerId }}">
         <div class="main-menu-columns main-menu-columns--single">
             <div class="main-menu-column">
                 <ul class="main-menu-column__inner">
@@ -190,7 +197,8 @@
 {% block _web_catalog_menu_main_menu_sub_block_head %}
     <div class="main-menu__sublist-container"
          data-header-row-toggle
-         data-scroll="true">
+         data-scroll="true"
+         aria-labelledby="{{ togglerId }}">
         <div class="main-menu-columns">
             {% do block|merge_context({'categories': category.children }) %}
             {{ block('container_widget') }}
@@ -212,7 +220,8 @@
 {% block _web_catalog_menu_main_menu_sub_block_mega %}
     <div class="main-menu__sublist-container"
          data-header-row-toggle
-         data-scroll="true">
+         data-scroll="true"
+         aria-labelledby="{{ togglerId }}">
         <div class="main-menu-columns">
             {% do block|merge_context({'categories': category.children }) %}
             {{ block('container_widget') }}

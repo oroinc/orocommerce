@@ -27,21 +27,27 @@
         <span class="main-menu__text">{{ category.title }} </span>
         {% if category.hasSublist %}
             <span class="main-menu__taptick">
-                <i class="fa-angle-down fa--no-offset"></i>
+                <span class="fa-angle-down fa--no-offset" aria-hidden="true"></span>
             </span>
         {% endif %}
     </a>
     {% if category.hasSublist %}
+        {% set togglerId = 'dropdown-'|uniqid %}
         <button class="main-menu__button-arrow"
+                id="{{ togglerId }}"
                 data-toggle="dropdown"
                 data-go-to="next"
-        >
-            <i class="fa-angle-down fa--no-offset"></i>
+                aria-haspopup="true"
+                aria-expanded="false"
+                aria-label="{{ category.title }}">
+            <span class="fa-angle-down fa--no-offset" aria-hidden="true"></span>
         </button>
         {# START TOP NAVIGATION SUBLIST #}
         <div class="main-menu__sublist-container"
              data-header-row-toggle
-             data-scroll="true">
+             data-scroll="true"
+             role="menu"
+             aria-labelledby="{{ togglerId }}">
             <div class="main-menu-columns">
                 <div class="main-menu-column main-menu-column">
                     <div class="main-menu-column__title">{{ 'oro.catalog.menu.by_category.label'|trans }}</div>

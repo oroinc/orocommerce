@@ -28,14 +28,14 @@ Feature: Shopping list subtotal with different currencies
     And I click "Add to Shopping List" for "PSKU1" product
     And I should see 'Product has been added to "Shopping list"' flash message
     And I open shopping list widget
-    And I click "Shopping List"
+    And I follow "Shopping List"
     Then I should see "Subtotal $13.00"
     And I should see "Total $13.00"
     Then I am on homepage
     And I click "Currency Switcher"
     And I click "Euro"
     And I open shopping list widget
-    And I click "Shopping List"
+    And I follow "Shopping List"
     Then I should not see "Subtotal $13.00"
     And I should not see "Total $13.00"
     And I should see "Subtotal €10.00"
@@ -55,7 +55,7 @@ Feature: Shopping list subtotal with different currencies
     Then I proceed as the Buyer
     Then I am on homepage
     And I open shopping list widget
-    And I click "Shopping List"
+    And I follow "Shopping List"
     Then I should not see "Subtotal $13.00"
     And I should not see "Total $13.00"
     And I should see "Subtotal €10.00"

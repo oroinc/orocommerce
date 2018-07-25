@@ -1,14 +1,17 @@
 {% block localization_switcher_widget %}
     {% if localizations|length > 1 %}
         <div class="oro-toolbar oro-localization-switcher">
-            <div class="oro-toolbar__content" data-toggle="dropdown">
+            {% set togglerId = 'dropdown-'|uniqid %}
+            <div class="oro-toolbar__content" data-toggle="dropdown" role="button" id="{{ togglerId }}"
+                 aria-haspopup="true" aria-expanded="false"
+                 aria-label="{{ 'oro.frontendlocalization.select.label'|trans }}">
                 {{ selected_localization.titles|localized_value }}
-                <span class="oro-toolbar__icon">
-                    <i class="fa-angle-down"></i>
+                <span class="oro-toolbar__icon" aria-hidden="true">
+                    <span class="fa-angle-down"></span>
                 </span>
             </div>
 
-            <div class="oro-toolbar__dropdown">
+            <div class="oro-toolbar__dropdown" role="menu" aria-labelledby="{{ togglerId }}">
                 <div data-page-component-module="orofrontendlocalization/js/app/components/localization-switcher-component"
                      data-page-component-options="{{ {
                         'selectedLocalization': selected_localization.titles|localized_value,

@@ -32,7 +32,7 @@ Feature: Guest RFQ
     Then I should see "Product1"
     When I click "Add to Shopping List" for "PSKU1" product
     Then I should see "Product has been added to" flash message
-    And I click "Shopping List"
+    And I follow "Shopping List"
     And click "Request Quote"
     And I fill form with:
       | First Name             | Tester               |

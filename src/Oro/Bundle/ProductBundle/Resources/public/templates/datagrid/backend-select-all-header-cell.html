@@ -4,14 +4,17 @@
         <span class="icon-selector icon--no-offset"></span>
     </label>
 <% } else { %>
+    <% var togglerId = _.uniqueId('dropdown-') %>
     <div class="datagrid-massaction">
         <div class="dropdown datagrid-massaction__toggle datagrid-massaction__toggle--size-m">
-            <button type="button" class="datagrid-massaction__invisible" data-toggle="dropdown"></button>
+            <button class="datagrid-massaction__invisible" type="button" id="<%- togglerId %>" data-toggle="dropdown"
+                    aria-haspopup="true" aria-expanded="false" aria-label="<%- _.__('oro.datagrid.headerCell.selectAll.label') %>"></button>
             <label class="custom-checkbox">
                 <input type="checkbox" name="is_default" class="custom-checkbox__input" data-select>
-                <span class="custom-checkbox__icon"></span>
+                <span class="custom-checkbox__icon" aria-hidden="true"></span>
             </label>
-            <ul class="dropdown-menu datagrid-massaction__dropdown-menu" data-options="{&quot;container&quot;: true}">
+            <ul class="dropdown-menu datagrid-massaction__dropdown-menu" aria-labelledby="<%- togglerId %>"
+                data-options="{&quot;container&quot;: true}">
                 <li class="all-visible">
                     <a href="#" class="action" data-select-all-visible>
                         <%- _.__('oro.datagrid.headerCell.selectAll.allVisible') %>

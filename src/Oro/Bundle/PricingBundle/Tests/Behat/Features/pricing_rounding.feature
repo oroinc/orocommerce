@@ -79,7 +79,7 @@ Feature: Pricing rounding
     And should see "Listed Price: $4.54 / item" for "Light" product
     And click "Add to Shopping List" for "Phone" product
     When I hover on "Shopping Cart"
-    And click "Shopping List"
+    And follow "Shopping List"
     Then should see "Subtotal $7.45"
     And should see "Total $7.45"
     When I hover on "Shopping Cart"
@@ -114,7 +114,7 @@ Feature: Pricing rounding
     And click "Cancel"
     And I proceed as the customer
     When I hover on "Shopping Cart"
-    And click "Shopping List"
+    And follow "Shopping List"
     Then should see "Subtotal $7"
     And should see "Total $7"
     When click "Create Order"
@@ -247,7 +247,7 @@ Feature: Pricing rounding
     And should see "Listed Price: $4.54 / item" for "Light" product
     And click "Add to Shopping List" for "Phone" product
     When I hover on "Shopping Cart"
-    And click "Shopping List"
+    And follow "Shopping List"
     Then should see "Subtotal $7.5"
     And should see "Total $7.5"
     When click "Create Order"
