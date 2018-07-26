@@ -53,7 +53,7 @@ Feature: Mass Product Actions Availability
 
   Scenario: Mass actions not available for configurable products
     Given I proceed as the Buyer
-    When I type "shirt_main" in "search"
+    When I type "shirt" in "search"
     And I click "Search Button"
     And I should not see mass action checkbox in row with shirt_main content for "Product Frontend Grid"
     And I should see mass action checkbox in row with gtsh_l content for "Product Frontend Grid"

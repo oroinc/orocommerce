@@ -128,7 +128,7 @@ Feature: Product attributes import
       | Myand4               | string | label value 4 | no                   | 0                   |
       | koko                 | string | label value 5 | no                   | 0                   |
       | LOREM                | string | label value 6 | no                   | 0                   |
-      | Sunset               | string | label value 7 | no                   | 0                   |
+      | SunSet               | string | label value 7 | no                   | 0                   |
     And I import file
     Then Email should contains the following "Errors: 0 processed: 6, read: 6, added: 6, updated: 0, replaced: 0" text
     When I reload the page
@@ -142,11 +142,11 @@ Feature: Product attributes import
     And I should see "label value 5" in grid
     And I should see LOREM in grid
     And I should see "label value 6" in grid
-    And I should see Sunset in grid
+    And I should see SunSet in grid
     And I should see "label value 7" in grid
     And I should not see "Update schema"
 
-  Scenario: It should be impossible to import attributes with correct names
+  Scenario: It should be impossible to import attributes with incorrect names
     When I fill template with data:
       | fieldName                                          | type   | entity.label   | datagrid.show_filter | datagrid.is_visible |
       | null                                               | string | label value 8  | no                   | 0                   |
@@ -197,7 +197,7 @@ Feature: Product attributes import
     And I should not see "FieldText Label updated"
     And I should not see "Update schema"
 
-  Scenario: It should be possible to updated columns with same name
+  Scenario: It should be possible to updated columns with the same name
     Given I fill template with data:
       | fieldName          | type   | entity.label            | datagrid.show_filter | datagrid.is_visible |
       | correct_field_name | bigint | FieldText Label updated | no                   | 0                   |
@@ -210,7 +210,7 @@ Feature: Product attributes import
     And I should not see "correctFieldName"
     And I should not see "Update schema"
 
-  Scenario: It should be possible to updated columns with same name from Entity Management
+  Scenario: It should be possible to update columns with the same name from Entity Management
     Given I go to System/Entities/Entity Management
     And I filter Name as is equal to "Product"
     And I click View Product in grid
