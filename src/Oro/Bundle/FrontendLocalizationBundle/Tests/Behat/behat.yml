@@ -8,6 +8,7 @@ oro_behat_extension:
             - Oro\Bundle\DataGridBundle\Tests\Behat\Context\GridContext
             - Oro\Bundle\FrontendLocalizationBundle\Tests\Behat\Context\LocalizationSwitcherContext
             - OroConfigBundle::FeatureContext
+            - OroTranslationBundle::FeatureContext
           paths:
             - '@OroFrontendLocalizationBundle/Tests/Behat/Features'
     elements:
