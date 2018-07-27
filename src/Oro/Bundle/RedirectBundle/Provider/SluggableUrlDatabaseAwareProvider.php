@@ -59,7 +59,8 @@ class SluggableUrlDatabaseAwareProvider implements SluggableUrlProviderInterface
     {
         // Skip routes that does not have slugs
         $sluggableRoutes = $this->getSluggableRoutes();
-        if (empty($sluggableRoutes[$routeName])) {
+        $isKnownRoute = array_key_exists($routeName, $sluggableRoutes);
+        if ($isKnownRoute && $sluggableRoutes[$routeName] === false) {
             return null;
         }
 
@@ -72,7 +73,13 @@ class SluggableUrlDatabaseAwareProvider implements SluggableUrlProviderInterface
 
         $this->fillCacheByDatabase($routeName, $routeParameters, $localizationId);
 
-        return $this->urlCacheProvider->getUrl($routeName, $routeParameters, $localizationId);
+        $url = $this->urlCacheProvider->getUrl($routeName, $routeParameters, $localizationId);
+        if (!$isKnownRoute) {
+            $sluggableRoutes[$routeName] = \strlen($url) > 0;
+            $this->updateSluggableRoutes($sluggableRoutes);
+        }
+
+        return $url;
     }
 
     /**
@@ -135,17 +142,20 @@ class SluggableUrlDatabaseAwareProvider implements SluggableUrlProviderInterface
     }
 
     /**
+     * @param array $sluggableRoutes
+     */
+    protected function updateSluggableRoutes(array $sluggableRoutes)
+    {
+        $this->cache->setUrl(self::SLUG_ROUTES_KEY, [], json_encode($sluggableRoutes));
+    }
+
+    /**
      * @return array
      */
     protected function getSluggableRoutes()
     {
         if (!$this->cache->has(self::SLUG_ROUTES_KEY, [])) {
-            $sluggableRoutes = [];
-            foreach ($this->getSlugRepository()->getUsedRoutes() as $usedRoute) {
-                $sluggableRoutes[$usedRoute] = true;
-            }
-
-            $this->cache->setUrl(self::SLUG_ROUTES_KEY, [], json_encode($sluggableRoutes));
+            return [];
         }
 
         return json_decode($this->cache->getUrl(self::SLUG_ROUTES_KEY, []), true);
