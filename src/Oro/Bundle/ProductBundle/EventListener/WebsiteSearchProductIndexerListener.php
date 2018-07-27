@@ -12,6 +12,7 @@ use Oro\Bundle\EntityConfigBundle\Manager\AttributeManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
+use Oro\Bundle\ProductBundle\Event\Decorator\ProductVariantIndexEntityEventDecorator;
 use Oro\Bundle\ProductBundle\Search\ProductIndexDataModel;
 use Oro\Bundle\ProductBundle\Search\WebsiteSearchProductIndexDataProvider;
 use Oro\Bundle\WebsiteBundle\Provider\AbstractWebsiteLocalizationProvider;
@@ -141,6 +142,8 @@ class WebsiteSearchProductIndexerListener
                     $units
                 );
             }
+
+            $this->processProductVariants($event, $product);
         }
     }
 
@@ -239,6 +242,30 @@ class WebsiteSearchProductIndexerListener
                 $mediumImageUrl
             );
         }
+    }
+
+    /**
+     * @param IndexEntityEvent $event
+     * @param Product $product
+     */
+    private function processProductVariants(IndexEntityEvent $event, Product $product)
+    {
+        if ($product->getType() !== Product::TYPE_CONFIGURABLE) {
+            return;
+        }
+
+        $variantProducts = [];
+        foreach ($product->getVariantLinks() as $link) {
+            $variantProducts[] = $link->getProduct();
+        }
+
+        if (!$variantProducts) {
+            return;
+        }
+
+        // create fake event and call the same listener to add all searchable text information from product variants
+        $variantsEvent = new ProductVariantIndexEntityEventDecorator($event, $product->getId(), $variantProducts);
+        $this->onWebsiteSearchIndex($variantsEvent);
     }
 
     /**
