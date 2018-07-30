@@ -50,6 +50,24 @@ oro_behat_extension:
             class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
             selector: '.line-item-form .dropdown-toggle'
 
+        RFQ > SKU1 > DropDown:
+            selector: '[data-content="oro_rfp_frontend_request[requestProducts][0]"] .select2-container a'
+            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+        RFQ > SKU2 > DropDown:
+            selector: '[data-content="oro_rfp_frontend_request[requestProducts][1]"] .select2-container a'
+            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+        RFQ > SKU3 > DropDown:
+            selector: '[data-content="oro_rfp_frontend_request[requestProducts][2]"] .select2-container a'
+            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+        RFQ > SKU1 > Target Price DropDown:
+            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+            selector: '[data-content="oro_rfp_frontend_request[requestProducts][0][requestProductItems][0]"] .request-form-lineitem-unit--prices .product-tier-prices'
+        RFQ > SKU2 > Target Price DropDown:
+            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+            selector: '[data-content="oro_rfp_frontend_request[requestProducts][1][requestProductItems][0]"] .request-form-lineitem-unit--prices .product-tier-prices'
+        RFQ > SKU3 > Target Price DropDown:
+            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+            selector: '[data-content="oro_rfp_frontend_request[requestProducts][2][requestProductItems][0]"] .request-form-lineitem-unit--prices .product-tier-prices'
     pages:
         RequestViewBackendPage:
             class: Oro\Bundle\RFPBundle\Tests\Behat\Page\RequestViewPage

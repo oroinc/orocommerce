@@ -47,7 +47,7 @@ class ProductAutocompleteTypeTest extends \PHPUnit_Framework_TestCase
                             [
                                 'route_name' => 'oro_frontend_autocomplete_search',
                                 'route_parameters' => [
-                                    'name' => 'oro_product_visibility_limited',
+                                    'name' => 'oro_product_visibility_limited_with_prices',
                                 ],
                                 'selection_template_twig' =>
                                     'OroProductBundle:Product:Autocomplete/autocomplete_selection.html.twig',

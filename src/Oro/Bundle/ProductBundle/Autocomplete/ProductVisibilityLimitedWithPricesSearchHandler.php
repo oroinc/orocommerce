@@ -38,15 +38,9 @@ class ProductVisibilityLimitedWithPricesSearchHandler implements SearchHandlerIn
     {
         $results = $this->productVisibilityLimitedSearchHandler->search($query, $page, $perPage, $searchById);
 
-        if (\count($results['results'])) {
-            $skus = array_column($results['results'], 'sku');
-            $skus = array_map('strtoupper', $skus);
+        if (count($results['results'])) {
             $priceResults = $this->productWithPricesSearchHandler->search($query, $page, $perPage, $searchById);
-            $priceResults['results'] = array_filter($priceResults['results'], function ($result) use ($skus) {
-                return \in_array(strtoupper($result['sku']), $skus, true);
-            });
-
-            return $priceResults;
+            $results['results'] = $this->getResultsBasedOnPriceResults($results['results'], $priceResults['results']);
         }
 
         return $results;
@@ -74,5 +68,29 @@ class ProductVisibilityLimitedWithPricesSearchHandler implements SearchHandlerIn
     public function getEntityName()
     {
         return $this->productWithPricesSearchHandler->getEntityName();
+    }
+
+    /**
+     * @param array $results
+     * @param array $priceResults
+     *
+     * @return array
+     */
+    private function getResultsBasedOnPriceResults(array $results, array $priceResults)
+    {
+        $priceResultsById = [];
+        foreach ($priceResults as $data) {
+            $priceResultsById[$data['id']] = $data;
+        }
+
+        foreach ($results as $key => $result) {
+            if (array_key_exists($result['id'], $priceResultsById)) {
+                $results[$key] = array_merge($result, $priceResultsById[$result['id']]);
+            } else {
+                unset($results[$key]);
+            }
+        }
+
+        return array_values($results);
     }
 }

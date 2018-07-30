@@ -8,8 +8,10 @@ oro_behat_extension:
         - OroFormBundle::FormContext
         - OroDataGridBundle::GridContext
         - OroApplicationBundle::CommerceMainContext
+        - OroSearchBundle::SearchContext
         - OroShippingBundle::SingleCurrencyContext
         - OroShippingBundle::FeatureContext
+        - OroProductBundle::QuickOrderFormContext
         - OroShoppingListBundle::ShoppingListContext
         - OroCustomerBundle::CustomerUserContext
         - OroCustomerBundle::FrontendGridContext
