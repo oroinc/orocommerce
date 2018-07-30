@@ -42,7 +42,12 @@ class ProductVariantIndexEntityEventDecorator extends IndexEntityEvent
             $this->decoratedEvent->addField($this->sourceEntityId, $fieldName, $value, $addToAllText);
         } elseif ($addToAllText) {
             // add other values to all_text only
-            $this->decoratedEvent->addField($this->sourceEntityId, IndexDataProvider::ALL_TEXT_L10N_FIELD, $value);
+            $this->decoratedEvent->addField(
+                $this->sourceEntityId,
+                IndexDataProvider::ALL_TEXT_L10N_FIELD,
+                $value,
+                $addToAllText
+            );
         }
 
         return $this;
@@ -68,7 +73,8 @@ class ProductVariantIndexEntityEventDecorator extends IndexEntityEvent
                 $this->sourceEntityId,
                 IndexDataProvider::ALL_TEXT_L10N_FIELD,
                 $value,
-                $placeholders
+                $placeholders,
+                $addToAllText
             );
         }
 
@@ -81,6 +87,6 @@ class ProductVariantIndexEntityEventDecorator extends IndexEntityEvent
      */
     public function getEntitiesData()
     {
-        throw new \LogicException('Method getEntitiesData must never be called! Please, use original event instead.');
+        throw new \LogicException('Method getEntitiesData must never be called. Please, use original event instead.');
     }
 }

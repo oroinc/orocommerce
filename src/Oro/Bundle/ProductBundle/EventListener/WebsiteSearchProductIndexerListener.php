@@ -256,7 +256,10 @@ class WebsiteSearchProductIndexerListener
 
         $variantProducts = [];
         foreach ($product->getVariantLinks() as $link) {
-            $variantProducts[] = $link->getProduct();
+            $variantProduct = $link->getProduct();
+            if ($variantProduct->getType() === Product::TYPE_SIMPLE) {
+                $variantProducts[] = $variantProduct;
+            }
         }
 
         if (!$variantProducts) {
