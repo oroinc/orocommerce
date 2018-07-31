@@ -9,6 +9,7 @@ use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\EntityConfigBundle\Entity\Repository\AttributeFamilyRepository;
 use Oro\Bundle\EntityConfigBundle\Manager\AttributeManager;
 use Oro\Bundle\FrontendBundle\Manager\AttachmentManager;
+use Oro\Bundle\InventoryBundle\Tests\Unit\Inventory\Stub\InventoryStatusStub;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -18,6 +19,7 @@ use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use Oro\Bundle\ProductBundle\EventListener\WebsiteSearchProductIndexerListener;
 use Oro\Bundle\ProductBundle\Search\ProductIndexDataModel;
 use Oro\Bundle\ProductBundle\Search\WebsiteSearchProductIndexDataProvider;
+use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductWithInventoryStatus;
 use Oro\Bundle\WebsiteBundle\Provider\AbstractWebsiteLocalizationProvider;
 use Oro\Bundle\WebsiteSearchBundle\Engine\IndexDataProvider;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
@@ -115,12 +117,13 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
 
         /** @var Product $product */
         $product = $this->getEntity(
-            Product::class,
+            ProductWithInventoryStatus::class,
             [
                 'id' => 777,
                 'sku' => 'sku123',
                 'status' => Product::STATUS_ENABLED,
                 'type' => Product::TYPE_CONFIGURABLE,
+                'inventoryStatus' => new InventoryStatusStub('in_stock', 'In Stock'),
                 'newArrival' => true,
                 'createdAt' => new \DateTime('2017-09-09 00:00:00'),
                 'attributeFamily' => $attributeFamily,
@@ -128,12 +131,13 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
         );
 
         $childProduct = $this->getEntity(
-            Product::class,
+            ProductWithInventoryStatus::class,
             [
                 'id' => 778,
                 'sku' => 'child_sku123',
                 'status' => Product::STATUS_ENABLED,
                 'type' => Product::TYPE_SIMPLE,
+                'inventoryStatus' => new InventoryStatusStub('out_of_stock', 'Out Of Stock'),
                 'newArrival' => true,
                 'createdAt' => new \DateTime('2017-09-09 00:00:00'),
                 'attributeFamily' => $attributeFamily,
@@ -339,6 +343,7 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
             'sku_uppercase' => [['value' => 'SKU123', 'all_text' => true]],
             'status' => [['value' => Product::STATUS_ENABLED, 'all_text' => false]],
             'type' => [['value' => Product::TYPE_CONFIGURABLE, 'all_text' => false]],
+            'inventory_status' => [['value' => 'in_stock', 'all_text' => false]],
             'is_variant' => [['value' => 0, 'all_text' => false]],
             'newArrival' => [['value' => 1, 'all_text' => false]],
             'all_text_LOCALIZATION_ID' => [

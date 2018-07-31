@@ -1301,7 +1301,6 @@ services:
             - [addForceIndexed,  ['sku']]
             - [addForceIndexed,  ['names']]
             - [addForceIndexed,  ['shortDescriptions']]
-            - [addForceIndexed,  ['inventory_status']]
             - [addForceIndexed,  ['newArrival']]
 
     oro_product.event_listener.website_search_mapping:

@@ -22,7 +22,6 @@ use Oro\Bundle\EntityConfigBundle\Manager\AttributeManager;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\FilterBundle\Form\Type\Filter\NumberFilterTypeInterface;
-use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\ProductBundle\DataGrid\EventListener\FrontendProductGridEventListener;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SearchBundle\Query\Query;
@@ -270,9 +269,9 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
                 'expected' => [
                     'filters' => [
                         'columns' => [
-                            'internalStatus' => [
-                                'type' => SearchableType\SearchableAttributeTypeInterface::FILTER_TYPE_ENUM,
-                                'data_name' => Query::TYPE_TEXT . '.internalStatus',
+                            'internalStatus_' . EnumIdPlaceholder::NAME => [
+                                'type' => SearchableType\SearchableAttributeTypeInterface::FILTER_TYPE_MULTI_ENUM,
+                                'data_name' => Query::TYPE_INTEGER . '.internalStatus_' . EnumIdPlaceholder::NAME,
                                 'force_like' => true,
                                 'label' => self::LABEL,
                                 'class' => StubEnumValue::class

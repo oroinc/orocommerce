@@ -13,6 +13,7 @@ use Oro\Bundle\ProductBundle\Search\ProductIndexFieldsProvider;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\WebsiteSearchBundle\Attribute\Type\EnumSearchableAttributeType;
 use Oro\Bundle\WebsiteSearchBundle\Event\WebsiteSearchMappingEvent;
+use Oro\Bundle\WebsiteSearchBundle\Placeholder\EnumIdPlaceholder;
 
 class WebsiteSearchMappingListenerTest extends \PHPUnit\Framework\TestCase
 {
@@ -187,17 +188,21 @@ class WebsiteSearchMappingListenerTest extends \PHPUnit\Framework\TestCase
                             'type' => 'text',
                             'store' => true
                         ],
-                        $attribute1->getFieldName() => [
-                            'name' => $attribute1->getFieldName(),
-                            'type' => Query::TYPE_TEXT
+                        'attribute1' => [
+                            'name' => 'test',
+                            'type' => 'test'
+                        ],
+                        $attribute1->getFieldName() . '_' . EnumIdPlaceholder::NAME => [
+                            'name' => $attribute1->getFieldName() . '_' . EnumIdPlaceholder::NAME,
+                            'type' => Query::TYPE_INTEGER
                         ],
                         $attribute2->getFieldName() . '_priority' => [
                             'name' => $attribute2->getFieldName() . '_priority',
                             'type' => Query::TYPE_INTEGER
                         ],
-                        $attribute3->getFieldName() => [
-                            'name' => $attribute3->getFieldName(),
-                            'type' => Query::TYPE_TEXT
+                        $attribute3->getFieldName() . '_' . EnumIdPlaceholder::NAME => [
+                            'name' => $attribute3->getFieldName() . '_' . EnumIdPlaceholder::NAME,
+                            'type' => Query::TYPE_INTEGER
                         ],
                         $attribute3->getFieldName() . '_priority' => [
                             'name' => $attribute3->getFieldName() . '_priority',
