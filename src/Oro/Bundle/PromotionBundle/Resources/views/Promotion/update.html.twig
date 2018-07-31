@@ -76,7 +76,7 @@
     {% set dataBlocks = [
         {
             'title': 'oro.promotion.blocks.general'|trans,
-            'class': 'active',
+            'class': 'nav-item active',
             'subblocks': [{
                 'title': '',
                 'data': [
@@ -91,6 +91,7 @@
         },
         {
             'title': 'oro.promotion.blocks.discount_options'|trans,
+            'class': 'nav-item',
             'subblocks': [{
                 'title': '',
                 'data': [
@@ -100,6 +101,7 @@
         },
         {
             'title': 'oro.promotion.blocks.schedules'|trans,
+            'class': 'nav-item',
             'subblocks': [{
                 'title': '',
                 'data': [
@@ -109,6 +111,7 @@
         },
         {
             'title': 'oro.promotion.blocks.conditions'|trans,
+            'class': 'nav-item',
             'subblocks': [{
                 'title': '',
                 'data': [
@@ -119,6 +122,7 @@
         },
         {
             'title': 'oro.promotion.blocks.matching_items'|trans,
+            'class': 'nav-item',
             'subblocks': [{
                 'title': '',
                 'data': [
@@ -130,6 +134,7 @@
 
     {% set dataBlocks = dataBlocks|merge([{
         'title': 'oro.promotion.blocks.store_frontend'|trans,
+        'class': 'nav-item',
         'subblocks': [{
             'title': '',
             'data': [
