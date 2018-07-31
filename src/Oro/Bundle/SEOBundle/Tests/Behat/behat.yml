@@ -13,9 +13,13 @@ oro_behat_extension:
             paths:
                 - '@OroSEOBundle/Tests/Behat/Features'
     elements:
-        ProductMetaTitleField:
-          selector: "input[name='oro_product[metaTitles][values][default]']"
-        ProductMetaDescriptionField:
-          selector: "textarea[name='oro_product[metaDescriptions][values][default]']"
-        ProductMetaKeywordField:
-          selector: "textarea[name='oro_product[metaKeywords][values][default]']"
+        Product With Meta Fields Form:
+            selector: 'form[name="oro_product"]'
+            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+            options:
+                mapping:
+                    SKU: 'oro_product[sku]'
+                    Name: 'oro_product[names][values][default]'
+                    Meta Title: 'oro_product[metaTitles][values][default]'
+                    Meta Description: 'oro_product[metaDescriptions][values][default]'
+                    Meta Keywords: 'oro_product[metaKeywords][values][default]'

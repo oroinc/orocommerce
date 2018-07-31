@@ -5,10 +5,12 @@ namespace Oro\Bundle\SEOBundle\EventListener;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Event\ProductDuplicateAfterEvent;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
+/**
+ * Clone meta fields and link them with duplicate product
+ */
 class ProductDuplicateListener
 {
     /** @var PropertyAccessor */

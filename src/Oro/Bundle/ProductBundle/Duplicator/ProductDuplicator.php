@@ -114,6 +114,23 @@ class ProductDuplicator
      */
     protected function cloneChildObjects(Product $product, Product $productCopy)
     {
+        $this->cloneUnitPrecisions($product, $productCopy);
+        $this->cloneFallbackValues($product, $productCopy);
+        $this->cloneImages($product, $productCopy);
+        $this->cloneAttachments($product, $productCopy);
+
+        $pageTemplate = $product->getPageTemplate();
+        if ($pageTemplate) {
+            $productCopy->setPageTemplate(clone $pageTemplate);
+        }
+    }
+
+    /**
+     * @param Product $product
+     * @param Product $productCopy
+     */
+    private function cloneUnitPrecisions(Product $product, Product $productCopy)
+    {
         $primaryPrecision = $product->getPrimaryUnitPrecision();
         if ($primaryPrecision) {
             $productCopy->setPrimaryUnitPrecision(clone $primaryPrecision);
@@ -122,7 +139,14 @@ class ProductDuplicator
         foreach ($product->getAdditionalUnitPrecisions() as $unitPrecision) {
             $productCopy->addAdditionalUnitPrecision(clone $unitPrecision);
         }
+    }
 
+    /**
+     * @param Product $product
+     * @param Product $productCopy
+     */
+    private function cloneFallbackValues(Product $product, Product $productCopy)
+    {
         foreach ($product->getNames() as $name) {
             $productCopy->addName(clone $name);
         }
@@ -134,7 +158,14 @@ class ProductDuplicator
         foreach ($product->getShortDescriptions() as $shortDescription) {
             $productCopy->addShortDescription(clone $shortDescription);
         }
+    }
 
+    /**
+     * @param Product $product
+     * @param Product $productCopy
+     */
+    private function cloneImages(Product $product, Product $productCopy)
+    {
         foreach ($product->getImages() as $productImage) {
             $productImageCopy = clone $productImage;
             $productImageCopy->setProduct($productCopy);
@@ -144,9 +175,15 @@ class ProductDuplicator
 
             $this->doctrineHelper->getEntityManager($productImageCopy)->persist($productImageCopy);
         }
+    }
 
+    /**
+     * @param Product $product
+     * @param Product $productCopy
+     */
+    private function cloneAttachments(Product $product, Product $productCopy)
+    {
         $attachments = $this->attachmentProvider->getEntityAttachments($product);
-
         foreach ($attachments as $attachment) {
             $attachmentCopy = clone $attachment;
             $attachmentFileCopy = $this->fileManager->cloneFileEntity($attachment->getFile());
