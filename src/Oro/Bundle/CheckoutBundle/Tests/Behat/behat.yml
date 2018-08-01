@@ -18,6 +18,7 @@ oro_behat_extension:
         - OroOrderBundle::OrderContext
         - OroCustomerBundle::ACLContext
         - OroProductBundle::FeatureContext
+        - OroProductBundle::QuickOrderFormContext
         - OroLocaleBundle::LocalizationContext
         - OroFrontendLocalizationBundle::LocalizationSwitcherContext
       paths:
