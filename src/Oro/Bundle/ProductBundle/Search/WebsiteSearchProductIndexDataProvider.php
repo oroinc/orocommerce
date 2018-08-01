@@ -12,7 +12,7 @@ use Oro\Bundle\WebsiteSearchBundle\Engine\IndexDataProvider;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
-class WebsiteSearchProductIndexDataProvider
+class WebsiteSearchProductIndexDataProvider implements ProductIndexDataProviderInterface
 {
     /** @var AttributeTypeRegistry */
     protected $attributeTypeRegistry;
@@ -45,11 +45,7 @@ class WebsiteSearchProductIndexDataProvider
     }
 
     /**
-     * @param Product $product
-     * @param FieldConfigModel $attribute
-     * @param array|Localization[] $localizations
-     *
-     * @return array|ProductIndexDataModel[]
+     * {@inheritdoc}
      */
     public function getIndexData(Product $product, FieldConfigModel $attribute, array $localizations)
     {
