@@ -66,7 +66,7 @@
         <tr>
             <td>{{ validRow.sku }} - {{ validRow.product.name }}</td>
             <td class="text-center">{{ validRow.quantity }}</td>
-            <td>{{ validRow.unit }}</td>
+            <td>{{ validRow.unit|oro_format_product_unit_label }}</td>
             {% do block|merge_context({'validRow': validRow}) %}
             {{ block('container_widget') }}
             <td class="hidden">{{ validRow.sku }}</td>
