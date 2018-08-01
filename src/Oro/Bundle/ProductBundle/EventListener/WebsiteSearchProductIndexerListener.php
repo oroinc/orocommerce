@@ -12,9 +12,8 @@ use Oro\Bundle\EntityConfigBundle\Manager\AttributeManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
-use Oro\Bundle\ProductBundle\Event\Decorator\ProductVariantIndexEntityEventDecorator;
 use Oro\Bundle\ProductBundle\Search\ProductIndexDataModel;
-use Oro\Bundle\ProductBundle\Search\WebsiteSearchProductIndexDataProvider;
+use Oro\Bundle\ProductBundle\Search\ProductIndexDataProviderInterface;
 use Oro\Bundle\WebsiteBundle\Provider\AbstractWebsiteLocalizationProvider;
 use Oro\Bundle\WebsiteBundle\Provider\WebsiteLocalizationProvider;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
@@ -41,7 +40,7 @@ class WebsiteSearchProductIndexerListener
     /** @var AttributeManager */
     private $attributeManager;
 
-    /** @var WebsiteSearchProductIndexDataProvider */
+    /** @var ProductIndexDataProviderInterface */
     private $dataProvider;
 
     /**
@@ -50,7 +49,7 @@ class WebsiteSearchProductIndexerListener
      * @param ManagerRegistry                       $registry
      * @param AttachmentManager                     $attachmentManager
      * @param AttributeManager                      $attributeManager
-     * @param WebsiteSearchProductIndexDataProvider $dataProvider
+     * @param ProductIndexDataProviderInterface $dataProvider
      */
     public function __construct(
         AbstractWebsiteLocalizationProvider $websiteLocalizationProvider,
@@ -58,7 +57,7 @@ class WebsiteSearchProductIndexerListener
         ManagerRegistry $registry,
         AttachmentManager $attachmentManager,
         AttributeManager $attributeManager,
-        WebsiteSearchProductIndexDataProvider $dataProvider
+        ProductIndexDataProviderInterface $dataProvider
     ) {
         $this->websiteLocalizationProvider = $websiteLocalizationProvider;
         $this->websiteContextManager = $websiteContextManager;
@@ -143,8 +142,6 @@ class WebsiteSearchProductIndexerListener
                     $units
                 );
             }
-
-            $this->processProductVariants($event, $product);
         }
     }
 
@@ -243,33 +240,6 @@ class WebsiteSearchProductIndexerListener
                 $mediumImageUrl
             );
         }
-    }
-
-    /**
-     * @param IndexEntityEvent $event
-     * @param Product $product
-     */
-    private function processProductVariants(IndexEntityEvent $event, Product $product)
-    {
-        if ($product->getType() !== Product::TYPE_CONFIGURABLE) {
-            return;
-        }
-
-        $variantProducts = [];
-        foreach ($product->getVariantLinks() as $link) {
-            $variantProduct = $link->getProduct();
-            if ($variantProduct->getType() === Product::TYPE_SIMPLE) {
-                $variantProducts[] = $variantProduct;
-            }
-        }
-
-        if (!$variantProducts) {
-            return;
-        }
-
-        // create fake event and call the same listener to add all searchable text information from product variants
-        $variantsEvent = new ProductVariantIndexEntityEventDecorator($event, $product->getId(), $variantProducts);
-        $this->onWebsiteSearchIndex($variantsEvent);
     }
 
     /**

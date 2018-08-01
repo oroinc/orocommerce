@@ -13,12 +13,11 @@ use Oro\Bundle\InventoryBundle\Tests\Unit\Inventory\Stub\InventoryStatusStub;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Entity\ProductVariantLink;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use Oro\Bundle\ProductBundle\EventListener\WebsiteSearchProductIndexerListener;
 use Oro\Bundle\ProductBundle\Search\ProductIndexDataModel;
-use Oro\Bundle\ProductBundle\Search\WebsiteSearchProductIndexDataProvider;
+use Oro\Bundle\ProductBundle\Search\ProductIndexDataProviderInterface;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductWithInventoryStatus;
 use Oro\Bundle\WebsiteBundle\Provider\AbstractWebsiteLocalizationProvider;
 use Oro\Bundle\WebsiteSearchBundle\Engine\IndexDataProvider;
@@ -34,8 +33,6 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
 
     const DESCRIPTION_DEFAULT_LOCALE = 'description default';
     const DESCRIPTION_CUSTOM_LOCALE = 'description custom';
-    const CHILD_DESCRIPTION_DEFAULT_LOCALE = 'child description default';
-    const CHILD_DESCRIPTION_CUSTOM_LOCALE = 'child description custom';
 
     /**
      * @var WebsiteSearchProductIndexerListener
@@ -57,7 +54,7 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
     /** @var AttributeManager|\PHPUnit\Framework\MockObject\MockObject */
     private $attributeManager;
 
-    /** @var WebsiteSearchProductIndexDataProvider|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var ProductIndexDataProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $dataProvider;
 
     protected function setUp()
@@ -67,7 +64,7 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
         $this->registry = $this->createMock(ManagerRegistry::class);
         $this->attachmentManager = $this->createMock(AttachmentManager::class);
         $this->attributeManager = $this->createMock(AttributeManager::class);
-        $this->dataProvider = $this->createMock(WebsiteSearchProductIndexDataProvider::class);
+        $this->dataProvider = $this->createMock(ProductIndexDataProviderInterface::class);
 
         $this->listener = new WebsiteSearchProductIndexerListener(
             $this->websiteLocalizationProvider,
@@ -108,14 +105,13 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
         $secondLocale = $this->getEntity(Localization::class, ['id' => 2]);
 
         $this->websiteLocalizationProvider
-            ->expects($this->any())
+            ->expects($this->once())
             ->method('getLocalizationsByWebsiteId')
             ->willReturn([$firstLocale, $secondLocale]);
 
         $attributeFamilyId = 42;
         $attributeFamily = $this->getEntity(AttributeFamily::class, ['id' => $attributeFamilyId]);
 
-        /** @var Product $product */
         $product = $this->getEntity(
             ProductWithInventoryStatus::class,
             [
@@ -130,35 +126,10 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
             ]
         );
 
-        $childProduct = $this->getEntity(
-            ProductWithInventoryStatus::class,
-            [
-                'id' => 778,
-                'sku' => 'child_sku123',
-                'status' => Product::STATUS_ENABLED,
-                'type' => Product::TYPE_SIMPLE,
-                'inventoryStatus' => new InventoryStatusStub('out_of_stock', 'Out Of Stock'),
-                'newArrival' => true,
-                'createdAt' => new \DateTime('2017-09-09 00:00:00'),
-                'attributeFamily' => $attributeFamily,
-            ]
-        );
-
-        /** @var ProductVariantLink $productVariant */
-        $productVariant = $this->getEntity(
-            ProductVariantLink::class,
-            [
-                'parentProduct' => $product,
-                'product' => $childProduct
-            ]
-        );
-
-        $product->addVariantLink($productVariant);
-
         $event = new IndexEntityEvent(Product::class, [$product], []);
 
         $this->websiteContextManager
-            ->expects($this->any())
+            ->expects($this->once())
             ->method('getWebsiteId')
             ->with([])
             ->willReturn(1);
@@ -173,32 +144,20 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
 
         $entity = $this->getImageFileEntities();
 
-        $productRepository->expects($this->at(0))
+        $productRepository->expects($this->once())
             ->method('getListingImagesFilesByProductIds')
             ->with([777])
             ->willReturn([777 => $entity]);
-        $productRepository->expects($this->at(1))
-            ->method('getListingImagesFilesByProductIds')
-            ->with([778])
-            ->willReturn([]);
 
-        $unitRepository->expects($this->at(0))
+        $unitRepository->expects($this->once())
             ->method('getProductsUnits')
             ->with([777])
             ->willReturn([777 => ['item', 'set']]);
-        $unitRepository->expects($this->at(1))
+
+        $unitRepository->expects($this->once())
             ->method('getPrimaryProductsUnits')
             ->with([777])
             ->willReturn([777 => 'item']);
-
-        $unitRepository->expects($this->at(2))
-            ->method('getProductsUnits')
-            ->with([778])
-            ->willReturn([778 => ['item', 'set']]);
-        $unitRepository->expects($this->at(3))
-            ->method('getPrimaryProductsUnits')
-            ->with([778])
-            ->willReturn([778 => 'item']);
 
         $attribute1 = $this->getEntity(FieldConfigModel::class, ['id' => 1001, 'fieldName' => 'sku']);
         $attribute2 = $this->getEntity(FieldConfigModel::class, ['id' => 1002, 'fieldName' => 'newArrival']);
@@ -207,7 +166,7 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
         $attribute5 = $this->getEntity(FieldConfigModel::class, ['id' => 1005, 'fieldName' => 'skipped']);
         $attribute6 = $this->getEntity(FieldConfigModel::class, ['id' => 1006, 'fieldName' => 'system']);
 
-        $attributeFamilyRepository->expects($this->any())
+        $attributeFamilyRepository->expects($this->once())
             ->method('getFamilyIdsForAttributes')
             ->with([$attribute1, $attribute2, $attribute3, $attribute4, $attribute5, $attribute6])
             ->willReturn(
@@ -221,23 +180,15 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
             );
 
         $this->registry
-            ->expects($this->any())
+            ->expects($this->exactly(4))
             ->method('getRepository')
             ->withConsecutive(
-                ['OroProductBundle:Product'],
-                ['OroProductBundle:ProductUnit'],
-                ['OroProductBundle:ProductUnit'],
-                [AttributeFamily::class],
                 ['OroProductBundle:Product'],
                 ['OroProductBundle:ProductUnit'],
                 ['OroProductBundle:ProductUnit'],
                 [AttributeFamily::class]
             )
             ->willReturnOnConsecutiveCalls(
-                $productRepository,
-                $unitRepository,
-                $unitRepository,
-                $attributeFamilyRepository,
                 $productRepository,
                 $unitRepository,
                 $unitRepository,
@@ -253,7 +204,7 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
             );
 
         $this->attributeManager
-            ->expects($this->any())
+            ->expects($this->once())
             ->method('getAttributesByClass')
             ->with(Product::class)
             ->willReturn([$attribute1, $attribute2, $attribute3, $attribute4, $attribute5, $attribute6]);
@@ -286,34 +237,8 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
         $model6 = new ProductIndexDataModel('system', 'system', [], false, false);
         $model7 = new ProductIndexDataModel('descriptions', $this->createMultiControlCharString(), [], true, false);
 
-        $childModel1 = new ProductIndexDataModel('sku', $childProduct->getSku(), [], false, true);
-        $childModel2 = new ProductIndexDataModel('newArrival', $childProduct->isNewArrival(), [], false, false);
-        $childModel3 = new ProductIndexDataModel(
-            IndexDataProvider::ALL_TEXT_L10N_FIELD,
-            self::CHILD_DESCRIPTION_DEFAULT_LOCALE,
-            [LocalizationIdPlaceholder::NAME => $firstLocale->getId()],
-            true,
-            true
-        );
-        $childModel4 = new ProductIndexDataModel(
-            IndexDataProvider::ALL_TEXT_L10N_FIELD,
-            self::CHILD_DESCRIPTION_CUSTOM_LOCALE,
-            [LocalizationIdPlaceholder::NAME => $secondLocale->getId()],
-            true,
-            true
-        );
-        $childModel5 = new ProductIndexDataModel('createdAt', $childProduct->getCreatedAt(), [], false, false);
-        $childModel6 = new ProductIndexDataModel('system', 'system', [], false, false);
-        $childModel7 = new ProductIndexDataModel(
-            'descriptions',
-            $this->createMultiControlCharString(),
-            [],
-            true,
-            false
-        );
-
         $this->dataProvider
-            ->expects($this->exactly(10))
+            ->expects($this->exactly(5))
             ->method('getIndexData')
             ->willReturnMap(
                 [
@@ -322,16 +247,6 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
                     [$product, $attribute3, [$firstLocale, $secondLocale], [$model3, $model4, $model7]],
                     [$product, $attribute4, [$firstLocale, $secondLocale], [$model5]],
                     [$product, $attribute6, [$firstLocale, $secondLocale], [$model6]],
-                    [$childProduct, $attribute1, [$firstLocale, $secondLocale], [$childModel1]],
-                    [$childProduct, $attribute2, [$firstLocale, $secondLocale], [$childModel2]],
-                    [
-                        $childProduct,
-                        $attribute3,
-                        [$firstLocale, $secondLocale],
-                        [$childModel3, $childModel4, $childModel7]
-                    ],
-                    [$childProduct, $attribute4, [$firstLocale, $secondLocale], [$childModel5]],
-                    [$childProduct, $attribute6, [$firstLocale, $secondLocale], [$childModel6]],
                 ]
             );
 
@@ -359,28 +274,6 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
                         $this->prepareLocalizedValue($secondLocale, null, self::DESCRIPTION_CUSTOM_LOCALE),
                         [LocalizationIdPlaceholder::NAME => $secondLocale->getId()]
                     ),
-                    'all_text' => true,
-                ],
-                [
-                    'value' => 'child_sku123',
-                    'all_text' => true,
-                ],
-                [
-                    'value' => new PlaceholderValue(
-                        $this->prepareLocalizedValue($firstLocale, null, self::CHILD_DESCRIPTION_DEFAULT_LOCALE),
-                        [LocalizationIdPlaceholder::NAME => $firstLocale->getId()]
-                    ),
-                    'all_text' => true,
-                ],
-                [
-                    'value' => new PlaceholderValue(
-                        $this->prepareLocalizedValue($secondLocale, null, self::CHILD_DESCRIPTION_CUSTOM_LOCALE),
-                        [LocalizationIdPlaceholder::NAME => $secondLocale->getId()]
-                    ),
-                    'all_text' => true,
-                ],
-                [
-                    'value' => 'CHILD_SKU123',
                     'all_text' => true,
                 ],
             ],
