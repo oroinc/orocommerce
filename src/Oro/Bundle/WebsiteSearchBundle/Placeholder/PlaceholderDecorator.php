@@ -4,7 +4,7 @@ namespace Oro\Bundle\WebsiteSearchBundle\Placeholder;
 
 class PlaceholderDecorator implements PlaceholderInterface
 {
-    const DEFAULT_PLACEHOLDER_VALUE = '[^_]+';
+    const DEFAULT_PLACEHOLDER_VALUE = '.+?';
 
     /**
      * @var PlaceholderRegistry
