@@ -16,6 +16,7 @@ oro_behat_extension:
         - OroCustomerBundle::CustomerUserContext
         - OroCustomerBundle::FrontendGridContext
         - OroCheckoutBundle::FeatureContext
+        - OroProductBundle::QuickOrderFormContext
         - OroOrderBundle::OrderContext
         - OroCustomerBundle::ACLContext
         - OroProductBundle::FeatureContext
