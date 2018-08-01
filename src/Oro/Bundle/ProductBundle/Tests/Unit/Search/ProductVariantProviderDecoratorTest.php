@@ -157,8 +157,7 @@ class ProductVariantProviderDecoratorTest extends \PHPUnit\Framework\TestCase
                 'first simple product data' => [
                     new ProductIndexDataModel('options_pocket', 1, [], false, false),
                     new ProductIndexDataModel('options_collar', 1, [], false, false),
-                    new ProductIndexDataModel(IndexDataProvider::ALL_TEXT_L10N_FIELD, 'Pocket', [], true, true),
-                    new ProductIndexDataModel(IndexDataProvider::ALL_TEXT_L10N_FIELD, 'Collar', [], true, true),
+                    new ProductIndexDataModel(IndexDataProvider::ALL_TEXT_L10N_FIELD, 'Pocket Collar', [], true, true),
                 ],
                 'second simple product data' => [
                     new ProductIndexDataModel('options_seams', 1, [], false, false),
@@ -172,8 +171,7 @@ class ProductVariantProviderDecoratorTest extends \PHPUnit\Framework\TestCase
                     new ProductIndexDataModel('options_pocket', 1, [], false, false),
                     new ProductIndexDataModel(IndexDataProvider::ALL_TEXT_L10N_FIELD, 'Pocket', [], true, true),
                     new ProductIndexDataModel('options_collar', 1, [], false, false),
-                    new ProductIndexDataModel(IndexDataProvider::ALL_TEXT_L10N_FIELD, 'Pocket', [], true, true),
-                    new ProductIndexDataModel(IndexDataProvider::ALL_TEXT_L10N_FIELD, 'Collar', [], true, true),
+                    new ProductIndexDataModel(IndexDataProvider::ALL_TEXT_L10N_FIELD, 'Pocket Collar', [], true, true),
                     new ProductIndexDataModel('options_seams', 1, [], false, false),
                     new ProductIndexDataModel(IndexDataProvider::ALL_TEXT_L10N_FIELD, 'Seams', [], true, true),
                 ],
