@@ -1,0 +1,20 @@
+include:
+    - '@OroLocaleBundle:LocalizationFixture.yml'
+    - '@OroProductBundle:ProductUnitItemTranslation.yml'
+    - '@OroPricingBundle:ProductPrices.yml'
+
+Oro\Bundle\PricingBundle\Entity\CombinedPriceListToCustomer:
+    combinedPriceListToCustomer:
+        pricelist: '@combinedPriceList'
+        customer: '@customer1'
+        website: '@website1'
+
+Oro\Bundle\PricingBundle\Entity\CombinedProductPrice:
+   combinedProduct1Price:
+        pricelist: '@combinedPriceList'
+        product: '@product1'
+        productSku: 'PSKU1'
+        quantity: 1
+        unit: '@item'
+        value: 6
+        currency: 'USD'

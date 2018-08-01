@@ -21,6 +21,7 @@ oro_behat_extension:
         - OroProductBundle::QuickOrderFormContext
         - OroLocaleBundle::LocalizationContext
         - OroFrontendLocalizationBundle::LocalizationSwitcherContext
+        - OroDataGridBundle::GridContext
       paths:
         - '@OroCheckoutBundle/Tests/Behat/Features'
 
@@ -225,3 +226,7 @@ oro_behat_extension:
       selector:
         locator: '//input[contains(@id,"oro_rfp_frontend_request_assignedCustomerUsers-uid")]'
         type: xpath
+
+    Quick Order Import Validation:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Table
+      selector: 'table.quick_add_validation_items'
