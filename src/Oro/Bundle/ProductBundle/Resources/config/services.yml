@@ -1456,3 +1456,15 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_product.product_search_query.restriction, method: onSearchQuery }
             - { name: kernel.event_listener, event: oro_product.product_db_query.restriction, method: onDBQuery }
+
+    oro_product.event_listener.reindex_parent_configurable_product:
+        class: 'Oro\Bundle\ProductBundle\EventListener\Search\ReindexParentConfigurableProductListener'
+        public: false
+        arguments:
+            - '@event_dispatcher'
+        tags:
+            - { name: doctrine.orm.entity_listener, entity: '%oro_product.entity.product.class%', event: postPersist }
+            - { name: doctrine.orm.entity_listener, entity: '%oro_product.entity.product.class%', event: postUpdate }
+            - { name: doctrine.orm.entity_listener, entity: '%oro_product.entity.product.class%', event: preRemove }
+            - { name: doctrine.event_listener, event: postFlush }
+            - { name: doctrine.event_listener, event: onClear }

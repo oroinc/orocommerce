@@ -6,6 +6,9 @@ use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteSearchBundle\Engine\IndexDataProvider;
 
+/**
+ * Adds information from all product variants to the main configurable product
+ */
 class ProductVariantProviderDecorator implements ProductIndexDataProviderInterface
 {
     /** @var ProductIndexDataProviderInterface */
