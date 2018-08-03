@@ -2,6 +2,9 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Placeholder;
 
+/**
+ * Replaces placeholders at with an appropriate values using all registered placeholders
+ */
 class PlaceholderDecorator implements PlaceholderInterface
 {
     const DEFAULT_PLACEHOLDER_VALUE = '.+?';

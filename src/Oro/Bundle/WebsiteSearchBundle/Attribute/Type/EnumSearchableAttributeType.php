@@ -6,6 +6,9 @@ use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\EnumIdPlaceholder;
 
+/**
+ * Searchable attribute type for enum field type
+ */
 class EnumSearchableAttributeType extends AbstractSearchableAttributeType
 {
     /**

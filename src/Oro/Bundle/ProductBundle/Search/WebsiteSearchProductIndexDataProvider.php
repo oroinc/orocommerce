@@ -12,6 +12,9 @@ use Oro\Bundle\WebsiteSearchBundle\Engine\IndexDataProvider;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
+/**
+ * Provides product attributes information for the website search index
+ */
 class WebsiteSearchProductIndexDataProvider implements ProductIndexDataProviderInterface
 {
     /** @var AttributeTypeRegistry */

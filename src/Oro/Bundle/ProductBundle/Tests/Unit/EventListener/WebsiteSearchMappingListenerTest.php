@@ -115,6 +115,9 @@ class WebsiteSearchMappingListenerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals([], $event->getConfiguration());
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
     public function testOnWebsiteSearchMappingSortableAttribute()
     {
         $event = $this->createEventWithBasicConfiguration();
