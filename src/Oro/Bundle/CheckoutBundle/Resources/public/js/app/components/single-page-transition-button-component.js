@@ -66,8 +66,13 @@ define(function(require) {
         onFormChange: function(e) {
             var $target = $(e.target);
 
-            this.isReloadRequired($target);
-            this.saveOnChange($target);
+            // Validate form and save state/disable button if there is no js validation errors
+            var validator = this.$form.validate();
+
+            if (validator.checkForm()) {
+                this.isReloadRequired($target);
+                this.saveOnChange($target);
+            }
         },
 
         /**
@@ -105,12 +110,14 @@ define(function(require) {
             for (var i = 0; i < this.options.ignoreTargets.length; i++) {
                 var selector = this.options.ignoreTargets[i];
                 if ($target.closest(selector).length) {
+                    mediator.trigger('checkout:transition-button:enable');
                     return;
                 }
             }
 
             var ajaxData = this.createAjaxData();
             if (null === ajaxData) {
+                mediator.trigger('checkout:transition-button:enable');
                 return;
             }
 

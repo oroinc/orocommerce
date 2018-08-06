@@ -78,6 +78,49 @@ class ProductUnitLabelExtensionTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
+    /**
+     * @param string $unitCode
+     * @param bool $isPlural
+     * @param string $expected
+     *
+     * @dataProvider formatShortProvider
+     */
+    public function testFormatShort($unitCode, $isPlural, $expected)
+    {
+        $this->formatter->expects($this->once())
+            ->method('format')
+            ->with($unitCode, true, $isPlural)
+            ->willReturn($expected);
+
+        $this->assertEquals(
+            $expected,
+            self::callTwigFilter(
+                $this->extension,
+                'oro_format_short_product_unit_label',
+                [$unitCode, $isPlural]
+            )
+        );
+    }
+
+    /**
+     * @return array
+     */
+    public function formatShortProvider(): array
+    {
+        return [
+            'format single' => [
+                'unitCode'  => 'kg',
+                'isPlural'  => false,
+                'expected'  => 'kilogram',
+            ],
+            'format plural' => [
+                'unitCode'  => 'kg',
+                'isPlural'  => true,
+                'expected'  => 'kgs',
+            ],
+        ];
+    }
+
     public function testGetName()
     {
         $this->assertEquals(ProductUnitLabelExtension::NAME, $this->extension->getName());

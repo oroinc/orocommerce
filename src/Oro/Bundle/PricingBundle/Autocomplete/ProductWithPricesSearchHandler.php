@@ -51,11 +51,11 @@ class ProductWithPricesSearchHandler implements SearchHandlerInterface
     private $userCurrencyManager;
 
     /**
-     * @param string $className
+     * @param string                  $className
      * @param ProductSearchRepository $productSearchRepository
      * @param PriceListRequestHandler $priceListRequestHandler
-     * @param ManagerRegistry $registry
-     * @param ProductPriceFormatter $productPriceFormatter
+     * @param ManagerRegistry         $registry
+     * @param ProductPriceFormatter   $productPriceFormatter
      */
     public function __construct(
         $className,
@@ -97,8 +97,7 @@ class ProductWithPricesSearchHandler implements SearchHandlerInterface
         $perPage++;
 
         $products = $this->findProducts($query, $page, $perPage);
-
-        if (empty($products)) {
+        if (!$products) {
             return ['results' => [], 'more' => false];
         }
 
@@ -109,15 +108,9 @@ class ProductWithPricesSearchHandler implements SearchHandlerInterface
             $items = array_slice($items, 0, $perPage - 1);
         }
 
-        $result = [];
-
-        foreach ($items as $item) {
-            $result[] = $this->convertItem($item);
-        }
-
         return [
-            'results' => $result,
-            'more'    => $hasMore
+            'results' => $this->getResults($items),
+            'more' => $hasMore
         ];
     }
 
@@ -126,25 +119,27 @@ class ProductWithPricesSearchHandler implements SearchHandlerInterface
      */
     public function convertItem($item)
     {
-        $result = [];
         $product = $item['product'];
+        if (!$product instanceof Product) {
+            return [];
+        }
 
-        if ($product instanceof Product) {
-            $result['id'] = $product->getId();
-            $result['sku'] = $product->getSku();
-            $result['defaultName.string'] = $product->getName()->getString();
-            $result['prices'] = [];
-            $result['units'] = $product->getSellUnitsPrecision();
+        $result = [
+            'id' => $product->getId(),
+            'sku' => $product->getSku(),
+            'defaultName.string' => $product->getName()->getString(),
+            'prices' => [],
+            'units' => $product->getSellUnitsPrecision(),
+        ];
 
-            /** @var ProductPrice $price */
-            foreach ($item['prices'] as $price) {
-                $unit = $price->getUnit()->getCode();
-                if (!isset($result['prices'][$unit])) {
-                    $result['prices'][$unit] = [];
-                }
-
-                $result['prices'][$unit][] = $this->productPriceFormatter->formatProductPrice($price);
+        /** @var ProductPrice $price */
+        foreach ($item['prices'] as $price) {
+            $unit = $price->getUnit()->getCode();
+            if (!isset($result['prices'][$unit])) {
+                $result['prices'][$unit] = [];
             }
+
+            $result['prices'][$unit][] = $this->productPriceFormatter->formatProductPrice($price);
         }
 
         return $result;
@@ -209,14 +204,13 @@ class ProductWithPricesSearchHandler implements SearchHandlerInterface
     private function findProducts($search, $firstResult, $maxResults)
     {
         $foundItems = $this->productSearchRepository->findBySkuOrName($search, $firstResult-1, $maxResults);
-        $ids = [];
-
-        foreach ($foundItems as $foundItem) {
-            $ids[] = $foundItem->getSelectedData()['product_id'];
+        if (!$foundItems) {
+            return [];
         }
 
-        if (empty($ids)) {
-            return [];
+        $ids = [];
+        foreach ($foundItems as $foundItem) {
+            $ids[] = $foundItem->getSelectedData()['product_id'];
         }
 
         return $this->getProductRepository()->getProductsByIds($ids);
@@ -230,10 +224,11 @@ class ProductWithPricesSearchHandler implements SearchHandlerInterface
     private function buildItemsArray($products, $prices)
     {
         $items = [];
-
         foreach ($products as $product) {
-            $item['product'] = $product;
-            $item['prices'] = [];
+            $item = [
+                'product' => $product,
+                'prices' => []
+            ];
 
             foreach ($prices as $price) {
                 if ($price->getProduct()->getId() === $product->getId()) {
@@ -245,6 +240,21 @@ class ProductWithPricesSearchHandler implements SearchHandlerInterface
         }
 
         return $items;
+    }
+
+    /**
+     * @param array $items
+     *
+     * @return array
+     */
+    private function getResults(array $items)
+    {
+        $result = [];
+        foreach ($items as $item) {
+            $result[] = $this->convertItem($item);
+        }
+
+        return $result;
     }
 
     /**

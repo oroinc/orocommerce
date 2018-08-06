@@ -12,6 +12,8 @@ define(function(require) {
     var $ = require('jquery');
 
     BaseProductPricesView = BaseView.extend(_.extend({}, ElementsHelper, {
+        unitTemplate: require('tpl!oropricing/templates/product/unit.html'),
+
         keepElement: true,
 
         optionNames: BaseView.prototype.optionNames.concat([
@@ -53,6 +55,16 @@ define(function(require) {
 
         rendered: false,
 
+        /**
+         * @inheritDoc
+         */
+        constructor: function BaseProductPricesView() {
+            BaseProductPricesView.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
             BaseProductPricesView.__super__.initialize.apply(this, arguments);
             this.deferredInitializeCheck(options, ['productModel']);
@@ -184,7 +196,7 @@ define(function(require) {
 
             if (!price) {
                 if (changeQuantity) {
-                    price = _.last(this.prices[unit]) || null;//sorted by quantity, get smallest
+                    price = _.last(this.prices[unit]) || null;// sorted by quantity, get smallest
                 } else {
                     price = PricesHelper.findPrice(this.prices, unit, quantity);
                 }
@@ -214,7 +226,7 @@ define(function(require) {
                 this.getElement('price').addClass('hidden');
                 this.getElement('priceNotFound').removeClass('hidden');
             } else {
-                this.getElement('unit').text(price.formatted_unit);
+                this.getElement('unit').html(this.unitTemplate({price: price}));
 
                 this.getElement('priceValue').text(price.formatted_price);
 

@@ -283,11 +283,25 @@ oro_behat_extension:
             type: 'css'
             locator: 'select[name="oro_product_quick_add[products][1][productUnit]"]'
             element: Select2Entity
+          UNIT3:
+            type: 'css'
+            locator: 'select[name="oro_product_quick_add[products][2][productUnit]"]'
+            element: Select2Entity
 
     Quick Order Form > QTY1:
-      selector:
-        type: 'css'
-        locator: "input[name='oro_product_quick_add[products][0][productQuantity]']"
+      selector: "input[name='oro_product_quick_add[products][0][productQuantity]']"
+    Quick Order Form > SKU1:
+      selector: "input[name='oro_product_quick_add[products][0][productDisplayName]']"
+    Quick Order Form > SKU1 > AutoComplete Results > Item:
+      selector: '[data-content="oro_product_quick_add[products][0]"] ul.select2-results li a'
+    Quick Order Form > SKU2:
+      selector: "input[name='oro_product_quick_add[products][1][productDisplayName]']"
+    Quick Order Form > SKU2 > AutoComplete Results > Item:
+      selector: '[data-content="oro_product_quick_add[products][1]"] ul.select2-results li a'
+    Quick Order Form > SKU3:
+      selector: "input[name='oro_product_quick_add[products][2][productDisplayName]']"
+    Quick Order Form > SKU3 > AutoComplete Results > Item:
+      selector: '[data-content="oro_product_quick_add[products][2]"] ul.select2-results li a'
 
     Quick Add Price Field:
       selector:

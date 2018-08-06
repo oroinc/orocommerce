@@ -1,0 +1,113 @@
+include:
+    - '@OroLocaleBundle:LocalizationFixture.yml'
+
+Oro\Bundle\OrganizationBundle\Entity\BusinessUnit:
+    businessUnit:
+        name: Common Business Unit
+        organization: '@organization'
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    locvalue1:
+        string: 'PG-PA103 Product1'
+    locvalue2:
+        string: 'Product3 PA103-PG'
+    locvalue3:
+        string: 'Product2'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    precision{1..3}:
+        unit: '@item'
+        precision: '1'
+        sell: true
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product1:
+        sku: 'PG-PA103'
+        type: 'simple'
+        organization: '@organization'
+        owner: '@businessUnit'
+        primaryUnitPrecision: '@precision1'
+        attributeFamily: '@defaultProductFamily'
+        addName: ['@locvalue1']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+    product2:
+        sku: 'PA103-PG'
+        type: 'simple'
+        organization: '@organization'
+        owner: '@businessUnit'
+        primaryUnitPrecision: '@precision2'
+        attributeFamily: '@defaultProductFamily'
+        addName: ['@locvalue2']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+    product3:
+        sku: 'P-A103'
+        type: 'simple'
+        organization: '@organization'
+        owner: '@businessUnit'
+        primaryUnitPrecision: '@precision3'
+        attributeFamily: '@defaultProductFamily'
+        addName: ['@locvalue3']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+
+Oro\Bundle\PricingBundle\Entity\ProductPrice:
+    price1:
+        product: '@product1'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 45
+    price2:
+        product: '@product2'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 5
+    price3:
+        product: '@product3'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 22
+
+Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
+    priceRelation{1..3}:
+        product: '@product<current()>'
+        priceList: '@defaultPriceList'
+
+Oro\Bundle\PricingBundle\Entity\CombinedProductPrice:
+   combinedProductPriceProduct1:
+        pricelist: '@combinedPriceList'
+        product: '@product1'
+        productSku: 'PG-PA103'
+        quantity: 1
+        unit: '@item'
+        value: 45
+        currency: 'USD'
+   combinedProductPriceProduct2:
+        pricelist: '@combinedPriceList'
+        product: '@product2'
+        productSku: 'PA103-PG'
+        quantity: 1
+        unit: '@item'
+        value: 5
+        currency: 'USD'
+   combinedProductPriceProduct:
+        pricelist: '@combinedPriceList'
+        product: '@product3'
+        productSku: 'P-A103'
+        quantity: 1
+        unit: '@item'
+        value: 22
+        currency: 'USD'
+
+Oro\Bundle\InventoryBundle\Entity\InventoryLevel:
+    inventoryLevel{1..3}:
+        product: '@product<current()>'
+        productUnitPrecision: '@precision<current()>'
+        quantity: 100
