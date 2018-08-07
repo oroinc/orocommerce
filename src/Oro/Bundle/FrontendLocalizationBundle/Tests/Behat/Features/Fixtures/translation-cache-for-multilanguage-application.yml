@@ -1,0 +1,3 @@
+include:
+    - '@OroCustomerBundle:CustomerUserAmandaRCole.yml'
+    - '@OroLocaleBundle:ZuluLocalization.yml'

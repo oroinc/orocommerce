@@ -1,7 +1,8 @@
 @regression
 @ticket-BB-13273
 @ticket-BB-14555
-
+# Unskip after BB-14918
+@skip
 Feature: Product attributes import
   In order to effectively manage attributes for Product entity
   As an Administrator

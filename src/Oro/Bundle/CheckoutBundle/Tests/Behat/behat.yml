@@ -18,8 +18,10 @@ oro_behat_extension:
         - OroOrderBundle::OrderContext
         - OroCustomerBundle::ACLContext
         - OroProductBundle::FeatureContext
+        - OroProductBundle::QuickOrderFormContext
         - OroLocaleBundle::LocalizationContext
         - OroFrontendLocalizationBundle::LocalizationSwitcherContext
+        - OroDataGridBundle::GridContext
       paths:
         - '@OroCheckoutBundle/Tests/Behat/Features'
 
@@ -153,7 +155,9 @@ oro_behat_extension:
           Billing Address: 'oro_workflow_transition[billing_address][customerAddress]'
           First Name: 'oro_workflow_transition[billing_address][firstName]'
           Last Name: 'oro_workflow_transition[billing_address][lastName]'
+          Organization: 'oro_workflow_transition[billing_address][organization]'
           Email: 'oro_workflow_transition[email]'
+          Email: 'oro_workflow_transition[visitor_email]'
           Street: 'oro_workflow_transition[billing_address][street]'
           City: 'oro_workflow_transition[billing_address][city]'
           Country: 'oro_workflow_transition[billing_address][country]'
@@ -171,6 +175,7 @@ oro_behat_extension:
         mapping:
           First Name: 'oro_workflow_transition[shipping_address][firstName]'
           Last Name: 'oro_workflow_transition[shipping_address][lastName]'
+          Organization: 'oro_workflow_transition[shipping_address][organization]'
           Street: 'oro_workflow_transition[shipping_address][street]'
           City: 'oro_workflow_transition[shipping_address][city]'
           Country: 'oro_workflow_transition[shipping_address][country]'
@@ -221,3 +226,7 @@ oro_behat_extension:
       selector:
         locator: '//input[contains(@id,"oro_rfp_frontend_request_assignedCustomerUsers-uid")]'
         type: xpath
+
+    Quick Order Import Validation:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Table
+      selector: 'table.quick_add_validation_items'

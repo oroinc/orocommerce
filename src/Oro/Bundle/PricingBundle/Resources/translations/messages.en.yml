@@ -312,6 +312,9 @@ oro.pricing:
     validators:
         field_or_expression_is_required: Field "%fieldName%" is required
 
+    permission:
+        recalculate.label: "Recalculate"
+
 
 oro:
     importexport:

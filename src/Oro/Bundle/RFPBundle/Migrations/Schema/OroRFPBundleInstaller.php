@@ -14,6 +14,8 @@ use Oro\Bundle\RFPBundle\Migrations\Data\ORM\LoadRequestCustomerStatuses;
 use Oro\Bundle\RFPBundle\Migrations\Data\ORM\LoadRequestInternalStatuses;
 
 /**
+ * ORO installer for RFPBundle.
+ *
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class OroRFPBundleInstaller implements Installation, ActivityExtensionAwareInterface, ExtendExtensionAwareInterface
@@ -45,7 +47,7 @@ class OroRFPBundleInstaller implements Installation, ActivityExtensionAwareInter
      */
     public function getMigrationVersion()
     {
-        return 'v1_10';
+        return 'v1_11';
     }
 
     /**

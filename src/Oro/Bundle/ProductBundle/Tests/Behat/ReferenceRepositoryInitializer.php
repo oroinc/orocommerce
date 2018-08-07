@@ -9,6 +9,8 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use Oro\Bundle\ProductBundle\Migrations\Data\ORM\LoadProductDefaultAttributeFamilyData;
 use Oro\Bundle\TestFrameworkBundle\Behat\Isolation\ReferenceRepositoryInitializerInterface;
+use Oro\Bundle\TranslationBundle\Entity\Repository\TranslationKeyRepository;
+use Oro\Bundle\TranslationBundle\Entity\TranslationKey;
 
 class ReferenceRepositoryInitializer implements ReferenceRepositoryInitializerInterface
 {
@@ -16,6 +18,17 @@ class ReferenceRepositoryInitializer implements ReferenceRepositoryInitializerIn
      * {@inheritdoc}
      */
     public function init(Registry $doctrine, AliceCollection $referenceRepository)
+    {
+        $this->setDefaultProductFamilyReference($doctrine, $referenceRepository);
+        $this->setProductUnitReferences($doctrine, $referenceRepository);
+        $this->setProductUnitTranslationKeysReferences($doctrine, $referenceRepository);
+    }
+
+    /**
+     * @param Registry $doctrine
+     * @param AliceCollection $referenceRepository
+     */
+    private function setDefaultProductFamilyReference(Registry $doctrine, AliceCollection $referenceRepository): void
     {
         $repository = $doctrine->getManager()->getRepository(AttributeFamily::class);
         $attributeFamily = $repository->findOneBy([
@@ -27,7 +40,14 @@ class ReferenceRepositoryInitializer implements ReferenceRepositoryInitializerIn
         }
 
         $referenceRepository->set('defaultProductFamily', $attributeFamily);
+    }
 
+    /**
+     * @param Registry $doctrine
+     * @param AliceCollection $referenceRepository
+     */
+    private function setProductUnitReferences(Registry $doctrine, AliceCollection $referenceRepository): void
+    {
         /** @var ProductUnitRepository $repository */
         $repository = $doctrine->getManager()->getRepository('OroProductBundle:ProductUnit');
         /** @var ProductUnit $item */
@@ -42,5 +62,35 @@ class ReferenceRepositoryInitializer implements ReferenceRepositoryInitializerIn
         /** @var ProductUnit $piece */
         $piece = $repository->findOneBy(['code' => 'piece']);
         $referenceRepository->set('piece', $piece);
+    }
+
+    /**
+     * Adds to references for TranslationKey objects for product units.
+     * Format: translation_key_%domain%_%translation_key_dots_replaced_by_underscores%
+     * Example: translation_key_jsmessages_oro_product_product_unit_bottle_value_label
+     *
+     * @param Registry $doctrine
+     * @param AliceCollection $referenceRepository
+     */
+    private function setProductUnitTranslationKeysReferences(
+        Registry $doctrine,
+        AliceCollection $referenceRepository
+    ): void {
+        /** @var TranslationKeyRepository $repository */
+        $repository = $doctrine->getManager()->getRepository('OroTranslationBundle:TranslationKey');
+        $qb = $repository->createQueryBuilder('tk');
+        $qb->orWhere($qb->expr()->like('tk.key', $qb->expr()->literal('oro.product_unit.%')))
+            ->orWhere($qb->expr()->like('tk.key', $qb->expr()->literal('oro.product.product_unit.%')));
+        $translationKeys = $qb->getQuery()->execute();
+
+        /** @var TranslationKey $translationKey */
+        foreach ($translationKeys as $translationKey) {
+            $referenceKey = sprintf(
+                'translation_key_%s_%s',
+                $translationKey->getDomain(),
+                str_replace('.', '_', $translationKey->getKey())
+            );
+            $referenceRepository->set($referenceKey, $translationKey);
+        }
     }
 }
