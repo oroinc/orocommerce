@@ -1,0 +1,6 @@
+Oro\Bundle\TaxBundle\Entity\TaxJurisdiction:
+    tax_jurisdiction:
+        code: 'tazJurisdiction'
+        description: 'tazJurisdiction description'
+        country: '@united_states'
+        region: '@florida'

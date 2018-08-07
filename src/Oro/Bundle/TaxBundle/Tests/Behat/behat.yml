@@ -1,0 +1,17 @@
+oro_behat_extension:
+  suites:
+    OroTaxBundle:
+      contexts:
+        - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
+        - OroFormBundle::FeatureContext
+        - OroConfigBundle::FeatureContext
+        - OroFormBundle::FormContext
+        - OroDataGridBundle::GridContext
+        - OroApplicationBundle::CommerceMainContext
+        - OroSearchBundle::SearchContext
+        - OroCustomerBundle::CustomerUserContext
+        - OroCustomerBundle::ACLContext
+        - OroLocaleBundle::LocalizationContext
+        - OroFrontendLocalizationBundle::LocalizationSwitcherContext
+      paths:
+        - '@OroTaxBundle/Tests/Behat/Features'
