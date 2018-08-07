@@ -11,7 +11,7 @@ use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
 
 /**
- * Adds the file paths to the File entity if it is an image type.
+ * Computes a value of "filePath" field for File entity if it is an image type.
  */
 class AddImagePathToFile implements ProcessorInterface
 {
@@ -52,26 +52,18 @@ class AddImagePathToFile implements ProcessorInterface
             return;
         }
 
-        $config = $context->getConfig();
-
-        $filePathFieldName = $config->findFieldNameByPropertyPath('filePath');
-        if (!$filePathFieldName
-            || $config->getField($filePathFieldName)->isExcluded()
-            || array_key_exists($filePathFieldName, $data)
-        ) {
-            // the file path field is undefined, excluded or already added
+        $filePathFieldName = $context->getResultFieldName('filePath');
+        if (!$context->isFieldRequested($filePathFieldName, $data)) {
             return;
         }
 
-        $mimeTypeFieldName = $config->findFieldNameByPropertyPath('mimeType');
+        $mimeTypeFieldName = $context->getResultFieldName('mimeType');
         if (!$mimeTypeFieldName || empty($data[$mimeTypeFieldName])) {
-            // the mime type field is undefined or its value is unknown
             return;
         }
 
-        $fileIdFieldName = $config->findFieldNameByPropertyPath('id');
+        $fileIdFieldName = $context->getResultFieldName('id');
         if (!$fileIdFieldName || empty($data[$fileIdFieldName])) {
-            // the file id field is undefined or its value is unknown
             return;
         }
 
