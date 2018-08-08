@@ -68,48 +68,19 @@ class PriceAttributeProductPriceImportStrategyTest extends TestCase
     {
         $entity = $this->createAttributePrice(self::PRICE, self::CURRENCY);
 
-        $this->fieldHelper->expects(static::exactly(4))
-            ->method('getObjectValue')
-            ->withConsecutive(
-                [$entity, 'value'],
-                [$entity, 'currency'],
-                [$entity, 'value'],
-                [$entity, 'currency']
-            )
-            ->willReturnOnConsecutiveCalls(
-                self::PRICE,
-                self::CURRENCY,
-                self::PRICE,
-                self::CURRENCY
-            );
-
         /** @var PriceAttributeProductPrice $entity */
         $entity = $this->strategy->process($entity);
 
+        static::assertNotNull($entity->getPrice());
         static::assertSame(self::PRICE, $entity->getPrice()->getValue());
         static::assertSame(self::CURRENCY, $entity->getPrice()->getCurrency());
 
         static::assertSame(1, $entity->getQuantity());
     }
 
-    public function testStrategySetsPriceToNull()
+    public function testStrategySetsPriceToNullIfValueIsNull()
     {
-        $entity = $this->createAttributePrice(self::PRICE, self::CURRENCY);
-
-        $this->fieldHelper->expects(static::exactly(4))
-            ->method('getObjectValue')
-            ->withConsecutive(
-                [$entity, 'value'],
-                [$entity, 'currency'],
-                [$entity, 'value'],
-                [$entity, 'currency']
-            )
-            ->willReturnOnConsecutiveCalls(
-                self::PRICE,
-                null,
-                self::PRICE,
-                null
-            );
+        $entity = $this->createAttributePrice(null, self::CURRENCY);
 
         /** @var PriceAttributeProductPrice $entity */
         $entity = $this->strategy->process($entity);
@@ -117,17 +88,48 @@ class PriceAttributeProductPriceImportStrategyTest extends TestCase
         static::assertNull($entity->getPrice());
     }
 
+    public function testStrategySetsPriceToNullIfCurrencyIsNull()
+    {
+        $entity = $this->createAttributePrice(self::PRICE, null);
+
+        /** @var PriceAttributeProductPrice $entity */
+        $entity = $this->strategy->process($entity);
+
+        static::assertNull($entity->getPrice());
+    }
+
+    public function testStrategyReSetsPriceToNull()
+    {
+        $entity = $this->createAttributePrice(self::PRICE, self::CURRENCY);
+
+        /** @var PriceAttributeProductPrice $entity */
+        $entity = $this->strategy->process($entity);
+
+        static::assertNotNull($entity->getPrice());
+        static::assertSame(self::PRICE, $entity->getPrice()->getValue());
+        static::assertSame(self::CURRENCY, $entity->getPrice()->getCurrency());
+
+        // Entity value become invalid (null)
+        $this->setPriceValueAndCurrency($entity, null, self::CURRENCY);
+
+        /** @var PriceAttributeProductPrice $entity */
+        $afterProcessEntity = $this->strategy->process($entity);
+
+        static::assertNull($afterProcessEntity->getPrice());
+    }
+
     /**
+     * @param PriceAttributeProductPrice $entity
      * @param float  $value
      * @param string $currency
-     *
      * @return PriceAttributeProductPrice
      */
-    private function createAttributePrice(float $value, string $currency): PriceAttributeProductPrice
-    {
-        $entity = new PriceAttributeProductPrice();
-
-        $reflectionClass = new \ReflectionClass(PriceAttributeProductPrice::class);
+    private function setPriceValueAndCurrency(
+        PriceAttributeProductPrice $entity,
+        $value,
+        $currency
+    ): PriceAttributeProductPrice {
+        $reflectionClass = new \ReflectionObject($entity);
 
         $valueProperty = $reflectionClass->getProperty('value');
         $valueProperty->setAccessible(true);
@@ -138,5 +140,18 @@ class PriceAttributeProductPriceImportStrategyTest extends TestCase
         $currencyProperty->setValue($entity, $currency);
 
         return $entity;
+    }
+
+    /**
+     * @param float  $value
+     * @param string $currency
+     *
+     * @return PriceAttributeProductPrice
+     */
+    private function createAttributePrice($value, $currency): PriceAttributeProductPrice
+    {
+        $entity = new PriceAttributeProductPrice();
+
+        return $this->setPriceValueAndCurrency($entity, $value, $currency);
     }
 }

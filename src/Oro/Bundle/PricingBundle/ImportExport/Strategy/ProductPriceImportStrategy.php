@@ -58,13 +58,7 @@ class ProductPriceImportStrategy extends ConfigurableAddOrReplaceStrategy
      */
     protected function refreshPrice(ProductPrice $entity)
     {
-        $value = $this->fieldHelper->getObjectValue($entity, 'value');
-        $currency = $this->fieldHelper->getObjectValue($entity, 'currency');
-        if ($value && $currency) {
-            $entity->loadPrice();
-        } else {
-            $this->fieldHelper->setObjectValue($entity, 'price', null);
-        }
+        $entity->loadPrice();
     }
 
     /**
