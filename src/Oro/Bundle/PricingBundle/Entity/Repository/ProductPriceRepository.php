@@ -2,23 +2,24 @@
 
 namespace Oro\Bundle\PricingBundle\Entity\Repository;
 
+use Doctrine\DBAL\Connection;
 use Doctrine\ORM\Id\UuidGenerator;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Expr\Join;
-
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Entity\BaseProductPrice;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
-use Oro\Bundle\PricingBundle\Entity\PriceRule;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\ORM\ShardQueryExecutorInterface;
 use Oro\Bundle\PricingBundle\ORM\Walker\PriceShardWalker;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Doctrine\DBAL\Connection;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class ProductPriceRepository extends BaseProductPriceRepository
 {
     const BUFFER_SIZE = 500;
@@ -65,6 +66,19 @@ class ProductPriceRepository extends BaseProductPriceRepository
      */
     public function deleteInvalidPrices(ShardManager $shardManager, PriceList $priceList)
     {
+        $this->deleteInvalidPricesByProducts($shardManager, $priceList);
+    }
+
+    /**
+     * @param ShardManager $shardManager
+     * @param PriceList $priceList
+     * @param array $products
+     */
+    public function deleteInvalidPricesByProducts(
+        ShardManager $shardManager,
+        PriceList $priceList,
+        array $products = []
+    ) {
         $qb = $this->createQueryBuilder('invalidPrice');
         $qb->select('invalidPrice.id')
             ->leftJoin(
@@ -79,6 +93,12 @@ class ProductPriceRepository extends BaseProductPriceRepository
             ->where($qb->expr()->eq('invalidPrice.priceList', ':priceList'))
             ->andWhere($qb->expr()->isNull('productRelation.id'))
             ->setParameter('priceList', $priceList);
+
+        if ($products) {
+            $qb->andWhere($qb->expr()->in('invalidPrice.product', ':products'))
+                ->setParameter('products', $products);
+        }
+
         $query = $qb->getQuery();
 
         $query->setHint('priceList', $priceList->getId());
