@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\Tests\Unit\RelatedProducts;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\RelatedItem\RelatedProduct;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\UnitOfWork;
@@ -152,6 +152,15 @@ class AssignerDatabaseStrategyTest extends \PHPUnit_Framework_TestCase
         $this->assigner->removeRelations($productFrom, [$productTo]);
     }
 
+    public function testNothingHappensWhenTryToRemoveNoElements()
+    {
+        $this->noRelationShouldBeRemoved();
+        $this->doctrineHelper->expects($this->never())
+            ->method($this->anything());
+
+        $this->assigner->removeRelations(new Product(), []);
+    }
+
     public function testThrowExceptionWhenTryToExceedRelationLimitForAProduct()
     {
         $productFrom = new Product();
@@ -241,6 +250,12 @@ class AssignerDatabaseStrategyTest extends \PHPUnit_Framework_TestCase
     private function newRelationShouldNotBePersisted()
     {
         $this->entityManager->expects($this->never())->method('persist');
+        $this->entityManager->expects($this->never())->method('flush');
+    }
+
+    private function noRelationShouldBeRemoved()
+    {
+        $this->entityManager->expects($this->never())->method('remove');
         $this->entityManager->expects($this->never())->method('flush');
     }
 

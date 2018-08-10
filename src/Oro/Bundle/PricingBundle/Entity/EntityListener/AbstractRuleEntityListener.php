@@ -20,6 +20,11 @@ abstract class AbstractRuleEntityListener
     protected $fieldProvider;
 
     /**
+     * @var FieldsProviderInterface
+     */
+    protected $fieldsProvider;
+
+    /**
      * @var RegistryInterface
      */
     protected $registry;

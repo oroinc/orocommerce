@@ -56,6 +56,10 @@ class PriceRuleLexemeTriggerHandler
      */
     public function addTriggersByLexemes(array $lexemes, array $products = [])
     {
+        if (!$lexemes) {
+            return;
+        }
+
         $assignmentsRecalculatePriceLists = [];
         foreach ($lexemes as $lexeme) {
             $priceList = $lexeme->getPriceList();

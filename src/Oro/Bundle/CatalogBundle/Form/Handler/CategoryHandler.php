@@ -103,6 +103,10 @@ class CategoryHandler
             $productCategory = $categoryRepository->findOneByProduct($product);
 
             if ($productCategory instanceof Category) {
+                if ($productCategory->getId() === $category->getId()) {
+                    continue;
+                }
+
                 $productCategory->removeProduct($product);
             }
 
