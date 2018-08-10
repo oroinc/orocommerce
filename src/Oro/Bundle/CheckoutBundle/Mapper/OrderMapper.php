@@ -111,15 +111,7 @@ class OrderMapper implements MapperInterface
      */
     protected function getMapFields()
     {
-        $fields = $this->entityFieldHelper->getFields(
-            Order::class,
-            true,
-            false,
-            false,
-            false,
-            true,
-            false
-        );
+        $fields = $this->entityFieldHelper->getFields(Order::class, true, true, false, true, true, false);
 
         $withoutIds = array_filter(
             $fields,

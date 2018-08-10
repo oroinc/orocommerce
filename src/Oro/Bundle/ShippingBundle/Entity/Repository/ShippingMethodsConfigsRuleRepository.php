@@ -10,6 +10,9 @@ use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
+/**
+ * Returns shipping method config rules by destination, currency and website
+ */
 class ShippingMethodsConfigsRuleRepository extends EntityRepository
 {
     /**
@@ -39,6 +42,8 @@ class ShippingMethodsConfigsRuleRepository extends EntityRepository
     ): array {
         $queryBuilder = $this->getByCurrencyAndWebsiteQueryBuilder($currency, $website)
             ->leftJoin('methodsConfigsRule.destinations', 'destination')
+            ->leftJoin('methodsConfigsRule.rule', 'rule')
+            ->addSelect('rule', 'destination', 'postalCode')
             ->leftJoin('destination.region', 'region')
             ->leftJoin('destination.postalCodes', 'postalCode')
             ->andWhere('destination.country = :country or destination.country is null')

@@ -11,6 +11,9 @@ use Oro\Bundle\ProductBundle\VirtualFields\QueryDesigner\VirtualFieldsSelectQuer
 use Oro\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 
+/**
+ * Extends product with virtual fields
+ */
 class VirtualFieldsProductDecorator
 {
     const PRODUCT_ID_LABEL = 'product_id';
@@ -57,6 +60,11 @@ class VirtualFieldsProductDecorator
     protected static $propertyAccessor;
 
     /**
+     * @var array
+     */
+    private $propertyCache = [];
+
+    /**
      * @param EntityFieldProvider $provider
      * @param VirtualFieldsSelectQueryConverter $converter
      * @param ManagerRegistry $doctrine
@@ -85,15 +93,22 @@ class VirtualFieldsProductDecorator
      */
     public function __get($name)
     {
-        if ($this->getPropertyAccessor()->isReadable($this->product, $name)) {
-            return $this->getPropertyAccessor()->getValue($this->product, $name);
-        }
-        $field = $this->getRelationField($name);
-        if (!$field) {
-            throw new \InvalidArgumentException(sprintf('Relation "%s" doesn\'t exists for Product entity', $name));
+        if (!array_key_exists($name, $this->propertyCache)) {
+            if ($this->getPropertyAccessor()->isReadable($this->product, $name)) {
+                $this->propertyCache[$name] = $this->getPropertyAccessor()->getValue($this->product, $name);
+            } else {
+                $field = $this->getRelationField($name);
+                if (!$field) {
+                    throw new \InvalidArgumentException(
+                        sprintf('Relation "%s" doesn\'t exists for Product entity', $name)
+                    );
+                }
+                $this->propertyCache[$name] =
+                    $this->getVirtualFieldValueForAllProducts($field)[$this->product->getId()];
+            }
         }
 
-        return $this->getVirtualFieldValueForAllProducts($field)[$this->product->getId()];
+        return $this->propertyCache[$name];
     }
 
     /**
@@ -102,7 +117,7 @@ class VirtualFieldsProductDecorator
      */
     protected function getRelationField($name)
     {
-        $fields = $this->provider->getFields(Product::class, true, true, true);
+        $fields = $this->fieldHelper->getFields(Product::class, true, true, false, false, true, false);
         foreach ($fields as $field) {
             if ($field['name'] === $name) {
                 return $field;
