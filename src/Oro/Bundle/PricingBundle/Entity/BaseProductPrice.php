@@ -247,6 +247,10 @@ class BaseProductPrice implements ProductUnitHolderInterface, ProductHolderInter
      */
     public function getPrice()
     {
+        if (null === $this->price) {
+            $this->loadPrice();
+        }
+
         return $this->price;
     }
 
@@ -255,7 +259,13 @@ class BaseProductPrice implements ProductUnitHolderInterface, ProductHolderInter
      */
     public function loadPrice()
     {
-        $this->price = Price::create($this->value, $this->currency);
+        if (null !== $this->value && null !== $this->currency) {
+            $this->price = Price::create($this->value, $this->currency);
+        } else {
+            $this->price = null;
+        }
+
+        return $this;
     }
 
     /**

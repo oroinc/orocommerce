@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ProductBundle\Form\Handler;
 
 use Symfony\Bundle\FrameworkBundle\Routing\Router as SymfonyRouter;
-use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Translation\TranslatorInterface;

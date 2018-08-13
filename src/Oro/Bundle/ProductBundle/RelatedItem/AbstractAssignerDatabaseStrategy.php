@@ -57,6 +57,10 @@ abstract class AbstractAssignerDatabaseStrategy implements AssignerStrategyInter
      */
     public function removeRelations(Product $productFrom, array $productsTo)
     {
+        if (count($productsTo) === 0) {
+            return;
+        }
+
         foreach ($productsTo as $productTo) {
             $this->removeRelation($productFrom, $productTo);
         }

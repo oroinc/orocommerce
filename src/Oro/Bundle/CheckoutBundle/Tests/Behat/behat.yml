@@ -20,6 +20,8 @@ oro_behat_extension:
         - OroOrderBundle::OrderContext
         - OroCustomerBundle::ACLContext
         - OroProductBundle::FeatureContext
+        - OroLocaleBundle::LocalizationContext
+        - OroFrontendLocalizationBundle::LocalizationSwitcherContext
       paths:
         - '@OroCheckoutBundle/Tests/Behat/Features'
 
@@ -191,9 +193,61 @@ oro_behat_extension:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
     Submit Order:
-        selector: '.order-checkout-widget button:contains("Submit Order")'
-        class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector: '.order-checkout-widget button:contains("Submit Order")'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
     Quick Order Import Validation:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Table
       selector: 'table.quick_add_validation_items'
+
+    Customers Address Book Paginator:
+      selector: 'div[data-page-component-name="frontend-customer-customer-address-grid"] div.oro-items-counter'
+      class: Oro\Bundle\FrontendBundle\Tests\Behat\Element\GridToolbarPaginator
+
+    Customers Address Book Grid:
+      selector: 'div[data-page-component-name="frontend-customer-customer-address-grid"]'
+      class: Oro\Bundle\FrontendBundle\Tests\Behat\Element\Grid
+      options:
+        mapping:
+          GridToolbarPaginator: 'Customers Address Book Paginator'
+
+    Customers Address Book GridFilters:
+      selector: 'div[data-page-component-name="frontend-customer-customer-address-grid"] div.filter-box'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilters
+
+    Customers Address Book GridFiltersState:
+      selector: 'div[data-page-component-name="frontend-customer-customer-address-grid"] div.filters-state'
+
+    Customers Address Book GridToolbarActions:
+      selector: 'div[data-page-component-name="frontend-customer-customer-address-grid"] div.toolbar div.actions-panel'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridToolbarActions
+
+    Customers Address Book GridFilterItem:
+      selector: 'div.filter-items-hint span'
+      class: Oro\Bundle\FrontendBundle\Tests\Behat\Element\GridFilterItem
+
+    Customer Users Address Book Paginator:
+      selector: 'div[data-page-component-name="frontend-customer-customer-user-address-grid"] div.oro-items-counter'
+      class: Oro\Bundle\FrontendBundle\Tests\Behat\Element\GridToolbarPaginator
+
+    Customer Users Address Book Grid:
+      selector: 'div[data-page-component-name="frontend-customer-customer-user-address-grid"]'
+      class: Oro\Bundle\FrontendBundle\Tests\Behat\Element\Grid
+      options:
+        mapping:
+          GridToolbarPaginator: 'Customer Users Address Book Paginator'
+
+    Customer Users Address Book GridFilters:
+      selector: 'div[data-page-component-name="frontend-customer-customer-user-address-grid"] div.filter-box'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilters
+
+    Customer Users Address Book GridFiltersState:
+      selector: 'div[data-page-component-name="frontend-customer-customer-user-address-grid"] div.filters-state'
+
+    Customer Users Address Book GridToolbarActions:
+      selector: 'div[data-page-component-name="frontend-customer-customer-user-address-grid"] div.toolbar div.actions-panel'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridToolbarActions
+
+    Customer Users Address Book GridFilterItem:
+      selector: 'div.filter-items-hint span'
+      class: Oro\Bundle\FrontendBundle\Tests\Behat\Element\GridFilterItem
