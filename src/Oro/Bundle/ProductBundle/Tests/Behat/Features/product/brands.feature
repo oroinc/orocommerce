@@ -1,5 +1,5 @@
 @fixture-OroProductBundle:highlighting_new_products.yml
-Feature: Brands1
+Feature: Brands
   In order to add sort products by brands
   As an Administrator
   I want to be able to create and assign brands to the product
