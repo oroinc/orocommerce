@@ -137,3 +137,9 @@ oro_behat_extension:
       selector:
         type: 'xpath'
         locator: '//div[contains(@data-bound-component, "currency-switcher")]'
+
+    Export Button:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        locator: '//a[@type="button" and contains(text(),"Export")]'
+        type: xpath

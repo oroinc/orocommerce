@@ -90,50 +90,6 @@ Oro\Bundle\CatalogBundle\Entity\Category:
         setProducts: ['@products']
 
 Oro\Bundle\PricingBundle\Entity\PriceList:
-    priceListForExport:
-        name: 'priceListForExport'
+    priceListForImport:
+        name: 'priceListForImport'
         addCurrencyByCode: ['USD']
-
-Oro\Bundle\PricingBundle\Entity\ProductPrice:
-    price1:
-        product: '@product1'
-        priceList: '@priceListForExport'
-        currency: 'USD'
-        quantity: 1
-        unit: '@item'
-        value: 6
-    price2:
-        product: '@product2'
-        priceList: '@priceListForExport'
-        currency: 'USD'
-        quantity: 2
-        unit: '@item'
-        value: 10
-    price3:
-        product: '@product3'
-        priceList: '@priceListForExport'
-        currency: 'USD'
-        quantity: 5
-        unit: '@item'
-        value: 33
-    price4:
-        product: '@product4'
-        priceList: '@priceListForExport'
-        currency: 'USD'
-        quantity: 1
-        unit: '@item'
-        value: 0
-
-Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
-    priceRelation1:
-        product: '@product1'
-        priceList: '@priceListForExport'
-    priceRelation2:
-        product: '@product2'
-        priceList: '@priceListForExport'
-    priceRelation3:
-        product: '@product3'
-        priceList: '@priceListForExport'
-    priceRelation4:
-        product: '@product4'
-        priceList: '@priceListForExport'
