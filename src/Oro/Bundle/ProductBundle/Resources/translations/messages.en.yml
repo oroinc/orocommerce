@@ -221,9 +221,11 @@ oro:
             product_image.label: Type
         related_products:
             label: Related Products
+            no_entities: No records found
 
         upsell_products:
             label: Up-sell Products
+            no_entities: No records found
 
         lineitem:
             unit.label: Unit

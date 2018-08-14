@@ -52,6 +52,26 @@ class FinderDatabaseStrategy implements FinderStrategyInterface
     }
 
     /**
+     * @param Product   $product
+     * @param bool      $bidirectional
+     * @param int|null  $limit
+     * @return Product[]
+     */
+    public function findIds(Product $product, $bidirectional = false, $limit = null)
+    {
+        if (!$this->configProvider->isEnabled()) {
+            return [];
+        }
+
+        return $this->getRelatedProductsRepository()
+            ->findRelatedIds(
+                $product->getId(),
+                $bidirectional,
+                $limit
+            );
+    }
+
+    /**
      * @return RelatedProductRepository|EntityRepository
      */
     private function getRelatedProductsRepository()

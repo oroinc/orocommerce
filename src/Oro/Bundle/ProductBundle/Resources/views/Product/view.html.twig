@@ -185,8 +185,22 @@
             'id': 'products-related-products-view',
             'label': 'oro.product.tabs.relatedProducts'|trans}
         ]) %}
+
+        {% set relatedItemsIds = get_related_products_ids(entity) %}
+        {% set relatedGrid %}
+            {% if relatedItemsIds is not empty %}
+                {{ relatedProductsDataGrid.renderGrid('products-related-products-view', {'relatedItemsIds': relatedItemsIds}) }}
+            {% else %}
+                <div id="products-related-products-view">
+                    <div class="no-data">
+                        {{ 'oro.product.related_products.no_entities'|trans }}
+                    </div>
+                </div>
+            {% endif %}
+        {% endset %}
+
         {% set relatedItemsSubblocks = relatedItemsSubblocks|merge([
-            relatedProductsDataGrid.renderGrid('products-related-products-view', {'relatedItemsIds': get_related_products_ids(entity)}),
+            relatedGrid,
             placeholder('oro_product_related_items_view', {'entity':  entity}),
         ]) %}
     {% endif %}
@@ -196,8 +210,22 @@
             'id': 'products-upsell-products-view',
             'label': 'oro.product.tabs.upsellProducts'|trans
         }]) %}
+
+        {% set relatedItemsIds = get_upsell_products_ids(entity) %}
+        {% set relatedGrid %}
+            {% if relatedItemsIds is not empty %}
+                {{ relatedProductsDataGrid.renderGrid('products-upsell-products-view', {'relatedItemsIds': relatedItemsIds}) }}
+            {% else %}
+                <div id="products-upsell-products-view">
+                    <div class="no-data">
+                         {{ 'oro.product.upsell_products.no_entities'|trans }}
+                    </div>
+                </div>
+            {% endif %}
+        {% endset %}
+
         {% set relatedItemsSubblocks = relatedItemsSubblocks|merge([
-            relatedProductsDataGrid.renderGrid('products-upsell-products-view', {'relatedItemsIds': get_upsell_products_ids(entity)}),
+            relatedGrid,
             placeholder('oro_product_upsell_products_view', {'entity':  entity})
         ]) %}
     {% endif %}
