@@ -989,6 +989,7 @@ services:
         parent: oro_entity_config.block_type.abstract_attribute_block_type_mapper
         calls:
             - [addBlockTypeUsingMetadata, ['%oro_product.entity.product_image.class%', 'attribute_product_images']]
+            - [addBlockTypeUsingMetadata, ['%oro_product.entity.brand.class%', 'attribute_product_brand']]
         tags:
             - { name: oro_entity_config.layout.attribute_block_type_mapper }
 
