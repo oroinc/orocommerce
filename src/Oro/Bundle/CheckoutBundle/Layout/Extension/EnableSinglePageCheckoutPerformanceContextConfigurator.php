@@ -32,7 +32,7 @@ class EnableSinglePageCheckoutPerformanceContextConfigurator implements ContextC
 
         $context->set(
             self::ENABLE_SINGLE_PAGE_CHECKOUT_PERFORMANCE_OPTION_NAME,
-            $this->configManager->get('oro_checkout.single_page_checkout_increase_performance')
+            (bool) $this->configManager->get('oro_checkout.single_page_checkout_increase_performance')
         );
     }
 }
