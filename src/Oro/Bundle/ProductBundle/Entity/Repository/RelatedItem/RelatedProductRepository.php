@@ -62,10 +62,12 @@ class RelatedProductRepository extends EntityRepository implements AbstractAssig
                     ->select('DISTINCT IDENTITY(rp.product) as id')
                     ->from(RelatedProduct::class, 'rp')
                     ->where($qb->expr()->eq('rp.relatedItem', ':id'))
-                    ->andWhere($qb->expr()->notIn('rp.product', ':alreadySelectedIds'))
                     ->setParameter('id', $id)
-                    ->setParameter('alreadySelectedIds', $productIds)
                     ->orderBy('rp.product');
+                if ($productIds) {
+                    $qb->andWhere($qb->expr()->notIn('rp.product', ':alreadySelectedIds'))
+                        ->setParameter('alreadySelectedIds', $productIds);
+                }
                 if ($limit) {
                     $qb->setMaxResults($limit - count($productIds));
                 }
