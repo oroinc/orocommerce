@@ -51,6 +51,8 @@ class CheckoutController extends Controller
      * @param Checkout $checkout
      * @return array|Response
      * @throws \Exception
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     public function checkoutAction(Request $request, Checkout $checkout)
     {
@@ -82,7 +84,7 @@ class CheckoutController extends Controller
             }
         }
 
-        if ($responseData && $request->isXmlHttpRequest()) {
+        if ($responseData && $request->isXmlHttpRequest() && !$request->get('layout_block_ids')) {
             return new JsonResponse($responseData);
         }
 
@@ -127,6 +129,8 @@ class CheckoutController extends Controller
      * @param WorkflowItem $workflowItem
      * @param CheckoutInterface $checkout
      * @param Request $request
+     *
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     protected function validateOrderLineItems(WorkflowItem $workflowItem, CheckoutInterface $checkout, Request $request)
     {
