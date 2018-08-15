@@ -28,6 +28,11 @@ class OrderMapperTest extends \PHPUnit_Framework_TestCase
     protected $mapper;
 
     /**
+     * @var EntityFieldProvider|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $provider;
+
+    /**
      * @var FieldHelper|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $fieldHelper;
@@ -39,16 +44,19 @@ class OrderMapperTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
+        $this->provider = $this->createMock(EntityFieldProvider::class);
         $this->fieldHelper = $this->createMock(FieldHelper::class);
         $this->paymentTermAssociationProvider = $this->getMockBuilder(PaymentTermAssociationProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->mapper = new OrderMapper(
-            $this->fieldHelper,
+            $this->provider,
             PropertyAccess::createPropertyAccessor(),
             $this->paymentTermAssociationProvider
         );
+
+        $this->mapper->setEntityFieldHelper($this->fieldHelper);
     }
 
     public function testMap()
