@@ -384,9 +384,11 @@ services:
         class: 'Oro\Bundle\CheckoutBundle\Mapper\OrderMapper'
         public: false
         arguments:
-            - '@oro_entity.helper.field_helper'
+            - '@oro_entity.entity_field_provider'
             - '@property_accessor'
             - '@oro_payment_term.provider.payment_term_association'
+        calls:
+            - [setEntityFieldHelper, ['@oro_entity.helper.field_helper']]
 
     oro_checkout.model.action.create_order:
         class: 'Oro\Bundle\CheckoutBundle\Model\Action\CreateOrder'
@@ -606,11 +608,3 @@ services:
 
     oro_checkout.provider.checkout_line_items:
         class: 'Oro\Bundle\CheckoutBundle\Provider\CheckoutLineItemsProvider'
-
-    oro_checkout.layout_context_configurator.enable_single_page_checkout_performance:
-        class: 'Oro\Bundle\CheckoutBundle\Layout\Extension\EnableSinglePageCheckoutPerformanceContextConfigurator'
-        arguments:
-            - '@request_stack'
-            - '@oro_config.manager'
-        tags:
-            - { name: layout.context_configurator }
