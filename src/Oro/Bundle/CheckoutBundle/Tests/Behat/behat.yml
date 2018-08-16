@@ -230,3 +230,6 @@ oro_behat_extension:
     Quick Order Import Validation:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Table
       selector: 'table.quick_add_validation_items'
+
+    Permissions Dropdown Items:
+      selector: '.dropdown-menu__permissions-item a'
