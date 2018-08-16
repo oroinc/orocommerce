@@ -12,6 +12,9 @@ use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermAssociationProvider;
 use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 
+/**
+ * Maps data from Checkout to Order
+ */
 class OrderMapper implements MapperInterface
 {
     /** @var PropertyAccessorInterface */
@@ -121,7 +124,7 @@ class OrderMapper implements MapperInterface
      */
     protected function getMapFields()
     {
-        $fields = $this->entityFieldHelper->getFields(Order::class, true, true, false, true, true, false);
+        $fields = $this->entityFieldHelper->getFields(Order::class, true, false, false, true, true, false);
 
         $withoutIds = array_filter(
             $fields,
