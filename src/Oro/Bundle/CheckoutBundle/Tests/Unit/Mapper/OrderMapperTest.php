@@ -61,7 +61,10 @@ class OrderMapperTest extends \PHPUnit\Framework\TestCase
 
     public function testMap()
     {
-        $this->fieldHelper->expects($this->once())->method('getFields')->willReturn(
+        $this->fieldHelper->expects($this->once())
+            ->method('getFields')
+            ->with(Order::class, true, false, false, true, true, false)
+            ->willReturn(
             [
                 ['name' => 'id', 'identifier' => true],
                 ['name' => 'website'],
@@ -110,7 +113,10 @@ class OrderMapperTest extends \PHPUnit\Framework\TestCase
 
     public function testMapWithSourceEntity()
     {
-        $this->fieldHelper->expects($this->once())->method('getFields')->willReturn([]);
+        $this->fieldHelper->expects($this->once())
+            ->method('getFields')
+            ->with(Order::class, true, false, false, true, true, false)
+            ->willReturn([]);
 
         $source = new CheckoutSourceStub();
         $source->setId(2);
@@ -127,9 +133,12 @@ class OrderMapperTest extends \PHPUnit\Framework\TestCase
 
     public function testMapIdsIgnored()
     {
-        $this->fieldHelper->expects($this->once())->method('getFields')->willReturn(
-            [['name' => 'id', 'identifier' => true]]
-        );
+        $this->fieldHelper->expects($this->once())
+            ->method('getFields')
+            ->with(Order::class, true, false, false, true, true, false)
+            ->willReturn(
+                [['name' => 'id', 'identifier' => true]]
+            );
 
         $checkout = $this->getEntity(Checkout::class, ['id' => 5]);
 
