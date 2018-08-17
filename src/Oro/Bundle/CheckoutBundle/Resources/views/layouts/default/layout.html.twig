@@ -41,12 +41,14 @@
 {% endmacro %}
 
 {% macro transitionConditionMessages(transitionData) %}
-    <div>{{ 'oro.checkout.workflow.unavailable_transition.message'|trans }}</div>
-    <ul>
-        {% for error in transitionData.errors %}
-            <li>{{ error.message|trans(error.parameters)|nl2br }}</li>
-        {% endfor %}
-    </ul>
+    {%- spaceless -%}
+        <div>{{ 'oro.checkout.workflow.unavailable_transition.message'|trans }}</div>
+        <ul>
+            {% for error in transitionData.errors %}
+                <li>{{ error.message|trans(error.parameters)|nl2br }}</li>
+            {% endfor %}
+        </ul>
+    {%- endspaceless -%}
 {% endmacro %}
 
 {% block checkout_transition_back_widget %}

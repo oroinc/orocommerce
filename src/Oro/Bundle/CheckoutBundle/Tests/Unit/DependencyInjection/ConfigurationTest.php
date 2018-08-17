@@ -2,9 +2,8 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\DependencyInjection;
 
-use Symfony\Component\Config\Definition\Processor;
-
 use Oro\Bundle\CheckoutBundle\DependencyInjection\Configuration;
+use Symfony\Component\Config\Definition\Processor;
 
 class ConfigurationTest extends \PHPUnit_Framework_TestCase
 {
@@ -46,6 +45,10 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                             'scope' => 'app'
                         ],
                         'guest_checkout' => [
+                            'value' => false,
+                            'scope' => 'app'
+                        ],
+                        'single_page_checkout_increase_performance' => [
                             'value' => false,
                             'scope' => 'app'
                         ],

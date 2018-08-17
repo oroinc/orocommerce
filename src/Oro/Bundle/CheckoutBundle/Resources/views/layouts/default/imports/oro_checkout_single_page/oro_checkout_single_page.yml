@@ -1,0 +1,68 @@
+layout:
+    actions:
+        - '@changeBlockType':
+            id: checkout_view
+            blockType: single_page_transition_container
+
+        - '@appendOption':
+            id: checkout_view
+            optionName: transitionData
+            optionValue: '=data["oro_checkout_single_page_transition"].getContinueTransition(data["workflowItem"])'
+
+        - '@appendOption':
+            id: checkout_view
+            optionName: checkout
+            optionValue: '=data["checkout"]'
+
+        - '@changeBlockType':
+            id: checkout_button_continue_right_container
+            blockType: container
+
+        - '@removeOption':
+            id: checkout_button_continue_right_container
+            optionName: transitionData
+
+        - '@removeOption':
+            id: checkout_button_continue_right_container
+            optionName: checkout
+
+        - '@move':
+            id: checkout_button_continue_right_container
+            parentId: checkout_button_continue_right_wrapper
+            siblingId: checkout_order_summary_totals
+
+        - '@move':
+            id: checkout_button_continue_right_wrapper
+            parentId: checkout_order_summary_totals_sticky_container
+            siblingId: checkout_order_summary_totals_wrapper
+
+        - '@setOption':
+            id: checkout_button_continue_right_wrapper
+            optionName: reloadEvents
+            optionValue: []
+
+        - '@add':
+            id: checkout_order_summary_totals_wrapper
+            blockType: layout_subtree_update
+            parentId: checkout_order_summary_totals_sticky_container
+            options:
+                reloadEvents: []
+                showLoading: false
+
+        - '@move':
+            id: checkout_order_summary_totals
+            parentId: checkout_order_summary_totals_wrapper
+
+        - '@move':
+            id: checkout_button_continue_right
+            parentId: checkout_button_continue_right_container
+
+        - '@setOption':
+            id: payment_methods_wrapper
+            optionName: reloadEvents
+            optionValue: []
+
+        - '@setOption':
+            id: shipping_methods_wrapper
+            optionName: reloadEvents
+            optionValue: []

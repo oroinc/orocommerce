@@ -3,13 +3,12 @@
 namespace Oro\Bundle\CheckoutBundle\Mapper;
 
 use Doctrine\Common\Util\ClassUtils;
-
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\EntityBundle\Helper\FieldHelper;
 use Oro\Bundle\EntityBundle\Provider\EntityFieldProvider;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermAssociationProvider;
-
 use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 
@@ -20,6 +19,9 @@ class OrderMapper implements MapperInterface
 
     /** @var EntityFieldProvider */
     private $entityFieldProvider;
+
+    /** @var FieldHelper */
+    private $entityFieldHelper;
 
     /** @var PaymentTermAssociationProvider */
     private $paymentTermAssociationProvider;
@@ -34,9 +36,17 @@ class OrderMapper implements MapperInterface
         PropertyAccessorInterface $propertyAccessor,
         PaymentTermAssociationProvider $paymentTermAssociationProvider
     ) {
-        $this->propertyAccessor = $propertyAccessor;
         $this->entityFieldProvider = $entityFieldProvider;
+        $this->propertyAccessor = $propertyAccessor;
         $this->paymentTermAssociationProvider = $paymentTermAssociationProvider;
+    }
+
+    /**
+     * @param FieldHelper $entityFieldHelper
+     */
+    public function setEntityFieldHelper(FieldHelper $entityFieldHelper)
+    {
+        $this->entityFieldHelper = $entityFieldHelper;
     }
 
     /** {@inheritdoc} */
@@ -111,7 +121,7 @@ class OrderMapper implements MapperInterface
      */
     protected function getMapFields()
     {
-        $fields = $this->entityFieldProvider->getFields(Order::class, true, true, false, true, true, false);
+        $fields = $this->entityFieldHelper->getFields(Order::class, true, true, false, true, true, false);
 
         $withoutIds = array_filter(
             $fields,

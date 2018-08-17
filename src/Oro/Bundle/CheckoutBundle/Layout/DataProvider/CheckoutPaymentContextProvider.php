@@ -8,6 +8,9 @@ use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 
 class CheckoutPaymentContextProvider
 {
+    /** @var array */
+    private $paymentContextCache = [];
+
     /** @var CheckoutPaymentContextFactory */
     protected $paymentContextFactory;
 
@@ -25,6 +28,12 @@ class CheckoutPaymentContextProvider
      */
     public function getContext(Checkout $entity)
     {
-        return $this->paymentContextFactory->create($entity);
+        $contextHash = md5(serialize($entity));
+        if (isset($this->paymentContextCache[$contextHash])) {
+            return $this->paymentContextCache[$contextHash];
+        }
+
+        $this->paymentContextCache[$contextHash] = $this->paymentContextFactory->create($entity);
+        return $this->paymentContextCache[$contextHash];
     }
 }
