@@ -120,6 +120,10 @@ class ShippingPriceProvider implements ShippingPriceProviderInterface
             return null;
         }
 
+        if ($this->priceCache->hasPrice($context, $methodId, $typeId)) {
+            return $this->priceCache->getPrice($context, $methodId, $typeId);
+        }
+
         $rules = $this->shippingRulesProvider->getShippingMethodsConfigsRules($context);
         foreach ($rules as $rule) {
             foreach ($rule->getMethodConfigs() as $methodConfig) {
@@ -129,9 +133,6 @@ class ShippingPriceProvider implements ShippingPriceProviderInterface
 
                 $typesOptions = $this->getEnabledTypesOptions($methodConfig->getTypeConfigs()->toArray());
                 if (array_key_exists($typeId, $typesOptions)) {
-                    if ($this->priceCache->hasPrice($context, $methodId, $typeId)) {
-                        return $this->priceCache->getPrice($context, $methodId, $typeId);
-                    }
                     $price = $type->calculatePrice(
                         $context,
                         $methodConfig->getOptions(),

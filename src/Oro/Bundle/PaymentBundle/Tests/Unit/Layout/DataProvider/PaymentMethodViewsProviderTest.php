@@ -115,6 +115,18 @@ class PaymentMethodViewsProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals([$methodType => ['label' => 'label', 'block' => 'block', 'options' => []]], $data);
     }
 
+    public function testGetViewsCached()
+    {
+        /** @var PaymentContextInterface $context */
+        $context = $this->createMock(PaymentContextInterface::class);
+
+        $this->testGetViews();
+
+        $data = $this->provider->getViews($context);
+
+        $this->assertEquals(['payment_method' => ['label' => 'label', 'block' => 'block', 'options' => []]], $data);
+    }
+
     public function testGetPaymentMethods()
     {
         $entity = new \stdClass();

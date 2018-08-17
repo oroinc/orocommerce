@@ -89,10 +89,19 @@ workflows:
                     page-component-module: 'orocheckout/js/app/components/single-page-transition-button-component'
                     page-component-options:
                         saveStateUrl: $.result.saveStateUrl
+                        targetLayoutBlocks:
+                            '[data-role="checkout-shipping-address"]':
+                                - 'payment_methods_wrapper'
+                                - 'shipping_methods_wrapper'
+                                - 'checkout_order_summary_totals_wrapper'
+                            '[name="shippingMethodType"]':
+                                - 'checkout_order_summary_totals_wrapper'
+                            '[name="paymentMethod"]':
+                                - 'checkout_order_summary_totals_wrapper'
                         targetEvents:
                             '.checkout-billing-address, .checkout-shipping-address':
-                                - 'payment-methods:refresh'
                                 - 'shipping-methods:refresh'
+                                - 'payment-methods:refresh'
                         ignoreTargets:
                             - '.checkout-payment-methods .checkout-form__payment-container'
                         enableOnLoad: false

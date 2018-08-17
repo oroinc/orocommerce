@@ -1,0 +1,9 @@
+layout:
+    imports:
+        - 'oro_checkout_single_page'
+
+    actions:
+        - '@setBlockTheme':
+            themes: '../templates/single_page_decorated.html.twig'
+
+    conditions: 'context["workflowStepName"]=="checkout" && !context["widget_container"] && context["enable_single_page_checkout_performance"]'

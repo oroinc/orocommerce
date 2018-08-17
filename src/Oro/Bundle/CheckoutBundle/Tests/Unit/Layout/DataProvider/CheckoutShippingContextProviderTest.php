@@ -48,5 +48,16 @@ class CheckoutShippingContextProviderTest extends \PHPUnit\Framework\TestCase
 
         $shippingContext = $this->provider->getContext($this->checkout);
         $this->assertEquals($context, $shippingContext);
+
+        return $context;
+    }
+
+    public function testGetPaymentStatusCached()
+    {
+        $context = $this->testGetPaymentStatus();
+
+        $shippingContext = $this->provider->getContext($this->checkout);
+
+        $this->assertEquals($context, $shippingContext);
     }
 }

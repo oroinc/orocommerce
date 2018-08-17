@@ -387,6 +387,8 @@ services:
             - '@oro_entity.entity_field_provider'
             - '@property_accessor'
             - '@oro_payment_term.provider.payment_term_association'
+        calls:
+            - [setEntityFieldHelper, ['@oro_entity.helper.field_helper']]
 
     oro_checkout.model.action.create_order:
         class: 'Oro\Bundle\CheckoutBundle\Model\Action\CreateOrder'
@@ -678,3 +680,10 @@ services:
             - '@session'
         tags:
             - { name: layout.data_provider, alias: oro_checkout_forgot_password_check_email }
+
+    oro_checkout.layout_context_configurator.enable_single_page_checkout_performance:
+        class: Oro\Bundle\CheckoutBundle\Layout\Extension\EnableSinglePageCheckoutPerformanceContextConfigurator
+        arguments:
+            - '@oro_config.manager'
+        tags:
+            - { name: layout.context_configurator }
