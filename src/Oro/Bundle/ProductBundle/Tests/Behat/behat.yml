@@ -742,7 +742,9 @@ oro_behat_extension:
       options:
         mapping:
           Name: 'oro_product_brand[names][values][default]'
+          Name First: 'oro_product_brand[names][values][localizations][1][value]'
           Name Second: 'oro_product_brand[names][values][localizations][2][value]'
+          Name First Use Default: 'oro_product_brand[names][values][localizations][1][use_fallback]'
           Name Second Use Default: 'oro_product_brand[names][values][localizations][2][use_fallback]'
           Meta Title: 'oro_product_brand[metaTitles][values][default]'
           Meta Description: 'oro_product_brand[metaDescriptions][values][default]'
@@ -853,6 +855,7 @@ oro_behat_extension:
             - '@oro_importexport.processor.registry'
         - OroNavigationBundle::FeatureContext
         - OroQueryDesignerBundle::QueryDesignerContext
+        - OroLocaleBundle::LocalizationContext
       paths:
         - '@OroProductBundle/Tests/Behat/Features/product-collection'
         - '@OroProductBundle/Tests/Behat/Features/product'

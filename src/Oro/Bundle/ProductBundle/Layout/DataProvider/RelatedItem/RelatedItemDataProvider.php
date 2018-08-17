@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Layout\DataProvider\RelatedItem;
 
+use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\Restriction\RestrictedProductRepository;
 use Oro\Bundle\ProductBundle\RelatedItem\AbstractRelatedItemConfigProvider;
@@ -45,21 +46,20 @@ class RelatedItemDataProvider implements RelatedItemDataProviderInterface
      */
     public function getRelatedItems(Product $product)
     {
+        $isBidirectional = $this->configProvider->isBidirectional();
+        $limit = $this->configProvider->getLimit();
+
         /** @var Product[] $relatedProducts */
-        $relatedProducts = $this->finderStrategy
-            ->find($product, $this->configProvider->isBidirectional(), $this->configProvider->getLimit());
+        $relatedProducts = method_exists($this->finderStrategy, 'findIds')
+            ? $this->finderStrategy->findIds($product, $isBidirectional, $limit)
+            : $this->finderStrategy->find($product, $isBidirectional, $limit);
 
         if (!$this->hasMoreThanRequiredMinimum($relatedProducts)) {
             return [];
         }
 
-        $relatedProductsId = [];
-        foreach ($relatedProducts as $relatedProduct) {
-            $relatedProductsId[] = $relatedProduct->getId();
-        }
-
         $restrictedProducts = $this->restrictedProductRepository->findProducts(
-            $relatedProductsId,
+            $relatedProducts instanceof Collection ? $relatedProducts->toArray() : $relatedProducts,
             $this->configProvider->getMaximumItems()
         );
 

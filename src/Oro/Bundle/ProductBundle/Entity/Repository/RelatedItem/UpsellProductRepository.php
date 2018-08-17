@@ -4,7 +4,6 @@ namespace Oro\Bundle\ProductBundle\Entity\Repository\RelatedItem;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
-
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\RelatedItem\UpsellProduct;
 use Oro\Bundle\ProductBundle\RelatedItem\AbstractAssignerRepositoryInterface;
@@ -52,5 +51,26 @@ class UpsellProductRepository extends EntityRepository implements AbstractAssign
         }
 
         return $qb->getQuery()->execute();
+    }
+
+    /**
+     * @param int $id
+     * @param int|null $limit
+     * @return int[]
+     */
+    public function findUpsellIds($id, $limit = null)
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder()
+            ->select('DISTINCT IDENTITY(up.relatedItem) as id')
+            ->from(UpsellProduct::class, 'up')
+            ->where('up.product = :id')
+            ->setParameter(':id', $id)
+            ->orderBy('up.relatedItem');
+
+        if ($limit) {
+            $qb->setMaxResults($limit);
+        }
+
+        return array_column($qb->getQuery()->getArrayResult(), 'id');
     }
 }
