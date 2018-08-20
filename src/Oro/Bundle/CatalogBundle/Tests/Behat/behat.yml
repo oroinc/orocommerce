@@ -18,7 +18,7 @@ oro_behat_extension:
     Search:
       selector:
         type: xpath
-        locator: '//a[@title="Search"]'
+        locator: '//button[@title="Search"]'
 
     VisibilityToAll:
       selector: 'select[name="oro_catalog_category[visibility][all]"]'
