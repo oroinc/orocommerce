@@ -311,23 +311,48 @@
                  data-page-component-options="{{ gridSidebarComponentOptions|json_encode }}"
             >
                 {% import 'OroProductBundle::product_collection_macros.html.twig' as ProductCollection %}
+                {% set uniqueId = 'dropdown-'|uniqid %}
                 <div class="oro-tabs">
                     <div class="oro-tabs__head">
-                        <ul class="nav nav-tabs">
-                            <li class="nav-item active">
-                                <a href="#{{ 'filtered_products' ~ scope}}" class="nav-link" data-toggle="tab" data-role="tab-filtered">
+                        <ul class="nav nav-tabs" role="tablist">
+                            <li class="nav-item">
+                                <a id="{{ 'filtered_products' ~ uniqueId ~ scope ~ '-tab' }}"
+                                   href="#{{ 'filtered_products' ~ uniqueId ~ scope }}"
+                                   class="nav-link active"
+                                   data-toggle="tab"
+                                   data-role="tab-filtered"
+                                   role="tab"
+                                   aria-controls="{{'filtered_products' ~ uniqueId ~ scope }}"
+                                   aria-selected="true"
+                                >
                                     {{ 'oro.product.content_variant.ui.filtered_products'|trans }}
                                     (<span data-role="counter">{{ render(controller('OroProductBundle:AjaxGetProductsCount:get', widgetRouteParameters)) }}</span>)
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="#{{ 'excluded_products' ~ scope}}" class="nav-link" data-toggle="tab" data-role="tab-excluded">
+                                <a id="{{ 'excluded_products' ~ uniqueId ~ scope ~ '-tab' }}"
+                                   href="#{{ 'excluded_products' ~ uniqueId ~ scope}}"
+                                   class="nav-link"
+                                   data-toggle="tab"
+                                   data-role="tab-excluded"
+                                   role="tab"
+                                   aria-controls="{{ 'excluded_products' ~ uniqueId ~ scope}}"
+                                   aria-selected="false"
+                                >
                                     {{ 'oro.product.content_variant.ui.excluded_products'|trans }}
                                     (<span data-role="counter">{{ render(controller('OroProductBundle:AjaxGetProductsCount:get', excludedWidgetRouteParameters)) }}</span>)
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="#{{ 'included_products' ~ scope}}" class="nav-link" data-toggle="tab" data-role="tab-included">
+                                <a id="{{ 'included_products' ~ uniqueId ~ scope ~ '-id' }}"
+                                   href="#{{ 'included_products' ~ uniqueId ~ scope}}"
+                                   class="nav-link"
+                                   data-toggle="tab"
+                                   data-role="tab-included"
+                                   role="tab"
+                                   aria-controls="{{ 'included_products' ~ uniqueId ~ scope}}"
+                                   aria-selected="false"
+                                >
                                     {{ 'oro.product.content_variant.ui.included_products'|trans }}
                                     (<span data-role="counter">{{ render(controller('OroProductBundle:AjaxGetProductsCount:get', includedWidgetRouteParameters)) }}</span>)
                                 </a>
@@ -345,7 +370,11 @@
                     </div>
                     <div class="oro-tabs__content">
                         <div class="tab-content">
-                            <div class="tab-pane active" id="{{ 'filtered_products' ~ scope}}">
+                            <div class="tab-pane active"
+                                 id="{{ 'filtered_products' ~ uniqueId ~ scope }}"
+                                 role="tabpanel"
+                                 aria-labelledby="{{ 'filtered_products' ~ uniqueId ~ scope ~ '-tab' }}"
+                            >
                                 <div class="collapse-view"
                                      data-page-component-collapse="{{ {
                                          openClass: 'expanded',
@@ -387,7 +416,11 @@
                                 </div>
                             </div>
 
-                            <div class="tab-pane" id="{{ 'excluded_products' ~ scope}}">
+                            <div class="tab-pane"
+                                 id="{{ 'excluded_products' ~ uniqueId ~ scope }}"
+                                 role="tabpanel"
+                                 aria-labelledby="{{ 'excluded_products' ~ uniqueId ~ scope ~ '-tab' }}"
+                            >
                                 <div class="top-frame">
                                     <div class="control-group">
                                         <div class="pull-right">
@@ -422,7 +455,11 @@
 
                             </div>
 
-                            <div class="tab-pane" id="{{ 'included_products' ~ scope}}">
+                            <div class="tab-pane"
+                                 id="{{ 'included_products' ~ uniqueId ~ scope }}"
+                                 role="tabpanel"
+                                 aria-labelledby="{{ 'included_products' ~ uniqueId ~ scope ~ '-id' }}"
+                            >
                                 <div class="top-frame">
                                     <div class="control-group">
                                         <div class="pull-right">
