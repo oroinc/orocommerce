@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Search;
 
+use Oro\Bundle\EntityBundle\ORM\DatabaseDriverInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\FilterBundle\Form\Type\Filter\TextFilterType;
@@ -9,6 +10,7 @@ use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserD
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Schema\OroFrontendTestFrameworkBundleInstaller;
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\Client;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadConfigurableProductWithVariants;
+use Oro\Bundle\SearchBundle\Engine\Orm;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -36,6 +38,15 @@ class ProductVariantProviderDecoratorTest extends WebTestCase
      */
     public function testAllTextVariantSearch($allTextValue, array $expectedSkus)
     {
+        if ($this->getContainer()->getParameter('search_engine_name') === Orm::ENGINE_NAME &&
+            $this->getContainer()->getParameter('database_driver') === DatabaseDriverInterface::DRIVER_MYSQL
+        ) {
+            $this->markTestSkipped(
+                'Fulltext search does not work inside the transaction for MySQL. ' .
+                'https://dev.mysql.com/doc/refman/5.6/en/innodb-fulltext-index.html#innodb-fulltext-index-transaction'
+            );
+        }
+
         $response = $this->client->requestFrontendGrid(
             'frontend-product-search-grid',
             [
