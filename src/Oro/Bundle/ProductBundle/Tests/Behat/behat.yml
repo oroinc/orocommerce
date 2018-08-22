@@ -245,6 +245,10 @@ oro_behat_extension:
       options:
         mapping:
           Label: 'oro_attribute_family[labels][values][default]'
+          Attribute Groups Attributes SEO:
+            type: 'xpath'
+            locator: '//div[@id[starts-with(.,"s2id_oro_attribute_family_attributeGroups_seo_attributeRelations-uid")]]//input'
+          Attribute Groups Visible SEO: 'oro_attribute_family[attributeGroups][seo][isVisible]'
 
     QuickAddForm:
       selector: "form[name='oro_product_quick_add']"
@@ -739,7 +743,9 @@ oro_behat_extension:
       options:
         mapping:
           Name: 'oro_product_brand[names][values][default]'
+          Name First: 'oro_product_brand[names][values][localizations][1][value]'
           Name Second: 'oro_product_brand[names][values][localizations][2][value]'
+          Name First Use Default: 'oro_product_brand[names][values][localizations][1][use_fallback]'
           Name Second Use Default: 'oro_product_brand[names][values][localizations][2][use_fallback]'
           Meta Title: 'oro_product_brand[metaTitles][values][default]'
           Meta Description: 'oro_product_brand[metaDescriptions][values][default]'
@@ -771,6 +777,12 @@ oro_behat_extension:
     Product View Gallery Trigger:
       selector: '.product-view-media-container [data-trigger-gallery-open]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+
+    Product Main Image:
+      selector: '.tab-content__wrapper .product-view-media-gallery__image'
+
+    Zoom Container:
+      selector: '.zoomWindowContainer'
 
     Product navbar:
       selector: '#product-edit.navbar'
@@ -862,6 +874,7 @@ oro_behat_extension:
         - OroNavigationBundle::FeatureContext
         - OroNavigationBundle::PinbarContext
         - OroQueryDesignerBundle::QueryDesignerContext
+        - OroLocaleBundle::LocalizationContext
       paths:
         - '@OroProductBundle/Tests/Behat/Features/product-collection'
         - '@OroProductBundle/Tests/Behat/Features/product'

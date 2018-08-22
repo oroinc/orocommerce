@@ -70,7 +70,7 @@ class RelatedItemDataProviderTest extends \PHPUnit\Framework\TestCase
             $this->getEntity(Product::class, ['id' => 3]),
         ]);
 
-        $this->finderReturnsRelatedProducts($relatedProducts);
+        $this->finderReturnsRelatedProducts([2, 3]);
         $this->minimumRelatedProductsIs(2);
         $this->restrictionReturnsRelatedProducts($relatedProducts);
 
@@ -82,12 +82,7 @@ class RelatedItemDataProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testDoesNotReturnProductsIfThereAreLessRelatedProductThanSpecifiedInMinConfiguration()
     {
-        $relatedProducts = new ArrayCollection([
-            $this->getEntity(Product::class, ['id' => 2]),
-            $this->getEntity(Product::class, ['id' => 3]),
-        ]);
-
-        $this->finderReturnsRelatedProducts($relatedProducts);
+        $this->finderReturnsRelatedProducts([2, 3]);
         $this->minimumRelatedProductsIs(3);
 
         $this->assertEquals([], $this->dataProvider->getRelatedItems(new Product()));
@@ -97,11 +92,10 @@ class RelatedItemDataProviderTest extends \PHPUnit\Framework\TestCase
     {
         $product2 = $this->getEntity(Product::class, ['id' => 2]);
         $product3 = $this->getEntity(Product::class, ['id' => 3]);
-        $product4 = $this->getEntity(Product::class, ['id' => 4]);
-        $relatedProducts = new ArrayCollection([$product2, $product3, $product4]);
+
         $restrictedProducts = new ArrayCollection([$product2, $product3]);
 
-        $this->finderReturnsRelatedProducts($relatedProducts);
+        $this->finderReturnsRelatedProducts([2, 3, 4]);
         $this->minimumRelatedProductsIs(2);
         $this->restrictionReturnsRelatedProducts($restrictedProducts);
 
@@ -118,7 +112,7 @@ class RelatedItemDataProviderTest extends \PHPUnit\Framework\TestCase
         $product4 = $this->getEntity(Product::class, ['id' => 4]);
         $relatedProducts = new ArrayCollection([$product2, $product3, $product4]);
 
-        $this->finderReturnsRelatedProducts($relatedProducts);
+        $this->finderReturnsRelatedProducts([2, 3, 4]);
         $this->restrictionReturnsRelatedProducts($relatedProducts, 1);
 
         $this->assertEquals(
@@ -131,11 +125,10 @@ class RelatedItemDataProviderTest extends \PHPUnit\Framework\TestCase
     {
         $product2 = $this->getEntity(Product::class, ['id' => 2]);
         $product3 = $this->getEntity(Product::class, ['id' => 3]);
-        $product4 = $this->getEntity(Product::class, ['id' => 4]);
-        $relatedProducts = new ArrayCollection([$product2, $product3, $product4]);
+
         $restrictedProducts = new ArrayCollection([$product2, $product3]);
 
-        $this->finderReturnsRelatedProducts($relatedProducts);
+        $this->finderReturnsRelatedProducts([2, 3, 4]);
         $this->minimumRelatedProductsIs(3);
         $this->restrictionReturnsRelatedProducts($restrictedProducts);
 
@@ -174,13 +167,13 @@ class RelatedItemDataProviderTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param Product[]|ArrayCollection $relatedProducts
+     * @param int[] $relatedProductIds
      */
-    private function finderReturnsRelatedProducts($relatedProducts)
+    private function finderReturnsRelatedProducts(array $relatedProductIds)
     {
         $this->finder->expects($this->once())
-            ->method('find')
-            ->willReturn($relatedProducts);
+            ->method('findIds')
+            ->willReturn($relatedProductIds);
     }
 
     /**
@@ -193,6 +186,9 @@ class RelatedItemDataProviderTest extends \PHPUnit\Framework\TestCase
             ->willReturn($count);
     }
 
+    /**
+     * @param bool $isEnabled
+     */
     private function isSliderEnabledOnMobile($isEnabled)
     {
         $this->configProvider->expects($this->any())
@@ -200,6 +196,9 @@ class RelatedItemDataProviderTest extends \PHPUnit\Framework\TestCase
             ->willReturn($isEnabled);
     }
 
+    /**
+     * @param bool $isVisible
+     */
     private function isAddButtonVisible($isVisible)
     {
         $this->configProvider->expects($this->any())
