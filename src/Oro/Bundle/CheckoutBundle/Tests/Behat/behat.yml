@@ -251,3 +251,6 @@ oro_behat_extension:
     Customer Users Address Book GridFilterItem:
       selector: 'div.filter-items-hint span'
       class: Oro\Bundle\FrontendBundle\Tests\Behat\Element\GridFilterItem
+
+    Permissions Dropdown Items:
+      selector: '.dropdown-menu__permissions-item a'

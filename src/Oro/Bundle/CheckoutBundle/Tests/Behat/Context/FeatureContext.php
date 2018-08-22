@@ -345,8 +345,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      */
     public function iShouldSeeItemsInPermissionsDropdown(TableNode $table)
     {
-        $page = $this->getSession()->getPage();
-        $itemElements = $page->findAll('xpath', "//*[contains(@class, 'dropdown-menu__permissions-item')]//a");
+        $itemElements = $this->findAllElements('Permissions Dropdown Items');
         $actualItems = [];
         if (count($itemElements)) {
             foreach ($itemElements as $itemElement) {
@@ -369,11 +368,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      */
     public function iSelectOptionInPermissionsDropdown($option)
     {
-        $page = $this->getSession()->getPage();
-        $itemElement = $page->find(
-            'xpath',
-            "//*[contains(@class, 'dropdown-menu__permissions-item')]//a[text()=\"$option\"]"
-        );
+        $itemElement = $this->findElementContains('Permissions Dropdown Items', $option);
 
         self::assertNotNull($itemElement, "Selected Option is not found in permissions dropdown");
 
