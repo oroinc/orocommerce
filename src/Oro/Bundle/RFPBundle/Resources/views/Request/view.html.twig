@@ -45,14 +45,12 @@
     {% set dataBlocks = [
         {
             'title': 'oro.rfp.sections.general'|trans,
-            'class': 'nav-item active',
             'subblocks': [{'data' : [requestInfo]}]
         }
     ] %}
 
     {% set dataBlocks = dataBlocks|merge([{
         'title': 'oro.rfp.sections.note'|trans,
-        'class': 'nav-item',
         'subblocks': [{'data': [
             dataGrid.renderGrid('rfp-request-additional-notes-grid', {request: entity.id}, {cssClass: 'inner-grid'})
         ]}]
@@ -111,7 +109,6 @@
 
         {% set dataBlocks = dataBlocks|merge([{
             'title': 'oro.rfp.sections.request_products'|trans,
-            'class': 'nav-item',
             'subblocks': [{'data' : [lineItems]}]
         }]) %}
     {% endif %}

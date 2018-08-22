@@ -114,7 +114,6 @@
     {% set dataBlocks = [
         {
             'title': 'oro.sale.quote.sections.general'|trans,
-            'class': 'nav-item active',
             'subblocks': [{
                 'title': '',
                 'data-page-component-module': 'sadfas',
@@ -123,7 +122,6 @@
         },
         {
             'title': 'oro.sale.quote.sections.quote_products'|trans,
-            'class': 'nav-item',
             'subblocks': [{
                 'title': '',
                 'data': [
@@ -159,7 +157,6 @@
         {% endset %}
         {% set dataBlocks = dataBlocks|merge([{
             'title': 'oro.order.shipping_address.label'|trans,
-            'class': 'nav-item',
             'subblocks': [{
                 'data': [shippingAddress]
             }]
@@ -192,7 +189,6 @@
 
     {% set dataBlocks = dataBlocks|merge([{
         'title': 'oro.sale.quote.sections.shipping_information'|trans,
-        'class': 'nav-item',
         'subblocks': [{
             'title': '',
             'data': [shippingInformation]
@@ -206,7 +202,6 @@
     {% if additionalData is not empty %}
         {% set dataBlocks = dataBlocks|merge([{
             'title': 'oro.sale.quote.sections.additional'|trans,
-            'class': 'nav-item',
             'subblocks': [{
                 'title': '',
                 'useSpan': false,

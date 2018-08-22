@@ -44,7 +44,6 @@
     {% set dataBlocks = [
         {
             'title': 'oro.shoppinglist.sections.general'|trans,
-            'class': 'nav-item active',
             'subblocks': generalSectionBlocks
         }
     ] %}
@@ -52,7 +51,6 @@
     {% set dataBlocks = dataBlocks|merge([
         {
             'title' : 'oro.shoppinglist.lineitem.entity_plural_label'|trans,
-            'class': 'nav-item',
             'subblocks': [
                 {
                     'title' : '',
@@ -66,7 +64,6 @@
 
     {% set dataBlocks = dataBlocks|merge([{
         'title': 'oro.shoppinglist.sections.subtotals'|trans,
-        'class': 'nav-item',
         'subblocks': [{'data' : [subtotals]}]
     }]) %}
 

@@ -99,7 +99,6 @@
     {% set dataBlocks = [
         {
             'title': 'oro.webcatalog.sections.general'|trans,
-            'class': 'nav-item active',
             'subblocks': [{
                 'title': '',
                 'data': formRows
@@ -107,7 +106,6 @@
         },
         {
             'title': 'oro.webcatalog.sections.use_for'|trans,
-            'class': 'nav-item',
             'subblocks': [{
                 'title': '',
                 'data': [scopes]
@@ -115,7 +113,6 @@
         },
         {
             'title': 'oro.webcatalog.contentvariant.entity_plural_label'|trans,
-            'class': 'nav-item',
             'subblocks': [{
                 'title': '',
                 'data': [form_widget(form.contentVariants)]
