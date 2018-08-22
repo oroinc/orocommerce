@@ -18,6 +18,18 @@ services:
             - '@oro_checkout.data_provider.manager.checkout_line_items'
             - '@oro_checkout.mapper.order_mapper'
 
+    oro_checkout.product_availability.cache:
+        parent: doctrine_cache.abstract.array
+        calls:
+            - [ setNamespace, [ 'oro_product_availability' ] ]
+
+    oro_checkout.event_listener.product_availability_cache:
+        class: Oro\Bundle\CheckoutBundle\EventListener\ProductAvailabilityCacheListener
+        arguments:
+            - '@oro_checkout.product_availability.cache'
+        tags:
+            - { name: doctrine.event_listener, event: postFlush }
+
     oro_checkout.data_provider.manager.checkout_line_items:
         class: 'Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager'
         public: false
@@ -26,6 +38,8 @@ services:
             - '@oro_pricing.user_currency_manager'
             - '@oro_config.manager'
             - '@security.authorization_checker'
+        calls:
+            - [setProductAvailabilityCache, ['@oro_checkout.product_availability.cache']]
 
     oro_checkout.layout.data_provider.line_items_totals:
         class: 'Oro\Bundle\CheckoutBundle\Layout\DataProvider\LineItemsWithTotalsProvider'

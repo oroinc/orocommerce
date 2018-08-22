@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CheckoutBundle\DataProvider\Manager;
 
+use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\CheckoutBundle\DataProvider\Converter\CheckoutLineItemsConverter;
@@ -46,6 +47,11 @@ class CheckoutLineItemsManager
     protected $authorizationChecker;
 
     /**
+     * @var CacheProvider
+     */
+    private $productAvailabilityCache;
+
+    /**
      * @param CheckoutLineItemsConverter $checkoutLineItemsConverter
      * @param UserCurrencyManager $userCurrencyManager
      * @param ConfigManager $configManager
@@ -61,6 +67,14 @@ class CheckoutLineItemsManager
         $this->userCurrencyManager = $userCurrencyManager;
         $this->configManager = $configManager;
         $this->authorizationChecker = $authorizationChecker;
+    }
+
+    /**
+     * @param CacheProvider $productAvailabilityCache
+     */
+    public function setProductAvailabilityCache(CacheProvider $productAvailabilityCache)
+    {
+        $this->productAvailabilityCache = $productAvailabilityCache;
     }
 
     /**
@@ -161,8 +175,16 @@ class CheckoutLineItemsManager
             return true;
         }
 
-        return $product->getStatus() === Product::STATUS_ENABLED &&
-            $this->authorizationChecker->isGranted('VIEW', $product);
+        if ($this->productAvailabilityCache->contains($product->getId())) {
+            return $this->productAvailabilityCache->fetch($product->getId());
+        }
+
+        $isAvailable = $product->getStatus() === Product::STATUS_ENABLED
+            && $this->authorizationChecker->isGranted('VIEW', $product);
+
+        $this->productAvailabilityCache->save($product->getId(), $isAvailable);
+
+        return $isAvailable;
     }
 
     /**
