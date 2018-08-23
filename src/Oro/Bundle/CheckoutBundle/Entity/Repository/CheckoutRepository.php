@@ -15,6 +15,23 @@ class CheckoutRepository extends EntityRepository
     use WorkflowQueryTrait;
 
     /**
+     * @param int $checkoutId
+     *
+     * @return Checkout|null
+     */
+    public function getCheckoutWithRelations($checkoutId)
+    {
+        $qb = $this->createQueryBuilder('c');
+        $qb->select('c', 'cli', 'p')
+            ->leftJoin('c.lineItems', 'cli')
+            ->leftJoin('cli.product', 'p')
+            ->where($qb->expr()->eq('c.id', ':id'))
+            ->setParameter('id', $checkoutId);
+
+        return $qb->getQuery()->getOneOrNullResult();
+    }
+
+    /**
      * Return the count of line items per Checkout.
      *
      * @param array $checkoutIds

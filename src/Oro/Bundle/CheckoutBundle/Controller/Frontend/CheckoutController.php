@@ -56,6 +56,7 @@ class CheckoutController extends Controller
      */
     public function checkoutAction(Request $request, Checkout $checkout)
     {
+        $checkout = $this->getCheckoutWithRelations($checkout);
         $workflowItem = $this->getWorkflowItem($checkout);
 
         if ($request->isMethod(Request::METHOD_POST) &&
@@ -344,5 +345,17 @@ class CheckoutController extends Controller
         $this->get('oro_action.action_group_registry')
             ->findByName('start_shoppinglist_checkout')
             ->execute($actionData);
+    }
+
+    /**
+     * @param Checkout $checkout
+     *
+     * @return Checkout|null
+     */
+    private function getCheckoutWithRelations(Checkout $checkout)
+    {
+        $repository = $this->get('doctrine')->getRepository(Checkout::class);
+
+        return $repository->getCheckoutWithRelations($checkout->getId());
     }
 }
