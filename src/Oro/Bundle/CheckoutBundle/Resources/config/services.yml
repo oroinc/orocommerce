@@ -92,7 +92,8 @@ services:
 
     oro_checkout.layout.data_provider.single_page_transition:
         class: 'Oro\Bundle\CheckoutBundle\Layout\DataProvider\SinglePageTransitionProvider'
-        parent: oro_checkout.layout.data_provider.transition
+        arguments:
+            - '@oro_checkout.layout.data_provider.transition'
         tags:
             - { name: layout.data_provider, alias: oro_checkout_single_page_transition }
 
