@@ -3,6 +3,7 @@ define(function(require) {
 
     var $ = require('jquery');
     var _ = require('underscore');
+    var mediator = require('oroui/js/mediator');
     require('jquery-elevatezoom');
 
     $.widget('oroproduct.zoomWidget', {
@@ -23,18 +24,29 @@ define(function(require) {
             lensOpacity: 0.22
         },
 
+        _zoomedImageLoadedState: false,
+
+        /**
+         * Queue for tasks that should be done after elevatezoom loaded
+         *
+         * @private
+         */
+        _zoomedImageLoadedQueue: [],
+
         _init: function() {
-            this.options.onZoomedImageLoaded = _.bind(this._resetImageProperty, this);
+            this.options.onZoomedImageLoaded = _.bind(this._onZoomedImageLoaded, this);
 
             //Bind activeImage event of slick gallery
             this.element.on('slider:activeImage', _.bind(function(e, activeImage) {
                 if (!this.element.is(activeImage)) {
-                    this._removeZoomContainer();
-                    this._ensureLoadedZoomInit(activeImage);
+                    this._updateZoomContainer(activeImage);
                 }
             }, this));
 
             var initImage = this.element.data('slider:activeImage') || this.element.get(0);
+
+            mediator.on('widget:doRefresh', this._reset, this);
+
             this._ensureLoadedZoomInit(initImage);
         },
 
@@ -62,6 +74,54 @@ define(function(require) {
             this.element = $(activeImage);
             this._setZoomWindowSize(activeImage);
             this.element.elevateZoom(this.options);
+        },
+
+        /**
+         * Update zoom container
+         * @param initImage
+         * @private
+         */
+        _updateZoomContainer: function(initImage) {
+            if (this._zoomedImageLoadedState) {
+                this._reInitZoomContainer(initImage);
+            } else {
+                this._zoomedImageLoadedQueue.push(function() {
+                    this._reInitZoomContainer(initImage);
+                });
+            }
+        },
+
+        /**
+         * ReInit zoom container
+         * @param initImage
+         * @private
+         */
+        _reInitZoomContainer: function(initImage) {
+            this._removeZoomContainer();
+            this._zoomInit(initImage);
+        },
+
+        _reset: function() {
+            this._updateZoomContainer(this.element.get(0));
+        },
+
+        /**
+         * Implementation ZoomedImageLoaded event
+         *
+         * @private
+         */
+        _onZoomedImageLoaded: function() {
+            this._zoomedImageLoadedState = true;
+
+            for (var i = 0; i < this._zoomedImageLoadedQueue.length; i++) {
+                if (typeof this._zoomedImageLoadedQueue[i] === 'function') {
+                    _.bind(this._zoomedImageLoadedQueue[i], this)();
+                }
+            }
+
+            this._zoomedImageLoadedQueue = [];
+
+            this._resetImageProperty();
         },
 
         /**
@@ -126,7 +186,7 @@ define(function(require) {
             //Check min zoom window width
             proportionalWidth = proportionalWidth < minZoomWindowWidth ? minZoomWindowWidth : proportionalWidth;
 
-            //Set proportionalWidth for zoom window
+            // Set proportionalWidth for zoom window
             this.options.zoomWindowWidth = proportionalWidth;
         },
 
@@ -145,6 +205,15 @@ define(function(require) {
 
             this.element.removeData('elevateZoom');
             this.element.removeData('zoomImage');
+            this._unBindZoomEvents();
+        },
+
+        /**
+         * Remove zoom container events
+         * @private
+         */
+        _unBindZoomEvents: function() {
+            this.element.unbind('mousemove touchmove touchend mousewheel DOMMouseScroll MozMousePixelScroll');
         },
 
         /**
@@ -155,7 +224,7 @@ define(function(require) {
         _destroy: function() {
             this._removeZoomContainer();
             $('.' + this.element[0].className).off('slider:activeImage');
-            this.element.unbind('mousemove touchmove touchend mousewheel DOMMouseScroll MozMousePixelScroll');
+            this._unBindZoomEvents();
         }
     });
 
