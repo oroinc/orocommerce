@@ -15,3 +15,33 @@ oro_behat_extension:
         - OroFrontendLocalizationBundle::LocalizationSwitcherContext
       paths:
         - '@OroTaxBundle/Tests/Behat/Features'
+
+  elements:
+    Tax Jurisdiction Form:
+      selector: 'form[name="oro_tax_jurisdiction_type"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+    Tax Rule Form:
+      selector: 'form[name="oro_tax_rule_type"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Customer Tax Code:
+            locator: '//div[contains(@id,"s2id_oro_tax_rule_type_customerTaxCode-uid")]/input'
+            type: xpath
+          Product Tax Code:
+            locator: '//div[contains(@id,"s2id_oro_tax_rule_type_productTaxCode-uid")]/input'
+            type: xpath
+          Tax Jurisdiction:
+            locator: '//div[contains(@id,"s2id_oro_tax_rule_type_taxJurisdiction-uid")]/input'
+            type: xpath
+          Tax:
+            locator: '//div[contains(@id,"s2id_oro_tax_rule_type_tax-uid")]/input'
+            type: xpath
+    Tax Jurisdiction create new:
+      selector:
+        locator: '//label[text()="Tax Jurisdiction"]/../..//button[contains(@class,"entity-create-btn")]'
+        type: xpath
+    Tax Jurisdiction hamburger:
+      selector:
+        locator: '//label[text()="Tax Jurisdiction"]/../..//button[contains(@class,"entity-select-btn")]'
+        type: xpath

@@ -465,3 +465,10 @@ services:
             - '@oro_product.search.product_reindex_manager'
         tags:
             - { name: kernel.event_listener, event: oro_config.update_after, method: reindexProducts }
+
+    oro_order.datagrid.order_line_items_grid_frontend_access_listener:
+        class: 'Oro\Bundle\OrderBundle\Datagrid\OrderLineItemsGridFrontendAccessListener'
+        arguments:
+            - '@security.token_storage'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.order-line-items-grid-frontend, method: onBuildBefore }

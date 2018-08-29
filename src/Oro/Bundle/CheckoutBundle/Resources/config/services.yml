@@ -185,6 +185,14 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-checkouts-grid, method: onBuildBefore }
 
+    oro_checkout.datagrid.checkout_grid_customer_visitor_acl_listener:
+        class: 'Oro\Bundle\CheckoutBundle\Datagrid\CheckoutGridCustomerVisitorAclListener'
+        arguments:
+            - '@oro_featuretoggle.checker.feature_checker'
+            - '@security.token_storage'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-checkouts-grid, method: onBuildBefore }
+
     oro_checkout.workflow.condition.order_line_item_has_count:
         class: 'Oro\Bundle\CheckoutBundle\Model\Condition\OrderLineItemsHasCount'
         arguments:
