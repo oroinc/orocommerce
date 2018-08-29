@@ -5,7 +5,6 @@ namespace Oro\Bundle\ApplicationBundle\Tests\Behat\Context;
 use Behat\Gherkin\Node\TableNode;
 use Behat\Symfony2Extension\Context\KernelAwareContext;
 use Behat\Symfony2Extension\Context\KernelDictionary;
-use Oro\Bundle\DataGridBundle\Tests\Behat\Element\TableRow;
 use Oro\Bundle\FormBundle\Tests\Behat\Element\OroForm;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\SessionAliasProviderAwareInterface;
@@ -29,16 +28,18 @@ class CommerceMainContext extends OroFeatureContext implements
      *
      * @Given /^I login as (?P<email>\S+) buyer$/
      * @Given /^I signed in as (?P<email>\S+) on the store frontend$/
+     * @Given /^I signed in as (?P<email>\S+) with password (?P<password>\S+) on the store frontend$/
      *
      * @param string $email
+     * @param string|null $password
      */
-    public function loginAsBuyer($email)
+    public function loginAsBuyer($email, $password = null)
     {
         //quick way to logout user (delete all cookies)
         $driver = $this->getSession()->getDriver();
         $driver->reset();
 
-        $this->login($email);
+        $this->login($email, $password);
     }
 
     /**
@@ -61,8 +62,9 @@ class CommerceMainContext extends OroFeatureContext implements
 
     /**
      * @param string $email
+     * @param null|string $password
      */
-    protected function login($email)
+    protected function login($email, $password = null)
     {
         $this->visitPath($this->getUrl('oro_customer_customer_user_security_login'));
         $this->waitForAjax();
@@ -71,7 +73,7 @@ class CommerceMainContext extends OroFeatureContext implements
         $form = $this->createElement('OroForm');
         $table = new TableNode([
             ['Email Address', $email],
-            ['Password', $email]
+            ['Password', $password ?? $email]
         ]);
         $form->fill($table);
         $form->pressButton('Sign In');

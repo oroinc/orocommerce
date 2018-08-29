@@ -296,8 +296,8 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
       | Value 13 |          |          | -        |
       | Value 14 | -        | -        | 1        |
     And I focus on "matrix_collection[rows][0][columns][0][quantity]" field and press Enter key
-    Then I should see "Shopping list \"Shopping List\" was updated successfully"
-    And I click "Shopping List"
+    Then I should see "Shopping list \"List 2\" was updated successfully"
+    And I click "List 2"
 
     Then I should see an "Matrix Grid Form" element
     And I should see next rows in "Matrix Grid Form" table
@@ -339,6 +339,8 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I am on the homepage
     Then I open shopping list widget
     And I click "View Details"
+    And I click "Delete"
+    And I click "Yes, Delete"
     And I click "Delete"
     And I click "Yes, Delete"
     Then I should see "You do not have available Shopping Lists"
@@ -900,7 +902,6 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And check "Use default" for "Shopping Lists" field
     And I save form
     And I proceed as the User
-    And I signed in as AmandaRCole@example.org on the store frontend
     And type "CNF_A" in "search"
     And click "Search Button"
     And click "View Details" for "CNF_A" product
@@ -908,8 +909,8 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I fill "One Dimensional Matrix Grid Form" with:
       | Value 11 | Value 12 | Value 13 | Value 14 |
       | 1        | -        | -        | 1        |
-    And I click "Add to List 2"
-    Then I should see "Shopping list \"List 2\" was updated successfully"
+    And I click "Add to Shopping List"
+    Then I should see "Shopping list \"Shopping List\" was updated successfully"
 
   Scenario: Order with two dimensional inline matrix form
     Given type "CNF_B" in "search"
@@ -929,7 +930,8 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     Then I should see "Shopping list \"Product B Shopping List\" was created successfully"
 
   Scenario: Update Configurable Product B variants
-    Given I fill "Matrix Grid Form" with:
+    Given I click "Clear All"
+    And I fill "Matrix Grid Form" with:
       |          | Value 21 | Value 22 | Value 23 |
       | Value 11 | 1        | -        | -        |
       | Value 12 | 4        | -        | -        |
@@ -978,8 +980,8 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And click "View Details" for "CNF_A" product
     Then I should see an "One Dimensional Matrix Grid Form" element
     And I click on "Shopping List Dropdown"
-    And I click "Remove From List 2"
-    Then I should see "Product has been removed from \"List 2\""
+    And I click "Remove From Shopping List"
+    Then I should see "Product has been removed from \"Shopping List\""
     And I open shopping list widget
     And I click "View Details"
     Then I should not see "Shopping list 2 Items"
