@@ -1,8 +1,10 @@
 @regression
 @fixture-OroPricingBundle:ProductPrices.yml
 Feature: Visibility of product prices in different cases
-  I want refreshing frontend filters to default values after resetting
-  ToDo: BAP-16103 Add missing descriptions to the Behat features
+  In order to have ability to filter products by product prices on the store frontend
+  As an Buyer
+  I want to see and manage product prices filter`s state on product grid page
+
   Scenario: Empty product prices for non authorized user
     Given I am on "/product"
     Then I should not see a "Product Price Listed" element
@@ -27,6 +29,7 @@ Feature: Visibility of product prices in different cases
       | Value          | 100                |
       | Currency       | $                  |
     And I submit form
+
     Then I am on "/product"
     And I should see that "Product Price Listed" contains "$100.00"
     When I hover on "Product Price Hint"
