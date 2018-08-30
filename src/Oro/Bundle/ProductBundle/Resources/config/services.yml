@@ -983,6 +983,7 @@ services:
         parent: oro_entity_config.block_type.abstract_attribute_block_type_mapper
         calls:
             - [addBlockTypeUsingMetadata, ['%oro_product.entity.product_image.class%', 'attribute_product_images']]
+            - [addBlockTypeUsingMetadata, ['%oro_product.entity.brand.class%', 'attribute_product_brand']]
         tags:
             - { name: oro_entity_config.layout.attribute_block_type_mapper }
 
@@ -1447,6 +1448,13 @@ services:
         arguments:
             - "@oro_config.manager"
             - "@oro_frontend.request.frontend_helper"
+            - "@oro_product.model.restrict_display_product_variants_query_builder_modifier"
         tags:
             - { name: kernel.event_listener, event: oro_product.product_search_query.restriction, method: onSearchQuery }
             - { name: kernel.event_listener, event: oro_product.product_db_query.restriction, method: onDBQuery }
+
+    oro_product.model.restrict_display_product_variants_query_builder_modifier:
+        class: 'Oro\Bundle\ProductBundle\Model\RestrictProductVariationsBuilderModifier'
+        public: false
+        arguments:
+            - '@oro_entity.doctrine_helper'

@@ -8,7 +8,7 @@ use Oro\Bundle\FrontendTestFrameworkBundle\Test\Client;
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\FrontendWebTestCase;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
-class CheckoutGridListenerTest extends FrontendWebTestCase
+class CheckoutGridTest extends FrontendWebTestCase
 {
     /**
      * @var Client
