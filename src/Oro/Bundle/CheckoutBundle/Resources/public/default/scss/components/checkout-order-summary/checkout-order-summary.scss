@@ -8,6 +8,9 @@
 }
 
 .checkout-order-summary {
+    position: $checkout-order-summary-position;
+    z-index: $checkout-order-summary-z-index;
+
     &__header {
         position: $checkout-order-summary-header-position;
 

@@ -20,6 +20,8 @@ use Oro\Bundle\RedirectBundle\Migration\Extension\SlugExtension;
 use Oro\Bundle\RedirectBundle\Migration\Extension\SlugExtensionAwareInterface;
 
 /**
+ * Handles all migrations logic executed during installation.
+ *
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class OroCatalogBundleInstaller implements
@@ -65,7 +67,7 @@ class OroCatalogBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_10';
+        return 'v1_11';
     }
 
     /**
@@ -455,6 +457,7 @@ class OroCatalogBundleInstaller implements
                     'is_extend' => true,
                     'owner' => ExtendScope::OWNER_CUSTOM,
                     'without_default' => true,
+                    'fetch' => 'extra_lazy',
                     'on_delete' => 'SET NULL',
                 ],
                 'datagrid' => ['is_visible' => false],

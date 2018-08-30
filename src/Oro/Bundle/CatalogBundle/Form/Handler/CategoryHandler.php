@@ -12,6 +12,9 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * Handles the action of creating or editing a category. Allows to assign or remove products form category.
+ */
 class CategoryHandler
 {
     use RequestHandlerTrait;
@@ -104,6 +107,10 @@ class CategoryHandler
             $productCategory = $categoryRepository->findOneByProduct($product);
 
             if ($productCategory instanceof Category) {
+                if ($productCategory->getId() === $category->getId()) {
+                    continue;
+                }
+
                 $productCategory->removeProduct($product);
             }
 

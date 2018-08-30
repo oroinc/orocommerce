@@ -1,0 +1,8 @@
+<div class="pull-left">
+    {% if (is_granted('oro_pricing_price_list_view')) %}
+        {{ include('@OroImportExport/ImportExport/export-buttons.html.twig') }}
+    {% endif %}
+    {% if (is_granted('oro_pricing_price_list_update')) %}
+        {{ include('@OroImportExport/ImportExport/import-button.html.twig') }}
+    {% endif %}
+</div>
