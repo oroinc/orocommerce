@@ -74,9 +74,15 @@ class SluggableUrlDatabaseAwareProvider implements SluggableUrlProviderInterface
         $this->fillCacheByDatabase($routeName, $routeParameters, $localizationId);
 
         $url = $this->urlCacheProvider->getUrl($routeName, $routeParameters, $localizationId);
+
         if (!$isKnownRoute) {
-            $sluggableRoutes[$routeName] = \strlen($url) > 0;
+            $sluggableRoutes[$routeName] = $url || $this->isSlugForRouteExists($routeName);
+
             $this->updateSluggableRoutes($sluggableRoutes);
+        }
+
+        if ($this->cache instanceof FlushableCache) {
+            $this->cache->flushAll();
         }
 
         return $url;
@@ -111,10 +117,6 @@ class SluggableUrlDatabaseAwareProvider implements SluggableUrlProviderInterface
             $slugData[self::SLUG_PROTOTYPE_KEY],
             $localizationId
         );
-
-        if ($this->cache instanceof FlushableCache) {
-            $this->cache->flushAll();
-        }
     }
 
     /**
@@ -173,5 +175,15 @@ class SluggableUrlDatabaseAwareProvider implements SluggableUrlProviderInterface
         }
 
         return $this->slugRepository;
+    }
+
+    /**
+     * @param string $routeName
+     *
+     * @return bool
+     */
+    protected function isSlugForRouteExists($routeName): bool
+    {
+        return $this->getSlugRepository()->isSlugForRouteExists($routeName);
     }
 }
