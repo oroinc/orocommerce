@@ -10,6 +10,7 @@ use Oro\Bundle\RedirectBundle\Cache\UrlCacheInterface;
 use Oro\Bundle\RedirectBundle\Generator\SlugEntityGenerator;
 use Oro\Bundle\RedirectBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\RedirectBundle\Model\MessageFactoryInterface;
+use Oro\Bundle\RedirectBundle\Provider\SluggableUrlDatabaseAwareProvider;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
@@ -97,6 +98,8 @@ class DirectUrlProcessor implements MessageProcessorInterface, TopicSubscriberIn
 
             $em->flush();
             $em->commit();
+
+            $this->urlCache->removeUrl(SluggableUrlDatabaseAwareProvider::SLUG_ROUTES_KEY, []);
 
             if ($this->urlCache instanceof FlushableCache) {
                 $this->urlCache->flushAll();
