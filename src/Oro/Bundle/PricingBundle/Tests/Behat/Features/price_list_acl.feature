@@ -88,13 +88,12 @@ Feature: Price List ACL
       | View        |
     When I click view "first price list" in grid
     Then I should not see following buttons:
-#      | Add Product Price |
-#    this step should be uncommented when BB-14602 will be fixed
       | Import file       |
       | Disable           |
       | Delete            |
       | Edit              |
     And I should see following buttons:
+      | Add Product Price    |
       | Duplicate Price List |
       | Recalculate          |
       | Export               |
@@ -109,14 +108,13 @@ Feature: Price List ACL
     And I proceed as the manager
     When I reload the page
     Then I should not see following buttons:
-#      | Add Product Price |
-#    this step should be uncommented when BB-14602 will be fixed
       | Import file       |
       | Disable           |
       | Delete            |
       | Edit              |
       | Duplicate Price List |
     And I should see following buttons:
+      | Add Product Price    |
       | Recalculate          |
       | Export               |
     When I go to Sales/ Price Lists

@@ -22,6 +22,10 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
  *          "entity"={
  *              "icon"="fa-usd"
  *          },
+ *          "security"={
+ *              "type"="ACL",
+ *              "group_name"="",
+ *          },
  *          "sharding"={
  *              "discrimination_field"="priceList"
  *          }

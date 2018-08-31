@@ -838,6 +838,12 @@ oro_behat_extension:
     Price Unit:
       selector: 'div[id*="uniform-oro_product_prices_1_unit-"]'
 
+    Remove Product Price Button:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        type: 'xpath'
+        locator: '//div[contains (@id,"oro_product_prices-uid")]//button[contains(@class,"removeRow")]'
+
   pages:
     Product View:
       class: Oro\Bundle\ProductBundle\Tests\Behat\Page\ProductView
