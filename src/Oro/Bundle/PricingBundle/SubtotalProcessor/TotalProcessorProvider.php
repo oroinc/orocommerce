@@ -68,9 +68,11 @@ class TotalProcessorProvider extends AbstractSubtotalProvider
      */
     public function getTotalWithSubtotalsAsArray($entity)
     {
+        $subtotals = $this->getSubtotals($entity);
+
         return [
-            self::TYPE => $this->getTotal($entity)->toArray(),
-            self::SUBTOTALS => $this->getSubtotals($entity)
+            self::TYPE => $this->getTotal($entity, $subtotals)->toArray(),
+            self::SUBTOTALS => $subtotals
                 ->map(
                     function (Subtotal $subtotal) {
                         return $subtotal->toArray();
@@ -84,10 +86,11 @@ class TotalProcessorProvider extends AbstractSubtotalProvider
      * Calculate and return total based on all subtotals
      *
      * @param $entity
+     * @param array|ArrayCollection $subtotals
      *
      * @return Subtotal
      */
-    public function getTotal($entity)
+    public function getTotal($entity, $subtotals = [])
     {
         $total = new Subtotal();
 
@@ -97,7 +100,10 @@ class TotalProcessorProvider extends AbstractSubtotalProvider
         $total->setCurrency($this->getBaseCurrency($entity));
 
         $totalAmount = 0.0;
-        foreach ($this->getSubtotals($entity) as $subtotal) {
+        if (!$subtotals || ($subtotals instanceof ArrayCollection && $subtotals->isEmpty())) {
+            $subtotals = $this->getSubtotals($entity);
+        }
+        foreach ($subtotals as $subtotal) {
             $rowTotal = $subtotal->getAmount();
 
             $totalAmount = $this->calculateTotal($subtotal->getOperation(), $rowTotal, $totalAmount);

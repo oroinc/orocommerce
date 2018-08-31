@@ -526,7 +526,7 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
             ->with(sprintf('oro.pricing.subtotals.%s.label', TotalProcessorProvider::TYPE))
             ->willReturn(ucfirst(TotalProcessorProvider::TYPE));
 
-        $entity = $this->prepareSubtotals(new EntityStub(), 2);
+        $entity = $this->prepareSubtotals(new EntityStub());
 
         $totals = $this->provider->enableRecalculation()->getTotalWithSubtotalsAsArray($entity);
         $this->assertInternalType('array', $totals);
@@ -578,5 +578,28 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
             ->expects($this->once())
             ->method('getSupportedProviders')
             ->willReturn([$subtotalProvider]);
+    }
+
+    public function testGetTotalByPassedSubtotals()
+    {
+        $this->translator->expects($this->once())
+            ->method('trans')
+            ->with(sprintf('oro.pricing.subtotals.%s.label', TotalProcessorProvider::TYPE))
+            ->willReturn(ucfirst(TotalProcessorProvider::TYPE));
+        $entity = new EntityStub();
+        $entity->setCurrency('USD');
+        $subtotal = new Subtotal();
+        $subtotal->setCurrency('USD');
+        $subtotal->setAmount(142.0);
+        $subtotal->setType(LineItemSubtotalProvider::TYPE);
+        $subtotal->setLabel('Total');
+        $subtotal->setOperation(Subtotal::OPERATION_ADD);
+        $total = $this->provider->enableRecalculation()->getTotal($entity, [$subtotal]);
+        $this->assertInstanceOf(Subtotal::class, $total);
+        $this->assertEquals(TotalProcessorProvider::TYPE, $total->getType());
+        $this->assertEquals(ucfirst(TotalProcessorProvider::TYPE), $total->getLabel());
+        $this->assertEquals($entity->getCurrency(), $total->getCurrency());
+        $this->assertInternalType('float', $total->getAmount());
+        $this->assertEquals(142.0, $total->getAmount());
     }
 }

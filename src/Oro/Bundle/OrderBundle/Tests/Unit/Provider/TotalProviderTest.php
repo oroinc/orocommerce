@@ -98,11 +98,13 @@ class TotalProviderTest extends AbstractSubtotalProviderTest
         $this->processorProvider
             ->expects($this->once())
             ->method('getTotal')
+            ->with($order, $subtotals)
             ->willReturn($total);
 
         $this->processorProvider
             ->expects($this->once())
             ->method('getSubtotals')
+            ->with($order)
             ->willReturn($subtotals);
 
         $totals = $this->provider->getTotalWithSubtotalsWithBaseCurrencyValues($order);
