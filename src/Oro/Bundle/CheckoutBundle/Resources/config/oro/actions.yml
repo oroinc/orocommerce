@@ -406,6 +406,7 @@ action_groups:
                     - '@create_datetime': {attribute: $.checkout.createdAt}
                     - '@create_datetime': {attribute: $.checkout.updatedAt}
                     - '@assign_value': [$.updateData, true]
+                    - '@flush_entity': $.checkout
 
                     - '@start_workflow':
                         attribute: $.workflowItem
