@@ -22,6 +22,7 @@ oro_behat_extension:
         - OroProductBundle::FeatureContext
         - OroLocaleBundle::LocalizationContext
         - OroFrontendLocalizationBundle::LocalizationSwitcherContext
+        - OroEmailBundle::EmailContext
       paths:
         - '@OroCheckoutBundle/Tests/Behat/Features'
 

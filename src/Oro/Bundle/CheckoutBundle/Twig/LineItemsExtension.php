@@ -4,10 +4,13 @@ namespace Oro\Bundle\CheckoutBundle\Twig;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+use Oro\Bundle\EntityBundle\Provider\EntityNameProviderInterface;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
+use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
+use Oro\Bundle\EntityBundle\Provider\EntityNameResolver;
 
 class LineItemsExtension extends \Twig_Extension
 {
@@ -41,6 +44,22 @@ class LineItemsExtension extends \Twig_Extension
     }
 
     /**
+     * @return LocalizationHelper
+     */
+    private function getLocalizationHelper()
+    {
+        return $this->container->get('oro_locale.helper.localization');
+    }
+
+    /**
+     * @return EntityNameResolver
+     */
+    private function getEntityNameResolver()
+    {
+        return $this->container->get('oro_entity.entity_name_resolver');
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function getFunctions()
@@ -57,7 +76,13 @@ class LineItemsExtension extends \Twig_Extension
         $lineItems = [];
         foreach ($order->getLineItems() as $lineItem) {
             $product = $lineItem->getProduct();
-            $data['product_name'] = $product ? (string)$product : $lineItem->getFreeFormProduct();
+            $productName = $this->getEntityNameResolver()->getName(
+                $product,
+                EntityNameProviderInterface::FULL,
+                $this->getLocalizationHelper()->getCurrentLocalization()
+            );
+
+            $data['product_name'] = $productName ?? $lineItem->getFreeFormProduct();
             $data['product_sku'] = $lineItem->getProductSku();
             $data['quantity'] = $lineItem->getQuantity();
             $data['unit'] = $lineItem->getProductUnit();
