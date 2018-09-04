@@ -40,12 +40,14 @@ class ProductPriceUnitSelectorType extends ProductUnitSelectionType
     }
 
     /**
-     * @param ProductUnitPrecision $primaryUnitPrecision
+     * @param ProductUnitPrecision|null $primaryUnitPrecision
      * @param ProductUnitPrecision[] $additionalUnitPrecisions
      * @return ProductUnit[]
      */
-    protected function getAllProductEnabledUnits(ProductUnitPrecision $primaryUnitPrecision, $additionalUnitPrecisions)
-    {
+    protected function getAllProductEnabledUnits(
+        ProductUnitPrecision $primaryUnitPrecision = null,
+        $additionalUnitPrecisions
+    ) {
         $units = [];
         if ($primaryUnitPrecision) {
             $units[] = $primaryUnitPrecision->getUnit();
