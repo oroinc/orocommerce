@@ -56,6 +56,8 @@ class CheckoutController extends Controller
      */
     public function checkoutAction(Request $request, Checkout $checkout)
     {
+        $this->disableGarbageCollector();
+
         $checkout = $this->getCheckoutWithRelations($checkout);
         $workflowItem = $this->getWorkflowItem($checkout);
 
@@ -99,6 +101,17 @@ class CheckoutController extends Controller
                     'workflowStep' => $currentStep
                 ]
         ];
+    }
+
+    /**
+     *  Disables Garbage collector to improve execution speed of the action which perform a lot of stuff
+     *  Only for Prod mode requests
+     */
+    private function disableGarbageCollector()
+    {
+        if ($this->container->get('kernel')->getEnvironment() === 'prod') {
+            gc_disable();
+        }
     }
 
     /**
