@@ -4,6 +4,8 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Twig;
 
 use Oro\Bundle\CheckoutBundle\Twig\LineItemsExtension;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\EntityBundle\Provider\EntityNameResolver;
+use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
@@ -22,24 +24,41 @@ class LineItemsTest extends \PHPUnit\Framework\TestCase
     /** @var LineItemSubtotalProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $lineItemSubtotalProvider;
 
+    /** @var LocalizationHelper|\PHPUnit_Framework_MockObject_MockObject */
+    protected $localizedHelper;
+
+    /** @var EntityNameResolver|\PHPUnit_Framework_MockObject_MockObject */
+    protected $entityNameResolver;
+
     /** @var LineItemsExtension */
     protected $extension;
 
     public function setUp()
     {
-        $this->totalsProvider = $this->getMockBuilder(TotalProcessorProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->lineItemSubtotalProvider = $this->getMockBuilder(LineItemSubtotalProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->totalsProvider = self::createMock(TotalProcessorProvider::class);
+        $this->lineItemSubtotalProvider = self::createMock(LineItemSubtotalProvider::class);
+        $this->localizedHelper = self::createMock(LocalizationHelper::class);
+        $this->entityNameResolver = self::createMock(EntityNameResolver::class);
+        $this->entityNameResolver
+            ->method('getName')
+            ->willReturnCallback(function ($param) {
+                return $param ? 'Item Sku' : 'Item Name';
+            });
 
         $container = self::getContainerBuilder()
             ->add('oro_pricing.subtotal_processor.total_processor_provider', $this->totalsProvider)
             ->add('oro_pricing.subtotal_processor.provider.subtotal_line_item', $this->lineItemSubtotalProvider)
+            ->add('oro_locale.helper.localization', $this->localizedHelper)
+            ->add('oro_entity.entity_name_resolver', $this->entityNameResolver)
             ->getContainer($this);
 
         $this->extension = new LineItemsExtension($container);
+    }
+
+    public function testGetName()
+    {
+        self::assertEquals('oro_checkout_order_line_items', LineItemsExtension::NAME);
+        self::assertEquals('oro_checkout_order_line_items', $this->extension->getName());
     }
 
     /**

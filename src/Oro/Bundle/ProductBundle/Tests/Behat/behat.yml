@@ -841,6 +841,12 @@ oro_behat_extension:
         type: 'xpath'
         locator: '//div[contains (@id,"oro_product_prices-uid")]/../a'
 
+    Remove Product Price Button:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        type: 'xpath'
+        locator: '//div[contains (@id,"oro_product_prices-uid")]//button[contains(@class,"removeRow")]'
+
     Product Preview Image:
       selector:
         type: xpath
