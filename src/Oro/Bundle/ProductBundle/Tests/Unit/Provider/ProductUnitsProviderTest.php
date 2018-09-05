@@ -6,7 +6,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
-use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Oro\Bundle\ProductBundle\Provider\ProductUnitsProvider;
 use Oro\Component\Testing\Unit\EntityTrait;
 
@@ -20,7 +20,7 @@ class ProductUnitsProviderTest extends \PHPUnit\Framework\TestCase
     protected $productUnitsProvider;
 
     /**
-     * @var ProductUnitLabelFormatter|\PHPUnit\Framework\MockObject\MockObject
+     * @var UnitLabelFormatterInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $formatter;
 
@@ -85,9 +85,7 @@ class ProductUnitsProviderTest extends \PHPUnit\Framework\TestCase
             ->with(ProductUnit::class)
             ->willReturn($manager);
 
-        $this->formatter = $this->getMockBuilder(ProductUnitLabelFormatter::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->formatter = $this->createMock(UnitLabelFormatterInterface::class);
 
         $this->productUnitsProvider = new ProductUnitsProvider($managerRegistry, $this->formatter);
     }

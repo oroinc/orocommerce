@@ -43,11 +43,15 @@ services:
 
     oro_product.formatter.product_unit_value:
         parent: oro_product.formatter.unit_value
-        class: 'Oro\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter'
+        public: true
+        calls:
+            - [setTranslationPrefix, ['oro.product_unit']]
 
     oro_product.formatter.product_unit_label:
         parent: oro_product.formatter.unit_label
-        class: 'Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter'
+        public: true
+        calls:
+            - [setTranslationPrefix, ['oro.product_unit']]
 
     oro_product.twig.product_unit_value:
         class: 'Oro\Bundle\ProductBundle\Twig\ProductUnitValueExtension'
@@ -77,7 +81,7 @@ services:
         class: 'Oro\Bundle\ProductBundle\Twig\ProductUnitLabelExtension'
         public: false
         arguments:
-            - "@service_container"
+            - '@oro_product.formatter.product_unit_label'
         tags:
             - { name: twig.extension }
 
