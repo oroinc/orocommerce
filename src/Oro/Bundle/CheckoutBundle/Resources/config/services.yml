@@ -28,7 +28,7 @@ services:
         arguments:
             - '@oro_checkout.product_availability.cache'
         tags:
-            - { name: doctrine.event_listener, event: postFlush }
+            - { name: doctrine.event_listener, event: onFlush }
 
     oro_checkout.data_provider.manager.checkout_line_items:
         class: 'Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager'
@@ -38,8 +38,6 @@ services:
             - '@oro_pricing.user_currency_manager'
             - '@oro_config.manager'
             - '@security.authorization_checker'
-        calls:
-            - [setProductAvailabilityCache, ['@oro_checkout.product_availability.cache']]
 
     oro_checkout.layout.data_provider.line_items_totals:
         class: 'Oro\Bundle\CheckoutBundle\Layout\DataProvider\LineItemsWithTotalsProvider'
@@ -600,6 +598,9 @@ services:
         arguments:
             - '@oro_pricing.provider.frontend_product_prices'
             - '@doctrine'
+        calls:
+            - [setAuthorizationChecker, ['@security.authorization_checker']]
+            - [setProductAvailabilityCache, ['@oro_checkout.product_availability.cache']]
         tags:
             - { name: checkout.data_provider.line_item }
 
