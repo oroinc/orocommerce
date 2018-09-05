@@ -14,6 +14,7 @@ define(function(require) {
          * @property {Object}
          */
         options: {
+            entityId: null,
             saveStateUrl: null,
             transitionUrl: null,
             targetLayoutBlocks: null,
@@ -52,7 +53,8 @@ define(function(require) {
             this.queue = $({});
 
             this.formView = new SinglePageCheckoutFormView({
-                el: this.options._sourceElement.closest('form')
+                el: this.options._sourceElement.closest('form'),
+                entityId: this.options.entityId
             });
 
             this.formView.on('after-check-form', _.bind(this.onAfterCheckForm, this));

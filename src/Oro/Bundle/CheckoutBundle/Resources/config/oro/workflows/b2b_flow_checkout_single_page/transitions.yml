@@ -40,6 +40,8 @@ workflows:
                                 disabled: $disallow_billing_address_edit
                         save_billing_address:
                             form_type: Oro\Bundle\CheckoutBundle\Form\Type\SaveAddressType
+                            options:
+                                disabled: $disallow_save_billing_address_edit
                         shipping_address:
                             form_type: Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressType
                             options:
@@ -51,6 +53,8 @@ workflows:
                                 disabled: $disallow_shipping_address_edit
                         save_shipping_address:
                             form_type: Oro\Bundle\CheckoutBundle\Form\Type\SaveAddressType
+                            options:
+                                disabled: $disallow_save_shipping_address_edit
                         ship_to_billing_address:
                             form_type: Oro\Bundle\CheckoutBundle\Form\Type\ShipToBillingAddressType
                         shipping_method: ~
@@ -90,7 +94,15 @@ workflows:
                     page-component-options:
                         saveStateUrl: $.result.saveStateUrl
                         targetLayoutBlocks:
-                            '[data-role="checkout-shipping-address"]':
+                            '[data-role="checkout-ship-to"]':
+                                - 'payment_methods_wrapper'
+                                - 'shipping_methods_wrapper'
+                                - 'checkout_order_summary_totals_wrapper'
+                            'select[data-role="checkout-billing-address"]':
+                                - 'payment_methods_wrapper'
+                                - 'shipping_methods_wrapper'
+                                - 'checkout_order_summary_totals_wrapper'
+                            'select[data-role="checkout-shipping-address"]':
                                 - 'payment_methods_wrapper'
                                 - 'shipping_methods_wrapper'
                                 - 'checkout_order_summary_totals_wrapper'
@@ -122,6 +134,8 @@ workflows:
                                 disabled: $disallow_billing_address_edit
                         save_billing_address:
                             form_type: Oro\Bundle\CheckoutBundle\Form\Type\SaveAddressType
+                            options:
+                                disabled: $disallow_save_billing_address_edit
                         shipping_address:
                             form_type: Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressType
                             options:
@@ -137,6 +151,8 @@ workflows:
                                     - Oro\Bundle\AddressBundle\Validator\Constraints\NameOrOrganization: ~
                         save_shipping_address:
                             form_type: Oro\Bundle\CheckoutBundle\Form\Type\SaveAddressType
+                            options:
+                                disabled: $disallow_save_shipping_address_edit
                         ship_to_billing_address:
                             form_type: Oro\Bundle\CheckoutBundle\Form\Type\ShipToBillingAddressType
                         shipping_method:
@@ -174,3 +190,4 @@ workflows:
                             form_type: Oro\Bundle\CustomerBundle\Form\Type\CustomerVisitorEmailAddressType
                             options:
                                 required: true
+                                disabled: $disallow_visitor_email
