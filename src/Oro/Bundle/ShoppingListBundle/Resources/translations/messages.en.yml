@@ -160,7 +160,7 @@ oro:
                 add_note.placeholder: Enter your note
 
                 item.lable: Item
-                subtotal.lable: Subtotal
+                price.label: Price
 
                 entity.label: '{0} No Shopping Lists|{1} <strong>%count%</strong> Shopping List|]1,Inf[ <strong>%count%</strong> Shopping Lists'
                 items.label: '{0} No Items|{1} %count% Item|]1,Inf[ %count% Items'

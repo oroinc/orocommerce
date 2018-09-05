@@ -10,6 +10,9 @@ use Oro\Bundle\ProductBundle\Entity\Repository\RelatedItem\RelatedProductReposit
 use Oro\Bundle\ProductBundle\RelatedItem\AbstractRelatedItemConfigProvider;
 use Oro\Bundle\ProductBundle\RelatedItem\FinderStrategyInterface;
 
+/**
+ * Provides methods to get ids of instances of related products.
+ */
 class FinderDatabaseStrategy implements FinderStrategyInterface
 {
     /**
@@ -36,14 +39,14 @@ class FinderDatabaseStrategy implements FinderStrategyInterface
      * {@inheritdoc}
      * If parameters `bidirectional` and `limit` are not passed - default values from configuration will be used
      */
-    public function find(Product $product, $bidirectional = false, $limit = null)
+    public function findIds(Product $product, $bidirectional = false, $limit = null)
     {
         if (!$this->configProvider->isEnabled()) {
             return [];
         }
 
         return $this->getRelatedProductsRepository()
-            ->findRelated(
+            ->findRelatedIds(
                 $product->getId(),
                 $bidirectional,
                 $limit

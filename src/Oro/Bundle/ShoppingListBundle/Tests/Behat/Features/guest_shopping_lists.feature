@@ -145,6 +145,14 @@ Feature: Guest Shopping Lists
       | Create Order  |
       | Request Quote |
 
+  Scenario: Check Shopping list button in Guest mode when product remove from shopping list
+    Given I type "CONTROL1" in "search"
+    And I click "Search Button"
+    And I should see "Control Product"
+    And I click on "Shopping List Dropdown"
+    And I click "Remove From Shopping List"
+    And I should not see "Shopping List Dropdown"
+
   Scenario: Check shopping list count
     Given I proceed as the Admin
     When I go to Sales/ Shopping Lists

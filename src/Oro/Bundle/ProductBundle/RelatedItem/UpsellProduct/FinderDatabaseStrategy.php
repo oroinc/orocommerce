@@ -10,6 +10,9 @@ use Oro\Bundle\ProductBundle\Entity\Repository\RelatedItem\UpsellProductReposito
 use Oro\Bundle\ProductBundle\RelatedItem\AbstractRelatedItemConfigProvider;
 use Oro\Bundle\ProductBundle\RelatedItem\FinderStrategyInterface;
 
+/**
+ * Provides methods to get ids of instances of upsell products.
+ */
 class FinderDatabaseStrategy implements FinderStrategyInterface
 {
     /**
@@ -37,14 +40,14 @@ class FinderDatabaseStrategy implements FinderStrategyInterface
     /**
      * {@inheritdoc}
      */
-    public function find(Product $product, $bidirectional = false, $limit = null)
+    public function findIds(Product $product, $bidirectional = false, $limit = null)
     {
         if (!$this->configProvider->isEnabled()) {
             return [];
         }
 
         return $this->getUpsellProductRepository()
-            ->findUpsell(
+            ->findUpsellIds(
                 $product->getId(),
                 $limit
             );

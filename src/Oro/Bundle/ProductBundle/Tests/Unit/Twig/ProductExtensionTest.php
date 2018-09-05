@@ -5,6 +5,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Twig;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Expression\Autocomplete\AutocompleteFieldsProvider;
+use Oro\Bundle\ProductBundle\RelatedItem\FinderStrategyInterface;
 use Oro\Bundle\ProductBundle\RelatedItem\RelatedProduct\FinderDatabaseStrategy;
 use Oro\Bundle\ProductBundle\Twig\ProductExtension;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -37,7 +38,7 @@ class ProductExtensionTest extends \PHPUnit\Framework\TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->finderDatabaseStrategy = $this->getMockBuilder(FinderDatabaseStrategy::class)
+        $this->finderDatabaseStrategy = $this->getMockBuilder(FinderStrategyInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -70,28 +71,26 @@ class ProductExtensionTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param array $relatedProducts
-     * @param array $expectedIds
-     * @dataProvider dataProviderRelatedProducts
+     * @param array $ids
+     * @dataProvider dataProviderRelatedProductIds
      */
-    public function testGetRelatedProductsIds(array $relatedProducts, array $expectedIds)
+    public function testGetRelatedProductsIds(array $ids)
     {
         $this->finderDatabaseStrategy->expects($this->once())
-            ->method('find')
-            ->willReturn($relatedProducts);
+            ->method('findIds')
+            ->willReturn($ids);
 
-        $this->assertSame($expectedIds, $this->extension->getRelatedProductsIds(new Product()));
+        $this->assertSame($ids, $this->extension->getRelatedProductsIds(new Product()));
     }
 
-    public function dataProviderRelatedProducts()
+    /**
+     * @return array
+     */
+    public function dataProviderRelatedProductIds()
     {
         return [
-            [[
-                $this->getEntity(Product::class, ['id' => 2]),
-                $this->getEntity(Product::class, ['id' => 3]),
-                $this->getEntity(Product::class, ['id' => 4]),
-            ], [2, 3, 4]],
-            [[],[]]
+            [[2, 3, 4]],
+            [[]]
         ];
     }
 
@@ -108,6 +107,9 @@ class ProductExtensionTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedId, $formView->vars['attr']['id']);
     }
 
+    /**
+     * @return array
+     */
     public function dataSetUniqueLineItemFormId()
     {
         $formView = new FormView();

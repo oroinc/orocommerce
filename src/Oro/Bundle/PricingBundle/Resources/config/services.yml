@@ -267,6 +267,7 @@ services:
             - '@translator'
             - '@oro_entity.doctrine_helper'
             - '@oro_pricing.providers.price_attribute_prices'
+            - '@security.authorization_checker'
         tags:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-view, method: onProductView }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-edit, method: onProductEdit }
@@ -343,6 +344,7 @@ services:
             - '@oro_pricing.model.price_list_request_handler'
             - '@oro_entity.doctrine_helper'
             - '@oro_pricing.shard_manager'
+            - '@security.authorization_checker'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.products-grid, method: onBuildBefore }
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.products-grid, method: onResultAfter }

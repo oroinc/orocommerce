@@ -10,6 +10,9 @@ use Oro\Bundle\PricingBundle\Entity\Repository\PriceRuleLexemeRepository;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
+/**
+ * Schedule recalculations related to product price rules with lexemes.
+ */
 class PriceRuleLexemeTriggerHandler
 {
     /**
@@ -56,6 +59,10 @@ class PriceRuleLexemeTriggerHandler
      */
     public function addTriggersByLexemes(array $lexemes, array $products = [])
     {
+        if (!$lexemes) {
+            return;
+        }
+
         $assignmentsRecalculatePriceLists = [];
         foreach ($lexemes as $lexeme) {
             $priceList = $lexeme->getPriceList();
