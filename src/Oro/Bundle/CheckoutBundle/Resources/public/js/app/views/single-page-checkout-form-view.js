@@ -5,23 +5,28 @@ define(function(require) {
     var $ = require('jquery');
     var _ = require('underscore');
     var mediator = require('oroui/js/mediator');
-    var BaseComponent = require('oroui/js/app/views/base/view');
+    var BaseView = require('oroui/js/app/views/base/view');
     var SinglePageCheckoutSubmitButtonView =
         require('orocheckout/js/app/views/single-page-checkout-submit-button-view');
+    var SinglePageCheckoutAddressView = require('orocheckout/js/app/views/single-page-checkout-address-view');
 
-    SinglePageCheckoutFormView = BaseComponent.extend({
+    SinglePageCheckoutFormView = BaseView.extend({
         /**
          * @property
          */
         options: {
             submitButtonSelector: '[type="submit"]',
+            billingAddressSelector: 'select[data-role="checkout-billing-address"]',
+            shippingAddressSelector: 'select[data-role="checkout-shipping-address"]',
+            shipToSelector: '[data-role="checkout-ship-to"]',
             transitionFormFieldSelector: '[name*="oro_workflow_transition"]',
             originShippingMethodTypeSelector: '[name$="shippingMethodType"]',
             formShippingMethodSelector: '[name$="[shipping_method]"]',
             formShippingMethodTypeSelector: '[name$="[shipping_method_type]"]',
             originPaymentMethodSelector: '[name="paymentMethod"]',
             formPaymentMethodSelector: '[name$="[payment_method]"]',
-            originPaymentFormSelector: '[data-content="payment_method_form"]'
+            originPaymentFormSelector: '[data-content="payment_method_form"]',
+            entityId: null
         },
 
         /**
@@ -50,11 +55,6 @@ define(function(require) {
         timeout: 50,
 
         /**
-         * @property {boolean}
-         */
-        isSilent: false,
-
-        /**
          * @inheritDoc
          */
         constructor: function SinglePageCheckoutFormView() {
@@ -73,12 +73,21 @@ define(function(require) {
                 })
             );
 
+            this.subview('checkoutBillingAddress', new SinglePageCheckoutAddressView({
+                    el: this.$el.find(this.options.billingAddressSelector),
+                    entityId: this.options.entityId
+                })
+            );
+
+            this.subview('checkoutShippingAddress', new SinglePageCheckoutAddressView({
+                    el: this.$el.find(this.options.shippingAddressSelector),
+                    entityId: this.options.entityId
+                })
+            );
+
+            this._disableShippingAddress();
             this._changeShippingMethod();
             this._changePaymentMethod();
-
-            this.isSilent = true;
-            this.$el.trigger('change');
-            this.isSilent = false;
 
             SinglePageCheckoutFormView.__super__.initialize.call(this, arguments);
         },
@@ -87,15 +96,12 @@ define(function(require) {
          * @param {jQuery.Event} event
          */
         onChange: function(event) {
-            if (this.isSilent) {
-                return;
-            }
-
             var validate = this.$el.validate();
             if (!validate.checkForm()) {
                 return;
             }
 
+            this._disableShippingAddress();
             this._changeShippingMethod();
             this._changePaymentMethod();
 
@@ -110,6 +116,7 @@ define(function(require) {
         },
 
         onBeforeSaveState: function() {
+            this._disableShippingAddress();
             this.subview('checkoutSubmitButton')
                 .setElement(this.$el.find(this.options.submitButtonSelector))
                 .onToggleState();
@@ -154,6 +161,16 @@ define(function(require) {
 
         getSerializedData: function() {
             return this.$el.find(this.options.transitionFormFieldSelector).serialize();
+        },
+
+        _disableShippingAddress: function() {
+            var $element = this.$el.find(this.options.shipToSelector);
+            if ($element.is(this.options.shipToSelector)) {
+                this.subview('checkoutShippingAddress').onToggleState(
+                    $element.is(':checked'),
+                    this.subview('checkoutBillingAddress').$el.val()
+                );
+            }
         },
 
         _changeShippingMethod: function() {

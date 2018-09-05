@@ -29,6 +29,7 @@ oro_behat_extension:
     SelectBillingAddress:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector: '[name="oro_workflow_transition[billing_address][customerAddress]"]'
+
     SelectShippingAddress:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector: '[name="oro_workflow_transition[shipping_address][customerAddress]"]'
@@ -254,3 +255,43 @@ oro_behat_extension:
 
     Permissions Dropdown Items:
       selector: '.dropdown-menu__permissions-item a'
+
+    Billing Address Select:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        type: xpath
+        locator: '//*[contains(@id, "s2id_oro_workflow_transition_billing_address_customerAddress-uid-")]/a'
+
+    Shipping Address Select:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        type: xpath
+        locator: '//*[contains(@id, "s2id_oro_workflow_transition_shipping_address_customerAddress-uid-")]/a'
+
+    New Address Option:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        type: xpath
+        locator: '//ul[@class="select2-results"]/li/div[contains(., "New address")]'
+
+    New Address Popup Form:
+      selector: 'form[name="oro_action_operation"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Email: 'oro_action_operation[visitor_email]'
+          Label: 'oro_action_operation[address][label]'
+          Name Prefix: 'oro_action_operation[address][namePrefix]'
+          First Name: 'oro_action_operation[address][firstName]'
+          Middle Name: 'oro_action_operation[address][middleName]'
+          Last Name: 'oro_action_operation[address][lastName]'
+          Name Suffix: 'oro_action_operation[address][nameSuffix]'
+          Organization: 'oro_action_operation[address][organization]'
+          Phone: 'oro_action_operation[address][phone]'
+          Street: 'oro_action_operation[address][street]'
+          Street 2: 'oro_action_operation[address][street2]'
+          City: 'oro_action_operation[address][city]'
+          Country: 'oro_action_operation[address][country]'
+          State: 'oro_action_operation[address][region]'
+          Postal Code: 'oro_action_operation[address][postalCode]'
+          Save Address: 'oro_action_operation[save_address]'

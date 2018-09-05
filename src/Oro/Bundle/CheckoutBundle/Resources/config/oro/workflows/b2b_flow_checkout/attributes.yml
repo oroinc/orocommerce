@@ -63,3 +63,5 @@ workflows:
                     class: Oro\Bundle\CustomerBundle\Entity\CustomerVisitor
             visitor_email:
                 type: string
+            disallow_visitor_email:
+                type: boolean

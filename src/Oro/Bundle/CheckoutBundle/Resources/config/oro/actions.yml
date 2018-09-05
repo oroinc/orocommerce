@@ -1,5 +1,6 @@
 imports:
     - { resource: 'actions/b2b_flow_checkout.yml' }
+    - { resource: 'actions/b2b_flow_checkout_single_page.yml' }
 
 operations:
     UPDATE:

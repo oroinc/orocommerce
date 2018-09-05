@@ -2,9 +2,9 @@ define(function(require) {
     'use strict';
 
     var SinglePageCheckoutSubmitButtonView;
-    var BaseComponent = require('oroui/js/app/views/base/view');
+    var BaseView = require('oroui/js/app/views/base/view');
 
-    SinglePageCheckoutSubmitButtonView = BaseComponent.extend({
+    SinglePageCheckoutSubmitButtonView = BaseView.extend({
         /**
          * @inheritDoc
          */
