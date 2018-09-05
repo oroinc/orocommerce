@@ -19,9 +19,7 @@ class ProductUnitValueExtensionTest extends \PHPUnit\Framework\TestCase
 
     public function setUp()
     {
-        $this->formatter = $this->getMockBuilder(UnitValueFormatterInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->formatter = $this->createMock(UnitValueFormatterInterface::class);
 
         $container = self::getContainerBuilder()
             ->add('oro_product.formatter.product_unit_value', $this->formatter)

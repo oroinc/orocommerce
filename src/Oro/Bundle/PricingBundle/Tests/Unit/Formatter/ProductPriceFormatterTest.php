@@ -31,7 +31,7 @@ class ProductPriceFormatterTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->numberFormatter = $this->getMockBuilder('Oro\Bundle\LocaleBundle\Formatter\NumberFormatter')
+        $this->numberFormatter = $this->getMockBuilder(NumberFormatter::class)
             ->disableOriginalConstructor()->getMock();
         $this->numberFormatter->expects($this->any())
             ->method('formatCurrency')

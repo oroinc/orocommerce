@@ -41,9 +41,7 @@ class ProductPrimaryUnitPrecisionTypeTest extends FormIntegrationTestCase
     {
         $this->formType = new ProductPrimaryUnitPrecisionType();
         $this->formType->setDataClass(ProductUnitPrecision::class);
-        $this->productUnitLabelFormatter = $this->getMockBuilder(UnitLabelFormatterInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->productUnitLabelFormatter = $this->createMock(UnitLabelFormatterInterface::class);
 
         parent::setUp();
     }

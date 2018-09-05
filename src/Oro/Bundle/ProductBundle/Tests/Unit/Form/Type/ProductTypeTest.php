@@ -133,10 +133,7 @@ class ProductTypeTest extends FormIntegrationTestCase
 
         $this->images = [$image1, $image2];
 
-        $this->productUnitLabelFormatter = $this->getMockBuilder(UnitLabelFormatterInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $this->productUnitLabelFormatter = $this->createMock(UnitLabelFormatterInterface::class);
 
         parent::setUp();
     }

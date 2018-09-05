@@ -9,10 +9,11 @@ use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub
 use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
-use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
+use Oro\Bundle\RFPBundle\Entity\Request;
+use Oro\Bundle\RFPBundle\Entity\RequestProduct;
 use Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestProductType as FrontendRequestProductType;
 use Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestType;
 use Oro\Bundle\RFPBundle\Form\Type\RequestProductItemType;
@@ -26,7 +27,7 @@ class RequestTypeTest extends AbstractTest
 {
     use QuantityTypeTrait;
 
-    const DATA_CLASS = 'Oro\Bundle\RFPBundle\Entity\Request';
+    const DATA_CLASS = Request::class;
 
     /**
      * @var RequestType
@@ -50,7 +51,7 @@ class RequestTypeTest extends AbstractTest
     public function testConfigureOptions()
     {
         /* @var $resolver OptionsResolver|\PHPUnit\Framework\MockObject\MockObject */
-        $resolver = $this->createMock('Symfony\Component\OptionsResolver\OptionsResolver');
+        $resolver = $this->createMock(OptionsResolver::class);
 
         $resolver->expects(static::once())
             ->method('setDefaults')
@@ -193,23 +194,16 @@ class RequestTypeTest extends AbstractTest
      */
     protected function getExtensions()
     {
-        /* @var $productUnitLabelFormatter UnitLabelFormatterInterface|\PHPUnit\Framework\MockObject\MockObject */
-        $productUnitLabelFormatter = $this->getMockBuilder(
-            UnitLabelFormatterInterface::class
-        )
-            ->disableOriginalConstructor()
-            ->getMock();
-
         $priceType                  = $this->preparePriceType();
         $entityType                 = $this->prepareProductSelectType();
         $currencySelectionType      = new CurrencySelectionTypeStub();
         $requestProductItemType     = $this->prepareRequestProductItemType();
         $productUnitSelectionType   = $this->prepareProductUnitSelectionType();
         $customerUserMultiSelectType = $this->prepareCustomerUserMultiSelectType();
-        $requestProductType         = new RequestProductType($productUnitLabelFormatter);
-        $requestProductType->setDataClass('Oro\Bundle\RFPBundle\Entity\RequestProduct');
+        $requestProductType         = new RequestProductType();
+        $requestProductType->setDataClass(RequestProduct::class);
         $frontendRequestProductType = new FrontendRequestProductType();
-        $frontendRequestProductType->setDataClass('Oro\Bundle\RFPBundle\Entity\RequestProduct');
+        $frontendRequestProductType->setDataClass(RequestProduct::class);
 
         return [
             new PreloadedExtension(

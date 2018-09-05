@@ -11,7 +11,7 @@ class DimensionsUnitValueExtensionTest extends \PHPUnit\Framework\TestCase
 {
     use TwigExtensionTestCaseTrait;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
+    /** @var UnitValueFormatterInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $formatter;
 
     /** @var DimensionsUnitValueExtension */
@@ -19,9 +19,7 @@ class DimensionsUnitValueExtensionTest extends \PHPUnit\Framework\TestCase
 
     public function setUp()
     {
-        $this->formatter = $this->getMockBuilder(UnitValueFormatterInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->formatter = $this->createMock(UnitValueFormatterInterface::class);
 
         $container = self::getContainerBuilder()
             ->add('oro_shipping.formatter.dimensions_unit_value', $this->formatter)

@@ -27,7 +27,10 @@ class ProductPriceFilterTypeTest extends NumberRangeFilterTypeTest
     protected function setUp()
     {
         $translator = $this->createMockTranslator();
-        $this->formExtensions[] = new CustomFormExtension([new NumberRangeFilterType($translator)]);
+
+        $this->formExtensions = [
+            new CustomFormExtension([new NumberRangeFilterType($translator)])
+        ];
 
         /** @var \PHPUnit\Framework\MockObject\MockObject|UnitLabelFormatterInterface $formatter */
         $formatter = $this->getMockBuilder(UnitLabelFormatterInterface::class)

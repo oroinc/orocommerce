@@ -8,8 +8,6 @@ use Symfony\Component\Translation\TranslatorInterface;
 
 abstract class UnitLabelFormatterTestCase extends \PHPUnit\Framework\TestCase
 {
-    const TRANSLATION_PREFIX = '';
-
     /** @var \PHPUnit\Framework\MockObject\MockObject|TranslatorInterface */
     protected $translator;
 
@@ -18,7 +16,8 @@ abstract class UnitLabelFormatterTestCase extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->translator = $this->createMock('Symfony\Component\Translation\TranslatorInterface');
+        $this->translator = $this->createMock(TranslatorInterface::class);
+        $this->formatter = $this->createFormatter();
     }
 
     protected function tearDown()
@@ -50,25 +49,25 @@ abstract class UnitLabelFormatterTestCase extends \PHPUnit\Framework\TestCase
                 'unitCode'  => 'kg',
                 'isShort'   => false,
                 'isPlural'  => false,
-                'expected'  => static::TRANSLATION_PREFIX . '.kg.label.full',
+                'expected'  => $this->getTranslationPrefix() . '.kg.label.full',
             ],
             'format full plural' => [
                 'unitCode'  => 'kg',
                 'isShort'   => false,
                 'isPlural'  => true,
-                'expected'  => static::TRANSLATION_PREFIX . '.kg.label.full_plural',
+                'expected'  => $this->getTranslationPrefix() . '.kg.label.full_plural',
             ],
             'format short single' => [
                 'unitCode'  => 'item',
                 'isShort'   => true,
                 'isPlural'   => false,
-                'expected'  => static::TRANSLATION_PREFIX . '.item.label.short',
+                'expected'  => $this->getTranslationPrefix() . '.item.label.short',
             ],
             'format short plural' => [
                 'unitCode'  => 'item',
                 'isShort'   => true,
                 'isPlural'  => true,
-                'expected'  => static::TRANSLATION_PREFIX . '.item.label.short_plural',
+                'expected'  => $this->getTranslationPrefix() . '.item.label.short_plural',
             ],
             'empty code' => [
                 'unitCode'  => '',
@@ -93,14 +92,14 @@ abstract class UnitLabelFormatterTestCase extends \PHPUnit\Framework\TestCase
         $this->translator->expects($this->exactly(2))
             ->method('trans')
             ->will($this->returnValueMap([
-                [static::TRANSLATION_PREFIX . '.kg.label.full', [], null, null, '_KG'],
-                [static::TRANSLATION_PREFIX . '.kg.label.full_plural', [], null, null, '_KG_PLURAL'],
-                [static::TRANSLATION_PREFIX . '.item.label.full', [], null, null, '_ITEM'],
-                [static::TRANSLATION_PREFIX . '.item.label.full_plural', [], null, null, '_ITEM_PLURAL'],
-                [static::TRANSLATION_PREFIX . '.kg.label.short', [], null, null, '_KG_SHORT'],
-                [static::TRANSLATION_PREFIX . '.kg.label.short_plural', [], null, null, '_KG_SHORT_PLURAL'],
-                [static::TRANSLATION_PREFIX . '.item.label.short', [], null, null, '_ITEM_SHORT'],
-                [static::TRANSLATION_PREFIX . '.item.label.short_plural', [], null, null, '_ITEM_SHORT_PLURAL']
+                [$this->getTranslationPrefix() . '.kg.label.full', [], null, null, '_KG'],
+                [$this->getTranslationPrefix() . '.kg.label.full_plural', [], null, null, '_KG_PLURAL'],
+                [$this->getTranslationPrefix() . '.item.label.full', [], null, null, '_ITEM'],
+                [$this->getTranslationPrefix() . '.item.label.full_plural', [], null, null, '_ITEM_PLURAL'],
+                [$this->getTranslationPrefix() . '.kg.label.short', [], null, null, '_KG_SHORT'],
+                [$this->getTranslationPrefix() . '.kg.label.short_plural', [], null, null, '_KG_SHORT_PLURAL'],
+                [$this->getTranslationPrefix() . '.item.label.short', [], null, null, '_ITEM_SHORT'],
+                [$this->getTranslationPrefix() . '.item.label.short_plural', [], null, null, '_ITEM_SHORT_PLURAL']
             ]));
 
         $this->assertEquals($expected, $this->formatter->formatChoices($units, $isShort, $isPlural));
@@ -148,8 +147,18 @@ abstract class UnitLabelFormatterTestCase extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * @return UnitLabelFormatterInterface
+     */
+    abstract protected function createFormatter(): UnitLabelFormatterInterface;
+
+    /**
+     * @return string
+     */
+    abstract protected function getTranslationPrefix(): string;
+
+    /**
      * @param string $code
      * @return MeasureUnitInterface
      */
-    abstract protected function createObject($code);
+    abstract protected function createObject($code): MeasureUnitInterface;
 }

@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Provider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 
@@ -14,12 +15,12 @@ use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 class ProductUnitsProvider
 {
     /**
-     * @var  ManagerRegistry
+     * @var ManagerRegistry
      */
     protected $registry;
 
     /**
-     * @var  UnitLabelFormatterInterface
+     * @var UnitLabelFormatterInterface
      */
     protected $formatter;
 
@@ -70,7 +71,7 @@ class ProductUnitsProvider
     protected function getRepository()
     {
         return $this->registry
-            ->getManagerForClass('Oro\Bundle\ProductBundle\Entity\ProductUnit')
-            ->getRepository('Oro\Bundle\ProductBundle\Entity\ProductUnit');
+            ->getManagerForClass(ProductUnit::class)
+            ->getRepository(ProductUnit::class);
     }
 }

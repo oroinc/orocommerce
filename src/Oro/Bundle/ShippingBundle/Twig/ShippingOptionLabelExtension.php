@@ -6,13 +6,7 @@ use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Adds Twig filters [
- * oro_length_unit_format_label,
- * oro_weight_unit_format_label
- * oro_freight_class_format_label
- * ]
- *
- * delegates formatting to UnitLabelFormatter
+ * Add filters for formatting length, weight, freight class
  */
 class ShippingOptionLabelExtension extends \Twig_Extension
 {

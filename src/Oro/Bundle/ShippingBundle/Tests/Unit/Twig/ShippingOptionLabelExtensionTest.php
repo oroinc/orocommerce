@@ -24,15 +24,9 @@ class ShippingOptionLabelExtensionTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->lengthUnitLabelFormatter = $this->getMockBuilder(UnitLabelFormatterInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->weightUnitLabelFormatter = $this->getMockBuilder(UnitLabelFormatterInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->freightClassLabelFormatter = $this->getMockBuilder(UnitLabelFormatterInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->lengthUnitLabelFormatter = $this->createMock(UnitLabelFormatterInterface::class);
+        $this->weightUnitLabelFormatter = $this->createMock(UnitLabelFormatterInterface::class);
+        $this->freightClassLabelFormatter = $this->createMock(UnitLabelFormatterInterface::class);
 
         $container = self::getContainerBuilder()
             ->add('oro_shipping.formatter.length_unit_label', $this->lengthUnitLabelFormatter)

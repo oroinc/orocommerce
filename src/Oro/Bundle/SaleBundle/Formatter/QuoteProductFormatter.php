@@ -65,9 +65,9 @@ class QuoteProductFormatter
 
         if (isset($types[$type])) {
             return $this->formatTypeLabel($types[$type]);
-        } else {
-            return $this->translator->trans('N/A');
         }
+
+        return $this->translator->trans('N/A');
     }
 
     /**
@@ -154,7 +154,9 @@ class QuoteProductFormatter
     {
         if (!$item->getProductUnit()) {
             return sprintf('%s %s', $item->getQuantity(), $item->getProductUnitCode());
-        } elseif ($item->getQuantity()) {
+        }
+
+        if ($item->getQuantity()) {
             return $this->productUnitValueFormatter->format($item->getQuantity(), $item->getProductUnit());
         }
 
@@ -184,8 +186,6 @@ class QuoteProductFormatter
      */
     protected function formatUnitCode(BaseQuoteProductItem $item)
     {
-        $unit = $this->productUnitLabelFormatter->format($item->getProductUnitCode());
-
-        return $unit;
+        return $this->productUnitLabelFormatter->format($item->getProductUnitCode());
     }
 }

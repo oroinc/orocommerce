@@ -8,8 +8,6 @@ use Symfony\Component\Translation\TranslatorInterface;
 
 abstract class UnitValueFormatterTestCase extends \PHPUnit\Framework\TestCase
 {
-    const TRANSLATION_PREFIX = '';
-
     /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $translator;
 
@@ -18,7 +16,8 @@ abstract class UnitValueFormatterTestCase extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->translator = $this->createMock('Symfony\Component\Translation\TranslatorInterface');
+        $this->translator = $this->createMock(TranslatorInterface::class);
+        $this->formatter = $this->createFormatter();
     }
 
     protected function tearDown()
@@ -30,7 +29,7 @@ abstract class UnitValueFormatterTestCase extends \PHPUnit\Framework\TestCase
     {
         $this->translator->expects($this->once())
             ->method('transChoice')
-            ->with(static::TRANSLATION_PREFIX . '.kg.value.full', 42);
+            ->with($this->getTranslationPrefix() . '.kg.value.full', 42);
 
         $this->formatter->format(42, $this->createObject('kg'));
     }
@@ -39,7 +38,7 @@ abstract class UnitValueFormatterTestCase extends \PHPUnit\Framework\TestCase
     {
         $this->translator->expects($this->once())
             ->method('transChoice')
-            ->with(static::TRANSLATION_PREFIX . '.item.value.short', 42);
+            ->with($this->getTranslationPrefix() . '.item.value.short', 42);
 
         $this->formatter->formatShort(42, $this->createObject('item'));
     }
@@ -48,7 +47,7 @@ abstract class UnitValueFormatterTestCase extends \PHPUnit\Framework\TestCase
     {
         $this->translator->expects($this->once())
             ->method('transChoice')
-            ->with(static::TRANSLATION_PREFIX . '.item.value.short', 42);
+            ->with($this->getTranslationPrefix() . '.item.value.short', 42);
 
         $this->formatter->formatCode(42, 'item', true);
     }
@@ -57,7 +56,7 @@ abstract class UnitValueFormatterTestCase extends \PHPUnit\Framework\TestCase
     {
         $this->translator->expects($this->once())
             ->method('transChoice')
-            ->with(static::TRANSLATION_PREFIX . '.item.value.full', 42);
+            ->with($this->getTranslationPrefix() . '.item.value.full', 42);
 
         $this->formatter->formatCode(42, 'item');
     }
@@ -66,7 +65,7 @@ abstract class UnitValueFormatterTestCase extends \PHPUnit\Framework\TestCase
     {
         $this->translator->expects($this->once())
             ->method('transChoice')
-            ->with(static::TRANSLATION_PREFIX . '.item.value.short_fraction', 0.5);
+            ->with($this->getTranslationPrefix() . '.item.value.short_fraction', 0.5);
 
         $this->formatter->formatCode(0.5, 'item', true);
     }
@@ -75,7 +74,7 @@ abstract class UnitValueFormatterTestCase extends \PHPUnit\Framework\TestCase
     {
         $this->translator->expects($this->once())
             ->method('transChoice')
-            ->with(static::TRANSLATION_PREFIX . '.item.value.short_fraction_gt_1', 1.5);
+            ->with($this->getTranslationPrefix() . '.item.value.short_fraction_gt_1', 1.5);
 
         $this->formatter->formatCode(1.5, 'item', true);
     }
@@ -91,8 +90,18 @@ abstract class UnitValueFormatterTestCase extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * @return UnitValueFormatterInterface
+     */
+    abstract protected function createFormatter(): UnitValueFormatterInterface;
+
+    /**
+     * @return string
+     */
+    abstract protected function getTranslationPrefix(): string;
+
+    /**
      * @param string $code
      * @return MeasureUnitInterface
      */
-    abstract protected function createObject($code);
+    abstract protected function createObject($code): MeasureUnitInterface;
 }

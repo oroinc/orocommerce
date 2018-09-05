@@ -7,13 +7,7 @@ use Oro\Bundle\ProductBundle\Formatter\UnitValueFormatterInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Adds Twig filters [
- * oro_dimensions_unit_format_value,
- * oro_dimensions_unit_format_value_short
- * oro_dimensions_unit_format_code
- * ]
- *
- * delegates formatting to UnitValueFormatter
+ * Add filters which format using \Oro\Bundle\ShippingBundle\Formatter\DimensionsValueFormatter
  */
 class DimensionsUnitValueExtension extends \Twig_Extension
 {

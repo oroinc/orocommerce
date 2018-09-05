@@ -22,7 +22,6 @@ use Symfony\Component\Translation\TranslatorInterface;
  * validating units
  * setAcceptable units
  * formatting view choices values using UnitLabelFormatterInterface
- *
  */
 class ProductUnitSelectionType extends AbstractProductAwareType
 {

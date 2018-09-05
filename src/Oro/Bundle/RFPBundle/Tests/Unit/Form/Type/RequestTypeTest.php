@@ -12,7 +12,6 @@ use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub
 use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
-use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 use Oro\Bundle\RFPBundle\Entity\Request;
@@ -417,13 +416,6 @@ class RequestTypeTest extends AbstractTest
      */
     protected function getExtensions()
     {
-        /* @var $productUnitLabelFormatter UnitLabelFormatterInterface|\PHPUnit\Framework\MockObject\MockObject */
-        $productUnitLabelFormatter = $this->getMockBuilder(
-            UnitLabelFormatterInterface::class
-        )
-            ->disableOriginalConstructor()
-            ->getMock();
-
         $priceType                  = $this->preparePriceType();
         $productSelectType          = $this->prepareProductSelectType();
         $userMultiSelectType        = $this->prepareUserMultiSelectType();
@@ -448,7 +440,7 @@ class RequestTypeTest extends AbstractTest
             CustomerUserSelectType::NAME
         );
 
-        $requestProductType = new RequestProductType($productUnitLabelFormatter);
+        $requestProductType = new RequestProductType();
         $requestProductType->setDataClass('Oro\Bundle\RFPBundle\Entity\RequestProduct');
 
         return [

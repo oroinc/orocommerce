@@ -27,16 +27,12 @@ abstract class AbstractShippingOptionSelectTypeTest extends FormIntegrationTestC
 
     protected function configureProvider()
     {
-        $this->provider = $this->getMockBuilder('Oro\Bundle\ShippingBundle\Provider\MeasureUnitProvider')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->provider = $this->createMock(MeasureUnitProvider::class);
     }
 
     protected function configureFormatter()
     {
-        $this->formatter = $this->getMockBuilder(UnitLabelFormatterInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->formatter = $this->createMock(UnitLabelFormatterInterface::class);
     }
 
     protected function tearDown()
@@ -203,7 +199,7 @@ abstract class AbstractShippingOptionSelectTypeTest extends FormIntegrationTestC
     protected function createUnit($code)
     {
         /** @var MeasureUnitInterface|\PHPUnit\Framework\MockObject\MockObject $unit */
-        $unit = $this->createMock('Oro\Bundle\ProductBundle\Entity\MeasureUnitInterface');
+        $unit = $this->createMock(MeasureUnitInterface::class);
         $unit->expects($this->any())
             ->method('getCode')
             ->willReturn($code);

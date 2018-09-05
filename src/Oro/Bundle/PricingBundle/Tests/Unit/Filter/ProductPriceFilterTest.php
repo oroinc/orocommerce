@@ -45,13 +45,13 @@ class ProductPriceFilterTest extends \PHPUnit\Framework\TestCase
 
     public function setUp()
     {
-        $this->form = $this->createMock('Symfony\Component\Form\Test\FormInterface');
-        $this->formFactory = $this->createMock('Symfony\Component\Form\FormFactoryInterface');
+        $this->form = $this->createMock(FormInterface::class);
+        $this->formFactory = $this->createMock(FormFactoryInterface::class);
         $this->formFactory->expects($this->any())
             ->method('create')
             ->will($this->returnValue($this->form));
 
-        $this->filterUtility = $this->getMockBuilder('Oro\Bundle\FilterBundle\Filter\FilterUtility')
+        $this->filterUtility = $this->getMockBuilder(FilterUtility::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->filterUtility->expects($this->any())
@@ -62,7 +62,7 @@ class ProductPriceFilterTest extends \PHPUnit\Framework\TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->requestHandler = $this->getMockBuilder('Oro\Bundle\PricingBundle\Model\PriceListRequestHandler')
+        $this->requestHandler = $this->getMockBuilder(PriceListRequestHandler::class)
             ->disableOriginalConstructor()
             ->getMock();
 

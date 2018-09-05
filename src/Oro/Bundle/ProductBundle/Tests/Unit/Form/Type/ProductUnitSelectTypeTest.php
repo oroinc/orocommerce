@@ -32,9 +32,7 @@ class ProductUnitSelectTypeTest extends FormIntegrationTestCase
      */
     protected function setUp()
     {
-        $this->productUnitLabelFormatter = $this->getMockBuilder(UnitLabelFormatterInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->productUnitLabelFormatter = $this->createMock(UnitLabelFormatterInterface::class);
 
         $this->formType = new ProductUnitSelectType($this->productUnitLabelFormatter);
         $this->formType->setEntityClass(ProductUnitPrecision::class);

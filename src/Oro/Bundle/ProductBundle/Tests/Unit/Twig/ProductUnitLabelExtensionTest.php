@@ -21,9 +21,7 @@ class ProductUnitLabelExtensionTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp()
     {
-        $this->formatter = $this->getMockBuilder(UnitLabelFormatterInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->formatter = $this->createMock(UnitLabelFormatterInterface::class);
 
         $this->extension = new ProductUnitLabelExtension($this->formatter);
     }

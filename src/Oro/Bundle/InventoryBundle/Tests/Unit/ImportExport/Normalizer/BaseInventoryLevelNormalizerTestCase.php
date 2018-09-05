@@ -23,6 +23,9 @@ class BaseInventoryLevelNormalizerTestCase extends \PHPUnit\Framework\TestCase
     /** @var  \PHPUnit\Framework\MockObject\MockObject|QuantityRoundingService */
     protected $roundingService;
 
+    /** @var \PHPUnit\Framework\MockObject\MockObject|FieldHelper */
+    protected $fieldHelper;
+
     protected function setUp()
     {
         $this->formatter = $this->getMockBuilder(UnitLabelFormatterInterface::class)
@@ -31,11 +34,11 @@ class BaseInventoryLevelNormalizerTestCase extends \PHPUnit\Framework\TestCase
         $this->roundingService = $this->getMockBuilder(QuantityRoundingService::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $fieldHelper = $this->getMockBuilder(FieldHelper::class)
+        $this->fieldHelper = $this->getMockBuilder(FieldHelper::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->inventoryLevelNormalizer = new InventoryLevelNormalizer(
-            $fieldHelper,
+            $this->fieldHelper,
             $this->formatter,
             $this->roundingService
         );

@@ -85,9 +85,7 @@ class ProductUnitsProviderTest extends \PHPUnit\Framework\TestCase
             ->with(ProductUnit::class)
             ->willReturn($manager);
 
-        $this->formatter = $this->getMockBuilder(UnitLabelFormatterInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->formatter = $this->createMock(UnitLabelFormatterInterface::class);
 
         $this->productUnitsProvider = new ProductUnitsProvider($managerRegistry, $this->formatter);
     }
