@@ -319,8 +319,8 @@ Feature: Quick order form
       | PSKU1       | 1        | item |
     When I import file for quick order
     Then I should see next rows in "Quick Order Import Validation" table
-      | Item #                           | Qty | Unit         | Price  |
-      | PSKU1 - Product1 (Localization1) | 1   | item (lang1) | $45.00 |
+      | Item #                           | Qty | Unit         | Price    |
+      | PSKU1 - Product1 (Localization1) | 1   | item (lang1) | US$45.00 |
 
   #@todo check with Serhii Polishchuk how can we manipulate xlsx files
 # Scenario: Verify user is able to upload .xlsx file
