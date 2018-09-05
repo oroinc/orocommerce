@@ -3,7 +3,12 @@
 namespace Oro\Bundle\CheckoutBundle\EventListener;
 
 use Doctrine\Common\Cache\CacheProvider;
+use Doctrine\ORM\Event\OnFlushEventArgs;
+use Oro\Bundle\ProductBundle\Entity\Product;
 
+/**
+ * This listener clear product availability cache on change related entities
+ */
 class ProductAvailabilityCacheListener
 {
     /**
@@ -17,8 +22,28 @@ class ProductAvailabilityCacheListener
     {
         $this->cache = $cache;
     }
-    public function postFlush()
+
+    /**
+     * @param OnFlushEventArgs $args
+     */
+    public function onFlush(OnFlushEventArgs $args)
     {
-        $this->cache->deleteAll();
+        $unitOfWork = $args->getEntityManager()->getUnitOfWork();
+        $entities = array_merge(
+            $unitOfWork->getScheduledEntityInsertions(),
+            $unitOfWork->getScheduledEntityUpdates(),
+            $unitOfWork->getScheduledEntityDeletions()
+        );
+        $productsId = [];
+        foreach ($entities as $entity) {
+            if ($entity instanceof Product
+                && null !== $entity->getId()
+            ) {
+                $productsId[] = $entity->getId();
+            }
+        }
+        foreach (array_unique($productsId) as $productId) {
+            $this->cache->delete($productId);
+        }
     }
 }

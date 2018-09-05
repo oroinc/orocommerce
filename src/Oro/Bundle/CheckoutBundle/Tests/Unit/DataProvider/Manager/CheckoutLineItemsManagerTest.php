@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\DataProvider\Manager;
 
-use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CheckoutBundle\DataProvider\Converter\CheckoutLineItemsConverter;
 use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
@@ -46,11 +45,6 @@ class CheckoutLineItemsManagerTest extends \PHPUnit\Framework\TestCase
      */
     protected $configManager;
 
-    /**
-     * @var CacheProvider|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $productAvailabilityCache;
-
     protected function setUp()
     {
         $this->checkoutLineItemsConverter = $this->createMock(CheckoutLineItemsConverter::class);
@@ -69,7 +63,6 @@ class CheckoutLineItemsManagerTest extends \PHPUnit\Framework\TestCase
             }));
         $this->configManager = $this->createMock(ConfigManager::class);
         $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
-        $this->productAvailabilityCache = $this->createMock(CacheProvider::class);
 
         $this->checkoutLineItemsManager = new CheckoutLineItemsManager(
             $this->checkoutLineItemsConverter,
@@ -77,8 +70,6 @@ class CheckoutLineItemsManagerTest extends \PHPUnit\Framework\TestCase
             $this->configManager,
             $this->authorizationChecker
         );
-
-        $this->checkoutLineItemsManager->setProductAvailabilityCache($this->productAvailabilityCache);
     }
 
     public function testAddProvider()
@@ -108,10 +99,8 @@ class CheckoutLineItemsManagerTest extends \PHPUnit\Framework\TestCase
             ->with('oro_order.frontend_product_visibility')
             ->willReturn(['in_stock']);
 
-        $this->authorizationChecker->expects($this->any())
-            ->method('isGranted')
-            ->with('VIEW', $this->isInstanceOf(Product::class))
-            ->willReturn($visible);
+        $this->authorizationChecker->expects($this->never())
+            ->method('isGranted');
 
         $checkout = $this->getCheckout();
         $data = [];
@@ -143,10 +132,8 @@ class CheckoutLineItemsManagerTest extends \PHPUnit\Framework\TestCase
             ->with('oro_order.frontend_product_visibility')
             ->willReturn(['in_stock']);
 
-        $this->authorizationChecker->expects($this->any())
-            ->method('isGranted')
-            ->with('VIEW', $this->isInstanceOf(Product::class))
-            ->willReturn($visible);
+        $this->authorizationChecker->expects($this->never())
+            ->method('isGranted');
 
         $checkout = $this->getCheckout();
 
@@ -211,16 +198,6 @@ class CheckoutLineItemsManagerTest extends \PHPUnit\Framework\TestCase
                         Price::create(10, 'USD')
                     ),
                     $this->getLineItemData($productFree, 42, 'PRO', 'in_stock', 10, 'litre', Price::create(10, 'USD')),
-                    $this->getLineItemData(
-                        $hasProduct,
-                        42,
-                        'PRO',
-                        'in_stock',
-                        10,
-                        'litre',
-                        Price::create(10, 'USD'),
-                        Product::STATUS_DISABLED
-                    ),
                 ],
                 'disablePriceFilter' => true,
                 'visible' => true,
@@ -245,20 +222,6 @@ class CheckoutLineItemsManagerTest extends \PHPUnit\Framework\TestCase
             [
                 'providerData' => [
                     $this->getLineItemData($productFree, 42, 'PRO', 'in_stock', 10, 'litre', Price::create(10, 'USD')),
-                    $this->getLineItemData($hasProduct, 42, 'PRO', 'in_stock', 10, 'litre', Price::create(10, 'USD')),
-                    $this->getLineItemData($hasProduct, 42, 'PRO', 'in_stock', 10, 'litre', null),
-                    $this->getLineItemData($hasProduct, 42, 'PRO', 'out_of_stock', 10, 'litre', null),
-                    $this->getLineItemData($hasProduct, 42, 'PRO', 'in_stock', 10, 'litre', Price::create(10, 'UAH')),
-                    $this->getLineItemData($hasProduct, 42, 'PRO', null, 10, 'litre', Price::create(10, 'USD')),
-                    $this->getLineItemData(
-                        $hasProduct,
-                        42,
-                        'PRO',
-                        'out_of_stock',
-                        10,
-                        'litre',
-                        Price::create(10, 'USD')
-                    ),
                 ],
                 'disablePriceFilter' => true,
                 'visible' => false,
@@ -366,10 +329,8 @@ class CheckoutLineItemsManagerTest extends \PHPUnit\Framework\TestCase
             ->with('oro_order.frontend_product_visibility')
             ->willReturn(['in_stock']);
 
-        $this->authorizationChecker->expects($this->any())
-            ->method('isGranted')
-            ->with('VIEW', $this->isInstanceOf(Product::class))
-            ->willReturn($visible);
+        $this->authorizationChecker->expects($this->never())
+            ->method('isGranted');
 
         $checkout = $this->getCheckout();
 
@@ -455,9 +416,7 @@ class CheckoutLineItemsManagerTest extends \PHPUnit\Framework\TestCase
                     $this->getLineItemData($productFree, 42, 'PRO', 'in_stock', 0, 'litre', Price::create(10, 'USD')),
                     $this->getLineItemData($productFree, 42, 'PRO', 'in_stock', 10, 'litre', Price::create(10, 'USD')),
                     $this->getLineItemData($hasProduct, 42, 'PRO', 'in_stock', 10, 'litre', null),
-                    $this->getLineItemData($hasProduct, 42, 'PRO', 'out_of_stock', 0, 'litre', null),
                     $this->getLineItemData($hasProduct, 42, 'PRO', 'in_stock', 10, 'litre', Price::create(10, 'UAH')),
-                    $this->getLineItemData($hasProduct, 42, 'PRO', null, 0, 'litre', Price::create(10, 'USD')),
                     $this->getLineItemData(
                         $hasProduct,
                         42,
@@ -474,52 +433,5 @@ class CheckoutLineItemsManagerTest extends \PHPUnit\Framework\TestCase
                 ],
             ],
         ];
-    }
-
-    public function testGetDataWithCache()
-    {
-        $providerData = [
-            $this->getLineItemData(true, 42, 'PRO', 'in_stock', 10, 'litre', Price::create(10, 'USD')),
-            $this->getLineItemData(true, 42, 'PRO', 'in_stock', 10, 'litre', Price::create(0, 'USD')),
-            $this->getLineItemData(false, 42, 'PRO', 'in_stock', 10, 'litre', Price::create(10, 'USD')),
-            $this->getLineItemData(true, 42, 'PRO', 'in_stock', 10, 'litre', null),
-            $this->getLineItemData(true, 42, 'PRO', 'out_of_stock', 10, 'litre', null),
-            $this->getLineItemData(true, 42, 'PRO', 'in_stock', 10, 'litre', Price::create(10, 'UAH')),
-            $this->getLineItemData(true, 42, 'PRO', null, 10, 'litre', Price::create(10, 'USD')),
-            $this->getLineItemData(true, 42, 'PRO', 'out_of_stock', 10, 'litre', Price::create(10, 'USD')),
-        ];
-
-        $expectedData = [
-            $this->getLineItemData(true, 42, 'PRO', 'in_stock', 10, 'litre', Price::create(10, 'USD')),
-            $this->getLineItemData(true, 42, 'PRO', 'in_stock', 10, 'litre', Price::create(0, 'USD')),
-            $this->getLineItemData(false, 42, 'PRO', 'in_stock', 10, 'litre', Price::create(10, 'USD')),
-        ];
-
-        $this->configManager->expects($this->any())
-            ->method('get')
-            ->with('oro_order.frontend_product_visibility')
-            ->willReturn(['in_stock']);
-
-        $this->productAvailabilityCache->expects($this->any())
-            ->method('contains')
-            ->with(42)
-            ->willReturn(true);
-
-        $this->productAvailabilityCache->expects($this->any())
-            ->method('fetch')
-            ->with(42)
-            ->willReturn(true);
-
-        $this->authorizationChecker->expects($this->never())
-            ->method('isGranted')
-            ->with('VIEW', $this->isInstanceOf(Product::class));
-
-        $checkout = $this->getCheckout();
-
-        $this->checkoutLineItemsManager->addProvider($this->getProvider($checkout, $providerData));
-
-        $expectedData = $this->checkoutLineItemsConverter->convert($expectedData);
-        $actualData = $this->checkoutLineItemsManager->getData($checkout, false);
-        $this->assertEquals($expectedData, $actualData);
     }
 }
