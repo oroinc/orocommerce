@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\TaxBundle\Manager;
 
+use Doctrine\Common\Cache\CacheProvider;
 use Oro\Bundle\TaxBundle\Entity\TaxValue;
 use Oro\Bundle\TaxBundle\Event\TaxEventDispatcher;
 use Oro\Bundle\TaxBundle\Exception\TaxationDisabledException;
@@ -11,6 +12,9 @@ use Oro\Bundle\TaxBundle\Model\Taxable;
 use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 use Oro\Bundle\TaxBundle\Transformer\TaxTransformerInterface;
 
+/**
+ * Organizes logic to work with taxes such as saving, getting, removing for passed object (eg. Order)
+ */
 class TaxManager
 {
     /** @var TaxTransformerInterface[] */
@@ -28,6 +32,9 @@ class TaxManager
     /** @var TaxationSettingsProvider */
     protected $settingsProvider;
 
+    /** @var CacheProvider */
+    protected $cacheProvider;
+
     /**
      * @param TaxFactory $taxFactory
      * @param TaxEventDispatcher $eventDispatcher
@@ -44,6 +51,14 @@ class TaxManager
         $this->eventDispatcher = $eventDispatcher;
         $this->taxValueManager = $taxValueManager;
         $this->settingsProvider = $settingsProvider;
+    }
+
+    /**
+     * @param CacheProvider $cacheProvider
+     */
+    public function setCacheProvider(CacheProvider $cacheProvider)
+    {
+        $this->cacheProvider = $cacheProvider;
     }
 
     /**
@@ -80,7 +95,7 @@ class TaxManager
     {
         $this->throwExceptionIfTaxationDisabled();
 
-        $taxable = $this->taxFactory->create($object);
+        $taxable = $this->getCachedTaxable($object);
         $transformer = $this->getTaxTransformer($taxable->getClassName());
 
         $taxValue = $this->taxValueManager->getTaxValue($taxable->getClassName(), $taxable->getIdentifier());
@@ -113,7 +128,7 @@ class TaxManager
     {
         $this->throwExceptionIfTaxationDisabled();
 
-        $taxable = $this->taxFactory->create($object);
+        $taxable = $this->getCachedTaxable($object);
 
         if (!$taxable->getIdentifier()) {
             return false;
@@ -144,7 +159,7 @@ class TaxManager
     {
         $this->throwExceptionIfTaxationDisabled();
 
-        $taxable = $this->taxFactory->create($object);
+        $taxable = $this->getCachedTaxable($object);
 
         if ($includeItems) {
             foreach ($taxable->getItems() as $item) {
@@ -221,7 +236,7 @@ class TaxManager
             $taxResult = new Result();
         }
 
-        $taxable = $this->taxFactory->create($object);
+        $taxable = $this->getCachedTaxable($object);
         $taxable->setResult($taxResult);
 
         $this->eventDispatcher->dispatch($taxable);
@@ -250,5 +265,30 @@ class TaxManager
         if (!$this->settingsProvider->isEnabled()) {
             throw new TaxationDisabledException();
         }
+    }
+
+    /**
+     * Returns cached taxation entity representation to reduce calls to TaxFactory which executes heavy
+     * mapping logic
+     * @param $object
+     * @return Taxable
+     */
+    private function getCachedTaxable($object)
+    {
+        if (!$this->cacheProvider) {
+            return $this->taxFactory->create($object);
+        }
+        $cacheKey = md5(serialize($object));
+
+        if (!$this->cacheProvider->contains($cacheKey)) {
+            $taxable = $this->taxFactory->create($object);
+            $this->cacheProvider->save($cacheKey, $taxable);
+
+            return clone $taxable;
+        }
+
+        $taxable = clone $this->cacheProvider->fetch($cacheKey);
+
+        return $taxable;
     }
 }
