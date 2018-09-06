@@ -12,6 +12,7 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
+ * Twig extension that provides Order entity's data for checkout process
  * Returns all products from order with accrued amounts and subtotals
  */
 class LineItemsExtension extends \Twig_Extension
@@ -89,6 +90,9 @@ class LineItemsExtension extends \Twig_Extension
             $data['quantity'] = $lineItem->getQuantity();
             $data['unit'] = $lineItem->getProductUnit();
             $data['price'] = $lineItem->getPrice();
+            $data['comment'] = $lineItem->getComment();
+            $data['ship_by'] = $lineItem->getShipBy();
+            $data['id'] = $lineItem->getEntityIdentifier();
             $data['subtotal'] = Price::create(
                 $this->getLineItemSubtotalProvider()->getRowTotal($lineItem, $order->getCurrency()),
                 $order->getCurrency()
@@ -96,11 +100,9 @@ class LineItemsExtension extends \Twig_Extension
             $lineItems[] = $data;
         }
         $result['lineItems'] = $lineItems;
-        $subtotals = [];
-        foreach ($this->getTotalsProvider()->getSubtotals($order) as $subtotal) {
-            $subtotals[] = ['label' => $subtotal->getLabel(), 'totalPrice' => $subtotal->getTotalPrice()];
-        }
-        $result['subtotals'] = $subtotals;
+
+        $result['subtotals'] = $this->getSubtotals($order);
+        $result['total'] = $this->getTotal($order);
 
         return $result;
     }
@@ -111,5 +113,42 @@ class LineItemsExtension extends \Twig_Extension
     public function getName()
     {
         return static::NAME;
+    }
+
+    /**
+     * @param Order $order
+     *
+     * @return array
+     */
+    protected function getSubtotals(Order $order)
+    {
+        $result = [];
+        $subtotals = $this->getTotalsProvider()->getSubtotals($order);
+        foreach ($subtotals as $subtotal) {
+            $result[] = [
+                'label' => $subtotal->getLabel(),
+                'totalPrice' => Price::create(
+                    $subtotal->getSignedAmount(),
+                    $subtotal->getCurrency()
+                )
+            ];
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param Order $order
+     *
+     * @return array
+     */
+    protected function getTotal(Order $order)
+    {
+        $total = $this->getTotalsProvider()->getTotal($order);
+
+        return [
+            'label' => $total->getLabel(),
+            'totalPrice' => $total->getTotalPrice()
+        ];
     }
 }

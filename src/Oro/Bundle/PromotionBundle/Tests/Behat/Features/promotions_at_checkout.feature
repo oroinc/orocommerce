@@ -67,6 +67,9 @@ Feature: Promotions at Checkout
       | Discount          | -$12.50 |
       | Shipping Discount | -$1.00  |
     Then I click "Submit Order"
+    And Email should contains the following:
+      | Body | Discount -$12.50         |
+      | Body | Shipping Discount -$1.00 |
       And I follow "click here to review"
 
   Scenario: Check line item and order discount at Order View page
