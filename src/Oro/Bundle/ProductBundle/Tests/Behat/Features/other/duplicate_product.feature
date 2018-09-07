@@ -43,8 +43,8 @@ Feature: Duplicate product
     And I should see following "ProductPricesGrid" grid:
       | Price List   | Quantity  | Unit | Value  | Currency |
       | Price List 1 | 1         | item | 10     | USD      |
-    And there are no records in "RelatedProductsViewGrid"
-    And there are no records in "UpsellProductsViewGrid"
+    And I should not see "RelatedProductsViewGrid"
+    And I should not see "UpsellProductsViewGrid"
 
   Scenario: Edit copied product
     Given I click "Edit"
@@ -93,7 +93,6 @@ Feature: Duplicate product
       | Unit              | kilogram                   |
       | Page Template     | Two columns page           |
       | Tax Code          | TaxCode2                   |
-    And I should see "/product2"
     And I should see following product additional units:
       | piece | 10 |  | No |
     And I should see following product images:
@@ -101,8 +100,8 @@ Feature: Duplicate product
     And I should see following "ProductPricesGrid" grid:
       | Price List   | Quantity  | Unit     | Value  | Currency |
       | Price List 1 | 2         | kilogram | 20     | USD      |
-    And there are no records in "RelatedProductsViewGrid"
-    And there are no records in "UpsellProductsViewGrid"
+    And I should not see "RelatedProductsViewGrid"
+    And I should not see "UpsellProductsViewGrid"
 
   Scenario: Verify that original product is not changed
     And I go to Products/ Products
@@ -120,7 +119,6 @@ Feature: Duplicate product
       | Brand             | Brand1                     |
       | Unit              | item                       |
       | Tax Code          | TaxCode1                   |
-    And I should see "/product1"
     And I should see "No page template"
     And I should see following product additional units:
       | set | 5 |  | Yes |
