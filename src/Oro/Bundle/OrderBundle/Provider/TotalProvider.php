@@ -44,7 +44,7 @@ class TotalProvider
     {
         $defaultCurrency = $this->defaultCurrencyProvider->getDefaultCurrency();
         $subtotals = $this->pricingTotal->getSubtotals($order);
-        $total = $this->pricingTotal->getTotal($order, $subtotals);
+        $total = $this->pricingTotal->getTotalForSubtotals($order, $subtotals);
         if ($total->getCurrency() !== $defaultCurrency) {
             $baseAmount = $isStatic ? $order->getBaseTotalValue() : null;
             $this->addSubtotalBaseCurrencyConversion($total, $defaultCurrency, $baseAmount);

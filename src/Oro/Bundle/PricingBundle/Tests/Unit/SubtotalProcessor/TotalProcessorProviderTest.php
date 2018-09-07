@@ -578,7 +578,7 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
             ->willReturn([$subtotalProvider]);
     }
 
-    public function testGetTotalByPassedSubtotals()
+    public function testGetTotalForSubtotals()
     {
         $this->translator->expects($this->once())
             ->method('trans')
@@ -592,7 +592,7 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
         $subtotal->setType(LineItemSubtotalProvider::TYPE);
         $subtotal->setLabel('Total');
         $subtotal->setOperation(Subtotal::OPERATION_ADD);
-        $total = $this->provider->enableRecalculation()->getTotal($entity, [$subtotal]);
+        $total = $this->provider->enableRecalculation()->getTotalForSubtotals($entity, [$subtotal]);
         $this->assertInstanceOf(Subtotal::class, $total);
         $this->assertEquals(TotalProcessorProvider::TYPE, $total->getType());
         $this->assertEquals(ucfirst(TotalProcessorProvider::TYPE), $total->getLabel());
