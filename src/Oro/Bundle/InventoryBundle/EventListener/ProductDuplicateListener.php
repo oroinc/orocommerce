@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\SEOBundle\EventListener;
+namespace Oro\Bundle\InventoryBundle\EventListener;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -9,7 +9,7 @@ use Oro\Bundle\ProductBundle\Event\ProductDuplicateAfterEvent;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 /**
- * Clone meta fields and link them with duplicate product
+ * Clone inventory fields and link them with duplicate product
  */
 class ProductDuplicateListener
 {
@@ -17,19 +17,19 @@ class ProductDuplicateListener
     private $propertyAccessor;
 
     /** @var array */
-    private $metaFields = [];
+    private $fields = [];
 
     /** @var DoctrineHelper */
     private $doctrineHelper;
 
     /**
      * @param PropertyAccessor $propertyAccessor
-     * @param array $metaFields
+     * @param array $fields
      */
-    public function __construct(PropertyAccessor $propertyAccessor, array $metaFields = [])
+    public function __construct(PropertyAccessor $propertyAccessor, array $fields = [])
     {
         $this->propertyAccessor = $propertyAccessor;
-        $this->metaFields = $metaFields;
+        $this->fields = $fields;
     }
 
     /**
@@ -41,7 +41,7 @@ class ProductDuplicateListener
     }
 
     /**
-     * Link new product with cloned meta fields from source product
+     * Link new product with cloned inventory fields from source product
      *
      * @param ProductDuplicateAfterEvent $event
      */
@@ -50,16 +50,12 @@ class ProductDuplicateListener
         $product = $event->getProduct();
         $sourceProduct = $event->getSourceProduct();
 
-        foreach ($this->metaFields as $metaField) {
+        foreach ($this->fields as $field) {
             /** @var Collection $collection */
-            $collection = $this->propertyAccessor->getValue($sourceProduct, $metaField);
-            $newCollection = new ArrayCollection();
-
-            foreach ($collection as $field) {
-                $newCollection->add(clone $field);
+            $originValue = $this->propertyAccessor->getValue($sourceProduct, $field);
+            if ($originValue) {
+                $this->propertyAccessor->setValue($product, $field, clone $originValue);
             }
-
-            $this->propertyAccessor->setValue($product, $metaField, $newCollection);
         }
 
         $em = $this->doctrineHelper->getEntityManager(get_class($product));
