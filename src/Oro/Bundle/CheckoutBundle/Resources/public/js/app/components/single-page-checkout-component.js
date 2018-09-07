@@ -224,6 +224,9 @@ define(function(require) {
         _setLayoutSubTreeViewContent: function(response) {
             _.each(this.layoutSubTreeViews, (function(view, blockId) {
                 if (blockId in response) {
+                    if (blockId === 'checkout_order_summary_totals_wrapper') {
+                        view.useHiddenElement = true;
+                    }
                     view.setContent(response[blockId]);
                 }
             }).bind(this));
