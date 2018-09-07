@@ -1,6 +1,7 @@
 @community-edition-only
 @ticket-BB-7523
 @ticket-BB-13978
+@ticket-BB-14758
 @fixture-OroCheckoutBundle:Products_quick_order_form_ce.yml
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
@@ -12,6 +13,7 @@ Feature: Quick order form
   In order to provide customers with ability to quickly start an order
   As customer
   I need to be able to enter products' skus and quantities and start checkout
+  I need to be able to see localized product names and units in Import Validation popup
 
   Scenario: Feature Background
     Given I enable the existing localizations
@@ -316,8 +318,9 @@ Feature: Quick order form
       | Item Number | Quantity | Unit |
       | PSKU1       | 1        | item |
     When I import file for quick order
-    Then I should see "UiDialog" with elements:
-      | Content | Product1 (Localization1) |
+    Then I should see next rows in "Quick Order Import Validation" table
+      | Item #                           | Qty | Unit         | Price    |
+      | PSKU1 - Product1 (Localization1) | 1   | item (lang1) | US$45.00 |
 
   #@todo check with Serhii Polishchuk how can we manipulate xlsx files
 # Scenario: Verify user is able to upload .xlsx file

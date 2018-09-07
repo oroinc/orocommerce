@@ -51,7 +51,6 @@ class BaseProductPriceTest extends \PHPUnit\Framework\TestCase
         $currency = 'EUR';
         $this->setProperty($productPrice, 'value', $value);
         $this->setProperty($productPrice, 'currency', $currency);
-        $productPrice->loadPrice();
 
         $price = $productPrice->getPrice();
         $this->assertInstanceOf('Oro\Bundle\CurrencyBundle\Entity\Price', $price);

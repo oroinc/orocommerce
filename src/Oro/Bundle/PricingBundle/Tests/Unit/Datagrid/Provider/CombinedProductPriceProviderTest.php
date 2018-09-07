@@ -11,8 +11,8 @@ use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
 use Oro\Bundle\PricingBundle\Tests\Unit\Entity\Repository\Stub\CombinedProductPriceRepository;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
-use Oro\Bundle\ProductBundle\Formatter\UnitValueFormatter;
+use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
+use Oro\Bundle\ProductBundle\Formatter\UnitValueFormatterInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 class CombinedProductPriceProviderTest extends \PHPUnit\Framework\TestCase
@@ -160,12 +160,12 @@ class CombinedProductPriceProviderTest extends \PHPUnit\Framework\TestCase
             ->getMock();
 
         $unitLabelFormatter =
-            $this->getMockBuilder(UnitLabelFormatter::class)
+            $this->getMockBuilder(UnitLabelFormatterInterface::class)
                 ->disableOriginalConstructor()
                 ->getMock();
 
         $unitValueFormatter =
-            $this->getMockBuilder(UnitValueFormatter::class)
+            $this->getMockBuilder(UnitValueFormatterInterface::class)
                 ->disableOriginalConstructor()
                 ->getMock();
 

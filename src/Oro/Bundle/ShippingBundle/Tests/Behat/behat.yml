@@ -1,4 +1,26 @@
 oro_behat_extension:
+  suites:
+    OroShippingBundle:
+      contexts:
+        - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
+        - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\FixturesContext
+        - OroActivityListBundle::ActivityContext
+        - OroDataGridBundle::GridContext
+        - OroFormBundle::FormContext
+        - OroSecurityBundle::ACLContext
+        - OroSecurityBundle::PermissionContext
+        - OroSearchBundle::SearchContext
+        - OroConfigBundle::FeatureContext
+        - OroAddressBundle::AddressContext
+        - OroApplicationBundle::CommerceMainContext
+        - OroCustomerBundle::CustomerUserContext
+        - OroOrderBundle::OrderContext
+        - OroShippingBundle::FeatureContext
+        - OroShoppingListBundle::ShoppingListContext
+        - OroRedirectBundle::SlugPrototypesContext
+      paths:
+        - '@OroShippingBundle/Tests/Behat/Features'
+
   elements:
     Shipping Method Config Type Field:
       class: Oro\Bundle\ShippingBundle\Tests\Behat\Element\ShippingMethodConfigType

@@ -5,6 +5,10 @@ namespace Oro\Bundle\PricingBundle\ImportExport\Strategy;
 use Oro\Bundle\ImportExportBundle\Strategy\Import\ConfigurableAddOrReplaceStrategy;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 
+/**
+ * Product price attributes add or replace import strategy.
+ * Set quantity to 1, ensure that price is loaded correctly.
+ */
 class PriceAttributeProductPriceImportStrategy extends ConfigurableAddOrReplaceStrategy
 {
     /**
@@ -38,15 +42,6 @@ class PriceAttributeProductPriceImportStrategy extends ConfigurableAddOrReplaceS
      */
     protected function setPrice(PriceAttributeProductPrice $entity)
     {
-        $value = $this->fieldHelper->getObjectValue($entity, 'value');
-        $currency = $this->fieldHelper->getObjectValue($entity, 'currency');
-
-        if ($value === null || $currency === null) {
-            $this->fieldHelper->setObjectValue($entity, 'price', null);
-
-            return;
-        }
-
         $entity->loadPrice();
     }
 }

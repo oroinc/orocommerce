@@ -8,7 +8,12 @@ use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\Event\ProductDBQueryRestrictionEvent;
 use Oro\Bundle\ProductBundle\Event\ProductSearchQueryRestrictionEvent;
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
+use Oro\Bundle\SearchBundle\Query\Modifier\QueryBuilderModifierInterface;
 
+/**
+ * The listener that adds restriction condition to the query
+ * that filters out all products that are variation of configurable product
+ */
 class RestrictProductVariationsEventListener
 {
     /** @var ConfigManager */
@@ -17,14 +22,22 @@ class RestrictProductVariationsEventListener
     /** @var FrontendHelper */
     private $frontendHelper;
 
+    /** @var QueryBuilderModifierInterface */
+    private $dbQueryBuilderModifier;
+
     /**
-     * @param ConfigManager  $configManager
-     * @param FrontendHelper $frontendHelper
+     ** @param ConfigManager $configManager
+     * @param FrontendHelper                $frontendHelper
+     * @param QueryBuilderModifierInterface $dbQueryBuilderModifier
      */
-    public function __construct(ConfigManager $configManager, FrontendHelper $frontendHelper)
-    {
+    public function __construct(
+        ConfigManager $configManager,
+        FrontendHelper $frontendHelper,
+        QueryBuilderModifierInterface $dbQueryBuilderModifier
+    ) {
         $this->configManager = $configManager;
         $this->frontendHelper = $frontendHelper;
+        $this->dbQueryBuilderModifier = $dbQueryBuilderModifier;
     }
 
     /**
@@ -45,10 +58,7 @@ class RestrictProductVariationsEventListener
     public function onDBQuery(ProductDBQueryRestrictionEvent $event)
     {
         if ($this->isRestrictionApplicable()) {
-            $qb = $event->getQueryBuilder();
-            list($rootAlias) = $qb->getRootAliases();
-
-            $qb->andWhere(sprintf('%s.parentVariantLinks IS EMPTY', $rootAlias));
+            $this->dbQueryBuilderModifier->modify($event->getQueryBuilder());
         }
     }
 

@@ -1,4 +1,19 @@
 oro_behat_extension:
+  suites:
+    OroPaymentBundle:
+      contexts:
+        - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
+        - OroDataGridBundle::GridContext
+        - OroFormBundle::FormContext
+        - OroUIBundle::BreadcrumbContext
+        - OroConfigBundle::FeatureContext
+        - OroNavigationBundle::FeatureContext
+        - OroSecurityBundle::ACLContext
+        - OroUIBundle::ContextSelectorContext
+        - OroLocaleBundle::LocalizationContext
+      paths:
+        - '@OroPaymentBundle/Tests/Behat/Features'
+
   elements:
     Payment Method Config Type Field:
       class: Oro\Bundle\PaymentBundle\Tests\Behat\Element\PaymentMethodConfigType

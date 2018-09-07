@@ -2,25 +2,22 @@
 
 namespace Oro\Bundle\PromotionBundle\Api\Processor;
 
-use Oro\Bundle\ApiBundle\Config\EntityDefinitionConfig;
 use Oro\Bundle\ApiBundle\Processor\CustomizeLoadedData\CustomizeLoadedDataContext;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\OrderBundle\Entity\Order;
-use Oro\Bundle\OrderBundle\Entity\Repository\OrderRepository;
 use Oro\Bundle\PromotionBundle\Provider\AppliedDiscountsProvider;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
 
+/**
+ * Computes values of "discount" and "shippingDiscount" fields for Order entity.
+ */
 class AddPromotionDiscounts implements ProcessorInterface
 {
-    /**
-     * @var AppliedDiscountsProvider
-     */
+    /** @var AppliedDiscountsProvider */
     private $appliedDiscountsProvider;
 
-    /**
-     * @var DoctrineHelper
-     */
+    /** @var DoctrineHelper */
     private $doctrineHelper;
 
     /**
@@ -42,89 +39,45 @@ class AddPromotionDiscounts implements ProcessorInterface
     {
         /** @var CustomizeLoadedDataContext $context */
 
-        $orderData = $context->getResult();
-        if (!is_array($orderData)) {
+        $data = $context->getResult();
+        if (!is_array($data)) {
             return;
         }
 
-        $config = $context->getConfig();
-        if (!$config) {
-            return;
+        $discountFieldName = $context->getResultFieldName('discount');
+        $shippingDiscountFieldName = $context->getResultFieldName('shippingDiscount');
+        $isDiscountFieldRequested = $context->isFieldRequested($discountFieldName, $data);
+        $isShippingDiscountFieldRequested = $context->isFieldRequested($shippingDiscountFieldName, $data);
+        if ($isDiscountFieldRequested || $isShippingDiscountFieldRequested) {
+            $order = $this->getOrder($data, $context->getResultFieldName('id'));
+            if (null !== $order) {
+                if ($isDiscountFieldRequested) {
+                    $data[$discountFieldName] = $this->appliedDiscountsProvider
+                        ->getDiscountsAmountByOrder($order);
+                }
+                if ($isShippingDiscountFieldRequested) {
+                    $data[$shippingDiscountFieldName] = $this->appliedDiscountsProvider
+                        ->getShippingDiscountsAmountByOrder($order);
+                }
+                $context->setResult($data);
+            }
         }
-
-        $order = $this->getOrder($orderData, $config);
-        if (!$order) {
-            return;
-        }
-
-        $orderData = $this->processDiscountField($orderData, $config, $order);
-        $orderData = $this->processShippingDiscountField($orderData, $config, $order);
-
-        $context->setResult($orderData);
     }
 
     /**
-     * @param array                  $orderData
-     * @param EntityDefinitionConfig $config
+     * @param array       $data
+     * @param string|null $orderIdFieldName
      *
-     * @return null|Order
+     * @return Order|null
      */
-    private function getOrder(array $orderData, EntityDefinitionConfig $config)
+    private function getOrder(array $data, ?string $orderIdFieldName): ?Order
     {
-        $idField = $config->findFieldNameByPropertyPath('id');
-        if ($idField && array_key_exists($idField, $orderData)) {
-            return $this->getOrderRepository()->find($orderData[$idField]);
+        if (!$orderIdFieldName || empty($data[$orderIdFieldName])) {
+            return null;
         }
 
-        return null;
-    }
-
-    /**
-     * @return OrderRepository
-     */
-    private function getOrderRepository(): OrderRepository
-    {
-        return $this->doctrineHelper->getEntityRepository(Order::class);
-    }
-
-    /**
-     * @param array                  $orderData
-     * @param EntityDefinitionConfig $config
-     * @param Order                  $order
-     *
-     * @return array
-     */
-    private function processDiscountField(array $orderData, EntityDefinitionConfig $config, Order $order): array
-    {
-        $discountFieldName = $config->findFieldNameByPropertyPath('discount');
-        if ($discountFieldName &&
-            !array_key_exists($discountFieldName, $orderData) &&
-            !$config->getField($discountFieldName)->isExcluded()
-        ) {
-            $orderData[$discountFieldName] = $this->appliedDiscountsProvider->getDiscountsAmountByOrder($order);
-        }
-
-        return $orderData;
-    }
-
-    /**
-     * @param array                  $orderData
-     * @param EntityDefinitionConfig $config
-     * @param Order                  $order
-     *
-     * @return array
-     */
-    private function processShippingDiscountField(array $orderData, EntityDefinitionConfig $config, Order $order): array
-    {
-        $shippingDiscountFieldName = $config->findFieldNameByPropertyPath('shippingDiscount');
-        if ($shippingDiscountFieldName &&
-            !array_key_exists($shippingDiscountFieldName, $orderData) &&
-            !$config->getField($shippingDiscountFieldName)->isExcluded()
-        ) {
-            $orderData[$shippingDiscountFieldName] = $this->appliedDiscountsProvider
-                ->getShippingDiscountsAmountByOrder($order);
-        }
-
-        return $orderData;
+        return $this->doctrineHelper
+            ->getEntityRepository(Order::class)
+            ->find($data[$orderIdFieldName]);
     }
 }

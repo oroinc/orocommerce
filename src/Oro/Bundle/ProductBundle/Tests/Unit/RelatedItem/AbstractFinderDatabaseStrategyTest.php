@@ -83,7 +83,7 @@ abstract class AbstractFinderDatabaseStrategyTest extends \PHPUnit\Framework\Tes
     protected function relatedItemsFunctionalityShouldBeEnabled()
     {
         $this->configProvider
-            ->expects($this->any())
+            ->expects($this->once())
             ->method('isEnabled')
             ->willReturn(true);
     }
@@ -91,7 +91,7 @@ abstract class AbstractFinderDatabaseStrategyTest extends \PHPUnit\Framework\Tes
     protected function relatedItemsFunctionalityShouldBeDisabled()
     {
         $this->configProvider
-            ->expects($this->any())
+            ->expects($this->once())
             ->method('isEnabled')
             ->willReturn(false);
     }
@@ -99,9 +99,23 @@ abstract class AbstractFinderDatabaseStrategyTest extends \PHPUnit\Framework\Tes
     protected function andShouldNotBeBidirectional()
     {
         $this->configProvider
-            ->expects($this->any())
+            ->expects($this->once())
             ->method('isBidirectional')
             ->willReturn(false);
+    }
+
+    protected function configManagerBidirectionalOptionShouldBeIgnored()
+    {
+        $this->configProvider
+            ->expects($this->never())
+            ->method('isBidirectional');
+    }
+
+    protected function configManagerLimitOptionShouldBeIgnored()
+    {
+        $this->configProvider
+            ->expects($this->never())
+            ->method('getLimit');
     }
 
     /**

@@ -7,6 +7,9 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Component\Expression\FieldsProviderInterface;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
+/**
+ * Abstract class for listeners which watch product changes and execute price recalculation.
+ */
 abstract class AbstractRuleEntityListener
 {
     /**
@@ -17,7 +20,7 @@ abstract class AbstractRuleEntityListener
     /**
      * @var FieldsProviderInterface
      */
-    protected $fieldProvider;
+    protected $fieldsProvider;
 
     /**
      * @var RegistryInterface

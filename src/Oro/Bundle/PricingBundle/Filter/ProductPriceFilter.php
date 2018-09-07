@@ -9,14 +9,18 @@ use Oro\Bundle\FilterBundle\Filter\FilterUtility;
 use Oro\Bundle\FilterBundle\Filter\NumberRangeFilter;
 use Oro\Bundle\PricingBundle\Form\Type\Filter\ProductPriceFilterType;
 use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
-use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 use Symfony\Component\Form\FormFactoryInterface;
 
+/**
+ * Applies a filter restrictions to a data source (use public method apply())
+ * More details: Modifies dbSource query by applying restriction constraints (WHERE type = $data['type'])
+ */
 class ProductPriceFilter extends NumberRangeFilter
 {
     /**
-     * @var ProductUnitLabelFormatter
+     * @var UnitLabelFormatterInterface
      */
     protected $formatter;
 
@@ -33,13 +37,13 @@ class ProductPriceFilter extends NumberRangeFilter
     /**
      * @param FormFactoryInterface $factory
      * @param FilterUtility $util
-     * @param ProductUnitLabelFormatter $formatter
+     * @param UnitLabelFormatterInterface $formatter
      * @param PriceListRequestHandler $priceListRequestHandler
      */
     public function __construct(
         FormFactoryInterface $factory,
         FilterUtility $util,
-        ProductUnitLabelFormatter $formatter,
+        UnitLabelFormatterInterface $formatter,
         PriceListRequestHandler $priceListRequestHandler
     ) {
         parent::__construct($factory, $util);
