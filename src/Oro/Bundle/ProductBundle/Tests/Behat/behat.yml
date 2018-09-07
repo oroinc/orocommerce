@@ -29,6 +29,22 @@ oro_behat_extension:
           type: xpath
           locator: '//h4[text()[contains(.,"Related Items")]]/parent::div//a[contains(@class, "quick-editable")]'
 
+    Products Grid:
+      selector: 'div[data-page-component-name="products-grid"]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
+    Products GridFiltersButton:
+      selector: 'div[data-page-component-name="products-grid"] div.filter-container > button.select-filter-widget'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFiltersButton
+
+    Products GridFilterManagerButton:
+      selector: 'div[data-page-component-name="products-grid"] button.select-filter-widget'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+
+    Products GridFilterManager:
+      selector: 'div[data-page-component-name="products-grid"] div.filter-container>div.dropdown-menu'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilterManager
+
     ### Related Items ###
     ## Related Products ##
     SelectRelatedProductsGrid:
@@ -837,6 +853,11 @@ oro_behat_extension:
 
     Price Unit:
       selector: 'div[id*="uniform-oro_product_prices_1_unit-"]'
+
+    Grid Settings SelectField:
+      selector:
+        type: xpath
+        locator: '//label[contains(., "SelectField")]/ancestor::td[contains(@class, "title-cell")]'
 
     Remove Product Price Button:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
