@@ -7,10 +7,13 @@ use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
 
 /**
- * Saves priceListId from ProductPrice entity to context for later use
+ * Adds a clone of the product price from the "result" context attribute
+ * to the "product_price" context attribute.
  */
-class StorePriceListInContextByProductPrice implements ProcessorInterface
+class RememberProductPrice implements ProcessorInterface
 {
+    public const PRODUCT_PRICE_ATTRIBUTE = 'product_price';
+
     /**
      * {@inheritdoc}
      */
@@ -21,11 +24,8 @@ class StorePriceListInContextByProductPrice implements ProcessorInterface
             return;
         }
 
-        $priceList = $productPrice->getPriceList();
-        if (!$priceList || !$priceList->getId()) {
-            return;
+        if (!$context->has(self::PRODUCT_PRICE_ATTRIBUTE)) {
+            $context->set(self::PRODUCT_PRICE_ATTRIBUTE, clone $productPrice);
         }
-
-        PriceListIdContextUtil::storePriceListId($context, $priceList->getId());
     }
 }
