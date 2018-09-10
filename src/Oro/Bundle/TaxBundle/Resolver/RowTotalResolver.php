@@ -56,17 +56,24 @@ class RowTotalResolver
 
         foreach ($taxRules as $taxRule) {
             $currentTaxRate = BigDecimal::of($taxRule->getTax()->getRate());
-            $taxResults[] = TaxResultElement::create(
-                $taxRule->getTax(),
-                $currentTaxRate,
-                $resultElementStartWith->getExcludingTax(),
-                BigDecimal::of($resultElementStartWith->getTaxAmount())
+            
+            if (BigDecimal::zero()->isEqualTo($currentTaxRate) || BigDecimal::zero()->isEqualTo($resultElementStartWith)) {
+                $taxAmount = BigDecimal::zero();
+            } else {
+                $taxAmount = BigDecimal::of($resultElementStartWith->getTaxAmount())
                     ->multipliedBy($currentTaxRate->toScale(TaxationSettingsProvider::CALCULATION_SCALE))
                     ->dividedBy(
                         $taxRate->toScale(TaxationSettingsProvider::CALCULATION_SCALE),
                         TaxationSettingsProvider::CALCULATION_SCALE,
                         RoundingMode::HALF_UP
-                    )
+                    );
+            }
+
+            $taxResults[] = TaxResultElement::create(
+                $taxRule->getTax(),
+                $currentTaxRate,
+                $resultElementStartWith->getExcludingTax(),
+                $taxAmount
             );
         }
 
