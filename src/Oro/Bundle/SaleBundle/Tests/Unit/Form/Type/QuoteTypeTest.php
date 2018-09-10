@@ -13,12 +13,14 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Form\Type\CustomerSelectType;
 use Oro\Bundle\CustomerBundle\Form\Type\CustomerUserMultiSelectType;
 use Oro\Bundle\CustomerBundle\Form\Type\CustomerUserSelectType;
+use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Form\Type\PriceListSelectType;
 use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
-use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
 use Oro\Bundle\SaleBundle\Entity\Quote;
@@ -39,6 +41,7 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Component\Security\Core\Role\RoleInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
 class QuoteTypeTest extends AbstractTest
@@ -107,12 +110,12 @@ class QuoteTypeTest extends AbstractTest
             ->with('oro_quote_add_free_form_items')
             ->willReturn(false);
         /* @var $resolver \PHPUnit\Framework\MockObject\MockObject|OptionsResolver */
-        $resolver = $this->createMock('Symfony\Component\OptionsResolver\OptionsResolver');
+        $resolver = $this->createMock(OptionsResolver::class);
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with(
                 [
-                    'data_class' => 'Oro\Bundle\SaleBundle\Entity\Quote',
+                    'data_class' => Quote::class,
                     'csrf_token_id' => 'sale_quote',
                     'allow_prices_override' => true,
                     'allow_add_free_form_items' => false,
@@ -148,10 +151,10 @@ class QuoteTypeTest extends AbstractTest
         $quote->setShippingMethodLocked($shippingMethodLocked);
         $quote->setAllowUnlistedShippingMethod($allowedUnlistedShippingMethod);
 
-        $organization = $this->getMockBuilder('Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface')->getMock();
+        $organization = $this->createMock(OrganizationInterface::class);
 
         /** @var User $owner */
-        $owner = $this->getEntity('Oro\Bundle\UserBundle\Entity\User', $ownerId);
+        $owner = $this->getEntity(User::class, $ownerId);
         $owner->setUsername('UserName')
             ->setEmail('test@test.test')
             ->setFirstName('First Name')
@@ -160,11 +163,11 @@ class QuoteTypeTest extends AbstractTest
         $quote->setOwner($owner);
 
         if (null !== $customerUserId) {
-            $customer = $this->getMockBuilder('Oro\Bundle\CustomerBundle\Entity\Customer')->getMock();
-            $role = $this->getMockBuilder('Symfony\Component\Security\Core\Role\RoleInterface')->getMock();
+            $customer = $this->createMock(Customer::class);
+            $role = $this->createMock(RoleInterface::class);
 
             /** @var CustomerUser $customerUser */
-            $customerUser = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerUser', $customerUserId);
+            $customerUser = $this->getEntity(CustomerUser::class, $customerUserId);
             $customerUser->setEmail('test@test.test')
                 ->setFirstName('First Name')
                 ->setLastName('Last Name')
@@ -177,7 +180,7 @@ class QuoteTypeTest extends AbstractTest
 
         if (null !== $customerId) {
             /** @var Customer $customer */
-            $customer = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Customer', $customerId);
+            $customer = $this->getEntity(Customer::class, $customerId);
             $customer->setName('Name');
             $quote->setCustomer($customer);
         }
@@ -389,49 +392,42 @@ class QuoteTypeTest extends AbstractTest
     protected function getExtensions()
     {
         /* @var $translator \PHPUnit\Framework\MockObject\MockObject|TranslatorInterface */
-        $translator = $this->getMockBuilder('Symfony\Component\Translation\TranslatorInterface')
-            ->disableOriginalConstructor()
-            ->getMock()
-        ;
+        $translator = $this->createMock(TranslatorInterface::class);
 
         /* @var $registry ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
-        $registry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $registry = $this->createMock(ManagerRegistry::class);
 
-        /* @var $productUnitLabelFormatter \PHPUnit\Framework\MockObject\MockObject|ProductUnitLabelFormatter */
-        $productUnitLabelFormatter = $this->getMockBuilder(
-            'Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter'
-        )
-            ->disableOriginalConstructor()
-            ->getMock();
+        /* @var $productUnitLabelFormatter \PHPUnit\Framework\MockObject\MockObject|UnitLabelFormatterInterface */
+        $productUnitLabelFormatter = $this->createMock(UnitLabelFormatterInterface::class);
 
         $userSelectType = new StubEntityType(
             [
-                1 => $this->getEntity('Oro\Bundle\UserBundle\Entity\User', 1),
-                2 => $this->getEntity('Oro\Bundle\UserBundle\Entity\User', 2),
+                1 => $this->getEntity(User::class, 1),
+                2 => $this->getEntity(User::class, 2),
             ],
             'oro_user_select'
         );
 
         $customerSelectType = new StubEntityType(
             [
-                1 => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Customer', 1),
-                2 => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Customer', 2),
+                1 => $this->getEntity(Customer::class, 1),
+                2 => $this->getEntity(Customer::class, 2),
             ],
             CustomerSelectType::NAME
         );
 
         $customerUserSelectType = new StubEntityType(
             [
-                1 => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerUser', 1),
-                2 => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerUser', 2),
+                1 => $this->getEntity(CustomerUser::class, 1),
+                2 => $this->getEntity(CustomerUser::class, 2),
             ],
             CustomerUserSelectType::NAME
         );
 
         $priceListSelectType = new StubEntityType(
             [
-                1 => $this->getEntity('Oro\Bundle\PricingBundle\Entity\PriceList', 1),
-                2 => $this->getEntity('Oro\Bundle\PricingBundle\Entity\PriceList', 2),
+                1 => $this->getEntity(PriceList::class, 1),
+                2 => $this->getEntity(PriceList::class, 2),
             ],
             PriceListSelectType::NAME
         );
@@ -452,7 +448,7 @@ class QuoteTypeTest extends AbstractTest
             $this->quoteProductFormatter,
             $registry
         );
-        $quoteProductType->setDataClass('Oro\Bundle\SaleBundle\Entity\QuoteProduct');
+        $quoteProductType->setDataClass(QuoteProduct::class);
 
         return [
             new PreloadedExtension(

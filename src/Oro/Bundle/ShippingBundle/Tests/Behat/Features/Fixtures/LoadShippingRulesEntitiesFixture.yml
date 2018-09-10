@@ -1,0 +1,63 @@
+Oro\Bundle\RuleBundle\Entity\Rule:
+    shippingRule1:
+        name: 'shippingRule1'
+        enabled: true
+        sortOrder: 1
+    shippingRule2:
+        name: 'shippingRule2'
+        enabled: true
+        sortOrder: 1
+
+Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig:
+    shippingMethodTypeConfig1:
+        type: 'primary'
+        enabled: true
+        options:
+            price: 3.0
+            type: 'per_order'
+            handling_fee: 2.0
+    shippingMethodTypeConfig2:
+        type: 'primary'
+        enabled: true
+        options:
+            price: 4.0
+            type: 'per_order'
+            handling_fee: 3.0
+
+Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig:
+    shippingMethodConfig1:
+        method: '<("flat_rate_".@flatRateIntegration->id)>'
+        typeConfigs: ['@shippingMethodTypeConfig1']
+    shippingMethodConfig2:
+        method: '<("flat_rate_".@flatRateIntegration->id)>'
+        typeConfigs: ['@shippingMethodTypeConfig2']
+
+Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule:
+    shippingMethodsConfigsRule1:
+        rule: '@shippingRule1'
+        methodConfigs: ['@shippingMethodConfig1']
+        currency: 'USD'
+        organization: '@organization'
+        destinations: ['@shippingMethodsConfigsRuleDestination1']
+    shippingMethodsConfigsRule2:
+        rule: '@shippingRule2'
+        methodConfigs: ['@shippingMethodConfig2']
+        currency: 'USD'
+        organization: '@organization'
+        destinations: ['@shippingMethodsConfigsRuleDestination2']
+
+Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestination:
+    shippingMethodsConfigsRuleDestination1:
+        country: '@united_states'
+        region: '@florida'
+    shippingMethodsConfigsRuleDestination2:
+        country: '@germany'
+        region: '@berlin'
+
+Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestinationPostalCode:
+    postalCode1:
+        destination: '@shippingMethodsConfigsRuleDestination1'
+        name: '10001'
+    postalCode2:
+        destination: '@shippingMethodsConfigsRuleDestination2'
+        name: '10002'

@@ -45,7 +45,8 @@
 
 {% block _single_page_checkout_sticky_panel_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        id: 'single-page-checkout-sticky'
+        id: 'single-page-checkout-sticky',
+        '~class': 'single-page-checkout-sticky'
     }) %}
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
@@ -304,9 +305,7 @@
 {% endblock %}
 
 {% block _shipping_date_widget %}
-    <fieldset class="grid__row grid__row--offset-none"
-              data-trigger-selector="#addShipDate"
-              data-page-component-module="orocheckout/js/app/components/clear-field-data-component">
+    <fieldset class="grid__row grid__row--offset-none">
         <label class="label label--full">{{ "oro.checkout.order_review.shipping_date"|trans }}</label>
         <div class="datepicker-box">
             <span class="datepicker-box__icon"><i class="fa-calendar"></i></span>
@@ -324,9 +323,7 @@
             {{ 'oro.checkout.workflow.order_options.label'|trans }}
         </a>
         <div class="order-review-options collapse-view__container" data-collapse-container>
-            <fieldset class="grid__row grid__row--offset-none"
-                      data-trigger-selector="#addPoNumber"
-                      data-page-component-module="orocheckout/js/app/components/clear-field-data-component">
+            <fieldset class="grid__row grid__row--offset-none">
                 <div class="grid__column grid__column--6 grid__column--offset-y">
                     <label class=" label label--full">{{ "oro.checkout.order_review.po_number"|trans }}</label>
                     <div class="checkout-form__optional-ref-number">
@@ -334,9 +331,7 @@
                     </div>
                 </div>
             </fieldset>
-            <fieldset class="grid__row grid__row--offset-none"
-                      data-trigger-selector="#addNote"
-                      data-page-component-module="orocheckout/js/app/components/clear-field-data-component">
+            <fieldset class="grid__row grid__row--offset-none">
                 <div class="grid__column grid__column--12 grid__column--offset-y">
                     <label class=" label label--full">{{ "oro.checkout.order_review.note"|trans }}</label>
                     <div class="checkout-form__order-notes">
@@ -395,8 +390,10 @@
         'data-sticky': {
             isSticky: true,
             affixed: true,
-            autoWidth: true,
+            autoWidth: false,
             placeholderId: 'single-page-checkout-sticky-totals',
+            toggleClass: 'checkout-order-summary-totals-sticky',
+            moveToPanel: false,
             viewport: {
                 minScreenType: 'desktop'
             }
@@ -411,7 +408,7 @@
     {% import 'OroUIBundle::macros.html.twig' as UI %}
     {% import 'OroCheckoutBundle:layouts/default:layout.html.twig' as _layout %}
 
-    <div {{ _layout.transitionAttributes(transitionData, checkout) }} }}>
+    <div {{ _layout.transitionAttributes(transitionData, checkout) }} >
         <div {{ UI.renderPageComponentAttributes({
             module: 'orocheckout/js/app/components/shipping-transition-button-component',
             options: {

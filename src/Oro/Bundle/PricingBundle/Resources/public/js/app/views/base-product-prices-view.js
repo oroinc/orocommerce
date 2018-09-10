@@ -16,6 +16,7 @@ define(function(require) {
 
     BaseProductPricesView = BaseView.extend(_.extend({}, ElementsHelper, {
         priceTemplate: require('tpl!oropricing/templates/product/price.html'),
+        unitTemplate: require('tpl!oropricing/templates/product/unit.html'),
 
         keepElement: true,
 
@@ -229,7 +230,7 @@ define(function(require) {
                 this.getElement('price').addClass('hidden');
                 this.getElement('priceNotFound').removeClass('hidden');
             } else {
-                this.getElement('unit').text(price.formatted_unit);
+                this.getElement('unit').html(this.unitTemplate({price: price}));
 
                 this.getElement('priceValue').html(this.priceTemplate({
                     price: price,

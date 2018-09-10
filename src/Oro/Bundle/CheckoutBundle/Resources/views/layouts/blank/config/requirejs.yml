@@ -6,7 +6,6 @@ config:
         'orocheckout/js/app/components/single-page-transition-button-component': 'bundles/orocheckout/js/app/components/single-page-transition-button-component.js'
         'orocheckout/js/app/views/single-page-checkout-view': 'bundles/orocheckout/js/app/views/single-page-checkout-view.js'
         'orocheckout/js/app/views/address-view': 'bundles/orocheckout/js/app/views/address-view.js'
-        'orocheckout/js/app/components/clear-field-data-component': 'bundles/orocheckout/js/app/components/clear-field-data-component.js'
         'orocheckout/js/app/components/payment-save-for-later-component': 'bundles/orocheckout/js/app/components/payment-save-for-later-component.js'
         'orocheckout/js/app/components/payment-validate-component': 'bundles/orocheckout/js/app/components/payment-validate-component.js'
         'orocheckout/js/app/components/payment-additional-data-component': 'bundles/orocheckout/js/app/components/payment-additional-data-component.js'

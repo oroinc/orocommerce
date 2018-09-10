@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Twig;
 
-use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
+use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Oro\Bundle\ShippingBundle\Twig\ShippingOptionLabelExtension;
 use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
 
@@ -10,13 +10,13 @@ class ShippingOptionLabelExtensionTest extends \PHPUnit\Framework\TestCase
 {
     use TwigExtensionTestCaseTrait;
 
-    /** @var UnitLabelFormatter|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var UnitLabelFormatterInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $lengthUnitLabelFormatter;
 
-    /** @var UnitLabelFormatter|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var UnitLabelFormatterInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $weightUnitLabelFormatter;
 
-    /** @var UnitLabelFormatter|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var UnitLabelFormatterInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $freightClassLabelFormatter;
 
     /** @var ShippingOptionLabelExtension */
@@ -24,15 +24,9 @@ class ShippingOptionLabelExtensionTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->lengthUnitLabelFormatter = $this->getMockBuilder(UnitLabelFormatter::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->weightUnitLabelFormatter = $this->getMockBuilder(UnitLabelFormatter::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->freightClassLabelFormatter = $this->getMockBuilder(UnitLabelFormatter::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->lengthUnitLabelFormatter = $this->createMock(UnitLabelFormatterInterface::class);
+        $this->weightUnitLabelFormatter = $this->createMock(UnitLabelFormatterInterface::class);
+        $this->freightClassLabelFormatter = $this->createMock(UnitLabelFormatterInterface::class);
 
         $container = self::getContainerBuilder()
             ->add('oro_shipping.formatter.length_unit_label', $this->lengthUnitLabelFormatter)
