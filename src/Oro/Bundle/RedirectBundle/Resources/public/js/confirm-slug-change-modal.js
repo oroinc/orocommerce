@@ -68,7 +68,7 @@ define(function(require) {
                 this.trigger('confirm-option-changed', $(event.target).prop('checked'));
             }, this));
 
-            this.$el.on('shown', _.bind(function() {
+            this.$el.on('shown.bs.modal', _.bind(function() {
                 this.$el.find(this.options.confirmCreateRedirectSelector).prop('checked', this.options.confirmState);
             }, this));
         },
