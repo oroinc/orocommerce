@@ -5,9 +5,9 @@ namespace Oro\Bundle\InventoryBundle\Tests\Unit\EventListener;
 use Doctrine\ORM\EntityManager;
 use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\ProductBundle\Event\ProductDuplicateAfterEvent;
 use Oro\Bundle\InventoryBundle\EventListener\ProductDuplicateListener;
 use Oro\Bundle\InventoryBundle\Tests\Unit\EventListener\Stub\ProductStub as Product;
+use Oro\Bundle\ProductBundle\Event\ProductDuplicateAfterEvent;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 class ProductDuplicateListenerTest extends \PHPUnit\Framework\TestCase
