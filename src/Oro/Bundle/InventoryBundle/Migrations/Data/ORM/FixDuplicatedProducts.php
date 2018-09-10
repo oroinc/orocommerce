@@ -11,6 +11,9 @@ use Oro\Bundle\ProductBundle\Event\ProductDuplicateAfterEvent;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
+/**
+ * Fix inventory fields for already duplicated products
+ */
 class FixDuplicatedProducts extends AbstractFixture implements ContainerAwareInterface
 {
     use ContainerAwareTrait;

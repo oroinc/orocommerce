@@ -9,6 +9,9 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Event\ProductDuplicateAfterEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+/**
+ * This class helps duplicate product with independent related fields
+ */
 class ProductDuplicator
 {
     /**

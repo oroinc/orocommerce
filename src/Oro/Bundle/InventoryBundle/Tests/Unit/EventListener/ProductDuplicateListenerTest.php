@@ -10,7 +10,7 @@ use Oro\Bundle\InventoryBundle\EventListener\ProductDuplicateListener;
 use Oro\Bundle\InventoryBundle\Tests\Unit\EventListener\Stub\ProductStub as Product;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class ProductDuplicateListenerTest extends \PHPUnit_Framework_TestCase
+class ProductDuplicateListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
