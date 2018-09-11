@@ -2344,10 +2344,10 @@ Remove the variant products of a specific product record.
 
 Retrieve a specific product inventory status record.
 
-Product inventory status defines an product's availability ("Discontinued", In Stock" and "Out of Stock" ).
+Product inventory status defines an product's availability (**In Stock**, **Out of Stock** and **Discontinued**).
 
 ### get_list
 
 Retrieve a collection of product inventory status records.
 
-Product inventory status defines an product's availability  ("Discontinued", In Stock" and "Out of Stock" ).
+Product inventory status defines an product's availability (**In Stock**, **Out of Stock** and **Discontinued**).
