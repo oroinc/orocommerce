@@ -12,7 +12,6 @@ define(function(require) {
          * @property {Object}
          */
         options: {
-            confirmCreateRedirectSelector: 'input[type=checkbox]',
             messageTemplate: '<%- message %><%- changedSlugs %><br><br>' +
             '<label class="checkbox" for="confirm-create-redirect">' +
             '<input type="checkbox" id="confirm-create-redirect" name="confirm-create-redirect">' +
@@ -29,6 +28,14 @@ define(function(require) {
          * @property {Object}
          */
         requiredOptions: ['changedSlugs'],
+
+        /**
+         * @property {Object}
+         */
+        events: {
+            'shown.bs.modal': 'onShown',
+            'change input[type=checkbox]': 'onChange'
+        },
 
         /**
          * @inheritDoc
@@ -56,21 +63,20 @@ define(function(require) {
                 content: this._createContent(this.options.changedSlugs)
             }, options);
             ConfirmSlugChangeModal.__super__.initialize.apply(this, [options]);
-
-            this._initEvents();
         },
 
         /**
-         * @private
+         * handler on modal shown
          */
-        _initEvents: function() {
-            this.$el.on('change', this.options.confirmCreateRedirectSelector, _.bind(function(event) {
-                this.trigger('confirm-option-changed', $(event.target).prop('checked'));
-            }, this));
+        onShown: function() {
+            this.$('input[type=checkbox]').prop('checked', this.options.confirmState);
+        },
 
-            this.$el.on('shown.bs.modal', _.bind(function() {
-                this.$el.find(this.options.confirmCreateRedirectSelector).prop('checked', this.options.confirmState);
-            }, this));
+        /**
+         * handler on change
+         */
+        onChange: function() {
+            this.trigger('confirm-option-changed', $(event.target).prop('checked'));
         },
 
         /**
