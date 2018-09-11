@@ -2,7 +2,7 @@
     {% if localizations|length > 1 %}
         <div class="oro-toolbar oro-localization-switcher">
             {% set togglerId = 'dropdown-'|uniqid %}
-            <div class="oro-toolbar__content" data-toggle="dropdown" role="button" id="{{ togglerId }}"
+            <div class="oro-toolbar__content" data-toggle="dropdown" data-popper="false" role="button" id="{{ togglerId }}"
                  aria-haspopup="true" aria-expanded="false"
                  aria-label="{{ 'oro.frontendlocalization.select.label'|trans }}">
                 {{ selected_localization.titles|localized_value }}

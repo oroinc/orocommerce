@@ -25,10 +25,9 @@
         },
         '~class': " header-row__toggle header-row__wrapper",
         'data-header-row-toggle': '',
-        'data-options': '{"attachToParent": "true"}',
         'aria-labelledby': togglerId|default('')
     }) %}
-    <div {{ block('block_attributes') }} >
+    <div {{ block('block_attributes') }}>
         <div class="header-row__dropdown"
              data-page-component-module="oroshoppinglist/js/app/views/shoppinglist-widget-view">
             {{ block_widget(block) }}

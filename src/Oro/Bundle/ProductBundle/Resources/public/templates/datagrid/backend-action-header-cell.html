@@ -5,7 +5,8 @@
             <div class="btn-group full dropup">
                 <span class="btn btn--full btn--info btn--size-s btn--clip-text" data-toggle data-action-extra-panel></span>
                 <a href="#" class="btn btn--info btn--size-s dropdown-toggle" role="button" id="<%- togglerId %>"
-                   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" aria-label="<%- _.__('oro.product.frontend.choose_action') %>">
+                   data-toggle="dropdown" data-popper="false"
+                   aria-haspopup="true" aria-expanded="false" aria-label="<%- _.__('oro.product.frontend.choose_action') %>">
                     <span class="caret" aria-hidden="true"></span>
                 </a>
                 <div class="dropdown-menu dropdown-menu-right datagrid-massaction__dropdown-menu datagrid-massaction__dropdown-menu--stretch"
@@ -26,9 +27,7 @@
                 <%- _.__('oro.product.frontend.choose_action') %>
                 <span class="caret" aria-hidden="true"></span>
             </button>
-            <div class="dropdown-menu datagrid-massaction__dropdown-menu" aria-labelledby="<%- togglerId %>"
-                data-action-panel
-                data-options="{&quot;container&quot;: true}">
+            <div class="dropdown-menu datagrid-massaction__dropdown-menu" aria-labelledby="<%- togglerId %>" data-action-panel>
             </div>
         </div>
     </div>

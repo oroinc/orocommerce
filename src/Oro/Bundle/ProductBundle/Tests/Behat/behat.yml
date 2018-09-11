@@ -495,7 +495,7 @@ oro_behat_extension:
       selector: '.datagrid-massaction button.dropdown-toggle'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
-    ProductFrontendGridFloatingMenu:
+    ProductFrontendGridMassActionMenu:
       selector: '.datagrid-massaction__dropdown-menu'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
@@ -564,7 +564,7 @@ oro_behat_extension:
 
     Product Shopping List Dropdown:
       selector:
-        locator: '//form[@name="oro_product_frontend_line_item"]//ul[@class="dropdown-menu"]'
+        locator: '//form[@name="oro_product_frontend_line_item"]//ul[contains(@class,"dropdown-menu")]'
         type: 'xpath'
 
     Request A Quote Button:
