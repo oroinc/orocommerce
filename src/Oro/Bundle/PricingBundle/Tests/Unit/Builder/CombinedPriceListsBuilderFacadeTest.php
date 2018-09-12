@@ -23,6 +23,7 @@ use Oro\Bundle\PricingBundle\Model\DTO\CustomerWebsiteDTO;
 use Oro\Bundle\PricingBundle\Model\DTO\PriceListRelationTrigger;
 use Oro\Bundle\PricingBundle\PricingStrategy\PriceCombiningStrategyInterface;
 use Oro\Bundle\PricingBundle\PricingStrategy\StrategyRegister;
+use Oro\Bundle\PricingBundle\Tests\Unit\Builder\Stub\PriceCombiningWithPendingProductReindexStrategy;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -103,18 +104,19 @@ class CombinedPriceListsBuilderFacadeTest extends \PHPUnit_Framework_TestCase
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|PriceCombiningStrategyInterface $strategy */
         $strategy = $this->createMock(PriceCombiningStrategyInterface::class);
-        $this->strategyRegister->expects($this->once())->method('getCurrentStrategy')
+        $this->strategyRegister
+            ->expects($this->once())
+            ->method('getCurrentStrategy')
             ->willReturn($strategy);
 
-        $strategy->expects($this->at(0))
+        $strategy
+            ->expects($this->exactly(3))
             ->method('combinePrices')
-            ->with($combinedPriceList1, $products, $startTimestamp);
-        $strategy->expects($this->at(1))
-            ->method('combinePrices')
-            ->with($combinedPriceList2, $products, $startTimestamp);
-        $strategy->expects($this->at(2))
-            ->method('combinePrices')
-            ->with($combinedPriceList3, $products, $startTimestamp);
+            ->withConsecutive(
+                [$combinedPriceList1, $products, $startTimestamp],
+                [$combinedPriceList2, $products, $startTimestamp],
+                [$combinedPriceList3, $products, $startTimestamp]
+            );
 
         $this->dispatcher->expects($this->once())
             ->method('dispatch')
