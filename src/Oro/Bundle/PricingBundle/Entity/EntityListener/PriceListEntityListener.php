@@ -83,7 +83,7 @@ class PriceListEntityListener
         }
 
         // Recalculate Combined Price Lists
-        $this->triggerHandler->handleFullRebuild();
+        $this->triggerHandler->handlePriceListStatusChange($priceList);
 
         // Schedule dependent price lists recalculation
         $this->scheduleDependentPriceListsUpdate($priceList);
