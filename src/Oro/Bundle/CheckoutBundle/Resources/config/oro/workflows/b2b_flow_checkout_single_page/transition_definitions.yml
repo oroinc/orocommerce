@@ -166,15 +166,8 @@ workflows:
 
                 conditions:
                     '@and':
-                        - '@not_empty': $checkout.billingAddress
-
-                        - '@or':
-                            - '@and':
-                                - '@equal': [$billing_address_has_shipping, true]
-                                - '@equal': [$checkout.shipToBillingAddress, true]
-                            - '@and':
-                                - '@equal': [$checkout.shipToBillingAddress, false]
-                                - '@not_empty': $checkout.shippingAddress
+                        - '@validate_checkout_addresses':
+                            parameters: $checkout
                         - '@not_empty':
                             message: Payment method was not selected
                             parameters: $checkout.paymentMethod

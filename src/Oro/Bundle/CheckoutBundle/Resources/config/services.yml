@@ -639,3 +639,11 @@ services:
             - '@oro_config.manager'
         tags:
             - { name: layout.context_configurator }
+
+    oro_checkout.condition.validate_checkout_addresses:
+        class: 'Oro\Bundle\CheckoutBundle\Condition\ValidateCheckoutAddresses'
+        arguments:
+            - '@validator'
+        tags:
+            - { name: oro_workflow.condition, alias: 'validate_checkout_addresses' }
+            - { name: oro_action.condition, alias: 'validate_checkout_addresses' }
