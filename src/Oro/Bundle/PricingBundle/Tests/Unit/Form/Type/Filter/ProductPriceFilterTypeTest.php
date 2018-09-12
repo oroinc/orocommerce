@@ -10,7 +10,7 @@ use Oro\Bundle\FilterBundle\Tests\Unit\Fixtures\CustomFormExtension;
 use Oro\Bundle\FilterBundle\Tests\Unit\Form\Type\Filter\NumberRangeFilterTypeTest;
 use Oro\Bundle\PricingBundle\Form\Type\Filter\ProductPriceFilterType;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Forms;
 
@@ -27,10 +27,13 @@ class ProductPriceFilterTypeTest extends NumberRangeFilterTypeTest
     protected function setUp()
     {
         $translator = $this->createMockTranslator();
-        $this->formExtensions[] = new CustomFormExtension([new NumberRangeFilterType($translator)]);
 
-        /** @var \PHPUnit\Framework\MockObject\MockObject|ProductUnitLabelFormatter $formatter */
-        $formatter = $this->getMockBuilder('Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter')
+        $this->formExtensions = [
+            new CustomFormExtension([new NumberRangeFilterType($translator)])
+        ];
+
+        /** @var \PHPUnit\Framework\MockObject\MockObject|UnitLabelFormatterInterface $formatter */
+        $formatter = $this->getMockBuilder(UnitLabelFormatterInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
         $formatter->expects($this->any())

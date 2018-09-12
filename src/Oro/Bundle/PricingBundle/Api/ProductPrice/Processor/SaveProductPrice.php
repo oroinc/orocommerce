@@ -13,9 +13,7 @@ use Oro\Component\ChainProcessor\ProcessorInterface;
  */
 class SaveProductPrice implements ProcessorInterface
 {
-    /**
-     * @var PriceManager
-     */
+    /** @var PriceManager */
     private $priceManager;
 
     /**

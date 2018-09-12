@@ -66,6 +66,19 @@ oro_behat_extension:
           ZIP2: 'oro_shipping_methods_configs_rule[destinations][2][postalCodes]'
           Config Enable: 'oro_shipping_methods_configs_rule[methodConfigs][0][typeConfigs][0][enabled]'
 
+    Shipping Origin System Config Form:
+      selector: 'form[name="shipping_origin"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Use Default: 'shipping_origin[oro_shipping___shipping_origin][use_parent_scope_value]'
+          Country: 'shipping_origin[oro_shipping___shipping_origin][value][country]'
+          Region/State: 'shipping_origin[oro_shipping___shipping_origin][value][region]'
+          Zip/Postal Code: 'shipping_origin[oro_shipping___shipping_origin][value][postalCode]'
+          City: 'shipping_origin[oro_shipping___shipping_origin][value][city]'
+          Street Address 1: 'shipping_origin[oro_shipping___shipping_origin][value][street]'
+          Street Address 2: 'shipping_origin[oro_shipping___shipping_origin][value][street2]'
+
     Flat Rate Shipping Rule Form:
       selector: 'form[name="oro_shipping_methods_configs_rule"]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form

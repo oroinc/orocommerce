@@ -733,3 +733,11 @@ services:
             - '@oro_entity.doctrine_helper'
         tags:
             - { name: oro_datagrid.extension }
+
+    oro_promotion.twig.extension.discounts_information:
+        class: 'Oro\Bundle\PromotionBundle\Twig\DiscountsInformationExtension'
+        public: false
+        arguments:
+            - '@oro_promotion.layout.discount_information_data_provider'
+        tags:
+            - { name: twig.extension }

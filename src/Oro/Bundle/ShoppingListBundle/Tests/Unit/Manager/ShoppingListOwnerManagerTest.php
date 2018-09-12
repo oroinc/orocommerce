@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Manager;
 
-use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
@@ -63,21 +62,21 @@ class ShoppingListOwnerManagerTest extends \PHPUnit\Framework\TestCase
         $user = new CustomerUser();
         $repo->method('find')->with(1)->willReturn($user);
 
-        // assert that current user has ACL permissions to set user as ShoppingList owner
-        $criteria = new Criteria();
-        $this->aclHelper->expects($this->once())
-            ->method('applyAclToCriteria')
-            ->with(
-                ShoppingList::class,
-                $criteria,
-                "ASSIGN",
-                ['customerUser' => 'user.id', 'organisation' => 'user.organization']
-            );
         $qb = $this->getQueryBuilder();
         $repo->expects($this->once())->method('createQueryBuilder')->willReturn($qb);
-        $qb->expects($this->at(2))->method('addCriteria')->with($criteria);
         $queryWithCriteria = $this->getMockBuilder(AbstractQuery::class)->disableOriginalConstructor()->getMock();
-        $qb->expects($this->at(3))->method('getQuery')->willReturn($queryWithCriteria);
+        $this->aclHelper->expects($this->once())
+            ->method('apply')
+            ->with(
+                $qb,
+                'ASSIGN',
+                [
+                    'aclDisable' => true,
+                    'availableOwnerEnable' => true,
+                    'availableOwnerTargetEntityClass' => ShoppingList::class
+                ]
+            )
+            ->willReturn($queryWithCriteria);
         $queryWithCriteria->method('getOneOrNullResult')->willReturn($user);
 
         $shoppingList = new ShoppingList();
@@ -142,21 +141,12 @@ class ShoppingListOwnerManagerTest extends \PHPUnit\Framework\TestCase
         $user = new CustomerUser();
         $repo->method('find')->with(1)->willReturn($user);
 
-        // current user don't have ACL permissions to perform action
-        $criteria = new Criteria();
-        $this->aclHelper->expects($this->once())
-            ->method('applyAclToCriteria')
-            ->with(
-                ShoppingList::class,
-                $criteria,
-                "ASSIGN",
-                ['customerUser' => 'user.id', 'organisation' => 'user.organization']
-            );
         $qb = $this->getQueryBuilder();
         $repo->expects($this->once())->method('createQueryBuilder')->willReturn($qb);
-        $qb->expects($this->at(2))->method('addCriteria')->with($criteria);
         $queryWithCriteria = $this->getMockBuilder(AbstractQuery::class)->disableOriginalConstructor()->getMock();
-        $qb->expects($this->at(3))->method('getQuery')->willReturn($queryWithCriteria);
+        $this->aclHelper->expects($this->once())
+            ->method('apply')
+            ->willReturn($queryWithCriteria);
         $queryWithCriteria->method('getOneOrNullResult')->willReturn(null);
 
         $em = $this->createMock(EntityManagerInterface::class);

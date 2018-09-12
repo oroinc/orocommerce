@@ -47,7 +47,7 @@ class OroRFPBundleInstaller implements Installation, ActivityExtensionAwareInter
      */
     public function getMigrationVersion()
     {
-        return 'v1_11';
+        return 'v1_11_1';
     }
 
     /**

@@ -4,7 +4,6 @@ namespace Oro\Bundle\PricingBundle\Api\ProductPrice\Processor;
 
 use Oro\Bundle\ApiBundle\Processor\SingleItemContext;
 use Oro\Bundle\ApiBundle\Util\DoctrineHelper;
-use Oro\Bundle\PricingBundle\Api\ProductPrice\PriceListIDContextStorageInterface;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
@@ -18,69 +17,49 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
  */
 class NormalizeInputProductPriceId implements ProcessorInterface
 {
-    /**
-     * @internal
-     */
-    const REGEX_FOR_API_PRODUCT_PRICE_ID = '/(.+)\-(\d+)$/';
+    private const REGEX_FOR_API_PRODUCT_PRICE_ID = '/(.+)\-(\d+)$/';
 
-    /**
-     * @var PriceListIDContextStorageInterface
-     */
-    private $priceListIDContextStorage;
-
-    /**
-     * @var DoctrineHelper
-     */
+    /** @var DoctrineHelper */
     private $doctrineHelper;
 
-    /**
-     * @var ValidatorInterface
-     */
+    /** @var ValidatorInterface */
     private $validator;
 
     /**
-     * @param PriceListIDContextStorageInterface $priceListIDContextStorage
-     * @param DoctrineHelper                     $doctrineHelper
-     * @param ValidatorInterface                 $validator
+     * @param DoctrineHelper     $doctrineHelper
+     * @param ValidatorInterface $validator
      */
-    public function __construct(
-        PriceListIDContextStorageInterface $priceListIDContextStorage,
-        DoctrineHelper $doctrineHelper,
-        ValidatorInterface $validator
-    ) {
-        $this->priceListIDContextStorage = $priceListIDContextStorage;
+    public function __construct(DoctrineHelper $doctrineHelper, ValidatorInterface $validator)
+    {
         $this->doctrineHelper = $doctrineHelper;
         $this->validator = $validator;
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function process(ContextInterface $context)
     {
-        if (!$context instanceof SingleItemContext) {
+        /** @var SingleItemContext $context */
+
+        $productPriceId = $context->getId();
+        if (!$productPriceId || !is_string($productPriceId)) {
             return;
         }
 
-        if (!$context->getId() || !is_string($context->getId())) {
-            return;
-        }
-
-        $matched = preg_match(self::REGEX_FOR_API_PRODUCT_PRICE_ID, $context->getId(), $matches);
-
+        $matched = preg_match(self::REGEX_FOR_API_PRODUCT_PRICE_ID, $productPriceId, $matches);
         if (!$matched || 3 !== count($matches)) {
             throw new NotFoundHttpException('An entity with the requested identifier does not exist.');
         }
 
         $uuid = $matches[1];
-        $priceListID = (int)$matches[2];
-
-        if (false === $this->isValidUuid($uuid) || false === $this->isValidPriceListId($priceListID)) {
+        $priceListId = (int)$matches[2];
+        if (!$this->isValidUuid($uuid) || !$this->isValidPriceListId($priceListId)) {
             throw new NotFoundHttpException('An entity with the requested identifier does not exist.');
         }
 
         $context->setId($uuid);
-        $this->priceListIDContextStorage->store($priceListID, $context);
+        PriceListIdContextUtil::storePriceListId($context, $priceListId);
     }
 
     /**
@@ -94,14 +73,14 @@ class NormalizeInputProductPriceId implements ProcessorInterface
     }
 
     /**
-     * @param int $priceListID
+     * @param int $priceListId
      *
      * @return bool
      */
-    private function isValidPriceListId(int $priceListID): bool
+    private function isValidPriceListId(int $priceListId): bool
     {
         $priceListRepository = $this->doctrineHelper->getEntityRepositoryForClass(PriceList::class);
 
-        return null !== $priceListRepository->find($priceListID);
+        return null !== $priceListRepository->find($priceListId);
     }
 }
