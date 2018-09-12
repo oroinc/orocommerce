@@ -1,0 +1,303 @@
+/* @theme: admin.oro; */
+
+.product-inventory-status-in_stock {
+    color: #008000;
+}
+
+.product-inventory-status-out_of_stock {
+    color: #f00;
+}
+
+.float-holder {
+    tr {
+        vertical-align: top;
+    }
+}
+
+.quick-editable {
+    margin-top: -3px;
+    height: 13px;
+    font-size: 13px;
+}
+
+.mobile-version {
+    .quick-editable {
+        margin-top: 2px;
+    }
+}
+
+.oro-item-collection {
+    td {
+        white-space: nowrap;
+        vertical-align: top;
+
+        .conversion-rate-label {
+            position: absolute;
+            padding-top: 5px;
+        }
+
+        .sell {
+            margin-top: 8px;
+        }
+    }
+
+    input[type="text"],
+    input[type="number"] {
+        &.precision,
+        &.conversionRate {
+            width: 40px;
+        }
+    }
+}
+
+.unit-precisions-collection {
+    > div {
+        margin: 0 0 8px !important;
+    }
+
+    .input-widget-select {
+        margin-left: 0 !important;
+    }
+
+    .collection-fields-list {
+        td {
+            padding-left: 10px;
+        }
+
+        button {
+            margin-left: 0;
+        }
+    }
+
+    select {
+        &.hidden-unit {
+            display: none;
+            visibility: hidden;
+        }
+    }
+}
+
+.product-container {
+    div.box-type1 {
+        div.title {
+            padding: 0 !important;
+        }
+    }
+}
+
+.mobile-version {
+    .product-container {
+        .box-type1 {
+            margin-left: 0;
+            margin-right: 0;
+        }
+    }
+}
+
+.row-oro {
+    &.add-products {
+        float: left;
+        width: auto;
+
+        .add-list-item,
+        .add-buttons {
+            margin-top: 10px;
+        }
+
+        .add-products-sku {
+            width: 310px;
+            padding-right: 0;
+        }
+
+        .add-products-quantity {
+            padding-left: 2px;
+        }
+
+        .product-autocomplete-success {
+            display: none;
+            float: right;
+        }
+
+        .fa-check-circle-o {
+            font-size: 20px;
+            color: #2f8206;
+            line-height: 30px;
+        }
+    }
+
+    .fa-info-circle {
+        padding: 0 5px;
+        margin: 0 0 0 5px;
+        width: 21px;
+        line-height: 28px;
+    }
+}
+
+.image-collection {
+    overflow-x: auto;
+
+    &.view table {
+        width: 60%;
+    }
+
+    .add-list-item {
+        margin-top: 8px;
+        margin-left: 0;
+    }
+
+    th,
+    td {
+        &:not(:first-child) {
+            text-align: center;
+        }
+    }
+
+    th {
+        &.file {
+            width: 320px;
+        }
+
+        &.remove {
+            width: 65px;
+        }
+    }
+}
+
+.web-catalog-page-data,
+.oro-content-variant-collection {
+    .scope-collection {
+        div[data-validation-optional-group=""] {
+            display: block;
+            padding-right: 0;
+        }
+    }
+}
+
+.content-variant-item,
+.product-collection-segment {
+    div.filter-box {
+        &.oro-clearfix-width {
+            margin-left: 0;
+            margin-right: 0;
+        }
+    }
+
+    .oro-tabs {
+        .tab-pane {
+            min-height: 0;
+        }
+    }
+
+    .collapse-view {
+        .filter {
+            display: none;
+        }
+
+        &.expanded {
+            .filter {
+                display: block;
+            }
+        }
+    }
+
+    .tab-content {
+        border: none;
+    }
+
+    .nav-tabs {
+        width: 100%;
+    }
+
+    .grid-toolbar {
+        padding-right: 0;
+    }
+
+    div.other-scroll-container {
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    .box-type1 {
+        .title {
+            padding-left: 0;
+        }
+    }
+
+    div.control-group {
+        max-width: 100%;
+
+        &.control-group-oro_segment_filter_builder {
+            .control-label {
+                &.wrap {
+                    float: none;
+                    width: 60px;
+                    text-align: left;
+
+                    i {
+                        float: right;
+                        line-height: 20px;
+                    }
+
+                    label {
+                        color: rgb(68, 68, 68);
+                        font-size: 14px;
+                        font-weight: bold;
+                        display: block;
+
+                        em {
+                            display: none !important;
+                        }
+                    }
+                }
+            }
+
+            .controls {
+                margin-left: 0;
+            }
+        }
+
+        &.control-group-oro_segment_filter_builder_segment_name {
+            .control-label {
+                &.wrap {
+                    float: none;
+                    text-align: left;
+
+                    label {
+                        color: rgb(68, 68, 68);
+                        font-size: 14px;
+                        font-weight: bold;
+                        display: block;
+                    }
+                }
+            }
+
+            .controls {
+                margin-left: 0;
+            }
+        }
+    }
+}
+
+.collapse-view {
+    &.expanded {
+        .collapse-view__trigger {
+            background-image: none;
+            background-color: #e6e6e6;
+            outline: 0;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, .15), 0 1px 2px rgba(0, 0, 0, .05);
+        }
+    }
+}
+
+.related-items-widget {
+    margin-top: 7px;
+    overflow: hidden;
+
+    &__button {
+        float: right;
+    }
+
+    ~ div .grid-views {
+        margin-top: -28px;
+    }
+}

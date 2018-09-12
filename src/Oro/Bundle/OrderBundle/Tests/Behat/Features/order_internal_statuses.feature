@@ -11,40 +11,40 @@ Feature: Order Internal Statuses
     When I click view "SimpleOrder" in grid
     Then I should see that order internal status is "Open"
     And I should see available page actions:
-      | Mark As Shipped |
-      | Cancel          |
-      | Close           |
+      | MARK AS SHIPPED |
+      | CANCEL          |
+      | CLOSE           |
     And I should not see following page actions:
-      | Archive |
+      | ARCHIVE |
 
     When I click on page action "Mark As Shipped"
     Then I should see "Order #SimpleOrder has been marked as shipped." flash message
     And I should see that order internal status is "Shipped"
     And I should see available page actions:
-      | Close |
+      | CLOSE |
     And I should not see following page actions:
-      | Mark As Shipped |
-      | Cancel          |
-      | Archive         |
+      | MARK AS SHIPPED |
+      | CANCEL          |
+      | ARCHIVE         |
 
     When I click on page action "Close"
     Then I should see "Order #SimpleOrder has been closed." flash message
     And I should see that order internal status is "Closed"
     And I should see available page actions:
-      | Archive |
+      | ARCHIVE |
     And I should not see following page actions:
-      | Cancel          |
-      | Close           |
-      | Mark As Shipped |
+      | CANCEL          |
+      | CLOSE           |
+      | MARK AS SHIPPED |
 
     When I click on page action "Archive"
     Then I should see "Order #SimpleOrder has been archived." flash message
     And I should see that order internal status is "Archived"
     And I should not see following page actions:
-      | Cancel          |
-      | Archive         |
-      | Close           |
-      | Mark As Shipped |
+      | CANCEL          |
+      | ARCHIVE         |
+      | CLOSE           |
+      | MARK AS SHIPPED |
 
   Scenario: Verify internal statuses at BackOffice Order grid
     Given I go to Sales/Orders
@@ -77,37 +77,37 @@ Feature: Order Internal Statuses
     When I click view "SecondOrder" in grid
     Then I should see that order internal status is "Open"
     And I should see available page actions:
-      | Mark As Shipped |
-      | Cancel          |
-      | Close           |
+      | MARK AS SHIPPED |
+      | CANCEL          |
+      | CLOSE           |
     And I should not see following page actions:
-      | Archive |
+      | ARCHIVE |
 
     When I click on page action "Cancel"
     Then I should see "Order #SecondOrder has been cancelled." flash message
     And I should see that order internal status is "Cancelled"
     And I should see available page actions:
-      | Close |
+      | CLOSE |
     And I should not see following page actions:
-      | Cancel          |
-      | Archive         |
-      | Mark As Shipped |
+      | CANCEL          |
+      | ARCHIVE         |
+      | MARK AS SHIPPED |
 
     When I click on page action "Close"
     Then I should see "Order #SecondOrder has been closed." flash message
     And I should see that order internal status is "Closed"
     And I should see available page actions:
-      | Archive |
+      | ARCHIVE |
     And I should not see following page actions:
-      | Cancel          |
-      | Close           |
-      | Mark As Shipped |
+      | CANCEL          |
+      | CLOSE           |
+      | MARK AS SHIPPED |
 
     When I click on page action "Archive"
     Then I should see "Order #SecondOrder has been archived." flash message
     And I should see that order internal status is "Archived"
     And I should not see following page actions:
-      | Cancel          |
-      | Archive         |
-      | Close           |
-      | Mark As Shipped |
+      | CANCEL          |
+      | ARCHIVE         |
+      | CLOSE           |
+      | MARK AS SHIPPED |

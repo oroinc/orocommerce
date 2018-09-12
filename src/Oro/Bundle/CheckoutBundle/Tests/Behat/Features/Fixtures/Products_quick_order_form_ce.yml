@@ -1,5 +1,6 @@
 include:
     - '@OroLocaleBundle:LocalizationFixture.yml'
+    - '@OroProductBundle:ProductUnitItemTranslation.yml'
 
 Oro\Bundle\OrganizationBundle\Entity\BusinessUnit:
   businessUnit:

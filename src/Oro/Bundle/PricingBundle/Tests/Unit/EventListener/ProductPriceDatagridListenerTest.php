@@ -18,33 +18,30 @@ use Oro\Bundle\PricingBundle\ORM\Walker\PriceShardWalker;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Component\Testing\Unit\EntityTrait;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
 class ProductPriceDatagridListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var ShardManager|\PHPUnit\Framework\MockObject\MockObject
-     */
+    use EntityTrait;
+
+    /** @var AuthorizationCheckerInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $authorizationChecker;
+
+    /** @var ShardManager|\PHPUnit\Framework\MockObject\MockObject */
     protected $shardManager;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|TranslatorInterface
-     */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|TranslatorInterface */
     protected $translator;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|PriceListRequestHandler
-     */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|PriceListRequestHandler */
     protected $priceListRequestHandler;
     
-    /**
-     * @var ProductPriceDatagridListener
-     */
+    /** @var ProductPriceDatagridListener */
     protected $listener;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|DoctrineHelper
-     */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|DoctrineHelper */
     protected $doctrineHelper;
 
     public function setUp()
@@ -61,14 +58,10 @@ class ProductPriceDatagridListenerTest extends \PHPUnit\Framework\TestCase
                 }
             );
 
-        $this->priceListRequestHandler = $this
-            ->getMockBuilder('Oro\Bundle\PricingBundle\Model\PriceListRequestHandler')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->priceListRequestHandler = $this->createMock(PriceListRequestHandler::class);
+        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
         $this->shardManager = $this->createMock(ShardManager::class);
+        $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
 
         $this->listener = $this->createListener();
     }
@@ -82,7 +75,8 @@ class ProductPriceDatagridListenerTest extends \PHPUnit\Framework\TestCase
             $this->translator,
             $this->priceListRequestHandler,
             $this->doctrineHelper,
-            $this->shardManager
+            $this->shardManager,
+            $this->authorizationChecker
         );
     }
 
@@ -94,7 +88,7 @@ class ProductPriceDatagridListenerTest extends \PHPUnit\Framework\TestCase
         $this->priceListRequestHandler
             ->expects($this->any())
             ->method('getPriceList')
-            ->willReturn($this->getPriceList($priceListId));
+            ->willReturn($this->getEntity(PriceList::class, ['id' => $priceListId]));
 
         $this->priceListRequestHandler
             ->expects($this->any())
@@ -110,11 +104,17 @@ class ProductPriceDatagridListenerTest extends \PHPUnit\Framework\TestCase
      */
     public function testOnBuildBefore($priceListId = null, array $priceCurrencies = [], array $expectedConfig = [])
     {
+        $this->authorizationChecker
+            ->expects($this->once())
+            ->method('isGranted')
+            ->with('VIEW', 'entity:Oro\Bundle\PricingBundle\Entity\ProductPrice')
+            ->willReturn(true);
+
         $this->setUpRepository();
         $this->setUpPriceListRequestHandler($priceListId, $priceCurrencies);
 
         /** @var \PHPUnit\Framework\MockObject\MockObject|DatagridInterface $datagrid */
-        $datagrid = $this->createMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
+        $datagrid = $this->createMock(DatagridInterface::class);
         $config = DatagridConfiguration::create([]);
 
         $event = new BuildBefore($datagrid, $config);
@@ -268,6 +268,27 @@ class ProductPriceDatagridListenerTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
+    public function testOnBuildBeforeAndPermissionViewForbidden()
+    {
+        $this->authorizationChecker
+            ->expects($this->once())
+            ->method('isGranted')
+            ->with('VIEW', 'entity:' . ProductPrice::class)
+            ->willReturn(false);
+
+        $this->setUpRepository();
+        $this->setUpPriceListRequestHandler(1, ['USD']);
+
+        /** @var \PHPUnit\Framework\MockObject\MockObject|DatagridInterface $datagrid */
+        $datagrid = $this->createMock(DatagridInterface::class);
+        $config = DatagridConfiguration::create([]);
+
+        $event = new BuildBefore($datagrid, $config);
+        $this->listener->onBuildBefore($event);
+
+        $this->assertEquals([], $config->toArray());
+    }
+
     /**
      * @param int|null $priceListId
      * @param array $priceCurrencies
@@ -283,6 +304,12 @@ class ProductPriceDatagridListenerTest extends \PHPUnit\Framework\TestCase
         array $prices = [],
         array $expectedResults = []
     ) {
+        $this->authorizationChecker
+            ->expects($this->once())
+            ->method('isGranted')
+            ->with('VIEW', 'entity:' . ProductPrice::class)
+            ->willReturn(true);
+
         $sourceResultRecords = [];
         $productIds = [];
         foreach ($sourceResults as $sourceResult) {
@@ -389,14 +416,49 @@ class ProductPriceDatagridListenerTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
+    public function testOnResultAfterAndPermissionViewForbidden()
+    {
+        $this->authorizationChecker
+            ->expects($this->once())
+            ->method('isGranted')
+            ->with('VIEW', 'entity:' . ProductPrice::class)
+            ->willReturn(false);
+
+        $this->setUpPriceListRequestHandler(1, ['USD']);
+
+        $this->priceListRequestHandler
+            ->expects($this->never())
+            ->method('getShowTierPrices');
+
+        $this->setUpRepository()
+            ->expects($this->never())
+            ->method('findByPriceListIdAndProductIds');
+
+        $record = new ResultRecord(
+            [
+                'id' => 1,
+                'name' => 'first',
+                'price_column_usd_unit1' => 15,
+            ]
+        );
+
+        $expectedRecord = clone $record;
+
+        /** @var \PHPUnit\Framework\MockObject\MockObject|DatagridInterface $datagrid */
+        $datagrid = $this->createMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
+        $event = new OrmResultAfter($datagrid, [ $record ]);
+        $this->listener->onResultAfter($event);
+        $actualResults = $event->getRecords();
+
+        $this->assertEquals([$expectedRecord], $actualResults);
+    }
+
     /**
      * @return \PHPUnit\Framework\MockObject\MockObject|ProductPriceRepository
      */
     protected function setUpRepository()
     {
-        $repository = $this->getMockBuilder('Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $repository = $this->createMock(ProductPriceRepository::class);
         $repository->expects($this->any())
             ->method('findBy')
             ->willReturn([$this->getUnit('unit1')]);
@@ -418,20 +480,16 @@ class ProductPriceDatagridListenerTest extends \PHPUnit\Framework\TestCase
      */
     protected function createPrice($productId, $value, $currency, $unit = null)
     {
-        $product = new Product();
+        $priceProperties = [
+            'product' => $this->getEntity(Product::class, [ 'id' => $productId ]),
+            'price' => Price::create($value, $currency)
+        ];
 
-        $reflection = new \ReflectionProperty(get_class($product), 'id');
-        $reflection->setAccessible(true);
-        $reflection->setValue($product, $productId);
-
-        $price = new ProductPrice();
-        $price->setProduct($product)
-            ->setPrice(Price::create($value, $currency));
         if ($unit) {
-            $price->setUnit($unit);
+            $priceProperties['unit'] = $unit;
         }
 
-        return $price;
+        return $this->getEntity(ProductPrice::class, $priceProperties);
     }
 
     /**
@@ -441,32 +499,5 @@ class ProductPriceDatagridListenerTest extends \PHPUnit\Framework\TestCase
     protected function getUnit($unitCode)
     {
         return (new ProductUnit())->setCode($unitCode);
-    }
-
-    /**
-     * @param int $id
-     * @return PriceList
-     */
-    protected function getPriceList($id)
-    {
-        $priceList = new PriceList();
-        $reflection = new \ReflectionProperty(get_class($priceList), 'id');
-        $reflection->setAccessible(true);
-        $reflection->setValue($priceList, $id);
-
-        return $priceList;
-    }
-
-    /**
-     * @param object $object
-     * @param string $property
-     * @return mixed $value
-     */
-    protected function getProperty($object, $property)
-    {
-        $reflection = new \ReflectionProperty(get_class($object), $property);
-        $reflection->setAccessible(true);
-
-        return $reflection->getValue($object);
     }
 }

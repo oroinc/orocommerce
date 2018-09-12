@@ -11,11 +11,13 @@ define(function(require) {
     var localeSettings = require('orolocale/js/locale-settings');
     var BaseModel = require('oroui/js/app/models/base/model');
     var PricesHelper = require('oropricing/js/app/prices-helper');
+    var Popover = require('bootstrap-popover');
     var _ = require('underscore');
     var $ = require('jquery');
 
     BaseProductPricesView = BaseView.extend(_.extend({}, ElementsHelper, {
         priceTemplate: require('tpl!oropricing/templates/product/price.html'),
+        unitTemplate: require('tpl!oropricing/templates/product/unit.html'),
 
         keepElement: true,
 
@@ -124,13 +126,13 @@ define(function(require) {
                 return;
             }
 
-            if (!$pricesHint.data('popover')) {
+            if (!$pricesHint.data(Popover.DATA_KEY)) {
                 layout.initPopoverForElements($pricesHint, {
                     container: 'body'
                 }, true);
             }
 
-            $pricesHint.data('popover').updateContent(content);
+            $pricesHint.data(Popover.DATA_KEY).updateContent(content);
         },
 
         getHintContent: function() {
@@ -229,7 +231,7 @@ define(function(require) {
                 this.getElement('price').addClass('hidden');
                 this.getElement('priceNotFound').removeClass('hidden');
             } else {
-                this.getElement('unit').text(price.formatted_unit);
+                this.getElement('unit').html(this.unitTemplate({price: price}));
 
                 this.getElement('priceValue').html(this.priceTemplate({
                     price: price,

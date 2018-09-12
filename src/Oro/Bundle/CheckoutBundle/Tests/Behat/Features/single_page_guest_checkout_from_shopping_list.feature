@@ -64,7 +64,7 @@ Feature: Single Page Guest Checkout From Shopping List
     And I click "Search Button"
     And I click "400-Watt Bulb Work Light"
     And I click "Add to Shopping List"
-    And I click "Shopping List"
+    And I follow "Shopping List"
     And I press "Create Order"
     And I uncheck "Save my data and create an account" on the checkout page
     And I fill "Billing Information Form" with:
@@ -97,7 +97,7 @@ Feature: Single Page Guest Checkout From Shopping List
     And I click "Search Button"
     And I click "400-Watt Bulb Work Light"
     And I click "Add to Shopping List"
-    And I click "Shopping List"
+    And I follow "Shopping List"
     And I press "Create Order"
     And I type "rob1@test.com" in "Email Address"
     And I type "Rob1@test.com" in "Password"

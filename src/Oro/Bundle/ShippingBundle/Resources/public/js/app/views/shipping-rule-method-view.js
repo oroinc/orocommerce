@@ -5,6 +5,7 @@ define(function(require) {
     var _ = require('underscore');
     var $ = require('jquery');
     var BaseView = require('oroui/js/app/views/base/view');
+    var Popover = require('bootstrap-popover');
     var mediator = require('oroui/js/mediator');
     var layout = require('oroui/js/layout');
 
@@ -277,7 +278,7 @@ define(function(require) {
         },
 
         updatePreviewTooltip: function($preview, preview) {
-            if (!$preview.data('popover')) {
+            if ($preview.data(Popover.DATA_KEY) === void 0) {
                 layout.initPopoverForElements($preview, {
                     placement: 'bottom',
                     trigger: 'hover',
@@ -293,7 +294,7 @@ define(function(require) {
             });
             var isOverflow = $preview.height() > height;
 
-            $preview.attr('style', '').data('popover').updateContent(isOverflow ? preview.join('<br/>') : '');
+            $preview.attr('style', '').data(Popover.DATA_KEY).updateContent(isOverflow ? preview.join('<br/>') : '');
         },
 
         dispose: function() {

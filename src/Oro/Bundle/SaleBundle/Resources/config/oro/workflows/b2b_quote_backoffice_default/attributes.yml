@@ -23,3 +23,7 @@ workflows:
                 type: bool
                 options:
                     virtual: true
+            hasEmptyPrice:
+                type: bool
+                options:
+                    virtual: true

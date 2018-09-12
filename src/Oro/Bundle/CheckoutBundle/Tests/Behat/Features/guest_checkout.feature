@@ -49,7 +49,7 @@ Feature: Guest Checkout
     And I click "400-Watt Bulb Work Light"
     And I click "Add to Shopping List"
     And I should see "Product has been added to" flash message
-    When I click "Shopping List"
+    And follow "Shopping List"
     And I should see "400-Watt Bulb Work Light"
     Then I should not see following buttons:
       | Create Order |
@@ -117,7 +117,7 @@ Feature: Guest Checkout
     And I click "Search Button"
     And I click "400-Watt Bulb Work Light"
     And I click "Add to Shopping List"
-    And I click "Shopping List"
+    And I follow "Shopping List"
     And I press "Create Order"
     And I click "Continue as a Guest"
     And I fill form with:

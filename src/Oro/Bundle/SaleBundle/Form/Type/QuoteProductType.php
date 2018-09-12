@@ -5,7 +5,7 @@ namespace Oro\Bundle\SaleBundle\Form\Type;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
-use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
 use Oro\Bundle\SaleBundle\Formatter\QuoteProductFormatter;
 use Symfony\Component\Form\AbstractType;
@@ -18,12 +18,15 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
 
+/**
+ * Builds QuoteProductType form
+ */
 class QuoteProductType extends AbstractType
 {
     const NAME = 'oro_sale_quote_product';
 
     /**
-     * @var ProductUnitLabelFormatter
+     * @var UnitLabelFormatterInterface
      */
     protected $labelFormatter;
 
@@ -54,13 +57,13 @@ class QuoteProductType extends AbstractType
 
     /**
      * @param TranslatorInterface $translator
-     * @param ProductUnitLabelFormatter $labelFormatter
+     * @param UnitLabelFormatterInterface $labelFormatter
      * @param QuoteProductFormatter $formatter
      * @param ManagerRegistry $registry
      */
     public function __construct(
         TranslatorInterface $translator,
-        ProductUnitLabelFormatter $labelFormatter,
+        UnitLabelFormatterInterface $labelFormatter,
         QuoteProductFormatter $formatter,
         ManagerRegistry $registry
     ) {

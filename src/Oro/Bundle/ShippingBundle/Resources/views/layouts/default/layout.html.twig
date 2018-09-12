@@ -34,7 +34,7 @@
     <% if (!_.isEmpty(methods)) { %>
         {{ block_widget(block) }}
     <% } else { %>
-        <div class="notification notification--alert">
+        <div class="notification notification--alert" role="alert">
             <span class="notification__text">{{ 'oro.shipping.methods.no_method'|trans }}</span>
         </div>
     <% } %>

@@ -11,7 +11,7 @@ Feature: Guest shopping lists owner
     And uncheck "Use default" for "Enable guest shopping list" field
     And I check "Enable guest shopping list"
     And uncheck "Use default" for "Default Guest Shopping List Owner" field
-    And I fill in "Select2Entity" with "Admin User - newadmin@example.com (newadmin)"
+    And I fill in "Default Guest Shopping List Owner" with "Admin User - newadmin@example.com (newadmin)"
     And I should see "Admin User"
     And I save setting
     And I should see "Configuration saved" flash message

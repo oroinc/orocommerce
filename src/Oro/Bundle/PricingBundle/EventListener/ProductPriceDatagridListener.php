@@ -16,8 +16,12 @@ use Oro\Bundle\PricingBundle\ORM\Walker\PriceShardWalker;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
+/**
+ * Adds price columns and filters on product-grid
+ */
 class ProductPriceDatagridListener
 {
     /**
@@ -47,20 +51,23 @@ class ProductPriceDatagridListener
 
     /**
      * @param TranslatorInterface $translator
-     * @param PriceListRequestHandler $priceListRequestHandler
-     * @param DoctrineHelper $doctrineHelper
-     * @param ShardManager $shardManager
+     * @param PriceListRequestHandler       $priceListRequestHandler
+     * @param DoctrineHelper                $doctrineHelper
+     * @param ShardManager                  $shardManager
+     * @param AuthorizationCheckerInterface $authorizationChecker
      */
     public function __construct(
         TranslatorInterface $translator,
         PriceListRequestHandler $priceListRequestHandler,
         DoctrineHelper $doctrineHelper,
-        ShardManager $shardManager
+        ShardManager $shardManager,
+        AuthorizationCheckerInterface $authorizationChecker
     ) {
         $this->translator = $translator;
         $this->priceListRequestHandler = $priceListRequestHandler;
         $this->doctrineHelper = $doctrineHelper;
         $this->shardManager = $shardManager;
+        $this->authorizationChecker = $authorizationChecker;
     }
 
     /**
@@ -69,7 +76,7 @@ class ProductPriceDatagridListener
     public function onBuildBefore(BuildBefore $event)
     {
         $currencies = $this->getCurrencies();
-        if (!$currencies) {
+        if (!$this->isGrantedToViewPriceFields() || !$currencies) {
             return;
         }
 
@@ -95,9 +102,10 @@ class ProductPriceDatagridListener
     public function onResultAfter(OrmResultAfter $event)
     {
         $currencies = $this->getCurrencies();
-        if (!$currencies) {
+        if (!$this->isGrantedToViewPriceFields() || !$currencies) {
             return;
         }
+
         $units = $this->getAllUnits();
 
         /** @var ResultRecord[] $records */
@@ -346,5 +354,16 @@ class ProductPriceDatagridListener
         }
 
         return $groupedPrices;
+    }
+
+    /**
+     * @return bool
+     */
+    private function isGrantedToViewPriceFields()
+    {
+        return $this->authorizationChecker->isGranted(
+            'VIEW',
+            sprintf('entity:%s', ProductPrice::class)
+        );
     }
 }

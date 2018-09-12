@@ -8,7 +8,7 @@
      data-page-component-options="{{ pageComponentOptions|json_encode }}"
         >
     {% if form.vars.errors|length > 0 %}
-        <div class="alert alert-error">
+        <div class="alert alert-error" role="alert">
             {{ form_errors(form) }}
         </div>
     {% endif %}

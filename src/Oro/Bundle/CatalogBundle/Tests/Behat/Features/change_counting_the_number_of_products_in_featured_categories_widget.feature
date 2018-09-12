@@ -15,7 +15,7 @@ Feature: Change counting the number of products in featured categories widget
     And click on PSKU2 in grid
     And click "Save"
     And I am on the homepage
-    Then should see "2 items" for "NewCategory" category
+    Then should see "3 items" for "NewCategory" category
     And should see "1 item" for "SubNew" category
     When click "NewCategory"
     Then should see "PSKU2" product

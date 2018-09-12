@@ -11,6 +11,9 @@ use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 
+/**
+ * A repository for ShoppingList entities.
+ */
 class ShoppingListRepository extends EntityRepository
 {
     /**
@@ -65,7 +68,7 @@ class ShoppingListRepository extends EntityRepository
             }
         }
 
-        return $aclHelper->apply($qb, 'VIEW', false)->getResult();
+        return $aclHelper->apply($qb, 'VIEW', [AclHelper::CHECK_RELATIONS => false])->getResult();
     }
 
     /**

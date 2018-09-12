@@ -1,6 +1,3 @@
-include:
-    - '@OroCustomerBundle:BuyerCustomerFixture.yml'
-
 Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     attribute_family_label:
         string: 'Attribute Family'
