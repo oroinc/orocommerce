@@ -80,22 +80,13 @@ Feature: Single Page Checkout With Popup for Guest
       | Postal Code  |  |
     And I click "Continue"
     Then I should see "New Address Popup Form" validation errors:
-      | Email       | This value should not be blank. |
-      | Street      | This value should not be blank. |
-      | City        | This value should not be blank. |
-      | Postal Code | This value should not be blank. |
-    When I fill "New Address Popup Form" with:
-      | Email        | test@example.com |
-      | Street       | Fifth avenue     |
-      | City         | B City           |
-      | Country      | Albania          |
-      | State        | Has              |
-      | Postal Code  | 10115            |
-    And I click "Continue"
-    Then I should see "New Address Popup Form" validation errors:
+      | Email        | This value should not be blank.                               |
       | First Name   | First Name and Last Name or Organization should not be blank. |
       | Last Name    | Last Name and First Name or Organization should not be blank. |
       | Organization | Organization or First Name and Last Name should not be blank. |
+      | Street       | This value should not be blank.                               |
+      | City         | This value should not be blank.                               |
+      | Postal Code  | This value should not be blank.                               |
     When I close ui dialog
     Then I should see "New address" for "Select Billing Address" select
 
