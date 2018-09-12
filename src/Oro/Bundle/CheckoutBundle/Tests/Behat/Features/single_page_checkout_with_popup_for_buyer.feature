@@ -103,18 +103,12 @@ Feature: Single Page Checkout With Popup for Buyer
       | Postal Code  | |
     And I click "Continue"
     Then I should see "New Address Popup Form" validation errors:
-      | Street      | This value should not be blank. |
-      | City        | This value should not be blank. |
-      | Postal Code | This value should not be blank. |
-    When I fill "New Address Popup Form" with:
-      | Street       | Fifth avenue |
-      | City         | Berlin       |
-      | Postal Code  | 10115        |
-    And I click "Continue"
-    Then I should see "New Address Popup Form" validation errors:
       | First Name   | First Name and Last Name or Organization should not be blank. |
       | Last Name    | Last Name and First Name or Organization should not be blank. |
       | Organization | Organization or First Name and Last Name should not be blank. |
+      | Street       | This value should not be blank.                               |
+      | City         | This value should not be blank.                               |
+      | Postal Code  | This value should not be blank.                               |
     When I close ui dialog
     Then I should see "ORO, Fifth avenue, 10115 Berlin, Germany" for "Select Billing Address" select
 
@@ -124,7 +118,7 @@ Feature: Single Page Checkout With Popup for Buyer
     And I click on "New Address Option"
     Then I should see "UiDialog" with elements:
       | Title        | Shipping Address |
-      | okButton     | Continue        |
+      | okButton     | Continue         |
     And "New Address Popup Form" must contains values:
       | Label        | Primary address |
       | Organization | ORO             |
@@ -141,18 +135,12 @@ Feature: Single Page Checkout With Popup for Buyer
       | Postal Code  | |
     And I click "Continue"
     Then I should see "New Address Popup Form" validation errors:
-      | Street      | This value should not be blank. |
-      | City        | This value should not be blank. |
-      | Postal Code | This value should not be blank. |
-    When I fill "New Address Popup Form" with:
-      | Street       | Fifth avenue |
-      | City         | Berlin       |
-      | Postal Code  | 10115        |
-    And I click "Continue"
-    Then I should see "New Address Popup Form" validation errors:
       | First Name   | First Name and Last Name or Organization should not be blank. |
       | Last Name    | Last Name and First Name or Organization should not be blank. |
       | Organization | Organization or First Name and Last Name should not be blank. |
+      | Street       | This value should not be blank.                               |
+      | City         | This value should not be blank.                               |
+      | Postal Code  | This value should not be blank.                               |
     When I close ui dialog
     Then I should see "ORO, Fifth avenue, 10115 Berlin, Germany" for "Select Shipping Address" select
 
