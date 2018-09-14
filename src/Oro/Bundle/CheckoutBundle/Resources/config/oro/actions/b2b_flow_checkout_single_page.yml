@@ -38,14 +38,12 @@ operations:
                 save_address:
                     form_type: oro_save_address
         form_init:
-            - '@tree':
-                conditions:
-                    '@and':
-                        - '@not_blank': $.data.customerUser
-                        - '@not_blank': $.data.customerUser.firstName
-                        - '@not_blank': $.data.billingAddress
-                actions:
-                    - '@assign_value': [$.visitor_email, $.data.customerUser.email]
+            - '@call_service_method':
+                service: oro_workflow.manager
+                method: getFirstWorkflowItemByEntity
+                method_parameters: [$.data]
+                attribute: $.workflowItem
+
             - '@assign_value': [$.address, $.data.billingAddress]
             - '@assign_value': [$.address.customerAddress, null]
             - '@assign_value': [$.address.customerUserAddress, null]
@@ -57,19 +55,12 @@ operations:
                 actions:
                     - '@assign_value': [$.save_address, $.data.saveBillingAddress]
         actions:
-            - '@tree':
-                conditions:
-                    '@and':
-                        - '@not_blank': $.visitor_email
-                        - '@not_blank': $.data.customerUser
-                actions:
-                    - '@assign_value': [$.data.customerUser.firstName, null]
-                    - '@run_action_group':
-                        action_group: b2b_flow_checkout_update_guest_customer_user
-                        parameters_mapping:
-                            checkout: $.data
-                            visitor_email: $.visitor_email
-                            billing_address: $.data.billingAddress
+            - '@assign_value': [$.workflowItem.data.visitor_email, $.visitor_email]
+            - '@call_method':
+                object: $.workflowItem
+                method: setUpdated
+            - '@flush_entity': $.workflowItem
+
             - '@assign_value': [$.data.saveBillingAddress, $.save_address]
             - '@run_action_group':
                 action_group: b2b_flow_checkout_update_shipping_address
