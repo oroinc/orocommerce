@@ -166,9 +166,11 @@ define(function(require) {
         _disableShippingAddress: function() {
             var $element = this.$el.find(this.options.shipToSelector);
             if ($element.is(this.options.shipToSelector)) {
+                var $billingAddress = this.subview('checkoutBillingAddress').$el;
                 this.subview('checkoutShippingAddress').onToggleState(
                     $element.is(':checked'),
-                    this.subview('checkoutBillingAddress').$el.val()
+                    $billingAddress.val(),
+                    $billingAddress.find(':selected').text()
                 );
             }
         },

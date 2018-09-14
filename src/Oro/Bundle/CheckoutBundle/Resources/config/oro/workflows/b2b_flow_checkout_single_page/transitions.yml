@@ -82,6 +82,7 @@ workflows:
                             form_type: Oro\Bundle\CustomerBundle\Form\Type\CustomerVisitorEmailAddressType
                             options:
                                 required: true
+                                disabled: $disallow_visitor_email
 
             create_order:
                 step_to: checkout

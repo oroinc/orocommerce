@@ -51,6 +51,7 @@ define(function(require) {
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
 
+            this.enterManuallyOriginLabel = this.$el.find('[value="0"]').text();
             this._changeEnterManualValueLabel();
 
             SinglePageCheckoutAddressView.__super__.initialize.apply(this, arguments);
@@ -77,13 +78,13 @@ define(function(require) {
             }
         },
 
-        onToggleState: function(disable, value) {
+        onToggleState: function(disable, value, label) {
             if (disable) {
                 this.$el.prop('disabled', 'disabled');
 
                 this.$el.val(value);
                 this.$el.inputWidget('refresh');
-                this._changeEnterManualValueLabel();
+                this._changeEnterManualValueLabel(label);
             } else {
                 this.$el.prop('disabled', false);
             }
@@ -136,17 +137,20 @@ define(function(require) {
             return parseInt(val) === 0;
         },
 
-        _changeEnterManualValueLabel: function() {
+        _changeEnterManualValueLabel: function(customLabel) {
             if (this.isManual(this.$el.val())) {
                 var newAddressLabel = this.$el.data('new-address-label');
                 if (newAddressLabel) {
-                    var $option = this.$el.find('[value="0"]');
-
-                    this.enterManuallyOriginLabel = $option.text();
-                    $option.text(this.enterManuallyOriginLabel + ' (' + newAddressLabel + ')');
-
-                    this.$el.inputWidget('refresh');
+                    newAddressLabel = this.enterManuallyOriginLabel + ' (' + newAddressLabel + ')';
                 }
+
+                var label = customLabel || newAddressLabel;
+                if (label) {
+                    var $option = this.$el.find('[value="0"]');
+                    $option.text(label);
+                }
+
+                this.$el.inputWidget('refresh');
             }
         },
 
