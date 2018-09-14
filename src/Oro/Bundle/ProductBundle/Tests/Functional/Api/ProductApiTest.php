@@ -14,9 +14,10 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Form\Type\ProductType;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
-use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnits;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnits;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadVariantFields;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadWorkflowDefinitions;
 use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadProductTaxCodes;
 
 /**
@@ -39,7 +40,8 @@ class ProductApiTest extends RestJsonApiTestCase
             LoadOrganizations::class,
             LoadProductTaxCodes::class,
             LoadCategoryData::class,
-            LoadVariantFields::class
+            LoadVariantFields::class,
+            LoadWorkflowDefinitions::class,
         ]);
     }
 
@@ -458,5 +460,22 @@ class ProductApiTest extends RestJsonApiTestCase
         );
 
         $this->assertResponseStatusCodeEquals($response, Response::HTTP_CREATED);
+    }
+
+    public function testCreateProductWithImage()
+    {
+        $response = $this->post(['entity' => 'products'], 'create_product_with_image.yml');
+        $response = json_decode($response->getContent());
+
+        $product = $this->getEntityManager()->find(Product::class, $response->data->id);
+
+        $this->assertTrue($product !== null);
+        $this->assertCount(1, $product->getImages());
+
+        $items = $this->getContainer()
+            ->get('oro_workflow.manager.system')
+            ->getWorkflowItemsByEntity($product);
+
+        $this->assertCount(1, $items);
     }
 }
