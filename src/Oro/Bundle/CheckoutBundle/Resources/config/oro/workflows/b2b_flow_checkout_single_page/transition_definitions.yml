@@ -2,7 +2,27 @@ workflows:
     b2b_flow_checkout_single_page:
         transition_definitions:
             save_state_definition:
+                preactions:
+                    - '@tree':
+                        conditions:
+                            '@feature_enabled':
+                                feature: single_page_checkout_performance
+                        actions:
+                          - '@assign_value': [$disallow_visitor_email, true]
+                          - '@assign_value': [$origin_disallow_billing_address_edit, $disallow_billing_address_edit]
+                          - '@assign_value': [$origin_disallow_shipping_address_edit, $disallow_shipping_address_edit]
+                          - '@assign_value': [$disallow_billing_address_edit, true]
+                          - '@assign_value': [$disallow_shipping_address_edit, true]
+
                 actions:
+                    - '@tree':
+                        conditions:
+                            '@feature_enabled':
+                                feature: single_page_checkout_performance
+                        actions:
+                          - '@assign_value': [$disallow_billing_address_edit, $origin_disallow_billing_address_edit]
+                          - '@assign_value': [$disallow_shipping_address_edit, $origin_disallow_shipping_address_edit]
+
                     - '@assign_value': [$.result.responseData.stateSaved, true]
 
                     - '@run_action_group':

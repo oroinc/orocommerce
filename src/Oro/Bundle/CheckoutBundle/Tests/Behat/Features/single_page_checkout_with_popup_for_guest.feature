@@ -1,7 +1,9 @@
 @ticket-BB-15015
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
+@fixture-OroFlatRateShippingBundle:FlatRate2Integration.yml
 @fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
 @fixture-OroCheckoutBundle:Checkout.yml
+@fixture-OroCheckoutBundle:ShippingRuleForFlatRate2.yml
 @fixture-OroCheckoutBundle:InventoryLevel.yml
 @community-edition-only
 
@@ -52,6 +54,25 @@ Feature: Single Page Checkout With Popup for Guest
       | Payment Term | net 10 |
     When I save form
     Then I should see "Customer group has been saved" flash message
+
+  Scenario: Configure shipping rules
+    Given I go to System/Shipping Rules
+    And I click Edit "Default" in grid
+    And I click "Add"
+    And fill "Shipping Rule" with:
+      | Country1 | Germany |
+    When I save and close form
+    Then I should see "Shipping rule has been saved" flash message
+    When I go to System/Shipping Rules
+    And I click Edit "Flat Rate 2$" in grid
+    And I click "Add"
+    And fill "Shipping Rule" with:
+      | Country1 | Albania |
+    And I click "Add"
+    And fill "Shipping Rule" with:
+      | Country2 | Georgia |
+    And I save and close form
+    Then I should see "Shipping rule has been saved" flash message
 
   Scenario: Validate new billing address form
     Given I proceed as the Guest
@@ -148,6 +169,7 @@ Feature: Single Page Checkout With Popup for Guest
     When I click View "Order1" in grid
     And I should see "B Address B Prefix B Fname B Mname B Lname B Suffix B Organization B Street B Street 2 B CITY HA AL 12345 12345"
     And I should see "S Address S Prefix S Fname S Mname S Lname S Suffix S Organization S Street S Street 2 67890 S City Georgia 67890"
+    And I should see "Flat Rate 2"
 
   Scenario: Create order with new billing address and ship to this address
     Given I proceed as the Guest
@@ -158,24 +180,81 @@ Feature: Single Page Checkout With Popup for Guest
     And I click on "Billing Address Select"
     And I click on "New Address Option"
     And I fill "New Address Popup Form" with:
-      | Label        | B Address      |
-      | Name Prefix  | B Prefix       |
-      | First Name   | B Fname        |
-      | Middle Name  | B Mname        |
-      | Last Name    | B Lname        |
-      | Name Suffix  | B Suffix       |
-      | Organization | B Organization |
-      | Phone        | 12345          |
-      | Street       | B Street       |
-      | Street 2     | B Street 2     |
-      | City         | B City         |
+      | Email        | test@example.com |
+      | Label        | B Address        |
+      | Name Prefix  | B Prefix         |
+      | First Name   | B Fname          |
+      | Middle Name  | B Mname          |
+      | Last Name    | B Lname          |
+      | Name Suffix  | B Suffix         |
+      | Organization | B Organization   |
+      | Phone        | 12345            |
+      | Street       | B Street         |
+      | Street 2     | B Street 2       |
+      | City         | B City           |
+      | Country      | Germany          |
+      | State        | Berlin           |
+      | Postal Code  | 12345            |
+    And I click "Continue"
+    Then I should see "New address (B Prefix B Fname B Mname B Lname B Suffix, B Organization, B Street B Street 2, 12345 B City, Germany, 12345)" for "Select Billing Address" select
+    And There is no shipping method available for this order
+    When I click on "Shipping Address Select"
+    And I click on "New Address Option"
+    And I fill "New Address Popup Form" with:
+      | Label        | S Address      |
+      | Name Prefix  | S Prefix       |
+      | First Name   | S Fname        |
+      | Middle Name  | S Mname        |
+      | Last Name    | S Lname        |
+      | Name Suffix  | S Suffix       |
+      | Organization | S Organization |
+      | Phone        | 67890          |
+      | Street       | S Street       |
+      | Street 2     | S Street 2     |
+      | City         | S City         |
       | Country      | Albania        |
       | State        | Has            |
-      | Postal Code  | 12345          |
+      | Postal Code  | 67890          |
     And I click "Continue"
-    Then I should see "New address (B Prefix B Fname B Mname B Lname B Suffix, B Organization, B Street B Street 2, B CITY HA AL 12345, 12345)" for "Select Billing Address" select
+    Then I should see "New address (S Prefix S Fname S Mname S Lname S Suffix, S Organization, S Street S Street 2, S CITY HA AL 67890, 67890)" for "Select Shipping Address" select
+    And I should see "Flat Rate 2: $2.00"
     When I check "Use billing address" on the checkout page
-    And I click "Delete this shopping list after submitting order"
+    Then I should see "Flat Rate: $3.00"
+    When I click on "Billing Address Select"
+    And I click on "New Address Option"
+    Then "New Address Popup Form" must contains values:
+      | Email        | test@example.com |
+      | Label        | B Address        |
+      | Name Prefix  | B Prefix         |
+      | First Name   | B Fname          |
+      | Middle Name  | B Mname          |
+      | Last Name    | B Lname          |
+      | Name Suffix  | B Suffix         |
+      | Organization | B Organization   |
+      | Phone        | 12345            |
+      | Street       | B Street         |
+      | Street 2     | B Street 2       |
+      | City         | B City           |
+      | Country      | DE               |
+      | State        | DE-BE            |
+      | Postal Code  | 12345            |
+    When I fill "New Address Popup Form" with:
+      | Country      | Ukraine            |
+      | State        | Cherkas'ka Oblast' |
+    And I click "Continue"
+    Then There is no shipping method available for this order
+    When I uncheck "Use billing address" on the checkout page
+    Then I should see "New address (12345 Ukraine B City, B Street B Street 2, B Organization, B Prefix B Fname B Mname B Lname B Suffix, 12345)" for "Select Shipping Address" select
+    And There is no shipping method available for this order
+    When I click on "Billing Address Select"
+    And I click on "New Address Option"
+    And I fill "New Address Popup Form" with:
+      | Country      | Germany          |
+      | State        | Berlin           |
+    And I click "Continue"
+    And I check "Use billing address" on the checkout page
+    Then I should see "Flat Rate: $3.00"
+    When I click "Delete this shopping list after submitting order"
     And I fill "Checkout Order Form" with:
       | PO Number | Order2 |
     And I wait "Submit Order" button
@@ -186,5 +265,6 @@ Feature: Single Page Checkout With Popup for Guest
     Given I proceed as the Admin
     And I go to Sales/Orders
     When I click View "Order2" in grid
-    And I should see "B Address B Prefix B Fname B Mname B Lname B Suffix B Organization B Street B Street 2 B CITY HA AL 12345 12345"
+    And I should see "B Address B Prefix B Fname B Mname B Lname B Suffix B Organization B Street B Street 2 12345 B City Germany 12345"
     And I should not see "S Address S Prefix S Fname S Mname S Lname S Suffix S Organization S Street S Street 2 67890 S City Georgia 67890"
+    And I should see "Flat Rate"
