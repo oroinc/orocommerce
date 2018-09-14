@@ -164,6 +164,7 @@ Feature: Single Page Checkout With Popup for Buyer
       | State        | Has            |
       | Postal Code  | 12345          |
     And I click "Continue"
+    And I should see "Amanda Cole"
     And I click on "Billing Address Select"
     And I click on "New Address Option"
     And "New Address Popup Form" must contains values:

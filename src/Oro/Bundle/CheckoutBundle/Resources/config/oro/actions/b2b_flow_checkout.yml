@@ -470,6 +470,7 @@ action_groups:
                         - '@not_empty': $.billing_address
                         - '@not_empty': $.checkout.customerUser
                         - '@empty': $.checkout.customerUser.firstName
+                        - '@equal': [$.checkout.customerUser.isGuest, true] #For guest customer user only
                 actions:
                     - '@call_service_method':
                         attribute: $.checkout.customerUser

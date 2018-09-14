@@ -312,13 +312,13 @@ class CheckoutController extends Controller
      */
     protected function getWorkflowItem(CheckoutInterface $checkout)
     {
-        $items = $this->getWorkflowManager()->getWorkflowItemsByEntity($checkout);
+        $item = $this->getWorkflowManager()->getFirstWorkflowItemByEntity($checkout);
 
-        if (count($items) !== 1) {
+        if (!$item) {
             throw $this->createNotFoundException('Unable to find correct WorkflowItem for current checkout');
         }
 
-        return reset($items);
+        return $item;
     }
 
     /**
