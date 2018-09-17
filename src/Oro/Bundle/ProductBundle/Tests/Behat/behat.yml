@@ -23,6 +23,9 @@ oro_behat_extension:
     Configurable Attributes:
       class: Oro\Bundle\ProductBundle\Tests\Behat\Element\ProductCustomVariantFieldsCollection
       selector: 'div[id^="oro_product_variantFields"]'
+    AddAttribute:
+      selector: '.controls .add-btn'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
     ProductViewRelatedItemQuickEdit:
       selector:
