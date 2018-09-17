@@ -3,7 +3,6 @@
 @fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
 @fixture-OroCheckoutBundle:Checkout.yml
 @fixture-OroCheckoutBundle:InventoryLevel.yml
-@community-edition-only
 
 Feature: Single Page Checkout With Popup for Sales
   In order to complete the checkout process
