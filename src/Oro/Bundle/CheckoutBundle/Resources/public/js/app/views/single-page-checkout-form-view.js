@@ -52,7 +52,12 @@ define(function(require) {
         /**
          * @property {number}
          */
-        timeout: 50,
+        timeout: 150,
+
+        /**
+         * @property {boolean}
+         */
+        submitStarted: false,
 
         /**
          * @inheritDoc
@@ -96,6 +101,9 @@ define(function(require) {
          * @param {jQuery.Event} event
          */
         onChange: function(event) {
+            if (this.submitStarted) {
+                return;
+            }
             var validate = this.$el.validate();
             if (!validate.checkForm()) {
                 return;
@@ -126,6 +134,7 @@ define(function(require) {
          * @param {jQuery.Event} event
          */
         onSubmit: function(event) {
+            this.submitStarted = true; //This value is set to false after reinitialize on submit ends
             event.preventDefault();
 
             var validate = this.$el.validate();
