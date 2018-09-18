@@ -11,7 +11,7 @@ Feature: Duplicate product
   Scenario: Open original product and duplicate it
     Given I login as administrator
     When I go to Products/ Products
-    And number of records should be 1
+    And number of records should be 3
     And I should see PSKU1 in grid with following data:
       | Name             | Product1 |
       | Inventory Status | In Stock |

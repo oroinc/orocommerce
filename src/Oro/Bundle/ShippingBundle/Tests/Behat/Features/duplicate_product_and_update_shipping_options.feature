@@ -23,6 +23,8 @@ Feature: Duplicate product and update shipping options
     When fill "Product With Shipping Options Form" with:
       | SKU                                   | PSKU2    |
       | Name                                  | Product2 |
+    And I click "Shipping Options"
+    And fill "Product With Shipping Options Form" with:
       | Shipping Option Weight Value 1        | 10       |
       | Shipping Option Freight Class Value 1 | parcel   |
     And I save and close form
