@@ -145,3 +145,22 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-product-search-grid, method: onPreBuild }
             - { name: kernel.event_listener, event: oro_datagrid.search_datasource.result.after.frontend-product-search-grid, method: onResultAfter }
+
+    oro_inventory.event_listener.product_duplicate:
+        class: Oro\Bundle\InventoryBundle\EventListener\ProductDuplicateListener
+        arguments:
+            - '@property_accessor'
+            -
+                - 'manageInventory'
+                - 'highlightLowInventory'
+                - 'inventoryThreshold'
+                - 'lowInventoryThreshold'
+                - 'minimumQuantityToOrder'
+                - 'maximumQuantityToOrder'
+                - 'decrementQuantity'
+                - 'backOrder'
+                - 'isUpcoming'
+        calls:
+            - [setDoctrineHelper, ['@oro_entity.doctrine_helper']]
+        tags:
+            - { name: kernel.event_listener, event: oro_product.product.duplicate.after, method: onDuplicateAfter }

@@ -83,4 +83,28 @@ trait MetaFieldSetterGetterTrait
     {
         return $this->metaDescriptions;
     }
+
+    /**
+     * @param Collection $values
+     */
+    public function setMetaTitles(Collection $values)
+    {
+        $this->metaTitles = $values;
+    }
+
+    /**
+     * @param Collection $values
+     */
+    public function setMetaKeywords(Collection $values)
+    {
+        $this->metaKeywords = $values;
+    }
+
+    /**
+     * @param Collection $values
+     */
+    public function setMetaDescriptions(Collection $values)
+    {
+        $this->metaDescriptions = $values;
+    }
 }

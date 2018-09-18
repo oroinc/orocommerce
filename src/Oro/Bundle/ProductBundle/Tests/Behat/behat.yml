@@ -155,6 +155,11 @@ oro_behat_extension:
       selector: 'div[data-page-component-name="products-upsell-products-edit"] div.filter-item'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilterStringItem
 
+    Upsell Products View Tab:
+      selector:
+        type: xpath
+        locator: '//div[contains(@class, "oro-tabs")]/ul/li/a[text()="Up-sell Products"]'
+
     ProductForm Step One:
       selector: 'form[name="oro_product_step_one"]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
@@ -188,11 +193,34 @@ oro_behat_extension:
         mapping:
           SKU: 'oro_product[sku]'
           Name: 'oro_product[names][values][default]'
+          URL Slug: 'oro_product[slugPrototypesWithRedirect][slugPrototypes][values][default]'
+          Description: 'oro_product[descriptions][values][default]'
+          Short Description: 'oro_product[shortDescriptions][values][default]'
           Status: 'oro_product[status]'
           PrimaryUnit: 'oro_product[primaryUnitPrecision][unit]'
           PrimaryPrecision: 'oro_product[primaryUnitPrecision][precision]'
           AdditionalUnit: 'oro_product[additionalUnitPrecisions][0][unit]'
           AdditionalPrecision: 'oro_product[additionalUnitPrecisions][0][precision]'
+          Additional Unit 2: 'oro_product[additionalUnitPrecisions][1][unit]'
+          Additional Precision 2: 'oro_product[additionalUnitPrecisions][1][precision]'
+          Page Template: 'oro_product[pageTemplate][scalarValue]'
+          Page Template Use Fallback: 'oro_product[pageTemplate][useFallback]'
+          Managed Inventory Use Fallback: 'oro_product[manageInventory][useFallback]'
+          Highlight Low Inventory Use Fallback: 'oro_product[highlightLowInventory][useFallback]'
+          Inventory Threshold Use Fallback: 'oro_product[inventoryThreshold][useFallback]'
+          Inventory Threshold: 'oro_product[inventoryThreshold][scalarValue]'
+          Low Inventory Threshold Use Fallback: 'oro_product[lowInventoryThreshold][useFallback]'
+          Low Inventory Threshold: 'oro_product[lowInventoryThreshold][scalarValue]'
+          Backorders Use Fallback: 'oro_product[backOrder][useFallback]'
+          Decrement Inventory Use Fallback: 'oro_product[decrementQuantity][useFallback]'
+          Is Upcoming Use Fallback: 'oro_product[isUpcoming][useFallback]'
+          Minimum Quantity To Order Use Fallback: 'oro_product[minimumQuantityToOrder][useFallback]'
+          Minimum Quantity To Order: 'oro_product[minimumQuantityToOrder][scalarValue]'
+          Maximum Quantity To Order Use Fallback: 'oro_product[maximumQuantityToOrder][useFallback]'
+          Maximum Quantity To Order: 'oro_product[maximumQuantityToOrder][scalarValue]'
+          Price Quantity 1: 'oro_product[prices][0][quantity]'
+          Price Value 1: 'oro_product[prices][0][price][value]'
+          Price Unit 1: 'oro_product[prices][0][unit]'
           Configurable Attributes:
             type: 'xpath'
             locator: '//div[@id[starts-with(.,"oro_product_variantFields-uid")]]'
@@ -867,6 +895,12 @@ oro_behat_extension:
       selector:
         type: 'xpath'
         locator: '//div[contains (@id,"oro_product_prices-uid")]//button[contains(@class,"removeRow")]'
+
+    Remove Additional Unit Precision 1:
+        selector: 'tr[data-content="oro_product[additionalUnitPrecisions][0]"] .removeLineItem'
+
+    Remove Image 1:
+        selector: 'tr[data-content="oro_product[images][0]"] .removeRow'
 
   pages:
     Product View:
