@@ -16,6 +16,7 @@ use Oro\Bundle\PricingBundle\ORM\Walker\PriceShardWalker;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class ProductPriceDatagridListener
 {
@@ -63,12 +64,20 @@ class ProductPriceDatagridListener
     }
 
     /**
+     * @param AuthorizationCheckerInterface $authorizationChecker
+     */
+    public function setAuthorizationChecker(AuthorizationCheckerInterface $authorizationChecker)
+    {
+        $this->authorizationChecker = $authorizationChecker;
+    }
+
+    /**
      * {@inheritDoc}
      */
     public function onBuildBefore(BuildBefore $event)
     {
         $currencies = $this->getCurrencies();
-        if (!$currencies) {
+        if (!$this->isGrantedToViewPriceFields() || !$currencies) {
             return;
         }
 
@@ -94,9 +103,10 @@ class ProductPriceDatagridListener
     public function onResultAfter(OrmResultAfter $event)
     {
         $currencies = $this->getCurrencies();
-        if (!$currencies) {
+        if (!$this->isGrantedToViewPriceFields() || !$currencies) {
             return;
         }
+
         $units = $this->getAllUnits();
 
         /** @var ResultRecord[] $records */
@@ -343,5 +353,16 @@ class ProductPriceDatagridListener
         }
 
         return $groupedPrices;
+    }
+
+    /**
+     * @return bool
+     */
+    private function isGrantedToViewPriceFields()
+    {
+        return $this->authorizationChecker->isGranted(
+            'VIEW',
+            sprintf('entity:%s', ProductPrice::class)
+        );
     }
 }

@@ -4,6 +4,8 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Twig;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CheckoutBundle\Twig\LineItemsExtension;
+use Oro\Bundle\EntityBundle\Provider\EntityNameResolver;
+use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
@@ -12,7 +14,7 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
 
-class LineItemsTest extends \PHPUnit_Framework_TestCase
+class LineItemsExtensionTest extends \PHPUnit_Framework_TestCase
 {
     use TwigExtensionTestCaseTrait;
 
@@ -22,24 +24,41 @@ class LineItemsTest extends \PHPUnit_Framework_TestCase
     /** @var LineItemSubtotalProvider|\PHPUnit_Framework_MockObject_MockObject */
     protected $lineItemSubtotalProvider;
 
+    /** @var LocalizationHelper|\PHPUnit_Framework_MockObject_MockObject */
+    protected $localizedHelper;
+
+    /** @var EntityNameResolver|\PHPUnit_Framework_MockObject_MockObject */
+    protected $entityNameResolver;
+
     /** @var LineItemsExtension */
     protected $extension;
 
     public function setUp()
     {
-        $this->totalsProvider = $this->getMockBuilder(TotalProcessorProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->lineItemSubtotalProvider = $this->getMockBuilder(LineItemSubtotalProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->totalsProvider = self::createMock(TotalProcessorProvider::class);
+        $this->lineItemSubtotalProvider = self::createMock(LineItemSubtotalProvider::class);
+        $this->localizedHelper = self::createMock(LocalizationHelper::class);
+        $this->entityNameResolver = self::createMock(EntityNameResolver::class);
+        $this->entityNameResolver
+            ->method('getName')
+            ->willReturnCallback(function ($param) {
+                return $param ? 'Item Sku' : 'Item Name';
+            });
 
         $container = self::getContainerBuilder()
             ->add('oro_pricing.subtotal_processor.total_processor_provider', $this->totalsProvider)
             ->add('oro_pricing.subtotal_processor.provider.subtotal_line_item', $this->lineItemSubtotalProvider)
+            ->add('oro_locale.helper.localization', $this->localizedHelper)
+            ->add('oro_entity.entity_name_resolver', $this->entityNameResolver)
             ->getContainer($this);
 
         $this->extension = new LineItemsExtension($container);
+    }
+
+    public function testGetName()
+    {
+        self::assertEquals('oro_checkout_order_line_items', LineItemsExtension::NAME);
+        self::assertEquals('oro_checkout_order_line_items', $this->extension->getName());
     }
 
     /**
@@ -53,9 +72,15 @@ class LineItemsTest extends \PHPUnit_Framework_TestCase
         $priceValue = 123;
         $name = 'Item Name';
         $sku = 'Item Sku';
+        $comment = 'Comment';
+        $shipBy = new \DateTime();
 
         $subtotals = [
-            (new Subtotal())->setLabel('label2')->setAmount(321)->setCurrency('UAH'),
+            (new Subtotal())
+                ->setLabel('label2')
+                ->setAmount(321)
+                ->setOperation(Subtotal::OPERATION_SUBTRACTION)
+                ->setCurrency('UAH'),
             (new Subtotal())->setLabel('label1')->setAmount(123)->setCurrency('USD')
         ];
         $this->totalsProvider->expects($this->once())->method('getSubtotals')->willReturn($subtotals);
@@ -64,7 +89,30 @@ class LineItemsTest extends \PHPUnit_Framework_TestCase
         $order->setCurrency($currency);
 
         $product = $freeForm ? null : (new Product())->setSku($sku);
-        $order->addLineItem($this->createLineItem($currency, $quantity, $priceValue, $name, $sku, $product));
+        $order->addLineItem(
+            $this->createLineItem(
+                $currency,
+                $quantity,
+                $priceValue,
+                $name,
+                $sku,
+                $comment,
+                $shipBy,
+                $product
+            )
+        );
+
+        $total = new Subtotal();
+        $totalLabel = 'my total';
+        $totalCurrency = 'USD';
+        $totalAmount = 777;
+        $total->setLabel($totalLabel);
+        $total->setAmount($totalAmount);
+        $total->setCurrency($totalCurrency);
+        $this->totalsProvider->expects($this->once())
+            ->method('getTotal')
+            ->with($order)
+            ->willReturn($total);
 
         $result = self::callTwigFunction($this->extension, 'order_line_items', [$order]);
         $this->assertArrayHasKey('lineItems', $result);
@@ -76,7 +124,8 @@ class LineItemsTest extends \PHPUnit_Framework_TestCase
         $productName = $freeForm ? $name : $sku;
         $this->assertEquals($productName, $lineItem['product_name']);
         $this->assertEquals($sku, $lineItem['product_sku']);
-
+        $this->assertEquals($comment, $lineItem['comment']);
+        $this->assertEquals($shipBy, $lineItem['ship_by']);
         $this->assertEquals($quantity, $lineItem['quantity']);
         /** @var Price $price */
         $price = $lineItem['price'];
@@ -93,8 +142,15 @@ class LineItemsTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('label2', $firstSubtotal['label']);
         /** @var Price $totalPrice */
         $totalPrice = $firstSubtotal['totalPrice'];
-        $this->assertEquals(321, $totalPrice->getValue());
+        $this->assertEquals(-321, $totalPrice->getValue());
         $this->assertEquals('UAH', $totalPrice->getCurrency());
+
+        $total = $result['total'];
+        $this->assertEquals($totalLabel, $total['label']);
+        /** @var Price $totalPrice */
+        $totalPrice = $total['totalPrice'];
+        $this->assertEquals($totalAmount, $totalPrice->getValue());
+        $this->assertEquals($totalCurrency, $totalPrice->getCurrency());
     }
 
     /**
@@ -114,16 +170,28 @@ class LineItemsTest extends \PHPUnit_Framework_TestCase
      * @param float $priceValue
      * @param string $name
      * @param string $sku
+     * @param string $comment
+     * @param \DateTime $shipBy
      * @param Product|null $product
      * @return OrderLineItem
      */
-    protected function createLineItem($currency, $quantity, $priceValue, $name, $sku, Product $product = null)
-    {
+    protected function createLineItem(
+        $currency,
+        $quantity,
+        $priceValue,
+        $name,
+        $sku,
+        $comment,
+        $shipBy,
+        Product $product = null
+    ) {
         $lineItem = new OrderLineItem();
         $lineItem->setCurrency($currency);
         $lineItem->setQuantity($quantity);
         $lineItem->setPrice(Price::create($priceValue, $currency));
         $lineItem->setProductSku($sku);
+        $lineItem->setComment($comment);
+        $lineItem->setShipBy($shipBy);
         if (!$product) {
             $lineItem->setFreeFormProduct($name);
         } else {

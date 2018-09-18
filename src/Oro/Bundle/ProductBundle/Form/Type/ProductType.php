@@ -275,9 +275,11 @@ class ProductType extends AbstractType
         $product = $event->getData();
         $form = $event->getForm();
 
+        $primaryUnitPrecision = $product->getPrimaryUnitPrecision();
+
         // manual mapping
         $precisionForm = $form->get('primaryUnitPrecision');
-        if (empty($precisionForm->getData())) {
+        if (empty($precisionForm->getData()) && $primaryUnitPrecision instanceof ProductUnitPrecision) {
             // clone is required to prevent data modification by reference
             $precisionForm->setData(clone $product->getPrimaryUnitPrecision());
         }

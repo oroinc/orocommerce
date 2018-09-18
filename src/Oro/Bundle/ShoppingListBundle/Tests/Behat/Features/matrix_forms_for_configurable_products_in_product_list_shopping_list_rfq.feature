@@ -1,7 +1,11 @@
 @fixture-OroProductBundle:configurable_products.yml
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
-@fixture-OroCheckoutBundle:Checkout.yml
+@fixture-OroCheckoutBundle:Payment.yml
+@fixture-OroCheckoutBundle:Shipping.yml
+@fixture-OroCheckoutBundle:CheckoutCustomerFixture.yml
+@fixture-OroCheckoutBundle:CheckoutProductFixture.yml
+@fixture-OroCheckoutBundle:CheckoutQuoteFixture.yml
 @regression
 @ticket-BB-10500
 
@@ -745,7 +749,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
       | Value 11 | Value 12 | Value 13 | Value 14 |
       | 1        | -        | -        | 1        |
     And I click "Add to Shopping List"
-    Then I should see "Shopping list \"List 2\" was updated successfully"
+    Then I should see "Shopping list \"Shopping List\" was updated successfully"
 
   Scenario: Order with two dimensional inline matrix form
     Given type "Configurable Product B" in "search"
@@ -765,7 +769,8 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     Then I should see "Shopping list \"Product B Shopping List\" was created successfully"
 
   Scenario: Update Configurable Product B variants
-    Given I fill "Matrix Grid Form" with:
+    Given I click "Clear All"
+    And I fill "Matrix Grid Form" with:
       |          | Value 21 | Value 22 | Value 23 |
       | Value 11 | 1        | -        | -        |
       | Value 12 | 4        | -        | -        |
@@ -814,8 +819,8 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And click "View Details" for "Configurable Product A" product
     Then I should see an "One Dimensional Matrix Grid Form" element
     And I click on "Shopping List Dropdown"
-    And I click "Remove From List 2"
-    Then I should see "Product has been removed from \"List 2\""
+    And I click "Remove From Shopping List"
+    Then I should see "Product has been removed from \"Shopping List\""
     And I open shopping list widget
     And I click "View Details"
     Then I should not see "Shopping list 2 Items"

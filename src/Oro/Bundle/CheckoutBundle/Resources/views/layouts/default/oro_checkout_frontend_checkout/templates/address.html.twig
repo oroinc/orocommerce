@@ -55,17 +55,17 @@
             </div>
             <div class="grid__row grid__row--offset-none">
                 <div class="grid__column grid__column--12 grid__column--no-gutters">
-                    {{ form_row(address_form.country) }}
+                    {{ form_row(address_form.country, {'attr': {'data-role': 'checkout-shipping-address'}}) }}
                 </div>
             </div>
             <div class="grid__row grid__row--offset-none">
                 <div class="grid__column grid__column--12 grid__column--no-gutters">
-                    {{ form_row(address_form.region) }}
+                    {{ form_row(address_form.region, {'attr': {'data-role': 'checkout-shipping-address'}}) }}
                 </div>
             </div>
             <div class="grid__row grid__row--offset-none">
                 <div class="grid__column grid__column--no-gutters grid__column--6 col-zip-error">
-                    {{ form_row(address_form.postalCode, {'attr' : {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.address.zip'|trans}}) }}
+                    {{ form_row(address_form.postalCode, {'attr' : {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.address.zip'|trans, 'data-role': 'checkout-shipping-address'}}) }}
                 </div>
             </div>
         {% else %}
@@ -74,15 +74,15 @@
                     {{ form_row(address_form.city, {'attr': {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.address.city'|trans}}) }}
                 </div>
                 <div class="grid__column grid__column--2">
-                    {{ form_row(address_form.country) }}
+                    {{ form_row(address_form.country, {'attr': {'data-role': 'checkout-shipping-address'}}) }}
                 </div>
                 <div class="grid__column grid__column--2">
-                    {{ form_row(address_form.region) }}
+                    {{ form_row(address_form.region, {'attr': {'data-role': 'checkout-shipping-address'}}) }}
                 </div>
             </div>
             <div class="grid__row grid__row--offset-none">
                 <div class="grid__column grid__column--6 col-zip-error">
-                    {{ form_row(address_form.postalCode, {'attr' : {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.address.zip'|trans}}) }}
+                    {{ form_row(address_form.postalCode, {'attr' : {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.address.zip'|trans, 'data-role': 'checkout-shipping-address'}}) }}
                 </div>
             </div>
         {% endif %}

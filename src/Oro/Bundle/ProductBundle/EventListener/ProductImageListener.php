@@ -2,20 +2,15 @@
 
 namespace Oro\Bundle\ProductBundle\EventListener;
 
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-
-use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\LifecycleEventArgs;
-
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\LayoutBundle\Provider\ImageTypeProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
-use Oro\Bundle\ProductBundle\Helper\ProductImageHelper;
 use Oro\Bundle\ProductBundle\Event\ProductImageResizeEvent;
-use Oro\Bundle\ProductBundle\Entity\ProductImageType;
+use Oro\Bundle\ProductBundle\Helper\ProductImageHelper;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ProductImageListener
 {
@@ -41,6 +36,8 @@ class ProductImageListener
 
     /**
      * @param EventDispatcherInterface $eventDispatcher
+     * @param ImageTypeProvider $imageTypeProvider
+     * @param ProductImageHelper $productImageHelper
      */
     public function __construct(
         EventDispatcherInterface $eventDispatcher,
@@ -53,65 +50,50 @@ class ProductImageListener
     }
 
     /**
-     * @param ProductImage $productImage
+     * @param ProductImage $newProductImage
      * @param LifecycleEventArgs $args
      */
-    public function postPersist(ProductImage $productImage, LifecycleEventArgs $args)
+    public function postPersist(ProductImage $newProductImage, LifecycleEventArgs $args)
     {
-        /** @var Product $parentProduct */
-        $parentProduct = $productImage->getProduct();
-
-        /** @var Collection $images */
-        $parentProductImages = $parentProduct->getImages();
-
-        if ($parentProductImages->contains($productImage)) {
-            $parentProductImages->removeElement($productImage);
-        }
-
-        /** @var EntityManagerInterface $entityManager */
         $entityManager = $args->getEntityManager();
+        $product = $newProductImage->getProduct();
+        $productImages = $product->getImages();
+        $imagesByTypeCounter = $this->productImageHelper->countImagesByType($productImages);
 
-        //Remove all types of the new image within the existing collection,
-        //simulating a replace , required for api and UI import
-        foreach ($productImage->getTypes() as $newType) {
-            $this->removeImageTypeFromParent($parentProductImages, $newType->getType(), $entityManager);
+        // Ensures that maximum number of images per type is not exceeded.
+        // Required for API and UI import.
+        foreach ($productImages as $productImage) {
+            if ($newProductImage === $productImage) {
+                // Skips new product image because its types have higher priority - we shouldn't remove them.
+                continue;
+            }
+
+            // Goes through types, removes a type if maximum number of images is exceeded.
+            foreach ($productImage->getTypes() as $type) {
+                $typeName = $type->getType();
+                $maxNumberByType = $this->getMaxNumberByType($typeName);
+                if ($maxNumberByType === null || $imagesByTypeCounter[$typeName] <= $maxNumberByType) {
+                    continue;
+                }
+
+                $entityManager->remove($type);
+                $productImage->getTypes()->removeElement($type);
+            }
         }
 
-        $parentProduct->addImage($productImage);
-
-        $this->dispatchEvent($productImage);
+        $this->dispatchEvent($newProductImage);
     }
 
     /**
-     * Removes existing type from parent product image collection
+     * @param string $typeName
      *
-     * @param Collection $parentProductImages
-     * @param string $newTypeName
-     * @param EntityManagerInterface $entityManager
+     * @return int|null
      */
-    private function removeImageTypeFromParent(
-        Collection $parentProductImages,
-        string $newTypeName,
-        EntityManagerInterface $entityManager
-    ) {
+    private function getMaxNumberByType(string $typeName): ?int
+    {
         $maxNumberByType = $this->imageTypeProvider->getMaxNumberByType();
-        $imagesByTypeCounter = $this->productImageHelper->countImagesByType($parentProductImages);
 
-        /** @var ProductImage $productImage */
-        foreach ($parentProductImages as $productImage) {
-            /** @var ProductImageType $type */
-            foreach ($productImage->getTypes() as $type) {
-                $name = $type->getType();
-                if ($newTypeName === $name &&
-                    !is_null($max = $maxNumberByType[$name]['max']) &&
-                    $imagesByTypeCounter[$name] >= $max
-                ) {
-                    $entityManager->remove($type);
-                    $productImage->getTypes()->removeElement($type);
-                    break;
-                }
-            }
-        }
+        return $maxNumberByType[$typeName]['max'] ?? null;
     }
 
     /**
@@ -149,7 +131,8 @@ class ProductImageListener
             return;
         }
 
-        if ($product = $productImage->getProduct()) {
+        $product = $productImage->getProduct();
+        if ($product) {
             $this->eventDispatcher->dispatch(
                 ReindexationRequestEvent::EVENT_NAME,
                 new ReindexationRequestEvent(

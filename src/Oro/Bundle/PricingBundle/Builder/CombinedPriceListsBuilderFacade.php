@@ -25,6 +25,10 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+/**
+ * This class provides a clean interface for rebuilding combined price lists
+ * and dispatches required events when CPLs are updated
+ */
 class CombinedPriceListsBuilderFacade
 {
     /** @var DoctrineHelper */

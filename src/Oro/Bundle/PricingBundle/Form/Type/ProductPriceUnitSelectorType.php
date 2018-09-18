@@ -36,7 +36,11 @@ class ProductPriceUnitSelectorType extends ProductUnitSelectionType
         /** @var ProductUnitPrecision[] $additionalUnitPrecisions */
         $additionalUnitPrecisions = $productForm->get('additionalUnitPrecisions')->getData();
 
-        return $this->getAllProductEnabledUnits($primaryUnitPrecision, $additionalUnitPrecisions);
+        if ($primaryUnitPrecision instanceof ProductUnitPrecision) {
+            return $this->getAllProductEnabledUnits($primaryUnitPrecision, $additionalUnitPrecisions);
+        }
+
+        return $this->getUnitsFromAdditionalUnitPrecisions($additionalUnitPrecisions);
     }
 
     /**
@@ -44,12 +48,11 @@ class ProductPriceUnitSelectorType extends ProductUnitSelectionType
      * @param ProductUnitPrecision[] $additionalUnitPrecisions
      * @return ProductUnit[]
      */
-    protected function getAllProductEnabledUnits(ProductUnitPrecision $primaryUnitPrecision, $additionalUnitPrecisions)
-    {
-        $units = [];
-        if ($primaryUnitPrecision) {
-            $units[] = $primaryUnitPrecision->getUnit();
-        }
+    protected function getAllProductEnabledUnits(
+        ProductUnitPrecision $primaryUnitPrecision,
+        $additionalUnitPrecisions
+    ) {
+        $units[] = $primaryUnitPrecision->getUnit();
 
         if ($additionalUnitPrecisions) {
             foreach ($additionalUnitPrecisions as $precision) {
@@ -70,5 +73,24 @@ class ProductPriceUnitSelectorType extends ProductUnitSelectionType
         $collectionForm = $priceType ? $priceType->getParent() : null;
 
         return $collectionForm ? $collectionForm->getParent() : null;
+    }
+
+    /**
+     * Added to fix issue with null value in $primaryUnitPrecision
+     * In 3.1 getAllProductEnabledUnits will accept null as first argument
+     *
+     * @param array $additionalUnitPrecisions
+     * @return array
+     */
+    private function getUnitsFromAdditionalUnitPrecisions($additionalUnitPrecisions)
+    {
+        $units = [];
+        if ($additionalUnitPrecisions) {
+            foreach ($additionalUnitPrecisions as $precision) {
+                $units[] = $precision->getUnit();
+            }
+        }
+
+        return $units;
     }
 }

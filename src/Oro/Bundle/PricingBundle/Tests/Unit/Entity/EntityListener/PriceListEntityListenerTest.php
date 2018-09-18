@@ -204,7 +204,7 @@ class PriceListEntityListenerTest extends \PHPUnit_Framework_TestCase
                 ['pr_42']
             );
         $this->triggerHandler->expects($this->once())
-            ->method('handleFullRebuild');
+            ->method('handlePriceListStatusChange');
         $this->listener->preRemove($priceList);
     }
 }

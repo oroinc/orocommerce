@@ -41,18 +41,22 @@
         }
     ] %}
 
-    {% set dataBlocks = dataBlocks|merge([
-        {
-            'title' : 'oro.pricing.productprice.entity_plural_label'|trans,
-            'subblocks': [
-                {
-                    'title' : '',
-                    'useSpan': false,
-                    'data' : [dataGrid.renderGrid('price-list-product-prices-grid', {price_list_id: entity.id}, { cssClass: 'inner-grid' })]
-                }
-            ]
-        }
-    ]) %}
+    {% if is_granted('oro_pricing_product_price_view') %}
+
+        {% set dataBlocks = dataBlocks|merge([
+            {
+                'title' : 'oro.pricing.productprice.entity_plural_label'|trans,
+                'subblocks': [
+                    {
+                        'title' : '',
+                        'useSpan': false,
+                        'data' : [dataGrid.renderGrid('price-list-product-prices-grid', {price_list_id: entity.id}, { cssClass: 'inner-grid' })]
+                    }
+                ]
+            }
+        ]) %}
+
+    {% endif %}
 
     {% set dataBlocks = dataBlocks|merge([
         {
