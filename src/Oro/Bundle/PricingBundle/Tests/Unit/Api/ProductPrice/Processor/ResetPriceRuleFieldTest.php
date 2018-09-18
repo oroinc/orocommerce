@@ -2,36 +2,48 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Api\ProductPrice\Processor;
 
+use Oro\Bundle\ApiBundle\Tests\Unit\Processor\Update\UpdateProcessorTestCase;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\PricingBundle\Api\ProductPrice\Processor\ResetPriceRuleFieldOnUpdate;
+use Oro\Bundle\PricingBundle\Api\ProductPrice\Processor\ResetPriceRuleField;
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-use Oro\Component\ChainProcessor\ContextInterface;
-use PHPUnit\Framework\TestCase;
 
-class ResetPriceRuleFieldOnUpdateTest extends TestCase
+class ResetPriceRuleFieldTest extends UpdateProcessorTestCase
 {
-    /**
-     * @var ContextInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $context;
-
-    /**
-     * @var ResetPriceRuleFieldOnUpdate
-     */
+    /** @var ResetPriceRuleField */
     private $processor;
 
     protected function setUp()
     {
-        $this->context = $this->createMock(ContextInterface::class);
+        parent::setUp();
 
-        $this->processor = new ResetPriceRuleFieldOnUpdate();
+        $this->processor = new ResetPriceRuleField();
     }
 
-    public function testProcessWrongType()
+    public function testProcessWhenNoProductPriceInContextResult()
     {
+        $oldProductPrice = new ProductPrice();
+        $oldProductPrice->setPrice(Price::create('', ''));
+
+        $this->context->set('product_price', $oldProductPrice);
         $this->processor->process($this->context);
+
+        self::assertTrue($this->context->has('product_price'));
+    }
+
+    public function testProcessWithoutRememberedProductPrice()
+    {
+        $newProductPrice = new ProductPrice();
+        $newProductPrice
+            ->setPriceRule(new PriceRule())
+            ->setPrice(Price::create('', ''));
+
+        $this->context->setResult($newProductPrice);
+        $this->processor->process($this->context);
+
+        self::assertNotNull($newProductPrice->getPriceRule());
+        self::assertFalse($this->context->has('product_price'));
     }
 
     public function testProcessQuantityChanges()
@@ -76,12 +88,12 @@ class ResetPriceRuleFieldOnUpdateTest extends TestCase
             ->setPriceRule(new PriceRule())
             ->setPrice(Price::create('', ''));
 
-        $this->setContextExpectations($oldProductPrice, $newProductPrice);
-
+        $this->context->set('product_price', $oldProductPrice);
+        $this->context->setResult($newProductPrice);
         $this->processor->process($this->context);
-        $this->processor->process($this->context);
 
-        static::assertNotNull($newProductPrice->getPriceRule());
+        self::assertNotNull($newProductPrice->getPriceRule());
+        self::assertFalse($this->context->has('product_price'));
     }
 
     /**
@@ -94,27 +106,11 @@ class ResetPriceRuleFieldOnUpdateTest extends TestCase
             ->setPriceRule(new PriceRule())
             ->setPrice(Price::create('', ''));
 
-        $this->setContextExpectations($oldProductPrice, $newProductPrice);
-
+        $this->context->set('product_price', $oldProductPrice);
+        $this->context->setResult($newProductPrice);
         $this->processor->process($this->context);
-        $this->processor->process($this->context);
 
-        static::assertNull($newProductPrice->getPriceRule());
-    }
-
-    /**
-     * @param ProductPrice $oldProductPrice
-     * @param ProductPrice $newProductPrice
-     */
-    private function setContextExpectations(ProductPrice $oldProductPrice, ProductPrice $newProductPrice)
-    {
-        $this->context
-            ->expects(static::at(0))
-            ->method('getResult')
-            ->willReturn($oldProductPrice);
-        $this->context
-            ->expects(static::at(1))
-            ->method('getResult')
-            ->willReturn($newProductPrice);
+        self::assertNull($newProductPrice->getPriceRule());
+        self::assertFalse($this->context->has('product_price'));
     }
 }

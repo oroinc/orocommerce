@@ -10,7 +10,6 @@ OroProductBundle adds the Product entity to the OroCommerce application, provide
  - Product creation
     - [Two Step Product Creation](./Resources/doc/two-step-product-creation.md)
     - [Default Product Unit](./Resources/doc/default-product-unit.md)
- - [Product API](./Resources/doc/product-api.md)
  - [Product Attributes](./Resources/doc/product-attributes.md)
  - [Customize products using layouts](./Resources/doc/customize-products.md)
  - [Related items](./Resources/doc/related-items.md)

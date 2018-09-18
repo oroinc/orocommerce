@@ -4,6 +4,7 @@ namespace Oro\Bundle\PricingBundle\Async;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityNotFoundException;
 use Oro\Bundle\PricingBundle\Builder\ProductPriceBuilder;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
@@ -19,6 +20,9 @@ use Oro\Component\MessageQueue\Util\JSON;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
+/**
+ * Resolve price lists rules and update actuality of price lists
+ */
 class PriceRuleProcessor implements MessageProcessorInterface, TopicSubscriberInterface
 {
     /**
@@ -104,7 +108,12 @@ class PriceRuleProcessor implements MessageProcessorInterface, TopicSubscriberIn
 
             $repository = $em->getRepository(PriceList::class);
             foreach ($trigger->getProducts() as $plId => $plProducts) {
-                $this->processPriceList($repository->find($plId), $plProducts);
+                /** @var PriceList|null $priceList */
+                $priceList = $repository->find($plId);
+                if (null === $priceList) {
+                    throw new EntityNotFoundException(sprintf('PriceList entity with identifier %s not found', $plId));
+                }
+                $this->processPriceList($priceList, $plProducts);
             }
 
             $this->priceBuilder->flush();

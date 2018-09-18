@@ -15,6 +15,7 @@ class LoadCombinedPriceLists extends AbstractCombinedPriceListsFixture
         [
             'name' => '1t_2t_3t',
             'enabled' => true,
+            'calculated' => true,
             'priceListsToCustomers' => [],
             'priceListsToCustomerGroups' => [
                 [
@@ -41,6 +42,7 @@ class LoadCombinedPriceLists extends AbstractCombinedPriceListsFixture
         [
             'name' => '2t_3f_1t',
             'enabled' => true,
+            'calculated' => true,
             'priceListsToCustomers' => [
                 [
                     'customer' => 'customer.level_1.2',
@@ -67,6 +69,7 @@ class LoadCombinedPriceLists extends AbstractCombinedPriceListsFixture
         [
             'name' => '2f_1t_3t',
             'enabled' => true,
+            'calculated' => true,
             'priceListsToCustomers' => [
                 [
                     'customer' => 'customer.level_1.2',
@@ -93,6 +96,7 @@ class LoadCombinedPriceLists extends AbstractCombinedPriceListsFixture
         [
             'name' => '1f',
             'enabled' => true,
+            'calculated' => true,
             'priceListsToCustomers' => [],
             'priceListsToCustomerGroups' => [],
             'websites' => ['default'],
@@ -106,6 +110,7 @@ class LoadCombinedPriceLists extends AbstractCombinedPriceListsFixture
         [
             'name' => '2f',
             'enabled' => true,
+            'calculated' => true,
             'priceListsToCustomers' => [],
             'priceListsToCustomerGroups' => [],
             'websites' => [LoadWebsiteData::WEBSITE2],
@@ -119,6 +124,7 @@ class LoadCombinedPriceLists extends AbstractCombinedPriceListsFixture
         [
             'name' => '2t_3t',
             'enabled' => true,
+            'calculated' => true,
             'priceListsToCustomers' => [],
             'priceListsToCustomerGroups' => [],
             'websites' => [],
