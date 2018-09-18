@@ -44,6 +44,8 @@ operations:
                 method_parameters: [$.data]
                 attribute: $.workflowItem
 
+            - '@assign_value': [$.visitor_email, $.workflowItem.data.visitor_email]
+
             - '@assign_value': [$.address, $.data.billingAddress]
             - '@assign_value': [$.address.customerAddress, null]
             - '@assign_value': [$.address.customerUserAddress, null]
