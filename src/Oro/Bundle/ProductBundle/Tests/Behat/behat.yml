@@ -902,6 +902,7 @@ oro_behat_extension:
         - OroNavigationBundle::PinbarContext
         - OroQueryDesignerBundle::QueryDesignerContext
         - OroLocaleBundle::LocalizationContext
+        - OroWorkflowBundle::FeatureContext
       paths:
         - '@OroProductBundle/Tests/Behat/Features/product-collection'
         - '@OroProductBundle/Tests/Behat/Features/product'
