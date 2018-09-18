@@ -54,26 +54,7 @@ Feature: Single Page Checkout With Popup for Guest
     When I save form
     Then I should see "Customer group has been saved" flash message
 
-  Scenario: Configure shipping rules
-    Given I go to System/Shipping Rules
-    And I click Edit "Default" in grid
-    And I click "Add"
-    And fill "Shipping Rule" with:
-      | Country1 | Germany |
-    When I save and close form
-    Then I should see "Shipping rule has been saved" flash message
-    When I go to System/Shipping Rules
-    And I click Edit "Flat Rate 2$" in grid
-    And I click "Add"
-    And fill "Shipping Rule" with:
-      | Country1 | Albania |
-    And I click "Add"
-    And fill "Shipping Rule" with:
-      | Country2 | Georgia |
-    And I save and close form
-    Then I should see "Shipping rule has been saved" flash message
-
-  Scenario: Validate new billing address form
+  Scenario: Validate new billing address form and empty billing address notification
     Given I proceed as the Guest
     And I am on homepage
     And type "SKU123" in "search"
@@ -112,8 +93,7 @@ Feature: Single Page Checkout With Popup for Guest
     When I close ui dialog
     Then I should see "New address" for "Select Billing Address" select
 
-  Scenario: Create order with new shipping address and new billing address
-    Given I scroll to top
+    Scenario: Check empty shipping address notification
     And I click on "Billing Address Select"
     And I click on "New Address Option"
     And I fill "New Address Popup Form" with:
@@ -136,6 +116,58 @@ Feature: Single Page Checkout With Popup for Guest
     Then I should see "New address (B Prefix B Fname B Mname B Lname B Suffix, B Organization, B Street B Street 2, B CITY HA AL 12345, 12345)" for "Select Billing Address" select
     And I click "Submit Order"
     And I should see "Please enter correct shipping address"
+
+  Scenario: Configure shipping rules
+    Given I proceed as the Admin
+    Given I go to System/Shipping Rules
+    And I click Edit "Default" in grid
+    And I click "Add"
+    And fill "Shipping Rule" with:
+      | Country1 | Germany |
+    When I save and close form
+    Then I should see "Shipping rule has been saved" flash message
+    When I go to System/Shipping Rules
+    And I click Edit "Flat Rate 2$" in grid
+    And I click "Add"
+    And fill "Shipping Rule" with:
+      | Country1 | Albania |
+    And I click "Add"
+    And fill "Shipping Rule" with:
+      | Country2 | Georgia |
+    And I save and close form
+    Then I should see "Shipping rule has been saved" flash message
+
+  Scenario: Fill and save billing address via popup
+    Given I proceed as the Guest
+    Given I scroll to top
+    And I click on "Billing Address Select"
+    And I click on "New Address Option"
+    And I fill "New Address Popup Form" with:
+      | Email        | test@example.com |
+      | Label        | B Address        |
+      | Name Prefix  | B Prefix         |
+      | First Name   | B Fname          |
+      | Middle Name  | B Mname          |
+      | Last Name    | B Lname          |
+      | Name Suffix  | B Suffix         |
+      | Organization | B Organization   |
+      | Phone        | 12345            |
+      | Street       | B Street         |
+      | Street 2     | B Street 2       |
+      | City         | B City           |
+      | Country      | Albania          |
+      | State        | Has              |
+      | Postal Code  | 12345            |
+    And I click "Continue"
+    Then I should see "New address (B Prefix B Fname B Mname B Lname B Suffix, B Organization, B Street B Street 2, B CITY HA AL 12345, 12345)" for "Select Billing Address" select
+
+  Scenario: Check guest email is saved in popup
+    And I click on "Billing Address Select"
+    And I click on "New Address Option"
+    And the "Email" field should contain "test@example.com"
+    And I close ui dialog
+
+  Scenario: Fill and save shipping address via popup and create order
     And I click on "Shipping Address Select"
     And I click on "New Address Option"
     And I fill "New Address Popup Form" with:
