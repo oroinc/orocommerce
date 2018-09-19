@@ -15,11 +15,12 @@ Feature: Product attribute boolean
       | Type       | Boolean      |
     And I click "Continue"
     Then I should see that "Product Attribute Frontend Options" does not contain "Searchable"
-    And I should see that "Product Attribute Frontend Options" does not contain "Filterable"
+    And I should see that "Product Attribute Frontend Options" contains "Filterable"
     And I should see that "Product Attribute Frontend Options" contains "Sortable"
 
     When I fill form with:
-      | Sortable | Yes |
+      | Filterable | Yes |
+      | Sortable   | Yes |
     And I save and close form
     Then I should see "Attribute was successfully saved" flash message
 
