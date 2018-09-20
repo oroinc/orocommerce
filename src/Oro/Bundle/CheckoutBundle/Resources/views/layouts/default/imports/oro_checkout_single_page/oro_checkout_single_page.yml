@@ -66,3 +66,20 @@ layout:
             id: shipping_methods_wrapper
             optionName: reloadEvents
             optionValue: []
+
+        - '@add':
+            id: shipping_address_inner_wrapper
+            blockType: layout_subtree_update
+            parentId: shipping_address
+            options:
+                reloadEvents: []
+                showLoading: false
+
+        - '@add':
+            id: shipping_address_inner
+            blockType: checkout_form_fields
+            parentId: shipping_address_inner_wrapper
+            options:
+                checkout: '=data["checkout"]'
+                form: '=data["oro_checkout_single_page_transition_form"].getTransitionFormView(data["workflowItem"])'
+                workflowItem: '=data["workflowItem"]'
