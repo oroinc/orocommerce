@@ -56,6 +56,12 @@ define(function(require) {
             this.$currencySelect = this.$elem.find(options.currencySelector);
 
             this.prepareCurrencySelect(false);
+            this.$elem.one(
+                'change',
+                function() {
+                    this.$elem.removeAttr('data-validation-ignore');
+                }.bind(this)
+            );
             this.$elem.on(
                 'change',
                 options.priceListSelector,

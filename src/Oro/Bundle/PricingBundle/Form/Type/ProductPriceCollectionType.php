@@ -74,6 +74,10 @@ class ProductPriceCollectionType extends AbstractType
         $view->vars['attr']['data-currencies'] = json_encode(
             $this->registry->getRepository($this->priceListClass)->getCurrenciesIndexedByPricelistIds()
         );
+
+        $view->vars['skip_optional_validation_group'] = true;
+
+        unset($view->vars['attr']['data-validation-optional-group']);
     }
 
     /**
