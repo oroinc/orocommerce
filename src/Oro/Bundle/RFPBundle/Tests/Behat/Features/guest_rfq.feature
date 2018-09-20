@@ -105,7 +105,7 @@ Feature: Guest RFQ
   Scenario: Create RFQ with another localization and check product unit in email
     Given I proceed as the Buyer
     And I am on the homepage
-    And I press "Localization Switcher"
+    And I click "Localization Switcher"
     And I select "Localization 1" localization
     And I open shopping list widget
     And I click "View Details"

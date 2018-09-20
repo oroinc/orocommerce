@@ -79,7 +79,7 @@ Feature: Product attribute multiselect
   Scenario: Check if multiselect attribute if available for Reports & Segments
     Given I proceed as the Admin
     And I go to Reports & Segments / Manage Segments
-    And I press "Create Segment"
+    And I click "Create Segment"
     And I fill "Segment Form" with:
       | Name         | Segment with multiselect |
       | Entity       | Product                  |

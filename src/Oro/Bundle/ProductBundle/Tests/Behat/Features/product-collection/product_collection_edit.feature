@@ -63,7 +63,7 @@ Feature: Product collection edit
     And Page meta description equals "AnotherCollectionMetaDescription"
     And Page meta title equals "AnotherCollectionMetaTitle"
     When type "AnotherCollectionMetaKeyword" in "search"
-    And I press "Search Button"
+    And I click "Search Button"
     Then I should see "PSKU1"
 
   Scenario: Products Collection is deletable
@@ -81,5 +81,5 @@ Feature: Product collection edit
     Given I proceed as the Buyer
     And I am on homepage
     When type "AnotherCollectionMetaKeyword" in "search"
-    And I press "Search Button"
+    And I click "Search Button"
     Then I should not see "PSKU1"

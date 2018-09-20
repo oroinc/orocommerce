@@ -14,15 +14,15 @@ Feature: Javascript validation on "Default" Checkout workflow
     And AmandaRCole@example.org customer user has Buyer role
     And I signed in as AmandaRCole@example.org on the store frontend
     When I open page with shopping list List 1
-    And I press "Create Order (Custom)"
-    And I press "Continue"
+    And I click "Create Order (Custom)"
+    And I click "Continue"
     Then I should see "This value should not be blank."
 
   Scenario: Check validation without error
     Given I open page with shopping list List 1
-    And I press "Create Order (Custom)"
+    And I click "Create Order (Custom)"
     And I fill "Checkout Order Review Form" with:
       | Notes | Customer test note |
-    And I press "Continue"
+    And I click "Continue"
     Then I should not see "This value should not be blank."
     And I should see "Thank You For Your Purchase!"

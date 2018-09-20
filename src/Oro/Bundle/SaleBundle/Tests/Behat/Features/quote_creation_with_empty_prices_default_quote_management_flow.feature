@@ -39,7 +39,7 @@ Feature: Quote creation with empty prices (Default Quote Management Flow)
     And I login as administrator
     And go to System/Workflows
     And I click "Activate" on row "Quote Management Flow" in grid
-    And I press "Activate"
+    And I click "Activate"
     Then I should see "Workflow activated" flash message
 
   Scenario: Create quote with empty/zero price from RFQ and check send to customer is not available
