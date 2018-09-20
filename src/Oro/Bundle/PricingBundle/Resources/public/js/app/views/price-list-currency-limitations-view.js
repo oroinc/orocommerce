@@ -1,14 +1,14 @@
 define(function(require) {
     'use strict';
 
-    var PriceListCurrencyLimitationComponent;
+    var PriceListCurrencyLimitationView;
     var $ = require('jquery');
     var _ = require('underscore');
     var routing = require('routing');
     var LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
-    var BaseComponent = require('oroui/js/app/components/base/component');
+    var BaseView = require('oroui/js/app/views/base/view');
 
-    PriceListCurrencyLimitationComponent = BaseComponent.extend({
+    PriceListCurrencyLimitationView = BaseView.extend({
         /**
          * @property {Object}
          */
@@ -25,20 +25,19 @@ define(function(require) {
         currencies: {},
 
         /**
-         * @property {Object}
+         * @inheritDoc
          */
-        $priceListSelect: null,
-
-        /**
-         * @property {Object}
-         */
-        $currencySelect: null,
+        events: function() {
+            var events = {};
+            events['change ' + this.options.priceListSelector] = this.prepareCurrencySelect.bind(this, true);
+            return events;
+        },
 
         /**
          * @inheritDoc
          */
-        constructor: function PriceListCurrencyLimitationComponent(options) {
-            PriceListCurrencyLimitationComponent.__super__.constructor.call(this, options);
+        constructor: function PriceListCurrencyLimitationView(options) {
+            PriceListCurrencyLimitationView.__super__.constructor.call(this, options);
         },
 
         /**
@@ -46,24 +45,26 @@ define(function(require) {
          */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
-            this.$elem = options._sourceElement;
 
-            this.loadingMaskView = new LoadingMaskView({container: this.$elem});
-            this.currencies = this.$elem.closest(options.container).data('currencies');
-            this.$priceListSelect = this.$elem.find(options.priceListSelector);
-            this.$currencySelect = this.$elem.find(options.currencySelector);
+            this.currencies = this.$el.closest(options.container).data('currencies');
 
             this.prepareCurrencySelect(false);
-            this.$elem.on(
-                'change',
-                options.priceListSelector,
-                _.bind(
-                    function() {
-                        this.prepareCurrencySelect(true);
-                    },
-                    this
-                )
+        },
+
+        /**
+         * @inheritDoc
+         */
+        delegateEvents: function(events) {
+            PriceListCurrencyLimitationView.__super__.delegateEvents.call(this, events);
+
+            this.$el.one(
+                'change' + this.eventNamespace(),
+                function() {
+                    this.$el.removeAttr('data-validation-ignore');
+                }.bind(this)
             );
+
+            return this;
         },
 
         /**
@@ -73,7 +74,7 @@ define(function(require) {
          * @return {Object.<string, HTMLOptionElement>}
          */
         getSystemSupportedCurrencyOptions: function() {
-            var $collectionContainer = this.$elem.closest(this.options.container);
+            var $collectionContainer = this.$el.closest(this.options.container);
             var currencyOptions = $collectionContainer.data('systemSupportedCurrencyOptions');
 
             if (!currencyOptions) {
@@ -97,34 +98,35 @@ define(function(require) {
          *  @param {Boolean} selectFirst
          */
         prepareCurrencySelect: function(selectFirst) {
-            var priceListId = this.$priceListSelect.val();
-            var self = this;
+            var priceListId = this.$(this.options.priceListSelector).val();
 
             if (!priceListId) {
-                this.$currencySelect.find('option[value=""]').show();
-                this.$currencySelect.attr('disabled', 'disabled');
-                this.$currencySelect.val('');
-                this.$currencySelect.trigger('change');
+                var $currencySelect = this.$(this.options.currencySelector);
+                $currencySelect.find('option[value=""]').show();
+                $currencySelect.attr('disabled', 'disabled');
+                $currencySelect.val('');
+                $currencySelect.trigger('change');
                 return;
             }
 
             if (_.has(this.currencies, priceListId)) {
                 this.handleCurrencies(this.currencies[priceListId], selectFirst);
             } else {
+                var loadingMaskView = this.getLoadingMaskView();
                 $.ajax({
                     url: routing.generate(this.options.currenciesRoute, {id: priceListId}),
                     type: 'GET',
                     beforeSend: function() {
-                        self.loadingMaskView.show();
+                        loadingMaskView.show();
                     },
                     success: function(response) {
                         var priceListCurrencies = _.keys(response);
-                        self.currencies[priceListId] = priceListCurrencies;
-                        self.$elem.closest(self.options.container).data('currencies', self.currencies);
-                        self.handleCurrencies(priceListCurrencies, selectFirst);
-                    },
+                        this.currencies[priceListId] = priceListCurrencies;
+                        this.$el.closest(this.options.container).data('currencies', this.currencies);
+                        this.handleCurrencies(priceListCurrencies, selectFirst);
+                    }.bind(this),
                     complete: function() {
-                        self.loadingMaskView.hide();
+                        loadingMaskView.hide();
                     }
                 });
             }
@@ -141,37 +143,42 @@ define(function(require) {
             }
 
             var systemSupportedCurrencyOptions = this.getSystemSupportedCurrencyOptions();
-            var value = this.$currencySelect.val();
-            this.$currencySelect.empty();
+            var $currencySelect = this.$(this.options.currencySelector);
+            var value = $currencySelect.val();
+            $currencySelect.empty();
             _.each(priceListCurrencies, function(currency) {
                 if (currency in systemSupportedCurrencyOptions) {
                     var newOption = systemSupportedCurrencyOptions[currency].cloneNode(true);
                     if (!_.isEmpty(value) && newOption.value === value) {
                         newOption.selected = true;
                     }
-                    this.$currencySelect.append(newOption);
+                    $currencySelect.append(newOption);
                 }
             }, this);
 
-            this.$currencySelect.find('option[value=""]').hide();
-            this.$currencySelect.removeAttr('disabled');
+            $currencySelect.find('option[value=""]').hide();
+            $currencySelect.removeAttr('disabled');
 
             if (selectFirst && _.isEmpty(value)) {
-                this.$currencySelect.val(priceListCurrencies[1]);
-                this.$currencySelect.trigger('change');
+                $currencySelect.val(priceListCurrencies[1]);
+                $currencySelect.trigger('change');
             }
         },
 
-        dispose: function() {
-            if (this.disposed) {
-                return;
+        /**
+         * Creates lazily loading mask subview
+         *
+         * @return {LoadingMaskView}
+         */
+        getLoadingMaskView: function() {
+            var loadingMaskView = this.subview('loading-mask');
+            if (!loadingMaskView) {
+                loadingMaskView = new LoadingMaskView({container: this.$el});
+                this.subview('loading-mask', loadingMaskView);
             }
-
-            this.$elem.off();
-
-            PriceListCurrencyLimitationComponent.__super__.dispose.call(this);
+            return loadingMaskView;
         }
     });
 
-    return PriceListCurrencyLimitationComponent;
+    return PriceListCurrencyLimitationView;
 });
