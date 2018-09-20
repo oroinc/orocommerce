@@ -12,7 +12,7 @@ Feature: Promotions at Checkout
     And I disable inventory management
     Then I signed in as AmandaRCole@example.org on the store frontend
     When I open page with shopping list List 1
-      And I press "Create Order"
+      And I click "Create Order"
     Then I see next line item discounts for checkout:
       | SKU  | Discount |
       | SKU1 |          |

@@ -141,17 +141,17 @@ Feature: Commerce smoke e2e
     And fill form with:
       | Field Name | Color  |
       | Type       | Select |
-    And press "Continue"
+    And click "Continue"
     And set Options with:
       | Label  |
       | Black  |
       | White  |
     And save and close form
-    And I press "Create Attribute"
+    And I click "Create Attribute"
     And fill form with:
       | Field Name | Size   |
       | Type       | Select |
-    And press "Continue"
+    And click "Continue"
     And set Options with:
       | Label  |
       | L      |
@@ -161,7 +161,7 @@ Feature: Commerce smoke e2e
     Then should see Schema updated flash message
 
     And go to Products/ Product Families
-    When I press "Create Product Family"
+    When I click "Create Product Family"
     And fill "Product Family Form" with:
       | Code       | tshirt_family |
       | Label      | Tshirts       |
@@ -448,7 +448,7 @@ Feature: Commerce smoke e2e
       | Email Address    | AmandaRCole1@example.org |
       | Password         | AmandaRCole1@example.org |
       | Confirm Password | AmandaRCole1@example.org |
-    When I press "Create An Account"
+    When I click "Create An Account"
     Then I should see "Please check your email to complete registration" flash message
 
   Scenario: Create customer from the frontstore

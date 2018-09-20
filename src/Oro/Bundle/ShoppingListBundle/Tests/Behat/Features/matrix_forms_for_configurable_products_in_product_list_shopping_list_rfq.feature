@@ -820,7 +820,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And click "Search Button"
     And click "View Details" for "CNF_B" product
     Then I should not see an "Matrix Grid Form" element
-    And I press "Add to Shopping List"
+    And I click "Add to Shopping List"
     Then I should see an "Matrix Grid Form" element
     # Check popup close button and product name in popup title
     And I should see "Configurable Product B Item #: CNF_B" in the "Matrix Grid Popup" element
@@ -998,7 +998,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And click "Search Button"
     And click "View Details" for "CNF_B" product
     Then I should not see an "Matrix Grid Form" element
-    And I press "Add to Product C Shopping List"
+    And I click "Add to Product C Shopping List"
     Then I should see an "Matrix Grid Form" element
 
   Scenario: Check matrix form disabled
