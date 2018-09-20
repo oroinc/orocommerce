@@ -104,6 +104,12 @@ define(function(require) {
             if (this.submitStarted) {
                 return;
             }
+
+            // Do not execute logic when hidden element (form) is refreshed
+            if (!$(event.target).is(':visible')) {
+                return;
+            }
+
             var validate = this.$el.validate();
             if (!validate.checkForm()) {
                 return;

@@ -382,3 +382,35 @@ Feature: Single Page Checkout With Popup for Buyer
       | Shipping Address | B Address B Prefix B Fname B Mname B Lname B Suffix B Organization B Street B Street 2 B CITY HA AL 12345 12345 |
       | Shipping Method  | Flat Rate 2                                                                                                     |
       | Payment Method   | Payment Term                                                                                                    |
+
+  Scenario: Shipping rule should apply correctly after switching to address from address book
+    Given I open page with shopping list List 1
+    And I scroll to top
+    And I wait line items are initialized
+    And I click "Create Order"
+    And I click on "Billing Address Select"
+    And I click on "New Address Option"
+    And I fill "New Address Popup Form" with:
+      | Label        | B Address          |
+      | Name Prefix  | B Prefix           |
+      | First Name   | B Fname            |
+      | Middle Name  | B Mname            |
+      | Last Name    | B Lname            |
+      | Name Suffix  | B Suffix           |
+      | Organization | B Organization     |
+      | Phone        | 12345              |
+      | Street       | B Street           |
+      | Street 2     | B Street 2         |
+      | City         | B City             |
+      | Country      | Ukraine            |
+      | State        | Cherkas'ka Oblast' |
+      | Postal Code  | 12345              |
+    And I click "Continue"
+    When I check "Use billing address" on the checkout page
+    Then There is no shipping method available for this order
+    When I select "Fifth avenue, 10115 Berlin, Germany" from "Select Billing Address"
+    Then I should see "Flat Rate: $3.00"
+    When I click "Delete this shopping list after submitting order"
+    And I wait "Submit Order" button
+    And I click "Submit Order"
+    Then I see the "Thank You" page with "Thank You For Your Purchase!" title

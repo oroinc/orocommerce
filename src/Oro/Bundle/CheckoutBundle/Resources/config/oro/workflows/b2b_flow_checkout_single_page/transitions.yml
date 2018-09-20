@@ -96,6 +96,7 @@ workflows:
                         saveStateUrl: $.result.saveStateUrl
                         targetLayoutBlocks:
                             '[data-role="checkout-ship-to"]':
+                                - 'shipping_address_inner_wrapper'
                                 - 'payment_methods_wrapper'
                                 - 'shipping_methods_wrapper'
                                 - 'checkout_order_summary_totals_wrapper'

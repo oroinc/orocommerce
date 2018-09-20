@@ -59,7 +59,13 @@
     }}) }}
     {{ form_row(form.ship_to_billing_address, {'attr': {'data-role': 'checkout-ship-to'}}) }}
 
-    <div class="hidden">{{ form_row(form.save_shipping_address) }}</div>
+    {{ block_widget(block) }}
+{%- endblock %}
+
+{% block _shipping_address_inner_widget -%}
+    {% import 'OroCheckoutBundle:layouts/default/oro_checkout_frontend_checkout/templates:address.html.twig' as address %}
+
+    {{ address.address_form(form.shipping_address, form.save_shipping_address, false, true) }}
 {%- endblock %}
 
 {% block _billing_address_widget -%}
@@ -71,6 +77,6 @@
             'data-new-address-label': checkout.billingAddress|oro_format_address(null, ', ')
         }}) }}
 
-        <div class="hidden">{{ form_row(form.save_billing_address) }}</div>
+        {{ address.address_form(form.billing_address, form.save_billing_address, false, true) }}
     </div>
 {%- endblock %}
