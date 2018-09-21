@@ -41,7 +41,8 @@ define(function(require) {
          * @inheritDoc
          */
         listen: {
-            'before-save-state': 'onBeforeSaveState'
+            'before-save-state': 'onBeforeSaveState',
+            'after-save-state': 'onAfterSaveState'
         },
 
         /**
@@ -52,12 +53,7 @@ define(function(require) {
         /**
          * @property {number}
          */
-        timeout: 150,
-
-        /**
-         * @property {boolean}
-         */
-        submitStarted: false,
+        timeout: 50,
 
         /**
          * @inheritDoc
@@ -101,7 +97,7 @@ define(function(require) {
          * @param {jQuery.Event} event
          */
         onChange: function(event) {
-            if (this.submitStarted) {
+            if (this.subview('checkoutSubmitButton').isHovered()) {
                 return;
             }
 
@@ -131,16 +127,18 @@ define(function(require) {
 
         onBeforeSaveState: function() {
             this._disableShippingAddress();
-            this.subview('checkoutSubmitButton')
-                .setElement(this.$el.find(this.options.submitButtonSelector))
-                .onToggleState();
+            this.subview('checkoutSubmitButton').onToggleState();
+        },
+
+        onAfterSaveState: function() {
+            // Resets submit button element
+            this.subview('checkoutSubmitButton').setElement(this.$el.find(this.options.submitButtonSelector));
         },
 
         /**
          * @param {jQuery.Event} event
          */
         onSubmit: function(event) {
-            this.submitStarted = true; //This value is set to false after reinitialize on submit ends
             event.preventDefault();
 
             var validate = this.$el.validate();
