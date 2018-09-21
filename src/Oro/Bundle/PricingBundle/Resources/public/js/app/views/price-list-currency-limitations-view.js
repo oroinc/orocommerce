@@ -142,26 +142,27 @@ define(function(require) {
                 priceListCurrencies.unshift('');
             }
 
+            var optionElements = [];
             var systemSupportedCurrencyOptions = this.getSystemSupportedCurrencyOptions();
             var $currencySelect = this.$(this.options.currencySelector);
             var value = $currencySelect.val();
             $currencySelect.empty();
             _.each(priceListCurrencies, function(currency) {
                 if (currency in systemSupportedCurrencyOptions) {
-                    var newOption = systemSupportedCurrencyOptions[currency].cloneNode(true);
-                    if (!_.isEmpty(value) && newOption.value === value) {
-                        newOption.selected = true;
-                    }
-                    $currencySelect.append(newOption);
+                    optionElements.push(systemSupportedCurrencyOptions[currency].cloneNode(true));
                 }
             }, this);
 
-            $currencySelect.find('option[value=""]').hide();
-            $currencySelect.removeAttr('disabled');
+            $currencySelect
+                .append(optionElements)
+                .removeAttr('disabled')
+                .find('option[value=""]').hide();
 
             if (selectFirst && _.isEmpty(value)) {
                 $currencySelect.val(priceListCurrencies[1]);
                 $currencySelect.trigger('change');
+            } else {
+                $currencySelect.val(value);
             }
         },
 
