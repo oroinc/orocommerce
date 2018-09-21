@@ -191,6 +191,7 @@ define(function(require) {
                 .done(function(response) {
                     this._setLayoutSubTreeViewContent(response);
                     this._afterLayoutSubTreeViewContentLoading();
+                    this.formView.trigger('after-save-state');
                     dfd.resolve(response);
                 }.bind(this))
                 .fail(function(reject) {
