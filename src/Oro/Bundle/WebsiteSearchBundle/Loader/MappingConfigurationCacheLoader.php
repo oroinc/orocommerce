@@ -6,6 +6,9 @@ use Doctrine\Common\Cache\CacheProvider;
 use Oro\Bundle\WebsiteSearchBundle\Provider\ResourcesHashProvider;
 use Oro\Component\Config\CumulativeResourceInfo;
 
+/**
+ * The website search configuration loader.
+ */
 class MappingConfigurationCacheLoader implements ConfigurationLoaderInterface
 {
     const CACHE_KEY_HASH = 'cache_key_hash';
@@ -117,17 +120,14 @@ class MappingConfigurationCacheLoader implements ConfigurationLoaderInterface
      */
     protected function isFresh()
     {
-        $cacheExists = $this->cacheProvider->contains(self::CACHE_KEY_HASH);
-
-        if (!$cacheExists) {
+        $cachedHash = $this->cacheProvider->fetch(self::CACHE_KEY_HASH);
+        if (false === $cachedHash) {
             return false;
         }
 
         if (!$this->debug) {
             return true;
         }
-
-        $cachedHash = $this->cacheProvider->fetch(self::CACHE_KEY_HASH);
 
         return $cachedHash === $this->hashProvider->getHash($this->getResources());
     }
