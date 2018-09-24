@@ -1,0 +1,31 @@
+Oro\Bundle\PricingBundle\Entity\ProductPrice:
+    priceUsd2:
+        product: '@product1'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@each'
+        value: 23
+    priceEur2:
+        product: '@product1'
+        priceList: '@defaultPriceList'
+        currency: 'EUR'
+        quantity: 1
+        unit: '@each'
+        value: 20
+
+Oro\Bundle\PricingBundle\Entity\CombinedProductPrice:
+    combinedPriceRelationUsd2:
+        product: '@product1'
+        priceList: '@combinedPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@each'
+        value: 23
+    combinedPriceRelationEur2:
+        product: '@product1'
+        priceList: '@combinedPriceList'
+        currency: 'EUR'
+        quantity: 1
+        unit: '@each'
+        value: 20

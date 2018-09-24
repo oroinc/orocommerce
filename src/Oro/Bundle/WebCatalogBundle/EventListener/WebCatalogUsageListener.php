@@ -9,6 +9,11 @@ use Oro\Bundle\WebCatalogBundle\Provider\CacheableWebCatalogUsageProvider;
 use Oro\Bundle\WebCatalogBundle\Provider\WebCatalogUsageProvider;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
+/**
+ * Clears the cache of the web catalog usage provider
+ * when another web catalog is selected,
+ * a new web catalog is created or existing web catalog is deleted.
+ */
 class WebCatalogUsageListener
 {
     /** @var CacheableWebCatalogUsageProvider */
@@ -27,9 +32,7 @@ class WebCatalogUsageListener
      */
     public function onConfigurationUpdate(ConfigUpdateEvent $event)
     {
-        if ($this->cacheableWebCatalogUsageProvider->hasCache()
-            && $event->isChanged(WebCatalogUsageProvider::SETTINGS_KEY)
-        ) {
+        if ($event->isChanged(WebCatalogUsageProvider::SETTINGS_KEY)) {
             $this->cacheableWebCatalogUsageProvider->clearCache();
         }
     }
@@ -39,9 +42,7 @@ class WebCatalogUsageListener
      */
     public function onFlush(OnFlushEventArgs $args)
     {
-        if ($this->cacheableWebCatalogUsageProvider->hasCache()
-            && $this->hasInsertedOrDeletedWebsites($args->getEntityManager()->getUnitOfWork())
-        ) {
+        if ($this->hasInsertedOrDeletedWebsites($args->getEntityManager()->getUnitOfWork())) {
             $this->cacheableWebCatalogUsageProvider->clearCache();
         }
     }

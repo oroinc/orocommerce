@@ -307,7 +307,7 @@ Feature: Quick order form
     And I close ui dialog
 
   Scenario: Check product name is localized in Import Validation popup
-    Given I press "Localization Switcher"
+    Given I click "Localization Switcher"
     And I select "Localization 1" localization
     And I click "Quick Order Form"
     And I click "Get Directions"

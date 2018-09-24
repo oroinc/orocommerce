@@ -74,11 +74,11 @@ Feature: Guest Checkout
     And I reload the page
     And I should see following buttons:
       | Create Order |
-    And I press "Create Order"
+    And I click "Create Order"
     And I keep in mind current path
     When I hover on "Shopping Cart"
     And click "View Details"
-    And I press "Create Order"
+    And I click "Create Order"
     Then path remained the same
     Then I should see "Sign In and Continue" button
     And I should see "Create An Account"
@@ -94,7 +94,7 @@ Feature: Guest Checkout
       | State           | Berlin          |
       | Zip/Postal Code | 10115           |
     And I should not see "Save address"
-    And press "Continue"
+    And click "Continue"
     And I fill form with:
       | First Name      | Tester1         |
       | Last Name       | Testerson       |
@@ -103,11 +103,11 @@ Feature: Guest Checkout
       | Country         | Germany         |
       | State           | Berlin          |
       | Zip/Postal Code | 10115           |
-    And press "Continue"
+    And click "Continue"
     And I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
     And I check "Payment Terms" on the "Payment" checkout step and press Continue
     And I uncheck "Save my data and create an account" on the checkout page
-    When I press "Submit Order"
+    When I click "Submit Order"
     Then I should see "Thank You For Your Purchase!"
 
   Scenario: Checkout with shipping to billing address without guest registration
@@ -118,7 +118,7 @@ Feature: Guest Checkout
     And I click "400-Watt Bulb Work Light"
     And I click "Add to Shopping List"
     And I follow "Shopping List"
-    And I press "Create Order"
+    And I click "Create Order"
     And I click "Continue as a Guest"
     And I fill form with:
       | First Name           | Tester1         |
@@ -130,11 +130,11 @@ Feature: Guest Checkout
       | State                | Berlin          |
       | Zip/Postal Code      | 10115           |
     And I click "Ship to This Address"
-    And I press "Continue"
+    And I click "Continue"
     And I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
     And I check "Payment Terms" on the "Payment" checkout step and press Continue
     And I uncheck "Save my data and create an account" on the checkout page
-    When I press "Submit Order"
+    When I click "Submit Order"
     Then I should see "Thank You For Your Purchase!"
 
   Scenario: Check guest orders on management console
@@ -157,7 +157,7 @@ Feature: Guest Checkout
       | Email Address    | tester@test.com            |
       | Password         | TesterT1@test.com          |
       | Confirm Password | TesterT1@test.com          |
-    When I press "Create An Account"
+    When I click "Create An Account"
     Then I should see "Please check your email to complete registration" flash message
 
   Scenario: Activate customer user

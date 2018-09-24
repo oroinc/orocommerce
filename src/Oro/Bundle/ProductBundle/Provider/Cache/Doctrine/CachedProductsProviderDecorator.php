@@ -5,6 +5,10 @@ namespace Oro\Bundle\ProductBundle\Provider\Cache\Doctrine;
 use Doctrine\Common\Cache\Cache;
 use Oro\Bundle\ProductBundle\Provider\ProductsProviderInterface;
 
+/**
+ * The decorator that saves products loaded via the decorated provider to a cache
+ * and uses this cache to get the products when they are requested the next time.
+ */
 class CachedProductsProviderDecorator implements ProductsProviderInterface
 {
     /**
@@ -39,12 +43,11 @@ class CachedProductsProviderDecorator implements ProductsProviderInterface
      */
     public function getProducts()
     {
-        if ($this->cache->contains($this->cacheKey)) {
-            return $this->cache->fetch($this->cacheKey);
+        $products = $this->cache->fetch($this->cacheKey);
+        if (false === $products) {
+            $products = $this->decoratedProvider->getProducts();
+            $this->cache->save($this->cacheKey, $products);
         }
-
-        $products = $this->decoratedProvider->getProducts();
-        $this->cache->save($this->cacheKey, $products);
 
         return $products;
     }

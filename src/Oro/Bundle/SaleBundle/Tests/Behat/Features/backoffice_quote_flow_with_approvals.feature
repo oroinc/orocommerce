@@ -109,7 +109,7 @@ Feature: Backoffice Quote Flow with Approvals
     And I wait 2 seconds until submit button becomes available
     And I click "Submit"
     And I click "Save" in modal window
-    And I press "Submit for Review"
+    And I click "Submit for Review"
     And I fill form with:
       | Comment | Test comment for submitting |
     And I click "Submit"

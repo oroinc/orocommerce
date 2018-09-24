@@ -9,7 +9,7 @@ use Oro\Bundle\ProductBundle\Provider\ProductsProviderInterface;
 
 class CachedProductsProviderDecoratorTest extends \PHPUnit\Framework\TestCase
 {
-    const CACHE_KEY = 'cached_products_provider_decorator';
+    private const CACHE_KEY = 'cached_products_provider_decorator';
 
     /**
      * @var ProductsProviderInterface|\PHPUnit\Framework\MockObject\MockObject
@@ -51,11 +51,6 @@ class CachedProductsProviderDecoratorTest extends \PHPUnit\Framework\TestCase
         ];
 
         $this->cache->expects(static::once())
-            ->method('contains')
-            ->with($this->cacheKey)
-            ->willReturn(true);
-
-        $this->cache->expects(static::once())
             ->method('fetch')
             ->with($this->cacheKey)
             ->willReturn($products);
@@ -74,12 +69,9 @@ class CachedProductsProviderDecoratorTest extends \PHPUnit\Framework\TestCase
     public function testGetProductsEmptyCache(array $products)
     {
         $this->cache->expects(static::once())
-            ->method('contains')
+            ->method('fetch')
             ->with($this->cacheKey)
             ->willReturn(false);
-
-        $this->cache->expects(static::never())
-            ->method('fetch');
 
         $this->decoratedProvider->expects(static::once())
             ->method('getProducts')

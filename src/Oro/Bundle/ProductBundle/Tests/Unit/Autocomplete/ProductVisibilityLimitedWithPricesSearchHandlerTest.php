@@ -10,12 +10,12 @@ use PHPUnit\Framework\TestCase;
 class ProductVisibilityLimitedWithPricesSearchHandlerTest extends TestCase
 {
     /**
-     * @var SearchHandlerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var SearchHandlerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $productWithPricesSearchHandler;
 
     /**
-     * @var SearchHandlerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var SearchHandlerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $productVisibilityLimitedSearchHandler;
 
