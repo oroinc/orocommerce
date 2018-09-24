@@ -137,6 +137,17 @@ define(function(require) {
             return parseInt(val) === 0;
         },
 
+        /**
+         * @param {string} type
+         * @return boolean
+         */
+        isAvailableShippingType: function(type) {
+            var availableTypes = this.$el.data('addresses-types');
+
+            return !availableTypes.hasOwnProperty(this.$el.val()) ||
+                _.indexOf(availableTypes[this.$el.val()], type) > -1;
+        },
+
         _changeEnterManualValueLabel: function(customLabel) {
             if (this.isManual(this.$el.val())) {
                 var newAddressLabel = this.$el.data('new-address-label');
