@@ -41,7 +41,7 @@ Feature: Single Page Checkout With Popup for Sales
 
   Scenario: Create order with new shipping address and new billing address without saving addresses
     Given I proceed as the User
-    And I signed in as AmandaRCole1@example.org on the store frontend
+    And I signed in as AmandaRCole@example.org on the store frontend
     When I open page with shopping list List 1
     And I scroll to top
     And I wait line items are initialized
