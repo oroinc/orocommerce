@@ -9,8 +9,14 @@ Feature: Single Page Checkout With Popup for Sales
   As a Sales Representative
   I want to fill billing address and shipping address in dialog window, complete checkout and save the address to my address book
 
+  Scenario: Create different window session
+    Given sessions active:
+      | Admin  |first_session |
+      | User   |second_session|
+
   Scenario: Enable Single Page Checkout Workflow
     Given There is USD currency in the system configuration
+    And I proceed as the Admin
     And I login as administrator
     And I go to System/Workflows
     When I click "Activate" on row "Single Page Checkout" in grid
@@ -21,7 +27,7 @@ Feature: Single Page Checkout With Popup for Sales
     Given I go to System/Configuration
     And I follow "Commerce/Sales/Checkout" on configuration sidebar
     And uncheck "Use default" for "Optimize Template Performance" field
-    And I check "Optimize Template Performance"
+    When I check "Optimize Template Performance"
     And I click "Save settings"
     Then I should see "Configuration saved" flash message
 
@@ -34,8 +40,8 @@ Feature: Single Page Checkout With Popup for Sales
     Then I should see "Customer User has been saved" flash message
 
   Scenario: Create order with new shipping address and new billing address without saving addresses
-    Given AmandaRCole@example.org customer user has Buyer role
-    And I signed in as AmandaRCole@example.org on the store frontend
+    Given I proceed as the User
+    And I signed in as AmandaRCole1@example.org on the store frontend
     When I open page with shopping list List 1
     And I scroll to top
     And I wait line items are initialized
@@ -96,10 +102,9 @@ Feature: Single Page Checkout With Popup for Sales
     And I should not see "S Street"
 
   Scenario: Create order with new shipping address and new billing address with saving addresses
-    Given AmandaRCole@example.org customer user has Buyer role
-    And I signed in as AmandaRCole@example.org on the store frontend
-    When I open page with shopping list List 1
-    And I scroll to top
+    Given I proceed as the User
+    And I open page with shopping list List 1
+    When I scroll to top
     And I wait line items are initialized
     And I click "Create Order"
     And I click on "Billing Address Select"
@@ -162,8 +167,7 @@ Feature: Single Page Checkout With Popup for Sales
       | SStreet          | SCity  | Guria  | 67890           | Georgia |
 
   Scenario: Check "Use billing address" disappears when billing address with no shipping option is chosen
-    Given AmandaRCole@example.org customer user has Buyer role
-    And I signed in as AmandaRCole@example.org on the store frontend
+    Given I proceed as the User
     When I open page with shopping list List 1
     And I scroll to top
     And I wait line items are initialized
