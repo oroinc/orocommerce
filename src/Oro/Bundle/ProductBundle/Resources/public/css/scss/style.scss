@@ -1,11 +1,11 @@
 /* @theme: admin.oro; */
 
 .product-inventory-status-in_stock {
-    color: #008000;
+    color: $success;
 }
 
 .product-inventory-status-out_of_stock {
-    color: #f00;
+    color: $danger;
 }
 
 .float-holder {
@@ -88,15 +88,15 @@
 .mobile-version {
     .product-container {
         .box-type1 {
-            margin-left: 0;
-            margin-right: 0;
+            margin-#{$start}: 0;
+            margin-#{$end}: 0;
         }
     }
 }
 
 .row-oro {
     &.add-products {
-        float: left;
+        float: #{$start};
         width: auto;
 
         .add-list-item,
@@ -106,28 +106,28 @@
 
         .add-products-sku {
             width: 310px;
-            padding-right: 0;
+            padding-#{$end}: 0;
         }
 
         .add-products-quantity {
-            padding-left: 2px;
+            padding-#{$start}: 2px;
         }
 
         .product-autocomplete-success {
             display: none;
-            float: right;
+            float: #{$end};
         }
 
         .fa-check-circle-o {
             font-size: 20px;
-            color: #2f8206;
+            color: $success;
             line-height: 30px;
         }
     }
 
     .fa-info-circle {
         padding: 0 5px;
-        margin: 0 0 0 5px;
+        margin: side-values(0 0 0 5px);
         width: 21px;
         line-height: 28px;
     }
@@ -142,7 +142,7 @@
 
     .add-list-item {
         margin-top: 8px;
-        margin-left: 0;
+        margin-#{$start}: 0;
     }
 
     th,
@@ -168,7 +168,7 @@
     .scope-collection {
         div[data-validation-optional-group=""] {
             display: block;
-            padding-right: 0;
+            padding-#{$end}: 0;
         }
     }
 }
@@ -177,8 +177,8 @@
 .product-collection-segment {
     div.filter-box {
         &.oro-clearfix-width {
-            margin-left: 0;
-            margin-right: 0;
+            margin-#{$start}: 0;
+            margin-#{$end}: 0;
         }
     }
 
@@ -208,18 +208,14 @@
         width: 100%;
     }
 
-    .grid-toolbar {
-        padding-right: 0;
-    }
-
     div.other-scroll-container {
-        margin-left: 0;
-        margin-right: 0;
+        margin-#{$start}: 0;
+        margin-#{$end}: 0;
     }
 
     .box-type1 {
         .title {
-            padding-left: 0;
+            padding-#{$start}: 0;
         }
     }
 
@@ -231,15 +227,15 @@
                 &.wrap {
                     float: none;
                     width: 60px;
-                    text-align: left;
+                    text-align: #{$start};
 
                     i {
-                        float: right;
+                        float: #{$end};
                         line-height: 20px;
                     }
 
                     label {
-                        color: rgb(68, 68, 68);
+                        color: $primary-550;
                         font-size: 14px;
                         font-weight: bold;
                         display: block;
@@ -252,7 +248,7 @@
             }
 
             .controls {
-                margin-left: 0;
+                margin-#{$start}: 0;
             }
         }
 
@@ -260,10 +256,10 @@
             .control-label {
                 &.wrap {
                     float: none;
-                    text-align: left;
+                    text-align: #{$start};
 
                     label {
-                        color: rgb(68, 68, 68);
+                        color: $primary-550;
                         font-size: 14px;
                         font-weight: bold;
                         display: block;
@@ -272,7 +268,7 @@
             }
 
             .controls {
-                margin-left: 0;
+                margin-#{$start}: 0;
             }
         }
     }
@@ -282,7 +278,7 @@
     &.expanded {
         .collapse-view__trigger {
             background-image: none;
-            background-color: #e6e6e6;
+            background-color: $primary-800;
             outline: 0;
             box-shadow: inset 0 2px 4px rgba(0, 0, 0, .15), 0 1px 2px rgba(0, 0, 0, .05);
         }
@@ -294,7 +290,7 @@
     overflow: hidden;
 
     &__button {
-        float: right;
+        float: #{$end};
     }
 
     ~ div .grid-views {

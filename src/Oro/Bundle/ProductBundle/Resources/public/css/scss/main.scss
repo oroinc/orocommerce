@@ -1,6 +1,7 @@
 /* @theme: admin.oro; */
 
-@import "./variables";
+@import "oroui/css/scss/mixins";
+@import "variables";
 
-@import "./style";
-@import "./product-container";
+@import "style";
+@import "product-container";
