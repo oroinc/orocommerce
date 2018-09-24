@@ -86,6 +86,7 @@ define(function(require) {
                 })
             );
 
+            this._toggleShipTo();
             this._disableShippingAddress();
             this._changeShippingMethod();
             this._changePaymentMethod();
@@ -106,12 +107,14 @@ define(function(require) {
                 return;
             }
 
+            this._toggleShipTo();
+            this._disableShippingAddress();
+
             var validate = this.$el.validate();
             if (!validate.checkForm()) {
                 return;
             }
 
-            this._disableShippingAddress();
             this._changeShippingMethod();
             this._changePaymentMethod();
 
@@ -178,13 +181,25 @@ define(function(require) {
 
         _disableShippingAddress: function() {
             var $element = this.$el.find(this.options.shipToSelector);
-            if ($element.is(this.options.shipToSelector)) {
-                var $billingAddress = this.subview('checkoutBillingAddress').$el;
-                this.subview('checkoutShippingAddress').onToggleState(
-                    $element.is(':checked'),
-                    $billingAddress.val(),
-                    $billingAddress.find(':selected').text()
-                );
+            var disable = $element.is(':visible') && $element.is(':checked');
+            var $billingAddress = this.subview('checkoutBillingAddress').$el;
+            var text = $billingAddress.find(':selected').text();
+
+            this.subview('checkoutShippingAddress').onToggleState(disable, $billingAddress.val(), text);
+        },
+
+        _isAvailableShipTo: function() {
+            return this.subview('checkoutBillingAddress').isAvailableShippingType('shipping');
+        },
+
+        _toggleShipTo: function() {
+            var $element = this.$el.find(this.options.shipToSelector);
+            var $container = $element.parent();
+            if (this._isAvailableShipTo()) {
+                $container.removeClass('hidden');
+            } else {
+                $element.prop('checked', false);
+                $container.addClass('hidden');
             }
         },
 

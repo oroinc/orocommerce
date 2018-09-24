@@ -160,3 +160,44 @@ Feature: Single Page Checkout With Popup for Sales
       | Fourth avenue    | Berlin | Berlin | 10111           | Germany |
       | BStreet          | BCity  | Has    | 12345           | Albania |
       | SStreet          | SCity  | Guria  | 67890           | Georgia |
+
+  Scenario: Check "Use billing address" disappears when billing address with no shipping option is chosen
+    Given AmandaRCole@example.org customer user has Buyer role
+    And I signed in as AmandaRCole@example.org on the store frontend
+    When I open page with shopping list List 1
+    And I scroll to top
+    And I wait line items are initialized
+    And I click "Create Order"
+    Then I should see "ORO, Fifth avenue, 10115 Berlin, Germany" for "Select Billing Address" select
+    And I select "S Prefix S Fname S Mname S Lname S Suffix, S Organization, SStreet S Street 2, 67890 SCity, Georgia, 67890" from "Select Shipping Address"
+    And I check "Use billing address" on the checkout page
+    Then I should see "ORO, Fifth avenue, 10115 Berlin, Germany" for "Select Shipping Address" select
+    And I select "B Prefix B Fname B Mname B Lname B Suffix, B Organization, BStreet B Street 2, BCITY HA AL 12345, 12345" from "Select Billing Address"
+    And I should not see "Use billing address"
+    Then I should see "ORO, Fifth avenue, 10115 Berlin, Germany" for "Select Shipping Address" select
+
+  Scenario: Check "Use billing address" appears for new address and can be checked
+    And I click on "Billing Address Select"
+    And I click on "New Address Option"
+    And I fill "New Address Popup Form" with:
+      | Label        | B Address      |
+      | Name Prefix  | B Prefix       |
+      | First Name   | B Fname        |
+      | Middle Name  | B Mname        |
+      | Last Name    | B Lname        |
+      | Name Suffix  | B Suffix       |
+      | Organization | B Organization |
+      | Phone        | 12345          |
+      | Street       | BStreet        |
+      | Street 2     | B Street 2     |
+      | City         | BCity          |
+      | Country      | Albania        |
+      | State        | Has            |
+      | Postal Code  | 12345          |
+      | Save Address | true           |
+    And I click "Continue"
+    And I should see "Use billing address"
+    And I check "Use billing address" on the checkout page
+    And I wait "Submit Order" button
+    And I click "Submit Order"
+    Then I see the "Thank You" page with "Thank You For Your Purchase!" title
