@@ -11,8 +11,14 @@ Feature: Single Page Checkout With Popup for Buyer
   As a Buyer
   I want to fill billing address and shipping address in dialog window and complete checkout
 
+  Scenario: Create different window session
+    Given sessions active:
+      | Admin  |first_session |
+      | User   |second_session|
+
   Scenario: Enable Single Page Checkout Workflow
     Given There is USD currency in the system configuration
+    And I proceed as the Admin
     And I login as administrator
     And I go to System/Workflows
     When I click "Activate" on row "Single Page Checkout" in grid
@@ -47,7 +53,7 @@ Feature: Single Page Checkout With Popup for Buyer
     Then I should see "Shipping rule has been saved" flash message
 
   Scenario: Create order with predefined billing address and predefined shipping address
-    Given AmandaRCole@example.org customer user has Buyer role
+    Given I proceed as the User
     And I signed in as AmandaRCole@example.org on the store frontend
     When I open page with shopping list List 1
     And I scroll to top
