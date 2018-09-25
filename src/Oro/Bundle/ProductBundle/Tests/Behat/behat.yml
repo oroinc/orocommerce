@@ -203,6 +203,7 @@ oro_behat_extension:
             type: 'css'
             locator: 'input[name="oro_product[ManyToOneField]"]'
             element: Select2Entity
+          ColorField: 'oro_product[ColorField]'
 
     RelatedProductsConfig:
       selector: 'form[name="related_items"]'
