@@ -100,6 +100,47 @@ class RedirectRepositoryTest extends WebTestCase
         $this->assertEquals($redirect1->getId(), $result->getId());
     }
 
+    public function testFindByPrototypeSuccessful()
+    {
+        /** @var Redirect $redirect */
+        $redirect = $this->getReference(LoadRedirects::REDIRECT_2);
+
+        $scopeManager = $this->getContainer()->get('oro_scope.scope_manager');
+        $scopeCriteria = $scopeManager->getCriteriaByScope($redirect->getScopes()->first(), 'web_content');
+
+        $result = $this->repository->findByPrototype($redirect->getFromPrototype(), $scopeCriteria);
+
+        $this->assertEquals($redirect->getId(), $result->getId());
+    }
+
+    public function testFindByPrototypeNoMatchedPrototype()
+    {
+        /** @var Redirect $redirect */
+        $redirect = $this->getReference(LoadRedirects::REDIRECT_2);
+
+        $scopeManager = $this->getContainer()->get('oro_scope.scope_manager');
+        $scopeCriteria = $scopeManager->getCriteriaByScope($redirect->getScopes()->first(), 'web_content');
+
+        $result = $this->repository->findByPrototype($redirect->getFromPrototype() . '-unknown', $scopeCriteria);
+
+        $this->assertNull($result);
+    }
+
+    public function testFindByPrototypeNotMatchingCriteria()
+    {
+        /** @var Redirect $redirect1 */
+        $redirect1 = $this->getReference(LoadRedirects::REDIRECT_2);
+        /** @var Redirect $redirect2 */
+        $redirect2 = $this->getReference(LoadRedirects::REDIRECT_3);
+
+        $scopeManager = $this->getContainer()->get('oro_scope.scope_manager');
+        $scopeCriteria = $scopeManager->getCriteriaByScope($redirect2->getScopes()->first(), 'web_content');
+
+        $result = $this->repository->findByPrototype($redirect1->getFromPrototype(), $scopeCriteria);
+
+        $this->assertNull($result);
+    }
+
     public function testUpdateRedirectsBySlug()
     {
         /** @var Slug $slug */

@@ -32,9 +32,7 @@ class RedirectGeneratorTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->registry = $this->getMockBuilder(ManagerRegistry::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->registry = $this->createMock(ManagerRegistry::class);
 
         $this->redirectGenerator = new RedirectGenerator($this->registry);
     }
@@ -79,26 +77,35 @@ class RedirectGeneratorTest extends \PHPUnit_Framework_TestCase
 
     public function testGenerateRedirectsCyclic()
     {
-        $url = '/test';
+        $from = new Slug();
+        $from->setUrl('/test');
+        $from->setSlugPrototype('test');
+
         $slug = new Slug();
-        $slug->setUrl($url);
+        $slug->setUrl($from->getUrl());
+        $slug->setSlugPrototype($from->getSlugPrototype());
 
         $this->registry->expects($this->never())
             ->method($this->anything());
 
-        $this->redirectGenerator->generate($url, $slug);
+        $this->redirectGenerator->generateForSlug($from, $slug);
     }
 
     public function testGenerate()
     {
-        $from = '/from';
-        $to = '/to-url';
+        $from = new Slug();
+        $from->setUrl('/from');
+        $from->setSlugPrototype('from');
+
         $slug = new Slug();
-        $slug->setUrl($to);
+        $slug->setUrl('/to-url');
+        $slug->setSlugPrototype('to-url');
 
         $expectedRedirect = new Redirect();
-        $expectedRedirect->setFrom($from)
-            ->setTo($to)
+        $expectedRedirect->setFrom($from->getUrl())
+            ->setFromPrototype($from->getSlugPrototype())
+            ->setTo($slug->getUrl())
+            ->setToPrototype($slug->getSlugPrototype())
             ->setSlug($slug)
             ->setType(Redirect::MOVED_PERMANENTLY);
 
@@ -107,7 +114,7 @@ class RedirectGeneratorTest extends \PHPUnit_Framework_TestCase
             ->method('persist')
             ->with($expectedRedirect);
 
-        $this->redirectGenerator->generate($from, $slug);
+        $this->redirectGenerator->generateForSlug($from, $slug);
         $this->assertEquals($slug->getUrl(), $expectedRedirect->getTo());
     }
 

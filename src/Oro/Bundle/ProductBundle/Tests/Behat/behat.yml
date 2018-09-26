@@ -180,6 +180,9 @@ oro_behat_extension:
             element: Configurable Attributes
           Color: 'oro_product[Color]'
           Size: 'oro_product[Size]'
+          Name Default Slug: 'oro_product[slugPrototypesWithRedirect][slugPrototypes][values][default]'
+          Name First Slug: 'oro_product[slugPrototypesWithRedirect][slugPrototypes][values][localizations][1][value]'
+          Name First Slug Use Default: 'oro_product[slugPrototypesWithRedirect][slugPrototypes][values][localizations][1][use_fallback]'
         # for testing product attributes
           StringField: 'oro_product[StringField]'
           IntegerField: 'oro_product[IntegerField]'
@@ -419,6 +422,11 @@ oro_behat_extension:
         type: xpath
         locator: '//div[contains(@class, "select2-result-label") and contains(., "Inventory Status")]'
 
+    Content Node Form Slug Fallbacks:
+      selector:
+        type: xpath
+        locator: '//label[text()="URL Slug"]/../..//span[@class="fallback-status"]'
+
     Content Node Form:
       selector: 'form[name="oro_web_catalog_content_node"]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
@@ -426,6 +434,8 @@ oro_behat_extension:
         mapping:
           Titles: 'oro_web_catalog_content_node[titles][values][default]'
           Url Slug: 'oro_web_catalog_content_node[slugPrototypesWithRedirect][slugPrototypes][values][default]'
+          First Url Slug: 'oro_web_catalog_content_node[slugPrototypesWithRedirect][slugPrototypes][values][localizations][1][value]'
+          First Url Slug Use Default: 'oro_web_catalog_content_node[slugPrototypesWithRedirect][slugPrototypes][values][localizations][1][use_fallback]'
           Meta Title: 'oro_web_catalog_content_node[metaTitles][values][default]'
           Meta Description: 'oro_web_catalog_content_node[metaDescriptions][values][default]'
           Meta Keywords: 'oro_web_catalog_content_node[metaKeywords][values][default]'
@@ -760,6 +770,11 @@ oro_behat_extension:
 
     Product Item Gallery Trigger:
       selector: '.product-item [data-trigger-gallery-open]'
+
+    Product Form Slug Fallbacks:
+      selector:
+        type: xpath
+        locator: '//label[text()="URL Slug"]/../..//span[@class="fallback-status"]'
 
     Create Product Plus Button:
       selector: '.content-variant-item-default .entity-create-btn'
