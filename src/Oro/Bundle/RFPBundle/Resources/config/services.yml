@@ -8,6 +8,8 @@ services:
     oro_rfp.mailer.processor:
         class: 'Oro\Bundle\RFPBundle\Mailer\Processor'
         public: false
+        calls:
+            - [setTemplateEmailManager, ['@oro_email.manager.template_email']]
         arguments:
             - "@doctrine"
             - "@oro_config.manager"

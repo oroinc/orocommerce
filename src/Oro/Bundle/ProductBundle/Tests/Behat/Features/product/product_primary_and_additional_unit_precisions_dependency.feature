@@ -9,7 +9,7 @@ Feature: Product primary and additional unit precisions dependency
     Given I login as administrator
     And go to Products/ Products
     And click "Create Product"
-    When I press "Continue"
+    When I click "Continue"
     And I fill product fields with next data:
       | PrimaryUnit         | item      |
       | PrimaryPrecision    | 0         |

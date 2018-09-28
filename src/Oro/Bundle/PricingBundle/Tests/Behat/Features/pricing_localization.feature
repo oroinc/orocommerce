@@ -11,7 +11,7 @@ Feature: Pricing Localization
 
   Scenario: Check translation of product unit in product catalog
     Given I am on the homepage
-    And I press "Localization Switcher"
+    And I click "Localization Switcher"
     And I select "Localization 1" localization
     When type "PSKU1" in "search"
     And I click "Search Button"

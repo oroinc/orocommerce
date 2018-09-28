@@ -9,7 +9,13 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 
 /**
- * @ORM\Table(name="oro_redirect", indexes={@ORM\Index(name="idx_oro_redirect_from_hash", columns={"from_hash"})})
+ * @ORM\Table(
+ *      name="oro_redirect",
+ *      indexes={
+ *          @ORM\Index(name="idx_oro_redirect_from_hash", columns={"from_hash"}),
+ *          @ORM\Index(name="idx_oro_redirect_redirect_from_prototype", columns={"redirect_from_prototype"}),
+ *      }
+ * )
  * @ORM\Entity(repositoryClass="Oro\Bundle\RedirectBundle\Entity\Repository\RedirectRepository")
  * @Config(
  *      defaultValues={
@@ -40,6 +46,13 @@ class Redirect
     /**
      * @var string
      *
+     * @ORM\Column(name="redirect_from_prototype", type="string", length=255, nullable=true)
+     */
+    protected $fromPrototype;
+
+    /**
+     * @var string
+     *
      * @ORM\Column(name="redirect_from", type="string", length=1024)
      */
     protected $from;
@@ -50,7 +63,14 @@ class Redirect
      * @ORM\Column(name="from_hash", type="string", length=32)
      */
     protected $fromHash;
-    
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="redirect_to_prototype", type="string", length=255, nullable=true)
+     */
+    protected $toPrototype;
+
     /**
      * @var string
      *
@@ -105,6 +125,25 @@ class Redirect
     /**
      * @return string
      */
+    public function getFromPrototype()
+    {
+        return $this->fromPrototype;
+    }
+
+    /**
+     * @param string $fromPrototype
+     * @return $this
+     */
+    public function setFromPrototype($fromPrototype)
+    {
+        $this->fromPrototype = $fromPrototype;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
     public function getFrom()
     {
         return $this->from;
@@ -119,6 +158,25 @@ class Redirect
         $this->from = $from;
         $this->fromHash = md5($this->from);
         
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getToPrototype()
+    {
+        return $this->toPrototype;
+    }
+
+    /**
+     * @param string $toPrototype
+     * @return $this
+     */
+    public function setToPrototype($toPrototype)
+    {
+        $this->toPrototype = $toPrototype;
+
         return $this;
     }
 

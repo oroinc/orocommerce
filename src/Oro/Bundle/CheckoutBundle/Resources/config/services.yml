@@ -152,6 +152,7 @@ services:
             - { name: doctrine.orm.entity_listener, entity: '%oro_shopping_list.entity.shopping_list.class%', event: preRemove }
 
     oro_checkout.grid_totals_metadata.cache:
+        deprecated: The "%service_id%" service is never used and will be removed in 3.1
         public: false
         parent: oro.cache.abstract
         calls:

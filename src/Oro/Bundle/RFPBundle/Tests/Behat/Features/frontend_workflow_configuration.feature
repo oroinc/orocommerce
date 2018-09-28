@@ -10,134 +10,134 @@ Feature: Frontend workflow configuration
     Given I login as administrator
     Then I go to System/ Workflows
 
-    And I press "Create Workflow"
+    And I click "Create Workflow"
     And I fill form with:
       | Name           | Workflow Button Titles |
       | Related Entity | Request For Quote      |
 
-    And I press "Add step"
+    And I click "Add step"
     And I fill "Workflow Step Edit Form" with:
       | Name | Step with only Name |
-    And I press "Apply"
+    And I click "Apply"
 
-    And I press "Add step"
+    And I click "Add step"
     And I fill "Workflow Step Edit Form" with:
       | Name | Step with Message and Label |
-    And I press "Apply"
+    And I click "Apply"
 
-    And I press "Add step"
+    And I click "Add step"
     And I fill "Workflow Step Edit Form" with:
       | Name | Step with Message and Title |
-    And I press "Apply"
+    And I click "Apply"
 
-    And I press "Add step"
+    And I click "Add step"
     And I fill "Workflow Step Edit Form" with:
       | Name | Step with Message and Title and Label |
-    And I press "Apply"
+    And I click "Apply"
 
-    And I press "Add step"
+    And I click "Add step"
     And I fill "Workflow Step Edit Form" with:
       | Name | Step with Attribute |
-    And I press "Apply"
+    And I click "Apply"
 
-    And I press "Add step"
+    And I click "Add step"
     And I fill "Workflow Step Edit Form" with:
       | Name | Step with Attribute and Label |
-    And I press "Apply"
+    And I click "Apply"
 
-    And I press "Add step"
+    And I click "Add step"
     And I fill "Workflow Step Edit Form" with:
       | Name | Step with Attribute and Title |
-    And I press "Apply"
+    And I click "Apply"
 
-    And I press "Add step"
+    And I click "Add step"
     And I fill "Workflow Step Edit Form" with:
       | Name | Step with Attribute and Title and Label |
-    And I press "Apply"
+    And I click "Apply"
 
-    And I press "Add step"
+    And I click "Add step"
     And I fill "Workflow Step Edit Form" with:
       | Name | Step with Message, Attribute, Title and Label |
-    And I press "Apply"
+    And I click "Apply"
 
-    And I press "Add step"
+    And I click "Add step"
     And I fill "Workflow Step Edit Form" with:
       | Name | Step with Original Page with only Name |
-    And I press "Apply"
+    And I click "Apply"
 
-    And I press "Add step"
+    And I click "Add step"
     And I fill "Workflow Step Edit Form" with:
       | Name | Step with View Page and Message and Label |
-    And I press "Apply"
+    And I click "Apply"
 
-    And I press "Add step"
+    And I click "Add step"
     And I fill "Workflow Step Edit Form" with:
       | Name | Step with Index Page and Message and Title |
-    And I press "Apply"
+    And I click "Apply"
 
-    And I press "Add step"
+    And I click "Add step"
     And I fill "Workflow Step Edit Form" with:
       | Name | Step with Original Page and Message and Title and Label |
-    And I press "Apply"
+    And I click "Apply"
 
-    And I press "Add step"
+    And I click "Add step"
     And I fill "Workflow Step Edit Form" with:
       | Name | Step with View Page and Attribute |
-    And I press "Apply"
+    And I click "Apply"
 
-    And I press "Add step"
+    And I click "Add step"
     And I fill "Workflow Step Edit Form" with:
       | Name | Step with Index Page and Attribute and Label |
-    And I press "Apply"
+    And I click "Apply"
 
-    And I press "Add step"
+    And I click "Add step"
     And I fill "Workflow Step Edit Form" with:
       | Name | Step with Original Page and Attribute and Title |
-    And I press "Apply"
+    And I click "Apply"
 
-    And I press "Add step"
+    And I click "Add step"
     And I fill "Workflow Step Edit Form" with:
       | Name | Step with View Page and Attribute and Title and Label |
-    And I press "Apply"
+    And I click "Apply"
 
-    And I press "Add step"
+    And I click "Add step"
     And I fill "Workflow Step Edit Form" with:
       | Name | Step with Index Page and Message, Attribute, Title and Label |
-    And I press "Apply"
+    And I click "Apply"
 
-    And I press "Add transition"
+    And I click "Add transition"
     And I fill "Workflow Transition Edit Info Form" with:
       | Name            | Start Transition    |
       | From step       | (Start)             |
       | To step         | Step with only Name |
-    And press "Apply"
+    And click "Apply"
 
-    And I press "Add transition"
+    And I click "Add transition"
     And I fill "Workflow Transition Edit Info Form" with:
       | Name      | Popup transition with only name |
       | From step | Step with only Name             |
       | To step   | Step with only Name             |
-    And press "Apply"
+    And click "Apply"
 
-    And I press "Add transition"
+    And I click "Add transition"
     And I fill "Workflow Transition Edit Info Form" with:
       | Name            | Popup transition with Message and Label |
       | From step       | Step with only Name                     |
       | To step         | Step with Message and Label             |
       | Warning message | warning message text TML                |
       | Button Label    | Label TML                               |
-    And press "Apply"
+    And click "Apply"
 
-    And I press "Add transition"
+    And I click "Add transition"
     And I fill "Workflow Transition Edit Info Form" with:
       | Name            | Popup transition with Message and Title |
       | From step       | Step with Message and Label             |
       | To step         | Step with Message and Title             |
       | Warning message | warning message text TMT                |
       | Button Title    | Title TMT                               |
-    And press "Apply"
+    And click "Apply"
 
-    And I press "Add transition"
+    And I click "Add transition"
     And I fill "Workflow Transition Edit Info Form" with:
       | Name            | Popup transition with Message and Title, Label |
       | From step       | Step with Message and Title                    |
@@ -145,60 +145,60 @@ Feature: Frontend workflow configuration
       | Warning message | warning message text TMTL                      |
       | Button Label    | Label TMTL                                     |
       | Button Title    | Title TMTL                                     |
-    And press "Apply"
+    And click "Apply"
 
-    And I press "Add transition"
+    And I click "Add transition"
     And I fill "Workflow Transition Edit Info Form" with:
       | Name      | Popup transition with Attribute       |
       | From step | Step with Message and Title and Label |
       | To step   | Step with Attribute                   |
-    And press "Attributes"
+    And click "Attributes"
     And fill "Workflow Transition Edit Attributes Form" with:
       | Entity field | PO Number |
-    And press "Add"
-    And press "Apply"
+    And click "Add"
+    And click "Apply"
 
-    And I press "Add transition"
+    And I click "Add transition"
     And I fill "Workflow Transition Edit Info Form" with:
       | Name         | Popup transition with Attribute and Label |
       | From step    | Step with Attribute                       |
       | To step      | Step with Attribute and Label             |
       | Button Label | Label TAL                                 |
-    And press "Attributes"
+    And click "Attributes"
     And fill "Workflow Transition Edit Attributes Form" with:
       | Entity field | PO Number          |
       | Label        | Change a PO Number |
-    And press "Add"
-    And press "Apply"
+    And click "Add"
+    And click "Apply"
 
-    And I press "Add transition"
+    And I click "Add transition"
     And I fill "Workflow Transition Edit Info Form" with:
       | Name         | Popup transition with Attribute and Title |
       | From step    | Step with Attribute and Label             |
       | To step      | Step with Attribute and Title             |
       | Button Title | Title TAT                                 |
-    And press "Attributes"
+    And click "Attributes"
     And fill "Workflow Transition Edit Attributes Form" with:
       | Entity field | PO Number          |
       | Label        | Change a PO Number |
-    And press "Add"
-    And press "Apply"
+    And click "Add"
+    And click "Apply"
 
-    And I press "Add transition"
+    And I click "Add transition"
     And I fill "Workflow Transition Edit Info Form" with:
       | Name         | Popup transition with Attribute and Title and Label |
       | From step    | Step with Attribute and Title                       |
       | To step      | Step with Attribute and Title and Label             |
       | Button Label | Label TATL                                          |
       | Button Title | Title TATL                                          |
-    And press "Attributes"
+    And click "Attributes"
     And fill "Workflow Transition Edit Attributes Form" with:
       | Entity field | PO Number          |
       | Label        | Change a PO Number |
-    And press "Add"
-    And press "Apply"
+    And click "Add"
+    And click "Apply"
 
-    And I press "Add transition"
+    And I click "Add transition"
     And I fill "Workflow Transition Edit Info Form" with:
       | Name            | Popup transition with Attribute and Title and Label |
       | From step       | Step with Attribute and Title and Label             |
@@ -206,23 +206,23 @@ Feature: Frontend workflow configuration
       | Warning message | warning message text TMATL                          |
       | Button Label    | Label TMATL                                         |
       | Button Title    | Title TMATL                                         |
-    And press "Attributes"
+    And click "Attributes"
     And fill "Workflow Transition Edit Attributes Form" with:
       | Entity field | PO Number          |
       | Label        | Change a PO Number |
-    And press "Add"
-    And press "Apply"
+    And click "Add"
+    And click "Apply"
 
-    And I press "Add transition"
+    And I click "Add transition"
     And I fill "Workflow Transition Edit Info Form" with:
       | Name             | Page Original transition with only name       |
       | From step        | Step with Message, Attribute, Title and Label |
       | To step          | Step with Original Page with only Name        |
       | View form        | Separate page                                 |
       | Destination Page | Original Page                                 |
-    And press "Apply"
+    And click "Apply"
 
-    And I press "Add transition"
+    And I click "Add transition"
     And I fill "Workflow Transition Edit Info Form" with:
       | Name             | Page View transition with Message and Label          |
       | From step        | Step with Original Page with only Name               |
@@ -231,9 +231,9 @@ Feature: Frontend workflow configuration
       | Destination Page | Entity View Page                                     |
       | Warning message  | warning message text View Page and Message and Label |
       | Button Label     | Label TPML                                           |
-    And press "Apply"
+    And click "Apply"
 
-    And I press "Add transition"
+    And I click "Add transition"
     And I fill "Workflow Transition Edit Info Form" with:
       | Name             | Page Index transition with Message and Title          |
       | From step        | Step with View Page and Message and Label             |
@@ -242,9 +242,9 @@ Feature: Frontend workflow configuration
       | Destination Page | Entity Index Page                                     |
       | Warning message  | warning message text Index Page and Message and Title |
       | Button Title     | Title TPMT                                            |
-    And press "Apply"
+    And click "Apply"
 
-    And I press "Add transition"
+    And I click "Add transition"
     And I fill "Workflow Transition Edit Info Form" with:
       | Name             | Page Original transition with message and Title, Label             |
       | From step        | Step with Index Page and Message and Title                         |
@@ -254,22 +254,22 @@ Feature: Frontend workflow configuration
       | Warning message  | warning message text Original Page and Message and Title and Label |
       | Button Label     | Label TPMTL                                                        |
       | Button Title     | Title TPMTL                                                        |
-    And press "Apply"
+    And click "Apply"
 
-    And I press "Add transition"
+    And I click "Add transition"
     And I fill "Workflow Transition Edit Info Form" with:
       | Name             | Page View transition with Attribute                     |
       | From step        | Step with Original Page and Message and Title and Label |
       | To step          | Step with View Page and Attribute                       |
       | View form        | Separate page                                           |
       | Destination Page | Entity View Page                                        |
-    And press "Attributes"
+    And click "Attributes"
     And fill "Workflow Transition Edit Attributes Form" with:
       | Entity field | PO Number |
-    And press "Add"
-    And press "Apply"
+    And click "Add"
+    And click "Apply"
 
-    And I press "Add transition"
+    And I click "Add transition"
     And I fill "Workflow Transition Edit Info Form" with:
       | Name             | Page Index transition with Attribute and Label |
       | From step        | Step with View Page and Attribute              |
@@ -277,14 +277,14 @@ Feature: Frontend workflow configuration
       | View form        | Separate page                                  |
       | Destination Page | Entity Index Page                              |
       | Button Label     | Label TPAL                                     |
-    And press "Attributes"
+    And click "Attributes"
     And fill "Workflow Transition Edit Attributes Form" with:
       | Entity field | PO Number          |
       | Label        | Change a PO Number |
-    And press "Add"
-    And press "Apply"
+    And click "Add"
+    And click "Apply"
 
-    And I press "Add transition"
+    And I click "Add transition"
     And I fill "Workflow Transition Edit Info Form" with:
       | Name             | Page Original transition with Attribute and Title |
       | From step        | Step with Index Page and Attribute and Label       |
@@ -292,14 +292,14 @@ Feature: Frontend workflow configuration
       | View form        | Separate page                                      |
       | Destination Page | Original Page                                      |
       | Button Title     | Title TPAT                                         |
-    And press "Attributes"
+    And click "Attributes"
     And fill "Workflow Transition Edit Attributes Form" with:
       | Entity field | PO Number          |
       | Label        | Change a PO Number |
-    And press "Add"
-    And press "Apply"
+    And click "Add"
+    And click "Apply"
 
-    And I press "Add transition"
+    And I click "Add transition"
     And I fill "Workflow Transition Edit Info Form" with:
       | Name             | Page View transition with Attribute and Title and Label |
       | From step        | Step with Original Page and Attribute and Title         |
@@ -308,14 +308,14 @@ Feature: Frontend workflow configuration
       | Destination Page | Entity View Page                                        |
       | Button Label     | Label TPATL                                             |
       | Button Title     | Title TPATL                                             |
-    And press "Attributes"
+    And click "Attributes"
     And fill "Workflow Transition Edit Attributes Form" with:
       | Entity field | PO Number          |
       | Label        | Change a PO Number |
-    And press "Add"
-    And press "Apply"
+    And click "Add"
+    And click "Apply"
 
-    And I press "Add transition"
+    And I click "Add transition"
     And I fill "Workflow Transition Edit Info Form" with:
       | Name             | Page Index transition with Message, Attribute, Title and Label      |
       | From step        | Step with View Page and Attribute and Title and Label               |
@@ -325,11 +325,11 @@ Feature: Frontend workflow configuration
       | Warning message  | warning message text - Page and Message, Attribute, Title and Label |
       | Button Label     | Label TPMATL                                                        |
       | Button Title     | Title TPMATL                                                        |
-    And press "Attributes"
+    And click "Attributes"
     And fill "Workflow Transition Edit Attributes Form" with:
       | Entity field | PO Number |
-    And press "Add"
-    And press "Apply"
+    And click "Add"
+    And click "Apply"
 
     And save and close form
     And click "Activate"
@@ -337,7 +337,7 @@ Feature: Frontend workflow configuration
     # for now, in UI no way to change applications
     And I allow workflow "Workflow Button Titles" for "commerce" application
     And go to System/ Localization/ Translations
-    And press "Update Cache"
+    And click "Update Cache"
     # start workflow to see it on frontend
     And I go to Sales/ Requests For Quote
     And click View 0110 in grid

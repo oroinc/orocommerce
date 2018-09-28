@@ -26,5 +26,5 @@ Feature: Checkout by user with same email as from contact entity
     And I select "2849 Junkins Avenue, ALBANY NY US 31707" on the "Shipping Information" checkout step and press Continue
     And I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
     And I click "Continue"
-    And I press "Submit Order"
+    And I click "Submit Order"
     Then I see the "Thank You" page with "Thank You For Your Purchase!" title

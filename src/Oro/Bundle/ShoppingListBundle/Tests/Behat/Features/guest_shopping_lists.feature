@@ -16,21 +16,21 @@ Feature: Guest Shopping Lists
     Given I proceed as the Admin
     And I login as administrator
     And I go to Products/ Product Attributes
-    And press "Create Attribute"
+    And click "Create Attribute"
     And fill form with:
       | Field Name | Color  |
       | Type       | Select |
-    And press "Continue"
+    And click "Continue"
     And set Options with:
       | Label |
       | Black |
       | White |
     And save and close form
-    And I press "Create Attribute"
+    And I click "Create Attribute"
     And fill form with:
       | Field Name | Size   |
       | Type       | Select |
-    And press "Continue"
+    And click "Continue"
     And set Options with:
       | Label |
       | L     |
@@ -99,6 +99,18 @@ Feature: Guest Shopping Lists
     Then I should see "Configuration saved" flash message
     And the "Enable guest shopping list" checkbox should be checked
 
+  Scenario: Empty shopping list shouldn't be created automatically for unauthorized user
+    Given I proceed as the User
+    And I am on homepage
+    And I should see "No Shopping Lists"
+
+  Scenario: Enable "Create shopping list for new guest on first visit"
+    Given I proceed as the Admin
+    And uncheck "Use default" for "Create shopping list for new guest on first visit" field
+    And I check "Create shopping list for new guest on first visit"
+    And I save setting
+    Then I should see "Configuration saved" flash message
+
   Scenario: Configurable product variants and matrix button should be available on front store
     Given I proceed as the User
     When I open product with sku "1GB83" on the store frontend
@@ -106,17 +118,19 @@ Feature: Guest Shopping Lists
     And I should see "Add to Shopping list"
 
   Scenario: Create Shopping List as unauthorized user from product view page
-    Given I am on homepage
-    Then I should see "Shopping list"
-    When type "SKU003" in "search"
+    Given I type "SKU003" in "search"
     And I click "Search Button"
     Then I should see "Product3"
+    When I hover on "Shopping List Widget"
+    And I should see "No Items" in the "Shopping List Widget" element
     And I should see "Add to Shopping list"
     When I click "View Details" for "SKU003" product
     Then I should see "Add to Shopping list"
     When I click "Add to Shopping list"
     Then I should see "Product has been added to" flash message
     And I should see "In shopping list"
+    And I hover on "Shopping List Widget"
+    And I should see "1 Item | $0.00" in the "Shopping List Widget" element
 
   Scenario: Check Update Shopping List
     Given I should see "Update Shopping list"

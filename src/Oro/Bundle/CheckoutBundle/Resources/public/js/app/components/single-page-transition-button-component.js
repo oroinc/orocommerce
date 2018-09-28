@@ -34,6 +34,20 @@ define(function(require) {
             this.createAjaxData();
         },
 
+        /**
+         * @inheritDoc
+         */
+        dispose: function() {
+            if (this.disposed) {
+                return;
+            }
+
+            this.$form.off('change');
+            mediator.off('single-page:transition-button:submit');
+
+            SinglePageTransitionButtonComponent.__super__.dispose.call(this);
+        },
+
         submit: function() {
             this.$form.trigger('submit');
         },

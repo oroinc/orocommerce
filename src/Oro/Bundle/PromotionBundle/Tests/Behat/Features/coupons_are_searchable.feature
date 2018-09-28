@@ -11,7 +11,7 @@ Feature: Coupons are searchable
     When I follow "Search"
     And type "test" in "search"
     And I should see 1 search suggestions
-    When I press "Go"
+    When I click "Go"
     Then I should be on Search Result page
     And I should see following search entity types:
       | Type        | N | isSelected |

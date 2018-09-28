@@ -316,7 +316,7 @@ action_groups:
                             '@not_empty': $.data.customerUser.owner
                         parameters:
                             from: $.data.customerUser.owner.email
-                            to: $.saleRep.email
+                            recipients: [$.saleRep]
                             template: 'request_no_quote_alert'
                             entity: $.data
             - '@call_method':
@@ -334,7 +334,7 @@ action_groups:
                                 - '@not_in': [$.saleRep, $.customerUserSalesReps]
                         parameters:
                             from: $.data.customerUser.owner.email
-                            to: $.saleRep.email
+                            recipients: [$.saleRep]
                             template: 'request_no_quote_alert'
                             entity: $.data
 
