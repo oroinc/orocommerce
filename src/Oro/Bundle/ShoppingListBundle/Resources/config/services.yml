@@ -41,6 +41,7 @@ services:
             - [setTokenStorage, ['@security.token_storage']]
             - [setWebsiteManager, ['@oro_website.manager']]
             - [setTranslator, ['@translator']]
+            - [setConfigManager, ['@oro_config.manager']]
         tags:
             - { name: oro_featuretogle.feature, feature: 'guest_shopping_list' }
 
