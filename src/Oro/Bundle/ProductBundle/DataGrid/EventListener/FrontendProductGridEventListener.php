@@ -13,6 +13,7 @@ use Oro\Bundle\FilterBundle\Form\Type\Filter\NumberFilterTypeInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\WebsiteSearchBundle\Attribute\Type\SearchableAttributeTypeInterface;
+use Oro\Bundle\WebsiteSearchBundle\Placeholder\EnumIdPlaceholder;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
 
 /**
@@ -186,12 +187,9 @@ class FrontendProductGridEventListener
      */
     private function clearName($name)
     {
-        $placeholder = '_' . LocalizationIdPlaceholder::NAME;
-        if (strpos($name, $placeholder) !== false) {
-            $name = str_replace($placeholder, '', $name);
-        }
+        $placeholders = ['_'.LocalizationIdPlaceholder::NAME => '', '_'.EnumIdPlaceholder::NAME => ''];
 
-        return $name;
+        return strtr($name, $placeholders);
     }
 
     /**
