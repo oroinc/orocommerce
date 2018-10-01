@@ -102,23 +102,25 @@ class DirectUrlProcessor implements MessageProcessorInterface, TopicSubscriberIn
                 $this->urlCache->flushAll();
             }
         } catch (InvalidArgumentException $e) {
-            if ($em) {
-                $em->rollback();
-            }
             $this->logger->error(
                 'Queue Message is invalid',
                 ['exception' => $e]
             );
 
-            return self::REJECT;
-        } catch (\Exception $e) {
             if ($em) {
                 $em->rollback();
             }
+
+            return self::REJECT;
+        } catch (\Exception $e) {
             $this->logger->error(
                 'Unexpected exception occurred during Direct URL generation',
                 ['exception' => $e]
             );
+
+            if ($em) {
+                $em->rollback();
+            }
 
             $driverException = $this->databaseExceptionHelper->getDriverException($e);
             if ($driverException && $this->databaseExceptionHelper->isDeadlock($driverException)) {
