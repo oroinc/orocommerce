@@ -1,6 +1,7 @@
 @regression
 @ticket-BB-14588
 @fixture-OroShippingBundle:ProductDuplicateFixture.yml
+@skip
 Feature: Duplicate product and update shipping options
   In order to manage products
   As administrator

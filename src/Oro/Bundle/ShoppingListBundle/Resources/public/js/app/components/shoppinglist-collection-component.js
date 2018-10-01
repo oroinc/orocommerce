@@ -54,6 +54,13 @@ define(function(require) {
                 );
             }
 
+            var updateShoppingListCollection = function(shoppingList) {
+                if (shoppingList && !this.collection.find({id: shoppingList.id})) {
+                    this.collection.add(_.defaults(shoppingList, {is_current: true}), {
+                        silent: true
+                    });
+                }
+            }.bind(this);
             var updateModel = function(model, product) {
                 model.set('shopping_lists', product.shopping_lists, {silent: true});
                 model.trigger('change:shopping_lists');
@@ -64,14 +71,11 @@ define(function(require) {
                 model = _.indexBy(model, 'id');
                 _.each(response.products, function(product) {
                     updateModel(model[product.id], product);
+                    _.each(product.shopping_lists, updateShoppingListCollection);
                 });
             }
 
-            if (response.shoppingList && !this.collection.find({id: response.shoppingList.id})) {
-                this.collection.add(_.defaults(response.shoppingList, {is_current: true}), {
-                    silent: true
-                });
-            }
+            updateShoppingListCollection(response.shoppingList);
 
             this.collection.trigger('change', {
                 refresh: true
