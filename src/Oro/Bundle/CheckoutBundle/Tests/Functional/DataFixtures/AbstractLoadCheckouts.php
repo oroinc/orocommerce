@@ -62,6 +62,18 @@ abstract class AbstractLoadCheckouts extends AbstractFixture implements
     abstract protected function getCheckoutSourceName();
 
     /**
+     * @param ObjectManager $manager
+     *
+     * @return CustomerUser
+     */
+    protected function getDefaultCustomerUser(ObjectManager $manager)
+    {
+        return $manager
+            ->getRepository('OroCustomerBundle:CustomerUser')
+            ->findOneBy(['username' => LoadCustomerUserData::AUTH_USER]);
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function load(ObjectManager $manager)
@@ -72,9 +84,7 @@ abstract class AbstractLoadCheckouts extends AbstractFixture implements
         /* @var $workflowManager WorkflowManager */
         $workflowManager = $this->container->get('oro_workflow.manager');
         $this->clearPreconditions();
-        /** @var CustomerUser $defaultCustomerUser */
-        $defaultCustomerUser = $manager->getRepository('OroCustomerBundle:CustomerUser')
-            ->findOneBy(['username' => LoadCustomerUserData::AUTH_USER]);
+        $defaultCustomerUser = $this->getDefaultCustomerUser($manager);
         $website = $this->getReference(LoadWebsiteData::WEBSITE1);
         foreach ($this->getData() as $name => $checkoutData) {
             /* @var $customerUser CustomerUser */

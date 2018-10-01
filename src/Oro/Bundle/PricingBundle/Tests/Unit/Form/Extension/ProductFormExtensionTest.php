@@ -24,6 +24,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -33,46 +34,36 @@ class ProductFormExtensionTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var UnitOfWork
-     */
+    /** @var AuthorizationCheckerInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $authorizationChecker;
+
+    /** @var UnitOfWork */
     protected $uow;
 
-    /**
-     * @var PriceManager|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var PriceManager|\PHPUnit\Framework\MockObject\MockObject */
     protected $priceManager;
 
-    /**
-     * @var ShardManager|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ShardManager|\PHPUnit\Framework\MockObject\MockObject */
     protected $shardManager;
 
-    /**
-     * @var ObjectManager|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ObjectManager|\PHPUnit\Framework\MockObject\MockObject */
     protected $em;
 
-    /**
-     * @var ProductPriceRepository|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ProductPriceRepository|\PHPUnit\Framework\MockObject\MockObject */
     protected $priceRepository;
 
-    /**
-     * @var ProductFormExtension
-     */
+    /** @var ProductFormExtension */
     protected $extension;
 
+    /**
+     * {@inheritdoc}
+     */
     protected function setUp()
     {
-        $this->priceRepository = $this
-            ->getMockBuilder(ProductPriceRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->priceRepository = $this->createMock(ProductPriceRepository::class);
 
         $this->em = $this->createMock(EntityManager::class);
-        $this->uow = $this->getMockBuilder(UnitOfWork::class)->disableOriginalConstructor()->getMock();
-        $this->uow;
+        $this->uow = $this->createMock(UnitOfWork::class);
 
         $this->em->method('getUnitOfWork')->willReturn($this->uow);
         $this->em->method('getClassMetadata')->willReturn($this->createMock(ClassMetadata::class));
@@ -89,8 +80,14 @@ class ProductFormExtensionTest extends \PHPUnit\Framework\TestCase
             ->willReturn($this->em);
         $this->shardManager = $this->createMock(ShardManager::class);
         $this->priceManager = $this->createMock(PriceManager::class);
+        $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
 
-        $this->extension = new ProductFormExtension($registry, $this->shardManager, $this->priceManager);
+        $this->extension = new ProductFormExtension(
+            $registry,
+            $this->shardManager,
+            $this->priceManager,
+            $this->authorizationChecker
+        );
     }
 
     /**
@@ -130,6 +127,30 @@ class ProductFormExtensionTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
+    public function testOnPreSubmitAndNoPriceField()
+    {
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
+        $form = $this->createMock(FormInterface::class);
+        $form
+            ->expects($this->once())
+            ->method('getData')
+            ->willReturn($this->getEntity(Product::class, ['id' => 1]));
+
+        $form
+            ->expects($this->once())
+            ->method('has')
+            ->with('prices')
+            ->willReturn(false);
+
+        $this->priceRepository
+            ->expects($this->never())
+            ->method('getPricesByProduct');
+
+        $event = new FormEvent($form, []);
+
+        $this->extension->onPreSubmit($event);
+    }
+
     public function testOnPreSubmitNoPrices()
     {
         $product = $this->getEntity(Product::class, ['id' => 1]);
@@ -166,6 +187,12 @@ class ProductFormExtensionTest extends \PHPUnit\Framework\TestCase
             ->expects($this->once())
             ->method('getData')
             ->willReturn($product);
+
+        $form
+            ->expects($this->once())
+            ->method('has')
+            ->with('prices')
+            ->willReturn(true);
 
         $this->priceRepository
             ->expects($this->once())
@@ -290,7 +317,63 @@ class ProductFormExtensionTest extends \PHPUnit\Framework\TestCase
     {
         /** @var FormBuilderInterface|\PHPUnit\Framework\MockObject\MockObject $builder */
         $builder = $this->createMock('Symfony\Component\Form\FormBuilderInterface');
-        $builder->expects($this->once())
+
+        $builder
+            ->expects(static::exactly(4))
+            ->method('addEventListener');
+
+        $builder
+            ->expects(static::at(0))
+            ->method('addEventListener')
+            ->with(FormEvents::PRE_SET_DATA, [$this->extension, 'addFormOnPreSetData']);
+
+        $builder
+            ->expects(static::at(1))
+            ->method('addEventListener')
+            ->with(FormEvents::POST_SET_DATA, [$this->extension, 'onPostSetData']);
+        $builder
+            ->expects(static::at(2))
+            ->method('addEventListener')
+            ->with(FormEvents::PRE_SUBMIT, [$this->extension, 'onPreSubmit'], 10);
+        $builder
+            ->expects(static::at(3))
+            ->method('addEventListener')
+            ->with(FormEvents::POST_SUBMIT, [$this->extension, 'onPostSubmit'], 10);
+
+        $this->extension->buildForm($builder, []);
+    }
+
+    public function testAddFormOnPreSetDataAndFieldPricesAlreadyAdded()
+    {
+        $product = $this->getEntity(Product::class, ['id' => 1]);
+
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
+        $form = $this->createMock(FormInterface::class);
+        $form
+            ->expects($this->never())
+            ->method('add');
+
+        $form
+            ->expects($this->once())
+            ->method('has')
+            ->with('prices')
+            ->willReturn(true);
+
+        $this->authorizationChecker
+            ->expects($this->never())
+            ->method('isGranted');
+
+        $formEvent = new FormEvent($form, $product);
+        $this->extension->addFormOnPreSetData($formEvent);
+    }
+
+    public function testAddFormOnPreSetDataAndNewProduct()
+    {
+        $product = $this->getEntity(Product::class, ['id' => null]);
+
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
+        $form = $this->createMock(FormInterface::class);
+        $form->expects($this->once())
             ->method('add')
             ->with(
                 'prices',
@@ -303,29 +386,161 @@ class ProductFormExtensionTest extends \PHPUnit\Framework\TestCase
                         new UniqueProductPrices(['groups' => ProductPriceCollectionType::VALIDATION_GROUP])
                     ],
                     'entry_options' => [
-                        'product' => null,
+                        'product' => $product,
                     ],
+                    'allow_add' => true,
+                    'allow_delete' => true
                 ]
             );
 
-        $builder
-            ->expects(static::exactly(3))
-            ->method('addEventListener');
+        $form
+            ->expects($this->once())
+            ->method('has')
+            ->with('prices')
+            ->willReturn(false);
 
-        $builder
-            ->expects(static::at(2))
-            ->method('addEventListener')
-            ->with(FormEvents::POST_SET_DATA, [$this->extension, 'onPostSetData']);
-        $builder
-            ->expects(static::at(3))
-            ->method('addEventListener')
-            ->with(FormEvents::PRE_SUBMIT, [$this->extension, 'onPreSubmit'], 10);
-        $builder
-            ->expects(static::at(4))
-            ->method('addEventListener')
-            ->with(FormEvents::POST_SUBMIT, [$this->extension, 'onPostSubmit'], 10);
+        $this->authorizationChecker
+            ->expects($this->once())
+            ->method('isGranted')
+            ->with('CREATE', 'entity:' . ProductPrice::class)
+            ->willReturn(true);
 
-        $this->extension->buildForm($builder, []);
+        $formEvent = new FormEvent($form, $product);
+        $this->extension->addFormOnPreSetData($formEvent);
+    }
+
+    /**
+     * @dataProvider addFormOnPreSetDataWithNoFieldAddedProviderAndUpdateProductProvider
+     *
+     * @param array $allowedPermissions
+     */
+    public function testAddFormOnPreSetDataWithNoFieldAddedAndUpdateProduct(array $allowedPermissions)
+    {
+        $product = $this->getEntity(Product::class, ['id' => 1]);
+
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
+        $form = $this->createMock(FormInterface::class);
+        $form
+            ->expects($this->never())
+            ->method('add');
+
+        $form
+            ->expects($this->once())
+            ->method('has')
+            ->with('prices')
+            ->willReturn(false);
+
+        $this->authorizationChecker
+            ->expects($this->atLeast(2))
+            ->method('isGranted')
+            ->willReturnCallback(function ($permission, $objectDescriptions) use ($allowedPermissions) {
+                if (!in_array($permission, $allowedPermissions)) {
+                    return false;
+                }
+
+                return $objectDescriptions = 'entity:' . ProductPrice::class;
+            });
+
+        $formEvent = new FormEvent($form, $product);
+        $this->extension->addFormOnPreSetData($formEvent);
+    }
+
+    /**
+     * @return array
+     */
+    public function addFormOnPreSetDataWithNoFieldAddedProviderAndUpdateProductProvider()
+    {
+        return [
+            'No "View" permission granted' => [
+                'allowedPermissions' => ['EDIT', 'CREATE', 'DELETE'],
+            ],
+            'No "EDIT" permission granted' => [
+                'allowedPermissions' => ['VIEW', 'CREATE', 'DELETE'],
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider addFormOnPreSetDataAndFieldAddedAndUpdateProductProvider
+     *
+     * @param array $allowedPermissions
+     * @param string $allowAdd
+     * @param string $allowDelete
+     */
+    public function testAddFormOnPreSetDataAndFieldAddedAndUpdateProduct(
+        array $allowedPermissions,
+        $allowAdd,
+        $allowDelete
+    ) {
+        $product = $this->getEntity(Product::class, ['id' => 1]);
+
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
+        $form = $this->createMock(FormInterface::class);
+        $form
+            ->expects($this->once())
+            ->method('add')
+            ->with(
+                'prices',
+                ProductPriceCollectionType::class,
+                [
+                    'label' => 'oro.pricing.productprice.entity_plural_label',
+                    'required' => false,
+                    'mapped' => false,
+                    'constraints' => [
+                        new UniqueProductPrices(['groups' => ProductPriceCollectionType::VALIDATION_GROUP])
+                    ],
+                    'entry_options' => [
+                        'product' => $product,
+                    ],
+                    'allow_add' => $allowAdd,
+                    'allow_delete' => $allowDelete
+                ]
+            );
+        ;
+
+        $form
+            ->expects($this->once())
+            ->method('has')
+            ->with('prices')
+            ->willReturn(false);
+
+        $this->authorizationChecker
+            ->expects($this->exactly(4))
+            ->method('isGranted')
+            ->willReturnCallback(function ($permission, $objectDescriptions) use ($allowedPermissions) {
+                if (!in_array($permission, $allowedPermissions)) {
+                    return false;
+                }
+
+                return $objectDescriptions = 'entity:' . ProductPrice::class;
+            });
+
+        $formEvent = new FormEvent($form, $product);
+        $this->extension->addFormOnPreSetData($formEvent);
+    }
+
+    /**
+     * @return array
+     */
+    public function addFormOnPreSetDataAndFieldAddedAndUpdateProductProvider()
+    {
+        return [
+            'All permissions granted' => [
+                'allowedPermissions' => ['EDIT', 'CREATE', 'DELETE', 'VIEW'],
+                'allowAdd' => true,
+                'allowDelete' => true
+            ],
+            'No "DELETE" permission granted' => [
+                'allowedPermissions' => ['EDIT', 'CREATE', 'VIEW'],
+                'allowAdd' => true,
+                'allowDelete' => false
+            ],
+            'No "CREATE" permission granted' => [
+                'allowedPermissions' => ['EDIT', 'VIEW', 'DELETE'],
+                'allowAdd' => false,
+                'allowDelete' => true
+            ]
+        ];
     }
 
     /**
@@ -336,6 +551,10 @@ class ProductFormExtensionTest extends \PHPUnit\Framework\TestCase
     public function testOnPostSetData($product)
     {
         $event = $this->createEvent($product);
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $mainForm */
+        $mainForm = $event->getForm();
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $pricesForm */
+        $pricesForm = $mainForm->get('prices');
 
         if ($product && $product->getId()) {
             $prices = ['price1', 'price2'];
@@ -346,10 +565,11 @@ class ProductFormExtensionTest extends \PHPUnit\Framework\TestCase
                 ->with($this->shardManager, $product)
                 ->willReturn($prices);
 
-            /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $pricesForm */
-            $pricesForm = $event
-                ->getForm()
-                ->get('prices');
+            $mainForm
+                ->method('has')
+                ->with('prices')
+                ->willReturn(true);
+
             $pricesForm
                 ->expects(static::once())
                 ->method('setData')
@@ -358,6 +578,11 @@ class ProductFormExtensionTest extends \PHPUnit\Framework\TestCase
             $this->priceRepository
                 ->expects(static::never())
                 ->method('getPricesByProduct');
+
+            $mainForm
+                ->expects($this->never())
+                ->method('has')
+                ->with('prices');
         }
 
         $this->extension->onPostSetData($event);
@@ -384,6 +609,11 @@ class ProductFormExtensionTest extends \PHPUnit\Framework\TestCase
             ->expects(static::never())
             ->method('isValid');
 
+        $mainForm
+            ->expects($this->never())
+            ->method('has')
+            ->with('prices');
+
         $this->extension->onPostSubmit($event);
     }
 
@@ -396,6 +626,12 @@ class ProductFormExtensionTest extends \PHPUnit\Framework\TestCase
             ->expects(static::once())
             ->method('isValid')
             ->willReturn(false);
+
+        $mainForm
+            ->expects($this->once())
+            ->method('has')
+            ->with('prices')
+            ->willReturn(true);
 
         $priceOne = $this->createProductPrice(1);
         $priceTwo = $this->createProductPrice(2);
@@ -418,10 +654,40 @@ class ProductFormExtensionTest extends \PHPUnit\Framework\TestCase
         $this->extension->onPostSubmit($event);
     }
 
+    public function testOnPostSubmitFormWithoutPriceField()
+    {
+        $event = $this->createEvent($this->createProduct());
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $mainForm */
+        $mainForm = $event->getForm();
+        $mainForm
+            ->expects($this->never())
+            ->method('isValid');
+
+        $mainForm
+            ->expects($this->once())
+            ->method('has')
+            ->with('prices')
+            ->willReturn(false);
+
+        $this->em->expects($this->never())
+            ->method('persist');
+
+        $this->extension->onPostSubmit($event);
+    }
+
     public function testOnPostSubmitNewProduct()
     {
         $product = $this->createProduct();
         $event = $this->createEvent($product);
+
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $mainForm */
+        $mainForm = $event->getForm();
+        $mainForm
+            ->expects($this->once())
+            ->method('has')
+            ->with('prices')
+            ->willReturn(true);
+
         $priceList = new PriceList();
         $priceOne = $this->createProductPrice(1);
         $priceTwo = $this->createProductPrice(2);
@@ -442,6 +708,14 @@ class ProductFormExtensionTest extends \PHPUnit\Framework\TestCase
     {
         $product = $this->createProduct(1);
         $event = $this->createEvent($product);
+
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $mainForm */
+        $mainForm = $event->getForm();
+        $mainForm
+            ->expects($this->once())
+            ->method('has')
+            ->with('prices')
+            ->willReturn(true);
 
         $priceList = new PriceList();
         $priceOne = $this->createProductPrice(1);
@@ -492,7 +766,7 @@ class ProductFormExtensionTest extends \PHPUnit\Framework\TestCase
      */
     protected function createProduct($id = null)
     {
-        return $this->createEntity('Oro\Bundle\ProductBundle\Entity\Product', $id);
+        return $this->getEntity(Product::class, ['id' => $id]);
     }
 
     /**
@@ -502,25 +776,7 @@ class ProductFormExtensionTest extends \PHPUnit\Framework\TestCase
      */
     protected function createProductPrice($id = null)
     {
-        return $this->createEntity('Oro\Bundle\PricingBundle\Entity\ProductPrice', $id);
-    }
-
-    /**
-     * @param string $class
-     * @param int|null $id
-     *
-     * @return object
-     */
-    protected function createEntity($class, $id = null)
-    {
-        $entity = new $class();
-        if ($id) {
-            $reflection = new \ReflectionProperty($class, 'id');
-            $reflection->setAccessible(true);
-            $reflection->setValue($entity, $id);
-        }
-
-        return $entity;
+        return $this->getEntity(ProductPrice::class, ['id' => $id]);
     }
 
     /**

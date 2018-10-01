@@ -16,6 +16,9 @@ use Oro\Bundle\PricingBundle\Provider\CombinedPriceListProvider;
 use Oro\Bundle\PricingBundle\Provider\PriceListSequenceMember;
 use Oro\Bundle\PricingBundle\Resolver\PriceListScheduleResolver;
 
+/**
+ * Generate activation plans for Combined Price Lists based on Price Lists Schedules.
+ */
 class CombinedPriceListActivationPlanBuilder
 {
     /**
@@ -123,7 +126,7 @@ class CombinedPriceListActivationPlanBuilder
     protected function generateActivationRules(CombinedPriceList $cpl)
     {
         $now = new \DateTime('now', new \DateTimeZone('UTC'));
-        $priceListSchedules = $this->getPriceListScheduleRepository()->getSchedulesByCPL($cpl, $now);
+        $priceListSchedules = $this->getPriceListScheduleRepository()->getSchedulesByCPL($cpl);
         $priceListRelations = $this->getCPLToPriceListRepository()->getPriceListRelations($cpl);
 
         $rawRules = $this->schedulerResolver->mergeSchedule($priceListSchedules, $priceListRelations);

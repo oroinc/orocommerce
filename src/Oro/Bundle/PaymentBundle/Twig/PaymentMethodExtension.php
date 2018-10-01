@@ -4,10 +4,15 @@ namespace Oro\Bundle\PaymentBundle\Twig;
 
 use Oro\Bundle\PaymentBundle\Event\PaymentMethodConfigDataEvent;
 use Oro\Bundle\PaymentBundle\Formatter\PaymentMethodLabelFormatter;
+use Oro\Bundle\PaymentBundle\Formatter\PaymentMethodOptionsFormatter;
 use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
+use Oro\Bundle\PaymentBundle\Twig\DTO\PaymentMethodObject;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+/**
+ * Twig extension that provides data based on payment method or entity that was participated in payment transactions
+ */
 class PaymentMethodExtension extends \Twig_Extension
 {
     const DEFAULT_METHOD_CONFIG_TEMPLATE =
@@ -41,6 +46,14 @@ class PaymentMethodExtension extends \Twig_Extension
     protected function getPaymentMethodLabelFormatter()
     {
         return $this->container->get('oro_payment.formatter.payment_method_label');
+    }
+
+    /**
+     * @return PaymentMethodOptionsFormatter
+     */
+    protected function getPaymentMethodOptionsFormatter()
+    {
+        return $this->container->get('oro_payment.formatter.payment_method_options');
     }
 
     /**
@@ -103,12 +116,12 @@ class PaymentMethodExtension extends \Twig_Extension
     {
         $paymentTransactions = $this->getPaymentTransactionProvider()->getPaymentTransactions($entity);
         $paymentMethods = [];
+        $labelFormatter = $this->getPaymentMethodLabelFormatter();
+        $optionsFormatter = $this->getPaymentMethodOptionsFormatter();
         foreach ($paymentTransactions as $paymentTransaction) {
-            $paymentMethods[] = $this->getPaymentMethodLabelFormatter()
-                ->formatPaymentMethodLabel(
-                    $paymentTransaction->getPaymentMethod(),
-                    false
-                );
+            $label = $labelFormatter->formatPaymentMethodLabel($paymentTransaction->getPaymentMethod(), false);
+            $options = $optionsFormatter->formatPaymentMethodOptions($paymentTransaction->getPaymentMethod());
+            $paymentMethods[] = new PaymentMethodObject($label, $options);
         }
 
         return $paymentMethods;

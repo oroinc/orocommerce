@@ -8,6 +8,9 @@ use Oro\Bundle\RedirectBundle\Entity\Redirect;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
 
+/**
+ * Doctrine repository for Oro\Bundle\RedirectBundle\Entity\Redirect entity.
+ */
 class RedirectRepository extends EntityRepository
 {
     /**
@@ -43,6 +46,34 @@ class RedirectRepository extends EntityRepository
             $qb->andWhere($qb->expr()->isNull('scope.id'));
 
             return $qb->getQuery()->getOneOrNullResult();
+        }
+
+        return null;
+    }
+
+    /**
+     * @param string $from
+     * @param ScopeCriteria $scopeCriteria
+     * @return null|Redirect
+     */
+    public function findByPrototype($from, ScopeCriteria $scopeCriteria)
+    {
+        $qb = $this->createQueryBuilder('redirect');
+        $qb->leftJoin('redirect.scopes', 'scope', Join::WITH)
+            ->where($qb->expr()->eq('redirect.fromPrototype', ':fromPrototype'))
+            ->setParameter('fromPrototype', $from);
+
+        $qb->addSelect('scope.id as matchedScopeId');
+        $scopeCriteria->applyToJoinWithPriority($qb, 'scope');
+
+        $results = $qb->getQuery()->getResult();
+        foreach ($results as $result) {
+            /** @var Redirect $redirect */
+            $redirect = $result[0];
+            $matchedScopeId = $result['matchedScopeId'];
+            if ($matchedScopeId || $redirect->getScopes()->isEmpty()) {
+                return $redirect;
+            }
         }
 
         return null;

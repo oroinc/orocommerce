@@ -15,16 +15,4 @@ In order for this IP check to work, the bundle has to be able to resolve the IP 
 
 For the purpose of testing the payments on the developer machine you will usually have to use some kind of tunneling service, for example [ngrok.com](https://ngrok.com). The problem with the tunneling services is they tend to put the original request IP address in the header like `X-Forwarded-For` and Symfony doesn't resolve this address as client IP by default.
 
-Luckily there is and option for Symfony to do that by enabling trusted proxies. You can see the detailed explanation in the Symfony documentation [here](http://symfony.com/doc/current/components/http_foundation/trusting_proxies.html) and [here](http://symfony.com/doc/current/cookbook/request/load_balancer_reverse_proxy.html).
-
-To make the configuration process simpler, we provided the stub configuration for this option with the bundle. It is located in the `Resources/config/oro/app.yml` and is commented out by default. To enable it, uncomment it like this:
-
-```
-#Resources/config/oro/app.yml
-framework:
-    trusted_proxies: [ 127.0.0.1 ]
-```
-
-You may also need to change the IP address of the trusted proxy if it's different from `127.0.0.1`. You have to clear the cache to apply the settings in this file.
-
-You can also make this setting in the standard Symfony way - in the `config/config_{dev|test}.yml`.
+Luckily there is an option for Symfony to do that by enabling trusted proxies. You can see the detailed explanation in the [Symfony documentation](http://symfony.com/doc/3.4/deployment/proxies.html).

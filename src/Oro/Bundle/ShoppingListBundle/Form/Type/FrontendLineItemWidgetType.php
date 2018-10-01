@@ -2,9 +2,7 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Form\Type;
 
-use Doctrine\Common\Collections\Criteria;
 use Oro\Bundle\ProductBundle\Form\Type\FrontendLineItemType;
-use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
@@ -20,6 +18,9 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Translation\TranslatorInterface;
 
+/**
+ * Form type for line item widget.
+ */
 class FrontendLineItemWidgetType extends AbstractType
 {
     const NAME = 'oro_shopping_list_frontend_line_item_widget';
@@ -30,11 +31,6 @@ class FrontendLineItemWidgetType extends AbstractType
     protected $shoppingListManager;
 
     /**
-     * @var AclHelper
-     */
-    protected $aclHelper;
-
-    /**
      * @var ManagerRegistry
      */
     protected $registry;
@@ -43,29 +39,24 @@ class FrontendLineItemWidgetType extends AbstractType
      * @var string
      */
     protected $shoppingListClass;
-
-
+    
     /**
      * @var TranslatorInterface
      */
     protected $translator;
 
-
     /**
      * @param ManagerRegistry $registry
      * @param TranslatorInterface $translator
-     * @param AclHelper $aclHelper
      * @param ShoppingListManager $shoppingListManager
      */
     public function __construct(
         ManagerRegistry $registry,
         TranslatorInterface $translator,
-        AclHelper $aclHelper,
         ShoppingListManager $shoppingListManager
     ) {
         $this->registry = $registry;
         $this->translator = $translator;
-        $this->aclHelper = $aclHelper;
         $this->shoppingListManager = $shoppingListManager;
     }
 
@@ -85,18 +76,11 @@ class FrontendLineItemWidgetType extends AbstractType
                     'class' => $this->shoppingListClass,
                     'query_builder' => function (ShoppingListRepository $repository) {
                         $qb = $repository->createQueryBuilder('shoppingList');
-                        $criteria = new Criteria();
-                        $this->aclHelper->applyAclToCriteria(
-                            $this->shoppingListClass,
-                            $criteria,
-                            'EDIT',
-                            ['customerUser' => 'shoppingList.customerUser']
-                        );
-                        $qb->addCriteria($criteria);
 
                         return $qb;
                     },
                     'placeholder' => 'oro.shoppinglist.lineitem.create_new_shopping_list',
+                    'acl_options'  => ['permission' => 'EDIT']
                 ]
             )
             ->add(

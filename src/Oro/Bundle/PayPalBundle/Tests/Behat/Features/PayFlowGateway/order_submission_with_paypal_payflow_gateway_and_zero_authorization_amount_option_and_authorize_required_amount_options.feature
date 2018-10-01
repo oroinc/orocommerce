@@ -34,7 +34,7 @@ Feature: Order submission with PayPal PayFlow Gateway and zero "authorization am
     And I fill in "Name" with "PayPalFlow"
     And I fill in "Sort Order" with "1"
     And I select "PayPalFlow" from "Method"
-    And I press "Add Method Button"
+    And I click "Add Method Button"
     And I save and close form
     Then I should see "Payment rule has been saved" flash message
 
@@ -42,7 +42,7 @@ Feature: Order submission with PayPal PayFlow Gateway and zero "authorization am
     Given There are products in the system available for order
     And I operate as the Buyer
     When I open page with shopping list List 2
-    And I press "Create Order"
+    And I click "Create Order"
     And I select "Fifth avenue, 10115 Berlin, Germany" on the "Billing Information" checkout step and press Continue
     And I select "Fifth avenue, 10115 Berlin, Germany" on the "Shipping Information" checkout step and press Continue
     And I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
@@ -57,14 +57,14 @@ Feature: Order submission with PayPal PayFlow Gateway and zero "authorization am
   Scenario: Successful first order payment with PayPal PayFlow Gateway and enabled "zero authorization amount" option
     Given There are products in the system available for order
     When I open page with shopping list List 2
-    And I press "Create Order"
+    And I click "Create Order"
     And I fill credit card form with next data:
       | CreditCardNumber | 5424000000000015 |
       | Month            | 11               |
       | Year             | 2027             |
       | CVV              | 123              |
     And I click "Continue"
-    And I press "Submit Order"
+    And I click "Submit Order"
     Then I see the "Thank You" page with "Thank You For Your Purchase!" title
 
     Then I operate as the Admin
@@ -79,12 +79,12 @@ Feature: Order submission with PayPal PayFlow Gateway and zero "authorization am
     Given There are products in the system available for order
     And I operate as the Buyer
     When I open page with shopping list List 1
-    And I press "Create Order"
+    And I click "Create Order"
     And I select "Fifth avenue, 10115 Berlin, Germany" on the "Billing Information" checkout step and press Continue
     And I select "Fifth avenue, 10115 Berlin, Germany" on the "Shipping Information" checkout step and press Continue
     And I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
     And I click "Continue"
-    And I press "Submit Order"
+    And I click "Submit Order"
     Then I see the "Thank You" page with "Thank You For Your Purchase!" title
 
     Then I operate as the Admin

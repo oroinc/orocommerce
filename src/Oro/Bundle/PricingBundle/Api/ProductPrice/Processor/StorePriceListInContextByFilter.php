@@ -6,7 +6,6 @@ use Oro\Bundle\ApiBundle\Model\Error;
 use Oro\Bundle\ApiBundle\Processor\Context;
 use Oro\Bundle\ApiBundle\Request\Constraint;
 use Oro\Bundle\ApiBundle\Util\DoctrineHelper;
-use Oro\Bundle\PricingBundle\Api\ProductPrice\PriceListIDContextStorageInterface;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
@@ -16,74 +15,56 @@ use Oro\Component\ChainProcessor\ProcessorInterface;
  */
 class StorePriceListInContextByFilter implements ProcessorInterface
 {
-    const FILTER_PARAM_PRICE_LIST = 'filter[priceList]';
+    private const FILTER_PARAM_PRICE_LIST = 'filter[priceList]';
 
-    const VALIDATION_MESSAGE_PRICE_LIST_REQUIRED = 'priceList filter is required';
-    const VALIDATION_MESSAGE_PRICE_LIST_NOT_FOUND = 'specified priceList does not exist';
-
-    /**
-     * @var PriceListIDContextStorageInterface
-     */
-    private $priceListIDContextStorage;
-
-    /**
-     * @var DoctrineHelper
-     */
+    /** @var DoctrineHelper */
     private $doctrineHelper;
 
     /**
-     * @param PriceListIDContextStorageInterface $priceListIDContextStorage
-     * @param DoctrineHelper                     $doctrineHelper
+     * @param DoctrineHelper $doctrineHelper
      */
-    public function __construct(
-        PriceListIDContextStorageInterface $priceListIDContextStorage,
-        DoctrineHelper $doctrineHelper
-    ) {
-        $this->priceListIDContextStorage = $priceListIDContextStorage;
+    public function __construct(DoctrineHelper $doctrineHelper)
+    {
         $this->doctrineHelper = $doctrineHelper;
     }
+
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function process(ContextInterface $context)
     {
-        if (!$context instanceof Context) {
-            return;
-        }
+        /** @var Context $context */
 
-        if (false === $context->getFilterValues()->has(self::FILTER_PARAM_PRICE_LIST)) {
+        $filterValues = $context->getFilterValues();
+
+        if (!$filterValues->has(self::FILTER_PARAM_PRICE_LIST)) {
             $context->addError(
-                Error::createValidationError(
-                    Constraint::FILTER,
-                    self::VALIDATION_MESSAGE_PRICE_LIST_REQUIRED
-                )
+                Error::createValidationError(Constraint::FILTER, 'priceList filter is required')
             );
 
             return;
         }
 
-        $priceListID = $context->getFilterValues()->get(self::FILTER_PARAM_PRICE_LIST)->getValue();
+        $priceListId = $filterValues->get(self::FILTER_PARAM_PRICE_LIST)->getValue();
 
-        if (false === $this->isValidPriceListId($priceListID)) {
+        if (!$this->isValidPriceListId($priceListId)) {
             $context->addError(
-                Error::createValidationError(
-                    Constraint::FILTER,
-                    self::VALIDATION_MESSAGE_PRICE_LIST_NOT_FOUND
-                )
+                Error::createValidationError(Constraint::FILTER, 'specified priceList does not exist')
             );
         }
 
-        $this->priceListIDContextStorage->store($priceListID, $context);
+        PriceListIdContextUtil::storePriceListId($context, $priceListId);
     }
+
     /**
-     * @param int $priceListID
+     * @param int $priceListId
      *
      * @return bool
      */
-    private function isValidPriceListId(int $priceListID): bool
+    private function isValidPriceListId(int $priceListId): bool
     {
         $priceListRepository = $this->doctrineHelper->getEntityRepositoryForClass(PriceList::class);
 
-        return null !== $priceListRepository->find($priceListID);
+        return null !== $priceListRepository->find($priceListId);
     }
 }

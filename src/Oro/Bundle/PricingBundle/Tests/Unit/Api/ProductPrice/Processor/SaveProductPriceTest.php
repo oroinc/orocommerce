@@ -2,33 +2,24 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Api\ProductPrice\Processor;
 
-use Oro\Bundle\ApiBundle\Processor\SingleItemContext;
+use Oro\Bundle\ApiBundle\Tests\Unit\Processor\FormProcessorTestCase;
 use Oro\Bundle\PricingBundle\Api\ProductPrice\Processor\SaveProductPrice;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Manager\PriceManager;
-use PHPUnit\Framework\TestCase;
 
-class SaveProductPriceTest extends TestCase
+class SaveProductPriceTest extends FormProcessorTestCase
 {
-    /**
-     * @var PriceManager|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var PriceManager|\PHPUnit\Framework\MockObject\MockObject */
     private $priceManager;
 
-    /**
-     * @var SingleItemContext|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $context;
-
-    /**
-     * @var SaveProductPrice
-     */
+    /** @var SaveProductPrice */
     private $processor;
 
     protected function setUp()
     {
+        parent::setUp();
+
         $this->priceManager = $this->createMock(PriceManager::class);
-        $this->context = $this->createMock(SingleItemContext::class);
 
         $this->processor = new SaveProductPrice($this->priceManager);
     }
@@ -43,28 +34,18 @@ class SaveProductPriceTest extends TestCase
         $productPriceId = 'test';
 
         $productPrice = $this->createMock(ProductPrice::class);
-        $productPrice
-            ->expects(static::once())
+        $productPrice->expects(self::once())
             ->method('getId')
             ->willReturn($productPriceId);
 
-        $this->context
-            ->expects(static::once())
-            ->method('getResult')
-            ->willReturn($productPrice);
-        $this->context
-            ->expects(static::once())
-            ->method('setId')
-            ->with($productPriceId);
-
-        $this->priceManager
-            ->expects(static::once())
+        $this->priceManager->expects(self::once())
             ->method('persist')
             ->with($productPrice);
-        $this->priceManager
-            ->expects(static::once())
+        $this->priceManager->expects(self::once())
             ->method('flush');
 
+        $this->context->setResult($productPrice);
         $this->processor->process($this->context);
+        self::assertSame($productPriceId, $this->context->getId());
     }
 }
