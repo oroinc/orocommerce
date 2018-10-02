@@ -13,9 +13,15 @@ define(function(require) {
         options: {
             entityId: null,
             entityClass: 'Oro\\Bundle\\CheckoutBundle\\Entity\\Checkout',
+            jsDialogWidget: 'orofrontend/js/app/components/frontend-dialog-widget',
+            dialogClass: 'ui-dialog--frontend',
             dialogRoute: 'oro_frontend_action_widget_form',
             dialogWidth: 1000,
-            dialogHeight: 700
+            dialogHeight: 'auto',
+            resizable: false,
+            autoResize: true,
+            popupIcon: 'fa-map-marker',
+            popupBadge: true
         },
 
         enterManuallyOriginLabel: null,
@@ -107,12 +113,21 @@ define(function(require) {
                 showDialog: true,
                 hasForm: true,
                 dialogUrl: dialogUrl,
+                jsDialogWidget: this.options.jsDialogWidget,
                 dialogOptions: {
                     title: this._title(addressType),
                     dialogOptions: {
+                        dialogClass: this.options.dialogClass,
                         width: this.options.dialogWidth,
                         height: this.options.dialogHeight,
+                        resizable: this.options.resizable,
+                        autoResize: this.options.autoResize,
                         close: _.bind(this.closeDialog, this, event, previousVal)
+                    },
+                    fullscreenViewOptions: {
+                        popupLabel: this._title(addressType),
+                        popupIcon: this.options.popupIcon,
+                        popupBadge: this.options.popupBadge
                     }
                 }
             });
