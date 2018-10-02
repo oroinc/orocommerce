@@ -481,7 +481,7 @@ class ProductRepository extends EntityRepository
     /**
      * This is analog of  self::findParentSkusByAttributeValue method but fetches results for array of options
      * to not to execute query for each option
-     * Added for BC purposes
+     * Added new method for BC purposes only
      * @param string $type
      * @param string $fieldName
      * @param array $attributeOptions
@@ -489,7 +489,6 @@ class ProductRepository extends EntityRepository
      */
     public function findParentSkusByAttributeOptions(string $type, string $fieldName, array $attributeOptions)
     {
-
         $qb = $this->createQueryBuilder('p');
 
         $result = $qb

@@ -85,7 +85,6 @@ class EnumValueCollectionExtensionTest extends \PHPUnit_Framework_TestCase
         $this->assertArrayNotHasKey('tooltip_parameters', $view->vars);
     }
 
-
     public function testBuildViewWhenConfigIdIsNull()
     {
         $view = new FormView();
