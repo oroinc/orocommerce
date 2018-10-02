@@ -4,6 +4,9 @@ namespace Oro\Bundle\CheckoutBundle\Migrations\Data\ORM;
 
 use Oro\Bundle\CustomerBundle\Migrations\Data\ORM\AbstractUpdateCustomerUserRolePermissions;
 
+/**
+ * Set Corporate (All Levels) permission for Single Page Checkout workflow for Administrator
+ */
 class UpdateAdministratorPermissionsForSinglePageCheckoutWorkflow extends AbstractUpdateCustomerUserRolePermissions
 {
     /**

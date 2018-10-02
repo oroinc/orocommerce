@@ -4,6 +4,9 @@ namespace Oro\Bundle\CheckoutBundle\Migrations\Data\ORM;
 
 use Oro\Bundle\CustomerBundle\Migrations\Data\ORM\AbstractUpdateCustomerUserRolePermissions;
 
+/**
+ * Set User (Own) permission for Single Page Checkout workflow for Anonymous
+ */
 class UpdateAnonymousPermissionsForSinglePageCheckoutWorkflow extends AbstractUpdateCustomerUserRolePermissions
 {
     /**
