@@ -104,10 +104,10 @@ Feature: Guest Shopping Lists
     And I am on homepage
     And I should see "No Shopping Lists"
 
-  Scenario: Enable "Create shopping list for new guest on first visit"
+  Scenario: Enable "Create Guest Shopping Lists Immediately"
     Given I proceed as the Admin
-    And uncheck "Use default" for "Create shopping list for new guest on first visit" field
-    And I check "Create shopping list for new guest on first visit"
+    And uncheck "Use default" for "Create Guest Shopping Lists Immediately" field
+    And I check "Create Guest Shopping Lists Immediately"
     And I save setting
     Then I should see "Configuration saved" flash message
 
