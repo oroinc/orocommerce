@@ -79,7 +79,16 @@ class EnumValueCollectionExtension extends AbstractTypeExtension
 
         $optionsWithProductsSkusAssigned = $this->getProductSkuUsingEnum($configId, $attributeOptionIds);
 
-        foreach ($view->children as $childView) {
+        $this->updateChildrenViews($view, $optionsWithProductsSkusAssigned);
+    }
+
+    /**
+     * @param FormView $formView
+     * @param array $optionsWithProductsSkusAssigned
+     */
+    private function updateChildrenViews(FormView $formView, array $optionsWithProductsSkusAssigned)
+    {
+        foreach ($formView->children as $childView) {
             $optionId = $childView->vars['value']['id'];
 
             if (isset($optionsWithProductsSkusAssigned[$optionId])) {
