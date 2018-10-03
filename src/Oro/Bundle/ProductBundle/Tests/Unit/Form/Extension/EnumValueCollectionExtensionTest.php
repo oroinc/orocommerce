@@ -3,41 +3,42 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Extension;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\EntityConfigBundle\Config\ConfigInterface;
-use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
-use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
-use Oro\Bundle\EntityExtendBundle\Form\Type\EnumValueType;
+use Oro\Bundle\EntityExtendBundle\Form\Type\EnumValueCollectionType;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use Oro\Bundle\ProductBundle\Form\Extension\EnumValueCollectionExtension;
 use Oro\Bundle\ProductBundle\Form\Extension\EnumValueForProductExtension;
 use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
+use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use Oro\Bundle\EntityConfigBundle\Config\ConfigInterface;
+use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Symfony\Component\Form\FormConfigInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 
-class EnumValueForProductExtensionTest extends \PHPUnit\Framework\TestCase
+class EnumValueCollectionExtensionTest extends  \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     const ENUM_FIELD_NAME = 'enumField';
 
-    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject */
     private $doctrineHelper;
 
     /** @var EnumValueForProductExtension */
     private $extension;
 
-    /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
+    /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
     private $form;
 
-    /** @var FormConfigInterface|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var FormConfigInterface|\PHPUnit_Framework_MockObject_MockObject */
     private $configInterface;
 
-    /** @var ProductRepository|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var ProductRepository|\PHPUnit_Framework_MockObject_MockObject */
     private $productRepository;
 
-    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject */
     private $configManager;
 
     /**
@@ -59,20 +60,12 @@ class EnumValueForProductExtensionTest extends \PHPUnit\Framework\TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->extension = new EnumValueForProductExtension($this->doctrineHelper, $this->configManager);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function tearDown()
-    {
-        unset($this->doctrineHelper, $this->form, $this->configInterface, $this->productRepository, $this->extension);
+        $this->extension = new EnumValueCollectionExtension($this->doctrineHelper, $this->configManager);
     }
 
     public function testGetExtendedType()
     {
-        $this->assertEquals(EnumValueType::class, $this->extension->getExtendedType());
+        $this->assertEquals(EnumValueCollectionType::class, $this->extension->getExtendedType());
     }
 
     public function testBuildViewWhenEmptyFormData()
@@ -81,29 +74,12 @@ class EnumValueForProductExtensionTest extends \PHPUnit\Framework\TestCase
 
         $this->form->expects($this->once())
             ->method('getData')
-            ->willReturn(null);
+            ->willReturn([]);
 
         $this->form->expects($this->never())
             ->method('getParent');
 
-        $this->extension->buildView($view, $this->form, []);
-
-        $this->assertArrayNotHasKey('tooltip', $view->vars);
-        $this->assertArrayNotHasKey('tooltip_parameters', $view->vars);
-    }
-
-    public function testBuildViewWhenEmptyDataId()
-    {
-        $view = new FormView();
-
-        $this->form->expects($this->once())
-            ->method('getData')
-            ->willReturn(['id' => null]);
-
-        $this->form->expects($this->never())
-            ->method('getParent');
-
-        $this->extension->buildView($view, $this->form, []);
+        $this->extension->finishView($view, $this->form, []);
 
         $this->assertArrayNotHasKey('tooltip', $view->vars);
         $this->assertArrayNotHasKey('tooltip_parameters', $view->vars);
@@ -120,7 +96,7 @@ class EnumValueForProductExtensionTest extends \PHPUnit\Framework\TestCase
             ->with('config_id')
             ->willReturn(null);
 
-        $this->extension->buildView($view, $this->form, []);
+        $this->extension->finishView($view, $this->form, []);
 
         $this->assertArrayNotHasKey('tooltip', $view->vars);
         $this->assertArrayNotHasKey('tooltip_parameters', $view->vars);
@@ -137,7 +113,7 @@ class EnumValueForProductExtensionTest extends \PHPUnit\Framework\TestCase
             ->with('config_id')
             ->willReturn(new \stdClass());
 
-        $this->extension->buildView($view, $this->form, []);
+        $this->extension->finishView($view, $this->form, []);
 
         $this->assertArrayNotHasKey('tooltip', $view->vars);
         $this->assertArrayNotHasKey('tooltip_parameters', $view->vars);
@@ -156,13 +132,13 @@ class EnumValueForProductExtensionTest extends \PHPUnit\Framework\TestCase
             ->with('config_id')
             ->willReturn($configId);
 
-        $this->extension->buildView($view, $this->form, []);
+        $this->extension->finishView($view, $this->form, []);
 
         $this->assertArrayNotHasKey('tooltip', $view->vars);
         $this->assertArrayNotHasKey('tooltip_parameters', $view->vars);
     }
 
-    public function testBuildViewWhenEnumValueNotUsedByProductVariants()
+    public function testBuildViewWhenNoEnumValuesUsedByProductVariants()
     {
         $view = new FormView();
 
@@ -181,11 +157,11 @@ class EnumValueForProductExtensionTest extends \PHPUnit\Framework\TestCase
             ->willReturn($this->productRepository);
 
         $this->productRepository->expects($this->once())
-            ->method('findParentSkusByAttributeValue')
+            ->method('findParentSkusByAttributeOptions')
             ->with(
                 Product::TYPE_SIMPLE,
                 'enumFieldName',
-                1
+                [1]
             )
             ->willReturn([]);
 
@@ -201,7 +177,7 @@ class EnumValueForProductExtensionTest extends \PHPUnit\Framework\TestCase
             ->method('getConfig')
             ->willReturn($attributeConfig);
 
-        $this->extension->buildView($view, $this->form, []);
+        $this->extension->finishView($view, $this->form, []);
 
         $this->assertArrayNotHasKey('tooltip', $view->vars);
         $this->assertArrayNotHasKey('tooltip_parameters', $view->vars);
@@ -224,7 +200,7 @@ class EnumValueForProductExtensionTest extends \PHPUnit\Framework\TestCase
             ->method('getEntityRepositoryForClass');
 
         $this->productRepository->expects($this->never())
-            ->method('findParentSkusByAttributeValue');
+            ->method('findParentSkusByAttributeOptions');
 
         $attributeConfigProvider = $this->getAttributeProvider();
         $attributeConfig = $this->createMock(ConfigInterface::class);
@@ -238,7 +214,7 @@ class EnumValueForProductExtensionTest extends \PHPUnit\Framework\TestCase
             ->method('getConfig')
             ->willReturn($attributeConfig);
 
-        $this->extension->buildView($view, $this->form, []);
+        $this->extension->finishView($view, $this->form, []);
 
         $this->assertArrayNotHasKey('tooltip', $view->vars);
         $this->assertArrayNotHasKey('tooltip_parameters', $view->vars);
@@ -249,9 +225,13 @@ class EnumValueForProductExtensionTest extends \PHPUnit\Framework\TestCase
      * @param array $skus
      * @param $expectedTooltip
      */
-    public function testBuildView(array $skus, $expectedTooltip)
+    public function testFinishView(array $skus, $expectedTooltip)
     {
+        $childView = new FormView();
+        $childView->vars['value']['id'] = 1;
+
         $view = new FormView();
+        $view->children[] = $childView;
 
         $this->prepareForm();
 
@@ -267,13 +247,13 @@ class EnumValueForProductExtensionTest extends \PHPUnit\Framework\TestCase
             ->willReturn($this->productRepository);
 
         $this->productRepository->expects($this->once())
-            ->method('findParentSkusByAttributeValue')
+            ->method('findParentSkusByAttributeOptions')
             ->with(
                 Product::TYPE_SIMPLE,
                 self::ENUM_FIELD_NAME,
-                1
+                [1]
             )
-            ->willReturn($skus);
+            ->willReturn([1 => $skus]);
 
         $attributeConfigProvider = $this->getAttributeProvider();
         $attributeConfig = $this->createMock(ConfigInterface::class);
@@ -287,22 +267,22 @@ class EnumValueForProductExtensionTest extends \PHPUnit\Framework\TestCase
             ->method('getConfig')
             ->willReturn($attributeConfig);
 
-        $this->extension->buildView($view, $this->form, []);
+        $this->extension->finishView($view, $this->form, []);
 
-        $this->assertArrayHasKey('tooltip', $view->vars);
-        $this->assertArrayHasKey('tooltip_parameters', $view->vars);
+        $this->assertArrayHasKey('tooltip', $childView->vars);
+        $this->assertArrayHasKey('tooltip_parameters', $childView->vars);
         $this->assertEquals(
             [
                 '%skuList%' => $expectedTooltip
             ],
-            $view->vars['tooltip_parameters']
+            $childView->vars['tooltip_parameters']
         );
-        $this->assertArrayHasKey('allow_delete', $view->vars);
-        $this->assertFalse($view->vars['allow_delete']);
+        $this->assertArrayHasKey('allow_delete', $childView->vars);
+        $this->assertFalse($childView->vars['allow_delete']);
     }
 
     /**
-     * @return \PHPUnit\Framework\MockObject\MockObject|ConfigProvider
+     * @return \PHPUnit_Framework_MockObject_MockObject|ConfigProvider
      */
     private function getAttributeProvider()
     {
@@ -355,15 +335,9 @@ class EnumValueForProductExtensionTest extends \PHPUnit\Framework\TestCase
     {
         $this->form->expects($this->once())
             ->method('getData')
-            ->willReturn(['id' => 1]);
-
-        $parentForm = $this->createMock(FormInterface::class);
+            ->willReturn([['id' => 1]]);
 
         $this->form->expects($this->once())
-            ->method('getParent')
-            ->willReturn($parentForm);
-
-        $parentForm->expects($this->once())
             ->method('getConfig')
             ->willReturn($this->configInterface);
     }
