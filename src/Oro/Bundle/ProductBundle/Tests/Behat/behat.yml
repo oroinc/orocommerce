@@ -224,6 +224,11 @@ oro_behat_extension:
             type: 'css'
             locator: 'input[name="oro_product[TagField]"]'
             element: Select2Entity
+          MultiColor:
+            type: 'css'
+            locator: 'div[data-ftid="oro_product_MultiColor"]'
+            element: GroupChoiceField
+          BooleanAttr: 'oro_product[BooleanAttr]'
 
     RelatedProductsConfig:
       selector: 'form[name="related_items"]'
