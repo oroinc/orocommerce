@@ -46,11 +46,4 @@ Feature: Checkout by customer user with new role
   Scenario: Create Checkout as Customer User with new Customer User Role
     Given I proceed as the Buyer
     And I signed in as AmandaRCole@example.org on the store frontend
-    When I open page with shopping list List 1
-    And I click "Create Order"
-    And I click "Continue"
-    And I click "Continue"
-    And I click "Continue"
-    And I click "Continue"
-    And I click "Submit Order"
-    Then I see the "Thank You" page with "Thank You For Your Purchase!" title
+    And I do the order through completion, and should be on order view page
