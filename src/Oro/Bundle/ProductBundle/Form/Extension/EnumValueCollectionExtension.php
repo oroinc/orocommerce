@@ -66,7 +66,15 @@ class EnumValueCollectionExtension extends AbstractTypeExtension
         $attributeOptionIds = [];
 
         foreach ($data as $option) {
+            //Empty option id means option is not saved so no need further logic
+            if(!$option['id']) {
+                continue;
+            }
             $attributeOptionIds[] = $option['id'];
+        }
+
+        if (!$attributeOptionIds) {
+            return;
         }
 
         $optionsWithProductsSkusAssigned = $this->getProductSkuUsingEnum($configId, $attributeOptionIds);
