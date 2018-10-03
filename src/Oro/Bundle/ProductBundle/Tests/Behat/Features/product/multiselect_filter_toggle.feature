@@ -23,12 +23,13 @@ Feature: Multiselect Filter Toggle
         And I signed in as AmandaRCole@example.org on the store frontend
         And I click "NewCategory"
         And I click "FrontendGridActionFilterButton"
-        And I should not see an "FrontendGridFilterManager" element
+        And I wait for action
+        And I should not see an "Frontend Grid Filter Dropdown" element
         When I click "Brand Filter"
-        And I should see an "FrontendGridFilterManager" element
+        And I should see an "Frontend Grid Filter Dropdown" element
         And I click "Brand Filter"
-        And I should not see an "FrontendGridFilterManager" element
+        And I should not see an "Frontend Grid Filter Dropdown" element
         And I click "Brand Filter Toggle Icon"
-        And I should see an "FrontendGridFilterManager" element
+        And I should see an "Frontend Grid Filter Dropdown" element
         And I click "Brand Filter Toggle Icon"
-        Then I should not see an "FrontendGridFilterManager" element
+        Then I should not see an "Frontend Grid Filter Dropdown" element
