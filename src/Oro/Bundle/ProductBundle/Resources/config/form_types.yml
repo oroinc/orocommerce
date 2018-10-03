@@ -212,7 +212,7 @@ services:
             - '@oro_entity.doctrine_helper'
             - '@oro_entity_config.config_manager'
         tags:
-        - { name: form.type_extension, extended_type: 'Oro\Bundle\EntityExtendBundle\Form\Type\EnumValueCollectionType' }
+            - { name: form.type_extension, extended_type: 'Oro\Bundle\EntityExtendBundle\Form\Type\EnumValueCollectionType' }
 
     oro_product.form.type.extension.product_collection:
         class: 'Oro\Bundle\ProductBundle\Form\Extension\ProductCollectionExtension'
