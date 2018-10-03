@@ -27,28 +27,10 @@ class WebCatalogUsageListenerTest extends \PHPUnit_Framework_TestCase
         $this->listener = new WebCatalogUsageListener($this->cacheableProvider);
     }
 
-    public function testOnConfigurationUpdateWhenCacheIsEmpty()
+    public function testOnConfigurationUpdateWhenWebCatalogConfigIsNotChanged()
     {
         $event = $this->createMock(ConfigUpdateEvent::class);
 
-        $this->cacheableProvider->expects(self::once())
-            ->method('hasCache')
-            ->willReturn(false);
-        $event->expects(self::never())
-            ->method('isChanged');
-        $this->cacheableProvider->expects(self::never())
-            ->method('clearCache');
-
-        $this->listener->onConfigurationUpdate($event);
-    }
-
-    public function testOnConfigurationUpdateWhenHasCacheAndWebCatalogConfigIsNotChanged()
-    {
-        $event = $this->createMock(ConfigUpdateEvent::class);
-
-        $this->cacheableProvider->expects(self::once())
-            ->method('hasCache')
-            ->willReturn(true);
         $event->expects(self::once())
             ->method('isChanged')
             ->with(WebCatalogUsageProvider::SETTINGS_KEY)
@@ -59,13 +41,10 @@ class WebCatalogUsageListenerTest extends \PHPUnit_Framework_TestCase
         $this->listener->onConfigurationUpdate($event);
     }
 
-    public function testOnConfigurationUpdateWhenHasCacheAndWebCatalogConfigIsChanged()
+    public function testOnConfigurationUpdateWhenWebCatalogConfigIsChanged()
     {
         $event = $this->createMock(ConfigUpdateEvent::class);
 
-        $this->cacheableProvider->expects(self::once())
-            ->method('hasCache')
-            ->willReturn(true);
         $event->expects(self::once())
             ->method('isChanged')
             ->with(WebCatalogUsageProvider::SETTINGS_KEY)
@@ -76,31 +55,13 @@ class WebCatalogUsageListenerTest extends \PHPUnit_Framework_TestCase
         $this->listener->onConfigurationUpdate($event);
     }
 
-    public function testOnFlushWhenCacheIsEmpty()
-    {
-        $args = $this->createMock(OnFlushEventArgs::class);
-
-        $this->cacheableProvider->expects(self::once())
-            ->method('hasCache')
-            ->willReturn(false);
-        $args->expects(self::never())
-            ->method('getEntityManager');
-        $this->cacheableProvider->expects(self::never())
-            ->method('clearCache');
-
-        $this->listener->onFlush($args);
-    }
-
-    public function testOnFlushWhenHasCacheAndNoInsertedOrDeletedWebsite()
+    public function testOnFlushWhenNoInsertedOrDeletedWebsite()
     {
         $args = $this->createMock(OnFlushEventArgs::class);
 
         $em = $this->createMock(EntityManager::class);
         $uow = $this->createMock(UnitOfWork::class);
 
-        $this->cacheableProvider->expects(self::once())
-            ->method('hasCache')
-            ->willReturn(true);
         $args->expects(self::once())
             ->method('getEntityManager')
             ->willReturn($em);
@@ -119,16 +80,13 @@ class WebCatalogUsageListenerTest extends \PHPUnit_Framework_TestCase
         $this->listener->onFlush($args);
     }
 
-    public function testOnFlushWhenHasCacheAndHasInsertedWebsite()
+    public function testOnFlushWhenHasInsertedWebsite()
     {
         $args = $this->createMock(OnFlushEventArgs::class);
 
         $em = $this->createMock(EntityManager::class);
         $uow = $this->createMock(UnitOfWork::class);
 
-        $this->cacheableProvider->expects(self::once())
-            ->method('hasCache')
-            ->willReturn(true);
         $args->expects(self::once())
             ->method('getEntityManager')
             ->willReturn($em);
@@ -146,16 +104,13 @@ class WebCatalogUsageListenerTest extends \PHPUnit_Framework_TestCase
         $this->listener->onFlush($args);
     }
 
-    public function testOnFlushWhenHasCacheAndHasDeletedWebsite()
+    public function testOnFlushWhenHasDeletedWebsite()
     {
         $args = $this->createMock(OnFlushEventArgs::class);
 
         $em = $this->createMock(EntityManager::class);
         $uow = $this->createMock(UnitOfWork::class);
 
-        $this->cacheableProvider->expects(self::once())
-            ->method('hasCache')
-            ->willReturn(true);
         $args->expects(self::once())
             ->method('getEntityManager')
             ->willReturn($em);

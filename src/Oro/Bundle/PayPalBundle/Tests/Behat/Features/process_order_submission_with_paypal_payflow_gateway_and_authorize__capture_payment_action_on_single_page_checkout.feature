@@ -35,7 +35,7 @@ Feature: Process order submission with PayPal PayFlow Gateway and Authorize & Ca
     And I fill in "Name" with "PayPalPro"
     And I fill in "Sort Order" with "1"
     And I select "PayPalFlow" from "Method"
-    And I press "Add Method Button"
+    And I click "Add Method Button"
     And I save and close form
     Then I should see "Payment rule has been saved" flash message
 
@@ -49,7 +49,7 @@ Feature: Process order submission with PayPal PayFlow Gateway and Authorize & Ca
     Given There are products in the system available for order
     And I operate as the Buyer
     When I open page with shopping list List 1
-    And I press "Create Order"
+    And I click "Create Order"
     And I select "Fifth avenue, 10115 Berlin, Germany" from "Select Billing Address"
     And I select "Fifth avenue, 10115 Berlin, Germany" from "Select Shipping Address"
     And I check "Flat Rate" on the checkout page
@@ -58,7 +58,7 @@ Feature: Process order submission with PayPal PayFlow Gateway and Authorize & Ca
       | Month            | 11               |
       | Year             | 2027             |
       | CVV              | 123              |
-    And I press "Submit Order"
+    And I click "Submit Order"
     Then I see the "Thank You" page with "Thank You For Your Purchase!" title
 
     Then I operate as the Admin
@@ -79,7 +79,7 @@ Feature: Process order submission with PayPal PayFlow Gateway and Authorize & Ca
     Given There are products in the system available for order
     And I operate as the Buyer
     When I open page with shopping list List 2
-    And I press "Create Order"
+    And I click "Create Order"
     And I select "Fifth avenue, 10115 Berlin, Germany" from "Select Billing Address"
     And I select "Fifth avenue, 10115 Berlin, Germany" from "Select Shipping Address"
     And I check "Flat Rate" on the checkout page
@@ -88,7 +88,7 @@ Feature: Process order submission with PayPal PayFlow Gateway and Authorize & Ca
       | Month            | 11               |
       | Year             | 2027             |
       | CVV              | 123              |
-    And I press "Submit Order"
+    And I click "Submit Order"
     Then I should see only following flash messages:
       | We were unable to process your payment. Please verify your payment information and try again. |
 

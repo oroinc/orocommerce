@@ -28,9 +28,7 @@ class WebCatalogUsageListener
      */
     public function onConfigurationUpdate(ConfigUpdateEvent $event)
     {
-        if ($this->cacheableWebCatalogUsageProvider->hasCache()
-            && $event->isChanged(WebCatalogUsageProvider::SETTINGS_KEY)
-        ) {
+        if ($event->isChanged(WebCatalogUsageProvider::SETTINGS_KEY)) {
             $this->cacheableWebCatalogUsageProvider->clearCache();
         }
     }
@@ -40,9 +38,7 @@ class WebCatalogUsageListener
      */
     public function onFlush(OnFlushEventArgs $args)
     {
-        if ($this->cacheableWebCatalogUsageProvider->hasCache()
-            && $this->hasInsertedOrDeletedWebsites($args->getEntityManager()->getUnitOfWork())
-        ) {
+        if ($this->hasInsertedOrDeletedWebsites($args->getEntityManager()->getUnitOfWork())) {
             $this->cacheableWebCatalogUsageProvider->clearCache();
         }
     }

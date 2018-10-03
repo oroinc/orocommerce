@@ -516,6 +516,15 @@ services:
             - '@oro_shipping.enabled_rule_filtration.basic_service'
             - '@oro_shipping.repository.shipping_methods_configs_rule'
 
+    oro_shipping.configuration_search_provider.shipping_origin:
+        class: 'Oro\Bundle\ShippingBundle\Provider\ShippingOriginConfigSearchProvider'
+        public: false
+        arguments:
+        - '@translator'
+        - '@oro_config.manager'
+        tags:
+        - { name: oro_config.configuration_search_provider }
+
     oro_shipping.factory.shipping_package_options:
         class: 'Oro\Bundle\ShippingBundle\Factory\ShippingPackageOptionsFactory'
         public: false

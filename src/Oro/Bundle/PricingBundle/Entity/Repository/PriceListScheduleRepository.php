@@ -25,12 +25,7 @@ class PriceListScheduleRepository extends EntityRepository
                 $qb->expr()->eq('schedule.priceList', 'priceListRelations.priceList')
             )
             ->where($qb->expr()->eq('priceListRelations.combinedPriceList', ':cpl'))
-            ->andWhere($qb->expr()->orX(
-                $qb->expr()->isNull('schedule.deactivateAt'),
-                $qb->expr()->gt('schedule.deactivateAt', ':deactivateAt')
-            ))
-            ->setParameter('cpl', $cpl)
-            ->setParameter('deactivateAt', $deactivateAt);
+            ->setParameter('cpl', $cpl);
 
         return $qb->getQuery()->getResult();
     }

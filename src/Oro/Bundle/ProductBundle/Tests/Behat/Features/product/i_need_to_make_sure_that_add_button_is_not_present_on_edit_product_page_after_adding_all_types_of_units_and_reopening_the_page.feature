@@ -24,5 +24,5 @@ Feature: I need to make sure that "+Add' button" is not present on edit product 
       | Set      | 0         | 10   |
     Then I should not see "Add More Rows" element inside "Additional Units Form Section" element
     And I save and close form
-    When I press "Edit"
+    When I click "Edit"
     Then I should not see "Add More Rows" element inside "Additional Units Form Section" element

@@ -21,7 +21,7 @@ search:
         alias:                          oro_coupon
         title_fields:                   [code]
         route:
-            name:                       oro_coupon_view
+            name:                       oro_promotion_coupon_view
             parameters:
                 id:                     id
         search_template:                OroPromotionBundle:Coupon:searchResult.html.twig

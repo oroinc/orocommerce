@@ -2,34 +2,51 @@
 
 namespace Oro\Bundle\PaymentBundle\DependencyInjection\Compiler;
 
-use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
+use Oro\Bundle\EmailBundle\DependencyInjection\Compiler\AbstractTwigSandboxConfigurationPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Reference;
 
-class TwigSandboxConfigurationPass implements CompilerPassInterface
+/**
+ * Compiler pass that collects extensions for service `oro_payment.twig.payment_method_extension` and
+ * `oro_payment.twig.payment_status_extension` by `oro_email.email_renderer` tag
+ */
+class TwigSandboxConfigurationPass extends AbstractTwigSandboxConfigurationPass
 {
-    const EMAIL_TEMPLATE_SANDBOX_SECURITY_POLICY_SERVICE_KEY = 'oro_email.twig.email_security_policy';
-    const EMAIL_TEMPLATE_RENDERER_SERVICE_KEY = 'oro_email.email_renderer';
+    /**
+     * {@inheritdoc}
+     */
+    public function process(ContainerBuilder $container)
+    {
+        parent::process($container);
+    }
 
     /**
      * {@inheritDoc}
      */
-    public function process(ContainerBuilder $container)
+    protected function getFunctions()
     {
-        if ($container->hasDefinition(self::EMAIL_TEMPLATE_SANDBOX_SECURITY_POLICY_SERVICE_KEY)
-            && $container->hasDefinition(self::EMAIL_TEMPLATE_RENDERER_SERVICE_KEY)
-        ) {
-            $securityPolicyDef = $container->getDefinition(self::EMAIL_TEMPLATE_SANDBOX_SECURITY_POLICY_SERVICE_KEY);
+        return [
+            'get_payment_methods',
+            'get_payment_status_label',
+            'get_payment_status'
+        ];
+    }
 
-            $functions = array_merge($securityPolicyDef->getArgument(4), ['get_payment_methods']);
+    /**
+     * {@inheritDoc}
+     */
+    protected function getFilters()
+    {
+        return [];
+    }
 
-            $securityPolicyDef->replaceArgument(4, $functions);
-
-            $rendererDef = $container->getDefinition(self::EMAIL_TEMPLATE_RENDERER_SERVICE_KEY);
-            $rendererDef->addMethodCall(
-                'addExtension',
-                [new Reference('oro_payment.twig.payment_method_extension')]
-            );
-        }
+    /**
+     * {@inheritDoc}
+     */
+    protected function getExtensions()
+    {
+        return [
+            'oro_payment.twig.payment_method_extension',
+            'oro_payment.twig.payment_status_extension'
+        ];
     }
 }

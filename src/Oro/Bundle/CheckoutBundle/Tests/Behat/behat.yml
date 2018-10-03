@@ -23,6 +23,7 @@ oro_behat_extension:
         - OroPricingBundle::FeatureContext
         - OroLocaleBundle::LocalizationContext
         - OroFrontendLocalizationBundle::LocalizationSwitcherContext
+        - OroUIBundle::DatepickerContext
         - OroEmailBundle::EmailContext
       paths:
         - '@OroCheckoutBundle/Tests/Behat/Features'
@@ -73,7 +74,7 @@ oro_behat_extension:
 
     Do not ship later than Datepicker:
       selector: 'form[name="oro_workflow_transition"] input.hasDatepicker'
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\DateTimePicker
 
     Checkout Totals:
       class: Oro\Bundle\CheckoutBundle\Tests\Behat\Element\CheckoutPage
@@ -98,6 +99,10 @@ oro_behat_extension:
     OpenOrdersGridFilterItem:
       selector: 'div.filter-items-hint span'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilterItem
+
+    OpenOrdersGridFilterDateTimeItem:
+      selector: 'div.filter-item'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilterDateTimeItem
 
     PastOrdersGrid:
       selector: 'div[data-page-component-name="frontend-orders-grid"]'

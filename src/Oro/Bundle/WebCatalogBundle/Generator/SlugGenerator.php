@@ -97,17 +97,17 @@ class SlugGenerator
             foreach ($contentVariant->getSlugs() as $slug) {
                 $localeId = (int)$this->getLocaleId($slug->getLocalization());
                 if ($slugUrls->containsKey($localeId)) {
-                    $previousSlugUrl = $slug->getUrl();
+                    $previousSlug = clone $slug;
 
                     /** @var SlugUrl $slugUrl */
                     $slugUrl = $slugUrls->get($localeId);
                     $slug->resetScopes();
                     $this->fillSlug($slug, $slugUrl, $routeData, $scopes);
 
-                    $this->redirectGenerator->updateRedirects($previousSlugUrl, $slug);
+                    $this->redirectGenerator->updateRedirects($previousSlug->getUrl(), $slug);
 
                     if ($generateRedirects) {
-                        $this->redirectGenerator->generate($previousSlugUrl, $slug);
+                        $this->redirectGenerator->generateForSlug($previousSlug, $slug);
                     }
                 } else {
                     $toRemove[] = $slug;

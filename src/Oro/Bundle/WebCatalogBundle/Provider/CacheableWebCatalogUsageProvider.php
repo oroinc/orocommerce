@@ -64,6 +64,10 @@ class CacheableWebCatalogUsageProvider implements WebCatalogUsageProviderInterfa
      */
     public function clearCache()
     {
+        if (!$this->hasCache()) {
+            return;
+        }
+
         $this->assignedWebCatalogs = null;
         $this->inUseWebCatalogs = [];
     }
