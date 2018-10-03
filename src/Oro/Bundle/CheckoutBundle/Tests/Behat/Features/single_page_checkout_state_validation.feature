@@ -55,7 +55,6 @@ Feature: Single Page Checkout State Validation
     Then I should not see "Thank You For Your Purchase!"
     And I should see "There was a change to the contents of your order." flash message
 
-  # TODO: Uncomment after fix of BB-15054
-#  Scenario: Buyer can finish checkout after he was acknowledged about changes
-#    When I click "Submit Order"
-#    Then I should see "Thank You For Your Purchase!"
+  Scenario: Buyer can finish checkout after he was acknowledged about changes
+    When I click "Submit Order"
+    Then I should see "Thank You For Your Purchase!"

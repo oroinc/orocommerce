@@ -388,6 +388,8 @@ action_groups:
                 service: oro_website.manager
                 method: getCurrentWebsite
 
+            - '@assign_value': [$.checkoutActualizationRequired, true]
+
             - '@tree':
                 conditions:
                     '@empty': $.checkout.id
@@ -406,13 +408,40 @@ action_groups:
                     - '@create_datetime': {attribute: $.checkout.createdAt}
                     - '@create_datetime': {attribute: $.checkout.updatedAt}
                     - '@assign_value': [$.updateData, true]
-                    - '@flush_entity': $.checkout
+
+                    - '@run_action_group':
+                        action_group: actualize_checkout
+                        parameters_mapping:
+                            checkout: $.checkout
+
+                    - '@assign_value': [$.checkoutActualizationRequired, false]
 
                     - '@start_workflow':
                         attribute: $.workflowItem
                         name: $.currentWorkflow.name
                         entity: $.checkout
 
+            - '@run_action_group':
+                conditions:
+                    '@equal': [$.checkoutActualizationRequired, true]
+                parameters:
+                    action_group: actualize_checkout
+                    parameters_mapping:
+                        checkout: $.checkout
+                        updateData: $.updateData
+                        currentUser: $.currentUser
+
+    actualize_checkout:
+        parameters:
+            checkout:
+                type: Oro\Bundle\CheckoutBundle\Entity\Checkout
+            updateData:
+                type: bool
+                default: false
+            currentUser:
+                type: object
+                default: null
+        actions:
             # update checkout data
             - '@tree':
                 conditions:
