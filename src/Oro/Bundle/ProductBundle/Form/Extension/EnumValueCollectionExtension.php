@@ -67,7 +67,7 @@ class EnumValueCollectionExtension extends AbstractTypeExtension
 
         foreach ($data as $option) {
             //Empty option id means option is not saved so no need further logic
-            if(!$option['id']) {
+            if (!$option['id']) {
                 continue;
             }
             $attributeOptionIds[] = $option['id'];
@@ -102,7 +102,6 @@ class EnumValueCollectionExtension extends AbstractTypeExtension
                 }
             }
         }
-
     }
 
     /**
