@@ -462,15 +462,18 @@ class ProductRepository extends EntityRepository
     public function findParentSkusByAttributeOptions(string $type, string $fieldName, array $attributeOptions)
     {
         $qb = $this->createQueryBuilder('p');
+
+        $aliasedFieldName = QueryBuilderUtil::getField('p', $fieldName);
+
         $result = $qb
             ->select(['parent_product.sku', 'attr.id'])
             ->distinct()
-            ->join('p.' . $fieldName, 'attr')
+            ->join($aliasedFieldName, 'attr')
             ->join('p.parentVariantLinks', 'variant_links')
             ->join('variant_links.parentProduct', 'parent_product')
             ->where($qb->expr()->in('attr', ':attributeOptions'))
             ->andWhere('p.type = :type')
-            ->andWhere($qb->expr()->isNotNull('p.' . $fieldName))
+            ->andWhere($qb->expr()->isNotNull($aliasedFieldName))
             ->orderBy('parent_product.sku')
             ->setParameter('attributeOptions', $attributeOptions)
             ->setParameter('type', $type)

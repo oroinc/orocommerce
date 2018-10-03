@@ -7,7 +7,6 @@ use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
 use Oro\Bundle\EntityExtendBundle\Form\Type\EnumValueCollectionType;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\Extension\EnumValueCollectionExtension;
-use Oro\Bundle\ProductBundle\Form\Extension\EnumValueForProductExtension;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
@@ -17,7 +16,7 @@ use Symfony\Component\Form\FormConfigInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 
-class EnumValueCollectionExtensionTest extends  \PHPUnit\Framework\TestCase
+class EnumValueCollectionExtensionTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
@@ -26,7 +25,7 @@ class EnumValueCollectionExtensionTest extends  \PHPUnit\Framework\TestCase
     /** @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject */
     private $doctrineHelper;
 
-    /** @var EnumValueForProductExtension */
+    /** @var EnumValueCollectionExtension */
     private $extension;
 
     /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
