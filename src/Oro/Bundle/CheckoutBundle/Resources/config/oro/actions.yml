@@ -405,7 +405,6 @@ action_groups:
                         data:
                             source: $.source
                             customerUser: $.currentUser
-                            website: $.currentWebsite
                     - '@create_datetime': {attribute: $.checkout.createdAt}
                     - '@create_datetime': {attribute: $.checkout.updatedAt}
                     - '@assign_value': [$.updateData, true]
@@ -414,6 +413,9 @@ action_groups:
                         action_group: actualize_checkout
                         parameters_mapping:
                             checkout: $.checkout
+                            updateData: $.updateData
+                            currentUser: $.currentUser
+                            currentWebsite: $.currentWebsite
 
                     - '@assign_value': [$.checkoutActualizationRequired, false]
 
@@ -431,6 +433,7 @@ action_groups:
                         checkout: $.checkout
                         updateData: $.updateData
                         currentUser: $.currentUser
+                        currentWebsite: $.currentWebsite
 
     actualize_checkout:
         parameters:
@@ -442,6 +445,8 @@ action_groups:
             currentUser:
                 type: object
                 default: null
+            currentWebsite:
+                type: Oro\Bundle\WebsiteBundle\Entity\Website
         actions:
             # update checkout data
             - '@tree':
