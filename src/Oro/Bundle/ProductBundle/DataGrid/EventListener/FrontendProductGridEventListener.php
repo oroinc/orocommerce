@@ -171,7 +171,6 @@ class FrontendProductGridEventListener
         $name = $attributeType->getSortableFieldName($attribute);
         $alias = $this->clearName($name);
 
-        //TODO: should be removed after BAP-15318, because we don't need columns for sortable data
         $config->addColumn($alias, ['label' => $label]);
         $config->addSorter(
             $alias,

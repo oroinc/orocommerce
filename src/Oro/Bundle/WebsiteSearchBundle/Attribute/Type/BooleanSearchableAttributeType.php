@@ -5,6 +5,9 @@ namespace Oro\Bundle\WebsiteSearchBundle\Attribute\Type;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\SearchBundle\Query\Query;
 
+/**
+ * Attribute type provides metadata for boolean attribute for search index.
+ */
 class BooleanSearchableAttributeType extends AbstractSearchableAttributeType
 {
     /**
