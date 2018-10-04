@@ -140,6 +140,7 @@ class ShippingMethodsConfigsRuleRepository extends EntityRepository
     public function getEnabledRulesByMethod($method)
     {
         $qb = $this->getRulesByMethodQueryBuilder($method)
+            ->addSelect('rule')
             ->innerJoin('methodsConfigsRule.rule', 'rule', Expr\Join::WITH, 'rule.enabled = true');
 
         return $this->aclHelper->apply($qb)->getResult();
@@ -192,7 +193,11 @@ class ShippingMethodsConfigsRuleRepository extends EntityRepository
     private function getRulesByMethodQueryBuilder($method)
     {
         return $this->createQueryBuilder('methodsConfigsRule')
+            ->addSelect('methodConfigs', 'typeConfigs', 'destination', 'postalCode')
             ->innerJoin('methodsConfigsRule.methodConfigs', 'methodConfigs')
+            ->leftJoin('methodConfigs.typeConfigs', 'typeConfigs')
+            ->leftJoin('methodsConfigsRule.destinations', 'destination')
+            ->leftJoin('destination.postalCodes', 'postalCode')
             ->where('methodConfigs.method = :method')
             ->setParameter('method', $method);
     }

@@ -14,6 +14,7 @@ define(function(require) {
          * @property {Object}
          */
         options: {
+            entityId: null,
             saveStateUrl: null,
             transitionUrl: null,
             targetLayoutBlocks: null,
@@ -52,7 +53,8 @@ define(function(require) {
             this.queue = $({});
 
             this.formView = new SinglePageCheckoutFormView({
-                el: this.options._sourceElement.closest('form')
+                el: this.options._sourceElement.closest('form'),
+                entityId: this.options.entityId
             });
 
             this.formView.on('after-check-form', _.bind(this.onAfterCheckForm, this));
@@ -189,6 +191,7 @@ define(function(require) {
                 .done(function(response) {
                     this._setLayoutSubTreeViewContent(response);
                     this._afterLayoutSubTreeViewContentLoading();
+                    this.formView.trigger('after-save-state');
                     dfd.resolve(response);
                 }.bind(this))
                 .fail(function(reject) {
@@ -222,6 +225,9 @@ define(function(require) {
         _setLayoutSubTreeViewContent: function(response) {
             _.each(this.layoutSubTreeViews, (function(view, blockId) {
                 if (blockId in response) {
+                    if (blockId === 'checkout_order_summary_totals_wrapper') {
+                        view.useHiddenElement = true;
+                    }
                     view.setContent(response[blockId]);
                 }
             }).bind(this));

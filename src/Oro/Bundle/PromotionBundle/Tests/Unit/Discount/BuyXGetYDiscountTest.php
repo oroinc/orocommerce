@@ -8,10 +8,13 @@ use Oro\Bundle\PromotionBundle\Discount\BuyXGetYDiscount;
 use Oro\Bundle\PromotionBundle\Discount\DiscountContext;
 use Oro\Bundle\PromotionBundle\Discount\DiscountLineItem;
 use Oro\Bundle\PromotionBundle\Discount\DiscountProductUnitCodeAwareInterface;
+use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 
 class BuyXGetYDiscountTest extends \PHPUnit_Framework_TestCase
 {
+    use EntityTrait;
+
     /**
      * @var BuyXGetYDiscount
      */
@@ -24,8 +27,8 @@ class BuyXGetYDiscountTest extends \PHPUnit_Framework_TestCase
 
     public function testApply()
     {
-        $matchingProduct = new Product();
-        $notMatchingProduct = new Product();
+        $matchingProduct = $this->getEntity(Product::class, ['id' => 42]);
+        $notMatchingProduct = $this->getEntity(Product::class, ['id' => 123]);
         $lineItemWithDiscount = (new DiscountLineItem())
             ->setProduct($matchingProduct)
             ->setQuantity(10.0)

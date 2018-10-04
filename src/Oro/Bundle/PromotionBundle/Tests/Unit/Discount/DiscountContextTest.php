@@ -179,4 +179,16 @@ class DiscountContextTest extends \PHPUnit_Framework_TestCase
         $this->assertContains($discount1, $discounts);
         $this->assertContains($discount2, $discounts);
     }
+
+    public function testCloneCreatesNewLineItemInstances()
+    {
+        $originalContext = new DiscountContext();
+        $originalLineItem = new DiscountLineItem();
+        $originalContext->addLineItem($originalLineItem);
+
+        $clonedContext = clone $originalContext;
+
+        $this->assertEquals($originalContext->getLineItems(), $clonedContext->getLineItems());
+        $this->assertNotSame($originalContext->getLineItems(), $clonedContext->getLineItems());
+    }
 }

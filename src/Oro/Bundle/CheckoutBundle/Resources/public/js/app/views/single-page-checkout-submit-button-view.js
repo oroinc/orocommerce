@@ -2,9 +2,16 @@ define(function(require) {
     'use strict';
 
     var SinglePageCheckoutSubmitButtonView;
-    var BaseComponent = require('oroui/js/app/views/base/view');
+    var BaseView = require('oroui/js/app/views/base/view');
 
-    SinglePageCheckoutSubmitButtonView = BaseComponent.extend({
+    SinglePageCheckoutSubmitButtonView = BaseView.extend({
+        events: {
+            'mouseover': 'onHover',
+            'mouseout': 'onHoverOut'
+        },
+
+        isHoveredFlag: false, //Marks submit button hovered if true
+
         /**
          * @inheritDoc
          */
@@ -14,6 +21,18 @@ define(function(require) {
 
         onToggleState: function() {
             this.$el.prop('disabled', 'disabled');
+        },
+
+        onHover: function() {
+            this.isHoveredFlag = true;
+        },
+
+        onHoverOut: function() {
+            this.isHoveredFlag = false;
+        },
+
+        isHovered: function() {
+            return this.isHoveredFlag;
         }
     });
 
