@@ -6,7 +6,7 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
 use Oro\Bundle\EntityExtendBundle\Form\Type\EnumValueCollectionType;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Form\Extension\EnumValueCollectionExtension;;
+use Oro\Bundle\ProductBundle\Form\Extension\EnumValueCollectionExtension;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
