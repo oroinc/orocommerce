@@ -405,6 +405,7 @@ action_groups:
                         data:
                             source: $.source
                             customerUser: $.currentUser
+                            website: $.currentWebsite
                     - '@create_datetime': {attribute: $.checkout.createdAt}
                     - '@create_datetime': {attribute: $.checkout.updatedAt}
                     - '@assign_value': [$.updateData, true]
@@ -443,7 +444,6 @@ action_groups:
                 type: bool
                 default: false
             currentUser:
-                type: object
                 default: null
             currentWebsite:
                 type: Oro\Bundle\WebsiteBundle\Entity\Website
