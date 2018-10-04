@@ -37,24 +37,13 @@ class ReindexParentConfigurableProductListenerTest extends WebTestCase
             ->getEntityManagerForClass(Product::class)
             ->flush();
 
-        self::assertMessagesCount(AsyncIndexer::TOPIC_REINDEX, 2);
+        self::assertMessagesCount(AsyncIndexer::TOPIC_REINDEX, 1);
         self::assertMessageSent(
             AsyncIndexer::TOPIC_REINDEX,
             new Message(
                 [
                     'class' => [Product::class],
-                    'context' => ['entityIds' => [$productVariant->getId()]],
-                    'granulize' => true
-                ],
-                MessagePriority::LOW
-            )
-        );
-        self::assertMessageSent(
-            AsyncIndexer::TOPIC_REINDEX,
-            new Message(
-                [
-                    'class' => [Product::class],
-                    'context' => ['entityIds' => [$configurableProduct->getId()]],
+                    'context' => ['entityIds' => [$productVariant->getId(), $configurableProduct->getId()]],
                     'granulize' => true
                 ],
                 MessagePriority::LOW
