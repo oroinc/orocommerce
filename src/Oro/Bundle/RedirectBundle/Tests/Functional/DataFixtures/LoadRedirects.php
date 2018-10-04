@@ -27,7 +27,9 @@ class LoadRedirects extends AbstractFixture implements DependentFixtureInterface
             'reference' => self::REDIRECT_1,
             'slug' => LoadSlugsData::SLUG_URL_ANONYMOUS,
             'from' => '/from-1',
+            'from_prototype' => 'from-1',
             'to' => '/',
+            'to_prototype' => '',
             'type' => Redirect::MOVED_PERMANENTLY,
             'localization' => null
         ],
@@ -35,7 +37,9 @@ class LoadRedirects extends AbstractFixture implements DependentFixtureInterface
             'reference' => self::REDIRECT_2,
             'slug' => LoadSlugsData::SLUG_URL_PAGE,
             'from' => '/from-2',
+            'from_prototype' => 'from-2',
             'to' => '/to-2',
+            'to_prototype' => 'to-2',
             'type' => Redirect::MOVED_PERMANENTLY,
             'localization' => 'es'
         ],
@@ -43,7 +47,9 @@ class LoadRedirects extends AbstractFixture implements DependentFixtureInterface
             'reference' => self::REDIRECT_3,
             'slug' => null,
             'from' => '/from-3',
+            'from_prototype' => 'from-3',
             'to' => '/to-3',
+            'to_prototype' => 'to-3',
             'type' => Redirect::MOVED_TEMPORARY,
             'localization' => 'en_US'
         ]
@@ -64,7 +70,9 @@ class LoadRedirects extends AbstractFixture implements DependentFixtureInterface
         foreach ($this->redirects as $item) {
             $redirect = new Redirect();
             $redirect->setFrom($item['from']);
+            $redirect->setFromPrototype($item['from_prototype']);
             $redirect->setTo($item['to']);
+            $redirect->setToPrototype($item['to_prototype']);
             $redirect->setType($item['type']);
 
             if (!empty($item['slug'])) {
