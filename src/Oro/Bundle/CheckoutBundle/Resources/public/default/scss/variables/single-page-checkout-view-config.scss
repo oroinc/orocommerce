@@ -56,7 +56,7 @@ $checkout-view-column-pseudo-width: 1px !default;
 $checkout-view-column-pseudo-background: get-color('additional', 'light') !default;
 
 $checkout-view-shipping-methods-margin: $offset-y 0 0 !default;
-$checkout-view-shipping-methods-datepicker-box-max-width: 256px !default;
+$checkout-view-shipping-methods-datepicker-box-max-width: none !default;
 
 $checkout-view-checkout-order-summary-totals-sticky-left: auto !default;
 $checkout-view-checkout-order-summary-totals-sticky-right: 8px !default;

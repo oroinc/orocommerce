@@ -6,6 +6,7 @@ use Oro\Bundle\LocaleBundle\DependencyInjection\Compiler\DefaultFallbackExtensio
 use Oro\Bundle\PromotionBundle\DependencyInjection\Compiler\LayoutBlockOptionsCompilerPass;
 use Oro\Bundle\PromotionBundle\DependencyInjection\Compiler\PromotionCompilerPass;
 use Oro\Bundle\PromotionBundle\DependencyInjection\Compiler\PromotionProductsGridCompilerPass;
+use Oro\Bundle\PromotionBundle\DependencyInjection\Compiler\TwigSandboxConfigurationPass;
 use Oro\Bundle\PromotionBundle\DependencyInjection\OroPromotionExtension;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Oro\Bundle\PromotionBundle\OroPromotionBundle;
@@ -31,7 +32,7 @@ class OroPromotionBundleTest extends \PHPUnit\Framework\TestCase
         }));
 
         $this->assertInternalType('array', $passes);
-        $this->assertCount(4, $passes);
+        $this->assertCount(5, $passes);
 
         $this->assertInstanceOf(DefaultFallbackExtensionPass::class, $passes[0]);
         $this->assertAttributeEquals(
@@ -48,7 +49,8 @@ class OroPromotionBundleTest extends \PHPUnit\Framework\TestCase
         $expectedPasses = [
             new PromotionCompilerPass(),
             new PromotionProductsGridCompilerPass(),
-            new LayoutBlockOptionsCompilerPass()
+            new LayoutBlockOptionsCompilerPass(),
+            new TwigSandboxConfigurationPass()
         ];
 
         foreach ($expectedPasses as $expectedPass) {

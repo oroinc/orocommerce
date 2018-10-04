@@ -5,7 +5,9 @@ namespace Oro\Bundle\PaymentBundle\Tests\Unit\Twig;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Event\PaymentMethodConfigDataEvent;
 use Oro\Bundle\PaymentBundle\Formatter\PaymentMethodLabelFormatter;
+use Oro\Bundle\PaymentBundle\Formatter\PaymentMethodOptionsFormatter;
 use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
+use Oro\Bundle\PaymentBundle\Twig\DTO\PaymentMethodObject;
 use Oro\Bundle\PaymentBundle\Twig\PaymentMethodExtension;
 use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -23,6 +25,9 @@ class PaymentMethodExtensionTest extends \PHPUnit\Framework\TestCase
     /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $dispatcher;
 
+    /** @var PaymentMethodOptionsFormatter|\PHPUnit_Framework_MockObject_MockObject */
+    protected $paymentMethodOptionsFormatter;
+
     /** @var PaymentMethodExtension */
     protected $extension;
 
@@ -37,10 +42,12 @@ class PaymentMethodExtensionTest extends \PHPUnit\Framework\TestCase
         $this->dispatcher = $this->getMockBuilder(EventDispatcherInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
+        $this->paymentMethodOptionsFormatter = $this->createMock(PaymentMethodOptionsFormatter::class);
 
         $container = self::getContainerBuilder()
             ->add('oro_payment.provider.payment_transaction', $this->paymentTransactionProvider)
             ->add('oro_payment.formatter.payment_method_label', $this->paymentMethodLabelFormatter)
+            ->add('oro_payment.formatter.payment_method_options', $this->paymentMethodOptionsFormatter)
             ->add('event_dispatcher', $this->dispatcher)
             ->getContainer($this);
 
@@ -51,6 +58,7 @@ class PaymentMethodExtensionTest extends \PHPUnit\Framework\TestCase
     {
         $entity = new \stdClass();
         $label = 'label';
+        $option = 'some option';
         $paymentMethodConstant = 'payment_method';
         $paymentTransaction = new PaymentTransaction();
         $paymentTransaction->setPaymentMethod($paymentMethodConstant);
@@ -63,9 +71,13 @@ class PaymentMethodExtensionTest extends \PHPUnit\Framework\TestCase
             ->method('formatPaymentMethodLabel')
             ->with($paymentMethodConstant, false)
             ->willReturn($label);
+        $this->paymentMethodOptionsFormatter->expects($this->once())
+            ->method('formatPaymentMethodOptions')
+            ->with($paymentMethodConstant)
+            ->willReturn([$option]);
 
         $this->assertEquals(
-            [$label],
+            [new PaymentMethodObject($label, [$option])],
             self::callTwigFunction($this->extension, 'get_payment_methods', [$entity])
         );
     }

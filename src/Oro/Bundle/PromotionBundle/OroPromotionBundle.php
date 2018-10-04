@@ -6,11 +6,15 @@ use Oro\Bundle\LocaleBundle\DependencyInjection\Compiler\DefaultFallbackExtensio
 use Oro\Bundle\PromotionBundle\DependencyInjection\Compiler\LayoutBlockOptionsCompilerPass;
 use Oro\Bundle\PromotionBundle\DependencyInjection\Compiler\PromotionCompilerPass;
 use Oro\Bundle\PromotionBundle\DependencyInjection\Compiler\PromotionProductsGridCompilerPass;
+use Oro\Bundle\PromotionBundle\DependencyInjection\Compiler\TwigSandboxConfigurationPass;
 use Oro\Bundle\PromotionBundle\DependencyInjection\OroPromotionExtension;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
+/**
+ * OroPromotionBundle adds coupon and promotion features to the OroCommerce application
+ */
 class OroPromotionBundle extends Bundle
 {
     /**
@@ -39,6 +43,7 @@ class OroPromotionBundle extends Bundle
         $container
             ->addCompilerPass(new PromotionCompilerPass())
             ->addCompilerPass(new PromotionProductsGridCompilerPass())
-            ->addCompilerPass(new LayoutBlockOptionsCompilerPass());
+            ->addCompilerPass(new LayoutBlockOptionsCompilerPass())
+            ->addCompilerPass(new TwigSandboxConfigurationPass());
     }
 }

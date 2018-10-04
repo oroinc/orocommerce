@@ -29,6 +29,7 @@ trait WebsiteManagerTrait
     protected function setCurrentWebsite($websiteReference = null)
     {
         $websiteManagerStub = $this->getWebsiteManagerStub();
+        $websiteManagerStub->resetStub();
         $defaultWebsite = $websiteManagerStub->getDefaultWebsite();
         if (!$websiteReference || $websiteReference === 'default') {
             $website = $defaultWebsite;

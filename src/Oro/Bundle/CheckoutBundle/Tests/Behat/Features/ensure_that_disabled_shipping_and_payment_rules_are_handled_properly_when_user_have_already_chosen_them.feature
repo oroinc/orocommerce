@@ -21,7 +21,7 @@ Feature: Ensure that disabled shipping and payment rules are handled properly wh
     And AmandaRCole@example.org customer user has Buyer role
     And I signed in as AmandaRCole@example.org on the store frontend
     When I open page with shopping list List 1
-    And I press "Create Order"
+    And I click "Create Order"
     And I select "Fifth avenue, 10115 Berlin, Germany" on the "Billing Information" checkout step and press Continue
     And I select "Fifth avenue, 10115 Berlin, Germany" on the "Shipping Information" checkout step and press Continue
     And I click on "ShippingMethodFlatRate2"
@@ -38,7 +38,7 @@ Feature: Ensure that disabled shipping and payment rules are handled properly wh
 
   Scenario: Ensure order cannot be submitted when shipping method is not available anymore
     Given I proceed as the Buyer
-    And I press "Submit Order"
+    And I click "Submit Order"
     Then I should see "The selected shipping method is not available. Please return to the shipping method selection step and select a different one." flash message
     And on the "Order Review" checkout step I go back to "Edit Shipping Method"
     And I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
@@ -53,7 +53,7 @@ Feature: Ensure that disabled shipping and payment rules are handled properly wh
 
   Scenario: Ensure order cannot be submitted when payment method is not available anymore
     Given I proceed as the Buyer
-    And I press "Submit Order"
+    And I click "Submit Order"
     Then I should see "The selected payment method is not available. Please return to the payment method selection step and select a different one." flash message
     And on the "Order Review" checkout step I go back to "Edit Payment"
     And I check "Payment Terms" on the "Payment" checkout step and press Continue

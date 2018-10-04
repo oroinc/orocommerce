@@ -85,8 +85,14 @@ define(function(require) {
                 this.$slugFields = this.$form.find(this.options.slugFields).filter(this.options.textFieldSelector);
                 this.$createRedirectCheckbox = this.$form.find(this.options.createRedirectCheckbox);
                 this._saveSlugFieldsInitialState();
-                this.$form.off('submit', $.proxy(this.onSubmit, this)).on('submit', $.proxy(this.onSubmit, this));
+                this.$form
+                    .off(this.eventNamespace())
+                    .on('submit' + this.eventNamespace(), this.onSubmit.bind(this));
             }
+        },
+
+        eventNamespace: function() {
+            return '.delegateEvents' + this.cid;
         },
 
         /**
@@ -94,7 +100,9 @@ define(function(require) {
          * @return {Boolean}
          */
         onSubmit: function(event) {
-            if (!$(event.target).valid()) {
+            var validator = $(event.target).data('validator');
+
+            if (validator && !validator.valid()) {
                 return true;
             }
 

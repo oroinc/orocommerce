@@ -93,7 +93,6 @@ class QuoteProductOfferTypeTest extends AbstractTest
                     ->setQuantity(10)
                     ->setAllowIncrements(false),
                 'expected' => [
-                    // TODO: enable once fully supported on the quote views and in orders
                     'priceType' => QuoteProductOffer::PRICE_TYPE_UNIT,
                     'quantity' => 10,
                 ],
@@ -281,7 +280,7 @@ class QuoteProductOfferTypeTest extends AbstractTest
 
     public function testOnPreSetData()
     {
-        /** @var $formMock FormInterface|\PHPUnit_Framework_MockObject_MockObject */
+        /** @var $formMock FormInterface|\PHPUnit\Framework\MockObject\MockObject */
         $formMock = $this->createMock(FormInterface::class);
         $event = new FormEvent($formMock, new QuoteProductOffer());
 
@@ -306,7 +305,7 @@ class QuoteProductOfferTypeTest extends AbstractTest
 
     public function testOnPreSetDataNoEntity()
     {
-        /** @var $formMock FormInterface|\PHPUnit_Framework_MockObject_MockObject */
+        /** @var $formMock FormInterface|\PHPUnit\Framework\MockObject\MockObject */
         $formMock = $this->createMock(FormInterface::class);
         $event = new FormEvent($formMock, null);
 

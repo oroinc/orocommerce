@@ -8,6 +8,9 @@ use Oro\Bundle\RedirectBundle\Entity\Repository\RedirectRepository;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 
+/**
+ * Manage redirects for given slugs.
+ */
 class RedirectGenerator
 {
     /**
@@ -40,19 +43,21 @@ class RedirectGenerator
     }
 
     /**
-     * @param string $from
-     * @param Slug $slug
+     * @param Slug $from
+     * @param Slug $to
      */
-    public function generate($from, Slug $slug)
+    public function generateForSlug(Slug $from, Slug $to)
     {
-        if ($from === $slug->getUrl()) {
+        if ($from->getUrl() === $to->getUrl()) {
             return;
         }
 
         $redirect = new Redirect();
-        $redirect->setFrom($from);
-        $redirect->setTo($slug->getUrl());
-        $redirect->setSlug($slug);
+        $redirect->setFromPrototype($from->getSlugPrototype());
+        $redirect->setFrom($from->getUrl());
+        $redirect->setToPrototype($to->getSlugPrototype());
+        $redirect->setTo($to->getUrl());
+        $redirect->setSlug($to);
         $redirect->setType(Redirect::MOVED_PERMANENTLY);
 
         $this->getRedirectManager()->persist($redirect);

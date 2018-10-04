@@ -374,7 +374,7 @@ action_groups:
             - '@send_email_template':
                 parameters:
                     from: $.order.owner.email
-                    to: [$.order.customerUser.email, $.checkout.registeredCustomerUser.email, $.email]
+                    to: [$.order.customerUser, $.checkout.registeredCustomerUser, $.email]
                     template: 'order_confirmation_email'
                     entity: $.order
 

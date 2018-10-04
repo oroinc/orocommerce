@@ -16,21 +16,21 @@ Feature: Guest Shopping Lists
     Given I proceed as the Admin
     And I login as administrator
     And I go to Products/ Product Attributes
-    And press "Create Attribute"
+    And click "Create Attribute"
     And fill form with:
       | Field Name | Color  |
       | Type       | Select |
-    And press "Continue"
+    And click "Continue"
     And set Options with:
       | Label |
       | Black |
       | White |
     And save and close form
-    And I press "Create Attribute"
+    And I click "Create Attribute"
     And fill form with:
       | Field Name | Size   |
       | Type       | Select |
-    And press "Continue"
+    And click "Continue"
     And set Options with:
       | Label |
       | L     |
@@ -144,6 +144,14 @@ Feature: Guest Shopping Lists
       | Delete        |
       | Create Order  |
       | Request Quote |
+
+  Scenario: Check Shopping list button in Guest mode when product remove from shopping list
+    Given I type "CONTROL1" in "search"
+    And I click "Search Button"
+    And I should see "Control Product"
+    And I click on "Shopping List Dropdown"
+    And I click "Remove From Shopping List"
+    And I should not see "Shopping List Dropdown"
 
   Scenario: Check shopping list count
     Given I proceed as the Admin
