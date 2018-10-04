@@ -1,26 +1,17 @@
-Product Variant Search
-======================
+# Product Variant Search
 
-### General Information
+## General Information
 
-This document describes how search index behaves when configurable product or product variant are searched and when
-configurable product can be found by the values from the assigned product variants. Also here you can find what data
-is stored at the search index and how to customize it.
+This document describes search index behavior when a user is looking for for a configurable product or a product variant and finds the configurable product by the values from the assigned product variants. Here, you can also find what data is stored in the search index and how to customize it.
 
+## How It Works
 
-### How does it work?
+When a user creates a configurable product, they associate it with several simple products called product variants. These variants should have different values for the configurable product attribute so that the application can identify the appropriate product variant by the value of the configurable product attribute.
 
-Every time user creates a configurable product he usually associates it with a several simple products called product
-variants. These variants have to have different values for the configurable product attribute, so application should be
-able to identify an appropriate product variant by the value of the configurable product attribute.
+When a user performs search in the application storefront, they should be able to find a configurable product by the values from
+the associated product variants. This feature works for the global search (all text), select and multi-select fields.
 
-When user performs search at application front-office he has to be able to find configurable product by the values from
-the associated product variants. This feature works for global search (all text), select and multi-select fields.
-
-Let's have a look at the example. Imagine that we have three simple products with SKUs like TAG1, TAG2 and TAG3; 
-and then we have one configurable product with SKU set to GENERAL-TAG. Also we have two attributes - 
-Color which has select type and Material which has multi-select type; both attributes are searchable and filterable. 
-Color is used as configurable product attribute. Here is the data we have for these products:
+For instance, you could have three simple products with the TAG1, TAG2, and TAG3 SKUs, one configurable product with the SKU set to GENERAL-TAG. In addition, there could be two attributes, Color (of the select type) and Material (of the multi-select type). Both attributes are searchable and filterable. Color is used as a configurable product attribute. The illustration for this example is below:
 
 ```
 Product SKU: TAG1
@@ -40,10 +31,12 @@ Color: empty
 Material: empty
 ``` 
 
-We have two scenarios - when product variants are invisible at the front office (this is a default behaviour) and 
-when they are visible (it has to be set manually at the system configuration).
+Here, we can have two scenarios:
 
-First let's check application behaviour when product variants are invisible.
+* When product variants are invisible in the storefront (which is the default behavior)
+* When prduct variants are visible (this behavior has to be set manually in the system configuration).
+
+The first table below illustrates the behavior when product variants are invisible.
 
 | Filter       | Value       | Found products |
 |--------------|-------------|----------------|
@@ -67,10 +60,9 @@ First let's check application behaviour when product variants are invisible.
 | All text     | Plastic     | GENERAL-TAG    |
 | All text     | Metal       |                |
 
-As we can see configurable product can be found by the values both from configurable product and
-associated product variants.
+Here, a configurable product can be found by the values both from the configurable product and associated product variants.
 
-Not let's check application behaviour when product variants are visible.
+The second table illustrates the application behavior when product variants are visible.
 
 | Filter       | Value       | Found products          |
 |--------------|-------------|-------------------------|
@@ -94,20 +86,18 @@ Not let's check application behaviour when product variants are visible.
 | All text     | Plastic     | GENERAL-TAG, TAG1, TAG3 |
 | All text     | Metal       |                         |
 
-As we can see both configurable product and product variants can be found using the values from the
+As we can see, both the configurable product and product variants can be found using the values from the
 product variants.
 
-Pay attention that configurable product can be found not only by configurable attribute filter 
-(e.g. Color = Green), but also by the text representation of the appropriate option (i.e. All text = Green). 
+Keep in mind that configurable products can be found not only by the configurable attribute filter 
+(e.g. Color = Green), but also by the text representation of the appropriate option (e.g. All text = Green). 
  
 
-### Search index data
+## Search Index Data
 
-After the expected behavior is absolutely clear we can check search index data to understand how application
-implements this behaviour. 
+Once you understand the expected behavior, you can check the search index data to find out how the application implements this behavior. 
 
-Let's use the same example with tag products from the previous chapter and check what data we have at
-the search index.
+Using the same example with the tag products from the previous section, we can check what data we have in the search index:
 
 *TAG1*
 ```json
@@ -157,22 +147,18 @@ the search index.
 }
 ```
 
-It's clearly visible that configurable product includes text, select and multi-select attribute values from the
-product variants. So, when application executes search query with restriction `all_text_1 ~ TAG1` or `color_red = 1` 
-both configurable product and product variant are found. 
+As illustrated in the example above, configurable product includes text, select, and multi-select attribute values from the
+product variants. So, when the application executes search query with the `all_text_1 ~ TAG1` or `color_red = 1` restrictions, both the configurable product and the product variant are found. 
 
 
-### Extension points
+## Extension Points
 
-The logic that adds product variant data to the configurable product is encapsulated at 
-`Oro\Bundle\ProductBundle\Search\ProductVariantProviderDecorator` class. This class decorates standard data provider 
-`Oro\Bundle\ProductBundle\Search\WebsiteSearchProductIndexDataProvider` and adds text, select and multi-select 
-attribute values of product variant to the configurable product.
+The logic that adds product variant data to the configurable product is encapsulated in the 
+`Oro\Bundle\ProductBundle\Search\ProductVariantProviderDecorator` class. This class decorates the `Oro\Bundle\ProductBundle\Search\WebsiteSearchProductIndexDataProvider` standard data provider and adds the text, select, and multi-select attribute values of a product variant to the configurable product.
 
-If you need to change this behaviour or change logic of data collection is general you may create another data
-provider decorator that implements interface `Oro\Bundle\ProductBundle\Search\ProductIndexDataProviderInterface` which 
-changes the search index data. Then you need to decorate original provider at DI container - 
-here is an example of how it can be done:
+If you need to change this behavior or the logic of data collection, create another data provider decorator that implements the `Oro\Bundle\ProductBundle\Search\ProductIndexDataProviderInterface` interface which changes the search index data. Next, decorate the original provider in the DI container.
+
+Here is an example of how you can implement this:
 
 ```yml
 services:
