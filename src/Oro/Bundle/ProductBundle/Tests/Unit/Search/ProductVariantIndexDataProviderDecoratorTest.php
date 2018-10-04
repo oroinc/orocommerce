@@ -7,13 +7,26 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductVariantLink;
 use Oro\Bundle\ProductBundle\Search\ProductIndexDataModel;
 use Oro\Bundle\ProductBundle\Search\ProductIndexDataProviderInterface;
-use Oro\Bundle\ProductBundle\Search\ProductVariantProviderDecorator;
+use Oro\Bundle\ProductBundle\Search\ProductVariantIndexDataProviderDecorator;
 use Oro\Bundle\WebsiteSearchBundle\Engine\IndexDataProvider;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class ProductVariantProviderDecoratorTest extends \PHPUnit\Framework\TestCase
+class ProductVariantIndexDataProviderDecoratorTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
+
+    /** @var ProductIndexDataProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $originalProvider;
+
+    /** @var ProductVariantIndexDataProviderDecorator */
+    private $productVariantProvider;
+
+    protected function setUp()
+    {
+        $this->originalProvider = $this->createMock(ProductIndexDataProviderInterface::class);
+
+        $this->productVariantProvider = new ProductVariantIndexDataProviderDecorator($this->originalProvider);
+    }
 
     /**
      * @param FieldConfigModel $attribute
@@ -45,9 +58,7 @@ class ProductVariantProviderDecoratorTest extends \PHPUnit\Framework\TestCase
             ->addVariantLink($firstVariantLink)
             ->addVariantLink($secondVariantLink);
 
-        /** @var ProductIndexDataProviderInterface|\PHPUnit\Framework\MockObject\MockObject $originalProvider */
-        $originalProvider = $this->createMock(ProductIndexDataProviderInterface::class);
-        $originalProvider->expects($this->any())
+        $this->originalProvider->expects($this->any())
             ->method('getIndexData')
             ->willReturnMap([
                 [$firstSimpleProduct, $attribute, [], $firstVariantData],
@@ -55,11 +66,9 @@ class ProductVariantProviderDecoratorTest extends \PHPUnit\Framework\TestCase
                 [$configurableProduct, $attribute, [], $configurableData],
             ]);
 
-        $productVariantProvider = new ProductVariantProviderDecorator($originalProvider);
-
         $this->assertEquals(
             $expectedConfigurableData,
-            $productVariantProvider->getIndexData($configurableProduct, $attribute, [])
+            $this->productVariantProvider->getIndexData($configurableProduct, $attribute, [])
         );
     }
 

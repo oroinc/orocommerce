@@ -14,11 +14,16 @@ class ReindexParentConfigurableProductListenerTest extends WebTestCase
 {
     use MessageQueueAssertTrait;
 
-    public function testParentConfigurableProductReindexation()
+    protected function setUp()
     {
+        parent::setUp();
+
         $this->initClient();
         $this->loadFixtures([LoadConfigurableProductWithVariants::class]);
+    }
 
+    public function testParentConfigurableProductReindexation()
+    {
         self::assertEmptyMessages(AsyncIndexer::TOPIC_REINDEX);
 
         /** @var Product $productVariant */

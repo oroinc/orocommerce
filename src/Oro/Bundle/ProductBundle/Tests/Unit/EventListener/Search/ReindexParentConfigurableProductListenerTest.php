@@ -2,30 +2,27 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener\Search;
 
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Event\OnClearEventArgs;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductVariantLink;
 use Oro\Bundle\ProductBundle\EventListener\Search\ReindexParentConfigurableProductListener;
-use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
+use Oro\Bundle\SearchBundle\Utils\IndexationEntitiesContainer;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ReindexParentConfigurableProductListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $eventDispatcher;
+    /** @var IndexationEntitiesContainer */
+    private $changedEntities;
 
     /** @var ReindexParentConfigurableProductListener */
-    protected $listener;
+    private $listener;
 
     protected function setUp()
     {
-        $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
+        $this->changedEntities = new IndexationEntitiesContainer();
 
-        $this->listener = new ReindexParentConfigurableProductListener($this->eventDispatcher);
+        $this->listener = new ReindexParentConfigurableProductListener($this->changedEntities);
     }
 
     public function testPostPersist()
@@ -36,7 +33,17 @@ class ReindexParentConfigurableProductListenerTest extends \PHPUnit\Framework\Te
         $this->listener->postPersist($simpleProduct);
         $this->listener->postPersist($productVariant);
 
-        $this->assertAttributeEquals([2], 'productIds', $this->listener);
+        /** @var ProductVariantLink $parent */
+        $parent = $productVariant->getParentVariantLinks()->first();
+
+        $this->assertEquals(
+            [
+                Product::class => [
+                    spl_object_hash($parent->getParentProduct()) => $parent->getParentProduct()
+                ]
+            ],
+            $this->changedEntities->getEntities()
+        );
     }
 
     public function testPostUpdate()
@@ -47,7 +54,17 @@ class ReindexParentConfigurableProductListenerTest extends \PHPUnit\Framework\Te
         $this->listener->postUpdate($simpleProduct);
         $this->listener->postUpdate($productVariant);
 
-        $this->assertAttributeEquals([2], 'productIds', $this->listener);
+        /** @var ProductVariantLink $parent */
+        $parent = $productVariant->getParentVariantLinks()->first();
+
+        $this->assertEquals(
+            [
+                Product::class => [
+                    spl_object_hash($parent->getParentProduct()) => $parent->getParentProduct()
+                ]
+            ],
+            $this->changedEntities->getEntities()
+        );
     }
 
     public function testPreRemove()
@@ -58,95 +75,17 @@ class ReindexParentConfigurableProductListenerTest extends \PHPUnit\Framework\Te
         $this->listener->preRemove($simpleProduct);
         $this->listener->preRemove($productVariant);
 
-        $this->assertAttributeEquals([2], 'productIds', $this->listener);
-    }
+        /** @var ProductVariantLink $parent */
+        $parent = $productVariant->getParentVariantLinks()->first();
 
-    public function testPostFlushWithProductIds()
-    {
-        $productVariant = $this->getProductVariant(1, 2);
-
-        $this->eventDispatcher->expects($this->once())
-            ->method('dispatch')
-            ->with(
-                ReindexationRequestEvent::EVENT_NAME,
-                new ReindexationRequestEvent([Product::class], [], [1])
-            );
-
-        $this->listener->postUpdate($productVariant);
-        $this->listener->postUpdate($productVariant);
-
-        $this->assertAttributeEquals([1, 1], 'productIds', $this->listener);
-
-        $this->listener->postFlush();
-
-        $this->assertAttributeEmpty('productIds', $this->listener);
-    }
-
-    public function testPostFlushWithoutProductIds()
-    {
-        $this->eventDispatcher->expects($this->never())
-            ->method('dispatch');
-
-        $this->assertAttributeEmpty('productIds', $this->listener);
-
-        $this->listener->postFlush();
-    }
-
-    public function testOnClearAllEntities()
-    {
-        /** @var EntityManagerInterface $entityManager */
-        $entityManager = $this->createMock(EntityManagerInterface::class);
-        $event = new OnClearEventArgs($entityManager);
-
-        $productVariant = $this->getProductVariant(1, 2);
-
-        $this->assertAttributeEmpty('productIds', $this->listener);
-
-        $this->listener->postUpdate($productVariant);
-
-        $this->assertAttributeEquals([1], 'productIds', $this->listener);
-
-        $this->listener->onClear($event);
-
-        $this->assertAttributeEmpty('productIds', $this->listener);
-    }
-
-    public function testOnClearProductEntity()
-    {
-        /** @var EntityManagerInterface $entityManager */
-        $entityManager = $this->createMock(EntityManagerInterface::class);
-        $event = new OnClearEventArgs($entityManager, Product::class);
-
-        $productVariant = $this->getProductVariant(1, 2);
-
-        $this->assertAttributeEmpty('productIds', $this->listener);
-
-        $this->listener->postUpdate($productVariant);
-
-        $this->assertAttributeEquals([1], 'productIds', $this->listener);
-
-        $this->listener->onClear($event);
-
-        $this->assertAttributeEmpty('productIds', $this->listener);
-    }
-
-    public function testOnClearNotProductEntity()
-    {
-        /** @var EntityManagerInterface $entityManager */
-        $entityManager = $this->createMock(EntityManagerInterface::class);
-        $event = new OnClearEventArgs($entityManager, \DateTime::class);
-
-        $productVariant = $this->getProductVariant(1, 2);
-
-        $this->assertAttributeEmpty('productIds', $this->listener);
-
-        $this->listener->postUpdate($productVariant);
-
-        $this->assertAttributeEquals([1], 'productIds', $this->listener);
-
-        $this->listener->onClear($event);
-
-        $this->assertAttributeEquals([1], 'productIds', $this->listener);
+        $this->assertEquals(
+            [
+                Product::class => [
+                    spl_object_hash($parent->getParentProduct()) => $parent->getParentProduct()
+                ]
+            ],
+            $this->changedEntities->getEntities()
+        );
     }
 
     /**

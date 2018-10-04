@@ -26,6 +26,22 @@ class LoadConfigurableProductWithVariants extends AbstractFixture implements Dep
     const FIRST_VARIANT_SKU = 'FIRSTVARIANT';
     const SECOND_VARIANT_SKU = 'SECONDVARIANT';
 
+    /** @var array */
+    private $variants = [
+        [
+            'sku' => self::FIRST_VARIANT_SKU,
+            'type' => Product::TYPE_SIMPLE,
+            'name' => 'Good',
+            'enumCodes' => ['first', 'second']
+        ],
+        [
+            'sku' => self::SECOND_VARIANT_SKU,
+            'type' => Product::TYPE_SIMPLE,
+            'name' => 'Better',
+            'enumCodes' => ['second', 'third']
+        ],
+    ];
+
     /**
      * {@inheritdoc}
      */
@@ -46,29 +62,16 @@ class LoadConfigurableProductWithVariants extends AbstractFixture implements Dep
         $configurableProduct = $this->createProduct($manager, self::CONFIGURABLE_SKU, Product::TYPE_CONFIGURABLE);
         $this->setReference(self::CONFIGURABLE_SKU, $configurableProduct);
 
-        $firstVariant = $this->createProduct(
-            $manager,
-            self::FIRST_VARIANT_SKU,
-            Product::TYPE_SIMPLE,
-            'Good',
-            ['first', 'second']
-        );
-        $firstLink = new ProductVariantLink($configurableProduct, $firstVariant);
-        $configurableProduct->addVariantLink($firstLink);
-        $manager->persist($firstLink);
-        $this->setReference(self::FIRST_VARIANT_SKU, $firstVariant);
+        foreach ($this->variants as $data) {
+            $variant = $this->createProduct($manager, $data['sku'], $data['type'], $data['name'], $data['enumCodes']);
 
-        $secondVariant = $this->createProduct(
-            $manager,
-            self::SECOND_VARIANT_SKU,
-            Product::TYPE_SIMPLE,
-            'Better',
-            ['second', 'third']
-        );
-        $secondLink = new ProductVariantLink($configurableProduct, $secondVariant);
-        $configurableProduct->addVariantLink($secondLink);
-        $manager->persist($secondLink);
-        $this->setReference(self::SECOND_VARIANT_SKU, $secondVariant);
+            $link = new ProductVariantLink($configurableProduct, $variant);
+            $configurableProduct->addVariantLink($link);
+
+            $manager->persist($link);
+
+            $this->setReference($data['sku'], $variant);
+        }
 
         $manager->flush();
 
@@ -86,12 +89,12 @@ class LoadConfigurableProductWithVariants extends AbstractFixture implements Dep
      * @param array $multiEnumCodes
      * @return Product
      */
-    protected function createProduct(
+    private function createProduct(
         ObjectManager $manager,
-        $sku,
-        $type,
-        $variantName = null,
-        $multiEnumCodes = []
+        string $sku,
+        string $type,
+        ?string $variantName = null,
+        array $multiEnumCodes = []
     ) {
         /** @var EntityManager $manager */
         $user = $this->getFirstUser($manager);

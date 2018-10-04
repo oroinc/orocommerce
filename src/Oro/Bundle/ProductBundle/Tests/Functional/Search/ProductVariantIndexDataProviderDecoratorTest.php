@@ -10,15 +10,12 @@ use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserD
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Schema\OroFrontendTestFrameworkBundleInstaller;
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\Client;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadConfigurableProductWithVariants;
-use Oro\Bundle\SearchBundle\Engine\Orm;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
-class ProductVariantProviderDecoratorTest extends WebTestCase
+class ProductVariantIndexDataProviderDecoratorTest extends WebTestCase
 {
-    /**
-     * @var Client
-     */
+    /** @var Client */
     protected $client;
 
     protected function setUp()
@@ -193,7 +190,7 @@ class ProductVariantProviderDecoratorTest extends WebTestCase
     private function getSkusFromResponse(Response $response)
     {
         $actualSkus = [];
-        $products = json_decode($response->getContent(), true)['data'];
+        $products = \json_decode($response->getContent(), true)['data'];
         foreach ($products as $product) {
             $actualSkus[] = $product['sku'];
         }

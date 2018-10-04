@@ -38,6 +38,9 @@ class LoadProductMultiEnumValues extends AbstractEnumFixture implements Containe
         return OroFrontendTestFrameworkBundleInstaller::MULTIENUM_FIELD_CODE;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function load(ObjectManager $manager)
     {
         parent::load($manager);
@@ -65,6 +68,7 @@ class LoadProductMultiEnumValues extends AbstractEnumFixture implements Containe
         $attributeGroupRelation = new AttributeGroupRelation();
         $attributeGroupRelation->setEntityConfigFieldId($variantField->getId());
         $attributeGroup->addAttributeRelation($attributeGroupRelation);
+
         $manager->persist($defaultFamily);
         $manager->flush();
     }
