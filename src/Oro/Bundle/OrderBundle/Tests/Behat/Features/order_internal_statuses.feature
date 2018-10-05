@@ -54,7 +54,6 @@ Feature: Order Internal Statuses
       | SecondOrder  | Open            |
     When click grid view list
     And I click "All Orders"
-    And I reset "Internal Status" filter
     Then number of records should be 2
     When I sort grid by "Internal Status"
     Then I should see following grid:
