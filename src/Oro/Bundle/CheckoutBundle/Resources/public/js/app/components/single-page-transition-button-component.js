@@ -31,7 +31,8 @@ define(function(require) {
             if (this.$form) {
                 mediator.on('single-page:transition-button:submit', _.bind(this.submit, this));
             }
-            this.createAjaxData();
+            var ajaxData = this.createAjaxData();
+            this.sendAjaxData(ajaxData, this.$el);
         },
 
         /**
@@ -135,6 +136,14 @@ define(function(require) {
                 return;
             }
 
+            this.sendAjaxData(ajaxData, $target);
+        },
+
+        /**
+         * @param {Object} ajaxData
+         * @param {jQuery.Element} $target
+         */
+        sendAjaxData: function(ajaxData, $target) {
             $.ajax(ajaxData)
                 .done(_.bind(this.afterSaveState, this, $target));
         },
