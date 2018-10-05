@@ -45,6 +45,5 @@ Feature: Checkout by customer user with new role
 
   Scenario: Create Checkout as Customer User with new Customer User Role
     Given I proceed as the Buyer
-    And click "Sign Out"
     And I signed in as AmandaRCole@example.org on the store frontend
     And I do the order through completion, and should be on order view page
