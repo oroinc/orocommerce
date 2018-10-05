@@ -1170,6 +1170,8 @@ services:
             - '@oro_product.website_search.repository.product'
             - '@oro_entity.doctrine_helper'
             - '@oro_datagrid.datagrid.manager.link'
+            - '@oro_filter.provider.state.filters'
+            - '@oro_datagrid.provider.state.sorters'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.search_datasource.result.before.frontend-product-search-grid, method: onSearchResultBefore }
             - { name: kernel.event_listener, event: oro_datagrid.search_datasource.result.after.frontend-product-search-grid, method: onSearchResultAfter }
