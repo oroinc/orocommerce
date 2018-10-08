@@ -7,6 +7,10 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\EmailBundle\Entity\EmailTemplate;
 use Oro\Bundle\EmailBundle\Migrations\Data\ORM\AbstractEmailFixture;
 
+/**
+ * Added html tag around twig tags
+ * Allows to edit text from WYSIWYG editor and does not break the twig template
+ */
 class ConvertOrderConfirmationEmail extends AbstractEmailFixture implements DependentFixtureInterface
 {
     /**
