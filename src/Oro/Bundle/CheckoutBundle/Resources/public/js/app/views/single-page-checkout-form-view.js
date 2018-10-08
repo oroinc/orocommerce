@@ -94,6 +94,20 @@ define(function(require) {
             SinglePageCheckoutFormView.__super__.initialize.call(this, arguments);
         },
 
+        afterCheck: function($el) {
+            if (!$el) {
+                $el = this.$el;
+            }
+            var serializedData = this.getSerializedData();
+
+            if (this.lastSerializedData === serializedData) {
+                return;
+            }
+
+            this.trigger('after-check-form', serializedData, $el);
+            this.lastSerializedData = serializedData;
+        },
+
         /**
          * @param {jQuery.Event} event
          */
@@ -118,14 +132,7 @@ define(function(require) {
             this._changeShippingMethod();
             this._changePaymentMethod();
 
-            var serializedData = this.getSerializedData();
-
-            if (this.lastSerializedData === serializedData) {
-                return;
-            }
-
-            this.trigger('after-check-form', serializedData, $(event.target));
-            this.lastSerializedData = serializedData;
+            this.afterCheck($(event.target));
         },
 
         onBeforeSaveState: function() {

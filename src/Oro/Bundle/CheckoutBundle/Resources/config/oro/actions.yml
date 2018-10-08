@@ -419,24 +419,32 @@ action_groups:
                             currentWebsite: $.currentWebsite
                             checkoutData: $.checkoutData
 
+                    - '@call_service_method':
+                         service: oro_checkout.action.default_shipping_method_setter
+                         method: setDefaultShippingMethod
+                         method_parameters: [$.checkout]
+
                     - '@assign_value': [$.checkoutActualizationRequired, false]
+                    - '@flush_entity': $.checkout
 
                     - '@start_workflow':
                         attribute: $.workflowItem
                         name: $.currentWorkflow.name
                         entity: $.checkout
 
-            - '@run_action_group':
+            - '@tree':
                 conditions:
                     '@equal': [$.checkoutActualizationRequired, true]
-                parameters:
-                    action_group: actualize_checkout
-                    parameters_mapping:
-                        checkout: $.checkout
-                        updateData: $.updateData
-                        currentUser: $.currentUser
-                        currentWebsite: $.currentWebsite
-                        checkoutData: $.checkoutData
+                actions:
+                    - '@run_action_group':
+                        action_group: actualize_checkout
+                        parameters_mapping:
+                            checkout: $.checkout
+                            updateData: $.updateData
+                            currentUser: $.currentUser
+                            currentWebsite: $.currentWebsite
+                            checkoutData: $.checkoutData
+                    - '@flush_entity': $.checkout
 
     actualize_checkout:
         parameters:
@@ -485,7 +493,18 @@ action_groups:
                 method: recalculateCheckoutSubtotals
                 method_parameters: [$.checkout]
 
-            - '@flush_entity': $.checkout
+    save_workflow_state:
+        parameters:
+            checkout:
+                type: Oro\Bundle\CheckoutBundle\Entity\Checkout
+        actions:
+            - '@generate_checkout_state_snapshot':
+                entity: $.checkout
+                attribute: $.currentCheckoutState
+            - '@save_checkout_state':
+                entity: $.checkout
+                state: $.currentCheckoutState
+                attribute: $.state_token
 
     actualize_workflow_state:
         parameters:

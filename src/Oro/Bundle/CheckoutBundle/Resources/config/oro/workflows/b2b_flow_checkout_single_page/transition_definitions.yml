@@ -45,10 +45,9 @@ workflows:
                     - '@flush_entity': [$checkout]
 
                     - '@run_action_group':
-                        action_group: actualize_workflow_state
+                        action_group: save_workflow_state
                         parameters_mapping:
                             checkout: $checkout
-                            state_token: $state_token
 
             create_order_transition_definition:
                 preactions:
@@ -301,10 +300,9 @@ workflows:
                             transition: payment_error
 
                     - '@run_action_group':
-                        action_group: actualize_workflow_state
+                        action_group: save_workflow_state
                         parameters_mapping:
                             checkout: $checkout
-                            state_token: $state_token
                         results:
                             data.internal_state_token: $.state_token
                             result.savedCheckoutState: $.currentCheckoutState
