@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Async;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\DBAL\ConnectionException;
 use Doctrine\DBAL\Driver\PDOException;
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\EntityBundle\ORM\DatabaseExceptionHelper;
@@ -84,35 +85,19 @@ class PriceListProcessorTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->triggerFactory = $this->getMockBuilder(PriceListTriggerFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->priceResolver = $this->getMockBuilder(MergePricesCombiningStrategy::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $strategyRegister = self::createMock(StrategyRegister::class);
+        $this->triggerFactory = $this->createMock(PriceListTriggerFactory::class);
+        $this->priceResolver = $this->createMock(MergePricesCombiningStrategy::class);
+
+        $strategyRegister = $this->createMock(StrategyRegister::class);
         $strategyRegister->method('getCurrentStrategy')->willReturn($this->priceResolver);
-        $this->eventDispatcher = $this->getMockBuilder(EventDispatcher::class)
-            ->disableOriginalConstructor()
-            ->getMock();
 
+        $this->eventDispatcher = $this->createMock(EventDispatcher::class);
         $this->combinedPriceListsBuilderFacade = $this->createMock(CombinedPriceListsBuilderFacade::class);
-
         $this->logger = $this->createMock(LoggerInterface::class);
-
-        $this->repository = $this->getMockBuilder(CombinedPriceListRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $this->repository = $this->createMock(CombinedPriceListRepository::class);
         $this->registry = $this->createMock(ManagerRegistry::class);
-
-        $this->databaseExceptionHelper = $this->getMockBuilder(DatabaseExceptionHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->triggerHandler = $this->getMockBuilder(CombinedPriceListTriggerHandler::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->databaseExceptionHelper = $this->createMock(DatabaseExceptionHelper::class);
+        $this->triggerHandler = $this->createMock(CombinedPriceListTriggerHandler::class);
 
         $this->priceRuleProcessor = new PriceListProcessor(
             $this->triggerFactory,
@@ -364,11 +349,104 @@ class PriceListProcessorTest extends \PHPUnit_Framework_TestCase
         $em->expects(($this->once()))
             ->method('commit');
 
+        $em->expects(($this->never()))
+            ->method('rollback');
+
         $this->registry->expects($this->any())
             ->method('getManagerForClass')
             ->willReturn($em);
 
         return $repository;
+    }
+
+    /**
+     * @expectedException \Doctrine\DBAL\ConnectionException
+     * @expectedExceptionMessage Error connection
+     */
+    public function testProcessInvalidArgumentExceptionWithNotActiveTransaction()
+    {
+        $data = ['test' => 1];
+        $body = json_encode($data);
+
+        $em = $this->createMock(EntityManagerInterface::class);
+
+        $em->expects($this->once())
+            ->method('beginTransaction');
+
+        $em->expects(($this->once()))
+            ->method('rollback')
+            ->willThrowException(new ConnectionException('Error connection'));
+
+        $this->registry->expects($this->once())
+            ->method('getManagerForClass')
+            ->with(CombinedPriceList::class)
+            ->willReturn($em);
+
+        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message */
+        $message = $this->createMock(MessageInterface::class);
+        $message->expects($this->any())
+            ->method('getBody')
+            ->willReturn($body);
+
+        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session */
+        $session = $this->createMock(SessionInterface::class);
+
+        $this->logger->expects($this->once())
+            ->method('error')
+            ->with(
+                sprintf(
+                    'Message is invalid: %s',
+                    'Test message'
+                )
+            );
+
+        $this->triggerFactory->expects($this->once())
+            ->method('createFromArray')
+            ->with($data)
+            ->willThrowException(new InvalidArgumentException('Test message'));
+
+        $this->priceRuleProcessor->process($message, $session);
+    }
+
+    /**
+     * @expectedException \Doctrine\DBAL\ConnectionException
+     * @expectedExceptionMessage Error connection
+     */
+    public function testProcessExceptionWithNotActiveTransaction()
+    {
+        $exception = new \Exception('Some error');
+
+        $em = $this->createMock(EntityManagerInterface::class);
+
+        $em->expects($this->once())
+            ->method('beginTransaction');
+
+        $em->expects(($this->once()))
+            ->method('rollback')
+            ->willThrowException(new ConnectionException('Error connection'));
+
+        $this->registry->expects($this->once())
+            ->method('getManagerForClass')
+            ->with(CombinedPriceList::class)
+            ->willReturn($em);
+
+        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message */
+        $message = $this->createMock(MessageInterface::class);
+        $message->expects($this->any())
+            ->method('getBody')
+            ->will($this->throwException($exception));
+
+        $this->logger->expects($this->once())
+            ->method('error')
+            ->with('Unexpected exception occurred during Combined Price Lists build', ['exception' => $exception]);
+
+        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session */
+        $session = $this->createMock(SessionInterface::class);
+
+        $this->databaseExceptionHelper->expects($this->never())
+            ->method('isDeadlock');
+
+        $this->priceRuleProcessor->process($message, $session);
     }
 
     public function testGetSubscribedTopics()
