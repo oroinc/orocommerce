@@ -1,6 +1,14 @@
 workflows:
     b2b_flow_checkout_single_page:
         transition_definitions:
+            __start___definition:
+                # perform preactions before actions defined in base_transition_definitions
+                preactions:
+                    - '@call_service_method':
+                         service: oro_checkout.action.default_shipping_method_setter
+                         method: setDefaultShippingMethod
+                         method_parameters: [$checkout]
+
             save_state_definition:
                 preactions:
                     - '@tree':
@@ -11,7 +19,7 @@ workflows:
                           - '@assign_value': [$disallow_visitor_email, true]
 
                 actions:
-                    - '@assign_value': [$.result.responseData.stateSaved, true]
+                    - '@assign_value': [$.result.responseData.stateSaved, false]
 
                     - '@run_action_group':
                         action_group: b2b_flow_checkout_update_billing_address
@@ -45,9 +53,17 @@ workflows:
                     - '@flush_entity': [$checkout]
 
                     - '@run_action_group':
-                        action_group: save_workflow_state
+                        action_group: actualize_workflow_state
                         parameters_mapping:
                             checkout: $checkout
+                            state_token: $state_token
+                        results:
+                            result.savedStateToken: $.state_token
+
+                    - '@assign_value':
+                        conditions:
+                            '@not_empty': $.result.savedStateToken
+                        parameters: [$.result.responseData.stateSaved, true]
 
             create_order_transition_definition:
                 preactions:
@@ -300,9 +316,10 @@ workflows:
                             transition: payment_error
 
                     - '@run_action_group':
-                        action_group: save_workflow_state
+                        action_group: actualize_workflow_state
                         parameters_mapping:
                             checkout: $checkout
+                            state_token: $state_token
                         results:
                             data.internal_state_token: $.state_token
                             result.savedCheckoutState: $.currentCheckoutState

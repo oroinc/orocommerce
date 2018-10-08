@@ -419,11 +419,6 @@ action_groups:
                             currentWebsite: $.currentWebsite
                             checkoutData: $.checkoutData
 
-                    - '@call_service_method':
-                         service: oro_checkout.action.default_shipping_method_setter
-                         method: setDefaultShippingMethod
-                         method_parameters: [$.checkout]
-
                     - '@assign_value': [$.checkoutActualizationRequired, false]
                     - '@flush_entity': $.checkout
 
@@ -492,19 +487,6 @@ action_groups:
                 service: oro_checkout.model.checkout_subtotal_updater
                 method: recalculateCheckoutSubtotals
                 method_parameters: [$.checkout]
-
-    save_workflow_state:
-        parameters:
-            checkout:
-                type: Oro\Bundle\CheckoutBundle\Entity\Checkout
-        actions:
-            - '@generate_checkout_state_snapshot':
-                entity: $.checkout
-                attribute: $.currentCheckoutState
-            - '@save_checkout_state':
-                entity: $.checkout
-                state: $.currentCheckoutState
-                attribute: $.state_token
 
     actualize_workflow_state:
         parameters:
