@@ -7,7 +7,7 @@ use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\ShippingBundle\Model\ShippingOrigin;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-class ShippingOriginTest extends \PHPUnit_Framework_TestCase
+class ShippingOriginTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 

@@ -7,13 +7,13 @@ use Oro\Bundle\RedirectBundle\Cache\UrlCacheInterface;
 use Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository;
 use Oro\Bundle\RedirectBundle\Tests\Unit\Stub\UrlCacheAllCapabilities;
 
-class SluggableUrlDumperTest extends \PHPUnit_Framework_TestCase
+class SluggableUrlDumperTest extends \PHPUnit\Framework\TestCase
 {
     public function testDump()
     {
-        /** @var SlugRepository|\PHPUnit_Framework_MockObject_MockObject $slugRepository */
+        /** @var SlugRepository|\PHPUnit\Framework\MockObject\MockObject $slugRepository */
         $slugRepository = $this->createMock(SlugRepository::class);
-        /** @var UrlCacheInterface|\PHPUnit_Framework_MockObject_MockObject $cache */
+        /** @var UrlCacheInterface|\PHPUnit\Framework\MockObject\MockObject $cache */
         $cache = $this->createMock(UrlCacheInterface::class);
         $dumper = new SluggableUrlDumper($slugRepository, $cache);
 
@@ -54,9 +54,9 @@ class SluggableUrlDumperTest extends \PHPUnit_Framework_TestCase
 
     public function testDumpFlushableCache()
     {
-        /** @var SlugRepository|\PHPUnit_Framework_MockObject_MockObject $slugRepository */
+        /** @var SlugRepository|\PHPUnit\Framework\MockObject\MockObject $slugRepository */
         $slugRepository = $this->createMock(SlugRepository::class);
-        /** @var UrlCacheInterface|\PHPUnit_Framework_MockObject_MockObject $cache */
+        /** @var UrlCacheInterface|\PHPUnit\Framework\MockObject\MockObject $cache */
         $cache = $this->createMock(UrlCacheAllCapabilities::class);
         $dumper = new SluggableUrlDumper($slugRepository, $cache);
 

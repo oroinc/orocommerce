@@ -8,10 +8,10 @@ use Oro\Bundle\PromotionBundle\CouponGeneration\CouponGenerationHandler;
 use Oro\Bundle\PromotionBundle\CouponGeneration\Options\CouponGenerationOptions;
 use Symfony\Component\Form\FormInterface;
 
-class CouponGenerationHandlerTest extends \PHPUnit_Framework_TestCase
+class CouponGenerationHandlerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var CouponGeneratorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var CouponGeneratorInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $couponGenerator;
 

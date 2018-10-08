@@ -8,7 +8,7 @@ use Oro\Bundle\CheckoutBundle\Shipping\Method\CheckoutShippingMethodsProviderInt
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodViewCollection;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class CheckoutHasApplicableShippingMethodsTest extends \PHPUnit_Framework_TestCase
+class CheckoutHasApplicableShippingMethodsTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
@@ -17,7 +17,7 @@ class CheckoutHasApplicableShippingMethodsTest extends \PHPUnit_Framework_TestCa
     /** @var CheckoutHasApplicableShippingMethods */
     protected $condition;
 
-    /** @var CheckoutShippingMethodsProviderInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var CheckoutShippingMethodsProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $checkoutShippingMethodsProviderMock;
 
     protected function setUp()

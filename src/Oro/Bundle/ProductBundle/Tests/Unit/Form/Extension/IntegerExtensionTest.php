@@ -8,7 +8,7 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class IntegerExtensionTest extends \PHPUnit_Framework_TestCase
+class IntegerExtensionTest extends \PHPUnit\Framework\TestCase
 {
     const TYPE = 'text';
 
@@ -24,7 +24,7 @@ class IntegerExtensionTest extends \PHPUnit_Framework_TestCase
 
     public function testConfigureOptions()
     {
-        /** @var OptionsResolver|\PHPUnit_Framework_MockObject_MockObject $resolver */
+        /** @var OptionsResolver|\PHPUnit\Framework\MockObject\MockObject $resolver */
         $resolver = $this->createMock('Symfony\Component\OptionsResolver\OptionsResolver');
         $resolver->expects($this->once())
             ->method('setDefaults')
@@ -45,7 +45,7 @@ class IntegerExtensionTest extends \PHPUnit_Framework_TestCase
      */
     public function testFinishView(FormView $view, array $options)
     {
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->getMockBuilder('Symfony\Component\Form\Form')
             ->disableOriginalConstructor()
             ->getMock();

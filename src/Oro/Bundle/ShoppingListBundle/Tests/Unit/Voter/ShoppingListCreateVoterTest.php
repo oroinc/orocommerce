@@ -7,14 +7,14 @@ use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListLimitManager;
 use Oro\Bundle\ShoppingListBundle\Voter\ShoppingListCreateVoter;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class ShoppingListCreateVoterTest extends \PHPUnit_Framework_TestCase
+class ShoppingListCreateVoterTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /** @var ShoppingListCreateVoter */
     private $shoppingListCreateVoter;
 
-    /** @var ShoppingListLimitManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ShoppingListLimitManager|\PHPUnit\Framework\MockObject\MockObject */
     private $shoppingListLimitManager;
 
     /**

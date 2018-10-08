@@ -6,12 +6,12 @@ use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
 
-class LocalizationIdPlaceholderTest extends \PHPUnit_Framework_TestCase
+class LocalizationIdPlaceholderTest extends \PHPUnit\Framework\TestCase
 {
     /** @var LocalizationIdPlaceholder */
     private $placeholder;
 
-    /** @var UserLocalizationManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var UserLocalizationManager|\PHPUnit\Framework\MockObject\MockObject */
     private $localizationManager;
 
     protected function setUp()

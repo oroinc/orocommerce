@@ -17,35 +17,35 @@ use Oro\Bundle\PricingBundle\Resolver\CombinedPriceListScheduleResolver;
 /**
  * @SuppressWarnings(PHPMD.TooManyFields)
  */
-abstract class AbstractCombinedPriceListsBuilderTest extends \PHPUnit_Framework_TestCase
+abstract class AbstractCombinedPriceListsBuilderTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var StrategyRegister|\PHPUnit_Framework_MockObject_MockObject
+     * @var StrategyRegister|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $strategyRegister;
 
     /**
-     * @var CombinedPriceListTriggerHandler|\PHPUnit_Framework_MockObject_MockObject
+     * @var CombinedPriceListTriggerHandler|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $triggerHandler;
 
     /**
-     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $registry;
 
     /**
-     * @var PriceListCollectionProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var PriceListCollectionProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $priceListCollectionProvider;
 
     /**
-     * @var CombinedPriceListProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var CombinedPriceListProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $combinedPriceListProvider;
 
     /**
-     * @var CombinedPriceListGarbageCollector|\PHPUnit_Framework_MockObject_MockObject
+     * @var CombinedPriceListGarbageCollector|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $garbageCollector;
 
@@ -70,22 +70,22 @@ abstract class AbstractCombinedPriceListsBuilderTest extends \PHPUnit_Framework_
     protected $fallbackClass = 'someOtherClass2';
 
     /**
-     * @var CombinedPriceListRepository|\PHPUnit_Framework_MockObject_MockObject
+     * @var CombinedPriceListRepository|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $combinedPriceListRepository;
 
     /**
-     * @var PriceListRepository|\PHPUnit_Framework_MockObject_MockObject
+     * @var PriceListRepository|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $combinedPriceListToEntityRepository;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
+     * @var \PHPUnit\Framework\MockObject\MockObject
      */
     protected $priceListToEntityRepository;
 
     /**
-     * @var EntityRepository|\PHPUnit_Framework_MockObject_MockObject
+     * @var EntityRepository|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $fallbackRepository;
 
@@ -95,7 +95,7 @@ abstract class AbstractCombinedPriceListsBuilderTest extends \PHPUnit_Framework_
     protected $cplScheduleResolver;
 
     /**
-     * @var PriceCombiningStrategyInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var PriceCombiningStrategyInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $combiningStrategy;
 
@@ -204,7 +204,7 @@ abstract class AbstractCombinedPriceListsBuilderTest extends \PHPUnit_Framework_
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     protected function getPriceListSequenceMember()
     {

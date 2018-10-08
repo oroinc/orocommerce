@@ -13,14 +13,14 @@ use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Form\FormInterface;
 
-class OrderPaymentTermEventListenerTest extends \PHPUnit_Framework_TestCase
+class OrderPaymentTermEventListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /** @var OrderPaymentTermEventListener */
     protected $listener;
 
-    /** @var PaymentTermProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var PaymentTermProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $paymentTermProvider;
 
     protected function setUp()
@@ -43,7 +43,7 @@ class OrderPaymentTermEventListenerTest extends \PHPUnit_Framework_TestCase
      */
     public function testThrowExceptionWhenCustomerUserHasWrongCustomer()
     {
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock('Symfony\Component\Form\FormInterface');
 
         /** @var Customer $customer1 */
@@ -66,7 +66,7 @@ class OrderPaymentTermEventListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testSkipValidationWithoutCustomerUser()
     {
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock('Symfony\Component\Form\FormInterface');
 
         $order = new Order();
@@ -81,7 +81,7 @@ class OrderPaymentTermEventListenerTest extends \PHPUnit_Framework_TestCase
      */
     public function testCustomerUserWithoutOrderCustomer()
     {
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock('Symfony\Component\Form\FormInterface');
 
         $customerUser = new CustomerUser();
@@ -103,7 +103,7 @@ class OrderPaymentTermEventListenerTest extends \PHPUnit_Framework_TestCase
      */
     public function testCustomerUserWithoutCustomer()
     {
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock('Symfony\Component\Form\FormInterface');
 
         $customerUser = new CustomerUser();
@@ -119,7 +119,7 @@ class OrderPaymentTermEventListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testCustomerUserCustomerValid()
     {
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock('Symfony\Component\Form\FormInterface');
 
         /** @var Customer $customer */
@@ -150,7 +150,7 @@ class OrderPaymentTermEventListenerTest extends \PHPUnit_Framework_TestCase
         PaymentTerm $customerPaymentTerm = null,
         PaymentTerm $customerGroupPaymentTerm = null
     ) {
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock('Symfony\Component\Form\FormInterface');
 
         $order = new Order();

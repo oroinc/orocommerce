@@ -11,29 +11,29 @@ use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCase
+class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     const WEBSITE_ID = 1;
 
     /**
-     * @var WebsiteContextManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var WebsiteContextManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $websiteContextManager;
 
     /**
-     * @var LatestOrderedProductsInfoProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var LatestOrderedProductsInfoProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     private $infoProvider;
 
     /**
-     * @var FeatureChecker|\PHPUnit_Framework_MockObject_MockObject
+     * @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject
      */
     private $featureChecker;
 
     /**
-     * @var IndexEntityEvent|\PHPUnit_Framework_MockObject_MockObject
+     * @var IndexEntityEvent|\PHPUnit\Framework\MockObject\MockObject
      */
     private $event;
 
@@ -163,7 +163,7 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCas
                     ['customer_user_id' => 1, 'created_at' => 20173]
                 ]
             ],
-            'assertPlaceholderFieldCallback' => function (\PHPUnit_Framework_MockObject_MockObject $event) {
+            'assertPlaceholderFieldCallback' => function (\PHPUnit\Framework\MockObject\MockObject $event) {
                 $event
                     ->expects($this->exactly(3))
                     ->method('addPlaceholderField')
@@ -184,7 +184,7 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCas
         yield 'Test no products' => [
             'products' => [],
             'orderInfo' => [],
-            'assertPlaceholderFieldCallback' => function (\PHPUnit_Framework_MockObject_MockObject $event) {
+            'assertPlaceholderFieldCallback' => function (\PHPUnit\Framework\MockObject\MockObject $event) {
                 $event
                     ->expects($this->never())
                     ->method('addPlaceholderField');

@@ -5,7 +5,7 @@ namespace Oro\Bundle\PaymentBundle\Tests\Unit\Model;
 use Oro\Bundle\PaymentBundle\Model\AddressOptionModel;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-class AddressOptionModelTest extends \PHPUnit_Framework_TestCase
+class AddressOptionModelTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 

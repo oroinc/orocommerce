@@ -11,7 +11,7 @@ use Oro\Bundle\EntityConfigBundle\Config\Id\EntityConfigId;
 use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
-class ProductMetadataBuilderTest extends \PHPUnit_Framework_TestCase
+class ProductMetadataBuilderTest extends \PHPUnit\Framework\TestCase
 {
     /** @var ProductMetadataBuilder */
     protected $builder;

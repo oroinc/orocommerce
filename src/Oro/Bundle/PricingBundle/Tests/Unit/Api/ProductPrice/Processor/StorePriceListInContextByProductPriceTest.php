@@ -2,57 +2,28 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Api\ProductPrice\Processor;
 
-use Oro\Bundle\PricingBundle\Api\ProductPrice\PriceListIDContextStorageInterface;
+use Oro\Bundle\ApiBundle\Tests\Unit\Processor\FormProcessorTestCase;
 use Oro\Bundle\PricingBundle\Api\ProductPrice\Processor\StorePriceListInContextByProductPrice;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
-use Oro\Component\ChainProcessor\ContextInterface;
-use PHPUnit\Framework\TestCase;
 
-class StorePriceListInContextByProductPriceTest extends TestCase
+class StorePriceListInContextByProductPriceTest extends FormProcessorTestCase
 {
-    /**
-     * @var PriceListIDContextStorageInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $priceListIDContextStorage;
-
-    /**
-     * @var ContextInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $context;
-
-    /**
-     * @var StorePriceListInContextByProductPrice
-     */
+    /** @var StorePriceListInContextByProductPrice */
     private $processor;
 
     protected function setUp()
     {
-        $this->priceListIDContextStorage = $this->createMock(PriceListIDContextStorageInterface::class);
-        $this->context = $this->createMock(ContextInterface::class);
+        parent::setUp();
 
-        $this->processor = new StorePriceListInContextByProductPrice(
-            $this->priceListIDContextStorage
-        );
-    }
-
-    public function testProcessWrongType()
-    {
-        $this->processor->process($this->context);
+        $this->processor = new StorePriceListInContextByProductPrice();
     }
 
     public function testProcessNoPriceList()
     {
-        $this->context
-            ->expects(static::once())
-            ->method('getResult')
-            ->willReturn(new ProductPrice());
-
-        $this->priceListIDContextStorage
-            ->expects(static::never())
-            ->method('store');
-
+        $this->context->setResult(new ProductPrice());
         $this->processor->process($this->context);
+        self::assertFalse($this->context->has('price_list_id'));
     }
 
     public function testProcessNoPriceListId()
@@ -60,16 +31,9 @@ class StorePriceListInContextByProductPriceTest extends TestCase
         $productPrice = new ProductPrice();
         $productPrice->setPriceList(new PriceList());
 
-        $this->context
-            ->expects(static::once())
-            ->method('getResult')
-            ->willReturn($productPrice);
-
-        $this->priceListIDContextStorage
-            ->expects(static::never())
-            ->method('store');
-
+        $this->context->setResult($productPrice);
         $this->processor->process($this->context);
+        self::assertFalse($this->context->has('price_list_id'));
     }
 
     public function testProcess()
@@ -77,24 +41,15 @@ class StorePriceListInContextByProductPriceTest extends TestCase
         $priceListId = 23;
 
         $priceList = $this->createMock(PriceList::class);
-        $priceList
-            ->expects(static::exactly(2))
+        $priceList->expects(self::any())
             ->method('getId')
             ->willReturn($priceListId);
 
         $productPrice = new ProductPrice();
         $productPrice->setPriceList($priceList);
 
-        $this->context
-            ->expects(static::once())
-            ->method('getResult')
-            ->willReturn($productPrice);
-
-        $this->priceListIDContextStorage
-            ->expects(static::once())
-            ->method('store')
-            ->with($priceListId, $this->context);
-
+        $this->context->setResult($productPrice);
         $this->processor->process($this->context);
+        self::assertSame($priceListId, $this->context->get('price_list_id'));
     }
 }

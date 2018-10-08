@@ -39,9 +39,9 @@ class BrandTypeTest extends WebTestCase
 
     protected function setUp()
     {
-        /** @var LocaleSettings|\PHPUnit_Framework_MockObject_MockObject */
+        /** @var LocaleSettings|\PHPUnit\Framework\MockObject\MockObject */
         $localeSettings = $this->createMock(LocaleSettings::class);
-        /** @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject */
+        /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
         $configManager = $this->createMock(ConfigManager::class);
 
         $this->type = new BrandType($configManager, $localeSettings);
@@ -62,7 +62,7 @@ class BrandTypeTest extends WebTestCase
 
     public function testBuildForm()
     {
-        /** @var FormBuilder|\PHPUnit_Framework_MockObject_MockObject $builder */
+        /** @var FormBuilder|\PHPUnit\Framework\MockObject\MockObject $builder */
         $builder = $this->createMock(FormBuilder::class);
 
         $builder->expects($this->exactly(5))

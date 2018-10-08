@@ -18,7 +18,7 @@ class ScopedProductSearchQueryRestrictionEventListenerTest extends
     protected $listener;
 
     /**
-     * @var RequestStack|\PHPUnit_Framework_MockObject_MockObject
+     * @var RequestStack|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $requestStack;
 

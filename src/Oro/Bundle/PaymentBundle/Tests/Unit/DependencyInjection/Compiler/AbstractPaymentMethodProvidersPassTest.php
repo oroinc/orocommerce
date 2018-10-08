@@ -6,7 +6,7 @@ use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
-abstract class AbstractPaymentMethodProvidersPassTest extends \PHPUnit_Framework_TestCase
+abstract class AbstractPaymentMethodProvidersPassTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var CompilerPassInterface
@@ -19,7 +19,7 @@ abstract class AbstractPaymentMethodProvidersPassTest extends \PHPUnit_Framework
     protected $serviceDefinition;
 
     /**
-     * @var ContainerBuilder|\PHPUnit_Framework_MockObject_MockObject
+     * @var ContainerBuilder|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $containerBuilder;
 

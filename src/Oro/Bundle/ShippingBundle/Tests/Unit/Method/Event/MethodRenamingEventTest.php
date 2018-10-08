@@ -4,7 +4,7 @@ namespace Oro\Bundle\ShippingBundle\Tests\Unit\Method\Event;
 
 use Oro\Bundle\ShippingBundle\Method\Event\MethodRenamingEvent;
 
-class MethodRenamingEventTest extends \PHPUnit_Framework_TestCase
+class MethodRenamingEventTest extends \PHPUnit\Framework\TestCase
 {
     public function testGetters()
     {

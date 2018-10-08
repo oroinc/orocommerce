@@ -8,7 +8,7 @@ use Oro\Bundle\UPSBundle\Client\Request\UpsClientRequest;
 use Oro\Bundle\UPSBundle\Connection\Validator\Request\Factory\RateUpsConnectionValidatorRequestFactory;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
 
-class RateUpsConnectionValidatorRequestFactoryTest extends \PHPUnit_Framework_TestCase
+class RateUpsConnectionValidatorRequestFactoryTest extends \PHPUnit\Framework\TestCase
 {
     const USERNAME = 'user';
     const PASS = 'pass';

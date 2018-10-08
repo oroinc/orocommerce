@@ -11,20 +11,20 @@ use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
-class CheckoutShipUntilValidatorTest extends \PHPUnit_Framework_TestCase
+class CheckoutShipUntilValidatorTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ProductUpcomingProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProductUpcomingProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $upcomingProvider;
 
     /**
-     * @var CheckoutLineItemsManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var CheckoutLineItemsManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $checkoutLineItemsManager;
 
     /**
-     * @var ExecutionContextInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ExecutionContextInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $context;
 

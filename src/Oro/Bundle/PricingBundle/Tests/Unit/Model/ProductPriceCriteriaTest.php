@@ -6,7 +6,7 @@ use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
-class ProductPriceCriteriaTest extends \PHPUnit_Framework_TestCase
+class ProductPriceCriteriaTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @dataProvider productPriceCriteriaDataProvider

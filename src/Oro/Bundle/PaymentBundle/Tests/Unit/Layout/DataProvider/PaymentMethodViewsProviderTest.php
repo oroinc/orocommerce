@@ -11,24 +11,24 @@ use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
 use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class PaymentMethodViewsProviderTest extends \PHPUnit_Framework_TestCase
+class PaymentMethodViewsProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     const METHOD = 'Method';
 
     /**
-     * @var CompositePaymentMethodViewProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var CompositePaymentMethodViewProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $paymentMethodViewProvider;
 
     /**
-     * @var PaymentMethodProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var PaymentMethodProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $paymentMethodProvider;
 
     /**
-     * @var PaymentTransactionProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var PaymentTransactionProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $paymentTransactionProvider;
 

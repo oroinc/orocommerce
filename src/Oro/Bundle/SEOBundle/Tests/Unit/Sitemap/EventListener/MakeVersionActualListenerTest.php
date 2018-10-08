@@ -7,10 +7,10 @@ use Oro\Bundle\SEOBundle\Sitemap\EventListener\MakeVersionActualListener;
 use Oro\Bundle\SEOBundle\Sitemap\Filesystem\SitemapFilesystemAdapter;
 use Oro\Component\Website\WebsiteInterface;
 
-class MakeVersionActualListenerTest extends \PHPUnit_Framework_TestCase
+class MakeVersionActualListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var SitemapFilesystemAdapter|\PHPUnit_Framework_MockObject_MockObject
+     * @var SitemapFilesystemAdapter|\PHPUnit\Framework\MockObject\MockObject
      */
     private $filesystemAdapter;
 

@@ -8,7 +8,7 @@ use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
 use Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class HasApplicableShippingMethodsTest extends \PHPUnit_Framework_TestCase
+class HasApplicableShippingMethodsTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
@@ -17,10 +17,10 @@ class HasApplicableShippingMethodsTest extends \PHPUnit_Framework_TestCase
     /** @var HasApplicableShippingMethods */
     protected $condition;
 
-    /** @var ShippingMethodProviderInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ShippingMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $shippingMethodProvider;
 
-    /** @var ShippingPriceProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ShippingPriceProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $shippingPriceProvider;
 
 

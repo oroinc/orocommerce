@@ -14,22 +14,22 @@ use Oro\Component\SEO\Tools\SitemapDumperInterface;
 use Oro\Component\Website\WebsiteInterface;
 use Psr\Log\LoggerInterface;
 
-class GenerateSitemapIndexProcessorTest extends \PHPUnit_Framework_TestCase
+class GenerateSitemapIndexProcessorTest extends \PHPUnit\Framework\TestCase
 {
     const INDEX_FILE_PROVIDER_NAME = 'index';
 
     /**
-     * @var SitemapIndexMessageFactory|\PHPUnit_Framework_MockObject_MockObject
+     * @var SitemapIndexMessageFactory|\PHPUnit\Framework\MockObject\MockObject
      */
     private $messageFactory;
 
     /**
-     * @var SitemapDumperInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var SitemapDumperInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $dumper;
 
     /**
-     * @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $logger;
 
@@ -55,11 +55,11 @@ class GenerateSitemapIndexProcessorTest extends \PHPUnit_Framework_TestCase
 
     public function testProcessWhenThrowsInvalidArgumentException()
     {
-        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session */
+        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session */
         $session = $this->createMock(SessionInterface::class);
 
         $data = ['key' => 'value'];
-        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message */
+        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message */
         $message = $this->createMock(MessageInterface::class);
 
         $message->expects($this->atLeastOnce())
@@ -86,11 +86,11 @@ class GenerateSitemapIndexProcessorTest extends \PHPUnit_Framework_TestCase
 
     public function testProcessWhenThrowsException()
     {
-        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session */
+        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session */
         $session = $this->createMock(SessionInterface::class);
 
         $data = ['key' => 'value'];
-        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message */
+        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message */
         $message = $this->createMock(MessageInterface::class);
 
         $message->expects($this->atLeastOnce())
@@ -129,11 +129,11 @@ class GenerateSitemapIndexProcessorTest extends \PHPUnit_Framework_TestCase
 
     public function testProcess()
     {
-        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session */
+        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session */
         $session = $this->createMock(SessionInterface::class);
 
         $data = ['key' => 'value'];
-        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message */
+        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message */
         $message = $this->createMock(MessageInterface::class);
 
         $message->expects($this->atLeastOnce())

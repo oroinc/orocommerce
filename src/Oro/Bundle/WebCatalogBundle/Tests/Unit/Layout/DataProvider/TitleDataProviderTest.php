@@ -10,15 +10,15 @@ use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-class TitleDataProviderTest extends \PHPUnit_Framework_TestCase
+class TitleDataProviderTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var RequestStack|\PHPUnit_Framework_MockObject_MockObject
+     * @var RequestStack|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $requestStack;
 
     /**
-     * @var LocalizationHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var LocalizationHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $localizationHelper;
 
@@ -43,7 +43,7 @@ class TitleDataProviderTest extends \PHPUnit_Framework_TestCase
 
         $contentNodeTitles = new ArrayCollection();
 
-        /** @var ContentNodeInterface|\PHPUnit_Framework_MockObject_MockObject $contentNode */
+        /** @var ContentNodeInterface|\PHPUnit\Framework\MockObject\MockObject $contentNode */
         $contentNode = $this->createMock(ContentNodeInterface::class);
         $contentNode->expects($this->once())
             ->method('getTitles')
@@ -52,7 +52,7 @@ class TitleDataProviderTest extends \PHPUnit_Framework_TestCase
             ->method('isRewriteVariantTitle')
             ->willReturn(true);
 
-        /** @var ContentNodeAwareInterface|\PHPUnit_Framework_MockObject_MockObject $contentVariant */
+        /** @var ContentNodeAwareInterface|\PHPUnit\Framework\MockObject\MockObject $contentVariant */
         $contentVariant = $this->createMock(ContentNodeAwareInterface::class);
         $contentVariant->expects($this->once())
             ->method('getNode')
@@ -77,7 +77,7 @@ class TitleDataProviderTest extends \PHPUnit_Framework_TestCase
 
         $contentNodeTitles = new ArrayCollection();
 
-        /** @var ContentNodeInterface|\PHPUnit_Framework_MockObject_MockObject $contentNode */
+        /** @var ContentNodeInterface|\PHPUnit\Framework\MockObject\MockObject $contentNode */
         $contentNode = $this->createMock(ContentNodeInterface::class);
         $contentNode->expects($this->once())
             ->method('getTitles')
@@ -86,7 +86,7 @@ class TitleDataProviderTest extends \PHPUnit_Framework_TestCase
             ->method('isRewriteVariantTitle')
             ->willReturn(true);
 
-        /** @var ContentNodeAwareInterface|\PHPUnit_Framework_MockObject_MockObject $contentVariant */
+        /** @var ContentNodeAwareInterface|\PHPUnit\Framework\MockObject\MockObject $contentVariant */
         $contentVariant = $this->createMock(ContentNodeAwareInterface::class);
         $contentVariant->expects($this->once())
             ->method('getNode')
@@ -109,7 +109,7 @@ class TitleDataProviderTest extends \PHPUnit_Framework_TestCase
     {
         $default = 'default';
 
-        /** @var ContentNodeInterface|\PHPUnit_Framework_MockObject_MockObject $contentNode */
+        /** @var ContentNodeInterface|\PHPUnit\Framework\MockObject\MockObject $contentNode */
         $contentNode = $this->createMock(ContentNodeInterface::class);
         $contentNode->expects($this->never())
             ->method('getTitles');
@@ -117,7 +117,7 @@ class TitleDataProviderTest extends \PHPUnit_Framework_TestCase
             ->method('isRewriteVariantTitle')
             ->willReturn(false);
 
-        /** @var ContentNodeAwareInterface|\PHPUnit_Framework_MockObject_MockObject $contentVariant */
+        /** @var ContentNodeAwareInterface|\PHPUnit\Framework\MockObject\MockObject $contentVariant */
         $contentVariant = $this->createMock(ContentNodeAwareInterface::class);
         $contentVariant->expects($this->once())
             ->method('getNode')

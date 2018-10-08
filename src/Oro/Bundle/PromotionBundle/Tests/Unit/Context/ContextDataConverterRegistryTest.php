@@ -6,7 +6,7 @@ use Oro\Bundle\PromotionBundle\Context\ContextDataConverterInterface;
 use Oro\Bundle\PromotionBundle\Context\ContextDataConverterRegistry;
 use Oro\Bundle\PromotionBundle\Discount\Exception\UnsupportedSourceEntityException;
 
-class ContextDataConverterRegistryTest extends \PHPUnit_Framework_TestCase
+class ContextDataConverterRegistryTest extends \PHPUnit\Framework\TestCase
 {
     public function testSupports()
     {
@@ -14,7 +14,7 @@ class ContextDataConverterRegistryTest extends \PHPUnit_Framework_TestCase
         $registry = new ContextDataConverterRegistry();
         $this->assertFalse($registry->supports($entity));
 
-        /** @var ContextDataConverterInterface|\PHPUnit_Framework_MockObject_MockObject $converter */
+        /** @var ContextDataConverterInterface|\PHPUnit\Framework\MockObject\MockObject $converter */
         $converter = $this->createMock(ContextDataConverterInterface::class);
         $converter->expects($this->once())
             ->method('supports')
@@ -31,7 +31,7 @@ class ContextDataConverterRegistryTest extends \PHPUnit_Framework_TestCase
         $registry = new ContextDataConverterRegistry();
         $context = [];
 
-        /** @var ContextDataConverterInterface|\PHPUnit_Framework_MockObject_MockObject $converter */
+        /** @var ContextDataConverterInterface|\PHPUnit\Framework\MockObject\MockObject $converter */
         $converter = $this->createMock(ContextDataConverterInterface::class);
         $converter->expects($this->once())
             ->method('supports')
@@ -51,7 +51,7 @@ class ContextDataConverterRegistryTest extends \PHPUnit_Framework_TestCase
         $entity = new \stdClass();
         $registry = new ContextDataConverterRegistry();
 
-        /** @var ContextDataConverterInterface|\PHPUnit_Framework_MockObject_MockObject $converter */
+        /** @var ContextDataConverterInterface|\PHPUnit\Framework\MockObject\MockObject $converter */
         $converter = $this->createMock(ContextDataConverterInterface::class);
         $converter->expects($this->once())
             ->method('supports')

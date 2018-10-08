@@ -9,7 +9,7 @@ use Oro\Bundle\CheckoutBundle\Manager\CheckoutManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
-class CheckoutManagerTest extends \PHPUnit_Framework_TestCase
+class CheckoutManagerTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var CheckoutManager
@@ -17,7 +17,7 @@ class CheckoutManagerTest extends \PHPUnit_Framework_TestCase
     private $checkoutManager;
 
     /**
-     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     private $doctrineHelper;
 
@@ -99,7 +99,7 @@ class CheckoutManagerTest extends \PHPUnit_Framework_TestCase
 
 
     /**
-     * @return EntityRepository|\PHPUnit_Framework_MockObject_MockObject
+     * @return EntityRepository|\PHPUnit\Framework\MockObject\MockObject
      */
     private function configureGetRepository()
     {
@@ -114,7 +114,7 @@ class CheckoutManagerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return EntityManager|\PHPUnit_Framework_MockObject_MockObject
+     * @return EntityManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private function configureGetEntityManager()
     {

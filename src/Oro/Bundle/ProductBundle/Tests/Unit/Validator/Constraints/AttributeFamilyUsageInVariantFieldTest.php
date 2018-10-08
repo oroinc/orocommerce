@@ -6,7 +6,7 @@ use Oro\Bundle\ProductBundle\Validator\Constraints\AttributeFamilyUsageInVariant
 use Oro\Bundle\ProductBundle\Validator\Constraints\AttributeFamilyUsageInVariantFieldValidator;
 use Symfony\Component\Validator\Constraint;
 
-class AttributeFamilyUsageInVariantFieldTest extends \PHPUnit_Framework_TestCase
+class AttributeFamilyUsageInVariantFieldTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var AttributeFamilyUsageInVariantField

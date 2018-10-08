@@ -66,10 +66,9 @@ class UserCurrencyManager
 
     /**
      * @param Website|null $website
-     * @param bool $fallbackToDefault
      * @return string|null
      */
-    public function getUserCurrency(Website $website = null, $fallbackToDefault = true)
+    public function getUserCurrency(Website $website = null)
     {
         $currency = null;
         $website = $this->getWebsite($website);
@@ -89,7 +88,7 @@ class UserCurrencyManager
             }
         }
 
-        if ($fallbackToDefault && (!$currency || !in_array($currency, $this->getAvailableCurrencies(), true))) {
+        if (!$currency || !in_array($currency, $this->getAvailableCurrencies(), true)) {
             $currency = $this->getDefaultCurrency();
         }
 

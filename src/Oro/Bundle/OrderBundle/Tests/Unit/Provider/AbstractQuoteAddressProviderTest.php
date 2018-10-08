@@ -11,18 +11,18 @@ use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
-abstract class AbstractQuoteAddressProviderTest extends \PHPUnit_Framework_TestCase
+abstract class AbstractQuoteAddressProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var \PHPUnit_Framework_MockObject_MockObject|AuthorizationCheckerInterface */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|AuthorizationCheckerInterface */
     protected $authorizationChecker;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|TokenAccessorInterface */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|TokenAccessorInterface */
     protected $tokenAccessor;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|ManagerRegistry */
     protected $registry;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|AclHelper */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|AclHelper */
     protected $aclHelper;
 
     /** @var string */
@@ -216,7 +216,7 @@ abstract class AbstractQuoteAddressProviderTest extends \PHPUnit_Framework_TestC
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     protected function assertCustomerAddressRepositoryCall()
     {
@@ -239,7 +239,7 @@ abstract class AbstractQuoteAddressProviderTest extends \PHPUnit_Framework_TestC
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     protected function assertCustomerUserAddressRepositoryCall()
     {

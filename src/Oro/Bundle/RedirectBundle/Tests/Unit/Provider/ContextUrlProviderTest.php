@@ -5,7 +5,7 @@ namespace Oro\Bundle\RedirectBundle\Tests\Unit\Provider;
 use Oro\Bundle\RedirectBundle\Provider\ContextUrlProviderInterface;
 use Oro\Bundle\RedirectBundle\Provider\ContextUrlProviderRegistry;
 
-class ContextUrlProviderTest extends \PHPUnit_Framework_TestCase
+class ContextUrlProviderTest extends \PHPUnit\Framework\TestCase
 {
     public function testProvider()
     {
@@ -15,7 +15,7 @@ class ContextUrlProviderTest extends \PHPUnit_Framework_TestCase
 
         $provider = new ContextUrlProviderRegistry();
 
-        /** @var ContextUrlProviderInterface|\PHPUnit_Framework_MockObject_MockObject $urlProvider */
+        /** @var ContextUrlProviderInterface|\PHPUnit\Framework\MockObject\MockObject $urlProvider */
         $urlProvider = $this->createMock(ContextUrlProviderInterface::class);
         $urlProvider->expects($this->once())
             ->method('getUrl')

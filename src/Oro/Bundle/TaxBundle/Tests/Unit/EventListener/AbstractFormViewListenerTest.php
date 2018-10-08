@@ -16,10 +16,10 @@ abstract class AbstractFormViewListenerTest extends FormViewListenerTestCase
      */
     protected $listener;
 
-    /** @var Request|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var Request|\PHPUnit\Framework\MockObject\MockObject */
     protected $request;
 
-    /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var RequestStack|\PHPUnit\Framework\MockObject\MockObject */
     protected $requestStack;
 
     protected function setUp()
@@ -45,7 +45,7 @@ abstract class AbstractFormViewListenerTest extends FormViewListenerTestCase
 
     public function testOnViewInvalidId()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|BeforeListRenderEvent $event */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|BeforeListRenderEvent $event */
         $event = $this->getMockBuilder('Oro\Bundle\UIBundle\Event\BeforeListRenderEvent')
             ->disableOriginalConstructor()
             ->getMock();
@@ -67,7 +67,7 @@ abstract class AbstractFormViewListenerTest extends FormViewListenerTestCase
 
     public function testOnViewEmpty()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|BeforeListRenderEvent $event */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|BeforeListRenderEvent $event */
         $event = $this->getMockBuilder('Oro\Bundle\UIBundle\Event\BeforeListRenderEvent')
             ->disableOriginalConstructor()
             ->getMock();
@@ -96,7 +96,7 @@ abstract class AbstractFormViewListenerTest extends FormViewListenerTestCase
         $this->requestStack = $this->createMock('Symfony\Component\HttpFoundation\RequestStack');
         $this->requestStack->expects($this->any())->method('getCurrentRequest')->willReturn(null);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|BeforeListRenderEvent $event */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|BeforeListRenderEvent $event */
         $event = $this->getMockBuilder('Oro\Bundle\UIBundle\Event\BeforeListRenderEvent')
             ->disableOriginalConstructor()
             ->getMock();
@@ -108,11 +108,11 @@ abstract class AbstractFormViewListenerTest extends FormViewListenerTestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|ScrollData
+     * @return \PHPUnit\Framework\MockObject\MockObject|ScrollData
      */
     protected function getScrollData()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|ScrollData $scrollData */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|ScrollData $scrollData */
         $scrollData = $this->createMock('Oro\Bundle\UIBundle\View\ScrollData');
 
         $scrollData->expects($this->once())

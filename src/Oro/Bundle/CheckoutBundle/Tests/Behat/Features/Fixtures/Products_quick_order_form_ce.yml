@@ -1,3 +1,7 @@
+include:
+    - '@OroLocaleBundle:LocalizationFixture.yml'
+    - '@OroProductBundle:ProductUnitItemTranslation.yml'
+
 Oro\Bundle\OrganizationBundle\Entity\BusinessUnit:
   businessUnit:
     name: Common Business Unit
@@ -6,6 +10,9 @@ Oro\Bundle\OrganizationBundle\Entity\BusinessUnit:
 Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     locvalue1:
         string: 'Product1'
+    locvalue1_loc1:
+        string: 'Product1 (Localization1)'
+        localization: '@localization1'
     locvalue2:
         string: 'Product2'
     locvalue3:
@@ -57,7 +64,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
         owner: '@businessUnit'
         primaryUnitPrecision: '@precision1'
         attributeFamily: '@defaultProductFamily'
-        addName: ['@locvalue1']
+        setNames: [['@locvalue1' , '@locvalue1_loc1']]
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
     product2:

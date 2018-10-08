@@ -12,21 +12,21 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\HttpFoundation\Session\Session;
 
-class PayflowExpressCheckoutRedirectListenerTest extends \PHPUnit_Framework_TestCase
+class PayflowExpressCheckoutRedirectListenerTest extends \PHPUnit\Framework\TestCase
 {
     /** @var PayflowExpressCheckoutRedirectListener */
     protected $listener;
 
-    /** @var Session|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var Session|\PHPUnit\Framework\MockObject\MockObject */
     protected $session;
 
     /** @var PaymentTransaction */
     protected $paymentTransaction;
 
-    /** @var PaymentMethodProviderInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var PaymentMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $paymentMethodProvider;
 
-    /** @var PaymentResultMessageProviderInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var PaymentResultMessageProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $messageProvider;
 
     protected function setUp()
@@ -62,7 +62,7 @@ class PayflowExpressCheckoutRedirectListenerTest extends \PHPUnit_Framework_Test
         $message = 'oro.payment.result.error';
         $this->messageProvider->expects($this->once())->method('getErrorMessage')->willReturn($message);
 
-        /** @var FlashBagInterface|\PHPUnit_Framework_MockObject_MockObject $flashBag */
+        /** @var FlashBagInterface|\PHPUnit\Framework\MockObject\MockObject $flashBag */
         $flashBag = $this->createMock(FlashBagInterface::class);
 
         $flashBag->expects($this->once())
@@ -120,7 +120,7 @@ class PayflowExpressCheckoutRedirectListenerTest extends \PHPUnit_Framework_Test
         $event = new CallbackErrorEvent();
         $event->setPaymentTransaction($this->paymentTransaction);
 
-        /** @var FlashBagInterface|\PHPUnit_Framework_MockObject_MockObject $flashBag */
+        /** @var FlashBagInterface|\PHPUnit\Framework\MockObject\MockObject $flashBag */
         $flashBag = $this->createMock(FlashBagInterface::class);
 
         $flashBag->expects($this->once())

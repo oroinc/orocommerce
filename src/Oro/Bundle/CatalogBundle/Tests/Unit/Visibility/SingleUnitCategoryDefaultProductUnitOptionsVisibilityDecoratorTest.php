@@ -4,15 +4,15 @@ namespace Oro\Bundle\CatalogBundle\Visibility;
 
 use Oro\Bundle\ProductBundle\Service\SingleUnitModeServiceInterface;
 
-class SingleUnitCategoryDefaultProductUnitOptionsVisibilityDecoratorTest extends \PHPUnit_Framework_TestCase
+class SingleUnitCategoryDefaultProductUnitOptionsVisibilityDecoratorTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var CategoryDefaultProductUnitOptionsVisibilityInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var CategoryDefaultProductUnitOptionsVisibilityInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $optionsVisibility;
 
     /**
-     * @var SingleUnitModeServiceInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var SingleUnitModeServiceInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $singleUnitModeService;
 

@@ -60,6 +60,10 @@ oro_behat_extension:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Table
       selector: '#shopping_list_view_container_content > div.cart-table .shopping-list-line-items'
 
+    ShoppingListLineItemsTableHeaderLabel:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector: 'div.shopping-list-line-items__header-label'
+
     ShoppingListLineItem:
       class: Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\ShoppingListLineItem
       selector: '.shopping-list-line-items__item-wrapper'
@@ -214,5 +218,7 @@ oro_behat_extension:
         - OroCustomerBundle::ACLContext
         - OroShoppingListBundle::ShoppingListContext
         - OroCustomerBundle::RegistrationInstructionFeatureContext
+        - OroLocaleBundle::LocalizationContext
+        - OroFrontendLocalizationBundle::LocalizationSwitcherContext
       paths:
         - '@OroShoppingListBundle/Tests/Behat/Features'

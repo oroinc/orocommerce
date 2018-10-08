@@ -5,7 +5,7 @@ namespace Oro\Bundle\PromotionBundle\Tests\Unit\CouponGeneration\Generator;
 use Oro\Bundle\PromotionBundle\CouponGeneration\Code\CodeGenerator;
 use Oro\Bundle\PromotionBundle\CouponGeneration\Options\CodeGenerationOptions;
 
-class CodeGeneratorTest extends \PHPUnit_Framework_TestCase
+class CodeGeneratorTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var CodeGenerator

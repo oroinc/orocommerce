@@ -14,10 +14,10 @@ use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class DisabledDiscountContextDecoratorTest extends \PHPUnit_Framework_TestCase
+class DisabledDiscountContextDecoratorTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var DiscountContext|\PHPUnit_Framework_MockObject_MockObject
+     * @var DiscountContext|\PHPUnit\Framework\MockObject\MockObject
      */
     private $discountContext;
 
@@ -56,7 +56,7 @@ class DisabledDiscountContextDecoratorTest extends \PHPUnit_Framework_TestCase
 
     public function testAddShippingDiscount()
     {
-        /** @var DiscountInterface|\PHPUnit_Framework_MockObject_MockObject $discount **/
+        /** @var DiscountInterface|\PHPUnit\Framework\MockObject\MockObject $discount **/
         $discount = $this->createMock(DiscountInterface::class);
 
         $this->discountContext
@@ -69,7 +69,7 @@ class DisabledDiscountContextDecoratorTest extends \PHPUnit_Framework_TestCase
 
     public function testAddSubtotalDiscount()
     {
-        /** @var DiscountInterface|\PHPUnit_Framework_MockObject_MockObject $discount **/
+        /** @var DiscountInterface|\PHPUnit\Framework\MockObject\MockObject $discount **/
         $discount = $this->createMock(DiscountInterface::class);
 
         $this->discountContext
@@ -170,7 +170,7 @@ class DisabledDiscountContextDecoratorTest extends \PHPUnit_Framework_TestCase
 
     public function testAddSubtotalDiscountInformation()
     {
-        /** @var DiscountInformation|\PHPUnit_Framework_MockObject_MockObject $discountInformation **/
+        /** @var DiscountInformation|\PHPUnit\Framework\MockObject\MockObject $discountInformation **/
         $discountInformation = $this->createMock(DiscountInformation::class);
         $this->discountContext
             ->expects($this->once())
@@ -182,7 +182,7 @@ class DisabledDiscountContextDecoratorTest extends \PHPUnit_Framework_TestCase
 
     public function testGetSubtotalDiscountsInformation()
     {
-        /** @var DiscountInformation|\PHPUnit_Framework_MockObject_MockObject $discountInformation **/
+        /** @var DiscountInformation|\PHPUnit\Framework\MockObject\MockObject $discountInformation **/
         $discountInformation = $this->createMock(DiscountInformation::class);
         $this->discountContext
             ->expects($this->once())
@@ -194,7 +194,7 @@ class DisabledDiscountContextDecoratorTest extends \PHPUnit_Framework_TestCase
 
     public function testAddShippingDiscountInformation()
     {
-        /** @var DiscountInformation|\PHPUnit_Framework_MockObject_MockObject $discountInformation **/
+        /** @var DiscountInformation|\PHPUnit\Framework\MockObject\MockObject $discountInformation **/
         $discountInformation = $this->createMock(DiscountInformation::class);
         $this->discountContext
             ->expects($this->once())
@@ -206,7 +206,7 @@ class DisabledDiscountContextDecoratorTest extends \PHPUnit_Framework_TestCase
 
     public function testGetShippingDiscountsInformation()
     {
-        /** @var DiscountInformation|\PHPUnit_Framework_MockObject_MockObject $discountInformation **/
+        /** @var DiscountInformation|\PHPUnit\Framework\MockObject\MockObject $discountInformation **/
         $discountInformation = $this->createMock(DiscountInformation::class);
         $this->discountContext
             ->expects($this->once())

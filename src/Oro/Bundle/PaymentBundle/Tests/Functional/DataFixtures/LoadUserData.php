@@ -29,15 +29,6 @@ class LoadUserData extends AbstractLoadMultipleUserData
                 ],
             ],
             [
-                'class' => 'oro_rule.entity.rule.class',
-                'acls'  => [
-                    [
-                        AbstractLoadMultipleUserData::ACL_PERMISSION => 'VIEW',
-                        AbstractLoadMultipleUserData::ACL_LEVEL => 'SYSTEM',
-                    ],
-                ],
-            ],
-            [
                 'class' => 'oro_integration.entity.class',
                 'acls'  => [
                     [

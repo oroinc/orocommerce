@@ -6,7 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\SaleBundle\Quote\Calculable\ParameterBag\ParameterBagCalculableQuote;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface;
 
-class ParameterBagCalculableQuoteTest extends \PHPUnit_Framework_TestCase
+class ParameterBagCalculableQuoteTest extends \PHPUnit\Framework\TestCase
 {
     public function testGetters()
     {
@@ -22,7 +22,7 @@ class ParameterBagCalculableQuoteTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return ShippingLineItemInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return ShippingLineItemInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private function getShippingLineItemMock()
     {

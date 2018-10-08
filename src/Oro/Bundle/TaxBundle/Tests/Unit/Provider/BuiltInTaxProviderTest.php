@@ -12,11 +12,11 @@ use Oro\Component\Testing\Unit\EntityTrait;
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class BuiltInTaxProviderTest extends \PHPUnit_Framework_TestCase
+class BuiltInTaxProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /** @var TaxManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var TaxManager|\PHPUnit\Framework\MockObject\MockObject */
     private $taxManager;
 
     /** @var BuiltInTaxProvider */

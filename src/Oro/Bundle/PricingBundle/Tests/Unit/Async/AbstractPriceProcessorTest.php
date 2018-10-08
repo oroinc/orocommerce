@@ -12,30 +12,30 @@ use Oro\Bundle\PricingBundle\NotificationMessage\Messenger;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Psr\Log\LoggerInterface;
 
-abstract class AbstractPriceProcessorTest extends \PHPUnit_Framework_TestCase
+abstract class AbstractPriceProcessorTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var PriceListRepository|\PHPUnit_Framework_MockObject_MockObject
+     * @var PriceListRepository|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $priceListRepository;
 
     /**
-     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $registry;
 
     /**
-     * @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $logger;
 
     /**
-     * @var PriceListTriggerFactory|\PHPUnit_Framework_MockObject_MockObject
+     * @var PriceListTriggerFactory|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $triggerFactory;
 
     /**
-     * @var Messenger|\PHPUnit_Framework_MockObject_MockObject
+     * @var Messenger|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $messenger;
 
@@ -50,7 +50,7 @@ abstract class AbstractPriceProcessorTest extends \PHPUnit_Framework_TestCase
 
 
     /**
-     * @return MessageInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return MessageInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function prepareMessageForProcessInvalidArgumentException()
     {
@@ -99,7 +99,7 @@ abstract class AbstractPriceProcessorTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param \Exception $exception
-     * @return MessageInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return MessageInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function prepareMessageForProcessExceptionWithoutTrigger(\Exception $exception)
     {
@@ -121,7 +121,7 @@ abstract class AbstractPriceProcessorTest extends \PHPUnit_Framework_TestCase
             ->with(PriceList::class)
             ->willReturn($em);
 
-        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message * */
+        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message * */
         $message = $this->createMock(MessageInterface::class);
         $message->expects($this->any())
             ->method('getBody')
@@ -138,7 +138,7 @@ abstract class AbstractPriceProcessorTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param array $data
-     * @return MessageInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return MessageInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function prepareMessageWithBody(array $data)
     {

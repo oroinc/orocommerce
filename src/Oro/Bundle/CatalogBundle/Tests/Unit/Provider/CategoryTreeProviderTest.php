@@ -9,12 +9,12 @@ use Oro\Bundle\CatalogBundle\Provider\CategoryTreeProvider;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class CategoryTreeProviderTest extends \PHPUnit_Framework_TestCase
+class CategoryTreeProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var \PHPUnit_Framework_MockObject_MockObject|CategoryRepository */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|CategoryRepository */
     protected $categoryRepository;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|EventDispatcherInterface */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|EventDispatcherInterface */
     protected $eventDispatcher;
 
     /** @var CategoryTreeProvider */

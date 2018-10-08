@@ -7,10 +7,10 @@ use Oro\Bundle\OrderBundle\Formatter\SourceDocumentFormatter;
 use Oro\Bundle\OrderBundle\Twig\OrderExtension;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class OrderExtensionTest extends \PHPUnit_Framework_TestCase
+class OrderExtensionTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ContainerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ContainerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $container;
 
@@ -49,12 +49,12 @@ class OrderExtensionTest extends \PHPUnit_Framework_TestCase
 
     public function testGetTemplateContent()
     {
-        /** @var \Twig_Environment|\PHPUnit_Framework_MockObject_MockObject $environment **/
+        /** @var \Twig_Environment|\PHPUnit\Framework\MockObject\MockObject $environment **/
         $environment = $this->createMock(\Twig_Environment::class);
 
         $context = ['parameter' => 'value'];
         $content = 'html conten';
-        /** @var \Twig_Template|\PHPUnit_Framework_MockObject_MockObject $template */
+        /** @var \Twig_Template|\PHPUnit\Framework\MockObject\MockObject $template */
         $template = $this->createMock(\Twig_Template::class);
         $template
             ->expects($this->once())
@@ -79,7 +79,7 @@ class OrderExtensionTest extends \PHPUnit_Framework_TestCase
         $sourceEntityIdentifier = 'id';
         $formattedData = 'html data';
 
-        /** @var SourceDocumentFormatter|\PHPUnit_Framework_MockObject_MockObject $sourceDocumentFormatter */
+        /** @var SourceDocumentFormatter|\PHPUnit\Framework\MockObject\MockObject $sourceDocumentFormatter */
         $sourceDocumentFormatter = $this->createMock(SourceDocumentFormatter::class);
         $sourceDocumentFormatter
             ->expects($this->once())
@@ -104,7 +104,7 @@ class OrderExtensionTest extends \PHPUnit_Framework_TestCase
         $shippingMethodName = 'shippingMethod';
         $formattedMethod = 'shipping method';
 
-        /** @var ShippingTrackingFormatter|\PHPUnit_Framework_MockObject_MockObject $shippingTrackingFormatter */
+        /** @var ShippingTrackingFormatter|\PHPUnit\Framework\MockObject\MockObject $shippingTrackingFormatter */
         $shippingTrackingFormatter = $this->createMock(ShippingTrackingFormatter::class);
         $shippingTrackingFormatter
             ->expects($this->once())
@@ -130,7 +130,7 @@ class OrderExtensionTest extends \PHPUnit_Framework_TestCase
         $trackingNumber = '7s45';
         $formattedLink = 'shipping link';
 
-        /** @var ShippingTrackingFormatter|\PHPUnit_Framework_MockObject_MockObject $shippingTrackingFormatter */
+        /** @var ShippingTrackingFormatter|\PHPUnit\Framework\MockObject\MockObject $shippingTrackingFormatter */
         $shippingTrackingFormatter = $this->createMock(ShippingTrackingFormatter::class);
         $shippingTrackingFormatter
             ->expects($this->once())

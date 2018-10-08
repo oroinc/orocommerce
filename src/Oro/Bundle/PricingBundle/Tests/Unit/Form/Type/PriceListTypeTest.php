@@ -29,16 +29,16 @@ class PriceListTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|CurrencyProviderInterface $currencyProvider */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|CurrencyProviderInterface $currencyProvider */
         $currencyProvider = $this->getMockBuilder(CurrencyProviderInterface::class)
             ->disableOriginalConstructor()->getMockForAbstractClass();
         $currencyProvider->method('getCurrencyList')->willReturn(['USD', 'EUR']);
         $currencyProvider->method('getDefaultCurrency')->willReturn('USD');
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|LocaleSettings $localeSettings */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|LocaleSettings $localeSettings */
         $localeSettings = $this->getMockBuilder(LocaleSettings::class)->disableOriginalConstructor()->getMock();
 
-        /** @var CurrencyNameHelper|\PHPUnit_Framework_MockObject_MockObject $currencyNameHelper */
+        /** @var CurrencyNameHelper|\PHPUnit\Framework\MockObject\MockObject $currencyNameHelper */
         $currencyNameHelper = $this->getMockBuilder(CurrencyNameHelper::class)
             ->disableOriginalConstructor()
             ->getMock();

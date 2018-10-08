@@ -16,10 +16,10 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
 
-class ConfirmSlugChangeFormHelperTest extends \PHPUnit_Framework_TestCase
+class ConfirmSlugChangeFormHelperTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $configManager;
 
@@ -49,7 +49,7 @@ class ConfirmSlugChangeFormHelperTest extends \PHPUnit_Framework_TestCase
         SlugPrototypesWithRedirect $data,
         $expectDisabled
     ) {
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock(FormInterface::class);
         $form->expects($this->any())
             ->method('getData')
@@ -125,7 +125,7 @@ class ConfirmSlugChangeFormHelperTest extends \PHPUnit_Framework_TestCase
         TextSlugPrototypeWithRedirect $data,
         $expectDisabled
     ) {
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock(FormInterface::class);
         $form->expects($this->any())
             ->method('getData')
@@ -195,7 +195,7 @@ class ConfirmSlugChangeFormHelperTest extends \PHPUnit_Framework_TestCase
      */
     protected function createPersistentCollection()
     {
-        /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $em */
+        /** @var EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject $em */
         $em = $this->createMock(EntityManagerInterface::class);
         /** @var ClassMetadata $classMetadata */
         $classMetadata = $this->getMockBuilder(ClassMetadata::class)->disableOriginalConstructor()->getMock();

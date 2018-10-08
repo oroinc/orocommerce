@@ -6,12 +6,12 @@ use Oro\Bundle\PaymentBundle\Event\ExtractLineItemPaymentOptionsEvent;
 use Oro\Bundle\PaymentBundle\Model\LineItemOptionModel;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
 
-class ExtractLineItemPaymentOptionsEventTest extends \PHPUnit_Framework_TestCase
+class ExtractLineItemPaymentOptionsEventTest extends \PHPUnit\Framework\TestCase
 {
     /** @var ExtractLineItemPaymentOptionsEvent */
     protected $event;
 
-    /** @var LineItemsAwareInterface|\PHPUnit_Framework_MockObject_MockObject $entityMock */
+    /** @var LineItemsAwareInterface|\PHPUnit\Framework\MockObject\MockObject $entityMock */
     protected $entityMock;
 
     protected function setUp()

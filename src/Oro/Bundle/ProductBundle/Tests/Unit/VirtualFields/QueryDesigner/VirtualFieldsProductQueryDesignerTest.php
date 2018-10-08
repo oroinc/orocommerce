@@ -5,7 +5,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\VirtualFields\QueryDesigner;
 use Oro\Bundle\ProductBundle\VirtualFields\QueryDesigner\VirtualFieldsProductQueryDesigner;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-class VirtualFieldsProductQueryDesignerTest extends \PHPUnit_Framework_TestCase
+class VirtualFieldsProductQueryDesignerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 

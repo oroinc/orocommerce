@@ -151,7 +151,7 @@
 {% block _web_catalog_menu_main_menu_link %}
     <li {{ block('block_attributes') }}>
         {% set hasSublist = category.children is not empty %}
-        <a href="{{ app.request.uriForPath(category.url) }}"
+        <a href="{{ oro_commercemenu_get_url(category.url) }}"
            class="main-menu__link">
             <span class="main-menu__text">{{ category.label }}</span>
             {% if hasSublist %}

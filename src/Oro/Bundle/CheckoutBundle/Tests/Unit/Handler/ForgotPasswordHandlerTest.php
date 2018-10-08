@@ -10,20 +10,20 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 
-class ForgotPasswordHandlerTest extends \PHPUnit_Framework_TestCase
+class ForgotPasswordHandlerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var CustomerUserPasswordRequestHandler|\PHPUnit_Framework_MockObject_MockObject
+     * @var CustomerUserPasswordRequestHandler|\PHPUnit\Framework\MockObject\MockObject
      */
     private $passwordRequestHandler;
 
     /**
-     * @var FrontendCustomerUserFormProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var FrontendCustomerUserFormProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     private $customerUserFormProvider;
 
     /**
-     * @var Session|\PHPUnit_Framework_MockObject_MockObject
+     * @var Session|\PHPUnit\Framework\MockObject\MockObject
      */
     private $session;
 

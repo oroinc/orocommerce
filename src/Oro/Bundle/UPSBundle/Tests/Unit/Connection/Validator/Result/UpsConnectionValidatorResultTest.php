@@ -4,7 +4,7 @@ namespace Oro\Bundle\UPSBundle\Tests\Unit\Connection\Validator\Result;
 
 use Oro\Bundle\UPSBundle\Connection\Validator\Result\UpsConnectionValidatorResult;
 
-class UpsConnectionValidatorResultTest extends \PHPUnit_Framework_TestCase
+class UpsConnectionValidatorResultTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var array

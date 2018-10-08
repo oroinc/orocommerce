@@ -24,37 +24,37 @@ use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 
-class LexemeCircularReferenceValidatorTest extends \PHPUnit_Framework_TestCase
+class LexemeCircularReferenceValidatorTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var LexemeCircularReferenceValidator|\PHPUnit_Framework_MockObject_MockObject
+     * @var LexemeCircularReferenceValidator|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $validator;
 
     /**
-     * @var ExpressionParser|\PHPUnit_Framework_MockObject_MockObject
+     * @var ExpressionParser|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $parser;
 
     /**
-     * @var RegistryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var RegistryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $doctrine;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ExecutionContextInterface
+     * @var \PHPUnit\Framework\MockObject\MockObject|ExecutionContextInterface
      */
     protected $context;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
+     * @var \PHPUnit\Framework\MockObject\MockObject
      */
     protected $entityRepository;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
+     * @var \PHPUnit\Framework\MockObject\MockObject
      */
     protected $entityManager;
 

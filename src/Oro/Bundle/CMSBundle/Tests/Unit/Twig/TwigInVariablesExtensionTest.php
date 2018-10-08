@@ -5,14 +5,14 @@ namespace Oro\Bundle\CMSBundle\Tests\Unit\Twig;
 use Oro\Bundle\CMSBundle\Twig\TwigInVariablesExtension;
 use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
 
-class TwigInVariablesExtensionTest extends \PHPUnit_Framework_TestCase
+class TwigInVariablesExtensionTest extends \PHPUnit\Framework\TestCase
 {
     use TwigExtensionTestCaseTrait;
 
     /** @var TwigInVariablesExtension */
     private $extension;
 
-    /** @var \Twig_Environment|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var \Twig_Environment|\PHPUnit\Framework\MockObject\MockObject */
     private $twig;
 
     protected function setUp()

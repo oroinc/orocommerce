@@ -22,22 +22,22 @@ use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\WebsiteSearchBundle\Query\WebsiteSearchQuery;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class SearchCategoryFilteringEventListenerTest extends \PHPUnit_Framework_TestCase
+class SearchCategoryFilteringEventListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     const CATEGORY_ID = 42;
 
-    /** @var RequestProductHandler|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var RequestProductHandler|\PHPUnit\Framework\MockObject\MockObject */
     protected $requestProductHandler;
 
-    /** @var CategoryRepository|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var CategoryRepository|\PHPUnit\Framework\MockObject\MockObject */
     protected $repository;
 
-    /** @var SubcategoryProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var SubcategoryProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $categoryProvider;
 
-    /** @var DatagridConfiguration|\PHPUnit_Framework_MockObject_MockObject $config */
+    /** @var DatagridConfiguration|\PHPUnit\Framework\MockObject\MockObject $config */
     protected $config;
 
     /** @var Category */
@@ -76,7 +76,7 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit_Framework_TestCa
     {
         $parameters = new ParameterBag();
 
-        /** @var PreBuild|\PHPUnit_Framework_MockObject_MockObject $event */
+        /** @var PreBuild|\PHPUnit\Framework\MockObject\MockObject $event */
         $event = $this->createMock(PreBuild::class);
         $event->expects($this->any())
             ->method('getParameters')
@@ -117,7 +117,7 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit_Framework_TestCa
             ->method('getIncludeSubcategoriesChoice')
             ->willReturn($includeSubcategories);
 
-        /** @var PreBuild|\PHPUnit_Framework_MockObject_MockObject $event */
+        /** @var PreBuild|\PHPUnit\Framework\MockObject\MockObject $event */
         $event = $this->createMock(PreBuild::class);
 
         $event->expects($this->any())
@@ -228,7 +228,7 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit_Framework_TestCa
         $includeSubcategories = false;
         $parameters = new ParameterBag();
 
-        /** @var PreBuild|\PHPUnit_Framework_MockObject_MockObject $event */
+        /** @var PreBuild|\PHPUnit\Framework\MockObject\MockObject $event */
         $event = $this->createMock(PreBuild::class);
 
         $event->expects($this->any())
@@ -274,13 +274,13 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit_Framework_TestCa
             ->method('getIncludeSubcategoriesChoice')
             ->willReturn(false);
 
-        /** @var SearchDatasource|\PHPUnit_Framework_MockObject_MockObject $searchDataSource */
+        /** @var SearchDatasource|\PHPUnit\Framework\MockObject\MockObject $searchDataSource */
         $datasource = $this->createMock(SearchDatasource::class);
 
-        /** @var SearchQuery|\PHPUnit_Framework_MockObject_MockObject $searchQuery */
+        /** @var SearchQuery|\PHPUnit\Framework\MockObject\MockObject $searchQuery */
         $query = $this->createMock(Query::class);
 
-        /** @var WebsiteSearchQuery|\PHPUnit_Framework_MockObject_MockObject $websiteSearchQuery */
+        /** @var WebsiteSearchQuery|\PHPUnit\Framework\MockObject\MockObject $websiteSearchQuery */
         $websiteSearchQuery = $this->createMock(WebsiteSearchQuery::class);
 
         $websiteSearchQuery->method('getQuery')
@@ -322,13 +322,13 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit_Framework_TestCa
                 ]
             );
 
-        /** @var BuildAfter|\PHPUnit_Framework_MockObject_MockObject $event */
+        /** @var BuildAfter|\PHPUnit\Framework\MockObject\MockObject $event */
         $event = $this->createMock(BuildAfter::class);
 
-        /** @var SearchDatasource|\PHPUnit_Framework_MockObject_MockObject $searchDataSource */
+        /** @var SearchDatasource|\PHPUnit\Framework\MockObject\MockObject $searchDataSource */
         $datasource = $this->createMock(SearchDatasource::class);
 
-        /** @var WebsiteSearchQuery|\PHPUnit_Framework_MockObject_MockObject $websiteSearchQuery */
+        /** @var WebsiteSearchQuery|\PHPUnit\Framework\MockObject\MockObject $websiteSearchQuery */
         $websiteSearchQuery = $this->createMock(WebsiteSearchQuery::class);
         $websiteSearchQuery->expects($this->never())
             ->method($this->anything());

@@ -6,11 +6,11 @@ use Oro\Bundle\ProductBundle\RelatedItem\Helper\RelatedItemConfigHelper;
 use Oro\Bundle\ProductBundle\Twig\RelatedItemExtension;
 use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
 
-class RelatedItemExtensionTest extends \PHPUnit_Framework_TestCase
+class RelatedItemExtensionTest extends \PHPUnit\Framework\TestCase
 {
     use TwigExtensionTestCaseTrait;
 
-    /** @var RelatedItemConfigHelper|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var RelatedItemConfigHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $helper;
 
     /** @var RelatedItemExtension */

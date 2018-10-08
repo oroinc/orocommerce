@@ -8,7 +8,7 @@ use Oro\Bundle\PricingBundle\Entity\Repository\PriceAttributePriceListRepository
 use Oro\Bundle\PricingBundle\Provider\ProductVirtualRelationProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
-class ProductVirtualRelationProviderTest extends \PHPUnit_Framework_TestCase
+class ProductVirtualRelationProviderTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var ProductVirtualRelationProvider
@@ -16,7 +16,7 @@ class ProductVirtualRelationProviderTest extends \PHPUnit_Framework_TestCase
     protected $provider;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|DoctrineHelper
+     * @var \PHPUnit\Framework\MockObject\MockObject|DoctrineHelper
      */
     protected $doctrineHelper;
 

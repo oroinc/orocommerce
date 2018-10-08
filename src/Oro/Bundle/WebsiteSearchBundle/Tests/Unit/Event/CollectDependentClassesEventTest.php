@@ -4,7 +4,7 @@ namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Event;
 
 use Oro\Bundle\WebsiteSearchBundle\Event\CollectDependentClassesEvent;
 
-class CollectDependentClassesEventTest extends \PHPUnit_Framework_TestCase
+class CollectDependentClassesEventTest extends \PHPUnit\Framework\TestCase
 {
     public function testGetClassesForReindexWithEmptyArray()
     {

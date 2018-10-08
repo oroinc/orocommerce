@@ -11,7 +11,7 @@ use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Layout\DataProvider\FrontendShoppingListProductsUnitsProvider;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class FrontendShoppingListProductsUnitsProviderTest extends \PHPUnit_Framework_TestCase
+class FrontendShoppingListProductsUnitsProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
@@ -23,17 +23,17 @@ class FrontendShoppingListProductsUnitsProviderTest extends \PHPUnit_Framework_T
     protected $provider;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|Registry
+     * @var \PHPUnit\Framework\MockObject\MockObject|Registry
      */
     protected $registry;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|PriceListRequestHandler
+     * @var \PHPUnit\Framework\MockObject\MockObject|PriceListRequestHandler
      */
     protected $requestHandler;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|UserCurrencyManager
+     * @var \PHPUnit\Framework\MockObject\MockObject|UserCurrencyManager
      */
     protected $userCurrencyManager;
 

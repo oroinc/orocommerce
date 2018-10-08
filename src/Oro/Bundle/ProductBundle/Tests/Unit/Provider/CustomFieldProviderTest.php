@@ -7,7 +7,7 @@ use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\ProductBundle\Provider\CustomFieldProvider;
 
-class CustomFieldProviderTest extends \PHPUnit_Framework_TestCase
+class CustomFieldProviderTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var CustomFieldProvider
@@ -15,12 +15,12 @@ class CustomFieldProviderTest extends \PHPUnit_Framework_TestCase
     protected $provider;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ConfigProvider
+     * @var \PHPUnit\Framework\MockObject\MockObject|ConfigProvider
      */
     protected $extendConfigProvider;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ConfigProvider
+     * @var \PHPUnit\Framework\MockObject\MockObject|ConfigProvider
      */
     protected $entityConfigProvider;
 
@@ -184,7 +184,7 @@ class CustomFieldProviderTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param string $className
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     protected function getMockForClass($className)
     {

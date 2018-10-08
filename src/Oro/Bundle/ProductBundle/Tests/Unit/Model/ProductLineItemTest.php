@@ -7,7 +7,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Model\ProductLineItem;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-class ProductLineItemTest extends \PHPUnit_Framework_TestCase
+class ProductLineItemTest extends \PHPUnit\Framework\TestCase
 {
     const IDENTIFIER = 'identifier';
     const UNIT_CODE = 'unit_code';

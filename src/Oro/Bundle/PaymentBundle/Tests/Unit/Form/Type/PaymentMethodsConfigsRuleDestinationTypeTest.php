@@ -38,7 +38,7 @@ class PaymentMethodsConfigsRuleDestinationTypeTest extends AddressFormExtensionT
 
     public function testBuildFormSubscriber()
     {
-        /** @var FormBuilderInterface|\PHPUnit_Framework_MockObject_MockObject $builder */
+        /** @var FormBuilderInterface|\PHPUnit\Framework\MockObject\MockObject $builder */
         $builder = $this->getMockBuilder(FormBuilderInterface::class)->getMock();
         $builder->expects($this->once())
             ->method('addEventSubscriber')

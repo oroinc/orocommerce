@@ -11,12 +11,12 @@ use Oro\Bundle\PromotionBundle\Discount\DiscountLineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class LineItemsToDiscountLineItemsConverterTest extends \PHPUnit_Framework_TestCase
+class LineItemsToDiscountLineItemsConverterTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var FrontendProductPricesDataProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var FrontendProductPricesDataProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $productPricesDataProvider;
 

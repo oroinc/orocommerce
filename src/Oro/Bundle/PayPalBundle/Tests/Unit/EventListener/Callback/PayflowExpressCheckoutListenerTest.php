@@ -10,15 +10,15 @@ use Oro\Bundle\PayPalBundle\EventListener\Callback\PayflowExpressCheckoutListene
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Response;
 
-class PayflowExpressCheckoutListenerTest extends \PHPUnit_Framework_TestCase
+class PayflowExpressCheckoutListenerTest extends \PHPUnit\Framework\TestCase
 {
     /** @var PayflowExpressCheckoutListener */
     protected $listener;
 
-    /** @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject $dispatcher */
+    /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject $dispatcher */
     protected $logger;
 
-    /** @var PaymentMethodProviderInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var PaymentMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $paymentMethodProvider;
 
     protected function setUp()

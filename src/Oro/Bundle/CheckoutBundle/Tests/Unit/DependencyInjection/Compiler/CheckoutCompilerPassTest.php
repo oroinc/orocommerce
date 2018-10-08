@@ -6,7 +6,7 @@ use Oro\Bundle\CheckoutBundle\DependencyInjection\Compiler\CheckoutCompilerPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
-class CheckoutCompilerPassTest extends \PHPUnit_Framework_TestCase
+class CheckoutCompilerPassTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @dataProvider processDataProvider
@@ -18,7 +18,7 @@ class CheckoutCompilerPassTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        /** @var ContainerBuilder|\PHPUnit_Framework_MockObject_MockObject $containerBuilder */
+        /** @var ContainerBuilder|\PHPUnit\Framework\MockObject\MockObject $containerBuilder */
         $containerBuilder = $this->getMockBuilder('Symfony\Component\DependencyInjection\ContainerBuilder')
             ->disableOriginalConstructor()
             ->getMock();

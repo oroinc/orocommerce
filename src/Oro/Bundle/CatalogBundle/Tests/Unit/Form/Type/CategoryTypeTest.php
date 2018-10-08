@@ -38,7 +38,7 @@ class CategoryTypeTest extends FormIntegrationTestCase
     const PRODUCT_CLASS = 'Oro\Bundle\ProductBundle\Entity\Product';
 
     /**
-     * @var UrlGeneratorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var UrlGeneratorInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $urlGenerator;
 
@@ -61,7 +61,7 @@ class CategoryTypeTest extends FormIntegrationTestCase
      */
     public function testBuildForm()
     {
-        /** @var FormBuilder|\PHPUnit_Framework_MockObject_MockObject $builder */
+        /** @var FormBuilder|\PHPUnit\Framework\MockObject\MockObject $builder */
         $builder = $this->getMockBuilder('Symfony\Component\Form\FormBuilder')
             ->disableOriginalConstructor()->getMock();
 
@@ -155,7 +155,7 @@ class CategoryTypeTest extends FormIntegrationTestCase
 
     public function testConfigureOptions()
     {
-        /** @var OptionsResolver|\PHPUnit_Framework_MockObject_MockObject $resolver */
+        /** @var OptionsResolver|\PHPUnit\Framework\MockObject\MockObject $resolver */
         $resolver = $this->createMock('Symfony\Component\OptionsResolver\OptionsResolver');
         $resolver->expects($this->once())
             ->method('setDefaults')
@@ -202,7 +202,7 @@ class CategoryTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
-        /** @var ConfirmSlugChangeFormHelper|\PHPUnit_Framework_MockObject_MockObject $confirmHelper */
+        /** @var ConfirmSlugChangeFormHelper|\PHPUnit\Framework\MockObject\MockObject $confirmHelper */
         $confirmHelper = $this->getMockBuilder(ConfirmSlugChangeFormHelper::class)
             ->disableOriginalConstructor()
             ->getMock();

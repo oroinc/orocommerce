@@ -10,12 +10,12 @@ use Oro\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\WebCatalog\Entity\WebCatalogInterface;
 
-class WebCatalogUsageProviderTest extends \PHPUnit_Framework_TestCase
+class WebCatalogUsageProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
     private $configManager;
 
-    /** @var WebsiteRepository|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var WebsiteRepository|\PHPUnit\Framework\MockObject\MockObject */
     private $repository;
 
     /** @var WebCatalogUsageProvider */

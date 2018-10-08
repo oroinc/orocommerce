@@ -8,10 +8,10 @@ use Oro\Bundle\TaxBundle\Validator\Constraints\ZipCodeFields;
 use Oro\Bundle\TaxBundle\Validator\Constraints\ZipCodeFieldsValidator;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
-class ZipCodeFieldsValidatorTest extends \PHPUnit_Framework_TestCase
+class ZipCodeFieldsValidatorTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ExecutionContextInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ExecutionContextInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $context;
 

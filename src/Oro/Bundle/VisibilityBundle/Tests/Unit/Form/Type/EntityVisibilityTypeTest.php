@@ -27,12 +27,12 @@ class EntityVisibilityTypeTest extends FormIntegrationTestCase
     protected $formType;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|VisibilityPostSetDataListener
+     * @var \PHPUnit\Framework\MockObject\MockObject|VisibilityPostSetDataListener
      */
     protected $visibilityPostSetDataListener;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|VisibilityChoicesProvider
+     * @var \PHPUnit\Framework\MockObject\MockObject|VisibilityChoicesProvider
      */
     protected $visibilityChoicesProvider;
 

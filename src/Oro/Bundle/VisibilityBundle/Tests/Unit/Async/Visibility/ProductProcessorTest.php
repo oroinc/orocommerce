@@ -18,30 +18,30 @@ use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Psr\Log\LoggerInterface;
 
-class ProductProcessorTest extends \PHPUnit_Framework_TestCase
+class ProductProcessorTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $registry;
 
     /**
-     * @var ProductMessageFactory|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProductMessageFactory|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $messageFactory;
 
     /**
-     * @var ProductCaseCacheBuilderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProductCaseCacheBuilderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $cacheBuilder;
 
     /**
-     * @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $logger;
 
     /**
-     * @var DatabaseExceptionHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var DatabaseExceptionHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $databaseExceptionHelper;
 
@@ -85,12 +85,12 @@ class ProductProcessorTest extends \PHPUnit_Framework_TestCase
             ->method('getManagerForClass')
             ->with(ProductVisibilityResolved::class)
             ->willReturn($em);
-        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
+        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message **/
         $message = $this->createMock(MessageInterface::class);
         $message->expects($this->any())
             ->method('getBody')
             ->willReturn($body);
-        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
+        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session **/
         $session = $this->createMock(SessionInterface::class);
         $product = new Product();
         $this->messageFactory->expects($this->once())
@@ -120,7 +120,7 @@ class ProductProcessorTest extends \PHPUnit_Framework_TestCase
             ->method('getManagerForClass')
             ->with(ProductVisibilityResolved::class)
             ->willReturn($em);
-        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
+        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message **/
         $message = $this->createMock(MessageInterface::class);
         $message->expects($this->any())
             ->method('getBody')
@@ -131,7 +131,7 @@ class ProductProcessorTest extends \PHPUnit_Framework_TestCase
                 'Unexpected exception occurred during Product Visibility resolve by Product',
                 ['exception' => $exception]
             );
-        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
+        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session **/
         $session = $this->createMock(SessionInterface::class);
         $driverException = $this->createMock(AbstractDriverException::class);
         $this->databaseExceptionHelper->expects($this->once())
@@ -158,7 +158,7 @@ class ProductProcessorTest extends \PHPUnit_Framework_TestCase
             ->method('getManagerForClass')
             ->with(ProductVisibilityResolved::class)
             ->willReturn($em);
-        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
+        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message **/
         $message = $this->createMock(MessageInterface::class);
         $message->expects($this->any())
             ->method('getBody')
@@ -169,7 +169,7 @@ class ProductProcessorTest extends \PHPUnit_Framework_TestCase
                 'Unexpected exception occurred during Product Visibility resolve by Product',
                 ['exception' => $exception]
             );
-        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
+        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session **/
         $session = $this->createMock(SessionInterface::class);
         $this->databaseExceptionHelper->expects($this->never())
             ->method('isDeadlock');
@@ -192,7 +192,7 @@ class ProductProcessorTest extends \PHPUnit_Framework_TestCase
         $this->messageFactory->expects($this->once())
             ->method('getProductFromMessage')
             ->will($this->throwException(new InvalidArgumentException('Wrong message')));
-        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
+        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message **/
         $message = $this->createMock(MessageInterface::class);
         $message->expects($this->any())
             ->method('getBody')
@@ -200,7 +200,7 @@ class ProductProcessorTest extends \PHPUnit_Framework_TestCase
         $this->logger->expects($this->once())
             ->method('error')
             ->with('Message is invalid: Wrong message');
-        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
+        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session **/
         $session = $this->createMock(SessionInterface::class);
         $this->assertEquals(
             MessageProcessorInterface::REJECT,

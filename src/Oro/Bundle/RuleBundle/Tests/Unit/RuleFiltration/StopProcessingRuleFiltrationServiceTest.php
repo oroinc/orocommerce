@@ -9,10 +9,10 @@ use Oro\Bundle\RuleBundle\RuleFiltration\EnabledRuleFiltrationServiceDecorator;
 use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
 use Oro\Bundle\RuleBundle\RuleFiltration\StopProcessingRuleFiltrationServiceDecorator;
 
-class StopProcessingRuleFiltrationServiceTest extends \PHPUnit_Framework_TestCase
+class StopProcessingRuleFiltrationServiceTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var RuleFiltrationServiceInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var RuleFiltrationServiceInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $service;
 
@@ -105,7 +105,7 @@ class StopProcessingRuleFiltrationServiceTest extends \PHPUnit_Framework_TestCas
     /**
      * @param RuleInterface $rule
      *
-     * @return RuleOwnerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return RuleOwnerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private function createRuleOwner(RuleInterface $rule)
     {

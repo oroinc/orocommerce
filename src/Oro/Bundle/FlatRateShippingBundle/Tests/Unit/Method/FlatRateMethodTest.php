@@ -6,7 +6,7 @@ use Oro\Bundle\FlatRateShippingBundle\Method\FlatRateMethod;
 use Oro\Bundle\FlatRateShippingBundle\Method\FlatRateMethodType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 
-class FlatRateMethodTest extends \PHPUnit_Framework_TestCase
+class FlatRateMethodTest extends \PHPUnit\Framework\TestCase
 {
     const LABEL = 'test';
     const IDENTIFIER = 'flat_rate';

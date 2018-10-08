@@ -7,7 +7,7 @@ use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\PricingBundle\EventListener\PriceListDatagridListener;
 
-class PriceListDatagridListenerTest extends \PHPUnit_Framework_TestCase
+class PriceListDatagridListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var PriceListDatagridListener
@@ -22,10 +22,10 @@ class PriceListDatagridListenerTest extends \PHPUnit_Framework_TestCase
     public function testOnBuildBefore()
     {
         $params = new ParameterBag();
-        /** @var DatagridInterface|\PHPUnit_Framework_MockObject_MockObject $datagrid */
+        /** @var DatagridInterface|\PHPUnit\Framework\MockObject\MockObject $datagrid */
         $datagrid = $this->createMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
         $datagrid->expects($this->once())->method('getParameters')->willReturn($params);
-        /** @var BuildBefore|\PHPUnit_Framework_MockObject_MockObject $event */
+        /** @var BuildBefore|\PHPUnit\Framework\MockObject\MockObject $event */
         $event = $this->getMockBuilder('Oro\Bundle\DataGridBundle\Event\BuildBefore')
             ->disableOriginalConstructor()
             ->getMock();

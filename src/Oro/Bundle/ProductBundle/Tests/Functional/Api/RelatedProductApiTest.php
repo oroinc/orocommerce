@@ -8,6 +8,8 @@ use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadRelatedProductData;
+use Oro\Bundle\SecurityBundle\Acl\AccessLevel;
+use Oro\Bundle\SecurityBundle\Test\Functional\RolePermissionExtension;
 use Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadRolesData;
 use Oro\Bundle\UserBundle\Tests\Functional\API\DataFixtures\LoadUserData;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,6 +22,8 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class RelatedProductApiTest extends RestJsonApiTestCase
 {
+    use RolePermissionExtension;
+
     protected function setUp()
     {
         parent::setUp();
@@ -28,7 +32,11 @@ class RelatedProductApiTest extends RestJsonApiTestCase
             LoadUserData::class,
             CatalogLoadUserData::class
         ]);
-        $this->setViewPermission(CatalogLoadUserData::ROLE_CATALOG_MANAGER, Product::class, true);
+        $this->updateRolePermission(
+            CatalogLoadUserData::ROLE_CATALOG_MANAGER,
+            Product::class,
+            AccessLevel::GLOBAL_LEVEL
+        );
     }
 
     public function testGetList()
@@ -63,7 +71,11 @@ class RelatedProductApiTest extends RestJsonApiTestCase
      */
     public function testGetListAccessDeniedOnLackOfPermissionToViewProductEntity()
     {
-        $this->setViewPermission(CatalogLoadUserData::ROLE_CATALOG_MANAGER, Product::class, false);
+        $this->updateRolePermission(
+            CatalogLoadUserData::ROLE_CATALOG_MANAGER,
+            Product::class,
+            AccessLevel::NONE_LEVEL
+        );
 
         $response = $this->cget(
             ['entity' => 'relatedproducts'],
@@ -116,7 +128,11 @@ class RelatedProductApiTest extends RestJsonApiTestCase
      */
     public function testGetAccessDeniedOnLackOfPermissionToViewProductEntity()
     {
-        $this->setViewPermission(CatalogLoadUserData::ROLE_CATALOG_MANAGER, Product::class, false);
+        $this->updateRolePermission(
+            CatalogLoadUserData::ROLE_CATALOG_MANAGER,
+            Product::class,
+            AccessLevel::NONE_LEVEL
+        );
 
         $response = $this->get(
             [
@@ -292,8 +308,17 @@ class RelatedProductApiTest extends RestJsonApiTestCase
      */
     public function testDeleteDeniedOnLackOfPermissionToViewProductEntity()
     {
-        $this->setEditPermission(CatalogLoadUserData::ROLE_CATALOG_MANAGER, Product::class, true);
-        $this->setActionPermissions(CatalogLoadUserData::ROLE_CATALOG_MANAGER, 'oro_related_products_edit', true);
+        $this->updateRolePermission(
+            CatalogLoadUserData::ROLE_CATALOG_MANAGER,
+            Product::class,
+            AccessLevel::GLOBAL_LEVEL,
+            'EDIT'
+        );
+        $this->updateRolePermissionForAction(
+            CatalogLoadUserData::ROLE_CATALOG_MANAGER,
+            'oro_related_products_edit',
+            true
+        );
 
         $response = $this->delete(
             [
@@ -360,7 +385,12 @@ class RelatedProductApiTest extends RestJsonApiTestCase
      */
     public function testPostAccessDeniedOnLackOfPermissionToEditProductEntity()
     {
-        $this->setActionPermissions(LoadRolesData::ROLE_USER, 'oro_related_products_edit', true);
+        $this->updateRolePermissionForAction(
+            LoadRolesData::ROLE_USER,
+            'oro_related_products_edit',
+            true
+        );
+
         $response = $this->post(
             ['entity' => 'relatedproducts'],
             'related_product/post.yml',
@@ -395,59 +425,5 @@ class RelatedProductApiTest extends RestJsonApiTestCase
         $configManager->set($name, $limit, 0);
         $configManager->set($name, $limit, 1);
         $configManager->flush();
-    }
-
-    /**
-     * @param string $role
-     * @param string $actionId
-     * @param bool   $value
-     */
-    private function setActionPermissions($role, $actionId, $value)
-    {
-        $aclManager = $this->getContainer()->get('oro_security.acl.manager');
-
-        $sid = $aclManager->getSid($role);
-        $oid = $aclManager->getOid('Action:' . $actionId);
-        $builder = $aclManager->getMaskBuilder($oid);
-        $mask = $value ? $builder->reset()->add('EXECUTE')->get() : $builder->reset()->get();
-        $aclManager->setPermission($sid, $oid, $mask);
-
-        $aclManager->flush();
-    }
-
-    /**
-     * @param string $role
-     * @param string $entity
-     * @param bool   $value
-     */
-    private function setViewPermission($role, $entity, $value)
-    {
-        $aclManager = $this->getContainer()->get('oro_security.acl.manager');
-
-        $sid = $aclManager->getSid($role);
-        $oid = $aclManager->getOid('entity:' . $entity);
-        $builder = $aclManager->getMaskBuilder($oid);
-        $mask = $value ? $builder->reset()->add('VIEW_GLOBAL')->get() : $builder->reset()->get();
-        $aclManager->setPermission($sid, $oid, $mask, true);
-
-        $aclManager->flush();
-    }
-
-    /**
-     * @param string $role
-     * @param string $entity
-     * @param bool   $value
-     */
-    private function setEditPermission($role, $entity, $value)
-    {
-        $aclManager = $this->getContainer()->get('oro_security.acl.manager');
-
-        $sid = $aclManager->getSid($role);
-        $oid = $aclManager->getOid('entity:' . $entity);
-        $builder = $aclManager->getMaskBuilder($oid);
-        $mask = $value ? $builder->reset()->add('EDIT_GLOBAL')->get() : $builder->reset()->get();
-        $aclManager->setPermission($sid, $oid, $mask, true);
-
-        $aclManager->flush();
     }
 }

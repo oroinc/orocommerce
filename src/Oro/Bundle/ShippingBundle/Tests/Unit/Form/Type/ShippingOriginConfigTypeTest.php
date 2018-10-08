@@ -7,7 +7,7 @@ use Oro\Bundle\ShippingBundle\Form\Type\ShippingOriginType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 
-class ShippingOriginConfigTypeTest extends \PHPUnit_Framework_TestCase
+class ShippingOriginConfigTypeTest extends \PHPUnit\Framework\TestCase
 {
     /** @var ShippingOriginConfigType */
     protected $formType;
@@ -29,12 +29,12 @@ class ShippingOriginConfigTypeTest extends \PHPUnit_Framework_TestCase
 
     public function testFinishViewWithoutParentForm()
     {
-        /** @var FormView|\PHPUnit_Framework_MockObject_MockObject $mockFormView */
+        /** @var FormView|\PHPUnit\Framework\MockObject\MockObject $mockFormView */
         $mockFormView = $this->getMockBuilder('Symfony\Component\Form\FormView')
             ->disableOriginalConstructor()
             ->getMock();
 
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $mockFormInterface */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $mockFormInterface */
         $mockFormInterface = $this->createMock('Symfony\Component\Form\FormInterface');
         $mockFormInterface->expects($this->once())->method('getParent')->willReturn(null);
 
@@ -43,7 +43,7 @@ class ShippingOriginConfigTypeTest extends \PHPUnit_Framework_TestCase
 
     public function testFinishViewWithoutParentScopeValue()
     {
-        /** @var FormView|\PHPUnit_Framework_MockObject_MockObject $mockFormView */
+        /** @var FormView|\PHPUnit\Framework\MockObject\MockObject $mockFormView */
         $mockFormView = $this->getMockBuilder('Symfony\Component\Form\FormView')
             ->disableOriginalConstructor()
             ->getMock();
@@ -51,7 +51,7 @@ class ShippingOriginConfigTypeTest extends \PHPUnit_Framework_TestCase
         $mockParentForm = $this->createMock('Symfony\Component\Form\FormInterface');
         $mockParentForm->expects($this->once())->method('has')->with('use_parent_scope_value')->willReturn(false);
 
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $mockFormInterface */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $mockFormInterface */
         $mockFormInterface = $this->createMock('Symfony\Component\Form\FormInterface');
         $mockFormInterface->expects($this->once())->method('getParent')->willReturn($mockParentForm);
 
@@ -60,12 +60,12 @@ class ShippingOriginConfigTypeTest extends \PHPUnit_Framework_TestCase
 
     public function testFinishViewParentScopeValue()
     {
-        /** @var FormView|\PHPUnit_Framework_MockObject_MockObject $childView */
+        /** @var FormView|\PHPUnit\Framework\MockObject\MockObject $childView */
         $childView = $this->getMockBuilder('Symfony\Component\Form\FormView')
             ->disableOriginalConstructor()
             ->getMock();
 
-        /** @var FormView|\PHPUnit_Framework_MockObject_MockObject $mockFormView */
+        /** @var FormView|\PHPUnit\Framework\MockObject\MockObject $mockFormView */
         $mockFormView = $this->getMockBuilder('Symfony\Component\Form\FormView')
             ->disableOriginalConstructor()
             ->getMock();
@@ -81,7 +81,7 @@ class ShippingOriginConfigTypeTest extends \PHPUnit_Framework_TestCase
             ->with('use_parent_scope_value')
             ->willReturn($mockParentScopeValueForm);
 
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $mockFormInterface */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $mockFormInterface */
         $mockFormInterface = $this->createMock('Symfony\Component\Form\FormInterface');
         $mockFormInterface->expects($this->once())->method('getParent')->willReturn($mockParentForm);
 

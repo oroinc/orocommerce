@@ -30,7 +30,7 @@ class ContentNodeFormViewListenerTest extends BaseFormViewListenerTestCase
     {
         $page = new ContentNode();
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $env */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|\Twig_Environment $env */
         $env = $this->getEnvironmentForView($page, $this->listener->getMetaFieldLabelPrefix());
 
         $event = new BeforeListRenderEvent($env, new ScrollData(), $page);

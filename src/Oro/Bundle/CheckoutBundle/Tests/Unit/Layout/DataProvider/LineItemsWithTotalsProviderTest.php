@@ -12,17 +12,17 @@ use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Component\Layout\LayoutContext;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class LineItemsWithTotalsProviderTest extends \PHPUnit_Framework_TestCase
+class LineItemsWithTotalsProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var CheckoutLineItemsManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var CheckoutLineItemsManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $checkoutLineItemsManager;
 
     /**
-     * @var LineItemSubtotalProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var LineItemSubtotalProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $lineItemSubtotalProvider;
 

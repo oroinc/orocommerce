@@ -11,6 +11,9 @@ use Oro\Bundle\PricingBundle\Model\PriceListRelationTriggerHandler;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerHandler;
 use Oro\Bundle\PricingBundle\Model\PriceRuleLexemeTriggerHandler;
 
+/**
+ * Handle price list changes, schedule dependent price lists recalculation and combined price lists rebuild.
+ */
 class PriceListEntityListener
 {
     const FIELD_PRODUCT_ASSIGNMENT_RULE = 'productAssignmentRule';
@@ -83,7 +86,7 @@ class PriceListEntityListener
         }
 
         // Recalculate Combined Price Lists
-        $this->triggerHandler->handleFullRebuild();
+        $this->triggerHandler->handlePriceListStatusChange($priceList);
 
         // Schedule dependent price lists recalculation
         $this->scheduleDependentPriceListsUpdate($priceList);

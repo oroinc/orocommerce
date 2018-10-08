@@ -1516,7 +1516,7 @@ workflows:
                     - '@send_email_template':
                         parameters:
                             from: $order.owner.email
-                            to: [$order.customerUser.email, $email]
+                            to: [$order.customerUser, $email]
                             template: 'order_confirmation_email'
                             entity: $order
 

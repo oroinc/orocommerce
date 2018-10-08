@@ -6,7 +6,7 @@ use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\PricingBundle\Model\DTO\CustomerWebsiteDTO;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
-class CustomerWebsiteDTOTest extends \PHPUnit_Framework_TestCase
+class CustomerWebsiteDTOTest extends \PHPUnit\Framework\TestCase
 {
     public function testCreate()
     {

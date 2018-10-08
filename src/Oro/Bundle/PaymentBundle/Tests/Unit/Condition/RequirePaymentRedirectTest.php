@@ -10,17 +10,17 @@ use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
 use Oro\Component\ConfigExpression\Condition\AbstractCondition;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class RequirePaymentRedirectTest extends \PHPUnit_Framework_TestCase
+class RequirePaymentRedirectTest extends \PHPUnit\Framework\TestCase
 {
     const PAYMENT_METHOD_KEY = 'payment_method';
 
     /** @var RequirePaymentRedirect */
     protected $condition;
 
-    /** @var PaymentMethodProviderInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var PaymentMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $paymentMethodProvider;
 
-    /** @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $dispatcher;
 
     public function setUp()
@@ -55,7 +55,7 @@ class RequirePaymentRedirectTest extends \PHPUnit_Framework_TestCase
     {
         $context = new \stdClass();
         $errors = $this->getMockForAbstractClass(Collection::class);
-        /** @var PaymentMethodInterface|\PHPUnit_Framework_MockObject_MockObject $paymentMethod */
+        /** @var PaymentMethodInterface|\PHPUnit\Framework\MockObject\MockObject $paymentMethod */
         $paymentMethod = $this->createMock(PaymentMethodInterface::class);
 
         $this->paymentMethodProvider

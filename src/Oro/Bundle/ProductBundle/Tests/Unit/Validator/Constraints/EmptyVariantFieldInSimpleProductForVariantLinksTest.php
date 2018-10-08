@@ -6,7 +6,7 @@ use Oro\Bundle\ProductBundle\Validator\Constraints\EmptyVariantFieldInSimpleProd
 use Oro\Bundle\ProductBundle\Validator\Constraints\EmptyVariantFieldInSimpleProductForVariantLinksValidator;
 use Symfony\Component\Validator\Constraint;
 
-class EmptyVariantFieldInSimpleProductForVariantLinksTest extends \PHPUnit_Framework_TestCase
+class EmptyVariantFieldInSimpleProductForVariantLinksTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var EmptyVariantFieldInSimpleProductForVariantLinks

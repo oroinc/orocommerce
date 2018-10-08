@@ -10,14 +10,14 @@ use Oro\Bundle\WebCatalogBundle\Twig\WebCatalogExtension;
 use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
 use Oro\Component\WebCatalog\ContentVariantTypeInterface;
 
-class WebCatalogExtensionTest extends \PHPUnit_Framework_TestCase
+class WebCatalogExtensionTest extends \PHPUnit\Framework\TestCase
 {
     use TwigExtensionTestCaseTrait;
 
-    /** @var ContentNodeTreeHandler|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ContentNodeTreeHandler|\PHPUnit\Framework\MockObject\MockObject */
     protected $treeHandler;
 
-    /** @var ContentVariantTypeRegistry|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ContentVariantTypeRegistry|\PHPUnit\Framework\MockObject\MockObject */
     protected $contentVariantTypeRegistry;
 
     /** @var WebCatalogExtension */

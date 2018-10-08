@@ -18,7 +18,7 @@ use Symfony\Component\Validator\Constraints\Locale;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class LocalizedLinksDataProviderTest extends \PHPUnit_Framework_TestCase
+class LocalizedLinksDataProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
@@ -27,22 +27,22 @@ class LocalizedLinksDataProviderTest extends \PHPUnit_Framework_TestCase
     const FR_SLUG = '/fr-slug';
 
     /**
-     * @var CanonicalUrlGenerator|\PHPUnit_Framework_MockObject_MockObject
+     * @var CanonicalUrlGenerator|\PHPUnit\Framework\MockObject\MockObject
      */
     private $urlGenerator;
 
     /**
-     * @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $configManager;
 
     /**
-     * @var UserLocalizationManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var UserLocalizationManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $userLocalizationManager;
 
     /**
-     * @var ValidatorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ValidatorInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $validator;
 
@@ -169,7 +169,7 @@ class LocalizedLinksDataProviderTest extends \PHPUnit_Framework_TestCase
             ->method('validate')
             ->willReturn($this->createMock(ConstraintViolationListInterface::class));
 
-        /** @var SluggableInterface|\PHPUnit_Framework_MockObject_MockObject $entity */
+        /** @var SluggableInterface|\PHPUnit\Framework\MockObject\MockObject $entity */
         $entity = $this->createMock(SluggableInterface::class);
 
         $systemUrl = 'http://domain.com/some/entity/3';
@@ -205,7 +205,7 @@ class LocalizedLinksDataProviderTest extends \PHPUnit_Framework_TestCase
             ->method('validate')
             ->willReturn($this->createMock(ConstraintViolationListInterface::class));
 
-        /** @var SluggableInterface|\PHPUnit_Framework_MockObject_MockObject $entity */
+        /** @var SluggableInterface|\PHPUnit\Framework\MockObject\MockObject $entity */
         $entity = $this->createMock(SluggableInterface::class);
 
         $this->assertEmpty($this->dataProvider->getAlternates($entity));
@@ -399,7 +399,7 @@ class LocalizedLinksDataProviderTest extends \PHPUnit_Framework_TestCase
      */
     private function configureSluggableInterfaceDataWithSlugs(array $slugs)
     {
-        /** @var SluggableInterface|\PHPUnit_Framework_MockObject_MockObject $entity */
+        /** @var SluggableInterface|\PHPUnit\Framework\MockObject\MockObject $entity */
         $entity = $this->createMock(SluggableInterface::class);
         $entity
             ->expects($this->any())
@@ -415,7 +415,7 @@ class LocalizedLinksDataProviderTest extends \PHPUnit_Framework_TestCase
      */
     private function configureSlugAwareDataWithSlugs(array $slugs)
     {
-        /** @var SlugAwareInterface|\PHPUnit_Framework_MockObject_MockObject $entity */
+        /** @var SlugAwareInterface|\PHPUnit\Framework\MockObject\MockObject $entity */
         $entity = $this->createMock(SlugAwareInterface::class);
         $entity
             ->expects($this->any())

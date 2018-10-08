@@ -10,15 +10,15 @@ use Oro\Bundle\ProductBundle\ProductVariant\TypeHandler\EnumTypeHandler;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormFactory;
 
-class EnumTypeHandlerTest extends \PHPUnit_Framework_TestCase
+class EnumTypeHandlerTest extends \PHPUnit\Framework\TestCase
 {
     const PRODUCT_CLASS = Product::class;
 
-    /** @var FormFactory|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var FormFactory|\PHPUnit\Framework\MockObject\MockObject */
     protected $formFactory;
 
     /**
-     * @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $configManager;
 

@@ -8,17 +8,17 @@ use Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\ShippingMethodStub;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Translation\TranslatorInterface;
 
-class BasicShippingMethodChoicesProviderTest extends \PHPUnit_Framework_TestCase
+class BasicShippingMethodChoicesProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var ShippingMethodProviderInterface|\PHPUnit_Framework_MockObject_MockObject phpdoc
+     * @var ShippingMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject phpdoc
      */
     protected $shippingMethodProvider;
 
     /**
-     * @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject phpdoc
+     * @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject phpdoc
      */
     protected $translator;
 

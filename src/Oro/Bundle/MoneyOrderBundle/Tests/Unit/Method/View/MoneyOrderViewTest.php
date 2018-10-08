@@ -6,12 +6,12 @@ use Oro\Bundle\MoneyOrderBundle\Method\Config\MoneyOrderConfig;
 use Oro\Bundle\MoneyOrderBundle\Method\View\MoneyOrderView;
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 
-class MoneyOrderViewTest extends \PHPUnit_Framework_TestCase
+class MoneyOrderViewTest extends \PHPUnit\Framework\TestCase
 {
     /** @var MoneyOrderView */
     protected $methodView;
 
-    /** @var MoneyOrderConfig|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var MoneyOrderConfig|\PHPUnit\Framework\MockObject\MockObject */
     protected $config;
 
     protected function setUp()
@@ -32,7 +32,7 @@ class MoneyOrderViewTest extends \PHPUnit_Framework_TestCase
             ->method('getSendTo')
             ->willReturn($data['send_to']);
 
-        /** @var PaymentContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
+        /** @var PaymentContextInterface|\PHPUnit\Framework\MockObject\MockObject $context */
         $context = $this->createMock(PaymentContextInterface::class);
 
         $this->assertEquals($data, $this->methodView->getOptions($context));

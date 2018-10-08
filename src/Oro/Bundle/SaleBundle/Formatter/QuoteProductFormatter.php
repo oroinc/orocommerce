@@ -3,14 +3,18 @@
 namespace Oro\Bundle\SaleBundle\Formatter;
 
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
-use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
-use Oro\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter;
+use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
+use Oro\Bundle\ProductBundle\Formatter\UnitValueFormatterInterface;
 use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductRequest;
 use Oro\Bundle\SaleBundle\Model\BaseQuoteProductItem;
 use Symfony\Component\Translation\TranslatorInterface;
 
+/**
+ * Facade for formatting operations
+ * use translator to translate variables, delegates formatting responsibility to internal formatters
+ */
 class QuoteProductFormatter
 {
     /**
@@ -19,12 +23,12 @@ class QuoteProductFormatter
     protected $translator;
 
     /**
-     * @var ProductUnitValueFormatter
+     * @var UnitValueFormatterInterface
      */
     protected $productUnitValueFormatter;
 
     /**
-     * @var ProductUnitLabelFormatter
+     * @var UnitLabelFormatterInterface
      */
     protected $productUnitLabelFormatter;
 
@@ -36,14 +40,14 @@ class QuoteProductFormatter
     /**
      * @param TranslatorInterface $translator
      * @param NumberFormatter $numberFormatter
-     * @param ProductUnitValueFormatter $productUnitValueFormatter
-     * @param ProductUnitLabelFormatter $productUnitLabelFormatter
+     * @param UnitValueFormatterInterface $productUnitValueFormatter
+     * @param UnitLabelFormatterInterface $productUnitLabelFormatter
      */
     public function __construct(
         TranslatorInterface $translator,
         NumberFormatter $numberFormatter,
-        ProductUnitValueFormatter $productUnitValueFormatter,
-        ProductUnitLabelFormatter $productUnitLabelFormatter
+        UnitValueFormatterInterface $productUnitValueFormatter,
+        UnitLabelFormatterInterface $productUnitLabelFormatter
     ) {
         $this->translator                   = $translator;
         $this->numberFormatter              = $numberFormatter;
@@ -61,9 +65,9 @@ class QuoteProductFormatter
 
         if (isset($types[$type])) {
             return $this->formatTypeLabel($types[$type]);
-        } else {
-            return $this->translator->trans('N/A');
         }
+
+        return $this->translator->trans('N/A');
     }
 
     /**
@@ -150,7 +154,9 @@ class QuoteProductFormatter
     {
         if (!$item->getProductUnit()) {
             return sprintf('%s %s', $item->getQuantity(), $item->getProductUnitCode());
-        } elseif ($item->getQuantity()) {
+        }
+
+        if ($item->getQuantity()) {
             return $this->productUnitValueFormatter->format($item->getQuantity(), $item->getProductUnit());
         }
 
@@ -180,8 +186,6 @@ class QuoteProductFormatter
      */
     protected function formatUnitCode(BaseQuoteProductItem $item)
     {
-        $unit = $this->productUnitLabelFormatter->format($item->getProductUnitCode());
-
-        return $unit;
+        return $this->productUnitLabelFormatter->format($item->getProductUnitCode());
     }
 }

@@ -10,22 +10,22 @@ use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class ProductCollectionVariantReindexMessageSendListenerTest extends \PHPUnit_Framework_TestCase
+class ProductCollectionVariantReindexMessageSendListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var MessageProducerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $messageProducer;
 
     /**
-     * @var SegmentMessageFactory|\PHPUnit_Framework_MockObject_MockObject
+     * @var SegmentMessageFactory|\PHPUnit\Framework\MockObject\MockObject
      */
     private $messageFactory;
 
     /**
-     * @var ProductCollectionSegmentHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProductCollectionSegmentHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     private $productCollectionSegmentHelper;
 

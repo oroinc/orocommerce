@@ -43,7 +43,7 @@ class OroInventoryExtensionTest extends ExtensionTestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|ContainerBuilder
+     * @return \PHPUnit\Framework\MockObject\MockObject|ContainerBuilder
      */
     protected function buildContainerMock()
     {

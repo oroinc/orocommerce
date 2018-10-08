@@ -8,9 +8,9 @@ use Oro\Bundle\FilterBundle\Form\Type\Filter\EnumFilterType;
 use Oro\Bundle\OrderBundle\Datagrid\OrdersViewList;
 use Symfony\Component\Translation\TranslatorInterface;
 
-class OrdersViewListTest extends \PHPUnit_Framework_TestCase
+class OrdersViewListTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $translator;
 
     /** @var OrdersViewList */

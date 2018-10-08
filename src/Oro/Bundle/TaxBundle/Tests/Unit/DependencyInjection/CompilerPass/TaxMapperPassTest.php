@@ -6,7 +6,7 @@ use Oro\Bundle\TaxBundle\DependencyInjection\CompilerPass\TaxMapperPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
-class TaxMapperPassTest extends \PHPUnit_Framework_TestCase
+class TaxMapperPassTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var TaxMapperPass
@@ -14,7 +14,7 @@ class TaxMapperPassTest extends \PHPUnit_Framework_TestCase
     protected $compilerPass;
 
     /**
-     * @var ContainerBuilder|\PHPUnit_Framework_MockObject_MockObject
+     * @var ContainerBuilder|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $containerBuilder;
 

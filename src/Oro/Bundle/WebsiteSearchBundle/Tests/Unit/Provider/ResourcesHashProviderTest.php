@@ -5,7 +5,7 @@ namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Provider;
 use Oro\Bundle\WebsiteSearchBundle\Provider\ResourcesHashProvider;
 use Oro\Component\Config\CumulativeResourceInfo;
 
-class ResourcesHashProviderTest extends \PHPUnit_Framework_TestCase
+class ResourcesHashProviderTest extends \PHPUnit\Framework\TestCase
 {
     /** @var string[] */
     protected $tempFiles;

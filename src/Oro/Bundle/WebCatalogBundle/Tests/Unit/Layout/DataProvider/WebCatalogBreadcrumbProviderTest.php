@@ -24,7 +24,7 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-class WebCatalogBreadcrumbProviderTest extends \PHPUnit_Framework_TestCase
+class WebCatalogBreadcrumbProviderTest extends \PHPUnit\Framework\TestCase
 {
     const WEBCATALOG_ID = 1;
     const LASTNODE_ID   = 999;
@@ -32,12 +32,12 @@ class WebCatalogBreadcrumbProviderTest extends \PHPUnit_Framework_TestCase
     use EntityTrait;
 
     /**
-     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $registry;
 
     /**
-     * @var WebCatalogProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var WebCatalogProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $webCatalogProvider;
 
@@ -47,17 +47,17 @@ class WebCatalogBreadcrumbProviderTest extends \PHPUnit_Framework_TestCase
     protected $webCatalog;
 
     /**
-     * @var RequestStack|\PHPUnit_Framework_MockObject_MockObject
+     * @var RequestStack|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $requestStack;
 
     /**
-     * @var LocalizationHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var LocalizationHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $localizationHelper;
 
     /**
-     * @var CategoryBreadcrumbProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var CategoryBreadcrumbProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $categoryBreadcrumbProvider;
 

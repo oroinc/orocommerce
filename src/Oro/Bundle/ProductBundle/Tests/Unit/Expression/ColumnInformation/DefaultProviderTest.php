@@ -8,10 +8,10 @@ use Oro\Component\Expression\Node\NameNode;
 use Oro\Component\Expression\Node\NodeInterface;
 use Oro\Component\Expression\Node\RelationNode;
 
-class DefaultProviderTest extends \PHPUnit_Framework_TestCase
+class DefaultProviderTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var FieldsProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var FieldsProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $fieldsProvider;
 

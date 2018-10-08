@@ -5,7 +5,7 @@ namespace Oro\Bundle\PromotionBundle\Tests\Unit\Form\Type;
 use Oro\Bundle\PromotionBundle\Form\Type\DashesSequenceType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 
-class DashesSequenceTypeTest extends \PHPUnit_Framework_TestCase
+class DashesSequenceTypeTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var DashesSequenceType

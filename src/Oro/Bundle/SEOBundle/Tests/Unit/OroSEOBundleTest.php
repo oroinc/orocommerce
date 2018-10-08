@@ -14,7 +14,7 @@ use Oro\Bundle\SEOBundle\OroSEOBundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\KernelInterface;
 
-class OroSEOBundleTest extends \PHPUnit_Framework_TestCase
+class OroSEOBundleTest extends \PHPUnit\Framework\TestCase
 {
     public function testBuild()
     {

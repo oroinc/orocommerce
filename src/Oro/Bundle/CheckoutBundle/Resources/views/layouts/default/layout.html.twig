@@ -1,4 +1,4 @@
-{% macro transitionAttrbiutes(transitionData, checkout, componentOptions) %}
+{% macro transitionAttributes(transitionData, checkout, componentOptions) %}
 {% spaceless %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
     {# Simplified transitions handler specific for checkout logic #}
@@ -9,7 +9,7 @@
     {% if componentOptions is iterable %}
         {% set pageComponentOptions = pageComponentOptions|merge(componentOptions) %}
     {% endif %}
-    
+
     {{ UI.renderPageComponentAttributes({
         module: pageComponentModule,
         options: pageComponentOptions|merge({
@@ -33,7 +33,8 @@
         data-toggle="tooltip"
         data-title="{{ _self.transitionConditionMessages(transitionData) }}"
         data-html="true"
-        data-container="body"
+        data-container=".checkout__submit-btn"
+        data-placement="{% if isMobileVersion() %}bottom{% else %}left{% endif %}"
     {% endif %}
 {% endmacro %}
 
@@ -56,7 +57,7 @@
         })
     %}
     <a href="{{ transitionUrl }}"
-        {{ _self.transitionAttrbiutes(transitionData, checkout) }}
+        {{ _self.transitionAttributes(transitionData, checkout) }}
         {{ _self.conditionMessages(transitionData) }}
     >
         <i class="fa-angle-left"></i>{{ 'oro.checkout.workflow.b2b_flow_checkout.transition.back.label'|trans }}
@@ -71,7 +72,7 @@
                 class="btn {% if transitionData.isAllowed %}btn--info{% endif %} btn--size-m checkout-form__submit"
                 disabled="disabled"
                 autocomplete="off"
-                {{ _self.transitionAttrbiutes(transitionData, checkout, componentOptions) }}
+                {{ _self.transitionAttributes(transitionData, checkout, componentOptions) }}
             >
                 {{ transitionData.transition.label|trans({},'workflows') }}&nbsp;<i class="fa-angle-right"></i>
             </button>
@@ -98,7 +99,7 @@
        data-title="{{ transitionLabel }}"
        data-html="true"
        data-container="body"
-       {{ _self.transitionAttrbiutes(transitionData, checkout) }}
+       {{ _self.transitionAttributes(transitionData, checkout) }}
     >
         <i class="fa-pencil fa--no-offset tooltip-trigger"></i>
     </a>

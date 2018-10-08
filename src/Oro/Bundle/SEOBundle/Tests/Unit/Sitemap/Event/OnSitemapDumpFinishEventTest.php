@@ -5,7 +5,7 @@ namespace Oro\Bundle\SEOBundle\Tests\Unit\Sitemap\Event;
 use Oro\Bundle\SEOBundle\Sitemap\Event\OnSitemapDumpFinishEvent;
 use Oro\Component\Website\WebsiteInterface;
 
-class OnSitemapDumpFinishEventTest extends \PHPUnit_Framework_TestCase
+class OnSitemapDumpFinishEventTest extends \PHPUnit\Framework\TestCase
 {
     public function testInitialization()
     {

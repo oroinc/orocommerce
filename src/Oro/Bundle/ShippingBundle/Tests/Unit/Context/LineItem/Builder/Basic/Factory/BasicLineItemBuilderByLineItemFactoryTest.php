@@ -11,7 +11,7 @@ use Oro\Bundle\ShippingBundle\Tests\Unit\Context\AbstractShippingLineItemTest;
 class BasicLineItemBuilderByLineItemFactoryTest extends AbstractShippingLineItemTest
 {
     /**
-     * @var ShippingLineItemBuilderFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingLineItemBuilderFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $lineItemBuilderFactory;
 

@@ -9,7 +9,7 @@ use Oro\Bundle\RedirectBundle\OroRedirectBundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\KernelInterface;
 
-class OroRedirectBundleTest extends \PHPUnit_Framework_TestCase
+class OroRedirectBundleTest extends \PHPUnit\Framework\TestCase
 {
     public function testBuild()
     {

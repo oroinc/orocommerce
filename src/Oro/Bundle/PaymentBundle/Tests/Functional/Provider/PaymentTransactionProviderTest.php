@@ -174,7 +174,7 @@ class PaymentTransactionProviderTest extends WebTestCase
         $this->initClient();
 
         $paymentTransactionProvider = $this->getContainer()->get('oro_payment.provider.payment_transaction');
-        /** @var \PHPUnit_Framework_MockObject_MockObject|LoggerInterface $logger */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|LoggerInterface $logger */
         $logger = $this->createMock('\Psr\Log\LoggerInterface');
         $logger->expects($this->once())->method('error');
 
@@ -205,7 +205,7 @@ class PaymentTransactionProviderTest extends WebTestCase
         $this->initClient();
 
         $paymentTransactionProvider = $this->getContainer()->get('oro_payment.provider.payment_transaction');
-        /** @var \PHPUnit_Framework_MockObject_MockObject|LoggerInterface $logger */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|LoggerInterface $logger */
         $logger = $this->createMock('\Psr\Log\LoggerInterface');
         $logger->expects($this->once())->method('error');
 

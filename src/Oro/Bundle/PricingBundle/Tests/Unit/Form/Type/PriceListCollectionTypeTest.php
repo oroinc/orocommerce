@@ -119,7 +119,7 @@ class PriceListCollectionTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|FormInterface
+     * @return \PHPUnit\Framework\MockObject\MockObject|FormInterface
      */
     protected function getFormMock()
     {

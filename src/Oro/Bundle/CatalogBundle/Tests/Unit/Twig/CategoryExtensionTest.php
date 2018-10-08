@@ -8,11 +8,11 @@ use Oro\Bundle\CatalogBundle\Twig\CategoryExtension;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
 
-class CategoryExtensionTest extends \PHPUnit_Framework_TestCase
+class CategoryExtensionTest extends \PHPUnit\Framework\TestCase
 {
     use TwigExtensionTestCaseTrait;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|CategoryTreeHandler */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|CategoryTreeHandler */
     protected $categoryTreeHandler;
 
     /** @var CategoryExtension */

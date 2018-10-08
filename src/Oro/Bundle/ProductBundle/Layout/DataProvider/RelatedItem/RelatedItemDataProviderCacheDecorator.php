@@ -5,6 +5,10 @@ namespace Oro\Bundle\ProductBundle\Layout\DataProvider\RelatedItem;
 use Doctrine\Common\Cache\Cache;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
+/**
+ * The decorator that saves related products loaded via the decorated provider to a cache
+ * and uses this cache to get the related products when they are requested the next time.
+ */
 class RelatedItemDataProviderCacheDecorator implements RelatedItemDataProviderInterface
 {
     /** @var RelatedItemDataProviderInterface */
@@ -34,12 +38,11 @@ class RelatedItemDataProviderCacheDecorator implements RelatedItemDataProviderIn
     public function getRelatedItems(Product $product)
     {
         $cacheKey = sprintf($this->cacheKey, $product->getId());
-        if ($this->cache->contains($cacheKey)) {
-            return $this->cache->fetch($cacheKey);
+        $relatedItems = $this->cache->fetch($cacheKey);
+        if (false === $relatedItems) {
+            $relatedItems = $this->dataProvider->getRelatedItems($product);
+            $this->cache->save($cacheKey, $relatedItems);
         }
-
-        $relatedItems = $this->dataProvider->getRelatedItems($product);
-        $this->cache->save($cacheKey, $relatedItems);
 
         return $relatedItems;
     }

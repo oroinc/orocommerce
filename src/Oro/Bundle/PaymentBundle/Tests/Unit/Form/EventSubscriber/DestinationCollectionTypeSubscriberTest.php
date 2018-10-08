@@ -5,14 +5,14 @@ namespace Oro\Bundle\PaymentBundle\Tests\Unit\Form\EventSubscriber;
 use Oro\Bundle\PaymentBundle\Form\EventSubscriber\DestinationCollectionTypeSubscriber;
 use Symfony\Component\Form\FormEvent;
 
-class DestinationCollectionTypeSubscriberTest extends \PHPUnit_Framework_TestCase
+class DestinationCollectionTypeSubscriberTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Test for DestinationCollectionTypeSubscriber.preSubmit
      */
     public function testPreSubmitMethod()
     {
-        /** @var FormEvent|\PHPUnit_Framework_MockObject_MockObject $event */
+        /** @var FormEvent|\PHPUnit\Framework\MockObject\MockObject $event */
         $event = $this->getMockBuilder(FormEvent::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -44,7 +44,7 @@ class DestinationCollectionTypeSubscriberTest extends \PHPUnit_Framework_TestCas
      */
     public function testNoChangesInPreSubmitMethod($data)
     {
-        /** @var FormEvent|\PHPUnit_Framework_MockObject_MockObject $event */
+        /** @var FormEvent|\PHPUnit\Framework\MockObject\MockObject $event */
         $event = $this->getMockBuilder(FormEvent::class)
             ->disableOriginalConstructor()
             ->getMock();

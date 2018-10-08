@@ -18,7 +18,7 @@ use Oro\Component\MessageQueue\Transport\Dbal\DbalMessage;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\MessageQueue\Util\JSON;
 
-abstract class AbstractImageResizeMessageProcessorTest extends \PHPUnit_Framework_TestCase
+abstract class AbstractImageResizeMessageProcessorTest extends \PHPUnit\Framework\TestCase
 {
     const PRODUCT_IMAGE_ID = 1;
     const FORCE_OPTION = false;

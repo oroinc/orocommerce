@@ -10,15 +10,15 @@ use Oro\Bundle\TaxBundle\EventListener\Config\AddressEventListener;
 use Oro\Bundle\TaxBundle\Factory\AddressModelFactory;
 use Oro\Bundle\TaxBundle\Model\Address;
 
-class AddressEventListenerTest extends \PHPUnit_Framework_TestCase
+class AddressEventListenerTest extends \PHPUnit\Framework\TestCase
 {
     /** @var AddressEventListener */
     protected $listener;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|AddressModelFactory */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|AddressModelFactory */
     protected $addressModelFactory;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|ConfigManager */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|ConfigManager */
     protected $configManager;
 
     protected function setUp()

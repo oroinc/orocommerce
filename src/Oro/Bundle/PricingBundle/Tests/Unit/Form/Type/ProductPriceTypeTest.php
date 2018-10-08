@@ -283,7 +283,7 @@ class ProductPriceTypeTest extends FormIntegrationTestCase
         $existingProductPrice->setPriceList($existingProductPriceList);
 
         /**
-         * @var $formMock FormInterface|\PHPUnit_Framework_MockObject_MockObject
+         * @var $formMock FormInterface|\PHPUnit\Framework\MockObject\MockObject
          */
         $formMock = $this->createMock(FormInterface::class);
 
@@ -308,7 +308,7 @@ class ProductPriceTypeTest extends FormIntegrationTestCase
     public function testOnPreSetDataNoPrice()
     {
         /**
-         * @var $formMock FormInterface|\PHPUnit_Framework_MockObject_MockObject
+         * @var $formMock FormInterface|\PHPUnit\Framework\MockObject\MockObject
          */
         $formMock = $this->createMock(FormInterface::class);
         $event = new FormEvent($formMock, null);
@@ -334,7 +334,7 @@ class ProductPriceTypeTest extends FormIntegrationTestCase
         $existingProductPrice = new ProductPrice();
 
         /**
-         * @var $formMock FormInterface|\PHPUnit_Framework_MockObject_MockObject
+         * @var $formMock FormInterface|\PHPUnit\Framework\MockObject\MockObject
          */
         $formMock = $this->createMock(FormInterface::class);
         $event = new FormEvent($formMock, $existingProductPrice);

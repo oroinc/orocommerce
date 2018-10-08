@@ -6,7 +6,7 @@ use Oro\Bundle\PaymentBundle\Method\View\CompositePaymentMethodViewProvider;
 use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
 use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewProviderInterface;
 
-class CompositePaymentMethodViewProviderTest extends \PHPUnit_Framework_TestCase
+class CompositePaymentMethodViewProviderTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var CompositePaymentMethodViewProvider
@@ -23,7 +23,7 @@ class CompositePaymentMethodViewProviderTest extends \PHPUnit_Framework_TestCase
         $testView = $this->getTypeMock('test_method_view');
         $testView2 = $this->getTypeMock('test_method_view2');
 
-        /** @var PaymentMethodViewProviderInterface|\PHPUnit_Framework_MockObject_MockObject $viewProvider */
+        /** @var PaymentMethodViewProviderInterface|\PHPUnit\Framework\MockObject\MockObject $viewProvider */
         $viewProvider = $this->createMock(PaymentMethodViewProviderInterface::class);
         $viewProvider->expects($this->any())->method('getPaymentMethodViews')
             ->with(['test_method_view', 'test_method_view2'])
@@ -40,7 +40,7 @@ class CompositePaymentMethodViewProviderTest extends \PHPUnit_Framework_TestCase
     {
         $testView = $this->getTypeMock('test_method_view');
             
-        /** @var PaymentMethodViewProviderInterface|\PHPUnit_Framework_MockObject_MockObject $viewProvider */
+        /** @var PaymentMethodViewProviderInterface|\PHPUnit\Framework\MockObject\MockObject $viewProvider */
         $viewProvider = $this->createMock(PaymentMethodViewProviderInterface::class);
         $viewProvider->expects($this->any())->method('getPaymentMethodView')
             ->with('test_method_view')
@@ -68,7 +68,7 @@ class CompositePaymentMethodViewProviderTest extends \PHPUnit_Framework_TestCase
     /**
      * @param string $name
      *
-     * @return \PHPUnit_Framework_MockObject_MockObject|PaymentMethodViewInterface
+     * @return \PHPUnit\Framework\MockObject\MockObject|PaymentMethodViewInterface
      */
     protected function getTypeMock($name)
     {

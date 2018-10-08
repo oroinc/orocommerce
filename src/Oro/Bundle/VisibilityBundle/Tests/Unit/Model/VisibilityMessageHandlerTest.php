@@ -11,17 +11,17 @@ use Oro\Bundle\VisibilityBundle\Model\VisibilityMessageHandler;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class VisibilityMessageHandlerTest extends \PHPUnit_Framework_TestCase
+class VisibilityMessageHandlerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var VisibilityMessageFactory|\PHPUnit_Framework_MockObject_MockObject
+     * @var VisibilityMessageFactory|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $messageFactory;
 
     /**
-     * @var MessageProducerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $messageProducer;
 

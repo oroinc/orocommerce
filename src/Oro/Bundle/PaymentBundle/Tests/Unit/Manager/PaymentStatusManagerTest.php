@@ -12,17 +12,17 @@ use Oro\Bundle\PaymentBundle\Provider\PaymentStatusProvider;
 use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class PaymentStatusManagerTest extends \PHPUnit_Framework_TestCase
+class PaymentStatusManagerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /** @var PaymentStatusProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var PaymentStatusProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $statusProviderMock;
 
-    /** @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
     protected $doctrineHelperMock;
 
-    /** @var PaymentTransactionProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var PaymentTransactionProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $paymentTransactionProvider;
 
     /** @var PaymentStatusManager */
@@ -105,7 +105,7 @@ class PaymentStatusManagerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param object $entity
-     * @return EntityRepository|\PHPUnit_Framework_MockObject_MockObject
+     * @return EntityRepository|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function commonExpectations($entity)
     {

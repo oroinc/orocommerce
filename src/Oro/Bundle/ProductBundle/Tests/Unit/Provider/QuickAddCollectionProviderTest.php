@@ -7,15 +7,15 @@ use Oro\Bundle\ProductBundle\Provider\QuickAddCollectionProvider;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-class QuickAddCollectionProviderTest extends \PHPUnit_Framework_TestCase
+class QuickAddCollectionProviderTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var QuickAddHandler|\PHPUnit_Framework_MockObject_MockObject
+     * @var QuickAddHandler|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $quickAddHandler;
 
     /**
-     * @var RequestStack|\PHPUnit_Framework_MockObject_MockObject
+     * @var RequestStack|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $requestStack;
 
@@ -25,7 +25,7 @@ class QuickAddCollectionProviderTest extends \PHPUnit_Framework_TestCase
     protected $provider;
 
     /**
-     * @var Request|\PHPUnit_Framework_MockObject_MockObject
+     * @var Request|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $request;
 

@@ -8,14 +8,14 @@ use Oro\Bundle\InventoryBundle\Tests\Unit\Form\Extension\Stub\CategoryStub;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 
-abstract class CategoryInventoryTest extends \PHPUnit_Framework_TestCase
+abstract class CategoryInventoryTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var AbstractTypeExtension
      */
     protected $categoryFormExtension;
 
-    /** @var FormBuilderInterface|\PHPUnit_Framework_MockObject_MockObject $builder * */
+    /** @var FormBuilderInterface|\PHPUnit\Framework\MockObject\MockObject $builder * */
     protected $builder;
 
     /** @var CategoryStub */

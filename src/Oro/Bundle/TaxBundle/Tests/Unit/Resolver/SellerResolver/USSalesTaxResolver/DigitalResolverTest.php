@@ -9,12 +9,12 @@ use Oro\Bundle\TaxBundle\Model\Taxable;
 use Oro\Bundle\TaxBundle\Resolver\SellerResolver\USSalesTaxResolver\DigitalItemResolver;
 use Oro\Bundle\TaxBundle\Resolver\SellerResolver\USSalesTaxResolver\DigitalResolver;
 
-class DigitalResolverTest extends \PHPUnit_Framework_TestCase
+class DigitalResolverTest extends \PHPUnit\Framework\TestCase
 {
     /** @var DigitalResolver */
     protected $resolver;
 
-    /** @var DigitalItemResolver|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var DigitalItemResolver|\PHPUnit\Framework\MockObject\MockObject */
     protected $itemResolver;
 
     /** {@inheritdoc} */

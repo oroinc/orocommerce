@@ -10,15 +10,15 @@ use Oro\Bundle\PricingBundle\NotificationMessage\Messenger;
 use Oro\Bundle\PricingBundle\NotificationMessage\Transport\TransportInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class MessengerTest extends \PHPUnit_Framework_TestCase
+class MessengerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var TransportInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var TransportInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $sender;
 
     /**
-     * @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $eventDispatcher;
 
@@ -36,7 +36,7 @@ class MessengerTest extends \PHPUnit_Framework_TestCase
 
     public function testAddTransport()
     {
-        /** @var TransportInterface|\PHPUnit_Framework_MockObject_MockObject $transport * */
+        /** @var TransportInterface|\PHPUnit\Framework\MockObject\MockObject $transport * */
         $transport = $this->createMock(TransportInterface::class);
         $this->assertAttributeCount(1, 'transports', $this->messenger);
         $this->assertAttributeContains($this->sender, 'transports', $this->messenger);
@@ -117,7 +117,7 @@ class MessengerTest extends \PHPUnit_Framework_TestCase
             ->with($channel, $receiverEntityFQCN, $receiverEntityId, $topic)
             ->willReturn([$message1]);
 
-        /** @var TransportInterface|\PHPUnit_Framework_MockObject_MockObject $transport * */
+        /** @var TransportInterface|\PHPUnit\Framework\MockObject\MockObject $transport * */
         $transport = $this->createMock(TransportInterface::class);
         $transport->expects($this->once())
             ->method('receive')
@@ -168,7 +168,7 @@ class MessengerTest extends \PHPUnit_Framework_TestCase
             ->method('remove')
             ->with($channel, $topic, $receiverEntityFQCN, $receiverEntityId);
 
-        /** @var TransportInterface|\PHPUnit_Framework_MockObject_MockObject $transport * */
+        /** @var TransportInterface|\PHPUnit\Framework\MockObject\MockObject $transport * */
         $transport = $this->createMock(TransportInterface::class);
         $transport->expects($this->once())
             ->method('remove')

@@ -9,7 +9,7 @@ use Oro\Bundle\PromotionBundle\Discount\DiscountInterface;
 use Oro\Bundle\PromotionBundle\Discount\DiscountLineItem;
 use Oro\Bundle\PromotionBundle\Discount\Strategy\ApplyAllStrategy;
 
-class ApplyAllStrategyTest extends \PHPUnit_Framework_TestCase
+class ApplyAllStrategyTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var ApplyAllStrategy
@@ -178,7 +178,7 @@ class ApplyAllStrategyTest extends \PHPUnit_Framework_TestCase
      * @param DiscountContext $discountContext
      * @param SubtotalAwareInterface $subtotalAware
      * @param float $discountAmount
-     * @return DiscountInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return DiscountInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private function createDiscount(
         DiscountContext $discountContext,

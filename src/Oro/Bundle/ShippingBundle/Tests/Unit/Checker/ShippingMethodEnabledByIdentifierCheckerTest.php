@@ -6,15 +6,15 @@ use Oro\Bundle\ShippingBundle\Checker\ShippingMethodEnabledByIdentifierChecker;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
 
-class ShippingMethodEnabledByIdentifierCheckerTest extends \PHPUnit_Framework_TestCase
+class ShippingMethodEnabledByIdentifierCheckerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ShippingMethodInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingMethodInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $method;
 
     /**
-     * @var ShippingMethodProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $shippingMethodProvider;
 

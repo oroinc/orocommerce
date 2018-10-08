@@ -7,6 +7,8 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
 /**
+ * Entity holds information about product price
+ *
  * @ORM\Table(
  *      name="oro_price_product",
  *      uniqueConstraints={
@@ -21,6 +23,10 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
  *      defaultValues={
  *          "entity"={
  *              "icon"="fa-usd"
+ *          },
+ *          "security"={
+ *              "type"="ACL",
+ *              "group_name"=""
  *          },
  *          "sharding"={
  *              "discrimination_field"="priceList"

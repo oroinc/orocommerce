@@ -12,22 +12,22 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-class CategoryContextUrlProviderTest extends \PHPUnit_Framework_TestCase
+class CategoryContextUrlProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var RequestStack|\PHPUnit_Framework_MockObject_MockObject
+     * @var RequestStack|\PHPUnit\Framework\MockObject\MockObject
      */
     private $requestStack;
 
     /**
-     * @var UrlCacheInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var UrlCacheInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $cache;
 
     /**
-     * @var UserLocalizationManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var UserLocalizationManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $userLocalizationManager;
 

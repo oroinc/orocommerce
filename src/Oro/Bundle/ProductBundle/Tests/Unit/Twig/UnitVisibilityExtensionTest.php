@@ -6,11 +6,11 @@ use Oro\Bundle\ProductBundle\Twig\UnitVisibilityExtension;
 use Oro\Bundle\ProductBundle\Visibility\UnitVisibilityInterface;
 use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
 
-class UnitVisibilityExtensionTest extends \PHPUnit_Framework_TestCase
+class UnitVisibilityExtensionTest extends \PHPUnit\Framework\TestCase
 {
     use TwigExtensionTestCaseTrait;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    /** @var \PHPUnit\Framework\MockObject\MockObject */
     protected $unitVisibility;
 
     /** @var UnitVisibilityExtension */

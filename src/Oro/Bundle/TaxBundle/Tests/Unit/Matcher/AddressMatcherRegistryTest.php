@@ -4,7 +4,7 @@ namespace Oro\Bundle\TaxBundle\Tests\Unit\Matcher;
 
 use Oro\Bundle\TaxBundle\Matcher\AddressMatcherRegistry;
 
-class AddressMatcherRegistryTest extends \PHPUnit_Framework_TestCase
+class AddressMatcherRegistryTest extends \PHPUnit\Framework\TestCase
 {
     const REGION = 'region';
     const COUNTRY = 'country';

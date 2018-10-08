@@ -9,10 +9,10 @@ use Oro\Bundle\PricingBundle\Form\Type\PriceRuleEditorType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 
-class PriceRuleEditorTypeTest extends \PHPUnit_Framework_TestCase
+class PriceRuleEditorTypeTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var PriceRuleEditorOptionsConfigurator|\PHPUnit_Framework_MockObject_MockObject
+     * @var PriceRuleEditorOptionsConfigurator|\PHPUnit\Framework\MockObject\MockObject
      */
     private $optionsConfigurator;
 

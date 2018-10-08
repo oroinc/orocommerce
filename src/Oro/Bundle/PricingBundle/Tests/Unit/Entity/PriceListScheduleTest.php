@@ -6,7 +6,7 @@ use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListSchedule;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-class PriceListScheduleTest extends \PHPUnit_Framework_TestCase
+class PriceListScheduleTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 

@@ -20,7 +20,7 @@ class TextContentVariantTypeTest extends FormIntegrationTestCase
     protected function getExtensions()
     {
         /**
-         * @var \Oro\Bundle\ConfigBundle\Config\ConfigManager|\PHPUnit_Framework_MockObject_MockObject $configManager
+         * @var \Oro\Bundle\ConfigBundle\Config\ConfigManager|\PHPUnit\Framework\MockObject\MockObject $configManager
          */
         $configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
             ->disableOriginalConstructor()

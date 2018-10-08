@@ -16,7 +16,7 @@ services:
             - [addSkippedUrlPattern, ['/_wdt']]
             - [addSkippedUrlPattern, ['/_fragment']]
             - [addSkippedUrlPattern, ['/js/']]
-            - [addSkippedUrlPattern, ['/api/']]
+            - [addSkippedUrlPattern, ['%oro_api.rest.prefix%']]
 
     oro_redirect.routing.slug_url_matcher:
         class: Oro\Bundle\RedirectBundle\Routing\SlugUrlMatcher
@@ -111,6 +111,7 @@ services:
             - '@oro_redirect.generator.unique_slug_resolver'
             - '@oro_redirect.generator.redirect'
             - '@oro_redirect.url_cache'
+            - '@oro_frontend_localization.manager.user_localization'
 
     oro_redirect.generator.redirect:
         class: Oro\Bundle\RedirectBundle\Generator\RedirectGenerator

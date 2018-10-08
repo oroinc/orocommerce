@@ -14,15 +14,15 @@ use Oro\Bundle\PromotionBundle\Discount\Exception\UnsupportedSourceEntityExcepti
 use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
-class CheckoutDiscountContextConverterTest extends \PHPUnit_Framework_TestCase
+class CheckoutDiscountContextConverterTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var CheckoutToOrderConverter|\PHPUnit_Framework_MockObject_MockObject
+     * @var CheckoutToOrderConverter|\PHPUnit\Framework\MockObject\MockObject
      */
     private $checkoutToOrderConverter;
 
     /**
-     * @var DiscountContextConverterInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var DiscountContextConverterInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $orderDiscountContextConverter;
 
@@ -119,7 +119,7 @@ class CheckoutDiscountContextConverterTest extends \PHPUnit_Framework_TestCase
      */
     private function getCheckout($sourceEntityClass = ShoppingList::class)
     {
-        /** @var CheckoutSource|\PHPUnit_Framework_MockObject_MockObject $source */
+        /** @var CheckoutSource|\PHPUnit\Framework\MockObject\MockObject $source */
         $source = $this->createMock(CheckoutSource::class);
         $source->expects($this->any())
             ->method('getEntity')

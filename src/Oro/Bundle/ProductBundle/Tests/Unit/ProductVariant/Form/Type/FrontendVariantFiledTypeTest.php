@@ -31,13 +31,13 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
     /** @var FrontendVariantFiledType */
     protected $type;
 
-    /** @var ProductVariantAvailabilityProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ProductVariantAvailabilityProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $productVariantAvailabilityProvider;
 
-    /** @var ProductVariantTypeHandlerRegistry|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ProductVariantTypeHandlerRegistry|\PHPUnit\Framework\MockObject\MockObject */
     protected $productVariantTypeHandlerRegistry;
 
-    /** @var VariantFieldProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var VariantFieldProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $variantFieldProvider;
 
     /**
@@ -210,7 +210,7 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
 
     public function testConfigureOptions()
     {
-        /** @var OptionsResolver|\PHPUnit_Framework_MockObject_MockObject $resolver */
+        /** @var OptionsResolver|\PHPUnit\Framework\MockObject\MockObject $resolver */
         $resolver = $this->createMock(OptionsResolver::class);
         $resolver->expects($this->once())
             ->method('setRequired')
@@ -245,7 +245,7 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
      * @param array $availability
      * @param array $expectedOptions
      *
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     private function createTypeHandler($fieldName, array $availability, array $expectedOptions)
     {
@@ -262,7 +262,7 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
 
     public function testFinishView()
     {
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock(FormInterface::class);
 
         $formView = new FormView();

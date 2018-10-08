@@ -14,7 +14,7 @@ use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-class PromotionTest extends \PHPUnit_Framework_TestCase
+class PromotionTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 

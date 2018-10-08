@@ -14,17 +14,17 @@ use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\PropertyAccess\PropertyPath;
 
-class RemoveRestrictedProductsTest extends \PHPUnit_Framework_TestCase
+class RemoveRestrictedProductsTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /** @var AbstractQuery|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var AbstractQuery|\PHPUnit\Framework\MockObject\MockObject */
     private $query;
 
-    /** @var ProductRepository|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ProductRepository|\PHPUnit\Framework\MockObject\MockObject */
     private $repository;
 
-    /** @var ProductManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ProductManager|\PHPUnit\Framework\MockObject\MockObject */
     private $productManager;
 
     /** @var RemoveRestrictedProducts */

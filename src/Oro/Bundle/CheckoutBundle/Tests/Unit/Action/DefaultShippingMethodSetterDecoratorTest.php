@@ -8,12 +8,12 @@ use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class DefaultShippingMethodSetterDecoratorTest extends \PHPUnit_Framework_TestCase
+class DefaultShippingMethodSetterDecoratorTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var DefaultShippingMethodSetter|\PHPUnit_Framework_MockObject_MockObject
+     * @var DefaultShippingMethodSetter|\PHPUnit\Framework\MockObject\MockObject
      */
     private $service;
 
@@ -50,7 +50,7 @@ class DefaultShippingMethodSetterDecoratorTest extends \PHPUnit_Framework_TestCa
         $quoteDemand->expects(static::exactly(2))->method('getShippingMethod')->willReturn($shippingMethod);
         $quoteDemand->expects(static::exactly(2))->method('getShippingMethodType')->willReturn($shippingMethodType);
 
-        /** @var Checkout|\PHPUnit_Framework_MockObject_MockObject $checkout */
+        /** @var Checkout|\PHPUnit\Framework\MockObject\MockObject $checkout */
         $checkout = $this->createMock(Checkout::class);
 
         $checkout->expects(static::once())->method('getSourceEntity')->willReturn($quoteDemand);
@@ -70,7 +70,7 @@ class DefaultShippingMethodSetterDecoratorTest extends \PHPUnit_Framework_TestCa
         $quoteDemand->expects($this->never())
             ->method('getShippingMethodType');
 
-        /* @var $checkout Checkout|\PHPUnit_Framework_MockObject_MockObject */
+        /* @var $checkout Checkout|\PHPUnit\Framework\MockObject\MockObject */
         $checkout = $this->createMock(Checkout::class);
 
         $checkout->expects($this->once())
@@ -98,7 +98,7 @@ class DefaultShippingMethodSetterDecoratorTest extends \PHPUnit_Framework_TestCa
             ->method('getShippingMethodType')
             ->willReturn(null);
 
-        /* @var $checkout Checkout|\PHPUnit_Framework_MockObject_MockObject */
+        /* @var $checkout Checkout|\PHPUnit\Framework\MockObject\MockObject */
         $checkout = $this->createMock(Checkout::class);
 
         $checkout->expects($this->once())

@@ -6,24 +6,14 @@ use Oro\Bundle\ApiBundle\Processor\ActionProcessorBagInterface;
 use Oro\Bundle\ApiBundle\Processor\Get\GetContext;
 use Oro\Bundle\ApiBundle\Tests\Unit\Processor\FormProcessorTestCase;
 use Oro\Bundle\PricingBundle\Api\ProductPrice\Processor\LoadNormalizedProductPriceWithNormalizedId;
-use Oro\Bundle\PricingBundle\Api\ProductPrice\ProductPriceIDByContextNormalizerInterface;
 use Oro\Component\ChainProcessor\ActionProcessorInterface;
 
 class LoadNormalizedProductPriceWithNormalizedIdTest extends FormProcessorTestCase
 {
-    /**
-     * @var ActionProcessorBagInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
+    /** @var ActionProcessorBagInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $processorBag;
 
-    /**
-     * @var ProductPriceIDByContextNormalizerInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $normalizer;
-
-    /**
-     * @var LoadNormalizedProductPriceWithNormalizedId
-     */
+    /** @var LoadNormalizedProductPriceWithNormalizedId */
     private $processor;
 
     protected function setUp()
@@ -31,31 +21,26 @@ class LoadNormalizedProductPriceWithNormalizedIdTest extends FormProcessorTestCa
         parent::setUp();
 
         $this->processorBag = $this->createMock(ActionProcessorBagInterface::class);
-        $this->normalizer = $this->createMock(ProductPriceIDByContextNormalizerInterface::class);
 
-        $this->processor = new LoadNormalizedProductPriceWithNormalizedId(
-            $this->processorBag,
-            $this->normalizer
-        );
+        $this->processor = new LoadNormalizedProductPriceWithNormalizedId($this->processorBag);
     }
 
     public function testProcessCompiles()
     {
-        $this->context->setId(1);
-
         $getContext = new GetContext($this->configProvider, $this->metadataProvider);
 
         $processor = $this->createMock(ActionProcessorInterface::class);
-        $processor
-            ->expects(static::once())
+        $processor->expects(self::once())
             ->method('createContext')
             ->willReturn($getContext);
 
-        $this->processorBag
-            ->expects(static::once())
+        $this->processorBag->expects(self::once())
             ->method('getProcessor')
             ->willReturn($processor);
 
+        $this->context->set('price_list_id', 12);
+        $this->context->setId('test');
         $this->processor->process($this->context);
+        self::assertEquals('test-12', $getContext->getId());
     }
 }

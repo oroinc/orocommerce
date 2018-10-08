@@ -3,9 +3,11 @@ oro:
         entity_label: Redirect
         entity_plural_label: Redirects
         from.label: From URL
+        from_prototype.label: From Slug Prototype
         from_hash.label: From URL Hash
         id.label: ID
         to.label: To URL
+        to_prototype.label: To Slug Prototype
         type.label: Redirect Type
         slug.label: Slug
         scopes.label: Scopes

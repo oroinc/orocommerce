@@ -22,27 +22,27 @@ use Oro\Bundle\UPSBundle\Model\PriceRequest;
 use Oro\Bundle\UPSBundle\Provider\UnitsMapper;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class PriceRequestFactoryTest extends \PHPUnit_Framework_TestCase
+class PriceRequestFactoryTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var UPSTransport|\PHPUnit_Framework_MockObject_MockObject
+     * @var UPSTransport|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $transport;
 
     /**
-     * @var ShippingService|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingService|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $shippingService;
 
     /**
-     * @var MeasureUnitConversion|\PHPUnit_Framework_MockObject_MockObject
+     * @var MeasureUnitConversion|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $measureUnitConversion;
 
     /**
-     * @var UnitsMapper|\PHPUnit_Framework_MockObject_MockObject
+     * @var UnitsMapper|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $unitsMapper;
 
@@ -52,7 +52,7 @@ class PriceRequestFactoryTest extends \PHPUnit_Framework_TestCase
     protected $priceRequestFactory;
 
     /**
-     * @var SymmetricCrypterInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var SymmetricCrypterInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $symmetricCrypter;
 

@@ -10,17 +10,17 @@ use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Oro\Bundle\WebCatalogBundle\EventListener\SystemConfigListener;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class SystemConfigListenerTest extends \PHPUnit_Framework_TestCase
+class SystemConfigListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry
+     * @var \PHPUnit\Framework\MockObject\MockObject|ManagerRegistry
      */
     protected $registry;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ConfigManager
+     * @var \PHPUnit\Framework\MockObject\MockObject|ConfigManager
      */
     protected $configManager;
 

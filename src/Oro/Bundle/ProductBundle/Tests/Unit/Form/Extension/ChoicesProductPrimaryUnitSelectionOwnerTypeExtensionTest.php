@@ -6,7 +6,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Form\Extension\ChoicesProductPrimaryUnitSelectionOwnerTypeExtension;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectType;
-use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Oro\Bundle\ProductBundle\Visibility\ProductUnitFieldsSettingsInterface;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
@@ -20,17 +20,17 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class ChoicesProductPrimaryUnitSelectionOwnerTypeExtensionTest extends FormIntegrationTestCase
 {
     /**
-     * @var string|\PHPUnit_Framework_MockObject_MockObject
+     * @var string|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $childName;
 
     /**
-     * @var string|\PHPUnit_Framework_MockObject_MockObject
+     * @var string|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $extendedType;
 
     /**
-     * @var ProductUnitFieldsSettingsInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProductUnitFieldsSettingsInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $productFormUnitFieldsSettings;
 
@@ -57,7 +57,7 @@ class ChoicesProductPrimaryUnitSelectionOwnerTypeExtensionTest extends FormInteg
 
     public function testBuildForm()
     {
-        /** @var FormBuilderInterface|\PHPUnit_Framework_MockObject_MockObject $builder */
+        /** @var FormBuilderInterface|\PHPUnit\Framework\MockObject\MockObject $builder */
         $builder = $this->createMock(FormBuilderInterface::class);
         $builder->expects($this->once())
             ->method('addEventListener');
@@ -86,7 +86,7 @@ class ChoicesProductPrimaryUnitSelectionOwnerTypeExtensionTest extends FormInteg
 
     public function testSetAvailableUnitsThrowsException()
     {
-        /** @var FormEvent|\PHPUnit_Framework_MockObject_MockObject $event * */
+        /** @var FormEvent|\PHPUnit\Framework\MockObject\MockObject $event * */
         $event = $this->getMockBuilder(FormEvent::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -114,7 +114,8 @@ class ChoicesProductPrimaryUnitSelectionOwnerTypeExtensionTest extends FormInteg
      */
     protected function getExtensions()
     {
-        $formatter = $this->createMock(ProductUnitLabelFormatter::class);
+        /** @var UnitLabelFormatterInterface|\PHPUnit_Framework_MockObject_MockObject $formatter */
+        $formatter = $this->createMock(UnitLabelFormatterInterface::class);
         $productUnitSelectType = new ProductUnitSelectType($formatter);
         $type = $this->createMock(FormTypeInterface::class);
         $type->method('getBlockPrefix')->willReturn('entity');

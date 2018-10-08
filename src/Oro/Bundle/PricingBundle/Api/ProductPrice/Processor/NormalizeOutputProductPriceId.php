@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\PricingBundle\Api\ProductPrice\Processor;
 
-use Oro\Bundle\PricingBundle\Api\ProductPrice\ProductPriceIDByContextNormalizerInterface;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
 
@@ -12,44 +11,26 @@ use Oro\Component\ChainProcessor\ProcessorInterface;
 class NormalizeOutputProductPriceId implements ProcessorInterface
 {
     /**
-     * @var ProductPriceIDByContextNormalizerInterface
-     */
-    private $productPriceIDByContextNormalizer;
-
-    /**
-     * @param ProductPriceIDByContextNormalizerInterface $productPriceIDByContextNormalizer
-     */
-    public function __construct(ProductPriceIDByContextNormalizerInterface $productPriceIDByContextNormalizer)
-    {
-        $this->productPriceIDByContextNormalizer = $productPriceIDByContextNormalizer;
-    }
-
-    /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function process(ContextInterface $context)
     {
         $result = $context->getResult();
-
-        if (null === $result) {
-            return;
-        }
-
-        if (false === is_array($result)) {
+        if (!is_array($result)) {
             return;
         }
 
         $newResult = $result;
 
         if (array_key_exists('id', $newResult)) {
-            $newResult['id'] = $this->productPriceIDByContextNormalizer->normalize($newResult['id'], $context);
+            $newResult['id'] = PriceListIdContextUtil::normalizeProductPriceId($context, $newResult['id']);
         } else {
             foreach ($newResult as &$entity) {
-                if (false === array_key_exists('id', $entity)) {
+                if (!array_key_exists('id', $entity)) {
                     continue;
                 }
 
-                $entity['id'] = $this->productPriceIDByContextNormalizer->normalize($entity['id'], $context);
+                $entity['id'] = PriceListIdContextUtil::normalizeProductPriceId($context, $entity['id']);
             }
         }
 

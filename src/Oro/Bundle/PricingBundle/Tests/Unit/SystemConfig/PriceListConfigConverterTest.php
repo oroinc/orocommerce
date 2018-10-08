@@ -5,7 +5,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\SystemConfig;
 use Oro\Bundle\PricingBundle\SystemConfig\PriceListConfig;
 use Oro\Bundle\PricingBundle\SystemConfig\PriceListConfigConverter;
 
-class PriceListConfigConverterTest extends \PHPUnit_Framework_TestCase
+class PriceListConfigConverterTest extends \PHPUnit\Framework\TestCase
 {
     use ConfigsGeneratorTrait;
 
@@ -59,7 +59,7 @@ class PriceListConfigConverterTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|\Symfony\Bridge\Doctrine\RegistryInterface
+     * @return \PHPUnit\Framework\MockObject\MockObject|\Symfony\Bridge\Doctrine\RegistryInterface
      */
     protected function getRegistryMock()
     {
@@ -67,7 +67,7 @@ class PriceListConfigConverterTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|\Symfony\Bridge\Doctrine\RegistryInterface
+     * @return \PHPUnit\Framework\MockObject\MockObject|\Symfony\Bridge\Doctrine\RegistryInterface
      */
     protected function getRegistryMockWithRepository()
     {

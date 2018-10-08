@@ -10,7 +10,7 @@ use Oro\Bundle\ShippingBundle\Context\ShippingLineItem;
 use Oro\Bundle\ShippingBundle\Model\Dimensions;
 use Oro\Bundle\ShippingBundle\Model\Weight;
 
-abstract class AbstractShippingLineItemTest extends \PHPUnit_Framework_TestCase
+abstract class AbstractShippingLineItemTest extends \PHPUnit\Framework\TestCase
 {
     const TEST_UNIT_CODE = 'someCode';
     const TEST_QUANTITY = 15;
@@ -19,17 +19,17 @@ abstract class AbstractShippingLineItemTest extends \PHPUnit_Framework_TestCase
     const TEST_ENTITY_ID = 'someId';
 
     /**
-     * @var Price|\PHPUnit_Framework_MockObject_MockObject
+     * @var Price|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $priceMock;
 
     /**
-     * @var ProductUnit|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProductUnit|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $productUnitMock;
 
     /**
-     * @var ProductHolderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProductHolderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $productHolderMock;
 

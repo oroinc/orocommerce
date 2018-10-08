@@ -19,7 +19,7 @@ class RuleFiltrationServiceTest extends WebTestCase
     /**
      * @param RuleInterface $rule
      *
-     * @return RuleOwnerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return RuleOwnerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private function createRuleOwnerMock(RuleInterface $rule)
     {
@@ -39,7 +39,7 @@ class RuleFiltrationServiceTest extends WebTestCase
      * @param int $sortOrder
      * @param bool $isStopProcessing
      *
-     * @return RuleInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return RuleInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private function createRuleMock($isEnabled, $expression, $sortOrder, $isStopProcessing)
     {

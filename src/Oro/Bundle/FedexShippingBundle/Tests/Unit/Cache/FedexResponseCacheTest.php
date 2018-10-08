@@ -13,7 +13,7 @@ use PHPUnit\Framework\TestCase;
 class FedexResponseCacheTest extends TestCase
 {
     /**
-     * @var CacheProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var CacheProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     private $cache;
 

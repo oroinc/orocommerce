@@ -7,7 +7,7 @@ use Oro\Bundle\ProductBundle\Form\Type\BrandSelectType;
 use Oro\Bundle\ProductBundle\Form\Type\BrandType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class BrandSelectTypeTest extends \PHPUnit_Framework_TestCase
+class BrandSelectTypeTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var BrandSelectType

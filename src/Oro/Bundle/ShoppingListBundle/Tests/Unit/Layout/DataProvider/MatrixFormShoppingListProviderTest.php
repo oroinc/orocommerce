@@ -14,14 +14,14 @@ use Oro\Bundle\ShoppingListBundle\Layout\DataProvider\MatrixGridOrderFormProvide
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Form\FormView;
 
-class MatrixFormShoppingListProviderTest extends \PHPUnit_Framework_TestCase
+class MatrixFormShoppingListProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /** @var MatrixGridOrderFormProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var MatrixGridOrderFormProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $matrixGridOrderFormProvider;
 
-    /** @var ProductFormAvailabilityProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ProductFormAvailabilityProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $productFormAvailabilityProvider;
 
     /** @var MatrixFormShoppingListProvider */
@@ -44,7 +44,7 @@ class MatrixFormShoppingListProviderTest extends \PHPUnit_Framework_TestCase
     /**
      * @param Product[] $products
      * @param LineItem[] $lineItems
-     * @param FormView|\PHPUnit_Framework_MockObject_MockObject $formView
+     * @param FormView|\PHPUnit\Framework\MockObject\MockObject $formView
      * @param bool $formOption
      * @param string $isFormAvailable
      * @param bool $isMobile

@@ -98,6 +98,22 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
+     * @When /^(?:|I )should see following header in shopping list line items table:$/
+     *
+     * @param TableNode $table
+     */
+    public function iShouldSeeFollowingColumns(TableNode $table)
+    {
+        $rows = $table->getRows();
+        self::assertNotEmpty($rows);
+
+        /* @var $element ShoppingListElement */
+        $element = $this->createElement('ShoppingList');
+
+        self::assertEquals(reset($rows), $element->getLineItemsHeader());
+    }
+
+    /**
      * @param string $label
      * @return null|ShoppingList
      */

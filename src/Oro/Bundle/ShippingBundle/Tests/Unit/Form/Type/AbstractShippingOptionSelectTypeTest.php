@@ -3,7 +3,7 @@
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\ProductBundle\Entity\MeasureUnitInterface;
-use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
+use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Oro\Bundle\ShippingBundle\Form\Type\AbstractShippingOptionSelectType;
 use Oro\Bundle\ShippingBundle\Provider\MeasureUnitProvider;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as EntityTypeStub;
@@ -13,10 +13,10 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
 abstract class AbstractShippingOptionSelectTypeTest extends FormIntegrationTestCase
 {
-    /** @var \PHPUnit_Framework_MockObject_MockObject|MeasureUnitProvider */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|MeasureUnitProvider */
     protected $provider;
 
-    /** @var UnitLabelFormatter|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var UnitLabelFormatterInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $formatter;
 
     /** @var AbstractShippingOptionSelectType */
@@ -27,16 +27,12 @@ abstract class AbstractShippingOptionSelectTypeTest extends FormIntegrationTestC
 
     protected function configureProvider()
     {
-        $this->provider = $this->getMockBuilder('Oro\Bundle\ShippingBundle\Provider\MeasureUnitProvider')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->provider = $this->createMock(MeasureUnitProvider::class);
     }
 
     protected function configureFormatter()
     {
-        $this->formatter = $this->getMockBuilder('Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatter')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->formatter = $this->createMock(UnitLabelFormatterInterface::class);
     }
 
     protected function tearDown()
@@ -198,12 +194,12 @@ abstract class AbstractShippingOptionSelectTypeTest extends FormIntegrationTestC
 
     /**
      * @param string $code
-     * @return MeasureUnitInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return MeasureUnitInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function createUnit($code)
     {
-        /** @var MeasureUnitInterface|\PHPUnit_Framework_MockObject_MockObject $unit */
-        $unit = $this->createMock('Oro\Bundle\ProductBundle\Entity\MeasureUnitInterface');
+        /** @var MeasureUnitInterface|\PHPUnit\Framework\MockObject\MockObject $unit */
+        $unit = $this->createMock(MeasureUnitInterface::class);
         $unit->expects($this->any())
             ->method('getCode')
             ->willReturn($code);

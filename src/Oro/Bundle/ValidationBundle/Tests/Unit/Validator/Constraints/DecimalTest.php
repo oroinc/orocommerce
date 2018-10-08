@@ -7,12 +7,12 @@ use Oro\Bundle\ValidationBundle\Validator\Constraints\DecimalValidator;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
-class DecimalTest extends \PHPUnit_Framework_TestCase
+class DecimalTest extends \PHPUnit\Framework\TestCase
 {
     /** @var Decimal */
     protected $constraint;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|ExecutionContextInterface */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|ExecutionContextInterface */
     protected $context;
 
     /** @var DecimalValidator */

@@ -10,10 +10,10 @@ use Oro\Bundle\CatalogBundle\EventListener\ProductStrategyEventListener;
 use Oro\Bundle\CatalogBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Bundle\ProductBundle\ImportExport\Event\ProductStrategyEvent;
 
-class ProductStrategyEventListenerTest extends \PHPUnit_Framework_TestCase
+class ProductStrategyEventListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     private $registry;
 

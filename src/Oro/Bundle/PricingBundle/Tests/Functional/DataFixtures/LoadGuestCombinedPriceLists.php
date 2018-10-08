@@ -17,6 +17,7 @@ class LoadGuestCombinedPriceLists extends AbstractCombinedPriceListsFixture
         [
             'name' => '4t_5t',
             'enabled' => true,
+            'calculated' => true,
             'priceListsToCustomers' => [],
             'priceListsToCustomerGroups' => [
                 [

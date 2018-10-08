@@ -15,7 +15,7 @@ class ProductStatusTypeTest extends FormIntegrationTestCase
     /** @var  ProductStatusType $productStatusType */
     protected $productStatusType;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|ProductStatusProvider $productStatusProvider */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|ProductStatusProvider $productStatusProvider */
     protected $productStatusProvider;
 
     public function setup()

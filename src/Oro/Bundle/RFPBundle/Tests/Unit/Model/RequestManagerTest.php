@@ -13,7 +13,7 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class RequestManagerTest extends \PHPUnit_Framework_TestCase
+class RequestManagerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
@@ -23,22 +23,22 @@ class RequestManagerTest extends \PHPUnit_Framework_TestCase
     protected $requestManager;
 
     /**
-     * @var TokenAccessorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var TokenAccessorInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $tokenAccessor;
 
     /**
-     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $doctrineHelper;
 
     /**
-     * @var GuestCustomerUserManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var GuestCustomerUserManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $guestCustomerUserManager;
 
     /**
-     * @var WebsiteManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var WebsiteManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $websiteManager;
 

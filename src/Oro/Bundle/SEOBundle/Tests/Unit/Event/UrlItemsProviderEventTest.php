@@ -5,7 +5,7 @@ namespace Oro\Bundle\SEOBundle\Tests\Unit\Event;
 use Oro\Bundle\SEOBundle\Event\UrlItemsProviderEvent;
 use Oro\Component\Website\WebsiteInterface;
 
-class UrlItemsProviderEventTest extends \PHPUnit_Framework_TestCase
+class UrlItemsProviderEventTest extends \PHPUnit\Framework\TestCase
 {
     public function testEventWithWebsite()
     {

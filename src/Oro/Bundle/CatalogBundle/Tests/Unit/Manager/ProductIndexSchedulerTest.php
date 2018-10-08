@@ -8,18 +8,18 @@ use Oro\Bundle\CatalogBundle\Manager\ProductIndexScheduler;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Search\Reindex\ProductReindexManager;
 
-class ProductIndexSchedulerTest extends \PHPUnit_Framework_TestCase
+class ProductIndexSchedulerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $doctrineHelper;
 
-    /** @var ProductReindexManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ProductReindexManager|\PHPUnit\Framework\MockObject\MockObject */
     private $reindexManager;
 
     /** @var ProductIndexScheduler */
     private $productIndexScheduler;
 
-    /** @var CategoryRepository|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var CategoryRepository|\PHPUnit\Framework\MockObject\MockObject */
     private $categoryRepository;
 
     protected function setUp()

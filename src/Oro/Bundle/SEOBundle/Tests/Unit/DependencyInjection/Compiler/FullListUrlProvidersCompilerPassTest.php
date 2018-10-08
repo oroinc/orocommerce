@@ -8,7 +8,7 @@ use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Exception\LogicException;
 use Symfony\Component\DependencyInjection\Reference;
 
-class FullListUrlProvidersCompilerPassTest extends \PHPUnit_Framework_TestCase
+class FullListUrlProvidersCompilerPassTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var FullListUrlProvidersCompilerPass
@@ -16,7 +16,7 @@ class FullListUrlProvidersCompilerPassTest extends \PHPUnit_Framework_TestCase
     private $compilerPass;
 
     /**
-     * @var ContainerBuilder|\PHPUnit_Framework_MockObject_MockObject
+     * @var ContainerBuilder|\PHPUnit\Framework\MockObject\MockObject
      */
     private $containerBuilder;
 

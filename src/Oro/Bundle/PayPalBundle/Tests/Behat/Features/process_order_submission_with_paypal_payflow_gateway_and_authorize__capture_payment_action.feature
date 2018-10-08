@@ -2,6 +2,8 @@
 @ticket-BB-8806
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroAuthorizeNetBundle:AuthorizeNetFixture.yml
+@ticket-BB-14390
+
 Feature: Process order submission with PayPal PayFlow Gateway and Authorize & Capture payment action
   ToDo: BAP-16103 Add missing descriptions to the Behat features
   Scenario: Create new PayPal PayFlow Gateway Integration
@@ -34,7 +36,7 @@ Feature: Process order submission with PayPal PayFlow Gateway and Authorize & Ca
     And I fill in "Name" with "PayPalPro"
     And I fill in "Sort Order" with "1"
     And I select "PayPalFlow" from "Method"
-    And I press "Add Method Button"
+    And I click "Add Method Button"
     And I save and close form
     Then I should see "Payment rule has been saved" flash message
 
@@ -42,7 +44,7 @@ Feature: Process order submission with PayPal PayFlow Gateway and Authorize & Ca
     Given There are products in the system available for order
     And I operate as the Buyer
     When I open page with shopping list List 1
-    And I press "Create Order"
+    And I click "Create Order"
     And I select "Fifth avenue, 10115 Berlin, Germany" on the "Billing Information" checkout step and press Continue
     And I select "Fifth avenue, 10115 Berlin, Germany" on the "Shipping Information" checkout step and press Continue
     And I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
@@ -52,7 +54,7 @@ Feature: Process order submission with PayPal PayFlow Gateway and Authorize & Ca
       | Year             | 2027             |
       | CVV              | 123              |
     And I click "Continue"
-    And I press "Submit Order"
+    And I click "Submit Order"
     Then I see the "Thank You" page with "Thank You For Your Purchase!" title
 
     Then I operate as the Admin
@@ -73,7 +75,7 @@ Feature: Process order submission with PayPal PayFlow Gateway and Authorize & Ca
     Given There are products in the system available for order
     And I continue as the Buyer
     When I open page with shopping list List 2
-    And I press "Create Order"
+    And I click "Create Order"
     And I select "Fifth avenue, 10115 Berlin, Germany" on the "Billing Information" checkout step and press Continue
     And I select "Fifth avenue, 10115 Berlin, Germany" on the "Shipping Information" checkout step and press Continue
     And I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
@@ -83,7 +85,7 @@ Feature: Process order submission with PayPal PayFlow Gateway and Authorize & Ca
       | Year             | 2027             |
       | CVV              | 123              |
     And I click "Continue"
-    And I press "Submit Order"
+    And I click "Submit Order"
     Then I should see "We were unable to process your payment. Please verify your payment information and try again." flash message
 
     Then I operate as the Admin

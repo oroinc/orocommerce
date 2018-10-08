@@ -4,7 +4,7 @@ namespace Oro\Bundle\ShippingBundle\Tests\Unit\Method\Validator\Result\Error\Col
 
 use Oro\Bundle\ShippingBundle\Method\Validator\Result\Error\Collection;
 
-class DoctrineShippingMethodValidatorResultErrorCollectionTest extends \PHPUnit_Framework_TestCase
+class DoctrineShippingMethodValidatorResultErrorCollectionTest extends \PHPUnit\Framework\TestCase
 {
     public function testCreateCommonBuilder()
     {

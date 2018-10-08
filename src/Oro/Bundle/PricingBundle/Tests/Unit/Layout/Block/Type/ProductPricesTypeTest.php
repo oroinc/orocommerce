@@ -20,7 +20,7 @@ class ProductPricesTypeTest extends BlockTypeTestCase
     /** @var AttributeRenderRegistry */
     protected $attributeRenderRegistry;
 
-    /** @var AttributeManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var AttributeManager|\PHPUnit\Framework\MockObject\MockObject */
     protected $attributeManager;
 
     /**

@@ -2,38 +2,38 @@
 
 namespace Oro\Bundle\RFPBundle\Mailer;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\EmailBundle\Provider\EmailRenderer;
-use Oro\Bundle\EmailBundle\Tools\EmailHolderHelper;
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Entity\UserInterface;
-use Oro\Bundle\UserBundle\Mailer\BaseProcessor;
+use Oro\Bundle\UserBundle\Mailer\UserTemplateEmailSender;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
-class Processor extends BaseProcessor implements LoggerAwareInterface
+/**
+ * Sends quote related email notifications.
+ */
+class Processor implements LoggerAwareInterface
 {
     const CREATE_REQUEST_TEMPLATE_NAME = 'request_create_notification';
     const CONFIRM_REQUEST_TEMPLATE_NAME = 'request_create_confirmation';
 
-    /** @var LoggerInterface */
-    protected $logger;
+    /**
+     * @var UserTemplateEmailSender
+     */
+    private $userTemplateEmailSender;
+
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
 
     /**
      * {@inheritdoc}
      */
-    public function __construct(
-        ManagerRegistry $managerRegistry,
-        ConfigManager $configManager,
-        EmailRenderer $renderer,
-        EmailHolderHelper $emailHolderHelper,
-        \Swift_Mailer $mailer
-    ) {
-        parent::__construct($managerRegistry, $configManager, $renderer, $emailHolderHelper, $mailer);
-
+    public function __construct(UserTemplateEmailSender $userTemplateEmailSender)
+    {
+        $this->userTemplateEmailSender = $userTemplateEmailSender;
         $this->logger = new NullLogger();
     }
 
@@ -51,7 +51,7 @@ class Processor extends BaseProcessor implements LoggerAwareInterface
      *
      * @return int
      */
-    public function sendRFPNotification(Request $request, User $user)
+    public function sendRFPNotification(Request $request, User $user): int
     {
         return $this->send($request, $user, self::CREATE_REQUEST_TEMPLATE_NAME);
     }
@@ -62,7 +62,7 @@ class Processor extends BaseProcessor implements LoggerAwareInterface
      *
      * @return int
      */
-    public function sendConfirmation(Request $request, UserInterface $user)
+    public function sendConfirmation(Request $request, UserInterface $user): int
     {
         return $this->send($request, $user, self::CONFIRM_REQUEST_TEMPLATE_NAME);
     }
@@ -74,10 +74,10 @@ class Processor extends BaseProcessor implements LoggerAwareInterface
      *
      * @return int
      */
-    private function send(Request $request, UserInterface $user, $template)
+    private function send(Request $request, UserInterface $user, $template): int
     {
         try {
-            return $this->getEmailTemplateAndSendEmail($user, $template, ['entity' => $request]);
+            return $this->userTemplateEmailSender->sendUserTemplateEmail($user, $template, ['entity' => $request]);
         } catch (\Swift_SwiftException $exception) {
             $this->logger->error('Unable to send email', [
                 'template' => $template,

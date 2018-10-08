@@ -13,7 +13,7 @@ Feature: Saved addresses with different types on "Default" Checkout workflow
     And AmandaRCole@example.org customer user has Buyer role
     And I signed in as AmandaRCole@example.org on the store frontend
     When I open page with shopping list List 1
-    And I press "Create Order"
+    And I click "Create Order"
     And I fill "Billing Information Form" with:
       | Billing Address | ORO, Fourth avenue, 10111 Berlin, Germany |
     Then I should not see "Ship to this address" element inside "Billing Information Form" element

@@ -35,7 +35,7 @@ Feature: Inline Editing in Products Grids
     And I login as administrator
     And I go to Products / Products
     When I edit "Product1" Name as "Product2" without saving
-    And I press "Save changes"
+    And I click "Save changes"
     Then I should see "Changing Page URLs" in the "UiWindow Title" element
     Then I click "Apply" in modal window
     Then I should see "Record has been successfully updated" flash message
@@ -55,12 +55,12 @@ Feature: Inline Editing in Products Grids
 
   Scenario: Canceling inline editing on Changing Page URLs warning pop-up
     When I edit "Product2" Name as "Product1" without saving
-    And I press "Save changes"
+    And I click "Save changes"
     Then I should see "Changing Page URLs" in the "UiWindow Title" element
     Then I click "Cancel" in modal window
     Then I should see following records in grid:
       | Product2 |
-    And I press "Cancel"
+    And I click "Cancel"
     And I reload the page
 
   Scenario Outline: Canceling inline editing of Product fields in grid
@@ -104,7 +104,7 @@ Feature: Inline Editing in Products Grids
 
   Scenario: Inline editing Name field using double click
     When I edit "Product1" Name as "Product2" by double click
-    And I press "Save changes"
+    And I click "Save changes"
     Then I should see "Changing Page URLs" in the "UiWindow Title" element
     Then I click "Apply" in modal window
     Then I should see "Record has been successfully updated" flash message
@@ -113,7 +113,7 @@ Feature: Inline Editing in Products Grids
 
   Scenario Outline: Inline editing of Product fields using double click
     When I edit "Product2" <field> as "<value>" by double click
-    And I press "Save changes"
+    And I click "Save changes"
     Then I should see "Record has been successfully updated" flash message
     Then I should see following records in grid:
       | <value> |
@@ -126,9 +126,9 @@ Feature: Inline Editing in Products Grids
 
   Scenario: Attempting to save empty value
     And I edit "Product2" Name as "" without saving
-    And I press "Save changes"
+    And I click "Save changes"
     Then I should see "This value should not be blank."
-    Then I press "Cancel"
+    Then I click "Cancel"
 
   Scenario: Check that slug redirect is created with dialog
     Given I proceed as the User
@@ -140,7 +140,7 @@ Feature: Inline Editing in Products Grids
     Then I proceed as the Admin
     And I go to Products / Products
     When I edit "Product2" Name as "Product3" without saving
-    And I press "Save changes"
+    And I click "Save changes"
     Then I should see "Changing Page URLs" in the "UiWindow Title" element
     Then I click "Apply" in modal window
     Then I should see "Record has been successfully updated" flash message
@@ -157,7 +157,7 @@ Feature: Inline Editing in Products Grids
     Given I proceed as the Admin
     And I go to Products / Products
     When I edit "Product3" Name as "Product4" without saving
-    And I press "Save changes"
+    And I click "Save changes"
     Then I should see "Changing Page URLs" in the "UiWindow Title" element
     Then I uncheck "Create 301 Redirect from old to new URLs"
     Then I click "Apply" in modal window
@@ -184,7 +184,7 @@ Feature: Inline Editing in Products Grids
 
     And I go to Products / Products
     When I edit "Product4" Name as "Product5" without saving
-    And I press "Save changes"
+    And I click "Save changes"
     Then I should not see "Changing Page URLs"
     Then I should see "Record has been successfully updated" flash message
     Then I should see following records in grid:
@@ -206,7 +206,7 @@ Feature: Inline Editing in Products Grids
 
     And I go to Products / Products
     When I edit "Product5" Name as "Product6" without saving
-    And I press "Save changes"
+    And I click "Save changes"
     Then I should not see "Changing Page URLs"
     Then I should see "Record has been successfully updated" flash message
     Then I should see following records in grid:
@@ -228,14 +228,14 @@ Feature: Inline Editing in Products Grids
   Scenario: Check that two products with the same name create different redirect slugs
     Given I go to Products / Products
     When I edit "Control Product" Name as "Product10" without saving
-    And I press "Save changes"
+    And I click "Save changes"
     Then I should see "Changing Page URLs" in the "UiWindow Title" element
     Then I click "Apply" in modal window
     Then I should see "Record has been successfully updated" flash message
     Then I should see following records in grid:
       | Product10 |
     When I edit "Product6" Name as "Product10" without saving
-    And I press "Save changes"
+    And I click "Save changes"
     Then I should see "Changing Page URLs" in the "UiWindow Title" element
     Then I click "Apply" in modal window
     Then I should see "Record has been successfully updated" flash message

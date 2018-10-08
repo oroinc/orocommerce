@@ -8,17 +8,17 @@ use Oro\Bundle\ShippingBundle\Provider\ShippingMethodChoicesProviderInterface;
 use Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\ShippingMethodStub;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class EnabledShippingMethodChoicesProviderDecoratorTest extends \PHPUnit_Framework_TestCase
+class EnabledShippingMethodChoicesProviderDecoratorTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var ShippingMethodProviderInterface|\PHPUnit_Framework_MockObject_MockObject phpdoc
+     * @var ShippingMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject phpdoc
      */
     protected $shippingMethodProvider;
 
     /**
-     * @var ShippingMethodChoicesProviderInterface|\PHPUnit_Framework_MockObject_MockObject phpdoc
+     * @var ShippingMethodChoicesProviderInterface|\PHPUnit\Framework\MockObject\MockObject phpdoc
      */
     protected $choicesProvider;
 

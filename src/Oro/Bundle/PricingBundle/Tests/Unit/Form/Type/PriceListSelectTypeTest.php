@@ -6,7 +6,7 @@ use Oro\Bundle\FormBundle\Form\Type\OroEntitySelectOrCreateInlineType;
 use Oro\Bundle\PricingBundle\Form\Type\PriceListSelectType;
 use Oro\Bundle\PricingBundle\Form\Type\PriceListType;
 
-class PriceListSelectTypeTest extends \PHPUnit_Framework_TestCase
+class PriceListSelectTypeTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var PriceListSelectType

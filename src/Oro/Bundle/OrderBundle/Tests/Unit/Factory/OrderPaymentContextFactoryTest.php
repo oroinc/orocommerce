@@ -20,17 +20,17 @@ class OrderPaymentContextFactoryTest extends AbstractOrderContextFactoryTest
     private $factory;
 
     /**
-     * @var OrderPaymentLineItemConverterInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var OrderPaymentLineItemConverterInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $paymentLineItemConverterMock;
 
     /**
-     * @var PaymentContextBuilderFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var PaymentContextBuilderFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $paymentContextBuilderFactoryMock;
 
     /**
-     * @var PaymentContextBuilderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var PaymentContextBuilderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $contextBuilder;
 

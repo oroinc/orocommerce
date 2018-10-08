@@ -9,51 +9,55 @@ use Oro\Bundle\ProductBundle\Tests\Unit\RelatedItem\AbstractFinderDatabaseStrate
 
 class FinderDatabaseStrategyTest extends AbstractFinderDatabaseStrategyTest
 {
-    public function testFindProductsIfTheyExist()
+    public function testFindIdsIfTheyExist()
     {
         $productA = $this->getProduct(['id' => 1]);
         $productB = $this->getProduct(['id' => 2]);
         $productC = $this->getProduct(['id' => 3]);
-        $expectedResult = [$productB, $productC];
+        $expectedResult = [$productB->getId(), $productC->getId()];
 
         $this->relatedItemsFunctionalityShouldBeEnabled();
-        $this->andProductRepositoryShouldFindRelated($productA, $this->anything(), $this->anything(), $expectedResult);
-        $this->andShouldNotBeBidirectional();
+        $this->andProductRepositoryShouldFindRelatedIds($productA, false, null, $expectedResult);
+        $this->configManagerBidirectionalOptionShouldBeIgnored();
+        $this->configManagerLimitOptionShouldBeIgnored();
 
         $this->assertSame(
             $expectedResult,
-            $this->strategy->find($productA)
+            $this->strategy->findIds($productA)
         );
     }
 
-    public function testFindNoRelatedProductsIfFunctionalityIsDisabled()
+    public function testFindIdsNoRelatedProductsIfFunctionalityIsDisabled()
     {
         $productA = $this->getProduct(['id' => 1]);
 
         $this->doctrineHelperShouldNotBeAskedForRepository();
         $this->relatedItemsFunctionalityShouldBeDisabled();
+        $this->configManagerBidirectionalOptionShouldBeIgnored();
+        $this->configManagerLimitOptionShouldBeIgnored();
 
-        $this->assertCount(0, $this->strategy->find($productA));
+        $this->assertCount(0, $this->strategy->findIds($productA));
     }
 
-    public function testFindProductsWithLimit()
+    public function testFindIdsWithLimit()
     {
         $productA = $this->getProduct(['id' => 1]);
         $productB = $this->getProduct(['id' => 2]);
         $productC = $this->getProduct(['id' => 3]);
-        $expectedResult = [$productB, $productC];
+        $expectedResult = [$productB->getId(), $productC->getId()];
 
         $this->relatedItemsFunctionalityShouldBeEnabled();
-        $this->andProductRepositoryShouldFindRelated($productA, $this->anything(), 2, $expectedResult);
-        $this->andShouldNotBeBidirectional();
+        $this->andProductRepositoryShouldFindRelatedIds($productA, false, 2, $expectedResult);
+        $this->configManagerBidirectionalOptionShouldBeIgnored();
+        $this->configManagerLimitOptionShouldBeIgnored();
 
         $this->assertSame(
             $expectedResult,
-            $this->strategy->find($productA, false, 2)
+            $this->strategy->findIds($productA, false, 2)
         );
     }
 
-    public function testFindProductsBidirectional()
+    public function testFindIdsBidirectional()
     {
         $productA = $this->getProduct(['id' => 1]);
         $productB = $this->getProduct(['id' => 2]);
@@ -61,15 +65,17 @@ class FinderDatabaseStrategyTest extends AbstractFinderDatabaseStrategyTest
         $expectedResult = [$productB, $productC];
 
         $this->relatedItemsFunctionalityShouldBeEnabled();
-        $this->andProductRepositoryShouldFindRelated($productA, true, $this->anything(), $expectedResult);
+        $this->andProductRepositoryShouldFindRelatedIds($productA, true, null, $expectedResult);
+        $this->configManagerBidirectionalOptionShouldBeIgnored();
+        $this->configManagerLimitOptionShouldBeIgnored();
 
         $this->assertSame(
             $expectedResult,
-            $this->strategy->find($productA, true)
+            $this->strategy->findIds($productA, true)
         );
     }
 
-    public function testFindProductsNonBidirectional()
+    public function testFindIdsNonBidirectional()
     {
         $productA = $this->getProduct(['id' => 1]);
         $productB = $this->getProduct(['id' => 2]);
@@ -77,16 +83,17 @@ class FinderDatabaseStrategyTest extends AbstractFinderDatabaseStrategyTest
         $expectedResult = [$productB, $productC];
 
         $this->relatedItemsFunctionalityShouldBeEnabled();
-        $this->andProductRepositoryShouldFindRelated($productA, false, $this->anything(), $expectedResult);
-        $this->andShouldNotBeBidirectional();
+        $this->andProductRepositoryShouldFindRelatedIds($productA, false, null, $expectedResult);
+        $this->configManagerBidirectionalOptionShouldBeIgnored();
+        $this->configManagerLimitOptionShouldBeIgnored();
 
         $this->assertSame(
             $expectedResult,
-            $this->strategy->find($productA)
+            $this->strategy->findIds($productA)
         );
     }
 
-    public function testFindShouldIgnoredConfigManagerIfArgumentsArePassed()
+    public function testFindIdsShouldIgnoredConfigManagerIfArgumentsArePassed()
     {
         $productA = $this->getProduct(['id' => 1]);
         $productB = $this->getProduct(['id' => 2]);
@@ -94,21 +101,23 @@ class FinderDatabaseStrategyTest extends AbstractFinderDatabaseStrategyTest
         $expectedResult = [$productB, $productC];
 
         $this->relatedItemsFunctionalityShouldBeEnabled();
-        $this->andProductRepositoryShouldFindRelated($productA, false, null, $expectedResult);
+        $this->andProductRepositoryShouldFindRelatedIds($productA, false, null, $expectedResult);
+        $this->configManagerBidirectionalOptionShouldBeIgnored();
+        $this->configManagerLimitOptionShouldBeIgnored();
 
         $this->assertSame(
             $expectedResult,
-            $this->strategy->find($productA, false, null)
+            $this->strategy->findIds($productA, false, null)
         );
     }
 
     /**
      * @param Product $product
-     * @param bool|\PHPUnit_Framework_Constraint_IsAnything $bidirectional
-     * @param null|int|\PHPUnit_Framework_Constraint_IsAnything $limit
+     * @param bool|\PHPUnit\Framework\Constraint\IsAnything $bidirectional
+     * @param null|int|\PHPUnit\Framework\Constraint\IsAnything $limit
      * @param array $related
      */
-    protected function andProductRepositoryShouldFindRelated(
+    protected function andProductRepositoryShouldFindRelatedIds(
         Product $product,
         $bidirectional,
         $limit,
@@ -116,7 +125,7 @@ class FinderDatabaseStrategyTest extends AbstractFinderDatabaseStrategyTest
     ) {
         $this->repository
             ->expects($this->once())
-            ->method('findRelated')
+            ->method('findRelatedIds')
             ->with($product->getId(), $bidirectional, $limit)
             ->willReturn($related);
     }

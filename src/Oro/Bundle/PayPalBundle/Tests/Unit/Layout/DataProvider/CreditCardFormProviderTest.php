@@ -9,10 +9,10 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class CreditCardFormProviderTest extends \PHPUnit_Framework_TestCase
+class CreditCardFormProviderTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var FormFactoryInterface| \PHPUnit_Framework_MockObject_MockObject
+     * @var FormFactoryInterface| \PHPUnit\Framework\MockObject\MockObject
      */
     protected $formFactory;
 
@@ -22,7 +22,7 @@ class CreditCardFormProviderTest extends \PHPUnit_Framework_TestCase
     protected $provider;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|UrlGeneratorInterface
+     * @var \PHPUnit\Framework\MockObject\MockObject|UrlGeneratorInterface
      */
     protected $router;
 

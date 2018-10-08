@@ -8,7 +8,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\VisibilityBundle\Provider\VisibilityChoicesProvider;
 use Symfony\Bundle\FrameworkBundle\Tests\Templating\Helper\Fixtures\StubTranslator;
 
-class VisibilityChoicesProviderTest extends \PHPUnit_Framework_TestCase
+class VisibilityChoicesProviderTest extends \PHPUnit\Framework\TestCase
 {
     const VISIBILITY_CLASS = 'Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility';
 
@@ -18,7 +18,7 @@ class VisibilityChoicesProviderTest extends \PHPUnit_Framework_TestCase
     protected $formatter;
 
     /**
-     * @var Registry|\PHPUnit_Framework_MockObject_MockObject
+     * @var Registry|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $registry;
 

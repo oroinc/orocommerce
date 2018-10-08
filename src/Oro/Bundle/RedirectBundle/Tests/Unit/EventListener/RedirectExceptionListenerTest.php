@@ -6,6 +6,7 @@ use Oro\Bundle\RedirectBundle\Entity\Redirect;
 use Oro\Bundle\RedirectBundle\Entity\Repository\RedirectRepository;
 use Oro\Bundle\RedirectBundle\EventListener\RedirectExceptionListener;
 use Oro\Bundle\RedirectBundle\Routing\MatchedUrlDecisionMaker;
+use Oro\Bundle\RedirectBundle\Routing\SluggableUrlGenerator;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -13,20 +14,20 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class RedirectExceptionListenerTest extends \PHPUnit_Framework_TestCase
+class RedirectExceptionListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var RedirectRepository|\PHPUnit_Framework_MockObject_MockObject
+     * @var RedirectRepository|\PHPUnit\Framework\MockObject\MockObject
      */
     private $repository;
 
     /**
-     * @var ScopeManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ScopeManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $scopeManager;
 
     /**
-     * @var MatchedUrlDecisionMaker|\PHPUnit_Framework_MockObject_MockObject
+     * @var MatchedUrlDecisionMaker|\PHPUnit\Framework\MockObject\MockObject
      */
     private $matchedUrlDecisionMaker;
 
@@ -37,15 +38,9 @@ class RedirectExceptionListenerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->repository = $this->getMockBuilder(RedirectRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->scopeManager = $this->getMockBuilder(ScopeManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->matchedUrlDecisionMaker = $this->getMockBuilder(MatchedUrlDecisionMaker::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->repository = $this->createMock(RedirectRepository::class);
+        $this->scopeManager = $this->createMock(ScopeManager::class);
+        $this->matchedUrlDecisionMaker = $this->createMock(MatchedUrlDecisionMaker::class);
 
         $this->listener = new RedirectExceptionListener(
             $this->repository,
@@ -122,6 +117,53 @@ class RedirectExceptionListenerTest extends \PHPUnit_Framework_TestCase
         $this->listener->onKernelException($event);
     }
 
+    public function testOnKernelExceptionRedirectByPrototype()
+    {
+        $url = '/context/' . SluggableUrlGenerator::CONTEXT_DELIMITER . '/test';
+
+        $request = Request::create($url);
+        $event = $this->getEvent($request, false, true, new NotFoundHttpException());
+        $this->matchedUrlDecisionMaker->expects($this->any())
+            ->method('matches')
+            ->with($url)
+            ->willReturn(true);
+
+        $scopeCriteria = $this->createMock(ScopeCriteria::class);
+
+        $this->scopeManager->expects($this->once())
+            ->method('getCriteria')
+            ->with('web_content')
+            ->willReturn($scopeCriteria);
+
+        $contextRedirect = new Redirect();
+        $contextRedirect->setTo('/context-new');
+        $contextRedirect->setType(301);
+
+        $this->repository->expects($this->any())
+            ->method('findByUrl')
+            ->willReturnMap(
+                [
+                    [$url, $scopeCriteria, null],
+                    ['/context', $scopeCriteria, $contextRedirect],
+                ]
+            );
+
+        $prototypeRedirect = new Redirect();
+        $prototypeRedirect->setToPrototype('test-new');
+        $prototypeRedirect->setType(301);
+
+        $this->repository->expects($this->any())
+            ->method('findByPrototype')
+            ->with('test', $scopeCriteria)
+            ->willReturn($prototypeRedirect);
+
+        $event->expects($this->once())
+            ->method('setResponse')
+            ->with(new RedirectResponse('/context-new/' . SluggableUrlGenerator::CONTEXT_DELIMITER . '/test-new', 301));
+
+        $this->listener->onKernelException($event);
+    }
+
     public function testOnKernelException()
     {
         $request = Request::create('/test');
@@ -159,7 +201,7 @@ class RedirectExceptionListenerTest extends \PHPUnit_Framework_TestCase
      * @param bool $hasResponse
      * @param bool $isMaster
      * @param \Exception $exception
-     * @return GetResponseForExceptionEvent|\PHPUnit_Framework_MockObject_MockObject
+     * @return GetResponseForExceptionEvent|\PHPUnit\Framework\MockObject\MockObject
      */
     private function getEvent(Request $request, $hasResponse, $isMaster, \Exception  $exception)
     {
