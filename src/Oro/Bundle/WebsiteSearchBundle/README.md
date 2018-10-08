@@ -13,4 +13,5 @@ It also enables developers to configure this search index in the YAML configurat
 * [Indexation process](./Resources/doc/indexation.md)
 * [Reindexation during platform update](Resources/doc/platform_update.md)
 * [ORM search engine](./Resources/doc/orm_engine.md)
+* [Search Relevance Weight](./Resources/doc/relevance_weight.md)
 * [Testing](./Resources/doc/testing.md)
