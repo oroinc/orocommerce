@@ -43,7 +43,7 @@ abstract class AbstractImportExportTest extends WebTestCase
         /** @var Form $form */
         $form = $crawler->selectButton('Submit')->form();
 
-        /** TODO Change after BAP-1813 */
+        /** Change after BAP-1813 */
         $form->getFormNode()->setAttribute(
             'action',
             $form->getFormNode()->getAttribute('action') . '&_widgetContainer=dialog'
