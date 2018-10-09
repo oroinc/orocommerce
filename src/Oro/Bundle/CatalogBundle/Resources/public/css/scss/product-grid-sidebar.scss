@@ -6,11 +6,6 @@
             flex-shrink: $product-container-header-flex-shrink;
         }
 
-        &--sidebar {
-            display: $product-container-sidebar-display;
-            flex-direction: $product-container-sidebar-flex-direction;
-        }
-
         &--sidebar-content {
             overflow: $product-container-sidebar-content-overflow;
             flex-grow: $product-container-sidebar-content-flex-grow;
@@ -18,11 +13,6 @@
             .control-group-checkbox {
                 label:not(.empty-label) {
                     float: $product-container-control-group-checkbox-label-float;
-                }
-
-                input,
-                .checkbox-view {
-                    margin: $product-container-control-group-checkbox-input-offset;
                 }
             }
         }

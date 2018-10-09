@@ -5,7 +5,7 @@
 
     .input-append,
     .input-prepend {
-        width: calc(100% - #{$select2IconBtnWidth} + #{$borderWidth});
+        display: flex;
 
         .select2-container {
             width: 100%;

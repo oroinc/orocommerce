@@ -103,6 +103,7 @@ oro_behat_extension:
         - Oro\Bundle\FrontendBundle\Tests\Behat\Context\FrontendMenuContext
         - Oro\Bundle\FormBundle\Tests\Behat\Context\FormContext
         - OroApplicationBundle::CommerceMainContext
+        - OroUIBundle::BreadcrumbContext
         - OroConfigBundle::FeatureContext
         - OroDataGridBundle::GridContext
         - OroCatalogBundle::FeatureContext

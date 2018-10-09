@@ -93,7 +93,7 @@ oro_behat_extension:
     Shopping List Dropdown:
       selector:
         type: 'xpath'
-        locator: '//a[contains(@class, "add-to-shopping-list-button")]/following-sibling::a/span[@class="caret"]/..'
+        locator: '//a[contains(@class, "add-to-shopping-list-button")]/following-sibling::a[contains(@class, "dropdown-toggle")]'
 
     Create New Shopping List:
       selector: 'a.add-to-shopping-list-button[title="Create New Shopping List"]'

@@ -23,7 +23,7 @@ Feature: Change categories visibility for store front
     Then I should see "Category has been saved" flash message
 
   Scenario: Change "Retail Supplies > Fax" category visibility
-    Given I should see "Products/ Master Catalog"
+    Given I should see "Products/ Master Catalog" in breadcrumbs
     And I expand "Retail Supplies" in tree
     And I click "Fax"
     And I follow "Visibility"

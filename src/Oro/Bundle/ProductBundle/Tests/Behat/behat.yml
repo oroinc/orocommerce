@@ -379,7 +379,7 @@ oro_behat_extension:
         locator: '//li[@data-criteria="condition-item" and contains(., "Field Condition")]'
 
     Drop condition here:
-      selector: ".right-area"
+      selector: ".condition-container"
 
     Choose a field..:
       selector: "#select2-drop-mask"
@@ -468,7 +468,7 @@ oro_behat_extension:
             element: Select2Entity
 
     RemoveFilterButton:
-      selector: '.conditions-group .condition a.close'
+      selector: '.conditions-group .condition .btn-close'
 
     Page Templates Form:
       selector: 'form[name="theme"]'

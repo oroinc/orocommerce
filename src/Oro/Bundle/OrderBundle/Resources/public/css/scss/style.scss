@@ -229,8 +229,6 @@ td.order-discount-item-remove {
 
 .discount-popup {
     .discount-amount-value {
-        font-size: 0;
-
         select {
             width: 60px;
         }
@@ -255,6 +253,7 @@ td.order-discount-item-remove {
         .discount-amount-type {
             width: 65px;
             display: inline-block;
+            vertical-align: top;
         }
 
         .input-widget-select {
