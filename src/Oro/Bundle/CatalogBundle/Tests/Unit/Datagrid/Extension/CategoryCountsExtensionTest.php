@@ -112,7 +112,6 @@ class CategoryCountsExtensionTest extends \PHPUnit\Framework\TestCase
                         AbstractFilterExtension::MINIFIED_FILTER_PARAM => [
                             'filter1' => [],
                             SubcategoryFilter::FILTER_TYPE_NAME => ['value' => [4, 5, 6]],
-                            '_' => '%%',
                         ],
                     ],
                 ]
