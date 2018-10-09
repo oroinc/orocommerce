@@ -119,4 +119,43 @@ class TaxableTest extends \PHPUnit_Framework_TestCase
         $this->assertNull($taxable->getDestination());
         $this->assertSame($origin, $taxable->getOrigin());
     }
+
+    public function testClone()
+    {
+        $taxable = $this->createTaxable();
+        $item = new Taxable();
+        $item2 = new Taxable();
+        $taxable->addItem($item);
+        $taxable->addItem($item2);
+        $taxable->setPrice(BigDecimal::of('10'));
+        $taxable->setQuantity(BigDecimal::of('10'));
+        $taxable->setOrigin(new Address());
+        $taxable->setDestination(new Address());
+        $taxable->setTaxationAddress(new Address());
+        $taxable->setResult(new Result());
+        $taxable->setItems(new \SplObjectStorage());
+
+        $clonedTaxable = clone $taxable;
+
+        $this->assertEquals($taxable->getPrice(), $clonedTaxable->getPrice());
+        $this->assertNotSame($taxable->getPrice(), $clonedTaxable->getPrice());
+
+        $this->assertEquals($taxable->getQuantity(), $clonedTaxable->getQuantity());
+        $this->assertNotSame($taxable->getQuantity(), $clonedTaxable->getQuantity());
+
+        $this->assertEquals($taxable->getOrigin(), $clonedTaxable->getOrigin());
+        $this->assertNotSame($taxable->getOrigin(), $clonedTaxable->getOrigin());
+
+        $this->assertEquals($taxable->getDestination(), $clonedTaxable->getDestination());
+        $this->assertNotSame($taxable->getDestination(), $clonedTaxable->getDestination());
+
+        $this->assertEquals($taxable->getTaxationAddress(), $clonedTaxable->getTaxationAddress());
+        $this->assertNotSame($taxable->getTaxationAddress(), $clonedTaxable->getTaxationAddress());
+
+        $this->assertEquals($taxable->getItems(), $clonedTaxable->getItems());
+        $this->assertNotSame($taxable->getItems(), $clonedTaxable->getItems());
+
+        $this->assertEquals($taxable->getResult(), $clonedTaxable->getResult());
+        $this->assertNotSame($taxable->getResult(), $clonedTaxable->getResult());
+    }
 }

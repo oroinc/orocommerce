@@ -2,6 +2,14 @@ workflows:
     b2b_flow_checkout_single_page:
         transition_definitions:
             save_state_definition:
+                preactions:
+                    - '@tree':
+                        conditions:
+                            '@feature_enabled':
+                                feature: single_page_checkout_performance
+                        actions:
+                          - '@assign_value': [$disallow_visitor_email, true]
+
                 actions:
                     - '@assign_value': [$.result.responseData.stateSaved, true]
 
@@ -38,6 +46,14 @@ workflows:
 
             create_order_transition_definition:
                 preactions:
+                    - '@tree':
+                        conditions:
+                            '@feature_enabled':
+                                feature: single_page_checkout_performance
+                        actions:
+                           - '@assign_value': [$disallow_visitor_email, true]
+                           - '@assign_value': [$billing_address_has_shipping, $ship_to_billing_address]
+
                     - '@generate_checkout_state_snapshot':
                         entity: $checkout
                         attribute: $.result.currentCheckoutState
@@ -153,15 +169,8 @@ workflows:
 
                 conditions:
                     '@and':
-                        - '@not_empty': $checkout.billingAddress
-
-                        - '@or':
-                            - '@and':
-                                - '@equal': [$billing_address_has_shipping, true]
-                                - '@equal': [$checkout.shipToBillingAddress, true]
-                            - '@and':
-                                - '@equal': [$checkout.shipToBillingAddress, false]
-                                - '@not_empty': $checkout.shippingAddress
+                        - '@validate_checkout_addresses':
+                            parameters: $checkout
                         - '@not_empty':
                             message: Payment method was not selected
                             parameters: $checkout.paymentMethod

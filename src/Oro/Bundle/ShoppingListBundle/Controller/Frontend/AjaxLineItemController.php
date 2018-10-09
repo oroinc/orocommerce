@@ -19,6 +19,9 @@ use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use Oro\Bundle\ProductBundle\Form\Type\FrontendLineItemType;
 use Oro\Bundle\ShoppingListBundle\Form\Type\ShoppingListType;
 
+/**
+ * Controller that manages products and line items for a shopping list via AJAX requests.
+ */
 class AjaxLineItemController extends AbstractLineItemController
 {
     /**
@@ -98,7 +101,14 @@ class AjaxLineItemController extends AbstractLineItemController
     {
         $shoppingListManager = $this->get('oro_shopping_list.shopping_list.manager');
 
+        /** @var ShoppingList $shoppingList */
         $shoppingList = $shoppingListManager->getForCurrentUser($request->get('shoppingListId'));
+
+        $lineItemId = $request->get('lineItemId');
+        $lineItem = null;
+        if ($lineItemId) {
+            $lineItem = $shoppingListManager->getLineItem((int)$lineItemId, $shoppingList);
+        }
 
         $result = [
             'successful' => false,
@@ -107,8 +117,12 @@ class AjaxLineItemController extends AbstractLineItemController
         ];
 
         if ($shoppingList) {
-            $count = $shoppingListManager->removeProduct($shoppingList, $product);
-
+            if ($lineItem && !$lineItem->getParentProduct()) {
+                $shoppingListManager->removeLineItem($lineItem);
+                $count = 1;
+            } else {
+                $count = $shoppingListManager->removeProduct($shoppingList, $product);
+            }
             if ($count) {
                 $result = $this->getSuccessResponse(
                     $shoppingList,

@@ -352,11 +352,19 @@ services:
         calls:
             - [ setNamespace, [ 'oro_promotion_executor' ] ]
 
+    oro_promotion.matching_products.cache:
+        public: false
+        parent: doctrine_cache.abstract.array
+        calls:
+            - [setNamespace, ['oro_promotion_matching_products']]
+
     oro_promotion.provider.matching_products_provider:
         class: Oro\Bundle\PromotionBundle\Provider\MatchingProductsProvider
         public: false
         arguments:
             - '@oro_segment.segment_manager'
+        calls:
+            - [setMatchingProductsCache, ['@oro_promotion.matching_products.cache']]
 
     oro_promotion.provider.applied_discounts_provider:
         class: Oro\Bundle\PromotionBundle\Provider\AppliedDiscountsProvider
