@@ -59,6 +59,7 @@ workflows:
                             state_token: $state_token
                         results:
                             result.savedStateToken: $.state_token
+                            data.internal_state_token: $.state_token
 
                     - '@assign_value':
                         conditions:

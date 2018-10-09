@@ -183,7 +183,7 @@ define(function(require) {
         },
 
         getSerializedData: function() {
-            return this.$el.find(this.options.transitionFormFieldSelector).serialize();
+            return this.$el.closest('form').find(this.options.transitionFormFieldSelector).serialize();
         },
 
         _disableShippingAddress: function() {

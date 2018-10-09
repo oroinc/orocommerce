@@ -58,6 +58,9 @@ define(function(require) {
          */
         serializeForm: function() {
             var formName = this.$form.attr('name');
+            this.$form.find(this.options.selectors.stateToken)
+                .prop('disabled', false)
+                .removeAttr('disabled');
             return this.$form.find('[name^=' + formName + ']').serialize();
         },
 
