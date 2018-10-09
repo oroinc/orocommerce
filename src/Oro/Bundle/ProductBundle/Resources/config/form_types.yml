@@ -208,7 +208,7 @@ services:
 
     oro_product.form.type.extension.enum_value_for_product:
         class: 'Oro\Bundle\ProductBundle\Form\Extension\EnumValueForProductExtension'
-        deprecated: 'Use oro_product.form.type.extension.enum_value_collection instead'
+        deprecated: 'The "%service_id%" is deprecated. Use oro_product.form.type.extension.enum_value_collection instead'
         arguments:
         - '@oro_entity.doctrine_helper'
         - '@oro_entity_config.config_manager'
