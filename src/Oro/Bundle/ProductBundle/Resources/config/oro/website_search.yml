@@ -37,11 +37,9 @@ Oro\Bundle\ProductBundle\Entity\Product:
         -
             name: product_units
             type: text
-
         -
             name: primary_unit
             type: text
-
         -
             name: attribute_family_id
             type: integer

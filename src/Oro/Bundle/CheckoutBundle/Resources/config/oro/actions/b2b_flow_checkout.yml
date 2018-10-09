@@ -495,7 +495,7 @@ action_groups:
                     '@and':
                         - '@not_empty': [$.late_registration_data]
                         - '@equal': [$.late_registration_data.is_late_registration_enabled, true]
-                        - '@equal': [$.checkout.registerdCustomerUser, null]
+                        - '@equal': [$.checkout.registeredCustomerUser, null]
                 actions:
                     - '@call_service_method':
                         attribute: $.checkout.registeredCustomerUser

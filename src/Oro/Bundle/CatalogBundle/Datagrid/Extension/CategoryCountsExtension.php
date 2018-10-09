@@ -18,6 +18,9 @@ use Oro\Bundle\FilterBundle\Grid\Extension\AbstractFilterExtension;
 use Oro\Bundle\SearchBundle\Datagrid\Datasource\SearchDatasource;
 use Oro\Component\DependencyInjection\ServiceLink;
 
+/**
+ * Adds category counts to filters metadata.
+ */
 class CategoryCountsExtension extends AbstractExtension
 {
     const SKIP_PARAM = 'skipCategoryCountsExtension';
@@ -155,16 +158,22 @@ class CategoryCountsExtension extends AbstractExtension
 
         $categoryFilterName = SubcategoryFilter::FILTER_TYPE_NAME;
 
-        // remove filter by category to make sure that filter counts will not be affected by filter itself
-        $filters = $datagridParameters->get(AbstractFilterExtension::FILTER_ROOT_PARAM);
-        if ($filters) {
-            unset($filters[$categoryFilterName]);
-            $datagridParameters->set(AbstractFilterExtension::FILTER_ROOT_PARAM, $filters);
-        }
-        $minifiedFilters = $datagridParameters->get(ParameterBag::MINIFIED_PARAMETERS);
-        if ($minifiedFilters) {
-            unset($minifiedFilters[AbstractFilterExtension::MINIFIED_FILTER_PARAM][$categoryFilterName]);
-            $datagridParameters->set(ParameterBag::MINIFIED_PARAMETERS, $minifiedFilters);
+        $minifiedParams = $datagridParameters->get(ParameterBag::MINIFIED_PARAMETERS);
+        if (isset($minifiedParams[AbstractFilterExtension::MINIFIED_FILTER_PARAM])) {
+            unset($minifiedParams[AbstractFilterExtension::MINIFIED_FILTER_PARAM][$categoryFilterName]);
+
+            $datagridParameters->set(ParameterBag::MINIFIED_PARAMETERS, $minifiedParams);
+            $datagridParameters->set(
+                AbstractFilterExtension::FILTER_ROOT_PARAM,
+                $minifiedParams[AbstractFilterExtension::MINIFIED_FILTER_PARAM]
+            );
+        } else {
+            // remove filter by category to make sure that filter counts will not be affected by filter itself
+            $filters = $datagridParameters->get(AbstractFilterExtension::FILTER_ROOT_PARAM);
+            if ($filters) {
+                unset($filters[$categoryFilterName]);
+                $datagridParameters->set(AbstractFilterExtension::FILTER_ROOT_PARAM, $filters);
+            }
         }
 
         return $datagridParameters;
