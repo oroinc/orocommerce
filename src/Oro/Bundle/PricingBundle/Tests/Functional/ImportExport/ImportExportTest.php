@@ -281,7 +281,7 @@ class ImportExportTest extends WebTestCase
             '&importJob=price_list_product_prices_entity_import_from_csv' .
             '&exportJob=price_list_product_prices_export_to_csv';
 
-        /** TODO: BB-3827 Change after BAP-1813 */
+        /** Change after BAP-1813 */
         $form->getFormNode()->setAttribute(
             'action',
             $form->getFormNode()->getAttribute('action'). $optionsPriceList . '&_widgetContainer=dialog'
@@ -355,13 +355,11 @@ class ImportExportTest extends WebTestCase
             );
 
         $result = json_decode($result->getContent(), true);
-        $chains = explode('/', $result['url']);
 
         return $this
             ->getContainer()
-            ->get('oro_importexport.file.file_system_operator')
-            ->getTemporaryFile(end($chains))
-            ->getRealPath();
+            ->get('oro_importexport.file.file_manager')
+            ->writeToTmpLocalStorage($result['file']);
     }
 
     /**
