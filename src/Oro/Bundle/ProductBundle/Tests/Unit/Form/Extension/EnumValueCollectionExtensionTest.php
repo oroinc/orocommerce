@@ -22,20 +22,20 @@ class EnumValueCollectionExtensionTest extends \PHPUnit_Framework_TestCase
 
     const ENUM_FIELD_NAME = 'enumField';
 
-    /** @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject */
-    private $doctrineHelper;
-
     /** @var EnumValueCollectionExtension */
     private $extension;
+
+    /** @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject */
+    private $doctrineHelper;
 
     /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
     private $form;
 
-    /** @var FormConfigInterface|\PHPUnit_Framework_MockObject_MockObject */
-    private $configInterface;
-
     /** @var ProductRepository|\PHPUnit_Framework_MockObject_MockObject */
     private $productRepository;
+
+    /** @var FormConfigInterface|\PHPUnit_Framework_MockObject_MockObject */
+    private $configInterface;
 
     /** @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject */
     private $configManager;
@@ -45,17 +45,17 @@ class EnumValueCollectionExtensionTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
+        $this->form = $this->createMock(FormInterface::class);
         $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
             ->disableOriginalConstructor()
             ->getMock();
-
-        $this->form = $this->createMock(FormInterface::class);
         $this->configInterface = $this->createMock(FormConfigInterface::class);
-        $this->productRepository = $this->getMockBuilder(ProductRepository::class)
+
+        $this->configManager = $this->getMockBuilder(ConfigManager::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->configManager = $this->getMockBuilder(ConfigManager::class)
+        $this->productRepository = $this->getMockBuilder(ProductRepository::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -288,7 +288,6 @@ class EnumValueCollectionExtensionTest extends \PHPUnit_Framework_TestCase
         $attributeConfigProvider = $this->getMockBuilder(ConfigProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
-
         $this->configManager->expects($this->once())
             ->method('getProvider')
             ->with('attribute')
@@ -303,14 +302,6 @@ class EnumValueCollectionExtensionTest extends \PHPUnit_Framework_TestCase
     public function buildViewProvider()
     {
         return [
-            '3 config products sku' => [
-                'products' => [
-                    'sku1' => 'sku1',
-                    'sku2' => 'sku2',
-                    'sku3' => 'sku3',
-                ],
-                'expectedTooltip' => 'sku1, sku2, sku3'
-            ],
             '11 config products sku' => [
                 'products' => [
                     'sku1' => 'sku1',
@@ -326,6 +317,14 @@ class EnumValueCollectionExtensionTest extends \PHPUnit_Framework_TestCase
                     'sku12' => 'sku12',
                 ],
                 'expectedTooltip' => 'sku1, sku2, sku3, sku4, sku5, sku6, sku7, sku8, sku9, sku10 ...',
+            ],
+            '3 config products sku' => [
+                'products' => [
+                    'sku1' => 'sku1',
+                    'sku2' => 'sku2',
+                    'sku3' => 'sku3',
+                ],
+                'expectedTooltip' => 'sku1, sku2, sku3'
             ],
         ];
     }
