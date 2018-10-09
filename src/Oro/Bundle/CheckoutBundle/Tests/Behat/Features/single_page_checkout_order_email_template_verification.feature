@@ -22,7 +22,7 @@ Feature: Single page checkout order email template verification
   Scenario: Changing the email template with WYSIWYG editor
     Given I go to System/ Emails/ Templates
     And I filter Template Name as Contains "order_confirmation_email"
-    And I click edit "order_confirmation_email" in "Email Template Grid"
+    And I click edit "order_confirmation_email" in grid
     And I save form
 
   # After saving the template with the WYSIWYG editor, we must make sure that the TWIG tags are left
