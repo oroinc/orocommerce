@@ -30,13 +30,13 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
 /**
- * @Todo: Must be refactored in scope of - #BB-10192
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
 {
     const CURRENCY_EUR = 'EUR';
+
     use EntityTrait;
 
     /**
@@ -261,6 +261,24 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         $lineItem->setProduct($configurableProduct);
 
         $this->manager->addLineItem($lineItem, $shoppingList);
+    }
+
+    public function testGetLineItemExistingItem()
+    {
+        $shoppingList = new ShoppingList();
+        $lineItem = new LineItem();
+        $this->setValue($lineItem, 'id', 1);
+        $lineItem->setNotes('123');
+        $this->manager->addLineItem($lineItem, $shoppingList);
+        $returnedLineItem = $this->manager->getLineItem(1, $shoppingList);
+        $this->assertEquals($returnedLineItem->getNotes(), $lineItem->getNotes());
+    }
+
+    public function testGetLineItemNotExistingItem()
+    {
+        $shoppingList = new ShoppingList();
+        $returnedLineItem = $this->manager->getLineItem(1, $shoppingList);
+        $this->assertNull($returnedLineItem);
     }
 
     /**
