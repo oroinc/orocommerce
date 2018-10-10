@@ -94,7 +94,7 @@ Feature: Single Page Checkout With Popup for Buyer
       | okButton     | Continue        |
     And "New Address Popup Form" must contains values:
       | Label        | Primary address |
-      | Organization | ORO          |
+      | Organization | ORO             |
       | Street       | Fifth avenue    |
       | City         | Berlin          |
       | Country      | DE              |
@@ -126,7 +126,7 @@ Feature: Single Page Checkout With Popup for Buyer
       | okButton     | Continue         |
     And "New Address Popup Form" must contains values:
       | Label        | Primary address |
-      | Organization | ORO          |
+      | Organization | ORO             |
       | Street       | Fifth avenue    |
       | City         | Berlin          |
       | Country      | DE              |
