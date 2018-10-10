@@ -64,7 +64,7 @@ class OroSaleBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_16';
+        return 'v1_17';
     }
 
     /**
@@ -157,6 +157,7 @@ class OroSaleBundleInstaller implements
     {
         $table = $schema->createTable('oro_sale_quote');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('guest_access_id', 'guid', ['notnull' => false]);
         $table->addColumn('customer_user_id', 'integer', ['notnull' => false]);
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
         $table->addColumn('request_id', 'integer', ['notnull' => false]);

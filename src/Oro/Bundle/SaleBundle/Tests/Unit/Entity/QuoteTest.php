@@ -10,6 +10,7 @@ use Oro\Bundle\SaleBundle\Entity\QuoteAddress;
 use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use Oro\Bundle\SaleBundle\Tests\Unit\Stub\QuoteStub as Quote;
+use Oro\Bundle\SecurityBundle\Tools\UUIDGenerator;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
@@ -25,6 +26,7 @@ class QuoteTest extends AbstractTest
         $properties = [
             ['id', '123'],
             ['qid', 'QID-123456'],
+            ['guestAccessId', UUIDGenerator::v4(), false],
             ['owner', new User()],
             ['customerUser', new CustomerUser()],
             ['shippingAddress', new QuoteAddress()],
@@ -47,6 +49,12 @@ class QuoteTest extends AbstractTest
         ];
 
         static::assertPropertyAccessors(new Quote(), $properties);
+
+        $quote = new Quote();
+        static::assertRegExp(
+            '/^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i',
+            $quote->getGuestAccessId()
+        );
 
         static::assertPropertyCollections(new Quote(), [
             ['quoteProducts', new QuoteProduct()],
