@@ -409,4 +409,14 @@ class Taxable
 
         return $this;
     }
+
+    public function __clone()
+    {
+        $propertiesToExplicitClone = ['price', 'taxationAddress', 'origin', 'amount', 'quantity', 'shippingCost',
+            'result', 'items', 'destination'];
+
+        foreach ($propertiesToExplicitClone as $property) {
+            $this->$property = is_object($this->$property) ? clone $this->$property : null;
+        }
+    }
 }

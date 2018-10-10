@@ -96,4 +96,25 @@ class DiscountLineItemTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(30.5, $lineItem->getDiscountTotal());
     }
+
+    public function testClone()
+    {
+        $product = new Product();
+        $product->setSku('test1');
+
+        $price = new Price();
+
+        $lineItem = new DiscountLineItem();
+        $lineItem->setProductSku('test2');
+        $lineItem->setPrice($price);
+
+        $productUnit = new ProductUnit();
+        $lineItem->setProductUnit($productUnit);
+
+        $clonedLineItem = clone $lineItem;
+        $this->assertEquals($lineItem, $clonedLineItem);
+        $this->assertSame($lineItem->getProduct(), $clonedLineItem->getProduct());
+        $this->assertNotSame($lineItem->getPrice(), $clonedLineItem->getPrice());
+        $this->assertNotSame($lineItem->getProductUnit(), $clonedLineItem->getProductUnit());
+    }
 }

@@ -10,17 +10,20 @@ use Oro\Bundle\LayoutBundle\Layout\DataProvider\AbstractFormProvider;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Exception\WorkflowException;
 
+/**
+ * Provides form and form view for Checkout transition
+ */
 class TransitionFormProvider extends AbstractFormProvider
 {
     /**
-     * @var TransitionProvider
+     * @var TransitionProviderInterface
      */
     private $transitionProvider;
 
     /**
-     * @var TransitionProvider
+     * @var TransitionProviderInterface
      */
-    public function setTransitionProvider(TransitionProvider $transitionProvider)
+    public function setTransitionProvider(TransitionProviderInterface $transitionProvider)
     {
         $this->transitionProvider = $transitionProvider;
     }

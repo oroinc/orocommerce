@@ -2,14 +2,19 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\Provider;
 
+use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\ORM\QueryBuilder;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\PromotionBundle\Discount\DiscountLineItem;
 use Oro\Bundle\PromotionBundle\Provider\MatchingProductsProvider;
 use Oro\Bundle\SegmentBundle\Entity\Manager\SegmentManager;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 class MatchingProductsProviderTest extends \PHPUnit_Framework_TestCase
 {
+    use EntityTrait;
+
     /**
      * @var SegmentManager|\PHPUnit_Framework_MockObject_MockObject
      */
@@ -20,10 +25,18 @@ class MatchingProductsProviderTest extends \PHPUnit_Framework_TestCase
      */
     private $provider;
 
+    /**
+     * @var CacheProvider|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $matchingProductsCache;
+
     protected function setUp()
     {
         $this->segmentManager = $this->createMock(SegmentManager::class);
         $this->provider = new MatchingProductsProvider($this->segmentManager);
+
+        $this->matchingProductsCache = $this->createMock(CacheProvider::class);
+        $this->provider->setMatchingProductsCache($this->matchingProductsCache);
     }
 
     public function testHasMatchingProductsThrowsExceptionWhenNoRootAlias()
@@ -37,15 +50,45 @@ class MatchingProductsProviderTest extends \PHPUnit_Framework_TestCase
         $this->provider->hasMatchingProducts($segment, [new DiscountLineItem()]);
     }
 
+    public function testGetMatchingProductsFromCache()
+    {
+        /** @var Segment $segment */
+        $segment = $this->getEntity(Segment::class, ['id' => 42]);
+        $product = $this->getEntity(Product::class, ['id' => 123]);
+
+        $hash = md5(123);
+
+        $this->matchingProductsCache->expects($this->once())
+            ->method('fetch')
+            ->with('42_' . $hash)
+            ->willReturn([
+                $product
+            ]);
+
+        $this->segmentManager->expects($this->never())
+            ->method('getSegmentQueryBuilder');
+
+        $this->provider->getMatchingProducts($segment, [(new DiscountLineItem())->setProduct($product)]);
+    }
+
     public function testGetMatchingProductsThrowsExceptionWhenNoRootAlias()
     {
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('No root alias for segment\'s query builder');
 
-        $segment = new Segment();
+        /** @var Segment $segment */
+        $segment = $this->getEntity(Segment::class, ['id' => 42]);
         $this->expectsQueryBuilderWithNoRootAlias($segment);
 
-        $this->provider->getMatchingProducts($segment, [new DiscountLineItem()]);
+        $lineItemProduct = $this->getEntity(Product::class, ['id' => 123]);
+        $hash = md5(123);
+
+        $this->matchingProductsCache->expects($this->once())
+            ->method('fetch')
+            ->with('42_' . $hash)
+            ->willReturn(false);
+
+        $this->provider->getMatchingProducts($segment, [(new DiscountLineItem())->setProduct($lineItemProduct)]);
     }
 
     public function testHasMatchingProductsThrowsExceptionWhenNoQueryBuilder()
@@ -64,10 +107,19 @@ class MatchingProductsProviderTest extends \PHPUnit_Framework_TestCase
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Cannot get query builder for segment');
 
-        $segment = new Segment();
+        /** @var Segment $segment */
+        $segment = $this->getEntity(Segment::class, ['id' => 42]);
         $this->expectsNoQueryBuilder($segment);
 
-        $this->provider->getMatchingProducts($segment, [new DiscountLineItem()]);
+        $lineItemProduct = $this->getEntity(Product::class, ['id' => 123]);
+
+        $hash = md5(123);
+        $this->matchingProductsCache->expects($this->once())
+            ->method('fetch')
+            ->with('42_' . $hash)
+            ->willReturn(false);
+
+        $this->provider->getMatchingProducts($segment, [(new DiscountLineItem())->setProduct($lineItemProduct)]);
     }
 
     public function testHasMatchingProductsWhenEmptyLineItems()

@@ -96,6 +96,27 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
+     * @When /^I uncheck "(?P<value>.+)" on the checkout page$/
+     *
+     * @param string $value
+     */
+    public function uncheckValueOnCheckoutPage($value)
+    {
+        $page = $this->getSession()->getPage();
+        $element = $page->findField(self::$valueMapping[$value] ?? $value);
+
+        self::assertTrue($element->isValid(), sprintf('Could not found option "%s" on page', $value));
+
+        if ($element->isChecked()) {
+            $element->getParent()->click();
+        }
+
+        self::assertFalse($element->isChecked(), sprintf('Option "%s" is checked', $value));
+
+        $this->waitForAjax();
+    }
+
+    /**
      * @When /^on the "(?P<step>[\w\s]+)" checkout step I press (?P<button>[\w\s]+)$/
      *
      * @param string $step

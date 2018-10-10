@@ -5,23 +5,28 @@ define(function(require) {
     var $ = require('jquery');
     var _ = require('underscore');
     var mediator = require('oroui/js/mediator');
-    var BaseComponent = require('oroui/js/app/views/base/view');
+    var BaseView = require('oroui/js/app/views/base/view');
     var SinglePageCheckoutSubmitButtonView =
         require('orocheckout/js/app/views/single-page-checkout-submit-button-view');
+    var SinglePageCheckoutAddressView = require('orocheckout/js/app/views/single-page-checkout-address-view');
 
-    SinglePageCheckoutFormView = BaseComponent.extend({
+    SinglePageCheckoutFormView = BaseView.extend({
         /**
          * @property
          */
         options: {
             submitButtonSelector: '[type="submit"]',
+            billingAddressSelector: 'select[data-role="checkout-billing-address"]',
+            shippingAddressSelector: 'select[data-role="checkout-shipping-address"]',
+            shipToSelector: '[data-role="checkout-ship-to"]',
             transitionFormFieldSelector: '[name*="oro_workflow_transition"]',
             originShippingMethodTypeSelector: '[name$="shippingMethodType"]',
             formShippingMethodSelector: '[name$="[shipping_method]"]',
             formShippingMethodTypeSelector: '[name$="[shipping_method_type]"]',
             originPaymentMethodSelector: '[name="paymentMethod"]',
             formPaymentMethodSelector: '[name$="[payment_method]"]',
-            originPaymentFormSelector: '[data-content="payment_method_form"]'
+            originPaymentFormSelector: '[data-content="payment_method_form"]',
+            entityId: null
         },
 
         /**
@@ -36,7 +41,8 @@ define(function(require) {
          * @inheritDoc
          */
         listen: {
-            'before-save-state': 'onBeforeSaveState'
+            'before-save-state': 'onBeforeSaveState',
+            'after-save-state': 'onAfterSaveState'
         },
 
         /**
@@ -48,11 +54,6 @@ define(function(require) {
          * @property {number}
          */
         timeout: 50,
-
-        /**
-         * @property {boolean}
-         */
-        isSilent: false,
 
         /**
          * @inheritDoc
@@ -73,12 +74,22 @@ define(function(require) {
                 })
             );
 
+            this.subview('checkoutBillingAddress', new SinglePageCheckoutAddressView({
+                    el: this.$el.find(this.options.billingAddressSelector),
+                    entityId: this.options.entityId
+                })
+            );
+
+            this.subview('checkoutShippingAddress', new SinglePageCheckoutAddressView({
+                    el: this.$el.find(this.options.shippingAddressSelector),
+                    entityId: this.options.entityId
+                })
+            );
+
+            this._toggleShipTo();
+            this._disableShippingAddress();
             this._changeShippingMethod();
             this._changePaymentMethod();
-
-            this.isSilent = true;
-            this.$el.trigger('change');
-            this.isSilent = false;
 
             SinglePageCheckoutFormView.__super__.initialize.call(this, arguments);
         },
@@ -87,9 +98,17 @@ define(function(require) {
          * @param {jQuery.Event} event
          */
         onChange: function(event) {
-            if (this.isSilent) {
+            if (this.subview('checkoutSubmitButton').isHovered()) {
                 return;
             }
+
+            // Do not execute logic when hidden element (form) is refreshed
+            if (!$(event.target).is(':visible')) {
+                return;
+            }
+
+            this._toggleShipTo();
+            this._disableShippingAddress();
 
             var validate = this.$el.validate();
             if (!validate.checkForm()) {
@@ -110,9 +129,13 @@ define(function(require) {
         },
 
         onBeforeSaveState: function() {
-            this.subview('checkoutSubmitButton')
-                .setElement(this.$el.find(this.options.submitButtonSelector))
-                .onToggleState();
+            this._disableShippingAddress();
+            this.subview('checkoutSubmitButton').onToggleState();
+        },
+
+        onAfterSaveState: function() {
+            // Resets submit button element
+            this.subview('checkoutSubmitButton').setElement(this.$el.find(this.options.submitButtonSelector));
         },
 
         /**
@@ -154,6 +177,30 @@ define(function(require) {
 
         getSerializedData: function() {
             return this.$el.find(this.options.transitionFormFieldSelector).serialize();
+        },
+
+        _disableShippingAddress: function() {
+            var $element = this.$el.find(this.options.shipToSelector);
+            var disable = $element.is(':visible') && $element.is(':checked');
+            var $billingAddress = this.subview('checkoutBillingAddress').$el;
+            var text = $billingAddress.find(':selected').text();
+
+            this.subview('checkoutShippingAddress').onToggleState(disable, $billingAddress.val(), text);
+        },
+
+        _isAvailableShipTo: function() {
+            return this.subview('checkoutBillingAddress').isAvailableShippingType('shipping');
+        },
+
+        _toggleShipTo: function() {
+            var $element = this.$el.find(this.options.shipToSelector);
+            var $container = $element.parent();
+            if (this._isAvailableShipTo()) {
+                $container.removeClass('hidden');
+            } else {
+                $element.prop('checked', false);
+                $container.addClass('hidden');
+            }
         },
 
         _changeShippingMethod: function() {

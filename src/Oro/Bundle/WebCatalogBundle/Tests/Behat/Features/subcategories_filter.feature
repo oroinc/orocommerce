@@ -104,7 +104,7 @@ Feature: Sub-Categories filter
       | Architectural Floodlighting (1) |
       | Headlamps (2)                   |
 
-Scenario: Apply subcategories filter
+  Scenario: Apply subcategories filter
     Given I check "Architectural Floodlighting (1)" in "Sub-Categories" filter in frontend product grid
     Then number of records in "Product Frontend Grid" should be 1
     And I should see "PSKU2" product
@@ -119,7 +119,7 @@ Scenario: Apply subcategories filter
     And I should see "PSKU3" product
     And I should see "PSKU4" product
 
-Scenario: Apply another filter
+  Scenario: Apply another filter
     Given I filter Text as does not contain "Product3"
     Then I should see "Subcategories Filter Select" with options:
       | Value                           |
@@ -138,13 +138,19 @@ Scenario: Apply another filter
     And I should see "PSKU4" product
 
     When I filter Text as contains "Product1"
-    Then I should not see an "Subcategories Filter" element
+    Then I should see "Subcategories Filter Select" with options:
+      | Value                           |
+      | Architectural Floodlighting (0) |
+      | Headlamps (0)                   |
     And number of records in "Product Frontend Grid" should be 0
     And I should see grid with filter hints:
       | Any Text: contains "Product1"                          |
       | Sub-Categories: Architectural Floodlighting, Headlamps |
     When I reload the page
-    Then I should not see an "Subcategories Filter" element
+    Then I should see "Subcategories Filter Select" with options:
+      | Value                           |
+      | Architectural Floodlighting (0) |
+      | Headlamps (0)                   |
     And number of records in "Product Frontend Grid" should be 0
     And I should see grid with filter hints:
       | Any Text: contains "Product1"                          |
@@ -158,7 +164,7 @@ Scenario: Apply another filter
     And I should see "PSKU3" product
     And I should see "PSKU4" product
 
-Scenario: Hide filter
+  Scenario: Hide filter
     Given I hide filter "Sub-Categories" in "ProductFrontendGrid" grid
     When I filter Text as contains "Product1"
     Then I should not see an "Subcategories Filter" element
@@ -177,7 +183,7 @@ Scenario: Hide filter
     And number of records in "Product Frontend Grid" should be 1
     And I should see "PSKU2" product
 
-Scenario: Change type to "Do not include"
+  Scenario: Change type to "Do not include"
     Given I proceed as the Admin
     And I click "Lighting Products"
     And I fill "Content Node Form" with:
@@ -194,7 +200,7 @@ Scenario: Change type to "Do not include"
     And number of records in "Product Frontend Grid" should be 1
     And I should see "PSKU1" product
 
-Scenario: Change type to "Include, show as filter"
+  Scenario: Change type to "Include, show as filter"
     Given I proceed as the Admin
     And I fill "Content Node Form" with:
       | Sub-Categories | Include, show as filter |

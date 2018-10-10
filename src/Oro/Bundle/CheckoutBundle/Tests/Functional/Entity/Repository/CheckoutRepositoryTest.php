@@ -41,6 +41,16 @@ class CheckoutRepositoryTest extends FrontendWebTestCase
         return $this->getContainer()->get('doctrine')->getRepository('OroCheckoutBundle:Checkout');
     }
 
+    public function testGetCheckoutWithRelations()
+    {
+        $repository = $this->getRepository();
+
+        $expected = $this->getReference(LoadShoppingListsCheckoutsData::CHECKOUT_1);
+        $result = $repository->getCheckoutWithRelations($expected->getId());
+
+        $this->assertSame($expected, $result);
+    }
+
     public function testCountItemsPerCheckout()
     {
         $repository = $this->getRepository();

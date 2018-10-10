@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\TaxBundle\Provider;
 
+use Doctrine\Common\Cache\CacheProvider;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\TaxBundle\Factory\AddressModelFactory;
 use Oro\Bundle\TaxBundle\Model\Address;
@@ -9,6 +10,8 @@ use Oro\Bundle\TaxBundle\Model\TaxBaseExclusion;
 use Oro\Bundle\TaxBundle\Factory\TaxBaseExclusionFactory;
 
 /**
+ * Provides taxation setting needed for tax calculation and work with
+ * cached results of config manger of most frequent calls
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
@@ -44,6 +47,11 @@ class TaxationSettingsProvider
     protected $taxBaseExclusionFactory;
 
     /**
+     * @var CacheProvider
+     */
+    private $cacheProvider;
+
+    /**
      * @param ConfigManager $configManager
      * @param TaxBaseExclusionFactory $taxBaseExclusionFactory
      * @param AddressModelFactory $addressModelFactory
@@ -59,11 +67,41 @@ class TaxationSettingsProvider
     }
 
     /**
+     * @param CacheProvider $cacheProvider
+     */
+    public function setCacheProvider(CacheProvider $cacheProvider)
+    {
+        $this->cacheProvider = $cacheProvider;
+    }
+
+    /**
+     * Caches settings which dramatically decreases calls to ConfigManager::get method
+     * @param string $cacheKey
+     * @param string $settingKey
+     * @return mixed
+     */
+    private function getCached($cacheKey, $settingKey)
+    {
+        if (!$this->cacheProvider) {
+            return $this->configManager->get($settingKey);
+        }
+
+        if (!$this->cacheProvider->contains($cacheKey)) {
+            $configSetting = $this->configManager->get($settingKey);
+            $this->cacheProvider->save($cacheKey, $configSetting);
+
+            return $configSetting;
+        }
+
+        return $this->cacheProvider->fetch($cacheKey);
+    }
+
+    /**
      * @return bool
      */
     public function isEnabled()
     {
-        return (bool)$this->configManager->get('oro_tax.tax_enable');
+        return (bool) $this->getCached(__METHOD__, 'oro_tax.tax_enable');
     }
 
     /**
@@ -79,7 +117,7 @@ class TaxationSettingsProvider
      */
     public function getStartCalculationWith()
     {
-        return $this->configManager->get('oro_tax.start_calculation_with');
+        return $this->getCached(__METHOD__, 'oro_tax.start_calculation_with');
     }
 
     /**
@@ -103,7 +141,7 @@ class TaxationSettingsProvider
      */
     public function getStartCalculationOn()
     {
-        return $this->configManager->get('oro_tax.start_calculation_on');
+        return $this->getCached(__METHOD__, 'oro_tax.start_calculation_on');
     }
 
     /**
@@ -127,7 +165,7 @@ class TaxationSettingsProvider
      */
     public function isProductPricesIncludeTax()
     {
-        return $this->configManager->get('oro_tax.product_prices_include_tax');
+        return $this->getCached(__METHOD__, 'oro_tax.product_prices_include_tax');
     }
 
     /**
@@ -135,7 +173,7 @@ class TaxationSettingsProvider
      */
     public function getDestination()
     {
-        return $this->configManager->get('oro_tax.destination');
+        return $this->getCached(__METHOD__, 'oro_tax.destination');
     }
 
     /**
@@ -143,7 +181,7 @@ class TaxationSettingsProvider
      */
     public function getDigitalProductsTaxCodesUS()
     {
-        return $this->configManager->get('oro_tax.digital_products_us');
+        return $this->getCached(__METHOD__, 'oro_tax.digital_products_us');
     }
 
     /**
@@ -151,7 +189,7 @@ class TaxationSettingsProvider
      */
     public function getDigitalProductsTaxCodesEU()
     {
-        return $this->configManager->get('oro_tax.digital_products_eu');
+        return $this->getCached(__METHOD__, 'oro_tax.digital_products_eu');
     }
 
     /**
@@ -175,7 +213,7 @@ class TaxationSettingsProvider
      */
     public function getBaseByDefaultAddressType()
     {
-        return $this->configManager->get('oro_tax.use_as_base_by_default');
+        return $this->getCached(__METHOD__, 'oro_tax.use_as_base_by_default');
     }
 
     /**
@@ -214,7 +252,7 @@ class TaxationSettingsProvider
      */
     public function getOrigin()
     {
-        $originAddressValues = $this->configManager->get('oro_tax.origin_address');
+        $originAddressValues = $this->getCached(__METHOD__, 'oro_tax.origin_address');
 
         return $this->addressModelFactory->create($originAddressValues);
     }

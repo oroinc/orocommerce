@@ -18,6 +18,18 @@ services:
             - '@oro_checkout.data_provider.manager.checkout_line_items'
             - '@oro_checkout.mapper.order_mapper'
 
+    oro_checkout.product_availability.cache:
+        parent: doctrine_cache.abstract.array
+        calls:
+            - [ setNamespace, [ 'oro_product_availability' ] ]
+
+    oro_checkout.event_listener.product_availability_cache:
+        class: Oro\Bundle\CheckoutBundle\EventListener\ProductAvailabilityCacheListener
+        arguments:
+            - '@oro_checkout.product_availability.cache'
+        tags:
+            - { name: doctrine.event_listener, event: onFlush }
+
     oro_checkout.data_provider.manager.checkout_line_items:
         class: 'Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager'
         public: false
@@ -78,7 +90,8 @@ services:
 
     oro_checkout.layout.data_provider.single_page_transition:
         class: 'Oro\Bundle\CheckoutBundle\Layout\DataProvider\SinglePageTransitionProvider'
-        parent: oro_checkout.layout.data_provider.transition
+        arguments:
+            - '@oro_checkout.layout.data_provider.transition'
         tags:
             - { name: layout.data_provider, alias: oro_checkout_single_page_transition }
 
@@ -586,6 +599,9 @@ services:
         arguments:
             - '@oro_pricing.provider.frontend_product_prices'
             - '@doctrine'
+        calls:
+            - [setAuthorizationChecker, ['@security.authorization_checker']]
+            - [setProductAvailabilityCache, ['@oro_checkout.product_availability.cache']]
         tags:
             - { name: checkout.data_provider.line_item }
 
@@ -624,3 +640,11 @@ services:
             - '@oro_config.manager'
         tags:
             - { name: layout.context_configurator }
+
+    oro_checkout.condition.validate_checkout_addresses:
+        class: 'Oro\Bundle\CheckoutBundle\Condition\ValidateCheckoutAddresses'
+        arguments:
+            - '@validator'
+        tags:
+            - { name: oro_workflow.condition, alias: 'validate_checkout_addresses' }
+            - { name: oro_action.condition, alias: 'validate_checkout_addresses' }

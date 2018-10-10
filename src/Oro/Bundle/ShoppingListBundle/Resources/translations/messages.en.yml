@@ -130,8 +130,8 @@ oro:
                     label: 'Enable Mass Adding on Product Listing'
                     tooltip: 'Customers will be able to select multiple products on the product listing page and add them to a shopping list at once.'
                 create_shopping_list_for_new_guest:
-                    label: 'Create shopping list for new guest on first visit'
-                    tooltip: 'If enabled, shopping list will be created for each guest user visits page. By default this behaviour is disabled to avoid creating a lot of shopping lists for bots and crawlers which may visit page'
+                    label: 'Create Guest Shopping Lists Immediately'
+                    tooltip: 'Enable this option to automatically create shopping lists for all guest users once they access the storefront. By default, this option is disabled and shopping lists are created only when guest users add at least one item to their shopping list.'
 
         privilege:
             category.shopping.label: 'Shopping'

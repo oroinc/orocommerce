@@ -8,6 +8,9 @@ use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 
+/**
+ * Puts data from an array to Order line items
+ */
 class CheckoutLineItemsConverter
 {
     /**
@@ -16,11 +19,17 @@ class CheckoutLineItemsConverter
     protected $propertyAccessor;
 
     /**
+     * @var \ReflectionClass
+     */
+    protected $reflectionClass;
+
+    /**
      * @param PropertyAccessor $propertyAccessor
      */
     public function __construct(PropertyAccessor $propertyAccessor)
     {
         $this->propertyAccessor = $propertyAccessor;
+        $this->reflectionClass = new \ReflectionClass(OrderLineItem::class);
     }
 
     /**
@@ -30,12 +39,12 @@ class CheckoutLineItemsConverter
     public function convert(array $data)
     {
         $result = new ArrayCollection();
-
         foreach ($data as $item) {
             $orderLineItem = new OrderLineItem();
             foreach ($item as $property => $value) {
-                if (null !== $value && $this->propertyAccessor->isWritable($orderLineItem, $property)) {
-                    $this->propertyAccessor->setValue($orderLineItem, $property, $value);
+                if (null !== $value && $this->reflectionClass->hasProperty($property)) {
+                    $methodName = $this->getSetterName($property);
+                    $orderLineItem->{$methodName}($value);
                 }
             }
 
@@ -43,5 +52,15 @@ class CheckoutLineItemsConverter
         }
 
         return $result;
+    }
+
+    /**
+     * @param string $propertyName
+     *
+     * @return string
+     */
+    private function getSetterName($propertyName)
+    {
+        return 'set' . str_replace(' ', '', ucwords(str_replace('_', ' ', $propertyName)));
     }
 }

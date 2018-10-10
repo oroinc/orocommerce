@@ -5,6 +5,7 @@ Oro\Bundle\CustomerBundle\Entity\Customer:
         owner: '@admin'
         vatId: 'VATID'
         payment_term_7c4f1e8e: '@paymentTerm'
+        vatId: 'VAT ID 1'
 
 Oro\Bundle\CustomerBundle\Entity\CustomerUser:
     amanda:
