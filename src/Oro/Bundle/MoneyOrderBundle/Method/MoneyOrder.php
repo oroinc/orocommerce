@@ -5,9 +5,14 @@ namespace Oro\Bundle\MoneyOrderBundle\Method;
 use Oro\Bundle\MoneyOrderBundle\Method\Config\MoneyOrderConfigInterface;
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
+use Oro\Bundle\PaymentBundle\Method\Action\CaptureActionInterface;
+use Oro\Bundle\PaymentBundle\Method\Action\PurchaseActionInterface;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 
-class MoneyOrder implements PaymentMethodInterface
+/**
+ * Implements Money Order payment method
+ */
+class MoneyOrder implements PaymentMethodInterface, CaptureActionInterface, PurchaseActionInterface
 {
     /**
      * @var MoneyOrderConfigInterface
@@ -27,9 +32,43 @@ class MoneyOrder implements PaymentMethodInterface
      */
     public function execute($action, PaymentTransaction $paymentTransaction)
     {
-        $paymentTransaction->setSuccessful(true);
+        if (!method_exists($this, $action)) {
+            throw new \InvalidArgumentException(
+                sprintf('"%s" payment method "%s" action is not supported', $this->getIdentifier(), $action)
+            );
+        }
 
-        return [];
+        return $this->$action($paymentTransaction);
+    }
+
+    public function getSourceAction(): string
+    {
+        return self::PENDING;
+    }
+
+    public function useSourcePaymentTransaction(): bool
+    {
+        return true;
+    }
+
+    public function purchase(PaymentTransaction $paymentTransaction): array
+    {
+        $paymentTransaction
+            ->setAction($this->getSourceAction())
+            ->setSuccessful(true)
+            ->setActive(true);
+
+        return ['successful' => true];
+    }
+
+    public function capture(PaymentTransaction $paymentTransaction): array
+    {
+        $paymentTransaction
+            ->setAction(self::CAPTURE)
+            ->setSuccessful(true)
+            ->setActive(true);
+
+        return ['successful' => true];
     }
 
     /**
@@ -53,6 +92,6 @@ class MoneyOrder implements PaymentMethodInterface
      */
     public function supports($actionName)
     {
-        return $actionName === self::PURCHASE;
+        return \in_array($actionName, [self::PURCHASE, self::CAPTURE], true);
     }
 }
