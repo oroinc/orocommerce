@@ -12,6 +12,7 @@ use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
+use Oro\Bundle\SecurityBundle\Tools\UUIDGenerator;
 use Oro\Bundle\UserBundle\Entity\Ownership\AuditableUserAwareTrait;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
@@ -120,6 +121,20 @@ class Quote extends ExtendQuote implements
      * )
      */
     protected $qid;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="guest_access_id", type="guid")
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "excluded"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $guestAccessId;
 
     /**
      * @var Website
@@ -349,6 +364,7 @@ class Quote extends ExtendQuote implements
     {
         parent::__construct();
 
+        $this->guestAccessId = UUIDGenerator::v4();
         $this->quoteProducts = new ArrayCollection();
         $this->assignedUsers = new ArrayCollection();
         $this->assignedCustomerUsers = new ArrayCollection();
@@ -407,6 +423,25 @@ class Quote extends ExtendQuote implements
     public function getQid()
     {
         return $this->qid;
+    }
+
+    /**
+     * @param string $guestAccessId
+     * @return Quote
+     */
+    public function setGuestAccessId(string $guestAccessId): Quote
+    {
+        $this->guestAccessId = $guestAccessId;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getGuestAccessId(): string
+    {
+        return $this->guestAccessId;
     }
 
     /**

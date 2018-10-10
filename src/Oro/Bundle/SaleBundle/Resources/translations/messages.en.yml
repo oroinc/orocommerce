@@ -8,6 +8,7 @@ oro:
             demands.label: 'Quote Demands'
             id.label: 'Numeric ID'
             qid.label: 'Quote #'
+            guest_access_id.label: 'Guest Access Id'
             owner.label: 'Owner'
             organization.label: 'Organization'
             valid_until.label: 'Valid Until'
