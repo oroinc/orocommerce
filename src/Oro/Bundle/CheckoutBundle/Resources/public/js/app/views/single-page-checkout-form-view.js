@@ -18,6 +18,7 @@ define(function(require) {
             submitButtonSelector: '[type="submit"]',
             billingAddressSelector: 'select[data-role="checkout-billing-address"]',
             shippingAddressSelector: 'select[data-role="checkout-shipping-address"]',
+            shippingAddressFieldsSelector: '[data-role="checkout-shipping-address-form"] :input',
             shipToSelector: '[data-role="checkout-ship-to"]',
             transitionFormFieldSelector: '[name*="oro_workflow_transition"]',
             originShippingMethodTypeSelector: '[name$="shippingMethodType"]',
@@ -26,6 +27,7 @@ define(function(require) {
             originPaymentMethodSelector: '[name="paymentMethod"]',
             formPaymentMethodSelector: '[name$="[payment_method]"]',
             originPaymentFormSelector: '[data-content="payment_method_form"]',
+            stateTokenSelector: '[name$="[state_token]"]',
             entityId: null
         },
 
@@ -183,7 +185,10 @@ define(function(require) {
         },
 
         getSerializedData: function() {
-            return this.$el.closest('form').find(this.options.transitionFormFieldSelector).serialize();
+            var $form = this.$el.closest('form');
+            $form.find(this.options.stateTokenSelector).prop('disabled', false);
+
+            return $form.find(this.options.transitionFormFieldSelector).serialize();
         },
 
         _disableShippingAddress: function() {
@@ -193,6 +198,7 @@ define(function(require) {
             var text = $billingAddress.find(':selected').text();
 
             this.subview('checkoutShippingAddress').onToggleState(disable, $billingAddress.val(), text);
+            this.$el.find(this.options.shippingAddressFieldsSelector).prop('disabled', disable ? 'disabled' : false);
         },
 
         _isAvailableShipTo: function() {

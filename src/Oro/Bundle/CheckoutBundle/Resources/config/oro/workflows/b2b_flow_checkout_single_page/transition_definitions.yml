@@ -76,14 +76,6 @@ workflows:
                            - '@assign_value': [$disallow_visitor_email, true]
                            - '@assign_value': [$billing_address_has_shipping, $ship_to_billing_address]
 
-                    - '@generate_checkout_state_snapshot':
-                        entity: $checkout
-                        attribute: $.result.currentCheckoutState
-                    - '@get_checkout_state':
-                        entity: $checkout
-                        token: $state_token
-                        attribute: $.result.savedCheckoutState
-
                     - '@tree':
                         conditions:
                             '@empty': $billing_address
@@ -114,6 +106,20 @@ workflows:
                                 method_parameters: [$.result.customerUserAddresses.defaultAddress]
 
                     - '@run_action_group':
+                        action_group: b2b_flow_checkout_update_billing_address
+                        parameters_mapping:
+                            checkout: $checkout
+                            disallow_shipping_address_edit: $disallow_shipping_address_edit
+                        results:
+                            data.billing_address_has_shipping: $.billing_address_has_shipping
+
+                    - '@run_action_group':
+                        action_group: b2b_flow_checkout_update_shipping_address
+                        parameters_mapping:
+                            checkout: $checkout
+                            billing_address_has_shipping: $billing_address_has_shipping
+
+                    - '@run_action_group':
                         action_group: oro_update_shipping_price
                         parameters_mapping:
                             checkout: $checkout
@@ -134,6 +140,14 @@ workflows:
                         method: create
                         method_parameters: [$checkout]
                         attribute: $.result.paymentContext
+
+                    - '@generate_checkout_state_snapshot':
+                        entity: $checkout
+                        attribute: $.result.currentCheckoutState
+                    - '@get_checkout_state':
+                        entity: $checkout
+                        token: $state_token
+                        attribute: $.result.savedCheckoutState
 
                     - '@flash_message':
                         conditions:
@@ -204,20 +218,6 @@ workflows:
                             events: ['extendable_condition.before_order_create']
 
                 actions:
-                    - '@run_action_group':
-                        action_group: b2b_flow_checkout_update_billing_address
-                        parameters_mapping:
-                            checkout: $checkout
-                            disallow_shipping_address_edit: $disallow_shipping_address_edit
-                        results:
-                            data.billing_address_has_shipping: $.billing_address_has_shipping
-
-                    - '@run_action_group':
-                        action_group: b2b_flow_checkout_update_shipping_address
-                        parameters_mapping:
-                            checkout: $checkout
-                            billing_address_has_shipping: $billing_address_has_shipping
-
                     - '@run_action_group':
                         action_group: b2b_flow_checkout_update_shipping_method
                         parameters_mapping:

@@ -65,7 +65,9 @@
 {% block _shipping_address_inner_widget -%}
     {% import 'OroCheckoutBundle:layouts/default/oro_checkout_frontend_checkout/templates:address.html.twig' as address %}
 
-    {{ address.address_form(form.shipping_address, form.save_shipping_address, false, true) }}
+    <div data-role="checkout-shipping-address-form">
+        {{ address.address_form(form.shipping_address, form.save_shipping_address, false, true) }}
+    </div>
 {%- endblock %}
 
 {% block _billing_address_widget -%}

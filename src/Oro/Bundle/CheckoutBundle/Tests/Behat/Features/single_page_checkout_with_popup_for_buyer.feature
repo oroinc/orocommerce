@@ -94,7 +94,7 @@ Feature: Single Page Checkout With Popup for Buyer
       | okButton     | Continue        |
     And "New Address Popup Form" must contains values:
       | Label        | Primary address |
-      | Organization | ORO             |
+      | Organization | OroCRM          |
       | Street       | Fifth avenue    |
       | City         | Berlin          |
       | Country      | DE              |
@@ -115,7 +115,7 @@ Feature: Single Page Checkout With Popup for Buyer
       | City         | This value should not be blank.                               |
       | Postal Code  | This value should not be blank.                               |
     When I close ui dialog
-    Then I should see "ORO, Fifth avenue, 10115 Berlin, Germany" for "Select Billing Address" select
+    Then I should see "OroCRM, Fifth avenue, 10115 Berlin, Germany" for "Select Billing Address" select
 
   Scenario: Validate new shipping address form
     Given I scroll to top
@@ -126,7 +126,7 @@ Feature: Single Page Checkout With Popup for Buyer
       | okButton     | Continue         |
     And "New Address Popup Form" must contains values:
       | Label        | Primary address |
-      | Organization | ORO             |
+      | Organization | OroCRM          |
       | Street       | Fifth avenue    |
       | City         | Berlin          |
       | Country      | DE              |
@@ -147,7 +147,7 @@ Feature: Single Page Checkout With Popup for Buyer
       | City         | This value should not be blank.                               |
       | Postal Code  | This value should not be blank.                               |
     When I close ui dialog
-    Then I should see "ORO, Fifth avenue, 10115 Berlin, Germany" for "Select Shipping Address" select
+    Then I should see "OroCRM, Fifth avenue, 10115 Berlin, Germany" for "Select Shipping Address" select
 
   Scenario: Create order with predefined shipping address and new billing address
     Given I scroll to top
@@ -218,7 +218,7 @@ Feature: Single Page Checkout With Popup for Buyer
     Then I should be on Order Frontend View page
     And I should see Order with data:
       | Billing Address  | B Address B Prefix B Fname B Mname B Lname B Suffix B Organization B Street B Street 2 B CITY HA AL 12345 12345 |
-      | Shipping Address | Primary address ORO Fifth avenue 10115 Berlin Germany                                                           |
+      | Shipping Address | Primary address OroCRM Fifth avenue 10115 Berlin Germany                                                           |
       | Shipping Method  | Flat Rate                                                                                                       |
       | Payment Method   | Payment Term                                                                                                    |
 
@@ -292,7 +292,7 @@ Feature: Single Page Checkout With Popup for Buyer
     When I click "click here to review"
     Then I should be on Order Frontend View page
     And I should see Order with data:
-      | Billing Address  | Primary address ORO Fifth avenue 10115 Berlin Germany                                                             |
+      | Billing Address  | Primary address OroCRM Fifth avenue 10115 Berlin Germany                                                             |
       | Shipping Address | S Address S Prefix S Fname S Mname S Lname S Suffix S Organization S Street S Street 2 67890 S City Georgia 67890 |
       | Shipping Method  | Flat Rate 2                                                                                                       |
       | Payment Method   | Payment Term                                                                                                      |
@@ -414,7 +414,7 @@ Feature: Single Page Checkout With Popup for Buyer
     And I click "Continue"
     When I check "Use billing address" on the checkout page
     Then There is no shipping method available for this order
-    When I select "Fifth avenue, 10115 Berlin, Germany" from "Select Billing Address"
+    When I select "OroCRM, Fifth avenue, 10115 Berlin, Germany" from "Select Billing Address"
     Then I should see "Flat Rate: $3.00"
     When I click "Delete this shopping list after submitting order"
     And I wait "Submit Order" button
