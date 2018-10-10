@@ -99,7 +99,9 @@
             )
         %}
     {% else %}
-        {% set imagesData = 'oro.product.form.no_images'|trans %}
+        {% set imagesData %}
+            <div class="no-data">{{ 'oro.product.form.no_images'|trans }}</div>
+        {% endset %}
     {% endif %}
 
     {% set dataBlocks = dataBlocks|merge({
@@ -266,7 +268,9 @@
     {% endif %}
 
     {% if pageTemplate == null %}
-        {% set pageTemplatesData = 'oro.product.form.no_page_template'|trans %}
+        {% set pageTemplatesData %}
+            <div class="no-data">{{ 'oro.product.form.no_page_template'|trans }}</div>
+        {% endset %}
     {% else %}
         {% set pageTemplatesData = UI.renderProperty(
             'oro.product.page_template.label'|trans,
