@@ -1074,6 +1074,25 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
+     * Checks if multiple choice filter contains expected options in the given order and no other options.
+     *
+     * Example: Then I should see "Address Filter" filter with exact options in frontend product grid:
+     *            | Address 1 |
+     *            | Address 2 |
+     * @When /^(?:|I )should see "(?P<filterName>[^"]+)" filter with exact options in frontend product grid:$/
+     */
+    public function shouldSeeSelectWithOptions($filterName, TableNode $options)
+    {
+        /** @var MultipleChoice $filterItem */
+        $filterItem = $this->getGridFilters()->getFilterItem(
+            'Frontend Product Grid MultipleChoice',
+            $filterName
+        );
+
+        self::assertEquals($options->getColumn(0), $filterItem->getChoices(), 'Filter options are not as expected');
+    }
+
+    /**
      * @return GridFilters|Element
      */
     private function getGridFilters()
