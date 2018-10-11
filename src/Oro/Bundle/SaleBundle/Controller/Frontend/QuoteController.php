@@ -48,6 +48,39 @@ class QuoteController extends Controller
     }
 
     /**
+     * @Route(
+     *     "/{guest_access_id}",
+     *     name="oro_sale_quote_frontend_guest_access",
+     *     requirements={
+     *          "guest_access_id"="[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}"
+     *     }
+     * )
+     * @Layout()
+     * @ParamConverter(
+     *     "quote",
+     *     options={
+     *          "repository_method": "getQuoteByGuestAccessId",
+     *          "mapping": {"guest_access_id": "guestAccessId"},
+     *          "map_method_signature" = true
+     *     }
+     * )
+     *
+     * @param Quote $quote
+     * @return array
+     */
+    public function guestAccessAction(Quote $quote)
+    {
+        $accessProvider = $this->get('oro_sale.provider.guest_quote_access');
+        if (!$accessProvider->isGranted($quote)) {
+            throw $this->createNotFoundException();
+        }
+
+        return [
+            'data' => ['entity' => $quote, 'quote' => $quote]
+        ];
+    }
+
+    /**
      * @Route("/", name="oro_sale_quote_frontend_index")
      * @Layout(vars={"entity_class"})
      * @Acl(

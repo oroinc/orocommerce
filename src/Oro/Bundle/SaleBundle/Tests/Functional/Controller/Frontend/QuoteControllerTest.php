@@ -12,6 +12,9 @@ use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData;
 use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class QuoteControllerTest extends WebTestCase
 {
     /**
@@ -599,6 +602,79 @@ class QuoteControllerTest extends WebTestCase
 
         $response = $this->client->getResponse();
         static::assertHtmlResponseStatusCodeEquals($response, Response::HTTP_FORBIDDEN);
+    }
+
+    /**
+     * @dataProvider guestAccessProvider
+     *
+     * @param string $qid
+     * @param bool $isFeatureEnabled
+     * @param int $expected
+     */
+    public function testGuestAccess(string $qid, bool $isFeatureEnabled, int $expected)
+    {
+        $this->initClient([]);
+
+        $configManager = $this->getContainer()->get('oro_config.manager');
+        $configManager->set('oro_sale.enable_guest_quote', $isFeatureEnabled);
+        $configManager->flush();
+
+        /** @var $quote Quote */
+        $quote = $this->getReference($qid);
+
+        $this->client->request(
+            'GET',
+            $this->getUrl(
+                'oro_sale_quote_frontend_guest_access',
+                ['guest_access_id' => $quote->getGuestAccessId()]
+            )
+        );
+
+        static::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), $expected);
+    }
+
+    /**
+     * @return array
+     */
+    public function guestAccessProvider()
+    {
+        return [
+            'valid' => [
+                'qid' => LoadQuoteData::QUOTE3,
+                'isFeatureEnabled' => true,
+                'expected' => Response::HTTP_OK,
+            ],
+            'valid, but feature disabled' => [
+                'qid' => LoadQuoteData::QUOTE3,
+                'isFeatureEnabled' => false,
+                'expected' => Response::HTTP_NOT_FOUND,
+            ],
+            'invalid date' => [
+                'qid' => LoadQuoteData::QUOTE5,
+                'isFeatureEnabled' => true,
+                'expected' => Response::HTTP_NOT_FOUND,
+            ],
+            'expired' => [
+                'qid' => LoadQuoteData::QUOTE8,
+                'isFeatureEnabled' => true,
+                'expected' => Response::HTTP_NOT_FOUND,
+            ],
+            'valid with empty date' => [
+                'qid' => LoadQuoteData::QUOTE9,
+                'isFeatureEnabled' => true,
+                'expected' => Response::HTTP_OK,
+            ],
+            'valid from different owner' => [
+                'qid' => LoadQuoteData::QUOTE9,
+                'isFeatureEnabled' => true,
+                'expected' => Response::HTTP_OK,
+            ],
+            'not acceptable' => [
+                'qid' => LoadQuoteData::QUOTE12,
+                'isFeatureEnabled' => true,
+                'expected' => Response::HTTP_NOT_FOUND,
+            ],
+        ];
     }
 
     public function testGridAccessDeniedForAnonymousUsers()
