@@ -57,7 +57,9 @@ Feature: Shopping list limit
     When go to System/ Websites
     And click "Create Website"
     And fill form with:
-      |Name|NewSite|
+      |Name                           |NewSite                   |
+      |Guest Role                     |Non-Authenticated Visitors|
+      |Default Self-Registration Role |Buyer                     |
     And save and close form
     Then should see "Website has been saved" flash message
     When go to System/ Websites
