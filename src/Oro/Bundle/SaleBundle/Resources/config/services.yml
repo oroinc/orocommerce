@@ -265,6 +265,13 @@ services:
         class: 'Oro\Bundle\SaleBundle\Provider\GuestQuoteAccessProvider'
         arguments:
             - '@oro_featuretoggle.checker.feature_checker'
+            
+    oro_sale.provider.guest_quote_access.decorator:
+        class: 'Oro\Bundle\SaleBundle\Provider\GuestQuoteAccessFrontendProvider'
+        decorates: oro_sale.provider.guest_quote_access
+        arguments:
+            - '@oro_sale.provider.guest_quote_access.decorator.inner'
+            - '@oro_website.manager'
 
     oro_sale.provider.guest_quote_access.link:
         class: 'Oro\Bundle\SaleBundle\Provider\GuestQuoteAccessLinkProvider'
