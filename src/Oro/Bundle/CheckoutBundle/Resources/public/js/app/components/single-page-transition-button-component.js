@@ -29,7 +29,7 @@ define(function(require) {
                 this.$form.on('change', _.bind(this.onFormChange, this));
             }
             if (this.$form) {
-                mediator.on('single-page:transition-button:submit', _.bind(this.submit, this));
+                mediator.on('single-page:transition-button:submit', this.submit, this);
             }
             var ajaxData = this.createAjaxData();
             this.sendAjaxData(ajaxData, this.$el);
@@ -43,8 +43,9 @@ define(function(require) {
                 return;
             }
 
-            this.$form.off('change');
-            mediator.off('single-page:transition-button:submit');
+            if (this.$form) {
+                this.$form.off('change');
+            }
 
             SinglePageTransitionButtonComponent.__super__.dispose.call(this);
         },

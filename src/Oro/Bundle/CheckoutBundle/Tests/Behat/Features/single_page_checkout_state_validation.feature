@@ -51,10 +51,12 @@ Feature: Single Page Checkout State Validation
 
   Scenario: After price change buyer is warned about checkout content changes
     Given I proceed as the Buyer
+    And I wait "Submit Order" button
     When I click "Submit Order"
     Then I should not see "Thank You For Your Purchase!"
     And I should see "There was a change to the contents of your order." flash message
 
   Scenario: Buyer can finish checkout after he was acknowledged about changes
+    Given I wait "Submit Order" button
     When I click "Submit Order"
     Then I should see "Thank You For Your Purchase!"
