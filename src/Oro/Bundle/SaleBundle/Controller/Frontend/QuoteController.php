@@ -16,6 +16,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * Frontend controller for quote management.
+ */
 class QuoteController extends Controller
 {
     /**
@@ -37,6 +40,39 @@ class QuoteController extends Controller
     {
         if (!$quote->isAcceptable()) {
             $this->addFlash('notice', $this->get('translator')->trans('oro.sale.controller.quote.expired.message'));
+        }
+
+        return [
+            'data' => ['entity' => $quote, 'quote' => $quote]
+        ];
+    }
+
+    /**
+     * @Route(
+     *     "/{guest_access_id}",
+     *     name="oro_sale_quote_frontend_guest_access",
+     *     requirements={
+     *          "guest_access_id"="[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}"
+     *     }
+     * )
+     * @Layout()
+     * @ParamConverter(
+     *     "quote",
+     *     options={
+     *          "repository_method": "getQuoteByGuestAccessId",
+     *          "mapping": {"guest_access_id": "guestAccessId"},
+     *          "map_method_signature" = true
+     *     }
+     * )
+     *
+     * @param Quote $quote
+     * @return array
+     */
+    public function guestAccessAction(Quote $quote): array
+    {
+        $accessProvider = $this->get('oro_sale.provider.guest_quote_access');
+        if (!$accessProvider->isGranted($quote)) {
+            throw $this->createNotFoundException();
         }
 
         return [
