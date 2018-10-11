@@ -9,11 +9,7 @@ services:
         class: 'Oro\Bundle\RFPBundle\Mailer\Processor'
         public: false
         arguments:
-            - "@doctrine"
-            - "@oro_config.manager"
-            - "@oro_email.email_renderer"
-            - "@oro_email.email_holder_helper"
-            - "@oro_email.direct_mailer"
+            - "@oro_user.mailer.user_template_email_sender"
 
     oro_rfp.mailer.request_representatives_notifier:
         class: 'Oro\Bundle\RFPBundle\Mailer\RequestRepresentativesNotifier'

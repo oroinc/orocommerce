@@ -75,6 +75,6 @@ Feature: Generation of coupons
     Given I go to Marketing/Promotions/Coupons
     And I click "Coupons Actions"
     And I click "Generate Multiple Coupons"
-    And I press "Promotions Grid Button"
+    And I click "Promotions Grid Button"
     And I should see "Order Discount Promotion"
     And I should not see "Shipping Discount Promotion"

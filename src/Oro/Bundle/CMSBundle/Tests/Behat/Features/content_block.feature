@@ -13,7 +13,7 @@ Feature: Content Block
     Given I proceed as the Admin
     And I login as administrator
     And go to Marketing/ Content Blocks
-    And press "Create Content Block"
+    And click "Create Content Block"
     And fill "Content Block Form" with:
       | Owner          | Main                       |
       | Alias          | test_alias                 |
@@ -42,7 +42,7 @@ Feature: Content Block
     And I am on dashboard
     And I go to Marketing/ Content Blocks
     And I click edit "home-page-slider" in grid
-    And press "Add Content"
+    And click "Add Content"
     And I fill "Content Variant 1 form" with:
       | Content  | Test block |
       | Customer | Company B  |

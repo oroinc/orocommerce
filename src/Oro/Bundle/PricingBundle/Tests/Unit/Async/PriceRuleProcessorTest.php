@@ -294,4 +294,63 @@ class PriceRuleProcessorTest extends AbstractPriceProcessorTest
     {
         $this->assertEquals([Topics::RESOLVE_PRICE_RULES], $this->priceRuleProcessor->getSubscribedTopics());
     }
+
+    public function testProcessWithUnknownPriceListId()
+    {
+        $priceListId = 1001;
+        $data = [PriceListTriggerFactory::PRODUCT => [$priceListId => []]];
+
+        $this->triggerFactory->expects($this->once())
+            ->method('createFromArray')
+            ->with($data)
+            ->willReturn(new PriceListTrigger($data[PriceListTriggerFactory::PRODUCT]));
+
+        $repository = $this->createMock(PriceListRepository::class);
+        $repository->expects($this->once())
+            ->method('find')
+            ->with($priceListId)
+            ->willReturn(null);
+
+        $manager = $this->createMock(EntityManagerInterface::class);
+        $this->registry->expects($this->any())
+            ->method('getManagerForClass')
+            ->with(PriceList::class)
+            ->willReturn($manager);
+        $manager->expects($this->once())
+            ->method('beginTransaction');
+        $manager->expects($this->once())
+            ->method('getRepository')
+            ->willReturn($repository);
+
+        $this->logger->expects($this->once())
+            ->method('error')
+            ->with('Unexpected exception occurred during Price Rule build');
+
+        $this->translator->expects($this->once())
+            ->method('trans')
+            ->with('oro.pricing.notification.price_list.error.price_rule_build')
+            ->willReturn('Error occurred during price rule build');
+
+        $this->messenger->expects($this->once())
+            ->method('send')
+            ->with(
+                NotificationMessages::CHANNEL_PRICE_LIST,
+                NotificationMessages::TOPIC_PRICE_RULES_BUILD,
+                Message::STATUS_ERROR,
+                'Error occurred during price rule build',
+                PriceList::class,
+                $priceListId
+            );
+
+        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message **/
+        $message = $this->createMock(MessageInterface::class);
+        $message->expects($this->any())
+            ->method('getBody')
+            ->willReturn(json_encode($data));
+
+        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session **/
+        $session = $this->createMock(SessionInterface::class);
+
+        $this->assertEquals(MessageProcessorInterface::REJECT, $this->priceRuleProcessor->process($message, $session));
+    }
 }

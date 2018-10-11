@@ -16,7 +16,7 @@ Feature: System configuration shipping origin filter
       | Zip/Postal Code  | 90401         |
       | City             | Santa Monica  |
       | Street Address 1 | 1685 Main St. |
-    And I press "Save settings"
+    And I click "Save settings"
     Then I should see "Configuration saved" flash message
 
   Scenario: System Config search must not hide complex forms
