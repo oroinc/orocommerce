@@ -261,6 +261,11 @@ services:
         arguments:
             - '@oro_locale.formatter.name'
 
+    oro_sale.provider.guest_quote_access:
+        class: 'Oro\Bundle\SaleBundle\Provider\GuestQuoteAccessProvider'
+        arguments:
+            - '@oro_featuretoggle.checker.feature_checker'
+
     oro_sale.provider.guest_quote_access.link:
         class: 'Oro\Bundle\SaleBundle\Provider\GuestQuoteAccessLinkProvider'
         arguments:
