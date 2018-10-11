@@ -1,85 +1,237 @@
 layout:
+    imports:
+        - 'oro_payment_method_options'
+        - 'oro_payment_method_order_submit'
+
     actions:
-        - '@changeBlockType':
-            id: checkout_view
-            blockType: single_page_transition_container
+        - '@addTree':
+            items:
+                checkout_view:
+                    blockType: single_page_transition_container
+                    options:
+                        checkout: '=data["checkout"]'
+                        transitionData: '=data["oro_checkout_single_page_transition"].getContinueTransition(data["workflowItem"])'
 
-        - '@appendOption':
-            id: checkout_view
-            optionName: transitionData
-            optionValue: '=data["oro_checkout_single_page_transition"].getContinueTransition(data["workflowItem"])'
+                checkout_billing_information:
+                    blockType: container
 
-        - '@appendOption':
-            id: checkout_view
-            optionName: checkout
-            optionValue: '=data["checkout"]'
+                billing_address:
+                    blockType: checkout_form_fields
+                    options:
+                        attr:
+                            class: 'checkout-billing-address'
+                        checkout: '=data["checkout"]'
+                        form: '=data["oro_checkout_single_page_transition_form"].getTransitionFormView(data["workflowItem"])'
+                        workflowItem: '=data["workflowItem"]'
 
-        - '@changeBlockType':
-            id: checkout_button_continue_right_container
-            blockType: container
+                payment_methods_wrapper:
+                    blockType: layout_subtree_update
+                    options:
+                        reloadEvents: []
 
-        - '@removeOption':
-            id: checkout_button_continue_right_container
-            optionName: transitionData
+                payment_methods_hidden:
+                    blockType: checkout_form_fields
+                    options:
+                        checkout: '=data["checkout"]'
+                        form: '=data["oro_checkout_single_page_transition_form"].getTransitionFormView(data["workflowItem"])'
+                        workflowItem: '=data["workflowItem"]'
 
-        - '@removeOption':
-            id: checkout_button_continue_right_container
-            optionName: checkout
+                payment_methods:
+                    blockType: payment_methods
+                    options:
+                        attr:
+                            class: 'checkout-payment-methods'
+                        class_prefix: 'checkout'
+                        views: '=data["oro_payment_method_views_provider"].getViews(data["checkout_payment_context"].getContext(data["checkout"]))'
+                        currentPaymentMethod: '=data["checkout"].getPaymentMethod()'
 
-        - '@move':
-            id: checkout_button_continue_right_container
-            parentId: checkout_button_continue_right_wrapper
-            siblingId: checkout_order_summary_totals
+                payment_additional_data:
+                    blockType: payment_additional_data
+                    options:
+                        block_name: payment_additional_data
+                        options:
+                            views: '=data["oro_payment_method_views_provider"].getViews(data["checkout_payment_context"].getContext(data["checkout"]))'
+                            block_prefix: "order_review"
 
-        - '@move':
-            id: checkout_button_continue_right_wrapper
-            parentId: checkout_order_summary_totals_sticky_container
-            siblingId: checkout_order_summary_totals_wrapper
+                checkout_shipping_information:
+                    blockType: container
 
-        - '@setOption':
-            id: checkout_button_continue_right_wrapper
-            optionName: reloadEvents
-            optionValue: []
+                shipping_address:
+                    blockType: checkout_form_fields
+                    options:
+                        attr:
+                            class: 'checkout-shipping-address'
+                        checkout: '=data["checkout"]'
+                        form: '=data["oro_checkout_single_page_transition_form"].getTransitionFormView(data["workflowItem"])'
+                        workflowItem: '=data["workflowItem"]'
+
+                shipping_address_inner_wrapper:
+                    blockType: layout_subtree_update
+                    options:
+                        reloadEvents: []
+                        showLoading: false
+
+                shipping_address_inner:
+                    blockType: checkout_form_fields
+                    options:
+                        checkout: '=data["checkout"]'
+                        form: '=data["oro_checkout_single_page_transition_form"].getTransitionFormView(data["workflowItem"])'
+                        workflowItem: '=data["workflowItem"]'
+
+                shipping_methods_wrapper:
+                    blockType: layout_subtree_update
+                    options:
+                        reloadEvents: []
+
+                shipping_methods_hidden:
+                    blockType: checkout_form_fields
+                    options:
+                        checkout: '=data["checkout"]'
+                        form: '=data["oro_checkout_single_page_transition_form"].getTransitionFormView(data["workflowItem"])'
+                        workflowItem: '=data["workflowItem"]'
+
+                shipping_methods:
+                    blockType: shipping_methods
+                    options:
+                        class_prefix: 'checkout'
+                        methods: '=data["checkout_shipping_methods"].getApplicableMethodsViews(data["checkout"]).toArray()'
+                        currentShippingMethod: '=data["checkout"].getShippingMethod()'
+                        currentShippingMethodType: '=data["checkout"].getShippingMethodType()'
+
+                shipping_methods_template:
+                    blockType: container
+
+                shipping_methods_template_methods:
+                    blockType: container
+
+                shipping_date:
+                    blockType: checkout_form_fields
+                    options:
+                        checkout: '=data["checkout"]'
+                        form: '=data["oro_checkout_single_page_transition_form"].getTransitionFormView(data["workflowItem"])'
+                        workflowItem: '=data["workflowItem"]'
+
+                checkout_summary:
+                    blockType: container
+
+            tree:
+                checkout_form_fields:
+                    checkout_view:
+                        checkout_billing_information:
+                            billing_address: ~
+                            payment_methods_wrapper:
+                                payment_methods_hidden: ~
+                                payment_methods: ~
+                                payment_additional_data: ~
+                        checkout_shipping_information:
+                            shipping_address:
+                                shipping_address_inner_wrapper:
+                                    shipping_address_inner: ~
+                            shipping_methods_wrapper:
+                                shipping_methods_hidden: ~
+                                shipping_methods:
+                                    shipping_methods_template:
+                                        shipping_methods_template_methods: ~
+                            shipping_date: ~
+                        checkout_summary: ~
+
+        - '@addTree':
+            items:
+                checkout_order_summary_totals_sticky_container:
+                    blockType: container
+
+                checkout_order_summary_totals_wrapper:
+                    blockType: layout_subtree_update
+                    options:
+                        reloadEvents: []
+                        showLoading: false
+
+                checkout_button_continue_right_wrapper:
+                    blockType: layout_subtree_update
+                    options:
+                        reloadEvents: []
+                        showLoading: false
+
+                checkout_button_continue_right_container:
+                    blockType: container
+
+                checkout_button_continue_right:
+                    blockType: checkout_transition_continue
+                    options:
+                        transitionData: '=data["oro_checkout_transition"].getContinueTransition(data["workflowItem"])'
+                        checkout: '=data["checkout"]'
+            tree:
+                checkout_order_summary_totals_container:
+                    checkout_order_summary_totals_sticky_container:
+                        checkout_order_summary_totals_wrapper: ~
+                        checkout_button_continue_right_wrapper:
+                            checkout_button_continue_right_container:
+                                checkout_button_continue_right: ~
+
+        - '@addTree':
+            items:
+                single_page_checkout_sticky_panel:
+                    blockType: container
+
+                single_page_checkout_sticky_titles:
+                    blockType: container
+
+                single_page_checkout_sticky_billing:
+                    blockType: container
+
+                single_page_checkout_sticky_shipping:
+                    blockType: container
+
+                single_page_checkout_sticky_summary:
+                    blockType: container
+
+                single_page_checkout_sticky_totals:
+                    blockType: container
+
+            tree:
+                top_sticky_panel_content:
+                    single_page_checkout_sticky_panel:
+                        single_page_checkout_sticky_titles:
+                            single_page_checkout_sticky_billing: ~
+                            single_page_checkout_sticky_shipping: ~
+                            single_page_checkout_sticky_summary: ~
+                        single_page_checkout_sticky_totals: ~
 
         - '@add':
-            id: checkout_order_summary_totals_wrapper
-            blockType: layout_subtree_update
-            parentId: checkout_order_summary_totals_sticky_container
+            id: checkout_summary_additional_options
+            blockType: checkout_form_fields
+            parentId: checkout_order_summary_content
+            siblingId: checkout_order_summary_line_items_container
             options:
-                reloadEvents: []
-                showLoading: false
+                checkout: '=data["checkout"]'
+                form: '=data["oro_checkout_single_page_transition_form"].getTransitionFormView(data["workflowItem"])'
+                workflowItem: '=data["workflowItem"]'
+
+        - '@add':
+            id: checkout_summary_badge
+            blockType: container
+            parentId: checkout_order_summary_title
+            prepend: true
+
+        - '@move':
+            id: checkout_order_summary
+            parentId: checkout_summary
 
         - '@move':
             id: checkout_order_summary_totals
             parentId: checkout_order_summary_totals_wrapper
 
-        - '@move':
-            id: checkout_button_continue_right
-            parentId: checkout_button_continue_right_container
+        - '@remove':
+            id: checkout_sidebar
 
-        - '@setOption':
-            id: payment_methods_wrapper
-            optionName: reloadEvents
-            optionValue: []
+        - '@remove':
+            id: checkout_information_head
 
-        - '@setOption':
-            id: shipping_methods_wrapper
-            optionName: reloadEvents
-            optionValue: []
+        - '@remove':
+            id: checkout_order_summary_container
 
-        - '@add':
-            id: shipping_address_inner_wrapper
-            blockType: layout_subtree_update
-            parentId: shipping_address
-            options:
-                reloadEvents: []
-                showLoading: false
+        - '@remove':
+            id: checkout_button_continue
 
-        - '@add':
-            id: shipping_address_inner
-            blockType: checkout_form_fields
-            parentId: shipping_address_inner_wrapper
-            options:
-                checkout: '=data["checkout"]'
-                form: '=data["oro_checkout_single_page_transition_form"].getTransitionFormView(data["workflowItem"])'
-                workflowItem: '=data["workflowItem"]'
+        - '@remove':
+            id: checkout_button_back

@@ -21,11 +21,11 @@ operations:
         form_options:
             attribute_fields:
                 visitor_email:
-                    form_type: oro_customer_visitor_email_address
+                    form_type: Oro\Bundle\CustomerBundle\Form\Type\CustomerVisitorEmailAddressType
                     options:
                         required: true
                 address:
-                    form_type: oro_checkout_address
+                    form_type: Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressType
                     options:
                         object: $.data
                         addressType: 'billing'
@@ -36,7 +36,7 @@ operations:
                             - NotBlank: ~
                             - Oro\Bundle\AddressBundle\Validator\Constraints\NameOrOrganization: ~
                 save_address:
-                    form_type: oro_save_address
+                    form_type: Oro\Bundle\CheckoutBundle\Form\Type\SaveAddressType
         form_init:
             - '@call_service_method':
                 service: oro_workflow.manager
@@ -44,7 +44,7 @@ operations:
                 method_parameters: [$.data]
                 attribute: $.workflowItem
 
-            - '@assign_value': [$.visitor_email, $.workflowItem.data.visitor_email]
+            - '@assign_value': [$.visitor_email, $.workflowItem.data.email]
 
             - '@assign_value': [$.address, $.data.billingAddress]
             - '@assign_value': [$.address.customerAddress, null]
@@ -57,7 +57,7 @@ operations:
                 actions:
                     - '@assign_value': [$.save_address, $.data.saveBillingAddress]
         actions:
-            - '@assign_value': [$.workflowItem.data.visitor_email, $.visitor_email]
+            - '@assign_value': [$.workflowItem.data.email, $.visitor_email]
             - '@call_method':
                 object: $.workflowItem
                 method: setUpdated
@@ -96,7 +96,7 @@ operations:
         form_options:
             attribute_fields:
                 address:
-                    form_type: oro_checkout_address
+                    form_type: Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressType
                     options:
                         object: $.data
                         addressType: 'shipping'
@@ -107,7 +107,7 @@ operations:
                             - NotBlank: ~
                             - Oro\Bundle\AddressBundle\Validator\Constraints\NameOrOrganization: ~
                 save_address:
-                    form_type: oro_save_address
+                    form_type: Oro\Bundle\CheckoutBundle\Form\Type\SaveAddressType
         form_init:
             - '@assign_value': [$.address, $.data.shippingAddress]
             - '@assign_value': [$.address.customerAddress, null]

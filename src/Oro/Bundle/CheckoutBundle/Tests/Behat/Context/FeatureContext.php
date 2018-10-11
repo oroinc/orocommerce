@@ -104,7 +104,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     public function unCheckValueOnCheckoutPage($value)
     {
         $page = $this->getSession()->getPage();
-        $element = $page->findField(self::$valueMapping[$value]);
+        $element = $page->findField(self::$valueMapping[$value] ?? $value);
 
         self::assertTrue($element->isValid(), sprintf('Could not found option "%s" on page', $value));
 

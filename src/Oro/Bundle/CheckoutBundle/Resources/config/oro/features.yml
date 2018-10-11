@@ -31,8 +31,3 @@ features:
         configuration:
             - guest_checkout_owner_section
         strategy: affirmative
-
-    single_page_checkout_performance:
-        label: oro.checkout.system_configuration.fields.single_page_checkout_increase_performance.title
-        description: oro.checkout.system_configuration.fields.single_page_checkout_increase_performance.tooltip
-        toggle: oro_checkout.single_page_checkout_increase_performance

@@ -252,16 +252,12 @@ oro:
                 default_guest_checkout_owner:
                     title: 'Default guest checkout owner'
                     tooltip: 'Allows guests to create order'
-                single_page_checkout_increase_performance:
-                    title: 'Optimize Template Performance'
-                    tooltip: 'This option improves the performance of the default single page checkout workflow. These optimizations may not work or they may break the checkout page entirely if applied to customized single page checkout. Please consult with the technical team before enabling this option.'
             groups:
                 open_orders.title: 'Open Orders'
                 checkout.title: 'Checkout'
                 guest_checkout.title: 'Guest Checkout'
                 guest_checkout_owner.title: 'Guest Checkout Owner Settings'
                 customer_users_registration.title: 'Customer Users Registration'
-                checkout_increase_performance.title: 'Single Page Checkout Settings'
 
         privilege:
             category.checkout.label: 'Checkout'

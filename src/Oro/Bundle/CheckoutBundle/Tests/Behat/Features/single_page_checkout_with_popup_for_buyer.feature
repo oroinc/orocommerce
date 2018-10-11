@@ -25,14 +25,6 @@ Feature: Single Page Checkout With Popup for Buyer
     And I click "Activate"
     Then I should see "Workflow activated" flash message
 
-  Scenario: Enable Optimize Template Performance in system configuration
-    Given I go to System/Configuration
-    And I follow "Commerce/Sales/Checkout" on configuration sidebar
-    And uncheck "Use default" for "Optimize Template Performance" field
-    And I check "Optimize Template Performance"
-    And I click "Save settings"
-    Then I should see "Configuration saved" flash message
-
   Scenario: Configure shipping rules
     Given I go to System/Shipping Rules
     And I click Edit "Default" in grid

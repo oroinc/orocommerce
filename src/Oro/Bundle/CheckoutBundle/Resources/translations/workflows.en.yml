@@ -272,6 +272,8 @@ oro:
                     label: 'Save payment data for later use'
                 state_token:
                     label: 'Token to track checkout state'
+                save_state_url:
+                    label: 'Save state url'
                 internal_state_token:
                     label: 'Internal checkout state token'
                 order:

@@ -17,15 +17,30 @@
 {% endblock %}
 
 {% block _checkout_view_widget %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+
     {% set attr = attr|merge({
-        'class': attr.class|default('') ~ " single-page-checkout-view",
-        'data-page-component-module': 'oroui/js/app/components/view-component',
-        'data-page-component-options': {
-            view: 'orocheckout/js/app/views/single-page-checkout-view'
-        }
+        'class': attr.class|default('') ~ " single-page-checkout-view"
     }) %}
-    <div {{ block('block_attributes') }}>
-        {{ block_widget(block) }}
+    {% set transition = transitionData.transition %}
+    {% set pageComponentOptions = transition.frontendOptions.page_component_options|default({}) %}
+
+    <div {{ block('block_attributes') }} {{ UI.renderPageComponentAttributes({
+        module: 'orocheckout/js/app/components/single-page-checkout-component',
+        options: pageComponentOptions|merge({
+            'entityId': checkout.id,
+            'enabled': transitionData.isAllowed,
+            'hasForm': transition.hasForm(),
+            'transitionUrl': path(
+                'oro_checkout_frontend_checkout',
+                {
+                    id: checkout.id,
+                    transition: transition.name
+                }
+            )
+        })
+    }) }}>
+        {{ block('container_widget') }}
     </div>
 {% endblock %}
 
@@ -190,77 +205,33 @@
 {% endblock %}
 
 {% block _shipping_address_widget -%}
-    {% from 'OroAddressBundle::macros.html.twig' import renderAddress %}
-    {% if workflowItem.data.get('disallow_shipping_address_edit') %}
-        {{ renderAddress(checkout.shippingAddress) }}
-    {% else %}
-        {% import 'OroCheckoutBundle:layouts/default/oro_checkout_frontend_checkout/templates:address.html.twig' as address %}
-        {% set hasCustomAddress = false %}
-        {% set compact = true %}
-        {% if form.shipping_address.id.vars.value %}
-            {% set hasCustomAddress = not form.shipping_address.vars.value.customerUserAddress and not form.shipping_address.vars.value.customerAddress %}
-        {% endif %}
+    {{ form_row(form.shipping_address.customerAddress, {'attr': {
+        'data-role': 'checkout-shipping-address',
+        'data-address-type': 'shipping',
+        'data-new-address-label': checkout.shippingAddress|oro_format_address(null, ', ')
+    }}) }}
+    {{ form_row(form.ship_to_billing_address, {'attr': {'data-role': 'checkout-ship-to'}}) }}
 
-        <div {{ block('block_attributes') }} data-page-component-module="oroui/js/app/components/view-component"
-             data-page-component-options="{{ {
-                 view: 'orocheckout/js/app/views/address-view',
-                 hideNewAddressForm: true,
-                 selectors: {
-                     address: '#' ~ form.shipping_address.customerAddress.vars.id,
-                     region: '#' ~ form.shipping_address.region.vars.id,
-                     fieldsContainer: '#checkout-address-fields-container',
-                     shipToBillingCheckbox: '#' ~ form.ship_to_billing_address.vars.id,
-                     externalShipToBillingCheckbox: '#checkout_ship_to_billing_address_checkbox',
-                 },
-             }|json_encode }}">
+    {{ block_widget(block) }}
+{%- endblock %}
 
-            {{ form_row(form.shipping_address.customerAddress, {'attr': {'data-role': 'checkout-shipping-address'}}) }}
+{% block _shipping_address_inner_widget -%}
+    {% import 'OroCheckoutBundle:layouts/default/oro_checkout_frontend_checkout/templates:address.html.twig' as address %}
 
-            {{ address.address_form(form.shipping_address, form.save_shipping_address, hasCustomAddress, null, compact) }}
-
-            {% if not workflowItem.data.get('disallow_shipping_address_edit') %}
-                {{ form_row(form.ship_to_billing_address, {'attr': {'data-role': 'checkout-shipping-address'}}) }}
-            {% endif %}
-        </div>
-    {% endif %}
+    {{ address.address_form(form.shipping_address, form.save_shipping_address, false, false, true) }}
 {%- endblock %}
 
 {% block _billing_address_widget -%}
+    {% import 'OroCheckoutBundle:layouts/default/oro_checkout_frontend_checkout/templates:address.html.twig' as address %}
+
     <div {{ block('block_attributes') }}>
-        {% from 'OroAddressBundle::macros.html.twig' import renderAddress %}
-        {% if workflowItem.data.get('disallow_billing_address_edit') %}
-            {% set billingAddress = checkout.billingAddress %}
-            {{ renderAddress(checkout.billingAddress) }}
-        {% else %}
-            {% import 'OroCheckoutBundle:layouts/default/oro_checkout_frontend_checkout/templates:address.html.twig' as address %}
-            {% set hasCustomAddress = false %}
-            {% set compact = true %}
-            {% if form.billing_address.id.vars.value %}
-                {% set hasCustomAddress = not form.billing_address.vars.value.customerUserAddress and not form.billing_address.vars.value.customerAddress %}
-            {% endif %}
-            {% set billingAddress = form.billing_address.vars.value %}
-            <div data-page-component-module="oroui/js/app/components/view-component"
-                 data-page-component-options="{{ {
-                     view: 'orocheckout/js/app/views/address-view',
-                     selectors: {
-                         address: '#' ~ form.billing_address.customerAddress.vars.id,
-                         region: '#' ~ form.billing_address.region.vars.id,
-                         fieldsContainer: '#checkout-address-fields-container',
-                         shipToBillingCheckbox: '#checkout_ship_to_billing_address_checkbox'
-                     }
-                 }|json_encode }}">
+        {{ form_row(form.billing_address.customerAddress, {'attr': {
+            'data-role': 'checkout-billing-address',
+            'data-address-type': 'billing',
+            'data-new-address-label': checkout.billingAddress|oro_format_address(null, ', ')
+        }}) }}
 
-                {{ form_row(form.billing_address.customerAddress, {'attr': {'data-role': 'checkout-shipping-address'}}) }}
-
-                {{ address.address_form(form.billing_address, form.save_billing_address, hasCustomAddress, form.email, compact) }}
-                {% if not workflowItem.data.get('disallow_shipping_address_edit') %}
-                    <label for="checkout_ship_to_billing_address_checkbox" id="checkout_ship_to_billing_address_label" class="custom-checkbox input-widget">
-                        <input type="checkbox" id="checkout_ship_to_billing_address_checkbox" class="custom-checkbox__input" data-role="checkout-shipping-address" value="1"><span class="custom-checkbox__icon"></span>
-                        <span class="custom-checkbox__text">{{ 'oro.checkout.workflow.b2b_flow_checkout.form.ship_to_this_address.label'|trans }}</span>
-                    </label>
-                {% endif %}
-            </div>
-        {% endif %}
+        {{ address.address_form(form.billing_address, form.save_billing_address, false, false, true) }}
     </div>
 {%- endblock %}
 
@@ -423,26 +394,18 @@
 {% endblock %}
 
 {% block _checkout_button_continue_right_widget %}
-    {% import 'OroUIBundle::macros.html.twig' as UI %}
     {% if transitionData is defined and transitionData %}
         {% import 'OroCheckoutBundle:layouts/default:layout.html.twig' as _layout %}
         <div class="order-checkout-widget text-right">
-            <span {{ _layout.conditionMessages(transitionData) }}>
-                <button type="submit"
-                        class="btn {% if transitionData.isAllowed %}btn--info{% endif %} btn--size-m checkout__submit-btn"
-                        disabled="disabled"
-                        autocomplete="off"
-                        {{ UI.renderPageComponentAttributes({
-                            module: 'oroui/js/app/components/view-component',
-                            options: {
-                                view: 'orocheckout/js/app/views/single-page-transition-button-view',
-                                enabled: transitionData.isAllowed
-                            }
-                        }) }}
-                >
-                {{ transitionData.transition.label|trans({},'workflows') }}
+            {% if transitionData.isAllowed %}
+                <button type="submit" class="btn btn--size-m btn--info checkout__submit-btn">
+                    {{- transitionData.transition.label|trans({},'workflows') -}}
                 </button>
-            </span>
+            {% else %}
+                <div {{- _layout.conditionMessages(transitionData) -}}>
+                    <div class="btn btn--size-m btn--disabled checkout__submit-btn">{{- transitionData.transition.label|trans({},'workflows') -}}</div>
+                </div>
+            {% endif %}
         </div>
     {% endif %}
 {% endblock %}

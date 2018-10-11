@@ -25,14 +25,6 @@ Feature: Single Page Checkout With Popup for Guest
     And I click "Activate"
     Then I should see "Workflow activated" flash message
 
-  Scenario: Enable Optimize Template Performance in system configuration
-    Given I go to System/Configuration
-    And I follow "Commerce/Sales/Checkout" on configuration sidebar
-    And uncheck "Use default" for "Optimize Template Performance" field
-    And I check "Optimize Template Performance"
-    And I click "Save settings"
-    Then I should see "Configuration saved" flash message
-
   Scenario: Enable Guest Checkout and Guest Shopping List in system configuration
     Given I go to System/Configuration
     And I follow "Commerce/Sales/Checkout" on configuration sidebar
@@ -60,11 +52,12 @@ Feature: Single Page Checkout With Popup for Guest
     And type "SKU123" in "search"
     And I click "Search Button"
     And I click "View Details" for "SKU123" product
-    And I click "Add to Shopping list"
-    And I open page with shopping list Shopping list
+    And I click "Add to Shopping List"
+    And I open page with shopping list Shopping List
     And I scroll to top
     And I wait line items are initialized
     And I click "Create Order"
+    And I uncheck "Save my data and create an account" on the checkout page
     And I click "Submit Order"
     And I should see "Please enter correct billing address"
     When I click on "Billing Address Select"
@@ -114,6 +107,8 @@ Feature: Single Page Checkout With Popup for Guest
       | Postal Code  | 12345            |
     And I click "Continue"
     Then I should see "New address (B Prefix B Fname B Mname B Lname B Suffix, B Organization, B Street B Street 2, B CITY HA AL 12345, 12345)" for "Select Billing Address" select
+    # TODO "Save my data and create an account" field should save their state
+    And I uncheck "Save my data and create an account" on the checkout page
     And I click "Submit Order"
     And I should see "Please enter correct shipping address"
 
@@ -164,7 +159,8 @@ Feature: Single Page Checkout With Popup for Guest
   Scenario: Check guest email is saved in popup
     And I click on "Billing Address Select"
     And I click on "New Address Option"
-    And the "Email" field should contain "test@example.com"
+    And "New Address Popup Form" must contains values:
+      | Email        | test@example.com |
     And I close ui dialog
 
   Scenario: Fill and save shipping address via popup and create order
@@ -190,6 +186,8 @@ Feature: Single Page Checkout With Popup for Guest
     When I click "Delete this shopping list after submitting order"
     And I fill "Checkout Order Form" with:
       | PO Number | Order1 |
+    # TODO "Save my data and create an account" field should save their state
+    And I uncheck "Save my data and create an account" on the checkout page
     And I wait "Submit Order" button
     And I click "Submit Order"
     Then I see the "Thank You" page with "Thank You For Your Purchase!" title
@@ -208,6 +206,7 @@ Feature: Single Page Checkout With Popup for Guest
     And I scroll to top
     And I wait line items are initialized
     When I click "Create Order"
+    And I uncheck "Save my data and create an account" on the checkout page
     And I click on "Billing Address Select"
     And I click on "New Address Option"
     And I fill "New Address Popup Form" with:
@@ -249,6 +248,8 @@ Feature: Single Page Checkout With Popup for Guest
     And I click "Continue"
     Then I should see "New address (S Prefix S Fname S Mname S Lname S Suffix, S Organization, S Street S Street 2, S CITY HA AL 67890, 67890)" for "Select Shipping Address" select
     And I should see "Flat Rate 2: $2.00"
+    # TODO "Save my data and create an account" field should save their state
+    And I uncheck "Save my data and create an account" on the checkout page
     When I check "Use billing address" on the checkout page
     Then I should see "Flat Rate: $3.00"
     When I click on "Billing Address Select"
@@ -273,6 +274,8 @@ Feature: Single Page Checkout With Popup for Guest
       | Country      | Ukraine            |
       | State        | Cherkas'ka Oblast' |
     And I click "Continue"
+    # TODO "Save my data and create an account" field should save their state
+    And I uncheck "Save my data and create an account" on the checkout page
     Then There is no shipping method available for this order
     When I uncheck "Use billing address" on the checkout page
     Then I should see "New address (12345 Ukraine B City, B Street B Street 2, B Organization, B Prefix B Fname B Mname B Lname B Suffix, 12345)" for "Select Shipping Address" select
@@ -283,11 +286,15 @@ Feature: Single Page Checkout With Popup for Guest
       | Country      | Germany          |
       | State        | Berlin           |
     And I click "Continue"
+        # TODO "Save my data and create an account" field should save their state
+    And I uncheck "Save my data and create an account" on the checkout page
     And I check "Use billing address" on the checkout page
     Then I should see "Flat Rate: $3.00"
     When I click "Delete this shopping list after submitting order"
     And I fill "Checkout Order Form" with:
       | PO Number | Order2 |
+    # TODO "Save my data and create an account" field should save their state
+    And I uncheck "Save my data and create an account" on the checkout page
     And I wait "Submit Order" button
     And I click "Submit Order"
     Then I see the "Thank You" page with "Thank You For Your Purchase!" title
