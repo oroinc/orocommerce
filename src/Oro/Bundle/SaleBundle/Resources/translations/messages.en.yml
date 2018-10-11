@@ -116,6 +116,8 @@ oro:
             groups:
                 sale_contact_info.title: 'Contacts'
                 customer_visible_contact_info.title: 'Customer Visible Contact Info'
+                quotes.title: 'Quotes'
+                guest_quote.title: 'Guest Quote'
             fields:
                 backend_product_visibility.title: 'Can Be Added to Quotes'
                 contact_info_source_display.label: 'Display'
@@ -125,6 +127,7 @@ oro:
                 contact_info_user_option.label: 'Customer Visible Contact Info'
                 contact_info_manual_text.label: 'Enter Contact Info'
                 guest_contact_info_text.label: 'Guest Contact'
+                enable_guest_quote.label: 'Enable Guest Quote'
 
         privilege:
             category.quotes.label: 'Quotes'
@@ -267,6 +270,7 @@ oro:
             tooltip:
                   allow_user_configuration: 'When checked, the sales representatives will be able to choose one of the options enabled below.'
                   guest_contact_info_text: 'You may use this setting to enter the sales contact information that will be shown to non-authenticated visitors.'
+                  enable_guest_quote: 'Select this option to enable quotes for guest users. Make sure that Guest Checkout is enabled for the storefront, otherwise guest users will be restricted to only viewing the quotes.'
         available_customer_options:
             type:
                 dont_display.label: "Don't Display Contact Info"
