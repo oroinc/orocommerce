@@ -30,6 +30,14 @@ services:
         tags:
             - { name: twig.extension }
 
+    oro_sale.twig.quote_guest_access:
+        class: 'Oro\Bundle\SaleBundle\Twig\QuoteGuestAccessExtension'
+        public: false
+        arguments:
+            - '@service_container'
+        tags:
+            - { name: twig.extension }
+
     oro_sale.formatter.quote_product:
         class: 'Oro\Bundle\SaleBundle\Formatter\QuoteProductFormatter'
         arguments:
