@@ -23,7 +23,8 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 use Symfony\Component\Translation\TranslatorInterface;
 
 /**
- * @Todo: Must be refactored in scope of - #BB-10192
+ * Handles logic related to shopping list and line item manipulations (create, remove, etc.).
+ *
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  * @SuppressWarnings(PHPMD.ExcessiveParameterList)
  */
@@ -222,6 +223,23 @@ class ShoppingListManager
 
         $em = $this->managerRegistry->getManagerForClass('OroShoppingListBundle:LineItem');
         $em->flush();
+    }
+
+    /**
+     * @param int $lineItemId
+     * @param ShoppingList $shoppingList
+     * @return LineItem|null
+     */
+    public function getLineItem($lineItemId, ShoppingList $shoppingList)
+    {
+        $lineItems = $shoppingList->getLineItems();
+        foreach ($lineItems as $lineItem) {
+            if ($lineItem->getId() === $lineItemId) {
+                return $lineItem;
+            }
+        }
+
+        return null;
     }
 
     /**
