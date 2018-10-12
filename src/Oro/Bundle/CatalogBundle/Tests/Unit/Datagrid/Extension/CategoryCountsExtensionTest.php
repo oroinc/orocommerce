@@ -200,8 +200,7 @@ class CategoryCountsExtensionTest extends \PHPUnit\Framework\TestCase
             ->with($category, $this->searchQuery)
             ->willReturn([1 => 2]);
 
-        $key = 'grid1|{"_filter":{"filter1":[],"subcategory":{"value":[1,2,3]}},"'
-            . '_minified":{"f":{"filter1":[],"subcategory":{"value":[4,5,6]}}},"categoryId":42}';
+        $key = 'grid1|{"_filter":{"filter1":[],"subcategory":{"value":[1,2,3]}},"categoryId":42}';
 
         $this->cache->expects($this->once())
             ->method('getCounts')
@@ -259,8 +258,7 @@ class CategoryCountsExtensionTest extends \PHPUnit\Framework\TestCase
         $this->productSearchRepository->expects($this->never())
             ->method('getCategoryCountsByCategory');
 
-        $key = 'grid1|{"_filter":{"filter1":[],"subcategory":{"value":[1,2,3]}},'
-            .'"_minified":{"f":{"filter1":[],"subcategory":{"value":[4,5,6]}}},"categoryId":42}';
+        $key = 'grid1|{"_filter":{"filter1":[],"subcategory":{"value":[1,2,3]}},"categoryId":42}';
 
         $this->cache->expects($this->once())
             ->method('getCounts')
