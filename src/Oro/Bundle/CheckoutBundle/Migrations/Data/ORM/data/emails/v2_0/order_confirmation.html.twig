@@ -5,33 +5,62 @@
 @isEditable = 1
 
 <h1>Hello, {{ entity.customerUser|oro_format_name }}!</h1>
-<p>Thank you for order from {{ entity.website }}. If you have any questions about your order, <a href="mailto:{{ entity.owner.email }}">please contact us</a> or call us at 800-555-0199 Monday-Friday, 9am-6pm PST.</p>
+
+<p>Thank you for order from {{ entity.website }}. If you have any questions about your order,
+    <a href="mailto:{{ entity.owner.email }}">please contact us</a>
+    or call us at 800-555-0199 Monday-Friday, 9am-6pm PST.</p>
+
 <h3>Please see your order #{{ entity.identifier }} details below.</h3>
-<p><strong>Order Date: </strong>{{ entity.createdAt|oro_format_date }}<br /> <strong>Billing Information:</strong> {{ entity.billingAddress|oro_format_address }}<br /> <strong>Shipping Information:</strong> {{ entity.shippingAddress|oro_format_address }}</p>
-<!--{% set shipping_method = oro_order_shipping_method_label(entity.shippingMethod, entity.shippingMethodType) %}-->
-<p><strong>Shipping Method: </strong>{{ shipping_method }}</p>
-<!--{% set payment_methods = get_payment_methods(entity)%} {% if payment_methods|length == 1 %}-->
-<p><strong>Payment Method: </strong></p>
+
+<strong>Order Date: </strong>{{ entity.createdAt|oro_format_date }}<br/>
+
+<strong>Billing Information:</strong>
+{{ entity.billingAddress|oro_format_address }}<br/>
+
+<strong>Shipping Information:</strong>
+{{ entity.shippingAddress|oro_format_address }}<br/>
+
+{% set shipping_method = oro_order_shipping_method_label(entity.shippingMethod, entity.shippingMethodType) %}
+<strong>Shipping Method: </strong>{{ shipping_method }}<br/>
+
+{% set payment_methods = get_payment_methods(entity) %}
+<!--{% if  payment_methods|length == 1 %}-->
+    <strong>Payment Method: </strong>
 <!--{% elseif payment_methods|length > 1 %}-->
-<p><strong>Payment Methods: </strong></p>
+    <strong>Payment Methods: </strong>
 <!--{% endif %}{% for payment_method in payment_methods %}-->
-<p>{{ payment_method.label }}</p>
-<!--{% if payment_method.options|length > 0 %}-->
-<p>{{- ' (' ~ payment_method.options|join(', ') ~ ')' -}}</p>
-<!--{% endif %}--><!--{% endfor %}--><!--{% set paymentTerm = get_payment_term(entity) %}--><!--{% if paymentTerm %}-->
-<p><strong>Payment Term: </strong>{{ paymentTerm }}</p>
-<!--{% endif %}-->
-<p><strong>Payment Status: </strong>{{ get_payment_status_label(get_payment_status(entity)) }}</p>
-<!--{% if entity.shipUntil or entity.customerNotes or entity.poNumber %}-->
-<h3>Additional Information:</h3>
-<!--{% if entity.shipUntil %}-->
-<p><strong>Do Not Ship Later Than: </strong>{{ entity.shipUntil|oro_format_date }}</p>
-<!--{% endif %}--><!--{% if entity.customerNotes %}-->
-<p><strong>Notes: </strong> {{ entity.customerNotes }}</p>
-<!--{% endif %}--><!--{% if entity.poNumber %}-->
-<p><strong>PO Number: </strong>{{ entity.poNumber }}</p>
-<!--{% endif %}--><!--{% endif %}-->
-<table style="border: 1px solid black; margin-top: 10px;">
+    {{ payment_method.label }}
+    <!--{% if payment_method.options|length > 0 %}-->
+        {{- ' (' ~ payment_method.options|join(', ') ~ ')' -}}
+    <!--{% endif %}-->
+    <br/>
+<!--{% endfor %}-->
+
+{% set paymentTerm = get_payment_term(entity) %}
+{% if paymentTerm %}
+    <strong>Payment Term: </strong>{{ paymentTerm }}<br/>
+{% endif %}
+
+<strong>Payment Status: </strong>{{ get_payment_status_label(get_payment_status(entity)) }}
+
+{% if entity.shipUntil or entity.customerNotes or entity.poNumber %}
+    <h3>Additional Information:</h3>
+
+    {% if entity.shipUntil %}
+        <strong>Do Not Ship Later Than: </strong>{{ entity.shipUntil|oro_format_date }}<br/>
+    {% endif %}
+
+    {% if entity.customerNotes %}
+        <strong>Notes: </strong>
+        {{ entity.customerNotes }}<br/>
+    {% endif %}
+
+    {% if entity.poNumber %}
+        <strong>PO Number: </strong>{{ entity.poNumber }}
+    {% endif %}
+{% endif %}
+
+<table style="border: 1px solid black;margin-top: 10px">
     <thead>
     <tr>
         <th><strong>Item</strong></th>
@@ -42,32 +71,44 @@
         <th><strong>Notes</strong></th>
     </tr>
     </thead>
-    <tbody><!--{% set data = order_line_items(entity) %}--> <!--{% set lineItemDiscounts = line_items_discounts(entity) %}-->
-        <!--{% for item in data.lineItems %}-->
+    <tbody>
+    <!--{% set data = order_line_items(entity) %}-->
+    <!--{% set lineItemDiscounts = line_items_discounts(entity) %}-->
+    <!--{% for item in data.lineItems %}-->
         <tr>
-            <td>{{ item.product_name }} <br /> SKU #: {{ item.product_sku }}</td>
+            <td>
+                {{ item.product_name }}
+                <br>
+                SKU #: {{ item.product_sku }}
+                <br>
+            </td>
             <td>{{ item.quantity|oro_format_short_product_unit_value(item.unit) }}</td>
             <td>{{ item.price|oro_format_price }}</td>
-            <td>{{ item.subtotal|oro_format_price }} <!--{% set matchedDiscount = lineItemDiscounts[item.id] %}--> <!--{% if matchedDiscount is not null and matchedDiscount.value > 0 %}--> <br />{{ (-matchedDiscount.value)|oro_format_currency({'currency': matchedDiscount.currency}) }} <!--{% endif %}--></td>
+            <td>
+                {{ item.subtotal|oro_format_price }}
+                {% set matchedDiscount = lineItemDiscounts[item.id] %}
+                <!--{% if matchedDiscount is not null and matchedDiscount.value > 0 %}-->
+                    <br/>{{ (-matchedDiscount.value)|oro_format_currency({'currency': matchedDiscount.currency}) }}
+                <!--{% endif %}-->
+            </td>
             <td>{{ item.ship_by }}</td>
             <td>{{ item.comment }}</td>
         </tr>
-        <!--{% endfor %}-->
+    <!--{% endfor %}-->
     </tbody>
 </table>
+<br>
 <table>
     <!--{% for subtotal in data.subtotals %}-->
-    <tbody>
-    <tr>
-        <td>{{ subtotal.label }}</td>
-        <td align="right">{{ subtotal.totalPrice|oro_format_price }}</td>
-    </tr>
+        <tr>
+            <td>{{ subtotal.label }}</td>
+            <td align="right">{{ subtotal.totalPrice|oro_format_price }}</td>
+        </tr>
     <!--{% endfor %}-->
     <tr>
         <td><strong>{{ data.total.label }}</strong></td>
         <td align="right">{{ data.total.totalPrice|oro_format_price }}</td>
     </tr>
-    </tbody>
 </table>
-<br />
+<br>
 Thank you.

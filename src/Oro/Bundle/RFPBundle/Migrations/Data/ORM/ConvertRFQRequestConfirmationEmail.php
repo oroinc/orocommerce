@@ -1,27 +1,19 @@
 <?php
 
-namespace Oro\Bundle\CheckoutBundle\Migrations\Data\ORM;
+namespace Oro\Bundle\RFPBundle\Migrations\Data\ORM;
 
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\EmailBundle\Entity\EmailTemplate;
 use Oro\Bundle\EmailBundle\Migrations\Data\ORM\AbstractEmailFixture;
-use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\RFPBundle\Entity\Request;
 
 /**
  * Added html tag around twig tags
  * Allows to edit text from WYSIWYG editor and does not break the twig template
  */
-class ConvertOrderConfirmationEmail extends AbstractEmailFixture implements DependentFixtureInterface
+class ConvertRFQRequestConfirmationEmail extends AbstractEmailFixture implements DependentFixtureInterface
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function getDependencies()
-    {
-        return [UpdateOrderConfirmationEmailTemplate::class];
-    }
-
     /**
      * {@inheritdoc}
      */
@@ -29,7 +21,15 @@ class ConvertOrderConfirmationEmail extends AbstractEmailFixture implements Depe
     {
         return $this->container
             ->get('kernel')
-            ->locateResource('@OroCheckoutBundle/Migrations/Data/ORM/data/emails/v2_0');
+            ->locateResource('@OroRFPBundle/Migrations/Data/ORM/data/emails/v1_0');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDependencies()
+    {
+        return [LoadEmailTemplates::class];
     }
 
     /**
@@ -37,7 +37,7 @@ class ConvertOrderConfirmationEmail extends AbstractEmailFixture implements Depe
      */
     protected function loadTemplate(ObjectManager $manager, $fileName, array $file)
     {
-        if ($fileName !== 'order_confirmation') {
+        if ($fileName !== 'confirmation') {
             return;
         }
 
@@ -47,7 +47,6 @@ class ConvertOrderConfirmationEmail extends AbstractEmailFixture implements Depe
         $existingTemplate = file_get_contents($existingEmailTemplatesList[$fileName]['path']);
         $existingParsedTemplate = EmailTemplate::parseContent($existingTemplate);
         $existingEmailTemplate = $this->findExistingTemplate($manager, $existingParsedTemplate);
-
         if ($existingEmailTemplate) {
             $this->updateExistingTemplate($existingEmailTemplate, $templateContent);
         }
@@ -71,10 +70,9 @@ class ConvertOrderConfirmationEmail extends AbstractEmailFixture implements Depe
         ) {
             return null;
         }
-
         return $manager->getRepository('OroEmailBundle:EmailTemplate')->findOneBy([
             'name' => $template['params']['name'],
-            'entityName' => Order::class,
+            'entityName' => Request::class,
             'content' => $template['content']
         ]);
     }
@@ -88,6 +86,6 @@ class ConvertOrderConfirmationEmail extends AbstractEmailFixture implements Depe
     {
         return $this->container
             ->get('kernel')
-            ->locateResource('@OroCheckoutBundle/Migrations/Data/ORM/data/emails/order');
+            ->locateResource('@OroRFPBundle/Migrations/Data/ORM/data/emails/request');
     }
 }
