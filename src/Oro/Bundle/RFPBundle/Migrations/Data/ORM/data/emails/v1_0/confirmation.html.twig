@@ -1,0 +1,56 @@
+@name = request_create_confirmation
+@entityName = Oro\Bundle\RFPBundle\Entity\Request
+@subject = Your RFQ has been received.
+@isSystem = 1
+@isEditable = 1
+
+<h1>Hello {{ entity.customerUser|oro_format_name }}!</h1>
+
+<p>Thank you for your request.</p>
+
+<h3>Please see the details of your quote request below.</h3>
+
+<div>
+    <p><i>Date:</i> {{ entity.createdAt|date('F j, Y, g:i A') }}</p>
+    <p><i>Company:</i> {{ entity.company|default('N/A') }}</p>
+    <p><i>Role:</i> {{ entity.role|default('N/A') }}</p>
+    <p><i>Phone:</i> {{ entity.phone|default('N/A') }}</p>
+    <p><i>Email:</i> {{ entity.email|default('N/A') }}</p>
+    {% if entity.note %}
+        <p><i>Notes:</i></p>
+        <p>{{ entity.note }}</p>
+    {% endif %}
+</div>
+
+{% set products = rfp_products(entity) %}
+{% if products|length %}
+    <table style="border: 1px solid black;margin-top: 10px">
+        <thead>
+            <tr>
+                <th><strong>SKU</strong></th>
+                <th><strong>Product</strong></th>
+                <th><strong>Quantity</strong></th>
+                <th><strong>Target Price</strong></th>
+                <th><strong>Comment</strong></th>
+            </tr>
+        </thead>
+        <!--{% for product in products %}-->
+        <!--{% set numItems = product.items|length %}-->
+            <tbody>
+            <!--{% for item in product.items %}-->
+                <tr>
+                <!--{% if loop.first %}-->
+                    <td rowspan="{{ numItems }}">{{ product.sku }}</td>
+                    <td rowspan="{{ numItems }}">{{ product.name }}</td>
+                <!--{% endif %}-->
+                    <td>{{ item.quantity }} {{ item.unit|oro_format_product_unit_label }}</td>
+                    <td>{{ item.price ? item.price|oro_format_price : '' }}</td>
+                <!--{% if loop.first %}-->
+                    <td rowspan="{{ numItems }}">{{ product.comment }}</td>
+                <!--{% endif %}-->
+                </tr>
+            <!--{% endfor %}-->
+            </tbody>
+        <!--{% endfor %}-->
+    </table>
+{% endif %}
