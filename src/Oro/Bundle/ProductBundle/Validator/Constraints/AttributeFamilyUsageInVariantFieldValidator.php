@@ -59,7 +59,7 @@ class AttributeFamilyUsageInVariantFieldValidator extends ConstraintValidator
         }
 
         $entityConfigNames = $this->getDeletedEntityConfigNames($toDeleteIds);
-        $errors = $this->validateConfigProducts($entityConfigNames);
+        $errors = $this->validateConfigProducts($entityConfigNames, $value);
 
         if ($errors) {
             $this->context->addViolation(
@@ -119,12 +119,16 @@ class AttributeFamilyUsageInVariantFieldValidator extends ConstraintValidator
 
     /**
      * @param array $entityConfigNames
+     * @param AttributeFamily $attributeFamily
      * @return array
      */
-    private function validateConfigProducts(array $entityConfigNames)
+    private function validateConfigProducts(array $entityConfigNames, AttributeFamily $attributeFamily)
     {
         $productRepository = $this->doctrineHelper->getEntityRepositoryForClass(Product::class);
-        $products = $productRepository->findBy(['type' => Product::TYPE_CONFIGURABLE]);
+        $products = $productRepository->findBy([
+            'type' => Product::TYPE_CONFIGURABLE,
+            'attributeFamily' => $attributeFamily
+        ]);
 
         $errors = [];
 
