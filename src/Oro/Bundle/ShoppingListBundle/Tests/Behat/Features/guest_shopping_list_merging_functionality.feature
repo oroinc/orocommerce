@@ -29,6 +29,7 @@ Feature: Guest shopping list merging functionality
 
   Scenario: Create shopping list as a guest
     Given I am on homepage
+    And I should see "No Shopping Lists"
     And I should see "Shopping List"
     And type "PSKU1" in "search"
     And I click "Search Button"
@@ -36,9 +37,11 @@ Feature: Guest shopping list merging functionality
     And I should see "Add to Shopping List"
     And I click "View Details" for "PSKU1" product
     And I should see "Add to Shopping List"
-    And I click "Add to Shopping List button"
+    And I click "Add to Shopping List"
     And I should see "Product has been added to" flash message
     And I should see "In shopping list"
+    And I hover on "Shopping List Widget"
+    And I should see "1 Item | $0.00" in the "Shopping List Widget" element
 
   Scenario: Check guest shopping list was added to customer
     Given I signed in as AmandaRCole@example.org on the store frontend in old session

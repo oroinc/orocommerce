@@ -53,6 +53,10 @@
             }
         }
     }
+
+    &--disabled {
+        pointer-events: none;
+    }
 }
 
 .cart-widget {
