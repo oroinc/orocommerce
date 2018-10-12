@@ -9,9 +9,16 @@ use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Generator\MessageGenerator;
 use Oro\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemHandler;
-use Oro\Component\PhpUtils\ArrayUtil;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
+/**
+ * Base common logic for realization of ComponentProcessorInterface
+ * provides defaults for:
+ *  isValidationRequired(): true
+ *  isAllowed(): ShoppingListLineItemHandler::isAllowed()
+ *
+ * provides base logic for fillShoppingList(ShoppingList $shoppingList, array $data)
+ */
 abstract class AbstractShoppingListQuickAddProcessor implements ComponentProcessorInterface
 {
     /**
@@ -57,7 +64,7 @@ abstract class AbstractShoppingListQuickAddProcessor implements ComponentProcess
     protected function fillShoppingList(ShoppingList $shoppingList, array $data)
     {
         $data = $data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY];
-        $productSkus = ArrayUtil::arrayColumn($data, ProductDataStorage::PRODUCT_SKU_KEY);
+        $productSkus = \array_column($data, ProductDataStorage::PRODUCT_SKU_KEY);
         $productIds = $this->getProductRepository()->getProductsIdsBySku($productSkus);
 
         $productUnitsWithQuantities = [];
