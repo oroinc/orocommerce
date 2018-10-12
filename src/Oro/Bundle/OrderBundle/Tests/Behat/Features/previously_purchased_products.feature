@@ -38,6 +38,16 @@ Feature: Previously purchased products
     And I should see "Product 2"
     And I should see "Recency (Newest first)"
 
+  Scenario: Check all sorting options available and Relevance option (Please select) is not visible
+    Then I should not see "Relevance" in the "Frontend Product Grid Sorter" element
+    Then I should see next options in "Frontend Product Grid Sorter"
+      |Recency (Oldest first)|
+      |Recency (Newest first)|
+      |Name (Low to High)    |
+      |Name (High to Low)    |
+      |Price (Low to High)   |
+      |Price (High to Low)   |
+
   Scenario: Product from page can be added to shopping list
     Given I operate as the Buyer
     When I click "Account"

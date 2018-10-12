@@ -55,10 +55,14 @@ Feature: Limit product filters and sorters in product catalog
     And I save and close form
     Then I should see "Successfully updated" flash message
 
-  Scenario: Check that all sorters and filters display on the category page
+  Scenario: Check that sorter "Relevance" is present and applied
     Given I proceed as the Buyer
-    Then I signed in as AmandaRCole@example.org on the store frontend
-    And I click "New Category"
+    And I signed in as AmandaRCole@example.org on the store frontend
+    When I click "New Category"
+    Then I should see "Relevance" in the "Frontend Product Grid Sorter" element
+    Then I should see "Sorted By: Relevance"
+
+  Scenario: Check that all custom sorters and filters display on the category page
     Then I check that filter block visible in frontend product grid
     Then I should see "AttrWithFamily" in the "ProductFrontendGridFiltersBlock" element
     Then I should see "AttrWithFamily" in the "Frontend Product Grid Sorter" element
