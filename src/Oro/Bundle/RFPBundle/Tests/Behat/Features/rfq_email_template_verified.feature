@@ -31,7 +31,7 @@ Feature: RFQ confirmation email template verification
   Scenario: Verified email template source
     Given I proceed as the User
     And I am on the homepage
-    When type "Product" in "search"
+    And type "Product" in "search"
     And I click "Search Button"
     And I click "Add to Shopping List"
     And I click "Shopping list"
@@ -43,6 +43,6 @@ Feature: RFQ confirmation email template verification
       | Phone Number  | 72 669 62 82          |
       | Company       | Red Fox Tavern        |
       | PO Number     | PO Test 01            |
-    And I click "Submit Request"
+    When I click "Submit Request"
     Then I should see "Request has been saved" flash message
     And Email should contains the following "PSKU1" text
