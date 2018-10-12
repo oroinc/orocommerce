@@ -35,9 +35,8 @@ Feature: Product Attributes Management in Product Families
       | Label      | size_family1 |
       | Attributes | [Size]       |
     And I save and close form
-    Then I should see "Successfully updated" flash message
+    Then I should see "Product Family was successfully saved" flash message
 
-  Scenario: Create product families with Size attribute
     When I go to Products / Product Families
     And I click "Create Product Family"
     And I fill "Product Family Form" with:
