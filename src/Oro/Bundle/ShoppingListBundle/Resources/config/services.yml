@@ -40,6 +40,7 @@ services:
             - '@security.token_storage'
             - '@oro_website.manager'
             - '@translator'
+            - '@oro_config.manager'
         tags:
             - { name: oro_featuretogle.feature, feature: 'guest_shopping_list' }
 
