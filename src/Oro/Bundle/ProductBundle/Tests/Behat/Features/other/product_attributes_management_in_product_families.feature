@@ -94,4 +94,4 @@ Feature: Product Attributes Management in Product Families
     And I click Edit size_family2 in grid
     And I clear "Attributes" field
     And I save and close form
-    Then I should see "Product Family was successfully saved" flash message
+    Then I should see "Successfully updated" flash message
