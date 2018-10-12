@@ -45,7 +45,7 @@ Feature: Product Attributes Management in Product Families
       | Label      | size_family2 |
       | Attributes | [Size]       |
     And I save and close form
-    Then I should see "Successfully updated" flash message
+    Then I should see "Product Family was successfully saved" flash message
 
   Scenario: Create configurable product with Size attributes in both families
     When go to Products/ Products
@@ -60,7 +60,7 @@ Feature: Product Attributes Management in Product Families
       | Configurable Attributes | [Size]       |
       | Size                    | S            |
     And I save and close form
-#    Then I should see "Product has been saved" flash message
+    Then I should see "Product has been saved" flash message
 
     When go to Products/ Products
     And click "Create Product"
@@ -95,4 +95,4 @@ Feature: Product Attributes Management in Product Families
     And I click Edit size_family2 in grid
     And I clear "Attributes" field
     And I save and close form
-    Then I should see "Successfully updated" flash message
+    Then I should see "Product Family was successfully saved" flash message
