@@ -234,7 +234,8 @@ class CategoryCountsExtension extends AbstractExtension
         return [
             'categoryId',
             DatagridParametersHelper::DATAGRID_SKIP_EXTENSION_PARAM,
-            AbstractFilterExtension::FILTER_ROOT_PARAM
+            AbstractFilterExtension::FILTER_ROOT_PARAM,
+            ParameterBag::MINIFIED_PARAMETERS
         ];
     }
 }
