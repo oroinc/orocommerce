@@ -61,4 +61,5 @@ navigation:
 
         oro_sale_quote_frontend_index: 'oro.frontend.sale.quote.entity_plural_label'
         oro_sale_quote_frontend_view:  'oro.sale.navigation.view'
+        oro_sale_quote_frontend_guest_access: 'oro.sale.navigation.guest_access'
         oro_sale_quote_frontend_choice:  'oro.sale.navigation.view'

@@ -255,6 +255,7 @@ oro:
 
         navigation:
             view: 'Quote #%id%'
+            guest_access: 'Quote #%id%'
 
         security:
             permission:

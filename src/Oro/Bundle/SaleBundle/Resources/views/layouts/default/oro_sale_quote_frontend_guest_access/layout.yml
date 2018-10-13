@@ -1,0 +1,5 @@
+layout:
+    imports:
+        -
+            id: oro_sale_quote_frontend_view
+    actions: []
