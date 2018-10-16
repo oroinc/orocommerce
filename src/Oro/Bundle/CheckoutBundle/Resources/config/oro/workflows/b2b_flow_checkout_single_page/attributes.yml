@@ -3,5 +3,3 @@ workflows:
         attributes:
             saveStateUrl:
                 type: string
-            disallow_visitor_email:
-                type: boolean
