@@ -19,5 +19,7 @@ class OroSaleBundle implements Migration
         if (!$table->hasColumn('guest_access_id')) {
             $table->addColumn('guest_access_id', 'guid', ['notnull' => false]);
         }
+
+        $queries->addPostQuery(new UpdateQuoteGuestAccessIdQuery());
     }
 }

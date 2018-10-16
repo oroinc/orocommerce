@@ -271,7 +271,7 @@ oro:
             tooltip:
                   allow_user_configuration: 'When checked, the sales representatives will be able to choose one of the options enabled below.'
                   guest_contact_info_text: 'You may use this setting to enter the sales contact information that will be shown to non-authenticated visitors.'
-                  enable_guest_quote: 'Select this option to enable quotes for guest users. Make sure that Guest Checkout is enabled for the storefront, otherwise guest users will be restricted to only viewing the quotes.'
+                  enable_guest_quote: 'This option allow usage of Quotes functionality for the Guest Users (Guest-related options: Website Access, Guest Checkout should be enabled too. If Guest Checkout option is disabled - Guest User is able only to view quote.'
         available_customer_options:
             type:
                 dont_display.label: "Don't Display Contact Info"
