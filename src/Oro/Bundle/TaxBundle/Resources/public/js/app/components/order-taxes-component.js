@@ -53,7 +53,10 @@ define(function(require) {
         },
 
         /**
+         * Formats data in a subtotals item
+         *
          * @param {Object} item
+         * @param {number} index
          */
         prepareItem: function(item, index) {
             item.data.total = TaxFormatter.formatItem(item.data.total);
