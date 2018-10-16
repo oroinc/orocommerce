@@ -21,17 +21,17 @@ Feature: RFQ confirmation email template verification
     And I save setting
     And I should see "Configuration saved" flash message
 
-#  Scenario: Changing the email template with WYSIWYG editor
-#    Given I go to System / Emails / Templates
-#    And I filter Template Name as is equal to "request_create_confirmation"
-#    And I click "edit" on first row in grid
-#    When I submit form
-#    Then I should see "Template saved" flash message
+  Scenario: Changing the email template with WYSIWYG editor
+    Given I go to System / Emails / Templates
+    And I filter Template Name as is equal to "request_create_confirmation"
+    And I click "edit" on first row in grid
+    When I submit form
+    Then I should see "Template saved" flash message
 
   Scenario: Verified email template source
     Given I proceed as the User
     And I am on the homepage
-    And type "Product" in "search"
+    And type "PSKU1" in "search"
     And I click "Search Button"
     And I click "Add to Shopping List"
     And I click "Shopping list"

@@ -79,8 +79,6 @@ class Processor extends BaseProcessor implements LoggerAwareInterface
     private function send(Request $request, UserInterface $user, $template)
     {
         try {
-            $this->logger->critical(sprintf('TODO: Template %s processed', $template));
-
             return $this->getEmailTemplateAndSendEmail($user, $template, ['entity' => $request]);
         } catch (\Swift_SwiftException $exception) {
             $this->logger->error('Unable to send email', [
