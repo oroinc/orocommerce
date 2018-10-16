@@ -7,7 +7,7 @@ use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 /**
- * Adds guest access id field with data
+ * Adds guest access id field with data.
  */
 class OroSaleBundle implements Migration
 {
@@ -21,5 +21,7 @@ class OroSaleBundle implements Migration
         if (!$table->hasColumn('guest_access_id')) {
             $table->addColumn('guest_access_id', 'guid', ['notnull' => false]);
         }
+
+        $queries->addPostQuery(new UpdateQuoteGuestAccessIdQuery());
     }
 }
