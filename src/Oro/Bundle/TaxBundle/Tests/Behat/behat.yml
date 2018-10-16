@@ -13,6 +13,9 @@ oro_behat_extension:
         - OroCustomerBundle::ACLContext
         - OroLocaleBundle::LocalizationContext
         - OroFrontendLocalizationBundle::LocalizationSwitcherContext
+        - OroProductBundle::FeatureContext
+        - OroShoppingListBundle::ShoppingListContext
+        - OroCheckoutBundle::FeatureContext
       paths:
         - '@OroTaxBundle/Tests/Behat/Features'
 
