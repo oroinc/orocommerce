@@ -67,7 +67,9 @@ Feature: Single Page Guest Checkout From Shopping List
     And I click "Shopping List"
     And I click "Create Order"
     And I uncheck "Save my data and create an account" on the checkout page
-    And I fill "Billing Information Form" with:
+    And I click on "Billing Address Select"
+    And I click on "New Address Option"
+    And I fill "New Address Popup Form" with:
       | First Name      | Tester          |
       | Last Name       | Testerson       |
       | Email           | tester@test.com |
@@ -76,7 +78,11 @@ Feature: Single Page Guest Checkout From Shopping List
       | Country         | Germany         |
       | State           | Berlin          |
       | Zip/Postal Code | 10115           |
-    And I fill "Shipping Information Form" with:
+    And I click "Continue"
+    And I scroll to top
+    And I click on "Shipping Address Select"
+    And I click on "New Address Option"
+    And I fill "New Address Popup Form" with:
       | First Name      | Tester       |
       | Last Name       | Testerson    |
       | Street          | Fifth avenue |
@@ -84,6 +90,9 @@ Feature: Single Page Guest Checkout From Shopping List
       | Country         | Germany      |
       | State           | Berlin       |
       | Zip/Postal Code | 10115        |
+    And I click "Continue"
+    # TODO "Save my data and create an account" field should save their state
+    And I uncheck "Save my data and create an account" on the checkout page
     And I check "Flat Rate" on the checkout page
     And I check "Payment Terms" on the checkout page
     And I wait "Submit Order" button
@@ -99,10 +108,9 @@ Feature: Single Page Guest Checkout From Shopping List
     And I click "Add to Shopping List"
     And I click "Shopping List"
     And I click "Create Order"
-    And I type "rob1@test.com" in "Email Address"
-    And I type "Rob1@test.com" in "Password"
-    And I type "Rob1@test.com" in "Confirm Password"
-    And I fill "Billing Information Form" with:
+    And I click on "Billing Address Select"
+    And I click on "New Address Option"
+    And I fill "New Address Popup Form" with:
       | First Name      | July          |
       | Last Name       | Robertson     |
       | Email           | july@test.com |
@@ -111,7 +119,11 @@ Feature: Single Page Guest Checkout From Shopping List
       | Country         | Germany       |
       | State           | Berlin        |
       | Zip/Postal Code | 10115         |
-    And I fill "Shipping Information Form" with:
+    And I click "Continue"
+    And I scroll to top
+    And I click on "Shipping Address Select"
+    And I click on "New Address Option"
+    And I fill "New Address Popup Form" with:
       | First Name      | July         |
       | Last Name       | Robertson    |
       | Street          | Fifth avenue |
@@ -119,6 +131,10 @@ Feature: Single Page Guest Checkout From Shopping List
       | Country         | Germany      |
       | State           | Berlin       |
       | Zip/Postal Code | 10115        |
+    And I click "Continue"
+    And I type "rob1@test.com" in "Email Address"
+    And I type "Rob1@test.com" in "Password"
+    And I type "Rob1@test.com" in "Confirm Password"
     And I check "Flat Rate" on the checkout page
     And I check "Payment Terms" on the checkout page
     And I wait "Submit Order" button
