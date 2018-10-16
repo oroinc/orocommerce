@@ -31,10 +31,11 @@ Feature: RFQ confirmation email template verification
   Scenario: Verified email template source
     Given I proceed as the User
     And I am on the homepage
-    And type "Product" in "search"
+    And type "PSKU1" in "search"
     And I click "Search Button"
     And I click "Add to Shopping List"
-    And I click "Shopping list"
+    And I hover on "Shopping Cart"
+    And click "Shopping List"
     And click "Request Quote"
     And I fill form with:
       | First Name    | John                  |
