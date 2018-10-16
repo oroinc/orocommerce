@@ -11,6 +11,9 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Component\Cache\Layout\DataProviderCacheTrait;
 
+/**
+ * Provides Category data for layouts
+ */
 class CategoryProvider
 {
     use DataProviderCacheTrait;
@@ -70,30 +73,6 @@ class CategoryProvider
     public function getRootCategory()
     {
         return $this->loadCategory();
-    }
-
-    /**
-     * @deprecated use CategoryBreadcrumbProvider::getItems() instead
-     * @return Category[]
-     */
-    public function getBreadcrumbs()
-    {
-        $categories = array_merge($this->getParentCategories(), [$this->getCurrentCategory()]);
-        $breadcrumbs = [];
-
-        /* @var Category $category */
-        foreach ($categories as $category) {
-            $breadcrumbs[] = [
-                'label_localized' => $category->getTitles(),
-                'route' => 'oro_product_frontend_product_index',
-                'routeParams' => [
-                    'categoryId' => $category->getId(),
-                    'includeSubcategories' => $this->requestProductHandler->getIncludeSubcategoriesChoice()
-                ]
-            ];
-        }
-
-        return $breadcrumbs;
     }
 
     /**

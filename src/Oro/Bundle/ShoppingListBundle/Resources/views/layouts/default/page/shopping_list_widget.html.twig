@@ -42,13 +42,21 @@
         </span>
         <span class="cart-widget-counter">
             <span class="cart-widget__text">
+                {% set isShowDropdown = true %}
                 {% if not is_one_shopping_list_enabled() %}
                     {{ 'oro.frontend.shoppinglist.view.entity.label'|transchoice(shoppingLists|length)|raw }}
                 {% else %}
-                    {{ 'oro.shoppinglist.default.label'|trans}}
+                    {% if (shoppingLists|length > 0) %}
+                        {{ 'oro.shoppinglist.default.label'|trans}}
+                    {% else %}
+                        {% set isShowDropdown = false %}
+                        {{ 'oro.frontend.shoppinglist.view.entity.label'|transchoice(shoppingLists|length)|raw }}
+                    {% endif %}
                 {% endif %}
             </span>
-            <span class="fa-angle-down" aria-hidden="true"></span>
+            {% if isShowDropdown is same as(true) %}
+                <span class="fa-angle-down" aria-hidden="true"></span>
+            {% endif %}
         </span>
     </div>
     {{ block_widget(block) }}
