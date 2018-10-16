@@ -20,8 +20,7 @@ use Oro\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
  *          },
  *          "security"={
  *              "type"="ACL",
- *              "group_name"="commerce",
- *              "category"="quotes"
+ *              "group_name"=""
  *          }
  *      }
  * )
