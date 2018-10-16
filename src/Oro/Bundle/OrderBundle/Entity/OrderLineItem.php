@@ -25,8 +25,7 @@ use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
  *          },
  *          "security"={
  *              "type"="ACL",
- *              "group_name"="commerce",
- *              "category"="orders"
+ *              "group_name"=""
  *          }
  *      }
  * )

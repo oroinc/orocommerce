@@ -19,8 +19,7 @@ use Oro\Bundle\SaleBundle\Model\BaseQuoteProductItem;
  *          },
  *          "security"={
  *              "type"="ACL",
- *              "group_name"="commerce",
- *              "category"="quotes"
+ *              "group_name"=""
  *          }
  *      }
  * )
