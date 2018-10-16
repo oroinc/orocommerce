@@ -7,7 +7,6 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\EmailBundle\Entity\EmailTemplate;
 use Oro\Bundle\EmailBundle\Migrations\Data\ORM\AbstractEmailFixture;
 use Oro\Bundle\RFPBundle\Entity\Request;
-use Symfony\Component\VarDumper\VarDumper;
 
 /**
  * Added html tag around twig tags
@@ -49,7 +48,6 @@ class ConvertRFQRequestConfirmationEmail extends AbstractEmailFixture implements
         $existingParsedTemplate = EmailTemplate::parseContent($existingTemplate);
         $existingEmailTemplate = $this->findExistingTemplate($manager, $existingParsedTemplate);
         if ($existingEmailTemplate) {
-            VarDumper::dump('TODO:: Email template is updated');
             $this->updateExistingTemplate($existingEmailTemplate, $templateContent);
         }
     }
