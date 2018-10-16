@@ -89,6 +89,7 @@ class CheckoutControllerErrorsTest extends CheckoutControllerTestCase
         $url = $this->getUrl('oro_shopping_list_frontend_remove_product', [
             'productId' => $productId,
             'shoppingListId' => $shoppingList->getId(),
+            'lineItemId' => $this->getLineItemIdByProductId($productId, $shoppingList)
         ]);
         $this->client->request('POST', $url);
         $result = $this->client->getResponse();
@@ -303,5 +304,22 @@ class CheckoutControllerErrorsTest extends CheckoutControllerTestCase
             [],
             ['HTTP_X-Requested-With' => 'XMLHttpRequest']
         );
+    }
+
+    /**
+     * @param int $productId
+     * @param ShoppingList $shoppingList
+     * @return int
+     */
+    protected function getLineItemIdByProductId(int $productId, ShoppingList $shoppingList): int
+    {
+        $lineItems = $shoppingList->getLineItems();
+        $filteredLineItems = $lineItems->filter(
+            function ($lineItem) use ($productId) {
+                return $lineItem->getProduct()->getId() === $productId;
+            }
+        );
+
+        return $filteredLineItems->current()->getId();
     }
 }
