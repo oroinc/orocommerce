@@ -37,8 +37,7 @@ Feature: Guest RFQ
     And I click "Search Button"
     Then I should see "Product1"
     When I click "Add to Shopping List" for "PSKU1" product
-    Then I should see "Product has been added to" flash message
-    And I click "Shopping List"
+    And I follow "Shopping List" link within flash message "Shopping list \"Shopping List\" was updated successfully"
     And I hover on "Shopping List Widget"
     And I should see "1 Item | $0.00" in the "Shopping List Widget" element
     And click "Request Quote"
