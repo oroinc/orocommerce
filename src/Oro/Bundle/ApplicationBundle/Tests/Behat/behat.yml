@@ -41,6 +41,9 @@ oro_behat_extension:
         mapping:
           Use As Base By Default Use Default: 'tax_calculation[oro_tax___use_as_base_by_default][use_parent_scope_value]'
           Use As Base By Default: 'tax_calculation[oro_tax___use_as_base_by_default][value]'
+          Origin Country: 'tax_calculation[oro_tax___origin_address][value][country]'
+          Origin Region: 'tax_calculation[oro_tax___origin_address][value][region]'
+          Origin Zip Code: 'tax_calculation[oro_tax___origin_address][value][postal_code]'
     Create Category Form:
       selector: 'form[name="oro_catalog_category"]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
