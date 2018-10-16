@@ -72,7 +72,7 @@ Feature: All products page feature
     Given I filter Name as contains "Product3"
     And I click "Add to Shopping List"
     And I should see "Product has been added to" flash message
-    And follow "Shopping List"
+    When I click "Shopping List"
     And I should see "Product3"
     Then I click "All Products"
     Given I filter Name as contains "Product3"

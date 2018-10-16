@@ -16,7 +16,7 @@ Feature: Change categories visibility for store front
     And I login as administrator
     When I go to Products/Master Catalog
     And I click "Medical Apparel"
-    And I follow "Visibility"
+    And I click "Visibility" in scrollspy
     And I fill form with:
       | Visibility to All | Hidden |
     And I save form
@@ -26,7 +26,7 @@ Feature: Change categories visibility for store front
     Given I should see "Products/ Master Catalog" in breadcrumbs
     And I expand "Retail Supplies" in tree
     And I click "Fax"
-    And I follow "Visibility"
+    And I click "Visibility" in scrollspy
     And I fill form with:
       | Visibility to All | Hidden |
     And I save form

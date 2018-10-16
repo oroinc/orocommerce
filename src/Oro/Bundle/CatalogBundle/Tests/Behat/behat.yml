@@ -104,6 +104,7 @@ oro_behat_extension:
         - Oro\Bundle\FormBundle\Tests\Behat\Context\FormContext
         - OroApplicationBundle::CommerceMainContext
         - OroUIBundle::BreadcrumbContext
+        - OroNavigationBundle::ScrollspyContext
         - OroConfigBundle::FeatureContext
         - OroDataGridBundle::GridContext
         - OroCatalogBundle::FeatureContext

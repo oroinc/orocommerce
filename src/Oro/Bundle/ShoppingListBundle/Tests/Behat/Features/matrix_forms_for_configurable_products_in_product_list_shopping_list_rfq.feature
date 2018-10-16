@@ -296,8 +296,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
       | Value 13 |          |          | -        |
       | Value 14 | -        | -        | 1        |
     And I focus on "matrix_collection[rows][0][columns][0][quantity]" field and press Enter key
-    Then I should see "Shopping list \"List 2\" was updated successfully"
-    And I follow "List 2"
+    And I follow "List 2" link within flash message "Shopping list \"List 2\" was updated successfully"
 
     Then I should see an "Matrix Grid Form" element
     And I should see next rows in "Matrix Grid Form" table
@@ -407,8 +406,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And click "Search Button"
     Then I should see an "Matrix Grid Form" element
     And I click "Add to Shopping List" for "CNFB" product
-    Then I should see "Shopping list \"Shopping List\" was updated successfully"
-    And I follow "Shopping List"
+    And I follow "Shopping List" link within flash message "Shopping list \"Shopping List\" was updated successfully"
     Then I should see an "Matrix Grid Form" element
     And I should see next rows in "Matrix Grid Form" table
       | Value 21 | Value 22 | Value 23 |
@@ -439,8 +437,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     Given type "SKU123" in "search"
     And click "Search Button"
     And I click "Add to Shopping List" for "SKU123" product
-    And I should see "Product has been added to \"Shopping List\""
-    And I follow "Shopping List"
+    And I follow "Shopping List" link within flash message "Product has been added to \"Shopping List\""
     Given I click "Create Order"
     Then I should see "Confirmation This shopping list contains configurable products with no variations. Proceed to checkout without these products?"
     And I click "Proceed"
@@ -526,8 +523,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
       | Value 13 |          |          | -        |
       | Value 14 | -        | -        | 1        |
     And I click "Add to Shopping List" for "CNFB" product
-    Then I should see "Shopping list \"Shopping List\" was updated successfully"
-    And I follow "Shopping List"
+    And I follow "Shopping List" link within flash message "Shopping list \"Shopping List\" was updated successfully"
     Then I should see next rows in "Matrix Grid Form" table
       | Value 21 | Value 22 | Value 23 |
       | 1        | 1        | N/A      |
@@ -563,8 +559,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
       | Value 11 | Value 12 | Value 13 | Value 14 |
       | 1        | -        | -        | 1        |
     And I click "Add to Shopping List"
-    Then I should see "Shopping list \"Shopping List\" was updated successfully"
-    And I follow "Shopping List"
+    And I follow "Shopping List" link within flash message "Shopping list \"Shopping List\" was updated successfully"
     Then I should see an "One Dimensional Matrix Grid Form" element
     And I should see next rows in "One Dimensional Matrix Grid Form" table
       | Value 11 | Value 12 | Value 13 | Value 14 |
@@ -592,8 +587,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
       | 1        | 2        | N/A      |          |
     And I click on "Shopping List Dropdown"
     And I click "Remove From Shopping List"
-    Then I should see "Product has been removed from \"Shopping List\""
-    And I follow "Shopping List"
+    And I follow "Shopping List" link within flash message "Product has been removed from \"Shopping List\""
     Then I should see "The Shopping List is empty"
 
   Scenario: Matrix form with two attributes
@@ -612,8 +606,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
       | Value 13 |          |          | -        |
       | Value 14 | -        | -        | 1        |
     And I click "Add to Shopping List"
-    Then I should see "Shopping list \"Shopping List\" was updated successfully"
-    And I follow "Shopping List"
+    And I follow "Shopping List" link within flash message "Shopping list \"Shopping List\" was updated successfully"
     Then I should see an "Matrix Grid Form" element
     And I should see next rows in "Matrix Grid Form" table
       | Value 21 | Value 22 | Value 23 |
@@ -638,8 +631,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I fill in "Attribute 2" with "Value 23"
     And I fill in "Attribute 3" with "Value 32"
     And I click "Add to Shopping List"
-    Then I should see "Product has been added to \"Shopping List\""
-    And I follow "Shopping List"
+    And I follow "Shopping List" link within flash message "Product has been added to \"Shopping List\""
     #next 6 lines related to @ticket-BB-10500
     And I should see text matching "Attribute 1: Value 12"
     And I should see text matching "Attribute 2: Value 23"
@@ -714,8 +706,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
       | Value 13 |          |          | -        |
       | Value 14 | -        | -        | 1        |
     And I click "Add to Shopping List"
-    Then I should see "Shopping list \"Shopping List\" was updated successfully"
-    And I follow "Shopping List"
+    And I follow "Shopping List" link within flash message "Shopping list \"Shopping List\" was updated successfully"
     Then I should not see an "Matrix Grid Form" element
     And I should see "Update"
     And I click "Update"
@@ -756,8 +747,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
       | Value 13 | -        | -        | -        |
       | Value 14 | -        | -        | -        |
     And I click "Update Shopping List"
-    Then I should see "Shopping list \"Shopping List\" was updated successfully"
-    And I follow "Shopping List"
+    And I follow "Shopping List" link within flash message "Shopping list \"Shopping List\" was updated successfully"
     And I should see "Update"
     And I click "Update"
     And I should see next rows in "Matrix Grid Form" table
@@ -796,8 +786,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
       | Value 13 |          |          | -        |
       | Value 14 | -        | -        |          |
     And I click "Add to Shopping List"
-    Then I should see "Shopping list \"Shopping List\" was updated successfully"
-    And I follow "Shopping List"
+    And I follow "Shopping List" link within flash message "Shopping list \"Shopping List\" was updated successfully"
     Then I should not see an "Matrix Grid Form" element
     And I should see text matching "Attribute 1: Value 11"
     And I should see text matching "Attribute 2: Value 21"
@@ -862,8 +851,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
       | Value 13 |          |          | -        |
       | Value 14 | -        | -        | 1        |
     And I click "Add to Shopping List" for "CNFB" product
-    Then I should see "Shopping list \"Shopping List\" was updated successfully"
-    And I follow "Shopping List"
+    And I follow "Shopping List" link within flash message "Shopping list \"Shopping List\" was updated successfully"
     Then I should see an "Matrix Grid Form" element
     And I should see next rows in "Matrix Grid Form" table
       | Value 21 | Value 22 | Value 23 |
@@ -883,8 +871,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
       | Value 13 | -        | -        | -        |
       | Value 14 | -        | -        | -        |
     And I click "Update Shopping List"
-    Then I should see "Shopping list \"Shopping List\" was updated successfully"
-    And I follow "Shopping List"
+    And I follow "Shopping List" link within flash message "Shopping list \"Shopping List\" was updated successfully"
     Then I should see an "Matrix Grid Form" element
     And I should see next rows in "Matrix Grid Form" table
       | Value 21 | Value 22 | Value 23 |

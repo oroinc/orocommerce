@@ -615,7 +615,7 @@ Feature: Commerce smoke e2e
     And click "Add to Shopping List"
     And should see 'Shopping list "Shopping list" was updated successfully' flash message
     When I hover on "Shopping Cart"
-    And follow "Shopping List"
+    And click "Shopping List"
     And should see "Subtotal $175.20"
     And click "Sign Out"
     And I signed in as BrandaJSanborn1@example.org on the store frontend
@@ -629,7 +629,7 @@ Feature: Commerce smoke e2e
     Then should see "1 $120.00"
     And should see "10 $135.00"
     When I hover on "Shopping Cart"
-    And follow "Shopping List"
+    And click "Shopping List"
     Then should see "Subtotal $900.00"
 
   Scenario: Create shopping list, update shopping list, delete shopping list from front store
@@ -729,7 +729,7 @@ Feature: Commerce smoke e2e
     Given I proceed as the User
     And I signed in as AmandaRCole1@example.org on the store frontend
     When I hover on "Shopping Cart"
-    And follow "Shopping List"
+    And click "Shopping List"
     And click "Create Order"
     And fill form with:
       |Label          |Home Address  |
@@ -772,7 +772,7 @@ Feature: Commerce smoke e2e
       |Quantity|10  |
     And click "Add to Shopping List"
     When I hover on "Shopping Cart"
-    And follow "Shopping List"
+    And click "Shopping List"
     And click "Request Quote"
     And fill form with:
       |PO Number|PO00001|
