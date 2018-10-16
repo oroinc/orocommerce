@@ -139,12 +139,6 @@ services:
         tags:
             - { name: doctrine.orm.entity_listener, entity: '%oro_shopping_list.entity.shopping_list.class%', event: preRemove }
 
-    oro_checkout.grid_totals_metadata.cache:
-        public: false
-        parent: oro.cache.abstract
-        calls:
-            - [ setNamespace, [ 'oro_checkout_grid_totals_metadata' ] ]
-
     oro_checkout.repository.checkout:
         class: 'Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository'
         parent: oro_entity.abstract_repository
@@ -161,13 +155,19 @@ services:
             - '@oro_entity.doctrine_helper'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-checkouts-grid, method: onBuildBefore }
-            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.frontend-checkouts-grid, method: onBuildAfter }
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-checkouts-grid, method: onResultAfter }
 
     oro_checkout.datagrid.checkout_grid_column_filter:
         class: 'Oro\Bundle\CheckoutBundle\Datagrid\CheckoutGridCustomerUserNameListener'
         arguments:
             - '@oro_customer.security.customer_user_provider'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-checkouts-grid, method: onBuildBefore }
+
+    oro_checkout.datagrid.checkout_grid_customer_visitor_acl_listener:
+        class: 'Oro\Bundle\CheckoutBundle\Datagrid\CheckoutGridCustomerVisitorAclListener'
+        arguments:
+            - '@security.token_storage'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-checkouts-grid, method: onBuildBefore }
 

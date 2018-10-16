@@ -169,10 +169,7 @@ class WebsiteSearchProductIndexDataProviderTest extends \PHPUnit\Framework\TestC
         $manyToManyAttribute->setEntity(new EntityConfigModel())
             ->fromArray('extend', ['target_entity' => LocalizedFallbackValue::class]);
         $manyToManyAttributeType = new ManyToManyAttributeType($entityNameResolver, $doctrineHelper);
-        $manyToManySearchAttributeType = new ManyToManySearchableAttributeType(
-            $manyToManyAttributeType,
-            $doctrineHelper
-        );
+        $manyToManySearchAttributeType = new ManyToManySearchableAttributeType($manyToManyAttributeType);
 
         $multiEnumAttribute = new FieldConfigModel('flags');
         $multiEnumAttribute->setEntity(new EntityConfigModel());
@@ -211,7 +208,13 @@ class WebsiteSearchProductIndexDataProviderTest extends \PHPUnit\Framework\TestC
                     ['filterable' => true, 'sortable' => false, 'searchable' => false]
                 ),
                 'expected' => [
-                    new ProductIndexDataModel('inventoryStatus', Product::INVENTORY_STATUS_IN_STOCK, [], false, false),
+                    new ProductIndexDataModel(
+                        'inventoryStatus_' . Product::INVENTORY_STATUS_IN_STOCK,
+                        1,
+                        [],
+                        false,
+                        false
+                    ),
                 ],
             ],
             'not filterable, sortable, not searchable, not localized' => [
@@ -244,7 +247,13 @@ class WebsiteSearchProductIndexDataProviderTest extends \PHPUnit\Framework\TestC
                     ['filterable' => true, 'sortable' => true, 'searchable' => false]
                 ),
                 'expected' => [
-                    new ProductIndexDataModel('inventoryStatus', Product::INVENTORY_STATUS_IN_STOCK, [], false, false),
+                    new ProductIndexDataModel(
+                        'inventoryStatus_' . Product::INVENTORY_STATUS_IN_STOCK,
+                        1,
+                        [],
+                        false,
+                        false
+                    ),
                     new ProductIndexDataModel('inventoryStatus_priority', 42, [], false, false),
                 ],
             ],
@@ -256,7 +265,13 @@ class WebsiteSearchProductIndexDataProviderTest extends \PHPUnit\Framework\TestC
                     ['filterable' => true, 'sortable' => false, 'searchable' => true]
                 ),
                 'expected' => [
-                    new ProductIndexDataModel('inventoryStatus', Product::INVENTORY_STATUS_IN_STOCK, [], false, false),
+                    new ProductIndexDataModel(
+                        'inventoryStatus_' . Product::INVENTORY_STATUS_IN_STOCK,
+                        1,
+                        [],
+                        false,
+                        false
+                    ),
                     new ProductIndexDataModel(IndexDataProvider::ALL_TEXT_FIELD, 'In Stock', [], false, true),
                 ],
             ],
@@ -278,7 +293,13 @@ class WebsiteSearchProductIndexDataProviderTest extends \PHPUnit\Framework\TestC
                 'extendConfig' => $this->getConfig(['state' => ExtendScope::STATE_ACTIVE]),
                 'attributeConfig' => $this->getConfig(['filterable' => true, 'sortable' => true, 'searchable' => true]),
                 'expected' => [
-                    new ProductIndexDataModel('inventoryStatus', Product::INVENTORY_STATUS_IN_STOCK, [], false, false),
+                    new ProductIndexDataModel(
+                        'inventoryStatus_' . Product::INVENTORY_STATUS_IN_STOCK,
+                        1,
+                        [],
+                        false,
+                        false
+                    ),
                     new ProductIndexDataModel('inventoryStatus_priority', 42, [], false, false),
                     new ProductIndexDataModel(IndexDataProvider::ALL_TEXT_FIELD, 'In Stock', [], false, true),
                 ],

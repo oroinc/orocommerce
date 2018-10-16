@@ -5,6 +5,7 @@ namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Attribute\Type;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\WebsiteSearchBundle\Attribute\Type\EnumSearchableAttributeType;
 use Oro\Bundle\WebsiteSearchBundle\Attribute\Type\SearchableAttributeTypeInterface;
+use Oro\Bundle\WebsiteSearchBundle\Placeholder\EnumIdPlaceholder;
 
 class EnumSearchableAttributeTypeTest extends SearchableAttributeTypeTestCase
 {
@@ -19,7 +20,7 @@ class EnumSearchableAttributeTypeTest extends SearchableAttributeTypeTestCase
     public function testGetFilterStorageFieldType()
     {
         $this->assertSame(
-            Query::TYPE_TEXT,
+            Query::TYPE_INTEGER,
             $this->getSearchableAttributeType()->getFilterStorageFieldType()
         );
     }
@@ -35,7 +36,7 @@ class EnumSearchableAttributeTypeTest extends SearchableAttributeTypeTestCase
     public function testGetFilterType()
     {
         $this->assertSame(
-            SearchableAttributeTypeInterface::FILTER_TYPE_ENUM,
+            SearchableAttributeTypeInterface::FILTER_TYPE_MULTI_ENUM,
             $this->getSearchableAttributeType()->getFilterType()
         );
     }
@@ -48,7 +49,7 @@ class EnumSearchableAttributeTypeTest extends SearchableAttributeTypeTestCase
     public function testGetFilterableFieldName()
     {
         $this->assertSame(
-            self::FIELD_NAME,
+            self::FIELD_NAME . '_' . EnumIdPlaceholder::NAME,
             $this->getSearchableAttributeType()->getFilterableFieldName($this->attribute)
         );
     }

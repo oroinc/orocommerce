@@ -37,6 +37,6 @@ Feature: Start checkout for a quote
 
   Scenario: Start checkout
     Given I click view PONUMBER1 in grid
-    And I press "Accept and Submit to Order"
-    And I press "Submit"
+    And I click "Accept and Submit to Order"
+    And I click "Submit"
     Then Buyer is on enter billing information checkout step

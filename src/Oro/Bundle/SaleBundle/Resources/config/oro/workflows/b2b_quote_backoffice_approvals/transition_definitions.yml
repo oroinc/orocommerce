@@ -21,12 +21,13 @@ workflows:
                             id: $quote.qid
             send_to_customer_transition_definition:
                 preconditions:
-                    '@or':
-                        - '@acl_granted': 'oro_quote_review_and_approve'
+                    '@and':
                         - '@or':
-                            - '@equal': [false, $price_override_triggers_approval]
-                            - '@equal': [false, $quote.prices_changed]
-                            - '@equal': [$approved, true]
+                            - '@acl_granted': 'oro_quote_review_and_approve'
+                            - '@or':
+                                - '@equal': [false, $price_override_triggers_approval]
+                                - '@equal': [false, $quote.prices_changed]
+                                - '@equal': [$approved, true]
             review_transition_definition:
                 actions:
                     - '@request_enum_entity':

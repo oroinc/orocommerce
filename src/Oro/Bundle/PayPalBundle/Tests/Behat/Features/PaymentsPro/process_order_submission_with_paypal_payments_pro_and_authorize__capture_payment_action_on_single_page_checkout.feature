@@ -55,7 +55,7 @@ Feature: Process order submission with PayPal Payments Pro and Authorize & Captu
     And I operate as the Buyer
     And I signed in as AmandaRCole@example.org on the store frontend
     When I open page with shopping list List 1
-    And I press "Create Order"
+    And I click "Create Order"
     And I select "Fifth avenue, 10115 Berlin, Germany" from "Select Billing Address"
     And I select "Fifth avenue, 10115 Berlin, Germany" from "Select Shipping Address"
     And I check "Flat Rate" on the checkout page
@@ -64,7 +64,7 @@ Feature: Process order submission with PayPal Payments Pro and Authorize & Captu
       | Month            | 11               |
       | Year             | 2027             |
       | CVV              | 123              |
-    And I press "Submit Order"
+    And I click "Submit Order"
     Then I see the "Thank You" page with "Thank You For Your Purchase!" title
 
   Scenario: Successful capture
@@ -79,7 +79,7 @@ Feature: Process order submission with PayPal Payments Pro and Authorize & Captu
   Scenario: Unsuccessful order payment, capture button is not shown in backoffice
     Given I operate as the Buyer
     When I open page with shopping list List 2
-    And I press "Create Order"
+    And I click "Create Order"
     And I select "Fifth avenue, 10115 Berlin, Germany" from "Select Billing Address"
     And I select "Fifth avenue, 10115 Berlin, Germany" from "Select Shipping Address"
     And I check "Flat Rate" on the checkout page
@@ -88,7 +88,7 @@ Feature: Process order submission with PayPal Payments Pro and Authorize & Captu
       | Month            | 11               |
       | Year             | 2027             |
       | CVV              | 123              |
-    And I press "Submit Order"
+    And I click "Submit Order"
     Then I should see only following flash messages:
       | We were unable to process your payment. Please verify your payment information and try again. |
 

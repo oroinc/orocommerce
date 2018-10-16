@@ -44,7 +44,7 @@
                             <td rowspan="{{ numItems }}">{{ product.name }}</td>
                         {% endif %}
 
-                        <td>{{ item.quantity }} {{ item.unit }}</td>
+                        <td>{{ item.quantity }} {{ item.unit|oro_format_product_unit_label }}</td>
                         <td>{{ item.price ? item.price|oro_format_price : '' }}</td>
 
                         {% if loop.first %}

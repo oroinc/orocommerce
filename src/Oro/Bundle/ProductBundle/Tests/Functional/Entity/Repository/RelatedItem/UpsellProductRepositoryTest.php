@@ -78,6 +78,29 @@ class UpsellProductRepositoryTest extends WebTestCase
         $this->assertEquals($expectedRelatedProducts, $relatedProducts);
     }
 
+    public function testFindUpsellIdsUnidirectionalWithLimit()
+    {
+        /** @var Product $product */
+        $product = $this->getProductRepository()->findOneBySku(ucfirst(LoadProductData::PRODUCT_3));
+        $expectedRelatedProducts = [
+            $this->getProductRepository()->findOneBySku(ucfirst(LoadProductData::PRODUCT_1))->getId(),
+        ];
+        $relatedProducts = $this->repository->findUpsellIds($product->getId(), 1);
+        $this->assertEquals($expectedRelatedProducts, $relatedProducts);
+    }
+
+    public function testFindUpsellIdsUnidirectionalWithoutLimit()
+    {
+        /** @var Product $product */
+        $product = $this->getProductRepository()->findOneBySku(ucfirst(LoadProductData::PRODUCT_3));
+        $expectedRelatedProducts = [
+            $this->getProductRepository()->findOneBySku(ucfirst(LoadProductData::PRODUCT_1))->getId(),
+            $this->getProductRepository()->findOneBySku(ucfirst(LoadProductData::PRODUCT_2))->getId(),
+        ];
+        $relatedProducts = $this->repository->findUpsellIds($product->getId());
+        $this->assertEquals($expectedRelatedProducts, $relatedProducts);
+    }
+
     /**
      * @return array
      */

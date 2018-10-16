@@ -376,7 +376,7 @@ operations:
                 productHolderPath: $.newShoppingList.lineItems
             - '@flash_message':
                 conditions:
-                    '@not_empty': $.removedProducts
+                    '@has_elements': $.removedProducts
                 message: oro.shoppinglist.duplicate.restricted_products.message
                 type: 'warning'
             - '@assign_value': [$.newShoppingList.label, $.newName]

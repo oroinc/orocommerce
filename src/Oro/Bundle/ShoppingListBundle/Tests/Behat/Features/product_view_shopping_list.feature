@@ -45,7 +45,7 @@ Feature: Product view shopping list
     Then I should see "Product has been added to" flash message
 
   Scenario: Check that product name is localized in shopping lists widget
-    Given I press "Localization Switcher"
+    Given I click "Localization Switcher"
     And I select "Localization 1" localization
     And type "PSKU_LOCALIZED" in "search"
     And click "Search Button"

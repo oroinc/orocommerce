@@ -52,6 +52,12 @@ class CategoriesProductsProviderTest extends FrontendWebTestCase
         $this->searchRepository = $this->getContainer()->get('oro_catalog.website_search.repository.product');
     }
 
+    protected function tearDown()
+    {
+        $this->getContainer()->get('oro_website_search.indexer')
+            ->resetIndex(Product::class);
+    }
+
     public function testGetCountByCategories()
     {
         $provider = new CategoriesProductsProvider(

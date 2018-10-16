@@ -14,6 +14,9 @@ Oro\Bundle\ProductBundle\Entity\Product:
             name: type
             type: text
         -
+            name: inventory_status
+            type: text
+        -
             name: is_variant
             type: integer
         -
@@ -37,11 +40,9 @@ Oro\Bundle\ProductBundle\Entity\Product:
         -
             name: product_units
             type: text
-
         -
             name: primary_unit
             type: text
-
         -
             name: attribute_family_id
             type: integer

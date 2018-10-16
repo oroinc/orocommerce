@@ -16,6 +16,9 @@ use Oro\Bundle\TestFrameworkBundle\Behat\Element\Table;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\TableRow;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
 
+/**
+ * The context for testing Shopping List related features.
+ */
 class FeatureContext extends OroFeatureContext implements OroPageObjectAware, KernelAwareContext
 {
     use PageObjectDictionary, KernelDictionary;
@@ -70,6 +73,29 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
+     * Finds the delete button for a line item by its row number for the given shopping list and clicks it.
+     *
+     * Example: When I delete line item 1 in "Shopping List Line Items Table"
+     *
+     * @param integer   $itemPosition
+     * @param string    $shoppingList
+     *
+     * @When I delete line item :itemPosition in :shoppingList
+     */
+    public function iClickDeleteLineItemNumberIn($itemPosition, $shoppingList)
+    {
+        /** @var Table $shoppingListItemsTableElement */
+        $shoppingListItemsTableElement = $this->elementFactory->createElement($shoppingList);
+
+        $rows = $this->getShoppingListLineItemsTableDirectRows($shoppingListItemsTableElement);
+        /** @var TableRow $row */
+        $row = $rows[$itemPosition - 1];
+        $button = $row->find('css', 'button');
+
+        $button->click();
+    }
+
+    /**
      * @param string    $shoppingList
      * @param TableNode $table
      *
@@ -95,6 +121,22 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
                 )
             );
         }
+    }
+
+    /**
+     * @When /^(?:|I )should see following header in shopping list line items table:$/
+     *
+     * @param TableNode $table
+     */
+    public function iShouldSeeFollowingColumns(TableNode $table)
+    {
+        $rows = $table->getRows();
+        self::assertNotEmpty($rows);
+
+        /* @var $element ShoppingListElement */
+        $element = $this->createElement('ShoppingList');
+
+        self::assertEquals(reset($rows), $element->getLineItemsHeader());
     }
 
     /**

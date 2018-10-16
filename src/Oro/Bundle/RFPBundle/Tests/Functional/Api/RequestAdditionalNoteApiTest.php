@@ -6,7 +6,6 @@ use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
 use Oro\Bundle\RFPBundle\Entity\RequestAdditionalNote;
 use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestAdditionalNoteData;
 use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
-use Symfony\Component\HttpFoundation\Response;
 
 class RequestAdditionalNoteApiTest extends RestJsonApiTestCase
 {
@@ -45,6 +44,24 @@ class RequestAdditionalNoteApiTest extends RestJsonApiTestCase
         $this->assertResponseNotEmpty($response);
     }
 
+    public function testOptionsForList()
+    {
+        $response = $this->options(
+            $this->getListRouteName(),
+            ['entity' => 'requestadditionalnotes']
+        );
+        self::assertAllowResponseHeader($response, 'OPTIONS, GET');
+    }
+
+    public function testOptionsForItem()
+    {
+        $response = $this->options(
+            $this->getItemRouteName(),
+            ['entity' => 'requestadditionalnotes', 'id' => 1]
+        );
+        self::assertAllowResponseHeader($response, 'OPTIONS, GET');
+    }
+
     /**
      * @dataProvider notAllowedActionProvider
      *
@@ -58,9 +75,7 @@ class RequestAdditionalNoteApiTest extends RestJsonApiTestCase
             $method,
             $this->getUrl($routeName, array_merge(['entity' => 'requestadditionalnotes'], $param))
         );
-
-        self::assertResponseStatusCodeEquals($response, Response::HTTP_METHOD_NOT_ALLOWED);
-        self::assertEquals('GET', $response->headers->get('Allow'));
+        self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
     }
 
     /**
@@ -71,16 +86,16 @@ class RequestAdditionalNoteApiTest extends RestJsonApiTestCase
         return [
             'create action' => [
                 'method' => 'POST',
-                'routeName' => 'oro_rest_api_list'
+                'routeName' => $this->getListRouteName()
             ],
             'update action' => [
                 'method' => 'PATCH',
-                'routeName' => 'oro_rest_api_item',
+                'routeName' => $this->getItemRouteName(),
                 'param' => ['id' => 1]
             ],
             'delete action' => [
                 'method' => 'DELETE',
-                'routeName' => 'oro_rest_api_item',
+                'routeName' => $this->getItemRouteName(),
                 'param' => ['id' => 1]
             ],
         ];

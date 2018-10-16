@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Functional\Security;
 
+use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\SecurityBundle\Acl\AccessLevel;
-use Oro\Bundle\UserBundle\Entity\Role;
-use Oro\Bundle\UserBundle\Entity\User;
 
 /**
  * @SuppressWarnings(PHPMD.ExcessiveClassLength)
@@ -23,9 +23,6 @@ class AddressACLTest extends AbstractAddressACLTest
     const USER_BILLING_SHIPPING_DEFAULT_SHIPPING = '1215 Caldwell Road, ROCHESTER NY US 14608';
     const USER_BILLING_SHIPPING_ADDRESS = '722 Harvest Lane, SEDALIA MO US 65301';
 
-    /** @var Role */
-    protected $role;
-
     /** @var string */
     protected $formName = 'oro_order_type';
 
@@ -33,12 +30,6 @@ class AddressACLTest extends AbstractAddressACLTest
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
-
-        $this->role = $this->getContainer()
-            ->get('doctrine')
-            ->getManagerForClass('OroUserBundle:Role')
-            ->getRepository('OroUserBundle:Role')
-            ->findOneBy(['role' => User::ROLE_ADMINISTRATOR]);
 
         $this->loadFixtures([
             'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomers',
@@ -49,11 +40,6 @@ class AddressACLTest extends AbstractAddressACLTest
         ]);
     }
 
-    protected function tearDown()
-    {
-        unset($this->role);
-    }
-
     /**
      * @dataProvider checkShippingAddressesDataProvider
      * @param array $permissions
@@ -62,11 +48,8 @@ class AddressACLTest extends AbstractAddressACLTest
      */
     public function testCheckShippingAddresses(array $permissions, array $capabilities, array $expected)
     {
-        $this->setRolePermissions($permissions['customerEntityPermissions'], $this->getCustomerAddressIdentity());
-        $this->setRolePermissions(
-            $permissions['customerUserEntityPermissions'],
-            $this->getCustomerAddressUserIdentity()
-        );
+        $this->setEntityPermissions(CustomerAddress::class, $permissions['customerEntityPermissions']);
+        $this->setEntityPermissions(CustomerUserAddress::class, $permissions['customerUserEntityPermissions']);
 
         foreach ($capabilities as $capabilityId => $value) {
             $this->setActionPermissions($capabilityId, $value);
@@ -572,11 +555,8 @@ class AddressACLTest extends AbstractAddressACLTest
      */
     public function testCheckBillingAddresses(array $permissions, array $capabilities, array $expected)
     {
-        $this->setRolePermissions($permissions['customerEntityPermissions'], $this->getCustomerAddressIdentity());
-        $this->setRolePermissions(
-            $permissions['customerUserEntityPermissions'],
-            $this->getCustomerAddressUserIdentity()
-        );
+        $this->setEntityPermissions(CustomerAddress::class, $permissions['customerEntityPermissions']);
+        $this->setEntityPermissions(CustomerUserAddress::class, $permissions['customerUserEntityPermissions']);
 
         foreach ($capabilities as $capabilityId => $value) {
             $this->setActionPermissions($capabilityId, $value);
