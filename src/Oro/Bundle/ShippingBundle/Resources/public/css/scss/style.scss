@@ -29,6 +29,7 @@
     input[type="text"].width,
     input[type="text"].height {
         width: 50px;
+        margin-bottom: 0;
     }
 
     select {
@@ -40,6 +41,7 @@
             td {
                 border: 0;
                 padding: 0 5px 0 5px;
+                vertical-align: middle;
 
                 &:first-child {
                     height: auto;

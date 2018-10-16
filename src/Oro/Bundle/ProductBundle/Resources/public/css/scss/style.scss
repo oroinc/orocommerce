@@ -62,6 +62,7 @@
     .collection-fields-list {
         td {
             padding-left: 10px;
+            vertical-align: middle;
         }
 
         button {
@@ -146,6 +147,7 @@
 
     th,
     td {
+        vertical-align: middle;
         &:not(:first-child) {
             text-align: center;
         }
