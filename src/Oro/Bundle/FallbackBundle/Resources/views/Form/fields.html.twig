@@ -1,25 +1,25 @@
 {% block oro_fallback_website_property_widget %}
-    <table class="fallback-container"
+    <div class="fallback-container"
             data-page-component-module="oroui/js/app/components/view-component"
             data-page-component-options="{{ {view: 'orolocale/js/app/views/fallback-view'}|json_encode }}"
             data-layout="separate"
             >
-        <tr class="fallback-item">
-            <td class="fallback-item-label">{{ form.default.vars.label|trans }}</td>
-            <td class="fallback-item-value">
+        <div class="fallback-item">
+            <div class="fallback-item-label">{{ form.default.vars.label|trans }}</div>
+            <div class="fallback-item-value">
                 {{ form_widget(form.default) }}
                 {{ form_errors(form.default) }}
-            </td>
-            <td class="fallback-status"></td>
-        </tr>
+            </div>
+            <div class="fallback-status"></div>
+        </div>
         {% for website in form.websites %}
-            <tr class="fallback-item" style="display: none">
-                <td class="fallback-item-label">{{ website.vars.label|trans }}</td>
-                <td colspan="2">
+            <div class="fallback-item" style="display: none">
+                <div class="fallback-item-label">{{ website.vars.label|trans }}</div>
+                <div colspan="2">
                     {{ form_widget(website) }}
                     {{ form_errors(website) }}
-                </td>
-            </tr>
+                </div>
+            </div>
         {% endfor %}
-    </table>
+    </div>
 {% endblock %}

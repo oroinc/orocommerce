@@ -24,7 +24,7 @@ Feature: Product collection grid pagination
   Scenario: All Added Grid pagination follow after product collection save
     Given I am on Content Node page and added Product Collection variant
     And I click on "Advanced Filter"
-    And I should see "DRAG TO SELECT"
+    And I should see "Drag And Drop From The Left To Start Working"
     And I drag and drop "Field Condition" on "Drop condition here"
     And I click "Choose a field.."
     And I click on "SKU"

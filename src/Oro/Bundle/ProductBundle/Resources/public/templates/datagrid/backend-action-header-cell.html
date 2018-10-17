@@ -1,33 +1,34 @@
+<% var togglerId = _.uniqueId('dropdown-') %>
 <% if (massActionsInSticky) { %>
-    <div class="datagrid-massaction" data-action-panel>
-        <% if (actionsLength > 1) { %>
-            <div class="btn-group full dropup">
-                <span class="btn btn--full btn--info btn--size-s btn--clip-text" data-toggle data-action-extra-panel></span>
-                <a href="#" class="btn btn--info btn--size-s dropdown-toggle" data-toggle="dropdown">
-                    <span class="caret"></span>
-                </a>
-                <div class="dropdown-menu dropdown-menu-right datagrid-massaction__dropdown-menu datagrid-massaction__dropdown-menu--stretch"
-                    data-action-main-panel
-                >
-                </div>
-            </div>
-        <% } else { %>
-            <span class="btn btn--full btn--info btn--size-s btn--clip-text" data-action-extra-panel></span>
-        <% } %>
-    </div>
-<% } else { %>
-    <div class="datagrid-massaction">
-        <div class="btn-group">
-            <button class="btn btn--default btn--size-s disabled dropdown-toggle"
-                    data-toggle="dropdown"
-                >
-                <%- _.__('oro.product.frontend.choose_action') %>
-                <span class="caret"></span>
-            </button>
-            <div class="dropdown-menu datagrid-massaction__dropdown-menu"
-                data-action-panel
-                data-options="{&quot;container&quot;: true}">
-            </div>
+<div class="datagrid-massaction" data-action-panel>
+    <% if (actionsLength > 1) { %>
+    <div class="btn-group btn-group--block dropup">
+        <span class="btn btn--block btn--info btn--size-s btn--clip-text" data-toggle data-action-extra-panel></span>
+        <a href="#" class="btn btn--info btn--size-s dropdown-toggle" role="button" id="<%- togglerId %>"
+           data-toggle="dropdown" data-popper="false"
+           aria-haspopup="true" aria-expanded="false" aria-label="<%- _.__('oro.product.frontend.choose_action') %>">
+            <span class="caret" aria-hidden="true"></span>
+        </a>
+        <div class="dropdown-menu dropdown-menu-right datagrid-massaction__dropdown-menu datagrid-massaction__dropdown-menu--stretch"
+             data-action-main-panel aria-labelledby="<%- togglerId %>"
+        >
         </div>
     </div>
+    <% } else { %>
+    <span class="btn btn--block btn--info btn--size-s btn--clip-text" data-action-extra-panel></span>
+    <% } %>
+</div>
+<% } else { %>
+<div class="datagrid-massaction">
+    <div class="btn-group">
+        <button class="btn btn--default btn--size-s disabled dropdown-toggle" type="button" id="<%- togglerId %>"
+                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+        >
+            <%- _.__('oro.product.frontend.choose_action') %>
+            <span class="caret" aria-hidden="true"></span>
+        </button>
+        <div class="dropdown-menu datagrid-massaction__dropdown-menu" aria-labelledby="<%- togglerId %>" data-action-panel>
+        </div>
+    </div>
+</div>
 <% } %>
