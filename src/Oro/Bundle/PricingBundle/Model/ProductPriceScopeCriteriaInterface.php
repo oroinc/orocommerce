@@ -22,4 +22,21 @@ interface ProductPriceScopeCriteriaInterface
      * @return Website
      */
     public function getWebsite();
+
+    /**
+     * @param string $key
+     * @return mixed
+     */
+    public function getData($key);
+
+    /**
+     * @param string $key
+     * @param mixed $value
+     */
+    public function setData($key, $value);
+
+    /**
+     * @param string $key
+     */
+    public function unsetData($key);
 }

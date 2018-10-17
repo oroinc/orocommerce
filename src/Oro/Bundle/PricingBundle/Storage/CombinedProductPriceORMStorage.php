@@ -3,6 +3,8 @@
 namespace Oro\Bundle\PricingBundle\Storage;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedProductPriceRepository;
@@ -10,8 +12,10 @@ use Oro\Bundle\PricingBundle\Model\PriceListTreeHandler;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaInterface;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 
-class CombinedProductPriceORMStorage implements ProductPriceStorageInterface
+class CombinedProductPriceORMStorage implements ProductPriceStorageInterface, FeatureToggleableInterface
 {
+    use FeatureCheckerHolderTrait;
+
     /**
      * @var ShardManager
      */
@@ -51,6 +55,10 @@ class CombinedProductPriceORMStorage implements ProductPriceStorageInterface
         array $productUnitCodes = null,
         array $currencies = null
     ) {
+        if (!$this->isFeaturesEnabled()) {
+            return [];
+        }
+
         $priceList = $this->getPriceListByScopeCriteria($scopeCriteria);
         if (!$priceList) {
             return [];
@@ -70,6 +78,10 @@ class CombinedProductPriceORMStorage implements ProductPriceStorageInterface
      */
     public function getSupportedCurrencies(ProductPriceScopeCriteriaInterface $scopeCriteria)
     {
+        if (!$this->isFeaturesEnabled()) {
+            return [];
+        }
+
         $priceList = $this->getPriceListByScopeCriteria($scopeCriteria);
         if (!$priceList) {
             return [];

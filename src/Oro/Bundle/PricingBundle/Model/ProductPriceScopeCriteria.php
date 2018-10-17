@@ -24,7 +24,12 @@ class ProductPriceScopeCriteria implements ProductPriceScopeCriteriaInterface
     protected $customerGroup;
 
     /**
-     * @return Customer
+     * @var array
+     */
+    protected $data = [];
+
+    /**
+     * {@inheritdoc}
      */
     public function getCustomer()
     {
@@ -43,7 +48,7 @@ class ProductPriceScopeCriteria implements ProductPriceScopeCriteriaInterface
     }
 
     /**
-     * @return Website
+     * {@inheritdoc}
      */
     public function getWebsite(): Website
     {
@@ -62,7 +67,7 @@ class ProductPriceScopeCriteria implements ProductPriceScopeCriteriaInterface
     }
 
     /**
-     * @return CustomerGroup
+     * {@inheritdoc}
      */
     public function getCustomerGroup()
     {
@@ -78,5 +83,33 @@ class ProductPriceScopeCriteria implements ProductPriceScopeCriteriaInterface
         $this->customerGroup = $customerGroup;
 
         return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getData($key)
+    {
+        if (array_key_exists($key, $this->data)) {
+            return $this->data[$key];
+        }
+
+        return null;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setData($key, $value)
+    {
+        $this->data[$key] = $value;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function unsetData($key)
+    {
+        unset($this->data[$key]);
     }
 }
