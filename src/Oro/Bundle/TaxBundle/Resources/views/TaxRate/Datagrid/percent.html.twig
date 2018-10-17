@@ -1,0 +1,9 @@
+{% set CALCULATION_SCALE_AS_PERCENT = constant('Oro\\Bundle\\TaxBundle\\Provider\\TaxationSettingsProvider::CALCULATION_SCALE_AS_PERCENT') %}
+
+{{ value|oro_format_percent({
+    attributes: {
+        FRACTION_DIGITS: CALCULATION_SCALE_AS_PERCENT,
+        MIN_FRACTION_DIGITS: 0,
+        MAX_FRACTION_DIGITS: CALCULATION_SCALE_AS_PERCENT
+    }
+}) }}
