@@ -218,16 +218,22 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_website_search.reindexation_request, method: process }
 
+    oro_website.indexation_entities_container:
+        class: 'Oro\Bundle\SearchBundle\Utils\IndexationEntitiesContainer'
+        public: false
+
     oro_website.indexation_request_listener:
         class: 'Oro\Bundle\WebsiteSearchBundle\EventListener\IndexationRequestListener'
         arguments:
             - '@oro_entity.doctrine_helper'
             - '@oro_website_search.provider.search_mapping'
             - '@event_dispatcher'
+            - '@oro_website.indexation_entities_container'
         tags:
             - { name: doctrine.event_listener, event: onFlush }
             - { name: kernel.event_listener, event: oro.form.update_handler.before_entity_flush, method: beforeEntityFlush }
             - { name: doctrine.event_listener, event: postFlush }
+            - { name: doctrine.event_listener, event: onClear }
 
     oro_website_search.repository.abstract:
         abstract: true

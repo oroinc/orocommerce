@@ -327,7 +327,10 @@
                 <div class="grid__column grid__column--6 grid__column--offset-y">
                     <label class=" label label--full">{{ "oro.checkout.order_review.po_number"|trans }}</label>
                     <div class="checkout-form__optional-ref-number">
-                        {{ form_widget(form.po_number, {'attr': {'placeholder': 'oro.checkout.order_review.po_number_placeholder'|trans}}) }}
+                        {{ form_widget(form.po_number, {'attr': {
+                            'placeholder': 'oro.checkout.order_review.po_number_placeholder'|trans,
+                            'data-validation': { Length: {max: 255} }|json_encode
+                        }}) }}
                     </div>
                 </div>
             </fieldset>

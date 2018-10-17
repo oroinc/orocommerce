@@ -89,3 +89,7 @@ Feature: Limit product filters and sorters in product catalog
     Then I should see "AttrWithFamily" in the "Frontend Product Grid Sorter" element
     Then I should see "AttrWithoutFamily" in the "ProductFrontendGridFiltersBlock" element
     Then I should see "AttrWithoutFamily" in the "Frontend Product Grid Sorter" element
+
+  Scenario: Check that sorter "Relevance" is present and applied
+    Then I should see "Relevance" in the "Frontend Product Grid Sorter" element
+    Then I should see "Sorted By: Relevance"

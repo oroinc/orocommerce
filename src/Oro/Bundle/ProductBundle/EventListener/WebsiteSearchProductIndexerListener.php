@@ -13,7 +13,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use Oro\Bundle\ProductBundle\Search\ProductIndexDataModel;
-use Oro\Bundle\ProductBundle\Search\WebsiteSearchProductIndexDataProvider;
+use Oro\Bundle\ProductBundle\Search\ProductIndexDataProviderInterface;
 use Oro\Bundle\WebsiteBundle\Provider\AbstractWebsiteLocalizationProvider;
 use Oro\Bundle\WebsiteBundle\Provider\WebsiteLocalizationProvider;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
@@ -40,7 +40,7 @@ class WebsiteSearchProductIndexerListener
     /** @var AttributeManager */
     private $attributeManager;
 
-    /** @var WebsiteSearchProductIndexDataProvider */
+    /** @var ProductIndexDataProviderInterface */
     private $dataProvider;
 
     /**
@@ -49,7 +49,7 @@ class WebsiteSearchProductIndexerListener
      * @param ManagerRegistry                       $registry
      * @param AttachmentManager                     $attachmentManager
      * @param AttributeManager                      $attributeManager
-     * @param WebsiteSearchProductIndexDataProvider $dataProvider
+     * @param ProductIndexDataProviderInterface $dataProvider
      */
     public function __construct(
         AbstractWebsiteLocalizationProvider $websiteLocalizationProvider,
@@ -57,7 +57,7 @@ class WebsiteSearchProductIndexerListener
         ManagerRegistry $registry,
         AttachmentManager $attachmentManager,
         AttributeManager $attributeManager,
-        WebsiteSearchProductIndexDataProvider $dataProvider
+        ProductIndexDataProviderInterface $dataProvider
     ) {
         $this->websiteLocalizationProvider = $websiteLocalizationProvider;
         $this->websiteContextManager = $websiteContextManager;
@@ -113,6 +113,11 @@ class WebsiteSearchProductIndexerListener
             $event->addField($product->getId(), 'sku_uppercase', strtoupper($product->getSku()), true);
             $event->addField($product->getId(), 'status', $product->getStatus());
             $event->addField($product->getId(), 'type', $product->getType());
+            $event->addField(
+                $product->getId(),
+                'inventory_status',
+                $product->getInventoryStatus() ? $product->getInventoryStatus()->getId() : ''
+            );
             $event->addField($product->getId(), 'is_variant', (int)$product->isVariant());
 
             if ($product->getAttributeFamily() instanceof AttributeFamily) {
