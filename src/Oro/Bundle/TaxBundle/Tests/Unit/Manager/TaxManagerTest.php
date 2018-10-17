@@ -38,25 +38,18 @@ class TaxManagerTest extends \PHPUnit\Framework\TestCase
     /** @var bool */
     protected $taxationEnabled = true;
 
-    /** @var CacheProvider|\PHPUnit_Framework_MockObject_MockObject */
-    protected $cacheProvider;
+    /** @var CacheProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $cacheProvider;
 
     protected function setUp()
     {
-        $this->factory = $this->getMockBuilder('Oro\Bundle\TaxBundle\Factory\TaxFactory')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->factory = $this->createMock(TaxFactory::class);
 
-        $this->eventDispatcher = $this->getMockBuilder('Oro\Bundle\TaxBundle\Event\TaxEventDispatcher')
-            ->disableOriginalConstructor()->getMock();
+        $this->eventDispatcher = $this->createMock(TaxEventDispatcher::class);
 
-        $this->taxValueManager = $this->getMockBuilder('Oro\Bundle\TaxBundle\Manager\TaxValueManager')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->taxValueManager = $this->createMock(TaxValueManager::class);
 
-        $this->settingsProvider = $this->getMockBuilder('Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->settingsProvider = $this->createMock(TaxationSettingsProvider::class);
 
         $this->settingsProvider
             ->expects($this->any())
@@ -71,10 +64,9 @@ class TaxManagerTest extends \PHPUnit\Framework\TestCase
             $this->factory,
             $this->eventDispatcher,
             $this->taxValueManager,
-            $this->settingsProvider
+            $this->settingsProvider,
+            $this->cacheProvider
         );
-
-        $this->manager->setCacheProvider($this->cacheProvider);
     }
 
     /**

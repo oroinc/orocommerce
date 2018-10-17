@@ -2,24 +2,30 @@
 
 namespace Oro\Bundle\CheckoutBundle\Layout\DataProvider;
 
+use Doctrine\Common\Cache\CacheProvider;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Factory\CheckoutShippingContextFactory;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 
+/**
+ * Provides checkout by shipping factory
+ */
 class CheckoutShippingContextProvider
 {
-    /** @var array */
-    private $shippingContextCache = [];
+    /** @var CacheProvider */
+    private $cacheProvider;
 
     /** @var CheckoutShippingContextFactory */
     protected $shippingContextFactory;
 
     /**
      * @param CheckoutShippingContextFactory $shippingContextFactory
+     * @param CacheProvider $cacheProvider
      */
-    public function __construct(CheckoutShippingContextFactory $shippingContextFactory)
+    public function __construct(CheckoutShippingContextFactory $shippingContextFactory, CacheProvider $cacheProvider)
     {
         $this->shippingContextFactory = $shippingContextFactory;
+        $this->cacheProvider = $cacheProvider;
     }
 
     /**
@@ -28,13 +34,13 @@ class CheckoutShippingContextProvider
      */
     public function getContext(Checkout $entity)
     {
-        $contextHash = md5(serialize($entity));
-        if (isset($this->shippingContextCache[$contextHash])) {
-            return $this->shippingContextCache[$contextHash];
+        $contextHash = self::class . \md5(\serialize($entity));
+        $cachedContext = $this->cacheProvider->fetch($contextHash);
+        if (!$cachedContext) {
+            $cachedContext = $this->shippingContextFactory->create($entity);
+            $this->cacheProvider->save($contextHash, $cachedContext);
         }
 
-        $this->shippingContextCache[$contextHash] = $this->shippingContextFactory->create($entity);
-
-        return $this->shippingContextCache[$contextHash];
+        return $cachedContext;
     }
 }

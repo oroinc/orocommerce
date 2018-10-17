@@ -6,20 +6,20 @@ use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
-use Oro\Bundle\VisibilityBundle\Model\ProductVisibilityQueryBuilderModifier;
-use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 use Oro\Bundle\VisibilityBundle\Acl\Voter\ProductVisibilityVoter;
+use Oro\Bundle\VisibilityBundle\Model\ProductVisibilityQueryBuilderModifier;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
-class ProductVisibilityVoterTest extends \PHPUnit_Framework_TestCase
+class ProductVisibilityVoterTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     private $doctrineHelper;
 
@@ -29,17 +29,17 @@ class ProductVisibilityVoterTest extends \PHPUnit_Framework_TestCase
     private $voter;
 
     /**
-     * @var CacheProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var CacheProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     private $cache;
 
     /**
-     * @var FrontendHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var FrontendHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     private $frontendHelper;
 
     /**
-     * @var ProductVisibilityQueryBuilderModifier|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProductVisibilityQueryBuilderModifier|\PHPUnit\Framework\MockObject\MockObject
      */
     private $modifier;
 
@@ -55,6 +55,8 @@ class ProductVisibilityVoterTest extends \PHPUnit_Framework_TestCase
         $this->voter->setModifier($this->modifier);
 
         $this->voter->setClassName(Product::class);
+
+        $this->cache = $this->createMock(CacheProvider::class);
     }
 
     /**
@@ -65,7 +67,7 @@ class ProductVisibilityVoterTest extends \PHPUnit_Framework_TestCase
     {
         $product = new Product();
 
-        /** @var TokenInterface|\PHPUnit_Framework_MockObject_MockObject $token **/
+        /** @var TokenInterface|\PHPUnit\Framework\MockObject\MockObject $token **/
         $token = $this->createMock(TokenInterface::class);
 
         $this->assertEquals(
@@ -119,9 +121,7 @@ class ProductVisibilityVoterTest extends \PHPUnit_Framework_TestCase
      */
     public function testPermissionsEmptyCache($queryResult, $expected)
     {
-        /** @var CacheProvider|\PHPUnit_Framework_MockObject_MockObject $cache */
-        $cache = $this->createMock(CacheProvider::class);
-        $this->voter->setAttributePermissionCache($cache);
+        $this->voter->setAttributePermissionCache($this->cache);
         
         $productId = 42;
         /** @var Product $product */
@@ -131,13 +131,13 @@ class ProductVisibilityVoterTest extends \PHPUnit_Framework_TestCase
             ->method('isFrontendRequest')
             ->willReturn(true);
 
-        $cache->expects($this->once())
+        $this->cache->expects($this->once())
             ->method('contains')
             ->willReturn(false);
 
         $this->assertQueryExecute($product, $queryResult);
 
-        $cache->expects($this->once())
+        $this->cache->expects($this->once())
             ->method('save')
             ->with('Oro\Bundle\ProductBundle\Entity\Product_42', !empty($queryResult));
 
@@ -173,9 +173,7 @@ class ProductVisibilityVoterTest extends \PHPUnit_Framework_TestCase
      */
     public function testPermissionsFromCache($cacheResult, $expected)
     {
-        /** @var CacheProvider|\PHPUnit_Framework_MockObject_MockObject $cache */
-        $cache = $this->createMock(CacheProvider::class);
-        $this->voter->setAttributePermissionCache($cache);
+        $this->voter->setAttributePermissionCache($this->cache);
         
         $productId = 42;
         $product = $this->getEntity(Product::class, ['id' => $productId]);
@@ -194,11 +192,11 @@ class ProductVisibilityVoterTest extends \PHPUnit_Framework_TestCase
             ->method('isFrontendRequest')
             ->willReturn(true);
 
-        $cache->expects($this->once())
+        $this->cache->expects($this->once())
             ->method('contains')
             ->willReturn(true);
 
-        $cache->expects($this->once())
+        $this->cache->expects($this->once())
             ->method('fetch')
             ->with('Oro\Bundle\ProductBundle\Entity\Product_42')
             ->willReturn($cacheResult);
@@ -207,7 +205,7 @@ class ProductVisibilityVoterTest extends \PHPUnit_Framework_TestCase
             ->method('getEntityRepository')
             ->with(Product::class);
 
-        $cache->expects($this->never())
+        $this->cache->expects($this->never())
             ->method('save');
 
         /** @var TokenInterface $token */

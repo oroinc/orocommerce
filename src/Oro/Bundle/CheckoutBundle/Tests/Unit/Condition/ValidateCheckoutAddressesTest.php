@@ -11,7 +11,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class ValidateCheckoutAddressesTest extends \PHPUnit_Framework_TestCase
+class ValidateCheckoutAddressesTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var ValidateCheckoutAddresses
@@ -19,7 +19,7 @@ class ValidateCheckoutAddressesTest extends \PHPUnit_Framework_TestCase
     private $condition;
 
     /**
-     * @var ValidatorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ValidatorInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $validator;
 

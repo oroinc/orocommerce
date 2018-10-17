@@ -26,17 +26,11 @@ class MatchingProductsProvider
 
     /**
      * @param SegmentManager $segmentManager
-     */
-    public function __construct(SegmentManager $segmentManager)
-    {
-        $this->segmentManager = $segmentManager;
-    }
-
-    /**
      * @param CacheProvider $matchingProductsCache
      */
-    public function setMatchingProductsCache(CacheProvider $matchingProductsCache): void
+    public function __construct(SegmentManager $segmentManager, CacheProvider $matchingProductsCache)
     {
+        $this->segmentManager = $segmentManager;
         $this->matchingProductsCache = $matchingProductsCache;
     }
 

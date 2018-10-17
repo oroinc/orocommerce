@@ -56,12 +56,19 @@ services:
             - '@oro_payment.payment_method.composite_provider'
             - '@oro_payment.provider.methods_configs_rules.by_context.basic'
 
+    oro_payment.methods_provider.cache:
+        parent: doctrine_cache.abstract.array
+        public: false
+        calls:
+            - [ setNamespace, [ 'payment_methods_provider_cache' ] ]
+
     oro_payment.provider.methods_provider:
         class: 'Oro\Bundle\PaymentBundle\Layout\DataProvider\PaymentMethodViewsProvider'
         arguments:
             - '@oro_payment.payment_method_view.composite_provider'
             - '@oro_payment.method.provider.method_provider'
             - '@oro_payment.provider.payment_transaction'
+            - '@oro_payment.methods_provider.cache'
         tags:
             - { name: layout.data_provider, alias: oro_payment_method_views_provider }
 

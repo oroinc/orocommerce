@@ -33,31 +33,26 @@ class TaxManager
     protected $settingsProvider;
 
     /** @var CacheProvider */
-    protected $cacheProvider;
+    private $cacheProvider;
 
     /**
      * @param TaxFactory $taxFactory
      * @param TaxEventDispatcher $eventDispatcher
      * @param TaxValueManager $taxValueManager
      * @param TaxationSettingsProvider $settingsProvider
+     * @param CacheProvider $cacheProvider
      */
     public function __construct(
         TaxFactory $taxFactory,
         TaxEventDispatcher $eventDispatcher,
         TaxValueManager $taxValueManager,
-        TaxationSettingsProvider $settingsProvider
+        TaxationSettingsProvider $settingsProvider,
+        CacheProvider $cacheProvider
     ) {
         $this->taxFactory = $taxFactory;
         $this->eventDispatcher = $eventDispatcher;
         $this->taxValueManager = $taxValueManager;
         $this->settingsProvider = $settingsProvider;
-    }
-
-    /**
-     * @param CacheProvider $cacheProvider
-     */
-    public function setCacheProvider(CacheProvider $cacheProvider)
-    {
         $this->cacheProvider = $cacheProvider;
     }
 
@@ -275,9 +270,6 @@ class TaxManager
      */
     private function getCachedTaxable($object)
     {
-        if (!$this->cacheProvider) {
-            return $this->taxFactory->create($object);
-        }
         $cacheKey = md5(serialize($object));
 
         if (!$this->cacheProvider->contains($cacheKey)) {

@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\ProductBundle\VirtualFields;
 
+use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\EntityBundle\Helper\FieldHelper;
-use Oro\Bundle\EntityBundle\Provider\EntityFieldProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\VirtualFields\QueryDesigner\VirtualFieldsProductQueryDesigner;
 use Oro\Bundle\ProductBundle\VirtualFields\QueryDesigner\VirtualFieldsSelectQueryConverter;
@@ -18,11 +18,6 @@ class VirtualFieldsProductDecorator
 {
     const PRODUCT_ID_LABEL = 'product_id';
     const RELATED_ID_LABEL = 'related_id';
-
-    /**
-     * @var EntityFieldProvider
-     */
-    protected $provider;
 
     /**
      * @var VirtualFieldsSelectQueryConverter
@@ -60,30 +55,30 @@ class VirtualFieldsProductDecorator
     protected static $propertyAccessor;
 
     /**
-     * @var array
+     * @var CacheProvider
      */
-    private $propertyCache = [];
+    private $cacheProvider;
 
     /**
-     * @param EntityFieldProvider $provider
      * @param VirtualFieldsSelectQueryConverter $converter
      * @param ManagerRegistry $doctrine
      * @param FieldHelper $fieldHelper
+     * @param CacheProvider $cacheProvider
      * @param array $products
      * @param Product $product
      */
     public function __construct(
-        EntityFieldProvider $provider,
         VirtualFieldsSelectQueryConverter $converter,
         ManagerRegistry $doctrine,
         FieldHelper $fieldHelper,
+        CacheProvider $cacheProvider,
         array $products,
         Product $product
     ) {
-        $this->provider = $provider;
         $this->doctrine = $doctrine;
         $this->converter = $converter;
         $this->fieldHelper = $fieldHelper;
+        $this->cacheProvider = $cacheProvider;
         $this->products = $products;
         $this->product = $product;
     }
@@ -93,9 +88,10 @@ class VirtualFieldsProductDecorator
      */
     public function __get($name)
     {
-        if (!array_key_exists($name, $this->propertyCache)) {
+        //Check contains before fetch considering bool value can be returned
+        if (!$this->cacheProvider->contains($name)) {
             if ($this->getPropertyAccessor()->isReadable($this->product, $name)) {
-                $this->propertyCache[$name] = $this->getPropertyAccessor()->getValue($this->product, $name);
+                $propertyValue = $this->getPropertyAccessor()->getValue($this->product, $name);
             } else {
                 $field = $this->getRelationField($name);
                 if (!$field) {
@@ -103,12 +99,15 @@ class VirtualFieldsProductDecorator
                         sprintf('Relation "%s" doesn\'t exists for Product entity', $name)
                     );
                 }
-                $this->propertyCache[$name] =
-                    $this->getVirtualFieldValueForAllProducts($field)[$this->product->getId()];
+
+                $propertyValue = $this->getVirtualFieldValueForAllProducts($field)[$this->product->getId()];
             }
+            $this->cacheProvider->save($name, $propertyValue);
+        } else {
+            $propertyValue = $this->cacheProvider->fetch($name);
         }
 
-        return $this->propertyCache[$name];
+        return $propertyValue;
     }
 
     /**

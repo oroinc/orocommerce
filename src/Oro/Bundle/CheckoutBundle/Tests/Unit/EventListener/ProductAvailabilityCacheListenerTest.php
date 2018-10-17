@@ -9,12 +9,12 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Component\Testing\Doctrine\EntityManagerMockBuilder;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class ProductAvailabilityCacheListenerTest extends \PHPUnit_Framework_TestCase
+class ProductAvailabilityCacheListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var CacheProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var CacheProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     private $cache;
 

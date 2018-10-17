@@ -14,12 +14,12 @@ use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\ProductVisibilityResol
 use Oro\Bundle\VisibilityBundle\EventListener\ProductVisibilityCacheListener;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class ProductVisibilityCacheListenerTest extends \PHPUnit_Framework_TestCase
+class ProductVisibilityCacheListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var CacheProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var CacheProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     private $cache;
 
@@ -61,7 +61,7 @@ class ProductVisibilityCacheListenerTest extends \PHPUnit_Framework_TestCase
                 new CustomerProductVisibilityResolved($scope, $secondProduct)
             ]);
 
-        /** @var EntityManager|\PHPUnit_Framework_MockObject_MockObject $em */
+        /** @var EntityManager|\PHPUnit\Framework\MockObject\MockObject $em */
         $em = $this->createMock(EntityManager::class);
         $em->expects($this->once())
             ->method('getUnitOfWork')
@@ -95,7 +95,7 @@ class ProductVisibilityCacheListenerTest extends \PHPUnit_Framework_TestCase
             ->method('getScheduledEntityDeletions')
             ->willReturn([]);
 
-        /** @var EntityManager|\PHPUnit_Framework_MockObject_MockObject $em */
+        /** @var EntityManager|\PHPUnit\Framework\MockObject\MockObject $em */
         $em = $this->createMock(EntityManager::class);
         $em->expects($this->once())
             ->method('getUnitOfWork')

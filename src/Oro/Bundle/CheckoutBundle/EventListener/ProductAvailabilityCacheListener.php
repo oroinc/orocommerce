@@ -7,7 +7,7 @@ use Doctrine\ORM\Event\OnFlushEventArgs;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
 /**
- * This listener clear product availability cache on change related entities
+ * Clears product availability cache on change related entities
  */
 class ProductAvailabilityCacheListener
 {
@@ -15,6 +15,7 @@ class ProductAvailabilityCacheListener
      * @var CacheProvider
      */
     private $cache;
+
     /**
      * @param CacheProvider $cache
      */

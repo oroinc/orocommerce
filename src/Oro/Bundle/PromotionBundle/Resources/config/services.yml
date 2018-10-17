@@ -362,8 +362,7 @@ services:
         public: false
         arguments:
             - '@oro_segment.segment_manager'
-        calls:
-            - [setMatchingProductsCache, ['@oro_promotion.matching_products.cache']]
+            - '@oro_promotion.matching_products.cache'
 
     oro_promotion.provider.applied_discounts_provider:
         class: Oro\Bundle\PromotionBundle\Provider\AppliedDiscountsProvider

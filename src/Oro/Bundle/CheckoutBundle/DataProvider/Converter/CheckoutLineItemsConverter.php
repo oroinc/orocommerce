@@ -4,7 +4,6 @@ namespace Oro\Bundle\CheckoutBundle\DataProvider\Converter;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
-use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 /**
  * Puts data from an array to Order line items
@@ -12,27 +11,14 @@ use Symfony\Component\PropertyAccess\PropertyAccessor;
 class CheckoutLineItemsConverter
 {
     /**
-     * @var PropertyAccessor
-     */
-    protected $propertyAccessor;
-
-    /**
      * @var \ReflectionClass
      */
-    protected $reflectionClass;
-
-    /**
-     * @param PropertyAccessor $propertyAccessor
-     */
-    public function __construct(PropertyAccessor $propertyAccessor)
-    {
-        $this->propertyAccessor = $propertyAccessor;
-        $this->reflectionClass = new \ReflectionClass(OrderLineItem::class);
-    }
+    private $reflectionClass;
 
     /**
      * @param array $data
      * @return ArrayCollection|OrderLineItem[]
+     * @throws \ReflectionException
      */
     public function convert(array $data)
     {
@@ -40,7 +26,7 @@ class CheckoutLineItemsConverter
         foreach ($data as $item) {
             $orderLineItem = new OrderLineItem();
             foreach ($item as $property => $value) {
-                if (null !== $value && $this->reflectionClass->hasProperty($property)) {
+                if (null !== $value && $this->getReflectionClass()->hasProperty($property)) {
                     $methodName = $this->getSetterName($property);
                     $orderLineItem->{$methodName}($value);
                 }
@@ -50,6 +36,19 @@ class CheckoutLineItemsConverter
         }
 
         return $result;
+    }
+
+    /**
+     * @return \ReflectionClass
+     * @throws \ReflectionException
+     */
+    private function getReflectionClass()
+    {
+        if (!$this->reflectionClass) {
+            $this->reflectionClass = new \ReflectionClass(OrderLineItem::class);
+        }
+
+        return $this->reflectionClass;
     }
 
     /**

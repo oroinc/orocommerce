@@ -7,7 +7,6 @@ use Oro\Bundle\CheckoutBundle\Mapper\OrderMapper;
 use Oro\Bundle\CheckoutBundle\Tests\Unit\Model\Action\CheckoutSourceStub;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\EntityBundle\Helper\FieldHelper;
-use Oro\Bundle\EntityBundle\Provider\EntityFieldProvider;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
@@ -28,12 +27,7 @@ class OrderMapperTest extends \PHPUnit\Framework\TestCase
     protected $mapper;
 
     /**
-     * @var EntityFieldProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $provider;
-
-    /**
-     * @var FieldHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var FieldHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $fieldHelper;
 
@@ -44,19 +38,16 @@ class OrderMapperTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->provider = $this->createMock(EntityFieldProvider::class);
         $this->fieldHelper = $this->createMock(FieldHelper::class);
         $this->paymentTermAssociationProvider = $this->getMockBuilder(PaymentTermAssociationProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->mapper = new OrderMapper(
-            $this->provider,
+            $this->fieldHelper,
             PropertyAccess::createPropertyAccessor(),
             $this->paymentTermAssociationProvider
         );
-
-        $this->mapper->setEntityFieldHelper($this->fieldHelper);
     }
 
     public function testMap()
@@ -65,16 +56,16 @@ class OrderMapperTest extends \PHPUnit\Framework\TestCase
             ->method('getFields')
             ->with(Order::class, true, false, false, true, true, false)
             ->willReturn(
-            [
-                ['name' => 'id', 'identifier' => true],
-                ['name' => 'website'],
-                ['name' => 'paymentTerm'],
-                ['name' => 'shippingAddress'],
-                ['name' => 'billingAddress'],
-                ['name' => 'currency'],
-                ['name' => 'someRelationEntity:someRelationField'],
-            ]
-        );
+                [
+                    ['name' => 'id', 'identifier' => true],
+                    ['name' => 'website'],
+                    ['name' => 'paymentTerm'],
+                    ['name' => 'shippingAddress'],
+                    ['name' => 'billingAddress'],
+                    ['name' => 'currency'],
+                    ['name' => 'someRelationEntity:someRelationField'],
+                ]
+            );
 
         $website = new Website();
         $address = new OrderAddress();

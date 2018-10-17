@@ -55,22 +55,17 @@ class TaxationSettingsProvider
      * @param ConfigManager $configManager
      * @param TaxBaseExclusionFactory $taxBaseExclusionFactory
      * @param AddressModelFactory $addressModelFactory
+     * @param CacheProvider $cacheProvider
      */
     public function __construct(
         ConfigManager $configManager,
         TaxBaseExclusionFactory $taxBaseExclusionFactory,
-        AddressModelFactory $addressModelFactory
+        AddressModelFactory $addressModelFactory,
+        CacheProvider $cacheProvider
     ) {
         $this->configManager = $configManager;
         $this->taxBaseExclusionFactory = $taxBaseExclusionFactory;
         $this->addressModelFactory = $addressModelFactory;
-    }
-
-    /**
-     * @param CacheProvider $cacheProvider
-     */
-    public function setCacheProvider(CacheProvider $cacheProvider)
-    {
         $this->cacheProvider = $cacheProvider;
     }
 
@@ -82,10 +77,6 @@ class TaxationSettingsProvider
      */
     private function getCached($cacheKey, $settingKey)
     {
-        if (!$this->cacheProvider) {
-            return $this->configManager->get($settingKey);
-        }
-
         if (!$this->cacheProvider->contains($cacheKey)) {
             $configSetting = $this->configManager->get($settingKey);
             $this->cacheProvider->save($cacheKey, $configSetting);

@@ -5,7 +5,6 @@ namespace Oro\Bundle\CheckoutBundle\Mapper;
 use Doctrine\Common\Util\ClassUtils;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\EntityBundle\Helper\FieldHelper;
-use Oro\Bundle\EntityBundle\Provider\EntityFieldProvider;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermAssociationProvider;
@@ -20,9 +19,6 @@ class OrderMapper implements MapperInterface
     /** @var PropertyAccessorInterface */
     private $propertyAccessor;
 
-    /** @var EntityFieldProvider */
-    private $entityFieldProvider;
-
     /** @var FieldHelper */
     private $entityFieldHelper;
 
@@ -30,26 +26,18 @@ class OrderMapper implements MapperInterface
     private $paymentTermAssociationProvider;
 
     /**
-     * @param EntityFieldProvider $entityFieldProvider
+     * @param FieldHelper $entityFieldHelper
      * @param PropertyAccessorInterface $propertyAccessor
      * @param PaymentTermAssociationProvider $paymentTermAssociationProvider
      */
     public function __construct(
-        EntityFieldProvider $entityFieldProvider,
+        FieldHelper $entityFieldHelper,
         PropertyAccessorInterface $propertyAccessor,
         PaymentTermAssociationProvider $paymentTermAssociationProvider
     ) {
-        $this->entityFieldProvider = $entityFieldProvider;
+        $this->entityFieldHelper = $entityFieldHelper;
         $this->propertyAccessor = $propertyAccessor;
         $this->paymentTermAssociationProvider = $paymentTermAssociationProvider;
-    }
-
-    /**
-     * @param FieldHelper $entityFieldHelper
-     */
-    public function setEntityFieldHelper(FieldHelper $entityFieldHelper)
-    {
-        $this->entityFieldHelper = $entityFieldHelper;
     }
 
     /** {@inheritdoc} */

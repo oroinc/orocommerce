@@ -16,7 +16,7 @@ use Oro\Component\Checkout\DataProvider\CheckoutDataProviderInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
- * This class provide obtaining Order line items from CheckoutInterface
+ * This class provides obtaining Order line items from CheckoutInterface
  */
 class CheckoutLineItemsManager
 {

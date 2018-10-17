@@ -4,7 +4,6 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\DataProvider\LineItem;
 
 use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\CheckoutBundle\DataProvider\LineItem\CheckoutLineItemsDataProvider;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
@@ -22,16 +21,13 @@ class CheckoutLineItemsDataProviderTest extends \PHPUnit\Framework\TestCase
     /** @var FrontendProductPricesDataProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $frontendProductPricesDataProvider;
 
-    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
-    protected $doctrine;
-
     /** @var CheckoutLineItemsDataProvider */
     protected $provider;
 
-    /** @var AuthorizationCheckerInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var AuthorizationCheckerInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $authorizationChecker;
 
-    /** @var CacheProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var CacheProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $productAvailabilityCache;
 
     /**
@@ -40,12 +36,12 @@ class CheckoutLineItemsDataProviderTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->frontendProductPricesDataProvider = $this->createMock(FrontendProductPricesDataProvider::class);
-        $this->doctrine = $this->createMock(ManagerRegistry::class);
         $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
         $this->productAvailabilityCache = $this->createMock(CacheProvider::class);
         $this->provider = new CheckoutLineItemsDataProvider(
             $this->frontendProductPricesDataProvider,
-            $this->doctrine
+            $this->authorizationChecker,
+            $this->productAvailabilityCache
         );
     }
 
@@ -128,37 +124,11 @@ class CheckoutLineItemsDataProviderTest extends \PHPUnit\Framework\TestCase
             ],
         ];
 
-        $this->provider->setProductAvailabilityCache($this->productAvailabilityCache);
-
         $this->authorizationChecker->expects($this->once())
             ->method('isGranted')
             ->willReturn(true);
-        $this->provider->setAuthorizationChecker($this->authorizationChecker);
 
         $this->assertEquals($expected, $this->provider->getData($checkout));
-    }
-
-    /**
-     * @expectedException \InvalidArgumentException
-     */
-    public function testGetDataWithoutCacheProvider()
-    {
-        /** @var CheckoutLineItem $lineItem */
-        $lineItem = $this->getEntity(CheckoutLineItem::class);
-        $checkout = $this->getEntity(Checkout::class, ['lineItems' => new ArrayCollection([$lineItem])]);
-        $this->provider->getData($checkout);
-    }
-
-    /**
-     * @expectedException \InvalidArgumentException
-     */
-    public function testGetDataWithoutAuthorizationChecker()
-    {
-        /** @var CheckoutLineItem $lineItem */
-        $lineItem = $this->getEntity(CheckoutLineItem::class);
-        $checkout = $this->getEntity(Checkout::class, ['lineItems' => new ArrayCollection([$lineItem])]);
-        $this->provider->setProductAvailabilityCache($this->productAvailabilityCache);
-        $this->provider->getData($checkout);
     }
 
     public function testGetDataWithoutProduct()
@@ -166,9 +136,6 @@ class CheckoutLineItemsDataProviderTest extends \PHPUnit\Framework\TestCase
         /** @var CheckoutLineItem $lineItem */
         $lineItem = $this->getEntity(CheckoutLineItem::class);
         $checkout = $this->getEntity(Checkout::class, ['lineItems' => new ArrayCollection([$lineItem])]);
-        
-        $this->provider->setProductAvailabilityCache($this->productAvailabilityCache);
-        $this->provider->setAuthorizationChecker($this->authorizationChecker);
 
         $expected = [
             [
@@ -207,7 +174,6 @@ class CheckoutLineItemsDataProviderTest extends \PHPUnit\Framework\TestCase
             ->method('isGranted')
             ->with('VIEW', $enabledProduct)
             ->willReturn(true);
-        $this->provider->setAuthorizationChecker($this->authorizationChecker);
 
         $this->productAvailabilityCache->expects($this->exactly(2))
             ->method('contains')
@@ -227,7 +193,6 @@ class CheckoutLineItemsDataProviderTest extends \PHPUnit\Framework\TestCase
             ->method('fetch')
             ->with($enabledProduct->getId())
             ->willReturn(true);
-        $this->provider->setProductAvailabilityCache($this->productAvailabilityCache);
 
         $expected = [
             [

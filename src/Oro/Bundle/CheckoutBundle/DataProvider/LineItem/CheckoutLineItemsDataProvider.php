@@ -4,7 +4,6 @@ namespace Oro\Bundle\CheckoutBundle\DataProvider\LineItem;
 
 use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\PricingBundle\Provider\FrontendProductPricesDataProvider;
@@ -14,7 +13,7 @@ use Oro\Component\Checkout\DataProvider\AbstractCheckoutProvider;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
- * Provide info to build collection of line items by given source entity.
+ * Provides info to build collection of line items by given source entity.
  * Source entity should implement ProductLineItemsHolderInterface.
  */
 class CheckoutLineItemsDataProvider extends AbstractCheckoutProvider
@@ -25,14 +24,9 @@ class CheckoutLineItemsDataProvider extends AbstractCheckoutProvider
     protected $frontendProductPricesDataProvider;
 
     /**
-     * @var ManagerRegistry
-     */
-    protected $registry;
-
-    /**
      * @var AuthorizationCheckerInterface
      */
-    protected $authorizationChecker;
+    private $authorizationChecker;
 
     /**
      * @var CacheProvider
@@ -41,29 +35,16 @@ class CheckoutLineItemsDataProvider extends AbstractCheckoutProvider
 
     /**
      * @param FrontendProductPricesDataProvider $frontendProductPricesDataProvider
-     * @param ManagerRegistry $registry
+     * @param AuthorizationCheckerInterface $authorizationChecker
+     * @param CacheProvider $productAvailabilityCache
      */
     public function __construct(
         FrontendProductPricesDataProvider $frontendProductPricesDataProvider,
-        ManagerRegistry $registry
+        AuthorizationCheckerInterface $authorizationChecker,
+        CacheProvider $productAvailabilityCache
     ) {
         $this->frontendProductPricesDataProvider = $frontendProductPricesDataProvider;
-        $this->registry = $registry;
-    }
-
-    /**
-     * @param AuthorizationCheckerInterface $authorizationChecker
-     */
-    public function setAuthorizationChecker(AuthorizationCheckerInterface $authorizationChecker)
-    {
         $this->authorizationChecker = $authorizationChecker;
-    }
-
-    /**
-     * @param CacheProvider $productAvailabilityCache
-     */
-    public function setProductAvailabilityCache(CacheProvider $productAvailabilityCache)
-    {
         $this->productAvailabilityCache = $productAvailabilityCache;
     }
 
@@ -149,12 +130,6 @@ class CheckoutLineItemsDataProvider extends AbstractCheckoutProvider
      */
     protected function isLineItemNeeded($lineItem)
     {
-        if (!$this->productAvailabilityCache) {
-            throw new \InvalidArgumentException('CacheProvider is not provided');
-        }
-        if (!$this->authorizationChecker) {
-            throw new \InvalidArgumentException('AuthorizationChecker is not provided');
-        }
         if (!$lineItem instanceof ProductHolderInterface) {
             return true;
         }

@@ -37,36 +37,26 @@ class TaxationSettingsProviderTest extends \PHPUnit\Framework\TestCase
     protected $provider;
 
     /**
-     * @var CacheProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var CacheProvider|\PHPUnit\Framework\MockObject\MockObject
      */
-    protected $cacheProvider;
+    private $cacheProvider;
 
     protected function setUp()
     {
-        $this->configManager = $this
-            ->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->configManager = $this->createMock(ConfigManager::class);
 
-        $this->taxBaseExclusionFactory = $this
-            ->getMockBuilder('Oro\Bundle\TaxBundle\Factory\TaxBaseExclusionFactory')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->taxBaseExclusionFactory = $this->createMock(TaxBaseExclusionFactory::class);
 
-        $this->addressModelFactory = $this
-            ->getMockBuilder('Oro\Bundle\TaxBundle\Factory\AddressModelFactory')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->addressModelFactory = $this->createMock(AddressModelFactory::class);
 
         $this->cacheProvider = $this->createMock(CacheProvider::class);
 
         $this->provider = new TaxationSettingsProvider(
             $this->configManager,
             $this->taxBaseExclusionFactory,
-            $this->addressModelFactory
+            $this->addressModelFactory,
+            $this->cacheProvider
         );
-
-        $this->provider->setCacheProvider($this->cacheProvider);
     }
 
     protected function tearDown()

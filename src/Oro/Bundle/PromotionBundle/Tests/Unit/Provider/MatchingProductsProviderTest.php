@@ -26,17 +26,15 @@ class MatchingProductsProviderTest extends \PHPUnit\Framework\TestCase
     private $provider;
 
     /**
-     * @var CacheProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var CacheProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     private $matchingProductsCache;
 
     protected function setUp()
     {
         $this->segmentManager = $this->createMock(SegmentManager::class);
-        $this->provider = new MatchingProductsProvider($this->segmentManager);
-
         $this->matchingProductsCache = $this->createMock(CacheProvider::class);
-        $this->provider->setMatchingProductsCache($this->matchingProductsCache);
+        $this->provider = new MatchingProductsProvider($this->segmentManager, $this->matchingProductsCache);
     }
 
     public function testHasMatchingProductsThrowsExceptionWhenNoRootAlias()
