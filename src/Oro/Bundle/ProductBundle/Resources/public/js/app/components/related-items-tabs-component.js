@@ -2,6 +2,7 @@ define(function(require) {
     'use strict';
 
     var RelatedItemsTabsComponent;
+    var _ = require('underscore');
     var BaseComponent = require('oroui/js/app/components/base/component');
     var BaseCollection = require('oroui/js/app/models/base/collection');
     var TabCollectionView = require('oroui/js/app/views/tab-collection-view');
@@ -21,12 +22,14 @@ define(function(require) {
          * @param {Array<Object>} options.data collection of tabs build over entities category
          */
         initialize: function(options) {
-            var categories = options.data;
-
-            if (categories.length === 0) {
+            if (!options.data.length) {
                 // Nothing to show
                 return;
             }
+
+            var categories = _.each(options.data, function(item) {
+                item.uniqueId = _.uniqueId(item.id);
+            });
 
             this.categories = new BaseCollection(categories);
             var firstElement = this.categories.first();

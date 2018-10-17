@@ -25,7 +25,7 @@
         },
         '~class': " header-row__toggle header-row__wrapper",
         'data-header-row-toggle': '',
-        'data-options': '{"attachToParent": "true"}'
+        'aria-labelledby': togglerId|default('')
     }) %}
     <div {{ block('block_attributes') }}>
         <div class="header-row__dropdown"
@@ -37,8 +37,8 @@
 
 {% block _main_menu_shopping_lists_dropdown_widget %}
     <div class="cart-widget__content">
-        <span class="cart-widget__icon">
-            <i class="fa-clipboard"></i>
+        <span class="cart-widget__icon" aria-hidden="true">
+            <span class="fa-clipboard"></span>
         </span>
         <span class="cart-widget-counter">
             <span class="cart-widget__text">
@@ -55,7 +55,7 @@
                 {% endif %}
             </span>
             {% if isShowDropdown is same as(true) %}
-                <i class="fa-angle-down"></i>
+                <span class="fa-angle-down" aria-hidden="true"></span>
             {% endif %}
         </span>
     </div>
@@ -138,6 +138,7 @@
             'aCss': 'shopping-list-widget__create-btn',
             'iCss': 'fa-plus-circle',
             'label' : 'oro.frontend.shoppinglist.view.create_new_shopping_list.label'|trans,
+            'labelInIcon': false,
             'widget' : {
                 'type' : 'shopping-list-create',
                 'options': {

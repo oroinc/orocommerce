@@ -1,0 +1,13 @@
+{% extends 'OroUIBundle:Form:fields.html.twig' %}
+
+{% block form_row %}
+    {% spaceless %}
+    <div class="control-group">
+        <div class="controls{% if errors|length > 0 %} validation-error{% endif %}">
+            {{ form_widget(form) }}
+            {{ form_label(form) }}
+            {{ form_errors(form) }}
+        </div>
+    </div>
+    {% endspaceless %}
+{% endblock form_row %}

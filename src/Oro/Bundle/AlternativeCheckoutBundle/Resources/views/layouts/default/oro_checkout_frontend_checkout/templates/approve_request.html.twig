@@ -1,11 +1,11 @@
 {% block _checkout_form_fields_widget -%}
     <div div class="checkout__approval-wrapper">
         {% if workflowItem.data.get('allowed') and workflowItem.data.get('allow_request_date') %}
-            <div class="notification--notice">
+            <div class="notification--notice" role="alert">
                 <span class="notification__text">{{ 'oro.alternativecheckout.messages.approved_at'|trans }} {{ workflowItem.data.get('allow_request_date')|oro_format_datetime }}</span>
             </div>
         {% else %}
-            <div class="notification--alert">
+            <div class="notification--alert" role="alert">
                 <span class="notification__text">{{ 'oro.alternativecheckout.messages.waiting_for_approve'|trans }}</span>
             </div>
         {% endif %}

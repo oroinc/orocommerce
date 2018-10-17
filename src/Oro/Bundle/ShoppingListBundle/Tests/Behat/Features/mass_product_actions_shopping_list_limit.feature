@@ -39,7 +39,7 @@ Feature: Mass Product Actions shopping list limit
   Scenario: "Create New Shopping List" action is not available when Shopping List limit is less or equals the number of Shopping Lists
     When I check PSKU1 record in "Product Frontend Grid" grid
     And I click "ProductFrontendMassActionButton"
-    Then I should not see "Create New Shopping List" in the "ProductFrontendGridFloatingMenu" element
+    Then I should not see "Create New Shopping List" in the "ProductFrontendGridMassActionMenu" element
     And I uncheck PSKU1 record in "Product Frontend Grid" grid
 
   Scenario: Shopping List can not be added when Shopping List limit is less or equals the number of Shopping Lists
