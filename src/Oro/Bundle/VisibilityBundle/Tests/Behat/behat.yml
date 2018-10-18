@@ -11,6 +11,8 @@ oro_behat_extension:
         - OroApplicationBundle::CommerceMainContext
         - OroConfigBundle::FeatureContext
         - OroUIBundle::TypeaheadContext
+        - OroNavigationBundle::ScrollspyContext
+        - OroNavigationBundle::TabContext
       paths:
         - '@OroVisibilityBundle/Tests/Behat/Features'
   elements:

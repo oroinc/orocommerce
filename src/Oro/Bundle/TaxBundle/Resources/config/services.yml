@@ -588,3 +588,8 @@ services:
         public: false
         calls:
             - [ setNamespace, [ 'oro_taxation_settings_provider' ] ]
+
+    oro_tax.validator.tax_rate:
+        class: Oro\Bundle\TaxBundle\Validator\Constraints\TaxRateValidator
+        tags:
+            - { name: validator.constraint_validator, alias: oro_tax_tax_rate }

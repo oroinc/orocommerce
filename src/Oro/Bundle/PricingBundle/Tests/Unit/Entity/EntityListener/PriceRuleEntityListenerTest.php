@@ -57,6 +57,9 @@ class PriceRuleEntityListenerTest extends \PHPUnit\Framework\TestCase
         $event = $this->getMockBuilder(PreUpdateEventArgs::class)
             ->disableOriginalConstructor()
             ->getMock();
+        $event->expects($this->once())
+            ->method('getEntityChangeSet')
+            ->willReturn([]);
         $this->listener->preUpdate($priceRule, $event);
     }
 

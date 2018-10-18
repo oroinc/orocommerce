@@ -74,8 +74,7 @@ class ProductPriceBuilderTest extends \PHPUnit\Framework\TestCase
 
     public function testBuildByPriceListNoRules()
     {
-        /** @var PriceList|\PHPUnit\Framework\MockObject\MockObject $priceList * */
-        $priceList = $this->createMock(PriceList::class);
+        $priceList = new PriceList();
 
         /** @var Product|\PHPUnit\Framework\MockObject\MockObject $product * */
         $productId = 1;
@@ -97,8 +96,7 @@ class ProductPriceBuilderTest extends \PHPUnit\Framework\TestCase
 
     public function testBuildByPriceListNoRulesWithoutProduct()
     {
-        /** @var PriceList|\PHPUnit\Framework\MockObject\MockObject $priceList * */
-        $priceList = $this->createMock(PriceList::class);
+        $priceList = new PriceList();
 
         $repo = $this->getRepositoryMock();
         $repo->expects($this->once())

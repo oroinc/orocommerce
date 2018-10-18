@@ -7,8 +7,10 @@
             id: group,
             viewport: {
                 maxScreenType: 'mobile-landscape',
-            }
-        }
+            },
+        },
+        'role': 'tab',
+        'id': group
     }) %}
     <div {{ block('block_attributes') }} style="display: none;" class="tab-content">
         {{ content|raw }}

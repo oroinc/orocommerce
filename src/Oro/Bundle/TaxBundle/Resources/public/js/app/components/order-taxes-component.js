@@ -20,7 +20,7 @@ define(function(require) {
         options: {
             selectors: {
                 totalsTemplate: '#order-taxes-totals-template',
-                collapseSelector: '#order-taxes-totals-table'
+                collapseSelector: '[data-role="order-taxes-totals"]'
             }
         },
 
@@ -53,14 +53,17 @@ define(function(require) {
         },
 
         /**
+         * Formats data in a subtotals item
+         *
          * @param {Object} item
+         * @param {number} index
          */
-        prepareItem: function(item) {
+        prepareItem: function(item, index) {
             item.data.total = TaxFormatter.formatItem(item.data.total);
             item.data.shipping = TaxFormatter.formatItem(item.data.shipping);
             item.data.taxes = _.map(item.data.taxes, TaxFormatter.formatTax);
 
-            item.data.in = $(this.options.selectors.collapseSelector).hasClass('in');
+            item.data.show = $(this.options.selectors.collapseSelector).eq(index).hasClass('show');
             item.template = this.totalsTemplate;
         },
 

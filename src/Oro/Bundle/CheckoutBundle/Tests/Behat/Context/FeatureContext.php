@@ -351,7 +351,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
             'xpath',
             "//h4[contains(@class,'scrollspy-title')][text()=\"$section\"]/.." .
             "//div[contains(@class,'entity-name')][text()=\"$entity\"]" .
-            "/..//*[contains(@class,'collapse-expand-action-container')]"
+            "/..//*[contains(@class,'collapse-action')]"
         );
         if ($expandElement) {
             $expandElement->focus();
