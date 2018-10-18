@@ -1219,9 +1219,11 @@ services:
             - '@security.authorization_checker'
         tags:
             - { name: oro_datagrid.extension }
+            - { name: oro_featuretogle.feature, feature: oro_price_lists }
 
     oro_pricing.datagrid.extension.price_attribute_product_price_datagrid:
         class: 'Oro\Bundle\PricingBundle\Datagrid\PriceAttributeProductPriceDatagridExtension'
         parent: oro_pricing.datagrid.extension.price
         tags:
             - { name: oro_datagrid.extension }
+            - { name: oro_featuretogle.feature, feature: oro_price_attributes }

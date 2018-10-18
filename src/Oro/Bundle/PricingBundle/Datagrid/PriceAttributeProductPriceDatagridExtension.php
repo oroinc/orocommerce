@@ -10,6 +10,8 @@ use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Extension\AbstractExtension;
 use Oro\Bundle\DataGridBundle\Provider\SelectedFields\SelectedFieldsProviderInterface;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceAttributePriceListRepository;
@@ -19,8 +21,10 @@ use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 /**
  * Adds price attribute columns, sorters, filters for each currency enabled in current price list.
  */
-class PriceAttributeProductPriceDatagridExtension extends AbstractExtension
+class PriceAttributeProductPriceDatagridExtension extends AbstractExtension implements FeatureToggleableInterface
 {
+    use FeatureCheckerHolderTrait;
+
     private const SUPPORTED_GRID = 'products-grid';
 
     /** @var bool */
@@ -68,8 +72,8 @@ class PriceAttributeProductPriceDatagridExtension extends AbstractExtension
      */
     public function isApplicable(DatagridConfiguration $config)
     {
-        return
-            !$this->applied
+        return $this->isFeaturesEnabled()
+            && !$this->applied
             && static::SUPPORTED_GRID === $config->getName()
             && parent::isApplicable($config);
     }
