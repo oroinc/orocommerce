@@ -364,11 +364,11 @@ class Quote extends ExtendQuote implements
     {
         parent::__construct();
 
-        $this->guestAccessId = UUIDGenerator::v4();
         $this->quoteProducts = new ArrayCollection();
         $this->assignedUsers = new ArrayCollection();
         $this->assignedCustomerUsers = new ArrayCollection();
         $this->demands = new ArrayCollection();
+        $this->generateGuestAccessId();
     }
 
     /**
@@ -580,6 +580,11 @@ class Quote extends ExtendQuote implements
     public function __toString()
     {
         return (string)$this->id;
+    }
+
+    public function __clone()
+    {
+        $this->generateGuestAccessId();
     }
 
     /**
@@ -957,5 +962,10 @@ class Quote extends ExtendQuote implements
     public function isOverriddenShippingCost()
     {
         return null !== $this->overriddenShippingCostAmount;
+    }
+
+    private function generateGuestAccessId(): void
+    {
+        $this->setGuestAccessId(UUIDGenerator::v4());
     }
 }

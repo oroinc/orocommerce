@@ -51,10 +51,7 @@ class QuoteTest extends AbstractTest
         static::assertPropertyAccessors(new Quote(), $properties);
 
         $quote = new Quote();
-        static::assertRegExp(
-            '/^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i',
-            $quote->getGuestAccessId()
-        );
+        static::assertIsUUID($quote->getGuestAccessId());
 
         static::assertPropertyCollections(new Quote(), [
             ['quoteProducts', new QuoteProduct()],
@@ -227,6 +224,16 @@ class QuoteTest extends AbstractTest
         ];
     }
 
+    public function testClone()
+    {
+        $quote = new Quote();
+        $this->assertIsUUID($quote->getGuestAccessId());
+
+        $clone = clone $quote;
+        $this->assertIsUUID($clone->getGuestAccessId());
+        $this->assertNotEquals($quote->getGuestAccessId(), $clone->getGuestAccessId());
+    }
+
     /**
      * @param int $quoteProductCount
      * @param int $quoteProductOfferCount
@@ -251,5 +258,16 @@ class QuoteTest extends AbstractTest
         }
 
         return $quote;
+    }
+
+    /**
+     * @param mixed $actual
+     */
+    private static function assertIsUUID($actual)
+    {
+        static::assertRegExp(
+            '/^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i',
+            $actual
+        );
     }
 }
