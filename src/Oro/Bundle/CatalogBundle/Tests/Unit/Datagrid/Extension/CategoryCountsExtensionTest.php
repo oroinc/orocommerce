@@ -224,6 +224,16 @@ class CategoryCountsExtensionTest extends \PHPUnit\Framework\TestCase
             ->method('resetFilter')
             ->with($this->extension->getParameters(), SubcategoryFilter::FILTER_TYPE_NAME);
 
+        $this->datagridParametersHelper->expects($this->once())
+            ->method('getFromParameters')
+            ->willReturn(null);
+        $this->datagridParametersHelper->expects($this->once())
+            ->method('getFromMinifiedParameters')
+            ->willReturn([
+                'filter1' => [],
+                SubcategoryFilter::FILTER_TYPE_NAME => ['value' => [1, 2, 3]],
+            ]);
+
         $this->extension->visitMetadata($config, $metadata);
 
         $metadataArray['filters'][1]['counts'] = [1 => 2];
@@ -274,6 +284,16 @@ class CategoryCountsExtensionTest extends \PHPUnit\Framework\TestCase
             ],
         ];
         $metadata = MetadataObject::create($metadataArray);
+
+        $this->datagridParametersHelper->expects($this->once())
+            ->method('getFromParameters')
+            ->willReturn([
+                'filter1' => [],
+                SubcategoryFilter::FILTER_TYPE_NAME => ['value' => [1, 2, 3]],
+            ]);
+        $this->datagridParametersHelper->expects($this->once())
+            ->method('getFromMinifiedParameters')
+            ->willReturn(null);
 
         $commonParameters = $this->extension->getParameters()->all();
         $parameters = array_merge($commonParameters, $additionalParameters);

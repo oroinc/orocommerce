@@ -121,6 +121,21 @@ class CategoryCountsExtension extends AbstractExtension
         // remove filter by category to make sure that filter counts will not be affected by filter itself
         $parameters = clone $this->getParameters();
         $this->datagridParametersHelper->resetFilter($parameters, SubcategoryFilter::FILTER_TYPE_NAME);
+
+        // merge common parameters filters with minified parameters filters for
+        // create correct cache key after reload the page
+        $filtersParameters = array_merge(
+            (array) $this->datagridParametersHelper->getFromParameters(
+                $parameters,
+                AbstractFilterExtension::FILTER_ROOT_PARAM
+            ),
+            (array) $this->datagridParametersHelper->getFromMinifiedParameters(
+                $parameters,
+                AbstractFilterExtension::MINIFIED_FILTER_PARAM
+            )
+        );
+        $parameters->set(AbstractFilterExtension::FILTER_ROOT_PARAM, $filtersParameters);
+
         $this->datagridParametersHelper->setDatagridExtensionSkipped($parameters);
 
         $cacheKey = $this->getCacheKey($config->getName(), $parameters);

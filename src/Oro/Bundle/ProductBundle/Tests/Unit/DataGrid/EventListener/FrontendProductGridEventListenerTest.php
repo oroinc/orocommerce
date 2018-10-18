@@ -269,7 +269,7 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
                 'expected' => [
                     'filters' => [
                         'columns' => [
-                            'internalStatus_' . EnumIdPlaceholder::NAME => [
+                            'internalStatus' => [
                                 'type' => SearchableType\SearchableAttributeTypeInterface::FILTER_TYPE_MULTI_ENUM,
                                 'data_name' => Query::TYPE_INTEGER . '.internalStatus_' . EnumIdPlaceholder::NAME,
                                 'force_like' => true,
