@@ -12,6 +12,11 @@
                 {{ UI.renderHtmlProperty('oro.sale.quote.customer.label'|trans, UI.entityViewLink(entity.customer, entity.customer.name, 'oro_customer_customer_view')) }}
             {% endif %}
 
+            {% set uniqueGuestLink = guest_access_link(entity) %}
+            {% if uniqueGuestLink %}
+                {{ UI.renderHtmlProperty('oro.sale.quote.unique_guest_link.label'|trans, UI.renderUrlWithActions(uniqueGuestLink), entity, 'guestAccessId') }}
+            {% endif %}
+
             {{ UI.renderProperty('oro.sale.quote.internal_status.label'|trans, entity.internalStatus.name|default('')) }}
             {{ UI.renderProperty('oro.sale.quote.customer_status.label'|trans, entity.customerStatus.name|default('')) }}
             
