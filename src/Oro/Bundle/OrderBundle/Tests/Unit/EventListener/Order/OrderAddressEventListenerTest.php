@@ -9,17 +9,18 @@ use Oro\Bundle\OrderBundle\EventListener\Order\OrderAddressEventListener;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\Tests\Fixtures\Type;
 use Symfony\Component\Templating\EngineInterface;
 
-class OrderAddressEventListenerTest extends \PHPUnit_Framework_TestCase
+class OrderAddressEventListenerTest extends \PHPUnit\Framework\TestCase
 {
     /** @var OrderAddressEventListener */
     protected $listener;
 
-    /** @var EngineInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var EngineInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $twigEngine;
 
-    /** @var FormFactoryInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var FormFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $formFactory;
 
     protected function setUp()
@@ -40,13 +41,13 @@ class OrderAddressEventListenerTest extends \PHPUnit_Framework_TestCase
         $order = new Order();
 
         $type = $this->createMock('Symfony\Component\Form\ResolvedFormTypeInterface');
-        $type->expects($this->once())->method('getName')->willReturn('type');
+        $type->expects($this->once())->method('getInnerType')->willReturn(new Type());
 
         $formConfig = $this->createMock('Symfony\Component\Form\FormConfigInterface');
         $formConfig->expects($this->once())->method('getType')->willReturn($type);
         $formConfig->expects($this->once())->method('getOptions')->willReturn([]);
 
-        /** @var Form|\PHPUnit_Framework_MockObject_MockObject $oldForm */
+        /** @var Form|\PHPUnit\Framework\MockObject\MockObject $oldForm */
         $oldForm = $this->getMockBuilder('Symfony\Component\Form\Form')
             ->disableOriginalConstructor()
             ->getMock();
@@ -60,7 +61,7 @@ class OrderAddressEventListenerTest extends \PHPUnit_Framework_TestCase
             ->withConsecutive($this->equalTo($billingAddressField), $this->equalTo($shippingAddressField))
             ->willReturnOnConsecutiveCalls(true, false);
 
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $field1 */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $field1 */
         $field1 = $this->createMock('Symfony\Component\Form\FormInterface');
 
         $oldForm->expects($this->once())->method('get')->with($billingAddressField)->willReturn($field1);
@@ -74,7 +75,7 @@ class OrderAddressEventListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $field2 */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $field2 */
         $field2 = $this->createMock('Symfony\Component\Form\FormInterface');
 
         $field2->expects($this->never())->method('createView');
@@ -84,15 +85,15 @@ class OrderAddressEventListenerTest extends \PHPUnit_Framework_TestCase
             ->with('OroOrderBundle:Form:customerAddressSelector.html.twig', ['form' => $field1View])
             ->willReturn('view1');
 
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $field1 */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $field1 */
         $newField1 = $this->createMock('Symfony\Component\Form\FormInterface');
         $newField1->expects($this->once())->method('createView')->willReturn($field1View);
-        /** @var Form|\PHPUnit_Framework_MockObject_MockObject $oldForm */
+        /** @var Form|\PHPUnit\Framework\MockObject\MockObject $oldForm */
         $newForm = $this->getMockBuilder('Symfony\Component\Form\Form')
             ->disableOriginalConstructor()
             ->getMock();
         $builder = $this->createMock('Symfony\Component\Form\FormBuilderInterface');
-        $builder->expects($this->once())->method('add')->with('billingAddress', 'type', $this->isType('array'))
+        $builder->expects($this->once())->method('add')->with('billingAddress', Type::class, $this->isType('array'))
             ->willReturnSelf();
         $builder->expects($this->once())->method('getForm')->willReturn($newForm);
         $this->formFactory->expects($this->once())->method('createNamedBuilder')->willReturn($builder);
@@ -110,7 +111,7 @@ class OrderAddressEventListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testDoNothingIfNoSubmission()
     {
-        /** @var OrderEvent|\PHPUnit_Framework_MockObject_MockObject $event */
+        /** @var OrderEvent|\PHPUnit\Framework\MockObject\MockObject $event */
         $event = static::createMock(OrderEvent::class);
         $event->expects(static::never())
             ->method('getForm');

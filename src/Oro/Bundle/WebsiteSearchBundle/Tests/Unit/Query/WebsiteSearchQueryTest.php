@@ -7,15 +7,15 @@ use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\SearchBundle\Query\Result;
 use Oro\Bundle\WebsiteSearchBundle\Query\WebsiteSearchQuery;
 
-class WebsiteSearchQueryTest extends \PHPUnit_Framework_TestCase
+class WebsiteSearchQueryTest extends \PHPUnit\Framework\TestCase
 {
     /** @var WebsiteSearchQuery */
     protected $websiteSearchQuery;
 
-    /** @var EngineInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var EngineInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $engine;
 
-    /** @var Query|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var Query|\PHPUnit\Framework\MockObject\MockObject */
     protected $query;
 
     public function setUp()

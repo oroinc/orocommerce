@@ -5,6 +5,7 @@ layout:
             parentId: product_view_specification_container
             blockType: layout_subtree_update
             options:
+                visible: '=data["frontend_product_prices"].isShowProductPriceContainer(data["oro_product_variant"].getProductVariantOrProduct(data))'
                 reloadEvents: ['layout-subtree:update:product']
         - '@move':
             id: product_price_container

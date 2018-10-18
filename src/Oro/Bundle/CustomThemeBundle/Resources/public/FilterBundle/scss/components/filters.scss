@@ -1,13 +1,9 @@
-// @theme: custom;
+/* @theme: custom; */
 
-@if ($apply-filters-collapse-mode-design) {
-    @import "filters-collapse-mode";
-}
+@import "filters-collapse-mode";
 
 .filter-box {
-    @if ($apply-filters-collapse-mode-design) {
-        &.collapse-mode {
-            margin: $filter-box-collapse-mode-offset;
-        }
+    &.collapse-mode {
+        margin: $filter-box-collapse-mode-offset;
     }
 }

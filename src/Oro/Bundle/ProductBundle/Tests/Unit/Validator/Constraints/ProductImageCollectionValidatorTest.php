@@ -14,17 +14,17 @@ use Symfony\Component\Translation\TranslatorInterface;
 class ProductImageCollectionValidatorTest extends AbstractConstraintValidatorTest
 {
     /**
-     * @var ImageTypeProvider|\PHPUnit_Framework_MockObject_MockObject $imageTypeProvider
+     * @var ImageTypeProvider|\PHPUnit\Framework\MockObject\MockObject $imageTypeProvider
      */
     protected $imageTypeProvider;
 
     /**
-     * @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject $translator
+     * @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject $translator
      */
     protected $translator;
 
     /**
-     * @var ProductImageHelper|\PHPUnit_Framework_MockObject_MockObject $productImageHelper
+     * @var ProductImageHelper|\PHPUnit\Framework\MockObject\MockObject $productImageHelper
      */
     protected $productImageHelper;
 

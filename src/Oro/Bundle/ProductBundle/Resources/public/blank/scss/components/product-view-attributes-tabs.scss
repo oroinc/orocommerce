@@ -1,4 +1,4 @@
-// @theme: blank
+/* @theme: blank; */
 
 @include nav-tabs(
     $nav-tabs: $product-view-attributes-tabs,
@@ -66,12 +66,6 @@
             }
         }
 
-        &__item.active & {
-            &__link {
-                background: transparent;
-            }
-        }
-
         &__link {
             text-align: $product-view-attributes-tabs-link-text-align-mobile-l;
 
@@ -84,6 +78,10 @@
                 margin-top: $product-view-attributes-tabs-link-after-margin-top-mobile-l;
 
                 font-size: $product-view-attributes-tabs-link-after-font-size-mobile-l;
+            }
+
+            &.active {
+                background: transparent;
             }
         }
     }

@@ -12,8 +12,6 @@ Retrieve a specific inventory level record.
 
 Retrieve a collection of inventory level records.
 
-The list of records that will be returned, could be limited by filters.
-
 {@inheritdoc}
 
 ### update
@@ -26,8 +24,6 @@ The updated record is returned in the response.
 
 {@request:json_api}
 Example:
-
-`</admin/api/inventorylevels/1>`
 
 ```JSON
 {
@@ -84,16 +80,14 @@ Retrieve a record of product assigned to a specific inventory level record.
 
 #### get_relationship
 
-Retrieve ID of product record assigned to a specific inventory level record.
+Retrieve the ID of the product record assigned to a specific inventory level record.
 
 #### update_relationship
 
-Replace product assigned to a specific inventory level record.
+Replace the product assigned to a specific inventory level record.
 
 {@request:json_api}
 Example:
-
-`</admin/api/inventorylevels/1/relationships/product>`
 
 ```JSON
 {
@@ -109,20 +103,18 @@ Example:
 
 #### get_subresource
 
-Retrieve a record of product unit precision assigned to a specific inventory level record.
+Retrieve a record of the product unit precision assigned to a specific inventory level record.
 
 #### get_relationship
 
-Retrieve ID of product unit precision record assigned to a specific inventory level record.
+Retrieve the ID of the product unit precision record assigned to a specific inventory level record.
 
 #### update_relationship
 
-Replace product unit precision assigned to a specific inventory level record.
+Replace the product unit precision assigned to a specific inventory level record.
 
 {@request:json_api}
 Example:
-
-`</admin/api/inventorylevels/1/relationships/productUnitPrecision>`
 
 ```JSON
 {
@@ -138,20 +130,18 @@ Example:
 
 #### get_subresource
 
-Retrieve a record of warehouse assigned to a specific inventory level record.
+Retrieve a record of the warehouse assigned to a specific inventory level record.
 
 #### get_relationship
 
-Retrieve ID of warehouse record assigned to a specific inventory level record.
+Retrieve the ID of the warehouse record assigned to a specific inventory level record.
 
 #### update_relationship
 
-Replace warehouse assigned to a specific inventory level record.
+Replace the warehouse assigned to a specific inventory level record.
 
 {@request:json_api}
 Example:
-
-`</admin/api/inventorylevels/1/relationships/warehouse>`
 
 ```JSON
 {

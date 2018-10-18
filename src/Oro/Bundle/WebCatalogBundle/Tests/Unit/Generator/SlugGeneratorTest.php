@@ -19,22 +19,22 @@ use Oro\Component\Routing\RouteData;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\WebCatalog\ContentVariantTypeInterface;
 
-class SlugGeneratorTest extends \PHPUnit_Framework_TestCase
+class SlugGeneratorTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var ContentVariantTypeRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var ContentVariantTypeRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $contentVariantTypeRegistry;
 
     /**
-     * @var RedirectGenerator|\PHPUnit_Framework_MockObject_MockObject
+     * @var RedirectGenerator|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $redirectGenerator;
 
     /**
-     * @var LocalizationHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var LocalizationHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $localizationHelper;
 
@@ -44,7 +44,7 @@ class SlugGeneratorTest extends \PHPUnit_Framework_TestCase
     protected $slugGenerator;
 
     /**
-     * @var SlugUrlDiffer|\PHPUnit_Framework_MockObject_MockObject
+     * @var SlugUrlDiffer|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $slugUrlDiffer;
 
@@ -247,7 +247,7 @@ class SlugGeneratorTest extends \PHPUnit_Framework_TestCase
             ->method('updateRedirects');
 
         $this->redirectGenerator->expects($this->atLeast(1))
-            ->method('generate');
+            ->method('generateForSlug');
 
         $this->slugGenerator->generate($contentNode, true);
 
@@ -302,7 +302,7 @@ class SlugGeneratorTest extends \PHPUnit_Framework_TestCase
             ->method('updateRedirects');
 
         $this->redirectGenerator->expects($this->never())
-            ->method('generate');
+            ->method('generateForSlug');
 
         $this->slugGenerator->generate($contentNode);
 

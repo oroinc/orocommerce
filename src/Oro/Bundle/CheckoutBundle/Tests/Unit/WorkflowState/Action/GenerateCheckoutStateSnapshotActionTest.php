@@ -8,12 +8,12 @@ use Oro\Component\ConfigExpression\ContextAccessor;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\PropertyAccess\PropertyPath;
 
-class GenerateCheckoutStateSnapshotActionTest extends \PHPUnit_Framework_TestCase
+class GenerateCheckoutStateSnapshotActionTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var ContextAccessor|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ContextAccessor|\PHPUnit\Framework\MockObject\MockObject */
     protected $contextAccessor;
 
-    /** @var CheckoutStateDiffManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var CheckoutStateDiffManager|\PHPUnit\Framework\MockObject\MockObject */
     protected $diffManager;
 
     /** @var GenerateCheckoutStateSnapshotAction */

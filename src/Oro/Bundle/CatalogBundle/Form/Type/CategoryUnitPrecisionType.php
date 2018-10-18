@@ -83,15 +83,15 @@ class CategoryUnitPrecisionType extends AbstractType
      */
     private function addUnitField(FormBuilderInterface $builder)
     {
-        $type = EntityIdentifierType::NAME;
+        $type = EntityIdentifierType::class;
         $options = [
             'class' => ProductUnit::class,
             'multiple' => false,
         ];
         if ($this->defaultProductOptionsVisibility->isDefaultUnitPrecisionSelectionAvailable()) {
-            $type = ProductUnitSelectionType::NAME;
+            $type = ProductUnitSelectionType::class;
             $options = [
-                'empty_value' => 'oro.catalog.category.unit.empty.value',
+                'placeholder' => 'oro.catalog.category.unit.empty.value',
             ];
         }
         $builder->add('unit', $type, $options);

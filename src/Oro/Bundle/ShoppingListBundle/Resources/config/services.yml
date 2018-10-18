@@ -40,6 +40,7 @@ services:
             - '@security.token_storage'
             - '@oro_website.manager'
             - '@translator'
+            - '@oro_config.manager'
         tags:
             - { name: oro_featuretogle.feature, feature: 'guest_shopping_list' }
 
@@ -117,7 +118,7 @@ services:
             - [setActionGroupRegistry, ['@oro_action.action_group_registry']]
             - [setTranslator, ['@translator']]
             - [setDateFormatter, ['@oro_locale.formatter.date_time']]
-            - [setActionGroupName, ['start_shoppinglist_checkout']]
+            - [setActionGroupName, ['start_quickorder_checkout']]
         tags:
             - { name: oro_product.quick_add_processor }
 
@@ -377,7 +378,7 @@ services:
         public: false
         calls:
             - [setWebsiteManager, ['@oro_website.manager']]
-            - [setClassName, [%oro_shopping_list.entity.shopping_list.class%]]
+            - [setClassName, ['%oro_shopping_list.entity.shopping_list.class%']]
         tags:
             - { name: security.voter }
 
@@ -387,6 +388,7 @@ services:
             - '@oro_config.manager'
             - '@oro_security.token_accessor'
             - '@oro_entity.doctrine_helper'
+            - '@oro_website.manager'
 
     oro_shopping_list.twig.shopping_list_limit_extension:
         class: 'Oro\Bundle\ShoppingListBundle\Twig\ShoppingListLimitExtension'
@@ -451,3 +453,14 @@ services:
         public: false
         tags:
             - { name: doctrine.orm.entity_listener, entity: '%oro_shopping_list.entity.line_item.class%', event: prePersist }
+
+    oro_shopping_list.event_listener.shopping_list_limit:
+        class: Oro\Bundle\ShoppingListBundle\EventListener\ShoppingListLimitListener
+        arguments:
+          - '@oro_shopping_list.manager.shopping_list_limit'
+          - '@oro_entity.doctrine_helper'
+        calls:
+          - ['setLogger', ['@logger']]
+        lazy: true
+        tags:
+            - { name: kernel.event_listener, event: oro_checkout.login_on_guest_checkout, method: onCheckoutLogin }

@@ -3,14 +3,15 @@
 namespace Oro\Bundle\SaleBundle\Tests\Unit\Form\EventListener;
 
 use Oro\Bundle\SaleBundle\Form\EventListener\QuoteToOrderResizeFormSubscriber;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
 class QuoteToOrderResizeFormSubscriberTest extends FormIntegrationTestCase
 {
-    const TYPE = 'form';
-
     /**
      * @var QuoteToOrderResizeFormSubscriber
      */
@@ -20,12 +21,12 @@ class QuoteToOrderResizeFormSubscriberTest extends FormIntegrationTestCase
     {
         parent::setUp();
 
-        $this->subscriber = new QuoteToOrderResizeFormSubscriber(self::TYPE);
+        $this->subscriber = new QuoteToOrderResizeFormSubscriber(FormType::class);
     }
 
     public function testPreSetDataEmpty()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|FormInterface $form */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|FormInterface $form */
         $form = $this->createMock('Symfony\Component\Form\FormInterface');
         $form->expects($this->never())
             ->method('remove');
@@ -37,7 +38,7 @@ class QuoteToOrderResizeFormSubscriberTest extends FormIntegrationTestCase
 
     public function testPreSetData()
     {
-        $form = $this->factory->create('collection', null, ['type' => 'text']);
+        $form = $this->factory->create(CollectionType::class, null, ['entry_type' => TextType::class]);
         $form->setData(['test']);
 
         $data = ['first', 'second'];
@@ -47,7 +48,7 @@ class QuoteToOrderResizeFormSubscriberTest extends FormIntegrationTestCase
         foreach ($data as $key => $value) {
             $this->assertTrue($form->has($key));
             $config = $form->get($key)->getConfig();
-            $this->assertEquals(self::TYPE, $config->getType()->getName());
+            $this->assertInstanceOf(FormType::class, $config->getType()->getInnerType());
             $this->assertEquals(sprintf('[%s]', $key), $config->getOption('property_path'));
             $this->assertEquals($value, $config->getOption('data'));
         }
@@ -59,7 +60,7 @@ class QuoteToOrderResizeFormSubscriberTest extends FormIntegrationTestCase
      */
     public function testPreSetDataInvalid()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|FormInterface $form */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|FormInterface $form */
         $form = $this->createMock('Symfony\Component\Form\FormInterface');
 
         $this->subscriber->preSetData(new FormEvent($form, new \stdClass()));

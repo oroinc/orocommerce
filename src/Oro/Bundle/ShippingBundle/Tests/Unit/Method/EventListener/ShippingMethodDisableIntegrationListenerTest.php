@@ -8,7 +8,7 @@ use Oro\Bundle\IntegrationBundle\Generator\IntegrationIdentifierGeneratorInterfa
 use Oro\Bundle\ShippingBundle\Method\EventListener\ShippingMethodDisableIntegrationListener;
 use Oro\Bundle\ShippingBundle\Method\Handler\ShippingMethodDisableHandlerInterface;
 
-class ShippingMethodDisableIntegrationListenerTest extends \PHPUnit_Framework_TestCase
+class ShippingMethodDisableIntegrationListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var string
@@ -16,17 +16,17 @@ class ShippingMethodDisableIntegrationListenerTest extends \PHPUnit_Framework_Te
     private $channelType;
 
     /**
-     * @var IntegrationIdentifierGeneratorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var IntegrationIdentifierGeneratorInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $methodIdentifierGenerator;
 
     /**
-     * @var ShippingMethodDisableHandlerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingMethodDisableHandlerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $handler;
 
     /**
-     * @var ChannelDisableEvent|\PHPUnit_Framework_MockObject_MockObject
+     * @var ChannelDisableEvent|\PHPUnit\Framework\MockObject\MockObject
      */
     private $event;
 

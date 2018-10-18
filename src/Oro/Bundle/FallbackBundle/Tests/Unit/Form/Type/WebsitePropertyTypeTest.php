@@ -10,7 +10,8 @@ use Oro\Bundle\LocaleBundle\Form\Type\FallbackPropertyType;
 use Oro\Bundle\LocaleBundle\Form\Type\FallbackValueType;
 use Oro\Bundle\LocaleBundle\Model\FallbackType;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
-use Symfony\Component\Form\PreloadedExtension;
+use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -19,12 +20,7 @@ class WebsitePropertyTypeTest extends FormIntegrationTestCase
     const WEBSITE_CLASS = 'Oro\Bundle\WebsiteBundle\Entity\Website';
 
     /**
-     * @var WebsitePropertyType
-     */
-    protected $formType;
-
-    /**
-     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $registry;
 
@@ -33,8 +29,6 @@ class WebsitePropertyTypeTest extends FormIntegrationTestCase
         $this->registry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
 
         parent::setUp();
-
-        $this->formType = new WebsitePropertyType();
     }
 
     /**
@@ -45,16 +39,16 @@ class WebsitePropertyTypeTest extends FormIntegrationTestCase
         $websiteCollection = new WebsiteCollectionType($this->registry);
         $websiteCollection->setWebsiteClass(self::WEBSITE_CLASS);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface $translator */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|TranslatorInterface $translator */
         $translator = $this->createMock('Symfony\Component\Translation\TranslatorInterface');
 
         return [
             new PreloadedExtension(
                 [
-                    FallbackPropertyType::NAME => new FallbackPropertyType($translator),
-                    FallbackValueType::NAME => new FallbackValueType(),
-                    WebsiteCollectionType::NAME => $websiteCollection,
-                    CheckboxTypeStub::NAME => new CheckboxTypeStub(),
+                    FallbackPropertyType::class => new FallbackPropertyType($translator),
+                    FallbackValueType::class => new FallbackValueType(),
+                    WebsiteCollectionType::class => $websiteCollection,
+                    CheckboxTypeStub::class => new CheckboxTypeStub(),
                 ],
                 []
             )
@@ -73,7 +67,7 @@ class WebsitePropertyTypeTest extends FormIntegrationTestCase
     {
         $this->setRegistryExpectations();
 
-        $form = $this->factory->create($this->formType, $defaultData, $options);
+        $form = $this->factory->create(WebsitePropertyType::class, $defaultData, $options);
 
         $this->assertEquals($defaultData, $form->getData());
         foreach ($viewData as $field => $data) {
@@ -92,7 +86,7 @@ class WebsitePropertyTypeTest extends FormIntegrationTestCase
     {
         return [
             'text with null data' => [
-                'entry_options' => ['entry_type' => 'text'],
+                'entry_options' => ['entry_type' => TextType::class],
                 'defaultData' => null,
                 'viewData' => [
                     WebsitePropertyType::FIELD_DEFAULT => null,
@@ -111,7 +105,7 @@ class WebsitePropertyTypeTest extends FormIntegrationTestCase
                 ],
             ],
             'checkbox with full data' => [
-                'entry_options' => ['entry_type' => CheckboxTypeStub::NAME, 'entry_options' => ['value' => 't']],
+                'entry_options' => ['entry_type' => CheckboxTypeStub::class, 'entry_options' => ['value' => 't']],
                 'defaultData' => [
                     null => true,
                     1    => false,
@@ -209,10 +203,5 @@ class WebsitePropertyTypeTest extends FormIntegrationTestCase
             ->will($this->returnValue($name));
 
         return $website;
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals(WebsitePropertyType::NAME, $this->formType->getName());
     }
 }

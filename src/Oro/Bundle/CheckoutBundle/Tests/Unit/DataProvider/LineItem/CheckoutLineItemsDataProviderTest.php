@@ -13,14 +13,14 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class CheckoutLineItemsDataProviderTest extends \PHPUnit_Framework_TestCase
+class CheckoutLineItemsDataProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /** @var FrontendProductPricesDataProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var FrontendProductPricesDataProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $frontendProductPricesDataProvider;
 
-    /** @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
     protected $doctrine;
 
     /** @var CheckoutLineItemsDataProvider */

@@ -1,0 +1,55 @@
+/* @theme: admin.oro; */
+
+.oro-payment-rule-collection {
+    &.oro-item-collection {
+        > div {
+            position: relative;
+            padding: 15px 15px 0 0;
+            margin: 0 60% 20px 0;
+            border: 1px solid #e6e6e6;
+            background: $primary-900;
+            border-radius: 4px;
+            min-width: 500px;
+        }
+
+        div[data-validation-optional-group=""] {
+            .oro-multiselect-holder {
+                padding-right: 50px !important;
+            }
+        }
+
+        .add-list-item {
+            margin-left: 183px;
+        }
+
+        .removeRow {
+            position: absolute;
+            width: 28px;
+            top: 4px;
+            right: 4px;
+            text-decoration: none;
+
+            &:after {
+                color: #bbb;
+            }
+        }
+
+        input[type="text"] {
+            width: 280px;
+        }
+
+        input.method-options-surcharge {
+            width: 110px;
+        }
+
+        .small-row {
+            .control-group-choice {
+                float: left;
+            }
+        }
+
+        .selector.input-widget-select {
+            margin-left: 0;
+        }
+    }
+}

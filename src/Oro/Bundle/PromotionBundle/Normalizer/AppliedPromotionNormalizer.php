@@ -129,13 +129,11 @@ class AppliedPromotionNormalizer implements NormalizerInterface
         $resolver->setDefined(['productsSegment', 'scopes']);
         $resolver->setDefault('scopes', []);
 
-        $resolver->setAllowedTypes([
-            'id' => ['integer'],
-            'rule' => ['array'],
-            'scopes' => ['array'],
-            'useCoupons' => ['boolean'],
-            'productsSegment' => ['array', 'null']
-        ]);
+        $resolver->setAllowedTypes('id', ['integer']);
+        $resolver->setAllowedTypes('rule', ['array']);
+        $resolver->setAllowedTypes('scopes', ['array']);
+        $resolver->setAllowedTypes('useCoupons', ['boolean']);
+        $resolver->setAllowedTypes('productsSegment', ['array', 'null']);
 
         return $resolver;
     }

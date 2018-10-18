@@ -1,0 +1,6 @@
+services:
+    Oro\Bundle\ShoppingListBundle\Command\ClearExpiredShoppingListsCommand:
+        public: false
+        class: Oro\Bundle\ShoppingListBundle\Command\ClearExpiredShoppingListsCommand
+        tags:
+            - { name: console.command }

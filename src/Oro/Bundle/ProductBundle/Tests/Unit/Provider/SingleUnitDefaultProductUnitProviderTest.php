@@ -7,15 +7,15 @@ use Oro\Bundle\ProductBundle\Provider\DefaultProductUnitProviderInterface;
 use Oro\Bundle\ProductBundle\Provider\SingleUnitDefaultProductUnitProvider;
 use Oro\Bundle\ProductBundle\Service\SingleUnitModeServiceInterface;
 
-class SingleUnitDefaultProductUnitProviderTest extends \PHPUnit_Framework_TestCase
+class SingleUnitDefaultProductUnitProviderTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var SingleUnitModeServiceInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var SingleUnitModeServiceInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $singleUnitService;
 
     /**
-     * @var DefaultProductUnitProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var DefaultProductUnitProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $enabledProvider;
 

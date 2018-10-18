@@ -9,7 +9,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Provider\ProductImagesURLsProvider;
 
-class ProductImagesURLsProviderTest extends \PHPUnit_Framework_TestCase
+class ProductImagesURLsProviderTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @internal
@@ -22,12 +22,12 @@ class ProductImagesURLsProviderTest extends \PHPUnit_Framework_TestCase
     private $productImagesURLsProvider;
 
     /**
-     * @var AttachmentManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var AttachmentManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $attachmentManager;
 
     /**
-     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     private $doctrineHelper;
 

@@ -6,7 +6,6 @@ Oro\Bundle\CustomerBundle\Entity\CustomerGroup:
         name: 'Group with PriceList'
         organization: '@organization'
         owner: '@admin'
-        addCustomer: ['@customer1']
     groupWithPriceList2:
         name: 'Group with PriceList2'
         organization: '@organization'
@@ -24,6 +23,20 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     localNewCategory:
         string: 'NewCategory'
 
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    precision1:
+        unit: '@item'
+        precision: '0'
+    precision2:
+        unit: '@item'
+        precision: '0'
+    precision3:
+        unit: '@item'
+        precision: '0'
+    precision4:
+        unit: '@item'
+        precision: '0'
+
 Oro\Bundle\ProductBundle\Entity\Product:
     product1:
         sku: 'PSKU1'
@@ -34,6 +47,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
         attributeFamily: '@defaultProductFamily'
         addName: ['@locvalue1']
         inventoryStatus: '@enumInventoryStatuses'
+        primaryUnitPrecision: '@precision1'
     product2:
         sku: 'PSKU2'
         status: 'enabled'
@@ -43,6 +57,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
         attributeFamily: '@defaultProductFamily'
         addName: ['@locvalue2']
         inventoryStatus: '@enumInventoryStatuses'
+        primaryUnitPrecision: '@precision2'
     product3:
         sku: 'PSKU3'
         status: 'enabled'
@@ -52,6 +67,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
         attributeFamily: '@defaultProductFamily'
         addName: ['@locvalue3']
         inventoryStatus: '@enumInventoryStatuses'
+        primaryUnitPrecision: '@precision3'
     product4:
         sku: 'PSKU4'
         status: 'enabled'
@@ -61,6 +77,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
         attributeFamily: '@defaultProductFamily'
         addName: ['@locvalue4']
         inventoryStatus: '@enumInventoryStatuses'
+        primaryUnitPrecision: '@precision4'
 
 Doctrine\Common\Collections\ArrayCollection(local):
     products:
@@ -105,7 +122,7 @@ Oro\Bundle\PricingBundle\Entity\ProductPrice:
         currency: 'USD'
         quantity: 1
         unit: '@item'
-        value: 4
+        value: 0
 
 Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
     priceRelation1:

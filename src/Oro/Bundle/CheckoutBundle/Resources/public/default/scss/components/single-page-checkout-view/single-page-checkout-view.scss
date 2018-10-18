@@ -1,4 +1,4 @@
-// theme: default;
+/* @theme: default; */
 
 .single-page-checkout-view {
     position: $checkout-view-position;
@@ -115,6 +115,11 @@
         margin: $checkout-view-sticky-totals-margin;
 
         justify-content: $checkout-view-sticky-totals-justify-content;
+
+        .checkout-order-summary__totals {
+            padding-top: $checkout-view-sticky-totals-summary-inner-offset-top;
+            float: $checkout-view-sticky-totals-summary-float;
+        }
     }
 
     &__sticky-column {
@@ -228,6 +233,15 @@
                     content: none;
                 }
             }
+        }
+    }
+}
+
+@media (max-width: $checkout-view-breakpoint-max-desktop) {
+    .checkout-order-summary-totals-sticky {
+        &.in-sticky {
+            left: $checkout-view-checkout-order-summary-totals-sticky-left !important;
+            right: $checkout-view-checkout-order-summary-totals-sticky-right;
         }
     }
 }

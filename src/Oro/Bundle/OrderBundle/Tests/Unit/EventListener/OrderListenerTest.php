@@ -9,10 +9,10 @@ use Oro\Bundle\OrderBundle\Doctrine\ORM\Id\EntityAwareGeneratorInterface;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\EventListener\ORM\OrderListener;
 
-class OrderListenerTest extends \PHPUnit_Framework_TestCase
+class OrderListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var EntityAwareGeneratorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var EntityAwareGeneratorInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $generator;
 
@@ -46,16 +46,16 @@ class OrderListenerTest extends \PHPUnit_Framework_TestCase
             ->method('generate')
             ->willReturn($newId);
 
-        /** @var Order|\PHPUnit_Framework_MockObject_MockObject $orderMock */
+        /** @var Order|\PHPUnit\Framework\MockObject\MockObject $orderMock */
         $orderMock = $this->createMock('Oro\Bundle\OrderBundle\Entity\Order');
         $lifecycleEventArgs = $this->getLifecycleEventArgs();
-        /** @var EntityManager|\PHPUnit_Framework_MockObject_MockObject $em */
+        /** @var EntityManager|\PHPUnit\Framework\MockObject\MockObject $em */
         $em = $this->getMockBuilder('Doctrine\ORM\EntityManager')
             ->disableOriginalConstructor()->getMock();
         $lifecycleEventArgs->expects($this->once())
             ->method('getEntityManager')
             ->willReturn($em);
-        /** @var UnitOfWork|\PHPUnit_Framework_MockObject_MockObject $unitOfWork */
+        /** @var UnitOfWork|\PHPUnit\Framework\MockObject\MockObject $unitOfWork */
         $unitOfWork = $this->getMockBuilder('Doctrine\ORM\UnitOfWork')
             ->disableOriginalConstructor()->getMock();
         $em->expects($this->once())
@@ -75,7 +75,7 @@ class OrderListenerTest extends \PHPUnit_Framework_TestCase
         $this->generator->expects($this->never())
             ->method('generate');
 
-        /** @var Order|\PHPUnit_Framework_MockObject_MockObject $orderMock */
+        /** @var Order|\PHPUnit\Framework\MockObject\MockObject $orderMock */
         $orderMock = $this->createMock('Oro\Bundle\OrderBundle\Entity\Order');
         $orderMock->expects($this->once())->method('getIdentifier')->willReturn(125);
 
@@ -87,11 +87,11 @@ class OrderListenerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return LifecycleEventArgs|\PHPUnit_Framework_MockObject_MockObject
+     * @return LifecycleEventArgs|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function getLifecycleEventArgs()
     {
-        /** @var LifecycleEventArgs|\PHPUnit_Framework_MockObject_MockObject $lifecycleEventArgs */
+        /** @var LifecycleEventArgs|\PHPUnit\Framework\MockObject\MockObject $lifecycleEventArgs */
         $lifecycleEventArgs = $this->getMockBuilder('Doctrine\ORM\Event\LifecycleEventArgs')
             ->disableOriginalConstructor()
             ->getMock();

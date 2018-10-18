@@ -16,6 +16,13 @@ define([
         /**
          * @inheritDoc
          */
+        constructor: function RelatedItemsListener() {
+            RelatedItemsListener.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
             this.grid = options.grid;
 

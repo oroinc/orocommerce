@@ -27,6 +27,8 @@ class PriceListTest extends RestJsonApiTestCase
      */
     protected function setUp()
     {
+        // remove calling of disableKernelTerminateHandler() in BB-12967
+        $this->disableKernelTerminateHandler();
         parent::setUp();
 
         $this->loadFixtures([
@@ -173,27 +175,19 @@ class PriceListTest extends RestJsonApiTestCase
 
         static::assertNotNull($lexeme);
 
-        static::assertMessageSent(
+        static::assertMessagesSent(
             Topics::REBUILD_COMBINED_PRICE_LISTS,
             [
-                PriceListRelationTrigger::WEBSITE => $this->getReference('US')->getId(),
-            ]
-        );
-
-        static::assertMessageSent(
-            Topics::REBUILD_COMBINED_PRICE_LISTS,
-            [
-                PriceListRelationTrigger::ACCOUNT => $this->getReference('customer.level_1_1')->getId(),
-                PriceListRelationTrigger::ACCOUNT_GROUP => null,
-                PriceListRelationTrigger::WEBSITE => $this->getReference('US')->getId(),
-            ]
-        );
-
-        static::assertMessageSent(
-            Topics::REBUILD_COMBINED_PRICE_LISTS,
-            [
-                PriceListRelationTrigger::ACCOUNT_GROUP => $this->getReference('customer_group.group1')->getId(),
-                PriceListRelationTrigger::WEBSITE => $this->getReference('US')->getId(),
+                [
+                    PriceListRelationTrigger::WEBSITE => $this->getReference('US')->getId(),
+                    PriceListRelationTrigger::ACCOUNT_GROUP => null,
+                    PriceListRelationTrigger::ACCOUNT => null
+                ],
+                [
+                    PriceListRelationTrigger::WEBSITE => $this->getReference('Canada')->getId(),
+                    PriceListRelationTrigger::ACCOUNT_GROUP => null,
+                    PriceListRelationTrigger::ACCOUNT => $this->getReference('customer.level_1_1')->getId()
+                ]
             ]
         );
     }

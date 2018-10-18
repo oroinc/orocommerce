@@ -39,7 +39,7 @@ class PriceListProductPriceType extends AbstractType
         $builder
             ->add(
                 'product',
-                ProductSelectType::NAME,
+                ProductSelectType::class,
                 [
                     'required' => true,
                     'label' => 'oro.pricing.productprice.product.label',
@@ -50,7 +50,7 @@ class PriceListProductPriceType extends AbstractType
             )
             ->add(
                 'unit',
-                ProductUnitSelectionType::NAME,
+                ProductUnitSelectionType::class,
                 [
                     'required' => true,
                     'label' => 'oro.pricing.productprice.unit.label',
@@ -59,7 +59,7 @@ class PriceListProductPriceType extends AbstractType
             )
             ->add(
                 'quantity',
-                QuantityType::NAME,
+                QuantityType::class,
                 [
                     'required' => true,
                     'label' => 'oro.pricing.productprice.quantity.label',
@@ -69,7 +69,7 @@ class PriceListProductPriceType extends AbstractType
             )
             ->add(
                 'price',
-                PriceType::NAME,
+                PriceType::class,
                 [
                     'required' => true,
                     'compact' => false,
@@ -95,7 +95,7 @@ class PriceListProductPriceType extends AbstractType
                 ->remove('unit')
                 ->add(
                     'unit',
-                    ProductUnitSelectionType::NAME,
+                    ProductUnitSelectionType::class,
                     [
                         'required' => true,
                         'label' => 'oro.pricing.productprice.unit.label',

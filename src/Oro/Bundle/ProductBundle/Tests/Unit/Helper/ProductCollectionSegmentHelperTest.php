@@ -12,7 +12,7 @@ use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 use Oro\Component\WebCatalog\Entity\WebCatalogInterface;
 use Oro\Component\WebCatalog\Provider\WebCatalogUsageProviderInterface;
 
-class ProductCollectionSegmentHelperTest extends \PHPUnit_Framework_TestCase
+class ProductCollectionSegmentHelperTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
@@ -24,12 +24,12 @@ class ProductCollectionSegmentHelperTest extends \PHPUnit_Framework_TestCase
     const SECOND_WEBSITE_ID = 2;
 
     /**
-     * @var ContentVariantSegmentProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var ContentVariantSegmentProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     private $contentVariantSegmentProvider;
 
     /**
-     * @var WebCatalogUsageProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var WebCatalogUsageProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $webCatalogUsageProvider;
 
@@ -141,13 +141,13 @@ class ProductCollectionSegmentHelperTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param int $webCatalogId
-     * @return ContentVariantInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return ContentVariantInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private function createContentVariant($webCatalogId)
     {
         $contentVariant = new ContentVariantStub();
 
-        /** @var WebCatalogInterface|\PHPUnit_Framework_MockObject_MockObject $webCatalog */
+        /** @var WebCatalogInterface|\PHPUnit\Framework\MockObject\MockObject $webCatalog */
         $webCatalog = $this->createMock(WebCatalogInterface::class);
 
         $webCatalog

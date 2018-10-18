@@ -6,10 +6,10 @@ use Oro\Bundle\PricingBundle\Form\OptionsConfigurator\PriceRuleEditorOptionsConf
 use Oro\Bundle\PricingBundle\Form\Type\RuleEditorUnitExpressionType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class RuleEditorUnitExpressionTypeTest extends \PHPUnit_Framework_TestCase
+class RuleEditorUnitExpressionTypeTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var PriceRuleEditorOptionsConfigurator|\PHPUnit_Framework_MockObject_MockObject
+     * @var PriceRuleEditorOptionsConfigurator|\PHPUnit\Framework\MockObject\MockObject
      */
     private $configurator;
 
@@ -28,7 +28,7 @@ class RuleEditorUnitExpressionTypeTest extends \PHPUnit_Framework_TestCase
 
     public function testConfigureOptions()
     {
-        /** @var OptionsResolver|\PHPUnit_Framework_MockObject_MockObject $resolver */
+        /** @var OptionsResolver|\PHPUnit\Framework\MockObject\MockObject $resolver */
         $resolver = $this->getMockBuilder(OptionsResolver::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -40,10 +40,5 @@ class RuleEditorUnitExpressionTypeTest extends \PHPUnit_Framework_TestCase
             ->with('allowedOperations', []);
 
         $this->type->configureOptions($resolver);
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals(RuleEditorUnitExpressionType::NAME, $this->type->getName());
     }
 }

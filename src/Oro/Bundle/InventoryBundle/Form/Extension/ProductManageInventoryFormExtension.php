@@ -34,7 +34,7 @@ class ProductManageInventoryFormExtension extends AbstractTypeExtension
 
         $builder->add(
             'manageInventory',
-            EntityFieldFallbackValueType::NAME,
+            EntityFieldFallbackValueType::class,
             [
                 'label' => 'oro.inventory.manage_inventory.label',
             ]

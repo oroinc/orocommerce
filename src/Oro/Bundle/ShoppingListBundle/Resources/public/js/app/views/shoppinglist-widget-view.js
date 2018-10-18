@@ -22,6 +22,16 @@ define(function(require) {
          */
         shoppingListCollection: null,
 
+        /**
+         * @inheritDoc
+         */
+        constructor: function ShoppingListWidgetView() {
+            ShoppingListWidgetView.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
             ShoppingListWidgetView.__super__.initialize.apply(this, arguments);
 
@@ -44,6 +54,15 @@ define(function(require) {
         },
 
         render: function() {
+            var showShoppingListDropdown =
+                this.shoppingListCollection.length ||
+                this.$el.closest('.shopping-list-widget').find('.shopping-list-widget__create-btn').length;
+
+            this.$el.closest('.shopping-list-widget').toggleClass(
+                'shopping-list-widget--disabled',
+                !showShoppingListDropdown
+            );
+
             this.updateLabel();
             this.updateRadio();
         },

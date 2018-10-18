@@ -6,7 +6,7 @@ use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Oro\Bundle\InventoryBundle\Form\Extension\InventoryLevelExportTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 
-class InventoryLevelExportTypeExtensionTest extends \PHPUnit_Framework_TestCase
+class InventoryLevelExportTypeExtensionTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var InventoryLevelExportTypeExtension
@@ -46,11 +46,11 @@ class InventoryLevelExportTypeExtensionTest extends \PHPUnit_Framework_TestCase
             ->method('add')
             ->will($this->returnCallback(function ($name, $type, $options) use ($phpunitTestCase, $processorAliases) {
                 $choices = $options['choices'];
-                $phpunitTestCase->assertArrayHasKey(
+                $phpunitTestCase->assertContains(
                     $processorAliases[0],
                     $choices
                 );
-                $phpunitTestCase->assertArrayHasKey(
+                $phpunitTestCase->assertContains(
                     $processorAliases[1],
                     $choices
                 );
@@ -63,7 +63,7 @@ class InventoryLevelExportTypeExtensionTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|FormBuilderInterface
+     * @return \PHPUnit\Framework\MockObject\MockObject|FormBuilderInterface
      */
     protected function getBuilderMock()
     {

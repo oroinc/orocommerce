@@ -16,17 +16,17 @@ use PHPUnit\Framework\TestCase;
 class FedexRateServiceCachedClientTest extends TestCase
 {
     /**
-     * @var FedexRateServiceBySettingsClientInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var FedexRateServiceBySettingsClientInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $rateServiceClient;
 
     /**
-     * @var FedexResponseCacheInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var FedexResponseCacheInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $cache;
 
     /**
-     * @var FedexResponseCacheKeyFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var FedexResponseCacheKeyFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $cacheKeyFactory;
 

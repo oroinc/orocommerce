@@ -5,6 +5,7 @@ namespace Oro\Bundle\RFPBundle\Tests\Unit\Form\Extension;
 use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\OrderBundle\Form\Section\SectionProvider;
+use Oro\Bundle\OrderBundle\Form\Type\OrderLineItemType;
 use Oro\Bundle\ProductBundle\Storage\DataStorageInterface;
 use Oro\Bundle\RFPBundle\Form\Extension\OrderLineItemDataStorageExtension;
 use Oro\Bundle\RFPBundle\Storage\OffersFormStorage;
@@ -16,25 +17,25 @@ use Symfony\Component\HttpFoundation\RequestStack;
 /**
  * @SuppressWarnings(PHPMD)
  */
-class OrderLineItemDataStorageExtensionTest extends \PHPUnit_Framework_TestCase
+class OrderLineItemDataStorageExtensionTest extends \PHPUnit\Framework\TestCase
 {
     /** @var OrderLineItemDataStorageExtension */
     protected $extension;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|RequestStack */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|RequestStack */
     protected $requestStack;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|DataStorageInterface */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|DataStorageInterface */
     protected $sessionStorage;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|OffersFormStorage */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|OffersFormStorage */
     protected $formDataStorage;
 
-    /** @var SectionProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var SectionProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $sectionProvider;
 
     /**
-     * @var FeatureChecker|\PHPUnit_Framework_MockObject_MockObject
+     * @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $featureChecker;
 
@@ -65,7 +66,7 @@ class OrderLineItemDataStorageExtensionTest extends \PHPUnit_Framework_TestCase
     public function testGetExtendedType()
     {
         $this->assertInternalType('string', $this->extension->getExtendedType());
-        $this->assertEquals('oro_order_line_item', $this->extension->getExtendedType());
+        $this->assertEquals(OrderLineItemType::class, $this->extension->getExtendedType());
     }
 
     public function testBuildViewNoFeatures()
@@ -81,7 +82,7 @@ class OrderLineItemDataStorageExtensionTest extends \PHPUnit_Framework_TestCase
             ->with($this->extension->getExtendedType());
 
         $view = new FormView();
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock('Symfony\Component\Form\FormInterface');
         $this->extension->buildView($view, $form, []);
     }
@@ -102,7 +103,7 @@ class OrderLineItemDataStorageExtensionTest extends \PHPUnit_Framework_TestCase
             ->with($this->extension->getExtendedType());
 
         $view = new FormView();
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock('Symfony\Component\Form\FormInterface');
         $this->extension->buildView($view, $form, []);
     }
@@ -249,8 +250,8 @@ class OrderLineItemDataStorageExtensionTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param bool $expectsAddEventListener
-     * @param \PHPUnit_Framework_MockObject_MockObject|FormInterface $form
-     * @return \PHPUnit_Framework_MockObject_MockObject|FormBuilderInterface
+     * @param \PHPUnit\Framework\MockObject\MockObject|FormInterface $form
+     * @return \PHPUnit\Framework\MockObject\MockObject|FormBuilderInterface
      */
     protected function getBuilderMock($expectsAddEventListener = false, FormInterface $form = null)
     {

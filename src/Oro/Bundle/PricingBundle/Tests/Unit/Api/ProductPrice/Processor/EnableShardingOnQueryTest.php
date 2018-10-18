@@ -5,78 +5,40 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Api\ProductPrice\Processor;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
-use Oro\Bundle\ApiBundle\Processor\ApiContext;
-use Oro\Bundle\ApiBundle\Processor\Context;
-use Oro\Bundle\PricingBundle\Api\ProductPrice\PriceListIDContextStorageInterface;
+use Oro\Bundle\ApiBundle\Tests\Unit\Processor\Create\CreateProcessorTestCase;
 use Oro\Bundle\PricingBundle\Api\ProductPrice\Processor\EnableShardingOnQuery;
 use Oro\Bundle\PricingBundle\ORM\Walker\PriceShardWalker;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
-use PHPUnit\Framework\TestCase;
 
-class EnableShardingOnQueryTest extends TestCase
+class EnableShardingOnQueryTest extends CreateProcessorTestCase
 {
-    /**
-     * @var ShardManager|\PHPUnit_Framework_MockObject_MockObject
-     */
+    /** @var ShardManager|\PHPUnit\Framework\MockObject\MockObject */
     private $shardManager;
 
-    /**
-     * @var PriceListIDContextStorageInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $priceListIDContextStorage;
-
-    /**
-     * @var Context|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $context;
-
-    /**
-     * @var EnableShardingOnQuery
-     */
+    /** @var EnableShardingOnQuery */
     private $processor;
 
     protected function setUp()
     {
+        parent::setUp();
+
         $this->shardManager = $this->createMock(ShardManager::class);
-        $this->priceListIDContextStorage = $this->createMock(PriceListIDContextStorageInterface::class);
-        $this->context = $this->createMock(Context::class);
 
-        $this->processor = new EnableShardingOnQuery(
-            $this->shardManager,
-            $this->priceListIDContextStorage
-        );
-    }
-
-    public function testProcessWrongType()
-    {
-        $this->priceListIDContextStorage
-            ->expects(static::never())
-            ->method('get');
-
-        $this->processor->process($this->createMock(ApiContext::class));
+        $this->processor = new EnableShardingOnQuery($this->shardManager);
     }
 
     public function testProcessWrongQuery()
     {
-        $this->priceListIDContextStorage
-            ->expects(static::never())
-            ->method('get');
-
         $this->processor->process($this->context);
+        self::assertFalse($this->context->hasQuery());
     }
 
     public function testProcess()
     {
         $priceListId = 1;
 
-        $this->priceListIDContextStorage
-            ->expects(static::once())
-            ->method('get')
-            ->willReturn($priceListId);
-
         $query = $this->createMock(AbstractQuery::class);
-        $query
-            ->expects(static::exactly(3))
+        $query->expects(self::exactly(3))
             ->method('setHint')
             ->withConsecutive(
                 ['priceList', $priceListId],
@@ -85,29 +47,20 @@ class EnableShardingOnQueryTest extends TestCase
             );
 
         $queryBuilder = $this->createMock(QueryBuilder::class);
-        $queryBuilder
-            ->expects(static::once())
+        $queryBuilder->expects(self::once())
             ->method('andWhere')
             ->with('e.priceList = :price_list_id')
             ->willReturn($queryBuilder);
-        $queryBuilder
-            ->expects(static::once())
+        $queryBuilder->expects(self::once())
             ->method('setParameter')
             ->with('price_list_id', $priceListId);
-        $queryBuilder
-            ->expects(static::once())
+        $queryBuilder->expects(self::once())
             ->method('getQuery')
             ->willReturn($query);
 
-        $this->context
-            ->expects(static::once())
-            ->method('getQuery')
-            ->willReturn($queryBuilder);
-        $this->context
-            ->expects(static::once())
-            ->method('setQuery')
-            ->with($query);
-
+        $this->context->set('price_list_id', $priceListId);
+        $this->context->setQuery($queryBuilder);
         $this->processor->process($this->context);
+        self::assertSame($query, $this->context->getQuery());
     }
 }

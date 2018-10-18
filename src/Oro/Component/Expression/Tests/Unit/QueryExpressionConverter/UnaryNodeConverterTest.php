@@ -8,7 +8,7 @@ use Oro\Component\Expression\Node\UnaryNode;
 use Oro\Component\Expression\QueryExpressionConverter\QueryExpressionConverterInterface;
 use Oro\Component\Expression\QueryExpressionConverter\UnaryNodeConverter;
 
-class UnaryNodeConverterTest extends \PHPUnit_Framework_TestCase
+class UnaryNodeConverterTest extends \PHPUnit\Framework\TestCase
 {
     public function testConvertUnsupported()
     {

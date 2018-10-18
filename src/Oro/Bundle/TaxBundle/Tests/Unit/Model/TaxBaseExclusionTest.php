@@ -5,7 +5,7 @@ namespace Oro\Bundle\CustomerBundle\Tests\Unit\Entity;
 use Oro\Bundle\TaxBundle\Model\TaxBaseExclusion;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
-class TaxBaseExclusionTest extends \PHPUnit_Framework_TestCase
+class TaxBaseExclusionTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @dataProvider propertiesDataProvider

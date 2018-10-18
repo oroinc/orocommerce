@@ -5,6 +5,7 @@ namespace Oro\Bundle\ProductBundle\Form\Type;
 use Oro\Bundle\ProductBundle\Helper\ProductGrouper\ProductsGrouperFactory;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -18,6 +19,7 @@ class QuickAddType extends AbstractType
     const PRODUCTS_FIELD_NAME = 'products';
     const COMPONENT_FIELD_NAME = 'component';
     const ADDITIONAL_FIELD_NAME = 'additional';
+    const TRANSITION_FIELD_NAME = 'transition';
 
     /** @var ProductsGrouperFactory */
     private $productsGrouperFactory;
@@ -38,7 +40,7 @@ class QuickAddType extends AbstractType
         $builder
             ->add(
                 self::PRODUCTS_FIELD_NAME,
-                ProductRowCollectionType::NAME,
+                ProductRowCollectionType::class,
                 [
                     'required' => false,
                     'entry_options' => [
@@ -52,11 +54,15 @@ class QuickAddType extends AbstractType
             )
             ->add(
                 self::COMPONENT_FIELD_NAME,
-                'hidden'
+                HiddenType::class
             )
             ->add(
                 self::ADDITIONAL_FIELD_NAME,
-                'hidden'
+                HiddenType::class
+            )
+            ->add(
+                self::TRANSITION_FIELD_NAME,
+                HiddenType::class
             );
 
         $builder->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'onPreSubmit']);

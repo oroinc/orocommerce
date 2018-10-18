@@ -14,25 +14,25 @@ use Oro\Bundle\PricingBundle\Entity\BasePriceListRelation;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToCustomerRepository;
 use Oro\Bundle\PricingBundle\EventListener\CustomerDataGridListener;
 
-abstract class AbstractPriceListRelationDataGridListenerTest extends \PHPUnit_Framework_TestCase
+abstract class AbstractPriceListRelationDataGridListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|Registry
+     * @var \PHPUnit\Framework\MockObject\MockObject|Registry
      */
     protected $registry;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ObjectManager
+     * @var \PHPUnit\Framework\MockObject\MockObject|ObjectManager
      */
     protected $manager;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|CustomerDataGridListener
+     * @var \PHPUnit\Framework\MockObject\MockObject|CustomerDataGridListener
      */
     protected $listener;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|PriceListToCustomerRepository
+     * @var \PHPUnit\Framework\MockObject\MockObject|PriceListToCustomerRepository
      */
     protected $repository;
 

@@ -13,17 +13,17 @@ use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseCategoryVisibility
 use Oro\Bundle\VisibilityBundle\Visibility\Resolver\CategoryVisibilityResolver;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
+class CategoryVisibilityResolverTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var Registry|\PHPUnit_Framework_MockObject_MockObject
+     * @var Registry|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $registry;
 
     /**
-     * @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $configManager;
 
@@ -43,7 +43,7 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
     protected $resolver;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ScopeManager
+     * @var \PHPUnit\Framework\MockObject\MockObject|ScopeManager
      */
     protected $scopeManager;
 

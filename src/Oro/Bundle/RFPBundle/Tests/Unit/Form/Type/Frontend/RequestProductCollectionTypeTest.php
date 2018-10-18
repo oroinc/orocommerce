@@ -27,12 +27,12 @@ class RequestProductCollectionTypeTest extends FormIntegrationTestCase
 
     public function testConfigureOptions()
     {
-        /* @var $resolver \PHPUnit_Framework_MockObject_MockObject|OptionsResolver */
+        /* @var $resolver \PHPUnit\Framework\MockObject\MockObject|OptionsResolver */
         $resolver = $this->createMock('Symfony\Component\OptionsResolver\OptionsResolver');
         $resolver->expects(static::once())
             ->method('setDefaults')
             ->with([
-                'entry_type' => RequestProductType::NAME,
+                'entry_type' => RequestProductType::class,
                 'show_form_when_empty'  => true,
                 'error_bubbling'        => false,
                 'prototype_name'        => '__namerequestproduct__',
@@ -44,7 +44,7 @@ class RequestProductCollectionTypeTest extends FormIntegrationTestCase
 
     public function testGetParent()
     {
-        static::assertEquals(CollectionType::NAME, $this->formType->getParent());
+        static::assertEquals(CollectionType::class, $this->formType->getParent());
     }
 
     public function testGetName()

@@ -3,6 +3,7 @@
 namespace Oro\Bundle\RFPBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\Options;
@@ -27,8 +28,6 @@ class OffersType extends AbstractType
             [
                 'mapped' => false,
                 'expanded' => true,
-                // TODO: Remove 'choices_as_values' option in scope of BAP-15236
-                'choices_as_values' => true,
                 self::OFFERS_OPTION => [],
             ]
         );
@@ -47,7 +46,7 @@ class OffersType extends AbstractType
     /** {@inheritdoc} */
     public function getParent()
     {
-        return 'choice';
+        return ChoiceType::class;
     }
 
     /** {@inheritdoc} */

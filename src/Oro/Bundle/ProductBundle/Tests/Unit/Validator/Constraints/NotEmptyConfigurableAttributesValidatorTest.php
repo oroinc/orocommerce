@@ -10,15 +10,15 @@ use Oro\Bundle\ProductBundle\Validator\Constraints\NotEmptyConfigurableAttribute
 use Oro\Bundle\ProductBundle\Validator\Constraints\NotEmptyConfigurableAttributesValidator;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
-class NotEmptyConfigurableAttributesValidatorTest extends \PHPUnit_Framework_TestCase
+class NotEmptyConfigurableAttributesValidatorTest extends \PHPUnit\Framework\TestCase
 {
     /** @var NotEmptyConfigurableAttributesValidator */
     private $validator;
 
-    /** @var ExecutionContextInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ExecutionContextInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $context;
 
-    /** @var VariantFieldProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var VariantFieldProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $provider;
 
     /**

@@ -5,7 +5,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Layout\DataProvider;
 use Oro\Bundle\ProductBundle\Layout\DataProvider\SingleUnitModeProvider;
 use Oro\Bundle\ProductBundle\Service\SingleUnitModeService;
 
-class SingleUnitModeProviderTest extends \PHPUnit_Framework_TestCase
+class SingleUnitModeProviderTest extends \PHPUnit\Framework\TestCase
 {
     /** @internal */
     const SINGLE_UNIT_MODE = true;
@@ -19,7 +19,7 @@ class SingleUnitModeProviderTest extends \PHPUnit_Framework_TestCase
     /** @var SingleUnitModeProvider */
     private $provider;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|SingleUnitModeService */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|SingleUnitModeService */
     private $singleUnitService;
 
     public function setUp()

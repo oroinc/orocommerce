@@ -71,8 +71,8 @@ class ProductControllerTest extends WebTestCase
         $requestContext->setBaseUrl('custom/base/url');
 
         $this->client->request('GET', static::getUrl('oro_product_frontend_product_index'), [], [], [
-            'SCRIPT_NAME' => '/custom/base/url/app.php',
-            'SCRIPT_FILENAME' => 'app.php'
+            'SCRIPT_NAME' => '/custom/base/url/index.php',
+            'SCRIPT_FILENAME' => 'index.php'
         ]);
 
         /** @var Product $firstProduct */

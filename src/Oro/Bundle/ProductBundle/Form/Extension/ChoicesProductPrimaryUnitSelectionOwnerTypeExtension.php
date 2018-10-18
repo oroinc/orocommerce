@@ -69,9 +69,8 @@ class ChoicesProductPrimaryUnitSelectionOwnerTypeExtension extends AbstractTypeE
         $options['choices'] = $this->productFormUnitFieldsSettings->getAvailablePrimaryUnitChoices($product);
         $options['choices_updated'] = true;
         $options['choice_loader'] = null;
-        $options['choice_list'] = null;
 
-        $form->add($child->getName(), $child->getConfig()->getType()->getName(), $options);
+        $form->add($child->getName(), get_class($child->getConfig()->getType()->getInnerType()), $options);
     }
 
     /**

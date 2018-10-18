@@ -5,7 +5,7 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Datagrid\Extension\MassAction
 use Oro\Bundle\DataGridBundle\Extension\Action\ActionConfiguration;
 use Oro\Bundle\ShoppingListBundle\DataGrid\Extension\MassAction\AddProductsMassAction;
 
-class AddProductsMassActionTest extends \PHPUnit_Framework_TestCase
+class AddProductsMassActionTest extends \PHPUnit\Framework\TestCase
 {
     public function testSetOptions()
     {

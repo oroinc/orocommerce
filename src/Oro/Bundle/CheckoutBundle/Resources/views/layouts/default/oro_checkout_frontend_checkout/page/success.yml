@@ -1,7 +1,7 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: '../templates/success.html.twig'
+            themes: 'OroCheckoutBundle:layouts:default/oro_checkout_frontend_checkout/templates/success.html.twig'
 
         - '@setOption':
             id: title
@@ -15,5 +15,8 @@ layout:
             blockType: success_order
             options:
                 order: '=data["workflowItem"].getData().get("order")'
+
+        - '@remove':
+            id: page_title
 
     conditions: 'context["workflowStepName"]=="order_created"'

@@ -11,7 +11,7 @@ use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Oro\Bundle\WebCatalogBundle\Form\Type\SystemPageVariantType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-use Symfony\Component\Form\PreloadedExtension;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 
 class SystemPageVariantTypeTest extends FormIntegrationTestCase
 {
@@ -25,9 +25,8 @@ class SystemPageVariantTypeTest extends FormIntegrationTestCase
      */
     protected function setUp()
     {
-        parent::setUp();
-
         $this->type = new SystemPageVariantType();
+        parent::setUp();
     }
 
     /**
@@ -46,8 +45,9 @@ class SystemPageVariantTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    ScopeCollectionType::NAME => new ScopeCollectionTypeStub(),
-                    RouteChoiceType::NAME => new RouteChoiceTypeStub(
+                    SystemPageVariantType::class => $this->type,
+                    ScopeCollectionType::class => new ScopeCollectionTypeStub(),
+                    RouteChoiceType::class => new RouteChoiceTypeStub(
                         [
                             'some_route' => 'some_route',
                             'other_route' => 'other_route'
@@ -61,21 +61,17 @@ class SystemPageVariantTypeTest extends FormIntegrationTestCase
 
     public function testBuildForm()
     {
-        $form = $this->factory->create($this->type, null, ['web_catalog' => null]);
+        $form = $this->factory->create(SystemPageVariantType::class, null, ['web_catalog' => null]);
 
         $this->assertTrue($form->has('systemPageRoute'));
         $this->assertTrue($form->has('scopes'));
         $this->assertTrue($form->has('type'));
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(SystemPageVariantType::NAME, $this->type->getName());
-    }
-
     public function testGetBlockPrefix()
     {
-        $this->assertEquals(SystemPageVariantType::NAME, $this->type->getBlockPrefix());
+        $type = new SystemPageVariantType();
+        $this->assertEquals(SystemPageVariantType::NAME, $type->getBlockPrefix());
     }
 
     /**
@@ -87,7 +83,7 @@ class SystemPageVariantTypeTest extends FormIntegrationTestCase
      */
     public function testSubmit($existingData, $submittedData, $expectedData)
     {
-        $form = $this->factory->create($this->type, $existingData, ['web_catalog' => null]);
+        $form = $this->factory->create(SystemPageVariantType::class, $existingData, ['web_catalog' => null]);
 
         $this->assertEquals($existingData, $form->getData());
 

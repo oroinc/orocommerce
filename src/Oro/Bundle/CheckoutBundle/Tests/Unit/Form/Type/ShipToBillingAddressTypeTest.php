@@ -4,8 +4,9 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\CheckoutBundle\Form\Type\ShipToBillingAddressType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Form;
-use Symfony\Component\Form\PreloadedExtension;
 
 class ShipToBillingAddressTypeTest extends FormIntegrationTestCase
 {
@@ -36,7 +37,7 @@ class ShipToBillingAddressTypeTest extends FormIntegrationTestCase
     public function testSubmitWhenAddressFormIsNotPresent()
     {
         $form = $this->factory->createBuilder()
-            ->add('test_type', ShipToBillingAddressType::NAME)
+            ->add('test_type', ShipToBillingAddressType::class)
             ->getForm();
 
         $form->submit(['test_type' => 1]);
@@ -62,7 +63,7 @@ class ShipToBillingAddressTypeTest extends FormIntegrationTestCase
     {
         return [
             new PreloadedExtension(
-                [ShipToBillingAddressType::NAME => new ShipToBillingAddressType()],
+                [ShipToBillingAddressType::class => new ShipToBillingAddressType()],
                 []
             ),
             $this->getValidatorExtension(true),
@@ -75,8 +76,8 @@ class ShipToBillingAddressTypeTest extends FormIntegrationTestCase
     protected function createParentForm()
     {
         $form = $this->factory->createBuilder()
-            ->add('test_type', ShipToBillingAddressType::NAME)
-            ->add(ShipToBillingAddressType::SHIPPING_ADDRESS_FORM_FIELD, 'text')
+            ->add('test_type', ShipToBillingAddressType::class)
+            ->add(ShipToBillingAddressType::SHIPPING_ADDRESS_FORM_FIELD, TextType::class)
             ->getForm();
 
         return $form;

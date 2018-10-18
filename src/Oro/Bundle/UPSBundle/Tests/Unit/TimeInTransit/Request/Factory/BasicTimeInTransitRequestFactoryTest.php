@@ -10,7 +10,7 @@ use Oro\Bundle\UPSBundle\TimeInTransit\Request\Builder\TimeInTransitRequestBuild
 use Oro\Bundle\UPSBundle\TimeInTransit\Request\Factory\BasicTimeInTransitRequestFactory;
 use Oro\Bundle\UPSBundle\TimeInTransit\Request\Factory\TimeInTransitRequestBuilderFactoryInterface;
 
-class BasicTimeInTransitRequestFactoryTest extends \PHPUnit_Framework_TestCase
+class BasicTimeInTransitRequestFactoryTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var BasicTimeInTransitRequestFactory
@@ -18,17 +18,17 @@ class BasicTimeInTransitRequestFactoryTest extends \PHPUnit_Framework_TestCase
     private $requestFactory;
 
     /**
-     * @var TimeInTransitRequestBuilderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var TimeInTransitRequestBuilderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $timeInTransitRequestBuilder;
 
     /**
-     * @var UPSTransport|\PHPUnit_Framework_MockObject_MockObject
+     * @var UPSTransport|\PHPUnit\Framework\MockObject\MockObject
      */
     private $upsTransport;
 
     /**
-     * @var TimeInTransitRequestBuilderFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var TimeInTransitRequestBuilderFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $timeInTransitRequestBuilderFactory;
 

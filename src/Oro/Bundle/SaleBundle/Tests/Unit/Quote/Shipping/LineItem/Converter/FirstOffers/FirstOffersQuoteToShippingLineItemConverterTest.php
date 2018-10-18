@@ -20,7 +20,7 @@ class FirstOffersQuoteToShippingLineItemConverterTest extends AbstractOffersQuot
     protected $firstOffersQuoteToShippingLineItemConverter;
 
     /**
-     * @var QuoteProductOffer|\PHPUnit_Framework_MockObject_MockObject
+     * @var QuoteProductOffer|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $quoteProductOfferMock;
 
@@ -112,7 +112,7 @@ class FirstOffersQuoteToShippingLineItemConverterTest extends AbstractOffersQuot
     /**
      * @param Collection $quoteProductOffers
      *
-     * @return QuoteProduct|\PHPUnit_Framework_MockObject_MockObject
+     * @return QuoteProduct|\PHPUnit\Framework\MockObject\MockObject
      */
     private function getQuoteProductMock(Collection $quoteProductOffers)
     {
@@ -131,7 +131,7 @@ class FirstOffersQuoteToShippingLineItemConverterTest extends AbstractOffersQuot
     /**
      * @param Collection $quoteProducts
      *
-     * @return \Oro\Bundle\SaleBundle\Entity\Quote|\PHPUnit_Framework_MockObject_MockObject
+     * @return \Oro\Bundle\SaleBundle\Entity\Quote|\PHPUnit\Framework\MockObject\MockObject
      */
     private function mockQuote(Collection $quoteProducts)
     {

@@ -19,20 +19,20 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class PaymentTermProviderTest extends \PHPUnit_Framework_TestCase
+class PaymentTermProviderTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|PaymentTermAssociationProvider
+     * @var \PHPUnit\Framework\MockObject\MockObject|PaymentTermAssociationProvider
      */
     protected $paymentTermAssociationProvider;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|TokenStorageInterface
+     * @var \PHPUnit\Framework\MockObject\MockObject|TokenStorageInterface
      */
     protected $tokenStorage;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|EventDispatcherInterface
+     * @var \PHPUnit\Framework\MockObject\MockObject|EventDispatcherInterface
      */
     protected $eventDispatcher;
 

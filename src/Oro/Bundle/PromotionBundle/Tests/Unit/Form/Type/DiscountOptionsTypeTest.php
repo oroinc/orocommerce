@@ -14,9 +14,10 @@ use Oro\Bundle\PromotionBundle\Discount\AbstractDiscount;
 use Oro\Bundle\PromotionBundle\Discount\DiscountInterface;
 use Oro\Bundle\PromotionBundle\Form\Type\DiscountOptionsType;
 use Oro\Bundle\TranslationBundle\Translation\Translator;
+use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Validation;
@@ -26,42 +27,15 @@ use Symfony\Component\Validator\Validation;
  */
 class DiscountOptionsTypeTest extends FormIntegrationTestCase
 {
-    /**
-     * @var DiscountOptionsType
-     */
-    protected $formType;
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function setUp()
-    {
-        parent::setUp();
-
-        $this->formType = new DiscountOptionsType();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function tearDown()
-    {
-        unset($this->formType);
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals(DiscountOptionsType::NAME, $this->formType->getName());
-    }
-
     public function testGetBlockPrefix()
     {
-        $this->assertEquals(DiscountOptionsType::NAME, $this->formType->getBlockPrefix());
+        $formType = new DiscountOptionsType();
+        $this->assertEquals(DiscountOptionsType::NAME, $formType->getBlockPrefix());
     }
 
     public function testInitialForm()
     {
-        $form = $this->factory->create($this->formType);
+        $form = $this->factory->create(DiscountOptionsType::class);
 
         $this->assertFormFieldsPreset($form);
         $this->assertFieldIsHidden($form, DiscountOptionsType::PERCENT_DISCOUNT_VALUE_FIELD);
@@ -70,7 +44,7 @@ class DiscountOptionsTypeTest extends FormIntegrationTestCase
     public function testFormWithTypeAmountSelected()
     {
         $form = $this->factory->create(
-            $this->formType,
+            DiscountOptionsType::class,
             [AbstractDiscount::DISCOUNT_TYPE => DiscountInterface::TYPE_AMOUNT]
         );
 
@@ -81,7 +55,7 @@ class DiscountOptionsTypeTest extends FormIntegrationTestCase
     public function testFormWithTypePercentSelected()
     {
         $form = $this->factory->create(
-            $this->formType,
+            DiscountOptionsType::class,
             [AbstractDiscount::DISCOUNT_TYPE => DiscountInterface::TYPE_PERCENT]
         );
 
@@ -98,7 +72,7 @@ class DiscountOptionsTypeTest extends FormIntegrationTestCase
     public function testSubmit($submittedData, $expectedData)
     {
         $form = $this->factory->create(
-            $this->formType,
+            DiscountOptionsType::class,
             []
         );
         $form->submit($submittedData);
@@ -145,7 +119,7 @@ class DiscountOptionsTypeTest extends FormIntegrationTestCase
     public function testSubmitInvalid($submittedData)
     {
         $form = $this->factory->create(
-            $this->formType,
+            DiscountOptionsType::class,
             []
         );
         $form->submit($submittedData);
@@ -193,7 +167,7 @@ class DiscountOptionsTypeTest extends FormIntegrationTestCase
 
     public function testConfigureOptions()
     {
-        /* @var $resolver OptionsResolver|\PHPUnit_Framework_MockObject_MockObject */
+        /* @var $resolver OptionsResolver|\PHPUnit\Framework\MockObject\MockObject */
         $resolver = $this->createMock(OptionsResolver::class);
         $resolver->expects($this->once())
             ->method('setDefaults')
@@ -205,8 +179,8 @@ class DiscountOptionsTypeTest extends FormIntegrationTestCase
                     $this->assertArrayHasKey('page_component_options', $options);
                     $this->assertEquals(
                         [
-                            'amount' => 'oro.discount_options.general.type.choices.amount',
-                            'percent' => 'oro.discount_options.general.type.choices.percent'
+                            'oro.discount_options.general.type.choices.amount' => 'amount',
+                            'oro.discount_options.general.type.choices.percent' => 'percent',
                         ],
                         $options['type_choices']
                     );
@@ -225,12 +199,13 @@ class DiscountOptionsTypeTest extends FormIntegrationTestCase
                 }
             );
 
-        $this->formType->configureOptions($resolver);
+        $formType = new DiscountOptionsType();
+        $formType->configureOptions($resolver);
     }
 
     public function testFinishView()
     {
-        $form = $this->factory->create($this->formType);
+        $form = $this->factory->create(DiscountOptionsType::class);
         $view = $form->createView();
         $this->assertArrayHasKey('attr', $view->vars);
         $this->assertArraySubset(
@@ -247,27 +222,27 @@ class DiscountOptionsTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
-        /** @var ConfigProvider|\PHPUnit_Framework_MockObject_MockObject $configProvider */
+        /** @var ConfigProvider|\PHPUnit\Framework\MockObject\MockObject $configProvider */
         $configProvider = $this->createMock(ConfigProvider::class);
 
-        /** @var Translator|\PHPUnit_Framework_MockObject_MockObject $translator */
+        /** @var Translator|\PHPUnit\Framework\MockObject\MockObject $translator */
         $translator = $this->createMock(Translator::class);
 
-        /** @var LocaleSettings|\PHPUnit_Framework_MockObject_MockObject $localeSettings */
+        /** @var LocaleSettings|\PHPUnit\Framework\MockObject\MockObject $localeSettings */
         $localeSettings = $this->createMock(LocaleSettings::class);
 
-        /** @var NumberFormatter|\PHPUnit_Framework_MockObject_MockObject $numberFormatter */
+        /** @var NumberFormatter|\PHPUnit\Framework\MockObject\MockObject $numberFormatter */
         $numberFormatter = $this->createMock(NumberFormatter::class);
 
         return [
             new PreloadedExtension(
                 [
-                    MultiCurrencyType::NAME => new MultiCurrencyType(),
-                    CurrencySelectionType::NAME => new CurrencySelectionTypeStub(),
-                    OroMoneyType::NAME => new OroMoneyType($localeSettings, $numberFormatter)
+                    MultiCurrencyType::class => new MultiCurrencyType(),
+                    CurrencySelectionType::class => new CurrencySelectionTypeStub(),
+                    OroMoneyType::class => new OroMoneyType($localeSettings, $numberFormatter)
                 ],
                 [
-                    'form' => [new TooltipFormExtension($configProvider, $translator)],
+                    FormType::class => [new TooltipFormExtension($configProvider, $translator)],
                 ]
             ),
             new ValidatorExtension(Validation::createValidator()),

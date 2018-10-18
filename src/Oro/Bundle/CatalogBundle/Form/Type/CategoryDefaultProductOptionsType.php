@@ -31,7 +31,7 @@ class CategoryDefaultProductOptionsType extends AbstractType
     {
         $builder->add(
             'unitPrecision',
-            CategoryUnitPrecisionType::NAME,
+            CategoryUnitPrecisionType::class,
             [
                 'label' => 'oro.catalog.category.unit.label',
                 'required' => false,

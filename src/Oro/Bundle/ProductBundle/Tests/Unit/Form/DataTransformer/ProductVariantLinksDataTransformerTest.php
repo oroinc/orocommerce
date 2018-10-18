@@ -7,7 +7,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductVariantLink;
 use Oro\Bundle\ProductBundle\Form\DataTransformer\ProductVariantLinksDataTransformer;
 
-class ProductVariantLinksDataTransformerTest extends \PHPUnit_Framework_TestCase
+class ProductVariantLinksDataTransformerTest extends \PHPUnit\Framework\TestCase
 {
     const PRODUCT_VARIANT_LINK_CLASS = 'Oro\Bundle\ProductBundle\Entity\ProductVariantLink';
 

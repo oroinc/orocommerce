@@ -7,10 +7,10 @@ use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Oro\Bundle\InventoryBundle\Inventory\InventoryQuantityManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
-class InventoryQuantityManagerTest extends \PHPUnit_Framework_TestCase
+class InventoryQuantityManagerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var EntityFallbackResolver|\PHPUnit_Framework_MockObject_MockObject
+     * @var EntityFallbackResolver|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $entityFallbackResolver;
 
@@ -20,7 +20,7 @@ class InventoryQuantityManagerTest extends \PHPUnit_Framework_TestCase
     protected $inventoryQuantityManager;
 
     /**
-     * @var InventoryLevel|\PHPUnit_Framework_MockObject_MockObject
+     * @var InventoryLevel|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $inventoryLevel;
 
@@ -32,7 +32,7 @@ class InventoryQuantityManagerTest extends \PHPUnit_Framework_TestCase
         $this->entityFallbackResolver = $this->getMockBuilder(EntityFallbackResolver::class)
             ->disableOriginalConstructor()
             ->getMock();
-        /** @var InventoryLevel|\PHPUnit_Framework_MockObject_MockObject $inventoryLevel * */
+        /** @var InventoryLevel|\PHPUnit\Framework\MockObject\MockObject $inventoryLevel * */
         $this->inventoryLevel = $this->createMock(InventoryLevel::class);
         $this->inventoryQuantityManager = new InventoryQuantityManager($this->entityFallbackResolver);
     }

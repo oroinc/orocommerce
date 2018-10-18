@@ -3,17 +3,22 @@
 namespace Oro\Bundle\SaleBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
+use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteProductOfferType;
-use Symfony\Component\Form\PreloadedExtension;
+use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\Test\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class QuoteProductOfferTypeTest extends AbstractTest
@@ -30,15 +35,15 @@ class QuoteProductOfferTypeTest extends AbstractTest
      */
     protected function setUp()
     {
-        parent::setUp();
-
+        $this->configureQuoteProductOfferFormatter();
         $this->formType = new QuoteProductOfferType($this->quoteProductOfferFormatter);
         $this->formType->setDataClass('Oro\Bundle\SaleBundle\Entity\QuoteProductOffer');
+        parent::setUp();
     }
 
     public function testConfigureOptions()
     {
-        /* @var $resolver \PHPUnit_Framework_MockObject_MockObject|OptionsResolver */
+        /* @var $resolver \PHPUnit\Framework\MockObject\MockObject|OptionsResolver */
         $resolver = $this->createMock('Symfony\Component\OptionsResolver\OptionsResolver');
         $resolver->expects($this->once())
             ->method('setDefaults')
@@ -54,11 +59,6 @@ class QuoteProductOfferTypeTest extends AbstractTest
         $this->formType->configureOptions($resolver);
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals('oro_sale_quote_product_offer', $this->formType->getName());
-    }
-
     /**
      * @param QuoteProductOffer $inputData
      * @param array $expectedData
@@ -67,7 +67,7 @@ class QuoteProductOfferTypeTest extends AbstractTest
      */
     public function testPostSetData(QuoteProductOffer $inputData, array $expectedData = [])
     {
-        $form = $this->factory->create($this->formType, $inputData);
+        $form = $this->factory->create(QuoteProductOfferType::class, $inputData);
 
         foreach ($expectedData as $key => $value) {
             $this->assertEquals($value, $form->get($key)->getData(), $key);
@@ -93,7 +93,6 @@ class QuoteProductOfferTypeTest extends AbstractTest
                     ->setQuantity(10)
                     ->setAllowIncrements(false),
                 'expected' => [
-                    // TODO: enable once fully supported on the quote views and in orders
                     'priceType' => QuoteProductOffer::PRICE_TYPE_UNIT,
                     'quantity' => 10,
                 ],
@@ -172,7 +171,7 @@ class QuoteProductOfferTypeTest extends AbstractTest
                 'defaultData'   => $this->getQuoteProductOffer(5),
             ],
             'empty price' => [
-                'isValid'       => false,
+                'isValid'       => true, //Quote can be create with empty price
                 'submittedData' => [
                     'quantity'      => 44,
                     'productUnit'   => 'kg',
@@ -203,7 +202,7 @@ class QuoteProductOfferTypeTest extends AbstractTest
      * @param int $id
      * @param ProductUnit[] $productUnits
      * @param string $unitCode
-     * @return \PHPUnit_Framework_MockObject_MockObject|QuoteProductOffer
+     * @return \PHPUnit\Framework\MockObject\MockObject|QuoteProductOffer
      */
     protected function createQuoteProductOffer($id, array $productUnits = [], $unitCode = null)
     {
@@ -218,7 +217,7 @@ class QuoteProductOfferTypeTest extends AbstractTest
             }
         }
 
-        /* @var $item \PHPUnit_Framework_MockObject_MockObject|QuoteProductOffer */
+        /* @var $item \PHPUnit\Framework\MockObject\MockObject|QuoteProductOffer */
         $item = $this->createMock('Oro\Bundle\SaleBundle\Entity\QuoteProductOffer');
         $item
             ->expects($this->any())
@@ -266,15 +265,52 @@ class QuoteProductOfferTypeTest extends AbstractTest
         return [
             new PreloadedExtension(
                 [
-                    ProductUnitSelectionType::NAME          => new ProductUnitSelectionTypeStub(),
-                    $priceType->getName()                   => $priceType,
-                    $currencySelectionType->getName()       => $currencySelectionType,
-                    $productUnitSelectionType->getName()    => $productUnitSelectionType,
-                    QuantityTypeTrait::$name                => $this->getQuantityType()
+                    QuoteProductOfferType::class => $this->formType,
+                    ProductUnitSelectionType::class => new ProductUnitSelectionTypeStub(),
+                    PriceType::class => $priceType,
+                    CurrencySelectionType::class => $currencySelectionType,
+                    ProductUnitSelectionType::class => $productUnitSelectionType,
+                    QuantityType::class => $this->getQuantityType()
                 ],
                 []
             ),
             $this->getValidatorExtension(true),
         ];
+    }
+
+    public function testOnPreSetData()
+    {
+        /** @var $formMock FormInterface|\PHPUnit\Framework\MockObject\MockObject */
+        $formMock = $this->createMock(FormInterface::class);
+        $event = new FormEvent($formMock, new QuoteProductOffer());
+
+        $formMock->expects($this->once())
+            ->method('add')
+            ->with(
+                'price',
+                PriceType::class,
+                [
+                    'currency_empty_value' => null,
+                    'error_bubbling' => false,
+                    'required' => true,
+                    'label' => 'oro.sale.quoteproductoffer.price.label',
+                    //Price value may be not set by user while creating quote
+                    'validation_groups' => [PriceType::OPTIONAL_VALIDATION_GROUP],
+                    'match_price_on_null' => false
+                ]
+            );
+
+        $this->formType->onPreSetData($event);
+    }
+
+    public function testOnPreSetDataNoEntity()
+    {
+        /** @var $formMock FormInterface|\PHPUnit\Framework\MockObject\MockObject */
+        $formMock = $this->createMock(FormInterface::class);
+        $event = new FormEvent($formMock, null);
+
+        $formMock->expects($this->never())->method('add');
+
+        $this->formType->onPreSetData($event);
     }
 }

@@ -9,7 +9,7 @@ use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
 
-class QuoteProductValidatorTest extends \PHPUnit_Framework_TestCase
+class QuoteProductValidatorTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var Constraints\QuoteProduct
@@ -17,7 +17,7 @@ class QuoteProductValidatorTest extends \PHPUnit_Framework_TestCase
     protected $constraint;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ExecutionContextInterface
+     * @var \PHPUnit\Framework\MockObject\MockObject|ExecutionContextInterface
      */
     protected $context;
 

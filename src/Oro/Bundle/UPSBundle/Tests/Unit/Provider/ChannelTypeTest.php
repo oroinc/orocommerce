@@ -4,7 +4,7 @@ namespace Oro\Bundle\UPSBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\UPSBundle\Provider\ChannelType;
 
-class ChannelTypeTest extends \PHPUnit_Framework_TestCase
+class ChannelTypeTest extends \PHPUnit\Framework\TestCase
 {
     /** @var ChannelType */
     protected $channel;

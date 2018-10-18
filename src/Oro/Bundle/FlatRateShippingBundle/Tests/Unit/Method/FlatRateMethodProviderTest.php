@@ -6,14 +6,14 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\FlatRateShippingBundle\Method\FlatRateMethodProvider;
 use Oro\Bundle\ShippingBundle\Method\Factory\IntegrationShippingMethodFactoryInterface;
 
-class FlatRateMethodProviderTest extends \PHPUnit_Framework_TestCase
+class FlatRateMethodProviderTest extends \PHPUnit\Framework\TestCase
 {
     const CHANNEL_TYPE = 'channel_type';
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|IntegrationShippingMethodFactoryInterface */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|IntegrationShippingMethodFactoryInterface */
     private $methodBuilder;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|DoctrineHelper */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|DoctrineHelper */
     private $doctrineHelper;
 
     public function setUp()

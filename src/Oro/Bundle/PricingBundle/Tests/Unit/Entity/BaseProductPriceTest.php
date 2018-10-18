@@ -9,7 +9,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-class BaseProductPriceTest extends \PHPUnit_Framework_TestCase
+class BaseProductPriceTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 
@@ -51,7 +51,6 @@ class BaseProductPriceTest extends \PHPUnit_Framework_TestCase
         $currency = 'EUR';
         $this->setProperty($productPrice, 'value', $value);
         $this->setProperty($productPrice, 'currency', $currency);
-        $productPrice->loadPrice();
 
         $price = $productPrice->getPrice();
         $this->assertInstanceOf('Oro\Bundle\CurrencyBundle\Entity\Price', $price);

@@ -8,6 +8,7 @@ use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Form;
 
 class ProductController extends Controller
@@ -35,11 +36,11 @@ class ProductController extends Controller
         $priceList = $this->getPriceListHandler()->getPriceList();
 
         return $this->createForm(
-            PriceListSelectType::NAME,
+            PriceListSelectType::class,
             $priceList,
             [
                 'create_enabled' => false,
-                'empty_value' => false,
+                'placeholder' => false,
                 'empty_data' => $priceList,
                 'configs' => ['allowClear' => false],
                 'label' => 'oro.pricing.pricelist.entity_label',
@@ -54,7 +55,7 @@ class ProductController extends Controller
     {
         $priceList = $this->getPriceListHandler()->getPriceList();
         return $this->createForm(
-            CurrencySelectionType::NAME,
+            CurrencySelectionType::class,
             null,
             [
                 'label' => false,
@@ -74,7 +75,7 @@ class ProductController extends Controller
     protected function createShowTierPricesForm()
     {
         return $this->createForm(
-            'checkbox',
+            CheckboxType::class,
             null,
             [
                 'label' => 'oro.pricing.productprice.show_tier_prices.label',

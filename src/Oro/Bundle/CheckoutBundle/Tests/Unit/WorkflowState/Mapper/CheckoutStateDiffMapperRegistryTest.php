@@ -5,7 +5,7 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\WorkflowState\Mapper;
 use Oro\Bundle\CheckoutBundle\WorkflowState\Mapper\CheckoutStateDiffMapperInterface;
 use Oro\Bundle\CheckoutBundle\WorkflowState\Mapper\CheckoutStateDiffMapperRegistry;
 
-class CheckoutStateDiffMapperRegistryTest extends \PHPUnit_Framework_TestCase
+class CheckoutStateDiffMapperRegistryTest extends \PHPUnit\Framework\TestCase
 {
     /** @var CheckoutStateDiffMapperRegistry */
     protected $registry;
@@ -76,7 +76,7 @@ class CheckoutStateDiffMapperRegistryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return CheckoutStateDiffMapperInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return CheckoutStateDiffMapperInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function getMapper()
     {

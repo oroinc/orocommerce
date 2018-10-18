@@ -7,7 +7,7 @@ use Oro\Bundle\WebCatalogBundle\Provider\ScopeWebCatalogProvider;
 use Oro\Bundle\WebCatalogBundle\Provider\WebCatalogProvider;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class ScopeWebCatalogProviderTest extends \PHPUnit_Framework_TestCase
+class ScopeWebCatalogProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
@@ -17,7 +17,7 @@ class ScopeWebCatalogProviderTest extends \PHPUnit_Framework_TestCase
     protected $provider;
 
     /**
-     * @var WebCatalogProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var WebCatalogProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $webCatalogProvider;
 

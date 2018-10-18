@@ -35,7 +35,7 @@ class PageVariantTypeExtension extends AbstractTypeExtension
         $builder
             ->add(
                 'scopes',
-                ScopeCollectionType::NAME,
+                ScopeCollectionType::class,
                 [
                     'label' => 'oro.webcatalog.contentvariant.scopes.label',
                     'required' => false,

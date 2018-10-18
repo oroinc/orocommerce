@@ -12,7 +12,7 @@ use Symfony\Component\Form\Test\FormIntegrationTestCase;
 class CouponGenerationTypeTest extends FormIntegrationTestCase
 {
     /**
-     * @var TokenAccessorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var TokenAccessorInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $tokenAccessor;
 
@@ -26,11 +26,6 @@ class CouponGenerationTypeTest extends FormIntegrationTestCase
         parent::setUp();
         $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
         $this->couponGenerationType = new CouponGenerationType($this->tokenAccessor);
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals(CouponGenerationType::NAME, $this->couponGenerationType->getName());
     }
 
     public function testGetBlockPrefix()

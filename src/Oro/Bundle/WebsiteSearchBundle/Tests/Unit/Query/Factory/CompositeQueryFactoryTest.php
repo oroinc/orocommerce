@@ -6,12 +6,12 @@ use Oro\Bundle\SearchBundle\Query\Factory\QueryFactoryInterface;
 use Oro\Bundle\SearchBundle\Query\SearchQueryInterface;
 use Oro\Bundle\WebsiteSearchBundle\Query\Factory\CompositeQueryFactory;
 
-class CompositeQueryFactoryTest extends \PHPUnit_Framework_TestCase
+class CompositeQueryFactoryTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var QueryFactoryInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var QueryFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $backendQueryFactory;
 
-    /** @var QueryFactoryInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var QueryFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $websiteQueryFactory;
 
     /**

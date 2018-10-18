@@ -5,52 +5,52 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Async;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
 use Oro\Bundle\PricingBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerFactory;
 use Oro\Bundle\PricingBundle\NotificationMessage\Messenger;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Psr\Log\LoggerInterface;
 
-abstract class AbstractPriceProcessorTest extends \PHPUnit_Framework_TestCase
+abstract class AbstractPriceProcessorTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var PriceListRepository|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $priceListRepository;
+
+    /**
+     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $registry;
 
     /**
-     * @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $logger;
 
     /**
-     * @var PriceListTriggerFactory|\PHPUnit_Framework_MockObject_MockObject
+     * @var PriceListTriggerFactory|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $triggerFactory;
 
     /**
-     * @var Messenger|\PHPUnit_Framework_MockObject_MockObject
+     * @var Messenger|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $messenger;
 
     protected function setUp()
     {
+        $this->priceListRepository = $this->createMock(PriceListRepository::class);
         $this->registry = $this->createMock(ManagerRegistry::class);
-
         $this->logger = $this->createMock(LoggerInterface::class);
-
-        $this->triggerFactory = $this->getMockBuilder(PriceListTriggerFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->messenger = $this->getMockBuilder(Messenger::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->triggerFactory = $this->createMock(PriceListTriggerFactory::class);
+        $this->messenger = $this->createMock(Messenger::class);
     }
 
 
     /**
-     * @return MessageInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return MessageInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function prepareMessageForProcessInvalidArgumentException()
     {
@@ -64,6 +64,11 @@ abstract class AbstractPriceProcessorTest extends \PHPUnit_Framework_TestCase
 
         $em->expects(($this->once()))
             ->method('rollback');
+
+        $em->expects($this->any())
+            ->method('getRepository')
+            ->with(PriceList::class)
+            ->willReturn($this->priceListRepository);
 
         $this->registry->expects($this->once())
             ->method('getManagerForClass')
@@ -94,7 +99,7 @@ abstract class AbstractPriceProcessorTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param \Exception $exception
-     * @return MessageInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return MessageInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function prepareMessageForProcessExceptionWithoutTrigger(\Exception $exception)
     {
@@ -106,12 +111,17 @@ abstract class AbstractPriceProcessorTest extends \PHPUnit_Framework_TestCase
         $em->expects(($this->once()))
             ->method('rollback');
 
+        $em->expects($this->any())
+            ->method('getRepository')
+            ->with(PriceList::class)
+            ->willReturn($this->priceListRepository);
+
         $this->registry->expects($this->once())
             ->method('getManagerForClass')
             ->with(PriceList::class)
             ->willReturn($em);
 
-        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message * */
+        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message * */
         $message = $this->createMock(MessageInterface::class);
         $message->expects($this->any())
             ->method('getBody')
@@ -128,7 +138,7 @@ abstract class AbstractPriceProcessorTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param array $data
-     * @return MessageInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return MessageInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function prepareMessageWithBody(array $data)
     {
@@ -141,6 +151,11 @@ abstract class AbstractPriceProcessorTest extends \PHPUnit_Framework_TestCase
 
         $em->expects(($this->once()))
             ->method('rollback');
+
+        $em->expects($this->any())
+            ->method('getRepository')
+            ->with(PriceList::class)
+            ->willReturn($this->priceListRepository);
 
         $this->registry->expects($this->once())
             ->method('getManagerForClass')

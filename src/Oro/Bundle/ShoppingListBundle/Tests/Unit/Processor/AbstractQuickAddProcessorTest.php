@@ -9,24 +9,24 @@ use Oro\Bundle\ShoppingListBundle\Generator\MessageGenerator;
 use Oro\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemHandler;
 use Oro\Bundle\ShoppingListBundle\Processor\QuickAddProcessor;
 
-abstract class AbstractQuickAddProcessorTest extends \PHPUnit_Framework_TestCase
+abstract class AbstractQuickAddProcessorTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var \PHPUnit_Framework_MockObject_MockObject|ShoppingListLineItemHandler */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|ShoppingListLineItemHandler */
     protected $handler;
 
     /** @var QuickAddProcessor */
     protected $processor;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|ManagerRegistry */
     protected $registry;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|MessageGenerator */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|MessageGenerator */
     protected $messageGenerator;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|ProductRepository */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|ProductRepository */
     protected $productRepository;
 
-    /** @var EntityManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var EntityManager|\PHPUnit\Framework\MockObject\MockObject */
     protected $em;
 
     abstract public function getProcessorName();

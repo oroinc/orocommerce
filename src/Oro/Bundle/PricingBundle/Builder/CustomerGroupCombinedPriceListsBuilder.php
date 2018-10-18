@@ -5,6 +5,7 @@ namespace Oro\Bundle\PricingBundle\Builder;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\PricingBundle\Entity\PriceListCustomerGroupFallback;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToCustomerGroupRepository;
+use Oro\Bundle\PricingBundle\Provider\PriceListSequenceMember;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
@@ -66,19 +67,48 @@ class CustomerGroupCombinedPriceListsBuilder extends AbstractCombinedPriceListBu
     ) {
         $priceListsToCustomerGroup = $this->getPriceListToEntityRepository()
             ->findOneBy(['website' => $website, 'customerGroup' => $customerGroup]);
+        $hasFallbackOnNextLevel = $this->hasFallbackOnNextLevel($website, $customerGroup);
+
         if (!$priceListsToCustomerGroup) {
             /** @var PriceListToCustomerGroupRepository $repo */
             $repo = $this->getCombinedPriceListToEntityRepository();
             $repo->delete($customerGroup, $website);
 
-            if ($this->hasFallbackOnNextLevel($website, $customerGroup)) {
+            if ($hasFallbackOnNextLevel) {
                 //is this case price list would be fetched from next level, and there is no need to store the own
                 return;
             }
         }
         $collection = $this->priceListCollectionProvider->getPriceListsByCustomerGroup($customerGroup, $website);
         $combinedPriceList = $this->combinedPriceListProvider->getCombinedPriceList($collection);
-        $this->updateRelationsAndPrices($combinedPriceList, $website, $customerGroup, $forceTimestamp);
+
+        if ($hasFallbackOnNextLevel
+            && ($fallbackPriceLists = $this->getFallbackPriceLists($website))
+            && !$this->priceListCollectionProvider->containMergeDisallowed($collection)
+            && !$this->priceListCollectionProvider->containScheduled($collection)
+        ) {
+            $currentLevelPriceLists = array_splice($collection, 0, -\count($fallbackPriceLists));
+
+            $this->updateRelationsAndPricesUsingFallback(
+                $combinedPriceList,
+                $website,
+                $currentLevelPriceLists,
+                $fallbackPriceLists,
+                $customerGroup,
+                $forceTimestamp
+            );
+        } else {
+            $this->updateRelationsAndPrices($combinedPriceList, $website, $customerGroup, $forceTimestamp);
+        }
+    }
+
+    /**
+     * @param Website $website
+     * @return array|PriceListSequenceMember[]
+     */
+    protected function getFallbackPriceLists(Website $website)
+    {
+        return $this->priceListCollectionProvider->getPriceListsByWebsite($website);
     }
 
     /**

@@ -11,9 +11,10 @@ use Oro\Bundle\ProductBundle\Form\Extension\IntegerExtension;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType as StubEntityIdentifierType;
+use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\FormConfigInterface;
-use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Validator\Validation;
 
@@ -27,7 +28,7 @@ class CategoryUnitPrecisionTypeTest extends FormIntegrationTestCase
     protected $formType;
 
     /**
-     * @var CategoryDefaultProductUnitOptionsVisibilityInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var CategoryDefaultProductUnitOptionsVisibilityInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $defaultProductOptionsVisibility;
 
@@ -52,18 +53,19 @@ class CategoryUnitPrecisionTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    ProductUnitSelectionType::NAME => new ProductUnitSelectionTypeStub(
+                    CategoryUnitPrecisionType::class => $this->formType,
+                    ProductUnitSelectionType::class => new ProductUnitSelectionTypeStub(
                         [
                             'item' => (new ProductUnit())->setCode('item'),
                             'kg' => (new ProductUnit())->setCode('kg'),
                         ]
                     ),
-                    EntityIdentifierType::NAME => new StubEntityIdentifierType([
+                    EntityIdentifierType::class => new StubEntityIdentifierType([
                         'kg' => (new ProductUnit())->setCode('kg'),
                     ]),
                 ],
                 [
-                    'form' => [new IntegerExtension()],
+                    FormType::class => [new IntegerExtension()],
                 ]
             ),
             new ValidatorExtension(Validation::createValidator()),
@@ -87,7 +89,7 @@ class CategoryUnitPrecisionTypeTest extends FormIntegrationTestCase
             ->method('isDefaultUnitPrecisionSelectionAvailable')
             ->willReturn(true);
 
-        $form = $this->factory->create($this->formType, $defaultData, []);
+        $form = $this->factory->create(CategoryUnitPrecisionType::class, $defaultData, []);
 
         $this->assertEquals($defaultData, $form->getData());
         $this->assertFormConfig($expectedOptions['unit'], $form->get('unit')->getConfig());
@@ -114,7 +116,7 @@ class CategoryUnitPrecisionTypeTest extends FormIntegrationTestCase
             ->method('isDefaultUnitPrecisionSelectionAvailable')
             ->willReturn(false);
 
-        $form = $this->factory->create($this->formType, $defaultData, []);
+        $form = $this->factory->create(CategoryUnitPrecisionType::class, $defaultData, []);
 
         $this->assertEquals($defaultData, $form->getData());
         $this->assertFormConfig($expectedOptions['unit'], $form->get('unit')->getConfig());
@@ -166,10 +168,5 @@ class CategoryUnitPrecisionTypeTest extends FormIntegrationTestCase
                     ->setPrecision(5)
             ]
         ];
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals(CategoryUnitPrecisionType::NAME, $this->formType->getName());
     }
 }

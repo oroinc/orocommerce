@@ -2,18 +2,27 @@
 
 namespace Oro\Bundle\PricingBundle\Filter;
 
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\FilterBundle\Filter\FilterUtility;
 use Oro\Bundle\PricingBundle\Form\Type\Filter\ProductPriceFilterType;
 use Oro\Bundle\PricingBundle\Placeholder\UnitPlaceholder;
-use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
+use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Oro\Bundle\SearchBundle\Datagrid\Filter\SearchNumberRangeFilter;
 
+/**
+ * A filter that can be used on frontend`s product grid to get products by prices range.
+ */
 class FrontendProductPriceFilter extends SearchNumberRangeFilter
 {
     /**
-     * @var UnitLabelFormatter
+     * @var UnitLabelFormatterInterface
      */
     protected $formatter;
+
+    /**
+     * @var ConfigManager
+     */
+    protected $configManager;
 
     /**
      * {@inheritdoc}
@@ -21,15 +30,23 @@ class FrontendProductPriceFilter extends SearchNumberRangeFilter
     protected function getFieldName(array $data)
     {
         $unit = $data['unit'];
-        return "decimal.".str_replace(UnitPlaceholder::NAME, $unit, $this->get(FilterUtility::DATA_NAME_KEY));
+        return 'decimal.' . str_replace(UnitPlaceholder::NAME, $unit, $this->get(FilterUtility::DATA_NAME_KEY));
     }
 
     /**
-     * @param UnitLabelFormatter $formatter
+     * @param UnitLabelFormatterInterface $formatter
      */
     public function setFormatter($formatter)
     {
         $this->formatter = $formatter;
+    }
+
+    /**
+     * @param ConfigManager $configManager
+     */
+    public function setConfigManager(ConfigManager $configManager)
+    {
+        $this->configManager = $configManager;
     }
 
     /**
@@ -39,6 +56,10 @@ class FrontendProductPriceFilter extends SearchNumberRangeFilter
     {
         $metadata = parent::getMetadata();
         $metadata['unitChoices'] = [];
+
+        if ($this->configManager) {
+            $metadata['precision'] = (int)$this->configManager->get('oro_pricing.precision');
+        }
 
         $unitChoices = $this->getForm()->createView()['unit']->vars['choices'];
         foreach ($unitChoices as $choice) {
@@ -58,6 +79,6 @@ class FrontendProductPriceFilter extends SearchNumberRangeFilter
      */
     protected function getFormType()
     {
-        return ProductPriceFilterType::NAME;
+        return ProductPriceFilterType::class;
     }
 }

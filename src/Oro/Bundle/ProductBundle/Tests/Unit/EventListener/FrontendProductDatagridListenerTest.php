@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener;
 
 use Liip\ImagineBundle\Imagine\Cache\CacheManager;
-use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\Datagrid;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
@@ -14,9 +13,8 @@ use Oro\Bundle\ProductBundle\DataGrid\DataGridThemeHelper;
 use Oro\Bundle\ProductBundle\EventListener\FrontendProductDatagridListener;
 use Oro\Bundle\SearchBundle\Datagrid\Event\SearchResultAfter;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 
-class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
+class FrontendProductDatagridListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
@@ -26,41 +24,21 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
     protected $listener;
 
     /**
-     * @var DataGridThemeHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var DataGridThemeHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $themeHelper;
 
     /**
-     * @var AttachmentManager|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $attachmentManager;
-
-    /**
-     * @var CacheManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var CacheManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $imagineCacheManager;
 
     public function setUp()
     {
-        $this->themeHelper = $this->getMockBuilder(DataGridThemeHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->themeHelper = $this->createMock(DataGridThemeHelper::class);
+        $this->imagineCacheManager = $this->createMock(CacheManager::class);
 
-        $this->attachmentManager = $this->getMockBuilder(AttachmentManager::class)
-            ->disableOriginalConstructor()->getMock();
-
-        $this->imagineCacheManager = $this->getMockBuilder(CacheManager::class)
-            ->disableOriginalConstructor()->getMock();
-
-        /** @deprecated Will be removed in 1.4 */
-        $doctrine = $this->createMock(RegistryInterface::class);
-
-        $this->listener = new FrontendProductDatagridListener(
-            $this->themeHelper,
-            $doctrine,
-            $this->attachmentManager,
-            $this->imagineCacheManager
-        );
+        $this->listener = new FrontendProductDatagridListener($this->themeHelper, $this->imagineCacheManager);
     }
 
     /**
@@ -156,15 +134,13 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
         array $data,
         array $expectedData
     ) {
-        $ids     = [];
         $records = [];
         foreach ($data as $record) {
-            $ids[]     = $record['id'];
             $records[] = new ResultRecord($record);
         }
 
         /**
-         * @var SearchResultAfter|\PHPUnit_Framework_MockObject_MockObject $event
+         * @var SearchResultAfter|\PHPUnit\Framework\MockObject\MockObject $event
          */
         $event = $this->getMockBuilder(SearchResultAfter::class)
             ->disableOriginalConstructor()
@@ -174,7 +150,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
             ->willReturn($records);
 
         /**
-         * @var Datagrid|\PHPUnit_Framework_MockObject_MockObject $datagrid
+         * @var Datagrid|\PHPUnit\Framework\MockObject\MockObject $datagrid
          */
         $datagrid = $this->getMockBuilder(Datagrid::class)
             ->disableOriginalConstructor()->getMock();
@@ -290,14 +266,14 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
      */
     public function testOnResultAfterViewWithoutImage($themeName)
     {
-        /** @var SearchResultAfter|\PHPUnit_Framework_MockObject_MockObject $event */
+        /** @var SearchResultAfter|\PHPUnit\Framework\MockObject\MockObject $event */
         $event = $this->getMockBuilder(SearchResultAfter::class)
             ->disableOriginalConstructor()->getMock();
         $event->expects($this->once())
             ->method('getRecords')
             ->willReturn([]);
 
-        /** @var Datagrid|\PHPUnit_Framework_MockObject_MockObject $datagrid */
+        /** @var Datagrid|\PHPUnit\Framework\MockObject\MockObject $datagrid */
         $datagrid = $this->getMockBuilder(Datagrid::class)
             ->disableOriginalConstructor()->getMock();
 

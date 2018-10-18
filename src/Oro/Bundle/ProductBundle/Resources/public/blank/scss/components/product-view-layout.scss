@@ -1,4 +1,4 @@
-// @theme: blank;
+/* @theme: blank; */
 
 .product-view {
     @include clearfix();
@@ -51,6 +51,11 @@
         padding: $product-view-description-inner-offset;
 
         word-wrap: break-word;
+
+        &:first-child {
+            width: $product-view-description-first-child-width;
+            padding: $product-view-description-first-child-inner-offset;
+        }
     }
 
     &__additional {

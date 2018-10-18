@@ -8,7 +8,7 @@ use Oro\Bundle\CMSBundle\Entity\ContentBlock;
 use Oro\Bundle\CMSBundle\Entity\TextContentVariant;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
-class ContentBlockResolverTest extends \PHPUnit_Framework_TestCase
+class ContentBlockResolverTest extends \PHPUnit\Framework\TestCase
 {
     /** @var ContentBlockResolver */
     protected $resolver;

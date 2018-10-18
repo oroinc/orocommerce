@@ -9,7 +9,7 @@ use Oro\Component\Expression\Node\ValueNode;
 use Oro\Component\Expression\QueryExpressionConverter\BinaryNodeConverter;
 use Oro\Component\Expression\QueryExpressionConverter\QueryExpressionConverterInterface;
 
-class BinaryNodeConverterTest extends \PHPUnit_Framework_TestCase
+class BinaryNodeConverterTest extends \PHPUnit\Framework\TestCase
 {
     public function testConvertUnsupported()
     {

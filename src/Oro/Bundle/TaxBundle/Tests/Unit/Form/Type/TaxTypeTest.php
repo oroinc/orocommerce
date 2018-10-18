@@ -6,7 +6,7 @@ use Oro\Bundle\FormBundle\Form\Type\OroPercentType;
 use Oro\Bundle\TaxBundle\Entity\Tax;
 use Oro\Bundle\TaxBundle\Form\Type\TaxType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-use Symfony\Component\Form\PreloadedExtension;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 
 class TaxTypeTest extends FormIntegrationTestCase
 {
@@ -25,7 +25,8 @@ class TaxTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    OroPercentType::NAME => new OroPercentType(),
+                    TaxType::class => $this->formType,
+                    OroPercentType::class => new OroPercentType(),
                 ],
                 []
             )
@@ -37,10 +38,9 @@ class TaxTypeTest extends FormIntegrationTestCase
      */
     protected function setUp()
     {
-        parent::setUp();
-
         $this->formType = new TaxType();
         $this->formType->setDataClass(static::DATA_CLASS);
+        parent::setUp();
     }
 
     /**
@@ -53,19 +53,17 @@ class TaxTypeTest extends FormIntegrationTestCase
         parent::tearDown();
     }
 
-    public function testGetName()
-    {
-        $this->assertInternalType('string', $this->formType->getName());
-        $this->assertEquals('oro_tax_type', $this->formType->getName());
-    }
-
     public function testBuildForm()
     {
-        $form = $this->factory->create($this->formType);
+        $form = $this->factory->create(TaxType::class);
 
         $this->assertTrue($form->has('code'));
         $this->assertTrue($form->has('description'));
         $this->assertTrue($form->has('rate'));
+
+        $rate = $form->get('rate');
+        $this->assertArrayHasKey('scale', $rate->getConfig()->getOptions());
+        $this->assertEquals(TaxType::TAX_RATE_FIELD_PRECISION, $rate->getConfig()->getOptions()['scale']);
     }
 
     /**
@@ -83,7 +81,7 @@ class TaxTypeTest extends FormIntegrationTestCase
         array $submittedData,
         $expectedData
     ) {
-        $form = $this->factory->create($this->formType, $defaultData);
+        $form = $this->factory->create(TaxType::class, $defaultData);
 
         $formConfig = $form->getConfig();
         $this->assertEquals(static::DATA_CLASS, $formConfig->getOption('data_class'));

@@ -74,7 +74,7 @@ class AddValidateUnitPrecisionsDuplicateFormListener implements ProcessorInterfa
         foreach ($unitPrecisionsData as $unitPrecisionData) {
             /** @var ProductUnitPrecision|null $unitPrecision */
             $unitPrecision = $includedEntities->get($unitPrecisionData['class'], $unitPrecisionData['id']);
-            if (null !== $unitPrecision) {
+            if (null !== $unitPrecision && null !== $unitPrecision->getUnit()) {
                 $unitPrecisionId = $unitPrecision->getId();
                 $unitCode = $unitPrecision->getUnit()->getCode();
                 if (array_key_exists($unitCode, $existingUnitCodes)

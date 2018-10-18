@@ -14,7 +14,14 @@ define(function(require) {
         $element: null,
 
         /**
-         * {@inheritDoc}
+         * @inheritDoc
+         */
+        constructor: function BreadcrumbsNavigationBlock() {
+            BreadcrumbsNavigationBlock.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
          */
         initialize: function(options) {
             this.$element = options._sourceElement;

@@ -32,7 +32,7 @@ class ProductPriceType extends AbstractType
         $builder
             ->add(
                 'priceList',
-                PriceListSelectType::NAME,
+                PriceListSelectType::class,
                 [
                     'label' => 'oro.pricing.pricelist.entity_label',
                     'create_enabled' => false,
@@ -42,17 +42,17 @@ class ProductPriceType extends AbstractType
             )
             ->add(
                 'unit',
-                ProductPriceUnitSelectorType::NAME,
+                ProductPriceUnitSelectorType::class,
                 [
                     'label' => 'oro.pricing.unit.label',
-                    'empty_value' => 'oro.product.productunitprecision.unit_precision_required',
+                    'placeholder' => 'oro.product.productunitprecision.unit_precision_required',
                     'product' => $options['product'],
                     'constraints' => [new NotBlank()],
                 ]
             )
             ->add(
                 'quantity',
-                QuantityType::NAME,
+                QuantityType::class,
                 [
                     'label' => 'oro.pricing.quantity.label',
                     'product' => $options['product'],
@@ -82,15 +82,18 @@ class ProductPriceType extends AbstractType
     public function onPreSubmit(FormEvent $event)
     {
         $submittedData = $event->getData();
-        $productPrice = $event->getForm()->getData();
+        $form = $event->getForm();
+        $productPrice = $form->getData();
+
         if (!$productPrice instanceof ProductPrice) {
             return;
         }
-        $oldPrice = $productPrice->getPrice();
-        if ($submittedData['quantity'] != $productPrice->getQuantity()
-            || $submittedData['unit'] != $productPrice->getUnit()->getCode()
-            || $submittedData['price']['value'] != $oldPrice->getValue()
-            || $submittedData['price']['currency'] != $oldPrice->getCurrency()
+
+        $priceForm = $form->get('price');
+        if ($submittedData['quantity'] != $form->get('quantity')->getViewData()
+            || $submittedData['unit'] != $productPrice->getProductUnitCode()
+            || $submittedData['price']['value'] != $priceForm->get('value')->getViewData()
+            || $submittedData['price']['currency'] != $priceForm->get('currency')->getViewData()
         ) {
             $productPrice->setPriceRule(null);
         }
@@ -113,7 +116,7 @@ class ProductPriceType extends AbstractType
             $isFullCurrencyList = false;
         }
 
-        $form ->add(
+        $form->add(
             'price',
             PriceType::class,
             [

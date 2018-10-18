@@ -13,7 +13,7 @@ use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class ProductVariantLinksValidatorTest extends \PHPUnit_Framework_TestCase
+class ProductVariantLinksValidatorTest extends \PHPUnit\Framework\TestCase
 {
     const VARIANT_FIELD_KEY_COLOR = 'color';
     const VARIANT_FIELD_KEY_SIZE = 'size';
@@ -25,7 +25,7 @@ class ProductVariantLinksValidatorTest extends \PHPUnit_Framework_TestCase
     protected $service;
 
     /**
-     * @var ExecutionContextInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ExecutionContextInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $context;
 

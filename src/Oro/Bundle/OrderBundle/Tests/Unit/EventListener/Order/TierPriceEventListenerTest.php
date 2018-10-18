@@ -15,17 +15,17 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Form\FormInterface;
 
-class TierPriceEventListenerTest extends \PHPUnit_Framework_TestCase
+class TierPriceEventListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /** @var TierPriceEventListener */
     protected $listener;
 
-    /** @var ProductPriceProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ProductPriceProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $provider;
 
-    /** @var PriceListTreeHandler|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var PriceListTreeHandler|\PHPUnit\Framework\MockObject\MockObject */
     protected $priceListTreeHandler;
 
     /** @var FormInterface */

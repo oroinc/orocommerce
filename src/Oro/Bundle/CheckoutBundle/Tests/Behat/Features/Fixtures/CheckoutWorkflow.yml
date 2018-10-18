@@ -116,7 +116,7 @@ Oro\Bundle\WorkflowBundle\Entity\WorkflowDefinition:
                     is_unavailable_hidden: false
                     acl_message: null
                     frontend_options: {  }
-                    form_type: oro_workflow_transition
+                    form_type: Oro\Bundle\WorkflowBundle\Form\Type\WorkflowTransitionType
                     display_type: dialog
                     destination_page: ''
                     form_options: {  }
@@ -147,7 +147,7 @@ Oro\Bundle\WorkflowBundle\Entity\WorkflowDefinition:
                         - $.result.shoppingList
                     is_hidden: false
                     acl_message: null
-                    form_type: oro_workflow_transition
+                    form_type: Oro\Bundle\WorkflowBundle\Form\Type\WorkflowTransitionType
                     display_type: dialog
                     destination_page: ''
                     form_options: {  }
@@ -181,14 +181,14 @@ Oro\Bundle\WorkflowBundle\Entity\WorkflowDefinition:
                             po_number: ~
                             ship_until: ~
                             customer_notes:
-                                form_type: textarea
+                                form_type: Symfony\Component\Form\Extension\Core\Type\TextareaType
                                 options:
                                     label: 'Text'
                                     required: true
                                     constraints:
                                         - NotBlank: ~
                             state_token:
-                                form_type: hidden
+                                form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
                                 options:
                                     data: $internal_state_token
                                     label: oro.workflow.custom_checkout_workflow.transition.continue_to_order_created.attribute.state_token.label
@@ -196,7 +196,7 @@ Oro\Bundle\WorkflowBundle\Entity\WorkflowDefinition:
                     is_hidden: false
                     is_unavailable_hidden: false
                     acl_message: null
-                    form_type: oro_workflow_transition
+                    form_type: Oro\Bundle\WorkflowBundle\Form\Type\WorkflowTransitionType
                     destination_page: ''
                     page_template: null
                     dialog_template: null

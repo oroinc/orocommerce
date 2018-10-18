@@ -37,7 +37,7 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function(options) {
+        constructor: function DiscountCollectionView(options) {
             this.options = $.extend(true, {}, this.options, options || {});
             DiscountCollectionView.__super__.constructor.call(this, options);
         },

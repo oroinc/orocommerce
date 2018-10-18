@@ -7,6 +7,31 @@ workflows:
             start_from_shoppinglist:
                 step_to: enter_billing_address
 
+            #Starts checkout as guest
+            start_from_shoppinglist_as_guest:
+                step_to: enter_credentials_step
+                is_start: true
+                is_unavailable_hidden: true #
+                transition_definition: start_from_shoppinglist_as_guest_definition
+                frontend_options:
+                    icon: fa-briefcase
+                init_routes:
+                    - oro_shopping_list_frontend_view
+                acl_resource: [CHECKOUT_CREATE, $.result.shoppingList]
+
+            # Continue checkout as guest from credentias step
+            continue_checkout_as_guest:
+                step_to: enter_billing_address
+                transition_definition: back_to_billing_address_definition
+                frontend_options:
+                    icon: fa-briefcase
+                    is_checkout_continue: true
+
+            start_checkout_as_guest_system:
+                step_to: enter_credentials_step
+                is_hidden: true
+                transition_definition: start_checkout_as_guest_system_definition
+
             start_from_quickorderform:
                 step_to: enter_billing_address
 
@@ -30,7 +55,7 @@ workflows:
                             attribute: $.result.initCheckoutState
                     attribute_fields:
                         billing_address:
-                            form_type: oro_checkout_address
+                            form_type: Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressType
                             options:
                                 object: $checkout
                                 isEditEnabled: true
@@ -43,17 +68,17 @@ workflows:
                                     - Oro\Bundle\AddressBundle\Validator\Constraints\NameOrOrganization: ~
                                 disabled: $disallow_billing_address_edit
                         save_billing_address:
-                            form_type: oro_save_address
+                            form_type: Oro\Bundle\CheckoutBundle\Form\Type\SaveAddressType
                             options:
                         ship_to_billing_address:
-                            form_type: oro_ship_to_billing_address
+                            form_type: Oro\Bundle\CheckoutBundle\Form\Type\ShipToBillingAddressType
                             options:
                         state_token:
-                            form_type: hidden
+                            form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
                             options:
                                 data: $internal_state_token
-                        visitor_email:
-                            form_type: oro_customer_visitor_email_address
+                        email:
+                            form_type: Oro\Bundle\CustomerBundle\Form\Type\CustomerVisitorEmailAddressType
             continue_to_shipping_method:
                 step_to: enter_shipping_method
                 transition_definition: continue_to_shipping_method_definition
@@ -68,7 +93,7 @@ workflows:
                             attribute: $.result.initCheckoutState
                     attribute_fields:
                         shipping_address:
-                            form_type: oro_checkout_address
+                            form_type: Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressType
                             options:
                                 object: $checkout
                                 isEditEnabled: true
@@ -81,13 +106,13 @@ workflows:
                                     - NotBlank: ~
                                     - Oro\Bundle\AddressBundle\Validator\Constraints\NameOrOrganization: ~
                         save_shipping_address:
-                            form_type: oro_save_address
+                            form_type: Oro\Bundle\CheckoutBundle\Form\Type\SaveAddressType
                             options:
                         ship_to_billing_address:
-                            form_type: oro_ship_to_billing_address
+                            form_type: Oro\Bundle\CheckoutBundle\Form\Type\ShipToBillingAddressType
                             options:
                         state_token:
-                            form_type: hidden
+                            form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
                             options:
                                 data: $internal_state_token
 
@@ -117,7 +142,7 @@ workflows:
                                 constraints:
                                     - NotBlank: ~
                         state_token:
-                            form_type: hidden
+                            form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
                             options:
                                 data: $internal_state_token
 
@@ -146,15 +171,15 @@ workflows:
                     attribute_fields:
                         payment_method: ~
                         payment_validate:
-                            form_type: checkbox
+                            form_type: Symfony\Component\Form\Extension\Core\Type\CheckboxType
                         payment_save_for_later:
-                            form_type: checkbox
+                            form_type: Symfony\Component\Form\Extension\Core\Type\CheckboxType
                         state_token:
-                            form_type: hidden
+                            form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
                             options:
                                 data: $internal_state_token
                         additional_data:
-                            form_type: hidden
+                            form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
 
             back_to_billing_address:
                 step_to: enter_billing_address
@@ -208,16 +233,22 @@ workflows:
                         - '@generate_checkout_state_snapshot':
                             entity: $checkout
                             attribute: $.result.initCheckoutState
+                        - '@assign_value': [$late_registration.email, $visitor_email]
+
                     attribute_fields:
                         remove_source: ~
                         po_number: ~
                         ship_until:
-                            form_type: oro_checkout_ship_until
+                            form_type: Oro\Bundle\CheckoutBundle\Form\Type\CheckoutShipUntilType
                             options:
                                 checkout: $checkout
+                        late_registration:
+                          form_type: Oro\Bundle\CheckoutBundle\Form\Type\LateRegistrationType
+                          options:
+                              required: true
                         customer_notes:
-                            form_type: textarea
+                            form_type: Symfony\Component\Form\Extension\Core\Type\TextareaType
                         state_token:
-                            form_type: hidden
+                            form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
                             options:
                                 data: $internal_state_token

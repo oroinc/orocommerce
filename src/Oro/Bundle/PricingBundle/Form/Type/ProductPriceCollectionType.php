@@ -56,7 +56,7 @@ class ProductPriceCollectionType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'entry_type' => ProductPriceType::NAME,
+                'entry_type' => ProductPriceType::class,
                 'show_form_when_empty' => false,
                 'entry_options' => ['data_class' => $this->dataClass],
                 'validation_groups' => [self::VALIDATION_GROUP]
@@ -72,6 +72,10 @@ class ProductPriceCollectionType extends AbstractType
         $view->vars['attr']['data-currencies'] = json_encode(
             $this->registry->getRepository($this->priceListClass)->getCurrenciesIndexedByPricelistIds()
         );
+
+        $view->vars['skip_optional_validation_group'] = true;
+
+        unset($view->vars['attr']['data-validation-optional-group']);
     }
 
     /**
@@ -87,7 +91,7 @@ class ProductPriceCollectionType extends AbstractType
      */
     public function getParent()
     {
-        return CollectionType::NAME;
+        return CollectionType::class;
     }
 
     /**

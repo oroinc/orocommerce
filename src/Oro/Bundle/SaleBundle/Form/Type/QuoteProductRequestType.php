@@ -34,31 +34,37 @@ class QuoteProductRequestType extends AbstractType
         $builder
             ->add(
                 'price',
-                PriceType::NAME,
+                PriceType::class,
                 [
                     'required' => false,
                     'label' => 'oro.sale.quoteproductrequest.price.label',
-                    'read_only' => true,
+                    'attr' => [
+                        'readonly' => true
+                    ]
                 ]
             )
             ->add(
                 'productUnit',
-                ProductUnitSelectionType::NAME,
+                ProductUnitSelectionType::class,
                 [
                     'label' => 'oro.product.productunit.entity_label',
                     'required' => false,
-                    'read_only' => true,
                     'compact' => $options['compact_units'],
+                    'attr' => [
+                        'readonly' => true
+                    ]
                 ]
             )
             ->add(
                 'quantity',
-                QuantityType::NAME,
+                QuantityType::class,
                 [
                     'required' => false,
                     'label' => 'oro.sale.quoteproductrequest.quantity.label',
-                    'read_only' => true,
                     'product_holder' => $builder->getData(),
+                    'attr' => [
+                        'readonly' => true
+                    ]
                 ]
             );
     }

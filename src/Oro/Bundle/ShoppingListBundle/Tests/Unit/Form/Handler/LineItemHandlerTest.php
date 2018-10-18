@@ -9,15 +9,20 @@ use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Form\Handler\LineItemHandler;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
+use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-class LineItemHandlerTest extends \PHPUnit_Framework_TestCase
+class LineItemHandlerTest extends \PHPUnit\Framework\TestCase
 {
+    use EntityTrait;
+
+    const FORM_DATA = ['field' => 'value'];
+
     const LINE_ITEM_SHORTCUT = 'OroShoppingListBundle:LineItem';
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|FormInterface
+     * @var \PHPUnit\Framework\MockObject\MockObject|FormInterface
      */
     protected $form;
 
@@ -27,17 +32,17 @@ class LineItemHandlerTest extends \PHPUnit_Framework_TestCase
     protected $request;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|Registry
+     * @var \PHPUnit\Framework\MockObject\MockObject|Registry
      */
     protected $registry;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ShoppingListManager
+     * @var \PHPUnit\Framework\MockObject\MockObject|ShoppingListManager
      */
     protected $shoppingListManager;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|LineItem
+     * @var \PHPUnit\Framework\MockObject\MockObject|LineItem
      */
     protected $lineItem;
 
@@ -86,7 +91,7 @@ class LineItemHandlerTest extends \PHPUnit_Framework_TestCase
 
     public function testProcessFormNotValid()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|EntityManagerInterface $manager */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|EntityManagerInterface $manager */
         $manager = $this->createMock('Doctrine\ORM\EntityManagerInterface');
         $manager->expects($this->once())
             ->method('beginTransaction');
@@ -103,11 +108,11 @@ class LineItemHandlerTest extends \PHPUnit_Framework_TestCase
             ->with(self::LINE_ITEM_SHORTCUT)
             ->will($this->returnValue($manager));
 
-        $this->request = Request::create('/', 'POST');
+        $this->request = Request::create('/', 'POST', [FrontendLineItemType::NAME => self::FORM_DATA]);
 
         $this->form->expects($this->once())
             ->method('submit')
-            ->with($this->request);
+            ->with(self::FORM_DATA);
         $this->form->expects($this->once())
             ->method('isValid')
             ->will($this->returnValue(false));
@@ -123,9 +128,9 @@ class LineItemHandlerTest extends \PHPUnit_Framework_TestCase
 
     public function testProcessSuccess()
     {
-        $this->request = Request::create('/', 'PUT');
+        $this->request = Request::create('/', 'PUT', [FrontendLineItemType::NAME => ['shoppingListLabel' => 'label']]);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|EntityManagerInterface $manager */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|EntityManagerInterface $manager */
         $manager = $this->createMock('Doctrine\ORM\EntityManagerInterface');
         $manager->expects($this->once())
             ->method('beginTransaction');
@@ -143,14 +148,12 @@ class LineItemHandlerTest extends \PHPUnit_Framework_TestCase
 
         $this->form->expects($this->once())
             ->method('submit')
-            ->with($this->request);
+            ->with(['shoppingListLabel' => 'label', 'shoppingList' => 777]);
         $this->form->expects($this->once())
             ->method('isValid')
             ->will($this->returnValue(true));
 
-        $this->request->request->add(['oro_product_frontend_line_item' => ['shoppingListLabel' => 'label']]);
-
-        $shoppingList = new ShoppingList();
+        $shoppingList = $this->getEntity(ShoppingList::class, ['id' => 777]);
         $this->lineItem->expects($this->once())
             ->method('getShoppingList')
             ->willReturn($shoppingList);

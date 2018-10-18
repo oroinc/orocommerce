@@ -3,15 +3,12 @@
 namespace Oro\Bundle\PaymentBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\AddressBundle\Entity\Country;
-use Oro\Bundle\AddressBundle\Form\Type\CountryType;
-use Oro\Bundle\AddressBundle\Form\Type\RegionType;
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\CurrencyBundle\Model\LocaleSettings;
 use Oro\Bundle\CurrencyBundle\Provider\CurrencyProviderInterface;
 use Oro\Bundle\CurrencyBundle\Utils\CurrencyNameHelper;
 use Oro\Bundle\FormBundle\Form\Extension\AdditionalAttrExtension;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
-use Oro\Bundle\FormBundle\Form\Type\Select2Type;
 use Oro\Bundle\FormBundle\Tests\Unit\Stub\StripTagsExtensionStub;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodConfig;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule;
@@ -32,7 +29,8 @@ use Oro\Bundle\RuleBundle\Validator\Constraints\ExpressionLanguageSyntaxValidato
 use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
 use Oro\Component\Testing\Unit\AddressFormExtensionTestCase;
 use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
-use Symfony\Component\Form\PreloadedExtension;
+use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 
 class PaymentMethodsConfigsRuleTypeTest extends AddressFormExtensionTestCase
 {
@@ -45,12 +43,12 @@ class PaymentMethodsConfigsRuleTypeTest extends AddressFormExtensionTestCase
     protected $formType;
 
     /**
-     * @var PaymentMethodProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var PaymentMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $paymentMethodProvider;
 
     /**
-     * @var CompositePaymentMethodViewProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var CompositePaymentMethodViewProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $compositePaymentMethodViewProvider;
 
@@ -59,12 +57,12 @@ class PaymentMethodsConfigsRuleTypeTest extends AddressFormExtensionTestCase
      */
     protected function setUp()
     {
-        parent::setUp();
         $this->createMocks();
         $this->formType = new PaymentMethodsConfigsRuleType(
             $this->paymentMethodProvider,
             $this->compositePaymentMethodViewProvider
         );
+        parent::setUp();
     }
 
     public function testGetBlockPrefix()
@@ -74,7 +72,7 @@ class PaymentMethodsConfigsRuleTypeTest extends AddressFormExtensionTestCase
 
     public function testDefaultOptions()
     {
-        $form = $this->factory->create($this->formType);
+        $form = $this->factory->create(PaymentMethodsConfigsRuleType::class);
         $options = $form->getConfig()->getOptions();
         $this->assertContains('data_class', $options);
     }
@@ -86,7 +84,7 @@ class PaymentMethodsConfigsRuleTypeTest extends AddressFormExtensionTestCase
      */
     public function testSubmit($data)
     {
-        $form = $this->factory->create($this->formType, $data);
+        $form = $this->factory->create(PaymentMethodsConfigsRuleType::class, $data);
 
         $this->assertEquals($data, $form->getData());
 
@@ -130,8 +128,6 @@ class PaymentMethodsConfigsRuleTypeTest extends AddressFormExtensionTestCase
      */
     public function getExtensions()
     {
-        $translatableEntity = $this->getTranslatableEntity();
-
         $currencyProvider = $this->getMockBuilder(CurrencyProviderInterface::class)
             ->disableOriginalConstructor()->getMockForAbstractClass();
         $currencyProvider->expects($this->any())
@@ -142,40 +138,36 @@ class PaymentMethodsConfigsRuleTypeTest extends AddressFormExtensionTestCase
 
         $subscriber = new RuleMethodConfigCollectionSubscriber($this->paymentMethodProvider);
 
-        return [
-            new PreloadedExtension(
-                [
-                    CollectionType::NAME => new CollectionType(),
-                    RuleType::BLOCK_PREFIX => new RuleType(),
-                    PaymentMethodConfigType::NAME =>
-                        new PaymentMethodConfigType(
+        return array_merge(
+            parent::getExtensions(),
+            [
+                new PreloadedExtension(
+                    [
+                        PaymentMethodsConfigsRuleType::class => $this->formType,
+                        CollectionType::class => new CollectionType(),
+                        RuleType::BLOCK_PREFIX => new RuleType(),
+                        PaymentMethodConfigType::class => new PaymentMethodConfigType(
                             $this->paymentMethodProvider,
                             $this->compositePaymentMethodViewProvider
                         ),
-                    PaymentMethodsConfigsRuleDestinationType::NAME =>
-                        new PaymentMethodsConfigsRuleDestinationType(new AddressCountryAndRegionSubscriberStub()),
-                    PaymentMethodConfigCollectionType::class =>
-                        new PaymentMethodConfigCollectionType($subscriber),
-                    CurrencySelectionType::NAME => new CurrencySelectionType(
-                        $currencyProvider,
-                        $this->createMock(LocaleSettings::class),
-                        $this->createMock(CurrencyNameHelper::class)
-                    ),
-                    'oro_country' => new CountryType(),
-                    'oro_select2_translatable_entity' => new Select2Type(
-                        'translatable_entity',
-                        'oro_select2_translatable_entity'
-                    ),
-                    'translatable_entity' => $translatableEntity,
-                    'oro_region' => new RegionType(),
-                ],
-                ['form' => [
-                    new AdditionalAttrExtension(),
-                    new StripTagsExtensionStub($this->createMock(HtmlTagHelper::class)),
-                ]]
-            ),
-            $this->getValidatorExtension(true)
-        ];
+                        PaymentMethodsConfigsRuleDestinationType::class =>
+                            new PaymentMethodsConfigsRuleDestinationType(new AddressCountryAndRegionSubscriberStub()),
+                        PaymentMethodConfigCollectionType::class =>
+                            new PaymentMethodConfigCollectionType($subscriber),
+                        CurrencySelectionType::class => new CurrencySelectionType(
+                            $currencyProvider,
+                            $this->createMock(LocaleSettings::class),
+                            $this->createMock(CurrencyNameHelper::class)
+                        ),
+                    ],
+                    [FormType::class => [
+                        new AdditionalAttrExtension(),
+                        new StripTagsExtensionStub($this->createMock(HtmlTagHelper::class)),
+                    ]]
+                ),
+                $this->getValidatorExtension(true)
+            ]
+        );
     }
 
     /**
@@ -197,13 +189,13 @@ class PaymentMethodsConfigsRuleTypeTest extends AddressFormExtensionTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        /** @var PaymentMethodInterface|\PHPUnit_Framework_MockObject_MockObject $paymentMethod */
+        /** @var PaymentMethodInterface|\PHPUnit\Framework\MockObject\MockObject $paymentMethod */
         $paymentMethod = $this->getMockBuilder(PaymentMethodInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
         $paymentMethod->expects(static::any())->method('getIdentifier')->willReturn(self::PAYMENT_TYPE);
 
-        /** @var PaymentMethodViewInterface|\PHPUnit_Framework_MockObject_MockObject $paymentMethodView */
+        /** @var PaymentMethodViewInterface|\PHPUnit\Framework\MockObject\MockObject $paymentMethodView */
         $paymentMethodView = $this->getMockBuilder(PaymentMethodViewInterface::class)
             ->disableOriginalConstructor()
             ->getMock();

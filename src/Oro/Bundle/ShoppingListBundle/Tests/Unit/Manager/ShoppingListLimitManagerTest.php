@@ -12,13 +12,14 @@ use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListLimitManager;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class ShoppingListLimitManagerTest extends \PHPUnit_Framework_TestCase
+class ShoppingListLimitManagerTest extends \PHPUnit\Framework\TestCase
 {
     const USER_ID = 777;
     const ORGANIZATION_ID = 555;
@@ -29,17 +30,20 @@ class ShoppingListLimitManagerTest extends \PHPUnit_Framework_TestCase
     /** @var ShoppingListLimitManager */
     private $shoppingListLimitManager;
 
-    /** @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
     private $configManager;
 
-    /** @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $doctrineHelper;
 
-    /** @var TokenAccessor|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var TokenAccessor|\PHPUnit\Framework\MockObject\MockObject */
     private $tokenAccessor;
 
-    /** @var TokenInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var TokenInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $token;
+
+    /** @var WebsiteManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $websiteManager;
 
     /**
      * {@inheritdoc}
@@ -62,10 +66,15 @@ class ShoppingListLimitManagerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->websiteManager = $this->getMockBuilder(WebsiteManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $this->shoppingListLimitManager = new ShoppingListLimitManager(
             $this->configManager,
             $this->tokenAccessor,
-            $this->doctrineHelper
+            $this->doctrineHelper,
+            $this->websiteManager
         );
     }
 
@@ -323,9 +332,15 @@ class ShoppingListLimitManagerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $website = new Website();
+
+        $this->websiteManager->expects($this->once())
+            ->method('getCurrentWebsite')
+            ->willReturn($website);
+
         $repository->expects($this->once())
             ->method('countUserShoppingLists')
-            ->with(self::USER_ID, self::ORGANIZATION_ID)
+            ->with(self::USER_ID, self::ORGANIZATION_ID, $website)
             ->willReturn($count);
 
         $this->doctrineHelper

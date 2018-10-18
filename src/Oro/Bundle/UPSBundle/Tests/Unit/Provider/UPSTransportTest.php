@@ -13,7 +13,7 @@ use Oro\Bundle\UPSBundle\Provider\UPSTransport;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Psr\Log\LoggerInterface;
 
-class UPSTransportTest extends \PHPUnit_Framework_TestCase
+class UPSTransportTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
@@ -21,12 +21,12 @@ class UPSTransportTest extends \PHPUnit_Framework_TestCase
     const TEST_URL = 'test.example.org';
 
     /**
-     * @var RestClientFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var RestClientFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $clientFactory;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
+     * @var \PHPUnit\Framework\MockObject\MockObject
      */
     protected $client;
 
@@ -36,12 +36,12 @@ class UPSTransportTest extends \PHPUnit_Framework_TestCase
     protected $transport;
 
     /**
-     * @var UpsClientUrlProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var UpsClientUrlProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $upsClientUrlProviderMock;
 
     /**
-     * @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $logger;
 
@@ -78,7 +78,7 @@ class UPSTransportTest extends \PHPUnit_Framework_TestCase
 
     public function testGetPrices()
     {
-        /** @var PriceRequest|\PHPUnit_Framework_MockObject_MockObject $rateRequest * */
+        /** @var PriceRequest|\PHPUnit\Framework\MockObject\MockObject $rateRequest * */
         $rateRequest = $this->createMock(PriceRequest::class);
 
         $integration = new Channel();
@@ -118,7 +118,7 @@ class UPSTransportTest extends \PHPUnit_Framework_TestCase
 
     public function testGetPricesException()
     {
-        /** @var PriceRequest|\PHPUnit_Framework_MockObject_MockObject $rateRequest * */
+        /** @var PriceRequest|\PHPUnit\Framework\MockObject\MockObject $rateRequest * */
         $rateRequest = $this->createMock(PriceRequest::class);
 
         $integration = new Channel();
@@ -227,7 +227,7 @@ class UPSTransportTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return PriceRequest|\PHPUnit_Framework_MockObject_MockObject $rateRequest
+     * @return PriceRequest|\PHPUnit\Framework\MockObject\MockObject $rateRequest
      */
     private function createRateRequestMock()
     {

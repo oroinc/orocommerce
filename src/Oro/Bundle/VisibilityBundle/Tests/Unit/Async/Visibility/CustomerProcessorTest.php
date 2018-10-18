@@ -16,25 +16,25 @@ use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\MessageQueue\Util\JSON;
 use Psr\Log\LoggerInterface;
 
-class CustomerProcessorTest extends \PHPUnit_Framework_TestCase
+class CustomerProcessorTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $doctrineHelper;
 
     /**
-     * @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $logger;
 
     /**
-     * @var MessageFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var MessageFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $messageFactory;
 
     /**
-     * @var CustomerPartialUpdateDriverInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var CustomerPartialUpdateDriverInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $driver;
 
@@ -81,14 +81,14 @@ class CustomerProcessorTest extends \PHPUnit_Framework_TestCase
             ->with(BaseVisibilityResolved::class)
             ->willReturn($em);
 
-        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
+        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message **/
         $message = $this->getMockBuilder(MessageInterface::class)
             ->getMock();
         $message->expects($this->once())
             ->method('getBody')
             ->willReturn($body);
 
-        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
+        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session **/
         $session = $this->getMockBuilder(SessionInterface::class)
             ->getMock();
 
@@ -131,13 +131,13 @@ class CustomerProcessorTest extends \PHPUnit_Framework_TestCase
             ->with($data)
             ->willThrowException(new InvalidArgumentException());
 
-        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
+        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message **/
         $message = $this->getMockBuilder(MessageInterface::class)
             ->getMock();
         $message->expects($this->once())
             ->method('getBody')
             ->willReturn($body);
-        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
+        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session **/
         $session = $this->getMockBuilder(SessionInterface::class)
             ->getMock();
 
@@ -178,13 +178,13 @@ class CustomerProcessorTest extends \PHPUnit_Framework_TestCase
             ->with($customer)
             ->willThrowException(new \Exception());
 
-        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
+        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message **/
         $message = $this->getMockBuilder(MessageInterface::class)
             ->getMock();
         $message->expects($this->once())
             ->method('getBody')
             ->willReturn($body);
-        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
+        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session **/
         $session = $this->getMockBuilder(SessionInterface::class)
             ->getMock();
 

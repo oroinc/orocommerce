@@ -6,7 +6,7 @@ use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderValue;
 
-class IndexEntityEventTest extends \PHPUnit_Framework_TestCase
+class IndexEntityEventTest extends \PHPUnit\Framework\TestCase
 {
     public function testGetEntityClass()
     {

@@ -9,7 +9,7 @@ use Oro\Bundle\WebsiteSearchBundle\Entity\IndexText;
 use Oro\Bundle\WebsiteSearchBundle\Entity\Item;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-class ItemTest extends \PHPUnit_Framework_TestCase
+class ItemTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 
@@ -29,6 +29,7 @@ class ItemTest extends \PHPUnit_Framework_TestCase
             ['alias', 'some_entity_alias'],
             ['title', 'Some text is here'],
             ['recordId', 1],
+            ['weight', 4.2],
             ['changed', false],
             ['createdAt', new \DateTime()],
             ['updatedAt', new \DateTime()]

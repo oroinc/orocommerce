@@ -13,19 +13,20 @@ use Oro\Bundle\ProductBundle\Search\ProductIndexFieldsProvider;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\WebsiteSearchBundle\Attribute\Type\EnumSearchableAttributeType;
 use Oro\Bundle\WebsiteSearchBundle\Event\WebsiteSearchMappingEvent;
+use Oro\Bundle\WebsiteSearchBundle\Placeholder\EnumIdPlaceholder;
 
-class WebsiteSearchMappingListenerTest extends \PHPUnit_Framework_TestCase
+class WebsiteSearchMappingListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var AttributeManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var AttributeManager|\PHPUnit\Framework\MockObject\MockObject */
     protected $attributeManager;
 
-    /** @var AttributeTypeRegistry|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var AttributeTypeRegistry|\PHPUnit\Framework\MockObject\MockObject */
     protected $attributeTypeRegistry;
 
-    /** @var AttributeConfigurationProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var AttributeConfigurationProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $configurationProvider;
 
-    /** @var ProductIndexFieldsProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ProductIndexFieldsProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $fieldsProvider;
 
     /** @var WebsiteSearchMappingListener */
@@ -114,6 +115,9 @@ class WebsiteSearchMappingListenerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals([], $event->getConfiguration());
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
     public function testOnWebsiteSearchMappingSortableAttribute()
     {
         $event = $this->createEventWithBasicConfiguration();
@@ -187,17 +191,21 @@ class WebsiteSearchMappingListenerTest extends \PHPUnit_Framework_TestCase
                             'type' => 'text',
                             'store' => true
                         ],
-                        $attribute1->getFieldName() => [
-                            'name' => $attribute1->getFieldName(),
-                            'type' => Query::TYPE_TEXT
+                        'attribute1' => [
+                            'name' => 'test',
+                            'type' => 'test'
+                        ],
+                        $attribute1->getFieldName() . '_' . EnumIdPlaceholder::NAME => [
+                            'name' => $attribute1->getFieldName() . '_' . EnumIdPlaceholder::NAME,
+                            'type' => Query::TYPE_INTEGER
                         ],
                         $attribute2->getFieldName() . '_priority' => [
                             'name' => $attribute2->getFieldName() . '_priority',
                             'type' => Query::TYPE_INTEGER
                         ],
-                        $attribute3->getFieldName() => [
-                            'name' => $attribute3->getFieldName(),
-                            'type' => Query::TYPE_TEXT
+                        $attribute3->getFieldName() . '_' . EnumIdPlaceholder::NAME => [
+                            'name' => $attribute3->getFieldName() . '_' . EnumIdPlaceholder::NAME,
+                            'type' => Query::TYPE_INTEGER
                         ],
                         $attribute3->getFieldName() . '_priority' => [
                             'name' => $attribute3->getFieldName() . '_priority',

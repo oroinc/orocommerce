@@ -7,10 +7,10 @@ use Oro\Component\ExpressionLanguage\BasicExpressionLanguageValidator;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
-class ExpressionLanguageSyntaxValidatorTest extends \PHPUnit_Framework_TestCase
+class ExpressionLanguageSyntaxValidatorTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var BasicExpressionLanguageValidator|\PHPUnit_Framework_MockObject_MockObject
+     * @var BasicExpressionLanguageValidator|\PHPUnit\Framework\MockObject\MockObject
      */
     private $basicExpressionLanguageValidator;
 
@@ -20,7 +20,7 @@ class ExpressionLanguageSyntaxValidatorTest extends \PHPUnit_Framework_TestCase
     private $expressionLanguageSyntaxValidator;
 
     /**
-     * @var ExecutionContextInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ExecutionContextInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $context;
 
@@ -63,7 +63,7 @@ class ExpressionLanguageSyntaxValidatorTest extends \PHPUnit_Framework_TestCase
             ->method('addViolation')
             ->with($message);
 
-        /** @var Constraint|\PHPUnit_Framework_MockObject_MockObject $constraint * */
+        /** @var Constraint|\PHPUnit\Framework\MockObject\MockObject $constraint * */
         $constraint = $this->createMock(Constraint::class);
         $this->expressionLanguageSyntaxValidator->initialize($this->context);
         $this->expressionLanguageSyntaxValidator->validate($expression, $constraint);

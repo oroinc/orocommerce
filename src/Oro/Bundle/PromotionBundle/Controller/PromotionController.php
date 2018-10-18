@@ -102,7 +102,7 @@ class PromotionController extends Controller
      */
     protected function update(Promotion $promotion, Request $request)
     {
-        $form = $this->createForm(PromotionType::NAME, $promotion);
+        $form = $this->createForm(PromotionType::class, $promotion);
 
         $result = $this->get('oro_form.update_handler')->update(
             $promotion,

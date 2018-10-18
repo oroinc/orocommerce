@@ -12,7 +12,7 @@ use Oro\Bundle\ShippingBundle\Model\Dimensions;
 use Oro\Bundle\ShippingBundle\Model\Weight;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-class ProductShippingOptionsTest extends \PHPUnit_Framework_TestCase
+class ProductShippingOptionsTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 

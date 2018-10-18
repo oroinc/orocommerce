@@ -4,6 +4,7 @@ namespace Oro\Bundle\CatalogBundle\Controller;
 
 use Oro\Bundle\CatalogBundle\Handler\RequestProductHandler;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Form;
 
 class BaseProductController extends Controller
@@ -14,7 +15,7 @@ class BaseProductController extends Controller
     protected function createIncludeSubcategoriesForm()
     {
         return $this->createForm(
-            'checkbox',
+            CheckboxType::class,
             null,
             [
                 'label' => 'oro.catalog.category.include_subcategories.label',
@@ -30,7 +31,7 @@ class BaseProductController extends Controller
     protected function createIncludeNotCategorizedProductForm()
     {
         return $this->createForm(
-            'checkbox',
+            CheckboxType::class,
             null,
             [
                 'label' => 'oro.catalog.category.include_not_categorized_products.label',

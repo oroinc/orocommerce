@@ -3,13 +3,13 @@
 namespace Oro\Bundle\InvoiceBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use Oro\Bundle\CurrencyBundle\Tests\Unit\Form\Type\PriceTypeGenerator;
-use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 use Oro\Bundle\InvoiceBundle\Entity\InvoiceLineItem;
 use Oro\Bundle\InvoiceBundle\Form\Type\InvoiceLineItemType;
-use Oro\Bundle\PricingBundle\Form\Type\PriceTypeSelectorType;
 use Oro\Bundle\PricingBundle\Rounding\PriceRoundingService;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use Oro\Bundle\ProductBundle\Provider\ProductUnitsProvider;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
@@ -17,9 +17,9 @@ use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductSelectEntityTypeSt
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
-use Symfony\Component\Form\PreloadedExtension;
 
 class InvoiceLineItemTypeTest extends FormIntegrationTestCase
 {
@@ -31,7 +31,7 @@ class InvoiceLineItemTypeTest extends FormIntegrationTestCase
     protected $formType;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ProductUnitsProvider
+     * @var \PHPUnit\Framework\MockObject\MockObject|ProductUnitsProvider
      */
     protected $productUnitsProvider;
 
@@ -40,8 +40,6 @@ class InvoiceLineItemTypeTest extends FormIntegrationTestCase
      */
     protected function setUp()
     {
-        parent::setUp();
-
         /** @var PriceRoundingService $roundingService */
         $roundingService = $this->getMockBuilder('Oro\Bundle\PricingBundle\Rounding\PriceRoundingService')
             ->disableOriginalConstructor()
@@ -57,6 +55,7 @@ class InvoiceLineItemTypeTest extends FormIntegrationTestCase
 
         $this->formType = new InvoiceLineItemType($roundingService, $this->productUnitsProvider);
         $this->formType->setDataClass('Oro\Bundle\InvoiceBundle\Entity\InvoiceLineItem');
+        parent::setUp();
     }
 
     /**
@@ -81,17 +80,13 @@ class InvoiceLineItemTypeTest extends FormIntegrationTestCase
 
         $priceType = PriceTypeGenerator::createPriceType($this);
 
-        $orderPriceType = new PriceTypeSelectorType();
-        $dateType = new OroDateType();
-
         return [
             new PreloadedExtension(
                 [
-                    $productSelectType->getName() => $productSelectType,
-                    $unitSelectType->getName() => $unitSelectType,
-                    $priceType->getName() => $priceType,
-                    $orderPriceType->getName() => $orderPriceType,
-                    $dateType->getName() => $dateType,
+                    $this->formType,
+                    ProductSelectType::class => $productSelectType,
+                    ProductUnitSelectionType::class => $unitSelectType,
+                    PriceType::class => $priceType,
                     QuantityTypeTrait::$name => $this->getQuantityType(),
                 ],
                 []
@@ -116,7 +111,7 @@ class InvoiceLineItemTypeTest extends FormIntegrationTestCase
         if (!$data) {
             $data = new InvoiceLineItem();
         }
-        $form = $this->factory->create($this->formType, $data, $options);
+        $form = $this->factory->create(InvoiceLineItemType::class, $data, $options);
 
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());
@@ -199,7 +194,7 @@ class InvoiceLineItemTypeTest extends FormIntegrationTestCase
 
         $view->vars = $inputData['vars'];
 
-        /* @var $form FormInterface|\PHPUnit_Framework_MockObject_MockObject */
+        /* @var $form FormInterface|\PHPUnit\Framework\MockObject\MockObject */
         $form = $this->createMock('Symfony\Component\Form\FormInterface');
 
         $this->formType->finishView($view, $form, []);
@@ -269,7 +264,7 @@ class InvoiceLineItemTypeTest extends FormIntegrationTestCase
 
     /**
      * @param array $units
-     * @return Product|\PHPUnit_Framework_MockObject_MockObject
+     * @return Product|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function createProduct(array $units = [])
     {

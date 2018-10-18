@@ -1,90 +1,85 @@
-Product visibility
-------------------
+## Product Visibility
 
-Product visibility is a functionality that allows to show or hide some products in specific scope.
-
+Product visibility is a functionality that enables products to be visible or hidden  for specific customers, customer groups, and websites. 
 
 ### General Information
 
-There are 3 levels of visibility for each product in scope types: product_visibility, customer_product_visibility, customer_group_product_visibility;
-Product visibility edit page allows setting of the following values:
+There are 3 type levels of visibility per each product: product_visibility, customer_product_visibility, customer_group_product_visibility.
+On the product visibility page, you can set the following values:
 
-#### Product Visibility (Visibility to All):
-* **Category (Visibility to All)** - `Default value`. Value is taken from the category of this product
-* **Config** - The value is taken from the system configuration parameter "Product Visibility to Customers"
-* **Hidden** - Specific static value
-* **Visible** - Specific static value
+#### Product Visibility (Visibility to All)
 
-#### Visibility to Customer Groups:
-* **Current Product (Visibility to All)** - `Default value`. Fallback to Product Visibility (Visibility to All) value
-* **Category** - Value is taken from the category of this product for selected customer group
-* **Hidden** - Specific static value
-* **Visible** - Specific static value
+* **Category (Visibility to All)** - `Default value`. The option inherits the value from the category of this product.
+* **Config** - The option inherits the value from the "Product Visibility to Customers" parameter in the system configuration.  
+* **Hidden** - provides a specific static value.
+* **Visible** - provides a specific static value.
 
-#### Visibility to Customers:
-* **Customer Group (Visibility to this Customer's Group)** - `Default value`. Fallback to Visibility to Customer Groups
-* **Current Product (Visibility to All)**  - Fallback to Product Visibility (Visibility to All) value
-* **Category (Visibility to this Customer)** - Value is taken from the category of this product for selected customer
-* **Hidden** - Specific static value
-* **Visible** - Specific static value
+#### Visibility to Customer Groups
 
-There is entities in database for each listed levels:
-`ProductVisibility`, `CustomerProductVisibility`, `CustomerGroupProductVisibility` each of which implements 
-`VisibilityInterface` and `ScopeAwareInterface` interfaces.
+* **Current Product (Visibility to All)** - `Default value`. The option inherits the configuration set in the Product Visibility (Visibility to All) field.
+* **Category** - inherits the value from the category of this product for the selected customer group.
+* **Hidden** - provides a specific static value.
+* **Visible** - provides a specific static value.
 
-#### Addition information:
-* If default value is selected then the entity is not written to the database.
-* If product doesn't have category, then "Category" option is not available for all levels. 
-If visibility setting already exist with "Category" value, and category is deleted for specific product, 
-then setting value is changed to default value (for visibility to customer and visibility to customer group), 
-for visibility to all that value changed to "Config".     
+#### Visibility to Customers
 
+* **Customer Group (Visibility to this Customer's Group)** - `Default value`. The option inherits the value set in the Visibility to Customer Groups field.
+* **Current Product (Visibility to All)**  - falls back to the Product Visibility (Visibility to All) value.
+* **Category (Visibility to this Customer)** - inherits the configuration from the product category for the selected customer.
+* **Hidden** - provides a specific static value.
+* **Visible** - provides a specific static value.
+
+There are three corresponding entities in the database for each visibility level:
+`ProductVisibility`, `CustomerProductVisibility`, and `CustomerGroupProductVisibility`. All of them implement `VisibilityInterface` and `ScopeAwareInterface`.
+
+#### Additional Information
+
+* If the default value for a particular product is selected, then its configuration will not be recorded to the database.
+* If a product doesn't have a category, then the "Category" option is unavailable for all visibility levels. 
+If the "Category" option has a certain visibility configuration, although the category itself is deleted for the selected product, then the visibility values for the selected customer and the customer group are changed to the default value while the  Visibility to All option value is changed to "Config".  
 
 ### Product Visibility Cache
 
-Resolved visibility settings must be pre-calculated and cached for greater performance. 
-To do this there are 3 resolved entities that contains only static visibility values (visible or hidden).
+Resolved visibility settings must be pre-calculated and cached for better performance. 
 
-There are resolved entities in database for each level:
-`ProductVisibilityResolved`, `CustomerProductVisibilityResolved`, `CustomerGroupProductVisibilityResolved` 
-each of which extend `BaseProductVisibilityResolved` abstract class.
+There are 3 resolved entities in the database that contain only static visibility values (visible or hidden). They are `ProductVisibilityResolved`, `CustomerProductVisibilityResolved`, and `CustomerGroupProductVisibilityResolved`. Each entity extends the `BaseProductVisibilityResolved` abstract class.
 
-For `CustomerProductVisibilityResolved` and `CustomerGroupProductVisibilityResolved` in case if in source tables 
-record is not exist (it was selected default visibility setting), then entity is not written to resolved tables.
-For `ProductVisibilityResolved`, entity is not written to resolved table is case then in source table 
-(ProductVisibility) exist record with "Config" value.
+If neither the `CustomerProductVisibilityResolved` nor the `CustomerGroupProductVisibilityResolved` entity record is displayed in the source table, it means that they have been selected as default values. Therefore, the entity configuration is not recorded to the resolved tables.
+If the `ProductVisibilityResolved` entity is not recorded to a resolved table, it means that the record with the "Config" value exists in the source table (ProductVisibility).
 
-Each create/update/delete operation in source visibility entities automatically performs 
-corresponding change in the resolve tables.
+Each create/update/delete operation in the source visibility entities automatically performs corresponding changes in the resolve tables.
 
-Also each row in cache tables stores one on the data sources:
-* STATIC - value is calculated based on selected option and fallback
-* CATEGORY - value is calculated based on related category, ID of the category also stored in DB
+Also, each row in cache tables stores one of the following data sources:
+* STATIC - the value is calculated based on the selected and fallback options;
+* CATEGORY - the value is calculated based on the related category and the ID of the category that is also stored in DB.
 
-Here are tables that describe calculation algorithms for all cache values.   
+Here are the tables that describe a calculation algorithm for all cache values.   
 
 #### Visibility to All
-| `ProductToAllVisibilityResolved` | **Category**                                | **Config** | **Hidden**                                  | **Visible**                                 |
-|----------------------------------|---------------------------------------------|------------|---------------------------------------------|---------------------------------------------|
-| **scope (FK) (PK)**              | Get scope from current product visibility   |      X     | Get scope from current product visibility   | Get scope from current product visibility   |
-| **product (FK)**                 | Get product from current product visibility |      X     | Get product from current product visibility | Get product from current product visibility |
-| **visibility**                   | Take from category visibility cache         |      X     |                   ::HIDDEN                  |                  ::VISIBLE                  |
-| **sourceProductVisibility (FK)** |                   null                      |      X     | Current product visibility                  | Current product visibility                  |
-| **source**                       |                ::CATEGORY                   |      X     |                   ::STATIC                  |                   ::STATIC                  |
-| **category (FK)**                | Get category from product                   |      X     |                     null                    |                     null                    |
+
+| `ProductToAllVisibilityResolved` | **Category**                                  | **Config** | **Hidden**                                    | **Visible**                                 |
+|----------------------------------|-----------------------------------------------|------------|-----------------------------------------------|---------------------------------------------|
+| **scope (FK) (PK)**              | Get a scope from current product visibility   |      X     | Get a scope from current product visibility   | Get a scope from current product visibility   |
+| **product (FK)**                 | Get a product from current product visibility |      X     | Get a product from current product visibility | Get a product from current product visibility |
+| **visibility**                   | Take from category visibility cache           |      X     |                   ::HIDDEN                    |                  ::VISIBLE                  |
+| **sourceProductVisibility (FK)** |                   null                        |      X     | Current product visibility                    | Current product visibility                  |
+| **source**                       |                ::CATEGORY                     |      X     |                   ::STATIC                    |                   ::STATIC                  |
+| **category (FK)**                | Get a category from a product                 |      X     |                     null                      |                     null                    |
 
 #### Visibility to Customer Group
+
 | `ProductToCustomerGroupVisibilityResolved`    | **Current Product (Visibility to All)** | **Category**                                               | **Hidden**                                                | **Visible**                                               |
-|----------------------------------------------|-----------------------------------------|------------------------------------------------------------|-----------------------------------------------------------|-----------------------------------------------------------|
-| **scope (FK) (PK)**                          |                    X                    | Get scope from current customer group product visibility    | Get scope from current customer group product visibility   | Get scope from currentcustomer group product visibility    |
-| **customerGroup (FK) (PK)**                   |                    X                    | Get group from current customer group product visibility    | Get group from current customer group product visibility   | Get group from current customer group product visibility   |
-| **product (FK) (PK)**                        |                    X                    | Get product from current customer group product visibility  | Get product from current customer group product visibility | Get product from current customer group product visibility |
-| **visibility**                               |                    X                    | Take from category visibility cache for this customer group |                          ::HIDDEN                         |                         ::VISIBLE                         |
-| **sourceProductVisibility (FK)**             |                    X                    | Current customer group product visibility                   | Current customer group product visibility                  | Current customer group product visibility                  |
-| **source**                                   |                    X                    |                         ::CATEGORY                         |                          ::STATIC                         |                          ::STATIC                         |
-| **category (FK)**                            |                    X                    | Get category from product                                  |                            null                           |                            null                           |
+|----------------------------------------------|-----------------------------------------|-------------------------------------------------------------|-----------------------------------------------------------|-----------------------------------------------------------|
+| **scope (FK) (PK)**                          |                    X                    | Get a scope from current customer group product visibility  | Get a scope from current customer group product visibility   | Get a scope from current customer group product visibility   |
+| **customerGroup (FK) (PK)**                   |                    X                   | Get a group from current customer group product visibility  | Get a group from current customer group product visibility   | Get a group from current customer group product visibility   |
+| **product (FK) (PK)**                        |                    X                    | Get a product from current customer group product visibility| Get a product from current customer group product visibility   | Get a product from current customer group product visibility |
+| **visibility**                               |                    X                    | Take from category visibility cache for this customer group |                          ::HIDDEN                                 |          ::VISIBLE                                           |
+| **sourceProductVisibility (FK)**             |                    X                    | Current customer group product visibility                   | Current customer group product visibility                    | Current customer group product visibility                    |
+| **source**                                   |                    X                    |                         ::CATEGORY                          |                          ::STATIC                                 |                          ::STATIC                            |
+| **category (FK)**                            |                    X                    | Get a category from a product                               |                            null                                   |                            null                              |
 
 #### Visibility to Customer
+
 | `ProductToCustomerVisibilityResolved`    | **Customer Group** | **Current Product**                                  | **Category**                                         | **Hidden**                                                | **Visible**                                               |
 |-----------------------------------------|-------------------|------------------------------------------------------|------------------------------------------------------|-----------------------------------------------------------|-----------------------------------------------------------|
 | **scope (FK) (PK)**                     |         X         | Get scope from cur. acc. product visibility          | Get scope from cur. acc. product visibility          | Get scope from cur. acc. product visibility               | Get scope from cur. acc. group product visibility         |
@@ -96,38 +91,34 @@ Here are tables that describe calculation algorithms for all cache values.
 | **category (FK)**                       |         X         |                      null                            |               Get category from product              |                            null                           |                            null                           |
 
 
-#### Cache builders
-The above listed steps, with the resolved entities for manipulation with the source entities. 
-But what if for example developer changed the product category or even removed it, and it will affect all the caches 
-for products that have this category? In this case all level have cache builders.
+#### Cache Builders
 
-Cache Builder have been implemented using composite pattern.
+Cache builders are provided for all visibility levels to avoid affecting the cache of products of a particular category that has been changed or removed.
+Cache builders are implemented using a composite pattern.
 
-There are cache builder classes for each listed levels: `ProductResolvedCacheBuilder`, 
-`CustomerProductResolvedCacheBuilder`, `CustomerGroupProductResolvedCacheBuilder` each of which implements 
-`CacheBuilderInterface` (these are leaves).
+There are three cache builder classes for each listed level: `ProductResolvedCacheBuilder`, 
+`CustomerProductResolvedCacheBuilder`, and `CustomerGroupProductResolvedCacheBuilder`. Each of them implements `CacheBuilderInterface`. These cache builder classes are called leaves.
 
-Composite is `CacheBuilder` class that aggregates all described leaves.
-To update the cache for all product visibility levels developer can run command: 
+Composite is the `CacheBuilder` class that aggregates all the mentioned leaves.
+To update the cache for all product visibility levels, a developer should run a command: 
 `product:visibility:cache:build`.
 
-To build a cache for all levels of visibility categories, there are also the corresponding cache Builder.
+To build a cache for all levels of visibility categories, the following cache builders are provided.
 
 Here is a list of possible cases that require to update the cache:
 
 | **Operation**                                            | **Action**                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 |----------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Updating visibility setting for any product at any level | Updating product visibility cache for that specific visibility (see table above)                                                                                                                                                                                                                                                                                                                                                                                                                   |
-| Delete category from product                             | Rebuild product visibility cache (on all levels) for all products in which it was removed, but only where been selected "category" option in source visibility                                                                                                                                                                                                                                                                                                                                     |
-| Update category in product                               | Updating product visibility cache for that product where been selected "category" option in source visibility (for all levels)                                                                                                                                                                                                                                                                                                                                                                     |
-| Moving category in the tree                              | If visibility setting of that category (for any category visibility level) was selected as "parent category" - Rebuild product visibility cache (on all product visibility levels) for all products which included in this category, but only where been selected "category" option in source visibility. <br> If there is at least one category, the parent of which is this moving category - similar Rebuild product visibility cache for all products which included in all subtree categories.|
-| Change category visibility                               | Rebuild product visibility cache (on all levels) for all products which included in this category, but only where been selected "category" option in source visibility                                                                                                                                                                                                                                                                                                                             |
+| Updating visibility settings for any product at any level | Updating product visibility cache for specific visibility (see table above)                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| Delete a category from a product                             | Rebuild product visibility cache (at all levels) for all the products where it was removed. It concerns only the products with the "category" option selected in source visibility                                                                                                                                                                                                                                                                                                                                     |
+| Update a category in a product                               | Updating product visibility cache for the product with the "category" option selected in source visibility (for all levels)                                                                                                                                                                                                                                                                                                                                                                     |
+| Moving a category in the tree                              | If the visibility value of the category (for any category visibility level) was selected as "parent category", you should rebuild product visibility cache (on all product visibility levels) for all products which are included in this category. It concerns only the products with the "category" option selected in source visibility. <br> If there is at least one category which is a child of this moving category, you should also rebuild product visibility cache for all products which are included in all subtree categories.|
+| Change category visibility                               | Rebuild product visibility cache (on all levels) for all products which are included in this category, but only if the "category" option is selected in source visibility                                                                                                                                                                                                                                                                                                                             |
 
 
 ### Visibility Calculation 
 
-All described cache tables contain information about visibility. 
-There are following constant options to store this information:
+All described cache tables contain information about visibility that is stored with the help of the following options. 
 
 * VISIBLE = 1
 * HIDDEN = -1
@@ -135,18 +126,16 @@ There are following constant options to store this information:
 * VISIBILITY_FALLBACK_TO_ALL = 2
 * null
 
-After all this information is stored in DB visibility calculation can be performed. It uses following formula to 
-understand whether product is visible or not:
+Once all the information is stored in DB, visibility calculation can be performed. It uses the following formula to 
+check whether a product is visible or not:
 
 ```
 PRODUCT_VISIBILITY + ACCOUNT_GROUP_VISIBILITY * 10 + ACCOUNT_VISIBILITY * 100 > 0
 ```
 
-So, value on each level might affect result calculation, and higher level is more important. 
-If visibility is not defined (null) then zero value is used. The only exceptions are values VISIBILITY_FALLBACK_TO_ALL and VISIBILITY_FALLBACK_TO_CONFIG.
-VISIBILITY_FALLBACK_TO_ALL - it used to distinguish fallback from `Customer` value to `Visibility to All` value, 
-and it means that `Visibility to All` value should be used instead of `Customer` value.
-VISIBILITY_FALLBACK_TO_CONFIG - it used to distinguish fallback from `Visibility to All`, `Customer` or `Customer Group` value to category `Config` value,
-and it means that Category Visibility value from System Configuration should be used instead of `Visibility to All`, `Customer` or `Customer Group` value respectively.
+So, a value set on each level affects the calculation result. The higher the level is, the more important it is. 
+If visibility is not defined (null) then zero value is used. The only exceptions are the VISIBILITY_FALLBACK_TO_ALL and the VISIBILITY_FALLBACK_TO_CONFIG values.
+VISIBILITY_FALLBACK_TO_ALL is used to enable the `Customer` value to fall back to the `Visibility to All` value. 
+VISIBILITY_FALLBACK_TO_CONFIG inherits the category visibility value set in the system configuration. It means that the `Config` value is to be used instead of the `Visibility to All`, `Customer`, or `Customer Group` values respectively.
 
-For more information about calculation logic see `ProductVisibilityQueryBuilderModifier` class.
+For more information about calculation logic, refer to the `ProductVisibilityQueryBuilderModifier` class.

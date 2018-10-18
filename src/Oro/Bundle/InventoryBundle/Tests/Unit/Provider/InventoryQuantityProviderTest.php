@@ -10,12 +10,12 @@ use Oro\Bundle\InventoryBundle\Provider\InventoryQuantityProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
-class InventoryQuantityProviderTest extends \PHPUnit_Framework_TestCase
+class InventoryQuantityProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
     protected $doctrineHelper;
 
-    /** @var InventoryQuantityManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var InventoryQuantityManager|\PHPUnit\Framework\MockObject\MockObject */
     protected $quantityManager;
 
     /** @var InventoryQuantityProvider */

@@ -5,7 +5,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\NotificationMessage\Event;
 use Oro\Bundle\PricingBundle\NotificationMessage\Event\MassMessagesEvent;
 use Oro\Bundle\PricingBundle\NotificationMessage\Message;
 
-class MassMessagesEventTest extends \PHPUnit_Framework_TestCase
+class MassMessagesEventTest extends \PHPUnit\Framework\TestCase
 {
     public function testEventMinimal()
     {

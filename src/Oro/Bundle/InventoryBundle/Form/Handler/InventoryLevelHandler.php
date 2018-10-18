@@ -58,9 +58,9 @@ class InventoryLevelHandler
     public function process()
     {
         if ($this->request->isMethod('POST')) {
-            $this->form->submit($this->request);
+            $this->form->handleRequest($this->request);
 
-            if ($this->form->isValid()) {
+            if ($this->form->isSubmitted() && $this->form->isValid()) {
                 $formData = $this->form->getData();
 
                 if ($formData && count($formData)) {

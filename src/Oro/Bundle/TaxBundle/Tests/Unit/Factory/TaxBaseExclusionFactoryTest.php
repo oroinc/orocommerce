@@ -9,7 +9,7 @@ use Oro\Bundle\TaxBundle\Factory\TaxBaseExclusionFactory;
 use Oro\Bundle\TaxBundle\Model\TaxBaseExclusion;
 use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 
-class TaxBaseExclusionFactoryTest extends \PHPUnit_Framework_TestCase
+class TaxBaseExclusionFactoryTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var TaxBaseExclusionFactory
@@ -17,7 +17,7 @@ class TaxBaseExclusionFactoryTest extends \PHPUnit_Framework_TestCase
     protected $factory;
 
     /**
-     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $doctrineHelper;
 

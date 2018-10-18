@@ -61,7 +61,7 @@ class SlugWithRedirectType extends AbstractType
         $builder
             ->add(
                 self::TEXT_SLUG_PROTOTYPE_FIELD_NAME,
-                SlugType::NAME,
+                SlugType::class,
                 [
                     'required' => !empty($options['required']),
                     'constraints' => $constraints,

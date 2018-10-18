@@ -20,7 +20,7 @@ class CustomerGroupTaxExtensionTest extends AbstractCustomerTaxExtensionTest
 
     public function testGetExtendedType()
     {
-        $this->assertEquals(CustomerGroupType::NAME, $this->getExtension()->getExtendedType());
+        $this->assertEquals(CustomerGroupType::class, $this->getExtension()->getExtendedType());
     }
 
     public function testOnPostSubmitNewCustomerGroup()
@@ -53,7 +53,7 @@ class CustomerGroupTaxExtensionTest extends AbstractCustomerTaxExtensionTest
 
     /**
      * @param int|null $id
-     * @return CustomerGroup|\PHPUnit_Framework_MockObject_MockObject
+     * @return CustomerGroup|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function createTaxCodeTarget($id = null)
     {

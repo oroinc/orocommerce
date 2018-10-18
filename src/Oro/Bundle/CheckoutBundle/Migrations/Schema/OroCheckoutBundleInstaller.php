@@ -11,6 +11,7 @@ use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 /**
+ * Executes all schema changes during install
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.ExcessiveClassLength)
  */
@@ -32,7 +33,7 @@ class OroCheckoutBundleInstaller implements Installation, ExtendExtensionAwareIn
      */
     public function getMigrationVersion()
     {
-        return 'v1_8';
+        return 'v1_10';
     }
 
     /**
@@ -80,6 +81,7 @@ class OroCheckoutBundleInstaller implements Installation, ExtendExtensionAwareIn
         $table->addColumn('source_id', 'integer', ['notnull' => true]);
         $table->addColumn('website_id', 'integer', ['notnull' => false]);
         $table->addColumn('customer_user_id', 'integer', ['notnull' => false]);
+        $table->addColumn('registered_customer_user_id', 'integer', ['notnull' => false]);
         $table->addColumn('customer_id', 'integer', ['notnull' => false]);
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
         $table->addColumn('user_owner_id', 'integer', ['notnull' => false]);
@@ -106,10 +108,11 @@ class OroCheckoutBundleInstaller implements Installation, ExtendExtensionAwareIn
         $table->addColumn('shipping_method_type', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('deleted', 'boolean', ['default' => false]);
         $table->addColumn('completed', 'boolean', ['default' => false]);
-        $table->addColumn('completed_data', 'json_array');
+        $table->addColumn('completed_data', 'json_array', ['comment' => '(DC2Type:json_array)']);
         $table->addUniqueIndex(['billing_address_id'], 'uniq_checkout_bill_addr');
         $table->addUniqueIndex(['shipping_address_id'], 'uniq_checkout_shipp_addr');
         $table->addUniqueIndex(['source_id'], 'uniq_e56b559d953c1c61');
+        $table->addUniqueIndex(['registered_customer_user_id'], 'UNIQ_C040FD5916A5A0D');
         $table->setPrimaryKey(['id']);
     }
 
@@ -136,6 +139,12 @@ class OroCheckoutBundleInstaller implements Installation, ExtendExtensionAwareIn
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_customer_user'),
             ['customer_user_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'SET NULL']
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_customer_user'),
+            ['registered_customer_user_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'SET NULL']
         );

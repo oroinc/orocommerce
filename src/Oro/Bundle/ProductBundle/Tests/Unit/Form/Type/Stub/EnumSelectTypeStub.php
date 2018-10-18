@@ -22,16 +22,14 @@ class EnumSelectTypeStub extends AbstractType
             'excluded_values' => [],
         ]);
 
-        $resolver->setAllowedTypes([
-            'disabled_values' => ['array', 'callable'],
-            'excluded_values' => ['array', 'callable'],
-        ]);
+        $resolver->setAllowedTypes('disabled_values', ['array', 'callable']);
+        $resolver->setAllowedTypes('excluded_values', ['array', 'callable']);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getName()
+    public function getBlockPrefix()
     {
         return self::NAME;
     }

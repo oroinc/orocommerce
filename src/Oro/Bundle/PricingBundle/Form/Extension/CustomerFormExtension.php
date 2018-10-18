@@ -36,7 +36,7 @@ class CustomerFormExtension extends AbstractTypeExtension
      */
     public function getExtendedType()
     {
-        return CustomerType::NAME;
+        return CustomerType::class;
     }
 
     /**
@@ -46,9 +46,9 @@ class CustomerFormExtension extends AbstractTypeExtension
     {
         $builder->add(
             CustomerListener::PRICE_LISTS_COLLECTION_FORM_FIELD_NAME,
-            WebsiteScopedDataType::NAME,
+            WebsiteScopedDataType::class,
             [
-                'type' => PriceListsSettingsType::NAME,
+                'type' => PriceListsSettingsType::class,
                 'options' => [
                     PriceListsSettingsType::PRICE_LIST_RELATION_CLASS => $this->relationClass,
                     PriceListsSettingsType::FALLBACK_CHOICES => $this->getFallbackChoices(),
@@ -70,10 +70,10 @@ class CustomerFormExtension extends AbstractTypeExtension
     protected function getFallbackChoices()
     {
         return [
-            PriceListCustomerFallback::ACCOUNT_GROUP =>
-                'oro.pricing.fallback.customer_group.label',
-            PriceListCustomerFallback::CURRENT_ACCOUNT_ONLY =>
-                'oro.pricing.fallback.current_customer_only.label',
+            'oro.pricing.fallback.customer_group.label' =>
+                PriceListCustomerFallback::ACCOUNT_GROUP,
+            'oro.pricing.fallback.current_customer_only.label' =>
+                PriceListCustomerFallback::CURRENT_ACCOUNT_ONLY,
         ];
     }
 

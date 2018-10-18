@@ -8,14 +8,14 @@ use Oro\Bundle\CatalogBundle\Form\Type\CategoryPageVariantType;
 use Oro\Bundle\CatalogBundle\Form\Type\CategoryTreeType;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\FormBundle\Form\Extension\TooltipFormExtension;
-use Oro\Bundle\FormBundle\Form\Type\OroChoiceType;
-use Oro\Bundle\FormBundle\Form\Type\Select2Type;
+use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 use Oro\Bundle\TranslationBundle\Translation\Translator;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType as EntityIdentifierTypeStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 use Oro\Component\Tree\Handler\AbstractTreeHandler;
-use Symfony\Component\Form\PreloadedExtension;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 
 class CategoryPageVariantTypeTest extends FormIntegrationTestCase
 {
@@ -25,31 +25,17 @@ class CategoryPageVariantTypeTest extends FormIntegrationTestCase
     protected static $categories = [];
 
     /**
-     * @var CategoryPageVariantType
-     */
-    protected $type;
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function setUp()
-    {
-        parent::setUp();
-        $this->type = new CategoryPageVariantType();
-    }
-
-    /**
      * @return array
      */
     protected function getExtensions()
     {
-        /** @var ConfigProvider|\PHPUnit_Framework_MockObject_MockObject $configProvider */
+        /** @var ConfigProvider|\PHPUnit\Framework\MockObject\MockObject $configProvider */
         $configProvider = $this->createMock(ConfigProvider::class);
 
-        /** @var Translator|\PHPUnit_Framework_MockObject_MockObject $translator */
+        /** @var Translator|\PHPUnit\Framework\MockObject\MockObject $translator */
         $translator = $this->createMock(Translator::class);
 
-        /** @var AbstractTreeHandler|\PHPUnit_Framework_MockObject_MockObject $treeHandler */
+        /** @var AbstractTreeHandler|\PHPUnit\Framework\MockObject\MockObject $treeHandler */
         $treeHandler = $this->createMock(AbstractTreeHandler::class);
         $treeHandler->expects($this->any())
             ->method('createTree')
@@ -73,13 +59,8 @@ class CategoryPageVariantTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    'oro_select2_choice' => new Select2Type(
-                        'Symfony\Component\Form\Extension\Core\Type\ChoiceType',
-                        'oro_select2_choice'
-                    ),
-                    OroChoiceType::NAME => new OroChoiceType(),
-                    CategoryTreeType::NAME => new CategoryTreeType($treeHandler),
-                    'oro_entity_identifier' => new EntityIdentifierType(
+                    CategoryTreeType::class => new CategoryTreeType($treeHandler),
+                    EntityIdentifierType::class => new EntityIdentifierTypeStub(
                         [
                             1001 => $this->getCategory(1001),
                             2002 => $this->getCategory(2002),
@@ -87,7 +68,7 @@ class CategoryPageVariantTypeTest extends FormIntegrationTestCase
                     )
                 ],
                 [
-                    'form' => [
+                    FormType::class => [
                         new TooltipFormExtension($configProvider, $translator),
                     ],
                 ]
@@ -98,7 +79,7 @@ class CategoryPageVariantTypeTest extends FormIntegrationTestCase
 
     public function testSubmit()
     {
-        $form = $this->factory->create($this->type, [], []);
+        $form = $this->factory->create(CategoryPageVariantType::class, [], []);
         $form->submit(
             [
                 'excludeSubcategories' => true,
@@ -133,7 +114,7 @@ class CategoryPageVariantTypeTest extends FormIntegrationTestCase
 
     public function testBuildForm()
     {
-        $form = $this->factory->create($this->type, null);
+        $form = $this->factory->create(CategoryPageVariantType::class, null);
 
         $this->assertTrue($form->has('excludeSubcategories'));
         $this->assertTrue($form->has('categoryPageCategory'));
@@ -145,11 +126,13 @@ class CategoryPageVariantTypeTest extends FormIntegrationTestCase
 
     public function testGetName()
     {
-        $this->assertEquals(CategoryPageVariantType::NAME, $this->type->getName());
+        $type = new CategoryPageVariantType();
+        $this->assertEquals(CategoryPageVariantType::NAME, $type->getName());
     }
 
     public function testGetBlockPrefix()
     {
-        $this->assertEquals(CategoryPageVariantType::NAME, $this->type->getBlockPrefix());
+        $type = new CategoryPageVariantType();
+        $this->assertEquals(CategoryPageVariantType::NAME, $type->getBlockPrefix());
     }
 }

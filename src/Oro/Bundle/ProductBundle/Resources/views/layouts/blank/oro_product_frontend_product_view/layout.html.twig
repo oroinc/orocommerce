@@ -7,7 +7,8 @@
 
     {% set modelAttr = product.jsonSerialize() %}
     {% set modelAttr = modelAttr|merge({
-        'imageUrl': productImageUrl
+        'imageUrl': productImageUrl,
+        'name': product.names|localized_value|e
     }) %}
 
     {% if parentProduct is not null %}
@@ -82,14 +83,19 @@
 {% endblock %}
 
 {% block _product_view_specification_container_widget %}
-    {% set attr = layout_attr_defaults(attr, {
-        '~class': ' product-view__specification',
-        'data-role': 'layout-subtree-loading-container'
-    }) %}
-
-    <div {{ block('block_attributes') }}>
-        {{ block_widget(block) }}
-    </div>
+    {% if block.children is not empty %}
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': ' product-view__specification',
+            'data-role': 'layout-subtree-loading-container'
+        }) %}
+        {% set children = block_widget(block) %}
+    
+        {% if children|trim|length %}
+            <div {{ block('block_attributes') }}>
+                {{ children|raw }}
+            </div>
+        {% endif %}
+    {% endif %}
 {% endblock %}
 
 {% block _product_view_description_container_widget %}
@@ -131,13 +137,15 @@
 {% endblock %}
 
 {% block _product_view_brand_container_widget %}
-    {% set attr = layout_attr_defaults(attr, {
-    '~class': ' product-view__brand'
-    }) %}
+    {% if block.children is not empty %}
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': ' product-view__brand'
+        }) %}
 
-    <div {{ block('block_attributes') }}>
-        {{ block_widget(block) }}
-    </div>
+        <div {{ block('block_attributes') }}>
+            {{ block_widget(block) }}
+        </div>
+    {% endif %}
 {% endblock %}
 
 {% block _product_view_additional_container_widget %}
@@ -161,23 +169,32 @@
 {% endblock %}
 
 {% block _product_view_attribute_group_general_attribute_text_sku_widget %}
-    <p class="sku">
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' sku'
+    }) %}
+    <p {{ block('block_attributes') }}>
         {{ 'oro.product.frontend.index.item'|trans }} <span class="sku__code" itemprop="sku">{{ entity.sku|oro_html_strip_tags }}</span>
     </p>
 {% endblock %}
 
-{% block _product_view_attribute_group_general_attribute_text_brand_widget %}
-    <div class="brand">
-        <span class="product-view-brand">{{ 'oro.product.brand.entity_label'|trans }}:</span>
+{% block _product_view_attribute_group_general_attribute_product_brand_brand_widget %}
+    {% set attr = layout_attr_defaults(attr, {'~class': ' brand'}) %}
+    <div {{ block('block_attributes') }}>
+        <span class="product-view-brand">{{ label|trans }}:</span>
         <span class="product-view-brand-title" itemprop="brand">{{ block_widget(block) }}</span>
     </div>
+{% endblock %}
+
+{% block attribute_product_images_widget %}
+    {% set product = entity %}
+    {{ block('_product_view_media_widget') }}
 {% endblock %}
 
 {% block _product_require_js_config_widget %}
     <script>
         require({
             config: {
-                'oroui/js/app/views/tab-collection-view': {templateClassName: 'product-attributes-tabs'},
+                'oroui/js/app/views/tab-collection-view': {templateClassName: 'nav product-attributes-tabs'},
                 'oroui/js/app/views/tab-item-view': {
                     className: 'product-attributes-tabs__item',
                     templateClassName: 'product-attributes-tabs__link'
@@ -191,7 +208,10 @@
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' line-item-form',
     }) %}
-    <div {{ block('block_attributes') }}>
-    {{ block_widget(block, {attr: attr}) }}
-    </div>
+    {% set children = block_widget(block, {attr: attr}) %}
+    {% if children|trim|length %}
+        <div {{ block('block_attributes') }}>
+            {{ children|raw }}
+        </div>
+    {% endif %}
 {% endblock %}

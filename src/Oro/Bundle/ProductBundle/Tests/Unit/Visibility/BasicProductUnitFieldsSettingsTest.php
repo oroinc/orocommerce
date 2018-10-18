@@ -8,10 +8,10 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use Oro\Bundle\ProductBundle\Visibility\BasicProductUnitFieldsSettings;
 
-class BasicProductUnitFieldsSettingsTest extends \PHPUnit_Framework_TestCase
+class BasicProductUnitFieldsSettingsTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     private $doctrineHelper;
 

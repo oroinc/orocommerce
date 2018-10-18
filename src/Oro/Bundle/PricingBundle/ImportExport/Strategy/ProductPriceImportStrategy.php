@@ -8,6 +8,12 @@ use Oro\Bundle\PricingBundle\Validator\Constraints\UniqueProductPrices;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Symfony\Component\Translation\TranslatorInterface;
 
+/**
+ * Product price add or replace import strategy.
+ * Control price uniqueness
+ * Ensure that price is loaded correctly
+ * Load product relation
+ */
 class ProductPriceImportStrategy extends ConfigurableAddOrReplaceStrategy
 {
     const PROCESSED_ENTITIES_HASH = 'processedEntitiesHash';
@@ -57,13 +63,7 @@ class ProductPriceImportStrategy extends ConfigurableAddOrReplaceStrategy
      */
     protected function refreshPrice(ProductPrice $entity)
     {
-        $value = $this->fieldHelper->getObjectValue($entity, 'value');
-        $currency = $this->fieldHelper->getObjectValue($entity, 'currency');
-        if ($value && $currency) {
-            $entity->loadPrice();
-        } else {
-            $this->fieldHelper->setObjectValue($entity, 'price', null);
-        }
+        $entity->loadPrice();
     }
 
     /**

@@ -1,8 +1,6 @@
-## 1.7.0 (Unreleased)
-
+## 3.2.0 (Unreleased)
 ### Added
 #### ProductBundle
-* Added a listener to the `oro_product.display_simple_variations` config field that cleans the product and category layout cache when changes occur.
 * Added public method `getDataProviderConfig` to `AutocompleteFieldsProvider` [[?]](https://github.com/orocommerce/orocommerce/tree/1.7.0/src/Oro/Bundle/ProductBundle/Expression/Autocomplete/AutocompleteFieldsProvider.php)
 * Added public method `getDataProviderConfig` to `CurrencyFieldsProvider` [[?]](https://github.com/orocommerce/orocommerce/tree/1.7.0/src/Oro/Bundle/ProductBundle/Expression/Autocomplete/CurrencyFieldsProvider.php)
 * Added public method `getDataProviderConfig` to `UnitFieldsProvider` [[?]](https://github.com/orocommerce/orocommerce/tree/1.7.0/src/Oro/Bundle/ProductBundle/Expression/Autocomplete/UnitFieldsProvider.php)
@@ -22,15 +20,35 @@
 #### ProductBundle
 * Class `AbstractAutocompleteFieldsProvider` [[?]](https://github.com/orocommerce/orocommerce/tree/1.7.0/src/Oro/Bundle/ProductBundle/Expression/Autocomplete/AbstractAutocompleteFieldsProvider.php)
 	- Method `getRootEntities` became public
+	
+### Removed
+#### ProductBundle
+* Removed method `getAutocompleteData` from `AbstractAutocompleteFieldsProvider` [[?]](https://github.com/orocommerce/orocommerce/tree/1.7.0/src/Oro/Bundle/ProductBundle/Expression/Autocomplete/AbstractAutocompleteFieldsProvider.php)
+* Removed twig extensions `oro_product_expression_autocomplete_data` in `ProductExtension` [[?]](https://github.com/orocommerce/orocommerce/tree/1.7.0/src/Oro/Bundle/ProductBundle/Twig/ProductExtension.php)
+
+## 3.0.0 (2018-07-27)
+[Show detailed list of changes](incompatibilities-3-0.md)
+
+## 3.0.0-rc (2018-05-31)
+[Show detailed list of changes](incompatibilities-3-0-rc.md)
+
+## 3.0.0-beta (2018-03-30)
+[Show detailed list of changes](incompatibilities-3-0-beta.md)
+
+### Changed
+#### ElasticSearchBundle
+* Method `validateReindexRequest` at `Oro\Bundle\WebsiteSearchBundle\Engine\IndexerInputValidator` was renamed to `validateRequestParameters`
+
+### Added
+#### ProductBundle
+* Added a listener to the `oro_product.display_simple_variations` config field that cleans the product and category layout cache when changes occur.
 
 ### Removed
 #### ProductBundle
 * Removed listener `oro_product.event_listener.restrict.display_product_variations`. The service `oro_product.config.event_listener.display_simple_variations_listener` is used instead.
 * Removed listener `oro_product.event_listener.datagrid.frontend_product_search.display_product_variations`. The service  `oro_product.config.event_listener.display_simple_variations_listener` is used instead.
-* Removed method `getAutocompleteData` from `AbstractAutocompleteFieldsProvider` [[?]](https://github.com/orocommerce/orocommerce/tree/1.7.0/src/Oro/Bundle/ProductBundle/Expression/Autocomplete/AbstractAutocompleteFieldsProvider.php)
-* Removed twig extensions `oro_product_expression_autocomplete_data` in `ProductExtension` [[?]](https://github.com/orocommerce/orocommerce/tree/1.7.0/src/Oro/Bundle/ProductBundle/Twig/ProductExtension.php)
 
-## 1.6.0 (Unreleased)
+## 1.6.0 (2018-01-31)
 [Show detailed list of changes](incompatibilities-1-6.md)
 
 ### Added

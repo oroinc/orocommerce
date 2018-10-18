@@ -7,12 +7,12 @@ use Oro\Bundle\DataGridBundle\Datagrid\RequestParameterBagFactory;
 use Oro\Bundle\ProductBundle\Event\ProductGridWidgetRenderEvent;
 use Oro\Bundle\ProductBundle\EventListener\ProductGridWidgetRenderEventListener;
 
-class ProductGridWidgetRenderEventListenerTest extends \PHPUnit_Framework_TestCase
+class ProductGridWidgetRenderEventListenerTest extends \PHPUnit\Framework\TestCase
 {
     /** @var ProductGridWidgetRenderEventListener */
     protected $listener;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|RequestParameterBagFactory */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|RequestParameterBagFactory */
     protected $requestParameterBagFactory;
 
     protected function setUp()

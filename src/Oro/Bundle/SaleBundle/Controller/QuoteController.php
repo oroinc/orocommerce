@@ -82,7 +82,7 @@ class QuoteController extends Controller
             return $this->update($quote, $request);
         }
 
-        $this->createForm(QuoteType::NAME, $quote);
+        $this->createForm(QuoteType::class, $quote);
 
         if (!$quote->getWebsite()) {
             $quote->setWebsite($this->get('oro_website.manager')->getDefaultWebsite());
@@ -143,7 +143,7 @@ class QuoteController extends Controller
         $handler = $this->get('oro_form.update_handler');
         return $handler->update(
             $quote,
-            QuoteType::NAME,
+            QuoteType::class,
             $this->get('translator')->trans('oro.sale.controller.quote.saved.message'),
             $request,
             null,

@@ -12,8 +12,6 @@ Retrieve a specific order record.
 
 Retrieve a collection of order records.
 
-The list of records that will be returned, could be limited by filters.
-
 {@inheritdoc}
 
 ### create
@@ -26,8 +24,6 @@ The created record is returned in the response.
 
 {@request:json_api}
 Example:
-
-`</admin/api/orders>`
 
 ```JSON
 {
@@ -84,8 +80,6 @@ The updated record is returned in the response.
 {@request:json_api}
 Example:
 
-`</admin/api/orders/1>`
-
 ```JSON
 {
   "data": {
@@ -133,8 +127,6 @@ Delete a specific order record.
 
 Delete a collection of order records.
 
-The list of records that will be deleted, could be limited by filters.
-
 {@inheritdoc}
 
 ## FIELDS
@@ -174,8 +166,6 @@ Replace address assigned to a specific order record.
 {@request:json_api}
 Example:
 
-`</admin/api/orders/1/relationships/billingAddress>`
-
 ```JSON
 {
   "data": {
@@ -202,8 +192,6 @@ Replace the customer assigned to a specific order record.
 
 {@request:json_api}
 Example:
-
-`</admin/api/orders/1/relationships/customer>`
 
 ```JSON
 {
@@ -233,8 +221,6 @@ Replace customer user assigned to a specific order record.
 {@request:json_api}
 Example:
 
-`</admin/api/orders/1/relationships/customerUser>`
-
 ```JSON
 {
   "data": {
@@ -262,8 +248,6 @@ Replace the list of discount assigned to a specific order record.
 {@request:json_api}
 Example:
 
-`</admin/api/orders/1/relationships/discounts>`
-
 ```JSON
 {
   "data": [
@@ -283,8 +267,6 @@ Set discount records for a specific order record.
 {@request:json_api}
 Example:
 
-`</admin/api/orders/1/relationships/discounts>`
-
 ```JSON
 {
   "data": [
@@ -303,8 +285,6 @@ Remove discount records from a specific order record.
 
 {@request:json_api}
 Example:
-
-`</admin/api/orders/1/relationships/discounts>`
 
 ```JSON
 {
@@ -335,8 +315,6 @@ Replace the list of line item assigned to a specific order record.
 {@request:json_api}
 Example:
 
-`</admin/api/orders/1/relationships/lineItems>`
-
 ```JSON
 {
   "data": [
@@ -356,8 +334,6 @@ Set line item records for a specific order record.
 {@request:json_api}
 Example:
 
-`</admin/api/orders/1/relationships/lineItems>`
-
 ```JSON
 {
   "data": [
@@ -376,8 +352,6 @@ Remove line item records from a specific order record.
 
 {@request:json_api}
 Example:
-
-`</admin/api/orders/1/relationships/lineItems>`
 
 ```JSON
 {
@@ -408,8 +382,6 @@ Replace the organization a specific order record belongs to.
 {@request:json_api}
 Example:
 
-`</admin/api/orders/1/relationships/organization>`
-
 ```JSON
 {
   "data": {
@@ -436,8 +408,6 @@ Replace the owner of a specific order record.
 
 {@request:json_api}
 Example:
-
-`</admin/api/orders/1/relationships/owner>`
 
 ```JSON
 {
@@ -466,8 +436,6 @@ Replace address assigned to a specific order record.
 {@request:json_api}
 Example:
 
-`</admin/api/orders/1/relationships/shippingAddress>`
-
 ```JSON
 {
   "data": {
@@ -495,8 +463,6 @@ Replace the list of shipping tracking assigned to a specific order record.
 {@request:json_api}
 Example:
 
-`</admin/api/orders/1/relationships/shippingTrackings>`
-
 ```JSON
 {
   "data": [
@@ -516,8 +482,6 @@ Set shipping tracking records for a specific order record.
 {@request:json_api}
 Example:
 
-`</admin/api/orders/1/relationships/shippingTrackings>`
-
 ```JSON
 {
   "data": [
@@ -536,8 +500,6 @@ Remove shipping tracking records from a specific order record.
 
 {@request:json_api}
 Example:
-
-`</admin/api/orders/1/relationships/shippingTrackings>`
 
 ```JSON
 {
@@ -568,8 +530,6 @@ Replace website assigned to a specific order record.
 {@request:json_api}
 Example:
 
-`</admin/api/orders/1/relationships/website>`
-
 ```JSON
 {
   "data": {
@@ -597,8 +557,6 @@ Replace warehouse assigned to a specific order record.
 {@request:json_api}
 Example:
 
-`</admin/api/orders/1/relationships/warehouse>`
-
 ```JSON
 {
   "data": {
@@ -625,8 +583,6 @@ Replace the payment term assigned to a specific order record.
 
 {@request:json_api}
 Example:
-
-`</admin/api/orders/1/relationships/paymentTerm>`
 
 ```JSON
 {

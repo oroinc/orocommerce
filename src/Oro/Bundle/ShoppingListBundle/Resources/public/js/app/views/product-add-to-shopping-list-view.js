@@ -41,6 +41,16 @@ define(function(require) {
 
         rendered: false,
 
+        /**
+         * @inheritDoc
+         */
+        constructor: function ProductAddToShoppingListView() {
+            ProductAddToShoppingListView.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
             ProductAddToShoppingListView.__super__.initialize.apply(this, arguments);
             this.deferredInitializeCheck(options, ['productModel', 'dropdownWidget']);
@@ -126,7 +136,10 @@ define(function(require) {
         },
 
         _clearButtons: function() {
-            this._getContainer().find(this.options.buttonsSelector).remove();
+            this._getContainer()
+                .trigger('disposeLayout')
+                .find(this.options.buttonsSelector)
+                .remove();
         },
 
         _getContainer: function() {

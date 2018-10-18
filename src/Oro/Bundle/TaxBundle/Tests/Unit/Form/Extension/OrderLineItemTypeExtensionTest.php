@@ -13,22 +13,22 @@ use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 
-class OrderLineItemTypeExtensionTest extends \PHPUnit_Framework_TestCase
+class OrderLineItemTypeExtensionTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var TaxationSettingsProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var TaxationSettingsProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $taxationSettingsProvider;
 
     /**
-     * @var TaxProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var TaxProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $taxProvider;
 
     /**
-     * @var TotalProcessorProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var TotalProcessorProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $totalProvider;
 
@@ -37,7 +37,7 @@ class OrderLineItemTypeExtensionTest extends \PHPUnit_Framework_TestCase
      */
     protected $extension;
 
-    /** @var SectionProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var SectionProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $sectionProvider;
 
     protected function setUp()
@@ -66,7 +66,7 @@ class OrderLineItemTypeExtensionTest extends \PHPUnit_Framework_TestCase
             $taxProviderRegistry,
             $this->totalProvider,
             $this->sectionProvider,
-            OrderLineItemType::NAME
+            OrderLineItemType::class
         );
     }
 
@@ -77,7 +77,7 @@ class OrderLineItemTypeExtensionTest extends \PHPUnit_Framework_TestCase
 
     public function testGetExtendedType()
     {
-        $this->assertEquals(OrderLineItemType::NAME, $this->extension->getExtendedType());
+        $this->assertEquals(OrderLineItemType::class, $this->extension->getExtendedType());
     }
 
     public function testFinishViewDisabledProvider()
@@ -147,7 +147,7 @@ class OrderLineItemTypeExtensionTest extends \PHPUnit_Framework_TestCase
         $this->taxationSettingsProvider->expects($this->once())->method('isEnabled')->willReturn(true);
 
         $view = new FormView();
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock('Symfony\Component\Form\FormInterface');
         $this->extension->buildView($view, $form, []);
     }
@@ -159,7 +159,7 @@ class OrderLineItemTypeExtensionTest extends \PHPUnit_Framework_TestCase
         $this->taxationSettingsProvider->expects($this->once())->method('isEnabled')->willReturn(false);
 
         $view = new FormView();
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock('Symfony\Component\Form\FormInterface');
         $this->extension->buildView($view, $form, []);
     }

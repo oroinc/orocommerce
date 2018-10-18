@@ -9,15 +9,15 @@ use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Response;
 
-class CallbackHandlerTest extends \PHPUnit_Framework_TestCase
+class CallbackHandlerTest extends \PHPUnit\Framework\TestCase
 {
     /** @var CallbackHandler */
     protected $handler;
 
-    /** @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $eventDispatcher;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|PaymentTransactionProvider */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|PaymentTransactionProvider */
     protected $paymentTransactionProvider;
 
     protected function setUp()

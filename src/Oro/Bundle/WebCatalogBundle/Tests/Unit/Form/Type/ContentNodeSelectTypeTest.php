@@ -10,7 +10,7 @@ use Oro\Bundle\WebCatalogBundle\Form\Type\ContentNodeSelectType;
 use Oro\Bundle\WebCatalogBundle\JsTree\ContentNodeTreeHandler;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType as EntityIdentifierTypeStub;
-use Symfony\Component\Form\PreloadedExtension;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
 class ContentNodeSelectTypeTest extends FormIntegrationTestCase
@@ -18,7 +18,7 @@ class ContentNodeSelectTypeTest extends FormIntegrationTestCase
     use EntityTrait;
 
     /**
-     * @var ContentNodeTreeHandler|\PHPUnit_Framework_MockObject_MockObject
+     * @var ContentNodeTreeHandler|\PHPUnit\Framework\MockObject\MockObject
      */
     private $treeHandler;
 
@@ -29,12 +29,11 @@ class ContentNodeSelectTypeTest extends FormIntegrationTestCase
 
     protected function setUp()
     {
-        parent::setUp();
-
         $this->treeHandler = $this->getMockBuilder(ContentNodeTreeHandler::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->formType = new ContentNodeSelectType($this->treeHandler);
+        parent::setUp();
     }
 
     /**
@@ -51,16 +50,12 @@ class ContentNodeSelectTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    EntityIdentifierType::NAME => $entityIdentifierType,
+                    ContentNodeSelectType::class => $this->formType,
+                    EntityIdentifierType::class => $entityIdentifierType,
                 ],
                 []
             )
         ];
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals(ContentNodeSelectType::NAME, $this->formType->getName());
     }
 
     public function testGetBlockPrefix()
@@ -89,7 +84,10 @@ class ContentNodeSelectTypeTest extends FormIntegrationTestCase
             ->with($root, true)
             ->willReturn($treeData);
 
-        $form = $this->factory->create($this->formType, null, ['web_catalog' => $webCatalog, 'tree_key' => 'test']);
+        $form = $this->factory->create(ContentNodeSelectType::class, null, [
+            'web_catalog' => $webCatalog,
+            'tree_key' => 'test'
+        ]);
         $form->submit(null);
         $view = $form->createView();
 

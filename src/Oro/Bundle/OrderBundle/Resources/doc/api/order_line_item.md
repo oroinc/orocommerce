@@ -12,8 +12,6 @@ Retrieve a specific order line item record.
 
 Retrieve a collection of order line item records.
 
-The list of records that will be returned, could be limited by filters.
-
 {@inheritdoc}
 
 ### create
@@ -26,8 +24,6 @@ The created record is returned in the response.
 
 {@request:json_api}
 Example:
-
-`</admin/api/orderlineitems>`
 
 ```JSON
 {
@@ -77,8 +73,6 @@ The updated record is returned in the response.
 {@request:json_api}
 Example:
 
-`</admin/api/orderlineitems/1>`
-
 ```JSON
 {
   "data": {
@@ -118,8 +112,6 @@ Delete a specific order line item record.
 ### delete_list
 
 Delete a collection of line item records.
-
-The list of records that will be deleted, could be limited by filters.
 
 {@inheritdoc}
 
@@ -224,8 +216,6 @@ Replace order a specific line item record is assigned to.
 {@request:json_api}
 Example:
 
-`</admin/api/orderlineitems/1/relationships/order>`
-
 ```JSON
 {
   "data": {
@@ -252,8 +242,6 @@ Replace the parent product assigned to a specific line item record.
 
 {@request:json_api}
 Example:
-
-`</admin/api/orderlineitems/1/relationships/parentProduct>`
 
 ```JSON
 {
@@ -282,8 +270,6 @@ Replace the product assigned to a specific line item record.
 {@request:json_api}
 Example:
 
-`</admin/api/orderlineitems/1/relationships/product>`
-
 ```JSON
 {
   "data": {
@@ -311,8 +297,6 @@ Replace the product unit assigned to a specific line item record.
 {@request:json_api}
 Example:
 
-`</admin/api/orderlineitems/1/relationships/productUnit>`
-
 ```JSON
 {
   "data": {
@@ -339,8 +323,6 @@ Replace warehouse a specific line item record is assigned to.
 
 {@request:json_api}
 Example:
-
-`</admin/api/orderlineitems/1/relationships/warehouse>`
 
 ```JSON
 {

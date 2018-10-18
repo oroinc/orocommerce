@@ -11,10 +11,10 @@ use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider;
 use Symfony\Bundle\FrameworkBundle\Tests\Templating\Helper\Fixtures\StubTranslator;
 use Symfony\Component\Translation\TranslatorInterface;
 
-class PaymentTermViewTest extends \PHPUnit_Framework_TestCase
+class PaymentTermViewTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var PaymentTermProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var PaymentTermProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $paymentTermProvider;
 
@@ -29,7 +29,7 @@ class PaymentTermViewTest extends \PHPUnit_Framework_TestCase
     protected $methodView;
 
     /**
-     * @var PaymentTermConfigInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var PaymentTermConfigInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $paymentConfig;
 
@@ -55,7 +55,7 @@ class PaymentTermViewTest extends \PHPUnit_Framework_TestCase
     {
         $customer = $this->createMock(Customer::class);
 
-        /** @var PaymentContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
+        /** @var PaymentContextInterface|\PHPUnit\Framework\MockObject\MockObject $context */
         $context = $this->createMock(PaymentContextInterface::class);
         $context->expects(static::any())
             ->method('getCustomer')
@@ -76,7 +76,7 @@ class PaymentTermViewTest extends \PHPUnit_Framework_TestCase
 
         $customer = $this->createMock(Customer::class);
 
-        /** @var PaymentContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
+        /** @var PaymentContextInterface|\PHPUnit\Framework\MockObject\MockObject $context */
         $context = $this->createMock(PaymentContextInterface::class);
         $context->expects(static::any())
             ->method('getCustomer')
@@ -95,7 +95,7 @@ class PaymentTermViewTest extends \PHPUnit_Framework_TestCase
 
     public function testGetOptionsNullCustomer()
     {
-        /** @var PaymentContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
+        /** @var PaymentContextInterface|\PHPUnit\Framework\MockObject\MockObject $context */
         $context = $this->createMock(PaymentContextInterface::class);
         $context->expects(static::once())
             ->method('getCustomer')

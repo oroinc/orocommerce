@@ -8,7 +8,7 @@ use Oro\Bundle\InventoryBundle\Form\Extension\ProductQuantityToOrderFormExtensio
 use Oro\Bundle\InventoryBundle\Tests\Unit\Form\Extension\Stub\ProductStub;
 use Symfony\Component\Form\FormBuilderInterface;
 
-class ProductQuantityToOrderFormExtensionTest extends \PHPUnit_Framework_TestCase
+class ProductQuantityToOrderFormExtensionTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var ProductQuantityToOrderFormExtension
@@ -22,7 +22,7 @@ class ProductQuantityToOrderFormExtensionTest extends \PHPUnit_Framework_TestCas
 
     public function testBuildForm()
     {
-        /** @var FormBuilderInterface|\PHPUnit_Framework_MockObject_MockObject $builder * */
+        /** @var FormBuilderInterface|\PHPUnit\Framework\MockObject\MockObject $builder * */
         $builder = $this->createMock(FormBuilderInterface::class);
         $product = new ProductStub();
         $builder->expects($this->once())

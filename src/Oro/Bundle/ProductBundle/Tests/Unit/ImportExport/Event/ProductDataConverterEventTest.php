@@ -4,7 +4,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\ImportExport\Event;
 
 use Oro\Bundle\ProductBundle\ImportExport\Event\ProductDataConverterEvent;
 
-class ProductDataConverterEventTest extends \PHPUnit_Framework_TestCase
+class ProductDataConverterEventTest extends \PHPUnit\Framework\TestCase
 {
     public function testEvent()
     {

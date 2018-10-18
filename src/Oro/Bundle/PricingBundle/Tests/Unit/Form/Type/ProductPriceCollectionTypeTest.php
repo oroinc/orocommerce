@@ -13,7 +13,6 @@ use Oro\Bundle\FormBundle\Autocomplete\SearchRegistry;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\FormBundle\Form\Type\OroEntitySelectOrCreateInlineType;
 use Oro\Bundle\FormBundle\Form\Type\OroJquerySelect2HiddenType;
-use Oro\Bundle\FormBundle\Form\Type\Select2Type;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
 use Oro\Bundle\PricingBundle\Form\Type\PriceListSelectType;
@@ -28,7 +27,8 @@ use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 use Oro\Component\Testing\Unit\Form\Extension\Stub\FormTypeValidatorExtensionStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-use Symfony\Component\Form\PreloadedExtension;
+use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class ProductPriceCollectionTypeTest extends FormIntegrationTestCase
@@ -43,7 +43,7 @@ class ProductPriceCollectionTypeTest extends FormIntegrationTestCase
     protected $formType;
 
     /**
-     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $registry;
 
@@ -52,13 +52,12 @@ class ProductPriceCollectionTypeTest extends FormIntegrationTestCase
      */
     protected function setUp()
     {
-        parent::setUp();
-
         $this->registry = $this->createMock(ManagerRegistry::class);
 
         $this->formType = new ProductPriceCollectionType($this->registry);
         $this->formType->setDataClass(ProductPrice::class);
         $this->formType->setPriceListClass(self::PRICE_LIST_CLASS);
+        parent::setUp();
     }
 
     /**
@@ -74,19 +73,19 @@ class ProductPriceCollectionTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
-        /** @var AuthorizationCheckerInterface|\PHPUnit_Framework_MockObject_MockObject $authorizationChecker */
+        /** @var AuthorizationCheckerInterface|\PHPUnit\Framework\MockObject\MockObject $authorizationChecker */
         $authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
 
-        /** @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject $authorizationChecker */
+        /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject $authorizationChecker */
         $configManager = $this->createMock(ConfigManager::class);
 
-        /** @var EntityManager|\PHPUnit_Framework_MockObject_MockObject $authorizationChecker */
+        /** @var EntityManager|\PHPUnit\Framework\MockObject\MockObject $authorizationChecker */
         $entityManager = $this->createMock(EntityManager::class);
 
-        /** @var SearchRegistry|\PHPUnit_Framework_MockObject_MockObject $authorizationChecker */
+        /** @var SearchRegistry|\PHPUnit\Framework\MockObject\MockObject $authorizationChecker */
         $searchRegistry = $this->createMock(SearchRegistry::class);
 
-        /** @var ConfigProvider|\PHPUnit_Framework_MockObject_MockObject $authorizationChecker */
+        /** @var ConfigProvider|\PHPUnit\Framework\MockObject\MockObject $authorizationChecker */
         $configProvider = $this->createMock(ConfigProvider::class);
 
         $productUnitSelection = new ProductUnitSelectionTypeStub(
@@ -99,31 +98,28 @@ class ProductPriceCollectionTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    CollectionType::NAME => new CollectionType(),
-                    ProductPriceType::NAME => new ProductPriceType(),
-                    PriceListSelectType::NAME => new PriceListSelectTypeStub(),
-                    OroEntitySelectOrCreateInlineType::NAME => new OroEntitySelectOrCreateInlineType(
+                    ProductPriceCollectionType::class => $this->formType,
+                    CollectionType::class => new CollectionType(),
+                    ProductPriceType::class => new ProductPriceType(),
+                    PriceListSelectType::class => new PriceListSelectTypeStub(),
+                    OroEntitySelectOrCreateInlineType::class => new OroEntitySelectOrCreateInlineType(
                         $authorizationChecker,
                         $configManager,
                         $entityManager,
                         $searchRegistry
                     ),
-                    ProductPriceUnitSelectorType::NAME => $productUnitSelection,
-                    OroJquerySelect2HiddenType::NAME => new OroJquerySelect2HiddenType(
+                    ProductPriceUnitSelectorType::class => $productUnitSelection,
+                    OroJquerySelect2HiddenType::class => new OroJquerySelect2HiddenType(
                         $entityManager,
                         $searchRegistry,
                         $configProvider
                     ),
-                    'oro_select2_hidden' => new Select2Type(
-                        'Symfony\Component\Form\Extension\Core\Type\HiddenType',
-                        'oro_select2_hidden'
-                    ),
-                    PriceType::NAME => $priceType,
-                    QuantityType::NAME => $this->getQuantityType(),
-                    CurrencySelectionType::NAME => new CurrencySelectionTypeStub()
+                    PriceType::class => $priceType,
+                    QuantityType::class => $this->getQuantityType(),
+                    CurrencySelectionType::class => new CurrencySelectionTypeStub()
                 ],
                 [
-                    'form' => [
+                    FormType::class => [
                         new FormTypeValidatorExtensionStub()
                     ]
                 ]
@@ -134,21 +130,15 @@ class ProductPriceCollectionTypeTest extends FormIntegrationTestCase
     public function testGetParent()
     {
         $this->assertInternalType('string', $this->formType->getParent());
-        $this->assertEquals(CollectionType::NAME, $this->formType->getParent());
-    }
-
-    public function testGetName()
-    {
-        $this->assertInternalType('string', $this->formType->getName());
-        $this->assertEquals(ProductPriceCollectionType::NAME, $this->formType->getName());
+        $this->assertEquals(CollectionType::class, $this->formType->getParent());
     }
 
     public function testConfigureOptions()
     {
-        $form = $this->factory->create($this->formType);
+        $form = $this->factory->create(ProductPriceCollectionType::class);
 
         $expectedOptions = [
-            'entry_type' => ProductPriceType::NAME,
+            'entry_type' => ProductPriceType::class,
             'show_form_when_empty' => false,
             'entry_options' => ['data_class' => ProductPrice::class]
         ];
@@ -174,7 +164,7 @@ class ProductPriceCollectionTypeTest extends FormIntegrationTestCase
             ->with(self::PRICE_LIST_CLASS)
             ->will($this->returnValue($repository));
 
-        $form = $this->factory->create($this->formType);
+        $form = $this->factory->create(ProductPriceCollectionType::class);
         $view = $form->createView();
 
         $this->assertEquals(

@@ -7,15 +7,15 @@ use Oro\Bundle\ProductBundle\Event\RestrictProductVariantEvent;
 use Oro\Bundle\VisibilityBundle\EventListener\RestrictProductVariantEventVisibilityListener;
 use Oro\Bundle\VisibilityBundle\Model\ProductVisibilityQueryBuilderModifier;
 
-class RestrictProductVariantEventVisibilityListenerTest extends \PHPUnit_Framework_TestCase
+class RestrictProductVariantEventVisibilityListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var ProductVisibilityQueryBuilderModifier|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ProductVisibilityQueryBuilderModifier|\PHPUnit\Framework\MockObject\MockObject */
     private $modifier;
 
     /** @var RestrictProductVariantEventVisibilityListener */
     private $listener;
 
-    /** @var RestrictProductVariantEvent|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var RestrictProductVariantEvent|\PHPUnit\Framework\MockObject\MockObject */
     private $event;
 
     /**

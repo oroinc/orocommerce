@@ -5,15 +5,15 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Provider;
 use Oro\Bundle\MultiWebsiteBundle\Provider\WebsiteCurrencyProvider;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 
-abstract class AbstractSubtotalProviderTest extends \PHPUnit_Framework_TestCase
+abstract class AbstractSubtotalProviderTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var UserCurrencyManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var UserCurrencyManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $currencyManager;
 
     /**
-     * @var WebsiteCurrencyProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var WebsiteCurrencyProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $websiteCurrencyProvider;
 

@@ -57,7 +57,7 @@ Feature: Show Assigned Coupons in Promotion view page
     Given I click on "Export Grid"
     And click on "CSV"
     Then I should see "Export started successfully. You will receive email notification upon completion." flash message
-    And Email should contains the following "Export performed successfully. 3 were exported. Download" text
+    And Email should contains the following "Grid export performed successfully. Download" text
 
   Scenario: Should be ability for bulk delete coupons
     Given I check first 2 records in "Assigned Coupons Grid"

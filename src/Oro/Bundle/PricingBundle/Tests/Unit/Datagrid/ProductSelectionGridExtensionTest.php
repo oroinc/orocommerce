@@ -13,18 +13,18 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
-class ProductSelectionGridExtensionTest extends \PHPUnit_Framework_TestCase
+class ProductSelectionGridExtensionTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var TokenStorageInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var TokenStorageInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $tokenStorage;
 
-    /** @var FrontendProductListModifier|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var FrontendProductListModifier|\PHPUnit\Framework\MockObject\MockObject */
     protected $productListModifier;
 
     /** @var ProductSelectionGridExtension */
     protected $extension;
 
-    /** @var  Request|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var  Request|\PHPUnit\Framework\MockObject\MockObject */
     protected $request;
 
     protected function setUp()
@@ -37,7 +37,7 @@ class ProductSelectionGridExtensionTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $this->request = $this->createMock('Symfony\Component\HttpFoundation\Request');
-        /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
+        /** @var RequestStack|\PHPUnit\Framework\MockObject\MockObject $requestStack */
         $requestStack = $this->createMock('Symfony\Component\HttpFoundation\RequestStack');
         $requestStack->expects($this->any())->method('getCurrentRequest')->willReturn($this->request);
 
@@ -57,7 +57,7 @@ class ProductSelectionGridExtensionTest extends \PHPUnit_Framework_TestCase
      */
     public function testIsApplicable($gridName, $token, $expected)
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridConfiguration $config */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|DatagridConfiguration $config */
         $config = $this->getMockBuilder('Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration')
             ->disableOriginalConstructor()
             ->getMock();
@@ -86,7 +86,7 @@ class ProductSelectionGridExtensionTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param bool $getUser
-     * @return \PHPUnit_Framework_MockObject_MockObject|TokenInterface
+     * @return \PHPUnit\Framework\MockObject\MockObject|TokenInterface
      */
     protected function getTockenMock($getUser = false)
     {
@@ -120,7 +120,7 @@ class ProductSelectionGridExtensionTest extends \PHPUnit_Framework_TestCase
         $token->expects($this->any())
             ->method('getUser')
             ->will($this->returnValue(new CustomerUser()));
-        /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridConfiguration $config */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|DatagridConfiguration $config */
         $config = $this->getMockBuilder('Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration')
             ->disableOriginalConstructor()
             ->getMock();
@@ -135,7 +135,7 @@ class ProductSelectionGridExtensionTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|OrmDatasource $dataSource */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|OrmDatasource $dataSource */
         $dataSource = $this->getMockBuilder('Oro\Bundle\DataGridBundle\Datasource\Orm\OrmDatasource')
             ->disableOriginalConstructor()
             ->getMock();

@@ -24,7 +24,7 @@ Import:
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'layout.html.twig'
+            themes: 'AcmeProductBundle:layouts:default/imports/oro_product_view/layout.html.twig'
 
         - '@addTree':
             items:
@@ -241,7 +241,7 @@ layout:
 
     actions:
         - '@setBlockTheme':
-            themes: 'configurable_product.html.twig'
+            themes: 'AcmeProductBundle:layouts:default/oro_product_frontend_product_view/configurable_product.html.twig'
 
         - '@add':
             id: product_variants
@@ -384,7 +384,7 @@ The result is:
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'headlamps.html.twig'
+            themes: 'AcmeProductBundle:layouts:default/oro_product_frontend_product_view/headlamps.html.twig'
 
         - '@add':
             id: product_sale_banner
@@ -424,7 +424,7 @@ The result is:
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'furniture.html.twig'
+            themes: 'AcmeProductBundle:layouts:default/oro_product_frontend_product_view/furniture.html.twig'
 
         - '@add':
             id: product_sale_banner
@@ -510,7 +510,7 @@ layout:
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'layout.html.twig'
+            themes: 'AcmeProductBundle:layouts:default/oro_product_frontend_product_view/page_template/additional/layout.html.twig'
         - '@add':
             id: product_view_banner
             blockType: block

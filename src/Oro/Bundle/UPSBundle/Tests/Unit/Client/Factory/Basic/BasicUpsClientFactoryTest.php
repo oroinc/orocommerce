@@ -7,15 +7,15 @@ use Oro\Bundle\IntegrationBundle\Provider\Rest\Client\RestClientInterface;
 use Oro\Bundle\UPSBundle\Client\Factory\Basic\BasicUpsClientFactory;
 use Oro\Bundle\UPSBundle\Client\Url\Provider\UpsClientUrlProviderInterface;
 
-class BasicUpsClientFactoryTest extends \PHPUnit_Framework_TestCase
+class BasicUpsClientFactoryTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var RestClientFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var RestClientFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $restClientFactoryMock;
 
     /**
-     * @var UpsClientUrlProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var UpsClientUrlProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $upsClientUrlProviderMock;
 

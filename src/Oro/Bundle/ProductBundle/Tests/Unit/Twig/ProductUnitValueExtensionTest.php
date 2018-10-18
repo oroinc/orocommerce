@@ -3,15 +3,15 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Twig;
 
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-use Oro\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter;
+use Oro\Bundle\ProductBundle\Formatter\UnitValueFormatterInterface;
 use Oro\Bundle\ProductBundle\Twig\ProductUnitValueExtension;
 use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
 
-class ProductUnitValueExtensionTest extends \PHPUnit_Framework_TestCase
+class ProductUnitValueExtensionTest extends \PHPUnit\Framework\TestCase
 {
     use TwigExtensionTestCaseTrait;
 
-    /** @var ProductUnitValueFormatter|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var UnitValueFormatterInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $formatter;
 
     /** @var ProductUnitValueExtension */
@@ -19,9 +19,7 @@ class ProductUnitValueExtensionTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->formatter = $this->getMockBuilder(ProductUnitValueFormatter::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->formatter = $this->createMock(UnitValueFormatterInterface::class);
 
         $container = self::getContainerBuilder()
             ->add('oro_product.formatter.product_unit_value', $this->formatter)

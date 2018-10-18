@@ -1,5 +1,4 @@
-Low Inventory Highlights
-========================
+# Low Inventory Highlights
 
 * [Overview](#overview)
 * [Configuration](#configuration)
@@ -15,6 +14,7 @@ Low Inventory Highlights
     * [LowInventoryCheckoutLineItemValidator](#lowinventorycheckoutlineitemvalidator)
 
 ## Overview
+
 The low inventory highlights functionality adds an inventory status message to products when their quantity drops below the value defined in Low Inventory Threshold. Reaching the defined Low Inventory Threshold level triggers a warning message to the buyer in the front store.
 
 ## Configuration
@@ -26,12 +26,12 @@ product_inventory_options:
         - oro_inventory.low_inventory_threshold
 ```
 
-The `oro_inventory.highlight_low_inventory` option should be used to enable highlighting low inventory for products. Contains `true` or `false`
-When the quantity of the product is lower than or equals the value of the `oro_inventory.low_inventory_threshold` option, then the product will be highlighted as low inventory in the front store.
+The `oro_inventory.highlight_low_inventory` option should be used to enable highlighting low inventory for products. Contains the `true` or `false` values.
+When the quantity of the product is lower than or equals the value of the `oro_inventory.low_inventory_threshold` option, then the product gets highlighted as low inventory in the front store.
 
 ## Options
 
-Two new options were added for products and category. These options are `highlightLowInventory` and `lowInventoryThreshold`.
+Two new options were added for products and categories. These options are `highlightLowInventory` and `lowInventoryThreshold`.
 These options help configure options for each category or product individually. By default, these options use the value from the system configuration.
 To check the currently configured fallback for product or category, please use [Oro\Bundle\EntityBundle\Fallback\EntityFallbackResolver](../../../../../../../platform/src/Oro/Bundle/EntityBundle/Fallback/EntityFallbackResolver.php).
 Example:
@@ -52,7 +52,7 @@ This listener contains the method that adds information about low inventory to t
 
 #### onPreBuild
 
-This method is called before the grid is built. It adds a new property `low_inventory` to the grid configuration, so it would be possible to add low inventory information to the property and display it in the layout when required.
+This method is called before the grid is built. It adds a new `low_inventory` property to the grid configuration that enables adding the low inventory information to the property and thus, displaying it in the layout when required.
 
 #### onResultAfter
 
@@ -71,22 +71,23 @@ The following is an [example](../views/layouts/default/imports/oro_product_grid/
 
 ### LowInventoryCheckoutLineItemValidationListener
 
-Class [Oro\Bundle\InventoryBundle\EventListener\LowInventoryCheckoutLineItemValidationListener](../../EventListener/LowInventoryCheckoutLineItemValidationListener.php)
+The [Oro\Bundle\InventoryBundle\EventListener\LowInventoryCheckoutLineItemValidationListener](../../EventListener/LowInventoryCheckoutLineItemValidationListener.php) class.
 This listener contains a method that checks low inventory for line item products and adds a warning message if a product has low quantity.
 
 #### onLineItemValidate
+
 ```php
 public function onLineItemValidate(LineItemValidateEvent $event)
 ```
-It validates the product from the line item and adds a warning message if this product has low inventory level.
+It validates the product from the line item and adds a warning message if this product has a low inventory level.
 
 ## Providers
 
 ### LowInventoryProvider
 
-Class [Oro\Bundle\InventoryBundle\Inventory\LowInventoryProvider](../../Inventory/LowInventoryProvider.php)
+The [Oro\Bundle\InventoryBundle\Inventory\LowInventoryProvider](../../Inventory/LowInventoryProvider.php) class.
 
-This class contains a method that helps you quickly get information about low quantity for the current product or product collection
+This class contains a method that helps you quickly get information about low quantity for the current product or product collection.
 
 #### isLowInventoryProduct
 
@@ -121,15 +122,15 @@ This method returns information about the low inventory status of the current pr
  public function isLowInventoryCollection(array $data)
 ```
 
-It works in the same way as [isLowInventoryProduct](#islowinventoryproduct) method, but has differences in taken up arguments and returned value.
-This method takes an argument as an array of [Product](../../../ProductBundle/Entity/Product.php) and [ProductUnit](../../../ProductBundle/Entity/ProductUnit.php) entities and returns an array of product ids with  a boolean result.
+It works in the same way as the [isLowInventoryProduct](#islowinventoryproduct) method, but has differences in taken up arguments and returned value.
+This method takes an argument as an array of the [Product](../../../ProductBundle/Entity/Product.php) and [ProductUnit](../../../ProductBundle/Entity/ProductUnit.php) entities and returns an array of product ids with  a boolean result.
 `True`  is returned if the quantity of the product is less than the `lowInventoryThreshold` option.  `False` is returned if the quantity of the product is greater than the `lowInventoryThreshold` option, or if `highlightLowInventory` is not checked. 
 
 ## Twig Extensions
 
 ### LowInventoryExtension
 
-Class [Oro\Bundle\InventoryBundle\Twig\LowInventoryExtension](../../Twig/LowInventoryExtension.php).
+The [Oro\Bundle\InventoryBundle\Twig\LowInventoryExtension](../../Twig/LowInventoryExtension.php) class.
 
 This extension depends on [LowInventoryProvider](#lowinventoryprovider) and provides the oro_is_low_inventory_product twig function which is used in twig templates to check low inventory for a specific product.
 The following is an example of using this function in twig templates:
@@ -144,10 +145,11 @@ The following is an example of using this function in twig templates:
 
 ### LowInventoryCheckoutLineItemValidator
 
-Class [Oro\Bundle\InventoryBundle\Validator\LowInventoryCheckoutLineItemValidator](../../Validator/LowInventoryCheckoutLineItemValidator.php)
+The [Oro\Bundle\InventoryBundle\Validator\LowInventoryCheckoutLineItemValidator](../../Validator/LowInventoryCheckoutLineItemValidator.php) class.
 This class contains a method that returns a message if a product has low quantity.
 
 #### getLowInventoryMessage
+
 ```php
 public function getLowInventoryMessage(LineItem $lineItem)
 ```

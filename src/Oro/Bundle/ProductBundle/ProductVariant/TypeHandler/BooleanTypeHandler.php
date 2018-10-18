@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\ProductVariant\TypeHandler;
 
 use Oro\Bundle\ProductBundle\ProductVariant\Registry\ProductVariantTypeHandlerInterface;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormFactory;
 
 class BooleanTypeHandler implements ProductVariantTypeHandlerInterface
@@ -30,7 +31,7 @@ class BooleanTypeHandler implements ProductVariantTypeHandlerInterface
             $options
         );
 
-        return $this->formFactory->createNamed($fieldName, 'choice', null, $options);
+        return $this->formFactory->createNamed($fieldName, ChoiceType::class, null, $options);
     }
 
     /**
@@ -60,8 +61,6 @@ class BooleanTypeHandler implements ProductVariantTypeHandlerInterface
                 'No' => false,
                 'Yes' => true,
             ],
-            // TODO: Remove 'choices_as_values' option in scope of BAP-15236
-            'choices_as_values' => true,
             'choice_attr' => $choiceAttrCallback,
             'auto_initialize' => false
         ];

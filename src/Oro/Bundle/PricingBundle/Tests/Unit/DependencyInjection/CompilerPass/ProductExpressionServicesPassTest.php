@@ -8,7 +8,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
 
-class ProductExpressionServicesPassTest extends \PHPUnit_Framework_TestCase
+class ProductExpressionServicesPassTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var ProductExpressionServicesPass
@@ -16,7 +16,7 @@ class ProductExpressionServicesPassTest extends \PHPUnit_Framework_TestCase
     protected $compilerPass;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ContainerBuilder
+     * @var \PHPUnit\Framework\MockObject\MockObject|ContainerBuilder
      */
     protected $container;
 

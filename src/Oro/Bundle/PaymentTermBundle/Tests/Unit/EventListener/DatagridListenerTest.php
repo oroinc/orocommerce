@@ -13,15 +13,15 @@ use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermAssociationProvider;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider;
 use Oro\Bundle\PaymentTermBundle\Tests\Unit\PaymentTermAwareStub;
 
-class DatagridListenerTest extends \PHPUnit_Framework_TestCase
+class DatagridListenerTest extends \PHPUnit\Framework\TestCase
 {
     /** @var DatagridListener */
     private $listener;
 
-    /** @var PaymentTermProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var PaymentTermProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $provider;
 
-    /** @var PaymentTermAssociationProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var PaymentTermAssociationProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $associationProvider;
 
     protected function setUp()
@@ -36,7 +36,7 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testOnBuildBeforeWithoutExtendClass()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $datagrid */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|DatagridInterface $datagrid */
         $datagrid = $this->createMock(DatagridInterface::class);
         $config = DatagridConfiguration::create([]);
 
@@ -49,7 +49,7 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testOnBuildBeforeWithoutAssociationNames()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $datagrid */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|DatagridInterface $datagrid */
         $datagrid = $this->createMock(DatagridInterface::class);
         $config = DatagridConfiguration::create(
             ['extended_entity_name' => \stdClass::class]
@@ -64,7 +64,7 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testOnBuildBeforeWithAssociationNames()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $datagrid */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|DatagridInterface $datagrid */
         $datagrid = $this->createMock(DatagridInterface::class);
         $config = DatagridConfiguration::create(
             ['extended_entity_name' => \stdClass::class]
@@ -93,7 +93,7 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testOnResultAfterWithoutExtendClass()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $datagrid */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|DatagridInterface $datagrid */
         $datagrid = $this->createMock(DatagridInterface::class);
         $config = DatagridConfiguration::create([]);
         $datagrid->expects($this->once())->method('getConfig')->willReturn($config);
@@ -110,7 +110,7 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testOnResultAfterWithoutAssociationNames()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $datagrid */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|DatagridInterface $datagrid */
         $datagrid = $this->createMock(DatagridInterface::class);
         $config = DatagridConfiguration::create(
             ['extended_entity_name' => \stdClass::class]
@@ -126,7 +126,7 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testOnResultAfterNotResultRecord()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $datagrid */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|DatagridInterface $datagrid */
         $datagrid = $this->createMock(DatagridInterface::class);
         $config = DatagridConfiguration::create(
             ['extended_entity_name' => \stdClass::class]
@@ -142,7 +142,7 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testOnResultAfterNotCustomerOwner()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $datagrid */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|DatagridInterface $datagrid */
         $datagrid = $this->createMock(DatagridInterface::class);
         $config = DatagridConfiguration::create(
             ['extended_entity_name' => \stdClass::class]
@@ -158,7 +158,7 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testOnResultWithCustomerOwner()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $datagrid */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|DatagridInterface $datagrid */
         $datagrid = $this->createMock(DatagridInterface::class);
         $config = DatagridConfiguration::create(
             ['extended_entity_name' => \stdClass::class]

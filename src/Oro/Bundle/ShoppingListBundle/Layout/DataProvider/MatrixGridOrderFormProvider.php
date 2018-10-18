@@ -7,8 +7,8 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Form\Type\MatrixCollectionType;
 use Oro\Bundle\ShoppingListBundle\Manager\MatrixGridOrderManager;
-use Symfony\Bridge\Twig\Form\TwigRenderer;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormRenderer;
 use Symfony\Component\Form\FormView;
 
 class MatrixGridOrderFormProvider extends AbstractFormProvider
@@ -21,7 +21,7 @@ class MatrixGridOrderFormProvider extends AbstractFormProvider
     private $matrixOrderManager;
 
     /**
-     * @var TwigRenderer
+     * @var FormRenderer
      */
     private $twigRenderer;
 
@@ -34,9 +34,9 @@ class MatrixGridOrderFormProvider extends AbstractFormProvider
     }
 
     /**
-     * @param TwigRenderer $twigRenderer
+     * @param FormRenderer $twigRenderer
      */
-    public function setTwigRenderer(TwigRenderer $twigRenderer)
+    public function setTwigRenderer(FormRenderer $twigRenderer)
     {
         $this->twigRenderer = $twigRenderer;
     }

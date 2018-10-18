@@ -24,22 +24,22 @@ class PriceAttributeProductPriceImportResetStrategyTest extends TestCase
     const DELETED_COUNT = 5;
 
     /**
-     * @var FieldHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var FieldHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     private $fieldHelper;
 
     /**
-     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     private $doctrineHelper;
 
     /**
-     * @var ContextInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ContextInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $context;
 
     /**
-     * @var DatabaseHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var DatabaseHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $databaseHelper;
 

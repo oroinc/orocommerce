@@ -15,12 +15,12 @@ class RemoveFromConfigurationPriceListEntityListenerTest extends TestCase
     use EntityTrait;
 
     /**
-     * @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $configManager;
 
     /**
-     * @var PriceListConfigConverter|\PHPUnit_Framework_MockObject_MockObject
+     * @var PriceListConfigConverter|\PHPUnit\Framework\MockObject\MockObject
      */
     private $configConverter;
 

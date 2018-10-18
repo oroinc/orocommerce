@@ -29,6 +29,8 @@ class WebCatalogBreadcrumbProviderTest extends WebTestCase
                 LoadWebCatalogCategoryVariantsData::class
             ]
         );
+
+        $this->getContainer()->get('oro_website_search.indexer')->reindex();
     }
 
     /**
@@ -63,6 +65,33 @@ class WebCatalogBreadcrumbProviderTest extends WebTestCase
         }
 
         $this->assertCount($expectedCount, $breadcrumbs);
+    }
+
+    public function testGetItemsByProducWithBaseUrl()
+    {
+        //Emulate subfolder request
+        $crawler = $this->client->request(
+            'GET',
+            '/custom/base/url/app.php/' . LoadContentNodesData::CATALOG_1_ROOT_SUBNODE_1_1,
+            [],
+            [],
+            [
+                'SCRIPT_NAME' => '/custom/base/url/app.php',
+                'SCRIPT_FILENAME' => 'app.php'
+            ]
+        );
+
+        $breadcrumbUrls = [];
+
+        /** @var $item \DOMElement */
+        foreach ($crawler->filter('.breadcrumbs__item a') as $key => $item) {
+            $breadcrumbUrls[] = $item->getAttribute('href');
+        }
+
+        self::assertCount(3, $breadcrumbUrls);
+        self::assertContains('/custom/base/url/app.php/', $breadcrumbUrls[0]);
+        self::assertContains('/custom/base/url/app.php/', $breadcrumbUrls[1]);
+        self::assertContains('/custom/base/url/app.php/', $breadcrumbUrls[2]);
     }
 
     /**

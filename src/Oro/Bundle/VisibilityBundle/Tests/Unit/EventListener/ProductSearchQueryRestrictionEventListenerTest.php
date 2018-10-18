@@ -8,7 +8,7 @@ use Oro\Bundle\SearchBundle\Query\Modifier\QueryModifierInterface;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\VisibilityBundle\EventListener\ProductSearchQueryRestrictionEventListener;
 
-class ProductSearchQueryRestrictionEventListenerTest extends \PHPUnit_Framework_TestCase
+class ProductSearchQueryRestrictionEventListenerTest extends \PHPUnit\Framework\TestCase
 {
     public function testOnSearchQueryWithFrontendRequest()
     {
@@ -33,11 +33,11 @@ class ProductSearchQueryRestrictionEventListenerTest extends \PHPUnit_Framework_
     /**
      * @param bool $isFrontendRequest
      *
-     * @return FrontendHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @return FrontendHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     private function getFrontendHelper($isFrontendRequest = true)
     {
-        /** @var FrontendHelper|\PHPUnit_Framework_MockObject_MockObject $frontendHelper */
+        /** @var FrontendHelper|\PHPUnit\Framework\MockObject\MockObject $frontendHelper */
         $frontendHelper = $this->getMockBuilder(FrontendHelper::class)
             ->disableOriginalConstructor()->getMock();
 
@@ -50,13 +50,13 @@ class ProductSearchQueryRestrictionEventListenerTest extends \PHPUnit_Framework_
     }
 
     /**
-     * @param \PHPUnit_Framework_MockObject_Matcher_InvokedCount $expectedToBeCalled
+     * @param \PHPUnit\Framework\MockObject\Matcher\InvokedCount $expectedToBeCalled
      *
-     * @return QueryModifierInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return QueryModifierInterface|\PHPUnit\Framework\MockObject\MockObject
      */
-    private function getQueryModifier(\PHPUnit_Framework_MockObject_Matcher_InvokedCount $expectedToBeCalled)
+    private function getQueryModifier(\PHPUnit\Framework\MockObject\Matcher\InvokedCount $expectedToBeCalled)
     {
-        /** @var QueryModifierInterface|\PHPUnit_Framework_MockObject_MockObject $queryModifier */
+        /** @var QueryModifierInterface|\PHPUnit\Framework\MockObject\MockObject $queryModifier */
         $queryModifier = $this->getMockBuilder(QueryModifierInterface::class)->getMock();
 
         $queryModifier

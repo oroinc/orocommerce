@@ -5,7 +5,7 @@ namespace Oro\Bundle\PaymentBundle\Tests\Unit\Extension\Action\Actions;
 use Oro\Bundle\DataGridBundle\Extension\Action\ActionConfiguration;
 use Oro\Bundle\PaymentBundle\Extension\Action\Actions\PaymentDeleteAction;
 
-class PaymentDeleteActionTest extends \PHPUnit_Framework_TestCase
+class PaymentDeleteActionTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @param array $options

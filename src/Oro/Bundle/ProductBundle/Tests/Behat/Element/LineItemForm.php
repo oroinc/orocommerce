@@ -9,7 +9,7 @@ class LineItemForm extends EntityPage
 {
     const SELECTOR_ITEM_LABEL = '.form-row label';
 
-    /*
+    /**
      * {@inheritdoc}
      */
     public function assertPageContainsValue($label, $value)
@@ -31,7 +31,7 @@ class LineItemForm extends EntityPage
         }
 
         if (!$rowValueOption->isSelected()) {
-            self::fail(sprintf('Value "%s" is not selected', $label, $value));
+            self::fail(sprintf('Value "%s" is not selected', $label));
         }
     }
 }

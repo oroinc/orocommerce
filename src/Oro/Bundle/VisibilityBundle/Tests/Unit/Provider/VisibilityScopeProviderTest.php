@@ -13,10 +13,10 @@ use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
 use Oro\Bundle\VisibilityBundle\Provider\VisibilityScopeProvider;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
-class VisibilityScopeProviderTest extends \PHPUnit_Framework_TestCase
+class VisibilityScopeProviderTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ScopeManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ScopeManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $scopeManager;
 

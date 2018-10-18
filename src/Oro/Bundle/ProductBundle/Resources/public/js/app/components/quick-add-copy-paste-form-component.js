@@ -38,7 +38,14 @@ define(function(require) {
         validator: null,
 
         /**
-         * {@inheritDoc}
+         * @inheritDoc
+         */
+        constructor: function QuickAddCopyPasteFormComponent() {
+            QuickAddCopyPasteFormComponent.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
          */
         initialize: function(options) {
             QuickAddCopyPasteFormComponent.__super__.initialize.apply(this, arguments);

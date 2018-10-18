@@ -4,7 +4,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Visibility;
 
 use Oro\Bundle\ProductBundle\Visibility\BasicUnitVisibility;
 
-class BasicUnitVisibilityTest extends \PHPUnit_Framework_TestCase
+class BasicUnitVisibilityTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var BasicUnitVisibility

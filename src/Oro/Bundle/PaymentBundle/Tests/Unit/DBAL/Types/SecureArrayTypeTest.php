@@ -3,16 +3,17 @@
 namespace Oro\Bundle\PaymentBundle\Tests\Unit\DBAL\Types;
 
 use Oro\Bundle\PaymentBundle\DBAL\Types\SecureArrayType;
-use Oro\Bundle\SecurityBundle\Encoder\Mcrypt;
+use Oro\Bundle\SecurityBundle\Encoder\DefaultCrypter;
+use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 use Oro\Component\TestUtils\ORM\Mocks\DatabasePlatformMock;
 
-class SecureArrayTypeTest extends \PHPUnit_Framework_TestCase
+class SecureArrayTypeTest extends \PHPUnit\Framework\TestCase
 {
     /** @var SecureArrayType */
     protected $type;
 
-    /** @var Mcrypt */
-    protected $mcrypt;
+    /** @var SymmetricCrypterInterface */
+    protected $crypter;
 
     public static function setUpBeforeClass()
     {
@@ -26,12 +27,12 @@ class SecureArrayTypeTest extends \PHPUnit_Framework_TestCase
     {
         $this->type = SecureArrayType::getType(SecureArrayType::TYPE);
 
-        $this->mcrypt = new Mcrypt('key');
+        $this->crypter = new DefaultCrypter('key');
     }
 
     /**
      * @expectedException \RuntimeException
-     * @expectedExceptionMessage Mcrypt missing
+     * @expectedExceptionMessage Crypter is not set
      */
     public function testMcryptMissingError()
     {
@@ -44,12 +45,12 @@ class SecureArrayTypeTest extends \PHPUnit_Framework_TestCase
     {
         /** @var SecureArrayType $secureArrayType */
         $secureArrayType = SecureArrayType::getType(SecureArrayType::TYPE);
-        $secureArrayType->setMcrypt($this->mcrypt);
+        $secureArrayType->setCrypter($this->crypter);
 
         $value = ['value' => 'value'];
         $platform = new DatabasePlatformMock();
 
-        $encrypted = $this->mcrypt->encryptData(json_encode($value));
+        $encrypted = $this->crypter->encryptData(json_encode($value));
 
         $this->assertEquals(
             $value,
@@ -61,7 +62,7 @@ class SecureArrayTypeTest extends \PHPUnit_Framework_TestCase
     {
         /** @var SecureArrayType $secureArrayType */
         $secureArrayType = SecureArrayType::getType(SecureArrayType::TYPE);
-        $secureArrayType->setMcrypt($this->mcrypt);
+        $secureArrayType->setCrypter($this->crypter);
 
         $platform = new DatabasePlatformMock();
 
@@ -73,11 +74,11 @@ class SecureArrayTypeTest extends \PHPUnit_Framework_TestCase
     {
         /** @var SecureArrayType $secureArrayType */
         $secureArrayType = SecureArrayType::getType(SecureArrayType::TYPE);
-        $secureArrayType->setMcrypt($this->mcrypt);
+        $secureArrayType->setCrypter($this->crypter);
 
         $platform = new DatabasePlatformMock();
 
-        $encrypted = $this->mcrypt->encryptData('{"value":"value}');
+        $encrypted = $this->crypter->encryptData('{"value":"value}');
 
         $this->assertNull($this->type->convertToPHPValue($encrypted, $platform));
     }
@@ -86,7 +87,7 @@ class SecureArrayTypeTest extends \PHPUnit_Framework_TestCase
     {
         /** @var SecureArrayType $secureArrayType */
         $secureArrayType = SecureArrayType::getType(SecureArrayType::TYPE);
-        $secureArrayType->setMcrypt($this->mcrypt);
+        $secureArrayType->setCrypter($this->crypter);
 
         $value = ['value' => 'value'];
         $platform = new DatabasePlatformMock();
@@ -106,21 +107,16 @@ class SecureArrayTypeTest extends \PHPUnit_Framework_TestCase
     {
         /** @var SecureArrayType $secureArrayType */
         $secureArrayType = SecureArrayType::getType(SecureArrayType::TYPE);
-        $secureArrayType->setMcrypt($this->mcrypt);
+        $secureArrayType->setCrypter($this->crypter);
 
         $platform = new DatabasePlatformMock();
 
         $this->assertNull($this->type->convertToDatabaseValue(null, $platform));
     }
 
-    public function testGetName()
-    {
-        $this->assertInternalType('string', $this->type->getName());
-    }
-
     public function testTextIsUsedToStoreData()
     {
-        /** @var DatabasePlatformMock|\PHPUnit_Framework_MockObject_MockObject $platform */
+        /** @var DatabasePlatformMock|\PHPUnit\Framework\MockObject\MockObject $platform */
         $platform = $this->createMock('Oro\Component\TestUtils\ORM\Mocks\DatabasePlatformMock');
 
         $platform->expects($this->once())->method('getClobTypeDeclarationSQL');
@@ -130,7 +126,7 @@ class SecureArrayTypeTest extends \PHPUnit_Framework_TestCase
 
     public function testRequiresSQLCommentHint()
     {
-        /** @var DatabasePlatformMock|\PHPUnit_Framework_MockObject_MockObject $platform */
+        /** @var DatabasePlatformMock|\PHPUnit\Framework\MockObject\MockObject $platform */
         $platform = $this->createMock('Oro\Component\TestUtils\ORM\Mocks\DatabasePlatformMock');
         $this->assertTrue($this->type->requiresSQLCommentHint($platform));
     }

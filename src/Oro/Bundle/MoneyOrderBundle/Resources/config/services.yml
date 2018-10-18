@@ -15,3 +15,10 @@ services:
             - 'Oro\Bundle\MoneyOrderBundle\Entity\MoneyOrderSettings'
         calls:
             - [setAclHelper, ['@oro_security.acl_helper']]
+
+    oro_money_order.event_listener.money_order_options:
+        class: 'Oro\Bundle\MoneyOrderBundle\EventListener\MoneyOrderOptionsListener'
+        arguments:
+            - '@translator'
+        tags:
+            - { name: kernel.event_listener, event: oro_payment.collect_formatted_payment_options, method: onCollectPaymentOptions }

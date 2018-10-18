@@ -46,6 +46,13 @@ define(function(require) {
         /**
          * @inheritDoc
          */
+        constructor: function AppliedCouponCollectionView() {
+            AppliedCouponCollectionView.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, options || {});
             this._checkOptions();

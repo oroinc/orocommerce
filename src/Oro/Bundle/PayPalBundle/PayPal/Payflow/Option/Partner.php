@@ -10,6 +10,10 @@ use Oro\Bundle\PayPalBundle\PayPal\Payflow\Processor;
  * @link https://developer.paypal.com/docs/classic/payflow/integration-guide/#processing-platforms-supporting-card-present-transactions
  */
 // @codingStandardsIgnoreEnd
+
+/**
+ * Partner option, contains all available partners in PayPal.
+ */
 class Partner extends AbstractOption
 {
     const PARTNER = 'PARTNER';
@@ -34,12 +38,14 @@ class Partner extends AbstractOption
     const FIFT = 'FIFT';
     const WPAY = 'WPAY';
     const PAYPAL = Processor\PayPal::CODE;
+    const PAYPALCA = Processor\PayPalCA::CODE;
 
     /**
      * @var array
      */
     public static $partners = [
         Partner::PAYPAL => Processor\PayPal::NAME,
+        Partner::PAYPALCA => Processor\PayPalCA::NAME,
         Partner::AMEX => 'American Express',
         Partner::MESP => 'Cielo Payments',
         Partner::NOVA => 'Elavon',

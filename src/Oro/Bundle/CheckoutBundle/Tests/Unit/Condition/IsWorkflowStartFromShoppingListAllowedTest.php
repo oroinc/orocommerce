@@ -7,15 +7,15 @@ use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
-class IsWorkflowStartFromShoppingListAllowedTest extends \PHPUnit_Framework_TestCase
+class IsWorkflowStartFromShoppingListAllowedTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var FeatureChecker|\PHPUnit_Framework_MockObject_MockObject
+     * @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject
      */
     private $featureChecker;
 
     /**
-     * @var TokenStorageInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var TokenStorageInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $tokenStorage;
 
@@ -34,38 +34,57 @@ class IsWorkflowStartFromShoppingListAllowedTest extends \PHPUnit_Framework_Test
         $this->condition      = new IsWorkflowStartFromShoppingListAllowed($this->featureChecker, $this->tokenStorage);
     }
 
-    public function testAllowed()
+    /**
+     * @param string $tokenClass
+     */
+    private function configureToken($tokenClass)
     {
-        $this->assertTrue($this->condition->isAllowed());
-    }
-
-    public function testAllowedForAnonymousUser()
-    {
-        $token = $this->createMock(AnonymousCustomerUserToken::class);
+        $token = $this->createMock($tokenClass);
         $this->tokenStorage->expects($this->once())
             ->method('getToken')
             ->willReturn($token);
+    }
 
+    public function testIsAllowedForLoggedDefault()
+    {
+        $this->assertTrue($this->condition->isAllowedForLogged());
+    }
+
+    public function testIsAllowedForLoggedFalse()
+    {
+        $this->configureToken(AnonymousCustomerUserToken::class);
+        $this->assertFalse($this->condition->isAllowedForLogged());
+    }
+
+    public function testIsAllowedForAnyLoggedUser()
+    {
+        $this->configureToken(\stdClass::class);
+        $this->assertTrue($this->condition->isAllowedForLogged());
+    }
+
+    public function testIsAllowedForAnyGuestFeatureEnabled()
+    {
+        $this->configureToken(AnonymousCustomerUserToken::class);
         $this->featureChecker->expects($this->once())
             ->method('isFeatureEnabled')
             ->with('guest_checkout', null)
             ->willReturn(true);
-
-        $this->assertTrue($this->condition->isAllowed());
+        $this->assertTrue($this->condition->isAllowedForAny());
     }
 
-    public function testNotAllowedForAnonymousUser()
+    public function testIsAllowedForAnyGuestFeatureDisabled()
     {
-        $token = $this->createMock(AnonymousCustomerUserToken::class);
-        $this->tokenStorage->expects($this->once())
-            ->method('getToken')
-            ->willReturn($token);
-
+        $this->configureToken(AnonymousCustomerUserToken::class);
         $this->featureChecker->expects($this->once())
             ->method('isFeatureEnabled')
             ->with('guest_checkout', null)
             ->willReturn(false);
+        $this->assertFalse($this->condition->isAllowedForAny());
+    }
 
-        $this->assertFalse($this->condition->isAllowed());
+    public function testIsAllowedForGuestFalseAsDefault()
+    {
+        $this->configureToken(\stdClass::class);
+        $this->assertFalse($this->condition->isAllowedForGuest());
     }
 }

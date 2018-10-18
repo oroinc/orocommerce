@@ -99,7 +99,6 @@
     {% set dataBlocks = [
         {
             'title': 'oro.webcatalog.sections.general'|trans,
-            'class': 'active',
             'subblocks': [{
                 'title': '',
                 'data': formRows
@@ -167,7 +166,9 @@
 
             {% block content %}
                 {% autoescape %}
-                    {{ twoColumnContent|raw}}
+                    <div class="category-data">
+                        {{ twoColumnContent|raw}}
+                    </div>
                 {% endautoescape %}
             {% endblock content %}
         {% endembed %}

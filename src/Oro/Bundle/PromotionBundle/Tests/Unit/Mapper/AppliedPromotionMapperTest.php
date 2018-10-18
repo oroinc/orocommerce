@@ -17,7 +17,7 @@ use Oro\Bundle\PromotionBundle\Tests\Unit\Entity\Stub\Order;
 use Oro\Bundle\RuleBundle\Entity\Rule;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class AppliedPromotionMapperTest extends \PHPUnit_Framework_TestCase
+class AppliedPromotionMapperTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
@@ -52,12 +52,12 @@ class AppliedPromotionMapperTest extends \PHPUnit_Framework_TestCase
     const DISCOUNT_OPTIONS = ['discount_type' => 'amount'];
 
     /**
-     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     private $registry;
 
     /**
-     * @var NormalizerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var NormalizerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $normalizer;
 
@@ -79,7 +79,7 @@ class AppliedPromotionMapperTest extends \PHPUnit_Framework_TestCase
             ->setType(self::DISCOUNT_TYPE)
             ->setOptions(self::DISCOUNT_OPTIONS);
 
-        /** @var PromotionDataInterface|\PHPUnit_Framework_MockObject_MockObject $appliedPromotionData **/
+        /** @var PromotionDataInterface|\PHPUnit\Framework\MockObject\MockObject $appliedPromotionData **/
         $appliedPromotionData = (new AppliedPromotionData())
             ->setDiscountConfiguration($discountConfiguration)
             ->setId(self::PROMOTION_ID)
@@ -118,7 +118,7 @@ class AppliedPromotionMapperTest extends \PHPUnit_Framework_TestCase
             ->setType(self::DISCOUNT_TYPE)
             ->setOptions(self::DISCOUNT_OPTIONS);
 
-        /** @var PromotionDataInterface|\PHPUnit_Framework_MockObject_MockObject $appliedPromotionData **/
+        /** @var PromotionDataInterface|\PHPUnit\Framework\MockObject\MockObject $appliedPromotionData **/
         $appliedPromotionData = (new AppliedPromotionData())
             ->setDiscountConfiguration($discountConfiguration)
             ->setId(self::PROMOTION_ID)
@@ -164,7 +164,7 @@ class AppliedPromotionMapperTest extends \PHPUnit_Framework_TestCase
             ->setType(self::DISCOUNT_TYPE)
             ->setOptions(self::DISCOUNT_OPTIONS);
 
-        /** @var AppliedPromotion|\PHPUnit_Framework_MockObject_MockObject $appliedPromotionEntity **/
+        /** @var AppliedPromotion|\PHPUnit\Framework\MockObject\MockObject $appliedPromotionEntity **/
         $appliedPromotionEntity = $this->getEntity(AppliedPromotion::class, [
             'promotionData' => $promotionData,
             'type' => self::DISCOUNT_TYPE,

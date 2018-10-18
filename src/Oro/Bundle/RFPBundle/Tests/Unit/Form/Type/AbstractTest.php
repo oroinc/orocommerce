@@ -65,7 +65,7 @@ abstract class AbstractTest extends FormIntegrationTestCase
      */
     public function testSubmit($isValid, $submittedData, $expectedData, $defaultData = null)
     {
-        $form = $this->factory->create($this->formType, $defaultData, []);
+        $form = $this->factory->create(get_class($this->formType), $defaultData, []);
 
         $this->assertEquals($defaultData, $form->getData());
 
@@ -247,11 +247,11 @@ abstract class AbstractTest extends FormIntegrationTestCase
      * @param int $id
      * @param RequestProduct $product
      * @param string $productSku
-     * @return \PHPUnit_Framework_MockObject_MockObject|RequestProduct
+     * @return \PHPUnit\Framework\MockObject\MockObject|RequestProduct
      */
     protected function createRequestProduct($id, $product, $productSku)
     {
-        /* @var $requestProduct \PHPUnit_Framework_MockObject_MockObject|RequestProduct */
+        /* @var $requestProduct \PHPUnit\Framework\MockObject\MockObject|RequestProduct */
         $requestProduct = $this->createMock('Oro\Bundle\RFPBundle\Entity\RequestProduct');
         $requestProduct
             ->expects(static::any())
@@ -275,7 +275,7 @@ abstract class AbstractTest extends FormIntegrationTestCase
     /**
      * @param string $className
      * @param array $fields
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     protected function getMockEntity($className, array $fields = [])
     {

@@ -1,3 +1,4 @@
+@ticket-BB-15172
 @fixture-OroPromotionBundle:promotions_for_coupons.yml
 Feature: CRUD operations for Coupons codes
   As an Administrator
@@ -9,13 +10,13 @@ Feature: CRUD operations for Coupons codes
     And go to Marketing/Promotions/Coupons
     And I click "Coupons Actions"
     And I click "Create Coupon"
-    And I type "Promotion" in "Promotion"
+    And I open select entity popup for field "Promotion"
     And I should see "line Item Discount Promotion"
     And I should see "order Discount Promotion"
     And I should not see "shipping Discount Promotion"
+    And I click on order Discount Promotion in grid
     When I fill "Coupon Form" with:
       |Coupon Code          | 12345                            |
-      |Promotion            | order Discount Promotion         |
       |Enabled              | true                             |
       |Uses per Coupon      | 1                                |
       |Valid From           | <DateTime:Jul 1, 2017, 12:00 AM> |
@@ -36,13 +37,13 @@ Feature: CRUD operations for Coupons codes
     Given I go to Marketing/Promotions/Coupons
     And I click "Coupons Actions"
     And I click "Create Coupon"
-    And I type "Promotion" in "Promotion"
     When I fill "Coupon Form" with:
       |Coupon Code          | 55555                            |
-      |Promotion            | order Discount Promotion         |
       |Uses per Coupon      | 1                                |
       |Valid From           | <DateTime:Jul 1, 2018, 12:00 AM> |
       |Valid Until          | <DateTime:Jul 1, 2017, 12:00 AM> |
+    And I open select entity popup for field "Promotion"
+    And I click on order Discount Promotion in grid
     When I save and close form
     Then I should see "Valid Until date should follow after Valid From."
 
@@ -166,3 +167,18 @@ Feature: CRUD operations for Coupons codes
     When I save and close form
     Then I should see validation errors:
       |Coupon Code |This value should not be blank. |
+
+  Scenario: Search coupons by coupon code
+    When I click "Search"
+    And type "22222" in "search"
+    Then I should see 1 search suggestions
+    When I click "Search Submit"
+    Then I should be on Search Result page
+    And I should see following search entity types:
+      | Type        | N | isSelected |
+      | All         | 1 | yes        |
+      | Coupons     | 1 |            |
+    And number of records should be 1
+    And I should see following search results:
+      | Title  | Type   |
+      | 22222  | Coupon |

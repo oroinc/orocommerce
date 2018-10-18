@@ -14,7 +14,14 @@ define(function(require) {
         },
 
         /**
-         * {@inheritDoc}
+         * @inheritDoc
+         */
+        constructor: function RedirectComponent() {
+            RedirectComponent.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
          */
         initialize: function(options) {
             var targetUrl = options.targetUrl || null;

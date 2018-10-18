@@ -280,7 +280,7 @@ services:
             - '%oro_promotion.entity.promotion.class%'
             - ["rule.name"]
         tags:
-            - { name: oro_form.autocomplete.search_handler, alias: oro_promotion, acl_resource: oro_promotion_view }
+            - { name: oro_form.autocomplete.search_handler, alias: Oro\Bundle\PromotionBundle\Form\Type\PromotionType, acl_resource: oro_promotion_view }
 
     oro_promotion.form.autocomplete.promotion_use_coupons.search_handler:
         class: Oro\Bundle\PromotionBundle\Form\Autocomplete\PromotionsUseCouponsSearchHandler
@@ -311,11 +311,11 @@ services:
     oro_promotion.discount_type_to_form_type_provider:
         class: Oro\Bundle\PromotionBundle\Provider\DiscountFormTypeProvider
         calls:
-            - ['setDefaultFormType', ['oro_promotion_order_discount_options']]
-            - ['addFormType', ['order', 'oro_promotion_order_discount_options']]
-            - ['addFormType', ['line_item', 'oro_promotion_line_item_discount_options']]
-            - ['addFormType', ['buy_x_get_y', 'oro_promotion_buy_x_get_y_discount_options']]
-            - ['addFormType', ['shipping', 'oro_promotion_shipping_discount_options']]
+            - ['setDefaultFormType', [Oro\Bundle\PromotionBundle\Form\Type\OrderDiscountOptionsType]]
+            - ['addFormType', ['order', Oro\Bundle\PromotionBundle\Form\Type\OrderDiscountOptionsType]]
+            - ['addFormType', ['line_item', Oro\Bundle\PromotionBundle\Form\Type\LineItemDiscountOptionsType]]
+            - ['addFormType', ['buy_x_get_y', Oro\Bundle\PromotionBundle\Form\Type\BuyXGetYDiscountOptionsType]]
+            - ['addFormType', ['shipping', Oro\Bundle\PromotionBundle\Form\Type\ShippingDiscountOptionsType]]
 
     oro_promotion.layout.discount_information_data_provider:
         class: Oro\Bundle\PromotionBundle\Layout\DataProvider\DiscountsInformationDataProvider
@@ -343,6 +343,13 @@ services:
             - '@oro_promotion.discount.context_converter.registry'
             - '@oro_promotion.discount.strategy_provider'
             - '@oro_promotion.provider.promotion_discounts_provider'
+            - '@oro_promotion.promotion_executor.cache'
+
+    oro_promotion.promotion_executor.cache:
+        public: false
+        parent: doctrine_cache.abstract.array
+        calls:
+            - [ setNamespace, [ 'oro_promotion_executor' ] ]
 
     oro_promotion.provider.matching_products_provider:
         class: Oro\Bundle\PromotionBundle\Provider\MatchingProductsProvider
@@ -717,3 +724,20 @@ services:
         decorates: oro_checkout.mapper.order_mapper
         arguments:
             - '@oro_promotion.mapper.order_mapper_decorator.inner'
+
+    oro_promotion.datagrid.extension.frontend_segment_datagrid:
+        class: Oro\Bundle\PromotionBundle\Datagrid\Extension\FrontendSegmentDatagridExtension
+        arguments:
+            - '@security.token_storage'
+            - '@oro_frontend.request.frontend_helper'
+            - '@oro_entity.doctrine_helper'
+        tags:
+            - { name: oro_datagrid.extension }
+
+    oro_promotion.twig.extension.discounts_information:
+        class: 'Oro\Bundle\PromotionBundle\Twig\DiscountsInformationExtension'
+        public: false
+        arguments:
+            - '@oro_promotion.layout.discount_information_data_provider'
+        tags:
+            - { name: twig.extension }

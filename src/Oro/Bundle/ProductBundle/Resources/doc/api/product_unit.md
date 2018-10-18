@@ -12,8 +12,6 @@ Retrieve a specific product unit record.
 
 Retrieve a collection of product unit records.
 
-The list of records that will be returned, could be limited by filters.
-
 {@inheritdoc}
 
 ### create
@@ -26,8 +24,6 @@ The created record is returned in the response.
 
 {@request:json_api}
 Example:
-
-`</admin/api/productunits>`
 
 ```JSON
 {
@@ -53,8 +49,6 @@ The updated record is returned in the response.
 {@request:json_api}
 Example:
 
-`</admin/api/productunits/items>`
-
 ```JSON
 {
   "data": {
@@ -77,8 +71,6 @@ Delete a specific product unit record.
 ### delete_list
 
 Delete a collection of product unit records.
-
-The list of records that will be deleted, could be limited by filters.
 
 {@inheritdoc}
 

@@ -6,7 +6,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ShoppingListBundle\DependencyInjection\Configuration;
 use Symfony\Component\Config\Definition\Processor;
 
-class ConfigurationTest extends \PHPUnit_Framework_TestCase
+class ConfigurationTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Test Configuration
@@ -46,6 +46,10 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                 ],
                 'mass_adding_on_product_listing_enabled' => [
                     'value' => true,
+                    'scope' => 'app',
+                ],
+                'create_shopping_list_for_new_guest' => [
+                    'value' => false,
                     'scope' => 'app',
                 ],
             ]

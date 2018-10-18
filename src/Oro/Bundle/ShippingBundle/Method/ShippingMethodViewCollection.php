@@ -2,6 +2,9 @@
 
 namespace Oro\Bundle\ShippingBundle\Method;
 
+/**
+ * Collection of shipping method views.
+ */
 class ShippingMethodViewCollection
 {
     const TYPES_FIELD = 'types';
@@ -230,7 +233,7 @@ class ShippingMethodViewCollection
      */
     public function isEmpty()
     {
-        if (count($this->methodViews) <= 0) {
+        if (count($this->methodViews) === 0) {
             return true;
         }
 

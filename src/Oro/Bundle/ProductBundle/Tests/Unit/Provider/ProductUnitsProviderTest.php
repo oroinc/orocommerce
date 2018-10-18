@@ -6,11 +6,11 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
-use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Oro\Bundle\ProductBundle\Provider\ProductUnitsProvider;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class ProductUnitsProviderTest extends \PHPUnit_Framework_TestCase
+class ProductUnitsProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
@@ -20,7 +20,7 @@ class ProductUnitsProviderTest extends \PHPUnit_Framework_TestCase
     protected $productUnitsProvider;
 
     /**
-     * @var ProductUnitLabelFormatter|\PHPUnit_Framework_MockObject_MockObject
+     * @var UnitLabelFormatterInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $formatter;
 
@@ -85,9 +85,7 @@ class ProductUnitsProviderTest extends \PHPUnit_Framework_TestCase
             ->with(ProductUnit::class)
             ->willReturn($manager);
 
-        $this->formatter = $this->getMockBuilder(ProductUnitLabelFormatter::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->formatter = $this->createMock(UnitLabelFormatterInterface::class);
 
         $this->productUnitsProvider = new ProductUnitsProvider($managerRegistry, $this->formatter);
     }
@@ -106,13 +104,12 @@ class ProductUnitsProviderTest extends \PHPUnit_Framework_TestCase
             ]));
 
         $expected = [
-            'each' => 'oro.product_unit.each.label.full',
-            'kg' => 'oro.product_unit.kg.label.full',
-            'hour' => 'oro.product_unit.hour.label.full',
-            'item' => 'oro.product_unit.item.label.full',
-            'set' => 'oro.product_unit.set.label.full',
-            'piece' => 'oro.product_unit.piece.label.full',
-
+            'oro.product_unit.each.label.full' => 'each',
+            'oro.product_unit.kg.label.full' => 'kg',
+            'oro.product_unit.hour.label.full' => 'hour',
+            'oro.product_unit.item.label.full' => 'item',
+            'oro.product_unit.set.label.full' => 'set',
+            'oro.product_unit.piece.label.full' => 'piece',
         ];
 
         $this->assertEquals($expected, $this->productUnitsProvider->getAvailableProductUnits());

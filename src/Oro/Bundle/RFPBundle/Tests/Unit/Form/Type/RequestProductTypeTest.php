@@ -2,20 +2,24 @@
 
 namespace Oro\Bundle\RFPBundle\Tests\Unit\Form\Type;
 
-use Oro\Bundle\FormBundle\Form\Type\CollectionType;
+use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
+use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use Oro\Bundle\FormBundle\Tests\Unit\Stub\StripTagsExtensionStub;
 use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 use Oro\Bundle\RFPBundle\Entity\RequestProduct;
-use Oro\Bundle\RFPBundle\Form\Type\RequestProductItemCollectionType;
+use Oro\Bundle\RFPBundle\Form\Type\RequestProductItemType;
 use Oro\Bundle\RFPBundle\Form\Type\RequestProductType;
 use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
+use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
-use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class RequestProductTypeTest extends AbstractTest
@@ -40,7 +44,7 @@ class RequestProductTypeTest extends AbstractTest
 
     public function testConfigureOptions()
     {
-        /* @var $resolver \PHPUnit_Framework_MockObject_MockObject|OptionsResolver */
+        /* @var $resolver \PHPUnit\Framework\MockObject\MockObject|OptionsResolver */
         $resolver = $this->createMock('Symfony\Component\OptionsResolver\OptionsResolver');
         $resolver->expects($this->once())
             ->method('setDefaults')
@@ -58,11 +62,6 @@ class RequestProductTypeTest extends AbstractTest
         $this->formType->configureOptions($resolver);
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(RequestProductType::NAME, $this->formType->getName());
-    }
-
     /**
      * @param array $inputData
      * @param array $expectedData
@@ -75,7 +74,7 @@ class RequestProductTypeTest extends AbstractTest
 
         $view->vars = $inputData['vars'];
 
-        /* @var $form FormInterface|\PHPUnit_Framework_MockObject_MockObject */
+        /* @var $form FormInterface|\PHPUnit\Framework\MockObject\MockObject */
         $form = $this->createMock('Symfony\Component\Form\FormInterface');
 
         $this->formType->buildView($view, $form, $inputData['options']);
@@ -95,7 +94,7 @@ class RequestProductTypeTest extends AbstractTest
 
         $view->vars = $inputData['vars'];
 
-        /* @var $form FormInterface|\PHPUnit_Framework_MockObject_MockObject */
+        /* @var $form FormInterface|\PHPUnit\Framework\MockObject\MockObject */
         $form = $this->createMock('Symfony\Component\Form\FormInterface');
 
         $this->formType->finishView($view, $form, $inputData['options']);
@@ -221,7 +220,7 @@ class RequestProductTypeTest extends AbstractTest
     /**
      * @param int $id
      * @param array $units
-     * @return Product|\PHPUnit_Framework_MockObject_MockObject
+     * @return Product|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function createProduct($id, array $units = [])
     {
@@ -321,17 +320,16 @@ class RequestProductTypeTest extends AbstractTest
         return [
             new PreloadedExtension(
                 [
-                    CollectionType::NAME                    => new CollectionType(),
-                    RequestProductItemCollectionType::NAME  => new RequestProductItemCollectionType(),
-                    ProductUnitSelectionType::NAME          => new ProductUnitSelectionTypeStub(),
-                    $priceType->getName()                   => $priceType,
-                    $productSelectType->getName()           => $productSelectType,
-                    $requestProductItemType->getName()      => $requestProductItemType,
-                    $currencySelectionType->getName()       => $currencySelectionType,
-                    $productUnitSelectionType->getName()    => $productUnitSelectionType,
-                    QuantityTypeTrait::$name                => $this->getQuantityType(),
+                    $this->formType,
+                    ProductUnitSelectionType::class => new ProductUnitSelectionTypeStub(),
+                    PriceType::class                => $priceType,
+                    ProductSelectType::class        => $productSelectType,
+                    RequestProductItemType::class   => $requestProductItemType,
+                    CurrencySelectionType::class    => $currencySelectionType,
+                    ProductUnitSelectionType::class => $productUnitSelectionType,
+                    QuantityType::class             => $this->getQuantityType()
                 ],
-                ['form' => [new StripTagsExtensionStub($this->createMock(HtmlTagHelper::class))]]
+                [FormType::class => [new StripTagsExtensionStub($this->createMock(HtmlTagHelper::class))]]
             ),
             $this->getValidatorExtension(true),
         ];

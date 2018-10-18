@@ -16,25 +16,25 @@ use Oro\Bundle\ShippingBundle\Provider\Price\Configured\ShippingConfiguredPriceP
 
 // @codingStandardsIgnoreEnd
 
-class ShippingCostQuoteDemandSubtotalsCalculatorDecoratorTest extends \PHPUnit_Framework_TestCase
+class ShippingCostQuoteDemandSubtotalsCalculatorDecoratorTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ShippingContextFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingContextFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $quoteShippingContextFactoryMock;
 
     /**
-     * @var QuoteShippingConfigurationFactory|\PHPUnit_Framework_MockObject_MockObject
+     * @var QuoteShippingConfigurationFactory|\PHPUnit\Framework\MockObject\MockObject
      */
     private $quoteShippingConfigurationFactoryMock;
 
     /**
-     * @var ShippingConfiguredPriceProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingConfiguredPriceProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $shippingConfiguredPriceProviderMock;
 
     /**
-     * @var QuoteDemandSubtotalsCalculatorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var QuoteDemandSubtotalsCalculatorInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $parentQuoteDemandSubtotalsCalculatorMock;
 
@@ -153,7 +153,7 @@ class ShippingCostQuoteDemandSubtotalsCalculatorDecoratorTest extends \PHPUnit_F
     }
 
     /**
-     * @return QuoteDemand|\PHPUnit_Framework_MockObject_MockObject
+     * @return QuoteDemand|\PHPUnit\Framework\MockObject\MockObject
      */
     private function getQuoteDemandMock()
     {
@@ -163,7 +163,7 @@ class ShippingCostQuoteDemandSubtotalsCalculatorDecoratorTest extends \PHPUnit_F
     }
 
     /**
-     * @return Quote|\PHPUnit_Framework_MockObject_MockObject
+     * @return Quote|\PHPUnit\Framework\MockObject\MockObject
      */
     private function getQuoteMock()
     {
@@ -173,7 +173,7 @@ class ShippingCostQuoteDemandSubtotalsCalculatorDecoratorTest extends \PHPUnit_F
     }
 
     /**
-     * @return ShippingContextInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return ShippingContextInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private function getShippingContextMock()
     {
@@ -183,7 +183,7 @@ class ShippingCostQuoteDemandSubtotalsCalculatorDecoratorTest extends \PHPUnit_F
     }
 
     /**
-     * @return ComposedShippingMethodConfigurationInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return ComposedShippingMethodConfigurationInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private function getComposedShippingMethodConfigurationMock()
     {

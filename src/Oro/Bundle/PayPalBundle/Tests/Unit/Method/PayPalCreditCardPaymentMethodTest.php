@@ -22,23 +22,23 @@ use Symfony\Component\Routing\RouterInterface;
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class PayPalCreditCardPaymentMethodTest extends \PHPUnit_Framework_TestCase
+class PayPalCreditCardPaymentMethodTest extends \PHPUnit\Framework\TestCase
 {
     use ConfigTestTrait, EntityTrait;
 
     const PROXY_HOST = '112.33.44.55';
     const PROXY_PORT = 7777;
 
-    /** @var Gateway|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var Gateway|\PHPUnit\Framework\MockObject\MockObject */
     protected $gateway;
 
-    /** @var RouterInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var RouterInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $router;
 
     /** @var PayPalCreditCardPaymentMethod */
     protected $method;
 
-    /** @var PayPalCreditCardConfigInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var PayPalCreditCardConfigInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $paymentConfig;
 
     protected function setUp()
@@ -619,7 +619,13 @@ class PayPalCreditCardPaymentMethodTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('USD', $transaction->getCurrency());
     }
 
-    public function testSecureTokenResponseLimitedWithIdToKenAndFormAction()
+    /**
+     * @dataProvider validateDataProvider
+     *
+     * @param string $result
+     * @param bool $expected
+     */
+    public function testSecureTokenResponseLimitedWithIdToKenAndFormAction(string $result, bool $expected)
     {
         $this->configureCredentials();
 
@@ -633,7 +639,7 @@ class PayPalCreditCardPaymentMethodTest extends \PHPUnit_Framework_TestCase
             new Response(
                 [
                     'PNREF' => 'reference',
-                    'RESULT' => '0',
+                    'RESULT' => $result,
                     'SECURETOKEN' => $secureToken,
                     'SECURETOKENID' => $secureTokenId,
                     'SHOULD_NOT_APPEAR_IN_RESPONSE' => 'AT_ALL',
@@ -650,9 +656,27 @@ class PayPalCreditCardPaymentMethodTest extends \PHPUnit_Framework_TestCase
                 'formAction' => 'url',
                 'SECURETOKEN' => $secureToken,
                 'SECURETOKENID' => $secureTokenId,
+                'successful' => $expected
             ],
             $response
         );
+    }
+
+    /**
+     * @return array
+     */
+    public function validateDataProvider()
+    {
+        return [
+            'approved' => [
+                'result' => '0',
+                'expected' => true
+            ],
+            'not approved' => [
+                'result' => '1',
+                'expected' => false
+            ]
+        ];
     }
 
     public function testSecureTokenOptions()
@@ -880,7 +904,7 @@ class PayPalCreditCardPaymentMethodTest extends \PHPUnit_Framework_TestCase
 
     public function testIsApplicable()
     {
-        /** @var PaymentContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
+        /** @var PaymentContextInterface|\PHPUnit\Framework\MockObject\MockObject $context */
         $context = $this->createMock(PaymentContextInterface::class);
         $this->assertTrue($this->method->isApplicable($context));
     }

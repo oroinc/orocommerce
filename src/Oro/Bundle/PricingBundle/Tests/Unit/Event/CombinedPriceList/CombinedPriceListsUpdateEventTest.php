@@ -4,7 +4,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Event\CombinedPriceList;
 
 use Oro\Bundle\PricingBundle\Event\CombinedPriceList\CombinedPriceListsUpdateEvent;
 
-class CombinedPriceListsUpdateEventTest extends \PHPUnit_Framework_TestCase
+class CombinedPriceListsUpdateEventTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var integer[]

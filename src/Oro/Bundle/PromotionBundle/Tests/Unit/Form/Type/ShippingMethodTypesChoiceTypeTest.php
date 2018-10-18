@@ -3,7 +3,6 @@
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\FormBundle\Form\Type\OroChoiceType;
-use Oro\Bundle\FormBundle\Form\Type\Select2Type;
 use Oro\Bundle\PromotionBundle\Discount\ShippingDiscount;
 use Oro\Bundle\PromotionBundle\Form\Type\ShippingMethodTypesChoiceType;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
@@ -12,23 +11,23 @@ use Oro\Bundle\ShippingBundle\Provider\ShippingMethodIconProviderInterface;
 use Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\ShippingMethodStub;
 use Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\ShippingMethodTypeStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Asset\Packages;
-use Symfony\Component\Form\PreloadedExtension;
 
 class ShippingMethodTypesChoiceTypeTest extends FormIntegrationTestCase
 {
     /**
-     * @var ShippingMethodProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $provider;
 
     /**
-     * @var ShippingMethodIconProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingMethodIconProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $iconProvider;
 
     /**
-     * @var Packages|\PHPUnit_Framework_MockObject_MockObject
+     * @var Packages|\PHPUnit\Framework\MockObject\MockObject
      */
     private $assetHelper;
 
@@ -39,13 +38,12 @@ class ShippingMethodTypesChoiceTypeTest extends FormIntegrationTestCase
 
     protected function setUp()
     {
-        parent::setUp();
-
         $this->provider = $this->createMock(ShippingMethodProviderInterface::class);
         $this->iconProvider = $this->createMock(ShippingMethodIconProviderInterface::class);
         $this->assetHelper = $this->createMock(Packages::class);
 
         $this->formType = new ShippingMethodTypesChoiceType($this->provider, $this->iconProvider, $this->assetHelper);
+        parent::setUp();
     }
 
     /**
@@ -68,7 +66,7 @@ class ShippingMethodTypesChoiceTypeTest extends FormIntegrationTestCase
             ->method('getShippingMethods')
             ->willReturn([$flatRateShippingMethod, $this->getUpsShippingMethod()]);
 
-        $form = $this->factory->create($this->formType, $existingData);
+        $form = $this->factory->create(ShippingMethodTypesChoiceType::class, $existingData);
         $form->submit($submittedData);
 
         $this->assertTrue($form->isValid());
@@ -116,7 +114,7 @@ class ShippingMethodTypesChoiceTypeTest extends FormIntegrationTestCase
             ->method('getShippingMethods')
             ->willReturn([$this->getUpsShippingMethod()]);
 
-        $form = $this->factory->create($this->formType, null, $options);
+        $form = $this->factory->create(ShippingMethodTypesChoiceType::class, null, $options);
 
         $this->assertArraySubset($expectedOptions, $form->getConfig()->getOptions());
     }
@@ -130,11 +128,10 @@ class ShippingMethodTypesChoiceTypeTest extends FormIntegrationTestCase
             'test default options' => [
                 'options' => [],
                 'expectedOptions' => [
-                    'empty_value' => null,
                     'placeholder' => false,
                     'choices' => [
-                        '{"shipping_method":"ups_4","shipping_method_type":"02"}' => 0,
-                        '{"shipping_method":"ups_4","shipping_method_type":"12"}' => 1
+                        'UPS 2 Day Air' => '{"shipping_method":"ups_4","shipping_method_type":"02"}',
+                        'UPS 3 Day Select' => '{"shipping_method":"ups_4","shipping_method_type":"12"}',
                     ],
                     'configs' => [
                         'showIcon' => true,
@@ -150,11 +147,6 @@ class ShippingMethodTypesChoiceTypeTest extends FormIntegrationTestCase
         $this->assertEquals(OroChoiceType::class, $this->formType->getParent());
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(ShippingMethodTypesChoiceType::NAME, $this->formType->getName());
-    }
-
     public function testGetBlockPrefix()
     {
         $this->assertEquals(ShippingMethodTypesChoiceType::NAME, $this->formType->getBlockPrefix());
@@ -168,10 +160,7 @@ class ShippingMethodTypesChoiceTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    'oro_select2_choice' => new Select2Type(
-                        'Symfony\Component\Form\Extension\Core\Type\ChoiceType',
-                        'oro_select2_choice'
-                    ),
+                    ShippingMethodTypesChoiceType::class => $this->formType
                 ],
                 []
             )

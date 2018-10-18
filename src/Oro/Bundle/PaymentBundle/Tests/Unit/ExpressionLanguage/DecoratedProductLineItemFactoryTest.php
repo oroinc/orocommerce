@@ -11,7 +11,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 use Oro\Bundle\ProductBundle\VirtualFields\VirtualFieldsProductDecoratorFactory;
 
-class DecoratedProductLineItemFactoryTest extends \PHPUnit_Framework_TestCase
+class DecoratedProductLineItemFactoryTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var DecoratedProductLineItemFactory
@@ -19,7 +19,7 @@ class DecoratedProductLineItemFactoryTest extends \PHPUnit_Framework_TestCase
     private $testedDecoratedProductLineItemFactory;
 
     /**
-     * @var VirtualFieldsProductDecoratorFactory|\PHPUnit_Framework_MockObject_MockObject
+     * @var VirtualFieldsProductDecoratorFactory|\PHPUnit\Framework\MockObject\MockObject
      */
     private $virtualFieldsProductDecoratorFactory;
 
@@ -33,7 +33,7 @@ class DecoratedProductLineItemFactoryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return Product|\PHPUnit_Framework_MockObject_MockObject
+     * @return Product|\PHPUnit\Framework\MockObject\MockObject
      */
     private function createProductMock()
     {
@@ -41,7 +41,7 @@ class DecoratedProductLineItemFactoryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return PaymentLineItemInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return PaymentLineItemInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private function createPaymentLineItemMock()
     {

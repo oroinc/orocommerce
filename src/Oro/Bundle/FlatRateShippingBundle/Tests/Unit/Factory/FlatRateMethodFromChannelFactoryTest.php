@@ -10,20 +10,20 @@ use Oro\Bundle\IntegrationBundle\Generator\IntegrationIdentifierGeneratorInterfa
 use Oro\Bundle\IntegrationBundle\Provider\IntegrationIconProviderInterface;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 
-class FlatRateMethodFromChannelFactoryTest extends \PHPUnit_Framework_TestCase
+class FlatRateMethodFromChannelFactoryTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var IntegrationIconProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var IntegrationIconProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $integrationIconProvider;
 
     /**
-     * @var IntegrationIdentifierGeneratorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var IntegrationIdentifierGeneratorInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $identifierGenerator;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|LocalizationHelper
+     * @var \PHPUnit\Framework\MockObject\MockObject|LocalizationHelper
      */
     private $localizationHelper;
 

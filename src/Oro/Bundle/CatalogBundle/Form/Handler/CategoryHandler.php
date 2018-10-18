@@ -6,13 +6,19 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
+use Oro\Bundle\FormBundle\Form\Handler\RequestHandlerTrait;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * Handles the action of creating or editing a category. Allows to assign or remove products form category.
+ */
 class CategoryHandler
 {
+    use RequestHandlerTrait;
+
     /** @var FormInterface */
     protected $form;
 
@@ -53,7 +59,7 @@ class CategoryHandler
         $this->form->setData($category);
 
         if (in_array($this->request->getMethod(), ['POST', 'PUT'])) {
-            $this->form->submit($this->request);
+            $this->submitPostPutRequest($this->form, $this->request);
             if ($this->form->isValid()) {
                 $appendProducts = $this->form->get('appendProducts')->getData();
                 $removeProducts = $this->form->get('removeProducts')->getData();
@@ -101,6 +107,10 @@ class CategoryHandler
             $productCategory = $categoryRepository->findOneByProduct($product);
 
             if ($productCategory instanceof Category) {
+                if ($productCategory->getId() === $category->getId()) {
+                    continue;
+                }
+
                 $productCategory->removeProduct($product);
             }
 

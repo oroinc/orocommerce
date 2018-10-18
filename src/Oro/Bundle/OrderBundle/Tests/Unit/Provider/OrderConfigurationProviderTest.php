@@ -7,9 +7,9 @@ use Oro\Bundle\OrderBundle\DependencyInjection\Configuration;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Provider\OrderConfigurationProvider;
 
-class OrderConfigurationProviderTest extends \PHPUnit_Framework_TestCase
+class OrderConfigurationProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
     protected $configManager;
 
     /** @var OrderConfigurationProvider */

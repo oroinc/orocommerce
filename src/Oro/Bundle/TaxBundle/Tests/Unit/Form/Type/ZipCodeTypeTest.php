@@ -6,6 +6,7 @@ use Oro\Bundle\TaxBundle\Form\Type\ZipCodeType;
 use Oro\Bundle\TaxBundle\Tests\Component\ZipCodeTestHelper;
 use Oro\Bundle\TaxBundle\Validator\Constraints\ZipCodeFields;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Validator\Context\ExecutionContext;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
@@ -23,10 +24,9 @@ class ZipCodeTypeTest extends FormIntegrationTestCase
      */
     protected function setUp()
     {
-        parent::setUp();
-
         $this->formType = new ZipCodeType();
         $this->formType->setDataClass(self::DATA_CLASS);
+        parent::setUp();
     }
 
     /**
@@ -56,7 +56,7 @@ class ZipCodeTypeTest extends FormIntegrationTestCase
         $expectedData,
         $valid
     ) {
-        $form = $this->factory->create($this->formType);
+        $form = $this->factory->create(ZipCodeType::class);
 
         $transformers = $form->getConfig()->getModelTransformers();
         $this->assertCount(1, $transformers);
@@ -175,6 +175,12 @@ class ZipCodeTypeTest extends FormIntegrationTestCase
     protected function getExtensions()
     {
         return [
+            new PreloadedExtension(
+                [
+                    ZipCodeType::class => $this->formType
+                ],
+                []
+            ),
             $this->getValidatorExtension(true),
         ];
     }

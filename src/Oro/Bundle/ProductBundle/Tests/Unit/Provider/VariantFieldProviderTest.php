@@ -9,15 +9,15 @@ use Oro\Bundle\ProductBundle\Provider\SerializedFieldProvider;
 use Oro\Bundle\ProductBundle\Provider\VariantField;
 use Oro\Bundle\ProductBundle\Provider\VariantFieldProvider;
 
-class VariantFieldProviderTest extends \PHPUnit_Framework_TestCase
+class VariantFieldProviderTest extends \PHPUnit\Framework\TestCase
 {
     /** @var VariantFieldProvider */
     private $variantFieldProvider;
 
-    /** @var AttributeManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var AttributeManager|\PHPUnit\Framework\MockObject\MockObject */
     private $attributeManager;
 
-    /** @var SerializedFieldProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var SerializedFieldProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $serializedFieldProvider;
 
     protected function setUp()

@@ -14,7 +14,7 @@ use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Doctrine\Factory\Doctr
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItem;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class BasicOrderShippingLineItemConverterTest extends \PHPUnit_Framework_TestCase
+class BasicOrderShippingLineItemConverterTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 

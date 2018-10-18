@@ -15,13 +15,13 @@ abstract class AbstractCustomerTaxExtensionTest extends AbstractTaxExtensionTest
     {
         $customerTaxExtension = $this->getExtension();
 
-        /** @var FormBuilderInterface|\PHPUnit_Framework_MockObject_MockObject $builder */
+        /** @var FormBuilderInterface|\PHPUnit\Framework\MockObject\MockObject $builder */
         $builder = $this->createMock('Symfony\Component\Form\FormBuilderInterface');
         $builder->expects($this->once())
             ->method('add')
             ->with(
                 'taxCode',
-                CustomerTaxCodeAutocompleteType::NAME,
+                CustomerTaxCodeAutocompleteType::class,
                 [
                     'required' => false,
                     'mapped' => false,
@@ -47,7 +47,7 @@ abstract class AbstractCustomerTaxExtensionTest extends AbstractTaxExtensionTest
         $event = $this->createEvent($customer);
 
         $taxCode = $this->createTaxCode();
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $taxCodeForm */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $taxCodeForm */
         $taxCodeForm = $event->getForm()->get('taxCode');
 
         $customer->method('getTaxCode')->willReturn($taxCode);

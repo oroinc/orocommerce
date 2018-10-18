@@ -5,19 +5,13 @@ namespace Oro\Bundle\PaymentBundle\Tests\Unit\Form\Type;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\AddressBundle\Form\EventListener\AddressCountryAndRegionSubscriber;
-use Oro\Bundle\AddressBundle\Form\Type\CountryType;
-use Oro\Bundle\AddressBundle\Form\Type\RegionType;
-use Oro\Bundle\FormBundle\Form\Extension\AdditionalAttrExtension;
-use Oro\Bundle\FormBundle\Form\Type\Select2Type;
-use Oro\Bundle\FormBundle\Tests\Unit\Stub\StripTagsExtensionStub;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRuleDestination;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRuleDestinationPostalCode;
 use Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodsConfigsRuleDestinationType;
-use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
 use Oro\Component\Testing\Unit\AddressFormExtensionTestCase;
 use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\PreloadedExtension;
 
 class PaymentMethodsConfigsRuleDestinationTypeTest extends AddressFormExtensionTestCase
 {
@@ -32,10 +26,9 @@ class PaymentMethodsConfigsRuleDestinationTypeTest extends AddressFormExtensionT
      */
     protected function setUp()
     {
-        parent::setUp();
-
         $this->subscriber = new AddressCountryAndRegionSubscriberStub();
         $this->formType = new PaymentMethodsConfigsRuleDestinationType($this->subscriber);
+        parent::setUp();
     }
 
     public function testGetBlockPrefix()
@@ -45,7 +38,7 @@ class PaymentMethodsConfigsRuleDestinationTypeTest extends AddressFormExtensionT
 
     public function testBuildFormSubscriber()
     {
-        /** @var FormBuilderInterface|\PHPUnit_Framework_MockObject_MockObject $builder */
+        /** @var FormBuilderInterface|\PHPUnit\Framework\MockObject\MockObject $builder */
         $builder = $this->getMockBuilder(FormBuilderInterface::class)->getMock();
         $builder->expects($this->once())
             ->method('addEventSubscriber')
@@ -62,7 +55,7 @@ class PaymentMethodsConfigsRuleDestinationTypeTest extends AddressFormExtensionT
 
     public function testDefaultOptions()
     {
-        $form = $this->factory->create($this->formType);
+        $form = $this->factory->create(PaymentMethodsConfigsRuleDestinationType::class);
         $options = $form->getConfig()->getOptions();
         $this->assertContains('data_class', $options);
         $this->assertContains('region_route', $options);
@@ -76,7 +69,7 @@ class PaymentMethodsConfigsRuleDestinationTypeTest extends AddressFormExtensionT
      */
     public function testSubmit($data)
     {
-        $form = $this->factory->create($this->formType, $data);
+        $form = $this->factory->create(PaymentMethodsConfigsRuleDestinationType::class, $data);
 
         $this->assertEquals($data, $form->getData());
 
@@ -157,25 +150,12 @@ class PaymentMethodsConfigsRuleDestinationTypeTest extends AddressFormExtensionT
      */
     public function getExtensions()
     {
-        $translatableEntity = $this->getTranslatableEntity();
-
-        return [
-            new PreloadedExtension(
-                [
-                    'oro_country' => new CountryType(),
-                    'oro_select2_translatable_entity' => new Select2Type(
-                        'translatable_entity',
-                        'oro_select2_translatable_entity'
-                    ),
-                    'translatable_entity' => $translatableEntity,
-                    'oro_region' => new RegionType(),
-                ],
-                ['form' => [
-                    new AdditionalAttrExtension(),
-                    new StripTagsExtensionStub($this->createMock(HtmlTagHelper::class)),
-                ]]
-            ),
-            $this->getValidatorExtension(true)
-        ];
+        return array_merge(
+            parent::getExtensions(),
+            [
+                new PreloadedExtension([$this->formType], []),
+                $this->getValidatorExtension(true)
+            ]
+        );
     }
 }

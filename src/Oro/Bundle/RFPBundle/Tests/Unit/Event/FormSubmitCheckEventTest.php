@@ -4,7 +4,7 @@ namespace Oro\Bundle\RFPBundle\Tests\Unit\Event;
 
 use Oro\Bundle\RFPBundle\Event\FormSubmitCheckEvent;
 
-class FormSubmitCheckEventTest extends \PHPUnit_Framework_TestCase
+class FormSubmitCheckEventTest extends \PHPUnit\Framework\TestCase
 {
     public function testSubmitOnErrorHandlesCorrectly()
     {

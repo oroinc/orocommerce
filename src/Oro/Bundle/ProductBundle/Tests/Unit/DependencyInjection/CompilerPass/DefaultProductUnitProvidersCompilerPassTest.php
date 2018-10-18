@@ -6,7 +6,7 @@ use Oro\Bundle\ProductBundle\DependencyInjection\CompilerPass\DefaultProductUnit
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
-class DefaultProductUnitProvidersCompilerPassTest extends \PHPUnit_Framework_TestCase
+class DefaultProductUnitProvidersCompilerPassTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var DefaultProductUnitProvidersCompilerPass
@@ -14,7 +14,7 @@ class DefaultProductUnitProvidersCompilerPassTest extends \PHPUnit_Framework_Tes
     protected $compilerPass;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ContainerBuilder
+     * @var \PHPUnit\Framework\MockObject\MockObject|ContainerBuilder
      */
     protected $container;
 

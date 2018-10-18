@@ -23,6 +23,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * Handles checkout logic
+ */
 class CheckoutController extends Controller
 {
     /**
@@ -229,8 +232,8 @@ class CheckoutController extends Controller
             return;
         }
 
-        $transitionForm->submit($request);
-        if (!$transitionForm->isValid()) {
+        $transitionForm->handleRequest($request);
+        if ($transitionForm->isSubmitted() && !$transitionForm->isValid()) {
             $this->handleFormErrors($transitionForm->getErrors());
             return;
         }
@@ -252,9 +255,12 @@ class CheckoutController extends Controller
      */
     protected function handleTransition(WorkflowItem $workflowItem, Request $request)
     {
-        if ($request->isMethod(Request::METHOD_GET)) {
+        $isRegistrationValid = $this->get('oro_checkout.handler.registration')->handle($request);
+        $isPasswordRequestValid = $this->get('oro_checkout.handler.forgot_password')->handle($request);
+
+        if ($isRegistrationValid || $request->isMethod(Request::METHOD_GET)) {
             $this->handleGetTransition($workflowItem, $request);
-        } elseif ($request->isMethod(Request::METHOD_POST)) {
+        } elseif ($isPasswordRequestValid || $request->isMethod(Request::METHOD_POST)) {
             $this->handlePostTransition($workflowItem, $request);
         }
     }

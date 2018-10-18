@@ -7,15 +7,15 @@ use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentTermBundle\Manager\PaymentTermManager;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermAssociationProvider;
 
-class PaymentTermManagerTest extends \PHPUnit_Framework_TestCase
+class PaymentTermManagerTest extends \PHPUnit\Framework\TestCase
 {
     /** @var PaymentTermManager */
     private $manager;
 
-    /** @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $doctrineHelper;
 
-    /** @var PaymentTermAssociationProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var PaymentTermAssociationProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $paymentTermAssociationProvider;
 
     protected function setUp()

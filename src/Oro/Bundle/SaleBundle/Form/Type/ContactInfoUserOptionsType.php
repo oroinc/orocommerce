@@ -6,6 +6,7 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\SaleBundle\DependencyInjection\Configuration;
 use Oro\Bundle\SaleBundle\Provider\OptionProviderWithDefaultValueInterface;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -42,18 +43,17 @@ class ContactInfoUserOptionsType extends AbstractType
     {
         $key = Configuration::getConfigKeyByName(Configuration::ALLOW_USER_CONFIGURATION);
         $configValue = $this->configManager->get($key) ? false : true;
+        $choices = $this->optionsProvider->getOptions();
 
         $resolver->setDefaults([
-            'choices' => array_flip($this->optionsProvider->getOptions()),
+            'choices' => array_combine($choices, $choices),
             'multiple' => false,
             'disabled' => $configValue
         ]);
 
         $resolver->setNormalizer('choice_label', function () {
             return function ($optionValue) {
-                $label = sprintf('oro.sale.contact_info_user_options.type.%s.label', $optionValue);
-
-                return $label;
+                return sprintf('oro.sale.contact_info_user_options.type.%s.label', $optionValue);
             };
         });
     }
@@ -93,6 +93,6 @@ class ContactInfoUserOptionsType extends AbstractType
      */
     public function getParent()
     {
-        return 'choice';
+        return ChoiceType::class;
     }
 }

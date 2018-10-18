@@ -16,10 +16,10 @@ use Oro\Bundle\RedirectBundle\Routing\SluggableUrlGenerator;
 use Oro\Bundle\SearchBundle\Datagrid\Datasource\SearchDatasource;
 use Oro\Bundle\SearchBundle\Query\SearchQueryInterface;
 
-class SearchContentVariantFilteringEventListenerTest extends \PHPUnit_Framework_TestCase
+class SearchContentVariantFilteringEventListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var RequestContentVariantHandler|\PHPUnit_Framework_MockObject_MockObject
+     * @var RequestContentVariantHandler|\PHPUnit\Framework\MockObject\MockObject
      */
     private $requestHandler;
 
@@ -90,7 +90,7 @@ class SearchContentVariantFilteringEventListenerTest extends \PHPUnit_Framework_
 
     public function testOnBuildAfterWhenDatasourceIsNotSearch()
     {
-        /** @var DatagridConfiguration|\PHPUnit_Framework_MockObject_MockObject $configuration */
+        /** @var DatagridConfiguration|\PHPUnit\Framework\MockObject\MockObject $configuration */
         $configuration = $this->createMock(DatagridConfiguration::class);
         $parameterBag = new ParameterBag([]);
         $grid = new Datagrid('name', $configuration, $parameterBag);
@@ -109,7 +109,7 @@ class SearchContentVariantFilteringEventListenerTest extends \PHPUnit_Framework_
         $configuration = DatagridConfiguration::create([]);
         $parameterBag = new ParameterBag([]);
         $grid = new Datagrid('name', $configuration, $parameterBag);
-        /** @var SearchDatasource|\PHPUnit_Framework_MockObject_MockObject $datasource */
+        /** @var SearchDatasource|\PHPUnit\Framework\MockObject\MockObject $datasource */
         $datasource = $this->createMock(SearchDatasource::class);
         $grid->setDatasource($datasource);
         $datasource->expects($this->never())
@@ -136,7 +136,7 @@ class SearchContentVariantFilteringEventListenerTest extends \PHPUnit_Framework_
         $searchQuery->expects($this->once())
             ->method('addWhere')
             ->with(Criteria::expr()->eq(sprintf('integer.assigned_to_variant_%s', $contentVariantId), 1));
-        /** @var SearchDatasource|\PHPUnit_Framework_MockObject_MockObject $datasource */
+        /** @var SearchDatasource|\PHPUnit\Framework\MockObject\MockObject $datasource */
         $datasource = $this->createMock(SearchDatasource::class);
         $datasource->expects($this->once())
             ->method('getSearchQuery')

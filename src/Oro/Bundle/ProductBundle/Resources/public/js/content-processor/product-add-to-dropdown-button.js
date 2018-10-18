@@ -11,6 +11,12 @@ define([
         'oroui.productAddToDropdownButtonProcessor',
         $.oroui.pinnedDropdownButtonProcessor,
         _.extend(componentContainerMixin, {
+            options: {
+                moreButtonAttrs: {
+                    'data-inherit-parent-width': 'strictly'
+                }
+            },
+
             keyPreffix: 'product-add-to-dropdown-button-processor-',
 
             modules: [],

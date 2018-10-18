@@ -8,20 +8,20 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 
-class PaymentLineItemTest extends \PHPUnit_Framework_TestCase
+class PaymentLineItemTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var Price|\PHPUnit_Framework_MockObject_MockObject
+     * @var Price|\PHPUnit\Framework\MockObject\MockObject
      */
     private $priceMock;
 
     /**
-     * @var ProductUnit|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProductUnit|\PHPUnit\Framework\MockObject\MockObject
      */
     private $productUnitMock;
 
     /**
-     * @var ProductHolderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProductHolderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $productHolderMock;
 

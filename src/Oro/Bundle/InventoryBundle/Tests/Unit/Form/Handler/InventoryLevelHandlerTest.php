@@ -13,22 +13,22 @@ use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-class InventoryLevelHandlerTest extends \PHPUnit_Framework_TestCase
+class InventoryLevelHandlerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|FormInterface
+     * @var \PHPUnit\Framework\MockObject\MockObject|FormInterface
      */
     protected $form;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ObjectManager
+     * @var \PHPUnit\Framework\MockObject\MockObject|ObjectManager
      */
     protected $manager;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|RoundingServiceInterface
+     * @var \PHPUnit\Framework\MockObject\MockObject|RoundingServiceInterface
      */
     protected $roundingService;
 
@@ -60,7 +60,7 @@ class InventoryLevelHandlerTest extends \PHPUnit_Framework_TestCase
     public function testProcessGet()
     {
         $this->form->expects($this->never())
-            ->method('submit');
+            ->method('handleRequest');
 
         $this->handler->process();
     }
@@ -70,8 +70,11 @@ class InventoryLevelHandlerTest extends \PHPUnit_Framework_TestCase
         $this->request->setMethod('POST');
 
         $this->form->expects($this->once())
-            ->method('submit')
+            ->method('handleRequest')
             ->with($this->request);
+        $this->form->expects($this->once())
+            ->method('isSubmitted')
+            ->willReturn(true);
         $this->form->expects($this->once())
             ->method('isValid')
             ->willReturn(false);
@@ -92,8 +95,11 @@ class InventoryLevelHandlerTest extends \PHPUnit_Framework_TestCase
         $this->request->setMethod('POST');
 
         $this->form->expects($this->once())
-            ->method('submit')
+            ->method('handleRequest')
             ->with($this->request);
+        $this->form->expects($this->once())
+            ->method('isSubmitted')
+            ->willReturn(true);
         $this->form->expects($this->once())
             ->method('isValid')
             ->willReturn(true);

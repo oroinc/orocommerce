@@ -23,37 +23,37 @@ use Symfony\Component\Translation\TranslatorInterface;
 class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensionTestCase
 {
     /**
-     * @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $configManager;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ContainerInterface
+     * @var \PHPUnit\Framework\MockObject\MockObject|ContainerInterface
      */
     protected $container;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|TwigEngine
+     * @var \PHPUnit\Framework\MockObject\MockObject|TwigEngine
      */
     protected $templating;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface
+     * @var \PHPUnit\Framework\MockObject\MockObject|TranslatorInterface
      */
     protected $translator;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|Session
+     * @var \PHPUnit\Framework\MockObject\MockObject|Session
      */
     protected $session;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|FlashBagInterface
+     * @var \PHPUnit\Framework\MockObject\MockObject|FlashBagInterface
      */
     protected $flashBag;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ProductAvailabilityProviderInterface
+     * @var \PHPUnit\Framework\MockObject\MockObject|ProductAvailabilityProviderInterface
      */
     protected $productAvailabilityProvider;
 
@@ -64,7 +64,7 @@ class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensio
     {
         parent::setUp();
 
-        /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
+        /** @var RequestStack|\PHPUnit\Framework\MockObject\MockObject $requestStack */
         $requestStack = $this->createMock('Symfony\Component\HttpFoundation\RequestStack');
         $this->request = $this->createMock('Symfony\Component\HttpFoundation\Request');
         $this->configManager = $this->getMockBuilder(ConfigManager::class)

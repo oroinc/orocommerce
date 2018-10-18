@@ -28,7 +28,7 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function(options) {
+        constructor: function AppliedPromotionCollectionView(options) {
             this.options = $.extend(true, {}, this.options, options || {});
             this._checkOptions();
             AppliedPromotionCollectionView.__super__.constructor.call(this, options);

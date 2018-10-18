@@ -11,20 +11,20 @@ use Oro\Bundle\ShippingBundle\Method\Handler\ShippingMethodDisableHandlerInterfa
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
 
-class RulesShippingMethodDisableHandlerDecoratorTest extends \PHPUnit_Framework_TestCase
+class RulesShippingMethodDisableHandlerDecoratorTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ShippingMethodDisableHandlerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingMethodDisableHandlerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $handler;
 
     /**
-     * @var ShippingMethodsConfigsRuleRepository|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingMethodsConfigsRuleRepository|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $repository;
 
     /**
-     * @var ShippingMethodProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $shippingMethodProvider;
 

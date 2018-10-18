@@ -1,0 +1,52 @@
+workflows:
+    b2b_flow_checkout:
+        transitions:
+            __start__:
+                is_start: true
+                is_hidden: true
+                transition_definition: __start___definition
+
+            start_from_shoppinglist:
+                is_start: true
+                is_unavailable_hidden: true
+                transition_definition: start_from_shoppinglist_definition
+                frontend_options:
+                    icon: fa-briefcase
+                    data:
+                      component_name: oro_shopping_list_matrix_to_create_order
+                      page-component-module: oroshoppinglist/js/app/components/shoppinglist-create-order-button-component
+                      page-component-options:
+                          component_name: '[name$="[component]"]'
+                          hasEmptyMatrix: $.result.shoppingListHasEmptyMatrix
+                init_routes:
+                    - oro_shopping_list_frontend_view
+                acl_resource: [CHECKOUT_CREATE, $.result.shoppingList]
+
+            start_from_quickorderform:
+                is_start: true
+                is_unavailable_hidden: true
+                transition_definition: start_from_quickorderform_definition
+                frontend_options:
+                    icon: fa-clipboard
+                    data:
+                        component_name: oro_shopping_list_to_checkout_quick_add_processor
+                        transition_name: start_from_quickorderform
+                        page-component-module: oroproduct/js/app/components/quick-add-form-button-component
+                        page-component-options:
+                            transition_name: '[name$="[transition]"]'
+                            component_name: '[name$="[component]"]'
+                            confirmation: $.result.doShowConfirmation
+                            shopping_list_limit: $.result.shoppingListLimit
+                init_routes:
+                    - oro_product_frontend_quick_add
+                    - oro_product_frontend_quick_add_copy_paste
+                    - oro_product_frontend_quick_add_import
+                acl_resource: [CREATE, entity:commerce@Oro\Bundle\CheckoutBundle\Entity\Checkout]
+
+            finish_checkout:
+                transition_definition: finish_checkout_definition
+                is_hidden: true
+
+            payment_error:
+                transition_definition: payment_error_definition
+                is_hidden: true

@@ -9,10 +9,10 @@ use Oro\Bundle\PricingBundle\Form\Type\PriceRuleEditorTextType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 
-class PriceRuleEditorTextTypeTest extends \PHPUnit_Framework_TestCase
+class PriceRuleEditorTextTypeTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var PriceRuleEditorOptionsConfigurator|\PHPUnit_Framework_MockObject_MockObject
+     * @var PriceRuleEditorOptionsConfigurator|\PHPUnit\Framework\MockObject\MockObject
      */
     private $optionsConfigurator;
 
@@ -27,11 +27,6 @@ class PriceRuleEditorTextTypeTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $this->type = new PriceRuleEditorTextType($this->optionsConfigurator);
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals(PriceRuleEditorTextType::NAME, $this->type->getName());
     }
 
     public function testGetBlockPrefix()

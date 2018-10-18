@@ -43,6 +43,13 @@ define(function(require) {
         /**
          * @inheritDoc
          */
+        constructor: function UPSTransportSettingsComponent() {
+            UPSTransportSettingsComponent.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
             this.$elem = options._sourceElement;

@@ -5,7 +5,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Entity;
 use Oro\Bundle\PricingBundle\Entity\NotificationMessage;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-class NotificationMessageTest extends \PHPUnit_Framework_TestCase
+class NotificationMessageTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 

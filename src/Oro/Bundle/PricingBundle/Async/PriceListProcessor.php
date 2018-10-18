@@ -3,24 +3,26 @@
 namespace Oro\Bundle\PricingBundle\Async;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\DBAL\Driver\DriverException;
+use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\EntityBundle\ORM\DatabaseExceptionHelper;
+use Oro\Bundle\PricingBundle\Builder\CombinedPriceListsBuilderFacade;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
-use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
-use Oro\Bundle\PricingBundle\Event\CombinedPriceList\CombinedPriceListsUpdateEvent;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
+use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListToPriceListRepository;
 use Oro\Bundle\PricingBundle\Model\CombinedPriceListTriggerHandler;
 use Oro\Bundle\PricingBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerFactory;
-use Oro\Bundle\PricingBundle\PricingStrategy\StrategyRegister;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\MessageQueue\Util\JSON;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+/**
+ * Updates combined price lists in case of price changes in some products
+ */
 class PriceListProcessor implements MessageProcessorInterface, TopicSubscriberInterface
 {
     /**
@@ -39,24 +41,14 @@ class PriceListProcessor implements MessageProcessorInterface, TopicSubscriberIn
     protected $registry;
 
     /**
-     * @var StrategyRegister
+     * @var CombinedPriceListsBuilderFacade
      */
-    protected $strategyRegister;
-
-    /**
-     * @var EventDispatcherInterface
-     */
-    protected $dispatcher;
+    protected $combinedPriceListsBuilderFacade;
 
     /**
      * @var LoggerInterface
      */
     protected $logger;
-
-    /**
-     * @var CombinedPriceListRepository
-     */
-    protected $combinedPriceListRepository;
 
     /**
      * @var DatabaseExceptionHelper
@@ -66,8 +58,7 @@ class PriceListProcessor implements MessageProcessorInterface, TopicSubscriberIn
     /**
      * @param PriceListTriggerFactory $triggerFactory
      * @param ManagerRegistry $registry
-     * @param StrategyRegister $strategyRegister
-     * @param EventDispatcherInterface $dispatcher
+     * @param CombinedPriceListsBuilderFacade $combinedPriceListsBuilderFacade
      * @param LoggerInterface $logger
      * @param DatabaseExceptionHelper $databaseExceptionHelper
      * @param CombinedPriceListTriggerHandler $triggerHandler
@@ -75,16 +66,14 @@ class PriceListProcessor implements MessageProcessorInterface, TopicSubscriberIn
     public function __construct(
         PriceListTriggerFactory $triggerFactory,
         ManagerRegistry $registry,
-        StrategyRegister $strategyRegister,
-        EventDispatcherInterface $dispatcher,
+        CombinedPriceListsBuilderFacade $combinedPriceListsBuilderFacade,
         LoggerInterface $logger,
         DatabaseExceptionHelper $databaseExceptionHelper,
         CombinedPriceListTriggerHandler $triggerHandler
     ) {
         $this->triggerFactory = $triggerFactory;
         $this->registry = $registry;
-        $this->strategyRegister = $strategyRegister;
-        $this->dispatcher = $dispatcher;
+        $this->combinedPriceListsBuilderFacade = $combinedPriceListsBuilderFacade;
         $this->logger = $logger;
         $this->databaseExceptionHelper = $databaseExceptionHelper;
         $this->triggerHandler = $triggerHandler;
@@ -98,46 +87,48 @@ class PriceListProcessor implements MessageProcessorInterface, TopicSubscriberIn
         /** @var EntityManagerInterface $em */
         $em = $this->registry->getManagerForClass(CombinedPriceList::class);
         $em->beginTransaction();
-        
+
         try {
             $this->triggerHandler->startCollect();
             $messageData = JSON::decode($message->getBody());
             $trigger = $this->triggerFactory->createFromArray($messageData);
-            $repository = $this->getCombinedPriceListRepository();
-            $iterator = $repository->getCombinedPriceListsByPriceList(
-                $trigger->getPriceList(),
-                true
-            );
-            $builtCPLs = [];
 
-            foreach ($iterator as $combinedPriceList) {
-                $this->strategyRegister->getCurrentStrategy()
-                    ->combinePrices($combinedPriceList, $trigger->getProducts());
-                $builtCPLs[$combinedPriceList->getId()] = true;
+            /** @var CombinedPriceListToPriceListRepository $cpl2plRepository */
+            $cpl2plRepository = $this->getRepository(CombinedPriceListToPriceList::class);
+            $allProducts = $trigger->getProducts();
+
+            $cpls = $cpl2plRepository->getCombinedPriceListsByActualPriceLists(array_keys($allProducts));
+            foreach ($cpls as $cpl) {
+                $pls = $cpl2plRepository->getPriceListIdsByCpls([$cpl]);
+
+                $products = array_merge(...array_intersect_key($allProducts, array_flip($pls)));
+
+                $this->combinedPriceListsBuilderFacade->rebuild([$cpl], array_unique($products));
             }
-            if ($builtCPLs) {
-                $this->dispatchEvent($builtCPLs);
-            }
+
+            $this->combinedPriceListsBuilderFacade->dispatchEvents();
             $em->commit();
             $this->triggerHandler->commit();
         } catch (InvalidArgumentException $e) {
-            $em->rollback();
-            $this->triggerHandler->rollback();
             $this->logger->error(sprintf('Message is invalid: %s', $e->getMessage()));
 
             return self::REJECT;
         } catch (\Exception $e) {
-            $em->rollback();
-            $this->triggerHandler->rollback();
             $this->logger->error(
                 'Unexpected exception occurred during Combined Price Lists build',
                 ['exception' => $e]
             );
 
-            if ($e instanceof DriverException && $this->databaseExceptionHelper->isDeadlock($e)) {
+            $driverException = $this->databaseExceptionHelper->getDriverException($e);
+            if ($driverException && $this->databaseExceptionHelper->isDeadlock($driverException)) {
                 return self::REQUEUE;
-            } else {
-                return self::REJECT;
+            }
+
+            return self::REJECT;
+        } finally {
+            if (isset($e)) {
+                $em->rollback();
+                $this->triggerHandler->rollback();
             }
         }
 
@@ -145,26 +136,12 @@ class PriceListProcessor implements MessageProcessorInterface, TopicSubscriberIn
     }
 
     /**
-     * @param array $cplIds
+     * @param string $className
+     * @return ObjectRepository
      */
-    protected function dispatchEvent(array $cplIds)
+    private function getRepository($className)
     {
-        $event = new CombinedPriceListsUpdateEvent(array_keys($cplIds));
-        $this->dispatcher->dispatch(CombinedPriceListsUpdateEvent::NAME, $event);
-    }
-
-    /**
-     * @return CombinedPriceListRepository
-     */
-    protected function getCombinedPriceListRepository()
-    {
-        if (!$this->combinedPriceListRepository) {
-            $this->combinedPriceListRepository = $this->registry
-                ->getManagerForClass(CombinedPriceList::class)
-                ->getRepository(CombinedPriceList::class);
-        }
-
-        return $this->combinedPriceListRepository;
+        return $this->registry->getManagerForClass($className)->getRepository($className);
     }
 
     /**

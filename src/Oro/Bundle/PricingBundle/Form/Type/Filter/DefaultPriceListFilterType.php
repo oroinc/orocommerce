@@ -59,7 +59,7 @@ class DefaultPriceListFilterType extends EntityFilterType
             [
                 'field_options' => [
                     'class' => $this->priceListClass,
-                    'property' => 'name',
+                    'choice_label' => 'name',
                 ],
                 'required' => $isEntitySharded,
             ]

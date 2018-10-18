@@ -8,29 +8,11 @@ use Oro\Bundle\ShoppingListBundle\Model\MatrixCollection;
 use Oro\Bundle\ShoppingListBundle\Model\MatrixCollectionColumn;
 use Oro\Bundle\ShoppingListBundle\Model\MatrixCollectionRow;
 use Oro\Bundle\ShoppingListBundle\Tests\Unit\Manager\Stub\ProductWithSizeAndColor;
-use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Validation;
 
 class MatrixCollectionTypeTest extends FormIntegrationTestCase
 {
-    /** @var MatrixCollectionType */
-    protected $type;
-
-    protected function setUp()
-    {
-        $this->type = new MatrixCollectionType();
-
-        parent::setUp();
-    }
-
-    protected function tearDown()
-    {
-        unset($this->type);
-    }
-
     /**
      * @dataProvider submitProvider
      *
@@ -40,7 +22,7 @@ class MatrixCollectionTypeTest extends FormIntegrationTestCase
      */
     public function testSubmit(MatrixCollection $defaultData, array $submittedData, MatrixCollection $expectedData)
     {
-        $form = $this->factory->create($this->type, $defaultData);
+        $form = $this->factory->create(MatrixCollectionType::class, $defaultData);
         $form->submit($submittedData);
         $this->assertEquals(true, $form->isValid());
         $this->assertEquals($expectedData, $form->getData());
@@ -90,7 +72,7 @@ class MatrixCollectionTypeTest extends FormIntegrationTestCase
     {
         $expectedQtys = [3, 12];
         $collection = $this->createCollection(true);
-        $form = $this->factory->create($this->type, $collection);
+        $form = $this->factory->create(MatrixCollectionType::class, $collection);
         $view = $form->createView();
 
         $this->assertEquals($expectedQtys, $view->vars['columnsQty']);
@@ -98,7 +80,7 @@ class MatrixCollectionTypeTest extends FormIntegrationTestCase
 
     public function testConfigureOptions()
     {
-        /** @var OptionsResolver|\PHPUnit_Framework_MockObject_MockObject $resolver */
+        /** @var OptionsResolver|\PHPUnit\Framework\MockObject\MockObject $resolver */
         $resolver = $this->createMock(OptionsResolver::class);
 
         $resolver->expects($this->once())
@@ -111,7 +93,8 @@ class MatrixCollectionTypeTest extends FormIntegrationTestCase
                 }
             );
 
-        $this->type->configureOptions($resolver);
+        $type = new MatrixCollectionType();
+        $type->configureOptions($resolver);
     }
 
     /**

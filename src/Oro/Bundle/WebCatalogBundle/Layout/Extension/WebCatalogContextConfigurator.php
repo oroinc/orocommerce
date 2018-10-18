@@ -30,7 +30,7 @@ class WebCatalogContextConfigurator implements ContextConfiguratorInterface
     {
         $context->getResolver()
             ->setRequired([WebCatalogContextConfigurator::CONTEXT_VARIABLE])
-            ->setAllowedTypes([WebCatalogContextConfigurator::CONTEXT_VARIABLE => ['null', 'string', 'integer']]);
+            ->setAllowedTypes(WebCatalogContextConfigurator::CONTEXT_VARIABLE, ['null', 'string', 'integer']);
 
         $context->set(
             WebCatalogContextConfigurator::CONTEXT_VARIABLE,

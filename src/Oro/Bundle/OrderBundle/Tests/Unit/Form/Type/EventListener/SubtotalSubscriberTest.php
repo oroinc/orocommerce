@@ -14,24 +14,24 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use Symfony\Component\Form\FormEvents;
 
-class SubtotalSubscriberTest extends \PHPUnit_Framework_TestCase
+class SubtotalSubscriberTest extends \PHPUnit\Framework\TestCase
 {
     /** @var SubtotalSubscriber */
     protected $subscriber;
 
-    /** @var TotalProcessorProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var TotalProcessorProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $totalProvider;
 
-    /** @var LineItemSubtotalProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var LineItemSubtotalProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $lineItemSubtotalProvider;
 
-    /** @var DiscountSubtotalProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var DiscountSubtotalProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $discountSubtotalProvider;
 
-    /** @var PriceMatcher|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var PriceMatcher|\PHPUnit\Framework\MockObject\MockObject */
     protected $priceMatcher;
 
-    /** @var RateConverterInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var RateConverterInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $rateConverter;
 
     protected function setUp()
@@ -139,6 +139,10 @@ class SubtotalSubscriberTest extends \PHPUnit_Framework_TestCase
             ->method('getTotal')
             ->willReturn(new Subtotal());
 
+        $this->discountSubtotalProvider->expects($this->any())
+            ->method('getSubtotal')
+            ->willReturn([]);
+
         $this->subscriber->onSubmitEventListener($event);
         $this->assertEquals(0, $order->getTotal());
         $this->assertEquals(0, $order->getSubtotal());
@@ -216,7 +220,7 @@ class SubtotalSubscriberTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param $order
-     * @return \PHPUnit_Framework_MockObject_MockObject|\Symfony\Component\Form\FormEvent
+     * @return \PHPUnit\Framework\MockObject\MockObject|\Symfony\Component\Form\FormEvent
      */
     protected function prepareEvent($order)
     {

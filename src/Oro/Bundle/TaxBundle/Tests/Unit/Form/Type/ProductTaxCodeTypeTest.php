@@ -18,14 +18,6 @@ class ProductTaxCodeTypeTest extends AbstractTaxCodeTypeTest
     /**
      * {@inheritdoc}
      */
-    public function testGetName()
-    {
-        $this->assertEquals('oro_tax_product_tax_code_type', $this->formType->getName());
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     protected function getDataClass()
     {
         return self::DATA_CLASS;

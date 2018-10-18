@@ -1,0 +1,43 @@
+/* @theme: default; */
+
+.checkout-credentials {
+    display: flex;
+    width: 100%;
+    max-width: $checkout-credentials-max-width;
+    margin: 0 auto;
+
+    .title {
+        padding-left: $checkout-credentials-column-title-offset-inner-left;
+    }
+
+    &__column {
+        width: $checkout-credentials-column-width;
+
+        &:not(:first-child) {
+            width: calc(#{$checkout-credentials-column-width} + #{$checkout-credentials-column-offset-left});
+            margin-left: $checkout-credentials-column-offset-left;
+            padding-left: $checkout-credentials-column-offset-inner-left;
+
+            border-left: 1px solid get-color('additional', 'middle');
+        }
+    }
+}
+
+// Mobile big
+@include breakpoint('mobile-big') {
+    .checkout-credentials {
+        flex-direction: column;
+
+        &__column {
+            width: 100%;
+
+            &:not(:first-child) {
+                width: 100%;
+                margin: $checkout-credentials-column-offset-top-mobile-big 0 0 0;
+                padding: 0;
+
+                border: 0;
+            }
+        }
+    }
+}

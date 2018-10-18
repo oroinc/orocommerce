@@ -12,8 +12,6 @@ Retrieve a specific category record.
 
 Retrieve a collection of category records.
 
-The list of records that will be returned, could be limited by filters.
-
 {@inheritdoc}
 
 ## SUBRESOURCES
@@ -22,11 +20,11 @@ The list of records that will be returned, could be limited by filters.
 
 #### get_subresource
 
-Retrieve the service records that store the category backorder data.
+Retrieve the service records that store category backorder data.
 
 #### get_relationship
 
-Retrieve the ID's of service records that store the category backorder data.
+Retrieve the IDs of the service records that store category backorder data.
 
 ### childCategories
 
@@ -42,161 +40,161 @@ Retrieve the IDs of the child category records assigned to a specific category r
 
 #### get_subresource
 
-Retrieve the service records that store the category decrement quantity data.
+Retrieve the service records that store category decrement quantity data.
 
 #### get_relationship
 
-Retrieve the ID's of service records that store the category decrement quantity data.
+Retrieve the IDs of the service records that store category decrement quantity data.
 
 ### inventoryThreshold
 
 #### get_subresource
 
-Retrieve the service records that store the category inventory threshold data.
+Retrieve the service records that store category inventory threshold data.
 
 #### get_relationship
 
-Retrieve the ID's of service records that store the category inventory threshold data.
+Retrieve the IDs of the service records that store category inventory threshold data.
 
 ### isUpcoming
 
 #### get_subresource
 
-Retrieve the service records that products from this category will be available later
+Retrieve the service records that store the information on whether the products of the category will be available later.
 
 #### get_relationship
 
-Retrieve the ID's of service records that products from this category will be available later
+Retrieve the IDs of the service records that store the information on whether the products of the category will be available later.
 
 ### largeImage
 
 #### get_subresource
 
-Retrieve a record of large image assigned to a specific category record.
+Retrieve the large image record assigned to a specific category record.
 
 #### get_relationship
 
-Retrieve ID of large image records assigned to a specific category record.
+Retrieve the ID of the large image record assigned to a specific category record.
 
 ### longDescriptions
 
 #### get_subresource
 
-Retrieve the service records that store the category long descriptions localized data.
+Retrieve the service records that store a localized description of a particular category.
 
 #### get_relationship
 
-Retrieve the ID's of service records that store the category long descriptions localized data.
+Retrieve the IDs of the service records that store a localized description of a particular category.
 
 ### manageInventory
 
 #### get_subresource
 
-Retrieve the service records that store the category manage inventory data.
+Retrieve the service records that store category manage inventory data.
 
 #### get_relationship
 
-Retrieve the ID's of service records that store the category manage inventory data.
+Retrieve the IDs of the service records that store category manage inventory data.
 
 ### maximumQuantityToOrder
 
 #### get_subresource
 
-Retrieve the service records that store the category maximum quantity to order data.
+Retrieve the service records that store category maximum quantity to order data.
 
 #### get_relationship
 
-Retrieve the ID's of service records that store the category maximum quantity to order data.
+Retrieve the IDs of the service records that store category maximum quantity to order data.
 
 ### metaDescriptions
 
 #### get_subresource
 
-Retrieve the service records that store the category meta descriptions localized data.
+Retrieve the service records that store category meta description localized data.
 
 #### get_relationship
 
-Retrieve the ID's of service records that store the category meta descriptions localized data.
+Retrieve the IDs of the service records that store category meta description localized data.
 
 ### metaKeywords
 
 #### get_subresource
 
-Retrieve the service records that store the category meta keywords localized data.
+Retrieve the service records that store category meta keywords localized data.
 
 #### get_relationship
 
-Retrieve the ID's of service records that store the category meta keywords localized data.
+Retrieve the IDs of the service records that store the category meta keywords localized data.
 
 ### metaTitles
 
 #### get_subresource
 
-Retrieve the service records that store the category meta titles localized data.
+Retrieve the service records that store category meta title localized data.
 
 #### get_relationship
 
-Retrieve the ID's of service records that store the category meta titles localized data.
+Retrieve the IDs of the service records that store category meta title localized data.
 
 ### minimumQuantityToOrder
 
 #### get_subresource
 
-Retrieve the service records that store the category minimum quantity to order data.
+Retrieve the service records that store category minimum quantity to order data.
 
 #### get_relationship
 
-Retrieve the ID's of service records that store the category minimum quantity to order data.
+Retrieve the IDs of the service records that store category minimum quantity to order data.
 
 ### shortDescriptions
 
 #### get_subresource
 
-Retrieve the service records that store the category short descriptions data.
+Retrieve the service records that store category short description data.
 
 #### get_relationship
 
-Retrieve the ID's of service records that store the category short descriptions data.
+Retrieve the IDs of the service records that store category short description data.
 
 ### slugPrototypes
 
 #### get_subresource
 
-Retrieve the service records that store the category slug prototypes data.
+Retrieve the service records that store category slug prototypes data.
 
 #### get_relationship
 
-Retrieve the ID's of service records that store the category slug prototypes data.
+Retrieve the IDs of the service records that store category slug prototypes data.
 
 ### titles
 
 #### get_subresource
 
-Retrieve the service records that store the category titles data.
+Retrieve the service records that store category titles data.
 
 #### get_relationship
 
-Retrieve the ID's of service records that store the category titles data.
+Retrieve the IDs of the service records that store category titles data.
 
 ### products
 
 #### get_subresource
 
-Retrieve a records of product assigned to a specific category record.
+Retrieve the records of the product assigned to a specific category record.
 
 #### get_relationship
 
-Retrieve IDs of product records assigned to a specific category record.
+Retrieve the IDs of the product records assigned to a specific category record.
 
 ### smallImage
 
 #### get_subresource
 
-Retrieve a record of small image assigned to a specific category record.
+Retrieve the record of the small image assigned to a specific category record.
 
 #### get_relationship
 
-Retrieve ID of small image records assigned to a specific category record.
+Retrieve the ID of the small image record assigned to a specific category record.
 
 ### parentCategory
 
@@ -212,18 +210,18 @@ Retrieve the IDs of the patent category records assigned to a specific category 
 
 #### get_subresource
 
-Retrieve the service records that store the category highlight low inventory data.
+Retrieve the service records that store category highlight low inventory data.
 
 #### get_relationship
 
-Retrieve the ID's of service records that store the category highlight low inventory data.
+Retrieve the IDs of the service records that store category highlight low inventory data.
 
 ### lowInventoryThreshold
 
 #### get_subresource
 
-Retrieve the service records that store the category low inventory threshold data.
+Retrieve the service records that store category low inventory threshold data.
 
 #### get_relationship
 
-Retrieve the ID's of service records that store the category low inventory threshold data.
+Retrieve the IDs of the service records that store category low inventory threshold data.

@@ -6,7 +6,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\MigrationBundle\Event\MigrationDataFixturesEvent;
 use Oro\Bundle\PlatformBundle\EventListener\AbstractDemoDataFixturesListener;
 use Oro\Bundle\PlatformBundle\Manager\OptionalListenerManager;
-use Oro\Bundle\PricingBundle\Builder\CombinedPriceListsBuilder;
+use Oro\Bundle\PricingBundle\Builder\CombinedPriceListsBuilderFacade;
 use Oro\Bundle\PricingBundle\Builder\PriceListProductAssignmentBuilder;
 use Oro\Bundle\PricingBundle\Builder\ProductPriceBuilder;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
@@ -17,8 +17,8 @@ use Oro\Bundle\PricingBundle\Entity\PriceList;
  */
 class BuildPricesDemoDataFixturesListener extends AbstractDemoDataFixturesListener
 {
-    /** @var CombinedPriceListsBuilder */
-    protected $priceListBuilder;
+    /** @var CombinedPriceListsBuilderFacade CombinedPriceListsBuilderFacade */
+    protected $combinedPriceListsBuilderFacade;
 
     /** @var ProductPriceBuilder */
     protected $priceBuilder;
@@ -28,19 +28,19 @@ class BuildPricesDemoDataFixturesListener extends AbstractDemoDataFixturesListen
 
     /**
      * @param OptionalListenerManager $listenerManager
-     * @param CombinedPriceListsBuilder $priceListBuilder
+     * @param CombinedPriceListsBuilderFacade $builderFacade
      * @param ProductPriceBuilder $priceBuilder
      * @param PriceListProductAssignmentBuilder $assignmentBuilder
      */
     public function __construct(
         OptionalListenerManager $listenerManager,
-        CombinedPriceListsBuilder $priceListBuilder,
+        CombinedPriceListsBuilderFacade $builderFacade,
         ProductPriceBuilder $priceBuilder,
         PriceListProductAssignmentBuilder $assignmentBuilder
     ) {
         parent::__construct($listenerManager);
 
-        $this->priceListBuilder = $priceListBuilder;
+        $this->combinedPriceListsBuilderFacade = $builderFacade;
         $this->priceBuilder = $priceBuilder;
         $this->assignmentBuilder = $assignmentBuilder;
     }
@@ -66,11 +66,10 @@ class BuildPricesDemoDataFixturesListener extends AbstractDemoDataFixturesListen
         $priceLists = $manager->getRepository(PriceList::class)->getPriceListsWithRules();
 
         foreach ($priceLists as $priceList) {
-            $this->assignmentBuilder->buildByPriceList($priceList);
-            $this->priceBuilder->buildByPriceList($priceList);
+            $this->assignmentBuilder->buildByPriceListWithoutEventDispatch($priceList);
+            $this->priceBuilder->buildByPriceListWithoutTriggers($priceList);
         }
 
-        $now = new \DateTime();
-        $this->priceListBuilder->build($now->getTimestamp());
+        $this->combinedPriceListsBuilderFacade->rebuildAll(time());
     }
 }

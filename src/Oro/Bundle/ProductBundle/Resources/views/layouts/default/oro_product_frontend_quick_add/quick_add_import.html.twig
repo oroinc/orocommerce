@@ -47,6 +47,7 @@
         'aCss': 'no-hash quick-order-import__link',
         'iCss': 'fa-info-circle',
         'label' : text|trans,
+        'labelInIcon': false,
         'widget' : {
             'type' : 'quick-add-import',
             'options' : {
@@ -61,4 +62,11 @@
             }
         }
     }) }}
+{% endblock %}
+
+{% block _quick_add_import_form_submit_widget %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ ' hidden'
+    }) %}
+    {{ block_widget(block, {attr: attr}) }}
 {% endblock %}

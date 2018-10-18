@@ -10,20 +10,23 @@
         }) %}
     {% endif %}
 
-    {% set attr = layout_attr_defaults(attr, {
-        'data-page-component-module': 'oroui/js/app/components/view-component',
-        '~data-page-component-options': {
-            view: 'oropricing/js/app/views/base-product-prices-view',
-            changeQuantity: true,
-            modelAttr: {
-                prices: productPrices
-            }
-        },
-    }) %}
+    {% set content = block_widget(block) %}
+    {% if block.children is not empty and content|trim|length > 0 %}
+        {% set attr = layout_attr_defaults(attr, {
+            'data-page-component-module': 'oroui/js/app/components/view-component',
+            '~data-page-component-options': {
+                view: 'oropricing/js/app/views/base-product-prices-view',
+                changeQuantity: true,
+                modelAttr: {
+                    prices: productPrices
+                }
+            },
+        }) %}
 
-    <div {{ block('block_attributes') }}>
-        {{ block_widget(block) }}
-    </div>
+        <div {{ block('block_attributes') }}>
+            {{ content|raw }}
+        </div>
+    {% endif %}
 {% endblock %}
 
 {% block product_price %}
@@ -52,7 +55,12 @@
                 {% spaceless %}
                 {% if firstPrice %}
                     <span itemprop="priceCurrency" content="{{ firstPrice.currency }}">{{ oro_currency_symbol(firstPrice.currency) }}</span>
-                    <span itemprop="price" content="{{ firstPrice.price }}">{{ (firstPrice.price|number_format(2, '.', ',')) }}</span>
+                    {% set priceFormatOptions = {
+                        attributes: {
+                            fraction_digits: oro_locale_number_attribute('max_fraction_digits', 'currency')
+                        }
+                    } %}
+                    <span itemprop="price" content="{{ (firstPrice.price|number_format(priceFormatOptions.attributes.fraction_digits, '.', '')) }}">{{ (firstPrice.price|oro_format_decimal(priceFormatOptions)) }}</span>
                 {% endif %}
                 {% endspaceless %}
             </span>
@@ -62,7 +70,7 @@
                     {{ firstPrice ? firstPrice.formatted_unit }}
                 </span>
                 <span class="product-price__unit-short">
-                    {{ firstPrice ? firstPrice.unit }}
+                    {{ firstPrice ? firstPrice.unit|oro_format_short_product_unit_label }}
                 </span>
             </span>
         </span>
@@ -108,8 +116,8 @@
         <table class="table">
             <thead>
             <tr>
-                <th class="text-uppercase">qty</th>
-                <th >Unit Price</th>
+                <th class="text-uppercase">{{ 'oro.pricing.frontend.product.quantity.short_label'|trans }}</th>{# qty#}
+                <th>{{ 'oro.pricing.frontend.product.unit_price.long_label'|trans }}</th>{# Unit Price #}
             </tr>
             </thead>
             <tbody>
@@ -164,7 +172,7 @@
                                 {{ price.formatted_unit}}
                             </span>
                             <span class="product-price__unit-short">
-                                {{ price.unit}}
+                                {{ price.unit|oro_format_short_product_unit_label }}
                             </span>
                         </span>
                     </span>
@@ -177,17 +185,20 @@
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' product-prices'
     }) %}
-    <div {{ block('block_attributes') }}>
-        <table class="product-prices__table">
-            <thead class="product-prices__thead">
-            <tr class="product-prices__tr">
-                <th style="width: 40%" class="product-prices__th text-uppercase">qty</th>
-                <th style="width: 60%" class="product-prices__th">Unit Price</th>
-            </tr>
-            </thead>
-            {{ block_widget(block) }}
-        </table>
-    </div>
+
+    {% if productPrices|length %}
+        <div {{ block('block_attributes') }}>
+            <table class="product-prices__table">
+                <thead class="product-prices__thead">
+                    <tr class="product-prices__tr">
+                        <th style="width: 40%" class="product-prices__th text-uppercase">{{ 'oro.pricing.frontend.product.quantity.short_label'|trans }}</th>{# qty #}
+                        <th style="width: 60%" class="product-prices__th">{{ 'oro.pricing.frontend.product.unit_price.long_label'|trans }}</th>{# Unit Price #}
+                    </tr>
+                </thead>
+                {{ block_widget(block) }}
+            </table>
+        </div>
+    {% endif %}
 {% endblock %}
 
 {% block product_price_table_body %}
@@ -213,6 +224,11 @@
 
     <tbody {{ block('block_attributes') }}>
         {% set currentUnit = '' %}
+        {% set priceFormatOptions = {
+            attributes: {
+                fraction_digits: oro_locale_number_attribute('max_fraction_digits', 'currency')
+            }
+        } %}
         {% for price in productPrices %}
             {% if price.formatted_unit is defined %}
                 {% if currentUnit != price.formatted_unit %}
@@ -232,8 +248,10 @@
                         <meta itemprop="unitCode" content="{{ currentUnit }}"/>
                     </td>
                     <td class="product-prices__td">
+                        {% spaceless %}
                         <span itemprop="priceCurrency" content="{{ price.currency }}">{{ oro_currency_symbol(price.currency) }}</span>
-                        <span itemprop="price">{{ (price.price|number_format(2, '.', ',')) }}</span>
+                        <span itemprop="price" content="{{ (price.price|number_format(priceFormatOptions.attributes.fraction_digits, '.', '')) }}">{{ (price.price|oro_format_decimal(priceFormatOptions)) }}</span>
+                        {% endspaceless %}
                     </td>
                 </tr>
             {% endif %}

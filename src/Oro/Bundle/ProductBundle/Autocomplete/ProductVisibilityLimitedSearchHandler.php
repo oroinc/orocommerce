@@ -161,7 +161,7 @@ class ProductVisibilityLimitedSearchHandler extends SearchHandler
      */
     protected function searchEntitiesUsingIndex($search, $firstResult, $maxResults)
     {
-        $searchQuery = $this->searchRepository->getSearchQuery($search, $firstResult, $maxResults);
+        $searchQuery = $this->searchRepository->getSearchQueryBySkuOrName($search, $firstResult, $maxResults);
 
         // Configurable products require additional option selection is not implemented yet
         // Thus we need to hide configurable products from the product drop-downs
@@ -170,8 +170,6 @@ class ProductVisibilityLimitedSearchHandler extends SearchHandler
             Criteria::expr()->neq('type', Product::TYPE_CONFIGURABLE)
         );
 
-        $searchQuery->setFirstResult($firstResult);
-        $searchQuery->setMaxResults($maxResults);
         $result = $searchQuery->getResult();
 
         return $result->getElements();

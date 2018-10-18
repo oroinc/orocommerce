@@ -191,28 +191,46 @@ class PriceListToCustomerGroupRepositoryTest extends WebTestCase
             'with fallback' => [
                 'website' => 'US',
                 'fallback' => PriceListCustomerGroupFallback::WEBSITE,
-                'expectedCustomerGroups' => ['customer_group.group1']
+                'expectedCustomerGroups' => [
+                    'Non-Authenticated Visitors',
+                    'customer_group.group1',
+                    'customer_group.group3',
+                ]
             ],
             'without fallback' => [
                 'website' => 'US',
                 'fallback' => null,
                 'expectedCustomerGroups' => [
+                    'Non-Authenticated Visitors',
                     'customer_group.group1',
-                    'customer_group.group2'
+                    'customer_group.group2',
+                    'customer_group.group3',
                 ]
             ],
         ];
+    }
+
+    public function testGetAllWebsiteIds()
+    {
+        $this->assertEquals(
+            [
+                $this->getReference(LoadWebsiteData::WEBSITE1)->getId(),
+                $this->getReference(LoadWebsiteData::WEBSITE2)->getId(),
+            ],
+            $this->getRepository()->getAllWebsiteIds(),
+            '',
+            $delta = 0.0,
+            $maxDepth = 10,
+            $canonicalize = true
+        );
     }
 
     public function testGetIteratorByPriceList()
     {
         /** @var PriceList $priceList */
         $priceList = $this->getReference('price_list_5');
-        $iterator = $this->getRepository()->getIteratorByPriceList($priceList);
-        $result = [];
-        foreach ($iterator as $item) {
-            $result[] = $item;
-        }
+        $result1 = iterator_to_array($this->getRepository()->getIteratorByPriceList($priceList));
+        $result2 = iterator_to_array($this->getRepository()->getIteratorByPriceLists([$priceList]));
 
         $this->assertEquals(
             [
@@ -225,12 +243,13 @@ class PriceListToCustomerGroupRepositoryTest extends WebTestCase
                     'website' => $this->getReference(LoadWebsiteData::WEBSITE2)->getId(),
                 ],
             ],
-            $result,
-            "Iterator should return proper values",
+            $result1,
+            'Iterator should return proper values',
             $delta = 0.0,
             $maxDepth = 10,
             $canonicalize = true
         );
+        $this->assertSame($result1, $result2);
     }
 
     /**

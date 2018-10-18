@@ -15,7 +15,7 @@ class QuoteProductOfferCollectionType extends AbstractType
      */
     public function getParent()
     {
-        return CollectionType::NAME;
+        return CollectionType::class;
     }
 
     /**
@@ -24,7 +24,7 @@ class QuoteProductOfferCollectionType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'entry_type'                  => QuoteProductOfferType::NAME,
+            'entry_type'                  => QuoteProductOfferType::class,
             'show_form_when_empty'  => false,
             'error_bubbling'        => false,
             'prototype_name'        => '__namequoteproductoffer__',

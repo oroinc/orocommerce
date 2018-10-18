@@ -10,13 +10,13 @@
         }
     ],
     "require": {
-        "oro/platform": "2.x-dev",
-        "oro/platform-serialised-fields": "2.x-dev",
-        "oro/calendar-bundle": "2.x-dev",
-        "oro/marketing": "2.x-dev",
-        "oro/customer-portal": "2.x-dev",
-        "box/spout": "2.3.*",
-        "myclabs/deep-copy": "1.5.*",
+        "oro/platform": "3.1.*",
+        "oro/platform-serialised-fields": "3.1.*",
+        "oro/calendar-bundle": "3.1.*",
+        "oro/marketing": "3.1.*",
+        "oro/customer-portal": "3.1.*",
+        "box/spout": "2.7.*",
+        "myclabs/deep-copy": "1.8.*",
         "bower-asset/jquery-creditcardvalidator": "1.0",
         "bower-asset/elevatezoom3": "3.0.8.1",
         "besimple/soap-client": "^0.2.6"
@@ -27,16 +27,14 @@
         "behat/mink-extension": "2.2.*",
         "behat/mink-selenium2-driver": "1.*",
         "behat/symfony2-extension": "2.1.1",
-        "nelmio/alice": "2.2.*",
         "phpunit/phpunit": "5.7.*",
-        "phpunit/phpunit-selenium": "3.0.*",
         "johnkary/phpunit-speedtrap": "1.0.*",
         "mybuilder/phpunit-accelerator": "1.2.*",
         "squizlabs/php_codesniffer": "2.8.*",
         "phpmd/phpmd": "2.6.*",
         "sebastian/phpcpd": "dev-master#cff7f36c2ae89d59987de25d14fd41a72dd4a703 as 3.1.0",
         "phpunit/phpcov": "3.1.*",
-        "symfony/phpunit-bridge": "3.2.*",
+        "symfony/phpunit-bridge": "3.4.*",
         "friendsofphp/php-cs-fixer": "2.1.*"
     },
     "repositories": {
@@ -53,7 +51,7 @@
     "prefer-stable": true,
     "extra": {
         "branch-alias": {
-            "dev-master": "1.x-dev"
+            "dev-master": "3.1-dev"
         }
     },
     "autoload": {

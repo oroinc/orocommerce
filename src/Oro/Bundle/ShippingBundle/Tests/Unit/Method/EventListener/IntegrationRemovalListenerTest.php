@@ -8,7 +8,7 @@ use Oro\Bundle\IntegrationBundle\Generator\IntegrationIdentifierGeneratorInterfa
 use Oro\Bundle\ShippingBundle\Method\Event\MethodRemovalEventDispatcherInterface;
 use Oro\Bundle\ShippingBundle\Method\EventListener\IntegrationRemovalListener;
 
-class IntegrationRemovalListenerTest extends \PHPUnit_Framework_TestCase
+class IntegrationRemovalListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var string
@@ -16,12 +16,12 @@ class IntegrationRemovalListenerTest extends \PHPUnit_Framework_TestCase
     private $channelType;
 
     /**
-     * @var IntegrationIdentifierGeneratorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var IntegrationIdentifierGeneratorInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $identifierGenerator;
 
     /**
-     * @var MethodRemovalEventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var MethodRemovalEventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $dispatcher;
 
@@ -45,13 +45,13 @@ class IntegrationRemovalListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testPreRemove()
     {
-        /** @var Channel|\PHPUnit_Framework_MockObject_MockObject $channel */
+        /** @var Channel|\PHPUnit\Framework\MockObject\MockObject $channel */
         $channel = $this->createMock(Channel::class);
         $channel->expects(static::once())
             ->method('getType')
             ->willReturn($this->channelType);
 
-        /** @var ChannelDeleteEvent|\PHPUnit_Framework_MockObject_MockObject $event */
+        /** @var ChannelDeleteEvent|\PHPUnit\Framework\MockObject\MockObject $event */
         $event = $this->createMock(ChannelDeleteEvent::class);
         $event->expects(static::any())
             ->method('getChannel')
@@ -73,13 +73,13 @@ class IntegrationRemovalListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testPreRemoveOtherType()
     {
-        /** @var Channel|\PHPUnit_Framework_MockObject_MockObject $channel */
+        /** @var Channel|\PHPUnit\Framework\MockObject\MockObject $channel */
         $channel = $this->createMock(Channel::class);
         $channel->expects(static::once())
             ->method('getType')
             ->willReturn('other_type');
 
-        /** @var ChannelDeleteEvent|\PHPUnit_Framework_MockObject_MockObject $event */
+        /** @var ChannelDeleteEvent|\PHPUnit\Framework\MockObject\MockObject $event */
         $event = $this->createMock(ChannelDeleteEvent::class);
         $event->expects(static::any())
             ->method('getChannel')

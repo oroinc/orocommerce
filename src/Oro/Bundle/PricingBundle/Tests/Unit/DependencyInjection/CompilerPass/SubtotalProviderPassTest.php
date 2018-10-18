@@ -6,12 +6,12 @@ use Oro\Bundle\PricingBundle\DependencyInjection\CompilerPass\SubtotalProviderPa
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
-class SubtotalProviderPassTest extends \PHPUnit_Framework_TestCase
+class SubtotalProviderPassTest extends \PHPUnit\Framework\TestCase
 {
     /** @var SubtotalProviderPass */
     protected $compilerPass;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|ContainerBuilder */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|ContainerBuilder */
     protected $container;
 
     protected function setUp()

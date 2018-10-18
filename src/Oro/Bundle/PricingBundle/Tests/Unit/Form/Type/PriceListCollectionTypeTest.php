@@ -19,20 +19,6 @@ class PriceListCollectionTypeTest extends FormIntegrationTestCase
     use EntityTrait;
 
     /**
-     * @var PriceListCollectionType
-     */
-    protected $type;
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function setUp()
-    {
-        parent::setUp();
-        $this->type = new PriceListCollectionType();
-    }
-
-    /**
      * @dataProvider submitDataProvider
      *
      * @param array|PriceListToWebsite[] $existing
@@ -47,7 +33,7 @@ class PriceListCollectionTypeTest extends FormIntegrationTestCase
             ]
         ];
 
-        $form = $this->factory->create($this->type, $existing, $options);
+        $form = $this->factory->create(PriceListCollectionType::class, $existing, $options);
         $form->submit($submitted);
 
         $this->assertTrue($form->isValid());
@@ -116,27 +102,24 @@ class PriceListCollectionTypeTest extends FormIntegrationTestCase
         return $provider->getExtensions();
     }
 
-    public function testGetName()
-    {
-        $this->assertSame(PriceListCollectionType::NAME, $this->type->getName());
-    }
-
     public function testGetParent()
     {
-        $this->assertSame(CollectionType::NAME, $this->type->getParent());
+        $type = new PriceListCollectionType();
+        $this->assertSame(CollectionType::class, $type->getParent());
     }
 
     public function testFinishView()
     {
         $view = new FormView();
-        $this->type->finishView($view, $this->getFormMock(), ['render_as_widget' => true]);
+        $type = new PriceListCollectionType();
+        $type->finishView($view, $this->getFormMock(), ['render_as_widget' => true]);
 
         $this->assertArrayHasKey('render_as_widget', $view->vars);
         $this->assertTrue($view->vars['render_as_widget']);
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|FormInterface
+     * @return \PHPUnit\Framework\MockObject\MockObject|FormInterface
      */
     protected function getFormMock()
     {

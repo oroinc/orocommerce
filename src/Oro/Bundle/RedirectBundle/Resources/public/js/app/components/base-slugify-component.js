@@ -31,6 +31,13 @@ define(function(require) {
         doSync: true,
 
         /**
+         * @inheritDoc
+         */
+        constructor: function SlugifyComponent() {
+            SlugifyComponent.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
          * Initializes Slugify component
          * @param {Object} options
          */

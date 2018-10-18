@@ -46,13 +46,12 @@ class CouponGenerationType extends AbstractType
         $builder
             ->add(
                 'owner',
-                BusinessUnitSelectAutocomplete::NAME,
+                BusinessUnitSelectAutocomplete::class,
                 [
                     'required' => true,
                     'label' => 'oro.user.owner.label',
                     'data' => $this->getCurrentBusinessUnit(),
                     'autocomplete_alias' => 'business_units_owner_search_handler',
-                    'empty_value' => 'oro.business_unit.form.choose_business_user',
                     'configs' => [
                         'multiple' => false,
                         'allowClear' => false,
@@ -177,12 +176,12 @@ class CouponGenerationType extends AbstractType
     protected function getCodeTypes()
     {
         return [
-            CouponGenerationOptions::NUMERIC_CODE_TYPE =>
-                'oro.promotion.coupon.generation.codeType.numeric.label',
-            CouponGenerationOptions::ALPHANUMERIC_CODE_TYPE =>
-                'oro.promotion.coupon.generation.codeType.alphanumeric.label',
-            CouponGenerationOptions::ALPHABETIC_CODE_TYPE =>
-                'oro.promotion.coupon.generation.codeType.alphabetic.label',
+            'oro.promotion.coupon.generation.codeType.numeric.label' =>
+                CouponGenerationOptions::NUMERIC_CODE_TYPE,
+            'oro.promotion.coupon.generation.codeType.alphanumeric.label' =>
+                CouponGenerationOptions::ALPHANUMERIC_CODE_TYPE,
+            'oro.promotion.coupon.generation.codeType.alphabetic.label' =>
+                CouponGenerationOptions::ALPHABETIC_CODE_TYPE,
         ];
     }
 }

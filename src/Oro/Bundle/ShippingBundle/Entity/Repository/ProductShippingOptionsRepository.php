@@ -6,6 +6,9 @@ use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions;
 use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 
+/**
+ * Repository class of ProductShippingOptions entity.
+ */
 class ProductShippingOptionsRepository extends EntityRepository
 {
     /**
@@ -15,7 +18,7 @@ class ProductShippingOptionsRepository extends EntityRepository
      */
     public function findByProductsAndUnits(array $unitsByProductIds): array
     {
-        if (count($unitsByProductIds) === 0) {
+        if (empty($unitsByProductIds)) {
             return [];
         }
 

@@ -1,0 +1,19 @@
+/* @theme: admin.oro; */
+
+.quote-shipping-methods-info {
+    .control-group-checkbox {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+
+        .control-label {
+            order: 2;
+        }
+
+        .controls {
+            position: static;
+            order: 1;
+            margin-right: 5px;
+        }
+    }
+}

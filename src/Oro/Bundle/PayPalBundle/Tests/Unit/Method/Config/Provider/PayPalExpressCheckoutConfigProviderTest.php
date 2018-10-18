@@ -13,12 +13,12 @@ use Oro\Bundle\PayPalBundle\Method\Config\Provider\PayPalExpressCheckoutConfigPr
 use Oro\Component\Testing\Unit\EntityTrait;
 use Psr\Log\LoggerInterface;
 
-class PayPalExpressCheckoutConfigProviderTest extends \PHPUnit_Framework_TestCase
+class PayPalExpressCheckoutConfigProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $doctrine;
 
@@ -68,13 +68,13 @@ class PayPalExpressCheckoutConfigProviderTest extends \PHPUnit_Framework_TestCas
 
         $this->doctrine->expects(static::once())->method('getManagerForClass')->willReturn($objectManager);
 
-        /** @var PayPalExpressCheckoutConfigFactory|\PHPUnit_Framework_MockObject_MockObject $factory */
+        /** @var PayPalExpressCheckoutConfigFactory|\PHPUnit\Framework\MockObject\MockObject $factory */
         $factory = $this->createMock(PayPalExpressCheckoutConfigFactory::class);
         $factory->expects(static::exactly(2))
             ->method('createConfig')
             ->willReturn($config);
 
-        /** @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject $logger */
+        /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject $logger */
         $logger = $this->createMock(LoggerInterface::class);
 
         $this->payPalConfigProvider = new PayPalExpressCheckoutConfigProvider(

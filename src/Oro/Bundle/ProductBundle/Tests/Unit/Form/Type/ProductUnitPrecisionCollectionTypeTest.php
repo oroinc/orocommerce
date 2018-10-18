@@ -2,10 +2,11 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
+use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitPrecisionCollectionType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitPrecisionType;
 
-class ProductUnitPrecisionCollectionTypeTest extends \PHPUnit_Framework_TestCase
+class ProductUnitPrecisionCollectionTypeTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var ProductUnitPrecisionCollectionType
@@ -26,7 +27,7 @@ class ProductUnitPrecisionCollectionTypeTest extends \PHPUnit_Framework_TestCase
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with([
-                'entry_type' => ProductUnitPrecisionType::NAME,
+                'entry_type' => ProductUnitPrecisionType::class,
                 'show_form_when_empty' => false
             ]);
 
@@ -35,11 +36,6 @@ class ProductUnitPrecisionCollectionTypeTest extends \PHPUnit_Framework_TestCase
 
     public function testGetParent()
     {
-        $this->assertEquals('oro_collection', $this->formType->getParent());
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals(ProductUnitPrecisionCollectionType::NAME, $this->formType->getName());
+        $this->assertEquals(CollectionType::class, $this->formType->getParent());
     }
 }

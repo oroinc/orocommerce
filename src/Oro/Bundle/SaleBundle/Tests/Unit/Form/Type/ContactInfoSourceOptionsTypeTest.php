@@ -5,13 +5,14 @@ namespace Oro\Bundle\SaleBundle\Tests\Unit\Form\Type;
 use Oro\Bundle\SaleBundle\Form\Type\ContactInfoSourceOptionsType;
 use Oro\Bundle\SaleBundle\Provider\OptionsProviderInterface;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\ChoiceList\View\ChoiceView;
 use Symfony\Component\Form\FormInterface;
 
 class ContactInfoSourceOptionsTypeTest extends FormIntegrationTestCase
 {
     /**
-     * @var OptionsProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var OptionsProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $customerOptionProvider;
 
@@ -28,6 +29,21 @@ class ContactInfoSourceOptionsTypeTest extends FormIntegrationTestCase
         $this->customerOptionProvider = $this->createMock(OptionsProviderInterface::class);
         $this->formType = new ContactInfoSourceOptionsType($this->customerOptionProvider);
         parent::setUp();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getExtensions()
+    {
+        return [
+            new PreloadedExtension(
+                [
+                    ContactInfoSourceOptionsType::class => $this->formType
+                ],
+                []
+            ),
+        ];
     }
 
     public function testSubmit()
@@ -60,7 +76,7 @@ class ContactInfoSourceOptionsTypeTest extends FormIntegrationTestCase
      */
     protected function doTestForm(array $inputOptions, array $expectedOptions, $submittedData)
     {
-        $form = $this->factory->create($this->formType, null, $inputOptions);
+        $form = $this->factory->create(ContactInfoSourceOptionsType::class, null, $inputOptions);
         $formConfig = $form->getConfig();
 
         foreach ($expectedOptions as $key => $value) {

@@ -10,18 +10,18 @@ use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\Response as PayflowResponse;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\ResponseStatusMap;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
+use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
 use Symfony\Component\HttpFoundation\Session\Session;
 
-class RedirectListenerTest extends \PHPUnit_Framework_TestCase
+class RedirectListenerTest extends \PHPUnit\Framework\TestCase
 {
     /** @var RedirectListener */
     protected $listener;
 
-    /** @var Session|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var Session|\PHPUnit\Framework\MockObject\MockObject */
     protected $session;
 
-    /** @var PaymentMethodProviderInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var PaymentMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $paymentMethodProvider;
 
     protected function setUp()
@@ -87,19 +87,12 @@ class RedirectListenerTest extends \PHPUnit_Framework_TestCase
         $event = new CallbackErrorEvent();
         $event->setPaymentTransaction($paymentTransaction);
 
-        /** @var FlashBagInterface|\PHPUnit_Framework_MockObject_MockObject $flashBag */
-        $flashBag = $this->createMock(FlashBagInterface::class);
+        $flashBag = new FlashBag();
+        if ($errorAlreadyInFlashBag) {
+            $flashBag->add('error', 'test msg');
+        }
 
-        $flashBag->expects($this->once())
-            ->method('has')
-            ->with('error')
-            ->willReturn($errorAlreadyInFlashBag);
-
-        $flashBag->expects($errorAlreadyInFlashBag ? $this->never() : $this->once())
-            ->method('add')
-            ->with('error', $expectedFlashError);
-
-        $this->session->expects($this->once())
+        $this->session->expects($this->any())
             ->method('getFlashBag')
             ->willReturn($flashBag);
 
@@ -110,6 +103,13 @@ class RedirectListenerTest extends \PHPUnit_Framework_TestCase
         $this->listener->onError($event);
 
         $this->assertResponses($expectedResponse, $event->getResponse());
+
+        if ($errorAlreadyInFlashBag) {
+            $this->assertContains('test msg', $flashBag->get('error', []));
+        }
+        if ($expectedFlashError) {
+            $this->assertContains($expectedFlashError, $flashBag->get('error', []));
+        }
     }
 
     /**
@@ -117,11 +117,23 @@ class RedirectListenerTest extends \PHPUnit_Framework_TestCase
      */
     public function onErrorProvider()
     {
+        $message = 'Field format error: 10736-A match of the Shipping Address City, State, and Postal Code failed.';
+
         return [
             [
                 'errorAlreadyInFlashBag' => false,
                 'options' => [RedirectListener::FAILED_SHIPPING_ADDRESS_URL_KEY => 'failedShippingUrl'],
                 'receivedResponse' => [PayflowResponse::RESULT_KEY => ResponseStatusMap::FIELD_FORMAT_ERROR],
+                'expectedResponse' => new Response('', Response::HTTP_FORBIDDEN),
+                'expectedFlashError' => null
+            ],
+            [
+                'errorAlreadyInFlashBag' => false,
+                'options' => [RedirectListener::FAILED_SHIPPING_ADDRESS_URL_KEY => 'failedShippingUrl'],
+                'receivedResponse' => [
+                    PayflowResponse::RESULT_KEY => ResponseStatusMap::FIELD_FORMAT_ERROR,
+                    PayflowResponse::RESPMSG_KEY => $message,
+                ],
                 'expectedResponse' => new RedirectResponse('failedShippingUrl'),
                 'expectedFlashError' => 'oro.paypal.result.incorrect_shipping_address_error',
             ],

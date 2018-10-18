@@ -15,6 +15,7 @@ use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnits;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadVariantFields;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadWorkflowDefinitions;
 use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadProductTaxCodes;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -38,7 +39,8 @@ class ProductApiTest extends RestJsonApiTestCase
             LoadOrganizations::class,
             LoadProductTaxCodes::class,
             LoadCategoryData::class,
-            LoadVariantFields::class
+            LoadVariantFields::class,
+            LoadWorkflowDefinitions::class,
         ]);
     }
 
@@ -49,9 +51,9 @@ class ProductApiTest extends RestJsonApiTestCase
             'create_product.yml'
         );
 
-        $responseContent = json_decode($response->getContent());
+        $productId = $this->getResourceId($response);
         /** @var Product $product */
-        $product = $this->getEntityManager()->find(Product::class, $responseContent->data->id);
+        $product = $this->getEntityManager()->find(Product::class, $productId);
 
         $localizations = $this->getContainer()
             ->get('oro_entity.doctrine_helper')
@@ -257,11 +259,18 @@ class ProductApiTest extends RestJsonApiTestCase
             false
         );
 
-        $this->assertResponseValidationError(
+        $this->assertResponseValidationErrors(
             [
-                'title' => 'form constraint',
-                'detail' => 'This value is not valid.',
-                'source' => ['pointer' => '/included/1/relationships/unit/data']
+                [
+                    'title' => 'not blank constraint',
+                    'detail' => 'This value should not be blank.',
+                    'source' => ['pointer' => '/data/relationships/primaryUnitPrecision/data']
+                ],
+                [
+                    'title' => 'form constraint',
+                    'detail' => 'This value is not valid.',
+                    'source' => ['pointer' => '/included/1/relationships/unit/data']
+                ]
             ],
             $response
         );
@@ -364,11 +373,18 @@ class ProductApiTest extends RestJsonApiTestCase
             false
         );
 
-        $this->assertResponseValidationError(
+        $this->assertResponseValidationErrors(
             [
-                'title' => 'form constraint',
-                'detail' => 'Unit precision "liter" already exists for this product.',
-                'source' => ['pointer' => '/data/relationships/unitPrecisions/data']
+                [
+                    'title' => 'form constraint',
+                    'detail' => 'Unit precision "liter" already exists for this product.',
+                    'source' => ['pointer' => '/data/relationships/unitPrecisions/data']
+                ],
+                [
+                    'title' => 'unique entity constraint',
+                    'detail' => 'This value is already used.',
+                    'source' => ['pointer' => '/included/0/relationships/product/data']
+                ]
             ],
             $response
         );
@@ -458,5 +474,22 @@ class ProductApiTest extends RestJsonApiTestCase
         );
 
         $this->assertResponseStatusCodeEquals($response, Response::HTTP_CREATED);
+    }
+
+    public function testCreateProductWithImage()
+    {
+        $response = $this->post(['entity' => 'products'], 'create_product_with_image.yml');
+        $productId = $this->getResourceId($response);
+
+        $product = $this->getEntityManager()->find(Product::class, $productId);
+
+        $this->assertTrue($product !== null);
+        $this->assertCount(1, $product->getImages());
+
+        $items = $this->getContainer()
+            ->get('oro_workflow.manager.system')
+            ->getWorkflowItemsByEntity($product);
+
+        $this->assertCount(1, $items);
     }
 }

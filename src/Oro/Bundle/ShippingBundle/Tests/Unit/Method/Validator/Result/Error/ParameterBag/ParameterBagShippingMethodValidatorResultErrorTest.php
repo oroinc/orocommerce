@@ -4,7 +4,7 @@ namespace Oro\Bundle\ShippingBundle\Tests\Unit\Method\Validator\Result\Error\Par
 
 use Oro\Bundle\ShippingBundle\Method\Validator\Result\Error\ParameterBag\ParameterBagShippingMethodValidatorResultError;
 
-class ParameterBagShippingMethodValidatorResultErrorTest extends \PHPUnit_Framework_TestCase
+class ParameterBagShippingMethodValidatorResultErrorTest extends \PHPUnit\Framework\TestCase
 {
     public function testGetMessage()
     {

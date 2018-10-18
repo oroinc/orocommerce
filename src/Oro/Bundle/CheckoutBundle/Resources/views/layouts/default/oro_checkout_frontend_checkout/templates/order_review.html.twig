@@ -5,36 +5,31 @@
     }) %}
     <div {{ block('block_attributes') }}>
         <span class="collapse-view__trigger collapse-view__trigger--icon" data-collapse-trigger>
-            <i class="collapse-view__trigger-icon fa-caret-right" data-toggle="collapse" data-target="#orderOptionsContainer"></i>
+            <span class="collapse-view__trigger-icon fa-caret-right" aria-hidden="true"></span>
         </span>
         <a href="#" class="collapse-view__trigger" data-collapse-trigger>
             {{ 'oro.checkout.workflow.order_options.label'|trans }}
         </a>
         <div class="order-review-options collapse-view__container" data-collapse-container>
-            <fieldset class="grid__row grid__row--offset-none"
-                      data-trigger-selector="#addShipDate"
-                      data-page-component-module="orocheckout/js/app/components/clear-field-data-component">
-                <div class="grid__column grid__column--6">
+            <div class="grid__row">
+                <fieldset class="grid__column grid__column--6">
                     <label class="label label--full">{{ "oro.checkout.order_review.shipping_date"|trans }}</label>
                     <div class="checkout-form__datepicker datepicker-box">
                         <span class="datepicker-box__icon"><i class="fa-calendar"></i></span>
                         {{ form_widget(form.ship_until) }}
                     </div>
-                </div>
-            </fieldset>
-            <fieldset class="grid__row grid__row--offset-none"
-                      data-trigger-selector="#addPoNumber"
-                      data-page-component-module="orocheckout/js/app/components/clear-field-data-component">
-                <div class="grid__column grid__column--6">
+                </fieldset>
+                <fieldset class="grid__column grid__column--6">
                     <label class="label label--full">{{ "oro.checkout.order_review.po_number"|trans }}</label>
                     <div class="checkout-form__optional-ref-number">
-                        {{ form_widget(form.po_number, {'attr': {'placeholder': 'oro.checkout.order_review.po_number_placeholder'|trans}}) }}
+                        {{ form_widget(form.po_number, {'attr': {
+                            'placeholder': 'oro.checkout.order_review.po_number_placeholder'|trans,
+                            'data-validation': { Length: {max: 255} }|json_encode
+                        }}) }}
                     </div>
-                </div>
-            </fieldset>
-            <fieldset class="grid__row grid__row--offset-none"
-                      data-trigger-selector="#addNote"
-                      data-page-component-module="orocheckout/js/app/components/clear-field-data-component">
+                </fieldset>
+            </div>
+            <fieldset class="grid__row grid__row--offset-none">
                 <div class="grid__column grid__column--12">
                     <label class="label label--full">{{ "oro.checkout.order_review.note"|trans }}</label>
                     <div class="checkout-form__order-notes">
@@ -60,6 +55,29 @@
             {% endif %}
             {% if form.state_token is defined %}
                 {{ form_row(form.state_token) }}
+            {% endif %}
+
+            {% if feature_enabled('checkout_customer_users_registration') and
+                checkout.registeredCustomerUser == null and
+                checkout.customerUser.isGuest
+            %}
+                <fieldset class="grid__row grid__row--offset-none"
+                  data-page-component-module="oroui/js/app/components/view-component"
+                  data-page-component-options="{{ {
+                      view: 'orocheckout/js/app/views/late-checkout-registration-view',
+                      selectors: {
+                          switcher: '#' ~ form.late_registration.offsetGet('is_late_registration_enabled').vars.id,
+                          fieldsContainer: '#checkout-late-registration-fields'
+                      }
+                  }|json_encode }}">
+                    <div class="grid__column grid__column--6">
+                        {{ form_row(form.late_registration.offsetGet('is_late_registration_enabled')) }}
+                        <div id="checkout-late-registration-fields">
+                            {{ form_widget(form.late_registration) }}
+                        </div>
+                    </div>
+                </fieldset>
+
             {% endif %}
         </div>
     </div>

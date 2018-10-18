@@ -212,7 +212,7 @@ oro:
                 listing.label: Listing
             import:
                 label: Import images
-                notice: "Please make sure that the image files are uploaded at path:\n \"{PROJECT}/app/import_export/product_images\""
+                notice: "Please make sure that the image files are uploaded at path:\n \"{PROJECT}/var/import_export/product_images\""
         productimagetype:
             entity_label: Product Image Type
             entity_plural_label: Product Image Types
@@ -221,9 +221,11 @@ oro:
             product_image.label: Type
         related_products:
             label: Related Products
+            no_entities: No records found
 
         upsell_products:
             label: Up-sell Products
+            no_entities: No records found
 
         lineitem:
             unit.label: Unit
@@ -271,8 +273,10 @@ oro:
             images: Images
             design: Design
             related_items: Related Items
+            filters_sorters: Filters and Sorters
             upsell_products: Up-sell Products
             related_products: Related Products
+            limit_filters_sorters: Limit Filters and Sorters
             upsellItems: Up-sell items
 
         tabs:
@@ -326,6 +330,8 @@ oro:
                 configurable_products.title: 'Configurable Products'
                 configurable_products_matrix_form.title: 'Configurable Product Display Options'
                 configurable_products_variations.title: 'Variations'
+                filters_sorters.title: 'Filters and Sorters'
+                limit_filters_sorters.title: 'Limit Filters and Sorters'
             fields:
                 brand_direct_url_prefix.label: 'Brand URL Prefix'
                 enable_related_products.label: 'Enable Related Products'
@@ -334,35 +340,35 @@ oro:
                     tooltip: 'If this option is enabled, the current product will automatically be added as a related product to all of its related products.'
                 max_number_of_related_products:
                     label: 'Maximum Number of Assigned Items'
-                    tooltip: 'You may use this option to set the limit on the number of related products that the catalog managers can link.'
+                    tooltip: 'A limit of related products that may be added to any product.'
                 enable_upsell_products.label: 'Enable Up-sell Products'
                 max_number_of_upsell_products:
                     label: 'Maximum Number of Assigned Items'
                     tooltip: 'You may use this option to set the limit on the number of up-sell items that the catalog managers can link.'
                 related_products_max_items:
                     label: 'Maximum Items'
-                    tooltip: 'Show not more than the specified number of items (applied after filtering out the products that are not visible to the current user).'
+                    tooltip: 'The limit of related products that may be added to any product (applied after filtering out the products that are not visible to the current user).'
                 related_products_min_items:
                     label: 'Minimum Items'
-                    tooltip: 'Hide the "Related Products" block completely if the number of items is less than the specified value.'
+                    tooltip: 'The minimum number of related products that may be shown to the buyer. If the actual number of products is lower than this value, the related products section is hidden in the storefront for the product.'
                 related_products_show_add_button:
                     label: 'Show Add Button'
-                    tooltip: 'When "Add To..." button is disabled the users will need to go the related product view page in order to add it to a shopping list.'
+                    tooltip: 'Enables a buyer to order a related product from the related products section in the main product details. When the option is disabled, a buyer needs to open the related product details before they can add it to the shopping list.'
                 related_products_use_slider_on_mobile:
                     label: 'Use Slider On Mobile'
-                    tooltip: 'When slider is enabled, the "Related Products" block will occupy less screen space, while showing larger product images.'
+                    tooltip: 'When enabled, one related product is displayed below the main product information. Other related products are accessible using the horizontal slider. Click < and > to slide through the related products.'
                 upsell_products_max_items:
                     label: 'Maximum Items'
-                    tooltip: 'Show not more than the specified number of items (applied after filtering out the products that are not visible to the current user).'
+                    tooltip: 'The limit of up-sell products that are shown to the buyer (applied after filtering out the products that are not visible to the current user).'
                 upsell_products_min_items:
                     label: 'Minimum Items'
-                    tooltip: 'Hide the "Up-sell Products" block completely if the number of items is less than the specified value.'
+                    tooltip: 'The minimum number of up-sell products that may be shown to the buyer. If the actual number of products is lower than this value, the up-sell products section is hidden in the storefront for the product.'
                 upsell_products_show_add_button:
                     label: 'Show Add Button'
-                    tooltip: 'When "Add To..." button is disabled the users will need to go the up-sell product view page in order to add it to a shopping list.'
+                    tooltip: 'Enables a buyer to order the product from the up-sell products section in the main product details. When disabled, a buyer needs to open the up-sell product details before they can add it to the shopping list.'
                 upsell_products_use_slider_on_mobile:
                     label: 'Use Slider On Mobile'
-                    tooltip: 'When slider is enabled, the "Up-sell Products" block will occupy less screen space, while showing larger product images.'
+                    tooltip: 'When the option is enabled, one up-sell product is displayed below the main product information. Other up-sell products are accessible using the horizontal slider. Click < and > to slide through the up-sell products.'
                 enable_quick_order_form.title: Enable Quick Order Form
                 guest_quick_order_form.title: Enable Guest Quick Order Form
                 guest_quick_order_form.tooltip: >
@@ -378,8 +384,7 @@ oro:
                 product_collections_indexation_cron_schedule:
                     label: 'Indexation Cron Schedule'
                     tooltip: |
-                        Product collections which have dependencies on other entities in a segment filter segment will be
-                        indexed based on cron schedule to improve system responsiveness.
+                        For product collections which have dependencies on other entities in a segment filter, the segment will be indexed based on the cron schedule to improve system responsiveness.
                     choice:
                         every_hour.label: Every hour
                         every_two_hours.label: Every two hours
@@ -393,7 +398,7 @@ oro:
                 product_image_watermark_file.label: 'File'
                 product_image_watermark_size:
                     label: 'Size'
-                    tooltip: 'Watermark image size relative to product image size (in percents)'
+                    tooltip: 'The size of the watermark in percentage compared to the whole image.'
                 product_image_watermark_position:
                     label: 'Position'
                     topleft.label: 'Top Left'
@@ -430,7 +435,7 @@ oro:
                     tooltip: Show not more than the specified number of items (additionaly limits the list of items retrieved from the selected segment after filtering out the products that are not visible to the current user).
                 new_arrivals_min_items:
                     label: Minimum Items
-                    tooltip: Hide the "News Arrivals" block completely if the number of items is less than the specified value.
+                    tooltip: Hide the "News Arrivals" block completely if the number of items is lower than the specified value.
                 new_arrivals_use_slider_on_mobile:
                     label: Use Slider On Mobile
                     tooltip: When slider is enabled, the "New Arrivals" block will occupy less screen space, while showing larger product images.
@@ -439,7 +444,7 @@ oro:
                     tooltip: 'If enabled, the customers will see product image gallery instead of going to the product view page when they click on a product image in the product listing.'
                 popup_gallery_on_product_view:
                     label: 'Popup Gallery on Product View'
-                    tooltip: 'Inline gallery view may work better for some product templates.'
+                    tooltip: 'Select whether to use popup or inline view for the image gallery in the storefront. Inline gallery view may work better for some product templates.'
                 matrix_form_on_product_view:
                     tooltip: 'Controls the appearance of configurable products with up to 2 attributes as editable matrix forms at product view pages.'
                     label: 'Product Views'
@@ -468,6 +473,9 @@ oro:
                         variations of a configurable product. It does not affect standalone simple products.
                     everywhere.label: 'Everywhere'
                     hide_completely.label: 'Hide completely'
+                limit_filters_sorters_on_product_listing:
+                    label: 'Hide unrelated product filters and sorting options'
+                    tooltip: 'Limit filters and sorting options on the product catalog page to display only those attributes that are relevant to the selected product family in the current product collection.'
             notice:
                 product_image_watermark: >
                    The updated product image watermark settings will be used for the newly uploaded images only.
@@ -512,6 +520,7 @@ oro:
                     description: 'Drag and drop a .CSV, .XLS or .ODF file here, or select them from your computer.'
                     label_directions: 'Get Directions'
                     continue.label: Submit
+                    choose_file.label: Choose File
                 import_validation:
                     back: Back
                     title: Import validation results
@@ -794,6 +803,9 @@ oro:
                 message: Enter item numbers in Column A and quantities needed in Column B. Please do not include any prefixes, dashes, or other punctuation in the item numbers.
             save_the_file:
                 message: Save the file on your computer. CSV format (.csv) is recommended and click Upload.
+        limit_filters_sorters_on_product_listing:
+            label: 'Hide unrelated product filters and sorting options'
+            description: 'Limit filters and sorting options on the product catalog page to display only those attributes that are relevant to the selected product family in the current product collection.'
 
     importexport:
         export:

@@ -12,7 +12,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class SlugTypeTest extends FormIntegrationTestCase
 {
     /**
-     * @var SlugifyFormHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var SlugifyFormHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $slugifyFormHelper;
 
@@ -29,11 +29,6 @@ class SlugTypeTest extends FormIntegrationTestCase
         $this->formType = new SlugType($this->slugifyFormHelper);
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(SlugType::NAME, $this->formType->getName());
-    }
-
     public function testGetBlockPrefix()
     {
         $this->assertEquals(SlugType::NAME, $this->formType->getBlockPrefix());
@@ -41,7 +36,7 @@ class SlugTypeTest extends FormIntegrationTestCase
 
     public function testConfigureOptions()
     {
-        /** @var OptionsResolver|\PHPUnit_Framework_MockObject_MockObject $resolver */
+        /** @var OptionsResolver|\PHPUnit\Framework\MockObject\MockObject $resolver */
         $resolver = $this->createMock(OptionsResolver::class);
         $resolver->expects($this->once())->method('setDefaults')->with(
             $this->callback(
@@ -61,7 +56,7 @@ class SlugTypeTest extends FormIntegrationTestCase
 
     public function testBuildView()
     {
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock(FormInterface::class);
         $view = new FormView();
         $options = ['someOptionName' => 'someOptionValue'];

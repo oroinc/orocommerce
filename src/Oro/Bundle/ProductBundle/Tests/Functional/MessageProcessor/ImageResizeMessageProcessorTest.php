@@ -140,7 +140,7 @@ class ImageResizeMessageProcessorTest extends WebTestCase
             ->get('oro_attachment.manager')
             ->getFilteredImageUrl($productImage->getImage(), $filterName);
 
-        $filteredPath = self::getContainer()->getParameter('kernel.root_dir') . '/../web' . $filteredUrl;
+        $filteredPath = self::getContainer()->getParameter('kernel.project_dir') . '/public' . $filteredUrl;
 
         return $filteredPath;
     }

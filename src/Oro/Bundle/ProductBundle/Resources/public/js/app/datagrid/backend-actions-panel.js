@@ -7,6 +7,13 @@ define(function(require) {
 
     BackendActionsPanel = ActionsPanel.extend({
         /**
+         * @inheritDoc
+         */
+        constructor: function BackendActionsPanel() {
+            BackendActionsPanel.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
          * Renders panel
          *
          * @return {*}
@@ -16,13 +23,13 @@ define(function(require) {
                 return launcher.action.is_current === true;
             }).length;
 
-            _.each(this.launchers, function(launcher) {
+            _.each(this.launchers, function(launcher, index) {
                 var $el = null;
 
                 if (currentLauncherIsPresent) {
                     $el = this.findContainer(launcher, launcher.action.is_current);
                 } else {
-                    $el = this.findContainer(launcher, true);
+                    $el = this.findContainer(launcher, !index);
                 }
 
                 $el.append(launcher.render().$el);

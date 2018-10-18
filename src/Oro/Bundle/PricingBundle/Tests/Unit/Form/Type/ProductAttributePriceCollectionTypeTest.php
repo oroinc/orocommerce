@@ -12,7 +12,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-use Symfony\Component\Form\PreloadedExtension;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Translation\TranslatorInterface;
 
 class ProductAttributePriceCollectionTypeTest extends FormIntegrationTestCase
@@ -32,8 +32,8 @@ class ProductAttributePriceCollectionTypeTest extends FormIntegrationTestCase
         $extensions = [
             new PreloadedExtension(
                 [
-                    ProductAttributePriceCollectionType::NAME => new ProductAttributePriceCollectionType($translator),
-                    ProductAttributePriceType::NAME => new ProductAttributePriceType(new RoundingServiceStub())
+                    ProductAttributePriceCollectionType::class => new ProductAttributePriceCollectionType($translator),
+                    ProductAttributePriceType::class => new ProductAttributePriceType(new RoundingServiceStub())
                 ],
                 []
             )
@@ -48,7 +48,7 @@ class ProductAttributePriceCollectionTypeTest extends FormIntegrationTestCase
             (new PriceAttributeProductPrice())->setPrice(Price::create('100', 'USD')),
             (new PriceAttributeProductPrice())->setPrice(Price::create('80', 'EUR')),
         ];
-        $form = $this->factory->create(ProductAttributePriceCollectionType::NAME, $data, []);
+        $form = $this->factory->create(ProductAttributePriceCollectionType::class, $data, []);
 
         $form->submit([
             [ProductAttributePriceType::PRICE => '200'],
@@ -87,7 +87,7 @@ class ProductAttributePriceCollectionTypeTest extends FormIntegrationTestCase
             ->setPriceList($attributePriceList)
             ->setUnit($productUnit2);
 
-        $form = $this->factory->create(ProductAttributePriceCollectionType::NAME, [$price1, $price2], []);
+        $form = $this->factory->create(ProductAttributePriceCollectionType::class, [$price1, $price2], []);
         $view = $form->createView();
 
         $this->assertSame(['EUR', 'USD'], $view->vars['currencies']);

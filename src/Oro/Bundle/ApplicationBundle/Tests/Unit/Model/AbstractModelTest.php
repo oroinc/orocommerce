@@ -4,7 +4,7 @@ namespace Oro\Bundle\ApplicationBundle\Tests\Unit\Model;
 
 use Oro\Bundle\ApplicationBundle\Model\AbstractModel;
 
-class AbstractModelTest extends \PHPUnit_Framework_TestCase
+class AbstractModelTest extends \PHPUnit\Framework\TestCase
 {
     public function testGetEntities()
     {

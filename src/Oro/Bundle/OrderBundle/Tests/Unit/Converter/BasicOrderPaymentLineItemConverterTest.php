@@ -15,7 +15,7 @@ use Oro\Bundle\PaymentBundle\Context\PaymentLineItem;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
-class BasicOrderPaymentLineItemConverterTest extends \PHPUnit_Framework_TestCase
+class BasicOrderPaymentLineItemConverterTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var DoctrinePaymentLineItemCollectionFactory
@@ -142,7 +142,7 @@ class BasicOrderPaymentLineItemConverterTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param int                                                  $quantity
-     * @param ProductUnit|\PHPUnit_Framework_MockObject_MockObject $productUnitMock
+     * @param ProductUnit|\PHPUnit\Framework\MockObject\MockObject $productUnitMock
      *
      * @return OrderLineItem
      */
@@ -154,7 +154,7 @@ class BasicOrderPaymentLineItemConverterTest extends \PHPUnit_Framework_TestCase
     /**
      * @param string $productUnitCode
      *
-     * @return ProductUnit|\PHPUnit_Framework_MockObject_MockObject
+     * @return ProductUnit|\PHPUnit\Framework\MockObject\MockObject
      */
     private function mockProductUnit($productUnitCode)
     {

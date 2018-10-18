@@ -7,6 +7,7 @@ use Oro\Bundle\PromotionBundle\EventListener\OrderAppliedPromotionEventListener;
 use Oro\Bundle\PromotionBundle\Manager\AppliedPromotionManager;
 use Oro\Bundle\PromotionBundle\Tests\Unit\Entity\Stub\Order;
 use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Component\Testing\Unit\Form\Type\Stub\FormStub;
 use Symfony\Component\Form\FormConfigInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
@@ -14,22 +15,22 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\ResolvedFormTypeInterface;
 use Symfony\Component\Templating\EngineInterface;
 
-class OrderAppliedPromotionEventListenerTest extends \PHPUnit_Framework_TestCase
+class OrderAppliedPromotionEventListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var EngineInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var EngineInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $engine;
 
     /**
-     * @var FormFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var FormFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $formFactory;
 
     /**
-     * @var AppliedPromotionManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var AppliedPromotionManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $appliedPromotionManager;
 
@@ -52,7 +53,7 @@ class OrderAppliedPromotionEventListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testOnOrderEventWhenNoAppliedDiscounts()
     {
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock(FormInterface::class);
         $form->expects($this->once())
             ->method('has')
@@ -71,7 +72,7 @@ class OrderAppliedPromotionEventListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testOnOrderEventWhenNoSubmittedData()
     {
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock(FormInterface::class);
         $form->expects($this->once())
             ->method('has')
@@ -90,7 +91,7 @@ class OrderAppliedPromotionEventListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testOnOrderEvent()
     {
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock(FormInterface::class);
         $form->expects($this->once())
             ->method('has')
@@ -100,11 +101,10 @@ class OrderAppliedPromotionEventListenerTest extends \PHPUnit_Framework_TestCase
         $order = new Order();
         $formView = new FormView();
 
-        $formTypeName = 'some name';
         $formType = $this->createMock(ResolvedFormTypeInterface::class);
         $formType->expects($this->once())
-            ->method('getName')
-            ->willReturn($formTypeName);
+            ->method('getInnerType')
+            ->willReturn(new FormStub('some name'));
         $formConfig = $this->createMock(FormConfigInterface::class);
         $formConfig->expects($this->once())
             ->method('getType')
@@ -119,7 +119,7 @@ class OrderAppliedPromotionEventListenerTest extends \PHPUnit_Framework_TestCase
             ->willReturn($formView);
         $this->formFactory->expects($this->once())
             ->method('create')
-            ->with($formTypeName, $order)
+            ->with(FormStub::class, $order)
             ->willReturn($newForm);
         $view = 'Some html view';
         $this->engine->expects($this->once())

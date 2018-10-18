@@ -14,27 +14,27 @@ use Oro\Bundle\PricingBundle\Model\PriceListTriggerHandler;
 use Oro\Bundle\PricingBundle\Model\PriceRuleLexemeTriggerHandler;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class PriceListEntityListenerTest extends \PHPUnit_Framework_TestCase
+class PriceListEntityListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var PriceListRelationTriggerHandler|\PHPUnit_Framework_MockObject_MockObject
+     * @var PriceListRelationTriggerHandler|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $triggerHandler;
 
     /**
-     * @var Cache|\PHPUnit_Framework_MockObject_MockObject
+     * @var Cache|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $cache;
 
     /**
-     * @var PriceListTriggerHandler|\PHPUnit_Framework_MockObject_MockObject
+     * @var PriceListTriggerHandler|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $priceListTriggerHandler;
 
     /**
-     * @var PriceRuleLexemeTriggerHandler|\PHPUnit_Framework_MockObject_MockObject
+     * @var PriceRuleLexemeTriggerHandler|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $priceRuleLexemeTriggerHandler;
 
@@ -75,7 +75,7 @@ class PriceListEntityListenerTest extends \PHPUnit_Framework_TestCase
             ->method('addTriggerForPriceList')
             ->with(Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS, $priceList);
 
-        /** @var PreUpdateEventArgs|\PHPUnit_Framework_MockObject_MockObject $event */
+        /** @var PreUpdateEventArgs|\PHPUnit\Framework\MockObject\MockObject $event */
         $event = $this->getMockBuilder(PreUpdateEventArgs::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -110,7 +110,7 @@ class PriceListEntityListenerTest extends \PHPUnit_Framework_TestCase
             ->method('addTriggerForPriceList')
             ->with(Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS, $priceList);
 
-        /** @var PreUpdateEventArgs|\PHPUnit_Framework_MockObject_MockObject $event */
+        /** @var PreUpdateEventArgs|\PHPUnit\Framework\MockObject\MockObject $event */
         $event = $this->getMockBuilder(PreUpdateEventArgs::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -155,7 +155,7 @@ class PriceListEntityListenerTest extends \PHPUnit_Framework_TestCase
         $this->priceListTriggerHandler->expects($this->never())
             ->method('addTriggerForPriceList');
 
-        /** @var PreUpdateEventArgs|\PHPUnit_Framework_MockObject_MockObject $event */
+        /** @var PreUpdateEventArgs|\PHPUnit\Framework\MockObject\MockObject $event */
         $event = $this->getMockBuilder(PreUpdateEventArgs::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -197,6 +197,11 @@ class PriceListEntityListenerTest extends \PHPUnit_Framework_TestCase
         /** @var PriceList $priceList */
         $priceList = $this->getEntity(PriceList::class, ['id' => 2]);
         $priceList->addPriceRule($priceRule);
+
+        $this->priceRuleLexemeTriggerHandler->expects($this->once())
+            ->method('findEntityLexemes')
+            ->willReturn([]);
+
         $this->cache->expects($this->exactly(2))
             ->method('delete')
             ->withConsecutive(
@@ -204,7 +209,7 @@ class PriceListEntityListenerTest extends \PHPUnit_Framework_TestCase
                 ['pr_42']
             );
         $this->triggerHandler->expects($this->once())
-            ->method('handleFullRebuild');
+            ->method('handlePriceListStatusChange');
         $this->listener->preRemove($priceList);
     }
 }

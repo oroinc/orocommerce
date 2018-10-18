@@ -13,7 +13,7 @@ use Oro\Bundle\SaleBundle\Provider\ContactInfoSourceOptionsProvider;
 use Oro\Bundle\SaleBundle\Provider\ContactInfoUserOptionsProvider;
 use Oro\Bundle\UserBundle\Entity\User;
 
-class ContactInfoProviderTest extends \PHPUnit_Framework_TestCase
+class ContactInfoProviderTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var NameFormatter
@@ -26,17 +26,17 @@ class ContactInfoProviderTest extends \PHPUnit_Framework_TestCase
     private $contactInfoProvider;
 
     /**
-     * @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $configManager;
 
     /**
-     * @var ContactInfoSourceOptionsProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var ContactInfoSourceOptionsProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     private $contactSourceProvider;
 
     /**
-     * @var ContactInfoUserOptionsProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var ContactInfoUserOptionsProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     private $contactInfoUserOptionsProvider;
 
@@ -219,7 +219,7 @@ class ContactInfoProviderTest extends \PHPUnit_Framework_TestCase
      * @param string $phone
      * @param string $email
      *
-     * @return User|\PHPUnit_Framework_MockObject_MockObject
+     * @return User|\PHPUnit\Framework\MockObject\MockObject
      */
     private function createUserMock($name, $phone, $email)
     {

@@ -49,10 +49,10 @@ class AjaxProductVariantController extends Controller
             'parentProduct' => $configurableProduct
         ];
 
-        $form = $this->createForm(FrontendVariantFiledType::NAME, new Product(), $options);
+        $form = $this->createForm(FrontendVariantFiledType::class, new Product(), $options);
         $form->handleRequest($request);
 
-        if ($form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid()) {
             return $form->getData();
         }
 

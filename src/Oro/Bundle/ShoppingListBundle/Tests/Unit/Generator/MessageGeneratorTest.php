@@ -6,12 +6,12 @@ use Oro\Bundle\ShoppingListBundle\Generator\MessageGenerator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
-class MessageGeneratorTest extends \PHPUnit_Framework_TestCase
+class MessageGeneratorTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|TranslatorInterface */
     protected $translator;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|UrlGeneratorInterface */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|UrlGeneratorInterface */
     protected $router;
 
     /** @var MessageGenerator */

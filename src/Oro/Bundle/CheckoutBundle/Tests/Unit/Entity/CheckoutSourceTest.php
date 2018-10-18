@@ -5,7 +5,7 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Entity;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-class CheckoutSourceTest extends \PHPUnit_Framework_TestCase
+class CheckoutSourceTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 

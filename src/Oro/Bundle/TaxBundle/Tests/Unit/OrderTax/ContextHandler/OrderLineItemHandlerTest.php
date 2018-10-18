@@ -18,7 +18,7 @@ use Oro\Bundle\TaxBundle\OrderTax\ContextHandler\OrderLineItemHandler;
 use Oro\Bundle\TaxBundle\Provider\TaxationAddressProvider;
 use Oro\Bundle\TaxBundle\Provider\TaxCodeProvider;
 
-class OrderLineItemHandlerTest extends \PHPUnit_Framework_TestCase
+class OrderLineItemHandlerTest extends \PHPUnit\Framework\TestCase
 {
     const ORDER_LINE_ITEM_CLASS = 'Oro\Bundle\OrderBundle\Entity\OrderLineItem';
     const PRODUCT_TAX_CODE = 'PTC';
@@ -27,12 +27,12 @@ class OrderLineItemHandlerTest extends \PHPUnit_Framework_TestCase
     const ORDER_ADDRESS_COUNTRY_CODE = 'US';
 
     /**
-     * @var TaxationAddressProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var TaxationAddressProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $addressProvider;
 
     /**
-     * @var TaxCodeProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var TaxCodeProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $taxCodeProvider;
 

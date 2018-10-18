@@ -18,15 +18,15 @@ use Oro\Bundle\WebsiteSearchBundle\Provider\PlaceholderProvider;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
-class ProductVisibilitySearchQueryModifierTest extends \PHPUnit_Framework_TestCase
+class ProductVisibilitySearchQueryModifierTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var TokenStorageInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var TokenStorageInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $tokenStorage;
 
     /**
-     * @var PlaceholderProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var PlaceholderProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $placeholderProvider;
 

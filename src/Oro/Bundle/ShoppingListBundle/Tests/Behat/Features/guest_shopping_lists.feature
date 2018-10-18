@@ -16,21 +16,21 @@ Feature: Guest Shopping Lists
     Given I proceed as the Admin
     And I login as administrator
     And I go to Products/ Product Attributes
-    And press "Create Attribute"
+    And click "Create Attribute"
     And fill form with:
       | Field Name | Color  |
       | Type       | Select |
-    And press "Continue"
+    And click "Continue"
     And set Options with:
       | Label |
       | Black |
       | White |
     And save and close form
-    And I press "Create Attribute"
+    And I click "Create Attribute"
     And fill form with:
       | Field Name | Size   |
       | Type       | Select |
-    And press "Continue"
+    And click "Continue"
     And set Options with:
       | Label |
       | L     |
@@ -80,7 +80,7 @@ Feature: Guest Shopping Lists
     When type "SKU003" in "search"
     And I click "Search Button"
     Then I should see "Product3"
-    But I should not see "Add to Shopping list"
+    But I should not see "Add to Shopping List"
 
   Scenario: Configurable product variants and matrix button shouldn't be available on front store
     And I open product with sku "1GB83" on the store frontend
@@ -99,50 +99,73 @@ Feature: Guest Shopping Lists
     Then I should see "Configuration saved" flash message
     And the "Enable guest shopping list" checkbox should be checked
 
+  Scenario: Empty shopping list shouldn't be created automatically for unauthorized user
+    Given I proceed as the User
+    And I am on homepage
+    And I should see "No Shopping Lists"
+
+  Scenario: Enable "Create Guest Shopping Lists Immediately"
+    Given I proceed as the Admin
+    And uncheck "Use default" for "Create Guest Shopping Lists Immediately" field
+    And I check "Create Guest Shopping Lists Immediately"
+    And I save setting
+    Then I should see "Configuration saved" flash message
+
   Scenario: Configurable product variants and matrix button should be available on front store
     Given I proceed as the User
     When I open product with sku "1GB83" on the store frontend
     Then I should see an "Matrix Grid Form" element
-    And I should see "Add to Shopping list"
+    And I should see "Add to Shopping List"
 
   Scenario: Create Shopping List as unauthorized user from product view page
-    Given I am on homepage
-    Then I should see "Shopping list"
-    When type "PSKU1" in "search"
+    Given I type "SKU003" in "search"
     And I click "Search Button"
-    Then I should see "Product1"
-    And I should see "Add to Shopping list"
-    When I click "View Details" for "PSKU1" product
-    Then I should see "Add to Shopping list"
-    When I click "Add to Shopping list"
+    Then I should see "Product3"
+    When I hover on "Shopping List Widget"
+    And I should see "No Items" in the "Shopping List Widget" element
+    And I should see "Add to Shopping List"
+    When I click "View Details" for "SKU003" product
+    Then I should see "Add to Shopping List"
+    When I click "Add to Shopping List"
     Then I should see "Product has been added to" flash message
     And I should see "In shopping list"
+    And I hover on "Shopping List Widget"
+    And I should see "1 Item | $0.00" in the "Shopping List Widget" element
 
   Scenario: Check Update Shopping List
     Given I should see "Update Shopping list"
     When I fill "FrontendLineItemForm" with:
       | Quantity | 10   |
       | Unit     | each |
-    And I click "Update Shopping list"
+    And I click "Update Shopping List"
     Then I should see "Record has been successfully updated" flash message
-    And I click "NewCategory"
+    Then type "SKU003" in "search"
+    And I click "Search Button"
     Then I should see "In shopping list"
 
   Scenario: Add more products to shopping list from list page (search)
     Given I type "CONTROL1" in "search"
     And I click "Search Button"
     And I should see "Control Product"
-    When I click "Add to Shopping list" for "CONTROL1" product
+    When I click "Add to Shopping List" for "CONTROL1" product
     Then I should see "Product has been added to" flash message
 
   Scenario: Check added products available in Guest Shopping List
-    Given I click "Shopping list"
+    Given I click "Shopping List"
     Then  I should see "Control Product"
-    And  I should see "Product1"
+    And  I should see "Product3"
     And I should not see following buttons:
       | Delete        |
       | Create Order  |
       | Request Quote |
+
+  Scenario: Check Shopping list button in Guest mode when product remove from shopping list
+    Given I type "CONTROL1" in "search"
+    And I click "Search Button"
+    And I should see "Control Product"
+    And I click on "Shopping List Dropdown"
+    And I click "Remove From Shopping List"
+    And I should not see "Shopping List Dropdown"
 
   Scenario: Check shopping list count
     Given I proceed as the Admin

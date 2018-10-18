@@ -68,6 +68,16 @@ define(function(require) {
 
         shoppingListCollection: null,
 
+        /**
+         * @inheritDoc
+         */
+        constructor: function ProductShoppingListsWidget() {
+            ProductShoppingListsWidget.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, _.pick(options, [
                 'dialogOptions',
@@ -320,8 +330,9 @@ define(function(require) {
                 success: function(response) {
                     mediator.execute('hideLoading');
                     if (response && response.message) {
+                        var isSuccessful = response.hasOwnProperty('successful') && response.successful;
                         mediator.execute(
-                            'showFlashMessage', (response.hasOwnProperty('successful') ? 'success' : 'error'),
+                            'showFlashMessage', (isSuccessful ? 'success' : 'error'),
                             response.message
                         );
                     }

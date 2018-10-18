@@ -4,10 +4,10 @@ namespace Oro\Bundle\ProductBundle\Layout\DataProvider;
 
 use Oro\Bundle\ProductBundle\Visibility\UnitVisibilityInterface;
 
-class UnitVisibilityProviderTest extends \PHPUnit_Framework_TestCase
+class UnitVisibilityProviderTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var UnitVisibilityInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var UnitVisibilityInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $unitVisibility;
 

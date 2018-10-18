@@ -14,12 +14,12 @@ class ScheduleFiltrationServiceTest extends AbstractSkippableFiltrationServiceTe
     use EntityTrait;
 
     /**
-     * @var RuleFiltrationServiceInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var RuleFiltrationServiceInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $filtrationService;
 
     /**
-     * @var ScheduleIntervalChecker|\PHPUnit_Framework_MockObject_MockObject
+     * @var ScheduleIntervalChecker|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $scheduleIntervalChecker;
 

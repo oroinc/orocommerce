@@ -23,32 +23,32 @@ class OrderShippingContextFactoryTest extends AbstractOrderContextFactoryTest
     private $factory;
 
     /**
-     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $doctrineHelper;
 
     /**
-     * @var OrderShippingLineItemConverterInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var OrderShippingLineItemConverterInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $shippingLineItemConverterMock;
 
     /**
-     * @var ShippingContextBuilderFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingContextBuilderFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $shippingContextBuilderFactoryMock;
 
     /**
-     * @var PaymentTransactionRepository|\PHPUnit_Framework_MockObject_MockObject
+     * @var PaymentTransactionRepository|\PHPUnit\Framework\MockObject\MockObject
      */
     private $repositoryMock;
 
     /**
-     * @var PaymentTransaction|\PHPUnit_Framework_MockObject_MockObject
+     * @var PaymentTransaction|\PHPUnit\Framework\MockObject\MockObject
      */
     private $paymentTransactionMock;
 
     /**
-     * @var ShippingContextBuilderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingContextBuilderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $contextBuilder;
 

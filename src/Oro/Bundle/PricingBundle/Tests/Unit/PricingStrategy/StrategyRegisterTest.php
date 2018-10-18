@@ -7,7 +7,7 @@ use Oro\Bundle\PricingBundle\PricingStrategy\MergePricesCombiningStrategy;
 use Oro\Bundle\PricingBundle\PricingStrategy\PriceCombiningStrategyInterface;
 use Oro\Bundle\PricingBundle\PricingStrategy\StrategyRegister;
 
-class StrategyRegisterTest extends \PHPUnit_Framework_TestCase
+class StrategyRegisterTest extends \PHPUnit\Framework\TestCase
 {
     public function test()
     {

@@ -2,8 +2,9 @@
 
 namespace Oro\Bundle\ShippingBundle\Form\Type;
 
-use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
+use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Oro\Bundle\ShippingBundle\Provider\MeasureUnitProvider;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\ChoiceList\View\ChoiceView;
 use Symfony\Component\Form\FormInterface;
@@ -11,6 +12,10 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Base FormBuilder for ShippingOption forms
+ * handles common 'choices' formatting logic
+ */
 abstract class AbstractShippingOptionSelectType extends AbstractType
 {
     const NAME = '';
@@ -18,7 +23,7 @@ abstract class AbstractShippingOptionSelectType extends AbstractType
     /** @var MeasureUnitProvider */
     protected $unitProvider;
 
-    /** @var UnitLabelFormatter */
+    /** @var UnitLabelFormatterInterface */
     protected $formatter;
 
     /** @var string */
@@ -26,9 +31,9 @@ abstract class AbstractShippingOptionSelectType extends AbstractType
 
     /**
      * @param MeasureUnitProvider $unitProvider
-     * @param UnitLabelFormatter $formatter
+     * @param UnitLabelFormatterInterface $formatter
      */
-    public function __construct(MeasureUnitProvider $unitProvider, UnitLabelFormatter $formatter)
+    public function __construct(MeasureUnitProvider $unitProvider, UnitLabelFormatterInterface $formatter)
     {
         $this->unitProvider = $unitProvider;
         $this->formatter = $formatter;
@@ -61,7 +66,7 @@ abstract class AbstractShippingOptionSelectType extends AbstractType
         $resolver->setDefaults(
             [
                 'class' => $this->entityClass,
-                'property' => 'code',
+                'choice_label' => 'code',
                 'compact' => false,
                 'full_list' => false,
                 'choices' => null,
@@ -116,6 +121,6 @@ abstract class AbstractShippingOptionSelectType extends AbstractType
      */
     public function getParent()
     {
-        return 'entity';
+        return EntityType::class;
     }
 }

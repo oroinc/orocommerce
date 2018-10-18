@@ -9,9 +9,9 @@ use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductHolderTypeStub;
 use Oro\Bundle\TestFrameworkBundle\Entity\Product;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
-use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -23,7 +23,7 @@ class ProductSelectTypeTest extends FormIntegrationTestCase
     protected $type;
 
     /**
-     * @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $translator;
 
@@ -43,19 +43,14 @@ class ProductSelectTypeTest extends FormIntegrationTestCase
         parent::setUp();
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(ProductSelectType::NAME, $this->type->getName());
-    }
-
     public function testGetParent()
     {
-        $this->assertEquals(OroEntitySelectOrCreateInlineType::NAME, $this->type->getParent());
+        $this->assertEquals(OroEntitySelectOrCreateInlineType::class, $this->type->getParent());
     }
 
     public function testConfigureOptions()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|OptionsResolver $resolver */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|OptionsResolver $resolver */
         $resolver = $this->createMock('Symfony\Component\OptionsResolver\OptionsResolver');
         $resolver->expects($this->once())
             ->method('setDefaults')
@@ -91,10 +86,10 @@ class ProductSelectTypeTest extends FormIntegrationTestCase
      */
     public function testFinishViewPlaceholderEmpty(array $inputData = [], $withParent = true)
     {
-        $form = $this->factory->create($this->type, null);
+        $form = $this->factory->create(ProductSelectType::class, null);
 
         if ($withParent) {
-            $formParent = $this->factory->create(new ProductHolderTypeStub(), $inputData['productHolder']);
+            $formParent = $this->factory->create(ProductHolderTypeStub::class, $inputData['productHolder']);
         } else {
             $formParent = null;
         }
@@ -140,9 +135,9 @@ class ProductSelectTypeTest extends FormIntegrationTestCase
 
     public function testFinishViewPlaceholder()
     {
-        $form = $this->factory->create($this->type, null);
+        $form = $this->factory->create(ProductSelectType::class, null);
 
-        $formParent = $this->factory->create(new ProductHolderTypeStub(), $this->createProductHolder(1, 'sku'));
+        $formParent = $this->factory->create(ProductHolderTypeStub::class, $this->createProductHolder(1, 'sku'));
 
         $form->setParent($formParent);
 
@@ -158,11 +153,11 @@ class ProductSelectTypeTest extends FormIntegrationTestCase
      * @param int $id
      * @param string $productSku
      * @param Product $product
-     * @return \PHPUnit_Framework_MockObject_MockObject|ProductHolderInterface
+     * @return \PHPUnit\Framework\MockObject\MockObject|ProductHolderInterface
      */
     protected function createProductHolder($id, $productSku, Product $product = null)
     {
-        /* @var $productHolder \PHPUnit_Framework_MockObject_MockObject|ProductHolderInterface */
+        /* @var $productHolder \PHPUnit\Framework\MockObject\MockObject|ProductHolderInterface */
         $productHolder = $this->createMock('Oro\Bundle\ProductBundle\Model\ProductHolderInterface');
         $productHolder
             ->expects($this->any())
@@ -185,14 +180,13 @@ class ProductSelectTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
-        $productSelectType = new ProductSelectType($this->translator);
         $entityType = new EntityType(['1'], OroEntitySelectOrCreateInlineType::NAME);
 
         return [
             new PreloadedExtension(
                 [
-                    $productSelectType->getName() => $productSelectType,
-                    $entityType->getName() => $entityType,
+                    $this->type,
+                    OroEntitySelectOrCreateInlineType::class => $entityType,
                 ],
                 []
             ),
@@ -206,7 +200,7 @@ class ProductSelectTypeTest extends FormIntegrationTestCase
      */
     public function testFinishView(array $dataParameters)
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|FormInterface $form */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|FormInterface $form */
         $form = $this->createMock('Symfony\Component\Form\FormInterface');
 
         $formView = new FormView();

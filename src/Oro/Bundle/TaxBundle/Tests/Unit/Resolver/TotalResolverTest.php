@@ -11,7 +11,7 @@ use Oro\Bundle\TaxBundle\Resolver\RoundingResolver;
 use Oro\Bundle\TaxBundle\Resolver\TotalResolver;
 use Oro\Bundle\TaxBundle\Tests\ResultComparatorTrait;
 
-class TotalResolverTest extends \PHPUnit_Framework_TestCase
+class TotalResolverTest extends \PHPUnit\Framework\TestCase
 {
     use ResultComparatorTrait;
 
@@ -19,7 +19,7 @@ class TotalResolverTest extends \PHPUnit_Framework_TestCase
     protected $resolver;
 
     /**
-     * @var TaxationSettingsProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var TaxationSettingsProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $settingsProvider;
 

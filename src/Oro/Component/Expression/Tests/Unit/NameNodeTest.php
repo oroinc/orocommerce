@@ -4,7 +4,7 @@ namespace Oro\Component\Expression\Tests\Unit;
 
 use Oro\Component\Expression\Node\NameNode;
 
-class NameNodeTest extends \PHPUnit_Framework_TestCase
+class NameNodeTest extends \PHPUnit\Framework\TestCase
 {
     public function testNode()
     {

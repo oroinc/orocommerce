@@ -5,7 +5,7 @@ namespace Oro\Bundle\PaymentBundle\Tests\Unit\Model;
 use Oro\Bundle\PaymentBundle\Model\Surcharge;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-class SurchargeTest extends \PHPUnit_Framework_TestCase
+class SurchargeTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 
