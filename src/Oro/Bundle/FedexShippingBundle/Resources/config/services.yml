@@ -59,7 +59,7 @@ services:
         class: 'Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Factory\FedexRateServiceRequestFactory'
         public: false
         arguments:
-            - '@oro_security.encoder.mcrypt'
+            - '@oro_security.encoder.default'
             - '@oro_fedex_shipping.factory.fedex_package_settings_by_integration_settings_and_rule'
             - '@oro_fedex_shipping.factory.fedex_packages_by_line_items_and_package_settings'
             - '@oro_fedex_shipping.modifier.convert_to_fedex_units_shipping_line_item_collection'
@@ -107,7 +107,7 @@ services:
     oro_fedex_shipping.client.rate_service.connection_validate_request.factory:
         class: 'Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Factory\FedexRateServiceValidateConnectionRequestFactory'
         arguments:
-            - '@oro_security.encoder.mcrypt'
+            - '@oro_security.encoder.default'
             - '@oro_shipping.shipping_origin.provider'
 
     oro_fedex_shipping.shipping_method.method_type_identifier_generator:

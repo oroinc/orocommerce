@@ -734,7 +734,7 @@ services:
             - '@oro_config.manager'
             - '@doctrine'
             - '@security.token_storage'
-            - '@oro_security.encoder.mcrypt'
+            - '@oro_security.encoder.default'
         calls:
             - [setCache, ['@oro_product.layout.data_provider.cache', 3600]]
 
