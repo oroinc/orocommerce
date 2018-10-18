@@ -9,6 +9,7 @@ oro:
             id.label: 'Numeric ID'
             qid.label: 'Quote #'
             guest_access_id.label: 'Guest Access Id'
+            unique_guest_link.label: 'Unique Guest Link'
             owner.label: 'Owner'
             organization.label: 'Organization'
             valid_until.label: 'Valid Until'
