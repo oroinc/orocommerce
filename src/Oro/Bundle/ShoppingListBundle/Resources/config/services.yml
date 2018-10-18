@@ -57,6 +57,7 @@ services:
             - "@oro_security.acl_helper"
             - '@oro_shopping_list.shopping_list_provider.cache'
             - "@oro_product.provider.product_variant_availability_provider"
+            - "@oro_shopping_list.layout.data_provider.shopping_list_form_availability_provider"
         calls:
             - [setGuestShoppingListManager, ['@oro_shopping_list.manager.guest_shopping_list']]
 

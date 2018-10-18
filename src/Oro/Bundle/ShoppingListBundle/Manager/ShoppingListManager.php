@@ -8,7 +8,9 @@ use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ORM\EntityManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
+use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Layout\DataProvider\ProductFormAvailabilityProvider;
 use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
 use Oro\Bundle\ProductBundle\Rounding\QuantityRoundingService;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
@@ -35,6 +37,9 @@ class ShoppingListManager
      * @var CustomerUser
      */
     private $customerUser;
+
+    /** @var ProductFormAvailabilityProvider */
+    private $productFormAvailabilityProvider;
 
     /**
      * @var TranslatorInterface
@@ -108,7 +113,8 @@ class ShoppingListManager
         ShoppingListTotalManager $totalManager,
         AclHelper $aclHelper,
         Cache $cache,
-        ProductVariantAvailabilityProvider $productVariantProvider
+        ProductVariantAvailabilityProvider $productVariantProvider,
+        ProductFormAvailabilityProvider $productFormAvailabilityProvider
     ) {
         $this->managerRegistry = $managerRegistry;
         $this->tokenStorage = $tokenStorage;
@@ -120,6 +126,7 @@ class ShoppingListManager
         $this->aclHelper = $aclHelper;
         $this->cache = $cache;
         $this->productVariantProvider = $productVariantProvider;
+        $this->productFormAvailabilityProvider = $productFormAvailabilityProvider;
     }
 
     /**
@@ -313,16 +320,35 @@ class ShoppingListManager
     }
 
     /**
+     * Removes the given line item. In case if line item is the part of matrix representation - removes all
+     * line items of the product from the given line item.
+     *
      * @param LineItem $lineItem
+     *
+     * @return int Number of deleted line items
      */
-    public function removeLineItem(LineItem $lineItem)
+    public function removeLineItem(LineItem $lineItem): int
     {
-        $objectManager = $this->managerRegistry->getManagerForClass('OroShoppingListBundle:LineItem');
-        $objectManager->remove($lineItem);
-        $shoppingList = $lineItem->getShoppingList();
-        $shoppingList->removeLineItem($lineItem);
-        $this->totalManager->recalculateTotals($lineItem->getShoppingList(), false);
-        $objectManager->flush();
+        $parentProduct = $lineItem->getParentProduct();
+        if (!$parentProduct
+            || $this->getAvailableMatrixFormType($parentProduct, $lineItem) === Configuration::MATRIX_FORM_NONE
+        ) {
+            $objectManager = $this->managerRegistry->getManagerForClass(LineItem::class);
+            $objectManager->remove($lineItem);
+            $shoppingList = $lineItem->getShoppingList();
+            $shoppingList->removeLineItem($lineItem);
+            $this->totalManager->recalculateTotals($lineItem->getShoppingList(), false);
+            $objectManager->flush();
+
+            // return 1 as was deleted only current given line item
+            return 1;
+
+        }
+
+        return $this->removeProduct(
+            $lineItem->getShoppingList(),
+            $parentProduct ? $parentProduct : $lineItem->getProduct()
+        );
     }
 
     /**
@@ -630,5 +656,22 @@ class ShoppingListManager
             return null;
         }
         return $website->getId();
+    }
+
+    /**
+     * @param Product $product
+     * @param LineItem $lineItem
+     * @return string
+     */
+    private function getAvailableMatrixFormType(Product $product, LineItem $lineItem)
+    {
+        $type = $this->productFormAvailabilityProvider->getAvailableMatrixFormType($product);
+        if ($type === Configuration::MATRIX_FORM_NONE
+            || $product->getPrimaryUnitPrecision()->getProductUnitCode() !== $lineItem->getProductUnitCode()
+        ) {
+            return Configuration::MATRIX_FORM_NONE;
+        }
+
+        return $type;
     }
 }
