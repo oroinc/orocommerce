@@ -80,7 +80,7 @@ operations:
         label: oro.pricing.pricelist.status.enable
         routes: [oro_pricing_price_list_view]
         applications: [default]
-        acl_resource: ['UPDATE', 'entity:Oro\Bundle\PricingBundle\Entity\PriceList']
+        acl_resource: ['EDIT', 'entity:Oro\Bundle\PricingBundle\Entity\PriceList']
         datagrids:
             - pricing-price-list-grid
         order: 10
@@ -107,7 +107,7 @@ operations:
         label: oro.pricing.pricelist.status.disable
         applications: [default]
         routes: [oro_pricing_price_list_view]
-        acl_resource: ['UPDATE', 'entity:Oro\Bundle\PricingBundle\Entity\PriceList']
+        acl_resource: ['EDIT', 'entity:Oro\Bundle\PricingBundle\Entity\PriceList']
         datagrids:
             - pricing-price-list-grid
         order: 10
@@ -180,11 +180,11 @@ operations:
 
     oro_pricing_price_list_duplicate:
         label: oro.pricing.pricelist.duplicate.label
+        acl_resource: [['CREATE', 'VIEW'], 'entity:Oro\Bundle\PricingBundle\Entity\PriceList']
         routes: [oro_pricing_price_list_view]
         order: 10
         button_options:
             icon: fa-files-o
-        acl_resource: oro_pricing_price_list_create
         actions:
             - '@format_string':
                 attribute: $.newName
@@ -230,6 +230,7 @@ operations:
         label: oro.pricing.pricelist.recalculate.label
         routes: [oro_pricing_price_list_view]
         order: 10
+        acl_resource: ['RECALCULATE', 'entity:Oro\Bundle\PricingBundle\Entity\PriceList']
         button_options:
             icon: fa-money
         actions:

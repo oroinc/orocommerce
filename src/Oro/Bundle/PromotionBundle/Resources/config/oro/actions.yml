@@ -58,6 +58,7 @@ operations:
             - '@redirect': {route: oro_promotion_coupon_create}
         button_options:
             group: oro.promotion.coupon.coupons_actions.label
+            class: 'dropdown-item'
         groups:
             - create_coupon_buttons
 
@@ -68,6 +69,7 @@ operations:
         order: 50
         button_options:
             group: oro.promotion.coupon.coupons_actions.label
+            class: 'dropdown-item'
         groups:
             - create_coupon_buttons
         acl_resource: [CREATE, 'entity:Oro\Bundle\PromotionBundle\Entity\Coupon']

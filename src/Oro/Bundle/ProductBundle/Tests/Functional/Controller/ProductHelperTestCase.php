@@ -22,7 +22,7 @@ class ProductHelperTestCase extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('oro_product_create'));
         $this->assertEquals(
             1,
-            $crawler->filterXPath("//li/a[contains(text(),'".ProductTestHelper::CATEGORY_MENU_NAME."')]")->count()
+            $crawler->filterXPath("//nav/a[contains(text(),'".ProductTestHelper::CATEGORY_MENU_NAME."')]")->count()
         );
 
         $this->assertEquals(
@@ -53,7 +53,7 @@ class ProductHelperTestCase extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertEquals(
             0,
-            $crawler->filterXPath("//li/a[contains(text(),'".ProductTestHelper::CATEGORY_MENU_NAME."')]")->count()
+            $crawler->filterXPath("//nav/a[contains(text(),'".ProductTestHelper::CATEGORY_MENU_NAME."')]")->count()
         );
         $this->assertContains("Category: ".ProductTestHelper::CATEGORY_NAME, $crawler->html());
 

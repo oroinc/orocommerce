@@ -146,13 +146,13 @@ define(function(require) {
                 return '';
             }
 
-            return $(this.templates.pricesHintContent({
+            return this.templates.pricesHintContent({
                 model: this.model.attributes,
                 prices: this.prices,
                 matchedPrice: this.findPrice(),
                 clickable: false,
                 formatter: NumberFormatter
-            }));
+            });
         },
 
         renderHint: function() {

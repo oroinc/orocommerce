@@ -7,13 +7,18 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
+use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceAttributePriceListRepository;
 use Oro\Bundle\PricingBundle\Provider\PriceAttributePricesProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Component\Exception\UnexpectedTypeException;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
+/**
+ * Adds scroll blocks with product price and product price attributes data on view and edit pages
+ */
 class FormViewListener implements FeatureToggleableInterface
 {
     use FeatureCheckerHolderTrait;
@@ -23,6 +28,11 @@ class FormViewListener implements FeatureToggleableInterface
 
     const PRICING_BLOCK_PRIORITY = 550;
     const PRICE_ATTRIBUTES_BLOCK_PRIORITY = 500;
+
+    /**
+     * @var AuthorizationCheckerInterface
+     */
+    private $authorizationChecker;
 
     /**
      * @var TranslatorInterface
@@ -41,17 +51,20 @@ class FormViewListener implements FeatureToggleableInterface
 
     /**
      * @param TranslatorInterface $translator
-     * @param DoctrineHelper $doctrineHelper
-     * @param PriceAttributePricesProvider $provider
+     * @param DoctrineHelper                $doctrineHelper
+     * @param PriceAttributePricesProvider  $provider
+     * @param AuthorizationCheckerInterface $authorizationChecker
      */
     public function __construct(
         TranslatorInterface $translator,
         DoctrineHelper $doctrineHelper,
-        PriceAttributePricesProvider $provider
+        PriceAttributePricesProvider $provider,
+        AuthorizationCheckerInterface $authorizationChecker
     ) {
         $this->translator = $translator;
         $this->doctrineHelper = $doctrineHelper;
         $this->priceAttributePricesProvider = $provider;
+        $this->authorizationChecker = $authorizationChecker;
     }
 
     /**
@@ -123,7 +136,9 @@ class FormViewListener implements FeatureToggleableInterface
             self::PRICE_ATTRIBUTES_BLOCK_PRIORITY
         );
 
-        foreach ($this->getProductAttributesPriceLists() as $priceList) {
+        $priceLists = $this->getProductAttributesPriceLists();
+
+        foreach ($priceLists as $priceList) {
             $subBlockId = $scrollData->addSubBlock(self::PRICE_ATTRIBUTES_BLOCK_NAME);
 
             $priceAttributePrices = $this->priceAttributePricesProvider
@@ -137,11 +152,22 @@ class FormViewListener implements FeatureToggleableInterface
                     'priceAttributePrices' => $priceAttributePrices,
                 ]
             );
+
             $scrollData->addSubBlockData(
                 self::PRICE_ATTRIBUTES_BLOCK_NAME,
                 $subBlockId,
                 $template,
-                $priceList->getName()
+                'productPriceAttributesPrices'
+            );
+        }
+
+        if (empty($priceLists)) {
+            $subBlockId = $scrollData->addSubBlock(self::PRICE_ATTRIBUTES_BLOCK_NAME);
+            $scrollData->addSubBlockData(
+                self::PRICE_ATTRIBUTES_BLOCK_NAME,
+                $subBlockId,
+                $this->translator->trans('oro.pricing.priceattributepricelist.no_data'),
+                'productPriceAttributesPrices'
             );
         }
     }
@@ -152,6 +178,13 @@ class FormViewListener implements FeatureToggleableInterface
      */
     protected function addProductPricesViewBlock(BeforeListRenderEvent $event, Product $product)
     {
+        if (!$this->authorizationChecker->isGranted(
+            'VIEW',
+            sprintf('entity:%s', ProductPrice::class)
+        )) {
+            return;
+        }
+
         $scrollData = $event->getScrollData();
         $blockLabel = $this->translator->trans('oro.pricing.pricelist.entity_plural_label');
         $scrollData->addNamedBlock(self::PRICING_BLOCK_NAME, $blockLabel, self::PRICING_BLOCK_PRIORITY);
@@ -168,7 +201,7 @@ class FormViewListener implements FeatureToggleableInterface
             self::PRICING_BLOCK_NAME,
             $priceListSubBlockId,
             $template,
-            'productPriceAttributesPrices'
+            'prices'
         );
     }
 }

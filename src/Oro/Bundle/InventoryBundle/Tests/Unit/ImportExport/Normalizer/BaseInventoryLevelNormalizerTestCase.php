@@ -7,7 +7,7 @@ use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Oro\Bundle\InventoryBundle\ImportExport\Serializer\InventoryLevelNormalizer;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Oro\Bundle\ProductBundle\Rounding\QuantityRoundingService;
 
 class BaseInventoryLevelNormalizerTestCase extends \PHPUnit\Framework\TestCase
@@ -17,25 +17,28 @@ class BaseInventoryLevelNormalizerTestCase extends \PHPUnit\Framework\TestCase
      */
     protected $inventoryLevelNormalizer;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject|ProductUnitLabelFormatter */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|UnitLabelFormatterInterface */
     protected $formatter;
 
     /** @var  \PHPUnit\Framework\MockObject\MockObject|QuantityRoundingService */
     protected $roundingService;
 
+    /** @var \PHPUnit\Framework\MockObject\MockObject|FieldHelper */
+    protected $fieldHelper;
+
     protected function setUp()
     {
-        $this->formatter = $this->getMockBuilder(ProductUnitLabelFormatter::class)
+        $this->formatter = $this->getMockBuilder(UnitLabelFormatterInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->roundingService = $this->getMockBuilder(QuantityRoundingService::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $fieldHelper = $this->getMockBuilder(FieldHelper::class)
+        $this->fieldHelper = $this->getMockBuilder(FieldHelper::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->inventoryLevelNormalizer = new InventoryLevelNormalizer(
-            $fieldHelper,
+            $this->fieldHelper,
             $this->formatter,
             $this->roundingService
         );

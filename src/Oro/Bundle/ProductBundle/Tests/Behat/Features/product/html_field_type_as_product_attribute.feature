@@ -12,12 +12,12 @@ Feature: HTML field type as product attribute
     And I go to System/ Entities/ Entity Management
     And I filter Name as is equal to "Product"
     And I click view "Product" in grid
-    And I press "Create Field"
+    And I click "Create Field"
     And I fill form with:
       | Field Name   | html_embed   |
       | Storage Type | Table column |
       | Type         | HTML         |
-    And press "Continue"
+    And click "Continue"
     When I save and close form
     Then I should see "Field saved" flash message
     And I click update schema
@@ -25,11 +25,11 @@ Feature: HTML field type as product attribute
 
   Scenario: Create product attribute with HTML type
     And I go to Products/ Product Attributes
-    And press "Create Attribute"
+    And click "Create Attribute"
     And fill form with:
       | Field Name | html_video  |
       | Type       | HTML        |
-    And press "Continue"
+    And click "Continue"
     And fill form with:
       | Label      | HTML video |
     When I save and close form

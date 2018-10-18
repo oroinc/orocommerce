@@ -45,14 +45,12 @@
     {% set dataBlocks = [
         {
             'title': 'oro.rfp.sections.general'|trans,
-            'class': 'active',
             'subblocks': [{'data' : [requestInfo]}]
         }
     ] %}
 
     {% set dataBlocks = dataBlocks|merge([{
         'title': 'oro.rfp.sections.note'|trans,
-
         'subblocks': [{'data': [
             dataGrid.renderGrid('rfp-request-additional-notes-grid', {request: entity.id}, {cssClass: 'inner-grid'})
         ]}]

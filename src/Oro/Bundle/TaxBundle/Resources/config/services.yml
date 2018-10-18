@@ -580,3 +580,8 @@ services:
             - '%oro_customer.entity.customer.class%'
         tags:
             - { name: kernel.event_subscriber }
+
+    oro_tax.validator.tax_rate:
+        class: Oro\Bundle\TaxBundle\Validator\Constraints\TaxRateValidator
+        tags:
+            - { name: validator.constraint_validator, alias: oro_tax_tax_rate }

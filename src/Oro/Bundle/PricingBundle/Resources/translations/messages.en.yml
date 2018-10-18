@@ -117,6 +117,7 @@ oro.pricing:
         prices:
             label: 'Price Attribute Product Prices'
             description: 'Product price attribute values'
+        no_data: 'No price attributes'
 
     pricerule:
         entity_label: Price Calculation Rule
@@ -313,6 +314,9 @@ oro.pricing:
 
     validators:
         field_or_expression_is_required: Field "%fieldName%" is required
+
+    permission:
+        recalculate.label: "Recalculate"
 
 
 oro:

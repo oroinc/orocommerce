@@ -7,6 +7,10 @@ use Oro\Bundle\PricingBundle\Formatter\ProductPriceFormatter;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaInterface;
 use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
 
+/**
+ * Realization of CombinedProductPriceProviderInterface
+ * Provides CombinedProductPrice formatted variables (price, unit, quantity_with_unit) for views
+ */
 class CombinedProductPriceProvider
 {
     /**

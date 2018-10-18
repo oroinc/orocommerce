@@ -5,6 +5,9 @@ namespace Oro\Bundle\CatalogBundle\Datagrid\Cache;
 use Doctrine\Common\Cache\CacheProvider;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessor;
 
+/**
+ * The cache for different kind of aggregated info for categories.
+ */
 class CategoryCountsCache
 {
     /** @var CacheProvider */
@@ -30,8 +33,9 @@ class CategoryCountsCache
     public function getCounts($key)
     {
         $key = $this->getDataKey($key);
+        $counts = $this->cacheProvider->fetch($key);
 
-        return $this->cacheProvider->contains($key) ? $this->cacheProvider->fetch($key) : null;
+        return false !== $counts ? $counts : null;
     }
 
     /**

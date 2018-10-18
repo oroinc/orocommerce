@@ -26,7 +26,7 @@ Feature: Top Selling Items Block Localization
   Scenario: Check that product name is localized
     Given I proceed as the Buyer
     And I signed in as AmandaRCole@example.org on the store frontend
-    And I press "Localization Switcher"
+    And I click "Localization Switcher"
     And I select "Localization 1" localization
     Then should see the following products in the "Top Selling Items Block":
       | Title                     |

@@ -30,5 +30,5 @@ Feature: UPS shipping cost calculation
     Then I see next subtotals for "Checkout Step":
       | Subtotal | Amount    |
       | Shipping | $1,199.75 |
-    When I press "Submit Order"
+    When I click "Submit Order"
     Then I should see "Thank You For Your Purchase!"

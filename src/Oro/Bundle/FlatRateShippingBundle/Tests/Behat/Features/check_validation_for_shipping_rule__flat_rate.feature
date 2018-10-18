@@ -7,7 +7,7 @@ Feature: Check validation for Shipping Rule - Flat rate
   Scenario: Get validation error on saving shipping method
     Given I login as administrator
     And go to System/ Shipping Rules
-    And I press "Create Shipping Rule"
+    And I click "Create Shipping Rule"
     And I fill form with:
       | Name       | test rule |
       | Sort Order | 1         |

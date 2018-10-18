@@ -19,9 +19,16 @@ use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class UserLocalizationManagerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
+    private const CUSTOMER_USER_ID = 8;
+    private const NOT_EXISTENT_LOCALIZATION_ID =  9;
+    private const CURRENT_LOCALIZATION_ID =  9;
+    private const ENABLED_LOCALIZATION_IDS = [3, 9];
 
     /** @var Session|\PHPUnit\Framework\MockObject\MockObject */
     private $session;
@@ -309,6 +316,107 @@ class UserLocalizationManagerTest extends \PHPUnit\Framework\TestCase
         $this->userLocalizationManager->setCurrentLocalization($localization, $website);
     }
 
+    public function testGetCurrentLocalizationByCustomerUserWhenNoWebsiteGivenAndCustomerUserSettingsExist()
+    {
+        /** @var Localization $localization */
+        $localization = $this->getEntity(Localization::class, ['id' => self::CURRENT_LOCALIZATION_ID]);
+        /** @var Website $website **/
+        $website = $this->getEntity(Website::class, ['id' => 1]);
+        /** @var CustomerUser $customerUser */
+        $customerUser = $this->getEntity(CustomerUser::class, ['id' => self::CUSTOMER_USER_ID]);
+
+        $customerUser->setWebsiteSettings((new CustomerUserSettings($website))->setLocalization($localization));
+
+        $this->configManager
+            ->expects($this->once())
+            ->method('get')
+            ->with(Configuration::getConfigKeyByName(Configuration::ENABLED_LOCALIZATIONS))
+            ->willReturn(self::ENABLED_LOCALIZATION_IDS);
+
+        $this->localizationManager
+            ->expects($this->once())
+            ->method('getLocalizations')
+            ->with(self::ENABLED_LOCALIZATION_IDS)
+            ->willReturn($this->getEnabledLocalizations());
+
+        $this->websiteManager
+            ->expects($this->once())
+            ->method('getCurrentWebsite')
+            ->willReturn($website);
+
+        self::assertSame(
+            $localization,
+            $this->userLocalizationManager->getCurrentLocalizationByCustomerUser($customerUser)
+        );
+    }
+
+    public function testGetCurrentLocalizationByCustomerUserWhenWebsiteGivenAndConfigurationLocalizationExists()
+    {
+        /** @var Localization $localization */
+        $localization = $this->getEntity(Localization::class, ['id' => self::CURRENT_LOCALIZATION_ID]);
+        /** @var Website $website **/
+        $website = $this->getEntity(Website::class, ['id' => 1]);
+        /** @var CustomerUser $customerUser */
+        $customerUser = $this->getEntity(CustomerUser::class, ['id' => self::CUSTOMER_USER_ID]);
+
+        $this->configManager
+            ->expects($this->once())
+            ->method('get')
+            ->with(Configuration::getConfigKeyByName(Configuration::DEFAULT_LOCALIZATION), false, false, $website)
+            ->willReturn(self::CURRENT_LOCALIZATION_ID);
+
+        $this->localizationManager
+            ->expects($this->once())
+            ->method('getLocalization')
+            ->with(self::CURRENT_LOCALIZATION_ID)
+            ->willReturn($localization);
+
+        $this->websiteManager
+            ->expects($this->never())
+            ->method('getCurrentWebsite');
+
+        self::assertSame(
+            $localization,
+            $this->userLocalizationManager->getCurrentLocalizationByCustomerUser($customerUser, $website)
+        );
+    }
+
+    public function testGetCurrentLocalizationByCustomerUserWhenWebsiteGivenAndNoConfigurationLocalizationExists()
+    {
+        /** @var Localization $localization */
+        $localization = $this->getEntity(Localization::class, ['id' => self::CURRENT_LOCALIZATION_ID]);
+        /** @var Website $website **/
+        $website = $this->getEntity(Website::class, ['id' => 1]);
+        /** @var CustomerUser $customerUser */
+        $customerUser = $this->getEntity(CustomerUser::class, ['id' => self::CUSTOMER_USER_ID]);
+
+        $this->configManager
+            ->expects($this->once())
+            ->method('get')
+            ->with(Configuration::getConfigKeyByName(Configuration::DEFAULT_LOCALIZATION), false, false, $website)
+            ->willReturn(self::NOT_EXISTENT_LOCALIZATION_ID);
+
+        $this->localizationManager
+            ->expects($this->once())
+            ->method('getLocalization')
+            ->with(self::NOT_EXISTENT_LOCALIZATION_ID)
+            ->willReturn(null);
+
+        $this->localizationManager
+            ->expects($this->once())
+            ->method('getDefaultLocalization')
+            ->willReturn($localization);
+
+        $this->websiteManager
+            ->expects($this->never())
+            ->method('getCurrentWebsite');
+
+        self::assertSame(
+            $localization,
+            $this->userLocalizationManager->getCurrentLocalizationByCustomerUser($customerUser, $website)
+        );
+    }
+
     public function testSetCurrentLocalizationNotLoggedUserAndSessionWasStarted()
     {
         /** @var Localization|\PHPUnit\Framework\MockObject\MockObject $localization */
@@ -356,5 +464,18 @@ class UserLocalizationManagerTest extends \PHPUnit\Framework\TestCase
             ->method('set');
 
         $this->userLocalizationManager->setCurrentLocalization($localization);
+    }
+
+    /**
+     * @return array
+     */
+    private function getEnabledLocalizations(): array
+    {
+        return [
+            self::ENABLED_LOCALIZATION_IDS[0] =>
+                $this->getEntity(Localization::class, ['id' => self::ENABLED_LOCALIZATION_IDS[0]]),
+            self::ENABLED_LOCALIZATION_IDS[1] =>
+                $this->getEntity(Localization::class, ['id' => self::ENABLED_LOCALIZATION_IDS[1]])
+        ];
     }
 }

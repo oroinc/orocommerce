@@ -76,6 +76,8 @@ workflows:
                                 data: $internal_state_token
                         email:
                             form_type: Oro\Bundle\CustomerBundle\Form\Type\CustomerVisitorEmailAddressType
+                            options:
+                                required: true
 
             create_order:
                 step_to: checkout
@@ -161,3 +163,5 @@ workflows:
                                 data: $internal_state_token
                         email:
                             form_type: Oro\Bundle\CustomerBundle\Form\Type\CustomerVisitorEmailAddressType
+                            options:
+                                required: true

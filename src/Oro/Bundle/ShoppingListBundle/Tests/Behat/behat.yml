@@ -60,6 +60,10 @@ oro_behat_extension:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Table
       selector: '#shopping_list_view_container_content > div.cart-table .shopping-list-line-items'
 
+    ShoppingListLineItemsTableHeaderLabel:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector: 'div.shopping-list-line-items__header-label'
+
     ShoppingListLineItem:
       class: Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\ShoppingListLineItem
       selector: '.shopping-list-line-items__item-wrapper'
@@ -89,7 +93,7 @@ oro_behat_extension:
     Shopping List Dropdown:
       selector:
         type: 'xpath'
-        locator: '//a[contains(@class, "add-to-shopping-list-button")]/following-sibling::a/span[@class="caret"]/..'
+        locator: '//a[contains(@class, "add-to-shopping-list-button")]/following-sibling::a[contains(@class, "dropdown-toggle")]'
 
     Create New Shopping List:
       selector: 'a.add-to-shopping-list-button[title="Create New Shopping List"]'
@@ -194,6 +198,10 @@ oro_behat_extension:
     Shopping list Line items Grid:
       selector: 'div[data-page-component-name="shopping-list-line-items-grid"]'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
+    Default Guest Shopping List Owner:
+      selector: 'input[name="shopping_list[oro_shopping_list___default_guest_shopping_list_owner][value]"]'
+      class: Oro\Bundle\FormBundle\Tests\Behat\Element\Select2Entity
 
   suites:
     OroShoppingListBundle:

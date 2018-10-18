@@ -73,7 +73,8 @@ class CustomerGroupChangesListenerTest extends WebTestCase
             Topics::REBUILD_COMBINED_PRICE_LISTS,
             [
                 PriceListRelationTrigger::WEBSITE => $this->getReference(LoadWebsiteData::WEBSITE1)->getId(),
-                PriceListRelationTrigger::ACCOUNT => $this->getReference('customer.level_1.3')->getId()
+                PriceListRelationTrigger::ACCOUNT => $this->getReference('customer.level_1.3')->getId(),
+                PriceListRelationTrigger::ACCOUNT_GROUP => null
             ]
         );
     }

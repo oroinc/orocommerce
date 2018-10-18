@@ -2,15 +2,19 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Manager;
 
-use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
+use Oro\Bundle\SecurityBundle\AccessRule\AclAccessRule;
+use Oro\Bundle\SecurityBundle\AccessRule\AvailableOwnerAccessRule;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
+/**
+ * Class that allows to set owner to shopping list.
+ */
 class ShoppingListOwnerManager
 {
     /**
@@ -75,18 +79,17 @@ class ShoppingListOwnerManager
             ->where("user.id = :id")
             ->setParameter("id", $id);
 
-        $criteria = new Criteria();
-        $config = $this->configProvider->getConfig(ShoppingList::class);
-        $ownerFieldName = $config->get('frontend_owner_field_name');
-        $organizationFieldName = $config->get('organization_field_name');
-        $this->aclHelper->applyAclToCriteria(
-            ShoppingList::class,
-            $criteria,
-            "ASSIGN",
-            [$ownerFieldName => 'user.id', $organizationFieldName => 'user.organization']
+        $query = $this->aclHelper->apply(
+            $qb,
+            'ASSIGN',
+            [
+                AclAccessRule::DISABLE_RULE => true,
+                AvailableOwnerAccessRule::ENABLE_RULE => true,
+                AvailableOwnerAccessRule::TARGET_ENTITY_CLASS => ShoppingList::class
+            ]
         );
-        $qb->addCriteria($criteria);
-        $owner = $qb->getQuery()->getOneOrNullResult();
+
+        $owner = $query->getOneOrNullResult();
 
         return null !== $owner;
     }

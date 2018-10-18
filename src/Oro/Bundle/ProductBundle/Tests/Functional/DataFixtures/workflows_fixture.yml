@@ -1,0 +1,70 @@
+workflows:
+    product_workflow_definition:
+        entity: Oro\Bundle\ProductBundle\Entity\Product
+        entity_attribute: entity
+        steps_display_ordered: false
+        priority: 0
+        defaults:
+            active: true
+        applications:
+            - default
+        start_step: step1
+        steps:
+            'step:starting_point':
+                order: -1
+                _is_start: true
+                is_final: false
+                allowed_transitions:
+                    - start_transition
+                position:
+                    - 0
+                    - 0
+                entity_acl: {  }
+            step1:
+                is_final: false
+                order: 0
+                allowed_transitions: {  }
+                _is_start: false
+                position:
+                    - 10
+                    - 10
+                entity_acl: {  }
+        transitions:
+            start_transition:
+                display_type: dialog
+                destination_page: ''
+                step_to: step1
+                is_start: true
+                form_options:
+                    attribute_fields: {  }
+                is_unavailable_hidden: true
+                transition_definition: start_transition_definition
+                frontend_options:
+                    icon: ''
+                    class: ''
+                is_hidden: false
+                acl_message: null
+                form_type: oro_workflow_transition
+                page_template: null
+                dialog_template: null
+                init_entities: {  }
+                init_routes: {  }
+                init_datagrids: {  }
+                init_context_attribute: init_context
+                message_parameters: {  }
+                triggers: {  }
+        attributes: {  }
+        transition_definitions:
+            start_transition_definition:
+                preactions: {  }
+                preconditions: {  }
+                conditions: {  }
+                actions: {  }
+        variable_definitions:
+            variables: {  }
+        force_autostart: false
+        scopes: {  }
+        datagrids: {  }
+        disable_operations: {  }
+        entity_restrictions: {  }
+

@@ -18,6 +18,9 @@ use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
+/**
+ * Entity repository for Combined Price List entity
+ */
 class CombinedPriceListRepository extends BasePriceListRepository
 {
     const CPL_BATCH_SIZE = 100;
@@ -165,7 +168,10 @@ class CombinedPriceListRepository extends BasePriceListRepository
                 $entityName,
                 $alias,
                 Join::WITH,
-                $selectQb->expr()->eq($alias . '.priceList', 'priceList.id')
+                $selectQb->expr()->orX(
+                    $selectQb->expr()->eq($alias . '.priceList', 'priceList.id'),
+                    $selectQb->expr()->eq($alias . '.fullChainPriceList', 'priceList.id')
+                )
             );
             $selectQb->andWhere($alias . '.priceList IS NULL');
         }
@@ -173,7 +179,10 @@ class CombinedPriceListRepository extends BasePriceListRepository
             'OroPricingBundle:CombinedPriceListActivationRule',
             'rule',
             Join::WITH,
-            $selectQb->expr()->eq('rule.combinedPriceList', 'priceList.id')
+            $selectQb->expr()->orX(
+                $selectQb->expr()->eq('rule.combinedPriceList', 'priceList.id'),
+                $selectQb->expr()->eq('rule.fullChainPriceList', 'priceList.id')
+            )
         );
         $selectQb->andWhere($selectQb->expr()->isNull('rule.combinedPriceList'));
         if ($exceptPriceLists) {

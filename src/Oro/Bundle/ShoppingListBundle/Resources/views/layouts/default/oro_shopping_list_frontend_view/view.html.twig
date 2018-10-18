@@ -176,7 +176,7 @@
             }) }}>
                 <div class="shopping-list-line-items__header">
                     <div class="shopping-list-line-items__header-label">{{ 'oro.frontend.shoppinglist.view.item.lable'|trans }}</div>
-                    <div class="shopping-list-line-items__header-label">{{ 'oro.frontend.shoppinglist.view.subtotal.lable'|trans }}</div>
+                    <div class="shopping-list-line-items__header-label">{{ 'oro.frontend.shoppinglist.view.price.label'|trans }}</div>
                 </div>
                 {% for lineItem in lineItems %}
                     <div class="shopping-list-line-items__item-wrapper">
@@ -509,7 +509,8 @@
             requestMethod: 'POST',
             routeParams: {
                 'productId': mainProduct.id,
-                'shoppingListId': shoppingList.id
+                'shoppingListId': shoppingList.id,
+                'lineItemId': lineItem.id
             }
         }) %}
     {% else %}
@@ -519,7 +520,7 @@
         }) %}
     {% endif %}
 
-    <button class="item-remove button button--plain" {{ UI.renderPageComponentAttributes({
+    <button class="item-remove btn btn--plain" {{ UI.renderPageComponentAttributes({
             module: 'orofrontend/js/app/components/delete-item-component',
             options: moduleOptions
         }) }} >

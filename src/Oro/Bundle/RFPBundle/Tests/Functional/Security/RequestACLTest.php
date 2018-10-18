@@ -2,22 +2,21 @@
 
 namespace Oro\Bundle\RFPBundle\Tests\Functional\Security;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadCustomerUsersData;
 use Oro\Bundle\SecurityBundle\Acl\AccessLevel;
-use Oro\Bundle\SecurityBundle\Model\AclPermission;
-use Oro\Bundle\SecurityBundle\Model\AclPrivilege;
-use Oro\Bundle\SecurityBundle\Model\AclPrivilegeIdentity;
+use Oro\Bundle\SecurityBundle\Test\Functional\RolePermissionExtension;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 use Symfony\Component\DomCrawler\Form;
 
 class RequestACLTest extends WebTestCase
 {
+    use RolePermissionExtension;
+
     /** @var WorkflowManager */
     protected $manager;
 
@@ -141,34 +140,16 @@ class RequestACLTest extends WebTestCase
         $chainMetadataProvider = $this->getContainer()->get('oro_security.owner.metadata_provider.chain');
         $chainMetadataProvider->startProviderEmulation(FrontendOwnershipMetadataProvider::ALIAS);
 
-        $role = $this->getContainer()
-            ->get('doctrine')
-            ->getManagerForClass('OroCustomerBundle:CustomerUserRole')
-            ->getRepository('OroCustomerBundle:CustomerUserRole')
-            ->findOneBy(['role' => LoadCustomerUsersData::BUYER]);
-
-        $aclPrivilege = new AclPrivilege();
-        $identity = new AclPrivilegeIdentity(
-            'entity:Oro\Bundle\RFPBundle\Entity\Request',
-            'oro.rfp.request.entity_label'
-        );
-
-        $aclPrivilege->setIdentity($identity);
-        $permissions = [
-            new AclPermission('VIEW', $level),
-            new AclPermission('CREATE', $level),
-            new AclPermission('EDIT', $level),
-            new AclPermission('DELETE', $level),
-            new AclPermission('ASSIGN', $level)
-        ];
-
-        foreach ($permissions as $permission) {
-            $aclPrivilege->addPermission($permission);
-        }
-
-        $this->getContainer()->get('oro_security.acl.privilege_repository')->savePrivileges(
-            $this->getContainer()->get('oro_security.acl.manager')->getSid($role),
-            new ArrayCollection([$aclPrivilege])
+        $this->updateRolePermissions(
+            LoadCustomerUsersData::BUYER,
+            Request::class,
+            [
+                'VIEW' => $level,
+                'CREATE' => $level,
+                'EDIT' => $level,
+                'DELETE' => $level,
+                'ASSIGN' => $level
+            ]
         );
 
         $chainMetadataProvider->stopProviderEmulation();

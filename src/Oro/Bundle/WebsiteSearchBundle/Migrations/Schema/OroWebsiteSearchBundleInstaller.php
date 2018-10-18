@@ -28,7 +28,7 @@ class OroWebsiteSearchBundleInstaller implements Installation, ContainerAwareInt
      */
     public function getMigrationVersion()
     {
-        return 'v1_3';
+        return 'v1_4';
     }
 
     /**
@@ -113,6 +113,7 @@ class OroWebsiteSearchBundleInstaller implements Installation, ContainerAwareInt
         $table->addColumn('alias', 'string', ['length' => 255]);
         $table->addColumn('record_id', 'integer', ['notnull' => false]);
         $table->addColumn('title', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('weight', 'decimal', ['precision' => 21, 'scale' => 8, 'default' => 1]);
         $table->addColumn('changed', 'boolean', []);
         $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);

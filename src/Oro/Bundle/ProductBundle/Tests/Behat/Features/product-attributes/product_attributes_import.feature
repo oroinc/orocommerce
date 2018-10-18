@@ -1,7 +1,8 @@
 @regression
 @ticket-BB-13273
 @ticket-BB-14555
-
+# Unskip after BB-14918
+@skip
 Feature: Product attributes import
   In order to effectively manage attributes for Product entity
   As an Administrator
@@ -163,24 +164,22 @@ Feature: Product attributes import
     And I import file
     Then Email should contains the following "Errors: 11 processed: 0, read: 11, added: 0, updated: 0, replaced: 0" text
     When I reload the page
-    When I should see "sku" in grid
-    And I should not see "null"
-    # will be fixed in BB-14718
-    And I should see "LoremIpsumLoremIpsumLoremIpsumLoremIpsumLoremIpsum"
-    And I should not see "лорем_иъий"
-    # will be fixed in BB-14718
-    And I should see "A"
-    And I should not see "correctFieldName"
-    And I should not see "inc@rrect_field_name"
-    And I should not see "incorrect_field"
-    And I should not see "UNION"
-    And I should not see "correct_field_name_2"
-    And I should not see "U+004C"
-    And I should not see "&^$"
-    And I should not see "4&a"
-    And I should not see "&A"
-    And I should not see "#^*()"
-    And I should not see "_loremipsum"
+    Then there are 13 records in grid
+    And I should see following grid:
+      | NAME                         | DATA TYPE       | LABEL             | TYPE   | SCHEMA STATUS | STORAGE TYPE | ORGANIZATION | VISIBLE | AUDITABLE | PRODUCT FAMILIES |
+      | brand                        | System relation | Brand             | System | Active	    | Table column | All          | Yes     | Yes       | Default          |
+      | descriptions                 | System relation | Description       | System | Active	    | Table column | All          | Yes     | Yes       | Default          |
+      | featured                     | Boolean         | Is Featured       | System | Active	    | Table column | All          | No      | No        | Default          |
+      | images                       | System relation | Images            | System | Active	    | Table column | All          | Yes     | Yes       | Default          |
+      | inventory_status             | Select          | Inventory Status  | System | Active	    | Table column | All          | No      | Yes       | Default          |
+      | metaDescriptions             | Many to many    | Meta description  | System | Active	    | Table column | All          | No      | No        | Default          |
+      | metaKeywords                 | Many to many    | Meta keywords     | System | Active	    | Table column | All          | No      | No        | Default          |
+      | metaTitles                   | Many to many    | Meta title        | System | Active	    | Table column | All          | No      | No        | Default          |
+      | names                        | System relation | Name              | System | Active	    | Table column | All          | Yes     | Yes       | Default          |
+      | newArrival                   | Boolean         | New Arrival       | System | Active	    | Table column | All          | No      | No        | Default          |
+      | productPriceAttributesPrices | System relation | Product prices    | System | Active	    | Table column | All          | Yes     | No        | Default          |
+      | shortDescriptions            | System relation | Short Description | System | Active	    | Table column | All          | Yes     | Yes       | Default          |
+      | sku                          | String          | SKU               | System | Active	    | Table column | All          | Yes     | Yes       | Default          |
     And I should not see "Update schema"
 
   Scenario: It should be impossible to updated columns with similar names

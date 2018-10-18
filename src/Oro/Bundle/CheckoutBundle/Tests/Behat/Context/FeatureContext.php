@@ -30,7 +30,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         'Ship to this address' => 'oro_workflow_transition[ship_to_billing_address]',
         'Flat Rate' => 'shippingMethodType',
         'Payment Terms' => 'paymentMethod',
-        'Value'=> 'paymentMethod',
+        'Value' => 'paymentMethod',
         'Delete this shopping list after submitting order' => 'oro_workflow_transition[remove_source]',
         'Save shipping address' => 'oro_workflow_transition[save_shipping_address]',
         'Save my data and create an account' =>
@@ -284,8 +284,8 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
 
     /**
      * @param Element $productLine
-     * @param array   $row
-     * @param string  $elementName
+     * @param array $row
+     * @param string $elementName
      * @return bool
      */
     private function matchProductLine(Element $productLine, array $row, $elementName)
@@ -293,9 +293,9 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         list($name, $quantity, $unit) = $row;
 
         try {
-            self::assertContains($name, $productLine->getElement($elementName.'ProductLineName')->getText());
-            self::assertContains($quantity, $productLine->getElement($elementName.'ProductLineQuantity')->getText());
-            self::assertContains($unit, $productLine->getElement($elementName.'ProductLineUnit')->getText());
+            self::assertContains($name, $productLine->getElement($elementName . 'ProductLineName')->getText());
+            self::assertContains($quantity, $productLine->getElement($elementName . 'ProductLineQuantity')->getText());
+            self::assertContains($unit, $productLine->getElement($elementName . 'ProductLineUnit')->getText());
         } catch (\Exception $exception) {
             return false;
         }
@@ -324,5 +324,95 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
             $this->currentPath,
             $parsedUrl['path']
         );
+    }
+
+    /**
+     * @Then /^(?:|I )should see "(?P<field>(?:[^"]|\\")*)" button enabled$/
+     */
+    public function iShouldSeeButtonEnabled($field)
+    {
+        $this->spin(function () use ($field) {
+            $button = $this->elementFactory->createElement($field);
+
+            return !$button->hasAttribute('disabled');
+        }, 5);
+    }
+
+    /**
+     * @When /^(?:|I )expand "(?P<entity>(?:[^"]|\\")*)" permissions in "(?P<section>(?:[^"]|\\")*)" section$/
+     *
+     * @param string $entity
+     * @param string $section
+     */
+    public function iExpandEntityPermissions($entity, $section)
+    {
+        $page = $this->getSession()->getPage();
+        $expandElement = $page->find(
+            'xpath',
+            "//h4[contains(@class,'scrollspy-title')][text()=\"$section\"]/.." .
+            "//div[contains(@class,'entity-name')][text()=\"$entity\"]" .
+            "/..//*[contains(@class,'collapse-action')]"
+        );
+        if ($expandElement) {
+            $expandElement->focus();
+            $expandElement->click();
+        }
+    }
+
+    /**
+     * @When /^(?:|I )click Perform Transition permissions for "(?P<transition>(?:[^"]|\\")*)" transition$/
+     *
+     * @param string $transition
+     */
+    public function iClickPerformTransitionPermissions($transition)
+    {
+        $page = $this->getSession()->getPage();
+        $element = $page->find(
+            'xpath',
+            "//*[contains(@class,'field-name')][contains(text(),'$transition')]/" .
+            "..//*[contains(@class,'action-permissions__item')]"
+        );
+        if ($element) {
+            $element->focus();
+            $element->click();
+        }
+    }
+
+    /**
+     * @Then /^(?:|I )should see next items in permissions dropdown:$/
+     *
+     * @param TableNode $table
+     */
+    public function iShouldSeeItemsInPermissionsDropdown(TableNode $table)
+    {
+        $itemElements = $this->findAllElements('Permissions Dropdown Items');
+        $actualItems = [];
+        if (count($itemElements)) {
+            foreach ($itemElements as $itemElement) {
+                $actualItems[] = $itemElement->getText();
+            }
+        }
+
+        $expectedItems = [];
+        foreach ($table->getRows() as $row) {
+            $expectedItems[] = reset($row);
+        }
+
+        self::assertEquals($expectedItems, $actualItems);
+    }
+
+    /**
+     * @Then /^(?:|I )choose "(?P<option>[^"]*)" in permissions dropdown$/
+     *
+     * @param string $option
+     */
+    public function iSelectOptionInPermissionsDropdown($option)
+    {
+        $itemElement = $this->findElementContains('Permissions Dropdown Items', $option);
+
+        self::assertNotNull($itemElement, "Selected Option is not found in permissions dropdown");
+
+        $itemElement->focus();
+        $itemElement->click();
     }
 }

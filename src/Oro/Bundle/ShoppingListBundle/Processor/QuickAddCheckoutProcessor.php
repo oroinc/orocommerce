@@ -17,6 +17,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Translation\TranslatorInterface;
 
+/**
+ * Handles logic related to quick order process
+ */
 class QuickAddCheckoutProcessor extends AbstractShoppingListQuickAddProcessor
 {
     const NAME = 'oro_shopping_list_to_checkout_quick_add_processor';
@@ -133,7 +136,7 @@ class QuickAddCheckoutProcessor extends AbstractShoppingListQuickAddProcessor
 
         if ($this->shoppingListLimitManager->isReachedLimit()) {
             $shoppingList = $this->shoppingListManager->edit(
-                $this->shoppingListManager->getCurrent(),
+                $this->shoppingListManager->getCurrent($create = true),
                 $this->getShoppingListLabel()
             );
             $this->shoppingListManager->removeLineItems($shoppingList);
