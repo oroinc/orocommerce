@@ -932,5 +932,9 @@ oro_behat_extension:
         - OroShippingBundle::FeatureContext
         - OroLocaleBundle::LocalizationContext
         - OroFrontendLocalizationBundle::LocalizationSwitcherContext
+        - OroEntityExtendBundle::FeatureContext
+        - OroImportExportBundle::ImportExportContext:
+            - '@oro_entity.entity_alias_resolver'
+            - '@oro_importexport.processor.registry'
       paths:
         - '@OroProductBundle/Tests/Behat/Features/other'
