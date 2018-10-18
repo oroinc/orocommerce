@@ -95,7 +95,6 @@
     {% set dataBlocks = [
         {
             'title': 'oro.order.sections.general'|trans,
-            'class': 'active',
             'subblocks': [{
                 'data': [
                     ownerSelectors,
@@ -239,7 +238,6 @@
         {% set dataBlocks = dataBlocks|merge({
             'discounts': {
                 'title': 'oro.order.sections.discounts'|trans,
-                'class': 'active',
                 'subblocks': [{
                     'data': [discounts],
                 }]
@@ -249,7 +247,6 @@
 
     {% set dataBlocks = dataBlocks|merge([{
         'title': 'oro.order.sections.subtotals'|trans,
-        'class': 'active',
         'priority': 900,
         'subblocks': [{
             'data': [subtotals]

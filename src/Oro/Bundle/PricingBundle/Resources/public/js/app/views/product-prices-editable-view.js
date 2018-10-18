@@ -7,6 +7,7 @@ define(function(require) {
     var priceOverridden = require('tpl!oropricing/templates/product/prices-price-overridden.html');
     var BaseProductPricesView = require('oropricing/js/app/views/base-product-prices-view');
     var NumberFormatter = require('orolocale/js/formatter/number');
+    var Popover = require('bootstrap-popover');
     var layout = require('oroui/js/layout');
     var $ = require('jquery');
     var _ = require('underscore');
@@ -41,6 +42,28 @@ define(function(require) {
             priceOverridden: priceOverridden,
             pricesHint: pricesHint,
             pricesHintContent: pricesHintContent
+        },
+
+        events: function() {
+            var events = {};
+
+            var eventNamespace = this.eventNamespace();
+            var onShow = function(clickHandler, event) {
+                var popover = $(event.target).data(Popover.DATA_KEY);
+                $(popover.getTipElement()).on('click' + eventNamespace, 'a', function() {
+                    popover.hide();
+                    clickHandler(this);
+                });
+            };
+
+            events[Popover.Event.SHOWN + ' .product-price-overridden'] = _.wrap(this.useFoundPrice.bind(this), onShow);
+            events[Popover.Event.SHOWN + ' .product-tier-prices'] = _.wrap(this.setPriceFromHint.bind(this), onShow);
+            events[Popover.Event.HIDDEN + ' [data-toggle=popover]'] = function(e) {
+                var tip = $(e.target).data(Popover.DATA_KEY).getTipElement();
+                $(tip).off(eventNamespace);
+            };
+
+            return events;
         },
 
         /**
@@ -122,8 +145,7 @@ define(function(require) {
             var $priceOverridden = this.createElementByTemplate('priceOverridden');
 
             layout.initPopover($priceOverridden);
-            $priceOverridden.insertBefore(this.getElement('priceValue'))
-                .on('click', 'a', _.bind(this.useFoundPrice, this));
+            $priceOverridden.insertBefore(this.getElement('priceValue'));
 
             if (_.isEmpty(this.getElement('priceValue').val()) && this.options.matchedPriceEnabled) {
                 this.getElement('priceValue').addClass('matched-price');
@@ -140,14 +162,6 @@ define(function(require) {
             var $pricesHint = this.createElementByTemplate('pricesHint');
 
             this.getElement('priceValue').after($pricesHint);
-
-            var clickHandler = _.bind(this.setPriceFromHint, this);
-            $pricesHint
-                .on('shown', function() {
-                    $pricesHint.data('popover').tip()
-                        .find('a[data-price]')
-                        .click(clickHandler);
-                });
         },
 
         getHintContent: function() {
@@ -155,13 +169,13 @@ define(function(require) {
                 return '';
             }
 
-            return $(this.templates.pricesHintContent({
+            return this.templates.pricesHintContent({
                 model: this.model.attributes,
                 prices: this.prices,
                 matchedPrice: this.findPrice(),
                 clickable: this.options.editable,
                 formatter: NumberFormatter
-            }));
+            });
         },
 
         renderHint: function() {
@@ -177,11 +191,11 @@ define(function(require) {
             }
         },
 
-        setPriceFromHint: function(e) {
+        setPriceFromHint: function(elem) {
             this.getElement('priceValue').removeClass('matched-price');
-            var $target = $(e.currentTarget);
-            this.model.set('unit', $target.data('unit'));
-            this.setPriceValue($target.data('price'));
+            var $elem = $(elem);
+            this.model.set('unit', $elem.data('unit'));
+            this.setPriceValue($elem.data('price'));
         },
 
         renderPriceOverridden: function() {

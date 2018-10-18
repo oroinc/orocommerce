@@ -1,0 +1,4 @@
+oro:
+    customtheme:
+        shopping_list:
+            view_more.label: 'View more...'

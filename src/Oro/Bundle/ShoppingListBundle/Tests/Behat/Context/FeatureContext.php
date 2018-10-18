@@ -265,4 +265,19 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     {
         $this->createElement('ShoppingListWidget')->click();
     }
+
+    /**
+     * Opens shopping list from widget
+     * Example: And I click "Shopping List 1" on shopping list widget
+     *
+     * @Given /^(?:|I )click "(?P<name>[\w\s]*)" on shopping list widget$/
+     */
+    public function iClickShoppingListOnListsDropdown($name)
+    {
+        $widget = $this->createElement('ShoppingListWidgetContainer');
+        $link = $widget->find('xpath', "//span[@data-role='shopping-list-title'][text()='{$name}']");
+
+        self::assertNotNull($link, sprintf('"%s" list item was found in shopping list widget', $name));
+        $link->click();
+    }
 }
