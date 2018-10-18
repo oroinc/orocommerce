@@ -87,6 +87,7 @@ services:
         calls:
             - [ setQuoteClassName, [ '%oro_sale.entity.quote.class%' ] ]
             - [ setEmailTemplateClassName, [ '%oro_email.emailtemplate.entity.class%' ] ]
+            - [ setFeatureChecker, ['@oro_featuretoggle.checker.feature_checker']]
 
     oro_sale.service.request_helper:
         class: 'Oro\Bundle\SaleBundle\Model\RequestHelper'
