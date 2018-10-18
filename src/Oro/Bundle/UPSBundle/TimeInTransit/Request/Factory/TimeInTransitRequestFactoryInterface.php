@@ -16,7 +16,7 @@ interface TimeInTransitRequestFactoryInterface
      * @param AddressInterface $shipFromAddress Origin address
      * @param AddressInterface $shipToAddress Destination address
      * @param \DateTime        $pickupDate Pickup date should be specified in the timezone specific for origin address
-     * @param int              $weight Weight in unit of weight which is specified in provided UPSTransport
+     * @param int              $weight Weight in the unit of weight specified in the provided UPSTransport
      *
      * @return UpsClientRequestInterface
      */
