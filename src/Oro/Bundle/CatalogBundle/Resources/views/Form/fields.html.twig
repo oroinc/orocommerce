@@ -8,7 +8,7 @@
             }|json_encode }}"
         >
             <tr>
-                <td>{{ form_widget(form.unit, { 'attr': {'class': 'unit'}}) }}</td>
+                <td class="category-precision-holder__unit">{{ form_widget(form.unit, { 'attr': {'class': 'unit'}}) }}</td>
                 <td><div class="control-label"><label>{{ 'oro.catalog.category.precision.label'|trans }}&nbsp;</label></div></td>
                 <td>{{ form_widget(form.precision, { 'attr': {'class': 'precision'} }) }}</td>
             </tr>

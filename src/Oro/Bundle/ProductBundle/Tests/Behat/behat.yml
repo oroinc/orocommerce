@@ -389,7 +389,7 @@ oro_behat_extension:
         locator: '//li[@data-criteria="condition-item" and contains(., "Field Condition")]'
 
     Drop condition here:
-      selector: ".right-area"
+      selector: ".condition-container"
 
     Choose a field..:
       selector: "#select2-drop-mask"
@@ -478,7 +478,7 @@ oro_behat_extension:
             element: Select2Entity
 
     RemoveFilterButton:
-      selector: '.conditions-group .condition a.close'
+      selector: '.conditions-group .condition .btn-close'
 
     Page Templates Form:
       selector: 'form[name="theme"]'
@@ -528,7 +528,7 @@ oro_behat_extension:
       selector: '.datagrid-massaction button.dropdown-toggle'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
-    ProductFrontendGridFloatingMenu:
+    ProductFrontendGridMassActionMenu:
       selector: '.datagrid-massaction__dropdown-menu'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
@@ -597,7 +597,7 @@ oro_behat_extension:
 
     Product Shopping List Dropdown:
       selector:
-        locator: '//form[@name="oro_product_frontend_line_item"]//ul[@class="dropdown-menu"]'
+        locator: '//form[@name="oro_product_frontend_line_item"]//ul[contains(@class,"dropdown-menu")]'
         type: 'xpath'
 
     Request A Quote Button:

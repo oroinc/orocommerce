@@ -75,12 +75,12 @@ define(function(require) {
         switchValues: function() {
             if (this.options.amount_type_value === this.$type.val()) {
                 this.$amountDiscountValue.removeClass('hide');
-                this.$amountDiscountValue.closest(this.options.control_group_selector).show();
+                this.$amountDiscountValue.closest(this.options.control_group_selector).removeClass('hide').show();
                 this.$percentDiscountValue.closest(this.options.control_group_selector).hide();
                 this.$percentDiscountValue.attr('value', '');
             } else if (this.options.percent_type_value === this.$type.val()) {
                 this.$percentDiscountValue.removeClass('hide');
-                this.$percentDiscountValue.closest(this.options.control_group_selector).show();
+                this.$percentDiscountValue.closest(this.options.control_group_selector).removeClass('hide').show();
                 this.$amountDiscountValue.closest(this.options.control_group_selector).hide();
                 this.$amountDiscountValue.attr('value', '');
             }

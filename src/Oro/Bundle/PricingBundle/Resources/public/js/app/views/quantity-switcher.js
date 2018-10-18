@@ -55,7 +55,7 @@ define(function(require) {
                 if (isNaN(this.expressionInput.val()) && (this.expressionInput.val().length > quantityVisibleLength)) {
                     this.showTooltip(this.expressionInput);
                 } else {
-                    this.destroyTooltip(this.expressionInput);
+                    this.disposeTooltip(this.expressionInput);
                 }
             }, this));
 

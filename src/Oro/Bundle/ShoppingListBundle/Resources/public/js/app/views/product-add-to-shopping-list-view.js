@@ -136,7 +136,10 @@ define(function(require) {
         },
 
         _clearButtons: function() {
-            this._getContainer().find(this.options.buttonsSelector).remove();
+            this._getContainer()
+                .trigger('disposeLayout')
+                .find(this.options.buttonsSelector)
+                .remove();
         },
 
         _getContainer: function() {
