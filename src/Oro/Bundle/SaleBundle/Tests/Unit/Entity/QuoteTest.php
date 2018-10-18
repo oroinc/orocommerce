@@ -20,7 +20,7 @@ use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
  */
 class QuoteTest extends AbstractTest
 {
-    public function testProperties()
+    public function testProperties(): void
     {
         $now = new \DateTime('now');
         $properties = [
@@ -51,10 +51,7 @@ class QuoteTest extends AbstractTest
         static::assertPropertyAccessors(new Quote(), $properties);
 
         $quote = new Quote();
-        static::assertRegExp(
-            '/^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i',
-            $quote->getGuestAccessId()
-        );
+        static::assertIsUUID($quote->getGuestAccessId());
 
         static::assertPropertyCollections(new Quote(), [
             ['quoteProducts', new QuoteProduct()],
@@ -63,7 +60,7 @@ class QuoteTest extends AbstractTest
         ]);
     }
 
-    public function testToString()
+    public function testToString(): void
     {
         $id = '123';
         $quote = new Quote();
@@ -75,7 +72,7 @@ class QuoteTest extends AbstractTest
         $this->assertEquals($id, (string)$quote);
     }
 
-    public function testGetEmail()
+    public function testGetEmail(): void
     {
         $quote = new Quote();
         $this->assertEmpty($quote->getEmail());
@@ -85,7 +82,7 @@ class QuoteTest extends AbstractTest
         $this->assertEquals('test', $quote->getEmail());
     }
 
-    public function testPrePersist()
+    public function testPrePersist(): void
     {
         $quote = new Quote();
 
@@ -98,7 +95,7 @@ class QuoteTest extends AbstractTest
         $this->assertInstanceOf('\DateTime', $quote->getUpdatedAt());
     }
 
-    public function testPreUpdate()
+    public function testPreUpdate(): void
     {
         $quote = new Quote();
 
@@ -109,7 +106,7 @@ class QuoteTest extends AbstractTest
         $this->assertInstanceOf('\DateTime', $quote->getUpdatedAt());
     }
 
-    public function testAddQuoteProduct()
+    public function testAddQuoteProduct(): void
     {
         $quote          = new Quote();
         $quoteProduct   = new QuoteProduct();
@@ -127,7 +124,7 @@ class QuoteTest extends AbstractTest
      * @param Quote $quote
      * @param bool $expected
      */
-    public function testHasOfferVariants(Quote $quote, $expected)
+    public function testHasOfferVariants(Quote $quote, $expected): void
     {
         $this->assertEquals($expected, $quote->hasOfferVariants());
     }
@@ -135,7 +132,7 @@ class QuoteTest extends AbstractTest
     /**
      * @return array
      */
-    public function hasOfferVariantsDataProvider()
+    public function hasOfferVariantsDataProvider(): array
     {
         return [
             [$this->createQuote(0, 0), false],
@@ -161,7 +158,7 @@ class QuoteTest extends AbstractTest
         $validUntil,
         $expected,
         $internalStatus = Quote::INTERNAL_STATUS_SENT_TO_CUSTOMER
-    ) {
+    ): void {
         $status = $internalStatus ? new StubEnumValue($internalStatus, 'test') : null;
 
         $quote = new Quote();
@@ -174,7 +171,7 @@ class QuoteTest extends AbstractTest
     /**
      * @return \Generator
      */
-    public function isAcceptableDataProvider()
+    public function isAcceptableDataProvider(): \Generator
     {
         yield [
             'expired' => false,
@@ -227,13 +224,23 @@ class QuoteTest extends AbstractTest
         ];
     }
 
+    public function testClone(): void
+    {
+        $quote = new Quote();
+        $this->assertIsUUID($quote->getGuestAccessId());
+
+        $clone = clone $quote;
+        $this->assertIsUUID($clone->getGuestAccessId());
+        $this->assertNotEquals($quote->getGuestAccessId(), $clone->getGuestAccessId());
+    }
+
     /**
      * @param int $quoteProductCount
      * @param int $quoteProductOfferCount
      * @param bool|false $allowIncrements
      * @return Quote
      */
-    protected function createQuote($quoteProductCount, $quoteProductOfferCount, $allowIncrements = false)
+    protected function createQuote($quoteProductCount, $quoteProductOfferCount, $allowIncrements = false): Quote
     {
         $quote = new Quote();
 
@@ -251,5 +258,16 @@ class QuoteTest extends AbstractTest
         }
 
         return $quote;
+    }
+
+    /**
+     * @param string $actual
+     */
+    private static function assertIsUUID(string $actual): void
+    {
+        static::assertRegExp(
+            '/^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i',
+            $actual
+        );
     }
 }
