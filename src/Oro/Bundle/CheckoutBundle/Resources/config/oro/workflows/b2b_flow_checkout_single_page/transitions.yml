@@ -82,7 +82,7 @@ workflows:
                 frontend_options:
                     is_checkout_continue: true
                     is_checkout_show_errors: true
-                    page-component-module: 'orocheckout/js/app/components/single-page-transition-button-component'
+                    page-component-module: 'orocheckout/js/app/components/single-page-checkout-component'
                     page-component-options:
                         saveStateUrl: $.result.saveStateUrl
                         targetLayoutBlocks:

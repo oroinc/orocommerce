@@ -18,28 +18,13 @@
 
 {% block _checkout_view_widget %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% import 'OroCheckoutBundle:layouts/default:layout.html.twig' as _layout %}
 
     {% set attr = attr|merge({
         'class': attr.class|default('') ~ " single-page-checkout-view"
     }) %}
-    {% set transition = transitionData.transition %}
-    {% set pageComponentOptions = transition.frontendOptions.page_component_options|default({}) %}
 
-    <div {{ block('block_attributes') }} {{ UI.renderPageComponentAttributes({
-        module: 'orocheckout/js/app/components/single-page-checkout-component',
-        options: pageComponentOptions|merge({
-            'entityId': checkout.id,
-            'enabled': transitionData.isAllowed,
-            'hasForm': transition.hasForm(),
-            'transitionUrl': path(
-                'oro_checkout_frontend_checkout',
-                {
-                    id: checkout.id,
-                    transition: transition.name
-                }
-            )
-        })
-    }) }}>
+    <div {{ block('block_attributes') }} {{ _layout.transitionAttributes(transitionData, checkout, { 'entityId': checkout.id}) }} >
         {{ block('container_widget') }}
     </div>
 {% endblock %}
