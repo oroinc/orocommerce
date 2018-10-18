@@ -72,11 +72,6 @@ class FormViewListener implements FeatureToggleableInterface
      */
     public function onProductView(BeforeListRenderEvent $event)
     {
-        // TODO: Uncomment after fix issue with product attributes in groups.
-//        if (!$this->isFeaturesEnabled()) {
-//            return;
-//        }
-
         $product = $event->getEntity();
         if (!$product instanceof Product) {
             throw new UnexpectedTypeException($product, Product::class);
@@ -128,11 +123,6 @@ class FormViewListener implements FeatureToggleableInterface
      */
     protected function addPriceAttributesViewBlock(BeforeListRenderEvent $event, Product $product)
     {
-        // TODO: Uncomment after fix issue with product attributes in groups.
-//        if (!$this->featureChecker->isFeatureEnabled('oro_price_attributes')) {
-//            return;
-//        }
-
         $scrollData = $event->getScrollData();
         $blockLabel = $this->translator->trans('oro.pricing.priceattributepricelist.entity_plural_label');
         $scrollData->addNamedBlock(
@@ -183,7 +173,7 @@ class FormViewListener implements FeatureToggleableInterface
      */
     protected function addProductPricesViewBlock(BeforeListRenderEvent $event, Product $product)
     {
-        if (!$this->featureChecker->isFeatureEnabled('oro_price_lists')) {
+        if (!$this->isFeaturesEnabled()) {
             return;
         }
 

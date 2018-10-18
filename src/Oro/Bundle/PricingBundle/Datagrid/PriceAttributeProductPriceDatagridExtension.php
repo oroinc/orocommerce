@@ -21,10 +21,8 @@ use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 /**
  * Adds price attribute columns, sorters, filters for each currency enabled in current price list.
  */
-class PriceAttributeProductPriceDatagridExtension extends AbstractExtension implements FeatureToggleableInterface
+class PriceAttributeProductPriceDatagridExtension extends AbstractExtension
 {
-    use FeatureCheckerHolderTrait;
-
     private const SUPPORTED_GRID = 'products-grid';
 
     /** @var bool */
@@ -72,8 +70,7 @@ class PriceAttributeProductPriceDatagridExtension extends AbstractExtension impl
      */
     public function isApplicable(DatagridConfiguration $config)
     {
-        return $this->isFeaturesEnabled()
-            && !$this->applied
+        return !$this->applied
             && static::SUPPORTED_GRID === $config->getName()
             && parent::isApplicable($config);
     }

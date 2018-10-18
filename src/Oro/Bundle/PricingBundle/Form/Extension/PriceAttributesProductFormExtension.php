@@ -4,8 +4,6 @@ namespace Oro\Bundle\PricingBundle\Form\Extension;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
-use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 use Oro\Bundle\PricingBundle\Form\Type\ProductAttributePriceCollectionType;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -17,10 +15,8 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 
-class PriceAttributesProductFormExtension extends AbstractTypeExtension implements FeatureToggleableInterface
+class PriceAttributesProductFormExtension extends AbstractTypeExtension
 {
-    use FeatureCheckerHolderTrait;
-
     const PRODUCT_PRICE_ATTRIBUTES_PRICES = 'productPriceAttributesPrices';
 
     /**
@@ -54,11 +50,6 @@ class PriceAttributesProductFormExtension extends AbstractTypeExtension implemen
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        // TODO: Uncomment after fix issue with product attributes in groups.
-//        if (!$this->isFeaturesEnabled()) {
-//            return;
-//        }
-
         $builder->add(self::PRODUCT_PRICE_ATTRIBUTES_PRICES, CollectionType::class, [
             'mapped' => false,
             'entry_type' => ProductAttributePriceCollectionType::class,

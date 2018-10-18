@@ -12,10 +12,8 @@ use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceAttributePriceListRepository;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
-class ProductVirtualRelationProvider implements VirtualRelationProviderInterface, FeatureToggleableInterface
+class ProductVirtualRelationProvider implements VirtualRelationProviderInterface
 {
-    use FeatureCheckerHolderTrait;
-
     /**
      * @var DoctrineHelper
      */
@@ -44,8 +42,7 @@ class ProductVirtualRelationProvider implements VirtualRelationProviderInterface
      */
     public function isVirtualRelation($className, $fieldName)
     {
-        return $this->isFeaturesEnabled()
-            && $className === Product::class
+        return $className === Product::class
             && $this->isProductAttributeField($fieldName);
     }
 
@@ -69,10 +66,6 @@ class ProductVirtualRelationProvider implements VirtualRelationProviderInterface
     public function getVirtualRelations($className)
     {
         $relations = [];
-
-        if (!$this->isFeaturesEnabled()) {
-            return $relations;
-        }
 
         if ($className == Product::class) {
             $productAttributeFieldNames = $this->getProductAttributes();

@@ -70,7 +70,6 @@ services:
             - [setPriceAttributeClass, ['%oro_pricing.entity.price_attribute_product_price.class%']]
         tags:
             - { name: doctrine.event_listener, event: postRemove }
-            - { name: oro_featuretogle.feature, feature: oro_price_attributes }
 
     oro_pricing.user_currency_manager:
         class: 'Oro\Bundle\PricingBundle\Manager\UserCurrencyManager'
@@ -128,7 +127,6 @@ services:
             - '@oro_entity.doctrine_helper'
         tags:
             - { name: oro_entity.virtual_relation_provider, priority: 120 }
-            - { name: oro_featuretogle.feature, feature: oro_price_attributes }
 
     oro_pricing.provider.frontend_product_prices:
         class: 'Oro\Bundle\PricingBundle\Provider\FrontendProductPricesDataProvider'
@@ -1226,4 +1224,3 @@ services:
         parent: oro_pricing.datagrid.extension.price
         tags:
             - { name: oro_datagrid.extension }
-            - { name: oro_featuretogle.feature, feature: oro_price_attributes }

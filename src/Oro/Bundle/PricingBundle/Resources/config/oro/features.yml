@@ -3,23 +3,8 @@ features:
         label: 'Oro Pricing'
         toggle: 'oro_pricing.feature_enabled'
 
-    oro_price_attributes:
-        label: 'Oro Pricing - Price Attributes'
-        # TODO: BB-14587: add separate toggle
-        toggle: 'oro_pricing.feature_enabled'
-        dependencies:
-            - 'oro_pricing'
-        routes:
-            - 'oro_pricing_price_attribute_price_list_index'
-            - 'oro_pricing_price_attribute_price_list_view'
-            - 'oro_pricing_price_attribute_price_list_create'
-            - 'oro_pricing_price_attribute_price_list_update'
-            - 'oro_pricing_price_attribute_price_list_info'
-
     oro_price_lists:
         label: 'Oro Pricing - Price Lists'
-        # TODO: BB-14587: add separate toggle
-        toggle: 'oro_pricing.feature_enabled'
         dependencies:
             - 'oro_pricing'
         routes:
