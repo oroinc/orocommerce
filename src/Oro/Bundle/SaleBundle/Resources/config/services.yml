@@ -81,9 +81,10 @@ services:
     oro_sale.helper.notification:
         class: 'Oro\Bundle\SaleBundle\Notification\NotificationHelper'
         arguments:
-            - "@doctrine"
-            - "@oro_email.email.model.builder"
-            - "@oro_email.mailer.processor"
+            - '@doctrine'
+            - '@oro_email.email.model.builder'
+            - '@oro_email.mailer.processor'
+            - '@oro_featuretoggle.checker.feature_checker'
         calls:
             - [ setQuoteClassName, [ '%oro_sale.entity.quote.class%' ] ]
             - [ setEmailTemplateClassName, [ '%oro_email.emailtemplate.entity.class%' ] ]

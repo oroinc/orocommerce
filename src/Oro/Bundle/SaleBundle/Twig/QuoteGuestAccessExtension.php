@@ -31,7 +31,7 @@ class QuoteGuestAccessExtension extends \Twig_Extension
     public function getFunctions()
     {
         return [
-            new \Twig_SimpleFunction('guest_access_link', [$this, 'getGuestAccessLink'])
+            new \Twig_SimpleFunction('quote_guest_access_link', [$this, 'getGuestAccessLink'])
         ];
     }
 

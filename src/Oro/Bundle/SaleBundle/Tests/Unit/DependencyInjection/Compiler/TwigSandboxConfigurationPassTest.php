@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\SaleBundle\DependencyInjection\Tests\Unit\Compiler;
+namespace Oro\Bundle\SaleBundle\Bundle\Tests\Unit\DependencyInjection\Compiler;
 
 use Oro\Bundle\SaleBundle\DependencyInjection\Compiler\TwigSandboxConfigurationPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -34,7 +34,7 @@ class TwigSandboxConfigurationPassTest extends \PHPUnit\Framework\TestCase
             ->willReturn(['test']);
         $securityPolicyDef->expects($this->once())
             ->method('replaceArgument')
-            ->with(4, ['test', 'guest_access_link']);
+            ->with(4, ['test', 'quote_guest_access_link']);
 
         $rendererDef = $this->createMock(Definition::class);
         $rendererDef->expects($this->once())

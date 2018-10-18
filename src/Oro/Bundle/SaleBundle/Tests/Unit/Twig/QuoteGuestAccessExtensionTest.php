@@ -75,7 +75,7 @@ class QuoteGuestAccessExtensionTest extends \PHPUnit\Framework\TestCase
 
         self::assertEquals(
             $expected,
-            self::callTwigFunction($this->extension, 'guest_access_link', [$quote])
+            self::callTwigFunction($this->extension, 'quote_guest_access_link', [$quote])
         );
     }
 

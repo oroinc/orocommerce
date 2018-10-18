@@ -15,7 +15,7 @@ class TwigSandboxConfigurationPass extends AbstractTwigSandboxConfigurationPass
     protected function getFunctions()
     {
         return [
-            'guest_access_link'
+            'quote_guest_access_link'
         ];
     }
 
