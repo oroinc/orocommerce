@@ -11,6 +11,9 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Provides configuration data for PriceRule expression editor
+ */
 class PriceRuleEditorOptionsConfigurator
 {
     /**

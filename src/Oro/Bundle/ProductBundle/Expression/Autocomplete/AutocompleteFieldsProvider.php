@@ -2,6 +2,9 @@
 
 namespace Oro\Bundle\ProductBundle\Expression\Autocomplete;
 
+/**
+ * Data provider for fields autocomplete, used in ExpressionEditors
+ */
 class AutocompleteFieldsProvider extends AbstractAutocompleteFieldsProvider
 {
     /**

@@ -4,6 +4,9 @@ namespace Oro\Bundle\ProductBundle\Expression\Autocomplete;
 
 use Oro\Bundle\ProductBundle\Entity\MeasureUnitInterface;
 
+/**
+ * Data provider for unit fields autocomplete, used in ExpressionEditors
+ */
 class UnitFieldsProvider extends AbstractAutocompleteFieldsProvider
 {
     /**

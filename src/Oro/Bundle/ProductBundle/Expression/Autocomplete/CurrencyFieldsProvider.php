@@ -2,6 +2,9 @@
 
 namespace Oro\Bundle\ProductBundle\Expression\Autocomplete;
 
+/**
+ * Data provider for currency fields autocomplete, used in ExpressionEditors
+ */
 class CurrencyFieldsProvider extends AbstractAutocompleteFieldsProvider
 {
     /**

@@ -6,6 +6,9 @@ use Oro\Component\Expression\ExpressionParser;
 use Oro\Component\Expression\FieldsProviderInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
+/**
+ * Base data provider for fields autocomplete, used in ExpressionEditors
+ */
 abstract class AbstractAutocompleteFieldsProvider implements AutocompleteFieldsProviderInterface
 {
     /**
