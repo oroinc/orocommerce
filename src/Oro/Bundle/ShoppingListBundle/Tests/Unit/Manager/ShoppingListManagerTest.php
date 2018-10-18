@@ -13,6 +13,7 @@ use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Layout\DataProvider\ProductFormAvailabilityProvider;
 use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
 use Oro\Bundle\ProductBundle\Rounding\QuantityRoundingService;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
@@ -26,6 +27,8 @@ use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListTotalManager;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Oro\Component\Testing\Unit\EntityTrait;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -38,7 +41,7 @@ use Symfony\Component\Translation\TranslatorInterface;
  * @SuppressWarnings(PHPMD.ExcessiveClassLength)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
-class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
+class ShoppingListManagerTest extends TestCase
 {
     const CURRENCY_EUR = 'EUR';
 
@@ -70,7 +73,7 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
     protected $lineItems = [];
 
     /**
-     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
+     * @var ManagerRegistry|MockObject
      */
     protected $registry = [];
 
@@ -80,34 +83,37 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
     protected $aclHelper;
 
     /**
-     * @var TokenInterface|\PHPUnit\Framework\MockObject\MockObject
+     * @var TokenInterface|MockObject
      */
     protected $securityToken;
 
     /**
-     * @var ShoppingListTotalManager|\PHPUnit\Framework\MockObject\MockObject
+     * @var ShoppingListTotalManager|MockObject
      */
     protected $totalManager;
 
     /**
-     * @var Cache|\PHPUnit\Framework\MockObject\MockObject
+     * @var Cache|MockObject
      */
     protected $cache;
 
     /**
-     * @var ProductVariantAvailabilityProvider|\PHPUnit\Framework\MockObject\MockObject
+     * @var ProductVariantAvailabilityProvider|MockObject
      */
     protected $productVariantProvider;
 
     /**
-     * @var GuestShoppingListManager|\PHPUnit\Framework\MockObject\MockObject
+     * @var GuestShoppingListManager|MockObject
      */
     protected $guestShoppingListManager;
 
     /**
-     * @var ShoppingListRepository|\PHPUnit\Framework\MockObject\MockObject
+     * @var ShoppingListRepository|MockObject
      */
     private $shoppingListRepository;
+
+    /** @var MockObject */
+    private $productFormAvailabilityProvider;
 
     protected function setUp()
     {
@@ -127,6 +133,7 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         $this->cache = $this->createMock(Cache::class);
         $this->totalManager = $this->getShoppingListTotalManager();
         $this->productVariantProvider = $this->createMock(ProductVariantAvailabilityProvider::class);
+        $this->productFormAvailabilityProvider = $this->createMock(ProductFormAvailabilityProvider::class);
 
         $this->manager = new ShoppingListManager(
             $this->registry,
@@ -138,7 +145,8 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
             $this->totalManager,
             $this->aclHelper,
             $this->cache,
-            $this->productVariantProvider
+            $this->productVariantProvider,
+            $this->productFormAvailabilityProvider
         );
 
         $this->guestShoppingListManager = $this->createMock(GuestShoppingListManager::class);
@@ -499,7 +507,8 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
             $this->getShoppingListTotalManager(),
             $this->aclHelper,
             $this->cache,
-            $this->productVariantProvider
+            $this->productVariantProvider,
+            $this->productFormAvailabilityProvider
         );
         $manager->setGuestShoppingListManager($this->guestShoppingListManager);
 
@@ -542,7 +551,8 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
             $this->getShoppingListTotalManager(),
             $this->aclHelper,
             $this->cache,
-            $this->productVariantProvider
+            $this->productVariantProvider,
+            $this->productFormAvailabilityProvider
         );
         $manager->setGuestShoppingListManager($this->guestShoppingListManager);
 
@@ -659,7 +669,8 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
             $this->getShoppingListTotalManager(),
             $this->aclHelper,
             $this->cache,
-            $this->productVariantProvider
+            $this->productVariantProvider,
+            $this->productFormAvailabilityProvider
         );
         $manager->setGuestShoppingListManager($this->guestShoppingListManager);
 
@@ -792,7 +803,8 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
             $this->getShoppingListTotalManager(),
             $this->aclHelper,
             $this->cache,
-            $this->productVariantProvider
+            $this->productVariantProvider,
+            $this->productFormAvailabilityProvider
         );
         $manager->setGuestShoppingListManager($this->guestShoppingListManager);
 
@@ -935,7 +947,8 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
             $this->getShoppingListTotalManager(),
             $this->aclHelper,
             $this->cache,
-            $this->productVariantProvider
+            $this->productVariantProvider,
+            $this->productFormAvailabilityProvider
         );
         $manager->setGuestShoppingListManager($this->guestShoppingListManager);
 
