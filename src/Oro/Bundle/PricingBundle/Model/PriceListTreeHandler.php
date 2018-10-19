@@ -76,11 +76,15 @@ class PriceListTreeHandler
      * @param Website|null $website
      * @return CombinedPriceList|null
      */
-    public function getPriceList(Customer $customer = null, Website $website = null)
+    public function getPriceList(Customer $customer = null, $website = null)
     {
         if (!$website) {
             $website = $this->websiteManager->getCurrentWebsite();
         }
+        if (!$website) {
+            $website = $this->websiteManager->getDefaultWebsite();
+        }
+
 
         $key = $this->getUniqueKey($customer, $website);
         if (array_key_exists($key, $this->priceLists)) {
