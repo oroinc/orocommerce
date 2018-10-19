@@ -6,9 +6,9 @@ use Oro\Bundle\WebsiteSearchBundle\Helper\PlaceholderHelper;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\AbstractPlaceholder;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderRegistry;
 
-class PlaceholderHelperTest extends \PHPUnit_Framework_TestCase
+class PlaceholderHelperTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var PlaceholderRegistry|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var PlaceholderRegistry|\PHPUnit\Framework\MockObject\MockObject */
     private $placeholderRegistry;
 
     /** @var PlaceholderHelper */

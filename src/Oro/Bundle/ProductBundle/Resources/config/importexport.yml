@@ -56,7 +56,7 @@ services:
             - [setProductImageClass, ['%oro_product.entity.product_image.class%']]
             - [setImageTypeProvider, ['@oro_layout.provider.image_type']]
             - [setFileLocator, ['@file_locator']]
-            - [setProductImageDir, ['%kernel.root_dir%/import_export/product_images/']]
+            - [setProductImageDir, ['%kernel.project_dir%/var/import_export/product_images/']]
         tags:
             - { name: oro_importexport.normalizer }
 
@@ -145,7 +145,7 @@ services:
         calls:
              - [setDataConverter, ["@oro_product.importexport.inventory_status_converter"]]
         tags:
-            - { name: oro_importexport.processor, type: export, entity: %oro_product.entity.product.class%, alias: oro_product.inventory_status_only }
+            - { name: oro_importexport.processor, type: export, entity: '%oro_product.entity.product.class%', alias: oro_product.inventory_status_only }
 
     oro_product.importexport.normalizer.inventory_status:
         class: Oro\Bundle\ProductBundle\ImportExport\Normalizer\InventoryStatusNormalizer

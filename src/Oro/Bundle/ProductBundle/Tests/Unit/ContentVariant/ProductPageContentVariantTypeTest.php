@@ -10,12 +10,12 @@ use Oro\Component\Routing\RouteData;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
-class ProductPageContentVariantTypeTest extends \PHPUnit_Framework_TestCase
+class ProductPageContentVariantTypeTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var AuthorizationCheckerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var AuthorizationCheckerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $authorizationChecker;
 
@@ -32,11 +32,6 @@ class ProductPageContentVariantTypeTest extends \PHPUnit_Framework_TestCase
             $this->authorizationChecker,
             $this->getPropertyAccessor()
         );
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals('product_page', $this->type->getName());
     }
 
     public function testGetTitle()

@@ -9,6 +9,13 @@ define(function(require) {
         /**
          * @inheritDoc
          */
+        constructor: function QuotePossibleShippingMethodsView() {
+            QuotePossibleShippingMethodsView.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
             QuotePossibleShippingMethodsView.__super__.initialize.apply(this, arguments);
         },

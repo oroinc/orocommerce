@@ -12,7 +12,7 @@ use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Routing\RouterInterface;
 
-class BasicPayPalExpressCheckoutPaymentMethodFactoryTest extends \PHPUnit_Framework_TestCase
+class BasicPayPalExpressCheckoutPaymentMethodFactoryTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var BasicPayPalExpressCheckoutPaymentMethodFactory
@@ -20,32 +20,32 @@ class BasicPayPalExpressCheckoutPaymentMethodFactoryTest extends \PHPUnit_Framew
     private $factory;
 
     /**
-     * @var Gateway|\PHPUnit_Framework_MockObject_MockObject
+     * @var Gateway|\PHPUnit\Framework\MockObject\MockObject
      */
     private $gateway;
 
     /**
-     * @var RouterInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var RouterInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $router;
 
     /**
-     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     private $doctrineHelper;
 
     /**
-     * @var ExtractOptionsProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var ExtractOptionsProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     private $optionsProvider;
 
     /**
-     * @var SurchargeProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var SurchargeProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     private $surchargeProvider;
 
     /**
-     * @var PropertyAccessor|\PHPUnit_Framework_MockObject_MockObject
+     * @var PropertyAccessor|\PHPUnit\Framework\MockObject\MockObject
      */
     private $propertyAccessor;
 

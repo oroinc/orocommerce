@@ -8,7 +8,7 @@ use Oro\Bundle\TaxBundle\Model\Result;
 use Oro\Bundle\TaxBundle\Model\Taxable;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-class TaxableTest extends \PHPUnit_Framework_TestCase
+class TaxableTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 

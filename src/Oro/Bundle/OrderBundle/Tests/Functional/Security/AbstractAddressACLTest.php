@@ -2,18 +2,15 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Functional\Security;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Oro\Bundle\SecurityBundle\Model\AclPermission;
-use Oro\Bundle\SecurityBundle\Model\AclPrivilege;
-use Oro\Bundle\SecurityBundle\Model\AclPrivilegeIdentity;
+use Oro\Bundle\SecurityBundle\Test\Functional\RolePermissionExtension;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\UserBundle\Entity\Role;
 use Symfony\Component\DomCrawler\Crawler;
 
 abstract class AbstractAddressACLTest extends WebTestCase
 {
-    /** @var Role */
-    protected $role;
+    use RolePermissionExtension;
+
+    protected const ROLE = 'ROLE_ADMINISTRATOR';
 
     /**
      * @param Crawler $crawler
@@ -60,48 +57,12 @@ abstract class AbstractAddressACLTest extends WebTestCase
     }
 
     /**
-     * @param int $level
-     * @param AclPrivilegeIdentity $identity
+     * @param string $entityClass
+     * @param int $accessLevel
      */
-    protected function setRolePermissions($level, AclPrivilegeIdentity $identity)
+    protected function setEntityPermissions($entityClass, $accessLevel)
     {
-        $aclPrivilege = new AclPrivilege();
-
-        $aclPrivilege->setIdentity($identity);
-        $permissions = [
-            new AclPermission('VIEW', $level)
-        ];
-
-        foreach ($permissions as $permission) {
-            $aclPrivilege->addPermission($permission);
-        }
-
-        $this->getContainer()->get('oro_security.acl.privilege_repository')->savePrivileges(
-            $this->getContainer()->get('oro_security.acl.manager')->getSid($this->role),
-            new ArrayCollection([$aclPrivilege])
-        );
-    }
-
-    /**
-     * @return AclPrivilegeIdentity
-     */
-    protected function getCustomerAddressIdentity()
-    {
-        return new AclPrivilegeIdentity(
-            'entity:Oro\Bundle\CustomerBundle\Entity\CustomerAddress',
-            'oro.customer.customeraddress.entity_label'
-        );
-    }
-
-    /**
-     * @return AclPrivilegeIdentity
-     */
-    protected function getCustomerAddressUserIdentity()
-    {
-        return new AclPrivilegeIdentity(
-            'entity:Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress',
-            'oro.customer.customeruseraddress.entity_label'
-        );
+        $this->updateRolePermission(static::ROLE, $entityClass, $accessLevel);
     }
 
     /**
@@ -110,14 +71,6 @@ abstract class AbstractAddressACLTest extends WebTestCase
      */
     protected function setActionPermissions($actionId, $value)
     {
-        $aclManager = $this->getContainer()->get('oro_security.acl.manager');
-
-        $sid = $aclManager->getSid($this->role);
-        $oid = $aclManager->getOid('action:' . $actionId);
-        $builder = $aclManager->getMaskBuilder($oid);
-        $mask = $value ? $builder->reset()->add('EXECUTE')->get() : $builder->reset()->get();
-        $aclManager->setPermission($sid, $oid, $mask, true);
-
-        $aclManager->flush();
+        $this->updateRolePermissionForAction(static::ROLE, $actionId, $value);
     }
 }

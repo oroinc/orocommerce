@@ -32,7 +32,7 @@ class CustomerGroupFormViewListenerTest extends AbstractFormViewListenerTest
     {
         $event = $this->getBeforeListRenderEvent();
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $env */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|\Twig_Environment $env */
         $env = $this->getMockBuilder('\Twig_Environment')
             ->disableOriginalConstructor()
             ->getMock();
@@ -57,7 +57,7 @@ class CustomerGroupFormViewListenerTest extends AbstractFormViewListenerTest
     {
         $this->request->expects($this->any())->method('get')->with('id')->willReturn(1);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|EntityRepository $repository */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|EntityRepository $repository */
         $repository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
             ->disableOriginalConstructor()
             ->setMethods(['findOneByCustomerGroup'])
@@ -73,7 +73,7 @@ class CustomerGroupFormViewListenerTest extends AbstractFormViewListenerTest
             ->method('getEntityReference')
             ->willReturn($customerGroup);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $env */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|\Twig_Environment $env */
         $env = $this->getMockBuilder('\Twig_Environment')
             ->disableOriginalConstructor()
             ->getMock();

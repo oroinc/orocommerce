@@ -9,7 +9,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class ProductUnitsWithoutPricesProviderTest extends \PHPUnit_Framework_TestCase
+class ProductUnitsWithoutPricesProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
@@ -19,7 +19,7 @@ class ProductUnitsWithoutPricesProviderTest extends \PHPUnit_Framework_TestCase
     protected $provider;
 
     /**
-     * @var FrontendProductPricesProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var FrontendProductPricesProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $frontendProductPricesProvider;
 

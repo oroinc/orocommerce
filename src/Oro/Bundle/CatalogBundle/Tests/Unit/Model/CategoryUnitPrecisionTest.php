@@ -6,7 +6,7 @@ use Oro\Bundle\CatalogBundle\Model\CategoryUnitPrecision;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-class CategoryUnitPrecisionTest extends \PHPUnit_Framework_TestCase
+class CategoryUnitPrecisionTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 

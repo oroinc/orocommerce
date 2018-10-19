@@ -2,11 +2,13 @@
 
 namespace Oro\Bundle\OrderBundle\Form\Type;
 
+use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Form\Section\SectionProvider;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -62,7 +64,7 @@ abstract class AbstractOrderLineItemType extends AbstractType
         $builder
             ->add(
                 'productUnit',
-                ProductUnitSelectionType::NAME,
+                ProductUnitSelectionType::class,
                 [
                     'label' => 'oro.product.productunit.entity_label',
                     'required' => true,
@@ -70,7 +72,7 @@ abstract class AbstractOrderLineItemType extends AbstractType
             )
             ->add(
                 'quantity',
-                QuantityType::NAME,
+                QuantityType::class,
                 [
                     'required' => true,
                     'label' => 'oro.order.orderlineitem.quantity.label',
@@ -80,7 +82,7 @@ abstract class AbstractOrderLineItemType extends AbstractType
             )
             ->add(
                 'shipBy',
-                'oro_date',
+                OroDateType::class,
                 [
                     'required' => false,
                     'label' => 'oro.order.orderlineitem.ship_by.label',
@@ -88,7 +90,7 @@ abstract class AbstractOrderLineItemType extends AbstractType
             )
             ->add(
                 'comment',
-                'textarea',
+                TextareaType::class,
                 [
                     'required' => false,
                     'label' => 'oro.order.orderlineitem.comment.label',
@@ -134,7 +136,7 @@ abstract class AbstractOrderLineItemType extends AbstractType
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
         $this->getSectionProvider()->addSections(
-            $this->getName(),
+            \get_class($this),
             [
                 'quantity' => ['data' => ['quantity' => [], 'productUnit' => []], 'order' => 10],
                 'price' => [
@@ -172,7 +174,7 @@ abstract class AbstractOrderLineItemType extends AbstractType
     /** {@inheritdoc} */
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
-        $view->vars['sections'] = $this->getSectionProvider()->getSections($this->getName());
+        $view->vars['sections'] = $this->getSectionProvider()->getSections(get_class($this));
 
         $product = null;
         if ($view->vars['value']) {

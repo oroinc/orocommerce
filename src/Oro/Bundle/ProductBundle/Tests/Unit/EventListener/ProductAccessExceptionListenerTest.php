@@ -10,15 +10,15 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Exception\InsufficientAuthenticationException;
 
-class ProductAccessExceptionListenerTest extends \PHPUnit_Framework_TestCase
+class ProductAccessExceptionListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var GetResponseForExceptionEvent|\PHPUnit_Framework_MockObject_MockObject
+     * @var GetResponseForExceptionEvent|\PHPUnit\Framework\MockObject\MockObject
      */
     private $event;
 
     /**
-     * @var RequestStack|\PHPUnit_Framework_MockObject_MockObject
+     * @var RequestStack|\PHPUnit\Framework\MockObject\MockObject
      */
     private $requestStack;
 

@@ -7,7 +7,7 @@ use Oro\Bundle\PromotionBundle\Discount\AbstractDiscount;
 use Oro\Bundle\PromotionBundle\Discount\DiscountContext;
 use Oro\Bundle\PromotionBundle\Discount\OrderDiscount;
 
-class OrderDiscountTest extends \PHPUnit_Framework_TestCase
+class OrderDiscountTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var OrderDiscount

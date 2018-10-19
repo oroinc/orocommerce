@@ -4,7 +4,7 @@ layout:
             id: oro_customer_page
     actions:
         - '@setBlockTheme':
-            themes: 'layout.html.twig'
+            themes: 'OroRFPBundle:layouts:blank/oro_rfp_frontend_request_success/layout.html.twig'
 
         - '@addTree':
             items:

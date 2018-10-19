@@ -127,6 +127,7 @@ class LoadProductData extends AbstractFixture implements DependentFixtureInterfa
 
         $data = Yaml::parse(file_get_contents($filePath));
         $defaultAttributeFamily = $this->getDefaultAttributeFamily($manager);
+        $this->setReference(LoadProductDefaultAttributeFamilyData::DEFAULT_FAMILY_CODE, $defaultAttributeFamily);
 
         foreach ($data as $item) {
             $unit = $this->getReference('product_unit.milliliter');
@@ -292,6 +293,7 @@ class LoadProductData extends AbstractFixture implements DependentFixtureInterfa
         foreach ($item['images'] as $image) {
             $imageFile = new File();
             $imageFile->setFilename($item['productCode']);
+            $imageFile->setMimeType('image/jpeg');
             $this->setReference($image['reference'] . '.' . $item['productCode'], $imageFile);
 
             $productImage = new ProductImage();

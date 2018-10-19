@@ -5,7 +5,7 @@ namespace Oro\Bundle\PaymentBundle\Tests\Unit\Event;
 use Oro\Bundle\PaymentBundle\Event\CollectSurchargeEvent;
 use Oro\Bundle\PaymentBundle\Model\Surcharge;
 
-class CollectSurchargeEventTest extends \PHPUnit_Framework_TestCase
+class CollectSurchargeEventTest extends \PHPUnit\Framework\TestCase
 {
     /** @var CollectSurchargeEvent */
     protected $event;

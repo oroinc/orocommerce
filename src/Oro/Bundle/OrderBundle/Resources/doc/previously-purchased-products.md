@@ -22,7 +22,7 @@ Previously Purchased Products
 Overview
 --------
 
-Previously Purchased Products functionality adds the previously purchased products grid to the customer pages under `Account >  Previously Purchased` on the frontend. By default, previously purchased products are disabled. To enable this functionality, go to `System > Configuration > Orders > Purchase History > Enabled Purchase History` in the admin panel.
+The Previously Purchased Products functionality adds the previously purchased products grid to the customer pages under `Account >  Previously Purchased` on the frontend. By default, previously purchased products are disabled. To enable this functionality, navigate to `System > Configuration > Orders > Purchase History > Enabled Purchase History` in the admin panel.
 
 ### Config
 
@@ -38,9 +38,9 @@ purchase_history:
 ```
 
 The `oro_order.enable_purchase_history` option turns the feature on or off.
-The `oro_order.order_previously_purchased_period` option contains the number of days used to filter products by date in the [previously purchased products grid](../config/oro/datagrids.yml#L751)
+The `oro_order.order_previously_purchased_period` option stores the number of days that the purchase history should cover. The products listed as previously purchased are filtered using this timeframe and are displayed in the [previously purchased products grid](../config/oro/datagrids.yml#L751)
 
-If you need more information about system_config.yml, please see the relevant [documentation](../../../../../../../platform/src/Oro/Bundle/ConfigBundle/Resources/doc/system_configuration.md).
+For more information about system_config.yml, please see the relevant [documentation](../../../../../../../platform/src/Oro/Bundle/ConfigBundle/Resources/doc/system_configuration.md).
 
 ### Website Search Index
 
@@ -53,7 +53,7 @@ This listener contains methods which are called when reindex process is running.
 public function onWebsiteSearchIndex(IndexEntityEvent $event)
 ```
 
-This method is triggered when search reindex process starts running. For example, we can start reindex process with the  `oro:website-search:reindex` command.
+This method is triggered when search reindex process starts running. For example, we can start the reindex process with the `oro:website-search:reindex` command.
 This method adds new columns to the records with the `oro_product_WEBSITE_ID` index and based on order created_at,
 customer_user_id and product_id.
 
@@ -68,8 +68,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
         type: datetime
 ```
 
-We also added index field which saves information about the date of the last purchase of the product. 
-
+We also added the index field which stores information about the date of the last purchase of the product. 
 
 This field is used to select a query in the grid config for select, filter and sort data. For more information, please see [datagrids.yml](../config/oro/datagrids.yml#L751).
 
@@ -95,15 +94,13 @@ all conditions are correct, a message is sent to the message queue to reindex pr
 ```php
 public function reindexProductOnLineItemCreateOrDelete(OrderLineItem $lineItem, LifecycleEventArgs $args)
 ```
-This method is triggered when we create or delete an order line item and send a message to the message queue informing that reindex for a product entity is required.
-But if the order has unsuitable status, or the feature has been disabled, the message for reindex is not sent.
+This method is triggered when we create or delete an order line item. Once the order line item is created or deleted, a message is sent to the message queue informing that reindex for a product entity is required. However, if the order has unsuitable status, or the feature has been disabled, the message for reindex is not sent.
 
 ##### reindexProductOnLineItemUpdate
 ```php
 public function reindexProductOnLineItemUpdate(OrderLineItem $lineItem, PreUpdateEventArgs $event)
 ```
-This method is triggered when we update the "product" field in the order line item entity and send a message to the message queue that reindex for the product entity is required.
-But if the order has unsuitable status, or the feature has been disabled, the message is not sent for reindex.
+This method is triggered when we update the "product" field in the order line item entity, and a message is sent to the message queue that reindex for the product entity is required. However, if the order has unsuitable status, or the feature has been disabled, the message is not sent for reindex.
 
 #### ReindexProductOrderListener
 
@@ -134,13 +131,13 @@ This method is triggered when an order is removed. But if order status is not ap
 ```php
 public function processIndexOnCustomerUserChange(Order $order, PreUpdateEventArgs $event)
 ```
-This method is triggered when order was updated and field `customerUser` was changed. But if order status is not applicable, the message for reindex process is not sent.
+This method is triggered when order is updated and the `customerUser` field is changed. However, if order status is not applicable, the message for reindex process is not sent.
 
 ##### processIndexOnOrderCreatedAtChange
 ```php
 public function processIndexOnOrderCreatedAtChange(Order $order, PreUpdateEventArgs $event)
 ```
-This method is triggered when order was updated and field `createdAt` was changed. But if order status is not applicable, the message for reindex process is not sent.
+This method is triggered when order is updated and the `createdAt` field is changed. However, if order status is not applicable, the message for reindex process is not sent.
 
 #### PreviouslyPurchasedFeatureToggleListener
 
@@ -152,7 +149,7 @@ This listener contains methods which are called when we turn the feature on or o
 ```php
 public function reindexProducts(ConfigUpdateEvent $event)
 ```
-This method is triggered when we change the config setting `enable_purchase_history` and send a message to reindex products in the global or website scope. 
+This method is triggered when we change the `enable_purchase_history` config setting. Once the setting is changed, a message is sent to reindex products in the global or website scope. 
 
 ### Managers
 
@@ -160,14 +157,14 @@ This method is triggered when we change the config setting `enable_purchase_hist
 
 Class [Oro\Bundle\ProductBundle\Search\Reindex\ProductReindexManager](../../Search/Reindex/ProductReindexManager.php)
 
-This manager contains methods which are used when we need to reindex a product or a collection of products. Please use it when you need
+This manager contains methods which are used when we need to reindex a product or a collection of products. Use it when you need
 to reindex product data. 
 
 ##### reindexProduct
 ```php
 public function reindexProduct(Product $product, $websiteId = null)
 ```
-This method triggers reindex process for the current product. If websiteId is not present, this method takes the default website id.
+This method triggers reindex process for the current product. If the websiteId is not present, this method takes the default website id.
 
 ##### triggerReindexationRequestEvent
 ```php
@@ -202,7 +199,7 @@ Returns the start date in string format for previously purchased products.
 
 Class [Oro\Bundle\OrderBundle\Provider\LatestOrderedProductsInfoProvider](../../Provider/LatestOrderedProductsInfoProvider.php)
 
-This provider is used when we need more information who and when bought products in the order.
+This provider is used when we need more information about who and when bought products in the order.
 
 #### getLatestOrderedProductsInfo
 ```php
@@ -223,14 +220,14 @@ This provider is used when we need more information who and when bought products
  */
 public function getLatestOrderedProductsInfo(array $productIds, $websiteId)
 ```
-Returns information about who and when bought those products.
+Returns information about who and when bought the products.
 
 #### PreviouslyPurchasedOrderStatusesProvider
 
 Class [Oro\Bundle\OrderBundle\Provider\PreviouslyPurchasedOrderStatusesProvider](../../Provider/PreviouslyPurchasedOrderStatusesProvider.php)
 
 This service implements [OrderStatusesProviderInterface](../../Provider/OrderStatusesProviderInterface.php) and contains methods
-which returned applicable statuses for the order. For example:
+which return applicable statuses for the order. For example:
 
 ```php 
 /**
@@ -251,5 +248,5 @@ protected function isAllowedStatus(AbstractEnumValue $status = null)
 ```php
 public function getAvailableStatuses()
 ```
-This method returns an  array of applicable statuses for an order. It is used in [ReindexProductOrderListener](#reindexproductorderlistener)
+This method returns an array of applicable statuses for an order. It is used in [ReindexProductOrderListener](#reindexproductorderlistener),
 [ReindexProductLineItemListener](#reindexproductlineitemlistener) and [LatestOrderedProductsInfoProvider](#latestorderedproductsinfoprovider)

@@ -28,7 +28,7 @@ operations:
         form_options:
             attribute_fields:
                 price:
-                    form_type: oro_pricing_price_list_product_price
+                    form_type: Oro\Bundle\PricingBundle\Form\Type\PriceListProductPriceType
                     options:
                         required: true
             attribute_default_values:
@@ -80,7 +80,7 @@ operations:
         label: oro.pricing.pricelist.status.enable
         routes: [oro_pricing_price_list_view]
         applications: [default]
-        acl_resource: ['UPDATE', 'entity:Oro\Bundle\PricingBundle\Entity\PriceList']
+        acl_resource: ['EDIT', 'entity:Oro\Bundle\PricingBundle\Entity\PriceList']
         datagrids:
             - pricing-price-list-grid
         order: 10
@@ -107,7 +107,7 @@ operations:
         label: oro.pricing.pricelist.status.disable
         applications: [default]
         routes: [oro_pricing_price_list_view]
-        acl_resource: ['UPDATE', 'entity:Oro\Bundle\PricingBundle\Entity\PriceList']
+        acl_resource: ['EDIT', 'entity:Oro\Bundle\PricingBundle\Entity\PriceList']
         datagrids:
             - pricing-price-list-grid
         order: 10
@@ -180,6 +180,7 @@ operations:
 
     oro_pricing_price_list_duplicate:
         label: oro.pricing.pricelist.duplicate.label
+        acl_resource: [['CREATE', 'VIEW'], 'entity:Oro\Bundle\PricingBundle\Entity\PriceList']
         routes: [oro_pricing_price_list_view]
         order: 10
         button_options:
@@ -229,19 +230,12 @@ operations:
         label: oro.pricing.pricelist.recalculate.label
         routes: [oro_pricing_price_list_view]
         order: 10
+        acl_resource: ['RECALCULATE', 'entity:Oro\Bundle\PricingBundle\Entity\PriceList']
         button_options:
             icon: fa-money
         actions:
-            - '@call_service_method':
-                service: 'oro_pricing.builder.price_list_product_assignment_builder'
-                method: 'buildByPriceList'
-                method_parameters: [$.data]
-            - '@call_service_method':
-                service: 'oro_pricing.builder.product_price_builder'
-                method: 'buildByPriceList'
-                method_parameters: [$.data]
-            - '@assign_value': [$.data.actual, true]
-            - '@flush_entity': $.data
+            - '@price_list_recalculate':
+                price_list: $.data
             - '@flash_message':
                 message: oro.pricing.pricelist.recalculate.message
                 type: 'success'

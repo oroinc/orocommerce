@@ -5,7 +5,7 @@ namespace Oro\Bundle\ShippingBundle\Tests\Unit\Method\Configuration\Composed;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\ShippingBundle\Method\Configuration\Composed\ComposedShippingMethodConfiguration;
 
-class ComposedShippingMethodConfigurationTest extends \PHPUnit_Framework_TestCase
+class ComposedShippingMethodConfigurationTest extends \PHPUnit\Framework\TestCase
 {
     public function testGetters()
     {

@@ -19,7 +19,7 @@ class ScopeFiltrationServiceTest extends AbstractSkippableFiltrationServiceTest
     use EntityTrait;
 
     /**
-     * @var RuleFiltrationServiceInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var RuleFiltrationServiceInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $filtrationService;
 
@@ -29,7 +29,7 @@ class ScopeFiltrationServiceTest extends AbstractSkippableFiltrationServiceTest
     protected $scopeFiltrationService;
 
     /**
-     * @var ScopeManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ScopeManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $scopeManager;
 

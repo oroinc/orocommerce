@@ -8,10 +8,10 @@ use Oro\Bundle\ShippingBundle\Formatter\ShippingMethodLabelFormatter;
 use Oro\Bundle\ShippingBundle\Twig\ShippingMethodExtension;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class ShippingMethodExtensionTest extends \PHPUnit_Framework_TestCase
+class ShippingMethodExtensionTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ShippingMethodLabelFormatter|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingMethodLabelFormatter|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $shippingMethodLabelFormatter;
 
@@ -21,12 +21,12 @@ class ShippingMethodExtensionTest extends \PHPUnit_Framework_TestCase
     protected $extension;
 
     /**
-     * @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $dispatcher;
 
     /**
-     * @var ShippingMethodEnabledByIdentifierCheckerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingMethodEnabledByIdentifierCheckerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $checker;
 

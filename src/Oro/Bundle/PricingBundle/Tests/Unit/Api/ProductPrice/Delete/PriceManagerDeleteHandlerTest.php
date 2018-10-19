@@ -12,12 +12,12 @@ use PHPUnit\Framework\TestCase;
 class PriceManagerDeleteHandlerTest extends TestCase
 {
     /**
-     * @var PriceManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var PriceManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $priceManager;
 
     /**
-     * @var ObjectManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ObjectManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $entityManager;
 

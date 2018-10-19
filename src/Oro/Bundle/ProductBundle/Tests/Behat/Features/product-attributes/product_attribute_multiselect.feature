@@ -1,13 +1,20 @@
 @regression
 @ticket-BB-9989
+@ticket-BB-14989
 @fixture-OroProductBundle:ProductAttributesFixture.yml
 Feature: Product attribute multiselect
   In order to have custom attributes for Product entity
   As an Administrator
   I need to be able to add product attribute and have attribute data in search and filter
 
+  Scenario: Feature Background
+    Given sessions active:
+      | Admin  | first_session  |
+      | Buyer  | second_session |
+
   Scenario: Create product attribute
-    Given I login as administrator
+    Given I proceed as the Admin
+    And I login as administrator
     And I go to Products/ Product Attributes
     When I click "Create Attribute"
     And I fill form with:
@@ -48,8 +55,14 @@ Feature: Product attribute multiselect
     And I save and close form
     Then I should see "Product has been saved" flash message
 
+  Scenario: Check multiselect attributes are available at product view page (correctly formated)
+    Given I go to Products/ Products
+    When I click "View" on row "SKU123" in grid
+    Then I should see "TestMultiValueOne, TestMultiValueThree"
+
   Scenario: Check product grid search
-    Given I login as AmandaRCole@example.org buyer
+    Given I proceed as the Buyer
+    And I am on the homepage
     When I type "TestMultiValueThree" in "search"
     And I click "Search Button"
     Then I should see "SKU123" product
@@ -62,3 +75,23 @@ Feature: Product attribute multiselect
     When I check "TestMultiValueOne" in MultiSelectField filter in frontend product grid
     Then I should see "SKU123" product
     And I should not see "SKU456" product
+
+  Scenario: Check if multiselect attribute if available for Reports & Segments
+    Given I proceed as the Admin
+    And I go to Reports & Segments / Manage Segments
+    And I click "Create Segment"
+    And I fill "Segment Form" with:
+      | Name         | Segment with multiselect |
+      | Entity       | Product                  |
+      | Segment Type | Dynamic                  |
+    And I add the following columns:
+      | MultiSelectField |
+    When I save and close form
+    Then I should see "Segment saved" flash message
+
+  Scenario: Check multiselect attributes are available at store front
+    Given I proceed as the Buyer
+    When I type "SKU123" in "search"
+    And I click "Search Button"
+    And I click "View Details" for "SKU123" product
+    Then I should see "TestMultiValueOne, TestMultiValueThree"

@@ -11,32 +11,27 @@ use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Translation\TranslatorInterface;
 
-class RelatedItemsHandlerTest extends \PHPUnit_Framework_TestCase
+class RelatedItemsHandlerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /** @var RelatedItemsHandler */
     private $handler;
 
-    /** @var AssignerStrategyInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var AssignerStrategyInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $relatedAssigner;
 
-    /** @var AssignerStrategyInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var AssignerStrategyInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $upsellAssigner;
 
-    /** @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $translator;
 
     protected function setUp()
     {
-        $this->translator = $this->getMockBuilder(TranslatorInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->relatedAssigner = $this->getMockBuilder(AssignerStrategyInterface::class)
-            ->getMock();
-        $this->upsellAssigner = $this->getMockBuilder(AssignerStrategyInterface::class)
-            ->getMock();
+        $this->translator = $this->createMock(TranslatorInterface::class);
+        $this->relatedAssigner = $this->createMock(AssignerStrategyInterface::class);
+        $this->upsellAssigner = $this->createMock(AssignerStrategyInterface::class);
 
         $this->handler = new RelatedItemsHandler($this->translator);
     }
@@ -130,7 +125,7 @@ class RelatedItemsHandlerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param Product[] $data
-     * @return \PHPUnit_Framework_MockObject_MockObject|Form
+     * @return \PHPUnit\Framework\MockObject\MockObject|Form
      */
     private function getField($data = [])
     {

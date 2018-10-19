@@ -12,54 +12,60 @@ use Oro\Bundle\PaymentBundle\Context\LineItem\Collection\Factory\PaymentLineItem
 use Oro\Bundle\PaymentBundle\Context\LineItem\Collection\PaymentLineItemCollectionInterface;
 use Oro\Bundle\PaymentBundle\Context\PaymentContext;
 use Oro\Bundle\PaymentBundle\Context\PaymentLineItem;
+use Oro\Bundle\ShippingBundle\Model\ShippingOrigin;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
-class BasicPaymentContextBuilderTest extends \PHPUnit_Framework_TestCase
+class BasicPaymentContextBuilderTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var Customer|\PHPUnit_Framework_MockObject_MockObject
+     * @var Customer|\PHPUnit\Framework\MockObject\MockObject
      */
     private $customerMock;
 
     /**
-     * @var CustomerUser|\PHPUnit_Framework_MockObject_MockObject
+     * @var CustomerUser|\PHPUnit\Framework\MockObject\MockObject
      */
     private $customerUserMock;
 
     /**
-     * @var PaymentLineItemCollectionInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var PaymentLineItemCollectionInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $lineItemsCollectionMock;
 
     /**
-     * @var AddressInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var AddressInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $billingAddressMock;
 
     /**
-     * @var AddressInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var AddressInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $shippingAddressMock;
 
     /**
-     * @var Price|\PHPUnit_Framework_MockObject_MockObject
+     * @var Price|\PHPUnit\Framework\MockObject\MockObject
      */
     private $subtotalMock;
 
     /**
-     * @var Checkout|\PHPUnit_Framework_MockObject_MockObject
+     * @var Checkout|\PHPUnit\Framework\MockObject\MockObject
      */
     private $sourceEntityMock;
 
     /**
-     * @var PaymentLineItemCollectionFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var PaymentLineItemCollectionFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $paymentLineItemCollectionFactoryMock;
 
     /**
-     * @var Website|\PHPUnit_Framework_MockObject_MockObject
+     * @var Website|\PHPUnit\Framework\MockObject\MockObject
      */
     private $websiteMock;
+
+    /**
+     * @var ShippingOrigin|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $shippingOriginMock;
 
     protected function setUp()
     {
@@ -82,6 +88,7 @@ class BasicPaymentContextBuilderTest extends \PHPUnit_Framework_TestCase
             PaymentLineItemCollectionFactoryInterface::class
         );
         $this->websiteMock = $this->createMock(Website::class);
+        $this->shippingOriginMock = $this->createMock(ShippingOrigin::class);
     }
 
     public function testFullContextBuilding()
@@ -120,7 +127,8 @@ class BasicPaymentContextBuilderTest extends \PHPUnit_Framework_TestCase
             ->setCustomer($this->customerMock)
             ->setCustomerUser($this->customerUserMock)
             ->setShippingMethod($shippingMethod)
-            ->setWebsite($this->websiteMock);
+            ->setWebsite($this->websiteMock)
+            ->setShippingOrigin($this->shippingOriginMock);
 
         $expectedContext = $this->getExpectedFullContext(
             $shippingMethod,
@@ -177,6 +185,7 @@ class BasicPaymentContextBuilderTest extends \PHPUnit_Framework_TestCase
             PaymentContext::FIELD_SOURCE_ENTITY => $this->sourceEntityMock,
             PaymentContext::FIELD_SOURCE_ENTITY_ID => $entityId,
             PaymentContext::FIELD_WEBSITE => $this->websiteMock,
+            PaymentContext::FIELD_SHIPPING_ORIGIN => $this->shippingOriginMock,
         ];
 
         return new PaymentContext($params);

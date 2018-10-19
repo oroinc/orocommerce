@@ -4,23 +4,25 @@ namespace Oro\Bundle\PaymentTermBundle\Tests\Unit\Form\Extension;
 
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentTermBundle\Form\Extension\PaymentTermExtension;
+use Oro\Bundle\PaymentTermBundle\Form\Type\PaymentTermSelectType;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider;
 use Oro\Bundle\PaymentTermBundle\Tests\Unit\PaymentTermAwareStub;
 use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormConfigInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\ResolvedFormTypeInterface;
 
-class PaymentTermExtensionTest extends \PHPUnit_Framework_TestCase
+class PaymentTermExtensionTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /** @var PaymentTermExtension */
     protected $extension;
 
-    /** @var PaymentTermProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var PaymentTermProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $paymentTermProvider;
 
     protected function setUp()
@@ -34,11 +36,11 @@ class PaymentTermExtensionTest extends \PHPUnit_Framework_TestCase
 
     public function testGetExtended()
     {
-        $this->assertSame('oro_payment_term_select', $this->extension->getExtendedType());
+        $this->assertSame(PaymentTermSelectType::class, $this->extension->getExtendedType());
     }
 
     /**
-     * @param FormBuilderInterface|\PHPUnit_Framework_MockObject_MockObject $builder
+     * @param FormBuilderInterface|\PHPUnit\Framework\MockObject\MockObject $builder
      * @param FormEvent $formEvent
      */
     private function addCallbackAssert(FormBuilderInterface $builder, FormEvent $formEvent)
@@ -121,12 +123,15 @@ class PaymentTermExtensionTest extends \PHPUnit_Framework_TestCase
         $parent->expects($this->once())->method('getData')->willReturn(new PaymentTermAwareStub());
         $parent->expects($this->any())->method('getName')->willReturn('parent');
 
-        $type = $this->createMock(ResolvedFormTypeInterface::class);
+        $type = $this->createMock(FormInterface::class);
         $type->expects($this->any())->method('getName')->willReturn('entity');
+
+        $resolvedType = $this->createMock(ResolvedFormTypeInterface::class);
+        $resolvedType->expects($this->any())->method('getInnerType')->willReturn(new EntityType([]));
 
         $config = $this->createMock(FormConfigInterface::class);
         $config->expects($this->once())->method('getOptions')->willReturn([]);
-        $config->expects($this->once())->method('getType')->willReturn($type);
+        $config->expects($this->once())->method('getType')->willReturn($resolvedType);
 
         $form = $this->createMock(FormInterface::class);
         $form->expects($this->once())->method('getParent')->willReturn($parent);
@@ -141,7 +146,7 @@ class PaymentTermExtensionTest extends \PHPUnit_Framework_TestCase
             ),
             $this->logicalAnd(
                 $this->isType('string'),
-                $this->equalTo('entity')
+                $this->equalTo(EntityType::class)
             ),
             $this->logicalAnd(
                 $this->isType('array'),

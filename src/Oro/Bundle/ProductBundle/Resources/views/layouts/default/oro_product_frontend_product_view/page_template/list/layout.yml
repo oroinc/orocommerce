@@ -1,7 +1,7 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'layout.html.twig'
+            themes: 'OroProductBundle:layouts:default/oro_product_frontend_product_view/page_template/list/layout.html.twig'
         - '@move':
             id: product_view_line_item_container
             parentId: product_view_content_container

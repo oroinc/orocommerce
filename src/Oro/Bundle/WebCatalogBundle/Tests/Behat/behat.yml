@@ -27,6 +27,7 @@ oro_behat_extension:
                 mapping:
                     Title: 'oro_web_catalog_content_node[titles][values][default]'
                     Slug: 'oro_web_catalog_content_node[slugPrototypesWithRedirect][slugPrototypes][values][default]'
+                    Meta Title: 'oro_web_catalog_content_node[metaTitles][values][default]'
 
         Content Variant:
             class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
@@ -55,6 +56,7 @@ oro_behat_extension:
                 - OroDataGridBundle::GridContext
                 - OroFormBundle::FormContext
                 - OroWebCatalogBundle::FeatureContext
+                - OroCustomerBundle::FrontendGridContext
                 - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
             paths:
                 - '@OroWebCatalogBundle/Tests/Behat/Features'

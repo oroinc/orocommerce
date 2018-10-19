@@ -12,6 +12,13 @@ define(function(require) {
 
     BackendPageableCollection = PageableCollection.extend({
         /**
+         * @inheritDoc
+         */
+        constructor: function BackendPageableCollection() {
+            BackendPageableCollection.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
          * @param {object} options
          */
         fetch: function(options) {

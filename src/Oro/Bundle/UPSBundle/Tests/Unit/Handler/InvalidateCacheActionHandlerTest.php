@@ -12,32 +12,32 @@ use Oro\Bundle\UPSBundle\Handler\InvalidateCacheActionHandler;
 use Oro\Bundle\UPSBundle\TimeInTransit\CacheProvider\Factory\TimeInTransitCacheProviderFactoryInterface;
 use Oro\Bundle\UPSBundle\TimeInTransit\CacheProvider\TimeInTransitCacheProviderInterface;
 
-class InvalidateCacheActionHandlerTest extends \PHPUnit_Framework_TestCase
+class InvalidateCacheActionHandlerTest extends \PHPUnit\Framework\TestCase
 {
     const TRANSPORT_ID = 1;
 
     /**
-     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     private $doctrineHelper;
 
     /**
-     * @var TimeInTransitCacheProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var TimeInTransitCacheProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $timeInTransitCacheProvider;
 
     /**
-     * @var TimeInTransitCacheProviderFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var TimeInTransitCacheProviderFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $timeInTransitCacheProviderFactory;
 
     /**
-     * @var UPSShippingPriceCache|\PHPUnit_Framework_MockObject_MockObject
+     * @var UPSShippingPriceCache|\PHPUnit\Framework\MockObject\MockObject
      */
     private $upsPriceCache;
 
     /**
-     * @var ShippingPriceCache|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingPriceCache|\PHPUnit\Framework\MockObject\MockObject
      */
     private $shippingPriceCache;
 
@@ -104,7 +104,7 @@ class InvalidateCacheActionHandlerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return UPSSettings|\PHPUnit_Framework_MockObject_MockObject
+     * @return UPSSettings|\PHPUnit\Framework\MockObject\MockObject
      */
     private function createSettingsMock()
     {

@@ -7,13 +7,13 @@ use Oro\Bundle\SEOBundle\Event\RestrictSitemapEntitiesEvent;
 use Oro\Bundle\SEOBundle\EventListener\RestrictSitemapCategoryByVisibilityListener;
 use Oro\Bundle\VisibilityBundle\Model\CategoryVisibilityQueryBuilderModifier;
 
-class RestrictSitemapCategoryByVisibilityListenerTest extends \PHPUnit_Framework_TestCase
+class RestrictSitemapCategoryByVisibilityListenerTest extends \PHPUnit\Framework\TestCase
 {
     public function testFilterHiddenForAnonymousCategories()
     {
-        /** @var QueryBuilder|\PHPUnit_Framework_MockObject_MockObject $queryBuilder */
+        /** @var QueryBuilder|\PHPUnit\Framework\MockObject\MockObject $queryBuilder */
         $queryBuilder = $this->createMock(QueryBuilder::class);
-        /** @var CategoryVisibilityQueryBuilderModifier|\PHPUnit_Framework_MockObject_MockObject $queryModifier */
+        /** @var CategoryVisibilityQueryBuilderModifier|\PHPUnit\Framework\MockObject\MockObject $queryModifier */
         $queryModifier = $this->createMock(CategoryVisibilityQueryBuilderModifier::class);
         $queryModifier->expects($this->once())
             ->method('restrictForAnonymous')

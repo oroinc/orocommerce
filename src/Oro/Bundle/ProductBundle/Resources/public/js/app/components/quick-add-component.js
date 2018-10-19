@@ -24,7 +24,14 @@ define(function(require) {
         $form: null,
 
         /**
-         * {@inheritDoc}
+         * @inheritDoc
+         */
+        constructor: function QuickAddComponent() {
+            QuickAddComponent.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
          */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);

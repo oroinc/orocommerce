@@ -72,7 +72,7 @@ class PriceListToCustomerRepository extends EntityRepository implements PriceLis
             ->select('distinct customer')
             ->from('OroCustomerBundle:Customer', 'customer');
 
-        $qb->innerJoin(
+        $qb->leftJoin(
             PriceListToCustomer::class,
             'plToCustomer',
             Join::WITH,
@@ -146,6 +146,15 @@ class PriceListToCustomerRepository extends EntityRepository implements PriceLis
      */
     public function getIteratorByPriceList(PriceList $priceList)
     {
+        return $this->getIteratorByPriceLists([$priceList]);
+    }
+
+    /**
+     * @param PriceList[] $priceLists
+     * @return BufferedQueryResultIteratorInterface
+     */
+    public function getIteratorByPriceLists($priceLists)
+    {
         $qb = $this->createQueryBuilder('priceListToCustomer');
 
         $qb->select(
@@ -153,10 +162,10 @@ class PriceListToCustomerRepository extends EntityRepository implements PriceLis
             sprintf('IDENTITY(acc.group) as %s', PriceListRelationTrigger::ACCOUNT_GROUP),
             sprintf('IDENTITY(priceListToCustomer.website) as %s', PriceListRelationTrigger::WEBSITE)
         )
-            ->leftJoin('priceListToCustomer.customer', 'acc')
-            ->where('priceListToCustomer.priceList = :priceList')
+            ->innerJoin('priceListToCustomer.customer', 'acc')
+            ->where($qb->expr()->in('priceListToCustomer.priceList', ':priceLists'))
             ->groupBy('priceListToCustomer.customer', 'acc.group', 'priceListToCustomer.website')
-            ->setParameter('priceList', $priceList)
+            ->setParameter('priceLists', $priceLists)
             // order required for BufferedIdentityQueryResultIterator on PostgreSql
             ->orderBy('priceListToCustomer.customer');
 
@@ -170,17 +179,35 @@ class PriceListToCustomerRepository extends EntityRepository implements PriceLis
      */
     public function getCustomerWebsitePairsByCustomer(Customer $customer)
     {
+        return $this->getCustomerWebsitePairs($customer);
+    }
+
+    /**
+     * @return CustomerWebsiteDTO[]|ArrayCollection
+     */
+    public function getAllCustomerWebsitePairs()
+    {
+        return $this->getCustomerWebsitePairs();
+    }
+
+    /**
+     * @param Customer|null $customer
+     * @return CustomerWebsiteDTO[]|ArrayCollection
+     */
+    protected function getCustomerWebsitePairs(Customer $customer = null)
+    {
         $qb = $this->createQueryBuilder('PriceListToCustomer');
 
-        $pairs = $qb->select(
+        $qb->select(
             'IDENTITY(PriceListToCustomer.customer) as customer_id',
             'IDENTITY(PriceListToCustomer.website) as website_id'
         )
-            ->andWhere($qb->expr()->eq('PriceListToCustomer.customer', ':customer'))
-            ->groupBy('PriceListToCustomer.customer', 'PriceListToCustomer.website')
-            ->setParameter('customer', $customer)
-            ->getQuery()
-            ->getResult();
+            ->groupBy('PriceListToCustomer.customer', 'PriceListToCustomer.website');
+        if ($customer) {
+            $qb->andWhere($qb->expr()->eq('PriceListToCustomer.customer', ':customer'))
+                ->setParameter('customer', $customer);
+        }
+        $pairs = new BufferedQueryResultIterator($qb);
 
         $em = $this->getEntityManager();
         $collection = new ArrayCollection();

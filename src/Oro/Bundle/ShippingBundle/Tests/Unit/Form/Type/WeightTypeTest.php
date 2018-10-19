@@ -8,7 +8,7 @@ use Oro\Bundle\ShippingBundle\Form\Type\WeightUnitSelectType;
 use Oro\Bundle\ShippingBundle\Model\Weight;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-use Symfony\Component\Form\PreloadedExtension;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 
 class WeightTypeTest extends FormIntegrationTestCase
 {
@@ -19,10 +19,9 @@ class WeightTypeTest extends FormIntegrationTestCase
 
     protected function setUp()
     {
-        parent::setUp();
-
         $this->formType = new WeightType();
         $this->formType->setDataClass(self::DATA_CLASS);
+        parent::setUp();
     }
 
     public function testGetBlockPrefix()
@@ -39,7 +38,7 @@ class WeightTypeTest extends FormIntegrationTestCase
      */
     public function testSubmit($submittedData, $expectedData, $defaultData = null)
     {
-        $form = $this->factory->create($this->formType, $defaultData);
+        $form = $this->factory->create(WeightType::class, $defaultData);
 
         $this->assertEquals($defaultData, $form->getData());
 
@@ -104,7 +103,8 @@ class WeightTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    WeightUnitSelectType::NAME => new EntityType(
+                    WeightType::class => $this->formType,
+                    WeightUnitSelectType::class => new EntityType(
                         [
                             'kg' => $this->getWeightUnit('kg'),
                             'lbs' => $this->getWeightUnit('lbs')

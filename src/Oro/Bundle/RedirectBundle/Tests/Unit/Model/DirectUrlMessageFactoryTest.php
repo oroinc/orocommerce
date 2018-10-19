@@ -15,15 +15,15 @@ use Oro\Bundle\RedirectBundle\Tests\Unit\Entity\SluggableEntityStub;
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class DirectUrlMessageFactoryTest extends \PHPUnit_Framework_TestCase
+class DirectUrlMessageFactoryTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $registry;
 
     /**
-     * @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $configManager;
 
@@ -171,7 +171,7 @@ class DirectUrlMessageFactoryTest extends \PHPUnit_Framework_TestCase
         $entity = new SluggableEntityStub();
         $entity->setId(1);
 
-        /** @var ClassMetadata|\PHPUnit_Framework_MockObject_MockObject $metadata */
+        /** @var ClassMetadata|\PHPUnit\Framework\MockObject\MockObject $metadata */
         $metadata = $this->getMockBuilder(ClassMetadata::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -179,7 +179,7 @@ class DirectUrlMessageFactoryTest extends \PHPUnit_Framework_TestCase
             ->method('getSingleIdentifierFieldName')
             ->willReturn('id');
 
-        /** @var EntityRepository|\PHPUnit_Framework_MockObject_MockObject $repository */
+        /** @var EntityRepository|\PHPUnit\Framework\MockObject\MockObject $repository */
         $repository = $this->getMockBuilder(EntityRepository::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -188,7 +188,7 @@ class DirectUrlMessageFactoryTest extends \PHPUnit_Framework_TestCase
             ->with(['id' => 1])
             ->willReturn([$entity]);
 
-        /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $em */
+        /** @var EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject $em */
         $em = $this->createMock(EntityManagerInterface::class);
         $em->expects($this->once())
             ->method('getRepository')

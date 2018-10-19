@@ -13,7 +13,7 @@ use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
-class UniqueProductPricesTest extends \PHPUnit_Framework_TestCase
+class UniqueProductPricesTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var UniqueProductPrices
@@ -21,7 +21,7 @@ class UniqueProductPricesTest extends \PHPUnit_Framework_TestCase
     protected $constraint;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ExecutionContextInterface
+     * @var \PHPUnit\Framework\MockObject\MockObject|ExecutionContextInterface
      */
     protected $context;
 
@@ -130,7 +130,8 @@ class UniqueProductPricesTest extends \PHPUnit_Framework_TestCase
 
         /** @var PriceList $priceList */
         $priceList = $this->getEntity(PriceList::class, $priceListId);
-        $priceList->setName('price_list_' . $priceListId);
+        // Name is not unique for Price List, so it is set same for all price lists in test
+        $priceList->setName('price_list');
 
         $productPrice = new ProductPrice();
         $productPrice

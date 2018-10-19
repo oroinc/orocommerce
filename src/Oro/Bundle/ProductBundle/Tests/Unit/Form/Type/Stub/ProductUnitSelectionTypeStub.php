@@ -21,10 +21,10 @@ class ProductUnitSelectionTypeStub extends StubEntityType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
+        parent::configureOptions($resolver);
         $resolver->setDefaults(
             [
                 'compact' => false,
-                'choice_list' => $this->choiceList,
                 'product' => null,
                 'product_holder' => null,
                 'product_field' => 'product',

@@ -9,19 +9,19 @@ use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class WebsiteContextManagerTest extends \PHPUnit_Framework_TestCase
+class WebsiteContextManagerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     const WEBSITE_ID = 777;
 
-    /** @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $doctrineHelperMock;
 
     /** @var  WebsiteContextManager */
     private $websiteContextManager;
 
-    /** @var WebsiteRepository|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var WebsiteRepository|\PHPUnit\Framework\MockObject\MockObject */
     private $websiteRepositoryMock;
 
     /** @var Website */

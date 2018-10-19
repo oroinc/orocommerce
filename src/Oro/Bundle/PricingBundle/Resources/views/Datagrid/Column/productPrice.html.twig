@@ -4,8 +4,8 @@
 
     <table>
         {% for key, price in value %}
-            {% if shownUnit != price.unit.code %}
-                {% set shownUnit = price.unit.code %}
+            {% if shownUnit != price.unitCode %}
+                {% set shownUnit = price.unitCode %}
                 <tr>
                     <td{% if showTierPrices %} colspan="2"{% endif %} class="renderable">
                         <div class="product-price-unit{% if key != 0 %}-with-margin{% endif %}">

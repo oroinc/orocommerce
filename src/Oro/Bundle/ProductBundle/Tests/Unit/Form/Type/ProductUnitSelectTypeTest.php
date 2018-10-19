@@ -5,11 +5,12 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectType;
-use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
+use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as EntityTypeStub;
+use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\ChoiceList\View\ChoiceView;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
-use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Validation;
@@ -22,7 +23,7 @@ class ProductUnitSelectTypeTest extends FormIntegrationTestCase
     private $formType;
 
     /**
-     * @var ProductUnitLabelFormatter|\PHPUnit_Framework_MockObject_MockObject
+     * @var UnitLabelFormatterInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $productUnitLabelFormatter;
 
@@ -31,9 +32,7 @@ class ProductUnitSelectTypeTest extends FormIntegrationTestCase
      */
     protected function setUp()
     {
-        $this->productUnitLabelFormatter = $this->getMockBuilder(ProductUnitLabelFormatter::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->productUnitLabelFormatter = $this->createMock(UnitLabelFormatterInterface::class);
 
         $this->formType = new ProductUnitSelectType($this->productUnitLabelFormatter);
         $this->formType->setEntityClass(ProductUnitPrecision::class);
@@ -46,7 +45,7 @@ class ProductUnitSelectTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
-        $entityType = new EntityType(
+        $entityType = new EntityTypeStub(
             [
                 'item' => (new ProductUnit())->setCode('item'),
                 'kg' => (new ProductUnit())->setCode('kg')
@@ -56,18 +55,13 @@ class ProductUnitSelectTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    ProductUnitSelectType::NAME => new ProductUnitSelectType($this->productUnitLabelFormatter),
-                    'entity' => $entityType
+                    $this->formType,
+                    EntityType::class => $entityType
                 ],
                 []
             ),
             new ValidatorExtension(Validation::createValidator())
         ];
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals(ProductUnitSelectType::NAME, $this->formType->getName());
     }
 
     /**
@@ -79,7 +73,7 @@ class ProductUnitSelectTypeTest extends FormIntegrationTestCase
      */
     public function testSubmit(array $inputOptions, array $expectedOptions, $submittedData, $expectedData)
     {
-        $form = $this->factory->create($this->formType, null, $inputOptions);
+        $form = $this->factory->create(ProductUnitSelectType::class, null, $inputOptions);
 
         $this->assertNull($form->getData());
 
@@ -127,7 +121,7 @@ class ProductUnitSelectTypeTest extends FormIntegrationTestCase
 
     public function testConfigureOptions()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|OptionsResolver $resolver */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|OptionsResolver $resolver */
         $resolver = $this->createMock(OptionsResolver::class);
         $resolver->expects($this->exactly(2))
             ->method('setDefaults')
@@ -142,7 +136,7 @@ class ProductUnitSelectTypeTest extends FormIntegrationTestCase
                 [
                     [
                         'class' => ProductUnitPrecision::class,
-                        'property' => 'code',
+                        'choice_label' => 'code',
                         'compact' => false,
                         'choices_updated' => false,
                         'required' => true,
@@ -157,7 +151,7 @@ class ProductUnitSelectTypeTest extends FormIntegrationTestCase
 
     public function testsFinishView()
     {
-        $form = $this->factory->create($this->formType, null, ['compact' => false,]);
+        $form = $this->factory->create(ProductUnitSelectType::class, null, ['compact' => false,]);
         $this->assertNull($form->getData());
 
         $view = $form->createView();

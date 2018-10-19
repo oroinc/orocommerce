@@ -5,6 +5,7 @@ namespace Oro\Bundle\ProductBundle\Form\Type;
 use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
 use Oro\Bundle\EntityBundle\Fallback\Provider\SystemConfigFallbackProvider;
 use Oro\Bundle\EntityBundle\Form\Type\EntityFieldFallbackValueType;
+use Oro\Bundle\EntityExtendBundle\Form\Type\EnumSelectType;
 use Oro\Bundle\FormBundle\Form\Extension\StripTagsExtension;
 use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
 use Oro\Bundle\FrontendBundle\Form\DataTransformer\PageTemplateEntityFieldFallbackValueTransformer;
@@ -17,6 +18,7 @@ use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugWithRedirectType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -25,6 +27,9 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
+/**
+ * The form type for Product entity
+ */
 class ProductType extends AbstractType
 {
     const NAME = 'oro_product';
@@ -73,12 +78,12 @@ class ProductType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('sku', 'text', ['required' => true, 'label' => 'oro.product.sku.label'])
-            ->add('status', ProductStatusType::NAME, ['label' => 'oro.product.status.label'])
-            ->add('brand', BrandSelectType::NAME, ['label' => 'oro.product.brand.label'])
+            ->add('sku', TextType::class, ['required' => true, 'label' => 'oro.product.sku.label'])
+            ->add('status', ProductStatusType::class, ['label' => 'oro.product.status.label'])
+            ->add('brand', BrandSelectType::class, ['label' => 'oro.product.brand.label'])
             ->add(
                 'inventory_status',
-                'oro_enum_select',
+                EnumSelectType::class,
                 [
                     'label'     => 'oro.product.inventory_status.label',
                     'enum_code' => 'prod_inventory_status',
@@ -87,7 +92,7 @@ class ProductType extends AbstractType
             )
             ->add(
                 'names',
-                LocalizedFallbackValueCollectionType::NAME,
+                LocalizedFallbackValueCollectionType::class,
                 [
                     'label' => 'oro.product.names.label',
                     'required' => true,
@@ -99,12 +104,12 @@ class ProductType extends AbstractType
             )
             ->add(
                 'descriptions',
-                LocalizedFallbackValueCollectionType::NAME,
+                LocalizedFallbackValueCollectionType::class,
                 [
                     'label' => 'oro.product.descriptions.label',
                     'required' => false,
                     'field' => 'text',
-                    'entry_type' => OroRichTextType::NAME,
+                    'entry_type' => OroRichTextType::class,
                     'entry_options' => [
                         'wysiwyg_options' => [
                             'statusbar' => true,
@@ -117,12 +122,12 @@ class ProductType extends AbstractType
             )
             ->add(
                 'shortDescriptions',
-                LocalizedFallbackValueCollectionType::NAME,
+                LocalizedFallbackValueCollectionType::class,
                 [
                     'label' => 'oro.product.short_descriptions.label',
                     'required' => false,
                     'field' => 'text',
-                    'entry_type' => OroRichTextType::NAME,
+                    'entry_type' => OroRichTextType::class,
                     'entry_options' => [
                         'wysiwyg_options' => [
                             'statusbar' => true,
@@ -135,7 +140,7 @@ class ProductType extends AbstractType
             )
             ->add(
                 'primaryUnitPrecision',
-                ProductPrimaryUnitPrecisionType::NAME,
+                ProductPrimaryUnitPrecisionType::class,
                 [
                     'label'          => 'oro.product.primary_unit_precision.label',
                     'tooltip'        => 'oro.product.form.tooltip.unit_precision',
@@ -146,7 +151,7 @@ class ProductType extends AbstractType
             )
             ->add(
                 'additionalUnitPrecisions',
-                ProductUnitPrecisionCollectionType::NAME,
+                ProductUnitPrecisionCollectionType::class,
                 [
                     'label'          => 'oro.product.additional_unit_precisions.label',
                     'tooltip'        => 'oro.product.form.tooltip.unit_precision',
@@ -157,7 +162,7 @@ class ProductType extends AbstractType
             )
             ->add(
                 'images',
-                ProductImageCollectionType::NAME,
+                ProductImageCollectionType::class,
                 ['required' => false]
             )
             ->add(
@@ -174,7 +179,7 @@ class ProductType extends AbstractType
 
             ->add(
                 'slugPrototypesWithRedirect',
-                LocalizedSlugWithRedirectType::NAME,
+                LocalizedSlugWithRedirectType::class,
                 [
                     'label'    => 'oro.product.slug_prototypes.label',
                     'required' => false,
@@ -183,14 +188,14 @@ class ProductType extends AbstractType
             )
             ->add('featured', ChoiceType::class, [
                 'label' => 'oro.product.featured.label',
-                'choices' => ['oro.product.featured.no', 'oro.product.featured.yes'],
-                'empty_value' => false,
+                'choices' => ['oro.product.featured.no' => 0, 'oro.product.featured.yes' => 1],
+                'placeholder' => false,
             ])
             ->add('newArrival', ChoiceType::class, [
                 'label' => 'oro.product.new_arrival.label',
                 'tooltip' => 'oro.product.form.tooltip.new_arrival',
-                'choices' => ['oro.product.new_arrival.no', 'oro.product.new_arrival.yes'],
-                'empty_value' => false,
+                'choices' => ['oro.product.new_arrival.no' => 0, 'oro.product.new_arrival.yes' => 1],
+                'placeholder' => false,
             ])
             ->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetDataListener'])
             ->addEventListener(FormEvents::POST_SET_DATA, [$this, 'postSetDataListener'])
@@ -216,7 +221,7 @@ class ProductType extends AbstractType
         }
         $form->add(
             'variantFields',
-            ProductCustomVariantFieldsCollectionType::NAME,
+            ProductCustomVariantFieldsCollectionType::class,
             [
                 'label' => 'oro.product.variant_fields.label',
                 'tooltip' => 'oro.product.form.tooltip.variant_fields',
@@ -229,7 +234,7 @@ class ProductType extends AbstractType
             $form->remove('primaryUnitPrecision');
             $form->add(
                 'primaryUnitPrecision',
-                ProductPrimaryUnitPrecisionType::NAME,
+                ProductPrimaryUnitPrecisionType::class,
                 [
                     'label'          => 'oro.product.primary_unit_precision.label',
                     'tooltip'        => 'oro.product.form.tooltip.unit_precision',
@@ -245,7 +250,7 @@ class ProductType extends AbstractType
 
             $form->add(
                 'slugPrototypesWithRedirect',
-                LocalizedSlugWithRedirectType::NAME,
+                LocalizedSlugWithRedirectType::class,
                 [
                     'label'    => 'oro.product.slug_prototypes.label',
                     'required' => false,
@@ -259,7 +264,7 @@ class ProductType extends AbstractType
             $form
                 ->add(
                     'variantLinks',
-                    ProductVariantLinksType::NAME,
+                    ProductVariantLinksType::class,
                     ['product_class' => $this->dataClass, 'by_reference' => false]
                 );
         }
@@ -274,9 +279,11 @@ class ProductType extends AbstractType
         $product = $event->getData();
         $form = $event->getForm();
 
+        $primaryUnitPrecision = $product->getPrimaryUnitPrecision();
+
         // manual mapping
         $precisionForm = $form->get('primaryUnitPrecision');
-        if (empty($precisionForm->getData())) {
+        if (empty($precisionForm->getData()) && $primaryUnitPrecision instanceof ProductUnitPrecision) {
             // clone is required to prevent data modification by reference
             $precisionForm->setData(clone $product->getPrimaryUnitPrecision());
         }

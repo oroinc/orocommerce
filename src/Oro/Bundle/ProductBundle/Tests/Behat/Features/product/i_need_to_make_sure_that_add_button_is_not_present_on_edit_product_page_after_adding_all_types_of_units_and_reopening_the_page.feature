@@ -18,11 +18,17 @@ Feature: I need to make sure that "+Add' button" is not present on edit product 
     Then I should see "Add More Rows" element inside "Additional Units Form Section" element
     When set Additional Unit with:
       | Unit     | Precision | Rate |
-      | Hour     | 0         | 10   |
-      | Kilogram | 0         | 10   |
-      | Piece    | 0         | 10   |
-      | Set      | 0         | 10   |
+      | Hour     | 1         | 10   |
+      | Kilogram | 1         | 10   |
+      | Piece    | 1         | 10   |
+      | Set      | 1         | 10   |
+# TODO: After BB-13717 is fixed, return precision 0 here
+#      | Hour     | 0         | 10   |
+#      | Kilogram | 0         | 10   |
+#      | Piece    | 0         | 10   |
+#      | Set      | 0         | 10   |
     Then I should not see "Add More Rows" element inside "Additional Units Form Section" element
     And I save and close form
-    When I press "Edit"
+    And I should see "Product has been saved" flash message
+    When I click "Edit"
     Then I should not see "Add More Rows" element inside "Additional Units Form Section" element

@@ -11,7 +11,7 @@ use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Expression\PriceListQueryConverterExtension;
 use Oro\Bundle\QueryDesignerBundle\Model\AbstractQueryDesigner;
 
-class PriceListQueryConverterExtensionTest extends \PHPUnit_Framework_TestCase
+class PriceListQueryConverterExtensionTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var PriceListQueryConverterExtension
@@ -125,7 +125,7 @@ class PriceListQueryConverterExtensionTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     private function initializeExpressionBuilder()
     {

@@ -18,6 +18,9 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * Controller that manages products and line items for a shopping list via AJAX requests.
+ */
 class AjaxLineItemController extends AbstractLineItemController
 {
     /**
@@ -57,7 +60,7 @@ class AjaxLineItemController extends AbstractLineItemController
             $lineItem->setParentProduct($parentProduct);
         }
 
-        $form = $this->createForm(FrontendLineItemType::NAME, $lineItem);
+        $form = $this->createForm(FrontendLineItemType::class, $lineItem);
 
         $handler = new LineItemHandler(
             $form,
@@ -97,7 +100,14 @@ class AjaxLineItemController extends AbstractLineItemController
     {
         $shoppingListManager = $this->get('oro_shopping_list.shopping_list.manager');
 
+        /** @var ShoppingList $shoppingList */
         $shoppingList = $shoppingListManager->getForCurrentUser($request->get('shoppingListId'));
+
+        $lineItemId = $request->get('lineItemId');
+        $lineItem = null;
+        if ($lineItemId) {
+            $lineItem = $shoppingListManager->getLineItem((int)$lineItemId, $shoppingList);
+        }
 
         $result = [
             'successful' => false,
@@ -106,8 +116,12 @@ class AjaxLineItemController extends AbstractLineItemController
         ];
 
         if ($shoppingList) {
-            $count = $shoppingListManager->removeProduct($shoppingList, $product);
-
+            if ($lineItem && !$lineItem->getParentProduct()) {
+                $shoppingListManager->removeLineItem($lineItem);
+                $count = 1;
+            } else {
+                $count = $shoppingListManager->removeProduct($shoppingList, $product);
+            }
             if ($count) {
                 $result = $this->getSuccessResponse(
                     $shoppingList,
@@ -170,11 +184,11 @@ class AjaxLineItemController extends AbstractLineItemController
         $manager = $this->get('oro_shopping_list.shopping_list.manager');
         $shoppingList = $manager->create();
 
-        $form = $this->createForm(ShoppingListType::NAME, $shoppingList);
+        $form = $this->createForm(ShoppingListType::class, $shoppingList);
         $form->handleRequest($request);
 
         $response = [];
-        if ($form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid()) {
             $parameters = $this->get('oro_datagrid.mass_action.parameters_parser')->parse($request);
             $requestData = array_merge($request->query->all(), $request->request->all());
 

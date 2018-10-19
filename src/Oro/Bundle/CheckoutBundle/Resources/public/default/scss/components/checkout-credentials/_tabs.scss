@@ -1,0 +1,32 @@
+/* @theme: default; */
+
+.checkout-credentials {
+    &__tabs {
+        display: flex;
+        padding-left: $checkout-credentials-tabs-offset-inner-left;
+    }
+
+    &__tab-item {
+        font-size: $checkout-credentials-tab-item-font-size;
+
+        .link {
+            display: inline-block;
+            padding: $checkout-credentials-tab-link-offset-inner;
+
+            text-decoration: none;
+
+            line-height: $checkout-credentials-tab-link-line-height;
+
+            @include element-state('hover') {
+                color: $checkout-credentials-tab-item-active-link-color;
+            }
+
+            &.active {
+                color: $checkout-credentials-tab-item-active-link-color;
+                background: $checkout-credentials-tab-item-active-link-bg;
+
+                border-radius: $checkout-credentials-tab-item-active-link-border-radius;
+            }
+        }
+    }
+}

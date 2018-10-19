@@ -12,7 +12,7 @@ use Oro\Bundle\TaxBundle\OrderTax\Mapper\OrderLineItemMapper;
 use Oro\Bundle\TaxBundle\Provider\TaxationAddressProvider;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class OrderLineItemMapperTest extends \PHPUnit_Framework_TestCase
+class OrderLineItemMapperTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
@@ -29,7 +29,7 @@ class OrderLineItemMapperTest extends \PHPUnit_Framework_TestCase
     protected $mapper;
 
     /**
-     * @var TaxationAddressProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var TaxationAddressProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $addressProvider;
 

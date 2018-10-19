@@ -159,7 +159,7 @@ Scenario: Apply another filter
     And I should see "PSKU4" product
 
 Scenario: Hide filter
-    Given I hide filter "Sub-Categories" in "ProductFrontendGrid" grid
+    Given I hide filter "Sub-Categories" in "ProductFrontendGrid" frontend grid
     When I filter Text as contains "Product1"
     Then I should not see an "Subcategories Filter" element
     And number of records in "Product Frontend Grid" should be 1
@@ -172,7 +172,7 @@ Scenario: Hide filter
 
     When I filter Text as contains "Product2"
     Then I should not see an "Subcategories Filter" element
-    When I show filter "Sub-Categories" in "ProductFrontendGrid" grid
+    When I show filter "Sub-Categories" in "ProductFrontendGrid" frontend grid
     Then I should see an "Subcategories Filter" element
     And number of records in "Product Frontend Grid" should be 1
     And I should see "PSKU2" product

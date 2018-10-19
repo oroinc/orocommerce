@@ -3,6 +3,7 @@ define(function(require) {
 
     var $ = require('jquery');
     var _ = require('underscore');
+    var mediator = require('oroui/js/mediator');
     require('jquery-elevatezoom');
 
     $.widget('oroproduct.zoomWidget', {
@@ -23,23 +24,50 @@ define(function(require) {
             lensOpacity: 0.22
         },
 
+        _zoomedImageLoadedState: false,
+
+        /**
+         * Queue for tasks that should be done after elevatezoom loaded
+         *
+         * @private
+         */
+        _zoomedImageLoadedQueue: [],
+
         _init: function() {
-            this.options.onZoomedImageLoaded = _.bind(this._resetImageProperty, this);
+            this.options.onZoomedImageLoaded = _.bind(this._onZoomedImageLoaded, this);
 
             // Bind activeImage event of slick gallery
             this.element.on('slider:activeImage', _.bind(function(e, activeImage) {
-                this._removeZoomContainer();
-                this._zoomInit(activeImage);
+                if (!this.element.is(activeImage)) {
+                    this._updateZoomContainer(activeImage);
+                }
             }, this));
 
-            var initImage = this.element.data('slider:activeImage') || this.element;
-            this._zoomInit(initImage);
+            var initImage = this.element.data('slider:activeImage') || this.element.get(0);
+
+            mediator.on('widget:doRefresh', this._reset, this);
+
+            this._ensureLoadedZoomInit(initImage);
+        },
+
+        /**
+         * Inits of elevatezoom on image that completely loaded
+         *
+         * @param {HTMLElement} activeImage
+         * @private
+         */
+        _ensureLoadedZoomInit: function(activeImage) {
+            if (activeImage.complete) {
+                this._zoomInit(activeImage);
+            } else {
+                $(activeImage).one('load', this._zoomInit.bind(this, activeImage));
+            }
         },
 
         /**
          * Init of elevatezoom and set needed options
          *
-         * @param {DOM.Element} activeImage
+         * @param {HTMLElement} activeImage
          * @private
          */
         _zoomInit: function(activeImage) {
@@ -49,12 +77,66 @@ define(function(require) {
         },
 
         /**
+         * Update zoom container
+         * @param initImage
+         * @private
+         */
+        _updateZoomContainer: function(initImage) {
+            if (this._zoomedImageLoadedState) {
+                this._reInitZoomContainer(initImage);
+            } else {
+                this._zoomedImageLoadedQueue.push(function() {
+                    this._reInitZoomContainer(initImage);
+                });
+            }
+        },
+
+        /**
+         * ReInit zoom container
+         * @param initImage
+         * @private
+         */
+        _reInitZoomContainer: function(initImage) {
+            this._removeZoomContainer();
+            this._zoomInit(initImage);
+        },
+
+        _reset: function() {
+            this._updateZoomContainer(this.element.get(0));
+        },
+
+        /**
+         * Implementation ZoomedImageLoaded event
+         *
+         * @private
+         */
+        _onZoomedImageLoaded: function() {
+            this._zoomedImageLoadedState = true;
+
+            for (var i = 0; i < this._zoomedImageLoadedQueue.length; i++) {
+                if (typeof this._zoomedImageLoadedQueue[i] === 'function') {
+                    _.bind(this._zoomedImageLoadedQueue[i], this)();
+                }
+            }
+
+            this._zoomedImageLoadedQueue = [];
+
+            this._resetImageProperty();
+        },
+
+        /**
          * Reset image property for correct works with small images
          *
          * @private
          */
         _resetImageProperty: function() {
             var imageZoomData = this.element.data('elevateZoom');
+
+            if (!imageZoomData) {
+                // Widget was destroyed, nothing to do
+                return;
+            }
+
             var imageLargeWidth = imageZoomData.largeWidth;
             var imageLargeHeight = imageZoomData.largeHeight;
 
@@ -82,7 +164,7 @@ define(function(require) {
         /**
          * Set size of zoom window
          *
-         * @param {DOM.Element} activeImage
+         * @param {HTMLElement} activeImage
          * @private
          */
         _setZoomWindowSize: function(activeImage) {
@@ -122,6 +204,15 @@ define(function(require) {
 
             this.element.removeData('elevateZoom');
             this.element.removeData('zoomImage');
+            this._unBindZoomEvents();
+        },
+
+        /**
+         * Remove zoom container events
+         * @private
+         */
+        _unBindZoomEvents: function() {
+            this.element.unbind('mousemove touchmove touchend mousewheel DOMMouseScroll MozMousePixelScroll');
         },
 
         /**
@@ -132,7 +223,7 @@ define(function(require) {
         _destroy: function() {
             this._removeZoomContainer();
             $('.' + this.element[0].className).off('slider:activeImage');
-            this.element.unbind('mousemove touchmove touchend mousewheel DOMMouseScroll MozMousePixelScroll');
+            this._unBindZoomEvents();
         }
     });
 

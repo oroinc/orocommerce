@@ -6,7 +6,7 @@ use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Doctrine\Factory\Doctr
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 
-class DoctrineShippingLineItemCollectionFactoryTest extends \PHPUnit_Framework_TestCase
+class DoctrineShippingLineItemCollectionFactoryTest extends \PHPUnit\Framework\TestCase
 {
     public function testFactory()
     {

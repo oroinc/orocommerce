@@ -9,7 +9,7 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 class ShippingMethodEnabledMapperTest extends AbstractCheckoutDiffMapperTest
 {
     /**
-     * @var CheckoutShippingMethodsProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var CheckoutShippingMethodsProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $checkoutShippingMethodsProviderMock;
 

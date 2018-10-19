@@ -8,6 +8,10 @@ use Oro\Bundle\ProductBundle\RelatedItem\FinderStrategyInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Form\FormView;
 
+/**
+ * Introduces function to get products' related/upsell items ids, check if product type is configurable, generate
+ * form id for line items form and get data for rendering autocomplete input.
+ */
 class ProductExtension extends \Twig_Extension
 {
     const NAME = 'oro_product';
@@ -130,24 +134,6 @@ class ProductExtension extends \Twig_Extension
      */
     private function getRelatedItemsIds(Product $product, FinderStrategyInterface $finderStrategy)
     {
-        /** @var Product[] $related */
-        $related = $finderStrategy->find($product, false, null);
-
-        return $this->getIdsFromProducts($related);
-    }
-
-    /**
-     * @param Product[] $products
-     * @return int[]
-     */
-    private function getIdsFromProducts(array $products)
-    {
-        $ids = [];
-
-        foreach ($products as $product) {
-            $ids[] = $product->getId();
-        }
-
-        return $ids;
+        return $finderStrategy->findIds($product, false);
     }
 }

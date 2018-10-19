@@ -11,20 +11,20 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class PriceRuleEditorOptionsConfiguratorTest extends \PHPUnit_Framework_TestCase
+class PriceRuleEditorOptionsConfiguratorTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var AutocompleteFieldsProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var AutocompleteFieldsProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $autocompleteFieldsProvider;
 
     /**
-     * @var FormFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var FormFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $formFactory;
 
     /**
-     * @var \Twig_Environment|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Twig_Environment|\PHPUnit\Framework\MockObject\MockObject
      */
     private $twig;
 

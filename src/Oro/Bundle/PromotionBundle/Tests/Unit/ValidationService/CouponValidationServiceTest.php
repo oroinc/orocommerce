@@ -9,12 +9,12 @@ use Oro\Bundle\PromotionBundle\Manager\CouponUsageManager;
 use Oro\Bundle\PromotionBundle\ValidationService\CouponValidationService;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class CouponValidationServiceTest extends \PHPUnit_Framework_TestCase
+class CouponValidationServiceTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var CouponUsageManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var CouponUsageManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $couponUsageManager;
 

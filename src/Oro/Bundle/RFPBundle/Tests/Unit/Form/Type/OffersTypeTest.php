@@ -11,11 +11,9 @@ class OffersTypeTest extends FormIntegrationTestCase
 {
     public function testEmptyOptions()
     {
-        $form = $this->factory->create(new OffersType());
+        $form = $this->factory->create(OffersType::class);
         $this->assertFalse($form->getConfig()->getOption('mapped'));
         $this->assertTrue($form->getConfig()->getOption('expanded'));
-        // TODO: Remove assert below in scope of BAP-15236
-        $this->assertTrue($form->getConfig()->getOption('choices_as_values'));
         $this->assertInternalType('array', $form->getConfig()->getOption('offers'));
         $this->assertInternalType('array', $form->getConfig()->getOption('choices'));
     }
@@ -23,11 +21,9 @@ class OffersTypeTest extends FormIntegrationTestCase
     public function testOffersOption()
     {
         $offers = [['offer1'], ['offer2']];
-        $form = $this->factory->create(new OffersType(), null, ['offers' => $offers]);
+        $form = $this->factory->create(OffersType::class, null, ['offers' => $offers]);
         $this->assertFalse($form->getConfig()->getOption('mapped'));
         $this->assertTrue($form->getConfig()->getOption('expanded'));
-        // TODO: Remove assert below in scope of BAP-15236
-        $this->assertTrue($form->getConfig()->getOption('choices_as_values'));
         $this->assertInternalType('array', $form->getConfig()->getOption('offers'));
         $this->assertEquals($offers, $form->getConfig()->getOption('offers'));
         $this->assertInternalType('array', $form->getConfig()->getOption('choices'));
@@ -40,19 +36,11 @@ class OffersTypeTest extends FormIntegrationTestCase
      */
     public function testOffersOptionInvalid()
     {
-        $form = $this->factory->create(new OffersType(), null, ['offers' => 1]);
+        $form = $this->factory->create(OffersType::class, null, ['offers' => 1]);
         $this->assertFalse($form->getConfig()->getOption('mapped'));
         $this->assertTrue($form->getConfig()->getOption('expanded'));
-        // TODO: Remove assert below in scope of BAP-15236
-        $this->assertTrue($form->getConfig()->getOption('choices_as_values'));
         $this->assertInternalType('array', $form->getConfig()->getOption('offers'));
         $this->assertInternalType('array', $form->getConfig()->getOption('choices'));
-    }
-
-    public function testName()
-    {
-        $form = $this->factory->create(new OffersType());
-        $this->assertEquals(OffersType::NAME, $form->getName());
     }
 
     public function testFinishView()
@@ -60,7 +48,7 @@ class OffersTypeTest extends FormIntegrationTestCase
         $view = new FormView();
         $formType = new OffersType();
 
-        /* @var $form FormInterface|\PHPUnit_Framework_MockObject_MockObject */
+        /* @var $form FormInterface|\PHPUnit\Framework\MockObject\MockObject */
         $form = $this->createMock('Symfony\Component\Form\FormInterface');
 
         $formType->finishView($view, $form, ['offers' => []]);

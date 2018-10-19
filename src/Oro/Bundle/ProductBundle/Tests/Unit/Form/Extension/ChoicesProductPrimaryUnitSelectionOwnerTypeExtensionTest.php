@@ -6,30 +6,31 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Form\Extension\ChoicesProductPrimaryUnitSelectionOwnerTypeExtension;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectType;
-use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Oro\Bundle\ProductBundle\Visibility\ProductUnitFieldsSettingsInterface;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormTypeInterface;
-use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ChoicesProductPrimaryUnitSelectionOwnerTypeExtensionTest extends FormIntegrationTestCase
 {
     /**
-     * @var string|\PHPUnit_Framework_MockObject_MockObject
+     * @var string|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $childName;
 
     /**
-     * @var string|\PHPUnit_Framework_MockObject_MockObject
+     * @var string|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $extendedType;
 
     /**
-     * @var ProductUnitFieldsSettingsInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProductUnitFieldsSettingsInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $productFormUnitFieldsSettings;
 
@@ -56,7 +57,7 @@ class ChoicesProductPrimaryUnitSelectionOwnerTypeExtensionTest extends FormInteg
 
     public function testBuildForm()
     {
-        /** @var FormBuilderInterface|\PHPUnit_Framework_MockObject_MockObject $builder */
+        /** @var FormBuilderInterface|\PHPUnit\Framework\MockObject\MockObject $builder */
         $builder = $this->createMock(FormBuilderInterface::class);
         $builder->expects($this->once())
             ->method('addEventListener');
@@ -66,15 +67,12 @@ class ChoicesProductPrimaryUnitSelectionOwnerTypeExtensionTest extends FormInteg
 
     public function testBuildFormIntegration()
     {
-        //@TODO unskipp in scope BAP-16496
-        $this->markTestSkipped('Unskipp in scope BAP-16496');
-
         $choices = ['choice1', 'choice2'];
         $this->productFormUnitFieldsSettings
             ->method('getAvailablePrimaryUnitChoices')
             ->willReturn($choices);
         $formBuilder = $this->factory->createNamedBuilder('test');
-        $formBuilder->add($this->childName, ProductUnitSelectType::NAME, $this->getDefaultOptions());
+        $formBuilder->add($this->childName, ProductUnitSelectType::class, $this->getDefaultOptions());
         $this->choicesProductPrimaryUnitSelectionOwnerTypeExtension->buildForm(
             $formBuilder,
             []
@@ -88,7 +86,7 @@ class ChoicesProductPrimaryUnitSelectionOwnerTypeExtensionTest extends FormInteg
 
     public function testSetAvailableUnitsThrowsException()
     {
-        /** @var FormEvent|\PHPUnit_Framework_MockObject_MockObject $event * */
+        /** @var FormEvent|\PHPUnit\Framework\MockObject\MockObject $event * */
         $event = $this->getMockBuilder(FormEvent::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -116,22 +114,22 @@ class ChoicesProductPrimaryUnitSelectionOwnerTypeExtensionTest extends FormInteg
      */
     protected function getExtensions()
     {
-        $formatter = $this->createMock(ProductUnitLabelFormatter::class);
+        /** @var UnitLabelFormatterInterface|\PHPUnit_Framework_MockObject_MockObject $formatter */
+        $formatter = $this->createMock(UnitLabelFormatterInterface::class);
         $productUnitSelectType = new ProductUnitSelectType($formatter);
         $type = $this->createMock(FormTypeInterface::class);
-        $type->method('getName')->willReturn('entity');
-        //@TODO remove setDefaultOptions in scope BAP-16496
-        $type->method('setDefaultOptions')->willReturnCallback(
+        $type->method('getBlockPrefix')->willReturn('entity');
+        $type->method('configureOptions')->willReturnCallback(
             function (OptionsResolver $resolver) {
-                $resolver->setDefined(['auto_initialize', 'choice_list', 'choice_loader', 'choices']);
+                $resolver->setDefined(['auto_initialize', 'choice_loader', 'choices']);
             }
         );
 
         return [
             new PreloadedExtension(
                 [
-                    ProductUnitSelectType::NAME => $productUnitSelectType,
-                    'entity' => $type,
+                    ProductUnitSelectType::class => $productUnitSelectType,
+                    EntityType::class => $type,
                 ],
                 []
             ),

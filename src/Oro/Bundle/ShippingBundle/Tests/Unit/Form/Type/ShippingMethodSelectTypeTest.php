@@ -28,17 +28,17 @@ class ShippingMethodSelectTypeTest extends FormIntegrationTestCase
     ];
 
     /**
-     * @var ShippingMethodIconProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingMethodIconProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $iconProvider;
 
     /**
-     * @var ShippingMethodChoicesProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingMethodChoicesProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $choicesProvider;
 
     /**
-     * @var AssetHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var AssetHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $assetHelper;
 
@@ -82,7 +82,6 @@ class ShippingMethodSelectTypeTest extends FormIntegrationTestCase
         $resolved = $resolver->resolve();
 
         $expected = [
-            'empty_value' => null,
             'placeholder' => 'oro.shipping.sections.shippingrule_configurations.placeholder.label',
             'choices' => self::METHODS,
             'choice_attr' => function () {
@@ -109,11 +108,6 @@ class ShippingMethodSelectTypeTest extends FormIntegrationTestCase
     public function testGetParent()
     {
         $this->assertSame(OroChoiceType::class, $this->type->getParent());
-    }
-
-    public function testGetName()
-    {
-        $this->assertSame(ShippingMethodSelectType::NAME, $this->type->getName());
     }
 
     public function testGetBlockPrefix()

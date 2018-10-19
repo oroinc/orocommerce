@@ -10,7 +10,7 @@ use Oro\Bundle\PricingBundle\Handler\PriceRuleLexemeHandler;
 class UpdatePriceListLexemesTest extends FormProcessorTestCase
 {
     /**
-     * @var PriceRuleLexemeHandler|\PHPUnit_Framework_MockObject_MockObject
+     * @var PriceRuleLexemeHandler|\PHPUnit\Framework\MockObject\MockObject
      */
     private $priceRuleLexemeHandler;
 

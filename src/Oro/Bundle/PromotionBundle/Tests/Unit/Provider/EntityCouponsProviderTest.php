@@ -13,12 +13,12 @@ use Oro\Bundle\PromotionBundle\Provider\EntityCouponsProvider;
 use Oro\Bundle\PromotionBundle\Tests\Unit\CouponsTrait;
 use Oro\Bundle\PromotionBundle\Tests\Unit\Entity\Stub\Order;
 
-class EntityCouponsProviderTest extends \PHPUnit_Framework_TestCase
+class EntityCouponsProviderTest extends \PHPUnit\Framework\TestCase
 {
     use CouponsTrait;
 
     /**
-     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     private $doctrineHelper;
 

@@ -10,14 +10,14 @@ use Oro\Bundle\OrderBundle\EventListener\OrderDatagridListener;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Entity\Repository\PaymentTransactionRepository;
 
-class OrderDatagridListenerTest extends \PHPUnit_Framework_TestCase
+class OrderDatagridListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var OrderDatagridListener
      */
     protected $listener;
 
-    /** @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
     protected $doctrineHelper;
 
     /**
@@ -36,7 +36,7 @@ class OrderDatagridListenerTest extends \PHPUnit_Framework_TestCase
      */
     public function testOnResultAfter($returnResult, $expectation)
     {
-        /** @var OrmResultAfter|\PHPUnit_Framework_MockObject_MockObject $eventMock */
+        /** @var OrmResultAfter|\PHPUnit\Framework\MockObject\MockObject $eventMock */
         $eventMock = $this->getMockBuilder(OrmResultAfter::class)->disableOriginalConstructor()->getMock();
         $recordId = 1;
         $record = new ResultRecord(['id' => $recordId]);

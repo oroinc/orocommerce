@@ -2,16 +2,14 @@
 
 namespace Oro\Bundle\ProductBundle\Form\Type;
 
-use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
-use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Form\Type\Traits\ProductAwareTrait;
-use Oro\Bundle\ProductBundle\Visibility\ProductUnitFieldsSettingsInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for line item on frontend
+ */
 class FrontendLineItemType extends AbstractType
 {
     use ProductAwareTrait;
@@ -21,19 +19,6 @@ class FrontendLineItemType extends AbstractType
     const UNIT_FILED_NAME = 'unit';
 
     /**
-     * @var ProductUnitFieldsSettingsInterface
-     */
-    private $productUnitFieldsSettings;
-
-    /**
-     * @param ProductUnitFieldsSettingsInterface $productUnitFieldsSettings
-     */
-    public function __construct(ProductUnitFieldsSettingsInterface $productUnitFieldsSettings)
-    {
-        $this->productUnitFieldsSettings = $productUnitFieldsSettings;
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -41,7 +26,7 @@ class FrontendLineItemType extends AbstractType
         $builder
             ->add(
                 self::UNIT_FILED_NAME,
-                ProductUnitSelectionType::NAME,
+                ProductUnitSelectionType::class,
                 [
                     'required' => true,
                     'label' => 'oro.product.lineitem.unit.label',
@@ -51,7 +36,7 @@ class FrontendLineItemType extends AbstractType
             )
             ->add(
                 'quantity',
-                QuantityType::NAME,
+                QuantityType::class,
                 [
                     'required' => true,
                     'label' => 'oro.product.lineitem.quantity.enter',
@@ -62,36 +47,6 @@ class FrontendLineItemType extends AbstractType
                     'product_unit_field' => 'unit',
                 ]
             );
-
-        $builder->addEventListener(FormEvents::POST_SET_DATA, [$this, 'checkUnitSelectionVisibility']);
-    }
-
-    /**
-     * @param FormEvent $event
-     */
-    public function checkUnitSelectionVisibility(FormEvent $event)
-    {
-        $formParent = $event->getForm();
-
-        $form = $formParent->get(self::UNIT_FILED_NAME);
-        $options = $form->getConfig()->getOptions();
-
-        $product = $this->getProduct($form);
-
-        if ($product && !$this->productUnitFieldsSettings->isProductUnitSelectionVisible($product)) {
-            $formParent->add(
-                self::UNIT_FILED_NAME,
-                EntityIdentifierType::class,
-                [
-                    'class' => ProductUnit::class,
-                    'multiple' => false,
-                    'required' => $options['required'],
-                    'label' => $options['label'],
-                    'data' => $product->getPrimaryUnitPrecision()->getUnit(),
-                    'data_class' => null,
-                ]
-            );
-        }
     }
 
     /**

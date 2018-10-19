@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Form\Extension;
 
 use Symfony\Component\Form\AbstractTypeExtension;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -14,7 +15,7 @@ class IntegerExtension extends AbstractTypeExtension
      */
     public function getExtendedType()
     {
-        return 'integer';
+        return IntegerType::class;
     }
 
     /**

@@ -9,7 +9,7 @@ use Oro\Bundle\WorkflowBundle\Model\WorkflowAwareManager;
 
 class WorkflowStepMapperTest extends AbstractCheckoutDiffMapperTest
 {
-    /** @var WorkflowAwareManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var WorkflowAwareManager|\PHPUnit\Framework\MockObject\MockObject */
     protected $workflowAwareManager;
 
     protected function setUp()

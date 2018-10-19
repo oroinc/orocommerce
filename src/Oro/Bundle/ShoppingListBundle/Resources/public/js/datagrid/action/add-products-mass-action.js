@@ -19,6 +19,13 @@ define(function(require) {
         /**
          * @inheritDoc
          */
+        constructor: function AddProductsAction() {
+            AddProductsAction.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
             AddProductsAction.__super__.initialize.apply(this, arguments);
 

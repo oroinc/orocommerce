@@ -60,7 +60,7 @@ class ChangedSlugsHelper
         $oldSlugs = $this->slugGenerator->prepareSlugUrls($entity);
 
         $form = $this->formFactory->create($formType, $entity);
-        $form->submit($request);
+        $form->handleRequest($request);
 
         $newSlugs = $this->slugGenerator->prepareSlugUrls($form->getData());
 

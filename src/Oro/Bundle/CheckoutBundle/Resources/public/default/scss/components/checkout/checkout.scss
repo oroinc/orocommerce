@@ -1,4 +1,4 @@
-// @theme: default;
+/* @theme: default; */
 
 .checkout {
     padding: $checkout-padding;
@@ -66,6 +66,14 @@
 
         &__approval-wrapper {
             margin: $checkout-approval-wrapper-tablet-margin;
+        }
+
+        &__submit-btn {
+            > .tooltip.tooltip-top .tooltip-inner:before,
+            > .tooltip.tooltip-bottom .tooltip-inner:before {
+                left: $checkout-submit-tooltip-left;
+                right: $checkout-submit-tooltip-right;
+            }
         }
     }
 }

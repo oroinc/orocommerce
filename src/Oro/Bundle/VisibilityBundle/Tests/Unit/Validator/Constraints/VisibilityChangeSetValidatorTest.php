@@ -8,7 +8,7 @@ use Oro\Bundle\VisibilityBundle\Validator\Constraints\VisibilityChangeSet;
 use Oro\Bundle\VisibilityBundle\Validator\Constraints\VisibilityChangeSetValidator;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
-class VisibilityChangeSetValidatorTest extends \PHPUnit_Framework_TestCase
+class VisibilityChangeSetValidatorTest extends \PHPUnit\Framework\TestCase
 {
     /** @var  VisibilityChangeSet */
     protected $constraint;
@@ -19,7 +19,7 @@ class VisibilityChangeSetValidatorTest extends \PHPUnit_Framework_TestCase
     /** @var VisibilityChangeSetValidator */
     protected $visibilityChangeSetValidator;
 
-    /** @var ExecutionContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
+    /** @var ExecutionContextInterface|\PHPUnit\Framework\MockObject\MockObject $context */
     protected $context;
 
     /**

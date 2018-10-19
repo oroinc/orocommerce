@@ -17,24 +17,24 @@ use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderInterface;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\WebsiteIdPlaceholder;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class IndexDataProviderTest extends \PHPUnit_Framework_TestCase
+class IndexDataProviderTest extends \PHPUnit\Framework\TestCase
 {
     /** @var IndexDataProvider */
     protected $indexDataProvider;
 
-    /** @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $eventDispatcher;
 
-    /** @var EntityAliasResolver|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var EntityAliasResolver|\PHPUnit\Framework\MockObject\MockObject */
     protected $aliasResolver;
 
-    /** @var PlaceholderInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var PlaceholderInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $placeholder;
 
-    /** @var HtmlTagHelper|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var HtmlTagHelper|\PHPUnit\Framework\MockObject\MockObject */
     protected $tagHelper;
 
-    /** @var PlaceholderHelper|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var PlaceholderHelper|\PHPUnit\Framework\MockObject\MockObject */
     protected $placeholderHelper;
 
     protected function setUp()
@@ -133,6 +133,22 @@ class IndexDataProviderTest extends \PHPUnit_Framework_TestCase
                 return trim(strip_tags($value));
             }
         );
+        $this->tagHelper->expects($this->any())
+            ->method('stripLongWords')
+            ->willReturnCallback(
+                function ($value) {
+                    $words = preg_split('/\s+/', $value);
+
+                    $words = array_filter(
+                        $words,
+                        function ($item) {
+                            return \strlen($item) <= HtmlTagHelper::MAX_STRING_LENGTH;
+                        }
+                    );
+
+                    return implode(' ', $words);
+                }
+            );
         $this->placeholder->expects($this->any())->method('replace')->willReturnCallback(
             function ($string, array $values) {
                 return str_replace(array_keys($values), array_values($values), $string);
@@ -376,6 +392,51 @@ class IndexDataProviderTest extends \PHPUnit_Framework_TestCase
                             'title' => 'The fox',
                             'description' => 'The quick brown fox jumps over the lazy dog',
                             'all_text' => 'The fox quick brown jumps over the lazy dog',
+                        ],
+                    ],
+                ],
+            ],
+            'all_text has long strings' => [
+                'entityConfig' => [
+                    'fields' => [
+                        [
+                            'name' => 'title',
+                            'type' => Query::TYPE_TEXT,
+                        ],
+                        [
+                            'name' => 'description',
+                            'type' => Query::TYPE_TEXT,
+                        ],
+                    ],
+                ],
+                'indexData' => [
+                    [1, 'title', 'The long entry', true],
+                    [
+                        1,
+                        'description',
+                        'QJfPB2teh0ukQN46FehTdiMRMMGGlaNvQvB4ymJq49zUWidBOhT9IzqNyPhYvchY1234' .
+                        'QJfPB2teh0ukQN46FehTdiMRMMGGlaNvQvB4ymJq49zUWidBOhT9IzqNyPhYvchY1234' .
+                        'QJfPB2teh0ukQN46FehTdiMRMMGGlaNvQvB4ymJq49zUWidBOhT9IzqNyPhYvchY1234' .
+                        'QJfPB2teh0ukQN46FehTdiMRMMGGlaNvQvB4ymJq49zUWidBOhT9IzqNyPhYvchY1234' .
+                        'QJfPB2teh0ukQN46FehTdiMRMMGGlaNvQvB4ymJq49zUWidBOhT9IzqNyPhYvchY1234' .
+                        ' ' .
+                        'zUWidBOhT9IzqNyPhYvchY QJfPB2teh0ukQ',
+                        true
+                    ],
+                ],
+                'expected' => [
+                    1 => [
+                        'text' => [
+                            'title' => 'The long entry',
+                            'description' =>
+                                'QJfPB2teh0ukQN46FehTdiMRMMGGlaNvQvB4ymJq49zUWidBOhT9IzqNyPhYvchY1234' .
+                                'QJfPB2teh0ukQN46FehTdiMRMMGGlaNvQvB4ymJq49zUWidBOhT9IzqNyPhYvchY1234' .
+                                'QJfPB2teh0ukQN46FehTdiMRMMGGlaNvQvB4ymJq49zUWidBOhT9IzqNyPhYvchY1234' .
+                                'QJfPB2teh0ukQN46FehTdiMRMMGGlaNvQvB4ymJq49zUWidBOhT9IzqNyPhYvchY1234' .
+                                'QJfPB2teh0ukQN46FehTdiMRMMGGlaNvQvB4ymJq49zUWidBOhT9IzqNyPhYvchY1234' .
+                                ' ' .
+                                'zUWidBOhT9IzqNyPhYvchY QJfPB2teh0ukQ',
+                            'all_text' => 'The long entry zUWidBOhT9IzqNyPhYvchY QJfPB2teh0ukQ',
                         ],
                     ],
                 ],

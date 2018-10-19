@@ -1,0 +1,11 @@
+/* @theme: admin.oro; */
+
+.content-with-sidebar--content {
+    .select2-container {
+        width: calc(100% - 31px);
+    }
+
+    .select2-choice {
+        width: 100%;
+    }
+}

@@ -6,14 +6,14 @@ use Oro\Bundle\CMSBundle\Twig\WidgetExtension;
 use Oro\Bundle\CMSBundle\Widget\WidgetRegistry;
 use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
 
-class WidgetExtensionTest extends \PHPUnit_Framework_TestCase
+class WidgetExtensionTest extends \PHPUnit\Framework\TestCase
 {
     use TwigExtensionTestCaseTrait;
 
     /** @var WidgetExtension */
     private $extension;
 
-    /** @var WidgetRegistry|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var WidgetRegistry|\PHPUnit\Framework\MockObject\MockObject */
     private $widgetRegistry;
 
     protected function setUp()

@@ -138,7 +138,7 @@
         'itemprop': 'image'
     } %}
 
-    {% set image = product.image is defined ? asset(product.image) : Image.url(null, 'product_large') %}
+    {% set image = product.image is defined ? asset(product.image|trim('/')) : Image.url(null, 'product_large') %}
 
     <picture {{ block('block_attributes') }}>
         <img src="{{ image }}" {{ UI.attributes(attrImage) }} alt="{{ product.name }}">
@@ -154,8 +154,9 @@
         <a href="{{ product.view_link }}"
            class="view-product"{% if 'gallery-view' in class_prefix %} data-page-component-line-clamp{% endif %}
            itemprop="url"
+           title="{{- block('container_widget')|trim -}}"
         >
-            <span itemprop="name">{{- block('container_widget') -}}</span>
+            <span itemprop="name">{{- block('container_widget')|trim -}}</span>
         </a>
     </h3>
 {% endblock %}

@@ -1,21 +1,22 @@
-# UPS API credentials validation
+# UPS API Credentials Validation
 
-The "Check UPS Connection" button on an UPS integration page provide possibility for checking that the credentials were entered correctly. After clicking user see flash message with result of the checking.
+The "Check UPS Connection" button on the UPS integration page checks the credentials and ensures that they are entered correctly. Once clicked, a user gets a flash message with the checking results.
 
-### Main principe
+### Main Principle
 
-Is simple Rate request to UPS API used for checking credentials.
+Is the simple Rate request enough to check the UPS API credentials?
 
-General Rate request requires addresses and packages, but on integration page we don't have them. First of all is - address, we use country from integration settings and static postal code, which will match better for all countries. Country and postal code are enough for UPS address. Second problem is packages. We use one package with unit from integration settings, simple package type and not big weight. And it's also valid for simple request.
+The general Rate request requires addresses and packages, but there are none of them on the integration page. However, for the address we use a country from the integration settings and a static postal code which matches all countries. The country and the postal code are enough for the UPS address. 
+As for the packages, we use one package with the unit from the integration settings and a simple package type. The package should not weigh much. Therefore, it's valid for the simple request.
 
-Check `\Oro\Bundle\UPSBundle\Connection\Validator\Request\Factory\RateUpsConnectionValidatorRequestFactory` for details.
+For more details, refer to `\Oro\Bundle\UPSBundle\Connection\Validator\Request\Factory\RateUpsConnectionValidatorRequestFactory`.
 
 ### What's happening under the hood?
  
-All form data sends to server via AJAX after pressing the button. Channel entity,received from request, is passed into `Oro\Bundle\UPSBundle\Connection\Validator\UpsConnectionValidatorInterface::validateConnectionByUpsSettings`. In this method client (`Oro\Bundle\IntegrationBundle\Provider\Rest\Client\RestClientInterface`) and request (`Oro\Bundle\UPSBundle\Client\Request\UpsClientRequestInterface`) are created by their factories. Request is sent to UPS API via client. Next step is to check the response. 
+Once you click the button, all form data is sent to the server via AJAX. The channel entity received from the request is passed to `Oro\Bundle\UPSBundle\Connection\Validator\UpsConnectionValidatorInterface::validateConnectionByUpsSettings`. Based on this method, the (`Oro\Bundle\IntegrationBundle\Provider\Rest\Client\RestClientInterface`) client and the (`Oro\Bundle\UPSBundle\Client\Request\UpsClientRequestInterface`) request are created by their factories. The request is sent to UPS API via the client. The next step is to check the response. 
 
-If request fails by some connection issues, exception result of validation will be created (`Oro\Bundle\UPSBundle\Connection\Validator\Result\Factory\UpsConnectionValidatorResultFactory::createExceptionResult`) and user will see error flash message.
+If the request fails due to some connection issues, the (`Oro\Bundle\UPSBundle\Connection\Validator\Result\Factory\UpsConnectionValidatorResultFactory::createExceptionResult`) exception validation result is created with the error flash message displayed to a user.
 
-On success request, `Oro\Bundle\UPSBundle\Connection\Validator\Result\Factory\UpsConnectionValidatorResultFactory::createResultByUpsClientResponse` method parse UPS response for any errors. User will see success flash message if there are no errors. 
+For the request to succeed, the `Oro\Bundle\UPSBundle\Connection\Validator\Result\Factory\UpsConnectionValidatorResultFactory::createResultByUpsClientResponse` method parses the UPS response for any errors. If no errors found, the user gets a flash message with successful results. 
 
-If there are some errors related to authentication user will see error about unsuccessful UPS connection. In case when response contains no errors related to "Unavailable service between locations" and no authentication errors user also will see success flash message. Any other errors which don't relate to authentication will be shown as warning flash message.
+If there are some errors related to authentication, the user gets an error message that reports the UPS connection failure. If there are no errors related to "Unavailable service between locations" or authentication, the user gets a flash message with successful results. Any other errors not related to authentication are displayed as warning flash messages.

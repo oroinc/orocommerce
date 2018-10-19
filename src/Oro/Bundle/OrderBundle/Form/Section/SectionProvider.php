@@ -4,6 +4,7 @@ namespace Oro\Bundle\OrderBundle\Form\Section;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Criteria;
+use Symfony\Component\Form\FormRegistryInterface;
 
 class SectionProvider
 {
@@ -13,12 +14,25 @@ class SectionProvider
     protected $sections = [];
 
     /**
-     * @param string $formName
+     * @var FormRegistryInterface
+     */
+    private $formRegistry;
+
+    /**
+     * @param FormRegistryInterface $formRegistry
+     */
+    public function __construct(FormRegistryInterface $formRegistry)
+    {
+        $this->formRegistry = $formRegistry;
+    }
+
+    /**
+     * @param string $formTypeClass
      * @param array $sections
      */
-    public function addSections($formName, array $sections)
+    public function addSections($formTypeClass, array $sections)
     {
-        $formName = (string)$formName;
+        $formName = $this->getSectionNameByTypeClass($formTypeClass);
         if (!array_key_exists($formName, $this->sections)) {
             $this->sections[$formName] = [];
         }
@@ -27,12 +41,12 @@ class SectionProvider
     }
 
     /**
-     * @param string $formName
+     * @param string $formTypeClass
      * @return ArrayCollection
      */
-    public function getSections($formName)
+    public function getSections($formTypeClass)
     {
-        $formName = (string)$formName;
+        $formName = $this->getSectionNameByTypeClass($formTypeClass);
         if (!array_key_exists($formName, $this->sections)) {
             return new ArrayCollection();
         }
@@ -43,5 +57,16 @@ class SectionProvider
         $criteria->orderBy(['order' => Criteria::ASC]);
 
         return $sections->matching($criteria);
+    }
+
+    /**
+     * @param string $formTypeClass
+     * @return string
+     */
+    private function getSectionNameByTypeClass($formTypeClass)
+    {
+        $formType = $this->formRegistry->getType($formTypeClass);
+
+        return $formType->getBlockPrefix();
     }
 }

@@ -13,30 +13,30 @@ use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\UserBundle\Entity\User;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-class FrontendOrderDataHandlerTest extends \PHPUnit_Framework_TestCase
+class FrontendOrderDataHandlerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|RequestStack
+     * @var \PHPUnit\Framework\MockObject\MockObject|RequestStack
      */
     protected $requestStack;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ObjectManager
+     * @var \PHPUnit\Framework\MockObject\MockObject|ObjectManager
      */
     protected $objectManager;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry
+     * @var \PHPUnit\Framework\MockObject\MockObject|ManagerRegistry
      */
     protected $registry;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|TokenAccessorInterface
+     * @var \PHPUnit\Framework\MockObject\MockObject|TokenAccessorInterface
      */
     protected $tokenAccessor;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|PaymentTermProvider
+     * @var \PHPUnit\Framework\MockObject\MockObject|PaymentTermProvider
      */
     protected $paymentTermProvider;
 

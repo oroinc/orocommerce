@@ -17,20 +17,20 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class ProductCategoriesContextConfiguratorTest extends \PHPUnit_Framework_TestCase
+class ProductCategoriesContextConfiguratorTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var RequestStack|\PHPUnit\Framework\MockObject\MockObject */
     private $requestStack;
 
-    /** @var Request|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var Request|\PHPUnit\Framework\MockObject\MockObject */
     private $currentRequest;
 
-    /** @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
     private $registry;
 
-    /** @var CategoryProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var CategoryProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $categoryProvider;
 
     /** @var ProductCategoriesContextConfigurator */

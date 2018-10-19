@@ -9,7 +9,7 @@ use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
-class PaymentTermSettingsTest extends \PHPUnit_Framework_TestCase
+class PaymentTermSettingsTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
     use EntityTrait;

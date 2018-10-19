@@ -83,6 +83,13 @@ define(function(require) {
         /**
          * @inheritDoc
          */
+        constructor: function LineItemView() {
+            LineItemView.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @param {Object} options
+         */
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, options || {});
             if (!this.options.ftid) {

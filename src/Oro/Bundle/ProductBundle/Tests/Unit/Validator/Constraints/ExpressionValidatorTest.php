@@ -12,7 +12,7 @@ use Oro\Component\Expression\Preprocessor\ExpressionPreprocessorInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
-class ExpressionValidatorTest extends \PHPUnit_Framework_TestCase
+class ExpressionValidatorTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var ExpressionParser
@@ -20,12 +20,12 @@ class ExpressionValidatorTest extends \PHPUnit_Framework_TestCase
     protected $parser;
 
     /**
-     * @var ExpressionPreprocessorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ExpressionPreprocessorInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $preprocessor;
 
     /**
-     * @var FieldsProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var FieldsProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $fieldsProvider;
 
@@ -35,7 +35,7 @@ class ExpressionValidatorTest extends \PHPUnit_Framework_TestCase
     protected $expressionValidator;
 
     /**
-     * @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $translator;
 
@@ -64,7 +64,7 @@ class ExpressionValidatorTest extends \PHPUnit_Framework_TestCase
     {
         $this->fieldsProvider->method('getFields')->willReturn($attributes);
 
-        /** @var ExecutionContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
+        /** @var ExecutionContextInterface|\PHPUnit\Framework\MockObject\MockObject $context */
         $context = $this->createMock(ExecutionContextInterface::class);
         $context->expects($this->never())->method('addViolation');
         
@@ -80,7 +80,7 @@ class ExpressionValidatorTest extends \PHPUnit_Framework_TestCase
     {
         $this->fieldsProvider->method('getFields')->willReturn($attributes);
 
-        /** @var ExecutionContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
+        /** @var ExecutionContextInterface|\PHPUnit\Framework\MockObject\MockObject $context */
         $context = $this->createMock(ExecutionContextInterface::class);
         $context->expects($this->once())->method('addViolation');
 
@@ -97,7 +97,7 @@ class ExpressionValidatorTest extends \PHPUnit_Framework_TestCase
 
         $this->fieldsProvider->method('getFields')->willReturn(['fieldKnown']);
 
-        /** @var ExecutionContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
+        /** @var ExecutionContextInterface|\PHPUnit\Framework\MockObject\MockObject $context */
         $context = $this->createMock(ExecutionContextInterface::class);
         $context->expects($this->never())->method('addViolation');
 
@@ -118,7 +118,7 @@ class ExpressionValidatorTest extends \PHPUnit_Framework_TestCase
 
         $this->fieldsProvider->method('getFields')->willReturn(['value']);
 
-        /** @var ExecutionContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
+        /** @var ExecutionContextInterface|\PHPUnit\Framework\MockObject\MockObject $context */
         $context = $this->createMock(ExecutionContextInterface::class);
         $context->expects($this->once())
             ->method('addViolation')

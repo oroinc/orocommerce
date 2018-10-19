@@ -30,7 +30,7 @@ class VirtualFieldsSelectQueryConverterTest extends OrmQueryConverterTest
             ]
         );
 
-        /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $em */
+        /** @var EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject $em */
         $em = $doctrine->getManagerForClass(Product::class);
         $em->expects($this->once())
             ->method('createQueryBuilder')

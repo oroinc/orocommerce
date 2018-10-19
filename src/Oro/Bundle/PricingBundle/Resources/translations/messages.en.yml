@@ -117,6 +117,7 @@ oro.pricing:
         prices:
             label: 'Price Attribute Product Prices'
             description: 'Product price attribute values'
+        no_data: 'No price attributes'
 
     pricerule:
         entity_label: Price Calculation Rule
@@ -257,7 +258,7 @@ oro.pricing:
                     minimal_prices: Minimal prices
             rounding_type:
                 label: Pricing Rounding Type
-                tooltip: Select the rounding type that can be used for product prices.
+                tooltip: Select the rounding type that is used when calculated product price has more digits in the fractional part than allowed by the Pricing Precision value
                 choices:
                     ceil.label: Ceil
                     floor.label: Floor
@@ -274,7 +275,7 @@ oro.pricing:
                     real_time.label: 'Immediate'
             offset_of_processing_cpl_prices:
                 label: "Offset of processing CPL prices"
-                tooltip: 'Time (in hours) before the scheduled price list activation, when the prices calculation and indexing starts.'
+                tooltip: 'An offset (in hours) from the scheduled price change that determines how early the price list recalculation and reindex should happen to prepare the actual prices in the OroCommerce storefront for the scheduled launch.'
             enabled_currencies.label: 'Enabled Currencies'
 
     lineitem:
@@ -295,6 +296,13 @@ oro.pricing:
         product_prices:
             empty_prices: Price not available
             price_not_found: Price for requested quantity is not available
+        product:
+            quantity:
+                short_label: 'Qty'
+                long_label: 'Quantity'
+            unit_price:
+                short_label: 'per unit'
+                long_label: 'Unit price'
 
     notification:
         price_list:
@@ -304,6 +312,9 @@ oro.pricing:
 
     validators:
         field_or_expression_is_required: Field "%fieldName%" is required
+
+    permission:
+        recalculate.label: "Recalculate"
 
 
 oro:

@@ -30,6 +30,6 @@ class ShoppingListFormProvider extends AbstractFormProvider
             );
         }
 
-        return $this->getFormView(ShoppingListType::NAME, $shoppingList, $options);
+        return $this->getFormView(ShoppingListType::class, $shoppingList, $options);
     }
 }

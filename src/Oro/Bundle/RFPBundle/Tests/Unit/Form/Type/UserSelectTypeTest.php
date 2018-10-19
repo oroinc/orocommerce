@@ -4,9 +4,10 @@ namespace Oro\Bundle\RFPBundle\Tests\Unit\Form\Type;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\RFPBundle\Form\Type\UserSelectType;
+use Oro\Bundle\UserBundle\Form\Type\UserSelectType as BaseUserSelectType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class UserSelectTypeTest extends \PHPUnit_Framework_TestCase
+class UserSelectTypeTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var UserSelectType
@@ -18,7 +19,7 @@ class UserSelectTypeTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry $registry */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|ManagerRegistry $registry */
         $registry = $this->getMockBuilder('Doctrine\Common\Persistence\ManagerRegistry')
             ->disableOriginalConstructor()
             ->getMock();
@@ -27,19 +28,11 @@ class UserSelectTypeTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test getName
-     */
-    public function testGetName()
-    {
-        $this->assertEquals(UserSelectType::NAME, $this->formType->getName());
-    }
-
-    /**
      * Test getParent
      */
     public function testGetParent()
     {
-        $this->assertEquals('oro_user_select', $this->formType->getParent());
+        $this->assertEquals(BaseUserSelectType::class, $this->formType->getParent());
     }
 
     /**
@@ -47,7 +40,7 @@ class UserSelectTypeTest extends \PHPUnit_Framework_TestCase
      */
     public function testConfigureOptions()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|OptionsResolver $resolver */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|OptionsResolver $resolver */
         $resolver = $this->getMockBuilder('Symfony\Component\OptionsResolver\OptionsResolver')
             ->disableOriginalConstructor()
             ->getMock();

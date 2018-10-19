@@ -8,10 +8,10 @@ use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodViewFactory;
 
-class ShippingMethodViewFactoryTest extends \PHPUnit_Framework_TestCase
+class ShippingMethodViewFactoryTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ShippingMethodProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $shippingMethodProviderMock;
 

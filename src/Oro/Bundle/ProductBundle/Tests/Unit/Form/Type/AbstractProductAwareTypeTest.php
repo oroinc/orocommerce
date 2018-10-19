@@ -6,7 +6,8 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\Type\AbstractProductAwareType;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\AbstractProductAwareTypeStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-use Symfony\Component\Form\PreloadedExtension;
+use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 
 class AbstractProductAwareTypeTest extends FormIntegrationTestCase
 {
@@ -26,7 +27,7 @@ class AbstractProductAwareTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    AbstractProductAwareTypeStub::NAME => new AbstractProductAwareTypeStub(),
+                    AbstractProductAwareTypeStub::class => new AbstractProductAwareTypeStub(),
                 ],
                 []
             ),
@@ -42,7 +43,7 @@ class AbstractProductAwareTypeTest extends FormIntegrationTestCase
     {
         $form = $this->factory->createNamed(
             AbstractProductAwareTypeStub::NAME,
-            AbstractProductAwareTypeStub::NAME,
+            AbstractProductAwareTypeStub::class,
             null,
             $options
         );
@@ -78,9 +79,9 @@ class AbstractProductAwareTypeTest extends FormIntegrationTestCase
      */
     public function testGetProductFromParent($data, $expectedProduct)
     {
-        $parentForm = $this->factory->createNamed('parentForm', 'form');
-        $parentForm->add(AbstractProductAwareTypeStub::NAME, AbstractProductAwareTypeStub::NAME);
-        $parentForm->add('product', 'form', ['data' => $data]);
+        $parentForm = $this->factory->createNamed('parentForm', FormType::class);
+        $parentForm->add(AbstractProductAwareTypeStub::NAME, AbstractProductAwareTypeStub::class);
+        $parentForm->add('product', FormType::class, ['data' => $data]);
 
         $child = $parentForm->get(AbstractProductAwareTypeStub::NAME);
 
@@ -110,16 +111,16 @@ class AbstractProductAwareTypeTest extends FormIntegrationTestCase
         $product = new Product();
 
         $options = ['compound' => true];
-        $root = $this->factory->createNamed('root', 'form', $options);
-        $root->add('first', 'form');
-        $root->get('first')->add('second', 'form', ['compound' => true]);
+        $root = $this->factory->createNamed('root', FormType::class, $options);
+        $root->add('first', FormType::class);
+        $root->get('first')->add('second', FormType::class, ['compound' => true]);
         $root->get('first')->get('second')->add(
             AbstractProductAwareTypeStub::NAME,
-            AbstractProductAwareTypeStub::NAME,
+            AbstractProductAwareTypeStub::class,
             ['data' => null]
         );
 
-        $root->add('product', 'form', ['data' => $product]);
+        $root->add('product', FormType::class, ['data' => $product]);
 
         $child = $root->get('first')->get('second')->get(AbstractProductAwareTypeStub::NAME);
 
@@ -137,7 +138,7 @@ class AbstractProductAwareTypeTest extends FormIntegrationTestCase
     {
         $form = $this->factory->createNamed(
             AbstractProductAwareTypeStub::NAME,
-            AbstractProductAwareTypeStub::NAME,
+            AbstractProductAwareTypeStub::class,
             null,
             $options
         );
@@ -146,7 +147,7 @@ class AbstractProductAwareTypeTest extends FormIntegrationTestCase
         if ($useParentView) {
             $parentView = $this->factory->createNamed(
                 AbstractProductAwareTypeStub::NAME,
-                AbstractProductAwareTypeStub::NAME
+                AbstractProductAwareTypeStub::class
             )->createView();
             $parentView->vars['product'] = $product;
         }
@@ -198,7 +199,7 @@ class AbstractProductAwareTypeTest extends FormIntegrationTestCase
     ) {
         $form = $this->factory->createNamed(
             AbstractProductAwareTypeStub::NAME,
-            AbstractProductAwareTypeStub::NAME,
+            AbstractProductAwareTypeStub::class,
             null,
             ['product' => $formProduct]
         );

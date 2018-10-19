@@ -16,23 +16,23 @@ use Symfony\Component\Security\Core\Authentication\Token\AbstractToken;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
-class AddLineItemMassActionProviderTest extends \PHPUnit_Framework_TestCase
+class AddLineItemMassActionProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|ShoppingListManager */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|ShoppingListManager */
     protected $manager;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|TranslatorInterface */
     protected $translator;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|TokenStorageInterface */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|TokenStorageInterface */
     protected $tokenStorage;
 
     /** @var AddLineItemMassActionProvider */
     protected $provider;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|FeatureChecker */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|FeatureChecker */
     protected $featureChecker;
 
     protected function setUp()

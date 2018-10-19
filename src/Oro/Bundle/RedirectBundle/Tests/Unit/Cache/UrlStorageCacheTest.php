@@ -12,20 +12,20 @@ use Symfony\Component\Filesystem\Filesystem;
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class UrlStorageCacheTest extends \PHPUnit_Framework_TestCase
+class UrlStorageCacheTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var FileCache|\PHPUnit_Framework_MockObject_MockObject
+     * @var FileCache|\PHPUnit\Framework\MockObject\MockObject
      */
     private $persistentCache;
 
     /**
-     * @var Cache|\PHPUnit_Framework_MockObject_MockObject
+     * @var Cache|\PHPUnit\Framework\MockObject\MockObject
      */
     private $localCache;
 
     /**
-     * @var Filesystem|\PHPUnit_Framework_MockObject_MockObject
+     * @var Filesystem|\PHPUnit\Framework\MockObject\MockObject
      */
     private $filesystem;
 
@@ -71,7 +71,7 @@ class UrlStorageCacheTest extends \PHPUnit_Framework_TestCase
         $this->localCache->expects($this->never())
             ->method($this->anything());
 
-        /** @var Cache|\PHPUnit_Framework_MockObject_MockObject $persistentCache */
+        /** @var Cache|\PHPUnit\Framework\MockObject\MockObject $persistentCache */
         $persistentCache = $this->createMock(ArrayCache::class);
         $this->persistentCache->expects($this->once())
             ->method('deleteAll');
@@ -81,7 +81,7 @@ class UrlStorageCacheTest extends \PHPUnit_Framework_TestCase
 
     public function testDeleteAllLocal()
     {
-        /** @var ArrayCache|\PHPUnit_Framework_MockObject_MockObject $localCache */
+        /** @var ArrayCache|\PHPUnit\Framework\MockObject\MockObject $localCache */
         $localCache = $this->getMockBuilder(ArrayCache::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -163,7 +163,7 @@ class UrlStorageCacheTest extends \PHPUnit_Framework_TestCase
         $url = '/test';
         $localizationId = 1;
 
-        /** @var UrlDataStorage|\PHPUnit_Framework_MockObject_MockObject $storage */
+        /** @var UrlDataStorage|\PHPUnit\Framework\MockObject\MockObject $storage */
         $storage = $this->getMockBuilder(UrlDataStorage::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -184,7 +184,7 @@ class UrlStorageCacheTest extends \PHPUnit_Framework_TestCase
         $key = 'test_2';
         $localizationId = 1;
 
-        /** @var UrlDataStorage|\PHPUnit_Framework_MockObject_MockObject $storage */
+        /** @var UrlDataStorage|\PHPUnit\Framework\MockObject\MockObject $storage */
         $storage = $this->getMockBuilder(UrlDataStorage::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -205,7 +205,7 @@ class UrlStorageCacheTest extends \PHPUnit_Framework_TestCase
         $slug = 'test';
         $localizationId = 1;
 
-        /** @var UrlDataStorage|\PHPUnit_Framework_MockObject_MockObject $storage */
+        /** @var UrlDataStorage|\PHPUnit\Framework\MockObject\MockObject $storage */
         $storage = $this->getMockBuilder(UrlDataStorage::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -227,7 +227,7 @@ class UrlStorageCacheTest extends \PHPUnit_Framework_TestCase
         $url = '/test';
         $localizationId = 1;
 
-        /** @var UrlDataStorage|\PHPUnit_Framework_MockObject_MockObject $storage */
+        /** @var UrlDataStorage|\PHPUnit\Framework\MockObject\MockObject $storage */
         $storage = $this->getMockBuilder(UrlDataStorage::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -247,11 +247,11 @@ class UrlStorageCacheTest extends \PHPUnit_Framework_TestCase
         $key = 'test_2';
         $url = '/test';
 
-        /** @var UrlDataStorage|\PHPUnit_Framework_MockObject_MockObject $storage */
+        /** @var UrlDataStorage|\PHPUnit\Framework\MockObject\MockObject $storage */
         $storage = $this->getMockBuilder(UrlDataStorage::class)
             ->disableOriginalConstructor()
             ->getMock();
-        /** @var UrlDataStorage|\PHPUnit_Framework_MockObject_MockObject $oldStorage */
+        /** @var UrlDataStorage|\PHPUnit\Framework\MockObject\MockObject $oldStorage */
         $oldStorage = $this->getMockBuilder(UrlDataStorage::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -289,7 +289,7 @@ class UrlStorageCacheTest extends \PHPUnit_Framework_TestCase
         $key = 'test_2';
         $url = '/test';
 
-        /** @var UrlDataStorage|\PHPUnit_Framework_MockObject_MockObject $storage */
+        /** @var UrlDataStorage|\PHPUnit\Framework\MockObject\MockObject $storage */
         $storage = $this->getMockBuilder(UrlDataStorage::class)
             ->disableOriginalConstructor()
             ->getMock();

@@ -14,17 +14,17 @@ use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
-class CombinedPriceListTriggerHandlerTest extends \PHPUnit_Framework_TestCase
+class CombinedPriceListTriggerHandlerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var Registry|\PHPUnit_Framework_MockObject_MockObject
+     * @var Registry|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $registry;
 
     /**
-     * @var EventDispatcher|\PHPUnit_Framework_MockObject_MockObject
+     * @var EventDispatcher|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $eventDispatcher;
 
@@ -34,7 +34,7 @@ class CombinedPriceListTriggerHandlerTest extends \PHPUnit_Framework_TestCase
     protected $triggerHandler;
 
     /**
-     * @var CombinedProductPriceRepository|\PHPUnit_Framework_MockObject_MockObject
+     * @var CombinedProductPriceRepository|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $repository;
 
@@ -136,7 +136,7 @@ class CombinedPriceListTriggerHandlerTest extends \PHPUnit_Framework_TestCase
      * @param array $expectedEvents
      * @param array|null $website
      */
-    public function testMassProcess(
+    public function testProcessWithNestedCommits(
         array $combinedPriceList,
         array $productIds,
         array $expectedEvents,
@@ -147,6 +147,54 @@ class CombinedPriceListTriggerHandlerTest extends \PHPUnit_Framework_TestCase
             $website = $this->getEntity(Website::class, $website);
         }
 
+        $this->repository
+            ->expects($this->once())
+            ->method('getProductIdsByPriceLists')
+            ->willReturn($productIds);
+        $this->assertEmpty($this->events);
+        $this->triggerHandler->startCollect();
+        $this->triggerHandler->startCollect();
+        $this->triggerHandler->process($combinedPriceList, $website);
+        $this->triggerHandler->commit();
+        $this->assertEmpty($this->events);
+        $this->triggerHandler->commit();
+        $this->assertEquals($expectedEvents, $this->events);
+    }
+
+    public function testProcessWithRollback()
+    {
+        $combinedPriceList = $this->getEntity(CombinedPriceList::class, ['id' => 1001]);
+        $website = $this->getEntity(Website::class, ['id' => 1001]);
+
+        $this->repository->expects($this->never())
+            ->method('getProductIdsByPriceLists');
+
+        $this->triggerHandler->startCollect();
+        $this->triggerHandler->process($combinedPriceList, $website);
+        $this->assertEmpty($this->events);
+        $this->triggerHandler->rollback();
+        $this->triggerHandler->commit();
+        $this->assertEmpty($this->events);
+    }
+
+    /**
+     * @dataProvider processDataProvider
+     *
+     * @param array $combinedPriceList
+     * @param array $productIds
+     * @param array $expectedEvents
+     * @param array|null $website
+     */
+    public function testMassProcess(
+        array $combinedPriceList,
+        array $productIds,
+        array $expectedEvents,
+        array $website = null
+    ) {
+        $combinedPriceList = $this->getEntity(CombinedPriceList::class, $combinedPriceList);
+        if ($website) {
+            $website = $this->getEntity(Website::class, $website);
+        }
         $this->repository
             ->expects($this->once())
             ->method('getProductIdsByPriceLists')
@@ -181,6 +229,77 @@ class CombinedPriceListTriggerHandlerTest extends \PHPUnit_Framework_TestCase
                         [new ReindexationRequestEvent([Product::class], [1], [1, 2])]
                 ],
                 'website' => ['id' => 1],
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider processByProductDataProvider
+     *
+     * @param array $combinedPriceList
+     * @param array $expectedEvents
+     * @param array|null $products
+     * @param array|null $website
+     * @param array $productIds
+     */
+    public function testProcessByProduct(
+        array $combinedPriceList,
+        array $expectedEvents,
+        array $products = [],
+        array $website = null,
+        array $productIds = []
+    ) {
+        $combinedPriceList = $this->getEntity(CombinedPriceList::class, $combinedPriceList);
+        if ($website) {
+            $website = $this->getEntity(Website::class, $website);
+        }
+
+        $this->repository->expects($this->any())
+            ->method('getProductIdsByPriceLists')
+            ->willReturn($productIds);
+
+        $this->triggerHandler->startCollect();
+        $this->triggerHandler->processByProduct($combinedPriceList, $products, $website);
+        $this->triggerHandler->commit();
+        $this->assertEquals($expectedEvents, $this->events);
+    }
+
+    /**
+     * @return array
+     */
+    public function processByProductDataProvider()
+    {
+        return [
+            [
+                'cpl' => ['id' => 1001],
+                'events' => [
+                    ReindexationRequestEvent::EVENT_NAME => [
+                        new ReindexationRequestEvent([Product::class], [3003], [2002])
+                    ]
+                ],
+                'products' => [2002],
+                'website' => ['id' => 3003],
+            ],
+            [
+                'cpl' => ['id' => 1001],
+                'events' => [
+                    ReindexationRequestEvent::EVENT_NAME => [
+                        new ReindexationRequestEvent([Product::class], [], [2002])
+                    ]
+                ],
+                'products' => [2002],
+                'website' => null,
+            ],
+            [
+                'cpl' => ['id' => 1001],
+                'events' => [
+                    ReindexationRequestEvent::EVENT_NAME => [
+                        new ReindexationRequestEvent([Product::class], [3003], [4004, 5005])
+                    ]
+                ],
+                'products' => [],
+                'website' => ['id' => 3003],
+                'productIds' => [4004, 5005],
             ],
         ];
     }

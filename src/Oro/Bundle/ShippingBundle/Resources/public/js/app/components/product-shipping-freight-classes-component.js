@@ -51,6 +51,13 @@ define(function(require) {
         /**
          * @inheritDoc
          */
+        constructor: function ProductShippingFreightClassesComponent() {
+            ProductShippingFreightClassesComponent.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, options || {});
             this.initializeListener();

@@ -5,7 +5,7 @@ namespace Oro\Bundle\SaleBundle\Tests\Unit\Provider;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\SaleBundle\Provider\ContactInfoAvailableUserOptionsProvider;
 
-class ContactInfoAvailableUserOptionsProviderTest extends \PHPUnit_Framework_TestCase
+class ContactInfoAvailableUserOptionsProviderTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var ContactInfoAvailableUserOptionsProvider
@@ -13,7 +13,7 @@ class ContactInfoAvailableUserOptionsProviderTest extends \PHPUnit_Framework_Tes
     private $provider;
 
     /**
-     * @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $configManager;
 

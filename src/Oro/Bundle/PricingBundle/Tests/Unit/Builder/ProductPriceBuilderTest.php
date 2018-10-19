@@ -18,30 +18,30 @@ use Oro\Bundle\PricingBundle\ORM\InsertFromSelectShardQueryExecutor;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
-class ProductPriceBuilderTest extends \PHPUnit_Framework_TestCase
+class ProductPriceBuilderTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ShardManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShardManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $shardManager;
 
     /**
-     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $registry;
 
     /**
-     * @var InsertFromSelectShardQueryExecutor|\PHPUnit_Framework_MockObject_MockObject
+     * @var InsertFromSelectShardQueryExecutor|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $insertFromSelectQueryExecutor;
 
     /**
-     * @var PriceListRuleCompiler|\PHPUnit_Framework_MockObject_MockObject
+     * @var PriceListRuleCompiler|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $ruleCompiler;
 
     /**
-     * @var PriceListTriggerHandler|\PHPUnit_Framework_MockObject_MockObject
+     * @var PriceListTriggerHandler|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $priceListTriggerHandler;
 
@@ -74,10 +74,9 @@ class ProductPriceBuilderTest extends \PHPUnit_Framework_TestCase
 
     public function testBuildByPriceListNoRules()
     {
-        /** @var PriceList|\PHPUnit_Framework_MockObject_MockObject $priceList * */
-        $priceList = $this->createMock(PriceList::class);
+        $priceList = new PriceList();
 
-        /** @var Product|\PHPUnit_Framework_MockObject_MockObject $product * */
+        /** @var Product|\PHPUnit\Framework\MockObject\MockObject $product * */
         $productId = 1;
 
         $repo = $this->getRepositoryMock();
@@ -97,8 +96,7 @@ class ProductPriceBuilderTest extends \PHPUnit_Framework_TestCase
 
     public function testBuildByPriceListNoRulesWithoutProduct()
     {
-        /** @var PriceList|\PHPUnit_Framework_MockObject_MockObject $priceList * */
-        $priceList = $this->createMock(PriceList::class);
+        $priceList = new PriceList();
 
         $repo = $this->getRepositoryMock();
         $repo->expects($this->once())
@@ -119,7 +117,7 @@ class ProductPriceBuilderTest extends \PHPUnit_Framework_TestCase
     {
         $priceList = new PriceList();
 
-        /** @var Product|\PHPUnit_Framework_MockObject_MockObject $product * */
+        /** @var Product|\PHPUnit\Framework\MockObject\MockObject $product * */
         $product = $this->createMock(Product::class);
 
         $rule1 = new PriceRule();
@@ -183,8 +181,16 @@ class ProductPriceBuilderTest extends \PHPUnit_Framework_TestCase
         $this->productPriceBuilder->buildByPriceListWithoutTriggers($priceList);
     }
 
+    public function testFlush()
+    {
+        $this->priceListTriggerHandler->expects($this->once())
+            ->method('sendScheduledTriggers');
+
+        $this->productPriceBuilder->flush();
+    }
+
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|ProductPriceRepository
+     * @return \PHPUnit\Framework\MockObject\MockObject|ProductPriceRepository
      */
     protected function getRepositoryMock()
     {
@@ -210,7 +216,7 @@ class ProductPriceBuilderTest extends \PHPUnit_Framework_TestCase
      * @param array $fields
      * @param array $rules
      * @param int[]|Product[]|null $products
-     * @return QueryBuilder|\PHPUnit_Framework_MockObject_MockObject
+     * @return QueryBuilder|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function assertInsertCall(array $fields, array $rules, array $products = [])
     {

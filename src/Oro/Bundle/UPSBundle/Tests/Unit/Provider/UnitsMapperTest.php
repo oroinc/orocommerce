@@ -7,10 +7,10 @@ use Oro\Bundle\UPSBundle\Entity\UPSTransport;
 use Oro\Bundle\UPSBundle\Provider\UnitsMapper;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
-class UnitsMapperTest extends \PHPUnit_Framework_TestCase
+class UnitsMapperTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var RegistryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var RegistryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $registry;
 

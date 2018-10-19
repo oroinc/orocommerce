@@ -2,24 +2,28 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Api\Processor;
 
+use Oro\Bundle\ApiBundle\Tests\Unit\Processor\FormProcessorTestCase;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\PricingBundle\Api\Processor\PriceListRelationTriggerHandlerForWebsiteAndCustomerGroup;
 use Oro\Bundle\PricingBundle\Entity\PriceListCustomerGroupFallback;
 use Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup;
-use Oro\Bundle\PricingBundle\Tests\Unit\Api\Processor\PriceListRelationTriggerHandlerProcessorTestCase as BaseTestCase;
+use Oro\Bundle\PricingBundle\Model\PriceListRelationTriggerHandler;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 
-class PriceListRelationTriggerHandlerForWebsiteAndCustomerGroupTest extends BaseTestCase
+class PriceListRelationTriggerHandlerForWebsiteAndCustomerGroupTest extends FormProcessorTestCase
 {
-    /**
-     * @var PriceListRelationTriggerHandlerForWebsiteAndCustomerGroup
-     */
+    /** @var PriceListRelationTriggerHandler|\PHPUnit\Framework\MockObject\MockObject */
+    private $relationChangesHandler;
+
+    /** @var PriceListRelationTriggerHandlerForWebsiteAndCustomerGroup */
     private $processor;
 
     protected function setUp()
     {
         parent::setUp();
+
+        $this->relationChangesHandler = $this->createMock(PriceListRelationTriggerHandler::class);
 
         $this->processor = new PriceListRelationTriggerHandlerForWebsiteAndCustomerGroup(
             $this->relationChangesHandler
@@ -28,24 +32,21 @@ class PriceListRelationTriggerHandlerForWebsiteAndCustomerGroupTest extends Base
 
     public function testProcessForNotWebsiteAware()
     {
-        $context = $this->createContext(null);
-
         $this->relationChangesHandler
             ->expects(static::never())
             ->method('handleCustomerGroupChange');
 
-        $this->processor->process($context);
+        $this->processor->process($this->context);
     }
 
     public function testProcessForNotCustomerGroupAware()
     {
-        $context = $this->createContext($this->createMock(WebsiteAwareInterface::class));
-
         $this->relationChangesHandler
             ->expects(static::never())
             ->method('handleCustomerGroupChange');
 
-        $this->processor->process($context);
+        $this->context->setResult($this->createMock(WebsiteAwareInterface::class));
+        $this->processor->process($this->context);
     }
 
 
@@ -55,14 +56,13 @@ class PriceListRelationTriggerHandlerForWebsiteAndCustomerGroupTest extends Base
         $website = $this->createWebsite(2);
         $fallback = $this->createFallback($group, $website);
 
-        $context = $this->createContext($fallback);
-
         $this->relationChangesHandler
             ->expects(static::once())
             ->method('handleCustomerGroupChange')
             ->with($group, $website);
 
-        $this->processor->process($context);
+        $this->context->setResult($fallback);
+        $this->processor->process($this->context);
     }
 
     public function testProcessForMultipleCustomerGroupFallbacks()
@@ -75,8 +75,6 @@ class PriceListRelationTriggerHandlerForWebsiteAndCustomerGroupTest extends Base
         $website2 = $this->createWebsite(4);
         $fallback2 = $this->createFallback($group2, $website2);
 
-        $context = $this->createContext([$fallback, $fallback, $fallback2]);
-
         $this->relationChangesHandler
             ->expects(static::exactly(2))
             ->method('handleCustomerGroupChange')
@@ -85,7 +83,8 @@ class PriceListRelationTriggerHandlerForWebsiteAndCustomerGroupTest extends Base
                 [$group2, $website2]
             );
 
-        $this->processor->process($context);
+        $this->context->setResult([$fallback, $fallback, $fallback2]);
+        $this->processor->process($this->context);
     }
 
     public function testProcessForPriceListToCustomerGroup()
@@ -94,14 +93,13 @@ class PriceListRelationTriggerHandlerForWebsiteAndCustomerGroupTest extends Base
         $website = $this->createWebsite(2);
         $relation = $this->createPriceListToCustomerGroup($group, $website);
 
-        $context = $this->createContext($relation);
-
         $this->relationChangesHandler
             ->expects(static::once())
             ->method('handleCustomerGroupChange')
             ->with($group, $website);
 
-        $this->processor->process($context);
+        $this->context->setResult($relation);
+        $this->processor->process($this->context);
     }
 
     public function testProcessForMultiplePriceListToCustomerGroups()
@@ -114,8 +112,6 @@ class PriceListRelationTriggerHandlerForWebsiteAndCustomerGroupTest extends Base
         $website2 = $this->createWebsite(4);
         $relation2 = $this->createPriceListToCustomerGroup($group2, $website2);
 
-        $context = $this->createContext([$relation, $relation, $relation2]);
-
         $this->relationChangesHandler
             ->expects(static::exactly(2))
             ->method('handleCustomerGroupChange')
@@ -124,13 +120,30 @@ class PriceListRelationTriggerHandlerForWebsiteAndCustomerGroupTest extends Base
                 [$group2, $website2]
             );
 
-        $this->processor->process($context);
+        $this->context->setResult([$relation, $relation, $relation2]);
+        $this->processor->process($this->context);
     }
 
     /**
      * @param int $id
      *
-     * @return CustomerGroup|\PHPUnit_Framework_MockObject_MockObject
+     * @return Website|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private function createWebsite(int $id)
+    {
+        $website = $this->createMock(Website::class);
+        $website
+            ->expects(static::any())
+            ->method('getId')
+            ->willReturn($id);
+
+        return $website;
+    }
+
+    /**
+     * @param int $id
+     *
+     * @return CustomerGroup|\PHPUnit\Framework\MockObject\MockObject
      */
     private function createCustomerGroup(int $id)
     {

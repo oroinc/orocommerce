@@ -53,15 +53,15 @@ system_configuration:
                 label: oro.seo.system_configuration.fields.priority_page.label
         oro_seo.sitemap_cron_definition:
             data_type: string
-            type: choice
+            type: Symfony\Component\Form\Extension\Core\Type\ChoiceType
             search_type: choice
             priority: 500
             options:
                 label: oro.seo.system_configuration.fields.sitemap_cron_definition.label
                 choices:
-                    0 0 * * 0: oro.seo.system_configuration.fields.sitemap_cron_definition.choice.weekly.label
-                    0 0 * * *: oro.seo.system_configuration.fields.sitemap_cron_definition.choice.daily.label
-                    0 * * * *: oro.seo.system_configuration.fields.sitemap_cron_definition.choice.hourly.label
+                    oro.seo.system_configuration.fields.sitemap_cron_definition.choice.weekly.label: '0 0 * * 0'
+                    oro.seo.system_configuration.fields.sitemap_cron_definition.choice.daily.label: '0 0 * * *'
+                    oro.seo.system_configuration.fields.sitemap_cron_definition.choice.hourly.label: '0 * * * *'
 
     tree:
         system_configuration:

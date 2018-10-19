@@ -16,6 +16,13 @@ trait SlugAwareTrait
      *      cascade={"ALL"},
      *      orphanRemoval=true
      * )
+     * @Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "excluded"=true
+     *          }
+     *      }
+     * )
      */
     protected $slugs;
 

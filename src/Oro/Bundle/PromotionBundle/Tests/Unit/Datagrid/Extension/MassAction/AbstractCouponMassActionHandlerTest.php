@@ -20,22 +20,22 @@ use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Component\Exception\UnexpectedTypeException;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class AbstractCouponMassActionHandlerTest extends \PHPUnit_Framework_TestCase
+class AbstractCouponMassActionHandlerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $doctrineHelper;
 
     /**
-     * @var AclHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var AclHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $aclHelper;
 
     /**
-     * @var MassActionHandlerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var MassActionHandlerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $handler;
 
@@ -56,12 +56,12 @@ class AbstractCouponMassActionHandlerTest extends \PHPUnit_Framework_TestCase
 
     public function testExecuteForNonOrmDataSources()
     {
-        /** @var MassActionHandlerArgs|\PHPUnit_Framework_MockObject_MockObject $args */
+        /** @var MassActionHandlerArgs|\PHPUnit\Framework\MockObject\MockObject $args */
         $args = $this->createMock(MassActionHandlerArgs::class);
-        /** @var DatagridInterface|\PHPUnit_Framework_MockObject_MockObject $datagrid */
+        /** @var DatagridInterface|\PHPUnit\Framework\MockObject\MockObject $datagrid */
         $datagrid = $this->createMock(DatagridInterface::class);
 
-        /** @var DatasourceInterface|\PHPUnit_Framework_MockObject_MockObject $datasource */
+        /** @var DatasourceInterface|\PHPUnit\Framework\MockObject\MockObject $datasource */
         $datasource = $this->createMock(DatasourceInterface::class);
         $datagrid->expects($this->once())
             ->method('getDatasource')
@@ -81,18 +81,18 @@ class AbstractCouponMassActionHandlerTest extends \PHPUnit_Framework_TestCase
      */
     public function testHandle(array $iterateData, array $coupons)
     {
-        /** @var MassActionHandlerArgs|\PHPUnit_Framework_MockObject_MockObject $args */
+        /** @var MassActionHandlerArgs|\PHPUnit\Framework\MockObject\MockObject $args */
         $args = $this->createMock(MassActionHandlerArgs::class);
-        /** @var DatagridInterface|\PHPUnit_Framework_MockObject_MockObject $datagrid */
+        /** @var DatagridInterface|\PHPUnit\Framework\MockObject\MockObject $datagrid */
         $datagrid = $this->createMock(DatagridInterface::class);
 
-        /** @var OrmDatasource|\PHPUnit_Framework_MockObject_MockObject $datasource */
+        /** @var OrmDatasource|\PHPUnit\Framework\MockObject\MockObject $datasource */
         $datasource = $this->createMock(OrmDatasource::class);
         $datagrid->expects($this->once())
             ->method('getDatasource')
             ->willReturn($datasource);
 
-        /** @var DatagridConfiguration|\PHPUnit_Framework_MockObject_MockObject $config */
+        /** @var DatagridConfiguration|\PHPUnit\Framework\MockObject\MockObject $config */
         $config = $this->createMock(DatagridConfiguration::class);
         $config->expects($this->once())
             ->method('isDatasourceSkipAclApply')
@@ -105,13 +105,13 @@ class AbstractCouponMassActionHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('getDatagrid')
             ->willReturn($datagrid);
 
-        /** @var QueryBuilder|\PHPUnit_Framework_MockObject_MockObject $queryBuilder */
+        /** @var QueryBuilder|\PHPUnit\Framework\MockObject\MockObject $queryBuilder */
         $queryBuilder = $this->createMock(QueryBuilder::class);
         $this->aclHelper->expects($this->once())
             ->method('apply')
             ->with($queryBuilder, 'EDIT');
 
-        /** @var AbstractQuery|\PHPUnit_Framework_MockObject_MockObject $query */
+        /** @var AbstractQuery|\PHPUnit\Framework\MockObject\MockObject $query */
         $query = $this->createMock(AbstractQuery::class);
         $query->expects($this->once())
             ->method('iterate')
@@ -125,13 +125,13 @@ class AbstractCouponMassActionHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('getQueryBuilder')
             ->willReturn($queryBuilder);
 
-        /** @var EntityManager|\PHPUnit_Framework_MockObject_MockObject $em */
+        /** @var EntityManager|\PHPUnit\Framework\MockObject\MockObject $em */
         $em = $this->createMock(EntityManager::class);
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityManagerForClass')
             ->with(Coupon::class)
             ->willReturn($em);
-        /** @var EntityRepository|\PHPUnit_Framework_MockObject_MockObject $repo */
+        /** @var EntityRepository|\PHPUnit\Framework\MockObject\MockObject $repo */
         $repo = $this->createMock(EntityRepository::class);
         $repo->expects($this->any())
             ->method('find')
@@ -169,8 +169,8 @@ class AbstractCouponMassActionHandlerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param array|\PHPUnit_Framework_MockObject_MockObject|Coupon $coupons
-     * @param MassActionHandlerArgs|\PHPUnit_Framework_MockObject_MockObject $args
+     * @param array|\PHPUnit\Framework\MockObject\MockObject|Coupon $coupons
+     * @param MassActionHandlerArgs|\PHPUnit\Framework\MockObject\MockObject $args
      */
     protected function assertExecuteCalled(array $coupons, MassActionHandlerArgs $args)
     {
@@ -195,7 +195,7 @@ class AbstractCouponMassActionHandlerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     private function getCouponMock($id)
     {

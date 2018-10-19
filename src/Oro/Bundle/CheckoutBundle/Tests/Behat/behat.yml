@@ -14,9 +14,16 @@ oro_behat_extension:
         - OroCustomerBundle::CustomerUserContext
         - OroCustomerBundle::FrontendGridContext
         - OroCheckoutBundle::FeatureContext
+        - OroProductBundle::QuickOrderFormContext
         - OroOrderBundle::OrderContext
         - OroCustomerBundle::ACLContext
         - OroProductBundle::FeatureContext
+        - OroProductBundle::QuickOrderFormContext
+        - OroLocaleBundle::LocalizationContext
+        - OroFrontendLocalizationBundle::LocalizationSwitcherContext
+        - OroDataGridBundle::GridContext
+        - OroUIBundle::DatepickerContext
+        - OroEmailBundle::EmailContext
       paths:
         - '@OroCheckoutBundle/Tests/Behat/Features'
 
@@ -66,7 +73,7 @@ oro_behat_extension:
 
     Do not ship later than Datepicker:
       selector: 'form[name="oro_workflow_transition"] input.hasDatepicker'
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\DateTimePicker
 
     Checkout Totals:
       class: Oro\Bundle\CheckoutBundle\Tests\Behat\Element\CheckoutPage
@@ -91,6 +98,10 @@ oro_behat_extension:
     OpenOrdersGridFilterItem:
       selector: 'div.filter-items-hint span'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilterItem
+
+    OpenOrdersGridFilterDateTimeItem:
+      selector: 'div.filter-item'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilterDateTimeItem
 
     PastOrdersGrid:
       selector: 'div[data-page-component-name="frontend-orders-grid"]'
@@ -150,6 +161,8 @@ oro_behat_extension:
           Billing Address: 'oro_workflow_transition[billing_address][customerAddress]'
           First Name: 'oro_workflow_transition[billing_address][firstName]'
           Last Name: 'oro_workflow_transition[billing_address][lastName]'
+          Organization: 'oro_workflow_transition[billing_address][organization]'
+          Email: 'oro_workflow_transition[email]'
           Email: 'oro_workflow_transition[visitor_email]'
           Street: 'oro_workflow_transition[billing_address][street]'
           City: 'oro_workflow_transition[billing_address][city]'
@@ -158,6 +171,9 @@ oro_behat_extension:
           Zip/Postal Code: 'oro_workflow_transition[billing_address][postalCode]'
           Ship to this address: 'oro_workflow_transition[ship_to_billing_address]'
 
+    Shipping Country:
+      selector: 'select[name="oro_workflow_transition[shipping_address][country]"]'
+
     Shipping Information Form:
       selector: 'form[name="oro_workflow_transition"]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
@@ -165,6 +181,7 @@ oro_behat_extension:
         mapping:
           First Name: 'oro_workflow_transition[shipping_address][firstName]'
           Last Name: 'oro_workflow_transition[shipping_address][lastName]'
+          Organization: 'oro_workflow_transition[shipping_address][organization]'
           Street: 'oro_workflow_transition[shipping_address][street]'
           City: 'oro_workflow_transition[shipping_address][city]'
           Country: 'oro_workflow_transition[shipping_address][country]'
@@ -183,5 +200,94 @@ oro_behat_extension:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
     Submit Order:
-        selector: '.order-checkout-widget button:contains("Submit Order")'
-        class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector: '.order-checkout-widget button:contains("Submit Order")'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+
+    Customer Users List button:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        locator: '//div[contains(@id,"oro_sale_quote_customerUser-uid")]/div/button[@class="add-on btn entity-select-btn"]'
+        type: xpath
+
+    Product Line Item Input Field:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        locator: '//input[contains(@id,"oro_product_quick_add_products_1_productDisplayName-uid")]'
+        type: xpath
+
+    Qty Line Item Input Field:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        locator: '//input[contains(@id,"oro_product_quick_add_products_1_productQuantity-uid")]'
+        type: xpath
+
+    Paste Your Order Input Field:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        locator: '//textarea[contains(@id,"oro_product_quick_add_copy_paste_copyPaste-uid")]'
+        type: xpath
+
+    Assigned To Input Field:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        locator: '//input[contains(@id,"oro_rfp_frontend_request_assignedCustomerUsers-uid")]'
+        type: xpath
+
+    Quick Order Import Validation:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Table
+      selector: 'table.quick_add_validation_items'
+
+    Customers Address Book Paginator:
+      selector: 'div[data-page-component-name="frontend-customer-customer-address-grid"] div.oro-items-counter'
+      class: Oro\Bundle\FrontendBundle\Tests\Behat\Element\GridToolbarPaginator
+
+    Customers Address Book Grid:
+      selector: 'div[data-page-component-name="frontend-customer-customer-address-grid"]'
+      class: Oro\Bundle\FrontendBundle\Tests\Behat\Element\Grid
+      options:
+        mapping:
+          GridToolbarPaginator: 'Customers Address Book Paginator'
+
+    Customers Address Book GridFilters:
+      selector: 'div[data-page-component-name="frontend-customer-customer-address-grid"] div.filter-box'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilters
+
+    Customers Address Book GridFiltersState:
+      selector: 'div[data-page-component-name="frontend-customer-customer-address-grid"] div.filters-state'
+
+    Customers Address Book GridToolbarActions:
+      selector: 'div[data-page-component-name="frontend-customer-customer-address-grid"] div.toolbar div.actions-panel'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridToolbarActions
+
+    Customers Address Book GridFilterItem:
+      selector: 'div.filter-items-hint span'
+      class: Oro\Bundle\FrontendBundle\Tests\Behat\Element\GridFilterItem
+
+    Customer Users Address Book Paginator:
+      selector: 'div[data-page-component-name="frontend-customer-customer-user-address-grid"] div.oro-items-counter'
+      class: Oro\Bundle\FrontendBundle\Tests\Behat\Element\GridToolbarPaginator
+
+    Customer Users Address Book Grid:
+      selector: 'div[data-page-component-name="frontend-customer-customer-user-address-grid"]'
+      class: Oro\Bundle\FrontendBundle\Tests\Behat\Element\Grid
+      options:
+        mapping:
+          GridToolbarPaginator: 'Customer Users Address Book Paginator'
+
+    Customer Users Address Book GridFilters:
+      selector: 'div[data-page-component-name="frontend-customer-customer-user-address-grid"] div.filter-box'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilters
+
+    Customer Users Address Book GridFiltersState:
+      selector: 'div[data-page-component-name="frontend-customer-customer-user-address-grid"] div.filters-state'
+
+    Customer Users Address Book GridToolbarActions:
+      selector: 'div[data-page-component-name="frontend-customer-customer-user-address-grid"] div.toolbar div.actions-panel'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridToolbarActions
+
+    Customer Users Address Book GridFilterItem:
+      selector: 'div.filter-items-hint span'
+      class: Oro\Bundle\FrontendBundle\Tests\Behat\Element\GridFilterItem
+
+    Permissions Dropdown Items:
+      selector: '.dropdown-menu__permissions-item a'

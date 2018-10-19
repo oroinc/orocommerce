@@ -30,6 +30,13 @@ define(function(require) {
         /**
          * @inheritDoc
          */
+        constructor: function ShoppingListCreateOrderButtonComponent() {
+            ShoppingListCreateOrderButtonComponent.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
             this.hasEmptyMatrix = options.hasEmptyMatrix;
             return ShoppingListCreateOrderButtonComponent.__super__.initialize.apply(this, arguments);

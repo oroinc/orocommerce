@@ -96,7 +96,7 @@ class QuickAddProcessorTest extends AbstractQuickAddProcessorTest
             ->with($isFailedMessage ? 'error' : 'success', $message)
             ->willReturn($flashBag);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|Session $session */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|Session $session */
         $session = $this->getMockBuilder('Symfony\Component\HttpFoundation\Session\Session')
             ->disableOriginalConstructor()
             ->getMock();

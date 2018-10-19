@@ -1,4 +1,4 @@
-// @theme: default;
+/* @theme: default; */
 
 .quick-order-import {
   float: $quick-order-import-float;
@@ -27,21 +27,14 @@
 
   &__link {
     position: relative;
-    z-index: 3;
+    z-index: 2;
 
     display: inline-block;
     margin: $quick-order-import-link-margin;
   }
 
-  .uploader { //platform styles override
-    position: static;
-
-    display: block;
-    margin: 0 0 10px;
-
-    .action {
-      background: $quick-order-import-uploader-action-background;
-    }
+  &__content {
+    margin-bottom: $offset-y-m;
   }
 
   .filename {

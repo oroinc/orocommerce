@@ -2,8 +2,6 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Form\EventSubscriber;
 
-use Oro\Bundle\AddressBundle\Form\Type\CountryType;
-use Oro\Bundle\AddressBundle\Form\Type\RegionType;
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\CurrencyBundle\Provider\CurrencyProviderInterface;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
@@ -11,7 +9,6 @@ use Oro\Bundle\CurrencyBundle\Utils\CurrencyNameHelper;
 use Oro\Bundle\FormBundle\Form\Extension\AdditionalAttrExtension;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\FormBundle\Form\Type\OroChoiceType;
-use Oro\Bundle\FormBundle\Form\Type\Select2Type;
 use Oro\Bundle\FormBundle\Tests\Unit\Stub\StripTagsExtensionStub;
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 use Oro\Bundle\RuleBundle\Validator\Constraints\ExpressionLanguageSyntax;
@@ -36,9 +33,10 @@ use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
 use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
 use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Asset\Packages as AssetHelper;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Translation\TranslatorInterface;
 
 abstract class AbstractConfigSubscriberTest extends FormIntegrationTestCase
@@ -156,20 +154,20 @@ abstract class AbstractConfigSubscriberTest extends FormIntegrationTestCase
             ->method('getRoundType')
             ->willReturn(RoundingServiceInterface::ROUND_HALF_UP);
         
-        /** @var \PHPUnit_Framework_MockObject_MockObject|CurrencyProviderInterface */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|CurrencyProviderInterface */
         $currencyProvider = $this->getMockBuilder(CurrencyProviderInterface::class)
             ->disableOriginalConstructor()->getMockForAbstractClass();
         $currencyProvider->expects($this->any())
             ->method('getCurrencyList')
             ->willReturn(['USD']);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|TranslatableEntityType */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|TranslatableEntityType */
         $translatableEntity = $this->getMockBuilder(TranslatableEntityType::class)
             ->setMethods(['configureOptions', 'buildForm'])
             ->disableOriginalConstructor()
             ->getMock();
         
-        /** @var \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|TranslatorInterface */
         $translator = $this->createMock(TranslatorInterface::class);
         $translator->expects(static::any())
             ->method('trans')
@@ -177,13 +175,16 @@ abstract class AbstractConfigSubscriberTest extends FormIntegrationTestCase
                 return $message.'_translated';
             }));
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|ShippingMethodChoicesProviderInterface */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|ShippingMethodChoicesProviderInterface */
         $choicesProvider = $this->createMock(ShippingMethodChoicesProviderInterface::class);
+        $choicesProvider->expects($this->any())
+            ->method('getMethods')
+            ->willReturn([]);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|ShippingMethodIconProviderInterface */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|ShippingMethodIconProviderInterface */
         $iconProvider = $this->createMock(ShippingMethodIconProviderInterface::class);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|AssetHelper */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|AssetHelper */
         $assetHelper = $this->createMock(AssetHelper::class);
 
         return [
@@ -197,18 +198,14 @@ abstract class AbstractConfigSubscriberTest extends FormIntegrationTestCase
                     => new ShippingMethodConfigType($this->methodConfigSubscriber, $this->shippingMethodProvider),
                     ShippingMethodTypeConfigCollectionType::class =>
                         new ShippingMethodTypeConfigCollectionType($this->methodTypeConfigCollectionSubscriber),
-                    CurrencySelectionType::NAME => new CurrencySelectionType(
+                    CurrencySelectionType::class => new CurrencySelectionType(
                         $currencyProvider,
                         $this->getMockBuilder(LocaleSettings::class)->disableOriginalConstructor()->getMock(),
                         $this->getMockBuilder(CurrencyNameHelper::class)->disableOriginalConstructor()->getMock()
                     ),
-                    CollectionType::NAME => new CollectionType(),
-                    ShippingMethodsConfigsRuleDestinationType::NAME => new ShippingMethodsConfigsRuleDestinationType(
+                    CollectionType::class => new CollectionType(),
+                    ShippingMethodsConfigsRuleDestinationType::class => new ShippingMethodsConfigsRuleDestinationType(
                         new AddressCountryAndRegionSubscriberStub()
-                    ),
-                    'oro_select2_choice' => new Select2Type(
-                        'choice',
-                        'oro_select2_choice'
                     ),
                     OroChoiceType::class => new OroChoiceType(),
                     ShippingMethodSelectType::class => new ShippingMethodSelectType(
@@ -216,15 +213,9 @@ abstract class AbstractConfigSubscriberTest extends FormIntegrationTestCase
                         $iconProvider,
                         $assetHelper
                     ),
-                    'oro_country' => new CountryType(),
-                    'oro_select2_translatable_entity' => new Select2Type(
-                        'translatable_entity',
-                        'oro_select2_translatable_entity'
-                    ),
-                    'translatable_entity' => $translatableEntity,
-                    'oro_region' => new RegionType(),
+                    TranslatableEntityType::class => $translatableEntity
                 ],
-                ['form' => [
+                [FormType::class => [
                     new AdditionalAttrExtension(),
                     new StripTagsExtensionStub($this->createMock(HtmlTagHelper::class))
                 ]]

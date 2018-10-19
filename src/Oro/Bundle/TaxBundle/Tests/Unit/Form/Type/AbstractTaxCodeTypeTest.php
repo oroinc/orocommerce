@@ -4,6 +4,7 @@ namespace Oro\Bundle\TaxBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\TaxBundle\Form\Type\AbstractTaxCodeType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 
 abstract class AbstractTaxCodeTypeTest extends FormIntegrationTestCase
 {
@@ -14,10 +15,24 @@ abstract class AbstractTaxCodeTypeTest extends FormIntegrationTestCase
 
     protected function setUp()
     {
-        parent::setUp();
-
         $this->formType = $this->createTaxCodeType();
         $this->formType->setDataClass($this->getDataClass());
+        parent::setUp();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getExtensions()
+    {
+        return [
+            new PreloadedExtension(
+                [
+                    get_class($this->formType) => $this->formType
+                ],
+                []
+            ),
+        ];
     }
 
     protected function tearDown()
@@ -40,7 +55,7 @@ abstract class AbstractTaxCodeTypeTest extends FormIntegrationTestCase
         array $submittedData,
         $expectedData
     ) {
-        $form = $this->factory->create($this->formType, $defaultData);
+        $form = $this->factory->create(get_class($this->formType), $defaultData);
 
         $this->assertTrue($form->has('code'));
         $this->assertTrue($form->has('description'));
@@ -93,11 +108,6 @@ abstract class AbstractTaxCodeTypeTest extends FormIntegrationTestCase
             ],
         ];
     }
-
-    /**
-     * Form type name test
-     */
-    abstract public function testGetName();
 
     /**
      * Return data class string

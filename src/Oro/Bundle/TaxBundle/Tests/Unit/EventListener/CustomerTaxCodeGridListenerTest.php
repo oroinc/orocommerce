@@ -6,7 +6,6 @@ use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\TaxBundle\Entity\AbstractTaxCode;
-use Oro\Bundle\TaxBundle\Entity\CustomerTaxCode;
 use Oro\Bundle\TaxBundle\EventListener\CustomerTaxCodeGridListener;
 
 class CustomerTaxCodeGridListenerTest extends AbstractTaxCodeGridListenerTest
@@ -16,7 +15,7 @@ class CustomerTaxCodeGridListenerTest extends AbstractTaxCodeGridListenerTest
         $gridConfig = DatagridConfiguration::create(['name' => 'customers-grid']);
         $gridConfig->offsetSetByPath('[source][query][from]', [['alias' => 'customers']]);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $dataGrid */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|DatagridInterface $dataGrid */
         $dataGrid = $this->createMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
         $event = new BuildBefore($dataGrid, $gridConfig);
 
@@ -59,7 +58,7 @@ class CustomerTaxCodeGridListenerTest extends AbstractTaxCodeGridListenerTest
                                 'field_options' => [
                                     'multiple' => false,
                                     'class' => AbstractTaxCode::class,
-                                    'property' => 'code',
+                                    'choice_label' => 'code',
                                 ]
                             ],
                         ]

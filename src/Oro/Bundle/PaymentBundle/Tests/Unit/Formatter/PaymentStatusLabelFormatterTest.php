@@ -6,7 +6,7 @@ use Oro\Bundle\PaymentBundle\Formatter\PaymentStatusLabelFormatter;
 use Oro\Bundle\PaymentBundle\Provider\PaymentStatusProvider;
 use Symfony\Component\Translation\TranslatorInterface;
 
-class PaymentStatusLabelFormatterTest extends \PHPUnit_Framework_TestCase
+class PaymentStatusLabelFormatterTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var PaymentStatusLabelFormatter
@@ -14,7 +14,7 @@ class PaymentStatusLabelFormatterTest extends \PHPUnit_Framework_TestCase
     protected $formatter;
 
     /**
-     * @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $translator;
 
@@ -38,11 +38,11 @@ class PaymentStatusLabelFormatterTest extends \PHPUnit_Framework_TestCase
     public function testGetAvailableStatuses()
     {
         $expected = [
-            PaymentStatusProvider::FULL => 'full',
-            PaymentStatusProvider::AUTHORIZED => 'authorized',
-            PaymentStatusProvider::PENDING => 'pending',
-            PaymentStatusProvider::DECLINED => 'declined',
-            PaymentStatusProvider::PARTIALLY => 'partial'
+            'full' => PaymentStatusProvider::FULL,
+            'authorized' => PaymentStatusProvider::AUTHORIZED,
+            'pending' => PaymentStatusProvider::PENDING,
+            'declined' => PaymentStatusProvider::DECLINED,
+            'partial' => PaymentStatusProvider::PARTIALLY
         ];
         $this->translator->expects($this->exactly(5))
             ->method('trans')

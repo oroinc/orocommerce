@@ -147,6 +147,13 @@ define(function(require) {
         /**
          * @inheritDoc
          */
+        constructor: function LineItemView() {
+            LineItemView.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
             if (!this.model) {
                 this.model = new BaseModel();

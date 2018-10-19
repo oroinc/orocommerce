@@ -8,15 +8,15 @@ use Oro\Bundle\SEOBundle\Layout\DataProvider\SeoDataProvider;
 use Oro\Bundle\SEOBundle\Layout\DataProvider\SeoTitleDataProvider;
 use Oro\Bundle\WebCatalogBundle\Layout\DataProvider\TitleDataProvider;
 
-class SeoTitleDataProviderTest extends \PHPUnit_Framework_TestCase
+class SeoTitleDataProviderTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var SeoDataProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var SeoDataProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $seoDataProvider;
 
     /**
-     * @var TitleDataProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var TitleDataProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $titleDataProvider;
 
@@ -96,5 +96,17 @@ class SeoTitleDataProviderTest extends \PHPUnit_Framework_TestCase
             ->method('getMetaInformation');
 
         $this->assertEquals($default, $this->seoTitleDataProvider->getTitle($default, null));
+    }
+
+    public function testGetNodeTitle()
+    {
+        $default = 'default';
+
+        $this->titleDataProvider->expects($this->once())
+            ->method('getNodeTitle')
+            ->with($default)
+            ->willReturn($default);
+
+        $this->assertEquals($default, $this->seoTitleDataProvider->getNodeTitle($default));
     }
 }

@@ -11,8 +11,9 @@ use Oro\Bundle\PromotionBundle\Form\Type\DiscountOptionsType;
 use Oro\Bundle\PromotionBundle\Form\Type\OrderDiscountOptionsType;
 use Oro\Bundle\TranslationBundle\Translation\Translator;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
-use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Validator\Validation;
 
 class OrderDiscountOptionsTypeTest extends FormIntegrationTestCase
@@ -40,7 +41,7 @@ class OrderDiscountOptionsTypeTest extends FormIntegrationTestCase
 
     public function testGetParent()
     {
-        $this->assertEquals(DiscountOptionsType::NAME, $this->formType->getParent());
+        $this->assertEquals(DiscountOptionsType::class, $this->formType->getParent());
     }
 
     /**
@@ -48,21 +49,21 @@ class OrderDiscountOptionsTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
-        /** @var ConfigProvider|\PHPUnit_Framework_MockObject_MockObject $configProvider */
+        /** @var ConfigProvider|\PHPUnit\Framework\MockObject\MockObject $configProvider */
         $configProvider = $this->createMock(ConfigProvider::class);
 
-        /** @var Translator|\PHPUnit_Framework_MockObject_MockObject $translator */
+        /** @var Translator|\PHPUnit\Framework\MockObject\MockObject $translator */
         $translator = $this->createMock(Translator::class);
 
         return [
             new PreloadedExtension(
                 [
-                    MultiCurrencyType::NAME => new MultiCurrencyType(),
-                    CurrencySelectionType::NAME => new CurrencySelectionTypeStub(),
-                    DiscountOptionsType::NAME => new DiscountOptionsType()
+                    MultiCurrencyType::class => new MultiCurrencyType(),
+                    CurrencySelectionType::class => new CurrencySelectionTypeStub(),
+                    DiscountOptionsType::class => new DiscountOptionsType()
                 ],
                 [
-                    'form' => [new TooltipFormExtension($configProvider, $translator)],
+                    FormType::class => [new TooltipFormExtension($configProvider, $translator)],
                 ]
             ),
             new ValidatorExtension(Validation::createValidator()),

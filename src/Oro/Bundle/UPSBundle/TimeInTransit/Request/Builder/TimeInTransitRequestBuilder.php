@@ -166,6 +166,7 @@ class TimeInTransitRequestBuilder implements TimeInTransitRequestBuilderInterfac
                         'StateProvinceCode' => $this->shipFromAddress->getRegionCode(),
                         'PostalCode' => (string)$this->shipFromAddress->getPostalCode(),
                         'CountryCode' => $this->shipFromAddress->getCountryIso2(),
+                        'City' => $this->shipFromAddress->getCity(),
                     ],
                 ],
                 'ShipTo' => [
@@ -173,6 +174,7 @@ class TimeInTransitRequestBuilder implements TimeInTransitRequestBuilderInterfac
                         'StateProvinceCode' => $this->shipToAddress->getRegionCode(),
                         'PostalCode' => (string)$this->shipToAddress->getPostalCode(),
                         'CountryCode' => $this->shipToAddress->getCountryIso2(),
+                        'City' => $this->shipToAddress->getCity(),
                     ],
                 ],
                 'Pickup' => [

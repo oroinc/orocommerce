@@ -5,9 +5,9 @@ namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Cache;
 use Oro\Bundle\WebsiteSearchBundle\Cache\ConfigurationCache;
 use Oro\Bundle\WebsiteSearchBundle\Loader\MappingConfigurationCacheLoader;
 
-class ConfigurationCacheTest extends \PHPUnit_Framework_TestCase
+class ConfigurationCacheTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var MappingConfigurationCacheLoader|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var MappingConfigurationCacheLoader|\PHPUnit\Framework\MockObject\MockObject */
     protected $configurationCacheLoader;
 
     /** @var ConfigurationCache */

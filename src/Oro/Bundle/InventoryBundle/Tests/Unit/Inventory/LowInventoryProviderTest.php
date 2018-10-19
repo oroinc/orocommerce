@@ -12,20 +12,20 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 
-class LowInventoryProviderTest extends \PHPUnit_Framework_TestCase
+class LowInventoryProviderTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var EntityFallbackResolver|\PHPUnit_Framework_MockObject_MockObject
+     * @var EntityFallbackResolver|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $entityFallbackResolver;
 
     /**
-     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $doctrineHelper;
 
     /**
-     * @var InventoryLevelRepository|\PHPUnit_Framework_MockObject_MockObject
+     * @var InventoryLevelRepository|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $inventoryLevelRepository;
 

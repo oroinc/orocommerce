@@ -33,15 +33,7 @@
                 </div>
             </div>
 
-            <div class="grid">
-                <div class="grid__row grid__row--offset-none">
-                    <div class="grid__column grid__column--6">
-                        {{ form_row(form.visitor_email, {'attr': {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.visitor.email'|trans}}) }}
-                    </div>
-                </div>
-            </div>
-
-            {{ address.address_form(form.billing_address, form.save_billing_address, hasCustomAddress) }}
+            {{ address.address_form(form.billing_address, form.save_billing_address, hasCustomAddress, form.email) }}
 
             {% set hideShipping = false %}
             {% if billingAddress %}

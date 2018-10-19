@@ -10,17 +10,17 @@ use Oro\Bundle\WebCatalogBundle\ContentNodeUtils\ContentNodeTreeResolverInterfac
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class ContentNodeTreeResolverFacadeTest extends \PHPUnit_Framework_TestCase
+class ContentNodeTreeResolverFacadeTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var ContentNodeTreeResolverInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ContentNodeTreeResolverInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $cachedResolver;
 
     /**
-     * @var ContentNodeTreeDumper|\PHPUnit_Framework_MockObject_MockObject
+     * @var ContentNodeTreeDumper|\PHPUnit\Framework\MockObject\MockObject
      */
     private $contentNodeTreeDumper;
 

@@ -4,7 +4,7 @@ namespace Oro\Bundle\RedirectBundle\Tests\Unit\Helper;
 
 use Oro\Bundle\RedirectBundle\Helper\UrlParameterHelper;
 
-class UrlParameterHelperTest extends \PHPUnit_Framework_TestCase
+class UrlParameterHelperTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @dataProvider paramProvider

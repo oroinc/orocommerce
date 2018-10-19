@@ -12,7 +12,7 @@ use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * Price Rule Editor Options Configurator
+ * Provides configuration data for PriceRule expression editor
  */
 class PriceRuleEditorOptionsConfigurator
 {

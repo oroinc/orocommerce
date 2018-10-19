@@ -110,7 +110,7 @@ class CategoryTypeTest extends WebTestCase
             ];
         }
         // submit form
-        $form = $this->formFactory->create(CategoryType::NAME, new Category());
+        $form = $this->formFactory->create(CategoryType::class, new Category());
         $form->submit($submitData);
         $this->assertTrue($form->isValid());
 
@@ -167,10 +167,10 @@ class CategoryTypeTest extends WebTestCase
         }
 
         // submit form
-        $form = $this->formFactory->create(CategoryType::NAME, new Category());
+        $form = $this->formFactory->create(CategoryType::class, new Category());
         $form->submit($submitData);
         $this->assertFalse($form->isValid());
-        $this->assertStringStartsWith('inventoryThreshold', $form->getErrorsAsString());
+        $this->assertStringStartsWith('inventoryThreshold', (string)$form->getErrors(true, false));
 
         $this->assertEquals(
             "ERROR: This value should not be blank.\n",

@@ -3,13 +3,16 @@
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\Form\Type;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Oro\Bundle\CronBundle\Form\Type\ScheduleIntervalsCollectionType;
 use Oro\Bundle\CronBundle\Tests\Unit\Form\Type\Stub\ScheduleIntervalsCollectionTypeStub;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\FormBundle\Form\Extension\TooltipFormExtension;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizedFallbackValueCollectionTypeStub;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Form\Type\ProductCollectionSegmentType;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductCollectionSegmentTypeStub;
 use Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
@@ -18,14 +21,15 @@ use Oro\Bundle\PromotionBundle\Form\Type\PromotionType;
 use Oro\Bundle\PromotionBundle\Tests\Unit\Entity\ScopeStub;
 use Oro\Bundle\PromotionBundle\Tests\Unit\Form\Type\Stub\ScopeCollectionTypeStub;
 use Oro\Bundle\RuleBundle\Entity\Rule;
-use Oro\Bundle\RuleBundle\Form\Type\RuleType;
+use Oro\Bundle\ScopeBundle\Form\Type\ScopeCollectionType;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Bundle\TranslationBundle\Translation\Translator;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
-use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Validation;
 
@@ -34,47 +38,31 @@ class PromotionTypeTest extends FormIntegrationTestCase
     use EntityTrait;
 
     /**
-     * @var PromotionType
-     */
-    private $type;
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function setUp()
-    {
-        parent::setUp();
-
-        $this->type = new PromotionType();
-    }
-
-    /**
      * @return array
      */
     protected function getExtensions()
     {
         $em = $this->createMock(EntityManagerInterface::class);
-        /** @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject $doctrineHelper */
+        /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject $doctrineHelper */
         $doctrineHelper = $this->createMock(DoctrineHelper::class);
         $doctrineHelper->expects($this->any())
             ->method('getEntityManagerForClass')
             ->with(Product::class, false)
             ->willReturn($em);
 
-        /** @var ConfigProvider|\PHPUnit_Framework_MockObject_MockObject $configProvider */
+        /** @var ConfigProvider|\PHPUnit\Framework\MockObject\MockObject $configProvider */
         $configProvider = $this->createMock(ConfigProvider::class);
-        /** @var Translator|\PHPUnit_Framework_MockObject_MockObject $translator */
+        /** @var Translator|\PHPUnit\Framework\MockObject\MockObject $translator */
         $translator = $this->createMock(Translator::class);
 
         return [
             new PreloadedExtension(
                 [
-                    new RuleType(),
-                    new ScheduleIntervalsCollectionTypeStub(),
-                    new ScopeCollectionTypeStub(),
-                    new LocalizedFallbackValueCollectionTypeStub(),
-                    new ProductCollectionSegmentTypeStub(),
-                    new EntityType(
+                    ScheduleIntervalsCollectionType::class => new ScheduleIntervalsCollectionTypeStub(),
+                    ScopeCollectionType::class => new ScopeCollectionTypeStub(),
+                    LocalizedFallbackValueCollectionType::class => new LocalizedFallbackValueCollectionTypeStub(),
+                    ProductCollectionSegmentType::class => new ProductCollectionSegmentTypeStub(),
+                    DiscountConfigurationType::class => new EntityType(
                         [
                             'order' => $this->getEntity(DiscountConfiguration::class, ['type' => 'order']),
                         ],
@@ -82,7 +70,7 @@ class PromotionTypeTest extends FormIntegrationTestCase
                     ),
                 ],
                 [
-                    'form' => [new TooltipFormExtension($configProvider, $translator)],
+                    FormType::class => [new TooltipFormExtension($configProvider, $translator)],
                 ]
             ),
             new ValidatorExtension(Validation::createValidator())
@@ -91,7 +79,7 @@ class PromotionTypeTest extends FormIntegrationTestCase
 
     public function testBuildForm()
     {
-        $form = $this->factory->create($this->type, null);
+        $form = $this->factory->create(PromotionType::class, null);
         $this->assertTrue($form->has('rule'));
         $this->assertTrue($form->has('useCoupons'));
         $this->assertTrue($form->has('discountConfiguration'));
@@ -110,7 +98,7 @@ class PromotionTypeTest extends FormIntegrationTestCase
      */
     public function testSubmit(Promotion $defaultData, array $submittedData, Promotion $expectedData)
     {
-        $form = $this->factory->create($this->type, $defaultData, []);
+        $form = $this->factory->create(PromotionType::class, $defaultData, []);
 
         $this->assertEquals($defaultData, $form->getData());
         $this->assertEquals($defaultData, $form->getViewData());
@@ -214,7 +202,7 @@ class PromotionTypeTest extends FormIntegrationTestCase
 
     public function testConfigureOptions()
     {
-        /** @var OptionsResolver|\PHPUnit_Framework_MockObject_MockObject $resolver */
+        /** @var OptionsResolver|\PHPUnit\Framework\MockObject\MockObject $resolver */
         $resolver = $this->createMock(OptionsResolver::class);
         $resolver->expects($this->once())
             ->method('setDefaults')
@@ -224,16 +212,13 @@ class PromotionTypeTest extends FormIntegrationTestCase
                 ]
             );
 
-        $this->type->configureOptions($resolver);
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals(PromotionType::NAME, $this->type->getName());
+        $type = new PromotionType();
+        $type->configureOptions($resolver);
     }
 
     public function testGetBlockPrefix()
     {
-        $this->assertEquals(PromotionType::NAME, $this->type->getBlockPrefix());
+        $type = new PromotionType();
+        $this->assertEquals(PromotionType::NAME, $type->getBlockPrefix());
     }
 }

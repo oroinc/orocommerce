@@ -3,19 +3,20 @@
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\ProductBundle\Entity\MeasureUnitInterface;
-use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
+use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Oro\Bundle\ShippingBundle\Form\Type\AbstractShippingOptionSelectType;
 use Oro\Bundle\ShippingBundle\Provider\MeasureUnitProvider;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as EntityTypeStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-use Symfony\Component\Form\PreloadedExtension;
+use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
 abstract class AbstractShippingOptionSelectTypeTest extends FormIntegrationTestCase
 {
-    /** @var \PHPUnit_Framework_MockObject_MockObject|MeasureUnitProvider */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|MeasureUnitProvider */
     protected $provider;
 
-    /** @var UnitLabelFormatter|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var UnitLabelFormatterInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $formatter;
 
     /** @var AbstractShippingOptionSelectType */
@@ -24,17 +25,14 @@ abstract class AbstractShippingOptionSelectTypeTest extends FormIntegrationTestC
     /** @var array */
     protected $units = ['lbs', 'kg', 'custom'];
 
-    protected function setUp()
+    protected function configureProvider()
     {
-        $this->provider = $this->getMockBuilder('Oro\Bundle\ShippingBundle\Provider\MeasureUnitProvider')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->provider = $this->createMock(MeasureUnitProvider::class);
+    }
 
-        $this->formatter = $this->getMockBuilder('Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatter')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        parent::setUp();
+    protected function configureFormatter()
+    {
+        $this->formatter = $this->createMock(UnitLabelFormatterInterface::class);
     }
 
     protected function tearDown()
@@ -51,7 +49,7 @@ abstract class AbstractShippingOptionSelectTypeTest extends FormIntegrationTestC
 
     public function testGetParent()
     {
-        $this->assertEquals('entity', $this->formType->getParent());
+        $this->assertEquals(EntityType::class, $this->formType->getParent());
     }
 
     public function testSetEntityClass()
@@ -95,7 +93,7 @@ abstract class AbstractShippingOptionSelectTypeTest extends FormIntegrationTestC
             $units = $customChoices;
         }
 
-        $form = $this->factory->create($this->formType, null, $inputOptions);
+        $form = $this->factory->create(get_class($this->formType), null, $inputOptions);
 
         $formConfig = $form->getConfig();
         foreach ($expectedOptions as $key => $value) {
@@ -172,7 +170,8 @@ abstract class AbstractShippingOptionSelectTypeTest extends FormIntegrationTestC
         return [
             new PreloadedExtension(
                 [
-                    'entity' => new EntityType($this->prepareChoices())
+                    $this->formType,
+                    EntityType::class => new EntityTypeStub($this->prepareChoices())
                 ],
                 []
             ),
@@ -195,12 +194,12 @@ abstract class AbstractShippingOptionSelectTypeTest extends FormIntegrationTestC
 
     /**
      * @param string $code
-     * @return MeasureUnitInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return MeasureUnitInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function createUnit($code)
     {
-        /** @var MeasureUnitInterface|\PHPUnit_Framework_MockObject_MockObject $unit */
-        $unit = $this->createMock('Oro\Bundle\ProductBundle\Entity\MeasureUnitInterface');
+        /** @var MeasureUnitInterface|\PHPUnit\Framework\MockObject\MockObject $unit */
+        $unit = $this->createMock(MeasureUnitInterface::class);
         $unit->expects($this->any())
             ->method('getCode')
             ->willReturn($code);

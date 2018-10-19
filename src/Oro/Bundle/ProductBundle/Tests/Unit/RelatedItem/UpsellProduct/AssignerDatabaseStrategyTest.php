@@ -13,26 +13,26 @@ use Oro\Bundle\ProductBundle\RelatedItem\UpsellProduct\UpsellProductConfigProvid
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class AssignerDatabaseStrategyTest extends \PHPUnit_Framework_TestCase
+class AssignerDatabaseStrategyTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /** @var AssignerDatabaseStrategy */
     protected $assigner;
 
-    /** @var UpsellProductConfigProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var UpsellProductConfigProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $configProvider;
 
-    /** @var UnitOfWork|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var UnitOfWork|\PHPUnit\Framework\MockObject\MockObject */
     protected $unitOfWork;
 
-    /** @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $doctrineHelper;
 
-    /** @var EntityManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var EntityManager|\PHPUnit\Framework\MockObject\MockObject */
     protected $entityManager;
 
-    /** @var UpsellProductRepository|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var UpsellProductRepository|\PHPUnit\Framework\MockObject\MockObject */
     protected $upsellProductRepository;
 
     protected function setUp()
@@ -133,6 +133,15 @@ class AssignerDatabaseStrategyTest extends \PHPUnit_Framework_TestCase
         $this->assigner->removeRelations($productFrom, [$productTo]);
     }
 
+    public function testNothingHappensWhenTryToRemoveNoElements()
+    {
+        $this->noRelationShouldBeRemoved();
+        $this->doctrineHelper->expects($this->never())
+            ->method($this->anything());
+
+        $this->assigner->removeRelations(new Product(), []);
+    }
+
     public function testThrowExceptionWhenTryToExceedRelationLimitForAProduct()
     {
         $productFrom = new Product();
@@ -214,6 +223,12 @@ class AssignerDatabaseStrategyTest extends \PHPUnit_Framework_TestCase
     private function newRelationShouldNotBePersisted()
     {
         $this->entityManager->expects($this->never())->method('persist');
+        $this->entityManager->expects($this->never())->method('flush');
+    }
+
+    private function noRelationShouldBeRemoved()
+    {
+        $this->entityManager->expects($this->never())->method('remove');
         $this->entityManager->expects($this->never())->method('flush');
     }
 

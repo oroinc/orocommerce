@@ -2,6 +2,9 @@
 
 namespace Oro\Bundle\ProductBundle\Expression\Autocomplete;
 
+/**
+ * Defines the interface for AutocompleteFieldsProvider functionality
+ */
 interface AutocompleteFieldsProviderInterface
 {
     const TYPE_RELATION = 'relation';

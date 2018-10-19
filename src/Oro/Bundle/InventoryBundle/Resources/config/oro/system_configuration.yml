@@ -14,49 +14,49 @@ system_configuration:
     fields:
         oro_inventory.manage_inventory:
             data_type: boolean
-            type: choice
+            type: Symfony\Component\Form\Extension\Core\Type\ChoiceType
             search_type: choice
             options:
                 label: oro.inventory.system_configuration.fields.manage_inventory.label
                 choice_translation_domain: messages
                 choices:
-                    false: oro.inventory.manage_inventory.choice.false
-                    true: oro.inventory.manage_inventory.choice.true
+                    oro.inventory.manage_inventory.choice.false: 0
+                    oro.inventory.manage_inventory.choice.true: 1
         oro_inventory.highlight_low_inventory:
             data_type: boolean
-            type: choice
+            type: Symfony\Component\Form\Extension\Core\Type\ChoiceType
             search_type: choice
             options:
                 tooltip: oro.inventory.system_configuration.fields.highlight_low_inventory.tooltip
                 label: oro.inventory.system_configuration.fields.highlight_low_inventory.label
                 choice_translation_domain: messages
                 choices:
-                    false: oro.inventory.highlight_low_inventory.choice.false
-                    true: oro.inventory.highlight_low_inventory.choice.true
+                    oro.inventory.highlight_low_inventory.choice.false: 0
+                    oro.inventory.highlight_low_inventory.choice.true: 1
         oro_inventory.backorders:
             data_type: boolean
-            type: choice
+            type: Symfony\Component\Form\Extension\Core\Type\ChoiceType
             search_type: choice
             options:
                 label: oro.inventory.system_configuration.fields.backorders.label
                 choice_translation_domain: messages
                 choices:
-                    false: oro.inventory.backorders.choice.false
-                    true: oro.inventory.backorders.choice.true
+                    oro.inventory.backorders.choice.false: 0
+                    oro.inventory.backorders.choice.true: 1
         oro_inventory.decrement_inventory:
             data_type: boolean
-            type: choice
+            type: Symfony\Component\Form\Extension\Core\Type\ChoiceType
             search_type: choice
             options:
                 tooltip: oro.inventory.system_configuration.fields.decrement_inventory.tooltip
                 label: oro.inventory.system_configuration.fields.decrement_inventory.label
                 choice_translation_domain: messages
                 choices:
-                    false: oro.inventory.decrement_inventory.choice.false
-                    true: oro.inventory.decrement_inventory.choice.true
+                    oro.inventory.decrement_inventory.choice.false: 0
+                    oro.inventory.decrement_inventory.choice.true: 1
         oro_inventory.inventory_threshold:
             data_type: decimal
-            type: number
+            type: Symfony\Component\Form\Extension\Core\Type\NumberType
             search_type: text
             options:
                 label: oro.inventory.system_configuration.fields.inventory_threshold.label
@@ -67,7 +67,7 @@ system_configuration:
                     - Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
         oro_inventory.low_inventory_threshold:
             data_type: decimal
-            type: number
+            type: Symfony\Component\Form\Extension\Core\Type\NumberType
             search_type: text
             options:
                 tooltip: oro.inventory.system_configuration.fields.low_inventory_threshold.tooltip
@@ -79,7 +79,7 @@ system_configuration:
                     - Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
         oro_inventory.minimum_quantity_to_order:
             data_type: decimal
-            type: number
+            type: Symfony\Component\Form\Extension\Core\Type\NumberType
             search_type: text
             priority: 10
             options:
@@ -90,7 +90,7 @@ system_configuration:
                     - Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
         oro_inventory.maximum_quantity_to_order:
             data_type: decimal
-            type: number
+            type: Symfony\Component\Form\Extension\Core\Type\NumberType
             search_type: text
             priority: 5
             options:

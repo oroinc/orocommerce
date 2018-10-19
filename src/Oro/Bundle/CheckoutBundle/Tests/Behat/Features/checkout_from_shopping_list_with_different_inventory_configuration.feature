@@ -21,7 +21,7 @@ Feature: Checkout from Shopping List with different Inventory configuration
   Scenario: Create order from Shopping List 1 with Visibility validation error with RFP enabled
     Given I operate as the Buyer
     When I open page with shopping list List 1
-    And I press "Create Order"
+    And I click "Create Order"
     Then I should see "No products can be added to this order. Please create an RFQ to request price." flash message
 
   Scenario: Changing Inventory AllowedStatuses for RFQ
@@ -37,6 +37,6 @@ Feature: Checkout from Shopping List with different Inventory configuration
   Scenario: Create order from Shopping List 1 with Visibility validation error with RFQ enabled
     Given I operate as the Buyer
     When I open page with shopping list List 1
-    And I press "Create Order"
+    And I click "Create Order"
     Then I should see "No products can be added to this order." flash message
     And I should not see "Please create an RFQ to request price."

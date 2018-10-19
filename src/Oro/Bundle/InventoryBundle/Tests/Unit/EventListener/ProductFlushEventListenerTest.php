@@ -14,15 +14,15 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 /**
  * @group CommunityEdition
  */
-class ProductFlushEventListenerTest extends \PHPUnit_Framework_TestCase
+class ProductFlushEventListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var InventoryManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var InventoryManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $inventoryManager;
 
     /**
-     * @var EntityManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var EntityManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $entityManager;
 

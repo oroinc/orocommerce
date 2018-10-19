@@ -8,7 +8,7 @@ Feature: Export of Coupons codes
   Scenario: Export Coupon Codes
     Given I login as administrator
     When I go to Marketing/Promotions/Coupons
-    When I press "Export"
+    When I click "Export"
     Then I should see "Export started successfully. You will receive email notification upon completion." flash message
     And Exported file for "Coupon" contains the following data:
       | Coupon Code | Enabled | Uses per Coupon | Uses per Person | Valid From          | Valid Until         | Promotion Name           | Owner Name          |

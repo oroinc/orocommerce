@@ -10,7 +10,7 @@ use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-class AppliedPromotionDataTest extends \PHPUnit_Framework_TestCase
+class AppliedPromotionDataTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 

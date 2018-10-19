@@ -5,7 +5,7 @@ namespace Oro\Bundle\SaleBundle\Tests\Unit\Formatter;
 use Oro\Bundle\SaleBundle\Formatter\QuoteProductOfferFormatter;
 use Symfony\Component\Translation\TranslatorInterface;
 
-class QuoteProductOfferFormatterTest extends \PHPUnit_Framework_TestCase
+class QuoteProductOfferFormatterTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var QuoteProductOfferFormatter
@@ -13,7 +13,7 @@ class QuoteProductOfferFormatterTest extends \PHPUnit_Framework_TestCase
     protected $formatter;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface
+     * @var \PHPUnit\Framework\MockObject\MockObject|TranslatorInterface
      */
     protected $translator;
 

@@ -7,11 +7,11 @@ use Oro\Bundle\PaymentBundle\EventListener\AbstractSurchargeListener;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
 
-abstract class AbstractSurchargeListenerTest extends \PHPUnit_Framework_TestCase
+abstract class AbstractSurchargeListenerTest extends \PHPUnit\Framework\TestCase
 {
     const AMOUNT = 100;
 
-    /** @var SubtotalProviderInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var SubtotalProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $provider;
 
     /**

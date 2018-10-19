@@ -12,7 +12,7 @@ use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
 class ShippingFiltrationServiceTest extends AbstractSkippableFiltrationServiceTest
 {
     /**
-     * @var RuleFiltrationServiceInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var RuleFiltrationServiceInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $filtrationService;
 

@@ -34,7 +34,7 @@ class ProductDecrementQuantityFormExtension extends AbstractTypeExtension
 
         $builder->add(
             'decrementQuantity',
-            EntityFieldFallbackValueType::NAME,
+            EntityFieldFallbackValueType::class,
             [
                 'label' => 'oro.inventory.decrement_inventory.label',
             ]

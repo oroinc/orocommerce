@@ -7,7 +7,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
 
-class CheckoutStateDiffCompilerPassTest extends \PHPUnit_Framework_TestCase
+class CheckoutStateDiffCompilerPassTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var CheckoutStateDiffCompilerPass
@@ -15,12 +15,12 @@ class CheckoutStateDiffCompilerPassTest extends \PHPUnit_Framework_TestCase
     protected $compilerPass;
 
     /**
-     * @var ContainerBuilder|\PHPUnit_Framework_MockObject_MockObject
+     * @var ContainerBuilder|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $containerBuilder;
 
     /**
-     * @var Definition|\PHPUnit_Framework_MockObject_MockObject
+     * @var Definition|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $definition;
 

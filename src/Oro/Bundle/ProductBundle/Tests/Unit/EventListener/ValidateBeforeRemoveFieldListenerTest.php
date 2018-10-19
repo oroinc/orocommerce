@@ -11,18 +11,18 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\EventListener\ValidateBeforeRemoveFieldListener;
 use Symfony\Component\Translation\TranslatorInterface;
 
-class ValidateBeforeRemoveFieldListenerTest extends \PHPUnit_Framework_TestCase
+class ValidateBeforeRemoveFieldListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $doctrineHelper;
 
-    /** @var EntityRepository|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var EntityRepository|\PHPUnit\Framework\MockObject\MockObject */
     private $entityRepository;
 
     /** @var ValidateBeforeRemoveFieldListener */
     private $listener;
 
-    /** @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $translator;
 
     /**

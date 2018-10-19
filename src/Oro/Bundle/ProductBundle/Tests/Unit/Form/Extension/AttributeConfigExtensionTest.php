@@ -18,22 +18,23 @@ use Oro\Bundle\ProductBundle\Form\Extension\AttributeConfigExtension;
 use Oro\Bundle\TranslationBundle\Translation\Translator;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
-use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Translation\TranslatorInterface;
 
 class AttributeConfigExtensionTest extends FormIntegrationTestCase
 {
     use EntityTrait;
 
-    /** @var ConfigProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ConfigProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $attributeConfigProvider;
 
-    /** @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $translator;
 
-    /** @var ConfigInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ConfigInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $config;
 
     protected function setUp()
@@ -62,7 +63,7 @@ class AttributeConfigExtensionTest extends FormIntegrationTestCase
                 $datagrid
             );
 
-        $form = $this->factory->create('oro_entity_config_type', null, [
+        $form = $this->factory->create(ConfigType::class, null, [
             'config_model' => $this->getEntity(FieldConfigModel::class, [
                 'entity' => new EntityConfigModel(Product::class)
             ])
@@ -82,7 +83,7 @@ class AttributeConfigExtensionTest extends FormIntegrationTestCase
                 ['is_visible' => DatagridScope::IS_VISIBLE_TRUE]
             );
 
-        $form = $this->factory->create('oro_entity_config_type', null, [
+        $form = $this->factory->create(ConfigType::class, null, [
             'config_model' => $this->getEntity(FieldConfigModel::class, [
                 'id' => 1,
                 'entity' => new EntityConfigModel(Product::class)
@@ -103,7 +104,7 @@ class AttributeConfigExtensionTest extends FormIntegrationTestCase
                 []
             );
 
-        $form = $this->factory->create('oro_entity_config_type', null, [
+        $form = $this->factory->create(ConfigType::class, null, [
             'config_model' => $this->getEntity(FieldConfigModel::class, [
                 'entity' => new EntityConfigModel(Product::class)
             ])
@@ -117,16 +118,16 @@ class AttributeConfigExtensionTest extends FormIntegrationTestCase
     public function testGetExtendedType()
     {
         $extension = new AttributeConfigExtension($this->attributeConfigProvider, $this->translator);
-        $this->assertEquals('oro_entity_config_type', $extension->getExtendedType());
+        $this->assertEquals(ConfigType::class, $extension->getExtendedType());
     }
 
     public function testFinishViewNotApplicable()
     {
-        /** @var FormView|\PHPUnit_Framework_MockObject_MockObject $view */
+        /** @var FormView|\PHPUnit\Framework\MockObject\MockObject $view */
         $view = $this->createMock(FormView::class);
         $view->expects($this->never())->method($this->anything());
 
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock(FormInterface::class);
         $form->expects($this->never())->method($this->anything());
 
@@ -194,7 +195,7 @@ class AttributeConfigExtensionTest extends FormIntegrationTestCase
         $view->children[] = $child3;
         $view->children[] = $child4;
 
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock(FormInterface::class);
         $form->expects($this->never())->method($this->anything());
 
@@ -319,23 +320,23 @@ class AttributeConfigExtensionTest extends FormIntegrationTestCase
         $propertyConfig->expects($this->any())->method('getFormItems')->willReturn([]);
         $propertyConfig->expects($this->any())->method('getTranslatableValues')->willReturn([]);
 
-        /** @var ConfigProvider|\PHPUnit_Framework_MockObject_MockObject $attributeProvider */
+        /** @var ConfigProvider|\PHPUnit\Framework\MockObject\MockObject $attributeProvider */
         $attributeProvider = $this->createMock(ConfigProvider::class);
         $attributeProvider->expects($this->any())->method('getPropertyConfig')->willReturn($propertyConfig);
         $attributeProvider->expects($this->any())->method('getScope')->willReturn('attribute');
         $attributeProvider->expects($this->any())->method('getId')->willReturn($fieldConfigId);
 
-        /** @var ConfigProvider|\PHPUnit_Framework_MockObject_MockObject $datagridProvider */
+        /** @var ConfigProvider|\PHPUnit\Framework\MockObject\MockObject $datagridProvider */
         $datagridProvider = $this->createMock(ConfigProvider::class);
         $datagridProvider->expects($this->any())->method('getPropertyConfig')->willReturn($propertyConfig);
         $datagridProvider->expects($this->any())->method('getScope')->willReturn('datagrid');
         $datagridProvider->expects($this->any())->method('getId')->willReturn($fieldConfigId);
 
-        /** @var ConfigProvider|\PHPUnit_Framework_MockObject_MockObject $configProvider */
+        /** @var ConfigProvider|\PHPUnit\Framework\MockObject\MockObject $configProvider */
         $configProvider = $this->createMock(ConfigProvider::class);
         $configProvider->expects($this->any())->method('getConfigById')->willReturn($this->config);
 
-        /** @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject $configManager */
+        /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject $configManager */
         $configManager = $this->createMock(ConfigManager::class);
         $configManager->expects($this->any())->method('getProvider')->willReturn($configProvider);
         $configManager->expects($this->any())->method('getConfig')->willReturn($this->config);
@@ -345,21 +346,21 @@ class AttributeConfigExtensionTest extends FormIntegrationTestCase
             $datagridProvider
         ]);
 
-        /** @var ConfigTranslationHelper|\PHPUnit_Framework_MockObject_MockObject $translatorHelper */
+        /** @var ConfigTranslationHelper|\PHPUnit\Framework\MockObject\MockObject $translatorHelper */
         $translatorHelper = $this->createMock(ConfigTranslationHelper::class);
-        /** @var Translator|\PHPUnit_Framework_MockObject_MockObject $translator */
+        /** @var Translator|\PHPUnit\Framework\MockObject\MockObject $translator */
         $translator = $this->createMock(Translator::class);
 
         return [
             new PreloadedExtension(
                 [
-                    'oro_entity_config_type' => new ConfigType($translatorHelper, $configManager, $translator),
+                    new ConfigType($translatorHelper, $configManager, $translator),
                 ],
                 [
-                    'oro_entity_config_type' => [
+                    ConfigType::class => [
                         new AttributeConfigExtension($this->attributeConfigProvider, $this->translator)
                     ],
-                    'form' => [new DataBlockExtension()]
+                    FormType::class => [new DataBlockExtension()]
                 ]
             ),
         ];

@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Form\Type;
 
+use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Bundle\AddressBundle\Entity\AddressType as AddressTypeEntity;
 use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
 use Oro\Bundle\ImportExportBundle\Serializer\Serializer;
@@ -24,28 +25,31 @@ abstract class AbstractOrderAddressTypeTest extends AbstractAddressTypeTest
     /** @var AbstractOrderAddressType */
     protected $formType;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|AddressFormatter */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|AddressFormatter */
     protected $addressFormatter;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|OrderAddressSecurityProvider */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|OrderAddressSecurityProvider */
     protected $orderAddressSecurityProvider;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|OrderAddressManager */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|OrderAddressManager */
     protected $orderAddressManager;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|Serializer */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|Serializer */
     protected $serializer;
 
-    /** @var TypedOrderAddressCollection|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var TypedOrderAddressCollection|\PHPUnit\Framework\MockObject\MockObject */
     protected $addressCollection;
 
     protected function setUp()
     {
-        parent::setUp();
-
         $this->addressFormatter = $this->getMockBuilder('Oro\Bundle\LocaleBundle\Formatter\AddressFormatter')
             ->disableOriginalConstructor()
             ->getMock();
+        $this->addressFormatter->expects($this->any())
+            ->method('format')
+            ->willReturnCallback(function (AbstractAddress $item) {
+                return $item->__toString();
+            });
 
         $this->orderAddressSecurityProvider = $this
             ->getMockBuilder('Oro\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider')
@@ -64,6 +68,7 @@ abstract class AbstractOrderAddressTypeTest extends AbstractAddressTypeTest
             ->getMock();
 
         $this->initFormType();
+        parent::setUp();
     }
 
     abstract protected function initFormType();
@@ -75,7 +80,7 @@ abstract class AbstractOrderAddressTypeTest extends AbstractAddressTypeTest
 
     public function testConfigureOptions()
     {
-        /* @var $resolver \PHPUnit_Framework_MockObject_MockObject|OptionsResolver */
+        /* @var $resolver \PHPUnit\Framework\MockObject\MockObject|OptionsResolver */
         $resolver = $this->createMock('Symfony\Component\OptionsResolver\OptionsResolver');
         $resolver->expects($this->once())->method('setDefaults')->with($this->isType('array'))
             ->will($this->returnSelf());
@@ -88,8 +93,6 @@ abstract class AbstractOrderAddressTypeTest extends AbstractAddressTypeTest
 
         $this->formType->configureOptions($resolver);
     }
-
-    abstract public function testGetName();
 
     abstract public function testGetParent();
 
@@ -406,7 +409,7 @@ abstract class AbstractOrderAddressTypeTest extends AbstractAddressTypeTest
             ->willReturn(false);
 
         $form = $this->factory->create(
-            $this->formType,
+            get_class($this->formType),
             new OrderAddress(),
             ['addressType' => AddressTypeEntity::TYPE_SHIPPING, 'object' => $this->getEntity(), 'isEditEnabled' => true]
         );

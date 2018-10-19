@@ -8,14 +8,15 @@ use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Form\Type\OrderLineItemType;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use Oro\Bundle\ProductBundle\Provider\ProductUnitsProvider;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductSelectEntityTypeStub;
-use Symfony\Component\Form\PreloadedExtension;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 
 class OrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
 {
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ProductUnitsProvider
+     * @var \PHPUnit\Framework\MockObject\MockObject|ProductUnitsProvider
      */
     protected $productUnitsProvider;
 
@@ -33,14 +34,20 @@ class OrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
 
         return array_merge(
             parent::getExtensions(),
-            [new PreloadedExtension([$productSelectType->getName() => $productSelectType], [])]
+            [
+                new PreloadedExtension(
+                    [
+                        $this->formType,
+                        ProductSelectType::class => $productSelectType
+                    ],
+                    []
+                )
+            ]
         );
     }
 
     protected function setUp()
     {
-        parent::setUp();
-
         $this->productUnitsProvider = $this->createMock(ProductUnitsProvider::class);
         $this->productUnitsProvider->expects($this->any())
             ->method('getAvailableProductUnitsWithPrecision')
@@ -50,6 +57,7 @@ class OrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
             ]);
 
         $this->formType = $this->getFormType();
+        parent::setUp();
         $this->formType->setDataClass(OrderLineItem::class);
         $this->formType->setSectionProvider($this->sectionProvider);
     }
@@ -60,11 +68,6 @@ class OrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
     public function getFormType()
     {
         return new OrderLineItemType($this->productUnitsProvider);
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals(OrderLineItemType::NAME, $this->formType->getName());
     }
 
     /**
@@ -143,7 +146,7 @@ class OrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
     public function testBuildView()
     {
         $this->sectionProvider->expects($this->atLeastOnce())->method('addSections')
-            ->with($this->formType->getName(), $this->isType('array'))
+            ->with(OrderLineItemType::class, $this->isType('array'))
             ->willReturn($this->getExpectedSections());
 
         $this->assertDefaultBuildViewCalled();

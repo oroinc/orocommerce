@@ -13,22 +13,22 @@ use Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider;
 use Oro\Bundle\WarehouseProBundle\Entity\Warehouse;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class ShippingOriginProviderTest extends \PHPUnit_Framework_TestCase
+class ShippingOriginProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $doctrineHelper;
 
     /**
-     * @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $configManager;
 
     /**
-     * @var ShippingOriginModelFactory|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingOriginModelFactory|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $shippingOriginModelFactory;
 

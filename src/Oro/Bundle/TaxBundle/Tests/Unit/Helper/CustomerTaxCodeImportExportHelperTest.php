@@ -11,23 +11,23 @@ use Oro\Bundle\TaxBundle\Helper\CustomerTaxCodeImportExportHelper;
 use Oro\Bundle\TaxBundle\Tests\Unit\Entity\CustomerStub;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class CustomerTaxCodeImportExportHelperTest extends \PHPUnit_Framework_TestCase
+class CustomerTaxCodeImportExportHelperTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /** @var CustomerTaxCodeImportExportHelper */
     private $manager;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|DoctrineHelper */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|DoctrineHelper */
     private $doctrineHelper;
 
-    /** @var  \PHPUnit_Framework_MockObject_MockObject|CustomerTaxCodeRepository */
+    /** @var  \PHPUnit\Framework\MockObject\MockObject|CustomerTaxCodeRepository */
     private $repository;
 
-    /** @var  \PHPUnit_Framework_MockObject_MockObject|EntityManager */
+    /** @var  \PHPUnit\Framework\MockObject\MockObject|EntityManager */
     private $entityManager;
 
-    /** @var  Customer[]|\PHPUnit_Framework_MockObject_MockObject[] */
+    /** @var  Customer[]|\PHPUnit\Framework\MockObject\MockObject[] */
     private $customers;
 
     /** @var CustomerTaxCode[] */

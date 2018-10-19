@@ -1,4 +1,4 @@
-// @theme: default
+/* @theme: default; */
 
 .order-checkout-widget {
     position: relative;
@@ -59,6 +59,10 @@
         float: right;
 
         width: 320px;
+    }
+
+    [data-toggle="tooltip"] {
+        display: inline-block;
     }
 }
 

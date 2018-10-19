@@ -10,25 +10,25 @@ use Oro\Bundle\PricingBundle\Filter\PriceListsFilter;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 
-class PriceListsFilterTest extends \PHPUnit_Framework_TestCase
+class PriceListsFilterTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|FormFactoryInterface
+     * @var \PHPUnit\Framework\MockObject\MockObject|FormFactoryInterface
      */
     protected $formFactory;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|FormInterface
+     * @var \PHPUnit\Framework\MockObject\MockObject|FormInterface
      */
     protected $form;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|FilterUtility
+     * @var \PHPUnit\Framework\MockObject\MockObject|FilterUtility
      */
     protected $filterUtility;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|Registry
+     * @var \PHPUnit\Framework\MockObject\MockObject|Registry
      */
     protected $registry;
 
@@ -73,7 +73,7 @@ class PriceListsFilterTest extends \PHPUnit_Framework_TestCase
 
     public function testApplyNoData()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|FilterDatasourceAdapterInterface $ds */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|FilterDatasourceAdapterInterface $ds */
         $ds = $this->getMockBuilder('Oro\Bundle\FilterBundle\Datasource\Orm\OrmFilterDatasourceAdapter')
             ->disableOriginalConstructor()
             ->getMock();
@@ -97,7 +97,7 @@ class PriceListsFilterTest extends \PHPUnit_Framework_TestCase
             'value' => [new PriceList()]
         ];
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|FilterDatasourceAdapterInterface $ds */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|FilterDatasourceAdapterInterface $ds */
         $ds = $this->getMockBuilder('Oro\Bundle\FilterBundle\Datasource\Orm\OrmFilterDatasourceAdapter')
             ->disableOriginalConstructor()
             ->getMock();

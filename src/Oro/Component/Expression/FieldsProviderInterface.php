@@ -1,6 +1,9 @@
 <?php
 namespace Oro\Component\Expression;
 
+/**
+ * Defines the interface for FieldsProvider functionality
+ */
 interface FieldsProviderInterface
 {
     /**

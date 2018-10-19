@@ -17,7 +17,7 @@ class BrandSelectType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'autocomplete_alias' => 'oro_product_brand',
+                'autocomplete_alias' => BrandType::class,
                 'create_form_route' => 'oro_product_brand_create',
                 'configs' => [
                     'placeholder' => 'oro.product.brand.form.choose'
@@ -47,6 +47,6 @@ class BrandSelectType extends AbstractType
      */
     public function getParent()
     {
-        return OroEntitySelectOrCreateInlineType::NAME;
+        return OroEntitySelectOrCreateInlineType::class;
     }
 }

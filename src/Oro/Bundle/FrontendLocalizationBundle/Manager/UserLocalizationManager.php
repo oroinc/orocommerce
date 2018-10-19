@@ -14,6 +14,9 @@ use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
+/**
+ * Represents the entry point for the localization settings of the store frontend.
+ */
 class UserLocalizationManager
 {
     const SESSION_LOCALIZATIONS = 'localizations_by_website';
@@ -104,7 +107,7 @@ class UserLocalizationManager
             if ($userSettings) {
                 $localization = $userSettings->getLocalization();
             }
-        } else {
+        } elseif ($this->session->isStarted()) {
             $sessionStoredLocalizations = $this->getSessionLocalizations();
             if (array_key_exists($website->getId(), $sessionStoredLocalizations)) {
                 $localization = $this->localizationManager->getLocalization(
@@ -113,9 +116,36 @@ class UserLocalizationManager
             }
         }
 
-        $allowedLocalizations = $this->getEnabledLocalizations();
-        if (!$localization || !array_key_exists($localization->getId(), $allowedLocalizations)) {
+        if (!$localization || !array_key_exists($localization->getId(), $this->getEnabledLocalizations())) {
             $localization = $this->getDefaultLocalization();
+        }
+
+        return $localization;
+    }
+
+    /**
+     * @param CustomerUser $customerUser
+     * @param Website|null $website
+     * @return null|Localization
+     */
+    public function getCurrentLocalizationByCustomerUser(
+        CustomerUser $customerUser,
+        Website $website = null
+    ): ?Localization {
+        $website = $this->getWebsite($website);
+
+        if (!$website) {
+            return null;
+        }
+
+        $localization = null;
+        $customerUserSettings = $customerUser->getWebsiteSettings($website);
+        if ($customerUserSettings) {
+            $localization = $customerUserSettings->getLocalization();
+        }
+
+        if (!$localization || !array_key_exists($localization->getId(), $this->getEnabledLocalizations())) {
+            $localization = $this->getWebsiteDefaultLocalization($website);
         }
 
         return $localization;
@@ -141,7 +171,7 @@ class UserLocalizationManager
             }
             $userWebsiteSettings->setLocalization($localization);
             $this->userManager->getStorageManager()->flush();
-        } else {
+        } elseif ($this->session->isStarted()) {
             $sessionLocalizations = $this->getSessionLocalizations();
             $sessionLocalizations[$website->getId()] = $localization->getId();
             $this->session->set(self::SESSION_LOCALIZATIONS, $sessionLocalizations);
@@ -173,5 +203,23 @@ class UserLocalizationManager
     protected function getSessionLocalizations()
     {
         return (array)$this->session->get(self::SESSION_LOCALIZATIONS);
+    }
+
+    /**
+     * @param Website $website
+     * @return Localization|null
+     */
+    private function getWebsiteDefaultLocalization(Website $website): ?Localization
+    {
+        $localization = $this->localizationManager->getLocalization(
+            (int)$this->configManager->get(
+                Configuration::getConfigKeyByName(Configuration::DEFAULT_LOCALIZATION),
+                false,
+                false,
+                $website
+            )
+        );
+
+        return $localization ?: $this->localizationManager->getDefaultLocalization();
     }
 }

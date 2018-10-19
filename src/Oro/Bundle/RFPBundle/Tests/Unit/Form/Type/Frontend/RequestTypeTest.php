@@ -2,33 +2,32 @@
 
 namespace Oro\Bundle\RFPBundle\Tests\Unit\Form\Type\Frontend;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
+use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use Oro\Bundle\CustomerBundle\Form\Type\Frontend\CustomerUserMultiSelectType;
-use Oro\Bundle\FormBundle\Form\Type\CollectionType;
-use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
-use Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestProductCollectionType;
-use Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestProductItemCollectionType;
+use Oro\Bundle\RFPBundle\Entity\Request;
+use Oro\Bundle\RFPBundle\Entity\RequestProduct;
 use Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestProductType as FrontendRequestProductType;
 use Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestType;
+use Oro\Bundle\RFPBundle\Form\Type\RequestProductItemType;
 use Oro\Bundle\RFPBundle\Form\Type\RequestProductType;
 use Oro\Bundle\RFPBundle\Tests\Unit\Form\Type\AbstractTest;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
-use Symfony\Component\Form\PreloadedExtension;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class RequestTypeTest extends AbstractTest
 {
     use QuantityTypeTrait;
 
-    const DATA_CLASS = 'Oro\Bundle\RFPBundle\Entity\Request';
+    const DATA_CLASS = Request::class;
 
     /**
      * @var RequestType
@@ -51,8 +50,8 @@ class RequestTypeTest extends AbstractTest
      */
     public function testConfigureOptions()
     {
-        /* @var $resolver OptionsResolver|\PHPUnit_Framework_MockObject_MockObject */
-        $resolver = $this->createMock('Symfony\Component\OptionsResolver\OptionsResolver');
+        /* @var $resolver OptionsResolver|\PHPUnit\Framework\MockObject\MockObject */
+        $resolver = $this->createMock(OptionsResolver::class);
 
         $resolver->expects(static::once())
             ->method('setDefaults')
@@ -63,14 +62,6 @@ class RequestTypeTest extends AbstractTest
             );
 
         $this->formType->configureOptions($resolver);
-    }
-
-    /**
-     * Test getName
-     */
-    public function testGetName()
-    {
-        static::assertEquals(RequestType::NAME, $this->formType->getName());
     }
 
     /**
@@ -203,42 +194,32 @@ class RequestTypeTest extends AbstractTest
      */
     protected function getExtensions()
     {
-        /* @var $productUnitLabelFormatter ProductUnitLabelFormatter|\PHPUnit_Framework_MockObject_MockObject */
-        $productUnitLabelFormatter = $this->getMockBuilder(
-            'Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter'
-        )
-            ->disableOriginalConstructor()
-            ->getMock();
-
         $priceType                  = $this->preparePriceType();
         $entityType                 = $this->prepareProductSelectType();
         $currencySelectionType      = new CurrencySelectionTypeStub();
         $requestProductItemType     = $this->prepareRequestProductItemType();
         $productUnitSelectionType   = $this->prepareProductUnitSelectionType();
         $customerUserMultiSelectType = $this->prepareCustomerUserMultiSelectType();
-        $requestProductType         = new RequestProductType($productUnitLabelFormatter);
-        $requestProductType->setDataClass('Oro\Bundle\RFPBundle\Entity\RequestProduct');
+        $requestProductType         = new RequestProductType();
+        $requestProductType->setDataClass(RequestProduct::class);
         $frontendRequestProductType = new FrontendRequestProductType();
-        $frontendRequestProductType->setDataClass('Oro\Bundle\RFPBundle\Entity\RequestProduct');
+        $frontendRequestProductType->setDataClass(RequestProduct::class);
 
         return [
             new PreloadedExtension(
                 [
-                    CollectionType::NAME                    => new CollectionType(),
-                    RequestProductCollectionType::NAME      => new RequestProductCollectionType(),
-                    RequestProductItemCollectionType::NAME  => new RequestProductItemCollectionType(),
-                    ProductUnitSelectionType::NAME          => new ProductUnitSelectionTypeStub(),
-                    ProductSelectType::NAME                 => new ProductSelectTypeStub(),
-                    OroDateType::NAME                       => new OroDateType(),
-                    $priceType->getName()                   => $priceType,
-                    $entityType->getName()                  => $entityType,
-                    $requestProductType->getName()          => $requestProductType,
-                    $currencySelectionType->getName()       => $currencySelectionType,
-                    $requestProductItemType->getName()      => $requestProductItemType,
-                    $productUnitSelectionType->getName()    => $productUnitSelectionType,
-                    $customerUserMultiSelectType->getName()  => $customerUserMultiSelectType,
-                    $frontendRequestProductType->getName()  => $frontendRequestProductType,
-                    QuantityTypeTrait::$name                => $this->getQuantityType(),
+                    $this->formType,
+                    ProductUnitSelectionType::class    => new ProductUnitSelectionTypeStub(),
+                    ProductSelectType::class           => new ProductSelectTypeStub(),
+                    PriceType::class                   => $priceType,
+                    ProductSelectType::class           => $entityType,
+                    RequestProductType::class          => $requestProductType,
+                    CurrencySelectionType::class       => $currencySelectionType,
+                    RequestProductItemType::class      => $requestProductItemType,
+                    ProductUnitSelectionType::class    => $productUnitSelectionType,
+                    CustomerUserMultiSelectType::class => $customerUserMultiSelectType,
+                    FrontendRequestProductType::class  => $frontendRequestProductType,
+                    QuantityType::class                => $this->getQuantityType(),
                 ],
                 []
             ),

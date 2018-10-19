@@ -13,20 +13,20 @@ use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListLimitManager;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use Oro\Bundle\ShoppingListBundle\Tests\Unit\Entity\Stub\CustomerVisitorStub;
 
-class GuestShoppingListMigrationManagerTest extends \PHPUnit_Framework_TestCase
+class GuestShoppingListMigrationManagerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     private $doctrineHelper;
 
     /**
-     * @var ShoppingListLimitManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShoppingListLimitManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $shoppingListLimitManager;
 
     /**
-     * @var ShoppingListManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShoppingListManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $shoppingListManager;
 

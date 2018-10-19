@@ -61,7 +61,7 @@ class LocalizedSlugWithRedirectType extends AbstractType
         $builder
             ->add(
                 self::SLUG_PROTOTYPES_FIELD_NAME,
-                LocalizedSlugType::NAME,
+                LocalizedSlugType::class,
                 [
                     'required' => !empty($options['required']),
                     'entry_options'  => ['constraints' => $constraints],

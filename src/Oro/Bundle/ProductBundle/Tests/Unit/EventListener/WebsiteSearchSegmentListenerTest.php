@@ -11,17 +11,17 @@ use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class WebsiteSearchSegmentListenerTest extends \PHPUnit_Framework_TestCase
+class WebsiteSearchSegmentListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var ContentVariantSegmentProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var ContentVariantSegmentProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     private $contentVariantSegmentProvider;
 
     /**
-     * @var StaticSegmentManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var StaticSegmentManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $staticSegmentManager;
 

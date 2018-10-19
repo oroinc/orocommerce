@@ -1,7 +1,7 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'customer_user_login_form_cms_update.html.twig'
+            themes: 'OroCMSBundle:layouts:blank/oro_customer_customer_user_security_login/customer_user_login_form_cms_update.html.twig'
         - '@add':
             id: login_page_styles
             parentId: head

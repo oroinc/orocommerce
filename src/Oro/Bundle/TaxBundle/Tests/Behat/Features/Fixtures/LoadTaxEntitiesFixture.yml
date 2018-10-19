@@ -1,0 +1,17 @@
+Oro\Bundle\TaxBundle\Entity\TaxJurisdiction:
+    tax_jurisdiction_1:
+        code: 'tazJurisdiction'
+        description: 'tazJurisdiction description'
+        country: '@united_states'
+        region: '@florida'
+Oro\Bundle\TaxBundle\Entity\ProductTaxCode:
+    product_tax_code_1:
+        code: 'productTaxCode1'
+Oro\Bundle\TaxBundle\Entity\CustomerTaxCode:
+    customer_tax_code_1:
+        owner: '@admin'
+        code: 'customerTaxCode1'
+Oro\Bundle\TaxBundle\Entity\Tax:
+    tax_1:
+        code: 'tax1'
+        rate: 10

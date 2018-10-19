@@ -6,10 +6,10 @@ use Oro\Bundle\WebCatalogBundle\Async\Topics;
 use Oro\Bundle\WebCatalogBundle\Cache\ContentNodeTreeCacheWarmer;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 
-class ContentNodeTreeCacheWarmerTest extends \PHPUnit_Framework_TestCase
+class ContentNodeTreeCacheWarmerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var MessageProducerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $messageProducer;
 

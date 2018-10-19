@@ -25,6 +25,13 @@ define(function(require) {
         /**
          * @inheritDoc
          */
+        constructor: function QuantitySwitcher() {
+            QuantitySwitcher.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function() {
             QuantitySwitcher.__super__.initialize.apply(this, arguments);
             this.initLayout().done(_.bind(this.initSwitcher, this));
@@ -48,7 +55,7 @@ define(function(require) {
                 if (isNaN(this.expressionInput.val()) && (this.expressionInput.val().length > quantityVisibleLength)) {
                     this.showTooltip(this.expressionInput);
                 } else {
-                    this.destroyTooltip(this.expressionInput);
+                    this.disposeTooltip(this.expressionInput);
                 }
             }, this));
 

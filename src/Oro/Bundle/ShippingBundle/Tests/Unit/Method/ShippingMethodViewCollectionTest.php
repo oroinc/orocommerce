@@ -9,7 +9,7 @@ use Oro\Bundle\ShippingBundle\Method\ShippingMethodViewCollection;
 * @SuppressWarnings(PHPMD.TooManyPublicMethods)
 * @SuppressWarnings(PHPMD.ExcessivePublicCount)
 */
-class ShippingMethodViewCollectionTest extends \PHPUnit_Framework_TestCase
+class ShippingMethodViewCollectionTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @return ShippingMethodViewCollection

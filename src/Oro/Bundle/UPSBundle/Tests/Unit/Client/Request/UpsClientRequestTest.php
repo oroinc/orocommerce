@@ -4,7 +4,7 @@ namespace Oro\Bundle\UPSBundle\Tests\Unit\Client\Request;
 
 use Oro\Bundle\UPSBundle\Client\Request\UpsClientRequest;
 
-class UpsClientRequestTest extends \PHPUnit_Framework_TestCase
+class UpsClientRequestTest extends \PHPUnit\Framework\TestCase
 {
     public function testGetters()
     {

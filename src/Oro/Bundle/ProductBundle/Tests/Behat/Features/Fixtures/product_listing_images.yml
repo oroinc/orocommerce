@@ -1,5 +1,6 @@
 include:
     - '@OroCustomerBundle/Tests/Behat/Features/Fixtures/CustomerUserAmandaRCole.yml'
+    - '@OroLocaleBundle:LocalizationFixture.yml'
 
 Oro\Bundle\OrganizationBundle\Entity\BusinessUnit:
   businessUnit:
@@ -9,6 +10,9 @@ Oro\Bundle\OrganizationBundle\Entity\BusinessUnit:
 Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     locvalue1:
         string: 'Product1'
+    locvalue1_loc1:
+        string: 'Product1 (Localization 1)'
+        localization: '@localization1'
     localNewCategory:
         string: 'NewCategory'
 
@@ -26,7 +30,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
         primaryUnitPrecision: '@precision1'
         unitPrecisions: []
         attributeFamily: '@defaultProductFamily'
-        addName: ['@locvalue1']
+        setNames: [['@locvalue1' , '@locvalue1_loc1']]
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
 

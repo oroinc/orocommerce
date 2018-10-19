@@ -6,7 +6,7 @@ use Oro\Bundle\FormBundle\Form\Type\OroEntitySelectOrCreateInlineType;
 use Oro\Bundle\TaxBundle\Form\Type\TaxSelectType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class TaxSelectTypeTest extends \PHPUnit_Framework_TestCase
+class TaxSelectTypeTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var TaxSelectType
@@ -23,14 +23,9 @@ class TaxSelectTypeTest extends \PHPUnit_Framework_TestCase
         unset($this->type);
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(TaxSelectType::NAME, $this->type->getName());
-    }
-
     public function testGetParent()
     {
-        $this->assertEquals(OroEntitySelectOrCreateInlineType::NAME, $this->type->getParent());
+        $this->assertEquals(OroEntitySelectOrCreateInlineType::class, $this->type->getParent());
     }
 
     public function testConfigureOptions()

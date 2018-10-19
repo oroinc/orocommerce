@@ -6,9 +6,9 @@ use Oro\Bundle\CurrencyBundle\Provider\CurrencyProviderInterface;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Handler\OrderCurrencyHandler;
 
-class OrderCurrencyHandlerTest extends \PHPUnit_Framework_TestCase
+class OrderCurrencyHandlerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var CurrencyProviderInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var CurrencyProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $currencyProvider;
 
     /**

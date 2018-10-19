@@ -1,0 +1,20 @@
+/* @theme: admin.oro; */
+
+.product-container {
+    .content-with-sidebar {
+        &--header {
+            flex-shrink: $product-container-header-flex-shrink;
+        }
+
+        &--sidebar-content {
+            overflow: $product-container-sidebar-content-overflow;
+            flex-grow: $product-container-sidebar-content-flex-grow;
+
+            .control-group-checkbox {
+                label:not(.empty-label) {
+                    float: $product-container-control-group-checkbox-label-float;
+                }
+            }
+        }
+    }
+}

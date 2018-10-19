@@ -2,16 +2,11 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Form\Type;
 
-use Oro\Bundle\AddressBundle\Form\Type\CountryType;
-use Oro\Bundle\AddressBundle\Form\Type\RegionType;
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\CurrencyBundle\Provider\CurrencyProviderInterface;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\CurrencyBundle\Utils\CurrencyNameHelper;
 use Oro\Bundle\FormBundle\Form\Extension\AdditionalAttrExtension;
-use Oro\Bundle\FormBundle\Form\Type\CollectionType;
-use Oro\Bundle\FormBundle\Form\Type\OroChoiceType;
-use Oro\Bundle\FormBundle\Form\Type\Select2Type;
 use Oro\Bundle\FormBundle\Tests\Unit\Stub\StripTagsExtensionStub;
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 use Oro\Bundle\RuleBundle\Entity\Rule;
@@ -41,17 +36,13 @@ use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
 use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
 use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Asset\Packages as AssetHelper;
-use Symfony\Component\Form\PreloadedExtension;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Translation\TranslatorInterface;
 
 class ShippingMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
 {
-    /**
-     * @var ShippingMethodsConfigsRuleType
-     */
-    protected $formType;
-
     /**
      * @var MethodTypeConfigCollectionSubscriberProxy
      */
@@ -73,17 +64,17 @@ class ShippingMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
     protected $shippingMethodProvider;
 
     /**
-     * @var ShippingMethodChoicesProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingMethodChoicesProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $choicesProvider;
 
     /**
-     * @var ShippingMethodIconProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingMethodIconProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $iconProvider;
 
     /**
-     * @var AssetHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var AssetHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $assetHelper;
 
@@ -96,6 +87,9 @@ class ShippingMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
         $this->methodConfigCollectionSubscriber = new MethodConfigCollectionSubscriberProxy();
 
         $this->choicesProvider = $this->createMock(ShippingMethodChoicesProviderInterface::class);
+        $this->choicesProvider->expects($this->any())
+            ->method('getMethods')
+            ->willReturn([]);
         $this->iconProvider = $this->createMock(ShippingMethodIconProviderInterface::class);
         $this->assetHelper = $this->createMock(AssetHelper::class);
 
@@ -107,20 +101,19 @@ class ShippingMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
         $this->methodConfigCollectionSubscriber
             ->setFactory($this->factory)->setMethodRegistry($this->shippingMethodProvider);
 
-        /** @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject $translator */
+        /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject $translator */
         $translator = $this->createMock(TranslatorInterface::class);
         $translator->expects(static::any())
             ->method('trans')
             ->will(static::returnCallback(function ($message) {
                 return $message.'_translated';
             }));
-
-        $this->formType = new ShippingMethodsConfigsRuleType();
     }
 
     public function testGetBlockPrefix()
     {
-        $this->assertEquals(ShippingMethodsConfigsRuleType::BLOCK_PREFIX, $this->formType->getBlockPrefix());
+        $formType = new ShippingMethodsConfigsRuleType();
+        $this->assertEquals(ShippingMethodsConfigsRuleType::BLOCK_PREFIX, $formType->getBlockPrefix());
     }
 
     /**
@@ -130,7 +123,7 @@ class ShippingMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
      */
     public function testSubmit($data)
     {
-        $form = $this->factory->create($this->formType, $data);
+        $form = $this->factory->create(ShippingMethodsConfigsRuleType::class, $data);
 
         $this->assertSame($data, $form->getData());
 
@@ -239,7 +232,7 @@ class ShippingMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
             ->method('getCurrencyList')
             ->willReturn(['USD']);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|TranslatableEntityType $registry */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|TranslatableEntityType $registry */
         $translatableEntity = $this->getMockBuilder('Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType')
             ->setMethods(['configureOptions', 'buildForm'])
             ->disableOriginalConstructor()
@@ -254,34 +247,22 @@ class ShippingMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
                     => new ShippingMethodConfigType($this->methodConfigSubscriber, $this->shippingMethodProvider),
                     ShippingMethodTypeConfigCollectionType::class =>
                         new ShippingMethodTypeConfigCollectionType($this->methodTypeConfigCollectionSubscriber),
-                    CurrencySelectionType::NAME => new CurrencySelectionType(
+                    CurrencySelectionType::class => new CurrencySelectionType(
                         $currencyProvider,
                         $this->getMockBuilder(LocaleSettings::class)->disableOriginalConstructor()->getMock(),
                         $this->getMockBuilder(CurrencyNameHelper::class)->disableOriginalConstructor()->getMock()
                     ),
-                    CollectionType::NAME => new CollectionType(),
-                    ShippingMethodsConfigsRuleDestinationType::NAME => new ShippingMethodsConfigsRuleDestinationType(
+                    ShippingMethodsConfigsRuleDestinationType::class => new ShippingMethodsConfigsRuleDestinationType(
                         new AddressCountryAndRegionSubscriberStub()
                     ),
-                    'oro_select2_choice' => new Select2Type(
-                        'choice',
-                        'oro_select2_choice'
-                    ),
-                    OroChoiceType::class => new OroChoiceType(),
                     ShippingMethodSelectType::class => new ShippingMethodSelectType(
                         $this->choicesProvider,
                         $this->iconProvider,
                         $this->assetHelper
                     ),
-                    'oro_country' => new CountryType(),
-                    'oro_select2_translatable_entity' => new Select2Type(
-                        'translatable_entity',
-                        'oro_select2_translatable_entity'
-                    ),
-                    'translatable_entity' => $translatableEntity,
-                    'oro_region' => new RegionType(),
+                    TranslatableEntityType::class => $translatableEntity
                 ],
-                ['form' => [
+                [FormType::class => [
                     new AdditionalAttrExtension(),
                     new StripTagsExtensionStub($this->createMock(HtmlTagHelper::class))
                 ]]

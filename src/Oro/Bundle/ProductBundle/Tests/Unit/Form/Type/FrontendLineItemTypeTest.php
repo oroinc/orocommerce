@@ -9,9 +9,8 @@ use Oro\Bundle\ProductBundle\Form\Type\FrontendLineItemType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use Oro\Bundle\ProductBundle\Model\ProductLineItem;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
-use Oro\Bundle\ProductBundle\Visibility\ProductUnitFieldsSettingsInterface;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -33,27 +32,13 @@ class FrontendLineItemTypeTest extends FormIntegrationTestCase
     ];
 
     /**
-     * @var ProductUnitFieldsSettingsInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $productUnitFieldsSettings;
-
-    /**
      * {@inheritdoc}
      */
     protected function setUp()
     {
+        $this->type = new FrontendLineItemType();
+        
         parent::setUp();
-
-        $this->productUnitFieldsSettings = $this
-            ->getMockBuilder(ProductUnitFieldsSettingsInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->productUnitFieldsSettings->expects($this->any())
-            ->method('isProductUnitSelectionVisible')
-            ->willReturn(true);
-
-        $this->type = new FrontendLineItemType($this->productUnitFieldsSettings);
     }
 
     /**
@@ -66,7 +51,8 @@ class FrontendLineItemTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    ProductUnitSelectionType::NAME => $productUnitSelection,
+                    $this->type,
+                    ProductUnitSelectionType::class => $productUnitSelection,
                     QuantityTypeTrait::$name => $this->getQuantityType(),
                 ],
                 []
@@ -82,18 +68,10 @@ class FrontendLineItemTypeTest extends FormIntegrationTestCase
         $lineItem = (new ProductLineItem(1))
             ->setProduct($this->getProductEntityWithPrecision(1, 'kg', 3));
 
-        $form = $this->factory->create($this->type, $lineItem);
+        $form = $this->factory->create(FrontendLineItemType::class, $lineItem);
 
         $this->assertTrue($form->has('quantity'));
         $this->assertTrue($form->has('unit'));
-    }
-
-    /**
-     * Method testBuildForm
-     */
-    public function testGetName()
-    {
-        $this->assertEquals(FrontendLineItemType::NAME, $this->type->getName());
     }
 
     /**
@@ -117,7 +95,7 @@ class FrontendLineItemTypeTest extends FormIntegrationTestCase
      */
     public function testSubmit($defaultData, $submittedData, $expectedData)
     {
-        $form = $this->factory->create($this->type, $defaultData, []);
+        $form = $this->factory->create(FrontendLineItemType::class, $defaultData, []);
 
         $this->addRoundingServiceExpect();
 
@@ -215,11 +193,11 @@ class FrontendLineItemTypeTest extends FormIntegrationTestCase
     /**
      * @param ProductLineItem $lineItem
      *
-     * @return \PHPUnit_Framework_MockObject_MockObject|FormInterface
+     * @return \PHPUnit\Framework\MockObject\MockObject|FormInterface
      */
     protected function getForm(ProductLineItem $lineItem)
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|FormInterface $form */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|FormInterface $form */
         $form = $this->getMockBuilder('Symfony\Component\Form\FormInterface')
             ->disableOriginalConstructor()
             ->getMock();

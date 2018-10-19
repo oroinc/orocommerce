@@ -18,22 +18,22 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 class UrlItemsProviderTest extends OrmTestCase
 {
     /**
-     * @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $eventDispatcher;
 
     /**
-     * @var CanonicalUrlGenerator|\PHPUnit_Framework_MockObject_MockObject
+     * @var CanonicalUrlGenerator|\PHPUnit\Framework\MockObject\MockObject
      */
     private $canonicalUrlGenerator;
 
     /**
-     * @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $configManager;
 
     /**
-     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     private $registry;
 

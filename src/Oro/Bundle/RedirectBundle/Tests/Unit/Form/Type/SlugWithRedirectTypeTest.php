@@ -8,16 +8,16 @@ use Oro\Bundle\RedirectBundle\Form\Type\SlugWithRedirectType;
 use Oro\Bundle\RedirectBundle\Helper\ConfirmSlugChangeFormHelper;
 use Oro\Bundle\RedirectBundle\Helper\SlugifyFormHelper;
 use Oro\Bundle\RedirectBundle\Model\TextSlugPrototypeWithRedirect;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
-use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class SlugWithRedirectTypeTest extends FormIntegrationTestCase
 {
     /**
-     * @var ConfirmSlugChangeFormHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var ConfirmSlugChangeFormHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $confirmSlugChangeFormHelper;
 
@@ -47,16 +47,12 @@ class SlugWithRedirectTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    SlugType::NAME => new SlugType($slugifyFormHelper),
+                    SlugWithRedirectType::class => $this->formType,
+                    SlugType::class => new SlugType($slugifyFormHelper),
                 ],
                 []
             )
         ];
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals(SlugWithRedirectType::NAME, $this->formType->getName());
     }
 
     public function testGetBlockPrefix()
@@ -76,7 +72,7 @@ class SlugWithRedirectTypeTest extends FormIntegrationTestCase
         $submittedData,
         TextSlugPrototypeWithRedirect $expectedData
     ) {
-        $form = $this->factory->create($this->formType, $defaultData, ['source_field' => 'some_field']);
+        $form = $this->factory->create(SlugWithRedirectType::class, $defaultData, ['source_field' => 'some_field']);
 
         $this->assertEquals($defaultData, $form->getData());
         $form->submit($submittedData);
@@ -117,7 +113,7 @@ class SlugWithRedirectTypeTest extends FormIntegrationTestCase
 
     public function testConfigureOptions()
     {
-        /** @var OptionsResolver|\PHPUnit_Framework_MockObject_MockObject $resolver */
+        /** @var OptionsResolver|\PHPUnit\Framework\MockObject\MockObject $resolver */
         $resolver = $this->createMock(OptionsResolver::class);
         $resolver->expects($this->once())->method('setDefaults')->with(
             $this->callback(
@@ -137,7 +133,7 @@ class SlugWithRedirectTypeTest extends FormIntegrationTestCase
     
     public function testBuildView()
     {
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock(FormInterface::class);
         $view = new FormView();
         $options = ['someOptionName' => 'someOptionValue'];

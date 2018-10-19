@@ -29,37 +29,37 @@ class FedexShippingMethodFactoryTest extends TestCase
     const ENABLED = true;
 
     /**
-     * @var IntegrationIdentifierGeneratorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var IntegrationIdentifierGeneratorInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $identifierGenerator;
 
     /**
-     * @var LocalizationHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var LocalizationHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     private $localizationHelper;
 
     /**
-     * @var IntegrationIconProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var IntegrationIconProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $iconProvider;
 
     /**
-     * @var FedexShippingMethodTypeFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var FedexShippingMethodTypeFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $typeFactory;
 
     /**
-     * @var FedexRateServiceRequestSettingsFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var FedexRateServiceRequestSettingsFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $rateServiceRequestSettingsFactory;
 
     /**
-     * @var FedexRequestByRateServiceSettingsFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var FedexRequestByRateServiceSettingsFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $rateServiceRequestFactory;
 
     /**
-     * @var FedexRateServiceBySettingsClientInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var FedexRateServiceBySettingsClientInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $rateServiceClient;
 

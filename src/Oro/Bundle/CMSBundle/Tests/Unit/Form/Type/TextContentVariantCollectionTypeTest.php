@@ -6,7 +6,7 @@ use Oro\Bundle\CMSBundle\Form\Type\TextContentVariantCollectionType;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class TextContentVariantCollectionTypeTest extends \PHPUnit_Framework_TestCase
+class TextContentVariantCollectionTypeTest extends \PHPUnit\Framework\TestCase
 {
     /** @var TextContentVariantCollectionType */
     protected $type;
@@ -21,7 +21,7 @@ class TextContentVariantCollectionTypeTest extends \PHPUnit_Framework_TestCase
 
     public function testConfigureOptions()
     {
-        /** @var OptionsResolver|\PHPUnit_Framework_MockObject_MockObject $resolver */
+        /** @var OptionsResolver|\PHPUnit\Framework\MockObject\MockObject $resolver */
         $resolver = $this->getMockBuilder(OptionsResolver::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -36,6 +36,6 @@ class TextContentVariantCollectionTypeTest extends \PHPUnit_Framework_TestCase
 
     public function testGetParent()
     {
-        $this->assertEquals(CollectionType::NAME, $this->type->getParent());
+        $this->assertEquals(CollectionType::class, $this->type->getParent());
     }
 }

@@ -8,7 +8,7 @@ use Oro\Bundle\ProductBundle\Provider\ContentVariantSegmentProvider;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
-class ProductCollectionSegmentVoterTest extends \PHPUnit_Framework_TestCase
+class ProductCollectionSegmentVoterTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var ProductCollectionSegmentVoter
@@ -16,12 +16,12 @@ class ProductCollectionSegmentVoterTest extends \PHPUnit_Framework_TestCase
     private $voter;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|DoctrineHelper
+     * @var \PHPUnit\Framework\MockObject\MockObject|DoctrineHelper
      */
     private $doctrineHelper;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ContentVariantSegmentProvider
+     * @var \PHPUnit\Framework\MockObject\MockObject|ContentVariantSegmentProvider
      */
     private $contentVariantSegmentProvider;
 

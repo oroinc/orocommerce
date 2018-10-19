@@ -19,6 +19,7 @@
                 <label class="quick-order-add__label">{{ 'oro.product.item_number.label'|trans }}</label>
                 {{ form_widget(form.productDisplayName, {attr: {
                     placeholder: "oro.product.sku.placeholder",
+                    'data-value': form.productDisplayName.vars.value,
                     'data-dropdown-classes':{
                         holder: 'select2-drop oro-select2__dropdown',
                         menu: 'select2-results',
@@ -86,7 +87,7 @@
         </div>
 
         {% if allow_add %}
-            <a href="#" class="btn btn--primary btn--full add-list-item"
+            <a href="#" class="btn btn--primary btn--block add-list-item"
                data-container=".js-item-collection"
             >
                 <i class="fa-plus-circle"></i>
@@ -99,7 +100,10 @@
 {% block oro_product_quick_add_import_from_file_widget %}
     {% spaceless %}
         <div class="quick-order-import__content">
-            {{ form_widget(form.file) }}
+            <label class="btn btn--large">
+                {{ 'oro.product.frontend.quick_add.import_from_file.choose_file.label'|trans }}
+                {{ form_widget(form.file, {attr: {class:'hidden'}}) }}
+            </label>
         </div>
     {% endspaceless %}
 {% endblock %}

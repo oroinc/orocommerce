@@ -13,25 +13,27 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-class ProductPriceHandlerTest extends \PHPUnit_Framework_TestCase
+class ProductPriceHandlerTest extends \PHPUnit\Framework\TestCase
 {
+    const FORM_DATA = ['field' => 'value'];
+
     /**
-     * @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $eventDispatcher;
 
     /**
-     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     private $doctrineHelper;
 
     /**
-     * @var FormInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var FormInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $form;
 
     /**
-     * @var Request|\PHPUnit_Framework_MockObject_MockObject
+     * @var Request
      */
     private $request;
 
@@ -41,14 +43,14 @@ class ProductPriceHandlerTest extends \PHPUnit_Framework_TestCase
     private $handler;
 
     /**
-     * @var PriceManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var PriceManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $priceManager;
 
     protected function setUp()
     {
         $this->form = $this->createMock(FormInterface::class);
-        $this->request = $this->createMock(Request::class);
+        $this->request = new Request();
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
         $this->priceManager = $this->createMock(PriceManager::class);
         $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
@@ -89,19 +91,18 @@ class ProductPriceHandlerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param $entity
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     protected function formHandlerMock($entity)
     {
         $this->form->expects($this->once())
             ->method('setData')
             ->with($entity);
-        $this->request->expects($this->once())
-            ->method('getMethod')
-            ->will($this->returnValue('POST'));
+        $this->request->initialize([], self::FORM_DATA);
+        $this->request->setMethod('POST');
         $this->form->expects($this->once())
             ->method('submit')
-            ->with($this->request);
+            ->with(self::FORM_DATA);
         $this->form->expects($this->once())
             ->method('isValid')
             ->will($this->returnValue(true));

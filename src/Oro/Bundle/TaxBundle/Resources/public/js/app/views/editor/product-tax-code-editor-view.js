@@ -8,6 +8,16 @@ define(function(require) {
 
     ProductTaxCodeEditorView =
         AbstractRelationEditorView.extend(/** @exports ProductTaxCodeEditorView.prototype */{
+            /**
+             * @inheritDoc
+             */
+            constructor: function ProductTaxCodeEditorView() {
+                ProductTaxCodeEditorView.__super__.constructor.apply(this, arguments);
+            },
+
+            /**
+             * @inheritDoc
+             */
             initialize: function(options) {
                 ProductTaxCodeEditorView.__super__.initialize.apply(this, arguments);
                 if (options.value_field_name || options.ignore_value_field_name) {

@@ -18,7 +18,6 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormErrorIterator;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -32,45 +31,45 @@ class ProductUpdateHandlerTest extends UpdateHandlerTest
     const PRODUCT_ID = 1;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|Request
+     * @var \PHPUnit\Framework\MockObject\MockObject|Request
      */
     protected $request;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|Session
+     * @var \PHPUnit\Framework\MockObject\MockObject|Session
      */
     protected $session;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|Router
+     * @var \PHPUnit\Framework\MockObject\MockObject|Router
      */
     protected $router;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|DoctrineHelper
+     * @var \PHPUnit\Framework\MockObject\MockObject|DoctrineHelper
      */
     protected $doctrineHelper;
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|EntityManager
+     * @var \PHPUnit\Framework\MockObject\MockObject|EntityManager
      */
     protected $entityManager;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|EventDispatcherInterface
+     * @var \PHPUnit\Framework\MockObject\MockObject|EventDispatcherInterface
      */
     protected $eventDispatcher;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface
+     * @var \PHPUnit\Framework\MockObject\MockObject|TranslatorInterface
      */
     protected $translator;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ActionGroupRegistry
+     * @var \PHPUnit\Framework\MockObject\MockObject|ActionGroupRegistry
      */
     protected $actionGroupRegistry;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|RelatedItemsHandler */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|RelatedItemsHandler */
     protected $relatedItemsHandler;
 
     /**
@@ -91,7 +90,7 @@ class ProductUpdateHandlerTest extends UpdateHandlerTest
         $this->entityManager = $this->getMockBuilder('Doctrine\ORM\EntityManager')
             ->disableOriginalConstructor()
             ->getMock();
-        /** @var \PHPUnit_Framework_MockObject_MockObject|SymfonyRouter $symfonyRouter */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|SymfonyRouter $symfonyRouter */
         $symfonyRouter = $this->getMockBuilder('Symfony\Bundle\FrameworkBundle\Routing\Router')
             ->disableOriginalConstructor()
             ->getMock();
@@ -135,18 +134,11 @@ class ProductUpdateHandlerTest extends UpdateHandlerTest
     {
         $entity = $this->getProductMock(0);
         $queryParameters = ['qwe' => 'rty'];
-        $this->request->query = new ParameterBag($queryParameters);
-        $this->request->expects($this->once())
-            ->method('getMethod')
-            ->will($this->returnValue('POST'));
-        $this->request->expects($this->at(1))
-            ->method('get')
-            ->with($this->anything())
-            ->will($this->returnValue(false));
-        $this->request->expects($this->at(2))
-            ->method('get')
-            ->with(Router::ACTION_PARAMETER)
-            ->will($this->returnValue(ProductUpdateHandler::ACTION_SAVE_AND_DUPLICATE));
+        $this->request->initialize(
+            $queryParameters,
+            [Router::ACTION_PARAMETER => ProductUpdateHandler::ACTION_SAVE_AND_DUPLICATE]
+        );
+        $this->request->setMethod('POST');
 
         $this->doctrineHelper->expects($this->any())
             ->method('getEntityManager')
@@ -156,7 +148,7 @@ class ProductUpdateHandlerTest extends UpdateHandlerTest
         $message = 'Saved';
         $savedAndDuplicatedMessage = 'Saved and duplicated';
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|Form $form */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|Form $form */
         $form = $this->getMockBuilder('Symfony\Component\Form\Form')
             ->disableOriginalConstructor()
             ->getMock();
@@ -202,7 +194,7 @@ class ProductUpdateHandlerTest extends UpdateHandlerTest
             ->with('oro.product.controller.product.saved_and_duplicated.message')
             ->will($this->returnValue($savedAndDuplicatedMessage));
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|ActionGroup $actionGroup */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|ActionGroup $actionGroup */
         $actionGroup = $this->getMockBuilder('Oro\Bundle\ActionBundle\Model\ActionGroup')
             ->disableOriginalConstructor()
             ->getMock();
@@ -231,11 +223,13 @@ class ProductUpdateHandlerTest extends UpdateHandlerTest
 
     public function testBlankDataNoHandler()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|Form $form */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|Form $form */
         $form = $this->getMockBuilder('Symfony\Component\Form\Form')
             ->disableOriginalConstructor()
             ->getMock();
         $entity = $this->getProductMock(0);
+
+        $this->request->initialize(['_wid' => 'WID']);
         $expected = $this->assertSaveData($form, $entity);
 
         $result = $this->handler->handleUpdate(
@@ -250,7 +244,7 @@ class ProductUpdateHandlerTest extends UpdateHandlerTest
 
     public function testSaveHandler()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|Form $form */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|Form $form */
         $form = $this->getMockBuilder('Symfony\Component\Form\Form')
             ->disableOriginalConstructor()
             ->getMock();
@@ -273,8 +267,12 @@ class ProductUpdateHandlerTest extends UpdateHandlerTest
             ->with($entity)
             ->will($this->returnValue(1));
 
+        $this->request->initialize(['_wid' => 'WID']);
         $expected = $this->assertSaveData($form, $entity);
         $expected['savedId'] = 1;
+
+        $this->relatedItemsHandler->expects($this->never())
+            ->method('process');
 
         $result = $this->handler->handleUpdate(
             $entity,
@@ -295,9 +293,9 @@ class ProductUpdateHandlerTest extends UpdateHandlerTest
         $appendRelatedProductsField = $this->getSubForm([$relatedEntity]);
         $removeRelatedProductsField = $this->getSubForm();
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|Form $form */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|Form $form */
         $form = $this->prepareAppendedFields($appendRelatedProductsField, $removeRelatedProductsField, $entity);
-        /** @var FormHandler|\PHPUnit_Framework_MockObject_MockObject $formHandlerMock */
+        /** @var FormHandler|\PHPUnit\Framework\MockObject\MockObject $formHandlerMock */
         $formHandlerMock = $this->getFormHandlerMock($entity);
 
         $handler = new ProductUpdateHandler(
@@ -309,6 +307,7 @@ class ProductUpdateHandlerTest extends UpdateHandlerTest
         );
         $handler->setRelatedItemsHandler($this->relatedItemsHandler);
 
+        $this->request->initialize(['_wid' => 'WID']);
         $expected = $this->assertSaveData($form, $entity);
         $expected['savedId'] = 1;
 
@@ -330,11 +329,12 @@ class ProductUpdateHandlerTest extends UpdateHandlerTest
         $appendRelatedProductsField = $this->getSubForm();
         $removeRelatedProductsField = $this->getSubForm([$relatedEntity]);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|Form $form */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|Form $form */
         $form = $this->prepareAppendedFields($appendRelatedProductsField, $removeRelatedProductsField, $entity);
-        /** @var FormHandler|\PHPUnit_Framework_MockObject_MockObject $formHandlerMock */
+        /** @var FormHandler|\PHPUnit\Framework\MockObject\MockObject $formHandlerMock */
         $formHandlerMock = $this->getFormHandlerMock($entity);
 
+        $this->request->initialize(['_wid' => 'WID']);
         $expected = $this->assertSaveData($form, $entity);
         $expected['savedId'] = 1;
 
@@ -367,7 +367,7 @@ class ProductUpdateHandlerTest extends UpdateHandlerTest
 
         $form = $this->getFormThatReturnsNoErrors($appendRelatedProductsField, $removeRelatedProductsField);
 
-        /** @var FormHandler|\PHPUnit_Framework_MockObject_MockObject $formHandlerMock */
+        /** @var FormHandler|\PHPUnit\Framework\MockObject\MockObject $formHandlerMock */
         $formHandlerMock = $this->getFormHandlerMock($entity);
         $this->doctrineHelper->expects($this->never())
             ->method('getSingleEntityIdentifier');
@@ -392,6 +392,7 @@ class ProductUpdateHandlerTest extends UpdateHandlerTest
         $handler->setRelatedItemsHandler($this->relatedItemsHandler);
         $handler->setTranslator($this->translator);
 
+        $this->request->initialize(['_wid' => 'WID']);
         $expected = $this->assertSaveData($form, $entity);
 
         $result = $handler->handleUpdate(
@@ -471,17 +472,12 @@ class ProductUpdateHandlerTest extends UpdateHandlerTest
     }
 
     /**
-     * @param \PHPUnit_Framework_MockObject_MockObject|Form $form
+     * @param \PHPUnit\Framework\MockObject\MockObject|Form $form
      * @param object $entity
-     * @param string $wid
      * @return array
      */
-    protected function assertSaveData($form, $entity, $wid = 'WID')
+    protected function assertSaveData($form, $entity)
     {
-        $this->request->expects($this->atLeastOnce())
-            ->method('get')
-            ->with('_wid', false)
-            ->will($this->returnValue($wid));
         $formView = $this->getMockBuilder('Symfony\Component\Form\FormView')
             ->disableOriginalConstructor()
             ->getMock();
@@ -506,7 +502,7 @@ class ProductUpdateHandlerTest extends UpdateHandlerTest
 
     /**
      * @param array $data
-     * @return \PHPUnit_Framework_MockObject_MockObject|Form
+     * @return \PHPUnit\Framework\MockObject\MockObject|Form
      */
     private function getSubForm($data = [])
     {
@@ -523,13 +519,13 @@ class ProductUpdateHandlerTest extends UpdateHandlerTest
     /**
      * @param FormInterface $appendRelatedSubForm
      * @param FormInterface $removeRelatedSubForm
-     * @return \PHPUnit_Framework_MockObject_MockObject|Form
+     * @return \PHPUnit\Framework\MockObject\MockObject|Form
      */
     private function getFormThatReturnsNoErrors(
         FormInterface $appendRelatedSubForm,
         FormInterface $removeRelatedSubForm
     ) {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|Form $form */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|Form $form */
         $form = $this->getMockBuilder('Symfony\Component\Form\Form')
             ->disableOriginalConstructor()
             ->getMock();
@@ -551,11 +547,11 @@ class ProductUpdateHandlerTest extends UpdateHandlerTest
 
     /**
      * @param $entity
-     * @return FormHandler|\PHPUnit_Framework_MockObject_MockObject
+     * @return FormHandler|\PHPUnit\Framework\MockObject\MockObject
      */
     private function getFormHandlerMock($entity)
     {
-        /** @var FormHandler|\PHPUnit_Framework_MockObject_MockObject $formHandlerMock */
+        /** @var FormHandler|\PHPUnit\Framework\MockObject\MockObject $formHandlerMock */
         $formHandlerMock = $this->getMockBuilder(FormHandler::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -571,11 +567,11 @@ class ProductUpdateHandlerTest extends UpdateHandlerTest
      * @param $removeRelatedProductsField
      * @param $entity
      *
-     * @return \PHPUnit_Framework_MockObject_MockObject|Form
+     * @return \PHPUnit\Framework\MockObject\MockObject|Form
      */
     private function prepareAppendedFields($appendRelatedProductsField, $removeRelatedProductsField, $entity)
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|Form $form */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|Form $form */
         $form = $this->createMock(Form::class);
         $form->expects($this->any())
             ->method('get')

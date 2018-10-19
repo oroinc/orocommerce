@@ -15,37 +15,37 @@ use Oro\Bundle\PromotionBundle\Provider\SubtotalProvider;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Translation\TranslatorInterface;
 
-class SubtotalProviderTest extends \PHPUnit_Framework_TestCase
+class SubtotalProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var UserCurrencyManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var UserCurrencyManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $currencyManager;
 
     /**
-     * @var WebsiteCurrencyProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var WebsiteCurrencyProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     private $websiteCurrencyProvider;
 
     /**
-     * @var RoundingServiceInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var RoundingServiceInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $rounding;
 
     /**
-     * @var PromotionExecutor|\PHPUnit_Framework_MockObject_MockObject
+     * @var PromotionExecutor|\PHPUnit\Framework\MockObject\MockObject
      */
     private $promotionExecutor;
 
     /**
-     * @var AppliedDiscountsProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var AppliedDiscountsProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     private $appliedDiscountsProvider;
 
     /**
-     * @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $translator;
 

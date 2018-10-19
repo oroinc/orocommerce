@@ -4,8 +4,9 @@ namespace Oro\Bundle\ProductBundle\Form\Type;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Oro\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\ChoiceList\View\ChoiceView;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormError;
@@ -16,6 +17,12 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
 
+/**
+ * Extends AbstractProductAwareType behavior by:
+ * validating units
+ * setAcceptable units
+ * formatting view choices values using UnitLabelFormatterInterface
+ */
 class ProductUnitSelectionType extends AbstractProductAwareType
 {
     const NAME = 'oro_product_unit_selection';
@@ -26,7 +33,7 @@ class ProductUnitSelectionType extends AbstractProductAwareType
     protected $translator;
 
     /**
-     * @var ProductUnitLabelFormatter
+     * @var UnitLabelFormatterInterface
      */
     protected $productUnitFormatter;
 
@@ -36,10 +43,10 @@ class ProductUnitSelectionType extends AbstractProductAwareType
     protected $entityClass;
 
     /**
-     * @param ProductUnitLabelFormatter $productUnitFormatter
+     * @param UnitLabelFormatterInterface $productUnitFormatter
      * @param TranslatorInterface $translator
      */
-    public function __construct(ProductUnitLabelFormatter $productUnitFormatter, TranslatorInterface $translator)
+    public function __construct(UnitLabelFormatterInterface $productUnitFormatter, TranslatorInterface $translator)
     {
         $this->productUnitFormatter = $productUnitFormatter;
         $this->translator = $translator;
@@ -76,7 +83,7 @@ class ProductUnitSelectionType extends AbstractProductAwareType
             return;
         }
 
-        $options['choices'] = $this->getProductUnits($form, $product);
+        $options['choices'] = $this->getProductUnitChoices($form, $product);
         $options['choices_updated'] = true;
 
         $formParent->add($form->getName(), static::class, $options);
@@ -156,7 +163,7 @@ class ProductUnitSelectionType extends AbstractProductAwareType
         $resolver->setDefaults(
             [
                 'class' => $this->entityClass,
-                'property' => 'code',
+                'choice_label' => 'code',
                 'compact' => false,
                 'choices_updated' => false,
                 'required' => true,
@@ -255,11 +262,27 @@ class ProductUnitSelectionType extends AbstractProductAwareType
     }
 
     /**
+     * @param FormInterface $form
+     * @param Product|null $product
+     * @return array
+     */
+    private function getProductUnitChoices(FormInterface $form, Product $product = null)
+    {
+        $units = $this->getProductUnits($form, $product);
+        $choices = [];
+        foreach ($units as $value => $unit) {
+            $choices[$unit->getCode()] = $value;
+        }
+
+        return $choices;
+    }
+
+    /**
      * {@inheritDoc}
      */
     public function getParent()
     {
-        return 'entity';
+        return EntityType::class;
     }
 
     /**

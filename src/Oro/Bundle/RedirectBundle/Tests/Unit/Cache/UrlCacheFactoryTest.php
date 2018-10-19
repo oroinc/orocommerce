@@ -5,7 +5,7 @@ namespace Oro\Bundle\RedirectBundle\Tests\Unit\Cache;
 use Oro\Bundle\RedirectBundle\Cache\UrlCacheFactory;
 use Oro\Bundle\RedirectBundle\Cache\UrlCacheInterface;
 
-class UrlCacheFactoryTest extends \PHPUnit_Framework_TestCase
+class UrlCacheFactoryTest extends \PHPUnit\Framework\TestCase
 {
     public function testGetKnown()
     {

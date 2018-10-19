@@ -4,36 +4,34 @@
 
 ### get
 
-Get details of the product price attribute value by its ID.
+Retrieve a product price attribute value record.
 
 {@inheritdoc}
 
 ### get_list
 
-Get the collection of product price attribute value details. A collection may contain all values or may be filtered using standard <a href="https://www.oroinc.com/doc/orocommerce/current/dev-guide/integration#filters">filters</a>.
+Retrieve a collection of product price attribute value records.
 
 {@inheritdoc}
 
 ### create
 
-Add a new product price attribute value.
+Create a new product price attribute value record.
 
 {@inheritdoc}
 
 {@request:json_api}
 Example:
 
-`</api/priceattributeproductprices>`
-
 ```JSON
 {
     "data": {
         "type": "priceattributeproductprices",
         "attributes": {
-    		"currency": "USD",
-    		"value": "24.3"
-    	},
-    	"relationships": {
+            "currency": "USD",
+            "value": "24.3"
+        },
+        "relationships": {
             "priceList": {
                 "data": {
                     "type": "priceattributepricelists",
@@ -60,14 +58,12 @@ Example:
 
 ### update
 
-Update product price attribute value identified by ID.
+Edit a specific product price attribute value record.
 
 {@inheritdoc}
 
 {@request:json_api}
 Example:
-
-`</api/priceattributeproductprices/1>`
 
 ```JSON
 {
@@ -75,10 +71,10 @@ Example:
         "id": "1",
         "type": "priceattributeproductprices",
         "attributes": {
-    		"currency": "USD",
-    		"value": "35"
-    	},
-    	"relationships": {
+            "currency": "USD",
+            "value": "35"
+        },
+        "relationships": {
             "priceList": {
                 "data": {
                     "type": "priceattributepricelists",
@@ -105,13 +101,13 @@ Example:
 
 ### delete
 
-Delete a product price attribute value identified by ID.
+Delete a specific product price attribute value record.
 
 {@inheritdoc}
 
 ### delete_list
 
-Delete a collection of product price attribute values. A collection may contain all values or may be filtered using standard <a href="https://www.oroinc.com/doc/orocommerce/current/dev-guide/integration#filters">filters</a>.
+Delete a collection of product price attribute value records.
 
 {@inheritdoc}
 
@@ -177,7 +173,6 @@ Replace the product price attribute attached to a specific product price attribu
 {@request:json_api}
 Example:
 
-`</api/priceattributeproductprices/1/relationships/priceList>`
 ```JSON
 {
   "data": {
@@ -205,7 +200,6 @@ Replace the product attached to a specific product price attribute value.
 {@request:json_api}
 Example:
 
-`</api/priceattributeproductprices/1/relationships/product>`
 ```JSON
 {
   "data": {
@@ -233,7 +227,6 @@ Replace the product unit attached to a specific product price attribute value.
 {@request:json_api}
 Example:
 
-`</api/priceattributeproductprices/1/relationships/unit>`
 ```JSON
 {
   "data": {

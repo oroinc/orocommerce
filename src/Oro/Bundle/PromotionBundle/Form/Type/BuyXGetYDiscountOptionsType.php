@@ -66,7 +66,7 @@ class BuyXGetYDiscountOptionsType extends AbstractType
                     'choices' => $options['apply_to_choices'],
                     'required' => false,
                     'label' => 'oro.discount_options.buy_x_get_y_type.apply_to.label',
-                    'empty_value' => false,
+                    'placeholder' => false,
                 ]
             )
             ->add(
@@ -102,7 +102,7 @@ class BuyXGetYDiscountOptionsType extends AbstractType
      */
     public function getParent()
     {
-        return DiscountOptionsType::NAME;
+        return DiscountOptionsType::class;
     }
 
     /**
@@ -112,7 +112,7 @@ class BuyXGetYDiscountOptionsType extends AbstractType
     {
         $choices = [];
         foreach (self::APPLY_TO_FIELD_CHOICES as $item) {
-            $choices[$item] = 'oro.discount_options.buy_x_get_y_type.apply_to.choices.' . $item;
+            $choices['oro.discount_options.buy_x_get_y_type.apply_to.choices.' . $item] = $item;
         }
 
         return $choices;

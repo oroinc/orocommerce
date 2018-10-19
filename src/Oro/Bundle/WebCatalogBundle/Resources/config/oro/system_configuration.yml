@@ -3,7 +3,7 @@ system_configuration:
         oro_web_catalog.web_catalog:
             ui_only: true
             data_type: integer
-            type: oro_web_catalog_select
+            type: Oro\Bundle\WebCatalogBundle\Form\Type\WebCatalogSelectType
             priority: 110
             options:
                 label: oro.webcatalog.system_configuration.fields.web_catalog.label

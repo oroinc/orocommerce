@@ -44,18 +44,18 @@ class ZipCodeCollectionTypeTest extends FormIntegrationTestCase
     public function testGetParent()
     {
         $this->assertInternalType('string', $this->formType->getParent());
-        $this->assertEquals(CollectionType::NAME, $this->formType->getParent());
+        $this->assertEquals(CollectionType::class, $this->formType->getParent());
     }
 
     public function testConfigureOptions()
     {
-        /* @var $resolver \PHPUnit_Framework_MockObject_MockObject|OptionsResolver */
+        /* @var $resolver \PHPUnit\Framework\MockObject\MockObject|OptionsResolver */
         $resolver = $this->createMock('\Symfony\Component\OptionsResolver\OptionsResolver');
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with(
                 [
-                    'entry_type' => ZipCodeType::NAME,
+                    'entry_type' => ZipCodeType::class,
                     'required' => false,
                 ]
             );

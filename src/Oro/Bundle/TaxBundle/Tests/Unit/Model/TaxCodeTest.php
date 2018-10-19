@@ -4,7 +4,7 @@ namespace Oro\Bundle\CustomerBundle\Tests\Unit\Entity;
 
 use Oro\Bundle\TaxBundle\Model\TaxCode;
 
-class TaxCodeTest extends \PHPUnit_Framework_TestCase
+class TaxCodeTest extends \PHPUnit\Framework\TestCase
 {
     public function testNew()
     {

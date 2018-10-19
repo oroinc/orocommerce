@@ -6,10 +6,10 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Layout\DataProvider\OrderPaymentStatusProvider;
 use Oro\Bundle\PaymentBundle\Provider\PaymentStatusProvider;
 
-class OrderPaymentStatusProviderTest extends \PHPUnit_Framework_TestCase
+class OrderPaymentStatusProviderTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var PaymentStatusProvider| \PHPUnit_Framework_MockObject_MockObject
+     * @var PaymentStatusProvider| \PHPUnit\Framework\MockObject\MockObject
      */
     protected $paymentProvider;
 

@@ -7,7 +7,7 @@ use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-class ShoppingListTotalTest extends \PHPUnit_Framework_TestCase
+class ShoppingListTotalTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 

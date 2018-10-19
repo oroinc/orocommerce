@@ -20,10 +20,10 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Validator\Validation;
 
@@ -53,10 +53,16 @@ class ProductPriceTypeTest extends FormIntegrationTestCase
     ];
 
     /**
+     * @var string
+     */
+    protected $locale;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
     {
+        $this->locale = \Locale::getDefault();
         $this->formType = new ProductPriceType();
         $this->formType->setDataClass('Oro\Bundle\PricingBundle\Entity\ProductPrice');
         parent::setUp();
@@ -67,6 +73,7 @@ class ProductPriceTypeTest extends FormIntegrationTestCase
      */
     protected function tearDown()
     {
+        \Locale::setDefault($this->locale);
         unset($this->formType);
     }
 
@@ -91,11 +98,12 @@ class ProductPriceTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
+                    $this->formType,
                     $entityType->getName() => $entityType,
-                    PriceListSelectType::NAME => new PriceListSelectTypeStub(),
-                    ProductPriceUnitSelectorType::NAME => $productUnitSelection,
-                    PriceType::NAME => $priceType,
-                    CurrencySelectionType::NAME => new CurrencySelectionTypeStub(),
+                    PriceListSelectType::class => new PriceListSelectTypeStub(),
+                    ProductPriceUnitSelectorType::class => $productUnitSelection,
+                    PriceType::class => $priceType,
+                    CurrencySelectionType::class => new CurrencySelectionTypeStub(),
                     QuantityTypeTrait::$name => $this->getQuantityType(),
                 ],
                 []
@@ -108,15 +116,18 @@ class ProductPriceTypeTest extends FormIntegrationTestCase
      * @param ProductPrice $defaultData
      * @param array $submittedData
      * @param ProductPrice $expectedData
+     * @param string $locale
      * @dataProvider submitProvider
      */
     public function testSubmit(
         ProductPrice $defaultData,
         $submittedData,
-        ProductPrice $expectedData
+        ProductPrice $expectedData,
+        $locale = 'en'
     ) {
+        \Locale::setDefault($locale);
         $this->addRoundingServiceExpect();
-        $form = $this->factory->create($this->formType, $defaultData, []);
+        $form = $this->factory->create(ProductPriceType::class, $defaultData, []);
 
         $this->assertEquals($defaultData, $form->getData());
 
@@ -136,7 +147,7 @@ class ProductPriceTypeTest extends FormIntegrationTestCase
         $productUnitPrecision->setUnit((new ProductUnit())->setCode('kg'));
         $productUnitPrecision->setPrecision(5);
         $existingUnit = (new ProductUnit())->setCode('kg');
-        $existingPrice = (new Price())->setValue(42)->setCurrency('USD');
+        $existingPrice = (new Price())->setValue('42.0000')->setCurrency('USD');
 
         $product->addUnitPrecision($productUnitPrecision);
 
@@ -147,20 +158,29 @@ class ProductPriceTypeTest extends FormIntegrationTestCase
         $existingProductPrice
             ->setProduct($product)
             ->setPriceList($existingProductPriceList)
-            ->setQuantity(123)
+            ->setQuantity('123')
             ->setUnit($existingUnit)
             ->setPrice($existingPrice)
             ->setPriceRule($rule);
 
+        $generatedPrice = new ProductPrice();
+        $generatedPrice
+            ->setProduct($product)
+            ->setPriceList($existingProductPriceList)
+            ->setQuantity('123')
+            ->setUnit((new ProductUnit())->setCode('kg'))
+            ->setPrice((new Price())->setValue('42.0000')->setCurrency('USD'))
+            ->setPriceRule(new PriceRule());
+
         /** @var PriceList $expectedPriceList */
         $expectedPriceList = $this->getEntity('Oro\Bundle\PricingBundle\Entity\PriceList', 2);
         $expectedUnit = (new ProductUnit())->setCode('item');
-        $expectedPrice = (new Price())->setValue(43)->setCurrency('EUR');
+        $expectedPrice = (new Price())->setValue('43.0000')->setCurrency('EUR');
 
         $expectedProductPrice = new ProductPrice();
         $expectedProductPrice
             ->setPriceList($expectedPriceList)
-            ->setQuantity(124)
+            ->setQuantity('124')
             ->setUnit($expectedUnit)
             ->setPrice($expectedPrice)
             ->setProduct($product)
@@ -174,40 +194,43 @@ class ProductPriceTypeTest extends FormIntegrationTestCase
                 'defaultData'   => (new ProductPrice())->setProduct($product)->setUnit($existingUnit),
                 'submittedData' => [
                     'priceList' => 2,
-                    'quantity'  => 124,
+                    'quantity'  => '124',
                     'unit'      => 'item',
                     'price'     => [
-                        'value'    => 43,
+                        'value'    => '43.0000',
                         'currency' => 'EUR'
                     ]
                 ],
-                'expectedData' => $expectedProductPrice
+                'expectedData' => $expectedProductPrice,
+                'locale' => 'en'
             ],
             'product price with precision' => [
                 'defaultData'   => $existingProductPrice,
                 'submittedData' => [
                     'priceList' => 2,
-                    'quantity'  => 124,
+                    'quantity'  => '124',
                     'unit'      => 'item',
                     'price'     => [
-                        'value'    => 43,
+                        'value'    => '43.0000',
                         'currency' => 'EUR'
                     ]
                 ],
                 'expectedData' => $updatedExpectedProductPrice,
+                'locale' => 'en'
             ],
             'product price without changes' => [
-                'defaultData' => $existingProductPrice,
+                'defaultData'   => $generatedPrice,
                 'submittedData' => [
-                    'priceList' => $existingProductPrice->getPriceList()->getId(),
-                    'quantity' => $existingProductPrice->getQuantity(),
-                    'unit' => $existingProductPrice->getUnit()->getCode(),
-                    'price' => [
-                        'value' => $existingProductPrice->getPrice()->getValue(),
-                        'currency' => $existingProductPrice->getPrice()->getCurrency(),
+                    'priceList' => 1,
+                    'quantity'  => '123',
+                    'unit'      => 'kg',
+                    'price'     => [
+                        'value'    => '42,0000',
+                        'currency' => 'USD'
                     ],
                 ],
-                'expectedData' => $existingProductPrice,
+                'expectedData' => clone $generatedPrice,
+                'locale' => 'de'
             ],
         ];
     }
@@ -260,7 +283,7 @@ class ProductPriceTypeTest extends FormIntegrationTestCase
         $existingProductPrice->setPriceList($existingProductPriceList);
 
         /**
-         * @var $formMock FormInterface|\PHPUnit_Framework_MockObject_MockObject
+         * @var $formMock FormInterface|\PHPUnit\Framework\MockObject\MockObject
          */
         $formMock = $this->createMock(FormInterface::class);
 
@@ -285,7 +308,7 @@ class ProductPriceTypeTest extends FormIntegrationTestCase
     public function testOnPreSetDataNoPrice()
     {
         /**
-         * @var $formMock FormInterface|\PHPUnit_Framework_MockObject_MockObject
+         * @var $formMock FormInterface|\PHPUnit\Framework\MockObject\MockObject
          */
         $formMock = $this->createMock(FormInterface::class);
         $event = new FormEvent($formMock, null);
@@ -311,7 +334,7 @@ class ProductPriceTypeTest extends FormIntegrationTestCase
         $existingProductPrice = new ProductPrice();
 
         /**
-         * @var $formMock FormInterface|\PHPUnit_Framework_MockObject_MockObject
+         * @var $formMock FormInterface|\PHPUnit\Framework\MockObject\MockObject
          */
         $formMock = $this->createMock(FormInterface::class);
         $event = new FormEvent($formMock, $existingProductPrice);

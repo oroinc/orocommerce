@@ -1,6 +1,6 @@
 datagrids:
     products-select-grid-base-without-default-sorting:
-        extended_entity_name: %oro_product.entity.product.class%
+        extended_entity_name: '%oro_product.entity.product.class%'
         options:
             entityHint:        products
         source:
@@ -19,7 +19,7 @@ datagrids:
                     - product.denormalizedDefaultNameUppercase as productNameUppercase
                     - IDENTITY(product.inventory_status) as inventoryStatusId
                 from:
-                    - { table: %oro_product.entity.product.class%, alias: product }
+                    - { table: '%oro_product.entity.product.class%', alias: product }
         columns:
             sku:
                 label:         oro.product.sku.label
@@ -42,8 +42,8 @@ datagrids:
                 label:         oro.product.new_arrival.label
                 frontend_type: select
                 choices:
-                    - oro.product.new_arrival.no
-                    - oro.product.new_arrival.yes
+                    oro.product.new_arrival.no: 0
+                    oro.product.new_arrival.yes: 1
                 renderable:    false
             createdAt:
                 label:         oro.ui.created_at
@@ -103,8 +103,8 @@ datagrids:
                     options:
                         field_options:
                             choices:
-                                1: oro.product.new_arrival.yes
-                                2: oro.product.new_arrival.no
+                                oro.product.new_arrival.yes: 1
+                                oro.product.new_arrival.no: 2
                     enabled: false
                 createdAt:
                     type:      datetime
@@ -117,7 +117,7 @@ datagrids:
         extends: products-select-grid-base-without-default-sorting
         sorters:
             default:
-                createdAt: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
+                createdAt: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC'
 
     products-select-grid:
         extends: products-select-grid-base
@@ -361,7 +361,7 @@ datagrids:
                     - product.denormalizedDefaultNameUppercase as productNameUppercase
                     - IDENTITY(product.inventory_status) AS inventoryStatusId
                 from:
-                    - { table: %oro_product.entity.product.class%, alias: product }
+                    - { table: '%oro_product.entity.product.class%', alias: product }
                 where:
                     and:
                         - product.id <> :parentProduct
@@ -405,7 +405,7 @@ datagrids:
 
     product-product-variants-edit:
         extends: product-product-variants-base
-        extended_entity_name: %oro_product.entity.product.class%
+        extended_entity_name: '%oro_product.entity.product.class%'
         options:
             rowSelection:
                 dataField: id
@@ -425,7 +425,7 @@ datagrids:
                 join:
                     left:
                         -
-                            join: %oro_product.entity.product_variant_link.class%
+                            join: '%oro_product.entity.product_variant_link.class%'
                             alias: currentVariantLink
                             conditionType: WITH
                             condition: currentVariantLink.product = product.id AND currentVariantLink.parentProduct = :parentProduct
@@ -465,11 +465,11 @@ datagrids:
                 isVariant:
                     data_name: isVariant
             default:
-                sku: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+                sku: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
 
     product-product-variants-view:
         extends: product-product-variants-base
-        extended_entity_name: %oro_product.entity.product.class%
+        extended_entity_name: '%oro_product.entity.product.class%'
         source:
             query:
                 select:
@@ -477,7 +477,7 @@ datagrids:
                 join:
                     inner:
                         -
-                            join: %oro_product.entity.product_variant_link.class%
+                            join: '%oro_product.entity.product_variant_link.class%'
                             alias: productVariantLink
                             conditionType: WITH
                             condition: productVariantLink.product = product.id AND productVariantLink.parentProduct = :parentProduct
@@ -505,11 +505,11 @@ datagrids:
                 visible:
                     data_name: visible
             default:
-                visible: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
-                sku: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+                visible: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC'
+                sku: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
 
     products-related-items-base:
-        extended_entity_name: %oro_product.entity.product.class%
+        extended_entity_name: '%oro_product.entity.product.class%'
         options:
             entityHint:        products
         source:
@@ -527,7 +527,7 @@ datagrids:
                     - product.denormalizedDefaultNameUppercase as productNameUppercase
                     - IDENTITY(product.inventory_status) as inventoryStatusId
                 from:
-                    - { table: %oro_product.entity.product.class%, alias: product }
+                    - { table: '%oro_product.entity.product.class%', alias: product }
         columns:
             sku:
                 label:         oro.product.sku.label
@@ -569,7 +569,7 @@ datagrids:
                 updatedAt:
                     data_name: product.updatedAt
             default:
-                createdAt: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
+                createdAt: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC'
         filters:
             columns:
                 sku:
@@ -711,7 +711,7 @@ datagrids:
             columns:
                 isRelated:
                     data_name: isRelated
-            default: { isRelated: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC }
+            default: { isRelated: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC' }
 
     products-related-products-select:
         extends: products-related-items-select
@@ -796,7 +796,8 @@ datagrids:
                 rowAction:     true
 
     brand-grid:
-        extended_entity_name: %oro_product.entity.brand.class%
+        acl_resource: oro_product_brand_view
+        extended_entity_name: '%oro_product.entity.brand.class%'
         source:
             type: orm
             query:
@@ -804,7 +805,7 @@ datagrids:
                     - brand.id
                     - brand.defaultTitle
                 from:
-                    - { table: %oro_product.entity.brand.class%, alias: brand }
+                    - { table: '%oro_product.entity.brand.class%', alias: brand }
         columns:
             defaultTitle:
                 label: oro.product.brand.names.label
@@ -851,7 +852,7 @@ datagrids:
                 rowAction:     true
 
     brand-select-grid:
-        extended_entity_name: %oro_product.entity.brand.class%
+        extended_entity_name: '%oro_product.entity.brand.class%'
         acl_resource: oro_product_brand_update
         options:
             entityHint:        brands
@@ -862,7 +863,7 @@ datagrids:
                     - brand.id
                     - brand.defaultTitle
                 from:
-                    - { table: %oro_product.entity.brand.class%, alias: brand }
+                    - { table: '%oro_product.entity.brand.class%', alias: brand }
         columns:
             defaultTitle:
                 label: oro.product.brand.label
@@ -873,7 +874,7 @@ datagrids:
                 defaultTitle:
                     data_name: brand.defaultTitle
             default:
-                defaultTitle: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+                defaultTitle: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
         filters:
             columns:
                 defaultTitle:

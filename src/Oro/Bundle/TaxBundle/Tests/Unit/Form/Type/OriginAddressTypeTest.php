@@ -3,10 +3,10 @@
 namespace Oro\Bundle\TaxBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\AddressBundle\Entity\Country;
-use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\TaxBundle\Form\Type\OriginAddressType;
 use Oro\Bundle\TaxBundle\Model\Address;
 use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -22,11 +22,6 @@ class OriginAddressTypeTest extends AbstractAddressTestCase
         $this->formType->setDataClass('Oro\Bundle\TaxBundle\Model\Address');
 
         parent::setUp();
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals('oro_tax_origin_address', $this->formType->getName());
     }
 
     public function testConfigureOptions()
@@ -121,9 +116,9 @@ class OriginAddressTypeTest extends AbstractAddressTestCase
     /**
      * {@inheritdoc}
      */
-    protected function getFormType()
+    protected function getFormTypeClass()
     {
-        return $this->formType;
+        return OriginAddressType::class;
     }
 
     /**
@@ -131,12 +126,15 @@ class OriginAddressTypeTest extends AbstractAddressTestCase
      */
     protected function getExtensions()
     {
-        return array_merge([$this->getValidatorExtension(true)], parent::getExtensions());
+        return array_merge([
+            new PreloadedExtension([$this->formType], []),
+            $this->getValidatorExtension(true)
+        ], parent::getExtensions());
     }
 
     public function testFinishViewWithoutParent()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|FormInterface $formMock */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|FormInterface $formMock */
         $formMock = $this->createMock('Symfony\Component\Form\FormInterface');
 
         $formView = new FormView();
@@ -145,10 +143,10 @@ class OriginAddressTypeTest extends AbstractAddressTestCase
 
     public function testFinishViewWithoutUseDefault()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|FormInterface $formMock */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|FormInterface $formMock */
         $formMock = $this->createMock('Symfony\Component\Form\FormInterface');
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|FormInterface $parent */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|FormInterface $parent */
         $parent = $this->createMock('Symfony\Component\Form\FormInterface');
         $parent->expects($this->once())->method('has')->willReturn(false);
 
@@ -160,14 +158,14 @@ class OriginAddressTypeTest extends AbstractAddressTestCase
 
     public function testFinishView()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|FormInterface $formMock */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|FormInterface $formMock */
         $formMock = $this->createMock('Symfony\Component\Form\FormInterface');
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|FormInterface $useDefault */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|FormInterface $useDefault */
         $useDefault = $this->createMock('Symfony\Component\Form\FormInterface');
         $useDefault->expects($this->once())->method('getData')->willReturn(true);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|FormInterface $parent */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|FormInterface $parent */
         $parent = $this->createMock('Symfony\Component\Form\FormInterface');
         $parent->expects($this->once())->method('has')->willReturn(true);
         $parent->expects($this->once())->method('get')->willReturn($useDefault);

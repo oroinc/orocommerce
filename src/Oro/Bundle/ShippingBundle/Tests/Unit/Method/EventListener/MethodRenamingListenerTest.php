@@ -7,10 +7,10 @@ use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
 use Oro\Bundle\ShippingBundle\Method\Event\MethodRenamingEvent;
 use Oro\Bundle\ShippingBundle\Method\EventListener\MethodRenamingListener;
 
-class MethodRenamingListenerTest extends \PHPUnit_Framework_TestCase
+class MethodRenamingListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ShippingMethodConfigRepository|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingMethodConfigRepository|\PHPUnit\Framework\MockObject\MockObject
      */
     private $shippingMethodConfigRepository;
 
@@ -30,7 +30,7 @@ class MethodRenamingListenerTest extends \PHPUnit_Framework_TestCase
         $oldId = 'old_name';
         $newId = 'new_name';
 
-        /** @var MethodRenamingEvent|\PHPUnit_Framework_MockObject_MockObject $event */
+        /** @var MethodRenamingEvent|\PHPUnit\Framework\MockObject\MockObject $event */
         $event = $this->createMock(MethodRenamingEvent::class);
         $event->expects(static::any())
             ->method('getOldMethodIdentifier')

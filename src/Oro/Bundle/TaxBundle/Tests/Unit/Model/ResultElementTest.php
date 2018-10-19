@@ -5,7 +5,7 @@ namespace Oro\Bundle\CustomerBundle\Tests\Unit\Entity;
 use Brick\Math\BigDecimal;
 use Oro\Bundle\TaxBundle\Model\ResultElement;
 
-class ResultElementTest extends \PHPUnit_Framework_TestCase
+class ResultElementTest extends \PHPUnit\Framework\TestCase
 {
     const INCLUDING_TAX = 1.2;
     const EXCLUDING_TAX = 1;

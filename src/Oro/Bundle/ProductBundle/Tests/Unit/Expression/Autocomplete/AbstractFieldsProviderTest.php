@@ -6,7 +6,7 @@ use Oro\Bundle\ProductBundle\Expression\FieldsProvider;
 use Oro\Component\Expression\ExpressionParser;
 use Symfony\Component\Translation\TranslatorInterface;
 
-abstract class AbstractFieldsProviderTest extends \PHPUnit_Framework_TestCase
+abstract class AbstractFieldsProviderTest extends \PHPUnit\Framework\TestCase
 {
     const CLASS_NAME = 'className';
     const IS_RELATION = 'isRelation';
@@ -15,17 +15,17 @@ abstract class AbstractFieldsProviderTest extends \PHPUnit_Framework_TestCase
     const RELATION_TYPES = ['ref-one'];
 
     /**
-     * @var ExpressionParser|\PHPUnit_Framework_MockObject_MockObject
+     * @var ExpressionParser|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $expressionParser;
 
     /**
-     * @var FieldsProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var FieldsProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $fieldsProvider;
 
     /**
-     * @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $translator;
 

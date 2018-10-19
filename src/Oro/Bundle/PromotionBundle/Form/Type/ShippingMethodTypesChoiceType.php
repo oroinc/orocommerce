@@ -67,7 +67,6 @@ class ShippingMethodTypesChoiceType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'empty_value' => null,
             'placeholder' => false,
             'choices' => $this->getChoices(),
             'choice_attr' => function ($choice) {
@@ -137,7 +136,7 @@ class ShippingMethodTypesChoiceType extends AbstractType
                     ShippingDiscount::SHIPPING_METHOD => $shippingMethod->getIdentifier(),
                     ShippingDiscount::SHIPPING_METHOD_TYPE => $shippingType->getIdentifier()
                 ]);
-                $shippingTypeChoices[$info] = $shippingType->getLabel();
+                $shippingTypeChoices[$shippingType->getLabel()] = $info;
             }
         }
 

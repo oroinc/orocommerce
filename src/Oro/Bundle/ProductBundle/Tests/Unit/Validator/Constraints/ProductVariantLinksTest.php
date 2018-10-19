@@ -6,7 +6,7 @@ use Oro\Bundle\ProductBundle\Validator\Constraints\ProductVariantLinks;
 use Oro\Bundle\ProductBundle\Validator\Constraints\ProductVariantLinksValidator;
 use Symfony\Component\Validator\Constraint;
 
-class ProductVariantLinksTest extends \PHPUnit_Framework_TestCase
+class ProductVariantLinksTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var ProductVariantLinks

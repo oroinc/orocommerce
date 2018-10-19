@@ -2,6 +2,11 @@
 
 namespace Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
 
+use Brick\Math\BigDecimal;
+
+/**
+ * Provides line items scope of data for PayPal request
+ */
 class LineItems extends AbstractOption implements OptionsDependentInterface
 {
     const NAME = 'L_NAME%d';
@@ -84,7 +89,8 @@ class LineItems extends AbstractOption implements OptionsDependentInterface
     {
         $result = [];
         $num = 0;
-        $itemSum = $taxSum = 0;
+        $itemSum = BigDecimal::of(0);
+        $taxSum = BigDecimal::of(0);
 
         foreach ($options as $option) {
             ++$num;
@@ -96,13 +102,16 @@ class LineItems extends AbstractOption implements OptionsDependentInterface
                 $result[sprintf($field, $num)] = self::getValue($option, $field, 0);
             }
 
-            // TODO: Need to use bignumbers. Should be updated in BB-2369
-            $itemSum += isset($option[self::COST], $option[self::QTY]) ? $option[self::COST] * $option[self::QTY] : 0;
-            $taxSum += isset($option[self::TAXAMT], $option[self::QTY]) ? $option[self::TAXAMT] * $option[self::QTY]: 0;
+            $qty = BigDecimal::of($option[self::QTY] ?? 0);
+            $cost = BigDecimal::of($option[self::COST] ?? 0)->multipliedBy($qty);
+            $taxamt = BigDecimal::of($option[self::TAXAMT] ?? 0)->multipliedBy($qty);
+
+            $itemSum = $itemSum->plus($cost);
+            $taxSum = $taxSum->plus($taxamt);
         }
 
-        $result[Amount::TAXAMT] = $taxSum;
-        $result[Amount::ITEMAMT] = $itemSum;
+        $result[Amount::TAXAMT] = $taxSum->toFloat();
+        $result[Amount::ITEMAMT] = $itemSum->toFloat();
 
         return $result;
     }

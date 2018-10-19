@@ -8,6 +8,7 @@ use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Oro\Bundle\WebCatalogBundle\Entity\Repository\ContentVariantRepository;
 use Oro\Component\WebCatalog\Entity\ContentNodeAwareInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 class WebCatalogBreadcrumbProvider extends AbstractWebCatalogDataProvider
@@ -43,7 +44,7 @@ class WebCatalogBreadcrumbProvider extends AbstractWebCatalogDataProvider
         $request = $this->requestStack->getCurrentRequest();
 
         if ($request && $contentVariant = $request->attributes->get('_content_variant')) {
-            $breadcrumbs = $this->getItemsByContentVariant($contentVariant);
+            $breadcrumbs = $this->getItemsByContentVariant($contentVariant, $request);
         } else {
             $breadcrumbs = $request->query->get('categoryId') ? $this->categoryBreadcrumbProvider->getItems() : [];
         }
@@ -75,7 +76,7 @@ class WebCatalogBreadcrumbProvider extends AbstractWebCatalogDataProvider
         $slug = isset($contextUrlAttributes[0]['_used_slug']) ? $contextUrlAttributes[0]['_used_slug'] : null;
         if ($slug) {
             $contentVariant = $this->getRepository()->findVariantBySlug($slug);
-            $breadcrumbs = $this->getItemsByContentVariant($contentVariant);
+            $breadcrumbs = $this->getItemsByContentVariant($contentVariant, $request);
         }
         $breadcrumbs[] = ['label' => $currentPageTitle, 'url' => null];
 
@@ -87,10 +88,11 @@ class WebCatalogBreadcrumbProvider extends AbstractWebCatalogDataProvider
      * Get breadcrumbs by content variant
      *
      * @param ContentNodeAwareInterface|null $contentVariant
+     * @param Request $request
      *
      * @return array
      */
-    private function getItemsByContentVariant(ContentNodeAwareInterface $contentVariant = null)
+    private function getItemsByContentVariant(ContentNodeAwareInterface $contentVariant = null, Request $request)
     {
         $breadcrumbs = [];
 
@@ -103,7 +105,7 @@ class WebCatalogBreadcrumbProvider extends AbstractWebCatalogDataProvider
                     $breadcrumbs[] = [
                         'label' => (string)$this->localizationHelper
                             ->getLocalizedValue($breadcrumb->getTitles()),
-                        'url' => (string)$this->localizationHelper
+                        'url' => $request->getBaseUrl() . (string)$this->localizationHelper
                             ->getLocalizedValue($breadcrumb->getLocalizedUrls())
                     ];
                 }

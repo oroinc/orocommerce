@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\RFPBundle\Tests\Unit\Storage;
 
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -11,159 +12,188 @@ use Oro\Bundle\RFPBundle\Entity\Request as RFPRequest;
 use Oro\Bundle\RFPBundle\Entity\RequestProduct;
 use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
 use Oro\Bundle\RFPBundle\Storage\RequestToQuoteDataStorage;
+use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class RequestToQuoteDataStorageTest extends \PHPUnit_Framework_TestCase
+/**
+ * Unit tests for RequestToQuoteDataStorage
+ */
+class RequestToQuoteDataStorageTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|ProductDataStorage */
-    protected $storage;
+    /**
+     * @var ProductDataStorage|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $storage;
 
-    /** @var RequestToQuoteDataStorage */
-    protected $requestDataStorage;
+    /**
+     * @var RequestToQuoteDataStorage
+     */
+    private $requestDataStorage;
+
 
     protected function setUp()
     {
-        $this->storage = $this->getMockBuilder('Oro\Bundle\ProductBundle\Storage\ProductDataStorage')
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $this->storage = $this->createMock(ProductDataStorage::class);
         $this->requestDataStorage = new RequestToQuoteDataStorage($this->storage);
     }
 
-    protected function tearDown()
-    {
-        unset($this->storage, $this->requestDataStorage);
-    }
-
-    public function testSaveToStorage()
-    {
-        $rfpRequestData = [
-            'customerId' => 10,
-            'customerUserId' => 42,
-            'productSku' => 'testSku',
-            'quantity' => 100,
-            'comment' => 'Test Comment',
-            'unitCode' => 'kg',
-            'assignedUsers' => [1, 3, 7],
-            'assignedCustomerUsers' => [2, 5],
-            'website' => 1,
-        ];
-
+    /**
+     * @dataProvider saveToStorageDataProvider
+     *
+     * @param array $rfpRequestData
+     * @param array $entityData
+     * @param array $entityItemData
+     */
+    public function testSaveToStorage(
+        array $rfpRequestData,
+        array $entityData,
+        array $entityItemData
+    ) {
         $rfpRequest = $this->createRFPRequest($rfpRequestData);
+        $rfpRequest->addRequestProduct($this->createRequestProduct($rfpRequestData['requestProductData']));
+        $rfpRequest->addRequestProduct($this->createRequestProduct($rfpRequestData['requestProductData']));
 
-        /** @var RequestProduct $requestProduct */
-        $requestProduct = $rfpRequest->getRequestProducts()->first();
+        $entityItemData['requestProductItems'][0]['price'] = $rfpRequestData['requestProductData']['price'];
 
-        /** @var RequestProductItem $requestProductItem */
-        $requestProductItem = $requestProduct->getRequestProductItems()->first();
-
-        $this->storage->expects($this->once())
+        $this->storage
+            ->expects(self::once())
             ->method('set')
             ->with([
-                ProductDataStorage::ENTITY_DATA_KEY => [
-                    'customer' => $rfpRequestData['customerId'],
-                    'customerUser' => $rfpRequestData['customerUserId'],
-                    'request' => null,
-                    'poNumber' => null,
-                    'shipUntil' => null,
-                    'assignedUsers' => [1, 3, 7],
-                    'assignedCustomerUsers' => [2, 5],
-                    'website' => 1,
-                ],
-                ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
-                    [
-                        ProductDataStorage::PRODUCT_SKU_KEY => $rfpRequestData['productSku'],
-                        ProductDataStorage::PRODUCT_QUANTITY_KEY => null,
-                        'commentCustomer' => $rfpRequestData['comment'],
-                        'requestProductItems' => [
-                            [
-                                'productUnit' => $rfpRequestData['unitCode'],
-                                'productUnitCode' => $rfpRequestData['unitCode'],
-                                'requestProductItem' => $requestProductItem->getId(),
-                                'quantity' => $rfpRequestData['quantity'],
-                                'price' => null,
-                            ],
-                        ]
-                    ],
-                    [
-                        ProductDataStorage::PRODUCT_SKU_KEY => $rfpRequestData['productSku'],
-                        ProductDataStorage::PRODUCT_QUANTITY_KEY => null,
-                        'commentCustomer' => $rfpRequestData['comment'],
-                        'requestProductItems' => [
-                            [
-                                'productUnit' => $rfpRequestData['unitCode'],
-                                'productUnitCode' => $rfpRequestData['unitCode'],
-                                'requestProductItem' => $requestProductItem->getId(),
-                                'quantity' => $rfpRequestData['quantity'],
-                                'price' => null,
-                            ],
-                        ]
-                    ]
-                ]
+                ProductDataStorage::ENTITY_DATA_KEY => $entityData,
+                ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [$entityItemData, $entityItemData],
             ]);
 
         $this->requestDataStorage->saveToStorage($rfpRequest);
     }
 
     /**
+     * @return array
+     */
+    public function saveToStorageDataProvider(): array
+    {
+        $rfpRequestData = [
+            'customerId' => 10,
+            'customerUserId' => 42,
+            'assignedUsers' => [1, 3, 7],
+            'assignedCustomerUsers' => [2, 5],
+            'website' => 1,
+            'requestProductData' => [
+                'productId' => 1,
+                'productSku' => 'testSku',
+                'quantity' => 100,
+                'comment' => 'Test Comment',
+                'unitCode' => 'kg',
+                'price' => Price::create('99', 'USD'),
+            ],
+        ];
+
+        $entityData = $this->getExpectedEntityData($rfpRequestData);
+        $entityItemData = $this->getExpectedEntityItemData($rfpRequestData);
+
+        return [
+            [
+                'rfpRequestData' => $rfpRequestData,
+                'entityData' => $entityData,
+                'entityItemData' => $entityItemData,
+            ]
+        ];
+    }
+
+    /**
+     * @dataProvider saveToStorageDataProviderWhenNoTargetPrice
+     *
      * @param array $rfpRequestData
+     * @param array $entityData
+     * @param array $entityItemData
+     */
+    public function testSaveToStorageWhenNoTargetPriceSet(
+        array $rfpRequestData,
+        array $entityData,
+        array $entityItemData
+    ) {
+        $rfpRequest = $this->createRFPRequest($rfpRequestData);
+        $rfpRequest->addRequestProduct($this->createRequestProduct($rfpRequestData['requestProductData']));
+
+        $entityItemData['requestProductItems'][0]['price'] = null;
+
+        $this->storage
+            ->expects(self::once())
+            ->method('set')
+            ->with([
+                ProductDataStorage::ENTITY_DATA_KEY => $entityData,
+                ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [$entityItemData],
+            ]);
+
+        $this->requestDataStorage->saveToStorage($rfpRequest);
+    }
+
+    /**
+     * @return array
+     */
+    public function saveToStorageDataProviderWhenNoTargetPrice(): array
+    {
+        $rfpRequestData = [
+            'customerId' => 10,
+            'customerUserId' => 42,
+            'assignedUsers' => [1, 3, 7],
+            'assignedCustomerUsers' => [2, 5],
+            'website' => 1,
+            'requestProductData' => [
+                'productId' => 1,
+                'productSku' => 'testSku',
+                'quantity' => 100,
+                'comment' => 'Test Comment',
+                'unitCode' => 'kg',
+                'price' => null,
+            ],
+        ];
+
+        $entityData = $this->getExpectedEntityData($rfpRequestData);
+        $entityItemData = $this->getExpectedEntityItemData($rfpRequestData);
+
+        return [
+            [
+                'rfpRequestData' => $rfpRequestData,
+                'entityData' => $entityData,
+                'entityItemData' => $entityItemData
+            ]
+        ];
+    }
+
+    /**
+     * @param array $rfpRequestData
+     *
      * @return RFPRequest
      */
-    protected function createRFPRequest($rfpRequestData)
+    protected function createRFPRequest(array $rfpRequestData): RFPRequest
     {
         /** @var Customer $customer */
         $customer = $this->getEntity(
-            'Oro\Bundle\CustomerBundle\Entity\Customer',
+            Customer::class,
             ['id' => $rfpRequestData['customerId']]
         );
 
         /** @var CustomerUser $customerUser */
         $customerUser = $this->getEntity(
-            'Oro\Bundle\CustomerBundle\Entity\CustomerUser',
+            CustomerUser::class,
             ['id' => $rfpRequestData['customerUserId']]
         );
 
-        $product = new Product();
-        $product->setSku($rfpRequestData['productSku']);
-
-        $productUnit = new ProductUnit();
-        $productUnit->setCode($rfpRequestData['unitCode']);
-
-        /** @var RequestProductItem $requestProductItem */
-        $requestProductItem = $this->getEntity(
-            'Oro\Bundle\RFPBundle\Entity\RequestProductItem',
-            [
-                'id' => rand(1, 1000),
-                'quantity' => $rfpRequestData['quantity'],
-                'productUnit' => $productUnit
-            ]
-        );
-
-        $requestProduct = new RequestProduct();
-        $requestProduct
-            ->setProduct($product)
-            ->setComment($rfpRequestData['comment'])
-            ->addRequestProductItem($requestProductItem);
-        $requestProduct2 = clone $requestProduct;
-        $requestProduct2->setProduct(null);
-
-        $website = $this->getEntity(Website::class, ['id' => 1]);
+        $website = $this->getEntity(Website::class, ['id' => $rfpRequestData['website']]);
 
         $rfpRequest = new RFPRequest();
         $rfpRequest
             ->setCustomer($customer)
             ->setCustomerUser($customerUser)
-            ->addRequestProduct($requestProduct)
-            ->addRequestProduct($requestProduct2)
             ->setWebsite($website);
 
         foreach ($rfpRequestData['assignedUsers'] as $assignedUserId) {
             /** @var \Oro\Bundle\UserBundle\Entity\User $assignedUser */
             $assignedUser = $this->getEntity(
-                'Oro\Bundle\UserBundle\Entity\User',
+                User::class,
                 ['id' => $assignedUserId]
             );
             $rfpRequest->addAssignedUser($assignedUser);
@@ -172,12 +202,94 @@ class RequestToQuoteDataStorageTest extends \PHPUnit_Framework_TestCase
         foreach ($rfpRequestData['assignedCustomerUsers'] as $assignedCustomerUserId) {
             /** @var \Oro\Bundle\CustomerBundle\Entity\CustomerUser $assignedCustomerUser */
             $assignedCustomerUser = $this->getEntity(
-                'Oro\Bundle\CustomerBundle\Entity\CustomerUser',
+                CustomerUser::class,
                 ['id' => $assignedCustomerUserId]
             );
             $rfpRequest->addAssignedCustomerUser($assignedCustomerUser);
         }
 
         return $rfpRequest;
+    }
+
+
+    /**
+     * @param array $requestProductData
+     *
+     * @return RequestProduct
+     */
+    private function createRequestProduct(array $requestProductData): RequestProduct
+    {
+        $product = $this->getEntity(
+            Product::class,
+            [
+                'id' => $requestProductData['productId'],
+                'sku' => $requestProductData['productSku']
+            ]
+        );
+
+        $productUnit = new ProductUnit();
+        $productUnit->setCode($requestProductData['unitCode']);
+
+        /** @var RequestProductItem $requestProductItem */
+        $requestProductItem = $this->getEntity(
+            RequestProductItem::class,
+            [
+                'id' => 1,
+                'quantity' => $requestProductData['quantity'],
+                'productUnit' => $productUnit,
+                'price' => $requestProductData['price'],
+            ]
+        );
+
+        $requestProduct = new RequestProduct();
+        $requestProduct
+            ->setProduct($product)
+            ->setComment($requestProductData['comment'])
+            ->addRequestProductItem($requestProductItem);
+
+        return $requestProduct;
+    }
+
+    /**
+     * @param $rfpRequestData
+     *
+     * @return array
+     */
+    private function getExpectedEntityData($rfpRequestData): array
+    {
+        $entityData = [
+            'customer' => $rfpRequestData['customerId'],
+            'customerUser' => $rfpRequestData['customerUserId'],
+            'request' => null,
+            'poNumber' => null,
+            'shipUntil' => null,
+            'assignedUsers' => $rfpRequestData['assignedUsers'],
+            'assignedCustomerUsers' => $rfpRequestData['assignedCustomerUsers'],
+            'website' => 1,
+        ];
+        return $entityData;
+    }
+
+    /**
+     * @param array $rfpRequestData
+     *
+     * @return array
+     */
+    private function getExpectedEntityItemData(array $rfpRequestData): array
+    {
+        $entityItemData = [
+            ProductDataStorage::PRODUCT_SKU_KEY => $rfpRequestData['requestProductData']['productSku'],
+            ProductDataStorage::PRODUCT_QUANTITY_KEY => null,
+            'commentCustomer' => $rfpRequestData['requestProductData']['comment'],
+            'requestProductItems' => [
+                [
+                    'productUnit' => $rfpRequestData['requestProductData']['unitCode'],
+                    'productUnitCode' => $rfpRequestData['requestProductData']['unitCode'],
+                    'requestProductItem' => 1,
+                    'quantity' => $rfpRequestData['requestProductData']['quantity'],
+                ],
+            ]
+        ];
+        return $entityItemData;
     }
 }

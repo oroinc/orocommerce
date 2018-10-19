@@ -5,11 +5,11 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit;
 use Oro\Bundle\CheckoutBundle\OroCheckoutBundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-class OroCheckoutBundleTest extends \PHPUnit_Framework_TestCase
+class OroCheckoutBundleTest extends \PHPUnit\Framework\TestCase
 {
     public function testBuild()
     {
-        /** @var ContainerBuilder|\PHPUnit_Framework_MockObject_MockObject $container */
+        /** @var ContainerBuilder|\PHPUnit\Framework\MockObject\MockObject $container */
         $container = $this->createMock('Symfony\Component\DependencyInjection\ContainerBuilder');
         $kernel = $this->createMock('Symfony\Component\HttpKernel\KernelInterface');
 

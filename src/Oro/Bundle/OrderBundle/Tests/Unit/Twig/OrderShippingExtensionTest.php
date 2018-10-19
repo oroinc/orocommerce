@@ -7,7 +7,7 @@ use Oro\Bundle\ShippingBundle\Translator\ShippingMethodLabelTranslator;
 use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class OrderShippingExtensionTest extends \PHPUnit_Framework_TestCase
+class OrderShippingExtensionTest extends \PHPUnit\Framework\TestCase
 {
     use TwigExtensionTestCaseTrait;
 

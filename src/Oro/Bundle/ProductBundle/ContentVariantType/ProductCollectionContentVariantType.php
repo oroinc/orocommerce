@@ -46,7 +46,7 @@ class ProductCollectionContentVariantType implements ContentVariantTypeInterface
      */
     public function getFormType()
     {
-        return ProductCollectionVariantType::NAME;
+        return ProductCollectionVariantType::class;
     }
 
     /**

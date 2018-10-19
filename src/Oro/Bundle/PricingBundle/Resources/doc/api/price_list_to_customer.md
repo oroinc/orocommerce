@@ -4,13 +4,13 @@
 
 ### get
 
-Get details of the price list to customer relation by its ID.
+Retrieve a price list to customer relation record.
 
 {@inheritdoc}
 
 ### get_list
 
-Get the collection of price list to customer details. A collection may contain all relations or may be filtered using standard <a href="https://www.oroinc.com/doc/orocommerce/current/dev-guide/integration#filters">filters</a>.
+Retrieve a collection of price list to customer relation records.
 
 {@inheritdoc}
 
@@ -22,8 +22,6 @@ Create a new price list to customer relation.
 
 {@request:json_api}
 Example:
-
-`</api/pricelisttocustomers>`
 
 ```JSON
 {
@@ -54,15 +52,13 @@ Example:
 
 ### update
 
-Update details of the price list to customer relation identified by ID.
+Edit a specific price list to customer relation record.
 
 {@inheritdoc}
 
 {@request:json_api}
 Example:
 
-`</api/pricelisttocustomers/1>`
- 
 ```JSON
 {
     "data": {
@@ -87,13 +83,13 @@ Example:
 
 ### delete
 
-Delete a price list to customer relation identified by ID.
+Delete a specific price list to customer relation record.
 
 {@inheritdoc}
 
 ### delete_list
 
-Delete a collection of price list to customer relations. A collection may contain all relations or may be filtered using standard <a href="https://www.oroinc.com/doc/orocommerce/current/dev-guide/integration#filters">filters</a>.
+Delete a collection of price list to customer relation records.
 
 {@inheritdoc}
 

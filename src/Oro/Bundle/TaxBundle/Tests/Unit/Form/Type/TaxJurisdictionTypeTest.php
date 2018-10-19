@@ -8,15 +8,15 @@ use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\FormBundle\Form\Extension\AdditionalAttrExtension;
 use Oro\Bundle\FormBundle\Form\Extension\TooltipFormExtension;
-use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\TaxBundle\Entity\TaxJurisdiction;
 use Oro\Bundle\TaxBundle\Form\Type\TaxJurisdictionType;
-use Oro\Bundle\TaxBundle\Form\Type\ZipCodeCollectionType;
 use Oro\Bundle\TaxBundle\Form\Type\ZipCodeType;
 use Oro\Bundle\TaxBundle\Tests\Component\ZipCodeTestHelper;
 use Oro\Bundle\TranslationBundle\Translation\Translator;
 use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
-use Symfony\Component\Form\PreloadedExtension;
+use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 
 class TaxJurisdictionTypeTest extends AbstractAddressTestCase
 {
@@ -43,10 +43,9 @@ class TaxJurisdictionTypeTest extends AbstractAddressTestCase
      */
     protected function setUp()
     {
-        parent::setUp();
-
         $this->formType = new TaxJurisdictionType(new AddressCountryAndRegionSubscriberStub());
         $this->formType->setDataClass(static::DATA_CLASS);
+        parent::setUp();
     }
 
     /**
@@ -59,15 +58,9 @@ class TaxJurisdictionTypeTest extends AbstractAddressTestCase
         parent::tearDown();
     }
 
-    public function testGetName()
-    {
-        $this->assertInternalType('string', $this->formType->getName());
-        $this->assertEquals('oro_tax_jurisdiction_type', $this->formType->getName());
-    }
-
     public function testBuildForm()
     {
-        $form = $this->factory->create($this->formType);
+        $form = $this->factory->create(TaxJurisdictionType::class);
 
         $this->assertTrue($form->has('code'));
         $this->assertTrue($form->has('description'));
@@ -92,7 +85,7 @@ class TaxJurisdictionTypeTest extends AbstractAddressTestCase
         array $submittedData,
         $expectedData
     ) {
-        $form = $this->factory->create($this->formType, $defaultData);
+        $form = $this->factory->create(TaxJurisdictionType::class, $defaultData);
 
         $formConfig = $form->getConfig();
         $this->assertEquals(static::DATA_CLASS, $formConfig->getOption('data_class'));
@@ -170,11 +163,11 @@ class TaxJurisdictionTypeTest extends AbstractAddressTestCase
      */
     protected function getExtensions()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|ConfigProvider $configProvider */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|ConfigProvider $configProvider */
         $configProvider = $this->getMockBuilder('Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider')
             ->disableOriginalConstructor()
             ->getMock();
-        /** @var \PHPUnit_Framework_MockObject_MockObject|Translator $translator */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|Translator $translator */
         $translator = $this->getMockBuilder('Oro\Bundle\TranslationBundle\Translation\Translator')
             ->disableOriginalConstructor()
             ->getMock();
@@ -185,13 +178,13 @@ class TaxJurisdictionTypeTest extends AbstractAddressTestCase
         return array_merge([
             new PreloadedExtension(
                 [
-                    ZipCodeCollectionType::NAME => new ZipCodeCollectionType(),
-                    ZipCodeType::NAME => $zipCodeType,
-                    CollectionType::NAME => new CollectionType(),
+                    $this->formType,
+                    TaxJurisdictionType::class => $this->formType,
+                    ZipCodeType::class => $zipCodeType
                 ],
                 [
-                    'hidden' => [new AdditionalAttrExtension()],
-                    'form' => [new TooltipFormExtension($configProvider, $translator)],
+                    HiddenType::class => [new AdditionalAttrExtension()],
+                    FormType::class => [new TooltipFormExtension($configProvider, $translator)],
                 ]
             )
         ], parent::getExtensions());
@@ -200,8 +193,8 @@ class TaxJurisdictionTypeTest extends AbstractAddressTestCase
     /**
      * {@inheritdoc}
      */
-    protected function getFormType()
+    protected function getFormTypeClass()
     {
-        return $this->formType;
+        return TaxJurisdictionType::class;
     }
 }

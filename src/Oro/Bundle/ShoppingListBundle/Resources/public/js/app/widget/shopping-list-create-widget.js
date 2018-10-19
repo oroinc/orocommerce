@@ -10,6 +10,16 @@ define(function(require) {
     ShoppingListCreateWidget = DialogWidget.extend({
         shoppingListCollection: null,
 
+        /**
+         * @inheritDoc
+         */
+        constructor: function ShoppingListCreateWidget() {
+            ShoppingListCreateWidget.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
             var urlOptions = {};
             if (options.createOnly) {

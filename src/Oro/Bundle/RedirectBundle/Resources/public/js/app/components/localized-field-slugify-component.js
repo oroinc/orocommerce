@@ -9,6 +9,13 @@ define(function(require) {
         /**
          * @inheritDoc
          */
+        constructor: function LocalizedFieldSlugifyComponent() {
+            LocalizedFieldSlugifyComponent.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @param {Object} options
+         */
         syncField: function(event) {
             var $source = $(event.target);
             var $target;
@@ -32,9 +39,6 @@ define(function(require) {
                 this.slugifySourceToTarget($source, $target);
             } else if ($source.prop('type') === 'checkbox') {
                 $target.prop('checked', $source.prop('checked'));
-                $target.change();
-            } else if ($source.is('select')) {
-                $target.val($source.val());
                 $target.change();
             }
         },

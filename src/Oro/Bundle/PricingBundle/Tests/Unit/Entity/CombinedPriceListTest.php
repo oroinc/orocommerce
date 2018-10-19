@@ -5,7 +5,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Entity;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-class CombinedPriceListTest extends \PHPUnit_Framework_TestCase
+class CombinedPriceListTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 

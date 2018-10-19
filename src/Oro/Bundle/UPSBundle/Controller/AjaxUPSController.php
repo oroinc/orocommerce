@@ -4,6 +4,7 @@ namespace Oro\Bundle\UPSBundle\Controller;
 
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
+use Oro\Bundle\IntegrationBundle\Form\Type\ChannelType;
 use Oro\Bundle\UPSBundle\Connection\Validator\Result\Factory\UpsConnectionValidatorResultFactory;
 use Oro\Bundle\UPSBundle\Connection\Validator\Result\UpsConnectionValidatorResultInterface;
 use Oro\Bundle\UPSBundle\Entity\Repository\ShippingServiceRepository;
@@ -58,7 +59,7 @@ class AjaxUPSController extends Controller
         }
 
         $form = $this->createForm(
-            $this->get('oro_integration.form.type.channel'),
+            ChannelType::class,
             $channel
         );
         $form->handleRequest($request);

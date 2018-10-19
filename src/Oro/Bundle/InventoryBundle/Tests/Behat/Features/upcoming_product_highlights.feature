@@ -50,7 +50,7 @@ Feature: Upcoming product highlights
       |Is Upcoming     |1    |
     And I should see "Availability Date"
     And I fill in "Availability Date" with "Dec 1, 2200 04:00 PM"
-    And I press "Save"
+    And I click "Save"
     Then I should see "Category has been saved" flash message
     When I go to Products/Products
     And click view "SKU2" in grid
@@ -83,7 +83,7 @@ Feature: Upcoming product highlights
     Given I open page with shopping list List 1
     Then I should see "This product will be available on Jan 1, 2100" for "SKU1" line item "ShoppingListLineItem"
     And I should see "This product will be available on Dec 1, 2200" for "SKU2" line item "ShoppingListLineItem"
-    When I press "Create Order"
+    When I click "Create Order"
     And I select "Fifth avenue, 10115 Berlin, Germany" on the "Billing Information" checkout step and press Continue
     And I select "Fifth avenue, 10115 Berlin, Germany" on the "Shipping Information" checkout step and press Continue
     And I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
@@ -103,7 +103,7 @@ Feature: Upcoming product highlights
 
   Scenario: Check that upcoming products with unknown availability date is correctly handled during checkout process
     Given I open page with shopping list List 2
-    When I press "Create Order"
+    When I click "Create Order"
     And I select "Fifth avenue, 10115 Berlin, Germany" on the "Billing Information" checkout step and press Continue
     And I select "Fifth avenue, 10115 Berlin, Germany" on the "Shipping Information" checkout step and press Continue
     And I check "Flat Rate" on the "Shipping Method" checkout step and press Continue

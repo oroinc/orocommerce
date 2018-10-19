@@ -7,7 +7,7 @@ use Oro\Bundle\SaleBundle\Model\ContactInfo;
 use Oro\Bundle\SaleBundle\Model\ContactInfoFactory;
 use Oro\Bundle\UserBundle\Entity\User;
 
-class ContactInfoFactoryTest extends \PHPUnit_Framework_TestCase
+class ContactInfoFactoryTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var ContactInfoFactory
@@ -15,7 +15,7 @@ class ContactInfoFactoryTest extends \PHPUnit_Framework_TestCase
     private $factory;
 
     /**
-     * @var NameFormatter|\PHPUnit_Framework_MockObject_MockObject
+     * @var NameFormatter|\PHPUnit\Framework\MockObject\MockObject
      */
     private $nameFormatter;
 

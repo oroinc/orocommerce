@@ -9,6 +9,7 @@ use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\EntityConfigBundle\Entity\Repository\AttributeFamilyRepository;
 use Oro\Bundle\EntityConfigBundle\Manager\AttributeManager;
 use Oro\Bundle\FrontendBundle\Manager\AttachmentManager;
+use Oro\Bundle\InventoryBundle\Tests\Unit\Inventory\Stub\InventoryStatusStub;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -16,7 +17,8 @@ use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use Oro\Bundle\ProductBundle\EventListener\WebsiteSearchProductIndexerListener;
 use Oro\Bundle\ProductBundle\Search\ProductIndexDataModel;
-use Oro\Bundle\ProductBundle\Search\WebsiteSearchProductIndexDataProvider;
+use Oro\Bundle\ProductBundle\Search\ProductIndexDataProviderInterface;
+use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductWithInventoryStatus;
 use Oro\Bundle\WebsiteBundle\Provider\AbstractWebsiteLocalizationProvider;
 use Oro\Bundle\WebsiteSearchBundle\Engine\IndexDataProvider;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
@@ -25,7 +27,7 @@ use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderValue;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCase
+class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
@@ -37,22 +39,22 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCas
      */
     private $listener;
 
-    /** @var WebsiteContextManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var WebsiteContextManager|\PHPUnit\Framework\MockObject\MockObject */
     private $websiteContextManager;
 
-    /** @var AbstractWebsiteLocalizationProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var AbstractWebsiteLocalizationProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $websiteLocalizationProvider;
 
-    /** @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
     private $registry;
 
-    /** @var AttachmentManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var AttachmentManager|\PHPUnit\Framework\MockObject\MockObject */
     private $attachmentManager;
 
-    /** @var AttributeManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var AttributeManager|\PHPUnit\Framework\MockObject\MockObject */
     private $attributeManager;
 
-    /** @var WebsiteSearchProductIndexDataProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ProductIndexDataProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $dataProvider;
 
     protected function setUp()
@@ -62,7 +64,7 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCas
         $this->registry = $this->createMock(ManagerRegistry::class);
         $this->attachmentManager = $this->createMock(AttachmentManager::class);
         $this->attributeManager = $this->createMock(AttributeManager::class);
-        $this->dataProvider = $this->createMock(WebsiteSearchProductIndexDataProvider::class);
+        $this->dataProvider = $this->createMock(ProductIndexDataProviderInterface::class);
 
         $this->listener = new WebsiteSearchProductIndexerListener(
             $this->websiteLocalizationProvider,
@@ -111,12 +113,13 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCas
         $attributeFamily = $this->getEntity(AttributeFamily::class, ['id' => $attributeFamilyId]);
 
         $product = $this->getEntity(
-            Product::class,
+            ProductWithInventoryStatus::class,
             [
                 'id' => 777,
                 'sku' => 'sku123',
                 'status' => Product::STATUS_ENABLED,
                 'type' => Product::TYPE_CONFIGURABLE,
+                'inventoryStatus' => new InventoryStatusStub('in_stock', 'In Stock'),
                 'newArrival' => true,
                 'createdAt' => new \DateTime('2017-09-09 00:00:00'),
                 'attributeFamily' => $attributeFamily,
@@ -255,6 +258,7 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCas
             'sku_uppercase' => [['value' => 'SKU123', 'all_text' => true]],
             'status' => [['value' => Product::STATUS_ENABLED, 'all_text' => false]],
             'type' => [['value' => Product::TYPE_CONFIGURABLE, 'all_text' => false]],
+            'inventory_status' => [['value' => 'in_stock', 'all_text' => false]],
             'is_variant' => [['value' => 0, 'all_text' => false]],
             'newArrival' => [['value' => 1, 'all_text' => false]],
             'all_text_LOCALIZATION_ID' => [
@@ -318,6 +322,12 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCas
                     'all_text' => false
                 ]
             ],
+            'attribute_family_id' => [
+                [
+                    'value' => $attributeFamilyId,
+                    'all_text' => false
+                ]
+            ]
         ];
 
         $this->assertEquals($expected, $event->getEntitiesData());
@@ -340,7 +350,7 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCas
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     private function getImageFileEntities()
     {

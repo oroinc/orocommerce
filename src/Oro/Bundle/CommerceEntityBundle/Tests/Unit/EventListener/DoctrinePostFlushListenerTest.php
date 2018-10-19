@@ -11,7 +11,7 @@ use Oro\Bundle\CommerceEntityBundle\Tests\Stub\Entity1;
 use Oro\Bundle\CommerceEntityBundle\Tests\Stub\Entity2;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
-class DoctrinePostFlushListenerTest extends \PHPUnit_Framework_TestCase
+class DoctrinePostFlushListenerTest extends \PHPUnit\Framework\TestCase
 {
     public function testPostFlush()
     {
@@ -81,7 +81,7 @@ class DoctrinePostFlushListenerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|EntityManager
+     * @return \PHPUnit\Framework\MockObject\MockObject|EntityManager
      */
     protected function getEntityManagerMock()
     {
@@ -91,7 +91,7 @@ class DoctrinePostFlushListenerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param \PHPUnit_Framework_MockObject_MockObject|Registry $registry
+     * @param \PHPUnit\Framework\MockObject\MockObject|Registry $registry
      * @return DoctrineHelper
      */
     protected function getDoctrineHelper(Registry $registry = null)
@@ -101,7 +101,7 @@ class DoctrinePostFlushListenerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Registry
+     * @return \PHPUnit\Framework\MockObject\MockObject|Registry
      */
     protected function getRegistryMock()
     {

@@ -4,7 +4,7 @@ namespace Oro\Bundle\ApplicationBundle\Tests\Unit\Event;
 
 use Oro\Bundle\ApplicationBundle\Event\ModelIdentifierEvent;
 
-class ModelIdentifierEventTest extends \PHPUnit_Framework_TestCase
+class ModelIdentifierEventTest extends \PHPUnit\Framework\TestCase
 {
     public function testModelAccessors()
     {

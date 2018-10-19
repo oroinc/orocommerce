@@ -8,7 +8,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
 
-class SupportsEntityPaymentContextFactoriesPassTest extends \PHPUnit_Framework_TestCase
+class SupportsEntityPaymentContextFactoriesPassTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var PaymentMethodProvidersPass
@@ -16,7 +16,7 @@ class SupportsEntityPaymentContextFactoriesPassTest extends \PHPUnit_Framework_T
     private $compilerPass;
 
     /**
-     * @var ContainerBuilder|\PHPUnit_Framework_MockObject_MockObject
+     * @var ContainerBuilder|\PHPUnit\Framework\MockObject\MockObject
      */
     private $containerBuilder;
 

@@ -17,7 +17,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
 
-class InteractiveLoginListenerTest extends \PHPUnit_Framework_TestCase
+class InteractiveLoginListenerTest extends \PHPUnit\Framework\TestCase
 {
     const VISITOR_CREDENTIALS = [1, 'someSessionId'];
 
@@ -27,7 +27,7 @@ class InteractiveLoginListenerTest extends \PHPUnit_Framework_TestCase
     private $request;
 
     /**
-     * @var InteractiveLoginEvent|\PHPUnit_Framework_MockObject_MockObject
+     * @var InteractiveLoginEvent|\PHPUnit\Framework\MockObject\MockObject
      */
     private $event;
 
@@ -37,27 +37,27 @@ class InteractiveLoginListenerTest extends \PHPUnit_Framework_TestCase
     private $listener;
 
     /**
-     * @var CustomerVisitorManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var CustomerVisitorManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $visitorManager;
 
     /**
-     * @var GuestShoppingListMigrationManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var GuestShoppingListMigrationManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $guestShoppingListMigrationManager;
 
     /**
-     * @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $configManager;
 
     /**
-     * @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $logger;
 
     /**
-     * @var SendChangedEntitiesToMessageQueueListener|\PHPUnit_Framework_MockObject_MockObject
+     * @var SendChangedEntitiesToMessageQueueListener|\PHPUnit\Framework\MockObject\MockObject
      */
     private $sendChangedEntitiesToMessageQueueListener;
     /**

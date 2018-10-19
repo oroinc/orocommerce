@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PromotionBundle\Form\Type;
 
 use Oro\Bundle\CurrencyBundle\Entity\MultiCurrency;
+use Oro\Bundle\CurrencyBundle\Form\Type\MultiCurrencyType;
 use Oro\Bundle\FormBundle\Form\Type\OroPercentType;
 use Oro\Bundle\FormBundle\Utils\FormUtils;
 use Oro\Bundle\PromotionBundle\Discount\AbstractDiscount;
@@ -164,7 +165,7 @@ class DiscountOptionsType extends AbstractType
     {
         $choices = [];
         foreach (self::TYPE_FIELD_CHOICES as $type) {
-            $choices[$type] = 'oro.discount_options.general.type.choices.' . $type;
+            $choices['oro.discount_options.general.type.choices.' . $type] = $type;
         }
 
         return $choices;
@@ -180,11 +181,12 @@ class DiscountOptionsType extends AbstractType
         $form
             ->add(
                 self::AMOUNT_DISCOUNT_VALUE_FIELD,
-                'oro_multicurrency',
+                MultiCurrencyType::class,
                 [
                     'currency_empty_value' => null,
                     'required' => true,
                     'label' => 'oro.discount_options.general.value.label',
+                    'tooltip' => 'oro.discount_options.general.value.tooltip',
                     'compact' => false,
                     'data_class' => MultiCurrency::class,
                     'value_constraints' => [new NotBlank()],

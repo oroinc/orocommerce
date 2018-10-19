@@ -1,8 +1,8 @@
-Oro\Bundle\RedirectBundle
-=========================
+# OroRedirectBundle
 
-# Description
-OroRedirectBundle provides an extension to routing such as Semantic URLs and redirect functionality.
+OroRedirectBundle enables slug management for the product, category, brand, and landing pages in the OroCommerce storefront.
+
+The bundle enables OroCommerce management console administrators to configure automatic slug generation and related options in the system configuration UI. It also provides the ability for content managers to modify slugs manually for every sluggable page.
 
 # Semantic URLs
 ## Entity interfaces
@@ -66,7 +66,7 @@ which may be configured with DI parameter `oro_redirect.url_cache_type`.
 
 ### URL provider
 Semantic URLs should be received from URL providers. This services interact with caches and provide urls which may be returned to output.
-There are two providers in Oro Commerce:
+There are two providers in OroCommerce:
  - **cache** - reads data from `oro_redirect.url_cache`. Semantic URLs are available only after them appear in cache (URL is processed by MQ)
  - **database** - if URL was not found in decorated cache than this provider performs request to database and 
  in case when URL was found it is stored in cache. Using this provider you'll get Semantic URL immediately, but it may 

@@ -5,6 +5,7 @@ namespace Oro\Bundle\ProductBundle\Form\Type;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Bundle\ProductBundle\Validator\Constraints\ProductBySku;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
@@ -27,7 +28,7 @@ class ProductRowType extends AbstractProductAwareType
         $builder
             ->add(
                 ProductDataStorage::PRODUCT_DISPLAY_NAME,
-                ProductAutocompleteType::NAME,
+                ProductAutocompleteType::class,
                 [
                     'required' => false,
                     'label' => 'oro.product.sku.label',
@@ -41,7 +42,7 @@ class ProductRowType extends AbstractProductAwareType
             )
             ->add(
                 ProductDataStorage::PRODUCT_UNIT_KEY,
-                ProductUnitsType::NAME,
+                ProductUnitsType::class,
                 [
                     'required' => true,
                     'label' => 'oro.product.productunitprecision.unit.label'
@@ -49,7 +50,7 @@ class ProductRowType extends AbstractProductAwareType
             )
             ->add(
                 ProductDataStorage::PRODUCT_QUANTITY_KEY,
-                'number',
+                NumberType::class,
                 [
                     'required' => false,
                     'label' => 'oro.product.quantity.label',

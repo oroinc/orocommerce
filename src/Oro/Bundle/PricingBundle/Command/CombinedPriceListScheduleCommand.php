@@ -8,6 +8,9 @@ use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+/**
+ * Prepares and activates combined price list by schedule
+ */
 class CombinedPriceListScheduleCommand extends ContainerAwareCommand implements CronCommandInterface
 {
     const NAME = 'oro:cron:price-lists:schedule';
@@ -42,8 +45,13 @@ class CombinedPriceListScheduleCommand extends ContainerAwareCommand implements 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $container = $this->getContainer();
+        $triggerHandler = $container->get('oro_pricing.model.combined_price_list_trigger_handler');
+        $triggerHandler->startCollect();
+
         $container->get('oro_pricing.resolver.combined_product_schedule_resolver')->updateRelations();
+
         $this->combinePricesForScheduledCPL();
+        $triggerHandler->commit();
     }
 
     protected function combinePricesForScheduledCPL()
@@ -57,12 +65,9 @@ class CombinedPriceListScheduleCommand extends ContainerAwareCommand implements 
             ->getRepository(CombinedPriceList::class)
             ->getCPLsForPriceCollectByTimeOffset($offsetHours);
 
-        $combinedProductPriceResolver = $container->get('oro_pricing.pricing_strategy.strategy_register')
-            ->getCurrentStrategy();
-
-        foreach ($combinedPriceLists as $combinedPriceList) {
-            $combinedProductPriceResolver->combinePrices($combinedPriceList);
-        }
+        $builder = $this->getContainer()->get('oro_pricing.builder.combined_price_list_builder_facade');
+        $builder->rebuild($combinedPriceLists);
+        $builder->dispatchEvents();
     }
 
     /**

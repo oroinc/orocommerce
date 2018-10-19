@@ -13,11 +13,11 @@ use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Storage\ProductDataStorage;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class ProductDataStorageTest extends \PHPUnit_Framework_TestCase
+class ProductDataStorageTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|Storage */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|Storage */
     protected $storage;
 
     /** @var ProductDataStorage */

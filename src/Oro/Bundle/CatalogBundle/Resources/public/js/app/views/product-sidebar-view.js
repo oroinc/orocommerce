@@ -41,6 +41,13 @@ define(function(require) {
         gridName: null,
 
         /**
+         * @inheritDoc
+         */
+        constructor: function ProductSidebarView() {
+            ProductSidebarView.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
          * @param {Object} options
          */
         initialize: function(options) {

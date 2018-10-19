@@ -25,34 +25,34 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
-class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
+class QuickAddHandlerTest extends \PHPUnit\Framework\TestCase
 {
     const PRODUCT_CLASS = 'Oro\Bundle\ProductBundle\Entity\Product';
 
     const COMPONENT_NAME = 'component';
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface
+     * @var \PHPUnit\Framework\MockObject\MockObject|TranslatorInterface
      */
     protected $translator;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|UrlGeneratorInterface
+     * @var \PHPUnit\Framework\MockObject\MockObject|UrlGeneratorInterface
      */
     protected $router;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ProductFormProvider
+     * @var \PHPUnit\Framework\MockObject\MockObject|ProductFormProvider
      */
     protected $productFormProvider;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|QuickAddRowCollectionBuilder
+     * @var \PHPUnit\Framework\MockObject\MockObject|QuickAddRowCollectionBuilder
      */
     protected $quickAddRowCollectionBuilder;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ComponentProcessorRegistry
+     * @var \PHPUnit\Framework\MockObject\MockObject|ComponentProcessorRegistry
      */
     protected $componentRegistry;
 
@@ -62,12 +62,12 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
     protected $handler;
 
     /**
-     * @var ValidatorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ValidatorInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $validator;
 
     /**
-     * @var EventDispatcher|\PHPUnit_Framework_MockObject_MockObject
+     * @var EventDispatcher|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $eventDispatcher;
 
@@ -130,7 +130,7 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
 
         $form = $this->createMock('Symfony\Component\Form\FormInterface');
         $form->expects($this->once())
-            ->method('submit')
+            ->method('handleRequest')
             ->with($request);
 
         $this->productFormProvider->expects($this->once())
@@ -155,7 +155,7 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
 
         $form = $this->createMock('Symfony\Component\Form\FormInterface');
         $form->expects($this->once())
-            ->method('submit')
+            ->method('handleRequest')
             ->with($request);
 
         $this->productFormProvider->expects($this->once())
@@ -198,8 +198,11 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
 
         $form = $this->createMock('Symfony\Component\Form\FormInterface');
         $form->expects($this->once())
-            ->method('submit')
+            ->method('handleRequest')
             ->with($request);
+        $form->expects($this->once())
+            ->method('isSubmitted')
+            ->willReturn(true);
         $form->expects($this->once())
             ->method('isValid')
             ->willReturn(false);
@@ -235,7 +238,10 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
     public function testProcessValidDataWithoutResponse()
     {
         $request = Request::create('/post/valid-without-response', 'POST');
-        $request->request->set(QuickAddType::NAME, [QuickAddType::COMPONENT_FIELD_NAME => self::COMPONENT_NAME]);
+        $request->request->set(QuickAddType::NAME, [
+            QuickAddType::COMPONENT_FIELD_NAME => self::COMPONENT_NAME,
+            QuickAddType::TRANSITION_FIELD_NAME => 'start_from_quickorderform'
+        ]);
 
         $productRows = [
             $this->createProductRow('111', 123, 'kg'),
@@ -261,8 +267,11 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
 
         $mainForm = $this->createMock('Symfony\Component\Form\FormInterface');
         $mainForm->expects($this->once())
-            ->method('submit')
+            ->method('handleRequest')
             ->with($request);
+        $mainForm->expects($this->once())
+            ->method('isSubmitted')
+            ->willReturn(true);
         $mainForm->expects($this->once())
             ->method('isValid')
             ->willReturn(true);
@@ -295,7 +304,8 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
             ->with(
                 [
                     ProductDataStorage::ENTITY_ITEMS_DATA_KEY => $products,
-                    ProductDataStorage::ADDITIONAL_DATA_KEY => null
+                    ProductDataStorage::ADDITIONAL_DATA_KEY => null,
+                    ProductDataStorage::TRANSITION_NAME_KEY => 'start_from_quickorderform',
                 ],
                 $request
             );
@@ -311,7 +321,10 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
     public function testProcessValidDataWithResponse()
     {
         $request = Request::create('/post/valid-with-response', 'POST');
-        $request->request->set(QuickAddType::NAME, [QuickAddType::COMPONENT_FIELD_NAME => self::COMPONENT_NAME]);
+        $request->request->set(QuickAddType::NAME, [
+            QuickAddType::COMPONENT_FIELD_NAME => self::COMPONENT_NAME,
+            QuickAddType::TRANSITION_FIELD_NAME => 'start_from_quickorderform'
+        ]);
 
         $response = new RedirectResponse('/processor-redirect');
 
@@ -340,8 +353,11 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
 
         $form = $this->createMock('Symfony\Component\Form\FormInterface');
         $form->expects($this->once())
-            ->method('submit')
+            ->method('handleRequest')
             ->with($request);
+        $form->expects($this->once())
+            ->method('isSubmitted')
+            ->willReturn(true);
         $form->expects($this->once())
             ->method('isValid')
             ->willReturn(true);
@@ -374,7 +390,8 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
             ->with(
                 [
                     ProductDataStorage::ENTITY_ITEMS_DATA_KEY => $products,
-                    ProductDataStorage::ADDITIONAL_DATA_KEY => null
+                    ProductDataStorage::ADDITIONAL_DATA_KEY => null,
+                    ProductDataStorage::TRANSITION_NAME_KEY => 'start_from_quickorderform'
                 ],
                 $request
             )
@@ -400,6 +417,9 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('handleRequest')
             ->with($request)
             ->willReturn($form);
+        $form->expects($this->once())
+            ->method('isSubmitted')
+            ->willReturn(true);
         $form->expects($this->once())
             ->method('isValid')
             ->willReturn(true);
@@ -442,6 +462,9 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
             ->with($request)
             ->willReturn($form);
         $form->expects($this->once())
+            ->method('isSubmitted')
+            ->willReturn(true);
+        $form->expects($this->once())
             ->method('isValid')
             ->willReturn(false);
         $form->expects($this->never())
@@ -463,6 +486,9 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('handleRequest')
             ->with($request)
             ->willReturn($form);
+        $form->expects($this->once())
+            ->method('isSubmitted')
+            ->willReturn(true);
         $form->expects($this->once())
             ->method('isValid')
             ->willReturn(true);
@@ -504,6 +530,9 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
             ->with($request)
             ->willReturn($form);
         $form->expects($this->once())
+            ->method('isSubmitted')
+            ->willReturn(true);
+        $form->expects($this->once())
             ->method('isValid')
             ->willReturn(false);
 
@@ -512,7 +541,7 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Session
+     * @return \PHPUnit\Framework\MockObject\MockObject|Session
      */
     protected function getSessionWithErrorMessage()
     {
@@ -534,7 +563,7 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
     /**
      * @param bool $isValidationRequired
      * @param bool $isAllowed
-     * @return \PHPUnit_Framework_MockObject_MockObject|ComponentProcessorInterface
+     * @return \PHPUnit\Framework\MockObject\MockObject|ComponentProcessorInterface
      */
     protected function getProcessor($isValidationRequired = true, $isAllowed = true)
     {

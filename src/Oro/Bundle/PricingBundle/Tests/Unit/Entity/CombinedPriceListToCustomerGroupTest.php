@@ -6,7 +6,7 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToCustomerGroup;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-class CombinedPriceListToCustomerGroupTest extends \PHPUnit_Framework_TestCase
+class CombinedPriceListToCustomerGroupTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 

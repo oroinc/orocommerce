@@ -5,9 +5,9 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\WorkflowState\Condition;
 use Oro\Bundle\CheckoutBundle\WorkflowState\Condition\CheckCheckoutStates;
 use Oro\Bundle\CheckoutBundle\WorkflowState\Manager\CheckoutStateDiffManager;
 
-class CheckCheckoutStatesTest extends \PHPUnit_Framework_TestCase
+class CheckCheckoutStatesTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var CheckoutStateDiffManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var CheckoutStateDiffManager|\PHPUnit\Framework\MockObject\MockObject */
     protected $diffManager;
 
     /** @var CheckCheckoutStates */

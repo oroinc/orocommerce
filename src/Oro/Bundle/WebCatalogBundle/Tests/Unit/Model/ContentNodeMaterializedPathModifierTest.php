@@ -7,7 +7,7 @@ use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Model\ContentNodeMaterializedPathModifier;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class ContentNodeMaterializedPathModifierTest extends \PHPUnit_Framework_TestCase
+class ContentNodeMaterializedPathModifierTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 

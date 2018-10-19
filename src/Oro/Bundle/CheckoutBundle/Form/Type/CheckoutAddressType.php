@@ -2,11 +2,15 @@
 
 namespace Oro\Bundle\CheckoutBundle\Form\Type;
 
-use Oro\Bundle\AddressBundle\Entity\AddressType;
+use Oro\Bundle\AddressBundle\Entity\AddressType as AddressTypeEntity;
+use Oro\Bundle\AddressBundle\Form\Type\AddressType;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
+use Oro\Bundle\FrontendBundle\Form\Type\CountryType;
+use Oro\Bundle\FrontendBundle\Form\Type\RegionType;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\OrderBundle\Form\Type\AbstractOrderAddressType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -91,13 +95,13 @@ class CheckoutAddressType extends AbstractOrderAddressType
             if ($isManualEditGranted) {
                 $customerAddressOptions['choices'] = array_merge(
                     $customerAddressOptions['choices'],
-                    [self::ENTER_MANUALLY => 'oro.checkout.form.address.manual']
+                    ['oro.checkout.form.address.manual' => self::ENTER_MANUALLY]
                 );
             }
             $builder
-                ->add('customerAddress', 'choice', $customerAddressOptions)
-                ->add('country', 'oro_frontend_country', ['required' => true, 'label' => 'oro.address.country.label'])
-                ->add('region', 'oro_frontend_region', ['required' => true, 'label' => 'oro.address.region.label']);
+                ->add('customerAddress', ChoiceType::class, $customerAddressOptions)
+                ->add('country', CountryType::class, ['required' => true, 'label' => 'oro.address.country.label'])
+                ->add('region', RegionType::class, ['required' => true, 'label' => 'oro.address.region.label']);
 
             $builder->get('city')->setRequired(true);
             $builder->get('postalCode')->setRequired(true);
@@ -126,7 +130,7 @@ class CheckoutAddressType extends AbstractOrderAddressType
      */
     public function getParent()
     {
-        return 'oro_address';
+        return AddressType::class;
     }
 
     /**
@@ -137,9 +141,9 @@ class CheckoutAddressType extends AbstractOrderAddressType
     protected function getSelectedAddress($entity, $type)
     {
         $selectedKey = null;
-        if ($type === AddressType::TYPE_BILLING) {
+        if ($type === AddressTypeEntity::TYPE_BILLING) {
             $selectedKey = $this->getSelectedAddressKey($entity->getBillingAddress());
-        } elseif ($type === AddressType::TYPE_SHIPPING) {
+        } elseif ($type === AddressTypeEntity::TYPE_SHIPPING) {
             $selectedKey = $this->getSelectedAddressKey($entity->getShippingAddress());
         }
 

@@ -212,24 +212,37 @@ class PriceListToCustomerRepositoryTest extends WebTestCase
             'with fallback group1' => [
                 'customerGroup' => 'customer_group.group1',
                 'website' => 'US',
-                'expectedCustomers' => ['customer.level_1.3'],
+                'expectedCustomers' => [
+                    'customer.level_1',
+                    'customer.level_1.3',
+                ],
                 'fallback' => PriceListCustomerFallback::ACCOUNT_GROUP
             ],
             'without fallback group1' => [
                 'customerGroup' => 'customer_group.group1',
                 'website' => 'US',
-                'expectedCustomers' => ['customer.level_1.3']
+                'expectedCustomers' => [
+                    'customer.level_1',
+                    'customer.level_1.3',
+                ]
             ],
             'with fallback group2' => [
                 'customerGroup' => 'customer_group.group2',
                 'website' => 'US',
-                'expectedCustomers' => [],
+                'expectedCustomers' => [
+                    'customer.level_1.2.1',
+                    'customer.level_1.2.1.1'
+                ],
                 'fallback' => PriceListCustomerFallback::ACCOUNT_GROUP
             ],
             'without fallback group2' => [
                 'customerGroup' => 'customer_group.group2',
                 'website' => 'US',
-                'expectedCustomers' => ['customer.level_1.2'],
+                'expectedCustomers' => [
+                    'customer.level_1.2',
+                    'customer.level_1.2.1',
+                    'customer.level_1.2.1.1'
+                ],
             ],
         ];
     }
@@ -263,12 +276,8 @@ class PriceListToCustomerRepositoryTest extends WebTestCase
     {
         /** @var PriceList $priceList */
         $priceList = $this->getReference('price_list_6');
-        $iterator = $this->getRepository()->getIteratorByPriceList($priceList);
-        $result = [];
-        foreach ($iterator as $item) {
-            $result[] = $item;
-        }
-
+        $result1 = iterator_to_array($this->getRepository()->getIteratorByPriceList($priceList));
+        $result2 = iterator_to_array($this->getRepository()->getIteratorByPriceLists([$priceList]));
         $this->assertEquals(
             [
                 [
@@ -277,8 +286,9 @@ class PriceListToCustomerRepositoryTest extends WebTestCase
                     'website' => $this->getReference(LoadWebsiteData::WEBSITE1)->getId()
                 ]
             ],
-            $result
+            $result1
         );
+        $this->assertSame($result1, $result2);
     }
 
     public function testGetCustomerWebsitePairsByCustomer()
@@ -308,6 +318,36 @@ class PriceListToCustomerRepositoryTest extends WebTestCase
                 $this->assertContains($website, $expected[$customerId]);
             }
         }
+    }
+
+    public function testGetAllCustomerWebsitePairs()
+    {
+        /** @var CustomerWebsiteDTO[] $result */
+        $result = $this->getRepository()->getAllCustomerWebsitePairs();
+        $this->assertCount(5, $result);
+
+        $expected = [
+            $this->getReference('customer.level_1.3')->getId() => [
+                $this->getReference('US')->getId(),
+            ],
+            $this->getReference('customer.level_1_1')->getId() => [
+                $this->getReference('Canada')->getId(),
+                $this->getReference('US')->getId(),
+            ],
+            $this->getReference('customer.level_1.2')->getId() => [
+                $this->getReference('US')->getId(),
+            ],
+            $this->getReference('customer.level_1.1.1')->getId() => [
+                $this->getReference('Canada')->getId(),
+            ]
+        ];
+
+        $actual = [];
+        foreach ($result as $item) {
+            $actual[$item->getCustomer()->getId()][] = $item->getWebsite()->getId();
+        }
+
+        $this->assertEquals($expected, $actual, '', 0.0, 10, true);
     }
 
     public function testDelete()

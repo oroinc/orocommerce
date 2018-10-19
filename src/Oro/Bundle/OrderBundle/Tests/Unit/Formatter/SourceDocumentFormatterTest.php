@@ -5,7 +5,7 @@ namespace Oro\Bundle\OrderBundle\Tests\Unit\Formatter;
 use Oro\Bundle\EntityBundle\Provider\ChainEntityClassNameProvider;
 use Oro\Bundle\OrderBundle\Formatter\SourceDocumentFormatter;
 
-class SourceDocumentFormatterTest extends \PHPUnit_Framework_TestCase
+class SourceDocumentFormatterTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var SourceDocumentFormatter
@@ -13,7 +13,7 @@ class SourceDocumentFormatterTest extends \PHPUnit_Framework_TestCase
     protected $sourceDocumentFormatter;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ChainEntityClassNameProvider
+     * @var \PHPUnit\Framework\MockObject\MockObject|ChainEntityClassNameProvider
      */
     protected $chainEntityClassNameProvider;
 

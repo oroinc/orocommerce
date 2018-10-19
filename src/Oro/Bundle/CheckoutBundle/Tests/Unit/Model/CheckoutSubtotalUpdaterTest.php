@@ -13,22 +13,22 @@ use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 
-class CheckoutSubtotalUpdaterTest extends \PHPUnit_Framework_TestCase
+class CheckoutSubtotalUpdaterTest extends \PHPUnit\Framework\TestCase
 {
     const USD = 'USD';
     const EUR = 'EUR';
     const CAD = 'CAD';
 
-    /** @var ObjectManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ObjectManager|\PHPUnit\Framework\MockObject\MockObject */
     protected $objectManager;
 
-    /** @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
     protected $registry;
 
-    /** @var CheckoutSubtotalProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var CheckoutSubtotalProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $subtotalProvider;
 
-    /** @var UserCurrencyManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var UserCurrencyManager|\PHPUnit\Framework\MockObject\MockObject */
     protected $currencyManager;
 
     /** @var CheckoutSubtotalUpdater */

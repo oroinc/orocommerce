@@ -9,7 +9,7 @@ use Oro\Bundle\PromotionBundle\Discount\OrderDiscount;
 use Oro\Bundle\PromotionBundle\Discount\ShippingDiscount;
 use Oro\Bundle\PromotionBundle\Discount\Strategy\ProfitableStrategy;
 
-class ProfitableStrategyTest extends \PHPUnit_Framework_TestCase
+class ProfitableStrategyTest extends \PHPUnit\Framework\TestCase
 {
     public function testProcess()
     {

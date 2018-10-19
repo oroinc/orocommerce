@@ -1,7 +1,7 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'discount_information.html.twig'
+            themes: 'OroPromotionBundle:layouts:default/oro_shopping_list_frontend_view/discount_information.html.twig'
         - '@setOption':
             id: 'shopping_list_line_items_list'
             optionName: 'lineItemDiscounts'

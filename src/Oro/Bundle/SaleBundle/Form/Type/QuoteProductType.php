@@ -5,22 +5,28 @@ namespace Oro\Bundle\SaleBundle\Form\Type;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
-use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
 use Oro\Bundle\SaleBundle\Formatter\QuoteProductFormatter;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
 
+/**
+ * Builds QuoteProductType form
+ */
 class QuoteProductType extends AbstractType
 {
     const NAME = 'oro_sale_quote_product';
 
     /**
-     * @var ProductUnitLabelFormatter
+     * @var UnitLabelFormatterInterface
      */
     protected $labelFormatter;
 
@@ -51,13 +57,13 @@ class QuoteProductType extends AbstractType
 
     /**
      * @param TranslatorInterface $translator
-     * @param ProductUnitLabelFormatter $labelFormatter
+     * @param UnitLabelFormatterInterface $labelFormatter
      * @param QuoteProductFormatter $formatter
      * @param ManagerRegistry $registry
      */
     public function __construct(
         TranslatorInterface $translator,
-        ProductUnitLabelFormatter $labelFormatter,
+        UnitLabelFormatterInterface $labelFormatter,
         QuoteProductFormatter $formatter,
         ManagerRegistry $registry
     ) {
@@ -150,7 +156,7 @@ class QuoteProductType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('product', ProductSelectType::NAME, [
+            ->add('product', ProductSelectType::class, [
                 'required' => false,
                 'label' => 'oro.product.entity_label',
                 'create_enabled' => false,
@@ -158,11 +164,11 @@ class QuoteProductType extends AbstractType
                     'scope' => 'quote'
                 ]
             ])
-            ->add('productSku', 'text', [
+            ->add('productSku', TextType::class, [
                 'required' => false,
                 'label' => 'oro.product.sku.label',
             ])
-            ->add('productReplacement', ProductSelectType::NAME, [
+            ->add('productReplacement', ProductSelectType::class, [
                 'required' => false,
                 'label' => 'oro.sale.quoteproduct.product_replacement.label',
                 'create_enabled' => false,
@@ -170,34 +176,36 @@ class QuoteProductType extends AbstractType
                     'scope' => 'quote'
                 ]
             ])
-            ->add('productReplacementSku', 'text', [
+            ->add('productReplacementSku', TextType::class, [
                 'required' => false,
                 'label' => 'oro.product.sku.label',
             ])
-            ->add('freeFormProduct', 'text', [
+            ->add('freeFormProduct', TextType::class, [
                 'required' => false,
                 'label' => 'oro.product.entity_label',
             ])
-            ->add('freeFormProductReplacement', 'text', [
+            ->add('freeFormProductReplacement', TextType::class, [
                 'required' => false,
                 'label' => 'oro.sale.quoteproduct.product_replacement.label',
             ])
-            ->add('quoteProductOffers', QuoteProductOfferCollectionType::NAME, [
+            ->add('quoteProductOffers', QuoteProductOfferCollectionType::class, [
                 'add_label' => 'oro.sale.quoteproductoffer.add_label',
                 'entry_options' => [
                     'compact_units' => $options['compact_units'],
                     'allow_prices_override' => $options['allow_prices_override'],
                 ],
             ])
-            ->add('type', 'hidden', [
+            ->add('type', HiddenType::class, [
                 'data' => QuoteProduct::TYPE_REQUESTED,
             ])
-            ->add('commentCustomer', 'textarea', [
+            ->add('commentCustomer', TextareaType::class, [
                 'required' => false,
-                'read_only' => true,
                 'label' => 'oro.sale.quoteproduct.comment_customer.label',
+                'attr' => [
+                    'readonly' => true
+                ]
             ])
-            ->add('comment', 'textarea', [
+            ->add('comment', TextareaType::class, [
                 'required' => false,
                 'label' => 'oro.sale.quoteproduct.comment.label',
             ])

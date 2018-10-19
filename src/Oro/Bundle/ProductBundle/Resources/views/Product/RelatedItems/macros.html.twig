@@ -28,7 +28,7 @@
 {% macro renderGrid(name, params = {}, renderParams = {}) %}
     {% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
 
-    <div id="{{ name }}">
+    <div id="{{ name }}" role="tabpanel">
         {{ dataGrid.renderGrid(name, params, renderParams) }}
     </div>
 {% endmacro %}

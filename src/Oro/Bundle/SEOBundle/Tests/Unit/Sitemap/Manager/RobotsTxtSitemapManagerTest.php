@@ -5,10 +5,10 @@ namespace Oro\Bundle\SEOBundle\Tests\Unit\Sitemap\Manager;
 use Oro\Bundle\SEOBundle\Manager\RobotsTxtFileManager;
 use Oro\Bundle\SEOBundle\Sitemap\Manager\RobotsTxtSitemapManager;
 
-class RobotsTxtSitemapManagerTest extends \PHPUnit_Framework_TestCase
+class RobotsTxtSitemapManagerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var RobotsTxtFileManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var RobotsTxtFileManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $fileManager;
 

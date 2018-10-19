@@ -11,19 +11,19 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\ProductVariant\VariantFieldValueHandler\EnumVariantFieldValueHandler;
 use Psr\Log\LoggerInterface;
 
-class EnumVariantFieldValueHandlerTest extends \PHPUnit_Framework_TestCase
+class EnumVariantFieldValueHandlerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $doctrineHelper;
 
-    /** @var EnumValueProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var EnumValueProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $enumValueProvider;
 
-    /** @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $logger;
 
     /**
-     * @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $configManager;
 

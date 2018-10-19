@@ -21,7 +21,7 @@ action_groups:
                 type: Oro\Bundle\CheckoutBundle\Entity\Checkout
             disallow_shipping_address_edit:
                 default: false
-            visitor_email:
+            email:
                 default: null
             billing_address:
                 default: null
@@ -192,6 +192,13 @@ action_groups:
                 method: fillSubtotals
                 method_parameters:
                     - $.order
+            - '@tree':
+                conditions:
+                    '@not_empty': $.checkout.registeredCustomerUser
+                actions:
+                    - '@assign_value': [$.order.customerUser, $.checkout.registeredCustomerUser]
+                    - '@assign_value': [$.order.customer, $.checkout.registeredCustomerUser.customer]
+
             - '@flush_entity': $.order
 
     b2b_flow_checkout_purchase:
@@ -239,16 +246,6 @@ action_groups:
                 paymentMethod: $.checkout.paymentMethod
                 transactionOptions: $.paymentTransactionOptions
 
-            - '@flash_message':
-                conditions:
-                    '@and':
-                        - '@equal':
-                            - false
-                            - $.responseData[purchaseSuccessful]
-                        - '@not_empty': $.responseData[message]
-                message: $.responseData[message]
-                type: 'warning'
-
     b2b_flow_checkout_finish_checkout:
         parameters:
             checkout:
@@ -261,6 +258,8 @@ action_groups:
                 default: false
             remove_source:
                 default: false
+            email:
+                default: null
         actions:
             # Save billing address if required
             - '@assign_constant_value': [$.typeBillingName, Oro\Bundle\AddressBundle\Entity\AddressType::TYPE_BILLING]
@@ -375,7 +374,7 @@ action_groups:
             - '@send_email_template':
                 parameters:
                     from: $.order.owner.email
-                    to: $.order.customerUser.email
+                    to: [$.order.customerUser, $.checkout.registeredCustomerUser, $.email]
                     template: 'order_confirmation_email'
                     entity: $.order
 
@@ -420,9 +419,11 @@ action_groups:
 
             - '@remove_entity':
                 conditions:
-                    '@or':
-                        - '@equal': [$.auto_remove_source, true]
-                        - '@and':
+                    '@and':
+                        - '@not_equal': [$.checkout.sourceEntity, null]
+                        - '@or':
+                          - '@equal': [$.auto_remove_source, true]
+                          - '@and':
                             - '@equal': [$.allow_manual_source_remove, true]
                             - '@equal': [$.remove_source, true]
                 parameters: [$.checkout.sourceEntity]
@@ -431,7 +432,7 @@ action_groups:
         parameters:
             checkout:
                 type: Oro\Bundle\CheckoutBundle\Entity\Checkout
-            visitor_email:
+            email:
                 default: null
             billing_address:
                 default: null
@@ -446,7 +447,7 @@ action_groups:
                         service: 'oro_customer.manager.guest_customer_user'
                         method: createFromAddress
                         method_parameters:
-                            - $.visitor_email
+                            - $.email
                             - $.billing_address
                     - '@flush_entity': $.checkout.customerUser
                     - '@assign_value': [$visitor.customerUser, $.checkout.customerUser]
@@ -457,7 +458,7 @@ action_groups:
         parameters:
             checkout:
                 type: Oro\Bundle\CheckoutBundle\Entity\Checkout
-            visitor_email:
+            email:
                 default: null
             billing_address:
                 default: null
@@ -465,7 +466,7 @@ action_groups:
             - '@tree':
                 conditions:
                     '@and':
-                        - '@not_empty': $.visitor_email
+                        - '@not_empty': $.email
                         - '@not_empty': $.billing_address
                         - '@not_empty': $.checkout.customerUser
                         - '@empty': $.checkout.customerUser.firstName
@@ -476,6 +477,76 @@ action_groups:
                         method: updateFromAddress
                         method_parameters:
                             - $.checkout.customerUser
-                            - $.visitor_email
+                            - $.email
                             - $.billing_address
                     - '@flush_entity': $.checkout.customerUser
+
+    handle_late_registration:
+        parameters:
+            checkout:
+                type: Oro\Bundle\CheckoutBundle\Entity\Checkout
+            order:
+                type: Oro\Bundle\OrderBundle\Entity\Order
+            late_registration_data:
+                type: array
+        actions:
+            - '@tree':
+                conditions:
+                    '@and':
+                        - '@not_empty': [$.late_registration_data]
+                        - '@equal': [$.late_registration_data.is_late_registration_enabled, true]
+                        - '@equal': [$.checkout.registeredCustomerUser, null]
+                actions:
+                    - '@call_service_method':
+                        attribute: $.checkout.registeredCustomerUser
+                        service: 'oro_customer.provider.frontend_customer_user_registration_form'
+                        method: createCustomerUser
+
+                    - '@assign_value': [$.checkout.registeredCustomerUser.email, $.late_registration_data.email]
+                    - '@assign_value': [$.checkout.registeredCustomerUser.firstName, $.order.billingAddress.firstname]
+                    - '@assign_value': [$.checkout.registeredCustomerUser.lastName, $.order.billingAddress.lastName]
+                    - '@assign_value': [$.checkout.registeredCustomerUser.plainPassword, $.late_registration_data.password]
+
+                    - '@call_service_method':
+                        service: 'oro_customer_user.manager'
+                        method: register
+                        method_parameters:
+                          - $.checkout.registeredCustomerUser
+
+                    - '@call_service_method':
+                        service: 'oro_customer_user.manager'
+                        method: updateUser
+                        method_parameters:
+                          - $.checkout.registeredCustomerUser
+
+                    - '@assign_value': [$.result.confirmationRequired, true]
+                    - '@assign_value': [$.order.customerUser, $.checkout.registeredCustomerUser]
+                    - '@assign_value': [$.order.customer, $.checkout.registeredCustomerUser.customer]
+                    - '@flush_entity': $.order
+
+            - '@tree':
+                conditions:
+                  '@equal': [$.checkout.registeredCustomerUser.confirmed, true]
+                actions:
+                    - '@call_service_method':
+                        service: 'oro_customer.security.login_manager'
+                        method: logInUser
+                        method_parameters:
+                          - 'frontend'
+                          - $.checkout.registeredCustomerUser
+
+                    - '@flash_message':
+                        message: oro.customer.controller.customeruser.registered.message
+                        type: 'success'
+
+                    - '@assign_value': [$.result.confirmationRequired, false]
+
+            - '@tree':
+                conditions:
+                    '@and':
+                        - '@equal': [$.checkout.registeredCustomerUser.confirmed, false]
+                        - '@equal': [$.result.confirmationRequired, true]
+                actions:
+                    - '@flash_message':
+                        message: oro.customer.controller.customeruser.registered_with_confirmation.message
+                        type: 'success'

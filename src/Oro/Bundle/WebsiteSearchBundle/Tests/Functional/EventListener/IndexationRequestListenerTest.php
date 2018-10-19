@@ -5,6 +5,7 @@ namespace Oro\Bundle\WebsiteSearchBundle\Tests\Functional\EventListener;
 use Doctrine\ORM\EntityManager;
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
 use Oro\Bundle\FormBundle\Event\FormHandler\Events;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\TestFrameworkBundle\Entity\TestProduct;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
@@ -149,12 +150,42 @@ class IndexationRequestListenerTest extends WebTestCase
         $this->assertContains($productId, $triggeredEvent->getIds());
     }
 
+    public function testTriggersReindexationAfterOnClear()
+    {
+        /** @var EventDispatcher $eventDispatcher */
+        $eventDispatcher = $this->client->getContainer()->get('event_dispatcher');
+
+        $product = $this->createProduct(false);
+
+        /**
+         * @var ReindexationRequestEvent $triggeredEvent
+         */
+        $triggeredEvent = null;
+
+        $eventDispatcher->addListener(ReindexationRequestEvent::EVENT_NAME, function ($event) use (& $triggeredEvent) {
+            $triggeredEvent = $event;
+        });
+
+        /**
+         * @var EntityManager $em
+         */
+        $em = $this->client->getContainer()->get('doctrine.orm.entity_manager');
+
+        $em->clear(Product::class);
+        $em->flush();
+
+        $this->assertNotNull($triggeredEvent, 'Event was not triggered.');
+        $this->assertContains(TestProduct::class, $triggeredEvent->getClassesNames());
+        $this->assertContains($product->getId(), $triggeredEvent->getIds());
+    }
+
     /**
      * Helper method for creating a product which will be used for testing
      *
+     * @param bool $flush
      * @return TestProduct
      */
-    private function createProduct()
+    private function createProduct(bool $flush = true)
     {
         /**
          * @var EntityManager $em
@@ -165,7 +196,10 @@ class IndexationRequestListenerTest extends WebTestCase
         $product->setName('test');
 
         $em->persist($product);
-        $em->flush();
+
+        if ($flush) {
+            $em->flush();
+        }
 
         return $product;
     }

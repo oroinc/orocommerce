@@ -10,7 +10,7 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class ProductAutocompleteTypeTest extends \PHPUnit_Framework_TestCase
+class ProductAutocompleteTypeTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var ProductAutocompleteType
@@ -22,19 +22,14 @@ class ProductAutocompleteTypeTest extends \PHPUnit_Framework_TestCase
         $this->type = new ProductAutocompleteType();
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(ProductAutocompleteType::NAME, $this->type->getName());
-    }
-
     public function testGetParent()
     {
-        $this->assertEquals(OroAutocompleteType::NAME, $this->type->getParent());
+        $this->assertEquals(OroAutocompleteType::class, $this->type->getParent());
     }
 
     public function testConfigureOptions()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|OptionsResolver $resolver */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|OptionsResolver $resolver */
         $resolver = $this->createMock('Symfony\Component\OptionsResolver\OptionsResolver');
         $resolver->expects($this->at(0))
             ->method('setDefaults')
@@ -70,7 +65,7 @@ class ProductAutocompleteTypeTest extends \PHPUnit_Framework_TestCase
 
         $view = new FormView();
 
-        /** @var FormConfigInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        /** @var FormConfigInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $config = $this->createMock('Symfony\Component\Form\FormConfigInterface');
         $config->expects($this->any())
             ->method('getOptions')
@@ -82,7 +77,7 @@ class ProductAutocompleteTypeTest extends \PHPUnit_Framework_TestCase
                 ]
             );
 
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock('Symfony\Component\Form\FormInterface');
         $form->expects($this->any())->method('getConfig')->willReturn($config);
 

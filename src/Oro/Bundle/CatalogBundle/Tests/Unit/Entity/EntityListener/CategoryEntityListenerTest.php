@@ -10,14 +10,14 @@ use Oro\Bundle\CatalogBundle\Manager\ProductIndexScheduler;
 use Oro\Component\Cache\Layout\DataProviderCacheCleaner;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class CategoryEntityListenerTest extends \PHPUnit_Framework_TestCase
+class CategoryEntityListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /** @var ProductIndexScheduler|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ProductIndexScheduler|\PHPUnit\Framework\MockObject\MockObject */
     private $productIndexScheduler;
 
-    /** @var DataProviderCacheCleaner|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var DataProviderCacheCleaner|\PHPUnit\Framework\MockObject\MockObject */
     private $cacheCleaner;
 
     /** @var CategoryEntityListener */

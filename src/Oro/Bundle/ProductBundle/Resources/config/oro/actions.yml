@@ -104,6 +104,13 @@ operations:
                         - 'oro_datagrid_index'
                         - $.requestRoute
                     - '@not_blank': $.routes[name]
+        datagrid_options:
+            mass_action:
+                entity_name: Oro\Bundle\ProductBundle\Entity\Product
+                data_identifier: product.id
+                type: delete
+                label: oro.grid.action.delete
+                icon: trash-o
 
     oro_segment_edit_inside_content_node:
         label: oro.product.content_variant.product_collection.segment_edit_button.label

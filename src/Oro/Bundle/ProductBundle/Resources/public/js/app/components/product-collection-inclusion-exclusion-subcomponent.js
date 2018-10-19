@@ -37,6 +37,16 @@ define(function(require) {
          */
         $excluded: null,
 
+        /**
+         * @inheritDoc
+         */
+        constructor: function InclusionExclusionSubComponent() {
+            InclusionExclusionSubComponent.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, options || {});
             this._checkOptions();

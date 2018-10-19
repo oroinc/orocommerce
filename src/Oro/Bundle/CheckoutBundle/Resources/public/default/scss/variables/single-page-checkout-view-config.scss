@@ -1,4 +1,4 @@
-// theme: default;
+/* @theme: default; */
 
 $checkout-view-position: relative !default;
 $checkout-view-display: flex !default;
@@ -45,6 +45,9 @@ $checkout-view-sticky-totals-max-width: $site-width !default;
 $checkout-view-sticky-totals-margin: 0 auto !default;
 $checkout-view-sticky-totals-justify-content: flex-end !default;
 
+$checkout-view-sticky-totals-summary-inner-offset-top: 20px !default;
+$checkout-view-sticky-totals-summary-float: none !default;
+
 $checkout-view-badge-size: 32px !default;
 $checkout-view-badge-font-size: 18px !default;
 $checkout-view-badge-margin: 0 $offset-x-m 0 0 !default;
@@ -53,11 +56,16 @@ $checkout-view-column-pseudo-width: 1px !default;
 $checkout-view-column-pseudo-background: get-color('additional', 'light') !default;
 
 $checkout-view-shipping-methods-margin: $offset-y 0 0 !default;
-$checkout-view-shipping-methods-datepicker-box-max-width: 256px !default;
+$checkout-view-shipping-methods-datepicker-box-max-width: none !default;
+
+$checkout-view-checkout-order-summary-totals-sticky-left: auto !default;
+$checkout-view-checkout-order-summary-totals-sticky-right: 8px !default;
 
 $checkout-view-payment-methods-image-max-width: 100% !default;
 
 $checkout-view-summary-grid-container-shadow-background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 100%) !default;
+
+$checkout-view-breakpoint-max-desktop: $site-width !default;
 
 // tablet-small
 $checkout-view-column-tablet-width: 50% !default;

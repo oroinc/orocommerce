@@ -82,22 +82,22 @@ class PayPalSettingsType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('creditCardLabels', LocalizedFallbackValueCollectionType::NAME, [
+            ->add('creditCardLabels', LocalizedFallbackValueCollectionType::class, [
                 'label' => 'oro.paypal.settings.credit_card_labels.label',
                 'required' => true,
                 'entry_options' => ['constraints' => [new NotBlank()]],
             ])
-            ->add('creditCardShortLabels', LocalizedFallbackValueCollectionType::NAME, [
+            ->add('creditCardShortLabels', LocalizedFallbackValueCollectionType::class, [
                 'label' => 'oro.paypal.settings.credit_card_short_labels.label',
                 'required' => true,
                 'entry_options' => ['constraints' => [new NotBlank()]],
             ])
-            ->add('expressCheckoutLabels', LocalizedFallbackValueCollectionType::NAME, [
+            ->add('expressCheckoutLabels', LocalizedFallbackValueCollectionType::class, [
                 'label' => 'oro.paypal.settings.express_checkout_labels.label',
                 'required' => true,
                 'entry_options' => ['constraints' => [new NotBlank()]],
             ])
-            ->add('expressCheckoutShortLabels', LocalizedFallbackValueCollectionType::NAME, [
+            ->add('expressCheckoutShortLabels', LocalizedFallbackValueCollectionType::class, [
                 'label' => 'oro.paypal.settings.express_checkout_short_labels.label',
                 'required' => true,
                 'entry_options' => ['constraints' => [new NotBlank()]],
@@ -108,8 +108,6 @@ class PayPalSettingsType extends AbstractType
             ])
             ->add('creditCardPaymentAction', ChoiceType::class, [
                 'choices' => $this->paymentActionsDataProvider->getPaymentActions(),
-                // TODO: Remove 'choices_as_values' option in scope of BAP-15236
-                'choices_as_values' => true,
                 'choice_label' => function ($action) {
                     return $this->translator->trans(
                         sprintf('oro.paypal.settings.payment_action.%s', $action)
@@ -120,8 +118,6 @@ class PayPalSettingsType extends AbstractType
             ])
             ->add('expressCheckoutPaymentAction', ChoiceType::class, [
                 'choices' => $this->paymentActionsDataProvider->getPaymentActions(),
-                // TODO: Remove 'choices_as_values' option in scope of BAP-15236
-                'choices_as_values' => true,
                 'choice_label' => function ($action) {
                     return $this->translator->trans(
                         sprintf('oro.paypal.settings.payment_action.%s', $action)
@@ -132,8 +128,6 @@ class PayPalSettingsType extends AbstractType
             ])
             ->add('allowedCreditCardTypes', ChoiceType::class, [
                 'choices' => $this->creditCardTypesDataProvider->getCardTypes(),
-                // TODO: Remove 'choices_as_values' option in scope of BAP-15236
-                'choices_as_values' => true,
                 'choice_label' => function ($cardType) {
                     return $this->translator->trans(
                         sprintf('oro.paypal.settings.allowed_cc_types.%s', $cardType)

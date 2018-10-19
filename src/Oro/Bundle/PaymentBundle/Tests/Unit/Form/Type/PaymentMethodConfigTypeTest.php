@@ -7,6 +7,7 @@ use Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodConfigType;
 use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
 use Oro\Bundle\PaymentBundle\Method\View\CompositePaymentMethodViewProvider;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 
 class PaymentMethodConfigTypeTest extends FormIntegrationTestCase
 {
@@ -16,12 +17,12 @@ class PaymentMethodConfigTypeTest extends FormIntegrationTestCase
     protected $formType;
 
     /**
-     * @var PaymentMethodProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var PaymentMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $paymentMethodProvider;
 
     /**
-     * @var CompositePaymentMethodViewProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var CompositePaymentMethodViewProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $paymentMethodViewProvider;
 
@@ -49,7 +50,7 @@ class PaymentMethodConfigTypeTest extends FormIntegrationTestCase
      */
     public function testSubmit($data)
     {
-        $form = $this->factory->create($this->formType, $data);
+        $form = $this->factory->create(PaymentMethodConfigType::class, $data);
 
         $this->assertSame($data, $form->getData());
 
@@ -77,6 +78,16 @@ class PaymentMethodConfigTypeTest extends FormIntegrationTestCase
             [
                 (new PaymentMethodConfig())->setType('PP')->setOptions(['client_id' => 5])
             ],
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getExtensions()
+    {
+        return [
+            new PreloadedExtension([$this->formType], [])
         ];
     }
 }

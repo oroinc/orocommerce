@@ -8,7 +8,7 @@ use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
 use Oro\Bundle\ShippingBundle\Provider\ShippingMethodIconProvider;
 use Oro\Bundle\TestFrameworkBundle\Test\Logger\LoggerAwareTraitTestTrait;
 
-class ShippingMethodIconProviderTest extends \PHPUnit_Framework_TestCase
+class ShippingMethodIconProviderTest extends \PHPUnit\Framework\TestCase
 {
     use LoggerAwareTraitTestTrait;
 
@@ -16,7 +16,7 @@ class ShippingMethodIconProviderTest extends \PHPUnit_Framework_TestCase
     const ICON = 'bundles/icon-uri.png';
 
     /**
-     * @var ShippingMethodProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $shippingMethodProvider;
 
@@ -70,9 +70,9 @@ class ShippingMethodIconProviderTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param string                                   $identifier
-     * @param \PHPUnit_Framework_MockObject_MockObject $shippingMethod
+     * @param \PHPUnit\Framework\MockObject\MockObject $shippingMethod
      *
-     * @return ShippingMethodProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return ShippingMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private function configureShippingMethodRegistry($identifier, $shippingMethod)
     {

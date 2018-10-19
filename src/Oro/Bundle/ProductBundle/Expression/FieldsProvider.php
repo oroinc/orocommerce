@@ -7,6 +7,9 @@ use Oro\Bundle\EntityBundle\Provider\EntityFieldProvider;
 use Oro\Component\DependencyInjection\ServiceLink;
 use Oro\Component\Expression\FieldsProviderInterface;
 
+/**
+ * Fields provider is used in AutocompleteFieldsProvider
+ */
 class FieldsProvider implements FieldsProviderInterface
 {
     /**

@@ -62,7 +62,7 @@ class ReindexProductsByAttributeProcessor implements MessageProcessorInterface, 
                 throw new InvalidArgumentException();
             }
             $attributeId = $body['attributeId'];
-            $this->jobRunner->runUnique(
+            $result = $this->jobRunner->runUnique(
                 $message->getMessageId(),
                 Topics::REINDEX_PRODUCTS_BY_ATTRIBUTE,
                 function () use ($attributeId) {
@@ -70,7 +70,7 @@ class ReindexProductsByAttributeProcessor implements MessageProcessorInterface, 
                 }
             );
 
-            return self::ACK;
+            return $result ? self::ACK : self::REJECT;
         } catch (\Exception $e) {
             $this->logger->error(
                 'Unexpected exception occurred during queue message processing',
@@ -96,20 +96,33 @@ class ReindexProductsByAttributeProcessor implements MessageProcessorInterface, 
      * Trigger update search index only for product with attribute
      *
      * @param string $attributeId
+     * @return bool
      */
     private function triggerReindex($attributeId)
     {
-        /** @var ProductRepository $repository */
-        $repository = $this->registry->getManagerForClass(Product::class)->getRepository(Product::class);
+        try {
+            /** @var ProductRepository $repository */
+            $repository = $this->registry->getManagerForClass(Product::class)->getRepository(Product::class);
 
-        $productIds = $repository->getProductIdsByAttributeId($attributeId);
-        if (!$productIds) {
-            return;
+            $productIds = $repository->getProductIdsByAttributeId($attributeId);
+            if ($productIds) {
+                $this->dispatcher->dispatch(
+                    ReindexationRequestEvent::EVENT_NAME,
+                    new ReindexationRequestEvent([Product::class], [], $productIds)
+                );
+            }
+
+            return true;
+        } catch (\Exception $e) {
+            $this->logger->error(
+                'Unexpected exception occurred during triggering update of search index ',
+                [
+                    'exception' => $e,
+                    'topic' => Topics::REINDEX_PRODUCTS_BY_ATTRIBUTE
+                ]
+            );
+
+            return false;
         }
-
-        $this->dispatcher->dispatch(
-            ReindexationRequestEvent::EVENT_NAME,
-            new ReindexationRequestEvent([Product::class], [], $productIds)
-        );
     }
 }

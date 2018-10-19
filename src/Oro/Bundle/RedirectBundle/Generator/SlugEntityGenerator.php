@@ -4,6 +4,7 @@ namespace Oro\Bundle\RedirectBundle\Generator;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\RedirectBundle\Cache\UrlCacheInterface;
 use Oro\Bundle\RedirectBundle\Entity\LocalizedSlugPrototypeAwareInterface;
@@ -13,6 +14,10 @@ use Oro\Bundle\RedirectBundle\Generator\DTO\SlugUrl;
 use Oro\Bundle\RedirectBundle\Provider\RoutingInformationProviderInterface;
 use Oro\Component\Routing\RouteData;
 
+/**
+ * Removes old caches
+ * Generates new caches (only "slug" that were explicitly updated)
+ */
 class SlugEntityGenerator
 {
     /**
@@ -36,21 +41,29 @@ class SlugEntityGenerator
     private $redirectGenerator;
 
     /**
+     * @var UserLocalizationManager
+     */
+    private $userLocalizationManager;
+
+    /**
      * @param RoutingInformationProviderInterface $routingInformationProvider
      * @param UniqueSlugResolver $slugResolver
      * @param RedirectGenerator $redirectGenerator
      * @param UrlCacheInterface $urlCache
+     * @param UserLocalizationManager $userLocalizationManager
      */
     public function __construct(
         RoutingInformationProviderInterface $routingInformationProvider,
         UniqueSlugResolver $slugResolver,
         RedirectGenerator $redirectGenerator,
-        UrlCacheInterface $urlCache
+        UrlCacheInterface $urlCache,
+        UserLocalizationManager $userLocalizationManager
     ) {
         $this->routingInformationProvider = $routingInformationProvider;
         $this->slugResolver = $slugResolver;
         $this->redirectGenerator = $redirectGenerator;
         $this->urlCache = $urlCache;
+        $this->userLocalizationManager = $userLocalizationManager;
     }
 
     /**
@@ -59,6 +72,16 @@ class SlugEntityGenerator
      */
     public function generate(SluggableInterface $entity, $generateRedirects = false)
     {
+        $localizations = $this->userLocalizationManager->getEnabledLocalizations();
+        $routeData = $this->routingInformationProvider->getRouteData($entity);
+        foreach ($localizations as $localization) {
+            $this->urlCache->removeUrl(
+                $routeData->getRoute(),
+                $routeData->getRouteParameters(),
+                $this->getLocalizationId($localization)
+            );
+        }
+
         $slugUrls = $this->getResolvedSlugUrls($entity);
 
         /** @var Slug[] $toRemove */
@@ -70,15 +93,15 @@ class SlugEntityGenerator
             if ($slugUrls->containsKey($localizationId)) {
                 $slugUrl = $slugUrls->get($localizationId);
 
-                $previousSlugUrl = $slug->getUrl();
+                $previousSlug = clone $slug;
                 $updatedUrl = $slugUrl->getUrl();
                 $slug->setUrl($updatedUrl);
                 $slug->setSlugPrototype($slugUrl->getSlug());
 
-                $this->redirectGenerator->updateRedirects($previousSlugUrl, $slug);
+                $this->redirectGenerator->updateRedirects($previousSlug->getUrl(), $slug);
 
                 if ($generateRedirects) {
-                    $this->redirectGenerator->generate($previousSlugUrl, $slug);
+                    $this->redirectGenerator->generateForSlug($previousSlug, $slug);
                 }
 
                 $this->urlCache->setUrl(
@@ -96,12 +119,6 @@ class SlugEntityGenerator
         // Remove deleted
         foreach ($toRemove as $slugToRemove) {
             $entity->removeSlug($slugToRemove);
-
-            $this->urlCache->removeUrl(
-                $slugToRemove->getRouteName(),
-                $slugToRemove->getRouteParameters(),
-                $this->getLocalizationId($slugToRemove->getLocalization())
-            );
         }
 
         // Add new

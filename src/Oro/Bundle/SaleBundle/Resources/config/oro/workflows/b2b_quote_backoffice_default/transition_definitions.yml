@@ -54,6 +54,15 @@ workflows:
                             message_parameters:
                                 id: $quote.qid
                 send_to_customer_transition_definition:
+                    preactions:
+                        - '@call_service_method':
+                            service: oro_sale.provider.quote_product_price
+                            method: hasEmptyPrice
+                            method_parameters: [$quote]
+                            attribute: $hasEmptyPrice
+                    preconditions:
+                        '@and':
+                            - '@equal': [false, $hasEmptyPrice]
                     actions:
                         - '@request_enum_entity':
                             enum_code: 'quote_internal_status'

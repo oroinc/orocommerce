@@ -7,11 +7,6 @@ entity_config:
                         require_schema_update: false
                         value_type: boolean
                         default_value: false
-                is_total:
-                    options:
-                        require_schema_update: false
-                        value_type: boolean
-                        default_value: false
                 is_total_currency:
                     options:
                         require_schema_update: false

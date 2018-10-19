@@ -10,12 +10,12 @@ use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Form\FormInterface;
 
-class ProductFormListenerTest extends \PHPUnit_Framework_TestCase
+class ProductFormListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var PriceManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var PriceManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $priceManager;
 
@@ -34,7 +34,7 @@ class ProductFormListenerTest extends \PHPUnit_Framework_TestCase
     {
         /** @var FormInterface $form */
         $form = $this->createMock(FormInterface::class);
-        /** @var AfterFormProcessEvent|\PHPUnit_Framework_MockObject_MockObject $event **/
+        /** @var AfterFormProcessEvent|\PHPUnit\Framework\MockObject\MockObject $event **/
         $event = new AfterFormProcessEvent($form, new Product());
 
         $this->priceManager
@@ -51,7 +51,7 @@ class ProductFormListenerTest extends \PHPUnit_Framework_TestCase
 
         $product = $this->getEntity(Product::class, ['id' => 5]);
 
-        /** @var AfterFormProcessEvent|\PHPUnit_Framework_MockObject_MockObject $event **/
+        /** @var AfterFormProcessEvent|\PHPUnit\Framework\MockObject\MockObject $event **/
         $event = new AfterFormProcessEvent($form, $product);
 
         $this->priceManager

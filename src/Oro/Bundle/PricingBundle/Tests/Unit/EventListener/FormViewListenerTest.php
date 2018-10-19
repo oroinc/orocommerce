@@ -11,14 +11,20 @@ use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
 use Oro\Component\Testing\Unit\FormViewListenerTestCase;
 use Symfony\Component\Form\FormView;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class FormViewListenerTest extends FormViewListenerTestCase
 {
-    /**
-     * @var PriceAttributePricesProvider|\PHPUnit_Framework_MockObject_MockObject
-     */
+    /** @var FormViewListener */
+    private $listener;
+
+    /** @var AuthorizationCheckerInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $authorizationChecker;
+
+    /** @var \PHPUnit\Framework\MockObject\MockObject|\Twig_Environment */
+    private $environment;
+
+    /** @var PriceAttributePricesProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $priceAttributePricesProvider;
 
     protected function setUp()
@@ -26,48 +32,26 @@ class FormViewListenerTest extends FormViewListenerTestCase
         $this->priceAttributePricesProvider = $this->createMock(PriceAttributePricesProvider::class);
 
         parent::setUp();
+
+        $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
+
+        $this->listener = new FormViewListener(
+            $this->translator,
+            $this->doctrineHelper,
+            $this->priceAttributePricesProvider,
+            $this->authorizationChecker
+        );
     }
 
     public function testOnProductView()
     {
         $product = new Product();
-        $templateHtml = 'template_html';
+        $templateHtmlProductAttributePrice = 'template_html_product_attribute_price';
+        $templateHtmlProductPrice = 'template_html_product_price';
 
-        /** @var FormViewListener $listener */
-        $listener = $this->getListener();
+        $this->assertPriceAttributeViewRendered($product, $templateHtmlProductAttributePrice);
 
-        $priceList = new PriceAttributePriceList();
-
-        /** @var \PHPUnit_Framework_MockObject_MockObject|EntityRepository $priceAttributePriceListRepository */
-        $priceAttributePriceListRepository = $this->createMock(EntityRepository::class);
-
-        $priceAttributePriceListRepository->expects($this->once())
-            ->method('findAll')->willReturn([$priceList]);
-
-        $this->doctrineHelper->expects($this->any())
-            ->method('getEntityRepository')
-            ->willReturnMap([
-                ['OroPricingBundle:PriceAttributePriceList', $priceAttributePriceListRepository],
-            ]);
-
-        $this->priceAttributePricesProvider->expects($this->once())->method('getPricesWithUnitAndCurrencies')
-            ->with($priceList, $product)
-            ->willReturn(['Test' => ['item' => ['USD' => 100]]]);
-
-        /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $environment */
-        $environment = $this->createMock(\Twig_Environment::class);
-        $environment->expects($this->at(0))
-            ->method('render')
-            ->with(
-                'OroPricingBundle:Product:price_attribute_prices_view.html.twig',
-                [
-                    'product' => $product,
-                    'priceList' => $priceList,
-                    'priceAttributePrices' => ['Test' => ['item' => ['USD' => 100]]],
-                ]
-            )
-            ->willReturn($templateHtml);
-
+        $environment = $this->getEnvironment();
         $environment->expects($this->at(1))
             ->method('render')
             ->with(
@@ -76,14 +60,67 @@ class FormViewListenerTest extends FormViewListenerTestCase
                     'entity' => $product,
                 ]
             )
-            ->willReturn($templateHtml);
+            ->willReturn($templateHtmlProductPrice);
+
+        $this->authorizationChecker
+            ->expects($this->once())
+            ->method('isGranted')
+            ->with('VIEW', 'entity:Oro\Bundle\PricingBundle\Entity\ProductPrice')
+            ->willReturn(true);
 
         $event = $this->createEvent($environment, $product);
-        $listener->onProductView($event);
+        $this->listener->onProductView($event);
         $scrollData = $event->getScrollData()->getData();
 
-        $expectedTitle = 'oro.pricing.pricelist.entity_plural_label.trans';
-        $this->assertScrollDataPriceBlock($scrollData, $templateHtml, $expectedTitle);
+        $this->assertEquals(
+            'oro.pricing.pricelist.entity_plural_label.trans',
+            $scrollData[ScrollData::DATA_BLOCKS]['prices'][ScrollData::TITLE]
+        );
+
+        $this->assertEquals(
+            ['prices' => $templateHtmlProductPrice],
+            $scrollData[ScrollData::DATA_BLOCKS]['prices'][ScrollData::SUB_BLOCKS][0][ScrollData::DATA]
+        );
+
+        $this->assertEquals(
+            'oro.pricing.priceattributepricelist.entity_plural_label.trans',
+            $scrollData[ScrollData::DATA_BLOCKS]['price_attributes'][ScrollData::TITLE]
+        );
+
+        $this->assertEquals(
+            ['productPriceAttributesPrices' => $templateHtmlProductAttributePrice],
+            $scrollData[ScrollData::DATA_BLOCKS]['price_attributes'][ScrollData::SUB_BLOCKS][0][ScrollData::DATA]
+        );
+    }
+
+    public function testOnProductViewForbiddenToViewPrice()
+    {
+        $product = new Product();
+        $templateHtmlProductAttributePrice = 'template_html_product_attribute_price';
+
+        $this->assertPriceAttributeViewRendered($product, $templateHtmlProductAttributePrice);
+
+        $this->authorizationChecker
+            ->expects($this->once())
+            ->method('isGranted')
+            ->with('VIEW', 'entity:Oro\Bundle\PricingBundle\Entity\ProductPrice')
+            ->willReturn(false);
+
+        $event = $this->createEvent($this->getEnvironment(), $product);
+        $this->listener->onProductView($event);
+        $scrollData = $event->getScrollData()->getData();
+
+        $this->assertTrue(empty($scrollData[ScrollData::DATA_BLOCKS]['prices']));
+
+        $this->assertEquals(
+            'oro.pricing.priceattributepricelist.entity_plural_label.trans',
+            $scrollData[ScrollData::DATA_BLOCKS]['price_attributes'][ScrollData::TITLE]
+        );
+
+        $this->assertEquals(
+            ['productPriceAttributesPrices' => $templateHtmlProductAttributePrice],
+            $scrollData[ScrollData::DATA_BLOCKS]['price_attributes'][ScrollData::SUB_BLOCKS][0][ScrollData::DATA]
+        );
     }
 
     public function testOnProductEdit()
@@ -91,7 +128,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
         $formView = new FormView();
         $templateHtml = 'template_html';
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $environment */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|\Twig_Environment $environment */
         $environment = $this->createMock(\Twig_Environment::class);
         $environment->expects($this->once())
             ->method('render')
@@ -101,28 +138,18 @@ class FormViewListenerTest extends FormViewListenerTestCase
         $entity = new Product();
         $event = $this->createEvent($environment, $entity, $formView);
 
-        /** @var FormViewListener $listener */
-        $listener = $this->getListener();
-        $listener->onProductEdit($event);
+        $this->listener->onProductEdit($event);
         $scrollData = $event->getScrollData()->getData();
 
         $expectedTitle = 'oro.pricing.productprice.entity_plural_label.trans';
-        $this->assertScrollDataPriceBlock($scrollData, $templateHtml, $expectedTitle);
-    }
 
-    /**
-     * @param array $scrollData
-     * @param string $html
-     * @param string $expectedTitle
-     */
-    protected function assertScrollDataPriceBlock(array $scrollData, $html, $expectedTitle)
-    {
         $this->assertEquals(
             $expectedTitle,
             $scrollData[ScrollData::DATA_BLOCKS]['prices'][ScrollData::TITLE]
         );
+
         $this->assertEquals(
-            ['productPriceAttributesPrices' => $html],
+            ['productPriceAttributesPrices' => $templateHtml],
             $scrollData[ScrollData::DATA_BLOCKS]['prices'][ScrollData::SUB_BLOCKS][0][ScrollData::DATA]
         );
     }
@@ -150,15 +177,50 @@ class FormViewListenerTest extends FormViewListenerTestCase
         return new BeforeListRenderEvent($environment, new ScrollData($defaultData), $entity, $formView);
     }
 
-    /**
-     * @return FormViewListener
-     */
-    protected function getListener()
+    private function assertPriceAttributeViewRendered($product, $templateHtmlProductAttributePrice)
     {
-        return new FormViewListener(
-            $this->translator,
-            $this->doctrineHelper,
-            $this->priceAttributePricesProvider
-        );
+        $priceList = new PriceAttributePriceList();
+
+        /** @var \PHPUnit\Framework\MockObject\MockObject|EntityRepository $priceAttributePriceListRepository */
+        $priceAttributePriceListRepository = $this->createMock(EntityRepository::class);
+
+        $priceAttributePriceListRepository->expects($this->once())
+            ->method('findAll')->willReturn([$priceList]);
+
+        $this->doctrineHelper->expects($this->any())
+            ->method('getEntityRepository')
+            ->willReturnMap([
+                ['OroPricingBundle:PriceAttributePriceList', $priceAttributePriceListRepository],
+            ]);
+
+        $this->priceAttributePricesProvider->expects($this->once())->method('getPricesWithUnitAndCurrencies')
+            ->with($priceList, $product)
+            ->willReturn(['Test' => ['item' => ['USD' => 100]]]);
+
+        /** @var \PHPUnit\Framework\MockObject\MockObject|\Twig_Environment $environment */
+        $environment = $this->getEnvironment();
+        $environment->expects($this->at(0))
+            ->method('render')
+            ->with(
+                'OroPricingBundle:Product:price_attribute_prices_view.html.twig',
+                [
+                    'product' => $product,
+                    'priceList' => $priceList,
+                    'priceAttributePrices' => ['Test' => ['item' => ['USD' => 100]]],
+                ]
+            )
+            ->willReturn($templateHtmlProductAttributePrice);
+    }
+
+    /**
+     * @return \PHPUnit\Framework\MockObject\MockObject|\Twig_Environment
+     */
+    private function getEnvironment()
+    {
+        if (null === $this->environment) {
+            $this->environment = $this->createMock(\Twig_Environment::class);
+        }
+
+        return $this->environment;
     }
 }

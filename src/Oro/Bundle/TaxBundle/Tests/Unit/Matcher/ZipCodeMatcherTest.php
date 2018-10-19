@@ -17,7 +17,7 @@ class ZipCodeMatcherTest extends AbstractMatcherTest
     const POSTAL_CODE = '02097';
 
     /**
-     * @var RegionMatcher|\PHPUnit_Framework_MockObject_MockObject
+     * @var RegionMatcher|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $regionMatcher;
 

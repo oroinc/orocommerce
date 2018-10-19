@@ -27,7 +27,7 @@ datagrids:
                 title:
                     data_name: title
             default:
-                id: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+                id: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
         filters:
             columns:
                 id:
@@ -137,8 +137,8 @@ datagrids:
                 label: oro.cms.contentblock.enabled.label
                 frontend_type: select
                 choices:
-                   - Disabled
-                   - Enabled
+                   Disabled: 0
+                   Enabled: 1
             createdAt:
                 label: oro.cms.contentblock.createdat.label
                 frontend_type: datetime
@@ -173,8 +173,8 @@ datagrids:
                     options:
                         field_options:
                             choices:
-                                1: Enabled
-                                2: Disabled
+                                Enabled: 1
+                                Disabled: 2
                 createdAt:
                     type: datetime
                     data_name: contentBlock.createdAt

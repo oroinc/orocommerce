@@ -11,6 +11,7 @@ use Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider;
 use Oro\Bundle\UPSBundle\Entity\Repository\ShippingServiceRepository;
 use Oro\Bundle\UPSBundle\Entity\ShippingService;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -127,12 +128,12 @@ class UPSTransportSettingsType extends AbstractType
                 'label' => 'oro.ups.transport.pickup_type.label',
                 'required' => true,
                 'choices' => [
-                    UPSTransport::PICKUP_TYPE_REGULAR_DAILY => 'oro.ups.transport.pickup_type.regular_daily.label',
-                    UPSTransport::PICKUP_TYPE_CUSTOMER_COUNTER =>
-                        'oro.ups.transport.pickup_type.customer_counter.label',
-                    UPSTransport::PICKUP_TYPE_ONE_TIME => 'oro.ups.transport.pickup_type.one_time.label',
-                    UPSTransport::PICKUP_TYPE_ON_CALL_AIR => 'oro.ups.transport.pickup_type.on_call_air.label',
-                    UPSTransport::PICKUP_TYPE_LETTER_CENTER => 'oro.ups.transport.pickup_type.letter_center.label',
+                    'oro.ups.transport.pickup_type.regular_daily.label' => UPSTransport::PICKUP_TYPE_REGULAR_DAILY,
+                    'oro.ups.transport.pickup_type.customer_counter.label' =>
+                        UPSTransport::PICKUP_TYPE_CUSTOMER_COUNTER,
+                    'oro.ups.transport.pickup_type.one_time.label' => UPSTransport::PICKUP_TYPE_ONE_TIME,
+                    'oro.ups.transport.pickup_type.on_call_air.label' => UPSTransport::PICKUP_TYPE_ON_CALL_AIR,
+                    'oro.ups.transport.pickup_type.letter_center.label' => UPSTransport::PICKUP_TYPE_LETTER_CENTER,
                 ]
             ]
         );
@@ -143,8 +144,8 @@ class UPSTransportSettingsType extends AbstractType
                 'label' => 'oro.ups.transport.unit_of_weight.label',
                 'required' => true,
                 'choices' => [
-                    UPSTransport::UNIT_OF_WEIGHT_LBS => 'oro.ups.transport.unit_of_weight.lbs.label',
-                    UPSTransport::UNIT_OF_WEIGHT_KGS => 'oro.ups.transport.unit_of_weight.kgs.label'
+                    'oro.ups.transport.unit_of_weight.lbs.label' => UPSTransport::UNIT_OF_WEIGHT_LBS,
+                    'oro.ups.transport.unit_of_weight.kgs.label' => UPSTransport::UNIT_OF_WEIGHT_KGS,
                 ]
             ]
         );
@@ -158,7 +159,7 @@ class UPSTransportSettingsType extends AbstractType
         );
         $builder->add(
             'applicableShippingServices',
-            'entity',
+            EntityType::class,
             $this->getApplicableShippingServicesOptions()
         );
         $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'onPreSetData']);
@@ -227,7 +228,7 @@ class UPSTransportSettingsType extends AbstractType
             ];
         }
 
-        $form->add('applicableShippingServices', 'entity', array_merge(
+        $form->add('applicableShippingServices', EntityType::class, array_merge(
             $this->getApplicableShippingServicesOptions(),
             $additionalOptions
         ));

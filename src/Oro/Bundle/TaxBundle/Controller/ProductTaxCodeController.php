@@ -90,7 +90,7 @@ class ProductTaxCodeController extends Controller
     {
         return $this->get('oro_form.model.update_handler')->handleUpdate(
             $productTaxCode,
-            $this->createForm(ProductTaxCodeType::NAME, $productTaxCode),
+            $this->createForm(ProductTaxCodeType::class, $productTaxCode),
             function (ProductTaxCode $productTaxCode) {
                 return [
                     'route' => 'oro_tax_product_tax_code_update',

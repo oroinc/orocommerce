@@ -10,24 +10,24 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
-class RequestHandlerTest extends \PHPUnit_Framework_TestCase
+class RequestHandlerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var \PHPUnit_Framework_MockObject_MockObject|TotalProcessorProvider */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|TotalProcessorProvider */
     protected $totalProvider;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|EventDispatcherInterface */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|EventDispatcherInterface */
     protected $eventDispatcher;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|AuthorizationCheckerInterface */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|AuthorizationCheckerInterface */
     protected $authorizationChecker;
 
-    /** @var  \PHPUnit_Framework_MockObject_MockObject|EntityRoutingHelper */
+    /** @var  \PHPUnit\Framework\MockObject\MockObject|EntityRoutingHelper */
     protected $entityRoutingHelper;
 
-    /** @var  \PHPUnit_Framework_MockObject_MockObject|Registry */
+    /** @var  \PHPUnit\Framework\MockObject\MockObject|Registry */
     protected $doctrine;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|RequestHandler */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|RequestHandler */
     protected $requestHandler;
 
     protected function setUp()
@@ -192,7 +192,7 @@ class RequestHandlerTest extends \PHPUnit_Framework_TestCase
     /**
      * @param $returnEntity
      *
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     protected function initRepository($returnEntity)
     {
@@ -206,7 +206,7 @@ class RequestHandlerTest extends \PHPUnit_Framework_TestCase
     /**
      * @param $repository
      *
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     protected function initManager($repository)
     {

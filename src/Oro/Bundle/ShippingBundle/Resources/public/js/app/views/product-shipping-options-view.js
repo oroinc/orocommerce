@@ -1,12 +1,13 @@
 define(function(require) {
     'use strict';
 
+    var ProductShippingOptionsView;
     var $ = require('jquery');
     var _ = require('underscore');
     var BaseView = require('oroui/js/app/views/base/view');
     var mediator = require('oroui/js/mediator');
 
-    return BaseView.extend({
+    ProductShippingOptionsView = BaseView.extend({
         /**
          * @property {Object}
          */
@@ -32,6 +33,13 @@ define(function(require) {
          * @property {jQuery}
          */
         $itemsContainer: null,
+
+        /**
+         * @inheritDoc
+         */
+        constructor: function ProductShippingOptionsView() {
+            ProductShippingOptionsView.__super__.constructor.apply(this, arguments);
+        },
 
         /**
          * @inheritDoc
@@ -188,4 +196,6 @@ define(function(require) {
             }
         }
     });
+
+    return ProductShippingOptionsView;
 });

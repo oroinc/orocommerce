@@ -8,6 +8,13 @@ define(function(require) {
 
     FullscreenAttributeGroupTabContentComponent = AttributeGroupTabContentComponent.extend({
         /**
+         * @inheritDoc
+         */
+        constructor: function FullscreenAttributeGroupTabContentComponent() {
+            FullscreenAttributeGroupTabContentComponent.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
          * @param {Object} options
          */
         initialize: function(options) {
