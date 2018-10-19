@@ -74,7 +74,7 @@ Feature: Process order submission with PayPal PayFlow Gateway and Authorize & Ca
     Then I should see "product1"
 
   Scenario: Successful order payment with PayPal PayFlow Gateway
-    Given I click "View Details"
+    Given I click "View Details Link"
     And I click "Create Order"
     And I click "Continue as a Guest"
     And I fill form with:
