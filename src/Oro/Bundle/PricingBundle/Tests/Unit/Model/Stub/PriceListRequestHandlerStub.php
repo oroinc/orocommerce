@@ -9,8 +9,7 @@ use Oro\Bundle\PricingBundle\Model\PriceListRequestHandlerInterface;
 class PriceListRequestHandlerStub implements PriceListRequestHandlerInterface
 {
     /**
-     * @param BasePriceList $priceList
-     * @return array
+     * {@inheritdoc}
      */
     public function getPriceListSelectedCurrencies(BasePriceList $priceList)
     {
@@ -26,10 +25,18 @@ class PriceListRequestHandlerStub implements PriceListRequestHandlerInterface
     }
 
     /**
-     * @return bool
+     * {@inheritdoc}
      */
     public function getShowTierPrices()
     {
         return true;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getPriceList()
+    {
+        return null;
     }
 }

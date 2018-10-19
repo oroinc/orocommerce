@@ -586,6 +586,7 @@ services:
             - '@oro_pricing.provider.product_price'
             - '@oro_pricing.model.price_list_tree_handler'
             - '@oro_pricing.subtotal_processor.provider.arguments'
+            - '@oro_featuretoggle.checker.feature_checker'
         tags:
             - { name: oro_pricing.subtotal_provider, priority: 0 }
 

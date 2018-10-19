@@ -37,6 +37,10 @@ abstract class AbstractPriceListRelationDataGridListener implements FeatureToggl
      */
     public function onBuildBefore(BuildBefore $event)
     {
+        if (!$this->isFeaturesEnabled()) {
+            return;
+        }
+
         $grid = $event->getDatagrid();
         $config = $grid->getConfig();
         $this->addPriceListColumn($config);
@@ -48,6 +52,10 @@ abstract class AbstractPriceListRelationDataGridListener implements FeatureToggl
      */
     public function onResultAfter(OrmResultAfter $event)
     {
+        if (!$this->isFeaturesEnabled()) {
+            return;
+        }
+
         /** @var ResultRecord[] $records */
         $records = $event->getRecords();
         $priceListHoldersIds = [];

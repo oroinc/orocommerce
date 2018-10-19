@@ -178,7 +178,6 @@ abstract class BaseProductPriceRepository extends EntityRepository
     {
         $priceLists = $this->getPriceListIdsByProduct($product);
 
-        $prices = [];
         $qb = $this->createQueryBuilder('price');
         $qb->andWhere('price.priceList = :priceList')
             ->andWhere('price.product = :product')
@@ -188,6 +187,7 @@ abstract class BaseProductPriceRepository extends EntityRepository
             ->addOrderBy($qb->expr()->asc('price.quantity'))
             ->setParameter('product', $product);
 
+        $prices = [];
         foreach ($priceLists as $priceListId) {
             $qb->setParameter('priceList', $priceListId);
             $query = $qb->getQuery();
@@ -195,11 +195,10 @@ abstract class BaseProductPriceRepository extends EntityRepository
             $query->setHint(PriceShardWalker::ORO_PRICING_SHARD_MANAGER, $shardManager);
             $query->setHint(Query::HINT_CUSTOM_OUTPUT_WALKER, PriceShardWalker::class);
 
-            $pricesByPriceList = $query->getResult();
-            $prices = array_merge($prices, $pricesByPriceList);
+            $prices[] = $query->getResult();
         }
 
-        return $prices;
+        return array_merge(...$prices);
     }
 
     /**
@@ -358,105 +357,6 @@ abstract class BaseProductPriceRepository extends EntityRepository
         $query->setHint(Query::HINT_CUSTOM_OUTPUT_WALKER, PriceShardWalker::class);
 
         return $query->getArrayResult();
-    }
-
-    /**
-     * @todo: BB-14587 remove me, I'm not used anymore
-     *
-     * @param ShardManager $shardManager
-     * @param BasePriceList $priceList
-     * @param Product $product
-     * @param string|null $currency
-     * @return ProductUnit[]
-     */
-    public function getProductUnitsByPriceList(
-        ShardManager $shardManager,
-        BasePriceList $priceList,
-        Product $product,
-        $currency = null
-    ) {
-        $qb = $this->getProductUnitsByPriceListQueryBuilder($priceList, $product, $currency);
-        $query = $qb->getQuery();
-        $query->useQueryCache(false);
-        $query->setHint(PriceShardWalker::ORO_PRICING_SHARD_MANAGER, $shardManager);
-        $query->setHint(Query::HINT_CUSTOM_OUTPUT_WALKER, PriceShardWalker::class);
-
-        return $query->getResult();
-    }
-
-    /**
-     * @todo: BB-14587 remove me, I'm not used anymore
-     *
-     * @param BasePriceList $priceList
-     * @param Product $product
-     * @param string|null $currency
-     *
-     * @return QueryBuilder
-     */
-    protected function getProductUnitsByPriceListQueryBuilder(
-        BasePriceList $priceList,
-        Product $product,
-        $currency = null
-    ) {
-        $qb = $this->_em->createQueryBuilder();
-        $qb->select('partial unit.{code}')
-            ->from('OroProductBundle:ProductUnit', 'unit')
-            ->join($this->_entityName, 'price', Join::WITH, 'price.unit = unit')
-            ->where($qb->expr()->eq('price.product', ':product'))
-            ->andWhere($qb->expr()->eq('price.priceList', ':priceList'))
-            ->setParameter('product', $product)
-            ->setParameter('priceList', $priceList)
-            ->addOrderBy('unit.code')
-            ->groupBy('unit.code');
-
-        if ($currency) {
-            $qb->andWhere($qb->expr()->eq('price.currency', ':currency'))
-                ->setParameter('currency', $currency);
-        }
-
-        return $qb;
-    }
-
-    /**
-     * @todo: BB-14587 remove me, I'm not used anymore
-     *
-     * @param ShardManager $shardManager
-     * @param BasePriceList $priceList
-     * @param Collection $products
-     * @param string $currency
-     * @return array
-     */
-    public function getProductsUnitsByPriceList(
-        ShardManager $shardManager,
-        BasePriceList $priceList,
-        Collection $products,
-        $currency
-    ) {
-        $qb = $this->getEntityManager()->createQueryBuilder();
-        $qb->select('DISTINCT IDENTITY(price.product) AS productId, unit.code AS code')
-            ->from('OroProductBundle:ProductUnit', 'unit')
-            ->join($this->_entityName, 'price', Join::WITH, 'price.unit = unit')
-            ->where($qb->expr()->in('price.product', ':products'))
-            ->andWhere($qb->expr()->eq('price.priceList', ':priceList'))
-            ->andWhere($qb->expr()->eq('price.currency', ':currency'))
-            ->addOrderBy('unit.code')
-            ->setParameters([
-                'products' => $products,
-                'priceList' => $priceList,
-                'currency' => $currency,
-            ]);
-        $query = $qb->getQuery();
-        $query->useQueryCache(false);
-        $query->setHint(PriceShardWalker::ORO_PRICING_SHARD_MANAGER, $shardManager);
-        $query->setHint(Query::HINT_CUSTOM_OUTPUT_WALKER, PriceShardWalker::class);
-        $productsUnits = $query->getResult();
-
-        $result = [];
-        foreach ($productsUnits as $unit) {
-            $result[$unit['productId']][] = $unit['code'];
-        }
-
-        return $result;
     }
 
     /**

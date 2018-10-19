@@ -5,7 +5,7 @@ namespace Oro\Bundle\PricingBundle\Controller\Frontend;
 use Oro\Bundle\PricingBundle\Controller\AbstractAjaxProductPriceController;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaRequestHandler;
 use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
-use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -60,7 +60,7 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
         /** @var ProductPriceProviderInterface $priceProvider */
         $priceProvider = $this->container->get('oro_pricing.provider.product_price');
 
-        /** @var ProductUnitLabelFormatter $unitFormatter */
+        /** @var UnitLabelFormatterInterface $unitFormatter */
         $unitFormatter = $this->container->get('oro_product.formatter.product_unit_label');
 
         $productId = $request->get('id');

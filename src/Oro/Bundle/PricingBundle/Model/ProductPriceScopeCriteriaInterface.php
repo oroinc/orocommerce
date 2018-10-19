@@ -14,9 +14,9 @@ interface ProductPriceScopeCriteriaInterface
     public function getCustomer();
 
     /**
-     * @return CustomerGroup
+     * @return object|null
      */
-    public function getCustomerGroup();
+    public function getContext();
 
     /**
      * @return Website

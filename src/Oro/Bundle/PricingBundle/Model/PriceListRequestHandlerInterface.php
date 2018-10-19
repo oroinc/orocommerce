@@ -11,6 +11,11 @@ interface PriceListRequestHandlerInterface
     const PRICE_LIST_KEY = 'priceListId';
 
     /**
+     * @return BasePriceList|null
+     */
+    public function getPriceList();
+
+    /**
      * @return bool
      */
     public function getShowTierPrices();

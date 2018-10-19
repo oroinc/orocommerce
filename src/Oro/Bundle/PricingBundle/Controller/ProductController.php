@@ -4,7 +4,6 @@ namespace Oro\Bundle\PricingBundle\Controller;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\PricingBundle\Form\Type\PriceListSelectType;
-use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use Oro\Bundle\PricingBundle\Model\PriceListRequestHandlerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -116,7 +115,7 @@ class ProductController extends Controller
     }
 
     /**
-     * @return PriceListRequestHandler
+     * @return PriceListRequestHandlerInterface
      */
     protected function getPriceListHandler()
     {

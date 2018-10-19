@@ -6,9 +6,11 @@ use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\PricingBundle\Model\PriceListTreeHandler;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteria;
+use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaInterface;
 use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
@@ -16,6 +18,9 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\AbstractSubtotalProvider
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\SubtotalProviderConstructorArguments;
 use Symfony\Component\Translation\TranslatorInterface;
 
+/**
+ * Get Subtotal for the Checkout entity in the given currency
+ */
 class CheckoutSubtotalProvider extends AbstractSubtotalProvider implements SubtotalProviderInterface
 {
     const TYPE = 'subtotal';
@@ -34,19 +39,24 @@ class CheckoutSubtotalProvider extends AbstractSubtotalProvider implements Subto
     /** @var PriceListTreeHandler */
     protected $priceListTreeHandler;
 
+    /** @var FeatureChecker */
+    protected $featureChecker;
+
     /**
      * @param TranslatorInterface $translator
      * @param RoundingServiceInterface $rounding
      * @param ProductPriceProviderInterface $productPriceProvider
      * @param PriceListTreeHandler $priceListTreeHandler ,
      * @param SubtotalProviderConstructorArguments $arguments
+     * @param FeatureChecker $featureChecker
      */
     public function __construct(
         TranslatorInterface $translator,
         RoundingServiceInterface $rounding,
         ProductPriceProviderInterface $productPriceProvider,
         PriceListTreeHandler $priceListTreeHandler,
-        SubtotalProviderConstructorArguments $arguments
+        SubtotalProviderConstructorArguments $arguments,
+        FeatureChecker $featureChecker
     ) {
         parent::__construct($arguments);
 
@@ -54,6 +64,7 @@ class CheckoutSubtotalProvider extends AbstractSubtotalProvider implements Subto
         $this->rounding = $rounding;
         $this->productPriceProvider = $productPriceProvider;
         $this->priceListTreeHandler = $priceListTreeHandler;
+        $this->featureChecker = $featureChecker;
     }
 
     /**
@@ -116,13 +127,8 @@ class CheckoutSubtotalProvider extends AbstractSubtotalProvider implements Subto
 
         $productsPriceCriteria = $this->prepareProductsPriceCriteria($entity, $currency);
         if ($productsPriceCriteria) {
-            // TODO: BB-14587 combined price list may be unavailable when external pricing is used
-            $priceList = $this->priceListTreeHandler->getPriceList($entity->getCustomer(), $entity->getWebsite());
-            $subtotal->setCombinedPriceList($priceList);
-
-            $searchScope = new ProductPriceScopeCriteria();
-            $searchScope->setCustomer($entity->getCustomer());
-            $searchScope->setWebsite($entity->getWebsite());
+            $searchScope = $this->getScopeCriteria($entity);
+            $this->setPriceListRelation($searchScope, $subtotal);
             $prices = $this->productPriceProvider->getMatchedPrices($productsPriceCriteria, $searchScope);
             /** @var Price $price */
             foreach ($prices as $identifier => $price) {
@@ -204,5 +210,31 @@ class CheckoutSubtotalProvider extends AbstractSubtotalProvider implements Subto
         $subtotal->setType(self::TYPE);
 
         return $subtotal;
+    }
+
+    /**
+     * @param ProductPriceScopeCriteriaInterface $criteria
+     * @param Subtotal $subtotal
+     */
+    protected function setPriceListRelation(ProductPriceScopeCriteriaInterface $criteria, Subtotal $subtotal)
+    {
+        if ($this->featureChecker->isFeatureEnabled('oro_price_lists')) {
+            $priceList = $this->priceListTreeHandler
+                ->getPriceList($criteria->getCustomer(), $criteria->getWebsite());
+            $subtotal->setCombinedPriceList($priceList);
+        }
+    }
+
+    /**
+     * @param Checkout $entity
+     * @return ProductPriceScopeCriteriaInterface
+     */
+    protected function getScopeCriteria(Checkout $entity): ProductPriceScopeCriteriaInterface
+    {
+        $searchScope = new ProductPriceScopeCriteria();
+        $searchScope->setCustomer($entity->getCustomer());
+        $searchScope->setWebsite($entity->getWebsite());
+
+        return $searchScope;
     }
 }

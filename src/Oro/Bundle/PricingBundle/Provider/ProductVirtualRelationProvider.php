@@ -5,8 +5,6 @@ namespace Oro\Bundle\PricingBundle\Provider;
 use Doctrine\ORM\Query\Expr\Join;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityBundle\Provider\VirtualRelationProviderInterface;
-use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
-use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceAttributePriceListRepository;
@@ -42,8 +40,7 @@ class ProductVirtualRelationProvider implements VirtualRelationProviderInterface
      */
     public function isVirtualRelation($className, $fieldName)
     {
-        return $className === Product::class
-            && $this->isProductAttributeField($fieldName);
+        return ($className === Product::class) && $this->isProductAttributeField($fieldName);
     }
 
     /**

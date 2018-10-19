@@ -3,9 +3,11 @@
 namespace Oro\Bundle\PricingBundle\Model;
 
 use Oro\Bundle\CustomerBundle\Entity\Customer;
-use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
+/**
+ * Store criteria data required for searching of product price.
+ */
 class ProductPriceScopeCriteria implements ProductPriceScopeCriteriaInterface
 {
     /**
@@ -19,9 +21,9 @@ class ProductPriceScopeCriteria implements ProductPriceScopeCriteriaInterface
     protected $website;
 
     /**
-     * @var CustomerGroup
+     * @var object
      */
-    protected $customerGroup;
+    protected $context;
 
     /**
      * @var array
@@ -69,18 +71,18 @@ class ProductPriceScopeCriteria implements ProductPriceScopeCriteriaInterface
     /**
      * {@inheritdoc}
      */
-    public function getCustomerGroup()
+    public function getContext()
     {
-        return $this->customerGroup;
+        return $this->context;
     }
 
     /**
-     * @param CustomerGroup $customerGroup
+     * @param object|null $context
      * @return ProductPriceScopeCriteria
      */
-    public function setCustomerGroup(CustomerGroup $customerGroup)
+    public function setContext($context)
     {
-        $this->customerGroup = $customerGroup;
+        $this->context = $context;
 
         return $this;
     }
