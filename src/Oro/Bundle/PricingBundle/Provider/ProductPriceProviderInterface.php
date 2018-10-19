@@ -4,21 +4,20 @@ namespace Oro\Bundle\PricingBundle\Provider;
 
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaInterface;
+use Oro\Bundle\ProductBundle\Entity\Product;
 
 interface ProductPriceProviderInterface
 {
     /**
-     * @todo BB-14587 return array of DAO instead of array? Will require refactoring of all clients
-     *
      * @param ProductPriceScopeCriteriaInterface $scopeCriteria
-     * @param array $productIds
+     * @param array|Product[] $products
      * @param string|null $currency
      * @param string|null $unitCode
      * @return array
      */
     public function getPricesByScopeCriteriaAndProductIds(
         ProductPriceScopeCriteriaInterface $scopeCriteria,
-        array $productIds,
+        array $products,
         $currency = null,
         $unitCode = null
     );

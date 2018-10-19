@@ -7,6 +7,7 @@ use Oro\Bundle\InvoiceBundle\Entity\Invoice;
 use Oro\Bundle\InvoiceBundle\Entity\InvoiceLineItem;
 use Oro\Bundle\InvoiceBundle\Form\Type\InvoiceType;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
+use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaInterface;
 use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
@@ -161,22 +162,25 @@ class InvoiceController extends Controller
     {
         $tierPrices = [];
 
-        $productIds = $invoice->getLineItems()->filter(
+        $products = $invoice->getLineItems()->filter(
             function (InvoiceLineItem $lineItem) {
                 return $lineItem->getProduct() !== null;
             }
         )->map(
             function (InvoiceLineItem $lineItem) {
-                return $lineItem->getProduct()->getId();
+                return $lineItem->getProduct();
             }
         );
 
-        if ($productIds) {
+        if ($products->count() > 0) {
+            $scopeCriteria = $this->getPriceScopeCriteria();
+            $scopeCriteria->setContext($invoice);
+
             /** @var ProductPriceProviderInterface $priceProvider */
             $priceProvider = $this->get('oro_pricing.provider.product_price');
             $tierPrices = $priceProvider->getPricesByScopeCriteriaAndProductIds(
-                $this->get('oro_pricing.model.product_price_scope_criteria_request_handler')->getPriceScopeCriteria(),
-                $productIds->toArray(),
+                $scopeCriteria,
+                $products->toArray(),
                 $invoice->getCurrency()
             );
         }
@@ -212,7 +216,7 @@ class InvoiceController extends Controller
             $priceProvider = $this->get('oro_pricing.provider.product_price');
             $matchedPrices = $priceProvider->getMatchedPrices(
                 $productsPriceCriteria->toArray(),
-                $this->get('oro_pricing.model.product_price_scope_criteria_request_handler')->getPriceScopeCriteria()
+                $this->getPriceScopeCriteria()
             );
         }
 
@@ -235,5 +239,13 @@ class InvoiceController extends Controller
     protected function getTotalProcessor()
     {
         return $this->get('oro_pricing.subtotal_processor.total_processor_provider');
+    }
+
+    /**
+     * @return ProductPriceScopeCriteriaInterface
+     */
+    protected function getPriceScopeCriteria(): ProductPriceScopeCriteriaInterface
+    {
+        return  $this->get('oro_pricing.model.product_price_scope_criteria_request_handler')->getPriceScopeCriteria();
     }
 }

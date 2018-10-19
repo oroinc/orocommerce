@@ -5,8 +5,8 @@ namespace Oro\Bundle\PricingBundle\Provider;
 use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
-use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteria;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaRequestHandler;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 
@@ -54,8 +54,7 @@ class FrontendProductPricesDataProvider
 
         $result = [];
         foreach ($prices as $key => $price) {
-            $identifier = explode('-', $key);
-            list($productId, $unitId) = $identifier;
+            list($productId, $unitId) = explode('-', $key);
             $result[$productId][$unitId] = $price;
         }
 
@@ -70,9 +69,7 @@ class FrontendProductPricesDataProvider
     {
         $prices = $this->productPriceProvider->getPricesByScopeCriteriaAndProductIds(
             $this->scopeCriteriaRequestHandler->getPriceScopeCriteria(),
-            array_map(function (ProductHolderInterface $lineItem) {
-                return $lineItem->getProduct()->getId();
-            }, $lineItems),
+            $this->getProducts($lineItems),
             $this->userCurrencyManager->getUserCurrency()
         );
 
@@ -104,5 +101,24 @@ class FrontendProductPricesDataProvider
         }
 
         return $productsPricesCriteria;
+    }
+
+    /**
+     * @param array|ProductHolderInterface[] $lineItems
+     * @return array|Product[]
+     */
+    protected function getProducts(array $lineItems): array
+    {
+        return array_map(
+            function (ProductHolderInterface $lineItem) {
+                return $lineItem->getProduct();
+            },
+            array_filter(
+                $lineItems,
+                function (ProductHolderInterface $lineItem) {
+                    return $lineItem->getProduct();
+                }
+            )
+        );
     }
 }

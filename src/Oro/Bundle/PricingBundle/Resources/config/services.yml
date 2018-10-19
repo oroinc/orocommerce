@@ -412,6 +412,9 @@ services:
             - '@request_stack'
             - '@doctrine'
 
+    oro_pricing.model.product_price_scope_criteria_factory:
+        class: 'Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaFactory'
+
     oro_pricing.model.product_price_scope_criteria_request_handler:
         class: 'Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaRequestHandler'
         arguments:
@@ -420,6 +423,8 @@ services:
             - '@doctrine'
             - '@oro_customer.provider.customer_user_relations_provider'
             - '@oro_website.manager'
+            - '@security.authorization_checker'
+            - '@oro_pricing.model.product_price_scope_criteria_factory'
 
     oro_pricing.model.price_list_tree_handler:
         class: 'Oro\Bundle\PricingBundle\Model\PriceListTreeHandler'
@@ -741,6 +746,7 @@ services:
             - '@oro_pricing.provider.product_price'
             - '@oro_entity.doctrine_helper'
             - '@oro_pricing.subtotal_processor.provider.arguments'
+            - '@oro_pricing.model.product_price_scope_criteria_factory'
         calls:
             - [setProductClass, ['%oro_product.entity.product.class%']]
             - [setProductUnitClass, ['%oro_product.entity.product_unit.class%']]
@@ -992,6 +998,7 @@ services:
         arguments:
             - '@oro_pricing.provider.product_price'
             - '@oro_pricing.formatter.product_price_formatter'
+            - '@oro_entity.doctrine_helper'
 
     oro_pricing.provider.quick_add_collection_price_provider:
         class: 'Oro\Bundle\PricingBundle\Provider\QuickAddCollectionPriceProvider'

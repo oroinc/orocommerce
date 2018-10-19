@@ -91,6 +91,7 @@ services:
         arguments:
             - '@request_stack'
             - '@oro_pricing.provider.product_price'
+            - '@oro_pricing.model.product_price_scope_criteria_factory'
         calls:
             - [setExtendedType, ['Oro\Bundle\OrderBundle\Form\Type\OrderType']]
         tags:

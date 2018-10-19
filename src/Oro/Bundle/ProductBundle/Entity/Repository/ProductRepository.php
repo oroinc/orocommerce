@@ -333,7 +333,7 @@ class ProductRepository extends EntityRepository
 
     /**
      * @param array $ids
-     * @return Product[]
+     * @return array|Product[]
      */
     public function getProductsByIds(array $ids)
     {

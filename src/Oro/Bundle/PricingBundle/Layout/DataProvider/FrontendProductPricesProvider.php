@@ -186,16 +186,9 @@ class FrontendProductPricesProvider
         }
         $products = array_values($uniqueProducts);
 
-        $productsIds = array_map(
-            function (Product $product) {
-                return $product->getId();
-            },
-            $products
-        );
-
         $prices = $this->productPriceProvider->getPricesByScopeCriteriaAndProductIds(
             $this->scopeCriteriaRequestHandler->getPriceScopeCriteria(),
-            $productsIds,
+            $products,
             $this->userCurrencyManager->getUserCurrency()
         );
 

@@ -39,10 +39,10 @@ class ProductPriceScopeCriteria implements ProductPriceScopeCriteriaInterface
     }
 
     /**
-     * @param Customer $customer
+     * @param Customer|null $customer
      * @return ProductPriceScopeCriteria
      */
-    public function setCustomer(Customer $customer)
+    public function setCustomer(Customer $customer = null)
     {
         $this->customer = $customer;
 
@@ -58,10 +58,10 @@ class ProductPriceScopeCriteria implements ProductPriceScopeCriteriaInterface
     }
 
     /**
-     * @param Website $website
+     * @param Website|null $website
      * @return ProductPriceScopeCriteria
      */
-    public function setWebsite(Website $website)
+    public function setWebsite(Website $website = null)
     {
         $this->website = $website;
 

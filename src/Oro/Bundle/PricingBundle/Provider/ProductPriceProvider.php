@@ -46,7 +46,7 @@ class ProductPriceProvider implements ProductPriceProviderInterface
      */
     public function getPricesByScopeCriteriaAndProductIds(
         ProductPriceScopeCriteriaInterface $scopeCriteria,
-        array $productIds,
+        array $products,
         $currency = null,
         $unitCode = null
     ) {
@@ -59,7 +59,7 @@ class ProductPriceProvider implements ProductPriceProviderInterface
         }
 
         $productUnitCodes = $unitCode ? [$unitCode] : null;
-        $prices = $this->priceStorage->getPrices($scopeCriteria, $productIds, $productUnitCodes, $currencies);
+        $prices = $this->priceStorage->getPrices($scopeCriteria, $products, $productUnitCodes, $currencies);
 
         if ($prices) {
             foreach ($prices as $price) {
@@ -80,14 +80,14 @@ class ProductPriceProvider implements ProductPriceProviderInterface
      */
     public function getMatchedPrices(array $productPriceCriterias, ProductPriceScopeCriteriaInterface $scopeCriteria)
     {
-        $productIds = [];
+        $products = [];
         $productUnitCodes = [];
         $currencies = [];
         $result = [];
 
         /** @var ProductPriceCriteria $productPriceCriteria */
         foreach ($productPriceCriterias as $productPriceCriteria) {
-            $productIds[] = $productPriceCriteria->getProduct()->getId();
+            $products[] = $productPriceCriteria->getProduct();
             $productUnitCodes[] = $productPriceCriteria->getProductUnit()->getCode();
             $currencies[] = $productPriceCriteria->getCurrency();
         }
@@ -96,7 +96,7 @@ class ProductPriceProvider implements ProductPriceProviderInterface
         // TODO < if passed currencies are not allowed then them will be replaced with user selected one.
         $currencies = $this->getAllowedCurrencies($scopeCriteria, $currencies);
 
-        $prices = $this->priceStorage->getPrices($scopeCriteria, $productIds, $productUnitCodes, $currencies);
+        $prices = $this->priceStorage->getPrices($scopeCriteria, $products, $productUnitCodes, $currencies);
         foreach ($productPriceCriterias as $productPriceCriteria) {
             $id = $productPriceCriteria->getProduct()->getId();
             $code = $productPriceCriteria->getProductUnit()->getCode();

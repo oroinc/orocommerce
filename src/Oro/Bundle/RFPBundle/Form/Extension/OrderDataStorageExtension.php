@@ -7,8 +7,7 @@ use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
-use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteria;
-use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaInterface;
+use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaFactoryInterface;
 use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
 use Oro\Bundle\ProductBundle\Storage\DataStorageInterface;
 use Symfony\Component\Form\AbstractTypeExtension;
@@ -42,15 +41,23 @@ class OrderDataStorageExtension extends AbstractTypeExtension implements Feature
     protected $productPriceCriteriaCache = [];
 
     /**
+     * @var ProductPriceScopeCriteriaFactoryInterface
+     */
+    protected $priceScopeCriteriaFactory;
+
+    /**
      * @param RequestStack $requestStack
      * @param ProductPriceProviderInterface $productPriceProvider
+     * @param ProductPriceScopeCriteriaFactoryInterface $priceScopeCriteriaFactory
      */
     public function __construct(
         RequestStack $requestStack,
-        ProductPriceProviderInterface $productPriceProvider
+        ProductPriceProviderInterface $productPriceProvider,
+        ProductPriceScopeCriteriaFactoryInterface $priceScopeCriteriaFactory
     ) {
         $this->requestStack = $requestStack;
         $this->productPriceProvider = $productPriceProvider;
+        $this->priceScopeCriteriaFactory = $priceScopeCriteriaFactory;
     }
 
     /**
@@ -113,7 +120,7 @@ class OrderDataStorageExtension extends AbstractTypeExtension implements Feature
         }
         $matchedPrices = $this->productPriceProvider->getMatchedPrices(
             $productsPriceCriteria,
-            $this->getPriceScopeCriteria($order)
+            $this->priceScopeCriteriaFactory->createByContext($order)
         );
         foreach ($matchedPrices as $identifier => $price) {
             foreach ($lineItems[$identifier] as $lineItem) {
@@ -125,22 +132,10 @@ class OrderDataStorageExtension extends AbstractTypeExtension implements Feature
     /**
      * @return bool
      */
-    protected function isApplicable()
+    protected function isApplicable(): bool
     {
         $request = $this->requestStack->getCurrentRequest();
+
         return $this->isFeaturesEnabled() && $request && $request->get(DataStorageInterface::STORAGE_KEY);
-    }
-
-    /**
-     * @param Order $order
-     * @return ProductPriceScopeCriteriaInterface
-     */
-    protected function getPriceScopeCriteria(Order $order): ProductPriceScopeCriteriaInterface
-    {
-        $scopeCriteria = new ProductPriceScopeCriteria();
-        $scopeCriteria->setCustomer($order->getCustomer());
-        $scopeCriteria->setWebsite($order->getWebsite());
-
-        return $scopeCriteria;
     }
 }

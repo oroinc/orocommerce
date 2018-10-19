@@ -3,9 +3,11 @@
 namespace Oro\Bundle\PricingBundle\Datagrid\Provider;
 
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecordInterface;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PricingBundle\Formatter\ProductPriceFormatter;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaInterface;
 use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
+use Oro\Bundle\ProductBundle\Entity\Product;
 
 /**
  * Realization of CombinedProductPriceProviderInterface
@@ -24,15 +26,23 @@ class CombinedProductPriceProvider
     private $priceFormatter;
 
     /**
+     * @var DoctrineHelper
+     */
+    private $doctrineHelper;
+
+    /**
      * @param ProductPriceProviderInterface $productPriceProvider
      * @param ProductPriceFormatter $priceFormatter
+     * @param DoctrineHelper $doctrineHelper
      */
     public function __construct(
         ProductPriceProviderInterface $productPriceProvider,
-        ProductPriceFormatter $priceFormatter
+        ProductPriceFormatter $priceFormatter,
+        DoctrineHelper $doctrineHelper
     ) {
         $this->productPriceProvider = $productPriceProvider;
         $this->priceFormatter = $priceFormatter;
+        $this->doctrineHelper = $doctrineHelper;
     }
 
     /**
@@ -43,8 +53,8 @@ class CombinedProductPriceProvider
         ProductPriceScopeCriteriaInterface $scopeCriteria,
         $currency
     ) {
-        $productIds = $this->getProductIds($productRecords);
-        $prices = $this->getPrices($scopeCriteria, $currency, $productIds);
+        $products = $this->getProducts($productRecords);
+        $prices = $this->getPrices($scopeCriteria, $currency, $products);
 
         $resultProductPrices = [];
         foreach ($prices as $productId => $productPrices) {
@@ -64,13 +74,13 @@ class CombinedProductPriceProvider
     /**
      * @param ProductPriceScopeCriteriaInterface $scopeCriteria
      * @param string $currency
-     * @param array $productIds
+     * @param array|Product[] $products
      * @return array
      */
-    protected function getPrices(ProductPriceScopeCriteriaInterface $scopeCriteria, $currency, $productIds): array
+    protected function getPrices(ProductPriceScopeCriteriaInterface $scopeCriteria, $currency, $products): array
     {
         $prices = $this->productPriceProvider
-            ->getPricesByScopeCriteriaAndProductIds($scopeCriteria, $productIds, $currency);
+            ->getPricesByScopeCriteriaAndProductIds($scopeCriteria, $products, $currency);
 
         foreach ($prices as &$productPrices) {
             usort($productPrices, function (array $a, array $b) {
@@ -87,17 +97,15 @@ class CombinedProductPriceProvider
 
     /**
      * @param array|ResultRecordInterface[] $productRecords
-     * @return array
+     * @return array|Product[]
      */
-    protected function getProductIds(array $productRecords): array
+    protected function getProducts(array $productRecords): array
     {
-        $productIds = array_map(
+        return array_map(
             function (ResultRecordInterface $record) {
-                return $record->getValue('id');
+                return $this->doctrineHelper->getEntityReference(Product::class, $record->getValue('id'));
             },
             $productRecords
         );
-
-        return $productIds;
     }
 }

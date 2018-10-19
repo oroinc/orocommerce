@@ -102,7 +102,7 @@ class ProductWithPricesSearchHandler implements SearchHandlerInterface
             return ['results' => [], 'more' => false];
         }
 
-        $items = $this->buildItemsArray($products, $this->findPrices($this->getProductIds($products)));
+        $items = $this->buildItemsArray($products, $this->findPrices($products));
 
         $hasMore = count($items) === $perPage;
         if ($hasMore) {
@@ -159,15 +159,15 @@ class ProductWithPricesSearchHandler implements SearchHandlerInterface
     }
 
     /**
-     * @param int[] $productIds
+     * @param array|Product[] $products
      * @return array[]
      */
-    private function findPrices(array $productIds)
+    private function findPrices(array $products)
     {
-        if (\count($productIds) > 0) {
+        if (\count($products) > 0) {
             $prices = $this->productPriceProvider->getPricesByScopeCriteriaAndProductIds(
                 $this->scopeCriteriaRequestHandler->getPriceScopeCriteria(),
-                $productIds,
+                $products,
                 $this->userCurrencyManager->getUserCurrency()
             );
 
@@ -178,24 +178,10 @@ class ProductWithPricesSearchHandler implements SearchHandlerInterface
     }
 
     /**
-     * @param array $products
-     * @return array
-     */
-    private function getProductIds(array &$products)
-    {
-        $ids = [];
-        foreach ($products as $product) {
-            $ids[] = $product->getId();
-        }
-
-        return $ids;
-    }
-
-    /**
      * @param string $search
      * @param int $firstResult
      * @param int $maxResults
-     * @return Product[]
+     * @return array|Product[]
      */
     private function findProducts($search, $firstResult, $maxResults)
     {

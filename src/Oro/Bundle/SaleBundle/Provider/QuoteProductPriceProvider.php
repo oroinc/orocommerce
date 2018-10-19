@@ -4,9 +4,9 @@ namespace Oro\Bundle\SaleBundle\Provider;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
-use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteria;
-use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaInterface;
+use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaFactoryInterface;
 use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
@@ -22,11 +22,20 @@ class QuoteProductPriceProvider
     protected $productPriceProvider;
 
     /**
-     * @param ProductPriceProviderInterface $productPriceProvider
+     * @var ProductPriceScopeCriteriaFactoryInterface
      */
-    public function __construct(ProductPriceProviderInterface $productPriceProvider)
-    {
+    protected $priceScopeCriteriaFactory;
+
+    /**
+     * @param ProductPriceProviderInterface $productPriceProvider
+     * @param ProductPriceScopeCriteriaFactoryInterface $priceScopeCriteriaFactory
+     */
+    public function __construct(
+        ProductPriceProviderInterface $productPriceProvider,
+        ProductPriceScopeCriteriaFactoryInterface $priceScopeCriteriaFactory
+    ) {
         $this->productPriceProvider = $productPriceProvider;
+        $this->priceScopeCriteriaFactory = $priceScopeCriteriaFactory;
     }
 
     /**
@@ -42,7 +51,7 @@ class QuoteProductPriceProvider
             }
         )->map(
             function (QuoteProduct $quoteProduct) {
-                return $quoteProduct->getProduct()->getId();
+                return $quoteProduct->getProduct();
             }
         );
 
@@ -62,18 +71,18 @@ class QuoteProductPriceProvider
 
     /**
      * @param Quote $quote
-     * @param array $productIds
+     * @param array|Product[] $products
      *
      * @return array
      */
-    protected function fetchTierPrices(Quote $quote, array $productIds)
+    protected function fetchTierPrices(Quote $quote, array $products)
     {
         $tierPrices = [];
 
-        if ($productIds) {
+        if (count($products) > 0) {
             $tierPrices = $this->productPriceProvider->getPricesByScopeCriteriaAndProductIds(
-                $this->getPriceScopeCriteria($quote),
-                $productIds
+                $this->priceScopeCriteriaFactory->createByContext($quote),
+                $products
             );
             if (!$tierPrices) {
                 $tierPrices = [];
@@ -93,7 +102,7 @@ class QuoteProductPriceProvider
         $productsPriceCriteria = $this->getProductsPriceCriteria($quote);
 
         if ($productsPriceCriteria) {
-            $scopeCriteria = $this->getPriceScopeCriteria($quote);
+            $scopeCriteria = $this->priceScopeCriteriaFactory->createByContext($quote);
             $matchedPrices = $this->productPriceProvider->getMatchedPrices($productsPriceCriteria, $scopeCriteria);
         }
 
@@ -145,19 +154,6 @@ class QuoteProductPriceProvider
         }
 
         return $productsPriceCriteria;
-    }
-
-    /**
-     * @param Quote $quote
-     * @return ProductPriceScopeCriteriaInterface
-     */
-    protected function getPriceScopeCriteria(Quote $quote): ProductPriceScopeCriteriaInterface
-    {
-        $searchScope = new ProductPriceScopeCriteria();
-        $searchScope->setCustomer($quote->getCustomer());
-        $searchScope->setWebsite($quote->getWebsite());
-
-        return $searchScope;
     }
 
     /**

@@ -11,7 +11,11 @@ use Oro\Bundle\PricingBundle\Entity\Repository\CombinedProductPriceRepository;
 use Oro\Bundle\PricingBundle\Model\PriceListTreeHandler;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaInterface;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
+use Oro\Bundle\ProductBundle\Entity\Product;
 
+/**
+ * Fetch prices from Combined Price Lists DB storage.
+ */
 class CombinedProductPriceORMStorage implements ProductPriceStorageInterface, FeatureToggleableInterface
 {
     use FeatureCheckerHolderTrait;
@@ -51,7 +55,7 @@ class CombinedProductPriceORMStorage implements ProductPriceStorageInterface, Fe
      */
     public function getPrices(
         ProductPriceScopeCriteriaInterface $scopeCriteria,
-        array $productIds,
+        array $products,
         array $productUnitCodes = null,
         array $currencies = null
     ) {
@@ -64,10 +68,17 @@ class CombinedProductPriceORMStorage implements ProductPriceStorageInterface, Fe
             return [];
         }
 
+        $productIds = array_map(
+            function (Product $product) {
+                return $product->getId();
+            },
+            $products
+        );
+
         return $this->getRepository()->getPricesBatch(
             $this->shardManager,
             $priceList->getId(),
-            $productIds,
+            array_filter($productIds),
             $productUnitCodes,
             $currencies
         );

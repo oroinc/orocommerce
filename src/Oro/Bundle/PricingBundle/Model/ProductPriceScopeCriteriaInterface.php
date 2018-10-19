@@ -3,15 +3,24 @@
 namespace Oro\Bundle\PricingBundle\Model;
 
 use Oro\Bundle\CustomerBundle\Entity\Customer;
-use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 interface ProductPriceScopeCriteriaInterface
 {
     /**
-     * @return Customer
+     * @param Customer|null $customer
+     */
+    public function setCustomer(Customer $customer = null);
+
+    /**
+     * @return Customer|null
      */
     public function getCustomer();
+
+    /**
+     * @param object $context
+     */
+    public function setContext($context);
 
     /**
      * @return object|null
@@ -19,7 +28,12 @@ interface ProductPriceScopeCriteriaInterface
     public function getContext();
 
     /**
-     * @return Website
+     * @param Website|null $website
+     */
+    public function setWebsite(Website $website = null);
+
+    /**
+     * @return Website|null
      */
     public function getWebsite();
 

@@ -199,6 +199,7 @@ services:
         class: 'Oro\Bundle\OrderBundle\EventListener\Order\TierPriceEventListener'
         arguments:
             - '@oro_pricing.provider.product_price'
+            - '@oro_pricing.model.product_price_scope_criteria_factory'
         tags:
             - { name: kernel.event_listener, event: oro_order.order, method: onOrderEvent }
 
@@ -257,6 +258,7 @@ services:
         public: false
         arguments:
             - '@oro_pricing.provider.matching_price'
+            - '@oro_pricing.model.product_price_scope_criteria_factory'
 
     oro_order.order.total.total_helper:
         class: 'Oro\Bundle\OrderBundle\Total\TotalHelper'

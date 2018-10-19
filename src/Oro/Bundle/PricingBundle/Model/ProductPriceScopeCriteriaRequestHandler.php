@@ -7,14 +7,13 @@ use Doctrine\ORM\EntityManager;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Provider\CustomerUserRelationsProvider;
 use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
-use Oro\Bundle\PricingBundle\Entity\PriceList;
-use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\UserBundle\Entity\AbstractUser;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
  * Prepare ProductPriceScopeCriteria based on user token and request parameters.
@@ -29,42 +28,37 @@ class ProductPriceScopeCriteriaRequestHandler
     /**
      * @var RequestStack
      */
-    protected $requestStack;
+    private $requestStack;
 
     /**
      * @var TokenAccessorInterface
      */
-    protected $tokenAccessor;
+    private $tokenAccessor;
 
     /**
      * @var ManagerRegistry
      */
-    protected $registry;
-
-    /**
-     * @var PriceList
-     */
-    protected $defaultPriceList;
-
-    /**
-     * @var PriceList[]
-     */
-    protected $priceLists = [];
-
-    /**
-     * @var PriceListRepository
-     */
-    protected $priceListRepository;
+    private $registry;
 
     /**
      * @var CustomerUserRelationsProvider
      */
-    protected $relationsProvider;
+    private $relationsProvider;
 
     /**
      * @var WebsiteManager
      */
-    protected $websiteManager;
+    private $websiteManager;
+
+    /**
+     * @var AuthorizationCheckerInterface
+     */
+    private $authorizationChecker;
+
+    /**
+     * @var ProductPriceScopeCriteriaFactoryInterface
+     */
+    private $priceScopeCriteriaFactory;
 
     /**
      * @param RequestStack $requestStack
@@ -72,19 +66,25 @@ class ProductPriceScopeCriteriaRequestHandler
      * @param ManagerRegistry $registry
      * @param CustomerUserRelationsProvider $relationsProvider
      * @param WebsiteManager $websiteManager
+     * @param AuthorizationCheckerInterface $authorizationChecker
+     * @param ProductPriceScopeCriteriaFactoryInterface $priceScopeCriteriaFactory
      */
     public function __construct(
         RequestStack $requestStack,
         TokenAccessorInterface $tokenAccessor,
         ManagerRegistry $registry,
         CustomerUserRelationsProvider $relationsProvider,
-        WebsiteManager $websiteManager
+        WebsiteManager $websiteManager,
+        AuthorizationCheckerInterface $authorizationChecker,
+        ProductPriceScopeCriteriaFactoryInterface $priceScopeCriteriaFactory
     ) {
         $this->requestStack = $requestStack;
         $this->tokenAccessor = $tokenAccessor;
         $this->registry = $registry;
         $this->relationsProvider = $relationsProvider;
         $this->websiteManager = $websiteManager;
+        $this->authorizationChecker = $authorizationChecker;
+        $this->priceScopeCriteriaFactory = $priceScopeCriteriaFactory;
     }
 
     /**
@@ -92,12 +92,11 @@ class ProductPriceScopeCriteriaRequestHandler
      */
     public function getPriceScopeCriteria(): ProductPriceScopeCriteriaInterface
     {
-        $searchScope = new ProductPriceScopeCriteria();
-        $searchScope->setCustomer($this->getCustomer());
-        $searchScope->setWebsite($this->getWebsite());
-        $searchScope->setContext($this->getContext());
-
-        return $searchScope;
+        return $this->priceScopeCriteriaFactory->create(
+            $this->getWebsite(),
+            $this->getCustomer(),
+            $this->getContext()
+        );
     }
 
     /**
@@ -184,10 +183,15 @@ class ProductPriceScopeCriteriaRequestHandler
             $class = $request->get(self::PRICE_CONTEXT_ENTITY_KEY);
             $id = $request->get(self::PRICE_CONTEXT_ENTITY_ID_KEY);
 
-            /** @var EntityManager $em */
-            $em = $this->registry->getManagerForClass($class);
-            if ($em) {
-                return $em->getReference($class, $id);
+            if ($class && $id) {
+                /** @var EntityManager $em */
+                $em = $this->registry->getManagerForClass($class);
+                if ($em) {
+                    $entity = $em->getReference($class, $id);
+                    if ($this->authorizationChecker->isGranted('VIEW', $entity)) {
+                        return $entity;
+                    }
+                }
             }
         }
 

@@ -4,7 +4,7 @@ namespace Oro\Bundle\OrderBundle\EventListener\Order;
 
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Event\OrderEvent;
-use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteria;
+use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaFactoryInterface;
 use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
 
 class TierPriceEventListener
@@ -14,12 +14,19 @@ class TierPriceEventListener
     /** @var ProductPriceProviderInterface */
     protected $productPriceProvider;
 
+    /** @var ProductPriceScopeCriteriaFactoryInterface */
+    protected $priceScopeCriteriaFactory;
+
     /**
      * @param ProductPriceProviderInterface $productPriceProvider
+     * @param ProductPriceScopeCriteriaFactoryInterface $priceScopeCriteriaFactory
      */
-    public function __construct(ProductPriceProviderInterface $productPriceProvider)
-    {
+    public function __construct(
+        ProductPriceProviderInterface $productPriceProvider,
+        ProductPriceScopeCriteriaFactoryInterface $priceScopeCriteriaFactory
+    ) {
         $this->productPriceProvider = $productPriceProvider;
+        $this->priceScopeCriteriaFactory = $priceScopeCriteriaFactory;
     }
 
     /**
@@ -29,24 +36,19 @@ class TierPriceEventListener
     {
         $order = $event->getOrder();
 
-        $productIds = $order->getLineItems()->map(
-            function (OrderLineItem $orderLineItem) {
-                $product = $orderLineItem->getProduct();
-
-                if (!$product) {
-                    return false;
-                }
-
-                return $product->getId();
+        $products = $order->getLineItems()->filter(
+            function (OrderLineItem $lineItem) {
+                return $lineItem->getProduct() !== null;
+            }
+        )->map(
+            function (OrderLineItem $lineItem) {
+                return $lineItem->getProduct();
             }
         );
 
-        $searchScope = new ProductPriceScopeCriteria();
-        $searchScope->setCustomer($order->getCustomer());
-        $searchScope->setWebsite($order->getWebsite());
         $prices = $this->productPriceProvider->getPricesByScopeCriteriaAndProductIds(
-            $searchScope,
-            array_filter($productIds->toArray()),
+            $this->priceScopeCriteriaFactory->createByContext($order),
+            $products->toArray(),
             $order->getCurrency()
         );
 
