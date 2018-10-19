@@ -418,7 +418,7 @@ oro_behat_extension:
     Save on conf window:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
-        locator: '//div[@class="modal oro-modal-normal in"]//a[text()="Save"]'
+        locator: '//div[@class="modal oro-modal-normal show"]//a[text()="Save"]'
         type: xpath
 
     Quick Order Configuration Form:

@@ -11,6 +11,9 @@ use Oro\Bundle\PaymentBundle\DependencyInjection\OroPaymentExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
+/**
+ * This class is setting up bundle configuration
+ */
 class OroPaymentBundle extends Bundle
 {
     /** {@inheritdoc} */
@@ -38,11 +41,11 @@ class OroPaymentBundle extends Bundle
                 SecureArrayType::class
             );
 
-            $mcrypt = $this->container->get('oro_security.encoder.mcrypt');
+            $crypter = $this->container->get('oro_security.encoder.default');
 
             /** @var SecureArrayType $secureArrayType */
             $secureArrayType = SecureArrayType::getType(SecureArrayType::TYPE);
-            $secureArrayType->setMcrypt($mcrypt);
+            $secureArrayType->setCrypter($crypter);
         }
     }
 }

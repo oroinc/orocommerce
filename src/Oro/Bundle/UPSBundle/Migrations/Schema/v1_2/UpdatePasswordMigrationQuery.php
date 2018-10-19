@@ -9,6 +9,9 @@ use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * This migration encrypts existing UPS api passwords in DB
+ */
 class UpdatePasswordMigrationQuery implements MigrationQuery, ConnectionAwareInterface
 {
     /**
@@ -55,7 +58,7 @@ class UpdatePasswordMigrationQuery implements MigrationQuery, ConnectionAwareInt
         /**
          * @var SymmetricCrypterInterface $encryptor
          */
-        $encryptor = $this->container->get('oro_security.encoder.mcrypt');
+        $encryptor = $this->container->get('oro_security.encoder.default');
 
         $getIntegrationsSQL = "SELECT id, ups_api_password FROM oro_integration_transport WHERE type = 'upstransport'";
 

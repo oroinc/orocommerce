@@ -157,7 +157,7 @@ define([
                 this.fixSelects();
                 criteriaValues.trigger('change');
                 choiceName += this.caret;
-                parentDiv.find('.dropdown-toggle').html(choiceName);
+                parentDiv.find('[data-toggle="dropdown"]').html(choiceName);
 
                 this._handleEmptyFilter(type);
 

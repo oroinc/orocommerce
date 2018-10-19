@@ -193,6 +193,11 @@ class OrderTypeTest extends TypeTestCase
             ->method('getTotal')
             ->willReturn($total);
 
+        $this->discountSubtotalProvider
+            ->expects($this->any())
+            ->method('getSubtotal')
+            ->willReturn([]);
+
         $this->rateConverter
             ->expects($this->exactly(2))
             ->method('getBaseCurrencyAmount')

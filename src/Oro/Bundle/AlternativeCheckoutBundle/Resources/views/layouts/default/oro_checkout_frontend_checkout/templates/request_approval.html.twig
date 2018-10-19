@@ -1,6 +1,6 @@
 {% block _checkout_form_fields_widget -%}
     <div class="checkout__approval-wrapper">
-        <div class="notification notification--alert">
+        <div class="notification notification--alert" role="alert">
             {% set frontendMessage = transitionData.transition.frontendOptions.message %}
             <span class="notification__text">{{ frontendMessage.content|trans(frontendMessage.message_parameters|default({}), 'workflows')|raw }}</span>
         </div>
