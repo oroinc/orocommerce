@@ -12,6 +12,9 @@ use Oro\Bundle\TaxBundle\Model\ResultElement;
 use Oro\Bundle\TaxBundle\Model\TaxResultElement;
 use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 
+/**
+ * Calculates taxes for row total
+ */
 class RowTotalResolver
 {
     use CalculateAdjustmentTrait;

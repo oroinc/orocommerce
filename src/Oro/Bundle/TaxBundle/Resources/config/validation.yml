@@ -23,6 +23,7 @@ Oro\Bundle\TaxBundle\Entity\Tax:
             - NotBlank: ~
             - Range:
                 min: 0
+            - Oro\Bundle\TaxBundle\Validator\Constraints\TaxRate: ~
 
 Oro\Bundle\TaxBundle\Entity\TaxRule:
     properties:
