@@ -74,7 +74,8 @@ Feature: Process order submission with PayPal Payments Pro and Authorize & Captu
     Then I should see "product1"
 
   Scenario: Successful order payment with PayPal Payments Pro
-    Given I click "Create Order"
+    Given I click "View Details"
+    And I click "Create Order"
     When I click "Continue as a Guest"
     And I fill form with:
       | First Name      | Tester1         |
