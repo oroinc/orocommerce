@@ -34,8 +34,9 @@ Feature: RFQ confirmation email template verification
     And type "PSKU1" in "search"
     And I click "Search Button"
     And I click "Add to Shopping List"
-    And I hover on "Shopping Cart"
-    And click "Shopping List"
+    And I click "View Details" for "PSKU1" product
+    And I click "Shopping List Widget"
+    And I click "View Details"
     And click "Request Quote"
     And I fill form with:
       | First Name    | John                  |
