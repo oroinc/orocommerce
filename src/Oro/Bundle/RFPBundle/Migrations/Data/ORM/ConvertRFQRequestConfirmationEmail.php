@@ -21,7 +21,7 @@ class ConvertRFQRequestConfirmationEmail extends AbstractEmailFixture implements
     {
         return $this->container
             ->get('kernel')
-            ->locateResource('@OroRFPBundle/Migrations/Data/ORM/data/emails/v1_0');
+            ->locateResource('@OroRFPBundle/Migrations/Data/ORM/data/emails/request');
     }
 
     /**
@@ -86,6 +86,6 @@ class ConvertRFQRequestConfirmationEmail extends AbstractEmailFixture implements
     {
         return $this->container
             ->get('kernel')
-            ->locateResource('@OroRFPBundle/Migrations/Data/ORM/data/emails/request');
+            ->locateResource('@OroRFPBundle/Migrations/Data/ORM/data/emails/v1_0');
     }
 }

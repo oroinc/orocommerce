@@ -29,7 +29,7 @@ class ConvertOrderConfirmationEmail extends AbstractEmailFixture implements Depe
     {
         return $this->container
             ->get('kernel')
-            ->locateResource('@OroCheckoutBundle/Migrations/Data/ORM/data/emails/v2_0');
+            ->locateResource('@OroCheckoutBundle/Migrations/Data/ORM/data/emails/order');
     }
 
     /**
@@ -88,6 +88,6 @@ class ConvertOrderConfirmationEmail extends AbstractEmailFixture implements Depe
     {
         return $this->container
             ->get('kernel')
-            ->locateResource('@OroCheckoutBundle/Migrations/Data/ORM/data/emails/order');
+            ->locateResource('@OroCheckoutBundle/Migrations/Data/ORM/data/emails/v1_1');
     }
 }
