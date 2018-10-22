@@ -6,10 +6,10 @@
         <div class="collapse-view expanded" data-page-component-collapse="{{ { storageKey: id }|json_encode() }}">
             <a href="#" class="main-menu__link main-menu__link--is-trigger" data-collapse-trigger>
                 <span class="badge customer-menu__badge">
-                    <i class="fa-cogs"></i>
+                    <span class="fa-cogs" aria-hidden="true"></span>
                 </span>
                 <span class="collapse-view__trigger collapse-view__trigger--icon">
-                    <i class="collapse-view__trigger-icon fa-caret-right" data-toggle="collapse"></i>
+                    <span class="collapse-view__trigger-icon fa-caret-right" aria-hidden="true"></span>
                 </span>
                 <span class="collapse-view__text">{{ 'oro.customer.frontend.menu.customer_user_profile.label'|trans }}</span>
             </a>

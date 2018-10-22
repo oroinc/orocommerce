@@ -79,8 +79,8 @@ Feature: Limit product filters and sorters in product catalog
     Given I proceed as the Admin
     Given I go to System / Configuration
     And I follow "Commerce/Catalog/Filters and Sorters" on configuration sidebar
-    And uncheck "Use default" for "Hide unrelated product filters and sorting options." field
-    And I uncheck "Hide unrelated product filters and sorting options."
+    And uncheck "Use default" for "Hide unrelated product filters and sorting options" field
+    And I uncheck "Hide unrelated product filters and sorting options"
     And I click "Save settings"
     Given I proceed as the Buyer
     Then I reload the page
@@ -89,3 +89,7 @@ Feature: Limit product filters and sorters in product catalog
     Then I should see "AttrWithFamily" in the "Frontend Product Grid Sorter" element
     Then I should see "AttrWithoutFamily" in the "ProductFrontendGridFiltersBlock" element
     Then I should see "AttrWithoutFamily" in the "Frontend Product Grid Sorter" element
+
+  Scenario: Check that sorter "Relevance" is present and applied
+    Then I should see "Relevance" in the "Frontend Product Grid Sorter" element
+    Then I should see "Sorted By: Relevance"

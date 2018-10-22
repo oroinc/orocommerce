@@ -304,7 +304,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     public function iShouldSeePopup($title)
     {
         $popup = $this->spin(function (MinkAwareContext $context) {
-            return $context->getSession()->getPage()->find('css', '.popover-content');
+            return $context->getSession()->getPage()->find('css', '.popover-body');
         });
 
         self::assertNotFalse($popup, 'Popup not found on page');

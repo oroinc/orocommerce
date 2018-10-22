@@ -14,6 +14,7 @@ OroProductBundle adds the Product entity to the OroCommerce application, provide
  - [Customize products using layouts](./Resources/doc/customize-products.md)
  - [Related items](./Resources/doc/related-items.md)
  - [Actions](./Resources/doc/actions.md)
+ - [Product Variant Search](./Resources/doc/product-variant-search.md)
 
 ## Expected dependencies:
 

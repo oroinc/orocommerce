@@ -1,0 +1,7 @@
+oro.product:
+    test_variant_field:
+        label: Test variant field
+        description: Test variant field
+    multienum_field:
+        label: Multi-enum field
+        description: Multi-enum field

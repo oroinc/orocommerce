@@ -73,6 +73,9 @@ class ProductContentVariantReindexEventListenerTest extends \PHPUnit\Framework\T
     public function testItAcceptsOnlyContentVariantAfterFlush()
     {
         $entityManager = $this->entityManagerMockBuilder->getEntityManager($this, [new \stdClass()], [], []);
+        $this->webCatalogUsageProvider->expects($this->once())
+            ->method('getAssignedWebCatalogs')
+            ->willReturn([]);
         $this->eventDispatcher
             ->expects($this->never())
             ->method('dispatch');
@@ -310,6 +313,9 @@ class ProductContentVariantReindexEventListenerTest extends \PHPUnit\Framework\T
         $this->messageSendListener->expects($this->once())
             ->method('scheduleSegment')
             ->with($segment);
+        $this->webCatalogUsageProvider->expects($this->any())
+            ->method('getAssignedWebCatalogs')
+            ->willReturn([]);
 
         $this->eventListener->onFlush(new OnFlushEventArgs($entityManager));
     }
@@ -324,6 +330,9 @@ class ProductContentVariantReindexEventListenerTest extends \PHPUnit\Framework\T
             ->willReturn(false);
         $this->messageSendListener->expects($this->never())
             ->method('scheduleSegment');
+        $this->webCatalogUsageProvider->expects($this->once())
+            ->method('getAssignedWebCatalogs')
+            ->willReturn([]);
 
         $this->eventListener->onFlush(new OnFlushEventArgs($entityManager));
     }
