@@ -16,7 +16,6 @@ Feature: Product Attributes Management in Product Families
     And I click "Continue"
     And set Options with:
       | Label |
-      | L     |
       | M     |
       | S     |
     And I save form
@@ -29,7 +28,6 @@ Feature: Product Attributes Management in Product Families
   Scenario: Create product families with Size attribute
     When I go to Products / Product Families
     And I click "Create Product Family"
-    And I wait for action
     And I fill "Product Family Form" with:
       | Code       | size_family1 |
       | Label      | size_family1 |
@@ -61,33 +59,12 @@ Feature: Product Attributes Management in Product Families
     And I save and close form
     Then I should see "Product has been saved" flash message
 
-    When go to Products/ Products
-    And click "Create Product"
-    And fill "ProductForm Step One" with:
-      | Type           | Configurable |
-      | Product Family | size_family2 |
-    And I click "Continue"
-    And I fill "ProductForm" with:
-      | Sku                     | size_prod2   |
-      | Name                    | SizeProduct2 |
-      | Configurable Attributes | [Size]       |
-      | Size                    | L            |
-    And I save and close form
-    Then I should see "Product has been saved" flash message
-
-  Scenario: Validation error appears on attribute removal from size_family1
+  Scenario: Attribute can not be removed if it's used in a product from this family
     When I go to Products / Product Families
-    And I click Edit size_family2 in grid
+    And I click Edit size_family1 in grid
     And I clear "Attributes" field
     And I save and close form
-    Then I should see "Attributes Size used as configurable attributes in products: size_prod2" error message
-
-  Scenario: Remove Size attribute from product with size_family1
-    And I go to Products / Products
-    And I click Edit size_prod2 in grid
-    And I uncheck "Size Product Attribute" element
-    And I save and close form
-    Then I should see "Product has been saved" flash message
+    Then I should see "Attributes Size used as configurable attributes in products: size_prod1" error message
 
   Scenario: Attribute can be removed if it's not used in any product from this family
     When I go to Products / Product Families
