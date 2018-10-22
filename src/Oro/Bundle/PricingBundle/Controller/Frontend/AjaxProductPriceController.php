@@ -6,6 +6,7 @@ use Oro\Bundle\PricingBundle\Controller\AbstractAjaxProductPriceController;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaRequestHandler;
 use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -65,15 +66,15 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
         $unitFormatter = $this->container->get('oro_product.formatter.product_unit_label');
 
         $productId = $request->get('id');
-        $product = $this->container->get('oro_entity.doctrine_helper')
-            ->getEntityReference(Product::class, $productId);
+        $doctrineHelper = $this->container->get('oro_entity.doctrine_helper');
+        $product = $doctrineHelper->getEntityReference(Product::class, $productId);
         $currency = $request->get('currency');
         $prices = $priceProvider->getPricesByScopeCriteriaAndProductIds($scopeCriteria, [$product], $currency);
 
         $units = [];
         if (!empty($prices[$productId])) {
-            $units = array_map(function (array $price) {
-                return $price['unit'];
+            $units = array_map(function (array $price) use ($doctrineHelper) {
+                return $doctrineHelper->getEntityReference(ProductUnit::class, $price['unit']);
             }, $prices[$productId]);
         }
 
