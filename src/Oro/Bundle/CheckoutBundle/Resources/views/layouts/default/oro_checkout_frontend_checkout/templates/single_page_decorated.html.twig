@@ -52,14 +52,19 @@
 {% endmacro %}
 
 {% block _shipping_address_widget -%}
-    {{ form_row(form.shipping_address.customerAddress, {'attr': {
-        'data-role': 'checkout-shipping-address',
-        'data-address-type': 'shipping',
-        'data-new-address-label': checkout.shippingAddress|oro_format_address(null, ', ')
-    }}) }}
-    {{ form_row(form.ship_to_billing_address, {'attr': {'data-role': 'checkout-ship-to'}}) }}
+    {% from 'OroAddressBundle::macros.html.twig' import renderAddress %}
+    {% if workflowItem.data.get('disallow_shipping_address_edit') %}
+        {{ renderAddress(checkout.shippingAddress) }}
+    {% else %}
+        {{ form_row(form.shipping_address.customerAddress, {'attr': {
+            'data-role': 'checkout-shipping-address',
+            'data-address-type': 'shipping',
+            'data-new-address-label': checkout.shippingAddress|oro_format_address(null, ', ')
+        }}) }}
+        {{ form_row(form.ship_to_billing_address, {'attr': {'data-role': 'checkout-ship-to'}}) }}
 
-    {{ block_widget(block) }}
+        {{ block_widget(block) }}
+    {% endif %}
 {%- endblock %}
 
 {% block _shipping_address_inner_widget -%}
