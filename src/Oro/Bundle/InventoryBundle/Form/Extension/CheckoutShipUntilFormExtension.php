@@ -12,6 +12,9 @@ use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Extends CheckoutShipUntilType with new ship until options
+ */
 class CheckoutShipUntilFormExtension extends AbstractTypeExtension
 {
     /**

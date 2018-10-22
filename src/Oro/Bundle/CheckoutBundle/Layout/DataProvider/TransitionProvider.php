@@ -9,6 +9,9 @@ use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\Transition;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 
+/**
+ * Handles logic for fetching transitions and its data
+ */
 class TransitionProvider implements TransitionProviderInterface
 {
     /**

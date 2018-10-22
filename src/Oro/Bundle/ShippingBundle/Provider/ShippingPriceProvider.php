@@ -15,6 +15,9 @@ use Oro\Bundle\ShippingBundle\Provider\MethodsConfigsRule\Context\MethodsConfigs
 use Oro\Bundle\ShippingBundle\Provider\Price\ShippingPriceProviderInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+/**
+ * Provides shipping methods based on configuration
+ */
 class ShippingPriceProvider implements ShippingPriceProviderInterface
 {
     /**

@@ -13,6 +13,9 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\AbstractSubtotalProvider
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\SubtotalProviderConstructorArguments;
 use Symfony\Component\Translation\TranslatorInterface;
 
+/**
+ * Handles logic for fetching totals for certain entity passed
+ */
 class TotalProcessorProvider extends AbstractSubtotalProvider
 {
     const NAME = 'oro_pricing.subtotal_total';

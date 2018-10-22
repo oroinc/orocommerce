@@ -5,6 +5,9 @@ namespace Oro\Bundle\PromotionBundle\Discount\Strategy;
 use Oro\Bundle\PromotionBundle\Discount\DiscountContextInterface;
 use Oro\Bundle\PromotionBundle\Discount\DiscountInterface;
 
+/**
+ * Responsible for applying discounts
+ */
 class ProfitableStrategy extends AbstractStrategy
 {
     /**

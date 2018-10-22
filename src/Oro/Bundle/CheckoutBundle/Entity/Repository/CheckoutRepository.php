@@ -11,6 +11,9 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\WorkflowBundle\Helper\WorkflowQueryTrait;
 use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 
+/**
+ * Handles logic for fetching checkout and checkout items by ids and different criteria
+ */
 class CheckoutRepository extends EntityRepository
 {
     use WorkflowQueryTrait;

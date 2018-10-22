@@ -10,6 +10,9 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 
+/**
+ * Handles logic for fetching totals based on order
+ */
 class TotalProvider
 {
     /** @var DefaultCurrencyProviderInterface  */

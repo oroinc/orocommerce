@@ -9,6 +9,9 @@ use Oro\Bundle\EntityBundle\Fallback\Provider\SystemConfigFallbackProvider;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
+/**
+ * Provides Category Fallback for certain category
+ */
 class CategoryFallbackProvider extends AbstractEntityFallbackProvider
 {
     const FALLBACK_ID = 'category';

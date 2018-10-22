@@ -5,6 +5,9 @@ namespace Oro\Bundle\TaxBundle\Model;
 use Brick\Math\BigDecimal;
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 
+/**
+ * Object which holds all data related to tax such as line items, destination, amount, etc.
+ */
 class Taxable
 {
     const DIGITAL_PRODUCT = 'digital_product';
