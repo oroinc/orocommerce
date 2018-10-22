@@ -82,7 +82,6 @@ services:
 
     oro_pricing.storage.prices:
         class: 'Oro\Bundle\PricingBundle\Storage\CombinedProductPriceORMStorage'
-        public: false
         arguments:
             - '@doctrine'
             - '@oro_pricing.shard_manager'

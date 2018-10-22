@@ -2,11 +2,9 @@
 
 namespace Oro\Bundle\PricingBundle\Entity\Repository;
 
-use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
-use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Entity\BaseProductPrice;
@@ -198,7 +196,11 @@ abstract class BaseProductPriceRepository extends EntityRepository
             $prices[] = $query->getResult();
         }
 
-        return array_merge(...$prices);
+        if ($prices) {
+            return array_merge(...$prices);
+        }
+
+        return [];
     }
 
     /**
