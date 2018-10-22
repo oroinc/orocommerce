@@ -1,0 +1,101 @@
+include:
+    - '@OroCustomerBundle:CustomerFixture.yml'
+    - '@OroUserBundle:user.yml'
+    - '@OroProductBundle:ProductsWithUnits.yml'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerUser:
+    test3:
+        email: 'test3e@example.org'
+        username: 'test3e@example.org'
+        password: 'RQ0+FN3TZyBpB4W6FenR4kTugMt0LW6Gcq9hsMkC5hwkA+C9UQBvt2th0RXEbVMG3DcV7LXi+26CjK8L2EkLVQ=='
+        salt: '687ji8ylggkck4wg8gggkooo44gks8g'
+        firstName: 'Test3'
+        lastName: 'Test3'
+        enabled: true
+        confirmed: true
+        customer: '@customer2'
+        organization: '@organization'
+        role: ['@front_admin']
+        owner: '@admin'
+        website: '@website1'
+
+Oro\Bundle\SaleBundle\Entity\Quote:
+    quote{1..20}:
+        organization: '@organization'
+        owner: '@admin'
+        customerUser: '@test1'
+        poNumber: 'PO<current()>'
+        qid: 'Quote<current()>'
+        website: '@website1'
+
+    quote6:
+        owner: '@charlie'
+
+    quote7:
+        customerUser: '@test2'
+
+    quote8:
+        customer: '@customer2'
+        customerUser: '@test3'
+
+    quote9:
+        internal_status: 'sent_to_customer'
+
+    quote10:
+        customer_status: 'not_approved'
+
+    quote11:
+        expired: true
+
+    quote12:
+        validUntil: '<dateTimeBetween("now", "+1 day")>'
+
+    quote13:
+        shipUntil: '<dateTimeBetween("+1 day", "+2 day")>'
+
+    quote14:
+        payment_term_7c4f1e8e: '@paymentTerm10'
+
+    quote15:
+        internal_status: 'submitted_for_review'
+
+Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm:
+    paymentTerm10:
+        label: net 10
+
+Oro\Bundle\WorkflowBundle\Entity\WorkflowItem:
+    quote15WorkflowItem:
+        workflowName: 'b2b_quote_backoffice_approvals'
+        definition: '@workflow_b2b_quote_backoffice_approvals'
+        currentStep: '@workflow_b2b_quote_backoffice_approvals_submitted_for_review'
+        # Cannot use '@quote15->id' because quotes are not yet persisted to DB at this point.
+        entityId: '15'
+        entityClass: 'Oro\Bundle\SaleBundle\Entity\Quote'
+        serializedData: '[]'
+
+Oro\Bundle\SaleBundle\Entity\QuoteProduct:
+    quoteProduct{1..20}:
+        product: '@product1'
+        quote: '@quote<current()>'
+        comment: 'Seller Notes<current()>'
+        commentCustomer: 'Customer Notes<current()>'
+
+Oro\Bundle\CurrencyBundle\Entity\Price (local):
+    price1:
+        value: 5
+        currency: USD
+
+Oro\Bundle\SaleBundle\Entity\QuoteProductOffer:
+    quoteProductOffer{1..20}:
+        quote_product: '@quoteProduct<current()>'
+        product_unit: '@item'
+        price: '@price1'
+        quantity: 5
+        allow_increments: true
+
+Oro\Bundle\SaleBundle\Entity\QuoteProductRequest:
+    quoteProductRequest{1..20}:
+        quote_product: '@quoteProduct<current()>'
+        product_unit: '@item'
+        price: '@price1'
+        quantity: 5
