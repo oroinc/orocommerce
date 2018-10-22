@@ -16,5 +16,5 @@ Feature: New user registration
       | Email Address    | charlie@example.com |
       | Password         | Charlie001          |
       | Confirm Password | Charlie001          |
-    When I press "Create An Account"
+    When I click "Create An Account"
     Then I should see "Please check your email to complete registration"

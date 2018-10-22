@@ -7,7 +7,7 @@ Feature: Content Block content purify
   Scenario: Create new content block with tags in text data
     Given I login as administrator
     And go to Marketing / Content Blocks
-    And press "Create Content Block"
+    And click "Create Content Block"
     And I click "Add Content"
     And fill "Content Block Form" with:
       |Owner         |Main                         |

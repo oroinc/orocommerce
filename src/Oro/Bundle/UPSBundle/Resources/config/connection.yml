@@ -3,7 +3,7 @@ services:
         class: 'Oro\Bundle\UPSBundle\Connection\Validator\Request\Factory\RateUpsConnectionValidatorRequestFactory'
         public: false
         arguments:
-            - '@oro_security.encoder.mcrypt'
+            - '@oro_security.encoder.default'
 
     oro_ups.connection.validator.result.factory:
         class: 'Oro\Bundle\UPSBundle\Connection\Validator\Result\Factory\UpsConnectionValidatorResultFactory'

@@ -42,7 +42,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     /**
      * Walk through menus and navigations to get Checkout step page of given shopping list name
      *
-     * @When /^Buyer is on Checkout step on (?P<shoppingListName>[\w\s]+)$/
+     * @When /^Buyer is on Checkout step on "(?P<shoppingListName>[\w\s]+)"$/
      */
     public function buyerIsOnShippingMethodCheckoutStep($shoppingListName)
     {

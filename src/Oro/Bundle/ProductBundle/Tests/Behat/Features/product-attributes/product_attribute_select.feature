@@ -1,5 +1,6 @@
 @regression
 @ticket-BB-9989
+@ticket-BB-14755
 @fixture-OroProductBundle:ProductAttributesFixture.yml
 Feature: Product attribute select
   In order to have custom attributes for Product entity
@@ -32,7 +33,7 @@ Feature: Product attribute select
       | Label          |
       | TestValueOne   |
       | TestValueTwo   |
-      | TestValueThree |
+      | 10.5           |
     And I save and close form
     Then I should see "Attribute was successfully saved" flash message
 
@@ -47,11 +48,17 @@ Feature: Product attribute select
     And I save and close form
     Then I should see "Successfully updated" flash message
 
-  Scenario: Update product
+  Scenario: Update products
     Given I go to Products/ Products
     When I click "Edit" on row "SKU123" in grid
     And I fill "Product Form" with:
       | SelectField | TestValueTwo |
+    And I save and close form
+    Then I should see "Product has been saved" flash message
+    When I go to Products/ Products
+    And I click "Edit" on row "SKU456" in grid
+    And I fill "Product Form" with:
+      | SelectField | 10.5 |
     And I save and close form
     Then I should see "Product has been saved" flash message
 
@@ -70,6 +77,10 @@ Feature: Product attribute select
     When I check "TestValueTwo" in SelectField filter in frontend product grid
     Then I should see "SKU123" product
     And I should not see "SKU456" product
+    And grid sorter should have "SelectField" options
+    When I check "10.5" in SelectField filter in frontend product grid
+    And I should see "SKU123" product
+    Then I should see "SKU456" product
     And grid sorter should have "SelectField" options
 
   Scenario: Update product family and remove new attribute from it

@@ -621,41 +621,45 @@ class ProductPriceRepositoryTest extends WebTestCase
         $this->assertEquals($manualPrices, $actual);
     }
 
+    public function testDeleteInvalidPricesByProducts()
+    {
+        $priceList = $this->getReference(LoadPriceLists::PRICE_LIST_1);
+        $product1 = $this->getReference(LoadProductData::PRODUCT_1);
+        $product2 = $this->getReference(LoadProductData::PRODUCT_2);
+
+        /** @var ProductUnit $unit */
+        $unit = $this->getReference('product_unit.liter');
+        $price = Price::create(2, 'USD');
+
+        $this->prepareDetachedPrices($priceList, $product1, $unit, $price);
+        $this->prepareDetachedPrices($priceList, $product2, $unit, $price);
+        $prices = $this->repository->findByPriceList($this->shardManager, $priceList, []);
+        $this->assertCount(2, $prices);
+
+        $this->repository->deleteInvalidPricesByProducts($this->shardManager, $priceList, [$product1->getId()]);
+
+        $prices = $this->repository->findByPriceList($this->shardManager, $priceList, []);
+        $this->assertCount(1, $prices);
+    }
+
     public function testDeleteInvalidPrices()
     {
-        $objectRepository = $this->getContainer()->get('doctrine')
-            ->getRepository(PriceListToProduct::class);
-
-        $priceList = $this->getReference(LoadPriceLists::PRICE_LIST_1);
-        $product = $this->getReference(LoadProductData::PRODUCT_2);
+        $priceList = $this->getReference(LoadPriceLists::PRICE_LIST_2);
+        $product1 = $this->getReference(LoadProductData::PRODUCT_1);
+        $product2 = $this->getReference(LoadProductData::PRODUCT_2);
 
         /** @var ProductUnit $unit */
         $unit = $this->getReference('product_unit.liter');
         $price = Price::create(1, 'USD');
 
-        $productPrice = new ProductPrice();
-        $productPrice
-            ->setPriceList($priceList)
-            ->setUnit($unit)
-            ->setQuantity(1)
-            ->setPrice($price)
-            ->setProduct($product);
-        $this->repository->save($this->shardManager, $productPrice);
-
-        $objectRepository
-            ->createQueryBuilder('productRelation')
-            ->delete(PriceListToProduct::class, 'productRelation')
-            ->where('productRelation.priceList = :priceList AND productRelation.product = :product')
-            ->setParameter('priceList', $priceList)
-            ->setParameter('product', $product)
-            ->getQuery()
-            ->execute();
-        $prices = $this->repository->findByPriceList($this->shardManager, $priceList, ['priceList' => $priceList]);
-        $this->assertNotEmpty($prices);
+        $this->prepareDetachedPrices($priceList, $product1, $unit, $price);
+        $this->prepareDetachedPrices($priceList, $product2, $unit, $price);
+        $prices = $this->repository->findByPriceList($this->shardManager, $priceList, []);
+        $this->assertCount(2, $prices);
 
         $this->repository->deleteInvalidPrices($this->shardManager, $priceList);
 
-        $prices = $this->repository->findByPriceList($this->shardManager, $priceList, ['priceList' => $priceList]);
+        $prices = $this->repository->findByPriceList($this->shardManager, $priceList, []);
         $this->assertEmpty($prices);
     }
 
@@ -758,5 +762,33 @@ class ProductPriceRepositoryTest extends WebTestCase
             ->setProduct($product);
 
         return $productPrice;
+    }
+
+    /**
+     * @param PriceList $priceList
+     * @param Product $product
+     * @param string $unit
+     * @param Price $price
+     */
+    protected function prepareDetachedPrices(PriceList $priceList, Product $product, $unit, Price $price)
+    {
+        $objectRepository = $this->getContainer()->get('doctrine')
+            ->getRepository(PriceListToProduct::class);
+
+        $productPrice = new ProductPrice();
+        $productPrice->setPriceList($priceList)
+            ->setUnit($unit)
+            ->setQuantity(1)
+            ->setPrice($price)
+            ->setProduct($product);
+        $this->repository->save($this->shardManager, $productPrice);
+
+        $objectRepository->createQueryBuilder('productRelation')
+            ->delete(PriceListToProduct::class, 'productRelation')
+            ->where('productRelation.priceList = :priceList AND productRelation.product = :product')
+            ->setParameter('priceList', $priceList)
+            ->setParameter('product', $product)
+            ->getQuery()
+            ->execute();
     }
 }

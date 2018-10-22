@@ -9,12 +9,12 @@ Feature: RFQ Product Unit Translation
 
   Scenario: Feature Background
     Given I enable the existing localizations
-    And I signed in as AmandaRCole@example.org on the store frontend
+    And I signed in as MarleneSBradley@example.com on the store frontend
     When I press "Localization Switcher"
     Then I select "Localization 1" localization
 
   Scenario: Create RFQ from shopping list
-    Given I open page with shopping list "Shopping List 1"
+    Given I open page with shopping list "Shopping List 4"
     When I click "Request Quote"
     Then Request a Quote contains products
-      | Product1 | 5 | item (lang1) |
+      | Product1 | 10 | item (lang1) |

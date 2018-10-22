@@ -76,6 +76,12 @@ class OrmIndexer extends AbstractIndexer
         // Build items for search index
         foreach ($entitiesData as $entityId => $indexData) {
             $item = $this->getDriver()->createItem();
+
+            if (isset($indexData[SearchQuery::TYPE_DECIMAL][self::WEIGHT_FIELD])) {
+                $item->setWeight($indexData[SearchQuery::TYPE_DECIMAL][self::WEIGHT_FIELD]);
+                unset($indexData[SearchQuery::TYPE_DECIMAL][self::WEIGHT_FIELD]);
+            }
+
             $item->setEntity($entityClass)
                 ->setRecordId($entityId)
                 ->setAlias($entityAliasTemp)

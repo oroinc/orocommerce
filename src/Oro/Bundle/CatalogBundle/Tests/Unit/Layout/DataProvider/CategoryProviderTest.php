@@ -247,34 +247,6 @@ class CategoryProviderTest extends \PHPUnit\Framework\TestCase
         $this->categoryProvider->getCategoryTreeArray($user);
     }
 
-    public function testGetBreadcrumbs()
-    {
-        $category = new Category();
-        $categoryId = 1;
-
-        $this->requestProductHandler
-            ->expects($this->exactly(2))
-            ->method('getCategoryId')
-            ->willReturn($categoryId);
-
-        $this->categoryRepository
-            ->expects($this->once())
-            ->method('find')
-            ->with($categoryId)
-            ->willReturn($category);
-
-        $result = $this->categoryProvider->getBreadcrumbs();
-        $breadcrumb = [
-            'label_localized' => $category->getTitles(),
-            'route' => 'oro_product_frontend_product_index',
-            'routeParams' => [
-                'categoryId' => null,
-                'includeSubcategories' => null,
-            ]
-        ];
-        $this->assertSame([$breadcrumb], $result);
-    }
-
     public function testGetIncludeSubcategoriesChoice()
     {
         $this->requestProductHandler

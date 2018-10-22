@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Twig;
 
-use Oro\Bundle\ProductBundle\Formatter\UnitValueFormatter;
+use Oro\Bundle\ProductBundle\Formatter\UnitValueFormatterInterface;
 use Oro\Bundle\ShippingBundle\Entity\WeightUnit;
 use Oro\Bundle\ShippingBundle\Twig\WeightUnitValueExtension;
 use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
@@ -11,7 +11,7 @@ class WeightUnitValueExtensionTest extends \PHPUnit\Framework\TestCase
 {
     use TwigExtensionTestCaseTrait;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
+    /** @var UnitValueFormatterInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $formatter;
 
     /** @var WeightUnitValueExtension */
@@ -19,9 +19,7 @@ class WeightUnitValueExtensionTest extends \PHPUnit\Framework\TestCase
 
     public function setUp()
     {
-        $this->formatter = $this->getMockBuilder(UnitValueFormatter::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->formatter = $this->createMock(UnitValueFormatterInterface::class);
 
         $container = self::getContainerBuilder()
             ->add('oro_shipping.formatter.weight_unit_value', $this->formatter)

@@ -78,10 +78,13 @@
     }) %}
 
     <div{{ block('block_attributes') }}>
-        <div class="shopping-list-dropdown__handle" data-toggle="dropdown">
-            <i class="shopping-list-dropdown__icon fa-plus-circle"></i>
+        {% set togglerId = 'dropdown-'|uniqid %}
+        <div class="shopping-list-dropdown__handle" data-toggle="dropdown" role="button" id="{{ togglerId }}"
+             aria-haspopup="true" aria-expanded="false"
+             aria-label="{{ 'oro.customtheme.shopping_list.view_more.label'|trans }}">
+            <span class="shopping-list-dropdown__icon fa-plus-circle" aria-hidden="true"></span>
         </div>
-        <div class="shopping-list-dropdown__nav dropdown-menu">
+        <div class="shopping-list-dropdown__nav dropdown-menu" role="menu" aria-labelledby="{{ togglerId }}">
             <ul class="shopping-list-links">
                 {% for shoppingList in shoppingLists %}
                     <li class="shopping-list-links__item
@@ -91,7 +94,7 @@
                         data-shopping-list-id="{{ shoppingList.id }}"
                     >
                         <a class="shopping-list-links__link" href="{{ path('oro_shopping_list_frontend_view', {'id' : shoppingList.id}) }}">
-                            <i class="shopping-list-links__icon fa-check"></i>
+                            <span class="shopping-list-links__icon fa-check" aria-hidden="true"></span>
                             <span class="shopping-list-links__text"
                                   data-shopping-list-id="{{ shoppingList.id }}"
                                   data-role="shopping-list-title">{{ shoppingList.label }}</span>

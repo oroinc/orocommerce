@@ -1,17 +1,15 @@
+<% var togglerId = _.uniqueId('dropdown-') %>
 <div class="product-price-filter">
     <span class="product-price-unit-filter-separator"><%- _.__("oro.pricing.filter.product_price.per") %></span>
     <div class="btn-group btn-block filter-trigger-wrapper product-price-unit-filter">
-        <button class="btn btn--link dropdown-toggle" data-toggle="dropdown">
-            <%- selectedChoiceLabel %><span class="caret"></span>
+        <button id="<%- togglerId %>" class="btn btn--link dropdown-toggle" data-toggle="dropdown"
+                aria-haspopup="true" aria-expanded="false" aria-label="<%- _.__('oro.pricing.filter.product_price.units_select.label') %>">
+            <%- selectedChoiceLabel %><span class="caret" aria-hidden="true"></span>
         </button>
-        <ul class="dropdown-menu" data-name="unit">
+        <ul class="dropdown-menu" data-name="unit" role="menu" aria-labelledby="<%- togglerId %>">
             <% _.each(choices, function (option) { %>
             <li<% if (selectedChoice == option.value) { %> class="active"<% } %>>
-                <a class="dropdown-item choice-value"
-                   href="#"
-                   data-value="<%= option.value %>">
-                    <%- option.label %>
-                </a>
+                <a class="dropdown-item choice-value" href="#" data-value="<%= option.value %>"><%- option.label %></a>
             </li>
             <% }); %>
         </ul>

@@ -40,7 +40,7 @@ class CreateInventoryLevelsTest extends ProductHelperTestCase
         $crawler = $this->client->request('GET', $this->getUrl('oro_product_update', ['id' => $id]));
         $this->assertEquals(
             1,
-            $crawler->filterXPath("//li/a[contains(text(),'" . ProductTestHelper::CATEGORY_MENU_NAME . "')]")->count()
+            $crawler->filterXPath("//nav/a[contains(text(),'" . ProductTestHelper::CATEGORY_MENU_NAME . "')]")->count()
         );
         $form = $crawler->selectButton('Save and Close')->form();
 

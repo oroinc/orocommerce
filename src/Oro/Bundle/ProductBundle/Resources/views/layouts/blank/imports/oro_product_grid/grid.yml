@@ -63,7 +63,7 @@ layout:
 
         - '@setOption':
             id: product_datagrid
-            optionName: grid_render_parameters.toolbarOptions.addColumnManager
+            optionName: grid_render_parameters.toolbarOptions.addDatagridSettingsManager
             optionValue: false
 
         - '@setOption':

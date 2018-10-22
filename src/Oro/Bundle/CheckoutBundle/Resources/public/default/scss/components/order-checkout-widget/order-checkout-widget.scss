@@ -60,6 +60,10 @@
 
         width: 320px;
     }
+
+    [data-toggle="tooltip"] {
+        display: inline-block;
+    }
 }
 
 @include breakpoint('tablet-small') {

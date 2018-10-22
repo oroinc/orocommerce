@@ -29,14 +29,9 @@ class RelatedItemsHandlerTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->translator = $this->getMockBuilder(TranslatorInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->relatedAssigner = $this->getMockBuilder(AssignerStrategyInterface::class)
-            ->getMock();
-        $this->upsellAssigner = $this->getMockBuilder(AssignerStrategyInterface::class)
-            ->getMock();
+        $this->translator = $this->createMock(TranslatorInterface::class);
+        $this->relatedAssigner = $this->createMock(AssignerStrategyInterface::class);
+        $this->upsellAssigner = $this->createMock(AssignerStrategyInterface::class);
 
         $this->handler = new RelatedItemsHandler($this->translator);
     }

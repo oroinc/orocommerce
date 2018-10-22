@@ -10,11 +10,11 @@
         }
     ],
     "require": {
-        "oro/platform": "2.x-dev",
-        "oro/platform-serialised-fields": "2.x-dev",
-        "oro/calendar-bundle": "2.x-dev",
-        "oro/marketing": "2.x-dev",
-        "oro/customer-portal": "2.x-dev",
+        "oro/platform": "3.1.*",
+        "oro/platform-serialised-fields": "3.1.*",
+        "oro/calendar-bundle": "3.1.*",
+        "oro/marketing": "3.1.*",
+        "oro/customer-portal": "3.1.*",
         "box/spout": "2.7.*",
         "myclabs/deep-copy": "1.8.*",
         "bower-asset/jquery-creditcardvalidator": "1.0",
@@ -27,7 +27,6 @@
         "behat/mink-extension": "2.2.*",
         "behat/mink-selenium2-driver": "1.*",
         "behat/symfony2-extension": "2.1.1",
-        "nelmio/alice": "2.2.*",
         "phpunit/phpunit": "5.7.*",
         "johnkary/phpunit-speedtrap": "1.0.*",
         "mybuilder/phpunit-accelerator": "1.2.*",
@@ -52,7 +51,7 @@
     "prefer-stable": true,
     "extra": {
         "branch-alias": {
-            "dev-master": "1.x-dev"
+            "dev-master": "3.1-dev"
         }
     },
     "autoload": {

@@ -46,8 +46,7 @@ class VisibilityChoiceFilterTest extends WebTestCase
                 'gridName' => 'customer-product-visibility-grid',
             ],
             $gridParams,
-            true,
-            'oro_frontend_datagrid_index'
+            true
         );
         $result = $this->getJsonResponseContent($response, 200);
 

@@ -186,7 +186,7 @@ Feature: Showing related products
       Then I should not see "Add to Shopping List" in related products
 
     Scenario: Check that product name is localized
-      Given I press "Localization Switcher"
+      Given I click "Localization Switcher"
       When I select "Localization 1" localization
       Then should see the following products in the "Related Products Block":
         | Title                     |

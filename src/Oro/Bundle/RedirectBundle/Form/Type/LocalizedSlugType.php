@@ -13,6 +13,9 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Manage slugs for each of system localizations.
+ */
 class LocalizedSlugType extends AbstractType
 {
     const NAME = 'oro_redirect_localized_slug';
@@ -84,6 +87,7 @@ class LocalizedSlugType extends AbstractType
         $resolver->setDefaults([
             'slug_suggestion_enabled' => true,
             'slugify_route' => 'oro_api_slugify_slug',
+            'exclude_parent_localization' => true
         ]);
         $resolver->setDefined('source_field');
     }
