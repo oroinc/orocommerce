@@ -43,7 +43,7 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
     }
 
     /**
-     * @todo BB-14587 Do we really need this route? >
+     * @todo BB-14587/BB-15426 Do we really need this route? >
      * @todo < It's mentioned in ororfp/js/app/views/line-item-view unitLoaderRouteName which is never used
      *
      * @Route("/get-product-units-by-currency", name="oro_pricing_frontend_units_by_pricelist")

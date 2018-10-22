@@ -120,7 +120,7 @@ define(function(require) {
                 return;
             }
 
-            // TODO: BB-14587 implement hint content generation in JS based on prices data
+            // TODO: BB-14587/BB-15427 implement hint content generation in JS based on prices data
             var content = this.getHintContent();
             $pricesHint.toggleClass('disabled', content.length === 0);
             if (!content.length) {
@@ -225,7 +225,7 @@ define(function(require) {
             return price ? price.price : null;
         },
 
-        // TODO: BB-14587 refactor to fill not individual elements. but whole content. >
+        // TODO: BB-14587/BB-15429 refactor to fill not individual elements. but whole content. >
         // TODO < Currently may be broken if initial template does not contain required elements.
         updateUI: function() {
             this.rendered = true;
