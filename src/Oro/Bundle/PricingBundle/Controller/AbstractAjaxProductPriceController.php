@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Controller;
 
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -28,9 +29,25 @@ abstract class AbstractAjaxProductPriceController extends Controller
             $this->get('oro_pricing.provider.product_price')
                 ->getPricesByScopeCriteriaAndProductIds(
                     $scopeCriteria,
-                    $request->get('product_ids', []),
+                    $this->getRequestProducts($request),
                     $request->get('currency')
                 )
+        );
+    }
+
+    /**
+     * @param Request $request
+     * @return array
+     */
+    protected function getRequestProducts(Request $request): array
+    {
+        $productIds = $request->get('product_ids', []);
+        $doctrineHelper = $this->container->get('oro_entity.doctrine_helper');
+        return array_map(
+            function ($productId) use ($doctrineHelper) {
+                return $doctrineHelper->getEntityReference(Product::class, $productId);
+            },
+            array_filter($productIds)
         );
     }
 }
