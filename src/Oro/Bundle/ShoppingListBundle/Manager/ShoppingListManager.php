@@ -54,6 +54,7 @@ class ShoppingListManager
      * @param WebsiteManager                     $websiteManager
      * @param ShoppingListTotalManager           $totalManager
      * @param ProductVariantAvailabilityProvider $productVariantProvider
+     * @param ProductFormAvailabilityProvider    $productFormAvailabilityProvider
      */
     public function __construct(
         ManagerRegistry $doctrine,

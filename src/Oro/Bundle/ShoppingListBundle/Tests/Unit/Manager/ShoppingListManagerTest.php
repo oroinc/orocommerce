@@ -10,6 +10,7 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Layout\DataProvider\ProductFormAvailabilityProvider;
 use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
 use Oro\Bundle\ProductBundle\Rounding\QuantityRoundingService;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
@@ -51,6 +52,9 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
 
     /** @var LineItemRepository|\PHPUnit\Framework\MockObject\MockObject */
     private $lineItemRepository;
+
+    /** @var \PHPUnit\Framework\MockObject\MockObject */
+    private $productFormAvailabilityProvider;
 
     protected function setUp()
     {
@@ -94,6 +98,8 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
                 return round($value);
             });
 
+        $this->productFormAvailabilityProvider = $this->createMock(ProductFormAvailabilityProvider::class);
+
         $this->manager = new ShoppingListManager(
             $doctrine,
             $this->tokenAccessor,
@@ -101,7 +107,8 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
             $roundingService,
             $this->websiteManager,
             $this->totalManager,
-            $this->productVariantProvider
+            $this->productVariantProvider,
+            $this->productFormAvailabilityProvider
         );
     }
 
