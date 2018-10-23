@@ -2,18 +2,21 @@
 
 namespace Oro\Bundle\ProductBundle\Autocomplete;
 
+use Oro\Bundle\FormBundle\Autocomplete\SearchHandler;
+use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
+use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
+use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use Oro\Bundle\ProductBundle\Exception\InvalidArgumentException;
+use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
+use Oro\Bundle\ProductBundle\Search\ProductRepository as ProductSearchRepository;
+use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
-use Oro\Bundle\SearchBundle\Query\Result\Item;
-use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
-use Oro\Bundle\FormBundle\Autocomplete\SearchHandler;
-use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
-use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
-use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
-use Oro\Bundle\ProductBundle\Search\ProductRepository as ProductSearchRepository;
-
+/**
+ * Search handler with additional check for product visibility.
+ */
 class ProductVisibilityLimitedSearchHandler extends SearchHandler
 {
     /** @var RequestStack */
@@ -31,21 +34,25 @@ class ProductVisibilityLimitedSearchHandler extends SearchHandler
     /** @var \Oro\Bundle\ProductBundle\Search\ProductRepository */
     protected $searchRepository;
 
+    /** @var LocalizationHelper */
+    private $localizationHelper;
+
     /**
-     * @param string         $entityName
-     * @param array          $properties
-     * @param RequestStack   $requestStack
+     * @param string $entityName
+     * @param RequestStack $requestStack
      * @param ProductManager $productManager
+     * @param LocalizationHelper $localizationHelper
      */
     public function __construct(
         $entityName,
-        array $properties,
         RequestStack $requestStack,
-        ProductManager $productManager
+        ProductManager $productManager,
+        LocalizationHelper $localizationHelper
     ) {
         $this->requestStack   = $requestStack;
         $this->productManager = $productManager;
-        parent::__construct($entityName, $properties);
+        $this->localizationHelper = $localizationHelper;
+        parent::__construct($entityName, ['sku', 'defaultName.string']);
     }
 
     /**
@@ -85,33 +92,24 @@ class ProductVisibilityLimitedSearchHandler extends SearchHandler
             $result[$this->idFieldName] = $this->getPropertyValue($this->idFieldName, $item);
         }
 
-        foreach ($this->getProperties() as $destinationKey => $property) {
-            if ($this->isItem($item)) {
-                $result[$property] = $this->getSelectedData($item, $destinationKey);
-                continue;
+        if ($this->isItem($item)) {
+            $selectedData = $item->getSelectedData();
+            if (isset($selectedData['sku'], $selectedData['name'])) {
+                $result += [
+                    'sku' => $selectedData['sku'],
+                    'defaultName.string' => $selectedData['name'],
+                ];
             }
-            $result[$property] = $this->getPropertyValue($property, $item);
+        } elseif ($item instanceof Product) {
+            $result += [
+                'sku' => $item->getSku(),
+                'defaultName.string' => (string) $this->localizationHelper->getLocalizedValue($item->getNames()),
+            ];
+        } else {
+            throw new InvalidArgumentException('Given item could not be converted');
         }
 
         return $result;
-    }
-
-    /**
-     * @return array
-     */
-    public function getProperties()
-    {
-        if (!isset($this->properties['orm'])) {
-            return $this->properties; // usual case
-        }
-
-        $request = $this->requestStack->getCurrentRequest();
-
-        if (null === $this->frontendHelper || (false === $this->frontendHelper->isFrontendRequest($request))) {
-            return $this->properties['orm'];
-        }
-
-        return $this->properties['search'];
     }
 
     /**
@@ -172,33 +170,6 @@ class ProductVisibilityLimitedSearchHandler extends SearchHandler
         $result = $searchQuery->getResult();
 
         return $result->getElements();
-    }
-
-    /**
-     * @param Item   $item
-     * @param string $property
-     * @return null|string
-     */
-    protected function getSelectedData($item, $property)
-    {
-        $data = $item->getSelectedData();
-
-        if (empty($data)) {
-            return null;
-        }
-
-        foreach ($data as $key => $value) {
-            if ($key === $property) {
-                return (string)$value;
-            }
-
-            // support localized properties
-            if (strpos($key, $property) === 0) {
-                return (string)$value;
-            }
-        }
-
-        return null;
     }
 
     /**
