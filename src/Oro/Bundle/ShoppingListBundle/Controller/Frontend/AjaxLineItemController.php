@@ -11,7 +11,6 @@ use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Form\Handler\LineItemHandler;
 use Oro\Bundle\ShoppingListBundle\Form\Type\ShoppingListType;
-use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -41,8 +40,8 @@ class AjaxLineItemController extends AbstractLineItemController
      */
     public function addProductFromViewAction(Request $request, Product $product)
     {
-        $shoppingListManager = $this->get('oro_shopping_list.shopping_list.manager');
-        $shoppingList = $shoppingListManager->getForCurrentUser($request->get('shoppingListId'));
+        $currentShoppingListManager = $this->get('oro_shopping_list.manager.current_shopping_list');
+        $shoppingList = $currentShoppingListManager->getForCurrentUser($request->get('shoppingListId'));
 
         if (!$this->get('security.authorization_checker')->isGranted('EDIT', $shoppingList)) {
             throw $this->createAccessDeniedException();
@@ -66,7 +65,8 @@ class AjaxLineItemController extends AbstractLineItemController
             $form,
             $request,
             $this->getDoctrine(),
-            $shoppingListManager
+            $this->get('oro_shopping_list.manager.shopping_list'),
+            $currentShoppingListManager
         );
         $isFormHandled = $handler->process($lineItem);
 
@@ -136,10 +136,10 @@ class AjaxLineItemController extends AbstractLineItemController
      */
     public function removeProductFromViewAction(Request $request, Product $product)
     {
-        $shoppingListManager = $this->get('oro_shopping_list.shopping_list.manager');
+        $shoppingListManager = $this->get('oro_shopping_list.manager.shopping_list');
 
-        /** @var ShoppingList $shoppingList */
-        $shoppingList = $shoppingListManager->getForCurrentUser($request->get('shoppingListId'));
+        $shoppingList = $this->get('oro_shopping_list.manager.current_shopping_list')
+            ->getForCurrentUser($request->get('shoppingListId'));
 
         $result = [
             'successful' => false,
@@ -207,9 +207,7 @@ class AjaxLineItemController extends AbstractLineItemController
      */
     public function addProductsToNewMassAction(Request $request, $gridName, $actionName)
     {
-        /** @var ShoppingListManager $manager */
-        $manager = $this->get('oro_shopping_list.shopping_list.manager');
-        $shoppingList = $manager->create();
+        $shoppingList = $this->get('oro_shopping_list.manager.shopping_list')->create();
 
         $form = $this->createForm(ShoppingListType::class, $shoppingList);
         $form->handleRequest($request);
@@ -228,7 +226,8 @@ class AjaxLineItemController extends AbstractLineItemController
                     array_merge($requestData, ['shoppingList' => $shoppingList])
                 );
 
-            $manager->setCurrent($this->getUser(), $shoppingList);
+            $this->get('oro_shopping_list.manager.current_shopping_list')
+                ->setCurrent($this->getUser(), $shoppingList);
 
             $response['messages']['data'][] = $result->getMessage();
             $response['savedId'] = $shoppingList->getId();

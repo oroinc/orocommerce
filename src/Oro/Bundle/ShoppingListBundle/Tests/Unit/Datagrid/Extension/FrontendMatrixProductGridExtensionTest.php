@@ -18,7 +18,7 @@ use Oro\Bundle\ShoppingListBundle\Datagrid\Extension\FrontendMatrixProductGridEx
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Layout\DataProvider\MatrixGridOrderFormProvider;
 use Oro\Bundle\ShoppingListBundle\Layout\DataProvider\MatrixGridOrderProvider;
-use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
+use Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListManager;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 class FrontendMatrixProductGridExtensionTest extends \PHPUnit\Framework\TestCase
@@ -28,8 +28,8 @@ class FrontendMatrixProductGridExtensionTest extends \PHPUnit\Framework\TestCase
     /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $doctrineHelper;
 
-    /** @var ShoppingListManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $shoppingListManager;
+    /** @var CurrentShoppingListManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $currentShoppingListManager;
 
     /** @var MatrixGridOrderFormProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $matrixGridOrderFormProvider;
@@ -58,7 +58,7 @@ class FrontendMatrixProductGridExtensionTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
-        $this->shoppingListManager = $this->createMock(ShoppingListManager::class);
+        $this->currentShoppingListManager = $this->createMock(CurrentShoppingListManager::class);
         $this->matrixGridOrderFormProvider = $this->createMock(MatrixGridOrderFormProvider::class);
         $this->productFormAvailabilityProvider = $this->createMock(
             ProductFormAvailabilityProvider::class
@@ -74,7 +74,7 @@ class FrontendMatrixProductGridExtensionTest extends \PHPUnit\Framework\TestCase
 
         $this->gridExtension = new FrontendMatrixProductGridExtension(
             $this->doctrineHelper,
-            $this->shoppingListManager,
+            $this->currentShoppingListManager,
             $this->matrixGridOrderFormProvider,
             $this->productFormAvailabilityProvider,
             $this->frontendProductPricesProvider,
@@ -152,7 +152,7 @@ class FrontendMatrixProductGridExtensionTest extends \PHPUnit\Framework\TestCase
             ->with(Product::class)
             ->willReturn($repository);
 
-        $this->shoppingListManager->expects($this->once())
+        $this->currentShoppingListManager->expects($this->once())
             ->method('getCurrent')
             ->willReturn($shoppingList);
 
@@ -260,7 +260,7 @@ class FrontendMatrixProductGridExtensionTest extends \PHPUnit\Framework\TestCase
             ->with(Product::class)
             ->willReturn($repository);
 
-        $this->shoppingListManager->expects($this->once())
+        $this->currentShoppingListManager->expects($this->once())
             ->method('getCurrent')
             ->willReturn($shoppingList);
 
@@ -325,7 +325,7 @@ class FrontendMatrixProductGridExtensionTest extends \PHPUnit\Framework\TestCase
             ->with(Product::class)
             ->willReturn($repository);
 
-        $this->shoppingListManager->expects($this->once())
+        $this->currentShoppingListManager->expects($this->once())
             ->method('getCurrent')
             ->willReturn($shoppingList);
 
