@@ -2,12 +2,9 @@
 
 namespace Oro\Bundle\PricingBundle\SubtotalProcessor\Provider;
 
-use Symfony\Component\Translation\TranslatorInterface;
-
 use Doctrine\ORM\EntityManager;
-
-use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
+use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PricingBundle\Model\PriceListTreeHandler;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
@@ -21,7 +18,11 @@ use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 use Oro\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
 use Oro\Bundle\ProductBundle\Model\QuantityAwareInterface;
 use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
+use Symfony\Component\Translation\TranslatorInterface;
 
+/**
+ * Subtotal provider for line items without prices. SUM(ROUND(price*qty))
+ */
 class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider implements SubtotalProviderInterface
 {
     const TYPE = 'subtotal';
@@ -122,12 +123,13 @@ class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider impleme
             foreach ($prices as $identifier => $price) {
                 if ($price) {
                     $priceValue = $price->getValue();
-                    $subtotalAmount += (float) $priceValue * $productsPriceCriterias[$identifier]->getQuantity();
+                    $rowTotal = (float) $priceValue * $productsPriceCriterias[$identifier]->getQuantity();
+                    $subtotalAmount += $this->rounding->round($rowTotal);
                     $subtotal->setVisible(true);
                 }
             }
         }
-        $subtotal->setAmount($this->rounding->round($subtotalAmount));
+        $subtotal->setAmount($subtotalAmount);
         $subtotal->setCurrency($currency);
 
         return $subtotal;
