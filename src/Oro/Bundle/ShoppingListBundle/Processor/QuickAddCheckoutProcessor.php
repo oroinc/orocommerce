@@ -10,6 +10,7 @@ use Oro\Bundle\ActionBundle\Model\ActionGroupRegistry;
 use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatter;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListManager;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListLimitManager;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -29,6 +30,9 @@ class QuickAddCheckoutProcessor extends AbstractShoppingListQuickAddProcessor
 
     /** @var ShoppingListLimitManager */
     protected $shoppingListLimitManager;
+
+    /** @var CurrentShoppingListManager */
+    protected $currentShoppingListManager;
 
     /** @var ActionGroupRegistry */
     protected $actionGroupRegistry;
@@ -63,6 +67,17 @@ class QuickAddCheckoutProcessor extends AbstractShoppingListQuickAddProcessor
     public function setShoppingListLimitManager(ShoppingListLimitManager $shoppingListLimitManager)
     {
         $this->shoppingListLimitManager = $shoppingListLimitManager;
+
+        return $this;
+    }
+
+    /**
+     * @param CurrentShoppingListManager $currentShoppingListManager
+     * @return QuickAddCheckoutProcessor
+     */
+    public function setCurrentShoppingListManager(CurrentShoppingListManager $currentShoppingListManager)
+    {
+        $this->currentShoppingListManager = $currentShoppingListManager;
 
         return $this;
     }
@@ -136,7 +151,7 @@ class QuickAddCheckoutProcessor extends AbstractShoppingListQuickAddProcessor
 
         if ($this->shoppingListLimitManager->isReachedLimit()) {
             $shoppingList = $this->shoppingListManager->edit(
-                $this->shoppingListManager->getCurrent($create = true),
+                $this->currentShoppingListManager->getCurrent(true),
                 $this->getShoppingListLabel()
             );
             $this->shoppingListManager->removeLineItems($shoppingList);

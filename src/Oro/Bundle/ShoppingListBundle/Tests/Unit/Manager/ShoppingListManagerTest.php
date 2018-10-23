@@ -2,246 +2,300 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Manager;
 
-use Doctrine\Common\Cache\Cache;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
-use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
 use Oro\Bundle\ProductBundle\Rounding\QuantityRoundingService;
-use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
-use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use Oro\Bundle\ShoppingListBundle\Manager\GuestShoppingListManager;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListTotalManager;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
 /**
- * The class should get rid of most dependencies and will be divided into several classes with a single responsibility,
- * see BB-10192 for details
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
- * @SuppressWarnings(PHPMD.ExcessiveClassLength)
- * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
 {
-    const CURRENCY_EUR = 'EUR';
-
     use EntityTrait;
 
-    /**
-     * @var ShoppingList
-     */
-    protected $shoppingListOne;
+    /** @var ShoppingListManager */
+    private $manager;
 
-    /**
-     * @var ShoppingList
-     */
-    protected $shoppingListTwo;
+    /** @var TokenAccessorInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $tokenAccessor;
 
-    /**
-     * @var ShoppingListManager
-     */
-    protected $manager;
+    /** @var WebsiteManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $websiteManager;
 
-    /**
-     * @var ShoppingList[]
-     */
-    protected $shoppingLists = [];
+    /** @var ShoppingListTotalManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $totalManager;
 
-    /**
-     * @var LineItem[]
-     */
-    protected $lineItems = [];
+    /** @var ProductVariantAvailabilityProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $productVariantProvider;
 
-    /**
-     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $registry = [];
+    /** @var EntityManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $em;
 
-    /**
-     * @var AclHelper
-     */
-    protected $aclHelper;
-
-    /**
-     * @var TokenInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $securityToken;
-
-    /**
-     * @var ShoppingListTotalManager|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $totalManager;
-
-    /**
-     * @var Cache|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $cache;
-
-    /**
-     * @var ProductVariantAvailabilityProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $productVariantProvider;
-
-    /**
-     * @var GuestShoppingListManager|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $guestShoppingListManager;
-
-    /**
-     * @var ShoppingListRepository|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $shoppingListRepository;
+    /** @var LineItemRepository|\PHPUnit\Framework\MockObject\MockObject */
+    private $lineItemRepository;
 
     protected function setUp()
     {
-        $this->shoppingListOne = $this->getShoppingList(1, true);
-        $this->shoppingListTwo = $this->getShoppingList(2, false);
+        $this->lineItemRepository = $this->createMock(LineItemRepository::class);
+        $this->lineItemRepository
+            ->expects($this->any())
+            ->method('findDuplicate')
+            ->willReturnCallback(function (LineItem $lineItem) {
+                /** @var ArrayCollection $shoppingListLineItems */
+                $shoppingListLineItems = $lineItem->getShoppingList()->getLineItems();
+                if ($lineItem->getShoppingList()->getId() === 1
+                    && $shoppingListLineItems->count() > 0
+                    && $shoppingListLineItems->current()->getUnit() === $lineItem->getUnit()
+                ) {
+                    return $lineItem->getShoppingList()->getLineItems()->current();
+                }
 
-        $this->aclHelper = $this->getAclHelperMock();
+                return null;
+            });
 
-        $tokenStorage = $this->getTokenStorage(
-            (new CustomerUser())
-                ->setFirstName('skip')
-                ->setCustomer(new Customer())
-                ->setOrganization(new Organization())
-        );
+        $this->em = $this->createMock(EntityManager::class);
+        $this->em->expects($this->any())
+            ->method('getRepository')
+            ->with(LineItem::class)
+            ->willReturn($this->lineItemRepository);
 
-        $this->registry = $this->getManagerRegistry();
-        $this->cache = $this->createMock(Cache::class);
-        $this->totalManager = $this->getShoppingListTotalManager();
+        $doctrine = $this->createMock(ManagerRegistry::class);
+        $doctrine->expects($this->any())
+            ->method('getManagerForClass')
+            ->willReturn($this->em);
+
+        $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
+        $this->websiteManager = $this->createMock(WebsiteManager::class);
+        $this->totalManager = $this->createMock(ShoppingListTotalManager::class);
         $this->productVariantProvider = $this->createMock(ProductVariantAvailabilityProvider::class);
+        $translator = $this->createMock(TranslatorInterface::class);
+        $roundingService = $this->createMock(QuantityRoundingService::class);
+        $roundingService->expects($this->any())
+            ->method('roundQuantity')
+            ->willReturnCallback(function ($value) {
+                return round($value);
+            });
 
         $this->manager = new ShoppingListManager(
-            $this->registry,
-            $tokenStorage,
-            $this->getTranslator(),
-            $this->getRoundingService(),
-            $this->getUserCurrencyManager(),
-            $this->getWebsiteManager(),
+            $doctrine,
+            $this->tokenAccessor,
+            $translator,
+            $roundingService,
+            $this->websiteManager,
             $this->totalManager,
-            $this->aclHelper,
-            $this->cache,
             $this->productVariantProvider
         );
+    }
 
-        $this->guestShoppingListManager = $this->createMock(GuestShoppingListManager::class);
-        $this->manager->setGuestShoppingListManager($this->guestShoppingListManager);
+    /**
+     * @param int  $id
+     * @param bool $isCurrent
+     *
+     * @return ShoppingList
+     */
+    private function getShoppingList($id, $isCurrent = false)
+    {
+        return $this->getEntity(ShoppingList::class, ['id' => $id, 'current' => $isCurrent]);
+    }
+
+    /**
+     * @param int $id
+     *
+     * @return LineItem
+     */
+    private function getLineItem($id)
+    {
+        return $this->getEntity(LineItem::class, ['id' => $id]);
+    }
+
+    /**
+     * @param int         $id
+     * @param string|null $type
+     *
+     * @return Product
+     */
+    private function getProduct($id, $type = null)
+    {
+        $properties = ['id' => $id];
+        if ($type) {
+            $properties['type'] = $type;
+        }
+
+        return $this->getEntity(Product::class, $properties);
+    }
+
+    /**
+     * @param string $code
+     * @param int    $defaultPrecision
+     *
+     * @return ProductUnit
+     */
+    private function getProductUnit($code, $defaultPrecision)
+    {
+        $productUnit = new ProductUnit();
+        $productUnit->setCode($code);
+        $productUnit->setDefaultPrecision($defaultPrecision);
+
+        return $productUnit;
     }
 
     public function testCreate()
     {
+        $customerUser = new CustomerUser();
+        $customerUser->setCustomer(new Customer());
+        $customerUser->setOrganization(new Organization());
+        $this->tokenAccessor->expects($this->once())
+            ->method('getUser')
+            ->willReturn($customerUser);
+
+        $website = $this->createMock(Website::class);
+        $this->websiteManager->expects($this->once())
+            ->method('getCurrentWebsite')
+            ->willReturn($website);
+
+        $this->em->expects($this->never())
+            ->method('persist');
+        $this->em->expects($this->never())
+            ->method('flush');
+
         $shoppingList = $this->manager->create();
 
-        $this->assertInstanceOf('Oro\Bundle\ShoppingListBundle\Entity\ShoppingList', $shoppingList);
-        $this->assertInstanceOf('Oro\Bundle\CustomerBundle\Entity\Customer', $shoppingList->getCustomer());
-        $this->assertInstanceOf('Oro\Bundle\CustomerBundle\Entity\CustomerUser', $shoppingList->getCustomerUser());
-        $this->assertInstanceOf('Oro\Bundle\OrganizationBundle\Entity\Organization', $shoppingList->getOrganization());
+        $this->assertSame($customerUser, $shoppingList->getCustomerUser());
+        $this->assertSame($customerUser->getCustomer(), $shoppingList->getCustomer());
+        $this->assertSame($customerUser->getOrganization(), $shoppingList->getOrganization());
+        $this->assertSame($website, $shoppingList->getWebsite());
     }
 
-    public function testCreateCurrent()
+    public function testCreateWithFlushAndLabel()
     {
-        $this->manager->setCurrent(
-            (new CustomerUser())->setFirstName('setCurrent'),
-            $this->shoppingListTwo
-        );
-        $this->assertTrue($this->shoppingListTwo->isCurrent());
+        $label = 'test label';
+
+        $customerUser = new CustomerUser();
+        $customerUser->setCustomer(new Customer());
+        $customerUser->setOrganization(new Organization());
+        $this->tokenAccessor->expects($this->once())
+            ->method('getUser')
+            ->willReturn($customerUser);
+
+        $website = $this->createMock(Website::class);
+        $this->websiteManager->expects($this->once())
+            ->method('getCurrentWebsite')
+            ->willReturn($website);
+
+        $this->em->expects($this->once())
+            ->method('persist')
+            ->with($this->isInstanceOf(ShoppingList::class));
+        $this->em->expects($this->once())
+            ->method('flush');
+
+        $shoppingList = $this->manager->create(true, $label);
+
+        $this->assertEquals($label, $shoppingList->getLabel());
+        $this->assertSame($customerUser, $shoppingList->getCustomerUser());
+        $this->assertSame($customerUser->getCustomer(), $shoppingList->getCustomer());
+        $this->assertSame($customerUser->getOrganization(), $shoppingList->getOrganization());
+        $this->assertSame($website, $shoppingList->getWebsite());
     }
 
-    public function testSetCurrent()
+    /**
+     * @expectedException \LogicException
+     * @expectedExceptionMessage The customer user does not exist in the security context.
+     */
+    public function testCreateWhenNoCustomerUser()
     {
-        $this->assertEmpty($this->shoppingLists);
-        $this->manager->createCurrent();
-        $this->assertCount(1, $this->shoppingLists);
-        /** @var ShoppingList $list */
-        $list = array_shift($this->shoppingLists);
-        $this->assertTrue($list->isCurrent());
+        $this->tokenAccessor->expects($this->once())
+            ->method('getUser')
+            ->willReturn(null);
+
+        $this->manager->create();
     }
 
     public function testAddLineItem()
     {
         $shoppingList = new ShoppingList();
         $lineItem = new LineItem();
+
         $this->manager->addLineItem($lineItem, $shoppingList);
-        $this->assertEquals(1, $shoppingList->getLineItems()->count());
-        $this->assertEquals(null, $lineItem->getCustomerUser());
-        $this->assertEquals(null, $lineItem->getOrganization());
+        $this->assertCount(1, $shoppingList->getLineItems());
+        $this->assertNull($lineItem->getCustomerUser());
+        $this->assertNull($lineItem->getOrganization());
     }
 
     public function testAddLineItemWithShoppingListData()
     {
         $shoppingList = new ShoppingList();
-        $userName = 'Bob';
-        $organizationName = 'Organization';
-        $accountUser = (new CustomerUser())->setFirstName($userName);
-        $shoppingList->setCustomerUser($accountUser);
-        $organization = (new Organization())->setName($organizationName);
-        $shoppingList->setOrganization($organization);
-
+        $shoppingList->setCustomerUser(new CustomerUser());
+        $shoppingList->setOrganization(new Organization());
         $lineItem = new LineItem();
+
         $this->manager->addLineItem($lineItem, $shoppingList);
-        $this->assertEquals($userName, $lineItem->getCustomerUser()->getFirstName());
-        $this->assertEquals($organizationName, $lineItem->getOrganization()->getName());
+        $this->assertCount(1, $shoppingList->getLineItems());
+        $this->assertSame($shoppingList->getCustomerUser(), $lineItem->getCustomerUser());
+        $this->assertSame($shoppingList->getOrganization(), $lineItem->getOrganization());
     }
 
     public function testAddLineItemDuplicate()
     {
-        $shoppingList = new ShoppingList();
-        $reflectionClass = new \ReflectionClass(get_class($shoppingList));
-        $reflectionProperty = $reflectionClass->getProperty('id');
-        $reflectionProperty->setAccessible(true);
-        $reflectionProperty->setValue($shoppingList, 1);
+        $persistedLineItems = [];
+        $this->em->expects($this->any())
+            ->method('persist')
+            ->willReturnCallback(function ($obj) use (&$persistedLineItems) {
+                if ($obj instanceof LineItem) {
+                    $persistedLineItems[] = $obj;
+                }
+            });
+
+        $shoppingList = $this->getShoppingList(1);
 
         $lineItem = (new LineItem())
-            ->setUnit(
-                (new ProductUnit())
-                    ->setCode('test')
-                    ->setDefaultPrecision(1)
-            )
+            ->setUnit($this->getProductUnit('test', 1))
             ->setQuantity(10);
 
         $this->manager->addLineItem($lineItem, $shoppingList);
-        $this->assertEquals(1, $shoppingList->getLineItems()->count());
-        $this->assertEquals(1, count($this->lineItems));
+        $this->assertCount(1, $shoppingList->getLineItems());
+        $this->assertCount(1, $persistedLineItems);
         $lineItemDuplicate = clone $lineItem;
         $lineItemDuplicate->setQuantity(5);
         $this->manager->addLineItem($lineItemDuplicate, $shoppingList);
-        $this->assertEquals(1, $shoppingList->getLineItems()->count());
+        $this->assertCount(1, $shoppingList->getLineItems());
         /** @var LineItem $resultingItem */
-        $resultingItem = array_shift($this->lineItems);
+        $resultingItem = array_shift($persistedLineItems);
         $this->assertEquals(15, $resultingItem->getQuantity());
     }
 
     public function testAddLineItemDuplicateAndConcatNotes()
     {
-        $shoppingList = new ShoppingList();
-        $reflectionClass = new \ReflectionClass(get_class($shoppingList));
-        $reflectionProperty = $reflectionClass->getProperty('id');
-        $reflectionProperty->setAccessible(true);
-        $reflectionProperty->setValue($shoppingList, 1);
+        $persistedLineItems = [];
+        $this->em->expects($this->any())
+            ->method('persist')
+            ->willReturnCallback(function ($obj) use (&$persistedLineItems) {
+                if ($obj instanceof LineItem) {
+                    $persistedLineItems[] = $obj;
+                }
+            });
+
+        $shoppingList = $this->getShoppingList(1);
 
         $lineItem = (new LineItem())
-            ->setUnit(
-                (new ProductUnit())
-                    ->setCode('test')
-                    ->setDefaultPrecision(1)
-            )
+            ->setUnit($this->getProductUnit('test', 1))
             ->setNotes('Notes');
 
         $this->manager->addLineItem($lineItem, $shoppingList);
@@ -251,10 +305,10 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
 
         $this->manager->addLineItem($lineItemDuplicate, $shoppingList, true, true);
 
-        $this->assertEquals(1, $shoppingList->getLineItems()->count());
+        $this->assertCount(1, $shoppingList->getLineItems());
 
         /** @var LineItem $resultingItem */
-        $resultingItem = array_shift($this->lineItems);
+        $resultingItem = array_shift($persistedLineItems);
         $this->assertSame('Notes Duplicated Notes', $resultingItem->getNotes());
     }
 
@@ -276,8 +330,7 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
     public function testGetLineItemExistingItem()
     {
         $shoppingList = new ShoppingList();
-        $lineItem = new LineItem();
-        $this->setValue($lineItem, 'id', 1);
+        $lineItem = $this->getLineItem(1);
         $lineItem->setNotes('123');
         $this->manager->addLineItem($lineItem, $shoppingList);
         $returnedLineItem = $this->manager->getLineItem(1, $shoppingList);
@@ -301,43 +354,39 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
      */
     public function testRemoveProduct(array $lineItems, array $relatedLineItems, $flush, $expectedFlush)
     {
-        /** @var Product $product */
-        $product = $this->getEntity('Oro\Bundle\ProductBundle\Entity\Product', ['id' => 42]);
-
+        $shoppingList = $this->getShoppingList(1, true);
         foreach ($lineItems as $lineItem) {
-            $this->shoppingListOne->addLineItem($lineItem);
+            $shoppingList->addLineItem($lineItem);
         }
 
-        /** @var ObjectManager|\PHPUnit\Framework\MockObject\MockObject $manager */
-        $manager = $this->registry->getManagerForClass('OroShoppingListBundle:LineItem');
-        $manager->expects($this->exactly(count($relatedLineItems)))
-            ->method('remove')
-            ->willReturnCallback(
-                function (LineItem $item) {
-                    $this->lineItems[] = $item;
-                }
-            );
-        $manager->expects($expectedFlush ? $this->once() : $this->never())->method('flush');
+        $product = $this->getProduct(42);
 
-        /** @var LineItemRepository|\PHPUnit\Framework\MockObject\MockObject $repository */
-        $repository = $manager->getRepository('OroShoppingListBundle:LineItem');
-        $repository->expects($this->once())
+        $removedLineItems = [];
+        $this->em->expects($this->exactly(count($relatedLineItems)))
+            ->method('remove')
+            ->willReturnCallback(function (LineItem $item) use (&$removedLineItems) {
+                $removedLineItems[] = $item;
+            });
+        $this->em->expects($expectedFlush ? $this->once() : $this->never())
+            ->method('flush');
+
+        $this->lineItemRepository->expects($this->once())
             ->method('getItemsByShoppingListAndProducts')
-            ->with($this->shoppingListOne, [$product])
+            ->with($shoppingList, [$product])
             ->willReturn($relatedLineItems);
 
-        $result = $this->manager->removeProduct($this->shoppingListOne, $product, $flush);
+        $result = $this->manager->removeProduct($shoppingList, $product, $flush);
 
         $this->assertEquals(count($relatedLineItems), $result);
 
         foreach ($relatedLineItems as $lineItem) {
-            $this->assertContains($lineItem, $this->lineItems);
-            $this->assertNotContains($lineItem, $this->shoppingListOne->getLineItems());
+            $this->assertContains($lineItem, $removedLineItems);
+            $this->assertNotContains($lineItem, $shoppingList->getLineItems());
         }
 
-        $this->assertEquals(
+        $this->assertCount(
             count($lineItems) - count($relatedLineItems),
-            $this->shoppingListOne->getLineItems()->count()
+            $shoppingList->getLineItems()
         );
     }
 
@@ -346,14 +395,9 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
      */
     public function removeProductDataProvider()
     {
-        /** @var LineItem $lineItem1 */
-        $lineItem1 = $this->getEntity('Oro\Bundle\ShoppingListBundle\Entity\LineItem', ['id' => 35]);
-
-        /** @var LineItem $lineItem2 */
-        $lineItem2 = $this->getEntity('Oro\Bundle\ShoppingListBundle\Entity\LineItem', ['id' => 36]);
-
-        /** @var LineItem $lineItem3 */
-        $lineItem3 = $this->getEntity('Oro\Bundle\ShoppingListBundle\Entity\LineItem', ['id' => 37]);
+        $lineItem1 = $this->getLineItem(35);
+        $lineItem2 = $this->getLineItem(36);
+        $lineItem3 = $this->getLineItem(37);
 
         return [
             [
@@ -385,30 +429,24 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
      */
     public function testRemoveConfigurableProduct($simpleProducts, ArrayCollection $lineItems)
     {
-        /** @var Product $product */
-        $product = $this->getEntity(
-            Product::class,
-            ['id' => 43, 'type' => Product::TYPE_CONFIGURABLE]
-        );
-        /** @var ShoppingList $shoppingList */
-        $shoppingList = $this->getEntity(ShoppingList::class, ['lineItems' => $lineItems]);
+        $product = $this->getProduct(43, Product::TYPE_CONFIGURABLE);
+        $shoppingList = $this->getShoppingList(1);
+        foreach ($lineItems as $item) {
+            $shoppingList->addLineItem($item);
+        }
 
         $this->productVariantProvider->expects($this->once())
             ->method('getSimpleProductsByVariantFields')
             ->with($product)
             ->willReturn($simpleProducts);
 
-        /** @var ObjectManager|\PHPUnit\Framework\MockObject\MockObject $manager */
-        $manager = $this->registry->getManagerForClass('OroShoppingListBundle:LineItem');
-        $manager->expects($this->exactly(count($lineItems)))
+        $this->em->expects($this->exactly(count($lineItems)))
             ->method('remove');
 
         $products = $simpleProducts;
         $products[] = $product;
 
-        /** @var LineItemRepository|\PHPUnit\Framework\MockObject\MockObject $repository */
-        $repository = $manager->getRepository('OroShoppingListBundle:LineItem');
-        $repository->expects($this->once())
+        $this->lineItemRepository->expects($this->once())
             ->method('getItemsByShoppingListAndProducts')
             ->with($shoppingList, $products)
             ->willReturn($lineItems);
@@ -430,402 +468,17 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
             ],
             [
                 [
-                    $this->getEntity(Product::class, ['id' => 44, 'type' => Product::TYPE_SIMPLE]),
-                    $this->getEntity(Product::class, ['id' => 45, 'type' => Product::TYPE_SIMPLE]),
-                    $this->getEntity(Product::class, ['id' => 46, 'type' => Product::TYPE_SIMPLE])
+                    $this->getProduct(44, Product::TYPE_SIMPLE),
+                    $this->getProduct(45, Product::TYPE_SIMPLE),
+                    $this->getProduct(46, Product::TYPE_SIMPLE)
                 ],
-                new ArrayCollection(
-                    [
-                        $this->getEntity(LineItem::class, ['id' => 38]),
-                        $this->getEntity(LineItem::class, ['id' => 39]),
-                        $this->getEntity(LineItem::class, ['id' => 40])
-                    ]
-                )
+                new ArrayCollection([
+                    $this->getLineItem(38),
+                    $this->getLineItem(39),
+                    $this->getLineItem(40)
+                ])
             ]
         ];
-    }
-
-    public function testGetForCurrentUser()
-    {
-        $shoppingList = $this->manager->getForCurrentUser();
-        $this->assertInstanceOf('Oro\Bundle\ShoppingListBundle\Entity\ShoppingList', $shoppingList);
-    }
-
-    public function testGetForCurrentUserGuestShoppingList()
-    {
-        $this->guestShoppingListManager->expects($this->once())
-            ->method('isGuestShoppingListAvailable')
-            ->willReturn(true);
-
-        $guestShoppingList = $this->getEntity(ShoppingList::class, ['id' => 31]);
-        $this->guestShoppingListManager->expects($this->once())
-            ->method('createAndGetShoppingListForCustomerVisitor')
-            ->willReturn($guestShoppingList);
-
-        $this->assertSame($guestShoppingList, $this->manager->getForCurrentUser());
-    }
-
-    public function testGetForCurrentUserWithShoppingListIdShoppingListExists()
-    {
-        $this->guestShoppingListManager->expects($this->once())
-            ->method('isGuestShoppingListAvailable')
-            ->willReturn(false);
-
-        $existingShoppingList = $this->getEntity(ShoppingList::class, ['id' => 35]);
-
-        $this->shoppingListRepository->expects($this->once())
-            ->method('findByUserAndId')
-            ->with($this->aclHelper, 35, null)
-            ->willReturn($existingShoppingList);
-
-        $this->assertSame($existingShoppingList, $this->manager->getForCurrentUser(35));
-    }
-
-    public function testGetForCurrentUserWithShoppingListIdShoppingListDoesntExist()
-    {
-        $customerUser = (new CustomerUser())
-            ->setOrganization(new Organization())
-            ->setCustomer(new Customer());
-
-        $websiteManager = $this->getWebsiteManager();
-
-        $manager = new ShoppingListManager(
-            $this->registry,
-            $this->getTokenStorage($customerUser),
-            $this->getTranslator(),
-            $this->getRoundingService(),
-            $this->getUserCurrencyManager(),
-            $websiteManager,
-            $this->getShoppingListTotalManager(),
-            $this->aclHelper,
-            $this->cache,
-            $this->productVariantProvider
-        );
-        $manager->setGuestShoppingListManager($this->guestShoppingListManager);
-
-        $this->guestShoppingListManager->expects($this->exactly(2))
-            ->method('isGuestShoppingListAvailable')
-            ->willReturn(false);
-
-        $this->shoppingListRepository->expects($this->once())
-            ->method('findByUserAndId')
-            ->with($this->aclHelper, 35, null)
-            ->willReturn(null);
-
-        $newShoppingList = $this->getEntity(ShoppingList::class, [
-            'id' => null,
-            'website' => $websiteManager->getCurrentWebsite(),
-            'current' => true,
-            'customerUser' => $customerUser,
-            'customer' => new Customer(),
-            'organization' => new Organization(),
-        ]);
-
-        $this->assertEquals($newShoppingList, $manager->getForCurrentUser(35));
-    }
-
-    public function testGetForCurrentUserNoShoppingListId()
-    {
-        $customerUser = (new CustomerUser())
-            ->setOrganization(new Organization())
-            ->setCustomer(new Customer());
-
-        $websiteManager = $this->getWebsiteManager();
-
-        $manager = new ShoppingListManager(
-            $this->registry,
-            $this->getTokenStorage($customerUser),
-            $this->getTranslator(),
-            $this->getRoundingService(),
-            $this->getUserCurrencyManager(),
-            $websiteManager,
-            $this->getShoppingListTotalManager(),
-            $this->aclHelper,
-            $this->cache,
-            $this->productVariantProvider
-        );
-        $manager->setGuestShoppingListManager($this->guestShoppingListManager);
-
-        $this->guestShoppingListManager->expects($this->exactly(2))
-            ->method('isGuestShoppingListAvailable')
-            ->willReturn(false);
-
-        $this->shoppingListRepository->expects($this->never())
-            ->method('findByUserAndId');
-
-        $newShoppingList = $this->getEntity(ShoppingList::class, [
-            'id' => null,
-            'website' => $websiteManager->getCurrentWebsite(),
-            'current' => true,
-            'customerUser' => $customerUser,
-            'customer' => new Customer(),
-            'organization' => new Organization(),
-        ]);
-
-        $this->assertEquals($newShoppingList, $manager->getForCurrentUser());
-    }
-
-    public function testGetCurrentGuestShoppingListCreate()
-    {
-        $this->guestShoppingListManager->expects($this->once())
-            ->method('isGuestShoppingListAvailable')
-            ->willReturn(true);
-
-        $newShoppingList = $this->getEntity(ShoppingList::class, [
-            'id' => 31,
-            'label' => 'Default Shopping List Label'
-        ]);
-        $this->guestShoppingListManager->expects($this->once())
-            ->method('createAndGetShoppingListForCustomerVisitor')
-            ->willReturn($newShoppingList);
-
-        $this->guestShoppingListManager->expects($this->never())
-            ->method('getShoppingListForCustomerVisitor');
-
-        $this->shoppingListRepository->expects($this->never())
-            ->method('findByUserAndId');
-
-        $this->shoppingListRepository->expects($this->never())
-            ->method('findAvailableForCustomerUser');
-
-        $this->assertSame(
-            $newShoppingList,
-            $this->manager->getCurrent($create = true, $label = 'New Shopping List Label')
-        );
-    }
-
-    public function testGetCurrentGuestShoppingListDontCreate()
-    {
-        $this->guestShoppingListManager->expects($this->once())
-            ->method('isGuestShoppingListAvailable')
-            ->willReturn(true);
-
-        $existingShoppingList = $this->getEntity(ShoppingList::class, [
-            'id' => 31,
-            'label' => 'Existing Shopping List Label'
-        ]);
-        $this->guestShoppingListManager->expects($this->once())
-            ->method('getShoppingListForCustomerVisitor')
-            ->willReturn($existingShoppingList);
-
-        $this->guestShoppingListManager->expects($this->never())
-            ->method('createAndGetShoppingListForCustomerVisitor');
-
-        $this->shoppingListRepository->expects($this->never())
-            ->method('findByUserAndId');
-
-        $this->shoppingListRepository->expects($this->never())
-            ->method('findAvailableForCustomerUser');
-
-        $this->assertSame(
-            $existingShoppingList,
-            $this->manager->getCurrent()
-        );
-    }
-
-    public function testGetCurrentGuestShoppingListDontCreateNoExistingShoppingList()
-    {
-        $this->guestShoppingListManager->expects($this->once())
-            ->method('isGuestShoppingListAvailable')
-            ->willReturn(true);
-
-        $this->guestShoppingListManager->expects($this->once())
-            ->method('getShoppingListForCustomerVisitor')
-            ->willReturn(null);
-
-        $this->guestShoppingListManager->expects($this->never())
-            ->method('createAndGetShoppingListForCustomerVisitor');
-
-        $this->shoppingListRepository->expects($this->never())
-            ->method('findByUserAndId');
-
-        $this->shoppingListRepository->expects($this->never())
-            ->method('findAvailableForCustomerUser');
-
-        $this->assertNull($this->manager->getCurrent());
-    }
-
-    public function testGetCurrentNoGuestShoppingListNoCustomerUser()
-    {
-        $websiteManager = $this->getWebsiteManager();
-
-        $manager = new ShoppingListManager(
-            $this->registry,
-            $this->getTokenStorage(null),
-            $this->getTranslator(),
-            $this->getRoundingService(),
-            $this->getUserCurrencyManager(),
-            $websiteManager,
-            $this->getShoppingListTotalManager(),
-            $this->aclHelper,
-            $this->cache,
-            $this->productVariantProvider
-        );
-        $manager->setGuestShoppingListManager($this->guestShoppingListManager);
-
-        $this->guestShoppingListManager->expects($this->once())
-            ->method('isGuestShoppingListAvailable')
-            ->willReturn(false);
-
-        $this->guestShoppingListManager->expects($this->never())
-            ->method('getShoppingListForCustomerVisitor');
-
-        $this->guestShoppingListManager->expects($this->never())
-            ->method('createAndGetShoppingListForCustomerVisitor');
-
-        $this->shoppingListRepository->expects($this->never())
-            ->method('findByUserAndId');
-
-        $this->shoppingListRepository->expects($this->never())
-            ->method('findAvailableForCustomerUser');
-
-        $this->assertNull($manager->getCurrent());
-    }
-
-    public function testGetCurrentNoGuestShoppingList()
-    {
-        $this->guestShoppingListManager->expects($this->once())
-            ->method('isGuestShoppingListAvailable')
-            ->willReturn(false);
-
-        $this->guestShoppingListManager->expects($this->never())
-            ->method('getShoppingListForCustomerVisitor');
-
-        $this->guestShoppingListManager->expects($this->never())
-            ->method('createAndGetShoppingListForCustomerVisitor');
-
-        $existingShoppingList = $this->getEntity(ShoppingList::class, [
-            'id' => 31,
-            'label' => 'Existing Shopping List Label'
-        ]);
-
-        $this->shoppingListRepository->expects($this->never())
-            ->method('findByUserAndId');
-
-        $this->shoppingListRepository->expects($this->once())
-            ->method('findAvailableForCustomerUser')
-            ->willReturn($existingShoppingList);
-
-        $this->assertSame($existingShoppingList, $this->manager->getCurrent());
-    }
-
-    public function testGetCurrentNoGuestShoppingListWithCreateWithExistingShoppingList()
-    {
-        $this->guestShoppingListManager->expects($this->once())
-            ->method('isGuestShoppingListAvailable')
-            ->willReturn(false);
-
-        $this->guestShoppingListManager->expects($this->never())
-            ->method('getShoppingListForCustomerVisitor');
-
-        $this->guestShoppingListManager->expects($this->never())
-            ->method('createAndGetShoppingListForCustomerVisitor');
-
-        $existingShoppingList = $this->getEntity(ShoppingList::class, [
-            'id' => 31,
-            'label' => 'Existing Shopping List Label'
-        ]);
-
-        $this->cache->expects($this->once())
-            ->method('fetch')
-            ->willReturn(13);
-
-        $this->shoppingListRepository->expects($this->once())
-            ->method('findByUserAndId')
-            ->with($this->aclHelper, 13, null)
-            ->willReturn($existingShoppingList);
-
-        $this->shoppingListRepository->expects($this->never())
-            ->method('findAvailableForCustomerUser');
-
-        $this->assertSame(
-            $existingShoppingList,
-            $this->manager->getCurrent($create = true, $label = 'New Shopping List Label')
-        );
-    }
-
-    public function testGetCurrentNoGuestShoppingListWithCreateWithAvailableShoppingList()
-    {
-        $this->guestShoppingListManager->expects($this->once())
-            ->method('isGuestShoppingListAvailable')
-            ->willReturn(false);
-
-        $this->guestShoppingListManager->expects($this->never())
-            ->method('getShoppingListForCustomerVisitor');
-
-        $this->guestShoppingListManager->expects($this->never())
-            ->method('createAndGetShoppingListForCustomerVisitor');
-
-        $existingShoppingList = $this->getEntity(ShoppingList::class, [
-            'id' => 31,
-            'label' => 'Existing Shopping List Label'
-        ]);
-
-        $this->shoppingListRepository->expects($this->never())
-            ->method('findByUserAndId');
-
-        $this->shoppingListRepository->expects($this->once())
-            ->method('findAvailableForCustomerUser')
-            ->willReturn($existingShoppingList);
-
-        $this->assertSame(
-            $existingShoppingList,
-            $this->manager->getCurrent($create = true, $label = 'New Shopping List Label')
-        );
-    }
-
-    public function testGetCurrentNoGuestShoppingListWithCreateWithoutExistingShoppingList()
-    {
-        $customerUser = (new CustomerUser())
-            ->setOrganization(new Organization())
-            ->setCustomer(new Customer());
-
-        $websiteManager = $this->getWebsiteManager();
-
-        $manager = new ShoppingListManager(
-            $this->registry,
-            $this->getTokenStorage($customerUser),
-            $this->getTranslator(),
-            $this->getRoundingService(),
-            $this->getUserCurrencyManager(),
-            $websiteManager,
-            $this->getShoppingListTotalManager(),
-            $this->aclHelper,
-            $this->cache,
-            $this->productVariantProvider
-        );
-        $manager->setGuestShoppingListManager($this->guestShoppingListManager);
-
-        $this->guestShoppingListManager->expects($this->once())
-            ->method('isGuestShoppingListAvailable')
-            ->willReturn(false);
-
-        $this->guestShoppingListManager->expects($this->never())
-            ->method('getShoppingListForCustomerVisitor');
-
-        $this->guestShoppingListManager->expects($this->never())
-            ->method('createAndGetShoppingListForCustomerVisitor');
-
-        $newShoppingList = $this->getEntity(ShoppingList::class, [
-            'id' => null,
-            'website' => $websiteManager->getCurrentWebsite(),
-            'current' => true,
-            'customerUser' => $customerUser,
-            'customer' => new Customer(),
-            'organization' => new Organization(),
-        ]);
-
-        $this->shoppingListRepository->expects($this->never())
-            ->method('findByUserAndId');
-
-        $this->shoppingListRepository->expects($this->once())
-            ->method('findAvailableForCustomerUser')
-            ->willReturn(null);
-
-        $this->assertEquals(
-            $newShoppingList,
-            $manager->getCurrent($create = true, $label = 'New Shopping List Label')
-        );
     }
 
     public function testBulkAddLineItems()
@@ -837,7 +490,7 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         }
 
         $this->manager->bulkAddLineItems($lineItems, $shoppingList, 10);
-        $this->assertEquals(10, $shoppingList->getLineItems()->count());
+        $this->assertCount(10, $shoppingList->getLineItems());
     }
 
     public function testBulkAddLineItemsWithEmptyLineItems()
@@ -845,377 +498,30 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(0, $this->manager->bulkAddLineItems([], new ShoppingList(), 10));
     }
 
-    /**
-     * @dataProvider getShoppingListsDataProvider
-     *
-     * @param array $shoppingLists
-     * @param array $expectedResult
-     */
-    public function testGetShoppingListsGuestShoppingListExists($shoppingLists, $expectedResult)
+    public function testEdit()
     {
-        $this->guestShoppingListManager->expects($this->once())
-            ->method('isGuestShoppingListAvailable')
-            ->willReturn(true);
+        $label = 'test label';
 
-        $this->guestShoppingListManager->expects($this->once())
-            ->method('getShoppingListsForCustomerVisitor')
-            ->willReturn($shoppingLists);
-
-        $this->assertEquals($expectedResult, $this->manager->getShoppingLists());
-    }
-
-    /**
-     * @return array
-     */
-    public function getShoppingListsDataProvider()
-    {
-        $existingShoppingList = $this->getEntity(ShoppingList::class, [
-            'id' => 31,
-            'label' => 'Existing Shopping List Label'
-        ]);
-
-        return [
-            'shopping list exists'=> [
-                'shoppingLists' => [$existingShoppingList],
-                'expectedResults' => [$existingShoppingList]
-            ],
-            'shopping list doesnt exist'=> [
-                'shoppingLists' => [],
-                'expectedResults' => []
-            ]
-        ];
-    }
-
-    public function testGetShoppingListsRegisteredUser()
-    {
-        $this->guestShoppingListManager->expects($this->once())
-            ->method('isGuestShoppingListAvailable')
-            ->willReturn(false);
-
-        $this->guestShoppingListManager->expects($this->never())
-            ->method('getShoppingListForCustomerVisitor');
-
-        $user = new CustomerUser();
-
-        $shoppingList1 = $this->getShoppingList(10, false);
-        $shoppingList2 = $this->getShoppingList(20, false);
-        $shoppingList3 = $this->getShoppingList(30, true);
-
-        /* @var $repository ShoppingListRepository|\PHPUnit\Framework\MockObject\MockObject */
-        $repository = $this->getMockBuilder('Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $repository->expects($this->once())
-            ->method('findByUser')
-            ->with($this->aclHelper)
-            ->willReturn([$shoppingList3, $shoppingList1, $shoppingList2]);
-
-        /* @var $entityManager EntityManager|\PHPUnit\Framework\MockObject\MockObject */
-        $entityManager = $this->getMockBuilder('Doctrine\ORM\EntityManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $entityManager->expects($this->any())
-            ->method('getRepository')
-            ->willReturn($repository);
-
-        /* @var $registry ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
-        $registry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
-        $registry->expects($this->once())
-            ->method('getManagerForClass')
-            ->willReturn($entityManager);
-
-        $manager = new ShoppingListManager(
-            $registry,
-            $this->getTokenStorage($user),
-            $this->getTranslator(),
-            $this->getRoundingService(),
-            $this->getUserCurrencyManager(),
-            $this->getWebsiteManager(),
-            $this->getShoppingListTotalManager(),
-            $this->aclHelper,
-            $this->cache,
-            $this->productVariantProvider
-        );
-        $manager->setGuestShoppingListManager($this->guestShoppingListManager);
-
-        $this->assertEquals(
-            [$shoppingList3, $shoppingList1, $shoppingList2],
-            $manager->getShoppingLists()
-        );
-    }
-
-    /**
-     * @dataProvider getShoppingListsDataProvider
-     *
-     * @param array $shoppingLists
-     * @param array $expectedResult
-     */
-    public function testGetShoppingListsWithCurrentFirst($shoppingLists, $expectedResult)
-    {
-        $this->guestShoppingListManager->expects($this->once())
-            ->method('isGuestShoppingListAvailable')
-            ->willReturn(true);
-
-        $this->guestShoppingListManager->expects($this->once())
-            ->method('getShoppingListsForCustomerVisitor')
-            ->willReturn($shoppingLists);
-
-        $this->assertEquals($expectedResult, $this->manager->getShoppingListsWithCurrentFirst());
-    }
-
-    /**
-     * @return array
-     */
-    public function getShoppingListsWithCurrentFirstDataProvider()
-    {
-        $existingShoppingList = $this->getEntity(ShoppingList::class, [
-            'id' => 31,
-            'label' => 'Existing Shopping List Label'
-        ]);
-
-        return [
-            'shopping list exists'=> [
-                'shoppingLists' => [$existingShoppingList],
-                'expectedResults' => [$existingShoppingList]
-            ],
-            'shopping list doesnt exist'=> [
-                'shoppingLists' => [],
-                'expectedResults' => []
-            ]
-        ];
-    }
-
-    public function testGetShoppingListsWithCurrentFirstRegisteredNoCurrentShoppingList()
-    {
-        $this->guestShoppingListManager->expects($this->exactly(2))
-            ->method('isGuestShoppingListAvailable')
-            ->willReturn(false);
-
-        $this->guestShoppingListManager->expects($this->never())
-            ->method('getShoppingListForCustomerVisitor');
-
-        $this->shoppingListRepository->expects($this->once())
-            ->method('findAvailableForCustomerUser')
-            ->willReturn(null);
-
-        $this->assertEquals([], $this->manager->getShoppingListsWithCurrentFirst());
-    }
-
-    public function testGetShoppingListsWithCurrentFirstRegisteredCurrentShoppingListExists()
-    {
-        $this->guestShoppingListManager->expects($this->exactly(2))
-            ->method('isGuestShoppingListAvailable')
-            ->willReturn(false);
-
-        $this->guestShoppingListManager->expects($this->never())
-            ->method('getShoppingListForCustomerVisitor');
-
-        $currentShoppingList = $this->getEntity(ShoppingList::class, ['id' => 35]);
-        $shoppingList1 = $this->getEntity(ShoppingList::class, ['id' => 21]);
-        $shoppingList2 = $this->getEntity(ShoppingList::class, ['id' => 22]);
-
-        $this->shoppingListRepository->expects($this->once())
-            ->method('findAvailableForCustomerUser')
-            ->willReturn($currentShoppingList);
-
-        $this->shoppingListRepository->expects($this->once())
-            ->method('findByUser')
-            ->willReturn([$shoppingList2, $currentShoppingList, $shoppingList1]);
-
-        $this->assertEquals(
-            [$currentShoppingList, $shoppingList2, $shoppingList1],
-            $this->manager->getShoppingListsWithCurrentFirst()
-        );
-    }
-
-    /**
-     * @param CustomerUser|null $customerUser
-     * @return \PHPUnit\Framework\MockObject\MockObject|TokenStorageInterface
-     */
-    protected function getTokenStorage(CustomerUser $customerUser = null)
-    {
-        /** @var \PHPUnit\Framework\MockObject\MockObject|TokenInterface $securityToken */
-        $this->securityToken = $this->createMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
-        $this->securityToken->expects($this->any())
+        $customerUser = new CustomerUser();
+        $customerUser->setCustomer(new Customer());
+        $customerUser->setOrganization(new Organization());
+        $this->tokenAccessor->expects($this->once())
             ->method('getUser')
             ->willReturn($customerUser);
 
-        /** @var \PHPUnit\Framework\MockObject\MockObject|TokenStorageInterface $tokenStorage */
-        $tokenStorage = $this
-            ->createMock('Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface');
-        $tokenStorage->expects($this->any())
-            ->method('getToken')
-            ->willReturn($this->securityToken);
-
-        return $tokenStorage;
-    }
-
-    /**
-     * @return \PHPUnit\Framework\MockObject\MockObject|TranslatorInterface
-     */
-    protected function getTranslator()
-    {
-        return $this->createMock('Symfony\Component\Translation\TranslatorInterface');
-    }
-
-    /**
-     * @return \PHPUnit\Framework\MockObject\MockObject|QuantityRoundingService
-     */
-    protected function getRoundingService()
-    {
-        /** @var \PHPUnit\Framework\MockObject\MockObject|QuantityRoundingService $roundingService */
-        $roundingService = $this->getMockBuilder('Oro\Bundle\ProductBundle\Rounding\QuantityRoundingService')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $roundingService->expects($this->any())
-            ->method('roundQuantity')
-            ->will(
-                $this->returnCallback(
-                    function ($value) {
-                        return round($value, 0, PHP_ROUND_HALF_UP);
-                    }
-                )
-            );
-
-        return $roundingService;
-    }
-
-    /**
-     * @return \PHPUnit\Framework\MockObject\MockObject|ManagerRegistry
-     */
-    protected function getManagerRegistry()
-    {
-        $this->shoppingListRepository = $this
-            ->getMockBuilder('Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        /** @var \PHPUnit\Framework\MockObject\MockObject|LineItemRepository $lineItemRepository */
-        $lineItemRepository = $this
-            ->getMockBuilder('Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $lineItemRepository
-            ->expects($this->any())
-            ->method('findDuplicate')
-            ->willReturnCallback(function (LineItem $lineItem) {
-                /** @var ArrayCollection $shoppingListLineItems */
-                $shoppingListLineItems = $lineItem->getShoppingList()->getLineItems();
-                if ($lineItem->getShoppingList()->getId() === 1
-                    && $shoppingListLineItems->count() > 0
-                    && $shoppingListLineItems->current()->getUnit() === $lineItem->getUnit()
-                ) {
-                    return $lineItem->getShoppingList()->getLineItems()->current();
-                }
-
-                return null;
-            });
-
-        /** @var \PHPUnit\Framework\MockObject\MockObject|EntityManager $entityManager */
-        $entityManager = $this->getMockBuilder('Doctrine\ORM\EntityManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $entityManager->expects($this->any())
-            ->method('getRepository')
-            ->will($this->returnValueMap([
-                ['OroShoppingListBundle:ShoppingList', $this->shoppingListRepository],
-                ['OroShoppingListBundle:LineItem', $lineItemRepository]
-            ]));
-
-        $entityManager->expects($this->any())
-            ->method('persist')
-            ->willReturnCallback(function ($obj) {
-                if ($obj instanceof ShoppingList) {
-                    $this->shoppingLists[] = $obj;
-                }
-                if ($obj instanceof LineItem) {
-                    $this->lineItems[] = $obj;
-                }
-            });
-
-        /** @var \PHPUnit\Framework\MockObject\MockObject|ManagerRegistry $managerRegistry */
-        $managerRegistry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
-        $managerRegistry->expects($this->any())
-            ->method('getManagerForClass')
-            ->willReturn($entityManager);
-
-        return $managerRegistry;
-    }
-
-    /**
-     * @return \PHPUnit\Framework\MockObject\MockObject|ShoppingListTotalManager
-     */
-    protected function getShoppingListTotalManager()
-    {
-        return $this->getMockBuilder(ShoppingListTotalManager::class)
-                ->disableOriginalConstructor()
-                ->getMock();
-    }
-
-    /**
-     * @return \PHPUnit\Framework\MockObject\MockObject|UserCurrencyManager
-     */
-    protected function getUserCurrencyManager()
-    {
-        $userCurrencyManager = $this->getMockBuilder('Oro\Bundle\PricingBundle\Manager\UserCurrencyManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $userCurrencyManager->expects($this->any())
-            ->method('getUserCurrency')
-            ->willReturn(self::CURRENCY_EUR);
-
-        return $userCurrencyManager;
-    }
-
-    /**
-     * @return \PHPUnit\Framework\MockObject\MockObject|WebsiteManager
-     */
-    protected function getWebsiteManager()
-    {
-        $websiteManager = $this->createMock(WebsiteManager::class);
         $website = $this->createMock(Website::class);
-
-        $websiteManager->expects($this->any())
+        $this->websiteManager->expects($this->once())
             ->method('getCurrentWebsite')
             ->willReturn($website);
 
-        return $websiteManager;
-    }
-
-    /**
-     * @param int  $id
-     * @param bool $isCurrent
-     *
-     * @return ShoppingList
-     */
-    protected function getShoppingList($id, $isCurrent)
-    {
-        return $this->getEntity(
-            'Oro\Bundle\ShoppingListBundle\Entity\ShoppingList',
-            ['id' => $id, 'current' => $isCurrent]
-        );
-    }
-
-    /**
-     * @return \PHPUnit\Framework\MockObject\MockObject|AclHelper
-     */
-    protected function getAclHelperMock()
-    {
-        return $this->getMockBuilder('Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper')
-            ->disableOriginalConstructor()
-            ->getMock();
-    }
-
-    public function testEdit()
-    {
         $shoppingList = new ShoppingList();
 
-        $this->assertSame($shoppingList, $this->manager->edit($shoppingList));
+        $this->assertSame($shoppingList, $this->manager->edit($shoppingList, $label));
+        $this->assertEquals($label, $shoppingList->getLabel());
+        $this->assertSame($customerUser, $shoppingList->getCustomerUser());
+        $this->assertSame($customerUser->getCustomer(), $shoppingList->getCustomer());
+        $this->assertSame($customerUser->getOrganization(), $shoppingList->getOrganization());
+        $this->assertSame($website, $shoppingList->getWebsite());
     }
 
     public function testRemoveLineItems()
@@ -1225,37 +531,30 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         $this->manager->addLineItem($lineItem1, $shoppingList);
         $lineItem2 = new LineItem();
         $this->manager->addLineItem($lineItem2, $shoppingList);
-        $this->assertEquals(2, $shoppingList->getLineItems()->count());
+        $this->assertCount(2, $shoppingList->getLineItems());
 
         $this->totalManager->expects($this->once())
             ->method('recalculateTotals')
             ->with($shoppingList, false);
 
         $this->manager->removeLineItems($shoppingList);
-        $this->assertEquals(0, $shoppingList->getLineItems()->count());
+        $this->assertCount(0, $shoppingList->getLineItems());
     }
 
     public function testUpdateLineItem()
     {
         $lineItem = (new LineItem())
-            ->setUnit(
-                (new ProductUnit())
-                    ->setCode('test')
-                    ->setDefaultPrecision(1)
-            )
+            ->setUnit($this->getProductUnit('test', 1))
             ->setQuantity(10);
 
-        /** @var ShoppingList $shoppingList */
-        $shoppingList = $this->getEntity(ShoppingList::class, [
-            'id' => 1,
-            'lineItems' => [$lineItem]
-        ]);
+        $shoppingList = $this->getShoppingList(1);
+        $shoppingList->addLineItem($lineItem);
 
         $lineItemDuplicate = clone $lineItem;
         $lineItemDuplicate->setQuantity(5);
         $this->manager->updateLineItem($lineItemDuplicate, $shoppingList);
 
-        $this->assertEquals(1, $shoppingList->getLineItems()->count());
+        $this->assertCount(1, $shoppingList->getLineItems());
         /** @var LineItem $resultingItem */
         $resultingItem = $shoppingList->getLineItems()->first();
         $this->assertEquals(5, $resultingItem->getQuantity());
@@ -1264,18 +563,11 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
     public function testUpdateAndRemoveLineItem()
     {
         $lineItem = (new LineItem())
-            ->setUnit(
-                (new ProductUnit())
-                    ->setCode('test')
-                    ->setDefaultPrecision(1)
-            )
+            ->setUnit($this->getProductUnit('test', 1))
             ->setQuantity(10);
 
-        /** @var ShoppingList $shoppingList */
-        $shoppingList = $this->getEntity(ShoppingList::class, [
-            'id' => 1,
-            'lineItems' => [$lineItem]
-        ]);
+        $shoppingList = $this->getShoppingList(1);
+        $shoppingList->addLineItem($lineItem);
 
         $lineItemDuplicate = clone $lineItem;
         $lineItemDuplicate->setQuantity(0);
