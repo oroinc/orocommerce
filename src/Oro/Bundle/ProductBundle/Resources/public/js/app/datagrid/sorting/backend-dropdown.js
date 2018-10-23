@@ -18,6 +18,9 @@ define(function(require) {
         hasSortingOrderButton: false,
 
         /** @property */
+        inlineSortingLabel: true,
+
+        /** @property */
         className: '',
 
         /**
@@ -29,9 +32,6 @@ define(function(require) {
 
         /** @property */
         dropdownClassName: 'oro-select2__dropdown',
-
-        /** @property */
-        template: require('tpl!oroproduct/templates/datagrid/sorting-dropdown.html'),
 
         /** @property */
         themeOptions: {

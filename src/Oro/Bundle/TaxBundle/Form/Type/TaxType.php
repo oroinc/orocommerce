@@ -9,9 +9,21 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for Tax entity
+ */
 class TaxType extends AbstractType
 {
     const NAME = 'oro_tax_type';
+
+    /**
+     * This value is set to be slightly more than TaxationSettingsProvider::CALCULATION_SCALE.
+     * We need to set the precision explicitly because the default precision is lower than CALCULATION_SCALE.
+     * We also want the precision to be slightly higher than CALCULATION_SCALE because user input in the form
+     * is trimmed to this precision after validation, and we don't want the user to loose their input data
+     * (at least not all of it)
+     */
+    const TAX_RATE_FIELD_PRECISION = 8;
 
     /**
      * @var string
@@ -42,7 +54,8 @@ class TaxType extends AbstractType
             ])
             ->add('rate', OroPercentType::class, [
                 'label' => 'oro.tax.rate.label',
-                'required' => true
+                'required' => true,
+                'scale' => self::TAX_RATE_FIELD_PRECISION,
             ]);
     }
 

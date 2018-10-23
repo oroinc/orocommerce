@@ -14,7 +14,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Layout\DataProvider\ProductFormAvailabilityProvider;
 use Oro\Bundle\ShoppingListBundle\Layout\DataProvider\MatrixGridOrderFormProvider;
 use Oro\Bundle\ShoppingListBundle\Layout\DataProvider\MatrixGridOrderProvider;
-use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
+use Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListManager;
 
 /**
  * This extension adds data, that is required to build a matrix form, into a product search grid at frontend
@@ -29,8 +29,8 @@ class FrontendMatrixProductGridExtension extends AbstractExtension
     /** @var DoctrineHelper */
     private $doctrineHelper;
 
-    /** @var ShoppingListManager */
-    private $shoppingListManager;
+    /** @var CurrentShoppingListManager */
+    private $currentShoppingListManager;
 
     /** @var MatrixGridOrderFormProvider */
     private $matrixGridOrderFormProvider;
@@ -49,7 +49,7 @@ class FrontendMatrixProductGridExtension extends AbstractExtension
 
     /**
      * @param DoctrineHelper $doctrineHelper
-     * @param ShoppingListManager $shoppingListManager
+     * @param CurrentShoppingListManager $currentShoppingListManager
      * @param MatrixGridOrderFormProvider $matrixGridOrderFormProvider
      * @param ProductFormAvailabilityProvider $productFormAvailabilityProvider
      * @param FrontendProductPricesProvider $frontendProductPricesProvider
@@ -58,7 +58,7 @@ class FrontendMatrixProductGridExtension extends AbstractExtension
      */
     public function __construct(
         DoctrineHelper $doctrineHelper,
-        ShoppingListManager $shoppingListManager,
+        CurrentShoppingListManager $currentShoppingListManager,
         MatrixGridOrderFormProvider $matrixGridOrderFormProvider,
         ProductFormAvailabilityProvider $productFormAvailabilityProvider,
         FrontendProductPricesProvider $frontendProductPricesProvider,
@@ -66,7 +66,7 @@ class FrontendMatrixProductGridExtension extends AbstractExtension
         DataGridThemeHelper $dataGridThemeHelper
     ) {
         $this->doctrineHelper = $doctrineHelper;
-        $this->shoppingListManager = $shoppingListManager;
+        $this->currentShoppingListManager = $currentShoppingListManager;
         $this->matrixGridOrderFormProvider = $matrixGridOrderFormProvider;
         $this->productFormAvailabilityProvider = $productFormAvailabilityProvider;
         $this->frontendProductPricesProvider = $frontendProductPricesProvider;
@@ -102,7 +102,7 @@ class FrontendMatrixProductGridExtension extends AbstractExtension
         /** @var ResultRecord[] $rows */
         $rows = $result->getData();
         $productRepository = $this->doctrineHelper->getEntityRepositoryForClass(Product::class);
-        $shoppingList = $this->shoppingListManager->getCurrent();
+        $shoppingList = $this->currentShoppingListManager->getCurrent();
 
         foreach ($rows as $row) {
             $productId = $row->getValue('id');
@@ -128,8 +128,8 @@ class FrontendMatrixProductGridExtension extends AbstractExtension
                     $matrixFormData['form'] = $formHtml;
 
                     $form = $this->matrixGridOrderFormProvider->getMatrixOrderFormView($product, $shoppingList);
-                    $matrixFormData['rows'][] = count($form['rows']);
-                    $matrixFormData['rows'][] = count($form['rows'][0]['columns']);
+                    $matrixFormData['rows'][] = count($form['rows'] ?: []);
+                    $matrixFormData['rows'][] = count($form['rows'][0]['columns'] ?: []);
                 }
 
                 $row->setValue(

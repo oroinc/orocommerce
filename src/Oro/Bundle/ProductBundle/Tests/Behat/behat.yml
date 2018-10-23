@@ -59,6 +59,26 @@ oro_behat_extension:
       selector: 'div[data-page-component-name="products-related-products-view"]'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
 
+    RelatedProductsViewGridFilters:
+      selector: 'div[data-page-component-name="products-related-products-view"] div.filter-box'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilters
+
+    RelatedProductsViewGridToolbarActions:
+      selector: 'div[data-page-component-name="products-related-products-view"] div.toolbar div.actions-panel'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridToolbarActions
+
+    RelatedProductsViewGridFiltersState:
+      selector: 'div[data-page-component-name="products-related-products-view"] div.filters-state'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+
+    RelatedProductsViewGridFilterItem:
+      selector: 'div[data-page-component-name="products-related-products-view"] div.filter-item'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilterItem
+
+    RelatedProductsViewGridFilterStringItem:
+      selector: 'div[data-page-component-name="products-related-products-view"] div.filter-item'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilterStringItem
+
     SelectRelatedProductsGridFilters:
       selector: 'div[data-page-component-name="products-related-products-select"] div.filter-box'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilters
@@ -379,7 +399,7 @@ oro_behat_extension:
         locator: '//li[@data-criteria="condition-item" and contains(., "Field Condition")]'
 
     Drop condition here:
-      selector: ".right-area"
+      selector: ".condition-container"
 
     Choose a field..:
       selector: "#select2-drop-mask"
@@ -468,7 +488,7 @@ oro_behat_extension:
             element: Select2Entity
 
     RemoveFilterButton:
-      selector: '.conditions-group .condition a.close'
+      selector: '.conditions-group .condition .btn-close'
 
     Page Templates Form:
       selector: 'form[name="theme"]'
@@ -518,7 +538,7 @@ oro_behat_extension:
       selector: '.datagrid-massaction button.dropdown-toggle'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
-    ProductFrontendGridFloatingMenu:
+    ProductFrontendGridMassActionMenu:
       selector: '.datagrid-massaction__dropdown-menu'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
@@ -587,7 +607,7 @@ oro_behat_extension:
 
     Product Shopping List Dropdown:
       selector:
-        locator: '//form[@name="oro_product_frontend_line_item"]//ul[@class="dropdown-menu"]'
+        locator: '//form[@name="oro_product_frontend_line_item"]//ul[contains(@class,"dropdown-menu")]'
         type: 'xpath'
 
     Request A Quote Button:
@@ -831,6 +851,7 @@ oro_behat_extension:
 
     Frontend Product Grid Sorter:
       selector: 'div.datagrid-tool div[data-grid-sorting] select'
+      class: Oro\Bundle\FormBundle\Tests\Behat\Element\Select
 
     Shirt_101 Matrix Grid Order Form:
       selector: 'form[name="matrix_collection"]'
@@ -896,6 +917,7 @@ oro_behat_extension:
       contexts:
         - OroApplicationBundle::CommerceMainContext
         - OroDataGridBundle::GridContext
+        - OroCustomerBundle::FrontendGridContext
         - OroEmailBundle::EmailContext
         - OroFormBundle::FormContext
         - OroProductBundle::FeatureContext

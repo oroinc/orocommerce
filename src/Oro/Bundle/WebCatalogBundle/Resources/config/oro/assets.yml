@@ -1,4 +1,4 @@
 assets:
     css:
         'orocms':
-            - 'bundles/orowebcatalog/css/scss/styles.scss'
+            - 'bundles/orowebcatalog/css/scss/main.scss'

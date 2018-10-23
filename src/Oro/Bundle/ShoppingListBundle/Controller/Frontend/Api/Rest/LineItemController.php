@@ -15,6 +15,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
+ * Controller for shopping list line item REST API requests.
  * @NamePrefix("oro_api_shopping_list_frontend_")
  */
 class LineItemController extends RestController implements ClassResourceInterface
@@ -41,7 +42,7 @@ class LineItemController extends RestController implements ClassResourceInterfac
 
         $view = $this->view(null, Codes::HTTP_NO_CONTENT);
         if ($lineItem) {
-            $this->get('oro_shopping_list.shopping_list.manager')->removeLineItem($lineItem);
+            $this->get('oro_shopping_list.manager.shopping_list')->removeLineItem($lineItem);
             $success = true;
         }
 
@@ -72,7 +73,8 @@ class LineItemController extends RestController implements ClassResourceInterfac
                 $form,
                 $request,
                 $this->getDoctrine(),
-                $this->get('oro_shopping_list.shopping_list.manager')
+                $this->get('oro_shopping_list.manager.shopping_list'),
+                $this->get('oro_shopping_list.manager.current_shopping_list')
             );
             $isFormHandled = $handler->process($entity);
             if ($isFormHandled) {

@@ -9,6 +9,8 @@ use Oro\Bundle\TaxBundle\Model\Address;
 use Oro\Bundle\TaxBundle\Model\TaxBaseExclusion;
 
 /**
+ * Provides tax related option values
+ *
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
@@ -31,7 +33,8 @@ class TaxationSettingsProvider
     /**
      * For scale = 2 we use 3rd number to scale and fourth position to divide
      */
-    const CALCULATION_SCALE = 4;
+    const CALCULATION_SCALE = 6;
+    const CALCULATION_SCALE_AS_PERCENT = self::CALCULATION_SCALE - 2;
 
     /**
      * @var ConfigManager
