@@ -88,7 +88,7 @@ class PriceListRequestHandler implements PriceListRequestHandlerInterface
 
         $session = $request->getSession();
         if ($session && null === $currencies && $session->has(self::PRICE_LIST_CURRENCY_KEY)) {
-            $currencies = (array)$session->get(self::PRICE_LIST_CURRENCY_KEY);
+            $currencies = $session->get(self::PRICE_LIST_CURRENCY_KEY, []);
         }
 
         if (null === $currencies || filter_var($currencies, FILTER_VALIDATE_BOOLEAN)) {
