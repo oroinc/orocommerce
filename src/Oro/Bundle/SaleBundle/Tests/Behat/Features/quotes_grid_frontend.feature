@@ -342,6 +342,7 @@ Feature: Quotes Grid Frontend
     Then I should see following grid with exact columns order:
       | Quote # | PO Number | DNSLT |
       | Quote1  | PO1       |       |
+    And I reload the page
     When I switch to "gridview1" grid view in "AllQuotes" frontend grid
     Then I should see following grid with exact columns order:
       | Quote # | Owner       |
