@@ -143,7 +143,7 @@ class ShoppingListManager
             if ($lineItem->getQuantity() > 0) {
                 $this->updateLineItemQuantity($lineItem, $duplicate);
             } else {
-                $this->removeLineItem($duplicate);
+                $this->removeLineItem($duplicate, true);
             }
         };
 
@@ -208,13 +208,15 @@ class ShoppingListManager
      * line items of the product from the given line item.
      *
      * @param LineItem $lineItem
+     * @param bool     $removeOnlyCurrentItem
      *
      * @return int Number of deleted line items
      */
-    public function removeLineItem(LineItem $lineItem): int
+    public function removeLineItem(LineItem $lineItem, bool $removeOnlyCurrentItem = false): int
     {
         $parentProduct = $lineItem->getParentProduct();
-        if (!$parentProduct
+        if ($removeOnlyCurrentItem
+            || !$parentProduct
             || $this->getAvailableMatrixFormType($parentProduct, $lineItem) === Configuration::MATRIX_FORM_NONE
         ) {
             $em = $this->getEntityManager();
