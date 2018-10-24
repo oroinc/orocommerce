@@ -171,19 +171,6 @@ class ProductRepository extends EntityRepository
     }
 
     /**
-     * @return QueryBuilder
-     *
-     * @deprecated Since 1.5 "name" is available as a column in product table
-     */
-    public function getProductWithNamesQueryBuilder()
-    {
-        $queryBuilder = $this->createQueryBuilder('product')
-            ->select('product');
-        $this->selectNames($queryBuilder);
-        return $queryBuilder;
-    }
-
-    /**
      * @param QueryBuilder $queryBuilder
      * @return $this
      *

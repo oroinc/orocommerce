@@ -15,13 +15,12 @@ class BooleanSearchableAttributeTypeTest extends SearchableAttributeTypeTestCase
         return BooleanSearchableAttributeType::class;
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Not supported
-     */
     public function testGetFilterStorageFieldType()
     {
-        $this->getSearchableAttributeType()->getFilterStorageFieldType();
+        $this->assertSame(
+            Query::TYPE_INTEGER,
+            $this->getSearchableAttributeType()->getFilterStorageFieldType()
+        );
     }
 
     public function testGetSorterStorageFieldType()
@@ -32,13 +31,12 @@ class BooleanSearchableAttributeTypeTest extends SearchableAttributeTypeTestCase
         );
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Not supported
-     */
     public function testGetFilterTypeException()
     {
-        $this->getSearchableAttributeType()->getFilterType();
+        $this->assertSame(
+            'boolean',
+            $this->getSearchableAttributeType()->getFilterType()
+        );
     }
 
     public function testIsLocalizable()
@@ -46,13 +44,12 @@ class BooleanSearchableAttributeTypeTest extends SearchableAttributeTypeTestCase
         $this->assertFalse($this->getSearchableAttributeType()->isLocalizable($this->attribute));
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Not supported
-     */
     public function testGetFilterableFieldNameException()
     {
-        $this->getSearchableAttributeType()->getFilterableFieldName($this->attribute);
+        $this->assertSame(
+            self::FIELD_NAME,
+            $this->getSearchableAttributeType()->getFilterableFieldName($this->attribute)
+        );
     }
 
     public function testGetSortableFieldName()

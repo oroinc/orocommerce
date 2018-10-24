@@ -7,6 +7,8 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\RelatedItem\RelatedItemEntityInterface;
 
 /**
+ * Representation of relations between related products
+ *
  * @ORM\Table(
  *     name="oro_product_related_products",
  *     indexes={
@@ -87,24 +89,5 @@ class RelatedProduct implements RelatedItemEntityInterface
         $this->relatedItem = $product;
 
         return $this;
-    }
-
-    /**
-     * @deprecated since 1.4 Use RelatedProduct::getRelatedItem() instead
-     * @return Product
-     */
-    public function getRelatedProduct()
-    {
-        return $this->getRelatedItem();
-    }
-
-    /**
-     * @deprecated since 1.4 Use RelatedProduct::setRelatedItem() instead
-     * @param Product $relatedProduct
-     * @return RelatedProduct
-     */
-    public function setRelatedProduct(Product $relatedProduct)
-    {
-        return $this->setRelatedItem($relatedProduct);
     }
 }

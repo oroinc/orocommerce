@@ -239,6 +239,16 @@ oro_behat_extension:
             type: 'css'
             locator: 'input[name="oro_product[ManyToOneField]"]'
             element: Select2Entity
+          ColorField: 'oro_product[ColorField]'
+          TagField:
+            type: 'css'
+            locator: 'input[name="oro_product[TagField]"]'
+            element: Select2Entity
+          MultiColor:
+            type: 'css'
+            locator: 'div[data-ftid="oro_product_MultiColor"]'
+            element: GroupChoiceField
+          BooleanAttr: 'oro_product[BooleanAttr]'
 
     RelatedProductsConfig:
       selector: 'form[name="related_items"]'
@@ -905,6 +915,10 @@ oro_behat_extension:
       selector:
         type: xpath
         locator: '//label[contains(., "SelectField")]/ancestor::td[contains(@class, "title-cell")]'
+
+    FrontendProductGridFilters:
+      selector: 'div[data-bound-component="oroproduct/js/app/datagrid/backend-datagrid-component"] div.filter-box'
+      class: Oro\Bundle\ProductBundle\Tests\Behat\Element\FrontendProductGridFilters
 
   pages:
     Product View:
