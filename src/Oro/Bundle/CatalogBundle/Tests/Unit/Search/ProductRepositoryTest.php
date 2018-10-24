@@ -62,6 +62,8 @@ class ProductRepositoryTest extends \PHPUnit\Framework\TestCase
         ];
 
         $query = new Query();
+        $query->getCriteria()->setMaxResults(1);
+
         $query->addAggregate('categoryCounts', 'text.category_path', Query::AGGREGATE_FUNCTION_COUNT);
         $this->createIndexer($query);
 

@@ -101,7 +101,7 @@ class AddRelatedProductTest extends CreateProcessorTestCase
     private function prepareContext()
     {
         $relatedProduct = new RelatedProduct();
-        $relatedProduct->setProduct(new Product())->setRelatedProduct(new Product());
+        $relatedProduct->setProduct(new Product())->setRelatedItem(new Product());
         $this->context->setResult($relatedProduct);
     }
 
