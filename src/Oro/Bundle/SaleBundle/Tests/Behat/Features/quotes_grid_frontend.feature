@@ -313,8 +313,8 @@ Feature: Quotes Grid Frontend
       | Quote13 | PO13      | Amanda Cole  |
     When I reset "AllQuotes" grid
     Then I should see following grid with exact columns order:
-      | Quote # | PO Number | DNSLT |
-      | Quote1  | PO1       |       |
+      | Quote # | PO Number | DNSLT        |
+      | Quote1  | PO1       |              |
       | Quote2  | PO2       |              |
       | Quote3  | PO3       |              |
       | Quote4  | PO4       |              |
