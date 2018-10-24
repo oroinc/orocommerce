@@ -19,6 +19,8 @@ use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * Handles logic related to shopping list and line item manipulations (create, remove, etc.).
+ *
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class ShoppingListManager
 {
@@ -223,7 +225,6 @@ class ShoppingListManager
 
             // return 1 as was deleted only current given line item
             return 1;
-
         }
 
         return $this->removeProduct(
