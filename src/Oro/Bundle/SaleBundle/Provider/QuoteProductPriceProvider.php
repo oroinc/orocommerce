@@ -3,7 +3,6 @@
 namespace Oro\Bundle\SaleBundle\Provider;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaFactoryInterface;
 use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
@@ -28,23 +27,15 @@ class QuoteProductPriceProvider
     protected $priceScopeCriteriaFactory;
 
     /**
-     * @var DoctrineHelper
-     */
-    protected $doctrineHelper;
-
-    /**
      * @param ProductPriceProviderInterface $productPriceProvider
      * @param ProductPriceScopeCriteriaFactoryInterface $priceScopeCriteriaFactory
-     * @param DoctrineHelper $doctrineHelper
      */
     public function __construct(
         ProductPriceProviderInterface $productPriceProvider,
-        ProductPriceScopeCriteriaFactoryInterface $priceScopeCriteriaFactory,
-        DoctrineHelper $doctrineHelper
+        ProductPriceScopeCriteriaFactoryInterface $priceScopeCriteriaFactory
     ) {
         $this->productPriceProvider = $productPriceProvider;
         $this->priceScopeCriteriaFactory = $priceScopeCriteriaFactory;
-        $this->doctrineHelper = $doctrineHelper;
     }
 
     /**
@@ -54,7 +45,7 @@ class QuoteProductPriceProvider
      */
     public function getTierPrices(Quote $quote)
     {
-        $productIds = $quote->getQuoteProducts()->filter(
+        $products = $quote->getQuoteProducts()->filter(
             function (QuoteProduct $quoteProduct) {
                 return $quoteProduct->getProduct() !== null;
             }
@@ -64,7 +55,7 @@ class QuoteProductPriceProvider
             }
         );
 
-        return $this->fetchTierPrices($quote, $productIds->toArray());
+        return $this->fetchTierPrices($quote, $products->toArray());
     }
 
     /**
@@ -75,14 +66,7 @@ class QuoteProductPriceProvider
      */
     public function getTierPricesForProducts(Quote $quote, array $productIds)
     {
-        $products = array_map(
-            function ($productId) {
-                return $this->doctrineHelper->getEntityReference(Product::class, $productId);
-            },
-            array_filter($productIds)
-        );
-
-        return $this->fetchTierPrices($quote, $products);
+        return $this->fetchTierPrices($quote, $productIds);
     }
 
     /**
@@ -96,7 +80,7 @@ class QuoteProductPriceProvider
         $tierPrices = [];
 
         if (count($products) > 0) {
-            $tierPrices = $this->productPriceProvider->getPricesByScopeCriteriaAndProductIds(
+            $tierPrices = $this->productPriceProvider->getPricesByScopeCriteriaAndProducts(
                 $this->priceScopeCriteriaFactory->createByContext($quote),
                 $products
             );

@@ -178,7 +178,7 @@ class InvoiceController extends Controller
 
             /** @var ProductPriceProviderInterface $priceProvider */
             $priceProvider = $this->get('oro_pricing.provider.product_price');
-            $tierPrices = $priceProvider->getPricesByScopeCriteriaAndProductIds(
+            $tierPrices = $priceProvider->getPricesByScopeCriteriaAndProducts(
                 $scopeCriteria,
                 $products->toArray(),
                 $invoice->getCurrency()

@@ -50,7 +50,10 @@ class FrontendProductPricesDataProvider
     {
         $productsPriceCriteria = $this->getProductsPricesCriteria($lineItems);
         $prices = $this->productPriceProvider
-            ->getMatchedPrices($productsPriceCriteria, $this->scopeCriteriaRequestHandler->getPriceScopeCriteria());
+            ->getMatchedPrices(
+                $productsPriceCriteria,
+                $this->scopeCriteriaRequestHandler->getPriceScopeCriteria()
+            );
 
         $result = [];
         foreach ($prices as $key => $price) {
@@ -67,7 +70,7 @@ class FrontendProductPricesDataProvider
      */
     public function getProductsAllPrices(array $lineItems)
     {
-        $prices = $this->productPriceProvider->getPricesByScopeCriteriaAndProductIds(
+        $prices = $this->productPriceProvider->getPricesByScopeCriteriaAndProducts(
             $this->scopeCriteriaRequestHandler->getPriceScopeCriteria(),
             $this->getProducts($lineItems),
             $this->userCurrencyManager->getUserCurrency()

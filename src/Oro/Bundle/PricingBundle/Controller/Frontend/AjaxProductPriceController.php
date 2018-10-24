@@ -69,7 +69,7 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
         $doctrineHelper = $this->container->get('oro_entity.doctrine_helper');
         $product = $doctrineHelper->getEntityReference(Product::class, $productId);
         $currency = $request->get('currency');
-        $prices = $priceProvider->getPricesByScopeCriteriaAndProductIds($scopeCriteria, [$product], $currency);
+        $prices = $priceProvider->getPricesByScopeCriteriaAndProducts($scopeCriteria, [$product], $currency);
 
         $units = [];
         if (!empty($prices[$productId])) {

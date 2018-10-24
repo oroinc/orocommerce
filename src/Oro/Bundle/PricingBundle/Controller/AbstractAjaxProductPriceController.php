@@ -27,7 +27,7 @@ abstract class AbstractAjaxProductPriceController extends Controller
 
         return new JsonResponse(
             $this->get('oro_pricing.provider.product_price')
-                ->getPricesByScopeCriteriaAndProductIds(
+                ->getPricesByScopeCriteriaAndProducts(
                     $scopeCriteria,
                     $this->getRequestProducts($request),
                     $request->get('currency')

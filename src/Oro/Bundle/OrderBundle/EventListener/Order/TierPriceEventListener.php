@@ -46,7 +46,7 @@ class TierPriceEventListener
             }
         );
 
-        $prices = $this->productPriceProvider->getPricesByScopeCriteriaAndProductIds(
+        $prices = $this->productPriceProvider->getPricesByScopeCriteriaAndProducts(
             $this->priceScopeCriteriaFactory->createByContext($order),
             $products->toArray(),
             $order->getCurrency()

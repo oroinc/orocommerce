@@ -15,23 +15,26 @@ interface ProductPriceProviderInterface
      * @param string|null $unitCode
      * @return array
      */
-    public function getPricesByScopeCriteriaAndProductIds(
+    public function getPricesByScopeCriteriaAndProducts(
         ProductPriceScopeCriteriaInterface $scopeCriteria,
         array $products,
         $currency = null,
         $unitCode = null
-    );
+    ): array ;
 
     /**
      * @param ProductPriceCriteria[] $productPriceCriterias
      * @param ProductPriceScopeCriteriaInterface $scopeCriteria
-     * @return mixed
+     * @return array
      */
-    public function getMatchedPrices(array $productPriceCriterias, ProductPriceScopeCriteriaInterface $scopeCriteria);
+    public function getMatchedPrices(
+        array $productPriceCriterias,
+        ProductPriceScopeCriteriaInterface $scopeCriteria
+    ): array;
 
     /**
      * @param ProductPriceScopeCriteriaInterface $scopeCriteria
      * @return array|string[]
      */
-    public function getSupportedCurrencies(ProductPriceScopeCriteriaInterface $scopeCriteria);
+    public function getSupportedCurrencies(ProductPriceScopeCriteriaInterface $scopeCriteria): array;
 }

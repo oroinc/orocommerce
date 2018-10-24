@@ -33,7 +33,7 @@ class ProductPriceProvider implements ProductPriceProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function getSupportedCurrencies(ProductPriceScopeCriteriaInterface $scopeCriteria)
+    public function getSupportedCurrencies(ProductPriceScopeCriteriaInterface $scopeCriteria): array
     {
         return array_intersect(
             $this->currencyManager->getAvailableCurrencies(),
@@ -44,12 +44,12 @@ class ProductPriceProvider implements ProductPriceProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function getPricesByScopeCriteriaAndProductIds(
+    public function getPricesByScopeCriteriaAndProducts(
         ProductPriceScopeCriteriaInterface $scopeCriteria,
         array $products,
         $currency = null,
         $unitCode = null
-    ) {
+    ):array {
         $result = [];
         $currencies = null;
         if ($currency) {
@@ -61,15 +61,13 @@ class ProductPriceProvider implements ProductPriceProviderInterface
         $productUnitCodes = $unitCode ? [$unitCode] : null;
         $prices = $this->priceStorage->getPrices($scopeCriteria, $products, $productUnitCodes, $currencies);
 
-        if ($prices) {
-            foreach ($prices as $price) {
-                $result[$price['id']][] = [
-                    'price' => $price['value'],
-                    'currency' => $price['currency'],
-                    'quantity' => $price['quantity'],
-                    'unit' => $price['code']
-                ];
-            }
+        foreach ($prices as $price) {
+            $result[$price['id']][] = [
+                'price' => $price['value'],
+                'currency' => $price['currency'],
+                'quantity' => $price['quantity'],
+                'unit' => $price['code']
+            ];
         }
 
         return $result;
@@ -78,8 +76,10 @@ class ProductPriceProvider implements ProductPriceProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function getMatchedPrices(array $productPriceCriterias, ProductPriceScopeCriteriaInterface $scopeCriteria)
-    {
+    public function getMatchedPrices(
+        array $productPriceCriterias,
+        ProductPriceScopeCriteriaInterface $scopeCriteria
+    ): array {
         $products = [];
         $productUnitCodes = [];
         $currencies = [];
@@ -172,7 +172,10 @@ class ProductPriceProvider implements ProductPriceProviderInterface
     {
         $currencies = array_intersect($currencies, $this->getSupportedCurrencies($scopeCriteria));
         if (!$currencies) {
-            $currencies = [$this->currencyManager->getUserCurrency($scopeCriteria->getWebsite())];
+            $currency = $this->currencyManager->getUserCurrency($scopeCriteria->getWebsite());
+            if ($currency) {
+                $currencies = [$currency];
+            }
         }
 
         return $currencies;

@@ -165,7 +165,7 @@ class ProductWithPricesSearchHandler implements SearchHandlerInterface
     private function findPrices(array $products)
     {
         if (\count($products) > 0) {
-            $prices = $this->productPriceProvider->getPricesByScopeCriteriaAndProductIds(
+            $prices = $this->productPriceProvider->getPricesByScopeCriteriaAndProducts(
                 $this->scopeCriteriaRequestHandler->getPriceScopeCriteria(),
                 $products,
                 $this->userCurrencyManager->getUserCurrency()
