@@ -266,7 +266,7 @@ class AssignerDatabaseStrategyTest extends \PHPUnit\Framework\TestCase
     private function createRelatedProduct(Product $productFrom, Product $productTo)
     {
         return (new RelatedProduct())->setProduct($productFrom)
-            ->setRelatedProduct($productTo);
+            ->setRelatedItem($productTo);
     }
 
     private function relationDoesNotExistInDatabase()

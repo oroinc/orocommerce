@@ -7,6 +7,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Layout\DataProvider\MatrixGridOrderFormProvider;
+use Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListManager;
 use Oro\Bundle\ShoppingListBundle\Manager\MatrixGridOrderManager;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
@@ -39,12 +40,12 @@ class MatrixGridOrderController extends AbstractLineItemController
     {
         $matrixOrderFormProvider = $this->getMatrixOrderFormProvider();
         $matrixGridOrderManager = $this->getMatrixGridOrderManager();
-        $shoppingListManager = $this->getShoppingListManager();
+        $currentShoppingListManager = $this->getCurrentShoppingListManager();
 
         $shoppingListId = $request->get('shoppingListId');
         $shoppingList = $shoppingListId
-            ? $shoppingListManager->getForCurrentUser($shoppingListId)
-            : $shoppingListManager->getCurrent();
+            ? $currentShoppingListManager->getForCurrentUser($shoppingListId)
+            : $currentShoppingListManager->getCurrent();
 
         $form = $matrixOrderFormProvider->getMatrixOrderForm($product, $shoppingList);
         $form->handleRequest($request);
@@ -56,9 +57,10 @@ class MatrixGridOrderController extends AbstractLineItemController
                 $request->request->get('matrix_collection', [])
             );
 
-            $shoppingList = $shoppingList ?? $shoppingListManager->getForCurrentUser($shoppingListId);
+            $shoppingList = $shoppingList ?? $currentShoppingListManager->getForCurrentUser($shoppingListId);
             $matrixGridOrderManager->addEmptyMatrixIfAllowed($shoppingList, $product, $lineItems);
 
+            $shoppingListManager = $this->getShoppingListManager();
             foreach ($lineItems as $lineItem) {
                 $shoppingListManager->updateLineItem($lineItem, $shoppingList);
             }
@@ -128,6 +130,14 @@ class MatrixGridOrderController extends AbstractLineItemController
      */
     private function getShoppingListManager()
     {
-        return $this->get('oro_shopping_list.shopping_list.manager');
+        return $this->get('oro_shopping_list.manager.shopping_list');
+    }
+
+    /**
+     * @return CurrentShoppingListManager
+     */
+    private function getCurrentShoppingListManager()
+    {
+        return $this->get('oro_shopping_list.manager.current_shopping_list');
     }
 }

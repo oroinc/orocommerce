@@ -34,7 +34,7 @@ workflows:
                         method: isAllowedForAny
                         attribute: $.result.isCheckoutAllowed
                     - '@call_service_method':
-                        service: oro_shopping_list.shopping_list.manager
+                        service: oro_shopping_list.manager.current_shopping_list
                         method: isCurrentShoppingListEmpty
                         attribute: $.result.isCurrentShoppingListEmpty
                     - '@assign_value': [$.result.doShowConfirmation, false]

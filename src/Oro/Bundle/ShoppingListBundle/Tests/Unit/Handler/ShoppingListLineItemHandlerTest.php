@@ -20,6 +20,7 @@ use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemHandler;
+use Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListManager;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
@@ -40,6 +41,9 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit\Framework\TestCase
     /** @var \PHPUnit\Framework\MockObject\MockObject|ShoppingListManager */
     protected $shoppingListManager;
 
+    /** @var \PHPUnit\Framework\MockObject\MockObject|CurrentShoppingListManager */
+    protected $currentShoppingListManager;
+
     /** @var \PHPUnit\Framework\MockObject\MockObject|ManagerRegistry */
     protected $managerRegistry;
 
@@ -57,6 +61,9 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit\Framework\TestCase
         $this->shoppingListManager = $this->getMockBuilder(ShoppingListManager::class)
             ->disableOriginalConstructor()
             ->getMock();
+        $this->currentShoppingListManager = $this->getMockBuilder(CurrentShoppingListManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $this->productManager = $this->createMock(ProductManager::class);
 
@@ -69,6 +76,7 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit\Framework\TestCase
         $this->handler = new ShoppingListLineItemHandler(
             $this->managerRegistry,
             $this->shoppingListManager,
+            $this->currentShoppingListManager,
             $this->authorizationChecker,
             $this->tokenAccessor,
             $this->featureChecker,
@@ -86,7 +94,9 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit\Framework\TestCase
     public function testGetShoppingList($id)
     {
         $shoppingList = new ShoppingList();
-        $this->shoppingListManager->expects($this->once())->method('getForCurrentUser')->willReturn($shoppingList);
+        $this->currentShoppingListManager->expects($this->once())
+            ->method('getForCurrentUser')
+            ->willReturn($shoppingList);
         $this->assertSame($shoppingList, $this->handler->getShoppingList($id));
     }
 
@@ -292,7 +302,9 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit\Framework\TestCase
         /** @var Product $product */
         $product = $this->createMock(Product::class);
 
-        $this->shoppingListManager->expects($this->once())->method('getCurrent')->willReturn($shoppingList);
+        $this->currentShoppingListManager->expects($this->once())
+            ->method('getCurrent')
+            ->willReturn($shoppingList);
 
         $item = $this->handler->prepareLineItemWithProduct($user, $product);
         $this->assertSame($user, $item->getCustomerUser());
