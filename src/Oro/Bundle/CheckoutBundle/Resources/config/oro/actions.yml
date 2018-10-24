@@ -331,17 +331,14 @@ action_groups:
                     '@not_equal': [null, $visitor]
                 actions:
                     - '@assign_value': [$.checkout.registeredCustomerUser, null]
-                    - '@flush_entity': $.checkout
-            - '@tree':
-                conditions:
-                    '@and':
-                        - '@not_equal': [null, $visitor]
-                        - '@empty': $.checkout.billingAddress
-                actions:
-                    - '@assign_value': [$visitor.customerUser, null]
-                    - '@flush_entity': $visitor
-                    - '@assign_value': [$.checkout.customer, null]
-                    - '@assign_value': [$.checkout.customerUser, null]
+                    - '@tree':
+                        conditions:
+                            '@empty': $.checkout.billingAddress
+                        actions:
+                            - '@assign_value': [$visitor.customerUser, null]
+                            - '@flush_entity': $visitor
+                            - '@assign_value': [$.checkout.customer, null]
+                            - '@assign_value': [$.checkout.customerUser, null]
                     - '@flush_entity': $.checkout
             - '@get_start_checkout_transition':
                 attribute: $.startTransition

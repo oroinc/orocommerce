@@ -68,14 +68,13 @@ Feature: Process order submission with PayPal Payments Pro and Authorize & Captu
     And type "SKU123" in "search"
     And I click "Search Button"
     And I click "product1"
-    And I click "Add to Shopping List"
-    And I should see "Product has been added to" flash message
-    When I click "Shopping List"
+    When I click "Add to Shopping List"
+    Then I should see "Product has been added to" flash message
+    When I open page with shopping list "Shopping List"
     Then I should see "product1"
 
   Scenario: Successful order payment with PayPal Payments Pro
-    Given I click "View Details Link"
-    And I click "Create Order"
+    Given I click "Create Order"
     When I click "Continue as a Guest"
     And I fill form with:
       | First Name      | Tester1         |
