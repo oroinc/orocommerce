@@ -6,12 +6,14 @@ use Doctrine\ORM\EntityManager;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\PricingBundle\Entity\BasePriceList;
-use Oro\Bundle\PricingBundle\Model\PriceListTreeHandler;
+use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaFactoryInterface;
+use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaInterface;
 use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemNotPricedSubtotalProvider;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\SubtotalProviderConstructorArguments;
 use Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Stub\EntityNotPricedStub;
+use Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Stub\EntityStub;
 use Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Stub\LineItemNotPricedStub;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
@@ -49,16 +51,16 @@ class LineItemNotPricedSubtotalProviderTest extends AbstractSubtotalProviderTest
     protected $doctrineHelper;
 
     /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|PriceListTreeHandler
+     * @var \PHPUnit\Framework\MockObject\MockObject|ProductPriceScopeCriteriaFactoryInterface
      */
-    protected $priceListTreeHandler;
+    protected $priceScopeCriteriaFactory;
 
     protected function setUp()
     {
         parent::setUp();
-        $this->translator = $this->createMock('Symfony\Component\Translation\TranslatorInterface');
+        $this->translator = $this->createMock(TranslatorInterface::class);
 
-        $this->roundingService = $this->createMock('Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface');
+        $this->roundingService = $this->createMock(RoundingServiceInterface::class);
         $this->roundingService->expects($this->any())
             ->method('round')
             ->will(
@@ -71,22 +73,19 @@ class LineItemNotPricedSubtotalProviderTest extends AbstractSubtotalProviderTest
 
         $this->productPriceProvider = $this->createMock(ProductPriceProviderInterface::class);
 
-        $this->doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
+        $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->priceListTreeHandler = $this
-            ->getMockBuilder('Oro\Bundle\PricingBundle\Model\PriceListTreeHandler')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->priceScopeCriteriaFactory = $this->createMock(ProductPriceScopeCriteriaFactoryInterface::class);
 
         $this->provider = new LineItemNotPricedSubtotalProvider(
             $this->translator,
             $this->roundingService,
             $this->productPriceProvider,
             $this->doctrineHelper,
-            $this->priceListTreeHandler,
-            new SubtotalProviderConstructorArguments($this->currencyManager, $this->websiteCurrencyProvider)
+            new SubtotalProviderConstructorArguments($this->currencyManager, $this->websiteCurrencyProvider),
+            $this->priceScopeCriteriaFactory
         );
     }
 
@@ -144,16 +143,14 @@ class LineItemNotPricedSubtotalProviderTest extends AbstractSubtotalProviderTest
             ->with($websiteId)
             ->willReturn($currency);
 
-        /** @var BasePriceList $priceList */
-        $priceList = $this->getEntity('Oro\Bundle\PricingBundle\Entity\BasePriceList', ['id' => 1]);
-
-        $this->priceListTreeHandler->expects($this->exactly($entity->getLineItems()->count()))
-            ->method('getPriceList')
-            ->with($entity->getCustomer(), $website)
-            ->willReturn($priceList);
+        $searchScope = $this->createMock(ProductPriceScopeCriteriaInterface::class);
+        $this->priceScopeCriteriaFactory->expects($this->once())
+            ->method('createByContext')
+            ->with($entity)
+            ->willReturn($searchScope);
 
         $subtotal = $this->provider->getSubtotal($entity);
-        $this->assertInstanceOf('Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal', $subtotal);
+        $this->assertInstanceOf(Subtotal::class, $subtotal);
         $this->assertEquals(LineItemNotPricedSubtotalProvider::TYPE, $subtotal->getType());
         $this->assertEquals('test', $subtotal->getLabel());
         $this->assertEquals($currency, $subtotal->getCurrency());
@@ -172,13 +169,18 @@ class LineItemNotPricedSubtotalProviderTest extends AbstractSubtotalProviderTest
         $entity = new EntityNotPricedStub();
 
         $subtotal = $this->provider->getSubtotal($entity);
-        $this->assertInstanceOf('Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal', $subtotal);
+        $this->assertInstanceOf(Subtotal::class, $subtotal);
         $this->assertEquals(LineItemNotPricedSubtotalProvider::TYPE, $subtotal->getType());
         $this->assertEquals('test', $subtotal->getLabel());
         $this->assertEquals($entity->getCurrency(), $subtotal->getCurrency());
         $this->assertInternalType('float', $subtotal->getAmount());
         $this->assertEquals(0, $subtotal->getAmount());
         $this->assertFalse($subtotal->isVisible());
+    }
+
+    public function testGetSubtotalWithWrongEntity()
+    {
+        $this->assertNull($this->provider->getSubtotal(new EntityStub()));
     }
 
     public function testGetName()
@@ -204,7 +206,7 @@ class LineItemNotPricedSubtotalProviderTest extends AbstractSubtotalProviderTest
     protected function prepareProductUnit($code, $precision)
     {
         /** @var ProductUnit|\PHPUnit\Framework\MockObject\MockObject $productUnit */
-        $productUnit = $this->getMockBuilder('Oro\Bundle\ProductBundle\Entity\ProductUnit')
+        $productUnit = $this->getMockBuilder(ProductUnit::class)
             ->disableOriginalConstructor()
             ->getMock();
         $productUnit->expects($this->any())
@@ -223,7 +225,7 @@ class LineItemNotPricedSubtotalProviderTest extends AbstractSubtotalProviderTest
     protected function prepareProduct()
     {
         /** @var Product|\PHPUnit\Framework\MockObject\MockObject $product */
-        $product = $this->getMockBuilder('Oro\Bundle\ProductBundle\Entity\Product')
+        $product = $this->getMockBuilder(Product::class)
             ->disableOriginalConstructor()
             ->getMock();
         $product->expects($this->any())
@@ -240,7 +242,7 @@ class LineItemNotPricedSubtotalProviderTest extends AbstractSubtotalProviderTest
     protected function prepareEntityManager(Product $product, ProductUnit $productUnit)
     {
         /* @var $entityManager EntityManager|\PHPUnit\Framework\MockObject\MockObject */
-        $entityManager = $this->getMockBuilder('Doctrine\ORM\EntityManager')
+        $entityManager = $this->getMockBuilder(EntityManager::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->doctrineHelper->expects($this->any())
@@ -262,7 +264,7 @@ class LineItemNotPricedSubtotalProviderTest extends AbstractSubtotalProviderTest
     protected function preparePrice($value, $identifier, $defaultQuantity)
     {
         /** @var Price|\PHPUnit\Framework\MockObject\MockObject $price */
-        $price = $this->getMockBuilder('Oro\Bundle\CurrencyBundle\Entity\Price')
+        $price = $this->getMockBuilder(Price::class)
             ->disableOriginalConstructor()
             ->getMock();
         $price->expects($this->any())

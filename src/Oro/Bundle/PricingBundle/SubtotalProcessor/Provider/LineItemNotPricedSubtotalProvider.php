@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PricingBundle\SubtotalProcessor\Provider;
 
 use Doctrine\ORM\EntityManager;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
@@ -118,7 +119,7 @@ class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider impleme
             $searchScope = $this->priceScopeCriteriaFactory->createByContext($entity);
             $prices = $this->productPriceProvider->getMatchedPrices($productsPriceCriterias, $searchScope);
             foreach ($prices as $identifier => $price) {
-                if ($price) {
+                if ($price instanceof Price) {
                     $priceValue = $price->getValue();
                     $subtotalAmount += (float) $priceValue * $productsPriceCriterias[$identifier]->getQuantity();
                     $subtotal->setVisible(true);

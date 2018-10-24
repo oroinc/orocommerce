@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Provider;
 
-use Oro\Bundle\MultiWebsiteBundle\Provider\WebsiteCurrencyProvider;
+use Oro\Bundle\PricingBundle\Provider\WebsiteCurrencyProvider;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 
 abstract class AbstractSubtotalProviderTest extends \PHPUnit\Framework\TestCase
