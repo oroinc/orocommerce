@@ -97,8 +97,7 @@ class AjaxLineItemController extends AbstractLineItemController
      */
     public function removeLineItemAction(LineItem $lineItem)
     {
-
-        $shoppingListManager = $this->get('oro_shopping_list.shopping_list.manager');
+        $shoppingListManager = $this->get('oro_shopping_list.manager.shopping_list');
         $isRemoved = $shoppingListManager->removeLineItem($lineItem);
         if ($isRemoved > 0) {
             $result = $this->getSuccessResponse(
