@@ -7,8 +7,9 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Event\OrderEvent;
 use Oro\Bundle\OrderBundle\EventListener\Order\TierPriceEventListener;
-use Oro\Bundle\PricingBundle\Entity\BasePriceList;
-use Oro\Bundle\PricingBundle\Model\PriceListTreeHandler;
+use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteria;
+use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaFactory;
+use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaFactoryInterface;
 use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
@@ -22,33 +23,33 @@ class TierPriceEventListenerTest extends \PHPUnit\Framework\TestCase
     /** @var TierPriceEventListener */
     protected $listener;
 
+    /** @var ProductPriceScopeCriteriaFactoryInterface */
+    protected $priceScopeCriteriaFactory;
+
     /** @var ProductPriceProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $provider;
 
-    /** @var PriceListTreeHandler|\PHPUnit\Framework\MockObject\MockObject */
-    protected $priceListTreeHandler;
-
-    /** @var FormInterface */
+    /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $form;
 
+    /**
+     * {@inheritdoc}
+     */
     protected function setUp()
     {
-        $this->form = $this->createMock('Symfony\Component\Form\FormInterface');
+        $this->form = $this->createMock(FormInterface::class);
+        $this->provider = $this->createMock(ProductPriceProviderInterface::class);
+        $this->priceScopeCriteriaFactory = new ProductPriceScopeCriteriaFactory();
 
-        $this->provider = $this->getMockBuilder(ProductPriceProviderInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->priceListTreeHandler = $this->getMockBuilder('Oro\Bundle\PricingBundle\Model\PriceListTreeHandler')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->listener = new TierPriceEventListener($this->provider, $this->priceListTreeHandler);
+        $this->listener = new TierPriceEventListener($this->provider, $this->priceScopeCriteriaFactory);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function tearDown()
     {
-        unset($this->listener, $this->priceListTreeHandler, $this->provider, $this->form);
+        unset($this->listener, $this->priceScopeCriteriaFactory, $this->provider, $this->form);
     }
 
     public function testOnOrderEvent()
@@ -57,13 +58,12 @@ class TierPriceEventListenerTest extends \PHPUnit\Framework\TestCase
         $website = new Website();
 
         /** @var Product $product */
-        $product = $this->getEntity('Oro\Bundle\ProductBundle\Entity\Product', ['id' => 1]);
+        $product = $this->getEntity(Product::class, ['id' => 1]);
 
         $lineItem = new OrderLineItem();
         $lineItem->setProduct($product);
 
         $lineItem2 = new OrderLineItem();
-
 
         $order = new Order();
         $order
@@ -73,20 +73,14 @@ class TierPriceEventListenerTest extends \PHPUnit\Framework\TestCase
             ->addLineItem($lineItem)
             ->addLineItem($lineItem2);
 
-        /** @var BasePriceList $priceList */
-        $priceList = $this->getEntity('Oro\Bundle\PricingBundle\Entity\BasePriceList', ['id' => 1]);
-
-        $this->priceListTreeHandler
-            ->expects($this->once())
-            ->method('getPriceList')
-            ->with($customer, $website)
-            ->willReturn($priceList);
-
         $prices = ['prices'];
+
+        $productPriceScopeCriteria = $this->getScopeCriteriaByOrder($order);
+
         $this->provider
             ->expects($this->once())
-            ->method('getPriceByPriceListIdAndProductIds')
-            ->with($priceList->getId(), [$product->getId()], $order->getCurrency())
+            ->method('getPricesByScopeCriteriaAndProductIds')
+            ->with($productPriceScopeCriteria, [$product], $order->getCurrency())
             ->willReturn($prices);
 
         $event = new OrderEvent($this->form, $order);
@@ -95,5 +89,19 @@ class TierPriceEventListenerTest extends \PHPUnit\Framework\TestCase
         $actualResult = $event->getData()->getArrayCopy();
         $this->assertArrayHasKey(TierPriceEventListener::TIER_PRICES_KEY, $actualResult);
         $this->assertEquals([TierPriceEventListener::TIER_PRICES_KEY => $prices], $actualResult);
+    }
+
+    /**
+     * @param Order $order
+     * @return ProductPriceScopeCriteria
+     */
+    private function getScopeCriteriaByOrder(Order $order) : ProductPriceScopeCriteria
+    {
+        $criteria = new ProductPriceScopeCriteria();
+        $criteria->setWebsite($order->getWebsite());
+        $criteria->setCustomer($order->getCustomer());
+        $criteria->setContext($order);
+
+        return $criteria;
     }
 }
