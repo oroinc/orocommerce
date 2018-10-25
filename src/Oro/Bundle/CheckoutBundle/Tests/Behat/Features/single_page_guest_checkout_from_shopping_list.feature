@@ -57,7 +57,7 @@ Feature: Single Page Guest Checkout From Shopping List
     And I click "Activate"
     Then I should see "Workflow activated" flash message
 
-  Scenario: Create order from Shopping list as unauthorized user without guest registration
+  Scenario: Create order from shopping list
     Given I proceed as the User
     And I am on homepage
     And type "SKU123" in "search"
@@ -66,7 +66,16 @@ Feature: Single Page Guest Checkout From Shopping List
     And I click "Add to Shopping List"
     And I click "Shopping List"
     And I click "Create Order"
+
+  Scenario: Check save state works when "Late registration form" in not filled
+    Given the "Save my data and create an account" checkbox should be checked
+    And I check "Use billing address" on the checkout page
+    And I reload the page
+    Then the "Use billing address" checkbox should be checked
+
+  Scenario: Create order from Shopping list as unauthorized user without guest registration
     And I uncheck "Save my data and create an account" on the checkout page
+    And I uncheck "Use billing address" on the checkout page
     And I click on "Billing Address Select"
     And I click on "New Address Option"
     And I fill "New Address Popup Form" with:

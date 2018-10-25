@@ -6,11 +6,11 @@ define(function(require) {
 
     SinglePageCheckoutSubmitButtonView = BaseView.extend({
         events: {
-            'mouseover': 'onHover',
-            'mouseout': 'onHoverOut'
+            mouseover: 'onHover',
+            mouseout: 'onHoverOut'
         },
 
-        isHoveredFlag: false, //Marks submit button hovered if true
+        isHoveredFlag: false, // Marks submit button hovered if true
 
         /**
          * @inheritDoc

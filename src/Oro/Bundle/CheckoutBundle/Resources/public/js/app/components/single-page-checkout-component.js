@@ -20,11 +20,11 @@ define(function(require) {
             targetLayoutBlocks: null,
             checkoutContentSelector: '[data-role="checkout-content"]',
             defaultParameters: {
-                'layout_block_ids': [
+                layout_block_ids: [
                     'checkout_button_continue_right_wrapper'
                 ],
-                '_widgetContainer': 'ajax',
-                '_wid': 'ajax_checkout'
+                _widgetContainer: 'ajax',
+                _wid: 'ajax_checkout'
             }
         },
 
@@ -86,7 +86,7 @@ define(function(require) {
 
             var url = this.options.transitionUrl +
                 (-1 !== _.indexOf(this.options.transitionUrl, '?') ? '&' : '?') +
-                $.param({'_widgetContainer': 'ajax', '_wid': 'ajax_checkout'});
+                $.param({_widgetContainer: 'ajax', _wid: 'ajax_checkout'});
 
             $.ajax({
                 url: url,
@@ -97,14 +97,16 @@ define(function(require) {
                 .fail(function() {
                     mediator.execute('hideLoading');
                     mediator.execute('showFlashMessage', 'error', 'Could not perform transition');
-                }.bind(this));
+                });
         },
 
         onSuccess: function(response) {
             if (response.hasOwnProperty('responseData')) {
                 var eventData = {stopped: false, responseData: response.responseData};
                 mediator.trigger('checkout:place-order:response', eventData);
-                if (eventData.stopped) { return; }
+                if (eventData.stopped) {
+                    return;
+                }
             }
 
             if (response.hasOwnProperty('redirectUrl')) {
@@ -216,7 +218,7 @@ define(function(require) {
         _beforeLayoutSubTreeViewContentLoading: function() {
             _.each(this.layoutSubTreeViews, (function(view) {
                 view.beforeContentLoading();
-            }).bind(this));
+            }));
         },
 
         /**
@@ -230,19 +232,19 @@ define(function(require) {
                     }
                     view.setContent(response[blockId]);
                 }
-            }).bind(this));
+            }));
         },
 
         _afterLayoutSubTreeViewContentLoading: function() {
             _.each(this.layoutSubTreeViews, (function(view) {
                 view.afterContentLoading();
-            }).bind(this));
+            }));
         },
 
         _contentLayoutSubTreeViewContentLoadingFail: function() {
             _.each(this.layoutSubTreeViews, (function(view) {
                 view.contentLoadingFail();
-            }).bind(this));
+            }));
         },
 
         /**

@@ -103,9 +103,9 @@ define(function(require) {
         openDialog: function(event, previousVal) {
             var addressType = $(event.target).data('address-type');
             var dialogUrl = routing.generate(this.options.dialogRoute, {
-                'operationName': this._operationName(addressType),
-                'entityClass': this.options.entityClass,
-                'entityId': this.options.entityId
+                operationName: this._operationName(addressType),
+                entityClass: this.options.entityClass,
+                entityId: this.options.entityId
             });
 
             var buttonManager = new ButtonManager({

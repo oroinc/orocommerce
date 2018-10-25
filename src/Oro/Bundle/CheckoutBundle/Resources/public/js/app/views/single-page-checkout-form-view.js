@@ -33,8 +33,8 @@ define(function(require) {
          * @inheritDoc
          */
         events: {
-            'change': 'onChange',
-            'submit': 'onSubmit'
+            change: 'onChange',
+            submit: 'onSubmit'
         },
 
         /**
@@ -70,21 +70,18 @@ define(function(require) {
             this.options = _.extend({}, this.options, options || {});
 
             this.subview('checkoutSubmitButton', new SinglePageCheckoutSubmitButtonView({
-                    el: this.$el.find(this.options.submitButtonSelector)
-                })
-            );
+                el: this.$el.find(this.options.submitButtonSelector)
+            }));
 
             this.subview('checkoutBillingAddress', new SinglePageCheckoutAddressView({
-                    el: this.$el.find(this.options.billingAddressSelector),
-                    entityId: this.options.entityId
-                })
-            );
+                el: this.$el.find(this.options.billingAddressSelector),
+                entityId: this.options.entityId
+            }));
 
             this.subview('checkoutShippingAddress', new SinglePageCheckoutAddressView({
-                    el: this.$el.find(this.options.shippingAddressSelector),
-                    entityId: this.options.entityId
-                })
-            );
+                el: this.$el.find(this.options.shippingAddressSelector),
+                entityId: this.options.entityId
+            }));
 
             this._toggleShipTo();
             this._disableShippingAddress();
@@ -109,11 +106,6 @@ define(function(require) {
 
             this._toggleShipTo();
             this._disableShippingAddress();
-
-            var validate = this.$el.validate();
-            if (!validate.checkForm()) {
-                return;
-            }
 
             this._changeShippingMethod();
             this._changePaymentMethod();
