@@ -81,6 +81,10 @@ class CategoryContentVariantIndexListenerTest extends \PHPUnit\Framework\TestCas
 
     public function testOnFlushNoVariants()
     {
+        $this->provider
+            ->method('getAssignedWebCatalogs')
+            ->willReturn([]);
+
         $entityManager = $this->entityManagerMockBuilder->getEntityManager(
             $this,
             [new \stdClass()],

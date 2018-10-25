@@ -23,7 +23,7 @@ Feature: Open Orders Grid
     And I signed in as AmandaRCole@example.org on the store frontend
 
     When I open page with shopping list List 1
-    And I press "Create Order"
+    And I click "Create Order"
     And I select "Fifth avenue, 10115 Berlin, Germany" on the "Billing Information" checkout step and press Continue
     And I select "Fifth avenue, 10115 Berlin, Germany" on the "Shipping Information" checkout step and press Continue
     And I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
@@ -31,8 +31,8 @@ Feature: Open Orders Grid
     And I click "Account"
     And I click "Quotes"
     And I click view PO1 in grid
-    And I press "Accept and Submit to Order"
-    And I press "Submit"
+    And I click "Accept and Submit to Order"
+    And I click "Submit"
     And I select "Fifth avenue, 10115 Berlin, Germany" on the "Billing Information" checkout step and press Continue
     And I select "Fifth avenue, 10115 Berlin, Germany" on the "Shipping Information" checkout step and press Continue
     And I check "Flat Rate" on the "Shipping Method" checkout step and press Continue

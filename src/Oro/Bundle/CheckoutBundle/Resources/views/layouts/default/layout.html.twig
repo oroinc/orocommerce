@@ -33,7 +33,8 @@
         data-toggle="tooltip"
         data-title="{{ _self.transitionConditionMessages(transitionData) }}"
         data-html="true"
-        data-container="body"
+        data-container=".checkout__submit-btn"
+        data-placement="{% if isMobileVersion() %}bottom{% else %}left{% endif %}"
     {% endif %}
 {% endmacro %}
 
@@ -93,7 +94,7 @@
     {% else %}
         {% set transitionLabel = transitionData.transition.label|trans({},'workflows') %}
     {% endif %}
-    <a href="{{ transitionUrl }}" class="button--plain"
+    <a href="{{ transitionUrl }}" class="btn--plain"
        data-toggle="tooltip"
        data-title="{{ transitionLabel }}"
        data-html="true"

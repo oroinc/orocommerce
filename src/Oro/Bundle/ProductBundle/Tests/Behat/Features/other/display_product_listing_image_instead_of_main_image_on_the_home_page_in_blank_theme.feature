@@ -23,7 +23,7 @@ Feature: Display product listing image instead of main image on the home page in
       | Is Featured | Yes |
     And I save and close form
     Then I should see "Product has been saved" flash message
-    Then I press "Edit"
+    Then I click "Edit"
     And I remember "main" image resized ID
     Then I am on homepage
     Then I should see remembered "main" image in "Top Selling Items" section
@@ -38,7 +38,7 @@ Feature: Display product listing image instead of main image on the home page in
       | cat2.jpg |       | 1       | 1          |
     And I save and close form
     Then I should see "Product has been saved" flash message
-    Then I press "Edit"
+    Then I click "Edit"
     And I remember "listing" image resized ID
     Then I am on homepage
     Then I should see remembered "listing" image in "Top Selling Items" section

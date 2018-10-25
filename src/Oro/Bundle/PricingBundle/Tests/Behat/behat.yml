@@ -18,6 +18,8 @@ oro_behat_extension:
         - OroEmailBundle::EmailContext
         - OroCustomerBundle::ACLContext
         - OroShoppingListBundle::FeatureContext
+        - OroLocaleBundle::LocalizationContext
+        - OroFrontendLocalizationBundle::LocalizationSwitcherContext
       paths:
         - '@OroPricingBundle/Tests/Behat/Features'
 
@@ -135,3 +137,9 @@ oro_behat_extension:
       selector:
         type: 'xpath'
         locator: '//div[contains(@data-bound-component, "currency-switcher")]'
+
+    Export Button:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        locator: '//a[@role="button" and contains(text(),"Export")]'
+        type: xpath

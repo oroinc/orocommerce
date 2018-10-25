@@ -16,9 +16,12 @@ oro_behat_extension:
         - OroOrderBundle::OrderContext
         - OroShippingBundle::FeatureContext
         - OroShoppingListBundle::FeatureContext
+        - OroSearchBundle::SearchContext
         - OroImportExportBundle::ImportExportContext:
           - '@oro_entity.entity_alias_resolver'
           - '@oro_importexport.processor.registry'
+        - OroSecurityBundle::ACLContext
+        - Oro\Bundle\UserBundle\Tests\Behat\Context\FeatureContext
       paths:
         - '@OroPromotionBundle/Tests/Behat/Features'
 

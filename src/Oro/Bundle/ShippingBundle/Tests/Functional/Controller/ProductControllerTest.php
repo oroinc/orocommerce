@@ -3,9 +3,10 @@
 namespace Oro\Bundle\ShippingBundle\Tests\Functional\Controller;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
-use Oro\Bundle\ProductBundle\Formatter\UnitValueFormatter;
+use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
+use Oro\Bundle\ProductBundle\Formatter\UnitValueFormatterInterface;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
 use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions;
 use Oro\Bundle\ShippingBundle\Form\Extension\ProductFormExtension;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -17,9 +18,12 @@ class ProductControllerTest extends WebTestCase
     {
         $this->initClient([], static::generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
-        $this->loadFixtures(['Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions']);
+        $this->loadFixtures([LoadProductUnitPrecisions::class]);
     }
 
+    /**
+     * @return ProductShippingOptions
+     */
     public function testUpdateProductWithNewUnit()
     {
         $data = [
@@ -120,16 +124,16 @@ class ProductControllerTest extends WebTestCase
      */
     protected function assertProductShippingOptions(ProductShippingOptions $option, $html)
     {
-        /** @var UnitLabelFormatter $unitFormatter */
+        /** @var UnitLabelFormatterInterface $unitFormatter */
         $unitFormatter = static::getContainer()->get('oro_product.formatter.product_unit_label');
 
-        /** @var UnitValueFormatter $weightFormatter */
+        /** @var UnitValueFormatterInterface $weightFormatter */
         $weightFormatter = static::getContainer()->get('oro_shipping.formatter.weight_unit_value');
 
-        /** @var UnitLabelFormatter $lengthFormatter */
+        /** @var UnitLabelFormatterInterface $lengthFormatter */
         $lengthFormatter = static::getContainer()->get('oro_shipping.formatter.length_unit_label');
 
-        /** @var UnitLabelFormatter $freightFormatter */
+        /** @var UnitLabelFormatterInterface $freightFormatter */
         $freightFormatter = static::getContainer()->get('oro_shipping.formatter.freight_class_label');
 
         $this->assertContains($unitFormatter->format($option->getProductUnit()), $html);

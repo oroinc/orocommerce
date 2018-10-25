@@ -26,7 +26,7 @@ Feature: Featured Products Block Localization
   Scenario: Check that product name is localized
     Given I proceed as the Buyer
     And I login as AmandaRCole@example.org buyer
-    And I press "Localization Switcher"
+    And I click "Localization Switcher"
     And I select "Localization 1" localization
     Then should see the following products in the "Featured Products Block":
       | Title                     |

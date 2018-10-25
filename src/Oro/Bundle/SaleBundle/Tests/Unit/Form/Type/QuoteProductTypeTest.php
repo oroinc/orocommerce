@@ -13,7 +13,7 @@ use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
-use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
@@ -62,34 +62,23 @@ class QuoteProductTypeTest extends AbstractTest
      */
     protected function setUp()
     {
-        $this->translator = $this->getMockBuilder('Symfony\Component\Translation\TranslatorInterface')
-            ->disableOriginalConstructor()
-            ->getMock()
-        ;
+        $this->translator = $this->createMock(TranslatorInterface::class);
+        $this->repository = $this->createMock(ProductUnitRepository::class);
 
-        $this->repository = $this->getMockBuilder('Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository')
-            ->disableOriginalConstructor()
-            ->getMock()
-        ;
-
-        $this->manager = $this->createMock('Doctrine\Common\Persistence\ObjectManager');
+        $this->manager = $this->createMock(ObjectManager::class);
         $this->manager->expects($this->any())
             ->method('getRepository')
             ->willReturn($this->repository)
         ;
 
-        $this->registry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $this->registry = $this->createMock(ManagerRegistry::class);
         $this->registry->expects($this->any())
             ->method('getManagerForClass')
             ->willReturn($this->manager)
         ;
 
-        /* @var $productUnitLabelFormatter \PHPUnit\Framework\MockObject\MockObject|ProductUnitLabelFormatter */
-        $productUnitLabelFormatter = $this->getMockBuilder(
-            'Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter'
-        )
-            ->disableOriginalConstructor()
-            ->getMock();
+        /* @var $productUnitLabelFormatter \PHPUnit\Framework\MockObject\MockObject|UnitLabelFormatterInterface */
+        $productUnitLabelFormatter = $this->createMock(UnitLabelFormatterInterface::class);
 
         $productUnitLabelFormatter->expects($this->any())
             ->method('format')
@@ -114,7 +103,7 @@ class QuoteProductTypeTest extends AbstractTest
             $this->quoteProductFormatter,
             $this->registry
         );
-        $this->formType->setDataClass('Oro\Bundle\SaleBundle\Entity\QuoteProduct');
+        $this->formType->setDataClass(QuoteProduct::class);
 
         parent::setUp();
     }
@@ -122,7 +111,7 @@ class QuoteProductTypeTest extends AbstractTest
     public function testConfigureOptions()
     {
         /* @var $resolver \PHPUnit\Framework\MockObject\MockObject|OptionsResolver */
-        $resolver = $this->createMock('Symfony\Component\OptionsResolver\OptionsResolver');
+        $resolver = $this->createMock(OptionsResolver::class);
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with($this->callback(function (array $options) {
@@ -158,7 +147,7 @@ class QuoteProductTypeTest extends AbstractTest
         $view->vars = $inputData['vars'];
 
         /* @var $form \PHPUnit\Framework\MockObject\MockObject|FormInterface */
-        $form = $this->createMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock(FormInterface::class);
 
         $this->formType->finishView($view, $form, $inputData['options']);
 
@@ -562,7 +551,7 @@ class QuoteProductTypeTest extends AbstractTest
         $type = QuoteProduct::TYPE_OFFER
     ) {
         /* @var $quoteProduct \PHPUnit\Framework\MockObject\MockObject|QuoteProduct */
-        $quoteProduct = $this->createMock('Oro\Bundle\SaleBundle\Entity\QuoteProduct');
+        $quoteProduct = $this->createMock(QuoteProduct::class);
         $quoteProduct
             ->expects($this->any())
             ->method('getId')

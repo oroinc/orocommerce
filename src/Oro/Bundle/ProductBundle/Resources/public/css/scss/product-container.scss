@@ -1,0 +1,14 @@
+/* @theme: admin.oro; */
+
+.product-container {
+    position: relative;
+
+    .input-append,
+    .input-prepend {
+        display: flex;
+
+        .select2-container {
+            width: 100%;
+        }
+    }
+}

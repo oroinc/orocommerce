@@ -28,3 +28,8 @@ features:
         dependencies:
             - 'guest_quick_order'
         strategy: affirmative
+
+    limit_filters_sorters_on_product_listing:
+        label: oro.product.feature.limit_filters_sorters_on_product_listing.label
+        description: oro.product.feature.limit_filters_sorters_on_product_listing.description
+        toggle: oro_product.limit_filters_sorters_on_product_listing

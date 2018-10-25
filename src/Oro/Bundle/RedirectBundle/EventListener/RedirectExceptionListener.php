@@ -5,12 +5,16 @@ namespace Oro\Bundle\RedirectBundle\EventListener;
 use Oro\Bundle\RedirectBundle\Entity\Redirect;
 use Oro\Bundle\RedirectBundle\Entity\Repository\RedirectRepository;
 use Oro\Bundle\RedirectBundle\Routing\MatchedUrlDecisionMaker;
+use Oro\Bundle\RedirectBundle\Routing\SluggableUrlGenerator;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
+/**
+ * Catches the 404 exceptions from the router and tries to find the correct redirects for them.
+ */
 class RedirectExceptionListener
 {
     /**
@@ -97,6 +101,25 @@ class RedirectExceptionListener
     private function getApplicableRedirect($url)
     {
         $scopeCriteria = $this->scopeManager->getCriteria('web_content');
+        $delimiter = sprintf('/%s/', SluggableUrlGenerator::CONTEXT_DELIMITER);
+
+        if (strpos($url, $delimiter) !== false) {
+            list($contextUrl, $itemSlugPrototype) = explode($delimiter, $url);
+
+            $contextRedirect = $this->repository->findByUrl($contextUrl, $scopeCriteria);
+            $prototypeRedirect = $this->repository->findByPrototype($itemSlugPrototype, $scopeCriteria);
+
+            if ($contextRedirect || $prototypeRedirect) {
+                $contextRedirectUrl = $contextRedirect ? $contextRedirect->getTo() : $contextUrl;
+                $prototypeUrl = $prototypeRedirect ? $prototypeRedirect->getToPrototype() : $itemSlugPrototype;
+
+                $redirect = new Redirect();
+                $redirect->setTo($contextRedirectUrl . $delimiter . $prototypeUrl);
+                $redirect->setType(Redirect::MOVED_PERMANENTLY);
+
+                return $redirect;
+            }
+        }
 
         return $this->repository->findByUrl($url, $scopeCriteria);
     }

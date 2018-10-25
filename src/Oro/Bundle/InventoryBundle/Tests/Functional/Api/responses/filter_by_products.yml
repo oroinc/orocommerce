@@ -105,8 +105,6 @@ included:
             sku: product-1
             status: enabled
             variantFields: {  }
-            createdAt: '@product-1->createdAt->format("Y-m-d\TH:i:s\Z")'
-            updatedAt: '@product-1->updatedAt->format("Y-m-d\TH:i:s\Z")'
             productType: simple
         relationships:
             owner:
@@ -175,8 +173,6 @@ included:
             sku: product-2
             status: enabled
             variantFields: {  }
-            createdAt: '@product-2->createdAt->format("Y-m-d\TH:i:s\Z")'
-            updatedAt: '@product-2->updatedAt->format("Y-m-d\TH:i:s\Z")'
             productType: simple
         relationships:
             owner:

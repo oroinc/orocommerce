@@ -165,4 +165,15 @@ class PriceRuleLexemeTriggerHandlerTest extends \PHPUnit\Framework\TestCase
             [new Product()]
         ];
     }
+
+    public function testAddTriggersByLexemesWithoutLexemes()
+    {
+        $this->registry->expects($this->never())
+            ->method('getManagerForClass');
+
+        $this->priceListTriggerHandler->expects($this->never())
+            ->method('addTriggerForPriceList');
+
+        $this->handler->addTriggersByLexemes([], [new Product()]);
+    }
 }

@@ -197,6 +197,11 @@ class PriceListEntityListenerTest extends \PHPUnit\Framework\TestCase
         /** @var PriceList $priceList */
         $priceList = $this->getEntity(PriceList::class, ['id' => 2]);
         $priceList->addPriceRule($priceRule);
+
+        $this->priceRuleLexemeTriggerHandler->expects($this->once())
+            ->method('findEntityLexemes')
+            ->willReturn([]);
+
         $this->cache->expects($this->exactly(2))
             ->method('delete')
             ->withConsecutive(
@@ -204,7 +209,7 @@ class PriceListEntityListenerTest extends \PHPUnit\Framework\TestCase
                 ['pr_42']
             );
         $this->triggerHandler->expects($this->once())
-            ->method('handleFullRebuild');
+            ->method('handlePriceListStatusChange');
         $this->listener->preRemove($priceList);
     }
 }

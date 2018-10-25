@@ -26,23 +26,27 @@
         widgetRouteParameters: widgetRouteParameters
     } %}
 
-    <div class="product-container" data-role="grid-sidebar-component-container">
-        {% embed "OroUIBundle::content_sidebar.html.twig" %}
-            {% block sidebar %}
-                <div data-page-component-module="orodatagrid/js/app/components/grid-sidebar-component"
-                     data-page-component-options="{{ componentOptions|json_encode }}"
-                >
-                    {% include '@OroProduct/Product/Sidebar/sidebar.html.twig' %}
-                </div>
-            {% endblock sidebar %}
+    <div class="layout-content product-container" data-role="grid-sidebar-component-container">
+        <div class="scrollable-container sidebar-container">
+            {% embed "OroUIBundle::content_sidebar.html.twig" %}
+                {% block sidebar %}
+                    <div data-page-component-module="orodatagrid/js/app/components/grid-sidebar-component"
+                         data-page-component-options="{{ componentOptions|json_encode }}"
+                    >
+                        {% include '@OroProduct/Product/Sidebar/sidebar.html.twig' %}
+                    </div>
+                {% endblock sidebar %}
 
-            {% block content %}
-                {{ oro_widget_render({
-                    'widgetType': 'block',
-                    'url': path('oro_datagrid_widget', widgetRouteParameters|merge({route: 'oro_product_index'})),
-                    'alias': 'products-grid-widget'
-                }) }}
-            {% endblock content %}
-        {% endembed %}
+                {% block content %}
+                    <div class="category-data">
+                        {{ oro_widget_render({
+                            'widgetType': 'block',
+                            'url': path('oro_datagrid_widget', widgetRouteParameters|merge({route: 'oro_product_index'})),
+                            'alias': 'products-grid-widget'
+                        }) }}
+                    </div>
+                {% endblock content %}
+            {% endembed %}
+        </div>
     </div>
 {% endblock content_datagrid %}

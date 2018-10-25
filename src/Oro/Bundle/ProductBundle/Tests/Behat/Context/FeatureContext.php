@@ -304,7 +304,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     public function iShouldSeePopup($title)
     {
         $popup = $this->spin(function (MinkAwareContext $context) {
-            return $context->getSession()->getPage()->find('css', '.popover-content');
+            return $context->getSession()->getPage()->find('css', '.popover-body');
         });
 
         self::assertNotFalse($popup, 'Popup not found on page');
@@ -1127,6 +1127,25 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
+     * Checks if multiple choice filter contains expected options in the given order and no other options.
+     *
+     * Example: Then I should see "Address Filter" filter with exact options in frontend product grid:
+     *            | Address 1 |
+     *            | Address 2 |
+     * @When /^(?:|I )should see "(?P<filterName>[^"]+)" filter with exact options in frontend product grid:$/
+     */
+    public function shouldSeeSelectWithOptions($filterName, TableNode $options)
+    {
+        /** @var MultipleChoice $filterItem */
+        $filterItem = $this->getGridFilters()->getFilterItem(
+            'Frontend Product Grid MultipleChoice',
+            $filterName
+        );
+
+        self::assertEquals($options->getColumn(0), $filterItem->getChoices(), 'Filter options are not as expected');
+    }
+
+    /**
      * @return GridFilters|Element
      */
     private function getGridFilters()
@@ -1145,6 +1164,16 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         }
 
         return $filters;
+    }
+
+    /**
+     * Activate filter block in frontend product grid
+     *
+     * @When /^(?:|I )check that filter block visible in frontend product grid$/
+     */
+    public function enableGridFilters()
+    {
+        $this->getGridFilters();
     }
 
     /**

@@ -1,3 +1,13 @@
+## 3.1.0
+
+### Changed
+#### ShoppingListBundle
+* Functionality related to the currently active shopping list was moved from `Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager` to `Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListManager`. The service id for the CurrentShoppingListManager is `oro_shopping_list.manager.current_shopping_list`.
+* Service `oro_shopping_list.shopping_list.manager` was renamed to `oro_shopping_list.manager.shopping_list`.
+
+## 3.0.0 (2018-07-27)
+[Show detailed list of changes](incompatibilities-3-0.md)
+
 ## 3.0.0-rc (2018-05-31)
 [Show detailed list of changes](incompatibilities-3-0-rc.md)
 

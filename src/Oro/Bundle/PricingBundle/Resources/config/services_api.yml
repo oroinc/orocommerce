@@ -131,7 +131,6 @@ services:
     oro_pricing.api.normalize_product_price_id:
         class: 'Oro\Bundle\PricingBundle\Api\ProductPrice\Processor\NormalizeInputProductPriceId'
         arguments:
-            - '@oro_pricing.api.price_list_id_in_context_storage'
             - '@oro_api.doctrine_helper'
             - '@validator'
         tags:
@@ -139,26 +138,14 @@ services:
             - { name: oro.api.processor, action: delete, group: normalize_input, requestType: rest, priority: -120, class: '%oro_pricing.entity.product_price.class%' }
             - { name: oro.api.processor, action: update, group: normalize_input, requestType: rest, priority: -120, class: '%oro_pricing.entity.product_price.class%' }
 
-    oro_pricing.api.price_list_id_in_context_storage:
-        class: 'Oro\Bundle\PricingBundle\Api\ProductPrice\PriceListIDInContextStorage'
-
-    oro_pricing.api.product_price_id_by_price_list_id_normalizer:
-        class: 'Oro\Bundle\PricingBundle\Api\ProductPrice\ProductPriceIDByPriceListIDNormalizer'
-        arguments:
-            - '@oro_pricing.api.price_list_id_in_context_storage'
-
     oro_pricing.api.normalize_product_price:
         class: 'Oro\Bundle\PricingBundle\Api\ProductPrice\Processor\NormalizeOutputProductPriceId'
-        arguments:
-            - '@oro_pricing.api.product_price_id_by_price_list_id_normalizer'
         tags:
             - { name: oro.api.processor, action: get, group: load_data, priority: -20, class: '%oro_pricing.entity.product_price.class%' }
             - { name: oro.api.processor, action: get_list, group: load_data, priority: -20, class: '%oro_pricing.entity.product_price.class%' }
 
     oro_pricing.api.set_price_list_in_context_by_product_price:
         class: 'Oro\Bundle\PricingBundle\Api\ProductPrice\Processor\StorePriceListInContextByProductPrice'
-        arguments:
-            - '@oro_pricing.api.price_list_id_in_context_storage'
         tags:
             - { name: oro.api.processor, action: create, group: save_data, priority: 0, class: '%oro_pricing.entity.product_price.class%' }
             - { name: oro.api.processor, action: update, group: save_data, priority: 0, class: '%oro_pricing.entity.product_price.class%' }
@@ -167,7 +154,6 @@ services:
         class: 'Oro\Bundle\PricingBundle\Api\ProductPrice\Processor\LoadNormalizedProductPriceWithNormalizedId'
         arguments:
             - '@oro_api.action_processor_bag'
-            - '@oro_pricing.api.product_price_id_by_price_list_id_normalizer'
         tags:
             - { name: oro.api.processor, action: update, group: normalize_data, priority: 0, class: '%oro_pricing.entity.product_price.class%'}
             - { name: oro.api.processor, action: create, group: normalize_data, priority: 0, class: '%oro_pricing.entity.product_price.class%'}
@@ -175,7 +161,6 @@ services:
     oro_pricing.api.set_price_list_in_context_by_filter:
         class: 'Oro\Bundle\PricingBundle\Api\ProductPrice\Processor\StorePriceListInContextByFilter'
         arguments:
-            - '@oro_pricing.api.price_list_id_in_context_storage'
             - '@oro_api.doctrine_helper'
         tags:
             - { name: oro.api.processor, action: get_list, group: normalize_input, priority: -120, class: '%oro_pricing.entity.product_price.class%' }
@@ -202,8 +187,7 @@ services:
     oro_pricing.api.enabled_price_sharding_on_query:
         class: 'Oro\Bundle\PricingBundle\Api\ProductPrice\Processor\EnableShardingOnQuery'
         arguments:
-          - '@oro_pricing.shard_manager'
-          - '@oro_pricing.api.price_list_id_in_context_storage'
+            - '@oro_pricing.shard_manager'
         tags:
             - { name: oro.api.processor, action: update, group: load_data, priority: 5, class: '%oro_pricing.entity.product_price.class%' }
             - { name: oro.api.processor, action: delete, group: load_data, priority: 5, class: '%oro_pricing.entity.product_price.class%' }
@@ -213,7 +197,6 @@ services:
         class: 'Oro\Bundle\PricingBundle\Api\ProductPrice\Processor\EnableShardingOnConfig'
         arguments:
             - '@oro_pricing.shard_manager'
-            - '@oro_pricing.api.price_list_id_in_context_storage'
         tags:
             - { name: oro.api.processor, action: get_list, group: build_query, priority: -255, class: '%oro_pricing.entity.product_price.class%' }
             - { name: oro.api.processor, action: get, group: build_query, priority: -255, class: '%oro_pricing.entity.product_price.class%' }
@@ -232,8 +215,12 @@ services:
         arguments:
             - '@oro_pricing.manager.price_manager'
 
-    oro_pricing.api.reset_price_rule_field_on_update:
-        class: 'Oro\Bundle\PricingBundle\Api\ProductPrice\Processor\ResetPriceRuleFieldOnUpdate'
+    oro_pricing.api.remember_product_price:
+        class: 'Oro\Bundle\PricingBundle\Api\ProductPrice\Processor\RememberProductPrice'
         tags:
             - { name: oro.api.processor, action: update, priority: -45, group: load_data, class: '%oro_pricing.entity.product_price.class%' }
+
+    oro_pricing.api.reset_price_rule_field:
+        class: 'Oro\Bundle\PricingBundle\Api\ProductPrice\Processor\ResetPriceRuleField'
+        tags:
             - { name: oro.api.processor, action: update, priority: 0, group: save_data, class: '%oro_pricing.entity.product_price.class%' }

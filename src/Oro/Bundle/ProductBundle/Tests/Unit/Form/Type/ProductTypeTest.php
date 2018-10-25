@@ -29,7 +29,7 @@ use Oro\Bundle\ProductBundle\Form\Type\ProductStatusType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitPrecisionType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectType;
-use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Oro\Bundle\ProductBundle\Provider\ChainDefaultProductUnitProvider;
 use Oro\Bundle\ProductBundle\Provider\ProductStatusProvider;
 use Oro\Bundle\ProductBundle\Provider\VariantField;
@@ -101,7 +101,7 @@ class ProductTypeTest extends FormIntegrationTestCase
     protected $images = [];
 
     /**
-     * @var ProductUnitLabelFormatter|\PHPUnit\Framework\MockObject\MockObject
+     * @var UnitLabelFormatterInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $productUnitLabelFormatter;
 
@@ -133,10 +133,7 @@ class ProductTypeTest extends FormIntegrationTestCase
 
         $this->images = [$image1, $image2];
 
-        $this->productUnitLabelFormatter = $this->getMockBuilder(ProductUnitLabelFormatter::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $this->productUnitLabelFormatter = $this->createMock(UnitLabelFormatterInterface::class);
 
         parent::setUp();
     }

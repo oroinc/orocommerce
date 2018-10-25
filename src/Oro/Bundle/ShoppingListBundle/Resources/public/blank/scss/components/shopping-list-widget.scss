@@ -53,6 +53,10 @@
             }
         }
     }
+
+    &--disabled {
+        pointer-events: none;
+    }
 }
 
 .cart-widget {
@@ -138,7 +142,7 @@
             display: none;
         }
 
-        &.open > .header-row__toggle {
+        &.show > .header-row__toggle {
             display: block;
         }
 

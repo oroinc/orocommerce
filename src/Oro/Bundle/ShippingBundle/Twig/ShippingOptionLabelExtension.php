@@ -2,9 +2,12 @@
 
 namespace Oro\Bundle\ShippingBundle\Twig;
 
-use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
+use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * Add filters for formatting length, weight, freight class
+ */
 class ShippingOptionLabelExtension extends \Twig_Extension
 {
     const NAME = 'oro_shipping_option_label';
@@ -21,7 +24,7 @@ class ShippingOptionLabelExtension extends \Twig_Extension
     }
 
     /**
-     * @return UnitLabelFormatter
+     * @return UnitLabelFormatterInterface
      */
     protected function getLengthUnitLabelFormatter()
     {
@@ -29,7 +32,7 @@ class ShippingOptionLabelExtension extends \Twig_Extension
     }
 
     /**
-     * @return UnitLabelFormatter
+     * @return UnitLabelFormatterInterface
      */
     protected function getWeightUnitLabelFormatter()
     {
@@ -37,7 +40,7 @@ class ShippingOptionLabelExtension extends \Twig_Extension
     }
 
     /**
-     * @return UnitLabelFormatter
+     * @return UnitLabelFormatterInterface
      */
     protected function getFreightClassLabelFormatter()
     {

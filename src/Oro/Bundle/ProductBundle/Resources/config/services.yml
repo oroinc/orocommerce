@@ -43,11 +43,15 @@ services:
 
     oro_product.formatter.product_unit_value:
         parent: oro_product.formatter.unit_value
-        class: 'Oro\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter'
+        public: true
+        calls:
+            - [setTranslationPrefix, ['oro.product_unit']]
 
     oro_product.formatter.product_unit_label:
         parent: oro_product.formatter.unit_label
-        class: 'Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter'
+        public: true
+        calls:
+            - [setTranslationPrefix, ['oro.product_unit']]
 
     oro_product.twig.product_unit_value:
         class: 'Oro\Bundle\ProductBundle\Twig\ProductUnitValueExtension'
@@ -77,7 +81,7 @@ services:
         class: 'Oro\Bundle\ProductBundle\Twig\ProductUnitLabelExtension'
         public: false
         arguments:
-            - "@service_container"
+            - '@oro_product.formatter.product_unit_label'
         tags:
             - { name: twig.extension }
 
@@ -661,6 +665,13 @@ services:
             - '@oro_product.provider.index_fields'
             - '@property_accessor'
 
+    oro_product.provider.website_search_index_data.product_variants:
+        class: 'Oro\Bundle\ProductBundle\Search\ProductVariantIndexDataProviderDecorator'
+        decorates: 'oro_product.provider.website_search_index_data'
+        decoration_inner_name: 'oro_product.provider.website_search_index_data.original'
+        arguments:
+            - '@oro_product.provider.website_search_index_data.original'
+
     oro_product.event_listener.website_search_index:
         class: 'Oro\Bundle\ProductBundle\EventListener\WebsiteSearchProductIndexerListener'
         arguments:
@@ -723,7 +734,7 @@ services:
             - '@oro_config.manager'
             - '@doctrine'
             - '@security.token_storage'
-            - '@oro_security.encoder.mcrypt'
+            - '@oro_security.encoder.default'
         calls:
             - [setCache, ['@oro_product.layout.data_provider.cache', 3600]]
 
@@ -983,6 +994,7 @@ services:
         parent: oro_entity_config.block_type.abstract_attribute_block_type_mapper
         calls:
             - [addBlockTypeUsingMetadata, ['%oro_product.entity.product_image.class%', 'attribute_product_images']]
+            - [addBlockTypeUsingMetadata, ['%oro_product.entity.brand.class%', 'attribute_product_brand']]
         tags:
             - { name: oro_entity_config.layout.attribute_block_type_mapper }
 
@@ -1149,6 +1161,22 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-product-search-grid, method: onPreBuild }
 
+    oro_product.datagrid.event_listener.frontend_product_filter_sorted_disabling:
+        class: 'Oro\Bundle\ProductBundle\DataGrid\EventListener\FrontendProductFilterSorterDisablingEventListener'
+        arguments:
+            - '@oro_entity_config.manager.attribute_manager'
+            - '@oro_entity_config.registry.attribute_type'
+            - '@oro_entity_config.provider.attribute_configuration'
+            - '@oro_product.website_search.repository.product'
+            - '@oro_entity.doctrine_helper'
+            - '@oro_datagrid.datagrid.manager.link'
+            - '@oro_filter.provider.state.filters'
+            - '@oro_datagrid.provider.state.sorters'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.search_datasource.result.before.frontend-product-search-grid, method: onSearchResultBefore }
+            - { name: kernel.event_listener, event: oro_datagrid.search_datasource.result.after.frontend-product-search-grid, method: onSearchResultAfter }
+            - { name: oro_featuretogle.feature, feature: limit_filters_sorters_on_product_listing }
+
     oro_product.provider.catalog_context_url_provider:
         class: Oro\Bundle\ProductBundle\Provider\ContentVariantContextUrlProvider
         public: false
@@ -1287,7 +1315,6 @@ services:
             - [addForceIndexed,  ['sku']]
             - [addForceIndexed,  ['names']]
             - [addForceIndexed,  ['shortDescriptions']]
-            - [addForceIndexed,  ['inventory_status']]
             - [addForceIndexed,  ['newArrival']]
 
     oro_product.event_listener.website_search_mapping:
@@ -1330,6 +1357,12 @@ services:
 
     oro_product.provider.brand_entity_name:
         class: 'Oro\Bundle\ProductBundle\Provider\BrandEntityNameProvider'
+        public: false
+        tags:
+            - { name: oro_entity.name_provider, priority: 100 }
+
+    oro_product.provider.product_entity_name:
+        class: 'Oro\Bundle\ProductBundle\Provider\ProductEntityNameProvider'
         public: false
         tags:
             - { name: oro_entity.name_provider, priority: 100 }
@@ -1433,6 +1466,23 @@ services:
         arguments:
             - "@oro_config.manager"
             - "@oro_frontend.request.frontend_helper"
+            - "@oro_product.model.restrict_display_product_variants_query_builder_modifier"
         tags:
             - { name: kernel.event_listener, event: oro_product.product_search_query.restriction, method: onSearchQuery }
             - { name: kernel.event_listener, event: oro_product.product_db_query.restriction, method: onDBQuery }
+
+    oro_product.event_listener.reindex_parent_configurable_product:
+        class: 'Oro\Bundle\ProductBundle\EventListener\Search\ReindexParentConfigurableProductListener'
+        public: false
+        arguments:
+            - '@oro_website.indexation_entities_container'
+        tags:
+            - { name: doctrine.orm.entity_listener, entity: '%oro_product.entity.product.class%', event: postPersist }
+            - { name: doctrine.orm.entity_listener, entity: '%oro_product.entity.product.class%', event: postUpdate }
+            - { name: doctrine.orm.entity_listener, entity: '%oro_product.entity.product.class%', event: preRemove }
+
+    oro_product.model.restrict_display_product_variants_query_builder_modifier:
+        class: 'Oro\Bundle\ProductBundle\Model\RestrictProductVariationsBuilderModifier'
+        public: false
+        arguments:
+            - '@oro_entity.doctrine_helper'

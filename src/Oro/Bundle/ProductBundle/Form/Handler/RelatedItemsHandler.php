@@ -9,6 +9,9 @@ use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
+/**
+ * Allows to assign or remove related items to Product entity from UI.
+ */
 class RelatedItemsHandler
 {
     const RELATED_PRODUCTS = 'relatedProducts';

@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\SaleBundle\Form\Type;
 
-use Oro\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter;
+use Oro\Bundle\ProductBundle\Formatter\UnitValueFormatterInterface;
 use Oro\Bundle\ProductBundle\Visibility\UnitVisibilityInterface;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use Symfony\Component\Form\AbstractType;
@@ -10,12 +10,15 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
 
+/**
+ * Extends Choice type behavior by modifying 'choice_label' using translator and unitValueFormatter
+ */
 class QuoteProductDemandOfferChoiceType extends AbstractType
 {
     const NAME = 'oro_sale_quote_product_demand_offer_choice';
 
     /**
-     * @var ProductUnitValueFormatter
+     * @var UnitValueFormatterInterface
      */
     protected $unitValueFormatter;
 
@@ -30,12 +33,12 @@ class QuoteProductDemandOfferChoiceType extends AbstractType
     protected $unitVisibility;
 
     /**
-     * @param ProductUnitValueFormatter $unitValueFormatter
+     * @param UnitValueFormatterInterface $unitValueFormatter
      * @param TranslatorInterface $translator
      * @param UnitVisibilityInterface $unitVisibility
      */
     public function __construct(
-        ProductUnitValueFormatter $unitValueFormatter,
+        UnitValueFormatterInterface $unitValueFormatter,
         TranslatorInterface $translator,
         UnitVisibilityInterface $unitVisibility
     ) {

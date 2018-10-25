@@ -103,7 +103,7 @@ class FedexIntegrationTest extends WebTestCase
         static::assertSame($settingsData['key'], $settings->getKey());
         static::assertSame(
             $settingsData['password'],
-            static::getContainer()->get('oro_security.encoder.mcrypt')->decryptData($settings->getPassword())
+            static::getContainer()->get('oro_security.encoder.default')->decryptData($settings->getPassword())
         );
         static::assertSame($settingsData['accountNumber'], $settings->getAccountNumber());
         static::assertSame($settingsData['meterNumber'], $settings->getMeterNumber());
