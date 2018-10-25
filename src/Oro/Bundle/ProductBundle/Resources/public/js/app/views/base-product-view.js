@@ -77,6 +77,22 @@ define(function(require) {
             });
         },
 
+        /**
+         * @inheritDoc
+         */
+        delegateEvents: function(events) {
+            BaseProductView.__super__.delegateEvents.call(this, events);
+
+            this.$el.one(
+                'change' + this.eventNamespace(),
+                function() {
+                    this.$el.removeAttr('data-validation-ignore');
+                }.bind(this)
+            );
+
+            return this;
+        },
+
         initModel: function(options) {
             this.modelAttr = $.extend(true, {}, this.modelAttr, options.modelAttr || {});
             if (!this.model) {
