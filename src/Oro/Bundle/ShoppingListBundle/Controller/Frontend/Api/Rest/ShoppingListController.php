@@ -9,7 +9,6 @@ use FOS\RestBundle\Util\Codes;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use Oro\Bundle\SoapBundle\Controller\Api\Rest\RestController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,6 +16,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
+ * Controller for shopping list REST API requests.
  * @NamePrefix("oro_api_")
  */
 class ShoppingListController extends RestController implements ClassResourceInterface
@@ -36,9 +36,6 @@ class ShoppingListController extends RestController implements ClassResourceInte
      */
     public function setCurrentAction(ShoppingList $shoppingList)
     {
-        /** @var ShoppingListManager $manager */
-        $manager = $this->get('oro_shopping_list.shopping_list.manager');
-
         $isGranted = $this->isGranted('EDIT', $shoppingList);
         $isProcessed = false;
         $view = $this->view([], Codes::HTTP_NO_CONTENT);
@@ -46,7 +43,8 @@ class ShoppingListController extends RestController implements ClassResourceInte
             $view = $this->view(['reason' => 'Access denied'], Codes::HTTP_FORBIDDEN);
             $isProcessed = true;
         }
-        $manager->setCurrent($this->getUser(), $shoppingList);
+        $this->get('oro_shopping_list.manager.current_shopping_list')
+            ->setCurrent($this->getUser(), $shoppingList);
 
         return $this->buildResponse(
             $view,

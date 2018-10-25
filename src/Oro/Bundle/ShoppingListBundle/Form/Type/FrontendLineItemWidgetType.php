@@ -5,7 +5,7 @@ namespace Oro\Bundle\ShoppingListBundle\Form\Type;
 use Oro\Bundle\ProductBundle\Form\Type\FrontendLineItemType;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
-use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
+use Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListManager;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\Form\AbstractType;
@@ -26,9 +26,9 @@ class FrontendLineItemWidgetType extends AbstractType
     const NAME = 'oro_shopping_list_frontend_line_item_widget';
 
     /**
-     * @var ShoppingListManager
+     * @var CurrentShoppingListManager
      */
-    protected $shoppingListManager;
+    protected $currentShoppingListManager;
 
     /**
      * @var ManagerRegistry
@@ -48,16 +48,16 @@ class FrontendLineItemWidgetType extends AbstractType
     /**
      * @param ManagerRegistry $registry
      * @param TranslatorInterface $translator
-     * @param ShoppingListManager $shoppingListManager
+     * @param CurrentShoppingListManager $currentShoppingListManager
      */
     public function __construct(
         ManagerRegistry $registry,
         TranslatorInterface $translator,
-        ShoppingListManager $shoppingListManager
+        CurrentShoppingListManager $currentShoppingListManager
     ) {
         $this->registry = $registry;
         $this->translator = $translator;
-        $this->shoppingListManager = $shoppingListManager;
+        $this->currentShoppingListManager = $currentShoppingListManager;
     }
 
     /**
@@ -126,7 +126,7 @@ class FrontendLineItemWidgetType extends AbstractType
      */
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
-        $currentShoppingList = $this->shoppingListManager->getCurrent();
+        $currentShoppingList = $this->currentShoppingListManager->getCurrent();
         $view->children['shoppingList']->vars['currentShoppingList'] = $currentShoppingList;
     }
 
