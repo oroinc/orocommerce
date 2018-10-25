@@ -8,8 +8,10 @@ use Doctrine\ORM\EntityManager;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Layout\DataProvider\ProductFormAvailabilityProvider;
 use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
 use Oro\Bundle\ProductBundle\Rounding\QuantityRoundingService;
@@ -581,5 +583,161 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         $this->manager->updateLineItem($lineItemDuplicate, $shoppingList);
 
         $this->assertEmpty($shoppingList->getLineItems());
+    }
+
+    public function testRemoveLineItemWithSimpleProductsInItems()
+    {
+        $lineItem = (new LineItem())
+            ->setUnit($this->getProductUnit('test', 1))
+            ->setQuantity(10);
+        $lineItem1 = (new LineItem())
+            ->setUnit($this->getProductUnit('test1', 1))
+            ->setQuantity(2);
+
+        $shoppingList = $this->getShoppingList(1);
+        $shoppingList->addLineItem($lineItem);
+        $shoppingList->addLineItem($lineItem1);
+
+        $this->manager->removeLineItem($lineItem);
+
+        $lineItems = $shoppingList->getLineItems();
+
+        $this->assertCount(1, $lineItems);
+        $this->assertTrue($lineItems->contains($lineItem1));
+        $this->assertFalse($lineItems->contains($lineItem));
+    }
+
+    public function testRemoveLineItemWithConfigurableProductsAndMatrixMatrixType()
+    {
+        $productUnitPrecision = new ProductUnitPrecision();
+        $productUnitPrecision->setUnit($this->getProductUnit('test', 1));
+
+        $product = $this->getProduct(43, Product::TYPE_CONFIGURABLE);
+        $product->setPrimaryUnitPrecision($productUnitPrecision);
+
+        $simpleProduct1 = $this->getProduct(44, Product::TYPE_SIMPLE);
+        $simpleProduct2 = $this->getProduct(45, Product::TYPE_SIMPLE);
+        $simpleProduct3 = $this->getProduct(46, Product::TYPE_SIMPLE);
+
+        $lineItem1 = new LineItem();
+        $lineItem1->setProduct($simpleProduct1);
+        $lineItem1->setParentProduct($product);
+        $lineItem1->setUnit($this->getProductUnit('test', 1));
+
+        $lineItem2 = new LineItem();
+        $lineItem2->setProduct($simpleProduct2);
+        $lineItem2->setParentProduct($product);
+        $lineItem2->setUnit($this->getProductUnit('test', 1));
+
+        $lineItem3 = new LineItem();
+        $lineItem3->setProduct($simpleProduct3);
+        $lineItem3->setParentProduct($product);
+        $lineItem3->setUnit($this->getProductUnit('test', 1));
+
+        $shoppingList = $this->getShoppingList(1);
+        $shoppingList->addLineItem($lineItem1);
+        $shoppingList->addLineItem($lineItem2);
+        $shoppingList->addLineItem($lineItem3);
+
+        $this->lineItemRepository->expects($this->once())
+            ->method('getItemsByShoppingListAndProducts')
+            ->with($shoppingList, [$product])
+            ->willReturn([$lineItem1, $lineItem2, $lineItem3]);
+
+        $this->productFormAvailabilityProvider->expects($this->once())
+            ->method('getAvailableMatrixFormType')
+            ->with($product)
+            ->willReturn(Configuration::MATRIX_FORM_INLINE);
+
+        $this->manager->removeLineItem($lineItem1);
+
+        $this->assertEmpty($shoppingList->getLineItems());
+    }
+
+    public function testRemoveLineItemWithConfigurableProductsAndNoneMatrixType()
+    {
+        $productUnitPrecision = new ProductUnitPrecision();
+        $productUnitPrecision->setUnit($this->getProductUnit('test', 1));
+
+        $product = $this->getProduct(43, Product::TYPE_CONFIGURABLE);
+        $product->setPrimaryUnitPrecision($productUnitPrecision);
+
+        $simpleProduct1 = $this->getProduct(44, Product::TYPE_SIMPLE);
+        $simpleProduct2 = $this->getProduct(45, Product::TYPE_SIMPLE);
+        $simpleProduct3 = $this->getProduct(46, Product::TYPE_SIMPLE);
+
+        $lineItem1 = new LineItem();
+        $lineItem1->setProduct($simpleProduct1);
+        $lineItem1->setParentProduct($product);
+        $lineItem1->setUnit($this->getProductUnit('test', 1));
+
+        $lineItem2 = new LineItem();
+        $lineItem2->setProduct($simpleProduct2);
+        $lineItem2->setParentProduct($product);
+        $lineItem2->setUnit($this->getProductUnit('test', 1));
+
+        $lineItem3 = new LineItem();
+        $lineItem3->setProduct($simpleProduct3);
+        $lineItem3->setParentProduct($product);
+        $lineItem3->setUnit($this->getProductUnit('test', 1));
+
+        $shoppingList = $this->getShoppingList(1);
+        $shoppingList->addLineItem($lineItem1);
+        $shoppingList->addLineItem($lineItem2);
+        $shoppingList->addLineItem($lineItem3);
+
+        $this->productFormAvailabilityProvider->expects($this->once())
+            ->method('getAvailableMatrixFormType')
+            ->with($product)
+            ->willReturn(Configuration::MATRIX_FORM_NONE);
+
+        $this->manager->removeLineItem($lineItem1);
+
+        $resultLineItems = $shoppingList->getLineItems();
+        $this->assertCount(2, $resultLineItems);
+        $this->assertFalse($resultLineItems->contains($lineItem1));
+        $this->assertTrue($resultLineItems->contains($lineItem2));
+        $this->assertTrue($resultLineItems->contains($lineItem3));
+    }
+
+    public function testRemoveLineItemWithConfigurableProductsAndWithFlagToDeleteOnlyCurrentItem()
+    {
+        $productUnitPrecision = new ProductUnitPrecision();
+        $productUnitPrecision->setUnit($this->getProductUnit('test', 1));
+
+        $product = $this->getProduct(43, Product::TYPE_CONFIGURABLE);
+        $product->setPrimaryUnitPrecision($productUnitPrecision);
+
+        $simpleProduct1 = $this->getProduct(44, Product::TYPE_SIMPLE);
+        $simpleProduct2 = $this->getProduct(45, Product::TYPE_SIMPLE);
+        $simpleProduct3 = $this->getProduct(46, Product::TYPE_SIMPLE);
+
+        $lineItem1 = new LineItem();
+        $lineItem1->setProduct($simpleProduct1);
+        $lineItem1->setParentProduct($product);
+        $lineItem1->setUnit($this->getProductUnit('test', 1));
+
+        $lineItem2 = new LineItem();
+        $lineItem2->setProduct($simpleProduct2);
+        $lineItem2->setParentProduct($product);
+        $lineItem2->setUnit($this->getProductUnit('test', 1));
+
+        $lineItem3 = new LineItem();
+        $lineItem3->setProduct($simpleProduct3);
+        $lineItem3->setParentProduct($product);
+        $lineItem3->setUnit($this->getProductUnit('test', 1));
+
+        $shoppingList = $this->getShoppingList(1);
+        $shoppingList->addLineItem($lineItem1);
+        $shoppingList->addLineItem($lineItem2);
+        $shoppingList->addLineItem($lineItem3);
+
+        $this->manager->removeLineItem($lineItem1, true);
+
+        $resultLineItems = $shoppingList->getLineItems();
+        $this->assertCount(2, $resultLineItems);
+        $this->assertFalse($resultLineItems->contains($lineItem1));
+        $this->assertTrue($resultLineItems->contains($lineItem2));
+        $this->assertTrue($resultLineItems->contains($lineItem3));
     }
 }
