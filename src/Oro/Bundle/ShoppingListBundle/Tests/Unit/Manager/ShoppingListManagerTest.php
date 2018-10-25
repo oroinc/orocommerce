@@ -598,7 +598,9 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         $shoppingList->addLineItem($lineItem);
         $shoppingList->addLineItem($lineItem1);
 
-        $this->manager->removeLineItem($lineItem);
+        $countDeletedItems = $this->manager->removeLineItem($lineItem);
+
+        $this->assertEquals(1, $countDeletedItems);
 
         $lineItems = $shoppingList->getLineItems();
 
@@ -649,8 +651,9 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
             ->with($product)
             ->willReturn(Configuration::MATRIX_FORM_INLINE);
 
-        $this->manager->removeLineItem($lineItem1);
+        $countDeletedItems = $this->manager->removeLineItem($lineItem1);
 
+        $this->assertEquals(3, $countDeletedItems);
         $this->assertEmpty($shoppingList->getLineItems());
     }
 
@@ -691,7 +694,9 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
             ->with($product)
             ->willReturn(Configuration::MATRIX_FORM_NONE);
 
-        $this->manager->removeLineItem($lineItem1);
+        $countDeletedItems = $this->manager->removeLineItem($lineItem1);
+
+        $this->assertEquals(1, $countDeletedItems);
 
         $resultLineItems = $shoppingList->getLineItems();
         $this->assertCount(2, $resultLineItems);
@@ -732,7 +737,9 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         $shoppingList->addLineItem($lineItem2);
         $shoppingList->addLineItem($lineItem3);
 
-        $this->manager->removeLineItem($lineItem1, true);
+        $countDeletedItems = $this->manager->removeLineItem($lineItem1, true);
+
+        $this->assertEquals(1, $countDeletedItems);
 
         $resultLineItems = $shoppingList->getLineItems();
         $this->assertCount(2, $resultLineItems);
