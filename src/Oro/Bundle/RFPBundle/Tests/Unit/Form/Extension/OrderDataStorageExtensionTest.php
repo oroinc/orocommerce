@@ -4,15 +4,22 @@ namespace Oro\Bundle\RFPBundle\Tests\Unit\Form\Extension;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\OrderBundle\Entity\Order;
-use Oro\Bundle\PricingBundle\Entity\BasePriceList;
-use Oro\Bundle\PricingBundle\Model\PriceListTreeHandler;
+use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
+use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaFactory;
+use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaFactoryInterface;
+use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaInterface;
 use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Storage\DataStorageInterface;
 use Oro\Bundle\RFPBundle\Form\Extension\OrderDataStorageExtension;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -37,33 +44,29 @@ class OrderDataStorageExtensionTest extends \PHPUnit\Framework\TestCase
     protected $productPriceProvider;
 
     /**
-     * @var PriceListTreeHandler|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $priceListTreeHandler;
-
-    /**
      * @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $featureChecker;
+
+    /**
+     * @var ProductPriceScopeCriteriaFactoryInterface
+     */
+    protected $priceScopeCriteriaFactory;
 
     /**
      * {@inheritDoc}
      */
     protected function setUp()
     {
-        $this->requestStack = $this->createMock('Symfony\Component\HttpFoundation\RequestStack');
+        $this->requestStack = $this->createMock(RequestStack::class);
         $this->productPriceProvider = $this->createMock(ProductPriceProviderInterface::class);
-        $this->priceListTreeHandler = $this->getMockBuilder('Oro\Bundle\PricingBundle\Model\PriceListTreeHandler')
-            ->disableOriginalConstructor()->getMock();
-
-        $this->featureChecker = $this->getMockBuilder(FeatureChecker::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->featureChecker = $this->createMock(FeatureChecker::class);
+        $this->priceScopeCriteriaFactory = new ProductPriceScopeCriteriaFactory();
 
         $this->extension = new OrderDataStorageExtension(
             $this->requestStack,
             $this->productPriceProvider,
-            $this->priceListTreeHandler
+            $this->priceScopeCriteriaFactory
         );
         $this->extension->setFeatureChecker($this->featureChecker);
     }
@@ -79,14 +82,18 @@ class OrderDataStorageExtensionTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider buildFormDataProvider
      *
-     * @param array $lineItems
+     * @param array $lineItemsInfo
      * @param array $lineItemToMatchedPrices
      * @param array $matchedPrices
      */
-    public function testBuildForm(array $lineItems, array $lineItemToMatchedPrices, array $matchedPrices)
-    {
-        $order = $this->getOrder($lineItems);
+    public function testBuildForm(
+        array $lineItemsInfo,
+        array $lineItemToMatchedPrices,
+        array $matchedPrices
+    ) {
+        $order = $this->getOrder($lineItemsInfo);
         $matchedPrices = $this->getMatchedPrices($matchedPrices);
+        $priceScopeCriteria = $this->getPriceScopeCriteria($lineItemsInfo, $order);
 
         $this->extension->addFeature('test');
         $this->featureChecker->expects($this->once())
@@ -95,7 +102,7 @@ class OrderDataStorageExtensionTest extends \PHPUnit\Framework\TestCase
             ->willReturn(true);
 
         /** @var Request|\PHPUnit\Framework\MockObject\MockObject $request */
-        $request = $this->createMock('Symfony\Component\HttpFoundation\Request');
+        $request = $this->createMock(Request::class);
         $request->expects($this->once())
             ->method('get')
             ->with(DataStorageInterface::STORAGE_KEY)
@@ -104,17 +111,9 @@ class OrderDataStorageExtensionTest extends \PHPUnit\Framework\TestCase
             ->method('getCurrentRequest')
             ->willReturn($request);
 
-        /** @var BasePriceList $priceList */
-        $priceList = $this->createMock(BasePriceList::class);
-
-        $this->priceListTreeHandler->expects($this->once())
-            ->method('getPriceList')
-            ->with($order->getCustomer(), $order->getWebsite())
-            ->willReturn($priceList);
-
         $this->productPriceProvider->expects($this->once())
             ->method('getMatchedPrices')
-            ->with($this->isType('array'), $priceList->getId())
+            ->with($this->isType('array'), $priceScopeCriteria)
             ->willReturn($matchedPrices);
 
         $builder = $this->getBuilderMock();
@@ -125,7 +124,7 @@ class OrderDataStorageExtensionTest extends \PHPUnit\Framework\TestCase
                 $this->logicalAnd(
                     $this->isInstanceOf('\Closure'),
                     $this->callback(function (\Closure $closure) use ($order) {
-                        $event = $this->getMockBuilder('Symfony\Component\Form\FormEvent')
+                        $event = $this->getMockBuilder(FormEvent::class)
                             ->disableOriginalConstructor()
                             ->getMock();
                         $event->expects($this->once())->method('getData')->willReturn($order);
@@ -205,15 +204,32 @@ class OrderDataStorageExtensionTest extends \PHPUnit\Framework\TestCase
         $lineItems = new ArrayCollection();
         foreach ($data['lineItems'] as $lineItem) {
             $lineItem['product'] = $this
-                ->getEntity('Oro\Bundle\ProductBundle\Entity\Product', $lineItem['product']);
+                ->getEntity(Product::class, $lineItem['product']);
             $lineItem['productUnit'] = $this
-                ->getEntity('Oro\Bundle\ProductBundle\Entity\ProductUnit', $lineItem['productUnit']);
-            $lineItems->add($this->getEntity('Oro\Bundle\OrderBundle\Entity\OrderLineItem', $lineItem));
+                ->getEntity(ProductUnit::class, $lineItem['productUnit']);
+            $lineItems->add($this->getEntity(OrderLineItem::class, $lineItem));
         }
-        $data['customer'] = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Customer', $data['customer']);
-        $data['website'] = $this->getEntity('Oro\Bundle\WebsiteBundle\Entity\Website', $data['website']);
+        $data['customer'] = $this->getEntity(Customer::class, $data['customer']);
+        $data['website'] = $this->getEntity(Website::class, $data['website']);
         $data['lineItems'] = $lineItems;
-        return $this->getEntity('Oro\Bundle\OrderBundle\Entity\Order', $data);
+        return $this->getEntity(Order::class, $data);
+    }
+
+    /**
+     * @param array $data
+     * @param Order $order
+     * @return ProductPriceScopeCriteriaInterface
+     */
+    protected function getPriceScopeCriteria(array $data, Order $order)
+    {
+        $customer = $this->getEntity(Customer::class, $data['customer']);
+        $website = $this->getEntity(Website::class, $data['website']);
+
+        return $this->priceScopeCriteriaFactory->create(
+            $website,
+            $customer,
+            $order
+        );
     }
 
     /**
@@ -230,29 +246,46 @@ class OrderDataStorageExtensionTest extends \PHPUnit\Framework\TestCase
 
     public function testBuildFormNotApplicableEmptyGetParameter()
     {
+        $this->extension->addFeature('test');
+        $this->featureChecker->expects($this->once())
+            ->method('isFeatureEnabled')
+            ->with('test')
+            ->willReturn(true);
+
         $builder = $this->getBuilderMock();
         $builder->expects($this->never())
             ->method('addEventListener');
+
         /** @var Request|\PHPUnit\Framework\MockObject\MockObject $request */
-        $request = $this->createMock('Symfony\Component\HttpFoundation\Request');
+        $request = $this->createMock(Request::class);
         $request->expects($this->once())
             ->method('get')
             ->with(DataStorageInterface::STORAGE_KEY)
             ->willReturn(null);
+
         $this->requestStack->expects($this->once())
             ->method('getCurrentRequest')
             ->willReturn($request);
+
         $this->extension->buildForm($builder, []);
     }
 
     public function testBuildFormNotApplicableEmptyRequest()
     {
+        $this->extension->addFeature('test');
+        $this->featureChecker->expects($this->once())
+            ->method('isFeatureEnabled')
+            ->with('test')
+            ->willReturn(true);
+
         $builder = $this->getBuilderMock();
         $builder->expects($this->never())
             ->method('addEventListener');
+
         $this->requestStack->expects($this->once())
             ->method('getCurrentRequest')
             ->willReturn(null);
+
         $this->extension->buildForm($builder, []);
     }
 
@@ -270,18 +303,131 @@ class OrderDataStorageExtensionTest extends \PHPUnit\Framework\TestCase
 
         /** @var Request|\PHPUnit\Framework\MockObject\MockObject $request */
         $request = $this->createMock(Request::class);
+        $request->expects($this->any())
+            ->method('get')
+            ->with(DataStorageInterface::STORAGE_KEY)
+            ->willReturn(true);
+
         $this->requestStack->expects($this->once())
             ->method('getCurrentRequest')
             ->willReturn($request);
         $this->extension->buildForm($builder, []);
     }
 
+    /**
+     * @dataProvider fillDataDataProvider
+     *
+     * @param array $data
+     */
+    public function testFillDataEmptyCriteria($data)
+    {
+        $this->extension->addFeature('test');
+        $this->featureChecker->expects($this->once())
+            ->method('isFeatureEnabled')
+            ->with('test')
+            ->willReturn(true);
+
+        /** @var Request|\PHPUnit\Framework\MockObject\MockObject $request */
+        $request = $this->createMock(Request::class);
+        $request->expects($this->once())
+            ->method('get')
+            ->with(DataStorageInterface::STORAGE_KEY)
+            ->willReturn(true);
+        $this->requestStack->expects($this->once())
+            ->method('getCurrentRequest')
+            ->willReturn($request);
+
+        $this->productPriceProvider
+            ->expects($this->never())
+            ->method('getMatchedPrices');
+
+        $order = $this->getOrder($data);
+        $builder = $this->getBuilderMock();
+        $builder->expects($this->any())
+            ->method('addEventListener')
+            ->with(
+                FormEvents::PRE_SET_DATA,
+                $this->callback(function (\Closure $closure) use ($order) {
+                    $event = $this->createMock(FormEvent::class);
+                    $event->expects($this->once())->method('getData')->willReturn($order);
+                    $closure($event);
+                    return true;
+                })
+            );
+
+        $this->extension->buildForm($builder, []);
+    }
+
+    /**
+     * @return array
+     */
+    public function fillDataDataProvider()
+    {
+        return [
+            'no line items' => [
+                [
+                    'customer' => ['id' => 1],
+                    'website' => ['id' => 1],
+                    'currency' => 'USD',
+                    'lineItems' => [],
+                ]
+            ],
+            'invalid arguments' => [
+                [
+                    'customer' => ['id' => 1],
+                    'website' => ['id' => 1],
+                    'currency' => 'USD',
+                    'lineItems' => [
+                        [
+                            'id' => 1,
+                            'product' => ['id' => null],
+                            'productUnit' => ['code' => 'piece'],
+                            'quantity' => 2,
+                        ],
+                        [
+                            'id' => 1,
+                            'product' => ['id' => 1],
+                            'productUnit' => ['code' => null],
+                            'quantity' => 2,
+                        ],
+                        [
+                            'id' => 1,
+                            'product' => ['id' => 1],
+                            'productUnit' => ['code' => 'piece'],
+                            'quantity' => 'invalid',
+                        ],
+                        [
+                            'id' => 1,
+                            'product' => ['id' => 1],
+                            'productUnit' => ['code' => 'piece'],
+                            'quantity' => -5,
+                        ],
+                    ],
+                ]
+            ],
+            'invalid currency' => [
+                [
+                    'customer' => ['id' => 1],
+                    'website' => ['id' => 1],
+                    'currency' => '',
+                    'lineItems' => [
+                        [
+                            'id' => 1,
+                            'product' => ['id' => 1],
+                            'productUnit' => ['code' => 'piece'],
+                            'quantity' => 2,
+                        ],
+                    ],
+                ]
+            ],
+        ];
+    }
 
     /**
      * @return FormBuilderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function getBuilderMock()
     {
-        return $this->createMock('Symfony\Component\Form\FormBuilderInterface');
+        return $this->createMock(FormBuilderInterface::class);
     }
 }
