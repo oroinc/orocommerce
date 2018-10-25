@@ -6,6 +6,9 @@ use Oro\Bundle\LocaleBundle\Model\AddressInterface;
 use Oro\Bundle\UPSBundle\Client\Request\UpsClientRequestInterface;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
 
+/**
+ * Must be implemented by factories which creates request object to get tnt (Time In Transit) data from UPS
+ */
 interface TimeInTransitRequestFactoryInterface
 {
     /**
