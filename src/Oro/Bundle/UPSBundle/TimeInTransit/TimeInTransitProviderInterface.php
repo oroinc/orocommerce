@@ -6,6 +6,9 @@ use Oro\Bundle\LocaleBundle\Model\AddressInterface;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
 use Oro\Bundle\UPSBundle\TimeInTransit\Result\TimeInTransitResultInterface;
 
+/**
+ * Must be implemented by providers which provides tnt (Time In Transit) data from UPS
+ */
 interface TimeInTransitProviderInterface
 {
     /**
