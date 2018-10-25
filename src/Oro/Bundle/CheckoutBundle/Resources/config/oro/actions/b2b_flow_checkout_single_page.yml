@@ -29,7 +29,6 @@ operations:
                     options:
                         object: $.data
                         addressType: 'billing'
-                        isEditEnabled: true
                         required: true
                         constraints:
                             - Valid: ~
@@ -100,7 +99,6 @@ operations:
                     options:
                         object: $.data
                         addressType: 'shipping'
-                        isEditEnabled: true
                         required: true
                         constraints:
                             - Valid: ~

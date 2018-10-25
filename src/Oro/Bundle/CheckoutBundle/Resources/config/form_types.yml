@@ -1,7 +1,6 @@
 services:
     oro_checkout.form.type.checkout_address:
         class: 'Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressType'
-        parent: oro_order.form.type.order_address
         tags:
             - { name: form.type, alias: oro_checkout_address }
 
@@ -34,3 +33,10 @@ services:
         class: 'Oro\Bundle\CheckoutBundle\Form\Type\LateRegistrationType'
         tags:
             - { name: form.type, alias: oro_late_registration }
+
+    oro_checkout.form.type.checkout_address_select:
+        class: 'Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressSelectType'
+        arguments:
+            - '@oro_order.manager.order_address'
+        tags:
+            - { name: form.type, alias: oro_checkout_address_select }

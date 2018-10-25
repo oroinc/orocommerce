@@ -65,19 +65,6 @@ layout:
                         form: '=data["oro_checkout_single_page_transition_form"].getTransitionFormView(data["workflowItem"])'
                         workflowItem: '=data["workflowItem"]'
 
-                shipping_address_inner_wrapper:
-                    blockType: layout_subtree_update
-                    options:
-                        reloadEvents: []
-                        showLoading: false
-
-                shipping_address_inner:
-                    blockType: checkout_form_fields
-                    options:
-                        checkout: '=data["checkout"]'
-                        form: '=data["oro_checkout_single_page_transition_form"].getTransitionFormView(data["workflowItem"])'
-                        workflowItem: '=data["workflowItem"]'
-
                 shipping_methods_wrapper:
                     blockType: layout_subtree_update
                     options:
@@ -124,9 +111,7 @@ layout:
                                 payment_methods: ~
                                 payment_additional_data: ~
                         checkout_shipping_information:
-                            shipping_address:
-                                shipping_address_inner_wrapper:
-                                    shipping_address_inner: ~
+                            shipping_address: ~
                             shipping_methods_wrapper:
                                 shipping_methods_hidden: ~
                                 shipping_methods:

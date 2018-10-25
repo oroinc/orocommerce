@@ -107,7 +107,7 @@ Feature: Single Page Checkout With Popup for Buyer
       | City         | This value should not be blank.                               |
       | Postal Code  | This value should not be blank.                               |
     When I close ui dialog
-    Then I should see "ORO, Fifth avenue, 10115 Berlin, Germany" for "Select Billing Address" select
+    Then I should see "ORO, Fifth avenue, 10115 Berlin, Germany" for "Select Single Page Checkout Billing Address" select
 
   Scenario: Validate new shipping address form
     Given I scroll to top
@@ -139,7 +139,7 @@ Feature: Single Page Checkout With Popup for Buyer
       | City         | This value should not be blank.                               |
       | Postal Code  | This value should not be blank.                               |
     When I close ui dialog
-    Then I should see "ORO, Fifth avenue, 10115 Berlin, Germany" for "Select Shipping Address" select
+    Then I should see "ORO, Fifth avenue, 10115 Berlin, Germany" for "Select Single Page Checkout Shipping Address" select
 
   Scenario: Create order with predefined shipping address and new billing address
     Given I scroll to top
@@ -180,9 +180,9 @@ Feature: Single Page Checkout With Popup for Buyer
       | State        | AL-HA          |
       | Postal Code  | 12345          |
     When I close ui dialog
-    Then I should see "New address (B Prefix B Fname B Mname B Lname B Suffix, B Organization, B Street B Street 2, B CITY HA AL 12345, 12345)" for "Select Billing Address" select
+    Then I should see "New address (B Prefix B Fname B Mname B Lname B Suffix, B Organization, B Street B Street 2, B CITY HA AL 12345, 12345)" for "Select Single Page Checkout Billing Address" select
     When I reload the page
-    Then I should see "New address (B Prefix B Fname B Mname B Lname B Suffix, B Organization, B Street B Street 2, B CITY HA AL 12345, 12345)" for "Select Billing Address" select
+    Then I should see "New address (B Prefix B Fname B Mname B Lname B Suffix, B Organization, B Street B Street 2, B CITY HA AL 12345, 12345)" for "Select Single Page Checkout Billing Address" select
     When I click on "Billing Address Select"
     And I click on "New Address Option"
     Then "New Address Popup Form" must contains values:
@@ -255,9 +255,9 @@ Feature: Single Page Checkout With Popup for Buyer
       | State        | GE-GU          |
       | Postal Code  | 67890          |
     When I close ui dialog
-    Then I should see "New address (S Prefix S Fname S Mname S Lname S Suffix, S Organization, S Street S Street 2, 67890 S City, Georgia, 67890)" for "Select Shipping Address" select
+    Then I should see "New address (S Prefix S Fname S Mname S Lname S Suffix, S Organization, S Street S Street 2, 67890 S City, Georgia, 67890)" for "Select Single Page Checkout Shipping Address" select
     When I reload the page
-    Then I should see "New address (S Prefix S Fname S Mname S Lname S Suffix, S Organization, S Street S Street 2, 67890 S City, Georgia, 67890)" for "Select Shipping Address" select
+    Then I should see "New address (S Prefix S Fname S Mname S Lname S Suffix, S Organization, S Street S Street 2, 67890 S City, Georgia, 67890)" for "Select Single Page Checkout Shipping Address" select
     When I click on "Shipping Address Select"
     And I click on "New Address Option"
     Then "New Address Popup Form" must contains values:
@@ -312,7 +312,7 @@ Feature: Single Page Checkout With Popup for Buyer
       | State        | Has            |
       | Postal Code  | 12345          |
     And I click "Continue"
-    Then I should see "New address (B Prefix B Fname B Mname B Lname B Suffix, B Organization, B Street B Street 2, B CITY HA AL 12345, 12345)" for "Select Billing Address" select
+    Then I should see "New address (B Prefix B Fname B Mname B Lname B Suffix, B Organization, B Street B Street 2, B CITY HA AL 12345, 12345)" for "Select Single Page Checkout Billing Address" select
     And I click on "Shipping Address Select"
     And I click on "New Address Option"
     And I fill "New Address Popup Form" with:
@@ -331,7 +331,7 @@ Feature: Single Page Checkout With Popup for Buyer
       | State        | Guria          |
       | Postal Code  | 67890          |
     And I click "Continue"
-    Then I should see "New address (S Prefix S Fname S Mname S Lname S Suffix, S Organization, S Street S Street 2, 67890 S City, Georgia, 67890)" for "Select Shipping Address" select
+    Then I should see "New address (S Prefix S Fname S Mname S Lname S Suffix, S Organization, S Street S Street 2, 67890 S City, Georgia, 67890)" for "Select Single Page Checkout Shipping Address" select
     When I click "Delete this shopping list after submitting order"
     And I wait "Submit Order" button
     And I click "Submit Order"
@@ -367,7 +367,7 @@ Feature: Single Page Checkout With Popup for Buyer
       | State        | Has            |
       | Postal Code  | 12345          |
     And I click "Continue"
-    Then I should see "New address (B Prefix B Fname B Mname B Lname B Suffix, B Organization, B Street B Street 2, B CITY HA AL 12345, 12345)" for "Select Billing Address" select
+    Then I should see "New address (B Prefix B Fname B Mname B Lname B Suffix, B Organization, B Street B Street 2, B CITY HA AL 12345, 12345)" for "Select Single Page Checkout Billing Address" select
     When I check "Use billing address" on the checkout page
     And I click "Delete this shopping list after submitting order"
     And I wait "Submit Order" button

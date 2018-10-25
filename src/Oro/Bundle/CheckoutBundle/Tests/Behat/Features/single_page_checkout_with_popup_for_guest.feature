@@ -84,7 +84,7 @@ Feature: Single Page Checkout With Popup for Guest
       | City         | This value should not be blank.                               |
       | Postal Code  | This value should not be blank.                               |
     When I close ui dialog
-    Then I should see "New address" for "Select Billing Address" select
+    Then I should see "New address" for "Select Single Page Checkout Billing Address" select
 
     Scenario: Check empty shipping address notification
     And I click on "Billing Address Select"
@@ -106,7 +106,7 @@ Feature: Single Page Checkout With Popup for Guest
       | State        | Has              |
       | Postal Code  | 12345            |
     And I click "Continue"
-    Then I should see "New address (B Prefix B Fname B Mname B Lname B Suffix, B Organization, B Street B Street 2, B CITY HA AL 12345, 12345)" for "Select Billing Address" select
+    Then I should see "New address (B Prefix B Fname B Mname B Lname B Suffix, B Organization, B Street B Street 2, B CITY HA AL 12345, 12345)" for "Select Single Page Checkout Billing Address" select
     # TODO "Save my data and create an account" field should save their state
     And I uncheck "Save my data and create an account" on the checkout page
     And I click "Submit Order"
@@ -154,7 +154,7 @@ Feature: Single Page Checkout With Popup for Guest
       | State        | Has              |
       | Postal Code  | 12345            |
     And I click "Continue"
-    Then I should see "New address (B Prefix B Fname B Mname B Lname B Suffix, B Organization, B Street B Street 2, B CITY HA AL 12345, 12345)" for "Select Billing Address" select
+    Then I should see "New address (B Prefix B Fname B Mname B Lname B Suffix, B Organization, B Street B Street 2, B CITY HA AL 12345, 12345)" for "Select Single Page Checkout Billing Address" select
 
   Scenario: Check guest email is saved in popup
     And I click on "Billing Address Select"
@@ -182,7 +182,7 @@ Feature: Single Page Checkout With Popup for Guest
       | State        | Guria          |
       | Postal Code  | 67890          |
     And I click "Continue"
-    Then I should see "New address (S Prefix S Fname S Mname S Lname S Suffix, S Organization, S Street S Street 2, 67890 S City, Georgia, 67890)" for "Select Shipping Address" select
+    Then I should see "New address (S Prefix S Fname S Mname S Lname S Suffix, S Organization, S Street S Street 2, 67890 S City, Georgia, 67890)" for "Select Single Page Checkout Shipping Address" select
     When I click "Delete this shopping list after submitting order"
     And I fill "Checkout Order Form" with:
       | PO Number | Order1 |
@@ -226,7 +226,7 @@ Feature: Single Page Checkout With Popup for Guest
       | State        | Berlin           |
       | Postal Code  | 12345            |
     And I click "Continue"
-    Then I should see "New address (B Prefix B Fname B Mname B Lname B Suffix, B Organization, B Street B Street 2, 12345 B City, Germany, 12345)" for "Select Billing Address" select
+    Then I should see "New address (B Prefix B Fname B Mname B Lname B Suffix, B Organization, B Street B Street 2, 12345 B City, Germany, 12345)" for "Select Single Page Checkout Billing Address" select
     And There is no shipping method available for this order
     When I click on "Shipping Address Select"
     And I click on "New Address Option"
@@ -246,7 +246,7 @@ Feature: Single Page Checkout With Popup for Guest
       | State        | Has            |
       | Postal Code  | 67890          |
     And I click "Continue"
-    Then I should see "New address (S Prefix S Fname S Mname S Lname S Suffix, S Organization, S Street S Street 2, S CITY HA AL 67890, 67890)" for "Select Shipping Address" select
+    Then I should see "New address (S Prefix S Fname S Mname S Lname S Suffix, S Organization, S Street S Street 2, S CITY HA AL 67890, 67890)" for "Select Single Page Checkout Shipping Address" select
     And I should see "Flat Rate 2: $2.00"
     # TODO "Save my data and create an account" field should save their state
     And I uncheck "Save my data and create an account" on the checkout page
@@ -278,7 +278,7 @@ Feature: Single Page Checkout With Popup for Guest
     And I uncheck "Save my data and create an account" on the checkout page
     Then There is no shipping method available for this order
     When I uncheck "Use billing address" on the checkout page
-    Then I should see "New address (12345 Ukraine B City, B Street B Street 2, B Organization, B Prefix B Fname B Mname B Lname B Suffix, 12345)" for "Select Shipping Address" select
+    Then I should see "New address (12345 Ukraine B City, B Street B Street 2, B Organization, B Prefix B Fname B Mname B Lname B Suffix, 12345)" for "Select Single Page Checkout Shipping Address" select
     And There is no shipping method available for this order
     When I click on "Billing Address Select"
     And I click on "New Address Option"

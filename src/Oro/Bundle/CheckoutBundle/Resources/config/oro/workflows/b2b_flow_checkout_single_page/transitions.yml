@@ -30,27 +30,19 @@ workflows:
                             attribute: $.result.initCheckoutState
                     attribute_fields:
                         billing_address:
-                            form_type: Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressType
+                            form_type: Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressSelectType
                             options:
                                 object: $checkout
-                                isEditEnabled: true
-                                addressType: 'billing'
+                                address_type: 'billing'
                                 required: true
                                 translation_domain: messages
-                                disabled: $disallow_billing_address_edit
-                        save_billing_address:
-                            form_type: Oro\Bundle\CheckoutBundle\Form\Type\SaveAddressType
                         shipping_address:
-                            form_type: Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressType
+                            form_type: Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressSelectType
                             options:
                                 object: $checkout
-                                isEditEnabled: true
-                                addressType: 'shipping'
+                                address_type: 'shipping'
                                 required: true
                                 translation_domain: messages
-                                disabled: $disallow_shipping_address_edit
-                        save_shipping_address:
-                            form_type: Oro\Bundle\CheckoutBundle\Form\Type\SaveAddressType
                         ship_to_billing_address:
                             form_type: Oro\Bundle\CheckoutBundle\Form\Type\ShipToBillingAddressType
                         shipping_method: ~
@@ -87,7 +79,6 @@ workflows:
                         saveStateUrl: $.result.saveStateUrl
                         targetLayoutBlocks:
                             '[data-role="checkout-ship-to"]':
-                                - 'shipping_address_inner_wrapper'
                                 - 'payment_methods_wrapper'
                                 - 'shipping_methods_wrapper'
                                 - 'checkout_order_summary_totals_wrapper'
@@ -106,35 +97,19 @@ workflows:
                 form_options:
                     attribute_fields:
                         billing_address:
-                            form_type: Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressType
+                            form_type: Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressSelectType
                             options:
                                 object: $checkout
-                                isEditEnabled: true
-                                addressType: 'billing'
+                                address_type: 'billing'
                                 required: true
                                 translation_domain: messages
-                                constraints:
-                                    - Valid: ~
-                                    - NotBlank: ~
-                                    - Oro\Bundle\AddressBundle\Validator\Constraints\NameOrOrganization: ~
-                                disabled: $disallow_billing_address_edit
-                        save_billing_address:
-                            form_type: Oro\Bundle\CheckoutBundle\Form\Type\SaveAddressType
                         shipping_address:
-                            form_type: Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressType
+                            form_type: Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressSelectType
                             options:
                                 object: $checkout
-                                isEditEnabled: true
-                                addressType: 'shipping'
+                                address_type: 'shipping'
                                 required: true
-                                disabled: $disallow_shipping_address_edit
                                 translation_domain: messages
-                                constraints:
-                                    - Valid: ~
-                                    - NotBlank: ~
-                                    - Oro\Bundle\AddressBundle\Validator\Constraints\NameOrOrganization: ~
-                        save_shipping_address:
-                            form_type: Oro\Bundle\CheckoutBundle\Form\Type\SaveAddressType
                         ship_to_billing_address:
                             form_type: Oro\Bundle\CheckoutBundle\Form\Type\ShipToBillingAddressType
                         shipping_method:

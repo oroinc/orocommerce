@@ -2,36 +2,136 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Form\Type;
 
-use Oro\Bundle\AddressBundle\Entity\AddressType as AddressTypeEntity;
-use Oro\Bundle\AddressBundle\Form\Type\AddressType;
+use Oro\Bundle\AddressBundle\Entity\AddressType;
+use Oro\Bundle\AddressBundle\Form\Type\AddressType as AddressFormType;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressSelectType;
 use Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressType;
-use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
-use Oro\Bundle\FormBundle\Form\Extension\AdditionalAttrExtension;
-use Oro\Bundle\FrontendBundle\Form\Type\CountryType;
-use Oro\Bundle\FrontendBundle\Form\Type\RegionType;
+use Oro\Bundle\CustomerBundle\Tests\Unit\Form\Type\Stub\AddressTypeStub;
+use Oro\Bundle\FormBundle\Tests\Unit\Stub\StripTagsExtensionStub;
+use Oro\Bundle\ImportExportBundle\Serializer\Serializer;
+use Oro\Bundle\LocaleBundle\Formatter\AddressFormatter;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
-use Oro\Bundle\OrderBundle\Tests\Unit\Form\Type\AbstractOrderAddressTypeTest;
+use Oro\Bundle\OrderBundle\Form\Type\OrderAddressSelectType;
+use Oro\Bundle\OrderBundle\Form\Type\OrderAddressType;
+use Oro\Bundle\OrderBundle\Manager\OrderAddressManager;
+use Oro\Bundle\OrderBundle\Manager\TypedOrderAddressCollection;
+use Oro\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
+use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
+use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
+use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class CheckoutAddressTypeTest extends AbstractOrderAddressTypeTest
+class CheckoutAddressTypeTest extends FormIntegrationTestCase
 {
-    protected function initFormType()
+    public function testGetBlockPrefix()
     {
-        $this->formType = new CheckoutAddressType(
-            $this->addressFormatter,
-            $this->orderAddressManager,
-            $this->orderAddressSecurityProvider,
-            $this->serializer
-        );
-        $this->formType->setDataClass('Oro\Bundle\OrderBundle\Entity\OrderAddress');
+        $type = new CheckoutAddressType();
+        $this->assertEquals('oro_checkout_address', $type->getBlockPrefix());
+    }
+
+    public function testConfigureOptions()
+    {
+        /** @var OptionsResolver|\PHPUnit\Framework\MockObject\MockObject $resolver */
+        $resolver = $this->createMock(OptionsResolver::class);
+        $resolver->expects($this->once())
+            ->method('setAllowedTypes')
+            ->with('object', Checkout::class)
+            ->willReturnSelf();
+
+        $type = new CheckoutAddressType();
+        $type->configureOptions($resolver);
+    }
+
+    public function testBuildForm()
+    {
+        $form = $this->factory->create(CheckoutAddressType::class, null, [
+            'object' => new Checkout(),
+            'addressType' => 'billing'
+        ]);
+
+        $this->assertTrue($form->has('id'));
+        $this->assertTrue($form->has('label'));
+        $this->assertTrue($form->has('namePrefix'));
+        $this->assertTrue($form->has('firstName'));
+        $this->assertTrue($form->has('middleName'));
+        $this->assertTrue($form->has('lastName'));
+        $this->assertTrue($form->has('nameSuffix'));
+        $this->assertTrue($form->has('organization'));
+        $this->assertTrue($form->has('country'));
+        $this->assertTrue($form->has('street'));
+        $this->assertTrue($form->has('city'));
+        $this->assertTrue($form->has('region'));
+        $this->assertTrue($form->has('postalCode'));
+        $this->assertTrue($form->has('customerAddress'));
+        $this->assertTrue($form->has('phone'));
     }
 
     public function testGetParent()
     {
-        $this->assertEquals(AddressType::class, $this->formType->getParent());
+        $type = new CheckoutAddressType();
+
+        $this->assertInternalType('string', $type->getParent());
+        $this->assertEquals(OrderAddressType::class, $type->getParent());
+    }
+
+    /**
+     * @dataProvider submitDataProvider
+     *
+     * @param OrderAddress|null $defaultData
+     * @param array $submittedData
+     * @param OrderAddress|null $expectedData
+     */
+    public function testSubmit($defaultData, $submittedData, $expectedData)
+    {
+        $form = $this->factory->create(CheckoutAddressType::class, $defaultData, [
+            'object' => new Checkout(),
+            'addressType' => 'billing'
+        ]);
+
+        $this->assertEquals($defaultData, $form->getViewData());
+        $this->assertEquals($defaultData, $form->getData());
+
+        $form->submit($submittedData);
+        $this->assertTrue($form->isValid());
+
+        $this->assertEquals($expectedData, $form->getData());
+    }
+
+    /**
+     * @return array
+     */
+    public function submitDataProvider()
+    {
+        return [
+            'edit order address' => [
+                'defaultData' => $this->getOrderAddress('existing address'),
+                'submittedData' => [
+                    'label' => 'new label',
+                    'firstName' => 'First Name',
+                    'lastName' => 'Last Name',
+                    'phone' => '0123456789',
+                    'street' => 'Street',
+                ],
+                'expectedData' => $this->getOrderAddress(
+                    'new label',
+                    'First Name',
+                    'Last Name',
+                    '0123456789_stripped',
+                    'Street'
+                ),
+            ],
+            'new order address' => [
+                'defaultData' => $this->getOrderAddress(),
+                'submittedData' => [
+                    'label' => 'new address'
+                ],
+                'expectedData' => $this->getOrderAddress('new address'),
+            ],
+        ];
     }
 
     /**
@@ -39,153 +139,66 @@ class CheckoutAddressTypeTest extends AbstractOrderAddressTypeTest
      */
     protected function getExtensions()
     {
-        $ext = parent::getExtensions();
-
-        return array_merge($ext, [new PreloadedExtension(
+        $orderAddressSecurityProvider = $this->createMock(OrderAddressSecurityProvider::class);
+        $orderAddressSecurityProvider->expects($this->any())
+            ->method('isManualEditGranted')
+            ->willReturn(true);
+        $orderAddressType = new OrderAddressType($orderAddressSecurityProvider);
+        $addressTypeStub = new AddressTypeStub();
+        $htmlTagHelper = $this->createMock(HtmlTagHelper::class);
+        /** @var OrderAddressManager|\PHPUnit\Framework\MockObject\MockObject $addressManager */
+        $addressManager = $this->createMock(OrderAddressManager::class);
+        $addressManager->expects($this->any())
+            ->method('getGroupedAddresses')
+            ->willReturn(new TypedOrderAddressCollection(null, 'billing', []));
+        $addressFormatter = $this->createMock(AddressFormatter::class);
+        $serializer = $this->createMock(Serializer::class);
+        $addressType = new EntityType(
             [
-                $this->formType,
-                CountryType::class => new EntityType($this->getCountryChoices(), 'oro_frontend_country'),
-                RegionType::class => new EntityType($this->getRegionChoices(), 'oro_frontend_region'),
+                AddressType::TYPE_BILLING => new AddressType(AddressType::TYPE_BILLING),
+                AddressType::TYPE_SHIPPING => new AddressType(AddressType::TYPE_SHIPPING),
             ],
-            [FormType::class => [new AdditionalAttrExtension()]]
-        )]);
-    }
+            TranslatableEntityType::NAME
+        );
 
-    /**
-     * @return Checkout
-     */
-    protected function getEntity()
-    {
-        return new Checkout();
-    }
-
-    /**
-     * @param array $submittedData
-     * @param mixed $expectedData
-     * @param CustomerAddress $savedAddress
-     * @param string $addressType
-     * @dataProvider submitWithPermissionAndCustomFieldsAndCustomerAddressProvider
-     */
-    public function testSubmitWithManualPermissionAndCustomFieldsAndAddressCustomer(
-        $submittedData,
-        $expectedData,
-        $savedAddress,
-        $addressType
-    ) {
-        $customerAddressIdentifier = $submittedData['customerAddress'];
-        $this->serializer->expects($this->once())->method('normalize')->willReturn(['a_1' => ['street' => 'street']]);
-
-        $this->addressCollection->expects($this->once())
-            ->method('toArray')
-            ->willReturn(['group_name' => [$customerAddressIdentifier => $savedAddress]]);
-        $this->addressCollection->expects($this->once())
-            ->method('getDefaultAddressKey')
-            ->willReturn($customerAddressIdentifier);
-
-        $this->orderAddressManager->expects($this->once())->method('getEntityByIdentifier')
-            ->willReturn($savedAddress);
-
-        $this->orderAddressSecurityProvider->expects($this->once())->method('isManualEditGranted')->willReturn(true);
-
-        $this->orderAddressManager->expects($this->once())->method('updateFromAbstract')
-            ->will(
-                $this->returnCallback(
-                    function (CustomerAddress $address = null, OrderAddress $orderAddress = null) {
-                        $orderAddress
-                            ->setCustomerAddress($address)
-                            ->setLabel($address->getLabel())
-                            ->setCountry($address->getCountry())
-                            ->setOrganization(static::ORGANIZATION)
-                            ->setRegion($address->getRegion())
-                            ->setCity($address->getCity())
-                            ->setPostalCode($address->getPostalCode())
-                            ->setStreet($address->getStreet());
-
-                        return $orderAddress;
-                    }
-                )
-            );
-
-        $formOptions =  [
-            'addressType' => $addressType,
-            'object' => $this->getEntity(),
-            'isEditEnabled' => true,
-        ];
-
-        $this->checkForm(true, $submittedData, $expectedData, new OrderAddress(), [], $formOptions);
-    }
-
-    public function testSubmitWithManualPermissionWhenNoDataSubmitted()
-    {
-        $this->addressCollection->expects($this->once())
-            ->method('toArray')
-            ->willReturn([]);
-
-        $formOptions =  [
-            'addressType' => AddressTypeEntity::TYPE_BILLING,
-            'object' => $this->getEntity(),
-            'isEditEnabled' => true,
-        ];
-
-        $this->checkForm(true, null, null, new OrderAddress(), [], $formOptions);
-    }
-
-    /**
-     * @return array
-     */
-    public function submitWithPermissionAndCustomFieldsAndCustomerAddressProvider()
-    {
-        list($country, $region) = $this->getValidCountryAndRegion();
-
-        $savedCustomerAddress = (new CustomerAddress())
-            ->setLabel('Label')
-            ->setCountry($country)
-            ->setOrganization(static::ORGANIZATION)
-            ->setRegion($region)
-            ->setCity('City')
-            ->setPostalCode('AL')
-            ->setStreet('Street');
-
-        $submittedData = [
-            'customerAddress' => 'a_1',
-            'label' => 'Label',
-            'namePrefix' => 'NamePrefix',
-            'firstName' => 'FirstName',
-            'middleName' => 'MiddleName',
-            'lastName' => 'LastName',
-            'nameSuffix' => 'NameSuffix',
-            'street' => 'Street',
-            'street2' => 'Street2',
-            'city' => 'City',
-            'region' => self::REGION_WITH_COUNTRY,
-            'region_text' => 'Region Text',
-            'postalCode' => 'AL',
-            'country' => self::COUNTRY_WITH_REGION,
-        ];
-
-        $expectedData = (new OrderAddress())
-            ->setCustomerAddress($savedCustomerAddress)
-            ->setLabel('Label')
-            ->setStreet('Street')
-            ->setCity('City')
-            ->setRegion($region)
-            ->setPostalCode('AL')
-            ->setCountry($country)
-            ->setOrganization(static::ORGANIZATION);
 
         return [
-            'custom_address_info_submitted_together_with_chosen_customer_address_for_billing_address' => [
-                'submittedData' => $submittedData,
-                'expectedData' => $expectedData,
-                'savedAddress' => $savedCustomerAddress,
-                'addressType' => AddressTypeEntity::TYPE_BILLING
-            ],
-            'custom_address_info_submitted_together_with_chosen_customer_address_for_shipping_address' => [
-                'submittedData' => $submittedData,
-                'expectedData' => $expectedData,
-                'savedAddress' => $savedCustomerAddress,
-                'addressType' => AddressTypeEntity::TYPE_SHIPPING
-            ]
+            new PreloadedExtension([
+                CheckoutAddressType::class => new CheckoutAddressType(),
+                OrderAddressType::class => $orderAddressType,
+                AddressFormType::class => $addressTypeStub,
+                CheckoutAddressSelectType::class => new CheckoutAddressSelectType($addressManager),
+                OrderAddressSelectType::class => new OrderAddressSelectType(
+                    $addressManager,
+                    $addressFormatter,
+                    $orderAddressSecurityProvider,
+                    $serializer
+                ),
+                TranslatableEntityType::class => $addressType,
+            ], [
+                FormType::class => [new StripTagsExtensionStub($htmlTagHelper)]
+            ])
         ];
+    }
+
+    /**
+     * @param string|null $label
+     * @param string|null $firstName
+     * @param string|null $lastName
+     * @param string|null $phone
+     * @param string|null $street
+     *
+     * @return OrderAddress
+     */
+    private function getOrderAddress($label = null, $firstName = null, $lastName = null, $phone = null, $street = null)
+    {
+        $orderAddress = new OrderAddress();
+        $orderAddress->setLabel($label);
+        $orderAddress->setFirstName($firstName);
+        $orderAddress->setLastName($lastName);
+        $orderAddress->setPhone($phone);
+        $orderAddress->setStreet($street);
+
+        return $orderAddress;
     }
 }
