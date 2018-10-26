@@ -51,10 +51,6 @@
 }
 
 .unit-precisions-collection {
-    > div {
-        margin: 0 0 8px !important;
-    }
-
     .input-widget-select {
         margin-left: 0 !important;
     }
@@ -124,12 +120,6 @@
             color: $success;
             line-height: 30px;
         }
-    }
-
-    .fa-info-circle {
-        padding: 0 5px;
-        margin: side-values(0 0 0 5px);
-        width: 21px;
     }
 }
 

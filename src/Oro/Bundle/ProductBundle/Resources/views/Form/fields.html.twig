@@ -11,7 +11,8 @@
         {% endfor %}
     {% endif %}
 
-    <div data-page-component-module="oroproduct/js/app/components/product-primary-unit-limitations-component"
+    <div class="controls-inner"
+         data-page-component-module="oroproduct/js/app/components/product-primary-unit-limitations-component"
          data-page-component-options="{{ { 'precisions': precisions, 'initialAdditionalUnits': initialAdditionalUnits }|json_encode  }}">
 
         <div class="float-holder">
@@ -145,7 +146,7 @@
     {% endfor %}
 
     <div data-page-component-module="oroproduct/js/app/components/product-unit-selection-limitations-component"
-         data-page-component-options="{{ {'precisions': precisions}|json_encode }}" class="unit-precisions-collection">
+         data-page-component-options="{{ {'precisions': precisions}|json_encode }}" class="controls-inner unit-precisions-collection">
         {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-options-collection ' }) %}
         {{ block('oro_product_precision_collection_widget') }}
     </div>
