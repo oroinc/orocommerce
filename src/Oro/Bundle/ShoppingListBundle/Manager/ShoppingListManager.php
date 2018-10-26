@@ -422,13 +422,10 @@ class ShoppingListManager
      */
     private function getAvailableMatrixFormType(Product $product, LineItem $lineItem)
     {
-        $type = $this->productFormAvailabilityProvider->getAvailableMatrixFormType($product);
-        if ($type === Configuration::MATRIX_FORM_NONE
-            || $product->getPrimaryUnitPrecision()->getProductUnitCode() !== $lineItem->getProductUnitCode()
-        ) {
+        if ($product->getPrimaryUnitPrecision()->getProductUnitCode() !== $lineItem->getProductUnitCode()) {
             return Configuration::MATRIX_FORM_NONE;
         }
 
-        return $type;
+        return $this->productFormAvailabilityProvider->getAvailableMatrixFormType($product);
     }
 }
