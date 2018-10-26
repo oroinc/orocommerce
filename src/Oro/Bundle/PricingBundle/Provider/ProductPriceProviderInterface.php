@@ -20,12 +20,17 @@ interface ProductPriceProviderInterface
         array $products,
         $currency = null,
         $unitCode = null
-    ): array ;
+    ): array;
 
     /**
      * @param ProductPriceCriteria[] $productPriceCriterias
      * @param ProductPriceScopeCriteriaInterface $scopeCriteria
+     *
      * @return array
+     * [
+     *    product.id => Oro\Bundle\CurrencyBundle\Entity\Price|null,
+     *    ...
+     * ]
      */
     public function getMatchedPrices(
         array $productPriceCriterias,

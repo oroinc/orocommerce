@@ -4,10 +4,9 @@ namespace Oro\Bundle\SaleBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
-use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
-use Oro\Bundle\PricingBundle\Entity\PriceList;
-use Oro\Bundle\PricingBundle\Model\PriceListTreeHandler;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
+use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaFactoryInterface;
+use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaInterface;
 use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
@@ -22,74 +21,63 @@ class QuoteProductPriceProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    const DEFAULT_PRICE_LIST_ID = 1;
-
-    /**
-     * @var QuoteProductPriceProvider
-     */
+    /** @var QuoteProductPriceProvider */
     protected $quoteProductPriceProvider;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|ProductPriceProviderInterface
-     */
-    protected $productPriceProvider;
+    /** @var ProductPriceScopeCriteriaFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
+    protected $priceScopeCriteriaFactory;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|PriceListTreeHandler
-     */
-    protected $treeHandler;
+    /** @var ProductPriceProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $productPriceProvider;
 
     protected function setUp()
     {
         $this->productPriceProvider = $this->createMock(ProductPriceProviderInterface::class);
-
-        $this->treeHandler = $this->getMockBuilder(PriceListTreeHandler::class)
-            ->setMethods(['getPriceList', 'getPriceListByCustomer'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->priceScopeCriteriaFactory = $this->createMock(ProductPriceScopeCriteriaFactoryInterface::class);
 
         $this->quoteProductPriceProvider = new QuoteProductPriceProvider(
             $this->productPriceProvider,
-            $this->treeHandler
+            $this->priceScopeCriteriaFactory
         );
     }
 
     protected function tearDown()
     {
-        unset($this->quoteProductPriceProvider, $this->productPriceProvider, $this->priceListRequestHandler);
+        unset($this->quoteProductPriceProvider, $this->productPriceProvider, $this->priceScopeCriteriaFactory);
     }
 
     /**
      * @dataProvider getTierPricesDataProvider
-     * @param PriceList|null $quotePriceList
      * @param QuoteProduct[] $quoteProducts
-     * @param array|null $productPriceProviderArgs
+     * @param array|null $products
      * @param int $tierPricesCount
      */
-    public function testGetTierPrices($quotePriceList, $quoteProducts, $productPriceProviderArgs, $tierPricesCount)
+    public function testGetTierPrices($quoteProducts, $products, $tierPricesCount)
     {
         $quote = new Quote();
         $website = new Website();
         $customer = new Customer();
-        $quote->setWebsite($website)
-            ->setCustomer($customer);
+        $quote->setWebsite($website)->setCustomer($customer);
+
         foreach ($quoteProducts as $quoteProduct) {
             $quote->addQuoteProduct($quoteProduct);
         }
 
-        $this->treeHandler->expects($this->any())
-            ->method('getPriceList')
-            ->with($customer, $website)
-            ->willReturn($quotePriceList);
-
-        if ($productPriceProviderArgs) {
-            call_user_func_array(
-                [
-                    $this->productPriceProvider->expects($this->once())->method('getPriceByPriceListIdAndProductIds'),
-                    'with'
-                ],
-                $productPriceProviderArgs
-            )->willReturn(range(0, $tierPricesCount - 1));
+        if ($products) {
+            $productScopeCriteria = $this->createMock(ProductPriceScopeCriteriaInterface::class);
+            $this->priceScopeCriteriaFactory->expects($this->once())
+                ->method('createByContext')
+                ->with($quote)
+                ->willReturn($productScopeCriteria);
+            $this->productPriceProvider
+                ->expects($this->once())
+                ->method('getPricesByScopeCriteriaAndProducts')
+                ->with($productScopeCriteria, $products)
+                ->willReturn(range(0, $tierPricesCount - 1));
+        } else {
+            $this->productPriceProvider
+                ->expects($this->never())
+                ->method('getPricesByScopeCriteriaAndProducts');
         }
 
         $result = $this->quoteProductPriceProvider->getTierPrices($quote);
@@ -100,36 +88,33 @@ class QuoteProductPriceProviderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider getTierPricesDataProvider
-     * @param PriceList|null $quotePriceList
      * @param QuoteProduct[] $quoteProducts
-     * @param array|null $productPriceProviderArgs
+     * @param array|null $products
      * @param int $tierPricesCount
      */
-    public function testGetTierPricesForProducts(
-        $quotePriceList,
-        $quoteProducts,
-        $productPriceProviderArgs,
-        $tierPricesCount
-    ) {
+    public function testGetTierPricesForProducts($quoteProducts, $products, $tierPricesCount)
+    {
         $website = new Website();
         $customer = new Customer();
 
         $quote = new Quote();
         $quote->setWebsite($website)->setCustomer($customer);
 
-        $this->treeHandler->expects($this->any())
-            ->method('getPriceList')
-            ->with($customer, $website)
-            ->willReturn($quotePriceList);
-
-        if ($productPriceProviderArgs) {
-            call_user_func_array(
-                [
-                    $this->productPriceProvider->expects($this->once())->method('getPriceByPriceListIdAndProductIds'),
-                    'with'
-                ],
-                $productPriceProviderArgs
-            )->willReturn(range(0, $tierPricesCount - 1));
+        if ($products) {
+            $productScopeCriteria = $this->createMock(ProductPriceScopeCriteriaInterface::class);
+            $this->priceScopeCriteriaFactory->expects($this->once())
+                ->method('createByContext')
+                ->with($quote)
+                ->willReturn($productScopeCriteria);
+            $this->productPriceProvider
+                ->expects($this->once())
+                ->method('getPricesByScopeCriteriaAndProducts')
+                ->with($productScopeCriteria, $products)
+                ->willReturn(range(0, $tierPricesCount - 1));
+        } else {
+            $this->productPriceProvider
+                ->expects($this->never())
+                ->method('getPricesByScopeCriteriaAndProducts');
         }
 
         $result = $this->quoteProductPriceProvider->getTierPricesForProducts(
@@ -137,7 +122,7 @@ class QuoteProductPriceProviderTest extends \PHPUnit\Framework\TestCase
             array_filter(
                 array_map(
                     function (QuoteProduct $quoteProduct) {
-                        return $quoteProduct->getProduct() ? $quoteProduct->getProduct()->getId() : null;
+                        return $quoteProduct->getProduct() ? $quoteProduct->getProduct() : null;
                     },
                     $quoteProducts
                 )
@@ -156,27 +141,22 @@ class QuoteProductPriceProviderTest extends \PHPUnit\Framework\TestCase
         $quoteProduct = $this->getQuoteProduct();
         $emptyQuoteProduct = $this->getQuoteProduct('empty');
 
-        $quotePriceList = $this->getEntity(CombinedPriceList::class, ['id' => 2]);
-
-        $product1 = $quoteProduct->getProduct();
+        $product = $quoteProduct->getProduct();
 
         return [
-            'no price list' => [
-                'quotePriceList' => null,
-                'quoteProducts' => [$quoteProduct, $emptyQuoteProduct],
-                'productPriceProviderArgs' => null,
-                'tierPricesCount' => 0,
-            ],
-            'quote price list' => [
-                'quotePriceList' => $quotePriceList,
-                'quoteProducts' => [$quoteProduct, $emptyQuoteProduct],
-                'productPriceProviderArgs' => [$quotePriceList->getId(), [$product1->getId()]],
+            'quote product with product' => [
+                'quoteProducts' => [$quoteProduct],
+                'products' => [$product],
                 'tierPricesCount' => 1,
             ],
-            'empty quote products list' => [
-                'quotePriceList' => $quotePriceList,
+            'quote product without product' => [
+                'quoteProducts' => [$emptyQuoteProduct],
+                'products' => null,
+                'tierPricesCount' => 0,
+            ],
+            'empty quote products' => [
                 'quoteProducts' => [],
-                'productPriceProviderArgs' => null,
+                'products' => null,
                 'tierPricesCount' => 0,
             ],
         ];
@@ -184,45 +164,42 @@ class QuoteProductPriceProviderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider getMatchedPricesDataProvider
-     * @param PriceList|null $quotePriceList
      * @param QuoteProduct[] $quoteProducts
-     * @param array|null $productPriceProviderArgs
-     * @param int $matchedPriceCount
+     * @param array|null $productPriceCriteria
+     * @param array $prices
+     * @param array $expectedResult
      */
-    public function testGetMatchedPrices($quotePriceList, $quoteProducts, $productPriceProviderArgs, $matchedPriceCount)
+    public function testGetMatchedPrices($quoteProducts, $productPriceCriteria, $prices, $expectedResult)
     {
         $quote = new Quote();
         $website = new Website();
         $customer = new Customer();
-        $quote->setWebsite($website)
-            ->setCustomer($customer);
+        $quote->setWebsite($website)->setCustomer($customer);
+
         foreach ($quoteProducts as $quoteProduct) {
             $quote->addQuoteProduct($quoteProduct);
         }
 
-        $this->treeHandler->expects($this->once())
-            ->method('getPriceList')
-            ->with($customer, $website)
-            ->willReturn($quotePriceList);
-
-        if ($productPriceProviderArgs) {
-            call_user_func_array(
-                [
-                    $this->productPriceProvider->expects($this->once())->method('getMatchedPrices'),
-                    'with'
-                ],
-                $productPriceProviderArgs
-            )->willReturn(array_fill(0, $matchedPriceCount, new Price()));
+        if ($productPriceCriteria) {
+            $productScopeCriteria = $this->createMock(ProductPriceScopeCriteriaInterface::class);
+            $this->priceScopeCriteriaFactory->expects($this->once())
+                ->method('createByContext')
+                ->with($quote)
+                ->willReturn($productScopeCriteria);
+            $this->productPriceProvider
+                ->expects($this->once())
+                ->method('getMatchedPrices')
+                ->with($productPriceCriteria, $productScopeCriteria)
+                ->willReturn($prices);
+        } else {
+            $this->productPriceProvider
+                ->expects($this->never())
+                ->method('getMatchedPrices');
         }
 
         $result = $this->quoteProductPriceProvider->getMatchedPrices($quote);
 
-        $this->assertInternalType('array', $result);
-        $this->assertCount($matchedPriceCount, $result);
-        if ($matchedPriceCount) {
-            $this->assertArrayHasKey('value', $result[0]);
-            $this->assertArrayHasKey('currency', $result[0]);
-        }
+        $this->assertEquals($expectedResult, $result);
     }
 
     /**
@@ -233,20 +210,19 @@ class QuoteProductPriceProviderTest extends \PHPUnit\Framework\TestCase
         $quoteProduct = $this->getQuoteProduct();
         $emptyQuoteProduct = $this->getQuoteProduct('empty');
 
-        $quotePriceList = $this->getEntity(CombinedPriceList::class, ['id' => 2]);
-
         $product1 = $quoteProduct->getProduct();
 
         $quoteProductOffer1 = $quoteProduct->getQuoteProductOffers()->get(0);
         $quoteProductOffer2 = $quoteProduct->getQuoteProductOffers()->get(1);
 
-        $productsPriceCriteria = [];
-        $productsPriceCriteria[] = new ProductPriceCriteria(
-            $product1,
-            $quoteProductOffer1->getProductUnit(),
-            $quoteProductOffer1->getQuantity(),
-            $quoteProductOffer1->getPrice()->getCurrency()
-        );
+        $productsPriceCriteria = [
+            new ProductPriceCriteria(
+                $product1,
+                $quoteProductOffer1->getProductUnit(),
+                $quoteProductOffer1->getQuantity(),
+                $quoteProductOffer1->getPrice()->getCurrency()
+            ),
+        ];
         $productsPriceCriteria[] = new ProductPriceCriteria(
             $product1,
             $quoteProductOffer2->getProductUnit(),
@@ -255,23 +231,40 @@ class QuoteProductPriceProviderTest extends \PHPUnit\Framework\TestCase
         );
 
         return [
-            'no price list' => [
-                'quotePriceList' => null,
-                'quoteProducts' => [$quoteProduct, $emptyQuoteProduct],
-                'productPriceProviderArgs' => null,
-                'matchedPrice' => 0,
+            'quote product with product' => [
+                'quoteProducts' => [$quoteProduct],
+                'productPriceCriteria' => $productsPriceCriteria,
+                'prices' => [
+                    1 => Price::create(10, 'USD')
+                ],
+                'expectedResult' => [
+                    1 => [
+                        'value' => 10,
+                        'currency' => 'USD'
+                    ]
+                ]
             ],
-            'quote price list' => [
-                'quotePriceList' => $quotePriceList,
-                'quoteProducts' => [$quoteProduct, $emptyQuoteProduct],
-                'productPriceProviderArgs' => [$productsPriceCriteria, $quotePriceList->getId()],
-                'matchedPrice' => 3,
+            'quote product with product and empty matched price' => [
+                'quoteProducts' => [$quoteProduct],
+                'productPriceCriteria' => $productsPriceCriteria,
+                'prices' => [
+                    1 => null
+                ],
+                'expectedResult' => [
+                    1 => null
+                ]
             ],
-            'empty quote products list' => [
-                'quotePriceList' => $quotePriceList,
+            'quote product without product' => [
+                'quoteProducts' => [$emptyQuoteProduct],
+                'productPriceCriteria' => null,
+                'prices' => [],
+                'expectedResult' => []
+            ],
+            'empty quote products' => [
                 'quoteProducts' => [],
-                'productPriceProviderArgs' => null,
-                'matchedPrice' => 0,
+                'productPriceCriteria' => null,
+                'prices' => [],
+                'expectedResult' => []
             ],
         ];
     }
@@ -315,6 +308,7 @@ class QuoteProductPriceProviderTest extends \PHPUnit\Framework\TestCase
                 $quoteProduct->addQuoteProductOffer($quoteProductOffer3);
                 break;
         }
+
         return $quoteProduct;
     }
 

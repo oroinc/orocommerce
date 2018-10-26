@@ -60,13 +60,13 @@ class QuoteProductPriceProvider
 
     /**
      * @param Quote $quote
-     * @param array $productIds
+     * @param array|Product[] $products
      *
      * @return array
      */
-    public function getTierPricesForProducts(Quote $quote, array $productIds)
+    public function getTierPricesForProducts(Quote $quote, array $products)
     {
-        return $this->fetchTierPrices($quote, $productIds);
+        return $this->fetchTierPrices($quote, $products);
     }
 
     /**
@@ -84,9 +84,6 @@ class QuoteProductPriceProvider
                 $this->priceScopeCriteriaFactory->createByContext($quote),
                 $products
             );
-            if (!$tierPrices) {
-                $tierPrices = [];
-            }
         }
 
         return $tierPrices;
@@ -106,17 +103,16 @@ class QuoteProductPriceProvider
             $matchedPrices = $this->productPriceProvider->getMatchedPrices($productsPriceCriteria, $scopeCriteria);
         }
 
-        /** @var Price $price */
-        foreach ($matchedPrices as &$price) {
-            if ($price) {
-                $price = [
+        return array_map(function ($price) {
+            if ($price instanceof Price) {
+                return [
                     'value' => $price->getValue(),
                     'currency' => $price->getCurrency()
                 ];
             }
-        }
 
-        return $matchedPrices;
+            return $price;
+        }, $matchedPrices);
     }
 
     /**
