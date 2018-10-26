@@ -46,15 +46,18 @@ class CombinedProductPriceProvider
     }
 
     /**
-     * {@inheritdoc}
+     * @param ResultRecordInterface[] $productRecords
+     * @param ProductPriceScopeCriteriaInterface $scopeCriteria
+     * @param string|null $currency
+     * @return array
      */
     public function getCombinedPricesForProductsByPriceList(
         array $productRecords,
         ProductPriceScopeCriteriaInterface $scopeCriteria,
-        $currency
+        string $currency = null
     ) {
         $products = $this->getProducts($productRecords);
-        $prices = $this->getPrices($scopeCriteria, $currency, $products);
+        $prices = $this->getPrices($scopeCriteria, $products, $currency);
 
         $resultProductPrices = [];
         foreach ($prices as $productId => $productPrices) {
@@ -73,12 +76,15 @@ class CombinedProductPriceProvider
 
     /**
      * @param ProductPriceScopeCriteriaInterface $scopeCriteria
-     * @param string $currency
-     * @param array|Product[] $products
+     * @param Product[] $products
+     * @param string|null $currency
      * @return array
      */
-    protected function getPrices(ProductPriceScopeCriteriaInterface $scopeCriteria, $currency, $products): array
-    {
+    protected function getPrices(
+        ProductPriceScopeCriteriaInterface $scopeCriteria,
+        array $products,
+        string $currency = null
+    ): array {
         $prices = $this->productPriceProvider
             ->getPricesByScopeCriteriaAndProducts($scopeCriteria, $products, $currency);
 

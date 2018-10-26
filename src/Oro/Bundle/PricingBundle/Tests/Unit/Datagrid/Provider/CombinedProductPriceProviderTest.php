@@ -2,197 +2,169 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Datagrid\Provider;
 
-use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
-use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PricingBundle\Datagrid\Provider\CombinedProductPriceProvider;
-use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
-use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
-use Oro\Bundle\PricingBundle\Tests\Unit\Entity\Repository\Stub\CombinedProductPriceRepository;
+use Oro\Bundle\PricingBundle\Formatter\ProductPriceFormatter;
+use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteria;
+use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
-use Oro\Bundle\ProductBundle\Formatter\UnitValueFormatterInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 class CombinedProductPriceProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
+    private $doctrineHelper;
+
+    /** @var ProductPriceFormatter|\PHPUnit\Framework\MockObject\MockObject */
+    private $priceFormatter;
+
+    /** @var ProductPriceProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $productPriceProvider;
+
+    /** @var CombinedProductPriceProvider */
+    private $combinedProductPriceProvider;
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
+    {
+        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
+        $this->priceFormatter = $this->createMock(ProductPriceFormatter::class);
+        $this->productPriceProvider = $this->createMock(ProductPriceProviderInterface::class);
+
+        $this->combinedProductPriceProvider = new CombinedProductPriceProvider(
+            $this->productPriceProvider,
+            $this->priceFormatter,
+            $this->doctrineHelper
+        );
+    }
+
+    protected function tearDown()
+    {
+        unset(
+            $this->doctrineHelper,
+            $this->productPriceProvider,
+            $this->priceFormatter,
+            $this->combinedProductPriceProvider
+        );
+    }
+
     public function testGetCombinedPricesForProductsByPriceListWithoutPrices()
     {
-        list($numberFormatter, $unitLabelFormatter, $unitValueFormatter) = $this->getDependencies();
+        $productScopeCriteria = new ProductPriceScopeCriteria();
+        $this->productPriceProvider->expects($this->once())
+            ->method('getPricesByScopeCriteriaAndProducts')
+            ->with($productScopeCriteria, [], null, null)
+            ->willReturn([]);
 
-        $combinedProductPriceProvider = new CombinedProductPriceProvider(
-            CombinedProductPriceRepository::withoutPricesForProductsByPriceList(),
-            $numberFormatter,
-            $unitLabelFormatter,
-            $unitValueFormatter
-        );
+        $this->priceFormatter->expects($this->never())
+            ->method('formatProductPriceData');
 
-        $combinedPricesForProductsByPriceList = $combinedProductPriceProvider->getCombinedPricesForProductsByPriceList(
-            [new ResultRecord([])],
-            new CombinedPriceList(),
-            'PLN'
-        );
-        $this->assertEquals([], $combinedPricesForProductsByPriceList);
+        $this->doctrineHelper->expects($this->never())
+            ->method('getEntityReference');
+
+        $result = $this->combinedProductPriceProvider
+            ->getCombinedPricesForProductsByPriceList(
+                [],
+                $productScopeCriteria
+            );
+
+        $this->assertEquals([], $result);
     }
 
     /**
-     * @dataProvider combinedPricesForProductsByPriceListProvider
-     * @param CombinedProductPrice[] $combinedPrices
-     * @param array                  $expectedResults
+     * @dataProvider pricesDataProvider
+     *
+     * @param array $productPrices
+     * @param array $expected
      */
-    public function testGetCombinedPricesForProductsByPriceList(array $combinedPrices, array $expectedResults)
+    public function testGetCombinedPricesForProductsByPriceList(array $productPrices, array $expected)
     {
-        list($numberFormatter, $unitLabelFormatter, $unitValueFormatter) = $this->getDependencies();
+        $this->doctrineHelper->expects($this->once())
+            ->method('getEntityReference')
+            ->willReturnCallback(function ($className, $id) {
+                return $this->getEntity($className, ['id' => $id]);
+            });
 
-        $combinedProductPriceProvider = new CombinedProductPriceProvider(
-            CombinedProductPriceRepository::withPricesForProductsByPriceList($combinedPrices),
-            $numberFormatter,
-            $unitLabelFormatter,
-            $unitValueFormatter
-        );
+        $productScopeCriteria = new ProductPriceScopeCriteria();
+        $this->productPriceProvider->expects($this->once())
+            ->method('getPricesByScopeCriteriaAndProducts')
+            ->with(
+                $productScopeCriteria,
+                [$this->getEntity(Product::class, ['id' => 1])],
+                null,
+                null
+            )
+            ->willReturn($productPrices);
 
-        $combinedPricesForProductsByPriceList = $combinedProductPriceProvider->getCombinedPricesForProductsByPriceList(
-            [new ResultRecord([])],
-            new CombinedPriceList(),
-            'PLN'
+        $this->priceFormatter->expects($this->exactly(2))
+            ->method('formatProductPriceData')
+            ->willReturnCallback(function (array $price) {
+                return $price;
+            });
+
+        $combinedPricesForProductsByPriceList = $this->combinedProductPriceProvider
+            ->getCombinedPricesForProductsByPriceList(
+                [new ResultRecord(['id' => 1])],
+                $productScopeCriteria
+            );
+
+        $this->assertEquals(
+            $expected,
+            $combinedPricesForProductsByPriceList
         );
-        $this->assertEquals($expectedResults, $combinedPricesForProductsByPriceList);
     }
 
     /**
      * @return array
      */
-    public function combinedPricesForProductsByPriceListProvider()
+    public function pricesDataProvider(): array
     {
-        /** @var Product $product */
-        $product = $this->getEntity('Oro\Bundle\ProductBundle\Entity\Product', ['id' => 2]);
-
-        $price = new Price();
-        $price->setCurrency('EUR');
-        $price->setValue(20);
-
-        $cpl1 = new CombinedProductPrice();
-        $cpl1->setPrice($price);
-        $cpl1->setProduct($product);
-        $cpl1->setQuantity(1);
-        $cpl1->setUnit((new ProductUnit())->setCode('item'));
-
-        $price = new Price();
-        $price->setCurrency('EUR');
-        $price->setValue(21);
-
-        $cpl2 = new CombinedProductPrice;
-        $cpl2->setPrice($price);
-        $cpl2->setProduct($product);
-        $cpl2->setQuantity(2);
-        $cpl2->setUnit((new ProductUnit())->setCode('item'));
-
-        $cpl3 = new CombinedProductPrice;
-        $cpl3->setPrice($price);
-        $cpl3->setProduct($product);
-        $cpl3->setQuantity(2);
-        $cpl3->setUnit((new ProductUnit())->setCode('item'));
-
         return [
-            'valid data' => [
-                'combinedPrices'  => [$cpl1, $cpl2],
-                'expectedResults' => [
-                    2 => [
-                        'item_1' => [
-                            'price'              => 20,
-                            'currency'           => 'EUR',
-                            'formatted_price'    => 'EUR20',
-                            'unit'               => 'item',
-                            'formatted_unit'     => 'item-formatted',
-                            'quantity'           => 1,
-                            'quantity_with_unit' => '1-item-formatted',
+            [
+                'productPrices' => [
+                    1 => [
+                        [
+                            'price' => 10,
+                            'currency' => 'USD',
+                            'quantity' => 5,
+                            'unit' => 'item'
                         ],
-                        'item_2' => [
-                            'price'              => 21,
-                            'currency'           => 'EUR',
-                            'formatted_price'    => 'EUR21',
-                            'unit'               => 'item',
-                            'formatted_unit'     => 'item-formatted',
-                            'quantity'           => 2,
-                            'quantity_with_unit' => '2-item-formatted',
+                        [
+                            'price' => 20,
+                            'currency' => 'USD',
+                            'quantity' => 5,
+                            'unit' => 'item'
                         ],
-                    ],
+                        [
+                            'price' => 10,
+                            'currency' => 'USD',
+                            'quantity' => 1,
+                            'unit' => 'unit'
+                        ]
+                    ]
                 ],
-            ],
-            'doubled products prices data' => [
-                'combinedPrices'  => [$cpl1, $cpl2, $cpl3],
-                'expectedResults' => [
-                    2 => [
-                        'item_1' => [
-                            'price'              => 20,
-                            'currency'           => 'EUR',
-                            'formatted_price'    => 'EUR20',
-                            'unit'               => 'item',
-                            'formatted_unit'     => 'item-formatted',
-                            'quantity'           => 1,
-                            'quantity_with_unit' => '1-item-formatted',
+                'expected' => [
+                    1 => [
+                        'item_5' => [
+                            'price' => 10,
+                            'currency' => 'USD',
+                            'quantity' => 5,
+                            'unit' => 'item'
                         ],
-                        'item_2' => [
-                            'price'              => 21,
-                            'currency'           => 'EUR',
-                            'formatted_price'    => 'EUR21',
-                            'unit'               => 'item',
-                            'formatted_unit'     => 'item-formatted',
-                            'quantity'           => 2,
-                            'quantity_with_unit' => '2-item-formatted',
-                        ],
-                    ],
-                ],
-            ],
+                        'unit_1' => [
+                            'price' => 10,
+                            'currency' => 'USD',
+                            'quantity' => 1,
+                            'unit' => 'unit'
+                        ]
+                    ]
+                ]
+            ]
         ];
-    }
-
-    /**
-     * @return array
-     */
-    private function getDependencies()
-    {
-        $numberFormatter = $this->getMockBuilder(NumberFormatter::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $unitLabelFormatter =
-            $this->getMockBuilder(UnitLabelFormatterInterface::class)
-                ->disableOriginalConstructor()
-                ->getMock();
-
-        $unitValueFormatter =
-            $this->getMockBuilder(UnitValueFormatterInterface::class)
-                ->disableOriginalConstructor()
-                ->getMock();
-
-        $numberFormatter->expects($this->any())
-            ->method('formatCurrency')
-            ->willReturnCallback(
-                function ($price, $currency) {
-                    return $currency . $price;
-                }
-            );
-
-        $unitLabelFormatter->expects($this->any())
-            ->method('format')
-            ->willReturnCallback(
-                function ($unit) {
-                    return $unit . '-formatted';
-                }
-            );
-
-        $unitValueFormatter->expects($this->any())
-            ->method('formatCode')
-            ->willReturnCallback(
-                function ($quantity, $unit) {
-                    return $quantity . '-' . $unit . '-formatted';
-                }
-            );
-
-        return [$numberFormatter, $unitLabelFormatter, $unitValueFormatter];
     }
 }
