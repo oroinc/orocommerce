@@ -94,12 +94,17 @@ class FrontendProductPricesDataProvider
     protected function getProductsPricesCriteria(array $lineItems)
     {
         $productsPricesCriteria = [];
+        $currency = $this->userCurrencyManager->getUserCurrency();
         foreach ($lineItems as $lineItem) {
+            if (!$this->isValidLineItem($lineItem)) {
+                continue;
+            }
+
             $productsPricesCriteria[] = new ProductPriceCriteria(
                 $lineItem->getProduct(),
                 $lineItem->getProductUnit(),
                 $lineItem->getQuantity(),
-                $this->userCurrencyManager->getUserCurrency()
+                $currency
             );
         }
 
@@ -119,9 +124,18 @@ class FrontendProductPricesDataProvider
             array_filter(
                 $lineItems,
                 function (ProductHolderInterface $lineItem) {
-                    return $lineItem->getProduct();
+                    return $this->isValidLineItem($lineItem);
                 }
             )
         );
+    }
+
+    /**
+     * @param ProductHolderInterface $lineItem
+     * @return bool
+     */
+    protected function isValidLineItem(ProductHolderInterface $lineItem)
+    {
+        return $lineItem->getProduct() && $lineItem->getProduct()->getId();
     }
 }
