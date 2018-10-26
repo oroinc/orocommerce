@@ -79,7 +79,7 @@ class TierPriceEventListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->provider
             ->expects($this->once())
-            ->method('getPricesByScopeCriteriaAndProductIds')
+            ->method('getPricesByScopeCriteriaAndProducts')
             ->with($productPriceScopeCriteria, [$product], $order->getCurrency())
             ->willReturn($prices);
 
