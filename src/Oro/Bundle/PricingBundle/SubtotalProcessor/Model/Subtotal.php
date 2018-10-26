@@ -145,7 +145,7 @@ class Subtotal
     }
 
     /**
-     * @return CombinedPriceList
+     * @return null|CombinedPriceList
      */
     public function getCombinedPriceList()
     {

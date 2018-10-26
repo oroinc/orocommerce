@@ -15,7 +15,7 @@ interface ProductPriceScopeCriteriaInterface
     /**
      * @return Customer|null
      */
-    public function getCustomer();
+    public function getCustomer(): ?Customer;
 
     /**
      * @param object $context
@@ -35,22 +35,22 @@ interface ProductPriceScopeCriteriaInterface
     /**
      * @return Website|null
      */
-    public function getWebsite();
+    public function getWebsite(): ?Website;
 
     /**
      * @param string $key
      * @return mixed
      */
-    public function getData($key);
+    public function getData(string $key);
 
     /**
      * @param string $key
      * @param mixed $value
      */
-    public function setData($key, $value);
+    public function setData(string $key, $value);
 
     /**
      * @param string $key
      */
-    public function unsetData($key);
+    public function unsetData(string $key);
 }

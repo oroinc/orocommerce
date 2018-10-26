@@ -11,17 +11,17 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 class ProductPriceScopeCriteria implements ProductPriceScopeCriteriaInterface
 {
     /**
-     * @var Customer
+     * @var Customer|null
      */
     protected $customer;
 
     /**
-     * @var Website
+     * @var Website|null
      */
     protected $website;
 
     /**
-     * @var object
+     * @var object|null
      */
     protected $context;
 
@@ -33,39 +33,33 @@ class ProductPriceScopeCriteria implements ProductPriceScopeCriteriaInterface
     /**
      * {@inheritdoc}
      */
-    public function getCustomer()
+    public function getCustomer(): ?Customer
     {
         return $this->customer;
     }
 
     /**
-     * @param Customer|null $customer
-     * @return ProductPriceScopeCriteria
+     * {@inheritdoc}
      */
     public function setCustomer(Customer $customer = null)
     {
         $this->customer = $customer;
-
-        return $this;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getWebsite(): Website
+    public function getWebsite(): ?Website
     {
         return $this->website;
     }
 
     /**
-     * @param Website|null $website
-     * @return ProductPriceScopeCriteria
+     * {@inheritdoc}
      */
     public function setWebsite(Website $website = null)
     {
         $this->website = $website;
-
-        return $this;
     }
 
     /**
@@ -77,22 +71,19 @@ class ProductPriceScopeCriteria implements ProductPriceScopeCriteriaInterface
     }
 
     /**
-     * @param object|null $context
-     * @return ProductPriceScopeCriteria
+     * {@inheritdoc}
      */
     public function setContext($context)
     {
         $this->context = $context;
-
-        return $this;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getData($key)
+    public function getData(string $key)
     {
-        if (array_key_exists($key, $this->data)) {
+        if (\array_key_exists($key, $this->data)) {
             return $this->data[$key];
         }
 
@@ -102,7 +93,7 @@ class ProductPriceScopeCriteria implements ProductPriceScopeCriteriaInterface
     /**
      * {@inheritdoc}
      */
-    public function setData($key, $value)
+    public function setData(string $key, $value)
     {
         $this->data[$key] = $value;
     }
@@ -110,7 +101,7 @@ class ProductPriceScopeCriteria implements ProductPriceScopeCriteriaInterface
     /**
      * {@inheritdoc}
      */
-    public function unsetData($key)
+    public function unsetData(string $key)
     {
         unset($this->data[$key]);
     }
