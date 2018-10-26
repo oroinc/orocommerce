@@ -143,7 +143,7 @@ class FrontendProductPricesProvider
      */
     protected function getProductPrices(int $productId)
     {
-        return array_key_exists($productId, $this->productPrices) ? $this->productPrices[$productId] : [];
+        return $this->productPrices[$productId] ?? [];
     }
 
     /**
@@ -153,13 +153,13 @@ class FrontendProductPricesProvider
      */
     protected function getVariantsPrices(int $productId)
     {
-        return array_key_exists($productId, $this->variantsPrices) ? $this->variantsPrices[$productId] : [];
+        return $this->variantsPrices[$productId] ?? [];
     }
 
     /**
      * @param Product[] $products
      */
-    protected function prepareAndSetProductsPrices($products)
+    protected function prepareAndSetProductsPrices(array $products)
     {
         $products = array_filter($products, function (Product $product) {
             return !array_key_exists($product->getId(), $this->productPrices);
@@ -225,7 +225,7 @@ class FrontendProductPricesProvider
             }
 
             $this->productPrices[$product->getId()] = array_filter(
-                isset($productsPricesByUnit[$product->getId()]) ? $productsPricesByUnit[$product->getId()] : [],
+                $productsPricesByUnit[$product->getId()] ?? [],
                 function ($price) use ($unitsToSell) {
                     return !empty($unitsToSell[$price['unit']]);
                 }
