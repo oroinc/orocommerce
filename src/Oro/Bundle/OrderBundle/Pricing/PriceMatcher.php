@@ -7,7 +7,11 @@ use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaFactoryInterface;
 use Oro\Bundle\PricingBundle\Provider\MatchingPriceProvider;
+use Psr\Log\LoggerInterface;
 
+/**
+ * Match prices by order line items.
+ */
 class PriceMatcher
 {
     /** @var MatchingPriceProvider */
@@ -16,16 +20,22 @@ class PriceMatcher
     /** @var ProductPriceScopeCriteriaFactoryInterface */
     protected $priceScopeCriteriaFactory;
 
+    /** @var LoggerInterface */
+    private $logger;
+
     /**
      * @param MatchingPriceProvider $provider
      * @param ProductPriceScopeCriteriaFactoryInterface $priceScopeCriteriaFactory
+     * @param LoggerInterface $logger
      */
     public function __construct(
         MatchingPriceProvider $provider,
-        ProductPriceScopeCriteriaFactoryInterface $priceScopeCriteriaFactory
+        ProductPriceScopeCriteriaFactoryInterface $priceScopeCriteriaFactory,
+        LoggerInterface $logger
     ) {
         $this->provider = $provider;
         $this->priceScopeCriteriaFactory = $priceScopeCriteriaFactory;
+        $this->logger = $logger;
     }
 
     /**
@@ -121,6 +131,13 @@ class PriceMatcher
                 $orderLineItem->getCurrency() ?: $orderLineItem->getOrder()->getCurrency()
             );
         } catch (\InvalidArgumentException $e) {
+            $this->logger->error(
+                'Got error while trying to create new ProductPriceCriteria with message: "{message}"',
+                [
+                    'message' => $e->getMessage(),
+                    'exception' => $e
+                ]
+            );
             return null;
         }
     }

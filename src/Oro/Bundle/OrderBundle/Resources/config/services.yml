@@ -259,6 +259,7 @@ services:
         arguments:
             - '@oro_pricing.provider.matching_price'
             - '@oro_pricing.model.product_price_scope_criteria_factory'
+            - '@logger'
 
     oro_order.order.total.total_helper:
         class: 'Oro\Bundle\OrderBundle\Total\TotalHelper'
