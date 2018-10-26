@@ -5,7 +5,7 @@ Feature: Delete line item from shopping list for configurable products
   In order to have ability to manage shopping list
   As a Buyer
   I want to delete line item from Shopping List and this should not affect
-  another line items in case if configured product representation at checkout page was not configured as matrix view.
+  another line items in case if configured product representation at checkout page was not configured as matrix view
 
   Scenario: Create sessions
     Given sessions active:
