@@ -614,12 +614,17 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         $productUnitPrecision = new ProductUnitPrecision();
         $productUnitPrecision->setUnit($this->getProductUnit('test', 1));
 
-        $product = $this->getProduct(43, Product::TYPE_CONFIGURABLE);
+        $product = $this->getProduct(5, Product::TYPE_CONFIGURABLE);
         $product->setPrimaryUnitPrecision($productUnitPrecision);
 
-        $simpleProduct1 = $this->getProduct(44, Product::TYPE_SIMPLE);
-        $simpleProduct2 = $this->getProduct(45, Product::TYPE_SIMPLE);
-        $simpleProduct3 = $this->getProduct(46, Product::TYPE_SIMPLE);
+        $simpleProduct1 = $this->getProduct(6, Product::TYPE_SIMPLE);
+        $simpleProduct2 = $this->getProduct(7, Product::TYPE_SIMPLE);
+        $simpleProduct3 = $this->getProduct(8, Product::TYPE_SIMPLE);
+
+        $lineItem3 = new LineItem();
+        $lineItem3->setProduct($simpleProduct3);
+        $lineItem3->setParentProduct($product);
+        $lineItem3->setUnit($this->getProductUnit('test', 1));
 
         $lineItem1 = new LineItem();
         $lineItem1->setProduct($simpleProduct1);
@@ -630,11 +635,6 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         $lineItem2->setProduct($simpleProduct2);
         $lineItem2->setParentProduct($product);
         $lineItem2->setUnit($this->getProductUnit('test', 1));
-
-        $lineItem3 = new LineItem();
-        $lineItem3->setProduct($simpleProduct3);
-        $lineItem3->setParentProduct($product);
-        $lineItem3->setUnit($this->getProductUnit('test', 1));
 
         $shoppingList = $this->getShoppingList(1);
         $shoppingList->addLineItem($lineItem1);
@@ -674,15 +674,15 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         $lineItem1->setParentProduct($product);
         $lineItem1->setUnit($this->getProductUnit('test', 1));
 
-        $lineItem2 = new LineItem();
-        $lineItem2->setProduct($simpleProduct2);
-        $lineItem2->setParentProduct($product);
-        $lineItem2->setUnit($this->getProductUnit('test', 1));
-
         $lineItem3 = new LineItem();
         $lineItem3->setProduct($simpleProduct3);
         $lineItem3->setParentProduct($product);
         $lineItem3->setUnit($this->getProductUnit('test', 1));
+
+        $lineItem2 = new LineItem();
+        $lineItem2->setProduct($simpleProduct2);
+        $lineItem2->setParentProduct($product);
+        $lineItem2->setUnit($this->getProductUnit('test', 1));
 
         $shoppingList = $this->getShoppingList(1);
         $shoppingList->addLineItem($lineItem1);
@@ -710,12 +710,12 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         $productUnitPrecision = new ProductUnitPrecision();
         $productUnitPrecision->setUnit($this->getProductUnit('test', 1));
 
-        $product = $this->getProduct(43, Product::TYPE_CONFIGURABLE);
+        $product = $this->getProduct(10, Product::TYPE_CONFIGURABLE);
         $product->setPrimaryUnitPrecision($productUnitPrecision);
 
-        $simpleProduct1 = $this->getProduct(44, Product::TYPE_SIMPLE);
-        $simpleProduct2 = $this->getProduct(45, Product::TYPE_SIMPLE);
-        $simpleProduct3 = $this->getProduct(46, Product::TYPE_SIMPLE);
+        $simpleProduct1 = $this->getProduct(11, Product::TYPE_SIMPLE);
+        $simpleProduct2 = $this->getProduct(12, Product::TYPE_SIMPLE);
+        $simpleProduct3 = $this->getProduct(13, Product::TYPE_SIMPLE);
 
         $lineItem1 = new LineItem();
         $lineItem1->setProduct($simpleProduct1);
@@ -741,10 +741,10 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
 
         $this->assertEquals(1, $countDeletedItems);
 
-        $resultLineItems = $shoppingList->getLineItems();
-        $this->assertCount(2, $resultLineItems);
-        $this->assertFalse($resultLineItems->contains($lineItem1));
-        $this->assertTrue($resultLineItems->contains($lineItem2));
-        $this->assertTrue($resultLineItems->contains($lineItem3));
+        $resultItems = $shoppingList->getLineItems();
+        $this->assertCount(2, $resultItems);
+        $this->assertFalse($resultItems->contains($lineItem1));
+        $this->assertTrue($resultItems->contains($lineItem2));
+        $this->assertTrue($resultItems->contains($lineItem3));
     }
 }
