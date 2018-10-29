@@ -2,7 +2,7 @@
 
 .product-price-collection {
     .small-row > div > div {
-        float: left;
+        float: #{$start};
     }
 
     .grouped-fields {
@@ -17,18 +17,18 @@
 
     .col-widget {
         width: 100px;
-        margin-right: 22px;
+        margin-#{$end}: $product-price-collection-col-widget-offset;
     }
 
     input[type="text"].quantity,
     input[type="text"].price-value,
     .entity-create-or-select-container {
-        margin-left: 4px;
+        margin-#{$start}: $product-price-collection-create-or-select-offset;
         width: 100px;
     }
 
     .price-currency {
-        margin-left: 5px;
+        margin-#{$start}: $product-price-collection-price-currency-offset;
         width: 100px;
     }
 
@@ -43,21 +43,17 @@
         width: 156px !important;
     }
 
-    .oro-multiselect-holder {
-        padding-left: 10px;
-    }
-
     .entity-create-or-select-container {
-        margin-left: 4px;
+        margin-#{$start}: $product-price-collection-create-or-select-offset;
         width: 294px;
     }
 
     .oro-item-collection {
         .row-oro {
             position: relative;
-            padding: 10px 10px 10px 40px;
+            padding: $product-price-collection-row-offset;
             margin-bottom: 10px;
-            border: 1px solid #e6e6e6;
+            border: 1px solid $primary-800;
             background: $primary-900;
             border-radius: 4px;
         }
@@ -66,18 +62,18 @@
             position: absolute;
             width: 28px;
             top: 4px;
-            right: 4px;
+            #{$end}: $product-price-collection-remove-row-end;
             text-decoration: none;
         }
     }
 
     div[data-validation-optional-group=""] {
-        padding-right: 20px;
+        padding-#{$end}: $product-price-collection-validation-optional-offset;
         display: inline-block;
     }
 
     .oro-multiselect-holder {
-        padding-right: 50px !important;
+        padding-#{$end}: $product-price-collection-multiselect-holder-offset !important;
     }
 
     .form-horizontal {
@@ -152,7 +148,7 @@
     }
 
     .controls {
-        margin-left: 10px !important;
+        margin-#{$start}: $pricing-price-list-controls-offset !important;
     }
 }
 
@@ -162,10 +158,6 @@
 
 .price-list-collection-as-widget {
     padding: 0 10px 10px;
-}
-
-.tab-content > .tab-pane.price-list-by-customer-grid {
-    padding: 0 20px;
 }
 
 @media screen and (min-width: 1470px) {
@@ -189,7 +181,7 @@
 
         .col-widget {
             width: auto;
-            margin-right: 5px;
+            margin-#{$end}: $product-price-collection-large-col-widget-offset;
         }
 
         .group-label {
@@ -197,7 +189,7 @@
         }
 
         .grouped-fields {
-            margin-left: 25px;
+            margin-#{$start}: $product-price-collection-large-grouped-fields-offset;
         }
     }
 }
@@ -214,6 +206,6 @@
     }
 
     .merge-allowed-label {
-        margin-left: 7px;
+        margin-#{$start}: $allow-merge-block-label-offset;
     }
 }

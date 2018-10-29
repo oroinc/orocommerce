@@ -384,18 +384,16 @@
                                          open: hasFilters
                                      }|json_encode() }}"
                                 >
-                                    <div class="top-frame">
-                                        <div class="control-group">
-                                            <div class="pull-right">
-                                                <div data-collapse-trigger class="btn-group icons-holder">
-                                                    <a class="collapse-view__trigger btn"><i class="fa-filter"></i> {{ 'oro.product.content_variant.ui.advanced_filter'|trans }}</a>
-                                                </div>
-                                                {{ ProductCollection.popupButton(
-                                                    oro_datagrid_build_fullname('product-collection-add-products-to-included-grid', scope),
-                                                    includedProductsElementId,
-                                                    'oro.product.content_variant.ui.hint.add_to_included'|trans
-                                                ) }}
+                                    <div class="control-group">
+                                        <div class="pull-right">
+                                            <div data-collapse-trigger class="btn-group icons-holder">
+                                                <a class="collapse-view__trigger btn"><i class="fa-filter"></i> {{ 'oro.product.content_variant.ui.advanced_filter'|trans }}</a>
                                             </div>
+                                            {{ ProductCollection.popupButton(
+                                                oro_datagrid_build_fullname('product-collection-add-products-to-included-grid', scope),
+                                                includedProductsElementId,
+                                                'oro.product.content_variant.ui.hint.add_to_included'|trans
+                                            ) }}
                                         </div>
                                     </div>
                                     <div data-collapse-container class="filter control-group fields-row">
@@ -424,17 +422,16 @@
                                  role="tabpanel"
                                  aria-labelledby="{{ 'excluded_products' ~ uniqueId ~ scope ~ '-tab' }}"
                             >
-                                <div class="top-frame">
-                                    <div class="control-group">
-                                        <div class="pull-right">
-                                            {{ ProductCollection.popupButton(
-                                                oro_datagrid_build_fullname('product-collection-add-products-to-excluded-grid', scope),
-                                                excludedProductsElementId,
-                                                'oro.product.content_variant.ui.hint.add_to_excluded'|trans
-                                            ) }}
-                                        </div>
+                                <div class="control-group">
+                                    <div class="pull-right">
+                                        {{ ProductCollection.popupButton(
+                                            oro_datagrid_build_fullname('product-collection-add-products-to-excluded-grid', scope),
+                                            excludedProductsElementId,
+                                            'oro.product.content_variant.ui.hint.add_to_excluded'|trans
+                                        ) }}
                                     </div>
                                 </div>
+
 
                                 {% set excludedGridWidgetAlias = 'product-collection-excluded-products-grid-' ~ scope %}
                                 {% set excludedGridSidebarComponentOptions = {
@@ -463,17 +460,16 @@
                                  role="tabpanel"
                                  aria-labelledby="{{ 'included_products' ~ uniqueId ~ scope ~ '-id' }}"
                             >
-                                <div class="top-frame">
-                                    <div class="control-group">
-                                        <div class="pull-right">
-                                            {{ ProductCollection.popupButton(
-                                                oro_datagrid_build_fullname('product-collection-add-products-to-included-grid', scope),
-                                                includedProductsElementId,
-                                                'oro.product.content_variant.ui.hint.add_to_included'|trans
-                                            ) }}
-                                        </div>
+                                <div class="control-group">
+                                    <div class="pull-right">
+                                        {{ ProductCollection.popupButton(
+                                            oro_datagrid_build_fullname('product-collection-add-products-to-included-grid', scope),
+                                            includedProductsElementId,
+                                            'oro.product.content_variant.ui.hint.add_to_included'|trans
+                                        ) }}
                                     </div>
                                 </div>
+
 
                                 {% set includedGridWidgetAlias = 'product-collection-included-products-grid-' ~ scope %}
                                 {% set includedGridSidebarComponentOptions = {
