@@ -112,6 +112,7 @@ services:
         arguments:
             - '@oro_sale.provider.quote_product_price'
             - '@translator'
+            - '@oro_entity.doctrine_helper'
 
     oro_sale.form_type.contact_info_customer_options_type:
         class: Oro\Bundle\SaleBundle\Form\Type\ContactInfoSourceOptionsType

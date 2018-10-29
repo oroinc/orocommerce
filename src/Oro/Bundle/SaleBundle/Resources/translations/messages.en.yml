@@ -106,6 +106,7 @@ oro:
                 shipping_options.label: 'Shipping Options'
                 error:
                     price_override: 'Price overriding allowed by tier price only'
+                    free_form_price_override: 'Price overriding allowed by tier price only'
 
             datagrid:
                 customer.label: 'Quotes'
