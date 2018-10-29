@@ -118,7 +118,7 @@ Feature: Single Page Guest Checkout From Shopping List
     And I click "Submit Order"
     Then I see the "Thank You" page with "Thank You For Your Purchase!" title
 
-  Scenario: Create order from shopping List as unauthorized user from product view page with guest registration
+  Scenario: Start order and fill shipping and billing addresses
     Given I proceed as the User
     And I am on homepage
     And type "SKU123" in "search"
@@ -151,6 +151,19 @@ Feature: Single Page Guest Checkout From Shopping List
       | State           | Berlin       |
       | Zip/Postal Code | 10115        |
     And I click "Continue"
+
+  Scenario: Check Late registration form validation errors
+    And I type "not@valid" in "Email Address"
+    And I type "1111" in "Password"
+    And I type "1" in "Confirm Password"
+    And I wait "Submit Order" button
+    And I click "Submit Order"
+    Then I should see validation errors:
+      | Email Address    | This value is not a valid email address.                                                                  |
+      | Password         | The password must be at least 8 characters long and include a lower case letter and an upper case letter  |
+      | Confirm Password | The password fields must match.                                                                           |
+
+  Scenario: Finish creating order from shopping List as unauthorized user from product view page with guest registration
     And I type "rob1@test.com" in "Email Address"
     And I type "Rob1@test.com" in "Password"
     And I type "Rob1@test.com" in "Confirm Password"
