@@ -123,9 +123,9 @@ class Quote extends ExtendQuote implements
     protected $qid;
 
     /**
-     * @var string
+     * @var string|null
      *
-     * @ORM\Column(name="guest_access_id", type="guid")
+     * @ORM\Column(name="guest_access_id", type="guid", nullable=true)
      * @ConfigField(
      *      defaultValues={
      *          "importexport"={

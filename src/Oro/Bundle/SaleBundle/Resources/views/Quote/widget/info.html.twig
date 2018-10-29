@@ -13,7 +13,7 @@
             {% endif %}
 
             {% set uniqueGuestLink = quote_guest_access_link(entity) %}
-            {% if uniqueGuestLink %}
+            {% if uniqueGuestLink and entity.isAcceptable() %}
                 {{ UI.renderHtmlProperty('oro.sale.quote.unique_guest_link.label'|trans, UI.renderUrlWithActions({url: uniqueGuestLink, attributes: {target: '_blank'}}, entity), entity, 'guestAccessId') }}
             {% endif %}
 

@@ -14,6 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
+use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteDemandType;
@@ -49,8 +50,8 @@ class QuoteController extends Controller
 
     /**
      * @Route(
-     *     "/{guest_access_id}",
-     *     name="oro_sale_quote_frontend_guest_access",
+     *     "/view/{guest_access_id}",
+     *     name="oro_sale_quote_frontend_view_guest",
      *     requirements={
      *          "guest_access_id"="[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}"
      *     }
@@ -76,7 +77,7 @@ class QuoteController extends Controller
         }
 
         return [
-            'data' => ['entity' => $quote, 'quote' => $quote]
+            'data' => ['entity' => $quote]
         ];
     }
 
@@ -104,9 +105,9 @@ class QuoteController extends Controller
      * @Route("/choice/{id}", name="oro_sale_quote_frontend_choice", requirements={"id"="\d+"})
      * @Layout()
      * @Acl(
-     *      id="oro_sale_quote_frontend_choice",
+     *      id="oro_sale_quote_demand_frontend_view",
      *      type="entity",
-     *      class="OroSaleBundle:Quote",
+     *      class="OroSaleBundle:QuoteDemand",
      *      permission="VIEW",
      *      group_name="commerce"
      * )
@@ -167,13 +168,7 @@ class QuoteController extends Controller
     /**
      * @Route("/subtotals/{id}", name="oro_sale_quote_frontend_subtotals", requirements={"id"="\d+"})
      * @Layout()
-     * @Acl(
-     *      id="oro_sale_quote_frontend_subtotals",
-     *      type="entity",
-     *      class="OroSaleBundle:Quote",
-     *      permission="VIEW",
-     *      group_name="commerce"
-     * )
+     * @AclAncestor("oro_sale_quote_demand_frontend_view")
      *
      * @param Request $request
      * @param QuoteDemand $quoteDemand

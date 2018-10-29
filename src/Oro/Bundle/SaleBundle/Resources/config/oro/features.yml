@@ -3,5 +3,8 @@ features:
         label: oro.sale.system_configuration.fields.enable_guest_quote.label
         description: oro.sale.form.tooltip.enable_guest_quote
         toggle: oro_sale.enable_guest_quote
+        strategy: affirmative
         routes:
-            - oro_sale_quote_frontend_guest_access
+            - oro_sale_quote_frontend_view_guest
+        operations:
+            - oro_sale_frontend_guest_quote_submit_to_order

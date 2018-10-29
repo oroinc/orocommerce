@@ -622,6 +622,7 @@ class OroSaleBundleInstaller implements
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('customer_id', 'integer', ['notnull' => false]);
         $table->addColumn('customer_user_id', 'integer', ['notnull' => false]);
+        $table->addColumn('visitor_id', 'integer', ['notnull' => false]);
         $table->addColumn('quote_id', 'integer', ['notnull' => false]);
         $table->addColumn(
             'subtotal',
@@ -699,6 +700,12 @@ class OroSaleBundleInstaller implements
             ['quote_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_customer_visitor'),
+            ['visitor_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
     }
 }

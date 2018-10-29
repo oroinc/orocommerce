@@ -67,7 +67,7 @@ class QuoteGuestAccessExtensionTest extends \PHPUnit_Framework_TestCase
         $this->websiteUrlResolver->expects($this->any())
             ->method('getWebsitePath')
             ->with(
-                'oro_sale_quote_frontend_guest_access',
+                'oro_sale_quote_frontend_view_guest',
                 ['guest_access_id' => $quote->getGuestAccessId()],
                 $website
             )
