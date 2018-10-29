@@ -414,7 +414,7 @@ Feature: Single Page Checkout With Popup for Buyer
     And I click "Continue"
     When I check "Use billing address" on the checkout page
     Then There is no shipping method available for this order
-    When I select "Fifth avenue, 10115 Berlin, Germany" from "Select Billing Address"
+    When I select "ORO, Fifth avenue, 10115 Berlin, Germany" from "Select Billing Address"
     Then I should see "Flat Rate: $3.00"
     When I click "Delete this shopping list after submitting order"
     And I wait "Submit Order" button
