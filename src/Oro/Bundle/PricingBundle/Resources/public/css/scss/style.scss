@@ -87,9 +87,18 @@
 
 .product-container {
     .sidebar-items {
-        .control-label {
-            font-weight: 700;
+        .currencies {
+            .oro-clearfix {
+                margin-bottom: 3px;
+            }
         }
+
+        .checkbox-view {
+        }
+    }
+
+    .include-sub-categories-choice {
+        margin-bottom: 4px;
     }
 
     .grid-container {
