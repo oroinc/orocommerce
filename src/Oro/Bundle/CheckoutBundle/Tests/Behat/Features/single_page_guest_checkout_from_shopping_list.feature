@@ -73,8 +73,20 @@ Feature: Single Page Guest Checkout From Shopping List
     And I reload the page
     Then the "Use billing address" checkbox should be checked
 
+  Scenario: "Save my data and create an account" checkbox should be possible to save in unchecked state
+    Given I uncheck "Save my data and create an account" on the checkout page
+    And I reload the page
+    Then the "Save my data and create an account" checkbox should be unchecked
+
+  Scenario: Check "Late registration form" entered email saved on save state
+    Given I check "Save my data and create an account" on the checkout page
+    And I type "emailShouldBesaved@test.com" in "Email Address"
+    And I type "PasswordShouldNot1" in "Password"
+    And I type "PasswordShouldNot1" in "Confirm Password"
+    And I reload the page
+    Then the "Email Address" field should contain "emailShouldBesaved@test.com"
+
   Scenario: Create order from Shopping list as unauthorized user without guest registration
-    And I uncheck "Save my data and create an account" on the checkout page
     And I uncheck "Use billing address" on the checkout page
     And I click on "Billing Address Select"
     And I click on "New Address Option"
@@ -100,8 +112,6 @@ Feature: Single Page Guest Checkout From Shopping List
       | State           | Berlin       |
       | Zip/Postal Code | 10115        |
     And I click "Continue"
-    # TODO "Save my data and create an account" field should save their state
-    And I uncheck "Save my data and create an account" on the checkout page
     And I check "Flat Rate" on the checkout page
     And I check "Payment Terms" on the checkout page
     And I wait "Submit Order" button

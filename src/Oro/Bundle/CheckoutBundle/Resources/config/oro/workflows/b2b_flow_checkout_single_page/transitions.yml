@@ -62,6 +62,9 @@ workflows:
                         customer_notes:
                             form_type: Symfony\Component\Form\Extension\Core\Type\TextareaType
                         remove_source: ~
+                        late_registration:
+                            form_type: Oro\Bundle\CheckoutBundle\Form\Type\LateRegistrationType
+                            data: $late_registration_data
                         state_token:
                             form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
                             options:
@@ -137,6 +140,7 @@ workflows:
                             form_type: Oro\Bundle\CheckoutBundle\Form\Type\LateRegistrationType
                             options:
                                 required: true
+                                data: $late_registration
                         customer_notes:
                             form_type: Symfony\Component\Form\Extension\Core\Type\TextareaType
                         state_token:
