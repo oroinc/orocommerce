@@ -19,7 +19,8 @@ define(function(require) {
                 checkoutSidebar: '[data-role="checkout-sidebar"]',
                 checkoutContent: '[data-role="checkout-content"]',
                 transitionTriggerContainer: '[data-role="transition-trigger-container"]',
-                transitionTrigger: '[data-role="transition-trigger"]'
+                transitionTrigger: '[data-role="transition-trigger"]',
+                stateToken: '[name$="[state_token]"]'
             }
         },
 
@@ -116,6 +117,9 @@ define(function(require) {
          * @returns {String}
          */
         serializeForm: function() {
+            this.$form.find(this.options.selectors.stateToken)
+                .prop('disabled', false)
+                .removeAttr('disabled');
             return this.$form.serialize();
         },
 

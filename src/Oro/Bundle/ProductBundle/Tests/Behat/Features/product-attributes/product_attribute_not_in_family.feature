@@ -1,5 +1,6 @@
 @ticket-BAP-17313
 @fixture-OroProductBundle:ProductAttributesFixture.yml
+@fixture-OroProductBundle:related_products.yml
 
 Feature: Product attribute not in family
   In order to ensure that product attribute column is present in columns manager only when attribute is in family
@@ -30,6 +31,13 @@ Feature: Product attribute not in family
     Then I should not see "Grid Settings SelectField"
     And click "Grid Settings"
 
+  Scenario: Ensure product attribute is not present in datagrid column manager of related products datagrid
+    Given I click View PSKU2 in grid
+    And I click "Related Items"
+    When click "Grid Settings"
+    Then I should not see "Grid Settings SelectField"
+    And click "Grid Settings"
+
   Scenario: Update product family with new attribute
     Given I go to Products/ Product Families
     When I click "Edit" on row "default_family" in grid
@@ -40,7 +48,7 @@ Feature: Product attribute not in family
 
   Scenario: Update attribute in product
     Given I go to Products/ Products
-    When I click "Edit" on row "SKU123" in grid
+    When I click "Edit" on row "PSKU1" in grid
     And I fill "Product Form" with:
       | SelectField | CustomSelectOption1 |
     And I save and close form
@@ -49,4 +57,10 @@ Feature: Product attribute not in family
   Scenario: Ensure product attribute is present in datagrid column manager and can be loaded
     Given I go to Products/ Products
     And I show column SelectField in grid
-    Then I should see that "CustomSelectOption1" is in 2 row
+    Then CustomSelectOption1 must be 5 record
+
+  Scenario: Ensure product attribute is present in datagrid column manager and can be loaded on related products datagrid
+    Given I click View PSKU2 in grid
+    And I click "Related Items"
+    When I show column SelectField in "RelatedProductsViewGrid"
+    Then I should see that "CustomSelectOption1" is in 4 row
