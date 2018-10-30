@@ -26,6 +26,7 @@ define(function(require) {
             originPaymentMethodSelector: '[name="paymentMethod"]',
             formPaymentMethodSelector: '[name$="[payment_method]"]',
             originPaymentFormSelector: '[data-content="payment_method_form"]',
+            stateTokenSelector: '[name$="[state_token]"]',
             entityId: null
         },
 
@@ -91,6 +92,20 @@ define(function(require) {
             SinglePageCheckoutFormView.__super__.initialize.call(this, arguments);
         },
 
+        afterCheck: function($el) {
+            if (!$el) {
+                $el = this.$el;
+            }
+            var serializedData = this.getSerializedData();
+
+            if (this.lastSerializedData === serializedData) {
+                return;
+            }
+
+            this.trigger('after-check-form', serializedData, $el);
+            this.lastSerializedData = serializedData;
+        },
+
         /**
          * @param {jQuery.Event} event
          */
@@ -110,14 +125,7 @@ define(function(require) {
             this._changeShippingMethod();
             this._changePaymentMethod();
 
-            var serializedData = this.getSerializedData();
-
-            if (this.lastSerializedData === serializedData) {
-                return;
-            }
-
-            this.trigger('after-check-form', serializedData, $(event.target));
-            this.lastSerializedData = serializedData;
+            this.afterCheck($(event.target));
         },
 
         onBeforeSaveState: function() {
@@ -168,7 +176,10 @@ define(function(require) {
         },
 
         getSerializedData: function() {
-            return this.$el.find(this.options.transitionFormFieldSelector).serialize();
+            var $form = this.$el.closest('form');
+            $form.find(this.options.stateTokenSelector).prop('disabled', false);
+
+            return $form.find(this.options.transitionFormFieldSelector).serialize();
         },
 
         _disableShippingAddress: function() {

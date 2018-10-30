@@ -19,6 +19,7 @@ define(function(require) {
             transitionUrl: null,
             targetLayoutBlocks: null,
             checkoutContentSelector: '[data-role="checkout-content"]',
+            checkoutFlashNotifications: '[data-role="checkout-flash-notifications"]',
             defaultParameters: {
                 layout_block_ids: [
                     'checkout_button_continue_right_wrapper'
@@ -59,6 +60,8 @@ define(function(require) {
 
             this.formView.on('after-check-form', _.bind(this.onAfterCheckForm, this));
             this.formView.on('submit-form', _.bind(this.onSubmit, this));
+
+            this.formView.afterCheck();
 
             SinglePageCheckoutComponent.__super__.initialize.call(this, this.options);
         },
@@ -118,6 +121,17 @@ define(function(require) {
 
                 var $content = $(this.options.checkoutContentSelector);
                 $content.html($response.find(this.options.checkoutContentSelector).html());
+
+                var $flashNotifications = $response.find(this.options.checkoutFlashNotifications);
+                _.each($flashNotifications, function(element) {
+                    var $element = $(element);
+                    var type = $element.data('type');
+                    var message = $element.data('message');
+                    message = message.replace(/\n/g, '<br>');
+                    _.delay(function() {
+                        mediator.execute('showFlashMessage', type, message);
+                    }, 100);
+                });
 
                 mediator.trigger('checkout-content:updated');
                 mediator.trigger('layout:reposition');

@@ -19,6 +19,7 @@ oro_behat_extension:
         - OroCustomerBundle::ACLContext
         - OroProductBundle::FeatureContext
         - OroProductBundle::QuickOrderFormContext
+        - OroPricingBundle::FeatureContext
         - OroLocaleBundle::LocalizationContext
         - OroFrontendLocalizationBundle::LocalizationSwitcherContext
         - OroDataGridBundle::GridContext
@@ -172,7 +173,6 @@ oro_behat_extension:
           Last Name: 'oro_workflow_transition[billing_address][lastName]'
           Organization: 'oro_workflow_transition[billing_address][organization]'
           Email: 'oro_workflow_transition[email]'
-          Email: 'oro_workflow_transition[visitor_email]'
           Street: 'oro_workflow_transition[billing_address][street]'
           City: 'oro_workflow_transition[billing_address][city]'
           Country: 'oro_workflow_transition[billing_address][country]'
