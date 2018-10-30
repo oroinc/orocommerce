@@ -58,10 +58,6 @@
         max-width: $product-price-max-width;
         margin: $product-price-margin;
     }
-
-    .product-price__listed {
-        text-align: $product-price-listed-text-align;
-    }
 }
 
 @include breakpoint('tablet') {

@@ -11,6 +11,24 @@
             @include mosaic-grid($mosaic-grid-column-count: 2);
         }
 
+        &-related-items {
+            columns: $product-view-attributes-box-related-items-columns;
+            display: $product-view-attributes-box-related-items-display;
+
+            > .embedded-products {
+                width: $product-view-attributes-box-embedded-products-width;
+                margin: 0 $product-view-attributes-box-embedded-products-offset;
+
+                &:first-child {
+                    margin-left: 0;
+                }
+
+                &:last-child {
+                    margin-right: 0;
+                }
+            }
+        }
+
         &-title {
             margin-bottom: $product-view-attributes-box-title-offset-bottom;
 
@@ -25,6 +43,10 @@
         &__attribute-box {
             &-wrapper {
                 @include mosaic-grid($mosaic-grid-column-count: 1);
+            }
+
+            &-related-items {
+                display: $product-view-attributes-box-tablet-related-items-display;
             }
         }
     }
