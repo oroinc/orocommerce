@@ -128,9 +128,9 @@ class FeatureContext extends OroFeatureContext implements
     }
 
     /**
-     * Example: I should see truncated to 10 symbols guest link for quote qid "Quote1"
+     * Example: I should see truncated to 10 symbols link for quote qid "Quote1"
      *
-     * @Then /^(?:|I )should see truncated to (?P<truncateTo>(?:\d+)) symbols guest link for quote qid (?P<qid>[\w\s]+)$/
+     * @Then /^(?:|I )should see truncated to (?P<truncateTo>(?:\d+)) symbols link for quote qid (?P<qid>[\w\s]+)$/
      * @param string $qid
      * @param integer $truncateTo
      */

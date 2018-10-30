@@ -83,7 +83,7 @@ Feature: Quote for guest
       | Customer Status | N/A              |
       | Website         | Default          |
     And I should see "Unique Guest link"
-    And I should see truncated to 31 symbols guest link for quote qid Quote_1
+    And I should see truncated to 31 symbols link for quote qid Quote_1
 
   Scenario: Copy guest link to clipboard
     When I click "Copy to Clipboard"
