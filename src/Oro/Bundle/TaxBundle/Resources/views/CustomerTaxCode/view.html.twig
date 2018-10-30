@@ -22,7 +22,6 @@
 
     {% set dataBlocks = [{
         'title': 'oro.tax.sections.general'|trans,
-        'class': 'active',
         'subblocks': [
             {'data' : [customerTaxCodeInfo]},
         ]
@@ -48,9 +47,9 @@
     {% set dataBlocks = dataBlocks|merge([{
         'title': 'oro.tax.customertaxcode.customer_groups.label'|trans,
         'subblocks': [{
-        'title': '',
-        'useSpan': false,
-        'data' : [customerGroupGrid]
+            'title': '',
+            'useSpan': false,
+            'data' : [customerGroupGrid]
         }]
     }] ) %}
 

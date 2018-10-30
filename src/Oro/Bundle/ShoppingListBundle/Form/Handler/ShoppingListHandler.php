@@ -2,13 +2,16 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Form\Handler;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\FormBundle\Form\Handler\RequestHandlerTrait;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
+use Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListManager;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * Handles create a shopping list request.
+ */
 class ShoppingListHandler
 {
     use RequestHandlerTrait;
@@ -24,30 +27,30 @@ class ShoppingListHandler
     protected $request;
 
     /**
-     * @var ShoppingListManager
+     * @var CurrentShoppingListManager
      */
-    protected $manager;
+    protected $currentShoppingListManager;
 
     /**
-     * @var Registry
+     * @var ManagerRegistry
      */
     protected $doctrine;
 
     /**
-     * @param FormInterface       $form
-     * @param Request             $request
-     * @param ShoppingListManager $manager
-     * @param Registry            $doctrine
+     * @param FormInterface              $form
+     * @param Request                    $request
+     * @param CurrentShoppingListManager $currentShoppingListManager
+     * @param ManagerRegistry            $doctrine
      */
     public function __construct(
         FormInterface $form,
         Request $request,
-        ShoppingListManager $manager,
-        Registry $doctrine
+        CurrentShoppingListManager $currentShoppingListManager,
+        ManagerRegistry $doctrine
     ) {
         $this->form = $form;
         $this->request = $request;
-        $this->manager = $manager;
+        $this->currentShoppingListManager = $currentShoppingListManager;
         $this->doctrine = $doctrine;
     }
 
@@ -62,12 +65,12 @@ class ShoppingListHandler
 
         if (in_array($this->request->getMethod(), ['POST', 'PUT'], true)) {
             $this->submitPostPutRequest($this->form, $this->request);
-            $em = $this->doctrine->getManagerForClass('OroShoppingListBundle:ShoppingList');
             if ($this->form->isValid()) {
+                $em = $this->doctrine->getManagerForClass(ShoppingList::class);
                 if ($shoppingList->getId() === null) {
                     $em->persist($shoppingList);
                     $em->flush();
-                    $this->manager->setCurrent(
+                    $this->currentShoppingListManager->setCurrent(
                         $shoppingList->getCustomerUser(),
                         $shoppingList
                     );

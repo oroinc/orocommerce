@@ -15,8 +15,8 @@ class ShoppingListContext extends OroFeatureContext implements OroPageObjectAwar
     use PageObjectDictionary, KernelDictionary;
 
     /**
-     * @When /^I open page with shopping list (?P<shoppingListLabel>[\w\s]+)/
-     * @When /^(?:|I )open page with shopping list "(?P<shoppingListLabel>[\w\s]+)"$/
+     * @When /^I open page with shopping list (?P<shoppingListLabel>[\w\s\(]+)/
+     * @When /^(?:|I )open page with shopping list "(?P<shoppingListLabel>[\w\s\(]+)"$/
      *
      * @param string $shoppingListLabel
      */

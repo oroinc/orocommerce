@@ -4,6 +4,7 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Manager;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerVisitor;
 use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
@@ -19,6 +20,9 @@ use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class GuestShoppingListManagerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
@@ -41,6 +45,9 @@ class GuestShoppingListManagerTest extends \PHPUnit\Framework\TestCase
     /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject */
     private $featureChecker;
 
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $configManager;
+
     /**
      * {@inheritdoc}
      */
@@ -51,12 +58,14 @@ class GuestShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         $this->websiteManager = $this->createMock(WebsiteManager::class);
         $this->translator = $this->createMock(TranslatorInterface::class);
         $this->featureChecker = $this->createMock(FeatureChecker::class);
+        $this->configManager = $this->createMock(ConfigManager::class);
 
         $this->guestShoppingListManager = new GuestShoppingListManager(
             $this->doctrineHelper,
             $this->tokenStorage,
             $this->websiteManager,
-            $this->translator
+            $this->translator,
+            $this->configManager
         );
 
         $this->guestShoppingListManager->setFeatureChecker($this->featureChecker);
@@ -126,45 +135,17 @@ class GuestShoppingListManagerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @dataProvider guestShoppingListDataProvider
+     * @dataProvider getGuestShoppingListsDataProvider
      *
-     * @param int $currentWebsiteId
-     * @param array $shoppingListsData
-     * @param array $expetedShoppingListData
+     * @param Website $currentWebsite
+     * @param CustomerVisitorStub $customerVisitor
+     * @param ShoppingList|null $expectedShoppingList
      */
-    public function testGetShoppingListForCustomerVisitor(
-        $currentWebsiteId,
-        array $shoppingListsData,
-        array $expetedShoppingListData
+    public function testGetShoppingListsForCustomerVisitor(
+        Website $currentWebsite,
+        CustomerVisitorStub $customerVisitor,
+        $expectedShoppingList
     ) {
-        /** @var ShoppingList $expectedShoppingList */
-        $expectedShoppingList = $this->getEntity(ShoppingList::class, [
-            'id' => $expetedShoppingListData['id'],
-            'label' => $expetedShoppingListData['label'],
-            'website' => $this->getEntity(Website::class, [
-                'id' => $expetedShoppingListData['websiteId'],
-                'organization' => new Organization()
-            ]),
-            'current' => true,
-            'organization' => new Organization(),
-        ]);
-
-        $customerVisitor = new CustomerVisitorStub();
-        foreach ($shoppingListsData as $shoppingListData) {
-            $customerVisitor->addShoppingList($this->getEntity(ShoppingList::class, [
-                'id' => $shoppingListData['id'],
-                'website' => $this->getEntity(Website::class, [
-                    'id' => $shoppingListData['websiteId'],
-                    'organization' => new Organization()
-                ]),
-                'organization' => new Organization()
-            ]));
-        }
-
-        $currentWebsite = $this->getEntity(Website::class, [
-            'id' => $currentWebsiteId,
-            'organization' => new Organization()
-        ]);
         $token = new AnonymousCustomerUserToken('', [], $customerVisitor);
 
         $this->websiteManager
@@ -177,14 +158,7 @@ class GuestShoppingListManagerTest extends \PHPUnit\Framework\TestCase
             ->method('getToken')
             ->willReturn($token);
 
-        $this->translator
-            ->expects($this->any())
-            ->method('trans')
-            ->with('oro.shoppinglist.default.label')
-            ->willReturn('Shopping List Label');
-
         $em = $this->createMock(EntityManager::class);
-
         $this->doctrineHelper
             ->expects($this->any())
             ->method('getEntityManager')
@@ -192,8 +166,44 @@ class GuestShoppingListManagerTest extends \PHPUnit\Framework\TestCase
 
         $this->assertEquals(
             $expectedShoppingList,
-            $this->guestShoppingListManager->getShoppingListForCustomerVisitor()
+            $this->guestShoppingListManager->getShoppingListsForCustomerVisitor()
         );
+    }
+
+    public function testGetShoppingListsForCustomerVisitorAndCreateShoppingListForGuest()
+    {
+        $token = new AnonymousCustomerUserToken('', [], new CustomerVisitorStub());
+
+        $website = $this->getEntity(Website::class, [
+            'id' => 1,
+            'organization' => new Organization()
+        ]);
+
+        $this->websiteManager
+            ->expects($this->exactly(2))
+            ->method('getCurrentWebsite')
+            ->willReturn($website);
+
+        $this->tokenStorage
+            ->expects($this->exactly(2))
+            ->method('getToken')
+            ->willReturn($token);
+
+        $this->configManager
+            ->expects($this->once())
+            ->method('get')
+            ->with('oro_shopping_list.create_shopping_list_for_new_guest')
+            ->willReturn(true);
+
+        $em = $this->createMock(EntityManager::class);
+        $this->doctrineHelper
+            ->expects($this->any())
+            ->method('getEntityManager')
+            ->willReturn($em);
+
+        $result = $this->guestShoppingListManager->getShoppingListsForCustomerVisitor();
+        $this->assertInternalType('array', $result);
+        $this->assertInstanceOf(ShoppingList::class, $result[0]);
     }
 
     public function testGetShoppingListForCustomerVisitorInValidToken()
@@ -271,50 +281,149 @@ class GuestShoppingListManagerTest extends \PHPUnit\Framework\TestCase
     /**
      * @return array
      */
-    public function guestShoppingListDataProvider()
+    public function getGuestShoppingListsDataProvider()
     {
+        $customerVisitorWithFewShoppingLists = new CustomerVisitorStub();
+
+        $organization = new Organization();
+
+        $website1 = $this->getEntity(Website::class, [
+            'id' => 1,
+            'organization' => $organization
+        ]);
+        $website2 = $this->getEntity(Website::class, [
+            'id' => 2,
+            'organization' => $organization
+        ]);
+
+        /** @var ShoppingList|\PHPUnit_Framework_MockObject_MockObject $shoppingList1 */
+        $shoppingList1 = $this->getEntity(ShoppingList::class, [
+            'id' => 25,
+            'website' => $website1,
+            'organization' => $organization
+        ]);
+        $expectedShoppingList1 = clone $shoppingList1;
+        /** @var ShoppingList|\PHPUnit_Framework_MockObject_MockObject $shoppingList2 */
+        $shoppingList2 = $this->getEntity(ShoppingList::class, [
+            'id' => 31,
+            'website' => $website2,
+            'organization' => $organization
+        ]);
+        $expectedShoppingList2 = clone $shoppingList2;
+
+        $customerVisitorWithFewShoppingLists->addShoppingList($shoppingList1);
+        $customerVisitorWithFewShoppingLists->addShoppingList($shoppingList2);
+
+        $customerVisitorWithOneShoppingList = new CustomerVisitorStub();
+        $customerVisitorWithOneShoppingList->addShoppingList($shoppingList2);
+
         return [
             'customer visitor has few shopping list' => [
-                'currentWebsiteId' => 1,
-                'shoppingListsData' => [
-                    [
-                        'id' => 25,
-                        'websiteId' => 1,
-                    ],
-                    [
-                        'id' => 31,
-                        'websiteId' => 2,
-                    ],
-                ],
-                'expetedShoppingListData' => [
-                    'id' => 25,
-                    'label' => null,
-                    'websiteId' => 1,
-                ],
+                'currentWebsite' => $website1,
+                'customerVisitor' => $customerVisitorWithFewShoppingLists,
+                'expectedShoppingList' => [$expectedShoppingList1->setCurrent(true)],
             ],
             'customer visitor has one shopping list' => [
-                'currentWebsiteId' => 1,
-                'shoppingListsData' => [
-                    [
-                        'id' => 25,
-                        'websiteId' => 1,
-                    ],
-                ],
-                'expetedShoppingListData' => [
-                    'id' => 25,
-                    'label' => null,
-                    'websiteId' => 1,
-                ],
+                'currentWebsite' => $website2,
+                'customerVisitor' => $customerVisitorWithOneShoppingList,
+                'expectedShoppingList' => [$expectedShoppingList2->setCurrent(true)],
             ],
-
             'customer visitor does not have shopping list' => [
-                'currentWebsiteId' => 1,
-                'shoppingListsData' => [],
-                'expetedShoppingListData' => [
+                'currentWebsiteId' => $website1,
+                'customerVisitor' => new CustomerVisitorStub(),
+                'expectedShoppingList' => [],
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider createGuestShoppingListDataProvider
+     *
+     * @param Website $currentWebsite
+     * @param CustomerVisitorStub $customerVisitor
+     * @param ShoppingList $expectedShoppingList
+     */
+    public function testCreateAndGetShoppingListForCustomerVisitor(
+        Website $currentWebsite,
+        CustomerVisitorStub $customerVisitor,
+        $expectedShoppingList
+    ) {
+        $token = new AnonymousCustomerUserToken('', [], $customerVisitor);
+
+        $this->websiteManager
+            ->expects($this->atLeastOnce())
+            ->method('getCurrentWebsite')
+            ->willReturn($currentWebsite);
+
+        $this->tokenStorage
+            ->expects($this->atLeastOnce())
+            ->method('getToken')
+            ->willReturn($token);
+
+        $this->translator
+            ->expects($this->any())
+            ->method('trans')
+            ->with('oro.shoppinglist.default.label')
+            ->willReturn('Shopping List Label');
+
+        $em = $this->createMock(EntityManager::class);
+        $this->doctrineHelper
+            ->expects($this->any())
+            ->method('getEntityManager')
+            ->willReturn($em);
+
+        $this->assertEquals(
+            $expectedShoppingList,
+            $this->guestShoppingListManager->createAndGetShoppingListForCustomerVisitor()
+        );
+    }
+
+    /**
+     * @return array
+     */
+    public function createGuestShoppingListDataProvider()
+    {
+        $customerVisitor = new CustomerVisitorStub();
+
+        $organization = new Organization();
+        $website = $this->getEntity(Website::class, [
+            'id' => 1,
+            'organization' => $organization
+        ]);
+
+        /** @var ShoppingList|\PHPUnit_Framework_MockObject_MockObject $shoppingList1 */
+        $shoppingList1 = $this->getEntity(ShoppingList::class, [
+            'id' => 25,
+            'website' => $website,
+            'organization' => $organization
+        ]);
+        $expectedShoppingList = clone $shoppingList1;
+        /** @var ShoppingList|\PHPUnit_Framework_MockObject_MockObject $shoppingList2 */
+        $shoppingList2 = $this->getEntity(ShoppingList::class, [
+            'id' => 31,
+            'website' => $website,
+            'organization' => $organization
+        ]);
+
+        $customerVisitor->addShoppingList($shoppingList1);
+        $customerVisitor->addShoppingList($shoppingList2);
+
+        return [
+            'shopping lists exist' => [
+                'currentWebsite' => $website,
+                'customerVisitor' => $customerVisitor,
+                'expectedShoppingList' => $expectedShoppingList->setCurrent(true),
+            ],
+            'shopping list doesn\'t exist' => [
+                'currentWebsite' => $website,
+                'customerVisitor' => new CustomerVisitorStub(),
+                'expectedShoppingList' => $this->getEntity(ShoppingList::class, [
                     'id' => null,
                     'label' => 'Shopping List Label',
-                    'websiteId' => 1,
-                ],
+                    'website' => $website,
+                    'current' => true,
+                    'organization' => $organization,
+                ]),
             ],
         ];
     }

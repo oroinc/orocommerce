@@ -85,7 +85,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
 
   Scenario: Prepare configurable products
 
-    # Variants for CNF_A
+    # Variants for CNFA
     Given I go to Products / Products
     And filter SKU as is equal to "PROD_A_1"
     And I click Edit PROD_A_1 in grid
@@ -107,7 +107,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I save form
     Then I should see "Product has been saved" flash message
 
-    # Variants for CNF_B
+    # Variants for CNFB
     And I go to Products / Products
     And filter SKU as is equal to "PROD_B_11"
     And I click Edit PROD_B_11 in grid
@@ -164,7 +164,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I save form
     Then I should see "Product has been saved" flash message
 
-    # Variants for CNF_C
+    # Variants for CNFC
     And I go to Products / Products
     And filter SKU as is equal to "PROD_C_111"
     And I click Edit PROD_C_111 in grid
@@ -212,8 +212,8 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
 
   Scenario: Save configurable products with simple products selected
     And I go to Products / Products
-    And filter SKU as is equal to "CNF_A"
-    And I click Edit CNF_A in grid
+    And filter SKU as is equal to "CNFA"
+    And I click Edit CNFA in grid
     And I should see "No records found"
     And I fill "ProductForm" with:
       | Configurable Attributes | [Attribute 1] |
@@ -223,8 +223,8 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     Then I should see "Product has been saved" flash message
 
     And I go to Products / Products
-    And filter SKU as is equal to "CNF_B"
-    And I click Edit CNF_B in grid
+    And filter SKU as is equal to "CNFB"
+    And I click Edit CNFB in grid
     And I should see "No records found"
     And I fill "ProductForm" with:
       | Configurable Attributes | [Attribute 1, Attribute 2] |
@@ -236,8 +236,8 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     Then I should see "Product has been saved" flash message
 
     And I go to Products / Products
-    And filter SKU as is equal to "CNF_C"
-    And I click Edit CNF_C in grid
+    And filter SKU as is equal to "CNFC"
+    And I click Edit CNFC in grid
     And I should see "No records found"
     And I fill "ProductForm" with:
       | Configurable Attributes | [Attribute 1, Attribute 2, Attribute 3] |
@@ -250,22 +250,22 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
   Scenario: Check prices container on configurable product view is visible only when there are prices
     Given I proceed as the User
     Given I signed in as AmandaRCole@example.org on the store frontend
-    And type "CNF_A" in "search"
+    And type "CNFA" in "search"
     And click "Search Button"
-    And click "View Details" for "CNF_A" product
+    And click "View Details" for "CNFA" product
     Then I should see an "One Dimensional Matrix Grid Form" element
     And I should not see an "Default Page Prices" element
-    Then type "CNF_B" in "search"
+    Then type "CNFB" in "search"
     And click "Search Button"
-    And click "View Details" for "CNF_B" product
+    And click "View Details" for "CNFB" product
     Then I should see an "Matrix Grid Form" element
     And I should see an "Default Page Prices" element
     And I should see "Item 1 $12.00" in the "Default Page Prices" element
 
   Scenario: Check clear all button and totals container
-    Then type "CNF_B" in "search"
+    Then type "CNFB" in "search"
     And click "Search Button"
-    And click "View Details" for "CNF_B" product
+    And click "View Details" for "CNFB" product
     Then I should see an "Matrix Grid Form" element
     And I fill "Matrix Grid Form" with:
       |          | Value 21 | Value 22 | Value 23 |
@@ -296,8 +296,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
       | Value 13 |          |          | -        |
       | Value 14 | -        | -        | 1        |
     And I focus on "matrix_collection[rows][0][columns][0][quantity]" field and press Enter key
-    Then I should see "Shopping list \"List 2\" was updated successfully"
-    And I click "List 2"
+    And I follow "List 2" link within flash message "Shopping list \"List 2\" was updated successfully"
 
     Then I should see an "Matrix Grid Form" element
     And I should see next rows in "Matrix Grid Form" table
@@ -317,7 +316,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
       | N/A      | N/A      |          |
     And I should see "Total QTY 0 | Subtotal $0.00" in the "Matrix Grid Form Totals" element
 
-    Then type "CNF_B" in "search"
+    Then type "CNFB" in "search"
     And click "Search Button"
     Then I should see an "Matrix Grid Form" element
     And I should see next rows in "Matrix Grid Form" table
@@ -355,9 +354,9 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
 #    And check "Enable guest shopping list"
 #    And I save form
 #    And I proceed as the User
-#    And type "CNF_B" in "search"
+#    And type "CNFB" in "search"
 #    And click "Search Button"
-#    And click "View Details" for "CNF_B" product
+#    And click "View Details" for "CNFB" product
 #    Then I should see an "Matrix Grid Form" element
 #    And I proceed as the Admin
 #    And I go to System/ Configuration
@@ -387,28 +386,27 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
       | Minimum Items             | 1     |
     And I save form
     Then I go to Products / Products
-    And filter SKU as is equal to "CNF_B"
-    And I click Edit CNF_B in grid
+    And filter SKU as is equal to "CNFB"
+    And I click Edit CNFB in grid
     And I click "Select related products"
     And I select following records in "SelectRelatedProductsGrid" grid:
       | SKU123 |
     And I click "Select products"
     And I save and close form
     And I proceed as the User
-    And type "CNF_B" in "search"
+    And type "CNFB" in "search"
     And click "Search Button"
-    And click "View Details" for "CNF_B" product
+    And click "View Details" for "CNFB" product
     And I should see "400-Watt Bulb Work Light" in related products
     Then I click "400-Watt Bulb Work Light"
     And I should see "All Products / 400-Watt Bulb Work Light"
 
   Scenario: Order empty matrix form
-    And type "CNF_B" in "search"
+    And type "CNFB" in "search"
     And click "Search Button"
     Then I should see an "Matrix Grid Form" element
-    And I click "Add to Shopping List" for "CNF_B" product
-    Then I should see "Shopping list \"Shopping List\" was updated successfully"
-    And I click "Shopping List"
+    And I click "Add to Shopping List" for "CNFB" product
+    And I follow "Shopping List" link within flash message "Shopping list \"Shopping List\" was updated successfully"
     Then I should see an "Matrix Grid Form" element
     And I should see next rows in "Matrix Grid Form" table
       | Value 21 | Value 22 | Value 23 |
@@ -439,15 +437,14 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     Given type "SKU123" in "search"
     And click "Search Button"
     And I click "Add to Shopping List" for "SKU123" product
-    And I should see "Product has been added to \"Shopping List\""
-    And I click "Shopping List"
+    And I follow "Shopping List" link within flash message "Product has been added to \"Shopping List\""
     Given I click "Create Order"
     Then I should see "Confirmation This shopping list contains configurable products with no variations. Proceed to checkout without these products?"
     And I click "Proceed"
     Then I should see "Some products have not been added to this order." flash message
     And I should see "Checkout"
     And I should see "400-Watt Bulb Work Light"
-    And I should not see "Configurable Product B"
+    And I should not see "ConfigurableProductB"
 
   Scenario: Create request for quote with empty configurable product and a simple product
     Given I open shopping list widget
@@ -457,7 +454,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I click "Proceed"
     Then I should see "Request A Quote"
     And I should see "400-Watt Bulb Work Light" in the "RequestAQuoteProducts" element
-    And I should not see "Configurable Product B" in the "RequestAQuoteProducts" element
+    And I should not see "ConfigurableProductB" in the "RequestAQuoteProducts" element
 
   Scenario: Update empty matrix form in the shopping list and create order
     Given I open shopping list widget
@@ -478,7 +475,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I click "Create Order"
     Then I should not see "Confirmation This shopping list contains configurable products with no variations. Proceed to checkout without these products?"
     And I should see "Checkout"
-    And I should see "Configurable Product B"
+    And I should see "ConfigurableProductB"
 
   Scenario: Create request for quote with configurable product
     Given I open shopping list widget
@@ -491,7 +488,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I should see "Product B 21" in the "RequestAQuoteProducts" element
     And I should see "Product B 23" in the "RequestAQuoteProducts" element
     And I should see "Product B 43" in the "RequestAQuoteProducts" element
-    And I should not see "Configurable Product B" in the "RequestAQuoteProducts" element
+    And I should not see "ConfigurableProductB" in the "RequestAQuoteProducts" element
     Then I open shopping list widget
     And I click "View Details"
     And I click "Remove Line Item"
@@ -508,7 +505,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I uncheck "Allow to add empty products"
     And I save form
     Given I proceed as the User
-    And type "CNF_B" in "search"
+    And type "CNFB" in "search"
     And click "Search Button"
     Then I should see an "Matrix Grid Form" element
     And I should see next rows in "Matrix Grid Form" table
@@ -517,7 +514,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
       |          | N/A      |          |
       |          |          | N/A      |
       | N/A      | N/A      |          |
-    And I click "Add to Shopping List" for "CNF_B" product
+    And I click "Add to Shopping List" for "CNFB" product
     Then I should see "Please provide at least one value before adding the product to your shopping list"
     Then I fill "Matrix Grid Form" with:
       |          | Value 21 | Value 22 | Value 23 |
@@ -525,9 +522,8 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
       | Value 12 | 1        | -        | 1        |
       | Value 13 |          |          | -        |
       | Value 14 | -        | -        | 1        |
-    And I click "Add to Shopping List" for "CNF_B" product
-    Then I should see "Shopping list \"Shopping List\" was updated successfully"
-    And I click "Shopping List"
+    And I click "Add to Shopping List" for "CNFB" product
+    And I follow "Shopping List" link within flash message "Shopping list \"Shopping List\" was updated successfully"
     Then I should see next rows in "Matrix Grid Form" table
       | Value 21 | Value 22 | Value 23 |
       | 1        | 1        | N/A      |
@@ -537,7 +533,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     Given I click "Create Order"
     Then I should not see "Confirmation This shopping list contains configurable products with no variations. Proceed to checkout without these products?"
     And I should see "Checkout"
-    And I should see "Configurable Product B"
+    And I should see "ConfigurableProductB"
     And I open shopping list widget
     And I click "View Details"
     And I click "Remove Line Item"
@@ -551,20 +547,19 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
 
   Scenario: Matrix form with single attribute
     Given I proceed as the User
-    And type "Configurable Product A" in "search"
+    And type "ConfigurableProductA" in "search"
     And click "Search Button"
     And I click "List View"
-    Then I should see "One Dimensional Matrix Grid Form" for "CNF_A" product
+    Then I should see "One Dimensional Matrix Grid Form" for "CNFA" product
     And I click "No Image View"
-    Then I should see "One Dimensional Matrix Grid Form" for "CNF_A" product
-    And click "View Details" for "CNF_A" product
+    Then I should see "One Dimensional Matrix Grid Form" for "CNFA" product
+    And click "View Details" for "CNFA" product
     Then I should see an "One Dimensional Matrix Grid Form" element
     And I fill "One Dimensional Matrix Grid Form" with:
       | Value 11 | Value 12 | Value 13 | Value 14 |
       | 1        | -        | -        | 1        |
     And I click "Add to Shopping List"
-    Then I should see "Shopping list \"Shopping List\" was updated successfully"
-    And I click "Shopping List"
+    And I follow "Shopping List" link within flash message "Shopping list \"Shopping List\" was updated successfully"
     Then I should see an "One Dimensional Matrix Grid Form" element
     And I should see next rows in "One Dimensional Matrix Grid Form" table
       | Value 11 | Value 12 | Value 13 | Value 14 |
@@ -573,12 +568,12 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
       | Value 11 | Value 12 | Value 13 | Value 14 |
       | -        | 2        | -        |          |
     And I click "Update"
-    And I click "Configurable Product A"
+    And I click "ConfigurableProductA"
     Then I should see an "One Dimensional Matrix Grid Form" element
     And I should see next rows in "One Dimensional Matrix Grid Form" table
       | Value 11 | Value 12 | Value 13 | Value 14 |
       | 1        | 2        | N/A      |          |
-    And type "CNF_A" in "search"
+    And type "CNFA" in "search"
     And click "Search Button"
     And I click "List View"
     Then I should see an "One Dimensional Matrix Grid Form" element
@@ -592,18 +587,17 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
       | 1        | 2        | N/A      |          |
     And I click on "Shopping List Dropdown"
     And I click "Remove From Shopping List"
-    Then I should see "Product has been removed from \"Shopping List\""
-    And I click "Shopping List"
+    And I follow "Shopping List" link within flash message "Product has been removed from \"Shopping List\""
     Then I should see "The Shopping List is empty"
 
   Scenario: Matrix form with two attributes
-    Given type "Configurable Product B" in "search"
+    Given type "ConfigurableProductB" in "search"
     And click "Search Button"
     And I click "List View"
-    Then I should see "Matrix Grid Form" for "CNF_B" product
+    Then I should see "Matrix Grid Form" for "CNFB" product
     And I click "No Image View"
-    Then I should see "Matrix Grid Form" for "CNF_B" product
-    And click "View Details" for "CNF_B" product
+    Then I should see "Matrix Grid Form" for "CNFB" product
+    And click "View Details" for "CNFB" product
     Then I should see an "Matrix Grid Form" element
     And I fill "Matrix Grid Form" with:
       |          | Value 21 | Value 22 | Value 23 |
@@ -612,8 +606,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
       | Value 13 |          |          | -        |
       | Value 14 | -        | -        | 1        |
     And I click "Add to Shopping List"
-    Then I should see "Shopping list \"Shopping List\" was updated successfully"
-    And I click "Shopping List"
+    And I follow "Shopping List" link within flash message "Shopping list \"Shopping List\" was updated successfully"
     Then I should see an "Matrix Grid Form" element
     And I should see next rows in "Matrix Grid Form" table
       | Value 21 | Value 22 | Value 23 |
@@ -626,20 +619,19 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     Then I should see "The Shopping List is empty"
 
   Scenario: Matrix form with three attributes
-    Given type "Configurable Product C" in "search"
+    Given type "ConfigurableProductC" in "search"
     And click "Search Button"
     And I click "List View"
-    Then I should not see "Matrix Grid Form" for "CNF_C" product
+    Then I should not see "Matrix Grid Form" for "CNFC" product
     And I click "No Image View"
-    Then I should not see "Matrix Grid Form" for "CNF_C" product
-    And click "View Details" for "CNF_C" product
+    Then I should not see "Matrix Grid Form" for "CNFC" product
+    And click "View Details" for "CNFC" product
     Then I should see an "Configurable Product Shopping List Form" element
     And I fill in "Attribute 1" with "Value 12"
     And I fill in "Attribute 2" with "Value 23"
     And I fill in "Attribute 3" with "Value 32"
     And I click "Add to Shopping List"
-    Then I should see "Product has been added to \"Shopping List\""
-    And I click "Shopping List"
+    And I follow "Shopping List" link within flash message "Product has been added to \"Shopping List\""
     #next 6 lines related to @ticket-BB-10500
     And I should see text matching "Attribute 1: Value 12"
     And I should see text matching "Attribute 2: Value 23"
@@ -659,16 +651,16 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I fill in "Product Listings" with "No Matrix Form"
     And I save form
     Given I proceed as the User
-    And type "Configurable Product" in "search"
+    And type "ConfigurableProduct" in "search"
     And click "Search Button"
     And I click "List View"
-    Then I should not see "Matrix Grid Form" for "CNF_A" product
-    And I should not see "Matrix Grid Form" for "CNF_B" product
-    And I should not see "Matrix Grid Form" for "CNF_C" product
+    Then I should not see "Matrix Grid Form" for "CNFA" product
+    And I should not see "Matrix Grid Form" for "CNFB" product
+    And I should not see "Matrix Grid Form" for "CNFC" product
     And I click "No Image View"
-    Then I should not see "Matrix Grid Form" for "CNF_A" product
-    And I should not see "Matrix Grid Form" for "CNF_B" product
-    And I should not see "Matrix Grid Form" for "CNF_C" product
+    Then I should not see "Matrix Grid Form" for "CNFA" product
+    And I should not see "Matrix Grid Form" for "CNFB" product
+    And I should not see "Matrix Grid Form" for "CNFC" product
     Then I proceed as the Admin
     And I go to System/ Configuration
     And I follow "Commerce/Product/Configurable Products" on configuration sidebar
@@ -686,27 +678,27 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I save form
     Given I proceed as the User
     And I should see "No Shopping Lists"
-    And type "CNF_B" in "search"
+    And type "CNFB" in "search"
     And click "Search Button"
     And I click "Gallery View"
-    Then I should see "Add to Shopping List" for "CNF_B" product
+    Then I should see "Add to Shopping List" for "CNFB" product
     And I should not see an "Matrix Grid Form" element
-    And I click "Add to Shopping List" for "CNF_B" product
+    And I click "Add to Shopping List" for "CNFB" product
     Then I should see an "Matrix Grid Form" element
     And I click "Matrix Grid Popup Close Button"
     And I click "List View"
-    Then I should see "Add to Shopping List" for "CNF_B" product
+    Then I should see "Add to Shopping List" for "CNFB" product
     And I should not see an "Matrix Grid Form" element
-    And I click "Add to Shopping List" for "CNF_B" product
+    And I click "Add to Shopping List" for "CNFB" product
     Then I should see an "Matrix Grid Form" element
     # Check popup close button and product name in popup title
-    And I should see "Configurable Product B Item #: CNF_B" in the "Matrix Grid Popup" element
+    And I should see "ConfigurableProductB Item #: CNFB" in the "Matrix Grid Popup" element
     And I should see "Matrix Grid Popup Close Button" element inside "Matrix Grid Popup" element
     And I click "Matrix Grid Popup Close Button"
     Then I should not see an "Matrix Grid Popup" element
     # Check opening popup matrix form doesn't create empty shopping list
     And I should see "No Shopping Lists"
-    And I click "Add to Shopping List" for "CNF_B" product
+    And I click "Add to Shopping List" for "CNFB" product
     And I fill "Matrix Grid Form" with:
       |          | Value 21 | Value 22 | Value 23 |
       | Value 11 | 1        | 1        | -        |
@@ -714,13 +706,12 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
       | Value 13 |          |          | -        |
       | Value 14 | -        | -        | 1        |
     And I click "Add to Shopping List"
-    Then I should see "Shopping list \"Shopping List\" was updated successfully"
-    And I click "Shopping List"
+    And I follow "Shopping List" link within flash message "Shopping list \"Shopping List\" was updated successfully"
     Then I should not see an "Matrix Grid Form" element
     And I should see "Update"
     And I click "Update"
     # Check popup close button and product name in popup title
-    And I should see "Configurable Product B Item #: CNF_B" in the "Matrix Grid Popup" element
+    And I should see "ConfigurableProductB Item #: CNFB" in the "Matrix Grid Popup" element
     And I should see "Matrix Grid Popup Close Button" element inside "Matrix Grid Popup" element
     And I click "Matrix Grid Popup Close Button"
     Then I should not see an "Matrix Grid Popup" element
@@ -739,9 +730,9 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
       | Value 14 | -        | -        | -        |
     And I click "Update Shopping List"
     Then I should see "Shopping list \"Shopping List\" was updated successfully"
-    And type "CNF_B" in "search"
+    And type "CNFB" in "search"
     And click "Search Button"
-    And I should see "Update Shopping List" for "CNF_B" product
+    And I should see "Update Shopping List" for "CNFB" product
     And I click "Update Shopping List"
     And I should see next rows in "Matrix Grid Form" table
       | Value 21 | Value 22 | Value 23 |
@@ -756,8 +747,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
       | Value 13 | -        | -        | -        |
       | Value 14 | -        | -        | -        |
     And I click "Update Shopping List"
-    Then I should see "Shopping list \"Shopping List\" was updated successfully"
-    And I click "Shopping List"
+    And I follow "Shopping List" link within flash message "Shopping list \"Shopping List\" was updated successfully"
     And I should see "Update"
     And I click "Update"
     And I should see next rows in "Matrix Grid Form" table
@@ -785,9 +775,9 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I fill in "Shopping Lists" with "Group Single Products"
     And I save form
     Given I proceed as the User
-    And type "Configurable Product B" in "search"
+    And type "ConfigurableProductB" in "search"
     And click "Search Button"
-    And click "View Details" for "CNF_B" product
+    And click "View Details" for "CNFB" product
     Then I should see an "Matrix Grid Form" element
     And I fill "Matrix Grid Form" with:
       |          | Value 21 | Value 22 | Value 23 |
@@ -796,8 +786,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
       | Value 13 |          |          | -        |
       | Value 14 | -        | -        |          |
     And I click "Add to Shopping List"
-    Then I should see "Shopping list \"Shopping List\" was updated successfully"
-    And I click "Shopping List"
+    And I follow "Shopping List" link within flash message "Shopping list \"Shopping List\" was updated successfully"
     Then I should not see an "Matrix Grid Form" element
     And I should see text matching "Attribute 1: Value 11"
     And I should see text matching "Attribute 2: Value 21"
@@ -816,14 +805,14 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I save form
     Given I proceed as the User
     And I should see "No Shopping Lists"
-    Given type "Configurable Product B" in "search"
+    Given type "ConfigurableProductB" in "search"
     And click "Search Button"
-    And click "View Details" for "CNF_B" product
+    And click "View Details" for "CNFB" product
     Then I should not see an "Matrix Grid Form" element
     And I click "Add to Shopping List"
     Then I should see an "Matrix Grid Form" element
     # Check popup close button and product name in popup title
-    And I should see "Configurable Product B Item #: CNF_B" in the "Matrix Grid Popup" element
+    And I should see "ConfigurableProductB Item #: CNFB" in the "Matrix Grid Popup" element
     And I should see "Matrix Grid Popup Close Button" element inside "Matrix Grid Popup" element
     And I click "Matrix Grid Popup Close Button"
     Then I should not see an "Matrix Grid Popup" element
@@ -839,9 +828,9 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I fill in "Product Views" with "No Matrix Form"
     And I save form
     Given I proceed as the User
-    And type "Configurable Product B" in "search"
+    And type "ConfigurableProductB" in "search"
     And click "Search Button"
-    And click "View Details" for "CNF_B" product
+    And click "View Details" for "CNFB" product
     Then I should not see an "Matrix Grid Form" element
     And I should see an "Configurable Product Shopping List Form" element
 
@@ -852,7 +841,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And check "Use default" for "Shopping Lists" field
     And I save form
     Given I proceed as the User
-    And type "CNF_B" in "search"
+    And type "CNFB" in "search"
     And click "Search Button"
     Then I should see an "Matrix Grid Form" element
     And I fill "Matrix Grid Form" with:
@@ -861,9 +850,8 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
       | Value 12 | 1        | -        | 1        |
       | Value 13 |          |          | -        |
       | Value 14 | -        | -        | 1        |
-    And I click "Add to Shopping List" for "CNF_B" product
-    Then I should see "Shopping list \"Shopping List\" was updated successfully"
-    And I click "Shopping List"
+    And I click "Add to Shopping List" for "CNFB" product
+    And I follow "Shopping List" link within flash message "Shopping list \"Shopping List\" was updated successfully"
     Then I should see an "Matrix Grid Form" element
     And I should see next rows in "Matrix Grid Form" table
       | Value 21 | Value 22 | Value 23 |
@@ -873,7 +861,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
       | N/A      | N/A      | 1        |
 
   Scenario: Update order with matrix form in Product List View
-    Given type "CNF_B" in "search"
+    Given type "CNFB" in "search"
     And click "Search Button"
     Then I should see an "Matrix Grid Form" element
     And I fill "Matrix Grid Form" with:
@@ -883,8 +871,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
       | Value 13 | -        | -        | -        |
       | Value 14 | -        | -        | -        |
     And I click "Update Shopping List"
-    Then I should see "Shopping list \"Shopping List\" was updated successfully"
-    And I click "Shopping List"
+    And I follow "Shopping List" link within flash message "Shopping list \"Shopping List\" was updated successfully"
     Then I should see an "Matrix Grid Form" element
     And I should see next rows in "Matrix Grid Form" table
       | Value 21 | Value 22 | Value 23 |
@@ -902,9 +889,9 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And check "Use default" for "Shopping Lists" field
     And I save form
     And I proceed as the User
-    And type "CNF_A" in "search"
+    And type "CNFA" in "search"
     And click "Search Button"
-    And click "View Details" for "CNF_A" product
+    And click "View Details" for "CNFA" product
     When I should see an "One Dimensional Matrix Grid Form" element
     And I fill "One Dimensional Matrix Grid Form" with:
       | Value 11 | Value 12 | Value 13 | Value 14 |
@@ -913,9 +900,9 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     Then I should see "Shopping list \"Shopping List\" was updated successfully"
 
   Scenario: Order with two dimensional inline matrix form
-    Given type "CNF_B" in "search"
+    Given type "CNFB" in "search"
     And click "Search Button"
-    And click "View Details" for "CNF_B" product
+    And click "View Details" for "CNFB" product
     When I should see an "Matrix Grid Form" element
     And I fill "Matrix Grid Form" with:
       |          | Value 21 | Value 22 | Value 23 |
@@ -929,7 +916,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I click "Create and Add"
     Then I should see "Shopping list \"Product B Shopping List\" was created successfully"
 
-  Scenario: Update Configurable Product B variants
+  Scenario: Update ConfigurableProductB variants
     Given I click "Clear All"
     And I fill "Matrix Grid Form" with:
       |          | Value 21 | Value 22 | Value 23 |
@@ -951,13 +938,13 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
 
   Scenario: Check product name in shopping list dropdown in front store
     Given I open shopping list widget
-    When I should see "Configurable Product B" in the "ShoppingListWidget" element
+    When I should see "ConfigurableProductB" in the "ShoppingListWidget" element
     Then I should not see "Product C 232" in the "ShoppingListWidget" element
 
   Scenario: Order with regular variant selectors
-    Given type "CNF_C" in "search"
+    Given type "CNFC" in "search"
     And click "Search Button"
-    And click "View Details" for "CNF_C" product
+    And click "View Details" for "CNFC" product
     When I should see an "Configurable Product Shopping List Form" element
     And I fill "ConfigurableProductForm" with:
       | Attributes_1 | Value 12 |
@@ -975,9 +962,9 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I should see "Product C Shopping List 1 Item"
 
   Scenario: Remove Configurable Product A variants from shopping list
-    Given type "CNF_A" in "search"
+    Given type "CNFA" in "search"
     And click "Search Button"
-    And click "View Details" for "CNF_A" product
+    And click "View Details" for "CNFA" product
     Then I should see an "One Dimensional Matrix Grid Form" element
     And I click on "Shopping List Dropdown"
     And I click "Remove From Shopping List"
@@ -994,9 +981,9 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I fill in "Product Views" with "Popup Matrix Form"
     And I save form
     And I proceed as the User
-    When type "CNF_B" in "search"
+    When type "CNFB" in "search"
     And click "Search Button"
-    And click "View Details" for "CNF_B" product
+    And click "View Details" for "CNFB" product
     Then I should not see an "Matrix Grid Form" element
     And I click "Add to Product C Shopping List"
     Then I should see an "Matrix Grid Form" element
@@ -1007,9 +994,9 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I save form
     And I proceed as the User
     And I reload the page
-    When type "CNF_B" in "search"
+    When type "CNFB" in "search"
     And click "Search Button"
-    And click "View Details" for "CNF_B" product
+    And click "View Details" for "CNFB" product
     Then I should not see an "Matrix Grid Form" element
     And I should see an "Configurable Product Shopping List Form" element
 
@@ -1020,5 +1007,5 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And click "Add Line Item"
     Then should see an "Add Line Item Popup" element
     And I open select entity popup for field "Product"
-    Then there is no "Configurable Product B" in grid
-    And there is no "Configurable Product A" in grid
+    Then there is no "ConfigurableProductB" in grid
+    And there is no "ConfigurableProductA" in grid

@@ -6,6 +6,7 @@ oro:
         filter:
             product_price:
                 per: '/'
+                units_select.label: Units
         click_to_select: Click to select price per unit
         qty: 'qty'
         unit_price: Unit Price

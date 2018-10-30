@@ -14,48 +14,53 @@ use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Datagrid\Manager;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 use Oro\Bundle\DataGridBundle\Extension\AbstractExtension;
+use Oro\Bundle\DataGridBundle\Tools\DatagridParametersHelper;
 use Oro\Bundle\FilterBundle\Grid\Extension\AbstractFilterExtension;
 use Oro\Bundle\SearchBundle\Datagrid\Datasource\SearchDatasource;
 use Oro\Component\DependencyInjection\ServiceLink;
 
 /**
- * Adds category counts to filters metadata.
+ * Extension adds counts for each option to filter metadata for subcategory filter
  */
 class CategoryCountsExtension extends AbstractExtension
 {
-    const SKIP_PARAM = 'skipCategoryCountsExtension';
-
     /** @var ServiceLink */
-    protected $datagridManagerLink;
+    private $datagridManagerLink;
 
     /** @var ManagerRegistry */
-    protected $registry;
+    private $registry;
 
     /** @var ProductRepository */
-    protected $productSearchRepository;
+    private $productSearchRepository;
 
     /** @var CategoryCountsCache */
-    protected $cache;
+    private $cache;
+
+    /** @var DatagridParametersHelper */
+    private $datagridParametersHelper;
 
     /** @var array */
-    protected $applicableGrids = [];
+    private $applicableGrids = [];
 
     /**
      * @param ServiceLink $datagridManagerLink
      * @param ManagerRegistry $registry
      * @param ProductRepository $productSearchRepository
      * @param CategoryCountsCache $cache
+     * @param DatagridParametersHelper $datagridParametersHelper
      */
     public function __construct(
         ServiceLink $datagridManagerLink,
         ManagerRegistry $registry,
         ProductRepository $productSearchRepository,
-        CategoryCountsCache $cache
+        CategoryCountsCache $cache,
+        DatagridParametersHelper $datagridParametersHelper
     ) {
         $this->datagridManagerLink = $datagridManagerLink;
         $this->registry = $registry;
         $this->productSearchRepository = $productSearchRepository;
         $this->cache = $cache;
+        $this->datagridParametersHelper = $datagridParametersHelper;
     }
 
     /**
@@ -73,7 +78,7 @@ class CategoryCountsExtension extends AbstractExtension
     {
         return
             parent::isApplicable($config)
-            && !$this->parameters->get(self::SKIP_PARAM)
+            && !$this->datagridParametersHelper->isDatagridExtensionSkipped($this->getParameters())
             && SearchDatasource::TYPE === $config->getDatasourceType()
             && in_array($config->getName(), $this->applicableGrids, true);
     }
@@ -113,7 +118,26 @@ class CategoryCountsExtension extends AbstractExtension
             return [];
         }
 
-        $parameters = $this->buildParameters();
+        // remove filter by category to make sure that filter counts will not be affected by filter itself
+        $parameters = clone $this->getParameters();
+        $this->datagridParametersHelper->resetFilter($parameters, SubcategoryFilter::FILTER_TYPE_NAME);
+
+        // merge common parameters filters with minified parameters filters for
+        // create correct cache key after reload the page
+        $filtersParameters = array_merge(
+            (array) $this->datagridParametersHelper->getFromParameters(
+                $parameters,
+                AbstractFilterExtension::FILTER_ROOT_PARAM
+            ),
+            (array) $this->datagridParametersHelper->getFromMinifiedParameters(
+                $parameters,
+                AbstractFilterExtension::MINIFIED_FILTER_PARAM
+            )
+        );
+        $parameters->set(AbstractFilterExtension::FILTER_ROOT_PARAM, $filtersParameters);
+
+        $this->datagridParametersHelper->setDatagridExtensionSkipped($parameters);
+
         $cacheKey = $this->getCacheKey($config->getName(), $parameters);
 
         $counts = $this->cache->getCounts($cacheKey);
@@ -145,38 +169,6 @@ class CategoryCountsExtension extends AbstractExtension
         $categoryId = filter_var($this->parameters->get('categoryId'), FILTER_VALIDATE_INT);
 
         return $categoryId && $categoryId > 0 ? $this->getCategoryRepository()->find($categoryId) : null;
-    }
-
-    /**
-     * @return ParameterBag
-     */
-    protected function buildParameters()
-    {
-        // get datagrid parameters
-        $datagridParameters = clone $this->parameters;
-        $datagridParameters->set(self::SKIP_PARAM, true);
-
-        $categoryFilterName = SubcategoryFilter::FILTER_TYPE_NAME;
-
-        $minifiedParams = $datagridParameters->get(ParameterBag::MINIFIED_PARAMETERS);
-        if (isset($minifiedParams[AbstractFilterExtension::MINIFIED_FILTER_PARAM])) {
-            unset($minifiedParams[AbstractFilterExtension::MINIFIED_FILTER_PARAM][$categoryFilterName]);
-
-            $datagridParameters->set(ParameterBag::MINIFIED_PARAMETERS, $minifiedParams);
-            $datagridParameters->set(
-                AbstractFilterExtension::FILTER_ROOT_PARAM,
-                $minifiedParams[AbstractFilterExtension::MINIFIED_FILTER_PARAM]
-            );
-        } else {
-            // remove filter by category to make sure that filter counts will not be affected by filter itself
-            $filters = $datagridParameters->get(AbstractFilterExtension::FILTER_ROOT_PARAM);
-            if ($filters) {
-                unset($filters[$categoryFilterName]);
-                $datagridParameters->set(AbstractFilterExtension::FILTER_ROOT_PARAM, $filters);
-            }
-        }
-
-        return $datagridParameters;
     }
 
     /**
@@ -256,7 +248,7 @@ class CategoryCountsExtension extends AbstractExtension
     {
         return [
             'categoryId',
-            self::SKIP_PARAM,
+            DatagridParametersHelper::DATAGRID_SKIP_EXTENSION_PARAM,
             AbstractFilterExtension::FILTER_ROOT_PARAM
         ];
     }
