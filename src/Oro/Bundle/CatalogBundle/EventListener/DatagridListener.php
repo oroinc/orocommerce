@@ -9,8 +9,10 @@ use Oro\Bundle\CatalogBundle\Handler\RequestProductHandler;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
-use Oro\Bundle\LocaleBundle\Datagrid\Formatter\Property\LocalizedValueProperty;
 
+/**
+ * Datagrid listener which adds column and filters for category to datagrids
+ */
 class DatagridListener
 {
     const CATEGORY_COLUMN = 'category_name';
@@ -78,15 +80,6 @@ class DatagridListener
             'data_name' => self::CATEGORY_COLUMN,
         ];
         $this->addConfigElement($config, '[filters][columns]', $categoryFilter, self::CATEGORY_COLUMN);
-    }
-
-    /**
-     * @param DatagridConfiguration $config
-     * @deprecated since 1.5. Please use denormalizedDefaultTitle instead of Category and associated relation
-     */
-    protected function addCategoryRelation(DatagridConfiguration $config)
-    {
-        $this->addCategoryInfo($config);
     }
 
     /**
