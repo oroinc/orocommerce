@@ -24,10 +24,10 @@ class LineItemsExtensionTest extends \PHPUnit\Framework\TestCase
     /** @var LineItemSubtotalProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $lineItemSubtotalProvider;
 
-    /** @var LocalizationHelper|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var LocalizationHelper|\PHPUnit\Framework\MockObject\MockObject */
     protected $localizedHelper;
 
-    /** @var EntityNameResolver|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var EntityNameResolver|\PHPUnit\Framework\MockObject\MockObject */
     protected $entityNameResolver;
 
     /** @var LineItemsExtension */

@@ -1,5 +1,6 @@
 @regression
 @ticket-BB-14565
+@ticket-BB-15378
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroFlatRateShippingBundle:FlatRate2Integration.yml
 @fixture-OroCheckoutBundle:ShippingRuleForFlatRate2.yml
@@ -31,7 +32,7 @@ Feature: Enter coupon code on Front Store for promotion that uses segment in que
     When I scroll to "I have a Coupon Code"
     And I click "I have a Coupon Code"
     And I type "mycoupon" in "CouponCodeInput"
-    And I press "Apply"
+    And I click "Apply"
     Then I should see "Coupon code has been applied successfully, please review discounts" flash message
     And I should see "mycoupon Promotion that uses segment in query" in the "Coupons List" element
     And I should see "Discount -$1.00" in the "Subtotals" element

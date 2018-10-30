@@ -36,9 +36,9 @@ class FrontendLineItemTypeTest extends FormIntegrationTestCase
      */
     protected function setUp()
     {
-        parent::setUp();
-
         $this->type = new FrontendLineItemType();
+        
+        parent::setUp();
     }
 
     /**

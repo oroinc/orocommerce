@@ -21,11 +21,11 @@ Feature: Enter coupon code on Front Store with shipping and review
     When I scroll to "I have a Coupon Code"
     And I click "I have a Coupon Code"
     When I type "coupon-flat-rate" in "CouponCodeInput"
-    And I press "Apply"
+    And I click "Apply"
     Then I should see "Coupon code has been applied successfully, please review discounts" flash message
     And I should see "coupon-flat-rate Flat rate shipping Promotion" in the "Coupons List" element
     When I type "coupon-flat-rate2" in "CouponCodeInput"
-    And I press "Apply"
+    And I click "Apply"
     Then I should see "Coupon code has been applied successfully, please review discounts" flash message
     And I should see "coupon-flat-rate2 Flat rate2 shipping Promotion" in the "Coupons List" element
 

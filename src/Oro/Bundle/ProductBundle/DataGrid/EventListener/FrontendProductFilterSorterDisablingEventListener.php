@@ -5,7 +5,7 @@ namespace Oro\Bundle\ProductBundle\DataGrid\EventListener;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Datagrid\Manager;
-use Oro\Bundle\DataGridBundle\Extension\Sorter\AbstractSorterExtension;
+use Oro\Bundle\DataGridBundle\Provider\State\DatagridStateProviderInterface;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityConfigBundle\Attribute\AttributeConfigurationProvider;
 use Oro\Bundle\EntityConfigBundle\Attribute\AttributeTypeRegistry;
@@ -14,7 +14,6 @@ use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\EntityConfigBundle\Entity\Repository\AttributeFamilyRepository;
 use Oro\Bundle\EntityConfigBundle\Manager\AttributeManager;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
-use Oro\Bundle\FilterBundle\Grid\Extension\AbstractFilterExtension;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Search\ProductRepository;
 use Oro\Bundle\SearchBundle\Datagrid\Datasource\SearchDatasource;
@@ -23,6 +22,7 @@ use Oro\Bundle\SearchBundle\Datagrid\Event\SearchResultBefore;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\SearchBundle\Query\SearchQueryInterface;
 use Oro\Bundle\WebsiteSearchBundle\Attribute\Type\SearchableAttributeTypeInterface;
+use Oro\Bundle\WebsiteSearchBundle\Placeholder\EnumIdPlaceholder;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
 use Oro\Component\DependencyInjection\ServiceLink;
 
@@ -58,13 +58,21 @@ class FrontendProductFilterSorterDisablingEventListener
     /** @var ServiceLink */
     private $datagridManagerLink;
 
+    /** @var DatagridStateProviderInterface */
+    private $filtersStateProvider;
+
+    /** @var DatagridStateProviderInterface */
+    private $sortersStateProvider;
+
     /**
-     * @param AttributeManager               $attributeManager
-     * @param AttributeTypeRegistry          $attributeTypeRegistry
+     * @param AttributeManager $attributeManager
+     * @param AttributeTypeRegistry $attributeTypeRegistry
      * @param AttributeConfigurationProvider $configurationProvider
-     * @param ProductRepository              $productRepository
-     * @param DoctrineHelper                 $doctrineHelper
-     * @param ServiceLink                    $datagridManagerLink
+     * @param ProductRepository $productRepository
+     * @param DoctrineHelper $doctrineHelper
+     * @param ServiceLink $datagridManagerLink
+     * @param DatagridStateProviderInterface $filtersStateProvider
+     * @param DatagridStateProviderInterface $sortersStateProvider
      */
     public function __construct(
         AttributeManager $attributeManager,
@@ -72,7 +80,9 @@ class FrontendProductFilterSorterDisablingEventListener
         AttributeConfigurationProvider $configurationProvider,
         ProductRepository $productRepository,
         DoctrineHelper $doctrineHelper,
-        ServiceLink $datagridManagerLink
+        ServiceLink $datagridManagerLink,
+        DatagridStateProviderInterface $filtersStateProvider,
+        DatagridStateProviderInterface $sortersStateProvider
     ) {
         $this->attributeManager = $attributeManager;
         $this->attributeTypeRegistry = $attributeTypeRegistry;
@@ -80,6 +90,8 @@ class FrontendProductFilterSorterDisablingEventListener
         $this->productRepository = $productRepository;
         $this->doctrineHelper = $doctrineHelper;
         $this->datagridManagerLink = $datagridManagerLink;
+        $this->filtersStateProvider = $filtersStateProvider;
+        $this->sortersStateProvider = $sortersStateProvider;
     }
 
     /**
@@ -209,7 +221,7 @@ class FrontendProductFilterSorterDisablingEventListener
      */
     private function disableFilters(DatagridInterface $datagrid, array $disabledAttributes)
     {
-        $filters = $datagrid->getParameters()->get(AbstractFilterExtension::FILTER_ROOT_PARAM);
+        $filtersState = $this->filtersStateProvider->getState($datagrid->getConfig(), $datagrid->getParameters());
 
         foreach ($disabledAttributes as $attribute) {
             if (!$this->configurationProvider->isAttributeFilterable($attribute)) {
@@ -222,7 +234,7 @@ class FrontendProductFilterSorterDisablingEventListener
             $alias = $this->clearName($name);
 
             // these filters already have data
-            if ($filters && array_key_exists($alias, $filters)) {
+            if (array_key_exists($alias, $filtersState)) {
                 continue;
             }
 
@@ -237,7 +249,7 @@ class FrontendProductFilterSorterDisablingEventListener
      */
     private function disableSorters(DatagridInterface $datagrid, array $disabledAttributes)
     {
-        $sorters = $datagrid->getParameters()->get(AbstractSorterExtension::SORTERS_ROOT_PARAM);
+        $sortersState = $this->sortersStateProvider->getState($datagrid->getConfig(), $datagrid->getParameters());
 
         foreach ($disabledAttributes as $attribute) {
             if (!$this->configurationProvider->isAttributeSortable($attribute)) {
@@ -250,7 +262,7 @@ class FrontendProductFilterSorterDisablingEventListener
             $alias = $this->clearName($name);
 
             // check that sorter not in use
-            if ($sorters && array_key_exists($alias, $sorters)) {
+            if (array_key_exists($alias, $sortersState)) {
                 continue;
             }
 
@@ -294,11 +306,8 @@ class FrontendProductFilterSorterDisablingEventListener
      */
     private function clearName($name)
     {
-        $placeholder = '_'.LocalizationIdPlaceholder::NAME;
-        if (strpos($name, $placeholder) !== false) {
-            $name = str_replace($placeholder, '', $name);
-        }
+        $placeholders = ['_'.LocalizationIdPlaceholder::NAME => '', '_'.EnumIdPlaceholder::NAME => ''];
 
-        return $name;
+        return strtr($name, $placeholders);
     }
 }

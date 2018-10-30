@@ -14,15 +14,19 @@ Feature: Javascript validation on "Default" Checkout workflow
     And AmandaRCole@example.org customer user has Buyer role
     And I signed in as AmandaRCole@example.org on the store frontend
     When I open page with shopping list List 1
-    And I press "Create Order (Custom)"
-    And I press "Continue"
-    Then I should see "This value should not be blank."
+    And I click "Create Order (Custom)"
+    And I fill "Checkout Order Review Form" with:
+      | PO Number | Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer finibus viverra ante, sit amet fringilla ipsum fringilla eu. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Donec vitae felis ac neque posuere egestas. |
+    And I click "Continue"
+    And I should see "Checkout Order Review Form" validation errors:
+      | PO Number | This value is too long. It should have 255 characters or less.  |
+      | Notes     | This value should not be blank.                                 |
 
   Scenario: Check validation without error
     Given I open page with shopping list List 1
-    And I press "Create Order (Custom)"
+    And I click "Create Order (Custom)"
     And I fill "Checkout Order Review Form" with:
       | Notes | Customer test note |
-    And I press "Continue"
+    And I click "Continue"
     Then I should not see "This value should not be blank."
     And I should see "Thank You For Your Purchase!"

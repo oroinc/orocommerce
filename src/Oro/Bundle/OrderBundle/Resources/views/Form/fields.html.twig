@@ -35,7 +35,9 @@
         'disabled': not allow_delete
     }) %}
 
-    <tr data-content="{{ name }}" data-validation-optional-group {{ block('widget_container_attributes') }}
+    <tr data-content="{{ name }}"
+        {% if form.vars.value is not empty %}data-validation-ignore{# item is only validated once it got changed #}{% endif %}
+        {{ block('widget_container_attributes') }}
         class="order-line-item"
         data-page-component-module="{{ form.vars.page_component }}"
         data-page-component-options="{{ page_component_options|json_encode }}"
@@ -44,7 +46,7 @@
 
         {% if allow_delete %}
             <td class="order-line-item-remove">
-                <button type="button" class="removeLineItem btn icons-holder"><i class="fa-close"></i></button>
+                <button type="button" class="removeLineItem btn btn-icon icons-holder"><i class="fa-close"></i></button>
             </td>
         {% elseif widget.parent.vars.allow_delete %}
             <td></td>
@@ -252,7 +254,7 @@
         <td>{{ form_widget(form.method, { 'attr': {'class': 'order-shipping-tracking-method', 'style': 'width: 100px'}}) }}</td>
         <td>{{ form_widget(form.number, { 'attr': {'class': 'order-shipping-tracking-number', 'style': 'width: 150px'} }) }}</td>
         {% if form.parent.vars.allow_delete %}
-            <td><button class="removeRow btn icons-holder" type="button" data-related="{{ name }}"><i class="fa-close"></i></button></td>
+            <td><button class="removeRow btn btn-icon icons-holder" type="button" data-related="{{ name }}"><i class="fa-close"></i></button></td>
         {% endif %}
     </tr>
 

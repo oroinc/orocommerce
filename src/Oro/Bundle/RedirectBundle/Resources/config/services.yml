@@ -111,6 +111,7 @@ services:
             - '@oro_redirect.generator.unique_slug_resolver'
             - '@oro_redirect.generator.redirect'
             - '@oro_redirect.url_cache'
+            - '@oro_frontend_localization.manager.user_localization'
 
     oro_redirect.generator.redirect:
         class: Oro\Bundle\RedirectBundle\Generator\RedirectGenerator

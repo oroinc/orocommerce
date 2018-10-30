@@ -22,7 +22,7 @@ class RestrictProductVariationsEventListenerTest extends \PHPUnit\Framework\Test
     /** @var FrontendHelper | \PHPUnit\Framework\MockObject\MockObject */
     private $frontendHelper;
 
-    /** @var QueryBuilderModifierInterface | \PHPUnit_Framework_MockObject_MockObject */
+    /** @var QueryBuilderModifierInterface | \PHPUnit\Framework\MockObject\MockObject */
     private $dbQueryBuilderModifier;
 
     /** @var RestrictProductVariationsEventListener */

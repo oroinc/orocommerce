@@ -110,14 +110,10 @@ class PriceListProcessor implements MessageProcessorInterface, TopicSubscriberIn
             $em->commit();
             $this->triggerHandler->commit();
         } catch (InvalidArgumentException $e) {
-            $em->rollback();
-            $this->triggerHandler->rollback();
             $this->logger->error(sprintf('Message is invalid: %s', $e->getMessage()));
 
             return self::REJECT;
         } catch (\Exception $e) {
-            $em->rollback();
-            $this->triggerHandler->rollback();
             $this->logger->error(
                 'Unexpected exception occurred during Combined Price Lists build',
                 ['exception' => $e]
@@ -126,8 +122,13 @@ class PriceListProcessor implements MessageProcessorInterface, TopicSubscriberIn
             $driverException = $this->databaseExceptionHelper->getDriverException($e);
             if ($driverException && $this->databaseExceptionHelper->isDeadlock($driverException)) {
                 return self::REQUEUE;
-            } else {
-                return self::REJECT;
+            }
+
+            return self::REJECT;
+        } finally {
+            if (isset($e)) {
+                $em->rollback();
+                $this->triggerHandler->rollback();
             }
         }
 

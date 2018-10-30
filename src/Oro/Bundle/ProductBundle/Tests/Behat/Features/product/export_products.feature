@@ -8,7 +8,7 @@ Feature: Export Products
   Scenario: Verify administrator is able Export Products from the system
     Given I login as administrator
     And I go to Products/ Products
-    When I press "Export"
+    When I click "Export"
     Then I should see "Export started successfully. You will receive email notification upon completion." flash message
     #todo: to be implemented in scope of CRM-7599.
     #And Email should contains the following "Export performed successfully. 5 products were exported. Download" text

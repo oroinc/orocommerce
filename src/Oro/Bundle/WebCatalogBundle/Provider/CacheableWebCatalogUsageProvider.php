@@ -5,6 +5,10 @@ namespace Oro\Bundle\WebCatalogBundle\Provider;
 use Oro\Component\WebCatalog\Entity\WebCatalogInterface;
 use Oro\Component\WebCatalog\Provider\WebCatalogUsageProviderInterface;
 
+/**
+ * The decorator that saves web catalog usage info loaded via the decorated provider to a memory
+ * and uses the saved data when this info is requested the next time.
+ */
 class CacheableWebCatalogUsageProvider implements WebCatalogUsageProviderInterface
 {
     /** @var WebCatalogUsageProviderInterface */
@@ -64,6 +68,10 @@ class CacheableWebCatalogUsageProvider implements WebCatalogUsageProviderInterfa
      */
     public function clearCache()
     {
+        if (!$this->hasCache()) {
+            return;
+        }
+
         $this->assignedWebCatalogs = null;
         $this->inUseWebCatalogs = [];
     }

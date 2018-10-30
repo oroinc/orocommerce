@@ -90,7 +90,7 @@ Feature: Guest quick order form
       | State           | Berlin          |
       | Zip/Postal Code | 10115           |
     And I should not see "Save address"
-    And press "Continue"
+    And click "Continue"
     And I fill form with:
       | Label           | Home Address    |
       | First Name      | Tester          |
@@ -100,7 +100,7 @@ Feature: Guest quick order form
       | Country         | Germany         |
       | State           | Berlin          |
       | Zip/Postal Code | 10115           |
-    And press "Continue"
+    And click "Continue"
     And I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
     And I check "Payment Terms" on the "Payment" checkout step and press Continue
     And "Order Review" checkout step "Order Summary Products Grid" contains products
@@ -108,7 +108,7 @@ Feature: Guest quick order form
       | Product2 | 4 | sets  |
       | Product3 | 2 | items |
     And I uncheck "Save my data and create an account" on the checkout page
-    When I press "Submit Order"
+    When I click "Submit Order"
     Then I see the "Thank You" page with "Thank You For Your Purchase!" title
 
   Scenario: Check guest orders in management console and disable checkout feature

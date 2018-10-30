@@ -302,7 +302,6 @@ services:
         arguments:
             - "@oro_product.repository.product"
             - "@oro_product.product.manager"
-            - "@oro.cache.memory_cache_chain"
         tags:
             - { name: layout.data_provider, alias: top_selling_items }
 

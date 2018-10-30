@@ -172,7 +172,7 @@ Feature: CRUD operations for Coupons codes
     When I click "Search"
     And type "22222" in "search"
     Then I should see 1 search suggestions
-    When I click "Go"
+    When I click "Search Submit"
     Then I should be on Search Result page
     And I should see following search entity types:
       | Type        | N | isSelected |
