@@ -145,7 +145,6 @@ class ProductVisibilityLimitedSearchHandler extends SearchHandler
 
         // Configurable products require additional option selection is not implemented yet
         // Thus we need to hide configurable products from the product drop-downs
-        // @TODO remove after configurable products require additional option selection implementation
         $queryBuilder->andWhere($queryBuilder->expr()->neq('p.type', ':configurable_type'))
             ->setParameter('configurable_type', Product::TYPE_CONFIGURABLE);
 
@@ -166,7 +165,6 @@ class ProductVisibilityLimitedSearchHandler extends SearchHandler
 
         // Configurable products require additional option selection is not implemented yet
         // Thus we need to hide configurable products from the product drop-downs
-        // @TODO remove after configurable products require additional option selection implementation
         $searchQuery->addWhere(
             Criteria::expr()->neq('type', Product::TYPE_CONFIGURABLE)
         );
