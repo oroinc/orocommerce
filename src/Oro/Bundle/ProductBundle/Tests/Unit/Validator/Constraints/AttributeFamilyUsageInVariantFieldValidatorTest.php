@@ -221,7 +221,7 @@ class AttributeFamilyUsageInVariantFieldValidatorTest extends \PHPUnit_Framework
 
         $this->productRepository->expects($this->once())
             ->method('findBy')
-            ->with(['type' => Product::TYPE_CONFIGURABLE])
+            ->with(['type' => Product::TYPE_CONFIGURABLE, 'attributeFamily' => $attributeFamily])
             ->willReturn([$product, $product2]);
 
         $this->context->expects($this->once())
@@ -287,7 +287,7 @@ class AttributeFamilyUsageInVariantFieldValidatorTest extends \PHPUnit_Framework
 
         $this->productRepository->expects($this->once())
             ->method('findBy')
-            ->with(['type' => Product::TYPE_CONFIGURABLE])
+            ->with(['type' => Product::TYPE_CONFIGURABLE, 'attributeFamily' => $attributeFamily])
             ->willReturn([$product, $product2]);
 
         $this->context->expects($this->once())

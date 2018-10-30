@@ -67,6 +67,10 @@ class TaxTypeTest extends FormIntegrationTestCase
         $this->assertTrue($form->has('code'));
         $this->assertTrue($form->has('description'));
         $this->assertTrue($form->has('rate'));
+
+        $rate = $form->get('rate');
+        $this->assertArrayHasKey('precision', $rate->getConfig()->getOptions());
+        $this->assertEquals(TaxType::TAX_RATE_FIELD_PRECISION, $rate->getConfig()->getOptions()['precision']);
     }
 
     /**

@@ -128,25 +128,6 @@ class FeatureContext extends OroFeatureContext implements
     }
 
     /**
-     * Load "QuotesSentToCustomer" alice fixture from SaleBundle suite
-     *
-     * Disable default workflow for Quote entity before loading fixtures to prevent overriding internal status
-     *
-     * @Given /^sent to customer quotes fixture loaded$/
-     */
-    public function bestSellingFixtureLoaded()
-    {
-        $workflowManager = $this->getContainer()->get('oro_workflow.registry.workflow_manager')->getManager();
-
-        foreach ($workflowManager->getApplicableWorkflows(Quote::class) as $workflow) {
-            $workflowManager->resetWorkflowData($workflow->getName());
-            $workflowManager->deactivateWorkflow($workflow->getName());
-        }
-
-        $this->fixtureLoader->loadFixtureFile('OroSaleBundle:QuotesSentToCustomer.yml');
-    }
-
-    /**
      * Example: I should see truncated to 10 symbols guest link for quote qid "Quote1"
      *
      * @Then /^(?:|I )should see truncated to (?P<truncateTo>(?:\d+)) symbols guest link for quote qid (?P<qid>[\w\s]+)$/
