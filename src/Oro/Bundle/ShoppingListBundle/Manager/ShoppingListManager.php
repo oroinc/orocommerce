@@ -5,10 +5,11 @@ namespace Oro\Bundle\ShoppingListBundle\Manager;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Layout\DataProvider\ProductFormAvailabilityProvider;
+use Oro\Bundle\ProductBundle\Provider\ProductMatrixAvailabilityProvider;
 use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
 use Oro\Bundle\ProductBundle\Rounding\QuantityRoundingService;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
@@ -46,8 +47,11 @@ class ShoppingListManager
     /** @var ProductVariantAvailabilityProvider */
     private $productVariantProvider;
 
-    /** @var ProductFormAvailabilityProvider */
-    private $productFormAvailabilityProvider;
+    /** @var ProductMatrixAvailabilityProvider */
+    private $productMatrixAvailabilityProvider;
+
+    /** @var ConfigManager */
+    private $configManager;
 
     /**
      * @param ManagerRegistry                    $doctrine
@@ -57,7 +61,8 @@ class ShoppingListManager
      * @param WebsiteManager                     $websiteManager
      * @param ShoppingListTotalManager           $totalManager
      * @param ProductVariantAvailabilityProvider $productVariantProvider
-     * @param ProductFormAvailabilityProvider    $productFormAvailabilityProvider
+     * @param ProductMatrixAvailabilityProvider  $productMatrixAvailabilityProvider
+     * @param ConfigManager                      $configManager
      */
     public function __construct(
         ManagerRegistry $doctrine,
@@ -67,7 +72,8 @@ class ShoppingListManager
         WebsiteManager $websiteManager,
         ShoppingListTotalManager $totalManager,
         ProductVariantAvailabilityProvider $productVariantProvider,
-        ProductFormAvailabilityProvider $productFormAvailabilityProvider
+        ProductMatrixAvailabilityProvider $productMatrixAvailabilityProvider,
+        ConfigManager $configManager
     ) {
         $this->doctrine = $doctrine;
         $this->tokenAccessor = $tokenAccessor;
@@ -76,7 +82,8 @@ class ShoppingListManager
         $this->websiteManager = $websiteManager;
         $this->totalManager = $totalManager;
         $this->productVariantProvider = $productVariantProvider;
-        $this->productFormAvailabilityProvider = $productFormAvailabilityProvider;
+        $this->productMatrixAvailabilityProvider = $productMatrixAvailabilityProvider;
+        $this->configManager = $configManager;
     }
 
     /**
@@ -226,7 +233,7 @@ class ShoppingListManager
             $this->totalManager->recalculateTotals($lineItem->getShoppingList(), false);
             $em->flush();
 
-            // return 1 as was deleted only current given line item
+            // return 1 because only the specified line item was deleted
             return 1;
         }
 
@@ -426,6 +433,16 @@ class ShoppingListManager
             return Configuration::MATRIX_FORM_NONE;
         }
 
-        return $this->productFormAvailabilityProvider->getAvailableMatrixFormType($product);
+        $matrixConfiguration = $this->configManager->get(
+            sprintf('%s.%s', Configuration::ROOT_NODE, Configuration::MATRIX_FORM_ON_SHOPPING_LIST)
+        );
+
+        if ($matrixConfiguration === Configuration::MATRIX_FORM_NONE
+            || !$this->productMatrixAvailabilityProvider->isMatrixFormAvailable($product)
+        ) {
+            return Configuration::MATRIX_FORM_NONE;
+        }
+
+        return $matrixConfiguration;
     }
 }

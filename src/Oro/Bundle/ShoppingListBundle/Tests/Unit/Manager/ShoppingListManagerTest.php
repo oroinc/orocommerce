@@ -5,6 +5,7 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Manager;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
@@ -13,6 +14,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Layout\DataProvider\ProductFormAvailabilityProvider;
+use Oro\Bundle\ProductBundle\Provider\ProductMatrixAvailabilityProvider;
 use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
 use Oro\Bundle\ProductBundle\Rounding\QuantityRoundingService;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
@@ -56,7 +58,10 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
     private $lineItemRepository;
 
     /** @var \PHPUnit\Framework\MockObject\MockObject */
-    private $productFormAvailabilityProvider;
+    private $productMatrixAvailabilityProvider;
+
+    /** @var \PHPUnit\Framework\MockObject\MockObject */
+    private $configManager;
 
     protected function setUp()
     {
@@ -100,7 +105,8 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
                 return round($value);
             });
 
-        $this->productFormAvailabilityProvider = $this->createMock(ProductFormAvailabilityProvider::class);
+        $this->productMatrixAvailabilityProvider = $this->createMock(ProductMatrixAvailabilityProvider::class);
+        $this->configManager = $this->createMock(ConfigManager::class);
 
         $this->manager = new ShoppingListManager(
             $doctrine,
@@ -110,7 +116,8 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
             $this->websiteManager,
             $this->totalManager,
             $this->productVariantProvider,
-            $this->productFormAvailabilityProvider
+            $this->productMatrixAvailabilityProvider,
+            $this->configManager
         );
     }
 
@@ -646,10 +653,14 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
             ->with($shoppingList, [$product])
             ->willReturn([$lineItem1, $lineItem2, $lineItem3]);
 
-        $this->productFormAvailabilityProvider->expects($this->once())
-            ->method('getAvailableMatrixFormType')
-            ->with($product)
+        $this->configManager->expects($this->once())
+            ->method('get')
+            ->with('oro_product.matrix_form_on_shopping_list')
             ->willReturn(Configuration::MATRIX_FORM_INLINE);
+        $this->productMatrixAvailabilityProvider->expects($this->once())
+            ->method('isMatrixFormAvailable')
+            ->with($product)
+            ->willReturn(true);
 
         $countDeletedItems = $this->manager->removeLineItem($lineItem1);
 
@@ -689,9 +700,9 @@ class ShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         $shoppingList->addLineItem($lineItem2);
         $shoppingList->addLineItem($lineItem3);
 
-        $this->productFormAvailabilityProvider->expects($this->once())
-            ->method('getAvailableMatrixFormType')
-            ->with($product)
+        $this->configManager->expects($this->once())
+            ->method('get')
+            ->with('oro_product.matrix_form_on_shopping_list')
             ->willReturn(Configuration::MATRIX_FORM_NONE);
 
         $countDeletedItems = $this->manager->removeLineItem($lineItem1);
