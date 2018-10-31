@@ -50,11 +50,20 @@ layout:
                     options:
                         quote: '=data["entity"]'
                         vars:
-                            paymentTerm: '=data["oro_payment_term_provider"].getObjectPaymentTerm(data["quote"])'
+                            paymentTerm: '=data["oro_payment_term_provider"].getObjectPaymentTerm(data["entity"])'
                 quote_view_line_items:
                     blockType: quote_products_container
                     options:
                         quoteProducts: '=data["entity"].getQuoteProducts()'
+                quote_view_back_link:
+                    blockType: link
+                    options:
+                        route_name: oro_sale_quote_frontend_index
+                        text: oro.frontend.sale.quote.sections.back.label
+                        icon: angle-left
+                        attr:
+                            class: 'link pull-left hide-on-print'
+                        visible: '=data["acl"].isGranted("oro_sale_quote_frontend_view")'
                 quote_view_accept_button:
                     blockType: combined_buttons
                     options:
@@ -77,4 +86,5 @@ layout:
                             quote_shipping_address: ~
                         quote_view_line_items: ~
                         quote_view_accept_container:
+                            quote_view_back_link: ~
                             quote_view_accept_button: ~

@@ -242,6 +242,7 @@ oro:
             total_currency.label: 'Total Currency'
             customer.label: 'Customer'
             customer_user.label: 'Customer User'
+            visitor.label: 'Customer Visitor'
 
         controller:
             quote:
@@ -256,7 +257,6 @@ oro:
 
         navigation:
             view: 'Quote #%id%'
-            guest_access: 'Quote #%id%'
 
         security:
             permission:
@@ -309,6 +309,7 @@ oro:
                 sections:
                     general: 'Quote Information'
                     back.label: 'Back to Quote List'
+                    back_to_quote.label: 'Back to Quote'
                     quote_products:
                         label: 'Line Items'
                         columns:

@@ -227,6 +227,15 @@ services:
         tags:
             - { name: security.voter }
 
+    oro_sale.acl.voter.frontend_quote_demand_permission_voter:
+        class: 'Oro\Bundle\SaleBundle\Acl\Voter\FrontendQuoteDemandPermissionVoter'
+        public: false
+        arguments:
+            - '@security.token_storage'
+            - '@security.authorization_checker'
+        tags:
+            - { name: security.voter }
+
     oro_sale.provider.contact_info_source_options_provider:
         class: 'Oro\Bundle\SaleBundle\Provider\ContactInfoSourceOptionsProvider'
         public: false
@@ -270,16 +279,17 @@ services:
         arguments:
             - '@oro_locale.formatter.name'
 
+    oro_sale.voter.guest_quote:
+        parent: oro_customer.voter.anonymous_customer_user
+        calls:
+            - [ setFeatureName, ['guest_quote'] ]
+        tags:
+            - { name: oro_featuretogle.voter }
+
     oro_sale.provider.guest_quote_access:
         class: 'Oro\Bundle\SaleBundle\Provider\GuestQuoteAccessProvider'
         arguments:
             - '@oro_featuretoggle.checker.feature_checker'
-            
-    oro_sale.provider.guest_quote_access.decorator:
-        class: 'Oro\Bundle\SaleBundle\Provider\GuestQuoteAccessFrontendProvider'
-        decorates: oro_sale.provider.guest_quote_access
-        arguments:
-            - '@oro_sale.provider.guest_quote_access.decorator.inner'
             - '@oro_website.manager'
 
     oro_sale.provider.guest_quote_access.link:

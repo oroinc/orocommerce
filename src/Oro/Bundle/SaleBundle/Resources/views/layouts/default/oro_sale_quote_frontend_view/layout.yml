@@ -2,15 +2,4 @@ layout:
     imports:
         -
             id: oro_sale_quote_frontend_view
-    actions:
-        - '@add':
-            id: quote_view_back_link
-            parentId: quote_view_accept_container
-            blockType: link
-            options:
-                route_name: oro_sale_quote_frontend_index
-                text: oro.frontend.sale.quote.sections.back.label
-                icon: angle-left
-                attr:
-                    class: 'link pull-left hide-on-print'
-            prepend: true
+    actions: []

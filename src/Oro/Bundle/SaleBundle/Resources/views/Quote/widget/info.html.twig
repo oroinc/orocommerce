@@ -13,13 +13,13 @@
             {% endif %}
 
             {% set uniqueGuestLink = quote_guest_access_link(entity) %}
-            {% if uniqueGuestLink %}
+            {% if uniqueGuestLink and entity.isAcceptable() %}
                 {{ UI.renderHtmlProperty('oro.sale.quote.unique_guest_link.label'|trans, UI.renderUrlWithActions({url: uniqueGuestLink, attributes: {target: '_blank'}}, entity), entity, 'guestAccessId') }}
             {% endif %}
 
             {{ UI.renderProperty('oro.sale.quote.internal_status.label'|trans, entity.internalStatus.name|default('')) }}
             {{ UI.renderProperty('oro.sale.quote.customer_status.label'|trans, entity.customerStatus.name|default('')) }}
-            
+
             {{ UI.renderProperty('oro.sale.quote.valid_until.label'|trans, entity.validUntil ? entity.validUntil|oro_format_datetime : 'N/A'|trans) }}
             {% if entity.request %}
                 {{ UI.renderHtmlProperty('oro.sale.quote.request.label'|trans, UI.entityViewLink(entity.request, entity.request, 'oro_rfp_request_view')) }}
