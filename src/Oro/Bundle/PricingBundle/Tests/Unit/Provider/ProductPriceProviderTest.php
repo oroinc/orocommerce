@@ -5,6 +5,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Provider;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
+use Oro\Bundle\PricingBundle\Model\DTO\ProductPriceDTO;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteria;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaInterface;
@@ -20,9 +21,6 @@ class ProductPriceProviderTest extends \PHPUnit\Framework\TestCase
     use EntityTrait;
 
     const TEST_CURRENCY = 'USD';
-
-    /** @var ProductPriceScopeCriteriaInterface */
-    private $productPriceScopeCriteria;
 
     /** @var ProductPriceProvider */
     protected $provider;
@@ -164,15 +162,7 @@ class ProductPriceProviderTest extends \PHPUnit\Framework\TestCase
                 'userCurrency' => 'UAH',
                 'unitCode' => 'unit',
                 'products' => [$this->getEntity(Product::class, ['id' => 1])],
-                'prices' => [
-                    [
-                        'id' => 1,
-                        'code' => 'unit',
-                        'quantity' => 10,
-                        'value' => 10,
-                        'currency' => self::TEST_CURRENCY
-                    ]
-                ],
+                'prices' => $this->getPricesArray(10, 10, self::TEST_CURRENCY, ['unit']),
                 'expectedResult' => [
                     1 => $this->getPricesArray(10, 10, self::TEST_CURRENCY, ['unit'])
                 ]
@@ -185,15 +175,7 @@ class ProductPriceProviderTest extends \PHPUnit\Framework\TestCase
                 'userCurrency' => 'UAH',
                 'unitCode' => 'unit',
                 'products' => [$this->getEntity(Product::class, ['id' => 1])],
-                'prices' => [
-                    [
-                        'id' => 1,
-                        'code' => 'unit',
-                        'quantity' => 10,
-                        'value' => 10,
-                        'currency' => self::TEST_CURRENCY
-                    ]
-                ],
+                'prices' => $this->getPricesArray(10, 10, self::TEST_CURRENCY, ['unit']),
                 'expectedResult' => [
                     1 => $this->getPricesArray(10, 10, self::TEST_CURRENCY, ['unit'])
                 ]
@@ -206,15 +188,7 @@ class ProductPriceProviderTest extends \PHPUnit\Framework\TestCase
                 'userCurrency' => 'UAH',
                 'unitCode' => 'unit',
                 'products' => [$this->getEntity(Product::class, ['id' => 1])],
-                'prices' => [
-                    [
-                        'id' => 1,
-                        'code' => 'unit',
-                        'quantity' => 10,
-                        'value' => 10,
-                        'currency' => 'UAH'
-                    ]
-                ],
+                'prices' => $this->getPricesArray(10, 10, 'UAH', ['unit']),
                 'expectedResult' => [
                     1 => $this->getPricesArray(10, 10, 'UAH', ['unit'])
                 ]
@@ -227,15 +201,7 @@ class ProductPriceProviderTest extends \PHPUnit\Framework\TestCase
                 'userCurrency' => null,
                 'unitCode' => 'unit',
                 'products' => [$this->getEntity(Product::class, ['id' => 1])],
-                'prices' => [
-                    [
-                        'id' => 1,
-                        'code' => 'unit',
-                        'quantity' => 10,
-                        'value' => 10,
-                        'currency' => 'UAH'
-                    ]
-                ],
+                'prices' => $this->getPricesArray(10, 10, 'UAH', ['unit']),
                 'expectedResult' => [
                     1 => $this->getPricesArray(10, 10, 'UAH', ['unit'])
                 ]
@@ -248,15 +214,7 @@ class ProductPriceProviderTest extends \PHPUnit\Framework\TestCase
                 'userCurrency' => 'UAH',
                 'unitCode' => null,
                 'products' => [$this->getEntity(Product::class, ['id' => 1])],
-                'prices' => [
-                    [
-                        'id' => 1,
-                        'code' => 'unit',
-                        'quantity' => 10,
-                        'value' => 10,
-                        'currency' => self::TEST_CURRENCY
-                    ]
-                ],
+                'prices' => $this->getPricesArray(10, 10, self::TEST_CURRENCY, ['unit']),
                 'expectedResult' => [
                     1 => $this->getPricesArray(10, 10, self::TEST_CURRENCY, ['unit'])
                 ]
@@ -346,20 +304,8 @@ class ProductPriceProviderTest extends \PHPUnit\Framework\TestCase
                 ],
                 'productUnitCodes' => ['item'],
                 'prices' => [
-                    [
-                        'id' => 1,
-                        'code' => 'item',
-                        'quantity' => 5,
-                        'value' => 15,
-                        'currency' => self::TEST_CURRENCY
-                    ],
-                    [
-                        'id' => 1,
-                        'code' => 'item',
-                        'quantity' => 10,
-                        'value' => 10,
-                        'currency' => self::TEST_CURRENCY
-                    ]
+                    $this->createPrice(15, self::TEST_CURRENCY, 5, 'item'),
+                    $this->createPrice(10, self::TEST_CURRENCY, 10, 'item')
                 ],
                 'supportedCurrencies' => [self::TEST_CURRENCY, 'UAH'],
                 'availableCurrencies' => [self::TEST_CURRENCY, 'UAH'],
@@ -370,54 +316,26 @@ class ProductPriceProviderTest extends \PHPUnit\Framework\TestCase
                 ]
             ],
             'with price criterias that contains only not allowed currency' => [
-                'productPriceCriterias' => [
-                    $this->getProductPriceCriteria(1, 'item', 10, 'EUR')
-                ],
-                'products' => [
-                    $this->getEntity(Product::class, ['id' => 1])
-                ],
+                'productPriceCriterias' => [$this->getProductPriceCriteria(1, 'item', 10, 'EUR')],
+                'products' => [$this->getEntity(Product::class, ['id' => 1])],
                 'productUnitCodes' => ['item'],
-                'prices' => [
-                    [
-                        'id' => 1,
-                        'code' => 'item',
-                        'quantity' => 10,
-                        'value' => 10,
-                        'currency' => 'UAH'
-                    ]
-                ],
+                'prices' => [$this->createPrice(10, 'UAH', 10, 'item')],
                 'supportedCurrencies' => [self::TEST_CURRENCY, 'UAH'],
                 'availableCurrencies' => [self::TEST_CURRENCY, 'UAH'],
                 'finalCurrencies' => ['UAH'],
                 'userCurrency' => 'UAH',
-                'expectedResult' => [
-                    '1-item-10-EUR' => null
-                ]
+                'expectedResult' => ['1-item-10-EUR' => null]
             ],
             'with price criterias that contains only not allowed currency and no user currency' => [
-                'productPriceCriterias' => [
-                    $this->getProductPriceCriteria(1, 'item', 10, 'EUR')
-                ],
-                'products' => [
-                    $this->getEntity(Product::class, ['id' => 1])
-                ],
+                'productPriceCriterias' => [$this->getProductPriceCriteria(1, 'item', 10, 'EUR')],
+                'products' => [$this->getEntity(Product::class, ['id' => 1])],
                 'productUnitCodes' => ['item'],
-                'prices' => [
-                    [
-                        'id' => 1,
-                        'code' => 'item',
-                        'quantity' => 10,
-                        'value' => 10,
-                        'currency' => 'UAH'
-                    ]
-                ],
+                'prices' => [$this->createPrice(10, 'UAH', 10, 'item')],
                 'supportedCurrencies' => [self::TEST_CURRENCY, 'UAH'],
                 'availableCurrencies' => [self::TEST_CURRENCY, 'UAH'],
                 'finalCurrencies' => [],
                 'userCurrency' => null,
-                'expectedResult' => [
-                    '1-item-10-EUR' => null
-                ]
+                'expectedResult' => ['1-item-10-EUR' => null]
             ],
             'no matched prices' => [
                 'productPriceCriterias' => [
@@ -427,28 +345,18 @@ class ProductPriceProviderTest extends \PHPUnit\Framework\TestCase
                     $this->getEntity(Product::class, ['id' => 1])
                 ],
                 'productUnitCodes' => ['item'],
-                'prices' => [
-                    [
-                        'id' => 1,
-                        'code' => 'item',
-                        'quantity' => 10,
-                        'value' => 10,
-                        'currency' => self::TEST_CURRENCY
-                    ]
-                ],
+                'prices' => [$this->createPrice(10, self::TEST_CURRENCY, 10, 'item')],
                 'supportedCurrencies' => [self::TEST_CURRENCY, 'UAH'],
                 'availableCurrencies' => [self::TEST_CURRENCY, 'UAH'],
                 'finalCurrencies' => [self::TEST_CURRENCY],
                 'userCurrency' => 'UAH',
-                'expectedResult' => [
-                    '1-item-5-USD' => null
-                ]
+                'expectedResult' => ['1-item-5-USD' => null]
             ]
         ];
     }
 
     /**
-     * @param int    $productId
+     * @param int $productId
      * @param string $unitCode
      * @param int $quantity
      * @param string $currency
@@ -474,22 +382,34 @@ class ProductPriceProviderTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param float  $price
-     * @param int    $quantity
+     * @param float $price
+     * @param int $quantity
      * @param string $currency
-     * @param array  $unitCodes
+     * @param array $unitCodes
      * @return array
      */
     private function getPricesArray($price, $quantity, $currency, array $unitCodes)
     {
         return array_map(function ($unitCode) use ($price, $quantity, $currency) {
-            return [
-                'price' => $price,
-                'currency' => $currency,
-                'quantity' => $quantity,
-                'unit' => $unitCode,
-            ];
+            return $this->createPrice($price, $currency, $quantity, $unitCode);
         }, $unitCodes);
+    }
+
+    /**
+     * @param float $price
+     * @param int $quantity
+     * @param string $currency
+     * @param string $unitCode
+     * @return ProductPriceDTO
+     */
+    private function createPrice($price, $currency, $quantity, $unitCode)
+    {
+        return new ProductPriceDTO(
+            $this->getEntity(Product::class, ['id' => 1]),
+            Price::create($price, $currency),
+            $quantity,
+            $this->getEntity(ProductUnit::class, ['code' => $unitCode])
+        );
     }
 
     /**
@@ -497,14 +417,10 @@ class ProductPriceProviderTest extends \PHPUnit\Framework\TestCase
      */
     private function getProductPriceScopeCriteria()
     {
-        if (null !== $this->productPriceScopeCriteria) {
-            return $this->productPriceScopeCriteria;
-        }
+        $productPriceScopeCriteria = new ProductPriceScopeCriteria();
+        $productPriceScopeCriteria->setCustomer($this->getEntity(Customer::class, ['id' => 1]));
+        $productPriceScopeCriteria->setWebsite($this->getEntity(Website::class, ['id' => 1]));
 
-        $this->productPriceScopeCriteria = new ProductPriceScopeCriteria();
-        $this->productPriceScopeCriteria->setCustomer($this->getEntity(Customer::class, ['id' => 1]));
-        $this->productPriceScopeCriteria->setWebsite($this->getEntity(Website::class, ['id' => 1]));
-
-        return $this->productPriceScopeCriteria;
+        return $productPriceScopeCriteria;
     }
 }

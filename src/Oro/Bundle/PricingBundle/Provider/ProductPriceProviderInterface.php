@@ -13,7 +13,12 @@ interface ProductPriceProviderInterface
      * @param array|Product[] $products
      * @param string|null $currency
      * @param string|null $unitCode
+     *
      * @return array
+     * [
+     *    'product.id' => ProductPriceInterface[],
+     *     ...
+     * ]
      */
     public function getPricesByScopeCriteriaAndProducts(
         ProductPriceScopeCriteriaInterface $scopeCriteria,

@@ -3,10 +3,10 @@
 namespace Oro\Bundle\PricingBundle\Controller\Frontend;
 
 use Oro\Bundle\PricingBundle\Controller\AbstractAjaxProductPriceController;
+use Oro\Bundle\PricingBundle\Model\ProductPriceInterface;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaRequestHandler;
 use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -73,8 +73,8 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
 
         $units = [];
         if (!empty($prices[$productId])) {
-            $units = array_map(function (array $price) use ($doctrineHelper) {
-                return $doctrineHelper->getEntityReference(ProductUnit::class, $price['unit']);
+            $units = array_map(function (ProductPriceInterface $price) {
+                return $price->getUnit();
             }, $prices[$productId]);
         }
 

@@ -10,6 +10,7 @@ use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
+use Oro\Bundle\PricingBundle\Model\DTO\ProductPriceDTO;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
@@ -277,19 +278,18 @@ class ProductPriceRepositoryTest extends WebTestCase
         foreach ($expectedPrices as $price) {
             /** @var ProductPrice $priceEntity */
             $priceEntity = $this->getReference($price);
-            $expectedPriceData[] = [
-                'id' => $priceEntity->getProduct()->getId(),
-                'code' => $priceEntity->getUnit()->getCode(),
-                'quantity' => $priceEntity->getQuantity(),
-                'value' => $priceEntity->getPrice()->getValue(),
-                'currency' => $priceEntity->getPrice()->getCurrency(),
-            ];
+            $expectedPriceData[] = new ProductPriceDTO(
+                $priceEntity->getProduct(),
+                $priceEntity->getPrice(),
+                $priceEntity->getQuantity(),
+                $priceEntity->getUnit()
+            );
         }
-        $sorter = function ($a, $b) {
-            if ($a['id'] === $b['id']) {
+        $sorter = function (ProductPriceDTO $a, ProductPriceDTO $b) {
+            if ($a->getProduct()->getId() === $b->getProduct()->getId()) {
                 return 0;
             }
-            return ($a['id'] < $b['id']) ? -1 : 1;
+            return ($a->getProduct()->getId() < $b->getProduct()->getId()) ? -1 : 1;
         };
 
         $actualPrices = $this->repository->getPricesBatch(

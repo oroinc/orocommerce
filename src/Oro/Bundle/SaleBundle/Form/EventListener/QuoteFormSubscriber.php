@@ -3,6 +3,7 @@
 namespace Oro\Bundle\SaleBundle\Form\EventListener;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\PricingBundle\Model\ProductPriceInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\SaleBundle\Entity\Quote;
@@ -154,14 +155,15 @@ class QuoteFormSubscriber implements EventSubscriberInterface
      */
     protected function isTierPrice($productId, array $quoteProductOfferData, array $tierPrices)
     {
+        /** @var ProductPriceInterface[] $productTierPrices */
         $productTierPrices = array_reverse($tierPrices[$productId] ?? []);
         foreach ($productTierPrices as $tierPrice) {
-            if ((float) $quoteProductOfferData['quantity'] < (float) $tierPrice['quantity']) {
+            if ((float) $quoteProductOfferData['quantity'] < (float) $tierPrice->getQuantity()) {
                 continue;
             }
-            if ($quoteProductOfferData['productUnit'] === $tierPrice['unit'] &&
-                $quoteProductOfferData['price']['currency'] === $tierPrice['currency'] &&
-                (float) $quoteProductOfferData['price']['value'] === (float) $tierPrice['price']
+            if ($quoteProductOfferData['productUnit'] === $tierPrice->getUnit()->getCode() &&
+                $quoteProductOfferData['price']['currency'] === $tierPrice->getPrice()->getCurrency() &&
+                (float) $quoteProductOfferData['price']['value'] === (float) $tierPrice->getPrice()->getValue()
             ) {
                 return true;
             }

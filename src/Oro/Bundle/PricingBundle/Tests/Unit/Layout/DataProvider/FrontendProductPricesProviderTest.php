@@ -2,9 +2,11 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Layout\DataProvider;
 
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\PricingBundle\Formatter\ProductPriceFormatter;
 use Oro\Bundle\PricingBundle\Layout\DataProvider\FrontendProductPricesProvider;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
+use Oro\Bundle\PricingBundle\Model\DTO\ProductPriceDTO;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaInterface;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaRequestHandler;
 use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
@@ -76,9 +78,7 @@ class FrontendProductPricesProviderTest extends \PHPUnit\Framework\TestCase
         $this->expectProductsAndPrices([$simpleProduct1], [], $prices);
 
         $this->assertEquals(
-            [
-                'each_1' => ['price' => 10, 'currency' => 'USD', 'unit' => 'each', 'quantity' => 1],
-            ],
+            ['each_1' => $this->createFormattedPrice(10, 'USD', 1, 'each')],
             $this->provider->getByProduct($simpleProduct1)
         );
     }
@@ -121,7 +121,7 @@ class FrontendProductPricesProviderTest extends \PHPUnit\Framework\TestCase
 
         $this->assertEquals(
             [
-                'each_1' => ['price' => 10, 'currency' => 'USD', 'unit' => 'each', 'quantity' => 1],
+                'each_1' => $this->createFormattedPrice(10, 'USD', 1, 'each')
             ],
             $this->provider->getByProduct($configurableProduct100)
         );
@@ -153,10 +153,10 @@ class FrontendProductPricesProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(
             [
                 101 => [
-                    'each_1' => ['price' => 5, 'currency' => 'USD', 'unit' => 'each', 'quantity' => 1],
+                    'each_1' => $this->createFormattedPrice(5, 'USD', 1, 'each')
                 ],
                 102 => [
-                    'each_1' => ['price' => 6, 'currency' => 'USD', 'unit' => 'each', 'quantity' => 1],
+                    'each_1' => $this->createFormattedPrice(6, 'USD', 1, 'each')
                 ],
             ],
             $this->provider->getVariantsPricesByProduct($configurableProduct100)
@@ -196,13 +196,13 @@ class FrontendProductPricesProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(
             [
                 1 => [
-                    'each_1' => ['price' => 20, 'currency' => 'USD', 'unit' => 'each', 'quantity' => 1],
+                    'each_1' => $this->createFormattedPrice(20, 'USD', 1, 'each')
                 ],
                 100 => [
-                    'each_1' => ['price' => 10, 'currency' => 'USD', 'unit' => 'each', 'quantity' => 1],
+                    'each_1' => $this->createFormattedPrice(10, 'USD', 1, 'each')
                 ],
                 101 => [
-                    'each_1' => ['price' => 5, 'currency' => 'USD', 'unit' => 'each', 'quantity' => 1],
+                    'each_1' => $this->createFormattedPrice(5, 'USD', 1, 'each')
                 ],
             ],
             $this->provider->getByProducts([$simpleProduct1, $configurableProduct100, $variantProduct101])
@@ -262,15 +262,15 @@ class FrontendProductPricesProviderTest extends \PHPUnit\Framework\TestCase
             [
                 100 => [
                     101 => [
-                        'each_1' => ['price' => 5, 'currency' => 'USD', 'unit' => 'each', 'quantity' => 1],
+                        'each_1' => $this->createFormattedPrice(5, 'USD', 1, 'each')
                     ],
                     102 => [
-                        'each_1' => ['price' => 6, 'currency' => 'USD', 'unit' => 'each', 'quantity' => 1],
+                        'each_1' => $this->createFormattedPrice(6, 'USD', 1, 'each')
                     ],
                 ],
                 200 => [
                     201 => [
-                        'each_1' => ['price' => 25, 'currency' => 'USD', 'unit' => 'each', 'quantity' => 1],
+                        'each_1' => $this->createFormattedPrice(25, 'USD', 1, 'each')
                     ],
                 ],
             ],
@@ -476,12 +476,18 @@ class FrontendProductPricesProviderTest extends \PHPUnit\Framework\TestCase
                 $formattedProductsPrices = [];
                 foreach ($productsPrices as $productId => $productsPrice) {
                     foreach ($productsPrice as $unit => $unitPrices) {
+                        /** @var ProductPriceDTO $unitPrice */
                         foreach ($unitPrices as $unitPrice) {
+                            $priceValue = $unitPrice->getPrice()->getValue();
+                            $priceCurrency = $unitPrice->getPrice()->getCurrency();
+                            $qty = $unitPrice->getQuantity();
+                            $unitCode = $unitPrice->getUnit()->getCode();
+
                             $formattedProductsPrices[$productId][sprintf(
                                 '%s_%s',
                                 $unit,
-                                $unitPrice['quantity']
-                            )] = $unitPrice;
+                                $unitPrice->getQuantity()
+                            )] = $this->createFormattedPrice($priceValue, $priceCurrency, $qty, $unitCode);
                         }
                     }
                 }
@@ -499,7 +505,6 @@ class FrontendProductPricesProviderTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     *
      * @param float $price
      * @param int $quantity
      * @param string $currency
@@ -509,12 +514,44 @@ class FrontendProductPricesProviderTest extends \PHPUnit\Framework\TestCase
     private function getPricesArray($price, $quantity, $currency, array $unitCodes)
     {
         return array_map(function ($unitCode) use ($price, $quantity, $currency) {
-            return [
-                'price' => $price,
-                'currency' => $currency,
-                'quantity' => $quantity,
-                'unit' => $unitCode,
-            ];
+            return $this->createPrice($price, $currency, $quantity, $unitCode);
         }, $unitCodes);
+    }
+
+    /**
+     * @param float $price
+     * @param int $quantity
+     * @param string $currency
+     * @param string $unitCode
+     * @return ProductPriceDTO
+     */
+    private function createPrice($price, $currency, $quantity, $unitCode)
+    {
+        return new ProductPriceDTO(
+            $this->getEntity(Product::class, ['id' => 1]),
+            Price::create($price, $currency),
+            $quantity,
+            $this->getEntity(ProductUnit::class, ['code' => $unitCode])
+        );
+    }
+
+    /**
+     * @param float $priceValue
+     * @param string $priceCurrency
+     * @param float $qty
+     * @param string $unitCode
+     * @return array
+     */
+    private function createFormattedPrice($priceValue, $priceCurrency, $qty, $unitCode): array
+    {
+        return [
+            'price' => $priceValue,
+            'currency' => $priceCurrency,
+            'quantity' => $qty,
+            'unit' => $unitCode,
+            'formatted_price' => $priceValue . ' ' . $priceCurrency,
+            'formatted_unit' => $unitCode . ' FORMATTED',
+            'quantity_with_unit' => $qty . ' ' . $unitCode
+        ];
     }
 }

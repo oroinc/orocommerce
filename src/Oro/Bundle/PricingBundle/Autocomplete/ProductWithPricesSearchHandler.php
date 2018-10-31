@@ -6,6 +6,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\FormBundle\Autocomplete\SearchHandlerInterface;
 use Oro\Bundle\PricingBundle\Formatter\ProductPriceFormatter;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
+use Oro\Bundle\PricingBundle\Model\ProductPriceInterface;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaRequestHandler;
 use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -136,14 +137,14 @@ class ProductWithPricesSearchHandler implements SearchHandlerInterface
             $result['prices'] = [];
             $result['units'] = $product->getSellUnitsPrecision();
 
-            /** @var array $price */
+            /** @var ProductPriceInterface $price */
             foreach ($item['prices'] as $price) {
-                $unit = $price['unit'];
+                $unit = $price->getUnit()->getCode();
                 if (!isset($result['prices'][$unit])) {
                     $result['prices'][$unit] = [];
                 }
 
-                $result['prices'][$unit][] = $this->productPriceFormatter->formatProductPriceData($price);
+                $result['prices'][$unit][] = $this->productPriceFormatter->formatProductPrice($price);
             }
         }
 

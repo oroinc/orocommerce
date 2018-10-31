@@ -4,7 +4,9 @@ namespace Oro\Bundle\SaleBundle\Tests\Unit\Form\EventListener;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\PricingBundle\Model\DTO\ProductPriceDTO;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
@@ -30,22 +32,6 @@ class QuoteFormSubscriberTest extends \PHPUnit\Framework\TestCase
     const QUANTITY = 10;
     const UNIT1 = 'kg';
     const UNIT2 = 'set';
-    const TIER_PRICES = [
-        1 => [
-            [
-                'quantity' => 1,
-                'unit' => self::UNIT2,
-                'currency' => self::CURRENCY,
-                'price' => self::PRICE2,
-            ],
-            [
-                'quantity' => 20,
-                'unit' => self::UNIT2,
-                'currency' => self::CURRENCY,
-                'price' => self::PRICE2,
-            ],
-        ],
-    ];
 
     /** @var QuoteProductPriceProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $provider;
@@ -58,6 +44,8 @@ class QuoteFormSubscriberTest extends \PHPUnit\Framework\TestCase
 
     /** @var QuoteFormSubscriber */
     private $subscriber;
+
+    private $tierPrices = [];
 
     protected function setUp()
     {
@@ -100,7 +88,7 @@ class QuoteFormSubscriberTest extends \PHPUnit\Framework\TestCase
     public function testOnPreSubmit(array $data, array $options = [], $expectError = false, $expectPriceChange = false)
     {
         $quote = $this->getQuote(42);
-        $quote->expects($this->exactly((int) $expectPriceChange))->method('setPricesChanged')->with(true);
+        $quote->expects($this->exactly((int)$expectPriceChange))->method('setPricesChanged')->with(true);
 
         $config = $this->createMock(FormConfigInterface::class);
         $config->expects($this->any())->method('getOptions')->willReturn($options);
@@ -191,6 +179,23 @@ class QuoteFormSubscriberTest extends \PHPUnit\Framework\TestCase
         $expectError = false,
         $expectPriceChange = false
     ) {
+        $tierPrices = [
+            1 => [
+                new ProductPriceDTO(
+                    $this->getEntity(Product::class, ['id' => 1]),
+                    Price::create(self::PRICE2, self::CURRENCY),
+                    1,
+                    $this->getEntity(ProductUnit::class, ['code' => self::UNIT2])
+                ),
+                new ProductPriceDTO(
+                    $this->getEntity(Product::class, ['id' => 1]),
+                    Price::create(self::PRICE2, self::CURRENCY),
+                    20,
+                    $this->getEntity(ProductUnit::class, ['code' => self::UNIT2])
+                )
+            ]
+        ];
+
         $quote = $this->getQuote(42);
         $quote->expects($this->exactly((int) $expectPriceChange))->method('setPricesChanged')->with(true);
 
@@ -216,7 +221,7 @@ class QuoteFormSubscriberTest extends \PHPUnit\Framework\TestCase
             ->expects($this->once())
             ->method('getTierPricesForProducts')
             ->with($quote, $products)
-            ->willReturn(self::TIER_PRICES);
+            ->willReturn($tierPrices);
 
         $this->subscriber->onPreSubmit(new FormEvent($form, $data));
     }

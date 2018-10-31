@@ -2,13 +2,17 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Datagrid\Provider;
 
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PricingBundle\Datagrid\Provider\CombinedProductPriceProvider;
 use Oro\Bundle\PricingBundle\Formatter\ProductPriceFormatter;
+use Oro\Bundle\PricingBundle\Model\DTO\ProductPriceDTO;
+use Oro\Bundle\PricingBundle\Model\ProductPriceInterface;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteria;
 use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 class CombinedProductPriceProviderTest extends \PHPUnit\Framework\TestCase
@@ -62,7 +66,7 @@ class CombinedProductPriceProviderTest extends \PHPUnit\Framework\TestCase
             ->willReturn([]);
 
         $this->priceFormatter->expects($this->never())
-            ->method('formatProductPriceData');
+            ->method('formatProductPrice');
 
         $this->doctrineHelper->expects($this->never())
             ->method('getEntityReference');
@@ -102,9 +106,21 @@ class CombinedProductPriceProviderTest extends \PHPUnit\Framework\TestCase
             ->willReturn($productPrices);
 
         $this->priceFormatter->expects($this->exactly(2))
-            ->method('formatProductPriceData')
-            ->willReturnCallback(function (array $price) {
-                return $price;
+            ->method('formatProductPrice')
+            ->willReturnCallback(function (ProductPriceInterface $price) {
+                $priceValue = $price->getPrice()->getValue();
+                $priceCurrency = $price->getPrice()->getCurrency();
+                $unitCode = $price->getUnit()->getCode();
+
+                return [
+                    'price' => $priceValue,
+                    'currency' => $priceCurrency,
+                    'quantity' => $price->getQuantity(),
+                    'unit' => $unitCode,
+                    'formatted_price' => $priceValue . ' ' . $priceCurrency,
+                    'formatted_unit' => $unitCode . ' FORMATTED',
+                    'quantity_with_unit' => $price->getQuantity() . ' ' . $unitCode
+                ];
             });
 
         $combinedPricesForProductsByPriceList = $this->combinedProductPriceProvider
@@ -128,24 +144,24 @@ class CombinedProductPriceProviderTest extends \PHPUnit\Framework\TestCase
             [
                 'productPrices' => [
                     1 => [
-                        [
-                            'price' => 10,
-                            'currency' => 'USD',
-                            'quantity' => 5,
-                            'unit' => 'item'
-                        ],
-                        [
-                            'price' => 20,
-                            'currency' => 'USD',
-                            'quantity' => 5,
-                            'unit' => 'item'
-                        ],
-                        [
-                            'price' => 10,
-                            'currency' => 'USD',
-                            'quantity' => 1,
-                            'unit' => 'unit'
-                        ]
+                        new ProductPriceDTO(
+                            $this->getEntity(Product::class, ['id' => 1]),
+                            Price::create(10, 'USD'),
+                            5,
+                            $this->getEntity(ProductUnit::class, ['code' => 'item'])
+                        ),
+                        new ProductPriceDTO(
+                            $this->getEntity(Product::class, ['id' => 1]),
+                            Price::create(20, 'USD'),
+                            5,
+                            $this->getEntity(ProductUnit::class, ['code' => 'item'])
+                        ),
+                        new ProductPriceDTO(
+                            $this->getEntity(Product::class, ['id' => 1]),
+                            Price::create(10, 'USD'),
+                            1,
+                            $this->getEntity(ProductUnit::class, ['code' => 'unit'])
+                        )
                     ]
                 ],
                 'expected' => [
@@ -154,13 +170,19 @@ class CombinedProductPriceProviderTest extends \PHPUnit\Framework\TestCase
                             'price' => 10,
                             'currency' => 'USD',
                             'quantity' => 5,
-                            'unit' => 'item'
+                            'unit' => 'item',
+                            'formatted_price' => '10 USD',
+                            'formatted_unit' => 'item FORMATTED',
+                            'quantity_with_unit' => '5 item'
                         ],
                         'unit_1' => [
                             'price' => 10,
                             'currency' => 'USD',
                             'quantity' => 1,
-                            'unit' => 'unit'
+                            'unit' => 'unit',
+                            'formatted_price' => '10 USD',
+                            'formatted_unit' => 'unit FORMATTED',
+                            'quantity_with_unit' => '1 unit'
                         ]
                     ]
                 ]

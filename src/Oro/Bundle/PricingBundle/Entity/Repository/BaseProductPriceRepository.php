@@ -8,6 +8,7 @@ use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Entity\BaseProductPrice;
+use Oro\Bundle\PricingBundle\Entity\Hydrator\ProductPriceDTOHydrator;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\ORM\ShardQueryExecutorInterface;
@@ -337,7 +338,10 @@ abstract class BaseProductPriceRepository extends EntityRepository
         $query->setHint(PriceShardWalker::ORO_PRICING_SHARD_MANAGER, $shardManager);
         $query->setHint(Query::HINT_CUSTOM_OUTPUT_WALKER, PriceShardWalker::class);
 
-        return $query->getArrayResult();
+        $this->_em->getConfiguration()
+            ->addCustomHydrationMode('ProductPriceDTOHydrator', ProductPriceDTOHydrator::class);
+
+        return $query->getResult('ProductPriceDTOHydrator');
     }
 
     /**

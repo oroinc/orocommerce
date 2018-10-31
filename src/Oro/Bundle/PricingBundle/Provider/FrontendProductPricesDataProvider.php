@@ -5,6 +5,7 @@ namespace Oro\Bundle\PricingBundle\Provider;
 use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
+use Oro\Bundle\PricingBundle\Model\ProductPriceInterface;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaRequestHandler;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
@@ -77,10 +78,11 @@ class FrontendProductPricesDataProvider
         );
 
         $pricesByUnit = [];
+        /** @var ProductPriceInterface[] $productPrices */
         foreach ($prices as $productId => $productPrices) {
             $pricesByUnit[$productId] = [];
             foreach ($productPrices as $productPrice) {
-                $pricesByUnit[$productId][$productPrice['unit']][] = $productPrice;
+                $pricesByUnit[$productId][$productPrice->getUnit()->getCode()][] = $productPrice;
             }
         }
 

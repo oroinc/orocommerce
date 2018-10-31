@@ -5,9 +5,13 @@ namespace Oro\Bundle\PricingBundle\Provider;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
+use Oro\Bundle\PricingBundle\Model\ProductPriceInterface;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaInterface;
 use Oro\Bundle\PricingBundle\Storage\ProductPriceStorageInterface;
 
+/**
+ * Read prices from storage and return requested prices to the client in expected format.
+ */
 class ProductPriceProvider implements ProductPriceProviderInterface
 {
     /**
@@ -49,8 +53,7 @@ class ProductPriceProvider implements ProductPriceProviderInterface
         array $products,
         $currency = null,
         $unitCode = null
-    ):array {
-        $result = [];
+    ): array {
         $currencies = null;
         if ($currency) {
             // TODO: BB-14587 CHECK THIS LOGIC!!! Currency may change here, >
@@ -61,13 +64,9 @@ class ProductPriceProvider implements ProductPriceProviderInterface
         $productUnitCodes = $unitCode ? [$unitCode] : null;
         $prices = $this->priceStorage->getPrices($scopeCriteria, $products, $productUnitCodes, $currencies);
 
+        $result = [];
         foreach ($prices as $price) {
-            $result[$price['id']][] = [
-                'price' => $price['value'],
-                'currency' => $price['currency'],
-                'quantity' => $price['quantity'],
-                'unit' => $price['code']
-            ];
+            $result[$price->getProduct()->getId()][] = $price;
         }
 
         return $result;
@@ -106,8 +105,10 @@ class ProductPriceProvider implements ProductPriceProviderInterface
 
             $productPrices = array_filter(
                 $prices,
-                function (array $price) use ($id, $code, $currency) {
-                    return (int)$price['id'] === $id && $price['code'] === $code && $price['currency'] === $currency;
+                function (ProductPriceInterface $priceData) use ($id, $code, $currency) {
+                    return $priceData->getProduct()->getId() === $id
+                        && $priceData->getUnit()->getCode() === $code
+                        && $priceData->getPrice()->getCurrency() === $currency;
                 }
             );
 
@@ -141,19 +142,19 @@ class ProductPriceProvider implements ProductPriceProviderInterface
     }
 
     /**
-     * @param array $prices
+     * @param array|ProductPriceInterface[] $pricesData
      * @param float $expectedQuantity
      * @return array
      */
-    protected function matchPriceByQuantity(array $prices, $expectedQuantity)
+    protected function matchPriceByQuantity(array $pricesData, $expectedQuantity)
     {
         $price = null;
         $matchedQuantity = null;
-        foreach ($prices as $productPrice) {
-            $quantity = (float)$productPrice['quantity'];
+        foreach ($pricesData as $priceData) {
+            $quantity = $priceData->getQuantity();
 
             if ($expectedQuantity >= $quantity) {
-                $price = (float)$productPrice['value'];
+                $price = $priceData->getPrice()->getValue();
                 $matchedQuantity = $quantity;
             }
         }

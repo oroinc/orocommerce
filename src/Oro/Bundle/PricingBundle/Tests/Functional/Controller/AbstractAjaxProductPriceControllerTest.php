@@ -69,6 +69,7 @@ abstract class AbstractAjaxProductPriceControllerTest extends WebTestCase
 
         $expectedByUnits = [];
         foreach ($expected as $price) {
+            $price['product_id'] = $product->getId();
             $expectedByUnits[$price['unit']][] = $price;
         }
 

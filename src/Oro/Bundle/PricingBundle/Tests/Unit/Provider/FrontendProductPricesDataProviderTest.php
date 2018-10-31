@@ -3,10 +3,9 @@
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
+use Oro\Bundle\PricingBundle\Model\DTO\ProductPriceDTO;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
-use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteria;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaInterface;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaRequestHandler;
 use Oro\Bundle\PricingBundle\Provider\FrontendProductPricesDataProvider;
@@ -15,7 +14,6 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 use Oro\Bundle\ProductBundle\Model\ProductLineItem;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 class FrontendProductPricesDataProviderTest extends \PHPUnit\Framework\TestCase
@@ -213,14 +211,7 @@ class FrontendProductPricesDataProviderTest extends \PHPUnit\Framework\TestCase
                 ],
                 'expectedPrices' => [
                     42 => [
-                        'item' => [
-                            [
-                                'price' => $priceValue,
-                                'currency' => self::TEST_CURRENCY,
-                                'quantity' => $quantity,
-                                'unit' => 'item'
-                            ]
-                        ]
+                        'item' => [$this->createPrice($priceValue, self::TEST_CURRENCY, $quantity, 'item')]
                     ]
                 ]
             ],
@@ -234,21 +225,33 @@ class FrontendProductPricesDataProviderTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param float  $price
-     * @param int    $quantity
+     * @param float $price
+     * @param int $quantity
      * @param string $currency
-     * @param array  $unitCodes
+     * @param array $unitCodes
      * @return array
      */
     private function getPricesArray($price, $quantity, $currency, array $unitCodes)
     {
         return array_map(function ($unitCode) use ($price, $quantity, $currency) {
-            return [
-                'price' => $price,
-                'currency' => $currency,
-                'quantity' => $quantity,
-                'unit' => $unitCode,
-            ];
+            return $this->createPrice($price, $currency, $quantity, $unitCode);
         }, $unitCodes);
+    }
+
+    /**
+     * @param float $price
+     * @param int $quantity
+     * @param string $currency
+     * @param string $unitCode
+     * @return ProductPriceDTO
+     */
+    private function createPrice($price, $currency, $quantity, $unitCode)
+    {
+        return new ProductPriceDTO(
+            $this->getEntity(Product::class, ['id' => 1]),
+            Price::create($price, $currency),
+            $quantity,
+            $this->getEntity(ProductUnit::class, ['code' => $unitCode])
+        );
     }
 }

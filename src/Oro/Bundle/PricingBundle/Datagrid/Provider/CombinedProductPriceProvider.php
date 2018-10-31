@@ -5,6 +5,7 @@ namespace Oro\Bundle\PricingBundle\Datagrid\Provider;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecordInterface;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PricingBundle\Formatter\ProductPriceFormatter;
+use Oro\Bundle\PricingBundle\Model\ProductPriceInterface;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaInterface;
 use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -61,13 +62,14 @@ class CombinedProductPriceProvider
 
         $resultProductPrices = [];
         foreach ($prices as $productId => $productPrices) {
+            /** @var ProductPriceInterface $price */
             foreach ($productPrices as $price) {
-                $index = sprintf('%s_%s', $price['unit'], $price['quantity']);
+                $index = sprintf('%s_%s', $price->getUnit()->getCode(), $price->getQuantity());
                 if (isset($resultProductPrices[$productId][$index])) {
                     continue;
                 }
 
-                $resultProductPrices[$productId][$index] = $this->priceFormatter->formatProductPriceData($price);
+                $resultProductPrices[$productId][$index] = $this->priceFormatter->formatProductPrice($price);
             }
         }
 
@@ -89,12 +91,12 @@ class CombinedProductPriceProvider
             ->getPricesByScopeCriteriaAndProducts($scopeCriteria, $products, $currency);
 
         foreach ($prices as &$productPrices) {
-            usort($productPrices, function (array $a, array $b) {
-                if ($a['unit'] !== $b['unit']) {
-                    return $a['unit'] > $b['unit'];
+            usort($productPrices, function (ProductPriceInterface $a, ProductPriceInterface $b) {
+                if ($a->getUnit()->getCode() !== $b->getUnit()->getCode()) {
+                    return $a->getUnit()->getCode() > $b->getUnit()->getCode();
                 }
 
-                return $a['quantity'] > $b['quantity'];
+                return $a->getQuantity() > $b->getQuantity();
             });
         }
 

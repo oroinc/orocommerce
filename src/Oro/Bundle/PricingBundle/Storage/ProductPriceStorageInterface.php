@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Storage;
 
+use Oro\Bundle\PricingBundle\Model\ProductPriceInterface;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
@@ -12,7 +13,7 @@ interface ProductPriceStorageInterface
      * @param array|Product[] $products
      * @param array|null $productUnitCodes
      * @param array|null $currencies
-     * @return array
+     * @return array|ProductPriceInterface[]
      */
     public function getPrices(
         ProductPriceScopeCriteriaInterface $scopeCriteria,

@@ -5,6 +5,7 @@ namespace Oro\Bundle\PricingBundle\Layout\DataProvider;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Formatter\ProductPriceFormatter;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
+use Oro\Bundle\PricingBundle\Model\ProductPriceInterface;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaRequestHandler;
 use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -211,11 +212,12 @@ class FrontendProductPricesProvider
     {
         $productsPricesByUnit = [];
         foreach ($prices as $productId => $productPrices) {
+            /** @var ProductPriceInterface $price */
             foreach ($productPrices as $price) {
-                $productsPricesByUnit[$productId][$price['unit']][] = $price;
+                $productsPricesByUnit[$productId][$price->getUnit()->getCode()][] = $price;
             }
         }
-        $productsPricesByUnit = $this->productPriceFormatter->formatProducts($productsPricesByUnit);
+        $formattedProductsPricesByUnit = $this->productPriceFormatter->formatProducts($productsPricesByUnit);
 
         foreach ($products as $product) {
             $unitPrecisions = $product->getUnitPrecisions();
@@ -225,9 +227,9 @@ class FrontendProductPricesProvider
             }
 
             $this->productPrices[$product->getId()] = array_filter(
-                $productsPricesByUnit[$product->getId()] ?? [],
-                function ($price) use ($unitsToSell) {
-                    return !empty($unitsToSell[$price['unit']]);
+                $formattedProductsPricesByUnit[$product->getId()] ?? [],
+                function (array $formattedPriceData) use ($unitsToSell) {
+                    return !empty($unitsToSell[$formattedPriceData['unit']]);
                 }
             );
         }
