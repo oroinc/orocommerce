@@ -13,6 +13,9 @@ use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * This helper contains useful methods common for working with quote emails.
+ */
 class NotificationHelper
 {
     /** @var ManagerRegistry */
