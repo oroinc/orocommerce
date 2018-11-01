@@ -9,6 +9,7 @@
 @fixture-OroCheckoutBundle:CheckoutShoppingListFixture.yml
 @fixture-OroCheckoutBundle:CheckoutQuoteFixture.yml
 @fixture-OroCheckoutBundle:InventoryLevel.yml
+@skip
 
 Feature: Single Page Checkout No Shipping Methods
   In order to complete single page checkout process
