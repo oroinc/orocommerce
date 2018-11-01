@@ -61,8 +61,6 @@ define(function(require) {
             this.formView.on('after-check-form', _.bind(this.onAfterCheckForm, this));
             this.formView.on('submit-form', _.bind(this.onSubmit, this));
 
-            this.formView.afterCheck();
-
             SinglePageCheckoutComponent.__super__.initialize.call(this, this.options);
         },
 
