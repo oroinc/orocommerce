@@ -189,3 +189,7 @@ workflows:
                             options:
                                 required: true
                                 disabled: $disallow_visitor_email
+
+            purchase:
+                step_to: checkout
+                transition_definition: purchase_transition_definition
