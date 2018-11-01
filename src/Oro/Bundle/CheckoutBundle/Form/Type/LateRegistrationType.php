@@ -94,7 +94,7 @@ class LateRegistrationType extends AbstractType
         $data = $event->getData();
 
         //Makes checkbox enabled by default if there ware no user changes before
-        if (!$data) {
+        if (!is_array($data) || !isset($data['is_late_registration_enabled'])) {
             $event->setData(['is_late_registration_enabled' => true]);
         }
     }
