@@ -224,7 +224,7 @@ class FrontendProductFilterSorterDisablingEventListenerTest extends \PHPUnit\Fra
             ->method('offsetUnsetByPath')
             ->withConsecutive(
                 ['[filters][columns][filterableAttributeName1_LOCALIZATION_ID]'],
-                ['[sorters][columns][sortableAttributeName2_LOCALIZATION_ID]']
+                ['[sorters][columns][sortableAttributeName2_ENUM_ID]']
             );
 
         $this->listener->onSearchResultAfter($eventAfter);
@@ -371,7 +371,7 @@ class FrontendProductFilterSorterDisablingEventListenerTest extends \PHPUnit\Fra
         ]);
         $attributeActiveFilterableSearchable2 = $this->getEntity(FieldConfigModel::class, [
             'id' => 332,
-            'fieldName' => 'filterableAttributeName2_LOCALIZATION_ID'
+            'fieldName' => 'filterableAttributeName2_ENUM_ID'
         ]);
         $attributeSortable = $this->getEntity(FieldConfigModel::class, ['id' => 34]);
         $attributeActiveSortable = $this->getEntity(FieldConfigModel::class, ['id' => 35]);
@@ -381,7 +381,7 @@ class FrontendProductFilterSorterDisablingEventListenerTest extends \PHPUnit\Fra
         ]);
         $attributeActiveSortableSearchable2 = $this->getEntity(FieldConfigModel::class, [
             'id' => 362,
-            'fieldName' => 'sortableAttributeName2_LOCALIZATION_ID'
+            'fieldName' => 'sortableAttributeName2_ENUM_ID'
         ]);
         $attributeSearchable = $this->getEntity(FieldConfigModel::class, ['id' => 37]);
         $attributeActiveFilterableSortable = $this->getEntity(FieldConfigModel::class, ['id' => 38]);

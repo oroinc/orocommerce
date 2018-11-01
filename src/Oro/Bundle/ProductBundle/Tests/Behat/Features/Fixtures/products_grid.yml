@@ -1,0 +1,111 @@
+include:
+    - '@OroCustomerBundle/Tests/Behat/Features/Fixtures/CustomerUserAmandaRCole.yml'
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    localProduct{1..20}Name:
+        string: 'Product <current()>'
+
+    localProductAttributeFamily:
+        string: 'Product Attribute Family'
+
+    localCategory{1..4}Title:
+        string: 'Category <current()>'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    productUnitPrecision{1..20}:
+        unit: '@item'
+        precision: '1'
+
+Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily:
+    productAttributeFamily:
+        entityClass: 'Oro\Bundle\ProductBundle\Entity\Product'
+        code: 'product_attribute_family_code'
+        addLabel: ['@localProductAttributeFamily']
+        organization: '@organization'
+        owner: '@admin'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product{1..20}:
+        type: 'simple'
+        sku: 'PSKU<current()>'
+        primaryUnitPrecision: '@productUnitPrecision<current()>'
+        addName: ['@localProduct<current()>Name']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        organization: '@organization'
+        attributeFamily: '@productAttributeFamily'
+        taxCode: '@productTaxCode1'
+
+    product6:
+        status: 'disabled'
+
+    product7:
+        inventoryStatus: '@enumInventoryStatusOutOfStock'
+
+    product8:
+        taxCode: '@productTaxCode2'
+
+    product9:
+        type: 'configurable'
+
+    product10:
+        newArrival: true
+
+Doctrine\Common\Collections\ArrayCollection(local):
+    products1:
+        __construct: [['@product1', '@product2', '@product3', '@product4', '@product5']]
+    products2:
+        __construct: [['@product6', '@product7', '@product8', '@product9', '@product10']]
+    products3:
+        __construct: [['@product11', '@product12', '@product13', '@product14', '@product15']]
+    products4:
+        __construct: [['@product16', '@product17', '@product18', '@product19', '@product20']]
+
+Oro\Bundle\CatalogBundle\Entity\Category:
+    category{1..4}:
+        addTitle: ['@localCategory<current()>Title']
+        setParentCategory: [1]
+        setProducts: ['@products<current()>']
+
+Oro\Bundle\TaxBundle\Entity\ProductTaxCode:
+    productTaxCode{1..2}:
+        code: 'productTaxCode<current()>'
+
+Oro\Bundle\PricingBundle\Entity\ProductPrice:
+    price{1..20}:
+        product: '@product<current()>'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@each'
+        value: <current()>
+
+Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice:
+    priceAttributeProductPrice{1..20}:
+        product: '@product<current()>'
+        priceList: '@priceAttributePriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@each'
+        value: <current(10)>
+
+Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
+    priceRelation{1..20}:
+        product: '@product<current()>'
+        priceList: '@defaultPriceList'
+
+Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList:
+    priceAttributePriceList:
+        name: 'Price Attribute'
+        fieldName: 'priceAttribute'
+
+Oro\Bundle\PricingBundle\Entity\PriceAttributeCurrency:
+    priceAttributeCurrency:
+        priceList: '@priceAttributePriceList'
+        currency: 'USD'
+
+Oro\Bundle\PricingBundle\Entity\CombinedPriceListToCustomer:
+    combinedPriceListToCustomer:
+        pricelist: '@combinedPriceList'
+        customer: '@Customer_AmandaRCole'
+        website: '@website1'

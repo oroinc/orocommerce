@@ -79,8 +79,8 @@ Feature: Limit product filters and sorters in product catalog
     Given I proceed as the Admin
     Given I go to System / Configuration
     And I follow "Commerce/Catalog/Filters and Sorters" on configuration sidebar
-    And uncheck "Use default" for "Hide unrelated product filters and sorting options." field
-    And I uncheck "Hide unrelated product filters and sorting options."
+    And uncheck "Use default" for "Hide Unrelated Product Filters And Sorting Options" field
+    And I uncheck "Hide Unrelated Product Filters And Sorting Options"
     And I click "Save settings"
     Given I proceed as the Buyer
     Then I reload the page

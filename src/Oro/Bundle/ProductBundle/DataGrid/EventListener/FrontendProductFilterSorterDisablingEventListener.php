@@ -22,6 +22,7 @@ use Oro\Bundle\SearchBundle\Datagrid\Event\SearchResultBefore;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\SearchBundle\Query\SearchQueryInterface;
 use Oro\Bundle\WebsiteSearchBundle\Attribute\Type\SearchableAttributeTypeInterface;
+use Oro\Bundle\WebsiteSearchBundle\Placeholder\EnumIdPlaceholder;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
 use Oro\Component\DependencyInjection\ServiceLink;
 
@@ -305,11 +306,8 @@ class FrontendProductFilterSorterDisablingEventListener
      */
     private function clearName($name)
     {
-        $placeholder = '_'.LocalizationIdPlaceholder::NAME;
-        if (strpos($name, $placeholder) !== false) {
-            $name = str_replace($placeholder, '', $name);
-        }
+        $placeholders = ['_'.LocalizationIdPlaceholder::NAME => '', '_'.EnumIdPlaceholder::NAME => ''];
 
-        return $name;
+        return strtr($name, $placeholders);
     }
 }

@@ -141,5 +141,5 @@ oro_behat_extension:
     Export Button:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
-        locator: '//a[@type="button" and contains(text(),"Export")]'
+        locator: '//a[@role="button" and contains(text(),"Export")]'
         type: xpath
