@@ -6,6 +6,7 @@ oro_behat_extension:
         - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
         - OroCheckoutBundle::FeatureContext
         - OroFormBundle::FormContext
+        - OroEmailBundle::EmailContext
         - OroSaleBundle::FeatureContext
         - OroShoppingListBundle::ShoppingListContext
         - OroUPSBundle::FeatureContext
