@@ -44,7 +44,7 @@ class QuoteController extends Controller
         }
 
         return [
-            'data' => ['entity' => $quote, 'quote' => $quote]
+            'data' => ['entity' => $quote]
         ];
     }
 
@@ -97,7 +97,7 @@ class QuoteController extends Controller
     public function indexAction()
     {
         return [
-            'entity_class' => $this->container->getParameter('oro_sale.entity.quote.class')
+            'entity_class' => $this->getParameter('oro_sale.entity.quote.class')
         ];
     }
 

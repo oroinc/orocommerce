@@ -70,15 +70,3 @@ acls:
         label: oro.sale.security.permission.add_free_form_items
         type: action
         category: "quotes"
-
-    oro_sale_quote_frontend_choice:
-        type: entity
-        permission: VIEW
-        class: OroSaleBundle:Quote
-        group_name: "commerce"
-
-    oro_sale_quote_frontend_subtotals:
-        type: entity
-        permission: VIEW
-        class: OroSaleBundle:Quote
-        group_name: "commerce"

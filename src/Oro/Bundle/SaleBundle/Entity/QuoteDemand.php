@@ -101,7 +101,7 @@ class QuoteDemand implements
     protected $totalCurrency;
 
     /**
-     * @var CustomerVisitor
+     * @var CustomerVisitor|null
      *
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\CustomerBundle\Entity\CustomerVisitor")
      * @ORM\JoinColumn(name="visitor_id", referencedColumnName="id", onDelete="SET NULL")
