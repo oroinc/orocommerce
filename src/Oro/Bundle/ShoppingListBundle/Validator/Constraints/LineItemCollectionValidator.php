@@ -8,6 +8,10 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
+/**
+ * Validates LineItemCollection Constraint.
+ * Also it dispatches event LineItemValidateEvent before validation.
+ */
 class LineItemCollectionValidator extends ConstraintValidator
 {
     /**
@@ -41,7 +45,7 @@ class LineItemCollectionValidator extends ConstraintValidator
         if ($event->hasErrors()) {
             foreach ($event->getErrors() as $error) {
                 $this->context->buildViolation($error['message'])
-                    ->atPath(sprintf('product.%s', $error['sku']))
+                    ->atPath(sprintf('product.%s.%s', $error['sku'], $error['unit']))
                     ->addViolation();
             }
         }

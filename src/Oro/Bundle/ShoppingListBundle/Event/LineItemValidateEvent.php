@@ -6,6 +6,10 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\EntityConfigBundle\Event\Event;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 
+/**
+ * This event allows to manage validation errors for LineItems.
+ * It is dispatched by LineItemCollectionValidator.
+ */
 class LineItemValidateEvent extends Event
 {
     const NAME = 'line_item.validate';
@@ -59,14 +63,14 @@ class LineItemValidateEvent extends Event
     }
 
     /**
-     * @param string $sku
-     * @param string $message
-     *
+     * @param $sku
+     * @param $unit
+     * @param $message
      * @return $this
      */
-    public function addError($sku, $message)
+    public function addError($sku, $unit, $message)
     {
-        $this->errors->add(['sku' => $sku, 'message' => $message]);
+        $this->errors->add(['sku' => $sku, 'unit' => $unit, 'message' => $message]);
 
         return $this;
     }
