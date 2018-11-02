@@ -24,11 +24,13 @@ class LineItemValidateEventTest extends \PHPUnit\Framework\TestCase
 
     public function testAddError()
     {
-        $this->lineItemValidateEvent->addError('testSku', 'testMessage');
+        $this->lineItemValidateEvent->addError('testSku', 'item', 'testMessage');
         $errors = $this->lineItemValidateEvent->getErrors();
         $this->assertCount(1, $errors);
         $this->assertArrayHasKey('sku', $errors[0]);
         $this->assertEquals($errors[0]['sku'], 'testSku');
+        $this->assertArrayHasKey('unit', $errors[0]);
+        $this->assertEquals($errors[0]['unit'], 'item');
         $this->assertArrayHasKey('message', $errors[0]);
         $this->assertEquals($errors[0]['message'], 'testMessage');
     }
@@ -36,7 +38,7 @@ class LineItemValidateEventTest extends \PHPUnit\Framework\TestCase
     public function testHasErrors()
     {
         $this->assertFalse($this->lineItemValidateEvent->hasErrors());
-        $this->lineItemValidateEvent->addError('testSku', 'testMessage');
+        $this->lineItemValidateEvent->addError('testSku', 'item', 'testMessage');
         $this->assertTrue($this->lineItemValidateEvent->hasErrors());
     }
 }
