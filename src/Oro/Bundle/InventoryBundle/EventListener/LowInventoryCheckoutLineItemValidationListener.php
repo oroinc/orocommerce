@@ -7,6 +7,9 @@ use Oro\Bundle\InventoryBundle\Validator\LowInventoryCheckoutLineItemValidator;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ShoppingListBundle\Event\LineItemValidateEvent;
 
+/**
+ * Adds validation errors to LineItemValidateEvent.
+ */
 class LowInventoryCheckoutLineItemValidationListener
 {
     /**
@@ -42,7 +45,11 @@ class LowInventoryCheckoutLineItemValidationListener
             }
 
             if ($lowInventoryWarning = $this->validator->getMessageIfLineItemRunningLow($lineItem)) {
-                $event->addWarning($lineItem->getProduct()->getSku(), $lowInventoryWarning);
+                $event->addWarning(
+                    $lineItem->getProduct()->getSku(),
+                    $lineItem->getProductUnitCode(),
+                    $lowInventoryWarning
+                );
             }
         }
     }

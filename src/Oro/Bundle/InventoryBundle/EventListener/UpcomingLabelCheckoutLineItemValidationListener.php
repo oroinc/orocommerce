@@ -7,6 +7,9 @@ use Oro\Bundle\InventoryBundle\Validator\UpcomingLabelCheckoutLineItemValidator;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ShoppingListBundle\Event\LineItemValidateEvent;
 
+/**
+ * Adds validation errors to LineItemValidateEvent.
+ */
 class UpcomingLabelCheckoutLineItemValidationListener
 {
     /** @var UpcomingLabelCheckoutLineItemValidator */
@@ -37,7 +40,11 @@ class UpcomingLabelCheckoutLineItemValidationListener
 
             $upcomingWarning = $this->validator->getMessageIfLineItemUpcoming($lineItem);
             if ($upcomingWarning) {
-                $event->addWarning($lineItem->getProduct()->getSku(), $upcomingWarning);
+                $event->addWarning(
+                    $lineItem->getProduct()->getSku(),
+                    $lineItem->getProductUnitCode(),
+                    $upcomingWarning
+                );
             }
         }
     }
