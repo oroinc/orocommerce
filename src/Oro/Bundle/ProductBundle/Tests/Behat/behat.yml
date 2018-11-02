@@ -853,7 +853,7 @@ oro_behat_extension:
     Brand humburger button:
       selector:
         type: xpath
-        locator: '//label[text()="Brand"]/../..//button[@class="add-on btn entity-select-btn"]'
+        locator: '//label[text()="Brand"]/../..//button[contains(@class, "entity-select-btn")]'
 
     Frontend Product Grid MultipleChoice:
       selector: 'div.filter-item'
