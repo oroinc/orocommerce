@@ -189,7 +189,7 @@ class SearchMessageProcessor implements MessageProcessorInterface
             $batchSize = count($entityClassesToIndex) * count($websiteIdsToIndex);
             // As granulizer returns iterable but not countable we can't count messages, buffer used instead
             // in order to process data without triggering new messages when it's smaller than batch size
-            $buffer       = [];
+            $buffer = [];
             $enableBuffer = true;
             foreach ($reindexMsgData as $msgData) {
                 if ($enableBuffer) {
@@ -205,7 +205,7 @@ class SearchMessageProcessor implements MessageProcessorInterface
                             $bufferMsgData
                         );
                     }
-                    $buffer       = [];
+                    $buffer = [];
                     $enableBuffer = false;
                 }
                 $this->messageProducer->send(

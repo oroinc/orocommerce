@@ -20,6 +20,9 @@ use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Psr\Log\LoggerInterface;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class SearchMessageProcessorTest extends \PHPUnit_Framework_TestCase
 {
     /**
@@ -560,7 +563,7 @@ class SearchMessageProcessorTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param \Exception|\PHPUnit_Framework_MockObject_MockObject $exception
-     * @param bool   $isDeadlock
+     * @param bool $isDeadlock
      * @param string $result
      *
      * @dataProvider getProcessExceptionsDataProvider
