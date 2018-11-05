@@ -389,6 +389,8 @@ action_groups:
                 service: oro_website.manager
                 method: getCurrentWebsite
 
+            - '@assign_value': [$.checkoutActualizationRequired, true]
+
             - '@tree':
                 conditions:
                     '@empty': $.checkout.id
@@ -408,11 +410,52 @@ action_groups:
                     - '@create_datetime': {attribute: $.checkout.updatedAt}
                     - '@assign_value': [$.updateData, true]
 
+                    - '@run_action_group':
+                        action_group: actualize_checkout
+                        parameters_mapping:
+                            checkout: $.checkout
+                            updateData: $.updateData
+                            currentUser: $.currentUser
+                            currentWebsite: $.currentWebsite
+                            checkoutData: $.checkoutData
+
+                    - '@assign_value': [$.checkoutActualizationRequired, false]
+                    - '@flush_entity': $.checkout
+
                     - '@start_workflow':
                         attribute: $.workflowItem
                         name: $.currentWorkflow.name
                         entity: $.checkout
 
+            - '@tree':
+                conditions:
+                    '@equal': [$.checkoutActualizationRequired, true]
+                actions:
+                    - '@run_action_group':
+                        action_group: actualize_checkout
+                        parameters_mapping:
+                            checkout: $.checkout
+                            updateData: $.updateData
+                            currentUser: $.currentUser
+                            currentWebsite: $.currentWebsite
+                            checkoutData: $.checkoutData
+                    - '@flush_entity': $.checkout
+
+    actualize_checkout:
+        parameters:
+            checkout:
+                type: Oro\Bundle\CheckoutBundle\Entity\Checkout
+            updateData:
+                type: bool
+                default: false
+            currentUser:
+                default: null
+            currentWebsite:
+                type: Oro\Bundle\WebsiteBundle\Entity\Website
+            checkoutData:
+                type: array
+                default: []
+        actions:
             # update checkout data
             - '@tree':
                 conditions:
@@ -445,7 +488,37 @@ action_groups:
                 method: recalculateCheckoutSubtotals
                 method_parameters: [$.checkout]
 
-            - '@flush_entity': $.checkout
+    actualize_workflow_state:
+        parameters:
+            checkout:
+                type: Oro\Bundle\CheckoutBundle\Entity\Checkout
+            state_token:
+                type: string
+        actions:
+            - '@generate_checkout_state_snapshot':
+                entity: $.checkout
+                attribute: $.currentCheckoutState
+            - '@get_checkout_state':
+                entity: $.checkout
+                token: $.state_token
+                attribute: $.tokenCheckoutState
+            - '@assign_value': [$.checkoutStateChanged, false]
+            - '@tree':
+                conditions:
+                    '@not':
+                        - '@check_checkout_states':
+                            entity: $.checkout
+                            state1: $.currentCheckoutState
+                            state2: $.tokenCheckoutState
+                actions:
+                    - '@assign_value': [$.checkoutStateChanged, true]
+                    - '@delete_checkout_state':
+                        entity: $.checkout
+                        token: $.state_token
+                    - '@save_checkout_state':
+                        entity: $.checkout
+                        state: $.currentCheckoutState
+                        token: $.state_token
 
     update_workflow_item:
         parameters:
