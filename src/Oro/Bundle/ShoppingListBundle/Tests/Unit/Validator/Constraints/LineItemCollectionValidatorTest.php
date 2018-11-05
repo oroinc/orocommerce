@@ -55,7 +55,7 @@ class LineItemCollectionValidatorTest extends \PHPUnit_Framework_TestCase
             ->method('dispatch')
             ->willReturnCallback(
                 function ($eventName, $event) {
-                    $event->addError('testSku', 'item', 'testMessage');
+                    $event->addErrorByUnit('testSku', 'item', 'testMessage');
                 }
             );
         $executionContext = $this->createMock(ExecutionContextInterface::class);
