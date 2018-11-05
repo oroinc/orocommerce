@@ -469,7 +469,6 @@ action_groups:
                         - '@not_empty': $.email
                         - '@not_empty': $.billing_address
                         - '@not_empty': $.checkout.customerUser
-                        - '@empty': $.checkout.customerUser.firstName
                 actions:
                     - '@call_service_method':
                         attribute: $.checkout.customerUser

@@ -239,7 +239,6 @@ abstract class AbstractOrderAddressTypeTest extends AbstractAddressTypeTest
                     'street' => 'Street',
                     'street2' => 'Street2',
                     'city' => 'City',
-                    'region_text' => 'Region Text',
                     'postalCode' => 'AL',
                     'country' => static::COUNTRY_WITH_REGION,
                     'region' => static::REGION_WITH_COUNTRY,
@@ -256,7 +255,6 @@ abstract class AbstractOrderAddressTypeTest extends AbstractAddressTypeTest
                     ->setStreet2('Street2_stripped')
                     ->setCity('City_stripped')
                     ->setRegion($region)
-                    ->setRegionText('Region Text')
                     ->setPostalCode('AL_stripped')
                     ->setCountry($country),
                 'defaultData' => $emptyAddress,

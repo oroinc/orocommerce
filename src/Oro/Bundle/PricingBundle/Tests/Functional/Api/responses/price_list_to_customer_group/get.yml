@@ -11,5 +11,5 @@ data:
                 id: '<toString(@price_list_6->id)>'
         customerGroup:
             data:
-                type: 'customer_groups'
+                type: 'customergroups'
                 id: '<toString(@customer_group.group1->id)>'
