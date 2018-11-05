@@ -236,6 +236,7 @@ class AjaxLineItemControllerTest extends WebTestCase
                 'oro_shopping_list_frontend_remove_product',
                 [
                     'productId' => $product->getId(),
+                    'shoppingListId' => $shoppingList->getId()
                 ]
             )
         );

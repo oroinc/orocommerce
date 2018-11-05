@@ -30,6 +30,7 @@ use Symfony\Component\Translation\TranslatorInterface;
  *
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  * @SuppressWarnings(PHPMD.ExcessiveParameterList)
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  */
 class ShoppingListManager
 {
@@ -238,7 +239,7 @@ class ShoppingListManager
             if ($lineItem->getQuantity() > 0) {
                 $this->updateLineItemQuantity($lineItem, $duplicate);
             } else {
-                $this->removeGivenLineItem($duplicate);
+                $this->removeLineItem($duplicate);
             }
         };
 
@@ -344,13 +345,13 @@ class ShoppingListManager
      *
      * @return int Number of deleted line items
      */
-    public function removeLineItem(LineItem $lineItem): int
+    public function removeLineItemAndCheckConfigurable(LineItem $lineItem): int
     {
         $parentProduct = $lineItem->getParentProduct();
         if (!$parentProduct
             || $this->getAvailableMatrixFormType($parentProduct, $lineItem) === Configuration::MATRIX_FORM_NONE
         ) {
-            $this->removeGivenLineItem($lineItem);
+            $this->removeLineItem($lineItem);
 
             // return 1 because only the specified line item was deleted
             return 1;
@@ -365,7 +366,7 @@ class ShoppingListManager
     /**
      * @param LineItem $lineItem
      */
-    private function removeGivenLineItem(LineItem $lineItem)
+    public function removeLineItem(LineItem $lineItem)
     {
         $objectManager = $this->managerRegistry->getManagerForClass('OroShoppingListBundle:LineItem');
         $objectManager->remove($lineItem);
