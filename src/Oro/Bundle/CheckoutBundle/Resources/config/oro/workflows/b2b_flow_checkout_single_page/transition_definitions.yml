@@ -240,9 +240,11 @@ workflows:
                     - '@assign_constant_value': [$.result.validateAction, Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface::VALIDATE]
                     - '@tree':
                         conditions:
-                            '@payment_method_supports':
-                                payment_method: $checkout.paymentMethod
-                                action: $.result.validateAction
+                            '@and':
+                                - '@payment_method_supports':
+                                    payment_method: $checkout.paymentMethod
+                                    action: $.result.validateAction
+                                - '@equal': [$payment_validate, true]
                         actions:
                              # validate payment
                             - '@assign_url':
@@ -279,6 +281,7 @@ workflows:
                                 - '@equal':
                                     - true
                                     - $.result.responseData[successful]
+                                - '@equal': [$payment_validate, false]
                         actions:
                             # purchase, validation not supported
                             - '@run_action_group':
@@ -368,7 +371,6 @@ workflows:
                                     state2: $.result.savedCheckoutState
 
                 actions:
-                    - '@assign_constant_value': [$.result.validateAction, Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface::VALIDATE]
                     - '@run_action_group':
                         action_group: b2b_flow_checkout_purchase
                         parameters_mapping:
@@ -378,7 +380,6 @@ workflows:
                                 additionalData: $additional_data
                         results:
                             result.responseData: $.responseData
-
                     - '@extendable':
                         events: [extendable_action.finish_checkout]
                     - '@redirect':

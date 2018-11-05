@@ -120,6 +120,17 @@ workflows:
                             - '.checkout-payment-methods .checkout-form__payment-container'
                         enableOnLoad: false
                 form_options:
+                    form_init:
+                        - '@assign_value': [$payment_validate, true]
+                        - '@call_service_method':
+                            service: oro_payment.provider.payment_transaction
+                            method: getActiveValidatePaymentTransaction
+                            method_parameters: [$payment_method]
+                            attribute: $.result.validatePaymentTransaction
+                        - '@assign_value':
+                            conditions:
+                                '@not_empty': [$.result.validatePaymentTransaction]
+                            parameters: [$payment_validate, false]
                     attribute_fields:
                         billing_address:
                             form_type: oro_checkout_address
