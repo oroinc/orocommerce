@@ -1,0 +1,16 @@
+data:
+    type: orderaddresses
+    attributes:
+        street: '1215 Caldwell Road'
+        city: 'Rochester'
+        postalCode: '14608'
+        organization: 'test organization'
+    relationships:
+        country:
+            data:
+                type: countries
+                id: '<toString(@country.usa->iso2Code)>'
+        region:
+            data:
+                type: regions
+                id: '<toString(@region.usny->combinedCode)>'
