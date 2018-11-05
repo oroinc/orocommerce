@@ -12,6 +12,7 @@ use Oro\Bundle\ProductBundle\Exception\InvalidArgumentException;
 use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use Oro\Bundle\ProductBundle\Search\ProductRepository as ProductSearchRepository;
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
+use Oro\Bundle\SearchBundle\Query\Result\Item;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
@@ -38,21 +39,28 @@ class ProductVisibilityLimitedSearchHandler extends SearchHandler
     private $localizationHelper;
 
     /**
-     * @param string $entityName
-     * @param RequestStack $requestStack
+     * @param string         $entityName
+     * @param array          $properties
+     * @param RequestStack   $requestStack
      * @param ProductManager $productManager
-     * @param LocalizationHelper $localizationHelper
      */
     public function __construct(
         $entityName,
+        array $properties,
         RequestStack $requestStack,
-        ProductManager $productManager,
-        LocalizationHelper $localizationHelper
+        ProductManager $productManager
     ) {
         $this->requestStack   = $requestStack;
         $this->productManager = $productManager;
-        $this->localizationHelper = $localizationHelper;
         parent::__construct($entityName, ['sku', 'defaultName.string']);
+    }
+
+    /**
+     * @param LocalizationHelper $localizationHelper
+     */
+    public function setLocalizationHelper(LocalizationHelper $localizationHelper): void
+    {
+        $this->localizationHelper = $localizationHelper;
     }
 
     /**
@@ -103,13 +111,35 @@ class ProductVisibilityLimitedSearchHandler extends SearchHandler
         } elseif ($item instanceof Product) {
             $result += [
                 'sku' => $item->getSku(),
-                'defaultName.string' => (string) $this->localizationHelper->getLocalizedValue($item->getNames()),
+                'defaultName.string' => (string) $item->getDefaultName(),
             ];
+            if ($this->localizationHelper) {
+                $result['defaultName.string'] = (string) $this->localizationHelper
+                    ->getLocalizedValue($item->getNames());
+            }
         } else {
             throw new InvalidArgumentException('Given item could not be converted');
         }
 
         return $result;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getProperties()
+    {
+        if (!isset($this->properties['orm'])) {
+            return $this->properties; // usual case
+        }
+
+        $request = $this->requestStack->getCurrentRequest();
+
+        if (null === $this->frontendHelper || (false === $this->frontendHelper->isFrontendRequest($request))) {
+            return $this->properties['orm'];
+        }
+
+        return $this->properties['search'];
     }
 
     /**
@@ -173,11 +203,40 @@ class ProductVisibilityLimitedSearchHandler extends SearchHandler
     }
 
     /**
+     * @param Item   $item
+     * @param string $property
+     * @return null|string
+     *
+     * @deprecated since v2.6
+     */
+    protected function getSelectedData($item, $property)
+    {
+        $data = $item->getSelectedData();
+
+        if (empty($data)) {
+            return null;
+        }
+
+        foreach ($data as $key => $value) {
+            if ($key === $property) {
+                return (string)$value;
+            }
+
+            // support localized properties
+            if (strpos($key, $property) === 0) {
+                return (string)$value;
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * @param $object
      * @return bool
      */
     protected function isItem($object)
     {
-        return is_object($object) && method_exists($object, 'getSelectedData');
+        return \is_object($object) && method_exists($object, 'getSelectedData');
     }
 }

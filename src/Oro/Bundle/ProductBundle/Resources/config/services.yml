@@ -466,14 +466,15 @@ services:
         public: false
         arguments:
             - '%oro_product.entity.product.class%'
+            - { search: {sku: "sku", name: "defaultName.string"}, orm: {sku: "sku", defaultName.string: "defaultName.string"}}
             - "@request_stack"
             - "@oro_product.product.manager"
-            - "@oro_locale.helper.localization"
         calls:
             - [initDoctrinePropertiesByManagerRegistry, ["@doctrine"]]
             - [setAclHelper,["@oro_security.acl_helper"]]
             - [setFrontendHelper,["@oro_frontend.request.frontend_helper"]]
             - [setSearchRepository,["@oro_product.website_search.repository.product"]]
+            - [setLocalizationHelper,["@oro_locale.helper.localization"]]
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: "oro_product_visibility_limited" }
 
