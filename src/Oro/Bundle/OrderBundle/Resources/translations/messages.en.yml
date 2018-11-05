@@ -204,7 +204,9 @@ oro:
             entity_plural_label:          Order Addresses
             entity_description:           Order Addresses refer to the address information that was used by customer users as the billing or shipping address in their orders.
             id.label:                     ID
-            customer_address.label:       Customer address
+            customer_address:
+                label:                    Customer address
+                description:              The identifier of customer address, which was used as order address.
             customer_user_address:
                 label:                    Customer user address
                 description:              The identifier of customer user address, which was used as order address.
@@ -241,7 +243,9 @@ oro:
             region:
                 label:                    State
                 description:              The state or region provided in the order shipping or billing address.
-            region_text.label:            State
+            region_text:
+                label:                    State
+                description:              The region name for cases when a country does not have predefined regions.
             street:
                 label:                    Street
                 description:              The street address provided in the order shipping or billing address.
