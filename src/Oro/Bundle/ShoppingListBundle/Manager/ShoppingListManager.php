@@ -238,7 +238,7 @@ class ShoppingListManager
             if ($lineItem->getQuantity() > 0) {
                 $this->updateLineItemQuantity($lineItem, $duplicate);
             } else {
-                $this->removeLineItem($duplicate);
+                $this->removeGivenLineItem($duplicate);
             }
         };
 
@@ -344,13 +344,13 @@ class ShoppingListManager
      *
      * @return int Number of deleted line items
      */
-    public function removeLineItemAndCheckConfigurable(LineItem $lineItem): int
+    public function removeLineItem(LineItem $lineItem): int
     {
         $parentProduct = $lineItem->getParentProduct();
         if (!$parentProduct
             || $this->getAvailableMatrixFormType($parentProduct, $lineItem) === Configuration::MATRIX_FORM_NONE
         ) {
-            $this->removeLineItem($lineItem);
+            $this->removeGivenLineItem($lineItem);
 
             // return 1 because only the specified line item was deleted
             return 1;
@@ -365,7 +365,7 @@ class ShoppingListManager
     /**
      * @param LineItem $lineItem
      */
-    public function removeLineItem(LineItem $lineItem)
+    public function removeGivenLineItem(LineItem $lineItem)
     {
         $objectManager = $this->managerRegistry->getManagerForClass('OroShoppingListBundle:LineItem');
         $objectManager->remove($lineItem);
