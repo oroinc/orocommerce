@@ -456,3 +456,15 @@ oro_behat_extension:
       selector:
         locator: '//div/a[@title="Add to New Front Shopping List"]'
         type: xpath
+
+    Customer Users Registration form:
+      selector: '[id^="customer_users-uid"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Show Registration Instructions Default: 'customer_users[oro_customer___registration_instructions_enabled][use_parent_scope_value]'
+          Show Registration Instructions: 'customer_users[oro_customer___registration_instructions_enabled][value]'
+          Registration Instructions Text Default: 'customer_users[oro_customer___registration_instructions_text][use_parent_scope_value]'
+          Registration Instructions Text: 'customer_users[oro_customer___registration_instructions_text][value]'
+          Confirmation Required Default: 'customer_users[oro_customer___confirmation_required][use_parent_scope_value]'
+          Confirmation Required: 'customer_users[oro_customer___confirmation_required][value]'
