@@ -64,7 +64,7 @@ Feature: Single Page Guest Checkout From Shopping List
     And I click "Search Button"
     And I click "400-Watt Bulb Work Light"
     And I click "Add to Shopping List"
-    And I click "Shopping List"
+    And I follow "Shopping List" link within flash message "Product has been added to \"Shopping list\""
     And I click "Create Order"
 
   Scenario: Check save state works when "Late registration form" in not filled
@@ -125,14 +125,14 @@ Feature: Single Page Guest Checkout From Shopping List
     And I click "Search Button"
     And I click "400-Watt Bulb Work Light"
     And I click "Add to Shopping List"
-    And I click "Shopping List"
+    And I follow "Shopping List" link within flash message "Product has been added to \"Shopping list\""
     And I click "Create Order"
     And I click on "Billing Address Select"
     And I click on "New Address Option"
     And I fill "New Address Popup Form" with:
       | First Name      | July          |
       | Last Name       | Robertson     |
-      | Email           | july@test.com |
+      | Email           | rob1@test.com |
       | Street          | Fifth avenue  |
       | City            | Berlin        |
       | Country         | Germany       |
@@ -171,8 +171,8 @@ Feature: Single Page Guest Checkout From Shopping List
     And I check "Payment Terms" on the checkout page
     And I wait "Submit Order" button
     And I click "Submit Order"
-    Then I see the "Thank You" page with "Thank You For Your Purchase!" title
-    And I should see "Please check your email to complete registration" flash message
+    Then I should see "Please check your email to complete registration" flash message
+    And I see the "Thank You" page with "Thank You For Your Purchase!" title
 
   Scenario: Check guest orders on management console
     Given I proceed as the Admin
@@ -186,7 +186,8 @@ Feature: Single Page Guest Checkout From Shopping List
     Given I proceed as the Admin
     When go to Customers/ Customer Users
     Then I should see following grid:
-      | Customer         | First Name | Last Name | Email Address           |
-      | Company A        | Amanda     | Cole      | AmandaRCole@example.org |
-      | Tester Testerson | Tester     | Testerson | tester@test.com         |
-      | July Robertson   | July       | Robertson | rob1@test.com           |
+      | Customer         | First Name | Last Name | Email Address           | Enabled | Confirmed | Guest |
+      | Company A        | Amanda     | Cole      | AmandaRCole@example.org | Yes     | Yes       | No    |
+      | Tester Testerson | Tester     | Testerson | tester@test.com         | No      | No        | Yes   |
+      | July Robertson   | July       | Robertson | rob1@test.com           | No      | No        | Yes   |
+      | July Robertson   | July       | Robertson | rob1@test.com           | Yes     | No        | No    |

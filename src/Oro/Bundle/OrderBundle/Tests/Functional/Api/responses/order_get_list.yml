@@ -45,7 +45,7 @@ data:
                     id: '<toString(@simple_order->organization->id)>'
             customerUser:
                 data:
-                     type: customer_users
+                     type: customerusers
                      id: '<toString(@simple_order->customerUser->id)>'
             customer:
                 data:
@@ -93,7 +93,7 @@ data:
                     id: '<toString(@simple_order2->organization->id)>'
             customerUser:
                 data:
-                     type: customer_users
+                     type: customerusers
                      id: '<toString(@simple_order2->customerUser->id)>'
             customer:
                 data:
@@ -141,7 +141,7 @@ data:
                     id: '<toString(@simple_order3->organization->id)>'
             customerUser:
                 data:
-                     type: customer_users
+                     type: customerusers
                      id: '<toString(@simple_order3->customerUser->id)>'
             customer:
                 data:
@@ -189,7 +189,7 @@ data:
                     id: '<toString(@simple_order4->organization->id)>'
             customerUser:
                 data:
-                     type: customer_users
+                     type: customerusers
                      id: '<toString(@simple_order4->customerUser->id)>'
             customer:
                 data:
@@ -237,7 +237,7 @@ data:
                     id: '<toString(@simple_order5->organization->id)>'
             customerUser:
                 data:
-                     type: customer_users
+                     type: customerusers
                      id: '<toString(@simple_order5->customerUser->id)>'
             customer:
                 data:
@@ -285,7 +285,7 @@ data:
                     id: '<toString(@simple_order6->organization->id)>'
             customerUser:
                 data:
-                     type: customer_users
+                     type: customerusers
                      id: '<toString(@simple_order6->customerUser->id)>'
             customer:
                 data:
@@ -333,7 +333,7 @@ data:
                     id: '<toString(@my_order->organization->id)>'
             customerUser:
                 data:
-                     type: customer_users
+                     type: customerusers
                      id: '<toString(@my_order->customerUser->id)>'
             customer:
                 data:

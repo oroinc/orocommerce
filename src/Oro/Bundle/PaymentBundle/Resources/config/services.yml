@@ -90,7 +90,7 @@ services:
         class: 'Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider'
         arguments:
             - '@oro_api.doctrine_helper'
-            - '@security.token_storage'
+            - '@oro_customer.security.customer_user_provider'
             - '@event_dispatcher'
             - '%oro_payment.entity.payment_transaction.class%'
         calls:
