@@ -19,7 +19,7 @@ define(function(require) {
             productItem: '[data-role="product-item"]',
             quantity: ['lineItem', '[data-name="field__quantity"]:first'],
             unit: ['lineItem', '[data-name="field__unit"]:first'],
-            lineItem: '[data-role="line-item-form-container"]',
+            lineItem: '[data-role="line-item-form-container"]:first',
             lineItemFields: ':input[data-name]'
         },
 
