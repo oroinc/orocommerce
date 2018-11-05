@@ -68,6 +68,8 @@ class LineItemValidateEvent extends Event
      * @param string $message
      *
      * @return $this
+     *
+     * @deprecated since 2.6, will be removed in 3.1. Use ::addErrorByUnit instead.
      */
     public function addError($sku, $message)
     {
@@ -94,6 +96,8 @@ class LineItemValidateEvent extends Event
      * @param string $message
      *
      * @return $this
+     *
+     * @deprecated since 2.6, will be removed in 3.1. Use ::addWarningByUnit instead.
      */
     public function addWarning($sku, $message)
     {
