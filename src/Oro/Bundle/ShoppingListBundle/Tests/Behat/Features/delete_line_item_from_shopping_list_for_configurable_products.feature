@@ -62,7 +62,7 @@ Feature: Delete line item from shopping list for configurable products
     Given I proceed as the User
     Given I signed in as AmandaRCole@example.org on the store frontend
     When Buyer is on Configurable products list 2
-    Then I should see "ConfigurableProductA"
+    Then I should see "Configurable Product A"
     And I should see "Item #: CNF_A"
     When I delete line item 1 in "Shopping List Line Items Table"
     And I click "Yes, Delete"
