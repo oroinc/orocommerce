@@ -7,6 +7,9 @@ use Oro\Bundle\InventoryBundle\Validator\UpcomingLabelCheckoutLineItemValidator;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ShoppingListBundle\Event\LineItemValidateEvent;
 
+/**
+ * Adds validation errors to LineItemValidateEvent.
+ */
 class UpcomingLabelCheckoutLineItemValidationListener
 {
     /** @var UpcomingLabelCheckoutLineItemValidator */
