@@ -49,8 +49,8 @@ Feature: Delete line item from shopping list for configurable products
     And I save form
     Then I should see "Product has been saved" flash message
     When I go to Products / Products
-    And filter SKU as is equal to "CNFA"
-    And I click Edit CNFA in grid
+    And filter SKU as is equal to "CNF_A"
+    And I click Edit CNF_A in grid
     And I should see "No records found"
     And I fill "ProductForm" with:
       | Configurable Attributes | [BooleanAttribute] |
@@ -63,7 +63,7 @@ Feature: Delete line item from shopping list for configurable products
     Given I signed in as AmandaRCole@example.org on the store frontend
     When Buyer is on Configurable products list 2
     Then I should see "ConfigurableProductA"
-    And I should see "Item #: CNFA"
+    And I should see "Item #: CNF_A"
     When I delete line item 1 in "Shopping List Line Items Table"
     And I click "Yes, Delete"
     Then I should see "The Shopping List is empty. Please add at least one product."
@@ -81,16 +81,16 @@ Feature: Delete line item from shopping list for configurable products
     Given I proceed as the User
     When Buyer is on Configurable products list 1
     Then I should see following line items in "Shopping List Line Items Table":
-      | SKU  | Quantity | Unit |
-      | CNFA | 5        | item |
-      | CNFA | 2        | item |
+      | SKU   | Quantity | Unit |
+      | CNF_A | 5        | item |
+      | CNF_A | 2        | item |
     And I should see "BooleanAttribute: Yes"
     And I should see "BooleanAttribute: No"
     When I delete line item 1 in "Shopping List Line Items Table"
     And I click "Yes, Delete"
     Then I should see "Shopping list item has been deleted" flash message
     And I should see following line items in "Shopping List Line Items Table":
-      | SKU  | Quantity | Unit |
-      | CNFA | 2        | item |
+      | SKU   | Quantity | Unit |
+      | CNF_A | 2        | item |
     And I should not see "BooleanAttribute: Yes"
     And I should see "BooleanAttribute: No"
