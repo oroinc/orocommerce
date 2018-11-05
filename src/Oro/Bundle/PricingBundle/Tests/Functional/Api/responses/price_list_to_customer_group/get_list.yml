@@ -12,7 +12,7 @@ data:
                     id: '<toString(@price_list_6->id)>'
             customerGroup:
                 data:
-                    type: 'customer_groups'
+                    type: 'customergroups'
                     id: '<toString(@customer_group.group1->id)>'
     -
         id: '<toString(@price_list_1_US_customer_group1->id)>'
@@ -27,7 +27,7 @@ data:
                     id: '<toString(@price_list_1->id)>'
             customerGroup:
                 data:
-                    type: 'customer_groups'
+                    type: 'customergroups'
                     id: '<toString(@customer_group.group1->id)>'
     -
         id: '<toString(@price_list_5_US_customer_group1->id)>'
@@ -42,7 +42,7 @@ data:
                     id: '<toString(@price_list_5->id)>'
             customerGroup:
                 data:
-                    type: 'customer_groups'
+                    type: 'customergroups'
                     id: '<toString(@customer_group.group1->id)>'
     -
         id: '<toString(@price_list_4_US_customer_group2->id)>'
@@ -57,7 +57,7 @@ data:
                     id: '<toString(@price_list_4->id)>'
             customerGroup:
                 data:
-                    type: 'customer_groups'
+                    type: 'customergroups'
                     id: '<toString(@customer_group.group2->id)>'
     -
         id: '<toString(@price_list_5_Canada_customer_group3->id)>'
@@ -72,5 +72,5 @@ data:
                     id: '<toString(@price_list_5->id)>'
             customerGroup:
                 data:
-                    type: 'customer_groups'
+                    type: 'customergroups'
                     id: '<toString(@customer_group.group3->id)>'

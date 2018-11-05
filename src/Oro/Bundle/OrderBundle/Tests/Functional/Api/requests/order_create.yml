@@ -35,7 +35,7 @@ data:
                   id: '<toString(@simple_order->organization->id)>'
           customerUser:
               data:
-                   type: customer_users
+                   type: customerusers
                    id: '<toString(@simple_order->customerUser->id)>'
           customer:
               data:
