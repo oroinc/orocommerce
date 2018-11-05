@@ -365,7 +365,7 @@ class ShoppingListManager
     /**
      * @param LineItem $lineItem
      */
-    public function removeGivenLineItem(LineItem $lineItem)
+    private function removeGivenLineItem(LineItem $lineItem)
     {
         $objectManager = $this->managerRegistry->getManagerForClass('OroShoppingListBundle:LineItem');
         $objectManager->remove($lineItem);
