@@ -43,7 +43,7 @@ class UpcomingLabelCheckoutLineItemValidationListenerTest extends \PHPUnit\Frame
         $this->validator->expects($this->once())->method('getMessageIfLineItemUpcoming')->with($lineItem)
             ->willReturn('some string');
 
-        $this->event->expects($this->once())->method('addWarning')->with('SKU', 'set', 'some string');
+        $this->event->expects($this->once())->method('addWarningByUnit')->with('SKU', 'set', 'some string');
 
         $this->listener->onLineItemValidate($this->event);
     }
@@ -62,7 +62,7 @@ class UpcomingLabelCheckoutLineItemValidationListenerTest extends \PHPUnit\Frame
         $this->validator->expects($this->never())->method('getMessageIfLineItemUpcoming')->with($lineItem)
             ->willReturn('some string');
 
-        $this->event->expects($this->never())->method('addWarning')->with('SKU', 'set', 'some string');
+        $this->event->expects($this->never())->method('addWarningByUnit')->with('SKU', 'set', 'some string');
 
         $this->listener->onLineItemValidate($this->event);
     }
@@ -76,7 +76,7 @@ class UpcomingLabelCheckoutLineItemValidationListenerTest extends \PHPUnit\Frame
 
         $this->validator->expects($this->never())->method('getMessageIfLineItemUpcoming');
 
-        $this->event->expects($this->never())->method('addWarning')->with('SKU', 'set', 'some string');
+        $this->event->expects($this->never())->method('addWarningByUnit')->with('SKU', 'set', 'some string');
 
         $this->listener->onLineItemValidate($this->event);
     }
@@ -91,7 +91,7 @@ class UpcomingLabelCheckoutLineItemValidationListenerTest extends \PHPUnit\Frame
 
         $this->validator->expects($this->never())->method('getMessageIfLineItemUpcoming');
 
-        $this->event->expects($this->never())->method('addWarning')->with('SKU', 'set', 'some string');
+        $this->event->expects($this->never())->method('addWarningByUnit')->with('SKU', 'set', 'some string');
 
         $this->listener->onLineItemValidate($this->event);
     }

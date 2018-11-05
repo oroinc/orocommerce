@@ -40,7 +40,7 @@ class UpcomingLabelCheckoutLineItemValidationListener
 
             $upcomingWarning = $this->validator->getMessageIfLineItemUpcoming($lineItem);
             if ($upcomingWarning) {
-                $event->addWarning(
+                $event->addWarningByUnit(
                     $lineItem->getProduct()->getSku(),
                     $lineItem->getProductUnitCode(),
                     $upcomingWarning

@@ -47,11 +47,11 @@ class LineItemValidationListener
             }
 
             if ($maxError = $this->validatorService->getMaximumErrorIfInvalid($product, $lineItem->getQuantity())) {
-                $event->addError($product->getSku(), $lineItem->getProductUnitCode(), $maxError);
+                $event->addErrorByUnit($product->getSku(), $lineItem->getProductUnitCode(), $maxError);
                 continue;
             }
             if ($minError = $this->validatorService->getMinimumErrorIfInvalid($product, $lineItem->getQuantity())) {
-                $event->addError($product->getSku(), $lineItem->getProductUnitCode(), $minError);
+                $event->addErrorByUnit($product->getSku(), $lineItem->getProductUnitCode(), $minError);
             }
         }
     }
