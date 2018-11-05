@@ -2,13 +2,13 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Provider;
 
-use Doctrine\ORM\EntityManager;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaFactoryInterface;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaInterface;
 use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
+use Oro\Bundle\PricingBundle\Provider\WebsiteCurrencyProvider;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemNotPricedSubtotalProvider;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\SubtotalProviderConstructorArguments;
@@ -21,9 +21,19 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Translation\TranslatorInterface;
 
-class LineItemNotPricedSubtotalProviderTest extends AbstractSubtotalProviderTest
+class LineItemNotPricedSubtotalProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
+
+    /**
+     * @var UserCurrencyManager|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $currencyManager;
+
+    /**
+     * @var WebsiteCurrencyProvider|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $websiteCurrencyProvider;
 
     /**
      * @var LineItemNotPricedSubtotalProvider
@@ -46,95 +56,80 @@ class LineItemNotPricedSubtotalProviderTest extends AbstractSubtotalProviderTest
     protected $productPriceProvider;
 
     /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|DoctrineHelper
-     */
-    protected $doctrineHelper;
-
-    /**
      * @var \PHPUnit\Framework\MockObject\MockObject|ProductPriceScopeCriteriaFactoryInterface
      */
     protected $priceScopeCriteriaFactory;
 
     protected function setUp()
     {
-        parent::setUp();
+        $this->currencyManager = $this->createMock(UserCurrencyManager::class);
+        $this->websiteCurrencyProvider = $this->createMock(WebsiteCurrencyProvider::class);
         $this->translator = $this->createMock(TranslatorInterface::class);
-
         $this->roundingService = $this->createMock(RoundingServiceInterface::class);
-        $this->roundingService->expects($this->any())
-            ->method('round')
-            ->will(
-                $this->returnCallback(
-                    function ($value) {
-                        return round($value, 0, PHP_ROUND_HALF_UP);
-                    }
-                )
-            );
-
         $this->productPriceProvider = $this->createMock(ProductPriceProviderInterface::class);
-
-        $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
         $this->priceScopeCriteriaFactory = $this->createMock(ProductPriceScopeCriteriaFactoryInterface::class);
 
         $this->provider = new LineItemNotPricedSubtotalProvider(
             $this->translator,
             $this->roundingService,
             $this->productPriceProvider,
-            $this->doctrineHelper,
             new SubtotalProviderConstructorArguments($this->currencyManager, $this->websiteCurrencyProvider),
             $this->priceScopeCriteriaFactory
         );
     }
 
-    protected function tearDown()
-    {
-        unset($this->translator, $this->provider);
-    }
-
     /**
-     * @dataProvider getPriceDataProvider
-     * @param float  $value
-     * @param string $identifier
-     * @param float  $defaultQuantity
-     * @param float  $quantity
-     * @param float  $expectedValue
-     * @param int    $precision
-     * @param string $code
+     * @dataProvider lineItemsDataProvider
+     *
+     * @param array $lineItemsData
+     * @param float $expectedValue
+     * @param int $precision
      */
     public function testGetSubtotal(
-        $value,
-        $identifier,
-        $defaultQuantity,
-        $quantity,
+        array $lineItemsData,
         $expectedValue,
-        $precision,
-        $code
+        $precision
     ) {
         $currency = 'USD';
 
+        $this->roundingService->expects($this->any())
+            ->method('round')
+            ->will(
+                $this->returnCallback(
+                    function ($value) use ($precision) {
+                        return round($value, $precision, PHP_ROUND_HALF_UP);
+                    }
+                )
+            );
         $this->translator->expects($this->once())
             ->method('trans')
             ->with(LineItemNotPricedSubtotalProvider::NAME . '.label')
             ->willReturn('test');
 
-        $product = $this->prepareProduct();
-        $productUnit = $this->prepareProductUnit($code, $precision);
-        $this->prepareEntityManager($product, $productUnit);
-        $this->preparePrice($value, $identifier, $defaultQuantity);
-
+        $prices = [];
         $entity = new EntityNotPricedStub();
-        $lineItem = new LineItemNotPricedStub();
-        $lineItem->setProduct($product);
-        $lineItem->setProductUnit($productUnit);
-        $lineItem->setQuantity($quantity);
+        foreach ($lineItemsData as $item) {
+            /** @var Product $product */
+            $product = $this->getEntity(Product::class, ['id' => $item['product_id']]);
+            /** @var ProductUnit $productUnit */
+            $productUnit = $this->getEntity(ProductUnit::class, ['code' => $item['unit']]);
 
-        $entity->addLineItem($lineItem);
+            $lineItem = new LineItemNotPricedStub();
+            $lineItem->setProduct($product);
+            $lineItem->setProductUnit($productUnit);
+            $lineItem->setQuantity($item['quantity']);
+            $entity->addLineItem($lineItem);
+
+            $prices[$item['identifier']] = Price::create($item['price'], $currency);
+        }
+
+        $this->productPriceProvider->expects($this->any())
+            ->method('getMatchedPrices')
+            ->willReturn($prices);
 
         $websiteId = 101;
-        $website = new Website();
+        /** @var Website $website */
+        $website = $this->getEntity(Website::class, ['id' => $websiteId]);
         $this->setValue($website, 'id', $websiteId);
         $entity->setWebsite($website);
 
@@ -159,8 +154,80 @@ class LineItemNotPricedSubtotalProviderTest extends AbstractSubtotalProviderTest
         $this->assertTrue($subtotal->isVisible());
     }
 
+    /**
+     * @return array
+     */
+    public function lineItemsDataProvider()
+    {
+        return [
+            'price with precision 2, system precision 2' => [
+                'lineItems' => [
+                    [
+                        'product_id' => 1,
+                        'price' => 0.03,
+                        'identifier' => '1-kg-3-USD',
+                        'quantity' => 3,
+                        'unit' => 'kg'
+                    ],
+                    [
+                        'product_id' => 2,
+                        'price' => 1.02,
+                        'identifier' => '2-item-7-USD',
+                        'quantity' => 7,
+                        'unit' => 'item'
+                    ]
+                ],
+                'expectedValue' => 7.23,
+                'precision' => 2,
+            ],
+            'price with precision 4, system precision 2' => [
+                'lineItems' => [
+                    [
+                        'product_id' => 1,
+                        'price' => 0.0149,
+                        'identifier' => '1-kg-3-USD',
+                        'quantity' => 3,
+                        'unit' => 'kg'
+                    ],
+                    [
+                        'product_id' => 2,
+                        'price' => 1.0149,
+                        'identifier' => '2-item-7-USD',
+                        'quantity' => 7,
+                        'unit' => 'item'
+                    ]
+                ],
+                'expectedValue' => 7.14,
+                'precision' => 2,
+            ],
+            'price with precision 4, system precision 4' => [
+                'lineItems' => [
+                    [
+                        'product_id' => 1,
+                        'price' => 0.0149,
+                        'identifier' => '1-kg-3-USD',
+                        'quantity' => 3,
+                        'unit' => 'kg'
+                    ],
+                    [
+                        'product_id' => 2,
+                        'price' => 1.0149,
+                        'identifier' => '2-item-7-USD',
+                        'quantity' => 7,
+                        'unit' => 'item'
+                    ]
+                ],
+                'expectedValue' => 7.149,
+                'precision' => 4,
+            ],
+        ];
+    }
+
     public function testGetSubtotalWithoutLineItems()
     {
+        $this->roundingService->expects($this->never())
+            ->method('round');
+
         $this->translator->expects($this->once())
             ->method('trans')
             ->with(LineItemNotPricedSubtotalProvider::NAME . '.label')
@@ -198,108 +265,5 @@ class LineItemNotPricedSubtotalProviderTest extends AbstractSubtotalProviderTest
     {
         $entity = new LineItemNotPricedStub();
         $this->assertFalse($this->provider->isSupported($entity));
-    }
-
-    /**
-     * @return ProductUnit|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected function prepareProductUnit($code, $precision)
-    {
-        /** @var ProductUnit|\PHPUnit\Framework\MockObject\MockObject $productUnit */
-        $productUnit = $this->getMockBuilder(ProductUnit::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $productUnit->expects($this->any())
-            ->method('getCode')
-            ->willReturn($code);
-        $productUnit->expects($this->any())
-            ->method('getDefaultPrecision')
-            ->willReturn($precision);
-
-        return $productUnit;
-    }
-
-    /**
-     * @return Product|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected function prepareProduct()
-    {
-        /** @var Product|\PHPUnit\Framework\MockObject\MockObject $product */
-        $product = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $product->expects($this->any())
-            ->method('getId')
-            ->willReturn(1);
-
-        return $product;
-    }
-
-    /**
-     * @param Product $product
-     * @param ProductUnit $productUnit
-     */
-    protected function prepareEntityManager(Product $product, ProductUnit $productUnit)
-    {
-        /* @var $entityManager EntityManager|\PHPUnit\Framework\MockObject\MockObject */
-        $entityManager = $this->getMockBuilder(EntityManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->doctrineHelper->expects($this->any())
-            ->method('getEntityManagerForClass')
-            ->willReturn($entityManager);
-        $entityManager->expects($this->at(0))
-            ->method('getReference')
-            ->willReturn($product);
-        $entityManager->expects($this->at(1))
-            ->method('getReference')
-            ->willReturn($productUnit);
-    }
-
-    /**
-     * @param $value
-     * @param $identifier
-     * @param $defaultQuantity
-     */
-    protected function preparePrice($value, $identifier, $defaultQuantity)
-    {
-        /** @var Price|\PHPUnit\Framework\MockObject\MockObject $price */
-        $price = $this->getMockBuilder(Price::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $price->expects($this->any())
-            ->method('getValue')
-            ->willReturn($value / $defaultQuantity);
-
-        $this->productPriceProvider->expects($this->any())
-            ->method('getMatchedPrices')
-            ->willReturn([$identifier => $price]);
-    }
-
-    /**
-     * @return array
-     */
-    public function getPriceDataProvider()
-    {
-        return [
-            'kilogram' => [
-                'value' => 25.0,
-                'identifier' => '1-kg-3-USD',
-                'defaultQuantity' => 0.5,
-                'quantity' => 3,
-                'expectedValue' => 150,
-                'precision' => 3,
-                'code' => 'kg'
-            ],
-            'item' => [
-                'value' => 142.0,
-                'identifier' => '1-item-2-USD',
-                'defaultQuantity' => 1,
-                'quantity' => 2,
-                'expectedValue' => 284,
-                'precision' => 0,
-                'code' => 'item'
-            ],
-        ];
     }
 }
