@@ -147,13 +147,14 @@ class ProductVariantIndexDataProviderDecoratorTest extends WebTestCase
         $response = $this->client->requestFrontendGrid(
             'frontend-product-search-grid',
             [
-                'frontend-product-search-grid[_filter][test_variant_field_ENUM_ID][value][]'
+                'frontend-product-search-grid[_filter][test_variant_field][value][]'
                     => $variantEnum->getId(),
             ],
             true
         );
 
-        $this->assertEquals($expectedSkus, $this->getSkusFromResponse($response));
+        $skus = $this->getSkusFromResponse($response);
+        $this->assertEquals($expectedSkus, $skus);
     }
 
     /**
@@ -209,7 +210,7 @@ class ProductVariantIndexDataProviderDecoratorTest extends WebTestCase
     {
         $filters = [];
         foreach ($multiEnumCodes as $key => $code) {
-            $filters["frontend-product-search-grid[_filter][multienum_field_ENUM_ID][value][$key]"] = $code;
+            $filters["frontend-product-search-grid[_filter][multienum_field][value][$key]"] = $code;
         }
 
         $response = $this->client->requestFrontendGrid(

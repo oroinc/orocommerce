@@ -209,7 +209,7 @@ and in the included section we specify the variants:
 
 For **parentProduct** id you need to specify any id of an existing product from the system,
 the link between the configurable product that is added on this request and the variants will be handled internally
-by the API. In **product** tag we specify the id of the product that will be a variant of the created product.
+by the API. In **product** tag we specify the ID of the product that will be a variant of the created product.
             
 #### 7. Using product images
 

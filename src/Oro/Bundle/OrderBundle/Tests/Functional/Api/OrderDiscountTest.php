@@ -3,11 +3,15 @@
 namespace Oro\Bundle\OrderBundle\Tests\Functional\Api;
 
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
+use Oro\Bundle\CurrencyBundle\Rounding\PriceRoundingService;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderDiscount;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrderDiscounts;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
 
+/**
+ * @dbIsolationPerTest
+ */
 class OrderDiscountTest extends RestJsonApiTestCase
 {
     /**
@@ -97,12 +101,8 @@ class OrderDiscountTest extends RestJsonApiTestCase
 
         $discountAmount = $discount->getPercent() * $order->getSubtotal() + $discount->getAmount();
 
-        self::assertSame($discountAmount, (float)$order->getTotalDiscounts()->getValue());
-
-        $order->removeDiscount($discount);
-        $this->getEntityManager()->remove($discount);
-        $this->getEntityManager()->flush();
-        $this->getEntityManager()->clear();
+        $roundingService = new PriceRoundingService($this->getContainer()->get('oro_config.manager'));
+        self::assertSame($roundingService->round($discountAmount), (float)$order->getTotalDiscounts()->getValue());
     }
 
     public function testUpdateDescription()

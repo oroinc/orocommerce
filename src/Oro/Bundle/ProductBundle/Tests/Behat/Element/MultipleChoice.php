@@ -4,6 +4,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Behat\Element;
 
 use Behat\Mink\Element\NodeElement;
 use Oro\Bundle\DataGridBundle\Tests\Behat\Element\MultipleChoice as BaseMultipleChoice;
+use Oro\Bundle\TestFrameworkBundle\Behat\Element\Element;
 
 class MultipleChoice extends BaseMultipleChoice
 {
@@ -38,5 +39,28 @@ class MultipleChoice extends BaseMultipleChoice
         } elseif ($this->isOpen()) {
             $this->find('css', '.filter-criteria-selector span.filter-criteria-selector-icon')->click();
         }
+    }
+
+    /**
+     * @return array
+     */
+    public function getChoices(): array
+    {
+        $this->open();
+        // Wait for open widget
+        $this->getDriver()->waitForAjax();
+
+        $widget = $this->getWidget();
+        $inputs = $widget->findAll('css', 'li span.custom-checkbox__text');
+
+        $choices = [];
+        /** @var Element $input */
+        foreach ($inputs as $input) {
+            $choices[] = trim($input->getText());
+        }
+
+        $this->close();
+
+        return $choices;
     }
 }

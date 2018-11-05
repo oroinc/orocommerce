@@ -73,6 +73,8 @@ Oro\Bundle\OrderBundle\Entity\OrderLineItem:
 Oro\Bundle\OrderBundle\Entity\OrderAddress:
     constraints:
         - Oro\Bundle\AddressBundle\Validator\Constraints\ValidRegion: ~
+        - Oro\Bundle\AddressBundle\Validator\Constraints\RegionText: ~
+        - Oro\Bundle\AddressBundle\Validator\Constraints\RequiredRegion: ~
         - Oro\Bundle\AddressBundle\Validator\Constraints\NameOrOrganization: ~
     properties:
         street:
