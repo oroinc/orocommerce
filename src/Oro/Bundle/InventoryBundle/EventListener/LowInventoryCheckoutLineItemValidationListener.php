@@ -45,7 +45,7 @@ class LowInventoryCheckoutLineItemValidationListener
             }
 
             if ($lowInventoryWarning = $this->validator->getMessageIfLineItemRunningLow($lineItem)) {
-                $event->addWarning(
+                $event->addWarningByUnit(
                     $lineItem->getProduct()->getSku(),
                     $lineItem->getProductUnitCode(),
                     $lowInventoryWarning

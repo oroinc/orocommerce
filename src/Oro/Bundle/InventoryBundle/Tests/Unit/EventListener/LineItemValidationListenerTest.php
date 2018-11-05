@@ -41,7 +41,7 @@ class LineItemValidationListenerTest extends \PHPUnit_Framework_TestCase
             ->willReturn([]);
 
         $this->event->expects($this->never())
-            ->method('addError');
+            ->method('addErrorByUnit');
         $this->lineItemValidationListener->onLineItemValidate($this->event);
     }
 
@@ -52,7 +52,7 @@ class LineItemValidationListenerTest extends \PHPUnit_Framework_TestCase
             ->willReturn(['xxxx']);
 
         $this->event->expects($this->never())
-            ->method('addError');
+            ->method('addErrorByUnit');
         $this->lineItemValidationListener->onLineItemValidate($this->event);
     }
 
@@ -97,7 +97,7 @@ class LineItemValidationListenerTest extends \PHPUnit_Framework_TestCase
             ->method('getMinimumErrorIfInvalid');
 
         $this->event->expects($this->once())
-            ->method('addError');
+            ->method('addErrorByUnit');
         $this->lineItemValidationListener->onLineItemValidate($this->event);
     }
 
@@ -121,7 +121,7 @@ class LineItemValidationListenerTest extends \PHPUnit_Framework_TestCase
             ->willReturn($minMessage);
 
         $this->event->expects($this->once())
-            ->method('addError');
+            ->method('addErrorByUnit');
         $this->lineItemValidationListener->onLineItemValidate($this->event);
     }
 }
