@@ -28,7 +28,6 @@ Oro\Bundle\ProductBundle\Entity\Product:
         organization: '@organization'
         owner: '@businessUnit'
         status: 'enabled'
-        taxCode: '@tax_code_taxable_items'
 
 Oro\Bundle\PricingBundle\Entity\PriceList:
     pricelistShipping:
