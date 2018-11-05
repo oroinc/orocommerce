@@ -11,7 +11,6 @@ use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToWebsiteRepository;
 use Oro\Bundle\PricingBundle\Tests\Functional\Controller\AbstractAjaxProductPriceControllerTest;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices;
-use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
@@ -99,60 +98,6 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
                     ['price' => 13.1, 'currency' => 'USD', 'quantity' => 1, 'unit' => 'bottle'],
                 ],
                 'currency' => 'USD'
-            ]
-        ];
-    }
-
-    /**
-     * @dataProvider unitDataProvider
-     * @param string $priceList
-     * @param string $product
-     * @param null|string $currency
-     * @param array $expected
-     */
-    public function testGetProductUnitsByCurrencyAction($priceList, $product, $currency = null, array $expected = [])
-    {
-        /** @var CombinedPriceList $priceList */
-        $priceList = $this->getReference($priceList);
-        /** @var Product $product */
-        $product = $this->getReference($product);
-        /** @var Website $website */
-        $website = $this->websiteRepository->getDefaultWebsite();
-        $priceList = $this->combinedPriceListRepository->find($priceList->getId());
-        $this->setPriceListToDefaultWebsite($priceList, $website);
-
-        $params = [
-            'id' => $product->getId(),
-            'currency' => $currency
-        ];
-
-        $this->client->request('GET', $this->getUrl('oro_pricing_frontend_units_by_pricelist', $params));
-
-        $result = $this->client->getResponse();
-        $this->assertJsonResponseStatusCodeEquals($result, 200);
-
-        $data = json_decode($result->getContent(), true);
-        $this->assertArrayHasKey('units', $data);
-        $this->assertEquals($expected, array_keys($data['units']));
-    }
-
-    /**
-     * @return array
-     */
-    public function unitDataProvider()
-    {
-        return [
-            [
-                '1f',
-                'product-1',
-                null,
-                ['bottle', 'liter', 'milliliter']
-            ],
-            [
-                '1f',
-                'product-1',
-                'EUR',
-                ['bottle']
             ]
         ];
     }

@@ -44,44 +44,6 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
     }
 
     /**
-     * @todo BB-14587/BB-15426 Do we really need this route? >
-     * @todo < It's mentioned in ororfp/js/app/views/line-item-view unitLoaderRouteName which is never used
-     *
-     * @Route("/get-product-units-by-currency", name="oro_pricing_frontend_units_by_pricelist")
-     * @Method({"GET"})
-     *
-     * {@inheritdoc}
-     */
-    public function getProductUnitsByCurrencyAction(Request $request)
-    {
-        /** @var ProductPriceScopeCriteriaRequestHandler $scopeCriteriaRequestHandler */
-        $scopeCriteriaRequestHandler = $this->container
-            ->get('oro_pricing.model.product_price_scope_criteria_request_handler');
-        $scopeCriteria = $scopeCriteriaRequestHandler->getPriceScopeCriteria();
-
-        /** @var ProductPriceProviderInterface $priceProvider */
-        $priceProvider = $this->container->get('oro_pricing.provider.product_price');
-
-        /** @var UnitLabelFormatterInterface $unitFormatter */
-        $unitFormatter = $this->container->get('oro_product.formatter.product_unit_label');
-
-        $productId = $request->get('id');
-        $doctrineHelper = $this->container->get('oro_entity.doctrine_helper');
-        $product = $doctrineHelper->getEntityReference(Product::class, $productId);
-        $currency = $request->get('currency');
-        $prices = $priceProvider->getPricesByScopeCriteriaAndProducts($scopeCriteria, [$product], $currency);
-
-        $units = [];
-        if (!empty($prices[$productId])) {
-            $units = array_map(function (ProductPriceInterface $price) {
-                return $price->getUnit();
-            }, $prices[$productId]);
-        }
-
-        return new JsonResponse(['units' => $unitFormatter->formatChoices($units)]);
-    }
-
-    /**
      * @Route("/set-current-currency", name="oro_pricing_frontend_set_current_currency")
      * @Method({"POST"})
      *
