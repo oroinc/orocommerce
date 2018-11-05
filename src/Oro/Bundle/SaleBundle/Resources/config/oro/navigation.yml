@@ -26,6 +26,10 @@ navigation:
                 extras:
                     routes: ['oro_sale_quote_frontend_view']
 
+            oro_sale_quote_frontend_view_guest:
+                extras:
+                    routes: ['oro_sale_quote_frontend_view_guest']
+
             oro_sale_quote_frontend_choice:
                 label: 'oro.frontend.sale.quote.sections.general'
                 extras:
@@ -52,6 +56,7 @@ navigation:
                     oro_sale_quote_frontend_index:
                         children:
                             oro_sale_quote_frontend_view: ~
+                            oro_sale_quote_frontend_view_guest: ~
                             oro_sale_quote_frontend_choice: ~
 
     titles:

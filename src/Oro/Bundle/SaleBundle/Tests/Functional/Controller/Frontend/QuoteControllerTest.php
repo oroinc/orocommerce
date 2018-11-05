@@ -689,7 +689,7 @@ class QuoteControllerTest extends WebTestCase
                     'oro_sale.enable_guest_quote' => true,
                 ],
                 'qid' => LoadQuoteData::QUOTE5,
-                'expected' => Response::HTTP_NOT_FOUND,
+                'expected' => Response::HTTP_OK,
                 'expectedButton' => false
             ],
             'expired' => [
@@ -697,7 +697,7 @@ class QuoteControllerTest extends WebTestCase
                     'oro_sale.enable_guest_quote' => true,
                 ],
                 'qid' => LoadQuoteData::QUOTE8,
-                'expected' => Response::HTTP_NOT_FOUND,
+                'expected' => Response::HTTP_OK,
                 'expectedButton' => false
             ],
             'valid with empty date' => [
@@ -739,7 +739,7 @@ class QuoteControllerTest extends WebTestCase
                     'oro_sale.enable_guest_quote' => true,
                 ],
                 'qid' => LoadQuoteData::QUOTE12,
-                'expected' => Response::HTTP_NOT_FOUND,
+                'expected' => Response::HTTP_OK,
                 'expectedButton' => false
             ],
         ];

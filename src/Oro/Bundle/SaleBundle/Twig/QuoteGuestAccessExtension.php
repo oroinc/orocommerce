@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\SaleBundle\Twig;
 
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\SaleBundle\Entity\Quote;
-use Oro\Bundle\SaleBundle\Provider\GuestQuoteAccessProviderInterface;
 use Oro\Bundle\WebsiteBundle\Resolver\WebsiteUrlResolver;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -38,7 +38,7 @@ class QuoteGuestAccessExtension extends \Twig_Extension
      */
     public function getGuestAccessLink(Quote $quote): ?string
     {
-        if (!$quote->getWebsite() || !$this->getGuestLinkAccessProvider()->isGranted($quote)) {
+        if (!$quote->getWebsite() || !$this->getFeatureChecker()->isFeatureEnabled('guest_quote')) {
             return null;
         }
 
@@ -59,11 +59,11 @@ class QuoteGuestAccessExtension extends \Twig_Extension
     }
 
     /**
-     * @return GuestQuoteAccessProviderInterface
+     * @return FeatureChecker
      */
-    private function getGuestLinkAccessProvider(): GuestQuoteAccessProviderInterface
+    private function getFeatureChecker(): FeatureChecker
     {
-        return $this->container->get('oro_sale.provider.guest_quote_access.link');
+        return $this->container->get('oro_featuretoggle.checker.feature_checker');
     }
 
     /**

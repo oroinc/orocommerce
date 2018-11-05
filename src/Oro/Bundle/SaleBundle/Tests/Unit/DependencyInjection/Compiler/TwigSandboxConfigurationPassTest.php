@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\SaleBundle\Bundle\Tests\Unit\DependencyInjection\Compiler;
+namespace Oro\Bundle\SaleBundle\Tests\Unit\DependencyInjection\Compiler;
 
 use Oro\Bundle\SaleBundle\DependencyInjection\Compiler\TwigSandboxConfigurationPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;

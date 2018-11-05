@@ -2,12 +2,12 @@
 
 namespace Oro\Bundle\SaleBundle\Acl\Voter;
 
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
+use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
 use Symfony\Component\Security\Acl\Permission\BasicPermissionMap;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 /**
@@ -15,22 +15,15 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
  */
 class FrontendQuoteDemandPermissionVoter extends Voter
 {
-    /** @var TokenStorageInterface */
-    private $tokenStorage;
-
-    /** @var AuthorizationCheckerInterface */
-    private $authorizationChecker;
+    /** @var FrontendHelper */
+    private $frontendHelper;
 
     /**
-     * @param TokenStorageInterface $tokenStorage
-     * @param AuthorizationCheckerInterface $authorizationChecker
+     * @param FrontendHelper $frontendHelper
      */
-    public function __construct(
-        TokenStorageInterface $tokenStorage,
-        AuthorizationCheckerInterface $authorizationChecker
-    ) {
-        $this->tokenStorage = $tokenStorage;
-        $this->authorizationChecker = $authorizationChecker;
+    public function __construct(FrontendHelper $frontendHelper)
+    {
+        $this->frontendHelper = $frontendHelper;
     }
 
     /**
@@ -38,7 +31,9 @@ class FrontendQuoteDemandPermissionVoter extends Voter
      */
     protected function supports($attribute, $subject)
     {
-        return $attribute === BasicPermissionMap::PERMISSION_VIEW && $subject instanceof QuoteDemand;
+        return $attribute === BasicPermissionMap::PERMISSION_VIEW &&
+            $subject instanceof QuoteDemand &&
+            $this->frontendHelper->isFrontendRequest();
     }
 
     /**
@@ -48,19 +43,20 @@ class FrontendQuoteDemandPermissionVoter extends Voter
      */
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
-        if ($this->isApplicable()) {
-            return $subject->getVisitor() && $subject->getVisitor() === $token->getVisitor();
+        if ($token instanceof AnonymousCustomerUserToken) {
+            $quoteVisitor = $subject->getVisitor();
+            $tokenVisitor = $token->getVisitor();
+
+            return $quoteVisitor && $tokenVisitor && $quoteVisitor->getId() === $tokenVisitor->getId();
         }
 
-        return $subject->getQuote() &&
-            $this->authorizationChecker->isGranted('oro_sale_quote_frontend_view', $subject->getQuote());
-    }
+        $tokenUser = $token->getUser();
+        if ($tokenUser instanceof CustomerUser) {
+            $quoteUser = $subject->getCustomerUser();
 
-    /**
-     * @return bool
-     */
-    private function isApplicable(): bool
-    {
-        return $this->tokenStorage->getToken() instanceof AnonymousCustomerUserToken;
+            return $quoteUser && $quoteUser->getId() === $tokenUser->getId();
+        }
+
+        return false;
     }
 }

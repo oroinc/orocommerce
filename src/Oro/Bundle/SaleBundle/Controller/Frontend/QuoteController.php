@@ -50,7 +50,7 @@ class QuoteController extends Controller
 
     /**
      * @Route(
-     *     "/view/{guest_access_id}",
+     *     "/{guest_access_id}",
      *     name="oro_sale_quote_frontend_view_guest",
      *     requirements={
      *          "guest_access_id"="[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}"
@@ -69,11 +69,15 @@ class QuoteController extends Controller
      * @param Quote $quote
      * @return array
      */
-    public function guestAccessAction(Quote $quote)
+    public function guestAccessAction(Quote $quote): array
     {
         $accessProvider = $this->get('oro_sale.provider.guest_quote_access');
         if (!$accessProvider->isGranted($quote)) {
             throw $this->createNotFoundException();
+        }
+
+        if (!$quote->isAcceptable()) {
+            $this->addFlash('notice', $this->get('translator')->trans('oro.sale.controller.quote.expired.message'));
         }
 
         return [

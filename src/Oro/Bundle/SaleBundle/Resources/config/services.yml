@@ -231,8 +231,7 @@ services:
         class: 'Oro\Bundle\SaleBundle\Acl\Voter\FrontendQuoteDemandPermissionVoter'
         public: false
         arguments:
-            - '@security.token_storage'
-            - '@security.authorization_checker'
+            - '@oro_frontend.request.frontend_helper'
         tags:
             - { name: security.voter }
 
@@ -291,8 +290,3 @@ services:
         arguments:
             - '@oro_featuretoggle.checker.feature_checker'
             - '@oro_website.manager'
-
-    oro_sale.provider.guest_quote_access.link:
-        class: 'Oro\Bundle\SaleBundle\Provider\GuestQuoteAccessLinkProvider'
-        arguments:
-            - '@oro_featuretoggle.checker.feature_checker'

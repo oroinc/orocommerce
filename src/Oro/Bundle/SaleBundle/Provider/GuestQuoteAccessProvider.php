@@ -32,7 +32,7 @@ class GuestQuoteAccessProvider implements GuestQuoteAccessProviderInterface
      */
     public function isGranted(Quote $quote): bool
     {
-        if (!$quote->isAcceptable() || !$this->featureChecker->isFeatureEnabled('guest_quote')) {
+        if (!$quote->isAvailableOnFrontend() || !$this->featureChecker->isFeatureEnabled('guest_quote')) {
             return false;
         }
 

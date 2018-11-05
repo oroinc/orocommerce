@@ -2,16 +2,16 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Unit\Entity;
 
-use Oro\Bundle\OrganizationBundle\Entity\Organization;
-use Oro\Bundle\SecurityBundle\Tools\UUIDGenerator;
-use Oro\Bundle\UserBundle\Entity\User;
-use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\SaleBundle\Entity\QuoteAddress;
 use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use Oro\Bundle\SaleBundle\Tests\Unit\Stub\QuoteStub as Quote;
+use Oro\Bundle\SecurityBundle\Tools\UUIDGenerator;
+use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
 
@@ -221,6 +221,37 @@ class QuoteTest extends AbstractTest
             'validUntil' => new \DateTime('+1 day'),
             'expected' => false,
             'internalStatus' => null
+        ];
+    }
+
+    /**
+     * @dataProvider isAvailableOnFrontendProvider
+     *
+     * @param string $internalStatus
+     * @param bool $expected
+     */
+    public function testIsAvailableOnFrontend(string $internalStatus, bool $expected): void
+    {
+        $quote = new Quote();
+        $quote->setInternalStatus(new StubEnumValue($internalStatus, 'test'));
+
+        $this->assertEquals($expected, $quote->isAvailableOnFrontend());
+    }
+
+    /**
+     * @return array
+     */
+    public function isAvailableOnFrontendProvider(): array
+    {
+        return [
+            ['template', true],
+            ['open', true],
+            ['sent_to_customer', true],
+            ['expired', true],
+            ['accepted', true],
+            ['declined', true],
+            ['cancelled', true],
+            ['test', false],
         ];
     }
 
