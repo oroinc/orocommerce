@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Unit\Twig;
 
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\SaleBundle\Entity\Quote;
-use Oro\Bundle\SaleBundle\Provider\GuestQuoteAccessProviderInterface;
 use Oro\Bundle\SaleBundle\Twig\QuoteGuestAccessExtension;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Resolver\WebsiteUrlResolver;
@@ -13,8 +13,8 @@ class QuoteGuestAccessExtensionTest extends \PHPUnit\Framework\TestCase
 {
     use TwigExtensionTestCaseTrait;
 
-    /** @var GuestQuoteAccessProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $guestLinkAccessProvider;
+    /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject */
+    private $featureChecker;
 
     /** @var WebsiteUrlResolver|\PHPUnit\Framework\MockObject\MockObject */
     private $websiteUrlResolver;
@@ -27,11 +27,11 @@ class QuoteGuestAccessExtensionTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp()
     {
-        $this->guestLinkAccessProvider = $this->createMock(GuestQuoteAccessProviderInterface::class);
+        $this->featureChecker = $this->createMock(FeatureChecker::class);
         $this->websiteUrlResolver = $this->createMock(WebsiteUrlResolver::class);
 
         $container = self::getContainerBuilder()
-            ->add('oro_sale.provider.guest_quote_access.link', $this->guestLinkAccessProvider)
+            ->add('oro_featuretoggle.checker.feature_checker', $this->featureChecker)
             ->add('oro_website.resolver.website_url_resolver', $this->websiteUrlResolver)
             ->getContainer($this);
 
@@ -47,10 +47,10 @@ class QuoteGuestAccessExtensionTest extends \PHPUnit\Framework\TestCase
      * @dataProvider guestAccessLinkProvider
      *
      * @param bool $withWebsite
-     * @param bool $isGranted
+     * @param bool $isEnabled
      * @param null|string $expected
      */
-    public function testGetGuestAccessLink(bool $withWebsite, bool $isGranted, ?string $expected): void
+    public function testGetGuestAccessLink(bool $withWebsite, bool $isEnabled, ?string $expected): void
     {
         $quote = new Quote();
         $website = new Website();
@@ -59,10 +59,10 @@ class QuoteGuestAccessExtensionTest extends \PHPUnit\Framework\TestCase
             $quote->setWebsite($website);
         }
 
-        $this->guestLinkAccessProvider->expects($this->any())
-            ->method('isGranted')
-            ->with($quote)
-            ->willReturn($isGranted);
+        $this->featureChecker->expects($this->any())
+            ->method('isFeatureEnabled')
+            ->with('guest_quote')
+            ->willReturn($isEnabled);
 
         $this->websiteUrlResolver->expects($this->any())
             ->method('getWebsitePath')
@@ -87,22 +87,22 @@ class QuoteGuestAccessExtensionTest extends \PHPUnit\Framework\TestCase
         return [
             [
                 'withWebsite' => false,
-                'isGranted' => false,
+                'isEnabled' => false,
                 'expected' => null
             ],
             [
                 'withWebsite' => false,
-                'isGranted' => true,
+                'isEnabled' => true,
                 'expected' => null
             ],
             [
                 'withWebsite' => true,
-                'isGranted' => false,
+                'isEnabled' => false,
                 'expected' => null
             ],
             [
                 'withWebsite' => true,
-                'isGranted' => true,
+                'isEnabled' => true,
                 'expected' => '/some/test/url'
             ],
         ];

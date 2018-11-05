@@ -908,6 +908,16 @@ class Quote extends ExtendQuote implements
     }
 
     /**
+     * @return bool
+     */
+    public function isAvailableOnFrontend()
+    {
+        $status = $this->getInternalStatus();
+
+        return !$status || \in_array($status->getId(), self::FRONTEND_INTERNAL_STATUSES, true);
+    }
+
+    /**
      * @return QuoteDemand[]|ArrayCollection
      */
     public function getDemands()

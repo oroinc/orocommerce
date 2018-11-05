@@ -76,6 +76,10 @@ class QuoteController extends Controller
             throw $this->createNotFoundException();
         }
 
+        if (!$quote->isAcceptable()) {
+            $this->addFlash('notice', $this->get('translator')->trans('oro.sale.controller.quote.expired.message'));
+        }
+
         return [
             'data' => ['entity' => $quote]
         ];

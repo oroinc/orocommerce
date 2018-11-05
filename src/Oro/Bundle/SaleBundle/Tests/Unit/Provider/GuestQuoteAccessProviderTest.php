@@ -47,16 +47,19 @@ class GuestQuoteAccessProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testIsGrantedForExpiredQuote()
     {
-        $quote = $this->getQuote(Quote::INTERNAL_STATUS_SENT_TO_CUSTOMER);
+        $quote = $this->getQuote(Quote::INTERNAL_STATUS_SENT_TO_CUSTOMER, 42);
         $quote->setExpired(true);
 
-        $this->featureChecker->expects($this->never())
-            ->method('isFeatureEnabled');
+        $this->featureChecker->expects($this->once())
+            ->method('isFeatureEnabled')
+            ->with('guest_quote')
+            ->willReturn(true);
 
-        $this->websiteManager->expects($this->never())
-            ->method('getCurrentWebsite');
+        $this->websiteManager->expects($this->once())
+            ->method('getCurrentWebsite')
+            ->willReturn($this->getWebsite(42));
 
-        $this->assertFalse($this->provider->isGranted($quote));
+        $this->assertTrue($this->provider->isGranted($quote));
     }
 
     public function testIsGrantedForCorrectValidUntil()
@@ -78,16 +81,19 @@ class GuestQuoteAccessProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testIsGrantedForIncorrectValidUntil()
     {
-        $quote = $this->getQuote(Quote::INTERNAL_STATUS_SENT_TO_CUSTOMER);
+        $quote = $this->getQuote(Quote::INTERNAL_STATUS_SENT_TO_CUSTOMER, 42);
         $quote->setValidUntil(new \DateTime('2010-01-01', new \DateTimeZone('UTC')));
 
-        $this->featureChecker->expects($this->never())
-            ->method('isFeatureEnabled');
+        $this->featureChecker->expects($this->once())
+            ->method('isFeatureEnabled')
+            ->with('guest_quote')
+            ->willReturn(true);
 
-        $this->websiteManager->expects($this->never())
-            ->method('getCurrentWebsite');
+        $this->websiteManager->expects($this->once())
+            ->method('getCurrentWebsite')
+            ->willReturn($this->getWebsite(42));
 
-        $this->assertFalse($this->provider->isGranted($quote));
+        $this->assertTrue($this->provider->isGranted($quote));
     }
 
     public function testIsGrantedWhenFeatureDisabled()
@@ -105,11 +111,17 @@ class GuestQuoteAccessProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testIsGrantedWithoutInternalStatus()
     {
-        $this->featureChecker->expects($this->never())
-            ->method('isFeatureEnabled');
+        $quote = new Quote();
+        $quote->setWebsite($this->getWebsite(42));
 
-        $this->websiteManager->expects($this->never())
-            ->method('getCurrentWebsite');
+        $this->featureChecker->expects($this->once())
+            ->method('isFeatureEnabled')
+            ->with('guest_quote')
+            ->willReturn(true);
+
+        $this->websiteManager->expects($this->once())
+            ->method('getCurrentWebsite')
+            ->willReturn($this->getWebsite(42));
 
         $this->assertFalse($this->provider->isGranted(new Quote()));
     }

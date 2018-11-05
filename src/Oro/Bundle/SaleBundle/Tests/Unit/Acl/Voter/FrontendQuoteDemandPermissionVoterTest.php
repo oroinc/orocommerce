@@ -2,65 +2,73 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Unit\Acl\Voter;
 
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerVisitor;
 use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
+use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 use Oro\Bundle\SaleBundle\Acl\Voter\FrontendQuoteDemandPermissionVoter;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class FrontendQuoteDemandPermissionVoterTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var TokenStorageInterface|\PHPUnit_Framework_MockObject_MockObject */
-    private $tokenStorage;
+    use EntityTrait;
 
-    /** @var AuthorizationCheckerInterface|\PHPUnit_Framework_MockObject_MockObject */
-    private $authorizationChecker;
+    /** @var FrontendHelper|\PHPUnit\Framework\MockObject\MockObject */
+    private $frontendHelper;
 
     /** @var FrontendQuoteDemandPermissionVoter */
     private $voter;
 
     protected function setUp()
     {
-        $this->tokenStorage = $this->createMock(TokenStorageInterface::class);
-        $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
+        $this->frontendHelper = $this->createMock(FrontendHelper::class);
 
-        $this->voter = new FrontendQuoteDemandPermissionVoter($this->tokenStorage, $this->authorizationChecker);
+        $this->voter = new FrontendQuoteDemandPermissionVoter($this->frontendHelper);
     }
 
     public function testVoteWithUnsupportedAttribute(): void
     {
+        $this->frontendHelper->expects($this->never())
+            ->method('isFrontendRequest');
+
         /** @var TokenInterface $token */
         $token = $this->createMock(TokenInterface::class);
 
-        $this->tokenStorage->expects($this->never())
-            ->method('getToken');
-
-        $this->authorizationChecker->expects($this->never())
-            ->method('isGranted');
-
         $this->assertEquals(
             FrontendQuoteDemandPermissionVoter::ACCESS_ABSTAIN,
-            $this->voter->vote($token, $this->getQuoteDemand(new CustomerVisitor(), new Quote()), ['ATTR'])
+            $this->voter->vote($token, $this->getQuoteDemand(), ['ATTR'])
         );
     }
 
     public function testVoteWithUnsupportedObject(): void
     {
+        $this->frontendHelper->expects($this->never())
+            ->method('isFrontendRequest');
+
         /** @var TokenInterface $token */
         $token = $this->createMock(TokenInterface::class);
-
-        $this->tokenStorage->expects($this->never())
-            ->method('getToken');
-
-        $this->authorizationChecker->expects($this->never())
-            ->method('isGranted');
 
         $this->assertEquals(
             FrontendQuoteDemandPermissionVoter::ACCESS_ABSTAIN,
             $this->voter->vote($token, new \stdClass(), [])
+        );
+    }
+
+    public function testVoteWithNotFrontendRequest(): void
+    {
+        $this->frontendHelper->expects($this->once())
+            ->method('isFrontendRequest')
+            ->willReturn(false);
+
+        /** @var TokenInterface $token */
+        $token = $this->createMock(TokenInterface::class);
+
+        $this->assertEquals(
+            FrontendQuoteDemandPermissionVoter::ACCESS_ABSTAIN,
+            $this->voter->vote($token, $this->getQuoteDemand(), ['VIEW'])
         );
     }
 
@@ -69,19 +77,13 @@ class FrontendQuoteDemandPermissionVoterTest extends \PHPUnit\Framework\TestCase
      *
      * @param TokenInterface $token
      * @param QuoteDemand $quoteDemand
-     * @param bool $isGranted
      * @param int $expected
      */
-    public function testVote(TokenInterface $token, QuoteDemand $quoteDemand, bool $isGranted, int $expected): void
+    public function testVote(TokenInterface $token, QuoteDemand $quoteDemand, int $expected): void
     {
-        $this->tokenStorage->expects($this->any())
-            ->method('getToken')
-            ->willReturn($token);
-
-        $this->authorizationChecker->expects($this->any())
-            ->method('isGranted')
-            ->with('oro_sale_quote_frontend_view', $this->isInstanceOf(Quote::class))
-            ->willReturn($isGranted);
+        $this->frontendHelper->expects($this->once())
+            ->method('isFrontendRequest')
+            ->willReturn(true);
 
         $this->assertEquals($expected, $this->voter->vote($token, $quoteDemand, ['VIEW']));
     }
@@ -91,43 +93,95 @@ class FrontendQuoteDemandPermissionVoterTest extends \PHPUnit\Framework\TestCase
      */
     public function voteProvider(): array
     {
-        $visitor = new CustomerVisitor();
-
         return [
-            'access granted by permission' => [
-                'token' => $this->createMock(TokenInterface::class),
-                'quoteDemand' => $this->getQuoteDemand($visitor, new Quote()),
-                'isGranted' => true,
+            'access granted for visitor' => [
+                'token' => new AnonymousCustomerUserToken(
+                    '',
+                    [],
+                    $this->getEntity(CustomerVisitor::class, ['id' => 42])
+                ),
+                'quoteDemand' => $this->getQuoteDemand(
+                    $this->getEntity(CustomerVisitor::class, ['id' => 42]),
+                    null,
+                    new Quote()
+                ),
                 'expected' => FrontendQuoteDemandPermissionVoter::ACCESS_GRANTED
             ],
-            'access granted by visitor' => [
-                'token' => new AnonymousCustomerUserToken('', [], $visitor),
-                'quoteDemand' => $this->getQuoteDemand($visitor, new Quote()),
-                'isGranted' => false,
+            'access granted for customer user' => [
+                'token' => $this->getToken(
+                    $this->getEntity(CustomerUser::class, ['id' => 42])
+                ),
+                'quoteDemand' => $this->getQuoteDemand(
+                    null,
+                    $this->getEntity(CustomerUser::class, ['id' => 42]),
+                    new Quote()
+                ),
                 'expected' => FrontendQuoteDemandPermissionVoter::ACCESS_GRANTED
             ],
             'token without visitor' => [
                 'token' => new AnonymousCustomerUserToken('', []),
-                'quoteDemand' => $this->getQuoteDemand($visitor, new Quote()),
-                'isGranted' => true,
+                'quoteDemand' => $this->getQuoteDemand(
+                    $this->getEntity(CustomerVisitor::class, ['id' => 42]),
+                    null,
+                    new Quote()
+                ),
                 'expected' => FrontendQuoteDemandPermissionVoter::ACCESS_DENIED
             ],
-            'token with different visitor' => [
-                'token' => new AnonymousCustomerUserToken('', [], new CustomerVisitor()),
-                'quoteDemand' => $this->getQuoteDemand($visitor, new Quote()),
-                'isGranted' => true,
+            'quote without visitor' => [
+                'token' => new AnonymousCustomerUserToken(
+                    '',
+                    [],
+                    $this->getEntity(CustomerVisitor::class, ['id' => 42])
+                ),
+                'quoteDemand' => $this->getQuoteDemand(
+                    null,
+                    null,
+                    new Quote()
+                ),
                 'expected' => FrontendQuoteDemandPermissionVoter::ACCESS_DENIED
             ],
-            'quote demand without quote' => [
-                'token' => $this->createMock(TokenInterface::class),
-                'quoteDemand' => $this->getQuoteDemand($visitor),
-                'isGranted' => true,
+            'different visitor ids' => [
+                'token' => new AnonymousCustomerUserToken(
+                    '',
+                    [],
+                    $this->getEntity(CustomerVisitor::class, ['id' => 1001])
+                ),
+                'quoteDemand' => $this->getQuoteDemand(
+                    $this->getEntity(CustomerVisitor::class, ['id' => 2002]),
+                    null,
+                    new Quote()
+                ),
                 'expected' => FrontendQuoteDemandPermissionVoter::ACCESS_DENIED
             ],
-            'access not granted by permission' => [
-                'token' => $this->createMock(TokenInterface::class),
-                'quoteDemand' => $this->getQuoteDemand($visitor, new Quote()),
-                'isGranted' => false,
+            'token without user' => [
+                'token' => $this->getToken(),
+                'quoteDemand' => $this->getQuoteDemand(
+                    null,
+                    $this->getEntity(CustomerUser::class, ['id' => 42]),
+                    new Quote()
+                ),
+                'expected' => FrontendQuoteDemandPermissionVoter::ACCESS_DENIED
+            ],
+            'quote without user' => [
+                'token' => $this->getToken(
+                    $this->getEntity(CustomerUser::class, ['id' => 42])
+                ),
+                'quoteDemand' => $this->getQuoteDemand(
+                    null,
+                    null,
+                    new Quote()
+                ),
+                'expected' => FrontendQuoteDemandPermissionVoter::ACCESS_DENIED
+            ],
+            'different user ids' => [
+                'token' => $this->getToken(
+                    $this->getEntity(CustomerUser::class, ['id' => 1001])
+                ),
+                'quoteDemand' => $this->getQuoteDemand(
+                    null,
+                    $this->getEntity(CustomerUser::class, ['id' => 2002]),
+                    new Quote()
+                ),
                 'expected' => FrontendQuoteDemandPermissionVoter::ACCESS_DENIED
             ],
         ];
@@ -135,21 +189,50 @@ class FrontendQuoteDemandPermissionVoterTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @param null|CustomerVisitor $visitor
+     * @param null|CustomerUser $user
      * @param null|Quote $quote
      * @return QuoteDemand
      */
-    private function getQuoteDemand(?CustomerVisitor $visitor = null, ?Quote $quote = null): QuoteDemand
-    {
-        $quoteDemand = new QuoteDemand();
+    private function getQuoteDemand(
+        ?CustomerVisitor $visitor = null,
+        ?CustomerUser $user = null,
+        ?Quote $quote = null
+    ): QuoteDemand {
+        $args = [];
 
         if ($visitor) {
-            $quoteDemand->setVisitor($visitor);
+            $args['visitor'] = $visitor;
+        }
+
+        if ($user) {
+            $args['customerUser'] = $user;
         }
 
         if ($quote) {
-            $quoteDemand->setQuote($quote);
+            $args['quote'] = $quote;
         }
 
+        /** @var QuoteDemand|\PHPUnit_Framework_MockObject_MockObject $quoteDemand */
+        $quoteDemand = $this->getEntity(QuoteDemand::class, $args);
+
         return $quoteDemand;
+    }
+
+    /**
+     * @param null|CustomerUser $customerUser
+     * @return TokenInterface
+     */
+    private function getToken(?CustomerUser $customerUser = null): TokenInterface
+    {
+        /** @var TokenInterface|\PHPUnit\Framework\MockObject\MockObject $token */
+        $token = $this->createMock(TokenInterface::class);
+
+        if ($customerUser) {
+            $token
+                ->method('getUser')
+                ->willReturn($customerUser);
+        }
+
+        return $token;
     }
 }

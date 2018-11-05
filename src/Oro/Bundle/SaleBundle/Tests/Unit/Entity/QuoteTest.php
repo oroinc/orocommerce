@@ -224,6 +224,37 @@ class QuoteTest extends AbstractTest
         ];
     }
 
+    /**
+     * @dataProvider isAvailableOnFrontendProvider
+     *
+     * @param string $internalStatus
+     * @param bool $expected
+     */
+    public function testIsAvailableOnFrontend(string $internalStatus, bool $expected): void
+    {
+        $quote = new Quote();
+        $quote->setInternalStatus(new StubEnumValue($internalStatus, 'test'));
+
+        $this->assertEquals($expected, $quote->isAvailableOnFrontend());
+    }
+
+    /**
+     * @return array
+     */
+    public function isAvailableOnFrontendProvider(): array
+    {
+        return [
+            ['template', true],
+            ['open', true],
+            ['sent_to_customer', true],
+            ['expired', true],
+            ['accepted', true],
+            ['declined', true],
+            ['cancelled', true],
+            ['test', false],
+        ];
+    }
+
     public function testClone(): void
     {
         $quote = new Quote();

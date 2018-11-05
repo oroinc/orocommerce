@@ -127,6 +127,20 @@ Feature: Quote for guest
   Scenario: Logged in user has access to quote from Guest Quote link
     When I visit guest quote link for quote Quote_1
     Then I should see "QUOTE #QUOTE_1"
+    And I should see "Accept and Submit to Order"
+    And I should see an "Page Sidebar" element
+    And I should see an "Breadcrumbs" element
+
+    When I click "Accept and Submit to Order"
+    Then First Product Quantity on Quote field should has 10 value
+
+    When I type "30" in "First Product Quantity on Quote"
+    And I click on empty space
+    Then I should see "Subtotal $3,000.00"
+    And I should see "Total $3,000.00"
+
+    When click "Submit"
+    And I should see "Checkout"
 
   Scenario: Enable Guest Checkout
     Given I proceed as the Admin
@@ -144,21 +158,29 @@ Feature: Quote for guest
     And I should see "Accept and Submit to Order"
     And I should not see an "Page Sidebar" element
     And I should not see an "Breadcrumbs" element
-    And I click "Accept and Submit to Order"
 
-  Scenario: Accepted Guest Quote is still available for another users
-    Given I proceed as the Buyer
+    When I click "Accept and Submit to Order"
+    Then I should not see an "Page Sidebar" element
+    And I should not see an "Breadcrumbs" element
+    And First Product Quantity on Quote field should has 10 value
+
+    When I type "20" in "First Product Quantity on Quote"
+    And I click on empty space
+    Then I should see "Subtotal $2,000.00"
+    And I should see "Total $2,000.00"
+    And I should see "Submit"
+
+    When I click "Submit"
+    And I should see "Checkout"
+
+  Scenario: Accepted and submitted Guest Quote is still available for guest user
     When I visit guest quote link for quote Quote_1
     Then I should see "QUOTE #QUOTE_1"
 
-  Scenario: Submit Guest Quote
-    Given I proceed as the Guest
+  Scenario: Accepted and submitted Guest Quote is still available for logged in user
+    Given I proceed as the Buyer
+    When I visit guest quote link for quote Quote_1
     Then I should see "QUOTE #QUOTE_1"
-    And I should not see an "Page Sidebar" element
-    And I should not see an "Breadcrumbs" element
-    And I should see "Submit"
-    When I click "Submit"
-    And I should see "Checkout"
 
   Scenario: Guest Quote link is clicable for administrator
     Given I proceed as the Admin
