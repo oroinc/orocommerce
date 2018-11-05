@@ -62,10 +62,9 @@ Feature: Delete line item from shopping list for configurable products
     Given I proceed as the User
     Given I signed in as AmandaRCole@example.org on the store frontend
     When Buyer is on Configurable products list 2
-    Then I should see an "One Dimensional Matrix Grid Form" element
-    And I should see "ConfigurableProductA"
+    Then I should see "ConfigurableProductA"
     And I should see "Item #: CNFA"
-    And I delete line item 1 in "Shopping List Line Items Table"
+    When I delete line item 1 in "Shopping List Line Items Table"
     And I click "Yes, Delete"
     Then I should see "The Shopping List is empty. Please add at least one product."
 
@@ -81,8 +80,7 @@ Feature: Delete line item from shopping list for configurable products
   Scenario: Remove configurable product when it shown as matrix at shopping list
     Given I proceed as the User
     When Buyer is on Configurable products list 1
-    Then I should not see an "One Dimensional Matrix Grid Form" element
-    And I should see following line items in "Shopping List Line Items Table":
+    Then I should see following line items in "Shopping List Line Items Table":
       | SKU  | Quantity | Unit |
       | CNFA | 5        | item |
       | CNFA | 2        | item |
