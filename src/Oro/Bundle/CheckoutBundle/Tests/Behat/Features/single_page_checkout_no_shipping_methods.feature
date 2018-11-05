@@ -3,6 +3,7 @@
 @fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
 @fixture-OroCheckoutBundle:Payment.yml
 @fixture-OroCheckoutBundle:ShippingDestinationUnitedStates.yml
+@fixture-OroCheckoutBundle:CheckoutTaxFixture.yml
 @fixture-OroCheckoutBundle:CheckoutCustomerFixture.yml
 @fixture-OroCheckoutBundle:CheckoutCustomerUSAddressFixture.yml
 @fixture-OroCheckoutBundle:CheckoutProductFixture.yml
