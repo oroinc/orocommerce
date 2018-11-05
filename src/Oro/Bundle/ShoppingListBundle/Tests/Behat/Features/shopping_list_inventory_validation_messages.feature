@@ -30,15 +30,15 @@ Feature: Shopping list inventory validation messages
     And I should not see an "Shopping List Line Item Error" element
     When I fill "Shopping List Line Item 2 Form" with:
       | Quantity | 4 |
-    Then I should not see "Shopping List Line Item Error" element with text "You cannot order less 5 units of SKU123: testname" inside "Shopping List Line Item 1" element
-    And I should see "Shopping List Line Item Error" element with text "You cannot order less 5 units of SKU123: testname" inside "Shopping List Line Item 2" element
+    Then I should not see "Shopping List Line Item Error" element with text "You cannot order less than 5 units of SKU123: testname" inside "Shopping List Line Item 1" element
+    And I should see "Shopping List Line Item Error" element with text "You cannot order less than 5 units of SKU123: testname" inside "Shopping List Line Item 2" element
     When I fill "Shopping List Line Item 1 Form" with:
       | Quantity | 4 |
-    Then I should see "Shopping List Line Item Error" element with text "You cannot order less 5 units of SKU123: testname" inside "Shopping List Line Item 1" element
-    And I should see "Shopping List Line Item Error" element with text "You cannot order less 5 units of SKU123: testname" inside "Shopping List Line Item 2" element
+    Then I should see "Shopping List Line Item Error" element with text "You cannot order less than 5 units of SKU123: testname" inside "Shopping List Line Item 1" element
+    And I should see "Shopping List Line Item Error" element with text "You cannot order less than 5 units of SKU123: testname" inside "Shopping List Line Item 2" element
     When I fill "Shopping List Line Item 1 Form" with:
       | Quantity | 11 |
     Then I should see "Shopping List Line Item Error" element with text "You cannot order more than 10 units of SKU123: testname" inside "Shopping List Line Item 1" element
-    And I should not see "Shopping List Line Item Error" element with text "You cannot order less 5 units of SKU123: testname" inside "Shopping List Line Item 1" element
-    And I should see "Shopping List Line Item Error" element with text "You cannot order less 5 units of SKU123: testname" inside "Shopping List Line Item 2" element
+    And I should not see "Shopping List Line Item Error" element with text "You cannot order less than 5 units of SKU123: testname" inside "Shopping List Line Item 1" element
+    And I should see "Shopping List Line Item Error" element with text "You cannot order less than 5 units of SKU123: testname" inside "Shopping List Line Item 2" element
     And I should not see "Shopping List Line Item Error" element with text "You cannot order more than 10 units of SKU123: testname" inside "Shopping List Line Item 2" element

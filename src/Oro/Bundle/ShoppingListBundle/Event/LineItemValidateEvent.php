@@ -76,14 +76,14 @@ class LineItemValidateEvent extends Event
     }
 
     /**
-     * @param string $sku
-     * @param string $message
-     *
+     * @param $sku
+     * @param $unit
+     * @param $message
      * @return $this
      */
-    public function addWarning($sku, $message)
+    public function addWarning($sku, $unit, $message)
     {
-        $this->warnings->add(['sku' => $sku, 'message' => $message]);
+        $this->warnings->add(['sku' => $sku, 'unit' => $unit, 'message' => $message]);
 
         return $this;
     }

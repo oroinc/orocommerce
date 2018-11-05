@@ -42,7 +42,11 @@ class LowInventoryCheckoutLineItemValidationListener
             }
 
             if ($lowInventoryWarning = $this->validator->getMessageIfLineItemRunningLow($lineItem)) {
-                $event->addWarning($lineItem->getProduct()->getSku(), $lowInventoryWarning);
+                $event->addWarning(
+                    $lineItem->getProduct()->getSku(),
+                    $lineItem->getProductUnitCode(),
+                    $lowInventoryWarning
+                );
             }
         }
     }
