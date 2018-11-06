@@ -105,7 +105,7 @@ class FeaturedCategoriesProviderTest extends \PHPUnit\Framework\TestCase
 
         $this->cache->expects($this->once())
             ->method('fetch')
-            ->with('cacheVal_featured_categories__0_1')
+            ->with('cacheVal_featured_categories__0_0_0_1')
             ->willReturn($result);
 
         $this->tokenStorage->expects($this->any())

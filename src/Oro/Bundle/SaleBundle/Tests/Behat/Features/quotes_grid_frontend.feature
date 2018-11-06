@@ -52,9 +52,9 @@ Feature: Quotes Grid Frontend
 
   Scenario: Check Ship Until filter
     Given number of records in "AllQuotes" should be 13
-    When I filter Do Not Ship Later Than as between "-1 day" and "today"
+    When I filter Do Not Ship Later Than as between "today -2 day" and "today -1 day"
     Then there are no records in grid
-    When I filter Do Not Ship Later Than as between "today" and "+2 day"
+    When I filter Do Not Ship Later Than as between "today" and "today +1 day"
     Then I should see following grid:
       | Quote # |
       | Quote13 |
@@ -63,9 +63,9 @@ Feature: Quotes Grid Frontend
 
   Scenario: Check Valid Until filter
     Given number of records in "AllQuotes" should be 13
-    When I filter Valid Until as between "-1 day" and "today"
+    When I filter Valid Until as between "today -2 day" and "today -1 day"
     Then there are no records in grid
-    When I filter Valid Until as between "today" and "+1 day"
+    When I filter Valid Until as between "today" and "today +1 day"
     Then I should see following grid:
       | Quote # |
       | Quote12 |
@@ -74,7 +74,7 @@ Feature: Quotes Grid Frontend
 
   Scenario: Check Created At filter
     Given number of records in "AllQuotes" should be 13
-    When I filter Created At as between "-1 day" and "today"
+    When I filter Created At as between "today -2 day" and "today -1 day"
     Then there are no records in grid
     When I filter Created At as between "today" and "+1 day"
     Then number of records in "AllQuotes" should be 13
@@ -313,8 +313,8 @@ Feature: Quotes Grid Frontend
       | Quote13 | PO13      | Amanda Cole  |
     When I reset "AllQuotes" grid
     Then I should see following grid with exact columns order:
-      | Quote # | PO Number | DNSLT |
-      | Quote1  | PO1       |       |
+      | Quote # | PO Number | DNSLT        |
+      | Quote1  | PO1       |              |
       | Quote2  | PO2       |              |
       | Quote3  | PO3       |              |
       | Quote4  | PO4       |              |
@@ -342,6 +342,7 @@ Feature: Quotes Grid Frontend
     Then I should see following grid with exact columns order:
       | Quote # | PO Number | DNSLT |
       | Quote1  | PO1       |       |
+    And I reload the page
     When I switch to "gridview1" grid view in "AllQuotes" frontend grid
     Then I should see following grid with exact columns order:
       | Quote # | Owner       |

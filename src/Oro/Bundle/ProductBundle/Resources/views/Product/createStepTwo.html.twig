@@ -36,13 +36,17 @@
         {{ parent() }}
     {% else %}
         {% set title = 'oro.ui.create_entity'|trans({'%entityName%': 'oro.product.entity_label'|trans}) %}
-        {% include 'OroUIBundle::page_title_block.html.twig' with { title: title } %}
+        {% set stats %}
+            {{ block('stats') }}
+        {% endset %}
+        {% include 'OroUIBundle::page_title_block.html.twig' with { title: title, pageStatsBlock: stats } %}
     {% endif %}
-    {% block stats %}
-        {{ parent() }}
-        {% placeholder oro_product_step_two_info with {'form' : form} %}
-    {% endblock stats %}
 {% endblock pageHeader %}
+
+{% block stats %}
+    {{ parent() }}
+    {% placeholder oro_product_step_two_info with {'form' : form} %}
+{% endblock stats %}
 
 {% block content_data %}
     {% set id = 'product-create-step-two' %}

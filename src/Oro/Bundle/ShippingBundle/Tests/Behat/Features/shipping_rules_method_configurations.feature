@@ -45,13 +45,13 @@ Feature: Shipping rules method configurations
     Given I go to System/ Shipping Rules
     And click edit "Flat Rate" in grid
     Then I should see "Flat Rate Disabled"
-    Then I should see "Price: $2.0000, Handling Fee: $3.0000, Type: Per Order"
+    Then I should see "Price: $2.00, Handling Fee: $3.00, Type: Per Order"
     And fill "Flat Rate Shipping Rule Form" with:
       | HandlingFee |  |
     And I click on empty space
     And fill "Shipping Rule" with:
       | Currency | € |
-    Then I should see "Price: €2.0000, Type: Per Order"
+    Then I should see "Price: €2.00, Type: Per Order"
     And I click "Flat Rate Shipping Method Icon"
     Then I should not see "Flat Rate Shipping Method Body"
     When I save and close form
