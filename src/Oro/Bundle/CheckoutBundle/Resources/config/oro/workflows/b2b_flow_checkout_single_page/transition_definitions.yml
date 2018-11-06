@@ -334,10 +334,57 @@ workflows:
                             result.savedCheckoutState: $.currentCheckoutState
 
             purchase_transition_definition:
-                preconditions:
+                preactions:
+                    - '@call_service_method':
+                        service: oro_checkout.factory.payment_context_factory
+                        method: create
+                        method_parameters: [$checkout]
+                        attribute: $.result.paymentContext
+
+                    - '@run_action_group':
+                        action_group: oro_update_shipping_price
+                        parameters_mapping:
+                            checkout: $checkout
+
+                    - '@generate_checkout_state_snapshot':
+                          entity: $checkout
+                          attribute: $.result.currentCheckoutState
+                    - '@get_checkout_state':
+                          entity: $checkout
+                          token: $state_token
+                          attribute: $.result.savedCheckoutState
+
+                conditions:
                     '@and':
                         - '@equal': [$payment_in_progress, true]
                         - '@equal': [$checkout.completed, false]
+
+                        - '@quote_acceptable': [$checkout.sourceEntity, true]
+
+                        - '@extendable':
+                            events: [extendable_condition.checkout]
+
+                        - '@order_line_item_has_count': $checkout
+
+                        - '@shipping_method_has_enabled_shipping_rules':
+                            message: oro.checkout.workflow.condition.shipping_method_is_not_available.message
+                            method_identifier: $checkout.shippingMethod
+
+                        - '@check_checkout_states':
+                            message: oro.checkout.workflow.condition.content_of_order_was_changed.message
+                            parameters:
+                                entity: $checkout
+                                state1: $.result.currentCheckoutState
+                                state2: $.result.savedCheckoutState
+
+                        - '@payment_method_applicable':
+                            message: oro.checkout.workflow.condition.payment_method_is_not_applicable.message
+                            payment_method: $checkout.paymentMethod
+                            context: $.result.paymentContext
+
+                        - '@extendable':
+                            message: 'oro.checkout.workflow.b2b_flow_checkout.transition.place_order.condition.extendable.message'
+                            events: ['extendable_condition.before_order_create']
 
                 actions:
                     - '@run_action_group':
@@ -349,8 +396,10 @@ workflows:
                                 additionalData: $additional_data
                         results:
                             result.responseData: $.responseData
+
                     - '@extendable':
                         events: [extendable_action.finish_checkout]
+
                     - '@redirect':
                         conditions:
                             '@equal':
@@ -369,14 +418,6 @@ workflows:
                         route_parameters:
                             id: $checkout.id
                             transition: payment_error
-                    - '@run_action_group':
-                        action_group: actualize_workflow_state
-                        parameters_mapping:
-                            checkout: $checkout
-                            state_token: $state_token
-                        results:
-                            data.internal_state_token: $.state_token
-                            result.savedCheckoutState: $.currentCheckoutState
 
             finish_checkout_definition:
                 conditions:
