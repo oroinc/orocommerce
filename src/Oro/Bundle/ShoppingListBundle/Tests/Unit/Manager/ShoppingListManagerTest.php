@@ -8,6 +8,8 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
 
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\ProductBundle\Provider\ProductMatrixAvailabilityProvider;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -109,6 +111,12 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
      */
     private $shoppingListRepository;
 
+    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    private $productMatrixAvailabilityProvider;
+
+    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    private $configManager;
+
     protected function setUp()
     {
         $this->shoppingListOne = $this->getShoppingList(1, true);
@@ -143,6 +151,11 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
 
         $this->guestShoppingListManager = $this->createMock(GuestShoppingListManager::class);
         $this->manager->setGuestShoppingListManager($this->guestShoppingListManager);
+
+        $this->productMatrixAvailabilityProvider = $this->createMock(ProductMatrixAvailabilityProvider::class);
+        $this->configManager = $this->createMock(ConfigManager::class);
+        $this->manager->setConfigManager($this->configManager);
+        $this->manager->setProductMatrixAvailabilityProvider($this->productMatrixAvailabilityProvider);
     }
 
     public function testCreate()
