@@ -1,0 +1,15 @@
+Oro\Bundle\CatalogBundle\Entity\Category:
+    categoryLightingProducts:
+        addTitle: ['@localValueLightingProducts']
+        setParentCategory: [1]
+
+    categoryMedicalApparel:
+        addTitle: ['@localValueMedicalApparel']
+        setParentCategory: [1]
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    localValueLightingProducts:
+        string: 'Lighting Products'
+
+    localValueMedicalApparel:
+        string: 'Medical Apparel'

@@ -585,6 +585,11 @@ services:
         tags:
             - { name: kernel.event_subscriber }
 
+    oro_tax.validator.tax_rate:
+        class: Oro\Bundle\TaxBundle\Validator\Constraints\TaxRateValidator
+        tags:
+            - { name: validator.constraint_validator, alias: oro_tax_tax_rate }
+
     oro_tax.taxation_provider.cache:
         parent: doctrine_cache.abstract.array
         public: false

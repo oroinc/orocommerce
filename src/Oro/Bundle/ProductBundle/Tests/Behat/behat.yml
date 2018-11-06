@@ -62,6 +62,26 @@ oro_behat_extension:
       selector: 'div[data-page-component-name="products-related-products-view"]'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
 
+    RelatedProductsViewGridFilters:
+      selector: 'div[data-page-component-name="products-related-products-view"] div.filter-box'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilters
+
+    RelatedProductsViewGridToolbarActions:
+      selector: 'div[data-page-component-name="products-related-products-view"] div.toolbar div.actions-panel'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridToolbarActions
+
+    RelatedProductsViewGridFiltersState:
+      selector: 'div[data-page-component-name="products-related-products-view"] div.filters-state'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+
+    RelatedProductsViewGridFilterItem:
+      selector: 'div[data-page-component-name="products-related-products-view"] div.filter-item'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilterItem
+
+    RelatedProductsViewGridFilterStringItem:
+      selector: 'div[data-page-component-name="products-related-products-view"] div.filter-item'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilterStringItem
+
     SelectRelatedProductsGridFilters:
       selector: 'div[data-page-component-name="products-related-products-select"] div.filter-box'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilters
@@ -250,6 +270,16 @@ oro_behat_extension:
             type: 'css'
             locator: 'input[name="oro_product[ManyToOneField]"]'
             element: Select2Entity
+          ColorField: 'oro_product[ColorField]'
+          TagField:
+            type: 'css'
+            locator: 'input[name="oro_product[TagField]"]'
+            element: Select2Entity
+          MultiColor:
+            type: 'css'
+            locator: 'div[data-ftid="oro_product_MultiColor"]'
+            element: GroupChoiceField
+          BooleanAttr: 'oro_product[BooleanAttr]'
 
     RelatedProductsConfig:
       selector: 'form[name="related_items"]'
@@ -865,6 +895,7 @@ oro_behat_extension:
 
     Frontend Product Grid Sorter:
       selector: 'div.datagrid-tool div[data-grid-sorting] select'
+      class: Oro\Bundle\FormBundle\Tests\Behat\Element\Select
 
     Shirt_101 Matrix Grid Order Form:
       selector: 'form[name="matrix_collection"]'
@@ -914,6 +945,10 @@ oro_behat_extension:
     Remove Image 1:
         selector: 'tr[data-content="oro_product[images][0]"] .removeRow'
 
+    FrontendProductGridFilters:
+      selector: 'div[data-bound-component="oroproduct/js/app/datagrid/backend-datagrid-component"] div.filter-box'
+      class: Oro\Bundle\ProductBundle\Tests\Behat\Element\FrontendProductGridFilters
+
   pages:
     Product View:
       class: Oro\Bundle\ProductBundle\Tests\Behat\Page\ProductView
@@ -925,6 +960,7 @@ oro_behat_extension:
       contexts:
         - OroApplicationBundle::CommerceMainContext
         - OroDataGridBundle::GridContext
+        - OroCustomerBundle::FrontendGridContext
         - OroEmailBundle::EmailContext
         - OroFormBundle::FormContext
         - OroProductBundle::FeatureContext
