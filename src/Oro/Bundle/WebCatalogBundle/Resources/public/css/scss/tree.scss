@@ -1,33 +1,33 @@
-@import "oroui/css/scss/variables";
+/* @theme: admin.oro; */
 
 .web-catalog-page-container {
-  position: relative;
+    position: relative;
 
-  .page-tree {
-    position: absolute;
-    border-top: 1px solid #f2f2f2;
-    width: 334px;
-    overflow: auto;
-  }
+    .page-tree {
+        position: absolute;
+        border-top: 1px solid #f2f2f2;
+        width: 334px;
+        overflow: auto;
+    }
 }
 
 .page-tree {
-  padding-left: 10px;
+    padding-left: 10px;
 }
 
 .content-with-sidebar--content {
-  .oro-multiselect-holder {
-    td {
-      display: block;
-      float: left;
-    }
+    .oro-multiselect-holder {
+        td {
+            display: block;
+            float: left;
+        }
 
-    .entity-create-or-select-container {
-      margin-left: 0;
+        .entity-create-or-select-container {
+            margin-left: 0;
 
-      @media (max-width: $smallScreen) {
-        width: auto;
-      }
+            @media (max-width: $small-screen) {
+                width: auto;
+            }
+        }
     }
-  }
 }

@@ -23,9 +23,9 @@
         {% if not entity.status %}
             {# status not defined #}
         {% elseif entity.status == constant('STATUS_ENABLED', entity) %}
-            <div class="badge badge-enabled status-enabled"><i class="icon-status-enabled fa-circle"></i>{{ 'oro.product.status.enabled'|trans }}</div>
+            <div class="badge badge-pill badge-enabled status-enabled"><i class="icon-status-enabled fa-circle"></i>{{ 'oro.product.status.enabled'|trans }}</div>
         {% elseif entity.status == constant('STATUS_DISABLED', entity) %}
-            <div class="badge badge-disabled status-disabled"><i class="icon-status-disabled fa-circle"></i>{{ 'oro.product.status.disabled'|trans }}</div>
+            <div class="badge badge-pill badge-disabled status-disabled"><i class="icon-status-disabled fa-circle"></i>{{ 'oro.product.status.disabled'|trans }}</div>
         {% endif %}
     </div>
 {% endblock breadcrumbs %}
@@ -54,7 +54,6 @@
     {% set dataBlocks = {
         'general': {
             'title': 'oro.product.sections.general'|trans,
-            'class': 'active',
             'subblocks': [
                 {
                     'data' : {
@@ -100,7 +99,9 @@
             )
         %}
     {% else %}
-        {% set imagesData = 'oro.product.form.no_images'|trans %}
+        {% set imagesData %}
+            <div class="no-data">{{ 'oro.product.form.no_images'|trans }}</div>
+        {% endset %}
     {% endif %}
 
     {% set dataBlocks = dataBlocks|merge({
@@ -147,7 +148,7 @@
         {% endfor %}
 
         {% set unitOfQuantityData = unitOfQuantityData|merge({
-            'additionalUnitPrecisions' : UI.renderHtmlProperty( 'oro.product.additional_unit_precisions.label'|trans, UI.renderTable(titles,rows,"grid table table-bordered unit-table"))
+            'additionalUnitPrecisions' : UI.renderHtmlProperty( 'oro.product.additional_unit_precisions.label'|trans, UI.renderTable(titles,rows,"grid table unit-table"))
         }) %}
 
     {% endif %}
@@ -191,7 +192,7 @@
             {% if relatedItemsIds is not empty %}
                 {{ relatedProductsDataGrid.renderGrid('products-related-products-view', {'relatedItemsIds': relatedItemsIds}) }}
             {% else %}
-                <div id="products-related-products-view">
+                <div id="products-related-products-view" class="tab-content">
                     <div class="no-data">
                         {{ 'oro.product.related_products.no_entities'|trans }}
                     </div>
@@ -216,7 +217,7 @@
             {% if relatedItemsIds is not empty %}
                 {{ relatedProductsDataGrid.renderGrid('products-upsell-products-view', {'relatedItemsIds': relatedItemsIds}) }}
             {% else %}
-                <div id="products-upsell-products-view">
+                <div id="products-upsell-products-view" class="tab-content">
                     <div class="no-data">
                          {{ 'oro.product.upsell_products.no_entities'|trans }}
                     </div>
@@ -267,7 +268,9 @@
     {% endif %}
 
     {% if pageTemplate == null %}
-        {% set pageTemplatesData = 'oro.product.form.no_page_template'|trans %}
+        {% set pageTemplatesData %}
+            <div class="no-data">{{ 'oro.product.form.no_page_template'|trans }}</div>
+        {% endset %}
     {% else %}
         {% set pageTemplatesData = UI.renderProperty(
             'oro.product.page_template.label'|trans,

@@ -7,18 +7,21 @@ use Oro\Bundle\ActionBundle\Datagrid\Provider\MassActionProviderInterface;
 use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
+use Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListManager;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
+/**
+ * Provides mass actions available for shopping list line items.
+ */
 class AddLineItemMassActionProvider implements MassActionProviderInterface
 {
     const NAME_PREFIX = 'oro_shoppinglist_frontend_addlineitem';
 
     use FeatureCheckerHolderTrait;
 
-    /** @var ShoppingListManager */
-    protected $manager;
+    /** @var CurrentShoppingListManager */
+    protected $currentShoppingListManager;
 
     /** @var TranslatorInterface */
     protected $translator;
@@ -27,16 +30,16 @@ class AddLineItemMassActionProvider implements MassActionProviderInterface
     protected $tokenStorage;
 
     /**
-     * @param ShoppingListManager $manager
+     * @param CurrentShoppingListManager $currentShoppingListManager
      * @param TranslatorInterface $translator
      * @param TokenStorageInterface $tokenStorage
      */
     public function __construct(
-        ShoppingListManager $manager,
+        CurrentShoppingListManager $currentShoppingListManager,
         TranslatorInterface $translator,
         TokenStorageInterface $tokenStorage
     ) {
-        $this->manager = $manager;
+        $this->currentShoppingListManager = $currentShoppingListManager;
         $this->translator = $translator;
         $this->tokenStorage = $tokenStorage;
     }
@@ -54,7 +57,7 @@ class AddLineItemMassActionProvider implements MassActionProviderInterface
                 'is_current' => true
             ]);
         } else {
-            $shoppingLists = $this->manager->getShoppingLists(['list.id' => Criteria::ASC]);
+            $shoppingLists = $this->currentShoppingListManager->getShoppingLists(['list.id' => Criteria::ASC]);
 
             /** @var ShoppingList $shoppingList */
             foreach ($shoppingLists as $shoppingList) {

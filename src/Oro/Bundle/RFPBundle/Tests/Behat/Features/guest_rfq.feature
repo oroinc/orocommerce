@@ -32,12 +32,14 @@ Feature: Guest RFQ
   Scenario: Create RFQ from shopping list
     Given I proceed as the Buyer
     And I am on the homepage
+    And I should see "No Shopping Lists"
     When type "PSKU1" in "search"
     And I click "Search Button"
     Then I should see "Product1"
     When I click "Add to Shopping List" for "PSKU1" product
-    Then I should see "Product has been added to" flash message
-    And I click "Shopping List"
+    And I follow "Shopping List" link within flash message "Product has been added to \"Shopping list\""
+    And I hover on "Shopping List Widget"
+    And I should see "1 Item | $0.00" in the "Shopping List Widget" element
     And click "Request Quote"
     And I fill form with:
       | First Name             | Tester               |

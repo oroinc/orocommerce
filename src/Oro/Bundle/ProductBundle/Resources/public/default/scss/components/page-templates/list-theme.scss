@@ -57,15 +57,9 @@
             .form__col,
             .form-row {
                 margin-left: $list-theme-product-view-line-item-form-margin-left-desktop;
+
                 &:first-child {
                     margin-left: 0;
-                }
-            }
-
-            .pinned-dropdown {
-                .btn {
-                    padding-top: $list-theme-product-view-shipping-list-button-padding-y-desktop;
-                    padding-bottom: $list-theme-product-view-shipping-list-button-padding-y-desktop;
                 }
             }
         }

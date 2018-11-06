@@ -88,7 +88,7 @@ Feature: Promotions with coupons on Order page
     Then I should see next rows in "Added Coupons" table
       | Coupon Code | Promotion                    | Type            | Discount Value |
       | test-1      | Line Item Discount Promotion | Order Line Item | $1.00          |
-    And I click "Cancel"
+    And I click "Cancel" in modal window
     Then I should see no records in "Promotions" table
 
   Scenario: Deactivate button in Promotions grid

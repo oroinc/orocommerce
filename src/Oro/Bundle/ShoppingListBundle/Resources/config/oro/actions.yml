@@ -27,7 +27,7 @@ operations:
             template: OroShoppingListBundle:Action:buttons.html.twig
         preactions:
             - '@call_service_method':
-                service: oro_shopping_list.shopping_list.manager
+                service: oro_shopping_list.manager.current_shopping_list
                 method: getShoppingLists
                 attribute: $.shoppingLists
             - '@call_service_method':
@@ -419,6 +419,6 @@ action_groups:
         acl_resource: [CREATE, entity:Oro\Bundle\ShoppingListBundle\Entity\LineItem]
         actions:
             - '@call_service_method':
-                service: oro_shopping_list.shopping_list.manager
+                service: oro_shopping_list.manager.shopping_list
                 method: addLineItem
                 method_parameters: [$.line_item, $.data, true, true]

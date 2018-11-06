@@ -6,5 +6,8 @@ config:
         'oropayment/js/validator/credit-card-expiration-date-not-blank': 'bundles/oropayment/js/validator/credit-card-expiration-date-not-blank.js'
         'oropayment/js/lib/jquery-credit-card-validator': 'bundles/bowerassets/jquery-creditcardvalidator/jquery.creditCardValidator.js'
         'oropayment/js/adapter/credit-card-validator-adapter': 'bundles/oropayment/js/adapter/credit-card-validator-adapter.js'
+        'oropayment/js/normalizer/credit-card-number': 'bundles/oropayment/js/normalizer/credit-card-number.js'
+        'oropayment/js/validator/credit-card-luhn': 'bundles/oropayment/js/validator/credit-card-luhn.js'
         'oropayment/js/validator/credit-card-number': 'bundles/oropayment/js/validator/credit-card-number.js'
         'oropayment/js/validator/credit-card-type': 'bundles/oropayment/js/validator/credit-card-type.js'
+        'oropayment/js/validator/credit-card-china-union-pay': 'bundles/oropayment/js/validator/credit-card-china-union-pay.js'

@@ -20,10 +20,8 @@
             @include element-state('hover') {
                 color: $checkout-credentials-tab-item-active-link-color;
             }
-        }
 
-        &.active {
-            .link {
+            &.active {
                 color: $checkout-credentials-tab-item-active-link-color;
                 background: $checkout-credentials-tab-item-active-link-bg;
 

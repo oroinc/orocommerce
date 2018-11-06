@@ -14,6 +14,7 @@ use Oro\Bundle\ProductBundle\Model\ProductRow;
 use Oro\Bundle\ProductBundle\Model\QuickAddRow;
 use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
+use Oro\Component\Testing\TempDirExtension;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -27,6 +28,8 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
  */
 class QuickAddHandlerTest extends \PHPUnit\Framework\TestCase
 {
+    use TempDirExtension;
+
     const PRODUCT_CLASS = 'Oro\Bundle\ProductBundle\Entity\Product';
 
     const COMPONENT_NAME = 'component';
@@ -427,7 +430,7 @@ class QuickAddHandlerTest extends \PHPUnit\Framework\TestCase
         $fileForm = $this->getMockForAbstractClass('Symfony\Component\Form\FormInterface');
         $file = $this->getMockBuilder('Symfony\Component\HttpFoundation\File\UploadedFile')
             ->enableOriginalConstructor()
-            ->setConstructorArgs([tempnam(sys_get_temp_dir(), ''), 'dummy'])
+            ->setConstructorArgs([tempnam($this->getTempDir('quick_add_handler'), ''), 'dummy'])
             ->getMock();
         $form->expects($this->once())
             ->method('get')

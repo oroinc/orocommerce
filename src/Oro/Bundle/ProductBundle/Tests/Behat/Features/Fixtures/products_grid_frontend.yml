@@ -1,0 +1,27 @@
+include:
+    - '@OroProductBundle/Tests/Behat/Features/Fixtures/products_grid.yml'
+
+Oro\Bundle\PricingBundle\Entity\CombinedPriceListToCustomer:
+    combinedPriceListToCustomer:
+        pricelist: '@combinedPriceList'
+        customer: '@Customer_AmandaRCole'
+        website: '@website1'
+
+Oro\Bundle\PricingBundle\Entity\CombinedProductPrice:
+    combinedProductPrice{1..20}Each:
+        pricelist: '@combinedPriceList'
+        product: '@product<current()>'
+        productSku: 'PSKU<current()>'
+        quantity: 1
+        unit: '@each'
+        value: '<current()>'
+        currency: 'USD'
+
+    combinedProductPrice{1..20}Item:
+        pricelist: '@combinedPriceList'
+        product: '@product<current()>'
+        productSku: 'PSKU<current()>'
+        quantity: 1
+        unit: '@item'
+        value: '<current()>'
+        currency: 'USD'

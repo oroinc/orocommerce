@@ -9,10 +9,14 @@ use Oro\Bundle\BatchBundle\ORM\Query\BufferedIdentityQueryResultIterator;
 use Oro\Bundle\PaymentBundle\Entity\PaymentStatus;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Provider\PaymentStatusProvider;
-use Oro\Component\PhpUtils\ArrayUtil;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
+/**
+ * Selects PaymentTransaction.entityClass,
+ * then use Repository of selected class
+ * then updates OroPaymentBundle:PaymentStatus table with selected data
+ */
 class AddPaymentStatuses extends AbstractFixture implements ContainerAwareInterface
 {
     use ContainerAwareTrait;
@@ -36,7 +40,7 @@ class AddPaymentStatuses extends AbstractFixture implements ContainerAwareInterf
             ->getQuery()
             ->getScalarResult();
 
-        $classNames = ArrayUtil::arrayColumn($classNames, 'entityClass');
+        $classNames = \array_column($classNames, 'entityClass');
 
         foreach ($classNames as $className) {
             $this->doUpdate($className);

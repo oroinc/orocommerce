@@ -55,7 +55,7 @@ Example:
       },      
       "customerUser": {
         "data": {
-          "type": "customer_users",
+          "type": "customerusers",
           "id": "5"
         }
       },
@@ -113,7 +113,7 @@ Example:
       },      
       "customerUser": {
         "data": {
-          "type": "customer_users",
+          "type": "customerusers",
           "id": "5"
         }
       },
@@ -309,11 +309,11 @@ Example:
 {
   "data": [
     {
-      "type": "customer_users",
+      "type": "customerusers",
       "id": "1"
     },
     {
-      "type": "customer_users",
+      "type": "customerusers",
       "id": "2"
     }
   ]
@@ -332,11 +332,11 @@ Example:
 {
   "data": [
     {
-      "type": "customer_users",
+      "type": "customerusers",
       "id": "1"
     },
     {
-      "type": "customer_users",
+      "type": "customerusers",
       "id": "2"
     }
   ]
@@ -355,11 +355,11 @@ Example:
 {
   "data": [
     {
-      "type": "customer_users",
+      "type": "customerusers",
       "id": "1"
     },
     {
-      "type": "customer_users",
+      "type": "customerusers",
       "id": "2"
     }
   ]
@@ -578,7 +578,7 @@ Example:
 ```JSON
 {
   "data": {
-    "type": "customer_users",
+    "type": "customerusers",
     "id": "1"
   }
 }

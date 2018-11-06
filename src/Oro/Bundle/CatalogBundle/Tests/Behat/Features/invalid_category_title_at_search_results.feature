@@ -6,6 +6,6 @@ Feature: Invalid category title at search results
     Given I login as administrator
     When click on "Search"
     And type "New" in "search"
-    And click "Go"
+    And click "Search Submit"
     Then should not see "1_2"
     And should see "NewCategory"
