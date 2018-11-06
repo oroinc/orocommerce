@@ -65,6 +65,8 @@ services:
             - "@oro_website.manager"
             - "@oro_shopping_list.manager.shopping_list_total"
             - "@oro_product.provider.product_variant_availability_provider"
+            - "@oro_product.provider.product_matrix_availability_provider"
+            - "@oro_config.manager"
 
     oro_shopping_list.shopping_list.owner_manager:
         class: 'Oro\Bundle\ShoppingListBundle\Manager\ShoppingListOwnerManager'

@@ -15,8 +15,8 @@ Feature: Delete line item from Shopping List
       | AA1 | 1        | set  |
       | AA1 | 2        | item |
     When I delete line item 1 in "Shopping List Line Items Table"
-    And click "Yes, Delete"
-    Then should see "Shopping list item has been deleted" flash message
+    And I click "Yes, Delete"
+    Then I should see "Shopping list item has been deleted" flash message
     And I should see following line items in "Shopping List Line Items Table":
       | SKU | Quantity | Unit |
       | AA1 | 2        | item |
