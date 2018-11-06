@@ -4,6 +4,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\EventListener;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
 use Oro\Bundle\PricingBundle\EventListener\WebsiteSearchProductPriceIndexerListener;
 use Oro\Bundle\PricingBundle\Tests\Unit\Entity\Repository\Stub\CombinedProductPriceRepository;
@@ -39,6 +40,11 @@ class WebsiteSearchProductPriceIndexerListenerTest extends \PHPUnit\Framework\Te
      */
     private $manager;
 
+    /**
+     * @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $featureChecker;
+
     public function setUp()
     {
         $this->websiteContextManager = $this->getMockBuilder(WebsiteContextManager::class)
@@ -54,11 +60,30 @@ class WebsiteSearchProductPriceIndexerListenerTest extends \PHPUnit\Framework\Te
         $this->manager = $this->createMock(EntityManagerInterface::class);
         $this->doctrine->method('getManagerForClass')->willReturn($this->manager);
 
+        $this->featureChecker = $this->createMock(FeatureChecker::class);
+
         $this->listener = new WebsiteSearchProductPriceIndexerListener(
             $this->websiteContextManager,
             $this->doctrine,
             $this->configManager
         );
+    }
+
+    public function testOnWebsiteSearchIndexFeatureDisabled()
+    {
+        $this->featureChecker->expects($this->once())
+            ->method('isFeatureEnabled')
+            ->with('feature1', null)
+            ->willReturn(false);
+
+        $this->listener->setFeatureChecker($this->featureChecker);
+        $this->listener->addFeature('feature1');
+
+        $event = $this->createMock(IndexEntityEvent::class);
+
+        $this->websiteContextManager->expects($this->never())->method('getWebsiteId');
+
+        $this->listener->onWebsiteSearchIndex($event);
     }
 
     public function testOnWebsiteSearchIndexWithoutWebsite()
@@ -162,6 +187,13 @@ class WebsiteSearchProductPriceIndexerListenerTest extends \PHPUnit\Framework\Te
             ]
         );
 
+        $this->featureChecker->expects($this->once())
+            ->method('isFeatureEnabled')
+            ->with('feature1', null)
+            ->willReturn(true);
+
+        $this->listener->setFeatureChecker($this->featureChecker);
+        $this->listener->addFeature('feature1');
         $this->listener->onWebsiteSearchIndex($event);
     }
 }

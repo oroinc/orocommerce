@@ -7,6 +7,7 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\ResultsObject;
 use Oro\Bundle\DataGridBundle\Datasource\Orm\OrmQueryConfiguration;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\PricingBundle\Datagrid\ProductPriceDatagridExtension;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
@@ -27,12 +28,18 @@ class ProductPriceDatagridExtensionTest extends AbstractProductsGridPricesExtens
     /** @var ProductPriceDatagridExtension */
     protected $extension;
 
+    /**
+     * @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $featureChecker;
+
     protected function setUp()
     {
         parent::setUp();
 
         $this->translator = $this->createMock(TranslatorInterface::class);
         $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
+        $this->featureChecker = $this->createMock(FeatureChecker::class);
 
         $this->extension = new ProductPriceDatagridExtension(
             $this->priceListRequestHandler,
@@ -41,6 +48,39 @@ class ProductPriceDatagridExtensionTest extends AbstractProductsGridPricesExtens
             $this->translator,
             $this->authorizationChecker
         );
+    }
+
+    protected function tearDown()
+    {
+        unset($this->translator, $this->authorizationChecker, $this->extension, $this->featureChecker);
+
+        parent::tearDown();
+    }
+
+    public function testIsApplicableWhenFeatureDisabled()
+    {
+        $this->featureChecker->expects($this->once())
+            ->method('isFeatureEnabled')
+            ->with('feature1', null)
+            ->willReturn(false);
+
+        $this->extension->setFeatureChecker($this->featureChecker);
+        $this->extension->addFeature('feature1');
+        $this->extension->setParameters($this->datagridParameters);
+        $this->assertFalse($this->extension->isApplicable($this->datagridConfiguration));
+    }
+
+    public function testIsApplicable(): void
+    {
+        $this->featureChecker->expects($this->once())
+            ->method('isFeatureEnabled')
+            ->with('feature1', null)
+            ->willReturn(true);
+
+        $this->extension->setFeatureChecker($this->featureChecker);
+        $this->extension->addFeature('feature1');
+
+        parent::testIsApplicable();
     }
 
     public function testIsApplicableWhenAlreadyApplied(): void
