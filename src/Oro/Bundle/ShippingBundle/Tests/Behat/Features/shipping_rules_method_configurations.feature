@@ -1,4 +1,6 @@
 @regression
+@ticket-BB-15402
+@fixture-OroTranslationBundle:ZuluLanguage.yml
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 Feature: Shipping rules method configurations
   ToDo: BAP-16103 Add missing descriptions to the Behat features
@@ -54,6 +56,31 @@ Feature: Shipping rules method configurations
     Then I should not see "Flat Rate Shipping Method Body"
     When I save and close form
     Then I should see "Shipping rule has been saved" flash message
+
+  Scenario: Change default language to Zulu and translate Disabled flag of shipping method config
+    When I go to System / Configuration
+    And I follow "System Configuration/General Setup/Language Settings" on configuration sidebar
+    And I fill form with:
+      | Use Default         | false           |
+      | Supported Languages | [English, Zulu] |
+      | Default Language    | Zulu            |
+    And I submit form
+    Then I should see "Configuration saved" flash message
+
+    When I go to System / Configuration
+    And go to System/Localization/Translations
+    And filter Translated Value as is empty
+    And filter Key as is equal to "oro.shipping.shippingmethodconfig.disabled"
+    And I edit "oro.shipping.shippingmethodconfig.disabled" Translated Value as "Disabled - Zulu"
+    Then I should see following records in grid:
+      | Disabled - Zulu |
+    When I click "Update Cache"
+    Then I should see "Translation Cache has been updated" flash message
+
+  Scenario: Check translations for grid view list
+    Given I go to System/ Shipping Rules
+    When click edit "Flat Rate" in grid
+    Then I should see "Flat Rate Disabled - Zulu"
 
   Scenario: Enable first Flat Rate integration
     Given I go to System/ Integrations/ Manage Integrations
