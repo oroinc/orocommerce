@@ -126,6 +126,7 @@ oro:
             currency:
                 label:                  'Price Currency'
                 description:            The currency in which the suggested price for the selected product in the RFQ is defined.
+            note.label:                 'Note'
 
         requestadditionalnote:
             entity_label: 'Request Additional Note'
