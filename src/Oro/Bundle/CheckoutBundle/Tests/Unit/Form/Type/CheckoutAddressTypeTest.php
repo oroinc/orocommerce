@@ -158,7 +158,6 @@ class CheckoutAddressTypeTest extends AbstractOrderAddressTypeTest
             'street2' => 'Street2',
             'city' => 'City',
             'region' => self::REGION_WITH_COUNTRY,
-            'region_text' => 'Region Text',
             'postalCode' => 'AL',
             'country' => self::COUNTRY_WITH_REGION,
         ];

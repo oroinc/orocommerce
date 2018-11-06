@@ -2,24 +2,23 @@
 
 namespace Oro\Bundle\PricingBundle\SubtotalProcessor\Provider;
 
-use Doctrine\ORM\EntityManager;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PricingBundle\Model\PriceListTreeHandler;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
 use Oro\Bundle\PricingBundle\Provider\ProductPriceProvider;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsNotPricedAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
-use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 use Oro\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
 use Oro\Bundle\ProductBundle\Model\QuantityAwareInterface;
 use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
+/**
+ * Subtotal provider for line items without prices. SUM(ROUND(price*qty))
+ */
 class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider implements SubtotalProviderInterface
 {
     const TYPE = 'subtotal';
@@ -35,9 +34,6 @@ class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider impleme
     /** @var ProductPriceProvider */
     protected $productPriceProvider;
 
-    /** @var DoctrineHelper */
-    protected $doctrineHelper;
-
     /** @var string */
     protected $productClass;
 
@@ -51,7 +47,6 @@ class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider impleme
      * @param TranslatorInterface $translator
      * @param RoundingServiceInterface $rounding
      * @param ProductPriceProvider $productPriceProvider
-     * @param DoctrineHelper $doctrineHelper
      * @param PriceListTreeHandler $priceListTreeHandler ,
      * @param SubtotalProviderConstructorArguments $arguments
      */
@@ -59,7 +54,6 @@ class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider impleme
         TranslatorInterface $translator,
         RoundingServiceInterface $rounding,
         ProductPriceProvider $productPriceProvider,
-        DoctrineHelper $doctrineHelper,
         PriceListTreeHandler $priceListTreeHandler,
         SubtotalProviderConstructorArguments $arguments
     ) {
@@ -68,7 +62,6 @@ class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider impleme
         $this->translator = $translator;
         $this->rounding = $rounding;
         $this->productPriceProvider = $productPriceProvider;
-        $this->doctrineHelper = $doctrineHelper;
         $this->priceListTreeHandler = $priceListTreeHandler;
     }
 
@@ -120,12 +113,13 @@ class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider impleme
             foreach ($prices as $identifier => $price) {
                 if ($price) {
                     $priceValue = $price->getValue();
-                    $subtotalAmount += (float) $priceValue * $productsPriceCriterias[$identifier]->getQuantity();
+                    $rowTotal = (float)$priceValue * $productsPriceCriterias[$identifier]->getQuantity();
+                    $subtotalAmount += $this->rounding->round($rowTotal);
                     $subtotal->setVisible(true);
                 }
             }
         }
-        $subtotal->setAmount($this->rounding->round($subtotalAmount));
+        $subtotal->setAmount($subtotalAmount);
         $subtotal->setCurrency($currency);
 
         return $subtotal;
@@ -144,56 +138,22 @@ class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider impleme
                 && $lineItem instanceof ProductUnitHolderInterface
                 && $lineItem instanceof QuantityAwareInterface
             ) {
-                $productId = $lineItem->getProduct()->getId();
-                $productUnitCode = $lineItem->getProductUnit()->getCode();
-                if ($productId && $productUnitCode) {
-                    /** @var Product $product */
-                    $product = $this->getEntityReference($this->productClass, $productId);
-                    /** @var ProductUnit $unit */
-                    $unit = $this->getEntityReference($this->productUnitClass, $productUnitCode);
+                $hasProduct = $lineItem->getProduct() && $lineItem->getProduct()->getId();
+                $hasProductUnitCode = $lineItem->getProductUnit() && $lineItem->getProductUnit()->getCode();
+                if ($hasProduct && $hasProductUnitCode) {
                     $quantity = (float)$lineItem->getQuantity();
-                    $criteria = new ProductPriceCriteria($product, $unit, $quantity, $currency);
+                    $criteria = new ProductPriceCriteria(
+                        $lineItem->getProduct(),
+                        $lineItem->getProductUnit(),
+                        $quantity,
+                        $currency
+                    );
                     $productsPriceCriterias[$criteria->getIdentifier()] = $criteria;
                 }
             }
         }
 
         return $productsPriceCriterias;
-    }
-
-    /**
-     * @param string $productClass
-     */
-    public function setProductClass($productClass)
-    {
-        $this->productClass = $productClass;
-    }
-
-    /**
-     * @param string $productUnitClass
-     */
-    public function setProductUnitClass($productUnitClass)
-    {
-        $this->productUnitClass = $productUnitClass;
-    }
-
-    /**
-     * @param string $class
-     * @param mixed $id
-     * @return object
-     */
-    protected function getEntityReference($class, $id)
-    {
-        return $this->getManagerForClass($class)->getReference($class, $id);
-    }
-
-    /**
-     * @param string $class
-     * @return EntityManager
-     */
-    protected function getManagerForClass($class)
-    {
-        return $this->doctrineHelper->getEntityManagerForClass($class);
     }
 
     /**

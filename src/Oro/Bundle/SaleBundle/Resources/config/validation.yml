@@ -78,6 +78,8 @@ Oro\Bundle\SaleBundle\Entity\QuoteAddress:
         phone:
             - Length:
                 max: 255
+        country:
+            - NotBlank: ~
 
 Oro\Bundle\SaleBundle\Entity\QuoteDemand:
     properties:

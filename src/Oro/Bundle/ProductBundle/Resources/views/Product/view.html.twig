@@ -192,7 +192,7 @@
             {% if relatedItemsIds is not empty %}
                 {{ relatedProductsDataGrid.renderGrid('products-related-products-view', {'relatedItemsIds': relatedItemsIds}) }}
             {% else %}
-                <div id="products-related-products-view">
+                <div id="products-related-products-view" class="tab-content">
                     <div class="no-data">
                         {{ 'oro.product.related_products.no_entities'|trans }}
                     </div>
@@ -217,7 +217,7 @@
             {% if relatedItemsIds is not empty %}
                 {{ relatedProductsDataGrid.renderGrid('products-upsell-products-view', {'relatedItemsIds': relatedItemsIds}) }}
             {% else %}
-                <div id="products-upsell-products-view">
+                <div id="products-upsell-products-view" class="tab-content">
                     <div class="no-data">
                          {{ 'oro.product.upsell_products.no_entities'|trans }}
                     </div>
