@@ -2,16 +2,18 @@
 
 namespace Oro\Bundle\SaleBundle\Controller\Frontend;
 
+use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
+use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
+use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
-use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
-
+/**
+ * Returns product offer by given quote product and quote demand via ajax.
+ */
 class AjaxQuoteProductController extends Controller
 {
     /**
@@ -20,14 +22,24 @@ class AjaxQuoteProductController extends Controller
      *      name="oro_sale_quote_frontend_quote_product_match_offer",
      *      requirements={"id"="\d+"}
      * )
-     * @AclAncestor("oro_sale_quote_frontend_view")
      *
      * @param QuoteProduct $quoteProduct
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function matchQuoteProductOfferAction(QuoteProduct $quoteProduct, Request $request)
     {
+        $quoteDemand = $this->getQuoteDemand($request);
+
+        $authorizationChecker = $this->get('security.authorization_checker');
+        if (!$quoteDemand ||
+            !$authorizationChecker->isGranted('oro_sale_quote_demand_frontend_view', $quoteDemand) ||
+            $quoteDemand->getQuote()->getId() !== $quoteProduct->getQuote()->getId()
+        ) {
+            throw $this->createAccessDeniedException();
+        }
+
         $matcher = $this->get('oro_sale.service.quote_product_offer_matcher');
         $offer = $matcher->match($quoteProduct, $request->get('unit'), $request->get('qty'));
 
@@ -58,5 +70,23 @@ class AjaxQuoteProductController extends Controller
             'qty' => $offer->getQuantity(),
             'price' => $formatter->formatCurrency($price->getValue(), $price->getCurrency()),
         ];
+    }
+
+    /**
+     * @param Request $request
+     * @return null|QuoteDemand
+     */
+    private function getQuoteDemand(Request $request): ?QuoteDemand
+    {
+        $demandId = (int)$request->get('demandId');
+        if ($demandId < 1) {
+            return null;
+        }
+
+        $repository = $this->get('doctrine')
+            ->getManagerForClass(QuoteDemand::class)
+            ->getRepository(QuoteDemand::class);
+
+        return $repository->find($demandId);
     }
 }
