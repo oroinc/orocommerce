@@ -334,41 +334,10 @@ workflows:
                             result.savedCheckoutState: $.currentCheckoutState
 
             purchase_transition_definition:
-                preactions:
-                    - '@call_service_method':
-                        service: oro_checkout.factory.payment_context_factory
-                        method: create
-                        method_parameters: [$checkout]
-                        attribute: $.result.paymentContext
-                    - '@generate_checkout_state_snapshot':
-                        entity: $checkout
-                        attribute: $.result.currentCheckoutState
-                    - '@get_checkout_state':
-                        entity: $checkout
-                        token: $state_token
-                        attribute: $.result.savedCheckoutState
-                    - '@assign_url':
-                        attribute: $.result.saveStateUrl
-                        route: oro_checkout_frontend_checkout
-                        route_parameters:
-                            id: $checkout.id
-                            transition: 'save_state'
-
                 preconditions:
                     '@and':
                         - '@equal': [$payment_in_progress, true]
                         - '@equal': [$checkout.completed, false]
-
-                conditions:
-                    '@and':
-                        - '@or':
-                            - '@empty': $.result.savedCheckoutState
-                            - '@check_checkout_states':
-                                message: oro.checkout.workflow.condition.content_of_order_was_changed.message
-                                parameters:
-                                    entity: $checkout
-                                    state1: $.result.currentCheckoutState
-                                    state2: $.result.savedCheckoutState
 
                 actions:
                     - '@run_action_group':
