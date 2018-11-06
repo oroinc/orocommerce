@@ -5,8 +5,11 @@ namespace Oro\Bundle\ShoppingListBundle\Manager;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Provider\ProductMatrixAvailabilityProvider;
 use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
 use Oro\Bundle\ProductBundle\Rounding\QuantityRoundingService;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
@@ -18,6 +21,8 @@ use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * Handles logic related to shopping list and line item manipulations (create, remove, etc.).
+ *
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class ShoppingListManager
 {
@@ -42,6 +47,12 @@ class ShoppingListManager
     /** @var ProductVariantAvailabilityProvider */
     private $productVariantProvider;
 
+    /** @var ProductMatrixAvailabilityProvider */
+    private $productMatrixAvailabilityProvider;
+
+    /** @var ConfigManager */
+    private $configManager;
+
     /**
      * @param ManagerRegistry                    $doctrine
      * @param TokenAccessorInterface             $tokenAccessor
@@ -50,6 +61,8 @@ class ShoppingListManager
      * @param WebsiteManager                     $websiteManager
      * @param ShoppingListTotalManager           $totalManager
      * @param ProductVariantAvailabilityProvider $productVariantProvider
+     * @param ProductMatrixAvailabilityProvider  $productMatrixAvailabilityProvider
+     * @param ConfigManager                      $configManager
      */
     public function __construct(
         ManagerRegistry $doctrine,
@@ -58,7 +71,9 @@ class ShoppingListManager
         QuantityRoundingService $rounding,
         WebsiteManager $websiteManager,
         ShoppingListTotalManager $totalManager,
-        ProductVariantAvailabilityProvider $productVariantProvider
+        ProductVariantAvailabilityProvider $productVariantProvider,
+        ProductMatrixAvailabilityProvider $productMatrixAvailabilityProvider,
+        ConfigManager $configManager
     ) {
         $this->doctrine = $doctrine;
         $this->tokenAccessor = $tokenAccessor;
@@ -67,6 +82,8 @@ class ShoppingListManager
         $this->websiteManager = $websiteManager;
         $this->totalManager = $totalManager;
         $this->productVariantProvider = $productVariantProvider;
+        $this->productMatrixAvailabilityProvider = $productMatrixAvailabilityProvider;
+        $this->configManager = $configManager;
     }
 
     /**
@@ -133,7 +150,7 @@ class ShoppingListManager
             if ($lineItem->getQuantity() > 0) {
                 $this->updateLineItemQuantity($lineItem, $duplicate);
             } else {
-                $this->removeLineItem($duplicate);
+                $this->removeLineItem($duplicate, true);
             }
         };
 
@@ -194,16 +211,36 @@ class ShoppingListManager
     }
 
     /**
+     * Removes the given line item. In case if line item is the part of matrix representation - removes all
+     * line items of the product from the given line item.
+     *
      * @param LineItem $lineItem
+     * @param bool     $removeOnlyCurrentItem
+     *
+     * @return int Number of deleted line items
      */
-    public function removeLineItem(LineItem $lineItem)
+    public function removeLineItem(LineItem $lineItem, bool $removeOnlyCurrentItem = false): int
     {
-        $em = $this->getEntityManager();
-        $em->remove($lineItem);
-        $shoppingList = $lineItem->getShoppingList();
-        $shoppingList->removeLineItem($lineItem);
-        $this->totalManager->recalculateTotals($lineItem->getShoppingList(), false);
-        $em->flush();
+        $parentProduct = $lineItem->getParentProduct();
+        if ($removeOnlyCurrentItem
+            || !$parentProduct
+            || $this->getAvailableMatrixFormType($parentProduct, $lineItem) === Configuration::MATRIX_FORM_NONE
+        ) {
+            $em = $this->getEntityManager();
+            $em->remove($lineItem);
+            $shoppingList = $lineItem->getShoppingList();
+            $shoppingList->removeLineItem($lineItem);
+            $this->totalManager->recalculateTotals($lineItem->getShoppingList(), false);
+            $em->flush();
+
+            // return 1 because only the specified line item was deleted
+            return 1;
+        }
+
+        return $this->removeProduct(
+            $lineItem->getShoppingList(),
+            $parentProduct ? $parentProduct : $lineItem->getProduct()
+        );
     }
 
     /**
@@ -383,5 +420,29 @@ class ShoppingListManager
     private function getLineItemRepository(EntityManagerInterface $em)
     {
         return $em->getRepository(LineItem::class);
+    }
+
+    /**
+     * @param Product $product
+     * @param LineItem $lineItem
+     * @return string
+     */
+    private function getAvailableMatrixFormType(Product $product, LineItem $lineItem)
+    {
+        if ($product->getPrimaryUnitPrecision()->getProductUnitCode() !== $lineItem->getProductUnitCode()) {
+            return Configuration::MATRIX_FORM_NONE;
+        }
+
+        $matrixConfiguration = $this->configManager->get(
+            sprintf('%s.%s', Configuration::ROOT_NODE, Configuration::MATRIX_FORM_ON_SHOPPING_LIST)
+        );
+
+        if ($matrixConfiguration === Configuration::MATRIX_FORM_NONE
+            || !$this->productMatrixAvailabilityProvider->isMatrixFormAvailable($product)
+        ) {
+            return Configuration::MATRIX_FORM_NONE;
+        }
+
+        return $matrixConfiguration;
     }
 }
