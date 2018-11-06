@@ -72,7 +72,9 @@
                         <th><span>{{ 'oro.pricing.pricelist.entity_label'|trans }}</span></th>
                         <th><span>{{ 'oro.pricing.pricelist.options.label'|trans }}</span></th>
                         <th></th>
+                        {% if form.mergeAllowed is defined %}
                         <th></th>
+                        {% endif %}
                     </tr>
                     </thead>
                     <tbody class="sortable-wrapper" data-last-index="{{ form.children|length}}" data-prototype-name="{{ prototype_name }}"{% if prototype_html is defined %} data-prototype="{{ prototype_html|escape }}"{% endif %} data-content>
@@ -86,7 +88,7 @@
                     </tbody>
                 </table>
             </div>
-            <a class="btn add-list-item" data-container=".oro-item-collection tbody" href="javascript: void(0);"><i class="fa-plus"></i>{{ 'oro.pricing.add_price_list'|trans }}</a>
+            <a class="btn add-list-item" data-container=".oro-item-collection tbody" href="javascript: void(0);">{{ 'oro.pricing.add_price_list'|trans }}</a>
         </div>
     </div>
 {% endblock %}
@@ -123,7 +125,7 @@
                 <i class="fa-arrows-v handle"></i></span>
         </td>
         <td>
-            <button type="button" class="btn btn-icon removeRow"><i class="fa-close"></i></button>
+            <button type="button" class="btn btn-icon btn-square-light removeRow"><i class="fa-close"></i></button>
         </td>
     {% endspaceless %}
 {% endblock %}
