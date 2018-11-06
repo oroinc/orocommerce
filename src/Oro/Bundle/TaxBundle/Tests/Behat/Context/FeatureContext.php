@@ -11,25 +11,18 @@ class FeatureContext extends OroFeatureContext implements KernelAwareContext
     use KernelDictionary;
 
     /**
-     * @Given Tax base by default is set to "shipping_origin"
+     * @Given /^Default tax is set to "(?P<value>[\w\s\_]+)"$/
+     * @param string $value
      */
-    public function taxBaseIsDefaultShipping()
+    public function taxBaseIsDefaultDestination(string $value): void
     {
-        $this->thereIsUseAsBaseByDefaultInTheSystemConfiguration('shipping_origin');
-    }
-
-    /**
-     * @Given Tax base by default is set to "destination"
-     */
-    public function taxBaseIsDefaultDestination()
-    {
-        $this->thereIsUseAsBaseByDefaultInTheSystemConfiguration('destination');
+        $this->thereIsUseAsBaseByDefaultInTheSystemConfiguration($value);
     }
 
     /**
      * @param string $value
      */
-    private function thereIsUseAsBaseByDefaultInTheSystemConfiguration($value)
+    private function thereIsUseAsBaseByDefaultInTheSystemConfiguration($value): void
     {
         $configManager = $this->getContainer()->get('oro_config.global');
         $configManager->set('oro_tax.use_as_base_by_default', $value);
