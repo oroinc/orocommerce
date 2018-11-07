@@ -373,7 +373,7 @@ services:
         arguments:
             - '@oro_pricing.model.product_price_scope_criteria_request_handler'
             - '@oro_pricing.user_currency_manager'
-            - '@oro_pricing.datagrid.provider.combined_product_price'
+            - '@oro_pricing.datagrid.provider.product_price'
             - '@translator'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-product-search-grid, method: onBuildBefore }
@@ -987,8 +987,8 @@ services:
         factory: ['@doctrine', 'getRepository']
         arguments: ['%oro_pricing.entity.combined_product_price.class%']
 
-    oro_pricing.datagrid.provider.combined_product_price:
-        class: Oro\Bundle\PricingBundle\Datagrid\Provider\CombinedProductPriceProvider
+    oro_pricing.datagrid.provider.product_price:
+        class: Oro\Bundle\PricingBundle\Datagrid\Provider\ProductPriceProvider
         public: false
         arguments:
             - '@oro_pricing.provider.product_price'

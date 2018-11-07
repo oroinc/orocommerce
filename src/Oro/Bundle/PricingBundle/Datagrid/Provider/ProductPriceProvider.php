@@ -11,10 +11,9 @@ use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
 /**
- * Realization of CombinedProductPriceProviderInterface
- * Provides CombinedProductPrice formatted variables (price, unit, quantity_with_unit) for views
+ * Provides Product Price formatted variables (price, unit, quantity_with_unit) for views
  */
-class CombinedProductPriceProvider
+class ProductPriceProvider
 {
     /**
      * @var ProductPriceProviderInterface

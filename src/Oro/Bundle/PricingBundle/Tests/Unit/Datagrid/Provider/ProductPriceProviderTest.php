@@ -5,7 +5,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Datagrid\Provider;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\PricingBundle\Datagrid\Provider\CombinedProductPriceProvider;
+use Oro\Bundle\PricingBundle\Datagrid\Provider\ProductPriceProvider;
 use Oro\Bundle\PricingBundle\Formatter\ProductPriceFormatter;
 use Oro\Bundle\PricingBundle\Model\DTO\ProductPriceDTO;
 use Oro\Bundle\PricingBundle\Model\ProductPriceInterface;
@@ -15,7 +15,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class CombinedProductPriceProviderTest extends \PHPUnit\Framework\TestCase
+class ProductPriceProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
@@ -28,8 +28,8 @@ class CombinedProductPriceProviderTest extends \PHPUnit\Framework\TestCase
     /** @var ProductPriceProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $productPriceProvider;
 
-    /** @var CombinedProductPriceProvider */
-    private $combinedProductPriceProvider;
+    /** @var ProductPriceProvider */
+    private $gridProductPriceProvider;
 
     /**
      * {@inheritdoc}
@@ -40,7 +40,7 @@ class CombinedProductPriceProviderTest extends \PHPUnit\Framework\TestCase
         $this->priceFormatter = $this->createMock(ProductPriceFormatter::class);
         $this->productPriceProvider = $this->createMock(ProductPriceProviderInterface::class);
 
-        $this->combinedProductPriceProvider = new CombinedProductPriceProvider(
+        $this->gridProductPriceProvider = new ProductPriceProvider(
             $this->productPriceProvider,
             $this->priceFormatter,
             $this->doctrineHelper
@@ -53,7 +53,7 @@ class CombinedProductPriceProviderTest extends \PHPUnit\Framework\TestCase
             $this->doctrineHelper,
             $this->productPriceProvider,
             $this->priceFormatter,
-            $this->combinedProductPriceProvider
+            $this->gridProductPriceProvider
         );
     }
 
@@ -71,7 +71,7 @@ class CombinedProductPriceProviderTest extends \PHPUnit\Framework\TestCase
         $this->doctrineHelper->expects($this->never())
             ->method('getEntityReference');
 
-        $result = $this->combinedProductPriceProvider
+        $result = $this->gridProductPriceProvider
             ->getCombinedPricesForProductsByPriceList(
                 [],
                 $productScopeCriteria
@@ -123,7 +123,7 @@ class CombinedProductPriceProviderTest extends \PHPUnit\Framework\TestCase
                 ];
             });
 
-        $combinedPricesForProductsByPriceList = $this->combinedProductPriceProvider
+        $combinedPricesForProductsByPriceList = $this->gridProductPriceProvider
             ->getCombinedPricesForProductsByPriceList(
                 [new ResultRecord(['id' => 1])],
                 $productScopeCriteria

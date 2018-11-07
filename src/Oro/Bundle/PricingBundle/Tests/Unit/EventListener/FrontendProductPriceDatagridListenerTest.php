@@ -6,7 +6,7 @@ use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
-use Oro\Bundle\PricingBundle\Datagrid\Provider\CombinedProductPriceProvider;
+use Oro\Bundle\PricingBundle\Datagrid\Provider\ProductPriceProvider;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\EventListener\FrontendProductPriceDatagridListener;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
@@ -37,7 +37,7 @@ class FrontendProductPriceDatagridListenerTest extends \PHPUnit\Framework\TestCa
     private $currencyManager;
 
     /**
-     * @var CombinedProductPriceProvider|\PHPUnit\Framework\MockObject\MockObject
+     * @var ProductPriceProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     private $combinedProductPriceProvider;
 
@@ -49,7 +49,7 @@ class FrontendProductPriceDatagridListenerTest extends \PHPUnit\Framework\TestCa
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->combinedProductPriceProvider = $this->getMockBuilder(CombinedProductPriceProvider::class)
+        $this->combinedProductPriceProvider = $this->getMockBuilder(ProductPriceProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
 

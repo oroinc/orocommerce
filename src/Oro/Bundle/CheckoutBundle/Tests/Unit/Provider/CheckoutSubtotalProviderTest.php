@@ -109,6 +109,8 @@ class CheckoutSubtotalProviderTest extends AbstractSubtotalProviderTest
      * @param string $expectedSubtotalCurrency
      * @param string|null $subtotalCurrency
      * @param string|null $entityCurrency
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function testGetSubtotalByCurrencyWithEnabledPriceListFeature(
         $value,
@@ -188,6 +190,8 @@ class CheckoutSubtotalProviderTest extends AbstractSubtotalProviderTest
      * @param string $expectedSubtotalCurrency
      * @param string|null $subtotalCurrency
      * @param string|null $entityCurrency
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function testGetSubtotalByCurrencyWithDisabledPriceListFeature(
         $value,
@@ -256,6 +260,8 @@ class CheckoutSubtotalProviderTest extends AbstractSubtotalProviderTest
      * @param string $expectedSubtotalCurrency
      * @param string|null $subtotalCurrency
      * @param string|null $entityCurrency
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function testGetSubtotalByCurrencyWithFixedPriceLineItem(
         $value,

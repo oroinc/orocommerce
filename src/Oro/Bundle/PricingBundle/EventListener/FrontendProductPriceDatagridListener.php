@@ -5,7 +5,7 @@ namespace Oro\Bundle\PricingBundle\EventListener;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\DataGridBundle\Extension\Formatter\Property\PropertyInterface;
-use Oro\Bundle\PricingBundle\Datagrid\Provider\CombinedProductPriceProvider;
+use Oro\Bundle\PricingBundle\Datagrid\Provider\ProductPriceProvider;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaRequestHandler;
 use Oro\Bundle\SearchBundle\Datagrid\Event\SearchResultAfter;
@@ -32,7 +32,7 @@ class FrontendProductPriceDatagridListener
     private $currencyManager;
 
     /**
-     * @var CombinedProductPriceProvider
+     * @var ProductPriceProvider
      */
     private $combinedProductPriceProvider;
 
@@ -54,13 +54,13 @@ class FrontendProductPriceDatagridListener
     /**
      * @param ProductPriceScopeCriteriaRequestHandler $scopeCriteriaRequestHandler
      * @param UserCurrencyManager $currencyManager
-     * @param CombinedProductPriceProvider $combinedProductPriceProvider
+     * @param ProductPriceProvider $combinedProductPriceProvider
      * @param TranslatorInterface $translator
      */
     public function __construct(
         ProductPriceScopeCriteriaRequestHandler $scopeCriteriaRequestHandler,
         UserCurrencyManager $currencyManager,
-        CombinedProductPriceProvider $combinedProductPriceProvider,
+        ProductPriceProvider $combinedProductPriceProvider,
         TranslatorInterface $translator
     ) {
         $this->scopeCriteriaRequestHandler = $scopeCriteriaRequestHandler;
