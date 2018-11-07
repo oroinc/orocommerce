@@ -472,7 +472,7 @@ oro_behat_extension:
     Content Node Form Slug Fallbacks:
       selector:
         type: xpath
-        locator: '//label[text()="URL Slug"]/../..//span[@class="fallback-status"]'
+        locator: '//label[text()="URL Slug"]/../..//span[contains(@class, "fallback-status")]'
 
     Content Node Form:
       selector: 'form[name="oro_web_catalog_content_node"]'
@@ -788,7 +788,7 @@ oro_behat_extension:
     Brand Form Name Fallbacks:
       selector:
         type: xpath
-        locator: '//label[text()="Name"]/../..//span[@class="fallback-status"]'
+        locator: '//label[text()="Name"]/../..//span[contains(@class, "fallback-status")]'
 
     Brand Form:
       selector: 'form[name="oro_product_brand"]'
@@ -823,7 +823,7 @@ oro_behat_extension:
     Product Form Slug Fallbacks:
       selector:
         type: xpath
-        locator: '//label[text()="URL Slug"]/../..//span[@class="fallback-status"]'
+        locator: '//label[text()="URL Slug"]/../..//span[contains(@class, "fallback-status")]'
 
     Create Product Plus Button:
       selector: '.content-variant-item-default .entity-create-btn'
@@ -853,7 +853,7 @@ oro_behat_extension:
     Brand humburger button:
       selector:
         type: xpath
-        locator: '//label[text()="Brand"]/../..//button[@class="add-on btn entity-select-btn"]'
+        locator: '//label[text()="Brand"]/../..//button[contains(@class, "entity-select-btn")]'
 
     Frontend Product Grid MultipleChoice:
       selector: 'div.filter-item'

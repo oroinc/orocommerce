@@ -6,4 +6,4 @@ data:
         customerGroup:
             data:
                 id: '<toString(@customer_group.group3->id)>'
-                type: 'customer_groups'
+                type: 'customergroups'

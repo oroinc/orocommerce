@@ -1,29 +1,17 @@
 data:
     type: products
     attributes:
-        sku: 'sku-invalid_product_unit'
-        status: 'enabled'
-        variantFields: []
-        productType: 'simple'
-        featured: true
-        newArrival: false
+        sku: 'test-api-10'
     relationships:
-        owner:
+        names:
             data:
-                type: businessunits
-                id: '<toString(@TestBusinessUnit->getId())>'
-        organization:
-            data:
-                type: organizations
-                id: '<toString(@TestBusinessUnit->organization->getId())>'
+                -
+                    type: localizedfallbackvalues
+                    id: 'names-1'
         attributeFamily:
             data:
                 type: attributefamilies
                 id: '<toString(@default_family->getId())>'
-        inventory_status:
-            data:
-                type: prodinventorystatuses
-                id: 'out_of_stock'
         primaryUnitPrecision:
             data:
                 type: productunitprecisions
@@ -33,7 +21,18 @@ data:
                 -
                     type: productunitprecisions
                     id: 'product-unit-precision-id-1'
+        inventory_status:
+            data:
+                type: prodinventorystatuses
+                id: 'out_of_stock'
 included:
+    -
+        type: localizedfallbackvalues
+        id: 'names-1'
+        attributes:
+            fallback: null
+            string: 'Test product'
+            text: null
     -
         type: productunitprecisions
         id: 'product-unit-precision-id-1'
