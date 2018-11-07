@@ -5,7 +5,8 @@ namespace Oro\Bundle\PricingBundle\Model;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 
 /**
- * Declares methods to obtain price list entity, selected price list currencies, decide whether tier prices should be shown or not
+ * Declares methods to obtain price list entity, selected price list currencies,
+ * decide whether tier prices should be shown or not
  */
 interface PriceListRequestHandlerInterface
 {

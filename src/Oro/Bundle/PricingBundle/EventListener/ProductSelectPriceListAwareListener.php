@@ -7,7 +7,8 @@ use Oro\Bundle\PricingBundle\Model\FrontendProductListModifier;
 use Oro\Bundle\ProductBundle\Event\ProductDBQueryRestrictionEvent;
 
 /**
- * If respective feature is enabled and conditions acceptable - calls frontend product list modifier on query given in event
+ * If respective feature is enabled and conditions acceptable
+ * - calls frontend product list modifier on query given in event
  */
 class ProductSelectPriceListAwareListener
 {

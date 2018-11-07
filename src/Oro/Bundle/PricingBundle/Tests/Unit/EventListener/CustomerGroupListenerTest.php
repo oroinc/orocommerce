@@ -88,10 +88,10 @@ class CustomerGroupListenerTest extends AbstractPriceListCollectionAwareListener
             ->with('feature1')
             ->willReturn(true);
 
+        $this->assertRepositoryCalls($targetEntity, $website, $priceLists, $priceListsFallback, 1);
         /** @var FormEvent|\PHPUnit\Framework\MockObject\MockObject $formEvent */
         $formEvent = $this->createMock(FormEvent::class);
         $this->assertPostSetDataFormCalls($targetEntity, $website, $numberOfCalls, $formEvent);
-        $this->assertRepositoryCalls($targetEntity, $website, $priceLists, $priceListsFallback, 1);
 
         $this->listener->onPostSetData($formEvent);
     }
@@ -101,27 +101,25 @@ class CustomerGroupListenerTest extends AbstractPriceListCollectionAwareListener
      */
     public function getPostSetData()
     {
-        /** @var Website $website1 */
-        $website1 = $this->getEntity(Website::class, ['id' => 1]);
-        /** @var Website $website2 */
-        $website2 = $this->getEntity(Website::class, ['id' => 2]);
+        /** @var Website $website */
+        $website = $this->getEntity(Website::class, ['id' => 1]);
         /** @var PriceListFallback $priceListFallback1 */
         $priceListFallback1 = $this->getEntity(PriceListFallback::class, ['id' => 3]);
-        $priceListFallback1->setWebsite($website1);
+        $priceListFallback1->setWebsite($website);
         /** @var PriceListFallback $priceListFallback2 */
         $priceListFallback2 = $this->getEntity(PriceListFallback::class, ['id' => 4]);
-        $priceListFallback2->setWebsite($website2);
+        $priceListFallback2->setWebsite($this->getEntity(Website::class, ['id' => 2]));
 
         return [
             'ok' => [
                 'CustomerGroup entity' => $this->getEntity(CustomerGroup::class, ['id' => 1]),
-                'Website entity returned by self::formConfig' => $website1,
+                'Website entity returned by self::formConfig' => $website,
                 'fallback price lists' => $priceListFallback1,
                 'number of calls to form::get()' => 3
             ],
             'different websites' => [
                 'CustomerGroup entity' => $this->getEntity(CustomerGroup::class, ['id' => 1]),
-                'Website entity returned by self::formConfig' => $website1,
+                'Website entity returned by self::formConfig' => $website,
                 'fallback price lists' => $priceListFallback2,
                 'number of calls to form::get()' => 2
             ],
@@ -156,7 +154,7 @@ class CustomerGroupListenerTest extends AbstractPriceListCollectionAwareListener
     /**
      * @return array
      */
-    public function wrongEntityDataProvider()
+    public function wrongEntityDataProvider(): array
     {
         return [
             'none' => [null],
@@ -166,15 +164,15 @@ class CustomerGroupListenerTest extends AbstractPriceListCollectionAwareListener
 
     public function testOnPostSetDataFeatureDisabled()
     {
-        /** @var FormEvent|\PHPUnit\Framework\MockObject\MockObject $formEvent */
-        $formEvent = $this->createMock(FormEvent::class);
-
-        $formEvent->expects($this->never())
-            ->method('getForm');
         $this->featureChecker->expects($this->once())
             ->method('isFeatureEnabled')
             ->with('feature1')
             ->willReturn(false);
+
+        /** @var FormEvent|\PHPUnit\Framework\MockObject\MockObject $formEvent */
+        $formEvent = $this->createMock(FormEvent::class);
+        $formEvent->expects($this->never())
+            ->method('getForm');
 
         $this->listener->onPostSetData($formEvent);
     }
@@ -206,15 +204,11 @@ class CustomerGroupListenerTest extends AbstractPriceListCollectionAwareListener
             ->with('feature1')
             ->willReturn(true);
 
+        $this->assertRepositoryCalls($targetEntity, $website, $priceLists, $priceListsFallback, $numberOfRepoCalls);
         /** @var AfterFormProcessEvent|\PHPUnit\Framework\MockObject\MockObject $formEvent */
         $formEvent = $this->createMock(AfterFormProcessEvent::class);
         $this->assertPostSubmitFormCalls($targetEntity, $website, $fallbackData, $submitted, $formEvent);
-        $this->assertRepositoryCalls($targetEntity, $website, $priceLists, $priceListsFallback, $numberOfRepoCalls);
 
-        $this->collectionHandler->expects($this->once())
-            ->method('handleChanges')
-            ->with($submitted, $priceLists, $targetEntity, $website)
-            ->willReturn(true);
 
         /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $priceListByWebsiteForm */
         $entityManager = $this->createMock(EntityManager::class);
@@ -224,6 +218,11 @@ class CustomerGroupListenerTest extends AbstractPriceListCollectionAwareListener
 
         $entityManager->expects($this->exactly($numberOfEmCalls))
             ->method('persist');
+
+        $this->collectionHandler->expects($this->once())
+            ->method('handleChanges')
+            ->with($submitted, $priceLists, $targetEntity, $website)
+            ->willReturn(true);
 
         $this->listener->onPostSubmit($formEvent);
     }
@@ -235,22 +234,20 @@ class CustomerGroupListenerTest extends AbstractPriceListCollectionAwareListener
     {
         /** @var BasePriceList $priceList */
         $priceList = $this->getEntity(BasePriceList::class, ['id' => 3]);
-        /** @var Website $website1 */
-        $website1 = $this->getEntity(Website::class, ['id' => 1]);
-        /** @var Website $website2 */
-        $website2 = $this->getEntity(Website::class, ['id' => 2]);
+        /** @var Website $website */
+        $website = $this->getEntity(Website::class, ['id' => 1]);
         /** @var PriceListFallback $priceListFallback1 */
         $priceListFallback1 = $this->getEntity(PriceListFallback::class, ['id' => 3]);
-        $priceListFallback1->setWebsite($website1);
+        $priceListFallback1->setWebsite($website);
         /** @var PriceListFallback $priceListFallback2 */
         $priceListFallback2 = $this->getEntity(PriceListFallback::class, ['id' => 4]);
-        $priceListFallback2->setWebsite($website2);
+        $priceListFallback2->setWebsite($this->getEntity(Website::class, ['id' => 2]));
 
         return [
             'empty pricelist' => [
                 'CustomerGroup entity' => $this->getEntity(CustomerGroup::class, ['id' => 1]),
                 'list returned by self::relationRepository' => [$priceList],
-                'Website entity returned by self::formConfig' => $website1,
+                'Website entity returned by self::formConfig' => $website,
                 'fallback price lists' => [],
                 'fallback data' => PriceListCustomerFallback::ACCOUNT_GROUP,
                 'number of calls to entity manager' => 0,
@@ -259,7 +256,7 @@ class CustomerGroupListenerTest extends AbstractPriceListCollectionAwareListener
             'different default fallback and fallback data' => [
                 'CustomerGroup entity' => $this->getEntity(CustomerGroup::class, ['id' => 1]),
                 'list returned by self::relationRepository' => [$priceList],
-                'Website entity returned by self::formConfig' => $website1,
+                'Website entity returned by self::formConfig' => $website,
                 'fallback price lists' => [$priceListFallback2],
                 'fallback data' => 1,
                 'number of calls to entity manager' => 1,
@@ -268,7 +265,7 @@ class CustomerGroupListenerTest extends AbstractPriceListCollectionAwareListener
             'empty target entity' => [
                 'CustomerGroup entity' => new CustomerGroup(),
                 'list returned by self::relationRepository' => [],
-                'Website entity returned by self::formConfig' => $website1,
+                'Website entity returned by self::formConfig' => $website,
                 'fallback price lists' => [],
                 'fallback data' => 1,
                 'number of calls to entity manager' => 1,
