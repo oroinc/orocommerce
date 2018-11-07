@@ -80,5 +80,6 @@ Feature: Process order submission with PayPal PayFlow Gateway and Authorize & Ch
     Given I proceed as the Admin
     When I go to Sales/Orders
     Then I should see following grid:
-      | Order Number | Payment Status |
-      | 2            | Paid in full   |
+      | Order Number | Payment Status   |
+      | 1            | Payment declined |
+      | 2            | Paid in full     |
