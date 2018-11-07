@@ -8,6 +8,8 @@ oro:
             demands.label: 'Quote Demands'
             id.label: 'Numeric ID'
             qid.label: 'Quote #'
+            guest_access_id.label: 'Guest Access Id'
+            unique_guest_link.label: 'Unique Guest Link'
             owner.label: 'Owner'
             organization.label: 'Organization'
             valid_until.label: 'Valid Until'
@@ -116,6 +118,8 @@ oro:
             groups:
                 sale_contact_info.title: 'Contacts'
                 customer_visible_contact_info.title: 'Customer Visible Contact Info'
+                quotes.title: 'Quotes'
+                guest_quote.title: 'Guest Quote'
             fields:
                 backend_product_visibility.title: 'Can Be Added to Quotes'
                 contact_info_source_display.label: 'Display'
@@ -125,6 +129,7 @@ oro:
                 contact_info_user_option.label: 'Customer Visible Contact Info'
                 contact_info_manual_text.label: 'Enter Contact Info'
                 guest_contact_info_text.label: 'Guest Contact'
+                enable_guest_quote.label: 'Enable Guest Quote'
 
         privilege:
             category.quotes.label: 'Quotes'
@@ -238,6 +243,7 @@ oro:
             total_currency.label: 'Total Currency'
             customer.label: 'Customer'
             customer_user.label: 'Customer User'
+            visitor.label: 'Customer Visitor'
 
         controller:
             quote:
@@ -267,6 +273,7 @@ oro:
             tooltip:
                   allow_user_configuration: 'When checked, the sales representatives will be able to choose one of the options enabled below.'
                   guest_contact_info_text: 'You may use this setting to enter the sales contact information that will be shown to non-authenticated visitors.'
+                  enable_guest_quote: 'Enables generation of unique links for sending quotes to guest users. "Guest Website Access" setting should be enabled to allow guests to view the quotes, and "Guest Checkout" setting should be enabled to allow guests to accept the quotes.'
         available_customer_options:
             type:
                 dont_display.label: "Don't Display Contact Info"
@@ -303,6 +310,7 @@ oro:
                 sections:
                     general: 'Quote Information'
                     back.label: 'Back to Quote List'
+                    back_to_quote.label: 'Back to Quote'
                     quote_products:
                         label: 'Line Items'
                         columns:
