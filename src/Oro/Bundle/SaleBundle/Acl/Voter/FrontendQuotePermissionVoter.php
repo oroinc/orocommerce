@@ -39,9 +39,8 @@ class FrontendQuotePermissionVoter extends Voter
      */
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
-        /* @var $subject Quote */
-        return !$subject->getInternalStatus() ||
-            in_array($subject->getInternalStatus()->getId(), Quote::FRONTEND_INTERNAL_STATUSES, true);
+        /** @var $subject Quote */
+        return $subject->isAvailableOnFrontend();
     }
 
     /**

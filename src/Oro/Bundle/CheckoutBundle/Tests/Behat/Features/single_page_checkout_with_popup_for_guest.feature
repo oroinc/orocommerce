@@ -73,14 +73,14 @@ Feature: Single Page Checkout With Popup for Guest
       | Title        | Billing Address |
       | okButton     | Continue        |
     And "New Address Popup Form" must contains values:
-      | Email        |  |
-      | Label        |  |
-      | Organization |  |
-      | Street       |  |
-      | City         |  |
-      | Country      |  |
-      | State        |  |
-      | Postal Code  |  |
+      | Email        |         |
+      | Label        |         |
+      | Organization |         |
+      | Street       |         |
+      | City         |         |
+      | Country      | Country |
+      | State        | State   |
+      | Postal Code  |         |
     And I click "Continue"
     Then I should see "New Address Popup Form" validation errors:
       | Email        | This value should not be blank.                               |
@@ -266,8 +266,8 @@ Feature: Single Page Checkout With Popup for Guest
       | Street       | B Street         |
       | Street 2     | B Street 2       |
       | City         | B City           |
-      | Country      | DE               |
-      | State        | DE-BE            |
+      | Country      | Germany          |
+      | State        | Berlin           |
       | Postal Code  | 12345            |
     When I fill "New Address Popup Form" with:
       | Country      | Ukraine            |

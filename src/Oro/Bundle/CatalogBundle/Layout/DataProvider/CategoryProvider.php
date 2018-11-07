@@ -104,10 +104,15 @@ class CategoryProvider
      */
     public function getCategoryTreeArray(CustomerUser $user = null)
     {
+        $customer = $user ? $user->getCustomer() : null;
+        $customerGroup = $customer ? $customer->getGroup() : null;
+
         $this->initCache([
             'category',
             $user ? $user->getId() : 0,
-            $this->getCurrentLocalization()
+            $this->getCurrentLocalization(),
+            $customer ? $customer->getId() : 0,
+            $customerGroup ? $customerGroup->getId() : 0,
         ]);
 
         $useCache = $this->isCacheUsed();
