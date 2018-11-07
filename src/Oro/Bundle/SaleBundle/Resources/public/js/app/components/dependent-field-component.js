@@ -78,6 +78,8 @@ define(function(require) {
 
             this.updateDependentFields();
             this.$dependee.on('change', $.proxy(this.updateDependentFields, this));
+
+            this.$el.inputWidget('create');
         },
 
         /**

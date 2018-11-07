@@ -97,10 +97,10 @@ class ExtractLineItemPaymentOptionsListenerTest extends \PHPUnit\Framework\TestC
                 ],
                 'currencyRoundingPrecision' => 2,
                 'expected' => [
-                    'name' => 'PRSKU Long Product Name',
+                    'name' => 'PRSKU Long Product N - EUR16.67x2 kg',
                     'description' => 'Product Description',
-                    'cost' => 16.67,
-                    'qty' => 2,
+                    'cost' => 33.33,
+                    'qty' => 1,
                     'currency' => 'EUR',
                     'unit' => 'kg',
                 ],

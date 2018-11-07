@@ -44,7 +44,7 @@ class ProductApiTest extends RestJsonApiTestCase
         ]);
     }
 
-    public function testCreateProduct()
+    public function testCreate()
     {
         $response = $this->post(
             ['entity' => 'products'],
@@ -77,17 +77,24 @@ class ProductApiTest extends RestJsonApiTestCase
         $this->assertEquals(false, $product->isNewArrival());
     }
 
-    /**
-     * @param array $parameters
-     * @param string $expectedDataFileName
-     *
-     * @dataProvider getListDataProvider
-     */
-    public function testGetList(array $parameters, $expectedDataFileName)
+    public function testGetListFilteredByProduct()
     {
-        $response = $this->cget(['entity' => 'products'], $parameters);
+        $response = $this->cget(
+            ['entity' => 'products'],
+            ['filter' => ['sku' => '@product-1->sku']]
+        );
 
-        $this->assertResponseContains($expectedDataFileName, $response);
+        $this->assertResponseContains('cget_filter_by_product.yml', $response);
+    }
+
+    public function testGetListFilteredBySeveralProductsWithDifferentInventoryStatuses()
+    {
+        $response = $this->cget(
+            ['entity' => 'products'],
+            ['filter' => ['sku' => ['@product-2->sku', '@product-3->sku']]]
+        );
+
+        $this->assertResponseContains('cget_filter_by_products_by_inventory_status.yml', $response);
     }
 
     public function testGet()
@@ -101,32 +108,7 @@ class ProductApiTest extends RestJsonApiTestCase
         $this->assertResponseContains('get_product_by_id.yml', $response);
     }
 
-    /**
-     * @return array
-     */
-    public function getListDataProvider()
-    {
-        return [
-            'filter by Product' => [
-                'parameters' => [
-                    'filter' => [
-                        'sku' => '@product-1->sku',
-                    ],
-                ],
-                'expectedDataFileName' => 'cget_filter_by_product.yml',
-            ],
-            'filter by Products with different inventory status' => [
-                'parameters' => [
-                    'filter' => [
-                        'sku' => ['@product-2->sku', '@product-3->sku'],
-                    ],
-                ],
-                'expectedDataFileName' => 'cget_filter_by_products_by_inventory_status.yml',
-            ],
-        ];
-    }
-
-    public function testUpdateEntity()
+    public function testUpdate()
     {
         /** @var Product $product */
         $product = $this->getReference(LoadProductData::PRODUCT_1);
@@ -171,16 +153,28 @@ class ProductApiTest extends RestJsonApiTestCase
         $this->assertResponseContains('patch_update_entity.yml', $response);
     }
 
-    public function testProductPageTemplateScalarValue()
+    public function testCreateWithPageTemplateScalarValue()
     {
-        // pageTemplate = 'short'
-        $response = $this->post(
-            ['entity' => $this->getEntityType(Product::class)],
-            __DIR__ . '/requests/create_product_1.yml'
-        );
+        $data = $this->getRequestData('create_product_min.yml');
+        $data['data']['attributes']['sku'] = 'test-api-pt-scalar';
+        $data['data']['relationships']['pageTemplate']['data'] = [
+            'type' => 'entityfieldfallbackvalues',
+            'id'   => 'page-template'
+        ];
+        $data['included'][] = [
+            'type' => 'entityfieldfallbackvalues',
+            'id'   => 'page-template',
+            'attributes' => [
+                'fallback'    => null,
+                'scalarValue' => 'short',
+                'arrayValue'  => null
+            ]
+        ];
+        $response = $this->post(['entity' => 'products'], $data);
 
         /** @var Product $product */
-        $product = $this->getEntityManager()->getRepository(Product::class)->findOneBy(['sku' => 'sku-test-api-1']);
+        $product = $this->getEntityManager()
+            ->find(Product::class, $this->getResourceId($response));
 
         $pageTemplate = $product->getPageTemplate();
         $this->assertInstanceOf(EntityFieldFallbackValue::class, $pageTemplate);
@@ -190,16 +184,28 @@ class ProductApiTest extends RestJsonApiTestCase
         $this->assertNull($pageTemplate->getFallback());
     }
 
-    public function testProductPageTemplateFallbackValue()
+    public function testCreateWithPageTemplateFallbackToSystemConfig()
     {
-        // pageTemplate = 'systemConfig'
-        $response = $this->post(
-            ['entity' => $this->getEntityType(Product::class)],
-            __DIR__ . '/requests/create_product_2.yml'
-        );
+        $data = $this->getRequestData('create_product_min.yml');
+        $data['data']['attributes']['sku'] = 'test-api-pt-sys-conf';
+        $data['data']['relationships']['pageTemplate']['data'] = [
+            'type' => 'entityfieldfallbackvalues',
+            'id'   => 'page-template'
+        ];
+        $data['included'][] = [
+            'type' => 'entityfieldfallbackvalues',
+            'id'   => 'page-template',
+            'attributes' => [
+                'fallback'    => 'systemConfig',
+                'scalarValue' => null,
+                'arrayValue'  => null
+            ]
+        ];
+        $response = $this->post(['entity' => 'products'], $data);
 
         /** @var Product $product */
-        $product = $this->getEntityManager()->getRepository(Product::class)->findOneBy(['sku' => 'sku-test-api-2']);
+        $product = $this->getEntityManager()
+            ->find(Product::class, $this->getResourceId($response));
 
         $pageTemplate = $product->getPageTemplate();
         $this->assertInstanceOf(EntityFieldFallbackValue::class, $pageTemplate);
@@ -207,15 +213,21 @@ class ProductApiTest extends RestJsonApiTestCase
         $this->assertNull($pageTemplate->getScalarValue());
     }
 
-    public function testProductPageTemplateInvalidValue()
+    public function testCreateWithInvalidPageTemplateBecauseOfInvalidValue()
     {
-        // pageTemplate = 'invalid-value'
-        $response = $this->post(
-            ['entity' => $this->getEntityType(Product::class)],
-            $this->getRequestData(__DIR__ . '/requests/create_product_3.yml'),
-            [],
-            false
-        );
+        $data = $this->getRequestData('create_product_min.yml');
+        $data['data']['relationships']['pageTemplate']['data'] = [
+            'type' => 'entityfieldfallbackvalues',
+            'id'   => 'page-template'
+        ];
+        $data['included'][] = [
+            'type' => 'entityfieldfallbackvalues',
+            'id'   => 'page-template',
+            'attributes' => [
+                'scalarValue' => 'invalid-value'
+            ]
+        ];
+        $response = $this->post(['entity' => 'products'], $data, [], false);
 
         $this->assertResponseValidationError(
             [
@@ -225,20 +237,165 @@ class ProductApiTest extends RestJsonApiTestCase
             ],
             $response
         );
-
-        /** @var Product $product */
-        $product = $this->getEntityManager()->getRepository(Product::class)->findOneBy(['sku' => 'sku-test-api-3']);
-        $this->assertNull($product);
     }
 
-    public function testCreateProductWithEmptyNames()
+    public function testCreateWithInvalidPageTemplateBecauseOfFallbackValueIsEmpty()
     {
-        $response = $this->post(
-            ['entity' => 'products'],
-            'create_product_empty_names.yml',
-            [],
-            false
+        $data = $this->getRequestData('create_product_min.yml');
+        $data['data']['relationships']['pageTemplate']['data'] = [
+            'type' => 'entityfieldfallbackvalues',
+            'id'   => 'page-template'
+        ];
+        $data['included'][] = [
+            'type' => 'entityfieldfallbackvalues',
+            'id'   => 'page-template'
+        ];
+        $response = $this->post(['entity' => 'products'], $data, [], false);
+
+        $this->assertResponseValidationError(
+            [
+                'title'  => 'entity field fallback value constraint',
+                'detail' => 'Either "fallback", "scalarValue" or "arrayValue" property should be specified.',
+                'source' => ['pointer' => sprintf('/included/%d', count($data['included']) - 1)]
+            ],
+            $response
         );
+    }
+
+    public function testCreateWithInvalidPageTemplateBecauseOfFallbackValueHasInvalidFallback()
+    {
+        $data = $this->getRequestData('create_product_min.yml');
+        $data['data']['relationships']['pageTemplate']['data'] = [
+            'type' => 'entityfieldfallbackvalues',
+            'id'   => 'page-template'
+        ];
+        $data['included'][] = [
+            'type'       => 'entityfieldfallbackvalues',
+            'id'         => 'page-template',
+            'attributes' => [
+                'fallback' => 'invalid-fallback'
+            ]
+        ];
+        $response = $this->post(['entity' => 'products'], $data, [], false);
+
+        $this->assertResponseValidationError(
+            [
+                'title'  => 'choice constraint',
+                'detail' => 'The value is not valid. Acceptable values: systemConfig.',
+                'source' => ['pointer' => sprintf('/included/%d/attributes/fallback', count($data['included']) - 1)]
+            ],
+            $response
+        );
+    }
+
+    public function testCreateWithInvalidIsUpcomingBecauseOfFallbackValueIsEmpty()
+    {
+        $data = $this->getRequestData('create_product_min.yml');
+        $data['data']['relationships']['isUpcoming']['data'] = [
+            'type' => 'entityfieldfallbackvalues',
+            'id'   => 'is-upcoming'
+        ];
+        $data['included'][] = [
+            'type' => 'entityfieldfallbackvalues',
+            'id'   => 'is-upcoming'
+        ];
+        $response = $this->post(['entity' => 'products'], $data, [], false);
+
+        $this->assertResponseValidationError(
+            [
+                'title'  => 'entity field fallback value constraint',
+                'detail' => 'Either "fallback", "scalarValue" or "arrayValue" property should be specified.',
+                'source' => ['pointer' => sprintf('/included/%d', count($data['included']) - 1)]
+            ],
+            $response
+        );
+    }
+
+    public function testCreateWithInvalidIsUpcomingBecauseOfFallbackValueHasMoreThanOneAttribute()
+    {
+        $data = $this->getRequestData('create_product_min.yml');
+        $data['data']['relationships']['isUpcoming']['data'] = [
+            'type' => 'entityfieldfallbackvalues',
+            'id'   => 'is-upcoming'
+        ];
+        $data['included'][] = [
+            'type'       => 'entityfieldfallbackvalues',
+            'id'         => 'is-upcoming',
+            'attributes' => [
+                'scalarValue' => 'test',
+                'arrayValue'  => ['key' => 'value']
+            ]
+        ];
+        $response = $this->post(['entity' => 'products'], $data, [], false);
+
+        $this->assertResponseValidationError(
+            [
+                'title'  => 'entity field fallback value constraint',
+                'detail' => 'Either "fallback", "scalarValue" or "arrayValue" property should be specified.',
+                'source' => ['pointer' => sprintf('/included/%d', count($data['included']) - 1)]
+            ],
+            $response
+        );
+    }
+
+    public function testCreateWithInvalidIsUpcomingBecauseOfFallbackValueHasInvalidFallback()
+    {
+        $data = $this->getRequestData('create_product_min.yml');
+        $data['data']['relationships']['isUpcoming']['data'] = [
+            'type' => 'entityfieldfallbackvalues',
+            'id'   => 'is-upcoming'
+        ];
+        $data['included'][] = [
+            'type'       => 'entityfieldfallbackvalues',
+            'id'         => 'is-upcoming',
+            'attributes' => [
+                'fallback' => 'invalid-fallback'
+            ]
+        ];
+        $response = $this->post(['entity' => 'products'], $data, [], false);
+
+        $this->assertResponseValidationError(
+            [
+                'title'  => 'choice constraint',
+                'detail' => 'The value is not valid. Acceptable values: category.',
+                'source' => ['pointer' => sprintf('/included/%d/attributes/fallback', count($data['included']) - 1)]
+            ],
+            $response
+        );
+    }
+
+    public function testCreateWithInvalidIsUpcomingBecauseOfFallbackValueIsArrayValueInsteadOfScalarValue()
+    {
+        $data = $this->getRequestData('create_product_min.yml');
+        $data['data']['relationships']['isUpcoming']['data'] = [
+            'type' => 'entityfieldfallbackvalues',
+            'id'   => 'is-upcoming'
+        ];
+        $data['included'][] = [
+            'type'       => 'entityfieldfallbackvalues',
+            'id'         => 'is-upcoming',
+            'attributes' => [
+                'arrayValue' => ['key' => 'value']
+            ]
+        ];
+        $response = $this->post(['entity' => 'products'], $data, [], false);
+
+        $this->assertResponseValidationError(
+            [
+                'title'  => 'not null constraint',
+                'detail' => 'The value should not be null.',
+                'source' => ['pointer' => sprintf('/included/%d/attributes/scalarValue', count($data['included']) - 1)]
+            ],
+            $response
+        );
+    }
+
+    public function testCreateWithEmptyNames()
+    {
+        $data = $this->getRequestData('create_product_min.yml');
+        unset($data['data']['relationships']['names']);
+        unset($data['included'][0]);
+        $response = $this->post(['entity' => 'products'], $data, [], false);
 
         $this->assertResponseValidationError(
             [
@@ -250,7 +407,7 @@ class ProductApiTest extends RestJsonApiTestCase
         );
     }
 
-    public function testCreateProductWithInvalidProductUnit()
+    public function testCreateWithInvalidProductUnit()
     {
         $response = $this->post(
             ['entity' => 'products'],
@@ -276,7 +433,7 @@ class ProductApiTest extends RestJsonApiTestCase
         );
     }
 
-    public function testCreateProductWithDuplicateUnitPrecision()
+    public function testCreateWithDuplicateUnitPrecision()
     {
         $response = $this->post(
             ['entity' => 'products'],
@@ -295,7 +452,7 @@ class ProductApiTest extends RestJsonApiTestCase
         );
     }
 
-    public function testUpdateProductWithInvalidProductUnit()
+    public function testUpdateWithInvalidProductUnit()
     {
         /** @var Product $product */
         $product = $this->getReference(LoadProductData::PRODUCT_3);
@@ -317,7 +474,7 @@ class ProductApiTest extends RestJsonApiTestCase
         );
     }
 
-    public function testUpdateProductWhenUnitForNewunitPrecisionIsNotProvided()
+    public function testUpdateWhenUnitForNewUnitPrecisionIsNotProvided()
     {
         /** @var Product $product */
         $product = $this->getReference(LoadProductData::PRODUCT_3);
@@ -339,7 +496,7 @@ class ProductApiTest extends RestJsonApiTestCase
         );
     }
 
-    public function testUpdateProductWithDuplicateUnitPrecision()
+    public function testUpdateWithDuplicateUnitPrecision()
     {
         /** @var Product $product */
         $product = $this->getReference(LoadProductData::PRODUCT_3);
@@ -361,7 +518,7 @@ class ProductApiTest extends RestJsonApiTestCase
         );
     }
 
-    public function testUpdateProductWithDuplicateExistingUnitPrecision()
+    public function testUpdateWithDuplicateExistingUnitPrecision()
     {
         /** @var Product $product */
         $product = $this->getReference(LoadProductData::PRODUCT_3);
@@ -390,7 +547,7 @@ class ProductApiTest extends RestJsonApiTestCase
         );
     }
 
-    public function testUpdateProductWithSetUnitForExistingUnitPrecisionThatDuplicatesAnotherUnitPrecision()
+    public function testUpdateWithSetUnitForExistingUnitPrecisionThatDuplicatesAnotherUnitPrecision()
     {
         /** @var Product $product */
         $product = $this->getReference(LoadProductData::PRODUCT_4);
@@ -419,7 +576,7 @@ class ProductApiTest extends RestJsonApiTestCase
         );
     }
 
-    public function testUpdateProductWithSetAttributeForExistingUnitPrecision()
+    public function testUpdateWithSetAttributeForExistingUnitPrecision()
     {
         /** @var Product $product */
         $product = $this->getReference(LoadProductData::PRODUCT_4);
@@ -448,7 +605,7 @@ class ProductApiTest extends RestJsonApiTestCase
         );
     }
 
-    public function testDeleteAction()
+    public function testDelete()
     {
         $product = $this->getReference(LoadProductData::PRODUCT_1);
         $id = $product->getId();
@@ -464,19 +621,17 @@ class ProductApiTest extends RestJsonApiTestCase
         );
     }
 
-    public function testCreateConfigurableProduct()
+    public function testCreateForConfigurableProduct()
     {
         $response = $this->post(
-            [
-                'entity' => $this->getEntityType(Product::class)
-            ],
-            __DIR__ . '/requests/create_configurable_product.yml'
+            ['entity' => $this->getEntityType(Product::class)],
+            'create_configurable_product.yml'
         );
 
         $this->assertResponseStatusCodeEquals($response, Response::HTTP_CREATED);
     }
 
-    public function testCreateProductWithImage()
+    public function testCreateWithImage()
     {
         $response = $this->post(['entity' => 'products'], 'create_product_with_image.yml');
         $productId = $this->getResourceId($response);

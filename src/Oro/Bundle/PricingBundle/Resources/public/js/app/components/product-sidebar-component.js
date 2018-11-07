@@ -168,6 +168,7 @@ define(function(require) {
          */
         _complete: function() {
             this.loadingMaskView.hide();
+            this.currenciesContainer.inputWidget('seekAndCreate');
         },
 
         dispose: function() {

@@ -1,40 +1,35 @@
 /* @theme: admin.oro; */
 
 .tax-address-row {
-    margin-bottom: 3px !important;
-    padding: 3px !important;
-    width: 300px;
-
-    .option {
-        .input-widget-select {
-            margin: 0 !important;
-            width: 294px !important;
-        }
-    }
-
-    .region {
-        input {
-            margin-bottom: 2px !important;
-            width: 280px !important;
-        }
-    }
+    width: $field-width;
 
     .removeRow {
-        float: right !important;
-        margin: 0 !important;
+        position: absolute;
+        top: 0;
+        #{$end}: 0;
     }
 
     .tax-address {
-        margin: 2px 0 !important;
+        margin-bottom: $content-padding-small;
+
+        &.controls {
+            float: none;
+        }
+        .select2-container,
+        input[type="text"] {
+            width: 262px;
+        }
+
+        select {
+            width: 248px;
+        }
     }
 
-    .row-oro {
-        margin: 0 !important;
+    &:last-of-type {
+        .row-oro {
+            margin-bottom: 0;
+        }
     }
-}
-
-.tax-address {
-    margin: 0 !important;
 }
 
 .tax-result-grid {

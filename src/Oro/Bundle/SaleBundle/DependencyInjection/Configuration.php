@@ -9,6 +9,9 @@ use Oro\Bundle\SaleBundle\Provider\ContactInfoSourceOptionsProvider;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
+/**
+ * This is the class that validates and merges configuration from your config files
+ */
 class Configuration implements ConfigurationInterface
 {
     const CONTACT_INFO_SOURCE_DISPLAY = 'contact_info_source_display';
@@ -18,6 +21,7 @@ class Configuration implements ConfigurationInterface
     const CONTACT_INFO_USER_OPTION = 'contact_info_user_option';
     const CONTACT_INFO_MANUAL_TEXT = 'contact_info_manual_text';
     const GUEST_CONTACT_INFO_TEXT = 'guest_contact_info_text';
+    const ENABLE_GUEST_QUOTE = 'enable_guest_quote';
 
     /**
      * {@inheritDoc}
@@ -44,6 +48,7 @@ class Configuration implements ConfigurationInterface
                 self::CONTACT_INFO_USER_OPTION => ['value' => ''],
                 self::CONTACT_INFO_MANUAL_TEXT => ['value' => ''],
                 self::GUEST_CONTACT_INFO_TEXT => ['value' => ''],
+                self::ENABLE_GUEST_QUOTE => ['value' => false, 'type' => 'boolean'],
             ]
         );
 
