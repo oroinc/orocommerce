@@ -2,13 +2,14 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Functional\Controller\Frontend;
 
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
 use Oro\Bundle\SaleBundle\Entity\Quote;
+use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
 use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
-
-use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData;
 use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData;
+use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteProductDemandData;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class AjaxQuoteProductControllerTest extends WebTestCase
 {
@@ -22,7 +23,7 @@ class AjaxQuoteProductControllerTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData',
+                LoadQuoteProductDemandData::class,
             ]
         );
     }
@@ -45,7 +46,7 @@ class AjaxQuoteProductControllerTest extends WebTestCase
     ) {
         $this->initClient(
             [],
-            $this->generateBasicAuthHeader(LoadUserData::ACCOUNT1_USER3, LoadUserData::ACCOUNT1_USER3)
+            $this->generateBasicAuthHeader(LoadCustomerUserData::EMAIL, LoadCustomerUserData::PASSWORD)
         );
 
         /** @var QuoteProduct $quoteProduct */
@@ -57,11 +58,19 @@ class AjaxQuoteProductControllerTest extends WebTestCase
             $expected = array_merge_recursive(['id' => $quoteProductOffer->getId()], $expected);
         }
 
+        /** @var QuoteDemand $quoteDemand */
+        $quoteDemand = $this->getReference(LoadQuoteProductDemandData::QUOTE_DEMAND_1);
+
         $this->client->request(
             'GET',
             $this->getUrl(
                 'oro_sale_quote_frontend_quote_product_match_offer',
-                ['id' => $quoteProduct->getId(), 'unit' => $unitCode, 'qty' => $quantity]
+                [
+                    'id' => $quoteProduct->getId(),
+                    'demandId' => $quoteDemand->getId(),
+                    'unit' => $unitCode,
+                    'qty' => $quantity
+                ]
             )
         );
 

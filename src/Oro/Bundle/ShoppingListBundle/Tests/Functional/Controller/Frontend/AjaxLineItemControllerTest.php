@@ -230,15 +230,13 @@ class AjaxLineItemControllerTest extends WebTestCase
             $this->setShoppingListCurrent($shoppingList, false);
         }
 
-        $lineItem = $this->getReference($lineItemId);
         $this->client->request(
             'POST',
             $this->getUrl(
                 'oro_shopping_list_frontend_remove_product',
                 [
                     'productId' => $product->getId(),
-                    'shoppingListId' => $shoppingList->getId(),
-                    'lineItemId' => $lineItem ? $lineItem->getId() : null
+                    'shoppingListId' => $shoppingList->getId()
                 ]
             )
         );
@@ -324,8 +322,7 @@ class AjaxLineItemControllerTest extends WebTestCase
                 'expectedMessage' => 'No current ShoppingList or no Product in current ShoppingList',
                 'expectedInitCount' => 2,
                 'removeCurrent' => true,
-                'shoppingListRef' => LoadShoppingLists::SHOPPING_LIST_1,
-                'lineItemRef' => static::LINE_ITEM_1
+                'shoppingListRef' => LoadShoppingLists::SHOPPING_LIST_1
             ],
             [
                 'productRef' => LoadProductData::PRODUCT_1,
@@ -334,8 +331,7 @@ class AjaxLineItemControllerTest extends WebTestCase
                     'shopping_list_2_label</a>"',
                 'expectedInitCount' => 2,
                 'removeCurrent' => false,
-                'shoppingListRef' => LoadShoppingLists::SHOPPING_LIST_2,
-                'lineItemRef' => static::LINE_ITEM_1
+                'shoppingListRef' => LoadShoppingLists::SHOPPING_LIST_2
             ],
             [
                 'productRef' => LoadProductData::PRODUCT_2,
@@ -344,8 +340,7 @@ class AjaxLineItemControllerTest extends WebTestCase
                     'shopping_list_2_label</a>"',
                 'expectedInitCount' => 1,
                 'removeCurrent' => false,
-                'shoppingListRef' => LoadShoppingLists::SHOPPING_LIST_2,
-                'lineItemRef' => static::LINE_ITEM_2
+                'shoppingListRef' => LoadShoppingLists::SHOPPING_LIST_2
             ],
             [
                 'productRef' => LoadProductData::PRODUCT_1,
@@ -353,8 +348,7 @@ class AjaxLineItemControllerTest extends WebTestCase
                 'expectedMessage' => 'No current ShoppingList or no Product in current ShoppingList',
                 'expectedInitCount' => 0,
                 'removeCurrent' => false,
-                'shoppingListRef' => LoadShoppingLists::SHOPPING_LIST_2,
-                'lineItemRef' => static::LINE_ITEM_1
+                'shoppingListRef' => LoadShoppingLists::SHOPPING_LIST_2
             ],
             [
                 'productRef' => LoadProductData::PRODUCT_1,
@@ -362,37 +356,7 @@ class AjaxLineItemControllerTest extends WebTestCase
                 'expectedMessage' => 'No current ShoppingList or no Product in current ShoppingList',
                 'expectedInitCount' => 0,
                 'removeCurrent' => true,
-                'shoppingListRef' => LoadShoppingLists::SHOPPING_LIST_2,
-                'lineItemRef' => static::LINE_ITEM_1
-            ],
-            [
-                'productRef' => LoadProductData::PRODUCT_1,
-                'expectedResult' => true,
-                'expectedMessage' => 'Product has been removed from "<a href="/customer/shoppinglist/%s">'.
-                    'shopping_list_1_label</a>"',
-                'expectedInitCount' => 2,
-                'removeCurrent' => false,
-                'shoppingListRef' => LoadShoppingLists::SHOPPING_LIST_1,
-                'lineItemRef' => static::LINE_ITEM_3
-            ],
-            [
-                'productRef' => LoadProductData::PRODUCT_1,
-                'expectedResult' => true,
-                'expectedMessage' => 'Product has been removed from "<a href="/customer/shoppinglist/%s">'.
-                    'shopping_list_1_label</a>"',
-                'expectedInitCount' => 1,
-                'removeCurrent' => false,
-                'shoppingListRef' => LoadShoppingLists::SHOPPING_LIST_1,
-                'lineItemRef' => static::LINE_ITEM_4
-            ],
-            [
-                'productRef' => LoadProductData::PRODUCT_1,
-                'expectedResult' => false,
-                'expectedMessage' => 'No current ShoppingList or no Product in current ShoppingList',
-                'expectedInitCount' => 0,
-                'removeCurrent' => false,
-                'shoppingListRef' => LoadShoppingLists::SHOPPING_LIST_1,
-                'lineItemRef' => static::LINE_ITEM_4
+                'shoppingListRef' => LoadShoppingLists::SHOPPING_LIST_2
             ]
         ];
     }
