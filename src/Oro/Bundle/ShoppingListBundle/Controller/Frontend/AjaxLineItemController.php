@@ -81,6 +81,42 @@ class AjaxLineItemController extends AbstractLineItemController
     }
 
     /**
+     * Remove Line item from Shopping List
+     *
+     * @Route(
+     *      "/remove-line-item/{lineItemId}",
+     *      name="oro_shopping_list_frontend_remove_line_item",
+     *      requirements={"lineItemId"="\d+"}
+     * )
+     * @AclAncestor("oro_shopping_list_frontend_update")
+     * @ParamConverter("lineItem", class="OroShoppingListBundle:LineItem", options={"id" = "lineItemId"})
+     * @Method("DELETE")
+     *
+     * @param LineItem $lineItem
+     *
+     * @return JsonResponse
+     */
+    public function removeLineItemAction(LineItem $lineItem)
+    {
+        $shoppingListManager = $this->get('oro_shopping_list.shopping_list.manager');
+        $isRemoved = $shoppingListManager->removeLineItemAndCheckConfigurable($lineItem);
+        if ($isRemoved > 0) {
+            $result = $this->getSuccessResponse(
+                $lineItem->getShoppingList(),
+                $lineItem->getProduct(),
+                'oro.frontend.shoppinglist.lineitem.product.removed.label'
+            );
+        } else {
+            $result = [
+                'successful' => false,
+                'message' => $this->get('translator')
+                    ->trans('oro.frontend.shoppinglist.lineitem.product.cant_remove.label')
+            ];
+        }
+        return new JsonResponse($result);
+    }
+
+    /**
      * Remove Product from Shopping List (product view form)
      *
      * @Route(
@@ -104,12 +140,6 @@ class AjaxLineItemController extends AbstractLineItemController
         /** @var ShoppingList $shoppingList */
         $shoppingList = $shoppingListManager->getForCurrentUser($request->get('shoppingListId'));
 
-        $lineItemId = $request->get('lineItemId');
-        $lineItem = null;
-        if ($lineItemId) {
-            $lineItem = $shoppingListManager->getLineItem((int)$lineItemId, $shoppingList);
-        }
-
         $result = [
             'successful' => false,
             'message' => $this->get('translator')
@@ -117,12 +147,8 @@ class AjaxLineItemController extends AbstractLineItemController
         ];
 
         if ($shoppingList) {
-            if ($lineItem && !$lineItem->getParentProduct()) {
-                $shoppingListManager->removeLineItem($lineItem);
-                $count = 1;
-            } else {
-                $count = $shoppingListManager->removeProduct($shoppingList, $product);
-            }
+            $count = $shoppingListManager->removeProduct($shoppingList, $product);
+
             if ($count) {
                 $result = $this->getSuccessResponse(
                     $shoppingList,

@@ -2,8 +2,10 @@
 
 namespace Oro\Bundle\SaleBundle;
 
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
+use Oro\Bundle\SaleBundle\DependencyInjection\Compiler\TwigSandboxConfigurationPass;
 use Oro\Bundle\SaleBundle\DependencyInjection\OroSaleExtension;
 
 class OroSaleBundle extends Bundle
@@ -18,5 +20,13 @@ class OroSaleBundle extends Bundle
         }
 
         return $this->extension;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function build(ContainerBuilder $container)
+    {
+        $container->addCompilerPass(new TwigSandboxConfigurationPass());
     }
 }

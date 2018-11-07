@@ -43,7 +43,16 @@ layout:
                         route_name: oro_sale_quote_frontend_view
                         route_parameters:
                             id: '=data["quote"].getId()'
-                        text: 'oro.frontend.sale.quote.sections.back.label'
+                        text: 'oro.frontend.sale.quote.sections.back_to_quote.label'
+                        visible: '=data["acl"].isGranted("oro_sale_quote_frontend_view", data["quote"])==true'
+                quote_choice_guest_back_button:
+                    blockType: back_link
+                    options:
+                        route_name: oro_sale_quote_frontend_view_guest
+                        route_parameters:
+                            guest_access_id: '=data["quote"].getGuestAccessId()'
+                        text: 'oro.frontend.sale.quote.sections.back_to_quote.label'
+                        visible: '=data["acl"].isGranted("oro_sale_quote_frontend_view", data["quote"])==false'
                 quote_choice_submit_button:
                     blockType: block
                 quote_choice_subtotals:
@@ -64,8 +73,8 @@ layout:
                             quote_shipping_address: ~
                         quote_choice_form:
                             quote_choice_back_button: ~
+                            quote_choice_guest_back_button: ~
                             quote_choice_subtotals: ~
                             quote_choice_submit_button: ~
 
     conditions: '!context["widget_container"]'
-

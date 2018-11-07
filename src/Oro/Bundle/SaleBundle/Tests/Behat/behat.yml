@@ -23,6 +23,8 @@ oro_behat_extension:
         - OroRFPBundle::FeatureContext
         - OroWorkflowBundle::FeatureContext
         - OroProductBundle::QuickOrderFormContext
+        - OroEmailBundle::EmailContext
+        - OroEntityExtendBundle::EntityExtendContext
       paths:
         - '@OroSaleBundle/Tests/Behat/Features'
 
@@ -55,6 +57,16 @@ oro_behat_extension:
           Shipping Address:
             locator: '//h4[text()="Shipping Address"]/../..//div[contains(@id,"s2id_oro_sale_quote-uid")]/input'
             type: xpath
+
+    Send to Customer Form:
+      selector: "form[name='oro_workflow_transition'][action*='send_to_customer']"
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Apply template:
+            type: 'xpath'
+            locator: '//select[contains(@id, "oro_workflow_transition_email_template")]'
+            element: Select2Entity
 
     LineItemPrice:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
@@ -101,3 +113,13 @@ oro_behat_extension:
     Quote Line Item Grid:
       selector: '.quote-line-items'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\FrontendTableGrid
+
+    Page Sidebar:
+      selector: '.page-sidebar'
+
+    Breadcrumbs:
+      selector: '.breadcrumbs'
+
+    Apply template:
+      selector: 'select[name="oro_workflow_transition[email][template]"]'
+      class: Oro\Bundle\FormBundle\Tests\Behat\Element\Select2Entity
