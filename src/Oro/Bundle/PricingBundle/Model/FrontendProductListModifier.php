@@ -9,6 +9,9 @@ use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
+/**
+ * Adds query builder limitation subquery based on currency and price list
+ */
 class FrontendProductListModifier implements FeatureCheckerAwareInterface
 {
     use FeatureCheckerHolderTrait;

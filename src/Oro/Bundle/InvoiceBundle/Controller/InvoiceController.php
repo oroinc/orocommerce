@@ -19,6 +19,9 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * Adds actions to list, view, create and edit invoices
+ */
 class InvoiceController extends Controller
 {
     /**

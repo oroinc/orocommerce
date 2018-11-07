@@ -13,6 +13,10 @@ use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 
+/**
+ * Adds priceListsByWebsites field of ScopedDataType type to a given form builder
+ * Adds CustomerGroupListener::onPostSetData to form builder
+ */
 class CustomerGroupFormExtension extends AbstractTypeExtension implements FeatureToggleableInterface
 {
     use FeatureCheckerHolderTrait;

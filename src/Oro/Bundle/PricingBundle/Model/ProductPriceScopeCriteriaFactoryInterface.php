@@ -5,6 +5,9 @@ namespace Oro\Bundle\PricingBundle\Model;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
+/**
+ * Declares methods to create instance of ProductPriceScopeCriteriaInterface by either direct self::create() call or from a given context
+ */
 interface ProductPriceScopeCriteriaFactoryInterface
 {
     /**

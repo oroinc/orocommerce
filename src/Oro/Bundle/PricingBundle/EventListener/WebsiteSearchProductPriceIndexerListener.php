@@ -15,6 +15,9 @@ use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
+/**
+ * Adds placeholder fields for product fields
+ */
 class WebsiteSearchProductPriceIndexerListener implements FeatureToggleableInterface
 {
     use FeatureCheckerHolderTrait;

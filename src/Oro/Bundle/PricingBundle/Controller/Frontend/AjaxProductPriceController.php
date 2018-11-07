@@ -13,6 +13,9 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * Adds actions to get prices by customer or matching prices via AJAX
+ */
 class AjaxProductPriceController extends AbstractAjaxProductPriceController
 {
     /**

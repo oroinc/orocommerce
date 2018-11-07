@@ -13,6 +13,10 @@ use Oro\Bundle\PricingBundle\Entity\BasePriceListRelation;
 use Oro\Bundle\PricingBundle\Filter\PriceListsFilter;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
+/**
+ * Adds price list column and filter
+ * Adds price list data to selected records
+ */
 abstract class AbstractPriceListRelationDataGridListener implements FeatureToggleableInterface
 {
     use FeatureCheckerHolderTrait;

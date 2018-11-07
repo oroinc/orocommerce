@@ -11,6 +11,10 @@ use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaRequestHandler;
 use Oro\Bundle\SearchBundle\Datagrid\Event\SearchResultAfter;
 use Symfony\Component\Translation\TranslatorInterface;
 
+/**
+ * Adds price info to records
+ * Modifies data grid settings by adding minimal price column, filter and sorter and prices property
+ */
 class FrontendProductPriceDatagridListener
 {
     const COLUMN_PRICES = 'prices';

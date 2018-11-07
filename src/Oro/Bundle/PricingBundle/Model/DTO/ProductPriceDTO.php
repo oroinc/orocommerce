@@ -7,6 +7,9 @@ use Oro\Bundle\PricingBundle\Model\ProductPriceInterface;
 use Oro\Bundle\ProductBundle\Entity\MeasureUnitInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
+/**
+ * Combines information about price, its quantity and price
+ */
 class ProductPriceDTO implements \JsonSerializable, ProductPriceInterface
 {
     const PRICE = 'price';

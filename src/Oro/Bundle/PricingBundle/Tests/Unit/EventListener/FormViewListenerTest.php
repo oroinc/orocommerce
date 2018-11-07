@@ -50,7 +50,6 @@ class FormViewListenerTest extends FormViewListenerTestCase
             $this->priceAttributePricesProvider,
             $this->authorizationChecker
         );
-
     }
 
     protected function tearDown()

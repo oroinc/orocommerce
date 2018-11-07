@@ -10,6 +10,9 @@ use Oro\Bundle\PricingBundle\Manager\PriceManager;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\ProductBundle\Event\ProductDuplicateAfterEvent;
 
+/**
+ * Creates copies of product prices
+ */
 class ProductDuplicateListener implements FeatureToggleableInterface
 {
     use FeatureCheckerHolderTrait;

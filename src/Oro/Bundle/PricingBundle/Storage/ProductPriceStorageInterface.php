@@ -6,6 +6,10 @@ use Oro\Bundle\PricingBundle\Model\ProductPriceInterface;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
+/**
+ * Declares set of methods to get prices taking into account given criteria
+ * Get supported currencies according to given criteria
+ */
 interface ProductPriceStorageInterface
 {
     /**

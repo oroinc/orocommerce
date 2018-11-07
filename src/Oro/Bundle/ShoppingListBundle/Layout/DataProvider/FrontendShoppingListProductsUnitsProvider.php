@@ -6,6 +6,9 @@ use Doctrine\Bundle\DoctrineBundle\Registry;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
+/**
+ * Allows to get units for products from given shopping list
+ */
 class FrontendShoppingListProductsUnitsProvider
 {
     /**

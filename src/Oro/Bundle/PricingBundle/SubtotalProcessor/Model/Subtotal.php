@@ -5,6 +5,9 @@ namespace Oro\Bundle\PricingBundle\SubtotalProcessor\Model;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 
+/**
+ * Represents subtotal information from shopping list
+ */
 class Subtotal
 {
     const OPERATION_ADD = 1;

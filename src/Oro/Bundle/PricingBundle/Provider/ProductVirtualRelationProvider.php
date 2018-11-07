@@ -10,6 +10,9 @@ use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceAttributePriceListRepository;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
+/**
+ * Allows to modify product queries to add related data
+ */
 class ProductVirtualRelationProvider implements VirtualRelationProviderInterface
 {
     /**

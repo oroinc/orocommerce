@@ -11,6 +11,9 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 
+/**
+ * Allows to get all or matched prices for products from given line items
+ */
 class FrontendProductPricesDataProvider
 {
     /**

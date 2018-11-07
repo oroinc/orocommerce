@@ -8,6 +8,9 @@ use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
 use Oro\Bundle\PricingBundle\Entity\BaseProductPrice;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 
+/**
+ * Adds feature enable check to precede execution of existing events
+ */
 class PriceAttributeProductPriceEntityListener extends BaseProductPriceEntityListener implements
     FeatureToggleableInterface
 {

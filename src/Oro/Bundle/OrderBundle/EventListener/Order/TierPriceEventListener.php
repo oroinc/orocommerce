@@ -7,6 +7,9 @@ use Oro\Bundle\OrderBundle\Event\OrderEvent;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaFactoryInterface;
 use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
 
+/**
+ * Adds tier price info for products from order with given currency
+ */
 class TierPriceEventListener
 {
     const TIER_PRICES_KEY = 'tierPrices';

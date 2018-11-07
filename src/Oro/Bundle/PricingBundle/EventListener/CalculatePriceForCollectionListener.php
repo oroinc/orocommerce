@@ -6,6 +6,9 @@ use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaRequestHandler;
 use Oro\Bundle\PricingBundle\Provider\QuickAddCollectionPriceProvider;
 use Oro\Bundle\ProductBundle\Event\QuickAddRowsCollectionReadyEvent;
 
+/**
+ * Adds price info to price provider
+ */
 class CalculatePriceForCollectionListener
 {
     /**

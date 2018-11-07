@@ -18,6 +18,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * Adds actions to update, delete and get prices by customer or matching prices via AJAX
+ */
 class AjaxProductPriceController extends AbstractAjaxProductPriceController
 {
     /**

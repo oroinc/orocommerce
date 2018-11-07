@@ -9,6 +9,10 @@ use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
+/**
+ * Allows to get formatted matching prices for products from given line items with given criteria
+ * Allows to get supported currencies according to given criteria
+ */
 class MatchingPriceProvider
 {
     /** @var ProductPriceProviderInterface */

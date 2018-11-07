@@ -5,6 +5,9 @@ namespace Oro\Bundle\PricingBundle\Model;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
+/**
+ * Declares set of methods which allow to interact with information which could be used to affect on product price search results
+ */
 interface ProductPriceScopeCriteriaInterface
 {
     /**

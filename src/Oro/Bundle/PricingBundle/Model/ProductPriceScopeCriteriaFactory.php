@@ -7,6 +7,9 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 
+/**
+ * Allows to create ProductPriceScopeCriteria by either direct self::create() call or from a given context
+ */
 class ProductPriceScopeCriteriaFactory implements ProductPriceScopeCriteriaFactoryInterface
 {
     /**

@@ -19,6 +19,9 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * Loads demo order line item data
+ */
 class LoadOrderLineItemDemoData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
 {
     /** @var ContainerInterface */

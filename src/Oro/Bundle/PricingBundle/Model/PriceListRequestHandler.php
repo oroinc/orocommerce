@@ -8,6 +8,9 @@ use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
 use Symfony\Component\HttpFoundation\RequestStack;
 
+/**
+ * Provides methods to obtain price list by given id, price list currencies, decide whether tier prices should be shown or not
+ */
 class PriceListRequestHandler implements PriceListRequestHandlerInterface
 {
     /**

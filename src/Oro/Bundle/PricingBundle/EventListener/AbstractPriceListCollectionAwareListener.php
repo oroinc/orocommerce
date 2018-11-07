@@ -20,6 +20,10 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Form\Type\WebsiteScopedDataType;
 use Symfony\Component\Form\FormEvent;
 
+/**
+ * Adds existing price lists and fallback if exists on post set data
+ * Creates fallback if missing and data differs from default and triggers collection changes handler if there are any changes
+ */
 abstract class AbstractPriceListCollectionAwareListener implements FeatureToggleableInterface
 {
     use FeatureCheckerHolderTrait;

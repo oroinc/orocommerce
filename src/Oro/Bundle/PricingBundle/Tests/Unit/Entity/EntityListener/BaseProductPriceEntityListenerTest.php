@@ -59,7 +59,7 @@ abstract class BaseProductPriceEntityListenerTest extends AbstractRuleEntityList
 
         $this->preUpdateEventArgs->expects($this->any())
             ->method('getOldValue')
-            ->willReturnCallback(function ($argument) use ($priceList, $product){
+            ->willReturnCallback(function ($argument) use ($priceList, $product) {
                 return (BaseProductPriceEntityListener::FIELD_PRICE_LIST === $argument)
                     ? $priceList
                     : $product;

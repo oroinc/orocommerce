@@ -11,6 +11,10 @@ use Oro\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Translation\TranslatorInterface;
 
+/**
+ * Adds scroll blocks with price list data on edit page
+ * Adds method to add price list data on view
+ */
 abstract class AbstractCustomerFormViewListener implements FeatureToggleableInterface
 {
     use FeatureCheckerHolderTrait;
