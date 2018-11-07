@@ -19,7 +19,7 @@ define(function(require) {
             productItem: '[data-role="product-item"]',
             quantity: ['lineItem', '[data-name="field__quantity"]:first'],
             unit: ['lineItem', '[data-name="field__unit"]:first'],
-            lineItem: '[data-role="line-item-form-container"]',
+            lineItem: '[data-role="line-item-form-container"]:first',
             lineItemFields: ':input[data-name]'
         },
 
@@ -65,6 +65,22 @@ define(function(require) {
                     productModel: this.model
                 }
             });
+        },
+
+        /**
+         * @inheritDoc
+         */
+        delegateEvents: function(events) {
+            BaseProductView.__super__.delegateEvents.call(this, events);
+
+            this.$el.one(
+                'change' + this.eventNamespace(),
+                function() {
+                    this.$el.removeAttr('data-validation-ignore');
+                }.bind(this)
+            );
+
+            return this;
         },
 
         initModel: function(options) {

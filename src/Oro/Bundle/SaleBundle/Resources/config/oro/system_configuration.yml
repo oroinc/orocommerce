@@ -5,6 +5,11 @@ system_configuration:
             icon:  'fa-id-card-o'
         customer_visible_contact_info:
             title: oro.sale.system_configuration.groups.customer_visible_contact_info.title
+        quotes:
+            title: oro.sale.system_configuration.groups.quotes.title
+            icon: 'fa-file-o'
+        guest_quote:
+            title: oro.sale.system_configuration.groups.guest_quote.title
     fields:
         oro_sale.backend_product_visibility:
             data_type: array
@@ -95,6 +100,14 @@ system_configuration:
                 label: oro.sale.system_configuration.fields.guest_contact_info_text.label
                 tooltip: oro.sale.form.tooltip.guest_contact_info_text
 
+        oro_sale.enable_guest_quote:
+            data_type: boolean
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
+            priority: 10
+            options:
+                label: oro.sale.system_configuration.fields.enable_guest_quote.label
+                tooltip: oro.sale.form.tooltip.enable_guest_quote
+
     tree:
         system_configuration:
             commerce:
@@ -117,6 +130,11 @@ system_configuration:
                                             - oro_sale.allow_user_configuration
                                             - oro_sale.available_user_options
                                             - oro_sale.guest_contact_info_text
+                            quotes:
+                                children:
+                                    guest_quote:
+                                        children:
+                                            - oro_sale.enable_guest_quote
         user_configuration:
             commerce:
                 children:

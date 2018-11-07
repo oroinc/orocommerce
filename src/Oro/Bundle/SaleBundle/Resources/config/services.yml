@@ -30,6 +30,14 @@ services:
         tags:
             - { name: twig.extension }
 
+    oro_sale.twig.quote_guest_access:
+        class: 'Oro\Bundle\SaleBundle\Twig\QuoteGuestAccessExtension'
+        public: false
+        arguments:
+            - '@service_container'
+        tags:
+            - { name: twig.extension }
+
     oro_sale.formatter.quote_product:
         class: 'Oro\Bundle\SaleBundle\Formatter\QuoteProductFormatter'
         arguments:
@@ -79,6 +87,7 @@ services:
         calls:
             - [ setQuoteClassName, [ '%oro_sale.entity.quote.class%' ] ]
             - [ setEmailTemplateClassName, [ '%oro_email.emailtemplate.entity.class%' ] ]
+            - [ setFeatureChecker, ['@oro_featuretoggle.checker.feature_checker']]
 
     oro_sale.service.request_helper:
         class: 'Oro\Bundle\SaleBundle\Model\RequestHelper'
@@ -218,6 +227,14 @@ services:
         tags:
             - { name: security.voter }
 
+    oro_sale.acl.voter.frontend_quote_demand_permission_voter:
+        class: 'Oro\Bundle\SaleBundle\Acl\Voter\FrontendQuoteDemandPermissionVoter'
+        public: false
+        arguments:
+            - '@oro_frontend.request.frontend_helper'
+        tags:
+            - { name: security.voter }
+
     oro_sale.provider.contact_info_source_options_provider:
         class: 'Oro\Bundle\SaleBundle\Provider\ContactInfoSourceOptionsProvider'
         public: false
@@ -260,3 +277,16 @@ services:
         public: false
         arguments:
             - '@oro_locale.formatter.name'
+
+    oro_sale.voter.guest_quote:
+        parent: oro_customer.voter.anonymous_customer_user
+        calls:
+            - [ setFeatureName, ['guest_quote'] ]
+        tags:
+            - { name: oro_featuretogle.voter }
+
+    oro_sale.provider.guest_quote_access:
+        class: 'Oro\Bundle\SaleBundle\Provider\GuestQuoteAccessProvider'
+        arguments:
+            - '@oro_featuretoggle.checker.feature_checker'
+            - '@oro_website.manager'

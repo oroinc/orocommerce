@@ -48,10 +48,10 @@ Oro\Bundle\SaleBundle\Entity\Quote:
         expired: true
 
     quote12:
-        validUntil: '<dateTimeBetween("now", "+1 day")>'
+        validUntil: '<dateTimeBetween("today +1 day", "today +1 day")>'
 
     quote13:
-        shipUntil: '<dateTimeBetween("+1 day", "+2 day")>'
+        shipUntil: '<dateTimeBetween("today +1 day", "today +1 day")>'
 
     quote14:
         payment_term_7c4f1e8e: '@paymentTerm10'

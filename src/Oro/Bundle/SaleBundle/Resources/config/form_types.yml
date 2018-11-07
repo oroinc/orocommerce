@@ -69,6 +69,14 @@ services:
         tags:
             - { name: form.type_extension, alias: oro_sale_quote }
 
+    oro_sale.form.type.extension.quote_email_template:
+        class: 'Oro\Bundle\SaleBundle\Form\Extension\QuoteEmailTemplateExtension'
+        arguments:
+            - '@oro_security.token_accessor'
+            - '@oro_featuretoggle.checker.feature_checker'
+        tags:
+            - { name: form.type_extension, alias: oro_email_email }
+
     oro_sale.form.type.quote_address:
         class: 'Oro\Bundle\SaleBundle\Form\Type\QuoteAddressType'
         arguments:

@@ -1,0 +1,191 @@
+{% block _quote_view_controls_list_widget %}
+    <ul class="controls-list">
+        <li><a href="#"><i class="fa-reply"></i>Share</a></li>
+        <li><a href="#"><i class="fa-print"></i>Print</a></li>
+        <li><a href="#"><i class="fa-file"></i>Save PDF</a></li>
+    </ul>
+{% endblock %}
+
+{% block _quote_view_customer_status_widget %}
+    {% set text %}
+        {{ 'oro.frontend.sale.quote.customer_status.label'|trans }}: {{ text }}
+    {% endset %}
+
+    {{ parent_block_widget(block) }}
+{% endblock %}
+
+{% block _quote_view_information_widget %}
+    <div class="customer-info-grid">
+        <h2 class="customer-info-grid__title">
+            {{ 'oro.frontend.sale.quote.sections.general'|trans }}
+        </h2>
+        <div class="grid__row">
+            <div class="grid__column grid__column--6 grid__column--no-gutters-l">
+                <table class="customer-info-grid__table">
+                    <tbody>
+                    {% if quote.assignedUsers | length %}
+                        <tr>
+                            <td class="customer-info-grid__element-label">{{ 'oro.frontend.sale.quote.assigned_customer_users.label'|trans }}</td>
+                            <td class="customer-info-grid__element-content">
+                                {% set assigned_users = [] %}
+                                {% for entity in quote.assignedUsers %}
+                                    {% set assigned_users = assigned_users|merge([entity.fullName]) %}
+                                {% endfor %}
+                                {{ assigned_users|join(', ') }}
+                            </td>
+                        </tr>
+                    {% endif %}
+                    <tr class="customer-info-grid__row">
+                        <td class="customer-info-grid__element-label">{{ 'oro.frontend.sale.quote.valid_until.label'|trans }}</td>
+                        <td class="customer-info-grid__element-content">{{ quote.validUntil ? quote.validUntil|oro_format_datetime : 'N/A'|trans }}</td>
+                    </tr>
+                    <tr class="customer-info-grid__row">
+                        <td class="customer-info-grid__element-label">{{ 'oro.frontend.sale.quote.po_number.label'|trans }}</td>
+                        <td class="customer-info-grid__element-content">{{ quote.poNumber|default('N/A'|trans) }}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="grid__column grid__column--6 grid__column--no-gutters-r">
+                <table class="customer-info-grid__table">
+                    <tbody>
+                        <tr class="customer-info-grid__row">
+                            <td class="customer-info-grid__element-label">{{ 'oro.frontend.sale.quote.ship_until.label'|trans }}</td>
+                            <td class="customer-info-grid__element-content">{{ quote.shipUntil|oro_format_date|default('N/A'|trans) }}</td>
+                        </tr>
+                        {% if quote.shippingCost is not empty %}
+                        <tr class="customer-info-grid__row">
+                            <td class="customer-info-grid__element-label">{{ 'oro.frontend.sale.quote.ship_estimate.label'|trans }}</td>
+                            <td class="customer-info-grid__element-content">{{ quote.shippingCost|oro_format_price }}</td>
+                        </tr>
+                        {% endif %}
+                        {% if paymentTerm is defined and paymentTerm is not empty %}
+                            <tr class="customer-info-grid__row">
+                                <td class="customer-info-grid__element-label">{{ 'oro.paymentterm.entity_label'|trans }}</td>
+                                <td class="customer-info-grid__element-content">{{ paymentTerm.label|escape }}</td>
+                            </tr>
+                        {% endif %}
+                        {{ block_widget(block) }}
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+{% endblock %}
+
+{% block _quote_view_line_items_widget %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    <div class="customer-line-items">
+        <h2 class="customer-line-items__title">
+            {{ 'oro.frontend.sale.quote.sections.quote_products.label'|trans }}
+        </h2>
+        <table class="oro-grid-table customer-line-items__table">
+            <thead class="grid-header hide-on-mobile-landscape">
+                <tr class="grid-header-row">
+                    <th class="grid-cell" colspan="2">{{ 'oro.frontend.sale.quote.sections.quote_products.columns.item'|trans }}</th>
+                    <th class="grid-cell">{{ 'oro.frontend.sale.quote.sections.quote_products.columns.quantity'|trans }}</th>
+                    <th class="grid-cell">{{ 'oro.frontend.sale.quote.sections.quote_products.columns.unit_price'|trans }}</th>
+                </tr>
+            </thead>
+            {% for quoteProduct in quoteProducts %}
+                <tbody class="grid-body">
+                {% for productOffer in quoteProduct.quoteProductOffers %}
+                    <tr class="grid-row">
+                        {% if loop.first %}
+                            <td class="grid-cell grid-cell--offset-none-mobile primary-cell" colspan="2" rowspan="{{ quoteProduct.quoteProductOffers|length }}">
+                                <h3 class="oro-grid-table__title">
+                                    {% if (quoteProduct.product.id is defined) %}
+                                        {{ UI.link({
+                                            path: path('oro_product_frontend_product_view', {'id': quoteProduct.product.id}),
+                                            label : quoteProduct.product.names|localized_value,
+                                        }) }}
+                                    {% else %}
+                                        {{ quoteProduct.productName }}
+                                    {% endif %}
+                                </h3>
+                                <div>{{ 'oro.frontend.sale.quoteproduct.product_sku.label'|trans }} <span class="customer-line-items__sku-value">{{ quoteProduct.productSku }}</span></div>
+
+                                <div class="grid-row hide-on-desktop hide-on-strict-tablet">
+                                    <div class="grid-head grid-cell--offset-l-none-mobile" aria-hidden="true">
+                                        {{ 'oro.frontend.sale.quote.sections.quote_products.columns.quantity'|trans }}
+                                    </div>
+                                    <div class="grid-head" aria-hidden="true">
+                                        {{ 'oro.frontend.sale.quote.sections.quote_products.columns.unit_price'|trans }}
+                                    </div>
+                                </div>
+                            </td>
+                        {% endif %}
+                        <td class="grid-cell grid-cell--offset-l-none-mobile">
+                            {% if oro_is_unit_code_visible(productOffer.productUnit.code) %}
+                                {{ productOffer.quantity|oro_format_short_product_unit_value(productOffer.productUnit) }}
+                            {% else %}
+                                {{ productOffer.quantity }}
+                            {% endif %}
+                            {% if productOffer.allowIncrements %}
+                                {{ 'oro.frontend.sale.quoteproductoffer.allow_increments.label'|trans }}
+                            {% endif %}
+                        </td>
+                        <td class="grid-cell">{{ productOffer.price|oro_format_price }}</td>
+                    </tr>
+                {% endfor %}
+
+                {% if (quoteProduct.commentCustomer is not empty) %}
+                    <tr class="grid-row">
+                        <td class="grid-cell notes-cell" colspan="4">
+                            <div class="customer-line-items__notes">
+                                {{ 'oro.frontend.sale.quoteproduct.comment_customer.label'|trans }}: {{ quoteProduct.commentCustomer }}
+                            </div>
+                        </td>
+                    </tr>
+                {% endif %}
+
+                {% if (quoteProduct.comment is not empty) %}
+                    <tr class="grid-row">
+                        <td class="grid-cell notes-cell" colspan="4">
+                            <div class="customer-line-items__notes">
+                                {{ 'oro.frontend.sale.quoteproduct.comment.label'|trans }}: {{ quoteProduct.comment }}
+                            </div>
+                        </td>
+                    </tr>
+                {% endif %}
+                </tbody>
+            {% endfor %}
+        </table>
+    </div>
+{% endblock %}
+
+{% block _quote_view_page_widget %}
+    {% set attr = attr|merge({class: attr.class|default('') ~ " quote"}) %}
+    <div{{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _quote_view_accept_container_widget %}
+    {% set attr = attr|merge({class: attr.class|default('') ~ " order-checkout-widget text-right"}) %}
+    <div{{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _quote_view_accept_button_widget %}
+    {% set attr = attr|merge({class: attr.class|default('') ~ " order-checkout-widget__quote"}) %}
+    <div{{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block address_widget %}
+    {% from 'OroAddressBundle::macros.html.twig' import renderAddress %}
+    {{ renderAddress(address) }}
+{% endblock %}
+
+{% block quote_body_column_element_widget %}
+    {% if address is not null %}
+        <tr class="customer-info-grid__row">
+            <td class="customer-info-grid__element-label">{{ label|trans }}</td>
+            <td class="customer-info-grid__element-content">{{ block_widget(block) }}</td>
+        </tr>
+    {% endif %}
+{% endblock %}
