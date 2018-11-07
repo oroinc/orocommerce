@@ -16,7 +16,10 @@
                 bcc: context.email.bcc,
                 appendSignature: context.appendSignature,
                 minimalWysiwygEditorHeight: 150,
-                isSignatureEditable: is_granted('oro_user_user_update')
+                isSignatureEditable: is_granted('oro_user_user_update'),
+                editorComponentName: form.email.body.vars.attr['data-page-component-name'] is defined
+                    ? form.email.body.vars.attr['data-page-component-name']
+                    : form.email.body.vars.attr['data-ftid']
             } %}
             <fieldset class="form-horizontal"
                 data-page-component-module="oroemail/js/app/components/email-editor-component"

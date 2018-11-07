@@ -25,6 +25,7 @@ define(function(require) {
             },
             matchOfferRoute: 'oro_sale_quote_frontend_quote_product_match_offer',
             quoteProductId: null,
+            quoteDemandId: null,
             calculatingMessage: 'Calculating...',
             notAvailableMessage: 'N/A'
         },
@@ -122,6 +123,7 @@ define(function(require) {
                     this.options.matchOfferRoute,
                     {
                         id: this.options.quoteProductId,
+                        demandId: this.options.quoteDemandId,
                         unit: this.$unitInput.val(),
                         qty: quantity
                     }
