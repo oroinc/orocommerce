@@ -79,12 +79,12 @@ class LineItemValidateEvent extends Event
     }
 
     /**
-     * @param $sku
-     * @param $unit
-     * @param $message
+     * @param string $sku
+     * @param string $unit
+     * @param string $message
      * @return $this
      */
-    public function addErrorByUnit($sku, $unit, $message)
+    public function addErrorByUnit(string $sku, string $unit, string $message): LineItemValidateEvent
     {
         $this->errors->add(['sku' => $sku, 'unit' => $unit, 'message' => $message]);
 
@@ -107,12 +107,12 @@ class LineItemValidateEvent extends Event
     }
 
     /**
-     * @param $sku
-     * @param $unit
-     * @param $message
+     * @param string $sku
+     * @param string $unit
+     * @param string $message
      * @return $this
      */
-    public function addWarningByUnit($sku, $unit, $message)
+    public function addWarningByUnit(string $sku, string $unit, string $message): LineItemValidateEvent
     {
         $this->warnings->add(['sku' => $sku, 'unit' => $unit, 'message' => $message]);
 
