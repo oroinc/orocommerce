@@ -44,13 +44,43 @@ Feature: Single Page Checkout With Popup for Buyer
     And I save and close form
     Then I should see "Shipping rule has been saved" flash message
 
-  Scenario: Create order with predefined billing address and predefined shipping address
+  Scenario: Configure payment rule restricted to certain country
+    Given I go to System/Payment Rules
+    And I click Edit "Default" in grid
+    And I click "Add"
+    And fill "Payment Rule Form" with:
+      | Country1 | Albania |
+    When I save and close form
+    Then I should see "Payment rule has been saved" flash message
+
+  Scenario: Check notification shown for no payment method selected
     Given I proceed as the User
     And I signed in as AmandaRCole@example.org on the store frontend
     When I open page with shopping list List 1
     And I scroll to top
     And I wait line items are initialized
     And I click "Create Order"
+    And I should see "No payment methods are available, please contact us to complete the order submission."
+    And I should see "Payment method is not selected." flash message
+    And I should see a "Disabled Submit Order Button" element
+
+  Scenario: Add default country to payment rule to make possible to continue order with predefined address
+    Given I proceed as the Admin
+    And I go to System/Payment Rules
+    And I click Edit "Default" in grid
+    And I click "Add"
+    And fill "Payment Rule Form" with:
+      | Country1 | Germany |
+    When I save and close form
+    Then I should see "Payment rule has been saved" flash message
+
+  Scenario: Check Submit Order button is not disabled anymore and payment method is available
+    Given I proceed as the User
+    And I reload the page
+    And I should not see a "Disabled Submit Order Button" element
+    And I should see "Payment Term"
+
+  Scenario: Create order with predefined billing address and predefined shipping address
     Then Checkout "Order Summary Products Grid" should contain products:
       | 400-Watt Bulb Work Light | 5 | items |
     And I should see Checkout Totals with data:

@@ -212,6 +212,11 @@ oro_behat_extension:
       selector: '.order-checkout-widget button:contains("Submit Order")'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
+    # Disabled Submit order button is actually other element (div)
+    Disabled Submit Order Button:
+      selector: '.order-checkout-widget .btn--disabled.checkout__submit-btn:contains("Submit Order")'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+
     Customer Users List button:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:

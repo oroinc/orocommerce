@@ -225,6 +225,9 @@ workflows:
                             message: oro.checkout.workflow.condition.shipping_method_is_not_available.message
                             method_identifier: $checkout.shippingMethod
                             context: $.result.paymentContext
+                        - '@has_applicable_payment_methods':
+                            message: oro.checkout.workflow.condition.payment_method_is_not_selected.message
+                            context: $.result.paymentContext
 
                 conditions:
                     '@and':
@@ -232,7 +235,7 @@ workflows:
                         - '@validate_checkout_addresses':
                             parameters: $checkout
                         - '@not_empty':
-                            message: Payment method was not selected
+                            message: oro.checkout.workflow.condition.payment_method_is_not_selected.message
                             parameters: $checkout.paymentMethod
                         - '@payment_method_applicable':
                             message: oro.checkout.workflow.condition.payment_method_is_not_applicable.message
