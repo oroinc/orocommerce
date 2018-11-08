@@ -13,6 +13,9 @@ use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Entity\ProductImageType;
 use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 
+/**
+ * Contains business specific methods for retrieving product entities.
+ */
 class ProductRepository extends EntityRepository
 {
     /**
@@ -508,15 +511,17 @@ class ProductRepository extends EntityRepository
     {
         $qb = $this->createQueryBuilder('p');
 
+        $aliasedFieldName = QueryBuilderUtil::getField('p', $fieldName);
+
         $result = $qb
             ->select(['parent_product.sku', 'attr.id'])
             ->distinct()
-            ->join('p.' . $fieldName, 'attr')
+            ->join($aliasedFieldName, 'attr')
             ->join('p.parentVariantLinks', 'variant_links')
             ->join('variant_links.parentProduct', 'parent_product')
             ->where($qb->expr()->in('attr', ':attributeOptions'))
             ->andWhere('p.type = :type')
-            ->andWhere($qb->expr()->isNotNull('p.' . $fieldName))
+            ->andWhere($qb->expr()->isNotNull($aliasedFieldName))
             ->orderBy('parent_product.sku')
             ->setParameter('attributeOptions', $attributeOptions)
             ->setParameter('type', $type)
