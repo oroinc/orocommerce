@@ -215,7 +215,7 @@ oro_behat_extension:
     Customer Users List button:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
-        locator: '//div[contains(@id,"oro_sale_quote_customerUser-uid")]/div/button[@class="add-on btn entity-select-btn"]'
+        locator: '//div[contains(@id,"oro_sale_quote_customerUser-uid")]/div/button[contains(@class, "entity-select-btn")]'
         type: xpath
 
     Product Line Item Input Field:

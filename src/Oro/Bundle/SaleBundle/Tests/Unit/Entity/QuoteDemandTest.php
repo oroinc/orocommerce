@@ -4,6 +4,7 @@ namespace Oro\Bundle\SaleBundle\Tests\Unit\Entity;
 
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerVisitor;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
 use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
@@ -21,6 +22,7 @@ class QuoteDemandTest extends AbstractTest
             ['id', '123'],
             ['customer', new Customer()],
             ['customerUser', new CustomerUser()],
+            ['visitor', new CustomerVisitor()],
             ['quote', new Quote()],
             ['total', 100.1],
             ['subtotal', 100.1],
