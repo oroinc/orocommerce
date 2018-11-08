@@ -1,4 +1,5 @@
 @ticket-BB-15015
+@ticket-BB-15624
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroFlatRateShippingBundle:FlatRate2Integration.yml
 @fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
@@ -84,6 +85,7 @@ Feature: Single Page Checkout With Popup for Buyer
     Then I should see "UiDialog" with elements:
       | Title        | Billing Address |
       | okButton     | Continue        |
+    And Email is not required field
     And "New Address Popup Form" must contains values:
       | Label        | Primary address |
       | Organization | ORO             |

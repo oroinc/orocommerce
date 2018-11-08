@@ -22,8 +22,6 @@ operations:
             attribute_fields:
                 visitor_email:
                     form_type: Oro\Bundle\CustomerBundle\Form\Type\CustomerVisitorEmailAddressType
-                    options:
-                        required: true
                 address:
                     form_type: Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressType
                     options:
