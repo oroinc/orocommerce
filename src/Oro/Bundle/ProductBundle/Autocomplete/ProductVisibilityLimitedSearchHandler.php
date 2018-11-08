@@ -2,18 +2,22 @@
 
 namespace Oro\Bundle\ProductBundle\Autocomplete;
 
-use Symfony\Component\HttpFoundation\RequestStack;
-
+use Oro\Bundle\FormBundle\Autocomplete\SearchHandler;
+use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
+use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
+use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use Oro\Bundle\ProductBundle\Exception\InvalidArgumentException;
+use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
+use Oro\Bundle\ProductBundle\Search\ProductRepository as ProductSearchRepository;
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
 use Oro\Bundle\SearchBundle\Query\Result\Item;
-use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
-use Oro\Bundle\FormBundle\Autocomplete\SearchHandler;
-use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
-use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
-use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
-use Oro\Bundle\ProductBundle\Search\ProductRepository as ProductSearchRepository;
+use Symfony\Component\HttpFoundation\RequestStack;
 
+/**
+ * Search handler with additional check for product visibility.
+ */
 class ProductVisibilityLimitedSearchHandler extends SearchHandler
 {
     /** @var RequestStack */
@@ -31,6 +35,9 @@ class ProductVisibilityLimitedSearchHandler extends SearchHandler
     /** @var \Oro\Bundle\ProductBundle\Search\ProductRepository */
     protected $searchRepository;
 
+    /** @var LocalizationHelper */
+    private $localizationHelper;
+
     /**
      * @param string         $entityName
      * @param array          $properties
@@ -45,7 +52,15 @@ class ProductVisibilityLimitedSearchHandler extends SearchHandler
     ) {
         $this->requestStack   = $requestStack;
         $this->productManager = $productManager;
-        parent::__construct($entityName, $properties);
+        parent::__construct($entityName, ['sku', 'defaultName.string']);
+    }
+
+    /**
+     * @param LocalizationHelper $localizationHelper
+     */
+    public function setLocalizationHelper(LocalizationHelper $localizationHelper): void
+    {
+        $this->localizationHelper = $localizationHelper;
     }
 
     /**
@@ -85,19 +100,32 @@ class ProductVisibilityLimitedSearchHandler extends SearchHandler
             $result[$this->idFieldName] = $this->getPropertyValue($this->idFieldName, $item);
         }
 
-        foreach ($this->getProperties() as $destinationKey => $property) {
-            if ($this->isItem($item)) {
-                $result[$property] = $this->getSelectedData($item, $destinationKey);
-                continue;
+        if ($this->isItem($item)) {
+            $selectedData = $item->getSelectedData();
+            if (isset($selectedData['sku'], $selectedData['name'])) {
+                $result += [
+                    'sku' => $selectedData['sku'],
+                    'defaultName.string' => $selectedData['name'],
+                ];
             }
-            $result[$property] = $this->getPropertyValue($property, $item);
+        } elseif ($item instanceof Product) {
+            $result += [
+                'sku' => $item->getSku(),
+                'defaultName.string' => (string) $item->getDefaultName(),
+            ];
+            if ($this->localizationHelper) {
+                $result['defaultName.string'] = (string) $this->localizationHelper
+                    ->getLocalizedValue($item->getNames());
+            }
+        } else {
+            throw new InvalidArgumentException('Given item could not be converted');
         }
 
         return $result;
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
     public function getProperties()
     {
@@ -145,7 +173,6 @@ class ProductVisibilityLimitedSearchHandler extends SearchHandler
 
         // Configurable products require additional option selection is not implemented yet
         // Thus we need to hide configurable products from the product drop-downs
-        // @TODO remove after configurable products require additional option selection implementation
         $queryBuilder->andWhere($queryBuilder->expr()->neq('p.type', ':configurable_type'))
             ->setParameter('configurable_type', Product::TYPE_CONFIGURABLE);
 
@@ -166,7 +193,6 @@ class ProductVisibilityLimitedSearchHandler extends SearchHandler
 
         // Configurable products require additional option selection is not implemented yet
         // Thus we need to hide configurable products from the product drop-downs
-        // @TODO remove after configurable products require additional option selection implementation
         $searchQuery->addWhere(
             Criteria::expr()->neq('type', Product::TYPE_CONFIGURABLE)
         );
@@ -180,6 +206,8 @@ class ProductVisibilityLimitedSearchHandler extends SearchHandler
      * @param Item   $item
      * @param string $property
      * @return null|string
+     *
+     * @deprecated since v2.6
      */
     protected function getSelectedData($item, $property)
     {
@@ -209,6 +237,6 @@ class ProductVisibilityLimitedSearchHandler extends SearchHandler
      */
     protected function isItem($object)
     {
-        return is_object($object) && method_exists($object, 'getSelectedData');
+        return \is_object($object) && method_exists($object, 'getSelectedData');
     }
 }

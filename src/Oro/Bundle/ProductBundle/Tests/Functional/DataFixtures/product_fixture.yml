@@ -8,16 +8,16 @@ product1:
         precision: 0
     names:
         - { reference: product-1.names.default, string: product-1.names.default }
-        - { reference: product-1.names.en_US, string: product-1.names.en_US, fallback: system, localization: en_US }
+        - { reference: product-1.names.en_US, string: product-1.names.en_US, localization: en_US }
     slugPrototypes:
         - { reference: product-1.slugPrototypes.default, string: product-1.slugPrototypes.default }
-        - { reference: product-1.slugPrototypes.en_US, string: product-1.slugPrototypes.en_US, fallback: system, localization: en_US }
+        - { reference: product-1.slugPrototypes.en_US, string: product-1.slugPrototypes.en_US, localization: en_US }
     descriptions:
         - { reference: product-1.descriptions.default, text: product-1.descriptions.default }
-        - { reference: product-1.descriptions.en_US, text: product-1.descriptions.en_US, fallback: system, localization: en_US }
+        - { reference: product-1.descriptions.en_US, text: product-1.descriptions.en_US, localization: en_US }
     shortDescriptions:
         - { reference: product-1.shortDescriptions.default, text: product-1.shortDescriptions.default }
-        - { reference: product-1.shortDescriptions.en_US, text: product-1.shortDescriptions.en_US, fallback: system, localization: en_US }
+        - { reference: product-1.shortDescriptions.en_US, text: product-1.shortDescriptions.en_US, localization: en_US }
     images:
         - { reference: img, type: listing }
     featured: true

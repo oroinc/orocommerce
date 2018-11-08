@@ -23,6 +23,8 @@ oro_behat_extension:
         - OroRFPBundle::FeatureContext
         - OroWorkflowBundle::FeatureContext
         - OroProductBundle::QuickOrderFormContext
+        - OroLocaleBundle::LocalizationContext
+        - OroFrontendLocalizationBundle::LocalizationSwitcherContext
         - OroEmailBundle::EmailContext
         - OroEntityExtendBundle::EntityExtendContext
       paths:
