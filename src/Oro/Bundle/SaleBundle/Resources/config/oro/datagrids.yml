@@ -186,6 +186,8 @@ datagrids:
                         - { join: quote.customer, alias: quoteCustomer }
                         - { join: quote.internal_status, alias: internalStatus }
                         - { join: quote.customer_status, alias: customerStatus }
+            hints:
+                - HINT_TRANSLATABLE
         columns:
             customerUserName:
                 label: oro.sale.quote.customer_user.label
@@ -276,6 +278,8 @@ datagrids:
                     left:
                         - { join: quote.customerUser, alias: quoteCustomerUser }
                         - { join: quote.customer_status, alias: customerStatus }
+            hints:
+                - HINT_TRANSLATABLE
         columns:
             qid:
                 label:         oro.frontend.sale.quote.qid.label
