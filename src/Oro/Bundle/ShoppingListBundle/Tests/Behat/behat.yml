@@ -88,18 +88,6 @@ oro_behat_extension:
           Quantity: 'product_qty'
           Unit: 'product_unit'
 
-    Shopping List Line Item 1:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
-      selector:
-        type: css
-        locator: 'div.shopping-list-line-items__item-wrapper:nth-child(2)'
-
-    Shopping List Line Item 2:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
-      selector:
-        type: css
-        locator: 'div.shopping-list-line-items__item-wrapper:nth-child(3)'
-
     Shopping List Line Item Error:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
@@ -252,7 +240,6 @@ oro_behat_extension:
         - OroConfigBundle::FeatureContext
         - OroShoppingListBundle::FeatureContext
         - OroNavigationBundle::FeatureContext
-        - OroNavigationBundle::ScrollspyContext
         - OroCustomerBundle::ACLContext
         - OroShoppingListBundle::ShoppingListContext
         - OroCustomerBundle::RegistrationInstructionFeatureContext
