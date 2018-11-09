@@ -72,11 +72,6 @@ oro_behat_extension:
             type: 'xpath'
             locator: '//input[contains(@id,"oro_product_variantFields_Size_is_selected-uid")]'
           Inventory Status: 'oro_product[inventory_status]'
-          Inventory Status: 'oro_product[inventory_status]'
-          Minimum Quantity To Order: 'oro_product[minimumQuantityToOrder][scalarValue]'
-          Minimum Quantity To Order Use: 'oro_product[minimumQuantityToOrder][useFallback]'
-          Maximum Quantity To Order: 'oro_product[maximumQuantityToOrder][scalarValue]'
-          Maximum Quantity To Order Use: 'oro_product[maximumQuantityToOrder][useFallback]'
 
     Customer User Addresses Form:
       selector: 'form[name="oro_customer_customer_user"]'

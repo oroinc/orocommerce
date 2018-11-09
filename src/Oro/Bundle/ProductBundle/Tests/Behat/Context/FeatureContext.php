@@ -726,6 +726,151 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
+     * Example: I should see "This product will be available later" for "SKU123" product on shopping list
+     * @Then /^(?:|I )should see "(?P<elementNameOrText>[^"]*)" for "(?P<SKU>[^"]*)" product on shopping list$/
+     */
+    public function shouldSeeForProductOnShoppingList($elementNameOrText, $SKU)
+    {
+        $productItem = $this->findProductItemForShoppingList($SKU);
+
+        if ($this->isElementVisible($elementNameOrText, $productItem)) {
+            return;
+        }
+
+        self::assertNotFalse(
+            stripos($productItem->getText(), $elementNameOrText),
+            sprintf(
+                '%s "%s" for product with SKU "%s" is not present or not visible',
+                $this->hasElement($elementNameOrText) ? 'Element' : 'Text',
+                $elementNameOrText,
+                $SKU
+            )
+        );
+    }
+
+    /**
+     * Example: I should not see "This product will be available later" for "SKU123" product on shopping list
+     * @Then /^(?:|I )should not see "(?P<elementNameOrText>[^"]*)" for "(?P<SKU>[^"]*)" product on shopping list$/
+     */
+    public function shouldNotSeeForProductOnShoppingList($elementNameOrText, $SKU)
+    {
+        $productItem = $this->findProductItemForShoppingList($SKU);
+
+        $textAndElementPresentedOnPage = $this->isElementVisible($elementNameOrText, $productItem)
+            || stripos($productItem->getText(), $elementNameOrText);
+
+        self::assertFalse(
+            $textAndElementPresentedOnPage,
+            sprintf(
+                '%s "%s" for product with SKU "%s" is present or visible',
+                $this->hasElement($elementNameOrText) ? 'Element' : 'Text',
+                $elementNameOrText,
+                $SKU
+            )
+        );
+    }
+
+    //@codingStandardsIgnoreStart
+    /**
+     * Example: I should see "This item is running low on inventory" for "SKU123" product with Unit of Quantity "item" on order
+     * @Then /^(?:|I )should see "(?P<elementNameOrText>[^"]*)" for "(?P<SKU>[^"]*)" product with Unit of Quantity "(?P<unit>[^"]*)" on order$/
+     */
+    //@codingStandardsIgnoreEnd
+    public function shouldSeeForProductWithUnitOnOrder($elementNameOrText, $SKU, $unit)
+    {
+        $productItem = $this->findProductItemByUnitForOrder($SKU, $unit);
+
+        if ($this->isElementVisible($elementNameOrText, $productItem)) {
+            return;
+        }
+
+        self::assertNotFalse(
+            stripos($productItem->getText(), $elementNameOrText),
+            sprintf(
+                '%s "%s" for product with SKU "%s" and Unit of Quantity "%s" is not present or not visible',
+                $this->hasElement($elementNameOrText) ? 'Element' : 'Text',
+                $elementNameOrText,
+                $SKU,
+                $unit
+            )
+        );
+    }
+
+    //@codingStandardsIgnoreStart
+    /**
+     * Example: I should not see "This item is running low on inventory" for "SKU123" product with Unit of Quantity "item" on order
+     * @Then /^(?:|I )should not see "(?P<elementNameOrText>[^"]*)" for "(?P<SKU>[^"]*)" product with Unit of Quantity "(?P<unit>[^"]*)" on order$/
+     */
+    //@codingStandardsIgnoreEnd
+    public function shouldNotSeeForProductWithUnitOnOrder($elementNameOrText, $SKU, $unit)
+    {
+        $productItem = $this->findProductItemByUnitForOrder($SKU, $unit);
+
+        $textAndElementPresentedOnPage = $this->isElementVisible($elementNameOrText, $productItem)
+            || stripos($productItem->getText(), $elementNameOrText);
+
+        self::assertFalse(
+            $textAndElementPresentedOnPage,
+            sprintf(
+                '%s "%s" for product with SKU "%s" is present or visible',
+                $this->hasElement($elementNameOrText) ? 'Element' : 'Text',
+                $elementNameOrText,
+                $SKU
+            )
+        );
+    }
+
+    //@codingStandardsIgnoreStart
+    /**
+     * Example: I should see "This item is running low on inventory" for "SKU123" product with Unit of Quantity "item" on shopping list
+     * @Then /^(?:|I )should see "(?P<elementNameOrText>[^"]*)" for "(?P<SKU>[^"]*)" product with Unit of Quantity "(?P<unit>[^"]*)" on shopping list$/
+     */
+    //@codingStandardsIgnoreEnd
+    public function shouldSeeForProductWithUnitOnShoppingList($elementNameOrText, $SKU, $unit)
+    {
+        $productItem = $this->findProductItemByUnitForShoppingList($SKU, $unit);
+
+        if ($this->isElementVisible($elementNameOrText, $productItem)) {
+            return;
+        }
+
+        self::assertNotFalse(
+            stripos($productItem->getText(), $elementNameOrText),
+            sprintf(
+                '%s "%s" for product with SKU "%s" and Unit of Quantity "%s" is not present or not visible',
+                $this->hasElement($elementNameOrText) ? 'Element' : 'Text',
+                $elementNameOrText,
+                $SKU,
+                $unit
+            )
+        );
+    }
+
+    //@codingStandardsIgnoreStart
+    /**
+     * Example: I should not see "This item is running low on inventory" for "SKU123" product with Unit of Quantity "item" on shopping list
+     * @Then /^(?:|I )should not see "(?P<elementNameOrText>[^"]*)" for "(?P<SKU>[^"]*)" product with Unit of Quantity "(?P<unit>[^"]*)" on shopping list$/
+     */
+    //@codingStandardsIgnoreEnd
+    public function shouldNotSeeForProductWithUnitOnShoppingList($elementNameOrText, $SKU, $unit)
+    {
+        $productItem = $this->findProductItemByUnitForShoppingList($SKU, $unit);
+
+        $textAndElementPresentedOnPage = $this->isElementVisible($elementNameOrText, $productItem)
+            || stripos($productItem->getText(), $elementNameOrText);
+
+        self::assertFalse(
+            $textAndElementPresentedOnPage,
+            sprintf(
+                '%s "%s" for product with SKU "%s" is present or visible',
+                $this->hasElement($elementNameOrText) ? 'Element' : 'Text',
+                $elementNameOrText,
+                $SKU
+            )
+        );
+    }
+
+    /**
      * Assert that embedded block contains specified product with specified element.
      * Example: Then should see "Low Inventory" for "PSKU1" product in the "New Arrivals Block"
      *
@@ -1227,6 +1372,84 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     {
         $productItem = $this->findElementContains('ProductItem', $SKU, $context);
         self::assertNotNull($productItem, sprintf('Product with SKU "%s" not found', $SKU));
+
+        return $productItem;
+    }
+
+    /**
+     * @param string $SKU
+     * @param Element|null $context
+     *
+     * @return Element
+     */
+    private function findProductItemForShoppingList(string $SKU, Element $context = null): Element
+    {
+        $productItem = $this->findElementContains('Shopping list line item', $SKU, $context);
+        self::assertNotNull($productItem, sprintf('Product with SKU "%s" not found', $SKU));
+
+        return $productItem;
+    }
+
+    /**
+     * @param string $SKU
+     * @param string $unit
+     * @param Element|null $context
+     * @return Element
+     */
+    private function findProductItemByUnitForOrder(string $SKU, string $unit, Element $context = null): Element
+    {
+        $items = $this->findAllElements('ProductLineItem', $context);
+
+        $productItem = null;
+
+        foreach ($items as $item) {
+            try {
+                self::assertContains($SKU, $item->getHtml());
+                self::assertContains($unit, $item->getElement('Order Summary Products GridProductLineUnit')->getHtml());
+
+                $productItem = $item;
+                break;
+            } catch (\Exception $exception) {
+                continue;
+            }
+        }
+
+        self::assertNotNull(
+            $productItem,
+            sprintf('Product with SKU "%s" and Unit of Quantity "%s" not found', $SKU, $unit)
+        );
+
+        return $productItem;
+    }
+
+    /**
+     * @param string $SKU
+     * @param string $unit
+     * @param Element|null $context
+     * @return Element
+     */
+    private function findProductItemByUnitForShoppingList(string $SKU, string $unit, Element $context = null): Element
+    {
+        $items = $this->findAllElements('Shopping list line item', $context);
+
+        $productItem = null;
+
+        foreach ($items as $item) {
+            try {
+                self::assertContains($SKU, $item->getHtml());
+                self::assertContains($unit, $item->getElement('Product unit dropdown')->getHtml());
+
+                $productItem = $item;
+                break;
+            } catch (\Exception $exception) {
+                continue;
+            }
+        }
+
+        self::assertNotNull(
+            $productItem,
+            sprintf('Product with SKU "%s" and Unit of Quantity "%s" not found', $SKU, $unit)
+        );
 
         return $productItem;
     }
