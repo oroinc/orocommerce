@@ -15,7 +15,7 @@ Feature: Create product with dialog widget
     And I click "Add Product Page"
     And I click "Content Variants"
     Then "Content Variant" must contains values:
-      | Product | |
+      | Product | Choose Product... |
     When I click on "Create Product Plus Button"
     Then I should see "Create Product"
     And I should see "Continue"

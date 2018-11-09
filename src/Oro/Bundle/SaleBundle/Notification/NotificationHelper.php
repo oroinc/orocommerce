@@ -9,10 +9,13 @@ use Oro\Bundle\EmailBundle\Builder\EmailModelBuilder;
 use Oro\Bundle\EmailBundle\Entity\EmailTemplate;
 use Oro\Bundle\EmailBundle\Form\Model\Email;
 use Oro\Bundle\EmailBundle\Mailer\Processor;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
 
+/**
+ * This helper contains useful methods common for working with quote emails.
+ */
 class NotificationHelper
 {
     /** @var ManagerRegistry */
@@ -24,6 +27,9 @@ class NotificationHelper
     /** @var Processor */
     protected $emailProcessor;
 
+    /** @var FeatureChecker */
+    protected $featureChecker;
+
     /** @var string */
     protected $quoteClassName;
 
@@ -34,15 +40,18 @@ class NotificationHelper
      * @param ManagerRegistry $registry
      * @param EmailModelBuilder $emailModelBuilder
      * @param Processor $emailProcessor
+     * @param FeatureChecker $featureChecker
      */
     public function __construct(
         ManagerRegistry $registry,
         EmailModelBuilder $emailModelBuilder,
-        Processor $emailProcessor
+        Processor $emailProcessor,
+        FeatureChecker $featureChecker
     ) {
         $this->registry = $registry;
         $this->emailModelBuilder = $emailModelBuilder;
         $this->emailProcessor = $emailProcessor;
+        $this->featureChecker = $featureChecker;
     }
 
     /**
@@ -98,7 +107,11 @@ class NotificationHelper
             ->setEntityId($quote->getId())
             ->setTo([$quote->getEmail()])
             ->setContexts([$quote])
-            ->setTemplate($this->getEmailTemplate('quote_email_link'));
+            ->setTemplate(
+                $this->getEmailTemplate(
+                    $this->isGuestAccessTemplateApplicable($quote) ? 'quote_email_link_guest' : 'quote_email_link'
+                )
+            );
 
         return $emailModel;
     }
@@ -140,5 +153,16 @@ class NotificationHelper
     protected function getRepository($className)
     {
         return $this->getManager($className)->getRepository($className);
+    }
+
+    /**
+     * @param Quote $quote
+     * @return bool
+     */
+    private function isGuestAccessTemplateApplicable(Quote $quote): bool
+    {
+        return $this->featureChecker &&
+            $this->featureChecker->isFeatureEnabled('guest_quote') &&
+            (!$quote->getCustomerUser() || $quote->getCustomerUser()->isGuest());
     }
 }

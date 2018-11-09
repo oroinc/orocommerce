@@ -370,7 +370,8 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         $element = $page->find(
             'xpath',
             "//*[contains(@class,'field-name')][contains(text(),'$transition')]/" .
-            "..//*[contains(@class,'action-permissions__item')]"
+            "..//*[contains(@class,'action-permissions__item')]/" .
+            "*[contains(@class,'action-permissions__dropdown-toggle')]"
         );
         if ($element) {
             $element->focus();

@@ -71,8 +71,6 @@ Feature: Single Page Checkout With Popup for Guest
       | Organization |  |
       | Street       |  |
       | City         |  |
-      | Country      |  |
-      | State        |  |
       | Postal Code  |  |
     And I click "Continue"
     Then I should see "New Address Popup Form" validation errors:
@@ -261,8 +259,8 @@ Feature: Single Page Checkout With Popup for Guest
       | Street       | B Street         |
       | Street 2     | B Street 2       |
       | City         | B City           |
-      | Country      | DE               |
-      | State        | DE-BE            |
+      | Country      | Germany          |
+      | State        | Berlin           |
       | Postal Code  | 12345            |
     When I fill "New Address Popup Form" with:
       | Country      | Ukraine            |
@@ -278,11 +276,11 @@ Feature: Single Page Checkout With Popup for Guest
       | Country      | Germany          |
       | State        | Berlin           |
     And I click "Continue"
-    And I check "Use billing address" on the checkout page
-    Then I should see "Flat Rate: $3.00"
-    When I click "Delete this shopping list after submitting order"
+    And I click "Delete this shopping list after submitting order"
     And I fill "Checkout Order Form" with:
       | PO Number | Order2 |
+    And I check "Use billing address" on the checkout page
+    Then I should see "Flat Rate: $3.00"
     And I wait "Submit Order" button
     And I click "Submit Order"
     Then I see the "Thank You" page with "Thank You For Your Purchase!" title

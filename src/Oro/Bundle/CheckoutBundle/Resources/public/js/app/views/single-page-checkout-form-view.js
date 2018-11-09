@@ -166,6 +166,9 @@ define(function(require) {
         },
 
         transit: function() {
+            this._changeShippingMethod();
+            this._changePaymentMethod();
+
             var paymentMethod = this.$el.find(this.options.formPaymentMethodSelector).val();
             var eventData = {paymentMethod: paymentMethod};
             mediator.trigger('checkout:payment:before-form-serialization', eventData);

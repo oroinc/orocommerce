@@ -1,4 +1,5 @@
 @ticket-BB-15015
+@ticket-BB-15624
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroFlatRateShippingBundle:FlatRate2Integration.yml
 @fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
@@ -114,13 +115,14 @@ Feature: Single Page Checkout With Popup for Buyer
     Then I should see "UiDialog" with elements:
       | Title        | Billing Address |
       | okButton     | Continue        |
+    And Email is not required field
     And "New Address Popup Form" must contains values:
       | Label        | Primary address |
       | Organization | ORO             |
       | Street       | Fifth avenue    |
       | City         | Berlin          |
-      | Country      | DE              |
-      | State        | DE-BE           |
+      | Country      | Germany         |
+      | State        | Berlin          |
       | Postal Code  | 10115           |
     When I fill "New Address Popup Form" with:
       | Label        | |
@@ -151,8 +153,8 @@ Feature: Single Page Checkout With Popup for Buyer
       | Organization | ORO             |
       | Street       | Fifth avenue    |
       | City         | Berlin          |
-      | Country      | DE              |
-      | State        | DE-BE           |
+      | Country      | Germany         |
+      | State        | Berlin          |
       | Postal Code  | 10115           |
     When I fill "New Address Popup Form" with:
       | Label        | |
@@ -206,8 +208,8 @@ Feature: Single Page Checkout With Popup for Buyer
       | Street       | B Street       |
       | Street 2     | B Street 2     |
       | City         | B City         |
-      | Country      | AL             |
-      | State        | AL-HA          |
+      | Country      | Albania        |
+      | State        | Has            |
       | Postal Code  | 12345          |
     When I close ui dialog
     Then I should see "New address (B Prefix B Fname B Mname B Lname B Suffix, B Organization, B Street B Street 2, B CITY HA AL 12345, 12345)" for "Select Single Page Checkout Billing Address" select
@@ -227,8 +229,8 @@ Feature: Single Page Checkout With Popup for Buyer
       | Street       | B Street       |
       | Street 2     | B Street 2     |
       | City         | B City         |
-      | Country      | AL             |
-      | State        | AL-HA          |
+      | Country      | Albania        |
+      | State        | Has            |
       | Postal Code  | 12345          |
     When I close ui dialog
     When I select "Fifth avenue, 10115 Berlin, Germany" from "Select Shipping Address"
@@ -281,8 +283,8 @@ Feature: Single Page Checkout With Popup for Buyer
       | Street       | S Street       |
       | Street 2     | S Street 2     |
       | City         | S City         |
-      | Country      | GE             |
-      | State        | GE-GU          |
+      | Country      | Georgia        |
+      | State        | Guria          |
       | Postal Code  | 67890          |
     When I close ui dialog
     Then I should see "New address (S Prefix S Fname S Mname S Lname S Suffix, S Organization, S Street S Street 2, 67890 S City, Georgia, 67890)" for "Select Single Page Checkout Shipping Address" select
@@ -302,8 +304,8 @@ Feature: Single Page Checkout With Popup for Buyer
       | Street       | S Street       |
       | Street 2     | S Street 2     |
       | City         | S City         |
-      | Country      | GE             |
-      | State        | GE-GU          |
+      | Country      | Georgia        |
+      | State        | Guria          |
       | Postal Code  | 67890          |
     When I close ui dialog
     And I select "Fifth avenue, 10115 Berlin, Germany" from "Select Billing Address"

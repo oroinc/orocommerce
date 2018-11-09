@@ -211,15 +211,18 @@ class QuoteTypeTest extends AbstractTest
 
         $date = '2015-10-15';
 
+        $quote = new Quote();
+        $quote->setCurrency('USD');
+
         return [
             'empty owner' => [
                 'isValid'       => false,
                 'submittedData' => [
                 ],
-                'expectedData'  => (new Quote())->setCurrency('USD'),
-                'defaultData'   => $this->getQuote(1)->setCurrency('USD'),
+                'expectedData'  => $quote,
+                'defaultData'   => $this->getQuote(1)->setCurrency('USD')->setGuestAccessId($quote->getGuestAccessId()),
                 'options' => [
-                    'data' => $this->getQuote(1)
+                    'data' => $this->getQuote(1)->setGuestAccessId($quote->getGuestAccessId())
                 ]
             ],
             'empty PO number' => [
@@ -261,7 +264,9 @@ class QuoteTypeTest extends AbstractTest
                     null,
                     true,
                     true
-                )->setCurrency('USD'),
+                )
+                    ->setCurrency('USD')
+                    ->setGuestAccessId($quote->getGuestAccessId()),
                 'defaultData'   => $this->getQuote(
                     1,
                     1,
@@ -269,7 +274,7 @@ class QuoteTypeTest extends AbstractTest
                     [$quoteProduct],
                     null,
                     null
-                ),
+                )->setGuestAccessId($quote->getGuestAccessId()),
             ],
             'valid data' => [
                 'isValid'       => true,
@@ -322,7 +327,8 @@ class QuoteTypeTest extends AbstractTest
                     ->setShippingMethodType('shippingType1')
                     ->setCurrency('USD')
                     ->setEstimatedShippingCostAmount(10)
-                    ->setOverriddenShippingCostAmount(111.12),
+                    ->setOverriddenShippingCostAmount(111.12)
+                    ->setGuestAccessId($quote->getGuestAccessId()),
                 'defaultData' => $this->getQuote(
                     1,
                     1,
@@ -332,7 +338,8 @@ class QuoteTypeTest extends AbstractTest
                     new \DateTime($date . 'T00:00:00+0000')
                 )->addAssignedUser($this->getUser(1))
                     ->addAssignedCustomerUser($this->getCustomerUser(11))
-                    ->setCurrency('USD'),
+                    ->setCurrency('USD')
+                    ->setGuestAccessId($quote->getGuestAccessId()),
                 'options' => [
                     'data' => $this->getQuote(
                         1,
@@ -342,7 +349,8 @@ class QuoteTypeTest extends AbstractTest
                         'poNumber',
                         new \DateTime($date . 'T00:00:00+0000')
                     )->addAssignedUser($this->getUser(1))
-                        ->addAssignedCustomerUser($this->getCustomerUser(11)),
+                        ->addAssignedCustomerUser($this->getCustomerUser(11))
+                        ->setGuestAccessId($quote->getGuestAccessId()),
                 ]
             ],
         ];
