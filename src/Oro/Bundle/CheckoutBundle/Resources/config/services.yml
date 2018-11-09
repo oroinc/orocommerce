@@ -712,11 +712,3 @@ services:
         tags:
             - { name: oro_workflow.condition, alias: 'validate_checkout_addresses' }
             - { name: oro_action.condition, alias: 'validate_checkout_addresses' }
-
-    oro_checkout.workflow_state.action.is_checkout_submit:
-        class: 'Oro\Bundle\CheckoutBundle\WorkflowState\Action\IsCheckoutSubmitAction'
-        arguments:
-            - '@oro_action.expression.context_accessor'
-            - '@request_stack'
-        tags:
-            - { name: oro_action.action, alias: is_checkout_submit }

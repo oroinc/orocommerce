@@ -161,59 +161,6 @@ workflows:
                         action_group: b2b_flow_checkout_create_guest_customer_user
                         parameters_mapping:
                             checkout: $checkout
-
-                    # $.result.is_checkout_submit - represent was it form submit or simple request
-                    - '@is_checkout_submit':
-                        attribute: $.result.is_checkout_submit
-
-                    # If it was form submit AND checkout states are invalid we set  $.result.isCheckoutStateValid to
-                    # FALSE which will be used to deny further executing checkout order
-                    - '@tree':
-                        conditions:
-                            '@and':
-                                - '@equal': [$.result.is_checkout_submit, true]
-                                - '@not':
-                                    - '@check_checkout_states':
-                                        message: check_checkout_states
-                                        parameters:
-                                            entity: $checkout
-                                            state1: $.result.currentCheckoutState
-                                            state2: $.result.savedCheckoutState
-
-                        actions:
-                            - '@assign_value': [$.result.isCheckoutStateValid, false]
-                            - '@flash_message':
-                                message: oro.checkout.workflow.condition.content_of_order_was_changed.message
-                                type: 'error'
-
-                    # If $.result.isCheckoutStateValid is not defined AND it was form submit
-                    # AND checkout states are VALID we set  $.result.isCheckoutStateValid to
-                    # TRUE which will be used to allow further executing checkout order
-                    - '@tree':
-                        conditions:
-                            '@and':
-                                - '@empty': $.result.isCheckoutStateValid
-                                - '@equal': [$.result.is_checkout_submit, true]
-                                - '@check_checkout_states':
-                                    message: check_checkout_states
-                                    parameters:
-                                        entity: $checkout
-                                        state1: $.result.currentCheckoutState
-                                        state2: $.result.savedCheckoutState
-
-                        actions:
-                            - '@assign_value': [$.result.isCheckoutStateValid, true]
-
-                    # actualize_workflow_state - always actualizes checkout state to actual
-                    - '@run_action_group':
-                        action_group: actualize_workflow_state
-                        parameters_mapping:
-                          checkout: $checkout
-                          state_token: $state_token
-                        results:
-                          result.savedStateToken: $.state_token
-                          data.internal_state_token: $.state_token
-
                 preconditions:
                     '@and':
                         - '@equal': [$checkout.completed, false]
@@ -228,7 +175,6 @@ workflows:
 
                 conditions:
                     '@and':
-                        - '@equal': [$.result.isCheckoutStateValid, true]
                         - '@validate_checkout_addresses':
                             parameters: $checkout
                         - '@not_empty':

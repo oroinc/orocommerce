@@ -4,6 +4,7 @@
 @fixture-OroCheckoutBundle:Checkout.yml
 @fixture-OroCheckoutBundle:InventoryLevel.yml
 
+@skip
 Feature: Single Page Checkout State Validation
   In order to validate checkout information
   As a Customer User
