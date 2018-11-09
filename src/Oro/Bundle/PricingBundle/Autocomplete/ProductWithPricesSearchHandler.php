@@ -12,6 +12,7 @@ use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Search\ProductRepository as ProductSearchRepository;
+use Oro\Bundle\SearchBundle\Query\Result\Item;
 
 /**
  * Class helps to prepare products search result for quick order form
@@ -97,13 +98,17 @@ class ProductWithPricesSearchHandler implements SearchHandlerInterface
         $perPage = (int)$perPage > 0 ? (int)$perPage : 10;
         $perPage++;
 
-        $products = $this->findProducts($query, $page, $perPage);
-
-        if (empty($products)) {
+        $searchResultData = $this->getSearchResultsData($query, $page, $perPage);
+        if (empty($searchResultData)) {
             return ['results' => [], 'more' => false];
         }
 
-        $items = $this->buildItemsArray($products, $this->findPrices($products));
+        $products = $this->getProductRepository()->getProductsByIds(array_keys($searchResultData));
+        $items = $this->buildItemsArray(
+            $products,
+            $this->findPrices($products),
+            $searchResultData
+        );
 
         $hasMore = count($items) === $perPage;
         if ($hasMore) {
@@ -133,7 +138,7 @@ class ProductWithPricesSearchHandler implements SearchHandlerInterface
         if ($product instanceof Product) {
             $result['id'] = $product->getId();
             $result['sku'] = $product->getSku();
-            $result['defaultName.string'] = $product->getName()->getString();
+            $result['defaultName.string'] = $item['name'];
             $result['prices'] = [];
             $result['units'] = $product->getSellUnitsPrecision();
 
@@ -182,36 +187,49 @@ class ProductWithPricesSearchHandler implements SearchHandlerInterface
      * @param string $search
      * @param int $firstResult
      * @param int $maxResults
-     * @return array|Product[]
+     *
+     * @return array
+     *
+     * [
+     *     'product.id' => [
+     *         product_id => 'id'
+     *         name => 'name',
+     *         sku => 'sku'
+     *      ],
+     *      ...
+     * ]
      */
-    private function findProducts($search, $firstResult, $maxResults)
+    private function getSearchResultsData($search, $firstResult, $maxResults) : array
     {
-        $foundItems = $this->productSearchRepository->findBySkuOrName($search, $firstResult-1, $maxResults);
-        $ids = [];
+        $foundItems = $this->productSearchRepository
+            ->getSearchQueryBySkuOrName($search, $firstResult-1, $maxResults)
+            ->getResult()
+            ->getElements();
 
-        foreach ($foundItems as $foundItem) {
-            $ids[] = $foundItem->getSelectedData()['product_id'];
-        }
-
-        if (empty($ids)) {
-            return [];
-        }
-
-        return $this->getProductRepository()->getProductsByIds($ids);
+        return array_combine(
+            array_map(function (Item $foundItem) {
+                return $foundItem->getSelectedData()['product_id'];
+            }, $foundItems),
+            array_map(function (Item $foundItem) {
+                return $foundItem->getSelectedData();
+            }, $foundItems)
+        );
     }
 
     /**
      * @param Product[] $products
      * @param array[] $prices
+     * @param array[] $searchResultData
      * @return array
      */
-    private function buildItemsArray($products, array $prices)
+    private function buildItemsArray($products, array $prices, array $searchResultData)
     {
         $items = [];
 
         foreach ($products as $product) {
             $item['product'] = $product;
             $item['prices'] = [];
+            $item['name'] = $searchResultData[$product->getId()]['name'];
 
             if (!empty($prices[$product->getId()])) {
                 $item['prices'] = $prices[$product->getId()];
