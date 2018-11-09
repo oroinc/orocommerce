@@ -292,3 +292,36 @@ Feature: Single Page Checkout With Popup for Guest
     And I should see "B Address B Prefix B Fname B Mname B Lname B Suffix B Organization B Street B Street 2 12345 B City Germany 12345"
     And I should not see "S Address S Prefix S Fname S Mname S Lname S Suffix S Organization S Street S Street 2 67890 S City Georgia 67890"
     And I should see "Flat Rate"
+
+  Scenario: Create order and check that no flash messages on success page
+    Given I proceed as the Guest
+    And I open page with shopping list Shopping List
+    And I scroll to top
+    And I wait line items are initialized
+    And I click "Create Order"
+    And I click "Delete this shopping list after submitting order"
+    And I click on "Billing Address Select"
+    And I click on "New Address Option"
+    And I fill "New Address Popup Form" with:
+      | Email        | test@example.com |
+      | Label        | B Address        |
+      | Name Prefix  | B Prefix         |
+      | First Name   | B Fname          |
+      | Middle Name  | B Mname          |
+      | Last Name    | B Lname          |
+      | Name Suffix  | B Suffix         |
+      | Organization | B Organization   |
+      | Phone        | 12345            |
+      | Street       | B Street         |
+      | Street 2     | B Street 2       |
+      | City         | B City           |
+      | Country      | Germany          |
+      | State        | Berlin           |
+      | Postal Code  | 12345            |
+    And I click "Continue"
+    And I check "Use billing address" on the checkout page
+    And I uncheck "Save my data and create an account" on the checkout page
+    And I wait "Submit Order" button
+    When I click "Submit Order"
+    Then I see the "Thank You" page with "Thank You For Your Purchase!" title
+    And I should not see flash messages
