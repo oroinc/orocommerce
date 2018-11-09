@@ -3,6 +3,7 @@
 namespace Oro\Bundle\SaleBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\CurrencyBundle\Provider\CurrencyProviderInterface;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaFactoryInterface;
@@ -30,20 +31,28 @@ class QuoteProductPriceProviderTest extends \PHPUnit\Framework\TestCase
     /** @var ProductPriceProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $productPriceProvider;
 
+    /** @var CurrencyProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    protected $currencyProvider;
+
     protected function setUp()
     {
         $this->productPriceProvider = $this->createMock(ProductPriceProviderInterface::class);
         $this->priceScopeCriteriaFactory = $this->createMock(ProductPriceScopeCriteriaFactoryInterface::class);
+        $this->currencyProvider = $this->createMock(CurrencyProviderInterface::class);
 
         $this->quoteProductPriceProvider = new QuoteProductPriceProvider(
             $this->productPriceProvider,
-            $this->priceScopeCriteriaFactory
+            $this->priceScopeCriteriaFactory,
+            $this->currencyProvider
         );
     }
 
     protected function tearDown()
     {
-        unset($this->quoteProductPriceProvider, $this->productPriceProvider, $this->priceScopeCriteriaFactory);
+        unset($this->currencyProvider);
+        unset($this->quoteProductPriceProvider);
+        unset($this->productPriceProvider);
+        unset($this->priceScopeCriteriaFactory);
     }
 
     /**
@@ -54,10 +63,17 @@ class QuoteProductPriceProviderTest extends \PHPUnit\Framework\TestCase
      */
     public function testGetTierPrices($quoteProducts, $products, $tierPricesCount)
     {
-        $quote = new Quote();
         $website = new Website();
         $customer = new Customer();
+
+        $quote = new Quote();
         $quote->setWebsite($website)->setCustomer($customer);
+
+        $currencies = ['USD', 'EUR'];
+        $this->currencyProvider
+            ->expects($this->any())
+            ->method('getCurrencyList')
+            ->willReturn($currencies);
 
         foreach ($quoteProducts as $quoteProduct) {
             $quote->addQuoteProduct($quoteProduct);
@@ -73,7 +89,7 @@ class QuoteProductPriceProviderTest extends \PHPUnit\Framework\TestCase
                 ->expects($this->once())
                 ->method('getPricesByScopeCriteriaAndProducts')
                 ->with($productScopeCriteria, $products)
-                ->willReturn(range(0, $tierPricesCount - 1));
+                ->willReturn(range(0, $tierPricesCount - 1), $currencies);
         } else {
             $this->productPriceProvider
                 ->expects($this->never())
@@ -100,6 +116,13 @@ class QuoteProductPriceProviderTest extends \PHPUnit\Framework\TestCase
         $quote = new Quote();
         $quote->setWebsite($website)->setCustomer($customer);
 
+        $currencies = ['USD', 'EUR'];
+        $this->currencyProvider
+            ->expects($this->any())
+            ->method('getCurrencyList')
+            ->willReturn($currencies);
+
+
         if ($products) {
             $productScopeCriteria = $this->createMock(ProductPriceScopeCriteriaInterface::class);
             $this->priceScopeCriteriaFactory->expects($this->once())
@@ -110,7 +133,7 @@ class QuoteProductPriceProviderTest extends \PHPUnit\Framework\TestCase
                 ->expects($this->once())
                 ->method('getPricesByScopeCriteriaAndProducts')
                 ->with($productScopeCriteria, $products)
-                ->willReturn(range(0, $tierPricesCount - 1));
+                ->willReturn(range(0, $tierPricesCount - 1), $currencies);
         } else {
             $this->productPriceProvider
                 ->expects($this->never())

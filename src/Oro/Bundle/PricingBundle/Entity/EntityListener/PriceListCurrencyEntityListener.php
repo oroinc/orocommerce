@@ -9,6 +9,11 @@ use Oro\Bundle\PricingBundle\Entity\PriceRule;
 use Oro\Bundle\PricingBundle\Model\PriceListRelationTriggerHandler;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerHandler;
 
+/**
+ * Catches changes in price list currency to make:
+ * 1. Update currency lists in dependent combined price lists
+ * 2. Actualize price list rules and actuality
+ */
 class PriceListCurrencyEntityListener
 {
     /**
@@ -43,6 +48,7 @@ class PriceListCurrencyEntityListener
      */
     public function postPersist(PriceListCurrency $priceListCurrency)
     {
+        $this->scheduleCurrencyUpdate($priceListCurrency);
         $this->scheduleRulesRecalculation($priceListCurrency);
     }
 
@@ -51,6 +57,7 @@ class PriceListCurrencyEntityListener
      */
     public function preRemove(PriceListCurrency $priceListCurrency)
     {
+        $this->scheduleCurrencyUpdate($priceListCurrency);
         $this->scheduleRulesRecalculation($priceListCurrency);
     }
 
@@ -75,5 +82,14 @@ class PriceListCurrencyEntityListener
             }
             $this->priceListTriggerHandler->addTriggerForPriceList(Topics::RESOLVE_PRICE_RULES, $priceList);
         }
+    }
+
+    /**
+     * @param PriceListCurrency $priceListCurrency
+     */
+    protected function scheduleCurrencyUpdate(PriceListCurrency $priceListCurrency)
+    {
+        $priceList = $priceListCurrency->getPriceList();
+        $this->priceListTriggerHandler->addTriggerForPriceList(Topics::RESOLVE_COMBINED_CURRENCIES, $priceList);
     }
 }

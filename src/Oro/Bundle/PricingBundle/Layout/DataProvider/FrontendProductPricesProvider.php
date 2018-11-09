@@ -190,7 +190,7 @@ class FrontendProductPricesProvider
         $prices = $this->productPriceProvider->getPricesByScopeCriteriaAndProducts(
             $this->scopeCriteriaRequestHandler->getPriceScopeCriteria(),
             $products,
-            $this->userCurrencyManager->getUserCurrency()
+            [$this->userCurrencyManager->getUserCurrency()]
         );
 
         $this->setProductsPrices($products, $prices);

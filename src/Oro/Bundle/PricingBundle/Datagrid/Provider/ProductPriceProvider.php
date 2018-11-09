@@ -54,7 +54,7 @@ class ProductPriceProvider
     public function getCombinedPricesForProductsByPriceList(
         array $productRecords,
         ProductPriceScopeCriteriaInterface $scopeCriteria,
-        string $currency = null
+        string $currency
     ) {
         $products = $this->getProducts($productRecords);
         $prices = $this->getPrices($scopeCriteria, $products, $currency);
@@ -78,16 +78,16 @@ class ProductPriceProvider
     /**
      * @param ProductPriceScopeCriteriaInterface $scopeCriteria
      * @param Product[] $products
-     * @param string|null $currency
+     * @param string $currency
      * @return array
      */
     protected function getPrices(
         ProductPriceScopeCriteriaInterface $scopeCriteria,
         array $products,
-        string $currency = null
+        string $currency
     ): array {
         $prices = $this->productPriceProvider
-            ->getPricesByScopeCriteriaAndProducts($scopeCriteria, $products, $currency);
+            ->getPricesByScopeCriteriaAndProducts($scopeCriteria, $products, [$currency]);
 
         foreach ($prices as &$productPrices) {
             usort($productPrices, function (ProductPriceInterface $a, ProductPriceInterface $b) {

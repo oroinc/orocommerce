@@ -22,6 +22,9 @@ class ProductPriceProviderTest extends \PHPUnit\Framework\TestCase
 
     const TEST_CURRENCY = 'USD';
 
+    /** @var ProductPriceScopeCriteriaInterface */
+    private $productPriceScopeCriteria;
+
     /** @var ProductPriceProvider */
     protected $provider;
 
@@ -92,22 +95,20 @@ class ProductPriceProviderTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider getPricesByScopeCriteriaAndProductsProvider
      *
-     * @param string $currency
+     * @param array $currencies
      * @param array $supportedCurrencies
      * @param array $availableCurrencies
-     * @param array|null $finalCurrencies
-     * @param string $userCurrency
+     * @param array $finalCurrencies
      * @param string $unitCode
      * @param array $products
      * @param array $prices
      * @param array $expectedResult
      */
     public function testGetPricesByScopeCriteriaAndProducts(
-        $currency,
+        array $currencies,
         array $supportedCurrencies,
         array $availableCurrencies,
-        array $finalCurrencies = null,
-        $userCurrency,
+        array $finalCurrencies,
         $unitCode,
         array $products,
         array $prices,
@@ -125,12 +126,6 @@ class ProductPriceProviderTest extends \PHPUnit\Framework\TestCase
             ->with($scopeCriteria)
             ->willReturn($supportedCurrencies);
 
-        $this->currencyManager
-            ->expects($this->any())
-            ->method('getUserCurrency')
-            ->with($scopeCriteria->getWebsite())
-            ->willReturn($userCurrency);
-
         $productUnitCodes = $unitCode ? [$unitCode] : null;
         $this->priceStorage
             ->expects($this->once())
@@ -141,7 +136,7 @@ class ProductPriceProviderTest extends \PHPUnit\Framework\TestCase
         $result = $this->provider->getPricesByScopeCriteriaAndProducts(
             $scopeCriteria,
             $products,
-            $currency,
+            $currencies,
             $unitCode
         );
 
@@ -154,25 +149,11 @@ class ProductPriceProviderTest extends \PHPUnit\Framework\TestCase
     public function getPricesByScopeCriteriaAndProductsProvider()
     {
         return [
-            'without currency' => [
-                'currency' => null,
-                'supportedCurrencies' => [self::TEST_CURRENCY, 'EUR'],
-                'availableCurrencies' => [self::TEST_CURRENCY, 'EUR'],
-                'finalCurrencies' => null,
-                'userCurrency' => 'UAH',
-                'unitCode' => 'unit',
-                'products' => [$this->getEntity(Product::class, ['id' => 1])],
-                'prices' => $this->getPricesArray(10, 10, self::TEST_CURRENCY, ['unit']),
-                'expectedResult' => [
-                    1 => $this->getPricesArray(10, 10, self::TEST_CURRENCY, ['unit'])
-                ]
-            ],
             'with allowed currency' => [
-                'currency' => self::TEST_CURRENCY,
+                'currencies' => [self::TEST_CURRENCY],
                 'supportedCurrencies' => [self::TEST_CURRENCY, 'EUR'],
                 'availableCurrencies' => [self::TEST_CURRENCY, 'EUR'],
                 'finalCurrencies' => [self::TEST_CURRENCY],
-                'userCurrency' => 'UAH',
                 'unitCode' => 'unit',
                 'products' => [$this->getEntity(Product::class, ['id' => 1])],
                 'prices' => $this->getPricesArray(10, 10, self::TEST_CURRENCY, ['unit']),
@@ -180,38 +161,11 @@ class ProductPriceProviderTest extends \PHPUnit\Framework\TestCase
                     1 => $this->getPricesArray(10, 10, self::TEST_CURRENCY, ['unit'])
                 ]
             ],
-            'with not allowed currency' => [
-                'currency' => self::TEST_CURRENCY,
-                'supportedCurrencies' => ['EUR'],
-                'availableCurrencies' => [self::TEST_CURRENCY],
-                'finalCurrencies' => ['UAH'],
-                'userCurrency' => 'UAH',
-                'unitCode' => 'unit',
-                'products' => [$this->getEntity(Product::class, ['id' => 1])],
-                'prices' => $this->getPricesArray(10, 10, 'UAH', ['unit']),
-                'expectedResult' => [
-                    1 => $this->getPricesArray(10, 10, 'UAH', ['unit'])
-                ]
-            ],
-            'with not allowed currency and no user currency' => [
-                'currency' => self::TEST_CURRENCY,
-                'supportedCurrencies' => ['EUR'],
-                'availableCurrencies' => [self::TEST_CURRENCY],
-                'finalCurrencies' => [],
-                'userCurrency' => null,
-                'unitCode' => 'unit',
-                'products' => [$this->getEntity(Product::class, ['id' => 1])],
-                'prices' => $this->getPricesArray(10, 10, 'UAH', ['unit']),
-                'expectedResult' => [
-                    1 => $this->getPricesArray(10, 10, 'UAH', ['unit'])
-                ]
-            ],
             'without unit code' => [
-                'currency' => null,
+                'currencies' => [self::TEST_CURRENCY],
                 'supportedCurrencies' => [self::TEST_CURRENCY, 'EUR'],
                 'availableCurrencies' => [self::TEST_CURRENCY, 'EUR'],
-                'finalCurrencies' => null,
-                'userCurrency' => 'UAH',
+                'finalCurrencies' => [self::TEST_CURRENCY],
                 'unitCode' => null,
                 'products' => [$this->getEntity(Product::class, ['id' => 1])],
                 'prices' => $this->getPricesArray(10, 10, self::TEST_CURRENCY, ['unit']),
@@ -223,27 +177,21 @@ class ProductPriceProviderTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @dataProvider getMatchedPricesProvider
+     * @dataProvider getPricesByScopeCriteriaAndProductsWhenGetPricesNotCalledProvider
      *
-     * @param array $productPriceCriterias
-     * @param array $products
-     * @param array $productUnitCodes
-     * @param array $prices
+     * @param array $currencies
      * @param array $supportedCurrencies
      * @param array $availableCurrencies
-     * @param array $finalCurrencies
-     * @param string $userCurrency
+     * @param string $unitCode
+     * @param array $products
      * @param array $expectedResult
      */
-    public function testGetMatchedPrices(
-        array $productPriceCriterias,
-        array $products,
-        array $productUnitCodes,
-        array $prices,
+    public function testGetPricesByScopeCriteriaAndProductsWhenGetPricesNotCalled(
+        array $currencies,
         array $supportedCurrencies,
         array $availableCurrencies,
-        array $finalCurrencies,
-        $userCurrency,
+        $unitCode,
+        array $products,
         array $expectedResult
     ) {
         $this->currencyManager
@@ -258,11 +206,78 @@ class ProductPriceProviderTest extends \PHPUnit\Framework\TestCase
             ->with($scopeCriteria)
             ->willReturn($supportedCurrencies);
 
+        $this->priceStorage
+            ->expects($this->never())
+            ->method('getPrices');
+
+        $result = $this->provider->getPricesByScopeCriteriaAndProducts(
+            $scopeCriteria,
+            $products,
+            $currencies,
+            $unitCode
+        );
+
+        $this->assertEquals($expectedResult, $result);
+    }
+
+    /**
+     * @return array
+     */
+    public function getPricesByScopeCriteriaAndProductsWhenGetPricesNotCalledProvider()
+    {
+        return [
+            'without currencies' => [
+                'currencies' => [],
+                'supportedCurrencies' => [self::TEST_CURRENCY, 'EUR'],
+                'availableCurrencies' => [self::TEST_CURRENCY, 'EUR'],
+                'unitCode' => 'unit',
+                'products' => [$this->getEntity(Product::class, ['id' => 1])],
+                'expectedResult' => []
+            ],
+            'with not allowed currency' => [
+                'currencies' => [self::TEST_CURRENCY],
+                'supportedCurrencies' => ['EUR'],
+                'availableCurrencies' => [self::TEST_CURRENCY],
+                'unitCode' => 'unit',
+                'products' => [$this->getEntity(Product::class, ['id' => 1])],
+                'expectedResult' => []
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider getMatchedPricesProvider
+     *
+     * @param array $productPriceCriteria
+     * @param array $products
+     * @param array $productUnitCodes
+     * @param array $prices
+     * @param array $supportedCurrencies
+     * @param array $availableCurrencies
+     * @param array $finalCurrencies
+     * @param array $expectedResult
+     */
+    public function testGetMatchedPrices(
+        array $productPriceCriteria,
+        array $products,
+        array $productUnitCodes,
+        array $prices,
+        array $supportedCurrencies,
+        array $availableCurrencies,
+        array $finalCurrencies,
+        array $expectedResult
+    ) {
         $this->currencyManager
             ->expects($this->any())
-            ->method('getUserCurrency')
-            ->with($scopeCriteria->getWebsite())
-            ->willReturn($userCurrency);
+            ->method('getAvailableCurrencies')
+            ->willReturn($availableCurrencies);
+
+        $scopeCriteria = $this->getProductPriceScopeCriteria();
+        $this->priceStorage
+            ->expects($this->any())
+            ->method('getSupportedCurrencies')
+            ->with($scopeCriteria)
+            ->willReturn($supportedCurrencies);
 
         $this->priceStorage
             ->expects($this->once())
@@ -271,7 +286,7 @@ class ProductPriceProviderTest extends \PHPUnit\Framework\TestCase
             ->willReturn($prices);
 
         $result = $this->provider->getMatchedPrices(
-            $productPriceCriterias,
+            $productPriceCriteria,
             $scopeCriteria
         );
 
@@ -284,19 +299,8 @@ class ProductPriceProviderTest extends \PHPUnit\Framework\TestCase
     public function getMatchedPricesProvider()
     {
         return [
-            'with no price criterias' => [
-                'productPriceCriterias' => [],
-                'products' => [],
-                'productUnitCodes' => [],
-                'prices' => [],
-                'supportedCurrencies' => [self::TEST_CURRENCY, 'UAH'],
-                'availableCurrencies' => [self::TEST_CURRENCY, 'UAH'],
-                'finalCurrencies' => ['UAH'],
-                'userCurrency' => 'UAH',
-                'expectedResult' => []
-            ],
-            'with price criterias that contains allowed currencies' => [
-                'productPriceCriterias' => [
+            'with price criteria that contains allowed currencies' => [
+                'productPriceCriteria' => [
                     $this->getProductPriceCriteria(1, 'item', 10, self::TEST_CURRENCY)
                 ],
                 'products' => [
@@ -310,35 +314,12 @@ class ProductPriceProviderTest extends \PHPUnit\Framework\TestCase
                 'supportedCurrencies' => [self::TEST_CURRENCY, 'UAH'],
                 'availableCurrencies' => [self::TEST_CURRENCY, 'UAH'],
                 'finalCurrencies' => [self::TEST_CURRENCY],
-                'userCurrency' => 'UAH',
                 'expectedResult' => [
-                    '1-item-10-USD' => Price::create(1, 'USD')
+                    '1-item-10-USD' => Price::create(1, 'USD'),
                 ]
             ],
-            'with price criterias that contains only not allowed currency' => [
-                'productPriceCriterias' => [$this->getProductPriceCriteria(1, 'item', 10, 'EUR')],
-                'products' => [$this->getEntity(Product::class, ['id' => 1])],
-                'productUnitCodes' => ['item'],
-                'prices' => [$this->createPrice(10, 'UAH', 10, 'item')],
-                'supportedCurrencies' => [self::TEST_CURRENCY, 'UAH'],
-                'availableCurrencies' => [self::TEST_CURRENCY, 'UAH'],
-                'finalCurrencies' => ['UAH'],
-                'userCurrency' => 'UAH',
-                'expectedResult' => ['1-item-10-EUR' => null]
-            ],
-            'with price criterias that contains only not allowed currency and no user currency' => [
-                'productPriceCriterias' => [$this->getProductPriceCriteria(1, 'item', 10, 'EUR')],
-                'products' => [$this->getEntity(Product::class, ['id' => 1])],
-                'productUnitCodes' => ['item'],
-                'prices' => [$this->createPrice(10, 'UAH', 10, 'item')],
-                'supportedCurrencies' => [self::TEST_CURRENCY, 'UAH'],
-                'availableCurrencies' => [self::TEST_CURRENCY, 'UAH'],
-                'finalCurrencies' => [],
-                'userCurrency' => null,
-                'expectedResult' => ['1-item-10-EUR' => null]
-            ],
             'no matched prices' => [
-                'productPriceCriterias' => [
+                'productPriceCriteria' => [
                     $this->getProductPriceCriteria(1, 'item', 5, self::TEST_CURRENCY)
                 ],
                 'products' => [
@@ -349,14 +330,79 @@ class ProductPriceProviderTest extends \PHPUnit\Framework\TestCase
                 'supportedCurrencies' => [self::TEST_CURRENCY, 'UAH'],
                 'availableCurrencies' => [self::TEST_CURRENCY, 'UAH'],
                 'finalCurrencies' => [self::TEST_CURRENCY],
-                'userCurrency' => 'UAH',
-                'expectedResult' => ['1-item-5-USD' => null]
+                'expectedResult' => [
+                    '1-item-5-USD' => null
+                ]
             ]
         ];
     }
 
     /**
-     * @param int $productId
+     * @dataProvider getMatchedPricesWhenGetPricesNotCalledProvider
+     *
+     * @param array $productPriceCriteria
+     * @param array $supportedCurrencies
+     * @param array $availableCurrencies
+     * @param array $expectedResult
+     */
+    public function testGetMatchedPricesWhenGetPricesNotCalled(
+        array $productPriceCriteria,
+        array $supportedCurrencies,
+        array $availableCurrencies,
+        array $expectedResult
+    ) {
+        $this->currencyManager
+            ->expects($this->any())
+            ->method('getAvailableCurrencies')
+            ->willReturn($availableCurrencies);
+
+        $scopeCriteria = $this->getProductPriceScopeCriteria();
+        $this->priceStorage
+            ->expects($this->any())
+            ->method('getSupportedCurrencies')
+            ->with($scopeCriteria)
+            ->willReturn($supportedCurrencies);
+
+        $this->priceStorage
+            ->expects($this->never())
+            ->method('getPrices');
+
+        $result = $this->provider->getMatchedPrices(
+            $productPriceCriteria,
+            $scopeCriteria
+        );
+
+        $this->assertEquals($expectedResult, $result);
+    }
+
+
+    /**
+     * @return array
+     */
+    public function getMatchedPricesWhenGetPricesNotCalledProvider()
+    {
+        return [
+            'with no price criteria' => [
+                'productPriceCriteria' => [],
+                'supportedCurrencies' => [self::TEST_CURRENCY, 'UAH'],
+                'availableCurrencies' => [self::TEST_CURRENCY, 'UAH'],
+                'expectedResult' => []
+            ],
+            'with price criteria that contains only not allowed currency' => [
+                'productPriceCriteria' => [
+                    $this->getProductPriceCriteria(1, 'item', 10, 'EUR')
+                ],
+                'supportedCurrencies' => [self::TEST_CURRENCY, 'UAH'],
+                'availableCurrencies' => [self::TEST_CURRENCY, 'UAH'],
+                'expectedResult' => [
+                    '1-item-10-EUR' => null
+                ]
+            ],
+        ];
+    }
+
+    /**
+     * @param int    $productId
      * @param string $unitCode
      * @param int $quantity
      * @param string $currency
@@ -382,11 +428,11 @@ class ProductPriceProviderTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param float $price
-     * @param int $quantity
+     * @param float  $price
+     * @param int    $quantity
      * @param string $currency
-     * @param array $unitCodes
-     * @return array
+     * @param array  $unitCodes
+     * @return array|ProductPriceDTO[]
      */
     private function getPricesArray($price, $quantity, $currency, array $unitCodes)
     {
@@ -417,10 +463,14 @@ class ProductPriceProviderTest extends \PHPUnit\Framework\TestCase
      */
     private function getProductPriceScopeCriteria()
     {
-        $productPriceScopeCriteria = new ProductPriceScopeCriteria();
-        $productPriceScopeCriteria->setCustomer($this->getEntity(Customer::class, ['id' => 1]));
-        $productPriceScopeCriteria->setWebsite($this->getEntity(Website::class, ['id' => 1]));
+        if (null !== $this->productPriceScopeCriteria) {
+            return $this->productPriceScopeCriteria;
+        }
 
-        return $productPriceScopeCriteria;
+        $this->productPriceScopeCriteria = new ProductPriceScopeCriteria();
+        $this->productPriceScopeCriteria->setCustomer($this->getEntity(Customer::class, ['id' => 1]));
+        $this->productPriceScopeCriteria->setWebsite($this->getEntity(Website::class, ['id' => 1]));
+
+        return $this->productPriceScopeCriteria;
     }
 }

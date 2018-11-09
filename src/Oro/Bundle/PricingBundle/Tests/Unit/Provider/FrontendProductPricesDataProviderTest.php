@@ -173,7 +173,7 @@ class FrontendProductPricesDataProviderTest extends \PHPUnit\Framework\TestCase
 
         $this->productPriceProvider->expects($this->once())
             ->method('getPricesByScopeCriteriaAndProducts')
-            ->with($scopeCriteria, $products, self::TEST_CURRENCY)
+            ->with($scopeCriteria, $products, [self::TEST_CURRENCY])
             ->willReturn($prices);
 
         $result = $this->provider->getProductsAllPrices($lineItems);

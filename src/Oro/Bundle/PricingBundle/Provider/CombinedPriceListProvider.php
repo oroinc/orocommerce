@@ -9,6 +9,9 @@ use Oro\Bundle\PricingBundle\Builder\CombinedPriceListActivationPlanBuilder;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
 
+/**
+ * Provide and actualize combined price list by given price list sequence members.
+ */
 class CombinedPriceListProvider
 {
     const GLUE = '_';
@@ -19,11 +22,6 @@ class CombinedPriceListProvider
      * @var ManagerRegistry
      */
     protected $registry;
-
-    /**
-     * @var string
-     */
-    protected $className;
 
     /**
      * @var CombinedPriceListActivationPlanBuilder
@@ -42,25 +40,13 @@ class CombinedPriceListProvider
 
     /**
      * @param ManagerRegistry $registry
-     */
-    public function __construct(ManagerRegistry $registry)
-    {
-        $this->registry = $registry;
-    }
-
-    /**
-     * @param string $className
-     */
-    public function setClassName($className)
-    {
-        $this->className = $className;
-    }
-
-    /**
      * @param CombinedPriceListActivationPlanBuilder $activationPlanBuilder
      */
-    public function setActivationPlanBuilder(CombinedPriceListActivationPlanBuilder $activationPlanBuilder)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        CombinedPriceListActivationPlanBuilder $activationPlanBuilder
+    ) {
+        $this->registry = $registry;
         $this->activationPlanBuilder = $activationPlanBuilder;
     }
 
@@ -81,6 +67,15 @@ class CombinedPriceListProvider
         }
 
         return $combinedPriceList;
+    }
+
+    /**
+     * @param CombinedPriceList $combinedPriceList
+     * @param array|PriceListSequenceMember[] $priceListsRelations
+     */
+    public function actualizeCurrencies(CombinedPriceList $combinedPriceList, array $priceListsRelations)
+    {
+        $combinedPriceList->setCurrencies($this->getCombinedCurrenciesList($priceListsRelations));
     }
 
     /**
@@ -148,7 +143,7 @@ class CombinedPriceListProvider
     protected function updateCombinedPriceList(CombinedPriceList $combinedPriceList, array $priceListsRelations)
     {
         $manager = $this->getManager();
-        $combinedPriceList->setCurrencies($this->getCombinedCurrenciesList($priceListsRelations));
+        $this->actualizeCurrencies($combinedPriceList, $priceListsRelations);
         $i = 0;
         foreach ($priceListsRelations as $priceListsRelation) {
             $priceListToCombined = new CombinedPriceListToPriceList();
@@ -169,11 +164,14 @@ class CombinedPriceListProvider
     {
         $currencies = [];
         foreach ($priceListsRelations as $priceListsRelation) {
-            $currencies = array_merge($currencies, $priceListsRelation->getPriceList()->getCurrencies());
+            $currencies[] = $priceListsRelation->getPriceList()->getCurrencies();
         }
-        $currencies = array_unique($currencies);
 
-        return $currencies;
+        if ($currencies) {
+            $currencies = array_merge(...$currencies);
+        }
+
+        return array_unique($currencies);
     }
 
     /**
@@ -182,7 +180,7 @@ class CombinedPriceListProvider
     protected function getManager()
     {
         if (!$this->manager) {
-            $this->manager = $this->registry->getManagerForClass($this->className);
+            $this->manager = $this->registry->getManagerForClass(CombinedPriceList::class);
         }
 
         return $this->manager;
@@ -194,7 +192,7 @@ class CombinedPriceListProvider
     protected function getRepository()
     {
         if (!$this->repository) {
-            $this->repository = $this->getManager()->getRepository($this->className);
+            $this->repository = $this->getManager()->getRepository(CombinedPriceList::class);
         }
 
         return $this->repository;

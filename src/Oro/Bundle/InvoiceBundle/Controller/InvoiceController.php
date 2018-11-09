@@ -184,7 +184,7 @@ class InvoiceController extends Controller
             $tierPrices = $priceProvider->getPricesByScopeCriteriaAndProducts(
                 $scopeCriteria,
                 $products->toArray(),
-                $invoice->getCurrency()
+                [$invoice->getCurrency()]
             );
         }
 

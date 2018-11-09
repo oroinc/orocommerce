@@ -15,7 +15,7 @@ interface ProductPriceProviderInterface
     /**
      * @param ProductPriceScopeCriteriaInterface $scopeCriteria
      * @param array|Product[] $products
-     * @param string|null $currency
+     * @param array|string[] $currencies
      * @param string|null $unitCode
      *
      * @return array
@@ -27,12 +27,12 @@ interface ProductPriceProviderInterface
     public function getPricesByScopeCriteriaAndProducts(
         ProductPriceScopeCriteriaInterface $scopeCriteria,
         array $products,
-        $currency = null,
-        $unitCode = null
+        array $currencies,
+        string $unitCode = null
     ): array;
 
     /**
-     * @param ProductPriceCriteria[] $productPriceCriterias
+     * @param ProductPriceCriteria[]             $productPriceCriteria
      * @param ProductPriceScopeCriteriaInterface $scopeCriteria
      *
      * @return array
@@ -42,7 +42,7 @@ interface ProductPriceProviderInterface
      * ]
      */
     public function getMatchedPrices(
-        array $productPriceCriterias,
+        array $productPriceCriteria,
         ProductPriceScopeCriteriaInterface $scopeCriteria
     ): array;
 

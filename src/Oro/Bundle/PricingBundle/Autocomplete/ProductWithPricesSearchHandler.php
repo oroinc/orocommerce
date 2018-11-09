@@ -169,7 +169,7 @@ class ProductWithPricesSearchHandler implements SearchHandlerInterface
             $prices = $this->productPriceProvider->getPricesByScopeCriteriaAndProducts(
                 $this->scopeCriteriaRequestHandler->getPriceScopeCriteria(),
                 $products,
-                $this->userCurrencyManager->getUserCurrency()
+                [$this->userCurrencyManager->getUserCurrency()]
             );
 
             return $prices;

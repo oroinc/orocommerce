@@ -80,14 +80,12 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
     public function getProductPricesByCustomerActionDataProvider()
     {
         return [
-            'without currency' => [
+            'without currency (all available currencies)' => [
                 'product' => 'product-1',
                 'expected' => [
-                    ['price' => 12.2, 'currency' => 'EUR', 'quantity' => 1, 'unit' => 'bottle'],
+                    ['price' => 10.0000, 'currency' => 'USD', 'quantity' => 1, 'unit' => 'liter'],
+                    ['price' => 12.2000, 'currency' => 'USD', 'quantity' => 10, 'unit' => 'liter'],
                     ['price' => 13.1, 'currency' => 'USD', 'quantity' => 1, 'unit' => 'bottle'],
-                    ['price' => 12.2, 'currency' => 'EUR', 'quantity' => 11, 'unit' => 'bottle'],
-                    ['price' => 10, 'currency' => 'USD', 'quantity' => 1, 'unit' => 'liter'],
-                    ['price' => 12.2, 'currency' => 'USD', 'quantity' => 10, 'unit' => 'liter'],
                 ],
             ],
             'with currency' => [

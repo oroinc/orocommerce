@@ -77,7 +77,7 @@ class FrontendProductPricesDataProvider
         $prices = $this->productPriceProvider->getPricesByScopeCriteriaAndProducts(
             $this->scopeCriteriaRequestHandler->getPriceScopeCriteria(),
             $this->getProducts($lineItems),
-            $this->userCurrencyManager->getUserCurrency()
+            [$this->userCurrencyManager->getUserCurrency()]
         );
 
         $pricesByUnit = [];

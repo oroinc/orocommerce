@@ -5,10 +5,16 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Provider;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Oro\Bundle\PricingBundle\Builder\CombinedPriceListActivationPlanBuilder;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Provider\CombinedPriceListProvider;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 class CombinedPriceListProviderTest extends \PHPUnit\Framework\TestCase
 {
+    use EntityTrait;
+
     /**
      * @var CombinedPriceListProvider
      */
@@ -32,14 +38,9 @@ class CombinedPriceListProviderTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->registry = $this->getRegistryMockWithRepository();
-        $className = 'Oro\Bundle\PricingBundle\Builder\CombinedPriceListActivationPlanBuilder';
-        $this->planBuilder = $this->getMockBuilder($className)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->planBuilder = $this->createMock(CombinedPriceListActivationPlanBuilder::class);
 
-        $this->provider = new CombinedPriceListProvider($this->registry);
-        $this->provider->setClassName('Oro\Bundle\PricingBundle\Entity\CombinedPriceList');
-        $this->provider->setActivationPlanBuilder($this->planBuilder);
+        $this->provider = new CombinedPriceListProvider($this->registry, $this->planBuilder);
     }
 
     protected function tearDown()
@@ -126,6 +127,51 @@ class CombinedPriceListProviderTest extends \PHPUnit\Framework\TestCase
                 ]
             ],
         ];
+    }
+
+    public function testActualizeCurrencies()
+    {
+        $pl1 = new PriceList();
+        $pl1->setCurrencies(['USD', 'EUR']);
+
+        $pl2 = new PriceList();
+        $pl2->setCurrencies(['USD', 'UAH']);
+
+        $cpl = new CombinedPriceList();
+
+        $relation1 = new CombinedPriceListToPriceList();
+        $relation1->setCombinedPriceList($cpl);
+        $relation1->setPriceList($pl1);
+
+        $relation2 = new CombinedPriceListToPriceList();
+        $relation2->setCombinedPriceList($cpl);
+        $relation2->setPriceList($pl2);
+        $relations = [
+            $relation1,
+            $relation2
+        ];
+
+        $this->provider->actualizeCurrencies($cpl, $relations);
+
+        $actualCurrencies = $cpl->getCurrencies();
+        sort($actualCurrencies);
+
+        $this->assertEquals(['EUR', 'UAH', 'USD'], $actualCurrencies);
+    }
+
+    public function testActualizeCurrenciesNoCurrencies()
+    {
+        $pl1 = new PriceList();
+        $cpl = new CombinedPriceList();
+
+        $relation1 = new CombinedPriceListToPriceList();
+        $relation1->setCombinedPriceList($cpl);
+        $relation1->setPriceList($pl1);
+        $relations = [$relation1];
+
+        $this->provider->actualizeCurrencies($cpl, $relations);
+
+        $this->assertEquals([], $cpl->getCurrencies());
     }
 
     /**

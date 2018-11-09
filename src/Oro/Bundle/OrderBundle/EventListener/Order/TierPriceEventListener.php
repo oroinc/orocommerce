@@ -52,7 +52,7 @@ class TierPriceEventListener
         $prices = $this->productPriceProvider->getPricesByScopeCriteriaAndProducts(
             $this->priceScopeCriteriaFactory->createByContext($order),
             $products->toArray(),
-            $order->getCurrency()
+            [$order->getCurrency()]
         );
 
         $event->getData()->offsetSet(self::TIER_PRICES_KEY, $prices);

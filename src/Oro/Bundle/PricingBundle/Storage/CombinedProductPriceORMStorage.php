@@ -69,8 +69,13 @@ class CombinedProductPriceORMStorage implements ProductPriceStorageInterface, Fe
         }
 
         $productIds = array_map(
-            function (Product $product) {
-                return $product->getId();
+            function ($product) {
+
+                if ($product instanceof Product) {
+                    return $product->getId();
+                }
+
+                return $product;
             },
             $products
         );

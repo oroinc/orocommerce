@@ -166,20 +166,25 @@ class FrontendProductPriceDatagridListenerTest extends \PHPUnit\Framework\TestCa
      */
     public function testOnResultWithCombinedPrices($products, $combinedProductPrices, $expected)
     {
-        $this->combinedProductPriceProvider->expects($this->once())
-            ->method('getCombinedPricesForProductsByPriceList')
-            ->will($this->returnValue($combinedProductPrices));
+        $this->setUpPriceListRequestHandler(['USD']);
 
+        $records = [new ResultRecord($products)];
+        $priceScopeCriteria = new ProductPriceScopeCriteria();
 
         $this->scopeCriteriaRequestHandler->expects($this->once())
             ->method('getPriceScopeCriteria')
-            ->willReturn(new ProductPriceScopeCriteria());
+            ->willReturn($priceScopeCriteria);
+
+        $this->combinedProductPriceProvider->expects($this->once())
+            ->method('getCombinedPricesForProductsByPriceList')
+            ->with($records, $priceScopeCriteria, 'USD')
+            ->will($this->returnValue($combinedProductPrices));
 
         /** @var SearchQueryInterface $query */
         $query = $this->getMockBuilder(SearchQueryInterface::class)->getMock();
         /** @var DatagridInterface $datagrid */
         $datagrid = $this->createMock(DatagridInterface::class);
-        $event = new SearchResultAfter($datagrid, $query, [new ResultRecord($products)]);
+        $event = new SearchResultAfter($datagrid, $query, $records);
         $this->listener->onResultAfter($event);
 
         $actualResults = $event->getRecords();

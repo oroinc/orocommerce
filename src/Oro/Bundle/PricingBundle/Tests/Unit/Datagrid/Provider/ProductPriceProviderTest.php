@@ -17,6 +17,8 @@ use Oro\Component\Testing\Unit\EntityTrait;
 
 class ProductPriceProviderTest extends \PHPUnit\Framework\TestCase
 {
+    const USER_CURRENCY = 'USD';
+
     use EntityTrait;
 
     /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
@@ -62,7 +64,7 @@ class ProductPriceProviderTest extends \PHPUnit\Framework\TestCase
         $productScopeCriteria = new ProductPriceScopeCriteria();
         $this->productPriceProvider->expects($this->once())
             ->method('getPricesByScopeCriteriaAndProducts')
-            ->with($productScopeCriteria, [], null, null)
+            ->with($productScopeCriteria, [], [self::USER_CURRENCY], null)
             ->willReturn([]);
 
         $this->priceFormatter->expects($this->never())
@@ -74,7 +76,8 @@ class ProductPriceProviderTest extends \PHPUnit\Framework\TestCase
         $result = $this->gridProductPriceProvider
             ->getCombinedPricesForProductsByPriceList(
                 [],
-                $productScopeCriteria
+                $productScopeCriteria,
+                self::USER_CURRENCY
             );
 
         $this->assertEquals([], $result);
@@ -100,7 +103,7 @@ class ProductPriceProviderTest extends \PHPUnit\Framework\TestCase
             ->with(
                 $productScopeCriteria,
                 [$this->getEntity(Product::class, ['id' => 1])],
-                null,
+                [self::USER_CURRENCY],
                 null
             )
             ->willReturn($productPrices);
@@ -126,7 +129,8 @@ class ProductPriceProviderTest extends \PHPUnit\Framework\TestCase
         $combinedPricesForProductsByPriceList = $this->gridProductPriceProvider
             ->getCombinedPricesForProductsByPriceList(
                 [new ResultRecord(['id' => 1])],
-                $productScopeCriteria
+                $productScopeCriteria,
+                self::USER_CURRENCY
             );
 
         $this->assertEquals(

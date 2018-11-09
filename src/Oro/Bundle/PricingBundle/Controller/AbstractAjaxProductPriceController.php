@@ -25,12 +25,19 @@ abstract class AbstractAjaxProductPriceController extends Controller
         $scopeCriteria = $this->get('oro_pricing.model.product_price_scope_criteria_request_handler')
             ->getPriceScopeCriteria();
 
+        $currency = $request->get('currency');
+        if (null === $currency) {
+            $currencies = $this->get('oro_currency.config.currency')->getCurrencyList();
+        } else {
+            $currencies = [$currency];
+        }
+
         return new JsonResponse(
             $this->get('oro_pricing.provider.product_price')
                 ->getPricesByScopeCriteriaAndProducts(
                     $scopeCriteria,
                     $this->getRequestProducts($request),
-                    $request->get('currency')
+                    $currencies
                 )
         );
     }

@@ -3,6 +3,7 @@
 namespace Oro\Bundle\SaleBundle\Provider;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\CurrencyBundle\Provider\CurrencyProviderInterface;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaFactoryInterface;
 use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
@@ -27,15 +28,23 @@ class QuoteProductPriceProvider
     protected $priceScopeCriteriaFactory;
 
     /**
+     * @var CurrencyProviderInterface
+     */
+    protected $currencyProvider;
+
+    /**
      * @param ProductPriceProviderInterface $productPriceProvider
      * @param ProductPriceScopeCriteriaFactoryInterface $priceScopeCriteriaFactory
+     * @param CurrencyProviderInterface                 $currencyProvider
      */
     public function __construct(
         ProductPriceProviderInterface $productPriceProvider,
-        ProductPriceScopeCriteriaFactoryInterface $priceScopeCriteriaFactory
+        ProductPriceScopeCriteriaFactoryInterface $priceScopeCriteriaFactory,
+        CurrencyProviderInterface $currencyProvider
     ) {
         $this->productPriceProvider = $productPriceProvider;
         $this->priceScopeCriteriaFactory = $priceScopeCriteriaFactory;
+        $this->currencyProvider = $currencyProvider;
     }
 
     /**
@@ -82,7 +91,8 @@ class QuoteProductPriceProvider
         if (count($products) > 0) {
             $tierPrices = $this->productPriceProvider->getPricesByScopeCriteriaAndProducts(
                 $this->priceScopeCriteriaFactory->createByContext($quote),
-                $products
+                $products,
+                $this->currencyProvider->getCurrencyList()
             );
         }
 

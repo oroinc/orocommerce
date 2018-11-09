@@ -28,8 +28,10 @@ class ProductPriceProvider implements ProductPriceProviderInterface
      * @param ProductPriceStorageInterface $priceStorage
      * @param UserCurrencyManager $currencyManager
      */
-    public function __construct(ProductPriceStorageInterface $priceStorage, UserCurrencyManager $currencyManager)
-    {
+    public function __construct(
+        ProductPriceStorageInterface $priceStorage,
+        UserCurrencyManager $currencyManager
+    ) {
         $this->priceStorage = $priceStorage;
         $this->currencyManager = $currencyManager;
     }
@@ -51,14 +53,15 @@ class ProductPriceProvider implements ProductPriceProviderInterface
     public function getPricesByScopeCriteriaAndProducts(
         ProductPriceScopeCriteriaInterface $scopeCriteria,
         array $products,
-        $currency = null,
-        $unitCode = null
-    ): array {
-        $currencies = null;
-        if ($currency) {
-            // TODO: BB-14587 CHECK THIS LOGIC!!! Currency may change here, >
-            // TODO < if passed currency is not allowed then it will be replaced with user selected
-            $currencies = $this->getAllowedCurrencies($scopeCriteria, [$currency]);
+        array $currencies,
+        string $unitCode = null
+    ):array {
+        $currencies = $this->getAllowedCurrencies($scopeCriteria, $currencies);
+        if (empty($currencies)) {
+            /**
+             * There is no sense to get prices because of no allowed currencies present.
+             */
+            return [];
         }
 
         $productUnitCodes = $unitCode ? [$unitCode] : null;
@@ -76,7 +79,7 @@ class ProductPriceProvider implements ProductPriceProviderInterface
      * {@inheritdoc}
      */
     public function getMatchedPrices(
-        array $productPriceCriterias,
+        array $productPriceCriteria,
         ProductPriceScopeCriteriaInterface $scopeCriteria
     ): array {
         $products = [];
@@ -84,24 +87,29 @@ class ProductPriceProvider implements ProductPriceProviderInterface
         $currencies = [];
         $result = [];
 
-        /** @var ProductPriceCriteria $productPriceCriteria */
-        foreach ($productPriceCriterias as $productPriceCriteria) {
-            $products[] = $productPriceCriteria->getProduct();
-            $productUnitCodes[] = $productPriceCriteria->getProductUnit()->getCode();
-            $currencies[] = $productPriceCriteria->getCurrency();
+        /** @var ProductPriceCriteria $productPriceCriterion */
+        foreach ($productPriceCriteria as $productPriceCriterion) {
+            $products[] = $productPriceCriterion->getProduct();
+            $productUnitCodes[] = $productPriceCriterion->getProductUnit()->getCode();
+            $currencies[] = $productPriceCriterion->getCurrency();
         }
 
-        // TODO: BB-14587 CHECK THIS LOGIC!!! Currency may change here, >
-        // TODO < if passed currencies are not allowed then them will be replaced with user selected one.
         $currencies = $this->getAllowedCurrencies($scopeCriteria, $currencies);
 
-        $prices = $this->priceStorage->getPrices($scopeCriteria, $products, $productUnitCodes, $currencies);
-        foreach ($productPriceCriterias as $productPriceCriteria) {
-            $id = $productPriceCriteria->getProduct()->getId();
-            $code = $productPriceCriteria->getProductUnit()->getCode();
-            $quantity = $productPriceCriteria->getQuantity();
-            $currency = $productPriceCriteria->getCurrency();
-            $precision = $productPriceCriteria->getProductUnit()->getDefaultPrecision();
+        $prices = [];
+        /**
+         * There is no sense to get prices when no allowed currencies present.
+         */
+        if ($currencies) {
+            $prices = $this->priceStorage->getPrices($scopeCriteria, $products, $productUnitCodes, $currencies);
+        }
+
+        foreach ($productPriceCriteria as $productPriceCriterion) {
+            $id = $productPriceCriterion->getProduct()->getId();
+            $code = $productPriceCriterion->getProductUnit()->getCode();
+            $quantity = $productPriceCriterion->getQuantity();
+            $currency = $productPriceCriterion->getCurrency();
+            $precision = $productPriceCriterion->getProductUnit()->getDefaultPrecision();
 
             $productPrices = array_filter(
                 $prices,
@@ -114,12 +122,12 @@ class ProductPriceProvider implements ProductPriceProviderInterface
 
             list($price, $matchedQuantity) = $this->matchPriceByQuantity($productPrices, $quantity);
             if ($price !== null) {
-                $result[$productPriceCriteria->getIdentifier()] = Price::create(
+                $result[$productPriceCriterion->getIdentifier()] = Price::create(
                     $this->recalculatePricePerUnit($price, $matchedQuantity, $precision),
                     $currency
                 );
             } else {
-                $result[$productPriceCriteria->getIdentifier()] = null;
+                $result[$productPriceCriterion->getIdentifier()] = null;
             }
         }
 
@@ -163,7 +171,7 @@ class ProductPriceProvider implements ProductPriceProviderInterface
     }
 
     /**
-     * Restrict currencies list to getSupportedCurrencies. If no supported pass User Currency
+     * Restrict currencies list to getSupportedCurrencies
      *
      * @param ProductPriceScopeCriteriaInterface $scopeCriteria
      * @param array $currencies
@@ -171,14 +179,11 @@ class ProductPriceProvider implements ProductPriceProviderInterface
      */
     protected function getAllowedCurrencies(ProductPriceScopeCriteriaInterface $scopeCriteria, array $currencies): array
     {
-        $currencies = array_intersect($currencies, $this->getSupportedCurrencies($scopeCriteria));
-        if (!$currencies) {
-            $currency = $this->currencyManager->getUserCurrency($scopeCriteria->getWebsite());
-            if ($currency) {
-                $currencies = [$currency];
-            }
+        if (empty($currencies)) {
+            return $currencies;
         }
 
+        $currencies = array_intersect($currencies, $this->getSupportedCurrencies($scopeCriteria));
         return $currencies;
     }
 }

@@ -455,7 +455,7 @@ class FrontendProductPricesProviderTest extends \PHPUnit\Framework\TestCase
         $this->productPriceProvider
             ->expects($this->once())
             ->method('getPricesByScopeCriteriaAndProducts')
-            ->with($scopeCriteria, $products, $currency)
+            ->with($scopeCriteria, $products, [$currency])
             ->willReturn($prices);
 
         $parentProducts = array_filter($products, function (Product $product) {
