@@ -86,6 +86,10 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     {
         /** @var Table $shoppingListItemsTableElement */
         $shoppingListItemsTableElement = $this->elementFactory->createElement($shoppingList);
+        self::assertTrue(
+            $shoppingListItemsTableElement->isValid(),
+            sprintf('Element "%s" was not found', $shoppingList)
+        );
 
         $rows = $this->getShoppingListLineItemsTableDirectRows($shoppingListItemsTableElement);
         /** @var TableRow $row */
@@ -105,7 +109,10 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     {
         /** @var Table $shoppingListItemsTableElement */
         $shoppingListItemsTableElement = $this->elementFactory->createElement($shoppingList);
-        self::assertTrue($shoppingListItemsTableElement->isValid(), sprintf('Element "%s" was not found', $shoppingList));
+        self::assertTrue(
+            $shoppingListItemsTableElement->isValid(),
+            sprintf('Element "%s" was not found', $shoppingList)
+        );
 
         $rows = $this->getShoppingListLineItemsTableDirectRows($shoppingListItemsTableElement);
 
