@@ -13,6 +13,9 @@ use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Entity\ProductImageType;
 use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 
+/**
+ * Contains business specific methods for retrieving product entities.
+ */
 class ProductRepository extends EntityRepository
 {
     /**
@@ -490,6 +493,45 @@ class ProductRepository extends EntityRepository
 
         foreach ($result as $item) {
             $flattenedResult[$item['sku']] = $item['sku'];
+        }
+
+        return $flattenedResult;
+    }
+
+    /**
+     * This is analog of  self::findParentSkusByAttributeValue method but fetches results for array of options
+     * to not to execute query for each option
+     * Added new method for BC purposes only
+     * @param string $type
+     * @param string $fieldName
+     * @param array $attributeOptions
+     * @return array
+     */
+    public function findParentSkusByAttributeOptions(string $type, string $fieldName, array $attributeOptions)
+    {
+        $qb = $this->createQueryBuilder('p');
+
+        $aliasedFieldName = QueryBuilderUtil::getField('p', $fieldName);
+
+        $result = $qb
+            ->select(['parent_product.sku', 'attr.id'])
+            ->distinct()
+            ->join($aliasedFieldName, 'attr')
+            ->join('p.parentVariantLinks', 'variant_links')
+            ->join('variant_links.parentProduct', 'parent_product')
+            ->where($qb->expr()->in('attr', ':attributeOptions'))
+            ->andWhere('p.type = :type')
+            ->andWhere($qb->expr()->isNotNull($aliasedFieldName))
+            ->orderBy('parent_product.sku')
+            ->setParameter('attributeOptions', $attributeOptions)
+            ->setParameter('type', $type)
+            ->getQuery()
+            ->getArrayResult();
+
+        $flattenedResult = [];
+
+        foreach ($result as $item) {
+            $flattenedResult[$item['id']][] = $item['sku'];
         }
 
         return $flattenedResult;
