@@ -81,12 +81,11 @@ class RequestProductItemApiTest extends RestJsonApiTestCase
             $data
         );
 
-        $result = $this->jsonToArray($response->getContent());
+        $entityId = $this->getResourceId($response);
+        $data['data']['id'] = $entityId;
+        $this->assertResponseContains($data, $response);
 
-        $data['data']['id'] = $result['data']['id'];
-        $this->assertEquals($data, $result);
-
-        return (int)$result['data']['id'];
+        return (int)$entityId;
     }
 
     /**
