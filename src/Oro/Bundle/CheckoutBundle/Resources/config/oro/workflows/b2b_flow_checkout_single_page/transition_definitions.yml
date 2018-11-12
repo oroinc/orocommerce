@@ -371,35 +371,45 @@ workflows:
                                     action: $.result.validateAction
                             - '@not_empty': [$.result.validatePaymentTransaction]
 
+                        - '@not_empty': $order
+
                         - '@equal': [$payment_in_progress, true]
                         - '@equal': [$checkout.completed, false]
 
-                        - '@quote_acceptable': [$checkout.sourceEntity, true]
+                        # Checks the following conditions only if transition was initiated via direct URL.
+                        - '@or':
+                            - '@not':
+                                - '@check_request':
+                                    parameters:
+                                        expected_key: transition
+                                        expected_value: purchase
+                            - '@and':
+                                - '@quote_acceptable': [$checkout.sourceEntity, true]
 
-                        - '@extendable':
-                            events: [extendable_condition.checkout]
+                                - '@extendable':
+                                    events: [extendable_condition.checkout]
 
-                        - '@order_line_item_has_count': $checkout
+                                - '@order_line_item_has_count': $checkout
 
-                        - '@shipping_method_has_enabled_shipping_rules':
-                            message: oro.checkout.workflow.condition.shipping_method_is_not_available.message
-                            method_identifier: $checkout.shippingMethod
+                                - '@shipping_method_has_enabled_shipping_rules':
+                                    message: oro.checkout.workflow.condition.shipping_method_is_not_available.message
+                                    method_identifier: $checkout.shippingMethod
 
-                        - '@check_checkout_states':
-                            message: oro.checkout.workflow.condition.content_of_order_was_changed.message
-                            parameters:
-                                entity: $checkout
-                                state1: $.result.currentCheckoutState
-                                state2: $.result.savedCheckoutState
+                                - '@check_checkout_states':
+                                    message: oro.checkout.workflow.condition.content_of_order_was_changed.message
+                                    parameters:
+                                        entity: $checkout
+                                        state1: $.result.currentCheckoutState
+                                        state2: $.result.savedCheckoutState
 
-                        - '@payment_method_applicable':
-                            message: oro.checkout.workflow.condition.payment_method_is_not_applicable.message
-                            payment_method: $checkout.paymentMethod
-                            context: $.result.paymentContext
+                                - '@payment_method_applicable':
+                                    message: oro.checkout.workflow.condition.payment_method_is_not_applicable.message
+                                    payment_method: $checkout.paymentMethod
+                                    context: $.result.paymentContext
 
-                        - '@extendable':
-                            message: 'oro.checkout.workflow.b2b_flow_checkout.transition.place_order.condition.extendable.message'
-                            events: ['extendable_condition.before_order_create']
+                                - '@extendable':
+                                    message: 'oro.checkout.workflow.b2b_flow_checkout.transition.place_order.condition.extendable.message'
+                                    events: ['extendable_condition.before_order_create']
 
                 actions:
                     - '@run_action_group':
