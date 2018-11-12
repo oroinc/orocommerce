@@ -258,8 +258,8 @@ class LoadProductData extends AbstractFixture implements DependentFixtureInterfa
     private function addAdvancedValue(array $item, Product $product)
     {
         if (!empty($item['names'])) {
-            foreach ($item['names'] as $slugPrototype) {
-                $product->addName($this->createValue($slugPrototype));
+            foreach ($item['names'] as $name) {
+                $product->addName($this->createValue($name));
             }
         }
 
@@ -270,14 +270,14 @@ class LoadProductData extends AbstractFixture implements DependentFixtureInterfa
         }
 
         if (!empty($item['descriptions'])) {
-            foreach ($item['descriptions'] as $slugPrototype) {
-                $product->addDescription($this->createValue($slugPrototype));
+            foreach ($item['descriptions'] as $description) {
+                $product->addDescription($this->createValue($description));
             }
         }
 
         if (!empty($item['shortDescriptions'])) {
-            foreach ($item['shortDescriptions'] as $slugPrototype) {
-                $product->addShortDescription($this->createValue($slugPrototype));
+            foreach ($item['shortDescriptions'] as $shortDescription) {
+                $product->addShortDescription($this->createValue($shortDescription));
             }
         }
     }

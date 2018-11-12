@@ -117,7 +117,7 @@ class RequestDataStorageExtension extends AbstractProductDataStorageExtension
 
             $result = $this->addItem($product, $entity, $dataRow);
             if ($result === false) {
-                $canNotBeAddedToRFQ[] = ['sku' => $product->getSku(), 'name' => $product->getDefaultName()];
+                $canNotBeAddedToRFQ[] = $product;
             }
         }
 

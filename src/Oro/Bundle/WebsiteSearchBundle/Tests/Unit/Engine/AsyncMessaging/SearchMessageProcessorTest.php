@@ -2,19 +2,27 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Engine\AsyncMessaging;
 
+use Doctrine\DBAL\Driver\DriverException;
+use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
+use Oro\Bundle\EntityBundle\ORM\DatabaseExceptionHelper;
+use Oro\Bundle\SearchBundle\Engine\IndexerInterface;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AsyncIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AsyncMessaging\ReindexMessageGranularizer;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AsyncMessaging\SearchMessageProcessor;
-use Oro\Bundle\SearchBundle\Engine\IndexerInterface;
 use Oro\Bundle\WebsiteSearchBundle\Engine\IndexerInputValidator;
+use Oro\Component\MessageQueue\Client\Config as MessageQueConfig;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Test\JobRunner;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
-use Oro\Component\MessageQueue\Client\Config as MessageQueConfig;
+use Psr\Log\LoggerInterface;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class SearchMessageProcessorTest extends \PHPUnit_Framework_TestCase
 {
     /**
@@ -47,6 +55,11 @@ class SearchMessageProcessorTest extends \PHPUnit_Framework_TestCase
      */
     private $session;
 
+    /**
+     * @var DatabaseExceptionHelper|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $databaseExceptionHelper;
+
     public function setUp()
     {
         $this->indexer = $this->createMock(IndexerInterface::class);
@@ -71,6 +84,9 @@ class SearchMessageProcessorTest extends \PHPUnit_Framework_TestCase
             $this->indexerInputValidator,
             $this->reindexMessageGranularizer
         );
+
+        $this->databaseExceptionHelper = $this->createMock(DatabaseExceptionHelper::class);
+        $this->processor->setDatabaseExceptionHelper($this->databaseExceptionHelper);
 
         $this->session = $this->createMock(SessionInterface::class);
     }
@@ -101,9 +117,10 @@ class SearchMessageProcessorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param $messageBody
-     * @param $topic
-     * @param $expectedMethod
+     * @param array $messageBody
+     * @param array $classesToIndex
+     * @param array $websiteIdsToIndex
+     * @param array $granulizedMessages
      *
      * @dataProvider processingReindexWithGranulizeDataProvider
      */
@@ -143,9 +160,10 @@ class SearchMessageProcessorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param $messageBody
-     * @param $topic
-     * @param $expectedMethod
+     * @param array $messageBody
+     * @param array $classesToIndex
+     * @param array $websiteIdsToIndex
+     * @param array $granulizedMessages
      *
      * @dataProvider processingReindexWithGranulizeAsyncDataProvider
      */
@@ -541,5 +559,96 @@ class SearchMessageProcessorTest extends \PHPUnit_Framework_TestCase
                 ],
             ],
         ];
+    }
+
+    /**
+     * @param \Exception|\PHPUnit_Framework_MockObject_MockObject $exception
+     * @param bool $isDeadlock
+     * @param string $result
+     *
+     * @dataProvider getProcessExceptionsDataProvider
+     */
+    public function testProcessExceptions($exception, $isDeadlock, $result)
+    {
+        $messageBody = [
+            'class' => '\StdClass',
+            'context' => []
+        ];
+        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message */
+        $message = $this->createMock(MessageInterface::class);
+        $message->method('getBody')
+            ->will($this->returnValue(json_encode($messageBody)));
+        $message->method('getProperty')
+            ->with(MessageQueConfig::PARAMETER_TOPIC_NAME)
+            ->willReturn(AsyncIndexer::TOPIC_REINDEX);
+
+        $this->indexer->expects($this->once())
+            ->method('reindex')
+            ->willThrowException($exception);
+
+        /** @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject $logger */
+        $logger = $this->createMock(LoggerInterface::class);
+        $logger->expects($this->once())
+            ->method('error');
+        $this->processor->setLogger($logger);
+
+        $driverException = $this->createMock(DriverException::class);
+        $this->databaseExceptionHelper->expects($this->once())
+            ->method('getDriverException')
+            ->with($exception)
+            ->willReturn($driverException);
+        $this->databaseExceptionHelper->expects($this->once())
+            ->method('isDeadlock')
+            ->with($driverException)
+            ->willReturn($isDeadlock);
+
+        $this->assertEquals($result, $this->processor->process($message, $this->session));
+    }
+
+    /**
+     * @return array
+     */
+    public function getProcessExceptionsDataProvider()
+    {
+        return [
+            'process deadlock' => [
+                'exception' => new \Exception(),
+                'isDeadlock' => true,
+                'result' => MessageProcessorInterface::REQUEUE
+            ],
+            'process exception' => [
+                'exception' => new \Exception(),
+                'isDeadlock' => false,
+                'result' => MessageProcessorInterface::REJECT
+            ],
+            'process unique constraint exception' => [
+                'exception' => $this->createMock(UniqueConstraintViolationException::class),
+                'isDeadlock' => false,
+                'result' => MessageProcessorInterface::REQUEUE
+            ],
+            'process foreign key constraint exception' => [
+                'exception' => $this->createMock(ForeignKeyConstraintViolationException::class),
+                'isDeadlock' => false,
+                'result' => MessageProcessorInterface::REQUEUE
+            ]
+        ];
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testDatabaseExceptionHelperNotInjected()
+    {
+        $processor = new SearchMessageProcessor(
+            $this->indexer,
+            new JobRunner(),
+            $this->messageProducer,
+            $this->indexerInputValidator,
+            $this->reindexMessageGranularizer
+        );
+
+        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message */
+        $message = $this->createMock(MessageInterface::class);
+        $processor->process($message, $this->session);
     }
 }

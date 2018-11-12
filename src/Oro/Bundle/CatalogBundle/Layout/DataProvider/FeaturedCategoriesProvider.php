@@ -10,6 +10,9 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Component\Cache\Layout\DataProviderCacheTrait;
 
+/**
+ * Provides Featured Category data for layouts
+ */
 class FeaturedCategoriesProvider
 {
     use DataProviderCacheTrait;
@@ -51,10 +54,15 @@ class FeaturedCategoriesProvider
     public function getAll(array $categoryIds = [])
     {
         $user = $this->getCurrentUser();
+        $customer = $user ? $user->getCustomer() : null;
+        $customerGroup = $customer ? $customer->getGroup() : null;
+
         $this->initCache([
             'featured_categories',
             $user ? $user->getId() : 0,
             $this->getCurrentLocalizationId(),
+            $customer ? $customer->getId() : 0,
+            $customerGroup ? $customerGroup->getId() : 0,
             implode('_', $categoryIds),
         ]);
 
