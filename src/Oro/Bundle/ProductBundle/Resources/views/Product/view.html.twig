@@ -100,7 +100,9 @@
         %}
     {% else %}
         {% set imagesData %}
-            <div class="no-data">{{ 'oro.product.form.no_images'|trans }}</div>
+            <div class="no-data">
+                {{ 'oro.product.form.no_images'|trans }}
+            </div>
         {% endset %}
     {% endif %}
 
@@ -219,7 +221,7 @@
             {% else %}
                 <div id="products-upsell-products-view" class="tab-content">
                     <div class="no-data">
-                         {{ 'oro.product.upsell_products.no_entities'|trans }}
+                        {{ 'oro.product.upsell_products.no_entities'|trans }}
                     </div>
                 </div>
             {% endif %}
@@ -269,7 +271,9 @@
 
     {% if pageTemplate == null %}
         {% set pageTemplatesData %}
-            <div class="no-data">{{ 'oro.product.form.no_page_template'|trans }}</div>
+            <div class="no-data">
+                {{ 'oro.product.form.no_page_template'|trans }}
+            </div>
         {% endset %}
     {% else %}
         {% set pageTemplatesData = UI.renderProperty(

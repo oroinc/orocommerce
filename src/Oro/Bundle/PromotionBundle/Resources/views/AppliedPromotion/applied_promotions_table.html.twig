@@ -110,5 +110,7 @@
         </tbody>
     </table>
 {% elseif editable is not defined or not editable %}
-    <div class="no-data"><span>{{ 'oro.promotion.appliedpromotion.no_entities'|trans }}<span></span></span></div>
+    <div class="no-data">
+        {{ 'oro.promotion.appliedpromotion.no_entities'|trans }}
+    </div>
 {% endif %}
