@@ -6,7 +6,7 @@ use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Event\AssignmentBuilderBuildEvent;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
-class AssignmentBuilderBuildEventTest extends \PHPUnit_Framework_TestCase
+class AssignmentBuilderBuildEventTest extends \PHPUnit\Framework\TestCase
 {
     public function testEvent()
     {

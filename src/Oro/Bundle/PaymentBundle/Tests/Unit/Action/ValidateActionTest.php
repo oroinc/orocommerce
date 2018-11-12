@@ -35,7 +35,7 @@ class ValidateActionTest extends AbstractActionTest
 
         $this->action->initialize($options);
 
-        /** @var PaymentMethodInterface|\PHPUnit_Framework_MockObject_MockObject $paymentMethod */
+        /** @var PaymentMethodInterface|\PHPUnit\Framework\MockObject\MockObject $paymentMethod */
         $paymentMethod = $this->createMock('Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface');
 
         /** @var PaymentTransaction $paymentTransaction */

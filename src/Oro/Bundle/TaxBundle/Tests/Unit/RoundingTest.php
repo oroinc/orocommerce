@@ -5,7 +5,7 @@ namespace Oro\Bundle\TaxBundle\Tests\Unit\Rounding;
 use Brick\Math\BigDecimal;
 use Brick\Math\RoundingMode;
 
-class RoundingTest extends \PHPUnit_Framework_TestCase
+class RoundingTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @param string $rangeStart

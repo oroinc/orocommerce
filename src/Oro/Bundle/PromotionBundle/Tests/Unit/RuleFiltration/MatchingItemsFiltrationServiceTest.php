@@ -23,12 +23,12 @@ class MatchingItemsFiltrationServiceTest extends AbstractSkippableFiltrationServ
     use EntityTrait;
 
     /**
-     * @var RuleFiltrationServiceInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var RuleFiltrationServiceInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $filtrationService;
 
     /**
-     * @var MatchingProductsProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var MatchingProductsProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     private $matchingProductsProvider;
 
@@ -210,7 +210,7 @@ class MatchingItemsFiltrationServiceTest extends AbstractSkippableFiltrationServ
         }
         $discountConfiguration = $this->getEntity(DiscountConfiguration::class, ['options' => $options]);
 
-        /** @var PromotionDataInterface|\PHPUnit_Framework_MockObject_MockObject $promotion */
+        /** @var PromotionDataInterface|\PHPUnit\Framework\MockObject\MockObject $promotion */
         $promotion = $this->createMock(PromotionDataInterface::class);
         $promotion->expects($this->any())
             ->method('getProductsSegment')

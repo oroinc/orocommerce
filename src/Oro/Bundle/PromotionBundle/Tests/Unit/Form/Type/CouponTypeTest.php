@@ -28,9 +28,9 @@ class CouponTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|ConfigProvider $configProvider */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|ConfigProvider $configProvider */
         $configProvider = $this->createMock(ConfigProvider::class);
-        /** @var \PHPUnit_Framework_MockObject_MockObject|Translator $translator */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|Translator $translator */
         $translator = $this->createMock(Translator::class);
 
         $promotionSelectType = new EntityType(

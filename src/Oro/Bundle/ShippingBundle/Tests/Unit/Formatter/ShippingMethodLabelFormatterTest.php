@@ -7,15 +7,15 @@ use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface;
 
-class ShippingMethodLabelFormatterTest extends \PHPUnit_Framework_TestCase
+class ShippingMethodLabelFormatterTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ShippingMethodProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $shippingMethodProvider;
 
     /**
-     * @var ShippingMethodInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingMethodInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $shippingMethod;
 

@@ -4,21 +4,21 @@ Feature: Product attributes
   Scenario: Create product attributes
     Given I login as administrator
     And I go to Products/ Product Attributes
-    And press "Create Attribute"
+    And click "Create Attribute"
     And fill form with:
       | Field Name | Color  |
       | Type       | Select |
-    And press "Continue"
+    And click "Continue"
     And set Options with:
       | Label  |
       | Black  |
       | White  |
     And save and close form
-    And I press "Create Attribute"
+    And I click "Create Attribute"
     And fill form with:
       | Field Name | Size   |
       | Type       | Select |
-    And press "Continue"
+    And click "Continue"
     And set Options with:
       | Label  |
       | L      |
@@ -31,12 +31,12 @@ Feature: Product attributes
     Given I go to System/ Entities/ Entity Management
     And I filter Name as is equal to "Product"
     And I click view "Product" in grid
-    And I press "Create Field"
+    And I click "Create Field"
     And I fill form with:
       | Field Name   | us_size      |
       | Storage Type | Table column |
       | Type         | Select       |
-    And press "Continue"
+    And click "Continue"
     When I save and close form
     Then I should see "Field saved" flash message
     And I click update schema
@@ -44,7 +44,7 @@ Feature: Product attributes
 
   Scenario: Create product family with new attributes
     And I go to Products/ Product Families
-    And I press "Create Product Family"
+    And I click "Create Product Family"
     And fill "Product Family Form" with:
       | Code       | tshirt_family |
       | Label      | Tshirts       |
@@ -55,11 +55,11 @@ Feature: Product attributes
 
   Scenario: Create configurable product
     Given I go to Products/ Products
-    And press "Create Product"
+    And click "Create Product"
     And I fill form with:
       | Type           | Configurable |
       | Product Family | Tshirts      |
-    When I press "Continue"
+    When I click "Continue"
     Then I should see that "Configurable Attributes" contains "Color"
     And I should see that "Configurable Attributes" contains "Size"
     And I should see that "Configurable Attributes" does not contain "us_size"

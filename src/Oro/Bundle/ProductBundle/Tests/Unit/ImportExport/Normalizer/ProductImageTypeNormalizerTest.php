@@ -6,10 +6,10 @@ use Oro\Bundle\EntityBundle\Helper\FieldHelper;
 use Oro\Bundle\ProductBundle\Entity\ProductImageType;
 use Oro\Bundle\ProductBundle\ImportExport\Normalizer\ProductImageTypeNormalizer;
 
-class ProductImageTypeNormalizerTest extends \PHPUnit_Framework_TestCase
+class ProductImageTypeNormalizerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var FieldHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var FieldHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $fieldHelper;
 

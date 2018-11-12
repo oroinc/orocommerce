@@ -34,6 +34,7 @@ datagrids:
                 where:
                     and:
                         - checkout.deleted = false
+                        - checkout.completed = false
         columns:
             customerUserName:
                 label: oro.checkout.ordered_by.label

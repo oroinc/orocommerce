@@ -17,7 +17,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
-class UniqueEntityValidatorTest extends \PHPUnit_Framework_TestCase
+class UniqueEntityValidatorTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var UniqueEntity
@@ -25,7 +25,7 @@ class UniqueEntityValidatorTest extends \PHPUnit_Framework_TestCase
     protected $constraint;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ExecutionContextInterface
+     * @var \PHPUnit\Framework\MockObject\MockObject|ExecutionContextInterface
      */
     protected $context;
 
@@ -40,7 +40,7 @@ class UniqueEntityValidatorTest extends \PHPUnit_Framework_TestCase
     protected $shardManager;
 
     /**
-     * @var Registry|\PHPUnit_Framework_MockObject_MockObject
+     * @var Registry|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $registry;
 

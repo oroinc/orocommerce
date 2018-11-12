@@ -3,8 +3,11 @@
 namespace Oro\Bundle\PaymentBundle\Tests\Functional\Provider;
 
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerVisitor;
+use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Oro\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadPaymentTransactionData;
 use Oro\Bundle\TestFrameworkBundle\Entity\Item;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -12,6 +15,9 @@ use Oro\Component\Testing\Unit\EntityTrait;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class PaymentTransactionProviderTest extends WebTestCase
 {
     use EntityTrait;
@@ -174,7 +180,7 @@ class PaymentTransactionProviderTest extends WebTestCase
         $this->initClient();
 
         $paymentTransactionProvider = $this->getContainer()->get('oro_payment.provider.payment_transaction');
-        /** @var \PHPUnit_Framework_MockObject_MockObject|LoggerInterface $logger */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|LoggerInterface $logger */
         $logger = $this->createMock('\Psr\Log\LoggerInterface');
         $logger->expects($this->once())->method('error');
 
@@ -205,7 +211,7 @@ class PaymentTransactionProviderTest extends WebTestCase
         $this->initClient();
 
         $paymentTransactionProvider = $this->getContainer()->get('oro_payment.provider.payment_transaction');
-        /** @var \PHPUnit_Framework_MockObject_MockObject|LoggerInterface $logger */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|LoggerInterface $logger */
         $logger = $this->createMock('\Psr\Log\LoggerInterface');
         $logger->expects($this->once())->method('error');
 
@@ -257,6 +263,33 @@ class PaymentTransactionProviderTest extends WebTestCase
             ->setAccessIdentifier(null);
 
         $this->assertEquals($expectedPaymentTransaction, $actualPaymentTransaction);
+    }
+
+    public function testCreateTransactionForAnonymousCustomreUser()
+    {
+        $this->initClient();
+        $this->loadFixtures([LoadPaymentTransactionData::class]);
+
+        $customerUser = new CustomerUser();
+        $customerUser->setEmail('test_guest@example.com');
+
+        $visitor = new CustomerVisitor();
+        $visitor->setCustomerUser($customerUser);
+
+        $this->getContainer()
+            ->get('security.token_storage')
+            ->setToken(new AnonymousCustomerUserToken(self::USER_NAME, [], $visitor));
+
+        $paymentTransaction = $this->getContainer()
+            ->get('oro_payment.provider.payment_transaction')
+            ->createPaymentTransaction(
+                'payment_method',
+                PaymentMethodInterface::PURCHASE,
+                $this->getEntity(PaymentTransaction::class, ['id' => 1])
+            );
+
+        $this->assertNotNull($paymentTransaction->getFrontendOwner());
+        $this->assertEquals($customerUser->getEmail(), $paymentTransaction->getFrontendOwner()->getEmail());
     }
 
     /**

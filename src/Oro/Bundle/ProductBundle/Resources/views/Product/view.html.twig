@@ -23,9 +23,9 @@
         {% if not entity.status %}
             {# status not defined #}
         {% elseif entity.status == constant('STATUS_ENABLED', entity) %}
-            <div class="badge badge-enabled status-enabled"><i class="icon-status-enabled fa-circle"></i>{{ 'oro.product.status.enabled'|trans }}</div>
+            <div class="badge badge-pill badge-enabled status-enabled"><i class="icon-status-enabled fa-circle"></i>{{ 'oro.product.status.enabled'|trans }}</div>
         {% elseif entity.status == constant('STATUS_DISABLED', entity) %}
-            <div class="badge badge-disabled status-disabled"><i class="icon-status-disabled fa-circle"></i>{{ 'oro.product.status.disabled'|trans }}</div>
+            <div class="badge badge-pill badge-disabled status-disabled"><i class="icon-status-disabled fa-circle"></i>{{ 'oro.product.status.disabled'|trans }}</div>
         {% endif %}
     </div>
 {% endblock breadcrumbs %}
@@ -54,7 +54,6 @@
     {% set dataBlocks = {
         'general': {
             'title': 'oro.product.sections.general'|trans,
-            'class': 'active',
             'subblocks': [
                 {
                     'data' : {
@@ -100,7 +99,9 @@
             )
         %}
     {% else %}
-        {% set imagesData = 'oro.product.form.no_images'|trans %}
+        {% set imagesData %}
+            <div class="no-data">{{ 'oro.product.form.no_images'|trans }}</div>
+        {% endset %}
     {% endif %}
 
     {% set dataBlocks = dataBlocks|merge({
@@ -147,7 +148,7 @@
         {% endfor %}
 
         {% set unitOfQuantityData = unitOfQuantityData|merge({
-            'additionalUnitPrecisions' : UI.renderHtmlProperty( 'oro.product.additional_unit_precisions.label'|trans, UI.renderTable(titles,rows,"grid table table-bordered unit-table"))
+            'additionalUnitPrecisions' : UI.renderHtmlProperty( 'oro.product.additional_unit_precisions.label'|trans, UI.renderTable(titles,rows,"grid table unit-table"))
         }) %}
 
     {% endif %}
@@ -185,8 +186,22 @@
             'id': 'products-related-products-view',
             'label': 'oro.product.tabs.relatedProducts'|trans}
         ]) %}
+
+        {% set relatedItemsIds = get_related_products_ids(entity) %}
+        {% set relatedGrid %}
+            {% if relatedItemsIds is not empty %}
+                {{ relatedProductsDataGrid.renderGrid('products-related-products-view', {'relatedItemsIds': relatedItemsIds}) }}
+            {% else %}
+                <div id="products-related-products-view" class="tab-content">
+                    <div class="no-data">
+                        {{ 'oro.product.related_products.no_entities'|trans }}
+                    </div>
+                </div>
+            {% endif %}
+        {% endset %}
+
         {% set relatedItemsSubblocks = relatedItemsSubblocks|merge([
-            relatedProductsDataGrid.renderGrid('products-related-products-view', {'relatedItemsIds': get_related_products_ids(entity)}),
+            relatedGrid,
             placeholder('oro_product_related_items_view', {'entity':  entity}),
         ]) %}
     {% endif %}
@@ -196,8 +211,22 @@
             'id': 'products-upsell-products-view',
             'label': 'oro.product.tabs.upsellProducts'|trans
         }]) %}
+
+        {% set relatedItemsIds = get_upsell_products_ids(entity) %}
+        {% set relatedGrid %}
+            {% if relatedItemsIds is not empty %}
+                {{ relatedProductsDataGrid.renderGrid('products-upsell-products-view', {'relatedItemsIds': relatedItemsIds}) }}
+            {% else %}
+                <div id="products-upsell-products-view" class="tab-content">
+                    <div class="no-data">
+                         {{ 'oro.product.upsell_products.no_entities'|trans }}
+                    </div>
+                </div>
+            {% endif %}
+        {% endset %}
+
         {% set relatedItemsSubblocks = relatedItemsSubblocks|merge([
-            relatedProductsDataGrid.renderGrid('products-upsell-products-view', {'relatedItemsIds': get_upsell_products_ids(entity)}),
+            relatedGrid,
             placeholder('oro_product_upsell_products_view', {'entity':  entity})
         ]) %}
     {% endif %}
@@ -239,7 +268,9 @@
     {% endif %}
 
     {% if pageTemplate == null %}
-        {% set pageTemplatesData = 'oro.product.form.no_page_template'|trans %}
+        {% set pageTemplatesData %}
+            <div class="no-data">{{ 'oro.product.form.no_page_template'|trans }}</div>
+        {% endset %}
     {% else %}
         {% set pageTemplatesData = UI.renderProperty(
             'oro.product.page_template.label'|trans,

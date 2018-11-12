@@ -18,7 +18,7 @@ oro_behat_extension:
     Search:
       selector:
         type: xpath
-        locator: '//a[@title="Search"]'
+        locator: '//button[@title="Search"]'
 
     VisibilityToAll:
       selector: 'select[name="oro_catalog_category[visibility][all]"]'
@@ -45,7 +45,7 @@ oro_behat_extension:
     URL Slug Fallback Status:
       selector:
         type: xpath
-        locator: '//label[text()="URL Slug"]/../..//span[@class="fallback-status"]'
+        locator: '//label[text()="URL Slug"]/../..//span[contains(@class, "fallback-status")]'
 
     URL Slug Form:
       selector: 'form[name="oro_product"]'
@@ -103,6 +103,8 @@ oro_behat_extension:
         - Oro\Bundle\FrontendBundle\Tests\Behat\Context\FrontendMenuContext
         - Oro\Bundle\FormBundle\Tests\Behat\Context\FormContext
         - OroApplicationBundle::CommerceMainContext
+        - OroUIBundle::BreadcrumbContext
+        - OroNavigationBundle::ScrollspyContext
         - OroConfigBundle::FeatureContext
         - OroDataGridBundle::GridContext
         - OroCatalogBundle::FeatureContext

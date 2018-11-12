@@ -8,7 +8,7 @@ use Oro\Bundle\FormBundle\Form\Type\EntityTreeSelectType;
 use Oro\Component\Tree\Handler\AbstractTreeHandler;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class CategoryTreeTypeTest extends \PHPUnit_Framework_TestCase
+class CategoryTreeTypeTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var AbstractTreeHandler

@@ -10,7 +10,7 @@ use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class ContentVariantTest extends \PHPUnit_Framework_TestCase
+class ContentVariantTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
     use EntityTestCaseTrait;

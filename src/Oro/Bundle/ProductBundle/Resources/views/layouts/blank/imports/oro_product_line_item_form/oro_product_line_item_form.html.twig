@@ -8,7 +8,7 @@
 
 {% block __oro_product_line_item_form__line_item_form_fields_widget %}
     {% set class_prefix = 'line_item_form_fields' %}
-    
+
     {% set unitAttr = {} %}
     {% if skipInputWidgets is not defined %}
         {% set skipInputWidgets = true %}
@@ -73,11 +73,36 @@
                 {% endif %}
 
                 {% if currentProduct.product_units is not defined or currentProduct.product_units|length > 1 %}
-                    {{ renderCacheUnit }}
+                    {% if singleUnitMode %}
+                        {% if currentProduct.product_units is not defined %}
+                            {{ renderCacheUnit }}
+                        {% else %}
+                            {% if singleUnitModeCodeVisible %}
+                                {% if currentProduct.unit == defaultUnitCode %}
+                                    <div class="product-item__placeholder-label" data-role="unit-label">
+                                        {{- currentProduct.unit|oro_format_product_unit_label -}}
+                                    </div>
+                                    <div class="hidden">
+                                        {{ renderCacheUnit }}
+                                    </div>
+                                {% else %}
+                                    {{ renderCacheUnit }}
+                                {% endif %}
+                            {% else %}
+                                <div class="hidden">
+                                    {{ renderCacheUnit }}
+                                </div>
+                            {% endif %}
+                        {% endif %}
+                    {% else %}
+                        {{ renderCacheUnit }}
+                    {% endif %}
                 {% else %}
-                    <div class="product-item__placeholder-label" data-role="unit-label">
-                        {{- currentProduct.unit|oro_format_product_unit_label -}}
-                    </div>
+                    {% if singleUnitModeCodeVisible %}
+                        <div class="product-item__placeholder-label" data-role="unit-label">
+                            {{- currentProduct.unit|oro_format_product_unit_label -}}
+                        </div>
+                    {% endif %}
                     <div class="hidden">
                         {{ renderCacheUnit }}
                     </div>
@@ -137,7 +162,7 @@
         {% set attr = layout_attr_defaults(attr, {
             '~class': " btn btn--info full"
         }) %}
-        
+
         {{ parent_block_widget(block) }}
     {% endif %}
 {% endblock %}

@@ -24,35 +24,35 @@ use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Oro\Bundle\WebCatalogBundle\Provider\WebCatalogProvider;
 use Oro\Component\Website\WebsiteInterface;
 
-class ContentVariantUrlItemsProviderTest extends \PHPUnit_Framework_TestCase
+class ContentVariantUrlItemsProviderTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var FeatureChecker|\PHPUnit_Framework_MockObject_MockObject
+     * @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $featureChecker;
 
     /**
-     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     private $registry;
 
     /**
-     * @var WebCatalogProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var WebCatalogProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     private $webCatalogProvider;
 
     /**
-     * @var ContentNodeTreeResolverInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ContentNodeTreeResolverInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $contentNodeTreeResolver;
 
     /**
-     * @var CanonicalUrlGenerator|\PHPUnit_Framework_MockObject_MockObject
+     * @var CanonicalUrlGenerator|\PHPUnit\Framework\MockObject\MockObject
      */
     private $canonicalUrlGenerator;
 
     /**
-     * @var WebCatalogScopeCriteriaProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var WebCatalogScopeCriteriaProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     private $scopeCriteriaProvider;
 

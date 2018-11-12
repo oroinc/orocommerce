@@ -6,12 +6,12 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Bundle\OrderBundle\Manager\OrderAddressManager;
 
-abstract class AbstractAddressManagerTest extends \PHPUnit_Framework_TestCase
+abstract class AbstractAddressManagerTest extends \PHPUnit\Framework\TestCase
 {
     /** @var OrderAddressManager */
     protected $manager;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|ManagerRegistry */
     protected $registry;
 
     /**

@@ -374,7 +374,7 @@ action_groups:
             - '@send_email_template':
                 parameters:
                     from: $.order.owner.email
-                    to: [$.order.customerUser.email, $.checkout.registeredCustomerUser.email, $.email]
+                    to: [$.order.customerUser, $.checkout.registeredCustomerUser, $.email]
                     template: 'order_confirmation_email'
                     entity: $.order
 
@@ -484,7 +484,6 @@ action_groups:
                         - '@not_empty': $.email
                         - '@not_empty': $.billing_address
                         - '@not_empty': $.checkout.customerUser
-                        - '@empty': $.checkout.customerUser.firstName
                 actions:
                     - '@call_service_method':
                         attribute: $.checkout.customerUser

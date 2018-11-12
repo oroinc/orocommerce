@@ -40,7 +40,7 @@ abstract class AbstractSubtotalProvider
         if ($entity instanceof CurrencyAwareInterface && $entity->getCurrency()) {
             return $entity->getCurrency();
         }
-        if ($currency = $this->currencyManager->getUserCurrency(null, false)) {
+        if ($currency = $this->currencyManager->getUserCurrency()) {
             return $currency;
         }
         if ($entity instanceof WebsiteBasedCurrencyAwareInterface && $entity->getWebsite()) {

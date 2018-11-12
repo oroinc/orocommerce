@@ -15,12 +15,12 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 class FrontendProductListModifierTest extends WebTestCase
 {
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|TokenStorageInterface
+     * @var \PHPUnit\Framework\MockObject\MockObject|TokenStorageInterface
      */
     protected $tokenStorage;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|PriceListTreeHandler
+     * @var \PHPUnit\Framework\MockObject\MockObject|PriceListTreeHandler
      */
     protected $priceListTreeHandler;
 

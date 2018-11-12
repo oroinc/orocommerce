@@ -9,7 +9,7 @@ use Oro\Bundle\SaleBundle\Tests\Unit\Stub\QuoteStub as Quote;
 use Oro\Component\ConfigExpression\ContextAccessor;
 use Symfony\Component\PropertyAccess\PropertyPath;
 
-class QuoteAcceptableTest extends \PHPUnit_Framework_TestCase
+class QuoteAcceptableTest extends \PHPUnit\Framework\TestCase
 {
     /** @var QuoteAcceptable */
     protected $condition;
@@ -144,7 +144,7 @@ class QuoteAcceptableTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param bool $isAcceptable
-     * @return Quote|\PHPUnit_Framework_MockObject_MockObject
+     * @return Quote|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function getQuote($isAcceptable = false)
     {
@@ -159,7 +159,7 @@ class QuoteAcceptableTest extends \PHPUnit_Framework_TestCase
     /**
      * @param bool $isAcceptable
      * @param bool $withQuote
-     * @return QuoteDemand|\PHPUnit_Framework_MockObject_MockObject
+     * @return QuoteDemand|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function getQuoteDemand($isAcceptable = false, $withQuote = true)
     {

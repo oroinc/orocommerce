@@ -14,12 +14,12 @@ use Oro\Bundle\TaxBundle\OrderTax\ContextHandler\OrderHandler;
 use Oro\Bundle\TaxBundle\Provider\TaxCodeProvider;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class OrderHandlerTest extends \PHPUnit_Framework_TestCase
+class OrderHandlerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var TaxCodeProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var TaxCodeProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $taxCodeProvider;
 

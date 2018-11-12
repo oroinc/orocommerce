@@ -14,22 +14,22 @@ use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class ShoppingListDiscountContextConverterTest extends \PHPUnit_Framework_TestCase
+class ShoppingListDiscountContextConverterTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var LineItemsToDiscountLineItemsConverter|\PHPUnit_Framework_MockObject_MockObject
+     * @var LineItemsToDiscountLineItemsConverter|\PHPUnit\Framework\MockObject\MockObject
      */
     private $lineItemsConverter;
 
     /**
-     * @var UserCurrencyManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var UserCurrencyManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $currencyManager;
 
     /**
-     * @var LineItemNotPricedSubtotalProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var LineItemNotPricedSubtotalProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     private $lineItemNotPricedSubtotalProvider;
 

@@ -12,7 +12,7 @@ Feature: Quote Backoffice Default Workflow
     And I login as administrator and use in "second_session" as "Admin"
     And go to System/Workflows
     And I click "Activate" on row "Quote Management Flow" in grid
-    And I press "Activate"
+    And I click "Activate"
     Then I should see "Workflow activated" flash message
 
   Scenario: Draft -> Edit, Quote #11. Internal status: Draft, customer status: N/A

@@ -13,6 +13,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * Controller that manages shopping lists.
+ */
 class ShoppingListController extends Controller
 {
     /**
@@ -33,7 +36,7 @@ class ShoppingListController extends Controller
     public function viewAction(ShoppingList $shoppingList = null)
     {
         if (!$shoppingList) {
-            $shoppingList = $this->get('oro_shopping_list.shopping_list.manager')->getCurrent();
+            $shoppingList = $this->get('oro_shopping_list.manager.current_shopping_list')->getCurrent();
         }
 
         if ($shoppingList) {
@@ -74,8 +77,7 @@ class ShoppingListController extends Controller
      */
     public function createAction(Request $request)
     {
-        $shoppingListManager = $this->get('oro_shopping_list.shopping_list.manager');
-        $shoppingList = $shoppingListManager->create();
+        $shoppingList = $this->get('oro_shopping_list.manager.shopping_list')->create();
 
         $response = $this->create($request, $shoppingList);
         if ($response instanceof Response) {
@@ -104,7 +106,7 @@ class ShoppingListController extends Controller
         $handler = new ShoppingListHandler(
             $form,
             $request,
-            $this->get('oro_shopping_list.shopping_list.manager'),
+            $this->get('oro_shopping_list.manager.current_shopping_list'),
             $this->getDoctrine()
         );
 

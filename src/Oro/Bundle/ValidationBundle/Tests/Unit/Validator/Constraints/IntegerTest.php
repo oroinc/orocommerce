@@ -7,12 +7,12 @@ use Oro\Bundle\ValidationBundle\Validator\Constraints\IntegerValidator;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
-class IntegerTest extends \PHPUnit_Framework_TestCase
+class IntegerTest extends \PHPUnit\Framework\TestCase
 {
     /** @var Integer */
     protected $constraint;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|ExecutionContextInterface */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|ExecutionContextInterface */
     protected $context;
 
     /** @var IntegerValidator */

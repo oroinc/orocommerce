@@ -13,7 +13,7 @@ use Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListTotalManager;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class ShoppingListTotalManagerTest extends \PHPUnit_Framework_TestCase
+class ShoppingListTotalManagerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
@@ -26,17 +26,17 @@ class ShoppingListTotalManagerTest extends \PHPUnit_Framework_TestCase
     protected $totalManager;
 
     /**
-     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $registry;
 
     /**
-     * @var UserCurrencyManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var UserCurrencyManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $currencyManager;
 
     /**
-     * @var LineItemNotPricedSubtotalProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var LineItemNotPricedSubtotalProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $subtotalProvider;
 

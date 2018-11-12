@@ -1,5 +1,6 @@
 {% block oro_pricing_product_price_widget %}
-    <div data-page-component-module="oropricing/js/app/components/price-list-currency-limitations-component">
+    <div data-page-component-view="oropricing/js/app/views/price-list-currency-limitations-view"
+         {% if form.vars.value is not empty %}data-validation-ignore{# item is only validated once it got changed #}{% endif %}>
         <div class="row">
             <div class="small-row">
                 <div>
@@ -91,7 +92,7 @@
                 <i class="fa-arrows-v handle"></i></span>
         </td>
         <td>
-            <button type="button" class="removeRow"><i class="fa-close"></i></button>
+            <button type="button" class="btn btn-icon btn-square-light removeRow"><i class="fa-close"></i></button>
         </td>
     {% endspaceless %}
 {% endblock %}
@@ -244,7 +245,7 @@
                             </div>
                         </div>
 
-                        <button type="button" class="removeRow btn icons-holder"><i class="fa-close"></i></button>
+                        <button type="button" class="removeRow btn btn-icon icons-holder"><i class="fa-close"></i></button>
                     </div>
                     <div class="price-rule-item-quantity-type-field error-block">
                         {{ form_errors(form.quantity) }}

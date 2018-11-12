@@ -8,7 +8,7 @@ use Oro\Bundle\TaxBundle\Provider\BuiltInTaxProvider;
 use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 use Symfony\Component\Config\Definition\Processor;
 
-class ConfigurationTest extends \PHPUnit_Framework_TestCase
+class ConfigurationTest extends \PHPUnit\Framework\TestCase
 {
     public function testGetConfigTreeBuilder()
     {

@@ -52,7 +52,7 @@
         data-page-component-options="{{ page_component_options|json_encode }}">
         {{ form_widget(form) }}
         <td class="quote-lineitem-remove">
-            <button type="button" class="removeLineItem btn icons-holder">{{ 'oro.sale.quote.lineitem.remove'|trans }}</button>
+            <button type="button" class="removeLineItem btn btn-icon icons-holder">{{ 'oro.sale.quote.lineitem.remove'|trans }}</button>
         </td>
     </tr>
 {% endmacro %}
@@ -234,7 +234,7 @@
         data-layout="separate">
         {{ form_widget(form, { 'prototype' : prototype}) }}
         <td class="quote-lineitem-offers-remove">
-            <button type="button" class="removeRow btn icons-holder"><i class="fa-close"></i></button>
+            <button type="button" class="removeRow btn btn-icon icons-holder"><i class="fa-close"></i></button>
         </td>
     </tr>
 {% endmacro %}

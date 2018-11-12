@@ -10,7 +10,7 @@ use Oro\Bundle\PromotionBundle\Placeholder\DiscountInformationPlaceholderFilter;
 use Oro\Bundle\ScopeBundle\Manager\ContextNormalizer;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 
-class DiscountInformationPlaceholderFilterTest extends \PHPUnit_Framework_TestCase
+class DiscountInformationPlaceholderFilterTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var DiscountInformationPlaceholderFilter

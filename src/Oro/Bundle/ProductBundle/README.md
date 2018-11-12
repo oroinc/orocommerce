@@ -6,15 +6,15 @@ OroProductBundle adds the Product entity to the OroCommerce application, provide
 
  - [Expected dependencies](#expected-dependencies)
  - Formatting
-    - [Product Unit Value Formatting](./Resources/doc/product-unit-value-formatting.md)
+    - [Product Unit Formatting](./Resources/doc/product-unit-formatting.md)
  - Product creation
     - [Two Step Product Creation](./Resources/doc/two-step-product-creation.md)
     - [Default Product Unit](./Resources/doc/default-product-unit.md)
- - [Product API](./Resources/doc/product-api.md)
  - [Product Attributes](./Resources/doc/product-attributes.md)
  - [Customize products using layouts](./Resources/doc/customize-products.md)
  - [Related items](./Resources/doc/related-items.md)
  - [Actions](./Resources/doc/actions.md)
+ - [Product Variant Search](./Resources/doc/product-variant-search.md)
 
 ## Expected dependencies:
 

@@ -16,7 +16,7 @@ class CategoryHandlerTest extends FormHandlerTestCase
      */
     protected $entity;
 
-    /** @var  EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var  EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $eventDispatcher;
 
     protected function setUp()

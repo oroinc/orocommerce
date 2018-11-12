@@ -4,7 +4,7 @@ namespace Oro\Bundle\PaymentTermBundle\Tests\Unit\Integration;
 
 use Oro\Bundle\PaymentTermBundle\Integration\PaymentTermChannelType;
 
-class PaymentTermChannelTypeTest extends \PHPUnit_Framework_TestCase
+class PaymentTermChannelTypeTest extends \PHPUnit\Framework\TestCase
 {
     /** @var PaymentTermChannelType */
     private $channel;

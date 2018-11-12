@@ -10,6 +10,7 @@ use Oro\Bundle\SaleBundle\Entity\QuoteAddress;
 use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use Oro\Bundle\SaleBundle\Tests\Unit\Stub\QuoteStub as Quote;
+use Oro\Bundle\SecurityBundle\Tools\UUIDGenerator;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
@@ -19,12 +20,13 @@ use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
  */
 class QuoteTest extends AbstractTest
 {
-    public function testProperties()
+    public function testProperties(): void
     {
         $now = new \DateTime('now');
         $properties = [
             ['id', '123'],
             ['qid', 'QID-123456'],
+            ['guestAccessId', UUIDGenerator::v4(), false],
             ['owner', new User()],
             ['customerUser', new CustomerUser()],
             ['shippingAddress', new QuoteAddress()],
@@ -48,6 +50,9 @@ class QuoteTest extends AbstractTest
 
         static::assertPropertyAccessors(new Quote(), $properties);
 
+        $quote = new Quote();
+        static::assertIsUUID($quote->getGuestAccessId());
+
         static::assertPropertyCollections(new Quote(), [
             ['quoteProducts', new QuoteProduct()],
             ['assignedUsers', new User()],
@@ -55,7 +60,7 @@ class QuoteTest extends AbstractTest
         ]);
     }
 
-    public function testToString()
+    public function testToString(): void
     {
         $id = '123';
         $quote = new Quote();
@@ -67,7 +72,7 @@ class QuoteTest extends AbstractTest
         $this->assertEquals($id, (string)$quote);
     }
 
-    public function testGetEmail()
+    public function testGetEmail(): void
     {
         $quote = new Quote();
         $this->assertEmpty($quote->getEmail());
@@ -77,7 +82,7 @@ class QuoteTest extends AbstractTest
         $this->assertEquals('test', $quote->getEmail());
     }
 
-    public function testPrePersist()
+    public function testPrePersist(): void
     {
         $quote = new Quote();
 
@@ -90,7 +95,7 @@ class QuoteTest extends AbstractTest
         $this->assertInstanceOf('\DateTime', $quote->getUpdatedAt());
     }
 
-    public function testPreUpdate()
+    public function testPreUpdate(): void
     {
         $quote = new Quote();
 
@@ -101,7 +106,7 @@ class QuoteTest extends AbstractTest
         $this->assertInstanceOf('\DateTime', $quote->getUpdatedAt());
     }
 
-    public function testAddQuoteProduct()
+    public function testAddQuoteProduct(): void
     {
         $quote          = new Quote();
         $quoteProduct   = new QuoteProduct();
@@ -119,7 +124,7 @@ class QuoteTest extends AbstractTest
      * @param Quote $quote
      * @param bool $expected
      */
-    public function testHasOfferVariants(Quote $quote, $expected)
+    public function testHasOfferVariants(Quote $quote, $expected): void
     {
         $this->assertEquals($expected, $quote->hasOfferVariants());
     }
@@ -127,7 +132,7 @@ class QuoteTest extends AbstractTest
     /**
      * @return array
      */
-    public function hasOfferVariantsDataProvider()
+    public function hasOfferVariantsDataProvider(): array
     {
         return [
             [$this->createQuote(0, 0), false],
@@ -153,7 +158,7 @@ class QuoteTest extends AbstractTest
         $validUntil,
         $expected,
         $internalStatus = Quote::INTERNAL_STATUS_SENT_TO_CUSTOMER
-    ) {
+    ): void {
         $status = $internalStatus ? new StubEnumValue($internalStatus, 'test') : null;
 
         $quote = new Quote();
@@ -166,7 +171,7 @@ class QuoteTest extends AbstractTest
     /**
      * @return \Generator
      */
-    public function isAcceptableDataProvider()
+    public function isAcceptableDataProvider(): \Generator
     {
         yield [
             'expired' => false,
@@ -220,12 +225,53 @@ class QuoteTest extends AbstractTest
     }
 
     /**
+     * @dataProvider isAvailableOnFrontendProvider
+     *
+     * @param string $internalStatus
+     * @param bool $expected
+     */
+    public function testIsAvailableOnFrontend(string $internalStatus, bool $expected): void
+    {
+        $quote = new Quote();
+        $quote->setInternalStatus(new StubEnumValue($internalStatus, 'test'));
+
+        $this->assertEquals($expected, $quote->isAvailableOnFrontend());
+    }
+
+    /**
+     * @return array
+     */
+    public function isAvailableOnFrontendProvider(): array
+    {
+        return [
+            ['template', true],
+            ['open', true],
+            ['sent_to_customer', true],
+            ['expired', true],
+            ['accepted', true],
+            ['declined', true],
+            ['cancelled', true],
+            ['test', false],
+        ];
+    }
+
+    public function testClone(): void
+    {
+        $quote = new Quote();
+        $this->assertIsUUID($quote->getGuestAccessId());
+
+        $clone = clone $quote;
+        $this->assertIsUUID($clone->getGuestAccessId());
+        $this->assertNotEquals($quote->getGuestAccessId(), $clone->getGuestAccessId());
+    }
+
+    /**
      * @param int $quoteProductCount
      * @param int $quoteProductOfferCount
      * @param bool|false $allowIncrements
      * @return Quote
      */
-    protected function createQuote($quoteProductCount, $quoteProductOfferCount, $allowIncrements = false)
+    protected function createQuote($quoteProductCount, $quoteProductOfferCount, $allowIncrements = false): Quote
     {
         $quote = new Quote();
 
@@ -243,5 +289,16 @@ class QuoteTest extends AbstractTest
         }
 
         return $quote;
+    }
+
+    /**
+     * @param string $actual
+     */
+    private static function assertIsUUID(string $actual): void
+    {
+        static::assertRegExp(
+            '/^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i',
+            $actual
+        );
     }
 }

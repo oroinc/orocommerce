@@ -6,7 +6,7 @@ use Oro\Bundle\TaxBundle\Entity\TaxJurisdiction;
 use Oro\Bundle\TaxBundle\Entity\ZipCode;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-class ZipCodeTest extends \PHPUnit_Framework_TestCase
+class ZipCodeTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 

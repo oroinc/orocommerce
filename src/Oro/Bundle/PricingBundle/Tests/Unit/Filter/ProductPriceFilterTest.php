@@ -5,26 +5,26 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Filter;
 use Oro\Bundle\FilterBundle\Filter\FilterUtility;
 use Oro\Bundle\PricingBundle\Filter\ProductPriceFilter;
 use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
-use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Symfony\Component\Form\ChoiceList\View\ChoiceView;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\Test\FormInterface;
 
-class ProductPriceFilterTest extends \PHPUnit_Framework_TestCase
+class ProductPriceFilterTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|FormFactoryInterface
+     * @var \PHPUnit\Framework\MockObject\MockObject|FormFactoryInterface
      */
     protected $formFactory;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|FormInterface
+     * @var \PHPUnit\Framework\MockObject\MockObject|FormInterface
      */
     protected $form;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|FilterUtility
+     * @var \PHPUnit\Framework\MockObject\MockObject|FilterUtility
      */
     protected $filterUtility;
 
@@ -34,35 +34,35 @@ class ProductPriceFilterTest extends \PHPUnit_Framework_TestCase
     protected $productPriceFilter;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ProductUnitLabelFormatter
+     * @var \PHPUnit\Framework\MockObject\MockObject|UnitLabelFormatterInterface
      */
     protected $formatter;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|PriceListRequestHandler
+     * @var \PHPUnit\Framework\MockObject\MockObject|PriceListRequestHandler
      */
     protected $requestHandler;
 
     public function setUp()
     {
-        $this->form = $this->createMock('Symfony\Component\Form\Test\FormInterface');
-        $this->formFactory = $this->createMock('Symfony\Component\Form\FormFactoryInterface');
+        $this->form = $this->createMock(FormInterface::class);
+        $this->formFactory = $this->createMock(FormFactoryInterface::class);
         $this->formFactory->expects($this->any())
             ->method('create')
             ->will($this->returnValue($this->form));
 
-        $this->filterUtility = $this->getMockBuilder('Oro\Bundle\FilterBundle\Filter\FilterUtility')
+        $this->filterUtility = $this->getMockBuilder(FilterUtility::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->filterUtility->expects($this->any())
             ->method('getExcludeParams')
             ->willReturn([]);
 
-        $this->formatter = $this->getMockBuilder('Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter')
+        $this->formatter = $this->getMockBuilder(UnitLabelFormatterInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->requestHandler = $this->getMockBuilder('Oro\Bundle\PricingBundle\Model\PriceListRequestHandler')
+        $this->requestHandler = $this->getMockBuilder(PriceListRequestHandler::class)
             ->disableOriginalConstructor()
             ->getMock();
 

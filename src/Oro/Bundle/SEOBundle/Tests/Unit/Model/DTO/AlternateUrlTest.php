@@ -6,7 +6,7 @@ use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\SEOBundle\Model\DTO\AlternateUrl;
 use Oro\Bundle\TranslationBundle\Entity\Language;
 
-class AlternateUrlTest extends \PHPUnit_Framework_TestCase
+class AlternateUrlTest extends \PHPUnit\Framework\TestCase
 {
     const URL = 'http://someurl.com/';
 

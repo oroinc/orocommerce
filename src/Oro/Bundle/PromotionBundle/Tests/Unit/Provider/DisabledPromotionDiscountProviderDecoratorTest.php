@@ -12,7 +12,7 @@ use Oro\Bundle\PromotionBundle\Tests\Unit\Discount\Stub\DiscountStub;
 use Oro\Bundle\PromotionBundle\Tests\Unit\Entity\Stub\Order;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class DisabledPromotionDiscountProviderDecoratorTest extends \PHPUnit_Framework_TestCase
+class DisabledPromotionDiscountProviderDecoratorTest extends \PHPUnit\Framework\TestCase
 {
     const ENABLED_PROMOTION_ID = 7;
     const DISABLED_PROMOTION_ID = 2;
@@ -20,7 +20,7 @@ class DisabledPromotionDiscountProviderDecoratorTest extends \PHPUnit_Framework_
     use EntityTrait;
 
     /**
-     * @var PromotionDiscountsProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var PromotionDiscountsProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $promotionDiscountsProvider;
 

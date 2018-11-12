@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\CatalogBundle\Entity\Repository;
 
-use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\CatalogBundle\Entity\Category;
@@ -10,6 +9,9 @@ use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Component\Tree\Entity\Repository\NestedTreeRepository;
 
+/**
+ * Provides methods to retrieve information about Catalog entity form the DB
+ */
 class CategoryRepository extends NestedTreeRepository
 {
     /**
@@ -69,30 +71,6 @@ class CategoryRepository extends NestedTreeRepository
     ) {
         return $this->getChildrenQueryBuilder($node, $direct, $sortByField, $direction, $includeNode)
             ->addSelect('children')
-            ->leftJoin('node.childCategories', 'children')
-            ->getQuery()
-            ->getResult();
-    }
-
-    /**
-     * @param object|null $node
-     * @param bool $direct
-     * @param string|null $sortByField
-     * @param string $direction
-     * @param bool $includeNode
-     * @return Category[]
-     * @deprecated Use \Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository::getChildren
-     */
-    public function getChildrenWithTitles(
-        $node = null,
-        $direct = false,
-        $sortByField = null,
-        $direction = 'ASC',
-        $includeNode = false
-    ) {
-        return $this->getChildrenQueryBuilder($node, $direct, $sortByField, $direction, $includeNode)
-            ->addSelect('title, children')
-            ->leftJoin('node.titles', 'title')
             ->leftJoin('node.childCategories', 'children')
             ->getQuery()
             ->getResult();
@@ -177,25 +155,6 @@ class CategoryRepository extends NestedTreeRepository
             ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult();
-    }
-
-    /**
-     * @param array $categories
-     *
-     * @return QueryBuilder
-     *
-     * @deprecated Not using
-     */
-    public function getCategoriesProductsCountQueryBuilder($categories)
-    {
-        $qb = $this->_em->createQueryBuilder();
-        $qb->select('IDENTITY(product.category), COUNT(product.id) as products_count')
-            ->from('OroProductBundle:Product', 'product')
-            ->where($qb->expr()->in('product.category', ':categories'))
-            ->setParameter('categories', $categories)
-            ->groupBy('product.category');
-
-        return $qb;
     }
 
     /**

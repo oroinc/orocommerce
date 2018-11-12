@@ -5,7 +5,7 @@ namespace Oro\Bundle\OrderBundle\Tests\Unit\Converter;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\OrderBundle\Converter\ShippingPricesConverter;
 
-class ShippingPricesConverterTest extends \PHPUnit_Framework_TestCase
+class ShippingPricesConverterTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @dataProvider convertPricesToArrayProvider

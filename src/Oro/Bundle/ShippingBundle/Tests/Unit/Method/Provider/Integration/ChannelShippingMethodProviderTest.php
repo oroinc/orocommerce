@@ -11,7 +11,7 @@ use Oro\Bundle\ShippingBundle\Method\Provider\Integration\ChannelShippingMethodP
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class ChannelShippingMethodProviderTest extends \PHPUnit_Framework_TestCase
+class ChannelShippingMethodProviderTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @internal
@@ -26,12 +26,12 @@ class ChannelShippingMethodProviderTest extends \PHPUnit_Framework_TestCase
     private $provider;
 
     /**
-     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     private $doctrineHelper;
 
     /**
-     * @var IntegrationShippingMethodFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var IntegrationShippingMethodFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $methodFactory;
 
@@ -127,7 +127,7 @@ class ChannelShippingMethodProviderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return LifecycleEventArgs|\PHPUnit_Framework_MockObject_MockObject
+     * @return LifecycleEventArgs|\PHPUnit\Framework\MockObject\MockObject
      */
     private function createLifecycleEventArgsMock()
     {

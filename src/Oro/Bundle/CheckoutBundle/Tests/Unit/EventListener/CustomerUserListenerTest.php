@@ -14,7 +14,7 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-class CustomerUserListenerTest extends \PHPUnit_Framework_TestCase
+class CustomerUserListenerTest extends \PHPUnit\Framework\TestCase
 {
     const FIREWALL_NAME= 'test_firewall';
 
@@ -24,7 +24,7 @@ class CustomerUserListenerTest extends \PHPUnit_Framework_TestCase
     private $listener;
 
     /**
-     * @var LoginManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var LoginManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $loginManager;
 
@@ -34,12 +34,12 @@ class CustomerUserListenerTest extends \PHPUnit_Framework_TestCase
     private $request;
 
     /**
-     * @var CheckoutManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var CheckoutManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $checkoutManager;
 
     /**
-     * @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $configManager;
 

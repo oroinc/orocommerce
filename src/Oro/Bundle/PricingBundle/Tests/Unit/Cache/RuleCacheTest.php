@@ -12,20 +12,20 @@ use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\PricingBundle\Cache\RuleCache;
 use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 
-class RuleCacheTest extends \PHPUnit_Framework_TestCase
+class RuleCacheTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var Cache|\PHPUnit_Framework_MockObject_MockObject
+     * @var Cache|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $cache;
 
     /**
-     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $registry;
 
     /**
-     * @var SymmetricCrypterInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var SymmetricCrypterInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $crypter;
 
@@ -46,7 +46,7 @@ class RuleCacheTest extends \PHPUnit_Framework_TestCase
     public function testFetchCorrectHash()
     {
         $id = 'test';
-        /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $em */
+        /** @var EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject $em */
         $em = $this->createMock(EntityManagerInterface::class);
         $qb = new QueryBuilder($em);
 

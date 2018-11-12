@@ -26,7 +26,7 @@ class CustomerGroupCombinedPriceListsBuilderTest extends AbstractCombinedPriceLi
     protected $builder;
 
     /**
-     * @var CustomerCombinedPriceListsBuilder|\PHPUnit_Framework_MockObject_MockObject
+     * @var CustomerCombinedPriceListsBuilder|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $customerBuilder;
 

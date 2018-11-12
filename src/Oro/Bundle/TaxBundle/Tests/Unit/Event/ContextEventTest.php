@@ -4,7 +4,7 @@ namespace Oro\Bundle\TaxBundle\Tests\Unit\Event;
 
 use Oro\Bundle\TaxBundle\Event\ContextEvent;
 
-class ContextEventTest extends \PHPUnit_Framework_TestCase
+class ContextEventTest extends \PHPUnit\Framework\TestCase
 {
     public function testA()
     {

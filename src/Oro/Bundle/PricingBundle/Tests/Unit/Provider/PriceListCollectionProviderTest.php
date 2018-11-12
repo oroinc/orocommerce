@@ -10,22 +10,22 @@ use Oro\Bundle\PricingBundle\Provider\PriceListSequenceMember;
 use Oro\Bundle\PricingBundle\SystemConfig\PriceListConfigConverter;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class PriceListCollectionProviderTest extends \PHPUnit_Framework_TestCase
+class PriceListCollectionProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $registry;
 
     /**
-     * @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $configManager;
 
     /**
-     * @var PriceListConfigConverter|\PHPUnit_Framework_MockObject_MockObject
+     * @var PriceListConfigConverter|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $configConverter;
 

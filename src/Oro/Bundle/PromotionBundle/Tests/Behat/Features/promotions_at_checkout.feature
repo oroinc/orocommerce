@@ -12,7 +12,7 @@ Feature: Promotions at Checkout
     And I disable inventory management
     Then I signed in as AmandaRCole@example.org on the store frontend
     When I open page with shopping list List 1
-      And I press "Create Order"
+      And I click "Create Order"
     Then I see next line item discounts for checkout:
       | SKU  | Discount |
       | SKU1 |          |
@@ -67,6 +67,9 @@ Feature: Promotions at Checkout
       | Discount          | -$12.50 |
       | Shipping Discount | -$1.00  |
     Then I click "Submit Order"
+    And Email should contains the following:
+      | Body | Discount -$12.50         |
+      | Body | Shipping Discount -$1.00 |
       And I follow "click here to review"
 
   Scenario: Check line item and order discount at Order View page

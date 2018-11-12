@@ -10,36 +10,36 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Layout\DataProvider\MatrixGridOrderProvider;
+use Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListManager;
 use Oro\Bundle\ShoppingListBundle\Manager\MatrixGridOrderManager;
-use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use Oro\Bundle\ShoppingListBundle\Model\MatrixCollection;
 use Oro\Bundle\ShoppingListBundle\Model\MatrixCollectionColumn;
 use Oro\Bundle\ShoppingListBundle\Model\MatrixCollectionRow;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class MatrixGridOrderProviderTest extends \PHPUnit_Framework_TestCase
+class MatrixGridOrderProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var MatrixGridOrderManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var MatrixGridOrderManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $matrixGridManager;
 
     /**
-     * @var TotalProcessorProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var TotalProcessorProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     private $totalProvider;
 
     /**
-     * @var NumberFormatter|\PHPUnit_Framework_MockObject_MockObject
+     * @var NumberFormatter|\PHPUnit\Framework\MockObject\MockObject
      */
     private $numberFormatter;
 
     /**
-     * @var ShoppingListManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var CurrentShoppingListManager|\PHPUnit\Framework\MockObject\MockObject
      */
-    private $shoppingListManager;
+    private $currentShoppingListManager;
 
     /** @var MatrixGridOrderProvider */
     private $provider;
@@ -49,13 +49,13 @@ class MatrixGridOrderProviderTest extends \PHPUnit_Framework_TestCase
         $this->matrixGridManager = $this->createMock(MatrixGridOrderManager::class);
         $this->totalProvider = $this->createMock(TotalProcessorProvider::class);
         $this->numberFormatter = $this->createMock(NumberFormatter::class);
-        $this->shoppingListManager = $this->createMock(ShoppingListManager::class);
+        $this->currentShoppingListManager = $this->createMock(CurrentShoppingListManager::class);
 
         $this->provider = new MatrixGridOrderProvider(
             $this->matrixGridManager,
             $this->totalProvider,
             $this->numberFormatter,
-            $this->shoppingListManager
+            $this->currentShoppingListManager
         );
     }
 
@@ -72,7 +72,7 @@ class MatrixGridOrderProviderTest extends \PHPUnit_Framework_TestCase
         $collection->rows[1]->columns[0]->quantity = 4;
         $collection->rows[0]->columns[1]->quantity = 3;
 
-        $this->shoppingListManager->expects($this->never())
+        $this->currentShoppingListManager->expects($this->never())
             ->method('getCurrent');
 
         $this->matrixGridManager->expects($this->once())
@@ -96,7 +96,7 @@ class MatrixGridOrderProviderTest extends \PHPUnit_Framework_TestCase
         $collection->rows[1]->columns[0]->quantity = 4;
         $collection->rows[0]->columns[1]->quantity = 3;
 
-        $this->shoppingListManager->expects($this->once())
+        $this->currentShoppingListManager->expects($this->once())
             ->method('getCurrent')
             ->willReturn($shoppingList);
 
@@ -130,7 +130,7 @@ class MatrixGridOrderProviderTest extends \PHPUnit_Framework_TestCase
         /** @var ShoppingList $shoppingList */
         $shoppingList = $this->getEntity(ShoppingList::class);
 
-        $this->shoppingListManager->expects($this->never())
+        $this->currentShoppingListManager->expects($this->never())
             ->method('getCurrent');
 
         $this->matrixGridManager->expects($this->once())
@@ -190,7 +190,7 @@ class MatrixGridOrderProviderTest extends \PHPUnit_Framework_TestCase
         /** @var ShoppingList $shoppingList */
         $shoppingList = $this->getEntity(ShoppingList::class);
 
-        $this->shoppingListManager->expects($this->once())
+        $this->currentShoppingListManager->expects($this->once())
             ->method('getCurrent')
             ->willReturn($shoppingList);
 
@@ -399,7 +399,7 @@ class MatrixGridOrderProviderTest extends \PHPUnit_Framework_TestCase
         /** @var ShoppingList $shoppingList */
         $shoppingList = $this->getEntity(ShoppingList::class);
 
-        $this->shoppingListManager->expects($this->exactly(6))
+        $this->currentShoppingListManager->expects($this->exactly(6))
             ->method('getCurrent')
             ->willReturn($shoppingList);
 
@@ -416,7 +416,7 @@ class MatrixGridOrderProviderTest extends \PHPUnit_Framework_TestCase
         /** @var ShoppingList $shoppingList */
         $shoppingList = $this->getEntity(ShoppingList::class);
 
-        $this->shoppingListManager->expects($this->never())
+        $this->currentShoppingListManager->expects($this->never())
             ->method('getCurrent');
 
         $preparedData = $this->getTotalsQuantityPricePrepareData();

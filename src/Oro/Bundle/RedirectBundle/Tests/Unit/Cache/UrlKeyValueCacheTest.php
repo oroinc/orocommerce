@@ -11,20 +11,20 @@ use Symfony\Component\Filesystem\Filesystem;
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class UrlKeyValueCacheTest extends \PHPUnit_Framework_TestCase
+class UrlKeyValueCacheTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var Cache|\PHPUnit_Framework_MockObject_MockObject
+     * @var Cache|\PHPUnit\Framework\MockObject\MockObject
      */
     private $persistentCache;
 
     /**
-     * @var Cache|\PHPUnit_Framework_MockObject_MockObject
+     * @var Cache|\PHPUnit\Framework\MockObject\MockObject
      */
     private $localCache;
 
     /**
-     * @var Filesystem|\PHPUnit_Framework_MockObject_MockObject
+     * @var Filesystem|\PHPUnit\Framework\MockObject\MockObject
      */
     private $filesystem;
 
@@ -185,9 +185,9 @@ class UrlKeyValueCacheTest extends \PHPUnit_Framework_TestCase
 
     public function testDeleteAllLocalClearablePersistentClearable()
     {
-        /** @var Cache|\PHPUnit_Framework_MockObject_MockObject $localCache */
+        /** @var Cache|\PHPUnit\Framework\MockObject\MockObject $localCache */
         $localCache = $this->createMock(CacheAllCapabilities::class);
-        /** @var Cache|\PHPUnit_Framework_MockObject_MockObject $persistentCache */
+        /** @var Cache|\PHPUnit\Framework\MockObject\MockObject $persistentCache */
         $persistentCache = $this->createMock(CacheAllCapabilities::class);
 
         $localCache->expects($this->once())
@@ -211,9 +211,9 @@ class UrlKeyValueCacheTest extends \PHPUnit_Framework_TestCase
 
     public function testDeleteAllLocalClearablePersistentFilesystem()
     {
-        /** @var Cache|\PHPUnit_Framework_MockObject_MockObject $localCache */
+        /** @var Cache|\PHPUnit\Framework\MockObject\MockObject $localCache */
         $localCache = $this->createMock(CacheAllCapabilities::class);
-        /** @var Cache|\PHPUnit_Framework_MockObject_MockObject $persistentCache */
+        /** @var Cache|\PHPUnit\Framework\MockObject\MockObject $persistentCache */
         $persistentCache = $this->createMock(FilesystemCache::class);
 
         $localCache->expects($this->once())
@@ -234,9 +234,9 @@ class UrlKeyValueCacheTest extends \PHPUnit_Framework_TestCase
 
     public function testFlushAllMulti()
     {
-        /** @var Cache|\PHPUnit_Framework_MockObject_MockObject $localCache */
+        /** @var Cache|\PHPUnit\Framework\MockObject\MockObject $localCache */
         $localCache = $this->createMock(CacheAllCapabilities::class);
-        /** @var Cache|\PHPUnit_Framework_MockObject_MockObject $persistentCache */
+        /** @var Cache|\PHPUnit\Framework\MockObject\MockObject $persistentCache */
         $persistentCache = $this->createMock(FilesystemCache::class);
 
         $urlCache = new UrlKeyValueCache($persistentCache, $localCache, $this->filesystem);

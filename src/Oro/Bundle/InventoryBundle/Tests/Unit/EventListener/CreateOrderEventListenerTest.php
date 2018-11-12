@@ -24,25 +24,25 @@ use Oro\Bundle\WorkflowBundle\Model\WorkflowData;
 use Oro\Component\Action\Event\ExtendableActionEvent;
 use Oro\Component\Action\Event\ExtendableConditionEvent;
 
-class CreateOrderEventListenerTest extends \PHPUnit_Framework_TestCase
+class CreateOrderEventListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var InventoryQuantityManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var InventoryQuantityManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $quantityManager;
 
     /**
-     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $doctrineHelper;
 
     /**
-     * @var InventoryStatusHandler|\PHPUnit_Framework_MockObject_MockObject
+     * @var InventoryStatusHandler|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $statusHandler;
 
     /**
-     * @var EntityFallbackResolver|\PHPUnit_Framework_MockObject_MockObject
+     * @var EntityFallbackResolver|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $entityFallbackResolver;
 
@@ -52,7 +52,7 @@ class CreateOrderEventListenerTest extends \PHPUnit_Framework_TestCase
     protected $createOrderEventListener;
 
     /**
-     * @var CheckoutLineItemsManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var CheckoutLineItemsManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $checkoutLineItemsManager;
 
@@ -120,7 +120,7 @@ class CreateOrderEventListenerTest extends \PHPUnit_Framework_TestCase
     public function testWrongContext()
     {
         $workflowData = $this->createMock(WorkflowData::class);
-        /** @var ExtendableActionEvent|\PHPUnit_Framework_MockObject_MockObject $event */
+        /** @var ExtendableActionEvent|\PHPUnit\Framework\MockObject\MockObject $event */
         $event = $this->getMockBuilder(ExtendableActionEvent::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -315,7 +315,7 @@ class CreateOrderEventListenerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return ExtendableConditionEvent|\PHPUnit_Framework_MockObject_MockObject
+     * @return ExtendableConditionEvent|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function prepareConditionEvent()
     {

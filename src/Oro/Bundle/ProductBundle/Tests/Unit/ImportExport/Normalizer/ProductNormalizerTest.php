@@ -7,7 +7,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\ImportExport\Normalizer\ProductNormalizer;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class ProductNormalizerTest extends \PHPUnit_Framework_TestCase
+class ProductNormalizerTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var ProductNormalizer
@@ -15,7 +15,7 @@ class ProductNormalizerTest extends \PHPUnit_Framework_TestCase
     protected $productNormalizer;
 
     /**
-     * @var FieldHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var FieldHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $fieldHelper;
 
@@ -25,7 +25,7 @@ class ProductNormalizerTest extends \PHPUnit_Framework_TestCase
     protected $productClass;
 
     /**
-     * @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $eventDispatcher;
 

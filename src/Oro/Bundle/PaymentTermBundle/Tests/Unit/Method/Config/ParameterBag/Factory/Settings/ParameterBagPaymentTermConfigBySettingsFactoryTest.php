@@ -13,7 +13,7 @@ use Oro\Bundle\PaymentTermBundle\Method\Config\ParameterBag\ParameterBagPaymentT
 
 // @codingStandardsIgnoreEnd
 
-class ParameterBagPaymentTermConfigBySettingsFactoryTest extends \PHPUnit_Framework_TestCase
+class ParameterBagPaymentTermConfigBySettingsFactoryTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var ParameterBagPaymentTermConfigBySettingsFactory
@@ -21,12 +21,12 @@ class ParameterBagPaymentTermConfigBySettingsFactoryTest extends \PHPUnit_Framew
     private $testedFactory;
 
     /**
-     * @var LocalizationHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var LocalizationHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     private $localizationHelperMock;
 
     /**
-     * @var IntegrationIdentifierGeneratorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var IntegrationIdentifierGeneratorInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $integrationIdentifierGeneratorMock;
 
@@ -105,7 +105,7 @@ class ParameterBagPaymentTermConfigBySettingsFactoryTest extends \PHPUnit_Framew
     }
 
     /**
-     * @return PaymentTermSettings|\PHPUnit_Framework_MockObject_MockObject
+     * @return PaymentTermSettings|\PHPUnit\Framework\MockObject\MockObject
      */
     private function createPaymentTermSettingsMock()
     {
@@ -113,7 +113,7 @@ class ParameterBagPaymentTermConfigBySettingsFactoryTest extends \PHPUnit_Framew
     }
 
     /**
-     * @return Channel|\PHPUnit_Framework_MockObject_MockObject
+     * @return Channel|\PHPUnit\Framework\MockObject\MockObject
      */
     private function createChannelMock()
     {
@@ -121,7 +121,7 @@ class ParameterBagPaymentTermConfigBySettingsFactoryTest extends \PHPUnit_Framew
     }
 
     /**
-     * @return Collection|\PHPUnit_Framework_MockObject_MockObject
+     * @return Collection|\PHPUnit\Framework\MockObject\MockObject
      */
     private function createLabelsCollectionMock()
     {

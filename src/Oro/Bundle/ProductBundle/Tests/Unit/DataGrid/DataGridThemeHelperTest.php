@@ -7,7 +7,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
-class DataGridThemeHelperTest extends \PHPUnit_Framework_TestCase
+class DataGridThemeHelperTest extends \PHPUnit\Framework\TestCase
 {
     const GRID_NAME = 'test-grid-name';
 
@@ -17,12 +17,12 @@ class DataGridThemeHelperTest extends \PHPUnit_Framework_TestCase
     protected $helper;
 
     /**
-     * @var RequestStack|\PHPUnit_Framework_MockObject_MockObject
+     * @var RequestStack|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $requestStack;
 
     /**
-     * @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $session;
 

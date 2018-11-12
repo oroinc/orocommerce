@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 class ProductPriceNormalizerTest extends TestCase
 {
     /**
-     * @var FieldHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var FieldHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     private $fieldHelper;
 

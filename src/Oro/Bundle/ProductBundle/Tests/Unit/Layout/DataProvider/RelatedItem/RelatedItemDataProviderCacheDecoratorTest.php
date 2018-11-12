@@ -7,12 +7,12 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Layout\DataProvider\RelatedItem\RelatedItemDataProviderCacheDecorator;
 use Oro\Bundle\ProductBundle\Layout\DataProvider\RelatedItem\RelatedItemDataProviderInterface;
 
-class RelatedItemDataProviderCacheDecoratorTest extends \PHPUnit_Framework_TestCase
+class RelatedItemDataProviderCacheDecoratorTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var RelatedItemDataProviderInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var RelatedItemDataProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $dataProvider;
 
-    /** @var Cache|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var Cache|\PHPUnit\Framework\MockObject\MockObject */
     private $cache;
 
     /** @var RelatedItemDataProviderCacheDecorator */
@@ -31,21 +31,46 @@ class RelatedItemDataProviderCacheDecoratorTest extends \PHPUnit_Framework_TestC
 
     public function testFetchRelatedItemsFromCacheIfCacheContainsData()
     {
-        $this->cache->expects($this->once())->method('contains')->willReturn(true);
-        $this->cache->expects($this->once())->method('fetch');
+        $product = $this->createMock(Product::class);
+        $relatedProducts = [$this->createMock(Product::class)];
 
-        $this->decorator->getRelatedItems(new Product());
+        $product->expects(self::once())
+            ->method('getId')
+            ->willReturn(123);
+
+        $this->cache->expects($this->once())
+            ->method('fetch')
+            ->with('cache_key_123')
+            ->willReturn($relatedProducts);
+        $this->cache->expects($this->never())
+            ->method('save');
+        $this->dataProvider->expects($this->never())
+            ->method('getRelatedItems');
+
+        $this->assertSame($relatedProducts, $this->decorator->getRelatedItems($product));
     }
 
     public function testFetchRelatedItemsFromDataProviderAndSavesInCacheIfCacheDoesNotContainData()
     {
-        $this->cache->expects($this->once())->method('contains')->willReturn(false);
-        $this->cache->expects($this->never())->method('fetch');
-        $this->cache->expects($this->once())->method('save');
+        $product = $this->createMock(Product::class);
+        $relatedProducts = [$this->createMock(Product::class)];
 
-        $expectedProducts = [new Product(), new Product()];
-        $this->dataProvider->expects($this->once())->method('getRelatedItems')->willReturn($expectedProducts);
+        $product->expects(self::once())
+            ->method('getId')
+            ->willReturn(123);
 
-        $this->assertSame($expectedProducts, $this->decorator->getRelatedItems(new Product()));
+        $this->cache->expects($this->once())
+            ->method('fetch')
+            ->with('cache_key_123')
+            ->willReturn(false);
+        $this->cache->expects($this->once())
+            ->method('save')
+            ->with('cache_key_123', $relatedProducts);
+        $this->dataProvider->expects($this->once())
+            ->method('getRelatedItems')
+            ->with($this->identicalTo($product))
+            ->willReturn($relatedProducts);
+
+        $this->assertSame($relatedProducts, $this->decorator->getRelatedItems($product));
     }
 }

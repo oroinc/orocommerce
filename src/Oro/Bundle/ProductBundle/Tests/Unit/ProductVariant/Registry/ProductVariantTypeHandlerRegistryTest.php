@@ -5,7 +5,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\ProductVariant\Registry;
 use Oro\Bundle\ProductBundle\ProductVariant\Registry\ProductVariantTypeHandlerInterface;
 use Oro\Bundle\ProductBundle\ProductVariant\Registry\ProductVariantTypeHandlerRegistry;
 
-class ProductVariantTypeHandlerRegistryTest extends \PHPUnit_Framework_TestCase
+class ProductVariantTypeHandlerRegistryTest extends \PHPUnit\Framework\TestCase
 {
     /** @var ProductVariantTypeHandlerRegistry */
     protected $registry;
@@ -57,7 +57,7 @@ class ProductVariantTypeHandlerRegistryTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param string $type
-     * @return ProductVariantTypeHandlerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return ProductVariantTypeHandlerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private function createTypeHandler($type)
     {

@@ -8,15 +8,15 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
 use Oro\Bundle\SaleBundle\Manager\QuoteDemandManager;
 
-class QuoteDemandManagerTest extends \PHPUnit_Framework_TestCase
+class QuoteDemandManagerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var TotalProcessorProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var TotalProcessorProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $totalProvider;
 
     /**
-     * @var LineItemSubtotalProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var LineItemSubtotalProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $subtotalProvider;
 

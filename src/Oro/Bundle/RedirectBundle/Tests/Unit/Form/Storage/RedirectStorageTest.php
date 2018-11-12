@@ -5,7 +5,7 @@ namespace Oro\Bundle\RedirectBundle\Tests\Unit\Form\Storage;
 use Oro\Bundle\RedirectBundle\Form\Storage\RedirectStorage;
 use Oro\Bundle\RedirectBundle\Model\PrefixWithRedirect;
 
-class RedirectStorageTest extends \PHPUnit_Framework_TestCase
+class RedirectStorageTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var RedirectStorage

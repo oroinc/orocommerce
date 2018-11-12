@@ -11,7 +11,7 @@ use Oro\Bundle\UPSBundle\TimeInTransit\Result\TimeInTransitResultInterface;
 use Oro\Bundle\UPSBundle\TimeInTransit\TimeInTransitProvider;
 use Oro\Bundle\UPSBundle\TimeInTransit\TimeInTransitProviderInterface;
 
-class CacheableTimeInTransitProviderTest extends \PHPUnit_Framework_TestCase
+class CacheableTimeInTransitProviderTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @internal
@@ -29,22 +29,22 @@ class CacheableTimeInTransitProviderTest extends \PHPUnit_Framework_TestCase
     private $timeInTransitResult;
 
     /**
-     * @var UPSTransport|\PHPUnit_Framework_MockObject_MockObject
+     * @var UPSTransport|\PHPUnit\Framework\MockObject\MockObject
      */
     private $upsTransport;
 
     /**
-     * @var TimeInTransitCacheProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var TimeInTransitCacheProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $timeInTransitCacheProvider;
 
     /**
-     * @var TimeInTransitCacheProviderFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var TimeInTransitCacheProviderFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $timeInTransitCacheProviderFactory;
 
     /**
-     * @var TimeInTransitProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var TimeInTransitProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $timeInTransit;
 

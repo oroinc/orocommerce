@@ -4,7 +4,7 @@ namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Placeholder;
 
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderValue;
 
-class PlaceholderValueTest extends \PHPUnit_Framework_TestCase
+class PlaceholderValueTest extends \PHPUnit\Framework\TestCase
 {
     public function testPlaceholderValue()
     {

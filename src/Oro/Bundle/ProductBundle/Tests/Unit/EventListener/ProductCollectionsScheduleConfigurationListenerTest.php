@@ -8,10 +8,10 @@ use Oro\Bundle\ProductBundle\Command\ProductCollectionsIndexCronCommand;
 use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\EventListener\ProductCollectionsScheduleConfigurationListener;
 
-class ProductCollectionsScheduleConfigurationListenerTest extends \PHPUnit_Framework_TestCase
+class ProductCollectionsScheduleConfigurationListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var DeferredScheduler|\PHPUnit_Framework_MockObject_MockObject
+     * @var DeferredScheduler|\PHPUnit\Framework\MockObject\MockObject
      */
     private $deferredScheduler;
 

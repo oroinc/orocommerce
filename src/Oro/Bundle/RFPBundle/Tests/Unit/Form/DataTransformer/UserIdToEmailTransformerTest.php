@@ -6,13 +6,13 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\RFPBundle\Form\DataTransformer\UserIdToEmailTransformer;
 use Oro\Bundle\UserBundle\Entity\User;
 
-class UserIdToEmailTransformerTest extends \PHPUnit_Framework_TestCase
+class UserIdToEmailTransformerTest extends \PHPUnit\Framework\TestCase
 {
     const USER_ID = 42;
     const USER_EMAIL = 'box42@example.com';
 
     /**
-     * @return User|\PHPUnit_Framework_MockObject_MockObject
+     * @return User|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function getExistingUserMock()
     {
@@ -32,7 +32,7 @@ class UserIdToEmailTransformerTest extends \PHPUnit_Framework_TestCase
     /**
      * @param array $findMap
      * @param array $findOneByMap
-     * @return ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @return ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function createRegistryMock(array $findMap = [], array $findOneByMap = [])
     {

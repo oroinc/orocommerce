@@ -7,7 +7,7 @@ use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Oro\Bundle\WebCatalogBundle\Form\Type\SystemPageVariantType;
 use Oro\Component\Routing\RouteData;
 
-class SystemPageContentVariantTypeTest extends \PHPUnit_Framework_TestCase
+class SystemPageContentVariantTypeTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var SystemPageContentVariantType
@@ -36,7 +36,7 @@ class SystemPageContentVariantTypeTest extends \PHPUnit_Framework_TestCase
 
     public function testGetRouteData()
     {
-        /** @var ContentVariant|\PHPUnit_Framework_MockObject_MockObject $contentVariant **/
+        /** @var ContentVariant|\PHPUnit\Framework\MockObject\MockObject $contentVariant **/
         $contentVariant = $this->createMock(ContentVariant::class);
         $contentVariant->expects($this->once())
             ->method('getSystemPageRoute')

@@ -17,7 +17,7 @@ use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Doctrine\DoctrineShipp
 use Oro\Bundle\ShippingBundle\Context\ShippingContext;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
-class BasicQuoteShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
+class BasicQuoteShippingContextFactoryTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var BasicQuoteShippingContextFactory
@@ -25,22 +25,22 @@ class BasicQuoteShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
     private $basicQuoteShippingContextFactory;
 
     /**
-     * @var ShippingContextBuilderFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingContextBuilderFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $shippingContextBuilderFactoryMock;
 
     /**
-     * @var QuoteToShippingLineItemConverterInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var QuoteToShippingLineItemConverterInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $quoteToShippingLineItemConverterMock;
 
     /**
-     * @var TotalProcessorProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var TotalProcessorProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     private $totalProcessorProviderMock;
 
     /**
-     * @var CalculableQuoteFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var CalculableQuoteFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $calculableQuoteFactoryMock;
 
@@ -181,7 +181,7 @@ class BasicQuoteShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
      * @param int    $amount
      * @param string $currency
      *
-     * @return Subtotal|\PHPUnit_Framework_MockObject_MockObject
+     * @return Subtotal|\PHPUnit\Framework\MockObject\MockObject
      */
     private function getTotalMock($amount, $currency)
     {
@@ -201,7 +201,7 @@ class BasicQuoteShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return CalculableQuoteInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return CalculableQuoteInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private function getCalculableQuoteMock()
     {
@@ -209,7 +209,7 @@ class BasicQuoteShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return ShippingContextBuilderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return ShippingContextBuilderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private function getShippingContextBuilderMock()
     {
@@ -217,7 +217,7 @@ class BasicQuoteShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return QuoteAddress|\PHPUnit_Framework_MockObject_MockObject
+     * @return QuoteAddress|\PHPUnit\Framework\MockObject\MockObject
      */
     private function getShippingAddressMock()
     {
@@ -225,7 +225,7 @@ class BasicQuoteShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return Quote|\PHPUnit_Framework_MockObject_MockObject
+     * @return Quote|\PHPUnit\Framework\MockObject\MockObject
      */
     private function getQuoteMock()
     {
@@ -233,7 +233,7 @@ class BasicQuoteShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return ShippingContext|\PHPUnit_Framework_MockObject_MockObject
+     * @return ShippingContext|\PHPUnit\Framework\MockObject\MockObject
      */
     private function getShippingContextMock()
     {

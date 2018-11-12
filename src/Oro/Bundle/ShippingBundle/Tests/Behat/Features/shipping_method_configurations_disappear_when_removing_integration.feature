@@ -15,7 +15,7 @@ Feature: Shipping Method Configurations disappear when removing integration
   Scenario: Disabling Shipping Integration And
     Given I login as administrator
     And I go to System/ Integrations/ Manage Integrations
-    And I press "Create Integration"
+    And I click "Create Integration"
     And I fill "Integration Form" with:
       | Type | Flat Rate Shipping |
     And I fill "Integration Form" with:
@@ -23,7 +23,7 @@ Feature: Shipping Method Configurations disappear when removing integration
       | Label| Flat Rate New      |
     And I save and close form
     And I go to System/ Shipping Rules
-    And I press "Create Shipping Rule"
+    And I click "Create Shipping Rule"
     And I fill "Shipping Rule" with:
       |Enabled   |true             |
       |Name      |New Shipping Rule|
@@ -35,7 +35,7 @@ Feature: Shipping Method Configurations disappear when removing integration
     And I save and close form
     And I go to System/ Integrations/ Manage Integrations
     And I click edit New Flat Rate in grid
-    When I press "Deactivate"
+    When I click "Deactivate"
     Then I should see Existing Shipping Rules popup
     And I click on "Deactivate Integration Confirm Button"
     And I go to System/ Shipping Rules

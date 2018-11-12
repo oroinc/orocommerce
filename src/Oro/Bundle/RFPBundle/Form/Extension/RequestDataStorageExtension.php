@@ -16,6 +16,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Translation\TranslatorInterface;
 
+/**
+ * Pre-fills RFQ with requested products taken from product data storage.
+ */
 class RequestDataStorageExtension extends AbstractProductDataStorageExtension
 {
     /**
@@ -115,7 +118,7 @@ class RequestDataStorageExtension extends AbstractProductDataStorageExtension
 
             $result = $this->addItem($product, $entity, $dataRow);
             if ($result === false) {
-                $canNotBeAddedToRFQ[] = ['sku' => $product->getSku(), 'name' => $product->getDefaultName()];
+                $canNotBeAddedToRFQ[] = $product;
             }
         }
 

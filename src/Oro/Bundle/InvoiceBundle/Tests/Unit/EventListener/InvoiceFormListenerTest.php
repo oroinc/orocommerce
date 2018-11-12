@@ -13,7 +13,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Form\Form;
 
-class InvoiceFormListenerTest extends \PHPUnit_Framework_TestCase
+class InvoiceFormListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
@@ -22,7 +22,7 @@ class InvoiceFormListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testBeforeFlush()
     {
-        /** @var LineItemSubtotalProvider|\PHPUnit_Framework_MockObject_MockObject $provider*/
+        /** @var LineItemSubtotalProvider|\PHPUnit\Framework\MockObject\MockObject $provider*/
         $provider = $this->getMockBuilder(
             'Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider'
         )

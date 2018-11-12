@@ -19,7 +19,7 @@ class OrderDataStorageExtensionTest extends AbstractProductDataStorageExtensionT
     {
         parent::setUp();
 
-        /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
+        /** @var RequestStack|\PHPUnit\Framework\MockObject\MockObject $requestStack */
         $requestStack = $this->createMock('Symfony\Component\HttpFoundation\RequestStack');
         $this->request = $this->createMock('Symfony\Component\HttpFoundation\Request');
 

@@ -16,7 +16,7 @@ use Oro\Bundle\SearchBundle\Datagrid\Filter\SearchNumberRangeFilter;
 use Oro\Bundle\SearchBundle\Query\Criteria\Comparison;
 use Symfony\Component\Form\FormFactoryInterface;
 
-class FrontendProductPriceFilterTest extends \PHPUnit_Framework_TestCase
+class FrontendProductPriceFilterTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var SearchNumberRangeFilter
@@ -28,10 +28,10 @@ class FrontendProductPriceFilterTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        /* @var $formFactory FormFactoryInterface|\PHPUnit_Framework_MockObject_MockObject */
+        /* @var $formFactory FormFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
         $formFactory = $this->createMock(FormFactoryInterface::class);
 
-        /* @var $filterUtility FilterUtility|\PHPUnit_Framework_MockObject_MockObject */
+        /* @var $filterUtility FilterUtility|\PHPUnit\Framework\MockObject\MockObject */
         $filterUtility = $this->createMock(FilterUtility::class);
 
         $this->filter = new FrontendProductPriceFilter($formFactory, $filterUtility);

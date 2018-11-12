@@ -15,7 +15,7 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
-class QuoteFormSubscriberTest extends \PHPUnit_Framework_TestCase
+class QuoteFormSubscriberTest extends \PHPUnit\Framework\TestCase
 {
     const PRODUCT_SKU = 'test-sku';
     const PRICE1 = 100;
@@ -41,7 +41,7 @@ class QuoteFormSubscriberTest extends \PHPUnit_Framework_TestCase
         ],
     ];
 
-    /** @var QuoteProductPriceProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var QuoteProductPriceProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $provider;
 
     /** @var QuoteFormSubscriber */
@@ -53,7 +53,7 @@ class QuoteFormSubscriberTest extends \PHPUnit_Framework_TestCase
 
         $this->provider = $this->createMock(QuoteProductPriceProvider::class);
 
-        /** @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject $translator */
+        /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject $translator */
         $translator = $this->createMock(TranslatorInterface::class);
         $translator->expects($this->any())->method('trans')->willReturnArgument(0);
 
@@ -81,7 +81,7 @@ class QuoteFormSubscriberTest extends \PHPUnit_Framework_TestCase
         $config = $this->createMock(FormConfigInterface::class);
         $config->expects($this->any())->method('getOptions')->willReturn($options);
 
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock(FormInterface::class);
         $form->expects($this->once())->method('getData')->willReturn($quote);
         $form->expects($this->once())->method('getConfig')->willReturn($config);
@@ -174,7 +174,7 @@ class QuoteFormSubscriberTest extends \PHPUnit_Framework_TestCase
         $config = $this->createMock(FormConfigInterface::class);
         $config->expects($this->any())->method('getOptions')->willReturn([]);
 
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock(FormInterface::class);
         $form->expects($this->once())->method('getData')->willReturn($quote);
         $form->expects($this->any())->method('getConfig')->willReturn($config);
@@ -209,7 +209,7 @@ class QuoteFormSubscriberTest extends \PHPUnit_Framework_TestCase
     /**
      * @param int $id
      *
-     * @return Quote|\PHPUnit_Framework_MockObject_MockObject
+     * @return Quote|\PHPUnit\Framework\MockObject\MockObject
      */
     private function getQuote($id)
     {

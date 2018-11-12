@@ -8,7 +8,7 @@ use Oro\Bundle\ProductBundle\Helper\ProductGrouper\ProductsGrouperFactory;
 use Oro\Bundle\ProductBundle\Helper\ProductGrouper\QuickAddRowGrouper;
 use Oro\Bundle\ProductBundle\Helper\ProductGrouper\UnknownGrouperException;
 
-class ProductsGrouperFactoryTest extends \PHPUnit_Framework_TestCase
+class ProductsGrouperFactoryTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var ProductsGrouperFactory

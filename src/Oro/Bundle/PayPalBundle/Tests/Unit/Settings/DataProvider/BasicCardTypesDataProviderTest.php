@@ -4,7 +4,7 @@ namespace Oro\Bundle\PayPalBundle\Tests\Unit\Settings\DataProvider;
 
 use Oro\Bundle\PayPalBundle\Settings\DataProvider\BasicCardTypesDataProvider;
 
-class BasicCardTypesDataProviderTest extends \PHPUnit_Framework_TestCase
+class BasicCardTypesDataProviderTest extends \PHPUnit\Framework\TestCase
 {
     public function testGetCardTypes()
     {

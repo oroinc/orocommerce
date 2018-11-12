@@ -11,7 +11,7 @@ use Oro\Bundle\PricingBundle\Entity\PriceListSchedule;
 class BuildCombinedPriceListOnScheduleSaveTest extends FormProcessorTestCase
 {
     /**
-     * @var CombinedPriceListActivationPlanBuilder|\PHPUnit_Framework_MockObject_MockObject
+     * @var CombinedPriceListActivationPlanBuilder|\PHPUnit\Framework\MockObject\MockObject
      */
     private $combinedPriceListBuilder;
 

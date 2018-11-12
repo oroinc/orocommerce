@@ -14,20 +14,20 @@ use Oro\Bundle\OrderBundle\Tests\Unit\EventListener\ORM\Stub\OrderStub;
 use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class OrderStatusListenerTest extends \PHPUnit_Framework_TestCase
+class OrderStatusListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /** @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
     protected $registry;
 
-    /** @var OrderConfigurationProviderInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var OrderConfigurationProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $configurationProvider;
 
-    /** @var EntityManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var EntityManager|\PHPUnit\Framework\MockObject\MockObject */
     protected $entityManager;
 
-    /** @var EntityRepository|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var EntityRepository|\PHPUnit\Framework\MockObject\MockObject */
     protected $entityRepository;
 
     /** @var OrderStatusListener */

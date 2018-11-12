@@ -10,17 +10,17 @@ use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
-class SegmentMessageFactoryTest extends \PHPUnit_Framework_TestCase
+class SegmentMessageFactoryTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var SegmentRepository|\PHPUnit_Framework_MockObject_MockObject
+     * @var SegmentRepository|\PHPUnit\Framework\MockObject\MockObject
      */
     private $segmentRepository;
 
     /**
-     * @var RegistryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var RegistryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $registry;
 

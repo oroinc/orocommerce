@@ -15,17 +15,17 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
-class PriceRuleLexemeTriggerHandlerTest extends \PHPUnit_Framework_TestCase
+class PriceRuleLexemeTriggerHandlerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var PriceListTriggerHandler|\PHPUnit_Framework_MockObject_MockObject
+     * @var PriceListTriggerHandler|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $priceListTriggerHandler;
 
     /**
-     * @var RegistryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var RegistryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $registry;
 
@@ -164,5 +164,16 @@ class PriceRuleLexemeTriggerHandlerTest extends \PHPUnit_Framework_TestCase
             [null],
             [new Product()]
         ];
+    }
+
+    public function testAddTriggersByLexemesWithoutLexemes()
+    {
+        $this->registry->expects($this->never())
+            ->method('getManagerForClass');
+
+        $this->priceListTriggerHandler->expects($this->never())
+            ->method('addTriggerForPriceList');
+
+        $this->handler->addTriggersByLexemes([], [new Product()]);
     }
 }

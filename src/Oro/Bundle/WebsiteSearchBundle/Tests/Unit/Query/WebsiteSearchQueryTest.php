@@ -7,15 +7,15 @@ use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\SearchBundle\Query\Result;
 use Oro\Bundle\WebsiteSearchBundle\Query\WebsiteSearchQuery;
 
-class WebsiteSearchQueryTest extends \PHPUnit_Framework_TestCase
+class WebsiteSearchQueryTest extends \PHPUnit\Framework\TestCase
 {
     /** @var WebsiteSearchQuery */
     protected $websiteSearchQuery;
 
-    /** @var EngineInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var EngineInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $engine;
 
-    /** @var Query|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var Query|\PHPUnit\Framework\MockObject\MockObject */
     protected $query;
 
     public function setUp()
@@ -89,21 +89,24 @@ class WebsiteSearchQueryTest extends \PHPUnit_Framework_TestCase
 
     public function testClone()
     {
-        $result1 = new Result($this->query);
-        $result2 = new Result($this->query);
+        $query = new Query();
+        $this->websiteSearchQuery = new WebsiteSearchQuery($this->engine, $query);
+
+        $result1 = new Result($query);
+        $result2 = new Result($query);
 
         $this->engine->expects($this->exactly(2))
             ->method('search')
-            ->with($this->query)
+            ->with($query)
             ->willReturnOnConsecutiveCalls($result1, $result2);
 
         $this->assertSame($result1, $this->websiteSearchQuery->getResult());
-        $this->assertSame($this->query, $this->websiteSearchQuery->getQuery());
+        $this->assertSame($query, $this->websiteSearchQuery->getQuery());
 
         $newQuery = clone $this->websiteSearchQuery;
 
         $this->assertSame($result2, $newQuery->getResult());
-        $this->assertNotSame($this->query, $newQuery->getQuery());
-        $this->assertEquals($this->query, $newQuery->getQuery());
+        $this->assertNotSame($query, $newQuery->getQuery());
+        $this->assertEquals($query, $newQuery->getQuery());
     }
 }

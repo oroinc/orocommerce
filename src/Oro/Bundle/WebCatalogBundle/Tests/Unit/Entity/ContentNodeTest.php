@@ -11,7 +11,7 @@ use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-class ContentNodeTest extends \PHPUnit_Framework_TestCase
+class ContentNodeTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 

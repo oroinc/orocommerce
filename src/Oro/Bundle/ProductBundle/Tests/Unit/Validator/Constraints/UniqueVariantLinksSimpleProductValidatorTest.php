@@ -12,15 +12,15 @@ use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class UniqueVariantLinksSimpleProductValidatorTest extends \PHPUnit_Framework_TestCase
+class UniqueVariantLinksSimpleProductValidatorTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var ValidatorInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ValidatorInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $uniqueVariantLinksProductValidatorMock;
 
     /** @var UniqueVariantLinksSimpleProductValidator */
     private $uniqueVariantLinksSimpleProductValidator;
 
-    /** @var ExecutionContextInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ExecutionContextInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $context;
 
     /**

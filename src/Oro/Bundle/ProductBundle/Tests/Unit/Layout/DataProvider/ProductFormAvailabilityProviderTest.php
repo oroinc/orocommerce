@@ -11,25 +11,25 @@ use Oro\Bundle\UIBundle\Provider\UserAgent;
 use Oro\Bundle\UIBundle\Provider\UserAgentProvider;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class ProductFormAvailabilityProviderTest extends \PHPUnit_Framework_TestCase
+class ProductFormAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     const CONFIG = 'matrix_form_on_product_view';
 
-    /** @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
     private $configManager;
 
-    /** @var ProductMatrixAvailabilityProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ProductMatrixAvailabilityProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $productMatrixAvailabilityProvider;
 
-    /** @var UserAgent|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var UserAgent|\PHPUnit\Framework\MockObject\MockObject */
     private $userAgent;
 
     /** @var ProductFormAvailabilityProvider */
     private $provider;
 
-    /** @var UserAgentProvider|\PHPUnit_Framework_MockObject_MockObject $userAgentProvider */
+    /** @var UserAgentProvider|\PHPUnit\Framework\MockObject\MockObject $userAgentProvider */
     private $userAgentProvider;
 
     /**

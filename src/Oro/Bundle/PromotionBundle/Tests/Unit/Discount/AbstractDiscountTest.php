@@ -8,7 +8,7 @@ use Oro\Bundle\PromotionBundle\Discount\DiscountInterface;
 use Oro\Bundle\PromotionBundle\Discount\Exception\ConfiguredException;
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 
-class AbstractDiscountTest extends \PHPUnit_Framework_TestCase
+class AbstractDiscountTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var DiscountInterface

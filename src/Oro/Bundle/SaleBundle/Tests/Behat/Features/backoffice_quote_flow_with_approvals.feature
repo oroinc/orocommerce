@@ -81,7 +81,8 @@ Feature: Backoffice Quote Flow with Approvals
     And I click "Submit"
     And I click "Save" in modal window
     Then I should see "Quote #2 successfully updated" flash message
-    And I should not see "Send to Customer"
+    And I should see "Send to Customer"
+    And "Send to Customer" button is disabled
     And I should see "Submit for Review"
 
   Scenario: Draft -> Submitted for Review: Quote prices changed
@@ -108,7 +109,7 @@ Feature: Backoffice Quote Flow with Approvals
     And I wait 2 seconds until submit button becomes available
     And I click "Submit"
     And I click "Save" in modal window
-    And I press "Submit for Review"
+    And I click "Submit for Review"
     And I fill form with:
       | Comment | Test comment for submitting |
     And I click "Submit"
@@ -442,7 +443,7 @@ Feature: Backoffice Quote Flow with Approvals
       | Customer Status | N/A      |
 
   Scenario: Create a Quote from RFQ: Internal status: Draft, customer status: N/A, invisible for customer
-    Given I signed in as AmandaRCole@example.org on the store frontend
+    Given I signed in as AmandaRCole@example.org on the store frontend in old session
     And request a quote from shopping list "Shopping List 1" with data:
       | PO Number | PO35 |
 

@@ -6,7 +6,7 @@ use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecordInterface;
 use Oro\Bundle\PricingBundle\Datagrid\PriceListPermissionProvider;
 
-class PriceListPermissionProviderTest extends \PHPUnit_Framework_TestCase
+class PriceListPermissionProviderTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var PriceListPermissionProvider

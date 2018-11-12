@@ -5,7 +5,7 @@ namespace Oro\Bundle\UPSBundle\Tests\Unit\Cache\Lifetime\UPSSettings;
 use Oro\Bundle\UPSBundle\Cache\Lifetime\UPSSettings\LifetimeByInvalidateCacheAtFieldProvider;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport as UPSSettings;
 
-class LifetimeByInvalidateCacheAtFieldProviderTest extends \PHPUnit_Framework_TestCase
+class LifetimeByInvalidateCacheAtFieldProviderTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @internal
@@ -99,7 +99,7 @@ class LifetimeByInvalidateCacheAtFieldProviderTest extends \PHPUnit_Framework_Te
     }
 
     /**
-     * @return UPSSettings|\PHPUnit_Framework_MockObject_MockObject
+     * @return UPSSettings|\PHPUnit\Framework\MockObject\MockObject
      */
     private function createSettingsMock()
     {

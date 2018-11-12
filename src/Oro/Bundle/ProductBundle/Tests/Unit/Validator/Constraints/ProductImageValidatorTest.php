@@ -13,7 +13,7 @@ use Prophecy\Argument;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class ProductImageValidatorTest extends \PHPUnit_Framework_TestCase
+class ProductImageValidatorTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var ProductImageValidator

@@ -15,45 +15,45 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
-class DataStorageComponentProcessorTest extends \PHPUnit_Framework_TestCase
+class DataStorageComponentProcessorTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var UrlGeneratorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var UrlGeneratorInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $router;
 
     /**
-     * @var ProductDataStorage|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProductDataStorage|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $storage;
 
     /**
-     * @var AuthorizationCheckerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var AuthorizationCheckerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $authorizationChecker;
 
     /**
-     * @var TokenAccessorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var TokenAccessorInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $tokenAccessor;
 
     /**
-     * @var Session|\PHPUnit_Framework_MockObject_MockObject
+     * @var Session|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $session;
 
     /**
-     * @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $translator;
 
     /**
-     * @var RequestDataStorageExtension|\PHPUnit_Framework_MockObject_MockObject
+     * @var RequestDataStorageExtension|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $requestDataStorageExtension;
 
     /**
-     * @var FeatureChecker|\PHPUnit_Framework_MockObject_MockObject
+     * @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $featureChecker;
 
@@ -118,12 +118,12 @@ class DataStorageComponentProcessorTest extends \PHPUnit_Framework_TestCase
     {
         $data = [ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [['productSku' => 'sku01']]];
 
-        /** @var Request|\PHPUnit_Framework_MockObject_MockObject $request **/
+        /** @var Request|\PHPUnit\Framework\MockObject\MockObject $request **/
         $request = $this->getMockBuilder(Request::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        /** @var FlashBag|\PHPUnit_Framework_MockObject_MockObject $flashBag **/
+        /** @var FlashBag|\PHPUnit\Framework\MockObject\MockObject $flashBag **/
         $flashBag = $this->getMockBuilder(FlashBag::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -140,7 +140,7 @@ class DataStorageComponentProcessorTest extends \PHPUnit_Framework_TestCase
     {
         $data = [ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [['productSku' => 'sku01']]];
 
-        /** @var Request|\PHPUnit_Framework_MockObject_MockObject $request **/
+        /** @var Request|\PHPUnit\Framework\MockObject\MockObject $request **/
         $request = $this->getMockBuilder(Request::class)
             ->disableOriginalConstructor()
             ->getMock();

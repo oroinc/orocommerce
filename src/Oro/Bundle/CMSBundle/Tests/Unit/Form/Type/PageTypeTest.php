@@ -33,7 +33,7 @@ class PageTypeTest extends FormIntegrationTestCase
     const PAGE_ID = 7;
 
     /**
-     * @var UrlGeneratorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var UrlGeneratorInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $urlGenerator;
 
@@ -45,7 +45,7 @@ class PageTypeTest extends FormIntegrationTestCase
     protected function setUp()
     {
         /**
-         * @var ValidatorInterface|\PHPUnit_Framework_MockObject_MockObject $validator
+         * @var ValidatorInterface|\PHPUnit\Framework\MockObject\MockObject $validator
          */
         $validator = $this->createMock(ValidatorInterface::class);
         $validator->expects($this->any())
@@ -80,7 +80,7 @@ class PageTypeTest extends FormIntegrationTestCase
             ->getMock();
 
         /**
-         * @var \Doctrine\Common\Persistence\ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject $registry
+         * @var \Doctrine\Common\Persistence\ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject $registry
          */
         $registry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
 
@@ -95,7 +95,7 @@ class PageTypeTest extends FormIntegrationTestCase
         $entityIdentifierType = new EntityIdentifierType($registry);
 
         /**
-         * @var \Oro\Bundle\ConfigBundle\Config\ConfigManager|\PHPUnit_Framework_MockObject_MockObject $configManager
+         * @var \Oro\Bundle\ConfigBundle\Config\ConfigManager|\PHPUnit\Framework\MockObject\MockObject $configManager
          */
         $configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
             ->disableOriginalConstructor()

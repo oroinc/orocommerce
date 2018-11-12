@@ -11,10 +11,10 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
 
-class ShippingRuleEnableValidatorTest extends \PHPUnit_Framework_TestCase
+class ShippingRuleEnableValidatorTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ShippingRuleEnabledCheckerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingRuleEnabledCheckerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $ruleEnabledChecker;
 
@@ -24,7 +24,7 @@ class ShippingRuleEnableValidatorTest extends \PHPUnit_Framework_TestCase
     private $constraint;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ExecutionContextInterface
+     * @var \PHPUnit\Framework\MockObject\MockObject|ExecutionContextInterface
      */
     private $context;
 

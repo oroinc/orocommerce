@@ -203,7 +203,6 @@ Example:
 ```
 {@/request}
 
-
 ### customerUser
 
 #### get_subresource
@@ -224,7 +223,7 @@ Example:
 ```JSON
 {
   "data": {
-    "type": "customer_users",
+    "type": "customerusers",
     "id": "1"
   }
 }

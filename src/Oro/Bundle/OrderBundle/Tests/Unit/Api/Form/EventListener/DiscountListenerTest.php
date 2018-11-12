@@ -10,10 +10,10 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 
-class DiscountListenerTest extends \PHPUnit_Framework_TestCase
+class DiscountListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var TotalHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var TotalHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     private $totalHelperMock;
 
@@ -30,7 +30,7 @@ class DiscountListenerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return FormInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return FormInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private function createFormMock()
     {
@@ -38,7 +38,7 @@ class DiscountListenerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return OrderDiscount|\PHPUnit_Framework_MockObject_MockObject
+     * @return OrderDiscount|\PHPUnit\Framework\MockObject\MockObject
      */
     private function createOrderDiscountMock()
     {
@@ -46,7 +46,7 @@ class DiscountListenerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return Order|\PHPUnit_Framework_MockObject_MockObject
+     * @return Order|\PHPUnit\Framework\MockObject\MockObject
      */
     private function createOrderMock()
     {

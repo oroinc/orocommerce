@@ -2,8 +2,10 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Form\Type;
 
+use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\ProductBundle\Autocomplete\ProductVisibilityLimitedSearchHandler;
 use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -99,18 +101,11 @@ abstract class AbstractProductSelectTypeTest extends WebTestCase
      */
     public function testAllDependenciesInjectedException()
     {
-        $requestStack = new RequestStack();
-
-        /** @var ProductManager|\PHPUnit_Framework_MockObject_MockObject $productManager */
-        $productManager = $this->getMockBuilder('Oro\Bundle\ProductBundle\Entity\Manager\ProductManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-
         $searchHandler = new ProductVisibilityLimitedSearchHandler(
-            'Oro\Bundle\ProductBundle\Entity\Product',
-            ['sku'],
-            $requestStack,
-            $productManager
+            Product::class,
+            new RequestStack(),
+            $this->createMock(ProductManager::class),
+            $this->createMock(LocalizationHelper::class)
         );
         $searchHandler->search('test', 1, 10);
     }

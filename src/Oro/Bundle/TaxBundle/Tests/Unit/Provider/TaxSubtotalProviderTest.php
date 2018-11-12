@@ -14,7 +14,7 @@ use Oro\Bundle\TaxBundle\Provider\TaxProviderRegistry;
 use Oro\Bundle\TaxBundle\Provider\TaxSubtotalProvider;
 use Symfony\Component\Translation\TranslatorInterface;
 
-class TaxSubtotalProviderTest extends \PHPUnit_Framework_TestCase
+class TaxSubtotalProviderTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var TaxSubtotalProvider
@@ -22,22 +22,22 @@ class TaxSubtotalProviderTest extends \PHPUnit_Framework_TestCase
     protected $provider;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface
+     * @var \PHPUnit\Framework\MockObject\MockObject|TranslatorInterface
      */
     protected $translator;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|TaxProviderInterface
+     * @var \PHPUnit\Framework\MockObject\MockObject|TaxProviderInterface
      */
     protected $taxProvider;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|TaxFactory
+     * @var \PHPUnit\Framework\MockObject\MockObject|TaxFactory
      */
     protected $taxFactory;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|TaxationSettingsProvider
+     * @var \PHPUnit\Framework\MockObject\MockObject|TaxationSettingsProvider
      */
     protected $taxationSettingsProvider;
 

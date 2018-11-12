@@ -9,7 +9,7 @@ use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use Oro\Bundle\ProductBundle\Model\Builder\QuickAddRowInputParser;
 
-class QuickAddRowInputParserTest extends \PHPUnit_Framework_TestCase
+class QuickAddRowInputParserTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var ManagerRegistry
@@ -17,12 +17,12 @@ class QuickAddRowInputParserTest extends \PHPUnit_Framework_TestCase
     private $registry;
 
     /**
-     * @var ProductUnitRepository|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProductUnitRepository|\PHPUnit\Framework\MockObject\MockObject
      */
     private $productUnitRepository;
 
     /**
-     * @var ProductRepository|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProductRepository|\PHPUnit\Framework\MockObject\MockObject
      */
     private $productRepository;
 

@@ -5,7 +5,7 @@ namespace Oro\Bundle\ShippingBundle\Tests\Unit\Entity;
 use Oro\Bundle\ShippingBundle\Entity\WeightUnit;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-class WeightUnitTest extends \PHPUnit_Framework_TestCase
+class WeightUnitTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 

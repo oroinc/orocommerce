@@ -23,27 +23,27 @@ use Oro\Bundle\ShippingBundle\Model\ShippingOrigin;
 use Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
-class CheckoutPaymentContextFactoryTest extends \PHPUnit_Framework_TestCase
+class CheckoutPaymentContextFactoryTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var CheckoutPaymentContextFactory|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var CheckoutPaymentContextFactory|\PHPUnit\Framework\MockObject\MockObject */
     protected $factory;
 
-    /** @var CheckoutLineItemsManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var CheckoutLineItemsManager|\PHPUnit\Framework\MockObject\MockObject */
     protected $checkoutLineItemsManager;
 
-    /** @var TotalProcessorProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var TotalProcessorProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $totalProcessorProvider;
 
-    /** @var OrderPaymentLineItemConverterInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var OrderPaymentLineItemConverterInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $paymentLineItemConverter;
 
-    /** @var PaymentContextBuilderInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var PaymentContextBuilderInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $contextBuilderMock;
 
-    /** @var PaymentContextBuilderFactoryInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var PaymentContextBuilderFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $paymentContextBuilderFactoryMock;
 
-    /** @var ShippingOriginProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ShippingOriginProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $shippingOriginProvider;
 
     protected function setUp()

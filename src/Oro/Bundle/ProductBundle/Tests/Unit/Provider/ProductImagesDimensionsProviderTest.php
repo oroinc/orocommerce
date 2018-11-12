@@ -8,10 +8,10 @@ use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Entity\ProductImageType;
 use Oro\Bundle\ProductBundle\Provider\ProductImagesDimensionsProvider;
 
-class ProductImagesDimensionsProviderTest extends \PHPUnit_Framework_TestCase
+class ProductImagesDimensionsProviderTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ImageTypeProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var ImageTypeProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $imageTypeProvider;
 
@@ -21,17 +21,17 @@ class ProductImagesDimensionsProviderTest extends \PHPUnit_Framework_TestCase
     protected $productImagesDimensionsProvider;
 
     /**
-     * @var ProductImage|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProductImage|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $productImage;
 
     /**
-     * @var ProductImageType|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProductImageType|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $productImageType;
 
     /**
-     * @var ThemeImageType|\PHPUnit_Framework_MockObject_MockObject
+     * @var ThemeImageType|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $themeImageType;
 

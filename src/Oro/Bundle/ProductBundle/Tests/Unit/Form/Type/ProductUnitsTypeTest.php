@@ -14,7 +14,7 @@ class ProductUnitsTypeTest extends FormIntegrationTestCase
     /** @var  ProductUnitsType $productUnitsType */
     protected $productUnitsType;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|ProductUnitsProvider $productUnitsProvider */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|ProductUnitsProvider $productUnitsProvider */
     protected $productUnitsProvider;
 
     public function setup()

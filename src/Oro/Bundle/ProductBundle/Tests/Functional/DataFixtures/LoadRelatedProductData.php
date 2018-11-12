@@ -44,7 +44,7 @@ class LoadRelatedProductData extends AbstractFixture implements DependentFixture
                 $relatedProduct = $productRepository->findOneBySku($relatedProductSku);
 
                 $productRelation = new RelatedProduct();
-                $productRelation->setProduct($product)->setRelatedProduct($relatedProduct);
+                $productRelation->setProduct($product)->setRelatedItem($relatedProduct);
 
                 $manager->persist($productRelation);
 

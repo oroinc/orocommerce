@@ -43,7 +43,7 @@ class ProductPriceCollectionTypeTest extends FormIntegrationTestCase
     protected $formType;
 
     /**
-     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $registry;
 
@@ -73,19 +73,19 @@ class ProductPriceCollectionTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
-        /** @var AuthorizationCheckerInterface|\PHPUnit_Framework_MockObject_MockObject $authorizationChecker */
+        /** @var AuthorizationCheckerInterface|\PHPUnit\Framework\MockObject\MockObject $authorizationChecker */
         $authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
 
-        /** @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject $authorizationChecker */
+        /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject $authorizationChecker */
         $configManager = $this->createMock(ConfigManager::class);
 
-        /** @var EntityManager|\PHPUnit_Framework_MockObject_MockObject $authorizationChecker */
+        /** @var EntityManager|\PHPUnit\Framework\MockObject\MockObject $authorizationChecker */
         $entityManager = $this->createMock(EntityManager::class);
 
-        /** @var SearchRegistry|\PHPUnit_Framework_MockObject_MockObject $authorizationChecker */
+        /** @var SearchRegistry|\PHPUnit\Framework\MockObject\MockObject $authorizationChecker */
         $searchRegistry = $this->createMock(SearchRegistry::class);
 
-        /** @var ConfigProvider|\PHPUnit_Framework_MockObject_MockObject $authorizationChecker */
+        /** @var ConfigProvider|\PHPUnit\Framework\MockObject\MockObject $authorizationChecker */
         $configProvider = $this->createMock(ConfigProvider::class);
 
         $productUnitSelection = new ProductUnitSelectionTypeStub(

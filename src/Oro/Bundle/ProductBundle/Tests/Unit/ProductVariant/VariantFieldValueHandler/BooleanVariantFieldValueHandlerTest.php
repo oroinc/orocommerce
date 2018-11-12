@@ -5,12 +5,12 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\ProductVariant\VariantFieldValueHa
 use Oro\Bundle\ProductBundle\ProductVariant\VariantFieldValueHandler\BooleanVariantFieldValueHandler;
 use Symfony\Component\Translation\TranslatorInterface;
 
-class BooleanVariantFieldValueHandlerTest extends \PHPUnit_Framework_TestCase
+class BooleanVariantFieldValueHandlerTest extends \PHPUnit\Framework\TestCase
 {
     /** @var BooleanVariantFieldValueHandler */
     private $handler;
 
-    /** @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $translator;
 
     /**

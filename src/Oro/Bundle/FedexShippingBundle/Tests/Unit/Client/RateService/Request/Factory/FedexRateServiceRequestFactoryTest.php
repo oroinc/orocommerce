@@ -30,22 +30,22 @@ class FedexRateServiceRequestFactoryTest extends TestCase
     const PICKUP_TYPE = 'pickup';
 
     /**
-     * @var SymmetricCrypterInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var SymmetricCrypterInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $crypter;
 
     /**
-     * @var FedexPackageSettingsByIntegrationSettingsAndRuleFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var FedexPackageSettingsByIntegrationSettingsAndRuleFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $packageSettingsFactory;
 
     /**
-     * @var FedexPackagesByLineItemsAndPackageSettingsFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var FedexPackagesByLineItemsAndPackageSettingsFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $packagesFactory;
 
     /**
-     * @var ShippingLineItemCollectionBySettingsModifierInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingLineItemCollectionBySettingsModifierInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $convertToFedexUnitsModifier;
 

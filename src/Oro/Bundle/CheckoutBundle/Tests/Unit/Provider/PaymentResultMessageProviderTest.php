@@ -7,9 +7,9 @@ use Oro\Bundle\CheckoutBundle\Provider\PaymentResultMessageProvider;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 
-class PaymentResultMessageProviderTest extends \PHPUnit_Framework_TestCase
+class PaymentResultMessageProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var PaymentMethodProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var PaymentMethodProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $paymentMethodsProvider;
 
     /** @var PaymentResultMessageProvider */

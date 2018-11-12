@@ -9,7 +9,7 @@ use Oro\Bundle\UPSBundle\Connection\Validator\Result\Factory\UpsConnectionValida
 use Oro\Bundle\UPSBundle\Connection\Validator\Result\UpsConnectionValidatorResult;
 use Oro\Bundle\UPSBundle\Connection\Validator\Result\UpsConnectionValidatorResultInterface;
 
-class UpsConnectionValidatorResultFactoryTest extends \PHPUnit_Framework_TestCase
+class UpsConnectionValidatorResultFactoryTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var UpsConnectionValidatorResultFactoryInterface
@@ -31,7 +31,7 @@ class UpsConnectionValidatorResultFactoryTest extends \PHPUnit_Framework_TestCas
         array $upsResponse,
         UpsConnectionValidatorResultInterface $expectedResult
     ) {
-        /** @var RestResponseInterface|\PHPUnit_Framework_MockObject_MockObject $response * */
+        /** @var RestResponseInterface|\PHPUnit\Framework\MockObject\MockObject $response * */
         $response = $this->createMock(RestResponseInterface::class);
         $response->expects(static::once())
             ->method('json')

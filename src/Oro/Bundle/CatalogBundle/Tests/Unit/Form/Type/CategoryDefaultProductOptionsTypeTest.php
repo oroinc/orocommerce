@@ -111,7 +111,7 @@ class CategoryDefaultProductOptionsTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @return CategoryDefaultProductUnitOptionsVisibilityInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return CategoryDefaultProductUnitOptionsVisibilityInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private function getVisibilityMock()
     {

@@ -6,7 +6,7 @@ use Oro\Bundle\ProductBundle\Form\Handler\ProductCreateStepOneHandler;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-class ProductCreateStepOneHandlerTest extends \PHPUnit_Framework_TestCase
+class ProductCreateStepOneHandlerTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var ProductCreateStepOneHandler
@@ -14,12 +14,12 @@ class ProductCreateStepOneHandlerTest extends \PHPUnit_Framework_TestCase
     protected $handler;
 
     /**
-     * @var FormInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var FormInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $form;
 
     /**
-     * @var Request|\PHPUnit_Framework_MockObject_MockObject
+     * @var Request|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $request;
 

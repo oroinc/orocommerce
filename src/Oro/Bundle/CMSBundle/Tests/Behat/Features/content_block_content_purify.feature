@@ -7,16 +7,16 @@ Feature: Content Block content purify
   Scenario: Create new content block with tags in text data
     Given I login as administrator
     And go to Marketing / Content Blocks
-    And press "Create Content Block"
+    And click "Create Content Block"
     And I click "Add Content"
     And fill "Content Block Form" with:
-      |Owner         |Main                         |
-      |Alias         |test_alias                   |
-      |Titles        |Test Title                   |
-      |Enabled       |True                         |
-      |Localization  |English                      |
-      |Website       |Default                      |
-      |Customer Group|Non-Authentificated Visitors |
+      |Owner         |Main                       |
+      |Alias         |test_alias                 |
+      |Titles        |Test Title                 |
+      |Enabled       |True                       |
+      |Localization  |English                    |
+      |Website       |Default                    |
+      |Customer Group|Non-Authenticated Visitors |
       |Content       |<style>div {display: none;}</style><div onclick=\"alert('test');\">Some Content <script>alert('test')</script></div> |
     When I save and close form
     Then I should see "Content block has been saved" flash message

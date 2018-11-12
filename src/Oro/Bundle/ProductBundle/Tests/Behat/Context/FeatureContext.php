@@ -304,7 +304,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     public function iShouldSeePopup($title)
     {
         $popup = $this->spin(function (MinkAwareContext $context) {
-            return $context->getSession()->getPage()->find('css', '.popover-content');
+            return $context->getSession()->getPage()->find('css', '.popover-body');
         });
 
         self::assertNotFalse($popup, 'Popup not found on page');
@@ -684,8 +684,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      */
     public function shouldSeeForProduct($elementNameOrText, $SKU)
     {
-        $productItem = $this->findElementContains('ProductItem', $SKU);
-        self::assertNotNull($productItem, sprintf('Product with SKU "%s" not found', $SKU));
+        $productItem = $this->findProductItem($SKU);
 
         if ($this->isElementVisible($elementNameOrText, $productItem)) {
             return;
@@ -707,8 +706,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      */
     public function shouldNotSeeForProduct($elementNameOrText, $SKU)
     {
-        $productItem = $this->findElementContains('ProductItem', $SKU);
-        self::assertNotNull($productItem, sprintf('product with SKU "%s" not found', $SKU));
+        $productItem = $this->findProductItem($SKU);
 
         $textAndElementPresentedOnPage = $this->isElementVisible($elementNameOrText, $productItem)
             || stripos($productItem->getText(), $elementNameOrText);
@@ -735,8 +733,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         $block = $this->createElement($blockName);
         self::assertTrue($block->isValid(), sprintf('Embedded block "%s" was not found', $blockName));
 
-        $productItem = $this->findElementContains('ProductItem', $SKU, $block);
-        self::assertNotNull($productItem, sprintf('product with SKU "%s" not found', $SKU));
+        $productItem = $this->findProductItem($SKU, $block);
 
         if ($this->isElementVisible($elementName, $productItem)) {
             return;
@@ -759,8 +756,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         $block = $this->createElement($blockName);
         self::assertTrue($block->isValid(), sprintf('Embedded block "%s" was not found', $blockName));
 
-        $productItem = $this->findElementContains('ProductItem', $SKU, $block);
-        self::assertNotNull($productItem, sprintf('product with SKU "%s" not found', $SKU));
+        $productItem = $this->findProductItem($SKU, $block);
 
         $textAndElementPresentedOnPage = $this->isElementVisible($element, $productItem)
             || stripos($productItem->getText(), $element);
@@ -815,8 +811,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      */
     public function clickElementForSelectedProduct($elementName, $SKU)
     {
-        $productItem = $this->findElementContains('ProductItem', $SKU);
-        self::assertNotNull($productItem);
+        $productItem = $this->findProductItem($SKU);
         $element = $this->createElement($elementName, $productItem);
         $element->click();
     }
@@ -903,8 +898,9 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         self::assertTrue($block->isValid(), sprintf('Embedded block "%s" was not found', $blockName));
 
         foreach ($table as $row) {
-            $productItem = $this->findElementContains('EmbeddedProduct', $row['SKU'], $block);
-            self::assertTrue($productItem->isIsset(), sprintf('Product "%s" was not found', $row['SKU']));
+            $needle = current($row);
+            $productItem = $this->findElementContains('EmbeddedProduct', $needle, $block);
+            self::assertTrue($productItem->isIsset(), sprintf('Product "%s" was not found', $needle));
         }
     }
 
@@ -923,8 +919,9 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         self::assertTrue($block->isValid(), sprintf('Embedded block "%s" was not found', $blockName));
 
         foreach ($table as $row) {
-            $productItem = $this->findElementContains('EmbeddedProduct', $row['SKU'], $block);
-            self::assertFalse($productItem->isIsset(), sprintf('Product "%s" should not be present', $row['SKU']));
+            $needle = current($row);
+            $productItem = $this->findElementContains('EmbeddedProduct', $needle, $block);
+            self::assertFalse($productItem->isIsset(), sprintf('Product "%s" should not be present', $needle));
         }
     }
 
@@ -1034,6 +1031,63 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
+     * Example: I should see preview image with alt "alt" for "SKU" product
+     *
+     * @Then /^(?:|I )should see preview image with alt "(?P<alt>[^"]+)" for "(?P<SKU>[^"]*)" product$/
+     *
+     * @param string $alt
+     * @param string $SKU
+     */
+    public function iShouldSeeImageWithAlt($alt, $SKU)
+    {
+        $productItem = $this->findProductItem($SKU);
+
+        $image = $this->createElement('Product Preview Image', $productItem);
+
+        self::assertEquals(
+            $alt,
+            $image->getAttribute('alt'),
+            sprintf('Preview image with alt "%s" not found for product "%s"', $alt, $SKU)
+        );
+    }
+
+    /**
+     * Example: I open product gallery for "SKU" product
+     *
+     * @Then /^(?:|I )open product gallery for "(?P<SKU>[^"]*)" product$/
+     *
+     * @param string $SKU
+     */
+    public function iOpenProductGallery($SKU)
+    {
+        $productItem = $this->findProductItem($SKU);
+
+        $galleryTrigger = $this->createElement('Product Item Gallery Trigger', $productItem);
+
+        self::assertNotEmpty($galleryTrigger, sprintf('Image gallery not found for product "%s"', $SKU));
+
+        $galleryTrigger->click();
+    }
+
+    /**
+     * Example: I should see gallery image with alt "alt"
+     *
+     * @Then /^(?:|I )should see gallery image with alt "(?P<alt>[^"]*)"$/
+     *
+     * @param string $alt
+     */
+    public function iShouldSeeGalleryImageWithAlt($alt)
+    {
+        $galleryWidgetImage = $this->createElement('Popup Gallery Widget Image');
+
+        self::assertEquals(
+            $alt,
+            $galleryWidgetImage->getAttribute('alt'),
+            sprintf('Image with alt "%s" not found in product gallery', $alt)
+        );
+    }
+
+    /**
      * Click on button in matrix order window
      * Example: Given I click "Add to Shopping List" in matrix order window
      * @When /^(?:|I )click "(?P<button>(?:[^"]|\\")*)" in matrix order window$/
@@ -1073,6 +1127,25 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
+     * Checks if multiple choice filter contains expected options in the given order and no other options.
+     *
+     * Example: Then I should see "Address Filter" filter with exact options in frontend product grid:
+     *            | Address 1 |
+     *            | Address 2 |
+     * @When /^(?:|I )should see "(?P<filterName>[^"]+)" filter with exact options in frontend product grid:$/
+     */
+    public function shouldSeeSelectWithOptions($filterName, TableNode $options)
+    {
+        /** @var MultipleChoice $filterItem */
+        $filterItem = $this->getGridFilters()->getFilterItem(
+            'Frontend Product Grid MultipleChoice',
+            $filterName
+        );
+
+        self::assertEquals($options->getColumn(0), $filterItem->getChoices(), 'Filter options are not as expected');
+    }
+
+    /**
      * @return GridFilters|Element
      */
     private function getGridFilters()
@@ -1094,6 +1167,16 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
+     * Activate filter block in frontend product grid
+     *
+     * @When /^(?:|I )check that filter block visible in frontend product grid$/
+     */
+    public function enableGridFilters()
+    {
+        $this->getGridFilters();
+    }
+
+    /**
      * Select a value for product attribute on product update form
      * Example: I fill in product attribute "Color" with "Red"
      *
@@ -1109,5 +1192,19 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         $form
             ->find('css', sprintf('[name="oro_product[%s]"]', $field))
             ->setValue($value);
+    }
+
+    /**
+     * @param string $SKU
+     * @param Element|null $context
+     *
+     * @return Element
+     */
+    private function findProductItem($SKU, Element $context = null): Element
+    {
+        $productItem = $this->findElementContains('ProductItem', $SKU, $context);
+        self::assertNotNull($productItem, sprintf('Product with SKU "%s" not found', $SKU));
+
+        return $productItem;
     }
 }

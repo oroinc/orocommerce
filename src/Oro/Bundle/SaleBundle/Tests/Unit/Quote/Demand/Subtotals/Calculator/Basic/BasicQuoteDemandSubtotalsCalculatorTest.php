@@ -6,10 +6,10 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
 use Oro\Bundle\SaleBundle\Quote\Demand\Subtotals\Calculator\Basic\BasicQuoteDemandSubtotalsCalculator;
 
-class BasicQuoteDemandSubtotalsCalculatorTest extends \PHPUnit_Framework_TestCase
+class BasicQuoteDemandSubtotalsCalculatorTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var TotalProcessorProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var TotalProcessorProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     private $totalProcessorProviderMock;
 

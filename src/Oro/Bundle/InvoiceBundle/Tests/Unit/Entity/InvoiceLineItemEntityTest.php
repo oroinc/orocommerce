@@ -9,7 +9,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-class InvoiceLineItemEntityTest extends \PHPUnit_Framework_TestCase
+class InvoiceLineItemEntityTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 

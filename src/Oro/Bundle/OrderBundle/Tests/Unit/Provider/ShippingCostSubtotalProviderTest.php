@@ -17,12 +17,12 @@ class ShippingCostSubtotalProviderTest extends AbstractSubtotalProviderTest
     protected $provider;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface
+     * @var \PHPUnit\Framework\MockObject\MockObject|TranslatorInterface
      */
     protected $translator;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|RoundingServiceInterface
+     * @var \PHPUnit\Framework\MockObject\MockObject|RoundingServiceInterface
      */
     protected $roundingService;
 

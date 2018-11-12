@@ -45,7 +45,7 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
     protected $doctrineHelper;
 
     /**
-     * @var AbstractSearchMappingProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var AbstractSearchMappingProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $mappingProviderMock;
 

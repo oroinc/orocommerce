@@ -7,7 +7,7 @@ use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\WebCatalogBundle\Cache\ResolvedData\ResolvedContentNode;
 use Oro\Bundle\WebCatalogBundle\Cache\ResolvedData\ResolvedContentVariant;
 
-class ResolvedContentNodeTest extends \PHPUnit_Framework_TestCase
+class ResolvedContentNodeTest extends \PHPUnit\Framework\TestCase
 {
     public function testAccessors()
     {

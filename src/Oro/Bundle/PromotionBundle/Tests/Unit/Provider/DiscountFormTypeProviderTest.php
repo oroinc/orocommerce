@@ -4,7 +4,7 @@ namespace Oro\Bundle\PromotionBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\PromotionBundle\Provider\DiscountFormTypeProvider;
 
-class DiscountFormTypeProviderTest extends \PHPUnit_Framework_TestCase
+class DiscountFormTypeProviderTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var DiscountFormTypeProvider

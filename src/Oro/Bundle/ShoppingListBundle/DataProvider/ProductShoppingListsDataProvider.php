@@ -7,12 +7,15 @@ use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
+use Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListManager;
 
+/**
+ * Provides info about shopping lists contains a specific products.
+ */
 class ProductShoppingListsDataProvider
 {
-    /** @var ShoppingListManager */
-    protected $shoppingListManager;
+    /** @var CurrentShoppingListManager */
+    protected $currentShoppingListManager;
 
     /** @var LineItemRepository */
     protected $lineItemRepository;
@@ -21,16 +24,16 @@ class ProductShoppingListsDataProvider
     protected $aclHelper;
 
     /**
-     * @param ShoppingListManager $shoppingListManager
+     * @param CurrentShoppingListManager $currentShoppingListManager
      * @param LineItemRepository $lineItemRepository
      * @param AclHelper $aclHelper
      */
     public function __construct(
-        ShoppingListManager $shoppingListManager,
+        CurrentShoppingListManager $currentShoppingListManager,
         LineItemRepository $lineItemRepository,
         AclHelper $aclHelper
     ) {
-        $this->shoppingListManager = $shoppingListManager;
+        $this->currentShoppingListManager = $currentShoppingListManager;
         $this->lineItemRepository = $lineItemRepository;
         $this->aclHelper = $aclHelper;
     }
@@ -54,7 +57,7 @@ class ProductShoppingListsDataProvider
      */
     public function getProductsUnitsQuantity(array $products)
     {
-        $currentShoppingList = $this->shoppingListManager->getCurrent();
+        $currentShoppingList = $this->currentShoppingListManager->getCurrent();
 
         if (!$currentShoppingList) {
             return [];

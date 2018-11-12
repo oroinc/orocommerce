@@ -154,20 +154,20 @@ abstract class AbstractConfigSubscriberTest extends FormIntegrationTestCase
             ->method('getRoundType')
             ->willReturn(RoundingServiceInterface::ROUND_HALF_UP);
         
-        /** @var \PHPUnit_Framework_MockObject_MockObject|CurrencyProviderInterface */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|CurrencyProviderInterface */
         $currencyProvider = $this->getMockBuilder(CurrencyProviderInterface::class)
             ->disableOriginalConstructor()->getMockForAbstractClass();
         $currencyProvider->expects($this->any())
             ->method('getCurrencyList')
             ->willReturn(['USD']);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|TranslatableEntityType */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|TranslatableEntityType */
         $translatableEntity = $this->getMockBuilder(TranslatableEntityType::class)
             ->setMethods(['configureOptions', 'buildForm'])
             ->disableOriginalConstructor()
             ->getMock();
         
-        /** @var \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|TranslatorInterface */
         $translator = $this->createMock(TranslatorInterface::class);
         $translator->expects(static::any())
             ->method('trans')
@@ -175,16 +175,16 @@ abstract class AbstractConfigSubscriberTest extends FormIntegrationTestCase
                 return $message.'_translated';
             }));
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|ShippingMethodChoicesProviderInterface */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|ShippingMethodChoicesProviderInterface */
         $choicesProvider = $this->createMock(ShippingMethodChoicesProviderInterface::class);
         $choicesProvider->expects($this->any())
             ->method('getMethods')
             ->willReturn([]);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|ShippingMethodIconProviderInterface */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|ShippingMethodIconProviderInterface */
         $iconProvider = $this->createMock(ShippingMethodIconProviderInterface::class);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|AssetHelper */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|AssetHelper */
         $assetHelper = $this->createMock(AssetHelper::class);
 
         return [

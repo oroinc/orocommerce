@@ -9,7 +9,7 @@ use Oro\Bundle\ProductBundle\Provider\BrandEntityNameProvider;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Brand;
 use Oro\Bundle\TranslationBundle\Entity\Language;
 
-class BrandEntityNameProviderTest extends \PHPUnit_Framework_TestCase
+class BrandEntityNameProviderTest extends \PHPUnit\Framework\TestCase
 {
     /** @var BrandEntityNameProvider */
     protected $provider;

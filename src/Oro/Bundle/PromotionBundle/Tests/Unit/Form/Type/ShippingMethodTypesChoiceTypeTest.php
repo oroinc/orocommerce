@@ -17,17 +17,17 @@ use Symfony\Component\Asset\Packages;
 class ShippingMethodTypesChoiceTypeTest extends FormIntegrationTestCase
 {
     /**
-     * @var ShippingMethodProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $provider;
 
     /**
-     * @var ShippingMethodIconProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingMethodIconProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $iconProvider;
 
     /**
-     * @var Packages|\PHPUnit_Framework_MockObject_MockObject
+     * @var Packages|\PHPUnit\Framework\MockObject\MockObject
      */
     private $assetHelper;
 

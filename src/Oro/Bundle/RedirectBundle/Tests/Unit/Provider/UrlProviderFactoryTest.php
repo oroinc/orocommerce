@@ -5,7 +5,7 @@ namespace Oro\Bundle\RedirectBundle\Tests\Unit\Provider;
 use Oro\Bundle\RedirectBundle\Provider\SluggableUrlProviderInterface;
 use Oro\Bundle\RedirectBundle\Provider\UrlProviderFactory;
 
-class UrlProviderFactoryTest extends \PHPUnit_Framework_TestCase
+class UrlProviderFactoryTest extends \PHPUnit\Framework\TestCase
 {
     public function testGetKnown()
     {

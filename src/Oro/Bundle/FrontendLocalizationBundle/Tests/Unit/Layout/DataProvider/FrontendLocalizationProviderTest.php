@@ -8,10 +8,10 @@ use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\TranslationBundle\Entity\Language;
 use Oro\Component\Layout\ContextInterface;
 
-class FrontendLocalizationProviderTest extends \PHPUnit_Framework_TestCase
+class FrontendLocalizationProviderTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var UserLocalizationManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var UserLocalizationManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $userLocalizationManager;
 

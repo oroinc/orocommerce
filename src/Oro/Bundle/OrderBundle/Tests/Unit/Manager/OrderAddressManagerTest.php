@@ -22,10 +22,10 @@ class OrderAddressManagerTest extends AbstractAddressManagerTest
     /** @var OrderAddressManager */
     protected $manager;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|OrderAddressProvider */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|OrderAddressProvider */
     protected $provider;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|ManagerRegistry */
     protected $registry;
 
     protected function setUp()
@@ -314,7 +314,7 @@ class OrderAddressManagerTest extends AbstractAddressManagerTest
     /**
      * @param array $addresses
      * @param array $types
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     protected function getManager(array $addresses, $types)
     {

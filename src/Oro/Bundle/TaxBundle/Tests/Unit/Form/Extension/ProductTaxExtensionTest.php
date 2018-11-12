@@ -15,7 +15,7 @@ use Symfony\Component\Form\FormInterface;
 class ProductTaxExtensionTest extends AbstractTaxExtensionTest
 {
     /**
-     * @var ProductTaxCodeRepository|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProductTaxCodeRepository|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $entityRepository;
 
@@ -41,7 +41,7 @@ class ProductTaxExtensionTest extends AbstractTaxExtensionTest
     {
         $productTaxExtension = $this->getExtension();
 
-        /** @var FormBuilderInterface|\PHPUnit_Framework_MockObject_MockObject $builder */
+        /** @var FormBuilderInterface|\PHPUnit\Framework\MockObject\MockObject $builder */
         $builder = $this->createMock('Symfony\Component\Form\FormBuilderInterface');
         $builder->expects($this->once())
             ->method('add')
@@ -74,7 +74,7 @@ class ProductTaxExtensionTest extends AbstractTaxExtensionTest
         $event = $this->createEvent($product);
         $product->method('getTaxCode')->willReturn($taxCode);
 
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $taxCodeForm */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $taxCodeForm */
         $taxCodeForm = $event->getForm()->get('taxCode');
         $taxCodeForm->expects($this->once())
             ->method('setData')
@@ -113,7 +113,7 @@ class ProductTaxExtensionTest extends AbstractTaxExtensionTest
     /**
      * @param int|null $id
      *
-     * @return Product|\PHPUnit_Framework_MockObject_MockObject
+     * @return Product|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function createTaxCodeTarget($id = null)
     {

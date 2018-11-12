@@ -7,7 +7,7 @@ use Oro\Bundle\CatalogBundle\Model\CategoryUnitPrecision;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-class CategoryDefaultProductOptionsTest extends \PHPUnit_Framework_TestCase
+class CategoryDefaultProductOptionsTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 

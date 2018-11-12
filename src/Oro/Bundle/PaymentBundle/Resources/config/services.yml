@@ -24,6 +24,12 @@ services:
         arguments:
             - "@oro_payment.payment_method_view.composite_provider"
 
+    oro_payment.formatter.payment_method_options:
+        class: 'Oro\Bundle\PaymentBundle\Formatter\PaymentMethodOptionsFormatter'
+        arguments:
+            - '@oro_payment.payment_method_view.composite_provider'
+            - '@event_dispatcher'
+
     oro_payment.twig.payment_method_extension:
         class: 'Oro\Bundle\PaymentBundle\Twig\PaymentMethodExtension'
         public: false
@@ -77,7 +83,7 @@ services:
         class: 'Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider'
         arguments:
             - '@oro_api.doctrine_helper'
-            - '@security.token_storage'
+            - '@oro_customer.security.customer_user_provider'
             - '@event_dispatcher'
             - '%oro_payment.entity.payment_transaction.class%'
         calls:
@@ -305,3 +311,10 @@ services:
         arguments:
             - '@oro_payment.enabled_rule_filtration.basic_service'
             - '@oro_payment.repository.payment_methods_configs_rule'
+
+    oro_payment.provider.payment_method_object_variables:
+        class: 'Oro\Bundle\PaymentBundle\Provider\PaymentMethodObjectVariablesProvider'
+        lazy: true
+        public: false
+        tags:
+            - { name: oro_email.emailtemplate.variable_provider, scope: entity }

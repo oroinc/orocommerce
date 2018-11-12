@@ -5,7 +5,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\DependencyInjection\CompilerPass;
 use Oro\Bundle\ProductBundle\DependencyInjection\CompilerPass\ProductCollectionCompilerPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-class ProductCollectionCompilerPassTest extends \PHPUnit_Framework_TestCase
+class ProductCollectionCompilerPassTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var ProductCollectionCompilerPass
@@ -13,7 +13,7 @@ class ProductCollectionCompilerPassTest extends \PHPUnit_Framework_TestCase
     private $productCollectionCompilerPass;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ContainerBuilder
+     * @var \PHPUnit\Framework\MockObject\MockObject|ContainerBuilder
      */
     private $container;
 

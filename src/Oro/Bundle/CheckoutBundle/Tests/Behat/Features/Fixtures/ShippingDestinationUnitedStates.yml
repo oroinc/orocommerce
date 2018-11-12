@@ -1,0 +1,31 @@
+Oro\Bundle\RuleBundle\Entity\Rule:
+    shippingRule:
+        name: 'Shipping Rules US'
+        enabled: true
+        sortOrder: 1
+
+Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig:
+    shippingMethodTypeConfig:
+        type: 'primary'
+        enabled: true
+        options:
+            price: 1.5
+            type: 'per_order'
+            handling_fee: 1.5
+
+Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig:
+    shippingMethodConfig:
+        method: '<("flat_rate_".@flatRateIntegration->id)>'
+        typeConfigs: ['@shippingMethodTypeConfig']
+        methodConfigsRule: '@shippingMethodsConfigsRule'
+
+Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule:
+    shippingMethodsConfigsRule:
+        rule: '@shippingRule'
+        currency: 'USD'
+        organization: '@organization'
+        destinations: ['@shippingMethodsConfigsRuleDestination']
+
+Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestination:
+    shippingMethodsConfigsRuleDestination:
+        country: '@united_states'

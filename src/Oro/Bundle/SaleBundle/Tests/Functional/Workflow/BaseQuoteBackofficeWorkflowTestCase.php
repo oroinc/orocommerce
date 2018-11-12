@@ -5,8 +5,6 @@ namespace Oro\Bundle\SaleBundle\Tests\Functional\Workflow;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\UserBundle\Entity\Role;
-use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\WorkflowBundle\Model\TransitionManager;
 use Oro\Bundle\WorkflowBundle\Model\Workflow;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
@@ -341,30 +339,6 @@ abstract class BaseQuoteBackofficeWorkflowTestCase extends WebTestCase
     {
         $this->manager->activateWorkflow(static::WORKFLOW_NAME);
         $this->manager->startWorkflow(static::WORKFLOW_NAME, $this->quote);
-    }
-
-    /**
-     * @param string $capability
-     * @param bool $value
-     */
-    protected function setCapabilityPermission($capability, $value)
-    {
-        $aclManager = $this->getContainer()->get('oro_security.acl.manager');
-
-        $role = $this->getContainer()
-            ->get('doctrine')
-            ->getManagerForClass(Role::class)
-            ->getRepository(Role::class)
-            ->findOneBy(['role' => User::ROLE_ADMINISTRATOR]);
-
-        $sid = $aclManager->getSid($role);
-        $oid = $aclManager->getOid('action:' . $capability);
-
-        $builder = $aclManager->getMaskBuilder($oid);
-        $mask = $value ? $builder->reset()->add('EXECUTE')->get() : $builder->reset()->get();
-
-        $aclManager->setPermission($sid, $oid, $mask, true);
-        $aclManager->flush();
     }
 
     /**

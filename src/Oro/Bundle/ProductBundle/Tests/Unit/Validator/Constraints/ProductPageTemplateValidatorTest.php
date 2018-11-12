@@ -9,22 +9,22 @@ use Oro\Bundle\ProductBundle\Validator\Constraints\ProductPageTemplateValidator;
 use Oro\Component\Layout\Extension\Theme\Manager\PageTemplatesManager;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
-class ProductPageTemplateValidatorTest extends \PHPUnit_Framework_TestCase
+class ProductPageTemplateValidatorTest extends \PHPUnit\Framework\TestCase
 {
     protected $validChoices = ["short", "two-columns", "list"];
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|PageTemplatesManager
+     * @var \PHPUnit\Framework\MockObject\MockObject|PageTemplatesManager
      */
     protected $pageTemplatesManager;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ExecutionContextInterface
+     * @var \PHPUnit\Framework\MockObject\MockObject|ExecutionContextInterface
      */
     protected $context;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ProductPageTemplate
+     * @var \PHPUnit\Framework\MockObject\MockObject|ProductPageTemplate
      */
     protected $constraint;
 

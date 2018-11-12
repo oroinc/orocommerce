@@ -9,10 +9,10 @@ use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderInterface;
 use Oro\Bundle\WebsiteSearchBundle\Resolver\QueryPlaceholderResolver;
 
-class QueryPlaceholderResolverTest extends \PHPUnit_Framework_TestCase
+class QueryPlaceholderResolverTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var PlaceholderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var PlaceholderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $placeholder;
 

@@ -10,34 +10,34 @@ use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\SecurityBundle\Authentication\Token\UsernamePasswordOrganizationToken;
 use Oro\Bundle\ShoppingListBundle\Datagrid\Provider\MassAction\AddLineItemMassActionProvider;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
+use Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListManager;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Security\Core\Authentication\Token\AbstractToken;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
-class AddLineItemMassActionProviderTest extends \PHPUnit_Framework_TestCase
+class AddLineItemMassActionProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|ShoppingListManager */
-    protected $manager;
+    /** @var \PHPUnit\Framework\MockObject\MockObject|CurrentShoppingListManager */
+    protected $currentShoppingListManager;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|TranslatorInterface */
     protected $translator;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|TokenStorageInterface */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|TokenStorageInterface */
     protected $tokenStorage;
 
     /** @var AddLineItemMassActionProvider */
     protected $provider;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|FeatureChecker */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|FeatureChecker */
     protected $featureChecker;
 
     protected function setUp()
     {
-        $this->manager = $this->createMock(ShoppingListManager::class);
+        $this->currentShoppingListManager = $this->createMock(CurrentShoppingListManager::class);
         $this->translator = $this->createMock(TranslatorInterface::class);
         $this->tokenStorage = $this->createMock(TokenStorageInterface::class);
         $this->featureChecker = $this->createMock(FeatureChecker::class);
@@ -48,14 +48,13 @@ class AddLineItemMassActionProviderTest extends \PHPUnit_Framework_TestCase
                 return $label;
             });
 
-        $this->provider = new AddLineItemMassActionProvider($this->manager, $this->translator, $this->tokenStorage);
+        $this->provider = new AddLineItemMassActionProvider(
+            $this->currentShoppingListManager,
+            $this->translator,
+            $this->tokenStorage
+        );
         $this->provider->setFeatureChecker($this->featureChecker);
         $this->provider->addFeature('shopping_list_create');
-    }
-
-    protected function tearDown()
-    {
-        unset($this->provider, $this->manager, $this->translator);
     }
 
     /**
@@ -85,10 +84,10 @@ class AddLineItemMassActionProviderTest extends \PHPUnit_Framework_TestCase
             ->willReturn($token);
 
         if ($isGuest) {
-            $this->manager->expects($this->never())
+            $this->currentShoppingListManager->expects($this->never())
                 ->method('getShoppingLists');
         } else {
-            $this->manager->expects($this->once())
+            $this->currentShoppingListManager->expects($this->once())
                 ->method('getShoppingLists')
                 ->willReturn($shoppingLists);
         }
@@ -306,7 +305,7 @@ class AddLineItemMassActionProviderTest extends \PHPUnit_Framework_TestCase
             $this->createShoppingList(2),
         ];
 
-        $this->manager->expects($this->once())
+        $this->currentShoppingListManager->expects($this->once())
             ->method('getShoppingLists')
             ->willReturn($shoppingLists);
 
@@ -326,7 +325,7 @@ class AddLineItemMassActionProviderTest extends \PHPUnit_Framework_TestCase
             ->method('getToken')
             ->willReturn($token);
 
-        $this->manager
+        $this->currentShoppingListManager
             ->expects($this->never())
             ->method('getShoppingLists');
 

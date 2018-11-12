@@ -4,7 +4,7 @@ namespace Oro\Bundle\TaxBundle\Tests\Unit\Migrations;
 
 use Oro\Bundle\TaxBundle\Migrations\ZipCodeRangeHelper;
 
-class ZipCodeRangeHelperTest extends \PHPUnit_Framework_TestCase
+class ZipCodeRangeHelperTest extends \PHPUnit\Framework\TestCase
 {
     const JURISDICTION_ID = 1;
     const TIME = 'time';

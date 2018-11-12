@@ -132,12 +132,11 @@ workflows:
                                     state2: $.result.savedCheckoutState
                 actions:
                     - '@run_action_group':
-                        action_group: b2b_flow_checkout_update_billing_address
+                        action_group: b2b_flow_checkout_update_guest_customer_user
                         parameters_mapping:
-                            checkout: $checkout
-                            disallow_shipping_address_edit: $disallow_shipping_address_edit
-                        results:
-                            data.billing_address_has_shipping: $.billing_address_has_shipping
+                          checkout: $checkout
+                          email: $email
+                          billing_address: $billing_address
 
                     - '@run_action_group':
                         action_group: b2b_flow_checkout_create_guest_customer_user
@@ -145,6 +144,14 @@ workflows:
                             checkout: $checkout
                             email: $email
                             billing_address: $billing_address
+
+                    - '@run_action_group':
+                        action_group: b2b_flow_checkout_update_billing_address
+                        parameters_mapping:
+                          checkout: $checkout
+                          disallow_shipping_address_edit: $disallow_shipping_address_edit
+                        results:
+                          data.billing_address_has_shipping: $.billing_address_has_shipping
 
                     - '@generate_checkout_state_snapshot':
                         entity: $checkout

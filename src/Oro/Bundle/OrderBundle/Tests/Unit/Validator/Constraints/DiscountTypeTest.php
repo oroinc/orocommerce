@@ -8,7 +8,7 @@ use Oro\Bundle\OrderBundle\Validator\Constraints\DiscountTypeValidator;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
-class DiscountTypeTest extends \PHPUnit_Framework_TestCase
+class DiscountTypeTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var DiscountType
@@ -34,7 +34,7 @@ class DiscountTypeTest extends \PHPUnit_Framework_TestCase
      */
     public function testValidateException()
     {
-        /** @var ExecutionContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
+        /** @var ExecutionContextInterface|\PHPUnit\Framework\MockObject\MockObject $context */
         $context = $this->createMock(ExecutionContextInterface::class);
         $validator = $this->getValidator();
         $validator->initialize($context);
@@ -48,7 +48,7 @@ class DiscountTypeTest extends \PHPUnit_Framework_TestCase
      */
     public function testValidate($value, $expectedViolationMessage = null)
     {
-        /** @var ExecutionContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
+        /** @var ExecutionContextInterface|\PHPUnit\Framework\MockObject\MockObject $context */
         $context = $this->createMock(ExecutionContextInterface::class);
         $validator = $this->getValidator();
         $validator->initialize($context);

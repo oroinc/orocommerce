@@ -2,13 +2,15 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Provider;
 
-use Oro\Bundle\SearchBundle\Tests\Unit\Provider\AbstractSearchMappingProviderTest;
 use Oro\Bundle\WebsiteSearchBundle\Event\WebsiteSearchMappingEvent;
 use Oro\Bundle\WebsiteSearchBundle\Loader\ConfigurationLoaderInterface;
 use Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchMappingProvider;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class WebsiteSearchMappingProviderTest extends AbstractSearchMappingProviderTest
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
+class WebsiteSearchMappingProviderTest extends \PHPUnit\Framework\TestCase
 {
     /** @var array */
     protected $testMapping = [
@@ -29,10 +31,10 @@ class WebsiteSearchMappingProviderTest extends AbstractSearchMappingProviderTest
         ]
     ];
 
-    /** @var ConfigurationLoaderInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ConfigurationLoaderInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $mappingConfigurationLoader;
 
-    /** @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $eventDispatcher;
 
     protected function setUp()
@@ -40,6 +42,108 @@ class WebsiteSearchMappingProviderTest extends AbstractSearchMappingProviderTest
         parent::setUp();
 
         $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
+    }
+
+    public function testGetEntitiesListAliases()
+    {
+        $this->assertEquals(
+            ['Oro\TestBundle\Entity\TestEntity' => 'test_entity'],
+            $this->getProvider()->getEntitiesListAliases()
+        );
+    }
+
+    public function testGetEntityAliases()
+    {
+        $this->assertEquals(
+            ['Oro\TestBundle\Entity\TestEntity' => 'test_entity'],
+            $this->getProvider()->getEntityAliases(['Oro\TestBundle\Entity\TestEntity'])
+        );
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage The search alias for the entity "Oro\TestBundle\Entity\UnknownEntity" not found.
+     */
+    public function testGetEntityAliasesForUnknownEntity()
+    {
+        $this->getProvider()->getEntityAliases(
+            ['Oro\TestBundle\Entity\TestEntity', 'Oro\TestBundle\Entity\UnknownEntity']
+        );
+    }
+
+    public function testGetEntityAliasesForEmptyClassNames()
+    {
+        $this->assertEquals(
+            ['Oro\TestBundle\Entity\TestEntity' => 'test_entity'],
+            $this->getProvider()->getEntityAliases()
+        );
+    }
+
+    public function testGetEntityAlias()
+    {
+        $this->assertEquals(
+            'test_entity',
+            $this->getProvider()->getEntityAlias('Oro\TestBundle\Entity\TestEntity')
+        );
+    }
+
+    public function testGetEntityAliasForUnknownEntity()
+    {
+        $this->assertNull(
+            $this->getProvider()->getEntityAlias('Oro\TestBundle\Entity\UnknownEntity')
+        );
+    }
+
+    public function testGetEntityClasses()
+    {
+        $this->assertEquals(
+            ['Oro\TestBundle\Entity\TestEntity'],
+            $this->getProvider()->getEntityClasses()
+        );
+    }
+
+    public function testIsClassSupported()
+    {
+        $provider = $this->getProvider();
+
+        $this->assertTrue($provider->isClassSupported('Oro\TestBundle\Entity\TestEntity'));
+        $this->assertFalse($provider->isClassSupported('Oro\TestBundle\Entity\BadEntity'));
+    }
+
+    public function testHasFieldsMapping()
+    {
+        $provider = $this->getProvider();
+
+        $this->assertTrue($provider->hasFieldsMapping('Oro\TestBundle\Entity\TestEntity'));
+        $this->assertFalse($provider->hasFieldsMapping('Oro\TestBundle\Entity\BadEntity'));
+    }
+
+    public function testGetEntityMapParameter()
+    {
+        $provider = $this->getProvider();
+
+        $this->assertEquals(
+            'test_entity',
+            $provider->getEntityMapParameter('Oro\TestBundle\Entity\TestEntity', 'alias')
+        );
+        $this->assertFalse(
+            $provider->getEntityMapParameter('Oro\TestBundle\Entity\TestEntity', 'badParameter', false)
+        );
+    }
+
+    public function testGetEntityClass()
+    {
+        $this->assertEquals(
+            'Oro\TestBundle\Entity\TestEntity',
+            $this->getProvider()->getEntityClass('test_entity')
+        );
+    }
+
+    public function testGetEntityClassForUnknownAlias()
+    {
+        $this->assertNull(
+            $this->getProvider()->getEntityClass('unknown_entity')
+        );
     }
 
     public function testGetMappingConfig()
@@ -166,7 +270,7 @@ class WebsiteSearchMappingProviderTest extends AbstractSearchMappingProviderTest
     }
 
     /**
-     * {@inheritdoc}
+     * @return WebsiteSearchMappingProvider
      */
     protected function getProvider()
     {

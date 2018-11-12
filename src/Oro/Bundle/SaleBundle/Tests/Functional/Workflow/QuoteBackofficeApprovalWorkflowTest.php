@@ -3,9 +3,13 @@
 namespace Oro\Bundle\SaleBundle\Tests\Functional\Workflow;
 
 use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData;
+use Oro\Bundle\SecurityBundle\Test\Functional\RolePermissionExtension;
+use Oro\Bundle\UserBundle\Entity\User;
 
 class QuoteBackofficeApprovalWorkflowTest extends BaseQuoteBackofficeWorkflowTestCase
 {
+    use RolePermissionExtension;
+
     const WORKFLOW_NAME = 'b2b_quote_backoffice_approvals';
     const WORKFLOW_TITLE = 'Backoffice Quote Flow with Approvals';
     const WORKFLOW_BUTTONS = [
@@ -59,8 +63,8 @@ class QuoteBackofficeApprovalWorkflowTest extends BaseQuoteBackofficeWorkflowTes
     {
         $this->assertSubmitForReviewAndReview();
         $this->transitWithForm('Return', ['oro_workflow_transition[comment]' => 'test submit comment']);
-        $this->setCapabilityPermission('oro_quote_review_and_approve', false);
-        $this->assertButtonsAvailable(['Edit', 'Clone', 'Delete', 'Submit for Review']);
+        $this->updateRolePermissionForAction(User::ROLE_ADMINISTRATOR, 'oro_quote_review_and_approve', false);
+        $this->assertButtonsAvailable(['Edit', 'Clone', 'Delete', 'Submit for Review', 'Send to Customer']);
     }
 
     public function testReviewSendToCustomer()
@@ -71,7 +75,7 @@ class QuoteBackofficeApprovalWorkflowTest extends BaseQuoteBackofficeWorkflowTes
             ['oro_workflow_transition[email][to]' => 'test_email@test.tst']
         );
         $this->assertStatuses('sent_to_customer', 'open');
-        $this->setCapabilityPermission('oro_quote_review_and_approve', false);
+        $this->updateRolePermissionForAction(User::ROLE_ADMINISTRATOR, 'oro_quote_review_and_approve', false);
         $this->assertButtonsAvailable(['Expire', 'Cancel', 'Delete', 'Create new Quote']);
     }
 
@@ -80,7 +84,7 @@ class QuoteBackofficeApprovalWorkflowTest extends BaseQuoteBackofficeWorkflowTes
         $this->assertSubmitForReviewAndReview();
         $this->transitWithForm('Approve', ['oro_workflow_transition[comment]' => 'test_email@test.tst']);
         $this->assertStatuses('reviewed', 'open');
-        $this->setCapabilityPermission('oro_quote_review_and_approve', false);
+        $this->updateRolePermissionForAction(User::ROLE_ADMINISTRATOR, 'oro_quote_review_and_approve', false);
         $this->assertButtonsAvailable(['Send to Customer']);
     }
 
@@ -89,13 +93,13 @@ class QuoteBackofficeApprovalWorkflowTest extends BaseQuoteBackofficeWorkflowTes
         $this->assertSubmitForReviewAndReview();
         $this->transitWithForm('Decline', ['oro_workflow_transition[comment]' => 'test submit comment']);
         $this->assertStatuses('not_approved', 'open');
-        $this->setCapabilityPermission('oro_quote_review_and_approve', false);
+        $this->updateRolePermissionForAction(User::ROLE_ADMINISTRATOR, 'oro_quote_review_and_approve', false);
         $this->assertButtonsAvailable([]);
     }
 
     protected function assertSubmitForReviewAndReview()
     {
-        $this->setCapabilityPermission('oro_quote_review_and_approve', false);
+        $this->updateRolePermissionForAction(User::ROLE_ADMINISTRATOR, 'oro_quote_review_and_approve', false);
         $this->quote = $this->getReference(LoadQuoteData::QUOTE_PRICE_CHANGED);
 
         $workflowItem = $this->manager->getWorkflowItem($this->quote, static::WORKFLOW_NAME);
@@ -105,11 +109,11 @@ class QuoteBackofficeApprovalWorkflowTest extends BaseQuoteBackofficeWorkflowTes
         } else {
             $this->manager->startWorkflow(static::WORKFLOW_NAME, $this->quote);
         }
-        $this->assertButtonsAvailable(['Edit', 'Clone', 'Delete', 'Submit for Review']);
+        $this->assertButtonsAvailable(['Edit', 'Clone', 'Delete', 'Submit for Review', 'Send to Customer']);
         $this->transitWithForm('Submit for Review', ['oro_workflow_transition[comment]' => 'test submit comment']);
         $this->assertStatuses('submitted_for_review', 'open');
         $this->assertButtonsAvailable([]);
-        $this->setCapabilityPermission('oro_quote_review_and_approve', true);
+        $this->updateRolePermissionForAction(User::ROLE_ADMINISTRATOR, 'oro_quote_review_and_approve', true);
         $this->assertButtonsAvailable(['Review']);
         $this->assertBackofficeTransition(
             'Review',

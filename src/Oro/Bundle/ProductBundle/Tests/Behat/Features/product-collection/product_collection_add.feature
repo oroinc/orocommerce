@@ -26,7 +26,7 @@ Feature: Product collection add
   Scenario: Use Advanced Filter
     When I click "Content Variants"
     And I click on "Advanced Filter"
-    And I should see "DRAG TO SELECT"
+    And I should see "Drag And Drop From The Left To Start Working"
     And I drag and drop "Field Condition" on "Drop condition here"
     And I click "Choose a field.."
     And I click on "SKU"

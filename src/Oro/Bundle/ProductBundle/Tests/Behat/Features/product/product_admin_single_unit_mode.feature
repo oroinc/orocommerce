@@ -1,5 +1,4 @@
 @ticket-BB-12801
-
 @fixture-OroProductBundle:ProductsExportFixture.yml
 
 Feature: Product admin single unit mode

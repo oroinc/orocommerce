@@ -6,15 +6,15 @@ use Oro\Bundle\ProductBundle\Service\SingleUnitModeServiceInterface;
 use Oro\Bundle\ProductBundle\Visibility\SingleUnitModeUnitVisibilityDecorator;
 use Oro\Bundle\ProductBundle\Visibility\UnitVisibilityInterface;
 
-class SingleUnitModeUnitVisibilityDecoratorTest extends \PHPUnit_Framework_TestCase
+class SingleUnitModeUnitVisibilityDecoratorTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var UnitVisibilityInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var UnitVisibilityInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $decoratedVisibility;
 
     /**
-     * @var SingleUnitModeServiceInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var SingleUnitModeServiceInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $singleUnitService;
 

@@ -15,15 +15,15 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\Request;
 
-class QuoteFormTemplateDataProviderTest extends \PHPUnit_Framework_TestCase
+class QuoteFormTemplateDataProviderTest extends \PHPUnit\Framework\TestCase
 {
     /** @var EventDispatcherInterface */
     private $dispatcher;
 
-    /** @var QuoteProductPriceProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var QuoteProductPriceProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $productPriceProvider;
 
-    /** @var QuoteAddressSecurityProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var QuoteAddressSecurityProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $addressSecurityProvider;
 
     /** @var QuoteFormTemplateDataProvider */
@@ -106,7 +106,7 @@ class QuoteFormTemplateDataProviderTest extends \PHPUnit_Framework_TestCase
     /**
      * @param string $name
      * @param Quote $quote
-     * @return \PHPUnit_Framework_MockObject_MockObject|FormInterface
+     * @return \PHPUnit\Framework\MockObject\MockObject|FormInterface
      */
     private function createForm($name = 'test_type', Quote $quote = null)
     {
@@ -121,7 +121,7 @@ class QuoteFormTemplateDataProviderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return Request|\PHPUnit_Framework_MockObject_MockObject
+     * @return Request|\PHPUnit\Framework\MockObject\MockObject
      */
     private function createRequest()
     {

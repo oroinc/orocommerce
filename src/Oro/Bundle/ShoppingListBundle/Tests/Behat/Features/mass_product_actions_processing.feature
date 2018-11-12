@@ -67,6 +67,7 @@ Feature: Mass Product Actions processing
     And I fill line item with "PSKU3" in frontend product grid:
       | Quantity | 7    |
       | Unit     | set  |
+    And I click "Header"
     And I click "Add to Shopping List of Amanda" link from mass action dropdown in "Product Frontend Grid"
     Then I should see "1 product was added" flash message
     When I hover on "Shopping Cart"

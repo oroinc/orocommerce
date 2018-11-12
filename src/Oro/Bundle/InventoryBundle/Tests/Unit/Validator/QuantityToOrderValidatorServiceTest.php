@@ -12,10 +12,10 @@ use Symfony\Component\Translation\TranslatorInterface;
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class QuantityToOrderValidatorServiceTest extends \PHPUnit_Framework_TestCase
+class QuantityToOrderValidatorServiceTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var EntityFallbackResolver|\PHPUnit_Framework_MockObject_MockObject
+     * @var EntityFallbackResolver|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $fallbackResolver;
 
@@ -25,7 +25,7 @@ class QuantityToOrderValidatorServiceTest extends \PHPUnit_Framework_TestCase
     protected $quantityToOrderValidatorService;
 
     /**
-     * @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $translator;
 
@@ -96,7 +96,7 @@ class QuantityToOrderValidatorServiceTest extends \PHPUnit_Framework_TestCase
 
     public function testIsMaxLimitLowerThenMinLimitReturnFalseIfNotNumeric()
     {
-        /** @var Product|\PHPUnit_Framework_MockObject_MockObject $product * */
+        /** @var Product|\PHPUnit\Framework\MockObject\MockObject $product * */
         $product = $this->createMock(Product::class);
         $this->fallbackResolver->expects($this->exactly(2))
             ->method('getFallbackValue')
@@ -107,7 +107,7 @@ class QuantityToOrderValidatorServiceTest extends \PHPUnit_Framework_TestCase
 
     public function testIsMaxLimitLowerThenMinLimitReturnFalse()
     {
-        /** @var Product|\PHPUnit_Framework_MockObject_MockObject $product * */
+        /** @var Product|\PHPUnit\Framework\MockObject\MockObject $product * */
         $product = $this->createMock(Product::class);
         $this->fallbackResolver->expects($this->exactly(2))
             ->method('getFallbackValue')
@@ -118,7 +118,7 @@ class QuantityToOrderValidatorServiceTest extends \PHPUnit_Framework_TestCase
 
     public function testIsMaxLimitLowerThenMinLimitReturnTrue()
     {
-        /** @var Product|\PHPUnit_Framework_MockObject_MockObject $product * */
+        /** @var Product|\PHPUnit\Framework\MockObject\MockObject $product * */
         $product = $this->createMock(Product::class);
         $this->fallbackResolver->expects($this->exactly(2))
             ->method('getFallbackValue')
@@ -166,7 +166,7 @@ class QuantityToOrderValidatorServiceTest extends \PHPUnit_Framework_TestCase
 
     public function testGetMinimumLimit()
     {
-        /** @var Product|\PHPUnit_Framework_MockObject_MockObject $product * */
+        /** @var Product|\PHPUnit\Framework\MockObject\MockObject $product * */
         $product = $this->createMock(Product::class);
         $this->fallbackResolver->expects($this->once())
             ->method('getFallbackValue')
@@ -177,7 +177,7 @@ class QuantityToOrderValidatorServiceTest extends \PHPUnit_Framework_TestCase
 
     public function testGetMaximumLimit()
     {
-        /** @var Product|\PHPUnit_Framework_MockObject_MockObject $product * */
+        /** @var Product|\PHPUnit\Framework\MockObject\MockObject $product * */
         $product = $this->createMock(Product::class);
         $this->fallbackResolver->expects($this->once())
             ->method('getFallbackValue')

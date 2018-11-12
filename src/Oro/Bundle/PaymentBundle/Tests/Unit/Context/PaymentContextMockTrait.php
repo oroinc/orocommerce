@@ -5,7 +5,7 @@ namespace Oro\Bundle\PaymentBundle\Tests\Unit\Context;
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 
 /**
- * @method \PHPUnit_Framework_MockObject_MockObject createMock(string $originalClassName)
+ * @method \PHPUnit\Framework\MockObject\MockObject createMock(string $originalClassName)
  */
 trait PaymentContextMockTrait
 {

@@ -23,23 +23,23 @@ use Oro\Bundle\PricingBundle\Event\CombinedPriceList\WebsiteCPLUpdateEvent;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class CheckoutSubtotalListenerTest extends \PHPUnit_Framework_TestCase
+class CheckoutSubtotalListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /** @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
     protected $registry;
 
-    /** @var ObjectRepository|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ObjectRepository|\PHPUnit\Framework\MockObject\MockObject */
     protected $checkoutRepository;
 
-    /** @var ObjectManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ObjectManager|\PHPUnit\Framework\MockObject\MockObject */
     protected $entityManager;
 
-    /** @var CheckoutSubtotalRepository|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var CheckoutSubtotalRepository|\PHPUnit\Framework\MockObject\MockObject */
     protected $checkoutSubtotalRepository;
 
-    /** @var MessageProducerInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $messageProducer;
 
     /** @var CheckoutSubtotalListener */

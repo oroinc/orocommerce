@@ -18,7 +18,7 @@ use Oro\Bundle\SaleBundle\Provider\QuoteProductPriceProvider;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class QuoteProductPriceProviderTest extends \PHPUnit_Framework_TestCase
+class QuoteProductPriceProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
@@ -30,12 +30,12 @@ class QuoteProductPriceProviderTest extends \PHPUnit_Framework_TestCase
     protected $quoteProductPriceProvider;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ProductPriceProvider
+     * @var \PHPUnit\Framework\MockObject\MockObject|ProductPriceProvider
      */
     protected $productPriceProvider;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|PriceListTreeHandler
+     * @var \PHPUnit\Framework\MockObject\MockObject|PriceListTreeHandler
      */
     protected $treeHandler;
 
@@ -316,5 +316,36 @@ class QuoteProductPriceProviderTest extends \PHPUnit_Framework_TestCase
                 break;
         }
         return $quoteProduct;
+    }
+
+    public function testHasEmptyPriceTrue()
+    {
+        $quote = new Quote();
+        $quoteProduct = $this->getQuoteProduct();
+
+        $quote->addQuoteProduct($quoteProduct);
+        $this->assertTrue($this->quoteProductPriceProvider->hasEmptyPrice($quote));
+    }
+
+    public function testHasEmptyPriceFalse()
+    {
+        $quote = new Quote();
+        $quoteProduct = new QuoteProduct();
+
+        $productUnit = new ProductUnit();
+        $productUnit->setCode('kg');
+
+        $price = new Price();
+        $price->setCurrency('USD');
+        $price->setValue(12.345);
+
+        $quoteProductOffer = new QuoteProductOffer();
+        $quoteProductOffer->setProductUnit($productUnit);
+        $quoteProductOffer->setQuantity(1);
+        $quoteProductOffer->setPrice($price);
+        $quoteProduct->addQuoteProductOffer($quoteProductOffer);
+
+        $quote->addQuoteProduct($quoteProduct);
+        $this->assertFalse($this->quoteProductPriceProvider->hasEmptyPrice($quote));
     }
 }

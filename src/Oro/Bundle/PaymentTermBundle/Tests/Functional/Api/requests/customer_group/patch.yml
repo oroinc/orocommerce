@@ -1,5 +1,5 @@
 data:
-    type: customer_groups
+    type: customergroups
     id: '<toString(@customer_group.group1->id)>'
     relationships:
         paymentTerm:

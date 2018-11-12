@@ -10,25 +10,25 @@ use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermAssociationProvider;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider;
 use Psr\Log\LoggerInterface;
 
-class PaymentTermPaymentMethodFactoryTest extends \PHPUnit_Framework_TestCase
+class PaymentTermPaymentMethodFactoryTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var PaymentTermProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var PaymentTermProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $paymentTermProvider;
 
     /**
-     * @var PaymentTermAssociationProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var PaymentTermAssociationProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $paymentTermAssociationProvider;
 
     /**
-     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $doctrineHelper;
 
     /**
-     * @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $logger;
 
@@ -53,7 +53,7 @@ class PaymentTermPaymentMethodFactoryTest extends \PHPUnit_Framework_TestCase
 
     public function testCreate()
     {
-        /** @var PaymentTermConfigInterface|\PHPUnit_Framework_MockObject_MockObject $config */
+        /** @var PaymentTermConfigInterface|\PHPUnit\Framework\MockObject\MockObject $config */
         $config = $this->createMock(PaymentTermConfigInterface::class);
 
         $method = new PaymentTerm(

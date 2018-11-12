@@ -7,10 +7,10 @@ use Oro\Bundle\WebCatalogBundle\EventListener\WebCatalogConfigChangeListener;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class WebCatalogConfigChangeListenerTest extends \PHPUnit_Framework_TestCase
+class WebCatalogConfigChangeListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $dispatcher;
 
@@ -27,7 +27,7 @@ class WebCatalogConfigChangeListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testOnConfigurationUpdate()
     {
-        /** @var ConfigUpdateEvent|\PHPUnit_Framework_MockObject_MockObject $event **/
+        /** @var ConfigUpdateEvent|\PHPUnit\Framework\MockObject\MockObject $event **/
         $event = $this->getMockBuilder(ConfigUpdateEvent::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -46,7 +46,7 @@ class WebCatalogConfigChangeListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testOnOtherConfigurationUpdate()
     {
-        /** @var ConfigUpdateEvent|\PHPUnit_Framework_MockObject_MockObject $event **/
+        /** @var ConfigUpdateEvent|\PHPUnit\Framework\MockObject\MockObject $event **/
         $event = $this->getMockBuilder(ConfigUpdateEvent::class)
             ->disableOriginalConstructor()
             ->getMock();

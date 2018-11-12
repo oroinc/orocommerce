@@ -7,15 +7,15 @@ use Oro\Bundle\CheckoutBundle\Factory\CheckoutShippingContextFactory;
 use Oro\Bundle\CheckoutBundle\Layout\DataProvider\CheckoutShippingContextProvider;
 use Oro\Bundle\ShippingBundle\Context\ShippingContext;
 
-class CheckoutShippingContextProviderTest extends \PHPUnit_Framework_TestCase
+class CheckoutShippingContextProviderTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var CheckoutShippingContextFactory| \PHPUnit_Framework_MockObject_MockObject
+     * @var CheckoutShippingContextFactory| \PHPUnit\Framework\MockObject\MockObject
      */
     protected $shippingContextFactory;
 
     /**
-     * @var Checkout| \PHPUnit_Framework_MockObject_MockObject
+     * @var Checkout| \PHPUnit\Framework\MockObject\MockObject
      */
     protected $checkout;
 

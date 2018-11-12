@@ -5,11 +5,11 @@ namespace Oro\Bundle\PromotionBundle\Tests\Unit\RuleFiltration;
 use Oro\Bundle\RuleBundle\Entity\RuleOwnerInterface;
 use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
 
-abstract class AbstractSkippableFiltrationServiceTest extends \PHPUnit_Framework_TestCase
+abstract class AbstractSkippableFiltrationServiceTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @param RuleFiltrationServiceInterface $service
-     * @param RuleFiltrationServiceInterface[]|\PHPUnit_Framework_MockObject_MockObject $decoratedService
+     * @param RuleFiltrationServiceInterface[]|\PHPUnit\Framework\MockObject\MockObject $decoratedService
      */
     protected function assertServiceSkipped(RuleFiltrationServiceInterface $service, $decoratedService)
     {

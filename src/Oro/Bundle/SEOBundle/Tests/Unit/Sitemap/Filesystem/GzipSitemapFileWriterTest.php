@@ -5,10 +5,10 @@ namespace Oro\Bundle\SEOBundle\Tests\Unit\Sitemap\Filesystem;
 use Oro\Bundle\SEOBundle\Sitemap\Filesystem\GzipSitemapFileWriter;
 use Oro\Bundle\SEOBundle\Sitemap\Filesystem\SitemapFileWriterInterface;
 
-class GzipSitemapFileWriterTest extends \PHPUnit_Framework_TestCase
+class GzipSitemapFileWriterTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var SitemapFileWriterInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var SitemapFileWriterInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $innerSitemapFileWriter;
 

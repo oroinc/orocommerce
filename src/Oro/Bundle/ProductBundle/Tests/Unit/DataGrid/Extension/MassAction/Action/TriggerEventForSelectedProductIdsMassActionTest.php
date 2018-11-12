@@ -5,7 +5,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\DataGrid\Extension\Action\MassActi
 use Oro\Bundle\DataGridBundle\Extension\Action\ActionConfiguration;
 use Oro\Bundle\ProductBundle\DataGrid\Extension\MassAction\Action\TriggerEventForSelectedProductIdsMassAction;
 
-class TriggerEventForSelectedProductIdsMassActionTest extends \PHPUnit_Framework_TestCase
+class TriggerEventForSelectedProductIdsMassActionTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var TriggerEventForSelectedProductIdsMassAction

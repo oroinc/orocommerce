@@ -6,10 +6,10 @@ use Oro\Bundle\OrderBundle\Provider\SkuCachedProductProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 
-class SkuCachedProductProviderTest extends \PHPUnit_Framework_TestCase
+class SkuCachedProductProviderTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ProductRepository|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProductRepository|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $productRepository;
 
@@ -26,7 +26,7 @@ class SkuCachedProductProviderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return Product|\PHPUnit_Framework_MockObject_MockObject
+     * @return Product|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function createProductMock()
     {

@@ -13,7 +13,7 @@ use Oro\Bundle\ShoppingListBundle\Tests\Unit\Entity\Stub\ShoppingListStub;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-class LineItemTest extends \PHPUnit_Framework_TestCase
+class LineItemTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 

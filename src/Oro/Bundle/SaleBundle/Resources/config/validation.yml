@@ -71,7 +71,6 @@ Oro\Bundle\SaleBundle\Entity\QuoteProductOffer:
             - NotBlank:
                 groups: [ Import ]
         price:
-            - NotBlank: ~
             - Valid: ~
 
 Oro\Bundle\SaleBundle\Entity\QuoteAddress:
@@ -79,6 +78,8 @@ Oro\Bundle\SaleBundle\Entity\QuoteAddress:
         phone:
             - Length:
                 max: 255
+        country:
+            - NotBlank: ~
 
 Oro\Bundle\SaleBundle\Entity\QuoteDemand:
     properties:

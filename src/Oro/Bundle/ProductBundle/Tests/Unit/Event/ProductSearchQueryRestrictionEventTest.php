@@ -5,7 +5,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Event;
 use Oro\Bundle\ProductBundle\Event\ProductSearchQueryRestrictionEvent;
 use Oro\Bundle\SearchBundle\Query\Query;
 
-class ProductSearchQueryRestrictionEventTest extends \PHPUnit_Framework_TestCase
+class ProductSearchQueryRestrictionEventTest extends \PHPUnit\Framework\TestCase
 {
     public function testGetQuery()
     {

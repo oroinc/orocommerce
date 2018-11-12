@@ -20,33 +20,37 @@ use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemHandler;
+use Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListManager;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
-class ShoppingListLineItemHandlerTest extends \PHPUnit_Framework_TestCase
+class ShoppingListLineItemHandlerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /** @var ShoppingListLineItemHandler */
     protected $handler;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|AuthorizationCheckerInterface */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|AuthorizationCheckerInterface */
     protected $authorizationChecker;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|TokenAccessorInterface */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|TokenAccessorInterface */
     protected $tokenAccessor;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|ShoppingListManager */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|ShoppingListManager */
     protected $shoppingListManager;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|CurrentShoppingListManager */
+    protected $currentShoppingListManager;
+
+    /** @var \PHPUnit\Framework\MockObject\MockObject|ManagerRegistry */
     protected $managerRegistry;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|FeatureChecker */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|FeatureChecker */
     protected $featureChecker;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|ProductManager */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|ProductManager */
     protected $productManager;
 
     protected function setUp()
@@ -55,6 +59,9 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit_Framework_TestCase
         $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
 
         $this->shoppingListManager = $this->getMockBuilder(ShoppingListManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->currentShoppingListManager = $this->getMockBuilder(CurrentShoppingListManager::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -69,6 +76,7 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit_Framework_TestCase
         $this->handler = new ShoppingListLineItemHandler(
             $this->managerRegistry,
             $this->shoppingListManager,
+            $this->currentShoppingListManager,
             $this->authorizationChecker,
             $this->tokenAccessor,
             $this->featureChecker,
@@ -86,7 +94,9 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit_Framework_TestCase
     public function testGetShoppingList($id)
     {
         $shoppingList = new ShoppingList();
-        $this->shoppingListManager->expects($this->once())->method('getForCurrentUser')->willReturn($shoppingList);
+        $this->currentShoppingListManager->expects($this->once())
+            ->method('getForCurrentUser')
+            ->willReturn($shoppingList);
         $this->assertSame($shoppingList, $this->handler->getShoppingList($id));
     }
 
@@ -205,7 +215,7 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit_Framework_TestCase
         array $productUnitsWithQuantities = [],
         array $expectedLineItems = []
     ) {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|ShoppingList $shoppingList */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|ShoppingList $shoppingList */
         $shoppingList = $this->createMock('Oro\Bundle\ShoppingListBundle\Entity\ShoppingList');
         $shoppingList->expects($this->any())
             ->method('getId')
@@ -292,7 +302,9 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit_Framework_TestCase
         /** @var Product $product */
         $product = $this->createMock(Product::class);
 
-        $this->shoppingListManager->expects($this->once())->method('getCurrent')->willReturn($shoppingList);
+        $this->currentShoppingListManager->expects($this->once())
+            ->method('getCurrent')
+            ->willReturn($shoppingList);
 
         $item = $this->handler->prepareLineItemWithProduct($user, $product);
         $this->assertSame($user, $item->getCustomerUser());
@@ -301,14 +313,14 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return Registry|\PHPUnit_Framework_MockObject_MockObject
+     * @return Registry|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function getManagerRegistry()
     {
-        /** @var EntityManager|\PHPUnit_Framework_MockObject_MockObject $em */
+        /** @var EntityManager|\PHPUnit\Framework\MockObject\MockObject $em */
         $em = $this->getMockBuilder('Doctrine\ORM\EntityManager')->disableOriginalConstructor()->getMock();
 
-        /** @var AbstractQuery|\PHPUnit_Framework_MockObject_MockObject $query */
+        /** @var AbstractQuery|\PHPUnit\Framework\MockObject\MockObject $query */
         $query = $this->getMockBuilder('Doctrine\ORM\AbstractQuery')
             ->disableOriginalConstructor()
             ->setMethods(['iterate'])
@@ -331,7 +343,7 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('iterate')
             ->willReturn($iterableResult);
 
-        /** @var QueryBuilder|\PHPUnit_Framework_MockObject_MockObject $queryBuilder */
+        /** @var QueryBuilder|\PHPUnit\Framework\MockObject\MockObject $queryBuilder */
         $queryBuilder = $this->getMockBuilder('Doctrine\ORM\QueryBuilder')
             ->disableOriginalConstructor()
             ->getMock();
@@ -340,7 +352,7 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('getQuery')
             ->willReturn($query);
 
-        /** @var EntityRepository|\PHPUnit_Framework_MockObject_MockObject $productRepository */
+        /** @var EntityRepository|\PHPUnit\Framework\MockObject\MockObject $productRepository */
         $productRepository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
             ->disableOriginalConstructor()
             ->setMethods(['getProductsQueryBuilder', 'findOneBy'])
@@ -350,12 +362,12 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('getProductsQueryBuilder')
             ->willReturn($queryBuilder);
 
-        /** @var EntityRepository|\PHPUnit_Framework_MockObject_MockObject $shoppingListRepository */
+        /** @var EntityRepository|\PHPUnit\Framework\MockObject\MockObject $shoppingListRepository */
         $shoppingListRepository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
             ->disableOriginalConstructor()
             ->getMock();
 
-        /** @var EntityRepository|\PHPUnit_Framework_MockObject_MockObject $productUnitRepository */
+        /** @var EntityRepository|\PHPUnit\Framework\MockObject\MockObject $productUnitRepository */
         $productUnitRepository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
             ->disableOriginalConstructor()
             ->setMethods(['findOneBy'])
@@ -387,7 +399,7 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit_Framework_TestCase
             )
         );
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|Registry $managerRegistry */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|Registry $managerRegistry */
         $managerRegistry = $this->getMockBuilder('Doctrine\Bundle\DoctrineBundle\Registry')
             ->disableOriginalConstructor()
             ->getMock();

@@ -27,12 +27,12 @@ class FedexRateServiceValidateConnectionRequestFactoryTest extends TestCase
     const COUNTRY = 'country';
 
     /**
-     * @var SymmetricCrypterInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var SymmetricCrypterInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $crypter;
 
     /**
-     * @var ShippingOriginProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingOriginProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     private $shippingOriginProvider;
 

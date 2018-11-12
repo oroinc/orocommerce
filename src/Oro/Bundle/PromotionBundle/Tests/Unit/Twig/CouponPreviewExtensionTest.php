@@ -7,7 +7,7 @@ use Oro\Bundle\PromotionBundle\CouponGeneration\Options\CodeGenerationOptions;
 use Oro\Bundle\PromotionBundle\Twig\CouponPreviewExtension;
 use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
 
-class CouponPreviewExtensionTest extends \PHPUnit_Framework_TestCase
+class CouponPreviewExtensionTest extends \PHPUnit\Framework\TestCase
 {
     use TwigExtensionTestCaseTrait;
 
@@ -17,7 +17,7 @@ class CouponPreviewExtensionTest extends \PHPUnit_Framework_TestCase
     protected $couponPreviewExtension;
 
     /**
-     * @var CodeGenerator|\PHPUnit_Framework_MockObject_MockObject
+     * @var CodeGenerator|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $codeGenerator;
 

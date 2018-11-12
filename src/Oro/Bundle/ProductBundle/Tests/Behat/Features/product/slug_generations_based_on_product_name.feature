@@ -9,7 +9,7 @@ Feature: Slug generations based on product name
     Given I login as administrator
     And go to Products/ Products
     And click "Create Product"
-    When I press "Continue"
+    When I click "Continue"
     And I fill product name field with "Some Product" value
     Then I should see URL Slug field filled with "some-product"
 

@@ -9,14 +9,14 @@ use Oro\Bundle\InventoryBundle\Form\Extension\CategoryQuantityToOrderFormExtensi
 use Oro\Bundle\InventoryBundle\Tests\Unit\Form\Extension\Stub\CategoryStub;
 use Symfony\Component\Form\FormBuilderInterface;
 
-class CategoryQuantityToOrderFormExtensionTest extends \PHPUnit_Framework_TestCase
+class CategoryQuantityToOrderFormExtensionTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var CategoryQuantityToOrderFormExtension
      */
     protected $categoryFormExtension;
 
-    /** @var FormBuilderInterface|\PHPUnit_Framework_MockObject_MockObject $builder * */
+    /** @var FormBuilderInterface|\PHPUnit\Framework\MockObject\MockObject $builder * */
     protected $builder;
 
     /** @var CategoryStub */

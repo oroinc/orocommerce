@@ -14,6 +14,7 @@ use Oro\Bundle\ProductBundle\Model\ProductRow;
 use Oro\Bundle\ProductBundle\Model\QuickAddRow;
 use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
+use Oro\Component\Testing\TempDirExtension;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,34 +26,36 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
-class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
+class QuickAddHandlerTest extends \PHPUnit\Framework\TestCase
 {
+    use TempDirExtension;
+
     const PRODUCT_CLASS = 'Oro\Bundle\ProductBundle\Entity\Product';
 
     const COMPONENT_NAME = 'component';
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface
+     * @var \PHPUnit\Framework\MockObject\MockObject|TranslatorInterface
      */
     protected $translator;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|UrlGeneratorInterface
+     * @var \PHPUnit\Framework\MockObject\MockObject|UrlGeneratorInterface
      */
     protected $router;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ProductFormProvider
+     * @var \PHPUnit\Framework\MockObject\MockObject|ProductFormProvider
      */
     protected $productFormProvider;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|QuickAddRowCollectionBuilder
+     * @var \PHPUnit\Framework\MockObject\MockObject|QuickAddRowCollectionBuilder
      */
     protected $quickAddRowCollectionBuilder;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ComponentProcessorRegistry
+     * @var \PHPUnit\Framework\MockObject\MockObject|ComponentProcessorRegistry
      */
     protected $componentRegistry;
 
@@ -62,12 +65,12 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
     protected $handler;
 
     /**
-     * @var ValidatorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ValidatorInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $validator;
 
     /**
-     * @var EventDispatcher|\PHPUnit_Framework_MockObject_MockObject
+     * @var EventDispatcher|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $eventDispatcher;
 
@@ -427,7 +430,7 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
         $fileForm = $this->getMockForAbstractClass('Symfony\Component\Form\FormInterface');
         $file = $this->getMockBuilder('Symfony\Component\HttpFoundation\File\UploadedFile')
             ->enableOriginalConstructor()
-            ->setConstructorArgs([tempnam(sys_get_temp_dir(), ''), 'dummy'])
+            ->setConstructorArgs([tempnam($this->getTempDir('quick_add_handler'), ''), 'dummy'])
             ->getMock();
         $form->expects($this->once())
             ->method('get')
@@ -541,7 +544,7 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Session
+     * @return \PHPUnit\Framework\MockObject\MockObject|Session
      */
     protected function getSessionWithErrorMessage()
     {
@@ -563,7 +566,7 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
     /**
      * @param bool $isValidationRequired
      * @param bool $isAllowed
-     * @return \PHPUnit_Framework_MockObject_MockObject|ComponentProcessorInterface
+     * @return \PHPUnit\Framework\MockObject\MockObject|ComponentProcessorInterface
      */
     protected function getProcessor($isValidationRequired = true, $isAllowed = true)
     {

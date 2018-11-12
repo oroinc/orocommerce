@@ -7,15 +7,15 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Factory\OrderPaymentContextFactory;
 use Oro\Bundle\OrderBundle\Factory\SupportsOrderPaymentContextFactory;
 
-class SupportsOrderPaymentContextFactoryTest extends \PHPUnit_Framework_TestCase
+class SupportsOrderPaymentContextFactoryTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $doctrineHelper;
 
     /**
-     * @var OrderPaymentContextFactory|\PHPUnit_Framework_MockObject_MockObject
+     * @var OrderPaymentContextFactory|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $orderPaymentContextFactory;
 

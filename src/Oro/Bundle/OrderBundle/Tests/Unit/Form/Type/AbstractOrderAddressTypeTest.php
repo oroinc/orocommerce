@@ -25,19 +25,19 @@ abstract class AbstractOrderAddressTypeTest extends AbstractAddressTypeTest
     /** @var AbstractOrderAddressType */
     protected $formType;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|AddressFormatter */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|AddressFormatter */
     protected $addressFormatter;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|OrderAddressSecurityProvider */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|OrderAddressSecurityProvider */
     protected $orderAddressSecurityProvider;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|OrderAddressManager */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|OrderAddressManager */
     protected $orderAddressManager;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|Serializer */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|Serializer */
     protected $serializer;
 
-    /** @var TypedOrderAddressCollection|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var TypedOrderAddressCollection|\PHPUnit\Framework\MockObject\MockObject */
     protected $addressCollection;
 
     protected function setUp()
@@ -80,7 +80,7 @@ abstract class AbstractOrderAddressTypeTest extends AbstractAddressTypeTest
 
     public function testConfigureOptions()
     {
-        /* @var $resolver \PHPUnit_Framework_MockObject_MockObject|OptionsResolver */
+        /* @var $resolver \PHPUnit\Framework\MockObject\MockObject|OptionsResolver */
         $resolver = $this->createMock('Symfony\Component\OptionsResolver\OptionsResolver');
         $resolver->expects($this->once())->method('setDefaults')->with($this->isType('array'))
             ->will($this->returnSelf());
@@ -239,7 +239,6 @@ abstract class AbstractOrderAddressTypeTest extends AbstractAddressTypeTest
                     'street' => 'Street',
                     'street2' => 'Street2',
                     'city' => 'City',
-                    'region_text' => 'Region Text',
                     'postalCode' => 'AL',
                     'country' => static::COUNTRY_WITH_REGION,
                     'region' => static::REGION_WITH_COUNTRY,
@@ -256,7 +255,6 @@ abstract class AbstractOrderAddressTypeTest extends AbstractAddressTypeTest
                     ->setStreet2('Street2_stripped')
                     ->setCity('City_stripped')
                     ->setRegion($region)
-                    ->setRegionText('Region Text')
                     ->setPostalCode('AL_stripped')
                     ->setCountry($country),
                 'defaultData' => $emptyAddress,

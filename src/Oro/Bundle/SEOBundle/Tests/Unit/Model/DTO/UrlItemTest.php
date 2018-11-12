@@ -4,7 +4,7 @@ namespace Oro\Bundle\SEOBundle\Tests\Unit\Model\DTO;
 
 use Oro\Bundle\SEOBundle\Model\DTO\UrlItem;
 
-class UrlItemTest extends \PHPUnit_Framework_TestCase
+class UrlItemTest extends \PHPUnit\Framework\TestCase
 {
     public function testCreate()
     {

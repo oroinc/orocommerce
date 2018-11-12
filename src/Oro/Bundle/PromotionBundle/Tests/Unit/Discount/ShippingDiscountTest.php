@@ -8,7 +8,7 @@ use Oro\Bundle\PromotionBundle\Discount\DiscountContext;
 use Oro\Bundle\PromotionBundle\Discount\ShippingDiscount;
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 
-class ShippingDiscountTest extends \PHPUnit_Framework_TestCase
+class ShippingDiscountTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var ShippingDiscount

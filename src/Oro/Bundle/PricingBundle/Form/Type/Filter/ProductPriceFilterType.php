@@ -4,13 +4,17 @@ namespace Oro\Bundle\PricingBundle\Form\Type\Filter;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\FilterBundle\Form\Type\Filter\NumberRangeFilterType;
-use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
 
+/**
+ * Builds form for ProductPriceFilter
+ * adds 'unit' Choice field with choices from OroProductBundle:ProductUnit repository
+ */
 class ProductPriceFilterType extends AbstractType
 {
     const NAME = 'oro_pricing_product_price_filter';
@@ -26,19 +30,19 @@ class ProductPriceFilterType extends AbstractType
     protected $registry;
 
     /**
-     * @var ProductUnitLabelFormatter
+     * @var UnitLabelFormatterInterface
      */
     protected $formatter;
 
     /**
-     * @param TranslatorInterface       $translator
-     * @param ManagerRegistry           $registry
-     * @param ProductUnitLabelFormatter $formatter
+     * @param TranslatorInterface $translator
+     * @param ManagerRegistry     $registry
+     * @param UnitLabelFormatterInterface  $formatter
      */
     public function __construct(
         TranslatorInterface $translator,
         ManagerRegistry $registry,
-        ProductUnitLabelFormatter $formatter
+        UnitLabelFormatterInterface $formatter
     ) {
         $this->translator = $translator;
         $this->registry = $registry;

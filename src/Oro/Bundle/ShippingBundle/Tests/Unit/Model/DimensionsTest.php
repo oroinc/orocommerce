@@ -7,7 +7,7 @@ use Oro\Bundle\ShippingBundle\Model\Dimensions;
 use Oro\Bundle\ShippingBundle\Model\DimensionsValue;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-class DimensionsTest extends \PHPUnit_Framework_TestCase
+class DimensionsTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 

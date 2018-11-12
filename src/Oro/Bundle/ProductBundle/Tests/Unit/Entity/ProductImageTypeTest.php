@@ -6,7 +6,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Entity\ProductImageType;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-class ProductImageTypeTest extends \PHPUnit_Framework_TestCase
+class ProductImageTypeTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 

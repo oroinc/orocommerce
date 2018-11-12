@@ -6,7 +6,7 @@ use Oro\Bundle\ProductBundle\DependencyInjection\CompilerPass\ProductDataStorage
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
-class ProductDataStorageSessionBagPassTest extends \PHPUnit_Framework_TestCase
+class ProductDataStorageSessionBagPassTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var ProductDataStorageSessionBagPass
@@ -14,7 +14,7 @@ class ProductDataStorageSessionBagPassTest extends \PHPUnit_Framework_TestCase
     protected $compilerPass;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ContainerBuilder
+     * @var \PHPUnit\Framework\MockObject\MockObject|ContainerBuilder
      */
     protected $container;
 

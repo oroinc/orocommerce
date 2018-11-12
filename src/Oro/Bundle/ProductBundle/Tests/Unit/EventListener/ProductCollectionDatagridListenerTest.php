@@ -20,30 +20,30 @@ use Oro\Bundle\SegmentBundle\Entity\SegmentType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-class ProductCollectionDatagridListenerTest extends \PHPUnit_Framework_TestCase
+class ProductCollectionDatagridListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var RequestStack|\PHPUnit_Framework_MockObject_MockObject
+     * @var RequestStack|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $requestStack;
 
     /**
-     * @var SegmentManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var SegmentManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $segmentManager;
 
     /**
-     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $registry;
 
     /**
-     * @var NameStrategyInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var NameStrategyInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $nameStrategy;
 
     /**
-     * @var ProductCollectionDefinitionConverter|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProductCollectionDefinitionConverter|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $definitionConverter;
 
@@ -73,7 +73,7 @@ class ProductCollectionDatagridListenerTest extends \PHPUnit_Framework_TestCase
     {
         $dataSource = $this->createMock(OrmDatasource::class);
 
-        /** @var Datagrid|\PHPUnit_Framework_MockObject_MockObject $dataGrid */
+        /** @var Datagrid|\PHPUnit\Framework\MockObject\MockObject $dataGrid */
         $dataGrid = $this->createMock(Datagrid::class);
         $dataGrid
             ->expects($this->once())
@@ -110,7 +110,7 @@ class ProductCollectionDatagridListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testOnBuildAfterWithoutRequest()
     {
-        /** @var Datagrid|\PHPUnit_Framework_MockObject_MockObject $dataGrid */
+        /** @var Datagrid|\PHPUnit\Framework\MockObject\MockObject $dataGrid */
         $dataGrid = $this->createMock(Datagrid::class);
         $dataGrid
             ->expects($this->once())
@@ -133,7 +133,7 @@ class ProductCollectionDatagridListenerTest extends \PHPUnit_Framework_TestCase
     {
         $dataSource = $this->createMock(DatasourceInterface::class);
 
-        /** @var Datagrid|\PHPUnit_Framework_MockObject_MockObject $dataGrid */
+        /** @var Datagrid|\PHPUnit\Framework\MockObject\MockObject $dataGrid */
         $dataGrid = $this->createMock(Datagrid::class);
         $dataGrid->expects($this->once())
             ->method('getDatasource')
@@ -164,7 +164,7 @@ class ProductCollectionDatagridListenerTest extends \PHPUnit_Framework_TestCase
             ->method('getQueryBuilder')
             ->willReturn($qb);
 
-        /** @var Datagrid|\PHPUnit_Framework_MockObject_MockObject $dataGrid */
+        /** @var Datagrid|\PHPUnit\Framework\MockObject\MockObject $dataGrid */
         $dataGrid = $this->createMock(Datagrid::class);
         $dataGrid->expects($this->once())
             ->method('getDatasource')
@@ -221,7 +221,7 @@ class ProductCollectionDatagridListenerTest extends \PHPUnit_Framework_TestCase
             ->method('getQueryBuilder')
             ->willReturn($qb);
 
-        /** @var Datagrid|\PHPUnit_Framework_MockObject_MockObject $dataGrid */
+        /** @var Datagrid|\PHPUnit\Framework\MockObject\MockObject $dataGrid */
         $dataGrid = $this->createMock(Datagrid::class);
         $dataGrid->expects($this->once())
             ->method('getDatasource')
@@ -288,7 +288,7 @@ class ProductCollectionDatagridListenerTest extends \PHPUnit_Framework_TestCase
             ->method('getQueryBuilder')
             ->willReturn($qb);
 
-        /** @var Datagrid|\PHPUnit_Framework_MockObject_MockObject $dataGrid */
+        /** @var Datagrid|\PHPUnit\Framework\MockObject\MockObject $dataGrid */
         $dataGrid = $this->createMock(Datagrid::class);
         $dataGrid->expects($this->once())
              ->method('getDatasource')
@@ -338,7 +338,7 @@ class ProductCollectionDatagridListenerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param Datagrid|\PHPUnit_Framework_MockObject_MockObject $dataGrid
+     * @param Datagrid|\PHPUnit\Framework\MockObject\MockObject $dataGrid
      * @param string $gridName
      * @param string $gridScope
      */

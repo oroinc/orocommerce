@@ -10,7 +10,7 @@ services:
             - "@oro_sale.provider.quote_address_security"
             - '@oro_config.global'
             - '@oro_sale.form.event_listener.quote_update'
-            - '@oro_security.security_facade'
+            - '@security.authorization_checker'
         calls:
             - [setDataClass, ['%oro_sale.entity.quote.class%']]
         tags:
@@ -68,6 +68,14 @@ services:
             - [setExtendedType, [Oro\Bundle\SaleBundle\Form\Type\QuoteType]]
         tags:
             - { name: form.type_extension, alias: oro_sale_quote, extended_type: Oro\Bundle\SaleBundle\Form\Type\QuoteType }
+
+    oro_sale.form.type.extension.quote_email_template:
+        class: 'Oro\Bundle\SaleBundle\Form\Extension\QuoteEmailTemplateExtension'
+        arguments:
+            - '@oro_security.token_accessor'
+            - '@oro_featuretoggle.checker.feature_checker'
+        tags:
+            - { name: form.type_extension, alias: oro_email_email, extended_type: Oro\Bundle\EmailBundle\Form\Type\EmailType }
 
     oro_sale.form.type.quote_address:
         class: 'Oro\Bundle\SaleBundle\Form\Type\QuoteAddressType'

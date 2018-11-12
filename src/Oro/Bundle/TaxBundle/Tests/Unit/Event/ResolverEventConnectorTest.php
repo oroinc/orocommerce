@@ -8,10 +8,10 @@ use Oro\Bundle\TaxBundle\Model\Taxable;
 use Oro\Bundle\TaxBundle\Resolver\ResolverInterface;
 use Oro\Bundle\TaxBundle\Resolver\StopPropagationException;
 
-class ResolverEventConnectorTest extends \PHPUnit_Framework_TestCase
+class ResolverEventConnectorTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ResolverInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ResolverInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $resolver;
 
@@ -22,7 +22,7 @@ class ResolverEventConnectorTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|ResolverInterface $resolver */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|ResolverInterface $resolver */
         $this->resolver = $this->createMock('Oro\Bundle\TaxBundle\Resolver\ResolverInterface');
         $this->connector = new ResolverEventConnector($this->resolver);
     }

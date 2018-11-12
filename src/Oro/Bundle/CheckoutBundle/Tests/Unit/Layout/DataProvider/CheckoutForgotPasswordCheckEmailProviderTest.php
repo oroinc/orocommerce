@@ -7,15 +7,15 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Session;
 
-class CheckoutForgotPasswordCheckEmailProviderTest extends \PHPUnit_Framework_TestCase
+class CheckoutForgotPasswordCheckEmailProviderTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var RequestStack|\PHPUnit_Framework_MockObject_MockObject
+     * @var RequestStack|\PHPUnit\Framework\MockObject\MockObject
      */
     private $requestStack;
 
     /**
-     * @var Session|\PHPUnit_Framework_MockObject_MockObject
+     * @var Session|\PHPUnit\Framework\MockObject\MockObject
      */
     private $session;
 

@@ -163,11 +163,11 @@ class TaxJurisdictionTypeTest extends AbstractAddressTestCase
      */
     protected function getExtensions()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|ConfigProvider $configProvider */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|ConfigProvider $configProvider */
         $configProvider = $this->getMockBuilder('Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider')
             ->disableOriginalConstructor()
             ->getMock();
-        /** @var \PHPUnit_Framework_MockObject_MockObject|Translator $translator */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|Translator $translator */
         $translator = $this->getMockBuilder('Oro\Bundle\TranslationBundle\Translation\Translator')
             ->disableOriginalConstructor()
             ->getMock();

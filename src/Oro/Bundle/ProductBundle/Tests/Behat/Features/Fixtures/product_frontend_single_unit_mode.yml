@@ -1,0 +1,157 @@
+include:
+    - '@OroCustomerBundle/Tests/Behat/Features/Fixtures/CustomerUserAmandaRCole.yml'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    precision1:
+        unit: '@item'
+        precision: '1'
+    precision2:
+        unit: '@each'
+        precision: '1'
+    precision3:
+        unit: '@set'
+        precision: '1'
+    precision4:
+        unit: '@item'
+        precision: '1'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product1:
+        sku: 'PSKU1'
+        primaryUnitPrecision: '@precision1'
+        attributeFamily: '@defaultProductFamily'
+        addName: ['@locvalue1']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        organization: '@organization'
+        owner: '@business_unit'
+    product2:
+        sku: 'PSKU2'
+        primaryUnitPrecision: '@precision2'
+        attributeFamily: '@defaultProductFamily'
+        addName: ['@locvalue2']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        organization: '@organization'
+        owner: '@business_unit'
+    product3:
+        sku: 'PSKU3'
+        primaryUnitPrecision: '@precision3'
+        attributeFamily: '@defaultProductFamily'
+        addName: ['@locvalue3']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        organization: '@organization'
+        owner: '@business_unit'
+    product4:
+        sku: 'PSKU4'
+        primaryUnitPrecision: '@precision4'
+        attributeFamily: '@defaultProductFamily'
+        addName: ['@locvalue4']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        organization: '@organization'
+        owner: '@business_unit'
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    locvalue1:
+        string: 'Product 1'
+    locvalue2:
+        string: 'Product 2'
+    locvalue3:
+        string: 'Product 3'
+    locvalue4:
+        string: 'Product 4'
+
+Oro\Bundle\PricingBundle\Entity\PriceList:
+    pricelist1:
+        name: 'pricelist1'
+        default: true
+        setCurrencies: [['USD']]
+        active: true
+
+Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
+    priceListToProduct{1..4}:
+        priceList: '@pricelist1'
+        product: '@product<current()>'
+
+Oro\Bundle\PricingBundle\Entity\PriceListToCustomer:
+  priceListToCustomer:
+    customer: '@Customer_AmandaRCole'
+    pricelist: '@pricelist1'
+    website: '@website1'
+    sortOrder: 200
+
+Oro\Bundle\PricingBundle\Entity\CombinedPriceListToCustomer:
+    combinedPriceListToCustomer:
+        pricelist: '@combinedPriceList'
+        customer: '@Customer_AmandaRCole'
+        website: '@website1'
+
+Oro\Bundle\PricingBundle\Entity\ProductPrice:
+    productPrice1:
+        pricelist: '@pricelist1'
+        product: '@product1'
+        productSku: 'PSKU1'
+        quantity: '1'
+        unit: '@item'
+        value: '10'
+        currency: 'USD'
+    productPrice2:
+        pricelist: '@pricelist1'
+        product: '@product2'
+        productSku: 'PSKU2'
+        quantity: '1'
+        unit: '@each'
+        value: '20'
+        currency: 'USD'
+    productPrice3:
+        pricelist: '@pricelist1'
+        product: '@product3'
+        productSku: 'PSKU3'
+        quantity: '1'
+        unit: '@set'
+        value: '30'
+        currency: 'USD'
+    productPrice4:
+        pricelist: '@pricelist1'
+        product: '@product4'
+        productSku: 'PSKU4'
+        quantity: '1'
+        unit: '@item'
+        value: '40'
+        currency: 'USD'
+
+Oro\Bundle\PricingBundle\Entity\CombinedProductPrice:
+    combinedProductPrice1:
+        pricelist: '@combinedPriceList'
+        product: '@product1'
+        productSku: 'PSKU1'
+        quantity: 1
+        unit: '@item'
+        value: '10'
+        currency: 'USD'
+    combinedProductPrice2:
+        pricelist: '@combinedPriceList'
+        product: '@product2'
+        productSku: 'PSKU2'
+        quantity: 1
+        unit: '@each'
+        value: '20'
+        currency: 'USD'
+    combinedProductPrice3:
+        pricelist: '@combinedPriceList'
+        product: '@product3'
+        productSku: 'PSKU3'
+        quantity: 1
+        unit: '@set'
+        value: '30'
+        currency: 'USD'
+    combinedProductPrice4:
+        pricelist: '@combinedPriceList'
+        product: '@product4'
+        productSku: 'PSKU4'
+        quantity: 1
+        unit: '@item'
+        value: '40'
+        currency: 'USD'

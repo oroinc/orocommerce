@@ -6,7 +6,7 @@ use Oro\Bundle\AddressBundle\Entity\Address;
 use Oro\Bundle\PaymentBundle\Event\ExtractAddressOptionsEvent;
 use Oro\Bundle\PaymentBundle\Model\AddressOptionModel;
 
-class ExtractAddressOptionsEventTest extends \PHPUnit_Framework_TestCase
+class ExtractAddressOptionsEventTest extends \PHPUnit\Framework\TestCase
 {
     /** @var ExtractAddressOptionsEvent */
     protected $event;

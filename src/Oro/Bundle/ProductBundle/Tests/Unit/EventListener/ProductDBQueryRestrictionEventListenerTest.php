@@ -11,7 +11,7 @@ use Oro\Bundle\ProductBundle\Model\ProductVisibilityQueryBuilderModifier;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-class ProductDBQueryRestrictionEventListenerTest extends \PHPUnit_Framework_TestCase
+class ProductDBQueryRestrictionEventListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var ProductDBQueryRestrictionEventListener
@@ -19,27 +19,27 @@ class ProductDBQueryRestrictionEventListenerTest extends \PHPUnit_Framework_Test
     protected $listener;
 
     /**
-     * @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $configManager;
 
     /**
-     * @var ProductVisibilityQueryBuilderModifier|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProductVisibilityQueryBuilderModifier|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $modifier;
 
     /**
-     * @var ProductDBQueryRestrictionEvent|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProductDBQueryRestrictionEvent|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $event;
 
     /**
-     * @var QueryBuilder|\PHPUnit_Framework_MockObject_MockObject
+     * @var QueryBuilder|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $queryBuilder;
 
     /**
-     * @var FrontendHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var FrontendHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $frontendHelper;
 

@@ -25,21 +25,21 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class ProductContentVariantReindexEventListenerTest extends \PHPUnit_Framework_TestCase
+class ProductContentVariantReindexEventListenerTest extends \PHPUnit\Framework\TestCase
 {
     /** @var ProductContentVariantReindexEventListener */
     private $eventListener;
 
-    /** @var WebCatalogUsageProviderInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var WebCatalogUsageProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $webCatalogUsageProvider;
 
-    /** @var FieldUpdatesChecker|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var FieldUpdatesChecker|\PHPUnit\Framework\MockObject\MockObject */
     private $fieldUpdatesChecker;
 
-    /** @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $eventDispatcher;
 
-    /** @var ProductCollectionVariantReindexMessageSendListener|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ProductCollectionVariantReindexMessageSendListener|\PHPUnit\Framework\MockObject\MockObject */
     private $messageSendListener;
 
     /** @var EntityManagerMockBuilder */
@@ -73,6 +73,9 @@ class ProductContentVariantReindexEventListenerTest extends \PHPUnit_Framework_T
     public function testItAcceptsOnlyContentVariantAfterFlush()
     {
         $entityManager = $this->entityManagerMockBuilder->getEntityManager($this, [new \stdClass()], [], []);
+        $this->webCatalogUsageProvider->expects($this->once())
+            ->method('getAssignedWebCatalogs')
+            ->willReturn([]);
         $this->eventDispatcher
             ->expects($this->never())
             ->method('dispatch');
@@ -310,6 +313,9 @@ class ProductContentVariantReindexEventListenerTest extends \PHPUnit_Framework_T
         $this->messageSendListener->expects($this->once())
             ->method('scheduleSegment')
             ->with($segment);
+        $this->webCatalogUsageProvider->expects($this->any())
+            ->method('getAssignedWebCatalogs')
+            ->willReturn([]);
 
         $this->eventListener->onFlush(new OnFlushEventArgs($entityManager));
     }
@@ -324,6 +330,9 @@ class ProductContentVariantReindexEventListenerTest extends \PHPUnit_Framework_T
             ->willReturn(false);
         $this->messageSendListener->expects($this->never())
             ->method('scheduleSegment');
+        $this->webCatalogUsageProvider->expects($this->once())
+            ->method('getAssignedWebCatalogs')
+            ->willReturn([]);
 
         $this->eventListener->onFlush(new OnFlushEventArgs($entityManager));
     }
@@ -374,7 +383,7 @@ class ProductContentVariantReindexEventListenerTest extends \PHPUnit_Framework_T
 
     /**
      * @param int $productId
-     * @return Product|\PHPUnit_Framework_MockObject_MockObject
+     * @return Product|\PHPUnit\Framework\MockObject\MockObject
      */
     private function generateProduct($productId)
     {

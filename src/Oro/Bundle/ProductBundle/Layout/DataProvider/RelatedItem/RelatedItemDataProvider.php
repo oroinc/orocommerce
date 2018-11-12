@@ -8,6 +8,9 @@ use Oro\Bundle\ProductBundle\RelatedItem\AbstractRelatedItemConfigProvider;
 use Oro\Bundle\ProductBundle\RelatedItem\FinderStrategyInterface;
 use Oro\Bundle\UIBundle\Provider\UserAgentProviderInterface;
 
+/**
+ * Provide info to build collection of related products by given product entity.
+ */
 class RelatedItemDataProvider implements RelatedItemDataProviderInterface
 {
     /** @var FinderStrategyInterface */
@@ -45,21 +48,15 @@ class RelatedItemDataProvider implements RelatedItemDataProviderInterface
      */
     public function getRelatedItems(Product $product)
     {
-        /** @var Product[] $relatedProducts */
-        $relatedProducts = $this->finderStrategy
-            ->find($product, $this->configProvider->isBidirectional(), $this->configProvider->getLimit());
+        $relatedProductIds = $this->finderStrategy
+            ->findIds($product, $this->configProvider->isBidirectional(), $this->configProvider->getLimit());
 
-        if (!$this->hasMoreThanRequiredMinimum($relatedProducts)) {
+        if (!$this->hasMoreThanRequiredMinimum($relatedProductIds)) {
             return [];
         }
 
-        $relatedProductsId = [];
-        foreach ($relatedProducts as $relatedProduct) {
-            $relatedProductsId[] = $relatedProduct->getId();
-        }
-
         $restrictedProducts = $this->restrictedProductRepository->findProducts(
-            $relatedProductsId,
+            $relatedProductIds,
             $this->configProvider->getMaximumItems()
         );
 
@@ -87,12 +84,12 @@ class RelatedItemDataProvider implements RelatedItemDataProviderInterface
     }
 
     /**
-     * @param Product[] $products
+     * @param array $productIds
      * @return bool
      */
-    private function hasMoreThanRequiredMinimum($products)
+    private function hasMoreThanRequiredMinimum($productIds)
     {
-        return count($products) !== 0 && count($products) >= (int)$this->configProvider->getMinimumItems();
+        return count($productIds) !== 0 && count($productIds) >= (int)$this->configProvider->getMinimumItems();
     }
 
     /**

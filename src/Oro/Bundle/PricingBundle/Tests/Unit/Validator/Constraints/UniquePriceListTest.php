@@ -5,7 +5,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Validator\Constraints;
 use Oro\Bundle\PricingBundle\Validator\Constraints\UniquePriceList;
 use Symfony\Component\Validator\Constraint;
 
-class UniquePriceListTest extends \PHPUnit_Framework_TestCase
+class UniquePriceListTest extends \PHPUnit\Framework\TestCase
 {
     public function testGetTargets()
     {
