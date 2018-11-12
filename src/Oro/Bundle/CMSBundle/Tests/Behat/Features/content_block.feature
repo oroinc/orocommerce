@@ -15,13 +15,13 @@ Feature: Content Block
     And go to Marketing/ Content Blocks
     And click "Create Content Block"
     And fill "Content Block Form" with:
-      | Owner          | Main                         |
-      | Alias          | test_alias                   |
-      | Titles         | Test Title                   |
-      | Enabled        | True                         |
-      | Localization   | English                      |
-      | Website        | Default                      |
-      | Customer Group | Non-Authentificated Visitors |
+      | Owner          | Main                       |
+      | Alias          | test_alias                 |
+      | Titles         | Test Title                 |
+      | Enabled        | True                       |
+      | Localization   | English                    |
+      | Website        | Default                    |
+      | Customer Group | Non-Authenticated Visitors |
     When I save and close form
     Then I should see "Content block has been saved" flash message
 
