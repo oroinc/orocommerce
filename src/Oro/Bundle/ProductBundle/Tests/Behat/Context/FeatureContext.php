@@ -726,9 +726,9 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      * Example: I should see "This product will be available later" for "SKU123" product on shopping list
      * @Then /^(?:|I )should see "(?P<elementNameOrText>[^"]*)" for "(?P<SKU>[^"]*)" product on shopping list$/
      */
-    public function shouldSeeForProductOnShoppingList($elementNameOrText, $SKU)
+    public function shouldSeeForProductInShoppingList($elementNameOrText, $SKU)
     {
-        $productItem = $this->findProductItemForShoppingList($SKU);
+        $productItem = $this->findProductItemInShoppingList($SKU);
 
         if ($this->isElementVisible($elementNameOrText, $productItem)) {
             return;
@@ -749,9 +749,9 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      * Example: I should not see "This product will be available later" for "SKU123" product on shopping list
      * @Then /^(?:|I )should not see "(?P<elementNameOrText>[^"]*)" for "(?P<SKU>[^"]*)" product on shopping list$/
      */
-    public function shouldNotSeeForProductOnShoppingList($elementNameOrText, $SKU)
+    public function shouldNotSeeForProductInShoppingList($elementNameOrText, $SKU)
     {
-        $productItem = $this->findProductItemForShoppingList($SKU);
+        $productItem = $this->findProductItemInShoppingList($SKU);
 
         $textAndElementPresentedOnPage = $this->isElementVisible($elementNameOrText, $productItem)
             || stripos($productItem->getText(), $elementNameOrText);
@@ -769,13 +769,13 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
 
     //@codingStandardsIgnoreStart
     /**
-     * Example: I should see "This item is running low on inventory" for "SKU123" product with Unit of Quantity "item" on order
-     * @Then /^(?:|I )should see "(?P<elementNameOrText>[^"]*)" for "(?P<SKU>[^"]*)" product with Unit of Quantity "(?P<unit>[^"]*)" on order$/
+     * Example: I should see "This item is running low on inventory" for "SKU123" product with Unit of Quantity "item" in order
+     * @Then /^(?:|I )should see "(?P<elementNameOrText>[^"]*)" for "(?P<SKU>[^"]*)" product with Unit of Quantity "(?P<unit>[^"]*)" in order$/
      */
     //@codingStandardsIgnoreEnd
-    public function shouldSeeForProductWithUnitOnOrder($elementNameOrText, $SKU, $unit)
+    public function shouldSeeForProductWithUnitInOrder($elementNameOrText, $SKU, $unit)
     {
-        $productItem = $this->findProductItemByUnitForOrder($SKU, $unit);
+        $productItem = $this->findProductItemByUnitInOrder($SKU, $unit);
 
         if ($this->isElementVisible($elementNameOrText, $productItem)) {
             return;
@@ -795,13 +795,13 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
 
     //@codingStandardsIgnoreStart
     /**
-     * Example: I should not see "This item is running low on inventory" for "SKU123" product with Unit of Quantity "item" on order
-     * @Then /^(?:|I )should not see "(?P<elementNameOrText>[^"]*)" for "(?P<SKU>[^"]*)" product with Unit of Quantity "(?P<unit>[^"]*)" on order$/
+     * Example: I should not see "This item is running low on inventory" for "SKU123" product with Unit of Quantity "item" in order
+     * @Then /^(?:|I )should not see "(?P<elementNameOrText>[^"]*)" for "(?P<SKU>[^"]*)" product with Unit of Quantity "(?P<unit>[^"]*)" in order$/
      */
     //@codingStandardsIgnoreEnd
-    public function shouldNotSeeForProductWithUnitOnOrder($elementNameOrText, $SKU, $unit)
+    public function shouldNotSeeForProductWithUnitInOrder($elementNameOrText, $SKU, $unit)
     {
-        $productItem = $this->findProductItemByUnitForOrder($SKU, $unit);
+        $productItem = $this->findProductItemByUnitInOrder($SKU, $unit);
 
         $textAndElementPresentedOnPage = $this->isElementVisible($elementNameOrText, $productItem)
             || stripos($productItem->getText(), $elementNameOrText);
@@ -819,13 +819,13 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
 
     //@codingStandardsIgnoreStart
     /**
-     * Example: I should see "This item is running low on inventory" for "SKU123" product with Unit of Quantity "item" on shopping list
-     * @Then /^(?:|I )should see "(?P<elementNameOrText>[^"]*)" for "(?P<SKU>[^"]*)" product with Unit of Quantity "(?P<unit>[^"]*)" on shopping list$/
+     * Example: I should see "This item is running low on inventory" for "SKU123" product with Unit of Quantity "item" in shopping list
+     * @Then /^(?:|I )should see "(?P<elementNameOrText>[^"]*)" for "(?P<SKU>[^"]*)" product with Unit of Quantity "(?P<unit>[^"]*)" in shopping list$/
      */
     //@codingStandardsIgnoreEnd
-    public function shouldSeeForProductWithUnitOnShoppingList($elementNameOrText, $SKU, $unit)
+    public function shouldSeeForProductWithUnitInShoppingList($elementNameOrText, $SKU, $unit)
     {
-        $productItem = $this->findProductItemByUnitForShoppingList($SKU, $unit);
+        $productItem = $this->findProductItemByUnitInShoppingList($SKU, $unit);
 
         if ($this->isElementVisible($elementNameOrText, $productItem)) {
             return;
@@ -845,13 +845,13 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
 
     //@codingStandardsIgnoreStart
     /**
-     * Example: I should not see "This item is running low on inventory" for "SKU123" product with Unit of Quantity "item" on shopping list
-     * @Then /^(?:|I )should not see "(?P<elementNameOrText>[^"]*)" for "(?P<SKU>[^"]*)" product with Unit of Quantity "(?P<unit>[^"]*)" on shopping list$/
+     * Example: I should not see "This item is running low on inventory" for "SKU123" product with Unit of Quantity "item" in shopping list
+     * @Then /^(?:|I )should not see "(?P<elementNameOrText>[^"]*)" for "(?P<SKU>[^"]*)" product with Unit of Quantity "(?P<unit>[^"]*)" in shopping list$/
      */
     //@codingStandardsIgnoreEnd
-    public function shouldNotSeeForProductWithUnitOnShoppingList($elementNameOrText, $SKU, $unit)
+    public function shouldNotSeeForProductWithUnitInShoppingList($elementNameOrText, $SKU, $unit)
     {
-        $productItem = $this->findProductItemByUnitForShoppingList($SKU, $unit);
+        $productItem = $this->findProductItemByUnitInShoppingList($SKU, $unit);
 
         $textAndElementPresentedOnPage = $this->isElementVisible($elementNameOrText, $productItem)
             || stripos($productItem->getText(), $elementNameOrText);
@@ -1359,7 +1359,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      *
      * @return Element
      */
-    private function findProductItemForShoppingList(string $SKU, Element $context = null): Element
+    private function findProductItemInShoppingList(string $SKU, Element $context = null): Element
     {
         $productItem = $this->findElementContains('Shopping list line item', $SKU, $context);
         self::assertNotNull($productItem, sprintf('Product with SKU "%s" not found', $SKU));
@@ -1373,7 +1373,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      * @param Element|null $context
      * @return Element
      */
-    private function findProductItemByUnitForOrder(string $SKU, string $unit, Element $context = null): Element
+    private function findProductItemByUnitInOrder(string $SKU, string $unit, Element $context = null): Element
     {
         $items = $this->findAllElements('ProductLineItem', $context);
 
@@ -1405,7 +1405,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      * @param Element|null $context
      * @return Element
      */
-    private function findProductItemByUnitForShoppingList(string $SKU, string $unit, Element $context = null): Element
+    private function findProductItemByUnitInShoppingList(string $SKU, string $unit, Element $context = null): Element
     {
         $items = $this->findAllElements('Shopping list line item', $context);
 
