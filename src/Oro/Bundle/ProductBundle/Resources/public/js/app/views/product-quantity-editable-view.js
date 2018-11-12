@@ -162,6 +162,20 @@ define(function(require) {
                 this.elements.saveButton.on('click', _.bind(this.onViewChange, this));
                 changeAction = this.enableAccept;
             }
+
+            // Fix bug with no fire change event in EDGE
+            if (tools.isEDGE()) {
+                var awaitBlur = false;
+                this.elements.quantity.on('input', function() {
+                    if (!awaitBlur) {
+                        $(this).one('blur', function() {
+                            $(this).trigger('change');
+                        });
+                    }
+                    awaitBlur = true;
+                });
+            }
+
             this.$el.on('change', this.elements.quantity, _.bind(changeAction, this));
             this.$el.on('change', this.elements.unit, _.bind(changeAction, this));
 

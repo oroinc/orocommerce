@@ -30,9 +30,6 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
 
         $container = $this->getContainer();
 
-        if (!$container->hasParameter('oro_product.entity.product.class')) {
-            $this->markTestSkipped('ProductBundle is missing');
-        }
         $this->loadFixtures([LoadProductData::class]);
 
         $container->get('oro_importexport.field.database_helper')->onClear();
@@ -185,7 +182,7 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
                         'reference' => 'product-1.names.en_US',
                         'string' => 'product-1 en_US Name',
                         'text' => null,
-                        'fallback' => 'system',
+                        'fallback' => null,
                     ],
                     'English (Canada)' => [
                         'reference' => null,

@@ -2,17 +2,26 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Functional\Entity\Repository;
 
+use Doctrine\DBAL\Logging\SQLLogger;
 use Doctrine\ORM\EntityManager;
 
 use Gedmo\Tool\Logging\DBAL\QueryAnalyzer;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\SaleBundle\Entity\Quote;
-use Oro\Bundle\SaleBundle\Entity\Repository\QuoteRepository;
 use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData;
 
 class QuoteRepositoryTest extends WebTestCase
 {
+    /** @var EntityManager */
+    private $em;
+
+    /** @var QueryAnalyzer */
+    private $queryAnalyzer;
+
+    /** @var SQLLogger */
+    private $prevLogger;
+
     /**
      * {@inheritdoc}
      */
@@ -25,6 +34,28 @@ class QuoteRepositoryTest extends WebTestCase
                 'Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData',
             ]
         );
+
+        $this->em = $this->getContainer()
+            ->get('doctrine')
+            ->getManagerForClass(Quote::class);
+
+        $connection = $this->em->getConnection();
+        $configuration = $connection->getConfiguration();
+
+        $this->prevLogger = $configuration->getSQLLogger();
+        $this->queryAnalyzer = new QueryAnalyzer($connection->getDatabasePlatform());
+
+        $configuration->setSQLLogger($this->queryAnalyzer);
+    }
+
+    protected function tearDown()
+    {
+        parent::tearDown();
+
+        $this->em
+            ->getConnection()
+            ->getConfiguration()
+            ->setSQLLogger($this->prevLogger);
     }
 
     public function testQuoteInOneQuery()
@@ -32,21 +63,26 @@ class QuoteRepositoryTest extends WebTestCase
         /** @var Quote $quote */
         $quote = $this->getReference(LoadQuoteData::QUOTE1);
 
-        $quoteClass = $this->getContainer()->getParameter('oro_sale.entity.quote.class');
+        $loadedQuote = $this->em->getRepository(Quote::class)->getQuote($quote->getId());
 
-        /** @var EntityManager $em */
-        $em = $this->getContainer()->get('doctrine')->getManagerForClass($quoteClass);
+        $this->assertQuoteFetchedInOneQuery($loadedQuote);
+    }
 
-        /** @var QuoteRepository $repository */
-        $repository = $em->getRepository($quoteClass);
+    public function testGetQuoteByGuestAccessIdInOneQuery()
+    {
+        /** @var Quote $quote */
+        $quote = $this->getReference(LoadQuoteData::QUOTE1);
 
-        $queryAnalyzer = new QueryAnalyzer($em->getConnection()->getDatabasePlatform());
+        $loadedQuote = $this->em->getRepository(Quote::class)->getQuoteByGuestAccessId($quote->getGuestAccessId());
 
-        $prevLogger = $em->getConnection()->getConfiguration()->getSQLLogger();
-        $em->getConnection()->getConfiguration()->setSQLLogger($queryAnalyzer);
+        $this->assertQuoteFetchedInOneQuery($loadedQuote);
+    }
 
-        $loadedQuote = $repository->getQuote($quote->getId());
-
+    /**
+     * @param Quote $loadedQuote
+     */
+    private function assertQuoteFetchedInOneQuery(Quote $loadedQuote)
+    {
         // iterate collections to run additional queries if not fetched at once
         $this->assertNotEmpty($loadedQuote->getQuoteProducts());
         $this->assertSameSize(
@@ -66,19 +102,17 @@ class QuoteRepositoryTest extends WebTestCase
             }
         }
 
-        $queries = $queryAnalyzer->getExecutedQueries();
+        $queries = $this->queryAnalyzer->getExecutedQueries();
         $this->assertCount(1, $queries);
 
         $query = reset($queries);
 
-        $quoteProductMetadata = $em
+        $quoteProductMetadata = $this->em
             ->getClassMetadata($this->getContainer()->getParameter('oro_sale.entity.quote_product.class'));
         $this->assertContains(sprintf('LEFT JOIN %s', $quoteProductMetadata->getTableName()), $query);
 
-        $quoteProductOfferMetadata = $em
+        $quoteProductOfferMetadata = $this->em
             ->getClassMetadata($this->getContainer()->getParameter('oro_sale.entity.quote_product_offer.class'));
         $this->assertContains(sprintf('LEFT JOIN %s', $quoteProductOfferMetadata->getTableName()), $query);
-
-        $em->getConnection()->getConfiguration()->setSQLLogger($prevLogger);
     }
 }
