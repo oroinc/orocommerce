@@ -49,7 +49,7 @@ class ReferenceRepositoryInitializer implements ReferenceRepositoryInitializerIn
     private function setProductUnitReferences(Registry $doctrine, AliceCollection $referenceRepository): void
     {
         /** @var ProductUnitRepository $repository */
-        $repository = $doctrine->getManager()->getRepository('OroProductBundle:ProductUnit');
+        $repository = $doctrine->getManager()->getRepository(ProductUnit::class);
         /** @var ProductUnit $item */
         $item = $repository->findOneBy(['code' => 'item']);
         $referenceRepository->set('item', $item);

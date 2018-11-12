@@ -16,8 +16,6 @@ datagrids:
                     - request.updatedAt
                 from:
                     - { table: '%oro_rfp.entity.request.class%', alias: request }
-            hints:
-                - { name: HINT_CUSTOM_OUTPUT_WALKER, value: '%oro_translation.translation_walker.class%'}
         columns:
             id:
                 label:         oro.rfp.request.id.label
@@ -155,7 +153,7 @@ datagrids:
                         - { join: request.internal_status, alias: internalStatus }
                         - { join: request.customer_status, alias: customerStatus }
             hints:
-                - { name: HINT_CUSTOM_OUTPUT_WALKER, value: '%oro_translation.translation_walker.class%'}
+                - HINT_TRANSLATABLE
         columns:
             firstName:
                 label:         oro.rfp.request.first_name.label
@@ -301,6 +299,8 @@ datagrids:
                 -
                     name: internalStatus
                     default: deleted
+            hints:
+                - HINT_TRANSLATABLE
 
         columns:
             id:
