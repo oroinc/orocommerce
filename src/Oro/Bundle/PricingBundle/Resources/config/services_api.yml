@@ -141,8 +141,8 @@ services:
     oro_pricing.api.normalize_product_price:
         class: 'Oro\Bundle\PricingBundle\Api\ProductPrice\Processor\NormalizeOutputProductPriceId'
         tags:
-            - { name: oro.api.processor, action: get, group: load_data, priority: -20, class: '%oro_pricing.entity.product_price.class%' }
-            - { name: oro.api.processor, action: get_list, group: load_data, priority: -20, class: '%oro_pricing.entity.product_price.class%' }
+            - { name: oro.api.processor, action: get, group: finalize, class: '%oro_pricing.entity.product_price.class%' }
+            - { name: oro.api.processor, action: get_list, group: finalize, class: '%oro_pricing.entity.product_price.class%' }
 
     oro_pricing.api.set_price_list_in_context_by_product_price:
         class: 'Oro\Bundle\PricingBundle\Api\ProductPrice\Processor\StorePriceListInContextByProductPrice'
