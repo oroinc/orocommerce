@@ -7,6 +7,7 @@ use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\InventoryBundle\EventListener\LineItemValidationListener;
 use Oro\Bundle\InventoryBundle\Tests\Unit\EventListener\Stub\ProductStub;
 use Oro\Bundle\InventoryBundle\Validator\QuantityToOrderValidatorService;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Event\LineItemValidateEvent;
 
@@ -82,7 +83,9 @@ class LineItemValidationListenerTest extends \PHPUnit_Framework_TestCase
     {
         $maxMessage = 'maxMessage';
         $lineItem = new LineItem();
+        $lineItem->setUnit((new ProductUnit())->setCode('someCode'));
         $product = new ProductStub();
+        $product->setSku('someSku');
         $lineItem->setProduct($product);
         $lineItems = new ArrayCollection();
         $lineItems->add($lineItem);
@@ -105,7 +108,9 @@ class LineItemValidationListenerTest extends \PHPUnit_Framework_TestCase
     {
         $minMessage = 'minMessage';
         $lineItem = new LineItem();
+        $lineItem->setUnit((new ProductUnit())->setCode('someCode'));
         $product = new ProductStub();
+        $product->setSku('someSku');
         $lineItem->setProduct($product);
         $lineItems = new ArrayCollection();
         $lineItems->add($lineItem);
