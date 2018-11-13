@@ -197,3 +197,6 @@ Feature: Single Page Checkout With Popup for Sales
     And I wait "Submit Order" button
     And I click "Submit Order"
     Then I see the "Thank You" page with "Thank You For Your Purchase!" title
+
+  Scenario: Check there are no flash messages on success page
+    And I should not see flash messages
