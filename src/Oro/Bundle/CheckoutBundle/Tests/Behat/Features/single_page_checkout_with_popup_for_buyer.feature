@@ -444,3 +444,4 @@ Feature: Single Page Checkout With Popup for Buyer
     And I wait "Submit Order" button
     And I click "Submit Order"
     Then I see the "Thank You" page with "Thank You For Your Purchase!" title
+    And I should not see flash messages
