@@ -60,7 +60,8 @@ class RowTotalResolver
         foreach ($taxRules as $taxRule) {
             $currentTaxRate = BigDecimal::of($taxRule->getTax()->getRate());
             
-            if (BigDecimal::zero()->isEqualTo($currentTaxRate) || BigDecimal::zero()->isEqualTo($resultElementStartWith)) {
+            if (BigDecimal::zero()->isEqualTo($currentTaxRate) &&
+                BigDecimal::zero()->isEqualTo($resultElementStartWith->getTaxAmount())) {
                 $taxAmount = BigDecimal::zero();
             } else {
                 $taxAmount = BigDecimal::of($resultElementStartWith->getTaxAmount())
