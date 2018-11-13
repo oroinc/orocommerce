@@ -5,11 +5,15 @@ namespace Oro\Bundle\PayPalBundle\Tests\Behat\Context;
 use Behat\Gherkin\Node\TableNode;
 use Behat\Symfony2Extension\Context\KernelAwareContext;
 use Behat\Symfony2Extension\Context\KernelDictionary;
-
+use Oro\Bundle\IntegrationBundle\Entity\Channel;
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\PayPalBundle\Entity\PayPalSettings;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\Form;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\OroPageObjectAware;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
+use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
+use Oro\Bundle\UserBundle\Entity\User;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -17,7 +21,181 @@ use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
  */
 class FeatureContext extends OroFeatureContext implements OroPageObjectAware, KernelAwareContext
 {
-    use PageObjectDictionary, KernelDictionary;
+    use PageObjectDictionary, KernelDictionary, UserUtilityTrait;
+
+    /**
+     * @Given /^(?:I )?create "(?P<name>(?:[^"]+))" PayPal Payflow integration$/
+     * @Given /^(?:I )?create PayPal Payflow integration$/
+     * @Given /^(?:I )?create "(?P<name>(?:[^"]+))" PayPal Payflow integration with following settings:$/
+     * @Given /^(?:I )?create PayPal Payflow integration with following settings:$/
+     *
+     * @param string $name
+     * @param TableNode|null $settingsTable
+     */
+    public function iCreatePayPalPayflowIntegration(string $name = 'PayPalFlow', ?TableNode $settingsTable = null)
+    {
+        $this->createPayPalIntegration('paypal_payflow_gateway', $name, $settingsTable);
+    }
+
+    /**
+     * @Given /^(?:I )?create "(?P<name>(?:[^"]+))" PayPal PaymentsPro integration"$/
+     * @Given /^(?:I )?create PayPal PaymentsPro integration$/
+     * @Given /^(?:I )?create "(?P<name>(?:[^"]+))" PayPal PaymentsPro integration with following settings:$/
+     * @Given /^(?:I )?create PayPal PaymentsPro integration with following settings:$/
+     *
+     * @param string $name
+     * @param TableNode|null $settingsTable
+     */
+    public function iCreatePayPalPaymentsProIntegration(string $name = 'PayPalPro', ?TableNode $settingsTable = null)
+    {
+        $this->createPayPalIntegration('paypal_payments_pro', $name, $settingsTable);
+    }
+
+    /**
+     * @param string $type
+     * @param string $name
+     * @param TableNode|null $settingsTable
+     */
+    public function createPayPalIntegration(string $type, string $name, ?TableNode $settingsTable = null)
+    {
+        $settings = $this->getIntegrationSettings($type);
+        if ($settingsTable !== null) {
+            $settings = array_merge($settings, $settingsTable->getRowsHash());
+        }
+
+        $transport = $this->createTransport($settings);
+        $channel = $this->createChannel($name, $type, $transport);
+        $transport->setChannel($channel);
+
+        $entityManager = $this->getContainer()->get('oro_entity.doctrine_helper')
+            ->getEntityManagerForClass(Channel::class);
+        $entityManager->persist($channel);
+        $entityManager->flush();
+    }
+
+    /**
+     * @param string $type
+     *
+     * @return array
+     */
+    private function getIntegrationSettings(string $type): array
+    {
+        $settings = [
+            $this->getContainer()->getParameter('oro_paypal.method.paypal_payflow_gateway') => [
+                'creditCardLabels' => 'PayPalFlow',
+                'creditCardShortLabels' => 'PPlFlow',
+                'allowedCreditCardTypes' => ['mastercard'],
+                'partner' => 'PayPal',
+                'vendor' => 'qwerty123456',
+                'user' => 'qwer12345',
+                'password' => 'qwer123423r23r',
+                'zeroAmountAuthorization' => false,
+                'authorizationForRequiredAmount' => false,
+                'creditCardPaymentAction' => 'authorize',
+                'expressCheckoutName' => 'ExpressPayPal',
+                'expressCheckoutLabels' => 'ExpressPayPal',
+                'expressCheckoutShortLabels' => 'ExprPPl',
+                'expressCheckoutPaymentAction' => 'authorize',
+            ],
+            $this->getContainer()->getParameter('oro_paypal.method.paypal_payments_pro') => [
+                'creditCardLabels' => 'PayPalPro',
+                'creditCardShortLabels' => 'PPlPro',
+                'allowedCreditCardTypes' => ['mastercard'],
+                'partner' => 'PayPal',
+                'vendor' => 'qwerty123456',
+                'user' => 'qwer12345',
+                'password' => 'qwer123423r23r',
+                'zeroAmountAuthorization' => false,
+                'authorizationForRequiredAmount' => false,
+                'creditCardPaymentAction' => 'authorize',
+                'expressCheckoutName' => 'ExpressPayPal',
+                'expressCheckoutLabels' => 'ExpressPayPal',
+                'expressCheckoutShortLabels' => 'ExprPPl',
+                'expressCheckoutPaymentAction' => 'authorize',
+            ],
+        ];
+
+        self::assertArrayHasKey(
+            $type,
+            $settings,
+            sprintf('Unknown PayPal integration channel type. Supported types: %s', implode(',', array_keys($settings)))
+        );
+
+        return $settings[$type];
+    }
+
+    /**
+     * @param array $settings
+     *
+     * @return PayPalSettings
+     */
+    private function createTransport(array $settings): PayPalSettings
+    {
+        $encoder = $this->getContainer()->get('oro_security.encoder.mcrypt');
+        $propertyAccessor = $this->getContainer()->get('property_accessor');
+        $transport = new PayPalSettings();
+        foreach ($settings as $key => $value) {
+            if ($this->isLocalizedProperty($key)) {
+                $value = [(new LocalizedFallbackValue())->setString($value)];
+            }
+
+            if ($this->isEncodedProperty($key)) {
+                $value = $encoder->encryptData($value);
+            }
+
+            $propertyAccessor->setValue($transport, $key, $value);
+        }
+
+        return $transport;
+    }
+
+    /**
+     * @param string $name
+     * @param string $type
+     * @param $transport
+     *
+     * @return Channel
+     */
+    protected function createChannel(string $name, string $type, $transport): Channel
+    {
+        $doctrineHelper = $this->getContainer()->get('oro_entity.doctrine_helper');
+        $owner = $this->getFirstUser($doctrineHelper->getEntityManagerForClass(User::class));
+
+        $channel = new Channel();
+        $channel->setName($name);
+        $channel->setType($type);
+        $channel->setEnabled(true);
+        $channel->setDefaultUserOwner($owner);
+        $channel->setOrganization($owner->getOrganization());
+        $channel->setTransport($transport);
+
+        return $channel;
+    }
+
+    /**
+     * @param string $name
+     *
+     * @return bool
+     */
+    private function isEncodedProperty(string $name): bool
+    {
+        return \in_array($name, ['vendor', 'user', 'password', 'partner']);
+    }
+
+    /**
+     * @param string $name
+     *
+     * @return bool
+     */
+    private function isLocalizedProperty(string $name)
+    {
+        return \in_array($name, [
+            'creditCardLabels',
+            'creditCardShortLabels',
+            'expressCheckoutLabels',
+            'expressCheckoutShortLabels',
+        ]);
+    }
 
     /**
      * | Name                      | PayPal               |

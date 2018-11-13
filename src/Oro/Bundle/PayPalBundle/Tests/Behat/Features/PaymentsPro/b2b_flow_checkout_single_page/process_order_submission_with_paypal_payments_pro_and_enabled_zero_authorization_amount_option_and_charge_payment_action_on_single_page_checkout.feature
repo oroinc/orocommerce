@@ -14,44 +14,11 @@ Feature: Process order submission with PayPal Payments Pro and enabled zero "aut
     Given sessions active:
       | Admin | first_session  |
       | Buyer | second_session |
-    # Enable SinglePage checkout
-    And I proceed as the Admin
-    And I login as administrator
-    And go to System/Workflows
-    And I click "Activate" on row "Single Page Checkout" in grid
-    And I click "Activate"
-    And I should see "Workflow activated" flash message
-    # Create new PayPal Payments Pro Integration
-    And I go to System/Integrations/Manage Integrations
-    And I click "Create Integration"
-    And I select "PayPal Payments Pro" from "Type"
-    And I fill PayPal integration fields with next data:
-      | Name                         | PayPalPro            |
-      | Label                        | PayPalPro            |
-      | Short Label                  | PPlPro               |
-      | Allowed Credit Card Types    | Mastercard           |
-      | Partner                      | PayPal               |
-      | Vendor                       | qwerty123456         |
-      | User                         | qwer12345            |
-      | Password                     | qwer123423r23r       |
-      | Zero Amount Authorization    | true                 |
-      | Payment Action               | Authorize and Charge |
-      | Express Checkout Name        | ExpressPayPal        |
-      | Express Checkout Label       | ExpressPayPal        |
-      | Express Checkout Short Label | ExprPPl              |
-    And I save and close form
-    And I should see "Integration saved" flash message
-    And I should see PayPalPro  in grid
-    # Create new Payment Rule for PayPal Payments Pro integration
-    And I go to System/Payment Rules
-    And I click "Create Payment Rule"
-    And I check "Enabled"
-    And I fill in "Name" with "PayPalPro"
-    And I fill in "Sort Order" with "1"
-    And I select "PayPalPro" from "Method"
-    And I click "Add Method Button"
-    And I save and close form
-    And I should see "Payment rule has been saved" flash message
+    And I activate "Single Page Checkout" workflow
+    And I create PayPal PaymentsPro integration with following settings:
+      | creditCardPaymentAction | charge |
+      | zeroAmountAuthorization | true   |
+    And I create payment rule with "PayPalPro" payment method
 
   Scenario: Successful first order payment with PayPal Payments Pro
     Given There are products in the system available for order
@@ -76,6 +43,7 @@ Feature: Process order submission with PayPal Payments Pro and enabled zero "aut
 
   Scenario: Check orders are paid in full
     Given I proceed as the Admin
+    And I login as administrator
     When I go to Sales/Orders
     Then I should see following grid:
       | Order Number | Payment Status |

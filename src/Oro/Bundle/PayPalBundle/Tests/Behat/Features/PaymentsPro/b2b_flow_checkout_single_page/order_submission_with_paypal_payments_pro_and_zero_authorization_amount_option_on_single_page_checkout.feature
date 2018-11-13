@@ -14,44 +14,10 @@ Feature: Order submission with PayPal Payments Pro and zero "authorization amoun
     Given sessions active:
       | Admin | first_session  |
       | Buyer | second_session |
-    # Enable SinglePage checkout
-    And I proceed as the Admin
-    And I login as administrator
-    And go to System/Workflows
-    And I click "Activate" on row "Single Page Checkout" in grid
-    And I click "Activate"
-    And I should see "Workflow activated" flash message
-    # Create new PayPal Payments Pro Integration
-    And I go to System/Integrations/Manage Integrations
-    And I click "Create Integration"
-    And I select "PayPal Payments Pro" from "Type"
-    And I fill PayPal integration fields with next data:
-      | Name                         | PayPalPro      |
-      | Label                        | PayPalPro      |
-      | Short Label                  | PPlPro         |
-      | Allowed Credit Card Types    | Mastercard     |
-      | Partner                      | PayPal         |
-      | Vendor                       | qwerty123456   |
-      | User                         | qwer12345      |
-      | Password                     | qwer123423r23r |
-      | Zero Amount Authorization    | true           |
-      | Payment Action               | Authorize      |
-      | Express Checkout Name        | ExpressPayPal  |
-      | Express Checkout Label       | ExpressPayPal  |
-      | Express Checkout Short Label | ExprPPl        |
-    And I save and close form
-    And I should see "Integration saved" flash message
-    And I should see PayPalPro  in grid
-    # Create new Payment Rule for PayPal Payments Pro integration
-    And I go to System/Payment Rules
-    And I click "Create Payment Rule"
-    And I check "Enabled"
-    And I fill in "Name" with "PayPalPro"
-    And I fill in "Sort Order" with "1"
-    And I select "PayPalPro" from "Method"
-    And I click "Add Method Button"
-    And I save and close form
-    And I should see "Payment rule has been saved" flash message
+    And I activate "Single Page Checkout" workflow
+    And I create PayPal PaymentsPro integration with following settings:
+      | zeroAmountAuthorization | true |
+    And I create payment rule with "PayPalPro" payment method
 
   Scenario: Successful first order payment with PayPal Payments Pro and enabled "zero authorization amount" option
     Given There are products in the system available for order
@@ -69,6 +35,7 @@ Feature: Order submission with PayPal Payments Pro and zero "authorization amoun
 
   Scenario: Check that payment can be captured for the first order
     Given I proceed as the Admin
+    And I login as administrator
     And I go to Sales/Orders
     And I click View Pending payment in grid
     When I click "Capture"
