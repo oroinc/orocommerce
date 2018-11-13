@@ -62,6 +62,7 @@ oro:
             organization.label: Organization
             websites.label: Websites
         shippingmethodconfig:
+            disabled: Disabled
             entity_label: Shipping Rule Method Config
             entity_plural_label: Shipping Rule Methods Configs
             id.label: Id
