@@ -14,6 +14,8 @@ define(function(require) {
      * @class oroorder.app.views.DiscountItemView
      */
     DiscountItemView = BaseView.extend({
+        discountItemHint: require('tpl!./../templates/discount-item-hint.html'),
+
         /**
          * @property {Object}
          */
@@ -26,7 +28,7 @@ define(function(require) {
             valueCalculatedSelector: '.discount-item-value-calculated',
             percentTypeValue: null,
             totalType: null,
-            discountType: null,
+            discountType: null
         },
 
         /**
@@ -48,6 +50,13 @@ define(function(require) {
          * @property {jQuery.Element}
          */
         $amountInputElement: null,
+
+        /**
+         * @inheritDoc
+         */
+        constructor: function DiscountItemView() {
+            DiscountItemView.__super__.constructor.apply(this, arguments);
+        },
 
         /**
          * @inheritDoc
@@ -85,7 +94,7 @@ define(function(require) {
             validator.element(this.$valueInputElement);
 
             if (!validator.numberOfInvalids()) {
-                this._updateAmounts(parseFloat(value));
+                this._updateAmounts(NumberFormatter.unformatStrict(value));
             }
         },
 
@@ -155,8 +164,12 @@ define(function(require) {
                 amount = value;
                 percent = total > 0 ? (value / total * 100).toFixed(2) : 0;
             }
-            var formattedDiscountAmount = NumberFormatter.formatCurrency(amount, this.options.currency);
-            this.$el.find(this.options.valueCalculatedSelector).html(formattedDiscountAmount + ' (' + percent + '%)');
+            this.$el.find(this.options.valueCalculatedSelector).html(this.discountItemHint({
+                NumberFormatter: NumberFormatter,
+                amount: amount,
+                currency: this.options.currency,
+                percent: percent
+            }));
 
             this.$amountInputElement.val(amount);
             this.$percentInputElement.val(percent);

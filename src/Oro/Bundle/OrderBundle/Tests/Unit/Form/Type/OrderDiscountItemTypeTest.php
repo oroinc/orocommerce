@@ -2,19 +2,21 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Form\Type;
 
+use Oro\Bundle\FormBundle\Form\Type\OroHiddenNumberType;
+use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use Oro\Bundle\OrderBundle\Entity\Order;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
-use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Validation;
-
-use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Bundle\OrderBundle\Entity\OrderDiscount;
 use Oro\Bundle\OrderBundle\Form\Type\OrderDiscountItemType;
 use Oro\Bundle\OrderBundle\Provider\DiscountSubtotalProvider;
 use Oro\Bundle\OrderBundle\Total\TotalHelper;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
+use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
+use Symfony\Component\Form\PreloadedExtension;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Validation;
 
 class OrderDiscountItemTypeTest extends FormIntegrationTestCase
 {
@@ -134,6 +136,16 @@ class OrderDiscountItemTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
-        return [new ValidatorExtension(Validation::createValidator())];
+        $numberFormatter = $this->createMock(NumberFormatter::class);
+
+        return [
+            new ValidatorExtension(Validation::createValidator()),
+            new PreloadedExtension(
+                [
+                    OroHiddenNumberType::class => new OroHiddenNumberType($numberFormatter),
+                ],
+                []
+            )
+        ];
     }
 }
