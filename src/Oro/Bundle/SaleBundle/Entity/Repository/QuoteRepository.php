@@ -2,9 +2,11 @@
 
 namespace Oro\Bundle\SaleBundle\Entity\Repository;
 
+use Doctrine\DBAL\Exception\DriverException;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
+use Doctrine\ORM\QueryBuilder;
 
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\SaleBundle\Entity\Quote;
@@ -12,26 +14,51 @@ use Oro\Bundle\SaleBundle\Entity\Quote;
 class QuoteRepository extends EntityRepository
 {
     /**
+     * @return QueryBuilder
+     */
+    private function getQueryBuildertoFetchQuote(): QueryBuilder
+    {
+        return $this->createQueryBuilder('q')
+            ->select(['q', 'quoteProducts', 'quoteProductOffers'])
+            ->leftJoin('q.quoteProducts', 'quoteProducts')
+            ->leftJoin('quoteProducts.quoteProductOffers', 'quoteProductOffers');
+    }
+
+    /**
      * @param int $id
-     * @return Quote
-     *
-     * @link http://www.doctrine-project.org/jira/browse/DDC-2536 setFetchMode doesn't work here
+     * @return Quote|null
      */
     public function getQuote($id)
     {
-        $qb = $this->createQueryBuilder('q');
+        $qb = $this->getQueryBuildertoFetchQuote();
+        $qb->where($qb->expr()->eq('q.id', ':id'))
+            ->setParameter('id', (int)$id);
 
         try {
             return $qb
-                ->select(['q', 'quoteProducts', 'quoteProductOffers'])
-                ->leftJoin('q.quoteProducts', 'quoteProducts')
-                ->leftJoin('quoteProducts.quoteProductOffers', 'quoteProductOffers')
-                ->where($qb->expr()->eq('q.id', ':id'))
-                ->setParameter('id', (int)$id)
                 ->getQuery()
                 ->getSingleResult();
-        } catch (NoResultException $e) {
-        } catch (NonUniqueResultException $e) {
+        } catch (NoResultException|NonUniqueResultException $e) {
+        }
+
+        return null;
+    }
+
+    /**
+     * @param string $guestAccessId
+     * @return Quote|null
+     */
+    public function getQuoteByGuestAccessId(string $guestAccessId)
+    {
+        $qb = $this->getQueryBuildertoFetchQuote();
+        $qb->where($qb->expr()->eq('q.guestAccessId', ':guestAccessId'))
+            ->setParameter('guestAccessId', $guestAccessId);
+
+        try {
+            return $qb
+                ->getQuery()
+                ->getSingleResult();
+        } catch (NoResultException|NonUniqueResultException|DriverException $e) {
         }
 
         return null;

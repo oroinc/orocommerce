@@ -9,6 +9,7 @@ use Behat\Symfony2Extension\Context\KernelDictionary;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Oro\Bundle\CheckoutBundle\Tests\Behat\Element\CheckoutStep;
 use Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid;
+use Oro\Bundle\EmailBundle\Tests\Behat\Context\EmailContext;
 use Oro\Bundle\NavigationBundle\Tests\Behat\Element\MainMenu;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
@@ -31,12 +32,18 @@ class FeatureContext extends OroFeatureContext implements
     private $oroMainContext;
 
     /**
+     * @var EmailContext
+     */
+    private $emailContext;
+
+    /**
      * @BeforeScenario
      */
     public function gatherContexts(BeforeScenarioScope $scope)
     {
         $environment = $scope->getEnvironment();
         $this->oroMainContext = $environment->getContext(OroMainContext::class);
+        $this->emailContext = $environment->getContext(EmailContext::class);
     }
 
     /**
@@ -121,6 +128,66 @@ class FeatureContext extends OroFeatureContext implements
     }
 
     /**
+     * Example: I should see truncated to 10 symbols link for quote qid "Quote1"
+     *
+     * @Then /^(?:|I )should see truncated to (?P<truncateTo>(?:\d+)) symbols link for quote qid (?P<qid>[\w\s]+)$/
+     * @param string $qid
+     * @param integer $truncateTo
+     */
+    public function iShouldSeeTruncatedGuestLink(string $qid, int $truncateTo): void
+    {
+        $this->assertSession()->pageTextContains($this->getTruncatedGuestLink($qid, $truncateTo));
+    }
+
+    /**
+     * Example: I visit guest quote link for quote 123
+     *
+     * @When /^I visit guest quote link for quote (?P<qid>[\w\s]+)$/
+     * @param string $qid
+     */
+    public function iVisitGuestQuoteLinkForQuote(string $qid): void
+    {
+        $this->visitPath($this->getGuestLink($qid));
+    }
+
+    /**
+     * Example: Then Guest Quote "123" email has been sent to "somebody@examle.com"
+     *
+     * @Then /^Guest Quote "(?P<qid>[\w\s]+)" email has been sent to "(?P<email>\S+)"/
+     * @param string $qid
+     * @param string $email
+     */
+    public function guestQuoteEmailHasBeenSend(string $qid, string $email): void
+    {
+        $guestLink = $this->getGuestLink($qid);
+
+        $guestQuoteTableNode = new TableNode([
+            ['To', $email],
+            ['Body', $guestLink]
+        ]);
+
+        $this->emailContext->emailShouldContainsTheFollowing($guestQuoteTableNode);
+    }
+
+    /**
+     * Example: Then I click truncated to 10 symbols Guest Quote 123 link
+     *
+     * @Then /^(?:|I )click truncated to (?P<truncateTo>(?:\d+)) symbols Guest Quote (?P<qid>[\w\s]+) link/
+     * @param string $qid
+     * @param integer $truncateTo
+     */
+    public function clickToGuestQuoteLink(string $qid, int $truncateTo): void
+    {
+        $guestLink = $this->getTruncatedGuestLink($qid, $truncateTo);
+        self::assertTrue($this->getSession()->getPage()->hasLink($guestLink), sprintf(
+            'Link "%s" not found.',
+            $guestLink
+        ));
+
+        $this->oroMainContext->clickLink($guestLink);
+    }
+
+    /**
      * @param string $qid
      *
      * @return Quote
@@ -141,5 +208,34 @@ class FeatureContext extends OroFeatureContext implements
             ->get('doctrine')
             ->getManagerForClass($className)
             ->getRepository($className);
+    }
+
+    /**
+     * @param string $qid
+     * @param integer $truncateTo
+     * @return string
+     */
+    private function getTruncatedGuestLink(string $qid, int $truncateTo): string
+    {
+        $guestLink = $this->getGuestLink($qid);
+
+        return substr($guestLink, 0, $truncateTo);
+    }
+
+    /**
+     * @param string $qid
+     * @return string
+     */
+    private function getGuestLink(string $qid): string
+    {
+        $quote = $this->getQuote($qid);
+
+        return $this->getContainer()
+            ->get('oro_website.resolver.website_url_resolver')
+            ->getWebsitePath(
+                'oro_sale_quote_frontend_view_guest',
+                ['guest_access_id' => $quote->getGuestAccessId()],
+                $quote->getWebsite()
+            );
     }
 }

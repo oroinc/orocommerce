@@ -503,11 +503,9 @@
 
     {% if matrixForm != 'none' %}
         {% set moduleOptions = moduleOptions|merge({
-            route: 'oro_shopping_list_frontend_remove_product',
-            requestMethod: 'POST',
+            route: 'oro_shopping_list_frontend_remove_line_item',
+            requestMethod: 'DELETE',
             routeParams: {
-                'productId': mainProduct.id,
-                'shoppingListId': shoppingList.id,
                 'lineItemId': lineItem.id
             }
         }) %}

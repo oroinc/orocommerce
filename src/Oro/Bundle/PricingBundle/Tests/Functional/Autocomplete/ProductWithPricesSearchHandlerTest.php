@@ -2,22 +2,27 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Autocomplete;
 
-use Symfony\Component\HttpFoundation\Request;
-
+use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
+use Oro\Bundle\FrontendTestFrameworkBundle\Test\FrontendWebTestCase;
+use Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData;
 use Oro\Bundle\PricingBundle\Autocomplete\ProductWithPricesSearchHandler;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadFrontendProductData;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Request;
 
-class ProductWithPricesSearchHandlerTest extends WebTestCase
+class ProductWithPricesSearchHandlerTest extends FrontendWebTestCase
 {
     /** @var ProductWithPricesSearchHandler */
     private $searchHandler;
 
     protected function setUp()
     {
-        $this->initClient([], $this->generateBasicAuthHeader());
+        $this->initClient(
+            [],
+            self::generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
+        );
 
         $this->loadFixtures(
             [
@@ -81,14 +86,35 @@ class ProductWithPricesSearchHandlerTest extends WebTestCase
         }
     }
 
-    public function testUnitsAreIncludedInReturnedResponse()
+    public function testReturnsLocalizedProductsNames()
     {
-        $items = $this->searchHandler->search('product-1', 0, 100);
-        $product1 = reset($items['results']);
+        $localizationCode = LoadLocalizationData::getLocalizations()[0]['language'];
+        $localization = $this->getReference($localizationCode);
 
-        $this->assertArrayHasKey('units', $product1);
-        $this->assertCount(1, $product1['units']);
-        $this->assertEquals(0, $product1['units']['milliliter']);
+        $this->client->request(
+            Request::METHOD_POST,
+            $this->getUrl('oro_frontend_localization_frontend_set_current_localization'),
+            ['localization' => $localization->getId()]
+        );
+        $result = $this->client->getResponse();
+
+        self::assertJsonResponseStatusCodeEquals($result, 200);
+
+        $items = $this->searchHandler->search('product', 0, 100);
+        $productIds = array_column($items['results'], 'id');
+
+        /** @var Product[] $products */
+        $products = $this->getClient()->getContainer()->get('doctrine')
+            ->getRepository(Product::class)
+            ->findById($productIds);
+
+        foreach ($items['results'] as $item) {
+            foreach ($products as $product) {
+                if ($item['id'] == $product->getId()) {
+                    self::assertEquals($product->getName($localization), $item['defaultName.string']);
+                }
+            }
+        }
     }
 
     /**

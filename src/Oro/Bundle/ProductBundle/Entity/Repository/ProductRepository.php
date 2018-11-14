@@ -479,6 +479,43 @@ class ProductRepository extends EntityRepository
     }
 
     /**
+     * This is analog of  self::findParentSkusByAttributeValue method but fetches results for array of options
+     * to not to execute query for each option
+     * Added new method for BC purposes only
+     * @param string $type
+     * @param string $fieldName
+     * @param array $attributeOptions
+     * @return array
+     */
+    public function findParentSkusByAttributeOptions(string $type, string $fieldName, array $attributeOptions)
+    {
+        $qb = $this->createQueryBuilder('p');
+
+        $result = $qb
+            ->select(['parent_product.sku', 'attr.id'])
+            ->distinct()
+            ->join('p.' . $fieldName, 'attr')
+            ->join('p.parentVariantLinks', 'variant_links')
+            ->join('variant_links.parentProduct', 'parent_product')
+            ->where($qb->expr()->in('attr', ':attributeOptions'))
+            ->andWhere('p.type = :type')
+            ->andWhere($qb->expr()->isNotNull('p.' . $fieldName))
+            ->orderBy('parent_product.sku')
+            ->setParameter('attributeOptions', $attributeOptions)
+            ->setParameter('type', $type)
+            ->getQuery()
+            ->getArrayResult();
+
+        $flattenedResult = [];
+
+        foreach ($result as $item) {
+            $flattenedResult[$item['id']][] = $item['sku'];
+        }
+
+        return $flattenedResult;
+    }
+
+    /**
      * Returns array of product ids that have required attribute in their attribute family
      *
      * @param FieldConfigModel $attribute
