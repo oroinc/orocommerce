@@ -8,6 +8,7 @@ define(function(require) {
     var BaseView = require('oroui/js/app/views/base/view');
     var tools = require('oroui/js/tools');
     var LoadingMask = require('oroui/js/app/views/loading-mask-view');
+    var NumberFormatter = require('orolocale/js/formatter/number');
 
     DiscountCollectionView = BaseView.extend({
         /**
@@ -96,10 +97,11 @@ define(function(require) {
                 }
             });
 
+            discountsSum = NumberFormatter.formatDecimal(discountsSum);
             $discountsSumElement.val(discountsSum);
 
             if (dataValidation && !_.isEmpty(dataValidation.Range)) {
-                dataValidation.Range.max = total;
+                dataValidation.Range.max = NumberFormatter.formatDecimal(total);
             }
 
             var validator = $($discountsSumElement.closest('form')).validate();
@@ -176,6 +178,11 @@ define(function(require) {
             _.each(this.options.selectors.formFields, _.bind(function(fieldSelector, fieldType) {
                 if ('value' !== fieldType) {
                     var submissionInputVal = $(fieldSelector, form).val();
+
+                    if ('amount' === fieldType || 'percent' === fieldType) {
+                        submissionInputVal = NumberFormatter.formatDecimal(submissionInputVal);
+                    }
+
                     $newInputs.filter(fieldSelector).attr('value', submissionInputVal);
                 }
             }, this), form);
