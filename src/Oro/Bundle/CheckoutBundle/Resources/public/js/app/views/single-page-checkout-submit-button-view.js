@@ -23,6 +23,10 @@ define(function(require) {
             this.$el.prop('disabled', 'disabled');
         },
 
+        onEnableState: function() {
+            this.$el.prop('disabled', false);
+        },
+
         onHover: function() {
             this.isHoveredFlag = true;
         },
