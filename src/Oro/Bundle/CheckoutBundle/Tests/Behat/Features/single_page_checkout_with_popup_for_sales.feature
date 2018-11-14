@@ -173,6 +173,7 @@ Feature: Single Page Checkout With Popup for Sales
     Then I should see "ORO, Fifth avenue, 10115 Berlin, Germany" for "Select Single Page Checkout Shipping Address" select
 
   Scenario: Check "Use billing address" appears for new address and can be checked
+    Given I should not see flash messages
     And I click on "Billing Address Select"
     And I click on "New Address Option"
     And I fill "New Address Popup Form" with:
