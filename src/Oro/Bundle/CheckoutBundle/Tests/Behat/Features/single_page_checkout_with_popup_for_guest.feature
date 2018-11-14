@@ -200,6 +200,7 @@ Feature: Single Page Checkout With Popup for Guest
     And I scroll to top
     And I wait line items are initialized
     When I click "Create Order"
+    And I should not see flash messages
     And I uncheck "Save my data and create an account" on the checkout page
     And I click on "Billing Address Select"
     And I click on "New Address Option"

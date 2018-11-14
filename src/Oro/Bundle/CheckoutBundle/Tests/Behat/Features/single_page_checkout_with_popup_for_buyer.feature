@@ -98,6 +98,7 @@ Feature: Single Page Checkout With Popup for Buyer
     And I scroll to top
     And I wait line items are initialized
     And I click "Create Order"
+    And I should not see flash messages
     And I select "Fifth avenue, 10115 Berlin, Germany" from "Select Billing Address"
     And I check "Use billing address" on the checkout page
     And I click "Delete this shopping list after submitting order"
