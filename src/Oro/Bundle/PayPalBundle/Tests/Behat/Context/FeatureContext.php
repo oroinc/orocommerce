@@ -15,10 +15,6 @@ use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
 use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 use Oro\Bundle\UserBundle\Entity\User;
 
-/**
- * @SuppressWarnings(PHPMD.TooManyMethods)
- * @SuppressWarnings(PHPMD.TooManyPublicMethods)
- */
 class FeatureContext extends OroFeatureContext implements OroPageObjectAware, KernelAwareContext
 {
     use PageObjectDictionary, KernelDictionary, UserUtilityTrait;
@@ -56,7 +52,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      * @param string $name
      * @param TableNode|null $settingsTable
      */
-    public function createPayPalIntegration(string $type, string $name, ?TableNode $settingsTable = null)
+    private function createPayPalIntegration(string $type, string $name, ?TableNode $settingsTable = null)
     {
         $settings = $this->getIntegrationSettings($type);
         if ($settingsTable !== null) {
@@ -80,39 +76,36 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      */
     private function getIntegrationSettings(string $type): array
     {
+        $baseSettings = [
+            'allowedCreditCardTypes' => ['mastercard'],
+            'partner' => 'PayPal',
+            'vendor' => 'qwerty123456',
+            'user' => 'qwer12345',
+            'password' => 'qwer123423r23r',
+            'zeroAmountAuthorization' => false,
+            'authorizationForRequiredAmount' => false,
+            'creditCardPaymentAction' => 'authorize',
+            'expressCheckoutName' => 'ExpressPayPal',
+            'expressCheckoutLabels' => 'ExpressPayPal',
+            'expressCheckoutShortLabels' => 'ExprPPl',
+            'expressCheckoutPaymentAction' => 'authorize',
+        ];
+
         $settings = [
-            $this->getContainer()->getParameter('oro_paypal.method.paypal_payflow_gateway') => [
-                'creditCardLabels' => 'PayPalFlow',
-                'creditCardShortLabels' => 'PPlFlow',
-                'allowedCreditCardTypes' => ['mastercard'],
-                'partner' => 'PayPal',
-                'vendor' => 'qwerty123456',
-                'user' => 'qwer12345',
-                'password' => 'qwer123423r23r',
-                'zeroAmountAuthorization' => false,
-                'authorizationForRequiredAmount' => false,
-                'creditCardPaymentAction' => 'authorize',
-                'expressCheckoutName' => 'ExpressPayPal',
-                'expressCheckoutLabels' => 'ExpressPayPal',
-                'expressCheckoutShortLabels' => 'ExprPPl',
-                'expressCheckoutPaymentAction' => 'authorize',
-            ],
-            $this->getContainer()->getParameter('oro_paypal.method.paypal_payments_pro') => [
-                'creditCardLabels' => 'PayPalPro',
-                'creditCardShortLabels' => 'PPlPro',
-                'allowedCreditCardTypes' => ['mastercard'],
-                'partner' => 'PayPal',
-                'vendor' => 'qwerty123456',
-                'user' => 'qwer12345',
-                'password' => 'qwer123423r23r',
-                'zeroAmountAuthorization' => false,
-                'authorizationForRequiredAmount' => false,
-                'creditCardPaymentAction' => 'authorize',
-                'expressCheckoutName' => 'ExpressPayPal',
-                'expressCheckoutLabels' => 'ExpressPayPal',
-                'expressCheckoutShortLabels' => 'ExprPPl',
-                'expressCheckoutPaymentAction' => 'authorize',
-            ],
+            $this->getContainer()->getParameter('oro_paypal.method.paypal_payflow_gateway') => array_merge(
+                $baseSettings,
+                [
+                    'creditCardLabels' => 'PayPalFlow',
+                    'creditCardShortLabels' => 'PPlFlow',
+                ]
+            ),
+            $this->getContainer()->getParameter('oro_paypal.method.paypal_payments_pro') => array_merge(
+                $baseSettings,
+                [
+                    'creditCardLabels' => 'PayPalPro',
+                    'creditCardShortLabels' => 'PPlPro',
+                ]
+            ),
         ];
 
         self::assertArrayHasKey(
@@ -162,12 +155,12 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         $owner = $this->getFirstUser($doctrineHelper->getEntityManagerForClass(User::class));
 
         $channel = new Channel();
-        $channel->setName($name);
-        $channel->setType($type);
-        $channel->setEnabled(true);
-        $channel->setDefaultUserOwner($owner);
-        $channel->setOrganization($owner->getOrganization());
-        $channel->setTransport($transport);
+        $channel->setName($name)
+            ->setType($type)
+            ->setEnabled(true)
+            ->setDefaultUserOwner($owner)
+            ->setOrganization($owner->getOrganization())
+            ->setTransport($transport);
 
         return $channel;
     }
