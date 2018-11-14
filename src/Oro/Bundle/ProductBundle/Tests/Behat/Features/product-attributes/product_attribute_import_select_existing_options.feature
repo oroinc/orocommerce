@@ -56,7 +56,7 @@ Feature: Product attribute import select existing options
       | fieldName   | type | enum.enum_options.0.label | enum.enum_options.0.is_default | enum.enum_options.1.label | enum.enum_options.1.is_default |
       | SelectField | enum | SelectOption 3            | yes                            | SelectOption 1            | no                             |
     When I import file
-    Then Email should contains the following "Errors: 0 processed: 1, read: 1, added: 1, updated: 0, replaced: 0" text
+    Then Email should contains the following "Errors: 0 processed: 1, read: 1, added: 0, updated: 1, replaced: 0" text
     When I click "Edit" on row "SelectField" in grid
     Then I should see values in field "Options":
       | SelectOption 3 |
