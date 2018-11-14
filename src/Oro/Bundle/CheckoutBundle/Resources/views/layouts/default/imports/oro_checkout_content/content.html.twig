@@ -233,7 +233,7 @@
 {% endblock %}
 
 {% block __oro_checkout_content__checkout_order_summary_line_item_row_widget %}
-    {% set errorPath = 'product.' ~ lineItem.productSku %}
+    {% set errorPath = 'product.' ~ lineItem.productSku ~ '.' ~ lineItem.productUnitCode %}
     {% set errorMessage = '' %}
     {% set errorClass = '' %}
     {% if parent.lineItemErrors is iterable and parent.lineItemErrors[errorPath] is defined and parent.lineItemErrors[errorPath] is iterable %}

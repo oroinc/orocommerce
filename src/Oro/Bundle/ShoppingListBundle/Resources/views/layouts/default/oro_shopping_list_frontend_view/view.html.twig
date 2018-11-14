@@ -541,7 +541,7 @@
         </div>
     {% endif %}
 
-    {% set errorPath = 'product.' ~ lineItem.productSku %}
+    {% set errorPath = 'product.' ~ lineItem.productSku ~ '.' ~ lineItem.productUnitCode %}
     {% if parent.lineItemErrors is iterable and parent.lineItemErrors[errorPath] is defined and parent.lineItemErrors[errorPath] is iterable %}
         <div class="shopping-list-line-items__error">
         {% for error in parent.lineItemErrors[errorPath] %}
