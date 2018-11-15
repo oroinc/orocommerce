@@ -55,12 +55,8 @@ class FrontendProductPriceFilter extends SearchNumberRangeFilter
     public function getMetadata()
     {
         $metadata = parent::getMetadata();
+
         $metadata['unitChoices'] = [];
-
-        if ($this->configManager) {
-            $metadata['precision'] = (int)$this->configManager->get('oro_pricing.precision');
-        }
-
         $unitChoices = $this->getForm()->createView()['unit']->vars['choices'];
         foreach ($unitChoices as $choice) {
             $metadata['unitChoices'][] = [
