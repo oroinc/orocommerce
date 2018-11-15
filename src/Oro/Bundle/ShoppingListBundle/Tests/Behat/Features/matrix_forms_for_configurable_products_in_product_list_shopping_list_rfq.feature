@@ -264,7 +264,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And click "View Details" for "CNF_B" product
     Then I should see an "Matrix Grid Form" element
     And I should see an "Default Page Prices" element
-    And I should see "Item 1 $ 12.00" in the "Default Page Prices" element
+    And I should see "Item 1 $12.00" in the "Default Page Prices" element
 
   Scenario: Order empty matrix form
     And type "CNF_B" in "search"
