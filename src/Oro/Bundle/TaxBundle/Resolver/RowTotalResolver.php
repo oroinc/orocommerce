@@ -4,7 +4,6 @@ namespace Oro\Bundle\TaxBundle\Resolver;
 
 use Brick\Math\BigDecimal;
 use Brick\Math\RoundingMode;
-
 use Oro\Bundle\TaxBundle\Calculator\TaxCalculatorInterface;
 use Oro\Bundle\TaxBundle\Entity\TaxRule;
 use Oro\Bundle\TaxBundle\Model\Result;
@@ -47,27 +46,27 @@ class RowTotalResolver
      */
     public function resolveRowTotal(Result $result, array $taxRules, BigDecimal $taxableAmount, $quantity = 1)
     {
-        $taxRate = BigDecimal::zero();
-
-        $taxResults = [];
-
+        $totalTaxRate = BigDecimal::zero();
         foreach ($taxRules as $taxRule) {
-            $taxRate = $taxRate->plus($taxRule->getTax()->getRate());
+            $totalTaxRate = $totalTaxRate->plus($taxRule->getTax()->getRate());
         }
 
-        $resultElementStartWith = $this->getRowTotalResult($taxableAmount, $taxRate, $quantity);
+        $totalResultElement = $this->getRowTotalResult($taxableAmount, $totalTaxRate, $quantity);
 
+        $taxResults = [];
         foreach ($taxRules as $taxRule) {
             $currentTaxRate = BigDecimal::of($taxRule->getTax()->getRate());
             
-            if (BigDecimal::zero()->isEqualTo($currentTaxRate) &&
-                BigDecimal::zero()->isEqualTo($resultElementStartWith->getTaxAmount())) {
-                $taxAmount = BigDecimal::zero();
+            if (BigDecimal::zero()->isEqualTo($totalTaxRate->toScale(TaxationSettingsProvider::CALCULATION_SCALE))) {
+                $currentTaxAmount = BigDecimal::zero();
             } else {
-                $taxAmount = BigDecimal::of($resultElementStartWith->getTaxAmount())
+                // Gets tax amount of current tax rule from total tax amount using proportion to avoid possible
+                // tolerance errors when getting each tax amount separately, as (pseudocode):
+                // sum((taxableAmount * currentTaxRate[N]).round(2))!=(taxableAmount * sum(currentTaxRate[N])).round(2)
+                $currentTaxAmount = BigDecimal::of($totalResultElement->getTaxAmount())
                     ->multipliedBy($currentTaxRate->toScale(TaxationSettingsProvider::CALCULATION_SCALE))
                     ->dividedBy(
-                        $taxRate->toScale(TaxationSettingsProvider::CALCULATION_SCALE),
+                        $totalTaxRate->toScale(TaxationSettingsProvider::CALCULATION_SCALE),
                         TaxationSettingsProvider::CALCULATION_SCALE,
                         RoundingMode::HALF_UP
                     );
@@ -76,12 +75,12 @@ class RowTotalResolver
             $taxResults[] = TaxResultElement::create(
                 $taxRule->getTax(),
                 $currentTaxRate,
-                $resultElementStartWith->getExcludingTax(),
-                $taxAmount
+                $totalResultElement->getExcludingTax(),
+                $currentTaxAmount
             );
         }
 
-        $result->offsetSet(Result::ROW, $resultElementStartWith);
+        $result->offsetSet(Result::ROW, $totalResultElement);
         $result->offsetSet(Result::TAXES, $taxResults);
     }
 
