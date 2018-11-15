@@ -92,6 +92,18 @@ class TaxRateValidatorTest extends \PHPUnit\Framework\TestCase
                 'expectedIsValid' => false,
             ],
             [
+                'value' => 0.00000001,
+                'expectedIsValid' => false,
+            ],
+            [
+                'value' => 11.0000001,
+                'expectedIsValid' => false,
+            ],
+            [
+                'value' => 11.00000001,
+                'expectedIsValid' => false,
+            ],
+            [
                 'value' => 'ab',
                 'expectedIsValid' => true,
             ],
