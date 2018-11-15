@@ -31,9 +31,9 @@ class RowTotalResolverTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->calculator = $this->createMock('Oro\Bundle\TaxBundle\Calculator\Calculator');
+        $this->calculator = $this->createMock(Calculator::class);
 
-        $this->settingsProvider = $this->createMock('Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider');
+        $this->settingsProvider = $this->createMock(TaxationSettingsProvider::class);
 
         $this->resolver = new RowTotalResolver($this->settingsProvider, $this->calculator);
     }
