@@ -240,6 +240,7 @@ oro:
                     alphanumeric.label: Alphanumeric
                     alphabetic.label: Alphabetic
                 codePrefix.label: Code Prefix
+                codePreview.label: Code Preview
                 codeSuffix.label: Code Suffix
                 dashesSequence:
                     prefix.label: Add Dashes Every
