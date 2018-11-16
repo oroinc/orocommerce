@@ -43,7 +43,7 @@
                 <td>{{ form_widget(form.conversionRate, { 'attr': {'class': 'conversionRate'} }) }}</td>
                 <td>{{ form_widget(form.sell, { 'attr': {'class': 'sell'} }) }}</td>
                 {% if form.parent.vars.allow_delete %}
-                    <td><button class="removeLineItem btn btn-icon icons-holder" type="button" data-related="{{ name }}"><i class="fa-close"></i></button></td>
+                    <td><button class="removeLineItem btn btn-icon btn-square-lighter" type="button" data-related="{{ name }}"><span class="fa-close"></span></button></td>
                 {% endif %}
             </tr>
 
@@ -171,7 +171,7 @@
 
         {% if allow_delete %}
             <td>
-                <button type="button" class="removeRow btn btn-icon icons-holder pull-right">
+                <button type="button" class="removeRow btn btn-icon btn-square-lighter">
                     <span class="fa-close"></span>
                 </button>
             </td>
