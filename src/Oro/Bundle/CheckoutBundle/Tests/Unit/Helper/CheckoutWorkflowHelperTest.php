@@ -10,6 +10,7 @@ use Oro\Bundle\CheckoutBundle\Layout\DataProvider\TransitionFormProvider;
 use Oro\Bundle\CheckoutBundle\Layout\DataProvider\TransitionProvider;
 use Oro\Bundle\CheckoutBundle\WorkflowState\Handler\CheckoutErrorHandler;
 use Oro\Bundle\CustomerBundle\Handler\CustomerRegistrationHandler;
+use Oro\Bundle\CustomerBundle\Handler\ForgotPasswordHandler;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -17,14 +18,14 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Translation\TranslatorInterface;
 
-class CheckoutWorkflowHelperTest extends \PHPUnit_Framework_TestCase
+class CheckoutWorkflowHelperTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /** @var  CheckoutWorkflowHelper */
     private $helper;
 
-    /** @var  WorkflowManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var  WorkflowManager|\PHPUnit\Framework\MockObject\MockObject */
     private $workflowManager;
 
     /**
@@ -41,6 +42,7 @@ class CheckoutWorkflowHelperTest extends \PHPUnit_Framework_TestCase
         $registrationHandler = $this->createMock(CustomerRegistrationHandler::class);
         $eventDispatcher = $this->createMock(EventDispatcherInterface::class);
         $translator = $this->createMock(TranslatorInterface::class);
+        $forgotPasswordHandler = $this->createMock(ForgotPasswordHandler::class);
 
         $this->helper = new CheckoutWorkflowHelper(
             $this->workflowManager,
@@ -50,6 +52,7 @@ class CheckoutWorkflowHelperTest extends \PHPUnit_Framework_TestCase
             $errorHandler,
             $lineItemsManager,
             $registrationHandler,
+            $forgotPasswordHandler,
             $eventDispatcher,
             $translator
         );
@@ -78,6 +81,9 @@ class CheckoutWorkflowHelperTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $result);
     }
 
+    /**
+     * @return \Generator
+     */
     public function workflowItemProvider()
     {
         yield 'Items count equals one' => [

@@ -28,6 +28,7 @@ use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * Use it to process checkout workflow
+ * @SuppressWarnings(PHPMD.ExcessiveParameterList)
  */
 class CheckoutWorkflowHelper
 {

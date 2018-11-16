@@ -421,7 +421,7 @@ class TimeInTransitResultFactoryTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return RestResponseInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return RestResponseInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private function getSuccessSingleServiceRestResponse()
     {

@@ -25,7 +25,7 @@ class PaymentMethodExtensionTest extends \PHPUnit\Framework\TestCase
     /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $dispatcher;
 
-    /** @var PaymentMethodOptionsFormatter|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var PaymentMethodOptionsFormatter|\PHPUnit\Framework\MockObject\MockObject */
     protected $paymentMethodOptionsFormatter;
 
     /** @var PaymentMethodExtension */
