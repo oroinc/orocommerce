@@ -8,6 +8,9 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Event\LineItemValidateEvent;
 
+/**
+ * Adds validation errors to LineItemValidateEvent.
+ */
 class LineItemValidationListener
 {
     /**
@@ -44,11 +47,11 @@ class LineItemValidationListener
             }
 
             if ($maxError = $this->validatorService->getMaximumErrorIfInvalid($product, $lineItem->getQuantity())) {
-                $event->addError($product->getSku(), $maxError);
+                $event->addErrorByUnit($product->getSku(), $lineItem->getProductUnitCode(), $maxError);
                 continue;
             }
             if ($minError = $this->validatorService->getMinimumErrorIfInvalid($product, $lineItem->getQuantity())) {
-                $event->addError($product->getSku(), $minError);
+                $event->addErrorByUnit($product->getSku(), $lineItem->getProductUnitCode(), $minError);
             }
         }
     }
