@@ -33,6 +33,19 @@ class LineItemValidateEventTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($errors[0]['message'], 'testMessage');
     }
 
+    public function testAddErrorByUnit()
+    {
+        $this->lineItemValidateEvent->addErrorByUnit('testSku', 'item', 'testMessage');
+        $errors = $this->lineItemValidateEvent->getErrors();
+        $this->assertCount(1, $errors);
+        $this->assertArrayHasKey('sku', $errors[0]);
+        $this->assertEquals($errors[0]['sku'], 'testSku');
+        $this->assertArrayHasKey('unit', $errors[0]);
+        $this->assertEquals($errors[0]['unit'], 'item');
+        $this->assertArrayHasKey('message', $errors[0]);
+        $this->assertEquals($errors[0]['message'], 'testMessage');
+    }
+
     public function testHasErrors()
     {
         $this->assertFalse($this->lineItemValidateEvent->hasErrors());
