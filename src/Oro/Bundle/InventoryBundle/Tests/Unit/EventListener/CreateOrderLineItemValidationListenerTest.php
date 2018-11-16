@@ -95,7 +95,7 @@ class CreateOrderLineItemValidationListenerTest extends \PHPUnit\Framework\TestC
             ->method('hasEnoughQuantity')
             ->willReturn(true);
         $event->expects($this->never())
-            ->method('addError');
+            ->method('addErrorByUnit');
         $this->inventoryQuantityManager->expects($this->once())
             ->method('shouldDecrement')
             ->willReturn(true);
@@ -128,7 +128,7 @@ class CreateOrderLineItemValidationListenerTest extends \PHPUnit\Framework\TestC
             ->method('getContext')
             ->willReturn(null);
         $event->expects($this->never())
-            ->method('addError');
+            ->method('addErrorByUnit');
         $this->doctrineHelper->expects($this->never())
             ->method('getEntityRepository');
         $this->inventoryQuantityManager->expects($this->never())

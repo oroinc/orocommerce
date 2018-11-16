@@ -920,6 +920,16 @@ oro_behat_extension:
       selector: 'div[data-bound-component="oroproduct/js/app/datagrid/backend-datagrid-component"] div.filter-box'
       class: Oro\Bundle\ProductBundle\Tests\Behat\Element\FrontendProductGridFilters
 
+    Product unit dropdown:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        type: 'xpath'
+        locator: '//form[@class="product__qty-container cart-table__form"]//span[@class="select2-chosen"]'
+
+    Shopping list line item:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector: 'div.shopping-list-line-items__item-wrapper'
+
   pages:
     Product View:
       class: Oro\Bundle\ProductBundle\Tests\Behat\Page\ProductView

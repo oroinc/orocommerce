@@ -164,7 +164,7 @@
         <% }) %>
         <% if (!_.isEmpty(_.trim(comment))) { %>
             <div class="request-form-product__item request-form-product__item--comment">
-                <p class="request-form-note">Note: <%- comment %></p>
+                <p class="request-form-note">{{ 'oro.rfp.requestproductitem.note.label'|trans }}: <%- comment %></p>
             </div>
         <% } %>
     </script>
