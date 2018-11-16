@@ -4,6 +4,7 @@ namespace Oro\Bundle\WebCatalogBundle\Provider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Oro\Component\Website\WebsiteInterface;
 
@@ -40,6 +41,22 @@ class WebCatalogProvider
         if ($webCatalogId) {
             return $this->registry->getManagerForClass(WebCatalog::class)
                 ->find(WebCatalog::class, $webCatalogId);
+        }
+
+        return null;
+    }
+
+    /**
+     * @param WebsiteInterface|null $website
+     * @return null|ContentNode
+     */
+    public function getNavigationRoot(WebsiteInterface $website = null)
+    {
+        $contentNodeId = $this->configManager->get('oro_web_catalog.navigation_root', false, false, $website);
+
+        if ($contentNodeId) {
+            return $this->registry->getManagerForClass(ContentNode::class)
+                ->find(ContentNode::class, $contentNodeId);
         }
 
         return null;

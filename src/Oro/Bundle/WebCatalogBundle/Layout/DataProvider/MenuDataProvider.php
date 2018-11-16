@@ -56,9 +56,15 @@ class MenuDataProvider extends AbstractWebCatalogDataProvider
 
         $rootItem = [];
         if ($request && $scope = $request->attributes->get('_web_content_scope')) {
-            $webCatalog = $this->webCatalogProvider->getWebCatalog();
-            if ($webCatalog) {
-                $rootNode = $this->getContentNodeRepository()->getRootNodeByWebCatalog($webCatalog);
+            $rootNode = $this->webCatalogProvider->getNavigationRoot();
+            if (!$rootNode) {
+                $webCatalog = $this->webCatalogProvider->getWebCatalog();
+                if ($webCatalog) {
+                    $rootNode = $this->getContentNodeRepository()->getRootNodeByWebCatalog($webCatalog);
+                }
+            }
+
+            if ($rootNode) {
                 $resolvedNode = $this->contentNodeTreeResolverFacade->getResolvedContentNode($rootNode, $scope);
 
                 if ($resolvedNode) {
