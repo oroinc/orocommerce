@@ -5,6 +5,9 @@ namespace Oro\Bundle\PricingBundle\EventListener;
 use Oro\Bundle\PricingBundle\Builder\CombinedPriceListActivationPlanBuilder;
 use Oro\Bundle\PricingBundle\Event\CombinedPriceList\CombinedPriceListCreateEvent;
 
+/**
+ * The event listener responsible for setting CombinedPriceList to the builder.
+ */
 class CombinedPriceListListener
 {
     /** @var CombinedPriceListActivationPlanBuilder */

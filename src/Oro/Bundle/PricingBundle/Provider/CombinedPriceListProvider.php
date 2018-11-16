@@ -10,6 +10,9 @@ use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
 use Oro\Bundle\PricingBundle\Event\CombinedPriceList\CombinedPriceListCreateEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+/**
+ * Provider that allows to get combined price list
+ */
 class CombinedPriceListProvider
 {
     const GLUE = '_';

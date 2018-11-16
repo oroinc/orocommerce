@@ -5,6 +5,9 @@ namespace Oro\Bundle\PricingBundle\Event\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Symfony\Component\EventDispatcher\Event;
 
+/**
+ * Provides event arguments for the create event of CombinedPriceList.
+ */
 class CombinedPriceListCreateEvent extends Event
 {
     const NAME = 'oro_pricing.combined_price_list.create';
