@@ -84,7 +84,7 @@
                     dataGrid.renderGrid(
                         'product-product-variants-view',
                         {'parentProduct': entity.id},
-                        { cssClass: 'inner-grid' }
+                        {cssClass: 'inner-grid'}
                     )
                 ]
             }]
@@ -192,7 +192,11 @@
         {% set relatedItemsIds = get_related_products_ids(entity) %}
         {% set relatedGrid %}
             {% if relatedItemsIds is not empty %}
-                {{ relatedProductsDataGrid.renderGrid('products-related-products-view', {'relatedItemsIds': relatedItemsIds}) }}
+                {{
+                    relatedProductsDataGrid.renderGrid('products-related-products-view',
+                    {'relatedItemsIds': relatedItemsIds},
+                    {cssClass: 'inner-grid'})
+                }}
             {% else %}
                 <div id="products-related-products-view" class="tab-content">
                     <div class="no-data">
@@ -217,7 +221,11 @@
         {% set relatedItemsIds = get_upsell_products_ids(entity) %}
         {% set relatedGrid %}
             {% if relatedItemsIds is not empty %}
-                {{ relatedProductsDataGrid.renderGrid('products-upsell-products-view', {'relatedItemsIds': relatedItemsIds}) }}
+                {{
+                    relatedProductsDataGrid.renderGrid('products-upsell-products-view',
+                    {'relatedItemsIds': relatedItemsIds},
+                    {cssClass: 'inner-grid'})
+                }}
             {% else %}
                 <div id="products-upsell-products-view" class="tab-content">
                     <div class="no-data">
