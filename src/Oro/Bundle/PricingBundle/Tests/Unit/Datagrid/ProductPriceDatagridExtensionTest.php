@@ -17,6 +17,10 @@ use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class ProductPriceDatagridExtensionTest extends AbstractProductsGridPricesExtensionTest
 {
     /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */

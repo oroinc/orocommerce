@@ -36,7 +36,7 @@ abstract class BaseProductPriceEntityListenerTest extends AbstractRuleEntityList
 
     public function testPostPersist()
     {
-        list ($baseProductPrice, $product, $priceList) = $this->getEntities();
+        list($baseProductPrice, $product, $priceList) = $this->getEntities();
 
         $this->assertRecalculateByEntity(1, [], [$product], $priceList->getId());
 
@@ -45,7 +45,7 @@ abstract class BaseProductPriceEntityListenerTest extends AbstractRuleEntityList
 
     public function testPreUpdate()
     {
-        list ($baseProductPrice, $product, $priceList) = $this->getEntities();
+        list($baseProductPrice, $product, $priceList) = $this->getEntities();
 
         $this->preUpdateEventArgs->expects($this->any())
             ->method('getEntityChangeSet')
@@ -72,7 +72,7 @@ abstract class BaseProductPriceEntityListenerTest extends AbstractRuleEntityList
 
     public function testPreRemove()
     {
-        list ($baseProductPrice, $product, $priceList) = $this->getEntities();
+        list($baseProductPrice, $product, $priceList) = $this->getEntities();
 
         $this->assertRecalculateByEntity(1, [], [$product], $priceList->getId());
 

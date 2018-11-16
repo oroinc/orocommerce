@@ -1,6 +1,5 @@
 layout:
     actions:
-        - '@setOption':
-            id: product_datagrid_row_product_price_container
-            optionName: productPrices
-            optionValue: null
+        - '@setBlockTheme':
+              themes:
+                    - 'OroPricingBundle:layouts:blank/imports/oro_product_grid/oro_product_price.html.twig'

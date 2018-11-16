@@ -423,7 +423,6 @@ class FrontendProductPricesProviderTest extends \PHPUnit\Framework\TestCase
         bool $expected,
         bool $expectedNoExternalServiceCalled
     ) {
-
         if ($expectedNoExternalServiceCalled) {
             $this->expectNoExternalServiceCalled();
         } else {

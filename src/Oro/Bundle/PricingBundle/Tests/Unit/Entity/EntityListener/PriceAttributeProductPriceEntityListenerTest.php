@@ -41,7 +41,7 @@ class PriceAttributeProductPriceEntityListenerTest extends BaseProductPriceEntit
 
     public function testPostPersistFeatureDisabled()
     {
-        list ($baseProductPrice) = $this->getEntities();
+        list($baseProductPrice) = $this->getEntities();
         $this->priceRuleLexemeTriggerHandler->expects($this->never())->method('findEntityLexemes');
 
         $this->assertFeatureChecker('feature1', false)
@@ -50,7 +50,7 @@ class PriceAttributeProductPriceEntityListenerTest extends BaseProductPriceEntit
 
     public function testPreUpdate()
     {
-        list ($baseProductPrice) = $this->getEntities();
+        list($baseProductPrice) = $this->getEntities();
         $event = $this->createMock(PreUpdateEventArgs::class);
         $event->expects($this->any())
             ->method('getEntityChangeSet')
@@ -81,7 +81,7 @@ class PriceAttributeProductPriceEntityListenerTest extends BaseProductPriceEntit
 
     public function testPreUpdateFeatureDisabled()
     {
-        list ($baseProductPrice) = $this->getEntities();
+        list($baseProductPrice) = $this->getEntities();
         $event = $this->createMock(PreUpdateEventArgs::class);
         $event->expects($this->never())->method('getEntityChangeSet');
 
@@ -98,7 +98,7 @@ class PriceAttributeProductPriceEntityListenerTest extends BaseProductPriceEntit
 
     public function testPreRemoveFeatureDisabled()
     {
-        list ($baseProductPrice) = $this->getEntities();
+        list($baseProductPrice) = $this->getEntities();
         $this->priceRuleLexemeTriggerHandler->expects($this->never())
             ->method('findEntityLexemes');
 

@@ -69,7 +69,7 @@ abstract class AbstractRuleEntityListenerTest extends \PHPUnit\Framework\TestCas
      */
     abstract protected function getListener();
 
-   /**
+    /**
      * @param string $feature
      * @param bool $isEnabled
      * @return AbstractRuleEntityListener

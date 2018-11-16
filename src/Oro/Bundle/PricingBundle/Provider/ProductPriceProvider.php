@@ -92,6 +92,10 @@ class ProductPriceProvider implements ProductPriceProviderInterface
             $products[] = $productPriceCriterion->getProduct();
             $productUnitCodes[] = $productPriceCriterion->getProductUnit()->getCode();
             $currencies[] = $productPriceCriterion->getCurrency();
+
+            if (!\in_array($productPriceCriterion->getCurrency(), $currencies)) {
+                $currencies[] = $productPriceCriterion->getCurrency();
+            }
         }
 
         $currencies = $this->getAllowedCurrencies($scopeCriteria, $currencies);
