@@ -214,7 +214,7 @@ oro_behat_extension:
     Restrictions:
       selector:
         type: xpath
-        locator: '//label[@class="control-label" and text()[contains(.,"Restrictions")]]/following-sibling::div[@class="controls"]'
+        locator: '//label[contains(@class, "attribute-item__term") and text()[contains(.,"Restrictions")]]/following-sibling::div[contains(@class, "attribute-item__description")]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
     Apply Segment:

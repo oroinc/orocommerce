@@ -95,7 +95,12 @@
     {% if entity.images.count %}
         {% set imagesData = UI.renderHtmlProperty(
                 'oro.product.images.label'|trans,
-                Image.renderProductImages(entity.images, imageTypes)
+                Image.renderProductImages(entity.images, imageTypes),
+                null,
+                null,
+                {
+                    rootClass: 'attribute-item--mobile-full'
+                }
             )
         %}
     {% else %}
@@ -150,7 +155,15 @@
         {% endfor %}
 
         {% set unitOfQuantityData = unitOfQuantityData|merge({
-            'additionalUnitPrecisions' : UI.renderHtmlProperty( 'oro.product.additional_unit_precisions.label'|trans, UI.renderTable(titles,rows,"grid table unit-table"))
+            'additionalUnitPrecisions' : UI.renderHtmlProperty(
+                'oro.product.additional_unit_precisions.label'|trans,
+                UI.renderTable(titles,rows,"grid table unit-table"),
+                null,
+                null,
+                {
+                    rootClass: 'attribute-item--mobile-full'
+                }
+            )
         }) %}
 
     {% endif %}
