@@ -122,6 +122,11 @@ workflows:
                         method_parameters: [$checkout]
                         attribute: $.result.shippingContext
 
+                    - '@run_action_group':
+                        action_group: b2b_flow_checkout_create_guest_customer_user
+                        parameters_mapping:
+                          checkout: $checkout
+
                     - '@call_service_method':
                         service: oro_checkout.factory.payment_context_factory
                         method: create
@@ -156,11 +161,6 @@ workflows:
                             transition: 'save_state'
 
                     - '@flush_entity': $checkout
-
-                    - '@run_action_group':
-                        action_group: b2b_flow_checkout_create_guest_customer_user
-                        parameters_mapping:
-                            checkout: $checkout
                 preconditions:
                     '@and':
                         - '@equal': [$checkout.completed, false]
@@ -168,14 +168,13 @@ workflows:
                         - '@extendable':
                             events: [extendable_condition.checkout]
                         - '@order_line_item_has_count': $checkout
+                        - '@has_applicable_payment_methods':
+                            message: oro.checkout.workflow.condition.payment_method_is_not_selected.message
+                            context: $.result.paymentContext
                         - '@shipping_method_has_enabled_shipping_rules':
                             message: oro.checkout.workflow.condition.shipping_method_is_not_available.message
                             method_identifier: $checkout.shippingMethod
                             context: $.result.paymentContext
-                        - '@has_applicable_payment_methods':
-                            message: oro.checkout.workflow.condition.payment_method_is_not_selected.message
-                            context: $.result.paymentContext
-
                 conditions:
                     '@and':
                         - '@validate_checkout_addresses':
