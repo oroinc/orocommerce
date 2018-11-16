@@ -199,7 +199,15 @@ class RedirectExceptionListenerTest extends \PHPUnit\Framework\TestCase
 
         $event->expects($this->once())
             ->method('setResponse')
-            ->with(new RedirectResponse('/test-new', 301));
+            ->willReturnCallback(
+                function (RedirectResponse $response) {
+                    $this->assertEquals(301, $response->getStatusCode());
+                    $this->assertEquals(
+                        '/test-new',
+                        $response->getTargetUrl()
+                    );
+                }
+            );
 
         $this->listener->onKernelException($event);
     }
