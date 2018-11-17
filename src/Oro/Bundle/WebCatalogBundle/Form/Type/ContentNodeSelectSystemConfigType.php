@@ -12,6 +12,9 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Content node select from type that used in system configuration
+ */
 class ContentNodeSelectSystemConfigType extends AbstractType
 {
     const NAME = 'oro_web_catalog_content_node_select_system_config';

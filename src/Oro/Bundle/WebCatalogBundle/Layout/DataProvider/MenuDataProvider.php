@@ -9,6 +9,9 @@ use Oro\Bundle\WebCatalogBundle\ContentNodeUtils\ContentNodeTreeResolverInterfac
 use Oro\Bundle\WebCatalogBundle\Provider\WebCatalogProvider;
 use Symfony\Component\HttpFoundation\RequestStack;
 
+/**
+ * Layout data provider that helps to build main navigation menu on the front store
+ */
 class MenuDataProvider extends AbstractWebCatalogDataProvider
 {
     const IDENTIFIER = 'identifier';

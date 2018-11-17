@@ -8,6 +8,9 @@ use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Oro\Component\Website\WebsiteInterface;
 
+/**
+ * This provider returns current web catalog and current navigation root, which were indicated in system configuration
+ */
 class WebCatalogProvider
 {
     /**
