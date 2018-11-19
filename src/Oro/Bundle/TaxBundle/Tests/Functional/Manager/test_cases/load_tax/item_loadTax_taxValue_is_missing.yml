@@ -35,4 +35,5 @@ databaseBefore:
             quantity: 6
             price: '@usd_price_5.55'
             product: { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product-2' } }
+databaseBeforeSecondPart: []
 expectedResult: []

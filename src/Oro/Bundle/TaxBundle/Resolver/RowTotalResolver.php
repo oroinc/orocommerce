@@ -59,7 +59,7 @@ class RowTotalResolver
 
         foreach ($taxRules as $taxRule) {
             $currentTaxRate = BigDecimal::of($taxRule->getTax()->getRate());
-            $taxResults[] = TaxResultElement::create(
+            $taxResult = TaxResultElement::create(
                 $taxRule->getTax(),
                 $currentTaxRate,
                 $resultElementStartWith->getExcludingTax(),
@@ -71,6 +71,8 @@ class RowTotalResolver
                         RoundingMode::HALF_UP
                     )
             );
+            $this->calculateAdjustmentForTaxResultElement($taxResult);
+            $taxResults[] = $taxResult;
         }
 
         $result->offsetSet(Result::ROW, $resultElementStartWith);
@@ -100,5 +102,17 @@ class RowTotalResolver
         $this->calculateAdjustment($resultElementStartWith);
 
         return $resultElementStartWith;
+    }
+
+    /**
+     * @param TaxResultElement $resultElement
+     * @deprecated since 2.6, will be removed in 3.1. Will be changed to CalculateAdjustmentTrait::calculateAdjustment
+     */
+    private function calculateAdjustmentForTaxResultElement(TaxResultElement $resultElement)
+    {
+        $taxAmount = BigDecimal::of($resultElement->getTaxAmount());
+        $taxAmountRounded = $taxAmount->toScale(TaxationSettingsProvider::SCALE, RoundingMode::HALF_UP);
+        $adjustment = $taxAmount->minus($taxAmountRounded);
+        $resultElement->setAdjustment($adjustment);
     }
 }

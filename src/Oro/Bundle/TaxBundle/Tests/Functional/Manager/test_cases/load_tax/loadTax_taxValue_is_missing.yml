@@ -7,4 +7,5 @@ databaseBefore:
             poNumber: empty_order
             customer: { class: 'Oro\Bundle\CustomerBundle\Entity\Customer', query: {} }
             currency: USD
+databaseBeforeSecondPart: []
 expectedResult: []

@@ -106,6 +106,21 @@ class RowTotalResolverTest extends \PHPUnit_Framework_TestCase
      */
     public function rowTotalDataProvider()
     {
+        $taxResult1_1 = TaxResultElement::create('city', '0.08', '0.02365', '0.019016');
+        $taxResult1_1->setAdjustment('-0.000984');
+        $taxResult1_2 = TaxResultElement::create('region', '0.07', '0.02365', '0.016639');
+        $taxResult1_2->setAdjustment('-0.003361');
+
+        $taxResult2_1 = TaxResultElement::create('city', '0.08', '0.02365', '0.019016');
+        $taxResult2_1->setAdjustment('-0.000984');
+        $taxResult2_2 = TaxResultElement::create('region', '0.07', '0.02365', '0.016639');
+        $taxResult2_2->setAdjustment('-0.003361');
+
+        $taxResult3_1 = TaxResultElement::create('city', '0.081111', '0.02365', '0.019087');
+        $taxResult3_1->setAdjustment('-0.000913');
+        $taxResult3_2 = TaxResultElement::create('region', '0.070404', '0.02365', '0.016568');
+        $taxResult3_2->setAdjustment('-0.003432');
+
         return [
             'without start calculation with row total' => [
                 'amount' => BigDecimal::of('19.99'),
@@ -117,8 +132,8 @@ class RowTotalResolverTest extends \PHPUnit_Framework_TestCase
                     'tax' => ResultElement::create('0.01255', '0.02365', '0.035655'),
                     'row' => ResultElement::create('0.01255', '0.02365', '0.035655', '-0.004345'),
                     'result' => [
-                        TaxResultElement::create('city', '0.08', '0.02365', '0.019016'),
-                        TaxResultElement::create('region', '0.07', '0.02365', '0.016639'),
+                        $taxResult1_1,
+                        $taxResult1_2,
                     ]
 
                 ],
@@ -136,8 +151,8 @@ class RowTotalResolverTest extends \PHPUnit_Framework_TestCase
                     'tax' => ResultElement::create('0.01255', '0.02365', '0.035655'),
                     'row' => ResultElement::create('0.01255', '0.02365', '0.035655', '-0.004345'),
                     'result' => [
-                        TaxResultElement::create('city', '0.08', '0.02365', '0.019016'),
-                        TaxResultElement::create('region', '0.07', '0.02365', '0.016639'),
+                        $taxResult2_1,
+                        $taxResult2_2,
                     ]
 
                 ],
@@ -155,8 +170,8 @@ class RowTotalResolverTest extends \PHPUnit_Framework_TestCase
                     'tax' => ResultElement::create('0.01255', '0.02365', '0.035655'),
                     'row' => ResultElement::create('0.01255', '0.02365', '0.035655', '-0.004345'),
                     'result' => [
-                        TaxResultElement::create('city', '0.081111', '0.02365', '0.019087'),
-                        TaxResultElement::create('region', '0.070404', '0.02365', '0.016568'),
+                        $taxResult3_1,
+                        $taxResult3_2,
                     ]
 
                 ],
@@ -209,6 +224,11 @@ class RowTotalResolverTest extends \PHPUnit_Framework_TestCase
      */
     public function resolverRowTotalWithUnitPriceDataProvider()
     {
+        $taxResult1 = TaxResultElement::create('city', '0.08', '0.555', '0.290880');
+        $taxResult1->setAdjustment('0.000880');
+        $taxResult2 = TaxResultElement::create('region', '0.07', '0.555', '0.254520');
+        $taxResult2->setAdjustment('0.004520');
+
         return [
             [
                 [
@@ -224,8 +244,8 @@ class RowTotalResolverTest extends \PHPUnit_Framework_TestCase
                     'excludingTax' => ResultElement::create('0.022', '0.555', '0.5454'),
                     'row' => ResultElement::create('0.022', '0.555', '0.5454', '-0.0046'),
                     'result' => [
-                        TaxResultElement::create('city', '0.08', '0.555', '0.290880'),
-                        TaxResultElement::create('region', '0.07', '0.555', '0.254520'),
+                        $taxResult1,
+                        $taxResult2,
                     ]
 
                 ],
