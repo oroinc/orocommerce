@@ -15,6 +15,7 @@ oro_behat_extension:
         - OroApplicationBundle::CommerceMainContext
         - OroCustomerBundle::CustomerUserContext
         - OroOrderBundle::OrderContext
+        - OroLocaleBundle::LocalizationContext
         - OroShippingBundle::FeatureContext
         - OroShoppingListBundle::ShoppingListContext
         - OroRedirectBundle::SlugPrototypesContext
