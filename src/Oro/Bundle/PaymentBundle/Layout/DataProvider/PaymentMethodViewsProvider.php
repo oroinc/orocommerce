@@ -2,14 +2,23 @@
 
 namespace Oro\Bundle\PaymentBundle\Layout\DataProvider;
 
+use Doctrine\Common\Cache\CacheProvider;
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProvider;
 use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewProviderInterface;
 use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
 
+/**
+ * Returns payment methods
+ */
 class PaymentMethodViewsProvider
 {
+    /**
+     * @var CacheProvider
+     */
+    private $cacheProvider;
+
     /**
      * @var PaymentMethodViewProviderInterface
      */
@@ -27,17 +36,20 @@ class PaymentMethodViewsProvider
 
     /**
      * @param PaymentMethodViewProviderInterface $paymentMethodViewProvider
-     * @param PaymentMethodProvider              $paymentMethodProvider
-     * @param PaymentTransactionProvider         $transactionProvider
+     * @param PaymentMethodProvider $paymentMethodProvider
+     * @param PaymentTransactionProvider $transactionProvider
+     * @param CacheProvider $cacheProvider
      */
     public function __construct(
         PaymentMethodViewProviderInterface $paymentMethodViewProvider,
         PaymentMethodProvider $paymentMethodProvider,
-        PaymentTransactionProvider $transactionProvider
+        PaymentTransactionProvider $transactionProvider,
+        CacheProvider $cacheProvider
     ) {
         $this->paymentMethodViewProvider = $paymentMethodViewProvider;
         $this->paymentMethodProvider = $paymentMethodProvider;
         $this->paymentTransactionProvider = $transactionProvider;
+        $this->cacheProvider = $cacheProvider;
     }
 
     /**
@@ -45,27 +57,33 @@ class PaymentMethodViewsProvider
      *
      * @return array[]
      */
-    public function getViews(PaymentContextInterface $context)
+    public function getViews(PaymentContextInterface $context): array
     {
-        $methods = $this->paymentMethodProvider->getApplicablePaymentMethods($context);
+        $contextHash = self::class . \md5(\serialize($context));
+        $cachedPaymentMethodViews = $this->cacheProvider->fetch($contextHash);
 
-        if (count($methods) === 0) {
-            return [];
+        if ($cachedPaymentMethodViews !== false) {
+            return $cachedPaymentMethodViews;
         }
-
-        $methodIdentifiers = array_map(function (PaymentMethodInterface $method) {
-            return $method->getIdentifier();
-        }, $methods);
 
         $paymentMethodViews = [];
-        $views = $this->paymentMethodViewProvider->getPaymentMethodViews($methodIdentifiers);
-        foreach ($views as $view) {
-            $paymentMethodViews[$view->getPaymentMethodIdentifier()] = [
-                'label' => $view->getLabel(),
-                'block' => $view->getBlock(),
-                'options' => $view->getOptions($context),
-            ];
+        $methods = $this->paymentMethodProvider->getApplicablePaymentMethods($context);
+        if (count($methods) !== 0) {
+            $methodIdentifiers = array_map(function (PaymentMethodInterface $method) {
+                return $method->getIdentifier();
+            }, $methods);
+
+            $views = $this->paymentMethodViewProvider->getPaymentMethodViews($methodIdentifiers);
+            foreach ($views as $view) {
+                $paymentMethodViews[$view->getPaymentMethodIdentifier()] = [
+                    'label' => $view->getLabel(),
+                    'block' => $view->getBlock(),
+                    'options' => $view->getOptions($context),
+                ];
+            }
         }
+
+        $this->cacheProvider->save($contextHash, $paymentMethodViews);
 
         return $paymentMethodViews;
     }

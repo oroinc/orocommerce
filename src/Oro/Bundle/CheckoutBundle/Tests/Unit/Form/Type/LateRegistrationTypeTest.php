@@ -31,6 +31,7 @@ class LateRegistrationTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
+        /** @var $validator ValidatorInterface|\PHPUnit_Framework_MockObject_MockObject */
         $validator = $this->createMock(ValidatorInterface::class);
 
         $validator
@@ -65,5 +66,42 @@ class LateRegistrationTypeTest extends FormIntegrationTestCase
         $formData = $form->getData();
         $submittedData['password'] = 'Q1foobar';
         $this->assertEquals($submittedData, $formData);
+    }
+
+    public function testIsLateRegistrationEnabledByDefault()
+    {
+        $expectedData =  [
+            'is_late_registration_enabled' => true
+        ];
+
+        $form = $this->factory->create(LateRegistrationType::class);
+        $formData = $form->getData();
+        $this->assertEquals($expectedData, $formData);
+    }
+
+    public function testIsLateRegistrationEnabledByDefaultWithNullEmail()
+    {
+        $expectedData =  [
+            'is_late_registration_enabled' => true
+        ];
+
+        $form = $this->factory->create(LateRegistrationType::class, ['email' => null]);
+        $formData = $form->getData();
+        $this->assertEquals($expectedData, $formData);
+    }
+
+    public function testSubmitWithUncheckedCheckbox()
+    {
+        $expectedData =  [
+            'is_late_registration_enabled' => false,
+            'email' =>  null,
+            'password' => null
+        ];
+
+        $form = $this->factory->create(LateRegistrationType::class);
+        $form->submit([]);
+        $formData = $form->getData();
+
+        $this->assertEquals($expectedData, $formData);
     }
 }

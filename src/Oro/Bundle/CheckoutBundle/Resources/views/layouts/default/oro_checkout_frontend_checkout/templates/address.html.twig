@@ -55,43 +55,43 @@
                 </div>
             </div>
 
-            {% if compact %}
-                <div class="grid__row grid__row--offset-none">
-                    <div class="grid__column grid__column--12 grid__column--no-gutters">
-                        {{ form_row(address_form.city, {'attr': {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.address.city'|trans}}) }}
-                    </div>
+        {% if compact %}
+            <div class="grid__row grid__row--offset-none">
+                <div class="grid__column grid__column--12 grid__column--no-gutters">
+                    {{ form_row(address_form.city, {'attr': {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.address.city'|trans}}) }}
                 </div>
-                <div class="grid__row grid__row--offset-none">
-                    <div class="grid__column grid__column--12 grid__column--no-gutters">
-                        {{ form_row(address_form.country) }}
-                    </div>
+            </div>
+            <div class="grid__row grid__row--offset-none">
+                <div class="grid__column grid__column--12 grid__column--no-gutters">
+                    {{ form_row(address_form.country) }}
                 </div>
-                <div class="grid__row grid__row--offset-none">
-                    <div class="grid__column grid__column--12 grid__column--no-gutters">
-                        {{ form_row(address_form.region) }}
-                    </div>
+            </div>
+            <div class="grid__row grid__row--offset-none">
+                <div class="grid__column grid__column--12 grid__column--no-gutters">
+                    {{ form_row(address_form.region) }}
                 </div>
-                <div class="grid__row grid__row--offset-none">
-                    <div class="grid__column grid__column--no-gutters grid__column--6 col-zip-error">
-                        {{ form_row(address_form.postalCode, {'attr' : {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.address.zip'|trans}}) }}
-                    </div>
+            </div>
+            <div class="grid__row grid__row--offset-none">
+                <div class="grid__column grid__column--no-gutters grid__column--6 col-zip-error">
+                    {{ form_row(address_form.postalCode, {'attr' : {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.address.zip'|trans}}) }}
                 </div>
-            {% else %}
-                <div class="grid__row grid__row--offset-none">
-                    <div class="grid__column grid__column--6">
-                        {{ form_row(address_form.city, {'attr': {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.address.city'|trans}}) }}
-                    </div>
-                    <div class="grid__column grid__column--2">
-                        {{ form_row(address_form.country) }}
-                    </div>
-                    <div class="grid__column grid__column--2">
-                        {{ form_row(address_form.region) }}
-                    </div>
-                    <div class="grid__column grid__column--6 col-zip-error">
-                        {{ form_row(address_form.postalCode, {'attr' : {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.address.zip'|trans}}) }}
-                    </div>
+            </div>
+        {% else %}
+            <div class="grid__row grid__row--offset-none">
+                <div class="grid__column grid__column--6">
+                    {{ form_row(address_form.city, {'attr': {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.address.city'|trans}}) }}
                 </div>
-            {% endif %}
+                <div class="grid__column grid__column--2">
+                    {{ form_row(address_form.country) }}
+                </div>
+                <div class="grid__column grid__column--2">
+                    {{ form_row(address_form.region) }}
+                </div>
+                <div class="grid__column grid__column--6 col-zip-error">
+                    {{ form_row(address_form.postalCode, {'attr' : {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.address.zip'|trans}}) }}
+                </div>
+            </div>
+        {% endif %}
 
             <div class="grid__row {% if not compact %}grid__row--offset-none{% endif %}">
                 <div class="grid__column {% if compact %}grid__column--no-gutters{% endif %}">

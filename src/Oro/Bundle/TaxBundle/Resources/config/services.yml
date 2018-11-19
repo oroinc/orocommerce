@@ -242,6 +242,7 @@ services:
             - '@oro_tax.event.tax_event_dispatcher'
             - '@oro_tax.manager.tax_value_manager'
             - '@oro_tax.provider.taxation_settings_provider'
+            - '@oro_tax.taxation_provider.cache'
         calls:
             - [addTransformer, ['%oro_order.entity.order.class%', "@oro_tax.transformer.tax_value"]]
             - [addTransformer, ['%oro_order.entity.order_line_item.class%', "@oro_tax.transformer.tax_value"]]
@@ -315,6 +316,7 @@ services:
             - '@oro_config.global'
             - '@oro_tax.factory.tax_base_exclusion'
             - '@oro_tax.factory.address_model_factory'
+            - '@oro_tax.taxation_provider.cache'
 
     oro_tax.provider.taxation_address_provider:
         class: 'Oro\Bundle\TaxBundle\Provider\TaxationAddressProvider'
@@ -580,6 +582,12 @@ services:
             - '%oro_customer.entity.customer.class%'
         tags:
             - { name: kernel.event_subscriber }
+
+    oro_tax.taxation_provider.cache:
+        parent: doctrine_cache.abstract.array
+        public: false
+        calls:
+            - [ setNamespace, [ 'oro_taxation_settings_provider' ] ]
 
     oro_tax.validator.tax_rate:
         class: Oro\Bundle\TaxBundle\Validator\Constraints\TaxRateValidator
