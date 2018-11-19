@@ -8,6 +8,9 @@ use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\PropertyAccess\PropertyPathInterface;
 
+/**
+ * Action to capture payments using capture payment transactions
+ */
 class PaymentTransactionCaptureAction extends AbstractPaymentMethodAction
 {
     const OPTION_PAYMENT_TRANSACTION = 'paymentTransaction';

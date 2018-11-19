@@ -5,6 +5,9 @@ namespace Oro\Bundle\PaymentBundle\Method;
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 
+/**
+ * Payment Method with generic execute method
+ */
 interface PaymentMethodInterface
 {
     /**
