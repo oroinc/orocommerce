@@ -596,7 +596,6 @@ services:
 
     oro_pricing.entity_listener.price_list_currency:
         class: 'Oro\Bundle\PricingBundle\Entity\EntityListener\PriceListCurrencyEntityListener'
-        public: false
         arguments:
             - '@oro_pricing.cache.rule_cache'
             - '@oro_pricing.price_list_trigger_handler'

@@ -2,6 +2,9 @@
 
 namespace Oro\Bundle\PricingBundle\Async;
 
+/**
+ * Pricing Bundle related Message Queue Topics
+ */
 final class Topics
 {
     const RESOLVE_PRICE_RULES = 'oro_pricing.price_rule.build';

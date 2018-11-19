@@ -44,6 +44,15 @@ class PriceListCurrencyEntityListenerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
+    public function testPostPersistDisabled()
+    {
+        $this->listener->setEnabled(false);
+        $this->priceListTriggerHandler->expects($this->never())
+            ->method($this->anything());
+
+        $this->listener->postPersist(new PriceListCurrency());
+    }
+
     public function testPostPersist()
     {
         /** @var PriceList $priceList */
@@ -85,6 +94,15 @@ class PriceListCurrencyEntityListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->listener->postPersist($priceListCurrency);
         $this->assertTrue($priceList->isActual());
+    }
+
+    public function testPreRemoveDisabled()
+    {
+        $this->listener->setEnabled(false);
+        $this->priceListTriggerHandler->expects($this->never())
+            ->method($this->anything());
+
+        $this->listener->preRemove(new PriceListCurrency());
     }
 
     public function testPreRemove()
