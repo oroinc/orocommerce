@@ -11,6 +11,9 @@ use Oro\Bundle\TaxBundle\Model\Taxable;
 use Oro\Bundle\TaxBundle\Model\TaxResultElement;
 use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 
+/**
+ * Tax resolver that combines all previous calculated tax values and provides total result.
+ */
 class TotalResolver implements ResolverInterface
 {
     /** @var TaxationSettingsProvider */
@@ -49,6 +52,9 @@ class TotalResolver implements ResolverInterface
 
             if ($this->settingsProvider->isStartCalculationOnItem()) {
                 $this->roundingResolver->round($row);
+                foreach ($taxableItemResult->getTaxes() as $tax) {
+                    $this->roundingResolver->round($tax);
+                }
             }
 
             try {
@@ -62,13 +68,18 @@ class TotalResolver implements ResolverInterface
             $taxResults = $mergedTaxResults;
         }
 
-        if ($this->settingsProvider->isStartCalculationOnTotal()) {
+        if ($this->settingsProvider->isStartCalculationOnItem()) {
             try {
                 $adjustment = BigDecimal::of($data[ResultElement::ADJUSTMENT]);
                 $adjustedAmounts = $this->adjustAmounts($data, $adjustment);
 
                 $adjustTaxResults = [];
                 foreach ($taxResults as $key => $taxData) {
+                    if (empty($taxData[TaxResultElement::ADJUSTMENT])) {
+                        $adjustment = BigDecimal::of('0');
+                    } else {
+                        $adjustment = BigDecimal::of($taxData[TaxResultElement::ADJUSTMENT]);
+                    }
                     $adjustTaxResults[$key] = $this->adjustAmounts($taxData, $adjustment);
                 }
             } catch (NumberFormatException $e) {
@@ -128,10 +139,12 @@ class TotalResolver implements ResolverInterface
             $taxCode = (string)$appliedTax->getTax();
             $taxAmount = $appliedTax->getTaxAmount();
             $taxableAmount = $appliedTax->getTaxableAmount();
+            $taxAdjustment = $appliedTax->getAdjustment();
             if (array_key_exists($taxCode, $taxResults)) {
                 $tax = $taxResults[$taxCode];
                 $taxAmount = BigDecimal::of($tax->getTaxAmount())->plus($taxAmount);
                 $taxableAmount = BigDecimal::of($tax->getTaxableAmount())->plus($taxableAmount);
+                $taxAdjustment = BigDecimal::of($tax->getAdjustment())->plus($taxAdjustment);
             }
 
             $taxResults[$taxCode] = TaxResultElement::create(
@@ -140,6 +153,7 @@ class TotalResolver implements ResolverInterface
                 $taxableAmount,
                 $taxAmount
             );
+            $taxResults[$taxCode]->setAdjustment($taxAdjustment);
         }
 
         return $taxResults;

@@ -133,7 +133,6 @@ class TaxableTest extends \PHPUnit\Framework\TestCase
         $taxable->setDestination(new Address());
         $taxable->setTaxationAddress(new Address());
         $taxable->setResult(new Result());
-        $taxable->setItems(new \SplObjectStorage());
 
         $clonedTaxable = clone $taxable;
 
@@ -152,8 +151,13 @@ class TaxableTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($taxable->getTaxationAddress(), $clonedTaxable->getTaxationAddress());
         $this->assertNotSame($taxable->getTaxationAddress(), $clonedTaxable->getTaxationAddress());
 
-        $this->assertEquals($taxable->getItems(), $clonedTaxable->getItems());
-        $this->assertNotSame($taxable->getItems(), $clonedTaxable->getItems());
+        $this->assertEquals($taxable->getItems()->current(), $clonedTaxable->getItems()->current());
+        $this->assertNotSame($taxable->getItems()->current(), $clonedTaxable->getItems()->current());
+
+        $taxable->getItems()->next();
+        $clonedTaxable->getItems()->next();
+        $this->assertEquals($taxable->getItems()->current(), $clonedTaxable->getItems()->current());
+        $this->assertNotSame($taxable->getItems()->current(), $clonedTaxable->getItems()->current());
 
         $this->assertEquals($taxable->getResult(), $clonedTaxable->getResult());
         $this->assertNotSame($taxable->getResult(), $clonedTaxable->getResult());

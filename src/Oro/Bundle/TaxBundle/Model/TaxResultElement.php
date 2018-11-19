@@ -10,6 +10,7 @@ class TaxResultElement extends AbstractResultElement
     const RATE = 'rate';
     const TAXABLE_AMOUNT = 'taxableAmount';
     const TAX_AMOUNT = 'taxAmount';
+    const ADJUSTMENT = 'adjustment';
 
     /**
      * @param string $taxCode
@@ -26,6 +27,7 @@ class TaxResultElement extends AbstractResultElement
         $resultElement->offsetSet(self::RATE, $rate);
         $resultElement->offsetSet(self::TAXABLE_AMOUNT, $taxableAmount);
         $resultElement->offsetSet(self::TAX_AMOUNT, $taxAmount);
+        $resultElement->offsetSet(self::ADJUSTMENT, '0');
 
         /** todo: remove after BB-1752 or BB-2113 */
         $resultElement->offsetSet(self::CURRENCY, Configuration::DEFAULT_CURRENCY);
@@ -63,5 +65,24 @@ class TaxResultElement extends AbstractResultElement
     public function getTaxAmount()
     {
         return $this->getOffset(self::TAX_AMOUNT);
+    }
+
+    /**
+     * @param string $adjustment
+     * @return self
+     */
+    public function setAdjustment($adjustment)
+    {
+        $this->offsetSet(self::ADJUSTMENT, $adjustment);
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAdjustment()
+    {
+        return $this->getOffset(self::ADJUSTMENT);
     }
 }
