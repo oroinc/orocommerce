@@ -1,5 +1,6 @@
 @ticket-BB-15579
 @fixture-OroWebCatalogBundle:web_catalog.yml
+@fixture-OroWebCatalogBundle:web_catalog_additional.yml
 Feature: Change navigation root
   In order to change a root node for main menu
   As site administrator
@@ -55,3 +56,28 @@ Feature: Change navigation root
     When I reload the page
     And I should not see "Clearance" in main menu
     And I should see "By Brand" in main menu
+
+  Scenario: Change web catalog
+    Given I proceed as the Admin
+    And I set "Additional Web Catalog" as default web catalog
+    When I go to Marketing/Web Catalogs
+    And I click "Edit Content Tree" on row "Additional Web Catalog" in grid
+    And I click on "Show Variants Dropdown"
+    And I click "Add System Page"
+    And I fill "Content Node Form" with:
+      | System Page Route | Oro Frontend Root (Welcome - Home page) |
+    When I save form
+    Then I should see "Content Node has been saved" flash message
+    When I click on "On Sale"
+    And I click on "Show Variants Dropdown"
+    And I click "Add System Page"
+    And I fill "Content Node Form" with:
+      | System Page Route | Oro Frontend Root (Welcome - Home page) |
+    And I save form
+    Then I should see "Content Node has been saved" flash message
+
+  Scenario: Check additional web catalog on front store
+    Given I proceed as the Buyer
+    When I reload the page
+    And I should not see "By Brand" in main menu
+    And I should see "On Sale" in main menu

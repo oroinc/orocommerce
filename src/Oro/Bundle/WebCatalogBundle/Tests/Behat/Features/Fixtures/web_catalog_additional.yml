@@ -1,0 +1,27 @@
+Oro\Bundle\WebCatalogBundle\Entity\ContentNode:
+    nodeAdditionalWebCatalog:
+        addTitle: ['@localValueAdditionalWebCatalog']
+        webCatalog: '@additionalWebCatalog'
+
+    nodeOnSale:
+        addTitle: ['@localValueOnSale']
+        addSlugPrototype: ['@localValueOnSaleSlug']
+        ParentNode: '@nodeAdditionalWebCatalog'
+        webCatalog: '@additionalWebCatalog'
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    localValueAdditionalWebCatalog:
+        string: 'Additional Web Catalog'
+
+    localValueOnSale:
+        string: 'On Sale'
+
+    localValueOnSaleSlug:
+        string: 'on-sale'
+
+Oro\Bundle\WebCatalogBundle\Entity\WebCatalog:
+    additionalWebCatalog:
+        name: 'Additional Web Catalog'
+        description: 'Additional Web Catalog description'
+        organization: '@organization'
+        owner: '@business_unit'

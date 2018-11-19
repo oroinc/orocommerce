@@ -15,6 +15,11 @@ oro_behat_extension:
                 type: xpath
                 locator: '//li[contains(@class, "jstree-node")]/a[contains(., "Default Web Catalog")]/parent::li/ul//li[contains(@class, "jstree-node")]/a[contains(., "By Brand")]'
 
+        On Sale:
+            selector:
+                type: xpath
+                locator: '//li[contains(@class, "jstree-node")]/a[contains(., "Additional Web Catalog")]/parent::li/ul//li[contains(@class, "jstree-node")]/a[contains(., "On Sale")]'
+
         Default Web Catalog:
             selector:
                 type: xpath
