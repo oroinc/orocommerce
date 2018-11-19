@@ -43,8 +43,6 @@ class BuildPricesDemoDataFixturesListener extends AbstractDemoDataFixturesListen
         $this->combinedPriceListsBuilderFacade = $builderFacade;
         $this->priceBuilder = $priceBuilder;
         $this->assignmentBuilder = $assignmentBuilder;
-
-        $this->listeners[] = 'oro_pricing.entity_listener.price_list_currency';
     }
 
     /**

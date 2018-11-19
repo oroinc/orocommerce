@@ -695,6 +695,7 @@ services:
         calls:
             - [disableListener, ['oro_pricing.entity_listener.product_price_cpl']]
             - [disableListener, ['oro_pricing.entity_listener.price_list_to_product']]
+            - [disableListener, ['oro_pricing.entity_listener.price_list_currency']]
         tags:
             - { name: kernel.event_listener, event: oro_migration.data_fixtures.pre_load, method: onPreLoad }
             - { name: kernel.event_listener, event: oro_migration.data_fixtures.post_load, method: onPostLoad }

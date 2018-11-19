@@ -16,10 +16,14 @@ features:
         description: oro.product.feature.quick_order_form.description
         strategy: affirmative
 
-    guest_quick_order_form:
+    guest_quick_order_config:
         label: oro.product.feature.guest_quick_order_form.label
         description: oro.product.feature.quick_order_form.description
         toggle: oro_product.guest_quick_order_form
+
+    guest_quick_order_form:
+        label: oro.product.feature.guest_quick_order_form.label
+        description: oro.product.feature.quick_order_form.description
         routes:
             - 'oro_product_frontend_quick_add'
             - 'oro_product_frontend_quick_add_import'
