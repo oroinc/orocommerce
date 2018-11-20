@@ -21,7 +21,7 @@ class TaxResultElement extends AbstractResultElement
      * @param string $adjustment
      * @return TaxResultElement
      */
-    public static function create($taxCode, $rate, $taxableAmount, $taxAmount, $adjustment = null)
+    public static function create($taxCode, $rate, $taxableAmount, $taxAmount, $adjustment = '0')
     {
         $resultElement = new static;
 
@@ -29,9 +29,7 @@ class TaxResultElement extends AbstractResultElement
         $resultElement->offsetSet(self::RATE, $rate);
         $resultElement->offsetSet(self::TAXABLE_AMOUNT, $taxableAmount);
         $resultElement->offsetSet(self::TAX_AMOUNT, $taxAmount);
-        if ($adjustment) {
-            $resultElement->offsetSet(self::ADJUSTMENT, $adjustment);
-        }
+        $resultElement->offsetSet(self::ADJUSTMENT, $adjustment);
 
         /** todo: remove after BB-1752 or BB-2113 */
         $resultElement->offsetSet(self::CURRENCY, Configuration::DEFAULT_CURRENCY);
