@@ -69,24 +69,7 @@ class TotalResolver implements ResolverInterface
         }
 
         if ($this->settingsProvider->isStartCalculationOnItem()) {
-            try {
-                $adjustment = BigDecimal::of($data[ResultElement::ADJUSTMENT]);
-                $adjustedAmounts = $this->adjustAmounts($data, $adjustment);
-
-                $adjustTaxResults = [];
-                foreach ($taxResults as $key => $taxData) {
-                    if (empty($taxData[TaxResultElement::ADJUSTMENT])) {
-                        $adjustment = BigDecimal::of('0');
-                    } else {
-                        $adjustment = BigDecimal::of($taxData[TaxResultElement::ADJUSTMENT]);
-                    }
-                    $adjustTaxResults[$key] = $this->adjustAmounts($taxData, $adjustment);
-                }
-            } catch (NumberFormatException $e) {
-                return;
-            }
-            $data = $adjustedAmounts;
-            $taxResults = $adjustTaxResults;
+            [$data, $taxResults] = $this->adjustResults($data, $taxResults);
         }
 
         $data = $this->mergeShippingData($taxable, $data);
@@ -95,6 +78,33 @@ class TotalResolver implements ResolverInterface
         $result->offsetSet(Result::TOTAL, $data);
         $result->offsetSet(Result::TAXES, array_values($taxResults));
         $result->lockResult();
+    }
+
+    /**
+     * @param ResultElement $data
+     * @param TaxResultElement[] $taxResults
+     * @return array
+     */
+    protected function adjustResults(ResultElement $data, array $taxResults)
+    {
+        try {
+            $adjustment = BigDecimal::of($data[ResultElement::ADJUSTMENT]);
+            $adjustedAmounts = $this->adjustAmounts($data, $adjustment);
+
+            $adjustTaxResults = [];
+            foreach ($taxResults as $key => $taxData) {
+                if (empty($taxData[TaxResultElement::ADJUSTMENT])) {
+                    $adjustment = BigDecimal::of('0');
+                } else {
+                    $adjustment = BigDecimal::of($taxData[TaxResultElement::ADJUSTMENT]);
+                }
+                $adjustTaxResults[$key] = $this->adjustAmounts($taxData, $adjustment);
+            }
+        } catch (NumberFormatException $e) {
+            return [$data, $taxResults];
+        }
+
+        return [$adjustedAmounts, $adjustTaxResults];
     }
 
     /**
