@@ -161,9 +161,9 @@ class TotalResolver implements ResolverInterface
                 $taxCode,
                 $appliedTax->getRate(),
                 $taxableAmount,
-                $taxAmount
+                $taxAmount,
+                $taxAdjustment
             );
-            $taxResults[$taxCode]->setAdjustment($taxAdjustment);
         }
 
         return $taxResults;

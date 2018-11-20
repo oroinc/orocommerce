@@ -70,7 +70,7 @@ class RowTotalResolver
                         RoundingMode::HALF_UP
                     )
             );
-            $this->calculateAdjustmentForTaxResultElement($taxResult);
+            $this->calculateAdjustment($taxResult);
             $taxResults[] = $taxResult;
         }
 
@@ -101,17 +101,5 @@ class RowTotalResolver
         $this->calculateAdjustment($resultElementStartWith);
 
         return $resultElementStartWith;
-    }
-
-    /**
-     * @param TaxResultElement $resultElement
-     * @deprecated since 2.6, will be removed in 3.1. Will be changed to CalculateAdjustmentTrait::calculateAdjustment
-     */
-    private function calculateAdjustmentForTaxResultElement(TaxResultElement $resultElement)
-    {
-        $taxAmount = BigDecimal::of($resultElement->getTaxAmount());
-        $taxAmountRounded = $taxAmount->toScale(TaxationSettingsProvider::SCALE, RoundingMode::HALF_UP);
-        $adjustment = $taxAmount->minus($taxAmountRounded);
-        $resultElement->setAdjustment($adjustment);
     }
 }

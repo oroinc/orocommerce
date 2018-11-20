@@ -2,11 +2,13 @@
 
 namespace Oro\Bundle\TaxBundle\Model;
 
+/**
+ * DTO model class to collect total result data.
+ */
 final class ResultElement extends AbstractResultElement implements \JsonSerializable
 {
     const INCLUDING_TAX = 'includingTax';
     const EXCLUDING_TAX = 'excludingTax';
-    const TAX_AMOUNT = 'taxAmount';
     const ADJUSTMENT = 'adjustment';
 
     /**
@@ -59,30 +61,5 @@ final class ResultElement extends AbstractResultElement implements \JsonSerializ
     public function getExcludingTax()
     {
         return $this->getOffset(self::EXCLUDING_TAX);
-    }
-
-    /**
-     * @return string
-     */
-    public function getTaxAmount()
-    {
-        return $this->getOffset(self::TAX_AMOUNT, 0);
-    }
-
-    /**
-     * @return string
-     */
-    public function getAdjustment()
-    {
-        return $this->getOffset(self::ADJUSTMENT, 0);
-    }
-
-    /**
-     * @param string $adjustment
-     * @return string
-     */
-    public function setAdjustment($adjustment)
-    {
-        $this->offsetSet(self::ADJUSTMENT, $adjustment);
     }
 }

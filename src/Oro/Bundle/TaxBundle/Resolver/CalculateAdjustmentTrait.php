@@ -4,15 +4,15 @@ namespace Oro\Bundle\TaxBundle\Resolver;
 
 use Brick\Math\BigDecimal;
 use Brick\Math\RoundingMode;
-use Oro\Bundle\TaxBundle\Model\ResultElement;
+use Oro\Bundle\TaxBundle\Model\AbstractResultElement;
 use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 
 trait CalculateAdjustmentTrait
 {
     /**
-     * @param ResultElement $resultElement
+     * @param AbstractResultElement $resultElement
      */
-    protected function calculateAdjustment(ResultElement $resultElement)
+    protected function calculateAdjustment(AbstractResultElement $resultElement)
     {
         $taxAmount = BigDecimal::of($resultElement->getTaxAmount());
         $taxAmountRounded = $taxAmount->toScale(TaxationSettingsProvider::SCALE, RoundingMode::HALF_UP);
