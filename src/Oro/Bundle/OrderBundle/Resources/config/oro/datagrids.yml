@@ -195,6 +195,8 @@ datagrids:
                         - { join: order1.customerUser, alias: customerUser }
                         - { join: order1.customer, alias: customer }
                         - { join: order1.internal_status, alias: internalStatus }
+            hints:
+                - HINT_TRANSLATABLE
         columns:
             identifier:
                 label:         oro.order.identifier.label

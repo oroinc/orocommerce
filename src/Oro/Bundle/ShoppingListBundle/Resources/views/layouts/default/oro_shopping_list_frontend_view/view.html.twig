@@ -542,17 +542,17 @@
             </td>
         </tr>
     {% endif %}
-    {% set errorPath = 'product.' ~ lineItem.productSku %}
+    {% set errorPath = 'product.' ~ lineItem.productSku ~ '.' ~ lineItem.productUnitCode %}
     {% if parent.lineItemErrors is iterable and parent.lineItemErrors[errorPath] is defined and parent.lineItemErrors[errorPath] is iterable %}
     {% for error in parent.lineItemErrors[errorPath] %}
     <div class="shopping-list-line-items__error">
-        <div id="product-error-{{ lineItem.productSku }}"></div>
+        <div id="product-error-{{ lineItem.productSku }}-{{ lineItem.productUnitCode }}"></div>
     </div>
     <script>
         require(['oroui/js/messenger'], function(messenger) {
             messenger.notificationFlashMessage('error', '{{ error.message }}', {
                 style: 'validation',
-                container: $('#product-error-{{ lineItem.productSku }}')
+                container: $('#product-error-{{ lineItem.productSku }}-{{ lineItem.productUnitCode }}')
             })
         });
     </script>

@@ -1,4 +1,6 @@
 {% block oro_sale_quote_product_demand_widget %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+
     {% set product = quoteProduct.productReplacement|default(quoteProduct.product) %}
     {% set isQuantityValid = form.quantity.vars.valid %}
     {% set selectedOffer = form.quoteProductOffer.vars.data %}
@@ -27,7 +29,14 @@
         data-page-component-options="{{ componentOptions|json_encode }}">
         <td class="grid-cell grid-cell--offset-l-none-mobile primary-cell">
             <h3 class="oro-grid-table__title">
-                {{ quoteProduct.productName }}
+                {% if (quoteProduct.product.id is defined) %}
+                    {{ UI.link({
+                        path: path('oro_product_frontend_product_view', {'id': quoteProduct.product.id}),
+                        label : quoteProduct.product.names|localized_value,
+                    }) }}
+                {% else %}
+                    {{ quoteProduct.productName }}
+                {% endif %}
             </h3>
             <div>
                 {{ 'oro.frontend.sale.quoteproduct.product_sku.label'|trans }}

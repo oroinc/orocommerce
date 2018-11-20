@@ -32,6 +32,8 @@ datagrids:
                         - { join: product.inventory_status, alias: productInventoryStatus}
             bind_parameters:
                 - category_id
+            hints:
+                - HINT_TRANSLATABLE
         columns:
             inCategory:
                 label:         oro.catalog.product.in_category.label

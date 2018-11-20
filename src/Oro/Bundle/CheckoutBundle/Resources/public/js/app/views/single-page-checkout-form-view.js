@@ -145,6 +145,7 @@ define(function(require) {
         onAfterSaveState: function() {
             // Resets submit button element
             this.subview('checkoutSubmitButton').setElement(this.$el.find(this.options.submitButtonSelector));
+            this.subview('checkoutSubmitButton').onEnableState();
         },
 
         /**

@@ -474,6 +474,7 @@ services:
             - [setAclHelper,["@oro_security.acl_helper"]]
             - [setFrontendHelper,["@oro_frontend.request.frontend_helper"]]
             - [setSearchRepository,["@oro_product.website_search.repository.product"]]
+            - [setLocalizationHelper,["@oro_locale.helper.localization"]]
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: "oro_product_visibility_limited" }
 

@@ -19,16 +19,16 @@ class ReferenceRepositoryInitializer implements ReferenceRepositoryInitializerIn
      */
     public function init(Registry $doctrine, AliceCollection $referenceRepository)
     {
-        $this->initDefaultAttributeFamily($doctrine, $referenceRepository);
-        $this->initProductUnits($doctrine, $referenceRepository);
-        $this->initProductUnitTranslations($doctrine, $referenceRepository);
+        $this->setDefaultProductFamilyReference($doctrine, $referenceRepository);
+        $this->setProductUnitReferences($doctrine, $referenceRepository);
+        $this->setProductUnitTranslationKeysReferences($doctrine, $referenceRepository);
     }
 
     /**
      * @param Registry $doctrine
      * @param AliceCollection $referenceRepository
      */
-    private function initDefaultAttributeFamily(Registry $doctrine, AliceCollection $referenceRepository): void
+    private function setDefaultProductFamilyReference(Registry $doctrine, AliceCollection $referenceRepository): void
     {
         $repository = $doctrine->getManager()->getRepository(AttributeFamily::class);
         $attributeFamily = $repository->findOneBy([
@@ -46,7 +46,7 @@ class ReferenceRepositoryInitializer implements ReferenceRepositoryInitializerIn
      * @param Registry $doctrine
      * @param AliceCollection $referenceRepository
      */
-    private function initProductUnits(Registry $doctrine, AliceCollection $referenceRepository): void
+    private function setProductUnitReferences(Registry $doctrine, AliceCollection $referenceRepository): void
     {
         /** @var ProductUnitRepository $repository */
         $repository = $doctrine->getManager()->getRepository(ProductUnit::class);
@@ -72,8 +72,10 @@ class ReferenceRepositoryInitializer implements ReferenceRepositoryInitializerIn
      * @param Registry $doctrine
      * @param AliceCollection $referenceRepository
      */
-    private function initProductUnitTranslations(Registry $doctrine, AliceCollection $referenceRepository): void
-    {
+    private function setProductUnitTranslationKeysReferences(
+        Registry $doctrine,
+        AliceCollection $referenceRepository
+    ): void {
         /** @var TranslationKeyRepository $repository */
         $repository = $doctrine->getManager()->getRepository('OroTranslationBundle:TranslationKey');
         $qb = $repository->createQueryBuilder('tk');
