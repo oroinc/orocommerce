@@ -16,6 +16,9 @@ use Oro\Bundle\ShoppingListBundle\Event\LineItemValidateEvent;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Symfony\Component\Translation\TranslatorInterface;
 
+/**
+ * Adds validation errors to LineItemValidateEvent.
+ */
 class CreateOrderLineItemValidationListener
 {
     /**
@@ -84,8 +87,9 @@ class CreateOrderLineItemValidationListener
             }
 
             if (!$this->inventoryQuantityManager->hasEnoughQuantity($inventoryLevel, $lineItem->getQuantity())) {
-                $event->addError(
+                $event->addErrorByUnit(
                     $lineItem->getProductSku(),
+                    $lineItem->getProductUnitCode(),
                     $this->translator->trans('oro.inventory.decrement_inventory.product.not_allowed')
                 );
             }

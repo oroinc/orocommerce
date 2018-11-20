@@ -341,6 +341,10 @@ oro_behat_extension:
         locator: '//div[contains (@id,"oro_rfp_frontend_request_requestProducts-uid")]//button[@title="Edit"]'
         type: xpath
 
+    Add a Note to This Item:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector: 'label.custom-checkbox:contains("Add a Note to This Item")'
+
     Frontstore RFQ Line Item Form1:
       selector: 'form[name="oro_rfp_frontend_request"]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
@@ -352,6 +356,7 @@ oro_behat_extension:
           Quantity: 'oro_rfp_frontend_request[requestProducts][0][requestProductItems][0][quantity]'
           Unit: 'oro_rfp_frontend_request[requestProducts][0][requestProductItems][0][productUnit]'
           Target Price: 'oro_rfp_frontend_request[requestProducts][0][requestProductItems][0][price][value]'
+          Note: 'oro_rfp_frontend_request[requestProducts][0][comment]'
 
     Frontstore RFQ Line Item Form2:
       selector: 'form[name="oro_rfp_frontend_request"]'

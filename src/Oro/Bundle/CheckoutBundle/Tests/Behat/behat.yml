@@ -19,6 +19,7 @@ oro_behat_extension:
         - OroCustomerBundle::ACLContext
         - OroProductBundle::FeatureContext
         - OroProductBundle::QuickOrderFormContext
+        - OroPricingBundle::FeatureContext
         - OroLocaleBundle::LocalizationContext
         - OroFrontendLocalizationBundle::LocalizationSwitcherContext
         - OroDataGridBundle::GridContext
@@ -28,12 +29,21 @@ oro_behat_extension:
         - '@OroCheckoutBundle/Tests/Behat/Features'
 
   elements:
-    SelectBillingAddress:
+    Select Billing Address:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector: '[name="oro_workflow_transition[billing_address][customerAddress]"]'
-    SelectShippingAddress:
+
+    Select Shipping Address:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector: '[name="oro_workflow_transition[shipping_address][customerAddress]"]'
+
+    Select Single Page Checkout Billing Address:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector: '[name="oro_workflow_transition[billing_address]"]'
+
+    Select Single Page Checkout Shipping Address:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector: '[name="oro_workflow_transition[shipping_address]"]'
 
     Edit Billing Information:
       selector: '[data-title="Edit Billing Information"]'
@@ -163,7 +173,6 @@ oro_behat_extension:
           Last Name: 'oro_workflow_transition[billing_address][lastName]'
           Organization: 'oro_workflow_transition[billing_address][organization]'
           Email: 'oro_workflow_transition[email]'
-          Email: 'oro_workflow_transition[visitor_email]'
           Street: 'oro_workflow_transition[billing_address][street]'
           City: 'oro_workflow_transition[billing_address][city]'
           Country: 'oro_workflow_transition[billing_address][country]'
@@ -203,10 +212,15 @@ oro_behat_extension:
       selector: '.order-checkout-widget button:contains("Submit Order")'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
+    # Disabled Submit order button is actually other element (div)
+    Disabled Submit Order Button:
+      selector: '.order-checkout-widget .btn--disabled.checkout__submit-btn:contains("Submit Order")'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+
     Customer Users List button:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
-        locator: '//div[contains(@id,"oro_sale_quote_customerUser-uid")]/div/button[@class="add-on btn entity-select-btn"]'
+        locator: '//div[contains(@id,"oro_sale_quote_customerUser-uid")]/div/button[contains(@class, "entity-select-btn")]'
         type: xpath
 
     Product Line Item Input Field:
@@ -291,3 +305,43 @@ oro_behat_extension:
 
     Permissions Dropdown Items:
       selector: '.dropdown-menu__permissions-item a'
+
+    Billing Address Select:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        type: xpath
+        locator: '//*[contains(@id, "s2id_oro_workflow_transition_billing_address-uid-")]/a'
+
+    Shipping Address Select:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        type: xpath
+        locator: '//*[contains(@id, "s2id_oro_workflow_transition_shipping_address-uid-")]/a'
+
+    New Address Option:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        type: xpath
+        locator: '//ul[@class="select2-results"]/li/div[contains(., "New address")]'
+
+    New Address Popup Form:
+      selector: 'form[name="oro_action_operation"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Email: 'oro_action_operation[visitor_email]'
+          Label: 'oro_action_operation[address][label]'
+          Name Prefix: 'oro_action_operation[address][namePrefix]'
+          First Name: 'oro_action_operation[address][firstName]'
+          Middle Name: 'oro_action_operation[address][middleName]'
+          Last Name: 'oro_action_operation[address][lastName]'
+          Name Suffix: 'oro_action_operation[address][nameSuffix]'
+          Organization: 'oro_action_operation[address][organization]'
+          Phone: 'oro_action_operation[address][phone]'
+          Street: 'oro_action_operation[address][street]'
+          Street 2: 'oro_action_operation[address][street2]'
+          City: 'oro_action_operation[address][city]'
+          Country: 'oro_action_operation[address][country]'
+          State: 'oro_action_operation[address][region]'
+          Postal Code: 'oro_action_operation[address][postalCode]'
+          Save Address: 'oro_action_operation[save_address]'

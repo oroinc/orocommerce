@@ -57,7 +57,7 @@ class AddUpdateCategoryForProductFormListener implements ProcessorInterface
     /**
      * It's a workaround for doctrine2 bug
      * @see https://github.com/doctrine/doctrine2/issues/6186
-     * @todo remove this in https://magecore.atlassian.net/browse/BB-11411
+     * remove this in https://magecore.atlassian.net/browse/BB-11411
      * @param FormEvent $event
      */
     public function onPreSubmit(FormEvent $event)

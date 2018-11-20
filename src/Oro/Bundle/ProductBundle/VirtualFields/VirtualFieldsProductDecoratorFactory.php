@@ -2,20 +2,18 @@
 
 namespace Oro\Bundle\ProductBundle\VirtualFields;
 
+use Doctrine\Common\Cache\CacheProvider;
 use Oro\Bundle\EntityBundle\Helper\FieldHelper;
-use Oro\Bundle\EntityBundle\Provider\EntityFieldProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 use Oro\Bundle\ProductBundle\VirtualFields\QueryDesigner\VirtualFieldsSelectQueryConverter;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 
+/**
+ * Creates decorated product
+ */
 class VirtualFieldsProductDecoratorFactory
 {
-    /**
-     * @var EntityFieldProvider
-     */
-    private $entityFieldProvider;
-
     /**
      * @var VirtualFieldsSelectQueryConverter
      */
@@ -32,21 +30,26 @@ class VirtualFieldsProductDecoratorFactory
     private $fieldHelper;
 
     /**
-     * @param EntityFieldProvider $entityFieldProvider
+     * @var CacheProvider
+     */
+    private $cacheProvider;
+
+    /**
      * @param VirtualFieldsSelectQueryConverter $converter
      * @param ManagerRegistry $doctrine
      * @param FieldHelper $fieldHelper
+     * @param CacheProvider $cacheProvider
      */
     public function __construct(
-        EntityFieldProvider $entityFieldProvider,
         VirtualFieldsSelectQueryConverter $converter,
         ManagerRegistry $doctrine,
-        FieldHelper $fieldHelper
+        FieldHelper $fieldHelper,
+        CacheProvider $cacheProvider
     ) {
-        $this->entityFieldProvider = $entityFieldProvider;
         $this->converter = $converter;
         $this->doctrine = $doctrine;
         $this->fieldHelper = $fieldHelper;
+        $this->cacheProvider = $cacheProvider;
     }
 
     /**
@@ -58,10 +61,10 @@ class VirtualFieldsProductDecoratorFactory
     public function createDecoratedProduct(array $products, Product $product)
     {
         return new VirtualFieldsProductDecorator(
-            $this->entityFieldProvider,
             $this->converter,
             $this->doctrine,
             $this->fieldHelper,
+            $this->cacheProvider,
             $products,
             $product
         );

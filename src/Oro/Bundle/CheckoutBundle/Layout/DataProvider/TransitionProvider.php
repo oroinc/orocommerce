@@ -9,6 +9,9 @@ use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\Transition;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 
+/**
+ * Handles logic for fetching transitions and its data
+ */
 class TransitionProvider implements TransitionProviderInterface
 {
     /**
@@ -35,9 +38,7 @@ class TransitionProvider implements TransitionProviderInterface
     }
 
     /**
-     * @param WorkflowItem $workflowItem
-     *
-     * @return null|TransitionData
+     * {@inheritdoc}
      */
     public function getBackTransition(WorkflowItem $workflowItem)
     {
@@ -51,9 +52,7 @@ class TransitionProvider implements TransitionProviderInterface
     }
 
     /**
-     * @param WorkflowItem $workflowItem
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function getBackTransitions(WorkflowItem $workflowItem)
     {
@@ -84,10 +83,7 @@ class TransitionProvider implements TransitionProviderInterface
     }
 
     /**
-     * @param WorkflowItem $workflowItem
-     * @param string $transitionName
-     *
-     * @return null|TransitionData
+     * {@inheritdoc}
      */
     public function getContinueTransition(WorkflowItem $workflowItem, $transitionName = null)
     {

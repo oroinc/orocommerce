@@ -16,6 +16,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\SaleBundle\Model\ExtendQuote;
+use Oro\Bundle\SecurityBundle\Tools\UUIDGenerator;
 use Oro\Bundle\ShippingBundle\Method\Configuration\AllowUnlistedShippingMethodConfigurationInterface;
 use Oro\Bundle\ShippingBundle\Method\Configuration\MethodLockedShippingMethodConfigurationInterface;
 use Oro\Bundle\ShippingBundle\Method\Configuration\OverriddenCostShippingMethodConfigurationInterface;
@@ -25,7 +26,7 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 
 /**
- * Quote entity
+ * Entity holds information about quote.
  *
  * @ORM\Table(name="oro_sale_quote")
  * @ORM\Entity(repositoryClass="Oro\Bundle\SaleBundle\Entity\Repository\QuoteRepository")
@@ -119,6 +120,20 @@ class Quote extends ExtendQuote implements
      * )
      */
     protected $qid;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="guest_access_id", type="guid", nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "excluded"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $guestAccessId;
 
     /**
      * @var Website
@@ -352,6 +367,7 @@ class Quote extends ExtendQuote implements
         $this->assignedUsers = new ArrayCollection();
         $this->assignedCustomerUsers = new ArrayCollection();
         $this->demands = new ArrayCollection();
+        $this->generateGuestAccessId();
     }
 
     /**
@@ -406,6 +422,25 @@ class Quote extends ExtendQuote implements
     public function getQid()
     {
         return $this->qid;
+    }
+
+    /**
+     * @param string $guestAccessId
+     * @return Quote
+     */
+    public function setGuestAccessId(?string $guestAccessId): Quote
+    {
+        $this->guestAccessId = $guestAccessId;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getGuestAccessId(): ?string
+    {
+        return $this->guestAccessId;
     }
 
     /**
@@ -544,6 +579,11 @@ class Quote extends ExtendQuote implements
     public function __toString()
     {
         return (string)$this->id;
+    }
+
+    public function __clone()
+    {
+        $this->generateGuestAccessId();
     }
 
     /**
@@ -868,6 +908,16 @@ class Quote extends ExtendQuote implements
     }
 
     /**
+     * @return bool
+     */
+    public function isAvailableOnFrontend()
+    {
+        $status = $this->getInternalStatus();
+
+        return !$status || \in_array($status->getId(), self::FRONTEND_INTERNAL_STATUSES, true);
+    }
+
+    /**
      * @return QuoteDemand[]|ArrayCollection
      */
     public function getDemands()
@@ -921,5 +971,10 @@ class Quote extends ExtendQuote implements
     public function isOverriddenShippingCost()
     {
         return null !== $this->overriddenShippingCostAmount;
+    }
+
+    private function generateGuestAccessId(): void
+    {
+        $this->setGuestAccessId(UUIDGenerator::v4());
     }
 }

@@ -9,6 +9,9 @@ use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
+/**
+ * Returns payment method config rules by destination, currency and website
+ */
 class PaymentMethodsConfigsRuleRepository extends EntityRepository
 {
     /**
@@ -38,6 +41,8 @@ class PaymentMethodsConfigsRuleRepository extends EntityRepository
     ): array {
         $queryBuilder = $this->getByCurrencyAndWebsiteQueryBuilder($currency, $website)
             ->leftJoin('methodsConfigsRule.destinations', 'destination')
+            ->leftJoin('methodsConfigsRule.rule', 'rule')
+            ->addSelect('rule', 'destination', 'postalCode')
             ->leftJoin('destination.region', 'region')
             ->leftJoin('destination.postalCodes', 'postalCode')
             ->andWhere('destination.country = :country or destination.country is null')

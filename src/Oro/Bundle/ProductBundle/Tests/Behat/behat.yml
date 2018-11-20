@@ -502,7 +502,7 @@ oro_behat_extension:
     Content Node Form Slug Fallbacks:
       selector:
         type: xpath
-        locator: '//label[text()="URL Slug"]/../..//span[@class="fallback-status"]'
+        locator: '//label[text()="URL Slug"]/../..//button[contains(@class, "fallback-status")]'
 
     Content Node Form:
       selector: 'form[name="oro_web_catalog_content_node"]'
@@ -818,7 +818,7 @@ oro_behat_extension:
     Brand Form Name Fallbacks:
       selector:
         type: xpath
-        locator: '//label[text()="Name"]/../..//span[@class="fallback-status"]'
+        locator: '//label[text()="Name"]/../..//button[contains(@class, "fallback-status")]'
 
     Brand Form:
       selector: 'form[name="oro_product_brand"]'
@@ -853,7 +853,7 @@ oro_behat_extension:
     Product Form Slug Fallbacks:
       selector:
         type: xpath
-        locator: '//label[text()="URL Slug"]/../..//span[@class="fallback-status"]'
+        locator: '//label[text()="URL Slug"]/../..//button[contains(@class, "fallback-status")]'
 
     Create Product Plus Button:
       selector: '.content-variant-item-default .entity-create-btn'
@@ -883,7 +883,7 @@ oro_behat_extension:
     Brand humburger button:
       selector:
         type: xpath
-        locator: '//label[text()="Brand"]/../..//button[@class="add-on btn entity-select-btn"]'
+        locator: '//label[text()="Brand"]/../..//button[contains(@class, "entity-select-btn")]'
 
     Frontend Product Grid MultipleChoice:
       selector: 'div.filter-item'
@@ -949,6 +949,16 @@ oro_behat_extension:
     FrontendProductGridFilters:
       selector: 'div[data-bound-component="oroproduct/js/app/datagrid/backend-datagrid-component"] div.filter-box'
       class: Oro\Bundle\ProductBundle\Tests\Behat\Element\FrontendProductGridFilters
+
+    Product unit dropdown:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        type: 'xpath'
+        locator: '//form[@class="product__qty-container cart-table__form"]//span[@class="select2-chosen"]'
+
+    Shopping list line item:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector: 'div.shopping-list-line-items__item-wrapper'
 
     Remove Additional Unit Precision 1:
         selector: 'tr[data-content="oro_product[additionalUnitPrecisions][0]"] .removeLineItem'

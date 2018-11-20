@@ -45,7 +45,7 @@ oro_behat_extension:
     URL Slug Fallback Status:
       selector:
         type: xpath
-        locator: '//label[text()="URL Slug"]/../..//span[@class="fallback-status"]'
+        locator: '//label[text()="URL Slug"]/../..//button[contains(@class, "fallback-status")]'
 
     URL Slug Form:
       selector: 'form[name="oro_product"]'
