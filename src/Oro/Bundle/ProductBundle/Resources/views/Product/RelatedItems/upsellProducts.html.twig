@@ -33,6 +33,6 @@
         'upsellProductsLimit': upsellProductsLimit,
         'gridName': gridName
     }) }}
-    {{ dataGrid.renderGrid(gridName, relatedGridParams) }}
-    {{ placeholder('oro_product_upsell_products_edit', {'entity':  entity}) }}
+    {{ dataGrid.renderGrid(gridName, relatedGridParams, {cssClass: 'inner-grid' }) }}
+    {{ placeholder('oro_product_upsell_products_edit', {'entity': entity}) }}
 </div>

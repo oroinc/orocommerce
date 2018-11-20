@@ -158,10 +158,12 @@ class FormViewListener implements FeatureToggleableInterface
 
         if (empty($priceLists)) {
             $subBlockId = $scrollData->addSubBlock(self::PRICE_ATTRIBUTES_BLOCK_NAME);
+            $template = $event->getEnvironment()
+                ->render('OroPricingBundle:Product:price_attribute_no_data.html.twig', []);
             $scrollData->addSubBlockData(
                 self::PRICE_ATTRIBUTES_BLOCK_NAME,
                 $subBlockId,
-                $this->translator->trans('oro.pricing.priceattributepricelist.no_data'),
+                $template,
                 'productPriceAttributesPrices'
             );
         }
