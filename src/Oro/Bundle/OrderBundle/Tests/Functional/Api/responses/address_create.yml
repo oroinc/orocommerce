@@ -1,5 +1,6 @@
 data:
     type: orderaddresses
+    id: new
     attributes:
         fromExternalSource: false
         phone: '777-777-777'
@@ -14,9 +15,12 @@ data:
         middleName: 'Edgar'
         lastName: 'Doo'
         nameSuffix: 'M.D.'
-        created: '2017-03-28T06:30:16Z'
-        updated: '2017-03-28T06:30:16Z'
+        customRegion: null
     relationships:
+        customerAddress:
+            data: null
+        customerUserAddress:
+            data: null
         country:
             data:
                 type: countries
