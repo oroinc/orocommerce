@@ -3,12 +3,11 @@
 namespace Oro\Bundle\CatalogBundle\Tests\Unit\Fallback\Provider;
 
 use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Fallback\Provider\CategoryFallbackProvider;
 use Oro\Bundle\EntityBundle\Exception\Fallback\InvalidFallbackArgumentException;
 use Oro\Bundle\EntityBundle\Fallback\Provider\SystemConfigFallbackProvider;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 
 class CategoryFallbackProviderTest extends \PHPUnit\Framework\TestCase
 {
@@ -54,10 +53,8 @@ class CategoryFallbackProviderTest extends \PHPUnit\Framework\TestCase
     {
         $product = new Product();
         $category = new Category();
-        $repo = $this->getMockBuilder(CategoryRepository::class)->disableOriginalConstructor()->getMock();
-        $this->doctrineHelper->expects($this->once())->method('getEntityRepository')->willReturn($repo);
+        $product->setCategory($category);
         $this->systemConfigFallbackProvider->expects($this->never())->method('getFallbackHolderEntity');
-        $repo->expects($this->once())->method('findOneByProduct')->willReturn($category);
 
         $result = $this->categoryFallbackProvider->getFallbackHolderEntity($product, 'test');
         $this->assertSame($category, $result);
@@ -66,9 +63,6 @@ class CategoryFallbackProviderTest extends \PHPUnit\Framework\TestCase
     public function testGetFallbackHolderEntityWithoutCategory()
     {
         $product = new Product();
-        $repo = $this->getMockBuilder(CategoryRepository::class)->disableOriginalConstructor()->getMock();
-        $this->doctrineHelper->expects($this->once())->method('getEntityRepository')->willReturn($repo);
-        $repo->expects($this->once())->method('findOneByProduct')->willReturn(null);
         $this->systemConfigFallbackProvider->expects($this->once())->method('getFallbackHolderEntity')->willReturn(123);
 
         $result = $this->categoryFallbackProvider->getFallbackHolderEntity($product, 'test');
