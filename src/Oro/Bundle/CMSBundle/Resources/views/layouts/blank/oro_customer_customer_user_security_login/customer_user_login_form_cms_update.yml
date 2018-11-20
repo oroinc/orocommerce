@@ -24,7 +24,6 @@ layout:
             options:
                 visible: '=data["oro_cms_login_page"].getDefaultLoginPage().getTopContent()!=null'
                 text: '=data["oro_cms_login_page"].getDefaultLoginPage().getTopContent()'
-                escape: true
             siblingId: login_page_logo
         - '@add':
             id: login_page_bottom
@@ -33,7 +32,6 @@ layout:
             options:
                 visible: '=data["oro_cms_login_page"].getDefaultLoginPage().getBottomContent()!=null'
                 text: '=data["oro_cms_login_page"].getDefaultLoginPage().getBottomContent()'
-                escape: true
         - '@changeBlockType':
             id: login_page
             blockType: login_page
