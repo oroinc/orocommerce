@@ -2,6 +2,9 @@
 
 namespace Oro\Bundle\TaxBundle\Model;
 
+/**
+ * Abstract base DTO model class for result elements.
+ */
 abstract class AbstractResultElement extends AbstractResult
 {
     const CURRENCY = 'currency';

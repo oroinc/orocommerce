@@ -7,6 +7,9 @@ use Brick\Math\RoundingMode;
 use Oro\Bundle\TaxBundle\Model\AbstractResultElement;
 use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 
+/**
+ * Helper trait to calculate adjustments for result elements.
+ */
 trait CalculateAdjustmentTrait
 {
     /**

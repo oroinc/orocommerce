@@ -30,8 +30,6 @@ class TaxResultElement extends AbstractResultElement
         $resultElement->offsetSet(self::TAXABLE_AMOUNT, $taxableAmount);
         $resultElement->offsetSet(self::TAX_AMOUNT, $taxAmount);
         $resultElement->offsetSet(self::ADJUSTMENT, $adjustment);
-
-        /** todo: remove after BB-1752 or BB-2113 */
         $resultElement->offsetSet(self::CURRENCY, Configuration::DEFAULT_CURRENCY);
 
         return $resultElement;
