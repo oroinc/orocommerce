@@ -73,6 +73,10 @@ class PaymentTerm implements PaymentMethodInterface, CaptureActionInterface, Pur
         return $this->$action($paymentTransaction);
     }
 
+    /**
+     * @param PaymentTransaction $paymentTransaction
+     * @return bool
+     */
     protected function assignPaymentTerm(PaymentTransaction $paymentTransaction): bool
     {
         $entity = $this->doctrineHelper->getEntityReference(
@@ -111,6 +115,9 @@ class PaymentTerm implements PaymentMethodInterface, CaptureActionInterface, Pur
         return true;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function capture(PaymentTransaction $paymentTransaction): array
     {
         $paymentTransaction
@@ -121,16 +128,25 @@ class PaymentTerm implements PaymentMethodInterface, CaptureActionInterface, Pur
         return ['successful' => true];
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getSourceAction(): string
     {
         return self::PENDING;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function useSourcePaymentTransaction(): bool
     {
         return true;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function purchase(PaymentTransaction $paymentTransaction): array
     {
         $assigned = $this->assignPaymentTerm($paymentTransaction);

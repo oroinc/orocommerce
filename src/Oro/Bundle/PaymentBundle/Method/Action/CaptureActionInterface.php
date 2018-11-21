@@ -9,6 +9,10 @@ use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
  */
 interface CaptureActionInterface
 {
+    /**
+     * @param PaymentTransaction $paymentTransaction
+     * @return array
+     */
     public function capture(PaymentTransaction $paymentTransaction): array;
 
     /**

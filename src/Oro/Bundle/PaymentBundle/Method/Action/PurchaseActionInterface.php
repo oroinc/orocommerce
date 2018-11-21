@@ -9,5 +9,9 @@ use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
  */
 interface PurchaseActionInterface
 {
+    /**
+     * @param PaymentTransaction $paymentTransaction
+     * @return array
+     */
     public function purchase(PaymentTransaction $paymentTransaction): array;
 }
