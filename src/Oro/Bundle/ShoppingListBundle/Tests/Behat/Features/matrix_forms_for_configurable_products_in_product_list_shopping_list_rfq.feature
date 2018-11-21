@@ -214,7 +214,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I go to Products / Products
     And filter SKU as is equal to "CNFA"
     And I click Edit CNFA in grid
-    And I should see "No records found"
+    And I should see "There are no product variants"
     And I fill "ProductForm" with:
       | Configurable Attributes | [Attribute 1] |
     And I check PROD_A_1 and PROD_A_2 in grid
@@ -225,7 +225,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I go to Products / Products
     And filter SKU as is equal to "CNFB"
     And I click Edit CNFB in grid
-    And I should see "No records found"
+    And I should see "There are no product variants"
     And I fill "ProductForm" with:
       | Configurable Attributes | [Attribute 1, Attribute 2] |
     And I check PROD_B_11 and PROD_B_12 in grid
@@ -238,7 +238,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I go to Products / Products
     And filter SKU as is equal to "CNFC"
     And I click Edit CNFC in grid
-    And I should see "No records found"
+    And I should see "There are no product variants"
     And I fill "ProductForm" with:
       | Configurable Attributes | [Attribute 1, Attribute 2, Attribute 3] |
     And I check PROD_C_111 and PROD_C_121 in grid

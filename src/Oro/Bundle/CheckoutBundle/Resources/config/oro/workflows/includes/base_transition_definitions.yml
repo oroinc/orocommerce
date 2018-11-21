@@ -1,3 +1,4 @@
+#Consider this workflow is reused in standart and single page checkout workflows
 workflows:
     b2b_flow_checkout:
         transition_definitions:

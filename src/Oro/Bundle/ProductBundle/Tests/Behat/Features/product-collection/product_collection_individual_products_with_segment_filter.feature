@@ -124,4 +124,4 @@ Feature: Product collection individual products with segment filter
     When I click on "Remove Filter Button"
     And I click on "Remove Filter Button"
     And I click on "Preview Results"
-    Then I should see "No records found"
+    Then I should see "There are no products"

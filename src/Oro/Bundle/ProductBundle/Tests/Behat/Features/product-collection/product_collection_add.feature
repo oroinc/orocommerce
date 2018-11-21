@@ -21,7 +21,7 @@ Feature: Product collection add
     Then I should see 1 element "Product Collection Variant Label"
     And I should see 1 element "Segment Name With Placeholder"
     And I should see an "Product Collection Preview Grid" element
-    And I should see "No records found"
+    And I should see "There are no products"
 
   Scenario: Use Advanced Filter
     When I click "Content Variants"

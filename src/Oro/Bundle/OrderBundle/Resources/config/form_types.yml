@@ -13,17 +13,22 @@ services:
         calls:
             - [setDataClass, ['%oro_order.entity.order.class%']]
 
-    oro_order.form.type.order_address:
-        class: 'Oro\Bundle\OrderBundle\Form\Type\OrderAddressType'
+    oro_order.form.type.order_address_select:
+        class: 'Oro\Bundle\OrderBundle\Form\Type\OrderAddressSelectType'
         arguments:
-            - '@oro_locale.formatter.address'
             - '@oro_order.manager.order_address'
+            - '@oro_locale.formatter.address'
             - '@oro_order.order.provider.order_address_security'
             - '@oro_importexport.serializer'
         tags:
+            - { name: form.type, alias: order_address_select }
+
+    oro_order.form.type.order_address:
+        class: 'Oro\Bundle\OrderBundle\Form\Type\OrderAddressType'
+        arguments:
+            - '@oro_order.order.provider.order_address_security'
+        tags:
             - { name: form.type, alias: oro_order_address_type }
-        calls:
-            - [setDataClass, ['%oro_order.entity.order_address.class%']]
 
     oro_order.form.section.provider:
         class: 'Oro\Bundle\OrderBundle\Form\Section\SectionProvider'

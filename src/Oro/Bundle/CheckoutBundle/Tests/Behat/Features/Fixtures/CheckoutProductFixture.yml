@@ -36,6 +36,11 @@ Oro\Bundle\PricingBundle\Entity\PriceList:
         setCurrencies: [['USD']]
         active: true
 
+Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
+    priceListToProduct:
+        priceList: '@pricelistShipping'
+        product: '@product'
+
 Oro\Bundle\PricingBundle\Entity\PriceListToCustomer:
     priceListToCustomer:
         customer: '@customer'
@@ -50,7 +55,7 @@ Oro\Bundle\PricingBundle\Entity\ProductPrice:
         productSku: 'SKU123'
         quantity: 5
         unit: '@item'
-        value: 5
+        value: 2
         currency: 'USD'
 
 Oro\Bundle\PricingBundle\Entity\CombinedProductPrice:
@@ -62,6 +67,13 @@ Oro\Bundle\PricingBundle\Entity\CombinedProductPrice:
         unit: '@item'
         value: 2
         currency: 'USD'
+
+Oro\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList:
+    cpl2pl:
+        combinedPriceList: '@combinedPriceList'
+        priceList: '@pricelistShipping'
+        sortOrder: 200
+        mergeAllowed: true
 
 Oro\Bundle\PricingBundle\Entity\CombinedPriceListToCustomer:
     combinedPriceListToCustomer:
