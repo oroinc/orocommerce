@@ -10,6 +10,9 @@ use Oro\Bundle\OrderBundle\Provider\OrderStatusesProviderInterface;
 use Oro\Bundle\ProductBundle\Search\Reindex\ProductReindexManager;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
+/**
+ * Reindexes related products when order is updated or removed.
+ */
 class ReindexProductOrderListener
 {
     use FeatureCheckerHolderTrait;

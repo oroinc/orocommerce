@@ -7,6 +7,9 @@ use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 
+/**
+ * Repository for Order entity provides methods to extract order related info.
+ */
 class OrderRepository extends EntityRepository
 {
     /**

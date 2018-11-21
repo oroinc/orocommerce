@@ -6,6 +6,9 @@ use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\OrderBundle\Entity\Repository\OrderRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
+/**
+ * Provides purchase information for products.
+ */
 class LatestOrderedProductsInfoProvider
 {
     /**
