@@ -1,17 +1,10 @@
 include:
     - '@OroCheckoutBundle:CheckoutCustomerFixture.yml'
-    - '@OroCheckoutBundle:CheckoutCustomerFixture.yml'
     - '@OroProductBundle:configurable_products.yml'
 
 Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
     configurable_1:
         label: 'Configurable products list 1'
-        customer: '@customer'
-        customerUser: '@amanda'
-        organization: '@organization'
-        website: '@website1'
-    configurable_2:
-        label: 'Configurable products list 2'
         customer: '@customer'
         customerUser: '@amanda'
         organization: '@organization'
@@ -33,20 +26,4 @@ Oro\Bundle\ShoppingListBundle\Entity\LineItem:
         unit: '@item'
         customerUser: '@amanda'
         shoppingList: '@configurable_1'
-        organization: '@organization'
-    lineitem2_1:
-        product: '@product_A_1'
-        parentProduct: '@configurable_product_A'
-        quantity: '5'
-        unit: '@item'
-        customerUser: '@amanda'
-        shoppingList: '@configurable_2'
-        organization: '@organization'
-    lineitem2_2:
-        product: '@product_A_2'
-        parentProduct: '@configurable_product_A'
-        quantity: '2'
-        unit: '@item'
-        customerUser: '@amanda'
-        shoppingList: '@configurable_2'
         organization: '@organization'
