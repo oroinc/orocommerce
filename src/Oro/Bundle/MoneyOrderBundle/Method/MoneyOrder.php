@@ -41,16 +41,25 @@ class MoneyOrder implements PaymentMethodInterface, CaptureActionInterface, Purc
         return $this->$action($paymentTransaction);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getSourceAction(): string
     {
         return self::PENDING;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function useSourcePaymentTransaction(): bool
     {
         return true;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function purchase(PaymentTransaction $paymentTransaction): array
     {
         $paymentTransaction
@@ -61,6 +70,9 @@ class MoneyOrder implements PaymentMethodInterface, CaptureActionInterface, Purc
         return ['successful' => true];
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function capture(PaymentTransaction $paymentTransaction): array
     {
         $paymentTransaction

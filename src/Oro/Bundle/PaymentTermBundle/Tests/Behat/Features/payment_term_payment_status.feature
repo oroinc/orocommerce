@@ -21,12 +21,12 @@ Feature: Payment Term payment status
       | Name        | PaymentTerm |
       | Label       | PaymentTerm |
       | Short Label | PaymentTerm |
-    When I save and close form
+    And I save and close form
     Then I should see "Integration saved" flash message
 
   Scenario: Create new Payment Rule for Payment Term integration
     Given I operate as the Admin
-    And I go to System/Payment Rules
+    When I go to System/Payment Rules
     And I click "Create Payment Rule"
     And I check "Enabled"
     And I fill in "Name" with "PaymentTerm"

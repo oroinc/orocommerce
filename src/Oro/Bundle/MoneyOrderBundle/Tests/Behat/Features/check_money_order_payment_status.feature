@@ -23,12 +23,12 @@ Feature: Check Money Order payment status
       | Short Label | Check/Money Order |
       | Pay To      | Oro Inc           |
       | Send To     | Oro Inc           |
-    When I save and close form
+    And I save and close form
     Then I should see "Integration saved" flash message
 
   Scenario: Create new Payment Rule for Check/Money Order integration
     Given I operate as the Admin
-    And I go to System/Payment Rules
+    When I go to System/Payment Rules
     And I click "Create Payment Rule"
     And I check "Enabled"
     And I fill in "Name" with "CheckMoneyOrder"
