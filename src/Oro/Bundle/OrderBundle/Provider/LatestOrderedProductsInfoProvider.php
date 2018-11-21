@@ -8,6 +8,9 @@ use Doctrine\ORM\QueryBuilder;
 
 use Oro\Bundle\OrderBundle\Entity\Repository\OrderRepository;
 
+/**
+ * Provides purchase information for products.
+ */
 class LatestOrderedProductsInfoProvider
 {
     /**

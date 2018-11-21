@@ -122,7 +122,7 @@ class ReindexProductOrderListenerTest extends \PHPUnit_Framework_TestCase
         $this->prepareEventMockForStatusChanges($oldStatusId, $newStatusId);
 
         $this->reindexManager
-            ->expects($expectThatReindexEventWilBeCalled ? $this->once() : $this->never())
+            ->expects($expectThatReindexEventWilBeCalled ? $this->exactly(2) : $this->never())
             ->method('reindexProducts');
 
         $this->order->setWebsite($this->website);
@@ -307,7 +307,7 @@ class ReindexProductOrderListenerTest extends \PHPUnit_Framework_TestCase
         $this->order->setWebsite($this->website);
 
         $this->reindexManager
-            ->expects($this->exactly(2))
+            ->expects($this->exactly(4))
             ->method('reindexProducts');
 
         $this->listener->processOrderUpdate($this->order, $this->event);
@@ -406,9 +406,9 @@ class ReindexProductOrderListenerTest extends \PHPUnit_Framework_TestCase
             $this->order->setLineItems($lineItems);
 
             $this->reindexManager
-                ->expects($this->once())
+                ->expects($this->exactly(2))
                 ->method('reindexProducts')
-                ->with($productIds, self::WEBSITE_ID);
+                ->withConsecutive([$productIds, self::WEBSITE_ID], [[], self::WEBSITE_ID]);
         } else {
             $this->reindexManager->expects($this->never())->method('reindexProducts');
         }
