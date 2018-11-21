@@ -51,7 +51,7 @@ Feature: Delete line item from shopping list for configurable products
     When I go to Products / Products
     And filter SKU as is equal to "CNFA"
     And I click Edit CNFA in grid
-    And I should see "No records found"
+    And I should see "There are no product variants"
     And I fill "ProductForm" with:
       | Configurable Attributes | [BooleanAttribute] |
     And I check PROD_A_1 and PROD_A_2 in grid

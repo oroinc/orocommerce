@@ -65,7 +65,6 @@ workflows:
                             form_type: Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressType
                             options:
                                 object: $checkout
-                                isEditEnabled: true
                                 addressType: 'billing'
                                 required: true
                                 translation_domain: messages
@@ -103,7 +102,6 @@ workflows:
                             form_type: Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressType
                             options:
                                 object: $checkout
-                                isEditEnabled: true
                                 addressType: 'shipping'
                                 required: true
                                 disabled: $disallow_shipping_address_edit

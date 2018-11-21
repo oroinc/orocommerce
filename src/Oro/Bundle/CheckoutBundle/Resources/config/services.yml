@@ -8,8 +8,6 @@ services:
     oro_checkout.data_provider.converter.checkout_line_items:
         class: 'Oro\Bundle\CheckoutBundle\DataProvider\Converter\CheckoutLineItemsConverter'
         public: false
-        arguments:
-            - '@property_accessor'
 
     oro_checkout.data_provider.converter.checkout_to_order:
         class: Oro\Bundle\CheckoutBundle\DataProvider\Converter\CheckoutToOrderConverter
@@ -17,6 +15,25 @@ services:
         arguments:
             - '@oro_checkout.data_provider.manager.checkout_line_items'
             - '@oro_checkout.mapper.order_mapper'
+            - '@oro_checkout.checkout_to_order_converter.cache'
+
+    oro_checkout.checkout_to_order_converter.cache:
+        parent: doctrine_cache.abstract.array
+        public: false
+        calls:
+            - [ setNamespace, [ 'checkout_to_order_converter' ] ]
+
+    oro_checkout.product_availability.cache:
+        parent: doctrine_cache.abstract.array
+        calls:
+            - [ setNamespace, [ 'oro_product_availability' ] ]
+
+    oro_checkout.event_listener.product_availability_cache:
+        class: Oro\Bundle\CheckoutBundle\EventListener\ProductAvailabilityCacheListener
+        arguments:
+            - '@oro_checkout.product_availability.cache'
+        tags:
+            - { name: doctrine.event_listener, event: onFlush }
 
     oro_checkout.data_provider.manager.checkout_line_items:
         class: 'Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager'
@@ -95,6 +112,7 @@ services:
         class: 'Oro\Bundle\CheckoutBundle\Layout\DataProvider\CheckoutShippingContextProvider'
         arguments:
             - '@oro_checkout.factory.shipping_context_factory'
+            - '@oro_checkout.checkout_context.cache'
         tags:
             - { name: layout.data_provider, alias: checkout_shipping_context }
 
@@ -102,8 +120,15 @@ services:
         class: 'Oro\Bundle\CheckoutBundle\Layout\DataProvider\CheckoutPaymentContextProvider'
         arguments:
             - '@oro_checkout.factory.payment_context_factory'
+            - '@oro_checkout.checkout_context.cache'
         tags:
             - { name: layout.data_provider, alias: checkout_payment_context }
+
+    oro_checkout.checkout_context.cache:
+        parent: doctrine_cache.abstract.array
+        public: false
+        calls:
+            - [ setNamespace, [ 'checkout_context_cache' ] ]
 
     oro_checkout.expression.acl_granted:
         class: Oro\Bundle\CheckoutBundle\Expression\CheckRequest
@@ -384,7 +409,7 @@ services:
         class: 'Oro\Bundle\CheckoutBundle\Mapper\OrderMapper'
         public: false
         arguments:
-            - '@oro_entity.entity_field_provider'
+            - '@oro_entity.helper.field_helper'
             - '@property_accessor'
             - '@oro_payment_term.provider.payment_term_association'
 
@@ -573,7 +598,8 @@ services:
         public: false
         arguments:
             - '@oro_pricing.provider.frontend_product_prices'
-            - '@doctrine'
+            - '@security.authorization_checker'
+            - '@oro_checkout.product_availability.cache'
         tags:
             - { name: checkout.data_provider.line_item }
 
@@ -673,3 +699,11 @@ services:
             - '@oro_customer.handler.forgot_password'
             - '@event_dispatcher'
             - '@translator'
+
+    oro_checkout.condition.validate_checkout_addresses:
+        class: 'Oro\Bundle\CheckoutBundle\Condition\ValidateCheckoutAddresses'
+        arguments:
+            - '@validator'
+        tags:
+            - { name: oro_workflow.condition, alias: 'validate_checkout_addresses' }
+            - { name: oro_action.condition, alias: 'validate_checkout_addresses' }
