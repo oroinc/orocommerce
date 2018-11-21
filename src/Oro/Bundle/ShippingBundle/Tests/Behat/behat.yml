@@ -125,13 +125,3 @@ oro_behat_extension:
       selector:
         type: 'xpath'
         locator: "//input[@name='possibleShippingMethodType']"
-
-    Product With Shipping Options Form:
-      selector: 'form[name="oro_product"]'
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
-      options:
-        mapping:
-          SKU: 'oro_product[sku]'
-          Name: 'oro_product[names][values][default]'
-          Shipping Option Weight Value 1: 'oro_product[product_shipping_options][0][weight][value]'
-          Shipping Option Freight Class Value 1: 'oro_product[product_shipping_options][0][freightClass]'
