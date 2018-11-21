@@ -30,27 +30,19 @@ workflows:
                             attribute: $.result.initCheckoutState
                     attribute_fields:
                         billing_address:
-                            form_type: Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressType
+                            form_type: Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressSelectType
                             options:
                                 object: $checkout
-                                isEditEnabled: true
-                                addressType: 'billing'
+                                address_type: 'billing'
                                 required: true
                                 translation_domain: messages
-                                disabled: $disallow_billing_address_edit
-                        save_billing_address:
-                            form_type: Oro\Bundle\CheckoutBundle\Form\Type\SaveAddressType
                         shipping_address:
-                            form_type: Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressType
+                            form_type: Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressSelectType
                             options:
                                 object: $checkout
-                                isEditEnabled: true
-                                addressType: 'shipping'
+                                address_type: 'shipping'
                                 required: true
                                 translation_domain: messages
-                                disabled: $disallow_shipping_address_edit
-                        save_shipping_address:
-                            form_type: Oro\Bundle\CheckoutBundle\Form\Type\SaveAddressType
                         ship_to_billing_address:
                             form_type: Oro\Bundle\CheckoutBundle\Form\Type\ShipToBillingAddressType
                         shipping_method: ~
@@ -70,14 +62,13 @@ workflows:
                         customer_notes:
                             form_type: Symfony\Component\Form\Extension\Core\Type\TextareaType
                         remove_source: ~
+                        late_registration:
+                            form_type: Oro\Bundle\CheckoutBundle\Form\Type\LateRegistrationType
+                            data: $late_registration_data
                         state_token:
                             form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
                             options:
                                 data: $internal_state_token
-                        email:
-                            form_type: Oro\Bundle\CustomerBundle\Form\Type\CustomerVisitorEmailAddressType
-                            options:
-                                required: true
 
             create_order:
                 step_to: checkout
@@ -86,48 +77,42 @@ workflows:
                 frontend_options:
                     is_checkout_continue: true
                     is_checkout_show_errors: true
-                    page-component-module: 'orocheckout/js/app/components/single-page-transition-button-component'
+                    page-component-module: 'orocheckout/js/app/components/single-page-checkout-component'
                     page-component-options:
                         saveStateUrl: $.result.saveStateUrl
-                        targetEvents:
-                            '.checkout-billing-address, .checkout-shipping-address':
-                                - 'payment-methods:refresh'
-                                - 'shipping-methods:refresh'
-                        ignoreTargets:
-                            - '.checkout-payment-methods .checkout-form__payment-container'
-                        enableOnLoad: false
+                        targetLayoutBlocks:
+                            '[data-role="checkout-ship-to"]':
+                                - 'payment_methods_wrapper'
+                                - 'shipping_methods_wrapper'
+                                - 'checkout_order_summary_totals_wrapper'
+                            'select[data-role="checkout-billing-address"]':
+                                - 'payment_methods_wrapper'
+                                - 'shipping_methods_wrapper'
+                                - 'checkout_order_summary_totals_wrapper'
+                            'select[data-role="checkout-shipping-address"]':
+                                - 'payment_methods_wrapper'
+                                - 'shipping_methods_wrapper'
+                                - 'checkout_order_summary_totals_wrapper'
+                            '[name="shippingMethodType"]':
+                                - 'checkout_order_summary_totals_wrapper'
+                            '[name="paymentMethod"]':
+                                - 'checkout_order_summary_totals_wrapper'
                 form_options:
                     attribute_fields:
                         billing_address:
-                            form_type: Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressType
+                            form_type: Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressSelectType
                             options:
                                 object: $checkout
-                                isEditEnabled: true
-                                addressType: 'billing'
+                                address_type: 'billing'
                                 required: true
                                 translation_domain: messages
-                                constraints:
-                                    - Valid: ~
-                                    - NotBlank: ~
-                                    - Oro\Bundle\AddressBundle\Validator\Constraints\NameOrOrganization: ~
-                                disabled: $disallow_billing_address_edit
-                        save_billing_address:
-                            form_type: Oro\Bundle\CheckoutBundle\Form\Type\SaveAddressType
                         shipping_address:
-                            form_type: Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressType
+                            form_type: Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressSelectType
                             options:
                                 object: $checkout
-                                isEditEnabled: true
-                                addressType: 'shipping'
+                                address_type: 'shipping'
                                 required: true
-                                disabled: $disallow_shipping_address_edit
                                 translation_domain: messages
-                                constraints:
-                                    - Valid: ~
-                                    - NotBlank: ~
-                                    - Oro\Bundle\AddressBundle\Validator\Constraints\NameOrOrganization: ~
-                        save_shipping_address:
-                            form_type: Oro\Bundle\CheckoutBundle\Form\Type\SaveAddressType
                         ship_to_billing_address:
                             form_type: Oro\Bundle\CheckoutBundle\Form\Type\ShipToBillingAddressType
                         shipping_method:
@@ -155,13 +140,10 @@ workflows:
                             form_type: Oro\Bundle\CheckoutBundle\Form\Type\LateRegistrationType
                             options:
                                 required: true
+                                data: $late_registration
                         customer_notes:
                             form_type: Symfony\Component\Form\Extension\Core\Type\TextareaType
                         state_token:
                             form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
                             options:
                                 data: $internal_state_token
-                        email:
-                            form_type: Oro\Bundle\CustomerBundle\Form\Type\CustomerVisitorEmailAddressType
-                            options:
-                                required: true

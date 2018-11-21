@@ -25,7 +25,7 @@ Feature: Generation of long coupon code
     Then I should see "Coupon codes must not be longer than 255 symbols, including prefix, suffix, and dashes. With the current settings, the coupon codes are 256 symbols longer."
     Then I expecting to see numeric coupon of 122 symbols with prefix "prefix" suffix "suffix" and dashes every 1 symbols
     When I close ui dialog
-    And I should see "No records found"
+    And I should see "There are no coupon"
 
   Scenario: Generate coupons with max length
     Given click "Coupons Actions"

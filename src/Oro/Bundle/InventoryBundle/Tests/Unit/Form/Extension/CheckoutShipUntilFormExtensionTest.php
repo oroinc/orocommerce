@@ -126,7 +126,7 @@ class CheckoutShipUntilFormExtensionTest extends \PHPUnit\Framework\TestCase
             (new OrderLineItem())->setProduct(new Product()),
             (new OrderLineItem())->setProduct(new Product()),
         ];
-        $this->checkoutLineItemsManager->expects($this->atLeastOnce())
+        $this->checkoutLineItemsManager->expects($this->atMost(1))
             ->method('getData')
             ->with($checkout)
             ->willReturn($lineItems);

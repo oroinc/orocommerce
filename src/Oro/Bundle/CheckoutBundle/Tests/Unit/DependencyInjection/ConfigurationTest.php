@@ -48,6 +48,10 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
                             'value' => false,
                             'scope' => 'app'
                         ],
+                        'single_page_checkout_increase_performance' => [
+                            'value' => false,
+                            'scope' => 'app'
+                        ],
                         'registration_allowed' => [
                             'value' => true,
                             'scope' => 'app'

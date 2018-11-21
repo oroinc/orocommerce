@@ -166,7 +166,7 @@
     {% set shippingInformation %}
         <div class="possible-shipping-methods-info">
             {% set possibleShippingMethodsView = 'orosale/js/app/views/quote-possible-shipping-methods-view' %}
-            {{ UI.renderAttribute('oro.sale.quote.shipping_method.label'|trans,
+            {{ UI.renderControlGroup('oro.sale.quote.shipping_method.label'|trans,
                 '<div class="possible_shipping_methods_container">' ~
                 SM.renderPossibleShippingMethods(form, entity, quoteEntryPointEvents, possibleShippingMethodsView) ~ '</div>'
             ) }}

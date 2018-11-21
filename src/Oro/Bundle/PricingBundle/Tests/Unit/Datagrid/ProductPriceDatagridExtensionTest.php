@@ -104,7 +104,7 @@ class ProductPriceDatagridExtensionTest extends AbstractProductsGridPricesExtens
 
     private function assertColumnsAddedToConfig(): void
     {
-        /** @var PriceList|\PHPUnit_Framework_MockObject_MockObject $priceList */
+        /** @var PriceList|\PHPUnit\Framework\MockObject\MockObject $priceList */
         $priceList = $this->createMock(PriceList::class);
         $priceList
             ->expects(self::any())

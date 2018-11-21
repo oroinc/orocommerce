@@ -122,7 +122,7 @@ Feature: Quote for guest
     Given I proceed as the Buyer
     And I am on the homepage
     When I click "Quotes"
-    Then I should see "No records found"
+    Then I should see "There are no quotes"
 
   Scenario: Logged in user has access to quote from Guest Quote link
     When I visit guest quote link for quote Quote_1

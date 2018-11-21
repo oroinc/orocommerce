@@ -6,6 +6,9 @@ use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
+/**
+ * This is the class that validates and merges configuration from your app/config files
+ */
 class Configuration implements ConfigurationInterface
 {
     const DEFAULT_GUEST_CHECKOUT_OWNER = 'default_guest_checkout_owner';
@@ -27,6 +30,10 @@ class Configuration implements ConfigurationInterface
                     'value' => false,
                 ],
                 'guest_checkout' => [
+                    'type' => 'boolean',
+                    'value' => false,
+                ],
+                'single_page_checkout_increase_performance' => [
                     'type' => 'boolean',
                     'value' => false,
                 ],
