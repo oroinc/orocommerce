@@ -37,10 +37,10 @@ class TaxRateValidator extends ConstraintValidator
      */
     private function isNoMoreDecimalPlacesThan($value, $decimalPlaces)
     {
-        $formattedValue = rtrim(number_format($value, TaxType::TAX_RATE_FIELD_PRECISION, '.', ''), '0.');
+        $formattedValue = rtrim(number_format($value, TaxType::TAX_RATE_FIELD_PRECISION, '.', ''), '0');
 
         // Covers case when $value has TaxType::TAX_RATE_FIELD_PRECISION or more zeros after decimal separator.
-        if ($formattedValue === '' || (float) $formattedValue < (float) $value) {
+        if ((float) $formattedValue < (float) $value) {
             return false;
         }
 
