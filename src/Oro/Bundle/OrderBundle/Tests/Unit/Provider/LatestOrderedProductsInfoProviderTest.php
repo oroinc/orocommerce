@@ -8,7 +8,6 @@ use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\OrderBundle\Entity\Repository\OrderRepository;
 use Oro\Bundle\OrderBundle\Provider\LatestOrderedProductsInfoProvider;
 use Oro\Bundle\OrderBundle\Provider\OrderStatusesProviderInterface;
-use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 class LatestOrderedProductsInfoProviderTest extends \PHPUnit\Framework\TestCase
@@ -17,12 +16,12 @@ class LatestOrderedProductsInfoProviderTest extends \PHPUnit\Framework\TestCase
     private const PRODUCT_IDS = [1, 5];
 
     /**
-     * @var RegistryInterface|\PHPUnit\Framework\MockObject\MockObject
+     * @var RegistryInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     private $registry;
 
     /**
-     * @var OrderStatusesProviderInterface|\PHPUnit\Framework\MockObject\MockObject
+     * @var OrderStatusesProviderInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     private $availableOrderStatusesProvider;
 
@@ -125,9 +124,9 @@ class LatestOrderedProductsInfoProviderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @param array $items
-     * @return \PHPUnit\Framework\MockObject\MockObject
+     * @return \PHPUnit_Framework_MockObject_MockObject
      */
-    private function configureQueryBuilder(array $items): MockObject
+    private function configureQueryBuilder(array $items): \PHPUnit_Framework_MockObject_MockObject
     {
         $queryBuilder = $this->createMock(QueryBuilder::class);
         $query = $this->createMock(AbstractQuery::class);
@@ -145,9 +144,9 @@ class LatestOrderedProductsInfoProviderTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return MockObject
+     * @return \PHPUnit_Framework_MockObject_MockObject
      */
-    private function configureRegistry(): MockObject
+    private function configureRegistry(): \PHPUnit_Framework_MockObject_MockObject
     {
         $repository = $this->createMock(OrderRepository::class);
 
