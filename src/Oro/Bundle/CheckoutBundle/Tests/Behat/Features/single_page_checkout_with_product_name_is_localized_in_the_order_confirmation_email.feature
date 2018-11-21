@@ -14,11 +14,7 @@ Feature: Single page checkout with product name is localized in the order confir
 
   Scenario: Feature Background
     Given I enable the existing localizations
-    And I login as administrator
-    When go to System/Workflows
-    And I click "Activate" on row "Single Page Checkout" in grid
-    And I click "Activate"
-    Then I should see "Workflow activated" flash message
+    And I activate "Single Page Checkout" workflow
 
   Scenario: Create order, process checkout and check order confirmation email
     Given AmandaRCole@example.org customer user has Buyer role
