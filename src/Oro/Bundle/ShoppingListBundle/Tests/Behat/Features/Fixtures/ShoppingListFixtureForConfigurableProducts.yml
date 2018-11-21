@@ -1,18 +1,17 @@
 include:
-    - '@OroCheckoutBundle:CheckoutCustomerFixture.yml'
-    - '@OroCheckoutBundle:CheckoutCustomerFixture.yml'
+    - '@OroCustomerBundle:BuyerCustomerFixture.yml'
     - '@OroProductBundle:configurable_products.yml'
 
 Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
     configurable_1:
         label: 'Configurable products list 1'
-        customer: '@customer'
+        customer: '@customer1'
         customerUser: '@amanda'
         organization: '@organization'
         website: '@website1'
     configurable_2:
         label: 'Configurable products list 2'
-        customer: '@customer'
+        customer: '@customer1'
         customerUser: '@amanda'
         organization: '@organization'
         website: '@website1'

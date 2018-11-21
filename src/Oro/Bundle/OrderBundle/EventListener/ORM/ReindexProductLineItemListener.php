@@ -11,6 +11,9 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Search\Reindex\ProductReindexManager;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
+/**
+ * Reindexes related products when line item is created, updated or deleted.
+ */
 class ReindexProductLineItemListener
 {
     use FeatureCheckerHolderTrait;
