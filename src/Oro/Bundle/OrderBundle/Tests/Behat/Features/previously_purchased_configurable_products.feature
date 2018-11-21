@@ -67,7 +67,7 @@ Feature: Previously purchased configurable products
     And I save form
     Then I should see "Product has been saved" flash message
     When I go to Products / Products
-    And filter SKU as is equal to "CNFA"
+    And filter SKU as is equal to "CNF_A"
     And I click Edit CNFA in grid
     And I should see "There are no product variants"
     And I fill "ProductForm" with:
@@ -92,7 +92,7 @@ Feature: Previously purchased configurable products
     Given I proceed as the Buyer
     When I click "Account"
     And I click "Previously Purchased"
-    Then I should see "ConfigurableProductA"
+    Then I should see "Configurable Product A"
 
   Scenario: Cancel order with configurable product
     Given I proceed as the Admin
@@ -106,4 +106,4 @@ Feature: Previously purchased configurable products
     Given I proceed as the Buyer
     When I click "Account"
     And I click "Previously Purchased"
-    Then I should not see "ConfigurableProductA"
+    Then I should not see "Configurable Product A"
