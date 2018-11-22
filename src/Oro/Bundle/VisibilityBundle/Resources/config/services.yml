@@ -13,6 +13,18 @@ parameters:
     oro_visibility.entity.product_visibility_resolved.class: Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\ProductVisibilityResolved
 
 services:
+    oro_visibility.product_visibility_permission.cache:
+        parent: doctrine_cache.abstract.array
+        calls:
+            - [setNamespace, ['product_visibility_permission']]
+
+    oro_visibility.event_listener.product_availability_cache:
+        class: Oro\Bundle\VisibilityBundle\EventListener\ProductVisibilityCacheListener
+        arguments:
+            - '@oro_visibility.product_visibility_permission.cache'
+        tags:
+            - { name: doctrine.event_listener, event: onFlush }
+
     oro_visibility.acl.voter.customer:
         class: 'Oro\Bundle\VisibilityBundle\Acl\Voter\ProductVisibilityVoter'
         public: false
@@ -22,6 +34,7 @@ services:
             - [setClassName, ['%oro_product.entity.product.class%']]
             - [setModifier, ["@oro_visibility.model.product_visibility_query_builder_modifier"]]
             - [setFrontendHelper, ["@oro_frontend.request.frontend_helper"]]
+            - [setAttributePermissionCache, ["@oro_visibility.product_visibility_permission.cache"]]
         tags:
             - { name: security.voter }
 

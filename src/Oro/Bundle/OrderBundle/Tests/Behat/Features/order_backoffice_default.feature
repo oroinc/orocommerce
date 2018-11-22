@@ -74,7 +74,7 @@ Feature: Order Backoffice Default
     Then I operate as the Buyer
     And I signed in as JuanaPBrzezinski@example.net on the store frontend
     And click "Orders"
-    Then I should see "No records found"
+    Then I should see "There are no orders"
 
   Scenario: See Orders with Customer by creator (buyer).
     Given I operate as the Admin

@@ -78,6 +78,22 @@ oro_behat_extension:
           Quantity: 'product_qty'
           Unit: 'product_unit'
 
+    Shopping List Line Item 2 Form:
+      class: 'Oro\Bundle\TestFrameworkBundle\Behat\Element\Form'
+      selector:
+        locator: '(//div[@class=" shopping-list-line-items__item"])[2]//form'
+        type: xpath
+      options:
+        mapping:
+          Quantity: 'product_qty'
+          Unit: 'product_unit'
+
+    Shopping List Line Item Error:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        type: css
+        locator: 'div.shopping-list-line-items__error'
+
     Shopping List Line Item 1 Quantity:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:

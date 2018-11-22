@@ -26,6 +26,9 @@ oro_behat_extension:
         - '@OroPromotionBundle/Tests/Behat/Features'
 
   pages:
+    All Coupons:
+      class: Oro\Bundle\PromotionBundle\Tests\Behat\Page\AllCoupons
+      route: 'oro_promotion_coupon_index'
     Promotion Create:
       class: Oro\Bundle\PromotionBundle\Tests\Behat\Page\PromotionCreate
       route: 'oro_promotion_create'
@@ -214,7 +217,7 @@ oro_behat_extension:
     Restrictions:
       selector:
         type: xpath
-        locator: '//label[@class="control-label" and text()[contains(.,"Restrictions")]]/following-sibling::div[@class="controls"]'
+        locator: '//label[contains(@class, "attribute-item__term") and text()[contains(.,"Restrictions")]]/following-sibling::div[contains(@class, "attribute-item__description")]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
     Apply Segment:

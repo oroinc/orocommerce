@@ -76,7 +76,7 @@ Feature: Hide simple products that are variations of configurable on front store
     And I go to Products / Products
     And filter SKU as is equal to "CNF_A"
     And I click Edit CNF_A in grid
-    And I should see "No records found"
+    And I should see "There are no product variants"
     And I fill "ProductForm" with:
       | Configurable Attributes | [Attribute_1] |
     And I check PROD_A_1 and PROD_A_2 in grid

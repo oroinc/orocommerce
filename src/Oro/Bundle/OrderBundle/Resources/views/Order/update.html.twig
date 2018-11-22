@@ -99,7 +99,7 @@
                 'data': [
                     ownerSelectors,
                     form_row(form.currency),
-                    UI.renderProperty('oro.order.currency.label'|trans, entity.currency)
+                    UI.renderPropertyControlGroup('oro.order.currency.label'|trans, entity.currency)
                 ]
             }]
         },
@@ -182,7 +182,7 @@
 
     {% set shippingInformation %}
         <div class="possible-shipping-methods-info">
-            {{ UI.renderAttribute('oro.order.form.shipping_options.label'|trans,
+            {{ UI.renderControlGroup('oro.order.form.shipping_options.label'|trans,
                 '<div class="possible_shipping_methods_container">' ~ SM.renderPossibleShippingMethods(form, entity) ~ '</div>'
             ) }}
 

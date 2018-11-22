@@ -60,7 +60,7 @@ Feature: Promotions in Shopping List
     # Save configurable product with simple products selected
     And I go to Products / Products
     And I click Edit SKU_CONFIGURABLE in grid
-    And I should see "No records found"
+    And I should see "There are no product variants"
     And I fill "ProductForm" with:
       | Configurable Attributes | [Size] |
     And I check SKU2 record in grid

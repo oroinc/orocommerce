@@ -10,6 +10,9 @@ use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
+/**
+ * Returns shipping method config rules by destination, currency and website
+ */
 class ShippingMethodsConfigsRuleRepository extends EntityRepository
 {
     /**
@@ -39,6 +42,8 @@ class ShippingMethodsConfigsRuleRepository extends EntityRepository
     ): array {
         $queryBuilder = $this->getByCurrencyAndWebsiteQueryBuilder($currency, $website)
             ->leftJoin('methodsConfigsRule.destinations', 'destination')
+            ->leftJoin('methodsConfigsRule.rule', 'rule')
+            ->addSelect('rule', 'destination', 'postalCode')
             ->leftJoin('destination.region', 'region')
             ->leftJoin('destination.postalCodes', 'postalCode')
             ->andWhere('destination.country = :country or destination.country is null')
@@ -135,6 +140,7 @@ class ShippingMethodsConfigsRuleRepository extends EntityRepository
     public function getEnabledRulesByMethod($method)
     {
         $qb = $this->getRulesByMethodQueryBuilder($method)
+            ->addSelect('rule')
             ->innerJoin('methodsConfigsRule.rule', 'rule', Expr\Join::WITH, 'rule.enabled = true');
 
         return $this->aclHelper->apply($qb)->getResult();
@@ -187,7 +193,11 @@ class ShippingMethodsConfigsRuleRepository extends EntityRepository
     private function getRulesByMethodQueryBuilder($method)
     {
         return $this->createQueryBuilder('methodsConfigsRule')
+            ->addSelect('methodConfigs', 'typeConfigs', 'destination', 'postalCode')
             ->innerJoin('methodsConfigsRule.methodConfigs', 'methodConfigs')
+            ->leftJoin('methodConfigs.typeConfigs', 'typeConfigs')
+            ->leftJoin('methodsConfigsRule.destinations', 'destination')
+            ->leftJoin('destination.postalCodes', 'postalCode')
             ->where('methodConfigs.method = :method')
             ->setParameter('method', $method);
     }

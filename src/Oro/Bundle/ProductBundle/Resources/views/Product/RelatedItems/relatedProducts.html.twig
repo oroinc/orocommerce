@@ -33,6 +33,6 @@
         'relatedProductsLimit': relatedProductsLimit,
         'gridName': gridName
     }) }}
-    {{ dataGrid.renderGrid(gridName, relatedGridParams) }}
-    {{ placeholder('oro_product_related_items_edit', {'entity':  entity}) }}
+    {{ dataGrid.renderGrid(gridName, relatedGridParams, {cssClass: 'inner-grid'}) }}
+    {{ placeholder('oro_product_related_items_edit', {'entity': entity}) }}
 </div>

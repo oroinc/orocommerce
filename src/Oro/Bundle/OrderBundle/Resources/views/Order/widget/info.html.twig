@@ -48,8 +48,6 @@
             {{ UI.renderHtmlProperty('oro.order.billing_address.label'|trans, address.renderAddress(order.billingAddress)) }}
             {{ UI.renderHtmlProperty('oro.order.shipping_address.label'|trans, address.renderAddress(order.shippingAddress)) }}
             {{ UI.renderProperty('oro.order.customer_notes.label'|trans, order.customerNotes) }}
-        </div>
-        <div class="responsive-block">
             {{ entityConfig.renderDynamicFields(order) }}
         </div>
     </div>

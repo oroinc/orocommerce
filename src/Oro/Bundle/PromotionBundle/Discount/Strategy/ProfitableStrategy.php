@@ -5,6 +5,9 @@ namespace Oro\Bundle\PromotionBundle\Discount\Strategy;
 use Oro\Bundle\PromotionBundle\Discount\DiscountContextInterface;
 use Oro\Bundle\PromotionBundle\Discount\DiscountInterface;
 
+/**
+ * Responsible for applying discounts
+ */
 class ProfitableStrategy extends AbstractStrategy
 {
     /**
@@ -124,6 +127,11 @@ class ProfitableStrategy extends AbstractStrategy
      */
     private function cloneContext(DiscountContextInterface $discountContext): DiscountContextInterface
     {
+        if (\method_exists($discountContext, '__clone')) {
+            /** @var \Oro\Bundle\PromotionBundle\Discount\DiscountContext $discountContext */
+            return clone $discountContext;
+        }
+
         return unserialize(serialize($discountContext));
     }
 }

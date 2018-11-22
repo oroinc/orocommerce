@@ -37,7 +37,7 @@ Feature: Product collection mass actions of tabs grids
     And I have all products available in <tab> tab, and focused on it
     And I check all records in "Active Grid" grid
     And I click <mass action> mass action in "Active Grid" grid
-    Then I should see "No records found"
+    And I should see "There are no products"
     And I click "Cancel"
     Examples:
       | tab            | mass action      |
