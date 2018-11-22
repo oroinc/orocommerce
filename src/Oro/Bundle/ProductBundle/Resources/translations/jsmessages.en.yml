@@ -11,7 +11,7 @@ oro:
             select_product: 'Select Item'
 
         productunit:
-            delete.confirmation: Are you sure you want to delete this unit precision?
+            delete.confirmation: Are you sure you want to delete this product unit?
             delete.error.title: Unit of quantity cannot be deleted
             delete.error.message: 'Selected unit is currently used to define the product price.<br>Please review and modify the prices first.'
 

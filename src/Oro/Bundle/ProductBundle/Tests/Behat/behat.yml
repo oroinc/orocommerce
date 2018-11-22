@@ -241,6 +241,8 @@ oro_behat_extension:
           Price Quantity 1: 'oro_product[prices][0][quantity]'
           Price Value 1: 'oro_product[prices][0][price][value]'
           Price Unit 1: 'oro_product[prices][0][unit]'
+          Shipping Option Weight Value 1: 'oro_product[product_shipping_options][0][weight][value]'
+          Shipping Option Freight Class Value 1: 'oro_product[product_shipping_options][0][freightClass]'
           Configurable Attributes:
             type: 'xpath'
             locator: '//div[@id[starts-with(.,"oro_product_variantFields-uid")]]'
@@ -948,6 +950,16 @@ oro_behat_extension:
     FrontendProductGridFilters:
       selector: 'div[data-bound-component="oroproduct/js/app/datagrid/backend-datagrid-component"] div.filter-box'
       class: Oro\Bundle\ProductBundle\Tests\Behat\Element\FrontendProductGridFilters
+
+    Product unit dropdown:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        type: 'xpath'
+        locator: '//form[@class="product__qty-container cart-table__form"]//span[@class="select2-chosen"]'
+
+    Shopping list line item:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector: 'div.shopping-list-line-items__item-wrapper'
 
   pages:
     Product View:
