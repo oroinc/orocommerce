@@ -6,7 +6,8 @@ use Oro\Bundle\PricingBundle\Builder\CombinedPriceListActivationPlanBuilder;
 use Oro\Bundle\PricingBundle\Event\CombinedPriceList\CombinedPriceListCreateEvent;
 
 /**
- * The event listener responsible for setting CombinedPriceList to the builder.
+ * Makes CombinedPriceListActivationPlanBuilder generate activation plans based on Price Lists Schedules for the newly
+ * created combined price list.
  */
 class CombinedPriceListListener
 {

@@ -10,12 +10,10 @@ use Symfony\Component\EventDispatcher\Event;
  */
 class CombinedPriceListCreateEvent extends Event
 {
-    const NAME = 'oro_pricing.combined_price_list.create';
+    public const NAME = 'oro_pricing.combined_price_list.create';
 
-    /**
-     * @var CombinedPriceList
-     */
-    protected $combinedPriceList;
+    /** @var CombinedPriceList */
+    private $combinedPriceList;
 
     /**
      * @param CombinedPriceList $combinedPriceList
