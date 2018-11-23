@@ -267,6 +267,7 @@ oro_behat_extension:
             locator: 'input[name^="date_selector_oro_product_DateField"]'
           DateTimeField: 'oro_product[DateTimeField]'
           SelectField: 'oro_product[SelectField]'
+          Field2: 'oro_product[Field2]'
           TextField: 'oro_product[TextField]'
           ManyToOneField:
             type: 'css'
