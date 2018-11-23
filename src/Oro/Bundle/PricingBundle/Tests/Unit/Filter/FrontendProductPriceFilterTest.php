@@ -282,7 +282,6 @@ class FrontendProductPriceFilterTest extends \PHPUnit\Framework\TestCase
             'data_name' => 'field-name',
             'options' => [],
             'lazy' => false,
-            'precision' => 0,
             'formatterOptions' => [
                 'decimals' => 0,
             ],

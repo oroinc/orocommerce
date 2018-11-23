@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\PricingBundle\Filter;
 
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\FilterBundle\Filter\FilterUtility;
 use Oro\Bundle\PricingBundle\Form\Type\Filter\ProductPriceFilterType;
 use Oro\Bundle\PricingBundle\Placeholder\UnitPlaceholder;
@@ -20,11 +19,6 @@ class FrontendProductPriceFilter extends SearchNumberRangeFilter
     protected $formatter;
 
     /**
-     * @var ConfigManager
-     */
-    protected $configManager;
-
-    /**
      * {@inheritdoc}
      */
     protected function getFieldName(array $data)
@@ -39,14 +33,6 @@ class FrontendProductPriceFilter extends SearchNumberRangeFilter
     public function setFormatter($formatter)
     {
         $this->formatter = $formatter;
-    }
-
-    /**
-     * @param ConfigManager $configManager
-     */
-    public function setConfigManager(ConfigManager $configManager)
-    {
-        $this->configManager = $configManager;
     }
 
     /**
