@@ -13,15 +13,18 @@ Feature: Business Unit owned entities edit
     And I click clone Catalog Manager in grid
     And I fill in "Role" with "Web Catalog Manager"
     And select following permissions:
-      | Web Catalog   | View:Business Unit | Edit:Business Unit |
+      | Web Catalog | View:Business Unit | Edit:Business Unit |
     And I save and close form
     And I go to System/ User Management/ Users
     And I click edit charlie in grid
     And I fill "User Form" with:
-      | Web Catalog Manager | true  |
+      | Web Catalog Manager | true |
     And I save and close form
 
     And I login as "charlie" user
     And I go to Marketing/ Web Catalogs
     When click edit Default Web Catalog in grid
-    Then I should not see flash messages
+    And I fill form with:
+      | Description | Updated |
+    When I save and close form
+    Then I should see "Web Catalog has been saved"
