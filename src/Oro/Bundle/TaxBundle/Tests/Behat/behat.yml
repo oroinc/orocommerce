@@ -48,3 +48,15 @@ oro_behat_extension:
       selector:
         locator: '//label[text()="Tax Jurisdiction"]/../..//button[contains(@class,"entity-select-btn")]'
         type: xpath
+
+    TaxBackendOrder:
+      class: Oro\Bundle\TaxBundle\Tests\Behat\Element\TaxBackendOrder
+      selector: 'div.layout-content'
+
+    TaxBackendOrderLineItem:
+      class: Oro\Bundle\TaxBundle\Tests\Behat\Element\TaxBackendOrderLineItem
+      selector: 'tr'
+
+    BackendLineItemTaxTable:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Table
+      selector: 'table.tax-result-grid'
