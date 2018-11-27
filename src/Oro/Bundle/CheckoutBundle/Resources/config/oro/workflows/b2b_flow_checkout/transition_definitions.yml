@@ -434,7 +434,7 @@ workflows:
                                 - 'extendable_condition.checkout'
                                 - 'extendable_condition.before_order_create'
                 conditions:
-                    - '@or':
+                    '@or':
                         - '@empty': $.result.savedCheckoutState
                         - '@check_checkout_states':
                             message: oro.checkout.workflow.condition.content_of_order_was_changed.message
