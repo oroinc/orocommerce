@@ -36,7 +36,7 @@ class PaymentTermTest extends \PHPUnit_Framework_TestCase
     /** @var PaymentTransaction */
     protected $paymentTransaction;
 
-    /** @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject  */
+    /** @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $logger;
 
     /** @var PaymentTermMethod */
@@ -44,21 +44,21 @@ class PaymentTermTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->paymentTermProvider = $this->getMockBuilder('Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider')
+        $this->paymentTermProvider = $this->getMockBuilder(PaymentTermProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->paymentTermAssociationProvider = $this
-            ->getMockBuilder('Oro\Bundle\PaymentTermBundle\Provider\PaymentTermAssociationProvider')
+            ->getMockBuilder(PaymentTermAssociationProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
+        $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->paymentConfig = $this->createMock(PaymentTermConfigInterface::class);
-        $this->paymentConfig->expects(static::any())->method('getPaymentMethodIdentifier')->willReturn('payment_term');
+        $this->paymentConfig->method('getPaymentMethodIdentifier')->willReturn('payment_term');
 
         $this->paymentTransaction = new PaymentTransaction();
         $this->paymentTransaction->setSuccessful(false);
@@ -74,64 +74,7 @@ class PaymentTermTest extends \PHPUnit_Framework_TestCase
         $this->method->setLogger($this->logger);
     }
 
-    public function testExecuteNoEntity()
-    {
-        $entityClass = 'TestClass';
-        $entityId = 10;
-
-        $this->paymentTransaction
-            ->setEntityClass($entityClass)
-            ->setEntityIdentifier($entityId);
-
-        $this->assertFalse($this->paymentTransaction->isSuccessful());
-
-        $this->doctrineHelper->expects($this->once())
-            ->method('getEntityReference')
-            ->with($entityClass, $entityId)
-            ->willReturn(null);
-
-        $this->paymentTermProvider->expects($this->never())
-            ->method('getCurrentPaymentTerm');
-
-        $this->assertEquals(
-            [],
-            $this->method->execute($this->paymentTransaction->getAction(), $this->paymentTransaction)
-        );
-        $this->assertFalse($this->paymentTransaction->isSuccessful());
-    }
-
-    public function testExecuteNoPaymentTerm()
-    {
-        $entity = new \stdClass();
-        $entityClass = 'TestClass';
-        $entityId = 10;
-
-        $this->paymentTransaction
-            ->setEntityClass($entityClass)
-            ->setEntityIdentifier($entityId);
-
-        $this->assertFalse($this->paymentTransaction->isSuccessful());
-
-        $this->doctrineHelper->expects($this->once())
-            ->method('getEntityReference')
-            ->with($entityClass, $entityId)
-            ->willReturn($entity);
-
-        $this->paymentTermProvider->expects($this->once())
-            ->method('getCurrentPaymentTerm')
-            ->willReturn(null);
-
-        $this->paymentTermAssociationProvider->expects($this->never())
-            ->method('setPaymentTerm');
-
-        $this->assertEquals(
-            [],
-            $this->method->execute($this->paymentTransaction->getAction(), $this->paymentTransaction)
-        );
-        $this->assertFalse($this->paymentTransaction->isSuccessful());
-    }
-
-    public function testExecute()
+    public function testExecutePurchaseViaExecute()
     {
         $entityClass = 'TestClass';
         $entityId = 10;
@@ -139,6 +82,7 @@ class PaymentTermTest extends \PHPUnit_Framework_TestCase
         $paymentTerm = new PaymentTerm();
 
         $this->paymentTransaction
+            ->setAction(PaymentTermMethod::PURCHASE)
             ->setEntityClass($entityClass)
             ->setEntityIdentifier($entityId);
 
@@ -158,7 +102,7 @@ class PaymentTermTest extends \PHPUnit_Framework_TestCase
             ->with($entity, $paymentTerm);
 
         /** @var EntityManager|\PHPUnit_Framework_MockObject_MockObject $entityManager */
-        $entityManager = $this->getMockBuilder('Doctrine\ORM\EntityManager')
+        $entityManager = $this->getMockBuilder(EntityManager::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -172,16 +116,167 @@ class PaymentTermTest extends \PHPUnit_Framework_TestCase
             ->willReturn($entityManager);
 
         $this->assertEquals(
-            [],
+            ['successful' => true],
             $this->method->execute($this->paymentTransaction->getAction(), $this->paymentTransaction)
         );
+        $this->assertTrue($this->paymentTransaction->isActive());
         $this->assertTrue($this->paymentTransaction->isSuccessful());
+        $this->assertEquals(PaymentTermMethod::PENDING, $this->paymentTransaction->getAction());
+    }
+
+    public function testExecutePurchaseDirectly()
+    {
+        $entityClass = 'TestClass';
+        $entityId = 10;
+        $entity = new \stdClass();
+        $paymentTerm = new PaymentTerm();
+
+        $this->paymentTransaction
+            ->setAction(PaymentTermMethod::PURCHASE)
+            ->setEntityClass($entityClass)
+            ->setEntityIdentifier($entityId);
+
+        $this->assertFalse($this->paymentTransaction->isSuccessful());
+
+        $this->doctrineHelper->expects($this->once())
+            ->method('getEntityReference')
+            ->with($entityClass, $entityId)
+            ->willReturn($entity);
+
+        $this->paymentTermProvider->expects($this->once())
+            ->method('getCurrentPaymentTerm')
+            ->willReturn($paymentTerm);
+
+        $this->paymentTermAssociationProvider->expects($this->once())
+            ->method('setPaymentTerm')
+            ->with($entity, $paymentTerm);
+
+        /** @var EntityManager|\PHPUnit_Framework_MockObject_MockObject $entityManager */
+        $entityManager = $this->getMockBuilder(EntityManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $entityManager->expects($this->once())
+            ->method('flush')
+            ->with($entity);
+
+        $this->doctrineHelper->expects($this->once())
+            ->method('getEntityManager')
+            ->with($entity)
+            ->willReturn($entityManager);
+
+        $this->assertEquals(['successful' => true], $this->method->purchase($this->paymentTransaction));
+        $this->assertTrue($this->paymentTransaction->isActive());
+        $this->assertTrue($this->paymentTransaction->isSuccessful());
+        $this->assertEquals(PaymentTermMethod::PENDING, $this->paymentTransaction->getAction());
+    }
+
+    public function testExecuteCaptureViaExecute()
+    {
+        $transaction = new PaymentTransaction();
+        $this->assertFalse($transaction->isSuccessful());
+        $this->assertFalse($transaction->isActive());
+
+        $this->assertEquals(['successful' => true], $this->method->execute(PaymentTermMethod::CAPTURE, $transaction));
+        $this->assertTrue($transaction->isActive());
+        $this->assertTrue($transaction->isSuccessful());
+        $this->assertEquals(PaymentTermMethod::CAPTURE, $transaction->getAction());
+    }
+
+    public function testExecuteCaptureDirectly()
+    {
+        $transaction = new PaymentTransaction();
+        $this->assertFalse($transaction->isSuccessful());
+        $this->assertFalse($transaction->isActive());
+
+        $this->assertEquals(['successful' => true], $this->method->capture($transaction));
+        $this->assertTrue($transaction->isActive());
+        $this->assertTrue($transaction->isSuccessful());
+        $this->assertEquals(PaymentTermMethod::CAPTURE, $transaction->getAction());
+    }
+
+    public function testExecuteNotSupported()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('"payment_term" payment method "not_supported" action is not supported');
+
+        $this->method->execute('not_supported', new PaymentTransaction());
+    }
+
+    public function testGetSourceAction()
+    {
+        $this->assertEquals('pending', $this->method->getSourceAction());
+    }
+
+    public function testuUseSourcePaymentTransaction()
+    {
+        $this->assertTrue($this->method->useSourcePaymentTransaction());
+    }
+
+    public function testExecuteNoEntity()
+    {
+        $entityClass = 'TestClass';
+        $entityId = 10;
+
+        $this->paymentTransaction
+            ->setAction(PaymentTermMethod::PURCHASE)
+            ->setEntityClass($entityClass)
+            ->setEntityIdentifier($entityId);
+
+        $this->assertFalse($this->paymentTransaction->isSuccessful());
+
+        $this->doctrineHelper->expects($this->once())
+            ->method('getEntityReference')
+            ->with($entityClass, $entityId)
+            ->willReturn(null);
+
+        $this->paymentTermProvider->expects($this->never())
+            ->method('getCurrentPaymentTerm');
+
+        $this->assertEquals(
+            ['successful' => false],
+            $this->method->execute($this->paymentTransaction->getAction(), $this->paymentTransaction)
+        );
+        $this->assertFalse($this->paymentTransaction->isSuccessful());
+    }
+
+    public function testExecuteNoPaymentTerm()
+    {
+        $entity = new \stdClass();
+        $entityClass = 'TestClass';
+        $entityId = 10;
+
+        $this->paymentTransaction
+            ->setAction(PaymentTermMethod::PURCHASE)
+            ->setEntityClass($entityClass)
+            ->setEntityIdentifier($entityId);
+
+        $this->assertFalse($this->paymentTransaction->isSuccessful());
+
+        $this->doctrineHelper->expects($this->once())
+            ->method('getEntityReference')
+            ->with($entityClass, $entityId)
+            ->willReturn($entity);
+
+        $this->paymentTermProvider->expects($this->once())
+            ->method('getCurrentPaymentTerm')
+            ->willReturn(null);
+
+        $this->paymentTermAssociationProvider->expects($this->never())
+            ->method('setPaymentTerm');
+
+        $this->assertEquals(
+            ['successful' => false],
+            $this->method->execute($this->paymentTransaction->getAction(), $this->paymentTransaction)
+        );
+        $this->assertFalse($this->paymentTransaction->isSuccessful());
     }
 
     public function testExecuteEntityWithoutPaymentTerm()
     {
         $this->paymentTransaction
-            ->setEntityClass('\stdClass')
+            ->setAction(PaymentTermMethod::PURCHASE)
+            ->setEntityClass(\stdClass::class)
             ->setEntityIdentifier(1);
 
         $this->doctrineHelper->expects($this->once())
@@ -200,7 +295,7 @@ class PaymentTermTest extends \PHPUnit_Framework_TestCase
             ->method('error');
 
         $this->assertEquals(
-            [],
+            ['successful' => false],
             $this->method->execute($this->paymentTransaction->getAction(), $this->paymentTransaction)
         );
         $this->assertFalse($this->paymentTransaction->isSuccessful());
@@ -229,7 +324,7 @@ class PaymentTermTest extends \PHPUnit_Framework_TestCase
     {
         return [
             [false, PaymentTermMethod::AUTHORIZE],
-            [false, PaymentTermMethod::CAPTURE],
+            [true, PaymentTermMethod::CAPTURE],
             [false, PaymentTermMethod::CHARGE],
             [false, PaymentTermMethod::VALIDATE],
             [true, PaymentTermMethod::PURCHASE],

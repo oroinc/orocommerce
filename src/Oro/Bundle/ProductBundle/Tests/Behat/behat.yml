@@ -241,6 +241,8 @@ oro_behat_extension:
           Price Quantity 1: 'oro_product[prices][0][quantity]'
           Price Value 1: 'oro_product[prices][0][price][value]'
           Price Unit 1: 'oro_product[prices][0][unit]'
+          Shipping Option Weight Value 1: 'oro_product[product_shipping_options][0][weight][value]'
+          Shipping Option Freight Class Value 1: 'oro_product[product_shipping_options][0][freightClass]'
           Configurable Attributes:
             type: 'xpath'
             locator: '//div[@id[starts-with(.,"oro_product_variantFields-uid")]]'
@@ -265,6 +267,7 @@ oro_behat_extension:
             locator: 'input[name^="date_selector_oro_product_DateField"]'
           DateTimeField: 'oro_product[DateTimeField]'
           SelectField: 'oro_product[SelectField]'
+          Field2: 'oro_product[Field2]'
           TextField: 'oro_product[TextField]'
           ManyToOneField:
             type: 'css'

@@ -834,6 +834,7 @@ datagrids:
                 brandName:
                     type:      string
                     data_name: brand.defaultTitle
+                    label:     oro.product.brand.names.label
         actions:
             update:
                 acl_resource:  oro_product_brand_update
