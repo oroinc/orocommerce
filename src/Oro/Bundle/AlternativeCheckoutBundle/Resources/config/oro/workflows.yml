@@ -776,8 +776,6 @@ workflows:
                         - '@quote_acceptable': [$checkout.sourceEntity, true]
                         - '@equal': [$checkout.completed, false]
                         - '@order_line_item_has_count': $checkout
-                        - '@extendable':
-                            events: [extendable_condition.checkout]
                 conditions:
                     '@and':
                         - '@or':
@@ -865,8 +863,6 @@ workflows:
                         - '@checkout_has_applicable_shipping_methods':
                             message: oro.checkout.workflow.condition.shipping_method_is_not_available.message
                             checkout: $checkout
-                        - '@extendable':
-                            events: [extendable_condition.checkout]
                 conditions:
                     '@and':
                         - '@shipping_method_has_enabled_shipping_rules':
@@ -941,8 +937,6 @@ workflows:
                         - '@has_applicable_payment_methods':
                             message: oro.checkout.workflow.condition.payment_method_is_not_applicable.message
                             context: $.result.paymentContext
-                        - '@extendable':
-                            events: [extendable_condition.checkout]
                 conditions:
                     '@and':
                         - '@or':
@@ -1012,8 +1006,6 @@ workflows:
                         - '@equal': [$payment_in_progress, false]
                         - '@equal': [$checkout.completed, false]
                         - '@order_line_item_has_count': $checkout
-                        - '@extendable':
-                            events: [extendable_condition.checkout]
                         - '@require_payment_redirect':
                             payment_method: $payment_method
                         - '@or':
