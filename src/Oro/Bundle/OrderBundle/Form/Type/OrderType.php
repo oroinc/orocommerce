@@ -24,6 +24,9 @@ use Symfony\Component\OptionsResolver\Exception\AccessException;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Range;
 
+/**
+ * Represents order form type
+ */
 class OrderType extends AbstractType
 {
     const NAME = 'oro_order_type';
@@ -205,7 +208,6 @@ class OrderType extends AbstractType
                         'object' => $options['data'],
                         'required' => false,
                         'addressType' => AddressType::TYPE_BILLING,
-                        'isEditEnabled' => true
                     ]
                 );
         }
@@ -228,7 +230,6 @@ class OrderType extends AbstractType
                         'object' => $options['data'],
                         'required' => false,
                         'addressType' => AddressType::TYPE_SHIPPING,
-                        'isEditEnabled' => true
                     ]
                 );
         }

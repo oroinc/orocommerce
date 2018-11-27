@@ -7,7 +7,7 @@
      data-page-component-options="{{ pageComponentOptions|merge({message: 'oro.pricing.product_price_save.flash.success'})|json_encode }}"
         >
     {% if form.vars.errors|length > 0 %}
-        <div class="alert alert-error">
+        <div class="alert alert-error" role="alert">
             {{ form_errors(form) }}
         </div>
     {% endif %}

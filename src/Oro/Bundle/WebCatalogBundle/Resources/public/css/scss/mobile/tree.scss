@@ -1,11 +1,11 @@
-.mobile-version {
-    .content-with-sidebar--content {
-        .select2-container {
-            width: calc(100% - 31px);
-        }
+/* @theme: admin.oro; */
 
-        .select2-choice {
-            width: 100%;
-        }
+.content-with-sidebar--content {
+    .select2-container {
+        width: calc(100% - 31px);
+    }
+
+    .select2-choice {
+        width: 100%;
     }
 }

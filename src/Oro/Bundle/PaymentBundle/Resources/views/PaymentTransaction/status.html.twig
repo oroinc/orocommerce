@@ -1,6 +1,6 @@
-<div class="control-group">
-    <label class="control-label">{{ 'oro.payment.status.label'|trans }}</label>
-    <div class="controls">
+<div class="attribute-item">
+    <label class="attribute-item__term">{{ 'oro.payment.status.label'|trans }}</label>
+    <div class="attribute-item__description">
         <div class="control-label">
             {% if data is not empty %}
                 {{ get_payment_status_label(data) }}

@@ -95,12 +95,11 @@
     {% set dataBlocks = [
         {
             'title': 'oro.order.sections.general'|trans,
-            'class': 'active',
             'subblocks': [{
                 'data': [
                     ownerSelectors,
                     form_row(form.currency),
-                    UI.renderProperty('oro.order.currency.label'|trans, entity.currency)
+                    UI.renderPropertyControlGroup('oro.order.currency.label'|trans, entity.currency)
                 ]
             }]
         },
@@ -183,7 +182,7 @@
 
     {% set shippingInformation %}
         <div class="possible-shipping-methods-info">
-            {{ UI.renderAttribute('oro.order.form.shipping_options.label'|trans,
+            {{ UI.renderControlGroup('oro.order.form.shipping_options.label'|trans,
                 '<div class="possible_shipping_methods_container">' ~ SM.renderPossibleShippingMethods(form, entity) ~ '</div>'
             ) }}
 
@@ -239,7 +238,6 @@
         {% set dataBlocks = dataBlocks|merge({
             'discounts': {
                 'title': 'oro.order.sections.discounts'|trans,
-                'class': 'active',
                 'subblocks': [{
                     'data': [discounts],
                 }]
@@ -249,7 +247,6 @@
 
     {% set dataBlocks = dataBlocks|merge([{
         'title': 'oro.order.sections.subtotals'|trans,
-        'class': 'active',
         'priority': 900,
         'subblocks': [{
             'data': [subtotals]

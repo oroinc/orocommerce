@@ -58,9 +58,7 @@
 
         {% if form.method.vars.choices|length == 0 %}
             <div class="no-data">
-                <span>
-                    {{ 'oro.shipping.sections.shippingrule_configurations.no_methods.message'|trans }}
-                </span>
+                {{ 'oro.shipping.sections.shippingrule_configurations.no_methods.message'|trans }}
             </div>
         {% endif %}
 
@@ -88,7 +86,6 @@
     {% set dataBlocks = [
         {
             'title': 'oro.shipping.sections.general'|trans,
-            'class': 'active',
             'subblocks': [
                 {
                     'data': [

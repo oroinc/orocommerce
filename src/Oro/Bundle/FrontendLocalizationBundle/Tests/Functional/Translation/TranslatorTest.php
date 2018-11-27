@@ -10,6 +10,7 @@ use Oro\Bundle\TranslationBundle\Strategy\TranslationStrategyProvider;
 use Oro\Bundle\TranslationBundle\Tests\Functional\DataFixtures\LoadStrategyLanguages;
 use Oro\Bundle\TranslationBundle\Tests\Functional\Stub\Strategy\TranslationStrategy;
 use Oro\Bundle\TranslationBundle\Translation\Translator;
+use Oro\Component\DependencyInjection\ServiceLink;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Translation\MessageCatalogueInterface;
 
@@ -39,7 +40,13 @@ class TranslatorTest extends FrontendWebTestCase
 
         $this->provider = new TranslationStrategyProvider();
         $this->provider->addStrategy($this->createStrategy());
-        $this->getContainer()->set('oro_translation.strategy.provider', $this->provider);
+        self::getContainer()->set('oro_translation.strategy.provider', $this->provider);
+        // Update translation strategy provider's service link for translator
+        // to ensure that old strategy provider is not in local cache
+        $this->translator->setStrategyProviderLink(new ServiceLink(
+            self::getContainer(),
+            'oro_translation.strategy.provider'
+        ));
 
         $this->cacheDir = $this->getContainer()->getParameter('kernel.cache_dir').DIRECTORY_SEPARATOR.'translations';
     }

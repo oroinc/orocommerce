@@ -12,8 +12,10 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 class OroFrontendTestFrameworkBundleInstaller implements Installation, ExtendExtensionAwareInterface
 {
     const VARIANT_FIELD_NAME = 'test_variant_field';
-
     const VARIANT_FIELD_CODE = 'variant_field_code';
+
+    const MULTIENUM_FIELD_NAME = 'multienum_field';
+    const MULTIENUM_FIELD_CODE = 'multienum_code';
 
     /** @var ExtendExtension */
     protected $extendExtension;
@@ -107,7 +109,21 @@ class OroFrontendTestFrameworkBundleInstaller implements Installation, ExtendExt
                 false,
                 [
                     'extend' => ['owner' => ExtendScope::OWNER_CUSTOM],
-                    'attribute' => ['is_attribute' => true],
+                    'attribute' => ['is_attribute' => true, 'searchable' => true, 'filterable' => true],
+                    'importexport' => ['excluded' => true]
+                ]
+            );
+
+            $this->extendExtension->addEnumField(
+                $schema,
+                $table,
+                self::MULTIENUM_FIELD_NAME,
+                self::MULTIENUM_FIELD_CODE,
+                true,
+                false,
+                [
+                    'extend' => ['owner' => ExtendScope::OWNER_CUSTOM],
+                    'attribute' => ['is_attribute' => true, 'searchable' => true, 'filterable' => true],
                     'importexport' => ['excluded' => true]
                 ]
             );

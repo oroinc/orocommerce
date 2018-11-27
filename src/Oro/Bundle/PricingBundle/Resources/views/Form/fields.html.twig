@@ -66,13 +66,15 @@
         }) }}>
             {% set prototype_name = form.vars.prototype_name %}
             <div {{ block('widget_container_attributes') }}>
-                <table class="grid table-hover table table-bordered">
+                <table class="grid table-hover table">
                     <thead>
                     <tr>
                         <th><span>{{ 'oro.pricing.pricelist.entity_label'|trans }}</span></th>
                         <th><span>{{ 'oro.pricing.pricelist.options.label'|trans }}</span></th>
                         <th></th>
+                        {% if form.mergeAllowed is defined %}
                         <th></th>
+                        {% endif %}
                     </tr>
                     </thead>
                     <tbody class="sortable-wrapper" data-last-index="{{ form.children|length}}" data-prototype-name="{{ prototype_name }}"{% if prototype_html is defined %} data-prototype="{{ prototype_html|escape }}"{% endif %} data-content>
@@ -86,7 +88,7 @@
                     </tbody>
                 </table>
             </div>
-            <a class="btn add-list-item" data-container=".oro-item-collection tbody" href="javascript: void(0);"><i class="fa-plus"></i>{{ 'oro.pricing.add_price_list'|trans }}</a>
+            <a class="btn add-list-item" data-container=".oro-item-collection tbody" href="javascript: void(0);">{{ 'oro.pricing.add_price_list'|trans }}</a>
         </div>
     </div>
 {% endblock %}
@@ -123,7 +125,7 @@
                 <i class="fa-arrows-v handle"></i></span>
         </td>
         <td>
-            <button type="button" class="removeRow"><i class="fa-close"></i></button>
+            <button type="button" class="btn btn-icon btn-square-lighter removeRow"><span class="fa-close"></span></button>
         </td>
     {% endspaceless %}
 {% endblock %}
@@ -276,7 +278,7 @@
                             </div>
                         </div>
 
-                        <button type="button" class="removeRow btn icons-holder"><i class="fa-close"></i></button>
+                        <button type="button" class="removeRow btn btn-icon btn-square-lighter"><span class="fa-close"></span></button>
                     </div>
                     <div class="price-rule-item-quantity-type-field error-block">
                         {{ form_errors(form.quantity) }}

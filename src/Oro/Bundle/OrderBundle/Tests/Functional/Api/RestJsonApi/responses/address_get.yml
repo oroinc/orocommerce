@@ -1,0 +1,29 @@
+data:
+    type: orderaddresses
+    id: '<toString(@order_address.office->id)>'
+    attributes:
+        fromExternalSource: '@order_address.office->fromExternalSource'
+        phone: '@order_address.office->phone'
+        label: '@order_address.office->label'
+        street: '@order_address.office->street'
+        street2: '@order_address.office->street2'
+        city: '@order_address.office->city'
+        postalCode: '@order_address.office->postalCode'
+        organization: '@order_address.office->organization'
+        namePrefix: '@order_address.office->namePrefix'
+        firstName: '@order_address.office->firstName'
+        middleName: '@order_address.office->middleName'
+        lastName: '@order_address.office->lastName'
+        nameSuffix: '@order_address.office->nameSuffix'
+        createdAt: '@order_address.office->created->format("Y-m-d\TH:i:s\Z")'
+        updatedAt: '@order_address.office->updated->format("Y-m-d\TH:i:s\Z")'
+        customRegion: null
+    relationships:
+        country:
+            data:
+                type: 'countries'
+                id: '<toString(@order_address.office->country->iso2Code)>'
+        region:
+            data:
+                type: 'regions'
+                id: '<toString(@order_address.office->region->combinedCode)>'

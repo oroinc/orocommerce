@@ -12,11 +12,15 @@ use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListManager;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
+/**
+ * Handles batch adding products to a shopping list.
+ */
 class ShoppingListLineItemHandler
 {
     const FLUSH_BATCH_SIZE = 100;
@@ -27,11 +31,17 @@ class ShoppingListLineItemHandler
     /** @var ShoppingListManager */
     protected $shoppingListManager;
 
+    /** @var CurrentShoppingListManager */
+    protected $currentShoppingListManager;
+
     /** @var AuthorizationCheckerInterface */
     protected $authorizationChecker;
 
     /** @var TokenAccessorInterface */
     protected $tokenAccessor;
+
+    /** @var FeatureChecker */
+    protected $featureChecker;
 
     /** @var string */
     protected $productClass;
@@ -48,6 +58,7 @@ class ShoppingListLineItemHandler
     /**
      * @param ManagerRegistry $managerRegistry
      * @param ShoppingListManager $shoppingListManager
+     * @param CurrentShoppingListManager $currentShoppingListManager
      * @param AuthorizationCheckerInterface $authorizationChecker
      * @param TokenAccessorInterface $tokenAccessor
      * @param FeatureChecker $featureChecker
@@ -56,6 +67,7 @@ class ShoppingListLineItemHandler
     public function __construct(
         ManagerRegistry $managerRegistry,
         ShoppingListManager $shoppingListManager,
+        CurrentShoppingListManager $currentShoppingListManager,
         AuthorizationCheckerInterface $authorizationChecker,
         TokenAccessorInterface $tokenAccessor,
         FeatureChecker $featureChecker,
@@ -63,6 +75,7 @@ class ShoppingListLineItemHandler
     ) {
         $this->managerRegistry = $managerRegistry;
         $this->shoppingListManager = $shoppingListManager;
+        $this->currentShoppingListManager = $currentShoppingListManager;
         $this->authorizationChecker = $authorizationChecker;
         $this->tokenAccessor = $tokenAccessor;
         $this->featureChecker = $featureChecker;
@@ -168,7 +181,7 @@ class ShoppingListLineItemHandler
      */
     public function prepareLineItemWithProduct(CustomerUser $customerUser, Product $product)
     {
-        $shoppingList = $this->shoppingListManager->getCurrent();
+        $shoppingList = $this->currentShoppingListManager->getCurrent();
 
         $lineItem = new LineItem();
         $lineItem
@@ -194,7 +207,7 @@ class ShoppingListLineItemHandler
             /* @var $form Form */
             $name = $form->get('lineItem')->get('shoppingListLabel')->getData();
 
-            $shoppingList = $this->shoppingListManager->createCurrent($name);
+            $shoppingList = $this->currentShoppingListManager->createCurrent($name);
         }
 
         $lineItem->setShoppingList($shoppingList);
@@ -227,7 +240,7 @@ class ShoppingListLineItemHandler
      */
     public function getShoppingList($shoppingListId = null)
     {
-        return $this->shoppingListManager->getForCurrentUser($shoppingListId);
+        return $this->currentShoppingListManager->getForCurrentUser($shoppingListId);
     }
 
     /**

@@ -474,7 +474,7 @@ oro:
                     everywhere.label: 'Everywhere'
                     hide_completely.label: 'Hide completely'
                 limit_filters_sorters_on_product_listing:
-                    label: 'Hide unrelated product filters and sorting options.'
+                    label: 'Hide Unrelated Product Filters And Sorting Options'
                     tooltip: 'Limit filters and sorting options on the product catalog page to display only those attributes that are relevant to the selected product family in the current product collection.'
             notice:
                 product_image_watermark: >
@@ -804,7 +804,7 @@ oro:
             save_the_file:
                 message: Save the file on your computer. CSV format (.csv) is recommended and click Upload.
         limit_filters_sorters_on_product_listing:
-            label: 'Hide unrelated product filters and sorting options.'
+            label: 'Hide Unrelated Product Filters And Sorting Options'
             description: 'Limit filters and sorting options on the product catalog page to display only those attributes that are relevant to the selected product family in the current product collection.'
 
     importexport:

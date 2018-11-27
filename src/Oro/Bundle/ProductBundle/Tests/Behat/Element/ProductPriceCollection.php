@@ -82,7 +82,7 @@ class ProductPriceCollection extends CollectionField
         );
 
         return [
-            'Price List' => $element->getChosenValue(),
+            'Price List' => $element->getValue(),
             'Quantity value' => $row->find('xpath', '//input[contains(@id,"quantity")]')->getValue(),
             'Quantity Unit' => $row->find('xpath', '//select[contains(@id,"unit")]')->getValue(),
             'Value' => $row->find('xpath', '//input[contains(@id,"price_value")]')->getValue()

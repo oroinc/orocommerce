@@ -29,6 +29,7 @@ class SingleCheckoutControllerTest extends CheckoutControllerTestCase
         $form = $this->getTransitionForm(
             $this->client->request('GET', self::$checkoutUrl)
         );
+        $form->get('oro_workflow_transition[po_number]')->setValue(12345);
 
         $this->client->request(
             'POST',

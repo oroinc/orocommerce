@@ -171,19 +171,6 @@ class ProductRepository extends EntityRepository
     }
 
     /**
-     * @return QueryBuilder
-     *
-     * @deprecated Since 1.5 "name" is available as a column in product table
-     */
-    public function getProductWithNamesQueryBuilder()
-    {
-        $queryBuilder = $this->createQueryBuilder('product')
-            ->select('product');
-        $this->selectNames($queryBuilder);
-        return $queryBuilder;
-    }
-
-    /**
      * @param QueryBuilder $queryBuilder
      * @return $this
      *
@@ -456,23 +443,26 @@ class ProductRepository extends EntityRepository
     /**
      * @param string $type
      * @param string $fieldName
-     * @param mixed $fieldValue
+     * @param array $attributeOptions
      * @return array
      */
-    public function findParentSkusByAttributeValue(string $type, string $fieldName, $fieldValue)
+    public function findParentSkusByAttributeOptions(string $type, string $fieldName, array $attributeOptions)
     {
-        QueryBuilderUtil::checkIdentifier($fieldName);
+        $qb = $this->createQueryBuilder('p');
 
-        $result = $this->createQueryBuilder('p')
-            ->select('parent_product.sku')
+        $aliasedFieldName = QueryBuilderUtil::getField('p', $fieldName);
+
+        $result = $qb
+            ->select(['parent_product.sku', 'attr.id'])
             ->distinct()
-            ->join('p.' . $fieldName, 'attr')
+            ->join($aliasedFieldName, 'attr')
             ->join('p.parentVariantLinks', 'variant_links')
             ->join('variant_links.parentProduct', 'parent_product')
-            ->where('attr = :valueId')
+            ->where($qb->expr()->in('attr', ':attributeOptions'))
             ->andWhere('p.type = :type')
+            ->andWhere($qb->expr()->isNotNull($aliasedFieldName))
             ->orderBy('parent_product.sku')
-            ->setParameter('valueId', $fieldValue)
+            ->setParameter('attributeOptions', $attributeOptions)
             ->setParameter('type', $type)
             ->getQuery()
             ->getArrayResult();
@@ -480,7 +470,7 @@ class ProductRepository extends EntityRepository
         $flattenedResult = [];
 
         foreach ($result as $item) {
-            $flattenedResult[$item['sku']] = $item['sku'];
+            $flattenedResult[$item['id']][] = $item['sku'];
         }
 
         return $flattenedResult;

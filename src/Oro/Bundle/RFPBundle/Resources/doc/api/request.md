@@ -24,7 +24,7 @@ The created record is returned in the response.
 
 **Please note:**
 
-*The fields `internal_status`, `customer_status`, `requestAdditionalNotes` are not configurable by api, because they depend on the workflow states.*
+*The fields **internal_status**, **customer_status**, **requestAdditionalNotes** are not configurable by API, because they depend on the workflow states.*
 
 {@request:json_api}
 Example:
@@ -55,7 +55,7 @@ Example:
       },      
       "customerUser": {
         "data": {
-          "type": "customer_users",
+          "type": "customerusers",
           "id": "5"
         }
       },
@@ -81,7 +81,7 @@ The updated record is returned in the response.
 
 **Please note:**
 
-*The fields `internal_status`, `customer_status`, `requestAdditionalNotes` are not configurable by api, because they depend on the workflow states.*
+*The fields **internal_status**, **customer_status**, **requestAdditionalNotes** are not configurable by API, because they depend on the workflow states.*
 
 {@request:json_api}
 Example:
@@ -113,7 +113,7 @@ Example:
       },      
       "customerUser": {
         "data": {
-          "type": "customer_users",
+          "type": "customerusers",
           "id": "5"
         }
       },
@@ -309,11 +309,11 @@ Example:
 {
   "data": [
     {
-      "type": "customer_users",
+      "type": "customerusers",
       "id": "1"
     },
     {
-      "type": "customer_users",
+      "type": "customerusers",
       "id": "2"
     }
   ]
@@ -332,11 +332,11 @@ Example:
 {
   "data": [
     {
-      "type": "customer_users",
+      "type": "customerusers",
       "id": "1"
     },
     {
-      "type": "customer_users",
+      "type": "customerusers",
       "id": "2"
     }
   ]
@@ -355,11 +355,11 @@ Example:
 {
   "data": [
     {
-      "type": "customer_users",
+      "type": "customerusers",
       "id": "1"
     },
     {
-      "type": "customer_users",
+      "type": "customerusers",
       "id": "2"
     }
   ]
@@ -578,7 +578,7 @@ Example:
 ```JSON
 {
   "data": {
-    "type": "customer_users",
+    "type": "customerusers",
     "id": "1"
   }
 }

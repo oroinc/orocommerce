@@ -2,30 +2,43 @@
 
 namespace Oro\Bundle\SaleBundle\Controller\Frontend;
 
+use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
 use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * Returns product offer by given quote product and quote demand via ajax.
+ */
 class AjaxQuoteProductController extends Controller
 {
     /**
      * @Route(
-     *      "/match-offer/{id}",
+     *      "/match-offer/{id}/{demandId}",
      *      name="oro_sale_quote_frontend_quote_product_match_offer",
-     *      requirements={"id"="\d+"}
+     *      requirements={"id"="\d+", "demandId"="\d+"}
      * )
-     * @AclAncestor("oro_sale_quote_frontend_view")
+     * @ParamConverter("quoteDemand", class="OroSaleBundle:QuoteDemand", options={"id" = "demandId"})
      *
      * @param QuoteProduct $quoteProduct
+     * @param QuoteDemand $quoteDemand
      * @param Request $request
+     *
      * @return JsonResponse
      */
-    public function matchQuoteProductOfferAction(QuoteProduct $quoteProduct, Request $request)
+    public function matchQuoteProductOfferAction(QuoteProduct $quoteProduct, QuoteDemand $quoteDemand, Request $request)
     {
+        $authorizationChecker = $this->get('security.authorization_checker');
+        if (!$authorizationChecker->isGranted('oro_sale_quote_demand_frontend_view', $quoteDemand) ||
+            $quoteDemand->getQuote()->getId() !== $quoteProduct->getQuote()->getId()
+        ) {
+            throw $this->createAccessDeniedException();
+        }
+
         $matcher = $this->get('oro_sale.service.quote_product_offer_matcher');
         $offer = $matcher->match($quoteProduct, $request->get('unit'), $request->get('qty'));
 

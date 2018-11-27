@@ -4,6 +4,7 @@ Oro\Bundle\CustomerBundle\Entity\Customer:
         organization: '@organization'
         owner: '@admin'
         payment_term_7c4f1e8e: '@paymentTerm'
+        vatId: 'VAT ID 1'
 
 Oro\Bundle\CustomerBundle\Entity\CustomerUser:
     amanda:

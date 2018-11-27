@@ -8,6 +8,7 @@ use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Datagrid\ManagerInterface;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 use Oro\Bundle\DataGridBundle\Extension\Acceptor;
+use Oro\Bundle\DataGridBundle\Provider\State\DatagridStateProviderInterface;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityConfigBundle\Attribute\AttributeConfigurationProvider;
 use Oro\Bundle\EntityConfigBundle\Attribute\AttributeTypeRegistry;
@@ -64,6 +65,12 @@ class FrontendProductFilterSorterDisablingEventListenerTest extends \PHPUnit\Fra
     /** @var SearchQueryInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $gridQuery;
 
+    /** @var DatagridStateProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $filtersStateProvider;
+
+    /** @var DatagridStateProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $sortersStateProvider;
+
     /** @var FrontendProductFilterSorterDisablingEventListener */
     private $listener;
 
@@ -79,6 +86,8 @@ class FrontendProductFilterSorterDisablingEventListenerTest extends \PHPUnit\Fra
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
         $this->datagridManagerLink = $this->createMock(ServiceLink::class);
         $this->gridQuery = $this->createMock(SearchQueryInterface::class);
+        $this->filtersStateProvider = $this->createMock(DatagridStateProviderInterface::class);
+        $this->sortersStateProvider = $this->createMock(DatagridStateProviderInterface::class);
 
         $gridParameters = new ParameterBag([]);
         $this->datagridConfig = $this->createMock(DatagridConfiguration::class);
@@ -94,7 +103,9 @@ class FrontendProductFilterSorterDisablingEventListenerTest extends \PHPUnit\Fra
             $this->configurationProvider,
             $this->productRepository,
             $this->doctrineHelper,
-            $this->datagridManagerLink
+            $this->datagridManagerLink,
+            $this->filtersStateProvider,
+            $this->sortersStateProvider
         );
     }
 
@@ -121,10 +132,15 @@ class FrontendProductFilterSorterDisablingEventListenerTest extends \PHPUnit\Fra
 
     public function testOnSearchResultBeforeSameQueries()
     {
-        $this->datagrid->getParameters()->add([
-            '_filter' => ['filterableAttributeName2' => 'filterableAttributeName2'],
-            '_sort_by' => ['sortableAttributeName1' => 'sortableAttributeName1'],
-        ]);
+        $this->filtersStateProvider->expects($this->once())
+            ->method('getState')
+            ->with($this->datagridConfig, $this->datagrid->getParameters())
+            ->willReturn(['filterableAttributeName2' => 'filterableAttributeName2']);
+
+        $this->sortersStateProvider->expects($this->once())
+            ->method('getState')
+            ->with($this->datagridConfig, $this->datagrid->getParameters())
+            ->willReturn(['sortableAttributeName1' => 'sortableAttributeName1']);
 
         $eventBefore = new SearchResultBefore($this->datagrid, $this->gridQuery);
 
@@ -208,7 +224,7 @@ class FrontendProductFilterSorterDisablingEventListenerTest extends \PHPUnit\Fra
             ->method('offsetUnsetByPath')
             ->withConsecutive(
                 ['[filters][columns][filterableAttributeName1_LOCALIZATION_ID]'],
-                ['[sorters][columns][sortableAttributeName2_LOCALIZATION_ID]']
+                ['[sorters][columns][sortableAttributeName2_ENUM_ID]']
             );
 
         $this->listener->onSearchResultAfter($eventAfter);
@@ -355,7 +371,7 @@ class FrontendProductFilterSorterDisablingEventListenerTest extends \PHPUnit\Fra
         ]);
         $attributeActiveFilterableSearchable2 = $this->getEntity(FieldConfigModel::class, [
             'id' => 332,
-            'fieldName' => 'filterableAttributeName2_LOCALIZATION_ID'
+            'fieldName' => 'filterableAttributeName2_ENUM_ID'
         ]);
         $attributeSortable = $this->getEntity(FieldConfigModel::class, ['id' => 34]);
         $attributeActiveSortable = $this->getEntity(FieldConfigModel::class, ['id' => 35]);
@@ -365,7 +381,7 @@ class FrontendProductFilterSorterDisablingEventListenerTest extends \PHPUnit\Fra
         ]);
         $attributeActiveSortableSearchable2 = $this->getEntity(FieldConfigModel::class, [
             'id' => 362,
-            'fieldName' => 'sortableAttributeName2_LOCALIZATION_ID'
+            'fieldName' => 'sortableAttributeName2_ENUM_ID'
         ]);
         $attributeSearchable = $this->getEntity(FieldConfigModel::class, ['id' => 37]);
         $attributeActiveFilterableSortable = $this->getEntity(FieldConfigModel::class, ['id' => 38]);
