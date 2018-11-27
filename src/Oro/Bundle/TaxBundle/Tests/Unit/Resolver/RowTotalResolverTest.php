@@ -32,13 +32,9 @@ class RowTotalResolverTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->calculator = $this->getMockBuilder('Oro\Bundle\TaxBundle\Calculator\Calculator')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->calculator = $this->createMock(Calculator::class);
 
-        $this->settingsProvider = $this->getMockBuilder('Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->settingsProvider = $this->createMock(TaxationSettingsProvider::class);
 
         $this->resolver = new RowTotalResolver($this->settingsProvider, $this->calculator);
     }
@@ -123,6 +119,40 @@ class RowTotalResolverTest extends \PHPUnit_Framework_TestCase
 
                 ],
                 'taxRate' => '0.15',
+                'quantity' => 1,
+                'isStartCalculationWithRowTotal' => false,
+            ],
+            'use zero tax' => [
+                'amount' => BigDecimal::of('19.99'),
+                'taxRules' => [
+                    $this->getTaxRule('country', '0.00'),
+                ],
+                'expected' => [
+                    'tax' => ResultElement::create('0.00', '19.99', '0.00'),
+                    'row' => ResultElement::create('0.00', '19.99', '0.00', '0.00'),
+                    'result' => [
+                        TaxResultElement::create('country', '0.00', '19.99', '0.00'),
+                    ]
+                ],
+                'taxRate' => '0.00',
+                'quantity' => 1,
+                'isStartCalculationWithRowTotal' => false,
+            ],
+            'use two taxes one of which is zero' => [
+                'amount' => BigDecimal::of('19.99'),
+                'taxRules' => [
+                    $this->getTaxRule('country', '0.00'),
+                    $this->getTaxRule('region', '0.07')
+                ],
+                'expected' => [
+                    'tax' => ResultElement::create('21.3893', '19.99', '1.3993'),
+                    'row' => ResultElement::create('21.3893', '19.99', '1.3993', '-0.0007'),
+                    'result' => [
+                        TaxResultElement::create('country', '0.00', '19.99', '0.00'),
+                        TaxResultElement::create('region', '0.07', '19.99', '1.3993'),
+                    ]
+                ],
+                'taxRate' => '0.07',
                 'quantity' => 1,
                 'isStartCalculationWithRowTotal' => false,
             ],
