@@ -347,7 +347,7 @@ datagrids:
     product-product-variants-base:
         acl_resource: oro_product_view
         options:
-            entityHint: product varitans
+            entityHint: product variants
             entity_pagination: true
         source:
             type:         orm

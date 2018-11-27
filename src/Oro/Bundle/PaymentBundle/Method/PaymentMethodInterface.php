@@ -5,18 +5,45 @@ namespace Oro\Bundle\PaymentBundle\Method;
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 
+/**
+ * Payment Method with generic execute method
+ */
 interface PaymentMethodInterface
 {
-    const AUTHORIZE = 'authorize';
-    const CHARGE = 'charge';
-    const INVOICE = 'invoice';
+    /**
+     * Validate with zero amount, e.g reserve
+     */
     const VALIDATE = 'validate';
+
+    /**
+     * Authorize with non-zero amount, e.g activate, initiate
+     */
+    const AUTHORIZE = 'authorize';
+
+    /**
+     * Capture authorized amount, e.g complete
+     */
     const CAPTURE = 'capture';
 
     /**
-     * Action to wrap action combination - charge, authorize, authorize and capture
+     * Capture non-zero amount
+     */
+    const CHARGE = 'charge';
+
+    /**
+     * Send invoice
+     */
+    const INVOICE = 'invoice';
+
+    /**
+     * Decorate actions - charge, authorize, authorize and capture
      */
     const PURCHASE = 'purchase';
+
+    /**
+     * Represents pending transaction that requires update
+     */
+    const PENDING = 'pending';
 
     /**
      * @param string $action

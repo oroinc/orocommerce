@@ -7,7 +7,19 @@ oro_behat_extension:
                 - OroConfigBundle::FeatureContext
                 - OroDataGridBundle::GridContext
                 - OroFormBundle::FormContext
+                - OroSEOBundle::FeatureContext
                 - OroWebCatalogBundle::FeatureContext
                 - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
             paths:
                 - '@OroSEOBundle/Tests/Behat/Features'
+    elements:
+        Product With Meta Fields Form:
+            selector: 'form[name="oro_product"]'
+            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+            options:
+                mapping:
+                    SKU: 'oro_product[sku]'
+                    Name: 'oro_product[names][values][default]'
+                    Meta Title: 'oro_product[metaTitles][values][default]'
+                    Meta Description: 'oro_product[metaDescriptions][values][default]'
+                    Meta Keywords: 'oro_product[metaKeywords][values][default]'

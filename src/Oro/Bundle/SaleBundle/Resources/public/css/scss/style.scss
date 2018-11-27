@@ -74,14 +74,6 @@
             width: 40px;
         }
     }
-
-    .quote-lineitem-offers-remove {
-        .removeRow {
-            &:after {
-                color: #666;
-            }
-        }
-    }
 }
 
 td.quote-lineitem-notes {
@@ -140,14 +132,6 @@ td.quote-lineitem-notes {
 
 table.quote-lineitem-offers {
     width: 560px;
-}
-
-.quote-lineitem-offers-remove {
-    .removeRow {
-        i {
-            margin-left: 3px;
-        }
-    }
 }
 
 .quote-lineitem-notes-customer {
