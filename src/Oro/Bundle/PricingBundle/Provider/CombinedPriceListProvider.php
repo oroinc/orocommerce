@@ -5,9 +5,10 @@ namespace Oro\Bundle\PricingBundle\Provider;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
-use Oro\Bundle\PricingBundle\Builder\CombinedPriceListActivationPlanBuilder;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
+use Oro\Bundle\PricingBundle\Event\CombinedPriceList\CombinedPriceListCreateEvent;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Provide and actualize combined price list by given price list sequence members.
@@ -24,9 +25,9 @@ class CombinedPriceListProvider
     protected $registry;
 
     /**
-     * @var CombinedPriceListActivationPlanBuilder
+     * @var EventDispatcherInterface
      */
-    protected $activationPlanBuilder;
+    protected $eventDispatcher;
 
     /**
      * @var EntityManager
@@ -40,14 +41,14 @@ class CombinedPriceListProvider
 
     /**
      * @param ManagerRegistry $registry
-     * @param CombinedPriceListActivationPlanBuilder $activationPlanBuilder
+     * @param EventDispatcherInterface $eventDispatcher
      */
     public function __construct(
         ManagerRegistry $registry,
-        CombinedPriceListActivationPlanBuilder $activationPlanBuilder
+        EventDispatcherInterface $eventDispatcher
     ) {
         $this->registry = $registry;
-        $this->activationPlanBuilder = $activationPlanBuilder;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
@@ -63,7 +64,11 @@ class CombinedPriceListProvider
         if (!$combinedPriceList) {
             $combinedPriceList = $this->createCombinedPriceList($identifier);
             $this->updateCombinedPriceList($combinedPriceList, $normalizedCollection);
-            $this->activationPlanBuilder->buildByCombinedPriceList($combinedPriceList);
+
+            $this->eventDispatcher->dispatch(
+                CombinedPriceListCreateEvent::NAME,
+                new CombinedPriceListCreateEvent($combinedPriceList)
+            );
         }
 
         return $combinedPriceList;

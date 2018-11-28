@@ -4,12 +4,13 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Provider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectRepository;
-use Oro\Bundle\PricingBundle\Builder\CombinedPriceListActivationPlanBuilder;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Event\CombinedPriceList\CombinedPriceListCreateEvent;
 use Oro\Bundle\PricingBundle\Provider\CombinedPriceListProvider;
 use Oro\Component\Testing\Unit\EntityTrait;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class CombinedPriceListProviderTest extends \PHPUnit\Framework\TestCase
 {
@@ -21,9 +22,9 @@ class CombinedPriceListProviderTest extends \PHPUnit\Framework\TestCase
     protected $provider;
 
     /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|CombinedPriceListActivationPlanBuilder
+     * @var \PHPUnit\Framework\MockObject\MockObject|EventDispatcherInterface
      */
-    protected $planBuilder;
+    protected $eventDispatcher;
 
     /**
      * @var \PHPUnit\Framework\MockObject\MockObject|ManagerRegistry
@@ -38,9 +39,9 @@ class CombinedPriceListProviderTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->registry = $this->getRegistryMockWithRepository();
-        $this->planBuilder = $this->createMock(CombinedPriceListActivationPlanBuilder::class);
+        $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
 
-        $this->provider = new CombinedPriceListProvider($this->registry, $this->planBuilder);
+        $this->provider = new CombinedPriceListProvider($this->registry, $this->eventDispatcher);
     }
 
     protected function tearDown()
@@ -59,14 +60,18 @@ class CombinedPriceListProviderTest extends \PHPUnit\Framework\TestCase
             ->method('findOneBy')
             ->willReturn($data['priceListFromRepository']);
 
-        $this->planBuilder->expects($this->exactly($expected['combineCallsCount']))->method('buildByCombinedPriceList');
+        $this->eventDispatcher->expects($this->exactly($expected['combineCallsCount']))
+            ->method('dispatch')
+            ->willReturnCallback(
+                function (string $eventName, CombinedPriceListCreateEvent $event) {
+                    $this->assertEquals(CombinedPriceListCreateEvent::NAME, $eventName);
+                    $this->assertInstanceOf(CombinedPriceList::class, $event->getCombinedPriceList());
+                }
+            );
 
         $priceListsRelations = $this->getPriceListsRelationMocks($data['priceListsRelationsData']);
         $combinedPriceList = $this->provider->getCombinedPriceList($priceListsRelations);
-        $this->assertInstanceOf(
-            'Oro\Bundle\PricingBundle\Entity\CombinedPriceList',
-            $combinedPriceList
-        );
+        $this->assertInstanceOf(CombinedPriceList::class, $combinedPriceList);
         $this->assertEquals($expected['name'], $combinedPriceList->getName());
         $this->assertEquals($expected['currencies'], $combinedPriceList->getCurrencies());
 
