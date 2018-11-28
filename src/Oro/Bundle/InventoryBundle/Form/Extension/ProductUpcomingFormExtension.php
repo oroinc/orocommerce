@@ -15,6 +15,9 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
+/**
+ * Adds upcoming fields to product form.
+ */
 class ProductUpcomingFormExtension extends AbstractTypeExtension
 {
     /**
@@ -45,6 +48,10 @@ class ProductUpcomingFormExtension extends AbstractTypeExtension
             )
             ->add(ProductUpcomingProvider::AVAILABILITY_DATE, OroDateTimeType::class, [
                 'required' => false,
+                'years' => [
+                    date_create('-10 year')->format('Y'),
+                    date_create('+30 year')->format('Y')
+                ],
             ]);
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'onPreSetData']);
