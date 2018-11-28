@@ -92,8 +92,7 @@ Feature: Upcoming product highlights
     Then I should see "December 2040"
     When I fill "Checkout Order Review Form" with:
       | Do not ship later than | Jul 1, 2018 |
-    And I click "Submit Order"
-    Then I should see "There was an error while processing the order"
+    Then I should see "Submit Order" button disabled
     When I fill "Checkout Order Review Form" with:
       | Do not ship later than | Dec 1, 2040 |
     And I click "Submit Order"
