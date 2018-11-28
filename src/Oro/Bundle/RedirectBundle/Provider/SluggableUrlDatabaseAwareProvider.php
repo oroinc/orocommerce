@@ -15,7 +15,7 @@ class SluggableUrlDatabaseAwareProvider implements SluggableUrlProviderInterface
 {
     const URL_KEY = 'url';
     const SLUG_PROTOTYPE_KEY = 'slug_prototype';
-    const SLUG_ROUTES_KEY = '__slug_routes__';
+    const SLUG_ROUTES_KEY = UrlCacheInterface::SLUG_ROUTES_KEY;
 
     /**
      * @var ManagerRegistry

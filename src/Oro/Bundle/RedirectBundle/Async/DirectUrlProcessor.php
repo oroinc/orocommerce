@@ -11,7 +11,6 @@ use Oro\Bundle\RedirectBundle\Cache\UrlCacheInterface;
 use Oro\Bundle\RedirectBundle\Generator\SlugEntityGenerator;
 use Oro\Bundle\RedirectBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\RedirectBundle\Model\MessageFactoryInterface;
-use Oro\Bundle\RedirectBundle\Provider\SluggableUrlDatabaseAwareProvider;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
@@ -19,6 +18,9 @@ use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\MessageQueue\Util\JSON;
 use Psr\Log\LoggerInterface;
 
+/**
+ * Generate Slug URLs for given entities
+ */
 class DirectUrlProcessor implements MessageProcessorInterface, TopicSubscriberInterface
 {
     /**
@@ -96,12 +98,7 @@ class DirectUrlProcessor implements MessageProcessorInterface, TopicSubscriberIn
 
             $em->flush();
             $em->commit();
-
-            $this->urlCache->removeUrl(SluggableUrlDatabaseAwareProvider::SLUG_ROUTES_KEY, []);
-
-            if ($this->urlCache instanceof FlushableCache) {
-                $this->urlCache->flushAll();
-            }
+            $this->actualizeUrlCache();
         } catch (InvalidArgumentException $e) {
             if ($em) {
                 $em->rollback();
@@ -139,5 +136,15 @@ class DirectUrlProcessor implements MessageProcessorInterface, TopicSubscriberIn
         return [
             Topics::GENERATE_DIRECT_URL_FOR_ENTITIES
         ];
+    }
+
+    private function actualizeUrlCache()
+    {
+        // Remove slug routes cache on Slug changes to refill it with actual data
+        $this->urlCache->removeUrl(UrlCacheInterface::SLUG_ROUTES_KEY, []);
+
+        if ($this->urlCache instanceof FlushableCache) {
+            $this->urlCache->flushAll();
+        }
     }
 }

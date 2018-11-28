@@ -93,6 +93,7 @@ class SluggableEntityListener implements OptionalListenerInterface
 
     public function postFlush()
     {
+        // Send MQ message to generate Slugs
         foreach ($this->sluggableEntities as $entityClass => $entityInfo) {
             foreach ($entityInfo as $createRedirect => $ids) {
                 $message = $this->messageFactory->createMassMessage($entityClass, $ids, (bool)$createRedirect);
