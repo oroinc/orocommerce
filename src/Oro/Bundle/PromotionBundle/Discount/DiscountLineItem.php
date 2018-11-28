@@ -301,4 +301,28 @@ class DiscountLineItem implements DiscountLineItemInterface
 
         return $this;
     }
+
+    /**
+     * Clones (creates new instances) certain fields which can be modified in cloned context
+     * to avoid modification of original one
+     * Other properties remains the same (ref links for objects)
+     */
+    public function __clone()
+    {
+        $this->price = \is_object($this->price) ? clone $this->price : null;
+        $this->productUnit = \is_object($this->productUnit) ? clone $this->productUnit : null;
+        $this->discounts = \array_map(
+            function ($o) {
+                return clone $o;
+            },
+            $this->discounts
+        );
+        $this->discountsInformation = \array_map(
+            function ($o) {
+                return clone $o;
+            },
+            $this->discountsInformation
+        );
+        $this->sourceLineItem = \is_object($this->sourceLineItem) ? clone $this->sourceLineItem : null;
+    }
 }

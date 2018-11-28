@@ -12,7 +12,7 @@ use Symfony\Component\Translation\TranslatorInterface;
 class MoneyOrderOptionsListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $translator;
 
@@ -29,7 +29,7 @@ class MoneyOrderOptionsListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testOnCollectPaymentOptionsWhenNoMoneyOrderView()
     {
-        /** @var PaymentMethodViewInterface|\PHPUnit_Framework_MockObject_MockObject $paymentMethodView */
+        /** @var PaymentMethodViewInterface|\PHPUnit\Framework\MockObject\MockObject $paymentMethodView */
         $paymentMethodView = $this->createMock(PaymentMethodViewInterface::class);
         $event = new CollectFormattedPaymentOptionsEvent($paymentMethodView);
         $paymentMethodView->expects($this->never())

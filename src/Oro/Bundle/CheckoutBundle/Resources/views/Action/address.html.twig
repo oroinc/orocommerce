@@ -1,0 +1,106 @@
+{% extends 'OroActionBundle:Operation:form.html.twig' %}
+
+{% form_theme form 'OroFrontendBundle:layouts/blank:form_theme.html.twig' %}
+
+{% block form_widget %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+
+    <div class="grid" {{ UI.attributes(form.vars.attr) }}>
+        {% if form.visitor_email is defined and form.visitor_email %}
+            <fieldset>
+                <div class="grid__row grid__row--offset-none">
+                    <div class="grid__column grid__column--6">
+                        {{ form_row(form.visitor_email, {'attr': {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.email'|trans}}) }}
+                    </div>
+                </div>
+            </fieldset>
+        {% endif %}
+
+        <fieldset {{ UI.attributes(form.address.vars.attr) }}>
+            <div class="grid__row grid__row--offset-none">
+                <div class="grid__column grid__column--6">
+                    {{ form_row(form.address.label, {'attr': {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.address.label'|trans}}) }}
+                </div>
+                <div class="grid__column grid__column--6">
+                    {{ form_row(form.address.namePrefix, {'attr': {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.name.prefix'|trans}}) }}
+                </div>
+            </div>
+
+            <div class="grid__row grid__row--offset-none">
+                <div class="grid__column grid__column--6">
+                    {{ form_row(form.address.firstName, {'attr': {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.name.first_name'|trans}}) }}
+                </div>
+                <div class="grid__column grid__column--6">
+                    {{ form_row(form.address.middleName, {'attr': {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.name.middle_name'|trans}}) }}
+                </div>
+            </div>
+
+            <div class="grid__row grid__row--offset-none">
+                <div class="grid__column grid__column--6">
+                    {{ form_row(form.address.lastName, {'attr': {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.name.last_name'|trans}}) }}
+                </div>
+                <div class="grid__column grid__column--6">
+                    {{ form_row(form.address.nameSuffix, {'attr': {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.name.sufix'|trans}}) }}
+                </div>
+            </div>
+
+            <div class="grid__row grid__row--offset-none">
+                <div class="grid__column grid__column--6">
+                    {{ form_row(form.address.organization, {'attr': {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.address.organization'|trans}}) }}
+                </div>
+                <div class="grid__column grid__column--6">
+                    {{ form_row(form.address.phone, {'attr': {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.address.phone'|trans}}) }}
+                </div>
+            </div>
+
+            <div class="grid__row grid__row--offset-none">
+                <div class="grid__column grid__column--6">
+                    {{ form_row(form.address.street, {'attr': {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.address.street'|trans}}) }}
+                </div>
+                <div class="grid__column grid__column--6">
+                    {{ form_row(form.address.street2, {'attr': {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.address.street2'|trans}}) }}
+                </div>
+            </div>
+
+            <div class="grid__row grid__row--offset-none">
+                <div class="grid__column grid__column--6">
+                    {{ form_row(form.address.city, {'attr': {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.address.city'|trans}}) }}
+                </div>
+                <div class="grid__column grid__column--2">
+                    {{ form_row(form.address.country) }}
+                </div>
+                <div class="grid__column grid__column--2">
+                    {{ form_row(form.address.region) }}
+                </div>
+                <div class="grid__column grid__column--2 col-zip-error">
+                    {{ form_row(form.address.postalCode, {'attr' : {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.address.zip'|trans}}) }}
+                </div>
+            </div>
+
+            <div class="grid__row">
+                <div class="grid__column">
+                    {{ form_row(form.save_address) }}
+                </div>
+            </div>
+
+            <div class="hidden">
+                {{ form_widget(form.address.id) }}
+                {{ form_widget(form.address.region_text) }}
+                {{ form_widget(form._token) }}
+            </div>
+        </fieldset>
+    </div>
+
+    {% set formRest = form_rest(form) %}
+{% endblock %}
+
+{% block form_actions %}
+    <div class="widget-actions form-actions">
+        {% block form_actions_inner %}
+            {% if isMobileVersion() %}
+                <button class="btn" type="reset">{{ 'Close'|trans }}</button>
+            {%  endif %}
+            <button class="btn btn-success btn--info" type="submit">{{ 'Continue'|trans }}</button>
+        {% endblock %}
+    </div>
+{% endblock %}

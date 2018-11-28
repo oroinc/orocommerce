@@ -4,15 +4,18 @@ namespace Oro\Bundle\CheckoutBundle\Form\Type;
 
 use Oro\Bundle\CustomerBundle\Validator\Constraints\UniqueCustomerUserNameAndEmail;
 use Oro\Bundle\UserBundle\Validator\Constraints\PasswordComplexity;
-use Oro\Bundle\ValidationBundle\Validator\Constraints\Email;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 /**
@@ -26,10 +29,20 @@ class LateRegistrationType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('is_late_registration_enabled', CheckboxType::class, [
-            'data' => true,
             'label' => 'oro.checkout.late_registration.label',
             'translation_domain' => 'messages'
         ]);
+
+        //Makes unchecked checkbox saving logic work
+        $builder->get('is_late_registration_enabled')
+            ->addViewTransformer(new CallbackTransformer(
+                function ($normalizedFormat) {
+                    return $normalizedFormat;
+                },
+                function ($submittedFormat) {
+                    return (!$submittedFormat) ? null : $submittedFormat;
+                }
+            ));
 
         $builder->add('email', EmailType::class, [
             'constraints' => [
@@ -68,6 +81,22 @@ class LateRegistrationType extends AbstractType
             ],
             'required' => true
         ]);
+
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSet']);
+    }
+
+    /**
+     * PreSet event handler
+     * @param FormEvent $event
+     */
+    public function preSet(FormEvent $event)
+    {
+        $data = $event->getData();
+
+        //Makes checkbox enabled by default if there ware no user changes before
+        if (!is_array($data) || !isset($data['is_late_registration_enabled'])) {
+            $event->setData(['is_late_registration_enabled' => true]);
+        }
     }
 
     /**

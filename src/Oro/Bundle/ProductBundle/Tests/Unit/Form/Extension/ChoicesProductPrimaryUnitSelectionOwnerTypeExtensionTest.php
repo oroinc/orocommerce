@@ -114,7 +114,7 @@ class ChoicesProductPrimaryUnitSelectionOwnerTypeExtensionTest extends FormInteg
      */
     protected function getExtensions()
     {
-        /** @var UnitLabelFormatterInterface|\PHPUnit_Framework_MockObject_MockObject $formatter */
+        /** @var UnitLabelFormatterInterface|\PHPUnit\Framework\MockObject\MockObject $formatter */
         $formatter = $this->createMock(UnitLabelFormatterInterface::class);
         $productUnitSelectType = new ProductUnitSelectType($formatter);
         $type = $this->createMock(FormTypeInterface::class);

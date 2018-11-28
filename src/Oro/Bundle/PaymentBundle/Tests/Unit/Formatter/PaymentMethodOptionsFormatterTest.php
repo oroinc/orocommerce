@@ -11,12 +11,12 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 class PaymentMethodOptionsFormatterTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var PaymentMethodViewProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var PaymentMethodViewProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $paymentMethodViewProvider;
 
     /**
-     * @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $eventDispatcher;
 

@@ -26,6 +26,9 @@ oro_behat_extension:
         - '@OroPromotionBundle/Tests/Behat/Features'
 
   pages:
+    All Coupons:
+      class: Oro\Bundle\PromotionBundle\Tests\Behat\Page\AllCoupons
+      route: 'oro_promotion_coupon_index'
     Promotion Create:
       class: Oro\Bundle\PromotionBundle\Tests\Behat\Page\PromotionCreate
       route: 'oro_promotion_create'

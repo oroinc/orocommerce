@@ -102,9 +102,7 @@ services:
         public: false
         arguments:
             - '@doctrine'
-        calls:
-            - [setClassName, ['%oro_pricing.entity.combined_price_list.class%']]
-            - [setActivationPlanBuilder, ['@oro_pricing.builder.combined_price_list_activation_plan_builder']]
+            - '@event_dispatcher'
 
     oro_pricing.provider.dependent_price_lists:
         class: Oro\Bundle\PricingBundle\Provider\DependentPriceListProvider
@@ -249,8 +247,7 @@ services:
         arguments:
             - '@oro_entity.doctrine_helper'
             - '@oro_pricing.resolver.price_list_schedule_resolver'
-        calls:
-            - [setProvider, ['@oro_pricing.provider.combined_price_list']]
+            - '@oro_pricing.provider.combined_price_list'
 
     oro_pricing.resolver.price_list_schedule_resolver:
         class: Oro\Bundle\PricingBundle\Resolver\PriceListScheduleResolver
@@ -532,6 +529,14 @@ services:
             - { name: kernel.event_listener, event: oro.form.update_handler.before_form_submit.oro_pricing_price_list, method: beforeSubmit }
             - { name: kernel.event_listener, event: oro.form.update_handler.before_entity_flush.oro_pricing_price_list, method: onPostSubmit }
             - { name: kernel.event_listener, event: oro.form.update_handler.after_entity_flush.oro_pricing_price_list, method: afterFlush }
+
+    oro_pricing.event_listener.combined_price_list:
+        class: 'Oro\Bundle\PricingBundle\EventListener\CombinedPriceListListener'
+        lazy: true
+        arguments:
+            - '@oro_pricing.builder.combined_price_list_activation_plan_builder'
+        tags:
+            - { name: kernel.event_listener, event: oro_pricing.combined_price_list.create, method: onCreate }
 
     oro_pricing.system_config_converter:
         class: 'Oro\Bundle\PricingBundle\SystemConfig\PriceListConfigConverter'

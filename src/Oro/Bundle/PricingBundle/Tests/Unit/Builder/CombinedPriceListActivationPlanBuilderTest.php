@@ -63,21 +63,18 @@ class CombinedPriceListActivationPlanBuilderTest extends \PHPUnit\Framework\Test
         $this->createPriceListScheduleRepositoryMock();
         $this->createCombinedPriceListToPriceListRepositoryMock();
 
-        $className = 'Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListActivationRuleRepository';
-        $this->CPLActivationRuleRepository = $this->getMockBuilder($className)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->CPLActivationRuleRepository = $this->createMock(CombinedPriceListActivationRuleRepository::class);
 
         $this->createDoctrineHelperMock();
 
         $this->builder = new CombinedPriceListActivationPlanBuilder(
             $this->doctrineHelper,
-            $this->schedulerResolver
+            $this->schedulerResolver,
+            $this->combinedPriceListProvider
         );
-        $this->builder->setProvider($this->combinedPriceListProvider);
     }
 
-    public function test()
+    public function testBuildByPriceList()
     {
         $this->builder->buildByPriceList(new PriceList());
     }
