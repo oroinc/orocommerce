@@ -24,7 +24,7 @@ Feature: Product with fractional prices view
 
   Scenario: Filter product by fractional price
     When I filter Price as equals or more than "10,55"
-    Then I should see grid with filter hints:
+    Then should see filter hints in frontend grid:
       | Price: equals or more than 10,55 / ea |
     And I should see "Product 1"
     And I should see "12,99 $" in the "Product Price Main" element
