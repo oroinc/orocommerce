@@ -5,10 +5,14 @@ namespace Oro\Bundle\PricingBundle\Provider;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
-use Oro\Bundle\PricingBundle\Builder\CombinedPriceListActivationPlanBuilder;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
+use Oro\Bundle\PricingBundle\Event\CombinedPriceList\CombinedPriceListCreateEvent;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+/**
+ * Provider that allows to get combined price list
+ */
 class CombinedPriceListProvider
 {
     const GLUE = '_';
@@ -21,14 +25,9 @@ class CombinedPriceListProvider
     protected $registry;
 
     /**
-     * @var string
+     * @var EventDispatcherInterface
      */
-    protected $className;
-
-    /**
-     * @var CombinedPriceListActivationPlanBuilder
-     */
-    protected $activationPlanBuilder;
+    protected $eventDispatcher;
 
     /**
      * @var EntityManager
@@ -42,26 +41,14 @@ class CombinedPriceListProvider
 
     /**
      * @param ManagerRegistry $registry
+     * @param EventDispatcherInterface $eventDispatcher
      */
-    public function __construct(ManagerRegistry $registry)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        EventDispatcherInterface $eventDispatcher
+    ) {
         $this->registry = $registry;
-    }
-
-    /**
-     * @param string $className
-     */
-    public function setClassName($className)
-    {
-        $this->className = $className;
-    }
-
-    /**
-     * @param CombinedPriceListActivationPlanBuilder $activationPlanBuilder
-     */
-    public function setActivationPlanBuilder(CombinedPriceListActivationPlanBuilder $activationPlanBuilder)
-    {
-        $this->activationPlanBuilder = $activationPlanBuilder;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
@@ -77,7 +64,11 @@ class CombinedPriceListProvider
         if (!$combinedPriceList) {
             $combinedPriceList = $this->createCombinedPriceList($identifier);
             $this->updateCombinedPriceList($combinedPriceList, $normalizedCollection);
-            $this->activationPlanBuilder->buildByCombinedPriceList($combinedPriceList);
+
+            $this->eventDispatcher->dispatch(
+                CombinedPriceListCreateEvent::NAME,
+                new CombinedPriceListCreateEvent($combinedPriceList)
+            );
         }
 
         return $combinedPriceList;
@@ -182,7 +173,7 @@ class CombinedPriceListProvider
     protected function getManager()
     {
         if (!$this->manager) {
-            $this->manager = $this->registry->getManagerForClass($this->className);
+            $this->manager = $this->registry->getManagerForClass(CombinedPriceList::class);
         }
 
         return $this->manager;
@@ -194,7 +185,7 @@ class CombinedPriceListProvider
     protected function getRepository()
     {
         if (!$this->repository) {
-            $this->repository = $this->getManager()->getRepository($this->className);
+            $this->repository = $this->getManager()->getRepository(CombinedPriceList::class);
         }
 
         return $this->repository;
