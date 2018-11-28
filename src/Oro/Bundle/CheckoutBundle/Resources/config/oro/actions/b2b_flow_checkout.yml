@@ -375,7 +375,7 @@ action_groups:
             - '@send_email_template':
                 parameters:
                     from: $.order.owner.email
-                    to: $.order.customerUser.email
+                    recipients: [$.order.customerUser]
                     template: 'order_confirmation_email'
                     entity: $.order
 
@@ -469,6 +469,7 @@ action_groups:
                         - '@not_empty': $.billing_address
                         - '@not_empty': $.checkout.customerUser
                         - '@empty': $.checkout.customerUser.firstName
+                        - '@equal': [$.checkout.customerUser.isGuest, true] #For guest customer user only
                 actions:
                     - '@call_service_method':
                         attribute: $.checkout.customerUser

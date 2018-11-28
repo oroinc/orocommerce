@@ -14,7 +14,7 @@ class OroRedirectBundleInstaller implements Installation
      */
     public function getMigrationVersion()
     {
-        return 'v1_4';
+        return 'v1_4_1';
     }
 
     /**
@@ -138,12 +138,15 @@ class OroRedirectBundleInstaller implements Installation
         $table = $schema->createTable('oro_redirect');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('slug_id', 'integer', ['notnull' => false]);
+        $table->addColumn('redirect_from_prototype', 'string', ['length' => 255, 'notnull' => false]);
         $table->addColumn('redirect_from', 'string', ['notnull' => true, 'length' => 1024]);
+        $table->addColumn('redirect_to_prototype', 'string', ['length' => 255, 'notnull' => false]);
         $table->addColumn('redirect_to', 'string', ['notnull' => true, 'length' => 1024]);
         $table->addColumn('redirect_type', 'integer', ['notnull' => true]);
         $table->addColumn('from_hash', 'string', ['length' => 32]);
         $table->setPrimaryKey(['id']);
         $table->addIndex(['from_hash'], 'idx_oro_redirect_from_hash', []);
+        $table->addIndex(['redirect_from_prototype'], 'idx_oro_redirect_redirect_from_prototype', []);
     }
 
     /**

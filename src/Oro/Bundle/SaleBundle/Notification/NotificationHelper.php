@@ -12,6 +12,7 @@ use Oro\Bundle\EmailBundle\Builder\EmailModelBuilder;
 use Oro\Bundle\EmailBundle\Entity\EmailTemplate;
 use Oro\Bundle\EmailBundle\Form\Model\Email;
 use Oro\Bundle\EmailBundle\Mailer\Processor;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 
 class NotificationHelper
@@ -24,6 +25,9 @@ class NotificationHelper
 
     /** @var Processor */
     protected $emailProcessor;
+
+    /** @var FeatureChecker */
+    protected $featureChecker;
 
     /** @var string */
     protected $quoteClassName;
@@ -44,6 +48,14 @@ class NotificationHelper
         $this->registry = $registry;
         $this->emailModelBuilder = $emailModelBuilder;
         $this->emailProcessor = $emailProcessor;
+    }
+
+    /**
+     * @param FeatureChecker $featureChecker
+     */
+    public function setFeatureChecker(FeatureChecker $featureChecker): void
+    {
+        $this->featureChecker = $featureChecker;
     }
 
     /**
@@ -99,7 +111,11 @@ class NotificationHelper
             ->setEntityId($quote->getId())
             ->setTo([$quote->getEmail()])
             ->setContexts([$quote])
-            ->setTemplate($this->getEmailTemplate('quote_email_link'));
+            ->setTemplate(
+                $this->getEmailTemplate(
+                    $this->isGuestAccessTemplateApplicable($quote) ? 'quote_email_link_guest' : 'quote_email_link'
+                )
+            );
 
         return $emailModel;
     }
@@ -141,5 +157,16 @@ class NotificationHelper
     protected function getRepository($className)
     {
         return $this->getManager($className)->getRepository($className);
+    }
+
+    /**
+     * @param Quote $quote
+     * @return bool
+     */
+    private function isGuestAccessTemplateApplicable(Quote $quote): bool
+    {
+        return $this->featureChecker &&
+            $this->featureChecker->isFeatureEnabled('guest_quote') &&
+            (!$quote->getCustomerUser() || $quote->getCustomerUser()->isGuest());
     }
 }

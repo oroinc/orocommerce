@@ -11,7 +11,7 @@ define(function(require) {
             saveStateUrl: null,
             targetEvents: {},
             ignoreTargets: {},
-            changeTimeout: 1500
+            changeTimeout: 500
         }),
 
         lastSavedData: '',
@@ -29,9 +29,25 @@ define(function(require) {
                 this.$form.on('change', _.bind(this.onFormChange, this));
             }
             if (this.$form) {
-                mediator.on('single-page:transition-button:submit', _.bind(this.submit, this));
+                mediator.on('single-page:transition-button:submit', this.submit, this);
             }
-            this.createAjaxData();
+            var ajaxData = this.createAjaxData();
+            this.sendAjaxData(ajaxData, this.$el);
+        },
+
+        /**
+         * @inheritDoc
+         */
+        dispose: function() {
+            if (this.disposed) {
+                return;
+            }
+
+            if (this.$form) {
+                this.$form.off('change');
+            }
+
+            SinglePageTransitionButtonComponent.__super__.dispose.call(this);
         },
 
         submit: function() {
@@ -43,6 +59,9 @@ define(function(require) {
          */
         serializeForm: function() {
             var formName = this.$form.attr('name');
+            this.$form.find(this.options.selectors.stateToken)
+                .prop('disabled', false)
+                .removeAttr('disabled');
             return this.$form.find('[name^=' + formName + ']').serialize();
         },
 
@@ -121,6 +140,14 @@ define(function(require) {
                 return;
             }
 
+            this.sendAjaxData(ajaxData, $target);
+        },
+
+        /**
+         * @param {Object} ajaxData
+         * @param {jQuery.Element} $target
+         */
+        sendAjaxData: function(ajaxData, $target) {
             $.ajax(ajaxData)
                 .done(_.bind(this.afterSaveState, this, $target));
         },

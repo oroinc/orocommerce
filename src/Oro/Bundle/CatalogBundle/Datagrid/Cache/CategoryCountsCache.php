@@ -30,8 +30,9 @@ class CategoryCountsCache
     public function getCounts($key)
     {
         $key = $this->getDataKey($key);
+        $counts = $this->cacheProvider->fetch($key);
 
-        return $this->cacheProvider->contains($key) ? $this->cacheProvider->fetch($key) : null;
+        return false !== $counts ? $counts : null;
     }
 
     /**

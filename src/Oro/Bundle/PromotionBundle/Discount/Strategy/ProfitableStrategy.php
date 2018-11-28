@@ -124,6 +124,11 @@ class ProfitableStrategy extends AbstractStrategy
      */
     private function cloneContext(DiscountContextInterface $discountContext): DiscountContextInterface
     {
+        if (\method_exists($discountContext, '__clone')) {
+            /** @var \Oro\Bundle\PromotionBundle\Discount\DiscountContext $discountContext */
+            return clone $discountContext;
+        }
+
         return unserialize(serialize($discountContext));
     }
 }

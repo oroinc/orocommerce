@@ -9,6 +9,9 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 
 class CheckoutToOrderConverter
 {
+    /** @var array */
+    private $orderCache = [];
+
     /**
      * @var CheckoutLineItemsManager
      */
@@ -37,8 +40,15 @@ class CheckoutToOrderConverter
      */
     public function getOrder(Checkout $checkout)
     {
+        $hash = md5(serialize($checkout));
+        if (isset($this->orderCache[$hash])) {
+            return $this->orderCache[$hash];
+        }
+
         $data = ['lineItems' => $this->checkoutLineItemsManager->getData($checkout)];
 
-        return $this->mapper->map($checkout, $data);
+        $this->orderCache[$hash] = $this->mapper->map($checkout, $data);
+
+        return $this->orderCache[$hash];
     }
 }

@@ -19,6 +19,9 @@ use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use Oro\Bundle\ProductBundle\Form\Type\FrontendLineItemType;
 use Oro\Bundle\ShoppingListBundle\Form\Type\ShoppingListType;
 
+/**
+ * Controller that manages products and line items for a shopping list via AJAX requests.
+ */
 class AjaxLineItemController extends AbstractLineItemController
 {
     /**
@@ -78,6 +81,42 @@ class AjaxLineItemController extends AbstractLineItemController
     }
 
     /**
+     * Remove Line item from Shopping List
+     *
+     * @Route(
+     *      "/remove-line-item/{lineItemId}",
+     *      name="oro_shopping_list_frontend_remove_line_item",
+     *      requirements={"lineItemId"="\d+"}
+     * )
+     * @AclAncestor("oro_shopping_list_frontend_update")
+     * @ParamConverter("lineItem", class="OroShoppingListBundle:LineItem", options={"id" = "lineItemId"})
+     * @Method("DELETE")
+     *
+     * @param LineItem $lineItem
+     *
+     * @return JsonResponse
+     */
+    public function removeLineItemAction(LineItem $lineItem)
+    {
+        $shoppingListManager = $this->get('oro_shopping_list.shopping_list.manager');
+        $isRemoved = $shoppingListManager->removeLineItemAndCheckConfigurable($lineItem);
+        if ($isRemoved > 0) {
+            $result = $this->getSuccessResponse(
+                $lineItem->getShoppingList(),
+                $lineItem->getProduct(),
+                'oro.frontend.shoppinglist.lineitem.product.removed.label'
+            );
+        } else {
+            $result = [
+                'successful' => false,
+                'message' => $this->get('translator')
+                    ->trans('oro.frontend.shoppinglist.lineitem.product.cant_remove.label')
+            ];
+        }
+        return new JsonResponse($result);
+    }
+
+    /**
      * Remove Product from Shopping List (product view form)
      *
      * @Route(
@@ -98,6 +137,7 @@ class AjaxLineItemController extends AbstractLineItemController
     {
         $shoppingListManager = $this->get('oro_shopping_list.shopping_list.manager');
 
+        /** @var ShoppingList $shoppingList */
         $shoppingList = $shoppingListManager->getForCurrentUser($request->get('shoppingListId'));
 
         $result = [

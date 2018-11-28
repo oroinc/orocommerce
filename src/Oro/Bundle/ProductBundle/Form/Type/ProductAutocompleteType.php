@@ -2,12 +2,14 @@
 
 namespace Oro\Bundle\ProductBundle\Form\Type;
 
+use Oro\Bundle\FormBundle\Form\Type\OroAutocompleteType;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use Oro\Bundle\FormBundle\Form\Type\OroAutocompleteType;
-
+/**
+ * Form type for product auto-complete field on frontend
+ */
 class ProductAutocompleteType extends AbstractProductAwareType
 {
     const NAME = 'oro_product_autocomplete';
@@ -46,7 +48,7 @@ class ProductAutocompleteType extends AbstractProductAwareType
                 'autocomplete' => [
                     'route_name' => 'oro_frontend_autocomplete_search',
                     'route_parameters' => [
-                        'name' => 'oro_product_visibility_limited',
+                        'name' => 'oro_product_visibility_limited_with_prices',
                     ],
                     'selection_template_twig' =>
                         'OroProductBundle:Product:Autocomplete/autocomplete_selection.html.twig',

@@ -8,6 +8,8 @@ use Doctrine\Common\Collections\Collection;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
+use Oro\Bundle\CustomerBundle\Entity\CustomerVisitor;
+use Oro\Bundle\CustomerBundle\Entity\CustomerVisitorOwnerAwareInterface;
 use Oro\Bundle\CustomerBundle\Entity\Ownership\AuditableFrontendCustomerUserAwareTrait;
 use Oro\Bundle\OrderBundle\Model\ShippingAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
@@ -47,6 +49,7 @@ class QuoteDemand implements
     ShippingAwareInterface,
     SubtotalAwareInterface,
     CustomerOwnerAwareInterface,
+    CustomerVisitorOwnerAwareInterface,
     ProductLineItemsHolderInterface,
     PreConfiguredShippingMethodConfigurationInterface
 {
@@ -96,6 +99,14 @@ class QuoteDemand implements
      * @ORM\Column(name="total_currency", type="string", length=3, nullable=true)
      */
     protected $totalCurrency;
+
+    /**
+     * @var CustomerVisitor
+     *
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\CustomerBundle\Entity\CustomerVisitor")
+     * @ORM\JoinColumn(name="visitor_id", referencedColumnName="id", onDelete="SET NULL")
+     */
+    protected $visitor;
 
     public function __construct()
     {
@@ -298,5 +309,25 @@ class QuoteDemand implements
     public function getTotal()
     {
         return $this->total;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getVisitor()
+    {
+        return $this->visitor;
+    }
+
+    /**
+     * @param CustomerVisitor $visitor
+     *
+     * @return $this
+     */
+    public function setVisitor(CustomerVisitor $visitor)
+    {
+        $this->visitor = $visitor;
+
+        return $this;
     }
 }

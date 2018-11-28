@@ -87,11 +87,12 @@ class ProductVisibilityLimitedWithPricesSearchHandlerTest extends \PHPUnit_Frame
 
     /**
      * @dataProvider searchDataProvider
-     * @param array $result
-     * @param array $pricesResult
-     * @param array $expected
+     *
+     * @param array $resultData
+     * @param array $priceResultData
+     * @param array $expectedResults
      */
-    public function testSearch(array $result, array $pricesResult, array $expected)
+    public function testSearch(array $resultData, array $priceResultData, array $expectedResults)
     {
         $query = 'test';
         $page = 1;
@@ -101,14 +102,14 @@ class ProductVisibilityLimitedWithPricesSearchHandlerTest extends \PHPUnit_Frame
         $this->productVisibilityLimitedSearchHandler->expects($this->once())
             ->method('search')
             ->with($query, $page, $perPage, $isId)
-            ->willReturn($result);
+            ->willReturn($resultData);
 
         $this->productWithPricesSearchHandler->expects($this->once())
             ->method('search')
             ->with($query, $page, $perPage, $isId)
-            ->willReturn($pricesResult);
+            ->willReturn($priceResultData);
 
-        $this->assertSame($expected, $this->searchHandler->search($query, $page, $perPage, $isId));
+        $this->assertEquals($expectedResults, $this->searchHandler->search($query, $page, $perPage, $isId));
     }
 
     /**
@@ -118,56 +119,64 @@ class ProductVisibilityLimitedWithPricesSearchHandlerTest extends \PHPUnit_Frame
     {
         return [
             'pricing results does not match' => [
-                [
-                    'more' => false,
-                    'results' => [
-                        [
-                            'sku' => 'test',
-                            'name' => 'test name'
-                        ]
-                    ]
+                'resultsData' => [
+                    'results' => [['id' => 1, 'name' => 'test name']]
                 ],
-                [
-                    'more' => false,
-                    'results' => [
-                        ['sku' => 'test2', 'name' => 'test name', 'prices' => [['value' => 10, 'unit' => 'item']]]
-                    ]
+                'priceResultsData' => [
+                    'results' => [['id' => 2, 'name' => 'test name', 'prices' => [['value' => 10]]]]
                 ],
-                [
-                    'more' => false,
+                'expectedResults' => [
                     'results' => []
                 ]
             ],
             'no pricing results' => [
-                [
-                    'more' => false,
-                    'results' => [['sku' => 'test', 'name' => 'test name']]
+                'resultsData' => [
+                    'results' => [['id' => 1, 'name' => 'test name']]
                 ],
-                [
-                    'more' => false,
+                'priceResultsData' => [
                     'results' => []
                 ],
-                [
-                    'more' => false,
+                'expectedResults' => [
                     'results' => []
                 ]
             ],
             'pricing results match' => [
-                [
-                    'more' => false,
-                    'results' => [['sku' => 'test', 'name' => 'test name']]
+                'resultsData' => [
+                    'results' => [['id' => 1, 'name' => 'test name']]
                 ],
-                [
-                    'more' => false,
+                'priceResultsData' => [
+                    'results' => [['id' => 1, 'name' => 'test name', 'prices' => [['value' => 10]]]]
+                ],
+                'expectedResults' => [
+                    'results' => [['id' => 1, 'name' => 'test name', 'prices' => [['value' => 10]]]]
+                ]
+            ],
+            'not all pricing results is match' => [
+                'resultsData' => [
                     'results' => [
-                        ['sku' => 'test', 'name' => 'test name', 'prices' => [['value' => 10, 'unit' => 'item']]]
+                        ['id' => 1, 'name' => 'test name 1'],
+                        ['id' => 2, 'name' => 'test name 2'],
                     ]
                 ],
-                [
-                    'more' => false,
+                'priceResultsData' => [
                     'results' => [
-                        ['sku' => 'test', 'name' => 'test name', 'prices' => [['value' => 10, 'unit' => 'item']]]
+                        ['id' => 2, 'name' => 'test name 2', 'prices' => [['value' => 10]]],
+                        ['id' => 3, 'name' => 'test name 3', 'prices' => [['value' => 20]]],
                     ]
+                ],
+                'expectedResults' => [
+                    'results' => [['id' => 2, 'name' => 'test name 2', 'prices' => [['value' => 10]]]]
+                ]
+            ],
+            'pricing results match and used price results data' => [
+                'resultsData' => [
+                    'results' => [['id' => 1, 'name' => 'test name extra']]
+                ],
+                'priceResultsData' => [
+                    'results' => [['id' => 1, 'name' => 'test name', 'prices' => [['value' => 10]]]]
+                ],
+                'expectedResults' => [
+                    'results' => [['id' => 1, 'name' => 'test name', 'prices' => [['value' => 10]]]]
                 ]
             ],
         ];

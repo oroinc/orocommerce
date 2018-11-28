@@ -1,0 +1,27 @@
+include:
+    - '@OroTranslationBundle:LanguageFixture.yml'
+
+Oro\Bundle\TranslationBundle\Entity\Translation:
+    translation_key_messages_oro_product_unit_item_label_full_lang1:
+        translationKey: '@translation_key_messages_oro_product_unit_item_label_full'
+        value: 'item (lang1)'
+        language: '@language1'
+        scope: 1
+
+    translation_key_messages_oro_product_unit_item_label_short_lang1:
+        translationKey: '@translation_key_messages_oro_product_unit_item_label_short'
+        value: 'item (short, lang1)'
+        language: '@language1'
+        scope: 1
+
+    translation_key_jsmessages_oro_product_product_unit_item_label_full_lang1:
+        translationKey: '@translation_key_jsmessages_oro_product_product_unit_item_label_full'
+        value: 'item (lang1)'
+        language: '@language1'
+        scope: 1
+
+    translation_key_jsmessages_oro_product_product_unit_item_label_short_lang1:
+        translationKey: '@translation_key_jsmessages_oro_product_product_unit_item_label_short'
+        value: 'item (short, lang1)'
+        language: '@language1'
+        scope: 1

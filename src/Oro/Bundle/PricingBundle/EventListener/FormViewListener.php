@@ -3,16 +3,16 @@
 namespace Oro\Bundle\PricingBundle\EventListener;
 
 use Doctrine\ORM\EntityRepository;
-
-use Symfony\Component\Translation\TranslatorInterface;
-
-use Oro\Component\Exception\UnexpectedTypeException;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
-use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
+use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceAttributePriceListRepository;
 use Oro\Bundle\PricingBundle\Provider\PriceAttributePricesProvider;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
+use Oro\Component\Exception\UnexpectedTypeException;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class FormViewListener
 {
@@ -21,6 +21,11 @@ class FormViewListener
 
     const PRICING_BLOCK_PRIORITY = 550;
     const PRICE_ATTRIBUTES_BLOCK_PRIORITY = 500;
+
+    /**
+     * @var AuthorizationCheckerInterface
+     */
+    private $authorizationChecker;
 
     /**
      * @var TranslatorInterface
@@ -50,6 +55,14 @@ class FormViewListener
         $this->translator = $translator;
         $this->doctrineHelper = $doctrineHelper;
         $this->priceAttributePricesProvider = $provider;
+    }
+
+    /**
+     * @param AuthorizationCheckerInterface $authorizationChecker
+     */
+    public function setAuthorizationChecker(AuthorizationCheckerInterface $authorizationChecker)
+    {
+        $this->authorizationChecker = $authorizationChecker;
     }
 
     /**
@@ -145,6 +158,20 @@ class FormViewListener
         $blockLabel = $this->translator->trans('oro.pricing.pricelist.entity_plural_label');
         $scrollData->addNamedBlock(self::PRICING_BLOCK_NAME, $blockLabel, self::PRICING_BLOCK_PRIORITY);
         $priceListSubBlockId = $scrollData->addSubBlock(self::PRICING_BLOCK_NAME);
+
+        if (!$this->authorizationChecker->isGranted(
+            'VIEW',
+            sprintf('entity:%s', ProductPrice::class)
+        )) {
+            $scrollData->addSubBlockData(
+                self::PRICING_BLOCK_NAME,
+                $priceListSubBlockId,
+                '',
+                'productPriceAttributesPrices'
+            );
+
+            return;
+        }
 
         $template = $event->getEnvironment()->render(
             'OroPricingBundle:Product:prices_view.html.twig',

@@ -3,16 +3,13 @@
 namespace Oro\Bundle\PricingBundle\Autocomplete;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-
+use Oro\Bundle\FormBundle\Autocomplete\SearchHandlerInterface;
 use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedProductPriceRepository;
 use Oro\Bundle\PricingBundle\Formatter\ProductPriceFormatter;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
-use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
-use Oro\Bundle\FormBundle\Autocomplete\SearchHandlerInterface;
 use Oro\Bundle\ProductBundle\Search\ProductRepository as ProductSearchRepository;
 
 /**
@@ -51,11 +48,11 @@ class ProductWithPricesSearchHandler implements SearchHandlerInterface
     private $userCurrencyManager;
 
     /**
-     * @param string $className
+     * @param string                  $className
      * @param ProductSearchRepository $productSearchRepository
      * @param PriceListRequestHandler $priceListRequestHandler
-     * @param ManagerRegistry $registry
-     * @param ProductPriceFormatter $productPriceFormatter
+     * @param ManagerRegistry         $registry
+     * @param ProductPriceFormatter   $productPriceFormatter
      */
     public function __construct(
         $className,
@@ -96,28 +93,16 @@ class ProductWithPricesSearchHandler implements SearchHandlerInterface
         $perPage = (int)$perPage > 0 ? (int)$perPage : 10;
         $perPage++;
 
-        $products = $this->findProducts($query, $page, $perPage);
+        $foundProducts = $this->searchProducts($query, $page, $perPage);
 
-        if (empty($products)) {
-            return ['results' => [], 'more' => false];
-        }
-
-        $items = $this->buildItemsArray($products, $this->findPrices($this->getProductIds($products)));
-
-        $hasMore = count($items) === $perPage;
+        $hasMore = count($foundProducts) === $perPage;
         if ($hasMore) {
-            $items = array_slice($items, 0, $perPage - 1);
-        }
-
-        $result = [];
-
-        foreach ($items as $item) {
-            $result[] = $this->convertItem($item);
+            $foundProducts = array_slice($foundProducts, 0, $perPage - 1);
         }
 
         return [
-            'results' => $result,
-            'more'    => $hasMore
+            'results' => array_map([$this, 'convertItem'], $foundProducts),
+            'more' => $hasMore,
         ];
     }
 
@@ -126,28 +111,24 @@ class ProductWithPricesSearchHandler implements SearchHandlerInterface
      */
     public function convertItem($item)
     {
-        $result = [];
-        $product = $item['product'];
-
-        if ($product instanceof Product) {
-            $result['id'] = $product->getId();
-            $result['sku'] = $product->getSku();
-            $result['defaultName.string'] = $product->getName()->getString();
-            $result['prices'] = [];
-            $result['units'] = $product->getSellUnitsPrecision();
-
-            /** @var ProductPrice $price */
-            foreach ($item['prices'] as $price) {
-                $unit = $price->getUnit()->getCode();
-                if (!isset($result['prices'][$unit])) {
-                    $result['prices'][$unit] = [];
-                }
-
-                $result['prices'][$unit][] = $this->productPriceFormatter->formatProductPrice($price);
-            }
+        if (!isset($item['product_id'], $item['sku'], $item['name'], $item['prices'], $item['product_units'])) {
+            return [];
         }
 
-        return $result;
+        $prices = [];
+
+        /** @var ProductPrice $price */
+        foreach ($item['prices'] as $price) {
+            $prices[$price->getUnit()->getCode()][] = $this->productPriceFormatter->formatProductPrice($price);
+        }
+
+        return [
+            'id' => $item['product_id'],
+            'sku' => $item['sku'],
+            'defaultName.string' => $item['name'],
+            'prices' => $prices,
+            'units' => unserialize($item['product_units']),
+        ];
     }
 
     /**
@@ -164,95 +145,56 @@ class ProductWithPricesSearchHandler implements SearchHandlerInterface
      */
     private function findPrices(array $productIds)
     {
-        if (count($productIds) > 0) {
-            if (null !== $this->userCurrencyManager) {
-                $currency = $this->userCurrencyManager->getUserCurrency();
-            } else {
-                $currency = null;
-            }
-            $prices = $this->getProductPriceRepository()
-                ->getFindByPriceListIdAndProductIdsQueryBuilder(
-                    $this->priceListRequestHandler->getPriceListByCustomer()->getId(),
-                    $productIds,
-                    true,
-                    $currency
-                )
-                ->getQuery()
-                ->getResult();
-
-            return $prices;
+        if (!$productIds) {
+            return [];
         }
 
-        return [];
-    }
-
-    /**
-     * @param array $products
-     * @return array
-     */
-    private function getProductIds(array &$products)
-    {
-        $ids = [];
-        foreach ($products as $product) {
-            $ids[] = $product->getId();
+        if (null !== $this->userCurrencyManager) {
+            $currency = $this->userCurrencyManager->getUserCurrency();
+        } else {
+            $currency = null;
         }
 
-        return $ids;
+        return $this->getProductPriceRepository()
+            ->getFindByPriceListIdAndProductIdsQueryBuilder(
+                $this->priceListRequestHandler->getPriceListByCustomer()->getId(),
+                $productIds,
+                true,
+                $currency
+            )
+            ->getQuery()
+            ->getResult();
     }
 
     /**
      * @param string $search
      * @param int $firstResult
      * @param int $maxResults
-     * @return Product[]
+     * @return array
      */
-    private function findProducts($search, $firstResult, $maxResults)
+    private function searchProducts($search, $firstResult, $maxResults): array
     {
-        $foundItems = $this->productSearchRepository->findBySkuOrName($search, $firstResult-1, $maxResults);
-        $ids = [];
+        $foundItems = $this->productSearchRepository->getSearchQueryBySkuOrName($search, $firstResult - 1, $maxResults)
+            ->addSelect('product_units')
+            ->getResult()
+            ->getElements();
 
-        foreach ($foundItems as $foundItem) {
-            $ids[] = $foundItem->getSelectedData()['product_id'];
-        }
-
-        if (empty($ids)) {
+        if (!$foundItems) {
             return [];
         }
 
-        return $this->getProductRepository()->getProductsByIds($ids);
-    }
-
-    /**
-     * @param Product[] $products
-     * @param ProductPrice[] $prices
-     * @return array
-     */
-    private function buildItemsArray($products, $prices)
-    {
-        $items = [];
-
-        foreach ($products as $product) {
-            $item['product'] = $product;
-            $item['prices'] = [];
-
-            foreach ($prices as $price) {
-                if ($price->getProduct()->getId() === $product->getId()) {
-                    $item['prices'][] = $price;
-                }
-            }
-
-            $items[] = $item;
+        $foundProducts = [];
+        foreach ($foundItems as $foundItem) {
+            $selectedData = $foundItem->getSelectedData();
+            $foundProducts[$selectedData['product_id']] = $selectedData + ['prices' => []];
         }
 
-        return $items;
-    }
+        $prices = $this->findPrices(array_column($foundProducts, 'product_id'));
+        foreach ($prices as $productPrice) {
+            $foundProducts[$productPrice->getProduct()->getId()]['prices'][] = $productPrice;
+        }
 
-    /**
-     * @return ProductRepository
-     */
-    private function getProductRepository()
-    {
-        return $this->registry->getRepository(Product::class);
+        return array_values($foundProducts);
     }
 
     /**

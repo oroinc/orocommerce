@@ -65,7 +65,7 @@
                     {{ firstPrice ? firstPrice.formatted_unit }}
                 </span>
                 <span class="product-price__unit-short">
-                    {{ firstPrice ? firstPrice.unit }}
+                    {{ firstPrice ? firstPrice.unit|oro_format_short_product_unit_label }}
                 </span>
             </span>
         </span>
@@ -167,7 +167,7 @@
                                 {{ price.formatted_unit}}
                             </span>
                             <span class="product-price__unit-short">
-                                {{ price.unit}}
+                                {{ price.unit|oro_format_short_product_unit_label }}
                             </span>
                         </span>
                     </span>

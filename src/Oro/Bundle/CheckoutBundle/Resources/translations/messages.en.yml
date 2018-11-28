@@ -227,6 +227,8 @@ oro:
             content_of_order_was_changed.message: |-
                 There was a change to the contents of your order.
                 Please review the order information before proceeding to the next step.
+            invalid_billing_address.message: Please enter correct billing address
+            invalid_shipping_address.message: Please enter correct shipping address
 
         order.line_items.line_item_has_no_price_allow_rfp.message: Some products have not been added to this order. Please create an RFQ to request price.
         order.line_items.line_item_has_no_price_not_allow_rfp.message: Some products have not been added to this order.
@@ -240,11 +242,15 @@ oro:
                 default_guest_checkout_owner:
                     title: 'Default guest checkout owner'
                     tooltip: 'Allows guests to create order'
+                single_page_checkout_increase_performance:
+                    title: 'Optimize Template Performance'
+                    tooltip: 'This option improves the performance of the default single page checkout workflow. These optimizations may not work or they may break the checkout page entirely if applied to customized single page checkout. Please consult with the technical team before enabling this option.'
             groups:
                 open_orders.title: 'Open Orders'
                 checkout.title: 'Checkout'
                 guest_checkout.title: 'Guest Checkout'
                 guest_checkout_owner.title: 'Guest Checkout Owner Settings'
+                checkout_increase_performance.title: 'Single Page Checkout Settings'
 
         privilege:
             category.checkout.label: 'Checkout'

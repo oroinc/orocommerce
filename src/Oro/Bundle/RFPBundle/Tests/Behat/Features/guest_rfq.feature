@@ -1,14 +1,19 @@
 @ticket-BB-10800
-@fixture-OroShoppingListBundle:ProductFixture.yml
+@ticket-BB-14758
+@fixture-OroRFPBundle:GuestRFQ.yml
 Feature: Guest RFQ
   In order to collect potential sales from non-registered customers
   As a Sales rep
-  I want that guest customers were able to submit RFQ for
+  I want to be able to check RFQs submitted by guest customers
+  As a Guest Customer
+  I want to be able to submit RFQs from shopping list page or by using product line item dropdown
+  I want to see localized product units in RFQ confirmation email
 
-  Scenario: Create different window session
+  Scenario: Feature Background
     Given sessions active:
       | Admin | first_session  |
-      | User | second_session |
+      | Buyer | second_session |
+    And I enable the existing localizations
 
   Scenario: Enable guest RFQ
     Given I proceed as the Admin
@@ -21,18 +26,21 @@ Feature: Guest RFQ
     And I follow "Commerce/Sales/Shopping List" on configuration sidebar
     And uncheck "Use default" for "Enable guest shopping list" field
     And I check "Enable guest shopping list"
-    And I save setting
+    When I save setting
     Then I should see "Configuration saved" flash message
 
-  Scenario:  Create RFQ from shopping list
-    Given I proceed as the User
+  Scenario: Create RFQ from shopping list
+    Given I proceed as the Buyer
     And I am on the homepage
+    And I should see "No Shopping Lists"
     When type "PSKU1" in "search"
     And I click "Search Button"
     Then I should see "Product1"
     When I click "Add to Shopping List"
     Then I should see "Product has been added to" flash message
     And I click "Shopping list"
+    And I hover on "Shopping List Widget"
+    And I should see "1 Item | $0.00" in the "Shopping List Widget" element
     And click "Request Quote"
     And I fill form with:
       | First Name             | Tester               |
@@ -66,11 +74,11 @@ Feature: Guest RFQ
     And I should see "Product1"
 
   Scenario: Create second RFQ without adding to shopping list
-    Given I proceed as the User
+    Given I proceed as the Buyer
     And I am on the homepage
-    When type "CONTROL1" in "search"
+    When type "PSKU1" in "search"
     And I click "Search Button"
-    Then I should see "Control Product"
+    Then I should see "Product1"
     And click "View Details"
     And click "LineItemDropdown"
     And click "Request a Quote"
@@ -93,6 +101,23 @@ Feature: Guest RFQ
     And I should see "Tester Testerson" in grid with following data:
       | Group   | Non-Authenticated Visitors |
       | Account | Tester Testerson           |
-    And I click view "Tester Testerson" in grid
-    And I should see "PO Test 01"
+    When I click view "Tester Testerson" in grid
+    Then I should see "PO Test 01"
     And I should see "PO Test 02"
+
+  Scenario: Create RFQ with another localization and check product unit in email
+    Given I proceed as the Buyer
+    And I am on the homepage
+    And I click "Localization Switcher"
+    And I select "Localization 1" localization
+    And I open shopping list widget
+    And I click "View Details"
+    And click "Request Quote"
+    And I fill form with:
+      | First Name             | Tester               |
+      | Last Name              | Testerson            |
+      | Email Address          | testerson@example.com|
+      | Company                | Red Fox Tavern       |
+    When I click "Submit Request"
+    Then email with Subject "Your RFQ has been received." containing the following was sent:
+      | Body    | 1 item (lang1) |

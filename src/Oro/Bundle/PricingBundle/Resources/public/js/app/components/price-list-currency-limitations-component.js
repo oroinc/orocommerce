@@ -56,6 +56,12 @@ define(function(require) {
             this.$currencySelect = this.$elem.find(options.currencySelector);
 
             this.prepareCurrencySelect(false);
+            this.$elem.one(
+                'change',
+                function() {
+                    this.$elem.removeAttr('data-validation-ignore');
+                }.bind(this)
+            );
             this.$elem.on(
                 'change',
                 options.priceListSelector,
@@ -142,25 +148,26 @@ define(function(require) {
                 priceListCurrencies.unshift('');
             }
 
+            var optionElements = [];
             var systemSupportedCurrencyOptions = this.getSystemSupportedCurrencyOptions();
             var value = this.$currencySelect.val();
             this.$currencySelect.empty();
             _.each(priceListCurrencies, function(currency) {
                 if (currency in systemSupportedCurrencyOptions) {
-                    var newOption = systemSupportedCurrencyOptions[currency].cloneNode(true);
-                    if (!_.isEmpty(value) && newOption.value === value) {
-                        newOption.selected = true;
-                    }
-                    this.$currencySelect.append(newOption);
+                    optionElements.push(systemSupportedCurrencyOptions[currency].cloneNode(true));
                 }
             }, this);
 
-            this.$currencySelect.find('option[value=""]').hide();
-            this.$currencySelect.removeAttr('disabled');
+            this.$currencySelect
+                .append(optionElements)
+                .removeAttr('disabled')
+                .find('option[value=""]').hide();
 
             if (selectFirst && _.isEmpty(value)) {
                 this.$currencySelect.val(priceListCurrencies[1]);
                 this.$currencySelect.trigger('change');
+            } else {
+                this.$currencySelect.val(value);
             }
         },
 

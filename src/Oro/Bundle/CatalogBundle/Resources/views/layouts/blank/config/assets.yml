@@ -1,5 +1,6 @@
 styles:
     inputs:
+        - 'bundles/orocatalog/blank/scss/variables/category-title-config.scss'
         - 'bundles/orocatalog/blank/scss/variables/category-picture-config.scss'
         - 'bundles/orocatalog/blank/scss/variables/featured-categories-config.scss'
         - 'bundles/orocatalog/blank/scss/variables/featured-category-config.scss'

@@ -16,7 +16,11 @@ class RedirectTest extends \PHPUnit_Framework_TestCase
         $this->assertPropertyAccessors(new Redirect(), [
             ['id', 42],
             ['from', 'url/from'],
+            ['fromPrototype', null],
+            ['fromPrototype', 'from-prototype'],
             ['to', 'url/to'],
+            ['toPrototype', null],
+            ['toPrototype', 'to-prototype'],
             ['type', Redirect::MOVED_PERMANENTLY],
             ['slug', new Slug()]
         ]);

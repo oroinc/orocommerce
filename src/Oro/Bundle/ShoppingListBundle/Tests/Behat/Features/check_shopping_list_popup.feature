@@ -11,7 +11,7 @@ Feature: Check shopping list popup
       | List      | Shopping list |
       | Unit      | set           |
       | Quantity  | 5             |
-    And press "Item Add"
+    And click "Item Add"
     Then I click "Item Edit"
     And I click "Item Edit Unit"
     Then I should see a "Item Disabled" element

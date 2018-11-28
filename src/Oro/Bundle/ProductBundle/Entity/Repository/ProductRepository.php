@@ -12,6 +12,9 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Entity\ProductImageType;
 
+/**
+ * Contains business specific methods for retrieving product entities.
+ */
 class ProductRepository extends EntityRepository
 {
     /**
@@ -340,19 +343,6 @@ class ProductRepository extends EntityRepository
     }
 
     /**
-     * @param QueryBuilder $queryBuilder
-     */
-    private function filterByImageType(QueryBuilder $queryBuilder)
-    {
-        $queryBuilder->addSelect('product_images, product_images_types, product_images_file')
-            ->join('product.images', 'product_images')
-            ->join('product_images.types', 'product_images_types')
-            ->join('product_images.image', 'product_images_file')
-            ->andWhere($queryBuilder->expr()->eq('product_images_types.type', ':imageType'))
-            ->setParameter('imageType', ProductImageType::TYPE_LISTING);
-    }
-
-    /**
      * @param Product $configurableProduct
      * @param array $variantParameters
      * $variantParameters = [
@@ -424,6 +414,7 @@ class ProductRepository extends EntityRepository
             ->select('product')
             ->setMaxResults($quantity)
             ->orderBy('product.id', 'ASC');
+
         $this->filterByImageType($queryBuilder);
 
         return $queryBuilder;
@@ -488,6 +479,43 @@ class ProductRepository extends EntityRepository
     }
 
     /**
+     * This is analog of  self::findParentSkusByAttributeValue method but fetches results for array of options
+     * to not to execute query for each option
+     * Added new method for BC purposes only
+     * @param string $type
+     * @param string $fieldName
+     * @param array $attributeOptions
+     * @return array
+     */
+    public function findParentSkusByAttributeOptions(string $type, string $fieldName, array $attributeOptions)
+    {
+        $qb = $this->createQueryBuilder('p');
+
+        $result = $qb
+            ->select(['parent_product.sku', 'attr.id'])
+            ->distinct()
+            ->join('p.' . $fieldName, 'attr')
+            ->join('p.parentVariantLinks', 'variant_links')
+            ->join('variant_links.parentProduct', 'parent_product')
+            ->where($qb->expr()->in('attr', ':attributeOptions'))
+            ->andWhere('p.type = :type')
+            ->andWhere($qb->expr()->isNotNull('p.' . $fieldName))
+            ->orderBy('parent_product.sku')
+            ->setParameter('attributeOptions', $attributeOptions)
+            ->setParameter('type', $type)
+            ->getQuery()
+            ->getArrayResult();
+
+        $flattenedResult = [];
+
+        foreach ($result as $item) {
+            $flattenedResult[$item['id']][] = $item['sku'];
+        }
+
+        return $flattenedResult;
+    }
+
+    /**
      * Returns array of product ids that have required attribute in their attribute family
      *
      * @param FieldConfigModel $attribute
@@ -543,5 +571,25 @@ class ProductRepository extends EntityRepository
             ->getArrayResult();
 
         return array_column($result, 'id');
+    }
+
+    /**
+     * @param QueryBuilder $queryBuilder
+     */
+    private function filterByImageType(QueryBuilder $queryBuilder)
+    {
+        $parentAlias = $queryBuilder->getRootAliases()[0];
+
+        $subQuery = $this->getEntityManager()->createQueryBuilder();
+        $subQuery->select('pi.id')
+            ->from(ProductImage::class, 'pi')
+            ->innerJoin('pi.types', 'types')
+            ->where($subQuery->expr()->eq('pi.product', $parentAlias))
+            ->andWhere($subQuery->expr()->eq('types.type', ':imageType'));
+
+
+        $queryBuilder
+            ->andWhere($queryBuilder->expr()->exists($subQuery->getDQL()))
+            ->setParameter('imageType', ProductImageType::TYPE_LISTING);
     }
 }

@@ -15,6 +15,9 @@ use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 use Oro\Component\Checkout\DataProvider\CheckoutDataProviderInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
+/**
+ * This class provide obtaining Order line items from CheckoutInterface
+ */
 class CheckoutLineItemsManager
 {
     /**
@@ -79,19 +82,12 @@ class CheckoutLineItemsManager
         $disablePriceFilter = false,
         $configVisibilityPath = 'oro_order.frontend_product_visibility'
     ) {
-        $entity = $checkout;
-        $currency = $this->userCurrencyManager->getUserCurrency();
-        $supportedStatuses = $this->getSupportedStatuses($configVisibilityPath);
         foreach ($this->providers as $provider) {
-            if ($provider->isEntitySupported($entity)) {
-                $lineItems = $this->checkoutLineItemsConverter->convert($provider->getData($entity));
-                $lineItems = $lineItems->filter(
-                    function ($lineItem) {
-                        return $this->isLineItemAvailable($lineItem);
-                    }
-                );
-
+            if ($provider->isEntitySupported($checkout)) {
+                $lineItems = $this->checkoutLineItemsConverter->convert($provider->getData($checkout));
                 if (!$disablePriceFilter) {
+                    $currency = $this->userCurrencyManager->getUserCurrency();
+                    $supportedStatuses = $this->getSupportedStatuses($configVisibilityPath);
                     $lineItems = $lineItems->filter(
                         function ($lineItem) use ($currency, $supportedStatuses) {
                             return $this->isLineItemHasCurrencyAndSupportedStatus(
@@ -158,8 +154,10 @@ class CheckoutLineItemsManager
             return true;
         }
 
-        return $product->getStatus() === Product::STATUS_ENABLED &&
-            $this->authorizationChecker->isGranted('VIEW', $product);
+        $isAvailable = $product->getStatus() === Product::STATUS_ENABLED
+            && $this->authorizationChecker->isGranted('VIEW', $product);
+
+        return $isAvailable;
     }
 
     /**

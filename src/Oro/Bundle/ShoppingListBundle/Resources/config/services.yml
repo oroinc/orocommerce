@@ -41,6 +41,7 @@ services:
             - [setTokenStorage, ['@security.token_storage']]
             - [setWebsiteManager, ['@oro_website.manager']]
             - [setTranslator, ['@translator']]
+            - [setConfigManager, ['@oro_config.manager']]
         tags:
             - { name: oro_featuretogle.feature, feature: 'guest_shopping_list' }
 
@@ -59,6 +60,8 @@ services:
             - "@oro_product.provider.product_variant_availability_provider"
         calls:
             - [setGuestShoppingListManager, ['@oro_shopping_list.manager.guest_shopping_list']]
+            - [setProductMatrixAvailabilityProvider, ['@oro_product.provider.product_matrix_availability_provider']]
+            - [setConfigManager, ['@oro_config.manager']]
 
     oro_shopping_list.shopping_list.owner_manager:
         class: 'Oro\Bundle\ShoppingListBundle\Manager\ShoppingListOwnerManager'

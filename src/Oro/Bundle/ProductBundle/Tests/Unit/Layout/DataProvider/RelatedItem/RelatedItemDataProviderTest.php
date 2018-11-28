@@ -8,6 +8,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\Restriction\RestrictedProductRepository;
 use Oro\Bundle\ProductBundle\Layout\DataProvider\RelatedItem\RelatedItemDataProvider;
 use Oro\Bundle\ProductBundle\RelatedItem\FinderStrategyInterface;
+use Oro\Bundle\ProductBundle\RelatedItem\RelatedProduct\FinderDatabaseStrategy;
 use Oro\Bundle\ProductBundle\RelatedItem\RelatedProduct\RelatedProductsConfigProvider;
 use Oro\Bundle\UIBundle\Tests\Unit\Provider\FakeUserAgentProvider;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -143,6 +144,101 @@ class RelatedItemDataProviderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals([], $this->dataProvider->getRelatedItems(new Product()));
     }
 
+    public function testDoesNotReturnRelatedProductIdsIfFinderDoesNotFindAny()
+    {
+        $provider = $this->getExtensionWithIdsFinder();
+
+        $this->finderReturnsRelatedProductIds([]);
+        $this->restrictionReturnsRelatedProducts(new ArrayCollection([
+            $this->getEntity(Product::class, ['id' => 2]),
+            $this->getEntity(Product::class, ['id' => 3]),
+        ]));
+
+        $this->assertEmpty($provider->getRelatedItems(new Product()));
+    }
+
+    public function testReturnRelatedProductIds()
+    {
+        $provider = $this->getExtensionWithIdsFinder();
+
+        $relatedProducts = new ArrayCollection([
+            $this->getEntity(Product::class, ['id' => 2]),
+            $this->getEntity(Product::class, ['id' => 3]),
+        ]);
+
+        $this->finderReturnsRelatedProductIds([2, 3]);
+        $this->minimumRelatedProductsIs(2);
+        $this->restrictionReturnsRelatedProducts($relatedProducts);
+
+        $this->assertEquals(
+            $relatedProducts,
+            $provider->getRelatedItems(new Product())
+        );
+    }
+
+    public function testDoesNotReturnProductIdsIfThereAreLessRelatedProductThanSpecifiedInMinConfiguration()
+    {
+        $provider = $this->getExtensionWithIdsFinder();
+
+        $this->finderReturnsRelatedProductIds([2, 3]);
+        $this->minimumRelatedProductsIs(3);
+
+        $this->assertEquals([], $provider->getRelatedItems(new Product()));
+    }
+
+    public function testReturnRestrictedRelatedProductIds()
+    {
+        $provider = $this->getExtensionWithIdsFinder();
+
+        $product2 = $this->getEntity(Product::class, ['id' => 2]);
+        $product3 = $this->getEntity(Product::class, ['id' => 3]);
+
+        $restrictedProducts = new ArrayCollection([$product2, $product3]);
+
+        $this->finderReturnsRelatedProductIds([2, 3, 4]);
+        $this->minimumRelatedProductsIs(2);
+        $this->restrictionReturnsRelatedProducts($restrictedProducts);
+
+        $this->assertEquals(
+            $restrictedProducts,
+            $provider->getRelatedItems(new Product())
+        );
+    }
+
+    public function testReturnNoMoreRestrictedRelatedProductsThanSpecifiedInMaximumItemsConfigurationWithIds()
+    {
+        $provider = $this->getExtensionWithIdsFinder();
+
+        $product2 = $this->getEntity(Product::class, ['id' => 2]);
+        $product3 = $this->getEntity(Product::class, ['id' => 3]);
+        $product4 = $this->getEntity(Product::class, ['id' => 4]);
+        $relatedProducts = new ArrayCollection([$product2, $product3, $product4]);
+
+        $this->finderReturnsRelatedProductIds([2, 3, 4]);
+        $this->restrictionReturnsRelatedProducts($relatedProducts, 1);
+
+        $this->assertEquals(
+            [$product2],
+            $provider->getRelatedItems(new Product())
+        );
+    }
+
+    public function testDoesNotReturnRestrictedProductsIfThereAreLessRelatedProductIdsThanSpecifiedInMinConfiguration()
+    {
+        $provider = $this->getExtensionWithIdsFinder();
+
+        $product2 = $this->getEntity(Product::class, ['id' => 2]);
+        $product3 = $this->getEntity(Product::class, ['id' => 3]);
+
+        $restrictedProducts = new ArrayCollection([$product2, $product3]);
+
+        $this->finderReturnsRelatedProductIds([2, 3, 4]);
+        $this->minimumRelatedProductsIs(3);
+        $this->restrictionReturnsRelatedProducts($restrictedProducts);
+
+        $this->assertEquals([], $provider->getRelatedItems(new Product()));
+    }
+
     public function testSliderEnabledOnDesktop()
     {
         $this->userAgentProvider->isDesktop = true;
@@ -185,6 +281,16 @@ class RelatedItemDataProviderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @param int[] $relatedProductIds
+     */
+    private function finderReturnsRelatedProductIds($relatedProductIds)
+    {
+        $this->finder->expects($this->once())
+            ->method('findIds')
+            ->willReturn($relatedProductIds);
+    }
+
+    /**
      * @param int $count
      */
     private function minimumRelatedProductsIs($count)
@@ -194,6 +300,9 @@ class RelatedItemDataProviderTest extends \PHPUnit_Framework_TestCase
             ->willReturn($count);
     }
 
+    /**
+     * @param bool $isEnabled
+     */
     private function isSliderEnabledOnMobile($isEnabled)
     {
         $this->configProvider->expects($this->any())
@@ -201,6 +310,9 @@ class RelatedItemDataProviderTest extends \PHPUnit_Framework_TestCase
             ->willReturn($isEnabled);
     }
 
+    /**
+     * @param bool $isVisible
+     */
     private function isAddButtonVisible($isVisible)
     {
         $this->configProvider->expects($this->any())
@@ -221,5 +333,20 @@ class RelatedItemDataProviderTest extends \PHPUnit_Framework_TestCase
         $this->restrictedRepository->expects($this->any())
             ->method('findProducts')
             ->willReturn($restrictedProducts);
+    }
+
+    /**
+     * @return RelatedItemDataProvider
+     */
+    private function getExtensionWithIdsFinder()
+    {
+        $this->finder = $this->createMock(FinderDatabaseStrategy::class);
+
+        return new RelatedItemDataProvider(
+            $this->finder,
+            $this->configProvider,
+            $this->restrictedRepository,
+            $this->userAgentProvider
+        );
     }
 }

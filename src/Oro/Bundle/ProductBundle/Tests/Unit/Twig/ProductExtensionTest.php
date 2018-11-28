@@ -7,6 +7,7 @@ use Symfony\Component\Form\FormView;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Expression\Autocomplete\AutocompleteFieldsProvider;
+use Oro\Bundle\ProductBundle\RelatedItem\FinderStrategyInterface;
 use Oro\Bundle\ProductBundle\RelatedItem\RelatedProduct\FinderDatabaseStrategy;
 use Oro\Bundle\ProductBundle\Twig\ProductExtension;
 
@@ -72,19 +73,54 @@ class ProductExtensionTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @param array $ids
+     * @dataProvider dataProviderRelatedProductIds
+     */
+    public function testGetRelatedProductsIds(array $ids)
+    {
+        $this->finderDatabaseStrategy->expects($this->once())
+            ->method('findIds')
+            ->willReturn($ids);
+
+        $this->assertSame($ids, $this->extension->getRelatedProductsIds(new Product()));
+    }
+
+    /**
+     * @return array
+     */
+    public function dataProviderRelatedProductIds()
+    {
+        return [
+            [[2, 3, 4]],
+            [[]]
+        ];
+    }
+
+    /**
      * @param array $relatedProducts
      * @param array $expectedIds
      * @dataProvider dataProviderRelatedProducts
      */
-    public function testGetRelatedProductsIds(array $relatedProducts, array $expectedIds)
+    public function testGetRelatedProductsIdsWithoutFindMethod(array $relatedProducts, array $expectedIds)
     {
-        $this->finderDatabaseStrategy->expects($this->once())
+        /** @var FinderDatabaseStrategy|\PHPUnit_Framework_MockObject_MockObject $finderDatabaseStrategy */
+        $finderDatabaseStrategy = $this->createMock(FinderStrategyInterface::class);
+        $finderDatabaseStrategy->expects($this->once())
             ->method('find')
             ->willReturn($relatedProducts);
 
-        $this->assertSame($expectedIds, $this->extension->getRelatedProductsIds(new Product()));
+        $container = self::getContainerBuilder()
+            ->add('oro_product.related_item.related_product.finder_strategy', $finderDatabaseStrategy)
+            ->getContainer($this);
+
+        $extension = new ProductExtension($container);
+
+        $this->assertSame($expectedIds, $extension->getRelatedProductsIds(new Product()));
     }
 
+    /**
+     * @return array
+     */
     public function dataProviderRelatedProducts()
     {
         return [
@@ -110,6 +146,9 @@ class ProductExtensionTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expectedId, $formView->vars['attr']['id']);
     }
 
+    /**
+     * @return array
+     */
     public function dataSetUniqueLineItemFormId()
     {
         $formView = new FormView();

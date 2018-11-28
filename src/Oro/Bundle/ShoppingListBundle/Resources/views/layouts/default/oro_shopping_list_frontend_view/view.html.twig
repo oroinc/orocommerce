@@ -176,7 +176,7 @@
             }) }}>
                 <div class="shopping-list-line-items__header">
                     <div class="shopping-list-line-items__header-label">{{ 'oro.frontend.shoppinglist.view.item.lable'|trans }}</div>
-                    <div class="shopping-list-line-items__header-label">{{ 'oro.frontend.shoppinglist.view.subtotal.lable'|trans }}</div>
+                    <div class="shopping-list-line-items__header-label">{{ 'oro.frontend.shoppinglist.view.price.label'|trans }}</div>
                 </div>
                 {% for lineItem in lineItems %}
                     <div class="shopping-list-line-items__item-wrapper">
@@ -503,11 +503,10 @@
 
     {% if matrixForm != 'none' %}
         {% set moduleOptions = moduleOptions|merge({
-            route: 'oro_shopping_list_frontend_remove_product',
-            requestMethod: 'POST',
+            route: 'oro_shopping_list_frontend_remove_line_item',
+            requestMethod: 'DELETE',
             routeParams: {
-                'productId': mainProduct.id,
-                'shoppingListId': shoppingList.id
+                'lineItemId': lineItem.id
             }
         }) %}
     {% else %}
@@ -543,17 +542,17 @@
             </td>
         </tr>
     {% endif %}
-    {% set errorPath = 'product.' ~ lineItem.productSku %}
+    {% set errorPath = 'product.' ~ lineItem.productSku ~ '.' ~ lineItem.productUnitCode %}
     {% if parent.lineItemErrors is iterable and parent.lineItemErrors[errorPath] is defined and parent.lineItemErrors[errorPath] is iterable %}
     {% for error in parent.lineItemErrors[errorPath] %}
     <div class="shopping-list-line-items__error">
-        <div id="product-error-{{ lineItem.productSku }}"></div>
+        <div id="product-error-{{ lineItem.productSku }}-{{ lineItem.productUnitCode }}"></div>
     </div>
     <script>
         require(['oroui/js/messenger'], function(messenger) {
             messenger.notificationFlashMessage('error', '{{ error.message }}', {
                 style: 'validation',
-                container: $('#product-error-{{ lineItem.productSku }}')
+                container: $('#product-error-{{ lineItem.productSku }}-{{ lineItem.productUnitCode }}')
             })
         });
     </script>

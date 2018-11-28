@@ -16,6 +16,7 @@ use Oro\Bundle\TestFrameworkBundle\Behat\Element\Form;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\OroPageObjectAware;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
+use Symfony\Component\DomCrawler\Crawler;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -42,7 +43,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     /**
      * Walk through menus and navigations to get Checkout step page of given shopping list name
      *
-     * @When /^Buyer is on Checkout step on (?P<shoppingListName>[\w\s]+)$/
+     * @When /^Buyer is on Checkout step on "(?P<shoppingListName>[\w\s]+)"$/
      */
     public function buyerIsOnShippingMethodCheckoutStep($shoppingListName)
     {
@@ -303,5 +304,41 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         $saveLink = $this->getPage()->find('css', '.oro-modal-normal .ok.btn-primary');
         self::assertNotNull($saveLink, "Can't find modal window or 'Save' button");
         $saveLink->click();
+    }
+
+    /**
+     * Assert product shipping options
+     * Example: And I should see following product shipping options:
+     *            | item | 9 lbs | 9 x 8 x 6 cm | parcel |
+     *            | set  | 3 lbs | 2 x 5 x 3 cm | parcel |
+     *
+     * @param TableNode $table
+     *
+     * @Then /^(?:|I )should see following product shipping options:$/
+     */
+    public function iShouldSeeFollowingAdditionalUnits(TableNode $table)
+    {
+        $element = $this->getPage()->find('xpath', '//table[contains(@class, "shipping-options-result-grid")]/tbody');
+
+        self::assertNotNull($element, 'Shipping options table not found on the page.');
+
+        $crawler = new Crawler($element->getHtml());
+        $results = [];
+        $crawler->filter('tr')->each(function (Crawler $tr) use (&$results) {
+            $row = [];
+            $tr->filter('td')->each(function (Crawler $td) use (&$row) {
+                $row[] = trim($td->filter('td')->first()->text());
+            });
+
+            $results[] = $row;
+        });
+
+        foreach ($table->getRows() as $key => $row) {
+            foreach ($row as &$value) {
+                $value = trim($value);
+            }
+
+            self::assertEquals($results[$key], $row, sprintf('Result "%s" not found', $table->getRowAsString($key)));
+        }
     }
 }

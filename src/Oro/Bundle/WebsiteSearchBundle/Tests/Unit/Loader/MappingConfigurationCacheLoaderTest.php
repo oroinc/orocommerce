@@ -73,32 +73,46 @@ class MappingConfigurationCacheLoaderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetConfigurationWhenDebugIsOffAndNoCacheExists()
     {
-        $this->setCacheExists(false);
         $this->initConfigurationCacheLoader(false);
         $this->configureResourcesAndHash();
+
+        $this->cacheProvider
+            ->expects($this->once())
+            ->method('fetch')
+            ->with(MappingConfigurationCacheLoader::CACHE_KEY_HASH)
+            ->willReturn(false);
 
         $this->assertEquals(self::$configuration, $this->configurationCacheLoader->getConfiguration());
     }
 
     public function testGetConfigurationWhenDebugIsOffAndCacheExists()
     {
-        $this->setCacheExists(true);
         $this->initConfigurationCacheLoader(false);
 
         $this->cacheProvider
-            ->expects($this->once())
+            ->expects($this->exactly(2))
             ->method('fetch')
-            ->with(MappingConfigurationCacheLoader::CACHE_KEY_CONFIGURATION)
-            ->willReturn(self::$configuration);
+            ->willReturnMap([
+                [MappingConfigurationCacheLoader::CACHE_KEY_HASH, self::GET_HASH_RESULT],
+                [MappingConfigurationCacheLoader::CACHE_KEY_CONFIGURATION, self::$configuration]
+            ]);
+        $this->cacheProvider
+            ->expects($this->never())
+            ->method('saveMultiple');
 
         $this->assertEquals(self::$configuration, $this->configurationCacheLoader->getConfiguration());
     }
 
     public function testGetConfigurationWhenDebugIsOnAndNoCacheExists()
     {
-        $this->setCacheExists(false);
         $this->initConfigurationCacheLoader(true);
         $this->configureResourcesAndHash();
+
+        $this->cacheProvider
+            ->expects($this->once())
+            ->method('fetch')
+            ->with(MappingConfigurationCacheLoader::CACHE_KEY_HASH)
+            ->willReturn(false);
 
         $this->cacheProvider
             ->expects($this->once())
@@ -113,7 +127,6 @@ class MappingConfigurationCacheLoaderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetConfigurationWhenDebugIsOnAndCacheExistsAndHashNotMatchStoredHash()
     {
-        $this->setCacheExists(true);
         $this->initConfigurationCacheLoader(true);
 
         $this->cacheProvider
@@ -151,7 +164,6 @@ class MappingConfigurationCacheLoaderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetConfigurationDataWhenDebugIsOnAndCacheExistsAndHashMatches()
     {
-        $this->setCacheExists(true);
         $this->initConfigurationCacheLoader(true);
         $this->configureResourcesAndHash();
 
@@ -185,12 +197,19 @@ class MappingConfigurationCacheLoaderTest extends \PHPUnit_Framework_TestCase
         $this->configurationCacheLoader->clearCache();
     }
 
-    public function testWarmUpCache()
+    /**
+     * @dataProvider warmUpCacheWhenNoCachedHashProvider
+     */
+    public function testWarmUpCacheWhenNoCachedHash($debug)
     {
-        $this->setCacheExists(false);
-        $this->initConfigurationCacheLoader(false);
+        $this->initConfigurationCacheLoader($debug);
         $this->configureResourcesAndHash();
 
+        $this->cacheProvider
+            ->expects($this->once())
+            ->method('fetch')
+            ->with(MappingConfigurationCacheLoader::CACHE_KEY_HASH)
+            ->willReturn(false);
         $this->cacheProvider
             ->expects($this->exactly(2))
             ->method('delete')
@@ -209,34 +228,16 @@ class MappingConfigurationCacheLoaderTest extends \PHPUnit_Framework_TestCase
         $this->configurationCacheLoader->warmUpCache();
     }
 
-    public function testWarmUpCacheDevMode()
+    public function warmUpCacheWhenNoCachedHashProvider()
     {
-        $this->setCacheExists(false);
-        $this->initConfigurationCacheLoader(true);
-        $this->configureResourcesAndHash();
-
-        $this->cacheProvider
-            ->expects($this->exactly(2))
-            ->method('delete')
-            ->withConsecutive(
-                [MappingConfigurationCacheLoader::CACHE_KEY_HASH],
-                [MappingConfigurationCacheLoader::CACHE_KEY_CONFIGURATION]
-            );
-
-        $this->cacheProvider
-            ->expects($this->once())
-            ->method('saveMultiple')
-            ->with([
-                MappingConfigurationCacheLoader::CACHE_KEY_HASH => self::GET_HASH_RESULT,
-                MappingConfigurationCacheLoader::CACHE_KEY_CONFIGURATION => self::$configuration,
-            ]);
-
-        $this->configurationCacheLoader->warmUpCache();
+        return [
+            ['debug' => false],
+            ['debug' => true]
+        ];
     }
 
     public function testGetConfigurationLocalCache()
     {
-        $this->setCacheExists(true);
         $this->initConfigurationCacheLoader(true);
         $this->configureResourcesAndHash();
 
@@ -282,19 +283,7 @@ class MappingConfigurationCacheLoaderTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    /**
-     * @param bool $cacheExists
-     */
-    private function setCacheExists($cacheExists)
-    {
-        $this->cacheProvider
-            ->expects($this->any())
-            ->method('contains')
-            ->with(MappingConfigurationCacheLoader::CACHE_KEY_HASH)
-            ->willReturn($cacheExists);
-    }
-
-    private function configureResourcesAndHash()
+    private function configureResourcesAndHash($getHashCallCount = 1)
     {
         $resources = [
             new CumulativeResourceInfo('bundleName', 'name', 'path', ['data' => 'value']),
@@ -306,10 +295,16 @@ class MappingConfigurationCacheLoaderTest extends \PHPUnit_Framework_TestCase
             ->method('getResources')
             ->willReturn($resources);
 
-        $this->resourceHashProvider
-            ->expects($this->once())
-            ->method('getHash')
-            ->with($resources)
-            ->willReturn(self::GET_HASH_RESULT);
+        if (0 === $getHashCallCount) {
+            $this->resourceHashProvider
+                ->expects($this->never())
+                ->method('getHash');
+        } else {
+            $this->resourceHashProvider
+                ->expects($this->exactly($getHashCallCount))
+                ->method('getHash')
+                ->with($resources)
+                ->willReturn(self::GET_HASH_RESULT);
+        }
     }
 }

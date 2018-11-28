@@ -65,6 +65,7 @@ class LocalizedSlugTypeTest extends FormIntegrationTestCase
                 function (array $options) {
                     $this->assertEquals('oro_api_slugify_slug', $options['slugify_route']);
                     $this->assertTrue($options['slug_suggestion_enabled']);
+                    self::assertTrue($options['exclude_parent_localization']);
 
                     return true;
                 }

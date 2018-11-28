@@ -474,6 +474,7 @@ services:
             - [setAclHelper,["@oro_security.acl_helper"]]
             - [setFrontendHelper,["@oro_frontend.request.frontend_helper"]]
             - [setSearchRepository,["@oro_product.website_search.repository.product"]]
+            - [setLocalizationHelper,["@oro_locale.helper.localization"]]
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: "oro_product_visibility_limited" }
 
@@ -989,6 +990,7 @@ services:
         parent: oro_entity_config.block_type.abstract_attribute_block_type_mapper
         calls:
             - [addBlockTypeUsingMetadata, ['%oro_product.entity.product_image.class%', 'attribute_product_images']]
+            - [addBlockTypeUsingMetadata, ['%oro_product.entity.brand.class%', 'attribute_product_brand']]
         tags:
             - { name: oro_entity_config.layout.attribute_block_type_mapper }
 
@@ -1372,6 +1374,12 @@ services:
         tags:
             - { name: oro_entity.name_provider, priority: 100 }
 
+    oro_product.provider.product_entity_name:
+        class: 'Oro\Bundle\ProductBundle\Provider\ProductEntityNameProvider'
+        public: false
+        tags:
+            - { name: oro_entity.name_provider, priority: 100 }
+
     oro_product.provider.serialized_field_provider:
         class: 'Oro\Bundle\ProductBundle\Provider\SerializedFieldProvider'
         decorates: oro_entity_config.provider.serialized_field_provider
@@ -1471,6 +1479,14 @@ services:
         arguments:
             - "@oro_config.manager"
             - "@oro_frontend.request.frontend_helper"
+        calls:
+            - ['setDBQueryBuilderModifier', ['@oro_product.model.restrict_display_product_variants_query_builder_modifier']]
         tags:
             - { name: kernel.event_listener, event: oro_product.product_search_query.restriction, method: onSearchQuery }
             - { name: kernel.event_listener, event: oro_product.product_db_query.restriction, method: onDBQuery }
+
+    oro_product.model.restrict_display_product_variants_query_builder_modifier:
+        class: 'Oro\Bundle\ProductBundle\Model\RestrictProductVariationsBuilderModifier'
+        public: false
+        arguments:
+            - '@oro_entity.doctrine_helper'

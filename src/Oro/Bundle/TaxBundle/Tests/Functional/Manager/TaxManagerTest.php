@@ -66,6 +66,8 @@ class TaxManagerTest extends WebTestCase
         }
 
         $this->prepareDatabase($databaseBefore);
+        //As configuration loaded dynamically we need to clear cache provider to not to cache old config settings
+        $this->getContainer()->get('oro_tax.taxation_provider.cache')->deleteAll();
 
         $this->executeMethod($method, $this->getReference($reference), $expectedResult);
 

@@ -6,8 +6,14 @@ Feature: Product attribute image
   As an Administrator
   I need to be able to add product attribute
 
+  Scenario: Create different window session
+    Given sessions active:
+      | Admin | first_session  |
+      | Buyer | second_session |
+
   Scenario: Create product attribute
-    Given I login as administrator
+    Given I proceed as the Admin
+    And I login as administrator
     And I go to Products/ Product Attributes
     When I click "Create Attribute"
     And I fill form with:
@@ -41,5 +47,25 @@ Feature: Product attribute image
     When I click "Edit" on row "SKU123" in grid
     And I fill "Product Form" with:
       | ImageField | cat1.jpg |
+    And I set Images with:
+      | File     | Main  | Listing | Additional |
+      | cat1.jpg | 1     | 1       | 1          |
     And I save and close form
     Then I should see "Product has been saved" flash message
+
+  Scenario: Check product image zoom in additional tabs
+    Given I go to Products/ Product Families
+    When I click "Edit" on row "default_family" in grid
+    And fill "Product Family Form" with:
+      | Attribute Groups Attributes SEO | [Images] |
+      | Attribute Groups Visible SEO    | true     |
+    And I save and close form
+    Then I should see "Successfully updated" flash message
+    And I proceed as the Buyer
+    And I login as AmandaRCole@example.org buyer
+    And I type "SKU123" in "search"
+    And I click "Search Button"
+    And I click "View Details" for "SKU123" product
+    And I click "Copyright"
+    And I hover on "Product Main Image"
+    And I check element "Zoom Container" has width "564"

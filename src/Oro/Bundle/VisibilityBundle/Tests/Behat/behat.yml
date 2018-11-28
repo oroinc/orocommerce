@@ -37,6 +37,9 @@ oro_behat_extension:
           Visibility To Customers First:
             locator: '#CustomerCategoryVisibility tr:contains(first) .grid-body-cell-visibility select'
             type: css
+          Visibility To Customers Second:
+            locator: '#CustomerCategoryVisibility tr:contains(second) .grid-body-cell-visibility select'
+            type: css
           Visibility To Customer First Group:
             locator: '#CustomerGroupCategoryVisibility tr:contains(first) .grid-body-cell-visibility select'
             type: css

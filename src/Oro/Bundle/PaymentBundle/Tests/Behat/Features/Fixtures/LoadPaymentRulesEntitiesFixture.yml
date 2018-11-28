@@ -1,0 +1,52 @@
+Oro\Bundle\RuleBundle\Entity\Rule:
+    paymentRule1:
+        name: 'paymentRule1'
+        enabled: true
+        sortOrder: 1
+    paymentRule2:
+        name: 'paymentRule2'
+        enabled: true
+        sortOrder: 2
+
+Oro\Bundle\PaymentBundle\Entity\PaymentMethodConfig:
+    paymentMethodConfig1:
+        type: '<("payment_term_".@paymentTermIntegration->id)>'
+    paymentMethodConfig2:
+        type: '<("payment_term_".@paymentTermIntegration->id)>'
+
+Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule:
+    paymentMethodsConfigsRule1:
+        rule: '@paymentRule1'
+        methodConfigs: ['@paymentMethodConfig1']
+        currency: 'USD'
+        organization: '@organization'
+    paymentMethodsConfigsRule2:
+        rule: '@paymentRule2'
+        methodConfigs: ['@paymentMethodConfig2']
+        currency: 'USD'
+        organization: '@organization'
+
+Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm:
+    paymentTerm1:
+        label: net 10
+Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm:
+    paymentTerm1:
+        label: net 20
+
+Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRuleDestination:
+    paymentMethodsConfigsRuleDestination1:
+        methodsConfigsRule: '@paymentMethodsConfigsRule1'
+        country: '@united_states'
+        region: '@florida'
+    paymentMethodsConfigsRuleDestination2:
+        methodsConfigsRule: '@paymentMethodsConfigsRule2'
+        country: '@germany'
+        region: '@berlin'
+
+Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRuleDestinationPostalCode:
+    paymentMethodsConfigsRuleDestinationPostalCode1:
+        destination: '@paymentMethodsConfigsRuleDestination1'
+        name: '10001'
+    paymentMethodsConfigsRuleDestinationPostalCode2:
+        destination: '@paymentMethodsConfigsRuleDestination2'
+        name: '10002'

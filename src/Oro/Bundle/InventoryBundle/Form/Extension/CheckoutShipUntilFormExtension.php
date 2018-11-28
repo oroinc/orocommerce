@@ -58,8 +58,12 @@ class CheckoutShipUntilFormExtension extends AbstractTypeExtension
      */
     public function configureOptions(OptionsResolver $resolver)
     {
+        $resolver->setDefault('_products', function (Options $options) {
+            return $this->getProducts($options);
+        });
+
         $resolver->setDefault('disabled', function (Options $options) {
-            foreach ($this->getProducts($options) as $product) {
+            foreach ($options['_products'] as $product) {
                 if ($this->provider->isUpcoming($product) && !$this->provider->getAvailabilityDate($product)) {
                     return true;
                 }
@@ -68,7 +72,7 @@ class CheckoutShipUntilFormExtension extends AbstractTypeExtension
         });
 
         $resolver->setDefault('minDate', function (Options $options) {
-            $latestDate = $this->provider->getLatestAvailabilityDate($this->getProducts($options));
+            $latestDate = $this->provider->getLatestAvailabilityDate($options['_products']);
             return $latestDate ? $this->dateTimeFormatter->formatDate($latestDate) : '0';
         });
     }

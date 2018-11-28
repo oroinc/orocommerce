@@ -49,6 +49,34 @@ class RedirectRepository extends EntityRepository
     }
 
     /**
+     * @param string $from
+     * @param ScopeCriteria $scopeCriteria
+     * @return null|Redirect
+     */
+    public function findByPrototype($from, ScopeCriteria $scopeCriteria)
+    {
+        $qb = $this->createQueryBuilder('redirect');
+        $qb->leftJoin('redirect.scopes', 'scope', Join::WITH)
+            ->where($qb->expr()->eq('redirect.fromPrototype', ':fromPrototype'))
+            ->setParameter('fromPrototype', $from);
+
+        $qb->addSelect('scope.id as matchedScopeId');
+        $scopeCriteria->applyToJoinWithPriority($qb, 'scope');
+
+        $results = $qb->getQuery()->getResult();
+        foreach ($results as $result) {
+            /** @var Redirect $redirect */
+            $redirect = $result[0];
+            $matchedScopeId = $result['matchedScopeId'];
+            if ($matchedScopeId || $redirect->getScopes()->isEmpty()) {
+                return $redirect;
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * @param Slug $slug
      */
     public function updateRedirectsBySlug(Slug $slug)

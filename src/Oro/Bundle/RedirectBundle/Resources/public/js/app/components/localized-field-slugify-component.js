@@ -33,9 +33,6 @@ define(function(require) {
             } else if ($source.prop('type') === 'checkbox') {
                 $target.prop('checked', $source.prop('checked'));
                 $target.change();
-            } else if ($source.is('select')) {
-                $target.val($source.val());
-                $target.change();
             }
         },
 

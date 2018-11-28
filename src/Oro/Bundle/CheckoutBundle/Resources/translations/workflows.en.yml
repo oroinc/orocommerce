@@ -31,8 +31,12 @@ oro:
                     label: 'Allow manual source entity removal'
                 disallow_billing_address_edit:
                     label: 'Disallow billing address edit'
+                disallow_save_billing_address_edit:
+                    label: 'Disallow save billing address'
                 disallow_shipping_address_edit:
                     label: 'Disallow shipping address edit'
+                disallow_save_shipping_address_edit:
+                    label: 'Disallow save shipping address'
                 disallow_shipping_method_edit:
                     label: 'Disallow shipping method edit'
                 remove_source:
@@ -83,6 +87,8 @@ oro:
                     label: 'Visitor'
                 visitor_email:
                     label: 'Email'
+                disallow_visitor_email:
+                    label: 'Disallow Visitor Email'
             transition:
                 __start__:
                     label: 'Start Checkout (System)'
@@ -226,8 +232,12 @@ oro:
                     label: 'Allow manual source entity removal'
                 disallow_billing_address_edit:
                     label: 'Disallow billing address edit'
+                disallow_save_billing_address_edit:
+                    label: 'Disallow save billing address'
                 disallow_shipping_address_edit:
                     label: 'Disallow shipping address edit'
+                disallow_save_shipping_address_edit:
+                    label: 'Disallow save shipping address'
                 disallow_shipping_method_edit:
                     label: 'Disallow shipping method edit'
                 remove_source:
@@ -252,6 +262,8 @@ oro:
                     label: 'Visitor'
                 visitor_email:
                     label: 'Email'
+                disallow_visitor_email:
+                    label: 'Disallow Visitor Email'
             transition:
                 __start__:
                     label: 'Start Checkout (System)'
@@ -275,6 +287,11 @@ oro:
                     warning_message: ''
                 create_order:
                     label: 'Submit Order'
+                    button_label: ''
+                    button_title: ''
+                    warning_message: ''
+                purchase:
+                    label: 'Purchase'
                     button_label: ''
                     button_title: ''
                     warning_message: ''

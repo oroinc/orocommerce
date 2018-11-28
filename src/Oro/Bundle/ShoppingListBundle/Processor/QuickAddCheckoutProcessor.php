@@ -135,7 +135,7 @@ class QuickAddCheckoutProcessor extends AbstractShoppingListQuickAddProcessor
 
         if ($this->shoppingListLimitManager->isReachedLimit()) {
             $shoppingList = $this->shoppingListManager->edit(
-                $this->shoppingListManager->getCurrent(),
+                $this->shoppingListManager->getCurrent($create = true),
                 $this->getShoppingListLabel()
             );
             $this->shoppingListManager->removeLineItems($shoppingList);

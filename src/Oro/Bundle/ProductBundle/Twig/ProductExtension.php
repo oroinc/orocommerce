@@ -146,6 +146,10 @@ class ProductExtension extends \Twig_Extension
      */
     private function getRelatedItemsIds(Product $product, FinderStrategyInterface $finderStrategy)
     {
+        if (method_exists($finderStrategy, 'findIds')) {
+            return $finderStrategy->findIds($product, false);
+        }
+
         /** @var Product[] $related */
         $related = $finderStrategy->find($product, false, null);
 

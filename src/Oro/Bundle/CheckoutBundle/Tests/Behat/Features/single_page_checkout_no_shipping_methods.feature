@@ -9,19 +9,16 @@
 @fixture-OroCheckoutBundle:CheckoutShoppingListFixture.yml
 @fixture-OroCheckoutBundle:CheckoutQuoteFixture.yml
 @fixture-OroCheckoutBundle:InventoryLevel.yml
+@skip
 
 Feature: Single Page Checkout No Shipping Methods
   In order to complete single page checkout process
   As a Customer User
   I want to proceed checkout after "No shipping methods available" error is fixed by choosing suitable Shipping Address
 
-  Scenario: Enable Single Page Checkout Workflow
+  Scenario: Feature Background
     Given There is USD currency in the system configuration
-    And I login as administrator
-    And go to System/Workflows
-    When I click "Activate" on row "Single Page Checkout" in grid
-    And I click "Activate"
-    Then I should see "Workflow activated" flash message
+    And I activate "Single Page Checkout" workflow
 
   Scenario: Create order from Shopping List 1 and verify quantity
     Given AmandaRCole@example.org customer user has Buyer role

@@ -271,7 +271,7 @@ define(function(require) {
 
         updateUI: function(triggerBlur) {
             if (triggerBlur) {
-                this.getElement('sku').trigger('blur');
+                this.getElement('sku').trigger('blur', [this.model.attributes]);
             }
 
             this.getElement('unit').inputWidget('refresh');

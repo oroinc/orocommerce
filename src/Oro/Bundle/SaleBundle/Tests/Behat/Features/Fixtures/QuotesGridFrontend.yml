@@ -1,0 +1,82 @@
+include:
+    - '@OroSaleBundle:QuotesGrid.yml'
+    - '@OroCustomerBundle:CustomerUserFixture.yml'
+
+Oro\Bundle\SaleBundle\Entity\Quote:
+    quote1:
+        customer: '@customer1'
+        customerUser: '@amanda'
+        internal_status: 'sent_to_customer'
+
+    quote2:
+        customer: '@customer1'
+        customerUser: '@amanda'
+        internal_status: 'sent_to_customer'
+
+    quote3:
+        customer: '@customer1'
+        customerUser: '@amanda'
+        internal_status: 'sent_to_customer'
+
+    quote4:
+        customer: '@customer1'
+        customerUser: '@amanda'
+        internal_status: 'sent_to_customer'
+
+    quote5:
+        customer: '@customer1'
+        customerUser: '@amanda'
+        internal_status: 'sent_to_customer'
+
+    quote6:
+        customer: '@customer1'
+        customerUser: '@amanda'
+        internal_status: 'sent_to_customer'
+
+    quote7:
+        customer: '@customer1'
+        customerUser: '@nancy'
+        internal_status: 'open'
+
+    quote8:
+        customer: '@customer1'
+        customerUser: '@amanda'
+        internal_status: 'sent_to_customer'
+
+    quote9:
+        customer: '@customer1'
+        customerUser: '@amanda'
+        internal_status: 'sent_to_customer'
+
+    quote10:
+        customer: '@customer1'
+        customerUser: '@amanda'
+        internal_status: 'sent_to_customer'
+        customer_status: 'not_approved'
+
+    quote11:
+        customer: '@customer1'
+        customerUser: '@amanda'
+        internal_status: 'sent_to_customer'
+
+    quote12:
+        customer: '@customer1'
+        customerUser: '@amanda'
+        internal_status: 'sent_to_customer'
+        validUntil: '<dateTimeBetween("today +1 day", "today +1 day")>'
+
+    quote13:
+        customer: '@customer1'
+        customerUser: '@amanda'
+        internal_status: 'sent_to_customer'
+        shipUntil: '<dateTimeBetween("today +1 day", "today +1 day")>'
+
+Oro\Bundle\WorkflowBundle\Entity\WorkflowItem:
+    quote{1..13}WorkflowItem:
+        workflowName: 'b2b_quote_backoffice_approvals'
+        definition: '@workflow_b2b_quote_backoffice_approvals'
+        currentStep: '@workflow_b2b_quote_backoffice_approvals_sent_to_customer'
+        # Cannot use '@quote15->id' because quotes are not yet persisted to DB at this point.
+        entityId: '<current()>'
+        entityClass: 'Oro\Bundle\SaleBundle\Entity\Quote'
+        serializedData: '[]'

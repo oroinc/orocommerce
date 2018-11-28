@@ -278,6 +278,9 @@ class ProductUpdateHandlerTest extends UpdateHandlerTest
         $expected = $this->assertSaveData($form, $entity);
         $expected['savedId'] = 1;
 
+        $this->relatedItemsHandler->expects($this->never())
+            ->method('process');
+
         $result = $this->handler->handleUpdate(
             $entity,
             $form,

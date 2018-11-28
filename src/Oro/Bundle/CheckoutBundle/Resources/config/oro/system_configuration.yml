@@ -13,6 +13,8 @@ system_configuration:
             title: oro.checkout.system_configuration.groups.guest_checkout.title
         guest_checkout_owner_section:
             title: oro.checkout.system_configuration.groups.guest_checkout_owner.title
+        checkout_increase_performance:
+            title: oro.checkout.system_configuration.groups.checkout_increase_performance.title
 
     fields:
         oro_checkout.frontend_open_orders_separate_page:
@@ -40,6 +42,13 @@ system_configuration:
                 label: oro.checkout.system_configuration.fields.default_guest_checkout_owner.title
                 tooltip: oro.checkout.system_configuration.fields.default_guest_checkout_owner.tooltip
                 required: true
+        oro_checkout.single_page_checkout_increase_performance:
+            data_type: boolean
+            type: oro_config_checkbox
+            priority: 100
+            options:
+                label: oro.checkout.system_configuration.fields.single_page_checkout_increase_performance.title
+                tooltip: oro.checkout.system_configuration.fields.single_page_checkout_increase_performance.tooltip
 
     tree:
         system_configuration:
@@ -55,6 +64,9 @@ system_configuration:
                                     guest_checkout_owner_section:
                                         children:
                                             - oro_checkout.default_guest_checkout_owner
+                                    checkout_increase_performance:
+                                        children:
+                                            - oro_checkout.single_page_checkout_increase_performance
                             orders_history:
                                 children:
                                     orders_history_open_orders:

@@ -1,5 +1,6 @@
 {% block oro_pricing_product_price_widget %}
-    <div data-page-component-module="oropricing/js/app/components/price-list-currency-limitations-component">
+    <div data-page-component-module="oropricing/js/app/components/price-list-currency-limitations-component"
+         {% if form.vars.value is not empty %}data-validation-ignore{# item is only validated once it got changed #}{% endif %}>
         <div class="row">
             <div class="small-row">
                 <div>

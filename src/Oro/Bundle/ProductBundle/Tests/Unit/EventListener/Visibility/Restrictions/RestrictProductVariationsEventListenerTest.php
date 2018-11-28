@@ -10,6 +10,7 @@ use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\Event\ProductDBQueryRestrictionEvent;
 use Oro\Bundle\ProductBundle\Event\ProductSearchQueryRestrictionEvent;
 use Oro\Bundle\ProductBundle\EventListener\Visibility\Restrictions\RestrictProductVariationsEventListener;
+use Oro\Bundle\SearchBundle\Query\Modifier\QueryBuilderModifierInterface;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
@@ -21,6 +22,9 @@ class RestrictProductVariationsEventListenerTest extends \PHPUnit_Framework_Test
     /** @var FrontendHelper | \PHPUnit_Framework_MockObject_MockObject */
     private $frontendHelper;
 
+    /** @var QueryBuilderModifierInterface | \PHPUnit_Framework_MockObject_MockObject */
+    private $dbQueryBuilderModifier;
+
     /** @var RestrictProductVariationsEventListener */
     private $listener;
 
@@ -31,11 +35,14 @@ class RestrictProductVariationsEventListenerTest extends \PHPUnit_Framework_Test
     {
         $this->configManager = $this->createMock(ConfigManager::class);
         $this->frontendHelper = $this->createMock(FrontendHelper::class);
+        $this->dbQueryBuilderModifier = $this->createMock(QueryBuilderModifierInterface::class);
 
         $this->listener = new RestrictProductVariationsEventListener(
             $this->configManager,
             $this->frontendHelper
         );
+
+        $this->listener->setDBQueryBuilderModifier($this->dbQueryBuilderModifier);
     }
 
     /**
@@ -102,23 +109,14 @@ class RestrictProductVariationsEventListenerTest extends \PHPUnit_Framework_Test
         $qb = $this->createMock(QueryBuilder::class);
 
         if ($isRestrictionApplicable) {
-            $qb
+            $this->dbQueryBuilderModifier
                 ->expects($this->once())
-                ->method('getRootAliases')
-                ->willReturn(['product']);
-
-            $qb
-                ->expects($this->once())
-                ->method('andWhere')
-                ->with('product.parentVariantLinks IS EMPTY');
+                ->method('modify')
+                ->with($qb);
         } else {
-            $qb
+            $this->dbQueryBuilderModifier
                 ->expects($this->never())
-                ->method('getRootAliases');
-
-            $qb
-                ->expects($this->never())
-                ->method('andWhere');
+                ->method('modify');
         }
 
         $event = new ProductDBQueryRestrictionEvent($qb, new ParameterBag());

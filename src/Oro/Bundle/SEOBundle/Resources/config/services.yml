@@ -451,3 +451,13 @@ services:
             - '@oro_seo.manager.robots_txt_file_manager'
             - '@oro_config.manager'
             - '@oro_seo.sitemap.provider.website_access_denied_urls_provider_registry'
+
+    oro_seo.event_listener.product_duplicate:
+        class: Oro\Bundle\SEOBundle\EventListener\ProductDuplicateListener
+        arguments:
+            - '@property_accessor'
+            - ['meta_titles', 'meta_descriptions', 'meta_keywords']
+        calls:
+            - [setDoctrineHelper, ['@oro_entity.doctrine_helper']]
+        tags:
+            - { name: kernel.event_listener, event: oro_product.product.duplicate.after, method: onDuplicateAfter }

@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\TaxBundle\Tests\Unit\Manager;
 
+use Doctrine\Common\Cache\CacheProvider;
 use Oro\Bundle\TaxBundle\Event\TaxEventDispatcher;
 use Oro\Bundle\TaxBundle\Model\Taxable;
 use Oro\Bundle\TaxBundle\Entity\TaxValue;
@@ -37,6 +38,9 @@ class TaxManagerTest extends \PHPUnit_Framework_TestCase
     /** @var bool */
     protected $taxationEnabled = true;
 
+    /** @var CacheProvider|\PHPUnit_Framework_MockObject_MockObject */
+    protected $cacheProvider;
+
     protected function setUp()
     {
         $this->factory = $this->getMockBuilder('Oro\Bundle\TaxBundle\Factory\TaxFactory')
@@ -61,12 +65,16 @@ class TaxManagerTest extends \PHPUnit_Framework_TestCase
                 return $this->taxationEnabled;
             });
 
+        $this->cacheProvider = $this->createMock(CacheProvider::class);
+
         $this->manager = new TaxManager(
             $this->factory,
             $this->eventDispatcher,
             $this->taxValueManager,
             $this->settingsProvider
         );
+
+        $this->manager->setCacheProvider($this->cacheProvider);
     }
 
     /**
@@ -129,10 +137,38 @@ class TaxManagerTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($taxResult, $result);
     }
 
-    public function testGetTaxNewResult()
+    /**
+     * @param $objectToTax
+     * @return Taxable
+     */
+    private function configureCacheProviderExpectations($objectToTax)
     {
         $taxable = new Taxable();
-        $this->factory->expects($this->exactly(2))->method('create')->willReturn($taxable);
+
+        $this->factory->expects($this->exactly(1))->method('create')->willReturn($taxable);
+        $cacheKey = md5(serialize($objectToTax));
+
+        $this->cacheProvider->expects($this->exactly(2))
+            ->method('contains')
+            ->with($cacheKey)
+            ->willReturnOnConsecutiveCalls(false, true);
+
+        $this->cacheProvider->expects($this->once())
+            ->method('save')
+            ->with($cacheKey, $taxable);
+
+        $this->cacheProvider->expects($this->once())
+            ->method('fetch')
+            ->with($cacheKey)
+            ->willReturn($taxable);
+
+        return $taxable;
+    }
+
+    public function testGetTaxNewResult()
+    {
+        $objectToTax = new \stdClass();
+        $taxable = $this->configureCacheProviderExpectations($objectToTax);
 
         $this->taxValueManager->expects($this->never())->method($this->anything());
 
@@ -142,7 +178,7 @@ class TaxManagerTest extends \PHPUnit_Framework_TestCase
                     function ($dispatchedTaxable) use ($taxable) {
                         /** @var Taxable $dispatchedTaxable */
                         $this->assertInstanceOf('Oro\Bundle\TaxBundle\Model\Taxable', $dispatchedTaxable);
-                        $this->assertSame($taxable, $dispatchedTaxable);
+                        $this->assertEquals($taxable, $dispatchedTaxable);
 
                         /** @var Result $dispatchedResult */
                         $dispatchedResult = $dispatchedTaxable->getResult();
@@ -156,7 +192,7 @@ class TaxManagerTest extends \PHPUnit_Framework_TestCase
                 )
             );
 
-        $result = $this->manager->getTax(new \stdClass());
+        $result = $this->manager->getTax($objectToTax);
         $this->assertInstanceOf('Oro\Bundle\TaxBundle\Model\Result', $result);
         $this->assertEquals(20, $result->getUnit()->getExcludingTax());
         $this->assertEquals(null, $result->getUnit()->getIncludingTax());
@@ -168,10 +204,11 @@ class TaxManagerTest extends \PHPUnit_Framework_TestCase
         $taxResult = new Result([Result::ROW => new ResultElement([ResultElement::EXCLUDING_TAX => 10])]);
         $taxValue->setResult($taxResult);
 
-        $taxable = new Taxable();
+        $objectToTax = new \stdClass();
+        $taxable = $this->configureCacheProviderExpectations($objectToTax);
+        $taxable->setResult($taxResult);
         $taxable->setClassName('stdClass');
         $taxable->setIdentifier(1);
-        $this->factory->expects($this->exactly(2))->method('create')->willReturn($taxable);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|TaxTransformerInterface $transformer */
         $transformer = $this->createMock('Oro\Bundle\TaxBundle\Transformer\TaxTransformerInterface');
@@ -191,7 +228,7 @@ class TaxManagerTest extends \PHPUnit_Framework_TestCase
                     function ($dispatchedTaxable) use ($taxable, $taxResult) {
                         /** @var Taxable $dispatchedTaxable */
                         $this->assertInstanceOf('Oro\Bundle\TaxBundle\Model\Taxable', $dispatchedTaxable);
-                        $this->assertSame($taxable, $dispatchedTaxable);
+                        $this->assertEquals($taxable, $dispatchedTaxable);
 
                         /** @var Result $dispatchedResult */
                         $dispatchedResult = $dispatchedTaxable->getResult();
@@ -207,7 +244,7 @@ class TaxManagerTest extends \PHPUnit_Framework_TestCase
                 )
             );
 
-        $result = $this->manager->getTax(new \stdClass());
+        $result = $this->manager->getTax($objectToTax);
         $this->assertInstanceOf('Oro\Bundle\TaxBundle\Model\Result', $result);
         $this->assertEquals(20, $result->getUnit()->getExcludingTax());
         $this->assertEquals(null, $result->getUnit()->getIncludingTax());
@@ -435,16 +472,13 @@ class TaxManagerTest extends \PHPUnit_Framework_TestCase
 
     public function testCrateTaxValue()
     {
-        $entity = new \stdClass();
-
-        $taxable = new Taxable();
+        $objectToTax = new \stdClass();
+        $taxable = $this->configureCacheProviderExpectations($objectToTax);
         $taxable->setClassName('stdClass');
         $taxable->setIdentifier(1);
 
         $taxValue = new TaxValue();
         $taxValue->setResult(new Result());
-
-        $this->factory->expects($this->exactly(2))->method('create')->willReturn($taxable);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|TaxTransformerInterface $transformer */
         $transformer = $this->createMock('Oro\Bundle\TaxBundle\Transformer\TaxTransformerInterface');
@@ -473,7 +507,7 @@ class TaxManagerTest extends \PHPUnit_Framework_TestCase
             ->with($taxable->getClassName(), $taxable->getIdentifier())
             ->willReturn($taxValue);
 
-        $this->assertEquals($taxValue, $this->manager->createTaxValue($entity));
+        $this->assertEquals($taxValue, $this->manager->createTaxValue($objectToTax));
     }
 
     /**

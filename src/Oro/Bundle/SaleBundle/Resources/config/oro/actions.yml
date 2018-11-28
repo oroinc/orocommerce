@@ -208,6 +208,93 @@ operations:
                  route: 'oro_sale_quote_frontend_choice'
                  route_parameters: {id: $.quoteDemand.id}
 
+    oro_sale_frontend_guest_quote_submit_to_order:
+        label: oro.sale.quote.actions.submit_to_order
+        applications: [commerce]
+        routes:
+            - oro_sale_quote_frontend_view_guest
+        order: 20
+        acl_resource: [CREATE, entity:commerce@Oro\Bundle\CheckoutBundle\Entity\Checkout]
+        button_options:
+            icon: fa-pencil-square-o
+            class: quota-accept-btn
+        preactions:
+            - '@call_service_method':
+                service: 'oro_security.token_accessor'
+                method: 'getToken'
+                attribute: $.currentToken
+        preconditions:
+            '@and':
+                - '@quote_acceptable': $.data
+                - '@workflow_available_by_record_group':
+                    group_name: b2b_checkout_flow
+                    entity_class: Oro\Bundle\CheckoutBundle\Entity\Checkout
+                - '@or':
+                    - '@not':
+                        - '@instanceof': [$.currentToken, Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken]
+                    - '@and':
+                        - '@instanceof': [$.currentToken, Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken]
+                        - '@feature_enabled': guest_checkout
+        actions:
+            - '@tree':
+                conditions:
+                    '@instanceof': [$.currentToken, Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken]
+                actions:
+                    - '@get_active_visitor': $.visitor
+                    - '@find_entity':
+                        class: Oro\Bundle\SaleBundle\Entity\QuoteDemand
+                        attribute: $.quoteDemand
+                        where:
+                            quote: $.data
+                            visitor: $.visitor
+                    - '@tree':
+                        conditions:
+                            '@empty': $.quoteDemand
+                        actions:
+                            - '@create_entity':
+                                parameters:
+                                    attribute: $.quoteDemand
+                                    class: Oro\Bundle\SaleBundle\Entity\QuoteDemand
+                                    data:
+                                        quote: $.data
+                                        visitor: $.visitor
+                            - '@call_service_method':
+                                service: oro_sale.manager.quote_demand_manager
+                                method: recalculateSubtotals
+                                method_parameters: [$.quoteDemand]
+                            - '@flush_entity': $.quoteDemand
+            - '@tree':
+                conditions:
+                    '@not':
+                        - '@instanceof': [$.currentToken, Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken]
+                actions:
+                    - '@get_active_user': $.currentUser
+                    - '@find_entity':
+                        class: Oro\Bundle\SaleBundle\Entity\QuoteDemand
+                        attribute: $.quoteDemand
+                        where:
+                            quote: $.data
+                            customerUser: $.currentUser
+                    - '@tree':
+                        conditions:
+                            '@empty': $.quoteDemand
+                        actions:
+                            - '@create_entity':
+                                parameters:
+                                    attribute: $.quoteDemand
+                                    class: Oro\Bundle\SaleBundle\Entity\QuoteDemand
+                                    data:
+                                        quote: $.data
+                                        customerUser: $.currentUser
+                            - '@call_service_method':
+                                service: oro_sale.manager.quote_demand_manager
+                                method: recalculateSubtotals
+                                method_parameters: [$.quoteDemand]
+                            - '@flush_entity': $.quoteDemand
+            - '@redirect':
+                route: 'oro_sale_quote_frontend_choice'
+                route_parameters: {id: $.quoteDemand.id}
+
 action_groups:
     oro_sale_quote_duplicate:
         parameters:
@@ -316,7 +403,7 @@ action_groups:
                             '@not_empty': $.data.customerUser.owner
                         parameters:
                             from: $.data.customerUser.owner.email
-                            to: $.saleRep.email
+                            recipients: [$.saleRep]
                             template: 'request_no_quote_alert'
                             entity: $.data
             - '@call_method':
@@ -334,7 +421,7 @@ action_groups:
                                 - '@not_in': [$.saleRep, $.customerUserSalesReps]
                         parameters:
                             from: $.data.customerUser.owner.email
-                            to: $.saleRep.email
+                            recipients: [$.saleRep]
                             template: 'request_no_quote_alert'
                             entity: $.data
 

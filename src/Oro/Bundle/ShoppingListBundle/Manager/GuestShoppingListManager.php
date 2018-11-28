@@ -2,9 +2,7 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Manager;
 
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Component\Translation\TranslatorInterface;
-
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerVisitor;
 use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
@@ -12,6 +10,8 @@ use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class GuestShoppingListManager
 {
@@ -28,6 +28,9 @@ class GuestShoppingListManager
 
     /** @var TranslatorInterface */
     private $translator;
+
+    /** @var ConfigManager */
+    private $configManager;
 
     /**
      * @param DoctrineHelper $doctrineHelper
@@ -62,6 +65,14 @@ class GuestShoppingListManager
     }
 
     /**
+     * @param ConfigManager $configManager
+     */
+    public function setConfigManager(ConfigManager $configManager)
+    {
+        $this->configManager = $configManager;
+    }
+
+    /**
      * @param int|null $userId
      * @return null|object
      */
@@ -85,7 +96,7 @@ class GuestShoppingListManager
     }
 
     /**
-     * @return ShoppingList
+     * @return ShoppingList|null
      */
     public function getShoppingListForCustomerVisitor()
     {
@@ -117,7 +128,35 @@ class GuestShoppingListManager
             }
         }
 
-        //Create new SL if no one still exists
+        if ($this->configManager->get('oro_shopping_list.create_shopping_list_for_new_guest')) {
+            return $this->createShoppingListForCustomerVisitor();
+        }
+
+        return null;
+    }
+
+    /**
+     * @return ShoppingList
+     */
+    public function createAndGetShoppingListForCustomerVisitor()
+    {
+        $shoppingList = $this->getShoppingListForCustomerVisitor();
+
+        return $shoppingList ?: $this->createShoppingListForCustomerVisitor();
+    }
+
+    /**
+     * @return ShoppingList
+     */
+    private function createShoppingListForCustomerVisitor()
+    {
+        $token = $this->tokenStorage->getToken();
+
+        /** @var CustomerVisitor $customerVisitor */
+        $customerVisitor = $token->getVisitor();
+
+        $currentWebsite = $this->websiteManager->getCurrentWebsite();
+
         $shoppingList = new ShoppingList();
         $shoppingList
             ->setOrganization($currentWebsite->getOrganization())
@@ -136,5 +175,19 @@ class GuestShoppingListManager
         $em->flush([$shoppingList, $customerVisitor]);
 
         return $shoppingList;
+    }
+
+    /**
+     * @return array
+     */
+    public function getShoppingListsForCustomerVisitor()
+    {
+        $guestShoppingList = $this->getShoppingListForCustomerVisitor();
+
+        if ($guestShoppingList === null) {
+            return [];
+        }
+
+        return [$guestShoppingList];
     }
 }

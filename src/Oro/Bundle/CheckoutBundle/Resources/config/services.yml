@@ -18,6 +18,18 @@ services:
             - '@oro_checkout.data_provider.manager.checkout_line_items'
             - '@oro_checkout.mapper.order_mapper'
 
+    oro_checkout.product_availability.cache:
+        parent: doctrine_cache.abstract.array
+        calls:
+            - [ setNamespace, [ 'oro_product_availability' ] ]
+
+    oro_checkout.event_listener.product_availability_cache:
+        class: Oro\Bundle\CheckoutBundle\EventListener\ProductAvailabilityCacheListener
+        arguments:
+            - '@oro_checkout.product_availability.cache'
+        tags:
+            - { name: doctrine.event_listener, event: onFlush }
+
     oro_checkout.data_provider.manager.checkout_line_items:
         class: 'Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager'
         public: false
@@ -78,7 +90,8 @@ services:
 
     oro_checkout.layout.data_provider.single_page_transition:
         class: 'Oro\Bundle\CheckoutBundle\Layout\DataProvider\SinglePageTransitionProvider'
-        parent: oro_checkout.layout.data_provider.transition
+        arguments:
+            - '@oro_checkout.layout.data_provider.transition'
         tags:
             - { name: layout.data_provider, alias: oro_checkout_single_page_transition }
 
@@ -139,6 +152,7 @@ services:
             - { name: doctrine.orm.entity_listener, entity: '%oro_shopping_list.entity.shopping_list.class%', event: preRemove }
 
     oro_checkout.grid_totals_metadata.cache:
+        deprecated: The "%service_id%" service is never used and will be removed in 3.1
         public: false
         parent: oro.cache.abstract
         calls:
@@ -167,6 +181,14 @@ services:
         class: 'Oro\Bundle\CheckoutBundle\Datagrid\CheckoutGridCustomerUserNameListener'
         arguments:
             - '@oro_customer.security.customer_user_provider'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-checkouts-grid, method: onBuildBefore }
+
+    oro_checkout.datagrid.checkout_grid_customer_visitor_acl_listener:
+        class: 'Oro\Bundle\CheckoutBundle\Datagrid\CheckoutGridCustomerVisitorAclListener'
+        arguments:
+            - '@oro_featuretoggle.checker.feature_checker'
+            - '@security.token_storage'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-checkouts-grid, method: onBuildBefore }
 
@@ -387,6 +409,8 @@ services:
             - '@oro_entity.entity_field_provider'
             - '@property_accessor'
             - '@oro_payment_term.provider.payment_term_association'
+        calls:
+            - [setEntityFieldHelper, ['@oro_entity.helper.field_helper']]
 
     oro_checkout.model.action.create_order:
         class: 'Oro\Bundle\CheckoutBundle\Model\Action\CreateOrder'
@@ -575,6 +599,9 @@ services:
         arguments:
             - '@oro_pricing.provider.frontend_product_prices'
             - '@doctrine'
+        calls:
+            - [setAuthorizationChecker, ['@security.authorization_checker']]
+            - [setProductAvailabilityCache, ['@oro_checkout.product_availability.cache']]
         tags:
             - { name: checkout.data_provider.line_item }
 
@@ -606,3 +633,18 @@ services:
 
     oro_checkout.provider.checkout_line_items:
         class: 'Oro\Bundle\CheckoutBundle\Provider\CheckoutLineItemsProvider'
+
+    oro_checkout.layout_context_configurator.enable_single_page_checkout_performance:
+        class: Oro\Bundle\CheckoutBundle\Layout\Extension\EnableSinglePageCheckoutPerformanceContextConfigurator
+        arguments:
+            - '@oro_config.manager'
+        tags:
+            - { name: layout.context_configurator }
+
+    oro_checkout.condition.validate_checkout_addresses:
+        class: 'Oro\Bundle\CheckoutBundle\Condition\ValidateCheckoutAddresses'
+        arguments:
+            - '@validator'
+        tags:
+            - { name: oro_workflow.condition, alias: 'validate_checkout_addresses' }
+            - { name: oro_action.condition, alias: 'validate_checkout_addresses' }

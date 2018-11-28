@@ -35,7 +35,7 @@ Feature: User should have the possibility to change Primary Unit
     And click edit "CONTROL1" in grid
     And I add price 10 to Price Attribute MSRP
     And I save and close form
-    And I press "Edit"
+    And I click "Edit"
     And I fill product fields with next data:
       | PrimaryUnit      | item |
       | PrimaryPrecision | 0    |

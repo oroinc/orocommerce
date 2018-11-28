@@ -35,12 +35,9 @@ class CategoryCountsCacheTest extends \PHPUnit_Framework_TestCase
             ->willReturn($userId);
 
         $this->cacheProvider->expects($this->once())
-            ->method('contains')
+            ->method('fetch')
             ->with($key . '|42')
             ->willReturn(false);
-
-        $this->cacheProvider->expects($this->never())
-            ->method('fetch');
 
         $this->assertNull($this->cache->getCounts($key));
     }
@@ -59,11 +56,6 @@ class CategoryCountsCacheTest extends \PHPUnit_Framework_TestCase
         $this->tokenAccessor->expects($this->once())
             ->method('getUserId')
             ->willReturn($userId);
-
-        $this->cacheProvider->expects($this->once())
-            ->method('contains')
-            ->with($expectedKey)
-            ->willReturn(true);
 
         $this->cacheProvider->expects($this->once())
             ->method('fetch')

@@ -60,6 +60,10 @@ oro_behat_extension:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Table
       selector: '#shopping_list_view_container_content > div.cart-table .shopping-list-line-items'
 
+    ShoppingListLineItemsTableHeaderLabel:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector: 'div.shopping-list-line-items__header-label'
+
     ShoppingListLineItem:
       class: Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\ShoppingListLineItem
       selector: '.shopping-list-line-items__item-wrapper'
@@ -74,11 +78,23 @@ oro_behat_extension:
           Quantity: 'product_qty'
           Unit: 'product_unit'
 
+    Shopping List Line Item Error:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        type: css
+        locator: 'div.shopping-list-line-items__error'
+
     Shopping List Line Item 1 Quantity:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
         type: css
         locator: 'form.product__qty-container:first-child input[name=product_qty]'
+
+    Shopping List Line Item 2 Quantity:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        type: css
+        locator: 'div.shopping-list-line-items__item-wrapper:nth-child(3) input[name=product_qty]'
 
     ShoppingListLineItemProductSku:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
@@ -195,6 +211,11 @@ oro_behat_extension:
       selector: 'div[data-page-component-name="shopping-list-line-items-grid"]'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
 
+    Currency USD dropdown:
+      selector:
+        type: xpath
+        locator: '//div[contains(text(),"$") and @class="oro-toolbar__content"]'
+
   suites:
     OroShoppingListBundle:
       contexts:
@@ -212,5 +233,7 @@ oro_behat_extension:
         - OroNavigationBundle::FeatureContext
         - OroCustomerBundle::ACLContext
         - OroShoppingListBundle::ShoppingListContext
+        - OroLocaleBundle::LocalizationContext
+        - OroFrontendLocalizationBundle::LocalizationSwitcherContext
       paths:
         - '@OroShoppingListBundle/Tests/Behat/Features'

@@ -4,7 +4,6 @@ define(function(require) {
     var ProductAutocompleteComponent;
     var $ = require('jquery');
     var _ = require('underscore');
-    var routing = require('routing');
     var mediator = require('oroui/js/mediator');
     var ProductHelper = require('oroproduct/js/app/product-helper');
     var AutocompleteComponent = require('oro/autocomplete-component');
@@ -39,7 +38,6 @@ define(function(require) {
             ProductAutocompleteComponent.__super__.initialize.apply(this, arguments);
 
             this.$row = this.$el.closest(this.options.selectors.row);
-            this.$sku = this.$row.find(this.options.selectors.sku);
             this.$error = this.$row.find(this.options.selectors.error);
 
             this.product = $.extend(true, {
@@ -57,7 +55,7 @@ define(function(require) {
             return '.product-autocomplete-component';
         },
 
-        onBlur: function(e) {
+        onBlur: function(e, attributes) {
             var val = ProductHelper.trimWhiteSpace(e.target.value);
             var hasChanged = val !== this.previousValue;
             var $autoComplete = $(e.relatedTarget).parents('ul.select2-results');
@@ -65,62 +63,80 @@ define(function(require) {
             if (hasChanged && !$autoComplete.length) {
                 this.previousValue = val;
                 this.resetProduct();
-                this.validateProduct(val);
+                this.searchProduct(attributes ? attributes.sku : val);
             }
         },
 
         updater: function(item) {
-            var sku = this.resultsMapping[item].sku;
-
             this.resetProduct();
             this.previousValue = item;
-            this.validateProduct(sku);
+            this.validateProductByName(item);
 
             return item;
         },
 
-        validateProduct: function(val) {
-            var self = this;
-            val = val.split(' ')[0];
+        searchProduct: function(query) {
+            var queryParts = query.split(' ');
+            var sku = queryParts.length > 1 ? queryParts[0] : query;
 
+            this.disposed = true;
+            var self = this;
             $.ajax({
-                url: routing.generate(this.options.productBySkuRoute),
+                url: self.url,
                 method: 'get',
-                data: {
-                    name: 'oro_product_visibility_limited_with_prices',
-                    per_page: 1,
-                    query: val
-                },
+                data: {query: sku},
                 type: 'post',
                 success: function(response) {
-                    self.resetProduct();
-
-                    var needleSku = val.toUpperCase();
-                    var item = _.find(response.results, function(resultItem) {
-                        return resultItem.sku.toUpperCase() === needleSku;
-                    });
-                    if (item) {
-                        self.product.sku = item.sku;
-                        self.product.name = item['defaultName.string'];
-                        self.product.displayName = [self.product.sku, self.product.name].join(' - ');
-
-                        mediator.trigger('autocomplete:productFound', {
-                            item: item,
-                            $el: self.$el
-                        });
-                        self.previousValue = self.product.displayName;
-                    } else {
-                        mediator.trigger('autocomplete:productNotFound', {
-                            item: {sku: val},
-                            $el: self.$el
-                        });
-                    }
-                    self.updateProduct();
-                },
-                error: function() {
-                    self.resetProduct();
+                    self.disposed = false;
+                    self.prepareResults(response);
+                    self.validateProductBySku(sku);
                 }
             });
+        },
+
+        validateProductBySku: function(sku) {
+            var self = this;
+            var isExist = false;
+            _.map(self.resultsMapping || [], function(product) {
+                if (product.sku.toUpperCase() === sku.toUpperCase()) {
+                    isExist = true;
+                    self.validateProduct(product);
+                }
+            });
+
+            if (!isExist) {
+                mediator.trigger('autocomplete:productNotFound', {
+                    item: {sku: sku},
+                    $el: this.$el
+                });
+            }
+            this.updateProduct();
+        },
+
+        validateProductByName: function(name) {
+            var product = this.resultsMapping ? this.resultsMapping[name] : null;
+            if (product) {
+                this.validateProduct(product);
+            } else {
+                var nameParts = name.split(' ');
+                mediator.trigger('autocomplete:productNotFound', {
+                    item: {sku: nameParts.length > 1 ? nameParts[0] : name},
+                    $el: this.$el
+                });
+            }
+            this.updateProduct();
+        },
+
+        validateProduct: function(product) {
+            this.product.sku = product.sku;
+            this.product.name = product['defaultName.string'];
+            this.product.displayName = [this.product.sku, this.product.name].join(' - ');
+
+            mediator.trigger('autocomplete:productFound', {
+                item: product,
+                $el: this.$el
+            });
+            this.previousValue = this.product.displayName;
         },
 
         resetProduct: function() {

@@ -100,17 +100,15 @@ class CheckoutLineItemsManagerTest extends \PHPUnit_Framework_TestCase
             ->with('oro_order.frontend_product_visibility')
             ->willReturn(['in_stock']);
 
-        $this->authorizationChecker->expects($this->any())
-            ->method('isGranted')
-            ->with('VIEW', $this->isInstanceOf(Product::class))
-            ->willReturn($visible);
+        $this->authorizationChecker->expects($this->never())
+            ->method('isGranted');
 
         $checkout = $this->getCheckout();
         $data = [];
 
         if ($withDataProvider) {
             if ($isEntitySupported && $visible) {
-                $data = [$this->getLineItemData(true, 'PRO', 'in_stock', 10, 'litre', Price::create(10, 'USD'))];
+                $data = [$this->getLineItemData(true, 42, 'PRO', 'in_stock', 10, 'litre', Price::create(10, 'USD'))];
             }
             $provider = $this->getProvider($checkout, $data, $isEntitySupported);
 
@@ -135,10 +133,8 @@ class CheckoutLineItemsManagerTest extends \PHPUnit_Framework_TestCase
             ->with('oro_order.frontend_product_visibility')
             ->willReturn(['in_stock']);
 
-        $this->authorizationChecker->expects($this->any())
-            ->method('isGranted')
-            ->with('VIEW', $this->isInstanceOf(Product::class))
-            ->willReturn($visible);
+        $this->authorizationChecker->expects($this->never())
+            ->method('isGranted');
 
         $checkout = $this->getCheckout();
 
@@ -151,6 +147,8 @@ class CheckoutLineItemsManagerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @return array
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function getDataDataProvider()
     {
@@ -159,68 +157,77 @@ class CheckoutLineItemsManagerTest extends \PHPUnit_Framework_TestCase
         return [
             [
                 'providerData' => [
-                    $this->getLineItemData($hasProduct, 'PRO', 'in_stock', 10, 'litre', Price::create(10, 'USD')),
-                    $this->getLineItemData($hasProduct, 'PRO', 'in_stock', 10, 'litre', Price::create(0, 'USD')),
-                    $this->getLineItemData($productFree, 'PRO', 'in_stock', 10, 'litre', Price::create(10, 'USD')),
-                    $this->getLineItemData($hasProduct, 'PRO', 'in_stock', 10, 'litre', null),
-                    $this->getLineItemData($hasProduct, 'PRO', 'out_of_stock', 10, 'litre', null),
-                    $this->getLineItemData($hasProduct, 'PRO', 'in_stock', 10, 'litre', Price::create(10, 'UAH')),
-                    $this->getLineItemData($hasProduct, 'PRO', null, 10, 'litre', Price::create(10, 'USD')),
-                    $this->getLineItemData($hasProduct, 'PRO', 'out_of_stock', 10, 'litre', Price::create(10, 'USD')),
+                    $this->getLineItemData($hasProduct, 42, 'PRO', 'in_stock', 10, 'litre', Price::create(10, 'USD')),
+                    $this->getLineItemData($hasProduct, 42, 'PRO', 'in_stock', 10, 'litre', Price::create(0, 'USD')),
+                    $this->getLineItemData($productFree, 42, 'PRO', 'in_stock', 10, 'litre', Price::create(10, 'USD')),
+                    $this->getLineItemData($hasProduct, 42, 'PRO', 'in_stock', 10, 'litre', null),
+                    $this->getLineItemData($hasProduct, 42, 'PRO', 'out_of_stock', 10, 'litre', null),
+                    $this->getLineItemData($hasProduct, 42, 'PRO', 'in_stock', 10, 'litre', Price::create(10, 'UAH')),
+                    $this->getLineItemData($hasProduct, 42, 'PRO', null, 10, 'litre', Price::create(10, 'USD')),
+                    $this->getLineItemData(
+                        $hasProduct,
+                        42,
+                        'PRO',
+                        'out_of_stock',
+                        10,
+                        'litre',
+                        Price::create(10, 'USD')
+                    ),
                 ],
                 'disablePriceFilter' => false,
                 'visible' => true,
                 'expectedData' => [
-                    $this->getLineItemData($hasProduct, 'PRO', 'in_stock', 10, 'litre', Price::create(10, 'USD')),
-                    $this->getLineItemData($hasProduct, 'PRO', 'in_stock', 10, 'litre', Price::create(0, 'USD')),
-                    $this->getLineItemData($productFree, 'PRO', 'in_stock', 10, 'litre', Price::create(10, 'USD')),
+                    $this->getLineItemData($hasProduct, 42, 'PRO', 'in_stock', 10, 'litre', Price::create(10, 'USD')),
+                    $this->getLineItemData($hasProduct, 42, 'PRO', 'in_stock', 10, 'litre', Price::create(0, 'USD')),
+                    $this->getLineItemData($productFree, 42, 'PRO', 'in_stock', 10, 'litre', Price::create(10, 'USD')),
                 ],
             ],
             [
                 'providerData' => [
-                    $this->getLineItemData($hasProduct, 'PRO', 'in_stock', 10, 'litre', Price::create(10, 'USD')),
-                    $this->getLineItemData($hasProduct, 'PRO', 'in_stock', 10, 'litre', null),
-                    $this->getLineItemData($hasProduct, 'PRO', 'out_of_stock', 10, 'litre', null),
-                    $this->getLineItemData($hasProduct, 'PRO', 'in_stock', 10, 'litre', Price::create(10, 'UAH')),
-                    $this->getLineItemData($hasProduct, 'PRO', null, 10, 'litre', Price::create(10, 'USD')),
-                    $this->getLineItemData($hasProduct, 'PRO', 'out_of_stock', 10, 'litre', Price::create(10, 'USD')),
-                    $this->getLineItemData($productFree, 'PRO', 'in_stock', 10, 'litre', Price::create(10, 'USD')),
+                    $this->getLineItemData($hasProduct, 42, 'PRO', 'in_stock', 10, 'litre', Price::create(10, 'USD')),
+                    $this->getLineItemData($hasProduct, 42, 'PRO', 'in_stock', 10, 'litre', null),
+                    $this->getLineItemData($hasProduct, 42, 'PRO', 'out_of_stock', 10, 'litre', null),
+                    $this->getLineItemData($hasProduct, 42, 'PRO', 'in_stock', 10, 'litre', Price::create(10, 'UAH')),
+                    $this->getLineItemData($hasProduct, 42, 'PRO', null, 10, 'litre', Price::create(10, 'USD')),
                     $this->getLineItemData(
                         $hasProduct,
+                        42,
                         'PRO',
-                        'in_stock',
+                        'out_of_stock',
                         10,
                         'litre',
-                        Price::create(10, 'USD'),
-                        Product::STATUS_DISABLED
+                        Price::create(10, 'USD')
                     ),
+                    $this->getLineItemData($productFree, 42, 'PRO', 'in_stock', 10, 'litre', Price::create(10, 'USD')),
                 ],
                 'disablePriceFilter' => true,
                 'visible' => true,
                 'expectedData' => [
-                    $this->getLineItemData($hasProduct, 'PRO', 'in_stock', 10, 'litre', Price::create(10, 'USD')),
-                    $this->getLineItemData($hasProduct, 'PRO', 'in_stock', 10, 'litre', null),
-                    $this->getLineItemData($hasProduct, 'PRO', 'out_of_stock', 10, 'litre', null),
-                    $this->getLineItemData($hasProduct, 'PRO', 'in_stock', 10, 'litre', Price::create(10, 'UAH')),
-                    $this->getLineItemData($hasProduct, 'PRO', null, 10, 'litre', Price::create(10, 'USD')),
-                    $this->getLineItemData($hasProduct, 'PRO', 'out_of_stock', 10, 'litre', Price::create(10, 'USD')),
-                    $this->getLineItemData($productFree, 'PRO', 'in_stock', 10, 'litre', Price::create(10, 'USD')),
+                    $this->getLineItemData($hasProduct, 42, 'PRO', 'in_stock', 10, 'litre', Price::create(10, 'USD')),
+                    $this->getLineItemData($hasProduct, 42, 'PRO', 'in_stock', 10, 'litre', null),
+                    $this->getLineItemData($hasProduct, 42, 'PRO', 'out_of_stock', 10, 'litre', null),
+                    $this->getLineItemData($hasProduct, 42, 'PRO', 'in_stock', 10, 'litre', Price::create(10, 'UAH')),
+                    $this->getLineItemData($hasProduct, 42, 'PRO', null, 10, 'litre', Price::create(10, 'USD')),
+                    $this->getLineItemData(
+                        $hasProduct,
+                        42,
+                        'PRO',
+                        'out_of_stock',
+                        10,
+                        'litre',
+                        Price::create(10, 'USD')
+                    ),
+                    $this->getLineItemData($productFree, 42, 'PRO', 'in_stock', 10, 'litre', Price::create(10, 'USD')),
                 ],
             ],
             [
                 'providerData' => [
-                    $this->getLineItemData($productFree, 'PRO', 'in_stock', 10, 'litre', Price::create(10, 'USD')),
-                    $this->getLineItemData($hasProduct, 'PRO', 'in_stock', 10, 'litre', Price::create(10, 'USD')),
-                    $this->getLineItemData($hasProduct, 'PRO', 'in_stock', 10, 'litre', null),
-                    $this->getLineItemData($hasProduct, 'PRO', 'out_of_stock', 10, 'litre', null),
-                    $this->getLineItemData($hasProduct, 'PRO', 'in_stock', 10, 'litre', Price::create(10, 'UAH')),
-                    $this->getLineItemData($hasProduct, 'PRO', null, 10, 'litre', Price::create(10, 'USD')),
-                    $this->getLineItemData($hasProduct, 'PRO', 'out_of_stock', 10, 'litre', Price::create(10, 'USD')),
+                    $this->getLineItemData($productFree, 42, 'PRO', 'in_stock', 10, 'litre', Price::create(10, 'USD')),
                 ],
                 'disablePriceFilter' => true,
                 'visible' => false,
                 'expectedData' => [
-                    $this->getLineItemData($productFree, 'PRO', 'in_stock', 10, 'litre', Price::create(10, 'USD')),
+                    $this->getLineItemData($productFree, 42, 'PRO', 'in_stock', 10, 'litre', Price::create(10, 'USD')),
                 ],
             ],
         ];
@@ -228,6 +235,7 @@ class CheckoutLineItemsManagerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param bool $hasProduct
+     * @param integer $productId
      * @param string|null $productSku
      * @param string|null $inventoryStatus
      * @param float $qty
@@ -238,6 +246,7 @@ class CheckoutLineItemsManagerTest extends \PHPUnit_Framework_TestCase
      */
     protected function getLineItemData(
         $hasProduct,
+        $productId,
         $productSku,
         $inventoryStatus,
         $qty,
@@ -247,8 +256,14 @@ class CheckoutLineItemsManagerTest extends \PHPUnit_Framework_TestCase
     ) {
         $product = null;
         if ($hasProduct && $productSku) {
-            $product = new Product();
-            $product->setSku($productSku)->setStatus($status);
+            $product = $this->getEntity(
+                Product::class,
+                [
+                    'id' => $productId,
+                    'sku' => $productSku,
+                    'status' => $status
+                ]
+            );
 
             if ($inventoryStatus) {
                 $inventoryStatus = new StubEnumValue($inventoryStatus, $inventoryStatus);
@@ -315,10 +330,8 @@ class CheckoutLineItemsManagerTest extends \PHPUnit_Framework_TestCase
             ->with('oro_order.frontend_product_visibility')
             ->willReturn(['in_stock']);
 
-        $this->authorizationChecker->expects($this->any())
-            ->method('isGranted')
-            ->with('VIEW', $this->isInstanceOf(Product::class))
-            ->willReturn($visible);
+        $this->authorizationChecker->expects($this->never())
+            ->method('isGranted');
 
         $checkout = $this->getCheckout();
 
@@ -339,34 +352,51 @@ class CheckoutLineItemsManagerTest extends \PHPUnit_Framework_TestCase
         return [
             [
                 'providerData' => [
-                    $this->getLineItemData($hasProduct, 'PRO', 'in_stock', 10, 'litre', Price::create(10, 'USD')),
-                    $this->getLineItemData($hasProduct, 'PRO', 'in_stock', 0, 'litre', Price::create(0, 'USD')),
-                    $this->getLineItemData($productFree, 'PRO', 'in_stock', 0, 'litre', Price::create(10, 'USD')),
-                    $this->getLineItemData($hasProduct, 'PRO', 'in_stock', 10, 'litre', null),
-                    $this->getLineItemData($hasProduct, 'PRO', 'out_of_stock', 0, 'litre', null),
-                    $this->getLineItemData($hasProduct, 'PRO', 'in_stock', 10, 'litre', Price::create(10, 'UAH')),
-                    $this->getLineItemData($hasProduct, 'PRO', null, 0, 'litre', Price::create(10, 'USD')),
-                    $this->getLineItemData($hasProduct, 'PRO', 'out_of_stock', 10, 'litre', Price::create(10, 'USD')),
+                    $this->getLineItemData($hasProduct, 42, 'PRO', 'in_stock', 10, 'litre', Price::create(10, 'USD')),
+                    $this->getLineItemData($hasProduct, 42, 'PRO', 'in_stock', 0, 'litre', Price::create(0, 'USD')),
+                    $this->getLineItemData($productFree, 42, 'PRO', 'in_stock', 0, 'litre', Price::create(10, 'USD')),
+                    $this->getLineItemData($hasProduct, 42, 'PRO', 'in_stock', 10, 'litre', null),
+                    $this->getLineItemData($hasProduct, 42, 'PRO', 'out_of_stock', 0, 'litre', null),
+                    $this->getLineItemData($hasProduct, 42, 'PRO', 'in_stock', 10, 'litre', Price::create(10, 'UAH')),
+                    $this->getLineItemData($hasProduct, 42, 'PRO', null, 0, 'litre', Price::create(10, 'USD')),
+                    $this->getLineItemData(
+                        $hasProduct,
+                        42,
+                        'PRO',
+                        'out_of_stock',
+                        10,
+                        'litre',
+                        Price::create(10, 'USD')
+                    ),
                 ],
                 'visible' => true,
                 'expectedData' => [
-                    $this->getLineItemData($hasProduct, 'PRO', 'in_stock', 0, 'litre', Price::create(0, 'USD')),
-                    $this->getLineItemData($productFree, 'PRO', 'in_stock', 0, 'litre', Price::create(10, 'USD')),
-                    $this->getLineItemData($hasProduct, 'PRO', 'out_of_stock', 0, 'litre', null),
-                    $this->getLineItemData($hasProduct, 'PRO', null, 0, 'litre', Price::create(10, 'USD')),
+                    $this->getLineItemData($hasProduct, 42, 'PRO', 'in_stock', 0, 'litre', Price::create(0, 'USD')),
+                    $this->getLineItemData($productFree, 42, 'PRO', 'in_stock', 0, 'litre', Price::create(10, 'USD')),
+                    $this->getLineItemData($hasProduct, 42, 'PRO', 'out_of_stock', 0, 'litre', null),
+                    $this->getLineItemData($hasProduct, 42, 'PRO', null, 0, 'litre', Price::create(10, 'USD')),
                 ],
             ],
             [
                 'providerData' => [
-                    $this->getLineItemData($hasProduct, 'PRO', 'in_stock', 10, 'litre', Price::create(10, 'USD')),
-                    $this->getLineItemData($hasProduct, 'PRO', 'in_stock', 0, 'litre', null),
-                    $this->getLineItemData($hasProduct, 'PRO', 'out_of_stock', 0, 'litre', null),
-                    $this->getLineItemData($hasProduct, 'PRO', 'in_stock', 10, 'litre', Price::create(10, 'UAH')),
-                    $this->getLineItemData($hasProduct, 'PRO', null, 0, 'litre', Price::create(10, 'USD')),
-                    $this->getLineItemData($hasProduct, 'PRO', 'out_of_stock', 10, 'litre', Price::create(10, 'USD')),
-                    $this->getLineItemData($productFree, 'PRO', 'in_stock', 10, 'litre', Price::create(10, 'USD')),
+                    $this->getLineItemData($hasProduct, 42, 'PRO', 'in_stock', 10, 'litre', Price::create(10, 'USD')),
+                    $this->getLineItemData($hasProduct, 42, 'PRO', 'in_stock', 0, 'litre', null),
+                    $this->getLineItemData($hasProduct, 42, 'PRO', 'out_of_stock', 0, 'litre', null),
+                    $this->getLineItemData($hasProduct, 42, 'PRO', 'in_stock', 10, 'litre', Price::create(10, 'UAH')),
+                    $this->getLineItemData($hasProduct, 42, 'PRO', null, 0, 'litre', Price::create(10, 'USD')),
                     $this->getLineItemData(
                         $hasProduct,
+                        42,
+                        'PRO',
+                        'out_of_stock',
+                        10,
+                        'litre',
+                        Price::create(10, 'USD')
+                    ),
+                    $this->getLineItemData($productFree, 42, 'PRO', 'in_stock', 10, 'litre', Price::create(10, 'USD')),
+                    $this->getLineItemData(
+                        $hasProduct,
+                        42,
                         'PRO',
                         'in_stock',
                         10,
@@ -377,24 +407,30 @@ class CheckoutLineItemsManagerTest extends \PHPUnit_Framework_TestCase
                 ],
                 'visible' => true,
                 'expectedData' => [
-                    $this->getLineItemData($hasProduct, 'PRO', 'in_stock', 0, 'litre', null),
-                    $this->getLineItemData($hasProduct, 'PRO', 'out_of_stock', 0, 'litre', null),
-                    $this->getLineItemData($hasProduct, 'PRO', null, 0, 'litre', Price::create(10, 'USD')),
+                    $this->getLineItemData($hasProduct, 42, 'PRO', 'in_stock', 0, 'litre', null),
+                    $this->getLineItemData($hasProduct, 42, 'PRO', 'out_of_stock', 0, 'litre', null),
+                    $this->getLineItemData($hasProduct, 42, 'PRO', null, 0, 'litre', Price::create(10, 'USD')),
                 ],
             ],
             [
                 'providerData' => [
-                    $this->getLineItemData($productFree, 'PRO', 'in_stock', 0, 'litre', Price::create(10, 'USD')),
-                    $this->getLineItemData($productFree, 'PRO', 'in_stock', 10, 'litre', Price::create(10, 'USD')),
-                    $this->getLineItemData($hasProduct, 'PRO', 'in_stock', 10, 'litre', null),
-                    $this->getLineItemData($hasProduct, 'PRO', 'out_of_stock', 0, 'litre', null),
-                    $this->getLineItemData($hasProduct, 'PRO', 'in_stock', 10, 'litre', Price::create(10, 'UAH')),
-                    $this->getLineItemData($hasProduct, 'PRO', null, 0, 'litre', Price::create(10, 'USD')),
-                    $this->getLineItemData($hasProduct, 'PRO', 'out_of_stock', 10, 'litre', Price::create(10, 'USD')),
+                    $this->getLineItemData($productFree, 42, 'PRO', 'in_stock', 0, 'litre', Price::create(10, 'USD')),
+                    $this->getLineItemData($productFree, 42, 'PRO', 'in_stock', 10, 'litre', Price::create(10, 'USD')),
+                    $this->getLineItemData($hasProduct, 42, 'PRO', 'in_stock', 10, 'litre', null),
+                    $this->getLineItemData($hasProduct, 42, 'PRO', 'in_stock', 10, 'litre', Price::create(10, 'UAH')),
+                    $this->getLineItemData(
+                        $hasProduct,
+                        42,
+                        'PRO',
+                        'out_of_stock',
+                        10,
+                        'litre',
+                        Price::create(10, 'USD')
+                    ),
                 ],
                 'visible' => false,
                 'expectedData' => [
-                    $this->getLineItemData($productFree, 'PRO', 'in_stock', 0, 'litre', Price::create(10, 'USD')),
+                    $this->getLineItemData($productFree, 42, 'PRO', 'in_stock', 0, 'litre', Price::create(10, 'USD')),
                 ],
             ],
         ];
