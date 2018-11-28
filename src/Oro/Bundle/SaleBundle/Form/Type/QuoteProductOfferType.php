@@ -72,7 +72,7 @@ class QuoteProductOfferType extends AbstractType
                 'priceType',
                 HiddenType::class,
                 [
-                    // TODO: enable once fully supported on the quote views and in orders
+                    // BB-15227: enable once fully supported on the quote views and in orders
                     'data' => QuoteProductOffer::PRICE_TYPE_UNIT,
                 ]
             )

@@ -302,7 +302,6 @@ services:
         arguments:
             - "@oro_product.repository.product"
             - "@oro_product.product.manager"
-            - "@oro.cache.memory_cache_chain"
         tags:
             - { name: layout.data_provider, alias: top_selling_items }
 
@@ -468,3 +467,10 @@ services:
         tags:
             - { name: doctrine.orm.entity_listener, entity: '%oro_order.entity.order_line_item.class%', event: prePersist }
             - { name: doctrine.orm.entity_listener, entity: '%oro_order.entity.order_line_item.class%', event: preUpdate }
+
+    oro_order.datagrid.order_line_items_grid_frontend_access_listener:
+        class: 'Oro\Bundle\OrderBundle\Datagrid\OrderLineItemsGridFrontendAccessListener'
+        arguments:
+            - '@security.token_storage'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.order-line-items-grid-frontend, method: onBuildBefore }

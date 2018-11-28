@@ -139,6 +139,10 @@ class SubtotalSubscriberTest extends \PHPUnit\Framework\TestCase
             ->method('getTotal')
             ->willReturn(new Subtotal());
 
+        $this->discountSubtotalProvider->expects($this->any())
+            ->method('getSubtotal')
+            ->willReturn([]);
+
         $this->subscriber->onSubmitEventListener($event);
         $this->assertEquals(0, $order->getTotal());
         $this->assertEquals(0, $order->getSubtotal());

@@ -1,7 +1,4 @@
 assets:
     css:
         'oropricing':
-            - 'bundles/oropricing/css/style.scss'
-            - 'bundles/oropricing/css/product-prices.scss'
-            - 'bundles/oropricing/css/price-rule.scss'
-            - 'bundles/oropricing/css/base-currency-row.scss'
+            - 'bundles/oropricing/css/scss/main.scss'

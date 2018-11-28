@@ -31,8 +31,8 @@ abstract class AbstractCombinedPriceListsFixture extends AbstractFixture impleme
 
         foreach ($this->data as $priceListData) {
             $combinedPriceList = new CombinedPriceList();
-            $combinedPriceList->setPricesCalculated(true);
             $combinedPriceList
+                ->setPricesCalculated($priceListData['calculated'])
                 ->setName(md5($priceListData['name']))
                 ->setCreatedAt($now)
                 ->setUpdatedAt($now)

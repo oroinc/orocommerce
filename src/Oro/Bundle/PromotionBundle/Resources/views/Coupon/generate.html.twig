@@ -17,7 +17,7 @@
             <fieldset class="form-horizontal">
                 {{ form_widget(form.couponGenerationOptions) }}
                 <div class="control-group attribute-row">
-                    <label class="control-label">Code Preview</label>
+                    <label class="control-label">{{ 'oro.promotion.coupon.generation.codePreview.label'|trans }}</label>
                     <div class="controls">
                         <div id="coupon-code-preview" class="control-label">{{ oro_promotion_generate_coupon_code(actionData.couponGenerationOptions) }}</div>
                     </div>

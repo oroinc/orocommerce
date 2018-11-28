@@ -50,12 +50,14 @@ oro_behat_extension:
     suites:
         OroWebCatalogBundle:
             contexts:
+                - OroSecurityBundle::ACLContext
                 - OroApplicationBundle::CommerceMainContext
                 - OroProductBundle::FeatureContext
                 - OroConfigBundle::FeatureContext
                 - OroDataGridBundle::GridContext
                 - OroFormBundle::FormContext
                 - OroWebCatalogBundle::FeatureContext
+                - OroCustomerBundle::FrontendGridContext
                 - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
             paths:
                 - '@OroWebCatalogBundle/Tests/Behat/Features'

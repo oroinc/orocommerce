@@ -374,7 +374,7 @@ action_groups:
             - '@send_email_template':
                 parameters:
                     from: $.order.owner.email
-                    to: [$.order.customerUser.email, $.checkout.registeredCustomerUser.email, $.email]
+                    to: [$.order.customerUser, $.checkout.registeredCustomerUser, $.email]
                     template: 'order_confirmation_email'
                     entity: $.order
 
@@ -469,7 +469,7 @@ action_groups:
                         - '@not_empty': $.email
                         - '@not_empty': $.billing_address
                         - '@not_empty': $.checkout.customerUser
-                        - '@empty': $.checkout.customerUser.firstName
+                        - '@equal': [$.checkout.customerUser.isGuest, true] #For guest customer user only
                 actions:
                     - '@call_service_method':
                         attribute: $.checkout.customerUser
@@ -495,7 +495,7 @@ action_groups:
                     '@and':
                         - '@not_empty': [$.late_registration_data]
                         - '@equal': [$.late_registration_data.is_late_registration_enabled, true]
-                        - '@equal': [$.checkout.registerdCustomerUser, null]
+                        - '@equal': [$.checkout.registeredCustomerUser, null]
                 actions:
                     - '@call_service_method':
                         attribute: $.checkout.registeredCustomerUser

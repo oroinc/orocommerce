@@ -43,7 +43,8 @@ class ProductControllerTest extends WebTestCase
         $shoppingListClass = $this->getContainer()->getParameter('oro_shopping_list.entity.shopping_list.class');
 
         /** @var ShoppingList[] $shoppingLists */
-        $shoppingLists = $this->getContainer()->get('oro_shopping_list.shopping_list.manager')->getShoppingLists();
+        $shoppingLists = $this->getContainer()->get('oro_shopping_list.manager.current_shopping_list')
+            ->getShoppingLists();
         /** @var ShoppingList $shoppingListFromAnotherSite */
         $shoppingListFromAnotherSite = $this->getReference(LoadShoppingLists::SHOPPING_LIST_9);
 

@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\Controller\Frontend;
 
-use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -12,11 +11,17 @@ use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal;
+use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class AjaxLineItemControllerTest extends WebTestCase
 {
+    const LINE_ITEM_1 = 'ajax_line_shopping_list_line_item.1';
+    const LINE_ITEM_2 = 'ajax_line_shopping_list_line_item.2';
+    const LINE_ITEM_3 = 'ajax_line_shopping_list_line_item.3';
+    const LINE_ITEM_4 = 'ajax_line_shopping_list_line_item.4';
+
     protected function setUp()
     {
         $this->initClient(
@@ -35,6 +40,7 @@ class AjaxLineItemControllerTest extends WebTestCase
     /**
      * @dataProvider addProductFromViewDataProvider
      *
+     * @param string $lineItem
      * @param string $product
      * @param string $unit
      * @param int $quantity
@@ -42,6 +48,7 @@ class AjaxLineItemControllerTest extends WebTestCase
      * @param string $shoppingListRef
      */
     public function testAddProductFromView(
+        $lineItem,
         $product,
         $unit,
         $quantity,
@@ -101,6 +108,8 @@ class AjaxLineItemControllerTest extends WebTestCase
         $this->assertArrayHasKey('unit', $result['product']['shopping_lists'][0]['line_items'][0]);
         $this->assertArrayHasKey('quantity', $result['product']['shopping_lists'][0]['line_items'][0]);
         $this->assertArrayHasKey('id', $result['product']['shopping_lists'][0]['line_items'][0]);
+
+        $this->storeLineItemId($lineItem, $result);
     }
 
     /**
@@ -110,22 +119,33 @@ class AjaxLineItemControllerTest extends WebTestCase
     {
         return [
             [
+                'lineItem' => static::LINE_ITEM_1,
                 'product' => LoadProductData::PRODUCT_1,
                 'unit' => 'product_unit.bottle',
                 'quantity' => 110,
                 'expectedSubtotals' => ['EUR' => 1342, 'USD' => 1441],
             ],
             [
+                'lineItem' => static::LINE_ITEM_2,
                 'product' => LoadProductData::PRODUCT_2,
                 'unit' => 'product_unit.liter',
                 'quantity' => 15,
                 'expectedSubtotals' => ['EUR' => 1573, 'USD' => 1456.25],
             ],
             [
+                'lineItem' => static::LINE_ITEM_3,
                 'product' => LoadProductData::PRODUCT_1,
                 'unit' => 'product_unit.bottle',
                 'quantity' => 10,
                 'expectedSubtotals' => ['EUR' => 122, 'USD' => 131],
+                'shoppingListRef' => LoadShoppingLists::SHOPPING_LIST_1,
+            ],
+            [
+                'lineItem' => static::LINE_ITEM_4,
+                'product' => LoadProductData::PRODUCT_1,
+                'unit' => 'product_unit.liter',
+                'quantity' => 10,
+                'expectedSubtotals' => ['EUR' => 122, 'USD' => 143.2],
                 'shoppingListRef' => LoadShoppingLists::SHOPPING_LIST_1,
             ],
         ];
@@ -186,6 +206,7 @@ class AjaxLineItemControllerTest extends WebTestCase
      * @param int $expectedInitCount
      * @param bool $removeCurrent
      * @param string $shoppingListRef
+     * @param string $lineItemId
      */
     public function testRemoveProductFromView(
         $productRef,
@@ -214,7 +235,7 @@ class AjaxLineItemControllerTest extends WebTestCase
                 'oro_shopping_list_frontend_remove_product',
                 [
                     'productId' => $product->getId(),
-                    'shoppingListId' => $shoppingList->getId(),
+                    'shoppingListId' => $shoppingList->getId()
                 ]
             )
         );
@@ -298,7 +319,7 @@ class AjaxLineItemControllerTest extends WebTestCase
                 'productRef' => LoadProductData::PRODUCT_8,
                 'expectedResult' => false,
                 'expectedMessage' => 'No current ShoppingList or no Product in current ShoppingList',
-                'expectedInitCount' => 1,
+                'expectedInitCount' => 2,
                 'removeCurrent' => true,
                 'shoppingListRef' => LoadShoppingLists::SHOPPING_LIST_1
             ],
@@ -308,6 +329,8 @@ class AjaxLineItemControllerTest extends WebTestCase
                 'expectedMessage' => 'Product has been removed from "<a href="/customer/shoppinglist/%s">'.
                     'shopping_list_2_label</a>"',
                 'expectedInitCount' => 2,
+                'removeCurrent' => false,
+                'shoppingListRef' => LoadShoppingLists::SHOPPING_LIST_2
             ],
             [
                 'productRef' => LoadProductData::PRODUCT_2,
@@ -315,12 +338,16 @@ class AjaxLineItemControllerTest extends WebTestCase
                 'expectedMessage' => 'Product has been removed from "<a href="/customer/shoppinglist/%s">'.
                     'shopping_list_2_label</a>"',
                 'expectedInitCount' => 1,
+                'removeCurrent' => false,
+                'shoppingListRef' => LoadShoppingLists::SHOPPING_LIST_2
             ],
             [
                 'productRef' => LoadProductData::PRODUCT_1,
                 'expectedResult' => false,
                 'expectedMessage' => 'No current ShoppingList or no Product in current ShoppingList',
                 'expectedInitCount' => 0,
+                'removeCurrent' => false,
+                'shoppingListRef' => LoadShoppingLists::SHOPPING_LIST_2
             ],
             [
                 'productRef' => LoadProductData::PRODUCT_1,
@@ -328,17 +355,8 @@ class AjaxLineItemControllerTest extends WebTestCase
                 'expectedMessage' => 'No current ShoppingList or no Product in current ShoppingList',
                 'expectedInitCount' => 0,
                 'removeCurrent' => true,
-                'shoppingListRef' => LoadShoppingLists::SHOPPING_LIST_2,
-            ],
-            [
-                'productRef' => LoadProductData::PRODUCT_1,
-                'expectedResult' => true,
-                'expectedMessage' => 'Product has been removed from "<a href="/customer/shoppinglist/%s">'.
-                    'shopping_list_1_label</a>"',
-                'expectedInitCount' => 1,
-                'removeCurrent' => false,
-                'shoppingListRef' => LoadShoppingLists::SHOPPING_LIST_1,
-            ],
+                'shoppingListRef' => LoadShoppingLists::SHOPPING_LIST_2
+            ]
         ];
     }
 
@@ -501,5 +519,20 @@ class AjaxLineItemControllerTest extends WebTestCase
         $this->assertEquals($shoppingList->getId(), $result['shoppingList']['id']);
 
         return $shoppingList->getLineItems()->first();
+    }
+
+    /**
+     * @param string $referenceName
+     * @param array $result
+     */
+    protected function storeLineItemId($referenceName, array $result)
+    {
+        $currentShoppingList = $result['shoppingList'];
+
+        $lineItems = $this->getShoppingList($currentShoppingList['id'])->getLineItems();
+
+        if (!$lineItems->isEmpty()) {
+            $this->getReferenceRepository()->setReference($referenceName, $lineItems->last());
+        }
     }
 }

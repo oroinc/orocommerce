@@ -1,4 +1,19 @@
 oro_behat_extension:
+  suites:
+    OroPaymentBundle:
+      contexts:
+        - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
+        - OroDataGridBundle::GridContext
+        - OroFormBundle::FormContext
+        - OroUIBundle::BreadcrumbContext
+        - OroConfigBundle::FeatureContext
+        - OroNavigationBundle::FeatureContext
+        - OroSecurityBundle::ACLContext
+        - OroUIBundle::ContextSelectorContext
+        - OroLocaleBundle::LocalizationContext
+      paths:
+        - '@OroPaymentBundle/Tests/Behat/Features'
+
   elements:
     Payment Method Config Type Field:
       class: Oro\Bundle\PaymentBundle\Tests\Behat\Element\PaymentMethodConfigType
@@ -16,3 +31,5 @@ oro_behat_extension:
             locator: '//div[@id[starts-with(.,"uniform-oro_payment_methods_configs_rule_method")]]'
             element: Payment Method Config Type Field
           Destination1PostalCodes: 'oro_payment_methods_configs_rule[destinations][0][postalCodes]'
+          Country1: 'oro_payment_methods_configs_rule[destinations][1][country]'
+          Country2: 'oro_payment_methods_configs_rule[destinations][2][country]'

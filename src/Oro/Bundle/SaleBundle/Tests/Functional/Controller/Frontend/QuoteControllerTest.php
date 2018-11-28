@@ -4,6 +4,7 @@ namespace Oro\Bundle\SaleBundle\Tests\Functional\Controller\Frontend;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\SaleBundle\Entity\Quote;
+use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteAddressData;
 use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData;
 use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -11,6 +12,10 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\Translation\TranslatorInterface;
 
+/**
+ * @dbIsolationPerTest
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class QuoteControllerTest extends WebTestCase
 {
     /**
@@ -21,8 +26,16 @@ class QuoteControllerTest extends WebTestCase
         $this->initClient();
         $this->client->useHashNavigation(true);
         $this->loadFixtures([
-            'Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteAddressData',
+            LoadQuoteAddressData::class,
         ]);
+    }
+
+    protected function tearDown()
+    {
+        $configManager = $this->getContainer()->get('oro_config.manager');
+        $configManager->set('oro_sale.enable_guest_quote', false);
+        $configManager->set('oro_checkout.guest_checkout', false);
+        $configManager->flush();
     }
 
     /**
@@ -31,7 +44,7 @@ class QuoteControllerTest extends WebTestCase
      *
      * @dataProvider indexProvider
      */
-    public function testIndex(array $inputData, array $expectedData)
+    public function testIndex(array $inputData, array $expectedData): void
     {
         $this->initClient([], $this->generateBasicAuthHeader($inputData['login'], $inputData['password']));
 
@@ -76,7 +89,7 @@ class QuoteControllerTest extends WebTestCase
      *
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function indexProvider()
+    public function indexProvider(): array
     {
         $defaultColumns = [
             'customerStatusName',
@@ -235,7 +248,7 @@ class QuoteControllerTest extends WebTestCase
      *
      * @dataProvider viewProvider
      */
-    public function testView(array $inputData, array $expectedData)
+    public function testView(array $inputData, array $expectedData): void
     {
         $this->initClient([], $this->generateBasicAuthHeader($inputData['login'], $inputData['password']));
 
@@ -286,7 +299,7 @@ class QuoteControllerTest extends WebTestCase
      *
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function viewProvider()
+    public function viewProvider(): array
     {
         return [
             'customer1 user1 (CustomerUser:VIEW_BASIC)' => [
@@ -522,7 +535,7 @@ class QuoteControllerTest extends WebTestCase
      * @param string $user
      * @param int $status
      */
-    public function testViewAccessDenied($user, $status)
+    public function testViewAccessDenied($user, $status): void
     {
         $this->loginUser($user);
 
@@ -544,7 +557,7 @@ class QuoteControllerTest extends WebTestCase
     /**
      * @return array
      */
-    public function ACLProvider()
+    public function ACLProvider(): array
     {
         return [
             'VIEW (nanonymous user)' => [
@@ -562,7 +575,7 @@ class QuoteControllerTest extends WebTestCase
         ];
     }
 
-    public function testViewAccessGranted()
+    public function testViewAccessGranted(): void
     {
         $this->loginUser(LoadUserData::PARENT_ACCOUNT_USER1);
 
@@ -581,7 +594,7 @@ class QuoteControllerTest extends WebTestCase
         static::assertHtmlResponseStatusCodeEquals($response, 200);
     }
 
-    public function testViewDraft()
+    public function testViewDraft(): void
     {
         $this->loginUser(LoadUserData::PARENT_ACCOUNT_USER1);
 
@@ -600,7 +613,140 @@ class QuoteControllerTest extends WebTestCase
         static::assertHtmlResponseStatusCodeEquals($response, Response::HTTP_FORBIDDEN);
     }
 
-    public function testGridAccessDeniedForAnonymousUsers()
+    /**
+     * @dataProvider guestAccessProvider
+     *
+     * @param array $configs
+     * @param string $qid
+     * @param int $expected
+     * @param bool $expectedButton
+     */
+    public function testGuestAccess(array $configs, string $qid, int $expected, bool $expectedButton)
+    {
+        $this->initClient();
+
+        $configManager = $this->getContainer()->get('oro_config.manager');
+
+        foreach ($configs as $name => $value) {
+            $configManager->set($name, $value);
+        }
+
+        $configManager->flush();
+
+        /** @var $quote Quote */
+
+        $quote = $this->getReference($qid);
+
+        $crawler = $this->client->request(
+            'GET',
+            $this->getUrl(
+                'oro_sale_quote_frontend_view_guest',
+                ['guest_access_id' => $quote->getGuestAccessId()]
+            )
+        );
+
+        static::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), $expected);
+        static::assertFalse((bool)$crawler->filterXPath('//div[contains(@class, "breadcrumbs")]')->count());
+        static::assertFalse((bool)$crawler->filterXPath('//div[contains(@class, "primary-menu-container")]')->count());
+        static::assertEquals(
+            $expectedButton,
+            (bool)$crawler->filterXPath('//a[contains(., \'Accept and Submit to Order\')]')->count()
+        );
+    }
+
+    /**
+     * @return array
+     */
+    public function guestAccessProvider()
+    {
+        return [
+            'valid' => [
+                'configs' => [
+                    'oro_sale.enable_guest_quote' => true,
+                ],
+                'qid' => LoadQuoteData::QUOTE3,
+                'expected' => Response::HTTP_OK,
+                'expectedButton' => false
+            ],
+            'valid with button' => [
+                'configs' => [
+                    'oro_sale.enable_guest_quote' => true,
+                    'oro_checkout.guest_checkout' => true,
+                ],
+                'qid' => LoadQuoteData::QUOTE3,
+                'expected' => Response::HTTP_OK,
+                'expectedButton' => true
+            ],
+            'valid, but feature disabled' => [
+                'configs' => [
+                    'oro_sale.enable_guest_quote' => false,
+                ],
+                'qid' => LoadQuoteData::QUOTE3,
+                'expected' => Response::HTTP_NOT_FOUND,
+                'expectedButton' => false
+            ],
+            'invalid date' => [
+                'configs' => [
+                    'oro_sale.enable_guest_quote' => true,
+                ],
+                'qid' => LoadQuoteData::QUOTE5,
+                'expected' => Response::HTTP_OK,
+                'expectedButton' => false
+            ],
+            'expired' => [
+                'configs' => [
+                    'oro_sale.enable_guest_quote' => true,
+                ],
+                'qid' => LoadQuoteData::QUOTE8,
+                'expected' => Response::HTTP_OK,
+                'expectedButton' => false
+            ],
+            'valid with empty date' => [
+                'configs' => [
+                    'oro_sale.enable_guest_quote' => true,
+                ],
+                'qid' => LoadQuoteData::QUOTE9,
+                'expected' => Response::HTTP_OK,
+                'expectedButton' => false
+            ],
+            'valid with empty date with button' => [
+                'configs' => [
+                    'oro_sale.enable_guest_quote' => true,
+                    'oro_checkout.guest_checkout' => true,
+                ],
+                'qid' => LoadQuoteData::QUOTE9,
+                'expected' => Response::HTTP_OK,
+                'expectedButton' => true
+            ],
+            'valid from different owner' => [
+                'configs' => [
+                    'oro_sale.enable_guest_quote' => true,
+                ],
+                'qid' => LoadQuoteData::QUOTE9,
+                'expected' => Response::HTTP_OK,
+                'expectedButton' => false
+            ],
+            'valid from different owner with button' => [
+                'configs' => [
+                    'oro_sale.enable_guest_quote' => true,
+                    'oro_checkout.guest_checkout' => true,
+                ],
+                'qid' => LoadQuoteData::QUOTE9,
+                'expected' => Response::HTTP_OK,
+                'expectedButton' => true
+            ],
+            'not acceptable' => [
+                'configs' => [
+                    'oro_sale.enable_guest_quote' => true,
+                ],
+                'qid' => LoadQuoteData::QUOTE12,
+                'expected' => Response::HTTP_OK,
+                'expectedButton' => false
+            ],
+        ];
+    }
+
+    public function testGridAccessDeniedForAnonymousUsers(): void
     {
         $this->initClient();
         $this->client->getCookieJar()->clear();
@@ -612,7 +758,7 @@ class QuoteControllerTest extends WebTestCase
         $this->assertSame($response->getStatusCode(), 302);
     }
 
-    public function testActualQuantityNotEqualToOfferedValidation()
+    public function testActualQuantityNotEqualToOfferedValidation(): void
     {
         $this->loginUser(LoadUserData::ACCOUNT1_USER2);
         /* @var $quote Quote */
@@ -673,7 +819,7 @@ class QuoteControllerTest extends WebTestCase
      *
      * @return array
      */
-    protected function getOperationExecuteParams($operationName, $entityId, $entityClass)
+    protected function getOperationExecuteParams($operationName, $entityId, $entityClass): array
     {
         $actionContext = [
             'entityId'    => $entityId,

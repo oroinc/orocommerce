@@ -12,11 +12,10 @@ use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 use Oro\Bundle\ProductBundle\Visibility\ProductUnitFieldsSettingsInterface;
-use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Form\Type\FrontendLineItemWidgetType;
-use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
+use Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListManager;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as EntityTypeStub;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -43,14 +42,9 @@ class FrontendLineItemWidgetTypeTest extends AbstractFormIntegrationTestCase
     protected $type;
 
     /**
-     * @var AclHelper|\PHPUnit\Framework\MockObject\MockObject
+     * @var CurrentShoppingListManager|\PHPUnit\Framework\MockObject\MockObject
      */
-    protected $aclHelper;
-
-    /**
-     * @var ShoppingListManager|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $shoppingListManager;
+    protected $currentShoppingListManager;
 
     /**
      * @var array
@@ -66,18 +60,14 @@ class FrontendLineItemWidgetTypeTest extends AbstractFormIntegrationTestCase
     protected function setUp()
     {
         $this->translator = $this->createMock('Symfony\Component\Translation\TranslatorInterface');
-        $this->aclHelper = $this->getMockBuilder(AclHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->shoppingListManager = $this->getMockBuilder(ShoppingListManager::class)
+        $this->currentShoppingListManager = $this->getMockBuilder(CurrentShoppingListManager::class)
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->type = new FrontendLineItemWidgetType(
             $this->getRegistry(),
             $this->translator,
-            $this->aclHelper,
-            $this->shoppingListManager
+            $this->currentShoppingListManager
         );
 
         $this->type->setShoppingListClass(self::SHOPPING_LIST_CLASS);
@@ -185,7 +175,7 @@ class FrontendLineItemWidgetTypeTest extends AbstractFormIntegrationTestCase
     public function testFinishView()
     {
         $shoppingList = $this->getShoppingList(1, 'Found Current Shopping List');
-        $this->shoppingListManager->method('getCurrent')->willReturn($shoppingList);
+        $this->currentShoppingListManager->method('getCurrent')->willReturn($shoppingList);
         /** @var FormView|\PHPUnit\Framework\MockObject\MockObject $view */
         $view = $this->getMockBuilder('Symfony\Component\Form\FormView')
             ->disableOriginalConstructor()

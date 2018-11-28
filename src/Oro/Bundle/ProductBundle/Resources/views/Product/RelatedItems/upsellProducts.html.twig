@@ -25,7 +25,7 @@
     }) %}
 {% endif %}
 
-<div id="upsell-products-block">
+<div id="upsell-products-block" class="tab-content">
     {{ form_widget(form.appendUpsell, {'id': 'productAppendUpsell'}) }}
     {{ form_widget(form.removeUpsell, {'id': 'productRemoveUpsell'}) }}
     {{ placeholder('oro_product_upsell_products_buttons', {
@@ -33,6 +33,6 @@
         'upsellProductsLimit': upsellProductsLimit,
         'gridName': gridName
     }) }}
-    {{ dataGrid.renderGrid(gridName, relatedGridParams) }}
-    {{ placeholder('oro_product_upsell_products_edit', {'entity':  entity}) }}
+    {{ dataGrid.renderGrid(gridName, relatedGridParams, {cssClass: 'inner-grid' }) }}
+    {{ placeholder('oro_product_upsell_products_edit', {'entity': entity}) }}
 </div>

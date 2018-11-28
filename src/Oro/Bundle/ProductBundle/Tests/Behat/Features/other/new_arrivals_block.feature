@@ -165,7 +165,9 @@ Feature: New Arrivals Block
     And go to System/ Websites
     And click "Create Website"
     And fill form with:
-    |Name|NewSite|
+      |Name                           |NewSite                   |
+      |Guest Role                     |Non-Authenticated Visitors|
+      |Default Self-Registration Role |Buyer                     |
     And save and close form
     And should see "Website has been saved" flash message
     And go to System/ Websites
@@ -257,7 +259,7 @@ Feature: New Arrivals Block
 
   Scenario: Check that product name is localized
     Given I proceed as the User
-    When I press "Localization Switcher"
+    When I click "Localization Switcher"
     And I select "Localization 1" localization
     Then should see the following products in the "New Arrivals Block":
       | Title                     |

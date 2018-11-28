@@ -11,15 +11,15 @@ use Oro\Component\ChainProcessor\ProcessorInterface;
 use Oro\Component\EntitySerializer\EntitySerializer;
 
 /**
- * Adds a value of "category" association to Product entity.
+ * Computes a value of "category" association to Product entity.
  */
 class LoadCategoryForProduct implements ProcessorInterface
 {
     /** @var DoctrineHelper */
-    protected $doctrineHelper;
+    private $doctrineHelper;
 
     /** @var EntitySerializer */
-    protected $entitySerializer;
+    private $entitySerializer;
 
     /**
      * @param DoctrineHelper   $doctrineHelper
@@ -43,25 +43,18 @@ class LoadCategoryForProduct implements ProcessorInterface
             return;
         }
 
-        $config = $context->getConfig();
-
-        $categoryFieldName = $config->findFieldNameByPropertyPath('category');
-        if (!$categoryFieldName
-            || $config->getField($categoryFieldName)->isExcluded()
-            || array_key_exists($categoryFieldName, $data)
-        ) {
-            // the category field is undefined, excluded or already added
+        $categoryFieldName = $context->getResultFieldName('category');
+        if (!$context->isFieldRequested($categoryFieldName, $data)) {
             return;
         }
 
-        $productIdFieldName = $config->findFieldNameByPropertyPath('id');
+        $productIdFieldName = $context->getResultFieldName('id');
         if (!$productIdFieldName || empty($data[$productIdFieldName])) {
-            // the product id field is undefined or its value is unknown
             return;
         }
 
         $data[$categoryFieldName] = $this->loadCategoryData(
-            $config->getField($categoryFieldName),
+            $context->getConfig()->getField($categoryFieldName),
             $data[$productIdFieldName]
         );
         $context->setResult($data);
@@ -73,7 +66,7 @@ class LoadCategoryForProduct implements ProcessorInterface
      *
      * @return array|null
      */
-    protected function loadCategoryData(EntityDefinitionFieldConfig $categoryField, $productId)
+    private function loadCategoryData(EntityDefinitionFieldConfig $categoryField, int $productId): ?array
     {
         $data = $this->entitySerializer->serialize(
             $this->getCategoryQueryBuilder($categoryField->getTargetClass(), $productId),
@@ -93,7 +86,7 @@ class LoadCategoryForProduct implements ProcessorInterface
      *
      * @return QueryBuilder
      */
-    protected function getCategoryQueryBuilder($categoryEntityClass, $productId)
+    private function getCategoryQueryBuilder(string $categoryEntityClass, int $productId): QueryBuilder
     {
         $qb = $this->doctrineHelper
             ->getEntityRepositoryForClass($categoryEntityClass)

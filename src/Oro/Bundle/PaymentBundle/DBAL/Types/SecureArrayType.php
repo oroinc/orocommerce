@@ -4,14 +4,18 @@ namespace Oro\Bundle\PaymentBundle\DBAL\Types;
 
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\JsonArrayType;
-use Oro\Bundle\SecurityBundle\Encoder\Mcrypt;
+use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 
+/**
+ * Class adds secure_array type to Doctrine Mapping Types
+ * This type provides ability to transparently encrypt/decrypt json array in DB
+ */
 class SecureArrayType extends JsonArrayType
 {
     const TYPE = 'secure_array';
 
-    /** @var Mcrypt */
-    private $mcrypt;
+    /** @var SymmetricCrypterInterface */
+    private $crypter;
 
     /**
      * {@inheritdoc}
@@ -24,7 +28,7 @@ class SecureArrayType extends JsonArrayType
 
         $value = parent::convertToDatabaseValue($value, $platform);
 
-        return $this->getMcrypt()->encryptData($value);
+        return $this->getCrypter()->encryptData($value);
     }
 
     /**
@@ -36,7 +40,7 @@ class SecureArrayType extends JsonArrayType
             return [];
         }
 
-        $value = $this->getMcrypt()->decryptData($value);
+        $value = $this->getCrypter()->decryptData($value);
 
         return parent::convertToPHPValue($value, $platform);
     }
@@ -60,22 +64,22 @@ class SecureArrayType extends JsonArrayType
     }
 
     /**
-     * @param Mcrypt $mcrypt
+     * @param SymmetricCrypterInterface $crypter
      */
-    public function setMcrypt(Mcrypt $mcrypt)
+    public function setCrypter(SymmetricCrypterInterface $crypter)
     {
-        $this->mcrypt = $mcrypt;
+        $this->crypter = $crypter;
     }
 
     /**
-     * @return Mcrypt
+     * @return SymmetricCrypterInterface
      */
-    public function getMcrypt()
+    public function getCrypter()
     {
-        if (!$this->mcrypt) {
-            throw new \RuntimeException('Mcrypt missing');
+        if (!$this->crypter) {
+            throw new \RuntimeException('Crypter is not set');
         }
 
-        return $this->mcrypt;
+        return $this->crypter;
     }
 }

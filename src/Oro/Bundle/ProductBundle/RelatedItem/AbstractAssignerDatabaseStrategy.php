@@ -3,10 +3,12 @@
 namespace Oro\Bundle\ProductBundle\RelatedItem;
 
 use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
+/**
+ * Abstract class for strategies which will save changes of product`s related items to database.
+ */
 abstract class AbstractAssignerDatabaseStrategy implements AssignerStrategyInterface
 {
     /**
@@ -56,6 +58,10 @@ abstract class AbstractAssignerDatabaseStrategy implements AssignerStrategyInter
      */
     public function removeRelations(Product $productFrom, array $productsTo)
     {
+        if (count($productsTo) === 0) {
+            return;
+        }
+
         foreach ($productsTo as $productTo) {
             $this->removeRelation($productFrom, $productTo);
         }

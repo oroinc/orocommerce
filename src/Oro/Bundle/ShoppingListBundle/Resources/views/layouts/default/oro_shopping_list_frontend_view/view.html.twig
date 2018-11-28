@@ -176,7 +176,7 @@
             }) }}>
                 <div class="shopping-list-line-items__header">
                     <div class="shopping-list-line-items__header-label">{{ 'oro.frontend.shoppinglist.view.item.lable'|trans }}</div>
-                    <div class="shopping-list-line-items__header-label">{{ 'oro.frontend.shoppinglist.view.subtotal.lable'|trans }}</div>
+                    <div class="shopping-list-line-items__header-label">{{ 'oro.frontend.shoppinglist.view.price.label'|trans }}</div>
                 </div>
                 {% for lineItem in lineItems %}
                     <div class="shopping-list-line-items__item-wrapper">
@@ -505,11 +505,10 @@
 
     {% if matrixForm != 'none' %}
         {% set moduleOptions = moduleOptions|merge({
-            route: 'oro_shopping_list_frontend_remove_product',
-            requestMethod: 'POST',
+            route: 'oro_shopping_list_frontend_remove_line_item',
+            requestMethod: 'DELETE',
             routeParams: {
-                'productId': mainProduct.id,
-                'shoppingListId': shoppingList.id
+                'lineItemId': lineItem.id
             }
         }) %}
     {% else %}
@@ -519,7 +518,7 @@
         }) %}
     {% endif %}
 
-    <button class="item-remove button button--plain" {{ UI.renderPageComponentAttributes({
+    <button class="item-remove btn btn--plain" {{ UI.renderPageComponentAttributes({
             module: 'orofrontend/js/app/components/delete-item-component',
             options: moduleOptions
         }) }} >
@@ -542,7 +541,7 @@
         </div>
     {% endif %}
 
-    {% set errorPath = 'product.' ~ lineItem.productSku %}
+    {% set errorPath = 'product.' ~ lineItem.productSku ~ '.' ~ lineItem.productUnitCode %}
     {% if parent.lineItemErrors is iterable and parent.lineItemErrors[errorPath] is defined and parent.lineItemErrors[errorPath] is iterable %}
         <div class="shopping-list-line-items__error">
         {% for error in parent.lineItemErrors[errorPath] %}

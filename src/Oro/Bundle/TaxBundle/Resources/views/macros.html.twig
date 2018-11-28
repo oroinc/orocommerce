@@ -45,13 +45,24 @@
 
 {% macro renderTaxes(result) %}
     {% if result.taxes is defined and result.taxes|length %}
+        {% set FRACTION_DIGITS = constant('\\NumberFormatter::FRACTION_DIGITS') %}
+        {% set MIN_FRACTION_DIGITS = constant('\\NumberFormatter::MIN_FRACTION_DIGITS') %}
+        {% set MAX_FRACTION_DIGITS = constant('\\NumberFormatter::MAX_FRACTION_DIGITS') %}
+        {% set CALCULATION_SCALE_AS_PERCENT = constant('Oro\\Bundle\\TaxBundle\\Provider\\TaxationSettingsProvider::CALCULATION_SCALE_AS_PERCENT') %}
+
         <table class="grid table table-condensed table-bordered tax-result-grid">
             {{ _self._renderTaxesHead() }}
             <tbody>
             {% for tax in result.taxes %}
                 <tr>
                     <td class="renderable">{{ tax.tax }}</td>
-                    <td class="renderable">{{ tax.rate|oro_format_percent }}</td>
+                    <td class="renderable">{{ tax.rate|oro_format_percent({
+                        attributes: {
+                            FRACTION_DIGITS: CALCULATION_SCALE_AS_PERCENT,
+                            MIN_FRACTION_DIGITS: 0,
+                            MAX_FRACTION_DIGITS: CALCULATION_SCALE_AS_PERCENT
+                        }
+                    }) }}</td>
                     <td class="renderable">{{ tax.taxableAmount|oro_format_currency({currency: tax.currency}) }}</td>
                     <td class="renderable">{{ tax.taxAmount|oro_format_currency({currency: tax.currency}) }}</td>
                 </tr>

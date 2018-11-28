@@ -20,6 +20,9 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 
+/**
+ * Abstract repository which contains logic of retrieving and changing price product information in DB
+ */
 abstract class BaseProductPriceRepository extends EntityRepository
 {
     /**
@@ -143,30 +146,6 @@ abstract class BaseProductPriceRepository extends EntityRepository
 
         return (int)$query
             ->getSingleScalarResult();
-    }
-
-    /**
-     * @deprecated Fetch currencies from config instead
-     * @return array
-     */
-    public function getAvailableCurrencies()
-    {
-        $qb = $this->createQueryBuilder('productPrice');
-
-        $currencies = $qb
-            ->distinct()
-            ->select('productPrice.currency')
-            ->orderBy($qb->expr()->asc('productPrice.currency'))
-            ->getQuery()
-            ->getArrayResult();
-
-        $result = [];
-        foreach ($currencies as $currency) {
-            $currencyName = reset($currency);
-            $result[$currencyName] = $currencyName;
-        }
-
-        return $result;
     }
 
     /**

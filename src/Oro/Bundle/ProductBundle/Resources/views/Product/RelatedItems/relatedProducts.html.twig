@@ -25,7 +25,7 @@
     }) %}
 {% endif %}
 
-<div id="related-products-block">
+<div id="related-products-block" class="tab-content">
     {{ form_widget(form.appendRelated, {'id': 'productAppendRelated'}) }}
     {{ form_widget(form.removeRelated, {'id': 'productRemoveRelated'}) }}
     {{ placeholder('oro_product_related_products_buttons', {
@@ -33,6 +33,6 @@
         'relatedProductsLimit': relatedProductsLimit,
         'gridName': gridName
     }) }}
-    {{ dataGrid.renderGrid(gridName, relatedGridParams) }}
-    {{ placeholder('oro_product_related_items_edit', {'entity':  entity}) }}
+    {{ dataGrid.renderGrid(gridName, relatedGridParams, {cssClass: 'inner-grid'}) }}
+    {{ placeholder('oro_product_related_items_edit', {'entity': entity}) }}
 </div>

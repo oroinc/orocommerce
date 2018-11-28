@@ -256,4 +256,18 @@ class DiscountContext implements DiscountContextInterface
             + $this->getSubtotalDiscountTotal()
             + $this->getShippingDiscountTotal();
     }
+
+    /**
+     * Employs custom cloning of the line items collection (to avoid
+     * unnecessary cloning of products inside of the line items)
+     */
+    public function __clone()
+    {
+        $this->lineItems = \array_map(
+            function ($item) {
+                return clone $item;
+            },
+            $this->lineItems
+        );
+    }
 }

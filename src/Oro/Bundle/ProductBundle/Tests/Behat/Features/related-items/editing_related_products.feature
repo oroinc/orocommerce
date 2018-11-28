@@ -102,7 +102,7 @@ Feature: Editing related products
     Given go to Products/ Products
     And "Assign In Both Directions" option for related products is enabled
     When I click View PSKU3 in grid
-    Then there is no records in "RelatedProductsViewGrid"
+    Then I should see "No records found"
 
   Scenario: Related items should not be visible on view if user has no permission
     Given user has following permissions

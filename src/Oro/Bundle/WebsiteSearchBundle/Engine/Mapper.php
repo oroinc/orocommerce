@@ -47,15 +47,32 @@ class Mapper
             $result[$resultName] = '';
 
             if (isset($item[$name])) {
-                $value = $item[$name];
-                if (is_array($value)) {
-                    $value = array_shift($value);
-                }
-
-                $result[$resultName] = $value;
+                $result[$resultName] = $this->parseValue($item[$name], $type);
             }
         }
 
         return $result;
+    }
+
+    /**
+     * @param mixed $value
+     * @param string $type
+     * @return mixed
+     */
+    protected function parseValue($value, $type)
+    {
+        if (is_array($value)) {
+            $value = array_shift($value);
+        }
+
+        if (is_numeric($value)) {
+            if ($type === Query::TYPE_INTEGER) {
+                $value = (int)$value;
+            } elseif ($type === Query::TYPE_DECIMAL) {
+                $value = (float)$value;
+            }
+        }
+
+        return $value;
     }
 }

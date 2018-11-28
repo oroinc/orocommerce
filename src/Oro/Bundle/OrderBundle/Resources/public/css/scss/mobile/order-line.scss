@@ -1,0 +1,21 @@
+/* @theme: admin.oro; */
+
+.order-line {
+    &-item-type,
+    &-item-warehouse {
+        .select2-container {
+            width: auto;
+        }
+    }
+
+    &-item-quantity {
+        .fields-row {
+            width: auto;
+            white-space: nowrap;
+
+            > div {
+                display: inline-block;
+            }
+        }
+    }
+}

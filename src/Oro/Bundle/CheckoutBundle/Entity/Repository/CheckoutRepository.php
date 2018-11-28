@@ -11,9 +11,29 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\WorkflowBundle\Helper\WorkflowQueryTrait;
 use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 
+/**
+ * Handles logic for fetching checkout and checkout items by ids and different criteria
+ */
 class CheckoutRepository extends EntityRepository
 {
     use WorkflowQueryTrait;
+
+    /**
+     * @param int $checkoutId
+     *
+     * @return Checkout|null
+     */
+    public function getCheckoutWithRelations($checkoutId)
+    {
+        $qb = $this->createQueryBuilder('c');
+        $qb->select('c', 'cli', 'p')
+            ->leftJoin('c.lineItems', 'cli')
+            ->leftJoin('cli.product', 'p')
+            ->where($qb->expr()->eq('c.id', ':id'))
+            ->setParameter('id', $checkoutId);
+
+        return $qb->getQuery()->getOneOrNullResult();
+    }
 
     /**
      * Return the count of line items per Checkout.

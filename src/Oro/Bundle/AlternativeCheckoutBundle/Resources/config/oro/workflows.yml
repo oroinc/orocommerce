@@ -223,7 +223,6 @@ workflows:
                             form_type: Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressType
                             options:
                                 object: $checkout
-                                isEditEnabled: true
                                 addressType: 'billing'
                                 required: true
                                 translation_domain: messages
@@ -260,7 +259,6 @@ workflows:
                             form_type: Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressType
                             options:
                                 object: $checkout
-                                isEditEnabled: true
                                 addressType: 'shipping'
                                 required: true
                                 disabled: $disallow_shipping_address_edit
@@ -533,7 +531,7 @@ workflows:
                        service: oro_shopping_list.manager.shopping_list_limit
                        method: getShoppingListLimitForUser
                     - '@call_service_method':
-                       service: oro_shopping_list.shopping_list.manager
+                       service: oro_shopping_list.manager.current_shopping_list
                        method: isCurrentShoppingListEmpty
                        attribute: $.result.isCurrentShoppingListEmpty
                     - '@assign_value': [$.result.doShowConfirmation, false]
@@ -1516,7 +1514,7 @@ workflows:
                     - '@send_email_template':
                         parameters:
                             from: $order.owner.email
-                            to: [$order.customerUser.email, $email]
+                            to: [$order.customerUser, $email]
                             template: 'order_confirmation_email'
                             entity: $order
 

@@ -7,6 +7,9 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerVisitor;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
+/**
+ * Handles logic related to migrating shopping lists from customer visitors to customer users.
+ */
 class GuestShoppingListMigrationManager
 {
     const FLUSH_BATCH_SIZE = 100;
@@ -20,21 +23,25 @@ class GuestShoppingListMigrationManager
     /** @var ShoppingListManager */
     private $shoppingListManager;
 
+    /** @var CurrentShoppingListManager */
+    private $currentShoppingListManager;
+
     /**
-     * GuestShoppingListMigrationManager constructor
-     *
-     * @param DoctrineHelper           $doctrineHelper
-     * @param ShoppingListLimitManager $shoppingListLimitManager
-     * @param ShoppingListManager      $shoppingListManager
+     * @param DoctrineHelper             $doctrineHelper
+     * @param ShoppingListLimitManager   $shoppingListLimitManager
+     * @param ShoppingListManager        $shoppingListManager
+     * @param CurrentShoppingListManager $currentShoppingListManager
      */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         ShoppingListLimitManager $shoppingListLimitManager,
-        ShoppingListManager $shoppingListManager
+        ShoppingListManager $shoppingListManager,
+        CurrentShoppingListManager $currentShoppingListManager
     ) {
-        $this->doctrineHelper           = $doctrineHelper;
+        $this->doctrineHelper = $doctrineHelper;
         $this->shoppingListLimitManager = $shoppingListLimitManager;
-        $this->shoppingListManager      = $shoppingListManager;
+        $this->shoppingListManager = $shoppingListManager;
+        $this->currentShoppingListManager = $currentShoppingListManager;
     }
 
     /**
@@ -78,7 +85,7 @@ class GuestShoppingListMigrationManager
             $lineItem->setCustomerUser($customerUser);
         }
         $shoppingList->setCustomerUser($customerUser);
-        $this->shoppingListManager->setCurrent($customerUser, $shoppingList);
+        $this->currentShoppingListManager->setCurrent($customerUser, $shoppingList);
         $this->doctrineHelper->getEntityManagerForClass(ShoppingList::class)->flush();
     }
 
@@ -89,12 +96,17 @@ class GuestShoppingListMigrationManager
      */
     public function mergeShoppingListWithCurrent(ShoppingList $shoppingList)
     {
-        $customerUserShoppingList = $this->shoppingListManager->getCurrent();
+        $customerUserShoppingList = $this->currentShoppingListManager->getCurrent();
         $lineItems = clone $shoppingList->getLineItems();
-        $shoppingListEntityManager = $this->doctrineHelper->getEntityManagerForClass(ShoppingList::class);
-        $shoppingListEntityManager->remove($shoppingList);
-        $shoppingListEntityManager->flush();
-        $this->shoppingListManager
-            ->bulkAddLineItems($lineItems->toArray(), $customerUserShoppingList, self::FLUSH_BATCH_SIZE);
+
+        $em = $this->doctrineHelper->getEntityManagerForClass(ShoppingList::class);
+        $em->remove($shoppingList);
+        $em->flush();
+
+        $this->shoppingListManager->bulkAddLineItems(
+            $lineItems->toArray(),
+            $customerUserShoppingList,
+            self::FLUSH_BATCH_SIZE
+        );
     }
 }

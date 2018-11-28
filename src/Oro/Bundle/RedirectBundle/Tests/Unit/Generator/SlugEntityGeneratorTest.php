@@ -3,6 +3,7 @@
 namespace Oro\Bundle\RedirectBundle\Tests\Unit\Generator;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\RedirectBundle\Cache\UrlCacheInterface;
@@ -24,17 +25,17 @@ class SlugEntityGeneratorTest extends \PHPUnit\Framework\TestCase
     /**
      * @var RoutingInformationProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
-    protected $routingInformationProvider;
+    private $routingInformationProvider;
 
     /**
      * @var UniqueSlugResolver|\PHPUnit\Framework\MockObject\MockObject
      */
-    protected $slugResolver;
+    private $slugResolver;
 
     /**
      * @var RedirectGenerator|\PHPUnit\Framework\MockObject\MockObject
      */
-    protected $redirectGenerator;
+    private $redirectGenerator;
 
     /**
      * @var UrlCacheInterface|\PHPUnit\Framework\MockObject\MockObject
@@ -42,9 +43,14 @@ class SlugEntityGeneratorTest extends \PHPUnit\Framework\TestCase
     private $urlStorageCache;
 
     /**
+     * @var UserLocalizationManager|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $userLocalizationManager;
+
+    /**
      * @var SlugEntityGenerator
      */
-    protected $generator;
+    private $generator;
 
     protected function setUp()
     {
@@ -52,12 +58,14 @@ class SlugEntityGeneratorTest extends \PHPUnit\Framework\TestCase
         $this->slugResolver = $this->createMock(UniqueSlugResolver::class);
         $this->redirectGenerator = $this->createMock(RedirectGenerator::class);
         $this->urlStorageCache = $this->createMock(UrlCacheInterface::class);
+        $this->userLocalizationManager = $this->createMock(UserLocalizationManager::class);
 
         $this->generator = new SlugEntityGenerator(
             $this->routingInformationProvider,
             $this->slugResolver,
             $this->redirectGenerator,
-            $this->urlStorageCache
+            $this->urlStorageCache,
+            $this->userLocalizationManager
         );
     }
 
@@ -68,6 +76,15 @@ class SlugEntityGeneratorTest extends \PHPUnit\Framework\TestCase
      */
     public function testGenerate(SluggableInterface $entity, SluggableInterface $expected)
     {
+        $localizations = [
+            $this->getEntity(Localization::class, ['id' => 1001])
+        ];
+
+        $this->userLocalizationManager
+            ->expects(self::any())
+            ->method('getEnabledLocalizations')
+            ->willReturn($localizations);
+
         $this->routingInformationProvider->expects($this->any())
             ->method('getRouteData')
             ->willReturn(new RouteData('some_route', ['id' => 42]));
@@ -83,6 +100,11 @@ class SlugEntityGeneratorTest extends \PHPUnit\Framework\TestCase
                 ->method('resolve')
                 ->willReturn($slug->getUrl());
         }
+
+        $this->urlStorageCache
+            ->expects(self::once())
+            ->method('removeUrl')
+            ->with('some_route', ['id' => 42], 1001);
 
         $this->generator->generate($entity);
         $this->assertEquals($expected, $entity);
@@ -263,7 +285,12 @@ class SlugEntityGeneratorTest extends \PHPUnit\Framework\TestCase
             ->method('updateRedirects');
 
         $this->redirectGenerator->expects($this->once())
-            ->method('generate');
+            ->method('generateForSlug');
+
+        $this->userLocalizationManager
+            ->expects(self::any())
+            ->method('getEnabledLocalizations')
+            ->willReturn([]);
 
         $this->generator->generate($entity, true);
         $this->assertEquals($expected, $entity);
@@ -282,7 +309,7 @@ class SlugEntityGeneratorTest extends \PHPUnit\Framework\TestCase
 
         $routeData = new RouteData('someRoute');
         $this->routingInformationProvider
-            ->expects($this->once())
+            ->expects($this->at(2))
             ->method('getRouteData')
             ->with($entity)
             ->willReturn($routeData);
@@ -290,6 +317,11 @@ class SlugEntityGeneratorTest extends \PHPUnit\Framework\TestCase
         $expectedSlugPrototypes = new ArrayCollection([
             $this->getEntity(LocalizedFallbackValue::class, ['string' => 'something-1'])
         ]);
+
+        $this->userLocalizationManager
+            ->expects(self::any())
+            ->method('getEnabledLocalizations')
+            ->willReturn([]);
 
         $this->generator->generate($entity);
         $this->assertEquals($expectedSlugPrototypes, $entity->getSlugPrototypes());

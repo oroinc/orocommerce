@@ -12,8 +12,16 @@ class FrontendProductGrid extends Grid
         'GridToolbarPaginator' => 'FrontendGridToolbarPaginator',
         'MassActionHeadCheckbox' => 'ProductFrontendMassActionHeadCheckbox',
         'MassActionButton' => 'ProductFrontendMassActionButton',
-        'GridFloatingMenu' => 'ProductFrontendGridFloatingMenu',
+        'GridMassActionMenu' => 'ProductFrontendGridMassActionMenu',
         'GridColumnManager' => 'FrontendGridColumnManager',
         'GridFilterManager' => 'FrontendGridFilterManager',
     ];
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getRows()
+    {
+        return $this->getElements($this->getMappedChildElementName(static::TABLE_ROW_ELEMENT));
+    }
 }

@@ -24,6 +24,12 @@ services:
         arguments:
             - "@oro_payment.payment_method_view.composite_provider"
 
+    oro_payment.formatter.payment_method_options:
+        class: 'Oro\Bundle\PaymentBundle\Formatter\PaymentMethodOptionsFormatter'
+        arguments:
+            - '@oro_payment.payment_method_view.composite_provider'
+            - '@event_dispatcher'
+
     oro_payment.twig.payment_method_extension:
         class: 'Oro\Bundle\PaymentBundle\Twig\PaymentMethodExtension'
         public: false
@@ -50,12 +56,19 @@ services:
             - '@oro_payment.payment_method.composite_provider'
             - '@oro_payment.provider.methods_configs_rules.by_context.basic'
 
+    oro_payment.methods_provider.cache:
+        parent: doctrine_cache.abstract.array
+        public: false
+        calls:
+            - [ setNamespace, [ 'payment_methods_provider_cache' ] ]
+
     oro_payment.provider.methods_provider:
         class: 'Oro\Bundle\PaymentBundle\Layout\DataProvider\PaymentMethodViewsProvider'
         arguments:
             - '@oro_payment.payment_method_view.composite_provider'
             - '@oro_payment.method.provider.method_provider'
             - '@oro_payment.provider.payment_transaction'
+            - '@oro_payment.methods_provider.cache'
         tags:
             - { name: layout.data_provider, alias: oro_payment_method_views_provider }
 
@@ -77,7 +90,7 @@ services:
         class: 'Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider'
         arguments:
             - '@oro_api.doctrine_helper'
-            - '@security.token_storage'
+            - '@oro_customer.security.customer_user_provider'
             - '@event_dispatcher'
             - '%oro_payment.entity.payment_transaction.class%'
         calls:
@@ -305,3 +318,10 @@ services:
         arguments:
             - '@oro_payment.enabled_rule_filtration.basic_service'
             - '@oro_payment.repository.payment_methods_configs_rule'
+
+    oro_payment.provider.payment_method_object_variables:
+        class: 'Oro\Bundle\PaymentBundle\Provider\PaymentMethodObjectVariablesProvider'
+        lazy: true
+        public: false
+        tags:
+            - { name: oro_email.emailtemplate.variable_provider, scope: entity }

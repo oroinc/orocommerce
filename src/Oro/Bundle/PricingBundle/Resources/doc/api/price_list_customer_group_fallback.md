@@ -37,7 +37,7 @@ Example:
         "relationships": {
             "customerGroup": {
                 "data": {
-                    "type":"customer_groups",
+                    "type":"customergroups",
                     "id": "1"
                 }
             }

@@ -33,18 +33,20 @@
         data-toggle="tooltip"
         data-title="{{ _self.transitionConditionMessages(transitionData) }}"
         data-html="true"
-        data-container=".checkout__submit-btn"
+        data-container="body"
         data-placement="{% if isMobileVersion() %}bottom{% else %}left{% endif %}"
     {% endif %}
 {% endmacro %}
 
 {% macro transitionConditionMessages(transitionData) %}
-    <div>{{ 'oro.checkout.workflow.unavailable_transition.message'|trans }}</div>
-    <ul>
-        {% for error in transitionData.errors %}
-            <li>{{ error.message|trans(error.parameters)|nl2br }}</li>
-        {% endfor %}
-    </ul>
+    {%- spaceless -%}
+        <div>{{ 'oro.checkout.workflow.unavailable_transition.message'|trans }}</div>
+        <ul>
+            {% for error in transitionData.errors %}
+                <li>{{ error.message|trans(error.parameters)|nl2br }}</li>
+            {% endfor %}
+        </ul>
+    {%- endspaceless -%}
 {% endmacro %}
 
 {% block checkout_transition_back_widget %}
@@ -94,7 +96,7 @@
     {% else %}
         {% set transitionLabel = transitionData.transition.label|trans({},'workflows') %}
     {% endif %}
-    <a href="{{ transitionUrl }}" class="button--plain"
+    <a href="{{ transitionUrl }}" class="btn--plain"
        data-toggle="tooltip"
        data-title="{{ transitionLabel }}"
        data-html="true"

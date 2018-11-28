@@ -86,15 +86,10 @@ class ShippingPriceCacheTest extends \PHPUnit\Framework\TestCase
     {
         $context = $this->createShippingContext([]);
 
-        $this->cacheProvider->expects(static::once())
-            ->method('contains')
-            ->with('_flat_rateprimary')
-            ->willReturn($isContains);
-
         $this->cacheProvider->expects(static::any())
             ->method('fetch')
             ->with('_flat_rateprimary')
-            ->willReturn($price);
+            ->willReturn($isContains ? $price : false);
 
         static::assertSame($price, $this->cache->getPrice($context, 'flat_rate', 'primary'));
     }

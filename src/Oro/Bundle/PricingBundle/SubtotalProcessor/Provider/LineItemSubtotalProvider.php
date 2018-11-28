@@ -14,6 +14,9 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
 use Oro\Bundle\ProductBundle\Model\QuantityAwareInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
+/**
+ * Subtotal provider for line items with prices. SUM(ROUND(price*qty))
+ */
 class LineItemSubtotalProvider extends AbstractSubtotalProvider implements
     SubtotalProviderInterface,
     SubtotalCacheAwareInterface
@@ -109,11 +112,12 @@ class LineItemSubtotalProvider extends AbstractSubtotalProvider implements
         $baseCurrency   = $this->getBaseCurrency($entity);
         foreach ($entity->getLineItems() as $lineItem) {
             if ($lineItem instanceof PriceAwareInterface && $lineItem->getPrice() instanceof Price) {
-                $subtotalAmount += $this->getRowTotal($lineItem, $baseCurrency);
+                $rowTotal = $this->getRowTotal($lineItem, $baseCurrency);
+                $subtotalAmount += $this->rounding->round($rowTotal);
             }
         }
 
-        return $this->rounding->round($subtotalAmount);
+        return $subtotalAmount;
     }
 
     /**

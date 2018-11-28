@@ -177,7 +177,7 @@
     </p>
 {% endblock %}
 
-{% block _product_view_attribute_group_general_attribute_text_brand_widget %}
+{% block _product_view_attribute_group_general_attribute_product_brand_brand_widget %}
     {% set attr = layout_attr_defaults(attr, {'~class': ' brand'}) %}
     <div {{ block('block_attributes') }}>
         <span class="product-view-brand">{{ label|trans }}:</span>
@@ -194,7 +194,7 @@
     <script>
         require({
             config: {
-                'oroui/js/app/views/tab-collection-view': {templateClassName: 'product-attributes-tabs'},
+                'oroui/js/app/views/tab-collection-view': {templateClassName: 'nav product-attributes-tabs'},
                 'oroui/js/app/views/tab-item-view': {
                     className: 'product-attributes-tabs__item',
                     templateClassName: 'product-attributes-tabs__link'
