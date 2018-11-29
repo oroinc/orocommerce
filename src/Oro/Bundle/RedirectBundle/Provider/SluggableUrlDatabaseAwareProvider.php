@@ -160,7 +160,7 @@ class SluggableUrlDatabaseAwareProvider implements SluggableUrlProviderInterface
             return [];
         }
 
-        return json_decode($this->cache->getUrl(self::SLUG_ROUTES_KEY, []), true);
+        return (array)json_decode($this->cache->getUrl(self::SLUG_ROUTES_KEY, []), true);
     }
 
     /**
