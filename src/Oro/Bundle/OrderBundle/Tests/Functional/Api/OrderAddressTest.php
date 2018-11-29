@@ -2,19 +2,29 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Functional\Api;
 
-use Oro\Bundle\AddressBundle\Entity\Country;
-use Oro\Bundle\AddressBundle\Entity\Region;
+use Oro\Bundle\AddressBundle\Tests\Functional\Api\RestJsonApi\AddressCountryAndRegionTestTrait;
 use Oro\Bundle\AddressBundle\Tests\Functional\DataFixtures\LoadCountryData;
 use Oro\Bundle\AddressBundle\Tests\Functional\DataFixtures\LoadRegionData;
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrderAddressData;
 
+/**
+ * @dbIsolationPerTest
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
+ */
 class OrderAddressTest extends RestJsonApiTestCase
 {
-    /**
-     * {@inheritDoc}
-     */
+    use AddressCountryAndRegionTestTrait;
+
+    private const ENTITY_CLASS               = OrderAddress::class;
+    private const ENTITY_TYPE                = 'orderaddresses';
+    private const CREATE_MIN_REQUEST_DATA    = 'address_create_min.yml';
+    private const IS_REGION_REQUIRED         = true;
+    private const COUNTRY_REGION_ADDRESS_REF = LoadOrderAddressData::ORDER_ADDRESS_1;
+
     protected function setUp()
     {
         parent::setUp();
@@ -22,36 +32,245 @@ class OrderAddressTest extends RestJsonApiTestCase
         $this->loadFixtures([
             LoadOrderAddressData::class,
             LoadCountryData::class,
-            LoadRegionData::class,
+            LoadRegionData::class
         ]);
     }
 
     public function testGetList()
     {
-        $response = $this->cget(['entity' => 'orderaddresses']);
+        $response = $this->cget(
+            ['entity' => self::ENTITY_TYPE]
+        );
 
         $this->assertResponseContains('address_get_list.yml', $response);
     }
 
     public function testGet()
     {
-        /** @var OrderAddress $orderAddress */
-        $orderAddress = $this->getReference(LoadOrderAddressData::ORDER_ADDRESS_1);
-
+        $addressId = $this->getReference(LoadOrderAddressData::ORDER_ADDRESS_1)->getId();
         $response = $this->get(
-            ['entity' => 'orderaddresses', 'id' => $orderAddress->getId()]
+            ['entity' => self::ENTITY_TYPE, 'id' => $addressId]
         );
 
         $this->assertResponseContains('address_get.yml', $response);
     }
 
+    public function testCreate()
+    {
+        $countryId = $this->getReference('country.usa')->getIso2Code();
+        $regionId = $this->getReference('region.usny')->getCombinedCode();
+
+        $response = $this->post(
+            ['entity' => self::ENTITY_TYPE],
+            'address_create.yml'
+        );
+
+        $addressId = (int)$this->getResourceId($response);
+        $responseContent = $this->updateResponseContent('address_create.yml', $response);
+        $this->assertResponseContains($responseContent, $response);
+
+        /** @var OrderAddress $address */
+        $address = $this->getEntityManager()
+            ->find(self::ENTITY_CLASS, $addressId);
+        self::assertNotNull($address);
+        self::assertEquals('New Address', $address->getLabel());
+        self::assertFalse($address->isFromExternalSource());
+        self::assertEquals('777-777-777', $address->getPhone());
+        self::assertEquals('1215 Caldwell Road', $address->getStreet());
+        self::assertEquals('Street 2', $address->getStreet2());
+        self::assertEquals('Rochester', $address->getCity());
+        self::assertEquals('14608', $address->getPostalCode());
+        self::assertEquals('test organization', $address->getOrganization());
+        self::assertEquals('Mr.', $address->getNamePrefix());
+        self::assertEquals('M.D.', $address->getNameSuffix());
+        self::assertEquals('John', $address->getFirstName());
+        self::assertEquals('Edgar', $address->getMiddleName());
+        self::assertEquals('Doo', $address->getLastName());
+        self::assertEquals($countryId, $address->getCountry()->getIso2Code());
+        self::assertEquals($regionId, $address->getRegion()->getCombinedCode());
+    }
+
+    public function testTryToCreateWithRequiredDataOnlyAndWithoutOrganizationAndFirstNameAndLastName()
+    {
+        $data = $this->getRequestData(self::CREATE_MIN_REQUEST_DATA);
+        unset($data['data']['attributes']['organization']);
+        $response = $this->post(
+            ['entity' => self::ENTITY_TYPE],
+            $data,
+            [],
+            false
+        );
+
+        $this->assertResponseValidationErrors(
+            [
+                [
+                    'title'  => 'name or organization constraint',
+                    'detail' => 'Organization or First Name and Last Name should not be blank.',
+                    'source' => ['pointer' => '/data/attributes/organization']
+                ],
+                [
+                    'title'  => 'name or organization constraint',
+                    'detail' => 'First Name and Last Name or Organization should not be blank.',
+                    'source' => ['pointer' => '/data/attributes/firstName']
+                ],
+                [
+                    'title'  => 'name or organization constraint',
+                    'detail' => 'Last Name and First Name or Organization should not be blank.',
+                    'source' => ['pointer' => '/data/attributes/lastName']
+                ]
+            ],
+            $response
+        );
+    }
+
+    public function testCreateWithRequiredDataOnlyAndOrganization()
+    {
+        $countryId = $this->getReference('country.usa')->getIso2Code();
+        $regionId = $this->getReference('region.usny')->getCombinedCode();
+
+        $data = $this->getRequestData(self::CREATE_MIN_REQUEST_DATA);
+        $response = $this->post(
+            ['entity' => self::ENTITY_TYPE],
+            $data
+        );
+
+        $addressId = (int)$this->getResourceId($response);
+        $responseContent = $data;
+        $responseContent['data']['attributes']['label'] = null;
+        $responseContent['data']['attributes']['fromExternalSource'] = false;
+        $responseContent['data']['attributes']['phone'] = null;
+        $responseContent['data']['attributes']['street2'] = null;
+        $responseContent['data']['attributes']['namePrefix'] = null;
+        $responseContent['data']['attributes']['nameSuffix'] = null;
+        $responseContent['data']['attributes']['firstName'] = null;
+        $responseContent['data']['attributes']['middleName'] = null;
+        $responseContent['data']['attributes']['lastName'] = null;
+        $this->assertResponseContains($responseContent, $response);
+
+        /** @var OrderAddress $address */
+        $address = $this->getEntityManager()
+            ->find(self::ENTITY_CLASS, $addressId);
+        self::assertNotNull($address);
+        self::assertNull($address->getLabel());
+        self::assertFalse($address->isFromExternalSource());
+        self::assertNull($address->getPhone());
+        self::assertEquals('1215 Caldwell Road', $address->getStreet());
+        self::assertNull($address->getStreet2());
+        self::assertEquals('Rochester', $address->getCity());
+        self::assertEquals('14608', $address->getPostalCode());
+        self::assertEquals('test organization', $address->getOrganization());
+        self::assertNull($address->getNamePrefix());
+        self::assertNull($address->getNameSuffix());
+        self::assertNull($address->getFirstName());
+        self::assertNull($address->getMiddleName());
+        self::assertNull($address->getLastName());
+        self::assertEquals($countryId, $address->getCountry()->getIso2Code());
+        self::assertEquals($regionId, $address->getRegion()->getCombinedCode());
+    }
+
+    public function testCreateWithRequiredDataOnlyAndFirstNameAndLastName()
+    {
+        $countryId = $this->getReference('country.usa')->getIso2Code();
+        $regionId = $this->getReference('region.usny')->getCombinedCode();
+
+        $data = $this->getRequestData(self::CREATE_MIN_REQUEST_DATA);
+        unset($data['data']['attributes']['organization']);
+        $data['data']['attributes']['firstName'] = 'John';
+        $data['data']['attributes']['lastName'] = 'Doo';
+        $response = $this->post(
+            ['entity' => self::ENTITY_TYPE],
+            $data
+        );
+
+        $addressId = (int)$this->getResourceId($response);
+        $responseContent = $data;
+        $responseContent['data']['attributes']['label'] = null;
+        $responseContent['data']['attributes']['fromExternalSource'] = false;
+        $responseContent['data']['attributes']['phone'] = null;
+        $responseContent['data']['attributes']['street2'] = null;
+        $responseContent['data']['attributes']['organization'] = null;
+        $responseContent['data']['attributes']['namePrefix'] = null;
+        $responseContent['data']['attributes']['nameSuffix'] = null;
+        $responseContent['data']['attributes']['middleName'] = null;
+        $this->assertResponseContains($responseContent, $response);
+
+        /** @var OrderAddress $address */
+        $address = $this->getEntityManager()
+            ->find(self::ENTITY_CLASS, $addressId);
+        self::assertNotNull($address);
+        self::assertNull($address->getLabel());
+        self::assertFalse($address->isFromExternalSource());
+        self::assertNull($address->getPhone());
+        self::assertEquals('1215 Caldwell Road', $address->getStreet());
+        self::assertNull($address->getStreet2());
+        self::assertEquals('Rochester', $address->getCity());
+        self::assertEquals('14608', $address->getPostalCode());
+        self::assertNull($address->getOrganization());
+        self::assertNull($address->getNamePrefix());
+        self::assertNull($address->getNameSuffix());
+        self::assertEquals('John', $address->getFirstName());
+        self::assertNull($address->getMiddleName());
+        self::assertEquals('Doo', $address->getLastName());
+        self::assertEquals($countryId, $address->getCountry()->getIso2Code());
+        self::assertEquals($regionId, $address->getRegion()->getCombinedCode());
+    }
+
+    public function testDelete()
+    {
+        $addressId = $this->getReference(LoadOrderAddressData::ORDER_ADDRESS_1)->getId();
+
+        $this->delete(
+            ['entity' => self::ENTITY_TYPE, 'id' => $addressId]
+        );
+
+        $address = $this->getEntityManager()
+            ->find(self::ENTITY_CLASS, $addressId);
+        self::assertTrue(null === $address);
+    }
+
+    public function testDeleteList()
+    {
+        $addressId = $this->getReference(LoadOrderAddressData::ORDER_ADDRESS_1)->getId();
+
+        $this->cdelete(
+            ['entity' => self::ENTITY_TYPE],
+            ['filter' => ['id' => $addressId]]
+        );
+
+        $address = $this->getEntityManager()
+            ->find(self::ENTITY_CLASS, $addressId);
+        self::assertTrue(null === $address);
+    }
+
+    public function testUpdatePhone()
+    {
+        $addressId = $this->getReference(LoadOrderAddressData::ORDER_ADDRESS_1)->getId();
+
+        $this->patch(
+            ['entity' => self::ENTITY_TYPE, 'id' => $addressId],
+            [
+                'data' => [
+                    'type'       => self::ENTITY_TYPE,
+                    'id'         => (string)$addressId,
+                    'attributes' => [
+                        'phone' => '111-111-111'
+                    ]
+                ]
+            ]
+        );
+
+        /** @var OrderAddress $address */
+        $address = $this->getEntityManager()
+            ->find(self::ENTITY_CLASS, $addressId);
+        self::assertSame('111-111-111', $address->getPhone());
+    }
+
     public function testGetCountryRelationship()
     {
-        /** @var OrderAddress $orderAddress */
-        $orderAddress = $this->getReference(LoadOrderAddressData::ORDER_ADDRESS_1);
+        $addressId = $this->getReference(LoadOrderAddressData::ORDER_ADDRESS_1)->getId();
 
         $response = $this->getRelationship(
-            ['entity' => 'orderaddresses', 'id' => $orderAddress->getId(), 'association' => 'country']
+            ['entity' => self::ENTITY_TYPE, 'id' => $addressId, 'association' => 'country']
         );
 
         $this->assertResponseContains(
@@ -62,145 +281,46 @@ class OrderAddressTest extends RestJsonApiTestCase
 
     public function testGetRegionRelationship()
     {
-        /** @var OrderAddress $orderAddress */
-        $orderAddress = $this->getReference(LoadOrderAddressData::ORDER_ADDRESS_2);
+        $addressId = $this->getReference(LoadOrderAddressData::ORDER_ADDRESS_1)->getId();
 
         $response = $this->getRelationship(
-            ['entity' => 'orderaddresses', 'id' => $orderAddress->getId(), 'association' => 'region']
+            ['entity' => self::ENTITY_TYPE, 'id' => $addressId, 'association' => 'region']
         );
 
         $this->assertResponseContains(
-            ['data' => ['type' => 'regions', 'id' => 'US-IN']],
+            ['data' => ['type' => 'regions', 'id' => 'US-NY']],
             $response
         );
     }
 
-    public function testCreate()
+    public function testTryToSetNullCountry()
     {
-        $this->post(
-            ['entity' => 'orderaddresses'],
-            'address_create.yml'
-        );
-
-        /** @var OrderAddress $orderAddress */
-        $orderAddress = $this->getEntityManager()
-            ->getRepository(OrderAddress::class)
-            ->findOneBy(['phone' => '777-777-777']);
-
-        self::assertSame('1215 Caldwell Road', $orderAddress->getStreet());
-        self::assertSame('Rochester', $orderAddress->getCity());
-        self::assertSame('US', $orderAddress->getCountryIso2());
-        self::assertSame('US-NY', $orderAddress->getRegion()->getCombinedCode());
-    }
-
-    public function testUpdatePhone()
-    {
-        /** @var OrderAddress $orderAddress */
-        $orderAddress = $this->getReference(LoadOrderAddressData::ORDER_ADDRESS_1);
-
-        $this->patch(
-            ['entity' => 'orderaddresses', 'id' => $orderAddress->getId()],
-            [
-                'data' => [
-                    'type' => 'orderaddresses',
-                    'id' => (string)$orderAddress->getId(),
-                    'attributes' => [
-                        'phone' => '111-111-111',
-                    ],
-                ],
+        $addressId = $this->getReference(LoadOrderAddressData::ORDER_ADDRESS_1)->getId();
+        $data = [
+            'data' => [
+                'type'          => self::ENTITY_TYPE,
+                'id'            => (string)$addressId,
+                'relationships' => [
+                    'country' => [
+                        'data' => null
+                    ]
+                ]
             ]
-        );
-
-        /** @var OrderAddress $updatedOrderAddress */
-        $updatedOrderAddress = $this->getEntityManager()
-            ->getRepository(OrderAddress::class)
-            ->find($orderAddress->getId());
-
-        self::assertSame('111-111-111', $updatedOrderAddress->getPhone());
-    }
-
-    public function testUpdateWrongRegion()
-    {
-        /** @var OrderAddress $orderAddress */
-        $orderAddress = $this->getReference(LoadOrderAddressData::ORDER_ADDRESS_1);
-
+        ];
         $response = $this->patch(
-            ['entity' => 'orderaddresses', 'id' => $orderAddress->getId()],
-            [
-                'data' => [
-                    'type' => 'orderaddresses',
-                    'id' => (string)$orderAddress->getId(),
-                    'relationships' => [
-                        'region' => [
-                            'data' => [
-                                'type' => 'regions',
-                                'id' => 'DE-BE',
-                            ]
-                        ]
-                    ],
-                ],
-            ],
+            ['entity' => self::ENTITY_TYPE, 'id' => $addressId],
+            $data,
             [],
             false
         );
 
         $this->assertResponseValidationError(
             [
-                'title' => 'valid region constraint',
-                'detail' => 'Region Berlin does not belong to country United States'
+                'title'  => 'not blank constraint',
+                'detail' => 'This value should not be blank.',
+                'source' => ['pointer' => '/data/relationships/country/data']
             ],
             $response
         );
-    }
-
-    public function testUpdateWrongCountry()
-    {
-        /** @var OrderAddress $orderAddress */
-        $orderAddress = $this->getReference(LoadOrderAddressData::ORDER_ADDRESS_1);
-
-        $response = $this->patch(
-            ['entity' => 'orderaddresses', 'id' => $orderAddress->getId()],
-            [
-                'data' => [
-                    'type' => 'orderaddresses',
-                    'id' => (string)$orderAddress->getId(),
-                    'relationships' => [
-                        'country' => [
-                            'data' => [
-                                'type' => 'countries',
-                                'id' => 'DE',
-                            ]
-                        ]
-                    ],
-                ],
-            ],
-            [],
-            false
-        );
-
-        $this->assertResponseValidationError(
-            [
-                'title' => 'valid region constraint',
-                'detail' => 'Region New York does not belong to country Germany'
-            ],
-            $response
-        );
-    }
-    public function testDeleteByFilter()
-    {
-        /** @var OrderAddress $orderAddress */
-        $orderAddress = $this->getReference(LoadOrderAddressData::ORDER_ADDRESS_1);
-        $orderAddressId = $orderAddress->getId();
-
-        $this->cdelete(
-            ['entity' => 'orderaddresses'],
-            ['filter' => ['id' => $orderAddressId]]
-        );
-
-        $removedOrderAddress = $this->getEntityManager()
-            ->getRepository(OrderAddress::class)
-            ->find($orderAddressId);
-
-        self::assertNull($removedOrderAddress);
     }
 }

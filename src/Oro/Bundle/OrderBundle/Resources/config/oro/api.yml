@@ -64,17 +64,17 @@ api:
 
         Oro\Bundle\OrderBundle\Entity\OrderAddress:
             documentation_resource: '@OroOrderBundle/Resources/doc/api/order_address.md'
+            fields:
+                customRegion:
+                    exclude: false # set manually because this field is marked as excluded in entity.yml
+                    property_path: regionText
             subresources:
                 country:
                     actions:
                         update_relationship: false
-                        add_relationship: false
-                        delete_relationship: false
                 region:
                     actions:
                         update_relationship: false
-                        add_relationship: false
-                        delete_relationship: false
 
         Oro\Bundle\OrderBundle\Entity\OrderDiscount:
             documentation_resource: '@OroOrderBundle/Resources/doc/api/order_discount.md'
