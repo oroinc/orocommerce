@@ -44,9 +44,7 @@
     }
 
     &__unit {
-        select {
-            width: 90px;
-        }
+        @include selector-width(100%);
 
         input {
             width: 91px !important;
@@ -55,9 +53,7 @@
     }
 
     &__currency {
-        select {
-            width: 90px;
-        }
+        @include selector-width(100%);
 
         input {
             width: 91px !important;

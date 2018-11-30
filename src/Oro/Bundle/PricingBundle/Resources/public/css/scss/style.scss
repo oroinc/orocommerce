@@ -33,10 +33,7 @@
     }
 
     .price-currency-div {
-        .selector,
-        span {
-            width: 170px !important;
-        }
+        @include selector-width(170px);
     }
 
     .unit {
