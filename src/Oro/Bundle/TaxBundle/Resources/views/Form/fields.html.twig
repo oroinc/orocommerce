@@ -49,7 +49,7 @@
         class="tax-zip-code-list tax-zip-code-list-item">
         {{ form_widget(form) }}
         <td class="tax-zip-code-list-remove">
-            <button type="button" class="removeRow btn btn-icon icons-holder"><i class="fa-close"></i></button>
+            <button type="button" class="removeRow btn btn-icon btn-square-lighter"><span class="fa-close"></span></button>
         </td>
     </tr>
 {% endmacro %}
@@ -83,10 +83,14 @@
         <div class="row-oro oro-multiselect-holder{% if not allow_delete %} not-removable{% endif %}">
             {{ form_widget(form, {disabled: disabled}) }}
             {% if allow_delete %}
-                <button class="removeRow btn btn-action btn-link" type="button" data-related="{{ name }}">×</button>
+                <button class="removeRow btn btn-icon btn-square-light" type="button" data-related="{{ name }}">
+                    <span class="fa-close"></span>
+                </button>
             {% endif %}
             {% if allow_add_after %}
-                <button class="addAfterRow btn btn-action btn-link" type="button" data-related="{{ name }}">+</button>
+                <button class="addAfterRow btn btn-icon btn-square-light" type="button" data-related="{{ name }}">
+                    <span class="fa-search-plus"></span>
+                </button>
             {% endif %}
         </div>
     </div>
@@ -114,7 +118,7 @@
             </div>
             {% if allow_add %}
                 <a class="btn add-list-item" href="javascript: void(0);" {{ disabled ? 'disabled=disabled' : '' }}>
-                    <i class="fa-plus"></i>{{ form.vars.add_label|default('oro.form.collection.add')|trans }}
+                    {{ form.vars.add_label|default('oro.form.collection.add')|trans }}
                 </a>
             {% endif %}
         </div>

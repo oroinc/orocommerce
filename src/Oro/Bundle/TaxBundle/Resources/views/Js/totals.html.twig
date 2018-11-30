@@ -3,9 +3,9 @@
     <% var togglerId = _.uniqueId('collapse-') %>
     <% var regionId = _.uniqueId('collapse-region-') %>
     <% var collapseShow = _.defaults(item.data.show, true); %>
-    <div id="<%- labelId %>" class="control-group">
-        <label class="control-label"><%= item.label %></label>
-        <div class="controls">
+    <div id="<%- labelId %>" class="attribute-item">
+        <label class="attribute-item__term"><%= item.label %></label>
+        <div class="attribute-item__description">
             <button id="<%- togglerId %>" class="amount<%- collapseShow ? '' : ' collapsed' %>" type="button"
                    data-toggle="collapse" data-target="#<%- regionId %>" aria-controls="<%- regionId %>"
                    aria-expanded="<%- collapseShow ? 'true' : 'false' %>">

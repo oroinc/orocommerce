@@ -1,5 +1,6 @@
 imports:
     - { resource: 'actions/b2b_flow_checkout.yml' }
+    - { resource: 'actions/b2b_flow_checkout_single_page.yml' }
 
 operations:
     UPDATE:
@@ -328,10 +329,8 @@ action_groups:
             - '@get_active_visitor': [$visitor, false]
             - '@tree':
                 conditions:
-                    '@not_equal': [null, $visitor]
+                    '@not_empty': $visitor
                 actions:
-                    - '@assign_value': [$visitor.customerUser, null]
-                    - '@flush_entity': $visitor
                     - '@assign_value': [$.checkout.registeredCustomerUser, null]
                     - '@flush_entity': $.checkout
             - '@get_start_checkout_transition':
@@ -420,6 +419,8 @@ action_groups:
                 service: oro_website.manager
                 method: getCurrentWebsite
 
+            - '@assign_value': [$.checkoutActualizationRequired, true]
+
             - '@tree':
                 conditions:
                     '@empty': $.checkout.id
@@ -428,31 +429,84 @@ action_groups:
                         attribute: $.source
                         class: 'Oro\Bundle\CheckoutBundle\Entity\CheckoutSource'
                         data: $.sourceCriteria
+                    - '@get_active_visitor': [$visitor, false]
                     - '@create_entity':
+                        conditions:
+                            '@empty': $visitor
                         attribute: $.checkout
                         class: 'Oro\Bundle\CheckoutBundle\Entity\Checkout'
                         data:
                             source: $.source
                             customerUser: $.currentUser
                             website: $.currentWebsite
+                    # Creates checkout with empty customerUser if user is guest.
+                    - '@create_entity':
+                          conditions:
+                              '@not_empty': $visitor
+                          attribute: $.checkout
+                          class: 'Oro\Bundle\CheckoutBundle\Entity\Checkout'
+                          data:
+                              source: $.source
+                              website: $.currentWebsite
                     - '@create_datetime': {attribute: $.checkout.createdAt}
                     - '@create_datetime': {attribute: $.checkout.updatedAt}
                     - '@assign_value': [$.updateData, true]
+
+                    - '@run_action_group':
+                        action_group: actualize_checkout
+                        parameters_mapping:
+                            checkout: $.checkout
+                            updateData: $.updateData
+                            currentUser: $.currentUser
+                            currentWebsite: $.currentWebsite
+                            checkoutData: $.checkoutData
+
+                    - '@assign_value': [$.checkoutActualizationRequired, false]
+                    - '@flush_entity': $.checkout
 
                     - '@start_workflow':
                         attribute: $.workflowItem
                         name: $.currentWorkflow.name
                         entity: $.checkout
 
+            - '@tree':
+                conditions:
+                    '@equal': [$.checkoutActualizationRequired, true]
+                actions:
+                    - '@run_action_group':
+                        action_group: actualize_checkout
+                        parameters_mapping:
+                            checkout: $.checkout
+                            updateData: $.updateData
+                            currentUser: $.currentUser
+                            currentWebsite: $.currentWebsite
+                            checkoutData: $.checkoutData
+                    - '@flush_entity': $.checkout
+
+    actualize_checkout:
+        parameters:
+            checkout:
+                type: Oro\Bundle\CheckoutBundle\Entity\Checkout
+            updateData:
+                type: bool
+                default: false
+            currentUser:
+                default: null
+            currentWebsite:
+                type: Oro\Bundle\WebsiteBundle\Entity\Website
+            checkoutData:
+                type: array
+                default: []
+        actions:
             # update checkout data
             - '@tree':
                 conditions:
                     '@and':
-                        - '@not_empty': $.currentUser
+                        - '@not_empty': $.checkout.customerUser
                         - '@equal': [true, $.updateData]
                 actions:
-                    - '@assign_value': [$.checkout.customer, $.currentUser.customer]
-                    - '@assign_value': [$.checkout.organization, $.currentUser.customer.organization]
+                    - '@assign_value': [$.checkout.customer, $.checkout.customerUser.customer]
+                    - '@assign_value': [$.checkout.organization, $.checkout.customerUser.customer.organization]
                     - '@assign_value': [$.checkout.website, $.currentWebsite]
                     # update custom data
                     - '@copy_values': [$.checkout, $.checkoutData]
@@ -476,7 +530,29 @@ action_groups:
                 method: recalculateCheckoutSubtotals
                 method_parameters: [$.checkout]
 
-            - '@flush_entity': $.checkout
+    #Forces checkout_state updating(resaving) should be used if explicitly needed
+    actualize_workflow_state:
+        parameters:
+            checkout:
+                type: Oro\Bundle\CheckoutBundle\Entity\Checkout
+            state_token:
+                type: string
+        actions:
+            - '@generate_checkout_state_snapshot':
+                entity: $.checkout
+                attribute: $.currentCheckoutState
+            - '@get_checkout_state':
+                entity: $.checkout
+                token: $.state_token
+                attribute: $.tokenCheckoutState
+            - '@assign_value': [$.checkoutStateChanged, true]
+            - '@delete_checkout_state':
+                  entity: $.checkout
+                  token: $.state_token
+            - '@save_checkout_state':
+                  entity: $.checkout
+                  state: $.currentCheckoutState
+                  token: $.state_token
 
     update_workflow_item:
         parameters:

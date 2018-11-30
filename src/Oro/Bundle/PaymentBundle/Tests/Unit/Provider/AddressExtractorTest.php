@@ -65,6 +65,7 @@ class AddressExtractorTest extends \PHPUnit\Framework\TestCase
      */
     public function testExtractFailed($object, $property)
     {
+        $this->expectExceptionMessage(sprintf('Object does not contains %s', $property));
         $this->extractor->extractAddress($object, $property);
     }
 

@@ -454,11 +454,7 @@ class ProductTypeTest extends FormIntegrationTestCase
             }
         }
 
-        $entityFieldFallbackValue = new EntityFieldFallbackValue();
-        $entityFieldFallbackValue->setArrayValue([
-            'oro_product_frontend_product_view' => null
-        ]);
-        $expectedProduct->setPageTemplate($entityFieldFallbackValue);
+        $expectedProduct->setPageTemplate(new EntityFieldFallbackValue());
         $expectedProduct->setAttributeFamily($this->getAttributeFamily());
 
         return $expectedProduct->setSku('test sku');

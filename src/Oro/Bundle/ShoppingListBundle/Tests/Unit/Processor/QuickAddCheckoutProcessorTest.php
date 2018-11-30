@@ -8,6 +8,7 @@ use Oro\Bundle\ActionBundle\Model\ActionGroupRegistry;
 use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatter;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListManager;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListLimitManager;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use Oro\Bundle\ShoppingListBundle\Processor\QuickAddCheckoutProcessor;
@@ -28,6 +29,11 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
      * @var \PHPUnit\Framework\MockObject\MockObject|ShoppingListLimitManager
      */
     protected $shoppingListLimitManager;
+
+    /**
+     * @var \PHPUnit\Framework\MockObject\MockObject|CurrentShoppingListManager
+     */
+    protected $currentShoppingListManager;
 
     /**
      * @var \PHPUnit\Framework\MockObject\MockObject|ActionGroupRegistry
@@ -73,6 +79,8 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
             ->disableOriginalConstructor()->getMock();
         $this->shoppingListLimitManager = $this->getMockBuilder(ShoppingListLimitManager::class)
             ->disableOriginalConstructor()->getMock();
+        $this->currentShoppingListManager = $this->getMockBuilder(CurrentShoppingListManager::class)
+            ->disableOriginalConstructor()->getMock();
         $this->actionGroupRegistry = $this->getMockBuilder(ActionGroupRegistry::class)
             ->disableOriginalConstructor()->getMock();
         $this->actionGroup = $this->getMockBuilder(ActionGroup::class)
@@ -87,6 +95,7 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
         $this->processor->setProductClass('Oro\Bundle\ProductBundle\Entity\Product');
         $this->processor->setShoppingListManager($this->shoppingListManager);
         $this->processor->setShoppingListLimitManager($this->shoppingListLimitManager);
+        $this->processor->setCurrentShoppingListManager($this->currentShoppingListManager);
         $this->processor->setActionGroupRegistry($this->actionGroupRegistry);
         $this->processor->setTranslator($this->translator);
         $this->processor->setDateFormatter($this->dateFormatter);
@@ -103,6 +112,7 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
         unset(
             $this->shoppingListManager,
             $this->shoppingListLimitManager,
+            $this->currentShoppingListManager,
             $this->actionGroupRegistry,
             $this->actionGroup,
             $this->translator,
@@ -250,7 +260,7 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
 
         $shoppingList = new ShoppingList();
 
-        $this->shoppingListManager->expects($this->once())
+        $this->currentShoppingListManager->expects($this->once())
             ->method('getCurrent')
             ->willReturn($shoppingList);
 

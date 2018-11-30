@@ -2,122 +2,144 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Form\Handler;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Form\Handler\ShoppingListHandler;
-use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
-use Symfony\Component\Form\Test\FormInterface;
+use Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListManager;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 class ShoppingListHandlerTest extends \PHPUnit\Framework\TestCase
 {
-    const FORM_DATA = ['field' => 'value'];
-
-    const SHOPPING_LIST_SHORTCUT = 'OroShoppingListBundle:ShoppingList';
+    private const FORM_DATA = ['field' => 'value'];
 
     /** @var \PHPUnit\Framework\MockObject\MockObject|FormInterface */
-    protected $form;
-    /** @var \PHPUnit\Framework\MockObject\MockObject|Request */
-    protected $request;
-    /** @var \PHPUnit\Framework\MockObject\MockObject|Registry */
-    protected $registry;
-    /** @var \PHPUnit\Framework\MockObject\MockObject|ShoppingList */
-    protected $shoppingList;
-    /** @var \PHPUnit\Framework\MockObject\MockObject|ShoppingListManager */
-    protected $manager;
+    private $form;
+
+    /** @var \PHPUnit\Framework\MockObject\MockObject|ManagerRegistry */
+    private $doctrine;
+
+    /** @var \PHPUnit\Framework\MockObject\MockObject|CurrentShoppingListManager */
+    private $currentShoppingListManager;
 
     protected function setUp()
     {
-        $this->form = $this->getMockBuilder('Symfony\Component\Form\FormInterface')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->request = new Request();
-        $this->registry = $this->getMockBuilder('Doctrine\Bundle\DoctrineBundle\Registry')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->shoppingList = $this->createMock('Oro\Bundle\ShoppingListBundle\Entity\ShoppingList');
-        $this->shoppingList->expects($this->any())
-            ->method('getCustomerUser')
-            ->willReturn(new CustomerUser());
-        $this->manager = $this->getMockBuilder('Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->form = $this->createMock(FormInterface::class);
+        $this->currentShoppingListManager = $this->createMock(CurrentShoppingListManager::class);
+        $this->doctrine = $this->createMock(ManagerRegistry::class);
+    }
+
+    /**
+     * @param Request $request
+     *
+     * @return ShoppingListHandler
+     */
+    private function getShoppingListHandler(Request $request)
+    {
+        return new ShoppingListHandler(
+            $this->form,
+            $request,
+            $this->currentShoppingListManager,
+            $this->doctrine
+        );
     }
 
     public function testProcessWrongMethod()
     {
-        $this->request->setMethod('GET');
+        $shoppingList = $this->createMock(ShoppingList::class);
 
-        $handler = new ShoppingListHandler($this->form, $this->request, $this->manager, $this->registry);
-        $this->assertFalse($handler->process($this->shoppingList));
+        $request = Request::create('/');
+
+        $handler = $this->getShoppingListHandler($request);
+        $this->assertFalse($handler->process($shoppingList));
     }
 
     public function testProcessFormNotValid()
     {
-        $this->request = Request::create('/', 'POST', self::FORM_DATA);
+        $shoppingList = $this->createMock(ShoppingList::class);
+
+        $request = Request::create('/', 'POST', self::FORM_DATA);
 
         $this->form->expects($this->once())
             ->method('submit')
             ->with(self::FORM_DATA);
         $this->form->expects($this->once())
             ->method('isValid')
-            ->will($this->returnValue(false));
+            ->willReturn(false);
 
-        $handler = new ShoppingListHandler($this->form, $this->request, $this->manager, $this->registry);
-        $this->assertFalse($handler->process($this->shoppingList));
+        $handler = $this->getShoppingListHandler($request);
+        $this->assertFalse($handler->process($shoppingList));
     }
 
     public function testProcessNotExistingShoppingList()
     {
-        $this->request = Request::create('/', 'PUT', self::FORM_DATA);
+        $customerUser = new CustomerUser();
+        $shoppingList = $this->createMock(ShoppingList::class);
+        $shoppingList->expects($this->once())
+            ->method('getCustomerUser')
+            ->willReturn($customerUser);
+
+        $request = Request::create('/', 'PUT', self::FORM_DATA);
 
         $this->form->expects($this->once())
             ->method('submit')
             ->with(self::FORM_DATA);
         $this->form->expects($this->once())
             ->method('isValid')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
 
         $em = $this->createMock(EntityManagerInterface::class);
-        $this->registry->method('getManagerForClass')->willReturn($em);
+        $this->doctrine->expects($this->once())
+            ->method('getManagerForClass')
+            ->with(ShoppingList::class)
+            ->willReturn($em);
 
-        $handler = new ShoppingListHandler($this->form, $this->request, $this->manager, $this->registry);
-        $this->assertTrue($handler->process($this->shoppingList));
+        $em->expects($this->once())
+            ->method('persist');
+        $em->expects($this->once())
+            ->method('flush');
+
+        $this->currentShoppingListManager->expects($this->once())
+            ->method('setCurrent')
+            ->with($this->identicalTo($customerUser), $this->identicalTo($shoppingList));
+
+        $handler = $this->getShoppingListHandler($request);
+        $this->assertTrue($handler->process($shoppingList));
     }
 
     public function testProcessExistingShoppingList()
     {
-        $this->shoppingList->expects($this->once())
+        $shoppingList = $this->createMock(ShoppingList::class);
+        $shoppingList->expects($this->once())
             ->method('getId')
             ->willReturn(1);
 
-        $this->request->initialize([], self::FORM_DATA);
-        $this->request->setMethod('PUT');
+        $request = Request::create('/', 'PUT', self::FORM_DATA);
 
         $this->form->expects($this->once())
             ->method('submit')
             ->with(self::FORM_DATA);
         $this->form->expects($this->once())
             ->method('isValid')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
 
-        /** @var \PHPUnit\Framework\MockObject\MockObject|ObjectManager $manager */
-        $manager = $this->createMock('Doctrine\Common\Persistence\ObjectManager');
+        $em = $this->createMock(EntityManagerInterface::class);
+        $this->doctrine->expects($this->once())
+            ->method('getManagerForClass')
+            ->with(ShoppingList::class)
+            ->willReturn($em);
 
-        $manager->expects($this->once())
+        $em->expects($this->once())
             ->method('persist');
-        $manager->expects($this->once())
+        $em->expects($this->once())
             ->method('flush');
 
-        $this->registry->expects($this->once())
-            ->method('getManagerForClass')
-            ->with(self::SHOPPING_LIST_SHORTCUT)
-            ->will($this->returnValue($manager));
+        $this->currentShoppingListManager->expects($this->never())
+            ->method('setCurrent');
 
-        $handler = new ShoppingListHandler($this->form, $this->request, $this->manager, $this->registry);
-        $this->assertTrue($handler->process($this->shoppingList));
+        $handler = $this->getShoppingListHandler($request);
+        $this->assertTrue($handler->process($shoppingList));
     }
 }

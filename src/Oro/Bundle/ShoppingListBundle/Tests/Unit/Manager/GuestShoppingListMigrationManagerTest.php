@@ -8,6 +8,7 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerVisitor;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListManager;
 use Oro\Bundle\ShoppingListBundle\Manager\GuestShoppingListMigrationManager;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListLimitManager;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
@@ -31,6 +32,11 @@ class GuestShoppingListMigrationManagerTest extends \PHPUnit\Framework\TestCase
     private $shoppingListManager;
 
     /**
+     * @var CurrentShoppingListManager|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $currentShoppingListManager;
+
+    /**
      * @var GuestShoppingListMigrationManager
      */
     private $migrationManager;
@@ -41,12 +47,14 @@ class GuestShoppingListMigrationManagerTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->shoppingListLimitManager = $this->createMock(ShoppingListLimitManager::class);
-        $this->shoppingListManager      = $this->createMock(ShoppingListManager::class);
-        $this->doctrineHelper           = $this->createMock(DoctrineHelper::class);
+        $this->shoppingListManager = $this->createMock(ShoppingListManager::class);
+        $this->currentShoppingListManager = $this->createMock(CurrentShoppingListManager::class);
+        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
         $this->migrationManager = new GuestShoppingListMigrationManager(
             $this->doctrineHelper,
             $this->shoppingListLimitManager,
-            $this->shoppingListManager
+            $this->shoppingListManager,
+            $this->currentShoppingListManager
         );
     }
 
@@ -77,7 +85,7 @@ class GuestShoppingListMigrationManagerTest extends \PHPUnit\Framework\TestCase
                  [ShoppingList::class, true, $shoppingListEntityManager]
              ]));
 
-        $this->shoppingListManager
+        $this->currentShoppingListManager
             ->expects($this->once())
             ->method('setCurrent')
             ->with($customerUser, $shoppingList)
@@ -104,7 +112,7 @@ class GuestShoppingListMigrationManagerTest extends \PHPUnit\Framework\TestCase
             ->with(ShoppingList::class)
             ->willReturn($shoppingListEntityManager);
         $customerUserShoppingList = new ShoppingList();
-        $this->shoppingListManager->expects($this->once())
+        $this->currentShoppingListManager->expects($this->once())
             ->method('getCurrent')
             ->willReturn($customerUserShoppingList);
         $this->shoppingListManager->expects($this->once())

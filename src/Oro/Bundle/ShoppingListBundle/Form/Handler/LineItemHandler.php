@@ -2,14 +2,18 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Form\Handler;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\FormBundle\Form\Handler\RequestHandlerTrait;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
+use Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListManager;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * Handles add a product to a shopping list request.
+ */
 class LineItemHandler
 {
     use RequestHandlerTrait;
@@ -20,28 +24,34 @@ class LineItemHandler
     /** @var Request */
     protected $request;
 
-    /** @var Registry */
-    protected $registry;
+    /** @var ManagerRegistry */
+    protected $doctrine;
 
     /** @var ShoppingListManager */
     protected $shoppingListManager;
 
+    /** @var CurrentShoppingListManager */
+    protected $currentShoppingListManager;
+
     /**
      * @param FormInterface $form
      * @param Request $request
-     * @param Registry $registry
+     * @param ManagerRegistry $doctrine
      * @param ShoppingListManager $shoppingListManager
+     * @param CurrentShoppingListManager $currentShoppingListManager
      */
     public function __construct(
         FormInterface $form,
         Request $request,
-        Registry $registry,
-        ShoppingListManager $shoppingListManager
+        ManagerRegistry $doctrine,
+        ShoppingListManager $shoppingListManager,
+        CurrentShoppingListManager $currentShoppingListManager
     ) {
         $this->form = $form;
         $this->request = $request;
-        $this->registry = $registry;
+        $this->doctrine = $doctrine;
         $this->shoppingListManager = $shoppingListManager;
+        $this->currentShoppingListManager = $currentShoppingListManager;
     }
 
     /**
@@ -54,15 +64,16 @@ class LineItemHandler
         if (!in_array($this->request->getMethod(), ['POST', 'PUT'], true)) {
             return false;
         }
-        /** @var EntityManagerInterface $manager */
-        $manager = $this->registry->getManagerForClass('OroShoppingListBundle:LineItem');
-        $manager->beginTransaction();
+
+        /** @var EntityManagerInterface $em */
+        $em = $this->doctrine->getManagerForClass(LineItem::class);
+        $em->beginTransaction();
 
         // handle case for new shopping list creation
         $formName = $this->form->getName();
         $formData = $this->request->request->get($formName, []);
         if (empty($formData['shoppingList']) && !empty($formData['shoppingListLabel'])) {
-            $shoppingList = $this->shoppingListManager->createCurrent($formData['shoppingListLabel']);
+            $shoppingList = $this->currentShoppingListManager->createCurrent($formData['shoppingListLabel']);
             $formData['shoppingList'] = $shoppingList->getId();
             $this->request->request->set($formName, $formData);
         }
@@ -70,10 +81,13 @@ class LineItemHandler
         $this->submitPostPutRequest($this->form, $this->request);
         if ($this->form->isValid()) {
             $this->shoppingListManager->addLineItem($lineItem, $lineItem->getShoppingList(), true, true);
-            $manager->commit();
+            $em->commit();
+
             return true;
         }
-        $manager->rollback();
+
+        $em->rollback();
+
         return false;
     }
 }

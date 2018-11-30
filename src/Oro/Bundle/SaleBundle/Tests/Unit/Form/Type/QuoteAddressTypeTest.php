@@ -211,7 +211,6 @@ class QuoteAddressTypeTest extends AbstractAddressTypeTest
                     'street2' => 'Street2',
                     'city' => 'City',
                     'region' => self::REGION_WITH_COUNTRY,
-                    'region_text' => 'Region Text',
                     'postalCode' => 'AL',
                     'country' => self::COUNTRY_WITH_REGION,
                 ],
@@ -227,7 +226,6 @@ class QuoteAddressTypeTest extends AbstractAddressTypeTest
                     ->setStreet2('Street2_stripped')
                     ->setCity('City_stripped')
                     ->setRegion($region)
-                    ->setRegionText('Region Text')
                     ->setPostalCode('AL_stripped')
                     ->setCountry($country),
                 'defaultData' => new QuoteAddress(),

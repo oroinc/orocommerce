@@ -64,7 +64,8 @@
                         {{ UI.clientLink({
                             'dataUrl': route,
                             'label': 'oro.product.content_variant.ui.add'|trans,
-                            'class': 'fa-eye hide-text',
+                            'class': 'btn btn-icon btn-square-lighter',
+                            'iCss': 'fa-eye hide-text',
                             'title': 'oro.promotion.appliedpromotion.actions.view'|trans,
                             'widget': {
                                 'type': 'dialog',
@@ -110,5 +111,7 @@
         </tbody>
     </table>
 {% elseif editable is not defined or not editable %}
-    <div class="no-data"><span>{{ 'oro.promotion.appliedpromotion.no_entities'|trans }}<span></span></span></div>
+    <div class="no-data">
+        {{ 'oro.promotion.appliedpromotion.no_entities'|trans }}
+    </div>
 {% endif %}

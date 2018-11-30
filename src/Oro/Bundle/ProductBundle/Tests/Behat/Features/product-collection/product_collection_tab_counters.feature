@@ -14,7 +14,7 @@ Feature: Product collection tab counters
     And I click "Content Variants"
     Then I should see 1 elements "Product Collection Variant Label"
     Then I should see an "Product Collection Preview Grid" element
-    And I should see "No records found"
+    And I should see "There are no products"
     And I should see 0 for "All Added" counter
     And I should see 0 for "Excluded" counter
     And I should see 0 for "Manually Added" counter
