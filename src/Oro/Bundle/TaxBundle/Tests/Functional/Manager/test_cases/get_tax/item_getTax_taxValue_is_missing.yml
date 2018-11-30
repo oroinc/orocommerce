@@ -48,4 +48,4 @@ expectedResult: # loaded from fixtures, values from simple_order_item_1 used to 
         adjustment: '0.00296'  # 1.66296 - 1.66 = 0.00296
         currency: 'USD'
     taxes:
-        - { tax: 'TAX1', rate: '0.104', taxableAmount: '95.94', taxAmount: '9.98', adjustment: '-0.00224', currency: 'USD' }
+        - { tax: 'TAX1', rate: '0.104', taxableAmount: '95.94', taxAmount: '9.98', currency: 'USD' }

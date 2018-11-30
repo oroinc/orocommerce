@@ -204,7 +204,7 @@ expectedResult:
                 adjustment: '-0.00016' # 2.30984 - 2.31 = -0.00016
                 currency: 'USD'
             taxes:
-                - { tax: 'TAX1', rate: '0.104', taxableAmount: '22.21', taxAmount: '2.31', adjustment: '-0.00016', currency: 'USD' }
+                - { tax: 'TAX1', rate: '0.104', taxableAmount: '22.21', taxAmount: '2.31', currency: 'USD' }
         -
             row:
                 includingTax: '24.52'  # 22.21 + 2.30984 = 24.51984
@@ -219,7 +219,7 @@ expectedResult:
                 adjustment: '-0.00016' # 2.30984 - 2.31 = -0.00016
                 currency: 'USD'
             taxes:
-                - { tax: 'TAX1', rate: '0.104', taxableAmount: '22.21', taxAmount: '2.31', adjustment: '-0.00016', currency: 'USD' }
+                - { tax: 'TAX1', rate: '0.104', taxableAmount: '22.21', taxAmount: '2.31', currency: 'USD' }
         -
             row:
                 includingTax: '24.52'  # 22.21 + 2.30984 = 24.51984
@@ -234,7 +234,7 @@ expectedResult:
                 adjustment: '-0.00016' # 2.30984 - 2.31 = -0.00016
                 currency: 'USD'
             taxes:
-                - { tax: 'TAX1', rate: '0.104', taxableAmount: '22.21', taxAmount: '2.31', adjustment: '-0.00016', currency: 'USD' }
+                - { tax: 'TAX1', rate: '0.104', taxableAmount: '22.21', taxAmount: '2.31', currency: 'USD' }
         -
             row:
                 includingTax: '24.52'  # 22.21 + 2.30984 = 24.51984
@@ -249,6 +249,6 @@ expectedResult:
                 adjustment: '-0.00016' # 2.30984 - 2.31 = -0.00016
                 currency: 'USD'
             taxes:
-                - { tax: 'TAX1', rate: '0.104', taxableAmount: '22.21', taxAmount: '2.31', adjustment: '-0.00016', currency: 'USD' }
+                - { tax: 'TAX1', rate: '0.104', taxableAmount: '22.21', taxAmount: '2.31', currency: 'USD' }
     taxes:
-        - { tax: 'TAX1', rate: '0.104', taxableAmount: '88.84', taxAmount: '9.24', adjustment: '-0.00064', currency: 'USD' }
+        - { tax: 'TAX1', rate: '0.104', taxableAmount: '88.84', taxAmount: '9.24', currency: 'USD' }

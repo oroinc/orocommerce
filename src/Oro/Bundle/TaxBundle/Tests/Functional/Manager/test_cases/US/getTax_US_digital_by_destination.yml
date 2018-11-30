@@ -70,8 +70,8 @@ expectedResult:
                 adjustment: '0.0007'  # 5.9607 - 5.96 = 0.0007
                 currency: 'USD'
             taxes:
-                - { tax: 'TAX1', rate: '0.104', taxableAmount: '33.3', taxAmount: '3.46', adjustment: '0.0032', currency: 'USD' }
-                - { tax: 'TAX3', rate: '0.075', taxableAmount: '33.3', taxAmount: '2.5', adjustment: '-0.0025', currency: 'USD' }
+                - { tax: 'TAX1', rate: '0.104', taxableAmount: '33.3', taxAmount: '3.46', currency: 'USD' }
+                - { tax: 'TAX3', rate: '0.075', taxableAmount: '33.3', taxAmount: '2.5', currency: 'USD' }
 
         -
             unit:
@@ -87,8 +87,8 @@ expectedResult:
                 adjustment: '0'
                 currency: 'USD'
     taxes:
-        - { tax: 'TAX1', rate: '0.104', taxableAmount: '33.3', taxAmount: '3.46', adjustment: '0.0032', currency: 'USD' }
-        - { tax: 'TAX3', rate: '0.075', taxableAmount: '33.3', taxAmount: '2.5', adjustment: '-0.0025', currency: 'USD' }
+        - { tax: 'TAX1', rate: '0.104', taxableAmount: '33.3', taxAmount: '3.46', currency: 'USD' }
+        - { tax: 'TAX3', rate: '0.075', taxableAmount: '33.3', taxAmount: '2.5', currency: 'USD' }
 databaseAfter:
     'Oro\Bundle\TaxBundle\Entity\TaxValue':
         -

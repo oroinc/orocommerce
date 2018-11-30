@@ -23,7 +23,6 @@ databaseBefore:
             rate: 0.1
             taxableAmount: 789
             taxAmount: 78.9
-            adjustment: 0
             currency: USD
     'Oro\Bundle\TaxBundle\Model\Result':
         simple_result:
@@ -47,4 +46,4 @@ expectedResult:
         adjustment: '0'
         currency: 'USD'
     taxes:
-        - { tax: 'TAX1', rate: '0.1', taxableAmount: '789', taxAmount: '78.9', adjustment: '0', currency: 'USD' }
+        - { tax: 'TAX1', rate: '0.1', taxableAmount: '789', taxAmount: '78.9', currency: 'USD' }
