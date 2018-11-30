@@ -103,6 +103,40 @@ class RowTotalResolverTest extends \PHPUnit\Framework\TestCase
                 'quantity' => 2,
                 'isStartCalculationWithRowTotal' => false,
             ],
+            'use zero tax' => [
+                'amount' => BigDecimal::of('19.99'),
+                'taxRules' => [
+                    $this->getTaxRule('country', '0.00'),
+                ],
+                'expected' => [
+                    'tax' => ResultElement::create('0.00', '19.99', '0.00'),
+                    'row' => ResultElement::create('0.00', '19.99', '0.00', '0.00'),
+                    'result' => [
+                        TaxResultElement::create('country', '0.00', '19.99', '0.00'),
+                    ]
+                ],
+                'taxRate' => '0.00',
+                'quantity' => 1,
+                'isStartCalculationWithRowTotal' => false,
+            ],
+            'use two taxes one of which is zero' => [
+                'amount' => BigDecimal::of('19.99'),
+                'taxRules' => [
+                    $this->getTaxRule('country', '0.00'),
+                    $this->getTaxRule('region', '0.07')
+                ],
+                'expected' => [
+                    'tax' => ResultElement::create('21.3893', '19.99', '1.3993'),
+                    'row' => ResultElement::create('21.3893', '19.99', '1.3993', '-0.0007'),
+                    'result' => [
+                        TaxResultElement::create('country', '0.00', '19.99', '0.00'),
+                        TaxResultElement::create('region', '0.07', '19.99', '1.3993'),
+                    ]
+                ],
+                'taxRate' => '0.07',
+                'quantity' => 1,
+                'isStartCalculationWithRowTotal' => false,
+            ],
             'with start calculation with row total' => [
                 'amount' => BigDecimal::of('19.9949'),
                 'taxRules' => [

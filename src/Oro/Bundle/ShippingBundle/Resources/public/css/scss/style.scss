@@ -32,9 +32,7 @@
         margin-bottom: 0;
     }
 
-    select {
-        width: 140px;
-    }
+    @include selector-width(140px);
 
     table {
         table {

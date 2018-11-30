@@ -1,57 +1,138 @@
 Oro\Bundle\OrganizationBundle\Entity\BusinessUnit:
-  businessUnit:
-    name: Common Business Unit
-    organization: '@organization'
+    business_unit2:
+        name: Extra Business Unit
+        organization: '@organization'
 
 Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
-    locvalue1:
+    name1:
         string: 'Product1'
-    localNewCategory:
-        string: 'NewCategory'
+    slug1:
+        string: 'product1'
+    description1:
+        text: 'Product1 Description'
+    shortDescription1:
+        text: 'Product1 Short Description'
+    categoryTitle{1..2}:
+        string: 'Category<current()>'
+    productSlugPrototype1:
+        string: 'product1'
+    brandName{1..2}:
+        string: 'Brand<current()>'
+    relatedProductName1:
+        string: 'Related1'
+    upsellProductName1:
+        string: 'Upsell1'
+
+Oro\Bundle\RedirectBundle\Entity\Slug:
+    productSlug1:
+        url: '/product1'
+        slugPrototype: 'product1'
+        routeName: 'oro_product_frontend_product_view'
+        routeParameters: []
+
+Oro\Bundle\ProductBundle\Entity\Brand:
+    brand{1..2}:
+        owner: '@business_unit'
+        organization: '@organization'
+        addName: ['@brandName<current()>']
 
 Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
-    precision1:
+    primaryPrecision1:
         unit: '@item'
         precision: '1'
+    additionalPrecision1:
+        unit: '@set'
+        precision: '5'
+    primaryRelatedProductPrecision1:
+        unit: '@item'
+        precision: '1'
+    primaryUpsellProductPrecision1:
+        unit: '@item'
+        precision: '1'
+
+Oro\Bundle\TaxBundle\Entity\ProductTaxCode:
+    taxCode{1..2}:
+        code: 'TaxCode<current()>'
+        description: 'Tax Code <current()>'
 
 Oro\Bundle\ProductBundle\Entity\Product:
     product1:
         sku: 'PSKU1'
         organization: '@organization'
-        owner: '@businessUnit'
-        primaryUnitPrecision: '@precision1'
+        owner: '@business_unit'
+        primaryUnitPrecision: '@primaryPrecision1'
         attributeFamily: '@defaultProductFamily'
-        addName: ['@locvalue1']
+        addName: ['@name1']
+        slugs: ['@productSlug1']
+        slugPrototypes: ['@productSlugPrototype1']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        featured: true
+        newArrival: true
+        brand: '@brand1'
+        addAdditionalUnitPrecision: ['@additionalPrecision1']
+        taxCode: '@taxCode1'
+        addDescription: ['@description1']
+        addShortDescription: ['@shortDescription1']
+    relatedProduct1:
+        sku: 'RELATED1'
+        organization: '@organization'
+        owner: '@business_unit'
+        primaryUnitPrecision: '@primaryRelatedProductPrecision1'
+        attributeFamily: '@defaultProductFamily'
+        addName: ['@relatedProductName1']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+    upsellProduct1:
+        sku: 'UPSELL1'
+        organization: '@organization'
+        owner: '@business_unit'
+        primaryUnitPrecision: '@primaryUpsellProductPrecision1'
+        attributeFamily: '@defaultProductFamily'
+        addName: ['@upsellProductName1']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
 
 Oro\Bundle\CatalogBundle\Entity\Category:
-    categoryLightingProducts:
-        addTitle: ['@localNewCategory']
+    category1:
+        addTitle: ['@categoryTitle1']
         setParentCategory: [1]
         addProduct: ['@product1']
+    category2:
+        addTitle: ['@categoryTitle2']
+        setParentCategory: [1]
 
 Oro\Bundle\PricingBundle\Entity\PriceList:
     pricelist1:
-        name: 'pricelist1'
+        name: 'Price List 1'
         default: true
         setCurrencies: [['USD']]
         active: true
 
 Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
-    priceListToProduct:
+    priceListToProduct1:
         priceList: '@pricelist1'
         product: '@product1'
 
 Oro\Bundle\PricingBundle\Entity\ProductPrice:
-    productPrice{1..50}:
+    productPrice1:
         pricelist: '@pricelist1'
         product: '@product1'
         productSku: 'PSKU1'
-        quantity: '<current()>'
+        quantity: '1'
         unit: '@item'
-        value: '<current()>'
+        value: '10'
         currency: 'USD'
+
+Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct:
+    relatedItem1:
+        product: '@product1'
+        relatedItem: '@relatedProduct1'
+
+Oro\Bundle\ProductBundle\Entity\RelatedItem\UpsellProduct:
+    upsellItem1:
+        product: '@product1'
+        relatedItem: '@upsellProduct1'
 
 Oro\Bundle\ShippingBundle\Model\Weight(local):
     weight:
@@ -69,14 +150,9 @@ Oro\Bundle\ShippingBundle\Model\Dimensions(local):
         value: '@dimensionsValue'
         unit: 'cm'
 
-Oro\Bundle\ShippingBundle\Entity\FreightClass:
-    freightClass:
-        code: 'freight_class'
-
 Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions:
     productShippingOptions:
         product: '@product1'
         productUnit: '@item'
         weight: '@weight'
         dimensions: '@dimensions'
-        freightClass: '@freightClass'

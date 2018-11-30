@@ -1,0 +1,23 @@
+oro_behat_extension:
+  elements:
+    Money Check Integration Form:
+      selector: 'form[name="oro_integration_channel_form"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Label: 'oro_integration_channel_form[transport][labels][values][default]'
+          Short Label: 'oro_integration_channel_form[transport][shortLabels][values][default]'
+
+  suites:
+    OroMoneyOrderBundle:
+      contexts:
+        - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
+        - OroApplicationBundle::CommerceMainContext
+        - OroCheckoutBundle::FeatureContext
+        - OroConfigBundle::FeatureContext
+        - OroDataGridBundle::GridContext
+        - OroFormBundle::FormContext
+        - OroProductBundle::FeatureContext
+        - OroShoppingListBundle::ShoppingListContext
+      paths:
+        - '@OroMoneyOrderBundle/Tests/Behat/Features'
