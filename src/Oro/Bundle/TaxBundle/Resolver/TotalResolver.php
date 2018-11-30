@@ -53,9 +53,6 @@ class TotalResolver implements ResolverInterface
 
             if ($this->settingsProvider->isStartCalculationOnItem()) {
                 $this->roundingResolver->round($row);
-                foreach ($taxableItemResult->getTaxes() as $tax) {
-                    $this->roundingResolver->round($tax);
-                }
             }
 
             try {
@@ -70,7 +67,13 @@ class TotalResolver implements ResolverInterface
         }
 
         if ($this->settingsProvider->isStartCalculationOnItem()) {
-            [$data, $taxResults] = $this->adjustResults($data, $taxResults);
+            try {
+                $adjustment = BigDecimal::of($data[ResultElement::ADJUSTMENT]);
+                $adjustedAmounts = $this->adjustAmounts($data, $adjustment);
+            } catch (NumberFormatException $e) {
+                return;
+            }
+            $data = $adjustedAmounts;
         }
 
         $data = $this->mergeShippingData($taxable, $data);
@@ -79,33 +82,6 @@ class TotalResolver implements ResolverInterface
         $result->offsetSet(Result::TOTAL, $data);
         $result->offsetSet(Result::TAXES, array_values($taxResults));
         $result->lockResult();
-    }
-
-    /**
-     * @param ResultElement $data
-     * @param TaxResultElement[] $taxResults
-     * @return array
-     */
-    protected function adjustResults(ResultElement $data, array $taxResults)
-    {
-        try {
-            $adjustment = BigDecimal::of($data[ResultElement::ADJUSTMENT]);
-            $adjustedAmounts = $this->adjustAmounts($data, $adjustment);
-
-            $adjustTaxResults = [];
-            foreach ($taxResults as $key => $taxData) {
-                if (empty($taxData[TaxResultElement::ADJUSTMENT])) {
-                    $adjustment = BigDecimal::of('0');
-                } else {
-                    $adjustment = BigDecimal::of($taxData[TaxResultElement::ADJUSTMENT]);
-                }
-                $adjustTaxResults[$key] = $this->adjustAmounts($taxData, $adjustment);
-            }
-        } catch (NumberFormatException $e) {
-            return [$data, $taxResults];
-        }
-
-        return [$adjustedAmounts, $adjustTaxResults];
     }
 
     /**
@@ -150,12 +126,10 @@ class TotalResolver implements ResolverInterface
             $taxCode = (string)$appliedTax->getTax();
             $taxAmount = $appliedTax->getTaxAmount();
             $taxableAmount = $appliedTax->getTaxableAmount();
-            $taxAdjustment = $appliedTax->getAdjustment();
             if (array_key_exists($taxCode, $taxResults)) {
                 $tax = $taxResults[$taxCode];
                 $taxAmount = BigDecimal::of($tax->getTaxAmount())->plus($taxAmount);
                 $taxableAmount = BigDecimal::of($tax->getTaxableAmount())->plus($taxableAmount);
-                $taxAdjustment = BigDecimal::of($tax->getAdjustment())->plus($taxAdjustment);
             }
 
             $taxResults[$taxCode] = TaxResultElement::create(

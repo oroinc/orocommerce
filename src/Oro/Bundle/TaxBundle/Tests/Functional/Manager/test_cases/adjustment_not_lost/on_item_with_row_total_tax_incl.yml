@@ -204,7 +204,7 @@ expectedResult:
                 adjustment: '0.002246'  # 2.092246 - 2.09 = 0.002246
                 currency: 'USD'
             taxes:
-                - { tax: 'TAX1', rate: '0.104', taxableAmount: '20.12', taxAmount: '2.09', adjustment: '0.002246', currency: 'USD' }
+                - { tax: 'TAX1', rate: '0.104', taxableAmount: '20.12', taxAmount: '2.09', currency: 'USD' }
         -
             row:
                 includingTax: '22.21'
@@ -219,7 +219,7 @@ expectedResult:
                 adjustment: '0.002246'  # 2.092246 - 2.09 = 0.002246
                 currency: 'USD'
             taxes:
-                - { tax: 'TAX1', rate: '0.104', taxableAmount: '20.12', taxAmount: '2.09', adjustment: '0.002246', currency: 'USD' }
+                - { tax: 'TAX1', rate: '0.104', taxableAmount: '20.12', taxAmount: '2.09', currency: 'USD' }
         -
             row:
                 includingTax: '22.21'
@@ -234,7 +234,7 @@ expectedResult:
                 adjustment: '0.002246'  # 2.092246 - 2.09 = 0.002246
                 currency: 'USD'
             taxes:
-                - { tax: 'TAX1', rate: '0.104', taxableAmount: '20.12', taxAmount: '2.09', adjustment: '0.002246', currency: 'USD' }
+                - { tax: 'TAX1', rate: '0.104', taxableAmount: '20.12', taxAmount: '2.09', currency: 'USD' }
         -
             row:
                 includingTax: '22.21'
@@ -249,6 +249,6 @@ expectedResult:
                 adjustment: '0.002246'  # 2.092246 - 2.09 = 0.002246
                 currency: 'USD'
             taxes:
-                - { tax: 'TAX1', rate: '0.104', taxableAmount: '20.12', taxAmount: '2.09', adjustment: '0.002246', currency: 'USD' }
+                - { tax: 'TAX1', rate: '0.104', taxableAmount: '20.12', taxAmount: '2.09', currency: 'USD' }
     taxes:
-        - { tax: 'TAX1', rate: '0.104', taxableAmount: '80.48', taxAmount: '8.37', adjustment: '0.008984', currency: 'USD' }
+        - { tax: 'TAX1', rate: '0.104', taxableAmount: '80.47', taxAmount: '8.37', currency: 'USD' }

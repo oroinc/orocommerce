@@ -108,8 +108,8 @@ expectedResult:
                 adjustment: '-0.00375'
                 currency: 'USD'
             taxes:
-                - { tax: 'TAX3', rate: '0.075', taxableAmount: '79.95', taxAmount: '6', adjustment: '-0.00375', currency: 'USD' }
-                - { tax: 'TAX2', rate: '0.2', taxableAmount: '79.95', taxAmount: '15.99', adjustment: '0', currency: 'USD' }
+                - { tax: 'TAX3', rate: '0.075', taxableAmount: '79.95', taxAmount: '6', currency: 'USD' }
+                - { tax: 'TAX2', rate: '0.2', taxableAmount: '79.95', taxAmount: '15.99', currency: 'USD' }
         -
             unit:
                 includingTax: '7.08'  # 5.55 + 1.52625 and round
@@ -124,8 +124,8 @@ expectedResult:
                 adjustment: '-0.0025'
                 currency: 'USD'
             taxes:
-                - { tax: 'TAX3', rate: '0.075', taxableAmount: '33.3', taxAmount: '2.5', adjustment: '-0.0025',currency: 'USD' }
-                - { tax: 'TAX2', rate: '0.2', taxableAmount: '33.3', taxAmount: '6.66', adjustment: '0', currency: 'USD' }
+                - { tax: 'TAX3', rate: '0.075', taxableAmount: '33.3', taxAmount: '2.5', currency: 'USD' }
+                - { tax: 'TAX2', rate: '0.2', taxableAmount: '33.3', taxAmount: '6.66', currency: 'USD' }
         -
             unit:
                 includingTax: '13.49' # 12.22 + 1.27088 = 13.49088
@@ -140,8 +140,8 @@ expectedResult:
                 adjustment: '-0.00384' # 8.89616 - 8.90 = -0.00384
                 currency: 'USD'
             taxes:
-                - { tax: 'TAX1', rate: '0.104', taxableAmount: '85.54', taxAmount: '8.90', adjustment: '-0.00384', currency: 'USD' }
+                - { tax: 'TAX1', rate: '0.104', taxableAmount: '85.54', taxAmount: '8.90', currency: 'USD' }
     taxes:
-        - { tax: 'TAX3', rate: '0.075', taxableAmount: '113.25', taxAmount: '8.49', adjustment: '-0.00625', currency: 'USD' }
-        - { tax: 'TAX2', rate: '0.2', taxableAmount: '113.25', taxAmount: '22.65', adjustment: '0', currency: 'USD' }
-        - { tax: 'TAX1', rate: '0.104', taxableAmount: '85.54', taxAmount: '8.9', adjustment: '-0.00384', currency: 'USD' }
+        - { tax: 'TAX3', rate: '0.075', taxableAmount: '113.25', taxAmount: '8.49', currency: 'USD' }
+        - { tax: 'TAX2', rate: '0.2', taxableAmount: '113.25', taxAmount: '22.65', currency: 'USD' }
+        - { tax: 'TAX1', rate: '0.104', taxableAmount: '85.54', taxAmount: '8.9', currency: 'USD' }

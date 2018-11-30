@@ -70,6 +70,6 @@ expectedResult:
                 adjustment: '0'
                 currency: 'USD'
             taxes:
-                - { tax: 'TAX1', rate: '0.104', taxableAmount: '100', taxAmount: '10.4', adjustment: '0', currency: 'USD' }
+                - { tax: 'TAX1', rate: '0.104', taxableAmount: '100', taxAmount: '10.4', currency: 'USD' }
     taxes:
-        - { tax: 'TAX1', rate: '0.104', taxableAmount: '100', taxAmount: '10.4', adjustment: '0', currency: 'USD' }
+        - { tax: 'TAX1', rate: '0.104', taxableAmount: '100', taxAmount: '10.4', currency: 'USD' }

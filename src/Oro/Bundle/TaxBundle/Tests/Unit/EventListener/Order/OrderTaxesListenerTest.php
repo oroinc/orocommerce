@@ -157,7 +157,6 @@ class OrderTaxesListenerTest extends \PHPUnit_Framework_TestCase
                                     'rate' => '0.1',
                                     'taxableAmount' => '50',
                                     'taxAmount' => '5',
-                                    'adjustment' => '0',
                                     'currency' => 'USD',
                                 ],
                             ],

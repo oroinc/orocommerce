@@ -74,6 +74,6 @@ expectedResult:
                 adjustment: '0.0048'  # 8.3148 - 8.31 = 0.0048
                 currency: 'USD'
             taxes:
-                - { tax: 'TAX1', rate: '0.104', taxableAmount: '79.95', taxAmount: '8.31', adjustment: '0.0048', currency: 'USD' }
+                - { tax: 'TAX1', rate: '0.104', taxableAmount: '79.95', taxAmount: '8.31', currency: 'USD' }
     taxes:
-        - { tax: 'TAX1', rate: '0.104', taxableAmount: '79.95', taxAmount: '8.31', adjustment: '0.0048', currency: 'USD' }
+        - { tax: 'TAX1', rate: '0.104', taxableAmount: '79.95', taxAmount: '8.31', currency: 'USD' }
