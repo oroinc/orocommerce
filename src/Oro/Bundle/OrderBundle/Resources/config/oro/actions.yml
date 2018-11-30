@@ -8,11 +8,21 @@ operations:
             - order-payment-transactions-grid
         order: 20
         preactions:
+            - '@assign_constant_value':
+                attribute: $.paymentMethodAction
+                value: Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface::AUTHORIZE
             - '@call_service_method':
                 service: oro_payment.payment_method.composite_provider
-                method: hasPaymentMethod
+                method: getPaymentMethod
                 method_parameters: [$.data.paymentMethod]
-                attribute: $.paymentMethodExist
+                attribute: $.paymentMethod
+            - '@call_method':
+                conditions:
+                    '@instanceof': [$.paymentMethod, Oro\Bundle\PaymentBundle\Method\Action\CaptureActionInterface]
+                attribute: $.paymentMethodAction
+                object: $.paymentMethod
+                method: getSourceAction
+                method_parameters: []
             - '@call_service_method':
                 service: oro_currency.formatter.number
                 method: formatCurrency
@@ -27,10 +37,10 @@ operations:
             '@and':
                 - '@acl_granted': ['CHARGE_AUTHORIZED_PAYMENTS', $.order]
                 - '@equal': [$.data.entity_class, '%oro_order.entity.order.class%']
-                - '@equal': [$.data.action, 'authorize']
+                - '@equal': [$.data.action, $.paymentMethodAction]
                 - '@equal': [$.data.active, true]
                 - '@equal': [$.data.successful, true]
-                - '@equal': [$.paymentMethodExist, true]
+                - '@not_empty': $.paymentMethod
                 - '@not':
                     - '@payment_transaction_was_charged':
                         transaction: $.data

@@ -133,3 +133,26 @@ Oro\Bundle\ProductBundle\Entity\RelatedItem\UpsellProduct:
     upsellItem1:
         product: '@product1'
         relatedItem: '@upsellProduct1'
+
+Oro\Bundle\ShippingBundle\Model\Weight(local):
+    weight:
+        unit: 'kg'
+        value: 1
+
+Oro\Bundle\ShippingBundle\Model\DimensionsValue(local):
+    dimensionsValue:
+        length: 1
+        width: 1
+        height: 1
+
+Oro\Bundle\ShippingBundle\Model\Dimensions(local):
+    dimensions:
+        value: '@dimensionsValue'
+        unit: 'cm'
+
+Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions:
+    productShippingOptions:
+        product: '@product1'
+        productUnit: '@item'
+        weight: '@weight'
+        dimensions: '@dimensions'

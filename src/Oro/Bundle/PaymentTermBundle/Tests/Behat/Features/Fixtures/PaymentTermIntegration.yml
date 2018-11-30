@@ -10,6 +10,7 @@ Oro\Bundle\PaymentTermBundle\Entity\PaymentTermSettings:
     paymentTermSettings:
         addLabel: ['@paymentTermLabel']
         addShortLabel: ['@paymentTermLabel']
+        channel: '@paymentTermIntegration'
 
 Oro\Bundle\IntegrationBundle\Entity\Channel:
     paymentTermIntegration:

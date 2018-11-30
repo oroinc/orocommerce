@@ -39,7 +39,12 @@ class TaxRateValidator extends ConstraintValidator
     {
         $formattedValue = rtrim(number_format($value, TaxType::TAX_RATE_FIELD_PRECISION, '.', ''), '0');
 
-        $decimalLength = strlen(
+        // Covers case when $value has TaxType::TAX_RATE_FIELD_PRECISION or more zeros after decimal separator.
+        if ((float) $formattedValue < (float) $value) {
+            return false;
+        }
+
+        $decimalLength = \strlen(
             substr(
                 strrchr($formattedValue, '.'),
                 1
