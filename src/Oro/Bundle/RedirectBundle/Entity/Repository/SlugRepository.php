@@ -16,6 +16,9 @@ use Oro\Bundle\RedirectBundle\Helper\UrlParameterHelper;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
 
+/**
+ * Repository for Slug entity
+ */
 class SlugRepository extends EntityRepository
 {
     /**
