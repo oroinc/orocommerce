@@ -197,7 +197,7 @@ services:
           arguments:
               - '@oro_shopping_list.provider.matrix_grid_order_manager'
               - '@oro_pricing.subtotal_processor.total_processor_provider'
-              - '@oro_currency.formatter.number'
+              - '@oro_locale.formatter.number'
               - '@oro_shopping_list.manager.current_shopping_list'
           tags:
               - { name: layout.data_provider, alias: oro_shopping_list_matrix_grid_order }

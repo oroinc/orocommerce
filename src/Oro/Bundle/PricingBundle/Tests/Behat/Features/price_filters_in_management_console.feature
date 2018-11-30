@@ -38,17 +38,17 @@ Feature: Price filters in management console
     Given I go to Sales/ Opportunities
     When I filter "Budget amount ($)" as equals "50"
     Then should see filter hints in grid:
-      | Budget Amount ($): equals 50,00 |
+      | Budget amount ($): equals 50,00 |
     And I should see "50,00 $" in grid
 
     When I filter "Budget amount ($)" as more than "49,77"
     Then should see filter hints in grid:
-      | Budget Amount ($): more than 49,77 |
+      | Budget amount ($): more than 49,77 |
     And I should see "50,00 $" in grid
 
     When I filter "Budget amount ($)" as more than "50,11"
     Then should see filter hints in grid:
-      | Budget Amount ($): more than 50,11 |
+      | Budget amount ($): more than 50,11 |
     And I should not see "50,00 $"
 
   Scenario: Order Price filters use formatting according locale setting

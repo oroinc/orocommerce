@@ -33,7 +33,7 @@ services:
     oro_paypal.event_listener.modify_line_item_option:
         class: 'Oro\Bundle\PayPalBundle\EventListener\ExtractLineItemPaymentOptionsListener'
         arguments:
-            - '@oro_currency.formatter.number'
+            - '@oro_locale.formatter.number'
             - '@oro_pricing.rounding.price_rounding_service'
         tags:
             - { name: kernel.event_listener, event: oro_payment.event.extract_line_item_options, priority: -50, method: onExtractLineItemPaymentOptions }
