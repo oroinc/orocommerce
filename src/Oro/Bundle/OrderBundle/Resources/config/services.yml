@@ -472,3 +472,11 @@ services:
             - '@security.token_storage'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.order-line-items-grid-frontend, method: onBuildBefore }
+
+    oro_order.datagrid.order_line_items_grid_frontend_order_object_access_listener:
+        class: 'Oro\Bundle\OrderBundle\Datagrid\OrderLineItemsOrderObjectAccessListener'
+        arguments:
+            - '@security.authorization_checker'
+            - '@doctrine'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.order-line-items-grid-frontend, method: onBuildBefore }
