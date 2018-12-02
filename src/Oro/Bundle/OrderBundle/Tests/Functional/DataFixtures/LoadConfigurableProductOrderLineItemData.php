@@ -35,7 +35,7 @@ class LoadConfigurableProductOrderLineItemData extends AbstractFixture implement
         self::ORDER_LINEITEM_WITH_PARENT_PRODUCT_2 => [
             'order' => LoadOrders::ORDER_3,
             'parentProduct' => LoadProductData::PRODUCT_7,
-            'product' => LoadProductData::PRODUCT_1,
+            'product' => LoadProductData::PRODUCT_3,
             'quantity' => 15,
             'productUnit' => LoadProductUnits::LITER,
             'price' => [
