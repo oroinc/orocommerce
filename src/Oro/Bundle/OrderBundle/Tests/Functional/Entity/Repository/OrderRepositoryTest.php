@@ -87,6 +87,7 @@ class OrderRepositoryTest extends WebTestCase
 
         $result = $queryBuilder->getQuery()->getArrayResult();
 
+        self::assertCount(2, $result);
         self::assertArraySubset(
             [
                 [
@@ -100,6 +101,21 @@ class OrderRepositoryTest extends WebTestCase
             ],
             $result
         );
+    }
+
+    public function testGetLatestOrderedProductsInfoWhenConfigurableProductsGiven(): void
+    {
+        $queryBuilder = $this->getRepository()->getLatestOrderedProductsInfo(
+            [
+                self::getReference(LoadProductData::PRODUCT_3)->getId(),
+            ],
+            $this->getDefaultWebsite()->getId(),
+            [
+                OrderStatusesProviderInterface::INTERNAL_STATUS_OPEN
+            ]
+        );
+
+        self::assertEmpty($queryBuilder->getQuery()->getArrayResult());
     }
 
     public function testGetLatestOrderedParentProductsInfo(): void
