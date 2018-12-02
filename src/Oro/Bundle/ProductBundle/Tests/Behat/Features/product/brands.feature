@@ -46,6 +46,12 @@ Feature: Brands
     And save and close form
     Then I should see "Brand has been saved" flash message
 
+  Scenario: Search Brands by name
+    When I go to Products/ Product Brands
+    And filter Name as Contains "ACME"
+    Then I should see following grid:
+      | ACME |
+
   Scenario: Assign Brand to the product
     Given I proceed as the Admin
     And go to Products/ Products

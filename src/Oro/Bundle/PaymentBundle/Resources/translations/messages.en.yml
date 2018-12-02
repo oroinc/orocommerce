@@ -113,6 +113,7 @@ oro:
                 capture.label: Capture
                 purchase.label: Purchase
                 invoice.label: Invoice
+                pending.label: Pending
 
         sections:
             general: 'General Information'
