@@ -70,6 +70,7 @@ class OrderRepository extends EntityRepository
         $queryBuilder
             ->addSelect('IDENTITY(lineItems.product) as product_id')
             ->andWhere($queryBuilder->expr()->in('lineItems.product', ':productIdList'))
+            ->andWhere($queryBuilder->expr()->isNull('lineItems.parentProduct'))
             ->addGroupBy('lineItems.product')
             ->orderBy('lineItems.product')
             ->setParameter('productIdList', $productIds);

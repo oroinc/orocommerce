@@ -68,7 +68,7 @@ Feature: Previously purchased configurable products
     Then I should see "Product has been saved" flash message
     When I go to Products / Products
     And filter SKU as is equal to "CNF_A"
-    And I click Edit CNFA in grid
+    And I click Edit CNF_A in grid
     And I should see "There are no product variants"
     And I fill "ProductForm" with:
       | Configurable Attributes | [BooleanAttribute] |
@@ -93,6 +93,8 @@ Feature: Previously purchased configurable products
     When I click "Account"
     And I click "Previously Purchased"
     Then I should see "Configurable Product A"
+    And I should not see "Product A 1"
+    And I should not see "Product A 2"
 
   Scenario: Cancel order with configurable product
     Given I proceed as the Admin
@@ -107,3 +109,36 @@ Feature: Previously purchased configurable products
     When I click "Account"
     And I click "Previously Purchased"
     Then I should not see "Configurable Product A"
+
+  Scenario: Change configuration to display simple variations everywhere
+    Given I proceed as the Admin
+    And go to System/ Configuration
+    And I follow "Commerce/Product/Configurable Products" on configuration sidebar
+    And I fill "Display Simple Variations Form" with:
+      | Display Simple Variations Default | false      |
+      | Display Simple Variations         | everywhere |
+    When save form
+    Then I should see "Configuration saved" flash message
+
+  Scenario: Order simple variation product
+    Given I proceed as the Buyer
+    And I type "PROD_A_1" in "search"
+    And I click "Search Button"
+    When I filter SKU as is equal to "PROD_A_1"
+    Then I should see "Product A 1"
+    When I click "Add to Shopping List" for "PROD_A_1" product
+    And I open page with shopping list "Shopping List"
+    And I press "Create Order"
+    And I select "ORO, Fifth avenue, 10115 Berlin, Germany" on the "Billing Information" checkout step and press Continue
+    And I select "ORO, Fifth avenue, 10115 Berlin, Germany" on the "Shipping Information" checkout step and press Continue
+    And I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
+    And I check "Payment Terms" on the "Payment" checkout step and press Continue
+    And I press "Submit Order"
+    Then I see the "Thank You" page with "Thank You For Your Purchase!" title
+
+  Scenario: Check that simple variation product is shown in Previously Purchased grid
+    Given I proceed as the Buyer
+    When I click "Account"
+    And I click "Previously Purchased"
+    Then I should see "Product A 1"
+    And I should not see "Configurable Product A"
