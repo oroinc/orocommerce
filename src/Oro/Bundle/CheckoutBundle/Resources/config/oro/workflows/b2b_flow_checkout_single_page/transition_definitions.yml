@@ -166,7 +166,9 @@ workflows:
                         - '@equal': [$checkout.completed, false]
                         - '@quote_acceptable': [$checkout.sourceEntity, true]
                         - '@extendable':
-                            events: [extendable_condition.checkout]
+                            events:
+                                - 'extendable_condition.checkout'
+                                - 'extendable_condition.before_order_create'
                         - '@order_line_item_has_count': $checkout
                         - '@has_applicable_payment_methods':
                             message: oro.checkout.workflow.condition.payment_method_is_not_selected.message
@@ -192,10 +194,6 @@ workflows:
                                 is_ajax: true
                                 expected_key: _wid
                                 expected_value: ajax_checkout
-
-                        - '@extendable':
-                            message: 'oro.checkout.workflow.b2b_flow_checkout.transition.place_order.condition.extendable.message'
-                            events: ['extendable_condition.before_order_create']
 
                 actions:
                     - '@run_action_group':
