@@ -36,11 +36,22 @@ Feature: Change navigation root
       | System Page Route | Oro Frontend Root (Welcome - Home page) |
     And I save form
     Then I should see "Content Node has been saved" flash message
+    When I click "Create Content Node"
+    And I fill "Content Node" with:
+      | Title      | Test |
+      | Slug       | test |
+    And I click on "Show Variants Dropdown"
+    And I click "Add System Page"
+    And I fill "Content Node Form" with:
+      | System Page Route | Oro Frontend Root (Welcome - Home page) |
+    And I save form
+    Then I should see "Content Node has been saved" flash message
 
   Scenario: Check root navigation on front store by default
     Given I proceed as the Buyer
     When I am on the homepage
     And I should see "Clearance" in main menu
+    And I should see "Test" in main menu
 
   Scenario: Change root navigation in system config
     Given I proceed as the Admin

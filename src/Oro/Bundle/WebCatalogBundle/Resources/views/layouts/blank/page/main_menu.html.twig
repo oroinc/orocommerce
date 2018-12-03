@@ -54,7 +54,7 @@
 
 {% block _web_catalog_menu_second_level_item_simple_widget %}
     {% for category in categories %}
-        {{ block('_web_catalog_menu_second_level_item') }}
+        {{ block('_web_catalog_menu_second_level_item_simple') }}
     {% endfor %}
 {% endblock %}
 
@@ -240,4 +240,14 @@
     <li class="main-menu-column__subitem">
         <a class="main-menu-column__link" href="{{ app.request.uriForPath(category.url) }}">{{ category.label }}</a>
     </li>
+{% endblock %}
+
+{% block _web_catalog_menu_second_level_item_simple %}
+    <li class="main-menu-column__item">
+        <a class="main-menu-column__link" href="{{ app.request.uriForPath(category.url) }}">{{ category.label }}</a>
+    </li>
+    {% if category.children is not empty %}
+        {% set categories = category.children %}
+        {{ block('_web_catalog_menu_four_level_item_mega_widget') }}
+    {% endif %}
 {% endblock %}
