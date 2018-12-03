@@ -1359,7 +1359,19 @@ services:
         arguments:
            - '@oro_featuretoggle.voter.config_voter'
            - '@security.token_storage'
+           - 'guest_quick_order'
         abstract: true
+
+    oro_product.voter.guest_quick_order_form.config:
+        class: 'Oro\Bundle\ProductBundle\Voter\GuestQuickOrderFormVoter'
+        arguments:
+            - '@oro_featuretoggle.voter.config_voter'
+            - '@security.token_storage'
+            - 'guest_quick_order_form'
+        calls:
+            - [ setFeatureName, ['guest_quick_order_config'] ]
+        tags:
+            - { name: oro_featuretogle.voter }
 
     oro_product.provider.brand_entity_name:
         class: 'Oro\Bundle\ProductBundle\Provider\BrandEntityNameProvider'

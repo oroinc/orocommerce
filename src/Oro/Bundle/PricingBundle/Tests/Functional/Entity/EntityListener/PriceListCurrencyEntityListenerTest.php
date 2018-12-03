@@ -45,6 +45,13 @@ class PriceListCurrencyEntityListenerTest extends WebTestCase
                 PriceListTriggerFactory::PRODUCT => [$priceList->getId() => []]
             ]
         );
+
+        self::assertMessageSent(
+            Topics::RESOLVE_COMBINED_CURRENCIES,
+            [
+                PriceListTriggerFactory::PRODUCT => [$priceList->getId() => []]
+            ]
+        );
     }
 
     public function testPreRemove()
@@ -61,6 +68,13 @@ class PriceListCurrencyEntityListenerTest extends WebTestCase
 
         self::assertMessageSent(
             Topics::RESOLVE_PRICE_RULES,
+            [
+                PriceListTriggerFactory::PRODUCT => [$priceList->getId() => []]
+            ]
+        );
+
+        self::assertMessageSent(
+            Topics::RESOLVE_COMBINED_CURRENCIES,
             [
                 PriceListTriggerFactory::PRODUCT => [$priceList->getId() => []]
             ]

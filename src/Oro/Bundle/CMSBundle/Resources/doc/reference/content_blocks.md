@@ -59,7 +59,7 @@ Content blocks can be rendered by unique `aliases` using the `content_block` blo
 ```yaml
 layout:
     actions:
-        - @add:
+        - '@add':
             id: marketing_block # unique layout block id
             parentId: page_content
             blockType: content_block

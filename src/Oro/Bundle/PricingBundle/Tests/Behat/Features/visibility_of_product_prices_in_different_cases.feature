@@ -5,15 +5,17 @@ Feature: Visibility of product prices in different cases
   Scenario: Empty product prices for non authorized user
     Given I am on "/product"
     Then I should not see a "Product Price Listed" element
+    And I should see that "Product Price Container" contains "Price not available"
     And I should not see a "Product Price Main" element
+    And I should not see a "Product Price Hint" element
 
   Scenario: Empty product prices for authorized user
     Given I signed in as AmandaRCole@example.org on the store frontend
     And I am on "/product"
-    Then I should see that "Product Price Hint" contains "Price not available"
+    Then I should not see a "Product Price Listed" element
+    And I should see that "Product Price Container" contains "Price not available"
     And I should not see a "Product Price Main" element
-    When I click on "Product Price Hint"
-    Then I should not see a "Product Price Popover" element
+    And I should not see a "Product Price Hint" element
 
   Scenario: Add prices for already created product and check prices visibility
     Given I login as administrator

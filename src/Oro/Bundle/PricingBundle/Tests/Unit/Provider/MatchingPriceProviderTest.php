@@ -4,10 +4,10 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
+use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaInterface;
 use Oro\Bundle\PricingBundle\Provider\MatchingPriceProvider;
-use Oro\Bundle\PricingBundle\Provider\ProductPriceProvider;
+use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -16,10 +16,7 @@ class MatchingPriceProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    const PRODUCT_CLASS = 'ProductClass';
-    const PRODUCT_UNIT_CLASS = 'ProductUnitClass';
-
-    /** @var ProductPriceProvider|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var ProductPriceProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $productPriceProvider;
 
     /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
@@ -30,21 +27,14 @@ class MatchingPriceProviderTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->productPriceProvider = $this
-            ->getMockBuilder('\Oro\Bundle\PricingBundle\Provider\ProductPriceProvider')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->doctrineHelper = $this
-            ->getMockBuilder('\Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->productPriceProvider = $this->createMock(ProductPriceProviderInterface::class);
+        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
 
         $this->provider = new MatchingPriceProvider(
             $this->productPriceProvider,
             $this->doctrineHelper,
-            self::PRODUCT_CLASS,
-            self::PRODUCT_UNIT_CLASS
+            Product::class,
+            ProductUnit::class
         );
     }
 
@@ -55,6 +45,9 @@ class MatchingPriceProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testGetMatchingPrices()
     {
+        /** @var ProductPriceScopeCriteriaInterface $priceScopeCriteria */
+        $priceScopeCriteria = $this->createMock(ProductPriceScopeCriteriaInterface::class);
+
         $productId = 1;
         $productUnitCode = 'unitCode';
         $qty = 5.5;
@@ -70,21 +63,16 @@ class MatchingPriceProviderTest extends \PHPUnit\Framework\TestCase
         ];
 
         /** @var Product $product */
-        $product = $this->getEntity('\Oro\Bundle\ProductBundle\Entity\Product', ['id' => $productId]);
-        /** @var BasePriceList $priceList */
-        $priceList = $this->getEntity('\Oro\Bundle\PricingBundle\Entity\BasePriceList', ['id' => 2]);
+        $product = $this->getEntity(Product::class, ['id' => $productId]);
 
         /** @var ProductUnit $productUnit */
-        $productUnit = $this->getEntity(
-            '\Oro\Bundle\ProductBundle\Entity\ProductUnit',
-            ['code' => $productUnitCode]
-        );
+        $productUnit = $this->getEntity(ProductUnit::class, ['code' => $productUnitCode]);
 
         $this->doctrineHelper->expects($this->exactly(2))
             ->method('getEntityReference')
             ->withConsecutive(
-                [self::PRODUCT_CLASS, $productId],
-                [self::PRODUCT_UNIT_CLASS, $productUnitCode]
+                [Product::class, $productId],
+                [ProductUnit::class, $productUnitCode]
             )
             ->willReturnOnConsecutiveCalls($product, $productUnit);
 
@@ -95,12 +83,12 @@ class MatchingPriceProviderTest extends \PHPUnit\Framework\TestCase
         ];
         $this->productPriceProvider->expects($this->once())
             ->method('getMatchedPrices')
-            ->with([new ProductPriceCriteria($product, $productUnit, $qty, $currency)], $priceList)
+            ->with([new ProductPriceCriteria($product, $productUnit, $qty, $currency)], $priceScopeCriteria)
             ->willReturn($expectedMatchedPrices);
 
         $this->assertEquals(
             $this->formatPrices($expectedMatchedPrices),
-            $this->provider->getMatchingPrices($lineItems, $priceList)
+            $this->provider->getMatchingPrices($lineItems, $priceScopeCriteria)
         );
     }
 

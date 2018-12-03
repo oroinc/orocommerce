@@ -7,9 +7,9 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Model\QuickAddRow;
 use Oro\Bundle\ProductBundle\Validator\Constraints\QuantityUnitPrecision;
 use Oro\Bundle\ProductBundle\Validator\Constraints\QuantityUnitPrecisionValidator;
-use Oro\Component\Testing\Validator\AbstractConstraintValidatorTest;
+use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
-class QuantityUnitPrecisionValidatorTest extends AbstractConstraintValidatorTest
+class QuantityUnitPrecisionValidatorTest extends ConstraintValidatorTestCase
 {
     protected function setUp()
     {

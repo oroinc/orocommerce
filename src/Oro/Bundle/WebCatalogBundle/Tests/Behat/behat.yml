@@ -55,6 +55,7 @@ oro_behat_extension:
     suites:
         OroWebCatalogBundle:
             contexts:
+                - OroSecurityBundle::ACLContext
                 - OroApplicationBundle::CommerceMainContext
                 - OroProductBundle::FeatureContext
                 - OroConfigBundle::FeatureContext

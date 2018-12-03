@@ -407,7 +407,10 @@
         <div class="line-item-price" {{ UI.renderPageComponentAttributes({
             module: 'oroui/js/app/components/view-component',
             options: {
-                view: 'oropricing/js/app/views/base-product-prices-view',
+                view: 'oropricing/js/app/views/list-item-product-prices-view',
+                showValuePrice: false,
+                showListedPrice: false,
+                doUpdateQtyForUnit: false,
                 modelAttr: {
                     prices: productAllPrices,
                 }
@@ -421,69 +424,13 @@
 
 {% block _shopping_list_line_items_list_price_info_widget %}
     {% set productMatchedPrice = parent.productsMatchedPrice[lineItem.product.id][lineItem.unit.code] is not empty ? parent.productsMatchedPrice[lineItem.product.id][lineItem.unit.code] : null %}
-    {# TODO: Pass default currency from provider. BB-2218 #}
-    {% set defaultCurrency = 'USD' %}
-    {% set currency = productMatchedPrice ? productMatchedPrice.currency : defaultCurrency %}
-    <table class="price-table {{ productMatchedPrice is null ? 'hidden' }}" data-name="price">
-        <tbody>
-        <tr>
-            <td class="text-right"
-                data-name="prices-hint"
-                data-placement="bottom"
-                data-close="false"
-                data-trigger="hover"
-                data-container="body"
-                data-class="prices-hint-content">
-                    <span data-name="price-value">
-                        {% if productMatchedPrice is not null %}
-                            {{ productMatchedPrice.value|oro_format_currency({'currency': currency}) }}
-                        {% else %}
-                            {{ 'oro.ui.empty'|trans }}
-                        {% endif %}
-                    </span>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-    <div data-name="prices-hint-content" class="hidden">
-        <table class="table">
-            <thead>
-            <tr>
-                <th class="text-uppercase">{{ 'oro.pricing.frontend.product.quantity.short_label'|trans }}</th>{# qty#}
-                <th>{{ 'oro.pricing.frontend.product.unit_price.long_label'|trans }}</th>{# Unit Price #}
-            </tr>
-            </thead>
-            <tbody>
-            {% set shownUnit = '' %}
-            {% for price in productAllPrices %}
-                {% if shownUnit != price.unit %}
-                    {% set shownUnit = price.unit %}
-            <tr>
-                <td colspan="2" class="text-capitalize">
-                    {% if loop.index > 1 %}<br/>{% endif %}
-                    <b>{{ shownUnit|oro_format_product_unit_label }}</b>
-                </td>
-            </tr>
-                {% endif %}
-            <tr>
-                <td>{{ price.quantity }}</td>
-                <td>{{ price.formatted_price }}</td>
-            </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    <div data-name="price-not-found" class="{{ productMatchedPrice is not null ? 'hidden' }}">
-        {% if productAllPrices %}
-            <span data-name="prices-hint"
-                  data-placement="bottom"
-                  data-close="false"
-                  data-trigger="hover"
-                  data-container="body"
-                  data-class="prices-hint-content"
-                  >{{ 'oro.pricing.frontend.product_prices.price_not_found'|trans }}</span>
+    <div data-name="prices-hint">
+        {% if productMatchedPrice is not null %}
+            <span data-name="price-value">
+                {{ productMatchedPrice.value|oro_format_currency({'currency': productMatchedPrice.currency}) }}
+            </span>
         {% else %}
-        {{ 'oro.pricing.frontend.product_prices.empty_prices'|trans }}
+            <div data-name="price-not-found">{{ 'oro.pricing.frontend.product_prices.price_not_found'|trans }}</div>
         {% endif %}
     </div>
 {% endblock %}

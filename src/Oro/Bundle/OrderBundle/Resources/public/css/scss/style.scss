@@ -19,17 +19,15 @@
     color: #444;
 }
 
-.totals-container .control-group .controls .amount {
+.totals-container .attribute-item .attribute-item__description .amount {
     width: 120px;
-    margin: 0 0 5px;
-    padding: 7px 0 0 5px;
-
-    text-align: right;
-    font-size: 13px;
+    margin: 0;
+    padding: 0;
     background-color: transparent;
     border: 0 none;
     outline: 0 none;
-    color: #444;
+    text-align: #{$start};
+    color: $primary-200;
 }
 
 .order-order-customeruser-select {

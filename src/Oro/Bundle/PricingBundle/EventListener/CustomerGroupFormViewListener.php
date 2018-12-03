@@ -8,6 +8,9 @@ use Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup;
 use Oro\Bundle\PricingBundle\Form\Type\PriceListCollectionType;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 
+/**
+ * Adds scroll blocks with price list data on customer group view page
+ */
 class CustomerGroupFormViewListener extends AbstractCustomerFormViewListener
 {
     /**
@@ -25,6 +28,10 @@ class CustomerGroupFormViewListener extends AbstractCustomerFormViewListener
      */
     public function onCustomerGroupView(BeforeListRenderEvent $event)
     {
+        if (!$this->isFeaturesEnabled()) {
+            return;
+        }
+
         $request = $this->requestStack->getCurrentRequest();
         if (!$request) {
             return;

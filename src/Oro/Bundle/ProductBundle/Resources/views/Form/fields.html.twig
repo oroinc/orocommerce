@@ -11,14 +11,14 @@
         {% endfor %}
     {% endif %}
 
-    <div class="controls-inner"
+    <div class="controls-inner product-primary-unit-controls"
          data-page-component-module="oroproduct/js/app/components/product-primary-unit-limitations-component"
          data-page-component-options="{{ { 'precisions': precisions, 'initialAdditionalUnits': initialAdditionalUnits }|json_encode  }}">
 
         <div class="float-holder">
             <table>
                 <tr>
-                    <td>{{ form_widget(form.unit, { 'attr': {'style': 'width: 100px'}}) }}{% if form.unit_disabled is defined %}{{ form_widget(form.unit_disabled, { 'attr': {'style': 'width: 100px'}}) }}{% endif %}</td>
+                    <td>{{ form_widget(form.unit) }}{% if form.unit_disabled is defined %}{{ form_widget(form.unit_disabled) }}{% endif %}</td>
                     <td><div class="control-label"><label>{{ 'oro.product.productunitprecision.precision.label'|trans }}<em>&nbsp;</em></label></div></td>
                     <td>{{ form_widget(form.precision, { 'attr': {'class': 'precision', 'style': 'width: 40px'} }) }}</td>
                     <td>{{ form_widget(form.conversionRate) }}</td>
@@ -43,7 +43,7 @@
                 <td>{{ form_widget(form.conversionRate, { 'attr': {'class': 'conversionRate'} }) }}</td>
                 <td>{{ form_widget(form.sell, { 'attr': {'class': 'sell'} }) }}</td>
                 {% if form.parent.vars.allow_delete %}
-                    <td><button class="removeLineItem btn btn-icon icons-holder" type="button" data-related="{{ name }}"><i class="fa-close"></i></button></td>
+                    <td><button class="removeLineItem btn btn-icon btn-square-lighter" type="button" data-related="{{ name }}"><span class="fa-close"></span></button></td>
                 {% endif %}
             </tr>
 
@@ -171,7 +171,7 @@
 
         {% if allow_delete %}
             <td>
-                <button type="button" class="removeRow btn btn-icon icons-holder pull-right">
+                <button type="button" class="removeRow btn btn-icon btn-square-lighter">
                     <span class="fa-close"></span>
                 </button>
             </td>
