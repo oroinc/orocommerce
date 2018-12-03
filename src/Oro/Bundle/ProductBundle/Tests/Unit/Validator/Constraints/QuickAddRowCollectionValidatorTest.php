@@ -7,12 +7,12 @@ use Oro\Bundle\ProductBundle\Model\QuickAddRow;
 use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
 use Oro\Bundle\ProductBundle\Validator\Constraints\QuickAddRowCollection as QuickAddRowCollectionConstraint;
 use Oro\Bundle\ProductBundle\Validator\Constraints\QuickAddRowCollectionValidator;
-use Oro\Component\Testing\Validator\AbstractConstraintValidatorTest;
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\ConstraintViolationList;
+use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class QuickAddRowCollectionValidatorTest extends AbstractConstraintValidatorTest
+class QuickAddRowCollectionValidatorTest extends ConstraintValidatorTestCase
 {
     /**
      * @var QuickAddRowCollection|\PHPUnit\Framework\MockObject\MockObject

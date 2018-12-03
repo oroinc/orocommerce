@@ -6,9 +6,9 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Model\QuickAddRow;
 use Oro\Bundle\ProductBundle\Validator\Constraints\ProductUnitExists;
 use Oro\Bundle\ProductBundle\Validator\Constraints\ProductUnitExistsValidator;
-use Oro\Component\Testing\Validator\AbstractConstraintValidatorTest;
+use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
-class ProductUnitExistsValidatorTest extends AbstractConstraintValidatorTest
+class ProductUnitExistsValidatorTest extends ConstraintValidatorTestCase
 {
     protected function setUp()
     {

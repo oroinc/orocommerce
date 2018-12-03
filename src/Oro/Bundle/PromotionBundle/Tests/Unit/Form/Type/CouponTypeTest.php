@@ -99,8 +99,8 @@ class CouponTypeTest extends FormIntegrationTestCase
     public function submitProvider()
     {
         $promotion2 = $this->getEntity(Promotion::class, ['id' => 2]);
-        $validFromDate = '01-01-2010 12:00:00';
-        $validUntilDate = '01-01-2020 12:00:00';
+        $validFromDate = '2010-01-01T12:00:00Z';
+        $validUntilDate = '2020-01-01T12:00:00Z';
 
         return [
             'coupon with promotion' => [
