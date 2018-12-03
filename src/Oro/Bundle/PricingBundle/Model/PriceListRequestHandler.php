@@ -3,34 +3,21 @@
 namespace Oro\Bundle\PricingBundle\Model;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\ORM\EntityRepository;
-use Oro\Bundle\CustomerBundle\Entity\Customer;
-use Oro\Bundle\CustomerBundle\Provider\CustomerUserRelationsProvider;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
-use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
-use Oro\Bundle\UserBundle\Entity\User;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
-use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Symfony\Component\HttpFoundation\RequestStack;
 
+/**
+ * Provides methods to obtain price list by given id, price list currencies,
+ * decide whether tier prices should be shown or not
+ */
 class PriceListRequestHandler implements PriceListRequestHandlerInterface
 {
     /**
      * @var RequestStack
      */
     protected $requestStack;
-
-    /**
-     * @var TokenAccessorInterface
-     */
-    protected $tokenAccessor;
-
-    /**
-     * @var PriceListTreeHandler
-     */
-    protected $priceListTreeHandler;
 
     /**
      * @var ManagerRegistry
@@ -48,58 +35,20 @@ class PriceListRequestHandler implements PriceListRequestHandlerInterface
     protected $priceLists = [];
 
     /**
-     * @var EntityRepository
+     * @var PriceListRepository
      */
     protected $priceListRepository;
 
     /**
-     * @var CustomerUserRelationsProvider
-     */
-    protected $relationsProvider;
-
-    /**
-     * @var WebsiteManager
-     */
-    protected $websiteManager;
-
-    /**
      * @param RequestStack $requestStack
-     * @param TokenAccessorInterface $tokenAccessor
-     * @param PriceListTreeHandler $priceListTreeHandler
      * @param ManagerRegistry $registry
-     * @param CustomerUserRelationsProvider $relationsProvider
-     * @param WebsiteManager $websiteManager
      */
     public function __construct(
         RequestStack $requestStack,
-        TokenAccessorInterface $tokenAccessor,
-        PriceListTreeHandler $priceListTreeHandler,
-        ManagerRegistry $registry,
-        CustomerUserRelationsProvider $relationsProvider,
-        WebsiteManager $websiteManager
+        ManagerRegistry $registry
     ) {
         $this->requestStack = $requestStack;
-        $this->tokenAccessor = $tokenAccessor;
-        $this->priceListTreeHandler = $priceListTreeHandler;
         $this->registry = $registry;
-        $this->relationsProvider = $relationsProvider;
-        $this->websiteManager = $websiteManager;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getPriceListByCustomer()
-    {
-        $website = $this->getWebsite();
-        $customer = $this->getCustomer();
-        $priceList = $this->priceListTreeHandler->getPriceList($customer, $website);
-
-        if (!$priceList) {
-            throw new \RuntimeException('PriceList not found');
-        }
-
-        return $priceList;
     }
 
     /**
@@ -143,7 +92,7 @@ class PriceListRequestHandler implements PriceListRequestHandlerInterface
 
         $session = $request->getSession();
         if ($session && null === $currencies && $session->has(self::PRICE_LIST_CURRENCY_KEY)) {
-            $currencies = (array)$session->get(self::PRICE_LIST_CURRENCY_KEY);
+            $currencies = $session->get(self::PRICE_LIST_CURRENCY_KEY, []);
         }
 
         if (null === $currencies || filter_var($currencies, FILTER_VALIDATE_BOOLEAN)) {
@@ -167,28 +116,6 @@ class PriceListRequestHandler implements PriceListRequestHandlerInterface
         }
 
         return filter_var($request->get(self::TIER_PRICES_KEY), FILTER_VALIDATE_BOOLEAN);
-    }
-
-    /**
-     * @return null|Customer
-     */
-    protected function getCustomer()
-    {
-        $user = $this->tokenAccessor->getUser();
-
-        if ($user instanceof User) {
-            $request = $this->getRequest();
-            if ($request && $customerId = $request->get(self::ACCOUNT_ID_KEY)) {
-                return $this->registry
-                    ->getManagerForClass(Customer::class)
-                    ->getRepository(Customer::class)
-                    ->find($customerId);
-            }
-        } else {
-            return $this->relationsProvider->getCustomerIncludingEmpty($user);
-        }
-
-        return null;
     }
 
     /**
@@ -243,30 +170,6 @@ class PriceListRequestHandler implements PriceListRequestHandlerInterface
         }
 
         return $this->priceListRepository;
-    }
-
-    /**
-     * @return null|Website
-     */
-    protected function getWebsite()
-    {
-        $website = null;
-
-        $user = $this->tokenAccessor->getUser();
-        if ($user instanceof User) {
-            $request = $this->getRequest();
-            if ($request && $id = $request->get(self::WEBSITE_KEY)) {
-                $website = $this->registry->getManagerForClass(Website::class)
-                    ->getRepository(Website::class)
-                    ->find($id);
-            } else {
-                $website = $this->websiteManager->getDefaultWebsite();
-            }
-        } else {
-            $website = $this->websiteManager->getCurrentWebsite();
-        }
-
-        return $website;
     }
 
     /**

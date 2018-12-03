@@ -3,28 +3,19 @@
 namespace Oro\Bundle\PricingBundle\Model;
 
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
-use Oro\Bundle\PricingBundle\Entity\PriceList;
 
+/**
+ * Declares methods to obtain price list entity, selected price list currencies,
+ * decide whether tier prices should be shown or not
+ */
 interface PriceListRequestHandlerInterface
 {
     const TIER_PRICES_KEY = 'showTierPrices';
-    const WEBSITE_KEY = 'websiteId';
     const PRICE_LIST_CURRENCY_KEY = 'priceCurrencies';
     const PRICE_LIST_KEY = 'priceListId';
-    const ACCOUNT_ID_KEY = 'customer_id';
 
     /**
-     * On frontend returns PriceList for logged in user
-     * On backend returns PriceList for customer specified in request
-     *
-     * @return BasePriceList
-     */
-    public function getPriceListByCustomer();
-
-    /**
-     * Return PriceLists by data from request or default
-     *
-     * @return null|PriceList
+     * @return BasePriceList|null
      */
     public function getPriceList();
 

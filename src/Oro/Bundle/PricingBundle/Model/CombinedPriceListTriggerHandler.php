@@ -5,6 +5,7 @@ namespace Oro\Bundle\PricingBundle\Model;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
+use Oro\Bundle\PricingBundle\Entity\Repository\CombinedProductPriceRepository;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
@@ -206,6 +207,7 @@ class CombinedPriceListTriggerHandler
      */
     private function getProductIdsByCombinedPriceLists(array $combinedPriceLists): array
     {
+        /** @var CombinedProductPriceRepository $repository */
         $repository = $this->registry
             ->getManagerForClass(CombinedProductPrice::class)
             ->getRepository(CombinedProductPrice::class);

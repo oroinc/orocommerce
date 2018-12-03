@@ -9,6 +9,8 @@ config:
         'oropricing/js/app/components/currency-switcher-component': 'bundles/oropricing/js/app/components/currency-switcher-component.js'
 
         'oropricing/js/app/views/base-product-prices-view': 'bundles/oropricing/js/app/views/base-product-prices-view.js'
+        'oropricing/js/app/views/list-item-product-prices-view': 'bundles/oropricing/js/app/views/list-item-product-prices-view.js'
+        'oropricing/js/app/views/list-item-product-prices-subview': 'bundles/oropricing/js/app/views/list-item-product-prices-subview.js'
         'oropricing/js/app/views/line-item-product-prices-view': 'bundles/oropricing/js/app/views/line-item-product-prices-view.js'
         'oropricing/js/app/views/product-prices-editable-view': 'bundles/oropricing/js/app/views/product-prices-editable-view.js'
         'oropricing/js/app/views/product-total-price-view': 'bundles/oropricing/js/app/views/product-total-price-view.js'

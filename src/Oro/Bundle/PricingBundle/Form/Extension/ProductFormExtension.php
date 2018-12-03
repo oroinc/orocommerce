@@ -4,6 +4,8 @@ namespace Oro\Bundle\PricingBundle\Form\Extension;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\PricingBundle\Form\Type\ProductPriceCollectionType;
@@ -22,8 +24,10 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 /**
  * Adds field 'prices' on product edit form and process changes of product prices
  */
-class ProductFormExtension extends AbstractTypeExtension
+class ProductFormExtension extends AbstractTypeExtension implements FeatureToggleableInterface
 {
+    use FeatureCheckerHolderTrait;
+
     /** @var AuthorizationCheckerInterface */
     private $authorizationChecker;
 
@@ -59,6 +63,10 @@ class ProductFormExtension extends AbstractTypeExtension
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        if (!$this->isFeaturesEnabled()) {
+            return;
+        }
+
         $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'addFormOnPreSetData']);
         $builder->addEventListener(FormEvents::POST_SET_DATA, [$this, 'onPostSetData']);
         $builder->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'onPreSubmit'], 10);

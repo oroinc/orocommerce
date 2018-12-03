@@ -4,6 +4,8 @@ namespace Oro\Bundle\PricingBundle\EventListener;
 
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\PricingBundle\Event\ProductPricesRemoveAfter;
 use Oro\Bundle\PricingBundle\Event\ProductPricesRemoveBefore;
@@ -14,8 +16,10 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 /**
  * Remove product prices by unit on ProductUnitPrecision delete.
  */
-class ProductUnitPrecisionListener
+class ProductUnitPrecisionListener implements FeatureToggleableInterface
 {
+    use FeatureCheckerHolderTrait;
+
     /**
      * @var string
      */
@@ -60,6 +64,10 @@ class ProductUnitPrecisionListener
      */
     public function postRemove(ProductUnitPrecision $precision, LifecycleEventArgs $event)
     {
+        if (!$this->isFeaturesEnabled()) {
+            return;
+        }
+
         $product = $precision->getProduct();
         $unit = $precision->getUnit();
         // prices are already removed using cascade delete operation

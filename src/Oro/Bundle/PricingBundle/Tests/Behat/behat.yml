@@ -44,6 +44,8 @@ oro_behat_extension:
     PriceSelectionStrategyForm:
       selector: '.control-group-oro_pricing_list_strategy_selection'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+    Product Price Container:
+      selector: '.product-price__container'
     Product Price Main:
       selector: '.product-price__main'
     Product Price Listed:

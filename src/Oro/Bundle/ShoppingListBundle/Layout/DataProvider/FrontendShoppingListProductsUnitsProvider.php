@@ -3,11 +3,12 @@
 namespace Oro\Bundle\ShoppingListBundle\Layout\DataProvider;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
-use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
-use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
+/**
+ * Allows to get units for products from given shopping list
+ */
 class FrontendShoppingListProductsUnitsProvider
 {
     /**
@@ -16,28 +17,11 @@ class FrontendShoppingListProductsUnitsProvider
     protected $registry;
 
     /**
-     * @var PriceListRequestHandler
-     */
-    protected $requestHandler;
-
-    /**
-     * @var UserCurrencyManager
-     */
-    protected $userCurrencyManager;
-
-    /**
      * @param Registry $registry
-     * @param PriceListRequestHandler $requestHandler
-     * @param UserCurrencyManager $userCurrencyManager
      */
-    public function __construct(
-        Registry $registry,
-        PriceListRequestHandler $requestHandler,
-        UserCurrencyManager $userCurrencyManager
-    ) {
+    public function __construct(Registry $registry)
+    {
         $this->registry = $registry;
-        $this->requestHandler = $requestHandler;
-        $this->userCurrencyManager = $userCurrencyManager;
     }
 
     /**

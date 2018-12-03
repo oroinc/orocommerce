@@ -2,7 +2,9 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\EventListener;
 
+use Doctrine\ORM\Event\LifecycleEventArgs;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\PricingBundle\Event\ProductPricesRemoveAfter;
 use Oro\Bundle\PricingBundle\Event\ProductPricesRemoveBefore;
 use Oro\Bundle\PricingBundle\EventListener\ProductUnitPrecisionListener;
@@ -38,6 +40,11 @@ class ProductUnitPrecisionListenerTest extends \PHPUnit\Framework\TestCase
     protected $listener;
 
     /**
+     * @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $featureChecker;
+
+    /**
      * @var string
      */
     protected $productPriceClass;
@@ -48,12 +55,41 @@ class ProductUnitPrecisionListenerTest extends \PHPUnit\Framework\TestCase
         $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
         $this->shardManager = $this->createMock(ShardManager::class);
+        $this->featureChecker = $this->createMock(FeatureChecker::class);
         $this->listener = new ProductUnitPrecisionListener(
             $this->productPriceClass,
             $this->eventDispatcher,
             $this->shardManager,
             $this->doctrineHelper
         );
+    }
+
+    protected function tearDown()
+    {
+        unset(
+            $this->productPriceClass,
+            $this->eventDispatcher,
+            $this->doctrineHelper,
+            $this->shardManager,
+            $this->listener
+        );
+    }
+
+    public function testOnBeforeFlushFeatureDisabled()
+    {
+        $this->featureChecker->expects($this->once())
+            ->method('isFeatureEnabled')
+            ->with('feature1', null)
+            ->willReturn(false);
+
+        $this->listener->setFeatureChecker($this->featureChecker);
+        $this->listener->addFeature('feature1');
+
+        $event = $this->createMock(LifecycleEventArgs::class);
+        $entity = $this->createMock(ProductUnitPrecision::class);
+        $entity->expects($this->never())->method('getProduct');
+
+        $this->listener->postRemove($entity, $event);
     }
 
     public function testPostRemoveWithExistingProduct()
@@ -91,6 +127,13 @@ class ProductUnitPrecisionListenerTest extends \PHPUnit\Framework\TestCase
                 $this->isInstanceOf('Oro\Bundle\PricingBundle\Event\ProductPricesRemoveAfter')
             );
 
+        $this->featureChecker->expects($this->once())
+            ->method('isFeatureEnabled')
+            ->with('feature1', null)
+            ->willReturn(true);
+
+        $this->listener->setFeatureChecker($this->featureChecker);
+        $this->listener->addFeature('feature1');
         $this->listener->postRemove($entity, $event);
     }
 
