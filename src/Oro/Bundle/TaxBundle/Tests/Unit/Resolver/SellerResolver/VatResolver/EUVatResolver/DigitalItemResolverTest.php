@@ -169,4 +169,22 @@ class DigitalItemResolverTest extends \PHPUnit_Framework_TestCase
         $this->unitResolver->expects($this->never())->method($this->anything());
         $this->rowTotalResolver->expects($this->never())->method($this->anything());
     }
+
+    public function testAddressNotChanged()
+    {
+        $result = new Result();
+        $result->lockResult();
+        $taxable = new Taxable();
+        $taxable->setPrice('20');
+        $address = new Address();
+        $taxable->setDestination($address);
+        $taxable->makeDestinationAddressTaxable();
+        $taxable->setResult($result);
+
+        $this->assertNothing();
+
+        $this->resolver->resolve($taxable);
+
+        $this->assertSame($address, $taxable->getTaxationAddress());
+    }
 }

@@ -43,8 +43,6 @@ class DigitalItemResolver extends AbstractItemResolver
             $this->rowTotalResolver->resolveRowTotal($result, $taxRules, $taxableAmount, $taxable->getQuantity());
 
             $result->lockResult();
-
-            $taxable->makeDestinationAddressTaxable();
         }
     }
 }

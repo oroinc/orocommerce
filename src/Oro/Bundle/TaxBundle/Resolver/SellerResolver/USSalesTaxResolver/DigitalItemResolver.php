@@ -48,8 +48,6 @@ class DigitalItemResolver implements ResolverInterface
             $result->offsetSet(Result::ROW, $rowResultElement);
 
             $result->lockResult();
-
-            $taxable->makeDestinationAddressTaxable();
         }
     }
 }
