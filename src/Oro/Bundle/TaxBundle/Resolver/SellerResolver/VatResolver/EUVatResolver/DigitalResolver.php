@@ -6,6 +6,9 @@ use Oro\Bundle\TaxBundle\Matcher\EuropeanUnionHelper;
 use Oro\Bundle\TaxBundle\Model\Taxable;
 use Oro\Bundle\TaxBundle\Resolver\ResolverInterface;
 
+/**
+ * Resolver to switch taxation address to a customer's one for digital product
+ */
 class DigitalResolver implements ResolverInterface
 {
     /**

@@ -9,6 +9,9 @@ use Oro\Bundle\TaxBundle\Model\ResultElement;
 use Oro\Bundle\TaxBundle\Model\Taxable;
 use Oro\Bundle\TaxBundle\Resolver\ResolverInterface;
 
+/**
+ * Resolver to apply zero tax to digital product for US customers from states without digital product taxes
+ */
 class DigitalItemResolver implements ResolverInterface
 {
     /** {@inheritdoc} */
