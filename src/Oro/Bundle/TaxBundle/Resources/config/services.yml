@@ -451,7 +451,7 @@ services:
         arguments:
             - "@oro_tax.resolver.unit"
             - "@oro_tax.resolver.row_total"
-            - "@oro_tax.matcher.country_matcher"
+            - "@oro_tax.matcher.resolvable_matcher"
         tags:
             - { name: oro_tax.resolver, event: oro_tax.resolve }
 

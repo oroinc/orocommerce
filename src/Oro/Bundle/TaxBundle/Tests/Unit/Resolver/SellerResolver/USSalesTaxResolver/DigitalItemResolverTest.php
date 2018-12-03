@@ -38,7 +38,7 @@ class DigitalItemResolverTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($taxable->getResult()->isResultLocked());
     }
 
-    public function testResultLocket()
+    public function testResultLocked()
     {
         $taxable = new Taxable();
         $address = new OrderAddress();
@@ -76,5 +76,25 @@ class DigitalItemResolverTest extends \PHPUnit\Framework\TestCase
         $this->resolver->resolve($taxable);
 
         $this->assertFalse($taxable->getResult()->isResultLocked());
+    }
+
+    public function testAddressNotChanged()
+    {
+        $taxable = new Taxable();
+        $address = new OrderAddress();
+        $address
+            ->setCountry(new Country('US'))
+            ->setRegion((new Region('US-CA'))->setCode('CA'));
+
+        $taxable
+            ->setPrice('19.99')
+            ->setDestination($address)
+            ->addContext(Taxable::DIGITAL_PRODUCT, true);
+
+        $taxable->makeDestinationAddressTaxable();
+
+        $this->resolver->resolve($taxable);
+
+        $this->assertSame($address, $taxable->getTaxationAddress());
     }
 }

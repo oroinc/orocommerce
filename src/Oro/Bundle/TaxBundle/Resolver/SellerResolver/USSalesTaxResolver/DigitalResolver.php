@@ -40,12 +40,18 @@ class DigitalResolver implements ResolverInterface
             $address->getRegionCode()
         );
 
-        if ($isStateWithoutDigitalTax) {
+        if (!$isStateWithoutDigitalTax) {
+            return;
+        }
+
+        try {
+            $taxationAddress = $taxable->getTaxationAddress();
+            $taxable->makeDestinationAddressTaxable();
             foreach ($taxable->getItems() as $taxableItem) {
                 $this->itemResolver->resolve($taxableItem);
             }
-
-            $taxable->makeDestinationAddressTaxable();
+        } finally {
+            $taxable->setTaxationAddress($taxationAddress);
         }
     }
 }
