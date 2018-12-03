@@ -23,7 +23,6 @@ Feature: Digital Products Taxes
       | Origin Zip Code        | 10115           |
     And I save form
     Then I should see "Configuration saved" flash message
-
     And I go to System/Configuration
     And I follow "Commerce/Taxation/US Sales Tax" on configuration sidebar
     And uncheck "Use default" for "Digital Products Tax Codes" field
@@ -31,7 +30,6 @@ Feature: Digital Products Taxes
       | Digital Products Tax Codes | digital |
     And I save form
     Then I should see "Configuration saved" flash message
-
     And I go to System/Configuration
     And I follow "Commerce/Taxation/EU VAT Tax" on configuration sidebar
     And uncheck "Use default" for "Digital Products Tax Codes" field
@@ -41,12 +39,12 @@ Feature: Digital Products Taxes
     Then I should see "Configuration saved" flash message
     And There are products in the system available for order
 
-  Scenario: Customer from European Union buys digital and non-digital products
+  Scenario: Customer from European Union, Austria buys digital and non-digital products
     Given I operate as the Buyer
     When I open page with shopping list List 1
     And I click "Create Order"
-    And I select "Oro, Second avenue, 1010 Vienna, Austria" on the "Billing Information" checkout step and press Continue
-    And I select "Oro, Second avenue, 1010 Vienna, Austria" on the "Shipping Information" checkout step and press Continue
+    And I select "ORO, Second avenue, 1010 Vienna, Austria" on the "Billing Information" checkout step and press Continue
+    And I select "ORO, Second avenue, 1010 Vienna, Austria" on the "Shipping Information" checkout step and press Continue
     And I click "Continue"
     And I click "Continue"
     And I should see "Subtotal $20.00"
@@ -56,13 +54,13 @@ Feature: Digital Products Taxes
     And I click "Submit Order"
     Then I see the "Thank You" page with "Thank You For Your Purchase!" title
 
-  Scenario: Customer from United States, Alabama buys digital and non-digital products
+  Scenario: Customer from United States, Florida buys digital and non-digital products
     Given I operate as the Buyer
     When I go to homepage
     And I open page with shopping list List 2
     And I click "Create Order"
-    And I select "Oro, Third avenue, TALLAHASSEE FL US 32003" on the "Billing Information" checkout step and press Continue
-    And I select "Oro, Third avenue, TALLAHASSEE FL US 32003" on the "Shipping Information" checkout step and press Continue
+    And I select "ORO, Third avenue, TALLAHASSEE FL US 32003" on the "Billing Information" checkout step and press Continue
+    And I select "ORO, Third avenue, TALLAHASSEE FL US 32003" on the "Shipping Information" checkout step and press Continue
     And I click "Continue"
     And I click "Continue"
     And I should see "Subtotal $20.00"
