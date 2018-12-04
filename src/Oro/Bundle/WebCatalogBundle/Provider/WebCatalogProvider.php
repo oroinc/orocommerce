@@ -56,14 +56,14 @@ class WebCatalogProvider
     public function getNavigationRoot(WebsiteInterface $website = null)
     {
         $webCatalogId = (int) $this->configManager->get('oro_web_catalog.web_catalog', false, false, $website);
-        $contentNodeId = (int) $this->configManager->get('oro_web_catalog.navigation_root', false, false, $website);
+        $contentNodeId = $this->configManager->get('oro_web_catalog.navigation_root', false, false, $website);
 
         if ($contentNodeId) {
             /** @var ContentNode $contentNode */
             $contentNode = $this->registry->getManagerForClass(ContentNode::class)
                 ->find(ContentNode::class, $contentNodeId);
 
-            if ($contentNode->getWebCatalog()->getId() === $webCatalogId) {
+            if ($contentNode && $contentNode->getWebCatalog()->getId() === $webCatalogId) {
                 return $contentNode;
             }
         }

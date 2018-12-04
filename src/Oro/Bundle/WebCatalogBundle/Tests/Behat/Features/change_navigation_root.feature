@@ -128,6 +128,21 @@ Feature: Change navigation root
     And I should see "Headlamps By Brand"
     And I should not see "By Brand Headlamps"
 
+  Scenario: Remove current navigation root
+    Given I proceed as the Admin
+    And I go to Marketing/Web Catalogs
+    And I click "Edit Content Tree" on row "Default Web Catalog" in grid
+    And I click on "Clearance"
+    And I click "Delete"
+    When I click "Yes, Delete" in confirmation dialogue
+    Then I should see "Content Node deleted" flash message
+
+  Scenario: Check root navigation on front store by default
+    Given I proceed as the Buyer
+    When I reload the page
+    Then I should see "Products" in main menu
+    And I should not see "Clearance" in main menu
+
   Scenario: Change web catalog
     Given I proceed as the Admin
     And I set "Additional Web Catalog" as default web catalog

@@ -156,6 +156,36 @@ class WebCatalogProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($navigationRootNode, $this->provider->getNavigationRoot($website));
     }
 
+    public function testGetNavigationRootWithRemovedContentNode(): void
+    {
+        $website = null;
+        $rootContentNodeId = 2;
+        $webCatalogId = 1;
+
+        $this->configManager->expects($this->at(0))
+            ->method('get')
+            ->with('oro_web_catalog.web_catalog', false, false, $website)
+            ->willReturn($webCatalogId);
+
+        $this->configManager->expects($this->at(1))
+            ->method('get')
+            ->with('oro_web_catalog.navigation_root', false, false, $website)
+            ->willReturn($rootContentNodeId);
+
+        $em = $this->createMock(EntityManagerInterface::class);
+        $em->expects($this->once())
+            ->method('find')
+            ->with(ContentNode::class, $rootContentNodeId)
+            ->willReturn(null);
+
+        $this->registry->expects($this->once())
+            ->method('getManagerForClass')
+            ->with(ContentNode::class)
+            ->willReturn($em);
+
+        $this->assertNull($this->provider->getNavigationRoot());
+    }
+
     /**
      * @param WebCatalog $webCatalog
      */
