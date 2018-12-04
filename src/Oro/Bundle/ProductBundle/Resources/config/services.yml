@@ -436,7 +436,7 @@ services:
         arguments:
             - "@oro_entity_config.config_model_manager"
         tags:
-            - { name: kernel.event_listener, event: console.command, name: onConsoleCommand }
+            - { name: kernel.event_listener, event: console.command, method: onConsoleCommand }
 
     oro_product.entity.event_listener.product_collection_variant_reindex_message_send_listener:
         class: 'Oro\Bundle\ProductBundle\EventListener\ProductCollectionVariantReindexMessageSendListener'
