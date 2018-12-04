@@ -46,7 +46,7 @@ Feature: Previously purchased configurable products
     Then I should see "Schema updated" flash message
 
     Then I go to Products / Product Families
-    When I click Edit Attribute Family in grid
+    When I click Edit "Attribute Family" in grid
     And set Attribute Groups with:
       | Label           | Visible | Attributes                                                                                                                                                                            |
       | Attribute group | true    | [SKU, Name, Is Featured, New Arrival, Brand, Description, Short Description, Images, Inventory Status, Meta title, Meta description, Meta keywords, Product prices, BooleanAttribute] |
@@ -56,19 +56,19 @@ Feature: Previously purchased configurable products
   Scenario: Prepare configurable product
     Given I go to Products / Products
     When filter SKU as is equal to "PROD_A_1"
-    And I click Edit PROD_A_1 in grid
+    And I click Edit "PROD_A_1" in grid
     And I fill in product attribute "BooleanAttribute" with "Yes"
     And I save form
     Then I should see "Product has been saved" flash message
     When I go to Products / Products
     And filter SKU as is equal to "PROD_A_2"
-    And I click Edit PROD_A_2 in grid
+    And I click Edit "PROD_A_2" in grid
     And I fill in product attribute "BooleanAttribute" with "No"
     And I save form
     Then I should see "Product has been saved" flash message
     When I go to Products / Products
     And filter SKU as is equal to "CNF_A"
-    And I click Edit CNF_A in grid
+    And I click Edit "CNF_A" in grid
     And I fill "ProductForm" with:
       | Configurable Attributes | [BooleanAttribute] |
     And I check PROD_A_1 and PROD_A_2 in grid
@@ -95,6 +95,23 @@ Feature: Previously purchased configurable products
     And I should not see "Product A 1"
     And I should not see "Product A 2"
 
+  Scenario: Change configuration to display simple variations everywhere
+    Given I proceed as the Admin
+    And go to System/ Configuration
+    And I follow "Commerce/Product/Configurable Products" on configuration sidebar
+    And I fill "Display Simple Variations Form" with:
+      | Display Simple Variations Default | false      |
+      | Display Simple Variations         | everywhere |
+    When save form
+    Then I should see "Configuration saved" flash message
+
+  Scenario: Check no variations appear in Previously Purchased grid
+    Given I proceed as the Buyer
+    When I click "Account"
+    And I click "Previously Purchased"
+    Then I should not see "Product A 1"
+    And I should not see "Product A 2"
+
   Scenario: Cancel order with configurable product
     Given I proceed as the Admin
     And I go to Sales/Orders
@@ -109,26 +126,15 @@ Feature: Previously purchased configurable products
     And I click "Previously Purchased"
     Then I should not see "Configurable Product A"
 
-  Scenario: Change configuration to display simple variations everywhere
-    Given I proceed as the Admin
-    And go to System/ Configuration
-    And I follow "Commerce/Product/Configurable Products" on configuration sidebar
-    And I fill "Display Simple Variations Form" with:
-      | Display Simple Variations Default | false      |
-      | Display Simple Variations         | everywhere |
-    When save form
-    Then I should see "Configuration saved" flash message
-
   Scenario: Order simple variation product
     Given I proceed as the Buyer
     And I type "PROD_A_1" in "search"
     And I click "Search Button"
-    And I filter SKU as is equal to "PROD_A_1"
+    When I filter SKU as is equal to "PROD_A_1"
     Then I should see "Product A 1"
     When I click "Add to Shopping List" for "PROD_A_1" product
-    And I follow "Shopping List" link within flash message "Product has been added to \"Shopping list\""
-    When I open page with shopping list "Shopping List"
-    When I press "Create Order"
+    And I open page with shopping list "Shopping List"
+    And I press "Create Order"
     And I select "ORO, Fifth avenue, 10115 Berlin, Germany" on the "Billing Information" checkout step and press Continue
     And I select "ORO, Fifth avenue, 10115 Berlin, Germany" on the "Shipping Information" checkout step and press Continue
     And I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
