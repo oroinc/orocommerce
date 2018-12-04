@@ -20,6 +20,11 @@ oro_behat_extension:
                 type: xpath
                 locator: '//li[contains(@class, "jstree-node")]/a[contains(., "Additional Web Catalog")]/parent::li/ul//li[contains(@class, "jstree-node")]/a[contains(., "On Sale")]'
 
+        Headlamps:
+            selector:
+                type: xpath
+                locator: '//li[contains(@class, "jstree-node")]/a[contains(., "Default Web Catalog")]/parent::li/ul//li[contains(@class, "jstree-node")]/a[contains(., "Headlamps")]'
+
         Default Web Catalog:
             selector:
                 type: xpath
@@ -51,6 +56,11 @@ oro_behat_extension:
         WebCatalogSystemConfigSelect:
             selector: '.oro-select2:contains("Choose a Web Catalog") .select2-offscreen'
             class: Oro\Bundle\FormBundle\Tests\Behat\Element\Select2Entity
+
+        Clearance menu item:
+            selector:
+                type: xpath
+                locator: '//span[@class="main-menu__text"][text()="Clearance"]'
 
     suites:
         OroWebCatalogBundle:
