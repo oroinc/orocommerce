@@ -1049,8 +1049,10 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         self::assertTrue($block->isValid(), sprintf('Embedded block "%s" was not found', $blockName));
 
         foreach ($table as $row) {
-            $productItem = $this->findElementContains('EmbeddedProduct', $row['SKU'], $block);
-            self::assertTrue($productItem->isIsset(), sprintf('Product "%s" was not found', $row['SKU']));
+            foreach ($row as $rowName => $rowValue) {
+                $productItem = $this->findElementContains('EmbeddedProduct', $rowValue, $block);
+                self::assertTrue($productItem->isIsset(), sprintf('Product "%s" was not found', $rowValue));
+            }
         }
     }
 
@@ -1069,8 +1071,10 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         self::assertTrue($block->isValid(), sprintf('Embedded block "%s" was not found', $blockName));
 
         foreach ($table as $row) {
-            $productItem = $this->findElementContains('EmbeddedProduct', $row['SKU'], $block);
-            self::assertFalse($productItem->isIsset(), sprintf('Product "%s" should not be present', $row['SKU']));
+            foreach ($row as $rowName => $rowValue) {
+                $productItem = $this->findElementContains('EmbeddedProduct', $rowValue, $block);
+                self::assertFalse($productItem->isIsset(), sprintf('Product "%s" should not be present', $rowValue));
+            }
         }
     }
 

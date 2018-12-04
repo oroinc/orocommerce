@@ -808,6 +808,18 @@ oro_behat_extension:
         type: xpath
         locator: '//div[contains(concat(" ", @class, " "), " embedded-list ")]/h2/span[text()="Related Products"]/../../div'
 
+    UpSell Products Block:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        type: xpath
+        locator: '//div[contains(concat(" ", @class, " "), " embedded-list ")]/h2/span[text()="Up-sell Products"]/../../div'
+
+    Top Selling Items Block:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        type: xpath
+        locator: '//div[contains(concat(" ", @class, " "), " embedded-list ")]/h2/span[text()="Top Selling Items"]/../../div'
+
     EmbeddedProduct:
       selector: 'div.product-item'
 
