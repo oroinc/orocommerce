@@ -2,20 +2,20 @@
 
 namespace Oro\Bundle\PaymentBundle\Provider;
 
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
-
-use Psr\Log\LoggerAwareTrait;
-
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Security\CustomerUserProvider;
+use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
-use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
-use Oro\Bundle\PaymentBundle\Event\TransactionCompleteEvent;
 use Oro\Bundle\PaymentBundle\Entity\Repository\PaymentTransactionRepository;
+use Oro\Bundle\PaymentBundle\Event\TransactionCompleteEvent;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
+use Psr\Log\LoggerAwareTrait;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class PaymentTransactionProvider
 {
@@ -33,6 +33,9 @@ class PaymentTransactionProvider
     /** @var TokenStorageInterface */
     protected $tokenStorage;
 
+    /** @var CustomerUserProvider */
+    protected $customerUserProvider;
+
     /**
      * @param DoctrineHelper $doctrineHelper
      * @param TokenStorageInterface $tokenStorage
@@ -49,6 +52,14 @@ class PaymentTransactionProvider
         $this->paymentTransactionClass = $paymentTransactionClass;
         $this->dispatcher = $dispatcher;
         $this->tokenStorage = $tokenStorage;
+    }
+
+    /**
+     * @param CustomerUserProvider $customerUserProvider
+     */
+    public function setCustomerUserProvider(CustomerUserProvider $customerUserProvider): void
+    {
+        $this->customerUserProvider = $customerUserProvider;
     }
 
     /**
@@ -70,17 +81,31 @@ class PaymentTransactionProvider
     protected function getLoggedCustomerUser()
     {
         $token = $this->tokenStorage->getToken();
-        if (!$token) {
+        if (!$token instanceof TokenInterface) {
             return null;
         }
 
         $user = $token->getUser();
-
         if ($user instanceof CustomerUser) {
             return $user;
         }
 
+        if ($token instanceof AnonymousCustomerUserToken) {
+            $visitor = $token->getVisitor();
+            if ($visitor) {
+                return $visitor->getCustomerUser();
+            }
+        }
+
         return null;
+    }
+
+    /**
+     * @return CustomerUser|null
+     */
+    private function getUser()
+    {
+        return $this->customerUserProvider ? $this->customerUserProvider->getUser() : $this->getLoggedCustomerUser();
     }
 
     /**
@@ -160,7 +185,7 @@ class PaymentTransactionProvider
      */
     public function getActiveValidatePaymentTransaction($paymentMethod)
     {
-        $customerUser = $this->getLoggedCustomerUser();
+        $customerUser = $this->getUser();
         if (!$customerUser) {
             return null;
         }
@@ -193,7 +218,7 @@ class PaymentTransactionProvider
             ->setAction($type)
             ->setEntityClass($className)
             ->setEntityIdentifier($identifier)
-            ->setFrontendOwner($this->getLoggedCustomerUser());
+            ->setFrontendOwner($this->customerUserProvider->getUser());
 
         return $paymentTransaction;
     }
@@ -213,7 +238,7 @@ class PaymentTransactionProvider
             ->setEntityIdentifier($parentPaymentTransaction->getEntityIdentifier())
             ->setAmount($parentPaymentTransaction->getAmount())
             ->setCurrency($parentPaymentTransaction->getCurrency())
-            ->setFrontendOwner($this->getLoggedCustomerUser())
+            ->setFrontendOwner($this->getUser())
             ->setSourcePaymentTransaction($parentPaymentTransaction);
 
         return $paymentTransaction;
