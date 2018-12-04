@@ -1,0 +1,21 @@
+action_groups:
+
+    # Add additional actions to declared action_group's
+
+    do_b2b_flow_checkout_create_guest_customer_user:
+        actions:
+            - '@call_service_method':
+                service: 'oro_consent.manager.guest_customer_consent_acceptances_manager'
+                method: flushCustomerConsentAcceptancesFromStorage
+                method_parameters:
+                    - $.checkout.customerUser
+
+    do_late_registration_customer_user:
+        actions:
+            - '@call_service_method':
+                service: 'oro_consent.helper.copy_customer_consents'
+                method: copyConsentsIfTargetHasNoAcceptedConsents
+                method_parameters:
+                    - $.checkout.customerUser
+                    - $.checkout.registeredCustomerUser
+            - '@flush_entity': $.checkout.registeredCustomerUser

@@ -1,0 +1,19 @@
+oro:
+    workflow:
+        b2b_flow_checkout:
+            step:
+                customer_consents:
+                    label: 'Agreements'
+            attribute:
+                customer_consents:
+                    label: 'Customer consents'
+            transition:
+                continue_to_billing_address:
+                    label: Continue
+                    state_token:
+                        label: ''
+                    customerConsents:
+                        label: 'Customer consents'
+                back_to_customer_consents:
+                    label: 'Edit Customer Consents'
+                    warning_message: ''

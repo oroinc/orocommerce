@@ -1,0 +1,134 @@
+datagrids:
+    consents-grid:
+        options:
+            entityHint:        consents
+            entity_pagination: true
+        source:
+            type:         orm
+            query:
+                select:
+                    - consent.id
+                    - consent.createdAt
+                    - consent.updatedAt
+                    - consent.mandatory as type
+                    - consent.declinedNotification
+                    - GROUP_CONCAT(page.id) as page_ids
+                from:
+                    - { table: %oro_consent.entity.consent.class%, alias: consent }
+                join:
+                    left:
+                        - { join: consent.contentNode, alias: cn }
+                        - { join: cn.contentVariants, alias: page }
+                groupBy: consent.id
+        columns:
+            id:
+                label:         oro.consent.id.label
+                renderable:    false
+            consentName:
+                label:         oro.consent.names.label
+                type:          twig
+                frontend_type: html
+                template:      OroConsentBundle:Consent:Datagrid/consent_name.html.twig
+            type:
+                label:         oro.consent.type.label
+                frontend_type: select
+                choices:
+                    oro.consent.type.optional: false
+                    oro.consent.type.mandatory: true
+            node_title:
+                label:         oro.consent.content_node.label
+                type:          twig
+                frontend_type: html
+                template:      OroConsentBundle:Consent:Datagrid/node_title.html.twig
+            content_source:
+                label:         oro.consent.content_source.label
+                frontend_type: string
+                type:          callback
+                callable:      ["@oro_consent.datagrid.landing_page_provider", "getLandingPages"]
+                params:
+                    nodes: page_ids
+            declinedNotification:
+                label:         oro.consent.declined_notification.label
+                frontend_type: select
+                choices:
+                    oro.consent.declined_notification.no.label: false
+                    oro.consent.declined_notification.yes.label: true
+            createdAt:
+                label:         oro.ui.created_at
+                frontend_type: datetime
+            updatedAt:
+                label:         oro.ui.updated_at
+                frontend_type: datetime
+        sorters:
+            columns:
+                id:
+                    data_name: consent.id
+                consentName:
+                    data_name: consent_name_localized
+                node_title:
+                    data_name: node_title_localized
+                type:
+                    data_name: type
+                declinedNotification:
+                    data_name: consent.declinedNotification
+                createdAt:
+                    data_name: consent.createdAt
+                updatedAt:
+                    data_name: consent.updatedAt
+            default:
+                id: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
+        filters:
+            columns:
+                id:
+                    type:       number
+                    data_name:  consent.id
+                    enabled:    false
+                consentName:
+                    type:       string
+                    data_name:  consent_name_localized
+                type:
+                    type: choice
+                    data_name: CAST(type as int)
+                    options:
+                        field_options:
+                            choices:
+                                oro.consent.type.optional: false
+                                oro.consent.type.mandatory: true
+                node_title:
+                    type:       string
+                    data_name:  node_title_localized
+                declinedNotification:
+                    type: choice
+                    data_name: CAST(consent.declinedNotification as int)
+                    options:
+                        field_options:
+                            choices:
+                                oro.consent.declined_notification.no.label: false
+                                oro.consent.declined_notification.yes.label: true
+                createdAt:
+                    type:       datetime
+                    data_name:  consent.createdAt
+                updatedAt:
+                    type:       datetime
+                    data_name:  consent.updatedAt
+        properties:
+            view_link:
+                type:  url
+                route: oro_consent_view
+                params: [ id ]
+            node_title_localized:
+                type: localized_value
+                data_name: cn.titles
+                allow_empty: true
+            consent_name_localized:
+                type: localized_value
+                data_name: consent.names
+                allow_empty: true
+        actions:
+            view:
+                type:         navigate
+                label:        oro.grid.action.view
+                link:         view_link
+                icon:         eye
+                acl_resource: oro_consent_view
+                rowAction:    true

@@ -1,0 +1,8 @@
+layout:
+    actions:
+        - '@setOption':
+            id: checkout_information_title
+            optionName: stepOrder
+            optionValue: '=data["oro_frontend_consent_provider"].getStepOrder(4)'
+
+    conditions: 'context["workflowName"]=="b2b_flow_checkout" && context["workflowStepName"]=="enter_shipping_method"'

@@ -1,0 +1,57 @@
+services:
+    oro_consent.form.type.consent:
+        class: 'Oro\Bundle\ConsentBundle\Form\Type\ConsentType'
+        arguments:
+            - '@oro_web_catalog.web_catalog_provider'
+            - '@form.factory'
+        tags:
+            - { name: form.type, alias: oro_consent }
+
+    oro_web_catalog.form.type.content_node_select:
+        class: 'Oro\Bundle\ConsentBundle\Form\Type\ContentNodeSelectType'
+        arguments:
+            - '@oro_web_catalog.content_node_tree_handler'
+        tags:
+            - { name: form.type, alias: oro_consent_web_catalog_content_node_select }
+
+    oro_consent.form.type.consent_select:
+        class: 'Oro\Bundle\ConsentBundle\Form\Type\ConsentSelectType'
+        tags:
+            - { name: form.type, alias: oro_consent_select }
+
+    oro_consent.form.type.consent_select_with_priority:
+        class: 'Oro\Bundle\ConsentBundle\Form\Type\ConsentSelectWithPriorityType'
+        tags:
+            - { name: form.type, alias: oro_consent_select_with_priority }
+
+    oro_consent.form.consent_collection:
+        class: 'Oro\Bundle\ConsentBundle\Form\Type\ConsentCollectionType'
+        arguments:
+            - '@oro_consent.form.consent_collection_data_transformer'
+        tags:
+            - { name: form.type, alias: oro_consent_collection }
+
+    oro_consent.form.customer_consents:
+        class: 'Oro\Bundle\ConsentBundle\Form\Type\CustomerConsentsType'
+        arguments:
+            - '@oro_consent.form.transformer.customer_consents_transformer'
+        tags:
+            - { name: form.type, alias: oro_customer_consents }
+
+    oro_consent.form.customer_consents_transition_type:
+        class: 'Oro\Bundle\ConsentBundle\Form\Type\CustomerConsentTransitionType'
+        arguments:
+            - '@oro_consent.form.event_subscriber.checkout_customer_consents'
+        tags:
+            - { name: oro_featuretogle.feature, feature: consents }
+            - { name: form.type, alias: oro_customer_consents_transition_type }
+
+    oro_consent.form.checkout_customer_consents_type:
+        class: 'Oro\Bundle\ConsentBundle\Form\Type\CheckoutCustomerConsentsType'
+        arguments:
+            - '@oro_consent.helper.consent_context_initialize_helper'
+            - '@oro_consent.provider.consent_acceptance_provider'
+            - '@oro_consent.extractor.customer_user_extractor'
+        tags:
+            - { name: oro_featuretogle.feature, feature: consents }
+            - { name: form.type, alias: oro_checkout_customer_consents }

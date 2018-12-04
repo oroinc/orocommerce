@@ -1,0 +1,12 @@
+/* @theme: blank; */
+
+.consent-item {
+    margin-bottom: $consent-item-offset-bottom;
+
+    &.required & {
+        &__asterisk {
+            margin-left: $consent-item-asterisk-offset-left;
+            margin-right: $consent-item-asterisk-offset-right;
+        }
+    }
+}

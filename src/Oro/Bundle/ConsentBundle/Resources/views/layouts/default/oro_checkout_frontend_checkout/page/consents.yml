@@ -1,0 +1,34 @@
+layout:
+    imports:
+        -
+            id: oro_consent_items
+            namespace: checkout
+            root: checkout_consent_container
+    actions:
+        - '@setBlockTheme':
+            themes: '../templates/consents.html.twig'
+
+        - '@setOption':
+            id: checkout_information_title
+            optionName: stepOrder
+            optionValue: 1
+
+        - '@setOption':
+            id: checkout_consent_wrapper
+            optionName: vars.consents
+            optionValue: '=data["oro_frontend_consent_provider"].getNotAcceptedRequiredConsentData()'
+
+        - '@add':
+            id: checkout_consent_container
+            blockType: container
+            parentId: checkout_form
+            prepend: true
+
+        - '@add':
+            id: checkout_consent_message
+            blockType: container
+            parentId: checkout_consent_container
+            options:
+                visible: '=data["oro_frontend_consent_provider"].getNotAcceptedRequiredConsentData() == []'
+
+    conditions: 'context["workflowName"]=="b2b_flow_checkout" && context["workflowStepName"]=="customer_consents" && !context["widget_container"]'

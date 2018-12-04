@@ -1,0 +1,54 @@
+system_configuration:
+    groups:
+        consents:
+            title: oro.consent.system_configuration.groups.consents.title
+            icon: 'fa-check-square'
+
+    fields:
+        oro_consent.consent_feature_enabled:
+            data_type: boolean
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
+            priority: 20
+            page_reload: true
+            options:
+                required: false
+                label: oro.consent.system_configuration.fields.consent.feature_enabled.label
+        oro_consent.enabled_consents:
+            data_type: array
+            type: Oro\Bundle\ConsentBundle\Form\Type\ConsentCollectionType
+            options:
+                required: false
+                label: oro.consent.system_configuration.fields.consent.enabled_consents.label
+                tooltip: oro.consent.system_configuration.fields.consent.enabled_consents.tooltip
+        oro_consent.consent_contact_reason:
+            data_type: integer
+            type: Oro\Bundle\ContactUsBundle\Form\Type\ContactReasonSelectType
+            options:
+                label: oro.consent.system_configuration.fields.consent.consent_contact_reason.label
+                required: false
+                create_enabled: false
+                tooltip: oro.consent.system_configuration.fields.consent.consent_contact_reason.tooltip
+
+    tree:
+        system_configuration:
+            commerce:
+                children:
+                    customer:
+                        children:
+                            consents:
+                                children:
+                                    consents:
+                                        children:
+                                            - oro_consent.consent_feature_enabled
+                                            - oro_consent.consent_contact_reason
+                                            - oro_consent.enabled_consents
+        website_configuration:
+            commerce:
+                children:
+                    customer:
+                        children:
+                            consents:
+                                children:
+                                    consents:
+                                        children:
+                                            - oro_consent.enabled_consents
