@@ -69,7 +69,6 @@ Feature: Previously purchased configurable products
     When I go to Products / Products
     And filter SKU as is equal to "CNF_A"
     And I click Edit "CNF_A" in grid
-    And I should see "There are no product variants"
     And I fill "ProductForm" with:
       | Configurable Attributes | [BooleanAttribute] |
     And I check PROD_A_1 and PROD_A_2 in grid
