@@ -2,15 +2,15 @@
 
 namespace Oro\Bundle\RedirectBundle\Tests\Unit\Routing;
 
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Routing\RequestContext;
-
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
-use Oro\Bundle\RedirectBundle\Provider\SluggableUrlProviderInterface;
 use Oro\Bundle\RedirectBundle\Provider\ContextUrlProviderRegistry;
+use Oro\Bundle\RedirectBundle\Provider\SluggableUrlProviderInterface;
 use Oro\Bundle\RedirectBundle\Routing\SluggableUrlGenerator;
 use Oro\Component\Testing\Unit\EntityTrait;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Routing\RequestContext;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
@@ -44,18 +44,25 @@ class SluggableUrlGeneratorTest extends \PHPUnit_Framework_TestCase
      */
     private $sluggableUrlProvider;
 
+    /**
+     * @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $configManager;
+
     protected function setUp()
     {
         $this->baseGenerator = $this->createMock(UrlGeneratorInterface::class);
         $this->contextUrlProvider = $this->createMock(ContextUrlProviderRegistry::class);
         $this->sluggableUrlProvider = $this->createMock(SluggableUrlProviderInterface::class);
         $this->userLocalizationManager = $this->createMock(UserLocalizationManager::class);
+        $this->configManager = $this->createMock(ConfigManager::class);
 
         $this->generator = new SluggableUrlGenerator(
             $this->sluggableUrlProvider,
             $this->contextUrlProvider,
             $this->userLocalizationManager
         );
+        $this->generator->setConfigManager($this->configManager);
         $this->generator->setBaseGenerator($this->baseGenerator);
     }
 
@@ -95,6 +102,11 @@ class SluggableUrlGeneratorTest extends \PHPUnit_Framework_TestCase
 
         $baseUrl = '/base';
         $this->assertRequestContextCalled($baseUrl);
+
+        $this->configManager->expects($this->once())
+            ->method('get')
+            ->with('oro_redirect.enable_direct_url')
+            ->willReturn(true);
 
         $localizationId = 1;
         $localization = $this->createMock(Localization::class);
@@ -140,6 +152,11 @@ class SluggableUrlGeneratorTest extends \PHPUnit_Framework_TestCase
         $url = '/base/test/1';
 
         $baseUrl = '/base';
+
+        $this->configManager->expects($this->once())
+            ->method('get')
+            ->with('oro_redirect.enable_direct_url')
+            ->willReturn(true);
         $this->assertRequestContextCalled($baseUrl);
 
         $this->initCommonMocks($contextType, $contextData, $contextUrl);
@@ -188,6 +205,10 @@ class SluggableUrlGeneratorTest extends \PHPUnit_Framework_TestCase
         $slug = 'slug';
 
         $baseUrl = '/base';
+        $this->configManager->expects($this->once())
+            ->method('get')
+            ->with('oro_redirect.enable_direct_url')
+            ->willReturn(true);
         $this->assertRequestContextCalled($baseUrl);
 
         $this->initCommonMocks($contextType, $contextData, $contextUrl);
@@ -223,6 +244,10 @@ class SluggableUrlGeneratorTest extends \PHPUnit_Framework_TestCase
         $slug = 'slug';
 
         $baseUrl = '/base';
+        $this->configManager->expects($this->once())
+            ->method('get')
+            ->with('oro_redirect.enable_direct_url')
+            ->willReturn(true);
         $this->assertRequestContextCalled($baseUrl);
 
         $this->initCommonMocks($contextType, $contextData, $contextUrl);
@@ -275,6 +300,10 @@ class SluggableUrlGeneratorTest extends \PHPUnit_Framework_TestCase
         $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH;
         $slug = 'slug';
 
+        $this->configManager->expects($this->once())
+            ->method('get')
+            ->with('oro_redirect.enable_direct_url')
+            ->willReturn(true);
         $this->baseGenerator->expects($this->never())
             ->method('generate');
 
@@ -318,6 +347,10 @@ class SluggableUrlGeneratorTest extends \PHPUnit_Framework_TestCase
         $url = '/test/1';
 
         $baseUrl = '/base';
+        $this->configManager->expects($this->once())
+            ->method('get')
+            ->with('oro_redirect.enable_direct_url')
+            ->willReturn(true);
         $this->assertRequestContextCalled($baseUrl);
 
         $localizationId = 1;
@@ -362,6 +395,10 @@ class SluggableUrlGeneratorTest extends \PHPUnit_Framework_TestCase
         $url = '/test/1';
 
         $baseUrl = '/base';
+        $this->configManager->expects($this->once())
+            ->method('get')
+            ->with('oro_redirect.enable_direct_url')
+            ->willReturn(true);
         $this->assertRequestContextCalled($baseUrl);
 
         $this->initCommonMocks($contextType, $contextData, $contextUrl);
@@ -396,6 +433,10 @@ class SluggableUrlGeneratorTest extends \PHPUnit_Framework_TestCase
         $url = '/base/test/1';
 
         $baseUrl = '/base';
+        $this->configManager->expects($this->once())
+            ->method('get')
+            ->with('oro_redirect.enable_direct_url')
+            ->willReturn(true);
         $this->assertRequestContextCalled($baseUrl);
 
         $this->initCommonMocks($contextType, $contextData, $contextUrl);
@@ -407,6 +448,32 @@ class SluggableUrlGeneratorTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             '/base/context/_item/test/1',
+            $this->generator->generate($routeName, $routeParameters, $referenceType)
+        );
+    }
+
+    public function testGenerateWhenSluggableUrlsDisabled()
+    {
+        $routeName = 'test';
+        $routeParameters = ['id' => 1];
+        $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH;
+        $url = '/test/1';
+
+        $baseUrl = '/base';
+        $this->assertRequestContextCalled($baseUrl);
+        $this->configManager->expects($this->once())
+            ->method('get')
+            ->with('oro_redirect.enable_direct_url')
+            ->willReturn(false);
+        $this->baseGenerator->expects($this->once())
+            ->method('generate')
+            ->with($routeName, $routeParameters, $referenceType)
+            ->willReturn($url);
+        $this->sluggableUrlProvider->expects($this->never())
+            ->method($this->anything());
+
+        $this->assertEquals(
+            '/base/test/1',
             $this->generator->generate($routeName, $routeParameters, $referenceType)
         );
     }

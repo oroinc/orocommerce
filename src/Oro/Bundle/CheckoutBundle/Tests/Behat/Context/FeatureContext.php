@@ -320,6 +320,18 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
+     * @Then /^(?:|I )should see "(?P<field>(?:[^"]|\\")*)" button disabled/
+     */
+    public function iShouldSeeButtonDisabled($field)
+    {
+        $this->spin(function () use ($field) {
+            $button = $this->elementFactory->createElement($field);
+
+            return $button->hasAttribute('disabled');
+        }, 5);
+    }
+
+    /**
      * @When /^(?:|I )expand "(?P<entity>(?:[^"]|\\")*)" permissions in "(?P<section>(?:[^"]|\\")*)" section$/
      *
      * @param string $entity
