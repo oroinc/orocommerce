@@ -1,6 +1,6 @@
 {% block _payment_methods_paypal_express_checkout_widget %}
     <div class="{{ class_prefix }}-form__payment-methods">
-        <img class="checkout-form__img" src="{% image '@OroPayPalBundle/Resources/public/default/images/pp-express-checkout-method.png' %}{{ asset_url }}{% endimage %}">
+        <img class="checkout-form__img" src="{{ asset('bundles/oropaypal/default/images/pp-express-checkout-method.png') }}">
         <div>{{ 'oro.paypal.payflow_express_checkout.redirect_to_paypal'|trans|nl2br }}</div>
     </div>
 {% endblock %}
