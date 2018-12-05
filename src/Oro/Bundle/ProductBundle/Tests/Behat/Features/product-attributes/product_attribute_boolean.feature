@@ -65,8 +65,8 @@ Feature: Product attribute boolean
     And I should see "SKU456" product
 
   Scenario: Delete product attribute
-    Given I login as administrator
-    Given I go to Products/ Product Attributes
+    Given I proceed as the Admin
+    And I go to Products/ Product Attributes
     When I click Remove "BooleanField" in grid
     Then I should see "Are you sure you want to delete this attribute?"
     And I click "Yes"

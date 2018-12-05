@@ -84,8 +84,8 @@ Feature: Product attribute string
     And I should not see "SKU456" product
 
   Scenario: Delete product attribute
-    Given I login as administrator
-    Given I go to Products/ Product Attributes
+    Given I proceed as the Admin
+    And I go to Products/ Product Attributes
     When I click Remove "StringField" in grid
     Then I should see "Are you sure you want to delete this attribute?"
     And I click "Yes"
