@@ -5,6 +5,8 @@ namespace Oro\Bundle\ProductBundle\Tests\Behat;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Nelmio\Alice\Instances\Collection as AliceCollection;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
+use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use Oro\Bundle\ProductBundle\Migrations\Data\ORM\LoadProductDefaultAttributeFamilyData;
@@ -22,6 +24,7 @@ class ReferenceRepositoryInitializer implements ReferenceRepositoryInitializerIn
         $this->setDefaultProductFamilyReference($doctrine, $referenceRepository);
         $this->setProductUnitReferences($doctrine, $referenceRepository);
         $this->setProductUnitTranslationKeysReferences($doctrine, $referenceRepository);
+        $this->setProductAttributesReferences($doctrine, $referenceRepository);
     }
 
     /**
@@ -91,6 +94,19 @@ class ReferenceRepositoryInitializer implements ReferenceRepositoryInitializerIn
                 str_replace('.', '_', $translationKey->getKey())
             );
             $referenceRepository->set($referenceKey, $translationKey);
+        }
+    }
+
+    /**
+     * @param Registry $doctrine
+     * @param AliceCollection $referenceRepository
+     */
+    private function setProductAttributesReferences(Registry $doctrine, AliceCollection $referenceRepository): void
+    {
+        $repository = $doctrine->getManagerForClass(FieldConfigModel::class)->getRepository(FieldConfigModel::class);
+
+        foreach ($repository->getAttributesByClass(Product::class) as $attribute) {
+            $referenceRepository->set('product_attribute_' . $attribute->getFieldName(), $attribute);
         }
     }
 }

@@ -2,11 +2,13 @@
 
 namespace Oro\Bundle\PricingBundle\SubtotalProcessor\Provider;
 
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
-use Oro\Bundle\PricingBundle\Model\PriceListTreeHandler;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
-use Oro\Bundle\PricingBundle\Provider\ProductPriceProvider;
+use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaFactoryInterface;
+use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsNotPricedAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
@@ -31,7 +33,7 @@ class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider impleme
     /** @var RoundingServiceInterface */
     protected $rounding;
 
-    /** @var ProductPriceProvider */
+    /** @var ProductPriceProviderInterface */
     protected $productPriceProvider;
 
     /** @var string */
@@ -40,29 +42,30 @@ class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider impleme
     /** @var string */
     protected $productUnitClass;
 
-    /** @var PriceListTreeHandler */
-    protected $priceListTreeHandler;
+    /** @var ProductPriceScopeCriteriaFactoryInterface */
+    protected $priceScopeCriteriaFactory;
 
     /**
      * @param TranslatorInterface $translator
      * @param RoundingServiceInterface $rounding
-     * @param ProductPriceProvider $productPriceProvider
-     * @param PriceListTreeHandler $priceListTreeHandler ,
+     * @param ProductPriceProviderInterface $productPriceProvider
+     * @param DoctrineHelper $doctrineHelper
      * @param SubtotalProviderConstructorArguments $arguments
+     * @param ProductPriceScopeCriteriaFactoryInterface $priceScopeCriteriaFactory
      */
     public function __construct(
         TranslatorInterface $translator,
         RoundingServiceInterface $rounding,
-        ProductPriceProvider $productPriceProvider,
-        PriceListTreeHandler $priceListTreeHandler,
-        SubtotalProviderConstructorArguments $arguments
+        ProductPriceProviderInterface $productPriceProvider,
+        SubtotalProviderConstructorArguments $arguments,
+        ProductPriceScopeCriteriaFactoryInterface $priceScopeCriteriaFactory
     ) {
         parent::__construct($arguments);
 
         $this->translator = $translator;
         $this->rounding = $rounding;
         $this->productPriceProvider = $productPriceProvider;
-        $this->priceListTreeHandler = $priceListTreeHandler;
+        $this->priceScopeCriteriaFactory = $priceScopeCriteriaFactory;
     }
 
     /**
@@ -106,14 +109,14 @@ class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider impleme
         $subtotalAmount = 0.0;
         $subtotal = $this->createSubtotal();
 
-        $productsPriceCriterias = $this->prepareProductsPriceCriterias($entity, $currency);
-        if ($productsPriceCriterias) {
-            $priceList = $this->priceListTreeHandler->getPriceList($entity->getCustomer(), $entity->getWebsite());
-            $prices = $this->productPriceProvider->getMatchedPrices($productsPriceCriterias, $priceList);
+        $productsPriceCriteria = $this->prepareProductsPriceCriteria($entity, $currency);
+        if ($productsPriceCriteria) {
+            $searchScope = $this->priceScopeCriteriaFactory->createByContext($entity);
+            $prices = $this->productPriceProvider->getMatchedPrices($productsPriceCriteria, $searchScope);
             foreach ($prices as $identifier => $price) {
-                if ($price) {
+                if ($price instanceof Price) {
                     $priceValue = $price->getValue();
-                    $rowTotal = (float)$priceValue * $productsPriceCriterias[$identifier]->getQuantity();
+                    $rowTotal = (float)$priceValue * $productsPriceCriteria[$identifier]->getQuantity();
                     $subtotalAmount += $this->rounding->round($rowTotal);
                     $subtotal->setVisible(true);
                 }
@@ -130,9 +133,9 @@ class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider impleme
      * @param string $currency
      * @return ProductPriceCriteria[]
      */
-    protected function prepareProductsPriceCriterias($entity, $currency)
+    protected function prepareProductsPriceCriteria($entity, $currency)
     {
-        $productsPriceCriterias = [];
+        $productsPriceCriteria = [];
         foreach ($entity->getLineItems() as $lineItem) {
             if ($lineItem instanceof ProductHolderInterface
                 && $lineItem instanceof ProductUnitHolderInterface
@@ -148,12 +151,12 @@ class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider impleme
                         $quantity,
                         $currency
                     );
-                    $productsPriceCriterias[$criteria->getIdentifier()] = $criteria;
+                    $productsPriceCriteria[$criteria->getIdentifier()] = $criteria;
                 }
             }
         }
 
-        return $productsPriceCriterias;
+        return $productsPriceCriteria;
     }
 
     /**

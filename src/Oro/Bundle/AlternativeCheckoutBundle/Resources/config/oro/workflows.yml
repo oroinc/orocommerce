@@ -851,11 +851,7 @@ workflows:
                                 entity: $checkout
                                 state: $.result.currentCheckoutState
                                 token: $state_token
-                    - '@call_service_method':
-                        service: oro_checkout.factory.shipping_context_factory
-                        method: create
-                        method_parameters: [$checkout]
-                        attribute: $.result.shippingContext
+
                 preconditions:
                     '@and':
                         - '@quote_acceptable': [$checkout.sourceEntity, true]
@@ -868,7 +864,6 @@ workflows:
                         - '@shipping_method_has_enabled_shipping_rules':
                             message: oro.checkout.workflow.condition.shipping_method_is_not_available.message
                             method_identifier: $checkout.shippingMethod
-                            context: $.result.paymentContext
                         - '@or':
                             - '@empty': $.result.savedCheckoutState
                             - '@check_checkout_states':
@@ -933,7 +928,6 @@ workflows:
                         - '@shipping_method_has_enabled_shipping_rules':
                             message: oro.checkout.workflow.condition.shipping_method_is_not_available.message
                             method_identifier: $checkout.shippingMethod
-                            context: $.result.paymentContext
                         - '@has_applicable_payment_methods':
                             message: oro.checkout.workflow.condition.payment_method_is_not_applicable.message
                             context: $.result.paymentContext
@@ -1081,7 +1075,6 @@ workflows:
                         - '@shipping_method_has_enabled_shipping_rules':
                             message: oro.checkout.workflow.condition.shipping_method_is_not_available.message
                             method_identifier: $checkout.shippingMethod
-                            context: $.result.paymentContext
                         - '@payment_method_applicable':
                             message: oro.checkout.workflow.condition.payment_method_is_not_applicable.message
                             payment_method: $checkout.paymentMethod
@@ -1092,19 +1085,19 @@ workflows:
                                 - '@less_order_total_limit': [$checkout, $.data.order_approval_threshold]
                                 - '@equal': [$allowed, true]
                                 - '@acl_granted': 'oro_alternativecheckout_checkout_approve'
-                conditions:
-                    '@and':
                         - '@extendable':
-                            message: 'oro.checkout.workflow.b2b_flow_checkout.transition.place_order.condition.extendable.message'
-                            events: ['extendable_condition.before_order_create']
-                        - '@or':
-                            - '@empty': $.result.savedCheckoutState
-                            - '@check_checkout_states':
-                                message: oro.checkout.workflow.condition.content_of_order_was_changed.message
-                                parameters:
-                                    entity: $checkout
-                                    state1: $.result.initCheckoutState
-                                    state2: $.result.savedCheckoutState
+                            events:
+                                - 'extendable_condition.checkout'
+                                - 'extendable_condition.before_order_create'
+                conditions:
+                    '@or':
+                        - '@empty': $.result.savedCheckoutState
+                        - '@check_checkout_states':
+                            message: oro.checkout.workflow.condition.content_of_order_was_changed.message
+                            parameters:
+                                entity: $checkout
+                                state1: $.result.initCheckoutState
+                                state2: $.result.savedCheckoutState
                 actions:
                     - '@assign_value':
                         conditions:

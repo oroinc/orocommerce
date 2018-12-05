@@ -1,4 +1,4 @@
 assets:
     css:
-        'orocms':
+        inputs:
             - 'bundles/orowebcatalog/css/scss/main.scss'

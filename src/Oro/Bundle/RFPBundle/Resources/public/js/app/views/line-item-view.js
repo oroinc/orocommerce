@@ -29,7 +29,6 @@ define(function(require) {
                 priceSelector: '[data-role="lineitem-price"]',
                 currencySelector: '[data-role="lineitem-currency"]'
             },
-            unitLoaderRouteName: 'oro_pricing_frontend_units_by_pricelist',
             unitsRoute: 'oro_product_frontend_ajaxproductunit_productunits',
             compactUnits: false,
             itemsContainer: '[data-role="lineitems"]',

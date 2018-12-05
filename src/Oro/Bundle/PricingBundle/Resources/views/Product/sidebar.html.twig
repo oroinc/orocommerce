@@ -1,5 +1,3 @@
-{% form_theme showTierPrices with 'OroPricingBundle:Form:sidebar.html.twig' %}
-
 {% set currencyTemplate %}
     <div class="oro-clearfix">
         <input type="checkbox"
@@ -12,17 +10,29 @@
     </div>
 {% endset %}
 
-{% set pageComponentOptions = {
-    'priceListSelector': '#' ~ priceList.vars.id,
-    'currenciesSelector': '#' ~ currencies.vars.id,
-    'showTierPricesSelector': '#' ~ showTierPrices.vars.id,
-    'currencyTemplate': currencyTemplate,
-} %}
+{% set pageComponentOptions = {} %}
+{% if currencies is defined %}
+    {% set pageComponentOptions = {
+        'currenciesSelector': '#' ~ currencies.vars.id,
+        'currencyTemplate': currencyTemplate,
+    } %}
+{% endif %}
 
+{% if priceList is defined %}
+    {% set pageComponentOptions = pageComponentOptions|merge({'priceListSelector': '#' ~ priceList.vars.id}) %}
+{% endif %}
+
+{% if showTierPrices is defined %}
+    {% form_theme showTierPrices with 'OroPricingBundle:Form:sidebar.html.twig' %}
+    {% set pageComponentOptions = pageComponentOptions|merge({'showTierPricesSelector': '#' ~ showTierPrices.vars.id}) %}
+{% endif %}
+
+{% if priceList is defined or showTierPrices is defined or currencies is defined %}
 <div class="sidebar-items"
     data-page-component-module="oropricing/js/app/components/product-sidebar-component"
     data-page-component-options="{{ pageComponentOptions|json_encode }}">
-        <div class="default-price-list-choice">{{ form_row(priceList) }}</div>
-        <div class="currencies">{{ form_row(currencies) }}</div>
-        <div class="show-tier-prices-choice">{{ form_row(showTierPrices) }}</div>
+        {% if priceList is defined %}<div class="default-price-list-choice">{{ form_row(priceList) }}</div>{% endif %}
+        {% if showTierPrices is defined %}<div class="show-tier-prices-choice">{{ form_row(showTierPrices) }}</div>{% endif %}
+        {% if currencies is defined %}<div class="currencies">{{ form_row(currencies) }}</div>{% endif %}
 </div>
+{% endif %}

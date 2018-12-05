@@ -4,6 +4,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\EventListener;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
@@ -51,6 +52,11 @@ class ProductDuplicateListenerTest extends \PHPUnit\Framework\TestCase
     private $priceManager;
 
     /**
+     * @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $featureChecker;
+
+    /**
      * @var Product
      */
     protected $product;
@@ -65,6 +71,7 @@ class ProductDuplicateListenerTest extends \PHPUnit\Framework\TestCase
         $this->product = new Product();
         $this->sourceProduct = new Product();
 
+        $this->featureChecker = $this->createMock(FeatureChecker::class);
         $this->shardManager = $this->createMock(ShardManager::class);
 
         $this->doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
@@ -99,6 +106,36 @@ class ProductDuplicateListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener->setPriceManager($this->priceManager);
     }
 
+    protected function tearDown()
+    {
+        unset(
+            $this->product,
+            $this->sourceProduct,
+            $this->shardManager,
+            $this->doctrineHelper,
+            $this->productPriceRepository,
+            $this->objectManager,
+            $this->priceManager,
+            $this->listener
+        );
+    }
+
+    public function testOnDuplicateAfterFeatureDisabled()
+    {
+        $this->featureChecker->expects($this->once())
+            ->method('isFeatureEnabled')
+            ->with('feature1', null)
+            ->willReturn(false);
+
+        $this->listener->setFeatureChecker($this->featureChecker);
+        $this->listener->addFeature('feature1');
+
+        $event = $this->createMock(ProductDuplicateAfterEvent::class);
+        $event->expects($this->never())->method('getProduct');
+
+        $this->listener->onDuplicateAfter($event);
+    }
+
     public function testOnDuplicateAfter()
     {
         $price1 = new ProductPrice();
@@ -124,6 +161,13 @@ class ProductDuplicateListenerTest extends \PHPUnit\Framework\TestCase
 
         $event = new ProductDuplicateAfterEvent($this->product, $this->sourceProduct);
 
+        $this->featureChecker->expects($this->once())
+            ->method('isFeatureEnabled')
+            ->with('feature1', null)
+            ->willReturn(true);
+
+        $this->listener->setFeatureChecker($this->featureChecker);
+        $this->listener->addFeature('feature1');
         $this->listener->onDuplicateAfter($event);
     }
 

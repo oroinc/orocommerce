@@ -39,24 +39,8 @@ class FrontendShoppingListProductsUnitsProviderTest extends \PHPUnit\Framework\T
 
     public function setUp()
     {
-        $this->registry = $this->getMockBuilder('Doctrine\Bundle\DoctrineBundle\Registry')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->requestHandler = $this
-            ->getMockBuilder('Oro\Bundle\PricingBundle\Model\PriceListRequestHandler')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->userCurrencyManager = $this->getMockBuilder('Oro\Bundle\PricingBundle\Manager\UserCurrencyManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->provider = new FrontendShoppingListProductsUnitsProvider(
-            $this->registry,
-            $this->requestHandler,
-            $this->userCurrencyManager
-        );
+        $this->registry = $this->createMock(Registry::class);
+        $this->provider = new FrontendShoppingListProductsUnitsProvider($this->registry);
     }
 
     /**
