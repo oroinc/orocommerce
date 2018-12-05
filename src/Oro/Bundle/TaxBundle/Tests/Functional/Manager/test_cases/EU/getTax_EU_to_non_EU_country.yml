@@ -57,6 +57,7 @@ databaseBefore:
             taxJurisdiction: '@europe_ukraine_jurisdiction_code'
             productTaxCode: { class: 'Oro\Bundle\TaxBundle\Entity\ProductTaxCode', query: { code: 'TAX1' } }
             customerTaxCode: { class: 'Oro\Bundle\TaxBundle\Entity\CustomerTaxCode', query: { code: 'TAX1' } }
+databaseBeforeSecondPart: []
 expectedResult:
     total:
         includingTax: '135.9'
