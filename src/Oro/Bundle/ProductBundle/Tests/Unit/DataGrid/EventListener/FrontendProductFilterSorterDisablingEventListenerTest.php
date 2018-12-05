@@ -223,8 +223,8 @@ class FrontendProductFilterSorterDisablingEventListenerTest extends \PHPUnit\Fra
         $this->datagridConfig->expects($this->exactly(2))
             ->method('offsetUnsetByPath')
             ->withConsecutive(
-                ['[filters][columns][filterableAttributeName1_LOCALIZATION_ID]'],
-                ['[sorters][columns][sortableAttributeName2_ENUM_ID]']
+                ['[filters][columns][filterableAttributeName1]'],
+                ['[sorters][columns][sortableAttributeName2]']
             );
 
         $this->listener->onSearchResultAfter($eventAfter);

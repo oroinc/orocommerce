@@ -2,44 +2,47 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Pricing;
 
-use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Pricing\PriceMatcher;
-use Oro\Bundle\PricingBundle\Entity\BasePriceList;
-use Oro\Bundle\PricingBundle\Model\PriceListTreeHandler;
+use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaFactoryInterface;
+use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaInterface;
 use Oro\Bundle\PricingBundle\Provider\MatchingPriceProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\Testing\Unit\EntityTrait;
+use Psr\Log\LoggerInterface;
 
 class PriceMatcherTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var PriceMatcher
-     */
+    /** @var PriceMatcher */
     protected $matcher;
 
     /** @var MatchingPriceProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $provider;
 
-    /** @var PriceListTreeHandler|\PHPUnit\Framework\MockObject\MockObject */
-    protected $priceListTreeHandler;
+    /** @var ProductPriceScopeCriteriaFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
+    protected $priceScopeCriteriaFactory;
 
+    /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject */
+    protected $logger;
+
+    /**
+     * {@inheritdoc}
+     */
     protected function setUp()
     {
-        $this->provider = $this->getMockBuilder('Oro\Bundle\PricingBundle\Provider\MatchingPriceProvider')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->provider = $this->createMock(MatchingPriceProvider::class);
+        $this->priceScopeCriteriaFactory = $this->createMock(ProductPriceScopeCriteriaFactoryInterface::class);
+        $this->logger = $this->createMock(LoggerInterface::class);
 
-        $this->priceListTreeHandler = $this->getMockBuilder('Oro\Bundle\PricingBundle\Model\PriceListTreeHandler')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->matcher = new PriceMatcher($this->provider, $this->priceListTreeHandler);
+        $this->matcher = new PriceMatcher(
+            $this->provider,
+            $this->priceScopeCriteriaFactory,
+            $this->logger
+        );
     }
 
     public function testGetMatchingPrices()
@@ -49,19 +52,15 @@ class PriceMatcherTest extends \PHPUnit\Framework\TestCase
         $lineItemCurrency = 'USD';
         $orderCurrency = 'EUR';
 
-        $customer = new Customer();
-        $website = new Website();
-
         /** @var Product $product */
-        $product = $this->getEntity('Oro\Bundle\ProductBundle\Entity\Product', ['id' => 1]);
+        $product = $this->getEntity(Product::class, ['id' => 1]);
+        $productUnit = new ProductUnit();
+        $productUnit->setCode($productUnitCode);
 
         $lineItem = new OrderLineItem();
         $lineItem->setProduct($product);
         $lineItem->setQuantity($lineItemQuantity);
         $lineItem->setCurrency($lineItemCurrency);
-
-        $productUnit = new ProductUnit();
-        $productUnit->setCode($productUnitCode);
         $lineItem->setProductUnit($productUnit);
 
         $product2 = new Product();
@@ -72,17 +71,8 @@ class PriceMatcherTest extends \PHPUnit\Framework\TestCase
         $order = new Order();
         $order
             ->setCurrency($orderCurrency)
-            ->setCustomer($customer)
-            ->setWebsite($website)
             ->addLineItem($lineItem)
             ->addLineItem($lineItem2);
-
-        $priceList = new BasePriceList();
-        $this->priceListTreeHandler
-            ->expects($this->once())
-            ->method('getPriceList')
-            ->with($customer, $website)
-            ->willReturn($priceList);
 
         $expectedLineItemsArray = [
             [
@@ -99,11 +89,17 @@ class PriceMatcherTest extends \PHPUnit\Framework\TestCase
             ],
         ];
 
+        $scopeCriteria = $this->createMock(ProductPriceScopeCriteriaInterface::class);
+        $this->priceScopeCriteriaFactory->expects($this->once())
+            ->method('createByContext')
+            ->with($order)
+            ->willReturn($scopeCriteria);
+
         $matchedPrices = ['matched', 'prices'];
         $this->provider
             ->expects($this->once())
             ->method('getMatchingPrices')
-            ->with($expectedLineItemsArray, $priceList)
+            ->with($expectedLineItemsArray, $scopeCriteria)
             ->willReturn($matchedPrices);
 
         $this->matcher->getMatchingPrices($order);
@@ -130,14 +126,15 @@ class PriceMatcherTest extends \PHPUnit\Framework\TestCase
             }
         );
 
-        /** @var BasePriceList $priceList */
-        $priceList = $this->getEntity('Oro\Bundle\PricingBundle\Entity\BasePriceList', ['id' => 1]);
-        $this->priceListTreeHandler->expects($this->once())
-            ->method('getPriceList')
-            ->willReturn($priceList);
+        $scopeCriteria = $this->createMock(ProductPriceScopeCriteriaInterface::class);
+        $this->priceScopeCriteriaFactory->expects($this->once())
+            ->method('createByContext')
+            ->with($order)
+            ->willReturn($scopeCriteria);
 
         $this->provider->expects($this->once())
             ->method('getMatchingPrices')
+            ->with($this->isType('array'), $scopeCriteria)
             ->willReturn($matchedPrices);
 
         $this->matcher->addMatchingPrices($order);
@@ -148,11 +145,53 @@ class PriceMatcherTest extends \PHPUnit\Framework\TestCase
         }
     }
 
+    public function testFillMatchingPricesWithIncorrectLineItem()
+    {
+        /** @var Product $product */
+        $product = $this->getEntity(Product::class, ['id' => 1]);
+        $productUnit = new ProductUnit();
+        $productUnit->setCode('item');
+
+        $lineItem1 = new OrderLineItem();
+        $lineItem1->setProduct($product);
+        $lineItem1->setQuantity(10);
+        $lineItem1->setCurrency('USD');
+        $lineItem1->setProductUnit($productUnit);
+
+        $lineItem2 = new OrderLineItem();
+        $lineItem2->setProduct($product);
+        $lineItem2->setQuantity(-10);
+        $lineItem2->setProductUnit($productUnit);
+
+        $order = new Order();
+        $order->setCurrency('USD');
+        $order->addLineItem($lineItem1);
+        $order->addLineItem($lineItem2);
+
+        $this->logger->expects($this->once())
+            ->method('error')
+            ->with(
+                'Got error while trying to create new ProductPriceCriteria with message: "{message}"',
+                $this->isType('array')
+            );
+
+        $matchedPrices = [
+            '1-item-10-USD' => [
+                'currency' => 'USD',
+                'value' => 42
+            ]
+        ];
+        $this->matcher->fillMatchingPrices($order, $matchedPrices);
+
+        $this->assertEquals(42, $lineItem1->getValue());
+    }
+
     /**
      * @dataProvider orderEventAddMatchedPricesDataProvider
      * @param array $orderLineItems
      * @param array $matchedPrices
      * @param array $expectedLineItemsPrices
+     * @param \InvalidArgumentException $exception
      */
     public function testFillMatchedPrices(
         array $orderLineItems = [],
@@ -186,10 +225,10 @@ class PriceMatcherTest extends \PHPUnit\Framework\TestCase
      */
     public function orderEventAddMatchedPricesDataProvider()
     {
-        $product = $this->getEntity('Oro\Bundle\ProductBundle\Entity\Product', ['id' => 1]);
-        $invalidProduct = $this->getEntity('Oro\Bundle\ProductBundle\Entity\Product');
-        $productUnit = $this->getEntity('Oro\Bundle\ProductBundle\Entity\ProductUnit', ['code' => 'set']);
-        $invalidProductUnit = $this->getEntity('Oro\Bundle\ProductBundle\Entity\ProductUnit');
+        $product = $this->getEntity(Product::class, ['id' => 1]);
+        $invalidProduct = $this->getEntity(Product::class);
+        $productUnit = $this->getEntity(ProductUnit::class, ['code' => 'set']);
+        $invalidProductUnit = $this->getEntity(ProductUnit::class);
 
         return [
             'empty prices' => [],
@@ -211,7 +250,7 @@ class PriceMatcherTest extends \PHPUnit\Framework\TestCase
                         ->setCurrency('USD')
                         ->setQuantity('3'),
                 ],
-                ['1-set-2-USD' => ['currency' => 'USD', 'value' => 100]],
+                ['1-set-3-USD' => ['currency' => 'USD', 'value' => 100]],
                 [null],
             ],
             'invalid product' => [
@@ -222,8 +261,8 @@ class PriceMatcherTest extends \PHPUnit\Framework\TestCase
                         ->setCurrency('USD')
                         ->setQuantity('3'),
                 ],
-                ['1-set-2-USD' => ['currency' => 'USD', 'value' => 100]],
-                [null],
+                ['1-set-3-USD' => ['currency' => 'USD', 'value' => 100]],
+                [null]
             ],
             'without productUnit' => [
                 [
@@ -232,7 +271,7 @@ class PriceMatcherTest extends \PHPUnit\Framework\TestCase
                         ->setCurrency('USD')
                         ->setQuantity('3'),
                 ],
-                ['1-set-2-USD' => ['currency' => 'USD', 'value' => 100]],
+                ['1-set-3-USD' => ['currency' => 'USD', 'value' => 100]],
                 [null],
             ],
             'invalid productUnit' => [
@@ -243,35 +282,35 @@ class PriceMatcherTest extends \PHPUnit\Framework\TestCase
                         ->setCurrency('USD')
                         ->setQuantity('3'),
                 ],
-                ['1-set-2-USD' => ['currency' => 'USD', 'value' => 100]],
-                [null],
+                ['1-set-3-USD' => ['currency' => 'USD', 'value' => 100]],
+                [null]
             ],
             'without currency' => [
                 [
                     (new OrderLineItem())
                         ->setProduct($product)
-                        ->setProduct($product)
+                        ->setProductUnit($productUnit)
                         ->setQuantity('3'),
                 ],
-                ['1-set-2-USD' => ['currency' => 'USD', 'value' => 100]],
-                [null],
+                ['1-set-3-USD' => ['currency' => 'USD', 'value' => 100]],
+                ['100'],
             ],
             'invalid currency' => [
                 [
                     (new OrderLineItem())
                         ->setProduct($product)
-                        ->setProduct($product)
+                        ->setProductUnit($productUnit)
                         ->setQuantity('3')
                         ->setCurrency(''),
                 ],
-                ['1-set-2-USD' => ['currency' => 'USD', 'value' => 100]],
-                [null],
+                ['1-set-3-USD' => ['currency' => 'USD', 'value' => 100]],
+                ['100']
             ],
             'without quantity' => [
                 [
                     (new OrderLineItem())
                         ->setProduct($product)
-                        ->setProduct($product)
+                        ->setProductUnit($productUnit)
                         ->setCurrency('USD'),
                 ],
                 ['1-set-2-USD' => ['currency' => 'USD', 'value' => 100]],
@@ -281,23 +320,23 @@ class PriceMatcherTest extends \PHPUnit\Framework\TestCase
                 [
                     (new OrderLineItem())
                         ->setProduct($product)
-                        ->setProduct($product)
+                        ->setProductUnit($productUnit)
                         ->setQuantity('string')
                         ->setCurrency('USD'),
                 ],
                 ['1-set-2-USD' => ['currency' => 'USD', 'value' => 100]],
-                [null],
+                [null]
             ],
             'invalid quantity #2' => [
                 [
                     (new OrderLineItem())
                         ->setProduct($product)
-                        ->setProduct($product)
+                        ->setProductUnit($productUnit)
                         ->setQuantity(-2)
                         ->setCurrency('USD'),
                 ],
                 ['1-set-2-USD' => ['currency' => 'USD', 'value' => 100]],
-                [null],
+                [null]
             ],
             'one matched price' => [
                 [

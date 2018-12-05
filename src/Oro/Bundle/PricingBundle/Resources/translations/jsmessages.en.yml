@@ -13,6 +13,11 @@ oro:
         product_prices:
             price_is_overridden: Price is overridden
             reset_price: Reset price
+            applicable_from: 'Price is applicable starting from {{ amount }}'
+            your_price: 'Your Price:'
+            listed_price: 'Listed Price:'
+            price_not_found: 'Price for requested quantity is not available'
+            empty_prices: 'Price not available'
         price:
             label: Price
             formatted.unit: '{{ formattedUnit }} ({{ formattedPrice }} Each)'

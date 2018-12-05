@@ -4,9 +4,11 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Form\Extension;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Form\Type\CustomerType;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\FormBundle\Form\Extension\SortableExtension;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListToCustomer;
+use Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup;
 use Oro\Bundle\PricingBundle\EventListener\AbstractPriceListCollectionAwareListener;
 use Oro\Bundle\PricingBundle\EventListener\CustomerListener;
 use Oro\Bundle\PricingBundle\Form\Extension\CustomerFormExtension;
@@ -22,20 +24,78 @@ use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\Form\FormBuilderInterface;
 
 class CustomerFormExtensionTest extends FormIntegrationTestCase
 {
     use EntityTrait;
+
+    public function testGetExtendedType()
+    {
+        /** @var CustomerListener|\PHPUnit\Framework\MockObject\MockObject $listener */
+        $listener = $this->createMock(CustomerListener::class);
+
+        $customerFormExtension = new CustomerFormExtension($listener);
+
+        $this->assertSame(CustomerType::class, $customerFormExtension->getExtendedType());
+    }
+
+    public function testSetRelationClass()
+    {
+        /** @var CustomerListener|\PHPUnit\Framework\MockObject\MockObject $listener */
+        $listener = $this->createMock(CustomerListener::class);
+
+        $customerFormExtension = new CustomerFormExtension($listener);
+        $customerFormExtension->setRelationClass(PriceListToCustomerGroup::class);
+
+        $reflection = new \ReflectionObject($customerFormExtension);
+        $relationClass = $reflection->getProperty('relationClass');
+        $relationClass->setAccessible(true);
+
+        $this->assertSame(PriceListToCustomerGroup::class, $relationClass->getValue($customerFormExtension));
+    }
+
+    public function testBuildFormFeatureDisabled()
+    {
+        /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject $featureChecker */
+        $featureChecker = $this->createMock(FeatureChecker::class);
+        $featureChecker->expects($this->once())
+            ->method('isFeatureEnabled')
+            ->with('feature1', null)
+            ->willReturn(false);
+
+        /** @var CustomerListener|\PHPUnit\Framework\MockObject\MockObject $listener */
+        $listener = $this->createMock(CustomerListener::class);
+        /** @var FormBuilderInterface|\PHPUnit\Framework\MockObject\MockObject $builder */
+        $builder = $this->createMock(FormBuilderInterface::class);
+        $builder->expects($this->never())->method('add');
+
+        $customerFormExtension = new CustomerFormExtension($listener);
+        $customerFormExtension->setFeatureChecker($featureChecker);
+        $customerFormExtension->addFeature('feature1');
+        $customerFormExtension->buildForm($builder, []);
+    }
 
     /**
      * @return array
      */
     protected function getExtensions()
     {
+        /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject $featureChecker */
+        $featureChecker = $this->createMock(FeatureChecker::class);
+        $featureChecker->expects($this->any())
+            ->method('isFeatureEnabled')
+            ->with('feature1', null)
+            ->willReturn(true);
+
         /** @var CustomerListener $listener */
         $listener = $this->getMockBuilder('Oro\Bundle\PricingBundle\EventListener\CustomerListener')
             ->disableOriginalConstructor()
             ->getMock();
+
+        $customerFormExtension = new CustomerFormExtension($listener);
+        $customerFormExtension->setFeatureChecker($featureChecker);
+        $customerFormExtension->addFeature('feature1');
 
         $provider = new PriceListCollectionTypeExtensionsProvider();
         $websiteScopedDataType = (new WebsiteScopedTypeMockProvider())->getWebsiteScopedDataType();
@@ -56,7 +116,7 @@ class CustomerFormExtensionTest extends FormIntegrationTestCase
                     CustomerType::class => new CustomerTypeStub()
                 ],
                 [
-                    CustomerTypeStub::class => [new CustomerFormExtension($listener)],
+                    CustomerTypeStub::class => [$customerFormExtension],
                     FormType::class => [new SortableExtension()],
                     PriceListSelectWithPriorityType::class => [new PriceListFormExtension($configManager)]
 

@@ -125,6 +125,7 @@ services:
             - "@oro_pricing.entity_listener.customer"
         tags:
             - { name: form.type_extension, alias: oro_customer_type, extended_type: Oro\Bundle\CustomerBundle\Form\Type\CustomerType }
+            - { name: oro_featuretogle.feature, feature: oro_price_lists }
 
     oro_pricing.form.extension.customer_group_type:
         class: 'Oro\Bundle\PricingBundle\Form\Extension\CustomerGroupFormExtension'
@@ -132,6 +133,7 @@ services:
             - "@oro_pricing.entity_listener.customer_group"
         tags:
             - { name: form.type_extension, alias: oro_customer_group_type, extended_type: Oro\Bundle\CustomerBundle\Form\Type\CustomerGroupType }
+            - { name: oro_featuretogle.feature, feature: oro_price_lists }
 
     oro_pricing.form.extension.product_type:
         class: 'Oro\Bundle\PricingBundle\Form\Extension\ProductFormExtension'
@@ -142,6 +144,7 @@ services:
             - '@security.authorization_checker'
         tags:
             - { name: form.type_extension, alias: oro_product, extended_type: Oro\Bundle\ProductBundle\Form\Type\ProductType }
+            - { name: oro_featuretogle.feature, feature: oro_price_lists }
 
     oro_pricing.form.extension.product_type.price_attributes:
         class: Oro\Bundle\PricingBundle\Form\Extension\PriceAttributesProductFormExtension

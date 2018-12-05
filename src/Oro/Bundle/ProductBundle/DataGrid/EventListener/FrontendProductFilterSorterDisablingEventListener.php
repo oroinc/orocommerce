@@ -238,7 +238,7 @@ class FrontendProductFilterSorterDisablingEventListener
                 continue;
             }
 
-            $filterPath = sprintf(DatagridConfiguration::FILTER_PATH, $name);
+            $filterPath = sprintf(DatagridConfiguration::FILTER_PATH, $alias);
             $datagrid->getConfig()->offsetUnsetByPath($filterPath);
         }
     }
@@ -266,7 +266,7 @@ class FrontendProductFilterSorterDisablingEventListener
                 continue;
             }
 
-            $sorterPath = sprintf(DatagridConfiguration::SORTER_PATH, $name);
+            $sorterPath = sprintf(DatagridConfiguration::SORTER_PATH, $alias);
             $datagrid->getConfig()->offsetUnsetByPath($sorterPath);
         }
     }

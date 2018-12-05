@@ -10,6 +10,9 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Form\Extension\AbstractProductDataStorageExtension;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 
+/**
+ * Generates new line item and adds it to entity if it's instance of order
+ */
 class OrderDataStorageExtension extends AbstractProductDataStorageExtension
 {
     /**

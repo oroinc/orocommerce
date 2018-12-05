@@ -29,6 +29,5 @@ Feature: Single Page Checkout From Shopping List Quantity Errors
     And I select "Fifth avenue, 10115 Berlin, Germany" from "Select Shipping Address"
     And I check "Flat Rate" on the checkout page
     And I check "Payment Terms" on the checkout page
-    And I click "Submit Order"
-    Then I should see "There was an error while processing the order"
-    And I should see "There is not enough quantity for this product"
+    Then I should see "There is not enough quantity for this product"
+    And I should see "Submit Order" button disabled

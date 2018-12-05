@@ -10,6 +10,7 @@ use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\PricingBundle\Entity\BasePriceListRelation;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToCustomerRepository;
 use Oro\Bundle\PricingBundle\EventListener\CustomerDataGridListener;
@@ -36,12 +37,59 @@ abstract class AbstractPriceListRelationDataGridListenerTest extends \PHPUnit\Fr
      */
     protected $repository;
 
+    /**
+     * @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $featureChecker;
+
     public function setUp()
     {
         $this->registry = $this->getMockBuilder('Doctrine\Bundle\DoctrineBundle\Registry')
             ->disableOriginalConstructor()
             ->getMock();
         $this->registry->method('getManagerForClass')->willReturn($this->manager);
+        $this->featureChecker = $this->createMock(FeatureChecker::class);
+    }
+
+    protected function tearDown()
+    {
+        unset(
+            $this->manager,
+            $this->listener,
+            $this->registry,
+            $this->repository,
+            $this->featureChecker
+        );
+    }
+
+    public function testOnBuilderBeforeFeatureDisabled()
+    {
+        $event = $this->createMock(BuildBefore::class);
+        $event->expects($this->never())->method('getDatagrid');
+
+        $this->featureChecker->expects($this->once())
+            ->method('isFeatureEnabled')
+            ->with('feature1', null)
+            ->willReturn(false);
+
+        $this->listener->setFeatureChecker($this->featureChecker);
+        $this->listener->addFeature('feature1');
+        $this->listener->onBuildBefore($event);
+    }
+
+    public function testOnResultAfterFeatureDisabled()
+    {
+        $event = $this->createMock(OrmResultAfter::class);
+        $event->expects($this->never())->method('getRecords');
+
+        $this->featureChecker->expects($this->once())
+            ->method('isFeatureEnabled')
+            ->with('feature1', null)
+            ->willReturn(false);
+
+        $this->listener->setFeatureChecker($this->featureChecker);
+        $this->listener->addFeature('feature1');
+        $this->listener->onResultAfter($event);
     }
 
     public function testOnResultAfter()
@@ -58,6 +106,13 @@ abstract class AbstractPriceListRelationDataGridListenerTest extends \PHPUnit\Fr
         $record = new ResultRecord(['name' => 'test']);
         $event = new OrmResultAfter($dataGrid, [$record]);
 
+        $this->featureChecker->expects($this->exactly(2))
+            ->method('isFeatureEnabled')
+            ->with('feature1', null)
+            ->willReturn(true);
+
+        $this->listener->setFeatureChecker($this->featureChecker);
+        $this->listener->addFeature('feature1');
         $this->listener->onBuildBefore($eventBuildBefore);
         $this->listener->onResultAfter($event);
         $configArray = $config->toArray();

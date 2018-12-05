@@ -11,6 +11,22 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     localCategory{1..4}Title:
         string: 'Category <current()>'
 
+    localProductAttributeFamilyGroupGeneral:
+        string: 'General'
+
+    localProductAttributeFamilyGroupInventory:
+        string: 'Inventory'
+
+    localProductAttributeFamilyGroupImages:
+        string: 'Images'
+
+    localProductAttributeFamilyGroupProductPrices:
+        string: 'Product Prices'
+
+    localProductAttributeFamilyGroupSEO:
+        string: 'SEO'
+
+
 Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
     productUnitPrecision{1..20}:
         unit: '@item'
@@ -23,6 +39,74 @@ Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily:
         addLabel: ['@localProductAttributeFamily']
         organization: '@organization'
         owner: '@admin'
+
+Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeGroup:
+    attributeGroupGeneral:
+        addLabel: ['@localProductAttributeFamilyGroupGeneral']
+        code: 'general'
+        attributeFamily: '@productAttributeFamily'
+        isVisible: true
+    attributeGroupInventory:
+        addLabel: ['@localProductAttributeFamilyGroupInventory']
+        code: 'inventory'
+        attributeFamily: '@productAttributeFamily'
+        isVisible: false
+    attributeGroupImages:
+        addLabel: ['@localProductAttributeFamilyGroupImages']
+        code: 'images'
+        attributeFamily: '@productAttributeFamily'
+        isVisible: true
+    attributeGroupProductPrices:
+        addLabel: ['@localProductAttributeFamilyGroupProductPrices']
+        code: 'prices'
+        attributeFamily: '@productAttributeFamily'
+        isVisible: true
+    attributeGroupSEO:
+        addLabel: ['@localProductAttributeFamilyGroupSEO']
+        code: 'seo'
+        attributeFamily: '@productAttributeFamily'
+        isVisible: false
+
+Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeGroupRelation:
+    attributeGroupGeneralRelationSku:
+        attributeGroup: '@attributeGroupGeneral'
+        entityConfigFieldId: '@product_attribute_sku->id'
+    attributeGroupGeneralRelationIs Featured:
+        attributeGroup: '@attributeGroupGeneral'
+        entityConfigFieldId: '@product_attribute_featured->id'
+    attributeGroupGeneralRelationNew Arrival:
+        attributeGroup: '@attributeGroupGeneral'
+        entityConfigFieldId: '@product_attribute_newArrival->id'
+    attributeGroupGeneralRelationName:
+        attributeGroup: '@attributeGroupGeneral'
+        entityConfigFieldId: '@product_attribute_names->id'
+    attributeGroupGeneralRelationDescription:
+        attributeGroup: '@attributeGroupGeneral'
+        entityConfigFieldId: '@product_attribute_descriptions->id'
+    attributeGroupGeneralRelationShort Description:
+        attributeGroup: '@attributeGroupGeneral'
+        entityConfigFieldId: '@product_attribute_shortDescriptions->id'
+    attributeGroupGeneralRelationBrand:
+        attributeGroup: '@attributeGroupGeneral'
+        entityConfigFieldId: '@product_attribute_brand->id'
+    attributeGroupGeneralRelationInventory Status:
+        attributeGroup: '@attributeGroupInventory'
+        entityConfigFieldId: '@product_attribute_inventory_status->id'
+    attributeGroupGeneralRelationImages:
+        attributeGroup: '@attributeGroupImages'
+        entityConfigFieldId: '@product_attribute_images->id'
+    attributeGroupGeneralRelationProduct prices:
+        attributeGroup: '@attributeGroupProductPrices'
+        entityConfigFieldId: '@product_attribute_productPriceAttributesPrices->id'
+    attributeGroupGeneralRelationMetaTitle:
+        attributeGroup: '@attributeGroupSEO'
+        entityConfigFieldId: '@product_attribute_metaTitles->id'
+    attributeGroupGeneralRelationMetaDescription:
+        attributeGroup: '@attributeGroupSEO'
+        entityConfigFieldId: '@product_attribute_metaDescriptions->id'
+    attributeGroupGeneralRelationMetaKeywords:
+        attributeGroup: '@attributeGroupSEO'
+        entityConfigFieldId: '@product_attribute_metaKeywords->id'
 
 Oro\Bundle\ProductBundle\Entity\Product:
     product{1..20}:

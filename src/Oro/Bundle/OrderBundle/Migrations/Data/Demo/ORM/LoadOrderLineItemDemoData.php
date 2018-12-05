@@ -12,18 +12,22 @@ use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Migrations\Data\Demo\ORM\LoadProductPriceDemoData;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
-use Oro\Bundle\PricingBundle\Provider\ProductPriceProvider;
+use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaInterface;
+use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * Loads demo order line item data
+ */
 class LoadOrderLineItemDemoData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
 {
     /** @var ContainerInterface */
     protected $container;
 
-    /** @var ProductPriceProvider */
+    /** @var ProductPriceProviderInterface */
     protected $productPriceProvider;
 
     /** @var array|Order[] */
@@ -41,7 +45,7 @@ class LoadOrderLineItemDemoData extends AbstractFixture implements ContainerAwar
     public function setContainer(ContainerInterface $container = null)
     {
         $this->container = $container;
-        $this->productPriceProvider = $container->get('oro_pricing.provider.combined_product_price');
+        $this->productPriceProvider = $container->get('oro_pricing.provider.product_price');
     }
 
     /**
@@ -98,7 +102,8 @@ class LoadOrderLineItemDemoData extends AbstractFixture implements ContainerAwar
                         $productUnit,
                         $quantity,
                         $order->getCurrency(),
-                        $priceList
+                        $priceList,
+                        $order
                     );
                 }
             }
@@ -181,6 +186,7 @@ class LoadOrderLineItemDemoData extends AbstractFixture implements ContainerAwar
      * @param float $quantity
      * @param string $currency
      * @param BasePriceList $priceList
+     * @param Order $order
      * @return Price
      */
     protected function getPrice(
@@ -188,18 +194,31 @@ class LoadOrderLineItemDemoData extends AbstractFixture implements ContainerAwar
         ProductUnit $productUnit,
         $quantity,
         $currency,
-        BasePriceList $priceList
+        BasePriceList $priceList,
+        Order $order
     ) {
         $productPriceCriteria = new ProductPriceCriteria($product, $productUnit, $quantity, $currency);
         $identifier = $productPriceCriteria->getIdentifier();
 
-        if (!isset($this->prices[$priceList->getId()][$identifier])) {
-            $prices = $this->productPriceProvider->getMatchedPrices([$productPriceCriteria], $priceList);
-            $this->prices[$priceList->getId()][$identifier] = $prices[$identifier];
+        $priceListId = $priceList->getId();
+        if (!isset($this->prices[$priceListId][$identifier])) {
+            $searchScope = $this->getSearchScope($order);
+            $prices = $this->productPriceProvider->getMatchedPrices([$productPriceCriteria], $searchScope);
+            $this->prices[$priceListId][$identifier] = $prices[$identifier];
         }
 
-        $price = $this->prices[$priceList->getId()][$identifier];
+        $price = $this->prices[$priceListId][$identifier];
 
         return $price ?: Price::create(mt_rand(10, 1000), $currency);
+    }
+
+    /**
+     * @param Order $order
+     * @return ProductPriceScopeCriteriaInterface
+     */
+    protected function getSearchScope(Order $order): ProductPriceScopeCriteriaInterface
+    {
+        return $this->container->get('oro_pricing.model.product_price_scope_criteria_factory')
+            ->createByContext($order);
     }
 }
