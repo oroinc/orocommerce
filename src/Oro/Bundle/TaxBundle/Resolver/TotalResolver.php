@@ -4,7 +4,6 @@ namespace Oro\Bundle\TaxBundle\Resolver;
 
 use Brick\Math\BigDecimal;
 use Brick\Math\Exception\NumberFormatException;
-use Oro\Bundle\TaxBundle\Model\AbstractResultElement;
 use Oro\Bundle\TaxBundle\Model\Result;
 use Oro\Bundle\TaxBundle\Model\ResultElement;
 use Oro\Bundle\TaxBundle\Model\Taxable;
@@ -84,11 +83,11 @@ class TotalResolver implements ResolverInterface
     }
 
     /**
-     * @param AbstractResultElement $data
+     * @param ResultElement $data
      * @param BigDecimal $adjustment
-     * @return AbstractResultElement
+     * @return ResultElement
      */
-    protected function adjustAmounts(AbstractResultElement $data, BigDecimal $adjustment)
+    protected function adjustAmounts(ResultElement $data, BigDecimal $adjustment)
     {
         $arrayCopy = $data->getArrayCopy();
         $currentData = new ResultElement($arrayCopy);
