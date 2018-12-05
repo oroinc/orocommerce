@@ -52,8 +52,6 @@ oro:
                     feature_enabled.label: Enable user consents feature
                     enabled_consents.label: Enabled user consents
                     enabled_consents.tooltip: List of consents available for Customer User
-                    consent_contact_reason.label: Сontact Reason
-                    consent_contact_reason.tooltip: Contact Reason which is used for declined consent notification
             groups:
                 consents:
                     title: Consents

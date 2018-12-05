@@ -266,24 +266,6 @@ services:
             - '@oro_consent.validator.consent_content_node_validator'
             - '@oro_consent.provider.consent_acceptance_provider'
 
-    oro_consent.event_listener.create_contact_request:
-        class: 'Oro\Bundle\ConsentBundle\EventListener\CreateContactRequestListener'
-        public: false
-        arguments:
-            - '@oro_consent.helper.contact_request'
-            - '@oro_featuretoggle.checker.feature_checker'
-        tags:
-            - { name: doctrine.event_listener, event: onFlush }
-            - { name: doctrine.event_listener, event: postFlush }
-
-    oro_consent.helper.contact_request:
-        class: 'Oro\Bundle\ConsentBundle\Helper\ContactRequestHelper'
-        arguments:
-            - '@oro_entity.doctrine_helper'
-            - '@oro_config.manager'
-            - '@oro_locale.helper.localization'
-            - '@translator'
-
     # It public, because it should be accessible for calls from action_group
     oro_consent.helper.copy_customer_consents:
         class: 'Oro\Bundle\ConsentBundle\Helper\CopyCustomerConsentsHelper'
@@ -437,16 +419,6 @@ services:
         class: 'Oro\Bundle\ConsentBundle\Form\Extension\FieldChoiceTypeExtension'
         tags:
             - { name: form.type_extension, extended_type: 'Oro\Bundle\QueryDesignerBundle\Form\Type\FieldChoiceType' }
-
-    oro_consent.event_listener.system_config:
-        class: 'Oro\Bundle\ConsentBundle\EventListener\SystemConfigListener'
-        arguments:
-            - '@oro_entity.doctrine_helper'
-            - '@oro_config.global'
-        tags:
-            - { name: kernel.event_listener, event: oro_config.settings_form_preset, method: onFormPreSetData }
-            - { name: kernel.event_listener, event: oro_config.settings_before_save.oro_consent.consent_contact_reason, method: onSettingsSaveBefore }
-            - { name: doctrine.orm.entity_listener, entity: '%oro_contact_us.contactreason.entity.class%', event: preRemove, method: onPreRemove}
 
     oro_consent.feature.voter.feature_voter:
         class: 'Oro\Bundle\ConsentBundle\Feature\Voter\FeatureVoter'

@@ -15,7 +15,6 @@ class Configuration implements ConfigurationInterface
     const ROOT_NODE = OroConsentExtension::ALIAS;
     const CONSENT_FEATURE_ENABLED = 'consent_feature_enabled';
     const ENABLED_CONSENTS = 'enabled_consents';
-    const CONSENT_CONTACT_REASON = 'consent_contact_reason';
 
     /**
      * {@inheritdoc}
@@ -30,7 +29,6 @@ class Configuration implements ConfigurationInterface
             [
                 self::CONSENT_FEATURE_ENABLED => ['value' => false, 'type' => 'boolean'],
                 self::ENABLED_CONSENTS => ['value' => [], 'type' => 'array'],
-                self::CONSENT_CONTACT_REASON => ['value' => null, 'type' => 'integer'],
             ]
         );
 
