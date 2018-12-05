@@ -65,3 +65,5 @@ workflows:
                 type: string
             late_registration:
                 type: array
+            customerConsents:
+                type: array

@@ -1,5 +1,0 @@
-workflows:
-    b2b_flow_checkout:
-        attributes:
-            customerConsents:
-                type: array

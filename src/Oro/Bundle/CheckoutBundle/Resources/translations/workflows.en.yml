@@ -10,6 +10,8 @@ oro:
         b2b_flow_checkout:
             label: Checkout
             step:
+                customer_consents:
+                    label: 'Agreements'
                 enter_billing_address:
                     label: 'Billing Information'
                 enter_shipping_address:
@@ -87,6 +89,8 @@ oro:
                     label: 'Email'
                 late_registration:
                     label: 'Late Registration Enabled'
+                customer_consents:
+                    label: 'Customer consents'
             transition:
                 __start__:
                     label: 'Start Checkout (System)'
@@ -117,6 +121,12 @@ oro:
                     button_label: 'Create Order'
                     button_title: ''
                     warning_message: ''
+                continue_to_billing_address:
+                    label: Continue
+                    state_token:
+                        label: ''
+                    customerConsents:
+                        label: 'Customer consents'
                 continue_to_shipping_address:
                     label: Continue
                     warning_message: ''
@@ -167,6 +177,9 @@ oro:
                             label: ''
                         additional_data:
                             label: ''
+                back_to_customer_consents:
+                    label: 'Edit Customer Consents'
+                    warning_message: ''
                 back_to_billing_address:
                     label: 'Edit Billing Information'
                     warning_message: ''
@@ -276,6 +289,8 @@ oro:
                     label: 'Email'
                 late_registration:
                     label: 'Late Registration Enabled'
+                customer_consents:
+                    label: 'Customer consents'
             transition:
                 __start__:
                     label: 'Start Checkout (System)'
