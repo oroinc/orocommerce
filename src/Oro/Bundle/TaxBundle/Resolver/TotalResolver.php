@@ -91,11 +91,7 @@ class TotalResolver implements ResolverInterface
     protected function adjustAmounts(AbstractResultElement $data, BigDecimal $adjustment)
     {
         $arrayCopy = $data->getArrayCopy();
-        if ($data instanceof TaxResultElement) {
-            $currentData = new TaxResultElement($arrayCopy);
-        } else {
-            $currentData = new ResultElement($arrayCopy);
-        }
+        $currentData = new ResultElement($arrayCopy);
 
         $keysToAdjust = [ResultElement::TAX_AMOUNT => $adjustment];
 
