@@ -34,17 +34,7 @@ Feature: Process order submission with PayPal Payments Pro and Authorize & Captu
     And I save and close form
     Then I should see "Integration saved" flash message
     And I should see PayPalPro in grid
-
-  Scenario: Create new Payment Rule for PayPal Payment Pro integration
-    Given I go to System/Payment Rules
-    And I click "Create Payment Rule"
-    And I check "Enabled"
-    And I fill in "Name" with "PayPalPro"
-    And I fill in "Sort Order" with "1"
-    And I select "PayPalPro" from "Method"
-    And I click "Add Method Button"
-    When I save and close form
-    Then I should see "Payment rule has been saved" flash message
+    And I create payment rule with "PayPalPro" payment method
 
   Scenario: Enable guest shopping list setting
     Given I go to System/ Configuration

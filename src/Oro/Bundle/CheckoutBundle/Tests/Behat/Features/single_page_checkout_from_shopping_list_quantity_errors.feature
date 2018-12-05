@@ -10,13 +10,9 @@ Feature: Single Page Checkout From Shopping List Quantity Errors
   As a buyer
   I want to start checkout from Shopping List view page and view quantity validation errors before submit order
 
-  Scenario: Enable Single Page Checkout Workflow
+  Scenario: Feature Background
     Given There is USD currency in the system configuration
-    And I login as administrator
-    And go to System/Workflows
-    When I click "Activate" on row "Single Page Checkout" in grid
-    And I click "Activate"
-    Then I should see "Workflow activated" flash message
+    And I activate "Single Page Checkout" workflow
 
   Scenario: Create order from Shopping List 1
     Given AmandaRCole@example.org customer user has Buyer role
