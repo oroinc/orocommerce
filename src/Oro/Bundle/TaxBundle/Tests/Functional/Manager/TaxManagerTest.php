@@ -48,6 +48,7 @@ class TaxManagerTest extends WebTestCase
      * @param string $reference
      * @param array $configuration
      * @param array $databaseBefore
+     * @param array $databaseBeforeSecondPart
      * @param array $expectedResult
      * @param array $databaseAfter
      */
@@ -56,6 +57,7 @@ class TaxManagerTest extends WebTestCase
         $reference,
         array $configuration,
         array $databaseBefore = [],
+        array $databaseBeforeSecondPart = [],
         array $expectedResult = [],
         array $databaseAfter = []
     ) {
@@ -63,7 +65,8 @@ class TaxManagerTest extends WebTestCase
             $this->configManager->set(sprintf('oro_tax.%s', $key), $value);
         }
 
-        $this->prepareDatabase($databaseBefore);
+        // $databaseBeforeSecondPart is used to avoid problems with relation identifiers during single fixture load
+        $this->prepareDatabase($databaseBefore, $databaseBeforeSecondPart);
         //As configuration loaded dynamically we need to clear cache provider to not to cache old config settings
         $this->getContainer()->get('oro_tax.taxation_provider.cache')->deleteAll();
 
@@ -89,6 +92,8 @@ class TaxManagerTest extends WebTestCase
     {
         $manager = $this->getContainer()->get('oro_tax.manager.tax_manager');
 
+        // Refresh the object to get the actual data. Without this move, we may get the order with empty line items.
+        self::getContainer()->get('doctrine')->getManagerForClass(get_class($object))->refresh($object);
         $this->compareResult($expectedResult, $manager->{$method}($object, true));
 
         // cache trigger
@@ -97,21 +102,18 @@ class TaxManagerTest extends WebTestCase
 
     /**
      * @param array $databaseBefore
+     * @param array $databaseBeforeSecondPart
      */
-    protected function prepareDatabase(array $databaseBefore)
+    protected function prepareDatabase(array $databaseBefore, array $databaseBeforeSecondPart)
     {
         // Disable taxation for load fixtures
         $previousTaxEnableState = $this->configManager->get('oro_tax.tax_enable');
         $this->configManager->set('oro_tax.tax_enable', false);
 
-        foreach ($databaseBefore as $class => $items) {
-            foreach ($items as $reference => $item) {
-                $items[$reference] = $this->getReferenceFromDoctrine($item);
-            }
-            $databaseBefore[$class] = $items;
+        $objectsData = [];
+        foreach ([$databaseBefore, $databaseBeforeSecondPart] as $database) {
+            $objectsData = array_merge($objectsData, $this->loadDatabase($database));
         }
-
-        $objectsData = \Nelmio\Alice\Fixtures::load($databaseBefore, $this->doctrine->getManager());
 
         // Restore previous taxation state after load fixtures
         $this->configManager->set('oro_tax.tax_enable', $previousTaxEnableState);
@@ -119,6 +121,24 @@ class TaxManagerTest extends WebTestCase
         foreach ($objectsData as $reference => $object) {
             $this->getReferenceRepository()->setReference($reference, $object);
         }
+    }
+
+    /**
+     * @param array $database
+     * @return array
+     */
+    protected function loadDatabase(array $database)
+    {
+        foreach ($database as $class => $items) {
+            foreach ($items as $reference => $item) {
+                $items[$reference] = $this->getReferenceFromDoctrine($item);
+            }
+            $database[$class] = $items;
+        }
+
+        $objectsData = \Nelmio\Alice\Fixtures::load($database, $this->doctrine->getManager());
+
+        return $objectsData;
     }
 
     /**
