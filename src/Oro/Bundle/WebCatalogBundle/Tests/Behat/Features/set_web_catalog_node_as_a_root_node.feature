@@ -1,7 +1,7 @@
 @ticket-BB-15579
 @fixture-OroWebCatalogBundle:web_catalog.yml
 @fixture-OroWebCatalogBundle:web_catalog_additional.yml
-Feature: Change navigation root
+Feature: Set web catalog node as a root node
   In order to change a root node for main menu
   As site administrator
   I need to be able to choose Web Catalog node as a root node for main menu
