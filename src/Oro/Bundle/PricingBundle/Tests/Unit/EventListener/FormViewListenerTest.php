@@ -3,7 +3,9 @@
 namespace Oro\Bundle\PricingBundle\Tests\Unit\EventListener;
 
 use Doctrine\ORM\EntityRepository;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
+use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\EventListener\FormViewListener;
 use Oro\Bundle\PricingBundle\Provider\PriceAttributePricesProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -27,9 +29,16 @@ class FormViewListenerTest extends FormViewListenerTestCase
     /** @var PriceAttributePricesProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $priceAttributePricesProvider;
 
+    /**
+     * @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $featureChecker;
+
     protected function setUp()
     {
         $this->priceAttributePricesProvider = $this->createMock(PriceAttributePricesProvider::class);
+        $this->environment = $this->createMock(\Twig_Environment::class);
+        $this->featureChecker = $this->createMock(FeatureChecker::class);
 
         parent::setUp();
 
@@ -41,6 +50,77 @@ class FormViewListenerTest extends FormViewListenerTestCase
             $this->priceAttributePricesProvider,
             $this->authorizationChecker
         );
+    }
+
+    protected function tearDown()
+    {
+        unset(
+            $this->listener,
+            $this->authorizationChecker,
+            $this->environment,
+            $this->priceAttributePricesProvider,
+            $this->featureChecker
+        );
+
+        parent::tearDown();
+    }
+
+    public function testOnProductEditFeatureDisabled()
+    {
+        $this->featureChecker->expects($this->once())
+            ->method('isFeatureEnabled')
+            ->with('feature1', null)
+            ->willReturn(false);
+
+        $this->listener->setFeatureChecker($this->featureChecker);
+        $this->listener->addFeature('feature1');
+
+        $this->environment->expects($this->never())->method('render');
+
+        $event = $this->createEvent($this->environment, new Product());
+        $this->listener->onProductEdit($event);
+    }
+
+    public function testOnProductViewFeatureDisabled()
+    {
+        /** @var \PHPUnit\Framework\MockObject\MockObject|EntityRepository $priceAttributePriceListRepository */
+        $priceAttributePriceListRepository = $this->createMock(EntityRepository::class);
+
+        $priceAttributePriceListRepository->expects($this->once())
+            ->method('findAll')->willReturn([]);
+
+        $this->doctrineHelper->expects($this->any())
+            ->method('getEntityRepository')
+            ->willReturnMap([
+                ['OroPricingBundle:PriceAttributePriceList', $priceAttributePriceListRepository],
+            ]);
+
+        $this->featureChecker->expects($this->once())
+            ->method('isFeatureEnabled')
+            ->with('feature1', null)
+            ->willReturn(false);
+
+        $this->listener->setFeatureChecker($this->featureChecker);
+        $this->listener->addFeature('feature1');
+
+        $this->authorizationChecker->expects($this->never())->method('isGranted');
+
+        $event = $this->createEvent($this->environment, new Product());
+        $this->listener->onProductView($event);
+    }
+
+    /**
+     * @expectedException \Oro\Component\Exception\UnexpectedTypeException
+     */
+    public function testOnProductViewException()
+    {
+        /** @var BeforeListRenderEvent|\PHPUnit\Framework\MockObject\MockObject $event */
+        $event = $this->createMock(BeforeListRenderEvent::class);
+        $event->expects($this->once())
+            ->method('getEntity')
+            ->willReturn(new ProductPrice());
+
+        $this->listener->onProductView($event);
     }
 
     public function testOnProductView()
@@ -68,7 +148,14 @@ class FormViewListenerTest extends FormViewListenerTestCase
             ->with('VIEW', 'entity:Oro\Bundle\PricingBundle\Entity\ProductPrice')
             ->willReturn(true);
 
+        $this->featureChecker->expects($this->once())
+            ->method('isFeatureEnabled')
+            ->with('feature1', null)
+            ->willReturn(true);
+
         $event = $this->createEvent($environment, $product);
+        $this->listener->setFeatureChecker($this->featureChecker);
+        $this->listener->addFeature('feature1');
         $this->listener->onProductView($event);
         $scrollData = $event->getScrollData()->getData();
 

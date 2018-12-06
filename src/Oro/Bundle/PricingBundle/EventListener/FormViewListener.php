@@ -4,6 +4,8 @@ namespace Oro\Bundle\PricingBundle\EventListener;
 
 use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceAttributePriceListRepository;
@@ -17,8 +19,10 @@ use Symfony\Component\Translation\TranslatorInterface;
 /**
  * Adds scroll blocks with product price and product price attributes data on view and edit pages
  */
-class FormViewListener
+class FormViewListener implements FeatureToggleableInterface
 {
+    use FeatureCheckerHolderTrait;
+
     const PRICE_ATTRIBUTES_BLOCK_NAME = 'price_attributes';
     const PRICING_BLOCK_NAME = 'prices';
 
@@ -82,6 +86,10 @@ class FormViewListener
      */
     public function onProductEdit(BeforeListRenderEvent $event)
     {
+        if (!$this->isFeaturesEnabled()) {
+            return;
+        }
+
         $template = $event->getEnvironment()->render(
             'OroPricingBundle:Product:prices_update.html.twig',
             ['form' => $event->getFormView()]
@@ -167,6 +175,10 @@ class FormViewListener
      */
     protected function addProductPricesViewBlock(BeforeListRenderEvent $event, Product $product)
     {
+        if (!$this->isFeaturesEnabled()) {
+            return;
+        }
+
         if (!$this->authorizationChecker->isGranted(
             'VIEW',
             sprintf('entity:%s', ProductPrice::class)

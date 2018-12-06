@@ -2,13 +2,12 @@
 
 namespace Oro\Bundle\PricingBundle\Layout\DataProvider;
 
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
-use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\PricingBundle\Formatter\ProductPriceFormatter;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
-use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
-use Oro\Bundle\PricingBundle\Sharding\ShardManager;
+use Oro\Bundle\PricingBundle\Model\ProductPriceInterface;
+use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaRequestHandler;
+use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
 
@@ -18,11 +17,6 @@ use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
  */
 class FrontendProductPricesProvider
 {
-    /**
-     * @var ShardManager
-     */
-    protected $shardManager;
-
     /**
      * @var array
      */
@@ -34,14 +28,9 @@ class FrontendProductPricesProvider
     protected $variantsPrices = [];
 
     /**
-     * @var DoctrineHelper
+     * @var ProductPriceScopeCriteriaRequestHandler
      */
-    protected $doctrineHelper;
-
-    /**
-     * @var PriceListRequestHandler
-     */
-    protected $priceListRequestHandler;
+    protected $scopeCriteriaRequestHandler;
 
     /**
      * @var ProductVariantAvailabilityProvider
@@ -54,27 +43,34 @@ class FrontendProductPricesProvider
     protected $userCurrencyManager;
 
     /**
-     * @param DoctrineHelper $doctrineHelper
-     * @param PriceListRequestHandler $priceListRequestHandler
+     * @var ProductPriceFormatter
+     */
+    protected $productPriceFormatter;
+
+    /**
+     * @var ProductPriceProviderInterface
+     */
+    protected $productPriceProvider;
+
+    /**
+     * @param ProductPriceScopeCriteriaRequestHandler $scopeCriteriaRequestHandler
      * @param ProductVariantAvailabilityProvider $productVariantAvailabilityProvider
      * @param UserCurrencyManager $userCurrencyManager
      * @param ProductPriceFormatter $productPriceFormatter
-     * @param ShardManager $shardManager
+     * @param ProductPriceProviderInterface $productPriceProvider
      */
     public function __construct(
-        DoctrineHelper $doctrineHelper,
-        PriceListRequestHandler $priceListRequestHandler,
+        ProductPriceScopeCriteriaRequestHandler $scopeCriteriaRequestHandler,
         ProductVariantAvailabilityProvider $productVariantAvailabilityProvider,
         UserCurrencyManager $userCurrencyManager,
         ProductPriceFormatter $productPriceFormatter,
-        ShardManager $shardManager
+        ProductPriceProviderInterface $productPriceProvider
     ) {
-        $this->doctrineHelper = $doctrineHelper;
         $this->productVariantAvailabilityProvider = $productVariantAvailabilityProvider;
-        $this->shardManager = $shardManager;
-        $this->priceListRequestHandler = $priceListRequestHandler;
+        $this->scopeCriteriaRequestHandler = $scopeCriteriaRequestHandler;
         $this->userCurrencyManager = $userCurrencyManager;
         $this->productPriceFormatter = $productPriceFormatter;
+        $this->productPriceProvider = $productPriceProvider;
     }
 
     /**
@@ -148,7 +144,7 @@ class FrontendProductPricesProvider
      */
     protected function getProductPrices(int $productId)
     {
-        return array_key_exists($productId, $this->productPrices) ? $this->productPrices[$productId] : [];
+        return $this->productPrices[$productId] ?? [];
     }
 
     /**
@@ -158,13 +154,13 @@ class FrontendProductPricesProvider
      */
     protected function getVariantsPrices(int $productId)
     {
-        return array_key_exists($productId, $this->variantsPrices) ? $this->variantsPrices[$productId] : [];
+        return $this->variantsPrices[$productId] ?? [];
     }
 
     /**
      * @param Product[] $products
      */
-    protected function prepareAndSetProductsPrices($products)
+    protected function prepareAndSetProductsPrices(array $products)
     {
         $products = array_filter($products, function (Product $product) {
             return !array_key_exists($product->getId(), $this->productPrices);
@@ -191,28 +187,10 @@ class FrontendProductPricesProvider
         }
         $products = array_values($uniqueProducts);
 
-        $priceList = $this->priceListRequestHandler->getPriceListByCustomer();
-        $productsIds = array_map(
-            function (Product $product) {
-                return $product->getId();
-            },
-            $products
-        );
-
-        /** @var ProductPriceRepository $priceRepository */
-        $priceRepository = $this->doctrineHelper->getEntityRepository('OroPricingBundle:CombinedProductPrice');
-        $prices = $priceRepository->findByPriceListIdAndProductIds(
-            $this->shardManager,
-            $priceList->getId(),
-            $productsIds,
-            true,
-            $this->userCurrencyManager->getUserCurrency(),
-            null,
-            [
-                'unit' => 'ASC',
-                'currency' => 'DESC',
-                'quantity' => 'ASC',
-            ]
+        $prices = $this->productPriceProvider->getPricesByScopeCriteriaAndProducts(
+            $this->scopeCriteriaRequestHandler->getPriceScopeCriteria(),
+            $products,
+            [$this->userCurrencyManager->getUserCurrency()]
         );
 
         $this->setProductsPrices($products, $prices);
@@ -228,20 +206,18 @@ class FrontendProductPricesProvider
 
     /**
      * @param Product[] $products
-     * @param ProductPrice[] $prices
+     * @param array $prices
      */
     protected function setProductsPrices($products, $prices)
     {
-        $productsPrices = [];
-        foreach ($prices as $price) {
-            $productsPrices[$price->getProduct()->getId()][$price->getProductUnitCode()][] = [
-                'quantity' => $price->getQuantity(),
-                'price' => $price->getPrice()->getValue(),
-                'currency' => $price->getPrice()->getCurrency(),
-                'unit'  => $price->getUnit()->getCode(),
-            ];
+        $productsPricesByUnit = [];
+        foreach ($prices as $productId => $productPrices) {
+            /** @var ProductPriceInterface $price */
+            foreach ($productPrices as $price) {
+                $productsPricesByUnit[$productId][$price->getUnit()->getCode()][] = $price;
+            }
         }
-        $productsPrices = $this->productPriceFormatter->formatProducts($productsPrices);
+        $formattedProductsPricesByUnit = $this->productPriceFormatter->formatProducts($productsPricesByUnit);
 
         foreach ($products as $product) {
             $unitPrecisions = $product->getUnitPrecisions();
@@ -251,9 +227,9 @@ class FrontendProductPricesProvider
             }
 
             $this->productPrices[$product->getId()] = array_filter(
-                isset($productsPrices[$product->getId()]) ? $productsPrices[$product->getId()] : [],
-                function ($price) use ($unitsToSell) {
-                    return !empty($unitsToSell[$price['unit']]);
+                $formattedProductsPricesByUnit[$product->getId()] ?? [],
+                function (array $formattedPriceData) use ($unitsToSell) {
+                    return !empty($unitsToSell[$formattedPriceData['unit']]);
                 }
             );
         }

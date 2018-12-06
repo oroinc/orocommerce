@@ -4,27 +4,32 @@ namespace Oro\Bundle\OrderBundle\EventListener\Order;
 
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Event\OrderEvent;
-use Oro\Bundle\PricingBundle\Model\PriceListTreeHandler;
-use Oro\Bundle\PricingBundle\Provider\ProductPriceProvider;
+use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaFactoryInterface;
+use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
 
+/**
+ * Adds tier price info for products from order with given currency
+ */
 class TierPriceEventListener
 {
     const TIER_PRICES_KEY = 'tierPrices';
 
-    /** @var ProductPriceProvider */
+    /** @var ProductPriceProviderInterface */
     protected $productPriceProvider;
 
-    /** @var PriceListTreeHandler */
-    protected $priceListTreeHandler;
+    /** @var ProductPriceScopeCriteriaFactoryInterface */
+    protected $priceScopeCriteriaFactory;
 
     /**
-     * @param ProductPriceProvider $productPriceProvider
-     * @param PriceListTreeHandler $priceListTreeHandler
+     * @param ProductPriceProviderInterface $productPriceProvider
+     * @param ProductPriceScopeCriteriaFactoryInterface $priceScopeCriteriaFactory
      */
-    public function __construct(ProductPriceProvider $productPriceProvider, PriceListTreeHandler $priceListTreeHandler)
-    {
+    public function __construct(
+        ProductPriceProviderInterface $productPriceProvider,
+        ProductPriceScopeCriteriaFactoryInterface $priceScopeCriteriaFactory
+    ) {
         $this->productPriceProvider = $productPriceProvider;
-        $this->priceListTreeHandler = $priceListTreeHandler;
+        $this->priceScopeCriteriaFactory = $priceScopeCriteriaFactory;
     }
 
     /**
@@ -34,27 +39,21 @@ class TierPriceEventListener
     {
         $order = $event->getOrder();
 
-        $productIds = $order->getLineItems()->map(
-            function (OrderLineItem $orderLineItem) {
-                $product = $orderLineItem->getProduct();
-
-                if (!$product) {
-                    return false;
-                }
-
-                return $product->getId();
+        $products = $order->getLineItems()->filter(
+            function (OrderLineItem $lineItem) {
+                return $lineItem->getProduct() !== null;
+            }
+        )->map(
+            function (OrderLineItem $lineItem) {
+                return $lineItem->getProduct();
             }
         );
 
-        $priceList = $this->priceListTreeHandler->getPriceList($order->getCustomer(), $order->getWebsite());
-        $prices = [];
-        if ($priceList) {
-            $prices = $this->productPriceProvider->getPriceByPriceListIdAndProductIds(
-                $priceList->getId(),
-                array_filter($productIds->toArray()),
-                $order->getCurrency()
-            );
-        }
+        $prices = $this->productPriceProvider->getPricesByScopeCriteriaAndProducts(
+            $this->priceScopeCriteriaFactory->createByContext($order),
+            $products->toArray(),
+            [$order->getCurrency()]
+        );
 
         $event->getData()->offsetSet(self::TIER_PRICES_KEY, $prices);
     }

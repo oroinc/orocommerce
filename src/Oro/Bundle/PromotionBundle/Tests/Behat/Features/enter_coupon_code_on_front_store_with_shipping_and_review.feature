@@ -3,6 +3,9 @@
 @fixture-OroCheckoutBundle:ShippingRuleForFlatRate2.yml
 @fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
 @fixture-OroPromotionBundle:promotions-with-coupons-on-shopping-list-page.yml
+@skip
+# Unskip after fix BB-13327
+
 Feature: Enter coupon code on Front Store with shipping and review
   In order to apply discount coupons on Front Store
   As a site user
@@ -34,8 +37,7 @@ Feature: Enter coupon code on Front Store with shipping and review
     Then I should see "Shipping Information" in the "Checkout Step Title" element
     When I click "Continue"
     Then I should see "Shipping Method" in the "Checkout Step Title" element
-    When I click "Flat Rate2 Shipping Method"
-    And I click "Continue"
+    When I check "Flat Rate 2" on the "Shipping Method" checkout step and press Continue
     Then I should see "Payment" in the "Checkout Step Title" element
     And I should see "Shipping Discount -$1.00" in the "Subtotals" element
 

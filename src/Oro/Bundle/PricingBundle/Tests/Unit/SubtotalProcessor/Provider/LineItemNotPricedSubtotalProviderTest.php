@@ -4,15 +4,16 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Provider;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
-use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
-use Oro\Bundle\PricingBundle\Model\PriceListTreeHandler;
-use Oro\Bundle\PricingBundle\Provider\ProductPriceProvider;
+use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaFactoryInterface;
+use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaInterface;
+use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
 use Oro\Bundle\PricingBundle\Provider\WebsiteCurrencyProvider;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemNotPricedSubtotalProvider;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\SubtotalProviderConstructorArguments;
 use Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Stub\EntityNotPricedStub;
+use Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Stub\EntityStub;
 use Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Stub\LineItemNotPricedStub;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
@@ -50,14 +51,14 @@ class LineItemNotPricedSubtotalProviderTest extends \PHPUnit\Framework\TestCase
     protected $roundingService;
 
     /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|ProductPriceProvider
+     * @var \PHPUnit\Framework\MockObject\MockObject|ProductPriceProviderInterface
      */
     protected $productPriceProvider;
 
     /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|PriceListTreeHandler
+     * @var \PHPUnit\Framework\MockObject\MockObject|ProductPriceScopeCriteriaFactoryInterface
      */
-    protected $priceListTreeHandler;
+    protected $priceScopeCriteriaFactory;
 
     protected function setUp()
     {
@@ -65,15 +66,15 @@ class LineItemNotPricedSubtotalProviderTest extends \PHPUnit\Framework\TestCase
         $this->websiteCurrencyProvider = $this->createMock(WebsiteCurrencyProvider::class);
         $this->translator = $this->createMock(TranslatorInterface::class);
         $this->roundingService = $this->createMock(RoundingServiceInterface::class);
-        $this->productPriceProvider = $this->createMock(ProductPriceProvider::class);
-        $this->priceListTreeHandler = $this->createMock(PriceListTreeHandler::class);
+        $this->productPriceProvider = $this->createMock(ProductPriceProviderInterface::class);
+        $this->priceScopeCriteriaFactory = $this->createMock(ProductPriceScopeCriteriaFactoryInterface::class);
 
         $this->provider = new LineItemNotPricedSubtotalProvider(
             $this->translator,
             $this->roundingService,
             $this->productPriceProvider,
-            $this->priceListTreeHandler,
-            new SubtotalProviderConstructorArguments($this->currencyManager, $this->websiteCurrencyProvider)
+            new SubtotalProviderConstructorArguments($this->currencyManager, $this->websiteCurrencyProvider),
+            $this->priceScopeCriteriaFactory
         );
     }
 
@@ -137,13 +138,11 @@ class LineItemNotPricedSubtotalProviderTest extends \PHPUnit\Framework\TestCase
             ->with($websiteId)
             ->willReturn($currency);
 
-        /** @var BasePriceList $priceList */
-        $priceList = $this->getEntity(BasePriceList::class, ['id' => 1]);
-
-        $this->priceListTreeHandler->expects($this->any())
-            ->method('getPriceList')
-            ->with($entity->getCustomer(), $website)
-            ->willReturn($priceList);
+        $searchScope = $this->createMock(ProductPriceScopeCriteriaInterface::class);
+        $this->priceScopeCriteriaFactory->expects($this->once())
+            ->method('createByContext')
+            ->with($entity)
+            ->willReturn($searchScope);
 
         $subtotal = $this->provider->getSubtotal($entity);
         $this->assertInstanceOf(Subtotal::class, $subtotal);
@@ -244,6 +243,11 @@ class LineItemNotPricedSubtotalProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertInternalType('float', $subtotal->getAmount());
         $this->assertEquals(0, $subtotal->getAmount());
         $this->assertFalse($subtotal->isVisible());
+    }
+
+    public function testGetSubtotalWithWrongEntity()
+    {
+        $this->assertNull($this->provider->getSubtotal(new EntityStub()));
     }
 
     public function testGetName()

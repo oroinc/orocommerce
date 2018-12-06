@@ -4,11 +4,9 @@
             <div class="control-label wrap">{{ form_label(form.value) }}</div>
             <div class="controls controls-discount-popup">
                 <div class="discount-popup">
-                    <div class="discount-amount-value">
+                    <div class="discount-amount-value input-append">
                         {{ form_widget(form.value, {attr: {'data-role': 'value'}}) }}
-                        <div class="discount-amount-type">
-                            {{ form_widget(form.type, {attr: {'data-role': 'type'}}) }}
-                        </div>
+                        {{ form_widget(form.type, {attr: {'data-role': 'type'}}) }}
                     </div>
 
                     <div class="discount-item-value-calculated">

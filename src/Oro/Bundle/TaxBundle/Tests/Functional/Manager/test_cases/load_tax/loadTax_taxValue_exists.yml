@@ -17,13 +17,13 @@ databaseBefore:
             adjustment: 0
             currency: USD
         result_element_2:
-             __construct: false
-             __set: offsetSet
-             tax: TAX1
-             rate: 0.1
-             taxableAmount: 789
-             taxAmount: 78.9
-             currency: USD
+            __construct: false
+            __set: offsetSet
+            tax: TAX1
+            rate: 0.1
+            taxableAmount: 789
+            taxAmount: 78.9
+            currency: USD
     'Oro\Bundle\TaxBundle\Model\Result':
         simple_result:
             __construct: false
@@ -31,6 +31,7 @@ databaseBefore:
             total: '@result_element_1'
             taxes:
                 - '@result_element_2'
+databaseBeforeSecondPart:
     'Oro\Bundle\TaxBundle\Entity\TaxValue':
         simple_order_tax_value:
             entityClass: 'Oro\Bundle\OrderBundle\Entity\Order'
@@ -42,7 +43,7 @@ expectedResult:
         includingTax: '867.9' # 789 + 78.9
         excludingTax: '789'
         taxAmount: '78.9' # 789 * 0.1
-        adjustment: ~
+        adjustment: '0'
         currency: 'USD'
     taxes:
         - { tax: 'TAX1', rate: '0.1', taxableAmount: '789', taxAmount: '78.9', currency: 'USD' }

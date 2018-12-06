@@ -165,10 +165,10 @@ class ShoppingListControllerTest extends WebTestCase
             'no price for selected unit' => [
                 'shoppingList' => LoadShoppingLists::SHOPPING_LIST_5,
                 'expectedLineItemPrice' => [
-                    'N/A',
+                    'Price for requested quantity is not available',
                     '$0.00',
-                    'N/A',
-                    'N/A',
+                    'Price for requested quantity is not available',
+                    'Price for requested quantity is not available',
                 ],
                 'atLeastOneAvailableProduct' => true,
             ],
@@ -204,7 +204,7 @@ class ShoppingListControllerTest extends WebTestCase
 
         $this->assertContains('Create Order', $crawler->html());
 
-        $this->assertLineItemPriceEquals('N/A', $crawler);
+        $this->assertLineItemPriceEquals('Price for requested quantity is not available', $crawler);
     }
 
     public function testQuickAdd()
@@ -419,10 +419,10 @@ class ShoppingListControllerTest extends WebTestCase
     protected function assertLineItemPriceEquals($expected, Crawler $crawler)
     {
         $expected = (array)$expected;
-        $prices = $crawler->filter('[data-name="price-value"]');
+        $prices = $crawler->filter('[data-name="prices-hint"]');
         $this->assertSameSize($expected, $prices);
         foreach ($prices as $value) {
-            $this->assertContains(trim($value->nodeValue), $expected);
+            $this->assertContains(trim($value->textContent), $expected);
         }
     }
 

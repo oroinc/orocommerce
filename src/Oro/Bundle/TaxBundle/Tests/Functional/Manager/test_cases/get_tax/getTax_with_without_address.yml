@@ -27,6 +27,7 @@ databaseBefore:
             order: '@simple_order'
             quantity: 6
             price: '@usd_price_5.55'
+databaseBeforeSecondPart: []
 expectedResult:
     total:
         includingTax: '113.25'
@@ -34,4 +35,33 @@ expectedResult:
         taxAmount: '0'
         adjustment: '0'
         currency: 'USD'
+    items:
+        -
+            row:
+                includingTax: '79.95' # 15.99 * 5
+                excludingTax: '79.95' # 15.99 * 5
+                taxAmount: '0'
+                adjustment: '0'
+                currency: 'USD'
+            unit:
+                includingTax: '15.99'
+                excludingTax: '15.99'
+                taxAmount: '0'
+                adjustment: '0'
+                currency: 'USD'
+            taxes: []
+        -
+            row:
+                includingTax: '33.3' # 33.3 * 6
+                excludingTax: '33.3' # 33.3 * 6
+                taxAmount: '0'
+                adjustment: '0'
+                currency: 'USD'
+            unit:
+                includingTax: '5.55'
+                excludingTax: '5.55'
+                taxAmount: '0'
+                adjustment: '0'
+                currency: 'USD'
+            taxes: []
     taxes: []

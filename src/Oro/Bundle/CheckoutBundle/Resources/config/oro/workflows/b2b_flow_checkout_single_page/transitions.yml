@@ -98,6 +98,17 @@ workflows:
                             '[name="paymentMethod"]':
                                 - 'checkout_order_summary_totals_wrapper'
                 form_options:
+                    form_init:
+                        - '@assign_value': [$payment_validate, true]
+                        - '@call_service_method':
+                            service: oro_payment.provider.payment_transaction
+                            method: getActiveValidatePaymentTransaction
+                            method_parameters: [$payment_method]
+                            attribute: $.result.validatePaymentTransaction
+                        - '@assign_value':
+                            conditions:
+                                '@not_empty': [$.result.validatePaymentTransaction]
+                            parameters: [$payment_validate, false]
                     attribute_fields:
                         billing_address:
                             form_type: Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressSelectType
@@ -147,3 +158,7 @@ workflows:
                             form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
                             options:
                                 data: $internal_state_token
+
+            purchase:
+                step_to: checkout
+                transition_definition: purchase_transition_definition

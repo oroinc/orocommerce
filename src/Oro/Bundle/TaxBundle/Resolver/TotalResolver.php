@@ -4,13 +4,15 @@ namespace Oro\Bundle\TaxBundle\Resolver;
 
 use Brick\Math\BigDecimal;
 use Brick\Math\Exception\NumberFormatException;
-use Oro\Bundle\TaxBundle\Model\AbstractResultElement;
 use Oro\Bundle\TaxBundle\Model\Result;
 use Oro\Bundle\TaxBundle\Model\ResultElement;
 use Oro\Bundle\TaxBundle\Model\Taxable;
 use Oro\Bundle\TaxBundle\Model\TaxResultElement;
 use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 
+/**
+ * Tax resolver that combines all previous calculated tax values and provides total result.
+ */
 class TotalResolver implements ResolverInterface
 {
     /** @var TaxationSettingsProvider */
@@ -62,20 +64,14 @@ class TotalResolver implements ResolverInterface
             $taxResults = $mergedTaxResults;
         }
 
-        if ($this->settingsProvider->isStartCalculationOnTotal()) {
+        if ($this->settingsProvider->isStartCalculationOnItem()) {
             try {
                 $adjustment = BigDecimal::of($data[ResultElement::ADJUSTMENT]);
                 $adjustedAmounts = $this->adjustAmounts($data, $adjustment);
-
-                $adjustTaxResults = [];
-                foreach ($taxResults as $key => $taxData) {
-                    $adjustTaxResults[$key] = $this->adjustAmounts($taxData, $adjustment);
-                }
             } catch (NumberFormatException $e) {
                 return;
             }
             $data = $adjustedAmounts;
-            $taxResults = $adjustTaxResults;
         }
 
         $data = $this->mergeShippingData($taxable, $data);
@@ -87,18 +83,14 @@ class TotalResolver implements ResolverInterface
     }
 
     /**
-     * @param AbstractResultElement $data
+     * @param ResultElement $data
      * @param BigDecimal $adjustment
-     * @return AbstractResultElement
+     * @return ResultElement
      */
-    protected function adjustAmounts(AbstractResultElement $data, BigDecimal $adjustment)
+    protected function adjustAmounts(ResultElement $data, BigDecimal $adjustment)
     {
         $arrayCopy = $data->getArrayCopy();
-        if ($data instanceof TaxResultElement) {
-            $currentData = new TaxResultElement($arrayCopy);
-        } else {
-            $currentData = new ResultElement($arrayCopy);
-        }
+        $currentData = new ResultElement($arrayCopy);
 
         $keysToAdjust = [ResultElement::TAX_AMOUNT => $adjustment];
 

@@ -59,7 +59,7 @@ class TotalResolverTest extends \PHPUnit\Framework\TestCase
      * @param ResultElement $shippingResult
      * @param ResultElement $expectedTotalResult
      * @param array $expectedTaxes
-     * @param bool $startOnTotal
+     * @param bool $startOnItem
      * @param bool $priceInclTax
      * @dataProvider resolveDataProvider
      */
@@ -68,13 +68,11 @@ class TotalResolverTest extends \PHPUnit\Framework\TestCase
         ResultElement $shippingResult = null,
         ResultElement $expectedTotalResult,
         array $expectedTaxes,
-        $startOnTotal = true,
+        $startOnItem = false,
         $priceInclTax = false
     ) {
         $this->settingsProvider->expects($this->any())->method('isStartCalculationOnItem')
-            ->willReturn(!$startOnTotal);
-        $this->settingsProvider->expects($this->any())->method('isStartCalculationOnTotal')
-            ->willReturn($startOnTotal);
+            ->willReturn($startOnItem);
         $this->settingsProvider->expects($this->any())->method('isProductPricesIncludeTax')
             ->willReturn($priceInclTax);
 
@@ -116,11 +114,11 @@ class TotalResolverTest extends \PHPUnit\Framework\TestCase
                     ],
                 ],
                 'shippingResult' => ResultElement::create('0', '0'),
-                'expectedTotalResult' => ResultElement::create('24.19', '19.99', '4.2', '0.0021'),
+                'expectedTotalResult' => ResultElement::create('24.1879', '19.99', '4.1979', '0.0021'),
                 'expectedTaxes' => [
-                    TaxResultElement::create('1', '0.08', '19.99', '1.6013'),
-                    TaxResultElement::create('2', '0.07', '19.99', '1.4014'),
-                    TaxResultElement::create('3', '0.06', '19.99', '1.2015'),
+                    TaxResultElement::create('1', '0.08', '19.99', '1.5992'),
+                    TaxResultElement::create('2', '0.07', '19.99', '1.3993'),
+                    TaxResultElement::create('3', '0.06', '19.99', '1.1994'),
                 ],
             ],
             'multiple items same tax' => [
@@ -145,8 +143,8 @@ class TotalResolverTest extends \PHPUnit\Framework\TestCase
                     ],
                 ],
                 'shippingResult' => ResultElement::create('0', '0'),
-                'expectedTotalResult' => ResultElement::create('71.25', '65.97', '5.28', '0.0024'),
-                'expectedTaxes' => [TaxResultElement::create('1', '0.08', '65.97', '5.2800')],
+                'expectedTotalResult' => ResultElement::create('71.2476', '65.97', '5.2776', '0.0024'),
+                'expectedTaxes' => [TaxResultElement::create('1', '0.08', '65.97', '5.2776')],
             ],
             'tax excluded, start from total' => [
                 'items' => [
@@ -174,16 +172,16 @@ class TotalResolverTest extends \PHPUnit\Framework\TestCase
                 ],
                 'shippingResult' => ResultElement::create('0', '0'),
                 'expectedTotalResult' => ResultElement::create(
-                    '75.1763', // 22.035 + 25.0686 + 28.0683 + 0.0013 + 0.0014 + 0.0017
+                    '75.1719', // 22.035 + 25.0686 + 28.0683
                     '65.46',
-                    '9.6929', // 2.535 + 3.0786 + 4.0749 + 0.0013 + 0.0014 + 0.0017
+                    '9.6885', // 2.535 + 3.0786 + 4.0749
                     '0.0044'
                 ),
                 'expectedTaxes' => [
-                    TaxResultElement::create('1', '0.08', '65.46', '5.0462'),
-                    TaxResultElement::create('2', '0.05', '19.50', '0.9794'),
-                    TaxResultElement::create('3', '0.06', '21.99', '1.3238'),
-                    TaxResultElement::create('4', '0.09', '23.97', '2.1617'),
+                    TaxResultElement::create('1', '0.08', '65.46', '5.0418'),
+                    TaxResultElement::create('2', '0.05', '19.50', '0.975'),
+                    TaxResultElement::create('3', '0.06', '21.99', '1.3194'),
+                    TaxResultElement::create('4', '0.09', '23.97', '2.1573'),
                 ],
             ],
             'tax excluded, start from item' => [
@@ -212,9 +210,9 @@ class TotalResolverTest extends \PHPUnit\Framework\TestCase
                 ],
                 'shippingResult' => ResultElement::create('0', '0'),
                 'expectedTotalResult' => ResultElement::create(
-                    '75.18', // 22.04 + 25.07 + 28.07
+                    '75.1844', // 22.04 + 25.07 + 28.07 + 0.0013 + 0.0014 + 0.0017
                     '65.46',
-                    '9.69',
+                    '9.6944',
                     '0.0044'
                 ),
                 'expectedTaxes' => [
@@ -223,7 +221,7 @@ class TotalResolverTest extends \PHPUnit\Framework\TestCase
                     TaxResultElement::create('3', '0.06', '21.99', '1.3194'),
                     TaxResultElement::create('4', '0.09', '23.97', '2.1573'),
                 ],
-                'startOnTotal' => false,
+                'startOnItem' => true,
             ],
             'tax included, start from total' => [
                 'items' => [
@@ -251,16 +249,16 @@ class TotalResolverTest extends \PHPUnit\Framework\TestCase
                 ],
                 'shippingResult' => ResultElement::create('0', '0'),
                 'expectedTotalResult' => ResultElement::create(
-                    '64.6410', // 19.5 + 21.99 + 23.15 + 0.0003 + 0.0037+ -0.003
+                    '64.64', // 19.5 + 21.99 + 23.15
                     '63.6990', // 19.2497 + 21.6863 + 22.7630
-                    '0.9420', // 0.2503 + 0.3037 + 0.3870 + 0.0003 + 0.0037+ -0.003
+                    '0.941', // 0.2503 + 0.3037 + 0.3870
                     '0.001'
                 ),
                 'expectedTaxes' => [
-                    TaxResultElement::create('1', '0.08', '63.6990', '4.9044'),
-                    TaxResultElement::create('2', '0.05', '19.2497', '0.9635'),
-                    TaxResultElement::create('3', '0.06', '21.6863', '1.3022'),
-                    TaxResultElement::create('4', '0.09', '22.7630', '2.0500'),
+                    TaxResultElement::create('1', '0.08', '63.6990', '4.9034'),
+                    TaxResultElement::create('2', '0.05', '19.2497', '0.9625'),
+                    TaxResultElement::create('3', '0.06', '21.6863', '1.3012'),
+                    TaxResultElement::create('4', '0.09', '22.7630', '2.0490'),
                 ],
             ],
             'tax included, start from item' => [
@@ -289,9 +287,9 @@ class TotalResolverTest extends \PHPUnit\Framework\TestCase
                 ],
                 'shippingResult' => ResultElement::create('0', '0'),
                 'expectedTotalResult' => ResultElement::create(
-                    '64.64', // 19.5 + 21.99 + 23.15
-                    '63.70', // 19.25 + 21.69 + 22.76
-                    '0.94',
+                    '64.641', // 19.5 + 21.99 + 23.15 + 0.0003 + 0.0037 + (-0.003)
+                    '63.7', // 19.25 + 21.69 + 22.76
+                    '0.941',
                     '0.001'
                 ),
                 'expectedTaxes' => [
@@ -300,9 +298,9 @@ class TotalResolverTest extends \PHPUnit\Framework\TestCase
                     TaxResultElement::create('3', '0.06', '21.6863', '1.3012'),
                     TaxResultElement::create('4', '0.09', '22.7630', '2.049'),
                 ],
-                'startOnTotal' => false,
+                'startOnItem' => true,
             ],
-            'tax included, start from total to adjust amount' => [
+            'tax included, start from item to adjust amounts' => [
                 'items' => [
                     [
                         Result::ROW => ResultElement::create('19.50', '19.2497', '0.2503', '0.0003'),
@@ -329,17 +327,17 @@ class TotalResolverTest extends \PHPUnit\Framework\TestCase
                 'shippingResult' => ResultElement::create('0', '0'),
                 'expectedTotalResult' => ResultElement::create(
                     '64.64',
-                    '63.6980', // 19.2497 + 21.6863 + 22.7630 - (0.0003 + 0.0037 + -0.003)
-                    '0.9420', // 0.2503 + 0.3037 + 0.3870 + 0.0003 + 0.0037+ -0.003
+                    '63.699', // 19.2497 + 21.6863 + 22.7630
+                    '0.941', // 0.2503 + 0.3037 + 0.3870
                     '0.0010'
                 ),
                 'expectedTaxes' => [
-                    TaxResultElement::create('1', '0.08', '63.6990', '4.9044'),
-                    TaxResultElement::create('2', '0.05', '19.2497', '0.9635'),
-                    TaxResultElement::create('3', '0.06', '21.6863', '1.3022'),
-                    TaxResultElement::create('4', '0.09', '22.7630', '2.0500'),
+                    TaxResultElement::create('1', '0.08', '63.6990', '4.9034'),
+                    TaxResultElement::create('2', '0.05', '19.2497', '0.9625'),
+                    TaxResultElement::create('3', '0.06', '21.6863', '1.3012'),
+                    TaxResultElement::create('4', '0.09', '22.7630', '2.049'),
                 ],
-                'startOnTotal' => true,
+                'startOnItem' => true,
                 'priceInclTax' => true,
             ],
             'failed' => [
@@ -369,8 +367,8 @@ class TotalResolverTest extends \PHPUnit\Framework\TestCase
                     ],
                 ],
                 'shippingResult' => ResultElement::create('0', '0'),
-                'expectedTotalResult' => ResultElement::create('21.59', '19.99', '1.6', '0.0008'),
-                'expectedTaxes' => [TaxResultElement::create('1', '0.08', '19.99', '1.6000')],
+                'expectedTotalResult' => ResultElement::create('21.5892', '19.99', '1.5992', '0.0008'),
+                'expectedTaxes' => [TaxResultElement::create('1', '0.08', '19.99', '1.5992')],
             ],
             'safe if applied tax failed' => [
                 'items' => [
@@ -388,8 +386,8 @@ class TotalResolverTest extends \PHPUnit\Framework\TestCase
                     ],
                 ],
                 'shippingResult' => ResultElement::create('0', '0'),
-                'expectedTotalResult' => ResultElement::create('21.59', '19.99', '1.6', '0.0008'),
-                'expectedTaxes' => [TaxResultElement::create('1', '0.08', '19.99', '1.6000')],
+                'expectedTotalResult' => ResultElement::create('21.5892', '19.99', '1.5992', '0.0008'),
+                'expectedTaxes' => [TaxResultElement::create('1', '0.08', '19.99', '1.5992')],
             ],
             'no shipping taxes' => [
                 'items' => [

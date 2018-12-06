@@ -18,5 +18,6 @@ class PriceListTriggerTest extends \PHPUnit\Framework\TestCase
         $trigger = new PriceListTrigger($data);
 
         $this->assertSame($data, $trigger->getProducts());
+        $this->assertEquals([1001], $trigger->getPriceListIds());
     }
 }

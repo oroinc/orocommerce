@@ -1,4 +1,4 @@
 assets:
     css:
-        'ororfp':
+        inputs:
             - 'bundles/ororfp/css/scss/main.scss'
