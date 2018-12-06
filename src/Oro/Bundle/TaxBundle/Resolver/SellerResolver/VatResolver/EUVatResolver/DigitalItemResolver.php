@@ -35,6 +35,8 @@ class DigitalItemResolver extends AbstractItemResolver
         $isBuyerFromEU = EuropeanUnionHelper::isEuropeanUnionCountry($taxable->getDestination()->getCountryIso2());
 
         if ($isBuyerFromEU && $taxable->getContextValue(Taxable::DIGITAL_PRODUCT)) {
+            $taxable->makeDestinationAddressTaxable();
+
             $taxRules = $this->matcher->match($buyerAddress, $this->getTaxCodes($taxable));
             $taxableAmount = BigDecimal::of($taxable->getPrice());
 

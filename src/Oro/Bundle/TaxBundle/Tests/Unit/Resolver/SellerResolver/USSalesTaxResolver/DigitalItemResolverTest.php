@@ -1,10 +1,11 @@
 <?php
 
-namespace Oro\Bundle\TaxBundle\Tests\Unit\Resolver\SellerResolver;
+namespace Oro\Bundle\TaxBundle\Tests\Unit\Resolver\SellerResolver\USSalesTaxResolver;
 
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
+use Oro\Bundle\TaxBundle\Model\Address;
 use Oro\Bundle\TaxBundle\Model\Taxable;
 use Oro\Bundle\TaxBundle\Resolver\SellerResolver\USSalesTaxResolver\DigitalItemResolver;
 
@@ -78,23 +79,78 @@ class DigitalItemResolverTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($taxable->getResult()->isResultLocked());
     }
 
-    public function testAddressNotChanged()
+    public function testDestinationAddressForDigitalProductsAndStateWithoutDigitalTax()
     {
         $taxable = new Taxable();
         $address = new OrderAddress();
         $address
             ->setCountry(new Country('US'))
-            ->setRegion((new Region('US-CA'))->setCode('CA'));
+            ->setRegion((new Region('US-FL'))->setCode('FL'));
+
+        $origin = new Address();
+        $origin
+            ->setCountry(new Country('US'));
 
         $taxable
             ->setPrice('19.99')
             ->setDestination($address)
+            ->setOrigin($origin)
             ->addContext(Taxable::DIGITAL_PRODUCT, true);
 
-        $taxable->makeDestinationAddressTaxable();
+        $taxable->makeOriginAddressTaxable();
 
         $this->resolver->resolve($taxable);
 
         $this->assertSame($address, $taxable->getTaxationAddress());
+    }
+
+    public function testOriginAddressForNonDigitalProductsAndStateWithoutDigitalTax()
+    {
+        $taxable = new Taxable();
+        $address = new OrderAddress();
+        $address
+            ->setCountry(new Country('US'))
+            ->setRegion((new Region('US-FL'))->setCode('FL'));
+
+        $origin = new Address();
+        $origin
+            ->setCountry(new Country('US'));
+
+        $taxable
+            ->setPrice('19.99')
+            ->setDestination($address)
+            ->setOrigin($origin)
+            ->addContext(Taxable::DIGITAL_PRODUCT, false);
+
+        $taxable->makeOriginAddressTaxable();
+
+        $this->resolver->resolve($taxable);
+
+        $this->assertSame($origin, $taxable->getTaxationAddress());
+    }
+
+    public function testOriginAddressForDigitalProductsAndStateWithDigitalTax()
+    {
+        $taxable = new Taxable();
+        $address = new OrderAddress();
+        $address
+            ->setCountry(new Country('US'))
+            ->setRegion((new Region('US-AL'))->setCode('AL'));
+
+        $origin = new Address();
+        $origin
+            ->setCountry(new Country('US'));
+
+        $taxable
+            ->setPrice('19.99')
+            ->setDestination($address)
+            ->setOrigin($origin)
+            ->addContext(Taxable::DIGITAL_PRODUCT, true);
+
+        $taxable->makeOriginAddressTaxable();
+
+        $this->resolver->resolve($taxable);
+
+        $this->assertSame($origin, $taxable->getTaxationAddress());
     }
 }
