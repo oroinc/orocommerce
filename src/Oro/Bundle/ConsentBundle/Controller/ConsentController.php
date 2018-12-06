@@ -4,7 +4,6 @@ namespace Oro\Bundle\ConsentBundle\Controller;
 
 use Oro\Bundle\ConsentBundle\Entity\Consent;
 use Oro\Bundle\ConsentBundle\Form\Type\ConsentType;
-use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\FormBundle\Model\UpdateHandlerFacade;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
@@ -133,24 +132,6 @@ class ConsentController extends Controller
     {
         return [
             'consent' => $consent,
-        ];
-    }
-
-    /**
-     * @Route("/customer_user_consents/{id}", name="oro_consent_customer_user_consents", requirements={"id"="\d+"})
-     * @Template
-     * @AclAncestor("oro_consent_view")
-     *
-     * @param CustomerUser $customerUser
-     * @return array
-     */
-    public function customerUserConsentsAction(CustomerUser $customerUser)
-    {
-        $consentsWithAcceptances = $this->get('oro_consent.provider.customer_user_consent_provider')
-            ->getCustomerUserConsentsWithAcceptances($customerUser);
-
-        return [
-            'consents' => $consentsWithAcceptances
         ];
     }
 }

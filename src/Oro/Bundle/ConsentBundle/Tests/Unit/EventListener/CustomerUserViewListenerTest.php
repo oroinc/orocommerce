@@ -3,6 +3,8 @@
 namespace Oro\Bundle\ConsentBundle\Tests\Unit\EventListener;
 
 use Doctrine\ORM\EntityRepository;
+use Oro\Bundle\CMSBundle\Entity\Page;
+use Oro\Bundle\ConsentBundle\Entity\Consent;
 use Oro\Bundle\ConsentBundle\EventListener\CustomerUserViewListener;
 use Oro\Bundle\ConsentBundle\Provider\CustomerUserConsentProvider;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
@@ -28,16 +30,14 @@ class CustomerUserViewListenerTest extends FormViewListenerTestCase
     private $environment;
 
     /** @var CustomerUserConsentProvider|\PHPUnit\Framework\MockObject\MockObject */
-    protected $customerUserConsentProvider;
+    private $customerUserConsentProvider;
 
     public function setUp()
     {
         parent::setUp();
 
         $this->requestStack = $this->createMock(RequestStack::class);
-
         $this->environment = $this->createMock(\Twig_Environment::class);
-
         $this->customerUserConsentProvider = $this->createMock(CustomerUserConsentProvider::class);
 
         $this->listener = new CustomerUserViewListener(
@@ -72,11 +72,21 @@ class CustomerUserViewListenerTest extends FormViewListenerTestCase
             ->with($customerUser)
             ->willReturn(true);
 
+        $consentsWithAcceptances = [
+            'consent' => $this->getEntity(Consent::class, ['id' => 1]),
+            'accepted' => true,
+            'landingPage' => $this->getEntity(Page::class, ['id' => 1])
+        ];
+        $this->customerUserConsentProvider->expects($this->once())
+            ->method('getCustomerUserConsentsWithAcceptances')
+            ->with($customerUser)
+            ->willReturn($consentsWithAcceptances);
+
         $this->environment->expects($this->once())
             ->method('render')
             ->with(
                 'OroConsentBundle:CustomerUser:consent_view.html.twig',
-                ['entity' => $customerUser]
+                ['consents' => $consentsWithAcceptances]
             )
             ->willReturn('template');
 

@@ -64,10 +64,13 @@ class CustomerUserViewListener
             if (!$this->customerUserConsentProvider->hasEnabledConsentsByCustomerUser($customerUser)) {
                 return;
             }
+            $consentsWithAcceptances = $this->customerUserConsentProvider->getCustomerUserConsentsWithAcceptances(
+                $customerUser
+            );
 
             $template = $event->getEnvironment()->render(
                 $this->getCustomerUserViewTemplate(),
-                ['entity' => $customerUser]
+                ['consents' => $consentsWithAcceptances]
             );
             $this->addConsentsBlock(
                 $event->getScrollData(),
