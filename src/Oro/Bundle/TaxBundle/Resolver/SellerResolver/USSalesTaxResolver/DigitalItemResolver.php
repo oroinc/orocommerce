@@ -41,6 +41,8 @@ class DigitalItemResolver implements ResolverInterface
         );
 
         if ($isStateWithoutDigitalTax && $taxable->getContextValue(Taxable::DIGITAL_PRODUCT)) {
+            $taxable->makeDestinationAddressTaxable();
+
             $unitPrice = BigDecimal::of($taxable->getPrice());
             $unitResultElement = ResultElement::create($unitPrice, $unitPrice, BigDecimal::zero(), BigDecimal::zero());
             $result->offsetSet(Result::UNIT, $unitResultElement);

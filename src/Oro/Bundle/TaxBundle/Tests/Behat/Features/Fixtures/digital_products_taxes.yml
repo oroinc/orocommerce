@@ -48,6 +48,11 @@ Oro\Bundle\TaxBundle\Entity\TaxRule:
     customerTaxCode: '@customer_tax_code_non_exempt'
     tax: '@taxable_items'
     taxJurisdiction: '@tax_jurisdiction'
+  digital_tax_rule_de:
+    productTaxCode: '@tax_code_digital_items'
+    customerTaxCode: '@customer_tax_code_non_exempt'
+    tax: '@taxable_items'
+    taxJurisdiction: '@tax_jurisdiction'
   digital_tax_rule_at:
     productTaxCode: '@tax_code_digital_items'
     customerTaxCode: '@customer_tax_code_non_exempt'

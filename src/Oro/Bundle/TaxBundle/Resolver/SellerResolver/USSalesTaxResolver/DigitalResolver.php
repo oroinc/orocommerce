@@ -47,14 +47,8 @@ class DigitalResolver implements ResolverInterface
             return;
         }
 
-        try {
-            $taxationAddress = $taxable->getTaxationAddress();
-            $taxable->makeDestinationAddressTaxable();
-            foreach ($taxable->getItems() as $taxableItem) {
-                $this->itemResolver->resolve($taxableItem);
-            }
-        } finally {
-            $taxable->setTaxationAddress($taxationAddress);
+        foreach ($taxable->getItems() as $taxableItem) {
+            $this->itemResolver->resolve($taxableItem);
         }
     }
 }

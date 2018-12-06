@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\TaxBundle\Tests\Unit\Resolver\SellerResolver;
+namespace Oro\Bundle\TaxBundle\Tests\Unit\Resolver\SellerResolver\USSalesTaxResolver;
 
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
@@ -72,7 +72,7 @@ class DigitalResolverTest extends \PHPUnit\Framework\TestCase
         $this->resolver->resolve($taxable);
     }
 
-    public function testTaxableAddressRestoredBackFromDestinationAddress()
+    public function testTaxableAddresIsOrigin()
     {
         $address = new OrderAddress();
         $address
@@ -89,34 +89,6 @@ class DigitalResolverTest extends \PHPUnit\Framework\TestCase
         $taxable->setDestination($address);
         $taxable->setOrigin($origin);
         $taxable->makeOriginAddressTaxable();
-
-        $this->resolver->resolve($taxable);
-
-        $this->assertSame($origin, $taxable->getTaxationAddress());
-    }
-
-    public function testTaxableAddressRestoredBackFromDestinationAddressWhenResolveFails()
-    {
-        $address = new OrderAddress();
-        $address
-            ->setCountry(new Country('US'))
-            ->setRegion((new Region('US-CA'))->setCode('CA'));
-
-        $origin = new Address();
-        $origin
-            ->setCountry(new Country('DE'));
-
-        $taxable = new Taxable();
-        $taxableItem = new Taxable();
-        $taxable->addItem($taxableItem);
-        $taxable->setDestination($address);
-        $taxable->setOrigin($origin);
-        $taxable->makeOriginAddressTaxable();
-
-        $this->itemResolver->expects($this->once())
-            ->method('resolve')
-            ->willThrowException(new \RuntimeException());
-        $this->expectException(\RuntimeException::class);
 
         $this->resolver->resolve($taxable);
 
