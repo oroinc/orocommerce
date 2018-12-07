@@ -1139,7 +1139,6 @@ services:
         arguments:
             - '@oro_entity.doctrine_helper'
             - '@oro_pricing.providers.price_attribute_prices'
-            - '@translator'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.product-price-attributes-grid, method: onBuildBefore }
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.product-price-attributes-grid, method: onBuildAfter }
