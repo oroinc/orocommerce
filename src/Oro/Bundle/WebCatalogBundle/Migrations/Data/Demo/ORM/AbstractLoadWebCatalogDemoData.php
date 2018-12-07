@@ -15,6 +15,7 @@ use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 use Oro\Bundle\WebCatalogBundle\Async\Topics;
 use Oro\Bundle\WebCatalogBundle\ContentVariantType\SystemPageContentVariantType;
+use Oro\Bundle\WebCatalogBundle\DependencyInjection\OroWebCatalogExtension;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Oro\Bundle\WebCatalogBundle\Entity\Repository\ContentNodeRepository;
@@ -97,6 +98,13 @@ abstract class AbstractLoadWebCatalogDemoData extends AbstractFixture implements
 
             if (isset($contentNode['children'])) {
                 $this->loadContentNodes($manager, $webCatalog, $contentNode['children'], $node);
+            }
+
+            if (isset($contentNode['isNavigationRoot'])) {
+                $configManager = $this->container->get('oro_config.global');
+                $configManager->set(OroWebCatalogExtension::ALIAS . '.navigation_root', $node->getId());
+
+                $configManager->flush();
             }
         }
     }
