@@ -4,66 +4,46 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Model\Builder;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
-use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use Oro\Bundle\ProductBundle\Model\Builder\QuickAddRowInputParser;
+use Oro\Bundle\ProductBundle\Provider\ProductUnitsProvider;
 
 class QuickAddRowInputParserTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var ManagerRegistry
-     */
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
     private $registry;
 
-    /**
-     * @var ProductUnitRepository|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $productUnitRepository;
+    /** @var ProductUnitsProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $productUnitsProvider;
 
-    /**
-     * @var ProductRepository|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ProductRepository|\PHPUnit\Framework\MockObject\MockObject */
     private $productRepository;
 
-    /**
-     * @var QuickAddRowInputParser
-     */
+    /** @var QuickAddRowInputParser */
     private $quickAddRowInputParser;
 
     public function setUp()
     {
         $this->registry = $this->createMock(ManagerRegistry::class);
-
-        $this->productRepository = $this->getMockBuilder(ProductRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->productUnitRepository = $this->getMockBuilder(ProductUnitRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->productRepository = $this->createMock(ProductRepository::class);
+        $this->productUnitsProvider = $this->createMock(ProductUnitsProvider::class);
 
         $this->registry->method('getRepository')->willReturnMap([
             [Product::class, null, $this->productRepository],
-            [ProductUnit::class, null, $this->productUnitRepository]
         ]);
-
-        $this->productUnitRepository->method('findOneBy')
-            ->willReturnCallback(function ($where) {
-                if (isset($where['code'])) {
-                    $unit = new ProductUnit();
-                    $unit->setCode($where['code']);
-
-                    return $unit;
-                }
-
-                return null;
-            });
 
         $this->productRepository->method('getPrimaryUnitPrecisionCode')
             ->willReturn('item');
 
-        $this->quickAddRowInputParser = new QuickAddRowInputParser($this->registry);
+        $this->productUnitsProvider->method('getAvailableProductUnits')
+            ->willReturn(
+                [
+                    'Element' => 'item',
+                    'Stunde' => 'hour',
+                ]
+            );
+
+        $this->quickAddRowInputParser = new QuickAddRowInputParser($this->registry, $this->productUnitsProvider);
     }
 
     /**
@@ -163,7 +143,31 @@ class QuickAddRowInputParserTest extends \PHPUnit\Framework\TestCase
                     '6',
                     'item'
                 ]
-            ]
+            ],
+            [
+                'input' => [
+                    ' SKU5  ',
+                    ' 4.5',
+                    'Stunde '
+                ],
+                'expected' => [
+                    'SKU5',
+                    '4.5',
+                    'hour'
+                ]
+            ],
+            [
+                'input' => [
+                    ' SKU5  ',
+                    ' 4.5',
+                    'ELEMENT '
+                ],
+                'expected' => [
+                    'SKU5',
+                    '4.5',
+                    'item'
+                ]
+            ],
         ];
     }
 }

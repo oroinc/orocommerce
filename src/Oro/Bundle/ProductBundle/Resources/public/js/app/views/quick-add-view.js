@@ -158,8 +158,13 @@ define(function(require) {
             this.clearElementsCache();
             var rows = this.getElement('rows');
             return _.find(rows, function(row) {
+                var $unit = $(row).find(this.elements.unit);
+                var unitValue = $unit.val().toLowerCase();
+                var unitLabel = $unit.find('option:selected').text().toLowerCase();
+                var rowDataUnit = rowData.unit ? rowData.unit.toLowerCase() : '';
+
                 return $(row).find(this.elements.sku).val() === rowData.sku &&
-                    $(row).find(this.elements.unit).val() === rowData.unit;
+                    _.contains([unitLabel, unitValue], rowDataUnit);
             }, this);
         },
 
