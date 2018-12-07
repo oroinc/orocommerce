@@ -2,6 +2,10 @@
 
 namespace Oro\Bundle\SaleBundle\Form\EventListener;
 
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\PricingBundle\Model\ProductPriceInterface;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Provider\QuoteProductPriceProvider;
 use Oro\Bundle\SaleBundle\Quote\Pricing\QuotePriceComparator;
@@ -24,14 +28,22 @@ class QuoteFormSubscriber implements EventSubscriberInterface
     /** @var TranslatorInterface */
     protected $translator;
 
+    /** @var DoctrineHelper */
+    protected $doctrineHelper;
+
     /**
      * @param QuoteProductPriceProvider $provider
      * @param TranslatorInterface $translator
+     * @param DoctrineHelper      $doctrineHelper
      */
-    public function __construct(QuoteProductPriceProvider $provider, TranslatorInterface $translator)
-    {
+    public function __construct(
+        QuoteProductPriceProvider $provider,
+        TranslatorInterface $translator,
+        DoctrineHelper $doctrineHelper
+    ) {
         $this->provider = $provider;
         $this->translator = $translator;
+        $this->doctrineHelper = $doctrineHelper;
     }
 
     /**
@@ -77,7 +89,6 @@ class QuoteFormSubscriber implements EventSubscriberInterface
         $allowFreeForm = $this->isAllowedAddFreeFormItems($config);
 
         $priceComparator = new QuotePriceComparator($quote);
-        $tierPrices = $this->getTierPrices($quote, $quoteProducts);
 
         foreach ($quoteProducts as $productData) {
             $allowChanges = $allowPricesOverride && ($productData['product'] || $allowFreeForm);
@@ -105,6 +116,7 @@ class QuoteFormSubscriber implements EventSubscriberInterface
                         break;
                     }
 
+                    $tierPrices = $this->getTierPrices($quote, $quoteProducts);
                     // check that overridden price is tier
                     if (!$this->isTierPrice($productData['product'], $productOfferData, $tierPrices)) {
                         $this->addFormError($form, 'oro.sale.quote.form.error.price_override');
@@ -125,7 +137,13 @@ class QuoteFormSubscriber implements EventSubscriberInterface
     {
         $productIds = array_filter(array_column($quoteProducts, 'product'));
 
-        return $this->provider->getTierPricesForProducts($quote, $productIds);
+        /** @var ProductRepository $productRepository */
+        $productRepository = $this->doctrineHelper->getEntityRepositoryForClass(Product::class);
+        $products = $productRepository->findBy([
+            'id' => $productIds
+        ]);
+
+        return $this->provider->getTierPricesForProducts($quote, $products);
     }
 
     /**
@@ -137,14 +155,15 @@ class QuoteFormSubscriber implements EventSubscriberInterface
      */
     protected function isTierPrice($productId, array $quoteProductOfferData, array $tierPrices)
     {
+        /** @var ProductPriceInterface[] $productTierPrices */
         $productTierPrices = array_reverse($tierPrices[$productId] ?? []);
         foreach ($productTierPrices as $tierPrice) {
-            if ((float) $quoteProductOfferData['quantity'] < (float) $tierPrice['quantity']) {
+            if ((float) $quoteProductOfferData['quantity'] < (float) $tierPrice->getQuantity()) {
                 continue;
             }
-            if ($quoteProductOfferData['productUnit'] === $tierPrice['unit'] &&
-                $quoteProductOfferData['price']['currency'] === $tierPrice['currency'] &&
-                (float) $quoteProductOfferData['price']['value'] === (float) $tierPrice['price']
+            if ($quoteProductOfferData['productUnit'] === $tierPrice->getUnit()->getCode() &&
+                $quoteProductOfferData['price']['currency'] === $tierPrice->getPrice()->getCurrency() &&
+                (float) $quoteProductOfferData['price']['value'] === (float) $tierPrice->getPrice()->getValue()
             ) {
                 return true;
             }

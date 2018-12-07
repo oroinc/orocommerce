@@ -503,9 +503,9 @@ services:
     oro_checkout.event_listener.has_price_in_shopping_line_items:
         class: 'Oro\Bundle\CheckoutBundle\EventListener\HasPriceInShoppingLineItemsListener'
         arguments:
-            - '@oro_pricing.provider.combined_product_price'
+            - '@oro_pricing.provider.product_price'
             - '@oro_pricing.user_currency_manager'
-            - '@oro_pricing.model.price_list_request_handler'
+            - '@oro_pricing.model.product_price_scope_criteria_request_handler'
         tags:
             - { name: kernel.event_listener, event: extendable_condition.start_checkout, method: onStartCheckoutConditionCheck }
 
@@ -608,9 +608,11 @@ services:
         arguments:
             - '@translator'
             - '@oro_currency.rounding.price_rounding_service'
-            - '@oro_pricing.provider.combined_product_price'
+            - '@oro_pricing.provider.product_price'
             - '@oro_pricing.model.price_list_tree_handler'
             - '@oro_pricing.subtotal_processor.provider.arguments'
+            - '@oro_featuretoggle.checker.feature_checker'
+            - '@oro_pricing.model.product_price_scope_criteria_factory'
         tags:
             - { name: oro_pricing.subtotal_provider, priority: 0 }
 

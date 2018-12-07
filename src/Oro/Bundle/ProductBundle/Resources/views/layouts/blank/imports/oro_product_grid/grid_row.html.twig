@@ -172,10 +172,6 @@
     </div>
 {% endblock %}
 
-{% block __oro_product_grid__product_price_container_widget %}
-    {{ block("product_price_container") }}
-{% endblock %}
-
 {% block _product_datagrid_cell_matrixForm_widget %}
     {% if matrixFormType == 'inline' %}
         {% do block|merge_context({

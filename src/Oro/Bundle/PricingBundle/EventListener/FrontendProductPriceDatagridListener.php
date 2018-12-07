@@ -5,13 +5,16 @@ namespace Oro\Bundle\PricingBundle\EventListener;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\DataGridBundle\Extension\Formatter\Property\PropertyInterface;
-use Oro\Bundle\PricingBundle\Datagrid\Provider\CombinedProductPriceProviderInterface;
-use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
+use Oro\Bundle\PricingBundle\Datagrid\Provider\ProductPriceProvider;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
-use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
+use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaRequestHandler;
 use Oro\Bundle\SearchBundle\Datagrid\Event\SearchResultAfter;
 use Symfony\Component\Translation\TranslatorInterface;
 
+/**
+ * Adds price info to records
+ * Modifies data grid settings by adding minimal price column, filter and sorter and prices property
+ */
 class FrontendProductPriceDatagridListener
 {
     const COLUMN_PRICES = 'prices';
@@ -19,9 +22,9 @@ class FrontendProductPriceDatagridListener
     const COLUMN_MINIMAL_PRICE_SORT = 'minimal_price_sort';
 
     /**
-     * @var PriceListRequestHandler
+     * @var ProductPriceScopeCriteriaRequestHandler
      */
-    private $priceListRequestHandler;
+    private $scopeCriteriaRequestHandler;
 
     /**
      * @var UserCurrencyManager
@@ -29,12 +32,7 @@ class FrontendProductPriceDatagridListener
     private $currencyManager;
 
     /**
-     * @var CombinedPriceList
-     */
-    private $priceList;
-
-    /**
-     * @var CombinedProductPriceProviderInterface
+     * @var ProductPriceProvider
      */
     private $combinedProductPriceProvider;
 
@@ -44,21 +42,47 @@ class FrontendProductPriceDatagridListener
     private $translator;
 
     /**
-     * @param PriceListRequestHandler $priceListRequestHandler
+     * @var string
+     */
+    private $priceColumnNameFilter = WebsiteSearchProductPriceIndexerListener::MP_ALIAS;
+
+    /**
+     * @var string
+     */
+    private $priceColumnNameSorter = 'minimal_price_CPL_ID_CURRENCY';
+
+    /**
+     * @param ProductPriceScopeCriteriaRequestHandler $scopeCriteriaRequestHandler
      * @param UserCurrencyManager $currencyManager
-     * @param CombinedProductPriceProviderInterface $combinedProductPriceProvider
+     * @param ProductPriceProvider $combinedProductPriceProvider
      * @param TranslatorInterface $translator
      */
     public function __construct(
-        PriceListRequestHandler $priceListRequestHandler,
+        ProductPriceScopeCriteriaRequestHandler $scopeCriteriaRequestHandler,
         UserCurrencyManager $currencyManager,
-        CombinedProductPriceProviderInterface $combinedProductPriceProvider,
+        ProductPriceProvider $combinedProductPriceProvider,
         TranslatorInterface $translator
     ) {
-        $this->priceListRequestHandler = $priceListRequestHandler;
+        $this->scopeCriteriaRequestHandler = $scopeCriteriaRequestHandler;
         $this->currencyManager = $currencyManager;
         $this->combinedProductPriceProvider = $combinedProductPriceProvider;
         $this->translator = $translator;
+    }
+
+    /**
+     * @param string $columnName
+     */
+    public function setPriceColumnNameForFilter($columnName)
+    {
+        $this->priceColumnNameFilter = $columnName;
+    }
+
+    /**
+     * @param string $columnName
+     */
+    public function setPriceColumnNameForSorter($columnName)
+    {
+        $this->priceColumnNameSorter = $columnName;
     }
 
     /**
@@ -68,17 +92,15 @@ class FrontendProductPriceDatagridListener
     {
         /** @var ResultRecord[] $records */
         $records = $event->getRecords();
-        if (count($records) === 0) {
+        if (\count($records) === 0) {
             return;
         }
 
-        $priceList = $this->getPriceList();
-        if (!$priceList) {
-            return;
-        }
-
-        $resultProductPrices = $this->combinedProductPriceProvider
-            ->getCombinedPricesForProductsByPriceList($records, $priceList, $this->currencyManager->getUserCurrency());
+        $resultProductPrices = $this->combinedProductPriceProvider->getCombinedPricesForProductsByPriceList(
+            $records,
+            $this->scopeCriteriaRequestHandler->getPriceScopeCriteria(),
+            $this->currencyManager->getUserCurrency()
+        );
 
         foreach ($records as $record) {
             $productId = $record->getValue('id');
@@ -125,7 +147,7 @@ class FrontendProductPriceDatagridListener
             [
                 self::COLUMN_MINIMAL_PRICE => [
                     'type' => 'frontend-product-price',
-                    'data_name' => WebsiteSearchProductPriceIndexerListener::MP_ALIAS,
+                    'data_name' => $this->priceColumnNameFilter
                 ],
             ]
         );
@@ -141,19 +163,7 @@ class FrontendProductPriceDatagridListener
 
         $config->addSorter(
             self::COLUMN_MINIMAL_PRICE_SORT,
-            ['data_name' => 'minimal_price_CPL_ID_CURRENCY', 'type' => 'decimal']
+            ['data_name' => $this->priceColumnNameSorter, 'type' => 'decimal']
         );
-    }
-
-    /**
-     * @return CombinedPriceList
-     */
-    private function getPriceList()
-    {
-        if (!$this->priceList) {
-            $this->priceList = $this->priceListRequestHandler->getPriceListByCustomer();
-        }
-
-        return $this->priceList;
     }
 }

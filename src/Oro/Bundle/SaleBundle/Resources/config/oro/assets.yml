@@ -1,4 +1,4 @@
 assets:
     css:
-        'orosale':
+        inputs:
             - 'bundles/orosale/css/scss/main.scss'

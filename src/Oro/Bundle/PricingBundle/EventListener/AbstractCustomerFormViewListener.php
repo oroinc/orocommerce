@@ -3,14 +3,22 @@
 namespace Oro\Bundle\PricingBundle\EventListener;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
 use Oro\Bundle\PricingBundle\Entity\BasePriceListRelation;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Translation\TranslatorInterface;
 
-abstract class AbstractCustomerFormViewListener
+/**
+ * Adds scroll blocks with price list data on edit page
+ * Adds method to add price list data on view
+ */
+abstract class AbstractCustomerFormViewListener implements FeatureToggleableInterface
 {
+    use FeatureCheckerHolderTrait;
+
     /**
      * @var TranslatorInterface
      */
@@ -59,6 +67,10 @@ abstract class AbstractCustomerFormViewListener
      */
     public function onEntityEdit(BeforeListRenderEvent $event)
     {
+        if (!$this->isFeaturesEnabled()) {
+            return;
+        }
+
         $template = $event->getEnvironment()->render(
             $this->updateTemplate,
             ['form' => $event->getFormView()]

@@ -221,8 +221,6 @@ services:
         class: 'Oro\Bundle\ShoppingListBundle\Layout\DataProvider\FrontendShoppingListProductsUnitsProvider'
         arguments:
             - "@doctrine"
-            - "@oro_pricing.model.price_list_request_handler"
-            - '@oro_pricing.user_currency_manager'
         tags:
             - { name: layout.data_provider, alias: oro_shopping_list_products_units }
 

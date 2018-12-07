@@ -8,18 +8,34 @@ use Oro\Bundle\PricingBundle\Entity\PriceListCustomerGroupFallback;
 use Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup;
 use Oro\Bundle\PricingBundle\EventListener\CustomerGroupFormViewListener;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
-use Symfony\Component\HttpFoundation\RequestStack;
 
 class CustomerGroupFormViewListenerTest extends AbstractCustomerFormViewListenerTest
 {
+    public function testOnCustomerGroupViewFeatureDisabled()
+    {
+        $this->featureChecker->expects($this->once())
+            ->method('isFeatureEnabled')
+            ->with('feature1', null)
+            ->willReturn(false);
+
+        $listener = $this->getListener();
+        $listener->setFeatureChecker($this->featureChecker);
+        $listener->addFeature('feature1');
+
+        $this->requestStack->expects($this->never())
+            ->method('getCurrentRequest');
+
+        $event = $this->createEvent($this->env);
+        $listener->onCustomerGroupView($event);
+    }
+
     /**
-     * @param RequestStack $requestStack
      * @return CustomerGroupFormViewListener
      */
-    protected function getListener(RequestStack $requestStack)
+    protected function getListener()
     {
         return new CustomerGroupFormViewListener(
-            $requestStack,
+            $this->requestStack,
             $this->translator,
             $this->doctrineHelper,
             $this->websiteProvider
@@ -82,9 +98,16 @@ class CustomerGroupFormViewListenerTest extends AbstractCustomerFormViewListener
     /**
      * {@inheritdoc}
      */
-    protected function processEvent(RequestStack $requestStack, BeforeListRenderEvent $event)
+    protected function processEvent(BeforeListRenderEvent $event)
     {
-        $listener = $this->getListener($requestStack);
+        $this->featureChecker->expects($this->once())
+            ->method('isFeatureEnabled')
+            ->with('feature1', null)
+            ->willReturn(true);
+
+        $listener = $this->getListener();
+        $listener->setFeatureChecker($this->featureChecker);
+        $listener->addFeature('feature1');
         $listener->onCustomerGroupView($event);
     }
 

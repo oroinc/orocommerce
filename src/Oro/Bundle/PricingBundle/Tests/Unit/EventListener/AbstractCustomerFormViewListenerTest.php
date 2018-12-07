@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\EventListener;
 
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\PricingBundle\Entity\BasePriceListRelation;
 use Oro\Bundle\PricingBundle\EventListener\AbstractCustomerFormViewListener;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
@@ -21,6 +22,21 @@ abstract class AbstractCustomerFormViewListenerTest extends FormViewListenerTest
     protected $websiteProvider;
 
     /**
+     * @var RequestStack|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $requestStack;
+
+    /**
+     * @var \Twig_Environment|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $env;
+
+    /**
+     * @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $featureChecker;
+
+    /**
      * @return BasePriceListRelation[]|\PHPUnit\Framework\MockObject\MockObject[]
      */
     abstract protected function setRepositoryExpectations();
@@ -31,16 +47,14 @@ abstract class AbstractCustomerFormViewListenerTest extends FormViewListenerTest
     abstract protected function getFallbackLabel();
 
     /**
-     * @param RequestStack $requestStack
      * @return AbstractCustomerFormViewListener
      */
-    abstract protected function getListener(RequestStack $requestStack);
+    abstract protected function getListener();
 
     /**
-     * @param RequestStack $requestStack
      * @param BeforeListRenderEvent $event
      */
-    abstract protected function processEvent(RequestStack $requestStack, BeforeListRenderEvent $event);
+    abstract protected function processEvent(BeforeListRenderEvent $event);
 
     /**
      * {@inheritdoc}
@@ -54,27 +68,57 @@ abstract class AbstractCustomerFormViewListenerTest extends FormViewListenerTest
             ->getMock();
         $website = new Website();
         $this->websiteProvider->method('getWebsites')->willReturn([$website]);
+
+        $this->requestStack = $this->createMock(RequestStack::class);
+        $this->env = $this->createMock(\Twig_Environment::class);
+        $this->featureChecker = $this->createMock(FeatureChecker::class);
     }
 
     protected function tearDown()
     {
-        unset($this->websiteProvider);
+        unset($this->websiteProvider, $this->requestStack, $this->env, $this->featureChecker);
 
         parent::tearDown();
     }
 
+    public function testSetUpdateTemplate()
+    {
+        $listener = $this->getListener();
+
+        $listener->setUpdateTemplate("test");
+
+        $reflection = new \ReflectionObject($listener);
+        $relationClass = $reflection->getProperty('updateTemplate');
+        $relationClass->setAccessible(true);
+
+        $this->assertSame("test", $relationClass->getValue($listener));
+    }
+
+    public function testOnEntityEditFeatureDisabled()
+    {
+        $this->featureChecker->expects($this->once())
+            ->method('isFeatureEnabled')
+            ->with('feature1', null)
+            ->willReturn(false);
+
+        $listener = $this->getListener();
+        $listener->setFeatureChecker($this->featureChecker);
+        $listener->addFeature('feature1');
+
+        $this->env->expects($this->never())
+            ->method('render');
+
+        $event = $this->createEvent($this->env);
+        $listener->onEntityEdit($event);
+    }
+
     public function testOnViewNoRequest()
     {
-        /** @var RequestStack|\PHPUnit\Framework\MockObject\MockObject $requestStack */
-        $requestStack = $this->createMock('Symfony\Component\HttpFoundation\RequestStack');
-
         $this->doctrineHelper->expects($this->never())
             ->method('getEntityReference');
 
-        /** @var \PHPUnit\Framework\MockObject\MockObject|\Twig_Environment $env */
-        $env = $this->createMock('\Twig_Environment');
-        $event = $this->createEvent($env);
-        $this->processEvent($requestStack, $event);
+        $event = $this->createEvent($this->env);
+        $this->processEvent($event);
     }
 
     public function testOnCustomerView()
@@ -83,13 +127,12 @@ abstract class AbstractCustomerFormViewListenerTest extends FormViewListenerTest
         $templateHtml = 'template_html';
 
         $request = new Request(['id' => $customerId]);
-        $requestStack = $this->getRequestStack($request);
+
+        $this->requestStack->expects($this->once())->method('getCurrentRequest')->willReturn($request);
 
         $priceLists = $this->setRepositoryExpectations();
 
-        /** @var \PHPUnit\Framework\MockObject\MockObject|\Twig_Environment $environment */
-        $environment = $this->createMock('\Twig_Environment');
-        $environment->expects($this->once())
+        $this->env->expects($this->once())
             ->method('render')
             ->with(
                 'OroPricingBundle:Customer:price_list_view.html.twig',
@@ -99,9 +142,9 @@ abstract class AbstractCustomerFormViewListenerTest extends FormViewListenerTest
                 ]
             )
             ->willReturn($templateHtml);
-        $event = $this->createEvent($environment);
+        $event = $this->createEvent($this->env);
 
-        $this->processEvent($requestStack, $event);
+        $this->processEvent($event);
         $scrollData = $event->getScrollData()->getData();
 
         $this->assertEquals(
@@ -115,17 +158,21 @@ abstract class AbstractCustomerFormViewListenerTest extends FormViewListenerTest
         $formView = new FormView();
         $templateHtml = 'template_html';
 
-        /** @var RequestStack|\PHPUnit\Framework\MockObject\MockObject $requestStack */
-        $requestStack = $this->createMock('Symfony\Component\HttpFoundation\RequestStack');
-
-        /** @var \PHPUnit\Framework\MockObject\MockObject|\Twig_Environment $environment */
-        $environment = $this->createMock('\Twig_Environment');
-        $environment->expects($this->once())
+        $this->env->expects($this->once())
             ->method('render')
             ->with('OroPricingBundle:Customer:price_list_update.html.twig', ['form' => $formView])
             ->willReturn($templateHtml);
-        $event = $this->createEvent($environment, $formView);
-        $this->getListener($requestStack)->onEntityEdit($event);
+
+        $this->featureChecker->expects($this->once())
+            ->method('isFeatureEnabled')
+            ->with('feature1', null)
+            ->willReturn(true);
+
+        $event = $this->createEvent($this->env, $formView);
+        $listener = $this->getListener();
+        $listener->setFeatureChecker($this->featureChecker);
+        $listener->addFeature('feature1');
+        $listener->onEntityEdit($event);
         $scrollData = $event->getScrollData()->getData();
 
         $this->assertEquals(
@@ -153,17 +200,5 @@ abstract class AbstractCustomerFormViewListenerTest extends FormViewListenerTest
             ]
         ];
         return new BeforeListRenderEvent($environment, new ScrollData($defaultData), new \stdClass(), $formView);
-    }
-
-    /**
-     * @param Request $request
-     * @return \PHPUnit\Framework\MockObject\MockObject|RequestStack
-     */
-    protected function getRequestStack(Request $request)
-    {
-        /** @var RequestStack|\PHPUnit\Framework\MockObject\MockObject $requestStack */
-        $requestStack = $this->createMock('Symfony\Component\HttpFoundation\RequestStack');
-        $requestStack->expects($this->once())->method('getCurrentRequest')->willReturn($request);
-        return $requestStack;
     }
 }

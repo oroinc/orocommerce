@@ -317,6 +317,11 @@ oro:
                     button_label: ''
                     button_title: ''
                     warning_message: ''
+                purchase:
+                    label: 'Purchase'
+                    button_label: ''
+                    button_title: ''
+                    warning_message: ''
                 finish_checkout:
                     label: 'Finish checkout'
                     warning_message: ''

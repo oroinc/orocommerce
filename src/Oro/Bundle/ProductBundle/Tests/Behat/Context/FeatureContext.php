@@ -30,6 +30,7 @@ use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
 use Oro\Bundle\WarehouseBundle\Entity\Warehouse;
 use Oro\Bundle\WarehouseBundle\SystemConfig\WarehouseConfig;
+use Symfony\Component\DomCrawler\Crawler;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -1043,9 +1044,10 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         self::assertTrue($block->isValid(), sprintf('Embedded block "%s" was not found', $blockName));
 
         foreach ($table as $row) {
-            $needle = current($row);
-            $productItem = $this->findElementContains('EmbeddedProduct', $needle, $block);
-            self::assertTrue($productItem->isIsset(), sprintf('Product "%s" was not found', $needle));
+            foreach ($row as $rowName => $rowValue) {
+                $productItem = $this->findElementContains('EmbeddedProduct', $rowValue, $block);
+                self::assertTrue($productItem->isIsset(), sprintf('Product "%s" was not found', $rowValue));
+            }
         }
     }
 
@@ -1064,9 +1066,10 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         self::assertTrue($block->isValid(), sprintf('Embedded block "%s" was not found', $blockName));
 
         foreach ($table as $row) {
-            $needle = current($row);
-            $productItem = $this->findElementContains('EmbeddedProduct', $needle, $block);
-            self::assertFalse($productItem->isIsset(), sprintf('Product "%s" should not be present', $needle));
+            foreach ($row as $rowName => $rowValue) {
+                $productItem = $this->findElementContains('EmbeddedProduct', $rowValue, $block);
+                self::assertFalse($productItem->isIsset(), sprintf('Product "%s" should not be present', $rowValue));
+            }
         }
     }
 
@@ -1337,6 +1340,82 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         $form
             ->find('css', sprintf('[name="oro_product[%s]"]', $field))
             ->setValue($value);
+    }
+
+    /**
+     * Assert product additional units
+     * Example: And I should see following product images:
+     *            | cat1.jpg | 1 | 1 | 1 |
+     *            | cat2.jpg |   |   | 1 |
+     *
+     * @param TableNode $table
+     *
+     * @Then /^(?:|I )should see following product images:$/
+     */
+    public function iShouldSeeFollowingImages(TableNode $table)
+    {
+        $element = $this->getPage()->find('xpath', '//div[contains(@class, "image-collection")]/table/tbody');
+
+        self::assertNotNull($element, 'Image table not found on the page.');
+
+        $crawler = new Crawler($element->getHtml());
+        $results = [];
+        $crawler->filter('tr')->each(function (Crawler $tr) use (&$results) {
+            $row = [];
+            $tr->filter('td')->each(function (Crawler $td) use (&$row) {
+                if ($td->filter('i.fa-check-square-o')->count()) {
+                    $row[] = 1;
+                } else {
+                    $row[] = trim($td->filter('td')->first()->text());
+                }
+            });
+
+            $results[] = $row;
+        });
+
+        foreach ($table->getRows() as $key => $row) {
+            foreach ($row as &$value) {
+                $value = trim($value);
+            }
+
+            self::assertEquals($results[$key], $row, sprintf('Result "%s" not found', $table->getRowAsString($key)));
+        }
+    }
+
+    /**
+     * Assert product additional units
+     * Example: And I should see following product additional units:
+     *            | item | 1 | 5  | Yes |
+     *            | set  | 5 | 10 | No  |
+     *
+     * @param TableNode $table
+     *
+     * @Then /^(?:|I )should see following product additional units:$/
+     */
+    public function iShouldSeeFollowingAdditionalUnits(TableNode $table)
+    {
+        $element = $this->getPage()->find('xpath', '//table[contains(@class, "unit-table")]/tbody');
+
+        self::assertNotNull($element, 'Additional units table not found on the page.');
+
+        $crawler = new Crawler($element->getHtml());
+        $results = [];
+        $crawler->filter('tr')->each(function (Crawler $tr) use (&$results) {
+            $row = [];
+            $tr->filter('td')->each(function (Crawler $td) use (&$row) {
+                $row[] = trim($td->filter('td')->first()->text());
+            });
+
+            $results[] = $row;
+        });
+
+        foreach ($table->getRows() as $key => $row) {
+            foreach ($row as &$value) {
+                $value = trim($value);
+            }
+
+            self::assertEquals($results[$key], $row, sprintf('Result "%s" not found', $table->getRowAsString($key)));
+        }
     }
 
     /**

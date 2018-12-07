@@ -112,8 +112,8 @@ class WebCatalogCacheProcessorTest extends \PHPUnit\Framework\TestCase
 
         /** @var WebCatalog $webCatalog */
         $webCatalog = $this->getEntity(WebCatalog::class, ['id' => 1]);
-        /** @var ContentNode $rootNode */
-        $rootNode = $this->getEntity(ContentNode::class, ['id' => 2]);
+        /** @var ContentNode $node */
+        $node = $this->getEntity(ContentNode::class, ['id' => 2]);
 
         /** @var WebCatalogRepository|\PHPUnit\Framework\MockObject\MockObject $webCatalogRepository */
         $webCatalogRepository = $this->getMockBuilder(WebCatalogRepository::class)
@@ -124,7 +124,7 @@ class WebCatalogCacheProcessorTest extends \PHPUnit\Framework\TestCase
             ->with(['id' => '1'])
             ->willReturn([$webCatalog]);
 
-        $this->assertProcessCalled($webCatalogRepository, $webCatalog, $rootNode);
+        $this->assertProcessCalled($webCatalogRepository, $webCatalog, $node);
 
         $this->assertEquals(WebCatalogCacheProcessor::ACK, $this->processor->process($message, $session));
     }
@@ -137,7 +137,6 @@ class WebCatalogCacheProcessorTest extends \PHPUnit\Framework\TestCase
 
         /** @var WebCatalog $webCatalog */
         $webCatalog = $this->getEntity(WebCatalog::class, ['id' => 1]);
-        $rootNode = null;
 
         /** @var WebCatalogRepository|\PHPUnit\Framework\MockObject\MockObject $webCatalogRepository */
         $webCatalogRepository = $this->getMockBuilder(WebCatalogRepository::class)
@@ -148,7 +147,7 @@ class WebCatalogCacheProcessorTest extends \PHPUnit\Framework\TestCase
             ->with(['id' => '1'])
             ->willReturn([$webCatalog]);
 
-        $this->assertRepositoryCalls($webCatalogRepository, $webCatalog, $rootNode);
+        $this->assertRepositoryCalls($webCatalogRepository, $webCatalog);
 
         /** @var Job|\PHPUnit\Framework\MockObject\MockObject $job */
         $this->assertUniqueJobExecuted();
@@ -190,14 +189,14 @@ class WebCatalogCacheProcessorTest extends \PHPUnit\Framework\TestCase
     /**
      * @param WebCatalogRepository|\PHPUnit\Framework\MockObject\MockObject $webCatalogRepository
      * @param WebCatalog $webCatalog
-     * @param ContentNode $rootNode
+     * @param ContentNode $node
      */
     private function assertProcessCalled(
         $webCatalogRepository,
         WebCatalog $webCatalog,
-        ContentNode $rootNode
+        ContentNode $node
     ) {
-        $this->assertRepositoryCalls($webCatalogRepository, $webCatalog, $rootNode);
+        $this->assertRepositoryCalls($webCatalogRepository, $webCatalog, [$node]);
 
         $this->logger->expects($this->never())
             ->method($this->anything());
@@ -215,7 +214,7 @@ class WebCatalogCacheProcessorTest extends \PHPUnit\Framework\TestCase
             ->with(
                 Topics::CALCULATE_CONTENT_NODE_TREE_BY_SCOPE,
                 [
-                    'contentNode' => $rootNode->getId(),
+                    'contentNode' => $node->getId(),
                     'scope' => $scope->getId(),
                     'jobId' => 123
                 ]
@@ -245,18 +244,18 @@ class WebCatalogCacheProcessorTest extends \PHPUnit\Framework\TestCase
     /**
      * @param WebCatalogRepository|\PHPUnit\Framework\MockObject\MockObject $webCatalogRepository
      * @param WebCatalog $webCatalog
-     * @param ContentNode|null $rootNode
+     * @param ContentNode[]|[] $nodes
      */
-    private function assertRepositoryCalls($webCatalogRepository, WebCatalog $webCatalog, ContentNode $rootNode = null)
+    private function assertRepositoryCalls($webCatalogRepository, WebCatalog $webCatalog, array $nodes = [])
     {
         /** @var ContentNodeRepository|\PHPUnit\Framework\MockObject\MockObject $contentNodeRepo */
         $contentNodeRepo = $this->getMockBuilder(ContentNodeRepository::class)
             ->disableOriginalConstructor()
             ->getMock();
         $contentNodeRepo->expects($this->any())
-            ->method('getRootNodeByWebCatalog')
-            ->with($webCatalog)
-            ->willReturn($rootNode);
+            ->method('findBy')
+            ->with(['webCatalog' => $webCatalog])
+            ->willReturn($nodes);
 
         $em = $this->createMock(EntityManagerInterface::class);
         $em->expects($this->any())

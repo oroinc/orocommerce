@@ -1,4 +1,4 @@
 assets:
     css:
-        'oropricing':
+        inputs:
             - 'bundles/oropricing/css/scss/main.scss'

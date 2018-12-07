@@ -20,16 +20,20 @@ layout:
                         not_use_for:
                             root__products: ~
                             root__new-arrivals: ~
+                            root__navigation-root__products: ~
+                            root__navigation-root__new-arrivals: ~
                 web_catalog_menu_first_level_item_head:
                     blockType: menu_item
                     options:
                         use_for:
                             root__new-arrivals: ~
+                            root__navigation-root__new-arrivals: ~
                 web_catalog_menu_first_level_item_mega:
                     blockType: menu_item
                     options:
                         use_for:
                             root__products: ~
+                            root__navigation-root__products: ~
                 web_catalog_menu_second_level_item_simple:
                     blockType: menu_item
                 web_catalog_menu_second_level_item_head:
@@ -49,7 +53,7 @@ layout:
                     web_catalog_menu_list:
                         web_catalog_menu:
                             web_catalog_menu_first_level_item_simple:
-                                web_catalog_menu_second_level_item_simple:
+                                web_catalog_menu_second_level_item_simple: ~
                             web_catalog_menu_first_level_item_head:
                                 web_catalog_menu_second_level_item_head: ~
                                 web_catalog_menu_second_level_sale_head: ~

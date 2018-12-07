@@ -1,7 +1,9 @@
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
 @fixture-OroCheckoutBundle:Payment.yml
-@fixture-OroTaxBundle:ProductsAndShoppingListsAndTaxesFixture.yml
+@fixture-OroTaxBundle:taxes_should_work_with_more_than_two_decimal_places.yml
+@ticket-BB-15155
+
 Feature: Taxes should work with more than two decimal places
   In order to be able to make purchases
   As a buyer
@@ -17,6 +19,12 @@ Feature: Taxes should work with more than two decimal places
     And I fill form with:
       | Code | Wrong_tax_rate |
       | Rate | 0.12345        |
+    And I save form
+    Then I should see validation errors:
+      | Rate | Tax rate can't have more than 4 decimal places |
+    When I fill form with:
+      | Code | Wrong_tax_rate |
+      | Rate | 0.000001       |
     And I save form
     Then I should see validation errors:
       | Rate | Tax rate can't have more than 4 decimal places |

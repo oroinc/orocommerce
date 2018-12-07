@@ -242,8 +242,6 @@ class PayPalCreditCardPaymentMethod implements PaymentMethodInterface
      */
     protected function secureTokenResponse(PaymentTransaction $paymentTransaction)
     {
-        $isSuccessful = $paymentTransaction->isSuccessful();
-
         // Mark successful false for generate token transaction
         // PayPal callback should update transaction
         $paymentTransaction->setSuccessful(false);
@@ -252,7 +250,9 @@ class PayPalCreditCardPaymentMethod implements PaymentMethodInterface
 
         $response = array_intersect_key($paymentTransaction->getResponse(), array_flip($keys));
 
-        return array_merge($response, ['formAction' => $this->gateway->getFormAction(), 'successful' => $isSuccessful]);
+        $response['formAction'] = $this->gateway->getFormAction();
+
+        return $response;
     }
 
     /**

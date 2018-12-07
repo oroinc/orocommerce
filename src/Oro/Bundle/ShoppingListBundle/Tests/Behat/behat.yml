@@ -56,6 +56,10 @@ oro_behat_extension:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector: '[data-role="start-editing"]'
 
+    Shopping List Label Input:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector: '#title-inline-editable .inline-view-editor__input-wrap > input'
+
     Shopping List Line Items Table:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Table
       selector: '#shopping_list_view_container_content > div.cart-table .shopping-list-line-items'

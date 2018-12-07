@@ -4,7 +4,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Functional\EventListener;
 
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomers;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserAddressACLData;
-use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
+use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaRequestHandler;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Event\QuickAddRowsCollectionReadyEvent;
@@ -31,7 +31,7 @@ class QuickAddCollectionPriceProviderTest extends WebTestCase
         $this->updateUserSecurityToken(self::AUTH_USER);
 
         $request->query->set(
-            PriceListRequestHandler::ACCOUNT_ID_KEY,
+            ProductPriceScopeCriteriaRequestHandler::CUSTOMER_ID_KEY,
             $this->getReference(LoadCustomers::CUSTOMER_LEVEL_1_1)->getId()
         );
 
