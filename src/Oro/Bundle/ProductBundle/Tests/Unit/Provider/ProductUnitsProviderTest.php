@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Provider;
 
+use Doctrine\Common\Cache\ArrayCache;
+use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 
@@ -13,73 +15,58 @@ use Oro\Component\Testing\Unit\EntityTrait;
 
 class ProductUnitsProviderTest extends \PHPUnit_Framework_TestCase
 {
+    private const UNITS = [
+        [
+            'code' => 'each',
+            'precision' => 1,
+        ],
+        [
+            'code' => 'kg',
+            'precision' => 3,
+        ],
+        [
+            'code' => 'hour',
+            'precision' => 0,
+        ],
+        [
+            'code' => 'item',
+            'precision' => 0,
+        ],
+        [
+            'code' => 'set',
+            'precision' => 2,
+        ],
+        [
+            'code' => 'piece',
+            'precision' => 1,
+        ],
+    ];
+
     use EntityTrait;
 
-    /**
-     * @var ProductUnitsProvider
-     */
-    protected $productUnitsProvider;
+    /** @var ProductUnitsProvider */
+    private $productUnitsProvider;
 
-    /**
-     * @var ProductUnitLabelFormatter|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $formatter;
+    /** @var ProductUnitLabelFormatter|\PHPUnit_Framework_MockObject_MockObject */
+    private $formatter;
 
-    public function setUp()
+    /** @var CacheProvider */
+    private $cache;
+
+    /** @var ProductUnitRepository|\PHPUnit_Framework_MockObject_MockObject */
+    private $repository;
+
+    protected function setUp()
     {
-        $units = [
-            [
-                'code' => 'each',
-                'precision' => 1,
-            ],
-            [
-                'code' => 'kg',
-                'precision' => 3,
-            ],
-            [
-                'code' => 'hour',
-                'precision' => 0,
-            ],
-            [
-                'code' => 'item',
-                'precision' => 0,
-            ],
-            [
-                'code' => 'set',
-                'precision' => 2,
-            ],
-            [
-                'code' => 'piece',
-                'precision' => 1,
-            ],
-        ];
-        $productUnits = [];
-
-        foreach ($units as $unit) {
-            $productUnits[] = $this->getEntity(
-                ProductUnit::class,
-                [
-                    'code' => $unit['code'],
-                    'defaultPrecision' => $unit['precision']
-                ]
-            );
-        }
-
-        $productUnitRepository = $this
-            ->getMockBuilder(ProductUnitRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $productUnitRepository->expects($this->once())
-            ->method('getAllUnits')
-            ->will($this->returnValue($productUnits));
+        $this->repository = $this->createMock(ProductUnitRepository::class);
 
         $manager = $this->createMock(ObjectManager::class);
         $manager->expects($this->once())
             ->method('getRepository')
             ->with(ProductUnit::class)
-            ->willReturn($productUnitRepository);
+            ->willReturn($this->repository);
 
+        /** @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject $managerRegistry */
         $managerRegistry = $this->createMock(ManagerRegistry::class);
         $managerRegistry->expects($this->any())
             ->method('getManagerForClass')
@@ -91,11 +78,23 @@ class ProductUnitsProviderTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $this->productUnitsProvider = new ProductUnitsProvider($managerRegistry, $this->formatter);
+        $this->productUnitsProvider->setCache(new ArrayCache());
     }
 
     public function testGetAvailableProductUnits()
     {
-        $this->formatter->expects($this->exactly(6))
+        $this->repository->expects($this->once())
+            ->method('getAllUnitCodes')
+            ->willReturn(
+                array_map(
+                    function (array $item) {
+                        return $item['code'];
+                    },
+                    self::UNITS
+                )
+            );
+
+        $this->formatter->expects($this->exactly(12))
             ->method('format')
             ->will($this->returnValueMap([
                 ['each', false, false, 'oro.product_unit.each.label.full'],
@@ -117,10 +116,29 @@ class ProductUnitsProviderTest extends \PHPUnit_Framework_TestCase
         ];
 
         $this->assertEquals($expected, $this->productUnitsProvider->getAvailableProductUnits());
+        // check cache
+        $this->assertEquals($expected, $this->productUnitsProvider->getAvailableProductUnits());
     }
 
     public function testGetAvailableProductUnitsWithPrecision()
     {
+        $this->repository->expects($this->once())
+            ->method('getAllUnits')
+            ->willReturn(
+                array_map(
+                    function (array $unit) {
+                        return $this->getEntity(
+                            ProductUnit::class,
+                            [
+                                'code' => $unit['code'],
+                                'defaultPrecision' => $unit['precision']
+                            ]
+                        );
+                    },
+                    self::UNITS
+                )
+            );
+
         $expected = [
             'each' => 1,
             'kg' => 3,
@@ -130,6 +148,8 @@ class ProductUnitsProviderTest extends \PHPUnit_Framework_TestCase
             'piece' => 1,
         ];
 
+        $this->assertEquals($expected, $this->productUnitsProvider->getAvailableProductUnitsWithPrecision());
+        // check cache
         $this->assertEquals($expected, $this->productUnitsProvider->getAvailableProductUnitsWithPrecision());
     }
 }
