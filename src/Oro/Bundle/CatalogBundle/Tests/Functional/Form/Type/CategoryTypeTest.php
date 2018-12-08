@@ -126,9 +126,19 @@ class CategoryTypeTest extends WebTestCase
         foreach ($localizations as $localization) {
             $this->assertLocalization($localization, $category);
         }
+
         // assert related products
-        $this->assertEquals($appendedProducts, $form->get('appendProducts')->getData());
-        $this->assertEquals($removedProducts, $form->get('removeProducts')->getData());
+        $appendProductsData = $form->get('appendProducts')->getData();
+        $this->assertCount(count($appendedProducts), $appendProductsData);
+        foreach ($appendedProducts as $appendedProduct) {
+            $this->assertContains($appendedProduct, $appendProductsData);
+        }
+
+        $removeProductsData = $form->get('removeProducts')->getData();
+        $this->assertCount(count($removedProducts), $removeProductsData);
+        foreach ($removedProducts as $removedProduct) {
+            $this->assertContains($removedProduct, $removeProductsData);
+        }
     }
 
     public function testInventoryThresholdMandatoryField()

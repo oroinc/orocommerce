@@ -6,6 +6,9 @@ use Oro\Bundle\TaxBundle\Matcher\EuropeanUnionHelper;
 use Oro\Bundle\TaxBundle\Model\Taxable;
 use Oro\Bundle\TaxBundle\Resolver\ResolverInterface;
 
+/**
+ * Resolver to switch taxation address to a customer's one for digital product
+ */
 class DigitalResolver implements ResolverInterface
 {
     /**
@@ -41,12 +44,12 @@ class DigitalResolver implements ResolverInterface
 
         $isBuyerFromEU = EuropeanUnionHelper::isEuropeanUnionCountry($buyerAddress->getCountryIso2());
 
-        if ($isBuyerFromEU) {
-            foreach ($taxable->getItems() as $item) {
-                $this->resolver->resolve($item);
-            }
+        if (!$isBuyerFromEU) {
+            return;
+        }
 
-            $taxable->makeDestinationAddressTaxable();
+        foreach ($taxable->getItems() as $item) {
+            $this->resolver->resolve($item);
         }
     }
 }

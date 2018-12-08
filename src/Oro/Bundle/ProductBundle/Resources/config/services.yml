@@ -312,11 +312,18 @@ services:
     oro_product.provider.product_type_provider:
         class: 'Oro\Bundle\ProductBundle\Provider\ProductTypeProvider'
 
+    oro_product.product_unit.cache:
+        public: false
+        parent: oro.cache.abstract
+        calls:
+            - [ setNamespace, ['oro_product_unit'] ]
+
     oro_product.provider.product_units_provider:
         class: 'Oro\Bundle\ProductBundle\Provider\ProductUnitsProvider'
         arguments:
-            - "@doctrine"
-            - "@oro_product.formatter.product_unit_label"
+            - '@doctrine'
+            - '@oro_product.formatter.product_unit_label'
+            - '@oro_product.product_unit.cache'
 
     oro_product.service.single_unit_mode:
         class: 'Oro\Bundle\ProductBundle\Service\SingleUnitModeService'
@@ -560,7 +567,8 @@ services:
     oro_product.model.builder.quick_add_row_input_parser:
         class: 'Oro\Bundle\ProductBundle\Model\Builder\QuickAddRowInputParser'
         arguments:
-            - "@doctrine"
+            - '@doctrine'
+            - '@oro_product.provider.product_units_provider'
 
     oro_product.model.builder.quick_add_row_collection:
         class: 'Oro\Bundle\ProductBundle\Model\Builder\QuickAddRowCollectionBuilder'
@@ -594,6 +602,16 @@ services:
         tags:
             - { name: doctrine.orm.entity_listener, entity_manager: default, entity: '%oro_product.entity.product_variant_link.class%', event: prePersist}
             - { name: doctrine.orm.entity_listener, entity_manager: default, entity: '%oro_product.entity.product_variant_link.class%', event: preRemove}
+
+    oro_product.event_listener.doctrine.product_unit:
+        class: Oro\Bundle\ProductBundle\EventListener\Doctrine\ProductUnitEntityListener
+        public: false
+        arguments:
+            - '@oro_product.provider.product_units_provider'
+        tags:
+            - { name: doctrine.orm.entity_listener, entity: '%oro_product.entity.product_unit.class%', event: postPersist, method: invalidateProductUnitCache }
+            - { name: doctrine.orm.entity_listener, entity: '%oro_product.entity.product_unit.class%', event: postUpdate, method: invalidateProductUnitCache }
+            - { name: doctrine.orm.entity_listener, entity: '%oro_product.entity.product_unit.class%', event: postRemove, method: invalidateProductUnitCache }
 
     oro_product.event_listener.product_handler:
         class: 'Oro\Bundle\ProductBundle\EventListener\ProductHandlerListener'

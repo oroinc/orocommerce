@@ -27,6 +27,10 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
                 'web_catalog' => [
                     'value' => null,
                     'scope' => 'app'
+                ],
+                'navigation_root' => [
+                    'value' => null,
+                    'scope' => 'app'
                 ]
             ]
         ];

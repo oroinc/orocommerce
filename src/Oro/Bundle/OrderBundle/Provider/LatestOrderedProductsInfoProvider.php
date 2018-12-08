@@ -6,6 +6,9 @@ use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\OrderBundle\Entity\Repository\OrderRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
+/**
+ * Provides purchase information for products.
+ */
 class LatestOrderedProductsInfoProvider
 {
     /**
@@ -53,9 +56,14 @@ class LatestOrderedProductsInfoProvider
     {
         $orderRepository = $this->getOrderRepository();
         $orderStatuses = $this->statusesProvider->getAvailableStatuses();
-        $qb = $orderRepository->getLatestOrderedProductsInfo($productIds, $websiteId, $orderStatuses);
 
-        return $this->getResultFromQB($qb);
+        $qb = $orderRepository->getLatestOrderedProductsInfo($productIds, $websiteId, $orderStatuses);
+        $productsResult = $this->getResultFromQB($qb);
+
+        $qb = $orderRepository->getLatestOrderedParentProductsInfo($productIds, $websiteId, $orderStatuses);
+        $parentProductsResult = $this->getResultFromQB($qb);
+
+        return array_replace($productsResult, $parentProductsResult);
     }
 
     /**

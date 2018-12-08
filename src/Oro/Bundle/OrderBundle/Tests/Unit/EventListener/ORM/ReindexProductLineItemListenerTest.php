@@ -133,6 +133,35 @@ class ReindexProductLineItemListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener->reindexProductOnLineItemUpdate($this->lineItem, $event);
     }
 
+    public function testOrderLineItemParentProductChange()
+    {
+        $this->featureChecker->expects($this->once())
+            ->method('isFeatureEnabled')
+            ->with('previously_purchased_products', $this->website)
+            ->willReturn(true);
+
+        $product1 = $this->getEntity(Product::class, [ 'id' => 1 ]);
+        $product2 = $this->getEntity(Product::class, [ 'id' => 2 ]);
+        $event = $this->getPreUpdateEvent(
+            [
+                ReindexProductLineItemListener::ORDER_LINE_ITEM_PARENT_PRODUCT_FIELD => [
+                    $product1,
+                    $product2,
+                ],
+            ]
+        );
+
+        $this->reindexManager
+            ->expects($this->exactly(2))
+            ->method('reindexProduct')
+            ->withConsecutive(
+                [$product1, self::WEBSITE_ID],
+                [$product2, self::WEBSITE_ID]
+            );
+
+        $this->listener->reindexProductOnLineItemUpdate($this->lineItem, $event);
+    }
+
     public function testReindexProductOnLineItemCreateOrDelete()
     {
         $this->featureChecker->expects($this->once())
@@ -149,6 +178,31 @@ class ReindexProductLineItemListenerTest extends \PHPUnit\Framework\TestCase
         $this->reindexManager->expects($this->once())
             ->method('reindexProduct')
             ->with($product, self::WEBSITE_ID);
+
+        $this->listener->reindexProductOnLineItemCreateOrDelete($this->lineItem);
+    }
+
+    public function testReindexProductOnLineItemCreateOrDeleteWithParentProduct()
+    {
+        $this->featureChecker->expects($this->once())
+            ->method('isFeatureEnabled')
+            ->with('previously_purchased_products', $this->website)
+            ->willReturn(true);
+
+        $product = $this->getEntity(Product::class);
+        $parentProduct = $this->getEntity(Product::class);
+
+        $this->lineItem->expects($this->once())
+            ->method('getProduct')
+            ->willReturn($product);
+
+        $this->lineItem->expects($this->atLeastOnce())
+            ->method('getParentProduct')
+            ->willReturn($parentProduct);
+
+        $this->reindexManager->expects($this->exactly(2))
+            ->method('reindexProduct')
+            ->withConsecutive([$product, self::WEBSITE_ID], [$parentProduct, self::WEBSITE_ID]);
 
         $this->listener->reindexProductOnLineItemCreateOrDelete($this->lineItem);
     }

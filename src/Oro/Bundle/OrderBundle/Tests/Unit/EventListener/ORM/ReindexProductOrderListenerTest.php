@@ -120,7 +120,7 @@ class ReindexProductOrderListenerTest extends \PHPUnit\Framework\TestCase
         $this->prepareEventMockForStatusChanges($oldStatusId, $newStatusId);
 
         $this->reindexManager
-            ->expects($expectThatReindexEventWilBeCalled ? $this->once() : $this->never())
+            ->expects($expectThatReindexEventWilBeCalled ? $this->exactly(2) : $this->never())
             ->method('reindexProducts');
 
         $this->order->setWebsite($this->website);
@@ -207,19 +207,36 @@ class ReindexProductOrderListenerTest extends \PHPUnit\Framework\TestCase
     public function testOrderRemoved()
     {
         $productIds = [1,2,3];
+        $parentProductIds = [7,9];
         $this->featureChecker->expects($this->any())
             ->method('isFeatureEnabled')
             ->with('previously_purchased_products', $this->website)
             ->willReturn(true);
 
-        $lineItems = new ArrayCollection($this->prepareLineItemsOnOrder($productIds));
+        /** @var Product $parentProduct1 */
+        $parentProduct1 = $this->getEntity(Product::class, ['id' => 7]);
+        /** @var Product $parentProduct2 */
+        $parentProduct2 = $this->getEntity(Product::class, ['id' => 9]);
+
+        $product4 = $this->getEntity(Product::class, ['id' => 4]);
+        $product5 = $this->getEntity(Product::class, ['id' => 5]);
+        $parentProductLineItems = [
+            (new OrderLineItem())->setParentProduct($parentProduct1)->setProduct($product4),
+            (new OrderLineItem())->setParentProduct($parentProduct2)->setProduct($product5)
+        ];
+
+        $lineItems = new ArrayCollection(
+            array_merge($this->prepareLineItemsOnOrder($productIds), $parentProductLineItems)
+        );
+
         $this->order->setLineItems($lineItems);
         $this->order->setWebsite($this->website);
 
+        $expectedProductIds = [1,2,3,4,5];
         $this->reindexManager
-            ->expects($this->once())
+            ->expects($this->exactly(2))
             ->method('reindexProducts')
-            ->with($productIds, self::WEBSITE_ID);
+            ->withConsecutive([$expectedProductIds, self::WEBSITE_ID], [$parentProductIds, self::WEBSITE_ID]);
 
         $this->listener->processOrderRemove($this->order);
     }
@@ -288,7 +305,7 @@ class ReindexProductOrderListenerTest extends \PHPUnit\Framework\TestCase
         $this->order->setWebsite($this->website);
 
         $this->reindexManager
-            ->expects($this->exactly(2))
+            ->expects($this->exactly(4))
             ->method('reindexProducts');
 
         $this->listener->processOrderUpdate($this->order, $this->event);
@@ -387,9 +404,9 @@ class ReindexProductOrderListenerTest extends \PHPUnit\Framework\TestCase
             $this->order->setLineItems($lineItems);
 
             $this->reindexManager
-                ->expects($this->once())
+                ->expects($this->exactly(2))
                 ->method('reindexProducts')
-                ->with($productIds, self::WEBSITE_ID);
+                ->withConsecutive([$productIds, self::WEBSITE_ID], [[], self::WEBSITE_ID]);
         } else {
             $this->reindexManager->expects($this->never())->method('reindexProducts');
         }
