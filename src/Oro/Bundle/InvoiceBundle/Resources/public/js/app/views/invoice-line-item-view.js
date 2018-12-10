@@ -31,7 +31,7 @@ define(function(require) {
                 freeFormType: '.invoice-line-item-type-free-form',
                 totalPrice: '.invoice-line-item-total-price'
             },
-            currency: localeSettings.defaults.currency
+            currency: localeSettings.getCurrency()
         },
 
         pricesComponent: null,
