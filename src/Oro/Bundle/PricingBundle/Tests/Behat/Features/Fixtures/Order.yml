@@ -1,0 +1,30 @@
+include:
+    - '@OroShoppingListBundle:ShoppingListFixture.yml'
+
+Oro\Bundle\OrderBundle\Entity\Order:
+    simpleOrder:
+        organization: '@organization'
+        owner: '@admin'
+        customer: '@customer1'
+        customerUser: '@amanda'
+        identifier: 'SimpleOrder'
+        website: '@website1'
+        currency: USD
+        total: 5.0
+        subtotal: 5.0
+        lineItems:
+            - '@simpleOrderLineItem'
+
+Oro\Bundle\CurrencyBundle\Entity\Price (local):
+    price1:
+        value: 5
+        currency: USD
+
+Oro\Bundle\OrderBundle\Entity\OrderLineItem:
+    simpleOrderLineItem:
+        product: '@product1'
+        order: '@simpleOrder'
+        price: '@price1'
+        quantity: 10
+        productUnit: '@item'
+        productUnitCode: item
