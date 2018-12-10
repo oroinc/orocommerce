@@ -1,0 +1,27 @@
+include:
+    - '@OroLocaleBundle:ZuluLocalization.yml'
+
+Oro\Bundle\TranslationBundle\Entity\Translation:
+    translation_key_messages_oro_product_unit_item_label_full_zulu:
+        translationKey: '@translation_key_messages_oro_product_unit_item_label_full'
+        value: 'Element'
+        language: '@zulu_lang'
+        scope: 1
+
+    translation_key_messages_oro_product_unit_item_label_short_zulu:
+        translationKey: '@translation_key_messages_oro_product_unit_item_label_short'
+        value: 'Elemente'
+        language: '@zulu_lang'
+        scope: 1
+
+    translation_key_jsmessages_oro_product_product_unit_item_label_full_zulu:
+        translationKey: '@translation_key_jsmessages_oro_product_product_unit_item_label_full'
+        value: 'Element'
+        language: '@zulu_lang'
+        scope: 1
+
+    translation_key_jsmessages_oro_product_product_unit_item_label_short_zulu:
+        translationKey: '@translation_key_jsmessages_oro_product_product_unit_item_label_short'
+        value: 'Elemente'
+        language: '@zulu_lang'
+        scope: 1

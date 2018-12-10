@@ -232,33 +232,21 @@ td.order-discount-item-remove {
         }
 
         div.selector {
-            width: 60px;
+            width: 74px;
+            min-width: 0;
 
-            span {
-                padding: 0;
-                padding-left: 5px;
-                width: 50px;
+            > span {
+                width: 74px;
             }
         }
 
         input {
-            display: inline-block;
-            width: 215px;
-            border-top-right-radius: 0;
-            border-bottom-right-radius: 0;
+            width: ($field-width - 73px);
+            margin-right: -2px;
         }
 
         .discount-amount-type {
             width: 65px;
-            display: inline-block;
-            vertical-align: top;
-        }
-
-        .input-widget-select {
-            display: inline-block;
-            font-size: 13px;
-            border-top-left-radius: 0;
-            border-bottom-left-radius: 0;
         }
     }
 
@@ -329,4 +317,17 @@ td.order-discount-item-remove {
 
 .line-through-shipping-method {
     text-decoration: line-through;
+}
+
+.order-shipping-tracking {
+    input[type="text"] {
+        &.order-shipping-tracking-method,
+        &.order-shipping-tracking-number {
+            margin-bottom: 0;
+        }
+    }
+
+    .add-list-item {
+        margin-top: $content-padding-medium;
+    }
 }

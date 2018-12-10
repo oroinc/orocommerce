@@ -6,11 +6,12 @@ use Doctrine\ORM\Query\Expr;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\ResultsObject;
-use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Extension\AbstractExtension;
 use Oro\Bundle\DataGridBundle\Provider\SelectedFields\SelectedFieldsProviderInterface;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
@@ -24,8 +25,10 @@ use Symfony\Component\Translation\TranslatorInterface;
 /**
  * Adds price and price per unit columns, sorters, filters for each currency enabled in current price list.
  */
-class ProductPriceDatagridExtension extends AbstractExtension
+class ProductPriceDatagridExtension extends AbstractExtension implements FeatureToggleableInterface
 {
+    use FeatureCheckerHolderTrait;
+
     private const SUPPORTED_GRID = 'products-grid';
     private const UNIT_FILTER_SUFFIX = '__value';
 
@@ -89,8 +92,8 @@ class ProductPriceDatagridExtension extends AbstractExtension
      */
     public function isApplicable(DatagridConfiguration $config)
     {
-        return
-            !$this->applied
+        return $this->isFeaturesEnabled()
+            && !$this->applied
             && static::SUPPORTED_GRID === $config->getName()
             && parent::isApplicable($config);
     }

@@ -1,4 +1,6 @@
 /* @theme: admin.oro; */
+@import "oroui/css/scss/variables";
+@import "oroui/css/scss/mixins";
 
 .controls {
     .control-label.expression-collapse-label {
@@ -54,14 +56,10 @@
 }
 
 .select-coupon-container {
-    display: inline-block;
+    display: flex;
 
-    .coupon-select {
-        display: inherit;
-    }
-
-    .btn {
-        display: inherit;
+    .btn.btn-primary {
+        margin-#{$start}: $content-padding-small;
     }
 }
 
@@ -76,4 +74,15 @@ label.dashes-sequence-suffix-label {
 
 .widget-content .added-coupons-container {
     margin-bottom: 10px;
+}
+
+.mobile-version {
+    .select-coupon-container {
+        display: block;
+
+        .btn.btn-primary {
+            margin-#{$start}: 0;
+            margin-top: $content-padding-small;
+        }
+    }
 }

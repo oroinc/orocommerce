@@ -198,8 +198,8 @@ services:
     oro_order.event_listener.order.tier_prices:
         class: 'Oro\Bundle\OrderBundle\EventListener\Order\TierPriceEventListener'
         arguments:
-            - '@oro_pricing.provider.combined_product_price'
-            - '@oro_pricing.model.price_list_tree_handler'
+            - '@oro_pricing.provider.product_price'
+            - '@oro_pricing.model.product_price_scope_criteria_factory'
         tags:
             - { name: kernel.event_listener, event: oro_order.order, method: onOrderEvent }
 
@@ -258,7 +258,8 @@ services:
         public: false
         arguments:
             - '@oro_pricing.provider.matching_price'
-            - '@oro_pricing.model.price_list_tree_handler'
+            - '@oro_pricing.model.product_price_scope_criteria_factory'
+            - '@logger'
 
     oro_order.order.total.total_helper:
         class: 'Oro\Bundle\OrderBundle\Total\TotalHelper'
@@ -472,5 +473,13 @@ services:
         class: 'Oro\Bundle\OrderBundle\Datagrid\OrderLineItemsGridFrontendAccessListener'
         arguments:
             - '@security.token_storage'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.order-line-items-grid-frontend, method: onBuildBefore }
+
+    oro_order.datagrid.order_line_items_grid_frontend_order_object_access_listener:
+        class: 'Oro\Bundle\OrderBundle\Datagrid\OrderLineItemsOrderObjectAccessListener'
+        arguments:
+            - '@security.authorization_checker'
+            - '@doctrine'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.order-line-items-grid-frontend, method: onBuildBefore }

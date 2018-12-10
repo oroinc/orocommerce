@@ -4,15 +4,20 @@ namespace Oro\Bundle\PricingBundle\Provider;
 
 use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
-use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
+use Oro\Bundle\PricingBundle\Model\ProductPriceInterface;
+use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaRequestHandler;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 
+/**
+ * Allows to get all or matched prices for products from given line items
+ */
 class FrontendProductPricesDataProvider
 {
     /**
-     * @var ProductPriceProvider
+     * @var ProductPriceProviderInterface
      */
     protected $productPriceProvider;
 
@@ -22,23 +27,23 @@ class FrontendProductPricesDataProvider
     protected $userCurrencyManager;
 
     /**
-     * @var PriceListRequestHandler
+     * @var ProductPriceScopeCriteriaRequestHandler
      */
-    protected $priceListRequestHandler;
+    protected $scopeCriteriaRequestHandler;
 
     /**
-     * @param ProductPriceProvider $productPriceProvider
+     * @param ProductPriceProviderInterface $productPriceProvider
      * @param UserCurrencyManager $userCurrencyManager
-     * @param PriceListRequestHandler $priceListRequestHandler
+     * @param ProductPriceScopeCriteriaRequestHandler $scopeCriteriaRequestHandler
      */
     public function __construct(
-        ProductPriceProvider $productPriceProvider,
+        ProductPriceProviderInterface $productPriceProvider,
         UserCurrencyManager $userCurrencyManager,
-        PriceListRequestHandler $priceListRequestHandler
+        ProductPriceScopeCriteriaRequestHandler $scopeCriteriaRequestHandler
     ) {
         $this->productPriceProvider = $productPriceProvider;
         $this->userCurrencyManager = $userCurrencyManager;
-        $this->priceListRequestHandler = $priceListRequestHandler;
+        $this->scopeCriteriaRequestHandler = $scopeCriteriaRequestHandler;
     }
 
     /**
@@ -48,16 +53,15 @@ class FrontendProductPricesDataProvider
     public function getProductsMatchedPrice(array $lineItems)
     {
         $productsPriceCriteria = $this->getProductsPricesCriteria($lineItems);
-
-        $prices = $this->productPriceProvider->getMatchedPrices(
-            $productsPriceCriteria,
-            $this->priceListRequestHandler->getPriceListByCustomer()
-        );
+        $prices = $this->productPriceProvider
+            ->getMatchedPrices(
+                $productsPriceCriteria,
+                $this->scopeCriteriaRequestHandler->getPriceScopeCriteria()
+            );
 
         $result = [];
         foreach ($prices as $key => $price) {
-            $identifier = explode('-', $key);
-            list($productId, $unitId) = $identifier;
+            list($productId, $unitId) = explode('-', $key);
             $result[$productId][$unitId] = $price;
         }
 
@@ -70,19 +74,18 @@ class FrontendProductPricesDataProvider
      */
     public function getProductsAllPrices(array $lineItems)
     {
-        $prices = $this->productPriceProvider->getPriceByPriceListIdAndProductIds(
-            $this->priceListRequestHandler->getPriceListByCustomer()->getId(),
-            array_map(function (ProductHolderInterface $lineItem) {
-                return $lineItem->getProduct()->getId();
-            }, $lineItems),
-            $this->userCurrencyManager->getUserCurrency()
+        $prices = $this->productPriceProvider->getPricesByScopeCriteriaAndProducts(
+            $this->scopeCriteriaRequestHandler->getPriceScopeCriteria(),
+            $this->getProducts($lineItems),
+            [$this->userCurrencyManager->getUserCurrency()]
         );
 
         $pricesByUnit = [];
+        /** @var ProductPriceInterface[] $productPrices */
         foreach ($prices as $productId => $productPrices) {
             $pricesByUnit[$productId] = [];
             foreach ($productPrices as $productPrice) {
-                $pricesByUnit[$productId][$productPrice['unit']][] = $productPrice;
+                $pricesByUnit[$productId][$productPrice->getUnit()->getCode()][] = $productPrice;
             }
         }
 
@@ -96,15 +99,48 @@ class FrontendProductPricesDataProvider
     protected function getProductsPricesCriteria(array $lineItems)
     {
         $productsPricesCriteria = [];
+        $currency = $this->userCurrencyManager->getUserCurrency();
         foreach ($lineItems as $lineItem) {
+            if (!$this->isValidLineItem($lineItem)) {
+                continue;
+            }
+
             $productsPricesCriteria[] = new ProductPriceCriteria(
                 $lineItem->getProduct(),
                 $lineItem->getProductUnit(),
                 $lineItem->getQuantity(),
-                $this->userCurrencyManager->getUserCurrency()
+                $currency
             );
         }
 
         return $productsPricesCriteria;
+    }
+
+    /**
+     * @param array|ProductHolderInterface[] $lineItems
+     * @return array|Product[]
+     */
+    protected function getProducts(array $lineItems): array
+    {
+        return array_map(
+            function (ProductHolderInterface $lineItem) {
+                return $lineItem->getProduct();
+            },
+            array_filter(
+                $lineItems,
+                function (ProductHolderInterface $lineItem) {
+                    return $this->isValidLineItem($lineItem);
+                }
+            )
+        );
+    }
+
+    /**
+     * @param ProductHolderInterface $lineItem
+     * @return bool
+     */
+    protected function isValidLineItem(ProductHolderInterface $lineItem)
+    {
+        return $lineItem->getProduct() && $lineItem->getProduct()->getId();
     }
 }

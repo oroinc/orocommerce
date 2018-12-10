@@ -10,11 +10,11 @@ use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\CheckoutBundle\EventListener\HasPriceInShoppingLineItemsListener;
 use Oro\Bundle\CheckoutBundle\Tests\Unit\Model\Action\CheckoutSourceStub;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
-use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
-use Oro\Bundle\PricingBundle\Provider\ProductPriceProvider;
+use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteria;
+use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaRequestHandler;
+use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
@@ -31,7 +31,7 @@ class HasPriceInShoppingLineItemsListenerTest extends \PHPUnit\Framework\TestCas
     const CURRENCY = 'USD';
 
     /**
-     * @var ProductPriceProvider|\PHPUnit\Framework\MockObject\MockObject
+     * @var ProductPriceProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $productPriceProvider;
 
@@ -41,9 +41,9 @@ class HasPriceInShoppingLineItemsListenerTest extends \PHPUnit\Framework\TestCas
     private $userCurrencyManager;
 
     /**
-     * @var PriceListRequestHandler|\PHPUnit\Framework\MockObject\MockObject
+     * @var ProductPriceScopeCriteriaRequestHandler|\PHPUnit\Framework\MockObject\MockObject
      */
-    private $priceListRequestHandler;
+    private $scopeCriteriaRequestHandler;
 
     /**
      * @var HasPriceInShoppingLineItemsListener
@@ -52,14 +52,14 @@ class HasPriceInShoppingLineItemsListenerTest extends \PHPUnit\Framework\TestCas
 
     public function setUp()
     {
-        $this->productPriceProvider = $this->createMock(ProductPriceProvider::class);
+        $this->productPriceProvider = $this->createMock(ProductPriceProviderInterface::class);
         $this->userCurrencyManager = $this->createMock(UserCurrencyManager::class);
-        $this->priceListRequestHandler = $this->createMock(PriceListRequestHandler::class);
+        $this->scopeCriteriaRequestHandler = $this->createMock(ProductPriceScopeCriteriaRequestHandler::class);
 
         $this->listener = new HasPriceInShoppingLineItemsListener(
             $this->productPriceProvider,
             $this->userCurrencyManager,
-            $this->priceListRequestHandler
+            $this->scopeCriteriaRequestHandler
         );
     }
 
@@ -143,11 +143,11 @@ class HasPriceInShoppingLineItemsListenerTest extends \PHPUnit\Framework\TestCas
             ->method('getUserCurrency')
             ->willReturn(self::CURRENCY);
 
-        $priceList = $this->getEntity(PriceList::class);
-        $this->priceListRequestHandler
+        $criteria = new ProductPriceScopeCriteria();
+        $this->scopeCriteriaRequestHandler
             ->expects($this->once())
-            ->method('getPriceListByCustomer')
-            ->willReturn($priceList);
+            ->method('getPriceScopeCriteria')
+            ->willReturn($criteria);
 
         $this->productPriceProvider
             ->expects($this->once())
@@ -167,7 +167,7 @@ class HasPriceInShoppingLineItemsListenerTest extends \PHPUnit\Framework\TestCas
 
                     return true;
                 }),
-                $priceList
+                $criteria
             )
             ->willReturn($prices);
 
@@ -192,10 +192,9 @@ class HasPriceInShoppingLineItemsListenerTest extends \PHPUnit\Framework\TestCas
             ->expects($this->never())
             ->method('getUserCurrency');
 
-        $priceList = $this->getEntity(PriceList::class);
-        $this->priceListRequestHandler
+        $this->scopeCriteriaRequestHandler
             ->expects($this->never())
-            ->method('getPriceListByCustomer');
+            ->method('getPriceScopeCriteria');
 
         $this->productPriceProvider
             ->expects($this->never())

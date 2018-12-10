@@ -6,6 +6,9 @@ use Oro\Bundle\TaxBundle\Matcher\UnitedStatesHelper;
 use Oro\Bundle\TaxBundle\Model\Taxable;
 use Oro\Bundle\TaxBundle\Resolver\ResolverInterface;
 
+/**
+ * Resolver to apply zero tax to digital products for US customers from states without digital product taxes
+ */
 class DigitalResolver implements ResolverInterface
 {
     /**
@@ -40,12 +43,12 @@ class DigitalResolver implements ResolverInterface
             $address->getRegionCode()
         );
 
-        if ($isStateWithoutDigitalTax) {
-            foreach ($taxable->getItems() as $taxableItem) {
-                $this->itemResolver->resolve($taxableItem);
-            }
+        if (!$isStateWithoutDigitalTax) {
+            return;
+        }
 
-            $taxable->makeDestinationAddressTaxable();
+        foreach ($taxable->getItems() as $taxableItem) {
+            $this->itemResolver->resolve($taxableItem);
         }
     }
 }

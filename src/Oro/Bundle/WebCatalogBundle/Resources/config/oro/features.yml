@@ -1,0 +1,7 @@
+features:
+    navigation_root_system_configuration:
+        label: oro.webcatalog.system_configuration.fields.navigation_root.label
+        description: oro.webcatalog.system_configuration.fields.navigation_root.tooltip
+        toggle: oro_web_catalog.web_catalog
+        configuration:
+            - oro_web_catalog.navigation_root

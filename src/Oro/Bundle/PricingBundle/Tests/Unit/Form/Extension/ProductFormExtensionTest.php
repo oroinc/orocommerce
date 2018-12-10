@@ -8,6 +8,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\UnitOfWork;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
@@ -88,6 +89,24 @@ class ProductFormExtensionTest extends \PHPUnit\Framework\TestCase
             $this->priceManager,
             $this->authorizationChecker
         );
+    }
+
+    public function testBuildFormFeatureDisabled()
+    {
+        /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject $featureChecker */
+        $featureChecker = $this->createMock(FeatureChecker::class);
+        $featureChecker->expects($this->any())
+            ->method('isFeatureEnabled')
+            ->with('feature1', null)
+            ->willReturn(false);
+
+        /** @var FormBuilderInterface|\PHPUnit\Framework\MockObject\MockObject $builder */
+        $builder = $this->createMock(FormBuilderInterface::class);
+        $builder->expects($this->never())->method('add');
+
+        $this->extension->setFeatureChecker($featureChecker);
+        $this->extension->addFeature('feature1');
+        $this->extension->buildForm($builder, []);
     }
 
     /**
@@ -315,6 +334,13 @@ class ProductFormExtensionTest extends \PHPUnit\Framework\TestCase
 
     public function testBuildForm()
     {
+        /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject $featureChecker */
+        $featureChecker = $this->createMock(FeatureChecker::class);
+        $featureChecker->expects($this->once())
+            ->method('isFeatureEnabled')
+            ->with('feature1', null)
+            ->willReturn(true);
+
         /** @var FormBuilderInterface|\PHPUnit\Framework\MockObject\MockObject $builder */
         $builder = $this->createMock('Symfony\Component\Form\FormBuilderInterface');
 
@@ -340,6 +366,8 @@ class ProductFormExtensionTest extends \PHPUnit\Framework\TestCase
             ->method('addEventListener')
             ->with(FormEvents::POST_SUBMIT, [$this->extension, 'onPostSubmit'], 10);
 
+        $this->extension->setFeatureChecker($featureChecker);
+        $this->extension->addFeature('feature1');
         $this->extension->buildForm($builder, []);
     }
 
