@@ -8,6 +8,8 @@ use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\SecurityBundle\Tools\UUIDGenerator;
 
 /**
+ * Store Checkout Workflow State in a database
+ *
  * @ORM\Entity(repositoryClass="Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutWorkflowStateRepository")
  * @ORM\Table(name="oro_checkout_workflow_state",
  *     uniqueConstraints={@ORM\UniqueConstraint(
@@ -15,8 +17,6 @@ use Oro\Bundle\SecurityBundle\Tools\UUIDGenerator;
  *         columns={"entity_id", "entity_class", "token"}
  *     )}
  * )
- *
- * Store Checkout Workflow State in a database
  */
 class CheckoutWorkflowState implements DatesAwareInterface
 {
