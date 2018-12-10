@@ -137,3 +137,13 @@ oro_behat_extension:
       selector:
         locator: '//a[@type="button" and contains(text(),"Export")]'
         type: xpath
+
+    Chosen Select Option:
+      selector:
+        locator: '//span[@class="select2-chosen"]'
+        type: 'xpath'
+
+    Open Filters Panel Button:
+      selector:
+        type: 'xpath'
+        locator: '//div[@class="btn-group not-expand frontend-datagrid__panel"]/a[@title="Filters"]'

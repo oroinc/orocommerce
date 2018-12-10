@@ -111,148 +111,144 @@ databaseBefore:
             customerTaxCode: { class: 'Oro\Bundle\TaxBundle\Entity\CustomerTaxCode', query: { code: 'TAX1' } }
             tax: { class: 'Oro\Bundle\TaxBundle\Entity\Tax', query: { code: 'TAX1' } }
             taxJurisdiction: { class: 'Oro\Bundle\TaxBundle\Entity\TaxJurisdiction', query: { code: 'TAX1' } }
+databaseBeforeSecondPart: []
 expectedResult:
     total:
-        includingTax: '219.87' # 24.43 * 9 = 219.87 (219.87 if count by rounded items)
+        includingTax: '209.13' # 24.51984 * 4 + 22.21 * 5 = 209.12936
         excludingTax: '199.89' # 22.21 * 9
-        taxAmount: '19.98'     # 2.22 * 9 = 19.98
-        adjustment: '0.009'    # 0.001 * 9 = 0.009
+        taxAmount: '9.24'      # 2.30984 * 4 = 9.23936
+        adjustment: '-0.00064' # -0.00016 * 4 = -0.00064
         currency: 'USD'
     items:
         -
             row:
-                includingTax: '24.43' # 22.21 + 2.221 = 24.431
+                includingTax: '22.21'
                 excludingTax: '22.21'
-                taxAmount: '2.22'     # 2.221
-                adjustment: '0.001'   # 2.221 - 2.22
+                taxAmount: '0' # empty tax amount because there is no product tax code for this line item
+                adjustment: '0'
                 currency: 'USD'
             unit:
-                includingTax: '24.43' # 22.21 + 2.221 = 24.431
+                includingTax: '22.21'
                 excludingTax: '22.21'
-                taxAmount: '2.22'     # 2.221
-                adjustment: '0.001'   # 2.221 - 2.22
+                taxAmount: '0' # empty tax amount because there is no product tax code for this line item
+                adjustment: '0'
                 currency: 'USD'
-            taxes:
-                - { tax: 'TAX1', rate: '0.1', taxableAmount: '22.21', taxAmount: '2.22', currency: 'USD' }
+            taxes: []
         -
             row:
-                includingTax: '24.43' # 22.21 + 2.221 = 24.431
+                includingTax: '22.21'
                 excludingTax: '22.21'
-                taxAmount: '2.22'     # 2.221
-                adjustment: '0.001'   # 2.221 - 2.22
+                taxAmount: '0' # empty tax amount because there is no product tax code for this line item
+                adjustment: '0'
                 currency: 'USD'
             unit:
-                includingTax: '24.43' # 22.21 + 2.221 = 24.431
+                includingTax: '22.21'
                 excludingTax: '22.21'
-                taxAmount: '2.22'     # 2.221
-                adjustment: '0.001'   # 2.221 - 2.22
+                taxAmount: '0' # empty tax amount because there is no product tax code for this line item
+                adjustment: '0'
                 currency: 'USD'
-            taxes:
-                - { tax: 'TAX1', rate: '0.1', taxableAmount: '22.21', taxAmount: '2.22', currency: 'USD' }
+            taxes: []
         -
             row:
-                includingTax: '24.43' # 22.21 + 2.221 = 24.431
+                includingTax: '22.21'
                 excludingTax: '22.21'
-                taxAmount: '2.22'     # 2.221
-                adjustment: '0.001'   # 2.221 - 2.22
+                taxAmount: '0' # empty tax amount because there is no product tax code for this line item
+                adjustment: '0'
                 currency: 'USD'
             unit:
-                includingTax: '24.43' # 22.21 + 2.221 = 24.431
+                includingTax: '22.21'
                 excludingTax: '22.21'
-                taxAmount: '2.22'     # 2.221
-                adjustment: '0.001'   # 2.221 - 2.22
+                taxAmount: '0' # empty tax amount because there is no product tax code for this line item
+                adjustment: '0'
                 currency: 'USD'
-            taxes:
-                - { tax: 'TAX1', rate: '0.1', taxableAmount: '22.21', taxAmount: '2.22', currency: 'USD' }
+            taxes: []
         -
             row:
-                includingTax: '24.43' # 22.21 + 2.221 = 24.431
+                includingTax: '22.21'
                 excludingTax: '22.21'
-                taxAmount: '2.22'     # 2.221
-                adjustment: '0.001'   # 2.221 - 2.22
+                taxAmount: '0' # empty tax amount because there is no product tax code for this line item
+                adjustment: '0'
                 currency: 'USD'
             unit:
-                includingTax: '24.43' # 22.21 + 2.221 = 24.431
+                includingTax: '22.21'
                 excludingTax: '22.21'
-                taxAmount: '2.22'     # 2.221
-                adjustment: '0.001'   # 2.221 - 2.22
+                taxAmount: '0' # empty tax amount because there is no product tax code for this line item
+                adjustment: '0'
                 currency: 'USD'
-            taxes:
-                - { tax: 'TAX1', rate: '0.1', taxableAmount: '22.21', taxAmount: '2.22', currency: 'USD' }
+            taxes: []
         -
             row:
-                includingTax: '24.43' # 22.21 + 2.221 = 24.431
+                includingTax: '22.21'
                 excludingTax: '22.21'
-                taxAmount: '2.22'     # 2.221
-                adjustment: '0.001'   # 2.221 - 2.22
+                taxAmount: '0' # empty tax amount because there is no product tax code for this line item
+                adjustment: '0'
                 currency: 'USD'
             unit:
-                includingTax: '24.43' # 22.21 + 2.221 = 24.431
+                includingTax: '22.21'
                 excludingTax: '22.21'
-                taxAmount: '2.22'     # 2.221
-                adjustment: '0.001'   # 2.221 - 2.22
+                taxAmount: '0' # empty tax amount because there is no product tax code for this line item
+                adjustment: '0'
                 currency: 'USD'
-            taxes:
-                - { tax: 'TAX1', rate: '0.1', taxableAmount: '22.21', taxAmount: '2.22', currency: 'USD' }
+            taxes: []
         -
             row:
-                includingTax: '24.43' # 22.21 + 2.221 = 24.431
+                includingTax: '24.52' # 22.21 + 2.30984 = 24.51984
                 excludingTax: '22.21'
-                taxAmount: '2.22'     # 2.221
-                adjustment: '0.001'   # 2.221 - 2.22
+                taxAmount: '2.31'     # 22.21 * 0.104 = 2.30984
+                adjustment: '-0.00016'   # 2.30984 - 2.31 = -0.00016
                 currency: 'USD'
             unit:
-                includingTax: '24.43' # 22.21 + 2.221 = 24.431
+                includingTax: '24.52' # 22.21 + 2.30984 = 24.51984
                 excludingTax: '22.21'
-                taxAmount: '2.22'     # 2.221
-                adjustment: '0.001'   # 2.221 - 2.22
+                taxAmount: '2.31'     # 22.21 * 0.104 = 2.30984
+                adjustment: '-0.00016'   # 2.30984 - 2.31 = -0.00016
                 currency: 'USD'
             taxes:
-                - { tax: 'TAX1', rate: '0.1', taxableAmount: '22.21', taxAmount: '2.22', currency: 'USD' }
+                - { tax: 'TAX1', rate: '0.104', taxableAmount: '22.21', taxAmount: '2.31', currency: 'USD' }
         -
             row:
-                includingTax: '24.43' # 22.21 + 2.221 = 24.431
+                includingTax: '24.52' # 22.21 + 2.30984 = 24.51984
                 excludingTax: '22.21'
-                taxAmount: '2.22'     # 2.221
-                adjustment: '0.001'   # 2.221 - 2.22
+                taxAmount: '2.31'     # 22.21 * 0.104 = 2.30984
+                adjustment: '-0.00016'   # 2.30984 - 2.31 = -0.00016
                 currency: 'USD'
             unit:
-                includingTax: '24.43' # 22.21 + 2.221 = 24.431
+                includingTax: '24.52' # 22.21 + 2.30984 = 24.51984
                 excludingTax: '22.21'
-                taxAmount: '2.22'     # 2.221
-                adjustment: '0.001'   # 2.221 - 2.22
+                taxAmount: '2.31'     # 22.21 * 0.104 = 2.30984
+                adjustment: '-0.00016'   # 2.30984 - 2.31 = -0.00016
                 currency: 'USD'
             taxes:
-                - { tax: 'TAX1', rate: '0.1', taxableAmount: '22.21', taxAmount: '2.22', currency: 'USD' }
+                - { tax: 'TAX1', rate: '0.104', taxableAmount: '22.21', taxAmount: '2.31', currency: 'USD' }
         -
             row:
-                includingTax: '24.43' # 22.21 + 2.221 = 24.431
+                includingTax: '24.52' # 22.21 + 2.30984 = 24.51984
                 excludingTax: '22.21'
-                taxAmount: '2.22'     # 2.221
-                adjustment: '0.001'   # 2.221 - 2.22
+                taxAmount: '2.31'     # 22.21 * 0.104 = 2.30984
+                adjustment: '-0.00016'   # 2.30984 - 2.31 = -0.00016
                 currency: 'USD'
             unit:
-                includingTax: '24.43' # 22.21 + 2.221 = 24.431
+                includingTax: '24.52' # 22.21 + 2.30984 = 24.51984
                 excludingTax: '22.21'
-                taxAmount: '2.22'     # 2.221
-                adjustment: '0.001'   # 2.221 - 2.22
+                taxAmount: '2.31'     # 22.21 * 0.104 = 2.30984
+                adjustment: '-0.00016'   # 2.30984 - 2.31 = -0.00016
                 currency: 'USD'
             taxes:
-                - { tax: 'TAX1', rate: '0.1', taxableAmount: '22.21', taxAmount: '2.22', currency: 'USD' }
+                - { tax: 'TAX1', rate: '0.104', taxableAmount: '22.21', taxAmount: '2.31', currency: 'USD' }
         -
             row:
-                includingTax: '24.43' # 22.21 + 2.221 = 24.431
+                includingTax: '24.52' # 22.21 + 2.30984 = 24.51984
                 excludingTax: '22.21'
-                taxAmount: '2.22'     # 2.221
-                adjustment: '0.001'   # 2.221 - 2.22
+                taxAmount: '2.31'     # 22.21 * 0.104 = 2.30984
+                adjustment: '-0.00016'   # 2.30984 - 2.31 = -0.00016
                 currency: 'USD'
             unit:
-                includingTax: '24.43' # 22.21 + 2.221 = 24.431
+                includingTax: '24.52' # 22.21 + 2.30984 = 24.51984
                 excludingTax: '22.21'
-                taxAmount: '2.22'     # 2.221
-                adjustment: '0.001'   # 2.221 - 2.22
+                taxAmount: '2.31'     # 22.21 * 0.104 = 2.30984
+                adjustment: '-0.00016'   # 2.30984 - 2.31 = -0.00016
                 currency: 'USD'
             taxes:
-               - { tax: 'TAX1', rate: '0.1', taxableAmount: '22.21', taxAmount: '2.22', currency: 'USD' }
+                - { tax: 'TAX1', rate: '0.104', taxableAmount: '22.21', taxAmount: '2.31', currency: 'USD' }
     taxes:
-        - { tax: 'TAX1', rate: '0.1', taxableAmount: '199.89', taxAmount: '19.99', currency: 'USD' }
+        - { tax: 'TAX1', rate: '0.104', taxableAmount: '88.84', taxAmount: '9.24', currency: 'USD' }

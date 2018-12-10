@@ -573,6 +573,21 @@ oro_behat_extension:
       selector: 'div[data-page-component-name="frontend-catalog-allproducts-grid"], div[data-page-component-name="frontend-product-search-grid"], div[data-page-component-name="order-products-previously-purchased-grid"]'
       class: Oro\Bundle\ProductBundle\Tests\Behat\Element\FrontendProductGrid
 
+    ProductFrontendGridFilters:
+      selector: 'div[data-page-component-name="frontend-product-search-grid"] div.filter-box'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilters
+
+    ProductFrontendGridFiltersState:
+      selector: 'div[data-page-component-name="frontend-product-search-grid"] div.filters-state'
+
+    ProductFrontendGridToolbarActions:
+      selector: 'div[data-page-component-name="frontend-product-search-grid"] div.toolbar div.actions-panel'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridToolbarActions
+
+    ProductFrontendGridFilterItem:
+      selector: 'div.filter-items-hint span'
+      class: Oro\Bundle\FrontendBundle\Tests\Behat\Element\GridFilterItem
+
     ProductFrontendGridFiltersBlock:
       selector: 'div.filter-container'
 
@@ -807,6 +822,18 @@ oro_behat_extension:
       selector:
         type: xpath
         locator: '//div[contains(concat(" ", @class, " "), " embedded-list ")]/h2/span[text()="Related Products"]/../../div'
+
+    UpSell Products Block:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        type: xpath
+        locator: '//div[contains(concat(" ", @class, " "), " embedded-list ")]/h2/span[text()="Up-sell Products"]/../../div'
+
+    Top Selling Items Block:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        type: xpath
+        locator: '//div[contains(concat(" ", @class, " "), " embedded-list ")]/h2/span[text()="Top Selling Items"]/../../div'
 
     EmbeddedProduct:
       selector: 'div.product-item'

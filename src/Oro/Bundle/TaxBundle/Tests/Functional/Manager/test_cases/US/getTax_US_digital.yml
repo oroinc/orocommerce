@@ -44,29 +44,30 @@ databaseBefore:
             taxJurisdiction: '@us_jurisdiction'
             productTaxCode: { class: 'Oro\Bundle\TaxBundle\Entity\ProductTaxCode', query: { code: 'TAX1' } }
             customerTaxCode: { class: 'Oro\Bundle\TaxBundle\Entity\CustomerTaxCode', query: { code: 'TAX1' } }
+databaseBeforeSecondPart: []
 expectedResult:
     total:
-        includingTax: '124.67' # 39.13 + 85.54
+        includingTax: '124.8'  # 39.26 + 85.54
         excludingTax: '118.84' # 33.3 + 85.54
-        taxAmount: '5.83'     # 5.83 + 0
-        adjustment: '-0.0025'   # -0.0025 + 0
+        taxAmount: '5.96'      # 5.96 + 0
+        adjustment: '0.0007'   # 0.0007 + 0
         currency: 'USD'
     items:
         -
             unit:
-                includingTax: '6.52'  # 5.55 + 0.97 and round
+                includingTax: '6.54'  # 5.55 + 0.99345 = 6.54345
                 excludingTax: '5.55'
-                taxAmount: '0.97'     # 5.55 * 0.175
-                adjustment: '0.00125'
+                taxAmount: '0.99'     # 5.55 * (0.075 + 0.104) = 0.99345
+                adjustment: '0.00345' # 0.99345 - 0.99 = 0.00345
                 currency: 'USD'
             row:
-                includingTax: '39.13' # 33.3 + 5.83
+                includingTax: '39.26' # 33.3 + 5.9607 = 39.2607
                 excludingTax: '33.3'
-                taxAmount: '5.83'     # 33.3 * 0.175
-                adjustment: '-0.0025'
+                taxAmount: '5.96'     # 33.3 * (0.075 + 0.104) = 5.9607
+                adjustment: '0.0007'  # 5.9607 - 5.96 = 0.0007
                 currency: 'USD'
             taxes:
-                - { tax: 'TAX1', rate: '0.1', taxableAmount: '33.3', taxAmount: '3.33', currency: 'USD' }
+                - { tax: 'TAX1', rate: '0.104', taxableAmount: '33.3', taxAmount: '3.46', currency: 'USD' }
                 - { tax: 'TAX3', rate: '0.075', taxableAmount: '33.3', taxAmount: '2.5', currency: 'USD' }
 
         -
@@ -83,5 +84,5 @@ expectedResult:
                 adjustment: '0'
                 currency: 'USD'
     taxes:
-        - { tax: 'TAX1', rate: '0.1', taxableAmount: '33.3', taxAmount: '3.33', currency: 'USD' }
+        - { tax: 'TAX1', rate: '0.104', taxableAmount: '33.3', taxAmount: '3.46', currency: 'USD' }
         - { tax: 'TAX3', rate: '0.075', taxableAmount: '33.3', taxAmount: '2.5', currency: 'USD' }

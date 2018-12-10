@@ -2,23 +2,25 @@
 
 namespace Oro\Bundle\ProductBundle\Provider;
 
+use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\Common\Persistence\ManagerRegistry;
 
-use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 
 class ProductUnitsProvider
 {
-    /**
-     * @var  ManagerRegistry
-     */
+    private const CACHE_KEY_CODES = 'codes';
+    private const CACHE_KEY_CODES_WITH_PRECISION = 'codes_with_precision';
+
+    /** @var ManagerRegistry */
     protected $registry;
 
-    /**
-     * @var  ProductUnitLabelFormatter
-     */
+    /** @var ProductUnitLabelFormatter */
     protected $formatter;
+
+    /** @var CacheProvider */
+    protected $cache;
 
     /**
      * @param ManagerRegistry $registry
@@ -29,17 +31,31 @@ class ProductUnitsProvider
         $this->registry = $registry;
         $this->formatter = $formatter;
     }
-    
+
+    /**
+     * @param CacheProvider $cache
+     */
+    public function setCache(CacheProvider $cache): void
+    {
+        $this->cache = $cache;
+    }
+
     /**
      * @return array
      */
     public function getAvailableProductUnits()
     {
-        $productUnits = $this->getRepository()->getAllUnits();
+        $productUnitCodes = $this->cache ? $this->cache->fetch(self::CACHE_KEY_CODES) : false;
+        if (false === $productUnitCodes) {
+            $productUnitCodes = $this->getRepository()->getAllUnitCodes();
+
+            if ($this->cache) {
+                $this->cache->save(self::CACHE_KEY_CODES, $productUnitCodes);
+            }
+        }
 
         $unitsFull = [];
-        foreach ($productUnits as $unit) {
-            $code = $unit->getCode();
+        foreach ($productUnitCodes as $code) {
             $unitsFull[$code] = $this->formatter->format($code);
         }
 
@@ -51,14 +67,29 @@ class ProductUnitsProvider
      */
     public function getAvailableProductUnitsWithPrecision()
     {
-        $productUnits = $this->getRepository()->getAllUnits();
+        $unitsWithPrecision = $this->cache ? $this->cache->fetch(self::CACHE_KEY_CODES_WITH_PRECISION) : false;
+        if (false === $unitsWithPrecision) {
+            $productUnits = $this->getRepository()->getAllUnits();
 
-        $unitsWithPrecision = array();
-        foreach ($productUnits as $unit) {
-            $unitsWithPrecision[$unit->getCode()] = $unit->getDefaultPrecision();
+            $unitsWithPrecision = [];
+            foreach ($productUnits as $unit) {
+                $unitsWithPrecision[$unit->getCode()] = $unit->getDefaultPrecision();
+            }
+
+            if ($this->cache) {
+                $this->cache->save(self::CACHE_KEY_CODES_WITH_PRECISION, $unitsWithPrecision);
+            }
         }
 
         return $unitsWithPrecision;
+    }
+
+    public function clearCache(): void
+    {
+        if ($this->cache) {
+            $this->cache->delete(self::CACHE_KEY_CODES);
+            $this->cache->delete(self::CACHE_KEY_CODES_WITH_PRECISION);
+        }
     }
 
     /**

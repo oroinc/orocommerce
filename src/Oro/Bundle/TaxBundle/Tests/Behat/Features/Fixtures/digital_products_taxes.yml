@@ -1,0 +1,189 @@
+include:
+  - '@OroTaxBundle:products_and_shopping_lists.yml'
+
+Oro\Bundle\TaxBundle\Entity\ProductTaxCode:
+  tax_code_taxable_items:
+    code: 'taxable_items'
+  tax_code_digital_items:
+    code: 'digital_items'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+  precision_digital:
+    unit: '@item'
+    precision: '1'
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+  locValue2:
+    string: 'product2'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+  digital_product:
+    sku: 'SKU124'
+    primaryUnitPrecision: '@precision_digital'
+    addName: ['@locValue2']
+    inventoryStatus: '@enumInventoryStatuses'
+    status: 'enabled'
+    owner: '@business_unit'
+    organization: '@organization'
+    attributeFamily: '@defaultProductFamily'
+    taxCode: '@tax_code_digital_items'
+
+Oro\Bundle\TaxBundle\Entity\CustomerTaxCode:
+  customer_tax_code_non_exempt:
+    owner: '@admin'
+    organization: '@organization'
+    code: 'non_exempt'
+
+Oro\Bundle\TaxBundle\Entity\Tax:
+  taxable_items:
+    code: 'taxable_items'
+    rate: 0.1
+  digital_items:
+    code: 'digital_items'
+    rate: 0.2
+
+Oro\Bundle\TaxBundle\Entity\TaxRule:
+  tax_rule:
+    productTaxCode: '@tax_code_taxable_items'
+    customerTaxCode: '@customer_tax_code_non_exempt'
+    tax: '@taxable_items'
+    taxJurisdiction: '@tax_jurisdiction'
+  digital_tax_rule_de:
+    productTaxCode: '@tax_code_digital_items'
+    customerTaxCode: '@customer_tax_code_non_exempt'
+    tax: '@taxable_items'
+    taxJurisdiction: '@tax_jurisdiction'
+  digital_tax_rule_at:
+    productTaxCode: '@tax_code_digital_items'
+    customerTaxCode: '@customer_tax_code_non_exempt'
+    tax: '@digital_items'
+    taxJurisdiction: '@digital_tax_jurisdiction_at'
+  digital_tax_rule_us:
+    productTaxCode: '@tax_code_digital_items'
+    customerTaxCode: '@customer_tax_code_non_exempt'
+    tax: '@digital_items'
+    taxJurisdiction: '@digital_tax_jurisdiction_us'
+
+Oro\Bundle\TaxBundle\Entity\TaxJurisdiction:
+  tax_jurisdiction:
+    code: 'tax_jurisdiction'
+    country: '@germany'
+    region: '@berlin'
+  digital_tax_jurisdiction_at:
+    code: 'digital_tax_jurisdiction_at'
+    country: '@austria'
+    region: '@vienna'
+  digital_tax_jurisdiction_us:
+    code: 'digital_tax_jurisdiction_us'
+    country: '@united_states'
+    region: '@florida'
+
+Oro\Bundle\TaxBundle\Entity\ZipCode:
+  tax_zip_code:
+    taxJurisdiction: '@tax_jurisdiction'
+    zipCode: '10115'
+  digital_tax_zip_code_at:
+    taxJurisdiction: '@digital_tax_jurisdiction_at'
+    zipCode: '1010'
+  digital_tax_zip_code_us:
+    taxJurisdiction: '@digital_tax_jurisdiction_us'
+    zipCode: '36133'
+
+Oro\Bundle\ShoppingListBundle\Entity\LineItem:
+  lineitem3:
+    product: '@digital_product'
+    quantity: '5'
+    unit: '@item'
+    customerUser: '@amanda'
+    shoppingList: '@shoppinglist'
+    organization: '@organization'
+  lineitem4:
+    product: '@digital_product'
+    quantity: '5'
+    unit: '@item'
+    customerUser: '@amanda'
+    shoppingList: '@shoppinglist2'
+    organization: '@organization'
+
+Oro\Bundle\PricingBundle\Entity\ProductPrice:
+  productPrice2:
+    pricelist: '@pricelistShipping'
+    product: '@digital_product'
+    productSku: 'SKU124'
+    quantity: 5
+    unit: '@item'
+    value: 5
+    currency: 'USD'
+
+Oro\Bundle\PricingBundle\Entity\CombinedProductPrice:
+  combinedProductPrice2:
+    pricelist: '@combinedPriceList'
+    product: '@digital_product'
+    productSku: 'SKU124'
+    quantity: 5
+    unit: '@item'
+    value: 2
+    currency: 'USD'
+
+Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
+  priceListToProduct:
+    product: '@digital_product'
+    pricelist: '@pricelistShipping'
+
+Oro\Bundle\WarehouseBundle\Entity\Warehouse:
+  testWarehouse:
+    name: 'Test Warehouse 333'
+    organization: '@organization'
+
+Oro\Bundle\InventoryBundle\Entity\InventoryLevel:
+  inventoryLevel1:
+    product: '@digital_product'
+    productUnitPrecision: '@precision_digital'
+    quantity: 100
+    warehouse: '@testWarehouse'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress:
+  euAddress:
+    country: '@austria'
+    region: '@vienna'
+    label: 'EU address'
+    street: 'Second avenue'
+    city: 'Vienna'
+    postalCode: '1010'
+    frontendOwner: '@amanda'
+    owner: '@admin'
+    setDefaults: ['@shippingType', '@billingType']
+    systemOrganization: '@organization'
+    primary: true
+    organization: '@organization'
+  usAddress:
+    country: '@united_states'
+    region: '@florida'
+    label: 'US address'
+    street: 'Third avenue'
+    city: 'Tallahassee'
+    postalCode: '32003'
+    frontendOwner: '@amanda'
+    owner: '@admin'
+    setDefaults: ['@shippingType', '@billingType']
+    systemOrganization: '@organization'
+    primary: true
+    organization: '@organization'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerUserAddressToAddressType:
+  billingEU:
+    address: '@euAddress'
+    type: '@billingType'
+    default: false
+  shippingEU:
+    address: '@euAddress'
+    type: '@shippingType'
+    default: false
+  billingUS:
+    address: '@usAddress'
+    type: '@billingType'
+    default: false
+  shippingUS:
+    address: '@usAddress'
+    type: '@shippingType'
+    default: false

@@ -33,6 +33,7 @@ databaseBefore:
             quantity: 0
             price: '@usd_price_5.55'
             product: { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product-2' } }
+databaseBeforeSecondPart: []
 expectedResult:
     row:
         includingTax: '0'
@@ -42,7 +43,9 @@ expectedResult:
         currency: 'USD'
     unit:
         includingTax: '5.55'
-        excludingTax: '5.05' # 5.55 - 0.5045 = 5.0455
-        taxAmount: '0.5'     # 5.55 * 0.1 / 1.1 = 0.5045
-        adjustment: '0.0045' # 0.5045 - 0.5
+        excludingTax: '5.03'   # 5.55 - 0.522826 = 5.027174
+        taxAmount: '0.52'      # 5.55 * 0.104 / 1.104 = 0.522826
+        adjustment: '0.002826' # 0.522826 - 0.52 = 0.002826
         currency: 'USD'
+    taxes:
+        - { tax: 'TAX1', rate: '0.104', taxableAmount: '0', taxAmount: '0', currency: 'USD' }
