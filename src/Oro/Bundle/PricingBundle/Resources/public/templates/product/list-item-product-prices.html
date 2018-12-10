@@ -7,7 +7,7 @@
     <span class="product-price__label"><%- _.__('oro.pricing.product_prices.your_price') %></span>
     <span class="product-price__main-box">
         <span class="product-price__value" data-name="price-value" itemscope="itemscope" itemtype="http://schema.org/Offer" itemprop="offers">
-            <span itemprop="priceCurrency" content="<%- price.currency %>"><%- localeSettings.getCurrencySymbol(price.currency) %></span><span itemprop="price" content="<%- numeral(price.price).format('0.00') %>"><%- numeral(price.price).format('0.00') %></span>
+            <meta itemprop="priceCurrency" content="<%= price.currency %>"/><meta itemprop="price" content="<%= numeral(price.price).format('0.00') %>"/><%= price.formatted_price.trim() %>
         </span>
         <span> / </span>
         <span class="product-price__unit" data-name="unit">
@@ -25,8 +25,7 @@
 <div class="product-price__listed">
     <span class="product-price__listed-label"><%- _.__('oro.pricing.product_prices.listed_price') %></span>
     <% _.each(listedPrice, function(price, unitCode) { %>
-    <span class="product-price__listed-box"
-          title="<%- _.__('oro.pricing.product_prices.applicable_from', { amount: price.quantity }) %>">
+    <span class="product-price__listed-box" title="<%- _.__('oro.pricing.product_prices.applicable_from', { amount: price.quantity }) %>">
         <span class="product-price__listed-value"><%- price.formatted_price %></span>
         <span> / </span>
         <span class="product-price__unit" data-name="unit">
