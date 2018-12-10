@@ -87,7 +87,7 @@ class CheckoutHasUnacceptedConsents extends AbstractCondition implements Context
         }
 
         return !empty(
-            $this->consentDataProvider->getNotAcceptedRequiredConsentData($customerUser)
+            $this->consentDataProvider->getNotAcceptedRequiredConsentData()
         );
     }
 

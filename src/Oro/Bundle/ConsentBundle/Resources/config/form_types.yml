@@ -49,7 +49,6 @@ services:
     oro_consent.form.checkout_customer_consents_type:
         class: 'Oro\Bundle\ConsentBundle\Form\Type\CheckoutCustomerConsentsType'
         arguments:
-            - '@oro_consent.helper.consent_context_initialize_helper'
             - '@oro_consent.provider.consent_acceptance_provider'
             - '@oro_consent.extractor.customer_user_extractor'
         tags:

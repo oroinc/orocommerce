@@ -6,7 +6,6 @@ use Oro\Bundle\ConsentBundle\Builder\ConsentDataBuilder;
 use Oro\Bundle\ConsentBundle\Entity\Consent;
 use Oro\Bundle\ConsentBundle\Filter\FrontendConsentContentNodeValidFilter;
 use Oro\Bundle\ConsentBundle\Filter\RequiredConsentFilter;
-use Oro\Bundle\ConsentBundle\Helper\ConsentContextInitializeHelperInterface;
 use Oro\Bundle\ConsentBundle\Model\ConsentData;
 use Oro\Bundle\ConsentBundle\Provider\ConsentDataProvider;
 use Oro\Bundle\ConsentBundle\Provider\EnabledConsentProvider;
@@ -28,11 +27,6 @@ class ConsentDataProviderTest extends \PHPUnit\Framework\TestCase
     private $consentDataBuilder;
 
     /**
-     * @var ConsentContextInitializeHelperInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $consentContextInitializeHelper;
-
-    /**
      * @var ConsentDataProvider
      */
     private $provider;
@@ -44,12 +38,10 @@ class ConsentDataProviderTest extends \PHPUnit\Framework\TestCase
     {
         $this->enabledConsentProvider = $this->createMock(EnabledConsentProvider::class);
         $this->consentDataBuilder = $this->createMock(ConsentDataBuilder::class);
-        $this->consentContextInitializeHelper = $this->createMock(ConsentContextInitializeHelperInterface::class);
 
         $this->provider = new ConsentDataProvider(
             $this->enabledConsentProvider,
-            $this->consentDataBuilder,
-            $this->consentContextInitializeHelper
+            $this->consentDataBuilder
         );
     }
 
@@ -58,10 +50,6 @@ class ConsentDataProviderTest extends \PHPUnit\Framework\TestCase
         $customerUser = new CustomerUser();
         $consent = new Consent();
         $consentData = new ConsentData($consent);
-
-        $this->consentContextInitializeHelper->expects($this->once())
-            ->method('initialize')
-            ->with($customerUser);
 
         $this->enabledConsentProvider->expects($this->once())
             ->method('getConsents')
@@ -81,10 +69,6 @@ class ConsentDataProviderTest extends \PHPUnit\Framework\TestCase
         $customerUser = new CustomerUser();
         $consent = new Consent();
         $consentData = new ConsentData($consent);
-
-        $this->consentContextInitializeHelper->expects($this->once())
-            ->method('initialize')
-            ->with($customerUser);
 
         $this->enabledConsentProvider->expects($this->once())
             ->method('getConsents')
@@ -110,10 +94,6 @@ class ConsentDataProviderTest extends \PHPUnit\Framework\TestCase
         $consentDataAccepted = (new ConsentData($consentAccepted))->setAccepted(true);
         $consentDataNotAccepted = (new ConsentData($consentNotAccepted))->setAccepted(false);
 
-        $this->consentContextInitializeHelper->expects($this->once())
-            ->method('initialize')
-            ->with($customerUser);
-
         $this->enabledConsentProvider->expects($this->once())
             ->method('getConsents')
             ->with([])
@@ -134,10 +114,6 @@ class ConsentDataProviderTest extends \PHPUnit\Framework\TestCase
         $consentNotAccepted = new Consent();
         $consentDataAccepted = (new ConsentData($consentAccepted))->setAccepted(true);
         $consentDataNotAccepted = (new ConsentData($consentNotAccepted))->setAccepted(false);
-
-        $this->consentContextInitializeHelper->expects($this->once())
-            ->method('initialize')
-            ->with($customerUser);
 
         $this->enabledConsentProvider->expects($this->once())
             ->method('getConsents')

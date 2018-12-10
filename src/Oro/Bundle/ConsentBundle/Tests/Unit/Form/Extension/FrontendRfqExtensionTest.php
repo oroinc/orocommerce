@@ -3,12 +3,10 @@
 namespace Oro\Bundle\ConsentBundle\Tests\Unit\Form\Extension;
 
 use Oro\Bundle\ConsentBundle\Form\EventSubscriber\CustomerConsentsEventSubscriber;
-use Oro\Bundle\ConsentBundle\Form\EventSubscriber\FillConsentContextEventSubscriber;
 use Oro\Bundle\ConsentBundle\Form\EventSubscriber\GuestCustomerConsentsEventSubscriber;
 use Oro\Bundle\ConsentBundle\Form\EventSubscriber\PopulateFieldCustomerConsentsSubscriber;
 use Oro\Bundle\ConsentBundle\Form\Extension\FrontendRfqExtension;
 use Oro\Bundle\ConsentBundle\Form\Type\CustomerConsentsType;
-use Oro\Bundle\ConsentBundle\Helper\ConsentContextInitializeHelperInterface;
 use Oro\Bundle\ConsentBundle\Validator\Constraints\RemovedConsents;
 use Oro\Bundle\ConsentBundle\Validator\Constraints\RemovedLandingPages;
 use Oro\Bundle\ConsentBundle\Validator\Constraints\RequiredConsents;
@@ -37,17 +35,11 @@ class FrontendRfqExtensionTest extends FormIntegrationTestCase
     /** @var CustomerConsentsEventSubscriber|\PHPUnit\Framework\MockObject\MockObject */
     private $saveConsentAcceptanceSubscriber;
 
-    /** @var FillConsentContextEventSubscriber|\PHPUnit\Framework\MockObject\MockObject */
-    private $fillConsentContextEventSubscriber;
-
     /** @var GuestCustomerConsentsEventSubscriber|\PHPUnit\Framework\MockObject\MockObject */
     private $guestCustomerConsentsEventSubscriber;
 
     /** @var PopulateFieldCustomerConsentsSubscriber|\PHPUnit\Framework\MockObject\MockObject */
     private $populateFieldCustomerConsentsSubscriber;
-
-    /** @var ConsentContextInitializeHelperInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $consentContextInitializeHelper;
 
     /** @var TokenStorageInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $tokenStorage;
@@ -60,9 +52,7 @@ class FrontendRfqExtensionTest extends FormIntegrationTestCase
         $this->featureChecker = $this->createMock(FeatureChecker::class);
 
         $this->saveConsentAcceptanceSubscriber = $this->createMock(CustomerConsentsEventSubscriber::class);
-        $this->fillConsentContextEventSubscriber = $this->createMock(FillConsentContextEventSubscriber::class);
         $this->guestCustomerConsentsEventSubscriber = $this->createMock(GuestCustomerConsentsEventSubscriber::class);
-        $this->consentContextInitializeHelper = $this->createMock(ConsentContextInitializeHelperInterface::class);
         $this->populateFieldCustomerConsentsSubscriber = $this->createMock(
             PopulateFieldCustomerConsentsSubscriber::class
         );
@@ -70,10 +60,8 @@ class FrontendRfqExtensionTest extends FormIntegrationTestCase
 
         $this->extension = new FrontendRfqExtension(
             $this->saveConsentAcceptanceSubscriber,
-            $this->fillConsentContextEventSubscriber,
             $this->guestCustomerConsentsEventSubscriber,
             $this->populateFieldCustomerConsentsSubscriber,
-            $this->consentContextInitializeHelper,
             $this->tokenStorage
         );
 
@@ -88,14 +76,14 @@ class FrontendRfqExtensionTest extends FormIntegrationTestCase
      */
     protected function tearDown()
     {
-        unset($this->featureChecker);
-        unset($this->saveConsentAcceptanceSubscriber);
-        unset($this->fillConsentContextEventSubscriber);
-        unset($this->extension);
-        unset($this->builder);
-        unset($this->guestCustomerConsentsEventSubscriber);
-        unset($this->consentContextInitializeHelper);
-        unset($this->tokenStorage);
+        unset(
+            $this->featureChecker,
+            $this->saveConsentAcceptanceSubscriber,
+            $this->extension,
+            $this->builder,
+            $this->guestCustomerConsentsEventSubscriber,
+            $this->tokenStorage
+        );
     }
 
     public function testBuildFormWithFeatureDisabled()
@@ -129,11 +117,10 @@ class FrontendRfqExtensionTest extends FormIntegrationTestCase
             ->with('consents')
             ->willReturn(true);
 
-        $this->builder->expects($this->exactly(3))
+        $this->builder->expects($this->exactly(2))
             ->method('addEventSubscriber')
             ->withConsecutive(
                 [$this->saveConsentAcceptanceSubscriber],
-                [$this->fillConsentContextEventSubscriber],
                 [$this->populateFieldCustomerConsentsSubscriber]
             );
 
@@ -170,10 +157,6 @@ class FrontendRfqExtensionTest extends FormIntegrationTestCase
         $this->builder->expects($this->once())
             ->method('addEventSubscriber')
             ->with($this->guestCustomerConsentsEventSubscriber);
-
-        $this->consentContextInitializeHelper
-            ->expects($this->once())
-            ->method('initialize');
 
         $this->builder->expects($this->once())
             ->method('add')

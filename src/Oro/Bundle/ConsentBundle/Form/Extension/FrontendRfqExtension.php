@@ -3,11 +3,9 @@
 namespace Oro\Bundle\ConsentBundle\Form\Extension;
 
 use Oro\Bundle\ConsentBundle\Form\EventSubscriber\CustomerConsentsEventSubscriber;
-use Oro\Bundle\ConsentBundle\Form\EventSubscriber\FillConsentContextEventSubscriber;
 use Oro\Bundle\ConsentBundle\Form\EventSubscriber\GuestCustomerConsentsEventSubscriber;
 use Oro\Bundle\ConsentBundle\Form\EventSubscriber\PopulateFieldCustomerConsentsSubscriber;
 use Oro\Bundle\ConsentBundle\Form\Type\CustomerConsentsType;
-use Oro\Bundle\ConsentBundle\Helper\ConsentContextInitializeHelperInterface;
 use Oro\Bundle\ConsentBundle\Validator\Constraints\RemovedConsents;
 use Oro\Bundle\ConsentBundle\Validator\Constraints\RemovedLandingPages;
 use Oro\Bundle\ConsentBundle\Validator\Constraints\RequiredConsents;
@@ -32,9 +30,6 @@ class FrontendRfqExtension extends AbstractTypeExtension implements FeatureToggl
     /** @var CustomerConsentsEventSubscriber */
     private $saveConsentAcceptanceSubscriber;
 
-    /** @var FillConsentContextEventSubscriber */
-    private $fillConsentContextEventSubscriber;
-
     /** @var PopulateFieldCustomerConsentsSubscriber */
     private $populateFieldCustomerConsentsSubscriber;
 
@@ -44,30 +39,21 @@ class FrontendRfqExtension extends AbstractTypeExtension implements FeatureToggl
     /** @var GuestCustomerConsentsEventSubscriber */
     private $guestCustomerConsentsEventSubscriber;
 
-    /** @var ConsentContextInitializeHelperInterface */
-    private $contextInitializeHelper;
-
     /**
      * @param CustomerConsentsEventSubscriber $saveConsentAcceptanceSubscriber
-     * @param FillConsentContextEventSubscriber $fillConsentContextEventSubscriber
      * @param GuestCustomerConsentsEventSubscriber $guestCustomerConsentsEventSubscriber
      * @param PopulateFieldCustomerConsentsSubscriber $populateFieldCustomerConsentsSubscriber
-     * @param ConsentContextInitializeHelperInterface $contextInitializeHelper
      * @param TokenStorageInterface $tokenStorage
      */
     public function __construct(
         CustomerConsentsEventSubscriber $saveConsentAcceptanceSubscriber,
-        FillConsentContextEventSubscriber $fillConsentContextEventSubscriber,
         GuestCustomerConsentsEventSubscriber $guestCustomerConsentsEventSubscriber,
         PopulateFieldCustomerConsentsSubscriber $populateFieldCustomerConsentsSubscriber,
-        ConsentContextInitializeHelperInterface $contextInitializeHelper,
         TokenStorageInterface $tokenStorage
     ) {
         $this->saveConsentAcceptanceSubscriber = $saveConsentAcceptanceSubscriber;
-        $this->fillConsentContextEventSubscriber = $fillConsentContextEventSubscriber;
         $this->guestCustomerConsentsEventSubscriber = $guestCustomerConsentsEventSubscriber;
         $this->populateFieldCustomerConsentsSubscriber = $populateFieldCustomerConsentsSubscriber;
-        $this->contextInitializeHelper = $contextInitializeHelper;
         $this->tokenStorage = $tokenStorage;
     }
 
@@ -82,11 +68,9 @@ class FrontendRfqExtension extends AbstractTypeExtension implements FeatureToggl
         }
 
         if ($this->isGuestCustomerUser()) {
-            $this->contextInitializeHelper->initialize();
             $builder->addEventSubscriber($this->guestCustomerConsentsEventSubscriber);
         } else {
             $builder->addEventSubscriber($this->saveConsentAcceptanceSubscriber);
-            $builder->addEventSubscriber($this->fillConsentContextEventSubscriber);
             $builder->addEventSubscriber($this->populateFieldCustomerConsentsSubscriber);
         }
 

@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ConsentBundle\Tests\Unit\Form\Extension;
 
 use Oro\Bundle\ConsentBundle\Form\EventSubscriber\CustomerConsentsEventSubscriber;
-use Oro\Bundle\ConsentBundle\Form\EventSubscriber\FillConsentContextEventSubscriber;
 use Oro\Bundle\ConsentBundle\Form\EventSubscriber\PopulateFieldCustomerConsentsSubscriber;
 use Oro\Bundle\ConsentBundle\Form\Extension\FrontendCustomerEditExtension;
 use Oro\Bundle\ConsentBundle\Form\Type\CustomerConsentsType;
@@ -22,22 +21,19 @@ class FrontendCustomerEditExtensionTest extends FormIntegrationTestCase
 {
     use EntityTrait;
 
-    /** @var CustomerConsentsEventSubscriber|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var CustomerConsentsEventSubscriber|\PHPUnit\Framework\MockObject\MockObject */
     private $saveConsentAcceptanceSubscriber;
 
-    /** @var FillConsentContextEventSubscriber|\PHPUnit_Framework_MockObject_MockObject */
-    private $fillConsentContextEventSubscriber;
-
-    /** @var PopulateFieldCustomerConsentsSubscriber|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var PopulateFieldCustomerConsentsSubscriber|\PHPUnit\Framework\MockObject\MockObject */
     private $populateFieldCustomerConsentsSubscriber;
 
-    /** @var TokenStorageInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var TokenStorageInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $tokenStorage;
 
-    /** @var FeatureChecker|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject */
     private $featureChecker;
 
-    /** @var FormBuilderInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var FormBuilderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $formBuilder;
 
     /** @var FrontendCustomerEditExtension */
@@ -49,7 +45,6 @@ class FrontendCustomerEditExtensionTest extends FormIntegrationTestCase
     public function setUp()
     {
         $this->saveConsentAcceptanceSubscriber = $this->createMock(CustomerConsentsEventSubscriber::class);
-        $this->fillConsentContextEventSubscriber = $this->createMock(FillConsentContextEventSubscriber::class);
         $this->populateFieldCustomerConsentsSubscriber = $this->createMock(
             PopulateFieldCustomerConsentsSubscriber::class
         );
@@ -59,7 +54,6 @@ class FrontendCustomerEditExtensionTest extends FormIntegrationTestCase
 
         $this->extension = new FrontendCustomerEditExtension(
             $this->saveConsentAcceptanceSubscriber,
-            $this->fillConsentContextEventSubscriber,
             $this->populateFieldCustomerConsentsSubscriber,
             $this->tokenStorage
         );
@@ -81,11 +75,10 @@ class FrontendCustomerEditExtensionTest extends FormIntegrationTestCase
             ->method('isFeatureEnabled')
             ->willReturn(true);
 
-        $this->formBuilder->expects($this->exactly(3))
+        $this->formBuilder->expects($this->exactly(2))
             ->method('addEventSubscriber')
             ->withConsecutive(
                 [$this->saveConsentAcceptanceSubscriber],
-                [$this->fillConsentContextEventSubscriber],
                 [$this->populateFieldCustomerConsentsSubscriber]
             );
 
@@ -118,6 +111,7 @@ class FrontendCustomerEditExtensionTest extends FormIntegrationTestCase
 
     public function testAddCustomerConsentsField()
     {
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock(FormInterface::class);
         $data = $this->getEntity(CustomerUser::class, ['id' => 35]);
         $event = new FormEvent($form, $data);
@@ -143,6 +137,7 @@ class FrontendCustomerEditExtensionTest extends FormIntegrationTestCase
 
     public function testAddCustomerConsentsFieldNoCustomerUserInEventData()
     {
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock(FormInterface::class);
         $event = new FormEvent($form, []);
 
@@ -161,6 +156,7 @@ class FrontendCustomerEditExtensionTest extends FormIntegrationTestCase
 
     public function testAddCustomerConsentsFieldNoToken()
     {
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock(FormInterface::class);
         $data = $this->getEntity(CustomerUser::class, ['id' => 35]);
         $event = new FormEvent($form, $data);
@@ -170,7 +166,6 @@ class FrontendCustomerEditExtensionTest extends FormIntegrationTestCase
             ->method('getToken')
             ->willReturn(null);
 
-        $otherCustomerUser = $this->getEntity(CustomerUser::class, ['id' => 72]);
         $token->expects($this->never())
             ->method('getUser');
 
@@ -182,6 +177,7 @@ class FrontendCustomerEditExtensionTest extends FormIntegrationTestCase
 
     public function testAddCustomerConsentsFieldWrongCustomerUserInEventData()
     {
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock(FormInterface::class);
         $data = $this->getEntity(CustomerUser::class, ['id' => 35]);
         $event = new FormEvent($form, $data);

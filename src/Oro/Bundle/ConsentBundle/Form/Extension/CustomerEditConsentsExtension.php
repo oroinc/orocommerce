@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ConsentBundle\Form\Extension;
 
 use Oro\Bundle\ConsentBundle\Form\EventSubscriber\CustomerConsentsEventSubscriber;
-use Oro\Bundle\ConsentBundle\Form\EventSubscriber\FillConsentContextEventSubscriber;
 use Oro\Bundle\ConsentBundle\Form\EventSubscriber\PopulateFieldCustomerConsentsSubscriber;
 use Oro\Bundle\ConsentBundle\Form\Type\CustomerConsentsType;
 use Oro\Bundle\ConsentBundle\Validator\Constraints\RemovedConsents;
@@ -30,24 +29,18 @@ class CustomerEditConsentsExtension extends AbstractTypeExtension implements Fea
     /** @var CustomerConsentsEventSubscriber */
     private $saveConsentAcceptanceSubscriber;
 
-    /** @var FillConsentContextEventSubscriber */
-    private $fillConsentContextEventSubscriber;
-
     /** @var PopulateFieldCustomerConsentsSubscriber */
     private $populateFieldCustomerConsentsSubscriber;
 
     /**
      * @param CustomerConsentsEventSubscriber $saveConsentAcceptanceSubscriber
-     * @param FillConsentContextEventSubscriber $fillConsentContextEventSubscriber
      * @param PopulateFieldCustomerConsentsSubscriber $populateFieldCustomerConsentsSubscriber
      */
     public function __construct(
         CustomerConsentsEventSubscriber $saveConsentAcceptanceSubscriber,
-        FillConsentContextEventSubscriber $fillConsentContextEventSubscriber,
         PopulateFieldCustomerConsentsSubscriber $populateFieldCustomerConsentsSubscriber
     ) {
         $this->saveConsentAcceptanceSubscriber = $saveConsentAcceptanceSubscriber;
-        $this->fillConsentContextEventSubscriber = $fillConsentContextEventSubscriber;
         $this->populateFieldCustomerConsentsSubscriber = $populateFieldCustomerConsentsSubscriber;
     }
 
@@ -99,7 +92,6 @@ class CustomerEditConsentsExtension extends AbstractTypeExtension implements Fea
         );
 
         $builder->addEventSubscriber($this->saveConsentAcceptanceSubscriber);
-        $builder->addEventSubscriber($this->fillConsentContextEventSubscriber);
         $builder->addEventSubscriber($this->populateFieldCustomerConsentsSubscriber);
     }
 

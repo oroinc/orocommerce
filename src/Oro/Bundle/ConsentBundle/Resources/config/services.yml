@@ -41,7 +41,7 @@ services:
         class: 'Oro\Bundle\ConsentBundle\Provider\ConsentAcceptanceProvider'
         public: false
         arguments:
-            - '@oro_consent.provider.consent_context_provider'
+            - '@security.token_storage'
             - '@doctrine'
 
     oro_consent.layout.data_provider.consent:
@@ -72,7 +72,6 @@ services:
         abstract: true
         arguments:
             - '@oro_consent.form.event_subscriber.customer_consents'
-            - '@oro_consent.form.event_subscriber.fill_consent_context'
             - '@oro_consent.form.event_subscriber.populate_field_customer_consents'
 
     oro_consent.form.extension.frontend_customer_user_registration:
@@ -97,7 +96,6 @@ services:
         class: 'Oro\Bundle\ConsentBundle\Form\Extension\FrontendCustomerEditExtension'
         arguments:
             - '@oro_consent.form.event_subscriber.customer_consents'
-            - '@oro_consent.form.event_subscriber.fill_consent_context'
             - '@oro_consent.form.event_subscriber.populate_field_customer_consents'
             - '@security.token_storage'
         calls:
@@ -110,10 +108,8 @@ services:
         class: 'Oro\Bundle\ConsentBundle\Form\Extension\FrontendRfqExtension'
         arguments:
             - '@oro_consent.form.event_subscriber.customer_consents'
-            - '@oro_consent.form.event_subscriber.fill_consent_context'
             - '@oro_consent.form.event_subscriber.guest_customer_consents'
             - '@oro_consent.form.event_subscriber.populate_field_customer_consents'
-            - '@oro_consent.helper.consent_context_initialize_helper'
             - '@security.token_storage'
         calls:
             - [setExtendedType, ['Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestType']]
@@ -226,13 +222,6 @@ services:
             - '@oro_consent.provider.consent_acceptance_provider'
             - '@oro_consent.extractor.customer_user_extractor'
 
-    oro_consent.form.event_subscriber.fill_consent_context:
-        class: 'Oro\Bundle\ConsentBundle\Form\EventSubscriber\FillConsentContextEventSubscriber'
-        public: false
-        arguments:
-            - '@oro_consent.helper.consent_context_initialize_helper'
-            - '@oro_consent.extractor.customer_user_extractor'
-
     oro_consent.form.event_subscriber.guest_customer_consents:
         class: 'Oro\Bundle\ConsentBundle\Form\EventSubscriber\GuestCustomerConsentsEventSubscriber'
         public: false
@@ -240,12 +229,6 @@ services:
             - '@oro_consent.helper.guest_customer_consent_acceptances_helper'
         calls:
             - ['addDelayedPersistQueue', ['@oro_consent.queue.rfq_delayed_consent_acceptance_persist_queue']]
-
-    oro_consent.helper.consent_context_initialize_helper:
-        class: 'Oro\Bundle\ConsentBundle\Helper\ConsentContextInitializeHelper'
-        arguments:
-            - '@oro_consent.provider.consent_context_provider'
-            - '@oro_website.manager'
 
     oro_consent.filter.admin_consent_content_node_valid_filter:
         class: 'Oro\Bundle\ConsentBundle\Filter\AdminConsentContentNodeValidFilter'
@@ -282,10 +265,6 @@ services:
         public: false
         arguments:
             - '@oro_scope.scope_manager'
-            - '@oro_redirect.repository.slug'
-            - '@oro_customer.provider.customer_user_relations_provider'
-            - '@request_stack'
-            - '@oro_frontend.request.frontend_helper'
 
     oro_consent.validator.consent_content_node_validator:
         class: 'Oro\Bundle\ConsentBundle\Validator\ConsentContentNodeValidator'
@@ -350,7 +329,6 @@ services:
         arguments:
             - '@oro_consent.provider.enabled_consent_provider'
             - '@oro_consent.builder.consent_data_builder'
-            - '@oro_consent.helper.consent_context_initialize_helper'
 
     oro_consent.condition.checkout_has_unaccepted_consents:
         class: 'Oro\Bundle\ConsentBundle\Condition\CheckoutHasUnacceptedConsents'
@@ -401,10 +379,10 @@ services:
     oro_consent.provider.customer_user_consent_provider:
         class: 'Oro\Bundle\ConsentBundle\Provider\CustomerUserConsentProvider'
         arguments:
-            - '@oro_consent.helper.consent_context_initialize_helper'
             - '@oro_consent.helper.cms_page_helper'
             - '@oro_consent.provider.enabled_consent_provider'
             - '@doctrine'
+            - '@oro_consent.provider.consent_context_provider'
 
     oro_consent.accepted_concents_filter:
         class: Oro\Bundle\ConsentBundle\Filter\AcceptedConsentsFilter

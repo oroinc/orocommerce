@@ -5,9 +5,7 @@ namespace Oro\Bundle\ConsentBundle\Provider;
 use Oro\Bundle\ConsentBundle\Builder\ConsentDataBuilder;
 use Oro\Bundle\ConsentBundle\Filter\FrontendConsentContentNodeValidFilter;
 use Oro\Bundle\ConsentBundle\Filter\RequiredConsentFilter;
-use Oro\Bundle\ConsentBundle\Helper\ConsentContextInitializeHelperInterface;
 use Oro\Bundle\ConsentBundle\Model\ConsentData;
-use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 
 /**
  * Data provider that helps to get DTO object ConsentData for certain website from config
@@ -25,46 +23,32 @@ class ConsentDataProvider
     private $consentDataBuilder;
 
     /**
-     * @var ConsentContextInitializeHelperInterface
-     */
-    private $contextInitializeHelper;
-
-    /**
      * @param EnabledConsentProvider $provider
      * @param ConsentDataBuilder $consentDataBuilder
-     * @param ConsentContextInitializeHelperInterface $contextInitializeHelper
      */
     public function __construct(
         EnabledConsentProvider $provider,
-        ConsentDataBuilder $consentDataBuilder,
-        ConsentContextInitializeHelperInterface $contextInitializeHelper
+        ConsentDataBuilder $consentDataBuilder
     ) {
         $this->provider = $provider;
         $this->consentDataBuilder = $consentDataBuilder;
-        $this->contextInitializeHelper = $contextInitializeHelper;
     }
 
     /**
-     * @param CustomerUser|null $customerUser
      * @return ConsentData[]
      */
-    public function getAllConsentData(CustomerUser $customerUser = null)
+    public function getAllConsentData()
     {
-        $this->contextInitializeHelper->initialize($customerUser);
-
         return $this->getFilteredConsents([
             FrontendConsentContentNodeValidFilter::NAME
         ]);
     }
 
     /**
-     * @param CustomerUser|null $customerUser
      * @return ConsentData[]
      */
-    public function getRequiredConsentData(CustomerUser $customerUser = null)
+    public function getRequiredConsentData()
     {
-        $this->contextInitializeHelper->initialize($customerUser);
-
         return $this->getFilteredConsents([
             FrontendConsentContentNodeValidFilter::NAME,
             RequiredConsentFilter::NAME
@@ -72,13 +56,10 @@ class ConsentDataProvider
     }
 
     /**
-     * @param CustomerUser|null $customerUser
      * @return ConsentData[]
      */
-    public function getAcceptedConsentData(CustomerUser $customerUser = null)
+    public function getAcceptedConsentData()
     {
-        $this->contextInitializeHelper->initialize($customerUser);
-
         /**
          * Accepted consents already contain resolved data (cmsPageId and URL calculated based on cmsPage slug),
          * so no need to validate it
@@ -93,13 +74,10 @@ class ConsentDataProvider
     }
 
     /**
-     * @param CustomerUser|null $customerUser
      * @return ConsentData[]
      */
-    public function getNotAcceptedRequiredConsentData(CustomerUser $customerUser = null)
+    public function getNotAcceptedRequiredConsentData()
     {
-        $this->contextInitializeHelper->initialize($customerUser);
-
         $consents = $this->getFilteredConsents([
             FrontendConsentContentNodeValidFilter::NAME,
             RequiredConsentFilter::NAME
@@ -120,6 +98,7 @@ class ConsentDataProvider
     private function getFilteredConsents(array $filters = [])
     {
         $consents = $this->provider->getConsents($filters);
+
         return array_map([$this->consentDataBuilder, 'build'], $consents);
     }
 }

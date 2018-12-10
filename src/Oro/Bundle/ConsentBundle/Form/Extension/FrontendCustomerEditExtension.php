@@ -31,9 +31,6 @@ class FrontendCustomerEditExtension extends AbstractTypeExtension implements Fea
     /** @var CustomerConsentsEventSubscriber */
     private $saveConsentAcceptanceSubscriber;
 
-    /** @var FillConsentContextEventSubscriber */
-    private $fillConsentContextEventSubscriber;
-
     /** @var PopulateFieldCustomerConsentsSubscriber */
     private $populateFieldCustomerConsentsSubscriber;
 
@@ -42,18 +39,15 @@ class FrontendCustomerEditExtension extends AbstractTypeExtension implements Fea
 
     /**
      * @param CustomerConsentsEventSubscriber $saveConsentAcceptanceSubscriber
-     * @param FillConsentContextEventSubscriber       $fillConsentContextEventSubscriber
      * @param PopulateFieldCustomerConsentsSubscriber $populateFieldCustomerConsentsSubscriber
      * @param TokenStorageInterface                   $tokenStorage
      */
     public function __construct(
         CustomerConsentsEventSubscriber $saveConsentAcceptanceSubscriber,
-        FillConsentContextEventSubscriber $fillConsentContextEventSubscriber,
         PopulateFieldCustomerConsentsSubscriber $populateFieldCustomerConsentsSubscriber,
         TokenStorageInterface $tokenStorage
     ) {
         $this->saveConsentAcceptanceSubscriber = $saveConsentAcceptanceSubscriber;
-        $this->fillConsentContextEventSubscriber = $fillConsentContextEventSubscriber;
         $this->populateFieldCustomerConsentsSubscriber = $populateFieldCustomerConsentsSubscriber;
         $this->tokenStorage = $tokenStorage;
     }
@@ -69,13 +63,8 @@ class FrontendCustomerEditExtension extends AbstractTypeExtension implements Fea
         }
 
         $builder->addEventSubscriber($this->saveConsentAcceptanceSubscriber);
-        $builder->addEventSubscriber($this->fillConsentContextEventSubscriber);
         $builder->addEventSubscriber($this->populateFieldCustomerConsentsSubscriber);
 
-        /**
-         * Use priority higher than in `FillConsentContextEventSubscriber`,
-         * because it depends on working result of this listener
-         */
         $builder->addEventListener(
             FormEvents::POST_SET_DATA,
             [$this, 'addCustomerConsentsField'],

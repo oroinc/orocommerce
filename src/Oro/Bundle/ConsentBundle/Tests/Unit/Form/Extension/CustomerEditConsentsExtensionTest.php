@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ConsentBundle\Tests\Unit\Form\Extension;
 
 use Oro\Bundle\ConsentBundle\Form\EventSubscriber\CustomerConsentsEventSubscriber;
-use Oro\Bundle\ConsentBundle\Form\EventSubscriber\FillConsentContextEventSubscriber;
 use Oro\Bundle\ConsentBundle\Form\EventSubscriber\PopulateFieldCustomerConsentsSubscriber;
 use Oro\Bundle\ConsentBundle\Form\Extension\CustomerEditConsentsExtension;
 use Oro\Bundle\ConsentBundle\Form\Type\CustomerConsentsType;
@@ -16,19 +15,16 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 class CustomerEditConsentsExtensionTest extends FormIntegrationTestCase
 {
-    /** @var CustomerConsentsEventSubscriber|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var CustomerConsentsEventSubscriber|\PHPUnit\Framework\MockObject\MockObject */
     private $saveConsentAcceptanceSubscriber;
 
-    /** @var FillConsentContextEventSubscriber|\PHPUnit_Framework_MockObject_MockObject */
-    private $fillConsentContextEventSubscriber;
-
-    /** @var PopulateFieldCustomerConsentsSubscriber|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var PopulateFieldCustomerConsentsSubscriber|\PHPUnit\Framework\MockObject\MockObject */
     private $populateFieldCustomerConsentsSubscriber;
 
-    /** @var FeatureChecker|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject */
     private $featureChecker;
 
-    /** @var FormBuilderInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var FormBuilderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $formBuilder;
 
     /** @var CustomerEditConsentsExtension */
@@ -40,7 +36,6 @@ class CustomerEditConsentsExtensionTest extends FormIntegrationTestCase
     public function setUp()
     {
         $this->saveConsentAcceptanceSubscriber = $this->createMock(CustomerConsentsEventSubscriber::class);
-        $this->fillConsentContextEventSubscriber = $this->createMock(FillConsentContextEventSubscriber::class);
         $this->populateFieldCustomerConsentsSubscriber = $this->createMock(
             PopulateFieldCustomerConsentsSubscriber::class
         );
@@ -49,7 +44,6 @@ class CustomerEditConsentsExtensionTest extends FormIntegrationTestCase
 
         $this->extension = new CustomerEditConsentsExtension(
             $this->saveConsentAcceptanceSubscriber,
-            $this->fillConsentContextEventSubscriber,
             $this->populateFieldCustomerConsentsSubscriber
         );
         $this->extension->setFeatureChecker($this->featureChecker);
@@ -91,11 +85,10 @@ class CustomerEditConsentsExtensionTest extends FormIntegrationTestCase
                 ['constraints' => [new RemovedLandingPages(), new RemovedConsents(), new RequiredConsents()]]
             );
 
-        $this->formBuilder->expects($this->exactly(3))
+        $this->formBuilder->expects($this->exactly(2))
             ->method('addEventSubscriber')
             ->withConsecutive(
                 [$this->saveConsentAcceptanceSubscriber],
-                [$this->fillConsentContextEventSubscriber],
                 [$this->populateFieldCustomerConsentsSubscriber]
             );
 
@@ -137,11 +130,10 @@ class CustomerEditConsentsExtensionTest extends FormIntegrationTestCase
                 ['constraints' => [new RemovedLandingPages(), new RemovedConsents()]]
             );
 
-        $this->formBuilder->expects($this->exactly(3))
+        $this->formBuilder->expects($this->exactly(2))
             ->method('addEventSubscriber')
             ->withConsecutive(
                 [$this->saveConsentAcceptanceSubscriber],
-                [$this->fillConsentContextEventSubscriber],
                 [$this->populateFieldCustomerConsentsSubscriber]
             );
 

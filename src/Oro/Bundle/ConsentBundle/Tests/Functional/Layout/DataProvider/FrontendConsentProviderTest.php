@@ -13,6 +13,7 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
 /**
  * @covers \Oro\Bundle\ConsentBundle\Layout\DataProvider\FrontendConsentProvider
@@ -49,10 +50,6 @@ class FrontendConsentProviderTest extends WebTestCase
      */
     protected function tearDown()
     {
-        $this->getContainer()
-            ->get('oro_consent.provider.consent_context_provider')
-            ->resetContext();
-
         unset($this->provider);
     }
 
@@ -67,7 +64,10 @@ class FrontendConsentProviderTest extends WebTestCase
         /** @var CustomerUser $customerUserData */
         $customerUserData = $this->getReference($customerUserReference);
 
-        $consentData = $this->provider->getAllConsentData($customerUserData);
+        $this->getContainer()->get('security.token_storage')
+            ->setToken(new UsernamePasswordToken($customerUserData, LoadCustomerUserData::PASSWORD, 'key'));
+
+        $consentData = $this->provider->getAllConsentData();
         $this->assertExpectedConsents($consentData, $expectedConsentReferences);
     }
 
@@ -77,7 +77,7 @@ class FrontendConsentProviderTest extends WebTestCase
     public function getAllConsentDataProvider()
     {
         return [
-            "Customer with consent acceptances" => [
+            'Customer with consent acceptances' => [
                 'customerUserReference' => LoadCustomerUserData::EMAIL,
                 'expectedConsentReferences' => [
                     LoadConsentsData::CONSENT_OPTIONAL_NODE1_WITH_CMS,
@@ -90,7 +90,7 @@ class FrontendConsentProviderTest extends WebTestCase
                     LoadConsentsData::CONSENT_REQUIRED_WITHOUT_NODE
                 ]
             ],
-            "Customer without consent acceptances" => [
+            'Customer without consent acceptances' => [
                 'customerUserReference' => LoadCustomerUserData::LEVEL_1_EMAIL,
                 'expectedConsentReferences' => [
                     LoadConsentsData::CONSENT_OPTIONAL_NODE1_WITH_CMS,
@@ -115,6 +115,9 @@ class FrontendConsentProviderTest extends WebTestCase
         /** @var CustomerUser $customerUserData */
         $customerUserData = $this->getReference($customerUserReference);
 
+        $this->getContainer()->get('security.token_storage')
+            ->setToken(new UsernamePasswordToken($customerUserData, LoadCustomerUserData::PASSWORD, 'key'));
+
         $consentData = $this->provider->getRequiredConsentData($customerUserData);
         $this->assertExpectedConsents($consentData, $expectedConsentReferences);
     }
@@ -125,7 +128,7 @@ class FrontendConsentProviderTest extends WebTestCase
     public function getRequiredConsentDataProvider()
     {
         return [
-            "Customer with consent acceptances" => [
+            'Customer with consent acceptances' => [
                 'customerUserReference' => LoadCustomerUserData::EMAIL,
                 'expectedConsentReferences' => [
                     LoadConsentsData::CONSENT_REQUIRED_NODE1_WITH_CMS,
@@ -134,7 +137,7 @@ class FrontendConsentProviderTest extends WebTestCase
                     LoadConsentsData::CONSENT_REQUIRED_WITHOUT_NODE
                 ]
             ],
-            "Customer without consent acceptances" => [
+            'Customer without consent acceptances' => [
                 'customerUserReference' => LoadCustomerUserData::LEVEL_1_EMAIL,
                 'expectedConsentReferences' => [
                     LoadConsentsData::CONSENT_REQUIRED_NODE1_WITH_CMS,
@@ -157,7 +160,10 @@ class FrontendConsentProviderTest extends WebTestCase
         /** @var CustomerUser $customerUserData */
         $customerUserData = $this->getReference($customerUserReference);
 
-        $consentData = $this->provider->getAcceptedConsentData($customerUserData);
+        $this->getContainer()->get('security.token_storage')
+            ->setToken(new UsernamePasswordToken($customerUserData, LoadCustomerUserData::PASSWORD, 'key'));
+
+        $consentData = $this->provider->getAcceptedConsentData();
         $this->assertExpectedConsents($consentData, $expectedConsentReferences);
     }
 
@@ -167,7 +173,7 @@ class FrontendConsentProviderTest extends WebTestCase
     public function getAcceptedConsentDataProvider()
     {
         return [
-            "Customer with consent acceptances" => [
+            'Customer with consent acceptances' => [
                 'customerUserReference' => LoadCustomerUserData::EMAIL,
                 'expectedConsentReferences' => [
                     LoadConsentsData::CONSENT_OPTIONAL_NODE1_WITH_CMS,
@@ -180,7 +186,7 @@ class FrontendConsentProviderTest extends WebTestCase
                     LoadConsentsData::CONSENT_REQUIRED_WITHOUT_NODE,
                 ]
             ],
-            "Customer without consent acceptances" => [
+            'Customer without consent acceptances' => [
                 'customerUserReference' => LoadCustomerUserData::LEVEL_1_EMAIL,
                 'expectedConsentReferences' => []
             ],
@@ -200,7 +206,10 @@ class FrontendConsentProviderTest extends WebTestCase
         /** @var CustomerUser $customerUserData */
         $customerUserData = $this->getReference($customerUserReference);
 
-        $consentData = $this->provider->getNotAcceptedRequiredConsentData($customerUserData);
+        $this->getContainer()->get('security.token_storage')
+            ->setToken(new UsernamePasswordToken($customerUserData, LoadCustomerUserData::PASSWORD, 'key'));
+
+        $consentData = $this->provider->getNotAcceptedRequiredConsentData();
         $this->assertExpectedConsents($consentData, $expectedConsentReferences);
     }
 
@@ -210,11 +219,11 @@ class FrontendConsentProviderTest extends WebTestCase
     public function getNotAcceptedRequiredConsentDataProvider()
     {
         return [
-            "Customer with consent acceptances" => [
+            'Customer with consent acceptances' => [
                 'customerUserReference' => LoadCustomerUserData::EMAIL,
                 'expectedConsentReferences' => []
             ],
-            "Customer without consent acceptances" => [
+            'Customer without consent acceptances' => [
                 'customerUserReference' => LoadCustomerUserData::LEVEL_1_EMAIL,
                 'expectedConsentReferences' => [
                     LoadConsentsData::CONSENT_REQUIRED_NODE1_WITH_CMS,

@@ -5,17 +5,19 @@ namespace Oro\Bundle\ConsentBundle\Provider;
 use Oro\Bundle\ConsentBundle\Entity\Consent;
 use Oro\Bundle\ConsentBundle\Entity\ConsentAcceptance;
 use Oro\Bundle\ConsentBundle\Entity\Repository\ConsentAcceptanceRepository;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Symfony\Bridge\Doctrine\RegistryInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 /**
- * Provides ConsentAcceptances by the CustomerUser that is retrieved from context provider
+ * Provides ConsentAcceptances by the CustomerUser that is retrieved from token storage
  */
 class ConsentAcceptanceProvider
 {
     /**
-     * @var ConsentContextProviderInterface
+     * @var TokenStorageInterface
      */
-    private $contextProvider;
+    private $tokenStorage;
 
     /**
      * @var RegistryInterface
@@ -23,12 +25,12 @@ class ConsentAcceptanceProvider
     private $doctrine;
 
     /**
-     * @param ConsentContextProviderInterface $contextProvider
+     * @param TokenStorageInterface $tokenStorage
      * @param RegistryInterface $doctrine
      */
-    public function __construct(ConsentContextProviderInterface $contextProvider, RegistryInterface $doctrine)
+    public function __construct(TokenStorageInterface $tokenStorage, RegistryInterface $doctrine)
     {
-        $this->contextProvider = $contextProvider;
+        $this->tokenStorage = $tokenStorage;
         $this->doctrine = $doctrine;
     }
 
@@ -71,8 +73,13 @@ class ConsentAcceptanceProvider
      */
     public function getCustomerConsentAcceptances()
     {
-        $customerUser = $this->contextProvider->getCustomerUser();
-        if (null === $customerUser) {
+        $token = $this->tokenStorage->getToken();
+        if (!$token) {
+            return [];
+        }
+        $customerUser = $token->getUser();
+
+        if (null === $customerUser || !$customerUser instanceof CustomerUser) {
             return [];
         }
 

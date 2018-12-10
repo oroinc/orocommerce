@@ -11,7 +11,6 @@ use Oro\Bundle\ConsentBundle\SystemConfig\ConsentConfigConverter;
 
 /**
  * Provides consents enabled in the config with additional filterable option
- * Before using this provider, context should be initialized. Use ConsentContextInitializeHelper::initialize()
  */
 class EnabledConsentProvider
 {
@@ -60,7 +59,6 @@ class EnabledConsentProvider
 
     /**
      * If no filters are passed, it will return all consents enabled in the configuration for customer user's website.
-     * Don't forget to initialize context. Use ConsentContextInitializeHelper::initialize()
      *
      * @param array $enabledFilters
      * [

@@ -17,7 +17,7 @@ layout:
             blockType: container
             parentId: customer_user_view_information_container
             options:
-                visible: '=data["oro_frontend_consent_provider"].getAllConsentData(data["entity"]) and data["oro_frontend_consent_provider"].isCustomerUserCurrentlyLoggedIn(data["entity"])'
+                visible: '=data["oro_frontend_consent_provider"].getAllConsentData() and data["oro_frontend_consent_provider"].isCustomerUserCurrentlyLoggedIn(data["entity"])'
         - '@move':
             id: customer_user_view_information_content
             parentId: customer_user_view_information_container

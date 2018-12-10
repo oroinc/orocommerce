@@ -10,7 +10,7 @@ layout:
         - '@setOption':
             id: edit_profile_consent_wrapper
             optionName: vars.consents
-            optionValue: '=data["oro_frontend_consent_provider"].getAllConsentData(data["entity"])'
+            optionValue: '=data["oro_frontend_consent_provider"].getAllConsentData()'
         - '@add':
             id: __customer_user_form_fields_data_protection
             blockType: container
@@ -18,4 +18,4 @@ layout:
             siblingId: __customer_user_form_fields_password
             prepend: true
             options:
-                visible: '=data["oro_frontend_consent_provider"].getAllConsentData(data["entity"]) and data["oro_frontend_consent_provider"].isCustomerUserCurrentlyLoggedIn(data["entity"])'
+                visible: '=data["oro_frontend_consent_provider"].getAllConsentData() and data["oro_frontend_consent_provider"].isCustomerUserCurrentlyLoggedIn(data["entity"])'

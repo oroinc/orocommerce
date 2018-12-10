@@ -7,11 +7,12 @@ use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\ConsentBundle\Entity\ConsentAcceptance;
 use Oro\Bundle\ConsentBundle\Entity\Repository\ConsentAcceptanceRepository;
 use Oro\Bundle\ConsentBundle\Helper\CmsPageHelper;
-use Oro\Bundle\ConsentBundle\Helper\ConsentContextInitializeHelperInterface;
+use Oro\Bundle\ConsentBundle\Provider\ConsentContextProviderInterface;
 use Oro\Bundle\ConsentBundle\Provider\CustomerUserConsentProvider;
 use Oro\Bundle\ConsentBundle\Provider\EnabledConsentProvider;
 use Oro\Bundle\ConsentBundle\Tests\Unit\Entity\Stub\Consent;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
@@ -22,8 +23,8 @@ class CustomerUserConsentProviderTest extends \PHPUnit\Framework\TestCase
     /** @var CustomerUserConsentProvider */
     private $provider;
 
-    /** @var ConsentContextInitializeHelperInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $consentContextInitializeHelper;
+    /** @var ConsentContextProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $consentContextProvider;
 
     /** @var CmsPageHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $cmsPageHelper;
@@ -39,16 +40,16 @@ class CustomerUserConsentProviderTest extends \PHPUnit\Framework\TestCase
      */
     public function setUp()
     {
-        $this->consentContextInitializeHelper = $this->createMock(ConsentContextInitializeHelperInterface::class);
+        $this->consentContextProvider = $this->createMock(ConsentContextProviderInterface::class);
         $this->cmsPageHelper = $this->createMock(CmsPageHelper::class);
         $this->enabledConsentProvider = $this->createMock(EnabledConsentProvider::class);
         $this->doctrine = $this->createMock(RegistryInterface::class);
 
         $this->provider = new CustomerUserConsentProvider(
-            $this->consentContextInitializeHelper,
             $this->cmsPageHelper,
             $this->enabledConsentProvider,
-            $this->doctrine
+            $this->doctrine,
+            $this->consentContextProvider
         );
     }
 
@@ -65,10 +66,6 @@ class CustomerUserConsentProviderTest extends \PHPUnit\Framework\TestCase
         array $acceptedConsents,
         array $expected
     ) {
-        $this->consentContextInitializeHelper->expects($this->once())
-            ->method('initialize')
-            ->with($customerUser);
-
         $entityManager = $this->createMock(EntityManager::class);
         $this->doctrine->expects($this->once())
             ->method('getEntityManagerForClass')
@@ -90,8 +87,7 @@ class CustomerUserConsentProviderTest extends \PHPUnit\Framework\TestCase
             ->with($customerUser)
             ->willReturn($acceptedConsents);
 
-        $this->cmsPageHelper->expects($this->any())
-            ->method('getCmsPage')
+        $this->cmsPageHelper->method('getCmsPage')
             ->willReturnCallback(function (Consent $consent, ConsentAcceptance $consentAcceptance) {
                 return $consentAcceptance->getLandingPage();
             });
@@ -184,11 +180,14 @@ class CustomerUserConsentProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testHasEnabledConsentsByCustomerUser()
     {
-        $customerUser = $this->getEntity(CustomerUser::class, ['id' => 42]);
+        /** @var Website $website */
+        $website = $this->getEntity(Website::class, ['id' => 42]);
+        /** @var CustomerUser $customerUser */
+        $customerUser = $this->getEntity(CustomerUser::class, ['id' => 42, 'website' => $website]);
 
-        $this->consentContextInitializeHelper->expects($this->once())
-            ->method('initialize')
-            ->with($customerUser);
+        $this->consentContextProvider->expects($this->once())
+            ->method('setWebsite')
+            ->with($customerUser->getWebsite());
 
         $this->enabledConsentProvider->expects($this->once())
             ->method('getConsents')
@@ -202,11 +201,14 @@ class CustomerUserConsentProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testHasEnabledConsentsByCustomerUserNoConsents()
     {
-        $customerUser = $this->getEntity(CustomerUser::class, ['id' => 42]);
+        /** @var Website $website */
+        $website = $this->getEntity(Website::class, ['id' => 42]);
+        /** @var CustomerUser $customerUser */
+        $customerUser = $this->getEntity(CustomerUser::class, ['id' => 42, 'website' => $website]);
 
-        $this->consentContextInitializeHelper->expects($this->once())
-            ->method('initialize')
-            ->with($customerUser);
+        $this->consentContextProvider->expects($this->once())
+            ->method('setWebsite')
+            ->with($customerUser->getWebsite());
 
         $this->enabledConsentProvider->expects($this->once())
             ->method('getConsents')

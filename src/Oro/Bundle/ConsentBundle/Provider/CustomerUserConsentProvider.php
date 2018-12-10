@@ -6,7 +6,6 @@ use Oro\Bundle\ConsentBundle\Entity\Consent;
 use Oro\Bundle\ConsentBundle\Entity\ConsentAcceptance;
 use Oro\Bundle\ConsentBundle\Entity\Repository\ConsentAcceptanceRepository;
 use Oro\Bundle\ConsentBundle\Helper\CmsPageHelper;
-use Oro\Bundle\ConsentBundle\Helper\ConsentContextInitializeHelperInterface;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
@@ -15,9 +14,6 @@ use Symfony\Bridge\Doctrine\RegistryInterface;
  */
 class CustomerUserConsentProvider
 {
-    /** @var ConsentContextInitializeHelperInterface */
-    protected $consentContextInitializeHelper;
-
     /** @var CmsPageHelper */
     protected $cmsPageHelper;
 
@@ -27,22 +23,25 @@ class CustomerUserConsentProvider
     /** @var RegistryInterface */
     protected $doctrine;
 
+    /** @var ConsentContextProviderInterface */
+    private $consentContextProvider;
+
     /**
-     * @param ConsentContextInitializeHelperInterface $consentContextInitializeHelper
      * @param CmsPageHelper $cmsPageHelper
      * @param EnabledConsentProvider $enabledConsentProvider
      * @param RegistryInterface $doctrine
+     * @param ConsentContextProviderInterface $consentContextProvider
      */
     public function __construct(
-        ConsentContextInitializeHelperInterface $consentContextInitializeHelper,
         CmsPageHelper $cmsPageHelper,
         EnabledConsentProvider $enabledConsentProvider,
-        RegistryInterface $doctrine
+        RegistryInterface $doctrine,
+        ConsentContextProviderInterface $consentContextProvider
     ) {
-        $this->consentContextInitializeHelper = $consentContextInitializeHelper;
         $this->cmsPageHelper = $cmsPageHelper;
         $this->enabledConsentProvider = $enabledConsentProvider;
         $this->doctrine = $doctrine;
+        $this->consentContextProvider = $consentContextProvider;
     }
 
     /**
@@ -51,9 +50,6 @@ class CustomerUserConsentProvider
      */
     public function getCustomerUserConsentsWithAcceptances(CustomerUser $customerUser)
     {
-        /** Initializing context for Consent Provider and CMS Page Helper */
-        $this->consentContextInitializeHelper->initialize($customerUser);
-
         /** @var ConsentAcceptanceRepository $consentAcceptanceRepository */
         $consentAcceptanceRepository = $this->doctrine
             ->getEntityManagerForClass(ConsentAcceptance::class)
@@ -104,8 +100,7 @@ class CustomerUserConsentProvider
      */
     public function hasEnabledConsentsByCustomerUser(CustomerUser $customerUser)
     {
-        /** Initializing context for Consent Provider */
-        $this->consentContextInitializeHelper->initialize($customerUser);
+        $this->consentContextProvider->setWebsite($customerUser->getWebsite());
 
         $consents = $this->enabledConsentProvider->getConsents();
 

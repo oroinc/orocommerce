@@ -54,29 +54,9 @@ class FrontendConsentProviderTest extends \PHPUnit\Framework\TestCase
 
         $this->consentDataProvider->expects($this->once())
             ->method('getAllConsentData')
-            ->with(null)
             ->willReturn($expectedData);
 
         $this->assertEquals($expectedData, $this->frontendConsentProvider->getAllConsentData());
-    }
-
-    public function testGetAllConsentDataWithCustomerUser()
-    {
-        $customerUser = new CustomerUser();
-        $customerUser->setFirstName('first name');
-        $expectedData = [$this->getConsentData('first'), $this->getConsentData('second')];
-
-        $this->featureChecker->expects($this->once())
-            ->method('isFeatureEnabled')
-            ->with('consents', null)
-            ->willReturn(true);
-
-        $this->consentDataProvider->expects($this->once())
-            ->method('getAllConsentData')
-            ->with($customerUser)
-            ->willReturn($expectedData);
-
-        $this->assertEquals($expectedData, $this->frontendConsentProvider->getAllConsentData($customerUser));
     }
 
     public function testGetAllConsentDataFeatureDisabled()
@@ -103,29 +83,9 @@ class FrontendConsentProviderTest extends \PHPUnit\Framework\TestCase
 
         $this->consentDataProvider->expects($this->once())
             ->method('getRequiredConsentData')
-            ->with(null)
             ->willReturn($expectedData);
 
         $this->assertEquals($expectedData, $this->frontendConsentProvider->getRequiredConsentData());
-    }
-
-    public function testGetRequiredConsentDataWithCustomerUser()
-    {
-        $customerUser = new CustomerUser();
-        $customerUser->setFirstName('first name');
-        $expectedData = [$this->getConsentData('first'), $this->getConsentData('second')];
-
-        $this->featureChecker->expects($this->once())
-            ->method('isFeatureEnabled')
-            ->with('consents', null)
-            ->willReturn(true);
-
-        $this->consentDataProvider->expects($this->once())
-            ->method('getRequiredConsentData')
-            ->with($customerUser)
-            ->willReturn($expectedData);
-
-        $this->assertEquals($expectedData, $this->frontendConsentProvider->getRequiredConsentData($customerUser));
     }
 
     public function testGetRequiredConsentDataFeatureDisabled()
@@ -152,29 +112,9 @@ class FrontendConsentProviderTest extends \PHPUnit\Framework\TestCase
 
         $this->consentDataProvider->expects($this->once())
             ->method('getAcceptedConsentData')
-            ->with(null)
             ->willReturn($expectedData);
 
         $this->assertEquals($expectedData, $this->frontendConsentProvider->getAcceptedConsentData());
-    }
-
-    public function testGetAcceptedConsentDataWithCustomerUser()
-    {
-        $customerUser = new CustomerUser();
-        $customerUser->setFirstName('first name');
-        $expectedData = [$this->getConsentData('first'), $this->getConsentData('second')];
-
-        $this->featureChecker->expects($this->once())
-            ->method('isFeatureEnabled')
-            ->with('consents', null)
-            ->willReturn(true);
-
-        $this->consentDataProvider->expects($this->once())
-            ->method('getAcceptedConsentData')
-            ->with($customerUser)
-            ->willReturn($expectedData);
-
-        $this->assertEquals($expectedData, $this->frontendConsentProvider->getAcceptedConsentData($customerUser));
     }
 
     public function testGetAcceptedConsentDataFeatureDisabled()
@@ -201,32 +141,9 @@ class FrontendConsentProviderTest extends \PHPUnit\Framework\TestCase
 
         $this->consentDataProvider->expects($this->once())
             ->method('getNotAcceptedRequiredConsentData')
-            ->with(null)
             ->willReturn($expectedData);
 
         $this->assertEquals($expectedData, $this->frontendConsentProvider->getNotAcceptedRequiredConsentData());
-    }
-
-    public function testGetNotAcceptedRequiredConsentDataWithCustomerUser()
-    {
-        $customerUser = new CustomerUser();
-        $customerUser->setFirstName('first name');
-        $expectedData = [$this->getConsentData('first'), $this->getConsentData('second')];
-
-        $this->featureChecker->expects($this->once())
-            ->method('isFeatureEnabled')
-            ->with('consents', null)
-            ->willReturn(true);
-
-        $this->consentDataProvider->expects($this->once())
-            ->method('getNotAcceptedRequiredConsentData')
-            ->with($customerUser)
-            ->willReturn($expectedData);
-
-        $this->assertEquals(
-            $expectedData,
-            $this->frontendConsentProvider->getNotAcceptedRequiredConsentData($customerUser)
-        );
     }
 
     public function testGetNotAcceptedRequiredConsentDataFeatureDisabled()

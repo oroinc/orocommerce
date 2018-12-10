@@ -39,55 +39,51 @@ class FrontendConsentProvider implements FeatureToggleableInterface
     }
 
     /**
-     * @param CustomerUser|null $customerUser
      * @return ConsentData[]
      */
-    public function getAllConsentData(CustomerUser $customerUser = null)
+    public function getAllConsentData()
     {
         if (!$this->isFeaturesEnabled()) {
             return [];
         }
 
-        return $this->provider->getAllConsentData($customerUser);
+        return $this->provider->getAllConsentData();
     }
 
     /**
-     * @param CustomerUser|null $customerUser
      * @return ConsentData[]
      */
-    public function getRequiredConsentData(CustomerUser $customerUser = null)
+    public function getRequiredConsentData()
     {
         if (!$this->isFeaturesEnabled()) {
             return [];
         }
 
-        return $this->provider->getRequiredConsentData($customerUser);
+        return $this->provider->getRequiredConsentData();
     }
 
     /**
-     * @param CustomerUser|null $customerUser
      * @return ConsentData[]
      */
-    public function getAcceptedConsentData(CustomerUser $customerUser = null)
+    public function getAcceptedConsentData()
     {
         if (!$this->isFeaturesEnabled()) {
             return [];
         }
 
-        return $this->provider->getAcceptedConsentData($customerUser);
+        return $this->provider->getAcceptedConsentData();
     }
 
     /**
-     * @param CustomerUser|null $customerUser
      * @return ConsentData[]
      */
-    public function getNotAcceptedRequiredConsentData(CustomerUser $customerUser = null)
+    public function getNotAcceptedRequiredConsentData()
     {
         if (!$this->isFeaturesEnabled()) {
             return [];
         }
 
-        return $this->provider->getNotAcceptedRequiredConsentData($customerUser);
+        return $this->provider->getNotAcceptedRequiredConsentData();
     }
 
     /**

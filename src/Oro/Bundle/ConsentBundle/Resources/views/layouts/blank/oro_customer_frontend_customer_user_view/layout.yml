@@ -3,4 +3,4 @@ layout:
         - '@setOption':
             id: edit_profile_view_consent_list
             optionName: vars.consents
-            optionValue: '=data["oro_frontend_consent_provider"].getAllConsentData(data["entity"])'
+            optionValue: '=data["oro_frontend_consent_provider"].getAllConsentData()'

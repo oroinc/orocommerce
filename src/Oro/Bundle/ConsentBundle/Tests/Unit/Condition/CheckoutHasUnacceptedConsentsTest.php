@@ -102,16 +102,14 @@ class CheckoutHasUnacceptedConsentsTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider evaluateProvider
      *
-     * @param Checkout     $checkout
-     * @param CustomerUser $customerUser
-     * @param array        $consents
-     * @param              $expected
+     * @param Checkout $checkout
+     * @param array    $consents
+     * @param          $expected
      */
-    public function testEvaluate(Checkout $checkout, CustomerUser $customerUser, array $consents, $expected)
+    public function testEvaluate(Checkout $checkout, array $consents, $expected)
     {
         $this->consentsProvider->expects($this->once())
             ->method('getNotAcceptedRequiredConsentData')
-            ->with($customerUser)
             ->willReturn($consents);
 
         $this->condition->initialize(['checkout' => $checkout]);
@@ -140,25 +138,21 @@ class CheckoutHasUnacceptedConsentsTest extends \PHPUnit\Framework\TestCase
         return [
             'no_unaccepted_consents and property "customerUser" in use' => [
                 'checkout' => $checkoutWithCustomerUser,
-                'customerUser' => $customerUser,
                 'consents' => [],
                 'expected' => false,
             ],
             'has_unaccepted_consents and property "customerUser" in use' => [
                 'checkout' => $checkoutWithCustomerUser,
-                'customerUser' => $customerUser,
                 'consents' => [new Consent(), new Consent()],
                 'expected' => true,
             ],
             'no_unaccepted_consents and property "registeredCustomerUser" in use' => [
                 'checkout' => $checkoutWithRegisteredCustomerUser,
-                'customerUser' => $customerUser,
                 'consents' => [],
                 'expected' => false,
             ],
             'has_unaccepted_consents and property "registeredCustomerUser" in use' => [
                 'checkout' => $checkoutWithRegisteredCustomerUser,
-                'customerUser' => $customerUser,
                 'consents' => [new Consent(), new Consent()],
                 'expected' => true,
             ],

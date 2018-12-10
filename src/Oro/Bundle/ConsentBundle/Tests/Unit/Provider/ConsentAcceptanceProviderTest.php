@@ -7,19 +7,20 @@ use Oro\Bundle\ConsentBundle\Entity\Consent;
 use Oro\Bundle\ConsentBundle\Entity\ConsentAcceptance;
 use Oro\Bundle\ConsentBundle\Entity\Repository\ConsentAcceptanceRepository;
 use Oro\Bundle\ConsentBundle\Provider\ConsentAcceptanceProvider;
-use Oro\Bundle\ConsentBundle\Provider\ConsentContextProvider;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Bridge\Doctrine\RegistryInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class ConsentAcceptanceProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var ConsentContextProvider|\PHPUnit\Framework\MockObject\MockObject
+     * @var TokenStorageInterface|\PHPUnit\Framework\MockObject\MockObject
      */
-    private $contextProvider;
+    private $tokenStorage;
 
     /**
      * @var ConsentAcceptanceRepository|\PHPUnit\Framework\MockObject\MockObject
@@ -36,24 +37,22 @@ class ConsentAcceptanceProviderTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp()
     {
-        $this->contextProvider = $this->createMock(ConsentContextProvider::class);
+        $this->tokenStorage = $this->createMock(TokenStorageInterface::class);
         $this->consentAcceptanceRepository = $this->createMock(ConsentAcceptanceRepository::class);
 
         $em = $this->createMock(EntityManager::class);
-        $em->expects($this->any())
-            ->method('getRepository')
+        $em->method('getRepository')
             ->with(ConsentAcceptance::class)
             ->willReturn($this->consentAcceptanceRepository);
 
         /** @var RegistryInterface|\PHPUnit\Framework\MockObject\MockObject $doctrine */
         $doctrine = $this->createMock(RegistryInterface::class);
-        $doctrine->expects($this->any())
-            ->method('getEntityManagerForClass')
+        $doctrine->method('getEntityManagerForClass')
             ->with(ConsentAcceptance::class)
             ->willReturn($em);
 
         $this->consentAcceptanceProvider = new ConsentAcceptanceProvider(
-            $this->contextProvider,
+            $this->tokenStorage,
             $doctrine
         );
     }
@@ -63,34 +62,40 @@ class ConsentAcceptanceProviderTest extends \PHPUnit\Framework\TestCase
      */
     protected function tearDown()
     {
-        unset($this->contextProvider);
-        unset($this->consentAcceptanceRepository);
-        unset($this->consentAcceptanceProvider);
+        unset(
+            $this->tokenStorage,
+            $this->consentAcceptanceRepository,
+            $this->consentAcceptanceProvider
+        );
+    }
+
+    public function testGetCustomerConsentAcceptancesWithoutCustomerUser()
+    {
+        $this->mockToken();
+
+        $this->consentAcceptanceRepository
+            ->expects($this->never())
+            ->method('getAcceptedConsentsByCustomer');
+
+        $this->assertEquals([], $this->consentAcceptanceProvider->getCustomerConsentAcceptances());
     }
 
     /**
      * @dataProvider getCustomerConsentAcceptancesProvider
      *
-     * @param CustomerUser|null $customerUser
-     * @param array             $consentAcceptances
+     * @param array $consentAcceptances
      */
-    public function testGetCustomerConsentAcceptances(CustomerUser $customerUser = null, array $consentAcceptances = [])
+    public function testGetCustomerConsentAcceptances(array $consentAcceptances = [])
     {
-        $this->contextProvider->expects($this->any())
-            ->method('getCustomerUser')
-            ->willReturn($customerUser);
+        $customerUser = $this->getEntity(CustomerUser::class, ['id' => 21]);
 
-        if ($customerUser !== null) {
-            $this->consentAcceptanceRepository
-                ->expects($this->once())
-                ->method('getAcceptedConsentsByCustomer')
-                ->with($customerUser)
-                ->willReturn($consentAcceptances);
-        } else {
-            $this->consentAcceptanceRepository
-                ->expects($this->never())
-                ->method('getAcceptedConsentsByCustomer');
-        }
+        $this->mockToken($customerUser);
+
+        $this->consentAcceptanceRepository
+            ->expects($this->once())
+            ->method('getAcceptedConsentsByCustomer')
+            ->with($customerUser)
+            ->willReturn($consentAcceptances);
 
         $this->assertSame(
             $consentAcceptances,
@@ -104,16 +109,10 @@ class ConsentAcceptanceProviderTest extends \PHPUnit\Framework\TestCase
     public function getCustomerConsentAcceptancesProvider()
     {
         return [
-            "Context doesn't contain customerUser" => [
-                'customerUser' => null,
+            'There is no consentAcceptance signed by CustomerUser' => [
                 'consentAcceptances' => []
             ],
-            "There is no consentAcceptance signed by CustomerUser" => [
-                'customerUser' => $this->getEntity(CustomerUser::class, ['id' => 21]),
-                'consentAcceptances' => []
-            ],
-            "There are several consentAcceptances signed by CustomerUser" => [
-                'customerUser' => $this->getEntity(CustomerUser::class, ['id' => 21]),
+            'There are several consentAcceptances signed by CustomerUser' => [
                 'consentAcceptances' => [
                     $this->getEntity(ConsentAcceptance::class, ['id' => 1]),
                     $this->getEntity(ConsentAcceptance::class, ['id' => 2]),
@@ -122,35 +121,38 @@ class ConsentAcceptanceProviderTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
+    public function testGetCustomerConsentAcceptanceByConsentIdWithoutCustomerUser()
+    {
+        $this->mockToken();
+
+        $this->consentAcceptanceRepository
+            ->expects($this->never())
+            ->method('getAcceptedConsentsByCustomer');
+
+        $this->assertNull($this->consentAcceptanceProvider->getCustomerConsentAcceptanceByConsentId(1));
+    }
+
     /**
      * @dataProvider getGetCustomerConsentAcceptanceByConsentId
      *
-     * @param CustomerUser|null      $customerUser
      * @param array                  $consentAcceptances
      * @param int                    $consentId
      * @param ConsentAcceptance|null $expectedResult
      */
     public function testGetCustomerConsentAcceptanceByConsentId(
-        $customerUser,
         array $consentAcceptances,
         int $consentId,
         ConsentAcceptance $expectedResult = null
     ) {
-        $this->contextProvider->expects($this->any())
-            ->method('getCustomerUser')
-            ->willReturn($customerUser);
+        $customerUser = $this->getEntity(CustomerUser::class, ['id' => 21]);
 
-        if ($customerUser !== null) {
-            $this->consentAcceptanceRepository
-                ->expects($this->once())
-                ->method('getAcceptedConsentsByCustomer')
-                ->with($customerUser)
-                ->willReturn($consentAcceptances);
-        } else {
-            $this->consentAcceptanceRepository
-                ->expects($this->never())
-                ->method('getAcceptedConsentsByCustomer');
-        }
+        $this->mockToken($customerUser);
+
+        $this->consentAcceptanceRepository
+            ->expects($this->once())
+            ->method('getAcceptedConsentsByCustomer')
+            ->with($customerUser)
+            ->willReturn($consentAcceptances);
 
         $this->assertSame(
             $expectedResult,
@@ -179,20 +181,12 @@ class ConsentAcceptanceProviderTest extends \PHPUnit\Framework\TestCase
         );
 
         return [
-            "Context doesn't contain customerUser" => [
-                'customerUser' => null,
+            'There is no consentAcceptance signed by CustomerUser' => [
                 'consentAcceptances' => [],
                 'consentId' => 1,
                 'expectedResult' => null
             ],
-            "There is no consentAcceptance signed by CustomerUser" => [
-                'customerUser' => $this->getEntity(CustomerUser::class, ['id' => 21]),
-                'consentAcceptances' => [],
-                'consentId' => 1,
-                'expectedResult' => null
-            ],
-            "Found consentAcceptance signed by CustomerUser on given consent id" => [
-                'customerUser' => $this->getEntity(CustomerUser::class, ['id' => 21]),
+            'Found consentAcceptance signed by CustomerUser on given consent id' => [
                 'consentAcceptances' => [
                     $consentAcceptance1,
                     $consentAcceptance2,
@@ -200,8 +194,7 @@ class ConsentAcceptanceProviderTest extends \PHPUnit\Framework\TestCase
                 'consentId' => 1,
                 'expectedResult' => $consentAcceptance1
             ],
-            "Not found consentAcceptance signed by CustomerUser on given consent id" => [
-                'customerUser' => $this->getEntity(CustomerUser::class, ['id' => 21]),
+            'Not found consentAcceptance signed by CustomerUser on given consent id' => [
                 'consentAcceptances' => [
                     $consentAcceptance1,
                     $consentAcceptance2,
@@ -212,35 +205,40 @@ class ConsentAcceptanceProviderTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
+    public function testGetCustomerConsentAcceptancesByConsentsWithoutCustomerUser()
+    {
+        $this->mockToken();
+
+        $this->consentAcceptanceRepository
+            ->expects($this->never())
+            ->method('getAcceptedConsentsByCustomer');
+
+        $consents = [$this->getEntity(Consent::class, ['id' => 1])];
+
+        $this->assertEquals([], $this->consentAcceptanceProvider->getCustomerConsentAcceptancesByConsents($consents));
+    }
+
     /**
      * @dataProvider getGetCustomerConsentAcceptancesByConsents
      *
-     * @param CustomerUser|null      $customerUser
-     * @param array                  $consentAcceptances
-     * @param array                  $consents
-     * @param array                  $expectedResult
+     * @param array $consentAcceptances
+     * @param array $consents
+     * @param array $expectedResult
      */
     public function testGetCustomerConsentAcceptancesByConsents(
-        $customerUser,
         array $consentAcceptances,
         array $consents,
         array $expectedResult = []
     ) {
-        $this->contextProvider->expects($this->any())
-            ->method('getCustomerUser')
-            ->willReturn($customerUser);
+        $customerUser = $this->getEntity(CustomerUser::class, ['id' => 21]);
 
-        if ($customerUser !== null) {
-            $this->consentAcceptanceRepository
-                ->expects($this->once())
-                ->method('getAcceptedConsentsByCustomer')
-                ->with($customerUser)
-                ->willReturn($consentAcceptances);
-        } else {
-            $this->consentAcceptanceRepository
-                ->expects($this->never())
-                ->method('getAcceptedConsentsByCustomer');
-        }
+        $this->mockToken($customerUser);
+
+        $this->consentAcceptanceRepository
+            ->expects($this->once())
+            ->method('getAcceptedConsentsByCustomer')
+            ->with($customerUser)
+            ->willReturn($consentAcceptances);
 
         $this->assertSame(
             $expectedResult,
@@ -275,24 +273,14 @@ class ConsentAcceptanceProviderTest extends \PHPUnit\Framework\TestCase
         );
 
         return [
-            "Context doesn't contain customerUser" => [
-                'customerUser' => null,
+            'There is no consentAcceptance signed by CustomerUser' => [
                 'consentAcceptances' => [],
                 'consents' => [
                     $consent1
                 ],
                 'expectedResult' => []
             ],
-            "There is no consentAcceptance signed by CustomerUser" => [
-                'customerUser' => $this->getEntity(CustomerUser::class, ['id' => 21]),
-                'consentAcceptances' => [],
-                'consents' => [
-                    $consent1
-                ],
-                'expectedResult' => []
-            ],
-            "Found consentAcceptances signed by CustomerUser by given consents" => [
-                'customerUser' => $this->getEntity(CustomerUser::class, ['id' => 21]),
+            'Found consentAcceptances signed by CustomerUser by given consents' => [
                 'consentAcceptances' => [
                     $consentAcceptance1,
                     $consentAcceptance2,
@@ -307,8 +295,7 @@ class ConsentAcceptanceProviderTest extends \PHPUnit\Framework\TestCase
                     $consentAcceptance2,
                 ]
             ],
-            "Not found consentAcceptance signed by CustomerUser by given consents" => [
-                'customerUser' => $this->getEntity(CustomerUser::class, ['id' => 21]),
+            'Not found consentAcceptance signed by CustomerUser by given consents' => [
                 'consentAcceptances' => [
                     $consentAcceptance1,
                     $consentAcceptance2,
@@ -317,5 +304,19 @@ class ConsentAcceptanceProviderTest extends \PHPUnit\Framework\TestCase
                 'expectedResult' => []
             ],
         ];
+    }
+
+    /**
+     * @param CustomerUser|null $customerUser
+     */
+    private function mockToken(CustomerUser $customerUser = null)
+    {
+        $token = $this->createMock(TokenInterface::class);
+        $token->expects($this->once())
+            ->method('getUser')
+            ->willReturn($customerUser);
+        $this->tokenStorage->expects($this->once())
+            ->method('getToken')
+            ->willReturn($token);
     }
 }

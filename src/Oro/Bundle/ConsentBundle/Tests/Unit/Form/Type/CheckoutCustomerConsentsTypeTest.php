@@ -6,7 +6,6 @@ use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\ConsentBundle\Extractor\CustomerUserExtractor;
 use Oro\Bundle\ConsentBundle\Form\Type\CheckoutCustomerConsentsType;
 use Oro\Bundle\ConsentBundle\Form\Type\CustomerConsentsType;
-use Oro\Bundle\ConsentBundle\Helper\ConsentContextInitializeHelperInterface;
 use Oro\Bundle\ConsentBundle\Provider\ConsentAcceptanceProvider;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
@@ -25,9 +24,6 @@ class CheckoutCustomerConsentsTypeTest extends FormIntegrationTestCase
     /** @var CheckoutCustomerConsentsType */
     private $formType;
 
-    /** @var ConsentContextInitializeHelperInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $consentContextInitializeHelper;
-
     /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject */
     private $featureChecker;
 
@@ -44,13 +40,9 @@ class CheckoutCustomerConsentsTypeTest extends FormIntegrationTestCase
     {
         parent::setUp();
 
-        $this->consentContextInitializeHelper = $this->createMock(
-            ConsentContextInitializeHelperInterface::class
-        );
         /** @var ConsentAcceptanceProvider|\PHPUnit\Framework\MockObject\MockObject $consentAcceptanceProvider */
         $consentAcceptanceProvider = $this->createMock(ConsentAcceptanceProvider::class);
         $consentAcceptanceProvider
-            ->expects($this->any())
             ->method('getCustomerConsentAcceptances')
             ->willReturn(self::CUSTOMER_ACCEPTANCE_DATA);
 
@@ -61,7 +53,6 @@ class CheckoutCustomerConsentsTypeTest extends FormIntegrationTestCase
         $this->customerUserExtractor->addMapping(Checkout::class, 'registeredCustomerUser');
 
         $this->formType = new CheckoutCustomerConsentsType(
-            $this->consentContextInitializeHelper,
             $consentAcceptanceProvider,
             $this->customerUserExtractor
         );
@@ -76,10 +67,11 @@ class CheckoutCustomerConsentsTypeTest extends FormIntegrationTestCase
      */
     protected function tearDown()
     {
-        unset($this->consentContextInitializeHelper);
-        unset($this->formType);
-        unset($this->builder);
-        unset($this->featureChecker);
+        unset(
+            $this->formType,
+            $this->builder,
+            $this->featureChecker
+        );
 
         parent::tearDown();
     }
@@ -92,10 +84,6 @@ class CheckoutCustomerConsentsTypeTest extends FormIntegrationTestCase
             ->with(self::FEATURE_NAME, null)
             ->willReturn(false);
 
-        $this->consentContextInitializeHelper
-            ->expects($this->never())
-            ->method('initialize');
-
         $this->builder
             ->expects($this->never())
             ->method('setData');
@@ -107,14 +95,10 @@ class CheckoutCustomerConsentsTypeTest extends FormIntegrationTestCase
      * @dataProvider buildFormWithFeatureEnabledProvider
      *
      * @param array $options
-     * @param bool|CustomerUser $customerUser
-     * @param bool  $expectedContextWillBeInitializer
      * @param bool  $expectedSetData
      */
     public function testBuildFormWithFeatureEnabled(
         array $options,
-        $customerUser,
-        bool $expectedContextWillBeInitializer,
         bool $expectedSetData
     ) {
         $this->featureChecker
@@ -122,17 +106,6 @@ class CheckoutCustomerConsentsTypeTest extends FormIntegrationTestCase
             ->method('isFeatureEnabled')
             ->with(self::FEATURE_NAME, null)
             ->willReturn(true);
-
-        if ($expectedContextWillBeInitializer) {
-            $this->consentContextInitializeHelper
-                ->expects($this->once())
-                ->method('initialize')
-                ->with($customerUser);
-        } else {
-            $this->consentContextInitializeHelper
-                ->expects($this->never())
-                ->method('initialize');
-        }
 
         if ($expectedSetData) {
             $this->builder
@@ -169,7 +142,6 @@ class CheckoutCustomerConsentsTypeTest extends FormIntegrationTestCase
                     'checkout' => false
                 ],
                 'customerUser' => false,
-                'expectedContextWillBeInitializer' => false,
                 'expectedSetData' => false
             ],
             'Option "checkout" contains "null" value' => [
@@ -177,23 +149,18 @@ class CheckoutCustomerConsentsTypeTest extends FormIntegrationTestCase
                     'checkout' => null
                 ],
                 'customerUser' => false,
-                'expectedContextWillBeInitializer' => false,
                 'expectedSetData' => false
             ],
             'Option "checkout" contains instance of CustomerUser in property "customerUser"' => [
                 'options' => [
                     'checkout' => $checkoutCustomerUser
                 ],
-                'customerUser' => $customerUser,
-                'expectedContextWillBeInitializer' => true,
                 'expectedSetData' => true
             ],
             'Option "checkout" contains instance of CustomerUser in property "registeredCustomerUser"' => [
                 'options' => [
                     'checkout' => $checkoutRegisteredCustomerUser
                 ],
-                'customerUser' => $customerUser,
-                'expectedContextWillBeInitializer' => true,
                 'expectedSetData' => true
             ],
         ];
@@ -211,6 +178,7 @@ class CheckoutCustomerConsentsTypeTest extends FormIntegrationTestCase
 
     public function testConfigureOptions()
     {
+        /** @var OptionsResolver|\PHPUnit\Framework\MockObject\MockObject $resolver */
         $resolver = $this->createMock(OptionsResolver::class);
 
         $resolver->expects($this->once())

@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\ConsentBundle\Provider;
 
-use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
@@ -13,9 +12,9 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 interface ConsentContextProviderInterface
 {
     /**
-     * @return CustomerUser|null
+     * @param Website $website
      */
-    public function getCustomerUser();
+    public function setWebsite(Website $website);
 
     /**
      * @return Website
@@ -23,7 +22,7 @@ interface ConsentContextProviderInterface
     public function getWebsite();
 
     /**
-     * @return Scope|null
+     * @return Scope
      */
     public function getScope();
 }
