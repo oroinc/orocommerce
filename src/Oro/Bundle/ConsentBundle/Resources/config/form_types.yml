@@ -7,7 +7,7 @@ services:
         tags:
             - { name: form.type, alias: oro_consent }
 
-    oro_web_catalog.form.type.content_node_select:
+    oro_consent.form.type.content_node_select:
         class: 'Oro\Bundle\ConsentBundle\Form\Type\ContentNodeSelectType'
         arguments:
             - '@oro_web_catalog.content_node_tree_handler'
