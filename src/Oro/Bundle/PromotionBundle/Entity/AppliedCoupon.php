@@ -12,6 +12,8 @@ use Oro\Bundle\PromotionBundle\Model\ExtendAppliedCoupon;
  * @Config()
  * @ORM\Table(name="oro_promotion_applied_coupon")
  * @ORM\Entity
+ *
+ * Store Applied Coupon in a database
  */
 class AppliedCoupon extends ExtendAppliedCoupon implements CreatedAtAwareInterface
 {

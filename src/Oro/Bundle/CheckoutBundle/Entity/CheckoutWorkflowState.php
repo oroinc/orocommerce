@@ -15,6 +15,8 @@ use Oro\Bundle\SecurityBundle\Tools\UUIDGenerator;
  *         columns={"entity_id", "entity_class", "token"}
  *     )}
  * )
+ *
+ * Store Checkout Workflow State in a database
  */
 class CheckoutWorkflowState implements DatesAwareInterface
 {
