@@ -47,28 +47,29 @@ databaseBefore:
             tax: { class: 'Oro\Bundle\TaxBundle\Entity\Tax', query: { code: 'TAX2' } }
             taxJurisdiction: '@us_any_state_jurisdiction_code'
             productTaxCode: { class: 'Oro\Bundle\TaxBundle\Entity\ProductTaxCode', query: { code: 'TAX1' } }
+databaseBeforeSecondPart: []
 expectedResult:
     total:
-        includingTax: '110'
-        excludingTax: '100' # 5 * 20
-        taxAmount: '10'     # 100 * 0.1
+        includingTax: '110.4'
+        excludingTax: '100'
+        taxAmount: '10.4'
         adjustment: '0'
         currency: 'USD'
     items:
         -
             unit:
-                includingTax: '22' # 20 + 2
+                includingTax: '22.08' # 20 + 2.08 = 22.08
                 excludingTax: '20'
-                taxAmount: '2'     # 20 * 0.1
+                taxAmount: '2.08'     # 20 * 0.104 = 2.08
                 adjustment: '0'
                 currency: 'USD'
             row:
-                includingTax: '110' # 100 + 10
-                excludingTax: '100' # 20 * 5
-                taxAmount: '10'     # 100 * 0.1
+                includingTax: '110.4' # 100 + 10.4 = 110.4
+                excludingTax: '100'   # 20 * 5
+                taxAmount: '10.4'     # 100 * 0.104 = 10.4
                 adjustment: '0'
                 currency: 'USD'
             taxes:
-                - { tax: 'TAX1', rate: '0.1', taxableAmount: '100', taxAmount: '10', currency: 'USD' }
+                - { tax: 'TAX1', rate: '0.104', taxableAmount: '100', taxAmount: '10.4', currency: 'USD' }
     taxes:
-        - { tax: 'TAX1', rate: '0.1', taxableAmount: '100', taxAmount: '10', currency: 'USD' }
+        - { tax: 'TAX1', rate: '0.104', taxableAmount: '100', taxAmount: '10.4', currency: 'USD' }

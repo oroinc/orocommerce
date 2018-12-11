@@ -367,3 +367,11 @@ services:
             - '@oro_config.manager'
         tags:
             - { name: oro_featuretogle.voter }
+
+    oro_web_catalog.form.type.content_node_select_system_config:
+        class: Oro\Bundle\WebCatalogBundle\Form\Type\ContentNodeSelectSystemConfigType
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@oro_config.manager'
+        tags:
+            - { name: form.type, alias: oro_web_catalog_content_node_select }

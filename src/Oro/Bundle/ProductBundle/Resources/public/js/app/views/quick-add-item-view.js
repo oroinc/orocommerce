@@ -153,13 +153,15 @@ define(function(require) {
                 return;
             }
 
+            var resolvedUnitCode = this._resolveUnitCode(obj.unit);
+
             this.model.set({
                 sku: obj.sku,
                 skuHiddenField: obj.sku,
                 quantity_changed_manually: true,
                 quantity: canBeUpdated
                     ? parseFloat(this.model.get('quantity')) + parseFloat(obj.quantity) : obj.quantity,
-                unit_deferred: obj.unit
+                unit_deferred: resolvedUnitCode ? resolvedUnitCode : obj.unit
             });
 
             if (canBeUpdated) {
@@ -232,15 +234,48 @@ define(function(require) {
         },
 
         canBeUpdated: function(item) {
-            return this.model.get('sku') === item.sku && this.model.get('unit') === item.unit;
+            var resolvedUnitCode = this._resolveUnitCode(item.unit);
+
+            return this.model.get('sku') === item.sku &&
+                (this.model.get('unit') === resolvedUnitCode || this.model.get('unit_deferred') === resolvedUnitCode);
         },
 
         setUnits: function() {
             UnitsUtil.updateSelect(this.model, this.getElement('unit'));
             if (this.model.get('unit_deferred')) {
-                this.model.set('unit', this.model.get('unit_deferred'));
+                var unitDeferred = this.model.get('unit_deferred');
+                this.model.set('unit', this._resolveUnitCode(unitDeferred));
             }
             this.updateUI();
+        },
+
+        /**
+         * Gets valid unit code by unit label or code case insensitively.
+         *
+         * @param {String} unit
+         * @returns {String|undefined}
+         * @private
+         */
+        _resolveUnitCode: function(unit) {
+            var labels = UnitsUtil.getUnitsLabel(this.model);
+            unit = unit ? unit.toLowerCase() : undefined;
+
+            // Finds valid unit code if unit is unit code.
+            var unitCode = _.find(_.keys(labels), function(unitCode) {
+                return unitCode.toLowerCase() === unit;
+            });
+
+            // Finds valid unit label if unit is unit label.
+            var unitLabel = _.find(labels, function(unitLabel) {
+                return unitLabel.toLowerCase() === unit;
+            });
+
+            // If unit label is found, gets unit code by unit label.
+            if (unitLabel !== undefined) {
+                unitCode = _.invert(labels)[unitLabel];
+            }
+
+            return unitCode;
         },
 
         publishModelChanges: function() {

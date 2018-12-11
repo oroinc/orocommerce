@@ -7,6 +7,9 @@ use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 
+/**
+ * Repository for Order entity provides methods to extract order related info.
+ */
 class OrderRepository extends EntityRepository
 {
     /**
@@ -63,20 +66,57 @@ class OrderRepository extends EntityRepository
      */
     public function getLatestOrderedProductsInfo(array $productIds, $websiteId, $orderStatuses)
     {
-        $qb = $this->createQueryBuilder('orders');
-        $qb->select('IDENTITY(orders.customerUser) as customer_user_id')
+        $queryBuilder = $this->getBaseLatestOrderedProductsQueryBuilder($websiteId, $orderStatuses);
+        $queryBuilder
             ->addSelect('IDENTITY(lineItems.product) as product_id')
+            ->andWhere($queryBuilder->expr()->in('lineItems.product', ':productIdList'))
+            ->andWhere($queryBuilder->expr()->isNull('lineItems.parentProduct'))
+            ->addGroupBy('lineItems.product')
+            ->orderBy('lineItems.product')
+            ->setParameter('productIdList', $productIds);
+
+        return $queryBuilder;
+    }
+
+    /**
+     * @param array $productIds
+     * @param int   $websiteId
+     * @param array $orderStatuses
+     *
+     * @return QueryBuilder
+     */
+    public function getLatestOrderedParentProductsInfo(array $productIds, $websiteId, $orderStatuses)
+    {
+        $queryBuilder = $this->getBaseLatestOrderedProductsQueryBuilder($websiteId, $orderStatuses);
+        $queryBuilder
+            ->addSelect('IDENTITY(lineItems.parentProduct) as product_id')
+            ->andWhere($queryBuilder->expr()->in('lineItems.parentProduct', ':productIdList'))
+            ->addGroupBy('lineItems.parentProduct')
+            ->orderBy('lineItems.parentProduct')
+            ->setParameter('productIdList', $productIds);
+
+        return $queryBuilder;
+    }
+
+    /**
+     * @param $websiteId
+     * @param $orderStatuses
+     * @return QueryBuilder
+     */
+    private function getBaseLatestOrderedProductsQueryBuilder(int $websiteId, array $orderStatuses): QueryBuilder
+    {
+        $qb = $this->createQueryBuilder('orders');
+        $qb
+            ->select('IDENTITY(orders.customerUser) as customer_user_id')
             ->addSelect(
                 $qb->expr()->max('orders.createdAt') . ' as created_at'
             )
             ->innerJoin('orders.lineItems', 'lineItems')
-            ->andWhere($qb->expr()->in('lineItems.product', ':productIdList'))
             ->andWhere($qb->expr()->eq('orders.website', ':websiteId'))
             ->andWhere($qb->expr()->in('orders.internal_status', ':orderStatuses'))
-            ->groupBy('orders.customerUser, lineItems.product')
-            ->orderBy('lineItems.product');
+            ->groupBy('orders.customerUser');
 
-        $qb->setParameter('productIdList', $productIds)
+        $qb
             ->setParameter('orderStatuses', $orderStatuses)
             ->setParameter('websiteId', $websiteId);
 

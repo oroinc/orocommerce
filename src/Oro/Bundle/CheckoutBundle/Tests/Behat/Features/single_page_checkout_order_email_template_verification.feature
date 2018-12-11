@@ -13,13 +13,11 @@ Feature: Single page checkout order email template verification
   I am changing the email template with WYSIWYG editor
 
   Scenario: Feature Background
-    Given I login as administrator
-    And go to System/Workflows
-    And I click "Activate" on row "Single Page Checkout" in grid
-    And I click "Activate"
+    Given I activate "Single Page Checkout" workflow
 
   Scenario: Changing the email template with WYSIWYG editor
-    Given I go to System/ Emails/ Templates
+    Given I login as administrator
+    And I go to System/ Emails/ Templates
     And I filter Template Name as Contains "order_confirmation_email"
     And I click edit "order_confirmation_email" in grid
     When I save form

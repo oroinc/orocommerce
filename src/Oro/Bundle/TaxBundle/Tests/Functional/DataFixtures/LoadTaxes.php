@@ -18,7 +18,7 @@ class LoadTaxes extends AbstractFixture
     const DESCRIPTION_3 = 'Tax description 3';
     const DESCRIPTION_4 = 'Tax description 4';
 
-    const RATE_1 = 0.1;
+    const RATE_1 = 0.104;
     const RATE_2 = 0.2;
     const RATE_3 = 0.075;
     const RATE_4 = 0.9;

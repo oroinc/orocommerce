@@ -211,7 +211,7 @@
         {% endif %}
         {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-item-collection collection-fields-list' }) %}
         {% set id = id ~ '_collection' %}
-        <div class="row-oro"
+        <div class="row-oro order-shipping-tracking"
                 {% import 'OroUIBundle::macros.html.twig' as UI %}
                 {{ UI.renderPageComponentAttributes({
                     module: form.vars.page_component,
@@ -241,7 +241,7 @@
                 </table>
             </div>
             {% if allow_add %}
-                <a class="btn add-list-item" href="javascript: void(0);"><i class="fa-plus"></i>{{ form.vars.add_label|default('oro.form.collection.add')|trans }}</a>
+                <a class="btn add-list-item" href="javascript: void(0);">{{ form.vars.add_label|default('oro.form.collection.add')|trans }}</a>
             {% endif %}
         </div>
     {% endspaceless %}

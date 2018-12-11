@@ -256,6 +256,7 @@ services:
             - '@oro_redirect.url_provider'
             - '@oro_redirect.provider.context_url_provider_registry'
             - '@oro_frontend_localization.manager.user_localization'
+            - '@oro_config.manager'
 
     oro_redirect.provider.sluggable_url_cache:
         public: false

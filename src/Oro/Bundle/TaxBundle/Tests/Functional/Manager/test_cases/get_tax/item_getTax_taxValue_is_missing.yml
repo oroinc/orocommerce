@@ -33,18 +33,19 @@ databaseBefore:
             quantity: 6
             price: '@usd_price_5.55'
             product: { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product-2' } }
+databaseBeforeSecondPart: []
 expectedResult: # loaded from fixtures, values from simple_order_item_1 used to check database overrid
     row:
-        includingTax: '105.53' # 17.589 * 6 = 105.534 (105.54 if count bi items)
+        includingTax: '105.92' # 17.65296 * 6 = 105.91776
         excludingTax: '95.94'  # 15.99 * 6
-        taxAmount: '9.59'      # 1.599 * 6 = 9.594
-        adjustment: '0.004'    # -0.001 * 6
+        taxAmount: '9.98'      # 1.66296 * 6 = 9.97776
+        adjustment: '-0.00224' # 9.97776 - 9.98 = -0.00224
         currency: 'USD'
     unit:
-        includingTax: '17.59'  # 15.99 + 1.599 = 17.589
+        includingTax: '17.65'  # 15.99 + 1.66296 = 17.65296
         excludingTax: '15.99'
-        taxAmount: '1.6'       # 15.99 * 0.1 = 1.599
-        adjustment: '-0.001'   # 1.599 - 1.6
+        taxAmount: '1.66'      # 15.99 * 0.104 = 1.66296
+        adjustment: '0.00296'  # 1.66296 - 1.66 = 0.00296
         currency: 'USD'
     taxes:
-        - { tax: 'TAX1', rate: '0.1', taxableAmount: '95.94', taxAmount: '9.59', currency: 'USD' }
+        - { tax: 'TAX1', rate: '0.104', taxableAmount: '95.94', taxAmount: '9.98', currency: 'USD' }

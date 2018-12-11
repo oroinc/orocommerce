@@ -88,14 +88,16 @@
     </div>
     {% if tooltip is defined  and tooltip %}
         {% import 'OroUIBundle::macros.html.twig' as ui %}
-        {{ ui.tooltip(
-            tooltip,
-            tooltip_parameters|default({}),
-            tooltip_placement|default(null),
-            tooltip_details_enabled|default(false),
-            tooltip_details_link|default(null),
-            tooltip_details_anchor|default(null)
-        ) }}
+        <div class="tooltip-icon-container">
+            {{ ui.tooltip(
+                tooltip,
+                tooltip_parameters|default({}),
+                tooltip_placement|default(null),
+                tooltip_details_enabled|default(false),
+                tooltip_details_link|default(null),
+                tooltip_details_anchor|default(null)
+            ) }}
+        </div>
     {% endif %}
     {{ form_rest(form) }}
 {% endblock %}

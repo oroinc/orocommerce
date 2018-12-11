@@ -619,13 +619,7 @@ class PayPalCreditCardPaymentMethodTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('USD', $transaction->getCurrency());
     }
 
-    /**
-     * @dataProvider validateDataProvider
-     *
-     * @param string $result
-     * @param bool $expected
-     */
-    public function testSecureTokenResponseLimitedWithIdToKenAndFormAction(string $result, bool $expected)
+    public function testSecureTokenResponseLimitedWithIdToKenAndFormAction()
     {
         $this->configureCredentials();
 
@@ -639,7 +633,7 @@ class PayPalCreditCardPaymentMethodTest extends \PHPUnit\Framework\TestCase
             new Response(
                 [
                     'PNREF' => 'reference',
-                    'RESULT' => $result,
+                    'RESULT' => '0',
                     'SECURETOKEN' => $secureToken,
                     'SECURETOKENID' => $secureTokenId,
                     'SHOULD_NOT_APPEAR_IN_RESPONSE' => 'AT_ALL',
@@ -656,27 +650,9 @@ class PayPalCreditCardPaymentMethodTest extends \PHPUnit\Framework\TestCase
                 'formAction' => 'url',
                 'SECURETOKEN' => $secureToken,
                 'SECURETOKENID' => $secureTokenId,
-                'successful' => $expected
             ],
             $response
         );
-    }
-
-    /**
-     * @return array
-     */
-    public function validateDataProvider()
-    {
-        return [
-            'approved' => [
-                'result' => '0',
-                'expected' => true
-            ],
-            'not approved' => [
-                'result' => '1',
-                'expected' => false
-            ]
-        ];
     }
 
     public function testSecureTokenOptions()

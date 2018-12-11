@@ -33,21 +33,22 @@ databaseBefore:
             quantity: 6
             price: '@usd_price_5.55'
             product: { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product-2' } }
+databaseBeforeSecondPart: []
 expectedResult: # values from simple_order_item_1 used to check database override
     row:
-        includingTax: '36.63' # 33.3 + 3.33
+        includingTax: '36.76' # 33.3 + 3.4632 = 36.7632
         excludingTax: '33.3'  # 5.55 * 6
-        taxAmount: '3.33'     # 33.3 * 0.1
-        adjustment: '0'
+        taxAmount: '3.46'     # 33.3 * 0.104 = 3.4632
+        adjustment: '0.0032'  # 3.4632 - 3.46 = 0.0032
         currency: 'USD'
     unit:
-        includingTax: '6.11' # 5.55 + 0.555
+        includingTax: '6.13' # 5.55 + 0.5772 = 6.1272
         excludingTax: '5.55'
-        taxAmount: '0.56'    # 5.55 * 0.1
-        adjustment: '-0.005' # 0.555 - 0.56
+        taxAmount: '0.58'    # 5.55 * 0.104 = 0.5772
+        adjustment: '-0.0028' # 0.5772 - 0.58 = -0.0028
         currency: 'USD'
     taxes:
-        - { tax: 'TAX1', rate: '0.1', taxableAmount: '33.3', taxAmount: '3.33', currency: 'USD' }
+        - { tax: 'TAX1', rate: '0.104', taxableAmount: '33.3', taxAmount: '3.46', currency: 'USD' }
 databaseAfter:
     'Oro\Bundle\TaxBundle\Entity\TaxValue':
         - { entityClass: 'Oro\Bundle\OrderBundle\Entity\OrderLineItem', entityId: { reference: 'order_line_item_2' } }
