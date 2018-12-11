@@ -17,7 +17,6 @@ class ConsentAcceptanceTest extends \PHPUnit\Framework\TestCase
         $now = new \DateTime('now');
         $properties = [
             ['id', '123'],
-            ['customerUser', new CustomerUser()],
             ['consent', new Consent()],
             ['landingPage', new Page()],
             ['createdAt', $now, false]

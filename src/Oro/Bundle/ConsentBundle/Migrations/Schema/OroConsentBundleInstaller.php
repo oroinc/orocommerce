@@ -3,15 +3,32 @@
 namespace Oro\Bundle\ConsentBundle\Migrations\Schema;
 
 use Doctrine\DBAL\Schema\Schema;
+use Doctrine\ORM\Mapping\ClassMetadataInfo;
+use Oro\Bundle\EntityConfigBundle\Entity\ConfigModel;
+use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
+use Oro\Bundle\EntityExtendBundle\Migration\ExtendOptionsManager;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 /** Bundle install migrations */
-class OroConsentBundleInstaller implements Installation
+class OroConsentBundleInstaller implements Installation, ExtendExtensionAwareInterface
 {
     const CONSENT_TABLE_NAME = 'oro_consent';
     const CONSENT_NAME_TABLE_NAME = 'oro_consent_name';
     const CONSENT_CUSTOMER_ACCEPTANCE_TABLE_NAME = 'oro_consent_acceptance';
+
+    /** @var ExtendExtension */
+    private $extendExtension;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setExtendExtension(ExtendExtension $extendExtension)
+    {
+        $this->extendExtension = $extendExtension;
+    }
 
     /**
      * {@inheritdoc}
@@ -33,6 +50,10 @@ class OroConsentBundleInstaller implements Installation
         $this->addOroConsentForeignKeys($schema);
         $this->addOroConsentNameForeignKeys($schema);
         $this->addOroConsentAcceptanceForeignKeys($schema);
+        $this->addConsentAcceptanceCustomerUserRelation($schema);
+
+        $table = $schema->getTable(self::CONSENT_CUSTOMER_ACCEPTANCE_TABLE_NAME);
+        $table->addUniqueIndex(['consent_id','customerUser_id'], 'oro_customer_consent_uidx');
     }
 
     /**
@@ -74,11 +95,9 @@ class OroConsentBundleInstaller implements Installation
         $table = $schema->createTable(self::CONSENT_CUSTOMER_ACCEPTANCE_TABLE_NAME);
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('consent_id', 'integer', []);
-        $table->addColumn('customer_user_id', 'integer', []);
         $table->addColumn('landing_page_id', 'integer', ['notnull' => false]);
         $table->addColumn('created_at', 'datetime', []);
         $table->setPrimaryKey(['id']);
-        $table->addUniqueIndex(['consent_id','customer_user_id'], 'oro_customer_consent_uidx');
     }
 
     /**
@@ -140,16 +159,67 @@ class OroConsentBundleInstaller implements Installation
             ['onDelete' => 'RESTRICT', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('oro_customer_user'),
-            ['customer_user_id'],
-            ['id'],
-            ['onDelete' => 'CASCADE', 'onUpdate' => null]
-        );
-        $table->addForeignKeyConstraint(
             $schema->getTable('oro_cms_page'),
             ['landing_page_id'],
             ['id'],
             ['onDelete' => 'RESTRICT', 'onUpdate' => null]
+        );
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    private function addConsentAcceptanceCustomerUserRelation(Schema $schema): void
+    {
+        $table = $schema->getTable('oro_customer_user');
+        $targetTable = $schema->getTable(self::CONSENT_CUSTOMER_ACCEPTANCE_TABLE_NAME);
+
+        $this->extendExtension->addManyToOneRelation(
+            $schema,
+            $targetTable,
+            'customerUser',
+            $table,
+            'id',
+            [
+                ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_READONLY,
+                'extend' => [
+                    'is_extend' => true,
+                    'owner' => ExtendScope::OWNER_CUSTOM,
+                    'without_default' => true,
+                    'on_delete' => 'CASCADE',
+                ],
+                'datagrid' => ['is_visible' => false],
+                'form' => ['is_enabled' => false],
+                'view' => ['is_displayable' => false],
+                'merge' => ['display' => false]
+            ]
+        );
+
+        $this->extendExtension->addManyToOneInverseRelation(
+            $schema,
+            $targetTable,
+            'customerUser',
+            $table,
+            'acceptedConsents',
+            ['id'],
+            ['id'],
+            ['id'],
+            [
+                ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_READONLY,
+                'extend' => [
+                    'is_extend' => true,
+                    'owner' => ExtendScope::OWNER_CUSTOM,
+                    'without_default' => true,
+                    'cascade' => ['persist'],
+                    'on_delete' => 'CASCADE',
+                    'orphanRemoval' => true,
+                    'fetch' => ClassMetadataInfo::FETCH_LAZY
+                ],
+                'datagrid' => ['is_visible' => false],
+                'form' => ['is_enabled' => false],
+                'view' => ['is_displayable' => false],
+                'merge' => ['display' => false]
+            ]
         );
     }
 }

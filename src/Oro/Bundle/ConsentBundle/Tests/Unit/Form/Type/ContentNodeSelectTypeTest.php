@@ -14,7 +14,7 @@ class ContentNodeSelectTypeTest extends \PHPUnit\Framework\TestCase
     protected $formType;
 
     /**
-     * @var ContentNodeTreeHandler|\PHPUnit_Framework_MockObject_MockObject
+     * @var ContentNodeTreeHandler|\PHPUnit\Framework\MockObject\MockObject
      */
     private $treeHandler;
 

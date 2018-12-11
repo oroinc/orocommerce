@@ -18,13 +18,13 @@ class CustomerConsentsEventSubscriberTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /** @var SaveConsentAcceptanceHandler|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var SaveConsentAcceptanceHandler|\PHPUnit\Framework\MockObject\MockObject */
     private $saveConsentAcceptanceHandler;
 
     /** @var CustomerConsentsEventSubscriber */
     private $subscriber;
 
-    /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $mainForm;
 
     /** @var CustomerUserExtractor */

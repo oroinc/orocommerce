@@ -92,6 +92,7 @@ class RequiredConsentsValidatorTest extends \PHPUnit\Framework\TestCase
         $isValid,
         array $violationParameters
     ) {
+        $validatedValue = new ArrayCollection($validatedValue);
         $this->enabledConsentProvider
             ->expects($this->once())
             ->method('getConsents')

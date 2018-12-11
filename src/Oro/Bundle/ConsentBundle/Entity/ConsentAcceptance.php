@@ -4,11 +4,15 @@ namespace Oro\Bundle\ConsentBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\CMSBundle\Entity\Page;
-use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\ConsentBundle\Model\ExtendConsentAcceptance;
 use Oro\Bundle\EntityBundle\EntityProperty\CreatedAtAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\CreatedAtAwareTrait;
+use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 
 /**
+ * Entity represents accepted consents with certain landing page by CustomerUser
+ * CustomerUser relation is added via migration
+ *
  * @ORM\Entity(repositoryClass="Oro\Bundle\ConsentBundle\Entity\Repository\ConsentAcceptanceRepository")
  *
  * @ORM\Table(
@@ -16,12 +20,13 @@ use Oro\Bundle\EntityBundle\EntityProperty\CreatedAtAwareTrait;
  *     uniqueConstraints={
  *          @ORM\UniqueConstraint(
  *              name="oro_customer_consent_uidx",
- *              columns={"consent_id","customer_user_id"}
+ *              columns={"consent_id","customerUser_id"}
  *          )
  *      }
  * )
+ * @Config()
  */
-class ConsentAcceptance implements CreatedAtAwareInterface
+class ConsentAcceptance extends ExtendConsentAcceptance implements CreatedAtAwareInterface
 {
     use CreatedAtAwareTrait;
 
@@ -33,14 +38,6 @@ class ConsentAcceptance implements CreatedAtAwareInterface
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     protected $id;
-
-    /**
-     * @var CustomerUser
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\CustomerBundle\Entity\CustomerUser")
-     * @ORM\JoinColumn(name="customer_user_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
-     */
-    protected $customerUser;
 
     /**
      * @var Page
@@ -102,26 +99,6 @@ class ConsentAcceptance implements CreatedAtAwareInterface
     public function setConsent(Consent $consent)
     {
         $this->consent = $consent;
-
-        return $this;
-    }
-
-    /**
-     * @return CustomerUser
-     */
-    public function getCustomerUser()
-    {
-        return $this->customerUser;
-    }
-
-    /**
-     * @param CustomerUser $customerUser
-     *
-     * @return $this
-     */
-    public function setCustomerUser(CustomerUser $customerUser)
-    {
-        $this->customerUser = $customerUser;
 
         return $this;
     }

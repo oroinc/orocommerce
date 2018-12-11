@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ConsentBundle\Tests\Unit\Validator\Constraints;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\CMSBundle\Entity\Repository\PageRepository;
 use Oro\Bundle\ConsentBundle\Entity\ConsentAcceptance;
@@ -78,6 +79,8 @@ class RemovedLandingPagesValidatorTest extends \PHPUnit\Framework\TestCase
      */
     public function testValidate(array $value, array $checkedConsentIds, array $nonExistentConsentIds)
     {
+        $value = new ArrayCollection($value);
+
         if (empty($checkedConsentIds)) {
             $this->pageRepository
                 ->expects($this->never())

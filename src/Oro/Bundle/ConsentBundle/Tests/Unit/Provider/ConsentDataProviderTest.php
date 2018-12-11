@@ -17,12 +17,12 @@ class ConsentDataProviderTest extends \PHPUnit\Framework\TestCase
     use EntityTrait;
 
     /**
-     * @var EnabledConsentProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var EnabledConsentProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     private $enabledConsentProvider;
 
     /**
-     * @var ConsentDataBuilder|\PHPUnit_Framework_MockObject_MockObject
+     * @var ConsentDataBuilder|\PHPUnit\Framework\MockObject\MockObject
      */
     private $consentDataBuilder;
 

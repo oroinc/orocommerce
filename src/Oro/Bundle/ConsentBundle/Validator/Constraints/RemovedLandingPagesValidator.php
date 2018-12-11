@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ConsentBundle\Validator\Constraints;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\CMSBundle\Entity\Repository\PageRepository;
 use Oro\Bundle\ConsentBundle\Entity\ConsentAcceptance;
@@ -32,9 +33,11 @@ class RemovedLandingPagesValidator extends ConstraintValidator
      */
     public function validate($value, Constraint $constraint)
     {
-        if (!is_array($value)) {
+        if (!is_array($value) && !$value instanceof ArrayCollection) {
             throw new \LogicException("Incorrect type of the value!");
         }
+
+        $value = $value->toArray();
 
         $checkedLandingPageIds = array_filter(
             array_map(

@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ConsentBundle\Tests\Unit\Validator\Constraints;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\ConsentBundle\Entity\Consent;
 use Oro\Bundle\ConsentBundle\Entity\ConsentAcceptance;
 use Oro\Bundle\ConsentBundle\Entity\Repository\ConsentRepository;
@@ -78,6 +79,8 @@ class RemovedConsentsValidatorTest extends \PHPUnit\Framework\TestCase
      */
     public function testValidate(array $value, array $checkedConsentIds, array $nonExistentConsentIds)
     {
+        $value = new ArrayCollection($value);
+
         if (empty($checkedConsentIds)) {
             $this->consentRepository
                 ->expects($this->never())

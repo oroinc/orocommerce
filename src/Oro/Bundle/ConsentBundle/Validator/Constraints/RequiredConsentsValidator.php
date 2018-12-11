@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ConsentBundle\Validator\Constraints;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\ConsentBundle\Entity\Consent;
 use Oro\Bundle\ConsentBundle\Entity\ConsentAcceptance;
 use Oro\Bundle\ConsentBundle\Filter\AdminConsentContentNodeValidFilter;
@@ -40,9 +41,11 @@ class RequiredConsentsValidator extends ConstraintValidator
      */
     public function validate($value, Constraint $constraint)
     {
-        if (!is_array($value)) {
+        if (!is_array($value) && !$value instanceof ArrayCollection) {
             throw new \LogicException("Incorrect type of the value!");
         }
+
+        $value = $value->toArray();
 
         $checkedConsentIds = array_map(function (ConsentAcceptance $consentAcceptance) {
             return $consentAcceptance->getConsent()->getId();

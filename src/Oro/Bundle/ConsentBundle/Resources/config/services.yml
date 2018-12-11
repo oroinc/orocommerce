@@ -67,27 +67,14 @@ services:
         tags:
             - { name: doctrine.orm.entity_listener, entity: '%oro_consent.entity.consent.class%', event: preRemove }
 
-    oro_consent.form.extension.customer_edit_consents.abstract:
-        class: 'Oro\Bundle\ConsentBundle\Form\Extension\CustomerEditConsentsExtension'
-        abstract: true
-        arguments:
-            - '@oro_consent.form.event_subscriber.customer_consents'
-            - '@oro_consent.form.event_subscriber.populate_field_customer_consents'
-
     oro_consent.form.extension.frontend_customer_user_registration:
-        parent: 'oro_consent.form.extension.customer_edit_consents.abstract'
-        calls:
-            - [setEnabledRequiredConsentsConstraint, [true]]
-            - [setExtendedType, ['Oro\Bundle\CustomerBundle\Form\Type\FrontendCustomerUserRegistrationType']]
+        class: 'Oro\Bundle\ConsentBundle\Form\Extension\FrontendCustomerUserRegistrationExtension'
         tags:
             - { name: oro_featuretogle.feature, feature: consents }
             - { name: form.type_extension, extended_type: Oro\Bundle\CustomerBundle\Form\Type\FrontendCustomerUserRegistrationType }
 
     oro_consent.form.extension.frontend_customer_user_profile:
-        parent: 'oro_consent.form.extension.customer_edit_consents.abstract'
-        calls:
-            - [setEnabledRequiredConsentsConstraint, [false]]
-            - [setExtendedType, ['Oro\Bundle\CustomerBundle\Form\Type\FrontendCustomerUserProfileType']]
+        class: 'Oro\Bundle\ConsentBundle\Form\Extension\FrontendCustomerUserProfileExtension'
         tags:
             - { name: oro_featuretogle.feature, feature: consents }
             - { name: form.type_extension, extended_type: Oro\Bundle\CustomerBundle\Form\Type\FrontendCustomerUserProfileType }

@@ -38,6 +38,13 @@ services:
         tags:
             - { name: form.type, alias: oro_customer_consents }
 
+    oro_consent.form.consent_acceptance:
+        class: 'Oro\Bundle\ConsentBundle\Form\Type\ConsentAcceptanceType'
+        arguments:
+            - '@oro_consent.form.transformer.customer_consents_transformer'
+        tags:
+            - { name: form.type, alias: oro_customer_consents }
+
     oro_consent.form.customer_consents_transition_type:
         class: 'Oro\Bundle\ConsentBundle\Form\Type\CustomerConsentTransitionType'
         arguments:

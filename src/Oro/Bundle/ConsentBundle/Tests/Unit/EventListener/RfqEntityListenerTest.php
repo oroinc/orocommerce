@@ -9,6 +9,7 @@ use Oro\Bundle\ConsentBundle\EventListener\RfqEntityListener;
 use Oro\Bundle\ConsentBundle\Extractor\CustomerUserExtractor;
 use Oro\Bundle\ConsentBundle\Helper\GuestCustomerConsentAcceptancesHelper;
 use Oro\Bundle\ConsentBundle\Queue\DelayedConsentAcceptancePersistQueueInterface;
+use Oro\Bundle\ConsentBundle\Tests\Unit\Stub\ConsentAcceptanceStub;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\RFPBundle\Entity\Request;
@@ -155,7 +156,7 @@ class RfqEntityListenerTest extends \PHPUnit\Framework\TestCase
     public function persistApplicableConsentAcceptanceProvider()
     {
         $customerUser = $this->getEntity(CustomerUser::class, ['id' => 34]);
-        $consentAcceptance = $this->getEntity(ConsentAcceptance::class, ['id' => 1]);
+        $consentAcceptance = $this->getEntity(ConsentAcceptanceStub::class, ['id' => 1]);
 
         $rfqWithoutCustomerUser = $this->getEntity(Request::class, ['id' => 10]);
         $rfqWithCustomerUser = $this->getEntity(Request::class, [

@@ -11,6 +11,7 @@ use Oro\Bundle\ConsentBundle\Provider\ConsentContextProviderInterface;
 use Oro\Bundle\ConsentBundle\Provider\CustomerUserConsentProvider;
 use Oro\Bundle\ConsentBundle\Provider\EnabledConsentProvider;
 use Oro\Bundle\ConsentBundle\Tests\Unit\Entity\Stub\Consent;
+use Oro\Bundle\ConsentBundle\Tests\Unit\Stub\ConsentAcceptanceStub;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -114,18 +115,18 @@ class CustomerUserConsentProviderTest extends \PHPUnit\Framework\TestCase
         $landingPage2 = $this->getEntity(Page::class, ['id' => 32]);
         $landingPage5 = $this->getEntity(Page::class, ['id' => 35]);
 
-        $consentAcceptance2 = $this->getEntity(ConsentAcceptance::class, [
+        $consentAcceptance2 = $this->getEntity(ConsentAcceptanceStub::class, [
             'id' => 22,
             'consent' => $consent2,
             'customerUser' => $customerUser,
             'landingPage' => $landingPage2,
         ]);
-        $consentAcceptance3 = $this->getEntity(ConsentAcceptance::class, [
+        $consentAcceptance3 = $this->getEntity(ConsentAcceptanceStub::class, [
             'id' => 23,
             'consent' => $consent3,
             'customerUser' => $customerUser,
         ]);
-        $consentAcceptance5 = $this->getEntity(ConsentAcceptance::class, [
+        $consentAcceptance5 = $this->getEntity(ConsentAcceptanceStub::class, [
             'id' => 25,
             'consent' => $consent5,
             'customerUser' => $customerUser,

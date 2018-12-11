@@ -16,7 +16,7 @@ class CustomerConsentTransitionTypeTest extends \PHPUnit\Framework\TestCase
     protected $formType;
 
     /**
-     * @var CheckoutCustomerConsentsEventSubscriber|\PHPUnit_Framework_MockObject_MockObject
+     * @var CheckoutCustomerConsentsEventSubscriber|\PHPUnit\Framework\MockObject\MockObject
      */
     private $subscriber;
 

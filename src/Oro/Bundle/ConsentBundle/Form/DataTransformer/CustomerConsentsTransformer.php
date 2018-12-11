@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\ConsentBundle\Form\DataTransformer;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\ConsentBundle\Entity\Consent;
 use Oro\Bundle\ConsentBundle\Entity\ConsentAcceptance;
@@ -42,6 +44,9 @@ class CustomerConsentsTransformer implements DataTransformerInterface
      */
     public function transform($consentAcceptances)
     {
+        if ($consentAcceptances instanceof Collection) {
+            $consentAcceptances = $consentAcceptances->toArray();
+        }
         if (is_array($consentAcceptances)) {
             $convertedConsentAcceptances = array_map(
                 [$this, 'convertToOutputFormat'],
@@ -82,12 +87,10 @@ class CustomerConsentsTransformer implements DataTransformerInterface
                     $consentAcceptance = $this->createConsentAcceptanceFromSelectedConsent($selectedConsent);
                 }
 
-                if ($consentAcceptance instanceof ConsentAcceptance) {
-                    $consentAcceptances[] = $consentAcceptance;
-                }
+                $consentAcceptances[] = $consentAcceptance;
             }
 
-            return $consentAcceptances;
+            return new ArrayCollection($consentAcceptances);
         }
     }
 

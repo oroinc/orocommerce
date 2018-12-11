@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ConsentBundle\Tests\Unit\Form\DataTransformer;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\ConsentBundle\Entity\Consent;
 use Oro\Bundle\ConsentBundle\Entity\ConsentAcceptance;
@@ -191,7 +192,7 @@ class CustomerConsentsTransformerTest extends \PHPUnit\Framework\TestCase
         }
 
         $consentAcceptanceData = $this->dataTransformer->reverseTransform($encodedConsentAcceptanceData);
-        $this->assertEquals($consentAcceptanceData, $expectedReverseTransformedValue);
+        $this->assertEquals($consentAcceptanceData, new ArrayCollection($expectedReverseTransformedValue));
     }
 
     /**

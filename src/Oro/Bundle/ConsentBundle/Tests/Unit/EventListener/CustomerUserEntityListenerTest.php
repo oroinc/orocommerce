@@ -6,6 +6,7 @@ use Doctrine\ORM\EntityManager;
 use Oro\Bundle\ConsentBundle\Entity\ConsentAcceptance;
 use Oro\Bundle\ConsentBundle\EventListener\CustomerUserEntityListener;
 use Oro\Bundle\ConsentBundle\Queue\DelayedConsentAcceptancePersistQueueInterface;
+use Oro\Bundle\ConsentBundle\Tests\Unit\Stub\ConsentAcceptanceStub;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -101,7 +102,7 @@ class CustomerUserEntityListenerTest extends \PHPUnit\Framework\TestCase
     public function persistApplicableConsentAcceptanceProvider()
     {
         $customerUser = $this->getEntity(CustomerUser::class, ['id' => 34]);
-        $consentAcceptance = $this->getEntity(ConsentAcceptance::class, [
+        $consentAcceptance = $this->getEntity(ConsentAcceptanceStub::class, [
             'id' => 1,
             'customerUser' => $customerUser
         ]);

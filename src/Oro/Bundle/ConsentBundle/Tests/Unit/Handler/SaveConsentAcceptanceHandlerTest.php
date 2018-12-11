@@ -7,6 +7,7 @@ use Oro\Bundle\ConsentBundle\Entity\ConsentAcceptance;
 use Oro\Bundle\ConsentBundle\Handler\SaveConsentAcceptanceHandler;
 use Oro\Bundle\ConsentBundle\Provider\ConsentAcceptanceProvider;
 use Oro\Bundle\ConsentBundle\Queue\DelayedConsentAcceptancePersistQueueInterface;
+use Oro\Bundle\ConsentBundle\Tests\Unit\Stub\ConsentAcceptanceStub;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -136,11 +137,14 @@ class SaveConsentAcceptanceHandlerTest extends \PHPUnit\Framework\TestCase
         $this->handler->save($customerUser, $selectedConsentAcceptances);
     }
 
+    /**
+     * @return array
+     */
     public function testSaveProvider()
     {
-        $consentAcceptanceOnRemove = $this->getEntity(ConsentAcceptance::class, ['id' => 1]);
-        $consentAcceptanceOnInsert = $this->getEntity(ConsentAcceptance::class);
-        $customerUserConsentAcceptance = $this->getEntity(ConsentAcceptance::class, ['id' => 3]);
+        $consentAcceptanceOnRemove = $this->getEntity(ConsentAcceptanceStub::class, ['id' => 1]);
+        $consentAcceptanceOnInsert = $this->getEntity(ConsentAcceptanceStub::class);
+        $customerUserConsentAcceptance = $this->getEntity(ConsentAcceptanceStub::class, ['id' => 3]);
 
         return [
             "Has consent acceptance on remove with logged user" => [
