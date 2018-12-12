@@ -3,6 +3,8 @@
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Controller;
 
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
 use Oro\Bundle\PricingBundle\Tests\Functional\ProductPriceReference;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
@@ -39,13 +41,11 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
             )
         );
 
-        $this->loadFixtures(
-            [
-                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices',
-                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations',
-                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices',
-            ]
-        );
+        $this->loadFixtures([
+            LoadCombinedProductPrices::class,
+            LoadProductPrices::class,
+            LoadPriceListRelations::class,
+        ]);
     }
 
     public function testUpdate()
