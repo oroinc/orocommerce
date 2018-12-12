@@ -178,11 +178,6 @@ define(function(require) {
             _.each(this.options.selectors.formFields, _.bind(function(fieldSelector, fieldType) {
                 if ('value' !== fieldType) {
                     var submissionInputVal = $(fieldSelector, form).val();
-
-                    if ('amount' === fieldType || 'percent' === fieldType) {
-                        submissionInputVal = NumberFormatter.formatDecimal(submissionInputVal);
-                    }
-
                     $newInputs.filter(fieldSelector).attr('value', submissionInputVal);
                 }
             }, this), form);
