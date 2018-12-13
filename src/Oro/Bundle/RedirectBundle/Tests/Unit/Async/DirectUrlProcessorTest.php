@@ -293,9 +293,6 @@ class DirectUrlProcessorTest extends \PHPUnit\Framework\TestCase
 
         $this->assertProcessorSuccessfulCalled($message, false);
 
-        /** @var UrlCacheInterface|\PH$this->registry->expects($this->once())
-            ->method('getManagerForClass')
-            ->willReturn($em);PUnit\Framework\MockObject\MockObject $urlCache */
         $urlCache = $this->createMock(UrlCacheAllCapabilities::class);
         $urlCache->expects($this->once())
             ->method('flushAll');
