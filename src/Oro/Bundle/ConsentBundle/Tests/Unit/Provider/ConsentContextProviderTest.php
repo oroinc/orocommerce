@@ -3,11 +3,11 @@
 namespace Oro\Bundle\ConsentBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\ConsentBundle\Provider\ConsentContextProvider;
-use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\ScopeBundle\Tests\Unit\Stub\StubScope;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 class ConsentContextProviderTest extends \PHPUnit\Framework\TestCase
@@ -20,6 +20,11 @@ class ConsentContextProviderTest extends \PHPUnit\Framework\TestCase
     private $scopeManager;
 
     /**
+     * @var WebsiteManager|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $websiteManager;
+
+    /**
      * @var ConsentContextProvider
      */
     private $provider;
@@ -30,9 +35,11 @@ class ConsentContextProviderTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->scopeManager = $this->createMock(ScopeManager::class);
+        $this->websiteManager = $this->createMock(WebsiteManager::class);
 
         $this->provider = new ConsentContextProvider(
-            $this->scopeManager
+            $this->scopeManager,
+            $this->websiteManager
         );
     }
 
@@ -81,7 +88,7 @@ class ConsentContextProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testGetSettedWebsite()
+    public function testGetSetWebsite()
     {
         /** @var Website $website */
         $website = $this->getEntity(Website::class, ['id' => 1]);
@@ -89,6 +96,28 @@ class ConsentContextProviderTest extends \PHPUnit\Framework\TestCase
 
         $this->scopeManager->expects($this->never())
             ->method('findOrCreate');
+
+        $this->assertSame(
+            $website,
+            $this->provider->getWebsite()
+        );
+    }
+
+    public function testGetCurrentWebsite()
+    {
+        /** @var Website $website */
+        $website = $this->getEntity(Website::class, ['id' => 1]);
+        $contentScope = new StubScope();
+        $contentScope->setWebsite(null);
+
+        $this->scopeManager->expects($this->once())
+            ->method('findOrCreate')
+            ->with('web_content')
+            ->willReturn($contentScope);
+
+        $this->websiteManager->expects($this->once())
+            ->method('getCurrentWebsite')
+            ->willReturn($website);
 
         $this->assertSame(
             $website,

@@ -8,6 +8,9 @@ use Oro\Bundle\ConsentBundle\Entity\Consent;
 use Oro\Bundle\ConsentBundle\Entity\ConsentAcceptance;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 
+/**
+ * Doctrine repository for ConsentAcceptance entity
+ */
 class ConsentAcceptanceRepository extends EntityRepository
 {
     /**

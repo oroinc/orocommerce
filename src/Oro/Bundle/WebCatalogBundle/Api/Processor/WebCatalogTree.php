@@ -9,6 +9,9 @@ use Oro\Bundle\WebCatalogBundle\JsTree\ContentNodeTreeHandler;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
 
+/**
+ * Updates a Context with information about WebCatalog tree
+ */
 class WebCatalogTree implements ProcessorInterface
 {
     /** @var ContentNodeTreeHandler  */

@@ -6,6 +6,8 @@ use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 
 /**
+ * Makes entity Consent extendable
+ *
  * @method LocalizedFallbackValue getName(Localization $localization = null)
  * @method LocalizedFallbackValue getDefaultName()
  * @method setDefaultName(string $value)

@@ -4,6 +4,9 @@ namespace Oro\Bundle\ConsentBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 
+/**
+ * Doctrine repository for Consent entity
+ */
 class ConsentRepository extends EntityRepository
 {
     /**

@@ -11,6 +11,9 @@ use Oro\Bundle\WebCatalogBundle\ContentNodeUtils\ContentNodeTreeResolverInterfac
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Psr\Log\LoggerInterface;
 
+/**
+ * Validates that Content Node has ResolvedContentVariant with the correct type
+ */
 class ConsentContentNodeValidator
 {
     /**

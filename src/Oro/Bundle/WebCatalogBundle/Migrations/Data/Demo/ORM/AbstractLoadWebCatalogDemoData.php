@@ -25,6 +25,9 @@ use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Yaml\Yaml;
 
+/**
+ * Holds common methods for loading WebCatalog demo data
+ */
 abstract class AbstractLoadWebCatalogDemoData extends AbstractFixture implements ContainerAwareInterface
 {
     use UserUtilityTrait;

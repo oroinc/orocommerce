@@ -10,6 +10,9 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type that allows to select Content Node for a Consent
+ */
 class ContentNodeSelectType extends AbstractType
 {
     /**

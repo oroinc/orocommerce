@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ConsentBundle\Tests\Layout\DataProvider;
+namespace Oro\Bundle\ConsentBundle\Tests\Functional\Layout\DataProvider;
 
 use Oro\Bundle\ConsentBundle\Layout\DataProvider\FrontendConsentProvider;
 use Oro\Bundle\ConsentBundle\Model\ConsentData;

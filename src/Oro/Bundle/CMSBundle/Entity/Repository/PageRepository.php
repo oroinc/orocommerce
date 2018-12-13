@@ -7,6 +7,9 @@ use Doctrine\ORM\Query\Expr\Join;
 use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 
+/**
+ * Doctrine repository for Page entity
+ */
 class PageRepository extends EntityRepository
 {
     /**

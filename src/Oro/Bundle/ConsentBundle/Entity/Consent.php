@@ -16,6 +16,8 @@ use Oro\Bundle\UserBundle\Entity\Ownership\AuditableUserAwareTrait;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 
 /**
+ * Entity holds information about consent
+ *
  * @ORM\Entity(repositoryClass="Oro\Bundle\ConsentBundle\Entity\Repository\ConsentRepository")
  * @ORM\Table(
  *     name="oro_consent",

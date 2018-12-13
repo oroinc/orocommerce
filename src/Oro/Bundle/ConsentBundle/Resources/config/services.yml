@@ -252,6 +252,7 @@ services:
         public: false
         arguments:
             - '@oro_scope.scope_manager'
+            - '@oro_website.manager'
 
     oro_consent.validator.consent_content_node_validator:
         class: 'Oro\Bundle\ConsentBundle\Validator\ConsentContentNodeValidator'
