@@ -37,6 +37,7 @@ Feature: Order Country and region selectors should contain translated values
       | Billing Address First name    | someFirstName       |
       | Billing Address Last name     | someLastName        |
       | Billing Address Organization  | someOrganization    |
+    And fill "Order Form" with:
       | Shipping Address              | Enter other address |
       | Shipping Address Country      | GermanyZulu         |
       | Shipping Address State        | BerlinZulu          |
@@ -69,6 +70,7 @@ Feature: Order Country and region selectors should contain translated values
       | Billing Address First name    | someFirstName       |
       | Billing Address Last name     | someLastName        |
       | Billing Address Organization  | someOrganization    |
+    And fill "Order Form" with:
       | Shipping Address              | Enter other address |
       | Shipping Address Country      | GermanyZulu         |
       | Shipping Address State        | BerlinZulu          |
