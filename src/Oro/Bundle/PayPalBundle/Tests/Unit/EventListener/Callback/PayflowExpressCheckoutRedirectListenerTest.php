@@ -81,7 +81,7 @@ class PayflowExpressCheckoutRedirectListenerTest extends \PHPUnit_Framework_Test
 
         $this->listener->onReturn($event);
 
-        $this->assertResponses(new RedirectResponse('failUrlForExpressCheckout'), $event->getResponse());
+        $this->assertEquals('failUrlForExpressCheckout', $event->getResponse()->getTargetUrl());
     }
 
     public function testOnErrorWithWrongTransaction()
@@ -139,7 +139,7 @@ class PayflowExpressCheckoutRedirectListenerTest extends \PHPUnit_Framework_Test
 
         $this->listener->onReturn($event);
 
-        $this->assertResponses(new RedirectResponse('failUrlForExpressCheckout'), $event->getResponse());
+        $this->assertEquals('failUrlForExpressCheckout', $event->getResponse()->getTargetUrl());
     }
 
     public function testOnErrorWithoutTransaction()
@@ -149,16 +149,5 @@ class PayflowExpressCheckoutRedirectListenerTest extends \PHPUnit_Framework_Test
         $this->listener->onReturn($event);
 
         $this->assertNotInstanceOf(RedirectResponse::class, $event->getResponse());
-    }
-
-    /**
-     * @param Response $expectedResponse
-     * @param Response $actualResponse
-     */
-    private function assertResponses(Response $expectedResponse, Response $actualResponse)
-    {
-        // Hack response datetime because of requests might have different datetime
-        $expectedResponse->setDate($actualResponse->getDate());
-        $this->assertEquals($expectedResponse, $actualResponse);
     }
 }
