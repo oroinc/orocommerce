@@ -18,7 +18,7 @@ use Oro\Component\MessageQueue\Util\JSON;
 use Psr\Log\LoggerInterface;
 
 /**
- * Generates direct URLs
+ * Generate Slug URLs for given entities
  */
 class DirectUrlProcessor implements MessageProcessorInterface, TopicSubscriberInterface
 {
@@ -97,10 +97,7 @@ class DirectUrlProcessor implements MessageProcessorInterface, TopicSubscriberIn
 
             $em->flush();
             $em->commit();
-
-            if ($this->urlCache instanceof FlushableCache) {
-                $this->urlCache->flushAll();
-            }
+            $this->actualizeUrlCache();
         } catch (InvalidArgumentException $e) {
             if ($em) {
                 $em->rollback();
@@ -139,5 +136,15 @@ class DirectUrlProcessor implements MessageProcessorInterface, TopicSubscriberIn
         return [
             Topics::GENERATE_DIRECT_URL_FOR_ENTITIES
         ];
+    }
+
+    private function actualizeUrlCache()
+    {
+        // Remove slug routes cache on Slug changes to refill it with actual data
+        $this->urlCache->removeUrl(UrlCacheInterface::SLUG_ROUTES_KEY, []);
+
+        if ($this->urlCache instanceof FlushableCache) {
+            $this->urlCache->flushAll();
+        }
     }
 }

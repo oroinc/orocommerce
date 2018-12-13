@@ -241,6 +241,9 @@ class DirectUrlProcessorTest extends \PHPUnit\Framework\TestCase
         /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message */
         $message = $this->createMock(MessageInterface::class);
 
+        $this->urlCache->expects($this->once())
+            ->method('removeUrl')
+            ->with(UrlCacheInterface::SLUG_ROUTES_KEY, []);
         $this->assertProcessorSuccessfulCalled($message, $createRedirect);
 
         $this->assertEquals(DirectUrlProcessor::ACK, $this->processor->process($message, $session));
@@ -257,6 +260,9 @@ class DirectUrlProcessorTest extends \PHPUnit\Framework\TestCase
 
         /** @var UrlCacheInterface|\PHPUnit\Framework\MockObject\MockObject $urlCache */
         $urlCache = $this->createMock(UrlCacheAllCapabilities::class);
+        $urlCache->expects($this->once())
+            ->method('removeUrl')
+            ->with(UrlCacheInterface::SLUG_ROUTES_KEY, []);
         $urlCache->expects($this->once())
             ->method('flushAll');
         $processor = new DirectUrlProcessor(
