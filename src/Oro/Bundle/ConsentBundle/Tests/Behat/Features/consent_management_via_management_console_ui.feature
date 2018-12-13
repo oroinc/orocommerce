@@ -358,9 +358,6 @@ Feature: Consent management via Management Console UI
     And I should see that "Presenting Personal Data" is in 2 row
     And I should see that "Collecting and storing personal data" is in 3 row
 
-   #This sceneraio fails because RFQ form does not save accepted consents considering we have separate task #BB-15807 for applying
-  #new logic for this form I will not change current behaviour to not to spent time
-  @skip
   Scenario: Accepted consents can't be deleted or edited
     Given I go to System/ Consent Management
     And I should not see following actions for Collecting and storing personal data in grid:

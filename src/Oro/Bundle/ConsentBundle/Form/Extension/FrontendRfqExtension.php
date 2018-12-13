@@ -2,60 +2,26 @@
 
 namespace Oro\Bundle\ConsentBundle\Form\Extension;
 
-use Oro\Bundle\ConsentBundle\Form\EventSubscriber\CustomerConsentsEventSubscriber;
-use Oro\Bundle\ConsentBundle\Form\EventSubscriber\GuestCustomerConsentsEventSubscriber;
-use Oro\Bundle\ConsentBundle\Form\EventSubscriber\PopulateFieldCustomerConsentsSubscriber;
-use Oro\Bundle\ConsentBundle\Form\Type\CustomerConsentsType;
+use Oro\Bundle\ConsentBundle\Form\Type\ConsentAcceptanceType;
 use Oro\Bundle\ConsentBundle\Validator\Constraints\RemovedConsents;
 use Oro\Bundle\ConsentBundle\Validator\Constraints\RemovedLandingPages;
 use Oro\Bundle\ConsentBundle\Validator\Constraints\RequiredConsents;
-use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
+use Oro\Bundle\RFPBundle\Entity\Request;
+use Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestType;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 
 /**
- * Form extension on oro_rfp_frontend_request that adds non accepted mandatory customer consents
- * to the create RFQ form
+ * Extends `Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestType` form type by adding consents field
+ * Consider it is used both for LOGGED CustomerUser as well as GUEST
  */
 class FrontendRfqExtension extends AbstractTypeExtension implements FeatureToggleableInterface
 {
     use FeatureCheckerHolderTrait;
-
-    /** @var string */
-    private $extendedType;
-
-    /** @var CustomerConsentsEventSubscriber */
-    private $saveConsentAcceptanceSubscriber;
-
-    /** @var PopulateFieldCustomerConsentsSubscriber */
-    private $populateFieldCustomerConsentsSubscriber;
-
-    /** @var TokenStorageInterface */
-    private $tokenStorage;
-
-    /** @var GuestCustomerConsentsEventSubscriber */
-    private $guestCustomerConsentsEventSubscriber;
-
-    /**
-     * @param CustomerConsentsEventSubscriber $saveConsentAcceptanceSubscriber
-     * @param GuestCustomerConsentsEventSubscriber $guestCustomerConsentsEventSubscriber
-     * @param PopulateFieldCustomerConsentsSubscriber $populateFieldCustomerConsentsSubscriber
-     * @param TokenStorageInterface $tokenStorage
-     */
-    public function __construct(
-        CustomerConsentsEventSubscriber $saveConsentAcceptanceSubscriber,
-        GuestCustomerConsentsEventSubscriber $guestCustomerConsentsEventSubscriber,
-        PopulateFieldCustomerConsentsSubscriber $populateFieldCustomerConsentsSubscriber,
-        TokenStorageInterface $tokenStorage
-    ) {
-        $this->saveConsentAcceptanceSubscriber = $saveConsentAcceptanceSubscriber;
-        $this->guestCustomerConsentsEventSubscriber = $guestCustomerConsentsEventSubscriber;
-        $this->populateFieldCustomerConsentsSubscriber = $populateFieldCustomerConsentsSubscriber;
-        $this->tokenStorage = $tokenStorage;
-    }
 
     /**
      * @param FormBuilderInterface $builder
@@ -67,32 +33,39 @@ class FrontendRfqExtension extends AbstractTypeExtension implements FeatureToggl
             return;
         }
 
-        if ($this->isGuestCustomerUser()) {
-            $builder->addEventSubscriber($this->guestCustomerConsentsEventSubscriber);
-        } else {
-            $builder->addEventSubscriber($this->saveConsentAcceptanceSubscriber);
-            $builder->addEventSubscriber($this->populateFieldCustomerConsentsSubscriber);
-        }
-
-        $builder->add(
-            CustomerConsentsType::TARGET_FIELDNAME,
-            CustomerConsentsType::class,
-            [
-                'constraints' => [
-                    new RemovedLandingPages(),
-                    new RemovedConsents(),
-                    new RequiredConsents()
-                ]
-            ]
-        );
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetData']);
     }
 
     /**
-     * @param string $extendedType
+     * PreSet event handler
+     * @param FormEvent $event
      */
-    public function setExtendedType($extendedType)
+    public function preSetData(FormEvent $event)
     {
-        $this->extendedType = $extendedType;
+        $formData = $event->getData();
+        $form = $event->getForm();
+
+        $formOptions = ['constraints' => [
+            new RemovedLandingPages(),
+            new RemovedConsents(),
+            new RequiredConsents()
+        ]];
+
+        // If we have CustomerUser in Request entity we can use corresponding property path so symfony populates and
+        // saves consents by its own
+        if ($formData instanceof Request && $formData->getCustomerUser()) {
+            $formOptions['property_path'] = 'customerUser.acceptedConsents';
+        // Otherwise we disable mapping and consider this is Guest (with empty CustomerUser) so we don't need pre
+        // population and saving will be handled by `RfqBeforeFlushFormListener`
+        } else {
+            $formOptions['mapped'] = false;
+        }
+
+        $form->add(
+            ConsentAcceptanceType::TARGET_FIELDNAME,
+            ConsentAcceptanceType::class,
+            $formOptions
+        );
     }
 
     /**
@@ -100,14 +73,6 @@ class FrontendRfqExtension extends AbstractTypeExtension implements FeatureToggl
      */
     public function getExtendedType()
     {
-        return $this->extendedType;
-    }
-
-    /**
-     * @return bool
-     */
-    private function isGuestCustomerUser()
-    {
-        return $this->tokenStorage->getToken() instanceof AnonymousCustomerUserToken;
+        return RequestType::class;
     }
 }

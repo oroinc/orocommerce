@@ -10,6 +10,10 @@ use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\UserBundle\Provider\DefaultUserProvider;
 
+/**
+ * Subscribed on Oro\Bundle\RFPBundle\Entity\Request persist
+ * it sets owner and CustomerUser to the entity in case of Guest user
+ */
 class RFPListener
 {
     /** @var DefaultUserProvider */
@@ -45,7 +49,7 @@ class RFPListener
 
         if ($token instanceof AnonymousCustomerUserToken) {
             $this->setOwner($request);
-            $this->setCustomerUser($request, $token);
+            $this->setCustomerUser($request);
         }
     }
 
@@ -65,24 +69,20 @@ class RFPListener
     }
 
     /**
+     * Always generates new CustomerUser for RFQ which is not assigned to visitor
      * @param Request $request
-     * @param $token
      */
-    protected function setCustomerUser(Request $request, AnonymousCustomerUserToken $token)
+    private function setCustomerUser(Request $request)
     {
-        $visitor = $token->getVisitor();
-        $user = $visitor->getCustomerUser();
-        if ($user === null) {
-            $user = $this->guestCustomerUserManager
-                ->generateGuestCustomerUser(
-                    [
-                        'email' => $request->getEmail(),
-                        'first_name' => $request->getFirstName(),
-                        'last_name' => $request->getLastName()
-                    ]
-                );
-            $visitor->setCustomerUser($user);
-        }
+        $user = $this->guestCustomerUserManager
+            ->generateGuestCustomerUser(
+                [
+                    'email' => $request->getEmail(),
+                    'first_name' => $request->getFirstName(),
+                    'last_name' => $request->getLastName()
+                ]
+            );
+
         $request->setCustomerUser($user);
     }
 }

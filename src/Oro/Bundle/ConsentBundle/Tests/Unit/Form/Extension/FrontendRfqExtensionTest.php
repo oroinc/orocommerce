@@ -2,22 +2,21 @@
 
 namespace Oro\Bundle\ConsentBundle\Tests\Unit\Form\Extension;
 
-use Oro\Bundle\ConsentBundle\Form\EventSubscriber\CustomerConsentsEventSubscriber;
-use Oro\Bundle\ConsentBundle\Form\EventSubscriber\GuestCustomerConsentsEventSubscriber;
-use Oro\Bundle\ConsentBundle\Form\EventSubscriber\PopulateFieldCustomerConsentsSubscriber;
 use Oro\Bundle\ConsentBundle\Form\Extension\FrontendRfqExtension;
-use Oro\Bundle\ConsentBundle\Form\Type\CustomerConsentsType;
+use Oro\Bundle\ConsentBundle\Form\Type\ConsentAcceptanceType;
 use Oro\Bundle\ConsentBundle\Validator\Constraints\RemovedConsents;
 use Oro\Bundle\ConsentBundle\Validator\Constraints\RemovedLandingPages;
 use Oro\Bundle\ConsentBundle\Validator\Constraints\RequiredConsents;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
-use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
+use Oro\Bundle\RFPBundle\Entity\Request;
+use Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestType;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormInterface;
 
 class FrontendRfqExtensionTest extends FormIntegrationTestCase
 {
@@ -32,18 +31,6 @@ class FrontendRfqExtensionTest extends FormIntegrationTestCase
     /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject */
     private $featureChecker;
 
-    /** @var CustomerConsentsEventSubscriber|\PHPUnit\Framework\MockObject\MockObject */
-    private $saveConsentAcceptanceSubscriber;
-
-    /** @var GuestCustomerConsentsEventSubscriber|\PHPUnit\Framework\MockObject\MockObject */
-    private $guestCustomerConsentsEventSubscriber;
-
-    /** @var PopulateFieldCustomerConsentsSubscriber|\PHPUnit\Framework\MockObject\MockObject */
-    private $populateFieldCustomerConsentsSubscriber;
-
-    /** @var TokenStorageInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $tokenStorage;
-
     /**
      * {@inheritdoc}
      */
@@ -51,39 +38,12 @@ class FrontendRfqExtensionTest extends FormIntegrationTestCase
     {
         $this->featureChecker = $this->createMock(FeatureChecker::class);
 
-        $this->saveConsentAcceptanceSubscriber = $this->createMock(CustomerConsentsEventSubscriber::class);
-        $this->guestCustomerConsentsEventSubscriber = $this->createMock(GuestCustomerConsentsEventSubscriber::class);
-        $this->populateFieldCustomerConsentsSubscriber = $this->createMock(
-            PopulateFieldCustomerConsentsSubscriber::class
-        );
-        $this->tokenStorage = $this->createMock(TokenStorageInterface::class);
-
-        $this->extension = new FrontendRfqExtension(
-            $this->saveConsentAcceptanceSubscriber,
-            $this->guestCustomerConsentsEventSubscriber,
-            $this->populateFieldCustomerConsentsSubscriber,
-            $this->tokenStorage
-        );
+        $this->extension = new FrontendRfqExtension();
 
         $this->extension->setFeatureChecker($this->featureChecker);
         $this->extension->addFeature('consents');
 
         $this->builder = $this->createMock(FormBuilderInterface::class);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function tearDown()
-    {
-        unset(
-            $this->featureChecker,
-            $this->saveConsentAcceptanceSubscriber,
-            $this->extension,
-            $this->builder,
-            $this->guestCustomerConsentsEventSubscriber,
-            $this->tokenStorage
-        );
     }
 
     public function testBuildFormWithFeatureDisabled()
@@ -103,83 +63,83 @@ class FrontendRfqExtensionTest extends FormIntegrationTestCase
 
     public function testBuildFormWithFeatureEnabledAndLoggedCustomerUser()
     {
-        $token = $this->createMock(TokenInterface::class);
-        $token
-            ->method('getUser')
-            ->willReturn($this->getEntity(CustomerUser::class, ['id' => 1]));
-
-        $this->tokenStorage->expects($this->once())
-            ->method('getToken')
-            ->willReturn($token);
-
         $this->featureChecker->expects($this->once())
             ->method('isFeatureEnabled')
             ->with('consents')
             ->willReturn(true);
 
-        $this->builder->expects($this->exactly(2))
-            ->method('addEventSubscriber')
-            ->withConsecutive(
-                [$this->saveConsentAcceptanceSubscriber],
-                [$this->populateFieldCustomerConsentsSubscriber]
-            );
-
         $this->builder->expects($this->once())
-            ->method('add')
+            ->method('addEventListener')
             ->with(
-                CustomerConsentsType::TARGET_FIELDNAME,
-                CustomerConsentsType::class,
-                [
-                    'constraints' => [
-                        new RemovedLandingPages(),
-                        new RemovedConsents(),
-                        new RequiredConsents()
-                    ]
-                ]
+                FormEvents::PRE_SET_DATA,
+                [$this->extension, 'preSetData']
             );
 
         $this->extension->buildForm($this->builder, []);
     }
 
-    public function testBuildFormWithFeatureEnabledAndAnonymousCustomerUser()
+    public function testPreSetDataForExistingCustomer()
     {
-        $token = $this->createMock(AnonymousCustomerUserToken::class);
+        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        $form = $this->createMock(FormInterface::class);
 
-        $this->tokenStorage->expects($this->once())
-            ->method('getToken')
-            ->willReturn($token);
+        $requestForQuote = new Request();
+        $customerUser = new CustomerUser();
+        $requestForQuote->setCustomerUser($customerUser);
 
-        $this->featureChecker->expects($this->once())
-            ->method('isFeatureEnabled')
-            ->with('consents')
-            ->willReturn(true);
+        $event = new FormEvent($form, $requestForQuote);
 
-        $this->builder->expects($this->once())
-            ->method('addEventSubscriber')
-            ->with($this->guestCustomerConsentsEventSubscriber);
+        $formOptions = [
+            'constraints' => [
+                new RemovedLandingPages(),
+                new RemovedConsents(),
+                new RequiredConsents()
+            ],
+            'property_path' => 'customerUser.acceptedConsents'
+        ];
 
-        $this->builder->expects($this->once())
+        $form->expects($this->once())
             ->method('add')
             ->with(
-                CustomerConsentsType::TARGET_FIELDNAME,
-                CustomerConsentsType::class,
-                [
-                    'constraints' => [
-                        new RemovedLandingPages(),
-                        new RemovedConsents(),
-                        new RequiredConsents()
-                    ]
-                ]
+                ConsentAcceptanceType::TARGET_FIELDNAME,
+                ConsentAcceptanceType::class,
+                $formOptions
             );
 
-        $this->extension->buildForm($this->builder, []);
+        $this->extension->preSetData($event);
+    }
+
+    public function testPreSetDataForEmptyCustomer()
+    {
+        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        $form = $this->createMock(FormInterface::class);
+
+        $requestForQuote = new Request();
+
+        $event = new FormEvent($form, $requestForQuote);
+
+        $formOptions = [
+            'constraints' => [
+                new RemovedLandingPages(),
+                new RemovedConsents(),
+                new RequiredConsents()
+            ],
+            'mapped' => false
+        ];
+
+        $form->expects($this->once())
+            ->method('add')
+            ->with(
+                ConsentAcceptanceType::TARGET_FIELDNAME,
+                ConsentAcceptanceType::class,
+                $formOptions
+            );
+
+        $this->extension->preSetData($event);
     }
 
     public function testGetExtendedType()
     {
-        $this->assertNull($this->extension->getExtendedType());
-
-        $this->extension->setExtendedType('extended_type');
-        $this->assertEquals('extended_type', $this->extension->getExtendedType());
+        $this->assertEquals(RequestType::class, $this->extension->getExtendedType());
     }
 }

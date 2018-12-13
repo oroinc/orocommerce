@@ -6,6 +6,7 @@ use Oro\Bundle\ConsentBundle\Entity\Consent;
 use Oro\Bundle\ConsentBundle\Entity\ConsentAcceptance;
 use Oro\Bundle\ConsentBundle\Entity\Repository\ConsentAcceptanceRepository;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
@@ -77,7 +78,12 @@ class ConsentAcceptanceProvider
         if (!$token) {
             return [];
         }
-        $customerUser = $token->getUser();
+
+        if ($token instanceof AnonymousCustomerUserToken) {
+            $customerUser = $token->getVisitor()->getCustomerUser();
+        } else {
+            $customerUser = $token->getUser();
+        }
 
         if (null === $customerUser || !$customerUser instanceof CustomerUser) {
             return [];

@@ -8,6 +8,8 @@ use Oro\Bundle\ConsentBundle\Entity\ConsentAcceptance;
 use Oro\Bundle\ConsentBundle\Entity\Repository\ConsentAcceptanceRepository;
 use Oro\Bundle\ConsentBundle\Provider\ConsentAcceptanceProvider;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerVisitor;
+use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -90,6 +92,31 @@ class ConsentAcceptanceProviderTest extends \PHPUnit\Framework\TestCase
         $customerUser = $this->getEntity(CustomerUser::class, ['id' => 21]);
 
         $this->mockToken($customerUser);
+
+        $this->consentAcceptanceRepository
+            ->expects($this->once())
+            ->method('getAcceptedConsentsByCustomer')
+            ->with($customerUser)
+            ->willReturn($consentAcceptances);
+
+        $this->assertSame(
+            $consentAcceptances,
+            $this->consentAcceptanceProvider->getCustomerConsentAcceptances()
+        );
+    }
+
+    public function testGetGuestCustomerConsentAcceptances()
+    {
+        $consentAcceptances = [$this->getEntity(ConsentAcceptance::class, ['id' => 1])];
+        $customerUser = $this->getEntity(CustomerUser::class, ['id' => 21]);
+
+        $visitor = new CustomerVisitor();
+        $visitor->setCustomerUser($customerUser);
+        $token = new AnonymousCustomerUserToken('', [], $visitor);
+
+        $this->tokenStorage->expects($this->once())
+            ->method('getToken')
+            ->willReturn($token);
 
         $this->consentAcceptanceRepository
             ->expects($this->once())
