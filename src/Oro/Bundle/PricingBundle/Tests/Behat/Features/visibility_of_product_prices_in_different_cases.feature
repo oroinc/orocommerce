@@ -1,7 +1,10 @@
 @regression
 @fixture-OroPricingBundle:ProductPrices.yml
 Feature: Visibility of product prices in different cases
-  ToDo: BAP-16103 Add missing descriptions to the Behat features
+  In order to have ability to filter products by product prices on the store frontend
+  As an Buyer
+  I want to see and manage product prices filter`s state on product grid page
+
   Scenario: Empty product prices for non authorized user
     Given I am on "/product"
     Then I should not see a "Product Price Listed" element
@@ -32,3 +35,12 @@ Feature: Visibility of product prices in different cases
     When I hover on "Product Price Hint"
     Then I should see a "Product Price Popover" element
     And I should see that "Product Price Popover" contains "$100.00"
+
+  Scenario: Resetting Price Filter
+    Given I am on "/product"
+    And I filter Price as equals "12,00"
+    And I should see grid with filter hints:
+      | Price: equals 1,200.00 / ea |
+    When I reset "Price" filter on grid "ProductFrontendGrid"
+    And click on "Open Filters Panel Button"
+    Then filter "Price" should have selected "between" type
