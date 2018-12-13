@@ -21,7 +21,7 @@ Feature: Consent management via Management Console UI
     And fill "Landing Page Form" with:
       | Titles   | Consent Landing |
       | URL Slug | consent-landing |
-    And I fill in "CMS Page Content" with "Consent landing page description"
+    And I fill in "CMS Page Content" with "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quae in controversiam veniunt, de iis, si placet, disseramus. Duo Reges constructio interrete. Tamen aberramus a proposito, et, ne longius, prorsus, inquam, Piso, si ista mala sunt, placet. </p> <p>At, illa, ut vobis placet, partem quandam tuetur, reliquam deserit. Inde sermone vario sex illa a Dipylo stadia confecimus. Sed id ne cogitari quidem potest quale sit, ut non repugnet ipsum sibi. Si qua in iis corrigere voluit, deteriora fecit. Audeo dicere, inquit. </p> <p> Ex quo intellegitur officium medium quiddam esse, quod neque in bonis ponatur neque in contrariis. </p> <dl> <dt><dfn>Perge porro;</dfn></dt> <dd>Erat enim Polemonis.</dd> <dt><dfn>Quibus ego vehementer assentior.</dfn></dt> <dd>Sed est forma eius disciplinae, sicut fere ceterarum, triplex una pars est naturae, disserendi altera, vivendi tertia.</dd> <dt><dfn>Nihilo magis.</dfn></dt> <dd>Illud dico, ea, quae dicat, praeclare inter se cohaerere.</dd> <dt><dfn>Certe non potest.</dfn></dt> <dd>Huius, Lyco, oratione locuples, rebus ipsis ielunior.</dd> <dt><dfn>Sed videbimus.</dfn></dt> <dd>Theophrastus mediocriterne delectat, cum tractat locos ab Aristotele ante tractatos?</dd> </dl> <h3>Quam si explicavisset, non tam haesitaret.</h3> <p>Nonne videmus quanta perturbatio rerum omnium consequatur, quanta confusio? Summum ením bonum exposuit vacuitatem doloris; Dici enim nihil potest verius. Sapiens autem semper beatus est et est aliquando in dolore; Aliud igitur esse censet gaudere, aliud non dolere. Sic, et quidem diligentius saepiusque ista loquemur inter nos agemusque communiter. </p> <h2>Plane idem, inquit, et maxima quidem, qua fieri nulla maior potest.</h2> <p>Hoc est vim afferre, Torquate, sensibus, extorquere ex animis cognitiones verborum, quibus inbuti sumus. Pisone in eo gymnasio, quod Ptolomaeum vocatur, unaque nobiscum Q. Levatio igitur vitiorum magna fit in iis, qui habent ad virtutem progressionis aliquantum. Optime, inquam. Utrum igitur tibi litteram videor an totas paginas commovere? </p> <ul> <li>Perturbationes autem nulla naturae vi commoventur, omniaque ea sunt opiniones ac iudicia levitatis.</li> <li>An vero, inquit, quisquam potest probare, quod perceptfum, quod.</li> <li>Nihilne te delectat umquam -video, quicum loquar-, te igitur, Torquate, ipsum per se nihil delectat?</li> <li>Quid ergo attinet gloriose loqui, nisi constanter loquare?</li> <li>Sed tamen omne, quod de re bona dilucide dicitur, mihi praeclare dici videtur.</li> <li>Sunt enim quasi prima elementa naturae, quibus ubertas orationis adhiberi vix potest, nec equidem eam cogito consectari.</li></ul>"
     And click "Save and Close"
     And go to Marketing/ Landing Pages
     Then click "Create Landing Page"
@@ -171,14 +171,19 @@ Feature: Consent management via Management Console UI
     Then I should see that "Required Consent" contains "This agreement is required"
     And I click "Presenting Personal Data"
     Then I should see "UiDialog" with elements:
-      | Title        | Presenting Personal Data         |
-      | Content      | Consent landing page description |
-      | okButton     | Accept                           |
-      | cancelButton | Cancel                           |
-    And click "Accept"
+      | Title             | Presenting Personal Data |
+      | Disabled okButton | Agree                    |
+      | cancelButton      | Cancel                   |
+    When I scroll modal window to bottom
+    Then I should see "UiDialog" with elements:
+      | Title        | Presenting Personal Data |
+      | okButton     | Agree                    |
+      | cancelButton | Cancel                   |
+    When I click "Agree"
     Then I should not see a "Consent Popup" element
-    Then I click "Collecting and storing personal data"
-    And click "Accept"
+    And I click "Collecting and storing personal data"
+    And I scroll modal window to bottom
+    And click "Agree"
     And the "Presenting Personal Data" checkbox should be checked
     And the "Email Newsletters" checkbox should not be checked
     And the "Collecting and storing personal data" checkbox should be checked
@@ -214,7 +219,6 @@ Feature: Consent management via Management Console UI
     When I click "Presenting Personal Data"
     Then I should see "UiDialog" with elements:
       | Title        | Presenting Personal Data         |
-      | Content      | Consent landing page description |
       | cancelButton | Close                            |
     And click "Close"
     Then I should not see a "Consent Popup" element
@@ -236,14 +240,14 @@ Feature: Consent management via Management Console UI
     And I click "No, Cancel"
     When I click "Presenting Personal Data"
     Then I should see "UiDialog" with elements:
-      | Title        | Presenting Personal Data         |
-      | Content      | Consent landing page description |
-      | okButton     | Accept                           |
-      | cancelButton | Cancel                           |
+      | Title             | Presenting Personal Data |
+      | Disabled okButton | Agree                    |
+      | cancelButton      | Cancel                   |
     And click "Cancel"
     Then the "Presenting Personal Data" checkbox should not be checked
     When I click "Presenting Personal Data"
-    And click "Accept"
+    And I scroll modal window to bottom
+    And click "Agree"
     Then I should not see a "Consent Popup" element
     And the "Presenting Personal Data" checkbox should be checked
     Then the "Email Newsletters" checkbox should be checked
@@ -310,14 +314,14 @@ Feature: Consent management via Management Console UI
     Then I should see that "Required Consent" contains "This agreement is required"
     When I click "Collecting and storing personal data"
     Then I should see "UiDialog" with elements:
-      | Title        | Collecting and storing personal data |
-      | Content      | Consent landing page description     |
-      | okButton     | Accept                               |
-      | cancelButton | Cancel                               |
+      | Title             | Collecting and storing personal data |
+      | Disabled okButton | Agree                                |
+      | cancelButton      | Cancel                               |
     And click "Cancel"
     And the "Collecting and storing personal data" checkbox should not be checked
     When I click "Collecting and storing personal data"
-    And click "Accept"
+    And I scroll modal window to bottom
+    And click "Agree"
     Then I should not see a "Consent Popup" element
     And the "Collecting and storing personal data" checkbox should be checked
     When click "Submit Request"
@@ -423,14 +427,16 @@ Feature: Consent management via Management Console UI
       | Password                             | BrandaJSanborn1@example.org |
       | Confirm Password                     | BrandaJSanborn1@example.org |
     And I click "Test Consent"
-    And click "Accept"
+    And click "Agree"
     And I click "Presenting Personal Data"
-    And click "Accept"
+    And I scroll modal window to bottom
+    And click "Agree"
     And I click "Collecting and storing personal data"
-    And click "Accept"
+    And I scroll modal window to bottom
+    And click "Agree"
     When I click "Test Consent"
     Then I should see a "Consent Popup" element
-    And click "Accept"
+    And click "Agree"
     # Proceeding to management console
     And I proceed as the Admin
     And go to System/ Consent Management
@@ -473,9 +479,11 @@ Feature: Consent management via Management Console UI
       | Password                             | BrandaJSanborn2@example.org |
       | Confirm Password                     | BrandaJSanborn2@example.org |
     And I click "Presenting Personal Data"
-    And click "Accept"
+    And I scroll modal window to bottom
+    And click "Agree"
     And I click "Collecting and storing personal data"
-    And click "Accept"
+    And I scroll modal window to bottom
+    And click "Agree"
     And I click "Test Consent 2"
     Then I should see a "Consent Popup" element
     And click "Cancel"
@@ -520,21 +528,22 @@ Feature: Consent management via Management Console UI
     Then I should see that "Required Consent" contains "This agreement is required"
     When I click on "Consent Link" with title "Presenting Personal Data"
     Then I should see "UiDialog" with elements:
-      | Title        | Presenting Personal Data                        |
-      | Content      | Required Consents description                   |
-      | okButton     | Accept                                          |
-      | cancelButton | Cancel                                          |
+      | Title             | Presenting Personal Data |
+      | Disabled okButton | Agree                    |
+      | cancelButton      | Cancel                   |
     When click "Cancel"
     Then the "Presenting Personal Data" checkbox should not be checked
     When I click "Presenting Personal Data"
-    And click "Accept"
+    And I scroll modal window to bottom
+    And click "Agree"
     Then I should not see a "Consent Popup" element
     And the "Presenting Personal Data" checkbox should be checked
     # In scenario below, we should also check if the customer user can proceed checkout with only one required consent and make sure the he cannot do this without accepting all required ones
     When click "Continue"
     Then I should see that "Required Consent" contains "This agreement is required"
     When I click "Collecting and storing personal data"
-    And click "Accept"
+    And I scroll modal window to bottom
+    And click "Agree"
     Then I should not see a "Consent Popup" element
     And the "Collecting and storing personal data" checkbox should be checked
     When click "Continue"

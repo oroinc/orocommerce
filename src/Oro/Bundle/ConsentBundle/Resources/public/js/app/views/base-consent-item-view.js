@@ -104,7 +104,8 @@ define(function(require) {
 
             this.subview('popup')
                 .once('frontend-dialog:accept', _.bind(this.changeCheckboxState, this, true))
-                .once('frontend-dialog:cancel frontend-dialog:close', _.bind(this.changeCheckboxState, this, false));
+                .once('frontend-dialog:cancel frontend-dialog:close', _.bind(this.changeCheckboxState, this, false))
+                .once('renderComplete', _.bind(this.onRenderComplete, this));
         },
 
         /**
@@ -185,6 +186,60 @@ define(function(require) {
 
             if (_.has(_.indexBy(JSON.parse(values), 'consentId'), this.consentId)) {
                 this.changeCheckboxState(true);
+            }
+        },
+
+        /**
+         * Listen renderComplete event
+         */
+        onRenderComplete: function() {
+            this.moveActionElements();
+            this.disableSubmitElement();
+            this.subview('popup').widget
+                .on('scroll', _.bind(this.onScroll, this));
+        },
+
+        /**
+         * Move action elements to the left side
+         */
+        moveActionElements: function() {
+            this.subview('popup').actionsEl
+                .removeClass('pull-right')
+                .addClass('pull-left');
+        },
+
+        /**
+         * Disable submit button when text height is bigger than widget height
+         */
+        disableSubmitElement: function() {
+            var popup = this.subview('popup');
+            var disable = $(popup.el).height() > popup.widget.height();
+
+            this.updateSubmitElementState(disable);
+        },
+
+        /**
+         * Submit element should be active when text was scrolled to the down
+         */
+        onScroll: function() {
+            var consentTextHeight = $(this.subview('popup').el).height();
+            var widget = this.subview('popup').widget;
+            var disable = consentTextHeight > (widget.height() + widget.scrollTop());
+
+            this.updateSubmitElementState(disable);
+        },
+
+        /**
+         * Update state of the submit element
+         *
+         * @param {Boolean} state
+         */
+        updateSubmitElementState: function(state) {
+            var element = this.subview('popup').actionsEl
+                .find('[type=submit]');
+
+            if (element.length) {
+                element.toggleClass('disabled', state);
             }
         }
     });

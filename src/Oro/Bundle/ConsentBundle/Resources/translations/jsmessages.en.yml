@@ -5,7 +5,7 @@ oro:
             web_catlog_is_empty: "{{ webCatalog }} doesn't have content nodes"
         frontend:
             dialog:
-                accept.label: "Accept"
+                accept.label: "Agree"
                 cancel.label: "Cancel"
                 close.label: "Close"
             confirm_modal:
