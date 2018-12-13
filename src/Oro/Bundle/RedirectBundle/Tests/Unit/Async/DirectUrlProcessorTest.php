@@ -3,6 +3,7 @@
 namespace Oro\Bundle\RedirectBundle\Tests\Unit\Async;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\AbstractDriverException;
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\EntityBundle\ORM\DatabaseExceptionHelper;
@@ -148,6 +149,40 @@ class DirectUrlProcessorTest extends \PHPUnit\Framework\TestCase
             ->willThrowException($exception);
 
         $this->assertTransactionRollback();
+
+        $this->logger->expects($this->once())
+            ->method('error')
+            ->with(
+                'Unexpected exception occurred during Direct URL generation',
+                ['exception' => $exception]
+            );
+
+        $this->assertEquals(DirectUrlProcessor::REJECT, $this->processor->process($message, $session));
+    }
+
+    public function testProcessExceptionInClosedTransaction()
+    {
+        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session */
+        $session = $this->createMock(SessionInterface::class);
+
+        $exception = new \Exception('Test');
+        $message = $this->prepareMessage();
+        $this->generator->expects($this->once())
+            ->method('generate')
+            ->willThrowException($exception);
+
+        $em = $this->assertTransactionStarted();
+
+        $conn = $this->createMock(Connection::class);
+        $conn->expects($this->once())
+            ->method('getTransactionNestingLevel')
+            ->willReturn(0);
+        $em->expects($this->once())
+            ->method('getConnection')
+            ->willReturn($conn);
+
+        $em->expects($this->never())
+            ->method('rollback');
 
         $this->logger->expects($this->once())
             ->method('error')
@@ -357,6 +392,15 @@ class DirectUrlProcessorTest extends \PHPUnit\Framework\TestCase
     private function assertTransactionRollback()
     {
         $em = $this->assertTransactionStarted();
+
+        $conn = $this->createMock(Connection::class);
+        $conn->expects($this->once())
+            ->method('getTransactionNestingLevel')
+            ->willReturn(1);
+        $em->expects($this->once())
+            ->method('getConnection')
+            ->willReturn($conn);
+
         $em->expects($this->once())
             ->method('rollback');
     }

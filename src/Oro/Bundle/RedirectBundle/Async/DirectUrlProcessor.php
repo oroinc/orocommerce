@@ -116,7 +116,7 @@ class DirectUrlProcessor implements MessageProcessorInterface, TopicSubscriberIn
                 ['exception' => $e]
             );
 
-            if ($em) {
+            if ($em && $em->getConnection()->getTransactionNestingLevel() > 0) {
                 $em->rollback();
             }
 
