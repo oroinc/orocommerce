@@ -51,7 +51,7 @@ system_configuration:
             commerce:
                 children:
                     shipping:
-                        priotity: 550
+                        priority: 550
                         children:
                             shipping_origin:
                                 priority: 100
