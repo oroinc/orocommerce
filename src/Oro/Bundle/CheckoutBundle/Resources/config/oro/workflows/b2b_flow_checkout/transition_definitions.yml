@@ -104,6 +104,11 @@ workflows:
                         attribute: $state_token
                     - '@assign_value': [$internal_state_token, $state_token]
 
+            verify_customer_consents_definition:
+                preconditions:
+                    '@not':
+                        - '@is_consents_accepted': ~
+
             back_to_billing_address_definition:
                 preconditions:
                     '@equal': [$checkout.completed, false]

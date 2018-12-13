@@ -318,12 +318,12 @@ services:
             - '@oro_consent.builder.consent_data_builder'
 
     oro_consent.condition.checkout_has_unaccepted_consents:
-        class: 'Oro\Bundle\ConsentBundle\Condition\CheckoutHasUnacceptedConsents'
+        class: 'Oro\Bundle\ConsentBundle\Condition\IsConsentsAccepted'
         arguments:
+            - '@oro_featuretoggle.checker.feature_checker'
             - '@oro_consent.provider.consent_data_provider'
-            - '@oro_consent.extractor.customer_user_extractor'
         tags:
-            - { name: oro_action.condition, alias: 'checkout_has_unaccepted_consents' }
+            - { name: oro_action.condition, alias: 'is_consents_accepted' }
 
     oro_consent.storage.abstract_customer_consent_acceptances_storage:
         class: 'Oro\Bundle\ConsentBundle\Storage\AbstractCustomerConsentAcceptancesStorage'

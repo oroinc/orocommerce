@@ -195,6 +195,9 @@ oro:
                 back_to_payment:
                     label: 'Edit Payment'
                     warning_message: ''
+                verify_customer_consents:
+                    label: 'Verify Customer Consents'
+                    warning_message: ''
                 verify_payment:
                     label: 'Verify Payment'
                     warning_message: ''

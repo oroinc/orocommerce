@@ -252,6 +252,13 @@ workflows:
                 frontend_options:
                     is_checkout_back: true
 
+            verify_customer_consents:
+                step_to: customer_consents
+                transition_definition: verify_customer_consents_definition
+                is_hidden: true
+                frontend_options:
+                    stop_propagation: true
+
             verify_payment:
                 step_to: enter_payment
                 transition_definition: verify_payment_definition

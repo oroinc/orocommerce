@@ -108,6 +108,10 @@ class CheckoutWorkflowHelper
     public function processWorkflowAndGetCurrentStep(Request $request, Checkout $checkout)
     {
         $workflowItem = $this->getWorkflowItem($checkout);
+        $stopPropagation = $this->stopPropagation($workflowItem);
+        if ($stopPropagation) {
+            return $workflowItem->getCurrentStep();
+        }
 
         if ($request->isMethod(Request::METHOD_POST) &&
             $this->isCheckoutRestartRequired($workflowItem)
@@ -122,6 +126,7 @@ class CheckoutWorkflowHelper
         if ($this->isValidationNeeded($checkout, $workflowItem, $request)) {
             $this->validateOrderLineItems($checkout, $request);
         }
+
 
         return $currentStep;
     }
@@ -298,6 +303,29 @@ class CheckoutWorkflowHelper
                 $this->handleGetTransition($workflowItem, $request);
             }
         }
+    }
+
+    /**
+     * @param WorkflowItem $workflowItem
+     *
+     * @return bool
+     */
+    private function stopPropagation(WorkflowItem $workflowItem)
+    {
+        $stopPropagation = false;
+        $transitions = $this->workflowManager->getTransitionsByWorkflowItem($workflowItem);
+        foreach ($transitions as $transition) {
+            $frontendOptions = $transition->getFrontendOptions();
+            if (!empty($frontendOptions['stop_propagation'])) {
+                $transitionAllowed = $this->workflowManager->transitIfAllowed($workflowItem, $transition);
+                if ($transitionAllowed) {
+                    $stopPropagation = true;
+                    break;
+                }
+            }
+        }
+
+        return $stopPropagation;
     }
 
     /**
