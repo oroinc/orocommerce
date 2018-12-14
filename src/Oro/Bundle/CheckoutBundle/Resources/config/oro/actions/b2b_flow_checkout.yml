@@ -441,38 +441,22 @@ action_groups:
                 conditions:
                     '@empty': $.checkout.customerUser
                 actions:
-                    - '@run_action_group':
-                        action_group: do_b2b_flow_checkout_create_guest_customer_user
-                        parameters_mapping:
-                            checkout: $.checkout
-                            email: $.email
-                            billing_address: $.billing_address
-
-    do_b2b_flow_checkout_create_guest_customer_user:
-        parameters:
-            checkout:
-                type: Oro\Bundle\CheckoutBundle\Entity\Checkout
-            email:
-                default: null
-            billing_address:
-                default: null
-        actions:
-            - '@get_active_visitor': $visitor
-            - '@call_service_method':
-                attribute: $.checkout.customerUser
-                service: 'oro_customer.manager.guest_customer_user'
-                method: createFromAddress
-                method_parameters:
-                    - $.email
-                    - $.billing_address
-            - '@flush_entity': $.checkout.customerUser
-            - '@assign_value': [$visitor.customerUser, $.checkout.customerUser]
-            - '@flush_entity': $visitor
-            - '@call_service_method':
-                service: 'oro_consent.manager.guest_customer_consent_acceptances_manager'
-                method: flushCustomerConsentAcceptancesFromStorage
-                method_parameters:
-                    - $.checkout.customerUser
+                    - '@get_active_visitor': $visitor
+                    - '@call_service_method':
+                        attribute: $.checkout.customerUser
+                        service: 'oro_customer.manager.guest_customer_user'
+                        method: createFromAddress
+                        method_parameters:
+                            - $.email
+                            - $.billing_address
+                    - '@flush_entity': $.checkout.customerUser
+                    - '@assign_value': [$visitor.customerUser, $.checkout.customerUser]
+                    - '@flush_entity': $visitor
+                    - '@call_service_method':
+                        service: 'oro_consent.manager.guest_customer_consent_acceptances_manager'
+                        method: flushCustomerConsentAcceptancesFromStorage
+                        method_parameters:
+                            - $.checkout.customerUser
 
     b2b_flow_checkout_update_guest_customer_user:
         parameters:
@@ -517,12 +501,38 @@ action_groups:
                         - '@equal': [$.late_registration_data.is_late_registration_enabled, true]
                         - '@equal': [$.checkout.registeredCustomerUser, null]
                 actions:
-                    - '@run_action_group':
-                        action_group: do_late_registration_customer_user
-                        parameters_mapping:
-                            checkout: $.checkout
-                            order: $.order
-                            late_registration_data: $.late_registration_data
+                    - '@call_service_method':
+                        attribute: $.checkout.registeredCustomerUser
+                        service: 'oro_customer.provider.frontend_customer_user_registration_form'
+                        method: createCustomerUser
+
+                    - '@assign_value': [$.checkout.registeredCustomerUser.email, $.late_registration_data.email]
+                    - '@assign_value': [$.checkout.registeredCustomerUser.firstName, $.order.billingAddress.firstname]
+                    - '@assign_value': [$.checkout.registeredCustomerUser.lastName, $.order.billingAddress.lastName]
+                    - '@assign_value': [$.checkout.registeredCustomerUser.plainPassword, $.late_registration_data.password]
+
+                    - '@call_service_method':
+                        service: 'oro_customer_user.manager'
+                        method: register
+                        method_parameters:
+                          - $.checkout.registeredCustomerUser
+
+                    - '@call_service_method':
+                        service: 'oro_customer_user.manager'
+                        method: updateUser
+                        method_parameters:
+                          - $.checkout.registeredCustomerUser
+
+                    - '@assign_value': [$.order.customerUser, $.checkout.registeredCustomerUser]
+                    - '@assign_value': [$.order.customer, $.checkout.registeredCustomerUser.customer]
+                    - '@flush_entity': $.order
+                    - '@call_service_method':
+                        service: 'oro_consent.helper.copy_customer_consents'
+                        method: copyConsentsIfTargetHasNoAcceptedConsents
+                        method_parameters:
+                            - $.checkout.customerUser
+                            - $.checkout.registeredCustomerUser
+                    - '@flush_entity': $.checkout.registeredCustomerUser
                     - '@assign_value': [$.result.confirmationRequired, true]
 
             - '@tree':
@@ -551,45 +561,3 @@ action_groups:
                     - '@flash_message':
                         message: oro.customer.controller.customeruser.registered_with_confirmation.message
                         type: 'success'
-
-    do_late_registration_customer_user:
-        parameters:
-            checkout:
-                type: Oro\Bundle\CheckoutBundle\Entity\Checkout
-            order:
-                type: Oro\Bundle\OrderBundle\Entity\Order
-            late_registration_data:
-                type: array
-        actions:
-            - '@call_service_method':
-                attribute: $.checkout.registeredCustomerUser
-                service: 'oro_customer.provider.frontend_customer_user_registration_form'
-                method: createCustomerUser
-
-            - '@assign_value': [$.checkout.registeredCustomerUser.email, $.late_registration_data.email]
-            - '@assign_value': [$.checkout.registeredCustomerUser.firstName, $.order.billingAddress.firstname]
-            - '@assign_value': [$.checkout.registeredCustomerUser.lastName, $.order.billingAddress.lastName]
-            - '@assign_value': [$.checkout.registeredCustomerUser.plainPassword, $.late_registration_data.password]
-
-            - '@call_service_method':
-                service: 'oro_customer_user.manager'
-                method: register
-                method_parameters:
-                  - $.checkout.registeredCustomerUser
-
-            - '@call_service_method':
-                service: 'oro_customer_user.manager'
-                method: updateUser
-                method_parameters:
-                  - $.checkout.registeredCustomerUser
-
-            - '@assign_value': [$.order.customerUser, $.checkout.registeredCustomerUser]
-            - '@assign_value': [$.order.customer, $.checkout.registeredCustomerUser.customer]
-            - '@flush_entity': $.order
-            - '@call_service_method':
-                service: 'oro_consent.helper.copy_customer_consents'
-                method: copyConsentsIfTargetHasNoAcceptedConsents
-                method_parameters:
-                    - $.checkout.customerUser
-                    - $.checkout.registeredCustomerUser
-            - '@flush_entity': $.checkout.registeredCustomerUser

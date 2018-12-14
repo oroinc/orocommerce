@@ -171,15 +171,6 @@ services:
             - '@oro_consent.extractor.customer_user_extractor'
             - '@oro_consent.handler.save_consent_acceptance_handler'
 
-    oro_consent.form.event_subscriber.checkout_customer_consents:
-        class: 'Oro\Bundle\ConsentBundle\Form\EventSubscriber\CheckoutCustomerConsentsEventSubscriber'
-        public: false
-        arguments:
-            - '@oro_consent.handler.save_consent_acceptance_handler'
-            - '@oro_consent.storage.session_customer_consent_acceptances_storage'
-            - '@security.token_storage'
-            - '@oro_consent.extractor.customer_user_extractor'
-
     oro_consent.form.event_subscriber.populate_field_customer_consents:
         class: 'Oro\Bundle\ConsentBundle\Form\EventSubscriber\PopulateFieldCustomerConsentsSubscriber'
         public: false
@@ -300,9 +291,20 @@ services:
         class: 'Oro\Bundle\ConsentBundle\Condition\IsConsentsAccepted'
         arguments:
             - '@oro_featuretoggle.checker.feature_checker'
-            - '@oro_consent.provider.consent_data_provider'
+            - '@oro_consent.provider.enabled_consent_provider'
+            - '@oro_consent.provider.consent_acceptance_provider'
+            - '@security.token_storage'
         tags:
             - { name: oro_action.condition, alias: 'is_consents_accepted' }
+
+    oro_consent.action.save_accepted_consents:
+        class: 'Oro\Bundle\ConsentBundle\Action\SaveAcceptedConsentsAction'
+        arguments:
+            - '@oro_action.expression.context_accessor'
+            - '@security.token_storage'
+            - '@oro_entity.doctrine_helper'
+        tags:
+            - { name: oro_action.action, alias: save_accepted_consents }
 
     oro_consent.storage.abstract_customer_consent_acceptances_storage:
         class: 'Oro\Bundle\ConsentBundle\Storage\AbstractCustomerConsentAcceptancesStorage'

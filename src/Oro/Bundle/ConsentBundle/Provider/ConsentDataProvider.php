@@ -47,35 +47,6 @@ class ConsentDataProvider
     /**
      * @return ConsentData[]
      */
-    public function getRequiredConsentData()
-    {
-        return $this->getFilteredConsents([
-            FrontendConsentContentNodeValidFilter::NAME,
-            RequiredConsentFilter::NAME
-        ]);
-    }
-
-    /**
-     * @return ConsentData[]
-     */
-    public function getAcceptedConsentData()
-    {
-        /**
-         * Accepted consents already contain resolved data (cmsPageId and URL calculated based on cmsPage slug),
-         * so no need to validate it
-         */
-        $consents = $this->getFilteredConsents();
-
-        $filteredConsents = array_filter($consents, function (ConsentData $consent) {
-            return true === $consent->isAccepted();
-        });
-
-        return array_values($filteredConsents);
-    }
-
-    /**
-     * @return ConsentData[]
-     */
     public function getNotAcceptedRequiredConsentData()
     {
         $consents = $this->getFilteredConsents([

@@ -117,6 +117,11 @@ class EnabledConsentProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedConsents, $consents);
     }
 
+    public function testGetUnacceptedRequiredConsents()
+    {
+        // TODO
+    }
+
     /**
      * @return array
      */

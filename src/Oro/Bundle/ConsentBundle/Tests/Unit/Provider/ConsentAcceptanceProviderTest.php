@@ -82,6 +82,22 @@ class ConsentAcceptanceProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals([], $this->consentAcceptanceProvider->getCustomerConsentAcceptances());
     }
 
+    public function testGetCustomerConsentAcceptancesForAnonymous()
+    {
+        $token = $this->createMock(AnonymousCustomerUserToken::class);
+        $token->expects($this->never())
+            ->method('getUser');
+        $this->tokenStorage->expects($this->once())
+            ->method('getToken')
+            ->willReturn($token);
+
+        $this->consentAcceptanceRepository
+            ->expects($this->never())
+            ->method('getAcceptedConsentsByCustomer');
+
+        $this->assertEquals([], $this->consentAcceptanceProvider->getCustomerConsentAcceptances());
+    }
+
     /**
      * @dataProvider getCustomerConsentAcceptancesProvider
      *
@@ -107,7 +123,6 @@ class ConsentAcceptanceProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testGetGuestCustomerConsentAcceptances()
     {
-        $consentAcceptances = [$this->getEntity(ConsentAcceptance::class, ['id' => 1])];
         $customerUser = $this->getEntity(CustomerUser::class, ['id' => 21]);
 
         $visitor = new CustomerVisitor();
@@ -119,13 +134,11 @@ class ConsentAcceptanceProviderTest extends \PHPUnit\Framework\TestCase
             ->willReturn($token);
 
         $this->consentAcceptanceRepository
-            ->expects($this->once())
-            ->method('getAcceptedConsentsByCustomer')
-            ->with($customerUser)
-            ->willReturn($consentAcceptances);
+            ->expects($this->never())
+            ->method('getAcceptedConsentsByCustomer');
 
         $this->assertSame(
-            $consentAcceptances,
+            [],
             $this->consentAcceptanceProvider->getCustomerConsentAcceptances()
         );
     }

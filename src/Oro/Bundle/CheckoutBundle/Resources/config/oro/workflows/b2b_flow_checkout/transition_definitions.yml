@@ -67,8 +67,6 @@ workflows:
                         route_parameters:
                             id: $checkout.id
 
-            continue_checkout_as_guest_definition: ~
-
             continue_to_billing_address_definition:
                 preactions:
                     - '@generate_checkout_state_snapshot':
@@ -103,11 +101,18 @@ workflows:
                         state: $.result.actualCheckoutState
                         attribute: $state_token
                     - '@assign_value': [$internal_state_token, $state_token]
+                    - '@call_method':
+                        object: $customerConsents
+                        method: toArray
+                        attribute: $customerConsents
+                    - '@save_accepted_consents':
+                        acceptedConsents: $customerConsents
 
             verify_customer_consents_definition:
                 preconditions:
                     '@not':
-                        - '@is_consents_accepted': ~
+                        - '@is_consents_accepted':
+                            acceptedConsents: $customerConsents
 
             back_to_billing_address_definition:
                 preconditions:
@@ -125,6 +130,16 @@ workflows:
                         state: $.result.actualCheckoutState
                         attribute: $state_token
                     - '@assign_value': [$internal_state_token, $state_token]
+                    - '@tree':
+                        conditions:
+                            '@not':
+                                - '@is_consents_accepted':
+                                    acceptedConsents: $customerConsents
+                        actions:
+                            - '@transit_workflow':
+                                entity: $checkout
+                                transition: back_to_customer_consents
+                                workflow: $.definition.name
 
             continue_to_shipping_address_definition:
                 preactions:
@@ -215,6 +230,8 @@ workflows:
                                 entity: $checkout
                                 transition: continue_to_shipping_method
                                 workflow: $.definition.name
+                    - '@save_accepted_consents':
+                        acceptedConsents: $customerConsents
 
             continue_to_shipping_method_definition:
                 preactions:

@@ -75,16 +75,22 @@ class ConsentAcceptanceProvider
     public function getCustomerConsentAcceptances()
     {
         $token = $this->tokenStorage->getToken();
-        if (!$token) {
+        if (!$token || $token instanceof AnonymousCustomerUserToken) {
             return [];
         }
 
-        if ($token instanceof AnonymousCustomerUserToken) {
-            $customerUser = $token->getVisitor()->getCustomerUser();
-        } else {
-            $customerUser = $token->getUser();
-        }
+        $customerUser = $token->getUser();
 
+        return $this->getAcceptedConsentsByCustomerUser($customerUser);
+    }
+
+    /**
+     * @param CustomerUser|null $customerUser
+     *
+     * @return ConsentAcceptance[]
+     */
+    private function getAcceptedConsentsByCustomerUser(CustomerUser $customerUser = null)
+    {
         if (null === $customerUser || !$customerUser instanceof CustomerUser) {
             return [];
         }

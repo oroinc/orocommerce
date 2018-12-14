@@ -1,17 +1,17 @@
 workflows:
     b2b_flow_checkout:
         steps:
-            customer_consents:
-                order: 10
-                allowed_transitions:
-                    - continue_to_billing_address
-                    - start_checkout_as_guest_system
             enter_credentials_step:
-                order: 20
+                order: 10
                 allowed_transitions:
                     - back_to_billing_address
                     - continue_checkout_as_registered_user
                     - continue_checkout_as_guest
+                    - start_checkout_as_guest_system
+            customer_consents:
+                order: 20
+                allowed_transitions:
+                    - continue_to_billing_address
                     - start_checkout_as_guest_system
             enter_billing_address:
                 order: 30

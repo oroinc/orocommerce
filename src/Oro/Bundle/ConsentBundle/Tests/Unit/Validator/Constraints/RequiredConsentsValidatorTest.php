@@ -95,7 +95,7 @@ class RequiredConsentsValidatorTest extends \PHPUnit\Framework\TestCase
         $validatedValue = new ArrayCollection($validatedValue);
         $this->enabledConsentProvider
             ->expects($this->once())
-            ->method('getConsents')
+            ->method('getUnacceptedRequiredConsents')
             ->willReturn($requiredConsents);
         
         if (!$isValid) {
@@ -122,18 +122,6 @@ class RequiredConsentsValidatorTest extends \PHPUnit\Framework\TestCase
                     $this->createConsentAcceptanceWithConsent(1),
                     $this->createConsentAcceptanceWithConsent(2),
                 ],
-                'requiredConsents' => [
-                    $this->createConsent(1),
-                    $this->createConsent(2),
-                ],
-                'isValid' => true,
-                'violationParameters' => []
-            ],
-            'No required consents' => [
-                'validatedValue' => [
-                    $this->createConsentAcceptanceWithConsent(1),
-                    $this->createConsentAcceptanceWithConsent(2),
-                ],
                 'requiredConsents' => [],
                 'isValid' => true,
                 'violationParameters' => []
@@ -149,7 +137,7 @@ class RequiredConsentsValidatorTest extends \PHPUnit\Framework\TestCase
                 ],
                 'isValid' => false,
                 'violationParameters' => [
-                    '{{ consent_names }}' => '"consent_2", "consent_3"'
+                    '{{ consent_names }}' => '"consent_1", "consent_2", "consent_3"'
                 ]
             ]
         ];

@@ -5,7 +5,11 @@ namespace Oro\Bundle\ConsentBundle\Provider;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ConsentBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ConsentBundle\Entity\Consent;
+use Oro\Bundle\ConsentBundle\Entity\ConsentAcceptance;
+use Oro\Bundle\ConsentBundle\Filter\AdminConsentContentNodeValidFilter;
 use Oro\Bundle\ConsentBundle\Filter\ConsentFilterInterface;
+use Oro\Bundle\ConsentBundle\Filter\FrontendConsentContentNodeValidFilter;
+use Oro\Bundle\ConsentBundle\Filter\RequiredConsentFilter;
 use Oro\Bundle\ConsentBundle\SystemConfig\ConsentConfig;
 use Oro\Bundle\ConsentBundle\SystemConfig\ConsentConfigConverter;
 
@@ -86,6 +90,28 @@ class EnabledConsentProvider
         }
 
         return $consents;
+    }
+
+    /**
+     * @param ConsentAcceptance[] $consentAcceptances
+     *
+     * @return Consent[]
+     */
+    public function getUnacceptedRequiredConsents(array $consentAcceptances)
+    {
+        $checkedConsentIds = array_map(function (ConsentAcceptance $consentAcceptance) {
+            return (int) $consentAcceptance->getConsent()->getId();
+        }, $consentAcceptances);
+
+        $requiredConsents = $this->getConsents([
+            RequiredConsentFilter::NAME,
+            AdminConsentContentNodeValidFilter::NAME,
+            FrontendConsentContentNodeValidFilter::NAME
+        ]);
+
+        return array_filter($requiredConsents, function (Consent $consent) use ($checkedConsentIds) {
+            return !in_array((int) $consent->getId(), $checkedConsentIds, true);
+        });
     }
 
     /**

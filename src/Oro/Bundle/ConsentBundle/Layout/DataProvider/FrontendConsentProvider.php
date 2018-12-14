@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ConsentBundle\Layout\DataProvider;
 
+use Oro\Bundle\ConsentBundle\Entity\ConsentAcceptance;
 use Oro\Bundle\ConsentBundle\Model\ConsentData;
 use Oro\Bundle\ConsentBundle\Provider\ConsentDataProvider;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
@@ -51,39 +52,33 @@ class FrontendConsentProvider implements FeatureToggleableInterface
     }
 
     /**
+     * @param ConsentAcceptance[] $consentAcceptances
+     *
      * @return ConsentData[]
      */
-    public function getRequiredConsentData()
+    public function getNotAcceptedRequiredConsentData(array $consentAcceptances = null)
     {
         if (!$this->isFeaturesEnabled()) {
             return [];
         }
 
-        return $this->provider->getRequiredConsentData();
-    }
-
-    /**
-     * @return ConsentData[]
-     */
-    public function getAcceptedConsentData()
-    {
-        if (!$this->isFeaturesEnabled()) {
-            return [];
+        $requiredConsentData = $this->provider->getNotAcceptedRequiredConsentData();
+        $filteredConsentData = [];
+        foreach ($requiredConsentData as $consentData) {
+            $key = sprintf('%s_%s', $consentData->getId(), $consentData->getCmsPageData()->getId());
+            $filteredConsentData[$key] = $consentData;
         }
 
-        return $this->provider->getAcceptedConsentData();
-    }
 
-    /**
-     * @return ConsentData[]
-     */
-    public function getNotAcceptedRequiredConsentData()
-    {
-        if (!$this->isFeaturesEnabled()) {
-            return [];
+        $consentAcceptances = (array) $consentAcceptances;
+        foreach ($consentAcceptances as $acceptance) {
+            $key = sprintf('%s_%s', $acceptance->getConsent()->getId(), $acceptance->getLandingPage()->getId());
+            if (array_key_exists($key, $filteredConsentData)) {
+                unset($filteredConsentData[$key]);
+            }
         }
 
-        return $this->provider->getNotAcceptedRequiredConsentData();
+        return $filteredConsentData;
     }
 
     /**

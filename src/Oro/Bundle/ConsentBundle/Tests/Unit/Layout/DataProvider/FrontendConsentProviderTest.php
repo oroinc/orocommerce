@@ -2,13 +2,17 @@
 
 namespace Oro\Bundle\ConsentBundle\Tests\Unit\Layout\DataProvider;
 
+use Oro\Bundle\CMSBundle\Entity\Page;
+use Oro\Bundle\ConsentBundle\Entity\ConsentAcceptance;
 use Oro\Bundle\ConsentBundle\Layout\DataProvider\FrontendConsentProvider;
+use Oro\Bundle\ConsentBundle\Model\CmsPageData;
 use Oro\Bundle\ConsentBundle\Model\ConsentData;
 use Oro\Bundle\ConsentBundle\Provider\ConsentDataProvider;
 use Oro\Bundle\ConsentBundle\Tests\Unit\Entity\Stub\Consent;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\UserBundle\Entity\User;
+use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
@@ -17,6 +21,8 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
  */
 class FrontendConsentProviderTest extends \PHPUnit\Framework\TestCase
 {
+    use EntityTrait;
+
     /** @var ConsentDataProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $consentDataProvider;
 
@@ -45,7 +51,7 @@ class FrontendConsentProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testGetAllConsentData()
     {
-        $expectedData = [$this->getConsentData('first'), $this->getConsentData('second')];
+        $expectedData = ['1_3' => $this->getConsentData('first', 1, 3), '2_5' => $this->getConsentData('second', 2, 5)];
 
         $this->featureChecker->expects($this->once())
             ->method('isFeatureEnabled')
@@ -72,67 +78,9 @@ class FrontendConsentProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals([], $this->frontendConsentProvider->getAllConsentData());
     }
 
-    public function testGetRequiredConsentData()
-    {
-        $expectedData = [$this->getConsentData('first'), $this->getConsentData('second')];
-
-        $this->featureChecker->expects($this->once())
-            ->method('isFeatureEnabled')
-            ->with('consents', null)
-            ->willReturn(true);
-
-        $this->consentDataProvider->expects($this->once())
-            ->method('getRequiredConsentData')
-            ->willReturn($expectedData);
-
-        $this->assertEquals($expectedData, $this->frontendConsentProvider->getRequiredConsentData());
-    }
-
-    public function testGetRequiredConsentDataFeatureDisabled()
-    {
-        $this->featureChecker->expects($this->once())
-            ->method('isFeatureEnabled')
-            ->with('consents', null)
-            ->willReturn(false);
-
-        $this->consentDataProvider->expects($this->never())
-            ->method('getRequiredConsentData');
-
-        $this->assertEquals([], $this->frontendConsentProvider->getRequiredConsentData());
-    }
-
-    public function testGetAcceptedConsentData()
-    {
-        $expectedData = [$this->getConsentData('first'), $this->getConsentData('second')];
-
-        $this->featureChecker->expects($this->once())
-            ->method('isFeatureEnabled')
-            ->with('consents', null)
-            ->willReturn(true);
-
-        $this->consentDataProvider->expects($this->once())
-            ->method('getAcceptedConsentData')
-            ->willReturn($expectedData);
-
-        $this->assertEquals($expectedData, $this->frontendConsentProvider->getAcceptedConsentData());
-    }
-
-    public function testGetAcceptedConsentDataFeatureDisabled()
-    {
-        $this->featureChecker->expects($this->once())
-            ->method('isFeatureEnabled')
-            ->with('consents', null)
-            ->willReturn(false);
-
-        $this->consentDataProvider->expects($this->never())
-            ->method('getAcceptedConsentData');
-
-        $this->assertEquals([], $this->frontendConsentProvider->getAcceptedConsentData());
-    }
-
     public function testGetNotAcceptedRequiredConsentData()
     {
-        $expectedData = [$this->getConsentData('first'), $this->getConsentData('second')];
+        $expectedData = ['1_3' => $this->getConsentData('first', 1, 3), '2_5' =>$this->getConsentData('second', 2, 5)];
 
         $this->featureChecker->expects($this->once())
             ->method('isFeatureEnabled')
@@ -144,6 +92,28 @@ class FrontendConsentProviderTest extends \PHPUnit\Framework\TestCase
             ->willReturn($expectedData);
 
         $this->assertEquals($expectedData, $this->frontendConsentProvider->getNotAcceptedRequiredConsentData());
+    }
+
+    public function testGetNotAcceptedRequiredConsentDataWithExclusion()
+    {
+        $consentAcceptance = new ConsentAcceptance();
+        $consentAcceptance->setConsent($this->getEntity(Consent::class, ['id' => 1]));
+        $consentAcceptance->setLandingPage($this->getEntity(Page::class, ['id' => 3]));
+        $consentData = ['1_3' => $this->getConsentData('first', 1, 3), '2_5' =>$this->getConsentData('second', 2, 5)];
+
+        $this->featureChecker->expects($this->once())
+            ->method('isFeatureEnabled')
+            ->with('consents', null)
+            ->willReturn(true);
+
+        $this->consentDataProvider->expects($this->once())
+            ->method('getNotAcceptedRequiredConsentData')
+            ->willReturn($consentData);
+
+        $this->assertEquals(
+            ['2_5' =>$this->getConsentData('second', 2, 5)],
+            $this->frontendConsentProvider->getNotAcceptedRequiredConsentData([$consentAcceptance])
+        );
     }
 
     public function testGetNotAcceptedRequiredConsentDataFeatureDisabled()
@@ -270,14 +240,20 @@ class FrontendConsentProviderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @param string $consentDefaultName
+     * @param int $consentId
+     * @param int $cmsPageId
      *
      * @return ConsentData
      */
-    private function getConsentData($consentDefaultName)
+    private function getConsentData($consentDefaultName, $consentId, $cmsPageId)
     {
-        $consent = new Consent();
-        $consent->setDefaultName($consentDefaultName);
+        $consent = $this->getEntity(Consent::class, ['id' => $consentId, 'defaultName' => $consentDefaultName]);
+        $cmsPageData = new CmsPageData();
+        $cmsPageData->setId($cmsPageId);
 
-        return new ConsentData($consent);
+        $consentData = new ConsentData($consent);
+        $consentData->setCmsPageData($cmsPageData);
+
+        return $consentData;
     }
 }

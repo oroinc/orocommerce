@@ -116,11 +116,6 @@ oro:
                     button_label: 'Create Order'
                     button_title: ''
                     warning_message: ''
-                start_from_quickorderform_as_guest:
-                    label: 'Start Checkout From Quick Order Form'
-                    button_label: 'Create Order'
-                    button_title: ''
-                    warning_message: ''
                 continue_to_billing_address:
                     label: Continue
                     state_token:

@@ -64,49 +64,6 @@ class ConsentDataProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals([$consentData], $this->provider->getAllConsentData($customerUser));
     }
 
-    public function testGetRequiredConsentData()
-    {
-        $customerUser = new CustomerUser();
-        $consent = new Consent();
-        $consentData = new ConsentData($consent);
-
-        $this->enabledConsentProvider->expects($this->once())
-            ->method('getConsents')
-            ->with([
-                FrontendConsentContentNodeValidFilter::NAME,
-                RequiredConsentFilter::NAME
-            ])
-            ->willReturn([$consent]);
-
-        $this->consentDataBuilder->expects($this->once())
-            ->method('build')
-            ->with($consent)
-            ->willReturn($consentData);
-
-        $this->assertEquals([$consentData], $this->provider->getRequiredConsentData($customerUser));
-    }
-
-    public function testGetAcceptedConsentData()
-    {
-        $customerUser = new CustomerUser();
-        $consentAccepted = new Consent();
-        $consentNotAccepted = new Consent();
-        $consentDataAccepted = (new ConsentData($consentAccepted))->setAccepted(true);
-        $consentDataNotAccepted = (new ConsentData($consentNotAccepted))->setAccepted(false);
-
-        $this->enabledConsentProvider->expects($this->once())
-            ->method('getConsents')
-            ->with([])
-            ->willReturn([$consentAccepted, $consentNotAccepted]);
-
-        $this->consentDataBuilder->expects($this->exactly(2))
-            ->method('build')
-            ->withConsecutive([$consentAccepted], [$consentNotAccepted])
-            ->willReturnOnConsecutiveCalls($consentDataAccepted, $consentDataNotAccepted);
-
-        $this->assertEquals([$consentDataAccepted], $this->provider->getAcceptedConsentData($customerUser));
-    }
-
     public function testGetNotAcceptedRequiredConsentData()
     {
         $customerUser = new CustomerUser();

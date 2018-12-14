@@ -4,10 +4,6 @@ namespace Oro\Bundle\ConsentBundle\Validator\Constraints;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\ConsentBundle\Entity\Consent;
-use Oro\Bundle\ConsentBundle\Entity\ConsentAcceptance;
-use Oro\Bundle\ConsentBundle\Filter\AdminConsentContentNodeValidFilter;
-use Oro\Bundle\ConsentBundle\Filter\FrontendConsentContentNodeValidFilter;
-use Oro\Bundle\ConsentBundle\Filter\RequiredConsentFilter;
 use Oro\Bundle\ConsentBundle\Provider\EnabledConsentProvider;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Symfony\Component\Validator\Constraint;
@@ -38,42 +34,23 @@ class RequiredConsentsValidator extends ConstraintValidator
 
     /**
      * {@inheritdoc}
+     *
+     * @param RequiredConsents $constraint
      */
     public function validate($value, Constraint $constraint)
     {
         if (!is_array($value) && !$value instanceof ArrayCollection) {
-            throw new \LogicException("Incorrect type of the value!");
+            throw new \LogicException('Incorrect type of the value!');
         }
 
-        $value = $value->toArray();
-
-        $checkedConsentIds = array_map(function (ConsentAcceptance $consentAcceptance) {
-            return $consentAcceptance->getConsent()->getId();
-        }, $value);
-
-        $requiredConsents = $this->enabledConsentProvider->getConsents([
-            RequiredConsentFilter::NAME,
-            AdminConsentContentNodeValidFilter::NAME,
-            FrontendConsentContentNodeValidFilter::NAME
-        ]);
-
-        $notCheckedRequiredConsents = array_filter(
-            $requiredConsents,
-            function (Consent $consent) use ($checkedConsentIds) {
-                $result = !in_array($consent->getId(), $checkedConsentIds);
-                return $result;
-            }
-        );
-
-        if (!empty($notCheckedRequiredConsents)) {
-            $consentLabels = array_map([$this, 'getConsentsLabels'], $notCheckedRequiredConsents);
+        $unacceptedRequiredConsents = $this->enabledConsentProvider
+            ->getUnacceptedRequiredConsents($value->toArray());
+        if ($unacceptedRequiredConsents) {
+            $consentLabels = array_map([$this, 'getConsentsLabels'], $unacceptedRequiredConsents);
             $this->context
-                ->buildViolation(
-                    $constraint->message,
-                    [
-                        '{{ consent_names }}' => '"'.implode('", "', $consentLabels).'"',
-                    ]
-                )
+                ->buildViolation($constraint->message, [
+                    '{{ consent_names }}' => '"'.implode('", "', $consentLabels).'"',
+                ])
                 ->addViolation();
         }
     }

@@ -55,7 +55,6 @@ workflows:
                 frontend_options:
                     is_checkout_continue: true
                     is_checkout_show_errors: true
-                form_type: Oro\Bundle\ConsentBundle\Form\Type\CustomerConsentTransitionType
                 form_options:
                     form_init:
                         - '@generate_checkout_state_snapshot':
@@ -63,11 +62,11 @@ workflows:
                             attribute: $.result.initCheckoutState
                     attribute_fields:
                         customerConsents:
-                            form_type: Oro\Bundle\ConsentBundle\Form\Type\CheckoutCustomerConsentsType
+                            form_type: Oro\Bundle\ConsentBundle\Form\Type\CustomerConsentsType
                             options:
-                                checkout: $checkout
-                                constraints:
-                                    - Oro\Bundle\ConsentBundle\Validator\Constraints\RequiredConsents: ~
+                                mapped: true
+                                required: true
+                                data: $customerConsents
                         state_token:
                             form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
                             options:
