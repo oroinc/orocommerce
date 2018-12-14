@@ -191,7 +191,7 @@ Oro\Bundle\EmbeddedFormBundle\Entity\EmbeddedForm:
     embedded_form:
         title: 'Embedded form'
         css: 'p {color: red;}'
-        formType: 'Oro\\Bundle\\MagentoContactUsBundle\\Form\\Type\\ContactRequestType'
+        formType: 'Oro\Bridge\ContactUs\Form\Type\ContactRequestType'
         successMessage: 'Success message'
         owner: '@organization'
 
