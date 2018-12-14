@@ -9,7 +9,6 @@ use Oro\Bundle\OrderBundle\Total\TotalHelper;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -91,7 +90,7 @@ class OrderDiscountItemType extends AbstractType
         $builder
             ->add(
                 'value',
-                NumberType::class,
+                TextType::class,
                 [
                     'required' => true,
                     'mapped' => false,
