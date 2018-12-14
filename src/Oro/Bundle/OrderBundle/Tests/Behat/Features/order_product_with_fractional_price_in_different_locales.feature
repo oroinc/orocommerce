@@ -59,7 +59,7 @@ Feature: Order product with fractional price in different locales
     When I click "Line Items"
     Then I see next line item taxes for backoffice order:
       | SKU   | Unit Price Incl Tax | Unit Price Excl Tax | Unit Price Tax Amount | Row Total Incl Tax | Row Total Excl Tax | Row Total Tax Amount |
-      | PSKU1 | 12,99 $             | 12,99 $             | 0,00 $                | 6.495,00 $            | 6.495,00 $            | 0,00 $               |
+      | PSKU1 | 12,99 $             | 12,99 $             | 0,00 $                | 6.495,00 $         | 6.495,00 $         | 0,00 $               |
     And I see next line item discounts for backoffice order:
       | SKU   | Row Total Incl Tax | Row Total Excl Tax | Discount |
       | PSKU1 | 6.495,00 $         | 6.495,00 $         | 0,00 $   |
@@ -69,9 +69,9 @@ Feature: Order product with fractional price in different locales
       | Total    | 6.495,00 $ |
 
     When I click "Add Special Discount"
-    And I type "123,45" in "Discount Value"
+    And I type "1123,45" in "Discount Value"
     And I type "Christmas discounts" in "Discount Description"
-    Then I should see "123,45 $ (1,9%)"
+    Then I should see "1.123,45 $ (17,3%)"
 
     When I click "Apply"
     And I click "Save and Close"
@@ -80,23 +80,23 @@ Feature: Order product with fractional price in different locales
 
     When I click "Totals"
     Then I see next subtotals for "Backend Order":
-      | Subtotal                       | Amount     |
-      | Subtotal                       | 6.495,00 $ |
-      | Christmas discounts (Discount) | -123,45 $  |
-      | Total                          | 6.371,55 $ |
+      | Subtotal                       | Amount      |
+      | Subtotal                       | 6.495,00 $  |
+      | Christmas discounts (Discount) | -1.123,45 $ |
+      | Total                          | 5.371,55 $  |
 
   Scenario: Discount on the view page
     When I click "Add Special Discount"
-    And I type "678,90" in "Discount Value"
+    And I type "1678,90" in "Discount Value"
     And I type "Additional discounts" in "Discount Description"
-    Then I should see "678,90 $ (10,45%)"
+    Then I should see "1.678,90 $ (25,85%)"
 
     When I click "Apply"
     Then I should see "Order Discount successfully added" flash message
     And I click "Totals"
     And I see next subtotals for "Backend Order":
-      | Subtotal                        | Amount     |
-      | Subtotal                        | 6.495,00 $ |
-      | Christmas discounts (Discount)  | -123,45 $  |
-      | Additional discounts (Discount) | -678,90 $  |
-      | Total                           | 5.692,65 $ |
+      | Subtotal                        | Amount      |
+      | Subtotal                        | 6.495,00 $  |
+      | Christmas discounts (Discount)  | -1.123,45 $ |
+      | Additional discounts (Discount) | -1.678,90 $ |
+      | Total                           | 3.692,65 $  |

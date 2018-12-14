@@ -171,8 +171,8 @@ define(function(require) {
                 percent: percent
             }));
 
-            this.$amountInputElement.val(NumberFormatter.formatDecimal(amount));
-            this.$percentInputElement.val(NumberFormatter.formatDecimal(percent));
+            this.$amountInputElement.val(NumberFormatter.formatDecimal(amount, {grouping_used: false}));
+            this.$percentInputElement.val(NumberFormatter.formatDecimal(percent, {grouping_used: false}));
         },
 
         /**
