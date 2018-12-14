@@ -54,5 +54,7 @@ oro_behat_extension:
         - OroDataGridBundle::GridContext
         - OroPaymentBundle::FeatureContext
         - OroWorkflowBundle::FeatureContext
+        - OroLocaleBundle::LocalizationContext
+        - OroFrontendLocalizationBundle::LocalizationSwitcherContext
       paths:
         - '@OroPayPalBundle/Tests/Behat/Features'
