@@ -57,8 +57,6 @@ class ProductUnitSelectType extends AbstractProductAwareType
                 'compact' => false,
                 'choices_updated' => false,
                 'required' => true,
-                'empty_label' => 'oro.product.productunit.removed',
-                'sell' => null,
             ]
         );
     }

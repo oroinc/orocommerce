@@ -176,6 +176,7 @@ class QuoteType extends AbstractType
             ->add('shippingMethodType', HiddenType::class)
             ->add('estimatedShippingCostAmount', HiddenType::class)
             ->add('overriddenShippingCostAmount', PriceType::class, [
+                'label' => 'oro.sale.quote.overridden_shipping_cost_amount.label',
                 'required' => false,
                 'validation_groups' => ['Optional'],
                 'hide_currency' => true,
