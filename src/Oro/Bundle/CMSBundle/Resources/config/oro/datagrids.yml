@@ -173,8 +173,8 @@ datagrids:
                     options:
                         field_options:
                             choices:
-                                1: Enabled
-                                2: Disabled
+                                1: oro.cms.contentblock.filters.enabled
+                                2: oro.cms.contentblock.filters.disabled
                 createdAt:
                     type: datetime
                     data_name: contentBlock.createdAt

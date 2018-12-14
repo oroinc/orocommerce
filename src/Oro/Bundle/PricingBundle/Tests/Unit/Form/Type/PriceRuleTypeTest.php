@@ -9,6 +9,8 @@ use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
 use Oro\Bundle\PricingBundle\Form\Type\PriceRuleType;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectType;
+use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Symfony\Component\Form\PreloadedExtension;
@@ -22,13 +24,15 @@ class PriceRuleTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
+        /** @var \PHPUnit_Framework_MockObject_MockObject|ProductUnitLabelFormatter $formatter */
+        $formatter = self::createMock(ProductUnitLabelFormatter::class);
+
         /** @var \PHPUnit_Framework_MockObject_MockObject|CurrencyProviderInterface $currencyProvider */
-        $currencyProvider = $this->getMockBuilder(CurrencyProviderInterface::class)
-            ->disableOriginalConstructor()->getMockForAbstractClass();
+        $currencyProvider = self::createMock(CurrencyProviderInterface::class);
         $currencyProvider->method('getCurrencyList')->willReturn(['USD', 'EUR']);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|LocaleSettings $localeSettings */
-        $localeSettings = $this->getMockBuilder(LocaleSettings::class)->disableOriginalConstructor()->getMock();
+        $localeSettings = self::createMock(LocaleSettings::class);
 
         return [
             new PreloadedExtension(
@@ -37,9 +41,10 @@ class PriceRuleTypeTest extends FormIntegrationTestCase
                         CurrencySelectionType::NAME => new CurrencySelectionType(
                             $currencyProvider,
                             $localeSettings,
-                            $this->getMockBuilder(CurrencyNameHelper::class)->disableOriginalConstructor()->getMock()
+                            self::createMock(CurrencyNameHelper::class)
                         ),
-                        'entity' => new EntityType(['item' => (new ProductUnit())->setCode('item')])
+                        ProductUnitSelectType::NAME => new ProductUnitSelectType($formatter),
+                        'entity' => new EntityType(['item' => (new ProductUnit())->setCode('item')]),
                     ],
                     $this->getPriceRuleEditorExtension()
                 ),

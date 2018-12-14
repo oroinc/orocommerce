@@ -4,7 +4,7 @@ namespace Oro\Bundle\PricingBundle\Form\Type;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
-use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -57,9 +57,8 @@ class PriceRuleType extends AbstractType
             )
             ->add(
                 self::PRODUCT_UNIT,
-                'entity',
+                ProductUnitSelectType::NAME,
                 [
-                    'class' => ProductUnit::class,
                     'label' => 'oro.pricing.pricerule.product_unit.label'
                 ]
             )

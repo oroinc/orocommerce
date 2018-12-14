@@ -66,7 +66,7 @@ Feature: Single Page Checkout With Popup for Guest
     And I wait line items are initialized
     And I click "Create Order"
     And I click "Submit Order"
-    And I should see "Please enter correct billing address"
+    And I should see "Please enter correct billing address."
     When I click on "Billing Address Select"
     And I click on "New Address Option"
     Then I should see "UiDialog" with elements:
@@ -115,7 +115,7 @@ Feature: Single Page Checkout With Popup for Guest
     And I click "Continue"
     Then I should see "New address (B Prefix B Fname B Mname B Lname B Suffix, B Organization, B Street B Street 2, B CITY HA AL 12345, 12345)" for "Select Billing Address" select
     And I click "Submit Order"
-    And I should see "Please enter correct shipping address"
+    And I should see "Please enter correct shipping address."
 
   Scenario: Configure shipping rules
     Given I proceed as the Admin
