@@ -1,4 +1,5 @@
-@regression
+@skip
+#TODO: unskip after BB-11976@regression
 @ticket-BB-9989
 @fixture-OroProductBundle:ProductAttributesFixture.yml
 Feature: Product attribute one-to-many
@@ -63,12 +64,3 @@ Feature: Product attribute one-to-many
     When I filter OneToManyField as contains "Amanda Cole"
     Then I should see "SKU123" product
     And I should not see "SKU456" product
-
-  Scenario: Delete product attribute
-    Given I login as administrator
-    Given I go to Products/ Product Attributes
-    When I click Remove "OneToManyField" in grid
-    Then I should see "Are you sure you want to delete this attribute?"
-    And I click "Yes"
-    Then I should see "Attribute successfully deleted" flash message
-    And I should see "Update schema"
