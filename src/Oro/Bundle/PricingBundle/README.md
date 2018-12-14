@@ -12,3 +12,4 @@ For management console users (e.g. sales representatives), the bundle enables th
 
  - [Price Sharding](./Resources/doc/price-sharding.md)
  - [Pricing Strategy](./Resources/doc/pricing-strategy.md)
+ - [Price Storage](./Resources/doc/price-storage.md)

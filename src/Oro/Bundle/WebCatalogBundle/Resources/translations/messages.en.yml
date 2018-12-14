@@ -77,6 +77,9 @@ oro:
                 web_catalog:
                     label: Web Catalog
                     tooltip: Assign a web catalog to the storefront
+                navigation_root:
+                    label: Navigation Root
+                    tooltip: Assign a content node as root for building a navigation tree on the storefront
 
     scope:
         web_catalog.label: Web Catalog

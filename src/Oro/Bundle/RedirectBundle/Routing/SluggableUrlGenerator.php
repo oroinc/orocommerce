@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\RedirectBundle\Routing;
 
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager;
 use Oro\Bundle\RedirectBundle\Helper\UrlParameterHelper;
 use Oro\Bundle\RedirectBundle\Provider\ContextUrlProviderRegistry;
@@ -9,6 +10,9 @@ use Oro\Bundle\RedirectBundle\Provider\SluggableUrlProviderInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RequestContext;
 
+/**
+ * Generate Sluggable URLs for given route and parameters
+ */
 class SluggableUrlGenerator implements UrlGeneratorInterface
 {
     const DEFAULT_LOCALIZATION_ID = 0;
@@ -37,18 +41,31 @@ class SluggableUrlGenerator implements UrlGeneratorInterface
     private $userLocalizationManager;
 
     /**
+     * @var ConfigManager
+     */
+    private $configManager;
+
+    /**
+     * @var bool|null
+     */
+    private $sluggableUrlsEnabled;
+
+    /**
      * @param SluggableUrlProviderInterface $sluggableUrlProvider
      * @param ContextUrlProviderRegistry $contextUrlProvider
      * @param UserLocalizationManager $userLocalizationManager
+     * @param ConfigManager $configManager
      */
     public function __construct(
         SluggableUrlProviderInterface $sluggableUrlProvider,
         ContextUrlProviderRegistry $contextUrlProvider,
-        UserLocalizationManager $userLocalizationManager
+        UserLocalizationManager $userLocalizationManager,
+        ConfigManager $configManager
     ) {
         $this->sluggableUrlProvider = $sluggableUrlProvider;
         $this->contextUrlProvider = $contextUrlProvider;
         $this->userLocalizationManager = $userLocalizationManager;
+        $this->configManager = $configManager;
     }
 
     /**
@@ -73,6 +90,10 @@ class SluggableUrlGenerator implements UrlGeneratorInterface
     private function generateSluggableUrl($name, $parameters)
     {
         $contextUrl = $this->getContextUrl($parameters);
+        if (!$this->isSluggableUrlsEnabled()) {
+            return $this->addContextUrl($this->generator->generate($name, $parameters), $contextUrl);
+        }
+
         $localizationId = $this->getLocalizationId();
 
         $url = null;
@@ -167,5 +188,17 @@ class SluggableUrlGenerator implements UrlGeneratorInterface
     {
         $localization = $this->userLocalizationManager->getCurrentLocalization();
         return $localization ? $localization->getId() : null;
+    }
+
+    /**
+     * @return bool
+     */
+    private function isSluggableUrlsEnabled(): bool
+    {
+        if ($this->sluggableUrlsEnabled === null) {
+            $this->sluggableUrlsEnabled = $this->configManager->get('oro_redirect.enable_direct_url');
+        }
+
+        return $this->sluggableUrlsEnabled;
     }
 }

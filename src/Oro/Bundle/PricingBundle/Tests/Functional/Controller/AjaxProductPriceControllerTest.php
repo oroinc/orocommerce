@@ -23,6 +23,9 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
      */
     protected $matchingPriceActionUrl = 'oro_pricing_matching_price';
 
+    /**
+     * {@inheritdoc}
+     */
     protected function setUp()
     {
         $this->initClient(
@@ -173,14 +176,11 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
             'default, without customer and website' => [
                 'product' => 'product-1',
                 'expected' => [
-                    ['price' => '12.2000', 'currency' => 'EUR', 'quantity' => 1, 'unit' => 'bottle'],
                     ['price' => '13.1000', 'currency' => 'USD', 'quantity' => 1, 'unit' => 'bottle'],
-                    ['price' => '12.2000', 'currency' => 'EUR', 'quantity' => 11, 'unit' => 'bottle'],
                     ['price' => '10.0000', 'currency' => 'USD', 'quantity' => 1, 'unit' => 'liter'],
                     ['price' => '12.2000', 'currency' => 'USD', 'quantity' => 10, 'unit' => 'liter'],
                 ]
             ],
-
         ];
     }
 }

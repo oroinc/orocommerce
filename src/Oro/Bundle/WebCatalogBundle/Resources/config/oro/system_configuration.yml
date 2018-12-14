@@ -10,6 +10,16 @@ system_configuration:
                 tooltip: oro.webcatalog.system_configuration.fields.web_catalog.tooltip
                 required: false
                 create_enabled: false
+            page_reload: true
+        oro_web_catalog.navigation_root:
+            data_type: integer
+            type: Oro\Bundle\WebCatalogBundle\Form\Type\ContentNodeSelectSystemConfigType
+            priority: 100
+            options:
+                label: oro.webcatalog.system_configuration.fields.navigation_root.label
+                tooltip: oro.webcatalog.system_configuration.fields.navigation_root.tooltip
+                required: false
+
     tree:
         system_configuration:
             platform:
@@ -21,3 +31,4 @@ system_configuration:
                                     websites_routing_general:
                                         children:
                                             - oro_web_catalog.web_catalog
+                                            - oro_web_catalog.navigation_root

@@ -392,4 +392,30 @@ class SlugRepositoryTest extends WebTestCase
             $slug
         );
     }
+
+    /**
+     * @dataProvider isSlugForRouteExistsDataProvider
+     *
+     * @param string $routeName
+     * @param bool   $expectedResult
+     */
+    public function testIsSlugForRouteExists(string $routeName, bool $expectedResult): void
+    {
+        $actualResult = $this->repository->isSlugForRouteExists($routeName);
+
+        static::assertEquals($expectedResult, $actualResult);
+    }
+
+    /**
+     * @return array
+     */
+    public function isSlugForRouteExistsDataProvider(): array
+    {
+        return [
+            ['oro_product_frontend_product_view', true],
+            ['oro_product_frontend_product_index', false],
+            ['oro_cms_frontend_page_view', true],
+            ['oro_rfp_frontend_request_view', false],
+        ];
+    }
 }

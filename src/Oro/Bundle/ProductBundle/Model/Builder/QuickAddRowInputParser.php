@@ -4,24 +4,30 @@ namespace Oro\Bundle\ProductBundle\Model\Builder;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Model\QuickAddRow;
+use Oro\Bundle\ProductBundle\Provider\ProductUnitsProvider;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
-use Oro\Bundle\ProductBundle\Validator\QuickAddRowCollectionValidator;
 
+/**
+ * Creates the instance of QuickAddRow model based on the passed data.
+ */
 class QuickAddRowInputParser
 {
-    /**
-     * @var ManagerRegistry
-     */
-    protected $registry;
+    /** @var ManagerRegistry */
+    private $registry;
+
+    /** @var ProductUnitsProvider */
+    private $productUnitsProvider;
 
     /**
      * @param ManagerRegistry $registry
+     * @param ProductUnitsProvider $productUnitsProvider
      */
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry, ProductUnitsProvider $productUnitsProvider)
     {
         $this->registry = $registry;
+        $this->productUnitsProvider = $productUnitsProvider;
     }
 
     /**
@@ -29,7 +35,7 @@ class QuickAddRowInputParser
      * @param int $lineNumber
      * @return QuickAddRow
      */
-    public function createFromFileLine($product, $lineNumber)
+    public function createFromFileLine(array $product, int $lineNumber): QuickAddRow
     {
         $sku = isset($product[0]) ? trim($product[0]) : null;
         $quantity = isset($product[1]) ? (float)$product[1] : null;
@@ -43,13 +49,11 @@ class QuickAddRowInputParser
      * @param int $index
      * @return QuickAddRow
      */
-    public function createFromRequest($product, $index)
+    public function createFromRequest(array $product, int $index): QuickAddRow
     {
         $sku = $product[ProductDataStorage::PRODUCT_SKU_KEY];
         $quantity = $product[ProductDataStorage::PRODUCT_QUANTITY_KEY];
-        $unit = isset($product[ProductDataStorage::PRODUCT_UNIT_KEY]) ?
-            $product[ProductDataStorage::PRODUCT_UNIT_KEY]
-            : null;
+        $unit = $product[ProductDataStorage::PRODUCT_UNIT_KEY] ?? null;
 
         return new QuickAddRow($index, $sku, $quantity, $this->resolveUnit($sku, $unit));
     }
@@ -59,7 +63,7 @@ class QuickAddRowInputParser
      * @param int $lineNumber
      * @return QuickAddRow
      */
-    public function createFromCopyPasteTextLine($product, $lineNumber)
+    public function createFromCopyPasteTextLine(array $product, int $lineNumber): QuickAddRow
     {
         $sku = trim($product[0]);
         $quantity = isset($product[1]) ? (float)$product[1] : null;
@@ -73,32 +77,41 @@ class QuickAddRowInputParser
      * @param string $unitName |null
      * @return null|string
      */
-    private function resolveUnit($sku, $unitName = null)
+    private function resolveUnit(string $sku, ?string $unitName = null): ?string
     {
         if (!$unitName) {
             $defaultUnitName = $this->getProductRepository()->getPrimaryUnitPrecisionCode($sku);
             return $defaultUnitName ?: $unitName;
         }
 
-        $productUnitEntity = $this->getProductUnitRepository()->findOneBy([
-            'code' => $unitName
-        ]);
+        $unit = \strtolower($unitName);
 
-        return $productUnitEntity ? $productUnitEntity->getCode() : $unitName;
+        foreach ($this->getAvailableProductUnitCodes() as $label => $code) {
+            if (\in_array($unit, [$label, $code], true)) {
+                return $code;
+            }
+        }
+
+        return $unitName;
     }
 
     /**
-     * @return \Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository
+     * @return array
      */
-    protected function getProductUnitRepository()
+    private function getAvailableProductUnitCodes(): array
     {
-        return $this->registry->getRepository(ProductUnit::class);
+        $units = $this->productUnitsProvider->getAvailableProductUnits();
+
+        return \array_combine(
+            \array_map('strtolower', \array_keys($units)),
+            \array_map('strtolower', $units)
+        );
     }
 
     /**
-     * @return \Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository
+     * @return ProductRepository
      */
-    protected function getProductRepository()
+    private function getProductRepository(): ProductRepository
     {
         return $this->registry->getRepository(Product::class);
     }

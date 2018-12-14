@@ -6,6 +6,7 @@
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
 @fixture-OroCheckoutBundle:Checkout.yml
+@fixture-OroProductBundle:ProductUnitItemZuluTranslation.yml
 @automatically-ticket-tagged
 @regression
 
@@ -125,6 +126,7 @@ Feature: Quick order form
     Given I click "Quick Order Form"
     And I fill "QuickAddForm" with:
       | SKU1 | PSKUwithlowercase |
+    And I wait for products to load
     When I click "Get Quote"
     Then Page title equals to "Request A Quote - Requests For Quote - My Account"
     And Request a Quote contains products
@@ -242,6 +244,7 @@ Feature: Quick order form
     When I fill "Quick Add Copy Paste Form" with:
       | Paste your order | PSKU1,2,item |
     And I click "Verify Order"
+    And I wait for products to load
     And "QuickAddForm" must contains values:
       | SKU1  | psku1 - Product1 |
       | QTY1  | 2                |
@@ -249,6 +252,7 @@ Feature: Quick order form
     When I fill "Quick Add Copy Paste Form" with:
       | Paste your order | PSKU2;2;item |
     And I click "Verify Order"
+    And I wait for products to load
     And "QuickAddForm" must contains values:
       | SKU1  | psku1 - Product1 |
       | QTY1  | 2                |
@@ -306,7 +310,7 @@ Feature: Quick order form
     And I should see text matching "We have not been able to identify any product references in the uploaded file."
     And I close ui dialog
 
-  Scenario: Check product name is localized in Import Validation popup
+  Scenario: Check product and unit names are localized in Import Validation popup
     Given I click "Localization Switcher"
     And I select "Localization 1" localization
     And I click "Quick Order Form"
@@ -315,12 +319,53 @@ Feature: Quick order form
     And I download "the CSV template"
     And I close ui dialog
     And I fill quick order template with data:
-      | Item Number | Quantity | Unit |
-      | PSKU1       | 1        | item |
+      | Item Number | Quantity | Unit         |
+      | PSKU1       | 1        | item         |
+      | PSKU1       | 1        | item (lang1) |
+      | PSKU2       | 3        | item         |
+      | PSKU2       | 3        | item (lang1) |
     When I import file for quick order
     Then I should see next rows in "Quick Order Import Validation" table
       | Item #                           | Qty | Unit         | Price    |
-      | PSKU1 - Product1 (Localization1) | 1   | item (lang1) | US$45.00 |
+      | PSKU1 - Product1 (Localization1) | 2   | item (lang1) | US$90.00 |
+      | PSKU2 - Product2                 | 6   | item (lang1) | N/A      |
+    And I click "Add to Form"
+    And "QuickAddForm" must contains values:
+      | SKU1  | psku1 - Product1 (Localization1) |
+      | QTY1  | 2                                |
+      | UNIT1 | item (lang1)                     |
+      | SKU2  | PSKU2 - Product2                 |
+      | QTY2  | 6                                |
+      | UNIT2 | item (lang1)                     |
+
+  Scenario: Check unit names are localized in copy paste form
+    Given I click "Localization Switcher"
+    And I select "Zulu" localization
+    And I click "Quick Order Form"
+    When I fill "Quick Add Copy Paste Form" with:
+      | Paste your order | PSKU2,1,item |
+    And I click "Verify Order"
+    And I wait for products to load
+    Then "QuickAddForm" must contains values:
+      | SKU1  | PSKU2 - Product2 |
+      | QTY1  | 1                |
+      | UNIT1 | Element          |
+    When I fill "Quick Add Copy Paste Form" with:
+      | Paste your order | PSKU2;3;Element |
+    And I click "Verify Order"
+    And I wait for products to load
+    Then "QuickAddForm" must contains values:
+      | SKU1  | PSKU2 - Product2 |
+      | QTY1  | 4                |
+      | UNIT1 | Element          |
+    When I fill "Quick Add Copy Paste Form" with:
+      | Paste your order | PSKU2;2;element |
+    And I click "Verify Order"
+    And I wait for products to load
+    Then "QuickAddForm" must contains values:
+      | SKU1  | PSKU2 - Product2 |
+      | QTY1  | 6                |
+      | UNIT1 | Element          |
 
   #@todo check with Serhii Polishchuk how can we manipulate xlsx files
 # Scenario: Verify user is able to upload .xlsx file

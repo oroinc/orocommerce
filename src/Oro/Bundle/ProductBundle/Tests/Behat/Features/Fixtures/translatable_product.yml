@@ -1,0 +1,101 @@
+include:
+  - '@OroLocaleBundle:ZuluLocalization.yml'
+
+Oro\Bundle\OrganizationBundle\Entity\BusinessUnit:
+  businessUnit:
+    name: Common Business Unit
+    organization: '@organization'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+  precision1:
+    unit: '@each'
+    precision: '1'
+    sell: true
+  precision2:
+    unit: '@each'
+    precision: '1'
+    sell: true
+  precision3:
+    unit: '@each'
+    precision: '1'
+    sell: true
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+  locValue1:
+    string: 'Product1'
+  zuluLocValue1:
+    string: '<script>alert("Product1_ZU");</script>'
+    localization: '@localization_zulu'
+  locValue2:
+    string: 'Product2'
+  zuluLocValue2:
+    string: 'Product2_ZU'
+    localization: '@localization_zulu'
+  locValue3:
+    string: 'Product3'
+  zuluLocValue3:
+    string: 'Product3_ZU'
+    localization: '@localization_zulu'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+  product1:
+    sku: 'SKU1'
+    type: 'simple'
+    organization: '@organization'
+    owner: '@businessUnit'
+    primaryUnitPrecision: '@precision1'
+    unitPrecisions: []
+    attributeFamily: '@defaultProductFamily'
+    setNames: [['@locValue1', '@zuluLocValue1']]
+    inventoryStatus: '@enumInventoryStatuses'
+    status: 'enabled'
+    newArrival: true
+    featured: true
+  product2:
+    sku: 'SKU2'
+    type: 'simple'
+    organization: '@organization'
+    owner: '@businessUnit'
+    primaryUnitPrecision: '@precision2'
+    unitPrecisions: []
+    attributeFamily: '@defaultProductFamily'
+    setNames: [['@locValue2', '@zuluLocValue2']]
+    inventoryStatus: '@enumInventoryStatuses'
+    status: 'enabled'
+    newArrival: true
+    featured: true
+  product3:
+    sku: 'SKU3'
+    type: 'simple'
+    organization: '@organization'
+    owner: '@businessUnit'
+    primaryUnitPrecision: '@precision3'
+    unitPrecisions: []
+    attributeFamily: '@defaultProductFamily'
+    setNames: [['@locValue3', '@zuluLocValue3']]
+    inventoryStatus: '@enumInventoryStatuses'
+    status: 'enabled'
+    newArrival: true
+    featured: true
+
+Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct:
+  relatedProduct1_1:
+    product: '@product1'
+    relatedItem: '@product1'
+  relatedProduct1_2:
+    product: '@product1'
+    relatedItem: '@product2'
+  relatedProduct1_3:
+    product: '@product1'
+    relatedItem: '@product3'
+
+Oro\Bundle\ProductBundle\Entity\RelatedItem\UpsellProduct:
+  upsellItem1_1:
+    product: '@product1'
+    relatedItem: '@product1'
+  upsellItem1_2:
+    product: '@product1'
+    relatedItem: '@product2'
+  upsellItem1_3:
+    product: '@product1'
+    relatedItem: '@product3'

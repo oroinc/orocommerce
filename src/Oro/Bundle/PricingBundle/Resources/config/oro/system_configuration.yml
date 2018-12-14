@@ -1,5 +1,7 @@
 system_configuration:
     groups:
+        pricing_general:
+            title: oro.pricing.system_configuration.groups.pricing_general.title
         default_price_lists:
             title: oro.pricing.system_configuration.groups.default_price_lists.title
         price_rounding:
@@ -71,6 +73,15 @@ system_configuration:
                 multiple: false
                 constraints:
                     - NotBlank: ~
+        oro_pricing.feature_enabled:
+            data_type: boolean
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
+            priority: 20
+            page_reload: true
+            options:
+                required: false
+                label: oro.pricing.system_configuration.fields.feature_enabled.label
+                tooltip: oro.pricing.system_configuration.fields.feature_enabled.tooltip
     tree:
         system_configuration:
             commerce:
@@ -80,6 +91,10 @@ system_configuration:
                             pricing:
                                 priority: 100
                                 children:
+                                    pricing_general:
+                                        priority: 300
+                                        children:
+                                            - oro_pricing.feature_enabled
                                     price_rounding:
                                         priority: 200
                                         children:

@@ -6,6 +6,7 @@
 @fixture-OroCheckoutBundle:Checkout.yml
 @fixture-OroCheckoutBundle:ShippingRuleForFlatRate2.yml
 @fixture-OroCheckoutBundle:InventoryLevel.yml
+@regression
 
 Feature: Single Page Checkout With Popup for Buyer
   In order to complete the checkout process

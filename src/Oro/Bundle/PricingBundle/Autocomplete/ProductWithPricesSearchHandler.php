@@ -4,13 +4,15 @@ namespace Oro\Bundle\PricingBundle\Autocomplete;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\FormBundle\Autocomplete\SearchHandlerInterface;
-use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
-use Oro\Bundle\PricingBundle\Entity\ProductPrice;
-use Oro\Bundle\PricingBundle\Entity\Repository\CombinedProductPriceRepository;
 use Oro\Bundle\PricingBundle\Formatter\ProductPriceFormatter;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
-use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
+use Oro\Bundle\PricingBundle\Model\ProductPriceInterface;
+use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaRequestHandler;
+use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Search\ProductRepository as ProductSearchRepository;
+use Oro\Bundle\SearchBundle\Query\Result\Item;
 
 /**
  * Class helps to prepare products search result for quick order form
@@ -28,9 +30,9 @@ class ProductWithPricesSearchHandler implements SearchHandlerInterface
     private $registry;
 
     /**
-     * @var PriceListRequestHandler
+     * @var ProductPriceScopeCriteriaRequestHandler
      */
-    private $priceListRequestHandler;
+    private $scopeCriteriaRequestHandler;
 
     /**
      * @var ProductSearchRepository
@@ -48,27 +50,35 @@ class ProductWithPricesSearchHandler implements SearchHandlerInterface
     private $userCurrencyManager;
 
     /**
+     * @var ProductPriceProviderInterface
+     */
+    private $productPriceProvider;
+
+    /**
      * @param string $className
      * @param ProductSearchRepository $productSearchRepository
-     * @param PriceListRequestHandler $priceListRequestHandler
+     * @param ProductPriceScopeCriteriaRequestHandler $scopeCriteriaRequestHandler
      * @param ManagerRegistry $registry
      * @param ProductPriceFormatter $productPriceFormatter
      * @param UserCurrencyManager $userCurrencyManager
+     * @param ProductPriceProviderInterface $productPriceProvider
      */
     public function __construct(
         $className,
         ProductSearchRepository $productSearchRepository,
-        PriceListRequestHandler $priceListRequestHandler,
+        ProductPriceScopeCriteriaRequestHandler $scopeCriteriaRequestHandler,
         ManagerRegistry $registry,
         ProductPriceFormatter $productPriceFormatter,
-        UserCurrencyManager $userCurrencyManager
+        UserCurrencyManager $userCurrencyManager,
+        ProductPriceProviderInterface $productPriceProvider
     ) {
         $this->className = $className;
         $this->productSearchRepository = $productSearchRepository;
-        $this->priceListRequestHandler = $priceListRequestHandler;
+        $this->scopeCriteriaRequestHandler = $scopeCriteriaRequestHandler;
         $this->registry = $registry;
         $this->productPriceFormatter = $productPriceFormatter;
         $this->userCurrencyManager = $userCurrencyManager;
+        $this->productPriceProvider = $productPriceProvider;
     }
 
     /**
@@ -88,16 +98,32 @@ class ProductWithPricesSearchHandler implements SearchHandlerInterface
         $perPage = (int)$perPage > 0 ? (int)$perPage : 10;
         $perPage++;
 
-        $foundProducts = $this->searchProducts($query, $page, $perPage);
+        $searchResultData = $this->getSearchResultsData($query, $page, $perPage);
+        if (empty($searchResultData)) {
+            return ['results' => [], 'more' => false];
+        }
 
-        $hasMore = count($foundProducts) === $perPage;
+        $products = $this->getProductRepository()->getProductsByIds(array_keys($searchResultData));
+        $items = $this->buildItemsArray(
+            $products,
+            $this->findPrices($products),
+            $searchResultData
+        );
+
+        $hasMore = count($items) === $perPage;
         if ($hasMore) {
-            $foundProducts = array_slice($foundProducts, 0, $perPage - 1);
+            $items = array_slice($items, 0, $perPage - 1);
+        }
+
+        $result = [];
+
+        foreach ($items as $item) {
+            $result[] = $this->convertItem($item);
         }
 
         return [
-            'results' => array_map([$this, 'convertItem'], $foundProducts),
-            'more' => $hasMore,
+            'results' => $result,
+            'more'    => $hasMore
         ];
     }
 
@@ -106,24 +132,28 @@ class ProductWithPricesSearchHandler implements SearchHandlerInterface
      */
     public function convertItem($item)
     {
-        if (!isset($item['product_id'], $item['sku'], $item['name'], $item['prices'], $item['product_units'])) {
-            return [];
+        $result = [];
+        $product = $item['product'];
+
+        if ($product instanceof Product) {
+            $result['id'] = $product->getId();
+            $result['sku'] = $product->getSku();
+            $result['defaultName.string'] = $item['name'];
+            $result['prices'] = [];
+            $result['units'] = $product->getSellUnitsPrecision();
+
+            /** @var ProductPriceInterface $price */
+            foreach ($item['prices'] as $price) {
+                $unit = $price->getUnit()->getCode();
+                if (!isset($result['prices'][$unit])) {
+                    $result['prices'][$unit] = [];
+                }
+
+                $result['prices'][$unit][] = $this->productPriceFormatter->formatProductPrice($price);
+            }
         }
 
-        $prices = [];
-
-        /** @var ProductPrice $price */
-        foreach ($item['prices'] as $price) {
-            $prices[$price->getUnit()->getCode()][] = $this->productPriceFormatter->formatProductPrice($price);
-        }
-
-        return [
-            'id' => $item['product_id'],
-            'sku' => $item['sku'],
-            'defaultName.string' => $item['name'],
-            'prices' => $prices,
-            'units' => unserialize($item['product_units']),
-        ];
+        return $result;
     }
 
     /**
@@ -135,62 +165,87 @@ class ProductWithPricesSearchHandler implements SearchHandlerInterface
     }
 
     /**
-     * @param int[] $productIds
-     * @return ProductPrice[]
+     * @param array|Product[] $products
+     * @return array[]
      */
-    private function findPrices(array $productIds)
+    private function findPrices(array $products)
     {
-        if (!$productIds) {
-            return [];
+        if (\count($products) > 0) {
+            $prices = $this->productPriceProvider->getPricesByScopeCriteriaAndProducts(
+                $this->scopeCriteriaRequestHandler->getPriceScopeCriteria(),
+                $products,
+                [$this->userCurrencyManager->getUserCurrency()]
+            );
+
+            return $prices;
         }
 
-        return $this->getProductPriceRepository()
-            ->getFindByPriceListIdAndProductIdsQueryBuilder(
-                $this->priceListRequestHandler->getPriceListByCustomer()->getId(),
-                $productIds,
-                true,
-                $this->userCurrencyManager->getUserCurrency()
-            )
-            ->getQuery()
-            ->getResult();
+        return [];
     }
 
     /**
      * @param string $search
      * @param int $firstResult
      * @param int $maxResults
+     *
      * @return array
+     *
+     * [
+     *     'product.id' => [
+     *         product_id => 'id'
+     *         name => 'name',
+     *         sku => 'sku'
+     *      ],
+     *      ...
+     * ]
      */
-    private function searchProducts($search, $firstResult, $maxResults): array
+    private function getSearchResultsData($search, $firstResult, $maxResults) : array
     {
-        $foundItems = $this->productSearchRepository->getSearchQueryBySkuOrName($search, $firstResult - 1, $maxResults)
-            ->addSelect('product_units')
+        $foundItems = $this->productSearchRepository
+            ->getSearchQueryBySkuOrName($search, $firstResult-1, $maxResults)
             ->getResult()
             ->getElements();
 
-        if (!$foundItems) {
-            return [];
-        }
-
-        $foundProducts = [];
-        foreach ($foundItems as $foundItem) {
-            $selectedData = $foundItem->getSelectedData();
-            $foundProducts[$selectedData['product_id']] = $selectedData + ['prices' => []];
-        }
-
-        $prices = $this->findPrices(array_column($foundProducts, 'product_id'));
-        foreach ($prices as $productPrice) {
-            $foundProducts[$productPrice->getProduct()->getId()]['prices'][] = $productPrice;
-        }
-
-        return array_values($foundProducts);
+        return array_combine(
+            array_map(function (Item $foundItem) {
+                return $foundItem->getSelectedData()['product_id'];
+            }, $foundItems),
+            array_map(function (Item $foundItem) {
+                return $foundItem->getSelectedData();
+            }, $foundItems)
+        );
     }
 
     /**
-     * @return CombinedProductPriceRepository
+     * @param Product[] $products
+     * @param array[] $prices
+     * @param array[] $searchResultData
+     * @return array
      */
-    private function getProductPriceRepository()
+    private function buildItemsArray($products, array $prices, array $searchResultData)
     {
-        return $this->registry->getRepository(CombinedProductPrice::class);
+        $items = [];
+
+        foreach ($products as $product) {
+            $item['product'] = $product;
+            $item['prices'] = [];
+            $item['name'] = $searchResultData[$product->getId()]['name'];
+
+            if (!empty($prices[$product->getId()])) {
+                $item['prices'] = $prices[$product->getId()];
+            }
+
+            $items[] = $item;
+        }
+
+        return $items;
+    }
+
+    /**
+     * @return ProductRepository
+     */
+    private function getProductRepository()
+    {
+        return $this->registry->getRepository(Product::class);
     }
 }

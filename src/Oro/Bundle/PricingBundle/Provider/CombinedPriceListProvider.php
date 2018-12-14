@@ -11,7 +11,7 @@ use Oro\Bundle\PricingBundle\Event\CombinedPriceList\CombinedPriceListCreateEven
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
- * Provider that allows to get combined price list
+ * Provide and actualize combined price list by given price list sequence members.
  */
 class CombinedPriceListProvider
 {
@@ -72,6 +72,15 @@ class CombinedPriceListProvider
         }
 
         return $combinedPriceList;
+    }
+
+    /**
+     * @param CombinedPriceList $combinedPriceList
+     * @param array|PriceListSequenceMember[] $priceListsRelations
+     */
+    public function actualizeCurrencies(CombinedPriceList $combinedPriceList, array $priceListsRelations)
+    {
+        $combinedPriceList->setCurrencies($this->getCombinedCurrenciesList($priceListsRelations));
     }
 
     /**
@@ -139,7 +148,7 @@ class CombinedPriceListProvider
     protected function updateCombinedPriceList(CombinedPriceList $combinedPriceList, array $priceListsRelations)
     {
         $manager = $this->getManager();
-        $combinedPriceList->setCurrencies($this->getCombinedCurrenciesList($priceListsRelations));
+        $this->actualizeCurrencies($combinedPriceList, $priceListsRelations);
         $i = 0;
         foreach ($priceListsRelations as $priceListsRelation) {
             $priceListToCombined = new CombinedPriceListToPriceList();
@@ -160,11 +169,14 @@ class CombinedPriceListProvider
     {
         $currencies = [];
         foreach ($priceListsRelations as $priceListsRelation) {
-            $currencies = array_merge($currencies, $priceListsRelation->getPriceList()->getCurrencies());
+            $currencies[] = $priceListsRelation->getPriceList()->getCurrencies();
         }
-        $currencies = array_unique($currencies);
 
-        return $currencies;
+        if ($currencies) {
+            $currencies = array_merge(...$currencies);
+        }
+
+        return array_unique($currencies);
     }
 
     /**

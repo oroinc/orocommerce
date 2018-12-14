@@ -19,7 +19,8 @@ class Configuration implements ConfigurationInterface
         SettingsBuilder::append(
             $rootNode,
             [
-                'web_catalog' => ['type' => 'integer', 'value' => null]
+                'web_catalog' => ['type' => 'integer', 'value' => null],
+                'navigation_root' => ['type' => 'integer', 'value' => null],
             ]
         );
 
