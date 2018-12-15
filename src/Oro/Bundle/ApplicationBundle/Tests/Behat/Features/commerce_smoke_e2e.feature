@@ -733,8 +733,8 @@ Feature: Commerce smoke e2e
     And click "Create Order"
     And fill form with:
       |Label          |Home Address  |
-      |First name     |NewAmanda     |
-      |Last name      |NewCole       |
+      |First Name     |NewAmanda     |
+      |Last Name      |NewCole       |
       |Organization   |NewOrg        |
       |Street         |Stanyan St 12 |
       |City           |San Francisco |
