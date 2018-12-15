@@ -32,10 +32,10 @@ Feature: Check CPL after remove manual product price
     And I reload the page
     And number of records in "Price list Product prices Grid" should be 3
     And I should see following grid:
-      | Product SKU | Product name | Quantity | Unit | Value   | Currency | Type      |
-      | PSKU1       | Product 1    | 1        | item | 8.4000  | USD      | Generated |
-      | PSKU2       | Product 2    | 1        | item | 13.2000 | USD      | Generated |
-      | PSKU3       | Product 3    | 1        | item | 15.6000 | USD      | Generated |
+      | Product SKU | Product name | Quantity | Unit | Value | Currency | Type      |
+      | PSKU1       | Product 1    | 1        | item | 8.40  | USD      | Generated |
+      | PSKU2       | Product 2    | 1        | item | 13.20 | USD      | Generated |
+      | PSKU3       | Product 3    | 1        | item | 15.60 | USD      | Generated |
 
   Scenario: Create custom price
     Given I click "Add Product Price"
@@ -48,20 +48,20 @@ Feature: Check CPL after remove manual product price
     Then I should see "Product Price has been added" flash message
     And number of records in "Price list Product prices Grid" should be 4
     And I should see following grid:
-      | Product SKU | Product name | Quantity | Unit | Value   | Currency | Type      |
-      | PSKU1       | Product 1    | 1        | item | 8.4000  | USD      | Generated |
-      | PSKU2       | Product 2    | 1        | item | 13.2000 | USD      | Generated |
-      | PSKU3       | Product 3    | 1        | item | 15.6000 | USD      | Generated |
-      | PSKU4       | Product 4    | 1        | item | 10.0000 | USD      | Manual    |
+      | Product SKU | Product name | Quantity | Unit | Value | Currency | Type      |
+      | PSKU1       | Product 1    | 1        | item | 8.40  | USD      | Generated |
+      | PSKU2       | Product 2    | 1        | item | 13.20 | USD      | Generated |
+      | PSKU3       | Product 3    | 1        | item | 15.60 | USD      | Generated |
+      | PSKU4       | Product 4    | 1        | item | 10.00 | USD      | Manual    |
 
   Scenario: Remove Price for fourth product
     When I click delete "PSKU4" in grid
     Then number of records in "Price list Product prices Grid" should be 3
     And I should see following grid:
-      | Product SKU | Product name | Quantity | Unit | Value   | Currency | Type      |
-      | PSKU1       | Product 1    | 1        | item | 8.4000  | USD      | Generated |
-      | PSKU2       | Product 2    | 1        | item | 13.2000 | USD      | Generated |
-      | PSKU3       | Product 3    | 1        | item | 15.6000 | USD      | Generated |
+      | Product SKU | Product name | Quantity | Unit | Value | Currency | Type      |
+      | PSKU1       | Product 1    | 1        | item | 8.40  | USD      | Generated |
+      | PSKU2       | Product 2    | 1        | item | 13.20 | USD      | Generated |
+      | PSKU3       | Product 3    | 1        | item | 15.60 | USD      | Generated |
 
   Scenario: Recalculate Price List
     When I click "Recalculate"
@@ -70,7 +70,7 @@ Feature: Check CPL after remove manual product price
     When I reload the page
     Then number of records in "Price list Product prices Grid" should be 3
     And I should see following grid:
-      | Product SKU | Product name | Quantity | Unit | Value   | Currency | Type      |
-      | PSKU1       | Product 1    | 1        | item | 8.4000  | USD      | Generated |
-      | PSKU2       | Product 2    | 1        | item | 13.2000 | USD      | Generated |
-      | PSKU3       | Product 3    | 1        | item | 15.6000 | USD      | Generated |
+      | Product SKU | Product name | Quantity | Unit | Value | Currency | Type      |
+      | PSKU1       | Product 1    | 1        | item | 8.40  | USD      | Generated |
+      | PSKU2       | Product 2    | 1        | item | 13.20 | USD      | Generated |
+      | PSKU3       | Product 3    | 1        | item | 15.60 | USD      | Generated |

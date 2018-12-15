@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\PricingBundle\Filter;
 
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\FilterBundle\Filter\FilterUtility;
 use Oro\Bundle\PricingBundle\Form\Type\Filter\ProductPriceFilterType;
 use Oro\Bundle\PricingBundle\Placeholder\UnitPlaceholder;
@@ -18,11 +17,6 @@ class FrontendProductPriceFilter extends SearchNumberRangeFilter
      * @var UnitLabelFormatterInterface
      */
     protected $formatter;
-
-    /**
-     * @var ConfigManager
-     */
-    protected $configManager;
 
     /**
      * {@inheritdoc}
@@ -42,25 +36,13 @@ class FrontendProductPriceFilter extends SearchNumberRangeFilter
     }
 
     /**
-     * @param ConfigManager $configManager
-     */
-    public function setConfigManager(ConfigManager $configManager)
-    {
-        $this->configManager = $configManager;
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function getMetadata()
     {
         $metadata = parent::getMetadata();
+
         $metadata['unitChoices'] = [];
-
-        if ($this->configManager) {
-            $metadata['precision'] = (int)$this->configManager->get('oro_pricing.precision');
-        }
-
         $unitChoices = $this->getForm()->createView()['unit']->vars['choices'];
         foreach ($unitChoices as $choice) {
             $metadata['unitChoices'][] = [
