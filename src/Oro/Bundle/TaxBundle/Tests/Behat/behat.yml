@@ -72,3 +72,15 @@ oro_behat_extension:
             locator: '//input[contains(@class, "select2-input")]'
             type: xpath
             element: Select2Entities
+
+    TaxBackendOrder:
+      class: Oro\Bundle\TaxBundle\Tests\Behat\Element\TaxBackendOrder
+      selector: 'div.layout-content'
+
+    TaxBackendOrderLineItem:
+      class: Oro\Bundle\TaxBundle\Tests\Behat\Element\TaxBackendOrderLineItem
+      selector: 'tr'
+
+    BackendLineItemTaxTable:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Table
+      selector: 'table.tax-result-grid'

@@ -876,7 +876,7 @@ oro_behat_extension:
     Brand Filter Toggle Icon:
       selector:
         type: xpath
-        locator: '//div[contains(@class,"filter-item")]/div[contains(@class,"filter-select") and contains(text(),"Filter By Brand")]/div[contains(@class,"filter-criteria-selector-icon-wrap")]'        
+        locator: '//div[contains(@class,"filter-item")]/div[contains(@class,"filter-select") and contains(text(),"Filter By Brand")]/div[contains(@class,"filter-criteria-selector-icon-wrap")]'
 
     Product Item Preview:
       selector: '.product-item .product-item__preview'
@@ -1019,6 +1019,8 @@ oro_behat_extension:
         - OroQueryDesignerBundle::QueryDesignerContext
         - OroLocaleBundle::LocalizationContext
         - OroWorkflowBundle::FeatureContext
+        - OroFrontendLocalizationBundle::LocalizationSwitcherContext
+        - OroShippingBundle::SingleCurrencyContext
       paths:
         - '@OroProductBundle/Tests/Behat/Features/product-collection'
         - '@OroProductBundle/Tests/Behat/Features/product'

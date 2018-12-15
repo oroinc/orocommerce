@@ -2,20 +2,22 @@
 
 namespace Oro\Bundle\PricingBundle\EventListener;
 
-use Symfony\Component\Translation\TranslatorInterface;
-
-use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
-use Oro\Bundle\DataGridBundle\Exception\UnexpectedTypeException;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
+use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Datasource\ArrayDatasource\ArrayDatasource;
 use Oro\Bundle\DataGridBundle\Event\BuildAfter;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
+use Oro\Bundle\DataGridBundle\Exception\UnexpectedTypeException;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 use Oro\Bundle\PricingBundle\Provider\PriceAttributePricesProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Symfony\Component\Translation\TranslatorInterface;
 
+/**
+ * Adds price attribute columns to price attributes datagrids on the product view page.
+ */
 class ProductPriceAttributesGridListener
 {
     /**
@@ -65,8 +67,13 @@ class ProductPriceAttributesGridListener
         $config = $event->getConfig();
         foreach ($priceList->getCurrencies() as $currency) {
             $columnPath = sprintf(DatagridConfiguration::COLUMN_PATH, $currency);
-            $columnConfig = $config->offsetGetByPath($columnPath, []);
             $columnConfig['label'] = $currency;
+            $columnConfig = [
+                    'label' => $currency,
+                    'type' => 'twig',
+                    'template' => 'OroPricingBundle:Datagrid:Column/priceValue.html.twig',
+                    'frontend_type' => 'html',
+                ] + $config->offsetGetByPath($columnPath, []);
             $config->offsetSetByPath($columnPath, $columnConfig);
 
             $sortersPath = sprintf(DatagridConfiguration::SORTER_PATH, $currency);
@@ -127,7 +134,7 @@ class ProductPriceAttributesGridListener
             foreach ($currencies as $currency) {
                 $result = !empty($prices[$currency]) ?
                     $prices[$currency]->getPrice()->getValue() :
-                    $this->translator->trans('oro.pricing.priceAttribute.withoutPrice');
+                    null;
 
                 $row[$currency] = $result;
             }

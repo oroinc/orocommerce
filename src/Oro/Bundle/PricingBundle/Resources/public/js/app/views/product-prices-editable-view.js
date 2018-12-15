@@ -186,12 +186,10 @@ define(function(require) {
                 this.initPriceOverridden();
             }
 
-            var priceValue = this.getElement('priceValue').val();
+            var priceValue = NumberFormatter.unformatStrict(this.model.get('price'));
             var price = this.findPriceValue();
 
-            if (price !== null &&
-                this.calcTotalPrice(price) !== parseFloat(priceValue)
-            ) {
+            if (price !== null && this.calcTotalPrice(price) !== this.calcTotalPrice(priceValue)) {
                 this.getElement('priceOverridden').show();
             } else {
                 this.getElement('priceOverridden').hide();
@@ -202,8 +200,8 @@ define(function(require) {
             if (price === null) {
                 return price;
             }
-            var quantity = 1;
-            return +(price * quantity).toFixed(this.options.precision);
+
+            return NumberFormatter.formatMonetary(price);
         },
 
         useFoundPrice: function() {

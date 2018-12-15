@@ -1,0 +1,61 @@
+include:
+  - '@OroShoppingListBundle:ShoppingListFixture.yml'
+
+Oro\Bundle\OrderBundle\Entity\Order:
+  simpleOrder:
+    organization: '@organization'
+    owner: '@admin'
+    customer: '@customer1'
+    identifier: 'SimpleOrder'
+    website: '@website1'
+    currency: USD
+    subtotalObject: '@subtotal1'
+    totalObject: '@total1'
+  secondOrder:
+    organization: '@organization'
+    owner: '@admin'
+    customer: '@customer1'
+    identifier: 'SecondOrder'
+    website: '@website1'
+    currency: USD
+    subtotalObject: '@subtotal2'
+    totalObject: '@total2'
+
+Oro\Bundle\CurrencyBundle\Entity\Price (local):
+  price1:
+    value: 5
+    currency: USD
+
+Oro\Bundle\OrderBundle\Entity\OrderLineItem:
+  simpleOrderLineItem:
+    product: '@product1'
+    order: '@simpleOrder'
+    price: '@price1'
+    quantity: 10
+    productUnit: '@item'
+    productUnitCode: item
+  secondOrderLineItem:
+    product: '@product1'
+    order: '@secondOrder'
+    price: '@price1'
+    quantity: 10
+    productUnit: '@item'
+    productUnitCode: item
+
+Oro\Bundle\CurrencyBundle\Entity\MultiCurrency (local):
+  subtotal1:
+    value: 50.00
+    baseCurrencyValue: 50.00
+    currency: 'USD'
+  total1:
+    value: 50.00
+    baseCurrencyValue: 50.00
+    currency: 'USD'
+  subtotal2:
+    value: 30.00
+    baseCurrencyValue: 30.00
+    currency: 'USD'
+  total2:
+    value: 30.00
+    baseCurrencyValue: 30.00
+    currency: 'USD'

@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Form\Type;
 
+use Oro\Bundle\FormBundle\Form\Type\OroHiddenNumberType;
+use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Form\Type\OrderCollectionTableType;
 use Oro\Bundle\OrderBundle\Form\Type\OrderDiscountCollectionRowType;
@@ -20,8 +22,15 @@ class OrderDiscountCollectionTableTypeTest extends FormIntegrationTestCase
      */
     private $formType;
 
+    /**
+     * @var NumberFormatter|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $numberFormatter;
+
     protected function setUp()
     {
+        $this->numberFormatter = $this->createMock(NumberFormatter::class);
+
         parent::setUp();
         $this->formType = new OrderDiscountCollectionTableType();
     }
@@ -34,7 +43,8 @@ class OrderDiscountCollectionTableTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    OrderDiscountCollectionRowType::NAME => new OrderDiscountCollectionRowType(),
+                    OrderDiscountCollectionRowType::class => new OrderDiscountCollectionRowType(),
+                    OroHiddenNumberType::class => new OroHiddenNumberType($this->numberFormatter),
                 ],
                 []
             ),
