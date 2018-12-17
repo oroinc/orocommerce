@@ -33,20 +33,18 @@ class RemovedLandingPagesValidator extends ConstraintValidator
      */
     public function validate($value, Constraint $constraint)
     {
-        if (!is_array($value) && !$value instanceof ArrayCollection) {
+        if (!$value instanceof ArrayCollection) {
             throw new \LogicException("Incorrect type of the value!");
         }
 
-        $value = $value->toArray();
+        $checkedLandingPageIds = [];
 
-        $checkedLandingPageIds = array_filter(
-            array_map(
-                function (ConsentAcceptance $consentAcceptance) {
-                    return $consentAcceptance->getLandingPage() ? $consentAcceptance->getLandingPage()->getId() : null;
-                },
-                $value
-            )
-        );
+        /** @var ConsentAcceptance $consentAcceptance */
+        foreach ($value as $consentAcceptance) {
+            if ($consentAcceptance->getLandingPage()) {
+                $checkedLandingPageIds[] = $consentAcceptance->getLandingPage()->getId();
+            }
+        }
 
         if (empty($checkedLandingPageIds)) {
             return;

@@ -149,42 +149,12 @@ services:
         tags:
             - { name: validator.constraint_validator, alias: oro_consent_removed_landing_pages_validator }
 
-    oro_consent.event_listener.customer_user_entity_listener:
-        class: 'Oro\Bundle\ConsentBundle\EventListener\CustomerUserEntityListener'
-        arguments:
-            - '@oro_consent.queue.customer_user_delayed_consent_acceptance_persist_queue'
-            - '@oro_entity.doctrine_helper'
-        tags:
-            - { name: doctrine.orm.entity_listener, entity: '%oro_customer.entity.customer_user.class%', event: postPersist, method: persistApplicableConsentAcceptance}
-
     oro_consent.event_listener.rfq_form_listener:
         class: 'Oro\Bundle\ConsentBundle\EventListener\RfqBeforeFlushFormListener'
         lazy: true
         tags:
             - { name: kernel.event_listener, event: oro.form.update_handler.before_entity_flush.oro_rfp_frontend_request, method: beforeFlush }
             - { name: oro_featuretogle.feature, feature: consents }
-
-    oro_consent.form.event_subscriber.customer_consents:
-        class: 'Oro\Bundle\ConsentBundle\Form\EventSubscriber\CustomerConsentsEventSubscriber'
-        public: false
-        arguments:
-            - '@oro_consent.extractor.customer_user_extractor'
-            - '@oro_consent.handler.save_consent_acceptance_handler'
-
-    oro_consent.form.event_subscriber.populate_field_customer_consents:
-        class: 'Oro\Bundle\ConsentBundle\Form\EventSubscriber\PopulateFieldCustomerConsentsSubscriber'
-        public: false
-        arguments:
-            - '@oro_consent.provider.consent_acceptance_provider'
-            - '@oro_consent.extractor.customer_user_extractor'
-
-    oro_consent.form.event_subscriber.guest_customer_consents:
-        class: 'Oro\Bundle\ConsentBundle\Form\EventSubscriber\GuestCustomerConsentsEventSubscriber'
-        public: false
-        arguments:
-            - '@oro_consent.helper.guest_customer_consent_acceptances_helper'
-        calls:
-            - ['addDelayedPersistQueue', ['@oro_consent.queue.rfq_delayed_consent_acceptance_persist_queue']]
 
     oro_consent.filter.admin_consent_content_node_valid_filter:
         class: 'Oro\Bundle\ConsentBundle\Filter\AdminConsentContentNodeValidFilter'
@@ -249,38 +219,6 @@ services:
         tags:
             - { name: security.voter, priority: 700 }
 
-    oro_consent.extractor.customer_user_extractor:
-        class: 'Oro\Bundle\ConsentBundle\Extractor\CustomerUserExtractor'
-        public: false
-        calls:
-            - [addMapping, ['%oro_rfp.entity.request.class%', 'customerUser']]
-            - [addMapping, ['%oro_checkout.entity.checkout.class%', 'customerUser']]
-            - [addMapping, ['%oro_checkout.entity.checkout.class%', 'registeredCustomerUser']]
-
-    oro_consent.handler.save_consent_acceptance_handler:
-        class: 'Oro\Bundle\ConsentBundle\Handler\SaveConsentAcceptanceHandler'
-        public: false
-        arguments:
-            - '@oro_entity.doctrine_helper'
-            - '@oro_consent.queue.customer_user_delayed_consent_acceptance_persist_queue'
-            - '@oro_consent.provider.consent_acceptance_provider'
-
-    oro_consent.queue.delayed_consent_acceptance_persist_queue.abstract:
-        class: 'Oro\Bundle\ConsentBundle\Queue\DelayedConsentAcceptancePersistQueue'
-        abstract: true
-        arguments:
-            - '@logger'
-
-    oro_consent.queue.customer_user_delayed_consent_acceptance_persist_queue:
-        parent: oro_consent.queue.delayed_consent_acceptance_persist_queue.abstract
-        calls:
-            - ['setSupportedEntityClassName', ['%oro_customer.entity.customer_user.class%']]
-
-    oro_consent.queue.rfq_delayed_consent_acceptance_persist_queue:
-        parent: oro_consent.queue.delayed_consent_acceptance_persist_queue.abstract
-        calls:
-            - ['setSupportedEntityClassName', ['%oro_rfp.entity.request.class%']]
-
     oro_consent.provider.consent_data_provider:
         class: 'Oro\Bundle\ConsentBundle\Provider\ConsentDataProvider'
         arguments:
@@ -305,32 +243,6 @@ services:
             - '@oro_entity.doctrine_helper'
         tags:
             - { name: oro_action.action, alias: save_accepted_consents }
-
-    oro_consent.storage.abstract_customer_consent_acceptances_storage:
-        class: 'Oro\Bundle\ConsentBundle\Storage\AbstractCustomerConsentAcceptancesStorage'
-        abstract: true
-        calls:
-            - ['setDoctrineHelper', ['@oro_entity.doctrine_helper']]
-
-    oro_consent.storage.session_customer_consent_acceptances_storage:
-        parent: oro_consent.storage.abstract_customer_consent_acceptances_storage
-        class: 'Oro\Bundle\ConsentBundle\Storage\SessionCustomerConsentAcceptancesStorage'
-        public: false
-        calls:
-            - ['setStorage', ['@session']]
-
-    oro_consent.manager.guest_customer_consent_acceptances_manager:
-        class: 'Oro\Bundle\ConsentBundle\Manager\GuestCustomerConsentAcceptancesManager'
-        arguments:
-            - '@oro_entity.doctrine_helper'
-            - '@logger'
-        calls:
-            - ['setStorage', ['@oro_consent.storage.session_customer_consent_acceptances_storage']]
-
-    oro_consent.helper.guest_customer_consent_acceptances_helper:
-        class: 'Oro\Bundle\ConsentBundle\Helper\GuestCustomerConsentAcceptancesHelper'
-        arguments:
-            - '@oro_entity.doctrine_helper'
 
     oro_consent.event_listener.customer_view:
         class: 'Oro\Bundle\ConsentBundle\EventListener\CustomerUserViewListener'

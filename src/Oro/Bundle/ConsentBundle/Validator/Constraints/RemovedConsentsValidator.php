@@ -33,15 +33,16 @@ class RemovedConsentsValidator extends ConstraintValidator
      */
     public function validate($value, Constraint $constraint)
     {
-        if (!is_array($value) && !$value instanceof ArrayCollection) {
+        if (!$value instanceof ArrayCollection) {
             throw new \LogicException("Incorrect type of the value!");
         }
 
-        $value = $value->toArray();
+        $checkedConsentIds = [];
 
-        $checkedConsentIds = array_map(function (ConsentAcceptance $consentAcceptance) {
-            return $consentAcceptance->getConsent()->getId();
-        }, $value);
+        /** @var ConsentAcceptance $consentAcceptance */
+        foreach ($value as $consentAcceptance) {
+            $checkedConsentIds[] = $consentAcceptance->getConsent()->getId();
+        }
 
         if (empty($checkedConsentIds)) {
             return;
