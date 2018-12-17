@@ -66,4 +66,6 @@ workflows:
             late_registration:
                 type: array
             customerConsents:
-                type: array
+                type: object
+                options:
+                    class: Doctrine\Common\Collections\ArrayCollection

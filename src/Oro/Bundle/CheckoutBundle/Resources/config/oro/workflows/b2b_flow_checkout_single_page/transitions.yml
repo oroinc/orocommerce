@@ -65,6 +65,11 @@ workflows:
                         late_registration:
                             form_type: Oro\Bundle\CheckoutBundle\Form\Type\LateRegistrationType
                             data: $late_registration_data
+                        customerConsents:
+                            form_type: Oro\Bundle\ConsentBundle\Form\Type\ConsentAcceptanceType
+                            options:
+                                required: true
+                                property_path: customerConsents
                         state_token:
                             form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
                             options:
@@ -154,6 +159,11 @@ workflows:
                                 data: $late_registration
                         customer_notes:
                             form_type: Symfony\Component\Form\Extension\Core\Type\TextareaType
+                        customerConsents:
+                            form_type: Oro\Bundle\ConsentBundle\Form\Type\ConsentAcceptanceType
+                            options:
+                                required: true
+                                property_path: customerConsents
                         state_token:
                             form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
                             options:

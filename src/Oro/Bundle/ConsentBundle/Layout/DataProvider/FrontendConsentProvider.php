@@ -56,7 +56,7 @@ class FrontendConsentProvider implements FeatureToggleableInterface
      *
      * @return ConsentData[]
      */
-    public function getNotAcceptedRequiredConsentData(array $consentAcceptances = null)
+    public function getNotAcceptedRequiredConsentData(array $consentAcceptances = [])
     {
         if (!$this->isFeaturesEnabled()) {
             return [];
@@ -74,8 +74,6 @@ class FrontendConsentProvider implements FeatureToggleableInterface
             $filteredConsentData[$key] = $consentData;
         }
 
-
-        $consentAcceptances = (array) $consentAcceptances;
         foreach ($consentAcceptances as $acceptance) {
             $key = sprintf('%s_%s', $acceptance->getConsent()->getId(), $acceptance->getLandingPage()->getId());
             if (array_key_exists($key, $filteredConsentData)) {

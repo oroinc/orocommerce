@@ -45,11 +45,11 @@ class IsConsentsAcceptedTest extends \PHPUnit\Framework\TestCase
         $this->tokenStorage = $this->createMock(TokenStorageInterface::class);
 
         $this->condition = new IsConsentsAccepted(
-            $this->featureChecker,
             $this->enabledConsentsProvider,
             $this->consentAcceptanceProvider,
             $this->tokenStorage
         );
+        $this->condition->setFeatureChecker($this->featureChecker);
 
         $this->contextAccessor = $this->createMock(ContextAccessorInterface::class);
         $this->condition->setContextAccessor($this->contextAccessor);

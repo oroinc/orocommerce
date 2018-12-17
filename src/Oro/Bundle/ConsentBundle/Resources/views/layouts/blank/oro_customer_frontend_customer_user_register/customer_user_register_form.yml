@@ -7,7 +7,7 @@ layout:
     actions:
         - '@setOption':
             id: registration_consent_wrapper
-            optionName: vars.consents
+            optionName: consents
             optionValue: '=data["oro_frontend_consent_provider"].getAllConsentData()'
         - '@move':
             id: registration_consent_wrapper

@@ -62,11 +62,10 @@ workflows:
                             attribute: $.result.initCheckoutState
                     attribute_fields:
                         customerConsents:
-                            form_type: Oro\Bundle\ConsentBundle\Form\Type\CustomerConsentsType
+                            form_type: Oro\Bundle\ConsentBundle\Form\Type\ConsentAcceptanceType
                             options:
-                                mapped: true
                                 required: true
-                                data: $customerConsents
+                                property_path: customerConsents
                         state_token:
                             form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
                             options:

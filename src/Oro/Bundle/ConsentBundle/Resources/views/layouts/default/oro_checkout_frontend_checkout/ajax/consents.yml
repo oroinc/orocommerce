@@ -15,8 +15,8 @@ layout:
 
         - '@setOption':
             id: checkout_consent_wrapper
-            optionName: vars.consents
-            optionValue: '=data["oro_frontend_consent_provider"].getNotAcceptedRequiredConsentData(data["workflowItem"].getData().get("customerConsents"))'
+            optionName: appliedConsents
+            optionValue: '=data["workflowItem"].getData().get("customerConsents") ? data["workflowItem"].getData().get("customerConsents").toArray() : []'
 
         - '@add':
             id: checkout_consent_container
@@ -26,9 +26,9 @@ layout:
 
         - '@add':
             id: checkout_consent_message
-            blockType: container
+            blockType: consent_acceptance_choice
             parentId: checkout_consent_container
             options:
-                visible: '=data["oro_frontend_consent_provider"].getNotAcceptedRequiredConsentData(data["workflowItem"].getData().get("customerConsents")) == []'
+                appliedConsents: '=data["workflowItem"].getData().get("customerConsents") ? data["workflowItem"].getData().get("customerConsents").toArray() : []'
 
     conditions: 'context["workflowStepName"]=="customer_consents"'

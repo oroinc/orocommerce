@@ -101,10 +101,6 @@ workflows:
                         state: $.result.actualCheckoutState
                         attribute: $state_token
                     - '@assign_value': [$internal_state_token, $state_token]
-                    - '@call_method':
-                        object: $customerConsents
-                        method: toArray
-                        attribute: $customerConsents
                     - '@save_accepted_consents':
                         acceptedConsents: $customerConsents
 
