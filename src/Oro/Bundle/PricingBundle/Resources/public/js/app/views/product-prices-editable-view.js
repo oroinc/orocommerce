@@ -145,7 +145,7 @@ define(function(require) {
             var $priceOverridden = this.createElementByTemplate('priceOverridden');
 
             layout.initPopover($priceOverridden);
-            $priceOverridden.insertBefore(this.getElement('priceValue'));
+            $priceOverridden.insertAfter(this.getElement('priceValue'));
 
             if (_.isEmpty(this.getElement('priceValue').val()) && this.options.matchedPriceEnabled) {
                 this.getElement('priceValue').addClass('matched-price');
@@ -212,8 +212,10 @@ define(function(require) {
 
             if (price !== null && this.calcTotalPrice(price) !== this.calcTotalPrice(priceValue)) {
                 this.getElement('priceOverridden').show();
+                this.getElement('priceValue').addClass('overridden-price');
             } else {
                 this.getElement('priceOverridden').hide();
+                this.getElement('priceValue').removeClass('overridden-price');
             }
         },
 
