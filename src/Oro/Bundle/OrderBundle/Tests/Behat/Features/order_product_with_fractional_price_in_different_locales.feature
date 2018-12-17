@@ -1,6 +1,6 @@
 @ticket-BB-14800
 @fixture-OroPricingBundle:FractionalProductPrices.yml
-
+@skip
 Feature: Order product with fractional price in different locales
   In order to use correct decimal separator for fractional prices in different locales
   As an Administrator
