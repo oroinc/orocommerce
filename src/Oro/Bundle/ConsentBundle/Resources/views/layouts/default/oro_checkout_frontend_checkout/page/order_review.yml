@@ -5,4 +5,4 @@ layout:
             optionName: stepOrder
             optionValue: '=data["oro_frontend_consent_provider"].getStepOrder(6)'
 
-    conditions: 'context["workflowName"]=="b2b_flow_checkout" && context["workflowStepName"]=="order_review" && !context["widget_container"]'
+    conditions: 'context["workflowStepName"]=="order_review" && !context["widget_container"]'

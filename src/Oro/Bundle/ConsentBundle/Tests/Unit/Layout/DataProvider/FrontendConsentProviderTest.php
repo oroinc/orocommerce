@@ -80,7 +80,7 @@ class FrontendConsentProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testGetNotAcceptedRequiredConsentData()
     {
-        $expectedData = ['1_3' => $this->getConsentData('first', 1, 3), '2_5' =>$this->getConsentData('second', 2, 5)];
+        $expectedData = [$this->getConsentData('first', 1, 3), $this->getConsentData('second', 2, 5)];
 
         $this->featureChecker->expects($this->once())
             ->method('isFeatureEnabled')
@@ -111,7 +111,7 @@ class FrontendConsentProviderTest extends \PHPUnit\Framework\TestCase
             ->willReturn($consentData);
 
         $this->assertEquals(
-            ['2_5' =>$this->getConsentData('second', 2, 5)],
+            [$this->getConsentData('second', 2, 5)],
             $this->frontendConsentProvider->getNotAcceptedRequiredConsentData([$consentAcceptance])
         );
     }

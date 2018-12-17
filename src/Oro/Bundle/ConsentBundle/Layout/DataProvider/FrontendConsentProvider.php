@@ -65,7 +65,12 @@ class FrontendConsentProvider implements FeatureToggleableInterface
         $requiredConsentData = $this->provider->getNotAcceptedRequiredConsentData();
         $filteredConsentData = [];
         foreach ($requiredConsentData as $consentData) {
-            $key = sprintf('%s_%s', $consentData->getId(), $consentData->getCmsPageData()->getId());
+            $cmsPageData = $consentData->getCmsPageData();
+            if (!$cmsPageData) {
+                continue;
+            }
+
+            $key = sprintf('%s_%s', $consentData->getId(), $cmsPageData->getId());
             $filteredConsentData[$key] = $consentData;
         }
 
@@ -78,7 +83,7 @@ class FrontendConsentProvider implements FeatureToggleableInterface
             }
         }
 
-        return $filteredConsentData;
+        return array_values($filteredConsentData);
     }
 
     /**

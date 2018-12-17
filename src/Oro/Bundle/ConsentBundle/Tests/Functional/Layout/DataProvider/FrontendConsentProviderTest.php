@@ -136,7 +136,6 @@ class FrontendConsentProviderTest extends WebTestCase
                 'customerUserReference' => LoadCustomerUserData::LEVEL_1_EMAIL,
                 'expectedConsentReferences' => [
                     LoadConsentsData::CONSENT_REQUIRED_NODE1_WITH_CMS,
-                    LoadConsentsData::CONSENT_REQUIRED_WITHOUT_NODE,
                 ]
             ],
         ];

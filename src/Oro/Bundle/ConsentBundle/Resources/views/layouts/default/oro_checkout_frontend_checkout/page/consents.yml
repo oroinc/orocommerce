@@ -31,4 +31,4 @@ layout:
             options:
                 visible: '=data["oro_frontend_consent_provider"].getNotAcceptedRequiredConsentData(data["workflowItem"].getData().get("customerConsents")) == []'
 
-    conditions: 'context["workflowName"]=="b2b_flow_checkout" && context["workflowStepName"]=="customer_consents" && !context["widget_container"]'
+    conditions: 'context["workflowStepName"]=="customer_consents" && !context["widget_container"]'
