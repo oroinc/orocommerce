@@ -21,13 +21,11 @@
         'class': 'notification notification--success'
     }) %}
 
-    {% if consents is empty %}
-        <div {{ block('block_attributes') }}>
-            <span class="notification__item">
-                <i class="fa-check"></i>
-                {{ 'oro.consent.frontend.checkout.form.messages.all_agreements_accepted'|trans }}
-                {{ parent_block_widget(block) }}
-            </span>
-        </div>
-    {% endif %}
+    <div {{ block('block_attributes') }}>
+        <span class="notification__item">
+            <i class="fa-check"></i>
+            {{ 'oro.consent.frontend.checkout.form.messages.all_agreements_accepted'|trans }}
+            {{ parent_block_widget(block) }}
+        </span>
+    </div>
 {% endblock %}

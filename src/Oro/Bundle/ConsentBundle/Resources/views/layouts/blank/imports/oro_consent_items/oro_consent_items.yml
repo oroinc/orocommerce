@@ -5,7 +5,7 @@ layout:
         - '@addTree':
             items:
                 __consent_wrapper:
-                    blockType: consent_acceptance_choice
+                    blockType: container
                 __consent_items:
                     blockType: container
                 __consent_item:

@@ -14,9 +14,6 @@
     {% if form.state_token is defined %}
         {{ form_row(form.state_token) }}
     {% endif %}
-    {% if form.customerConsents is defined %}
-        {{ form_row(form.customerConsents) }}
-    {% endif %}
 {% endblock %}
 
 {% block _checkout_view_widget %}

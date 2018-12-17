@@ -2,13 +2,11 @@
 
 namespace Oro\Bundle\ConsentBundle\Condition;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\ConsentBundle\Feature\Voter\FeatureVoter;
 use Oro\Bundle\ConsentBundle\Provider\ConsentAcceptanceProvider;
 use Oro\Bundle\ConsentBundle\Provider\EnabledConsentProvider;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
-use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
 use Oro\Component\Action\Condition\AbstractCondition;
 use Oro\Component\ConfigExpression\ContextAccessorAwareInterface;
 use Oro\Component\ConfigExpression\ContextAccessorAwareTrait;
@@ -21,9 +19,11 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 class IsConsentsAccepted extends AbstractCondition implements ContextAccessorAwareInterface
 {
     use ContextAccessorAwareTrait;
-    use FeatureCheckerHolderTrait;
 
     const NAME = 'is_consents_accepted';
+
+    /** @var FeatureChecker */
+    private $featureChecker;
 
     /** @var EnabledConsentProvider */
     private $enabledConsentProvider;
@@ -38,15 +38,18 @@ class IsConsentsAccepted extends AbstractCondition implements ContextAccessorAwa
     private $acceptedConsents;
 
     /**
+     * @param FeatureChecker $featureChecker
      * @param EnabledConsentProvider $enabledConsentProvider
      * @param ConsentAcceptanceProvider $consentAcceptanceProvider
      * @param TokenStorageInterface $tokenStorage
      */
     public function __construct(
+        FeatureChecker $featureChecker,
         EnabledConsentProvider $enabledConsentProvider,
         ConsentAcceptanceProvider $consentAcceptanceProvider,
         TokenStorageInterface $tokenStorage
     ) {
+        $this->featureChecker = $featureChecker;
         $this->enabledConsentProvider = $enabledConsentProvider;
         $this->consentAcceptanceProvider = $consentAcceptanceProvider;
         $this->tokenStorage = $tokenStorage;
@@ -81,13 +84,10 @@ class IsConsentsAccepted extends AbstractCondition implements ContextAccessorAwa
             if ($this->isCustomerUser()) {
                 $consentAcceptances = $this->consentAcceptanceProvider->getCustomerConsentAcceptances();
             } else {
-                $consentAcceptances = $this->resolveValue($context, $this->acceptedConsents);
-                if ($consentAcceptances instanceof ArrayCollection) {
-                    $consentAcceptances = $consentAcceptances->toArray();
-                }
+                $consentAcceptances = (array) $this->resolveValue($context, $this->acceptedConsents);
             }
 
-            return !$this->enabledConsentProvider->getUnacceptedRequiredConsents((array) $consentAcceptances);
+            return !$this->enabledConsentProvider->getUnacceptedRequiredConsents($consentAcceptances);
         }
 
         return true;

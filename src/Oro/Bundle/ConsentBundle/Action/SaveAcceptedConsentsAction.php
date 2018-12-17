@@ -6,11 +6,9 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\ConsentBundle\Entity\Consent;
 use Oro\Bundle\ConsentBundle\Entity\ConsentAcceptance;
-use Oro\Bundle\ConsentBundle\Feature\Voter\FeatureVoter;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
 use Oro\Component\Action\Action\AbstractAction;
 use Oro\Component\Action\Exception\InvalidParameterException;
 use Oro\Component\ConfigExpression\ContextAccessor;
@@ -22,8 +20,6 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
  */
 class SaveAcceptedConsentsAction extends AbstractAction
 {
-    use FeatureCheckerHolderTrait;
-
     /** @var TokenStorageInterface */
     private $tokenStorage;
 
@@ -55,10 +51,6 @@ class SaveAcceptedConsentsAction extends AbstractAction
      */
     protected function executeAction($context)
     {
-        if (!$this->featureChecker->isFeatureEnabled(FeatureVoter::FEATURE_NAME)) {
-            return;
-        }
-
         /** @var ConsentAcceptance[] $acceptedConsents */
         $acceptedConsents = $this->contextAccessor->getValue($context, $this->acceptedConsents);
         $customerUser = $this->getCustomerUser();
