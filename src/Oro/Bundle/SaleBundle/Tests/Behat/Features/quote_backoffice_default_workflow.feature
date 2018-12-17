@@ -39,10 +39,16 @@ Feature: Quote Backoffice Default Workflow
     And click "Quotes"
     Then there is no "PO11" in grid
 
-  Scenario: Draft -> Clone, Quote #11. Redirect to new Quote, internal status: Draft, customer status: N/A
+  Scenario: Edit Quote #11. Check that "Cancel" button return to the grid
     Given I operate as the Admin
-    And go to Sales/Quotes
-    And click view PO11 in grid
+    And I go to Sales/Quotes
+    And I filter PO Number as contains "PO11"
+    And I click edit PO11 in grid
+    When I click on page action "Cancel"
+    Then the url should match "/admin/sale/quote"
+
+  Scenario: Draft -> Clone, Quote #11. Redirect to new Quote, internal status: Draft, customer status: N/A
+    Given click view PO11 in grid
     Then I should see Quote with:
       | Quote # | 11 |
       | PO Number | PO11 |
