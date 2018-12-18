@@ -64,7 +64,10 @@ class CustomerConsentsTransformer implements DataTransformerInterface
      */
     public function reverseTransform($encodedConsentAcceptanceData)
     {
-        $consentAcceptancesDataArray = json_decode($encodedConsentAcceptanceData, true);
+        $consentAcceptancesDataArray = is_array($encodedConsentAcceptanceData)
+            ? $encodedConsentAcceptanceData
+            : json_decode($encodedConsentAcceptanceData, true);
+
         if (!is_array($consentAcceptancesDataArray)) {
             throw new TransformationFailedException(
                 'Expected an array after decoding a string.'

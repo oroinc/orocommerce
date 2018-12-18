@@ -9,7 +9,7 @@ layout:
             themes: 'data_protection.html.twig'
         - '@setOption':
             id: edit_profile_consent_wrapper
-            optionName: vars.consents
+            optionName: consents
             optionValue: '=data["oro_frontend_consent_provider"].getAllConsentData()'
         - '@add':
             id: __customer_user_form_fields_data_protection

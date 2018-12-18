@@ -228,12 +228,12 @@ services:
     oro_consent.condition.checkout_has_unaccepted_consents:
         class: 'Oro\Bundle\ConsentBundle\Condition\IsConsentsAccepted'
         arguments:
-            - '@oro_featuretoggle.checker.feature_checker'
             - '@oro_consent.provider.enabled_consent_provider'
             - '@oro_consent.provider.consent_acceptance_provider'
             - '@security.token_storage'
         tags:
             - { name: oro_action.condition, alias: 'is_consents_accepted' }
+            - { name: oro_featuretogle.feature, feature: consents }
 
     oro_consent.action.save_accepted_consents:
         class: 'Oro\Bundle\ConsentBundle\Action\SaveAcceptedConsentsAction'
@@ -243,6 +243,7 @@ services:
             - '@oro_entity.doctrine_helper'
         tags:
             - { name: oro_action.action, alias: save_accepted_consents }
+            - { name: oro_featuretogle.feature, feature: consents }
 
     oro_consent.event_listener.customer_view:
         class: 'Oro\Bundle\ConsentBundle\EventListener\CustomerUserViewListener'

@@ -4,13 +4,11 @@ layout:
             id: oro_consent_items
             namespace: rfp_form
             root: __rfp_form_data_protection
+
     actions:
         - '@setBlockTheme':
             themes: 'data_protection.html.twig'
-        - '@setOption':
-            id: rfp_form_consent_wrapper
-            optionName: vars.consents
-            optionValue: '=data["oro_frontend_consent_provider"].getNotAcceptedRequiredConsentData()'
+
         - '@add':
             id: __rfp_form_data_protection
             blockType: container
@@ -18,6 +16,7 @@ layout:
             siblingId: rfp_form_lineitems_container
             options:
                 visible: '=data["oro_frontend_consent_provider"].getNotAcceptedRequiredConsentData()'
+
         - '@add':
             id: __rfp_form_errros
             blockType: form_errors
