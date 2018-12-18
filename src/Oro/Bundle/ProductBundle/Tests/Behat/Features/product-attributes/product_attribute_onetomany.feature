@@ -1,5 +1,6 @@
 @skip
-#TODO: unskip after BB-11976@regression
+#TODO: unskip after BB-11976
+@regression
 @ticket-BB-9989
 @fixture-OroProductBundle:ProductAttributesFixture.yml
 Feature: Product attribute one-to-many
