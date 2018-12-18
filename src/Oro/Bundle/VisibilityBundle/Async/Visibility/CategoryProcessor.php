@@ -3,9 +3,9 @@
 namespace Oro\Bundle\VisibilityBundle\Async\Visibility;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\DBAL\Exception\RetryableException;
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\CatalogBundle\Model\Exception\InvalidArgumentException;
-use Oro\Bundle\EntityBundle\ORM\DatabaseExceptionHelper;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupProductVisibility;
@@ -57,18 +57,12 @@ class CategoryProcessor implements MessageProcessorInterface
     protected $scopeManager;
 
     /**
-     * @var DatabaseExceptionHelper
-     */
-    protected $databaseExceptionHelper;
-
-    /**
      * @param ManagerRegistry $registry
      * @param InsertFromSelectQueryExecutor $insertFromSelectQueryExecutor
      * @param LoggerInterface $logger
      * @param CategoryMessageFactory $messageFactory
      * @param CacheBuilder $cacheBuilder
      * @param ScopeManager $scopeManager
-     * @param DatabaseExceptionHelper $databaseExceptionHelper
      */
     public function __construct(
         ManagerRegistry $registry,
@@ -76,8 +70,7 @@ class CategoryProcessor implements MessageProcessorInterface
         LoggerInterface $logger,
         CategoryMessageFactory $messageFactory,
         CacheBuilder $cacheBuilder,
-        ScopeManager $scopeManager,
-        DatabaseExceptionHelper $databaseExceptionHelper
+        ScopeManager $scopeManager
     ) {
         $this->registry = $registry;
         $this->logger = $logger;
@@ -85,7 +78,6 @@ class CategoryProcessor implements MessageProcessorInterface
         $this->messageFactory = $messageFactory;
         $this->cacheBuilder = $cacheBuilder;
         $this->scopeManager = $scopeManager;
-        $this->databaseExceptionHelper = $databaseExceptionHelper;
     }
 
     /**
@@ -119,12 +111,11 @@ class CategoryProcessor implements MessageProcessorInterface
                 ['exception' => $e]
             );
 
-            $driverException = $this->databaseExceptionHelper->getDriverException($e);
-            if ($driverException && $this->databaseExceptionHelper->isDeadlock($driverException)) {
+            if ($e instanceof RetryableException) {
                 return self::REQUEUE;
-            } else {
-                return self::REJECT;
             }
+
+            return self::REJECT;
         }
 
         return self::ACK;

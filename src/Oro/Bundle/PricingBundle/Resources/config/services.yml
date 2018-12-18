@@ -962,7 +962,6 @@ services:
             - '@logger'
             - '@oro_pricing.price_list_change_trigger_factory'
             - '@doctrine'
-            - '@oro_entity.database_exception_helper'
             - '@oro_pricing.model.combined_price_list_trigger_handler'
             - '@oro_pricing.builder.combined_price_list_builder_facade'
         tags:
@@ -985,7 +984,6 @@ services:
             - '@doctrine'
             - '@oro_pricing.builder.combined_price_list_builder_facade'
             - '@logger'
-            - '@oro_entity.database_exception_helper'
             - '@oro_pricing.model.combined_price_list_trigger_handler'
         tags:
             - { name: 'oro_message_queue.client.message_processor' }

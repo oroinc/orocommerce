@@ -4,8 +4,8 @@ namespace Oro\Bundle\RedirectBundle\Async;
 
 use Doctrine\Common\Cache\FlushableCache;
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\DBAL\Exception\RetryableException;
 use Doctrine\ORM\EntityManagerInterface;
-use Oro\Bundle\EntityBundle\ORM\DatabaseExceptionHelper;
 use Oro\Bundle\RedirectBundle\Cache\UrlCacheInterface;
 use Oro\Bundle\RedirectBundle\Generator\SlugEntityGenerator;
 use Oro\Bundle\RedirectBundle\Model\Exception\InvalidArgumentException;
@@ -38,11 +38,6 @@ class DirectUrlProcessor implements MessageProcessorInterface, TopicSubscriberIn
     private $messageFactory;
 
     /**
-     * @var DatabaseExceptionHelper
-     */
-    private $databaseExceptionHelper;
-
-    /**
      * @var LoggerInterface
      */
     private $logger;
@@ -56,7 +51,6 @@ class DirectUrlProcessor implements MessageProcessorInterface, TopicSubscriberIn
      * @param ManagerRegistry $registry
      * @param SlugEntityGenerator $generator
      * @param MessageFactoryInterface $messageFactory
-     * @param DatabaseExceptionHelper $databaseExceptionHelper
      * @param LoggerInterface $logger
      * @param UrlCacheInterface $urlCache
      */
@@ -64,7 +58,6 @@ class DirectUrlProcessor implements MessageProcessorInterface, TopicSubscriberIn
         ManagerRegistry $registry,
         SlugEntityGenerator $generator,
         MessageFactoryInterface $messageFactory,
-        DatabaseExceptionHelper $databaseExceptionHelper,
         LoggerInterface $logger,
         UrlCacheInterface $urlCache
     ) {
@@ -72,7 +65,6 @@ class DirectUrlProcessor implements MessageProcessorInterface, TopicSubscriberIn
         $this->generator = $generator;
         $this->messageFactory = $messageFactory;
         $this->logger = $logger;
-        $this->databaseExceptionHelper = $databaseExceptionHelper;
         $this->urlCache = $urlCache;
     }
 
@@ -117,12 +109,11 @@ class DirectUrlProcessor implements MessageProcessorInterface, TopicSubscriberIn
                 ['exception' => $e]
             );
 
-            $driverException = $this->databaseExceptionHelper->getDriverException($e);
-            if ($driverException && $this->databaseExceptionHelper->isDeadlock($driverException)) {
+            if ($e instanceof RetryableException) {
                 return self::REQUEUE;
-            } else {
-                return self::REJECT;
             }
+
+            return self::REJECT;
         }
 
         return self::ACK;
