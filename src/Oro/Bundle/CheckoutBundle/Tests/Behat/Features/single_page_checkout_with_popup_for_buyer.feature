@@ -6,6 +6,7 @@
 @fixture-OroCheckoutBundle:Checkout.yml
 @fixture-OroCheckoutBundle:ShippingRuleForFlatRate2.yml
 @fixture-OroCheckoutBundle:InventoryLevel.yml
+@regression
 
 Feature: Single Page Checkout With Popup for Buyer
   In order to complete the checkout process
@@ -62,7 +63,7 @@ Feature: Single Page Checkout With Popup for Buyer
     And I wait line items are initialized
     And I click "Create Order"
     And I should see "No payment methods are available, please contact us to complete the order submission."
-    And I should see "Payment method is not selected." flash message
+    And I should see "Please select payment method." flash message
     And I should see a "Disabled Submit Order Button" element
 
   Scenario: Add default country to payment rule to make possible to continue order with predefined address

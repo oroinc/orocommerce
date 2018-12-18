@@ -3,8 +3,8 @@
 namespace Oro\Bundle\VisibilityBundle\Async\Visibility;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\DBAL\Exception\RetryableException;
 use Doctrine\ORM\EntityManager;
-use Oro\Bundle\EntityBundle\ORM\DatabaseExceptionHelper;
 use Oro\Bundle\ProductBundle\Exception\InvalidArgumentException;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Bundle\VisibilityBundle\Model\ProductMessageFactory;
@@ -42,11 +42,6 @@ class ProductProcessor implements MessageProcessorInterface
     protected $logger;
 
     /**
-     * @var DatabaseExceptionHelper
-     */
-    protected $databaseExceptionHelper;
-
-    /**
      * @var string
      */
     protected $resolvedVisibilityClassName = '';
@@ -56,20 +51,17 @@ class ProductProcessor implements MessageProcessorInterface
      * @param ProductMessageFactory $messageFactory
      * @param LoggerInterface $logger
      * @param CacheBuilderInterface $cacheBuilder
-     * @param DatabaseExceptionHelper $databaseExceptionHelper
      */
     public function __construct(
         ManagerRegistry $registry,
         ProductMessageFactory $messageFactory,
         LoggerInterface $logger,
-        CacheBuilderInterface $cacheBuilder,
-        DatabaseExceptionHelper $databaseExceptionHelper
+        CacheBuilderInterface $cacheBuilder
     ) {
         $this->registry = $registry;
         $this->logger = $logger;
         $this->messageFactory = $messageFactory;
         $this->cacheBuilder = $cacheBuilder;
-        $this->databaseExceptionHelper = $databaseExceptionHelper;
     }
 
     /**
@@ -98,12 +90,11 @@ class ProductProcessor implements MessageProcessorInterface
                 ['exception' => $e]
             );
 
-            $driverException = $this->databaseExceptionHelper->getDriverException($e);
-            if ($driverException && $this->databaseExceptionHelper->isDeadlock($driverException)) {
+            if ($e instanceof RetryableException) {
                 return self::REQUEUE;
-            } else {
-                return self::REJECT;
             }
+
+            return self::REJECT;
         }
 
         return self::ACK;

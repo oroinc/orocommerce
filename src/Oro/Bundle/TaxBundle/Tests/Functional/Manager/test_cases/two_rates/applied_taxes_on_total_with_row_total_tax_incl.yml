@@ -95,78 +95,79 @@ databaseBefore:
             taxJurisdiction: { class: 'Oro\Bundle\TaxBundle\Entity\TaxJurisdiction', query: { code: 'TAX3' } }
             productTaxCode: '@product_tax_code'
             customerTaxCode: { class: 'Oro\Bundle\TaxBundle\Entity\CustomerTaxCode', query: { code: 'TAX1' } }
+databaseBeforeSecondPart: []
 expectedResult:
     total:
         includingTax: '1371.12'  # 140.22 + 128.25 + 234.65 + 868
-        excludingTax: '1166.91'  # 119.33624 + 109.149 + 199.7021 + 738.724 = 1166.91134
-        taxAmount: '204.21'      # 20.88376 + 19.101 + 34.9479 + 129.2767 = 204.20936
-        adjustment: '-0.0006'    # 0.0038 + 0.0011 + -0.0021 + -0.0034
+        excludingTax: '1162.95'  # 118.931297 + 108.77862 + 199.024592 + 736.217125 = 1162.95
+        taxAmount: '208.17'      # 21.28870229 + 19.471374 + 35.625402884 + 131.782866836 = 208.16834601
+        adjustment: '-0.001654'  # -0.00129771 + 0.001374 - 0.004597116 + 0.002866836 = -0.00165399
         currency: 'USD'
     taxes:
-        - { tax: 'TAX1', rate: '0.1', taxableAmount: '1166.91', taxAmount: '116.69', currency: 'USD' }  # 1166.91 * 0.1
-        - { tax: 'TAX3', rate: '0.075', taxableAmount: '1166.91', taxAmount: '87.52', currency: 'USD' } # 1166.91 * 0.075
+        - { tax: 'TAX1', rate: '0.104', taxableAmount: '1162.95', taxAmount: '120.95', currency: 'USD' } # 1166.91 * 0.104
+        - { tax: 'TAX3', rate: '0.075', taxableAmount: '1162.95', taxAmount: '87.22', currency: 'USD' }  # 1166.91 * 0.075
     items:
         -
             row:
                 includingTax: '140.22'  # 3.42 * 41
-                excludingTax: '119.34'  # 2.91064 * 41 = 119.33624
-                taxAmount: '20.88'      # 0.50936 * 41 = 20.88376
-                adjustment: '0.0038'    # 20.88376 - 20.88
+                excludingTax: '118.93'  # 2.900763359 * 41 = 118.931297719
+                taxAmount: '21.29'      # 3.42 * 0.179 / 1.179 * 41 = 21.28870229
+                adjustment: '-0.001298' # 21.28870229 - 21.29 = -0.00129771
                 currency: 'USD'
             unit:
                 includingTax: '3.42'
-                excludingTax: '2.91'    # 3.42 - 0.50936 = 2.91064
-                taxAmount: '0.51'       # 3.42 * 0.175 / 1.175 = 0.50936
-                adjustment: '-0.0006'   # 0.50936 - 0.51
+                excludingTax: '2.90'    # 3.42 - 0.519236641 = 2.900763359
+                taxAmount: '0.52'       # 3.42 * 0.179 / 1.179 = 0.519236641
+                adjustment: '-0.000763' # 0.519236641 - 0.52 = -0.000763359
                 currency: 'USD'
             taxes:
-                - { tax: 'TAX1', rate: '0.1', taxableAmount: '119.34', taxAmount: '11.93', currency: 'USD' }   # 119.34 * 0.1
-                - { tax: 'TAX3', rate: '0.075', taxableAmount: '119.34', taxAmount: '8.95', currency: 'USD' }  # 119.34 * 0.075
+                - { tax: 'TAX1', rate: '0.104', taxableAmount: '118.93', taxAmount: '12.37', currency: 'USD' } # 118.931297719 * 0.104
+                - { tax: 'TAX3', rate: '0.075', taxableAmount: '118.93', taxAmount: '8.92', currency: 'USD' }  # 118.931297719 * 0.075
         -
             row:
                 includingTax: '128.25'  # 8.55 * 15
-                excludingTax: '109.15'  # 7.2766 * 15 = 109.149
-                taxAmount: '19.1'       # 1.2734 * 15 = 19.101
-                adjustment: '0.0011'    # 19.101 - 19.1
+                excludingTax: '108.78'  # 7.251908 * 15 = 108.77862
+                taxAmount: '19.47'      # 8.55 * 0.179 / 1.179 * 15 = 19.471374
+                adjustment: '0.001374'  # 19.471374 - 19.47 = 0.001374
                 currency: 'USD'
             unit:
                 includingTax: '8.55'
-                excludingTax: '7.28'    # 8.55 - 1.2734 = 7.2766
-                taxAmount: '1.27'       # 8.55 * 0.175 / 1.175 = 1.2734
-                adjustment: '0.0034'    # 1.2734 - 1.27
+                excludingTax: '7.25'    # 8.55 - 1.298092 = 7.251908
+                taxAmount: '1.3'        # 8.55 * 0.179 / 1.179 = 1.298092
+                adjustment: '-0.001908' # 8.55 * 0.179 / 1.179 - 1.3 = -0.001908
                 currency: 'USD'
             taxes:
-                - { tax: 'TAX1', rate: '0.1', taxableAmount: '109.15', taxAmount: '10.91', currency: 'USD' }   # 109.149 * 0.1
-                - { tax: 'TAX3', rate: '0.075', taxableAmount: '109.15', taxAmount: '8.19', currency: 'USD' }  # 109.149 * 0.075
+                - { tax: 'TAX1', rate: '0.104', taxableAmount: '108.78', taxAmount: '11.31', currency: 'USD' } # 108.77862 * 0.104
+                - { tax: 'TAX3', rate: '0.075', taxableAmount: '108.78', taxAmount: '8.16', currency: 'USD' } # 108.77862 * 0.075
         -
             row:
                 includingTax: '234.65'  # 18.05 * 13
-                excludingTax: '199.7'   # 15.3617 * 13 = 199.7021
-                taxAmount: '34.95'      # 2.6883 * 13 = 34.9479
-                adjustment: '-0.0021'   # 34.9479 - 34.95
+                excludingTax: '199.02'  # 15.309584 * 13 = 199.024592
+                taxAmount: '35.63'      # 18.05 * 0.179 / 1.179 * 13 = 35.625402884
+                adjustment: '-0.004597' # 35.625402884 - 35.63 = -0.004597116
                 currency: 'USD'
             unit:
                 includingTax: '18.05'
-                excludingTax: '15.36'   # 18.05 - 2.6883 = 15.3617
-                taxAmount: '2.69'       # 18.05 * 0.175 / 1.175 = 2.6883
-                adjustment: '-0.0017'   # 2.6883 - 2.69
+                excludingTax: '15.31'   # 18.05 - 2.740416 = 15.309584
+                taxAmount: '2.74'       # 18.05 * 0.179 / 1.179 = 2.740416
+                adjustment: '0.000416'  # 2.740416 - 2.74 = 0.000416
                 currency: 'USD'
             taxes:
-                - { tax: 'TAX1', rate: '0.1', taxableAmount: '199.7', taxAmount: '19.97', currency: 'USD' }    # 199.7 * 0.1
-                - { tax: 'TAX3', rate: '0.075', taxableAmount: '199.7', taxAmount: '14.98', currency: 'USD' }  # 199.7 * 0.075
+                - { tax: 'TAX1', rate: '0.104', taxableAmount: '199.02', taxAmount: '20.7', currency: 'USD' }  # 199.024592 * 0.104
+                - { tax: 'TAX3', rate: '0.075', taxableAmount: '199.02', taxAmount: '14.93', currency: 'USD' } # 199.024592 * 0.075
         -
             row:
                 includingTax: '868'     # 24.8 * 35
-                excludingTax: '738.72'  # 21.1064 * 35 = 738.724
-                taxAmount: '129.28'     # 3.69362 * 35 = 129.2767
-                adjustment: '-0.0034'   # 129.2767 - 129.28
+                excludingTax: '736.22'  # 21.034775 * 35 = 736.217125
+                taxAmount: '131.78'     # 24.8 * 0.179 / 1.179 * 35 = 131.782866836
+                adjustment: '0.002867'  # 131.782866836 - 131.78 = 0.002866836
                 currency: 'USD'
             unit:
                 includingTax: '24.8'
-                excludingTax: '21.11'   # 24.8 - 3.6936 = 21.1064
-                taxAmount: '3.69'       # 24.8 * 0.175 / 1.175 = 3.69362
-                adjustment: '0.0036'    # 3.6936 - 3.69
+                excludingTax: '21.03'   # 24.8 - 3.765225 = 21.034775
+                taxAmount: '3.77'       # 24.8 * 0.179 / 1.179 = 3.765225
+                adjustment: '-0.004775' # 24.8 * 0.179 / 1.179 - 3.77 = -0.004775
                 currency: 'USD'
             taxes:
-                - { tax: 'TAX1', rate: '0.1', taxableAmount: '738.72', taxAmount: '73.87', currency: 'USD' }    # 738.72 * 0.1
-                - { tax: 'TAX3', rate: '0.075', taxableAmount: '738.72', taxAmount: '55.4', currency: 'USD' }   # 738.72 * 0.075
+                - { tax: 'TAX1', rate: '0.104', taxableAmount: '736.22', taxAmount: '76.57', currency: 'USD' } # 736.217125 * 0.104
+                - { tax: 'TAX3', rate: '0.075', taxableAmount: '736.22', taxAmount: '55.22', currency: 'USD' } # 736.217125 * 0.075

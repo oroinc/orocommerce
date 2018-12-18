@@ -4,6 +4,8 @@ namespace Oro\Bundle\TaxBundle\Tests\Unit\Resolver\SellerResolver\VatResolver\EU
 
 use Brick\Math\BigDecimal;
 use Oro\Bundle\AddressBundle\Entity\Country;
+use Oro\Bundle\AddressBundle\Entity\Region;
+use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\TaxBundle\Entity\Tax;
 use Oro\Bundle\TaxBundle\Entity\TaxRule;
 use Oro\Bundle\TaxBundle\Matcher\CountryMatcher;
@@ -167,5 +169,92 @@ class DigitalItemResolverTest extends \PHPUnit\Framework\TestCase
         $this->matcher->expects($this->never())->method($this->anything());
         $this->unitResolver->expects($this->never())->method($this->anything());
         $this->rowTotalResolver->expects($this->never())->method($this->anything());
+    }
+
+    public function testDestinationAddressForDigitalProductsAndEUBuyer()
+    {
+        $taxable = new Taxable();
+        $address = new OrderAddress();
+        $address
+            ->setCountry(new Country('DE'))
+            ->setRegion((new Region('DE-BE'))->setCode('BE'));
+
+        $origin = new Address();
+        $origin
+            ->setCountry(new Country('AT'));
+
+        $taxable
+            ->setPrice('19.99')
+            ->setDestination($address)
+            ->setOrigin($origin)
+            ->addContext(Taxable::DIGITAL_PRODUCT, true);
+
+        $taxable->makeOriginAddressTaxable();
+
+        $this->matcher->expects($this->once())->method('match')->willReturn([]);
+        $this->rowTotalResolver->expects($this->once())->method('resolveRowTotal');
+        $this->unitResolver->expects($this->once())->method('resolveUnitPrice');
+
+        $this->resolver->resolve($taxable);
+
+        $this->assertSame($address, $taxable->getTaxationAddress());
+    }
+
+    public function testOriginAddressForNonDigitalProductsAndEUBuyer()
+    {
+        $taxable = new Taxable();
+        $address = new OrderAddress();
+        $address
+            ->setCountry(new Country('DE'))
+            ->setRegion((new Region('DE-BE'))->setCode('BE'));
+
+        $origin = new Address();
+        $origin
+            ->setCountry(new Country('AT'));
+
+        $taxable
+            ->setPrice('19.99')
+            ->setDestination($address)
+            ->setOrigin($origin)
+            ->addContext(Taxable::DIGITAL_PRODUCT, false);
+
+        $taxable->makeOriginAddressTaxable();
+
+        $this->matcher->expects($this->never())->method('match');
+        $this->rowTotalResolver->expects($this->never())->method('resolveRowTotal');
+        $this->unitResolver->expects($this->never())->method('resolveUnitPrice');
+
+        $this->resolver->resolve($taxable);
+
+        $this->assertSame($origin, $taxable->getTaxationAddress());
+    }
+
+    public function testDestinationAddressForDigitalProductsAndNonEUBuyer()
+    {
+        $taxable = new Taxable();
+        $address = new OrderAddress();
+        $address
+            ->setCountry(new Country('US'))
+            ->setRegion((new Region('US-FL'))->setCode('FL'));
+
+        $origin = new Address();
+        $origin
+            ->setCountry(new Country('AT'));
+
+        $taxable
+            ->setPrice('19.99')
+            ->setDestination($address)
+            ->setOrigin($origin)
+            ->addContext(Taxable::DIGITAL_PRODUCT, true);
+
+        $taxable->makeOriginAddressTaxable();
+
+        $this->matcher->expects($this->never())->method('match');
+        $this->rowTotalResolver->expects($this->never())->method('resolveRowTotal');
+        $this->unitResolver->expects($this->never())->method('resolveUnitPrice');
+
+        $this->resolver->resolve($taxable);
+
+        $this->assertSame($origin, $taxable->getTaxationAddress());
     }
 }

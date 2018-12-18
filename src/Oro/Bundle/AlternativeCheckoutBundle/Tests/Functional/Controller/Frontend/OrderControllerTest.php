@@ -37,12 +37,12 @@ class OrderControllerTest extends FrontendWebTestCase
         $this->setCurrentWebsite('default');
         $this->loadFixtures(
             [
+                LoadCombinedProductPrices::class,
                 LoadOrders::class,
                 LoadQuoteAlternativeCheckoutsData::class,
                 LoadQuoteAlternativeCheckoutsSubtotalsData::class,
                 LoadShoppingListsCheckoutsData::class,
-                LoadShoppingListLineItems::class,
-                LoadCombinedProductPrices::class
+                LoadShoppingListLineItems::class
             ]
         );
     }

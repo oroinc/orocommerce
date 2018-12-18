@@ -64,43 +64,44 @@ databaseBefore:
             taxJurisdiction: '@new_jurisdiction'
             productTaxCode: { class: 'Oro\Bundle\TaxBundle\Entity\ProductTaxCode', query: { code: 'TAX1' } }
             customerTaxCode: '@customer_tax_code.customer_tax_code'
+databaseBeforeSecondPart: []
 expectedResult:
     total:
-        includingTax: '124.57' # 87.945 + 36.63 + -0.005
-        excludingTax: '113.25' # 79.95 + 33.3
-        taxAmount: '11.32'     # 8 + 3.36 + -0.035
-        adjustment: '-0.005'   # -0.005
+        includingTax: '125.03'  # 88.2648 + 36.7632 = 125.028
+        excludingTax: '113.25'  # 79.95 + 33.3
+        taxAmount: '11.78'      # 8.3148 + 3.4632 = 11.778
+        adjustment: '0.008'     # 0.0048 + 0.0032
         currency: 'USD'
     items:
         -
             row:
-                includingTax: '87.95' # 17.589 * 5 = 87.945
+                includingTax: '88.26' # 17.65296 * 5 = 88.2648
                 excludingTax: '79.95' # 15.99 * 5
-                taxAmount: '8'        # 1.599 * 5 = 7.995
-                adjustment: '-0.005'
+                taxAmount: '8.31'     # 1.66296 * 5 = 8.3148
+                adjustment: '0.0048'  # 8.3148 - 8.31 = 0.0048
                 currency: 'USD'
             unit:
-                includingTax: '17.59' # 15.99 + 1.599 = 17.589
+                includingTax: '17.65' # 15.99 + 1.66296 = 17.65296
                 excludingTax: '15.99'
-                taxAmount: '1.6'      # 15.99 * 0.1 = 1.599
-                adjustment: '-0.001'
+                taxAmount: '1.66'     # 15.99 * 0.104 = 1.66296
+                adjustment: '0.00296' # 1.66296 - 1.66 = 0.00296
                 currency: 'USD'
             taxes:
-                - { tax: 'TAX1', rate: '0.1', taxableAmount: '79.95', taxAmount: '8', currency: 'USD' }
+                - { tax: 'TAX1', rate: '0.104', taxableAmount: '79.95', taxAmount: '8.31', currency: 'USD' }
         -
             row:
-                includingTax: '36.63' # 6.105 * 6
+                includingTax: '36.76' # 6.1272 * 6 = 36.7632
                 excludingTax: '33.3'  # 5.55 * 6
-                taxAmount: '3.33'     # 0.555 * 6
-                adjustment: '0'
+                taxAmount: '3.46'     # 0.5772 * 6 = 3.4632
+                adjustment: '0.0032'  # 3.4632 - 3.46 = 0.0032
                 currency: 'USD'
             unit:
-                includingTax: '6.11'  # 5.55 + 0.555 = 6.105
+                includingTax: '6.13'  # 5.55 + 0.5772 = 6.1272
                 excludingTax: '5.55'
-                taxAmount: '0.56'     # 5.55 * 0.1 = 0.555
-                adjustment: '-0.005'
+                taxAmount: '0.58'     # 5.55 * 0.104 = 0.5772
+                adjustment: '-0.0028' # 0.5772 - 0.58 = -0.0028
                 currency: 'USD'
             taxes:
-                - { tax: 'TAX1', rate: '0.1', taxableAmount: '33.3', taxAmount: '3.33', currency: 'USD' }
+                - { tax: 'TAX1', rate: '0.104', taxableAmount: '33.3', taxAmount: '3.46', currency: 'USD' }
     taxes:
-        - { tax: 'TAX1', rate: '0.1', taxableAmount: '113.25', taxAmount: '11.33', currency: 'USD' }
+        - { tax: 'TAX1', rate: '0.104', taxableAmount: '113.25', taxAmount: '11.78', currency: 'USD' }

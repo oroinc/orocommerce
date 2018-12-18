@@ -142,7 +142,6 @@ services:
             - '@doctrine'
             - '@oro_redirect.generator.slug_entity'
             - '@oro_redirect.direct_url_message_factory'
-            - '@oro_entity.database_exception_helper'
             - '@logger'
             - '@oro_redirect.url_cache'
         tags:
@@ -172,7 +171,6 @@ services:
         arguments:
            - '@doctrine'
            - '@logger'
-           - '@oro_entity.database_exception_helper'
         tags:
             - { name: 'oro_message_queue.client.message_processor' }
 

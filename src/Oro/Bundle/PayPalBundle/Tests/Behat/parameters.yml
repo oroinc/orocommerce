@@ -5,6 +5,8 @@ services:
 
     oro_paypal.paypal.payflow.client.nvp:
         class: 'Oro\Bundle\PayPalBundle\Tests\Behat\Mock\PayPal\Payflow\Client\NVPClientMock'
+        arguments:
+            - '@oro_paypal.express_payment.cache'
         public: false
 
     oro_paypal.test.fake_controller_mock.listener:
@@ -35,3 +37,22 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_payment.callback.notify, method: onNotify, priority: 255 }
             - { name: kernel.event_listener, event: oro_payment.callback.notify, method: onNotify, priority: 255 }
+
+    oro_paypal.method.factory.express_checkout:
+        class: 'Oro\Bundle\PayPalBundle\Tests\Behat\Mock\Method\Factory\BasicPayPalExpressCheckoutPaymentMethodFactoryMock'
+        public: false
+        arguments:
+            - '@oro_paypal.paypal.payflow_express_checkout.gateway='
+            - '@router'
+            - '@oro_entity.doctrine_helper'
+            - '@oro_payment.provider.extract_options'
+            - '@oro_payment.provider.surcharge'
+            - '@property_accessor'
+
+    oro_paypal.express_payment.cache:
+        parent: oro.cache.abstract
+        public: true
+        arguments:
+            - '%kernel.cache_dir%/oro_data'
+        calls:
+            - [ setNamespace, [ 'oro_paypal_express' ] ]

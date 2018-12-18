@@ -125,7 +125,7 @@ class ProductPriceFilterTest extends \PHPUnit\Framework\TestCase
             ->willReturn('formatted test label');
 
         $formView = $this->createFormView();
-        $formView->vars['formatter_options'] = [];
+        $formView->vars['formatter_options'] = ['decimals' => 2];
         $formView->vars['array_separator'] = ',';
         $formView->vars['array_operators'] = [9, 10];
         $formView->vars['data_type'] = 'data_integer';

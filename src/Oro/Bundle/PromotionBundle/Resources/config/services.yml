@@ -23,7 +23,7 @@ services:
 
     oro_promotion.rule_filtration.service:
         class: Oro\Bundle\RuleBundle\RuleFiltration\BasicRuleFiltrationService
-        extends: oro_rule.rule_filtration.service
+        parent: oro_rule.rule_filtration.service
 
     oro_promotion.rule_filtration.enabled_decorator:
         class: Oro\Bundle\RuleBundle\RuleFiltration\EnabledRuleFiltrationServiceDecorator

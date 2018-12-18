@@ -3,9 +3,14 @@
 namespace Oro\Bundle\WebCatalogBundle\Resolver;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\Repository\ContentNodeRepository;
+use Oro\Bundle\WebCatalogBundle\Provider\ScopeWebCatalogProvider;
 
+/**
+ * Calculate and set scopes for default content variant based on node restrictions and non-default variants restrictions
+ */
 class DefaultVariantScopesResolver
 {
     /**
@@ -14,11 +19,18 @@ class DefaultVariantScopesResolver
     protected $registry;
 
     /**
-     * @param ManagerRegistry $registry
+     * @var ScopeManager
      */
-    public function __construct(ManagerRegistry $registry)
+    protected $scopeManager;
+
+    /**
+     * @param ManagerRegistry $registry
+     * @param ScopeManager $scopeManager
+     */
+    public function __construct(ManagerRegistry $registry, ScopeManager $scopeManager)
     {
         $this->registry = $registry;
+        $this->scopeManager = $scopeManager;
     }
 
     /**
@@ -43,6 +55,7 @@ class DefaultVariantScopesResolver
     ) {
         $contentNodesWithParentFallbackUsed = $contentNodeRepository->getDirectNodesWithParentScopeUsed($contentNode);
 
+        $this->removeEmptyScopeFromVariants($contentNode);
         $this->updateDefaultVariantScopes($contentNode);
 
         foreach ($contentNodesWithParentFallbackUsed as $node) {
@@ -76,12 +89,32 @@ class DefaultVariantScopesResolver
 
         $contentVariantsScopes = [];
         foreach ($contentNode->getContentVariants() as $contentVariant) {
-            $contentVariantsScopes = array_merge($contentVariantsScopes, $contentVariant->getScopes()->toArray());
+            $contentVariantsScopes[] = $contentVariant->getScopes()->toArray();
+        }
+
+        if ($contentVariantsScopes) {
+            $contentVariantsScopes = array_merge(...$contentVariantsScopes);
         }
 
         foreach ($contentNodeScopes as $nodeScope) {
             if (!in_array($nodeScope, $contentVariantsScopes, true)) {
                 yield $nodeScope;
+            }
+        }
+    }
+
+    /**
+     * @param ContentNode $contentNode
+     */
+    protected function removeEmptyScopeFromVariants(ContentNode $contentNode)
+    {
+        $defaultScope = $this->scopeManager->findOrCreate(
+            'web_content',
+            [ScopeWebCatalogProvider::WEB_CATALOG => $contentNode->getWebCatalog()]
+        );
+        foreach ($contentNode->getContentVariants() as $contentVariant) {
+            if ($contentVariant->getScopes()->contains($defaultScope)) {
+                $contentVariant->getScopes()->removeElement($defaultScope);
             }
         }
     }

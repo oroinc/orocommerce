@@ -21,8 +21,8 @@ Feature: Product prices ACL
     And I click view First Price List in grid
     Then I should see following "Price list Product prices Grid" grid:
       | Product SKU | Product name | Quantity | Unit  | Value   | Currency | Type   |
-      | PSKU1       | Product 1    | 5        | item  | 15.0000 | USD      | Manual |
-      | PSKU2       | Product 2    | 10       | piece | 30.0000 | USD      | Manual |
+      | PSKU1       | Product 1    | 5        | item  | 15.00 | USD      | Manual |
+      | PSKU2       | Product 2    | 10       | piece | 30.00 | USD      | Manual |
 
     When I proceed as the admin
     And I login as administrator

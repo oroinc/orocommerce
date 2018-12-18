@@ -400,7 +400,7 @@ class QuickAddHandlerTest extends \PHPUnit\Framework\TestCase
             )
             ->willReturn($response);
 
-        $this->assertEquals($response, $this->handler->process($request, 'reload'));
+        $this->assertEquals($response->getTargetUrl(), $this->handler->process($request, 'reload')->getTargetUrl());
     }
 
     public function testProcessImport()

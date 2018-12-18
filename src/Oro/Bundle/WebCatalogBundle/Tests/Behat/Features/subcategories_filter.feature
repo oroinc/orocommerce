@@ -143,7 +143,7 @@ Feature: Sub-Categories filter
       | Architectural Floodlighting (0) |
       | Headlamps (0)                   |
     And number of records in "Product Frontend Grid" should be 0
-    And I should see grid with filter hints:
+    And should see filter hints in frontend grid:
       | Any Text: contains "Product1"                          |
       | Sub-Categories: Architectural Floodlighting, Headlamps |
     When I reload the page
@@ -152,7 +152,7 @@ Feature: Sub-Categories filter
       | Architectural Floodlighting (0) |
       | Headlamps (0)                   |
     And number of records in "Product Frontend Grid" should be 0
-    And I should see grid with filter hints:
+    And should see filter hints in frontend grid:
       | Any Text: contains "Product1"                          |
       | Sub-Categories: Architectural Floodlighting, Headlamps |
 

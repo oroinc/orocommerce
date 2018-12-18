@@ -1,0 +1,188 @@
+include:
+  - '@OroLocaleBundle:ZuluLocalization.yml'
+
+Oro\Bundle\RuleBundle\Entity\Rule:
+  shippingRule:
+    name: 'Default'
+    enabled: true
+    sortOrder: 1
+
+Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig:
+  shippingMethodTypeConfig:
+    type: 'primary'
+    enabled: true
+    options:
+      price: 1.5
+      type: 'per_order'
+      handling_fee: 1.5
+
+Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig:
+  shippingMethodConfig:
+    method: '<("flat_rate_".@flatRateIntegration->id)>'
+    typeConfigs: ['@shippingMethodTypeConfig']
+
+Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule:
+  shippingMethodsConfigsRule:
+    rule: '@shippingRule'
+    methodConfigs: ['@shippingMethodConfig']
+    currency: 'USD'
+
+Oro\Bundle\CurrencyBundle\Entity\Price(local):
+  price:
+    value: '10'
+    currency: 'USD'
+
+Oro\Bundle\CustomerBundle\Entity\Customer:
+  customer:
+    name: 'Company A'
+    organization: '@organization'
+    owner: '@admin'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerUser:
+  amanda:
+    email: 'AmandaRCole@example.org'
+    username: 'AmandaRCole@example.org'
+    password: 'gxP1L8r86hrdUMg9wKdfnsS/EZC4a7jOIdn6BMzegqL2S6e+KBIuHCrDVciMdiR/64osNnabmFonwK8l09vQxA=='
+    salt: 'fgswya1kzw0sck8ck48kosowckwo0ws'
+    firstName: 'Amanda'
+    lastName: 'Cole'
+    enabled: '1'
+    confirmed: '1'
+    customer: '@customer'
+    organization: '@organization'
+    role: ['@buyer']
+    owner: '@admin'
+    website: '@website1'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+  precision:
+    unit: '@item'
+    precision: '1'
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+  locValue:
+    string: 'product'
+  zuluLocValue:
+    string: 'ZU product'
+    localization: '@localization_zulu'
+  zuluLocDescription:
+    text: 'ZU product desc'
+    localization: '@localization_zulu'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+  product:
+    sku: 'SKU123'
+    primaryUnitPrecision: '@precision'
+    inventoryStatus: '@enumInventoryStatuses'
+    status: 'enabled'
+    owner: '@business_unit'
+    organization: '@organization'
+    attributeFamily: '@defaultProductFamily'
+    setNames: [['@locValue', '@zuluLocValue']]
+    addDescription: ['@zuluLocDescription']
+    addShortDescription: ['@zuluLocDescription']
+
+Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
+  shoppinglist:
+    label: 'List 1'
+    customerUser: '@amanda'
+    organization: '@organization'
+    website: '@website1'
+
+Oro\Bundle\ShoppingListBundle\Entity\LineItem:
+  lineitem1:
+    product: '@product'
+    quantity: '1'
+    unit: '@item'
+    customerUser: '@amanda'
+    shoppingList: '@shoppinglist'
+    organization: '@organization'
+
+Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal:
+  shoppingListTotal:
+    __construct: ['@shoppinglist','USD']
+    shoppingList: '@shoppinglist'
+    currency: 'USD'
+    subtotalValue: '10'
+    valid: true
+
+Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress:
+  address:
+    country: '@germany'
+    region: '@berlin'
+    label: 'Primary address'
+    street: 'Fifth avenue'
+    city: 'Berlin'
+    postalCode: '10115'
+    frontendOwner: '@amanda'
+    owner: '@admin'
+    setDefaults: ['@shippingType', '@billingType']
+    systemOrganization: '@organization'
+    primary: true
+    organization: '@organization'
+
+Oro\Bundle\PricingBundle\Entity\PriceList:
+  pricelistShipping:
+    name: 'pricelist_shipping'
+    default: true
+    setCurrencies: [['USD']]
+    active: true
+
+Oro\Bundle\PricingBundle\Entity\PriceListToCustomer:
+  priceListToCustomer:
+    customer: '@customer'
+    pricelist: '@pricelistShipping'
+    website: '@website1'
+    sortOrder: 200
+
+Oro\Bundle\PricingBundle\Entity\ProductPrice:
+  productPrice:
+    pricelist: '@pricelistShipping'
+    product: '@product'
+    productSku: 'SKU123'
+    quantity: 1
+    unit: '@item'
+    value: 10
+    currency: 'USD'
+
+Oro\Bundle\PricingBundle\Entity\CombinedProductPrice:
+  combinedProductPrice:
+    pricelist: '@combinedPriceList'
+    product: '@product'
+    productSku: 'SKU123'
+    quantity: 1
+    unit: '@item'
+    value: 10
+    currency: 'USD'
+
+Oro\Bundle\PricingBundle\Entity\CombinedPriceListToCustomer:
+  combinedPriceListToCustomer:
+    pricelist: '@combinedPriceList'
+    customer: '@customer'
+    website: '@website1'
+
+Oro\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite:
+  combinedPriceListToWebsite:
+    pricelist: '@combinedPriceList'
+    website: '@website1'
+
+Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
+  priceListToProduct:
+    product: '@product'
+    pricelist: '@pricelistShipping'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerUserSettings:
+  customerUserSetting:
+    customerUser: '@amanda'
+    __construct: ['@website1']
+    currency: 'USD'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerUserAddressToAddressType:
+  billing:
+    address: '@address'
+    type: '@billingType'
+    default: true
+  shipping:
+    address: '@address'
+    type: '@shippingType'
+    default: true

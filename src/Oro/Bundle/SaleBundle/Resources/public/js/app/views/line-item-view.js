@@ -37,6 +37,7 @@ define(function(require) {
             unitsRoute: 'oro_product_unit_product_units',
             compactUnits: false,
             addItemButton: '.add-list-item',
+            itemCollection: '.oro-item-collection',
             productSelectLink: '.quote-lineitem-product-select-link',
             freeFormLink: '.quote-lineitem-free-form-link',
             allowEditFreeForm: true,
@@ -177,6 +178,7 @@ define(function(require) {
             this.$productReplacementSelect = this.$el.find(this.options.productReplacementSelect);
             this.$typeSelect = this.$el.find(this.options.typeSelect);
             this.$addItemButton = this.$el.find(this.options.addItemButton);
+            this.$itemCollection = this.$el.find(this.options.itemCollection);
             this.$itemsContainer = this.$el.find(this.options.itemsContainer);
             this.$productReplacementContainer = this.$el.find(this.options.productReplacementContainer);
             this.$notesContainer = this.$el.find(this.options.notesContainer);
@@ -261,6 +263,7 @@ define(function(require) {
         checkAddButton: function() {
             var enabled = Boolean(this.getProductId()) || (this.isFreeForm && this.options.allowEditFreeForm);
             this.$addItemButton.toggle(enabled);
+            this.$itemCollection.toggle(enabled);
         },
 
         removeOfferRow: function() {
@@ -444,8 +447,8 @@ define(function(require) {
 
             this.clearInputs();
 
-            this.$el.find(this.options.productFormContainer).hide();
-            this.$el.find(this.options.freeFormContainer).show();
+            this.$el.find(this.options.productFormContainer).toggleClass('hide', true);
+            this.$el.find(this.options.freeFormContainer).toggleClass('hide', false);
 
             this.isFreeForm = true;
 
@@ -462,8 +465,8 @@ define(function(require) {
 
             this.clearInputs();
 
-            this.$el.find(this.options.productFormContainer).show();
-            this.$el.find(this.options.freeFormContainer).hide();
+            this.$el.find(this.options.productFormContainer).toggleClass('hide', false);
+            this.$el.find(this.options.freeFormContainer).toggleClass('hide', true);
 
             this.isFreeForm = false;
 

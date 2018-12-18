@@ -381,13 +381,13 @@ Feature: Commerce smoke e2e
     And I import file
     And reload the page
     Then should see following grid:
-      | Product SKU         | Product name    | Quantity | Unit | Value    | Currency |
-      | Black_Shirt_L_sku   | Black Shirt     | 10       | item | 7.0000   | USD      |
-      | Black_Shirt_M_sku   | Black Shirt     | 10       | item | 9.0000   | USD      |
-      | Lenovo_Vibe_sku     | Lenovo Vibe     | 10       | item | 90.0000  | USD      |
-      | White_Shirt_L_sku   | White Shirt     | 10       | item | 12.0000  | USD      |
-      | White_Shirt_M_sku   | White Shirt     | 10       | item | 11.0000  | USD      |
-      | Xiaomi_Redmi_3S_sku | Xiaomi Redmi 3S | 10       | item | 135.0000 | USD      |
+      | Product SKU         | Product name    | Quantity | Unit | Value  | Currency |
+      | Black_Shirt_L_sku   | Black Shirt     | 10       | item | 7.00   | USD      |
+      | Black_Shirt_M_sku   | Black Shirt     | 10       | item | 9.00   | USD      |
+      | Lenovo_Vibe_sku     | Lenovo Vibe     | 10       | item | 90.00  | USD      |
+      | White_Shirt_L_sku   | White Shirt     | 10       | item | 12.00  | USD      |
+      | White_Shirt_M_sku   | White Shirt     | 10       | item | 11.00  | USD      |
+      | Xiaomi_Redmi_3S_sku | Xiaomi Redmi 3S | 10       | item | 135.00 | USD      |
 
   Scenario: Create customer
     Given I proceed as the Admin
@@ -733,8 +733,8 @@ Feature: Commerce smoke e2e
     And click "Create Order"
     And fill form with:
       |Label          |Home Address  |
-      |First name     |NewAmanda     |
-      |Last name      |NewCole       |
+      |First Name     |NewAmanda     |
+      |Last Name      |NewCole       |
       |Organization   |NewOrg        |
       |Street         |Stanyan St 12 |
       |City           |San Francisco |

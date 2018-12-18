@@ -9,6 +9,9 @@ use Oro\Bundle\WebCatalogBundle\ContentNodeUtils\ContentNodeTreeResolverInterfac
 use Oro\Bundle\WebCatalogBundle\Provider\WebCatalogProvider;
 use Symfony\Component\HttpFoundation\RequestStack;
 
+/**
+ * Layout data provider that helps to build main navigation menu on the front store
+ */
 class MenuDataProvider extends AbstractWebCatalogDataProvider
 {
     const IDENTIFIER = 'identifier';
@@ -56,9 +59,15 @@ class MenuDataProvider extends AbstractWebCatalogDataProvider
 
         $rootItem = [];
         if ($request && $scope = $request->attributes->get('_web_content_scope')) {
-            $webCatalog = $this->webCatalogProvider->getWebCatalog();
-            if ($webCatalog) {
-                $rootNode = $this->getContentNodeRepository()->getRootNodeByWebCatalog($webCatalog);
+            $rootNode = $this->webCatalogProvider->getNavigationRoot();
+            if (!$rootNode) {
+                $webCatalog = $this->webCatalogProvider->getWebCatalog();
+                if ($webCatalog) {
+                    $rootNode = $this->getContentNodeRepository()->getRootNodeByWebCatalog($webCatalog);
+                }
+            }
+
+            if ($rootNode) {
                 $resolvedNode = $this->contentNodeTreeResolverFacade->getResolvedContentNode($rootNode, $scope);
 
                 if ($resolvedNode) {

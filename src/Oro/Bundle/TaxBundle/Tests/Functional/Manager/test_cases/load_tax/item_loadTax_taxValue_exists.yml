@@ -24,13 +24,11 @@ databaseBefore:
             currency: USD
     'Oro\Bundle\OrderBundle\Entity\OrderLineItem':
         order_line_item_1:
-            productSku: order_line_item_1
             order: '@simple_order'
             quantity: 5
             price: '@usd_price_15.99'
             product: { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product-1' } }
         order_line_item_2:
-            productSku: order_line_item_2
             order: '@simple_order'
             quantity: 6
             price: '@usd_price_5.55'
@@ -41,8 +39,8 @@ databaseBefore:
             __set: offsetSet
             includingTax: 105.54 # 95.94 + 9.594
             excludingTax: 95.94 # 15.99 * 6
-            taxAmount: 9.6 # 95.94 * 0.1
-            adjustment: 0.001
+            taxAmount: 9.59 # 95.94 * 0.1
+            adjustment: 0.004
             currency: USD
         result_element_2:
             __construct: false
@@ -57,8 +55,8 @@ databaseBefore:
             __set: offsetSet
             tax: TAX1
             rate: 0.1
-            taxableAmount: 9.6
-            taxAmount: 1.6
+            taxableAmount: 95.94
+            taxAmount: 9.59
             currency: USD
     'Oro\Bundle\TaxBundle\Model\Result':
         simple_result:
@@ -68,24 +66,25 @@ databaseBefore:
             unit: '@result_element_2'
             taxes:
             - '@result_element_3'
+databaseBeforeSecondPart:
     'Oro\Bundle\TaxBundle\Entity\TaxValue':
         simple_order_tax_value:
             entityClass: 'Oro\Bundle\OrderBundle\Entity\OrderLineItem'
             entityId:  '@order_line_item_1->id'
             address: address
             result: '@simple_result'
-expectedResult: # loaded from fixtures, values from simple_order_item_1 used to check database overrid
+expectedResult: # loaded from fixtures
     row:
-        includingTax: '105.54' # 95.94 + 9.594
-        excludingTax: '95.94' # 15.99 * 6
-        taxAmount: '9.6' # 95.94 * 0.1
-        adjustment: '0.001'
+        includingTax: '105.54'
+        excludingTax: '95.94'
+        taxAmount: '9.59'
+        adjustment: '0.004'
         currency: 'USD'
     unit:
-        includingTax: '17.59' # 15.99 + 1.599
+        includingTax: '17.59'
         excludingTax: '15.99'
-        taxAmount: '1.6' # 15.99 * 0.1
+        taxAmount: '1.6'
         adjustment: '0.001'
         currency: 'USD'
     taxes:
-        - { tax: 'TAX1', rate: '0.1', taxableAmount: '9.6', taxAmount: '1.6', currency: 'USD' }
+        - { tax: 'TAX1', rate: '0.1', taxableAmount: '95.94', taxAmount: '9.59', currency: 'USD' }
