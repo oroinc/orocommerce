@@ -8,6 +8,8 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomers;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups;
 
 class LoadPaymentTermData extends AbstractFixture implements DependentFixtureInterface, ContainerAwareInterface
 {
@@ -50,10 +52,7 @@ class LoadPaymentTermData extends AbstractFixture implements DependentFixtureInt
      */
     public function getDependencies()
     {
-        return [
-            'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomers',
-            'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups'
-        ];
+        return [LoadCustomers::class, LoadGroups::class];
     }
 
     /**

@@ -7,7 +7,6 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
-use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrderLineItems;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
 use Oro\Bundle\PromotionBundle\Entity\AppliedCoupon;
 use Oro\Bundle\PromotionBundle\Entity\AppliedDiscount;
@@ -35,7 +34,7 @@ class LoadAppliedPromotionData extends AbstractFixture implements DependentFixtu
             'amount' => 10.00,
             'currency' => 'USD',
             'promotion_name' => 'Some line item discount name',
-            'lineItem' => LoadOrderLineItems::ITEM_1,
+            'lineItem' => 'order_line_item.1',
             'source_promotion_id' => 0
         ],
     ];
@@ -48,7 +47,7 @@ class LoadAppliedPromotionData extends AbstractFixture implements DependentFixtu
         return [
             LoadCouponData::class,
             LoadOrders::class,
-            LoadOrderLineItems::class,
+            '@OroOrderBundle/Tests/Functional/DataFixtures/order_line_items.yml'
         ];
     }
 

@@ -21,7 +21,7 @@ class OrderAddressTest extends RestJsonApiTestCase
 
     private const ENTITY_CLASS               = OrderAddress::class;
     private const ENTITY_TYPE                = 'orderaddresses';
-    private const CREATE_MIN_REQUEST_DATA    = 'address_create_min.yml';
+    private const CREATE_MIN_REQUEST_DATA    = 'create_address_min.yml';
     private const IS_REGION_REQUIRED         = true;
     private const COUNTRY_REGION_ADDRESS_REF = LoadOrderAddressData::ORDER_ADDRESS_1;
 
@@ -42,7 +42,7 @@ class OrderAddressTest extends RestJsonApiTestCase
             ['entity' => self::ENTITY_TYPE]
         );
 
-        $this->assertResponseContains('address_get_list.yml', $response);
+        $this->assertResponseContains('cget_address.yml', $response);
     }
 
     public function testGet()
@@ -52,7 +52,7 @@ class OrderAddressTest extends RestJsonApiTestCase
             ['entity' => self::ENTITY_TYPE, 'id' => $addressId]
         );
 
-        $this->assertResponseContains('address_get.yml', $response);
+        $this->assertResponseContains('get_address.yml', $response);
     }
 
     public function testCreate()
@@ -62,11 +62,11 @@ class OrderAddressTest extends RestJsonApiTestCase
 
         $response = $this->post(
             ['entity' => self::ENTITY_TYPE],
-            'address_create.yml'
+            'create_address.yml'
         );
 
         $addressId = (int)$this->getResourceId($response);
-        $responseContent = $this->updateResponseContent('address_create.yml', $response);
+        $responseContent = $this->updateResponseContent('create_address.yml', $response);
         $this->assertResponseContains($responseContent, $response);
 
         /** @var OrderAddress $address */

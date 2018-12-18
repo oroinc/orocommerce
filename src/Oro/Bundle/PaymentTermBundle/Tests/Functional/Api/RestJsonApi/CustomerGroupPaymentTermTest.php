@@ -19,40 +19,88 @@ class CustomerGroupPaymentTermTest extends RestJsonApiTestCase
 
     public function testPaymentTermIsReturnedInCustomerGroupGetListResponse()
     {
-        $response = $this->cget(['entity' => $this->getEntityType(CustomerGroup::class)]);
-        $responseContent = $response->getContent();
+        $response = $this->cget(
+            ['entity' => 'customergroups'],
+            ['filter[id]' => '<toString(@customer_group.group1->id)>']
+        );
 
-        $this->assertContains('paymentTerm', $responseContent);
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    [
+                        'type'          => 'customergroups',
+                        'id'            => '<toString(@customer_group.group1->id)>',
+                        'relationships' => [
+                            'paymentTerm' => [
+                                'data' => [
+                                    'type' => 'paymentterms',
+                                    'id'   => '<toString(@payment_term_test_data_net 10->id)>'
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+            $response
+        );
     }
 
     public function testCustomerGroupGetResponseContainsAssignedPaymentTerm()
     {
-        $response = $this->get([
-            'entity' => $this->getEntityType(CustomerGroup::class),
-            'id' => '<toString(@customer_group.group1->id)>'
-        ]);
+        $response = $this->get(
+            ['entity' => 'customergroups', 'id' => '<toString(@customer_group.group1->id)>']
+        );
 
-        $this->assertResponseContains('customer_group/get.yml', $response);
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    'type'          => 'customergroups',
+                    'id'            => '<toString(@customer_group.group1->id)>',
+                    'relationships' => [
+                        'paymentTerm' => [
+                            'data' => [
+                                'type' => 'paymentterms',
+                                'id'   => '<toString(@payment_term_test_data_net 10->id)>'
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+            $response
+        );
     }
 
     public function testCustomerGroupPaymentTermCanBeModified()
     {
+        $customerGroupId = $this->getReference('customer_group.group1')->getId();
+
+        $data = [
+            'data' => [
+                'type'          => 'customergroups',
+                'id'            => (string)$customerGroupId,
+                'relationships' => [
+                    'paymentTerm' => [
+                        'data' => [
+                            'type' => 'paymentterms',
+                            'id'   => '<toString(@payment_term_test_data_net 20->id)>'
+                        ]
+                    ]
+                ]
+            ]
+        ];
         $response = $this->patch(
-            ['entity' => $this->getEntityType(CustomerGroup::class), 'id' => '<toString(@customer_group.group1->id)>'],
-            'customer_group/patch.yml'
+            ['entity' => 'customergroups', 'id' => (string)$customerGroupId],
+            $data
         );
 
-        $this->assertResponseContains('customer_group/patch.yml', $response);
-        $responseContent = json_decode($response->getContent());
+        $this->assertResponseContains($data, $response);
 
         /** @var CustomerGroup $customerGroup */
-        $customerGroup = $this->getEntityManager()->find(CustomerGroup::class, $responseContent->data->id);
-
+        $customerGroup = $this->getEntityManager()->find(CustomerGroup::class, $customerGroupId);
         $this->assertNotNull($customerGroup);
 
-        $paymentTermProvider = $this->getContainer()->get('oro_payment_term.provider.payment_term');
+        $paymentTermProvider = self::getContainer()->get('oro_payment_term.provider.payment_term');
         $paymentTerm = $paymentTermProvider->getCustomerGroupPaymentTerm($customerGroup);
-
         $this->assertNotNull($paymentTerm);
         $this->assertEquals(LoadPaymentTermData::TERM_LABEL_NET_20, $paymentTerm->getLabel());
     }
