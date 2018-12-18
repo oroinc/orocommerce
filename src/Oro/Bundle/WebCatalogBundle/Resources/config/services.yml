@@ -347,6 +347,8 @@ services:
         class: Oro\Bundle\WebCatalogBundle\Resolver\DefaultVariantScopesResolver
         arguments:
             - '@doctrine'
+        calls:
+            - ['setScopeManager', ['@oro_scope.scope_manager']]
 
     oro_web_catalog.layout.data_provider.title_data:
         class: Oro\Bundle\WebCatalogBundle\Layout\DataProvider\TitleDataProvider
@@ -369,3 +371,11 @@ services:
             - '@oro_config.manager'
         tags:
             - { name: oro_featuretogle.voter }
+
+    oro_web_catalog.validator_constraints.not_empty_scopes_validator:
+        class: 'Oro\Bundle\WebCatalogBundle\Validator\Constraint\NotEmptyScopesValidator'
+        public: true
+        arguments:
+            - '@oro_scope.scope_manager'
+        tags:
+            - { name: validator.constraint_validator, alias: oro_web_catalog.validator_constraints.not_empty_scopes_validator }

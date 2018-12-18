@@ -105,7 +105,7 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
                 ],
                 []
             ),
-            $this->getValidatorExtension(true)
+            $this->getValidatorExtension(false)
         ];
     }
 

@@ -544,6 +544,14 @@ oro_behat_extension:
             type: css
             locator: 'div.content-variant-item:first-child input[data-name="field__customer-group"]'
             element: Select2Entity
+          First Content Variant Restrictions Customer:
+            type: css
+            locator: 'div.content-variant-item:first-child .scope-collection input[data-name="field__customer"]'
+            element: Select2Entity
+          Content Node Restrictions Customer:
+            type: css
+            locator: 'div[data-ftid="oro_web_catalog_content_node_scopes"] input[data-name="field__customer"]'
+            element: Select2Entity
 
     RemoveFilterButton:
       selector: '.conditions-group .condition a.close'

@@ -47,6 +47,9 @@ oro_behat_extension:
             selector: '.oro-select2:contains("Choose a Web Catalog") .select2-offscreen'
             class: Oro\Bundle\FormBundle\Tests\Behat\Element\Select2Entity
 
+        Inherit Parent:
+            selector: '[name="oro_web_catalog_content_node[parentScopeUsed]"]'
+
     suites:
         OroWebCatalogBundle:
             contexts:
