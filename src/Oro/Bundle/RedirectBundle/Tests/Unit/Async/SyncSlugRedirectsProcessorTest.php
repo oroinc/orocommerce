@@ -3,9 +3,8 @@
 namespace Oro\Bundle\RedirectBundle\Tests\Unit\Async;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\DBAL\Driver\AbstractDriverException;
+use Doctrine\DBAL\Exception\DeadlockException;
 use Doctrine\ORM\EntityManagerInterface;
-use Oro\Bundle\EntityBundle\ORM\DatabaseExceptionHelper;
 use Oro\Bundle\RedirectBundle\Async\SyncSlugRedirectsProcessor;
 use Oro\Bundle\RedirectBundle\Async\Topics;
 use Oro\Bundle\RedirectBundle\Entity\Redirect;
@@ -34,11 +33,6 @@ class SyncSlugRedirectsProcessorTest extends \PHPUnit\Framework\TestCase
     protected $logger;
 
     /**
-     * @var DatabaseExceptionHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $databaseExceptionHelper;
-
-    /**
      * @var SyncSlugRedirectsProcessor
      */
     protected $processor;
@@ -47,13 +41,9 @@ class SyncSlugRedirectsProcessorTest extends \PHPUnit\Framework\TestCase
     {
         $this->registry = $this->createMock(ManagerRegistry::class);
         $this->logger = $this->createMock(LoggerInterface::class);
-        $this->databaseExceptionHelper = $this->getMockBuilder(DatabaseExceptionHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
         $this->processor = new SyncSlugRedirectsProcessor(
             $this->registry,
-            $this->logger,
-            $this->databaseExceptionHelper
+            $this->logger
         );
     }
 
@@ -113,9 +103,6 @@ class SyncSlugRedirectsProcessorTest extends \PHPUnit\Framework\TestCase
                 [Redirect::class, $redirectManager]
             ]);
 
-        $this->databaseExceptionHelper->expects($this->never())
-            ->method('isDeadlock');
-
         $redirectManager->expects($this->never())
             ->method('flush');
 
@@ -132,10 +119,8 @@ class SyncSlugRedirectsProcessorTest extends \PHPUnit\Framework\TestCase
     {
         $slugId = 42;
 
-        /** @var AbstractDriverException|\PHPUnit\Framework\MockObject\MockObject $exception */
-        $exception = $this->getMockBuilder(AbstractDriverException::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        /** @var DeadlockException|\PHPUnit\Framework\MockObject\MockObject $exception */
+        $exception = $this->createMock(DeadlockException::class);
 
         /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message **/
         $message = $this->createMock(MessageInterface::class);
@@ -167,15 +152,6 @@ class SyncSlugRedirectsProcessorTest extends \PHPUnit\Framework\TestCase
                 [Slug::class, $slugManager],
                 [Redirect::class, $redirectManager]
             ]);
-
-        $driverException = $this->createMock(AbstractDriverException::class);
-        $this->databaseExceptionHelper->expects($this->once())
-            ->method('getDriverException')
-            ->with($exception)
-            ->willReturn($driverException);
-        $this->databaseExceptionHelper->expects($this->once())
-            ->method('isDeadlock')
-            ->willReturn(true);
 
         $redirectManager->expects($this->never())
             ->method('flush');

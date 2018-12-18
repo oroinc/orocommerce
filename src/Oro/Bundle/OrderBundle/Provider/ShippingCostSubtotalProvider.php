@@ -10,6 +10,9 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\AbstractSubtotalProvider
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\SubtotalProviderConstructorArguments;
 use Symfony\Component\Translation\TranslatorInterface;
 
+/**
+ * Subtotal provider for shipping. ROUND(shippingValue)
+ */
 class ShippingCostSubtotalProvider extends AbstractSubtotalProvider implements SubtotalProviderInterface
 {
     const TYPE = 'shipping_cost';
@@ -65,14 +68,14 @@ class ShippingCostSubtotalProvider extends AbstractSubtotalProvider implements S
         $subtotal->setSortOrder(self::SUBTOTAL_SORT_ORDER);
         $translation = 'oro.order.subtotals.' . self::TYPE;
         $subtotal->setLabel($this->translator->trans($translation));
-        $subtotal->setVisible(false);
+        $subtotal->setVisible((bool) $entity->getShippingCost());
+        $subtotal->setCurrency($this->getBaseCurrency($entity));
 
+        $subtotalAmount = 0.0;
         if ($entity->getShippingCost() !== null) {
             $subtotalAmount = $entity->getShippingCost()->getValue();
-            $subtotal->setAmount($this->rounding->round($subtotalAmount))
-                ->setCurrency($this->getBaseCurrency($entity))
-                ->setVisible(true);
         }
+        $subtotal->setAmount($this->rounding->round($subtotalAmount));
 
         return $subtotal;
     }

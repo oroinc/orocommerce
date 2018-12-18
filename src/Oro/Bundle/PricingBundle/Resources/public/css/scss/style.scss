@@ -113,7 +113,7 @@
 
 .pricing-price-list {
     .add-list-item {
-        margin-top: 8px;
+        margin-top: $content-padding-small;
     }
 
     td {
@@ -158,7 +158,8 @@
 
     .group-label {
         label {
-            line-height: 25px;
+            line-height: 32px;
+            margin-#{$end}: $content-padding-medium;
             vertical-align: middle;
         }
     }

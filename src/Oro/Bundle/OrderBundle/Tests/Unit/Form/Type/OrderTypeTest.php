@@ -14,6 +14,8 @@ use Oro\Bundle\CustomerBundle\Form\Type\CustomerSelectType;
 use Oro\Bundle\CustomerBundle\Form\Type\CustomerUserSelectType;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
+use Oro\Bundle\FormBundle\Form\Type\OroHiddenNumberType;
+use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Form\Type\EventListener\SubtotalSubscriber;
@@ -83,6 +85,9 @@ class OrderTypeTest extends TypeTestCase
     /** @var RateConverterInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $rateConverter;
 
+    /** @var NumberFormatter|\PHPUnit\Framework\MockObject\MockObject */
+    private $numberFormatter;
+
     /** @var ValidatorInterface  */
     private $validator;
 
@@ -123,6 +128,8 @@ class OrderTypeTest extends TypeTestCase
             $this->discountSubtotalProvider,
             $this->rateConverter
         );
+
+        $this->numberFormatter = $this->createMock(NumberFormatter::class);
 
         // create a type instance with the mocked dependencies
         $this->type = new OrderType(
@@ -371,6 +378,7 @@ class OrderTypeTest extends TypeTestCase
                     OrderLineItemType::class => $orderLineItemType,
                     OrderDiscountCollectionRowType::class => new OrderDiscountCollectionRowType(),
                     QuantityType::class => $this->getQuantityType(),
+                    OroHiddenNumberType::class => new OroHiddenNumberType($this->numberFormatter),
                 ],
                 []
             ),

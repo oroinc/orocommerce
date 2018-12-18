@@ -16,6 +16,9 @@ use Oro\Bundle\RedirectBundle\Helper\UrlParameterHelper;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
 
+/**
+ * Repository for Slug entity
+ */
 class SlugRepository extends EntityRepository
 {
     /**
@@ -221,6 +224,28 @@ class SlugRepository extends EntityRepository
             ->setMaxResults(1);
 
         return $qb->execute()->fetch(\PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * @param string $routeName
+     *
+     * @return bool
+     */
+    public function isSlugForRouteExists(string $routeName): bool
+    {
+        /** @var Connection $connection */
+        $connection = $this->_em->getConnection();
+
+        $qb = $connection->createQueryBuilder();
+        $qb->select('1')
+            ->from('oro_redirect_slug', 'slug')
+            ->leftJoin('slug', 'oro_slug_scope', 'scope', 'scope.slug_id = slug.id')
+            ->where('scope.slug_id IS NULL')
+            ->andWhere('slug.route_name = :routeName')
+            ->setParameter('routeName', $routeName)
+            ->setMaxResults(1);
+
+        return (bool)$qb->execute()->fetch(\PDO::FETCH_ASSOC);
     }
 
     /**

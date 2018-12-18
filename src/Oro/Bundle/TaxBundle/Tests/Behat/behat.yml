@@ -24,6 +24,7 @@ oro_behat_extension:
     Tax Jurisdiction Form:
       selector: 'form[name="oro_tax_jurisdiction_type"]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+
     Tax Rule Form:
       selector: 'form[name="oro_tax_rule_type"]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
@@ -41,11 +42,45 @@ oro_behat_extension:
           Tax:
             locator: '//div[contains(@id,"s2id_oro_tax_rule_type_tax-uid")]/input'
             type: xpath
+
     Tax Jurisdiction create new:
       selector:
         locator: '//label[text()="Tax Jurisdiction"]/../..//button[contains(@class,"entity-create-btn")]'
         type: xpath
+
     Tax Jurisdiction hamburger:
       selector:
         locator: '//label[text()="Tax Jurisdiction"]/../..//button[contains(@class,"entity-select-btn")]'
         type: xpath
+
+    Tax US Sales Tax Form:
+      selector: 'form[name="us_sales_tax"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Digital Products Tax Codes:
+            locator: '//input[contains(@class, "select2-input")]'
+            type: xpath
+            element: Select2Entities
+
+    Tax EU Vat Tax Form:
+      selector: 'form[name="eu_vat_tax"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Digital Products Tax Codes:
+            locator: '//input[contains(@class, "select2-input")]'
+            type: xpath
+            element: Select2Entities
+
+    TaxBackendOrder:
+      class: Oro\Bundle\TaxBundle\Tests\Behat\Element\TaxBackendOrder
+      selector: 'div.layout-content'
+
+    TaxBackendOrderLineItem:
+      class: Oro\Bundle\TaxBundle\Tests\Behat\Element\TaxBackendOrderLineItem
+      selector: 'tr'
+
+    BackendLineItemTaxTable:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Table
+      selector: 'table.tax-result-grid'

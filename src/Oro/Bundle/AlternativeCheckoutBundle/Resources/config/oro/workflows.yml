@@ -1041,7 +1041,7 @@ workflows:
                                     state1: $.result.initCheckoutState
                                     state2: $.result.savedCheckoutState
                         - '@not_empty':
-                            message: Payment method was not selected
+                            message: oro.checkout.workflow.condition.payment_method_was_not_selected.message
                             parameters: $checkout.paymentMethod
                         - '@payment_method_applicable':
                             message: oro.checkout.workflow.condition.payment_method_is_not_applicable.message

@@ -250,7 +250,9 @@ oro.pricing:
             price_lists_update.title: 'Price List Calculations'
             price_strategies.title: Price Selection Strategy
         fields:
-            feature_enabled.label: Enable Oro Pricing
+            feature_enabled:
+                label: Enable Oro Pricing
+                tooltip: Enable the default OroCommerce pricing management system.
             price_lists.title: Price Lists
             precision.label: Pricing Precision
             pricing_strategy.label: Pricing Strategy

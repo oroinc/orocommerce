@@ -1,17 +1,26 @@
 {% block oro_order_address_type_widget %}
-    {% if form.parent is not empty %}
-        <div {{ block('widget_container_attributes') }}>
-            {% if form.customerAddress is defined %}
-                {{ form_row(form.customerAddress) }}
-            {% endif %}
-            {{ block('oro_address_rows') }}
-        </div>
-    {% else %}
+    {% if form.parent is not empty %}<div {{ block('widget_container_attributes') }}>{% endif %}
         {% if form.customerAddress is defined %}
             {{ form_row(form.customerAddress) }}
         {% endif %}
-        {{ block('oro_address_rows') }}
-    {% endif %}
+        {{ form_row(form.id) }}
+        {{ form_row(form.label, {label: 'oro.order.orderaddress.label.label'}) }}
+        {{ form_row(form.namePrefix, {label: 'oro.order.orderaddress.name_prefix.label'}) }}
+        {{ form_row(form.firstName, {label: 'oro.order.orderaddress.first_name.label'}) }}
+        {{ form_row(form.middleName, {label: 'oro.order.orderaddress.middle_name.label'}) }}
+        {{ form_row(form.lastName, {label: 'oro.order.orderaddress.last_name.label'}) }}
+        {{ form_row(form.nameSuffix, {label: 'oro.order.orderaddress.name_suffix.label'}) }}
+        {{ form_row(form.organization, {label: 'oro.order.orderaddress.organization.label'}) }}
+        {{ form_row(form.country, {label: 'oro.order.orderaddress.country.label'}) }}
+        {{ form_row(form.street, {label: 'oro.order.orderaddress.street.label'}) }}
+        {{ form_row(form.street2, {label: 'oro.order.orderaddress.street2.label'}) }}
+        {{ form_row(form.city, {label: 'oro.order.orderaddress.city.label'}) }}
+        {{ form_row(form.region_text, {label: 'oro.order.orderaddress.region_text.label'}) }}
+        {{ form_row(form.region, {label: 'oro.order.orderaddress.region.label'}) }}
+        {{ form_row(form.postalCode, {label: 'oro.order.orderaddress.postal_code.label'}) }}
+        {{ form_row(form.phone, {label: 'oro.order.orderaddress.phone.label'}) }}
+        {{ form_rest(form) }}
+    {% if form.parent is not empty %}</div>{% endif %}
 {% endblock %}
 
 {% macro oro_order_line_items_collection_item_prototype(widget) %}
@@ -96,7 +105,7 @@
             </div>
 
             {% if allow_add %}
-                <a class="btn add-list-item" data-container=".oro-item-collection tbody" href="javascript: void(0);"><i class="fa-plus"></i>{{ form.vars.add_label|default('oro.form.collection.add')|trans }}</a>
+                <a class="btn add-list-item" data-container=".oro-item-collection tbody" href="javascript: void(0);">{{ form.vars.add_label|default('oro.form.collection.add')|trans }}</a>
             {% endif %}
         </div>
     {% endspaceless %}

@@ -24,7 +24,7 @@ operations:
                 method: getSourceAction
                 method_parameters: []
             - '@call_service_method':
-                service: oro_currency.formatter.number
+                service: oro_locale.formatter.number
                 method: formatCurrency
                 method_parameters: [$.data.amount, $.data.currency]
                 attribute: $.amountWithCurrency

@@ -81,6 +81,7 @@ system_configuration:
             options:
                 required: false
                 label: oro.pricing.system_configuration.fields.feature_enabled.label
+                tooltip: oro.pricing.system_configuration.fields.feature_enabled.tooltip
     tree:
         system_configuration:
             commerce:

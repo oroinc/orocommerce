@@ -16,20 +16,16 @@ services:
     oro_product.api.create.related_product.security_check:
         class: Oro\Bundle\ProductBundle\Api\Processor\RelatedItemSecurityCheck
         arguments:
-            - '@security.authorization_checker'
-            - '@oro_security.acl.group_provider.chain'
+            - '@oro_api.security.authorization_checker'
             - ['VIEW', 'EDIT']
-            - ['oro_related_products_edit']
         tags:
             - { name: oro.api.processor, action: create, group: security_check, class: '%oro_product.entity.related_product.class%', priority: 100}
 
     oro_product.api.delete.related_product.security_check:
         class: Oro\Bundle\ProductBundle\Api\Processor\RelatedItemSecurityCheck
         arguments:
-            - '@security.authorization_checker'
-            - '@oro_security.acl.group_provider.chain'
+            - '@oro_api.security.authorization_checker'
             - ['EDIT']
-            - ['oro_related_products_edit']
         tags:
             - { name: oro.api.processor, action: delete, group: security_check, class: '%oro_product.entity.related_product.class%', priority: 100}
             - { name: oro.api.processor, action: delete_list, group: security_check, class: '%oro_product.entity.related_product.class%', priority: 100}
@@ -37,14 +33,11 @@ services:
     oro_product.api.get.related_product.security_check:
         class: Oro\Bundle\ProductBundle\Api\Processor\RelatedItemSecurityCheck
         arguments:
-            - '@security.authorization_checker'
-            - '@oro_security.acl.group_provider.chain'
+            - '@oro_api.security.authorization_checker'
             - ['VIEW']
-            - ['oro_related_products_edit']
         tags:
             - { name: oro.api.processor, action: get, group: security_check, class: '%oro_product.entity.related_product.class%', priority: 100}
             - { name: oro.api.processor, action: get_list, group: security_check, class: '%oro_product.entity.related_product.class%', priority: 100}
-
 
     oro_product.api.create.add_related_product:
         class: Oro\Bundle\ProductBundle\Api\Processor\Create\AddRelatedProduct

@@ -62,9 +62,7 @@ class DataStorageAwareComponentProcessorTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->router = $this->createMock('Symfony\Component\Routing\Generator\UrlGeneratorInterface');
-        $this->storage = $this->getMockBuilder('Oro\Bundle\ProductBundle\Storage\ProductDataStorage')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->storage = $this->createMock('Oro\Bundle\ProductBundle\Storage\ProductDataStorage');
 
         $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
         $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
@@ -73,10 +71,7 @@ class DataStorageAwareComponentProcessorTest extends \PHPUnit\Framework\TestCase
             ->getMockBuilder('Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorFilterInterface')
             ->getMockForAbstractClass();
 
-        $this->session = $this->getMockBuilder('Symfony\Component\HttpFoundation\Session\Session')
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $this->session = $this->createMock('Symfony\Component\HttpFoundation\Session\Session');
         $this->translator = $this->createMock('Symfony\Component\Translation\TranslatorInterface');
 
         $this->processor = new DataStorageAwareComponentProcessor(

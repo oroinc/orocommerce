@@ -8,6 +8,7 @@ use Behat\Symfony2Extension\Context\KernelDictionary;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\PayPalBundle\Entity\PayPalSettings;
+use Oro\Bundle\PayPalBundle\Tests\Behat\Mock\PayPal\Payflow\Client\NVPClientMock;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\Form;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\OroPageObjectAware;
@@ -235,5 +236,45 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         $form->fill($table);
 
         return $form;
+    }
+
+    /**
+     * Example: I should see the following products before pay:
+     * | NAME        | DESCRIPTION        |
+     * | Item Name 1 | Item Description 1 |
+     * @Then /^(?:|I )should see the following products before pay:$/
+     *
+     * @param TableNode $table
+     */
+    public function assertExistsProductDataBeforePay(TableNode $table)
+    {
+        $lineItems = $this->getContainer()
+            ->get('oro_paypal.express_payment.cache')
+            ->fetch(NVPClientMock::LINE_ITEM_CACHE_KEY);
+        foreach ($table as $row) {
+            foreach ($row as $columnName => $rowValue) {
+                self::assertTrue(in_array($rowValue, $lineItems, true));
+            }
+        }
+    }
+
+    /**
+     * Example: I should not see the following products before pay:
+     * | NAME        | DESCRIPTION        |
+     * | Item Name 1 | Item Description 1 |
+     * @Then /^(?:|I )should not see the following products before pay:$/
+     *
+     * @param TableNode $table
+     */
+    public function assertNotExistsProductDataBeforePay(TableNode $table)
+    {
+        $lineItems = $this->getContainer()
+            ->get('oro_paypal.express_payment.cache')
+            ->fetch(NVPClientMock::LINE_ITEM_CACHE_KEY);
+        foreach ($table as $row) {
+            foreach ($row as $columnName => $rowValue) {
+                self::assertFalse(in_array($rowValue, $lineItems, true));
+            }
+        }
     }
 }

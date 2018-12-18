@@ -59,11 +59,11 @@
 }
 
 .order-line-items-content fieldset {
-    min-width: inherit !important;
+    min-width: inherit;
 
     .order-line-items-table {
-        overflow-x: scroll !important;
-        display: block !important;
+        overflow-x: auto;
+        display: block;
     }
 }
 

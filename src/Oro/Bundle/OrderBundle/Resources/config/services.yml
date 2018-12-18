@@ -319,6 +319,7 @@ services:
         class: 'Oro\Bundle\OrderBundle\EventListener\ExtractLineItemPaymentOptionsListener'
         arguments:
             - '@oro_ui.html_tag_helper'
+            - '@oro_frontend_localization.manager.user_localization'
         tags:
             - { name: kernel.event_listener, event: oro_payment.event.extract_line_item_options, priority: 0, method: onExtractLineItemPaymentOptions }
 

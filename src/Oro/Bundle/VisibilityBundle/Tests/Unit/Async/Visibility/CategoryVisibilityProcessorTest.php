@@ -3,7 +3,6 @@
 namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Async\Visibility;
 
 use Doctrine\ORM\EntityManager;
-use Oro\Bundle\EntityBundle\ORM\DatabaseExceptionHelper;
 use Oro\Bundle\VisibilityBundle\Async\Visibility\CategoryVisibilityProcessor;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CategoryVisibilityResolved;
@@ -45,11 +44,6 @@ class CategoryVisibilityProcessorTest extends \PHPUnit\Framework\TestCase
     protected $productMessageHandler;
 
     /**
-     * @var DatabaseExceptionHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $databaseExceptionHelper;
-
-    /**
      * @var CategoryVisibilityProcessor
      */
     protected $categoryVisibilityProcessor;
@@ -65,15 +59,11 @@ class CategoryVisibilityProcessorTest extends \PHPUnit\Framework\TestCase
         $this->productMessageHandler = $this->getMockBuilder(ProductMessageHandler::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->databaseExceptionHelper = $this->getMockBuilder(DatabaseExceptionHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
         $this->categoryVisibilityProcessor = new CategoryVisibilityProcessor(
             $this->registry,
             $this->messageFactory,
             $this->logger,
             $this->cacheBuilder,
-            $this->databaseExceptionHelper,
             $this->productMessageHandler
         );
         $this->categoryVisibilityProcessor->setResolvedVisibilityClassName(CategoryVisibilityResolved::class);
