@@ -8,6 +8,7 @@ use Oro\Bundle\ConsentBundle\Entity\ConsentAcceptance;
 use Oro\Bundle\ConsentBundle\Helper\CmsPageHelper;
 use Oro\Bundle\ConsentBundle\Model\CmsPageData;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
+use Oro\Bundle\RedirectBundle\Generator\CanonicalUrlGenerator;
 use Oro\Bundle\RedirectBundle\Provider\RoutingInformationProviderInterface;
 use Symfony\Component\Routing\RouterInterface;
 
@@ -28,22 +29,28 @@ class CmsPageDataBuilder
     /** @var RouterInterface */
     protected $router;
 
+    /** @var CanonicalUrlGenerator */
+    private $canonicalUrlGenerator;
+
     /**
      * @param CmsPageHelper $cmsPageHelper
      * @param LocalizationHelper $localizationHelper
      * @param RoutingInformationProviderInterface $routingInformationProvider
      * @param RouterInterface $router
+     * @param CanonicalUrlGenerator $canonicalUrlGenerator
      */
     public function __construct(
         CmsPageHelper $cmsPageHelper,
         LocalizationHelper $localizationHelper,
         RoutingInformationProviderInterface $routingInformationProvider,
-        RouterInterface $router
+        RouterInterface $router,
+        CanonicalUrlGenerator $canonicalUrlGenerator
     ) {
         $this->cmsPageHelper = $cmsPageHelper;
         $this->localizationHelper = $localizationHelper;
         $this->routingInformationProvider = $routingInformationProvider;
         $this->router = $router;
+        $this->canonicalUrlGenerator = $canonicalUrlGenerator;
     }
 
     /**
@@ -86,7 +93,8 @@ class CmsPageDataBuilder
             );
         } else {
             $localizedUrls = $consent->getContentNode()->getLocalizedUrls();
-            $url = (string) $this->localizationHelper->getLocalizedValue($localizedUrls);
+            $localizedFallbackValue = $this->localizationHelper->getLocalizedValue($localizedUrls);
+            $url = $this->canonicalUrlGenerator->getAbsoluteUrl($localizedFallbackValue);
         }
 
         $cmsPageData = new CmsPageData();

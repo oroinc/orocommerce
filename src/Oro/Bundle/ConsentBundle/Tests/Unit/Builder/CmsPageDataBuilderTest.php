@@ -12,6 +12,7 @@ use Oro\Bundle\ConsentBundle\Helper\CmsPageHelper;
 use Oro\Bundle\ConsentBundle\Model\CmsPageData;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
+use Oro\Bundle\RedirectBundle\Generator\CanonicalUrlGenerator;
 use Oro\Bundle\RedirectBundle\Provider\RoutingInformationProviderInterface;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Component\Routing\RouteData;
@@ -31,89 +32,123 @@ class CmsPageDataBuilderTest extends \PHPUnit\Framework\TestCase
     /** @var CmsPageDataBuilder */
     private $builder;
 
+    /** @var CanonicalUrlGenerator|\PHPUnit\Framework\MockObject\MockObject */
+    private $canonicalUrlGenerator;
+
+    /** @var LocalizationHelper|\PHPUnit\Framework\MockObject\MockObject */
+    private $localizationHelper;
+
+    /** @var RoutingInformationProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $routingInformationProvider;
+
     /**
      * {@inheritdoc}
      */
     protected function setUp()
     {
         $this->cmsPageHelper = $this->createMock(CmsPageHelper::class);
+        $this->localizationHelper = $this->createMock(LocalizationHelper::class);
+        $this->routingInformationProvider = $this->createMock(RoutingInformationProviderInterface::class);
+        $this->canonicalUrlGenerator = $this->createMock(CanonicalUrlGenerator::class);
+        $this->router = $this->createMock(RouterInterface::class);
 
-        /** @var LocalizationHelper|\PHPUnit\Framework\MockObject\MockObject $localizationHelper */
-        $localizationHelper = $this->createMock(LocalizationHelper::class);
-        $localizationHelper->expects($this->any())
-            ->method('getLocalizedValue')
-            ->will($this->returnCallback(function (Collection $collection) {
-                return $collection->first()->getString();
-            }));
+        $this->builder = new CmsPageDataBuilder(
+            $this->cmsPageHelper,
+            $this->localizationHelper,
+            $this->routingInformationProvider,
+            $this->router,
+            $this->canonicalUrlGenerator
+        );
+    }
 
-        /**
-         * @var RoutingInformationProviderInterface|\PHPUnit\Framework\MockObject\MockObject $routingInformationProvider
-         */
-        $routingInformationProvider = $this->createMock(RoutingInformationProviderInterface::class);
-        $routingInformationProvider->expects($this->any())
+    public function testBuildCmsPageNotExists()
+    {
+        $consent = $this->getEntity(Consent::class, ['id' => 1]);
+
+        $this->cmsPageHelper->expects($this->once())
+            ->method('getCmsPage')
+            ->with($consent, null)
+            ->willReturn(null);
+
+        $this->router
+            ->expects($this->never())
+            ->method('generate');
+
+        $this->assertNull($this->builder->build($consent));
+    }
+
+    public function testBuildConceptAcceptanceSet()
+    {
+        $this->routingInformationProvider->expects($this->once())
             ->method('getRouteData')
             ->willReturnCallback(function (Page $cmsPage) {
                 return new RouteData('oro_cms_frontend_page_view', ['id' => $cmsPage->getId()]);
             });
 
-        $this->router = $this->createMock(RouterInterface::class);
-        $this->builder = new CmsPageDataBuilder(
-            $this->cmsPageHelper,
-            $localizationHelper,
-            $routingInformationProvider,
-            $this->router
-        );
-    }
+        $consent = $this->getConsent();
+        $consentAcceptance = $this->getEntity(ConsentAcceptance::class, ['id' => 42]);
+        $consentAcceptanceCmsPageId = 15;
+        $cmsPage = $this->getEntity(Page::class, ['id' => $consentAcceptanceCmsPageId]);
+        $routerUrl = '/cms-page-url-from-content-acceptance';
+        $expectedResult = (new CmsPageData())
+            ->setId($consentAcceptanceCmsPageId)
+            ->setUrl($routerUrl);
 
-    /**
-     * @dataProvider buildProvider
-     *
-     * @param Consent $consent
-     * @param ConsentAcceptance|null $consentAcceptance
-     * @param Page|null $cmsPage
-     * @param string $routerUrl
-     * @param CmsPageData|null $expectedResult
-     */
-    public function testBuild(
-        Consent $consent,
-        ConsentAcceptance $consentAcceptance = null,
-        Page $cmsPage = null,
-        $routerUrl,
-        CmsPageData $expectedResult = null
-    ) {
         $this->cmsPageHelper->expects($this->once())
             ->method('getCmsPage')
             ->with($consent, $consentAcceptance)
             ->willReturn($cmsPage);
 
-        if (!$consentAcceptance || !$cmsPage) {
-            $this->router
-                ->expects($this->never())
-                ->method('generate');
-        } else {
-            $this->router
-                ->expects($this->once())
-                ->method('generate')
-                ->with('oro_cms_frontend_page_view', ['id' => $expectedResult->getId()])
-                ->willReturn($routerUrl);
-        }
+        $this->router
+            ->expects($this->once())
+            ->method('generate')
+            ->with('oro_cms_frontend_page_view', ['id' => $expectedResult->getId()])
+            ->willReturn($routerUrl);
 
         $result = $this->builder->build($consent, $consentAcceptance);
         $this->assertEquals($expectedResult, $result);
     }
 
-    /**
-     * @return array
-     *
-     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     */
-    public function buildProvider()
+    public function testBuildConceptAcceptanceNotSet()
     {
+        $this->localizationHelper->expects($this->once())
+            ->method('getLocalizedValue')
+            ->will($this->returnCallback(function (Collection $collection) {
+                return $collection->first();
+            }));
+
+        $consent = $this->getConsent();
         $consentAcceptanceCmsPageId = 15;
+        $cmsPage = $this->getEntity(Page::class, ['id' => $consentAcceptanceCmsPageId]);
+        $routerUrl = '/cms-page-url-from-content-acceptance';
+        $expectedResult = (new CmsPageData())
+            ->setId($consentAcceptanceCmsPageId)
+            ->setUrl($routerUrl);
+
+        $this->cmsPageHelper->expects($this->once())
+            ->method('getCmsPage')
+            ->with($consent, null)
+            ->willReturn($cmsPage);
+
+        $this->canonicalUrlGenerator->expects($this->once())
+            ->method('getAbsoluteUrl')
+            ->willReturnCallback(function (LocalizedFallbackValue $fallbackValue) use ($routerUrl) {
+                return $routerUrl;
+            });
+
+        $result = $this->builder->build($consent);
+        $this->assertEquals($expectedResult, $result);
+    }
+
+    /**
+     * @return Consent
+     */
+    private function getConsent(): Consent
+    {
         $fallbackValue = new LocalizedFallbackValue();
         $fallbackValue->setString('/cms-page-url-from-content-node');
 
-        $consent = $this->getEntity(
+        return $this->getEntity(
             Consent::class,
             [
                 'id' => 1,
@@ -123,45 +158,8 @@ class CmsPageDataBuilderTest extends \PHPUnit\Framework\TestCase
                         'id' => 12,
                         'localizedUrls' => new ArrayCollection([$fallbackValue]),
                     ]
-                ),
+                )
             ]
         );
-
-        $consentAcceptance = $this->getEntity(ConsentAcceptance::class, ['id' => 42]);
-
-        return [
-            "Consent acceptance is set and cms page exists" => [
-                'consent' => $consent,
-                'consentAcceptance' => $consentAcceptance,
-                'cmsPage' => $this->getEntity(Page::class, ['id' => $consentAcceptanceCmsPageId]),
-                'routerUrl' => '/cms-page-url-from-content-acceptance',
-                'expected' => (new CmsPageData())
-                    ->setId($consentAcceptanceCmsPageId)
-                    ->setUrl('/cms-page-url-from-content-acceptance')
-            ],
-            "Consent acceptance is set and cms page doesn't exist" => [
-                'consent' => $consent,
-                'consentAcceptance' => $consentAcceptance,
-                'cmsPage' => null,
-                'routerUrl' => '/cms-page-url-from-content-acceptance',
-                'expected' => null
-            ],
-            "Consent acceptance isn't set and cms page exists" => [
-                'consent' => $consent,
-                'consentAcceptance' => null,
-                'cmsPage' => $this->getEntity(Page::class, ['id' => $consentAcceptanceCmsPageId]),
-                'routerUrl' => '/cms-page-url-from-content-acceptance',
-                'expected' => (new CmsPageData())
-                    ->setId($consentAcceptanceCmsPageId)
-                    ->setUrl('/cms-page-url-from-content-node')
-            ],
-            "Consent acceptance isn't set and cms page doesn't exist" => [
-                'consent' => $consent,
-                'consentAcceptance' => null,
-                'cmsPage' => null,
-                'routerUrl' => '/cms-page-url-from-content-acceptance',
-                'expected' => null
-            ],
-        ];
     }
 }
