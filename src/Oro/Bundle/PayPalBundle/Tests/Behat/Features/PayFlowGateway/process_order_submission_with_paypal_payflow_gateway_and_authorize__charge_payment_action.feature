@@ -1,4 +1,5 @@
 @regression
+@ticket-BB-15784
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroAuthorizeNetBundle:AuthorizeNetFixture.yml
 Feature: Process order submission with PayPal PayFlow Gateway and Authorize & Charge payment action
@@ -25,6 +26,14 @@ Feature: Process order submission with PayPal PayFlow Gateway and Authorize & Ch
     And I save and close form
     Then I should see "Integration saved" flash message
     And I should see PayPalFlow in grid
+
+  Scenario: Disable guest access to check right callbacks
+    Given I go to System/Configuration
+    And I follow "Commerce/Guests/Website Access" on configuration sidebar
+    When uncheck "Use default" for "Enable Guest Access" field
+    And I uncheck "Enable Guest Access"
+    And I save form
+    Then I should see "Configuration Saved" flash message
 
   Scenario: Create new Payment Rule for PayPal PayFlow Gateway integration
     Given I go to System/Payment Rules
