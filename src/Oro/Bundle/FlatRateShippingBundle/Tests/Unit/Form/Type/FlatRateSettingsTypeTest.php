@@ -6,7 +6,6 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Oro\Bundle\FlatRateShippingBundle\Entity\FlatRateSettings;
 use Oro\Bundle\FlatRateShippingBundle\Form\Type\FlatRateSettingsType;
-use Oro\Bundle\FormBundle\Tests\Unit\Stub\StripTagsExtensionStub;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Form\Type\FallbackPropertyType;
@@ -14,7 +13,6 @@ use Oro\Bundle\LocaleBundle\Form\Type\FallbackValueType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedPropertyType;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizationCollectionTypeStub;
-use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\PreloadedExtension;
@@ -93,7 +91,7 @@ class FlatRateSettingsTypeTest extends FormIntegrationTestCase
                     FallbackValueType::NAME => new FallbackValueType(),
                     FallbackPropertyType::NAME => new FallbackPropertyType($this->translator),
                 ],
-                ['form' => [new StripTagsExtensionStub($this->createMock(HtmlTagHelper::class))]]
+                []
             ),
             new ValidatorExtension(Validation::createValidator()),
         ];
@@ -118,11 +116,11 @@ class FlatRateSettingsTypeTest extends FormIntegrationTestCase
         $form->submit($submitData);
         $expected = (new FlatRateSettings())
             ->addLabel($this->createLocalizedValue(
-                'Label 2_stripped',
+                'Label 2',
                 null,
                 $this->getEntity(Localization::class, ['id' => self::LOCALIZATION_ID])
             ))->addLabel($this->createLocalizedValue(
-                'Label 1_stripped'
+                'Label 1'
             ));
         $this->assertTrue($form->isValid());
         $this->assertEquals($expected, $form->getData());
