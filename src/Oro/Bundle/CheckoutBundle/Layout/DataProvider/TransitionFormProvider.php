@@ -106,7 +106,6 @@ class TransitionFormProvider extends AbstractFormProvider
             [
                 'workflow_item' => $workflowItem,
                 'transition_name' => $transition->getName(),
-                'disabled' => !$transitionData->isAllowed(),
                 'allow_extra_fields' => true,
             ]
         );

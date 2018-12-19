@@ -411,8 +411,8 @@
         <div class="order-checkout-widget text-right">
             <span {{ _layout.conditionMessages(transitionData) }}>
                 <button type="submit"
-                        class="btn {% if transitionData.isAllowed %}btn--info{% endif %} btn--size-m checkout__submit-btn"
-                        disabled="disabled"
+                        class="btn btn--info{% if not transitionData.isAllowed %} btn--disabled{% endif %} btn--size-m checkout__submit-btn"
+                        {% if not transitionData.isAllowed %}disabled="disabled"{% endif %}
                         autocomplete="off"
                         {{ UI.renderPageComponentAttributes({
                             module: 'oroui/js/app/components/view-component',
