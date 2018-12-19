@@ -222,10 +222,10 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
         $continueButton = $crawler->filterXPath(self::CONTINUE_BUTTON);
         $buttonClasses = $continueButton->attr('class');
 
-        if (!$minError && !$maxError) {
-            $this->assertContains('btn--info', $buttonClasses);
+        if ($minError || $maxError) {
+            $this->assertContains('btn--disabled', $buttonClasses);
         } else {
-            $this->assertNotContains('btn--info', $buttonClasses);
+            $this->assertNotContains('btn--disabled', $buttonClasses);
         }
 
         $this->assertCurrentStep($crawler, $shouldBeFirstStep);
