@@ -66,16 +66,18 @@ class FrontendConsentProvider implements FeatureToggleableInterface
         $filteredConsentData = [];
         foreach ($requiredConsentData as $consentData) {
             $cmsPageData = $consentData->getCmsPageData();
-            if (!$cmsPageData) {
-                continue;
-            }
-
-            $key = sprintf('%s_%s', $consentData->getId(), $cmsPageData->getId());
+            $key = $this->getKey(
+                $consentData->getId(),
+                $cmsPageData ? $cmsPageData->getId() : null
+            );
             $filteredConsentData[$key] = $consentData;
         }
 
         foreach ($consentAcceptances as $acceptance) {
-            $key = sprintf('%s_%s', $acceptance->getConsent()->getId(), $acceptance->getLandingPage()->getId());
+            $key = $this->getKey(
+                $acceptance->getConsent()->getId(),
+                $acceptance->getLandingPage() ? $acceptance->getLandingPage()->getId() : null
+            );
             if (array_key_exists($key, $filteredConsentData)) {
                 unset($filteredConsentData[$key]);
             }
@@ -133,5 +135,18 @@ class FrontendConsentProvider implements FeatureToggleableInterface
         }
 
         return null;
+    }
+
+    /**
+     * @param string|int $consentId
+     * @param string|int|null $landingPageId
+     *
+     * @return string
+     */
+    private function getKey($consentId, $landingPageId): string
+    {
+        $testArray = [$consentId, $landingPageId];
+
+        return implode('_', $testArray);
     }
 }

@@ -2,7 +2,7 @@
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
 @fixture-OroProductBundle:gdpr_refactor.yml
-
+@fixture-OroConsentBundle:ConsentLandingPagesFixture.yml
 Feature: Consent management via Management Console UI
   In order to be able to manage consents in OroCommerce
   As an Administrator
@@ -16,20 +16,6 @@ Feature: Consent management via Management Console UI
   Scenario: Create Landing Page and Content Node in Web Catalog
     Given I proceed as the Admin
     And I login as administrator
-    And go to Marketing/ Landing Pages
-    Then click "Create Landing Page"
-    And fill "Landing Page Form" with:
-      | Titles   | Consent Landing |
-      | URL Slug | consent-landing |
-    And I fill in "CMS Page Content" with "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quae in controversiam veniunt, de iis, si placet, disseramus. Duo Reges constructio interrete. Tamen aberramus a proposito, et, ne longius, prorsus, inquam, Piso, si ista mala sunt, placet. </p> <p>At, illa, ut vobis placet, partem quandam tuetur, reliquam deserit. Inde sermone vario sex illa a Dipylo stadia confecimus. Sed id ne cogitari quidem potest quale sit, ut non repugnet ipsum sibi. Si qua in iis corrigere voluit, deteriora fecit. Audeo dicere, inquit. </p> <p> Ex quo intellegitur officium medium quiddam esse, quod neque in bonis ponatur neque in contrariis. </p> <dl> <dt><dfn>Perge porro;</dfn></dt> <dd>Erat enim Polemonis.</dd> <dt><dfn>Quibus ego vehementer assentior.</dfn></dt> <dd>Sed est forma eius disciplinae, sicut fere ceterarum, triplex una pars est naturae, disserendi altera, vivendi tertia.</dd> <dt><dfn>Nihilo magis.</dfn></dt> <dd>Illud dico, ea, quae dicat, praeclare inter se cohaerere.</dd> <dt><dfn>Certe non potest.</dfn></dt> <dd>Huius, Lyco, oratione locuples, rebus ipsis ielunior.</dd> <dt><dfn>Sed videbimus.</dfn></dt> <dd>Theophrastus mediocriterne delectat, cum tractat locos ab Aristotele ante tractatos?</dd> </dl> <h3>Quam si explicavisset, non tam haesitaret.</h3> <p>Nonne videmus quanta perturbatio rerum omnium consequatur, quanta confusio? Summum ením bonum exposuit vacuitatem doloris; Dici enim nihil potest verius. Sapiens autem semper beatus est et est aliquando in dolore; Aliud igitur esse censet gaudere, aliud non dolere. Sic, et quidem diligentius saepiusque ista loquemur inter nos agemusque communiter. </p> <h2>Plane idem, inquit, et maxima quidem, qua fieri nulla maior potest.</h2> <p>Hoc est vim afferre, Torquate, sensibus, extorquere ex animis cognitiones verborum, quibus inbuti sumus. Pisone in eo gymnasio, quod Ptolomaeum vocatur, unaque nobiscum Q. Levatio igitur vitiorum magna fit in iis, qui habent ad virtutem progressionis aliquantum. Optime, inquam. Utrum igitur tibi litteram videor an totas paginas commovere? </p> <ul> <li>Perturbationes autem nulla naturae vi commoventur, omniaque ea sunt opiniones ac iudicia levitatis.</li> <li>An vero, inquit, quisquam potest probare, quod perceptfum, quod.</li> <li>Nihilne te delectat umquam -video, quicum loquar-, te igitur, Torquate, ipsum per se nihil delectat?</li> <li>Quid ergo attinet gloriose loqui, nisi constanter loquare?</li> <li>Sed tamen omne, quod de re bona dilucide dicitur, mihi praeclare dici videtur.</li> <li>Sunt enim quasi prima elementa naturae, quibus ubertas orationis adhiberi vix potest, nec equidem eam cogito consectari.</li></ul>"
-    And click "Save and Close"
-    And go to Marketing/ Landing Pages
-    Then click "Create Landing Page"
-    And fill "Landing Page Form" with:
-      | Titles   | Test CMS Page   |
-      | URL Slug | test-cms-page   |
-    And I fill in "CMS Page Content" with "Test landing page description"
-    And click "Save and Close"
     And go to Marketing/ Web Catalogs
     And click "Create Web Catalog"
     And fill form with:
@@ -279,22 +265,6 @@ Feature: Consent management via Management Console UI
       | Email Newsletters                        | Yes        |
       | Presenting Personal Data                 | Yes        |
 
-  @skip
-  Scenario: Send notifications on removing consents
-    Given I proceed as the Admin
-    When I go to Activities/ Contact Requests
-    And I should see following grid:
-      | First Name | Last Name | Email                     | Contact Reason                             | Website |
-      | Amanda     | Cole      | AmandaRCole1@example.org  | General Data Protection Regulation details | Default |
-    And click view "General Data Protection Regulation details" in grid
-    Then I should see Contact Request with:
-      | First Name     | Amanda                                                            |
-      | Last Name      | Cole                                                              |
-      | Email          | AmandaRCole1@example.org                                          |
-      | Contact Reason | General Data Protection Regulation details                        |
-      | Comment        | Consent Collecting and storing personal data declined by customer |
-      | Customer User  | Amanda Cole                                                       |
-
   Scenario: Check mandatory consents before creating an RFQ
     Given I proceed as the User
     And click "Requests For Quote"
@@ -391,7 +361,6 @@ Feature: Consent management via Management Console UI
     And I should see that "Email Newsletters" is in 1 row
     And I should see that "Collecting and storing personal data" is in 2 row
 
-  @skip
   Scenario: When User submits the registration form with any removed consent or CMS page, there should be a validation error
     Given I proceed as the Admin
     When I go to System/ Consent Management
@@ -423,8 +392,6 @@ Feature: Consent management via Management Console UI
       | Email Address                        | BrandaJSanborn1@example.org |
       | Password                             | BrandaJSanborn1@example.org |
       | Confirm Password                     | BrandaJSanborn1@example.org |
-    And I click "Test Consent"
-    And click "Agree"
     And I click "Presenting Personal Data"
     And I scroll modal window to bottom
     And click "Agree"
@@ -444,7 +411,6 @@ Feature: Consent management via Management Console UI
     And I proceed as the User
     When press "Create An Account"
     Then I should see "Some consents were changed. Please reload the page."
-    # The validation message above should be changed to another according to the comment in BB-14261
     And I should not see "Test Consent"
     And I should see 2 elements "Required Consent"
     And I proceed as the Admin
@@ -482,8 +448,7 @@ Feature: Consent management via Management Console UI
     And I scroll modal window to bottom
     And click "Agree"
     And I click "Test Consent 2"
-    Then I should see a "Consent Popup" element
-    And click "Cancel"
+    And click "Agree"
     # Proceeding to management console
     When I proceed as the Admin
     And go to Marketing/ Landing Pages
@@ -492,31 +457,45 @@ Feature: Consent management via Management Console UI
     And I click "Yes, Delete"
     Then should see "Landing Page deleted" flash message
     When I proceed as the User
-    Then I should not see "Test Consent 2"
-    # The validation message above should be changed to another according to the comment in BB-14261
-    And I should see 2 elements "Required Consent"
+    When press "Create An Account"
+    Then I should see "Some consents were changed. Please reload the page."
 
   @skip
+  Scenario: Consent should not be visible when related CMS page was deleted
+    Given I should not see "Test Consent 2"
+    And I should see 2 elements "Required Consent"
+
+  Scenario: Create customer group
+    Given I proceed as the Admin
+    And go to Customers/ Customer Groups
+    And click "Create Customer Group"
+    And fill "Customer Group Form" with:
+      | Name         | All customers |
+      | Payment Term | net 10        |
+    And click on OroCommerce in grid
+    When save and close form
+    Then should see "Customer group has been saved" flash message
+
   Scenario: Check mandatory consents on Checkout Page
     Given I proceed as the User
     And I signed in as AmandaRCole1@example.org on the store frontend
-    When click "Account"
+    And click "Account"
     And I click "Edit Profile Button"
     And fill form with:
       | Presenting Personal Data             | false |
       | Collecting and storing personal data | false |
       | Email Newsletters                    | false |
     And I save form
-    And click "Yes, Decline"
+    When click "Yes, Decline"
     Then should see "Customer User profile updated" flash message
-    When click "Quick Order Form"
+    And click "Quick Order Form"
     And fill "QuickAddForm" with:
       | SKU1 |Lenovo_Vibe1_sku|
     And I wait for products to load
     And fill "QuickAddForm" with:
       | QTY1 | 10  |
-    And click "Create Order"
-    Then I should see "Agreements Information" in the "Checkout Step Title" element
+    When click "Create Order"
+    Then I should see "Agreements" in the "Checkout Step Title" element
     And I should see 2 elements "Required Consent"
     And the "Presenting Personal Data" checkbox should not be checked
     And the "Collecting and storing personal data" checkbox should not be checked
@@ -530,28 +509,152 @@ Feature: Consent management via Management Console UI
       | cancelButton      | Cancel                   |
     When click "Cancel"
     Then the "Presenting Personal Data" checkbox should not be checked
-    When I click "Presenting Personal Data"
-    And I scroll modal window to bottom
-    And click "Agree"
-    Then I should not see a "Consent Popup" element
-    And the "Presenting Personal Data" checkbox should be checked
-    # In scenario below, we should also check if the customer user can proceed checkout with only one required consent and make sure the he cannot do this without accepting all required ones
-    When click "Continue"
-    Then I should see that "Required Consent" contains "This agreement is required"
     When I click "Collecting and storing personal data"
     And I scroll modal window to bottom
     And click "Agree"
     Then I should not see a "Consent Popup" element
     And the "Collecting and storing personal data" checkbox should be checked
     When click "Continue"
-    Then I should see "Billing Information" in the "Checkout Step Title" element
-    When I click "Back"
-    Then I should see "Agreements Information" in the "Checkout Step Title" element
-    And I should see 2 elements "Required Consent"
-    # The behavior 2 lines below should be discussed in a review with the team
+    Then I should see that "Required Consent" contains "This agreement is required"
+    When I click "Presenting Personal Data"
+    And I scroll modal window to bottom
+    And click "Agree"
+    Then I should not see a "Consent Popup" element
     And the "Presenting Personal Data" checkbox should be checked
+    When click "Continue"
+    Then I should see "Billing Information" in the "Checkout Step Title" element
+    When on the "Billing Information" checkout step I go back to "Edit Customer Consents"
+    Then I should see "Agreements" in the "Checkout Step Title" element
+    And I should see "All mandatory consents were accepted."
+    And I should not see "Presenting Personal Data"
+    And I should not see "Collecting and storing personal data"
+
+  Scenario: Process checkout as registered customer user
+    Given I click "Continue"
+    And fill form with:
+      | First Name      | Tester1         |
+      | Last Name       | Testerson       |
+      | Email           | tester@test.com |
+      | Street          | Fifth avenue    |
+      | City            | Berlin          |
+      | Country         | Germany         |
+      | State           | Berlin          |
+      | Zip/Postal Code | 10115           |
+    And I click "Ship to This Address"
+    And I click "Continue"
+    And I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
+    And on the "Payment" checkout step I press Continue
+    When I click "Submit Order"
+    Then I see the "Thank You" page with "Thank You For Your Purchase!" title
+    When I click "Account"
+    Then I should see "Unaccepted Consent" element with text "Email Newsletters" inside "Data Protection Section" element
+    And I should see "Accepted Consent" element with text "Presenting Personal Data" inside "Data Protection Section" element
+    And I should see "Accepted Consent" element with text "Collecting and storing personal data" inside "Data Protection Section" element
+    And I click "Sign Out"
+
+  Scenario: Enable guest shopping list and guest checkout settings
+    Given I proceed as the Admin
+    And go to System/ Configuration
+    And I follow "Commerce/Sales/Shopping List" on configuration sidebar
+    And uncheck "Use default" for "Enable guest shopping list" field
+    And I check "Enable guest shopping list"
+    When I save form
+    Then I should see "Configuration saved" flash message
+    And I follow "Commerce/Sales/Checkout" on configuration sidebar
+    And uncheck "Use default" for "Enable Guest Checkout" field
+    And I check "Enable Guest Checkout"
+    When I save form
+    Then the "Enable Guest Checkout" checkbox should be checked
+
+  Scenario: Disable customer user registration confirmation on management console
+    Given go to System/ Configuration
+    And follow "Commerce/Customer/Customer Users" on configuration sidebar
+    And fill "Customer Users Registration Form" with:
+      | Confirmation Required Default | false |
+      | Confirmation Required         | false |
+    And click "Save settings"
+
+  Scenario: Set payment term for Non-Authenticated Visitors group
+    Given go to Customers/ Customer Groups
+    And I click Edit Non-Authenticated Visitors in grid
+    And I fill form with:
+      | Payment Term | net 10 |
+    When I save form
+    Then I should see "Customer group has been saved" flash message
+
+  Scenario: Remove Test Consent 2
+    Given I go to System/ Consent Management
+    And click delete "Test Consent 2" in grid
+    And I should see "Are you sure you want to delete this consent?"
+    When I click "Yes, Delete"
+    Then I should not see "Test Consent 2"
+
+  Scenario: Check mandatory consents on Checkout Page as unauthorized user
+    Given I proceed as the User
+    And I am on homepage
+    And type "Lenovo_Vibe1_sku" in "search"
+    And I click "Search Button"
+    And I click "Add to Shopping List" for "Lenovo_Vibe1_sku" product
+    And I should see "Product has been added to" flash message
+    And I open page with shopping list "Shopping List"
+    And click "Create Order"
+    And I click "Continue as a Guest"
+    And I should see "Agreements" in the "Checkout Step Title" element
+    And I should see 2 elements "Required Consent"
+    And the "Presenting Personal Data" checkbox should not be checked
+    And the "Collecting and storing personal data" checkbox should not be checked
+    And I should not see "Email Newsletters"
+    When click "Continue"
+    Then I should see that "Required Consent" contains "This agreement is required"
+    When I click on "Consent Link" with title "Presenting Personal Data"
+    Then I should see "UiDialog" with elements:
+      | Title             | Presenting Personal Data |
+      | Disabled okButton | Agree                    |
+      | cancelButton      | Cancel                   |
+    When click "Cancel"
+    Then the "Presenting Personal Data" checkbox should not be checked
+    When I click "Collecting and storing personal data"
+    And I scroll modal window to bottom
+    And click "Agree"
+    Then I should not see a "Consent Popup" element
     And the "Collecting and storing personal data" checkbox should be checked
+    When click "Continue"
+    Then I should see that "Required Consent" contains "This agreement is required"
+    When I click "Presenting Personal Data"
+    And I scroll modal window to bottom
+    And click "Agree"
+    Then I should not see a "Consent Popup" element
+    And the "Presenting Personal Data" checkbox should be checked
+    When click "Continue"
+    Then I should see "Billing Information" in the "Checkout Step Title" element
+    When on the "Billing Information" checkout step I go back to "Edit Customer Consents"
+    Then I should see "Agreements" in the "Checkout Step Title" element
+    And I should see "All mandatory consents were accepted."
+    And I should not see "Presenting Personal Data"
+    And I should not see "Collecting and storing personal data"
+
+  Scenario: Process checkout as guest customer user
+    Given I click "Continue"
+    And fill form with:
+      | First Name      | Tester2         |
+      | Last Name       | Testerson       |
+      | Email           | tester@test.com |
+      | Street          | Fifth avenue    |
+      | City            | Berlin          |
+      | Country         | Germany         |
+      | State           | Berlin          |
+      | Zip/Postal Code | 10115           |
+    And I click "Ship to This Address"
+    And I click "Continue"
+    And I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
+    And on the "Payment" checkout step I press Continue
+    And I type "Tester2@test.com" in "Email Address"
+    And I type "Tester2@test.com" in "Password"
+    And I type "Tester2@test.com" in "Confirm Password"
+    When I click "Submit Order"
+    Then I see the "Thank You" page with "Thank You For Your Purchase!" title
     When click "Account"
-    Then I should see "Unaccepted Consent" element with text "Email Newsletters" inside "Consent List Container" element
-    And I should see "Accepted Consent" element with text "Presenting Personal Data" inside "Consent List Container" element
-    And I should see "Accepted Consent" element with text "Collecting and storing personal data" inside "Consent List Container" element
+    Then should see a "Data Protection Section" element
+    And I should see "Unaccepted Consent" element with text "Email Newsletters" inside "Data Protection Section" element
+    And I should see "Accepted Consent" element with text "Presenting Personal Data" inside "Data Protection Section" element
+    And I should see "Accepted Consent" element with text "Collecting and storing personal data" inside "Data Protection Section" element

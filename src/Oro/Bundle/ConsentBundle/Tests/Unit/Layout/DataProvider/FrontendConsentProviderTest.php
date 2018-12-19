@@ -99,7 +99,15 @@ class FrontendConsentProviderTest extends \PHPUnit\Framework\TestCase
         $consentAcceptance = new ConsentAcceptance();
         $consentAcceptance->setConsent($this->getEntity(Consent::class, ['id' => 1]));
         $consentAcceptance->setLandingPage($this->getEntity(Page::class, ['id' => 3]));
-        $consentData = ['1_3' => $this->getConsentData('first', 1, 3), '2_5' =>$this->getConsentData('second', 2, 5)];
+
+        $consentAcceptanceWithoutPage = new ConsentAcceptance();
+        $consentAcceptanceWithoutPage->setConsent($this->getEntity(Consent::class, ['id' => 3]));
+
+        $consentData = [
+            '1_3' => $this->getConsentData('first', 1, 3),
+            '2_5' =>$this->getConsentData('second', 2, 5),
+            '3_' =>$this->getConsentData('second', 3, null)
+        ];
 
         $this->featureChecker->expects($this->once())
             ->method('isFeatureEnabled')
@@ -112,7 +120,9 @@ class FrontendConsentProviderTest extends \PHPUnit\Framework\TestCase
 
         $this->assertEquals(
             [$this->getConsentData('second', 2, 5)],
-            $this->frontendConsentProvider->getNotAcceptedRequiredConsentData([$consentAcceptance])
+            $this->frontendConsentProvider->getNotAcceptedRequiredConsentData(
+                [$consentAcceptance, $consentAcceptanceWithoutPage]
+            )
         );
     }
 
