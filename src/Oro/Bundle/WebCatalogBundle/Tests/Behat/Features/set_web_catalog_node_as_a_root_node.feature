@@ -31,10 +31,6 @@ Feature: Set web catalog node as a root node
     When I save form
     Then I should see "Content Node has been saved" flash message
     And I click on "Clearance"
-    And I click on "Show Variants Dropdown"
-    And I click "Add System Page"
-    And I fill "Content Node Form" with:
-      | System Page Route | Oro Frontend Root (Welcome - Home page) |
     When I save form
     Then I should see "Content Node has been saved" flash message
     And I click on "By Brand"
