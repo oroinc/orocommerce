@@ -193,19 +193,9 @@ define(function(require) {
          * Listen renderComplete event
          */
         onRenderComplete: function() {
-            this.moveActionElements();
             this.disableSubmitElement();
             this.subview('popup').widget
                 .on('scroll', _.bind(this.onScroll, this));
-        },
-
-        /**
-         * Move action elements to the left side
-         */
-        moveActionElements: function() {
-            this.subview('popup').actionsEl
-                .removeClass('pull-right')
-                .addClass('pull-left');
         },
 
         /**
