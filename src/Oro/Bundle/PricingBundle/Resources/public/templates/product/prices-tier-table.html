@@ -1,18 +1,17 @@
-<table class="table">
+<div class="prices-tier">
     <% if (clickable) { %>
-    <thead>
-        <tr>
-            <th colspan="2">
-                <%= _.__('oro.pricing.click_to_select') %>
-            </th>
-        </tr>
-        <tr>
-            <th class="text-uppercase"><%= _.__('oro.pricing.qty') %></th>
-            <th><%= _.__('oro.pricing.unit_price') %></th>
-        </tr>
-    </thead>
+    <h3 class="prices-tier-title"><%= _.__('oro.pricing.click_to_select') %></h3>
     <% } %>
-    <tbody>
+    <table class="table">
+        <% if (clickable) { %>
+        <thead>
+            <tr>
+                <th class="text-uppercase"><%= _.__('oro.pricing.qty') %></th>
+                <th><%= _.__('oro.pricing.unit_price') %></th>
+            </tr>
+        </thead>
+        <% } %>
+        <tbody>
         <% _.each(prices, function(unitPrices, unit) { %>
         <tr>
             <td colspan="2">
@@ -24,9 +23,9 @@
             <td><%= price.quantity %></td>
             <td>
                 <% if (clickable) { %>
-                <a href="javascript: void(0);" 
-                    data-price="<%= parseFloat(price.price) %>"
-                    data-unit="<%= unit %>"
+                <a href="javascript: void(0);"
+                   data-price="<%= parseFloat(price.price) %>"
+                   data-unit="<%= unit %>"
                 ><%= formatter.formatCurrency(price.price, price.currency) %></a>
                 <% } else { %>
                 <%= formatter.formatCurrency(price.price, price.currency) %>
@@ -35,5 +34,6 @@
         </tr>
         <% }) %>
         <% }) %>
-    </tbody>
-</table>
+        </tbody>
+    </table>
+</div>

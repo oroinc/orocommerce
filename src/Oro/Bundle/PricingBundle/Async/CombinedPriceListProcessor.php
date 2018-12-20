@@ -3,8 +3,8 @@
 namespace Oro\Bundle\PricingBundle\Async;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\DBAL\Exception\RetryableException;
 use Doctrine\ORM\EntityManagerInterface;
-use Oro\Bundle\EntityBundle\ORM\DatabaseExceptionHelper;
 use Oro\Bundle\PricingBundle\Builder\CombinedPriceListsBuilderFacade;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Model\CombinedPriceListTriggerHandler;
@@ -44,11 +44,6 @@ class CombinedPriceListProcessor implements MessageProcessorInterface, TopicSubs
     protected $registry;
 
     /**
-     * @var DatabaseExceptionHelper
-     */
-    protected $databaseExceptionHelper;
-
-    /**
      * @var CombinedPriceListTriggerHandler
      */
     private $triggerHandler;
@@ -57,7 +52,6 @@ class CombinedPriceListProcessor implements MessageProcessorInterface, TopicSubs
      * @param LoggerInterface $logger
      * @param PriceListRelationTriggerFactory $triggerFactory
      * @param ManagerRegistry $registry
-     * @param DatabaseExceptionHelper $databaseExceptionHelper
      * @param CombinedPriceListTriggerHandler $triggerHandler
      * @param CombinedPriceListsBuilderFacade $builderFacade
      */
@@ -65,14 +59,12 @@ class CombinedPriceListProcessor implements MessageProcessorInterface, TopicSubs
         LoggerInterface $logger,
         PriceListRelationTriggerFactory $triggerFactory,
         ManagerRegistry $registry,
-        DatabaseExceptionHelper $databaseExceptionHelper,
         CombinedPriceListTriggerHandler $triggerHandler,
         CombinedPriceListsBuilderFacade $builderFacade
     ) {
         $this->logger = $logger;
         $this->triggerFactory = $triggerFactory;
         $this->registry = $registry;
-        $this->databaseExceptionHelper = $databaseExceptionHelper;
         $this->triggerHandler = $triggerHandler;
         $this->combinedPriceListsBuilderFacade = $builderFacade;
     }
@@ -108,12 +100,11 @@ class CombinedPriceListProcessor implements MessageProcessorInterface, TopicSubs
                 ['exception' => $e]
             );
 
-            $driverException = $this->databaseExceptionHelper->getDriverException($e);
-            if ($driverException && $this->databaseExceptionHelper->isDeadlock($driverException)) {
+            if ($e instanceof RetryableException) {
                 return self::REQUEUE;
-            } else {
-                return self::REJECT;
             }
+
+            return self::REJECT;
         }
 
         return self::ACK;

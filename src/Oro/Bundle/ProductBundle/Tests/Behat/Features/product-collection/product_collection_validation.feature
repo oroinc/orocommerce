@@ -43,6 +43,8 @@ Feature: Product collection validation
     And I click on "SKU"
     And type "PSKU" in "value"
     And I click on "Preview Results"
+    And I fill "Content Node Form" with:
+      | First System Page Customer Group | Non-Authenticated Visitors |
     And I save form
     Then I should see "Content Node has been saved" flash message
 

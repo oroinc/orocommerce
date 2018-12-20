@@ -84,15 +84,14 @@
                   itemtype="http://schema.org/Offer" itemprop="offers">
                 {% spaceless %}
                     {% if firstPrice %}
-                        <span itemprop="priceCurrency"
-                              content="{{ firstPrice.currency }}">{{ oro_currency_symbol(firstPrice.currency) }}</span>
                     {% set priceFormatOptions = {
                         attributes: {
                             fraction_digits: oro_locale_number_attribute('max_fraction_digits', 'currency')
                         }
                     } %}
-                    <span itemprop="price"
-                          content="{{ (firstPrice.price|number_format(priceFormatOptions.attributes.fraction_digits, '.', '')) }}">{{ (firstPrice.price|oro_format_decimal(priceFormatOptions)) }}</span>
+                    <meta itemprop="priceCurrency" content="{{ firstPrice.currency }}"/>
+                    <meta itemprop="price" content="{{ firstPrice.price|number_format(priceFormatOptions.attributes.fraction_digits, '.', '') }}"/>
+                    {{- firstPrice.formatted_price -}}
                     {% endif %}
                 {% endspaceless %}
             </span>
@@ -221,12 +220,9 @@
                     <meta itemprop="unitCode" content="{{ currentUnit }}"/>
                 </td>
                 <td class="product-prices__td">
-                    {% spaceless %}
-                        <span itemprop="priceCurrency"
-                              content="{{ price.currency }}">{{ oro_currency_symbol(price.currency) }}</span>
-                        <span itemprop="price"
-                              content="{{ (price.price|number_format(priceFormatOptions.attributes.fraction_digits, '.', '')) }}">{{ (price.price|oro_format_decimal(priceFormatOptions)) }}</span>
-                    {% endspaceless %}
+                    <meta itemprop="priceCurrency" content="{{ price.currency }}"/>
+                    <meta itemprop="price" content="{{ price.price|number_format(priceFormatOptions.attributes.fraction_digits, '.', '') }}"/>
+                    {{- price.formatted_price -}}
                 </td>
             </tr>
         {% endif %}

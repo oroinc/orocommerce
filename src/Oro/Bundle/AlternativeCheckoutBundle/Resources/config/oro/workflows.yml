@@ -942,7 +942,7 @@ workflows:
                                     state1: $.result.initCheckoutState
                                     state2: $.result.savedCheckoutState
                         - '@not_empty':
-                            message: Payment method was not selected
+                            message: oro.checkout.workflow.condition.payment_method_was_not_selected.message
                             parameters: $checkout.paymentMethod
                         - '@payment_method_applicable':
                             message: oro.checkout.workflow.condition.payment_method_is_not_applicable.message
@@ -1088,16 +1088,21 @@ workflows:
                         - '@extendable':
                             events:
                                 - 'extendable_condition.checkout'
-                                - 'extendable_condition.before_order_create'
+                                - 'extendable_condition.pre_order_create'
                 conditions:
-                    '@or':
-                        - '@empty': $.result.savedCheckoutState
-                        - '@check_checkout_states':
-                            message: oro.checkout.workflow.condition.content_of_order_was_changed.message
-                            parameters:
-                                entity: $checkout
-                                state1: $.result.initCheckoutState
-                                state2: $.result.savedCheckoutState
+                    '@and':
+                        - '@extendable':
+                            message: 'oro.checkout.workflow.b2b_flow_checkout.transition.place_order.condition.extendable.message'
+                            events:
+                                - 'extendable_condition.before_order_create'
+                        - '@or':
+                            - '@empty': $.result.savedCheckoutState
+                            - '@check_checkout_states':
+                                message: oro.checkout.workflow.condition.content_of_order_was_changed.message
+                                parameters:
+                                    entity: $checkout
+                                    state1: $.result.initCheckoutState
+                                    state2: $.result.savedCheckoutState
                 actions:
                     - '@assign_value':
                         conditions:

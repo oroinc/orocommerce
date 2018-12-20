@@ -97,6 +97,12 @@ class SlugGenerator
             $scopes = $contentVariant->getScopes();
 
             $toRemove = [];
+            // Remove slugs if content node scopes list is empty (no restrictions)
+            if ($scopes->isEmpty()) {
+                $contentVariant->resetSlugs();
+                continue;
+            }
+
             foreach ($contentVariant->getSlugs() as $slug) {
                 $localeId = (int)$this->getLocaleId($slug->getLocalization());
                 if ($slugUrls->containsKey($localeId)) {

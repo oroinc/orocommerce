@@ -4,11 +4,10 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Async;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\DBAL\Driver\AbstractDriverException;
+use Doctrine\DBAL\Exception\DeadlockException;
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
-use Oro\Bundle\EntityBundle\ORM\DatabaseExceptionHelper;
 use Oro\Bundle\PricingBundle\Async\CombinedPriceListProcessor;
 use Oro\Bundle\PricingBundle\Builder\CombinedPriceListsBuilderFacade;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
@@ -54,11 +53,6 @@ class CombinedPriceListProcessorTest extends \PHPUnit\Framework\TestCase
     protected $triggerFactory;
 
     /**
-     * @var DatabaseExceptionHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $databaseExceptionHelper;
-
-    /**
      * @var CombinedPriceListTriggerHandler|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $triggerHandler;
@@ -80,10 +74,6 @@ class CombinedPriceListProcessorTest extends \PHPUnit\Framework\TestCase
 
         $this->registry = $this->createMock(ManagerRegistry::class);
 
-        $this->databaseExceptionHelper = $this->getMockBuilder(DatabaseExceptionHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
         $this->triggerHandler = $this->createMock(CombinedPriceListTriggerHandler::class);
 
         $this->combinedPriceListsBuilderFacade = $this->createMock(CombinedPriceListsBuilderFacade::class);
@@ -93,7 +83,6 @@ class CombinedPriceListProcessorTest extends \PHPUnit\Framework\TestCase
             $this->logger,
             $this->triggerFactory,
             $this->registry,
-            $this->databaseExceptionHelper,
             $this->triggerHandler,
             $this->combinedPriceListsBuilderFacade
         );
@@ -190,16 +179,6 @@ class CombinedPriceListProcessorTest extends \PHPUnit\Framework\TestCase
 
         $this->triggerFactory->method('createFromArray')->willThrowException($exception);
 
-        $driverException = $this->createMock(AbstractDriverException::class);
-        $this->databaseExceptionHelper->expects($this->exactly($isDeadlockCheck))
-            ->method('getDriverException')
-            ->with($exception)
-            ->willReturn($driverException);
-        $this->databaseExceptionHelper->expects($this->exactly($isDeadlockCheck))
-            ->method('isDeadlock')
-            ->with($driverException)
-            ->willReturn($isDeadlock);
-
         $this->assertEquals($result, $this->processor->process($message, $session));
     }
 
@@ -216,7 +195,7 @@ class CombinedPriceListProcessorTest extends \PHPUnit\Framework\TestCase
                 'result' => MessageProcessorInterface::REJECT
             ],
             'process deadlock' => [
-                'exception' => new \Exception(),
+                'exception' => $this->createMock(DeadlockException::class),
                 'isDeadlockCheck' => 1,
                 'isDeadlock' => true,
                 'result' => MessageProcessorInterface::REQUEUE

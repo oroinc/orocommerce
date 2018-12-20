@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\CheckoutBundle\Mapper;
 
-use Doctrine\Common\Util\ClassUtils;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\EntityBundle\Helper\FieldHelper;
 use Oro\Bundle\OrderBundle\Entity\Order;
@@ -10,6 +9,7 @@ use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermAssociationProvider;
 use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
+use Symfony\Component\Security\Acl\Util\ClassUtils;
 
 /**
  * Maps data from Checkout to Order
@@ -56,7 +56,7 @@ class OrderMapper implements MapperInterface
                 [
                     'sourceEntityId' => $sourceEntity->getSourceDocument()->getId(),
                     'sourceEntityIdentifier' => $sourceEntity->getSourceDocumentIdentifier(),
-                    'sourceEntityClass' => ClassUtils::getClass($sourceEntity->getSourceDocument()),
+                    'sourceEntityClass' => ClassUtils::getRealClass($sourceEntity->getSourceDocument()),
                 ]
             );
         }

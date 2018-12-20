@@ -183,7 +183,10 @@
     {% set shippingInformation %}
         <div class="possible-shipping-methods-info">
             {{ UI.renderControlGroup('oro.order.form.shipping_options.label'|trans,
-                '<div class="possible_shipping_methods_container">' ~ SM.renderPossibleShippingMethods(form, entity) ~ '</div>'
+                '<div class="possible_shipping_methods_container">' ~ SM.renderPossibleShippingMethods(form, entity) ~ '</div>',
+                {
+                    rootClass: null
+                }
             ) }}
 
             {% set options = {

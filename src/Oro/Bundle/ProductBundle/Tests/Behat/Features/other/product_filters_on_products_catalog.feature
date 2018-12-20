@@ -7,8 +7,8 @@ Feature: Product Filters On Products Catalog
     Given I login as AmandaRCole@example.org buyer
     When I click "NewCategory"
     And filter Price as equals "12,34"
-    Then I should see grid with filter hints:
+    Then should see filter hints in frontend grid:
       | Price: equals 1,234.00 / ea |
     And filter Price as equals "12345.6"
-    Then I should see grid with filter hints:
+    Then should see filter hints in frontend grid:
       | Price: equals 12,345.60 / ea |

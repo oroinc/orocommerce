@@ -19,6 +19,9 @@ use Oro\Component\Routing\RouteData;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\WebCatalog\ContentVariantTypeInterface;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class SlugGeneratorTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
@@ -381,6 +384,41 @@ class SlugGeneratorTest extends \PHPUnit\Framework\TestCase
             $this->assertContains($slug, $expectedSlugs, '', false, false);
             $this->assertNull($slug->getLocalization());
         }
+    }
+
+    public function testGenerateForVariantWithoutScopes()
+    {
+        $slugPrototype = new LocalizedFallbackValue();
+        $slugPrototype->setString('test-url');
+
+        $routeData = new RouteData('route_id', []);
+        $scope = new Scope();
+
+        $contentVariantType = $this->createMock(ContentVariantTypeInterface::class);
+        $contentVariantType->expects($this->once())
+            ->method('getRouteData')
+            ->willReturn($routeData);
+
+        $slug = new Slug();
+        $slug->setUrl('/test-url');
+
+        $contentVariant = new ContentVariant();
+        $contentVariant->setType('test_type');
+        $contentVariant->addSlug($slug);
+
+        $contentNode = new ContentNode();
+        $contentNode->setParentNode(new ContentNode());
+        $contentNode->addContentVariant($contentVariant);
+        $contentNode->addSlugPrototype($slugPrototype);
+        $contentNode->addScope($scope);
+
+        $this->contentVariantTypeRegistry->expects($this->once())
+            ->method('getContentVariantType')
+            ->willReturn($contentVariantType);
+
+        $this->slugGenerator->generate($contentNode);
+
+        $this->assertCount(0, $contentVariant->getSlugs());
     }
 
     /**

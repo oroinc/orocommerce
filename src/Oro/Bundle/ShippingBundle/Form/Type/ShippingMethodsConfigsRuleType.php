@@ -11,6 +11,9 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraint;
 
+/**
+ * Shipping methods configs form
+ */
 class ShippingMethodsConfigsRuleType extends AbstractType
 {
     const BLOCK_PREFIX = 'oro_shipping_methods_configs_rule';
@@ -34,6 +37,7 @@ class ShippingMethodsConfigsRuleType extends AbstractType
             ])
             ->add('methodConfigs', ShippingMethodConfigCollectionType::class)
             ->add('method', ShippingMethodSelectType::class, [
+                'label' => 'oro.shipping.shippingmethodsconfigsrule.method.label',
                 'mapped' => false,
             ]);
     }

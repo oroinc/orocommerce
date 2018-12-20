@@ -33,7 +33,7 @@
                 </tbody>
             </table>
         </div>
-        <a class="btn add-list-item" data-container=".oro-item-collection tbody" href="javascript: void(0);"><i class="fa-plus"></i>{{ 'oro.sale.quote.lineitem.add'|trans }}</a>
+        <a class="btn add-list-item" data-container=".oro-item-collection tbody" href="javascript: void(0);">{{ 'oro.sale.quote.lineitem.add'|trans }}</a>
     </div>
 {% endblock %}
 
@@ -201,7 +201,7 @@
                 </tbody>
             </table>
         </div>
-        <a class="btn add-list-item quote-lineitem-offers-item-add" data-container=".oro-item-collection tbody" href="javascript: void(0);"><i class="fa-plus"></i>{{ 'oro.sale.quote.lineitem.offers.add'|trans }}</a>
+        <a class="btn add-list-item quote-lineitem-offers-item-add" data-container=".oro-item-collection tbody" href="javascript: void(0);">{{ 'oro.sale.quote.lineitem.offers.add'|trans }}</a>
     </div>
 {% endblock %}
 
@@ -275,13 +275,24 @@
 {% endblock %}
 
 {% block oro_quote_address_type_widget %}
-    {% if form.parent is not empty %}
-        <div {{ block('widget_container_attributes') }}>
-            {{ form_row(form.customerAddress) }}
-            {{ block('oro_address_rows') }}
-        </div>
-    {% else %}
+    {% if form.parent is not empty %}<div {{ block('widget_container_attributes') }}>{% endif %}
         {{ form_row(form.customerAddress) }}
-        {{ block('oro_address_rows') }}
-    {% endif %}
+        {{ form_row(form.id) }}
+        {{ form_row(form.label, {label: 'oro.sale.quoteaddress.label.label'}) }}
+        {{ form_row(form.namePrefix, {label: 'oro.sale.quoteaddress.name_prefix.label'}) }}
+        {{ form_row(form.firstName, {label: 'oro.sale.quoteaddress.first_name.label'}) }}
+        {{ form_row(form.middleName, {label: 'oro.sale.quoteaddress.middle_name.label'}) }}
+        {{ form_row(form.lastName, {label: 'oro.sale.quoteaddress.last_name.label'}) }}
+        {{ form_row(form.nameSuffix, {label: 'oro.sale.quoteaddress.name_suffix.label'}) }}
+        {{ form_row(form.organization, {label: 'oro.sale.quoteaddress.organization.label'}) }}
+        {{ form_row(form.country, {label: 'oro.sale.quoteaddress.country.label'}) }}
+        {{ form_row(form.street, {label: 'oro.sale.quoteaddress.street.label'}) }}
+        {{ form_row(form.street2, {label: 'oro.sale.quoteaddress.street2.label'}) }}
+        {{ form_row(form.city, {label: 'oro.sale.quoteaddress.city.label'}) }}
+        {{ form_row(form.region_text, {label: 'oro.sale.quoteaddress.region_text.label'}) }}
+        {{ form_row(form.region, {label: 'oro.sale.quoteaddress.region.label'}) }}
+        {{ form_row(form.postalCode, {label: 'oro.sale.quoteaddress.postal_code.label'}) }}
+        {{ form_row(form.phone, {label: 'oro.sale.quoteaddress.phone.label'}) }}
+        {{ form_rest(form) }}
+    {% if form.parent is not empty %}</div>{% endif %}
 {% endblock %}

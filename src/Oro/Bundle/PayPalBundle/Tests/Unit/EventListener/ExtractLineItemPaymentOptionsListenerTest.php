@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\PayPalBundle\Tests\Unit\EventListener;
 
-use Oro\Bundle\CurrencyBundle\Formatter\NumberFormatter;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
+use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PaymentBundle\Event\ExtractLineItemPaymentOptionsEvent;
 use Oro\Bundle\PaymentBundle\Model\LineItemOptionModel;

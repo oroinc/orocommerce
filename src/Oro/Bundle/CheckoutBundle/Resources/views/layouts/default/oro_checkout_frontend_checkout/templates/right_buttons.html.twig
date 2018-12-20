@@ -3,7 +3,8 @@
         {% import 'OroCheckoutBundle:layouts/default:layout.html.twig' as _layout %}
         <div class="order-checkout-widget text-right">
             <button type="submit"
-                    class="btn {% if transitionData.isAllowed %}btn--info{% endif %} btn--size-m checkout__submit-btn"
+                    class="btn btn--info{% if not transitionData.isAllowed %} btn--disabled{% endif %} btn--size-m checkout__submit-btn"
+                    {% if not transitionData.isAllowed %}disabled="disabled"{% endif %}
                     {{ _layout.transitionAttributes(transitionData, checkout) }}
                     {{ _layout.conditionMessages(transitionData) }}
             >

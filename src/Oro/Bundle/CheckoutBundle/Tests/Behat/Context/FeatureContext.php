@@ -331,11 +331,14 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      */
     public function iShouldSeeButtonEnabled($field)
     {
-        $this->spin(function () use ($field) {
-            $button = $this->elementFactory->createElement($field);
+        self::assertTrue(
+            $this->spin(function () use ($field) {
+                $button = $this->elementFactory->createElement($field);
 
-            return !$button->hasAttribute('disabled');
-        }, 5);
+                return !$button->hasAttribute('disabled');
+            }, 5),
+            'Button is disabled'
+        );
     }
 
     /**
@@ -343,11 +346,14 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      */
     public function iShouldSeeButtonDisabled($field)
     {
-        $this->spin(function () use ($field) {
-            $button = $this->elementFactory->createElement($field);
+        self::assertTrue(
+            $this->spin(function () use ($field) {
+                $button = $this->elementFactory->createElement($field);
 
-            return $button->hasAttribute('disabled');
-        }, 5);
+                return $button->hasAttribute('disabled');
+            }, 5),
+            'Button is enabled'
+        );
     }
 
     /**

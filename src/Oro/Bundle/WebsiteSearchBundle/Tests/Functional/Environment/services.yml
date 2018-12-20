@@ -1,0 +1,7 @@
+services:
+    oro_website_search.tests.disable_listeners_for_data_fixtures:
+        class: Oro\Bundle\TestFrameworkBundle\Test\EventListener\DisableListenersForDataFixturesEventSubscriber
+        arguments:
+            - 'oro_website.indexation_request_listener'
+        tags:
+            - { name: kernel.event_subscriber }

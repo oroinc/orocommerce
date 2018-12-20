@@ -62,6 +62,9 @@ oro_behat_extension:
                 type: xpath
                 locator: '//span[@class="main-menu__text"][text()="Clearance"]'
 
+        Inherit Parent:
+            selector: '[name="oro_web_catalog_content_node[parentScopeUsed]"]'
+
     suites:
         OroWebCatalogBundle:
             contexts:

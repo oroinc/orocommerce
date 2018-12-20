@@ -51,6 +51,9 @@ oro.cms:
             label: Enabled
             yes.label: Yes
             no.label: No
+        filters:
+            enabled: Enabled
+            disabled: Disabled
         no_restrictions.label: No restrictions
         form:
             add_variant.label: Add Content

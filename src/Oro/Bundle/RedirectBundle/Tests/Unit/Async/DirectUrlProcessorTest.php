@@ -5,8 +5,8 @@ namespace Oro\Bundle\RedirectBundle\Tests\Unit\Async;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\AbstractDriverException;
+use Doctrine\DBAL\Exception\DeadlockException;
 use Doctrine\ORM\EntityManagerInterface;
-use Oro\Bundle\EntityBundle\ORM\DatabaseExceptionHelper;
 use Oro\Bundle\RedirectBundle\Async\DirectUrlProcessor;
 use Oro\Bundle\RedirectBundle\Async\Topics;
 use Oro\Bundle\RedirectBundle\Cache\UrlCacheInterface;
@@ -42,11 +42,6 @@ class DirectUrlProcessorTest extends \PHPUnit\Framework\TestCase
     private $messageFactory;
 
     /**
-     * @var DatabaseExceptionHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $databaseExceptionHelper;
-
-    /**
      * @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $logger;
@@ -66,7 +61,6 @@ class DirectUrlProcessorTest extends \PHPUnit\Framework\TestCase
         $this->registry = $this->createMock(ManagerRegistry::class);
         $this->generator = $this->createMock(SlugEntityGenerator::class);
         $this->messageFactory = $this->createMock(MessageFactoryInterface::class);
-        $this->databaseExceptionHelper = $this->createMock(DatabaseExceptionHelper::class);
         $this->logger = $this->createMock(LoggerInterface::class);
         $this->urlCache = $this->createMock(UrlCacheInterface::class);
 
@@ -74,7 +68,6 @@ class DirectUrlProcessorTest extends \PHPUnit\Framework\TestCase
             $this->registry,
             $this->generator,
             $this->messageFactory,
-            $this->databaseExceptionHelper,
             $this->logger,
             $this->urlCache
         );
@@ -204,16 +197,13 @@ class DirectUrlProcessorTest extends \PHPUnit\Framework\TestCase
         /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session */
         $session = $this->createMock(SessionInterface::class);
 
-        /** @var AbstractDriverException|\PHPUnit\Framework\MockObject\MockObject $exception */
-        $exception = $this->getMockBuilder(AbstractDriverException::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        /** @var DeadlockException|\PHPUnit\Framework\MockObject\MockObject $exception */
+        $exception = $this->createMock(DeadlockException::class);
 
         $message = $this->prepareMessage();
         $this->generator->expects($this->once())
             ->method('generate')
             ->willThrowException($exception);
-
         $this->assertTransactionRollback();
 
         $this->logger->expects($this->once())
@@ -222,55 +212,8 @@ class DirectUrlProcessorTest extends \PHPUnit\Framework\TestCase
                 'Unexpected exception occurred during Direct URL generation',
                 ['exception' => $exception]
             );
-
-        $driverException = $this->createMock(AbstractDriverException::class);
-        $this->databaseExceptionHelper->expects($this->once())
-            ->method('getDriverException')
-            ->with($exception)
-            ->willReturn($driverException);
-        $this->databaseExceptionHelper->expects($this->once())
-            ->method('isDeadlock')
-            ->with($driverException)
-            ->willReturn(true);
 
         $this->assertEquals(DirectUrlProcessor::REQUEUE, $this->processor->process($message, $session));
-    }
-
-    public function testProcessExceptionDriverExceptionInTransaction()
-    {
-        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session */
-        $session = $this->createMock(SessionInterface::class);
-
-        /** @var AbstractDriverException|\PHPUnit\Framework\MockObject\MockObject $exception */
-        $exception = $this->getMockBuilder(AbstractDriverException::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $message = $this->prepareMessage();
-        $this->generator->expects($this->once())
-            ->method('generate')
-            ->willThrowException($exception);
-
-        $this->assertTransactionRollback();
-
-        $this->logger->expects($this->once())
-            ->method('error')
-            ->with(
-                'Unexpected exception occurred during Direct URL generation',
-                ['exception' => $exception]
-            );
-
-        $driverException = $this->createMock(AbstractDriverException::class);
-        $this->databaseExceptionHelper->expects($this->once())
-            ->method('getDriverException')
-            ->with($exception)
-            ->willReturn($driverException);
-        $this->databaseExceptionHelper->expects($this->once())
-            ->method('isDeadlock')
-            ->with($driverException)
-            ->willReturn(false);
-
-        $this->assertEquals(DirectUrlProcessor::REJECT, $this->processor->process($message, $session));
     }
 
     /**
@@ -311,7 +254,6 @@ class DirectUrlProcessorTest extends \PHPUnit\Framework\TestCase
             $this->registry,
             $this->generator,
             $this->messageFactory,
-            $this->databaseExceptionHelper,
             $this->logger,
             $urlCache
         );
