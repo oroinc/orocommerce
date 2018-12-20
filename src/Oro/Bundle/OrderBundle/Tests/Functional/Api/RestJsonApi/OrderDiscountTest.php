@@ -71,6 +71,7 @@ class OrderDiscountTest extends RestJsonApiTestCase
         $discountId = (int)$this->getResourceId($response);
         $responseContent = $data;
         $responseContent['data']['id'] = (string)$discountId;
+        $responseContent['data']['attributes']['amount'] = '180';
         $this->assertResponseContains($responseContent, $response);
 
         /** @var OrderDiscount $discount */
@@ -80,7 +81,7 @@ class OrderDiscountTest extends RestJsonApiTestCase
 
         self::assertEquals('New Discount', $discount->getDescription());
         self::assertSame(0.201, $discount->getPercent());
-        self::assertSame(180.0, $discount->getAmount());
+        self::assertSame('180.0000', $discount->getAmount());
         self::assertEquals(OrderDiscount::TYPE_AMOUNT, $discount->getType());
         self::assertSame(
             $this->roundPrice($discount->getPercent() * $order->getSubtotal() + $discount->getAmount()),

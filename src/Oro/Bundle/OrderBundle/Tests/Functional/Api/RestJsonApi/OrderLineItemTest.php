@@ -60,7 +60,7 @@ class OrderLineItemTest extends RestJsonApiTestCase
         self::assertEquals($productSku, $lineItem->getProductSku());
         self::assertSame(6.0, $lineItem->getQuantity());
         self::assertEquals($productUnitId, $lineItem->getProductUnit()->getCode());
-        self::assertSame(200.0, $lineItem->getValue());
+        self::assertSame('200.0000', $lineItem->getValue());
         self::assertEquals('USD', $lineItem->getCurrency());
         self::assertEquals($productUnitId, $lineItem->getProductUnitCode());
         self::assertEquals($orderId, $lineItem->getOrder()->getId());
@@ -107,7 +107,7 @@ class OrderLineItemTest extends RestJsonApiTestCase
         /** @var OrderLineItem $lineItem */
         $lineItem = $this->getEntityManager()->find(OrderLineItem::class, $lineItemId);
         self::assertSame(50.0, $lineItem->getQuantity());
-        self::assertSame(100.0, $lineItem->getValue());
+        self::assertSame('100.0000', $lineItem->getValue());
         self::assertEquals('EUR', $lineItem->getCurrency());
         self::assertEquals(Price::create(100, 'EUR'), $lineItem->getPrice());
     }
