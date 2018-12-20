@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ConsentBundle\Tests\Unit\Entity\Stub;
 
-use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 
 /**
@@ -10,22 +10,22 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
  */
 class CustomerUserStub extends CustomerUser
 {
-    /** @var ArrayCollection */
+    /** @var Collection */
     private $acceptedConsents;
 
     /**
-     * @return ArrayCollection
+     * @return Collection|null
      */
-    public function getAcceptedConsents(): ArrayCollection
+    public function getAcceptedConsents()
     {
         return $this->acceptedConsents;
     }
 
     /**
-     * @param ArrayCollection $acceptedConsents
+     * @param Collection $acceptedConsents
      * @return CustomerUserStub
      */
-    public function setAcceptedConsents(ArrayCollection $acceptedConsents): self
+    public function setAcceptedConsents(Collection $acceptedConsents): self
     {
         $this->acceptedConsents = $acceptedConsents;
 

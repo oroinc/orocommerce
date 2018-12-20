@@ -75,6 +75,8 @@ services:
 
     oro_consent.form.extension.frontend_customer_user_profile:
         class: 'Oro\Bundle\ConsentBundle\Form\Extension\FrontendCustomerUserProfileExtension'
+        arguments:
+            - '@event_dispatcher'
         tags:
             - { name: oro_featuretogle.feature, feature: consents }
             - { name: form.type_extension, extended_type: Oro\Bundle\CustomerBundle\Form\Type\FrontendCustomerUserProfileType }
