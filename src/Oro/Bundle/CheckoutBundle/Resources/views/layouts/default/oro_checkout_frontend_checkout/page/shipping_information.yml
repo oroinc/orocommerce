@@ -6,7 +6,7 @@ layout:
         - '@setOption':
             id: checkout_information_title
             optionName: stepOrder
-            optionValue: 2
+            optionValue: '=data["oro_checkout_steps"].getStepOrder(3)'
 
     conditions: 'context["workflowStepName"]=="enter_shipping_address"'
 

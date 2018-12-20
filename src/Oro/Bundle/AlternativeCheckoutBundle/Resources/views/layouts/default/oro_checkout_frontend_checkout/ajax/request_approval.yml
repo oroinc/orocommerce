@@ -6,7 +6,7 @@ layout:
         - '@setOption':
             id: checkout_information_title
             optionName: stepOrder
-            optionValue: 6
+            optionValue: '=data["oro_checkout_steps"].getStepOrder(7)'
         - '@setOption':
             id: checkout_form_fields
             optionName: transitionData

@@ -393,3 +393,32 @@
         </div>
     {% endif %}
 {% endblock %}
+
+{% block _checkout_consent_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        'class': 'grid__row'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        <span class="label label--full text-uppercase">
+            {{- 'oro.consent.frontend.checkout.form.sections.data_protection.label'|trans -}}
+        </span>
+        {{ parent_block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _checkout_consent_message_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        'class': 'notification notification--success'
+    }) %}
+
+    {% if consents is empty %}
+        <div {{ block('block_attributes') }}>
+            <span class="notification__item">
+                <i class="fa-check"></i>
+                {{ 'oro.consent.frontend.checkout.form.messages.all_agreements_accepted'|trans }}
+                {{ parent_block_widget(block) }}
+            </span>
+        </div>
+    {% endif %}
+{% endblock %}

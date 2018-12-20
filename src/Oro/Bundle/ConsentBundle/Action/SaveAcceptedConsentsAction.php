@@ -121,8 +121,11 @@ class SaveAcceptedConsentsAction extends AbstractAction
 
         $initializedConsent = $emConsent->find(Consent::class, $consentAcceptance->getConsent()->getId());
         $consentAcceptance->setConsent($initializedConsent);
-        $initializedLandingPage = $emConsent->find(Page::class, $consentAcceptance->getLandingPage()->getId());
-        $consentAcceptance->setLandingPage($initializedLandingPage);
+
+        if ($consentAcceptance->getLandingPage()) {
+            $initializedLandingPage = $emConsent->find(Page::class, $consentAcceptance->getLandingPage()->getId());
+            $consentAcceptance->setLandingPage($initializedLandingPage);
+        }
 
         return $consentAcceptance;
     }
@@ -152,10 +155,11 @@ class SaveAcceptedConsentsAction extends AbstractAction
      */
     private function getAcceptedConsentKey(ConsentAcceptance $consentAcceptance)
     {
-        return sprintf(
-            '%s_%s',
-            $consentAcceptance->getLandingPage()->getId(),
-            $consentAcceptance->getConsent()->getId()
-        );
+        $landingPageId = null;
+        if ($consentAcceptance->getLandingPage()) {
+            $landingPageId = $consentAcceptance->getLandingPage()->getId();
+        }
+
+        return sprintf('%s_%s', $consentAcceptance->getConsent()->getId(), $landingPageId);
     }
 }

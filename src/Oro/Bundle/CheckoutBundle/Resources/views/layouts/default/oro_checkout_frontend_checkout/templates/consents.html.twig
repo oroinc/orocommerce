@@ -1,13 +1,18 @@
+{% block _checkout_form_fields_widget %}
+    {% if form.customerConsents is defined %}{{ form_widget(form.customerConsents) }}{% endif %}
+    {% if form.consents_available is defined %}{{ form_row(form.consents_available) }}{% endif %}
+    {% if form.state_token is defined %}{{ form_row(form.state_token) }}{% endif %}
+{% endblock %}
+
 {% block _checkout_consent_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
         'class': 'grid__row'
     }) %}
 
     <div {{ block('block_attributes') }}>
-        <span class="label label--full text-uppercase">
-            {{- 'oro.consent.frontend.checkout.form.sections.data_protection.label'|trans -}}
-        </span>
-        {{ parent_block_widget(block) }}
+        <div class="grid__column">
+            {{ parent_block_widget(block) }}
+        </div>
     </div>
 {% endblock %}
 

@@ -529,6 +529,45 @@ Feature: Consent management via Management Console UI
     And I should not see "Presenting Personal Data"
     And I should not see "Collecting and storing personal data"
 
+  Scenario: Add one more mandatory consent during checkout process
+    Given I proceed as the Admin
+    And I go to System/ Consent Management
+    And click "Create Consent"
+    And fill "Consent Form" with:
+      | Name        | Test Consent 3    |
+      | Type        | Mandatory         |
+    When save and close form
+    Then I should see "Consent has been created" flash message
+    When go to System/ Websites
+    And click "Configuration" on row "Default" in grid
+    And follow "Commerce/Customer/Consents" on configuration sidebar
+    And click "Add Consent"
+    And I choose Consent "Test Consent 3" in 5 row
+    When click "Save settings"
+    Then I should see "Configuration saved" flash message
+
+  Scenario: Check that redirect was executed and flash message is appeared on checkout
+    Given I proceed as the User
+    And I click "Continue"
+    And fill form with:
+      | First Name      | Tester1         |
+      | Last Name       | Testerson       |
+      | Email           | tester@test.com |
+      | Street          | Fifth avenue    |
+      | City            | Berlin          |
+      | Country         | Germany         |
+      | State           | Berlin          |
+      | Zip/Postal Code | 10115           |
+    And I click "Continue"
+    Then I should see "You have been redirected to the Agreements page as a new mandatory consent has been added and requires your attention. Please, review and accept it to proceed." flash message and I close it
+    Then I should see "Agreements" in the "Checkout Step Title" element
+    And I should see 1 elements "Required Consent"
+    And I should see "Test Consent 3"
+    And fill form with:
+      | Test Consent 3 | true |
+    Then I should not see a "Consent Popup" element
+    And the "Test Consent 3" checkbox should be checked
+
   Scenario: Process checkout as registered customer user
     Given I click "Continue"
     And fill form with:
@@ -600,7 +639,7 @@ Feature: Consent management via Management Console UI
     And click "Create Order"
     And I click "Continue as a Guest"
     And I should see "Agreements" in the "Checkout Step Title" element
-    And I should see 2 elements "Required Consent"
+    And I should see 3 elements "Required Consent"
     And the "Presenting Personal Data" checkbox should not be checked
     And the "Collecting and storing personal data" checkbox should not be checked
     And I should not see "Email Newsletters"
@@ -625,6 +664,9 @@ Feature: Consent management via Management Console UI
     And click "Agree"
     Then I should not see a "Consent Popup" element
     And the "Presenting Personal Data" checkbox should be checked
+    And I should see "Test Consent 3"
+    And fill form with:
+      | Test Consent 3 | true |
     When click "Continue"
     Then I should see "Billing Information" in the "Checkout Step Title" element
     When on the "Billing Information" checkout step I go back to "Edit Customer Consents"

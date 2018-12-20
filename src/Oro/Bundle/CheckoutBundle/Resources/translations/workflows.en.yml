@@ -91,6 +91,8 @@ oro:
                     label: 'Late Registration Enabled'
                 customer_consents:
                     label: 'Customer consents'
+                consents_available:
+                    label: 'Is consents available'
             transition:
                 __start__:
                     label: 'Start Checkout (System)'
@@ -289,6 +291,8 @@ oro:
                     label: 'Late Registration Enabled'
                 customer_consents:
                     label: 'Customer consents'
+                consents_available:
+                    label: 'Is consents available'
             transition:
                 __start__:
                     label: 'Start Checkout (System)'

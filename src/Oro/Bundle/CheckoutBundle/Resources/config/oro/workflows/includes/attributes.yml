@@ -69,3 +69,5 @@ workflows:
                 type: object
                 options:
                     class: Doctrine\Common\Collections\ArrayCollection
+            consents_available:
+                type: boolean

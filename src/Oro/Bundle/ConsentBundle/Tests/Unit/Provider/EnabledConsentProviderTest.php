@@ -4,6 +4,7 @@ namespace Oro\Bundle\ConsentBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ConsentBundle\Entity\Consent;
+use Oro\Bundle\ConsentBundle\Entity\ConsentAcceptance;
 use Oro\Bundle\ConsentBundle\Filter\ConsentFilterInterface;
 use Oro\Bundle\ConsentBundle\Filter\RequiredConsentFilter;
 use Oro\Bundle\ConsentBundle\Provider\ConsentContextProvider;
@@ -119,7 +120,45 @@ class EnabledConsentProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testGetUnacceptedRequiredConsents()
     {
-        // TODO
+        $website = $this->getEntity(Website::class, ['id' => 1]);
+        $consentConfigValue = [[ConsentConfigConverter::CONSENT_KEY => 2], [ConsentConfigConverter::CONSENT_KEY => 3]];
+        $consentIdToMandatoryMapping = [2 => true, 3 => true];
+        $consentAcceptance = $this->getEntity(
+            ConsentAcceptance::class,
+            ['id' => 2, 'consent' => $this->getEntity(Consent::class, ['id' => 2])]
+        );
+
+        $this->contextProvider
+            ->expects($this->once())
+            ->method('getWebsite')
+            ->willReturn($website);
+
+        $this->configManager->expects($this->any())
+            ->method('get')
+            ->with('oro_consent.enabled_consents', [], false, $website)
+            ->willReturn($consentConfigValue);
+
+        $this->converter
+            ->expects($this->any())
+            ->method('convertFromSaved')
+            ->willReturnCallback(
+                function (array $consentConfigValue) use ($consentIdToMandatoryMapping) {
+                    return array_map(function ($configItem) use ($consentIdToMandatoryMapping) {
+                        $consentId = $configItem[ConsentConfigConverter::CONSENT_KEY];
+                        $consent = $this->getEntity(Consent::class, [
+                            'id' => $consentId,
+                            'mandatory' => $consentIdToMandatoryMapping[$consentId]
+                        ]);
+
+                        return new ConsentConfig($consent);
+                    }, $consentConfigValue);
+                }
+            );
+
+        $this->provider->addFilter(new RequiredConsentFilter());
+
+        $consents = $this->provider->getUnacceptedRequiredConsents([$consentAcceptance]);
+        $this->assertEquals([1 => $this->getEntity(Consent::class, ['id' => 3])], $consents);
     }
 
     /**

@@ -195,59 +195,6 @@ class FrontendConsentProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertFalse($this->frontendConsentProvider->isCustomerUserCurrentlyLoggedIn($customerUser));
     }
 
-    public function testGetExcludedSteps()
-    {
-        $this->featureChecker->expects($this->once())
-            ->method('isFeatureEnabled')
-            ->with('consents', null)
-            ->willReturn(true);
-
-        $this->assertEquals([], $this->frontendConsentProvider->getExcludedSteps());
-    }
-
-    public function testGetExcludedStepsWithPredefinedSteps()
-    {
-        $this->featureChecker->expects($this->once())
-            ->method('isFeatureEnabled')
-            ->with('consents', null)
-            ->willReturn(true);
-
-        $this->assertEquals(['another_step'], $this->frontendConsentProvider->getExcludedSteps(['another_step']));
-    }
-
-    public function testGetExcludedStepsFeatureDisabled()
-    {
-        $this->featureChecker->expects($this->once())
-            ->method('isFeatureEnabled')
-            ->with('consents', null)
-            ->willReturn(false);
-
-        $this->assertEquals(
-            ['another_step', 'customer_consents'],
-            $this->frontendConsentProvider->getExcludedSteps(['another_step'])
-        );
-    }
-
-    public function testGetStepOrder()
-    {
-        $this->featureChecker->expects($this->once())
-            ->method('isFeatureEnabled')
-            ->with('consents', null)
-            ->willReturn(true);
-
-        $this->assertEquals(2, $this->frontendConsentProvider->getStepOrder(2));
-    }
-
-    public function testGetStepOrderFeatureDisabled()
-    {
-        $this->featureChecker->expects($this->once())
-            ->method('isFeatureEnabled')
-            ->with('consents', null)
-            ->willReturn(false);
-
-        $this->assertEquals(1, $this->frontendConsentProvider->getStepOrder(2));
-    }
-
     /**
      * @param string $consentDefaultName
      * @param int $consentId

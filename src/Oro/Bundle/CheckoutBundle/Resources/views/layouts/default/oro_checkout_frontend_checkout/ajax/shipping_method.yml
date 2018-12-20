@@ -6,7 +6,7 @@ layout:
         - '@setOption':
             id: checkout_information_title
             optionName: stepOrder
-            optionValue: 3
+            optionValue: '=data["oro_checkout_steps"].getStepOrder(4)'
 
         - '@add':
             id: shipping_methods

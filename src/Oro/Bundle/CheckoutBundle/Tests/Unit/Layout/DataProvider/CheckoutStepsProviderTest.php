@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Layout\DataProvider;
 
 use Oro\Bundle\CheckoutBundle\Layout\DataProvider\CheckoutStepsProvider;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -10,6 +11,9 @@ use Oro\Component\Testing\Unit\EntityTrait;
 class CheckoutStepsProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
+
+    /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject */
+    private $featureChecker;
 
     /**
      * @var CheckoutStepsProvider
@@ -22,13 +26,17 @@ class CheckoutStepsProviderTest extends \PHPUnit\Framework\TestCase
     protected $workflowManager;
 
 
+    /**
+     * {@inheritdoc}
+     */
     public function setUp()
     {
-        $this->workflowManager = $this->getMockBuilder('Oro\Bundle\WorkflowBundle\Model\WorkflowManager')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->workflowManager = $this->createMock(WorkflowManager::class);
+        $this->featureChecker = $this->createMock(FeatureChecker::class);
 
         $this->provider = new CheckoutStepsProvider($this->workflowManager);
+        $this->provider->setFeatureChecker($this->featureChecker);
+        $this->provider->addFeature('consents');
     }
 
     /**
@@ -81,6 +89,59 @@ class CheckoutStepsProviderTest extends \PHPUnit\Framework\TestCase
 
         $result = $this->provider->getSteps($workflowItem);
         $this->assertEquals($expected, $result);
+    }
+
+    public function testGetExcludedSteps()
+    {
+        $this->featureChecker->expects($this->once())
+            ->method('isFeatureEnabled')
+            ->with('consents', null)
+            ->willReturn(true);
+
+        $this->assertEquals([], $this->provider->getExcludedSteps());
+    }
+
+    public function testGetExcludedStepsWithPredefinedSteps()
+    {
+        $this->featureChecker->expects($this->once())
+            ->method('isFeatureEnabled')
+            ->with('consents', null)
+            ->willReturn(true);
+
+        $this->assertEquals(['another_step'], $this->provider->getExcludedSteps(['another_step']));
+    }
+
+    public function testGetExcludedStepsFeatureDisabled()
+    {
+        $this->featureChecker->expects($this->once())
+            ->method('isFeatureEnabled')
+            ->with('consents', null)
+            ->willReturn(false);
+
+        $this->assertEquals(
+            ['another_step', 'customer_consents'],
+            $this->provider->getExcludedSteps(['another_step'])
+        );
+    }
+
+    public function testGetStepOrder()
+    {
+        $this->featureChecker->expects($this->once())
+            ->method('isFeatureEnabled')
+            ->with('consents', null)
+            ->willReturn(true);
+
+        $this->assertEquals(2, $this->provider->getStepOrder(2));
+    }
+
+    public function testGetStepOrderFeatureDisabled()
+    {
+        $this->featureChecker->expects($this->once())
+            ->method('isFeatureEnabled')
+            ->with('consents', null)
+            ->willReturn(false);
+
+        $this->assertEquals(1, $this->provider->getStepOrder(2));
     }
 
     /**

@@ -10,7 +10,7 @@ layout:
         - '@setOption':
             id: checkout_information_title
             optionName: stepOrder
-            optionValue: 7
+            optionValue: '=data["oro_checkout_steps"].getStepOrder(8)'
 
         - '@add':
             id: payment_additional_data

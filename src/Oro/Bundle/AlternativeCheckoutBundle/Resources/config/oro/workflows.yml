@@ -98,6 +98,8 @@ workflows:
                 type: string
             customerConsents:
                 type: array
+            consents_available:
+                type: boolean
         steps:
             customer_consents:
                 order: 10
@@ -238,12 +240,18 @@ workflows:
                         - '@generate_checkout_state_snapshot':
                             entity: $checkout
                             attribute: $.result.initCheckoutState
+                        - '@assign_value': [$customerConsents, null]
+                        - '@assign_value': [$consents_available, false]
                     attribute_fields:
                         customerConsents:
                             form_type: Oro\Bundle\ConsentBundle\Form\Type\ConsentAcceptanceType
                             options:
                                 required: true
                                 property_path: customerConsents
+                        consents_available:
+                            form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
+                            options:
+                                data: true
                         state_token:
                             form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
                             options:
@@ -668,6 +676,16 @@ workflows:
                 preconditions:
                     '@not':
                         - '@is_consents_accepted': ~
+                preactions:
+                    - '@flash_message':
+                        conditions:
+                            '@and':
+                                - '@not':
+                                    - '@is_consents_accepted':
+                                        acceptedConsents: $customerConsents
+                                - '@equal': [$consents_available, true]
+                        message: oro.checkout.workflow.condition.required_consents_should_be_checked.message
+                        type: 'warning'
 
             back_to_billing_address_definition:
                 preconditions:

@@ -28,6 +28,13 @@ workflows:
                         - '@generate_checkout_state_snapshot':
                             entity: $checkout
                             attribute: $.result.initCheckoutState
+                        - '@tree':
+                            conditions:
+                                '@and':  #For logged customer user only
+                                    - '@not_empty': $checkout.customerUser
+                                    - '@equal': [$checkout.customerUser.isGuest, false]
+                            actions:
+                                - '@assign_value': [$customerConsents, null]
                     attribute_fields:
                         billing_address:
                             form_type: Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressSelectType
@@ -114,6 +121,13 @@ workflows:
                             conditions:
                                 '@not_empty': [$.result.validatePaymentTransaction]
                             parameters: [$payment_validate, false]
+                        - '@tree':
+                            conditions:
+                                '@and':  #For logged customer user only
+                                    - '@not_empty': $checkout.customerUser
+                                    - '@equal': [$checkout.customerUser.isGuest, false]
+                            actions:
+                                - '@assign_value': [$customerConsents, null]
                     attribute_fields:
                         billing_address:
                             form_type: Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressSelectType

@@ -1,6 +1,0 @@
-layout:
-    actions:
-        - '@setOption':
-            id: __checkout_sidebar
-            optionName: excludedSteps
-            optionValue: '=data["oro_frontend_consent_provider"].getExcludedSteps(["enter_credentials_step"])'

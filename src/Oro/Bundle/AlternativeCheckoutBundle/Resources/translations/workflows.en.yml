@@ -92,6 +92,8 @@ oro:
                     label: 'Email'
                 customer_consents:
                     label: 'Customer consents'
+                consents_available:
+                    label: 'Is consents available'
             transition:
                 __start__:
                     label: 'Create Order'
