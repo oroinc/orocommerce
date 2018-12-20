@@ -80,7 +80,6 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_product.strategy.process_after, method: onProcessAfter }
             - { name: doctrine.event_listener, event: onClear, method: onClear }
-            - { name: doctrine.event_listener, event: preFlush, method: preFlush }
 
     oro_catalog.event_listener.product_data_converter:
         class: 'Oro\Bundle\CatalogBundle\EventListener\ProductDataConverterEventListener'
@@ -257,6 +256,7 @@ services:
             - '@doctrine'
             - '@oro_catalog.website_search.repository.product'
             - '@oro_catalog.category_counts.cache'
+            - '@oro_datagrid.tools.parameters_helper'
         calls:
             - [addApplicableGrid, ['frontend-product-search-grid']]
         tags:

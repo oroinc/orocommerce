@@ -10,10 +10,10 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Violation\ConstraintViolationBuilder;
 use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
 
-class ProductQuantityToOrderLimitValidatorTest extends \PHPUnit_Framework_TestCase
+class ProductQuantityToOrderLimitValidatorTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var QuantityToOrderValidatorService|\PHPUnit_Framework_MockObject_MockObject
+     * @var QuantityToOrderValidatorService|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $validatorService;
 
@@ -23,7 +23,7 @@ class ProductQuantityToOrderLimitValidatorTest extends \PHPUnit_Framework_TestCa
     protected $validator;
 
     /**
-     * @var ExecutionContextInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ExecutionContextInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $context;
 

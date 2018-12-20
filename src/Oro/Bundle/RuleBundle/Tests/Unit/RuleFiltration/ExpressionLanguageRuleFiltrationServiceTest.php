@@ -10,7 +10,7 @@ use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
 use Oro\Component\ExpressionLanguage\ExpressionLanguage;
 use Psr\Log\LoggerInterface;
 
-class ExpressionLanguageRuleFiltrationServiceTest extends \PHPUnit_Framework_TestCase
+class ExpressionLanguageRuleFiltrationServiceTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @internal
@@ -23,7 +23,7 @@ class ExpressionLanguageRuleFiltrationServiceTest extends \PHPUnit_Framework_Tes
     const EXPRESSION_VALUE = 1;
 
     /**
-     * @var RuleFiltrationServiceInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var RuleFiltrationServiceInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $service;
 
@@ -33,7 +33,7 @@ class ExpressionLanguageRuleFiltrationServiceTest extends \PHPUnit_Framework_Tes
     private $serviceDecorator;
 
     /**
-     * @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $logger;
 
@@ -165,7 +165,7 @@ class ExpressionLanguageRuleFiltrationServiceTest extends \PHPUnit_Framework_Tes
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|RuleOwnerInterface
+     * @return \PHPUnit\Framework\MockObject\MockObject|RuleOwnerInterface
      */
     private function createExceptionOwner()
     {
@@ -179,7 +179,7 @@ class ExpressionLanguageRuleFiltrationServiceTest extends \PHPUnit_Framework_Tes
     /**
      * @param RuleInterface $rule
      *
-     * @return \PHPUnit_Framework_MockObject_MockObject|RuleOwnerInterface
+     * @return \PHPUnit\Framework\MockObject\MockObject|RuleOwnerInterface
      */
     private function createRuleOwner(RuleInterface $rule)
     {

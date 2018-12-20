@@ -21,7 +21,7 @@ class CouponAddTypeTest extends FormIntegrationTestCase
     use EntityTrait;
 
     /**
-     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     private $doctrineHelper;
 
@@ -73,11 +73,6 @@ class CouponAddTypeTest extends FormIntegrationTestCase
 
         $this->assertTrue($form->has('coupon'));
         $this->assertTrue($form->has('addedCoupons'));
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals(CouponAddType::NAME, $this->formType->getName());
     }
 
     public function testGetBlockPrefix()
@@ -133,7 +128,7 @@ class CouponAddTypeTest extends FormIntegrationTestCase
         $entityId = 777;
         $entity = $this->getEntity(Order::class, ['id' => $entityId]);
 
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock(FormInterface::class);
         $this->doctrineHelper->expects($this->once())
             ->method('getSingleEntityIdentifier')

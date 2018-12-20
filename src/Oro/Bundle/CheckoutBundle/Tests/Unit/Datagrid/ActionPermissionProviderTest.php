@@ -5,12 +5,12 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Datagrid;
 use Oro\Bundle\CheckoutBundle\Datagrid\ActionPermissionProvider;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecordInterface;
 
-class ActionPermissionProviderTest extends \PHPUnit_Framework_TestCase
+class ActionPermissionProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var \PHPUnit_Framework_MockObject_MockObject|ResultRecordInterface */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|ResultRecordInterface */
     protected $record;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|ActionPermissionProvider */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|ActionPermissionProvider */
     protected $provider;
 
     protected function setUp()

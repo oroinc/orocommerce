@@ -1,4 +1,4 @@
-// @theme: default
+/* @theme: default; */
 
 .shopping-list {
   margin: 10px 0 18px;
@@ -72,5 +72,6 @@
 
   &__text {
     display: inline-block;
+    max-width: 100%;
   }
 }

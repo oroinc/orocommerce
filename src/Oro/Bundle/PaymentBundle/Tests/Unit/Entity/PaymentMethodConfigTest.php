@@ -6,7 +6,7 @@ use Oro\Bundle\PaymentBundle\Entity\PaymentMethodConfig;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-class PaymentMethodConfigTest extends \PHPUnit_Framework_TestCase
+class PaymentMethodConfigTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 

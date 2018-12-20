@@ -1,7 +1,7 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'shopping_list_create.html.twig'
+            themes: 'OroShoppingListBundle:layouts:blank/imports/oro_shopping_list_create/shopping_list_create.html.twig'
         - '@setOption':
             id: widget_content
             optionName: savedId

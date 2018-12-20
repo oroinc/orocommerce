@@ -8,14 +8,14 @@ use Oro\Bundle\PayPalBundle\Method\Config\PayPalExpressCheckoutConfigInterface;
 use Oro\Bundle\PayPalBundle\Method\View\PayPalExpressCheckoutPaymentMethodView;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class PayPalExpressCheckoutPaymentMethodViewTest extends \PHPUnit_Framework_TestCase
+class PayPalExpressCheckoutPaymentMethodViewTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /** @var PaymentMethodViewInterface */
     protected $methodView;
 
-    /** @var PayPalExpressCheckoutConfigInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var PayPalExpressCheckoutConfigInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $paymentConfig;
 
     protected function setUp()
@@ -33,7 +33,7 @@ class PayPalExpressCheckoutPaymentMethodViewTest extends \PHPUnit_Framework_Test
 
     public function testGetOptions()
     {
-        /** @var PaymentContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
+        /** @var PaymentContextInterface|\PHPUnit\Framework\MockObject\MockObject $context */
         $context = $this->createMock(PaymentContextInterface::class);
         $this->assertEmpty($this->methodView->getOptions($context));
     }

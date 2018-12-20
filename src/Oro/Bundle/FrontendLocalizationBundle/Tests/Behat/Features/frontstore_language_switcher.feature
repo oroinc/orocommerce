@@ -56,7 +56,7 @@ Feature: FrontStore language switcher
 
   Scenario: Verify Switcher for anonymous front-end user
     Given I am on homepage
-    When I press "Localization Switcher"
+    When I click "Localization Switcher"
     Then I should see that localization switcher contains localizations:
       | Dutch    |
       | English  |
@@ -64,7 +64,7 @@ Feature: FrontStore language switcher
     And I should see that "English" localization is active
 
     When I select "Dutch" localization
-    And I press "Localization Switcher"
+    And I click "Localization Switcher"
     Then I should see that localization switcher contains localizations:
       | English  |
       | Dutch    |
@@ -72,7 +72,7 @@ Feature: FrontStore language switcher
     And I should see that "Dutch" localization is active
 
     When I select "Japanese" localization
-    And I press "Localization Switcher"
+    And I click "Localization Switcher"
     Then I should see that localization switcher contains localizations:
       | English  |
       | Dutch    |
@@ -81,7 +81,7 @@ Feature: FrontStore language switcher
 
   Scenario: Verify Switcher for logged in front-end user
     Given I signed in as AmandaRCole@example.org on the store frontend
-    When I press "Localization Switcher"
+    When I click "Localization Switcher"
     Then I should see that localization switcher contains localizations:
       | Dutch    |
       | English  |
@@ -89,7 +89,7 @@ Feature: FrontStore language switcher
     And I should see that "English" localization is active
 
     When I select "Dutch" localization
-    And I press "Localization Switcher"
+    And I click "Localization Switcher"
     Then I should see that localization switcher contains localizations:
       | English  |
       | Dutch    |
@@ -97,7 +97,7 @@ Feature: FrontStore language switcher
     And I should see that "Dutch" localization is active
 
     When I select "Japanese" localization
-    And I press "Localization Switcher"
+    And I click "Localization Switcher"
     Then I should see that localization switcher contains localizations:
       | English  |
       | Dutch    |

@@ -15,7 +15,7 @@ use Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Provider\AbstractSubto
 class TotalProviderTest extends AbstractSubtotalProviderTest
 {
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|SubtotalProviderRegistry
+     * @var \PHPUnit\Framework\MockObject\MockObject|SubtotalProviderRegistry
      */
     protected $subtotalProviderRegistry;
 
@@ -25,14 +25,14 @@ class TotalProviderTest extends AbstractSubtotalProviderTest
     protected $provider;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|TotalProcessorProvider
+     * @var \PHPUnit\Framework\MockObject\MockObject|TotalProcessorProvider
      */
     protected $processorProvider;
 
-    /** @var  \PHPUnit_Framework_MockObject_MockObject|RateConverterInterface */
+    /** @var  \PHPUnit\Framework\MockObject\MockObject|RateConverterInterface */
     protected $rateConverter;
 
-    /** @var  \PHPUnit_Framework_MockObject_MockObject|DefaultCurrencyProviderInterface */
+    /** @var  \PHPUnit\Framework\MockObject\MockObject|DefaultCurrencyProviderInterface */
     protected $currencyProvider;
 
     protected function setUp()
@@ -96,12 +96,14 @@ class TotalProviderTest extends AbstractSubtotalProviderTest
 
         $this->processorProvider
             ->expects($this->once())
-            ->method('getTotal')
+            ->method('getTotalForSubtotals')
+            ->with($order, $subtotals)
             ->willReturn($total);
 
         $this->processorProvider
             ->expects($this->once())
             ->method('getSubtotals')
+            ->with($order)
             ->willReturn($subtotals);
 
         $totals = $this->provider->getTotalWithSubtotalsWithBaseCurrencyValues($order);

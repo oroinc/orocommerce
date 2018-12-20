@@ -27,12 +27,6 @@ use Symfony\Component\Validator\Validation;
  */
 class DiscountOptionsTypeTest extends FormIntegrationTestCase
 {
-    public function testGetName()
-    {
-        $formType = new DiscountOptionsType();
-        $this->assertEquals(DiscountOptionsType::NAME, $formType->getName());
-    }
-
     public function testGetBlockPrefix()
     {
         $formType = new DiscountOptionsType();
@@ -173,7 +167,7 @@ class DiscountOptionsTypeTest extends FormIntegrationTestCase
 
     public function testConfigureOptions()
     {
-        /* @var $resolver OptionsResolver|\PHPUnit_Framework_MockObject_MockObject */
+        /* @var $resolver OptionsResolver|\PHPUnit\Framework\MockObject\MockObject */
         $resolver = $this->createMock(OptionsResolver::class);
         $resolver->expects($this->once())
             ->method('setDefaults')
@@ -185,8 +179,8 @@ class DiscountOptionsTypeTest extends FormIntegrationTestCase
                     $this->assertArrayHasKey('page_component_options', $options);
                     $this->assertEquals(
                         [
-                            'amount' => 'oro.discount_options.general.type.choices.amount',
-                            'percent' => 'oro.discount_options.general.type.choices.percent'
+                            'oro.discount_options.general.type.choices.amount' => 'amount',
+                            'oro.discount_options.general.type.choices.percent' => 'percent',
                         ],
                         $options['type_choices']
                     );
@@ -228,16 +222,16 @@ class DiscountOptionsTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
-        /** @var ConfigProvider|\PHPUnit_Framework_MockObject_MockObject $configProvider */
+        /** @var ConfigProvider|\PHPUnit\Framework\MockObject\MockObject $configProvider */
         $configProvider = $this->createMock(ConfigProvider::class);
 
-        /** @var Translator|\PHPUnit_Framework_MockObject_MockObject $translator */
+        /** @var Translator|\PHPUnit\Framework\MockObject\MockObject $translator */
         $translator = $this->createMock(Translator::class);
 
-        /** @var LocaleSettings|\PHPUnit_Framework_MockObject_MockObject $localeSettings */
+        /** @var LocaleSettings|\PHPUnit\Framework\MockObject\MockObject $localeSettings */
         $localeSettings = $this->createMock(LocaleSettings::class);
 
-        /** @var NumberFormatter|\PHPUnit_Framework_MockObject_MockObject $numberFormatter */
+        /** @var NumberFormatter|\PHPUnit\Framework\MockObject\MockObject $numberFormatter */
         $numberFormatter = $this->createMock(NumberFormatter::class);
 
         return [

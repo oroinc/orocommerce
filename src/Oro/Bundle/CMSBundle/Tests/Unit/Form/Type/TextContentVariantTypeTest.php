@@ -10,6 +10,7 @@ use Oro\Bundle\ScopeBundle\Form\Type\ScopeCollectionType;
 use Oro\Bundle\ScopeBundle\Tests\Unit\Form\Type\Stub\ScopeCollectionTypeStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Component\Asset\Context\ContextInterface;
 
 class TextContentVariantTypeTest extends FormIntegrationTestCase
 {
@@ -19,7 +20,7 @@ class TextContentVariantTypeTest extends FormIntegrationTestCase
     protected function getExtensions()
     {
         /**
-         * @var \Oro\Bundle\ConfigBundle\Config\ConfigManager|\PHPUnit_Framework_MockObject_MockObject $configManager
+         * @var \Oro\Bundle\ConfigBundle\Config\ConfigManager|\PHPUnit\Framework\MockObject\MockObject $configManager
          */
         $configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
             ->disableOriginalConstructor()
@@ -30,11 +31,13 @@ class TextContentVariantTypeTest extends FormIntegrationTestCase
             ->method('getAllowedElements')
             ->willReturn(['br', 'a']);
 
+        $context = $this->createMock(ContextInterface::class);
+
         return [
             new PreloadedExtension(
                 [
                     ScopeCollectionType::class => new ScopeCollectionTypeStub(),
-                    OroRichTextType::class => new OroRichTextType($configManager, $htmlTagProvider),
+                    OroRichTextType::class => new OroRichTextType($configManager, $htmlTagProvider, $context),
                 ],
                 []
             )

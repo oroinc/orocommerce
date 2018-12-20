@@ -1,17 +1,26 @@
 {% block oro_order_address_type_widget %}
-    {% if form.parent is not empty %}
-        <div {{ block('widget_container_attributes') }}>
-            {% if form.customerAddress is defined %}
-                {{ form_row(form.customerAddress) }}
-            {% endif %}
-            {{ block('oro_address_rows') }}
-        </div>
-    {% else %}
+    {% if form.parent is not empty %}<div {{ block('widget_container_attributes') }}>{% endif %}
         {% if form.customerAddress is defined %}
             {{ form_row(form.customerAddress) }}
         {% endif %}
-        {{ block('oro_address_rows') }}
-    {% endif %}
+        {{ form_row(form.id) }}
+        {{ form_row(form.label, {label: 'oro.order.orderaddress.label.label'}) }}
+        {{ form_row(form.namePrefix, {label: 'oro.order.orderaddress.name_prefix.label'}) }}
+        {{ form_row(form.firstName, {label: 'oro.order.orderaddress.first_name.label'}) }}
+        {{ form_row(form.middleName, {label: 'oro.order.orderaddress.middle_name.label'}) }}
+        {{ form_row(form.lastName, {label: 'oro.order.orderaddress.last_name.label'}) }}
+        {{ form_row(form.nameSuffix, {label: 'oro.order.orderaddress.name_suffix.label'}) }}
+        {{ form_row(form.organization, {label: 'oro.order.orderaddress.organization.label'}) }}
+        {{ form_row(form.country, {label: 'oro.order.orderaddress.country.label'}) }}
+        {{ form_row(form.street, {label: 'oro.order.orderaddress.street.label'}) }}
+        {{ form_row(form.street2, {label: 'oro.order.orderaddress.street2.label'}) }}
+        {{ form_row(form.city, {label: 'oro.order.orderaddress.city.label'}) }}
+        {{ form_row(form.region_text, {label: 'oro.order.orderaddress.region_text.label'}) }}
+        {{ form_row(form.region, {label: 'oro.order.orderaddress.region.label'}) }}
+        {{ form_row(form.postalCode, {label: 'oro.order.orderaddress.postal_code.label'}) }}
+        {{ form_row(form.phone, {label: 'oro.order.orderaddress.phone.label'}) }}
+        {{ form_rest(form) }}
+    {% if form.parent is not empty %}</div>{% endif %}
 {% endblock %}
 
 {% macro oro_order_line_items_collection_item_prototype(widget) %}
@@ -35,7 +44,9 @@
         'disabled': not allow_delete
     }) %}
 
-    <tr data-content="{{ name }}" data-validation-optional-group {{ block('widget_container_attributes') }}
+    <tr data-content="{{ name }}"
+        {% if form.vars.value is not empty %}data-validation-ignore{# item is only validated once it got changed #}{% endif %}
+        {{ block('widget_container_attributes') }}
         class="order-line-item"
         data-page-component-module="{{ form.vars.page_component }}"
         data-page-component-options="{{ page_component_options|json_encode }}"
@@ -44,7 +55,7 @@
 
         {% if allow_delete %}
             <td class="order-line-item-remove">
-                <button type="button" class="removeLineItem btn icons-holder"><i class="fa-close"></i></button>
+                <button type="button" class="removeLineItem btn btn-icon btn-square-lighter"><span class="fa-close"></span></button>
             </td>
         {% elseif widget.parent.vars.allow_delete %}
             <td></td>
@@ -94,7 +105,7 @@
             </div>
 
             {% if allow_add %}
-                <a class="btn add-list-item" data-container=".oro-item-collection tbody" href="javascript: void(0);"><i class="fa-plus"></i>{{ form.vars.add_label|default('oro.form.collection.add')|trans }}</a>
+                <a class="btn add-list-item" data-container=".oro-item-collection tbody" href="javascript: void(0);">{{ form.vars.add_label|default('oro.form.collection.add')|trans }}</a>
             {% endif %}
         </div>
     {% endspaceless %}
@@ -209,7 +220,7 @@
         {% endif %}
         {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-item-collection collection-fields-list' }) %}
         {% set id = id ~ '_collection' %}
-        <div class="row-oro"
+        <div class="row-oro order-shipping-tracking"
                 {% import 'OroUIBundle::macros.html.twig' as UI %}
                 {{ UI.renderPageComponentAttributes({
                     module: form.vars.page_component,
@@ -239,7 +250,7 @@
                 </table>
             </div>
             {% if allow_add %}
-                <a class="btn add-list-item" href="javascript: void(0);"><i class="fa-plus"></i>{{ form.vars.add_label|default('oro.form.collection.add')|trans }}</a>
+                <a class="btn add-list-item" href="javascript: void(0);">{{ form.vars.add_label|default('oro.form.collection.add')|trans }}</a>
             {% endif %}
         </div>
     {% endspaceless %}
@@ -252,7 +263,7 @@
         <td>{{ form_widget(form.method, { 'attr': {'class': 'order-shipping-tracking-method', 'style': 'width: 100px'}}) }}</td>
         <td>{{ form_widget(form.number, { 'attr': {'class': 'order-shipping-tracking-number', 'style': 'width: 150px'} }) }}</td>
         {% if form.parent.vars.allow_delete %}
-            <td><button class="removeRow btn icons-holder" type="button" data-related="{{ name }}"><i class="fa-close"></i></button></td>
+            <td><button class="removeRow btn btn-icon btn-square-lighter" type="button" data-related="{{ name }}"><span class="fa-close"></span></button></td>
         {% endif %}
     </tr>
 

@@ -14,12 +14,12 @@ use Oro\Bundle\TaxBundle\Model\TaxCodes;
 class ResolvableMatcherTest extends AbstractMatcherTest
 {
     /**
-     * @var ResolvableMatcher|\PHPUnit_Framework_MockObject_MockObject
+     * @var ResolvableMatcher|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $resolvableMatcher;
 
     /**
-     * @var CountryMatcher|\PHPUnit_Framework_MockObject_MockObject
+     * @var CountryMatcher|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $countryMatcher;
 

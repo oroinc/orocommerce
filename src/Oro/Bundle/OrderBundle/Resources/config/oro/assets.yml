@@ -1,4 +1,4 @@
 assets:
     css:
-        'oroorder':
-            - 'bundles/oroorder/css/less/style.less'
+        inputs:
+            - 'bundles/oroorder/css/scss/main.scss'

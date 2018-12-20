@@ -1,15 +1,13 @@
-// @theme: blank;
+/* @theme: blank; */
 
 .product-list {
     &--gallery-view {
-        display: flex;
+        display: $product-list-gallery-view-display;
 
-        align-content: space-between;
-        flex-wrap: wrap;
+        align-content: $product-list-gallery-view-align-content;
+        flex-wrap: $product-list-gallery-view-flex-wrap;
 
         margin: $product-list-gallery-view-offset;
-
-        font-size: 0;
     }
 
     &--no-image-view {

@@ -18,7 +18,7 @@
         '~data-page-component-options': {
             'view': 'oroui/js/app/views/layout-subtree-view',
             'blockId' : block.vars.id,
-            'reloadEvents': ['shopping-list:refresh', 'product:quantity-unit:update', 'workflow:transitions_failure']
+            'reloadEvents': ['shopping-list:refresh', 'product:quantity-unit:update', 'workflow:transitions_failure', 'frontend:item:delete']
         }
     }) %}
 
@@ -49,7 +49,25 @@
         {% set shoppingLists = shoppingLists|slice(0, 6) %}
     {% endif %}
 
-    {{ parent() }}
+    {% set currentClass = 'shopping-list__item--current' %}
+    {% set attr = layout_attr_defaults(attr, {
+        'data-dropdown-trigger': true,
+        '~class': ' shopping-list-navigation'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        <ul class="shopping-list"
+            data-page-component-module="oroshoppinglist/js/app/views/shoppinglist-widget-view">
+            {% for shoppingList in shoppingLists  %}
+                {% do block|merge_context({
+                    shoppingList: shoppingList,
+                    selectedShoppingList: selectedShoppingList,
+                    currentClass: currentClass
+                }) %}
+                {{ block('container_widget') }}
+            {% endfor %}
+        </ul>
+    </div>
 {% endblock %}
 
 {% block _shopping_list_view_more_widget %}
@@ -60,10 +78,13 @@
     }) %}
 
     <div{{ block('block_attributes') }}>
-        <div class="shopping-list-dropdown__handle" data-toggle="dropdown">
-            <i class="shopping-list-dropdown__icon fa-plus-circle"></i>
+        {% set togglerId = 'dropdown-'|uniqid %}
+        <div class="shopping-list-dropdown__handle" data-toggle="dropdown" role="button" id="{{ togglerId }}"
+             aria-haspopup="true" aria-expanded="false"
+             aria-label="{{ 'oro.customtheme.shopping_list.view_more.label'|trans }}">
+            <span class="shopping-list-dropdown__icon fa-plus-circle" aria-hidden="true"></span>
         </div>
-        <div class="shopping-list-dropdown__nav dropdown-menu">
+        <div class="shopping-list-dropdown__nav dropdown-menu" role="menu" aria-labelledby="{{ togglerId }}">
             <ul class="shopping-list-links">
                 {% for shoppingList in shoppingLists %}
                     <li class="shopping-list-links__item
@@ -73,7 +94,7 @@
                         data-shopping-list-id="{{ shoppingList.id }}"
                     >
                         <a class="shopping-list-links__link" href="{{ path('oro_shopping_list_frontend_view', {'id' : shoppingList.id}) }}">
-                            <i class="shopping-list-links__icon fa-check"></i>
+                            <span class="shopping-list-links__icon fa-check" aria-hidden="true"></span>
                             <span class="shopping-list-links__text"
                                   data-shopping-list-id="{{ shoppingList.id }}"
                                   data-role="shopping-list-title">{{ shoppingList.label }}</span>

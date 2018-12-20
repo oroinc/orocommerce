@@ -14,7 +14,7 @@ class UPSShippingMethodOptionsTypeTest extends FormIntegrationTestCase
 
     protected function setUp()
     {
-        /** @var RoundingServiceInterface|\PHPUnit_Framework_MockObject_MockObject $roundingService */
+        /** @var RoundingServiceInterface|\PHPUnit\Framework\MockObject\MockObject $roundingService */
         $roundingService = $this->getMockForAbstractClass(RoundingServiceInterface::class);
         $roundingService->expects(static::any())
             ->method('getPrecision')

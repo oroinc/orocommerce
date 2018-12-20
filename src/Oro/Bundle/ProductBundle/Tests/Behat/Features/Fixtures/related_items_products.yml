@@ -1,3 +1,6 @@
+include:
+    - '@OroLocaleBundle:LocalizationFixture.yml'
+
 Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
     precision1:
         unit: '@item'
@@ -29,7 +32,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
         sku: 'PSKU2'
         primaryUnitPrecision: '@precision2'
         attributeFamily: '@defaultProductFamily'
-        addName: ['@locvalue2']
+        setNames: [['@locvalue2' , '@locvalue2_loc1']]
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
         organization: '@organization'
@@ -67,6 +70,9 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
         string: 'Product 1'
     locvalue2:
         string: 'Product 2'
+    locvalue2_loc1:
+        string: 'Product2 (Localization 1)'
+        localization: '@localization1'
     locvalue3:
         string: 'Product 3'
     locvalue4:

@@ -10,8 +10,10 @@ Feature: Guest shopping lists owner
     And I follow "Commerce/Sales/Shopping List" on configuration sidebar
     And uncheck "Use default" for "Enable guest shopping list" field
     And I check "Enable guest shopping list"
+    And uncheck "Use default" for "Create Guest Shopping Lists Immediately" field
+    And I check "Create Guest Shopping Lists Immediately"
     And uncheck "Use default" for "Default Guest Shopping List Owner" field
-    And I fill in "Select2Entity" with "Admin User - newadmin@example.com (newadmin)"
+    And I fill in "Default Guest Shopping List Owner" with "newadmin@example.com"
     And I should see "Admin User"
     And I save setting
     And I should see "Configuration saved" flash message
@@ -22,15 +24,15 @@ Feature: Guest shopping lists owner
     And type "PSKU1" in "search"
     And I click "Search Button"
     And I should see "Product1"
-    And I should see "Add to Shopping list"
+    And I should see "Add to Shopping List"
     And I click "View Details" for "PSKU1" product
-    And I should see "Add to Shopping list"
-    And I click "Add to Shopping list"
+    And I should see "Add to Shopping List"
+    And I click "Add to Shopping List"
     And I should see "Product has been added to" flash message
     Then I should see "In shopping list"
 
   Scenario: Check shopping list saved with correct owner
     Given I login as administrator
     And I go to Sales/Shopping Lists
-    And I click View Shopping list in grid
+    And I click View Shopping List in grid
     Then I should see "Owner: Admin User (Main)"

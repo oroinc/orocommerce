@@ -1,10 +1,13 @@
+@ticket-BB-13978
 @fixture-OroProductBundle:new_arrivals_block.yml
 @regression
 Feature: New Arrivals Block
   In order to promote new arrivals on the store homepage
   As an Administrator
-  I want to control what products are included in the "New Arrivals" block
-  I want to mark some products as featured, specify the number of items and the sort order of items in the featured product list
+  I need to be able to mark some products as "New Arrivals" and see them in "New Arrivals" block on homepage
+  I need to be able to specify the number of items to display and see corresponding changes in "New Arrivals" block on homepage
+  I need to be able to change order of items and see corresponding changes in "New Arrivals" block on homepage
+  I need to be able to see localized product names on "New Arrivals" block, Shopping Lists widget, alt attributes of products preview images and gallery images.
 
 #  Description
 #  Create a segment, called "New Arrivals (Home Page)":
@@ -38,6 +41,18 @@ Feature: New Arrivals Block
     Given sessions active:
       | Admin          |first_session |
       | User           |second_session|
+    # Load image to product
+    And I proceed as the Admin
+    And login as administrator
+    And go to Products/ Products
+    And I click Edit "SKU6" in grid
+    And I set Images with:
+      | File     | Main  | Listing | Additional |
+      | cat1.jpg | 1     | 1       | 1          |
+    When I save and close form
+    Then I should see "Product has been saved" flash message
+    # Enable localizations
+    And I enable the existing localizations
 
   Scenario: Default state - "New Arrival" on and New Arrival segment selected
     Given I proceed as the User
@@ -64,7 +79,6 @@ Feature: New Arrivals Block
 
   Scenario: New Arrival is off
     Given I proceed as the Admin
-    And login as administrator
     And go to System/ Configuration
     And I follow "Commerce/Product/Promotions" on configuration sidebar
     And fill "Promotions Form" with:
@@ -151,7 +165,9 @@ Feature: New Arrivals Block
     And go to System/ Websites
     And click "Create Website"
     And fill form with:
-    |Name|NewSite|
+      |Name                           |NewSite                   |
+      |Guest Role                     |Non-Authenticated Visitors|
+      |Default Self-Registration Role |Buyer                     |
     And save and close form
     And should see "Website has been saved" flash message
     And go to System/ Websites
@@ -240,3 +256,24 @@ Feature: New Arrivals Block
       |SKU |
       |SKU6|
       |SKU7|
+
+  Scenario: Check that product name is localized
+    Given I proceed as the User
+    When I click "Localization Switcher"
+    And I select "Localization 1" localization
+    Then should see the following products in the "New Arrivals Block":
+      | Title                     |
+      | Product6 (Localization 1) |
+
+  Scenario: Check that alt attributes are localized
+    Given I open product gallery for "SKU6" product
+    Then I should see gallery image with alt "Product6 (Localization 1)"
+    When I click "Popup Gallery Widget Close"
+    Then I should see preview image with alt "Product6 (Localization 1)" for "SKU6" product
+
+  Scenario: Check that product name is localized in shopping lists widget
+    Given I proceed as the User
+    And click "Add to Shopping List" for "SKU6" product
+    When click "In Shopping List" for "SKU6" product
+    Then I should see "UiDialog" with elements:
+      | Title | Product6 (Localization 1) |

@@ -1,4 +1,4 @@
-{% macro transitionAttrbiutes(transitionData, checkout) %}
+{% macro transitionAttributes(transitionData, checkout, componentOptions) %}
 {% spaceless %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
     {# Simplified transitions handler specific for checkout logic #}
@@ -6,7 +6,10 @@
 
     {% set pageComponentModule = transition.frontendOptions.page_component_module|default('orocheckout/js/app/components/transition-button-component') %}
     {% set pageComponentOptions = transition.frontendOptions.page_component_options|default({}) %}
-    
+    {% if componentOptions is iterable %}
+        {% set pageComponentOptions = pageComponentOptions|merge(componentOptions) %}
+    {% endif %}
+
     {{ UI.renderPageComponentAttributes({
         module: pageComponentModule,
         options: pageComponentOptions|merge({
@@ -31,16 +34,19 @@
         data-title="{{ _self.transitionConditionMessages(transitionData) }}"
         data-html="true"
         data-container="body"
+        data-placement="{% if isMobileVersion() %}bottom{% else %}left{% endif %}"
     {% endif %}
 {% endmacro %}
 
 {% macro transitionConditionMessages(transitionData) %}
-    <div>{{ 'oro.checkout.workflow.unavailable_transition.message'|trans }}</div>
-    <ul>
-        {% for error in transitionData.errors %}
-            <li>{{ error.message|trans(error.parameters)|nl2br }}</li>
-        {% endfor %}
-    </ul>
+    {%- spaceless -%}
+        <div>{{ 'oro.checkout.workflow.unavailable_transition.message'|trans }}</div>
+        <ul>
+            {% for error in transitionData.errors %}
+                <li>{{ error.message|trans(error.parameters)|nl2br }}</li>
+            {% endfor %}
+        </ul>
+    {%- endspaceless -%}
 {% endmacro %}
 
 {% block checkout_transition_back_widget %}
@@ -53,7 +59,7 @@
         })
     %}
     <a href="{{ transitionUrl }}"
-        {{ _self.transitionAttrbiutes(transitionData, checkout) }}
+        {{ _self.transitionAttributes(transitionData, checkout) }}
         {{ _self.conditionMessages(transitionData) }}
     >
         <i class="fa-angle-left"></i>{{ 'oro.checkout.workflow.b2b_flow_checkout.transition.back.label'|trans }}
@@ -65,10 +71,10 @@
     {% if transitionData is defined and transitionData %}
         <div class="tooltip-container" {{ _self.conditionMessages(transitionData) }}>
             <button type="submit"
-                class="btn {% if transitionData.isAllowed %}btn--info{% endif %} btn--size-m checkout-form__submit"
+                class="btn btn--info{% if not transitionData.isAllowed %} btn--disabled{% endif %} btn--size-m checkout-form__submit"
                 disabled="disabled"
                 autocomplete="off"
-                {{ _self.transitionAttrbiutes(transitionData, checkout) }}
+                {{ _self.transitionAttributes(transitionData, checkout, componentOptions) }}
             >
                 {{ transitionData.transition.label|trans({},'workflows') }}&nbsp;<i class="fa-angle-right"></i>
             </button>
@@ -90,12 +96,12 @@
     {% else %}
         {% set transitionLabel = transitionData.transition.label|trans({},'workflows') %}
     {% endif %}
-    <a href="{{ transitionUrl }}" class="button--plain"
+    <a href="{{ transitionUrl }}" class="btn--plain"
        data-toggle="tooltip"
        data-title="{{ transitionLabel }}"
        data-html="true"
        data-container="body"
-       {{ _self.transitionAttrbiutes(transitionData, checkout) }}
+       {{ _self.transitionAttributes(transitionData, checkout) }}
     >
         <i class="fa-pencil fa--no-offset tooltip-trigger"></i>
     </a>

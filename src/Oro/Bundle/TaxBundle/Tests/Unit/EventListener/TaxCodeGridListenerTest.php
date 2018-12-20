@@ -15,7 +15,7 @@ class TaxCodeGridListenerTest extends AbstractTaxCodeGridListenerTest
         $gridConfig = DatagridConfiguration::create(['name' => 'customers-grid']);
         $gridConfig->offsetSetByPath('[source][query][from]', [['alias' => 'customer']]);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $dataGrid */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|DatagridInterface $dataGrid */
         $dataGrid = $this->createMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
         $event = new BuildBefore($dataGrid, $gridConfig);
 
@@ -51,7 +51,7 @@ class TaxCodeGridListenerTest extends AbstractTaxCodeGridListenerTest
                                 'field_options' => [
                                     'multiple' => false,
                                     'class' => AbstractTaxCode::class,
-                                    'property' => 'code',
+                                    'choice_label' => 'code',
                                 ]
                             ]
                         ]
@@ -70,7 +70,7 @@ class TaxCodeGridListenerTest extends AbstractTaxCodeGridListenerTest
     public function testOnBuildBeforeWithoutFromPart()
     {
         $gridConfig = DatagridConfiguration::create(['name' => 'std-grid']);
-        /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $dataGrid */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|DatagridInterface $dataGrid */
         $dataGrid = $this->createMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
         $event = new BuildBefore($dataGrid, $gridConfig);
 

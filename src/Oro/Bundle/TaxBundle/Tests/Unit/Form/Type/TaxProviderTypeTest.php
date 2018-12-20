@@ -7,7 +7,7 @@ use Oro\Bundle\TaxBundle\Provider\TaxProviderRegistry;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class TaxProviderTypeTest extends \PHPUnit_Framework_TestCase
+class TaxProviderTypeTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var TaxProviderType
@@ -15,7 +15,7 @@ class TaxProviderTypeTest extends \PHPUnit_Framework_TestCase
     protected $formType;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|TaxProviderRegistry
+     * @var \PHPUnit\Framework\MockObject\MockObject|TaxProviderRegistry
      */
     protected $registry;
 
@@ -34,7 +34,7 @@ class TaxProviderTypeTest extends \PHPUnit_Framework_TestCase
     /**
      * @param string $name
      * @param string $label
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     protected function getProviderMock($name, $label)
     {
@@ -62,12 +62,7 @@ class TaxProviderTypeTest extends \PHPUnit_Framework_TestCase
 
         $options = $resolver->resolve([]);
         $this->assertArrayHasKey('choices', $options);
-        $this->assertEquals(['name1' => 'label1', 'name2' => 'label2'], $options['choices']);
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals(TaxProviderType::NAME, $this->formType->getName());
+        $this->assertEquals(['label1' => 'name1', 'label2' => 'name2'], $options['choices']);
     }
 
     public function testGetParent()

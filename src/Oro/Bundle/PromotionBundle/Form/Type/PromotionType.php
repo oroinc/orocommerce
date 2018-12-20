@@ -37,8 +37,8 @@ class PromotionType extends AbstractType
                     'label' => 'oro.promotion.use_coupons.label',
                     'required' => false,
                     'choices' => [
-                        false => 'oro.promotion.use_coupons.no',
-                        true => 'oro.promotion.use_coupons.yes',
+                        'oro.promotion.use_coupons.no' => 0,
+                        'oro.promotion.use_coupons.yes' => 1,
                     ],
                     'placeholder' => false,
                 ]

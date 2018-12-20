@@ -100,9 +100,9 @@ class PaymentMethodConfigCollectionTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
-        /** @var PaymentMethodProviderInterface|\PHPUnit_Framework_MockObject_MockObject $methodProvider */
+        /** @var PaymentMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject $methodProvider */
         $methodProvider = $this->createMock(PaymentMethodProviderInterface::class);
-        /** @var CompositePaymentMethodViewProvider|\PHPUnit_Framework_MockObject_MockObject $methodViewProvider */
+        /** @var CompositePaymentMethodViewProvider|\PHPUnit\Framework\MockObject\MockObject $methodViewProvider */
         $methodViewProvider = $this->createMock(CompositePaymentMethodViewProvider::class);
 
         return [
@@ -118,11 +118,6 @@ class PaymentMethodConfigCollectionTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    public function testGetName()
-    {
-        static::assertSame(PaymentMethodConfigCollectionType::NAME, $this->type->getName());
-    }
-
     public function testGetParent()
     {
         static::assertSame(CollectionType::class, $this->type->getParent());
@@ -135,7 +130,7 @@ class PaymentMethodConfigCollectionTypeTest extends FormIntegrationTestCase
 
     public function testBuildFormSubscriber()
     {
-        /** @var FormBuilderInterface|\PHPUnit_Framework_MockObject_MockObject $builder */
+        /** @var FormBuilderInterface|\PHPUnit\Framework\MockObject\MockObject $builder */
         $builder = $this->createMock(FormBuilderInterface::class);
         $builder->expects($this->once())
             ->method('addEventSubscriber')

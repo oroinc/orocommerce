@@ -27,12 +27,12 @@ class EntityVisibilityTypeTest extends FormIntegrationTestCase
     protected $formType;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|VisibilityPostSetDataListener
+     * @var \PHPUnit\Framework\MockObject\MockObject|VisibilityPostSetDataListener
      */
     protected $visibilityPostSetDataListener;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|VisibilityChoicesProvider
+     * @var \PHPUnit\Framework\MockObject\MockObject|VisibilityChoicesProvider
      */
     protected $visibilityChoicesProvider;
 
@@ -81,18 +81,13 @@ class EntityVisibilityTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(EntityVisibilityType::NAME, $this->formType->getName());
-    }
-
     public function testBuildForm()
     {
         $this->visibilityChoicesProvider->expects($this->once())
             ->method('getFormattedChoices')
             ->willReturn([
-                'visible' => 'Visible',
-                'hidden' => 'Hidden'
+                'Visible' => 'visible',
+                'Hidden' => 'hidden',
             ]);
 
         $options = [

@@ -10,7 +10,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 
-class AdditionalProductPricesIteratorTest extends \PHPUnit_Framework_TestCase
+class AdditionalProductPricesIteratorTest extends \PHPUnit\Framework\TestCase
 {
     public function testIterator()
     {

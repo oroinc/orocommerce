@@ -13,7 +13,7 @@ use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
 use Psr\Log\LoggerInterface;
 
-class ContentBlockDataProviderTest extends \PHPUnit_Framework_TestCase
+class ContentBlockDataProviderTest extends \PHPUnit\Framework\TestCase
 {
     const ENTITY_CLASS = 'TestEntityClass';
     const SCOPE_TYPE = 'test_scope_type';
@@ -21,16 +21,16 @@ class ContentBlockDataProviderTest extends \PHPUnit_Framework_TestCase
     /** @var ContentBlockDataProvider */
     private $provider;
 
-    /** @var ContentBlockResolver|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ContentBlockResolver|\PHPUnit\Framework\MockObject\MockObject */
     protected $resolver;
 
-    /** @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
     protected $registry;
 
-    /** @var ScopeManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ScopeManager|\PHPUnit\Framework\MockObject\MockObject */
     protected $scopeManager;
 
-    /** @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $logger;
 
     protected function setUp()

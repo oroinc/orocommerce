@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Entity\Stub\LocalizedEntityTrait;
@@ -54,6 +55,11 @@ class Product extends BaseProduct
      * @var AbstractEnumValue[]|ArrayCollection
      */
     private $flags;
+
+    /**
+     * @var Category
+     */
+    private $category;
 
     /**
      * @var array
@@ -246,5 +252,21 @@ class Product extends BaseProduct
     public function setFlags($flags)
     {
         $this->flags = $flags;
+    }
+
+    /**
+     * @return Category|null
+     */
+    public function getCategory()
+    {
+        return $this->category;
+    }
+
+    /**
+     * @param Category $category
+     */
+    public function setCategory(Category $category)
+    {
+        $this->category = $category;
     }
 }

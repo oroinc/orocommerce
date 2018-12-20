@@ -4,7 +4,7 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Validator\Constraints;
 
 use Oro\Bundle\ShoppingListBundle\Validator\Constraints\LineItem;
 
-class LineItemTest extends \PHPUnit_Framework_TestCase
+class LineItemTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var LineItem

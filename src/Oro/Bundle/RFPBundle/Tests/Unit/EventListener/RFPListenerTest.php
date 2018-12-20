@@ -12,15 +12,15 @@ use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Provider\DefaultUserProvider;
 
-class RFPListenerTest extends \PHPUnit_Framework_TestCase
+class RFPListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var DefaultUserProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var DefaultUserProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $defaultUserProvider;
 
-    /** @var TokenAccessorInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var TokenAccessorInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $tokenAccessor;
 
-    /** @var GuestCustomerUserManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var GuestCustomerUserManager|\PHPUnit\Framework\MockObject\MockObject */
     private $customerUserManager;
 
     /** @var RFPListener */

@@ -10,20 +10,20 @@ use Oro\Component\SEO\Model\DTO\UrlItemInterface;
 use Oro\Component\SEO\Provider\UrlItemsProviderInterface;
 use Oro\Component\Website\WebsiteInterface;
 
-class RobotsTxtIndexingRulesBySitemapManagerTest extends \PHPUnit_Framework_TestCase
+class RobotsTxtIndexingRulesBySitemapManagerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var RobotsTxtFileManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var RobotsTxtFileManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $robotsTxtFileManager;
 
     /**
-     * @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $configManager;
 
     /**
-     * @var UrlItemsProviderRegistryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var UrlItemsProviderRegistryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $itemsProviderRegistry;
 

@@ -1,7 +1,7 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'shopping_list_owner.html.twig'
+            themes: 'OroShoppingListBundle:layouts:default/oro_shopping_list_frontend_view/shopping_list_owner.html.twig'
         - '@add':
             id: shopping_list_owner
             parentId: shopping_list_line_items

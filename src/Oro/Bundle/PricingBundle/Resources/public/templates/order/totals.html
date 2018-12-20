@@ -1,6 +1,6 @@
-<div class="control-group">
-    <label class="control-label"><%= _.escape(item.label) %></label>
-    <div class="controls">
+<div class="attribute-item">
+    <label class="attribute-item__term"><%= _.escape(item.label) %></label>
+    <div class="attribute-item__description">
         <label class="control-label"><%= item.formattedAmount %></label>
     </div>
     <% if (item.formattedBaseAmount) { %>

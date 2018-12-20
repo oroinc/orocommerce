@@ -58,12 +58,6 @@ class TaxJurisdictionTypeTest extends AbstractAddressTestCase
         parent::tearDown();
     }
 
-    public function testGetName()
-    {
-        $this->assertInternalType('string', $this->formType->getName());
-        $this->assertEquals('oro_tax_jurisdiction_type', $this->formType->getName());
-    }
-
     public function testBuildForm()
     {
         $form = $this->factory->create(TaxJurisdictionType::class);
@@ -169,11 +163,11 @@ class TaxJurisdictionTypeTest extends AbstractAddressTestCase
      */
     protected function getExtensions()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|ConfigProvider $configProvider */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|ConfigProvider $configProvider */
         $configProvider = $this->getMockBuilder('Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider')
             ->disableOriginalConstructor()
             ->getMock();
-        /** @var \PHPUnit_Framework_MockObject_MockObject|Translator $translator */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|Translator $translator */
         $translator = $this->getMockBuilder('Oro\Bundle\TranslationBundle\Translation\Translator')
             ->disableOriginalConstructor()
             ->getMock();
@@ -185,6 +179,7 @@ class TaxJurisdictionTypeTest extends AbstractAddressTestCase
             new PreloadedExtension(
                 [
                     $this->formType,
+                    TaxJurisdictionType::class => $this->formType,
                     ZipCodeType::class => $zipCodeType
                 ],
                 [

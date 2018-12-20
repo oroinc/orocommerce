@@ -1,4 +1,4 @@
-// @theme: default
+/* @theme: default; */
 
 .credit-card-icon {
     $paymentIconUrl: $global-url + '/orofrontend/default/images/payments';
@@ -32,5 +32,26 @@
         height: 25px;
 
         background: url('#{$paymentIconUrl}/discover.png') no-repeat;
+    }
+
+    &_jcb {
+        width: 40px;
+        height: 25px;
+
+        background: url('#{$paymentIconUrl}/jcb.png') no-repeat;
+    }
+
+    &_diners_club {
+        width: 40px;
+        height: 25px;
+
+        background: url('#{$paymentIconUrl}/diners_club.png') no-repeat;
+    }
+
+    &_china_union_pay {
+        width: 40px;
+        height: 25px;
+
+        background: url('#{$paymentIconUrl}/china_union_pay.png') no-repeat;
     }
 }

@@ -105,18 +105,13 @@ class ShoppingListTypeTest extends FormIntegrationTestCase
 
     public function testConfigureOptions()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|OptionsResolver $resolver */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|OptionsResolver $resolver */
         $resolver = $this->createMock('Symfony\Component\OptionsResolver\OptionsResolver');
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with(['data_class' => self::DATA_CLASS]);
 
         $this->type->configureOptions($resolver);
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals(ShoppingListType::NAME, $this->type->getName());
     }
 
     /**

@@ -7,7 +7,11 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
 use Oro\Bundle\PromotionBundle\Discount\DiscountContext;
 use Oro\Bundle\PromotionBundle\Discount\Exception\UnsupportedSourceEntityException;
+use Oro\Bundle\SaleBundle\Entity\Quote;
 
+/**
+ * Data converter that prepares discount context based on order entity to calculate discounts.
+ */
 class OrderDiscountContextConverter implements DiscountContextConverterInterface
 {
     /**
@@ -66,6 +70,6 @@ class OrderDiscountContextConverter implements DiscountContextConverterInterface
      */
     public function supports($sourceEntity): bool
     {
-        return $sourceEntity instanceof Order;
+        return $sourceEntity instanceof Order && $sourceEntity->getSourceEntityClass() !== Quote::class;
     }
 }

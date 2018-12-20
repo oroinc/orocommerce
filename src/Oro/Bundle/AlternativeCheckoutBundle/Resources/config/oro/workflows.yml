@@ -94,7 +94,7 @@ workflows:
                 type: entity
                 options:
                     class: Oro\Bundle\OrderBundle\Entity\Order
-            visitor_email:
+            email:
                 type: string
         steps:
             enter_billing_address:
@@ -198,7 +198,7 @@ workflows:
                         page-component-module: oroproduct/js/app/components/quick-add-form-button-component
                         page-component-options:
                             component_name: '[name$="[component]"]'
-                            confirmation: $.result.isReachedLimit
+                            confirmation: $.result.doShowConfirmation
                             shopping_list_limit: $.result.shoppingListLimit
                 init_routes:
                     - oro_product_frontend_quick_add
@@ -220,10 +220,9 @@ workflows:
                             attribute: $.result.initCheckoutState
                     attribute_fields:
                         billing_address:
-                            form_type: oro_checkout_address
+                            form_type: Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressType
                             options:
                                 object: $checkout
-                                isEditEnabled: true
                                 addressType: 'billing'
                                 required: true
                                 translation_domain: messages
@@ -235,14 +234,14 @@ workflows:
                         save_billing_address:
                             options:
                         ship_to_billing_address:
-                            form_type: oro_ship_to_billing_address
+                            form_type: Oro\Bundle\CheckoutBundle\Form\Type\ShipToBillingAddressType
                             options:
                         state_token:
-                            form_type: hidden
+                            form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
                             options:
                                 data: $internal_state_token
-                        visitor_email:
-                            form_type: oro_customer_visitor_email_address
+                        email:
+                            form_type: Oro\Bundle\CustomerBundle\Form\Type\CustomerVisitorEmailAddressType
             continue_to_shipping_method:
                 step_to: enter_shipping_method
                 transition_definition: continue_to_shipping_method_definition
@@ -257,10 +256,9 @@ workflows:
                             attribute: $.result.initCheckoutState
                     attribute_fields:
                         shipping_address:
-                            form_type: oro_checkout_address
+                            form_type: Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressType
                             options:
                                 object: $checkout
-                                isEditEnabled: true
                                 addressType: 'shipping'
                                 required: true
                                 disabled: $disallow_shipping_address_edit
@@ -272,10 +270,10 @@ workflows:
                         save_shipping_address:
                             options:
                         ship_to_billing_address:
-                            form_type: oro_ship_to_billing_address
+                            form_type: Oro\Bundle\CheckoutBundle\Form\Type\ShipToBillingAddressType
                             options:
                         state_token:
-                            form_type: hidden
+                            form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
                             options:
                                 data: $internal_state_token
 
@@ -301,7 +299,7 @@ workflows:
                                 constraints:
                                     - NotBlank: ~
                         state_token:
-                            form_type: hidden
+                            form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
                             options:
                                 data: $internal_state_token
 
@@ -330,15 +328,15 @@ workflows:
                     attribute_fields:
                         payment_method: ~
                         payment_validate:
-                            form_type: checkbox
+                            form_type: Symfony\Component\Form\Extension\Core\Type\CheckboxType
                         payment_save_for_later:
-                            form_type: checkbox
+                            form_type: Symfony\Component\Form\Extension\Core\Type\CheckboxType
                         state_token:
-                            form_type: hidden
+                            form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
                             options:
                                 data: $internal_state_token
                         additional_data:
-                            form_type: hidden
+                            form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
 
             continue_to_request_approval:
                 step_to: request_approval
@@ -355,15 +353,15 @@ workflows:
                         remove_source: ~
                         po_number: ~
                         ship_until:
-                            form_type: oro_checkout_ship_until
+                            form_type: Oro\Bundle\CheckoutBundle\Form\Type\CheckoutShipUntilType
                             options:
                                 checkout: $checkout
                         customer_notes:
-                            form_type: textarea
+                            form_type: Symfony\Component\Form\Extension\Core\Type\TextareaType
                             options:
                                 data: $checkout.customerNotes
                         state_token:
-                            form_type: hidden
+                            form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
                             options:
                                 data: $internal_state_token
 
@@ -379,11 +377,11 @@ workflows:
                             attribute: $.result.initCheckoutState
                     attribute_fields:
                         request_approval_notes:
-                            form_type: textarea
+                            form_type: Symfony\Component\Form\Extension\Core\Type\TextareaType
                             options:
                                 data: $request_approval_notes
                         state_token:
-                            form_type: hidden
+                            form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
                             options:
                                 data: $internal_state_token
                 message_parameters:
@@ -460,13 +458,13 @@ workflows:
                         remove_source: ~
                         po_number: ~
                         ship_until:
-                            form_type: oro_checkout_ship_until
+                            form_type: Oro\Bundle\CheckoutBundle\Form\Type\CheckoutShipUntilType
                             options:
                                 checkout: $checkout
                         customer_notes:
-                            form_type: textarea
+                            form_type: Symfony\Component\Form\Extension\Core\Type\TextareaType
                         state_token:
-                            form_type: hidden
+                            form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
                             options:
                                 data: $internal_state_token
 
@@ -486,7 +484,7 @@ workflows:
                     attribute_fields:
                         remove_source: ~
                         state_token:
-                            form_type: hidden
+                            form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
                             options:
                                 data: $internal_state_token
             approve_order:
@@ -503,7 +501,7 @@ workflows:
                             attribute: $.result.initCheckoutState
                     attribute_fields:
                         state_token:
-                            form_type: hidden
+                            form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
                             options:
                                 data: $internal_state_token
 
@@ -532,6 +530,17 @@ workflows:
                        attribute: $.result.shoppingListLimit
                        service: oro_shopping_list.manager.shopping_list_limit
                        method: getShoppingListLimitForUser
+                    - '@call_service_method':
+                       service: oro_shopping_list.manager.current_shopping_list
+                       method: isCurrentShoppingListEmpty
+                       attribute: $.result.isCurrentShoppingListEmpty
+                    - '@assign_value': [$.result.doShowConfirmation, false]
+                    - '@assign_value':
+                        conditions:
+                          '@and':
+                            - '@equal': [$.result.isReachedLimit, true]
+                            - '@equal': [$.result.isCurrentShoppingListEmpty, false]
+                        parameters: [$.result.doShowConfirmation, true]
                 preconditions:
                     '@and':
                         - '@not_empty': $init_context
@@ -842,11 +851,7 @@ workflows:
                                 entity: $checkout
                                 state: $.result.currentCheckoutState
                                 token: $state_token
-                    - '@call_service_method':
-                        service: oro_checkout.factory.shipping_context_factory
-                        method: create
-                        method_parameters: [$checkout]
-                        attribute: $.result.shippingContext
+
                 preconditions:
                     '@and':
                         - '@quote_acceptable': [$checkout.sourceEntity, true]
@@ -859,7 +864,6 @@ workflows:
                         - '@shipping_method_has_enabled_shipping_rules':
                             message: oro.checkout.workflow.condition.shipping_method_is_not_available.message
                             method_identifier: $checkout.shippingMethod
-                            context: $.result.paymentContext
                         - '@or':
                             - '@empty': $.result.savedCheckoutState
                             - '@check_checkout_states':
@@ -924,7 +928,6 @@ workflows:
                         - '@shipping_method_has_enabled_shipping_rules':
                             message: oro.checkout.workflow.condition.shipping_method_is_not_available.message
                             method_identifier: $checkout.shippingMethod
-                            context: $.result.paymentContext
                         - '@has_applicable_payment_methods':
                             message: oro.checkout.workflow.condition.payment_method_is_not_applicable.message
                             context: $.result.paymentContext
@@ -939,7 +942,7 @@ workflows:
                                     state1: $.result.initCheckoutState
                                     state2: $.result.savedCheckoutState
                         - '@not_empty':
-                            message: Payment method was not selected
+                            message: oro.checkout.workflow.condition.payment_method_was_not_selected.message
                             parameters: $checkout.paymentMethod
                         - '@payment_method_applicable':
                             message: oro.checkout.workflow.condition.payment_method_is_not_applicable.message
@@ -1072,7 +1075,6 @@ workflows:
                         - '@shipping_method_has_enabled_shipping_rules':
                             message: oro.checkout.workflow.condition.shipping_method_is_not_available.message
                             method_identifier: $checkout.shippingMethod
-                            context: $.result.paymentContext
                         - '@payment_method_applicable':
                             message: oro.checkout.workflow.condition.payment_method_is_not_applicable.message
                             payment_method: $checkout.paymentMethod
@@ -1083,11 +1085,16 @@ workflows:
                                 - '@less_order_total_limit': [$checkout, $.data.order_approval_threshold]
                                 - '@equal': [$allowed, true]
                                 - '@acl_granted': 'oro_alternativecheckout_checkout_approve'
+                        - '@extendable':
+                            events:
+                                - 'extendable_condition.checkout'
+                                - 'extendable_condition.pre_order_create'
                 conditions:
                     '@and':
                         - '@extendable':
                             message: 'oro.checkout.workflow.b2b_flow_checkout.transition.place_order.condition.extendable.message'
-                            events: ['extendable_condition.before_order_create']
+                            events:
+                                - 'extendable_condition.before_order_create'
                         - '@or':
                             - '@empty': $.result.savedCheckoutState
                             - '@check_checkout_states':
@@ -1505,7 +1512,7 @@ workflows:
                     - '@send_email_template':
                         parameters:
                             from: $order.owner.email
-                            to: $order.customerUser.email
+                            to: [$order.customerUser, $email]
                             template: 'order_confirmation_email'
                             entity: $order
 

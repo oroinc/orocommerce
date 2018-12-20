@@ -27,7 +27,7 @@ operations:
             template: OroShoppingListBundle:Action:buttons.html.twig
         preactions:
             - '@call_service_method':
-                service: oro_shopping_list.shopping_list.manager
+                service: oro_shopping_list.manager.current_shopping_list
                 method: getShoppingLists
                 attribute: $.shoppingLists
             - '@call_service_method':
@@ -71,7 +71,7 @@ operations:
         form_options:
             attribute_fields:
                 lineItem:
-                    form_type: oro_shopping_list_frontend_line_item_widget
+                    form_type: Oro\Bundle\ShoppingListBundle\Form\Type\FrontendLineItemWidgetType
         form_init:
             - '@get_active_user': $.currentUser
             - '@call_service_method':
@@ -106,7 +106,7 @@ operations:
         form_options:
             attribute_fields:
                 lineItem:
-                    form_type: oro_shopping_list_line_item
+                    form_type: Oro\Bundle\ShoppingListBundle\Form\Type\LineItemType
                     options:
                         required: true
             attribute_default_values:
@@ -376,7 +376,7 @@ operations:
                 productHolderPath: $.newShoppingList.lineItems
             - '@flash_message':
                 conditions:
-                    '@not_empty': $.removedProducts
+                    '@has_elements': $.removedProducts
                 message: oro.shoppinglist.duplicate.restricted_products.message
                 type: 'warning'
             - '@assign_value': [$.newShoppingList.label, $.newName]
@@ -419,6 +419,6 @@ action_groups:
         acl_resource: [CREATE, entity:Oro\Bundle\ShoppingListBundle\Entity\LineItem]
         actions:
             - '@call_service_method':
-                service: oro_shopping_list.shopping_list.manager
+                service: oro_shopping_list.manager.shopping_list
                 method: addLineItem
                 method_parameters: [$.line_item, $.data, true, true]

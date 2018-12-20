@@ -3,6 +3,8 @@
 namespace Oro\Bundle\PricingBundle\Form\Extension;
 
 use Oro\Bundle\CustomerBundle\Form\Type\CustomerType;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
 use Oro\Bundle\PricingBundle\Entity\PriceListCustomerFallback;
 use Oro\Bundle\PricingBundle\EventListener\CustomerListener;
 use Oro\Bundle\PricingBundle\Form\Type\PriceListsSettingsType;
@@ -11,8 +13,14 @@ use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 
-class CustomerFormExtension extends AbstractTypeExtension
+/**
+ * Adds priceListsByWebsites field of ScopedDataType type to a given form builder
+ * Adds CustomerListener::onPostSetData to form builder
+ */
+class CustomerFormExtension extends AbstractTypeExtension implements FeatureToggleableInterface
 {
+    use FeatureCheckerHolderTrait;
+
     /**
      * @var CustomerListener
      */
@@ -44,6 +52,10 @@ class CustomerFormExtension extends AbstractTypeExtension
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        if (!$this->isFeaturesEnabled()) {
+            return;
+        }
+
         $builder->add(
             CustomerListener::PRICE_LISTS_COLLECTION_FORM_FIELD_NAME,
             WebsiteScopedDataType::class,
@@ -70,10 +82,10 @@ class CustomerFormExtension extends AbstractTypeExtension
     protected function getFallbackChoices()
     {
         return [
-            PriceListCustomerFallback::ACCOUNT_GROUP =>
-                'oro.pricing.fallback.customer_group.label',
-            PriceListCustomerFallback::CURRENT_ACCOUNT_ONLY =>
-                'oro.pricing.fallback.current_customer_only.label',
+            'oro.pricing.fallback.customer_group.label' =>
+                PriceListCustomerFallback::ACCOUNT_GROUP,
+            'oro.pricing.fallback.current_customer_only.label' =>
+                PriceListCustomerFallback::CURRENT_ACCOUNT_ONLY,
         ];
     }
 

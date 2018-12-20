@@ -7,7 +7,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Form\Extension\IntegerExtension;
 use Oro\Bundle\ProductBundle\Form\Type\ProductPrimaryUnitPrecisionType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectType;
-use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as EntityTypeStub;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -30,7 +30,7 @@ class ProductPrimaryUnitPrecisionTypeTest extends FormIntegrationTestCase
     protected $units = ['item', 'kg'];
 
     /**
-     * @var ProductUnitLabelFormatter|\PHPUnit_Framework_MockObject_MockObject
+     * @var UnitLabelFormatterInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $productUnitLabelFormatter;
 
@@ -41,9 +41,7 @@ class ProductPrimaryUnitPrecisionTypeTest extends FormIntegrationTestCase
     {
         $this->formType = new ProductPrimaryUnitPrecisionType();
         $this->formType->setDataClass(ProductUnitPrecision::class);
-        $this->productUnitLabelFormatter = $this->getMockBuilder(ProductUnitLabelFormatter::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->productUnitLabelFormatter = $this->createMock(UnitLabelFormatterInterface::class);
 
         parent::setUp();
     }
@@ -151,14 +149,6 @@ class ProductPrimaryUnitPrecisionTypeTest extends FormIntegrationTestCase
                     ->setSell(true)
             ]
         ];
-    }
-
-    /**
-     * Test getName
-     */
-    public function testGetName()
-    {
-        $this->assertEquals(ProductPrimaryUnitPrecisionType::NAME, $this->formType->getName());
     }
 
     /**

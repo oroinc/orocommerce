@@ -5,7 +5,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Event;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Event\AbstractProductDuplicateEvent;
 
-class AbstractProductDuplicateEventTest extends \PHPUnit_Framework_TestCase
+class AbstractProductDuplicateEventTest extends \PHPUnit\Framework\TestCase
 {
     public function testEvent()
     {

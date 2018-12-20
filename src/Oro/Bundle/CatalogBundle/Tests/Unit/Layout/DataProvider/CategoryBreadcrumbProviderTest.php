@@ -16,10 +16,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Router;
 
-class CategoryBreadcrumbProviderTest extends \PHPUnit_Framework_TestCase
+class CategoryBreadcrumbProviderTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var CategoryProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var CategoryProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $categoryProvider;
 
@@ -29,22 +29,22 @@ class CategoryBreadcrumbProviderTest extends \PHPUnit_Framework_TestCase
     protected $categoryBreadcrumbProvider;
 
     /**
-     * @var LocalizationHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var LocalizationHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $localizationHelper;
 
     /**
-     * @var Router|\PHPUnit_Framework_MockObject_MockObject
+     * @var Router|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $router;
 
     /**
-     * @var Category|\PHPUnit_Framework_MockObject_MockObject
+     * @var Category|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $category;
 
     /**
-     * @var RequestStack|\PHPUnit_Framework_MockObject_MockObject
+     * @var RequestStack|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $requestStack;
 

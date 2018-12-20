@@ -27,24 +27,24 @@ use Oro\Bundle\PromotionBundle\Tests\Unit\Entity\Stub\Order;
 use Oro\Component\DependencyInjection\ServiceLink;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class AppliedPromotionManagerTest extends \PHPUnit_Framework_TestCase
+class AppliedPromotionManagerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     const CURRENCY = 'USD';
 
     /**
-     * @var ServiceLink|\PHPUnit_Framework_MockObject_MockObject
+     * @var ServiceLink|\PHPUnit\Framework\MockObject\MockObject
      */
     private $promotionExecutorServiceLink;
 
     /**
-     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     private $doctrineHelper;
 
     /**
-     * @var AppliedPromotionMapper|\PHPUnit_Framework_MockObject_MockObject
+     * @var AppliedPromotionMapper|\PHPUnit\Framework\MockObject\MockObject
      */
     private $promotionMapper;
 
@@ -108,6 +108,10 @@ class AppliedPromotionManagerTest extends \PHPUnit_Framework_TestCase
         ));
 
         $executor = $this->getExecutor();
+        $executor->expects($this->once())
+            ->method('supports')
+            ->with($order)
+            ->willReturn(true);
         $executor->expects($this->once())
             ->method('execute')
             ->with($order)
@@ -178,6 +182,10 @@ class AppliedPromotionManagerTest extends \PHPUnit_Framework_TestCase
 
         $executor = $this->getExecutor();
         $executor->expects($this->once())
+            ->method('supports')
+            ->with($order)
+            ->willReturn(true);
+        $executor->expects($this->once())
             ->method('execute')
             ->with($order)
             ->willReturn($discountContext);
@@ -211,6 +219,10 @@ class AppliedPromotionManagerTest extends \PHPUnit_Framework_TestCase
 
         $executor = $this->getExecutor();
         $executor->expects($this->once())
+            ->method('supports')
+            ->with($order)
+            ->willReturn(true);
+        $executor->expects($this->once())
             ->method('execute')
             ->with($order)
             ->willReturn($discountContext);
@@ -236,9 +248,9 @@ class AppliedPromotionManagerTest extends \PHPUnit_Framework_TestCase
 
     public function testCreateAppliedPromotionsWhenRemoveParameterIsTrue()
     {
-        /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $em */
+        /** @var EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject $em */
         $em = $this->createMock(EntityManagerInterface::class);
-        /** @var ClassMetadata|\PHPUnit_Framework_MockObject_MockObject $metadata */
+        /** @var ClassMetadata|\PHPUnit\Framework\MockObject\MockObject $metadata */
         $metadata = $this->createMock(ClassMetadata::class);
 
         $order = new Order();
@@ -251,10 +263,14 @@ class AppliedPromotionManagerTest extends \PHPUnit_Framework_TestCase
         $appliedPromotions->takeSnapshot();
         $order->setAppliedPromotions($appliedPromotions);
 
-        /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $em */
+        /** @var EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject $em */
         $entityManager = $this->createMock(EntityManagerInterface::class);
 
         $executor = $this->getExecutor();
+        $executor->expects($this->once())
+            ->method('supports')
+            ->with($order)
+            ->willReturn(true);
         $executor->expects($this->once())
             ->method('execute')
             ->with($order)
@@ -272,6 +288,21 @@ class AppliedPromotionManagerTest extends \PHPUnit_Framework_TestCase
             ->withConsecutive($firstAppliedPromotion, $secondAppliedPromotion);
 
         $this->manager->createAppliedPromotions($order, true);
+    }
+
+    public function testCreateAppliedPromotionsWhenNoSupports()
+    {
+        $order = new Order();
+        $executor = $this->getExecutor();
+        $executor->expects($this->once())
+            ->method('supports')
+            ->with($order)
+            ->willReturn(false);
+        $executor->expects($this->never())
+            ->method('execute')
+            ->with($order);
+
+        $this->manager->createAppliedPromotions($order);
     }
 
     /**
@@ -292,7 +323,7 @@ class AppliedPromotionManagerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return PromotionExecutor|\PHPUnit_Framework_MockObject_MockObject
+     * @return PromotionExecutor|\PHPUnit\Framework\MockObject\MockObject
      */
     private function getExecutor()
     {

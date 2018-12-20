@@ -1,14 +1,14 @@
-// @theme: default;
+/* @theme: default; */
 
 .order-review-options {
-    margin: $offset-y-m $offset-x 0;
+    margin: $offset-y-m;
 
     .toggle-block__content {
         margin: $offset-y-s 0 $offset-x-m;
     }
 
     .grid__column {
-        padding: 0;
+        padding: 0 $offset-y-m;
         margin-bottom: $offset-y-s;
     }
 }

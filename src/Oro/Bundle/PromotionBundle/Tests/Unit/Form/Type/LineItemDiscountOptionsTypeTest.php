@@ -28,12 +28,6 @@ use Symfony\Component\Validator\Validation;
 
 class LineItemDiscountOptionsTypeTest extends FormIntegrationTestCase
 {
-    public function testGetName()
-    {
-        $formType = new LineItemDiscountOptionsType();
-        $this->assertEquals(LineItemDiscountOptionsType::NAME, $formType->getName());
-    }
-
     public function testGetBlockPrefix()
     {
         $formType = new LineItemDiscountOptionsType();
@@ -58,7 +52,7 @@ class LineItemDiscountOptionsTypeTest extends FormIntegrationTestCase
 
     public function testConfigureOptions()
     {
-        /** @var OptionsResolver|\PHPUnit_Framework_MockObject_MockObject $resolver */
+        /** @var OptionsResolver|\PHPUnit\Framework\MockObject\MockObject $resolver */
         $resolver = $this->createMock(OptionsResolver::class);
 
         $resolver->expects($this->any())
@@ -66,8 +60,8 @@ class LineItemDiscountOptionsTypeTest extends FormIntegrationTestCase
             ->with(
                 'apply_to_choices',
                 [
-                    'each_item' => 'oro.discount_options.line_item_type.apply_to.choices.each_item',
-                    'line_items_total' => 'oro.discount_options.line_item_type.apply_to.choices.line_items_total'
+                    'oro.discount_options.line_item_type.apply_to.choices.each_item' => 'each_item',
+                    'oro.discount_options.line_item_type.apply_to.choices.line_items_total' => 'line_items_total',
                 ]
             );
         $formType = new LineItemDiscountOptionsType();
@@ -131,30 +125,30 @@ class LineItemDiscountOptionsTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
-        /** @var ConfigProvider|\PHPUnit_Framework_MockObject_MockObject $configProvider */
+        /** @var ConfigProvider|\PHPUnit\Framework\MockObject\MockObject $configProvider */
         $configProvider = $this->createMock(ConfigProvider::class);
 
-        /** @var Translator|\PHPUnit_Framework_MockObject_MockObject $translator */
+        /** @var Translator|\PHPUnit\Framework\MockObject\MockObject $translator */
         $translator = $this->createMock(Translator::class);
 
-        /** @var LocaleSettings|\PHPUnit_Framework_MockObject_MockObject $localeSettings */
+        /** @var LocaleSettings|\PHPUnit\Framework\MockObject\MockObject $localeSettings */
         $localeSettings = $this->createMock(LocaleSettings::class);
 
-        /** @var CurrencyNameHelper|\PHPUnit_Framework_MockObject_MockObject $currencyNameHelper */
+        /** @var CurrencyNameHelper|\PHPUnit\Framework\MockObject\MockObject $currencyNameHelper */
         $currencyNameHelper = $this->createMock(CurrencyNameHelper::class);
 
-        /** @var NumberFormatter|\PHPUnit_Framework_MockObject_MockObject $numberFormatter */
+        /** @var NumberFormatter|\PHPUnit\Framework\MockObject\MockObject $numberFormatter */
         $numberFormatter = $this->createMock(NumberFormatter::class);
 
-        /** @var ProductUnitsProvider|\PHPUnit_Framework_MockObject_MockObject $productUnitsProvider */
+        /** @var ProductUnitsProvider|\PHPUnit\Framework\MockObject\MockObject $productUnitsProvider */
         $productUnitsProvider = $this->createMock(ProductUnitsProvider::class);
         $productUnitsProvider->expects($this->any())
             ->method('getAvailableProductUnits')
             ->willReturn([
-                'item' => 'oro.product_unit.item.label.full',
-                'set' => 'oro.product_unit.set.label.full',
+                'oro.product_unit.item.label.full' => 'item',
+                'oro.product_unit.set.label.full' => 'set',
             ]);
-        /** @var CurrencyProviderInterface|\PHPUnit_Framework_MockObject_MockObject $currencyProvider */
+        /** @var CurrencyProviderInterface|\PHPUnit\Framework\MockObject\MockObject $currencyProvider */
         $currencyProvider = $this->getMockBuilder(CurrencyProviderInterface::class)
             ->disableOriginalConstructor()->getMockForAbstractClass();
         $currencyProvider->expects($this->any())

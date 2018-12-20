@@ -2,305 +2,475 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Provider;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\PricingBundle\Entity\BasePriceList;
-use Oro\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
+use Oro\Bundle\PricingBundle\Model\DTO\ProductPriceDTO;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
+use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteria;
+use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaInterface;
 use Oro\Bundle\PricingBundle\Provider\ProductPriceProvider;
-use Oro\Bundle\PricingBundle\Sharding\ShardManager;
+use Oro\Bundle\PricingBundle\Storage\ProductPriceStorageInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Component\Testing\Unit\EntityTrait;
 
-class ProductPriceProviderTest extends \PHPUnit_Framework_TestCase
+class ProductPriceProviderTest extends \PHPUnit\Framework\TestCase
 {
-    const CLASS_NAME = '\stdClass';
+    use EntityTrait;
 
-    /**
-     * @var ShardManager|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $shardManager;
+    const TEST_CURRENCY = 'USD';
 
-    /**
-     * @var ProductPriceProvider
-     */
+    /** @var ProductPriceScopeCriteriaInterface */
+    private $productPriceScopeCriteria;
+
+    /** @var ProductPriceProvider */
     protected $provider;
 
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry
-     */
-    protected $registry;
+    /** @var ProductPriceStorageInterface|\PHPUnit\Framework\MockObject\MockObject */
+    protected $priceStorage;
 
+    /** @var UserCurrencyManager|\PHPUnit\Framework\MockObject\MockObject */
+    protected $currencyManager;
+
+    /**
+     * {@inheritdoc}
+     */
     protected function setUp()
     {
-        $this->registry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
-        $this->shardManager = $this->createMock(ShardManager::class);
-        $this->provider = new ProductPriceProvider($this->registry, $this->shardManager);
-        $this->provider->setClassName('\stdClass');
-    }
+        $this->priceStorage = $this->createMock(ProductPriceStorageInterface::class);
+        $this->currencyManager = $this->createMock(UserCurrencyManager::class);
 
-    protected function tearDown()
-    {
-        unset($this->provider, $this->registry);
+        $this->provider = new ProductPriceProvider($this->priceStorage, $this->currencyManager);
     }
 
     /**
-     * @dataProvider getAvailableCurrenciesDataProvider
-     * @param int $priceListId
-     * @param array $productIds
-     * @param array $prices
-     * @param array $expectedData
+     * @dataProvider getSupportedCurrenciesProvider
+     * @param array $availableCurrencies
+     * @param array $supportedCurrencies
+     * @param array $expectedResult
      */
-    public function testGetAvailableCurrencies($priceListId, array $productIds, array $prices, array $expectedData)
-    {
-        $repository = $this->getMockBuilder('Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
+    public function testGetSupportedCurrencies(
+        array $availableCurrencies,
+        array $supportedCurrencies,
+        array $expectedResult
+    ) {
+        $this->currencyManager
+            ->expects($this->once())
+            ->method('getAvailableCurrencies')
+            ->willReturn($availableCurrencies);
 
-        $repository->expects($this->once())
-            ->method('findByPriceListIdAndProductIds')
-            ->with($this->shardManager, $priceListId, $productIds, true, null)
+        $scopeCriteria = $this->getProductPriceScopeCriteria();
+        $this->priceStorage
+            ->expects($this->once())
+            ->method('getSupportedCurrencies')
+            ->with($scopeCriteria)
+            ->willReturn($supportedCurrencies);
+
+        $result = $this->provider->getSupportedCurrencies($scopeCriteria);
+
+        $this->assertEquals($expectedResult, $result);
+    }
+
+    /**
+     * @return array
+     */
+    public function getSupportedCurrenciesProvider()
+    {
+        return [
+            'one supported currency exists' => [
+                'availableCurrencies' => [self::TEST_CURRENCY],
+                'supportedCurrencies' => [self::TEST_CURRENCY, 'EUR'],
+                'expectedResult' => [self::TEST_CURRENCY]
+            ],
+            'no available currencies' => [
+                'availableCurrencies' => [self::TEST_CURRENCY],
+                'supportedCurrencies' => ['EUR'],
+                'expectedResult' => []
+            ]
+        ];
+    }
+
+    /**
+     * @dataProvider getPricesByScopeCriteriaAndProductsProvider
+     *
+     * @param array $currencies
+     * @param array $supportedCurrencies
+     * @param array $availableCurrencies
+     * @param array $finalCurrencies
+     * @param string $unitCode
+     * @param array $products
+     * @param array $prices
+     * @param array $expectedResult
+     */
+    public function testGetPricesByScopeCriteriaAndProducts(
+        array $currencies,
+        array $supportedCurrencies,
+        array $availableCurrencies,
+        array $finalCurrencies,
+        $unitCode,
+        array $products,
+        array $prices,
+        array $expectedResult
+    ) {
+        $this->currencyManager
+            ->expects($this->any())
+            ->method('getAvailableCurrencies')
+            ->willReturn($availableCurrencies);
+
+        $scopeCriteria = $this->getProductPriceScopeCriteria();
+        $this->priceStorage
+            ->expects($this->any())
+            ->method('getSupportedCurrencies')
+            ->with($scopeCriteria)
+            ->willReturn($supportedCurrencies);
+
+        $productUnitCodes = $unitCode ? [$unitCode] : null;
+        $this->priceStorage
+            ->expects($this->once())
+            ->method('getPrices')
+            ->with($scopeCriteria, $products, $productUnitCodes, $finalCurrencies)
             ->willReturn($prices);
 
-        $manager = $this->getMockBuilder('Doctrine\Common\Persistence\ObjectManager')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $result = $this->provider->getPricesByScopeCriteriaAndProducts(
+            $scopeCriteria,
+            $products,
+            $currencies,
+            $unitCode
+        );
 
-        $manager->expects($this->once())
-            ->method('getRepository')
-            ->with($this->equalTo('\stdClass'))
-            ->willReturn($repository);
+        $this->assertEquals($expectedResult, $result);
+    }
 
-        $this->registry->expects($this->once())
-            ->method('getManagerForClass')
-            ->with($this->equalTo('\stdClass'))
-            ->will($this->returnValue($manager));
+    /**
+     * @return array
+     */
+    public function getPricesByScopeCriteriaAndProductsProvider()
+    {
+        return [
+            'with allowed currency' => [
+                'currencies' => [self::TEST_CURRENCY],
+                'supportedCurrencies' => [self::TEST_CURRENCY, 'EUR'],
+                'availableCurrencies' => [self::TEST_CURRENCY, 'EUR'],
+                'finalCurrencies' => [self::TEST_CURRENCY],
+                'unitCode' => 'unit',
+                'products' => [$this->getEntity(Product::class, ['id' => 1])],
+                'prices' => $this->getPricesArray(10, 10, self::TEST_CURRENCY, ['unit']),
+                'expectedResult' => [
+                    1 => $this->getPricesArray(10, 10, self::TEST_CURRENCY, ['unit'])
+                ]
+            ],
+            'without unit code' => [
+                'currencies' => [self::TEST_CURRENCY],
+                'supportedCurrencies' => [self::TEST_CURRENCY, 'EUR'],
+                'availableCurrencies' => [self::TEST_CURRENCY, 'EUR'],
+                'finalCurrencies' => [self::TEST_CURRENCY],
+                'unitCode' => null,
+                'products' => [$this->getEntity(Product::class, ['id' => 1])],
+                'prices' => $this->getPricesArray(10, 10, self::TEST_CURRENCY, ['unit']),
+                'expectedResult' => [
+                    1 => $this->getPricesArray(10, 10, self::TEST_CURRENCY, ['unit'])
+                ]
+            ]
+        ];
+    }
 
-        $this->assertEquals(
-            $expectedData,
-            $this->provider->getPriceByPriceListIdAndProductIds($priceListId, $productIds)
+    /**
+     * @dataProvider getPricesByScopeCriteriaAndProductsWhenGetPricesNotCalledProvider
+     *
+     * @param array $currencies
+     * @param array $supportedCurrencies
+     * @param array $availableCurrencies
+     * @param string $unitCode
+     * @param array $products
+     * @param array $expectedResult
+     */
+    public function testGetPricesByScopeCriteriaAndProductsWhenGetPricesNotCalled(
+        array $currencies,
+        array $supportedCurrencies,
+        array $availableCurrencies,
+        $unitCode,
+        array $products,
+        array $expectedResult
+    ) {
+        $this->currencyManager
+            ->expects($this->any())
+            ->method('getAvailableCurrencies')
+            ->willReturn($availableCurrencies);
+
+        $scopeCriteria = $this->getProductPriceScopeCriteria();
+        $this->priceStorage
+            ->expects($this->any())
+            ->method('getSupportedCurrencies')
+            ->with($scopeCriteria)
+            ->willReturn($supportedCurrencies);
+
+        $this->priceStorage
+            ->expects($this->never())
+            ->method('getPrices');
+
+        $result = $this->provider->getPricesByScopeCriteriaAndProducts(
+            $scopeCriteria,
+            $products,
+            $currencies,
+            $unitCode
+        );
+
+        $this->assertEquals($expectedResult, $result);
+    }
+
+    /**
+     * @return array
+     */
+    public function getPricesByScopeCriteriaAndProductsWhenGetPricesNotCalledProvider()
+    {
+        return [
+            'without currencies' => [
+                'currencies' => [],
+                'supportedCurrencies' => [self::TEST_CURRENCY, 'EUR'],
+                'availableCurrencies' => [self::TEST_CURRENCY, 'EUR'],
+                'unitCode' => 'unit',
+                'products' => [$this->getEntity(Product::class, ['id' => 1])],
+                'expectedResult' => []
+            ],
+            'with not allowed currency' => [
+                'currencies' => [self::TEST_CURRENCY],
+                'supportedCurrencies' => ['EUR'],
+                'availableCurrencies' => [self::TEST_CURRENCY],
+                'unitCode' => 'unit',
+                'products' => [$this->getEntity(Product::class, ['id' => 1])],
+                'expectedResult' => []
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider getMatchedPricesProvider
+     *
+     * @param array $productPriceCriteria
+     * @param array $products
+     * @param array $productUnitCodes
+     * @param array $prices
+     * @param array $supportedCurrencies
+     * @param array $availableCurrencies
+     * @param array $finalCurrencies
+     * @param array $expectedResult
+     */
+    public function testGetMatchedPrices(
+        array $productPriceCriteria,
+        array $products,
+        array $productUnitCodes,
+        array $prices,
+        array $supportedCurrencies,
+        array $availableCurrencies,
+        array $finalCurrencies,
+        array $expectedResult
+    ) {
+        $this->currencyManager
+            ->expects($this->any())
+            ->method('getAvailableCurrencies')
+            ->willReturn($availableCurrencies);
+
+        $scopeCriteria = $this->getProductPriceScopeCriteria();
+        $this->priceStorage
+            ->expects($this->any())
+            ->method('getSupportedCurrencies')
+            ->with($scopeCriteria)
+            ->willReturn($supportedCurrencies);
+
+        $this->priceStorage
+            ->expects($this->once())
+            ->method('getPrices')
+            ->with($scopeCriteria, $products, $productUnitCodes, $finalCurrencies)
+            ->willReturn($prices);
+
+        $result = $this->provider->getMatchedPrices(
+            $productPriceCriteria,
+            $scopeCriteria
+        );
+
+        $this->assertEquals($expectedResult, $result);
+    }
+
+    /**
+     * @return array
+     */
+    public function getMatchedPricesProvider()
+    {
+        return [
+            'with price criteria that contains allowed currencies' => [
+                'productPriceCriteria' => [
+                    $this->getProductPriceCriteria(1, 'item', 10, self::TEST_CURRENCY)
+                ],
+                'products' => [
+                    $this->getEntity(Product::class, ['id' => 1])
+                ],
+                'productUnitCodes' => ['item'],
+                'prices' => [
+                    $this->createPrice(15, self::TEST_CURRENCY, 5, 'item'),
+                    $this->createPrice(10, self::TEST_CURRENCY, 10, 'item')
+                ],
+                'supportedCurrencies' => [self::TEST_CURRENCY, 'UAH'],
+                'availableCurrencies' => [self::TEST_CURRENCY, 'UAH'],
+                'finalCurrencies' => [self::TEST_CURRENCY],
+                'expectedResult' => [
+                    '1-item-10-USD' => Price::create(1, 'USD'),
+                ]
+            ],
+            'no matched prices' => [
+                'productPriceCriteria' => [
+                    $this->getProductPriceCriteria(1, 'item', 5, self::TEST_CURRENCY)
+                ],
+                'products' => [
+                    $this->getEntity(Product::class, ['id' => 1])
+                ],
+                'productUnitCodes' => ['item'],
+                'prices' => [$this->createPrice(10, self::TEST_CURRENCY, 10, 'item')],
+                'supportedCurrencies' => [self::TEST_CURRENCY, 'UAH'],
+                'availableCurrencies' => [self::TEST_CURRENCY, 'UAH'],
+                'finalCurrencies' => [self::TEST_CURRENCY],
+                'expectedResult' => [
+                    '1-item-5-USD' => null
+                ]
+            ]
+        ];
+    }
+
+    /**
+     * @dataProvider getMatchedPricesWhenGetPricesNotCalledProvider
+     *
+     * @param array $productPriceCriteria
+     * @param array $supportedCurrencies
+     * @param array $availableCurrencies
+     * @param array $expectedResult
+     */
+    public function testGetMatchedPricesWhenGetPricesNotCalled(
+        array $productPriceCriteria,
+        array $supportedCurrencies,
+        array $availableCurrencies,
+        array $expectedResult
+    ) {
+        $this->currencyManager
+            ->expects($this->any())
+            ->method('getAvailableCurrencies')
+            ->willReturn($availableCurrencies);
+
+        $scopeCriteria = $this->getProductPriceScopeCriteria();
+        $this->priceStorage
+            ->expects($this->any())
+            ->method('getSupportedCurrencies')
+            ->with($scopeCriteria)
+            ->willReturn($supportedCurrencies);
+
+        $this->priceStorage
+            ->expects($this->never())
+            ->method('getPrices');
+
+        $result = $this->provider->getMatchedPrices(
+            $productPriceCriteria,
+            $scopeCriteria
+        );
+
+        $this->assertEquals($expectedResult, $result);
+    }
+
+
+    /**
+     * @return array
+     */
+    public function getMatchedPricesWhenGetPricesNotCalledProvider()
+    {
+        return [
+            'with no price criteria' => [
+                'productPriceCriteria' => [],
+                'supportedCurrencies' => [self::TEST_CURRENCY, 'UAH'],
+                'availableCurrencies' => [self::TEST_CURRENCY, 'UAH'],
+                'expectedResult' => []
+            ],
+            'with price criteria that contains only not allowed currency' => [
+                'productPriceCriteria' => [
+                    $this->getProductPriceCriteria(1, 'item', 10, 'EUR')
+                ],
+                'supportedCurrencies' => [self::TEST_CURRENCY, 'UAH'],
+                'availableCurrencies' => [self::TEST_CURRENCY, 'UAH'],
+                'expectedResult' => [
+                    '1-item-10-EUR' => null
+                ]
+            ],
+        ];
+    }
+
+    /**
+     * @param int    $productId
+     * @param string $unitCode
+     * @param int $quantity
+     * @param string $currency
+     *
+     * @return ProductPriceCriteria
+     */
+    private function getProductPriceCriteria(int $productId, string $unitCode, int $quantity, string $currency)
+    {
+        $unitDefaultPrecision = 1;
+        $productUnit = new ProductUnit();
+        $productUnit
+            ->setCode($unitCode)
+            ->setDefaultPrecision($unitDefaultPrecision);
+        /** @var Product $product */
+        $product = $this->getEntity(Product::class, ['id' => $productId]);
+
+        return new ProductPriceCriteria(
+            $product,
+            $productUnit,
+            $quantity,
+            $currency
         );
     }
 
     /**
-     * @return array
+     * @param float  $price
+     * @param int    $quantity
+     * @param string $currency
+     * @param array  $unitCodes
+     * @return array|ProductPriceDTO[]
      */
-    public function getAvailableCurrenciesDataProvider()
+    private function getPricesArray($price, $quantity, $currency, array $unitCodes)
     {
-        return [
-            'with prices' => [
-                'priceListId' => 1,
-                'productIds' => [1, 2],
-                'prices' => [
-                    $this->createPrice(1, 'item', 1, 100.0000, 'USD'),
-                    $this->createPrice(1, 'kg', 1, 20.0000, 'USD'),
-                    $this->createPrice(1, 'kg', 10, 15.0000, 'USD'),
-                    $this->createPrice(2, 'kg', 3, 50.0000, 'EUR')
-                ],
-                'expectedData' => [
-                    '1' => [
-                        [
-                            'price' => '100.0000',
-                            'currency' => 'USD',
-                            'quantity' => 1,
-                            'unit' => 'item',
-                        ],
-                        [
-                            'price' => '20.0000',
-                            'currency' => 'USD',
-                            'quantity' => 1,
-                            'unit' => 'kg',
-                        ],
-                        [
-                            'price' => '15.0000',
-                            'currency' => 'USD',
-                            'quantity' => 10,
-                            'unit' => 'kg',
-                        ],
-                    ],
-                    '2' => [
-                        [
-                            'price' => '50.0000',
-                            'currency' => 'EUR',
-                            'quantity' => 3,
-                            'unit' => 'kg',
-                        ],
-                    ],
-                ]
-            ],
-            'without prices' => [
-                'priceListId' => 1,
-                'productIds' => [1, 2],
-                'prices' => [],
-                'expectedData' => []
-            ]
-        ];
+        return array_map(function ($unitCode) use ($price, $quantity, $currency) {
+            return $this->createPrice($price, $currency, $quantity, $unitCode);
+        }, $unitCodes);
     }
 
     /**
-     * @param int $productId
-     * @param string $unitCode
+     * @param float $price
      * @param int $quantity
-     * @param float $value
      * @param string $currency
-     * @return ProductPrice
+     * @param string $unitCode
+     * @return ProductPriceDTO
      */
-    protected function createPrice($productId, $unitCode, $quantity, $value, $currency)
+    private function createPrice($price, $currency, $quantity, $unitCode)
     {
-        $productPrice = new ProductPrice();
-
-        $price = new Price();
-        $price->setCurrency($currency);
-        $price->setValue($value);
-
-        $product = new Product();
-        $idReflection = new \ReflectionProperty(get_class($product), 'id');
-        $idReflection->setAccessible(true);
-        $idReflection->setValue($product, $productId);
-
-        $unit = new ProductUnit();
-        $unit->setCode($unitCode);
-
-        $productPrice->setProduct($product);
-        $productPrice->setUnit($unit);
-        $productPrice->setQuantity($quantity);
-        $productPrice->setPrice($price);
-
-        return $productPrice;
+        return new ProductPriceDTO(
+            $this->getEntity(Product::class, ['id' => 1]),
+            Price::create($price, $currency),
+            $quantity,
+            $this->getEntity(ProductUnit::class, ['code' => $unitCode])
+        );
     }
 
     /**
-     * @dataProvider getMatchedPricesDataProvider
-     *
-     * @param array $productPriceCriteria
-     * @param array $repositoryData
-     * @param array $expectedData
+     * @return ProductPriceScopeCriteria|ProductPriceScopeCriteriaInterface
      */
-    public function testGetMatchedPrices(
-        array $productPriceCriteria,
-        array $repositoryData,
-        array $expectedData
-    ) {
-        $priceList = $this->getEntity('Oro\Bundle\PricingBundle\Entity\PriceList', 12);
-
-        $repository = $this->getMockBuilder('Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $repository->expects($this->once())->method('getPricesBatch')->willReturn($repositoryData);
-
-        $em = $this->getMockBuilder('Doctrine\ORM\EntityManager')->disableOriginalConstructor()->getMock();
-        $em->expects($this->once())
-            ->method('getRepository')
-            ->with(self::CLASS_NAME)
-            ->willReturn($repository);
-
-        $this->registry->expects($this->once())
-            ->method('getManagerForClass')
-            ->with(self::CLASS_NAME)
-            ->willReturn($em);
-
-        $prices = $this->provider->getMatchedPrices($productPriceCriteria, $priceList);
-
-        $this->assertInternalType('array', $prices);
-        $this->assertEquals(count($productPriceCriteria), count($prices));
-        $this->assertEquals($expectedData, $prices);
-    }
-
-    /**
-     * @return array
-     */
-    public function getMatchedPricesDataProvider()
+    private function getProductPriceScopeCriteria()
     {
-        $currency = 'USD';
-        $prodUnitQty1 = $this->getProductPriceCriteria(1, $currency, 0);
-        $prodUnitQty105 = $this->getProductPriceCriteria(10.5, $currency, 0);
-        $prodUnitQty50 = $this->getProductPriceCriteria(50, $currency, 3);
+        if (null !== $this->productPriceScopeCriteria) {
+            return $this->productPriceScopeCriteria;
+        }
 
-        return [
-            [
-                'productPriceCriteria' => [$prodUnitQty1, $prodUnitQty105, $prodUnitQty50],
-                'repositoryData' => $this->getRepositoryData($prodUnitQty50),
-                'expectedData' => [
-                    $prodUnitQty1->getIdentifier() => null,
-                    $prodUnitQty105->getIdentifier() => Price::create(15, $currency),
-                    $prodUnitQty50->getIdentifier() => Price::create(6, $currency),
-                ]
-            ],
-        ];
-    }
+        $this->productPriceScopeCriteria = new ProductPriceScopeCriteria();
+        $this->productPriceScopeCriteria->setCustomer($this->getEntity(Customer::class, ['id' => 1]));
+        $this->productPriceScopeCriteria->setWebsite($this->getEntity(Website::class, ['id' => 1]));
 
-    /**
-     * @param float $quantity
-     * @param string $currency
-     * @return ProductPriceCriteria
-     */
-    protected function getProductPriceCriteria($quantity, $currency, $precision)
-    {
-        /** @var Product $product */
-        $product = $this->getEntity('Oro\Bundle\ProductBundle\Entity\Product', 42);
-
-        $productUnit = new ProductUnit();
-        $productUnit->setDefaultPrecision($precision);
-        $productUnit->setCode('kg');
-
-        return new ProductPriceCriteria($product, $productUnit, $quantity, $currency);
-    }
-
-    /**
-     * @param ProductPriceCriteria $productPriceCriteria
-     * @return array
-     */
-    protected function getRepositoryData(ProductPriceCriteria $productPriceCriteria)
-    {
-        $product = $productPriceCriteria->getProduct();
-        $productUnit = $productPriceCriteria->getProductUnit();
-
-        return [
-            [
-                'id' => $product->getId(),
-                'code' => $productUnit->getCode(),
-                'quantity' => 1,
-                'value' => 20,
-                'currency' => 'EUR'
-            ],
-            [
-                'id' => $product->getId(),
-                'code' => $productUnit->getCode(),
-                'quantity' => 1.5,
-                'value' => 15,
-                'currency' => 'USD'
-            ],
-            [
-                'id' => $product->getId(),
-                'code' => $productUnit->getCode(),
-                'quantity' => 20,
-                'value' => 120,
-                'currency' => 'USD'
-            ],
-            [
-                'id' => $product->getId(),
-                'code' => $productUnit->getCode(),
-                'quantity' => 100,
-                'value' => 1400,
-                'currency' => 'USD'
-            ]
-        ];
-    }
-
-    /**
-     * @param string $className
-     * @param int $id
-     * @return BasePriceList
-     */
-    protected function getEntity($className, $id)
-    {
-        $entity = new $className;
-
-        $reflectionClass = new \ReflectionClass($className);
-        $method = $reflectionClass->getProperty('id');
-        $method->setAccessible(true);
-        $method->setValue($entity, $id);
-
-        return $entity;
+        return $this->productPriceScopeCriteria;
     }
 }

@@ -3,6 +3,8 @@
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Controller;
 
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
 use Oro\Bundle\PricingBundle\Tests\Functional\ProductPriceReference;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
@@ -23,6 +25,9 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
      */
     protected $matchingPriceActionUrl = 'oro_pricing_matching_price';
 
+    /**
+     * {@inheritdoc}
+     */
     protected function setUp()
     {
         $this->initClient(
@@ -36,13 +41,11 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
             )
         );
 
-        $this->loadFixtures(
-            [
-                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices',
-                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations',
-                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices',
-            ]
-        );
+        $this->loadFixtures([
+            LoadCombinedProductPrices::class,
+            LoadProductPrices::class,
+            LoadPriceListRelations::class,
+        ]);
     }
 
     public function testUpdate()
@@ -173,14 +176,11 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
             'default, without customer and website' => [
                 'product' => 'product-1',
                 'expected' => [
-                    ['price' => '12.2000', 'currency' => 'EUR', 'quantity' => 1, 'unit' => 'bottle'],
                     ['price' => '13.1000', 'currency' => 'USD', 'quantity' => 1, 'unit' => 'bottle'],
-                    ['price' => '12.2000', 'currency' => 'EUR', 'quantity' => 11, 'unit' => 'bottle'],
                     ['price' => '10.0000', 'currency' => 'USD', 'quantity' => 1, 'unit' => 'liter'],
                     ['price' => '12.2000', 'currency' => 'USD', 'quantity' => 10, 'unit' => 'liter'],
                 ]
             ],
-
         ];
     }
 }

@@ -10,7 +10,7 @@ use Oro\Bundle\ProductBundle\RelatedItem\AbstractRelatedItemConfigProvider;
 use Oro\Bundle\ProductBundle\RelatedItem\FinderStrategyInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-abstract class AbstractFinderDatabaseStrategyTest extends \PHPUnit_Framework_TestCase
+abstract class AbstractFinderDatabaseStrategyTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
@@ -20,22 +20,22 @@ abstract class AbstractFinderDatabaseStrategyTest extends \PHPUnit_Framework_Tes
     protected $strategy;
 
     /**
-     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $doctrineHelper;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
+     * @var \PHPUnit\Framework\MockObject\MockObject
      */
     protected $repository;
 
     /**
-     * @var EntityManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var EntityManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $entityManager;
 
     /**
-     * @var AbstractRelatedItemConfigProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var AbstractRelatedItemConfigProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $configProvider;
 
@@ -60,7 +60,7 @@ abstract class AbstractFinderDatabaseStrategyTest extends \PHPUnit_Framework_Tes
     abstract public function createFinderStrategy();
 
     /**
-     * @return EntityRepository|\PHPUnit_Framework_MockObject_MockObject
+     * @return EntityRepository|\PHPUnit\Framework\MockObject\MockObject
      */
     abstract public function createRepositoryMock();
 
@@ -83,7 +83,7 @@ abstract class AbstractFinderDatabaseStrategyTest extends \PHPUnit_Framework_Tes
     protected function relatedItemsFunctionalityShouldBeEnabled()
     {
         $this->configProvider
-            ->expects($this->any())
+            ->expects($this->once())
             ->method('isEnabled')
             ->willReturn(true);
     }
@@ -91,7 +91,7 @@ abstract class AbstractFinderDatabaseStrategyTest extends \PHPUnit_Framework_Tes
     protected function relatedItemsFunctionalityShouldBeDisabled()
     {
         $this->configProvider
-            ->expects($this->any())
+            ->expects($this->once())
             ->method('isEnabled')
             ->willReturn(false);
     }
@@ -99,9 +99,23 @@ abstract class AbstractFinderDatabaseStrategyTest extends \PHPUnit_Framework_Tes
     protected function andShouldNotBeBidirectional()
     {
         $this->configProvider
-            ->expects($this->any())
+            ->expects($this->once())
             ->method('isBidirectional')
             ->willReturn(false);
+    }
+
+    protected function configManagerBidirectionalOptionShouldBeIgnored()
+    {
+        $this->configProvider
+            ->expects($this->never())
+            ->method('isBidirectional');
+    }
+
+    protected function configManagerLimitOptionShouldBeIgnored()
+    {
+        $this->configProvider
+            ->expects($this->never())
+            ->method('getLimit');
     }
 
     /**

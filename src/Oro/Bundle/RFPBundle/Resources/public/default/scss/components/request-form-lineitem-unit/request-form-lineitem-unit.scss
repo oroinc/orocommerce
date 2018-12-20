@@ -1,3 +1,5 @@
+/* @theme: default; */
+
 .request-form-lineitem-unit {
     display: table-cell;
     padding-bottom: 8px;
@@ -26,11 +28,27 @@
 
     &--remove {
         @extend .request-form-lineitem-unit;
+
         text-align: right;
     }
 
     &--prices {
         white-space: nowrap;
+    }
+
+    &--select {
+        .select2-container-disabled {
+            background: none;
+            border-color: transparent;
+
+            .select2-choice {
+                background: none;
+            }
+
+            .select2-arrow {
+                display: none;
+            }
+        }
     }
 }
 

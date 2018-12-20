@@ -9,15 +9,15 @@ use Oro\Bundle\InventoryBundle\Validator\UpcomingLabelCheckoutLineItemValidator;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ShoppingListBundle\Event\LineItemValidateEvent;
 
-class UpcomingLabelCheckoutLineItemValidationListenerTest extends \PHPUnit_Framework_TestCase
+class UpcomingLabelCheckoutLineItemValidationListenerTest extends \PHPUnit\Framework\TestCase
 {
     /** @var  UpcomingLabelCheckoutLineItemValidationListener */
     protected $listener;
 
-    /** @var  UpcomingLabelCheckoutLineItemValidator|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var  UpcomingLabelCheckoutLineItemValidator|\PHPUnit\Framework\MockObject\MockObject */
     protected $validator;
 
-    /** @var  LineItemValidateEvent|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var  LineItemValidateEvent|\PHPUnit\Framework\MockObject\MockObject */
     protected $event;
 
     protected function setUp()
@@ -35,6 +35,7 @@ class UpcomingLabelCheckoutLineItemValidationListenerTest extends \PHPUnit_Frame
 
         $lineItem = $this->createMock(CheckoutLineItem::class);
         $lineItem->expects($this->exactly(2))->method('getProduct')->willReturn($product);
+        $lineItem->expects($this->exactly(1))->method('getProductUnitCode')->willReturn('set');
 
         $this->event->expects($this->once())->method('getLineItems')
             ->willReturn(new ArrayCollection([$lineItem]));
@@ -42,7 +43,7 @@ class UpcomingLabelCheckoutLineItemValidationListenerTest extends \PHPUnit_Frame
         $this->validator->expects($this->once())->method('getMessageIfLineItemUpcoming')->with($lineItem)
             ->willReturn('some string');
 
-        $this->event->expects($this->once())->method('addWarning')->with('SKU', 'some string');
+        $this->event->expects($this->once())->method('addWarningByUnit')->with('SKU', 'set', 'some string');
 
         $this->listener->onLineItemValidate($this->event);
     }
@@ -54,13 +55,14 @@ class UpcomingLabelCheckoutLineItemValidationListenerTest extends \PHPUnit_Frame
 
         $lineItem = $this->createMock(CheckoutLineItem::class);
         $lineItem->expects($this->never())->method('getProduct')->willReturn($product);
+        $lineItem->expects($this->never())->method('getProductUnitCode')->willReturn('set');
 
         $this->event->expects($this->once())->method('getLineItems')->willReturn([$lineItem]);
 
         $this->validator->expects($this->never())->method('getMessageIfLineItemUpcoming')->with($lineItem)
             ->willReturn('some string');
 
-        $this->event->expects($this->never())->method('addWarning')->with('SKU', 'some string');
+        $this->event->expects($this->never())->method('addWarningByUnit')->with('SKU', 'set', 'some string');
 
         $this->listener->onLineItemValidate($this->event);
     }
@@ -74,7 +76,7 @@ class UpcomingLabelCheckoutLineItemValidationListenerTest extends \PHPUnit_Frame
 
         $this->validator->expects($this->never())->method('getMessageIfLineItemUpcoming');
 
-        $this->event->expects($this->never())->method('addWarning')->with('SKU', 'some string');
+        $this->event->expects($this->never())->method('addWarningByUnit')->with('SKU', 'set', 'some string');
 
         $this->listener->onLineItemValidate($this->event);
     }
@@ -89,7 +91,7 @@ class UpcomingLabelCheckoutLineItemValidationListenerTest extends \PHPUnit_Frame
 
         $this->validator->expects($this->never())->method('getMessageIfLineItemUpcoming');
 
-        $this->event->expects($this->never())->method('addWarning')->with('SKU', 'some string');
+        $this->event->expects($this->never())->method('addWarningByUnit')->with('SKU', 'set', 'some string');
 
         $this->listener->onLineItemValidate($this->event);
     }

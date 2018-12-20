@@ -14,6 +14,8 @@ use Oro\Bundle\CustomerBundle\Form\Type\CustomerSelectType;
 use Oro\Bundle\CustomerBundle\Form\Type\CustomerUserSelectType;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
+use Oro\Bundle\FormBundle\Form\Type\OroHiddenNumberType;
+use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Form\Type\EventListener\SubtotalSubscriber;
@@ -42,12 +44,11 @@ use Oro\Bundle\ProductBundle\Provider\ProductUnitsProvider;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
-use Oro\Bundle\SaleBundle\Tests\Unit\Form\Type\Stub\EntityType as StubEntityType;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Form\Type\UserSelectType;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as StubEntityType;
 use Oro\Component\Testing\Unit\PreloadedExtension;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType as SymfonyEntityType;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\Test\TypeTestCase;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -60,29 +61,32 @@ class OrderTypeTest extends TypeTestCase
 {
     use QuantityTypeTrait;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|OrderAddressSecurityProvider */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|OrderAddressSecurityProvider */
     private $orderAddressSecurityProvider;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|OrderCurrencyHandler */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|OrderCurrencyHandler */
     private $orderCurrencyHandler;
 
     /** @var OrderType */
     private $type;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|TotalProcessorProvider */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|TotalProcessorProvider */
     protected $totalsProvider;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|LineItemSubtotalProvider */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|LineItemSubtotalProvider */
     protected $lineItemSubtotalProvider;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|DiscountSubtotalProvider */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|DiscountSubtotalProvider */
     protected $discountSubtotalProvider;
 
-    /** @var PriceMatcher|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var PriceMatcher|\PHPUnit\Framework\MockObject\MockObject */
     protected $priceMatcher;
 
-    /** @var RateConverterInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var RateConverterInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $rateConverter;
+
+    /** @var NumberFormatter|\PHPUnit\Framework\MockObject\MockObject */
+    private $numberFormatter;
 
     /** @var ValidatorInterface  */
     private $validator;
@@ -125,6 +129,8 @@ class OrderTypeTest extends TypeTestCase
             $this->rateConverter
         );
 
+        $this->numberFormatter = $this->createMock(NumberFormatter::class);
+
         // create a type instance with the mocked dependencies
         $this->type = new OrderType(
             $this->orderAddressSecurityProvider,
@@ -138,7 +144,7 @@ class OrderTypeTest extends TypeTestCase
 
     public function testConfigureOptions()
     {
-        /* @var $resolver \PHPUnit_Framework_MockObject_MockObject|OptionsResolver */
+        /* @var $resolver \PHPUnit\Framework\MockObject\MockObject|OptionsResolver */
         $resolver = $this->createMock(OptionsResolver::class);
         $resolver->expects($this->once())
             ->method('setDefaults')
@@ -151,11 +157,6 @@ class OrderTypeTest extends TypeTestCase
 
         $this->type->setDataClass('Order');
         $this->type->configureOptions($resolver);
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals('oro_order_type', $this->type->getName());
     }
 
     /**
@@ -198,6 +199,11 @@ class OrderTypeTest extends TypeTestCase
             ->expects($this->once())
             ->method('getTotal')
             ->willReturn($total);
+
+        $this->discountSubtotalProvider
+            ->expects($this->any())
+            ->method('getSubtotal')
+            ->willReturn([]);
 
         $this->rateConverter
             ->expects($this->exactly(2))
@@ -334,7 +340,7 @@ class OrderTypeTest extends TypeTestCase
         $entityType = $this->prepareProductEntityType();
         $priceType = $this->preparePriceType();
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|ProductUnitsProvider $productUnitsProvider */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|ProductUnitsProvider $productUnitsProvider */
         $productUnitsProvider = $this->createMock(ProductUnitsProvider::class);
         $productUnitsProvider->expects($this->any())
             ->method('getAvailableProductUnits')
@@ -359,7 +365,7 @@ class OrderTypeTest extends TypeTestCase
                     CollectionType::class => new CollectionType(),
                     OroDateType::class => new OroDateType(),
                     PriceType::class => $priceType,
-                    SymfonyEntityType::class => $entityType,
+                    EntityType::class => $entityType,
                     UserSelectType::class => $userSelectType,
                     ProductSelectType::class => $productSelectType,
                     ProductUnitSelectionType::class => $productUnitSelectionType,
@@ -372,6 +378,7 @@ class OrderTypeTest extends TypeTestCase
                     OrderLineItemType::class => $orderLineItemType,
                     OrderDiscountCollectionRowType::class => new OrderDiscountCollectionRowType(),
                     QuantityType::class => $this->getQuantityType(),
+                    OroHiddenNumberType::class => new OroHiddenNumberType($this->numberFormatter),
                 ],
                 []
             ),
@@ -406,11 +413,11 @@ class OrderTypeTest extends TypeTestCase
     }
 
     /**
-     * @return EntityType
+     * @return StubEntityType
      */
     protected function prepareProductEntityType()
     {
-        $entityType = new EntityType(
+        $entityType = new StubEntityType(
             [
                 2 => $this->getEntity(Product::class, 2),
                 3 => $this->getEntity(Product::class, 3),
@@ -421,7 +428,7 @@ class OrderTypeTest extends TypeTestCase
     }
 
     /**
-     * @return EntityType
+     * @return ProductUnitSelectionTypeStub
      */
     protected function prepareProductUnitSelectionType()
     {

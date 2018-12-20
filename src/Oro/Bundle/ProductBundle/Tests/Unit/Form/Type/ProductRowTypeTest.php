@@ -22,7 +22,7 @@ use Symfony\Component\Validator\ConstraintValidatorFactoryInterface;
 class ProductRowTypeTest extends FormIntegrationTestCase
 {
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ConstraintValidator
+     * @var \PHPUnit\Framework\MockObject\MockObject|ConstraintValidator
      */
     protected $validator;
 
@@ -78,9 +78,10 @@ class ProductRowTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
-        $unitsProviderMock = $this->getMockBuilder(ProductUnitsProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $unitsProviderMock = $this->createMock(ProductUnitsProvider::class);
+        $unitsProviderMock->expects($this->any())
+            ->method('getAvailableProductUnits')
+            ->willReturn([]);
 
         return [
             new PreloadedExtension(
@@ -95,11 +96,11 @@ class ProductRowTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|ConstraintValidatorFactoryInterface
+     * @return \PHPUnit\Framework\MockObject\MockObject|ConstraintValidatorFactoryInterface
      */
     protected function getConstraintValidatorFactory()
     {
-        /* @var $factory \PHPUnit_Framework_MockObject_MockObject|ConstraintValidatorFactoryInterface */
+        /* @var $factory \PHPUnit\Framework\MockObject\MockObject|ConstraintValidatorFactoryInterface */
         $factory = $this->createMock('Symfony\Component\Validator\ConstraintValidatorFactoryInterface');
         $factory->expects($this->any())
             ->method('getInstance')
@@ -160,19 +161,13 @@ class ProductRowTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    public function testGetName()
-    {
-        $formType = new ProductRowType();
-        $this->assertEquals(ProductRowType::NAME, $formType->getName());
-    }
-
     public function testBuildView()
     {
         $product = new Product();
 
         $view = new FormView();
 
-        /** @var FormConfigInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        /** @var FormConfigInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $config = $this->createMock('Symfony\Component\Form\FormConfigInterface');
         $config->expects($this->any())
             ->method('getOptions')
@@ -184,7 +179,7 @@ class ProductRowTypeTest extends FormIntegrationTestCase
                 ]
             );
 
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock('Symfony\Component\Form\FormInterface');
         $form->expects($this->any())->method('getConfig')->willReturn($config);
 
@@ -201,7 +196,7 @@ class ProductRowTypeTest extends FormIntegrationTestCase
 
         $view = new FormView();
 
-        /** @var FormConfigInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        /** @var FormConfigInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $config = $this->createMock('Symfony\Component\Form\FormConfigInterface');
         $config->expects($this->any())
             ->method('getOptions')
@@ -221,15 +216,15 @@ class ProductRowTypeTest extends FormIntegrationTestCase
                 ]
             );
 
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $parentForm = $this->createMock('Symfony\Component\Form\FormInterface');
         $parentForm->expects($this->any())->method('getConfig')->willReturn($config);
 
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $skuField = $this->createMock('Symfony\Component\Form\FormInterface');
         $skuField->expects($this->once())->method('getData')->willReturn('sku1');
 
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock('Symfony\Component\Form\FormInterface');
         $form->expects($this->any())->method('getConfig')->willReturn($config);
         $form->expects($this->any())->method('getParent')->willReturn($parentForm);

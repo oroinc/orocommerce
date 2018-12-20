@@ -9,23 +9,23 @@ use Oro\Bundle\ShoppingListBundle\Layout\DataProvider\MatrixGridOrderFormProvide
 use Oro\Bundle\ShoppingListBundle\Manager\MatrixGridOrderManager;
 use Oro\Bundle\ShoppingListBundle\Model\MatrixCollection;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Symfony\Bridge\Twig\Form\TwigRenderer;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormRenderer;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class MatrixGridOrderFormProviderTest extends \PHPUnit_Framework_TestCase
+class MatrixGridOrderFormProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /** @var FormFactoryInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var FormFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $formFactory;
 
-    /** @var UrlGeneratorInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var UrlGeneratorInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $router;
 
-    /** @var MatrixGridOrderManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var MatrixGridOrderManager|\PHPUnit\Framework\MockObject\MockObject */
     private $matrixOrderManager;
 
     /** @var MatrixGridOrderFormProvider */
@@ -165,7 +165,7 @@ class MatrixGridOrderFormProviderTest extends \PHPUnit_Framework_TestCase
             ->method('createView')
             ->willReturn($formView);
 
-        $twigRenderer = $this->createMock(TwigRenderer::class);
+        $twigRenderer = $this->createMock(FormRenderer::class);
         $this->provider->setTwigRenderer($twigRenderer);
 
         $twigRenderer->expects($this->once())

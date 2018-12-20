@@ -18,7 +18,7 @@ class ContentNodeSelectTypeTest extends FormIntegrationTestCase
     use EntityTrait;
 
     /**
-     * @var ContentNodeTreeHandler|\PHPUnit_Framework_MockObject_MockObject
+     * @var ContentNodeTreeHandler|\PHPUnit\Framework\MockObject\MockObject
      */
     private $treeHandler;
 
@@ -56,11 +56,6 @@ class ContentNodeSelectTypeTest extends FormIntegrationTestCase
                 []
             )
         ];
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals(ContentNodeSelectType::NAME, $this->formType->getName());
     }
 
     public function testGetBlockPrefix()

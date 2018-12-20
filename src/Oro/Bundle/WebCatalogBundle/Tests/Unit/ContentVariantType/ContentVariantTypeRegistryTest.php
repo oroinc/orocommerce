@@ -7,7 +7,7 @@ use Oro\Bundle\WebCatalogBundle\Exception\InvalidArgumentException;
 use Oro\Component\WebCatalog\ContentVariantTypeInterface;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 
-class ContentVariantTypeRegistryTest extends \PHPUnit_Framework_TestCase
+class ContentVariantTypeRegistryTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var ContentVariantTypeRegistry
@@ -28,7 +28,7 @@ class ContentVariantTypeRegistryTest extends \PHPUnit_Framework_TestCase
     {
         $pageTypeName = 'test_type';
 
-        /** @var ContentVariantTypeInterface|\PHPUnit_Framework_MockObject_MockObject $pageType */
+        /** @var ContentVariantTypeInterface|\PHPUnit\Framework\MockObject\MockObject $pageType */
         $pageType = $this->createMock(ContentVariantTypeInterface::class);
 
         $pageType->expects($this->any())
@@ -42,7 +42,7 @@ class ContentVariantTypeRegistryTest extends \PHPUnit_Framework_TestCase
 
     public function testGetPageType()
     {
-        /** @var ContentVariantTypeInterface|\PHPUnit_Framework_MockObject_MockObject $pageType */
+        /** @var ContentVariantTypeInterface|\PHPUnit\Framework\MockObject\MockObject $pageType */
         $pageType = $this->createMock(ContentVariantTypeInterface::class);
 
         $pageType->expects($this->any())
@@ -70,14 +70,14 @@ class ContentVariantTypeRegistryTest extends \PHPUnit_Framework_TestCase
         $pageType1Name = 'test_type_1';
         $pageType2Name = 'test_type_2';
 
-        /** @var ContentVariantTypeInterface|\PHPUnit_Framework_MockObject_MockObject $pageType1 */
+        /** @var ContentVariantTypeInterface|\PHPUnit\Framework\MockObject\MockObject $pageType1 */
         $pageType1 = $this->createMock(ContentVariantTypeInterface::class);
 
         $pageType1->expects($this->any())
             ->method('getName')
             ->willReturn($pageType1Name);
 
-        /** @var ContentVariantTypeInterface|\PHPUnit_Framework_MockObject_MockObject $pageType2 */
+        /** @var ContentVariantTypeInterface|\PHPUnit\Framework\MockObject\MockObject $pageType2 */
         $pageType2 = $this->createMock(ContentVariantTypeInterface::class);
 
         $pageType2->expects($this->any())
@@ -103,7 +103,7 @@ class ContentVariantTypeRegistryTest extends \PHPUnit_Framework_TestCase
         $pageType1Name = 'test_type_1';
         $pageType2Name = 'test_type_2';
 
-        /** @var ContentVariantTypeInterface|\PHPUnit_Framework_MockObject_MockObject $pageType1 */
+        /** @var ContentVariantTypeInterface|\PHPUnit\Framework\MockObject\MockObject $pageType1 */
         $pageType1 = $this->createMock(ContentVariantTypeInterface::class);
 
         $pageType1->expects($this->any())
@@ -113,7 +113,7 @@ class ContentVariantTypeRegistryTest extends \PHPUnit_Framework_TestCase
             ->method('isAllowed')
             ->willReturn(true);
 
-        /** @var ContentVariantTypeInterface|\PHPUnit_Framework_MockObject_MockObject $pageType2 */
+        /** @var ContentVariantTypeInterface|\PHPUnit\Framework\MockObject\MockObject $pageType2 */
         $pageType2 = $this->createMock(ContentVariantTypeInterface::class);
 
         $pageType2->expects($this->any())

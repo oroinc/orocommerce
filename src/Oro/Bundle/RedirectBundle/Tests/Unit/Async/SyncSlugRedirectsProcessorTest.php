@@ -3,9 +3,8 @@
 namespace Oro\Bundle\RedirectBundle\Tests\Unit\Async;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\DBAL\Driver\AbstractDriverException;
+use Doctrine\DBAL\Exception\DeadlockException;
 use Doctrine\ORM\EntityManagerInterface;
-use Oro\Bundle\EntityBundle\ORM\DatabaseExceptionHelper;
 use Oro\Bundle\RedirectBundle\Async\SyncSlugRedirectsProcessor;
 use Oro\Bundle\RedirectBundle\Async\Topics;
 use Oro\Bundle\RedirectBundle\Entity\Redirect;
@@ -19,24 +18,19 @@ use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Psr\Log\LoggerInterface;
 
-class SyncSlugRedirectsProcessorTest extends \PHPUnit_Framework_TestCase
+class SyncSlugRedirectsProcessorTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $registry;
 
     /**
-     * @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $logger;
-
-    /**
-     * @var DatabaseExceptionHelper|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $databaseExceptionHelper;
 
     /**
      * @var SyncSlugRedirectsProcessor
@@ -47,25 +41,21 @@ class SyncSlugRedirectsProcessorTest extends \PHPUnit_Framework_TestCase
     {
         $this->registry = $this->createMock(ManagerRegistry::class);
         $this->logger = $this->createMock(LoggerInterface::class);
-        $this->databaseExceptionHelper = $this->getMockBuilder(DatabaseExceptionHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
         $this->processor = new SyncSlugRedirectsProcessor(
             $this->registry,
-            $this->logger,
-            $this->databaseExceptionHelper
+            $this->logger
         );
     }
 
     public function testProcessRejectInvalidMessage()
     {
-        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
+        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message **/
         $message = $this->createMock(MessageInterface::class);
         $message->expects($this->once())
             ->method('getBody')
             ->willReturn(json_encode([]));
 
-        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
+        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session **/
         $session = $this->createMock(SessionInterface::class);
 
         $this->logger->expects($this->once())
@@ -82,13 +72,13 @@ class SyncSlugRedirectsProcessorTest extends \PHPUnit_Framework_TestCase
     {
         $slugId = 42;
 
-        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
+        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message **/
         $message = $this->createMock(MessageInterface::class);
         $message->expects($this->once())
             ->method('getBody')
             ->willReturn(json_encode(['slugId' => $slugId]));
 
-        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
+        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session **/
         $session = $this->createMock(SessionInterface::class);
 
         $slugRepository = $this->createMock(SlugRepository::class);
@@ -113,9 +103,6 @@ class SyncSlugRedirectsProcessorTest extends \PHPUnit_Framework_TestCase
                 [Redirect::class, $redirectManager]
             ]);
 
-        $this->databaseExceptionHelper->expects($this->never())
-            ->method('isDeadlock');
-
         $redirectManager->expects($this->never())
             ->method('flush');
 
@@ -132,18 +119,16 @@ class SyncSlugRedirectsProcessorTest extends \PHPUnit_Framework_TestCase
     {
         $slugId = 42;
 
-        /** @var AbstractDriverException|\PHPUnit_Framework_MockObject_MockObject $exception */
-        $exception = $this->getMockBuilder(AbstractDriverException::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        /** @var DeadlockException|\PHPUnit\Framework\MockObject\MockObject $exception */
+        $exception = $this->createMock(DeadlockException::class);
 
-        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
+        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message **/
         $message = $this->createMock(MessageInterface::class);
         $message->expects($this->once())
             ->method('getBody')
             ->willReturn(json_encode(['slugId' => $slugId]));
 
-        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
+        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session **/
         $session = $this->createMock(SessionInterface::class);
 
         $slugRepository = $this->createMock(SlugRepository::class);
@@ -167,10 +152,6 @@ class SyncSlugRedirectsProcessorTest extends \PHPUnit_Framework_TestCase
                 [Slug::class, $slugManager],
                 [Redirect::class, $redirectManager]
             ]);
-
-        $this->databaseExceptionHelper->expects($this->once())
-            ->method('isDeadlock')
-            ->willReturn(true);
 
         $redirectManager->expects($this->never())
             ->method('flush');
@@ -197,13 +178,13 @@ class SyncSlugRedirectsProcessorTest extends \PHPUnit_Framework_TestCase
 
         $redirect = $this->getEntity(Redirect::class, ['id' => 123]);
 
-        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
+        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message **/
         $message = $this->createMock(MessageInterface::class);
         $message->expects($this->once())
             ->method('getBody')
             ->willReturn(json_encode(['slugId' => $slugId]));
 
-        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
+        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session **/
         $session = $this->createMock(SessionInterface::class);
 
         $slugRepository = $this->createMock(SlugRepository::class);

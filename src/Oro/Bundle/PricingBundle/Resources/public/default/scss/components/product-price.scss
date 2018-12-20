@@ -1,4 +1,4 @@
-// @theme: default
+/* @theme: default; */
 
 .product-price {
     width: $product-price-width;
@@ -57,10 +57,6 @@
 
         max-width: $product-price-max-width;
         margin: $product-price-margin;
-    }
-
-    .product-price__listed {
-        text-align: $product-price-listed-text-align;
     }
 }
 

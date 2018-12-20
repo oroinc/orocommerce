@@ -31,10 +31,12 @@ class DiscountStrategySelectType extends AbstractType
     {
         $choices = [];
         foreach ($this->strategyRegistry->getStrategies() as $alias => $strategy) {
-            $choices[$alias] = $strategy->getLabel();
+            $choices[$strategy->getLabel()] = $alias;
         }
 
-        $resolver->setDefault('choices', $choices);
+        $resolver->setDefaults([
+            'choices' => $choices,
+        ]);
     }
 
     /**

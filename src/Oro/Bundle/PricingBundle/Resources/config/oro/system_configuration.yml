@@ -1,5 +1,7 @@
 system_configuration:
     groups:
+        pricing_general:
+            title: oro.pricing.system_configuration.groups.pricing_general.title
         default_price_lists:
             title: oro.pricing.system_configuration.groups.default_price_lists.title
         price_rounding:
@@ -14,13 +16,13 @@ system_configuration:
     fields:
         oro_pricing.default_price_lists:
             data_type: array
-            type: oro_pricing_price_list_system_config
+            type: Oro\Bundle\PricingBundle\Form\Type\PriceListSystemConfigType
             options:
                 label: oro.pricing.system_configuration.fields.price_lists.title
                 resettable: false
         oro_pricing.rounding_type:
             data_type: string
-            type: choice
+            type: Symfony\Component\Form\Extension\Core\Type\ChoiceType
             search_type: choice
             priority: 10
             options:
@@ -31,14 +33,14 @@ system_configuration:
                     - NotBlank: ~
                 choice_translation_domain: messages
                 choices:
-                    0: oro.pricing.system_configuration.fields.rounding_type.choices.ceil.label
-                    1: oro.pricing.system_configuration.fields.rounding_type.choices.floor.label
-                    5: oro.pricing.system_configuration.fields.rounding_type.choices.half_down.label
-                    6: oro.pricing.system_configuration.fields.rounding_type.choices.half_up.label
-                    4: oro.pricing.system_configuration.fields.rounding_type.choices.half_even.label
+                    oro.pricing.system_configuration.fields.rounding_type.choices.ceil.label: 0
+                    oro.pricing.system_configuration.fields.rounding_type.choices.floor.label: 1
+                    oro.pricing.system_configuration.fields.rounding_type.choices.half_down.label: 5
+                    oro.pricing.system_configuration.fields.rounding_type.choices.half_up.label: 6
+                    oro.pricing.system_configuration.fields.rounding_type.choices.half_even.label: 4
         oro_pricing.precision:
             data_type: integer
-            type: integer
+            type: Symfony\Component\Form\Extension\Core\Type\IntegerType
             search_type: text
             priority: 20
             options:
@@ -52,7 +54,7 @@ system_configuration:
                         type: integer
         oro_pricing.offset_of_processing_cpl_prices:
             data_type: float
-            type: number
+            type: Symfony\Component\Form\Extension\Core\Type\NumberType
             search_type: text
             options:
                 label: oro.pricing.system_configuration.fields.offset_of_processing_cpl_prices.label
@@ -64,13 +66,22 @@ system_configuration:
                     - 'Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero': ~
         oro_pricing.price_strategy:
             data_type: string
-            type: oro_pricing_list_strategy_selection
+            type: Oro\Bundle\PricingBundle\Form\Type\PriceListStrategySelectType
             options:
                 label: oro.pricing.system_configuration.fields.pricing_strategy.label
                 required: true
                 multiple: false
                 constraints:
                     - NotBlank: ~
+        oro_pricing.feature_enabled:
+            data_type: boolean
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
+            priority: 20
+            page_reload: true
+            options:
+                required: false
+                label: oro.pricing.system_configuration.fields.feature_enabled.label
+                tooltip: oro.pricing.system_configuration.fields.feature_enabled.tooltip
     tree:
         system_configuration:
             commerce:
@@ -80,6 +91,10 @@ system_configuration:
                             pricing:
                                 priority: 100
                                 children:
+                                    pricing_general:
+                                        priority: 300
+                                        children:
+                                            - oro_pricing.feature_enabled
                                     price_rounding:
                                         priority: 200
                                         children:

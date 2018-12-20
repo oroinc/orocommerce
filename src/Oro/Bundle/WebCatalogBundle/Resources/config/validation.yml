@@ -11,7 +11,8 @@ Oro\Bundle\WebCatalogBundle\Entity\ContentNode:
             - Count:
                 min: 1
                 minMessage: 'oro.webcatalog.contentnode.content_variants.blank'
-            - Oro\Bundle\WebCatalogBundle\Validator\Constraint\UniqueScope:
+            - Oro\Bundle\WebCatalogBundle\Validator\Constraint\UniqueScope: ~
+            - Oro\Bundle\WebCatalogBundle\Validator\Constraint\NotEmptyScopes: ~
             - Valid: ~
         scopes:
             - Oro\Bundle\CustomerBundle\Validator\Constraints\ScopeWithCustomerGroupAndCustomer: ~

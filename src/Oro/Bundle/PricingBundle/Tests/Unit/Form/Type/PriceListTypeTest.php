@@ -2,19 +2,13 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Form\Type;
 
-use Oro\Bundle\CronBundle\Form\Type\ScheduleIntervalsCollectionType;
-use Oro\Bundle\CronBundle\Form\Type\ScheduleIntervalType;
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\CurrencyBundle\Provider\CurrencyProviderInterface;
 use Oro\Bundle\CurrencyBundle\Utils\CurrencyNameHelper;
-use Oro\Bundle\FormBundle\Form\Type\CollectionType;
-use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListSchedule;
 use Oro\Bundle\PricingBundle\Form\Type\PriceListType;
-use Oro\Bundle\PricingBundle\Form\Type\PriceRuleType;
-use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as EntityTypeStub;
@@ -35,21 +29,21 @@ class PriceListTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|CurrencyProviderInterface $currencyProvider */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|CurrencyProviderInterface $currencyProvider */
         $currencyProvider = $this->getMockBuilder(CurrencyProviderInterface::class)
             ->disableOriginalConstructor()->getMockForAbstractClass();
         $currencyProvider->method('getCurrencyList')->willReturn(['USD', 'EUR']);
         $currencyProvider->method('getDefaultCurrency')->willReturn('USD');
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|LocaleSettings $localeSettings */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|LocaleSettings $localeSettings */
         $localeSettings = $this->getMockBuilder(LocaleSettings::class)->disableOriginalConstructor()->getMock();
 
-        /** @var CurrencyNameHelper|\PHPUnit_Framework_MockObject_MockObject $currencyNameHelper */
+        /** @var CurrencyNameHelper|\PHPUnit\Framework\MockObject\MockObject $currencyNameHelper */
         $currencyNameHelper = $this->getMockBuilder(CurrencyNameHelper::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $currencySelectType = new CurrencySelectionTypeStub();
+        /** @var TODO: Investigate $entityIdentifierType usage */
         $entityIdentifierType = new EntityIdentifierType(
             [
                 1 => $this->getEntity(self::ACCOUNT_CLASS, 1),
@@ -65,19 +59,13 @@ class PriceListTypeTest extends FormIntegrationTestCase
             new PreloadedExtension(
                 array_merge(
                     [
-                        $currencySelectType->getName() => $currencySelectType,
                         $entityIdentifierType->getName() => $entityIdentifierType,
-                        CollectionType::class => new CollectionType(),
-                        ScheduleIntervalsCollectionType::class => new ScheduleIntervalsCollectionType(),
-                        ScheduleIntervalType::class =>new ScheduleIntervalType(),
-                        OroDateTimeType::class => new OroDateTimeType(),
                         CurrencySelectionType::class => new CurrencySelectionType(
                             $currencyProvider,
                             $localeSettings,
                             $currencyNameHelper
                         ),
-                        EntityType::class => new EntityTypeStub(['item' => (new ProductUnit())->setCode('item')]),
-                        PriceRuleType::class => new PriceRuleType(),
+                        EntityType::class => new EntityTypeStub(['item' => (new ProductUnit())->setCode('item')])
                     ],
                     $this->getPriceRuleEditorExtension()
                 ),
@@ -226,12 +214,6 @@ class PriceListTypeTest extends FormIntegrationTestCase
                 ]
             ]
         ];
-    }
-
-    public function testGetName()
-    {
-        $type = new PriceListType();
-        $this->assertEquals(PriceListType::NAME, $type->getName());
     }
 
     /**

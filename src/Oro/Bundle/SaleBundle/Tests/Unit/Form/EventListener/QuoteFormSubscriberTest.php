@@ -3,11 +3,17 @@
 namespace Oro\Bundle\SaleBundle\Tests\Unit\Form\EventListener;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\PricingBundle\Model\DTO\ProductPriceDTO;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use Oro\Bundle\SaleBundle\Form\EventListener\QuoteFormSubscriber;
 use Oro\Bundle\SaleBundle\Provider\QuoteProductPriceProvider;
+use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Form\FormConfigInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvent;
@@ -15,8 +21,10 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
-class QuoteFormSubscriberTest extends \PHPUnit_Framework_TestCase
+class QuoteFormSubscriberTest extends \PHPUnit\Framework\TestCase
 {
+    use EntityTrait;
+
     const PRODUCT_SKU = 'test-sku';
     const PRICE1 = 100;
     const PRICE2 = 200;
@@ -24,28 +32,20 @@ class QuoteFormSubscriberTest extends \PHPUnit_Framework_TestCase
     const QUANTITY = 10;
     const UNIT1 = 'kg';
     const UNIT2 = 'set';
-    const TIER_PRICES = [
-        1 => [
-            [
-                'quantity' => 1,
-                'unit' => self::UNIT2,
-                'currency' => self::CURRENCY,
-                'price' => self::PRICE2,
-            ],
-            [
-                'quantity' => 20,
-                'unit' => self::UNIT2,
-                'currency' => self::CURRENCY,
-                'price' => self::PRICE2,
-            ],
-        ],
-    ];
 
-    /** @var QuoteProductPriceProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var QuoteProductPriceProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $provider;
+
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
+    private $doctrineHelper;
+
+    /** @var ProductRepository|\PHPUnit\Framework\MockObject\MockObject */
+    private $productRepository;
 
     /** @var QuoteFormSubscriber */
     private $subscriber;
+
+    private $tierPrices = [];
 
     protected function setUp()
     {
@@ -53,11 +53,23 @@ class QuoteFormSubscriberTest extends \PHPUnit_Framework_TestCase
 
         $this->provider = $this->createMock(QuoteProductPriceProvider::class);
 
-        /** @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject $translator */
+        /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject $translator */
         $translator = $this->createMock(TranslatorInterface::class);
         $translator->expects($this->any())->method('trans')->willReturnArgument(0);
 
-        $this->subscriber = new QuoteFormSubscriber($this->provider, $translator);
+        $this->productRepository = $this->createMock(ProductRepository::class);
+        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
+        $this->doctrineHelper
+            ->expects($this->any())
+            ->method('getEntityRepositoryForClass')
+            ->with(Product::class)
+            ->willReturn($this->productRepository);
+
+        $this->subscriber = new QuoteFormSubscriber(
+            $this->provider,
+            $translator,
+            $this->doctrineHelper
+        );
     }
 
     public function testGetSubscribedEvents()
@@ -76,18 +88,20 @@ class QuoteFormSubscriberTest extends \PHPUnit_Framework_TestCase
     public function testOnPreSubmit(array $data, array $options = [], $expectError = false, $expectPriceChange = false)
     {
         $quote = $this->getQuote(42);
-        $quote->expects($this->exactly((int) $expectPriceChange))->method('setPricesChanged')->with(true);
+        $quote->expects($this->exactly((int)$expectPriceChange))->method('setPricesChanged')->with(true);
 
         $config = $this->createMock(FormConfigInterface::class);
         $config->expects($this->any())->method('getOptions')->willReturn($options);
 
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock(FormInterface::class);
         $form->expects($this->once())->method('getData')->willReturn($quote);
         $form->expects($this->once())->method('getConfig')->willReturn($config);
         $form->expects($this->exactly($expectError ? 1 : 0))->method('addError')->with(new FormError($expectError));
 
-        $this->provider->expects($this->any())->method('getTierPricesForProducts')->willReturn(self::TIER_PRICES);
+        $this->productRepository->expects($this->never())->method('findBy');
+
+        $this->provider->expects($this->never())->method('getTierPricesForProducts');
 
         $this->subscriber->onPreSubmit(new FormEvent($form, $data));
     }
@@ -116,21 +130,9 @@ class QuoteFormSubscriberTest extends \PHPUnit_Framework_TestCase
                 'expectError' => '',
                 'expectPriceChange' => true,
             ],
-            'price changed not allow override' => [
-                'data' => $this->getData(self::PRICE2),
-                'options' => ['allow_prices_override' => false, 'allow_add_free_form_items' => true],
-                'expectError' => 'oro.sale.quote.form.error.price_override',
-                'expectPriceChange' => true,
-            ],
             'price changed not allow free form' => [
                 'data' => $this->getData(self::PRICE2),
                 'options' => ['allow_prices_override' => true, 'allow_add_free_form_items' => false],
-                'expectError' => '',
-                'expectPriceChange' => true,
-            ],
-            'price changed tier price' => [
-                'data' => $this->getData(self::PRICE2, self::CURRENCY, 5, self::UNIT2),
-                'options' => ['allow_prices_override' => false, 'allow_add_free_form_items' => false],
                 'expectError' => '',
                 'expectPriceChange' => true,
             ],
@@ -164,6 +166,88 @@ class QuoteFormSubscriberTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @dataProvider onPreSubmitWithCheckingTierPriceProvider
+     *
+     * @param array $data
+     * @param array $options
+     * @param bool $expectError
+     * @param bool $expectPriceChange
+     */
+    public function testOnPreSubmitWithCheckingTierPrice(
+        array $data,
+        array $options = [],
+        $expectError = false,
+        $expectPriceChange = false
+    ) {
+        $tierPrices = [
+            1 => [
+                new ProductPriceDTO(
+                    $this->getEntity(Product::class, ['id' => 1]),
+                    Price::create(self::PRICE2, self::CURRENCY),
+                    1,
+                    $this->getEntity(ProductUnit::class, ['code' => self::UNIT2])
+                ),
+                new ProductPriceDTO(
+                    $this->getEntity(Product::class, ['id' => 1]),
+                    Price::create(self::PRICE2, self::CURRENCY),
+                    20,
+                    $this->getEntity(ProductUnit::class, ['code' => self::UNIT2])
+                )
+            ]
+        ];
+
+        $quote = $this->getQuote(42);
+        $quote->expects($this->exactly((int) $expectPriceChange))->method('setPricesChanged')->with(true);
+
+        $config = $this->createMock(FormConfigInterface::class);
+        $config->expects($this->any())->method('getOptions')->willReturn($options);
+
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
+        $form = $this->createMock(FormInterface::class);
+        $form->expects($this->once())->method('getData')->willReturn($quote);
+        $form->expects($this->once())->method('getConfig')->willReturn($config);
+        $form->expects($this->exactly($expectError ? 1 : 0))->method('addError')->with(new FormError($expectError));
+
+        $products = [$this->getEntity(Product::class, ['id' => 1])];
+        $this->productRepository
+            ->expects($this->once())
+            ->method('findBy')
+            ->with([
+                'id' => [1]
+            ])
+            ->willReturn($products);
+
+        $this->provider
+            ->expects($this->once())
+            ->method('getTierPricesForProducts')
+            ->with($quote, $products)
+            ->willReturn($tierPrices);
+
+        $this->subscriber->onPreSubmit(new FormEvent($form, $data));
+    }
+
+    /**
+     * @return array
+     */
+    public function onPreSubmitWithCheckingTierPriceProvider()
+    {
+        return [
+            'price changed tier price' => [
+                'data' => $this->getData(self::PRICE2, self::CURRENCY, 5, self::UNIT2),
+                'options' => ['allow_prices_override' => false, 'allow_add_free_form_items' => false],
+                'expectError' => '',
+                'expectPriceChange' => true,
+            ],
+            'price changed not allow override' => [
+                'data' => $this->getData(self::PRICE2),
+                'options' => ['allow_prices_override' => false, 'allow_add_free_form_items' => true],
+                'expectError' => 'oro.sale.quote.form.error.price_override',
+                'expectPriceChange' => true,
+            ]
+        ];
+    }
+
+    /**
      * @dataProvider onPreSubmitSkipProvider
      *
      * @param Quote|null $quote
@@ -174,13 +258,14 @@ class QuoteFormSubscriberTest extends \PHPUnit_Framework_TestCase
         $config = $this->createMock(FormConfigInterface::class);
         $config->expects($this->any())->method('getOptions')->willReturn([]);
 
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock(FormInterface::class);
         $form->expects($this->once())->method('getData')->willReturn($quote);
         $form->expects($this->any())->method('getConfig')->willReturn($config);
         $form->expects($this->never())->method('addError');
 
         $this->provider->expects($this->never())->method('getTierPricesForProducts');
+        $this->productRepository->expects($this->never())->method('findBy');
 
         $this->subscriber->onPreSubmit(new FormEvent($form, $data));
     }
@@ -209,7 +294,7 @@ class QuoteFormSubscriberTest extends \PHPUnit_Framework_TestCase
     /**
      * @param int $id
      *
-     * @return Quote|\PHPUnit_Framework_MockObject_MockObject
+     * @return Quote|\PHPUnit\Framework\MockObject\MockObject
      */
     private function getQuote($id)
     {

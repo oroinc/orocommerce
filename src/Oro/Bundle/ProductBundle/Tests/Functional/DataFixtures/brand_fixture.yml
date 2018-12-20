@@ -12,6 +12,7 @@ brand1:
     shortDescriptions:
         - { reference: brand-1.shortDescriptions.default, text: brand-1.shortDescriptions.default }
         - { reference: brand-1.shortDescriptions.en_US, text: brand-1.shortDescriptions.en_US, fallback: system, localization: en_US }
+    reference: brand-1
 brand2:
     status: enabled
     names:
@@ -22,3 +23,4 @@ brand2:
         - { reference: brand-2.descriptions.default, text: brand-2.descriptions.default }
     shortDescriptions:
         - { reference: brand-2.shortDescriptions.default, text: brand-2.shortDescriptions.default }
+    reference: brand-2

@@ -8,6 +8,9 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * Use this class for getting product units on frontend.
+ */
 class AjaxProductUnitController extends AbstractAjaxProductUnitController
 {
     /**
@@ -19,12 +22,11 @@ class AjaxProductUnitController extends AbstractAjaxProductUnitController
      *
      * @param Request $request
      * @param Product $product
+     *
      * @return JsonResponse
      */
     public function productUnitsAction(Request $request, Product $product)
     {
-        $isShort = (bool)$request->get('short', false);
-
-        return $this->getProductUnits($product, $isShort);
+        return $this->getProductUnits($product);
     }
 }

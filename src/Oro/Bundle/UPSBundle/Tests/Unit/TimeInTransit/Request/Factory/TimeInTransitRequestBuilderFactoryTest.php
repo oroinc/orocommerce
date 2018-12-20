@@ -10,7 +10,7 @@ use Oro\Bundle\UPSBundle\TimeInTransit\Request\Builder\TimeInTransitRequestBuild
 use Oro\Bundle\UPSBundle\TimeInTransit\Request\Factory\TimeInTransitRequestBuilderFactory;
 use Oro\Bundle\UPSBundle\TimeInTransit\Request\Factory\TimeInTransitRequestBuilderFactoryInterface;
 
-class TimeInTransitRequestBuilderFactoryTest extends \PHPUnit_Framework_TestCase
+class TimeInTransitRequestBuilderFactoryTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @internal
@@ -28,12 +28,12 @@ class TimeInTransitRequestBuilderFactoryTest extends \PHPUnit_Framework_TestCase
     const UPS_API_KEY = 'key';
 
     /**
-     * @var SymmetricCrypterInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var SymmetricCrypterInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $crypter;
 
     /**
-     * @var UPSTransport|\PHPUnit_Framework_MockObject_MockObject
+     * @var UPSTransport|\PHPUnit\Framework\MockObject\MockObject
      */
     private $upsTransport;
 

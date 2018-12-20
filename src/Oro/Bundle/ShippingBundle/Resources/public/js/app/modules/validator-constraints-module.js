@@ -1,11 +1,7 @@
-define([
-    'oroui/js/app/controllers/base/controller'
-], function(BaseController) {
+define(function(require) {
     'use strict';
 
-    BaseController.loadBeforeAction([
-        'jquery', 'jquery.validate'
-    ], function($) {
-        $.validator.loadMethod('oroshipping/js/validator/unique-product-unit-shipping-options');
-    });
+    var $ = require('jquery.validate');
+
+    $.validator.loadMethod('oroshipping/js/validator/unique-product-unit-shipping-options');
 });

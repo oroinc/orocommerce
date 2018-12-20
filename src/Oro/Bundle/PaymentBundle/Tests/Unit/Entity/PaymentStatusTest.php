@@ -5,7 +5,7 @@ namespace Oro\Bundle\PaymentBundle\Tests\Unit\Entity;
 use Oro\Bundle\PaymentBundle\Entity\PaymentStatus;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-class PaymentStatusTest extends \PHPUnit_Framework_TestCase
+class PaymentStatusTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 

@@ -13,7 +13,7 @@ use Oro\Bundle\PricingBundle\Entity\Repository\PriceListScheduleRepository;
 use Oro\Bundle\PricingBundle\Provider\CombinedPriceListProvider;
 use Oro\Bundle\PricingBundle\Resolver\PriceListScheduleResolver;
 
-class CombinedPriceListActivationPlanBuilderTest extends \PHPUnit_Framework_TestCase
+class CombinedPriceListActivationPlanBuilderTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var DoctrineHelper
@@ -63,21 +63,18 @@ class CombinedPriceListActivationPlanBuilderTest extends \PHPUnit_Framework_Test
         $this->createPriceListScheduleRepositoryMock();
         $this->createCombinedPriceListToPriceListRepositoryMock();
 
-        $className = 'Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListActivationRuleRepository';
-        $this->CPLActivationRuleRepository = $this->getMockBuilder($className)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->CPLActivationRuleRepository = $this->createMock(CombinedPriceListActivationRuleRepository::class);
 
         $this->createDoctrineHelperMock();
 
         $this->builder = new CombinedPriceListActivationPlanBuilder(
             $this->doctrineHelper,
-            $this->schedulerResolver
+            $this->schedulerResolver,
+            $this->combinedPriceListProvider
         );
-        $this->builder->setProvider($this->combinedPriceListProvider);
     }
 
-    public function test()
+    public function testBuildByPriceList()
     {
         $this->builder->buildByPriceList(new PriceList());
     }
@@ -141,7 +138,7 @@ class CombinedPriceListActivationPlanBuilderTest extends \PHPUnit_Framework_Test
                 ['OroPricingBundle:PriceListSchedule', $this->priceListScheduleRepository],
                 ['OroPricingBundle:CombinedPriceList', $this->combinedPriceListRepository],
             ]);
-        /** @var \Doctrine\ORM\EntityManager| \PHPUnit_Framework_MockObject_MockObject $manager */
+        /** @var \Doctrine\ORM\EntityManager| \PHPUnit\Framework\MockObject\MockObject $manager */
         $manager = $this->getMockBuilder('Doctrine\Common\Persistence\ObjectManager')
             ->disableOriginalConstructor()
             ->getMock();

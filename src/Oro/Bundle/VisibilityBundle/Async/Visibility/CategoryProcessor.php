@@ -3,10 +3,9 @@
 namespace Oro\Bundle\VisibilityBundle\Async\Visibility;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\DBAL\Driver\DriverException;
+use Doctrine\DBAL\Exception\RetryableException;
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\CatalogBundle\Model\Exception\InvalidArgumentException;
-use Oro\Bundle\EntityBundle\ORM\DatabaseExceptionHelper;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupProductVisibility;
@@ -22,6 +21,9 @@ use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\MessageQueue\Util\JSON;
 use Psr\Log\LoggerInterface;
 
+/**
+ * Updates visibility of the Category
+ */
 class CategoryProcessor implements MessageProcessorInterface
 {
     /**
@@ -55,18 +57,12 @@ class CategoryProcessor implements MessageProcessorInterface
     protected $scopeManager;
 
     /**
-     * @var DatabaseExceptionHelper
-     */
-    protected $databaseExceptionHelper;
-
-    /**
      * @param ManagerRegistry $registry
      * @param InsertFromSelectQueryExecutor $insertFromSelectQueryExecutor
      * @param LoggerInterface $logger
      * @param CategoryMessageFactory $messageFactory
      * @param CacheBuilder $cacheBuilder
      * @param ScopeManager $scopeManager
-     * @param DatabaseExceptionHelper $databaseExceptionHelper
      */
     public function __construct(
         ManagerRegistry $registry,
@@ -74,8 +70,7 @@ class CategoryProcessor implements MessageProcessorInterface
         LoggerInterface $logger,
         CategoryMessageFactory $messageFactory,
         CacheBuilder $cacheBuilder,
-        ScopeManager $scopeManager,
-        DatabaseExceptionHelper $databaseExceptionHelper
+        ScopeManager $scopeManager
     ) {
         $this->registry = $registry;
         $this->logger = $logger;
@@ -83,7 +78,6 @@ class CategoryProcessor implements MessageProcessorInterface
         $this->messageFactory = $messageFactory;
         $this->cacheBuilder = $cacheBuilder;
         $this->scopeManager = $scopeManager;
-        $this->databaseExceptionHelper = $databaseExceptionHelper;
     }
 
     /**
@@ -117,11 +111,11 @@ class CategoryProcessor implements MessageProcessorInterface
                 ['exception' => $e]
             );
 
-            if ($e instanceof DriverException && $this->databaseExceptionHelper->isDeadlock($e)) {
+            if ($e instanceof RetryableException) {
                 return self::REQUEUE;
-            } else {
-                return self::REJECT;
             }
+
+            return self::REJECT;
         }
 
         return self::ACK;

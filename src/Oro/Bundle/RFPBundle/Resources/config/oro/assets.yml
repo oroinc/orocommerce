@@ -1,5 +1,4 @@
 assets:
     css:
-        'ororfp':
-            - 'bundles/ororfp/css/less/rfp.less'
-            - 'bundles/ororfp/css/less/order.less'
+        inputs:
+            - 'bundles/ororfp/css/scss/main.scss'

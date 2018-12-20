@@ -174,7 +174,7 @@ abstract class AbstractOrderLineItemType extends AbstractType
     /** {@inheritdoc} */
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
-        $view->vars['sections'] = $this->getSectionProvider()->getSections($this->getName());
+        $view->vars['sections'] = $this->getSectionProvider()->getSections(get_class($this));
 
         $product = null;
         if ($view->vars['value']) {

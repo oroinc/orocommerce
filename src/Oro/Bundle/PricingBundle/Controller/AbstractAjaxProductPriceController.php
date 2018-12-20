@@ -2,15 +2,16 @@
 
 namespace Oro\Bundle\PricingBundle\Controller;
 
-use Doctrine\ORM\EntityManager;
-use Oro\Bundle\PricingBundle\Entity\BasePriceList;
-use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * Base class for AjaxProductPriceControllers (backend and frontend)
+ * Is used to handle common logic for ProductPrice related actions
+ * see method descriptions for more details
+ */
 abstract class AbstractAjaxProductPriceController extends Controller
 {
     /**
@@ -21,72 +22,39 @@ abstract class AbstractAjaxProductPriceController extends Controller
      */
     public function getProductPricesByCustomer(Request $request)
     {
-        $priceListId = $this->get('oro_pricing.model.price_list_request_handler')
-            ->getPriceListByCustomer()
-            ->getId();
+        $scopeCriteria = $this->get('oro_pricing.model.product_price_scope_criteria_request_handler')
+            ->getPriceScopeCriteria();
+
+        $currency = $request->get('currency');
+        if (null === $currency) {
+            $currencies = $this->get('oro_currency.config.currency')->getCurrencyList();
+        } else {
+            $currencies = [$currency];
+        }
 
         return new JsonResponse(
-            $this->get('oro_pricing.provider.combined_product_price')
-                ->getPriceByPriceListIdAndProductIds(
-                    $priceListId,
-                    $request->get('product_ids', []),
-                    $request->get('currency')
+            $this->get('oro_pricing.provider.product_price')
+                ->getPricesByScopeCriteriaAndProducts(
+                    $scopeCriteria,
+                    $this->getRequestProducts($request),
+                    $currencies
                 )
         );
     }
 
     /**
-     * @param string $class
-     * @param mixed $id
-     * @return object
-     */
-    protected function getEntityReference($class, $id)
-    {
-        return $this->getManagerForClass($class)->getReference($class, $id);
-    }
-
-    /**
-     * @param string $class
-     * @return EntityManager
-     */
-    protected function getManagerForClass($class)
-    {
-        return $this->get('oro_entity.doctrine_helper')->getEntityManagerForClass($class);
-    }
-
-    /**
-     * @return ProductUnitLabelFormatter
-     */
-    protected function getProductUnitFormatter()
-    {
-        return $this->container->get('oro_product.formatter.product_unit_label');
-    }
-
-    /**
-     * Get product units that for which prices in given currency are exists.
-     *
-     * @param BasePriceList $priceList
      * @param Request $request
-     * @param string $productPriceClass
-     * @return JsonResponse
+     * @return array
      */
-    protected function getProductUnitsByCurrency(BasePriceList $priceList, Request $request, $productPriceClass)
+    protected function getRequestProducts(Request $request): array
     {
-        $productClass = $this->getParameter('oro_product.entity.product.class');
-
-        /** @var Product $product */
-        $product = $this->getEntityReference($productClass, $request->get('id'));
-
-        /** @var ProductPriceRepository $repository */
-        $repository = $this->getManagerForClass($productPriceClass)->getRepository($productPriceClass);
-        $shardManager = $this->get('oro_pricing.shard_manager');
-        $units = $repository->getProductUnitsByPriceList(
-            $shardManager,
-            $priceList,
-            $product,
-            $request->get('currency')
+        $productIds = $request->get('product_ids', []);
+        $doctrineHelper = $this->container->get('oro_entity.doctrine_helper');
+        return array_map(
+            function ($productId) use ($doctrineHelper) {
+                return $doctrineHelper->getEntityReference(Product::class, $productId);
+            },
+            array_filter($productIds)
         );
-
-        return new JsonResponse(['units' => $this->getProductUnitFormatter()->formatChoices($units)]);
     }
 }

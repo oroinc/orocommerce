@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\DataProvider\LineItem;
 
+use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\CheckoutBundle\DataProvider\LineItem\CheckoutLineItemsDataProvider;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
@@ -12,19 +12,23 @@ use Oro\Bundle\PricingBundle\Provider\FrontendProductPricesDataProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Component\Testing\Unit\EntityTrait;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
-class CheckoutLineItemsDataProviderTest extends \PHPUnit_Framework_TestCase
+class CheckoutLineItemsDataProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /** @var FrontendProductPricesDataProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var FrontendProductPricesDataProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $frontendProductPricesDataProvider;
-
-    /** @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject */
-    protected $doctrine;
 
     /** @var CheckoutLineItemsDataProvider */
     protected $provider;
+
+    /** @var AuthorizationCheckerInterface|\PHPUnit\Framework\MockObject\MockObject */
+    protected $authorizationChecker;
+
+    /** @var CacheProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $productAvailabilityCache;
 
     /**
      * {@inheritDoc}
@@ -32,10 +36,12 @@ class CheckoutLineItemsDataProviderTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->frontendProductPricesDataProvider = $this->createMock(FrontendProductPricesDataProvider::class);
-        $this->doctrine = $this->createMock(ManagerRegistry::class);
+        $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
+        $this->productAvailabilityCache = $this->createMock(CacheProvider::class);
         $this->provider = new CheckoutLineItemsDataProvider(
             $this->frontendProductPricesDataProvider,
-            $this->doctrine
+            $this->authorizationChecker,
+            $this->productAvailabilityCache
         );
     }
 
@@ -70,7 +76,10 @@ class CheckoutLineItemsDataProviderTest extends \PHPUnit_Framework_TestCase
     public function testGetData(Price $price = null, $isPriceFixed = false)
     {
         $freeFormProduct = 'freeFromProduct';
-        $product = $this->getEntity(Product::class, ['id' => 2, 'sku' => 'PRODUCT_SKU']);
+        $product = $this->getEntity(
+            Product::class,
+            ['id' => 2, 'sku' => 'PRODUCT_SKU', 'status' => Product::STATUS_ENABLED]
+        );
         $parentProduct = $this->getEntity(Product::class, ['id' => 1, 'sku' => 'PARENT_SKU']);
         $productUnit = $this->getEntity(ProductUnit::class, ['code' => 'code']);
         if (null === $price && !$isPriceFixed) {
@@ -115,7 +124,94 @@ class CheckoutLineItemsDataProviderTest extends \PHPUnit_Framework_TestCase
             ],
         ];
 
+        $this->authorizationChecker->expects($this->once())
+            ->method('isGranted')
+            ->willReturn(true);
+
         $this->assertEquals($expected, $this->provider->getData($checkout));
+    }
+
+    public function testGetDataWithoutProduct()
+    {
+        /** @var CheckoutLineItem $lineItem */
+        $lineItem = $this->getEntity(CheckoutLineItem::class);
+        $checkout = $this->getEntity(Checkout::class, ['lineItems' => new ArrayCollection([$lineItem])]);
+
+        $expected = [
+            [
+                'product' => null,
+                'parentProduct' => null,
+                'productSku' => null,
+                'freeFormProduct' => null,
+                'quantity' => null,
+                'productUnit' => null,
+                'productUnitCode' => null,
+                'price' => null,
+                'fromExternalSource' => false
+            ]
+        ];
+        $this->assertEquals($expected, $this->provider->getData($checkout));
+    }
+
+    public function testGetDataFromCache()
+    {
+        $enabledProduct = $this->getEntity(
+            Product::class,
+            ['id' => 3, 'sku' => 'PRODUCT_SKU', 'status' => Product::STATUS_ENABLED]
+        );
+        /** @var CheckoutLineItem $lineItem */
+        $lineItem = $this->getEntity(CheckoutLineItem::class, ['product' => $enabledProduct]);
+        $firstCheckout = $this->getEntity(
+            Checkout::class,
+            ['id' => 1, 'lineItems' => new ArrayCollection([$lineItem])]
+        );
+        $secondCheckout = $this->getEntity(
+            Checkout::class,
+            ['id' => 2, 'lineItems' => new ArrayCollection([$lineItem])]
+        );
+
+        $this->authorizationChecker->expects($this->once())
+            ->method('isGranted')
+            ->with('VIEW', $enabledProduct)
+            ->willReturn(true);
+
+        $this->productAvailabilityCache->expects($this->exactly(2))
+            ->method('contains')
+            ->withConsecutive(
+                [$enabledProduct->getId()],
+                [$enabledProduct->getId()]
+            )
+            ->willReturnOnConsecutiveCalls([
+                [$enabledProduct->getId(), false],
+                [$enabledProduct->getId(), true]
+            ]);
+        $this->productAvailabilityCache->expects($this->once())
+            ->method('save')
+            ->with($enabledProduct->getId())
+            ->willReturn(true);
+        $this->productAvailabilityCache->expects($this->once())
+            ->method('fetch')
+            ->with($enabledProduct->getId())
+            ->willReturn(true);
+
+        $expected = [
+            [
+                'productSku' => null,
+                'quantity' => null,
+                'productUnit' => null,
+                'productUnitCode' => null,
+                'product' => $enabledProduct,
+                'parentProduct' => null,
+                'freeFormProduct' => null,
+                'fromExternalSource' => false,
+                'price' => null
+            ]
+        ];
+
+        // Save product availability status to the cache
+        $this->assertEquals($expected, $this->provider->getData($firstCheckout));
+        // Load product availability status from the cache
+        $this->assertEquals($expected, $this->provider->getData($secondCheckout));
     }
 
     /**

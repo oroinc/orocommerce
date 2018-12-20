@@ -10,12 +10,12 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\UserBundle\Entity\User;
 
-class SubcategoryProviderTest extends \PHPUnit_Framework_TestCase
+class SubcategoryProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var TokenAccessorInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var TokenAccessorInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $tokenAccessor;
 
-    /** @var CategoryTreeProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var CategoryTreeProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $categoryTreeProvider;
 
     /** @var SubcategoryProvider */

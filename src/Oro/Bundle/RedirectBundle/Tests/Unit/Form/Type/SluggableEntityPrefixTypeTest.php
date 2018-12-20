@@ -19,12 +19,12 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class SluggableEntityPrefixTypeTest extends FormIntegrationTestCase
 {
     /**
-     * @var RedirectStorage|\PHPUnit_Framework_MockObject_MockObject
+     * @var RedirectStorage|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $storage;
 
     /**
-     * @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $configManager;
 
@@ -41,7 +41,7 @@ class SluggableEntityPrefixTypeTest extends FormIntegrationTestCase
             ->getMock();
 
         /**
-         * @var ValidatorInterface|\PHPUnit_Framework_MockObject_MockObject $validator
+         * @var ValidatorInterface|\PHPUnit\Framework\MockObject\MockObject $validator
          */
         $validator = $this->createMock(ValidatorInterface::class);
         $validator->expects($this->any())
@@ -69,11 +69,6 @@ class SluggableEntityPrefixTypeTest extends FormIntegrationTestCase
                 []
             ),
         ];
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals(SluggableEntityPrefixType::NAME, $this->formType->getName());
     }
 
     public function testGetBlockPrefix()
@@ -146,7 +141,7 @@ class SluggableEntityPrefixTypeTest extends FormIntegrationTestCase
      */
     public function testFinishView($strategy, $isAskStrategy)
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|FormInterface $form */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|FormInterface $form */
         $form = $this->createMock('Symfony\Component\Form\FormInterface');
 
         $this->configManager->expects($this->once())

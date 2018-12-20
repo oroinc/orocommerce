@@ -6,7 +6,7 @@ use Oro\Bundle\MoneyOrderBundle\Entity\MoneyOrderSettings;
 use Oro\Bundle\MoneyOrderBundle\Form\Type\MoneyOrderSettingsType;
 use Oro\Bundle\MoneyOrderBundle\Integration\MoneyOrderTransport;
 
-class MoneyOrderTransportTest extends \PHPUnit_Framework_TestCase
+class MoneyOrderTransportTest extends \PHPUnit\Framework\TestCase
 {
     /** @var MoneyOrderTransport */
     private $transport;

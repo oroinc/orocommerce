@@ -18,7 +18,12 @@ search:
                 target_fields:          [description]
 
     Oro\Bundle\TaxBundle\Entity\ProductTaxCode:
-        alias:            oro_product_tax_code
+        alias:                          oro_product_tax_code
+        title_fields:                   [code]
+        route:
+            name:                       oro_tax_product_tax_code_view
+            parameters:
+                id:                     id
         search_template:  OroTaxBundle:ProductTaxCode:searchResult.html.twig
         fields:
             -
@@ -31,7 +36,12 @@ search:
                 target_fields:          [description]
 
     Oro\Bundle\TaxBundle\Entity\CustomerTaxCode:
-        alias:            oro_customer_tax_code
+        alias:                          oro_customer_tax_code
+        title_fields:                   [code]
+        route:
+            name:                       oro_tax_customer_tax_code_view
+            parameters:
+                id:                     id
         search_template:  OroTaxBundle:CustomerTaxCode:searchResult.html.twig
         fields:
             -

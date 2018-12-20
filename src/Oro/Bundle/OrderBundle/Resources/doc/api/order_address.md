@@ -12,8 +12,6 @@ Retrieve a specific order address record.
 
 Retrieve a collection of order address records.
 
-The list of records that will be returned, could be limited by filters.
-
 {@inheritdoc}
 
 ### create
@@ -26,8 +24,6 @@ The created record is returned in the response.
 
 {@request:json_api}
 Example:
-
-`</admin/api/orderaddresses>`
 
 ```JSON
 {
@@ -72,8 +68,6 @@ The updated record is returned in the response.
 {@request:json_api}
 Example:
 
-`</admin/api/orderaddresses/1>`
-
 ```JSON
 {
   "data": {
@@ -116,8 +110,6 @@ Delete a specific order address record.
 ### delete_list
 
 Delete a collection of order address records.
-
-The list of records that will be deleted, could be limited by filters.
 
 {@inheritdoc}
 
@@ -178,14 +170,14 @@ The list of records that will be deleted, could be limited by filters.
 {@inheritdoc}
 
 **Conditionally required field:**
-*Either "Organization" or "FirstName" and "LastName" must be defined.*
+*Either **organization** or **firstName** and **lastName** must be defined.*
 
 #### update
 
 {@inheritdoc}
 
 **Please note:**
-*Either "Organization" or "FirstName" and "LastName" must remain defined.*
+*Either **organization** or **firstName** and **lastName** must remain defined.*
 
 ### lastName
 
@@ -194,14 +186,14 @@ The list of records that will be deleted, could be limited by filters.
 {@inheritdoc}
 
 **Conditionally required field:**
-*Either "Organization" or "FirstName" and "LastName" must be defined.*
+*Either **organization** or **firstName** and **lastName** must be defined.*
 
 #### update
 
 {@inheritdoc}
 
 **Please note:**
-*Either "Organization" or "FirstName" and "LastName" must remain defined.*
+*Either **organization** or **firstName** and **lastName** must remain defined.*
 
 ### organization
 
@@ -210,14 +202,14 @@ The list of records that will be deleted, could be limited by filters.
 {@inheritdoc}
 
 **Conditionally required field:**
-*Either "Organization" or "FirstName" and "LastName" must be defined.*
+*Either **organization** or **firstName** and **lastName** must be defined.*
 
 #### update
 
 {@inheritdoc}
 
 **Please note:**
-*Either "Organization" or "FirstName" and "LastName" must remain defined.*
+*Either **organization** or **firstName** and **lastName** must remain defined.*
 
 ### country
 
@@ -229,7 +221,7 @@ The list of records that will be deleted, could be limited by filters.
 
 ### region
 
-#### create
+#### create, update
 
 {@inheritdoc}
 
@@ -254,8 +246,6 @@ Replace country assigned to a specific address record.
 
 {@request:json_api}
 Example:
-
-`</admin/api/orderaddresses/1/relationships/country>`
 
 ```JSON
 {
@@ -284,13 +274,38 @@ Replace region assigned to a specific region record.
 {@request:json_api}
 Example:
 
-`</admin/api/orderaddresses/1/relationships/region>`
-
 ```JSON
 {
   "data": {
     "type": "regions",
     "id": "US-NY"
+  }
+}
+```
+{@/request}
+
+### customerAddress
+
+#### get_subresource
+
+Retrieve a record of customer address assigned to a specific order address record.
+
+#### get_relationship
+
+Retrieve the ID of customer address record assigned to a specific order address record.
+
+#### update_relationship
+
+Replace the customer address assigned to a specific order address record.
+
+{@request:json_api}
+Example:
+
+```JSON
+{
+  "data": {
+    "type": "customeraddresses",
+    "id": "4"
   }
 }
 ```
@@ -313,12 +328,10 @@ Replace the customer user address assigned to a specific order address record.
 {@request:json_api}
 Example:
 
-`</admin/api/orderaddresses/1/relationships/customerUserAddress>`
-
 ```JSON
 {
   "data": {
-    "type": "customer_user_addresses",
+    "type": "customeruseraddresses",
     "id": "4"
   }
 }

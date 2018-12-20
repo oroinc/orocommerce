@@ -1,0 +1,41 @@
+/* @theme: default; */
+
+.checkout-credentials {
+    &__form {
+        @include block-substrate(
+            $offset-inner: $checkout-credentials-form-offset-inner,
+            $bg: $checkout-credentials-form-bg,
+            $border-radius: $checkout-credentials-form-border-radius
+        );
+        
+        .link-forgot {
+            float: right;
+        }
+    }
+
+    &__button-set {
+        display: flex;
+
+        align-items: center;
+
+        .btn {
+            margin-right: $checkout-credentials-form-button-set-btn-offset-right;
+        }
+    }
+}
+
+// Mobile
+@include breakpoint('mobile') {
+    .checkout-credentials {
+        &__button-set {
+            text-align: center;
+
+            flex-direction: column;
+            align-items: inherit;
+        }
+
+        .btn {
+            margin: $checkout-credentials-form-button-set-btn-offset-mobile;
+        }
+    }
+}

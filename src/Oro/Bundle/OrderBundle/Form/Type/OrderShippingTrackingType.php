@@ -58,7 +58,7 @@ class OrderShippingTrackingType extends AbstractType
 
             /** @var ShippingMethodInterface $method */
             foreach ($methods as $method) {
-                $this->choices[$method->getIdentifier()] = $method->getLabel();
+                $this->choices[$method->getLabel()] = $method->getIdentifier();
             }
         }
         return $this->choices;
@@ -122,7 +122,7 @@ class OrderShippingTrackingType extends AbstractType
             $options = $config->getOptions();
 
             if ($this->getTrackingMethodsChoices()) {
-                if (null === $options['choices'] || !array_key_exists($data->getMethod(), $options['choices'])) {
+                if (null === $options['choices'] || !in_array($data->getMethod(), $options['choices'], true)) {
                     $form->add(
                         'method',
                         SelectSwitchInputType::class,
@@ -154,8 +154,8 @@ class OrderShippingTrackingType extends AbstractType
         $options = $config->getOptions();
 
         if ($this->getTrackingMethodsChoices()) {
-            if (null === $options['choices'] || !array_key_exists($data['method'], $options['choices'])) {
-                unset($options['choices'], $options['choice_list']);
+            if (null === $options['choices'] || !in_array($data['method'], $options['choices'], true)) {
+                unset($options['choices']);
                 $newChoices = $this->getTrackingMethodsChoices();
                 $newChoices[$data['method']] = $data['method'];
                 $form->add(

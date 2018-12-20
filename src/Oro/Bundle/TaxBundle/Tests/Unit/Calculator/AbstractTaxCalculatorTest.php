@@ -4,7 +4,7 @@ namespace Oro\Bundle\TaxBundle\Tests\Unit\Calculator;
 
 use Oro\Bundle\TaxBundle\Calculator\TaxCalculatorInterface;
 
-abstract class AbstractTaxCalculatorTest extends \PHPUnit_Framework_TestCase
+abstract class AbstractTaxCalculatorTest extends \PHPUnit\Framework\TestCase
 {
     /** @var TaxCalculatorInterface */
     protected $calculator;

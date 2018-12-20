@@ -7,6 +7,9 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextCacheKeyGenerator;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 
+/**
+ * The cache for shipping prices.
+ */
 class ShippingPriceCache
 {
     /**
@@ -45,10 +48,9 @@ class ShippingPriceCache
     public function getPrice(ShippingContextInterface $context, $methodId, $typeId)
     {
         $key = $this->generateKey($context, $methodId, $typeId);
-        if (!$this->cache->contains($key)) {
-            return null;
-        }
-        return $this->cache->fetch($key);
+        $value = $this->cache->fetch($key);
+
+        return false !== $value ? $value : null;
     }
 
     /**

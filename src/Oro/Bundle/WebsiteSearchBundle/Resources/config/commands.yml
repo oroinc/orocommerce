@@ -1,0 +1,6 @@
+services:
+    Oro\Bundle\WebsiteSearchBundle\Command\ReindexCommand:
+        public: false
+        class: Oro\Bundle\WebsiteSearchBundle\Command\ReindexCommand
+        tags:
+            - { name: console.command }

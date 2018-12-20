@@ -36,20 +36,20 @@ use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
-class WebsiteSearchProductIndexDataProviderTest extends \PHPUnit_Framework_TestCase
+class WebsiteSearchProductIndexDataProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /** @var AttributeTypeRegistry|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var AttributeTypeRegistry|\PHPUnit\Framework\MockObject\MockObject */
     protected $attributeTypeRegistry;
 
-    /** @var ConfigProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ConfigProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $extendConfigProvider;
 
-    /** @var ConfigProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ConfigProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $attributeConfigProvider;
 
-    /** @var ProductIndexFieldsProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ProductIndexFieldsProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $filterableAttributeProvider;
 
     /** @var WebsiteSearchProductIndexDataProvider */
@@ -62,7 +62,7 @@ class WebsiteSearchProductIndexDataProviderTest extends \PHPUnit_Framework_TestC
 
         $this->attributeTypeRegistry = $this->createMock(AttributeTypeRegistry::class);
 
-        /** @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject $configManager */
+        /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject $configManager */
         $configManager = $this->createMock(ConfigManager::class);
         $configManager->expects($this->any())
             ->method('getProvider')
@@ -152,7 +152,7 @@ class WebsiteSearchProductIndexDataProviderTest extends \PHPUnit_Framework_TestC
         $stringAttributeType = new StringAttributeType();
         $stringSearchAttributeType = new StringSearchableAttributeType($stringAttributeType);
 
-        /** @var EntityNameResolver|\PHPUnit_Framework_MockObject_MockObject $entityNameResolver */
+        /** @var EntityNameResolver|\PHPUnit\Framework\MockObject\MockObject $entityNameResolver */
         $entityNameResolver = $this->createMock(EntityNameResolver::class);
         $entityNameResolver->expects($this->any())
             ->method('getName')
@@ -169,10 +169,7 @@ class WebsiteSearchProductIndexDataProviderTest extends \PHPUnit_Framework_TestC
         $manyToManyAttribute->setEntity(new EntityConfigModel())
             ->fromArray('extend', ['target_entity' => LocalizedFallbackValue::class]);
         $manyToManyAttributeType = new ManyToManyAttributeType($entityNameResolver, $doctrineHelper);
-        $manyToManySearchAttributeType = new ManyToManySearchableAttributeType(
-            $manyToManyAttributeType,
-            $doctrineHelper
-        );
+        $manyToManySearchAttributeType = new ManyToManySearchableAttributeType($manyToManyAttributeType);
 
         $multiEnumAttribute = new FieldConfigModel('flags');
         $multiEnumAttribute->setEntity(new EntityConfigModel());
@@ -211,7 +208,13 @@ class WebsiteSearchProductIndexDataProviderTest extends \PHPUnit_Framework_TestC
                     ['filterable' => true, 'sortable' => false, 'searchable' => false]
                 ),
                 'expected' => [
-                    new ProductIndexDataModel('inventoryStatus', Product::INVENTORY_STATUS_IN_STOCK, [], false, false),
+                    new ProductIndexDataModel(
+                        'inventoryStatus_' . Product::INVENTORY_STATUS_IN_STOCK,
+                        1,
+                        [],
+                        false,
+                        false
+                    ),
                 ],
             ],
             'not filterable, sortable, not searchable, not localized' => [
@@ -244,7 +247,13 @@ class WebsiteSearchProductIndexDataProviderTest extends \PHPUnit_Framework_TestC
                     ['filterable' => true, 'sortable' => true, 'searchable' => false]
                 ),
                 'expected' => [
-                    new ProductIndexDataModel('inventoryStatus', Product::INVENTORY_STATUS_IN_STOCK, [], false, false),
+                    new ProductIndexDataModel(
+                        'inventoryStatus_' . Product::INVENTORY_STATUS_IN_STOCK,
+                        1,
+                        [],
+                        false,
+                        false
+                    ),
                     new ProductIndexDataModel('inventoryStatus_priority', 42, [], false, false),
                 ],
             ],
@@ -256,7 +265,13 @@ class WebsiteSearchProductIndexDataProviderTest extends \PHPUnit_Framework_TestC
                     ['filterable' => true, 'sortable' => false, 'searchable' => true]
                 ),
                 'expected' => [
-                    new ProductIndexDataModel('inventoryStatus', Product::INVENTORY_STATUS_IN_STOCK, [], false, false),
+                    new ProductIndexDataModel(
+                        'inventoryStatus_' . Product::INVENTORY_STATUS_IN_STOCK,
+                        1,
+                        [],
+                        false,
+                        false
+                    ),
                     new ProductIndexDataModel(IndexDataProvider::ALL_TEXT_FIELD, 'In Stock', [], false, true),
                 ],
             ],
@@ -278,7 +293,13 @@ class WebsiteSearchProductIndexDataProviderTest extends \PHPUnit_Framework_TestC
                 'extendConfig' => $this->getConfig(['state' => ExtendScope::STATE_ACTIVE]),
                 'attributeConfig' => $this->getConfig(['filterable' => true, 'sortable' => true, 'searchable' => true]),
                 'expected' => [
-                    new ProductIndexDataModel('inventoryStatus', Product::INVENTORY_STATUS_IN_STOCK, [], false, false),
+                    new ProductIndexDataModel(
+                        'inventoryStatus_' . Product::INVENTORY_STATUS_IN_STOCK,
+                        1,
+                        [],
+                        false,
+                        false
+                    ),
                     new ProductIndexDataModel('inventoryStatus_priority', 42, [], false, false),
                     new ProductIndexDataModel(IndexDataProvider::ALL_TEXT_FIELD, 'In Stock', [], false, true),
                 ],
@@ -370,7 +391,7 @@ class WebsiteSearchProductIndexDataProviderTest extends \PHPUnit_Framework_TestC
      * @param string $id
      * @param string $name
      * @param int $priority
-     * @return AbstractEnumValue|\PHPUnit_Framework_MockObject_MockObject
+     * @return AbstractEnumValue|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function getEnumValue($id, $name, $priority)
     {

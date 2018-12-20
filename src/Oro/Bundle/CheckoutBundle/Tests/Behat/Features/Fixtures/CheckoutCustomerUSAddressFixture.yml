@@ -1,0 +1,17 @@
+Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress:
+    address3:
+        country: '@united_states'
+        region: '@florida'
+        label: 'label'
+        street: 'First avenue'
+        city: 'Hollywood'
+        postalCode: '33019'
+        organization: 'ORO'
+        frontendOwner: '@amanda'
+        owner: '@admin'
+        systemOrganization: '@organization'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerUserAddressToAddressType:
+    shipping2:
+        address: '@address3'
+        type: '@shippingType'

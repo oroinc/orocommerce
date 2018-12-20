@@ -7,7 +7,7 @@ use Oro\Bundle\PromotionBundle\Discount\Converter\DiscountContextConverterRegist
 use Oro\Bundle\PromotionBundle\Discount\DiscountContext;
 use Oro\Bundle\PromotionBundle\Discount\Exception\UnsupportedSourceEntityException;
 
-class DiscountContextConverterRegistryTest extends \PHPUnit_Framework_TestCase
+class DiscountContextConverterRegistryTest extends \PHPUnit\Framework\TestCase
 {
     public function testSupports()
     {
@@ -15,7 +15,7 @@ class DiscountContextConverterRegistryTest extends \PHPUnit_Framework_TestCase
         $registry = new DiscountContextConverterRegistry();
         $this->assertFalse($registry->supports($entity));
 
-        /** @var DiscountContextConverterInterface|\PHPUnit_Framework_MockObject_MockObject $converter */
+        /** @var DiscountContextConverterInterface|\PHPUnit\Framework\MockObject\MockObject $converter */
         $converter = $this->createMock(DiscountContextConverterInterface::class);
         $converter->expects($this->once())
             ->method('supports')
@@ -32,7 +32,7 @@ class DiscountContextConverterRegistryTest extends \PHPUnit_Framework_TestCase
         $registry = new DiscountContextConverterRegistry();
         $discountContext = new DiscountContext();
 
-        /** @var DiscountContextConverterInterface|\PHPUnit_Framework_MockObject_MockObject $converter */
+        /** @var DiscountContextConverterInterface|\PHPUnit\Framework\MockObject\MockObject $converter */
         $converter = $this->createMock(DiscountContextConverterInterface::class);
         $converter->expects($this->once())
             ->method('supports')
@@ -52,7 +52,7 @@ class DiscountContextConverterRegistryTest extends \PHPUnit_Framework_TestCase
         $entity = new \stdClass();
         $registry = new DiscountContextConverterRegistry();
 
-        /** @var DiscountContextConverterInterface|\PHPUnit_Framework_MockObject_MockObject $converter */
+        /** @var DiscountContextConverterInterface|\PHPUnit\Framework\MockObject\MockObject $converter */
         $converter = $this->createMock(DiscountContextConverterInterface::class);
         $converter->expects($this->once())
             ->method('supports')

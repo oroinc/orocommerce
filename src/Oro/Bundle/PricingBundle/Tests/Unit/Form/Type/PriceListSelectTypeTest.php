@@ -6,7 +6,7 @@ use Oro\Bundle\FormBundle\Form\Type\OroEntitySelectOrCreateInlineType;
 use Oro\Bundle\PricingBundle\Form\Type\PriceListSelectType;
 use Oro\Bundle\PricingBundle\Form\Type\PriceListType;
 
-class PriceListSelectTypeTest extends \PHPUnit_Framework_TestCase
+class PriceListSelectTypeTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var PriceListSelectType
@@ -30,7 +30,7 @@ class PriceListSelectTypeTest extends \PHPUnit_Framework_TestCase
             ->willReturnCallback(
                 function (array $options) {
                     $this->assertArrayHasKey('autocomplete_alias', $options);
-                    $this->assertEquals('oro_pricing_price_list', $options['autocomplete_alias']);
+                    $this->assertEquals(PriceListType::class, $options['autocomplete_alias']);
 
                     $this->assertArrayHasKey('create_form_route', $options);
                     $this->assertEquals('oro_pricing_price_list_create', $options['create_form_route']);
@@ -49,10 +49,5 @@ class PriceListSelectTypeTest extends \PHPUnit_Framework_TestCase
     public function testGetParent()
     {
         $this->assertEquals(OroEntitySelectOrCreateInlineType::class, $this->type->getParent());
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals(PriceListSelectType::NAME, $this->type->getName());
     }
 }

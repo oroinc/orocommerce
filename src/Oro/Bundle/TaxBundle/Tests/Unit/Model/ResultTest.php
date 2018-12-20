@@ -5,7 +5,7 @@ namespace Oro\Bundle\CustomerBundle\Tests\Unit\Entity;
 use Oro\Bundle\TaxBundle\Model\Result;
 use Oro\Bundle\TaxBundle\Model\ResultElement;
 
-class ResultTest extends \PHPUnit_Framework_TestCase
+class ResultTest extends \PHPUnit\Framework\TestCase
 {
     public function testProperties()
     {

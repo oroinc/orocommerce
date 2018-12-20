@@ -1,7 +1,7 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: '../templates/request_approval.html.twig'
+            themes: 'OroAlternativeCheckoutBundle:layouts:default/oro_checkout_frontend_checkout/templates/request_approval.html.twig'
 
         - '@setOption':
             id: checkout_information_title

@@ -8,7 +8,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\LayoutBundle\Provider\ImageTypeProvider;
-use Oro\Bundle\ProductBundle\Api\Processor\Shared\ProcessImageTypesCollection;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Entity\ProductImageType;
@@ -17,7 +16,7 @@ use Oro\Bundle\ProductBundle\EventListener\ProductImageListener;
 use Oro\Bundle\ProductBundle\Helper\ProductImageHelper;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class ProductImageListenerTest extends \PHPUnit_Framework_TestCase
+class ProductImageListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var ProductImageListener $listener
@@ -25,37 +24,32 @@ class ProductImageListenerTest extends \PHPUnit_Framework_TestCase
     protected $listener;
 
     /**
-     * @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject $eventDispatcher
+     * @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject $eventDispatcher
      */
     protected $eventDispatcher;
 
     /**
-     * @var ImageTypeProvider|\PHPUnit_Framework_MockObject_MockObject $imageTypeProvider
+     * @var ImageTypeProvider|\PHPUnit\Framework\MockObject\MockObject $imageTypeProvider
      */
     protected $imageTypeProvider;
 
     /**
-     * @var ProductImageHelper|\PHPUnit_Framework_MockObject_MockObject $productImageHelper
+     * @var ProductImageHelper|\PHPUnit\Framework\MockObject\MockObject $productImageHelper
      */
     protected $productImageHelper;
 
     /**
-     * @var ProcessImageTypesCollection $processImageTypesCollection
-     */
-    protected $processImageTypesCollection;
-
-    /**
-     * @var EntityManager|\PHPUnit_Framework_MockObject_MockObject $productImageEntityManager
+     * @var EntityManager|\PHPUnit\Framework\MockObject\MockObject $productImageEntityManager
      */
     protected $productImageEntityManager;
 
     /**
-     * @var LifecycleEventArgs|\PHPUnit_Framework_MockObject_MockObject $lifecycleArgs
+     * @var LifecycleEventArgs|\PHPUnit\Framework\MockObject\MockObject $lifecycleArgs
      */
     protected $lifecycleArgs;
 
     /**
-     * @var ProductRepository|\PHPUnit_Framework_MockObject_MockObject $productRepository
+     * @var ProductRepository|\PHPUnit\Framework\MockObject\MockObject $productRepository
      */
     protected $productRepository;
 
@@ -77,7 +71,7 @@ class ProductImageListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testPostPersist()
     {
-        $this->imageTypeProvider->expects($this->once())
+        $this->imageTypeProvider->expects($this->any())
             ->method('getMaxNumberByType')
             ->willReturn(
                 [
@@ -100,10 +94,6 @@ class ProductImageListenerTest extends \PHPUnit_Framework_TestCase
                     'listing' => 1,
                 ]
             );
-
-        $this->productImageEntityManager->expects($this->once())
-            ->method('remove')
-            ->willReturn(true);
 
         $productImage = $this->prepareProductImage();
 

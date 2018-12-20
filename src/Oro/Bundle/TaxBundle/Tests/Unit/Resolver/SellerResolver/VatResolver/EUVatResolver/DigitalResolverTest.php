@@ -4,12 +4,13 @@ namespace Oro\Bundle\TaxBundle\Tests\Unit\Resolver\SellerResolver\VatResolver\EU
 
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
+use Oro\Bundle\TaxBundle\Model\Address;
 use Oro\Bundle\TaxBundle\Model\Result;
 use Oro\Bundle\TaxBundle\Model\Taxable;
 use Oro\Bundle\TaxBundle\Resolver\SellerResolver\VatResolver\EUVatResolver\DigitalItemResolver;
 use Oro\Bundle\TaxBundle\Resolver\SellerResolver\VatResolver\EUVatResolver\DigitalResolver;
 
-class DigitalResolverTest extends \PHPUnit_Framework_TestCase
+class DigitalResolverTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var DigitalResolver
@@ -17,7 +18,7 @@ class DigitalResolverTest extends \PHPUnit_Framework_TestCase
     protected $resolver;
 
     /**
-     * @var DigitalItemResolver|\PHPUnit_Framework_MockObject_MockObject
+     * @var DigitalItemResolver|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $itemResolver;
 
@@ -93,5 +94,25 @@ class DigitalResolverTest extends \PHPUnit_Framework_TestCase
         $taxable->addItem($taxableItem);
 
         return $taxable;
+    }
+
+    public function testTaxableAddresIsOrigin()
+    {
+        $address = new OrderAddress();
+        $address->setCountry(new Country('DE'));
+
+        $origin = new Address();
+        $origin->setCountry(new Country('AT'));
+
+        $taxable = new Taxable();
+        $taxableItem = new Taxable();
+        $taxable->addItem($taxableItem);
+        $taxable->setDestination($address);
+        $taxable->setOrigin($origin);
+        $taxable->makeOriginAddressTaxable();
+
+        $this->resolver->resolve($taxable);
+
+        $this->assertSame($origin, $taxable->getTaxationAddress());
     }
 }

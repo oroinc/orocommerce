@@ -23,9 +23,10 @@ class ProductRowCollectionTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
-        $unitsProviderMock = $this->getMockBuilder(ProductUnitsProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $unitsProviderMock = $this->createMock(ProductUnitsProvider::class);
+        $unitsProviderMock->expects($this->any())
+            ->method('getAvailableProductUnits')
+            ->willReturn([]);
 
         return [
             new PreloadedExtension(
@@ -125,7 +126,7 @@ class ProductRowCollectionTypeTest extends FormIntegrationTestCase
 
     public function testConfigureOptions()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|OptionsResolver $resolver */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|OptionsResolver $resolver */
         $resolver = $this->createMock('Symfony\Component\OptionsResolver\OptionsResolver');
         $resolver->expects($this->once())
             ->method('setDefaults')
@@ -141,12 +142,6 @@ class ProductRowCollectionTypeTest extends FormIntegrationTestCase
 
         $formType = new ProductRowCollectionType();
         $formType->configureOptions($resolver);
-    }
-
-    public function testGetName()
-    {
-        $formType = new ProductRowCollectionType();
-        $this->assertEquals(ProductRowCollectionType::NAME, $formType->getName());
     }
 
     /**

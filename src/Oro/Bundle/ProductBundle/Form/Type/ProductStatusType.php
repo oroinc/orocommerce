@@ -30,10 +30,10 @@ class ProductStatusType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults(array(
+        $resolver->setDefaults([
             'choices' => $this->productStatusProvider->getAvailableProductStatuses(),
             'preferred_choices' => Product::STATUS_DISABLED
-        ));
+        ]);
     }
 
     /**

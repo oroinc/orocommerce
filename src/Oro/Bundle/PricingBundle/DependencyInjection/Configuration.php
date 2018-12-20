@@ -10,6 +10,9 @@ use Oro\Bundle\PricingBundle\PricingStrategy\MinimalPricesCombiningStrategy;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
+/**
+ * Configuration structure and default values for PricingBundle.
+ */
 class Configuration implements ConfigurationInterface
 {
     const ROOT_NODE = 'oro_pricing';
@@ -45,13 +48,14 @@ class Configuration implements ConfigurationInterface
             [
                 self::DEFAULT_PRICE_LISTS => ['type' => 'array', 'value' => []],
                 self::ROUNDING_TYPE => ['value' => PriceRoundingService::ROUND_HALF_UP],
-                self::PRECISION => ['value' => PriceRoundingService::FALLBACK_PRECISION],
+                self::PRECISION => ['value' => PriceRoundingService::DEFAULT_PRECISION],
                 self::COMBINED_PRICE_LIST => ['value' => null],
                 self::FULL_COMBINED_PRICE_LIST => ['value' => null],
                 self::OFFSET_OF_PROCESSING_CPL_PRICES => [
                     'value' => CombinedPriceListsBuilder::DEFAULT_OFFSET_OF_PROCESSING_CPL_PRICES
                 ],
-                self::PRICE_LIST_STRATEGIES => ['type' => 'string', 'value' => MinimalPricesCombiningStrategy::NAME]
+                self::PRICE_LIST_STRATEGIES => ['type' => 'string', 'value' => MinimalPricesCombiningStrategy::NAME],
+                'feature_enabled' => ['value' => true],
             ]
         );
 

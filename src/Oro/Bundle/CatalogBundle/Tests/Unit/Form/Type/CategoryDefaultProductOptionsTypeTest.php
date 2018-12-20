@@ -110,13 +110,8 @@ class CategoryDefaultProductOptionsTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(CategoryDefaultProductOptionsType::NAME, $this->formType->getName());
-    }
-
     /**
-     * @return CategoryDefaultProductUnitOptionsVisibilityInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return CategoryDefaultProductUnitOptionsVisibilityInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private function getVisibilityMock()
     {

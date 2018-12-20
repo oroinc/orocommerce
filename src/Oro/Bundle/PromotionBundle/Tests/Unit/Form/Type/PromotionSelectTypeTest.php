@@ -23,11 +23,6 @@ class PromotionSelectTypeTest extends FormIntegrationTestCase
         $this->formType = new PromotionSelectType();
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(PromotionSelectType::NAME, $this->formType->getName());
-    }
-
     public function testGetParent()
     {
         $this->assertEquals(OroEntitySelectOrCreateInlineType::class, $this->formType->getParent());
@@ -35,7 +30,7 @@ class PromotionSelectTypeTest extends FormIntegrationTestCase
 
     public function testConfigureOptions()
     {
-        /* @var $resolver OptionsResolver|\PHPUnit_Framework_MockObject_MockObject */
+        /* @var $resolver OptionsResolver|\PHPUnit\Framework\MockObject\MockObject */
         $resolver = $this->createMock(OptionsResolver::class);
         $resolver->expects($this->once())
             ->method('setDefaults')
@@ -46,7 +41,7 @@ class PromotionSelectTypeTest extends FormIntegrationTestCase
                     $this->assertArrayHasKey('create_form_route', $options);
                     $this->assertArrayHasKey('configs', $options);
                     $this->assertFalse($options['create_enabled']);
-                    $this->assertEquals('oro_promotion', $options['autocomplete_alias']);
+                    $this->assertEquals(PromotionType::class, $options['autocomplete_alias']);
                     $this->assertEquals('oro_promotion_create', $options['create_form_route']);
                     $this->assertEquals(
                         [

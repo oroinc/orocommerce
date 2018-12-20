@@ -8,7 +8,7 @@ use Oro\Bundle\PricingBundle\Entity\PriceListSchedule;
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-class PriceListTest extends \PHPUnit_Framework_TestCase
+class PriceListTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 

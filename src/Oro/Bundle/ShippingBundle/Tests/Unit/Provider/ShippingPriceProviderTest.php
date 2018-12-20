@@ -21,27 +21,27 @@ use Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\ShippingMethodTypeStub;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class ShippingPriceProviderTest extends \PHPUnit_Framework_TestCase
+class ShippingPriceProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var MethodsConfigsRulesByContextProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var MethodsConfigsRulesByContextProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $shippingRulesProvider;
 
     /**
-     * @var ShippingMethodProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $shippingMethodProvider;
 
     /**
-     * @var ShippingPriceCache|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingPriceCache|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $priceCache;
 
     /**
-     * @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $eventDispatcher;
 
@@ -566,7 +566,7 @@ class ShippingPriceProviderTest extends \PHPUnit_Framework_TestCase
             ShippingContext::FIELD_CURRENCY => 'USD'
         ]);
 
-        $this->shippingRulesProvider->expects(static::exactly(2))
+        $this->shippingRulesProvider->expects($this->once())
             ->method('getShippingMethodsConfigsRules')
             ->with($context)
             ->willReturn([

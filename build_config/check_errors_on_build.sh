@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-log_file_path="app/logs/prod.log"
+log_file_path="var/logs/prod.log"
 
 while getopts "p:" opt; do
     case "$opt" in

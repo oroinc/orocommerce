@@ -6,7 +6,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\ProductVariant\Form\Type\DataTransformer\ProductVariantFieldsToProductVariantTransformer;
 use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
 
-class ProductVariantFieldsToProductVariantTransformerTest extends \PHPUnit_Framework_TestCase
+class ProductVariantFieldsToProductVariantTransformerTest extends \PHPUnit\Framework\TestCase
 {
     const PRODUCT_CLASS = Product::class;
 
@@ -16,7 +16,7 @@ class ProductVariantFieldsToProductVariantTransformerTest extends \PHPUnit_Frame
     /** @var ProductVariantFieldsToProductVariantTransformer */
     protected $dataTransformer;
 
-    /** @var ProductVariantAvailabilityProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ProductVariantAvailabilityProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $productVariantAvailabilityProvider;
 
     protected function setUp()

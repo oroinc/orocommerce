@@ -3,7 +3,7 @@
 namespace Oro\Bundle\TaxBundle\Tests\Unit\Resolver;
 
 use Brick\Math\BigDecimal;
-use Oro\Bundle\TaxBundle\Calculator\Calculator;
+use Oro\Bundle\TaxBundle\Calculator\TaxCalculator;
 use Oro\Bundle\TaxBundle\Entity\Tax;
 use Oro\Bundle\TaxBundle\Entity\TaxRule;
 use Oro\Bundle\TaxBundle\Model\Result;
@@ -12,52 +12,29 @@ use Oro\Bundle\TaxBundle\Model\TaxResultElement;
 use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 use Oro\Bundle\TaxBundle\Resolver\RowTotalResolver;
 
-class RowTotalResolverTest extends \PHPUnit_Framework_TestCase
+class RowTotalResolverTest extends \PHPUnit\Framework\TestCase
 {
+    /**
+     * @var TaxationSettingsProvider|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $settingsProvider;
+
     /**
      * @var RowTotalResolver
      */
-    protected $resolver;
-
-    /**
-     * @var Calculator| \PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $calculator;
-
-    /**
-     * @var TaxationSettingsProvider| \PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $settingsProvider;
+    private $resolver;
 
     protected function setUp()
     {
-        $this->calculator = $this->getMockBuilder('Oro\Bundle\TaxBundle\Calculator\Calculator')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->settingsProvider = $this->getMockBuilder('Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->resolver = new RowTotalResolver($this->settingsProvider, $this->calculator);
-    }
-
-    protected function tearDown()
-    {
-        unset($this->calculator, $this->resolver, $this->settingsProvider);
+        $this->settingsProvider = $this->createMock(TaxationSettingsProvider::class);
+        $this->resolver = new RowTotalResolver($this->settingsProvider, new TaxCalculator());
     }
 
     public function testEmptyTaxRule()
     {
         $result = new Result();
         $amount = BigDecimal::zero();
-        $taxRate = BigDecimal::zero();
-        $resultElement = new ResultElement();
-
-        $this->calculator->expects($this->once())
-            ->method('calculate')
-            ->with($amount, $taxRate)
-            ->willReturn($resultElement);
+        $resultElement = ResultElement::create('0', '0', '0', '0.00');
 
         $this->resolver->resolveRowTotal($result, [], $amount, 0);
 
@@ -70,7 +47,6 @@ class RowTotalResolverTest extends \PHPUnit_Framework_TestCase
      * @param BigDecimal $amount
      * @param array      $taxRules
      * @param array      $expected
-     * @param string     $taxRate
      * @param int        $quantity
      * @param bool       $isStartCalculationWithRowTotal
      */
@@ -78,22 +54,17 @@ class RowTotalResolverTest extends \PHPUnit_Framework_TestCase
         BigDecimal $amount,
         array $taxRules,
         array $expected,
-        $taxRate,
         $quantity,
-        $isStartCalculationWithRowTotal = false
+        $isStartCalculationWithRowTotal
     ) {
         $result = new Result();
 
-        $this->settingsProvider->expects($this->once())
+        $this->settingsProvider->expects($this->any())
             ->method('isStartCalculationWithRowTotal')
             ->willReturn($isStartCalculationWithRowTotal);
-
-        $calculateAmount = $amount->multipliedBy($quantity);
-
-        $this->calculator->expects($this->once())
-            ->method('calculate')
-            ->with($calculateAmount, $taxRate)
-            ->willReturn($expected['tax']);
+        $this->settingsProvider->expects($this->any())
+            ->method('isStartCalculationWithUnitPrice')
+            ->willReturn(!$isStartCalculationWithRowTotal);
 
         $this->resolver->resolveRowTotal($result, $taxRules, $amount, $quantity);
         $this->assertEquals($expected['row'], $result->getRow());
@@ -105,114 +76,97 @@ class RowTotalResolverTest extends \PHPUnit_Framework_TestCase
      */
     public function rowTotalDataProvider()
     {
+        $taxResult1_1 = TaxResultElement::create('city', '0.08', '39.98', '3.198400');
+        $taxResult1_2 = TaxResultElement::create('region', '0.07', '39.98', '2.798600');
+
+        $taxResult2_1 = TaxResultElement::create('city', '0.08', '39.99', '3.199200');
+        $taxResult2_2 = TaxResultElement::create('region', '0.07', '39.99', '2.799300');
+
+        $taxResult3_1 = TaxResultElement::create('city', '0.081111', '39.98', '3.242818');
+        $taxResult3_2 = TaxResultElement::create('region', '0.070404', '39.98', '2.814752');
+
         return [
-            [
-                BigDecimal::of('19.99'),
-                [
+            'without start calculation with row total' => [
+                'amount' => BigDecimal::of('19.9949'),
+                'taxRules' => [
                     $this->getTaxRule('city', '0.08'),
                     $this->getTaxRule('region', '0.07')
                 ],
-                [
-                    'tax' => ResultElement::create('0.01255', '0.02365', '0.035655'),
-                    'row' => ResultElement::create('0.01255', '0.02365', '0.035655', '-0.004345'),
+                'expected' => [
+                    'row' => ResultElement::create('45.9770', '39.98', '5.9970', '-0.0030'),
                     'result' => [
-                        TaxResultElement::create('city', '0.08', '0.02365', '0.0190'),
-                        TaxResultElement::create('region', '0.07', '0.02365', '0.0166'),
+                        $taxResult1_1,
+                        $taxResult1_2,
                     ]
 
                 ],
-                '0.15',
-                1
+                'quantity' => 2,
+                'isStartCalculationWithRowTotal' => false,
             ],
-            [
-                BigDecimal::of('19.99'),
-                [
+            'use zero tax' => [
+                'amount' => BigDecimal::of('19.99'),
+                'taxRules' => [
+                    $this->getTaxRule('country', '0.00'),
+                ],
+                'expected' => [
+                    'row' => ResultElement::create('19.9900', '19.99', '0.0000', '0.0000'),
+                    'result' => [
+                        TaxResultElement::create('country', '0.00', '19.9900', '0.00'),
+                    ]
+                ],
+                'quantity' => 1,
+                'isStartCalculationWithRowTotal' => false,
+            ],
+            'use two taxes one of which is zero' => [
+                'amount' => BigDecimal::of('19.99'),
+                'taxRules' => [
+                    $this->getTaxRule('country', '0.00'),
+                    $this->getTaxRule('region', '0.07')
+                ],
+                'expected' => [
+                    'row' => ResultElement::create('21.3893', '19.99', '1.3993', '-0.0007'),
+                    'result' => [
+                        TaxResultElement::create('country', '0.00', '19.99', '0.00'),
+                        TaxResultElement::create('region', '0.07', '19.99', '1.3993'),
+                    ]
+                ],
+                'quantity' => 1,
+                'isStartCalculationWithRowTotal' => false,
+            ],
+            'with start calculation with row total' => [
+                'amount' => BigDecimal::of('19.9949'),
+                'taxRules' => [
                     $this->getTaxRule('city', '0.08'),
                     $this->getTaxRule('region', '0.07')
                 ],
-                [
-                    'tax' => ResultElement::create('0.01255', '0.02365', '0.035655'),
-                    'row' => ResultElement::create('0.01255', '0.02365', '0.035655', '-0.004345'),
+                'expected' => [
+                    'row' => ResultElement::create('45.9885', '39.99', '5.9985', '-0.0015'),
                     'result' => [
-                        TaxResultElement::create('city', '0.08', '0.02365', '0.0190'),
-                        TaxResultElement::create('region', '0.07', '0.02365', '0.0166'),
+                        $taxResult2_1,
+                        $taxResult2_2,
                     ]
 
                 ],
-                '0.15',
-                2,
-                true
-            ]
-        ];
-    }
-
-    /**
-     * @dataProvider resolverRowTotalWithUnitPriceDataProvider
-     * @param BigDecimal[] $amount
-     * @param array        $taxRules
-     * @param array        $expected
-     * @param string       $taxRate
-     * @param int          $quantity
-     * @param bool|false $isStartCalculationWithUnitPrice
-     */
-    public function testResolverRowTotalWithStartCalculationWithUnitPrice(
-        array $amount,
-        array $taxRules,
-        array $expected,
-        $taxRate,
-        $quantity,
-        $isStartCalculationWithUnitPrice = false
-    ) {
-        $result = new Result();
-
-        $this->settingsProvider->expects($this->once())
-            ->method('isStartCalculationWithUnitPrice')
-            ->willReturn($isStartCalculationWithUnitPrice);
-
-        $this->calculator->expects($this->exactly(2))
-            ->method('calculate')
-            ->withConsecutive([$amount['amount'], $taxRate], [$amount['excludingAmount'], $taxRate])
-            ->willReturnOnConsecutiveCalls($expected['tax'], $expected['excludingTax']);
-
-        $this->calculator->expects($this->once())
-            ->method('getAmountKey')
-            ->willReturn(ResultElement::EXCLUDING_TAX);
-
-        $this->resolver->resolveRowTotal($result, $taxRules, $amount['amount'], $quantity);
-        $this->assertEquals($expected['row'], $result->getRow());
-        $this->assertEquals($expected['result'], $result->getTaxes());
-    }
-
-    /**
-     * @return array
-     */
-    public function resolverRowTotalWithUnitPriceDataProvider()
-    {
-        return [
-            [
-                [
-                    'amount' => BigDecimal::of('19.99'),
-                    'excludingAmount' => BigDecimal::of('0.04')
+                'quantity' => 2,
+                'isStartCalculationWithRowTotal' => true,
+            ],
+            'with more decimal places in tax rate' => [
+                'amount' => BigDecimal::of('19.9949'),
+                'taxRules' => [
+                    $this->getTaxRule('city', '0.081111'),
+                    $this->getTaxRule('region', '0.070404')
                 ],
-
-                [
-                    $this->getTaxRule('city', '0.08'),
-                    $this->getTaxRule('region', '0.07')
-                ],
-                [
-                    'tax' => ResultElement::create('0.01255', '0.02365', '0.035655'),
-                    'excludingTax' => ResultElement::create('0.022', '0.555', '0.5454'),
-                    'row' => ResultElement::create('0.022', '0.555', '0.5454', '-0.0046'),
+                'expected' => [
+                    'row' => ResultElement::create('46.03756970', '39.98', '6.05756970', '-0.00243030'),
                     'result' => [
-                        TaxResultElement::create('city', '0.08', '0.555', '0.2909'),
-                        TaxResultElement::create('region', '0.07', '0.555', '0.2545'),
+                        $taxResult3_1,
+                        $taxResult3_2,
                     ]
 
                 ],
-                '0.15',
-                2,
-                true
-            ]
+                'quantity' => 2,
+                'isStartCalculationWithRowTotal' => false,
+            ],
         ];
     }
 
@@ -229,6 +183,7 @@ class RowTotalResolverTest extends \PHPUnit_Framework_TestCase
             ->setRate($taxRate)
             ->setCode($taxCode);
         $taxRule->setTax($tax);
+
         return $taxRule;
     }
 }

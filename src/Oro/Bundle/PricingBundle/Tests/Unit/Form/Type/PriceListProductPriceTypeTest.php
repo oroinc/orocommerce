@@ -79,7 +79,7 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
             ProductUnitSelectionType::NAME
         );
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|CurrencyProviderInterface $currencyProvider */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|CurrencyProviderInterface $currencyProvider */
         $currencyProvider = $this->getMockBuilder(CurrencyProviderInterface::class)
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();
@@ -88,12 +88,12 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
             ->method('getCurrencyList')
             ->will($this->returnValue(['USD', 'EUR']));
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|LocaleSettings $localeSettings */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|LocaleSettings $localeSettings */
         $localeSettings = $this->getMockBuilder('Oro\Bundle\LocaleBundle\Model\LocaleSettings')
             ->disableOriginalConstructor()
             ->getMock();
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|\Oro\Bundle\CurrencyBundle\Utils\CurrencyNameHelper */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|\Oro\Bundle\CurrencyBundle\Utils\CurrencyNameHelper */
         $currencyNameHelper = $this
             ->getMockBuilder('Oro\Bundle\CurrencyBundle\Utils\CurrencyNameHelper')
             ->disableOriginalConstructor()
@@ -260,14 +260,6 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
         $error = $errors->current();
         $this->assertEquals('This value is not valid.', $error->getMessage());
         $this->assertEquals(['{{ value }}' => 'CAD'], $error->getMessageParameters());
-    }
-
-    /**
-     * Test getName
-     */
-    public function testGetName()
-    {
-        $this->assertEquals(PriceListProductPriceType::NAME, $this->formType->getName());
     }
 
     /**

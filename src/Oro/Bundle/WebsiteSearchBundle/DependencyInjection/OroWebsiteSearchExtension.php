@@ -26,6 +26,7 @@ class OroWebsiteSearchExtension extends Extension
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         $loader->load('services.yml');
         $loader->load('attribute_types.yml');
+        $loader->load('commands.yml');
 
         $ymlLoader = new YamlCumulativeFileLoader(
             'Resources/config/oro/website_search_engine/' . $config['engine'] . '.yml'
@@ -37,6 +38,10 @@ class OroWebsiteSearchExtension extends Extension
         foreach ($engineResources as $engineResource) {
             $loader->load($engineResource->path);
         }
+
+        if ('test' === $container->getParameter('kernel.environment')) {
+            $this->configureTestEnvironment($container);
+        }
     }
 
     /**
@@ -45,5 +50,17 @@ class OroWebsiteSearchExtension extends Extension
     public function getAlias()
     {
         return self::ALIAS;
+    }
+
+    /**
+     * @param ContainerBuilder $container
+     */
+    private function configureTestEnvironment(ContainerBuilder $container)
+    {
+        $loader = new Loader\YamlFileLoader(
+            $container,
+            new FileLocator(__DIR__ . '/../Tests/Functional/Environment')
+        );
+        $loader->load('services.yml');
     }
 }

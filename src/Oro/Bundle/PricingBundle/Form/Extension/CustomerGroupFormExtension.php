@@ -3,6 +3,8 @@
 namespace Oro\Bundle\PricingBundle\Form\Extension;
 
 use Oro\Bundle\CustomerBundle\Form\Type\CustomerGroupType;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
 use Oro\Bundle\PricingBundle\Entity\PriceListCustomerGroupFallback;
 use Oro\Bundle\PricingBundle\EventListener\CustomerGroupListener;
 use Oro\Bundle\PricingBundle\Form\Type\PriceListsSettingsType;
@@ -11,8 +13,14 @@ use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 
-class CustomerGroupFormExtension extends AbstractTypeExtension
+/**
+ * Adds priceListsByWebsites field of ScopedDataType type to a given form builder
+ * Adds CustomerGroupListener::onPostSetData to form builder
+ */
+class CustomerGroupFormExtension extends AbstractTypeExtension implements FeatureToggleableInterface
 {
+    use FeatureCheckerHolderTrait;
+
     /**
      * @var CustomerGroupListener
      */
@@ -44,6 +52,10 @@ class CustomerGroupFormExtension extends AbstractTypeExtension
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        if (!$this->isFeaturesEnabled()) {
+            return;
+        }
+
         $builder->add(
             CustomerGroupListener::PRICE_LISTS_COLLECTION_FORM_FIELD_NAME,
             WebsiteScopedDataType::class,
@@ -77,10 +89,10 @@ class CustomerGroupFormExtension extends AbstractTypeExtension
     protected function getFallbackChoices()
     {
         return [
-            PriceListCustomerGroupFallback::WEBSITE =>
-                'oro.pricing.fallback.website.label',
-            PriceListCustomerGroupFallback::CURRENT_ACCOUNT_GROUP_ONLY =>
-                'oro.pricing.fallback.current_customer_group_only.label',
+            'oro.pricing.fallback.website.label' =>
+                PriceListCustomerGroupFallback::WEBSITE,
+            'oro.pricing.fallback.current_customer_group_only.label' =>
+                PriceListCustomerGroupFallback::CURRENT_ACCOUNT_GROUP_ONLY,
         ];
     }
 }

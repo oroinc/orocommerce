@@ -21,25 +21,25 @@ use Symfony\Component\Routing\RouterInterface;
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class SlugUrlMatcherTest extends \PHPUnit_Framework_TestCase
+class SlugUrlMatcherTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var RouterInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var RouterInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $router;
 
     /**
-     * @var SlugRepository|\PHPUnit_Framework_MockObject_MockObject
+     * @var SlugRepository|\PHPUnit\Framework\MockObject\MockObject
      */
     private $repository;
 
     /**
-     * @var ScopeManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ScopeManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $scopeManager;
 
     /**
-     * @var MatchedUrlDecisionMaker|\PHPUnit_Framework_MockObject_MockObject
+     * @var MatchedUrlDecisionMaker|\PHPUnit\Framework\MockObject\MockObject
      */
     private $matchedUrlDecisionMaker;
 
@@ -74,7 +74,7 @@ class SlugUrlMatcherTest extends \PHPUnit_Framework_TestCase
         $url = '/test';
         $attributes = ['_route' => 'test', '_route_params' => [], '_controller' => 'Some::action'];
 
-        /** @var Router|\PHPUnit_Framework_MockObject_MockObject $baseMatcher */
+        /** @var Router|\PHPUnit\Framework\MockObject\MockObject $baseMatcher */
         $baseMatcher = $this->getMockBuilder(Router::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -96,7 +96,7 @@ class SlugUrlMatcherTest extends \PHPUnit_Framework_TestCase
     {
         $url = '/test';
 
-        /** @var Router|\PHPUnit_Framework_MockObject_MockObject $baseMatcher */
+        /** @var Router|\PHPUnit\Framework\MockObject\MockObject $baseMatcher */
         $baseMatcher = $this->getMockBuilder(Router::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -121,7 +121,7 @@ class SlugUrlMatcherTest extends \PHPUnit_Framework_TestCase
     {
         $url = '/test';
 
-        /** @var Router|\PHPUnit_Framework_MockObject_MockObject $baseMatcher */
+        /** @var Router|\PHPUnit\Framework\MockObject\MockObject $baseMatcher */
         $baseMatcher = $this->getMockBuilder(Router::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -146,7 +146,7 @@ class SlugUrlMatcherTest extends \PHPUnit_Framework_TestCase
     {
         $url = '/test';
 
-        /** @var Router|\PHPUnit_Framework_MockObject_MockObject $baseMatcher */
+        /** @var Router|\PHPUnit\Framework\MockObject\MockObject $baseMatcher */
         $baseMatcher = $this->getMockBuilder(Router::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -177,7 +177,7 @@ class SlugUrlMatcherTest extends \PHPUnit_Framework_TestCase
     {
         $url = '/test';
 
-        /** @var Router|\PHPUnit_Framework_MockObject_MockObject $baseMatcher */
+        /** @var Router|\PHPUnit\Framework\MockObject\MockObject $baseMatcher */
         $baseMatcher = $this->getMockBuilder(Router::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -187,8 +187,8 @@ class SlugUrlMatcherTest extends \PHPUnit_Framework_TestCase
 
         $this->matcher->setBaseMatcher($baseMatcher);
 
-        $baseUrl = '/app_dev.php';
-        /** @var RequestContext|\PHPUnit_Framework_MockObject_MockObject $requestContext */
+        $baseUrl = '/index_dev.php';
+        /** @var RequestContext|\PHPUnit\Framework\MockObject\MockObject $requestContext */
         $requestContext = $this->getMockBuilder(RequestContext::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -225,7 +225,7 @@ class SlugUrlMatcherTest extends \PHPUnit_Framework_TestCase
     {
         $url = '/test';
 
-        /** @var Router|\PHPUnit_Framework_MockObject_MockObject $baseMatcher */
+        /** @var Router|\PHPUnit\Framework\MockObject\MockObject $baseMatcher */
         $baseMatcher = $this->getMockBuilder(Router::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -235,8 +235,8 @@ class SlugUrlMatcherTest extends \PHPUnit_Framework_TestCase
 
         $this->matcher->setBaseMatcher($baseMatcher);
 
-        $baseUrl = '/app_dev.php';
-        /** @var RequestContext|\PHPUnit_Framework_MockObject_MockObject $requestContext */
+        $baseUrl = '/index_dev.php';
+        /** @var RequestContext|\PHPUnit\Framework\MockObject\MockObject $requestContext */
         $requestContext = $this->getMockBuilder(RequestContext::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -270,12 +270,12 @@ class SlugUrlMatcherTest extends \PHPUnit_Framework_TestCase
 
     public function testSetContext()
     {
-        /** @var RequestContext|\PHPUnit_Framework_MockObject_MockObject $context */
+        /** @var RequestContext|\PHPUnit\Framework\MockObject\MockObject $context */
         $context = $this->getMockBuilder(RequestContext::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        /** @var Router|\PHPUnit_Framework_MockObject_MockObject $baseMatcher */
+        /** @var Router|\PHPUnit\Framework\MockObject\MockObject $baseMatcher */
         $baseMatcher = $this->getMockBuilder(Router::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -289,12 +289,12 @@ class SlugUrlMatcherTest extends \PHPUnit_Framework_TestCase
 
     public function testGetContext()
     {
-        /** @var RequestContext|\PHPUnit_Framework_MockObject_MockObject $context */
+        /** @var RequestContext|\PHPUnit\Framework\MockObject\MockObject $context */
         $context = $this->getMockBuilder(RequestContext::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        /** @var Router|\PHPUnit_Framework_MockObject_MockObject $baseMatcher */
+        /** @var Router|\PHPUnit\Framework\MockObject\MockObject $baseMatcher */
         $baseMatcher = $this->getMockBuilder(Router::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -310,7 +310,7 @@ class SlugUrlMatcherTest extends \PHPUnit_Framework_TestCase
     {
         $attributes = ['_route' => 'test', '_route_params' => [], '_controller' => 'Some::action'];
 
-        /** @var UrlMatcherInterface|\PHPUnit_Framework_MockObject_MockObject $baseMatcher */
+        /** @var UrlMatcherInterface|\PHPUnit\Framework\MockObject\MockObject $baseMatcher */
         $baseMatcher = $this->createMock(RequestMatcherInterface::class);
         $this->matchedUrlDecisionMaker->expects($this->any())
             ->method('matches')
@@ -318,7 +318,7 @@ class SlugUrlMatcherTest extends \PHPUnit_Framework_TestCase
 
         $this->matcher->setBaseMatcher($baseMatcher);
 
-        /** @var Request|\PHPUnit_Framework_MockObject_MockObject $request */
+        /** @var Request|\PHPUnit\Framework\MockObject\MockObject $request */
         $request = $this->getMockBuilder(Request::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -336,7 +336,7 @@ class SlugUrlMatcherTest extends \PHPUnit_Framework_TestCase
     {
         $url = '/test';
 
-        /** @var RequestMatcherInterface|\PHPUnit_Framework_MockObject_MockObject $baseMatcher */
+        /** @var RequestMatcherInterface|\PHPUnit\Framework\MockObject\MockObject $baseMatcher */
         $baseMatcher = $this->createMock(RequestMatcherInterface::class);
         $this->matchedUrlDecisionMaker->expects($this->any())
             ->method('matches')
@@ -366,10 +366,10 @@ class SlugUrlMatcherTest extends \PHPUnit_Framework_TestCase
     {
         $url = '/test';
 
-        /** @var Request|\PHPUnit_Framework_MockObject_MockObject $request */
+        /** @var Request|\PHPUnit\Framework\MockObject\MockObject $request */
         $request = $this->createRequest($url);
 
-        /** @var RequestMatcherInterface|\PHPUnit_Framework_MockObject_MockObject $baseMatcher */
+        /** @var RequestMatcherInterface|\PHPUnit\Framework\MockObject\MockObject $baseMatcher */
         $baseMatcher = $this->createMock(RequestMatcherInterface::class);
         $baseMatcher->expects($this->once())
             ->method('matchRequest')
@@ -409,7 +409,7 @@ class SlugUrlMatcherTest extends \PHPUnit_Framework_TestCase
         $contextUrl = '/context-url';
         $url = $contextUrl . '/' . SluggableUrlGenerator::CONTEXT_DELIMITER . $itemUrl;
 
-        /** @var Request|\PHPUnit_Framework_MockObject_MockObject $request */
+        /** @var Request|\PHPUnit\Framework\MockObject\MockObject $request */
         $request = $this->createRequest($url);
         $this->prepareBaseMatcherForSlugRequest($request);
         $scopeCriteria = $this->assertScopeCriteriaReceived();
@@ -485,7 +485,7 @@ class SlugUrlMatcherTest extends \PHPUnit_Framework_TestCase
         $contextUrl = '/context-url';
         $url = $contextUrl . '/' . SluggableUrlGenerator::CONTEXT_DELIMITER . '/' . $itemUrl;
 
-        /** @var Request|\PHPUnit_Framework_MockObject_MockObject $request */
+        /** @var Request|\PHPUnit\Framework\MockObject\MockObject $request */
         $request = $this->createRequest($url);
         $this->prepareBaseMatcherForSlugRequest($request);
         $scopeCriteria = $this->assertScopeCriteriaReceived();
@@ -558,7 +558,7 @@ class SlugUrlMatcherTest extends \PHPUnit_Framework_TestCase
         $contextUrl = '/context-url';
         $url = $contextUrl . '/' . SluggableUrlGenerator::CONTEXT_DELIMITER . $itemUrl;
 
-        /** @var Request|\PHPUnit_Framework_MockObject_MockObject $request */
+        /** @var Request|\PHPUnit\Framework\MockObject\MockObject $request */
         $request = $this->createRequest($url);
         $baseMatcher = $this->prepareBaseMatcherForSlugRequest($request);
 
@@ -617,10 +617,10 @@ class SlugUrlMatcherTest extends \PHPUnit_Framework_TestCase
     {
         $url = '/test';
 
-        /** @var Request|\PHPUnit_Framework_MockObject_MockObject $request */
+        /** @var Request|\PHPUnit\Framework\MockObject\MockObject $request */
         $request = $this->createRequest($url);
 
-        /** @var RequestMatcherInterface|\PHPUnit_Framework_MockObject_MockObject $baseMatcher */
+        /** @var RequestMatcherInterface|\PHPUnit\Framework\MockObject\MockObject $baseMatcher */
         $baseMatcher = $this->createMock(RequestMatcherInterface::class);
         $this->matchedUrlDecisionMaker->expects($this->any())
             ->method('matches')
@@ -680,7 +680,7 @@ class SlugUrlMatcherTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return ScopeCriteria|\PHPUnit_Framework_MockObject_MockObject
+     * @return ScopeCriteria|\PHPUnit\Framework\MockObject\MockObject
      */
     private function assertScopeCriteriaReceived()
     {
@@ -697,11 +697,11 @@ class SlugUrlMatcherTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param Request $request
-     * @return \PHPUnit_Framework_MockObject_MockObject|Router
+     * @return \PHPUnit\Framework\MockObject\MockObject|Router
      */
     private function prepareBaseMatcherForSlugRequest($request)
     {
-        /** @var Router|\PHPUnit_Framework_MockObject_MockObject $baseMatcher */
+        /** @var Router|\PHPUnit\Framework\MockObject\MockObject $baseMatcher */
         $baseMatcher = $this->getMockBuilder(Router::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -720,11 +720,11 @@ class SlugUrlMatcherTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param string $url
-     * @return \PHPUnit_Framework_MockObject_MockObject|Request
+     * @return \PHPUnit\Framework\MockObject\MockObject|Request
      */
     private function createRequest($url)
     {
-        /** @var Request|\PHPUnit_Framework_MockObject_MockObject $request */
+        /** @var Request|\PHPUnit\Framework\MockObject\MockObject $request */
         $request = $this->getMockBuilder(Request::class)
             ->disableOriginalConstructor()
             ->getMock();

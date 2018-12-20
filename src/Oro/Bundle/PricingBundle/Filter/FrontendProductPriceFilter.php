@@ -5,13 +5,16 @@ namespace Oro\Bundle\PricingBundle\Filter;
 use Oro\Bundle\FilterBundle\Filter\FilterUtility;
 use Oro\Bundle\PricingBundle\Form\Type\Filter\ProductPriceFilterType;
 use Oro\Bundle\PricingBundle\Placeholder\UnitPlaceholder;
-use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
+use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Oro\Bundle\SearchBundle\Datagrid\Filter\SearchNumberRangeFilter;
 
+/**
+ * A filter that can be used on frontend`s product grid to get products by prices range.
+ */
 class FrontendProductPriceFilter extends SearchNumberRangeFilter
 {
     /**
-     * @var UnitLabelFormatter
+     * @var UnitLabelFormatterInterface
      */
     protected $formatter;
 
@@ -21,11 +24,11 @@ class FrontendProductPriceFilter extends SearchNumberRangeFilter
     protected function getFieldName(array $data)
     {
         $unit = $data['unit'];
-        return "decimal.".str_replace(UnitPlaceholder::NAME, $unit, $this->get(FilterUtility::DATA_NAME_KEY));
+        return 'decimal.' . str_replace(UnitPlaceholder::NAME, $unit, $this->get(FilterUtility::DATA_NAME_KEY));
     }
 
     /**
-     * @param UnitLabelFormatter $formatter
+     * @param UnitLabelFormatterInterface $formatter
      */
     public function setFormatter($formatter)
     {
@@ -38,8 +41,8 @@ class FrontendProductPriceFilter extends SearchNumberRangeFilter
     public function getMetadata()
     {
         $metadata = parent::getMetadata();
-        $metadata['unitChoices'] = [];
 
+        $metadata['unitChoices'] = [];
         $unitChoices = $this->getForm()->createView()['unit']->vars['choices'];
         foreach ($unitChoices as $choice) {
             $metadata['unitChoices'][] = [
@@ -58,6 +61,6 @@ class FrontendProductPriceFilter extends SearchNumberRangeFilter
      */
     protected function getFormType()
     {
-        return ProductPriceFilterType::NAME;
+        return ProductPriceFilterType::class;
     }
 }

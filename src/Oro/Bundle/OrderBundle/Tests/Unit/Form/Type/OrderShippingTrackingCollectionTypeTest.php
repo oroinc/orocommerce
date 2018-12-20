@@ -104,11 +104,6 @@ class OrderShippingTrackingCollectionTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    public function testGetName()
-    {
-        static::assertSame(OrderShippingTrackingCollectionType::NAME, $this->type->getName());
-    }
-
     public function testGetParent()
     {
         static::assertSame(CollectionType::class, $this->type->getParent());
@@ -125,7 +120,7 @@ class OrderShippingTrackingCollectionTypeTest extends FormIntegrationTestCase
      */
     public function testFinishView(array $options)
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|FormInterface $form */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|FormInterface $form */
         $form = $this->createMock('Symfony\Component\Form\FormInterface');
 
         $formView = new FormView();

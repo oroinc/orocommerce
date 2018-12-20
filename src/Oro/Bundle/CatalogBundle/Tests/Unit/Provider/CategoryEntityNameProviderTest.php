@@ -9,7 +9,7 @@ use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\TranslationBundle\Entity\Language;
 
-class CategoryEntityNameProviderTest extends \PHPUnit_Framework_TestCase
+class CategoryEntityNameProviderTest extends \PHPUnit\Framework\TestCase
 {
     /** @var CategoryEntityNameProvider */
     protected $provider;

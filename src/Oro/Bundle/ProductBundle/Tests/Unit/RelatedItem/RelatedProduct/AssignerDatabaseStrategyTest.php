@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\Tests\Unit\RelatedProducts;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\RelatedItem\RelatedProduct;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\UnitOfWork;
@@ -12,26 +12,26 @@ use Oro\Bundle\ProductBundle\RelatedItem\RelatedProduct\RelatedProductsConfigPro
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class AssignerDatabaseStrategyTest extends \PHPUnit_Framework_TestCase
+class AssignerDatabaseStrategyTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /** @var AssignerDatabaseStrategy */
     protected $assigner;
 
-    /** @var RelatedProductsConfigProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var RelatedProductsConfigProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $configProvider;
 
-    /** @var UnitOfWork|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var UnitOfWork|\PHPUnit\Framework\MockObject\MockObject */
     protected $unitOfWork;
 
-    /** @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $doctrineHelper;
 
-    /** @var EntityManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var EntityManager|\PHPUnit\Framework\MockObject\MockObject */
     protected $entityManager;
 
-    /** @var RelatedProductRepository|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var RelatedProductRepository|\PHPUnit\Framework\MockObject\MockObject */
     protected $relatedProductsRepository;
 
     protected function setUp()
@@ -151,6 +151,15 @@ class AssignerDatabaseStrategyTest extends \PHPUnit_Framework_TestCase
         $this->assigner->removeRelations($productFrom, [$productTo]);
     }
 
+    public function testNothingHappensWhenTryToRemoveNoElements()
+    {
+        $this->noRelationShouldBeRemoved();
+        $this->doctrineHelper->expects($this->never())
+            ->method($this->anything());
+
+        $this->assigner->removeRelations(new Product(), []);
+    }
+
     public function testThrowExceptionWhenTryToExceedRelationLimitForAProduct()
     {
         $productFrom = new Product();
@@ -243,6 +252,12 @@ class AssignerDatabaseStrategyTest extends \PHPUnit_Framework_TestCase
         $this->entityManager->expects($this->never())->method('flush');
     }
 
+    private function noRelationShouldBeRemoved()
+    {
+        $this->entityManager->expects($this->never())->method('remove');
+        $this->entityManager->expects($this->never())->method('flush');
+    }
+
     /**
      * @param Product $productFrom
      * @param Product $productTo
@@ -251,7 +266,7 @@ class AssignerDatabaseStrategyTest extends \PHPUnit_Framework_TestCase
     private function createRelatedProduct(Product $productFrom, Product $productTo)
     {
         return (new RelatedProduct())->setProduct($productFrom)
-            ->setRelatedProduct($productTo);
+            ->setRelatedItem($productTo);
     }
 
     private function relationDoesNotExistInDatabase()

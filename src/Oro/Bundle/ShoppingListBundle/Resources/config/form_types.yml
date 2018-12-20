@@ -18,8 +18,7 @@ services:
         arguments:
             - "@doctrine"
             - "@translator"
-            - '@oro_security.acl_helper'
-            - '@oro_shopping_list.shopping_list.manager'
+            - '@oro_shopping_list.manager.current_shopping_list'
         calls:
             - [setShoppingListClass, ['%oro_shopping_list.entity.shopping_list.class%']]
         tags:

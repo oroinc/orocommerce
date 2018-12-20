@@ -7,7 +7,7 @@ use Oro\Bundle\ValidationBundle\Validator\Constraints\DatesChainValidator;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Validator\Context\ExecutionContext;
 
-class DatesChainValidatorTest extends \PHPUnit_Framework_TestCase
+class DatesChainValidatorTest extends \PHPUnit\Framework\TestCase
 {
     const FIRST_LABEL = 'First';
     const SECOND_LABEL = 'Second';
@@ -109,7 +109,7 @@ class DatesChainValidatorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     protected function getBuilderMock()
     {
@@ -119,7 +119,7 @@ class DatesChainValidatorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|ExecutionContext $context
+     * @return \PHPUnit\Framework\MockObject\MockObject|ExecutionContext $context
      */
     protected function getContextMock()
     {

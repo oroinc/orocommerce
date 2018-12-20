@@ -4,14 +4,18 @@ namespace Oro\Bundle\PricingBundle\Provider;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
+use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
+/**
+ * Allows to get formatted matching prices for products from given line items with given criteria
+ * Allows to get supported currencies according to given criteria
+ */
 class MatchingPriceProvider
 {
-    /** @var ProductPriceProvider */
+    /** @var ProductPriceProviderInterface */
     protected $productPriceProvider;
 
     /** @var DoctrineHelper */
@@ -24,13 +28,13 @@ class MatchingPriceProvider
     protected $productUnitClass;
 
     /**
-     * @param ProductPriceProvider $productPriceProvider
+     * @param ProductPriceProviderInterface $productPriceProvider
      * @param DoctrineHelper $doctrineHelper
      * @param string $productClass
      * @param string $productUnitClass
      */
     public function __construct(
-        ProductPriceProvider $productPriceProvider,
+        ProductPriceProviderInterface $productPriceProvider,
         DoctrineHelper $doctrineHelper,
         $productClass,
         $productUnitClass
@@ -43,16 +47,25 @@ class MatchingPriceProvider
 
     /**
      * @param array $lineItems
-     * @param BasePriceList $priceList
+     * @param ProductPriceScopeCriteriaInterface $priceScopeCriteria
      * @return array
      */
-    public function getMatchingPrices(array $lineItems, BasePriceList $priceList)
+    public function getMatchingPrices(array $lineItems, ProductPriceScopeCriteriaInterface $priceScopeCriteria)
     {
         $productsPriceCriteria = $this->prepareProductsPriceCriteria($lineItems);
 
-        $matchedPrice = $this->productPriceProvider->getMatchedPrices($productsPriceCriteria, $priceList);
+        $matchedPrice = $this->productPriceProvider->getMatchedPrices($productsPriceCriteria, $priceScopeCriteria);
 
         return $this->formatMatchedPrices($matchedPrice);
+    }
+
+    /**
+     * @param ProductPriceScopeCriteriaInterface $priceScopeCriteria
+     * @return array|string[]
+     */
+    public function getSupportedCurrencies(ProductPriceScopeCriteriaInterface $priceScopeCriteria)
+    {
+        return $this->productPriceProvider->getSupportedCurrencies($priceScopeCriteria);
     }
 
     /**

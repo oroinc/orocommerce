@@ -44,7 +44,7 @@ class RequestProductTypeTest extends AbstractTest
 
     public function testConfigureOptions()
     {
-        /* @var $resolver \PHPUnit_Framework_MockObject_MockObject|OptionsResolver */
+        /* @var $resolver \PHPUnit\Framework\MockObject\MockObject|OptionsResolver */
         $resolver = $this->createMock('Symfony\Component\OptionsResolver\OptionsResolver');
         $resolver->expects($this->once())
             ->method('setDefaults')
@@ -62,11 +62,6 @@ class RequestProductTypeTest extends AbstractTest
         $this->formType->configureOptions($resolver);
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(RequestProductType::NAME, $this->formType->getName());
-    }
-
     /**
      * @param array $inputData
      * @param array $expectedData
@@ -79,7 +74,7 @@ class RequestProductTypeTest extends AbstractTest
 
         $view->vars = $inputData['vars'];
 
-        /* @var $form FormInterface|\PHPUnit_Framework_MockObject_MockObject */
+        /* @var $form FormInterface|\PHPUnit\Framework\MockObject\MockObject */
         $form = $this->createMock('Symfony\Component\Form\FormInterface');
 
         $this->formType->buildView($view, $form, $inputData['options']);
@@ -99,7 +94,7 @@ class RequestProductTypeTest extends AbstractTest
 
         $view->vars = $inputData['vars'];
 
-        /* @var $form FormInterface|\PHPUnit_Framework_MockObject_MockObject */
+        /* @var $form FormInterface|\PHPUnit\Framework\MockObject\MockObject */
         $form = $this->createMock('Symfony\Component\Form\FormInterface');
 
         $this->formType->finishView($view, $form, $inputData['options']);
@@ -225,7 +220,7 @@ class RequestProductTypeTest extends AbstractTest
     /**
      * @param int $id
      * @param array $units
-     * @return Product|\PHPUnit_Framework_MockObject_MockObject
+     * @return Product|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function createProduct($id, array $units = [])
     {

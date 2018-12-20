@@ -1,7 +1,7 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'quick_add_validation.html.twig'
+            themes: 'OroProductBundle:layouts:default/imports/oro_product_quick_add_validation/quick_add_validation.html.twig'
         - '@addTree':
             items:
                 __quick_add_validation:

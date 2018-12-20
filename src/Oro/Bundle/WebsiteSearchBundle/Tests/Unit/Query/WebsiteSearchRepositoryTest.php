@@ -7,15 +7,15 @@ use Oro\Bundle\SearchBundle\Query\Factory\QueryFactoryInterface;
 use Oro\Bundle\SearchBundle\Query\SearchQueryInterface;
 use Oro\Bundle\WebsiteSearchBundle\Query\WebsiteSearchRepository;
 
-class WebsiteSearchRepositoryTest extends \PHPUnit_Framework_TestCase
+class WebsiteSearchRepositoryTest extends \PHPUnit\Framework\TestCase
 {
     /** @var WebsiteSearchRepository */
     protected $repository;
 
-    /** @var QueryFactoryInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var QueryFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $queryFactory;
 
-    /** @var AbstractSearchMappingProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var AbstractSearchMappingProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $mappingProvider;
 
     protected function setUp()

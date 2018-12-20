@@ -8,9 +8,9 @@ use Oro\Bundle\SearchBundle\Query\Criteria\Comparison;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderExpressionVisitor;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderInterface;
 
-class PlaceholderExpressionVisitorTest extends \PHPUnit_Framework_TestCase
+class PlaceholderExpressionVisitorTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var PlaceholderInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var PlaceholderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $placeholder;
 
     /** @var PlaceholderExpressionVisitor */

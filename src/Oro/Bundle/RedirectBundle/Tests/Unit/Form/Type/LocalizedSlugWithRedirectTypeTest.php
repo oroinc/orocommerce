@@ -17,7 +17,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class LocalizedSlugWithRedirectTypeTest extends FormIntegrationTestCase
 {
     /**
-     * @var ConfirmSlugChangeFormHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var ConfirmSlugChangeFormHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $confirmSlugChangeFormHelper;
 
@@ -36,11 +36,6 @@ class LocalizedSlugWithRedirectTypeTest extends FormIntegrationTestCase
         $this->formType = new LocalizedSlugWithRedirectType($this->confirmSlugChangeFormHelper);
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(LocalizedSlugWithRedirectType::NAME, $this->formType->getName());
-    }
-
     public function testGetBlockPrefix()
     {
         $this->assertEquals(LocalizedSlugWithRedirectType::NAME, $this->formType->getBlockPrefix());
@@ -48,7 +43,7 @@ class LocalizedSlugWithRedirectTypeTest extends FormIntegrationTestCase
 
     public function testBuildForm()
     {
-        /** @var FormBuilderInterface|\PHPUnit_Framework_MockObject_MockObject $builder */
+        /** @var FormBuilderInterface|\PHPUnit\Framework\MockObject\MockObject $builder */
         $builder = $this->createMock(FormBuilderInterface::class);
         $builder->expects($this->exactly(2))
             ->method('add')
@@ -83,7 +78,7 @@ class LocalizedSlugWithRedirectTypeTest extends FormIntegrationTestCase
 
     public function testConfigureOptions()
     {
-        /** @var OptionsResolver|\PHPUnit_Framework_MockObject_MockObject $resolver */
+        /** @var OptionsResolver|\PHPUnit\Framework\MockObject\MockObject $resolver */
         $resolver = $this->createMock(OptionsResolver::class);
         $resolver->expects($this->once())->method('setDefaults')->with(
             $this->callback(
@@ -104,7 +99,7 @@ class LocalizedSlugWithRedirectTypeTest extends FormIntegrationTestCase
 
     public function testBuildViewWhenGetChangedSlugsUrlOptionsIsNull()
     {
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock(FormInterface::class);
         $view = new FormView();
         $options = ['get_changed_slugs_url' => null];
@@ -121,7 +116,7 @@ class LocalizedSlugWithRedirectTypeTest extends FormIntegrationTestCase
 
     public function testBuildViewWhenGetChangedSlugsUrlOptionsIsNotNull()
     {
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock(FormInterface::class);
         $view = new FormView();
         $changedSlugsUrl = '/some/action/3';

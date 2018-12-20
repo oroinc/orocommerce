@@ -5,7 +5,7 @@ namespace Oro\Bundle\RedirectBundle\Tests\Unit\Generator\DTO;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\RedirectBundle\Generator\DTO\SlugUrl;
 
-class SlugUrlTest extends \PHPUnit_Framework_TestCase
+class SlugUrlTest extends \PHPUnit\Framework\TestCase
 {
     public function testConstructor()
     {

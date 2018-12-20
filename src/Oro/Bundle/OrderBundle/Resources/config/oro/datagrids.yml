@@ -195,6 +195,8 @@ datagrids:
                         - { join: order1.customerUser, alias: customerUser }
                         - { join: order1.customer, alias: customer }
                         - { join: order1.internal_status, alias: internalStatus }
+            hints:
+                - HINT_TRANSLATABLE
         columns:
             identifier:
                 label:         oro.order.identifier.label
@@ -708,8 +710,8 @@ datagrids:
                     options:
                         field_options:
                             choices:
-                                0: No
-                                1: Yes
+                                No: 0
+                                Yes: 1
                         default_value: Yes
                 grouping:
                     label:              oro.report.filter.grouping.label
@@ -724,10 +726,10 @@ datagrids:
                     options:
                         field_options:
                             choices:
-                                day:     Day
-                                month:   Month
-                                quarter: Quarter
-                                year:    Year
+                                Day:     day
+                                Month:   month
+                                Quarter: quarter
+                                Year:    year
                         default_value: Day
             default:
                 grouping:

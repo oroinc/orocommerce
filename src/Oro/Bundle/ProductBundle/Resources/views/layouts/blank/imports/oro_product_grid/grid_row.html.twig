@@ -154,8 +154,9 @@
         <a href="{{ product.view_link }}"
            class="view-product"{% if 'gallery-view' in class_prefix %} data-page-component-line-clamp{% endif %}
            itemprop="url"
+           title="{{- block('container_widget')|trim -}}"
         >
-            <span itemprop="name">{{- block('container_widget') -}}</span>
+            <span itemprop="name">{{- block('container_widget')|trim -}}</span>
         </a>
     </h3>
 {% endblock %}
@@ -169,10 +170,6 @@
             {{ 'oro.product.frontend.index.view_details'|trans }}
         </a>
     </div>
-{% endblock %}
-
-{% block __oro_product_grid__product_price_container_widget %}
-    {{ block("product_price_container") }}
 {% endblock %}
 
 {% block _product_datagrid_cell_matrixForm_widget %}

@@ -8,7 +8,7 @@ use Oro\Bundle\TaxBundle\Model\Result;
 use Oro\Bundle\TaxBundle\Model\Taxable;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-class TaxableTest extends \PHPUnit_Framework_TestCase
+class TaxableTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 
@@ -118,5 +118,48 @@ class TaxableTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($origin, $taxable->getOrigin());
         $this->assertNull($taxable->getDestination());
         $this->assertSame($origin, $taxable->getOrigin());
+    }
+
+    public function testClone()
+    {
+        $taxable = $this->createTaxable();
+        $item = new Taxable();
+        $item2 = new Taxable();
+        $taxable->addItem($item);
+        $taxable->addItem($item2);
+        $taxable->setPrice(BigDecimal::of('10'));
+        $taxable->setQuantity(BigDecimal::of('10'));
+        $taxable->setOrigin(new Address());
+        $taxable->setDestination(new Address());
+        $taxable->setTaxationAddress(new Address());
+        $taxable->setResult(new Result());
+
+        $clonedTaxable = clone $taxable;
+
+        $this->assertEquals($taxable->getPrice(), $clonedTaxable->getPrice());
+        $this->assertNotSame($taxable->getPrice(), $clonedTaxable->getPrice());
+
+        $this->assertEquals($taxable->getQuantity(), $clonedTaxable->getQuantity());
+        $this->assertNotSame($taxable->getQuantity(), $clonedTaxable->getQuantity());
+
+        $this->assertEquals($taxable->getOrigin(), $clonedTaxable->getOrigin());
+        $this->assertNotSame($taxable->getOrigin(), $clonedTaxable->getOrigin());
+
+        $this->assertEquals($taxable->getDestination(), $clonedTaxable->getDestination());
+        $this->assertNotSame($taxable->getDestination(), $clonedTaxable->getDestination());
+
+        $this->assertEquals($taxable->getTaxationAddress(), $clonedTaxable->getTaxationAddress());
+        $this->assertNotSame($taxable->getTaxationAddress(), $clonedTaxable->getTaxationAddress());
+
+        $this->assertEquals($taxable->getItems()->current(), $clonedTaxable->getItems()->current());
+        $this->assertNotSame($taxable->getItems()->current(), $clonedTaxable->getItems()->current());
+
+        $taxable->getItems()->next();
+        $clonedTaxable->getItems()->next();
+        $this->assertEquals($taxable->getItems()->current(), $clonedTaxable->getItems()->current());
+        $this->assertNotSame($taxable->getItems()->current(), $clonedTaxable->getItems()->current());
+
+        $this->assertEquals($taxable->getResult(), $clonedTaxable->getResult());
+        $this->assertNotSame($taxable->getResult(), $clonedTaxable->getResult());
     }
 }

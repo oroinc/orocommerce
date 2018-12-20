@@ -10,10 +10,10 @@ use Oro\Bundle\PromotionBundle\Discount\DiscountContext;
 use Oro\Bundle\PromotionBundle\Discount\DiscountInterface;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
 
-class DisabledDiscountDecoratorTest extends \PHPUnit_Framework_TestCase
+class DisabledDiscountDecoratorTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var DiscountInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var DiscountInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $discount;
 

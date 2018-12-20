@@ -22,6 +22,17 @@ oro_behat_extension:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Table
       selector: 'table.order-line-items-table'
 
+    Backend Order First Line Item Taxes Items Table:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Table
+      selector: 'tr.order-line-item:first-child div.line-item-taxes-items table.tax-result-grid'
+
+    Backend Order First Line Item Taxes Results Table:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Table
+      selector: 'tr.order-line-item:first-child div.line-item-taxes-results table.tax-result-grid'
+
+    Backend Order Add Product Button:
+      selector: 'div.order-line-items a.add-list-item'
+
     BackendOrderLineItems:
       class: Oro\Bundle\OrderBundle\Tests\Behat\Element\BackendOrderLineItems
       selector: 'table.order-line-items-table'
@@ -70,11 +81,35 @@ oro_behat_extension:
       options:
         mapping:
           Billing Address:
-            locator: '//h4[text()="Billing Address"]/..//div[contains(@id,"s2id_oro_order_type-uid")]/input'
+            locator: '//h4[text()="Billing Address"]/..//div[contains(@id,"s2id_oro_order_type")]/input'
             type: xpath
+          Billing Address Country:
+            locator: '//h4[text()="Billing Address"]/..//div[contains(@id,"s2id_oro_order_type_billingAddress_country-uid")]/input'
+            type: xpath
+          Billing Address State:
+            locator: '//h4[text()="Billing Address"]/..//div[contains(@id,"s2id_oro_order_type_billingAddress_region-uid")]/input'
+            type: xpath
+          Billing Address First name: 'oro_order_type[billingAddress][firstName]'
+          Billing Address Last name: 'oro_order_type[billingAddress][lastName]'
+          Billing Address Organization: 'oro_order_type[billingAddress][organization]'
+          Billing Address Street: 'oro_order_type[billingAddress][street]'
+          Billing Address City: 'oro_order_type[billingAddress][city]'
+          Billing Address Postal Code: 'oro_order_type[billingAddress][postalCode]'
           Shipping Address:
-            locator: '//h4[text()="Shipping Address"]/..//div[contains(@id,"s2id_oro_order_type-uid")]/input'
+            locator: '//h4[text()="Shipping Address"]/..//div[contains(@id,"s2id_oro_order_type")]/input'
             type: xpath
+          Shipping Address Country:
+            locator: '//h4[text()="Shipping Address"]/..//div[contains(@id,"s2id_oro_order_type_shippingAddress_country-uid")]/input'
+            type: xpath
+          Shipping Address State:
+            locator: '//h4[text()="Shipping Address"]/..//div[contains(@id,"s2id_oro_order_type_shippingAddress_region-uid")]/input'
+            type: xpath
+          Shipping Address First name: 'oro_order_type[shippingAddress][firstName]'
+          Shipping Address Last name: 'oro_order_type[shippingAddress][lastName]'
+          Shipping Address Organization: 'oro_order_type[shippingAddress][organization]'
+          Shipping Address Street: 'oro_order_type[shippingAddress][street]'
+          Shipping Address City: 'oro_order_type[shippingAddress][city]'
+          Shipping Address Postal Code: 'oro_order_type[shippingAddress][postalCode]'
           Product:
             locator: '//div[contains(@id,"s2id_oro_order_type_lineItems_0_product-uid")]/input'
             type: xpath
@@ -157,5 +192,9 @@ oro_behat_extension:
         - OroNavigationBundle::FeatureContext
         - OroShoppingListBundle::ShoppingListContext
         - OroProductBundle::FeatureContext
+        - OroSecurityBundle::ACLContext
+        - OroShoppingListBundle::FeatureContext
+        - OroPromotionBundle::PromotionContext
+        - OroTaxBundle::TaxContext
       paths:
         - '@OroOrderBundle/Tests/Behat/Features'

@@ -9,22 +9,22 @@ use Oro\Bundle\TaxBundle\Model\TaxCodeInterface;
 use Oro\Bundle\TaxBundle\Provider\TaxCodeProvider;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class TaxCodeProviderTest extends \PHPUnit_Framework_TestCase
+class TaxCodeProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var AbstractTaxCodeRepository|\PHPUnit_Framework_MockObject_MockObject
+     * @var AbstractTaxCodeRepository|\PHPUnit\Framework\MockObject\MockObject
      */
     private $productRepository;
 
     /**
-     * @var AbstractTaxCodeRepository|\PHPUnit_Framework_MockObject_MockObject
+     * @var AbstractTaxCodeRepository|\PHPUnit\Framework\MockObject\MockObject
      */
     private $customerRepository;
 
     /**
-     * @var TaxCodesCache|\PHPUnit_Framework_MockObject_MockObject
+     * @var TaxCodesCache|\PHPUnit\Framework\MockObject\MockObject
      */
     private $taxCodesCache;
 

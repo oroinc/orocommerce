@@ -13,25 +13,25 @@ use Oro\Bundle\RedirectBundle\Model\MessageFactoryInterface;
 use Oro\Bundle\RedirectBundle\Model\PrefixWithRedirect;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 
-class ConfigRegenerateDirectUrlListenerTest extends \PHPUnit_Framework_TestCase
+class ConfigRegenerateDirectUrlListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $configManager;
 
     /**
-     * @var MessageProducerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $messageProducer;
 
     /**
-     * @var RedirectStorage|\PHPUnit_Framework_MockObject_MockObject
+     * @var RedirectStorage|\PHPUnit\Framework\MockObject\MockObject
      */
     private $redirectStorage;
 
     /**
-     * @var MessageFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var MessageFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $messageFactory;
 
@@ -71,7 +71,7 @@ class ConfigRegenerateDirectUrlListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testOnUpdateNotChanged()
     {
-        /** @var ConfigUpdateEvent|\PHPUnit_Framework_MockObject_MockObject $event */
+        /** @var ConfigUpdateEvent|\PHPUnit\Framework\MockObject\MockObject $event */
         $event = $this->getMockBuilder(ConfigUpdateEvent::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -91,7 +91,7 @@ class ConfigRegenerateDirectUrlListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testOnUpdatePrefixChange()
     {
-        /** @var ConfigUpdateEvent|\PHPUnit_Framework_MockObject_MockObject $event */
+        /** @var ConfigUpdateEvent|\PHPUnit\Framework\MockObject\MockObject $event */
         $event = $this->getMockBuilder(ConfigUpdateEvent::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -140,7 +140,7 @@ class ConfigRegenerateDirectUrlListenerTest extends \PHPUnit_Framework_TestCase
      */
     public function testOnUpdateUseDefault($strategy, $createRedirect)
     {
-        /** @var ConfigUpdateEvent|\PHPUnit_Framework_MockObject_MockObject $event */
+        /** @var ConfigUpdateEvent|\PHPUnit\Framework\MockObject\MockObject $event */
         $event = $this->getMockBuilder(ConfigUpdateEvent::class)
             ->disableOriginalConstructor()
             ->getMock();

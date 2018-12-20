@@ -6,7 +6,7 @@ use Oro\Bundle\WebsiteSearchBundle\Entity\IndexDecimal;
 use Oro\Bundle\WebsiteSearchBundle\Entity\Item;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-class IndexDecimalTest extends \PHPUnit_Framework_TestCase
+class IndexDecimalTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 

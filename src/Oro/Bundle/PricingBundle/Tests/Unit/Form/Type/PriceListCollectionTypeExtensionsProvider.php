@@ -4,9 +4,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\FormBundle\Form\Extension\SortableExtension;
-use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\PricingBundle\Form\Extension\PriceListFormExtension;
-use Oro\Bundle\PricingBundle\Form\Type\PriceListCollectionType;
 use Oro\Bundle\PricingBundle\Form\Type\PriceListSelectType;
 use Oro\Bundle\PricingBundle\Form\Type\PriceListSelectWithPriorityType;
 use Oro\Bundle\PricingBundle\PricingStrategy\MergePricesCombiningStrategy;
@@ -18,7 +16,7 @@ use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Validator\Validation;
 
-class PriceListCollectionTypeExtensionsProvider extends \PHPUnit_Framework_TestCase
+class PriceListCollectionTypeExtensionsProvider extends \PHPUnit\Framework\TestCase
 {
     /**
      * @return array
@@ -36,10 +34,7 @@ class PriceListCollectionTypeExtensionsProvider extends \PHPUnit_Framework_TestC
         return [
             new PreloadedExtension(
                 [
-                    CollectionType::class => new CollectionType(),
-                    PriceListSelectWithPriorityType::class => new PriceListSelectWithPriorityType(),
                     PriceListSelectType::class => new PriceListSelectTypeStub(),
-                    PriceListCollectionType::class => new PriceListCollectionType(),
                     EntityType::class => $entityType,
                 ],
                 [

@@ -60,7 +60,7 @@
 
     {% set buttonOptions = {
         'dataAttributes': dataAttributes,
-        'aCss': 'btn add-to-shopping-list-button ' ~ options.aCss,
+        'aCss': 'btn btn--block add-to-shopping-list-button ' ~ options.aCss,
         'moreButtonExtraClass': 'btn--action',
         'dataId': shoppingListId,
         'label' : options.actionLabel|replace({
@@ -78,7 +78,7 @@
         }) %}
     {% endif %}
 
-    <div class="pull-left btn-group icons-holder btn-group--loading">
+    <div class="btn-group btn-group--flex icons-holder btn-group--loading">
         {{ UI.clientLink(buttonOptions) }}
     </div>
 {% endmacro %}
@@ -86,7 +86,7 @@
 {% macro getButtonsHtml(options) %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
     {% import _self as buttons %}
-    <div class="btn-group full"
+    <div
          {{ UI.renderPageComponentAttributes({
              module: 'oroui/js/app/components/view-component',
              options: {

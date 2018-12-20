@@ -18,9 +18,9 @@
     {{ parent() }}
     <div class="pull-left">
         {% if entity.expired %}
-            <div class="badge badge-disabled status-disabled"><i class="fa-lock"></i>{{ 'oro.sale.quote.expired.label'|trans }}</div>
+            <div class="badge badge-pill badge-disabled status-disabled"><i class="fa-lock"></i>{{ 'oro.sale.quote.expired.label'|trans }}</div>
         {% else %}
-            <div class="badge badge-enabled status-enabled"><i class="fa-unlock"></i>{{ 'oro.sale.quote.not_expired.label'|trans }}</div>
+            <div class="badge badge-pill badge-enabled status-enabled"><i class="fa-unlock"></i>{{ 'oro.sale.quote.not_expired.label'|trans }}</div>
         {% endif %}
     </div>
 {% endblock breadcrumbs %}
@@ -74,7 +74,11 @@
                                 {% if quoteProductOffer.allowIncrements %}{{ 'oro.sale.quoteproductoffer.allow_increments.label'|trans }}{% endif %}
                             </td>
                             <td class="quote-line_item-price quote-line_item-price-{% if loop.first %}first{% else %}not_first{% endif %}">
-                                {{ quoteProductOffer.price|oro_format_price }}
+                                {% if quoteProductOffer.price %}
+                                    {{ quoteProductOffer.price|oro_format_price }}
+                                {% else %}
+                                    {{ 'N/A'|trans }}
+                                {% endif %}
                             </td>
                             {% if loop.first %}
                                 <td  class="quote-line_item-target_notes" rowspan="{{ numSubItems }}">{{ quoteProduct.commentCustomer }}</td>
@@ -107,7 +111,7 @@
         {% else %}
             <div class="items list-box list-shaped"></div>
             <div class="no-data">
-                <span>{{ "oro.sale.quoteaddress.no_exist"|trans|raw }}</span>
+                {{ "oro.sale.quoteaddress.no_exist"|trans|raw }}
             </div>
         {% endif %}
     {% endset %}
@@ -128,7 +132,6 @@
 
     {% set dataBlocks = [{
         'title': 'oro.order.sections.general'|trans,
-        'class': 'active',
         'subblocks': [{'data' : [quoteInformationWidget]}]
     }] %}
 

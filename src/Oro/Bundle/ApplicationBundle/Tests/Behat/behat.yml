@@ -11,6 +11,7 @@ oro_behat_extension:
             - '@oro_importexport.processor.registry'
         - OroApplicationBundle::CommerceMainContext
         - OroCheckoutBundle::FeatureContext
+        - OroProductBundle::QuickOrderFormContext
         - OroSecurityBundle::ACLContext
         - OroProductBundle::FeatureContext
         - OroProductBundle::FrontendProductGridContext
@@ -40,6 +41,9 @@ oro_behat_extension:
         mapping:
           Use As Base By Default Use Default: 'tax_calculation[oro_tax___use_as_base_by_default][use_parent_scope_value]'
           Use As Base By Default: 'tax_calculation[oro_tax___use_as_base_by_default][value]'
+          Origin Country: 'tax_calculation[oro_tax___origin_address][value][country]'
+          Origin Region: 'tax_calculation[oro_tax___origin_address][value][region]'
+          Origin Zip Code: 'tax_calculation[oro_tax___origin_address][value][postal_code]'
     Create Category Form:
       selector: 'form[name="oro_catalog_category"]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
@@ -68,15 +72,6 @@ oro_behat_extension:
             type: 'xpath'
             locator: '//input[contains(@id,"oro_product_variantFields_Size_is_selected-uid")]'
           Inventory Status: 'oro_product[inventory_status]'
-
-    Tax Rule Form:
-      selector: 'form[name="oro_tax_rule_type"]'
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
-      options:
-        mapping:
-          Tax:
-           type: 'xpath'
-           locator: '//div[contains(@id,"s2id_oro_tax_rule_type_tax-uid")]//input'
 
     Customer User Addresses Form:
       selector: 'form[name="oro_customer_customer_user"]'
@@ -198,16 +193,16 @@ oro_behat_extension:
         locator: '//div[@class="shopping-lists"]'
         type: xpath
 
-    Update Shopping list button:
+    Update Shopping List button:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
-        locator: '//div/a[@title="Update Shopping list"]'
+        locator: '//div/a[@title="Update Shopping List"]'
         type: xpath
 
     Add to Shopping List button:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
-        locator: '//div/a[@title="Add to Shopping list"]'
+        locator: '//div/a[@title="Add to Shopping List"]'
         type: xpath
 
     Gallery View:
@@ -233,7 +228,7 @@ oro_behat_extension:
       selector: 'div.matrix-order-widget--dialog'
 
     Matrix Grid Popup Close Button:
-      selector: 'button[title="close"]'
+      selector: 'button[title="Close"]'
 
     Matrix Grid Form:
       selector:
@@ -282,13 +277,13 @@ oro_behat_extension:
     Add to Shopping List form Matrix Grid:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
-        locator: '//form[@name="matrix_collection"]//a[@title="Add to Shopping list"]'
+        locator: '//form[@name="matrix_collection"]//a[@title="Add to Shopping List"]'
         type: xpath
 
-    Add to Shopping list button:
+    Add to Shopping List button:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
-        locator: '//a[@title="Add to Shopping list"]'
+        locator: '//a[@title="Add to Shopping List"]'
         type: xpath
 
     Create New Shopping List popup:
@@ -346,6 +341,10 @@ oro_behat_extension:
         locator: '//div[contains (@id,"oro_rfp_frontend_request_requestProducts-uid")]//button[@title="Edit"]'
         type: xpath
 
+    Add a Note to This Item:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector: 'label.custom-checkbox:contains("Add a Note to This Item")'
+
     Frontstore RFQ Line Item Form1:
       selector: 'form[name="oro_rfp_frontend_request"]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
@@ -357,6 +356,7 @@ oro_behat_extension:
           Quantity: 'oro_rfp_frontend_request[requestProducts][0][requestProductItems][0][quantity]'
           Unit: 'oro_rfp_frontend_request[requestProducts][0][requestProductItems][0][productUnit]'
           Target Price: 'oro_rfp_frontend_request[requestProducts][0][requestProductItems][0][price][value]'
+          Note: 'oro_rfp_frontend_request[requestProducts][0][comment]'
 
     Frontstore RFQ Line Item Form2:
       selector: 'form[name="oro_rfp_frontend_request"]'
@@ -418,11 +418,12 @@ oro_behat_extension:
       options:
         mapping:
           Enable Guest Shopping List Default: 'shopping_list[oro_shopping_list___availability_for_guests][use_parent_scope_value]'
+          Shopping List Limit Default: 'shopping_list[oro_shopping_list___shopping_list_limit][use_parent_scope_value]'
 
     Save on conf window:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
-        locator: '//div[@class="modal oro-modal-normal in"]//a[text()="Save"]'
+        locator: '//div[@class="modal oro-modal-normal show"]//a[text()="Save"]'
         type: xpath
 
     Quick Order Configuration Form:
@@ -445,6 +446,16 @@ oro_behat_extension:
       options:
         mapping:
           Enable Guest Checkout Default: 'checkout[oro_checkout___guest_checkout][use_parent_scope_value]'
+          Allow Registration Default: 'checkout[oro_checkout___registration_allowed][use_parent_scope_value]'
+          Allow Checkout Without Email Confirmation Default: 'checkout[oro_checkout___allow_checkout_without_email_confirmation][use_parent_scope_value]'
+
+    Customer Users Registration Form:
+      selector: 'form[name="customer_users"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Registration Allowed Default: 'customer_users[oro_customer___registration_allowed][use_parent_scope_value]'
+          Confirmation Required Default: 'customer_users[oro_customer___confirmation_required][use_parent_scope_value]'
 
     Reset Any Text filter:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element

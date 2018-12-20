@@ -2,130 +2,65 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Api\ProductPrice\Processor;
 
+use Oro\Bundle\ApiBundle\Tests\Unit\Processor\GetList\GetListProcessorTestCase;
 use Oro\Bundle\PricingBundle\Api\ProductPrice\Processor\NormalizeOutputProductPriceId;
-use Oro\Bundle\PricingBundle\Api\ProductPrice\ProductPriceIDByContextNormalizerInterface;
-use Oro\Component\ChainProcessor\ContextInterface;
-use PHPUnit\Framework\TestCase;
 
-class NormalizeOutputProductPriceIdTest extends TestCase
+class NormalizeOutputProductPriceIdTest extends GetListProcessorTestCase
 {
-    /**
-     * @var ProductPriceIDByContextNormalizerInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $normalizer;
-
-    /**
-     * @var ContextInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $context;
-
-    /**
-     * @var NormalizeOutputProductPriceId
-     */
+    /** @var NormalizeOutputProductPriceId */
     private $processor;
 
     protected function setUp()
     {
-        $this->normalizer = $this->createMock(ProductPriceIDByContextNormalizerInterface::class);
-        $this->context = $this->createMock(ContextInterface::class);
+        parent::setUp();
 
-        $this->processor = new NormalizeOutputProductPriceId($this->normalizer);
+        $this->processor = new NormalizeOutputProductPriceId();
     }
 
     public function testProcessNoResult()
     {
-        $this->context
-            ->expects(static::once())
-            ->method('getResult')
-            ->willReturn(null);
-
-        $this->normalizer
-            ->expects(static::never())
-            ->method('normalize');
-
         $this->processor->process($this->context);
+        self::assertFalse($this->context->hasResult());
     }
 
     public function testProcessResultNotArray()
     {
-        $this->context
-            ->expects(static::once())
-            ->method('getResult')
-            ->willReturn(1);
+        $result = 1;
 
-        $this->normalizer
-            ->expects(static::never())
-            ->method('normalize');
-
+        $this->context->setResult($result);
         $this->processor->process($this->context);
+        self::assertSame($result, $this->context->getResult());
     }
 
     public function testProcessOneEntity()
     {
+        $priceListId = 12;
         $oldId = 'id';
-        $newId = 'newId-1';
+        $newId = 'id-12';
 
-        $this->context
-            ->expects(static::once())
-            ->method('getResult')
-            ->willReturn([
-                'id' => $oldId,
-            ]);
-
-        $this->context
-            ->expects(static::once())
-            ->method('setResult')
-            ->with([
-                'id' => $newId,
-            ]);
-
-        $this->normalizer
-            ->expects(static::once())
-            ->method('normalize')
-            ->with($oldId, $this->context)
-            ->willReturn($newId);
-
+        $this->context->set('price_list_id', $priceListId);
+        $this->context->setResult(['id' => $oldId]);
         $this->processor->process($this->context);
+        self::assertSame(['id' => $newId], $this->context->getResult());
     }
 
     public function testProcessMultipleEntities()
     {
+        $priceListId = 12;
         $oldIds = [
             ['id' => 'id1'],
             ['id' => 'id2'],
-            ['other' => 'id3'],
+            ['other' => 'id3']
         ];
         $newIds = [
-            ['id' => 'newId-1'],
-            ['id' => 'newId-2'],
+            ['id' => 'id1-12'],
+            ['id' => 'id2-12'],
+            ['other' => 'id3']
         ];
 
-        $this->context
-            ->expects(static::once())
-            ->method('getResult')
-            ->willReturn($oldIds);
-
-        $this->context
-            ->expects(static::once())
-            ->method('setResult')
-            ->with([
-                $newIds[0],
-                $newIds[1],
-                $oldIds[2]
-            ]);
-
-        $this->normalizer
-            ->expects(static::exactly(2))
-            ->method('normalize')
-            ->withConsecutive(
-                [$oldIds[0]['id'], $this->context],
-                [$oldIds[1]['id'], $this->context]
-            )
-            ->willReturnOnConsecutiveCalls(
-                $newIds[0]['id'],
-                $newIds[1]['id']
-            );
-
+        $this->context->set('price_list_id', $priceListId);
+        $this->context->setResult($oldIds);
         $this->processor->process($this->context);
+        self::assertSame($newIds, $this->context->getResult());
     }
 }

@@ -88,11 +88,10 @@ class SlugRepositoryTest extends WebTestCase
 
     public function testGetSlugByUrlAndScopeCriteriaWhenSlugHasScopesThatNotMatches()
     {
-        $this->markTestSkipped('BB-12944: Unstable test');
         $criteria = $this->scopeManager->getCriteria(ScopeManager::BASE_SCOPE);
         $slug = $this->repository->getSlugByUrlAndScopeCriteria(LoadSlugsData::SLUG_URL_PAGE, $criteria);
 
-        $this->assertEmpty($slug);
+        $this->assertNull($slug);
     }
 
     public function testGetSlugByUrlAndScopeCriteriaSlugWithoutScopes()
@@ -133,13 +132,12 @@ class SlugRepositoryTest extends WebTestCase
 
     public function testGetSlugByUrlAndScopeCriteriaSlugWithoutScopesMatched()
     {
-        $this->markTestSkipped('BB-12944: Unstable test');
         $criteria = $this->scopeManager->getCriteria(ScopeManager::BASE_SCOPE);
         $slug = $this->repository->getSlugByUrlAndScopeCriteria(LoadSlugsData::SLUG_TEST_DUPLICATE_URL, $criteria);
         $expected = $this->getReference(LoadSlugsData::SLUG_TEST_DUPLICATE_REFERENCE);
 
         $this->assertNotEmpty($slug);
-        $this->assertSame($expected->getId(), $slug->getId());
+        $this->assertEquals($expected->getId(), $slug->getId());
     }
 
     public function testFindOneDirectUrlBySlug()
@@ -393,5 +391,31 @@ class SlugRepositoryTest extends WebTestCase
             ],
             $slug
         );
+    }
+
+    /**
+     * @dataProvider isSlugForRouteExistsDataProvider
+     *
+     * @param string $routeName
+     * @param bool   $expectedResult
+     */
+    public function testIsSlugForRouteExists(string $routeName, bool $expectedResult): void
+    {
+        $actualResult = $this->repository->isSlugForRouteExists($routeName);
+
+        static::assertEquals($expectedResult, $actualResult);
+    }
+
+    /**
+     * @return array
+     */
+    public function isSlugForRouteExistsDataProvider(): array
+    {
+        return [
+            ['oro_product_frontend_product_view', true],
+            ['oro_product_frontend_product_index', false],
+            ['oro_cms_frontend_page_view', true],
+            ['oro_rfp_frontend_request_view', false],
+        ];
     }
 }

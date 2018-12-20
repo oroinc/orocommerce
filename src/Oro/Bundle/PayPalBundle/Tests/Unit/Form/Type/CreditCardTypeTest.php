@@ -64,15 +64,9 @@ class CreditCardTypeTest extends FormIntegrationTestCase
         $this->assertFalse($form->has('save_for_later'));
     }
 
-    public function testGetName()
-    {
-        $formType = new CreditCardType();
-        $this->assertEquals('oro_paypal_credit_card', $formType->getName());
-    }
-
     public function testFinishView()
     {
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock('Symfony\Component\Form\FormInterface');
 
         $formView = new FormView();

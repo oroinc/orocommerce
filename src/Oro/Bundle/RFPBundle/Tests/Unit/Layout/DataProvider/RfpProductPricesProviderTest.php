@@ -14,7 +14,7 @@ use Oro\Bundle\RFPBundle\Entity\RequestProduct;
 use Oro\Bundle\RFPBundle\Layout\DataProvider\RfpProductPricesProvider;
 use Oro\Bundle\RFPBundle\Layout\DataProvider\TierPricesProvider;
 
-class RfpProductPricesProviderTest extends \PHPUnit_Framework_TestCase
+class RfpProductPricesProviderTest extends \PHPUnit\Framework\TestCase
 {
     public function testGetPrices()
     {

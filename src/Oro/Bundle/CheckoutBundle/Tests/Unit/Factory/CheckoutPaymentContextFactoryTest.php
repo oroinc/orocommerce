@@ -19,27 +19,32 @@ use Oro\Bundle\PaymentBundle\Context\LineItem\Collection\Doctrine\DoctrinePaymen
 use Oro\Bundle\PaymentBundle\Context\PaymentLineItem;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
+use Oro\Bundle\ShippingBundle\Model\ShippingOrigin;
+use Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
-class CheckoutPaymentContextFactoryTest extends \PHPUnit_Framework_TestCase
+class CheckoutPaymentContextFactoryTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var CheckoutPaymentContextFactory|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var CheckoutPaymentContextFactory|\PHPUnit\Framework\MockObject\MockObject */
     protected $factory;
 
-    /** @var CheckoutLineItemsManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var CheckoutLineItemsManager|\PHPUnit\Framework\MockObject\MockObject */
     protected $checkoutLineItemsManager;
 
-    /** @var TotalProcessorProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var TotalProcessorProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $totalProcessorProvider;
 
-    /** @var OrderPaymentLineItemConverterInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var OrderPaymentLineItemConverterInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $paymentLineItemConverter;
 
-    /** @var PaymentContextBuilderInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var PaymentContextBuilderInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $contextBuilderMock;
 
-    /** @var PaymentContextBuilderFactoryInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var PaymentContextBuilderFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $paymentContextBuilderFactoryMock;
+
+    /** @var ShippingOriginProvider|\PHPUnit\Framework\MockObject\MockObject */
+    protected $shippingOriginProvider;
 
     protected function setUp()
     {
@@ -57,10 +62,13 @@ class CheckoutPaymentContextFactoryTest extends \PHPUnit_Framework_TestCase
 
         $this->paymentContextBuilderFactoryMock = $this->createMock(PaymentContextBuilderFactoryInterface::class);
 
+        $this->shippingOriginProvider = $this->createMock(ShippingOriginProvider::class);
+
         $this->factory = new CheckoutPaymentContextFactory(
             $this->checkoutLineItemsManager,
             $this->totalProcessorProvider,
             $this->paymentLineItemConverter,
+            $this->shippingOriginProvider,
             $this->paymentContextBuilderFactoryMock
         );
     }
@@ -110,6 +118,12 @@ class CheckoutPaymentContextFactoryTest extends \PHPUnit_Framework_TestCase
         $this->contextBuilderMock
             ->expects($this->never())
             ->method('setLineItems');
+
+        $shippingOrigin = new ShippingOrigin();
+        $this->shippingOriginProvider
+            ->expects($this->once())
+            ->method('getSystemShippingOrigin')
+            ->willReturn($shippingOrigin);
 
         $this->factory->create($checkout);
     }

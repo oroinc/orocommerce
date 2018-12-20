@@ -11,7 +11,7 @@ class PromotionProductsGridCompilerPassTest extends TaggedServicesCompilerPassCa
 {
     public function testProcess()
     {
-        /** @var ContainerBuilder|\PHPUnit_Framework_MockObject_MockObject $containerBuilder */
+        /** @var ContainerBuilder|\PHPUnit\Framework\MockObject\MockObject $containerBuilder */
         $containerBuilder = $this->createMock(ContainerBuilder::class);
 
         $productCollectionListenerDefinition = $this->createMock(Definition::class);

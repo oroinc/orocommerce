@@ -33,17 +33,17 @@ class PayPalSettingsTypeTest extends FormIntegrationTestCase
     private $formType;
 
     /**
-     * @var SymmetricCrypterInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var SymmetricCrypterInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $encoder;
 
     /**
-     * @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $translator;
 
     /**
-     * @var PaymentActionsDataProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var PaymentActionsDataProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $paymentActionsDataProvider;
 
@@ -184,7 +184,7 @@ class PayPalSettingsTypeTest extends FormIntegrationTestCase
 
     public function testConfigureOptions()
     {
-        /** @var OptionsResolver|\PHPUnit_Framework_MockObject_MockObject $resolver */
+        /** @var OptionsResolver|\PHPUnit\Framework\MockObject\MockObject $resolver */
         $resolver = $this->createMock(OptionsResolver::class);
         $resolver->expects(static::once())
             ->method('setDefaults')
@@ -219,7 +219,7 @@ class PayPalSettingsTypeTest extends FormIntegrationTestCase
         $settings = new PayPalSettings();
         $settings->setAllowedCreditCardTypes($defaultValue);
 
-        /** @var FormEvent|\PHPUnit_Framework_MockObject_MockObject $event */
+        /** @var FormEvent|\PHPUnit\Framework\MockObject\MockObject $event */
         $event = $this->createMock(FormEvent::class);
         $event
             ->expects(static::once())

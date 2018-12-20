@@ -5,6 +5,7 @@ define(function(require) {
     var mediator = require('oroui/js/mediator');
     var $ = require('jquery');
     var _ = require('underscore');
+    var DISABLED_CLASS = 'btn--disabled';
 
     var TransitionButtonComponent;
     TransitionButtonComponent = BaseComponent.extend(/** @lends TransitionButtonComponent.prototype */{
@@ -13,12 +14,14 @@ define(function(require) {
             enabled: true,
             enableOnLoad: true,
             hasForm: false,
+            flashMessageOnSubmit: null,
             selectors: {
                 checkoutFlashNotifications: '[data-role="checkout-flash-notifications"]',
                 checkoutSidebar: '[data-role="checkout-sidebar"]',
                 checkoutContent: '[data-role="checkout-content"]',
                 transitionTriggerContainer: '[data-role="transition-trigger-container"]',
-                transitionTrigger: '[data-role="transition-trigger"]'
+                transitionTrigger: '[data-role="transition-trigger"]',
+                stateToken: '[name$="[state_token]"]'
             }
         },
 
@@ -59,12 +62,12 @@ define(function(require) {
 
         enableTransitionButton: function() {
             if (this.options.enabled) {
-                this.$el.prop('disabled', false);
+                this.$el.removeAttr('disabled', false).removeClass(DISABLED_CLASS);
             }
         },
 
         disableTransitionButton: function() {
-            this.$el.prop('disabled', 'disabled');
+            this.$el.attr('disabled', 'disabled').addClass(DISABLED_CLASS);
         },
 
         initializeTriggers: function() {
@@ -77,6 +80,11 @@ define(function(require) {
         },
 
         onSubmit: function(e) {
+            if (this.options.flashMessageOnSubmit) {
+                e.preventDefault();
+                mediator.execute('showFlashMessage', 'error', this.options.flashMessageOnSubmit);
+                return false;
+            }
             this.$form.validate();
 
             if (this.$form.valid()) {
@@ -122,6 +130,9 @@ define(function(require) {
          * @returns {String}
          */
         serializeForm: function() {
+            this.$form.find(this.options.selectors.stateToken)
+                .prop('disabled', false)
+                .removeAttr('disabled');
             return this.$form.serialize();
         },
 

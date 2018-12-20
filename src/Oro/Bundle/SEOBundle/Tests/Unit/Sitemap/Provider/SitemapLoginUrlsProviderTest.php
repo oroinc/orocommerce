@@ -8,15 +8,15 @@ use Oro\Bundle\SEOBundle\Sitemap\Provider\RouterSitemapUrlsProvider;
 use Oro\Component\Website\WebsiteInterface;
 use Symfony\Component\Routing\Router;
 
-class SitemapLoginUrlsProviderTest extends \PHPUnit_Framework_TestCase
+class SitemapLoginUrlsProviderTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var Router|\PHPUnit_Framework_MockObject_MockObject
+     * @var Router|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $router;
 
     /**
-     * @var CanonicalUrlGenerator|\PHPUnit_Framework_MockObject_MockObject
+     * @var CanonicalUrlGenerator|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $canonicalUrlGenerator;
 
@@ -48,7 +48,7 @@ class SitemapLoginUrlsProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetUrlItems()
     {
-        /** @var WebsiteInterface|\PHPUnit_Framework_MockObject_MockObject $website */
+        /** @var WebsiteInterface|\PHPUnit\Framework\MockObject\MockObject $website */
         $website = $this->createMock(WebsiteInterface::class);
         $version = '1';
         $url = '/sitemaps/1/actual/test.xml';

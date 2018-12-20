@@ -19,8 +19,8 @@ class PriceTypeSelectorType extends AbstractType
         $resolver->setDefaults(
             [
                 'choices' => [
-                    PriceTypeAwareInterface::PRICE_TYPE_UNIT => 'oro.pricing.price_type.unit',
-                    PriceTypeAwareInterface::PRICE_TYPE_BUNDLED => 'oro.pricing.price_type.bundled',
+                    'oro.pricing.price_type.unit' => PriceTypeAwareInterface::PRICE_TYPE_UNIT,
+                    'oro.pricing.price_type.bundled' => PriceTypeAwareInterface::PRICE_TYPE_BUNDLED,
                 ]
             ]
         );

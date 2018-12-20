@@ -3,9 +3,12 @@
 namespace Oro\Bundle\ShippingBundle\Twig;
 
 use Oro\Bundle\ProductBundle\Entity\MeasureUnitInterface;
-use Oro\Bundle\ProductBundle\Formatter\UnitValueFormatter;
+use Oro\Bundle\ProductBundle\Formatter\UnitValueFormatterInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * Add filters for formatting weight unit value
+ */
 class WeightUnitValueExtension extends \Twig_Extension
 {
     const NAME = 'oro_weight_unit_value';
@@ -22,7 +25,7 @@ class WeightUnitValueExtension extends \Twig_Extension
     }
 
     /**
-     * @return UnitValueFormatter
+     * @return UnitValueFormatterInterface
      */
     protected function getFormatter()
     {

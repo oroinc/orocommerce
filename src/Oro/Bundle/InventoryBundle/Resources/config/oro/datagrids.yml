@@ -85,6 +85,8 @@ datagrids:
                         - { join: product.inventory_status, alias: productInventoryStatus}
                         - { join: inventory.productUnitPrecision, alias: productPrecision}
                         - { join: productPrecision.unit, alias: precisionUnit}
+            hints:
+                - HINT_TRANSLATABLE
         properties:
             id: ~
             productId: ~

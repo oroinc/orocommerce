@@ -12,8 +12,8 @@ Next, add translations to all new "units" and/or "freight classes", or at least,
 Once the migration is implemented and translations are added, you need to execute "migration update script" to register new "units" and/or "freight classes" within the application.
 
 ```bash
-app/console cache:clear
-app/console oro:migration:data:load
+bin/console cache:clear
+bin/console oro:migration:data:load
 ```
 Finally, activate all new "units" and/or "freight classes" in the system configuration.
 

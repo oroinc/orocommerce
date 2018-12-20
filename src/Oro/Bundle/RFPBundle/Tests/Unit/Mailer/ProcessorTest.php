@@ -5,69 +5,74 @@ namespace Oro\Bundle\RFPBundle\Tests\Unit\Mailer;
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Mailer\Processor;
 use Oro\Bundle\UserBundle\Entity\User;
-use Oro\Bundle\UserBundle\Tests\Unit\Mailer\AbstractProcessorTest;
+use Oro\Bundle\UserBundle\Mailer\UserTemplateEmailSender;
+use PHPUnit\Framework\MockObject\MockObject;
 
-class ProcessorTest extends AbstractProcessorTest
+class ProcessorTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var Processor|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $mailProcessor;
-
     /**
      * @var Request
      */
-    protected $request;
+    private $request;
 
     /**
      * @var User
      */
-    protected $user;
+    private $user;
+
+    /**
+     * @var UserTemplateEmailSender|MockObject
+     */
+    private $userTemplateEmailSender;
+
+    /**
+     * @var Processor
+     */
+    private $mailProcessor;
 
     protected function setUp()
     {
-        parent::setUp();
-
         $this->request = new Request();
 
         $this->user = new User();
         $this->user->setEmail('user@example.com');
 
-        $this->mailProcessor = new Processor(
-            $this->managerRegistry,
-            $this->configManager,
-            $this->renderer,
-            $this->emailHolderHelper,
-            $this->mailer
-        );
+        $this->userTemplateEmailSender = $this->createMock(UserTemplateEmailSender::class);
+        $this->mailProcessor = new Processor($this->userTemplateEmailSender);
     }
 
-    protected function tearDown()
+    public function testSendRFPNotification(): void
     {
-        parent::tearDown();
+        $returnValue = 1;
+        $this->userTemplateEmailSender
+            ->expects($this->once())
+            ->method('sendUserTemplateEmail')
+            ->with(
+                $this->user,
+                Processor::CREATE_REQUEST_TEMPLATE_NAME,
+                ['entity' => $this->request]
+            )
+            ->willReturn($returnValue);
 
-        unset($this->user, $this->request);
+        self::assertEquals($returnValue, $this->mailProcessor->sendRFPNotification($this->request, $this->user));
     }
 
-    public function testSendRFPNotification()
+    public function testSendConfirmation(): void
     {
-        $this->assertSendCalled(
-            Processor::CREATE_REQUEST_TEMPLATE_NAME,
-            ['entity' => $this->request],
-            $this->buildMessage($this->user->getEmail())
+        $returnValue = 1;
+        $this->userTemplateEmailSender
+            ->expects($this->once())
+            ->method('sendUserTemplateEmail')
+            ->with(
+                $this->user,
+                Processor::CONFIRM_REQUEST_TEMPLATE_NAME,
+                ['entity' => $this->request]
+            )
+            ->willReturn($returnValue);
+
+        self::assertEquals(
+            $returnValue,
+            $this->mailProcessor->sendConfirmation($this->request, $this->user)
         );
-
-        $this->mailProcessor->sendRFPNotification($this->request, $this->user);
-    }
-
-    public function testSendConfirmation()
-    {
-        $this->assertSendCalled(
-            Processor::CONFIRM_REQUEST_TEMPLATE_NAME,
-            ['entity' => $this->request],
-            $this->buildMessage($this->user->getEmail())
-        );
-
-        $this->mailProcessor->sendConfirmation($this->request, $this->user);
     }
 }

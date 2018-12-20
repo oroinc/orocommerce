@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
+use Oro\Bundle\FormBundle\Form\Extension\DateTimeExtension;
 use Oro\Bundle\FormBundle\Form\Extension\TooltipFormExtension;
 use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
 use Oro\Bundle\PromotionBundle\Entity\Coupon;
@@ -14,6 +15,7 @@ use Oro\Bundle\TranslationBundle\Translation\Translator;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
@@ -26,9 +28,9 @@ class CouponTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|ConfigProvider $configProvider */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|ConfigProvider $configProvider */
         $configProvider = $this->createMock(ConfigProvider::class);
-        /** @var \PHPUnit_Framework_MockObject_MockObject|Translator $translator */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|Translator $translator */
         $translator = $this->createMock(Translator::class);
 
         $promotionSelectType = new EntityType(
@@ -38,7 +40,7 @@ class CouponTypeTest extends FormIntegrationTestCase
             ],
             PromotionSelectType::NAME,
             [
-                'autocomplete_alias' => 'oro_promotion',
+                'autocomplete_alias' => PromotionType::class,
                 'grid_name' => 'promotion-for-coupons-select-grid',
             ]
         );
@@ -53,6 +55,9 @@ class CouponTypeTest extends FormIntegrationTestCase
                     FormType::class => [
                         new TooltipFormExtension($configProvider, $translator),
                     ],
+                    DateTimeType::class => [
+                        new DateTimeExtension()
+                    ]
                 ]
             ),
         ];
@@ -94,8 +99,8 @@ class CouponTypeTest extends FormIntegrationTestCase
     public function submitProvider()
     {
         $promotion2 = $this->getEntity(Promotion::class, ['id' => 2]);
-        $validFromDate = '01-01-2010 12:00:00';
-        $validUntilDate = '01-01-2020 12:00:00';
+        $validFromDate = '2010-01-01T12:00:00Z';
+        $validUntilDate = '2020-01-01T12:00:00Z';
 
         return [
             'coupon with promotion' => [

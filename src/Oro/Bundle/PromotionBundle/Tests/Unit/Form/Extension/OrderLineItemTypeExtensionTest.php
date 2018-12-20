@@ -15,32 +15,32 @@ use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 
-class OrderLineItemTypeExtensionTest extends \PHPUnit_Framework_TestCase
+class OrderLineItemTypeExtensionTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var TaxationSettingsProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var TaxationSettingsProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $taxationSettingsProvider;
 
     /**
-     * @var TaxProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var TaxProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $taxProvider;
 
     /**
-     * @var AppliedDiscountsProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var AppliedDiscountsProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $appliedDiscountsProvider;
 
     /**
-     * @var SectionProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var SectionProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $sectionProvider;
 
     /**
-     * @var LineItemSubtotalProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var LineItemSubtotalProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $lineItemSubtotalProvider;
 
@@ -88,7 +88,7 @@ class OrderLineItemTypeExtensionTest extends \PHPUnit_Framework_TestCase
             );
 
         $view = new FormView();
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock(FormInterface::class);
 
         $this->extension->buildView($view, $form, []);

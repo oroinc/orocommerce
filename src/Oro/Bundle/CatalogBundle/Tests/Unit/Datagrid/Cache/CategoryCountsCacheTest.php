@@ -6,12 +6,12 @@ use Doctrine\Common\Cache\CacheProvider;
 use Oro\Bundle\CatalogBundle\Datagrid\Cache\CategoryCountsCache;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessor;
 
-class CategoryCountsCacheTest extends \PHPUnit_Framework_TestCase
+class CategoryCountsCacheTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var CacheProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var CacheProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $cacheProvider;
 
-    /** @var TokenAccessor|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var TokenAccessor|\PHPUnit\Framework\MockObject\MockObject */
     protected $tokenAccessor;
 
     /** @var CategoryCountsCache */
@@ -35,12 +35,9 @@ class CategoryCountsCacheTest extends \PHPUnit_Framework_TestCase
             ->willReturn($userId);
 
         $this->cacheProvider->expects($this->once())
-            ->method('contains')
+            ->method('fetch')
             ->with($key . '|42')
             ->willReturn(false);
-
-        $this->cacheProvider->expects($this->never())
-            ->method('fetch');
 
         $this->assertNull($this->cache->getCounts($key));
     }
@@ -59,11 +56,6 @@ class CategoryCountsCacheTest extends \PHPUnit_Framework_TestCase
         $this->tokenAccessor->expects($this->once())
             ->method('getUserId')
             ->willReturn($userId);
-
-        $this->cacheProvider->expects($this->once())
-            ->method('contains')
-            ->with($expectedKey)
-            ->willReturn(true);
 
         $this->cacheProvider->expects($this->once())
             ->method('fetch')

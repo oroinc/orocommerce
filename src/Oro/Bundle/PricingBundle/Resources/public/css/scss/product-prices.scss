@@ -1,0 +1,118 @@
+/* @theme: admin.oro; */
+
+.line-item-price {
+    .multicurrency-fields-wrapper {
+        width: 150px;
+
+        input[type="text"] {
+            text-align: right;
+            width: 105px !important;
+            float: #{$start};
+        }
+
+        .overridden-price {
+            padding-#{$start}: 28px;
+        }
+    }
+}
+
+table.product-tier-prices-table {
+    min-width: 100px;
+
+    tr {
+        &:hover {
+            > td {
+                background-color: #fff;
+            }
+        }
+
+        &.matched-tier-price {
+            > td {
+                font-weight: 700;
+            }
+        }
+    }
+
+    td {
+        border: none;
+        padding: 2px;
+        height: 19px !important;
+    }
+}
+
+.product-price-overridden {
+    position: absolute;
+    top: 9px;
+    #{$start}: 10px;
+    line-height: 1;
+    z-index: 2;
+    color: $primary-700;
+}
+
+.product-price-hint {
+    &.popover {
+        max-width: 156px;
+
+        .popover-body {
+            padding: 10px 12px;
+            text-align: center;
+
+            .hint-title {
+                margin-bottom: $content-padding-small;
+            }
+        }
+    }
+}
+
+.prices-tier {
+    &-title {
+        font-size: $base-font-size--m;
+        line-height: 1;
+        margin-bottom: $content-padding-medium;
+        font-weight: bold;
+    }
+
+    &-popover {
+        .popover-body {
+            padding: $content-padding;
+        }
+    }
+}
+
+table.product-price-attributes {
+    width: auto;
+}
+
+.form-horizontal {
+    .price-attributes-collection {
+        &.control-group > .controls {
+            margin-#{$start}: 0;
+
+            .control-group .control-label.wrap {
+                width: 160px;
+            }
+        }
+
+        .pricing-price-attribute {
+            .table {
+                width: auto;
+
+                .price-value {
+                    width: 100px;
+                }
+            }
+        }
+    }
+}
+
+.form-horizontal {
+    .control-group.price-rules {
+        & > .controls {
+            margin-#{$start}: 0;
+        }
+    }
+}
+
+.show-tier-prices-choice {
+    margin: side-values(18px 0 9px 0);
+}

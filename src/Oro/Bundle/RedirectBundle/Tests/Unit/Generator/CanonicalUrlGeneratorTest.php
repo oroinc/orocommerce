@@ -20,34 +20,34 @@ use Oro\Component\Website\WebsiteInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-class CanonicalUrlGeneratorTest extends \PHPUnit_Framework_TestCase
+class CanonicalUrlGeneratorTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     const WEBSITE_ID = 777;
 
     /**
-     * @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $configManager;
 
     /**
-     * @var Cache|\PHPUnit_Framework_MockObject_MockObject
+     * @var Cache|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $cache;
 
     /**
-     * @var RequestStack|\PHPUnit_Framework_MockObject_MockObject
+     * @var RequestStack|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $requestStack;
 
     /**
-     * @var RoutingInformationProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var RoutingInformationProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $routingInformationProvider;
 
     /**
-     * @var WebsiteUrlResolver|\PHPUnit_Framework_MockObject_MockObject
+     * @var WebsiteUrlResolver|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $websiteUrlResolver;
 
@@ -129,8 +129,8 @@ class CanonicalUrlGeneratorTest extends \PHPUnit_Framework_TestCase
     {
         $canonicalPath = '/canonical';
         $expectedWebsiteUrl = 'http://example.com/';
-        $expectedUrl = 'http://example.com/app_dev.php/canonical';
-        $expectedBaseUrl = '/app_dev.php';
+        $expectedUrl = 'http://example.com/index_dev.php/canonical';
+        $expectedBaseUrl = '/index_dev.php';
         $urlSecurityType = Configuration::INSECURE;
         $website = $this->getWebsite();
 
@@ -151,8 +151,8 @@ class CanonicalUrlGeneratorTest extends \PHPUnit_Framework_TestCase
     {
         $canonicalPath = '/canonical';
         $expectedWebsiteUrl = 'https://example.com/';
-        $expectedUrl = 'https://example.com/app_dev.php/canonical';
-        $expectedBaseUrl = '/app_dev.php';
+        $expectedUrl = 'https://example.com/index_dev.php/canonical';
+        $expectedBaseUrl = '/index_dev.php';
         $urlSecurityType = Configuration::SECURE;
         $website = $this->getWebsite();
 
@@ -196,7 +196,7 @@ class CanonicalUrlGeneratorTest extends \PHPUnit_Framework_TestCase
         $expectedUrl = 'http://example.com/canonical';
         $website = $this->getWebsite();
 
-        /** @var SluggableInterface|\PHPUnit_Framework_MockObject_MockObject $data **/
+        /** @var SluggableInterface|\PHPUnit\Framework\MockObject\MockObject $data **/
         $data = $this->createMock(SluggableInterface::class);
 
         $route = 'route';
@@ -241,7 +241,7 @@ class CanonicalUrlGeneratorTest extends \PHPUnit_Framework_TestCase
         $expectedUrl = 'https://example.com/canonical';
         $website = $this->getWebsite();
 
-        /** @var SluggableInterface|\PHPUnit_Framework_MockObject_MockObject $data **/
+        /** @var SluggableInterface|\PHPUnit\Framework\MockObject\MockObject $data **/
         $data = $this->createMock(SluggableInterface::class);
 
         $route = 'route';
@@ -283,7 +283,7 @@ class CanonicalUrlGeneratorTest extends \PHPUnit_Framework_TestCase
 
     public function testGetUrlWithoutDirect()
     {
-        /** @var SluggableInterface|\PHPUnit_Framework_MockObject_MockObject $data **/
+        /** @var SluggableInterface|\PHPUnit\Framework\MockObject\MockObject $data **/
         $data = $this->createMock(SluggableInterface::class);
         $data->expects($this->any())
             ->method('getSlugs')
@@ -406,7 +406,7 @@ class CanonicalUrlGeneratorTest extends \PHPUnit_Framework_TestCase
     ) {
         $slugs = new ArrayCollection([$slug]);
 
-        /** @var SluggableInterface|\PHPUnit_Framework_MockObject_MockObject $data * */
+        /** @var SluggableInterface|\PHPUnit\Framework\MockObject\MockObject $data * */
         $data = $this->createMock(SluggableInterface::class);
         $data->expects($this->any())
             ->method('getSlugs')
@@ -424,7 +424,7 @@ class CanonicalUrlGeneratorTest extends \PHPUnit_Framework_TestCase
             ->method('contains')
             ->willReturn(false);
 
-        /** @var Request|\PHPUnit_Framework_MockObject_MockObject $request */
+        /** @var Request|\PHPUnit\Framework\MockObject\MockObject $request */
         $request = $this->createMock(Request::class);
         $request->expects($this->any())
             ->method('getBaseUrl')
@@ -475,7 +475,7 @@ class CanonicalUrlGeneratorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return WebsiteInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return WebsiteInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private function getWebsite()
     {

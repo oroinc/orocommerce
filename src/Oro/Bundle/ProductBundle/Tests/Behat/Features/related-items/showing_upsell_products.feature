@@ -1,13 +1,15 @@
-@regression
+@feature-BB-8715
+@ticket-BB-13978
 @fixture-OroProductBundle:related_items_products.yml
 @fixture-OroProductBundle:related_items_system_users.yml
 @fixture-OroProductBundle:related_items_customer_users.yml
-@feature-BB-8715
+@regression
 
 Feature: Showing upsell products
   In order to be offer the customer to buy some products in addition to the one that he is looking at
   As an Administrator
   I want to the "Upsell Products" block displayed on the product view page
+  I need to be able to see localized product names on "Up-sell Products" block, Shopping Lists widget, alt attributes of products preview images and gallery images.
 
   Scenario: Create two session
     Given sessions active:
@@ -17,6 +19,17 @@ Feature: Showing upsell products
     And I login as AmandaRCole@example.org buyer
     And I proceed as the Admin
     And I login as administrator
+    # Load image to product
+    And I proceed as the Admin
+    And go to Products/ Products
+    And I click Edit "PSKU2" in grid
+    And I set Images with:
+      | File     | Main  | Listing | Additional |
+      | cat1.jpg | 1     | 1       | 1          |
+    When I save and close form
+    Then I should see "Product has been saved" flash message
+    # Enable localizations
+    And I enable the existing localizations
 
   Scenario: Verify that "Up-sell Products" block is not displayed if product doesn't have upsell items
     Given I proceed as the Buyer
@@ -144,7 +157,35 @@ Feature: Showing upsell products
       And I should see "PSKU1" product
       And I click "Product 1"
       And I should see "Up-sell Products"
-      Then I should not see "Add to Shopping list" in upsell products
+      Then I should not see "Add to Shopping List" in upsell products
+
+    Scenario: Check that product name is localized
+      Given I click "Localization Switcher"
+      When I select "Localization 1" localization
+      Then should see the following products in the "Upsell Products Block":
+        | Title                     |
+        | Product2 (Localization 1) |
+
+    Scenario: Check that alt attributes are localized
+      Given I open product gallery for "PSKU2" product
+      Then I should see gallery image with alt "Product2 (Localization 1)"
+      When I click "Popup Gallery Widget Close"
+      Then I should see preview image with alt "Product2 (Localization 1)" for "PSKU2" product
+
+    Scenario: Check that product name is localized in shopping lists widget
+      Given I proceed as the Admin
+      And go to System/ Configuration
+      And I follow "Commerce/Catalog/Related Items" on configuration sidebar
+      And I fill "UpsellProductsConfig" with:
+        | Show Add Button | true |
+      And I click "Save settings"
+      And I proceed as the Buyer
+      And reload the page
+      And click "Add to Shopping List" for "PSKU2" product
+      When click "In Shopping List" for "PSKU2" product
+      Then I should see "UiDialog" with elements:
+        | Title | Product2 (Localization 1) |
+      And I close ui dialog
 
 #  Scenario: Check up-sell items are displayed as slider when "use slider on mobile" option is checked
 #  TODO: Fix this check when we will be able to emulate mobile
@@ -185,12 +226,19 @@ Feature: Showing upsell products
       | Use Default  | false      |
       | Product Page | Short page |
     And I click "Save settings"
-    When I proceed as the Buyer
+    And I proceed as the Buyer
     And type "PSKU1" in "search"
     And click "Search Button"
     And I should see "PSKU1" product
-    And I click "Product 1"
+    When I click "Product 1"
     Then I should see "Up-sell Products"
+    Then should see the following products in the "Upsell Products Block":
+      | Title                     |
+      | Product2 (Localization 1) |
+    When click "In Shopping List" for "PSKU2" product
+    Then I should see "UiDialog" with elements:
+      | Title | Product2 (Localization 1) |
+    And I close ui dialog
 
   Scenario: Verify that "Up-sell Products" block is displayed in "Two columns page" layout view
     Given I proceed as the Admin
@@ -200,12 +248,19 @@ Feature: Showing upsell products
       | Use Default  | false            |
       | Product Page | Two columns page |
     And I click "Save settings"
-    When I proceed as the Buyer
+    And I proceed as the Buyer
     And type "PSKU1" in "search"
     And click "Search Button"
     And I should see "PSKU1" product
-    And I click "Product 1"
+    When I click "Product 1"
     Then I should see "Up-sell Products"
+    Then should see the following products in the "Upsell Products Block":
+      | Title                     |
+      | Product2 (Localization 1) |
+    When click "In Shopping List" for "PSKU2" product
+    Then I should see "UiDialog" with elements:
+      | Title | Product2 (Localization 1) |
+    And I close ui dialog
 
   Scenario: Verify that "Up-sell Products" block is displayed in "List page" layout view
     Given I proceed as the Admin
@@ -215,12 +270,19 @@ Feature: Showing upsell products
       | Use Default  | false     |
       | Product Page | List page |
     And I click "Save settings"
-    When I proceed as the Buyer
+    And I proceed as the Buyer
     And type "PSKU1" in "search"
     And click "Search Button"
     And I should see "PSKU1" product
-    And I click "Product 1"
+    When I click "Product 1"
     Then I should see "Up-sell Products"
+    Then should see the following products in the "Upsell Products Block":
+      | Title                     |
+      | Product2 (Localization 1) |
+    When click "In Shopping List" for "PSKU2" product
+    Then I should see "UiDialog" with elements:
+      | Title | Product2 (Localization 1) |
+    And I close ui dialog
 
   Scenario: Check if Related block is not displayed in case when Upsell feature is enabled but Related is disabled.
     Given I proceed as the Admin

@@ -47,10 +47,10 @@ class PriceListsSettingsTypeTest extends FormIntegrationTestCase
                 PriceListsSettingsType::PRICE_LIST_RELATION_CLASS
                     => 'Oro\Bundle\PricingBundle\Entity\PriceListToWebsite',
                 PriceListsSettingsType::FALLBACK_CHOICES => [
-                    PriceListWebsiteFallback::CONFIG =>
-                        'oro.pricing.fallback.config.label',
-                    PriceListWebsiteFallback::CURRENT_WEBSITE_ONLY =>
-                        'oro.pricing.fallback.current_website_only.label',
+                    'oro.pricing.fallback.config.label' =>
+                        PriceListWebsiteFallback::CONFIG,
+                    'oro.pricing.fallback.current_website_only.label' =>
+                        PriceListWebsiteFallback::CURRENT_WEBSITE_ONLY,
                 ]
             ]
         );

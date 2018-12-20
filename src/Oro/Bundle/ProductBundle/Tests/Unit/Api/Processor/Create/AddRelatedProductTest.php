@@ -13,10 +13,10 @@ use Oro\Bundle\ProductBundle\Tests\Unit\RelatedItem\FakeAssignerStrategy;
 
 class AddRelatedProductTest extends CreateProcessorTestCase
 {
-    /** @var RelatedProductRepository|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var RelatedProductRepository|\PHPUnit\Framework\MockObject\MockObject */
     private $relatedProductsRepository;
 
-    /** @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $doctrineHelper;
 
     /** @var FakeAssignerStrategy */
@@ -101,7 +101,7 @@ class AddRelatedProductTest extends CreateProcessorTestCase
     private function prepareContext()
     {
         $relatedProduct = new RelatedProduct();
-        $relatedProduct->setProduct(new Product())->setRelatedProduct(new Product());
+        $relatedProduct->setProduct(new Product())->setRelatedItem(new Product());
         $this->context->setResult($relatedProduct);
     }
 

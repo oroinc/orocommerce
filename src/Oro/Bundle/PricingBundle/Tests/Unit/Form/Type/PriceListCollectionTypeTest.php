@@ -102,12 +102,6 @@ class PriceListCollectionTypeTest extends FormIntegrationTestCase
         return $provider->getExtensions();
     }
 
-    public function testGetName()
-    {
-        $type = new PriceListCollectionType();
-        $this->assertSame(PriceListCollectionType::NAME, $type->getName());
-    }
-
     public function testGetParent()
     {
         $type = new PriceListCollectionType();
@@ -125,7 +119,7 @@ class PriceListCollectionTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|FormInterface
+     * @return \PHPUnit\Framework\MockObject\MockObject|FormInterface
      */
     protected function getFormMock()
     {

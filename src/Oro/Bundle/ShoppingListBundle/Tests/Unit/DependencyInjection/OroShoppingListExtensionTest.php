@@ -28,7 +28,7 @@ class OroShoppingListExtensionTest extends ExtensionTestCase
             'oro_shopping_list.validator.line_item',
             'oro_shopping_list.line_item.manager.api',
             'oro_shopping_list.shopping_list.manager.api',
-            'oro_shopping_list.shopping_list.manager',
+            'oro_shopping_list.manager.shopping_list',
             'oro_shopping_list.placeholder.filter',
             'oro_shopping_list.condition.rfp_allowed',
             'oro_shopping_list.provider.matrix_grid_order_manager',

@@ -4,42 +4,44 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Provider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectRepository;
-use Oro\Bundle\PricingBundle\Builder\CombinedPriceListActivationPlanBuilder;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Event\CombinedPriceList\CombinedPriceListCreateEvent;
 use Oro\Bundle\PricingBundle\Provider\CombinedPriceListProvider;
+use Oro\Component\Testing\Unit\EntityTrait;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class CombinedPriceListProviderTest extends \PHPUnit_Framework_TestCase
+class CombinedPriceListProviderTest extends \PHPUnit\Framework\TestCase
 {
+    use EntityTrait;
+
     /**
      * @var CombinedPriceListProvider
      */
     protected $provider;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|CombinedPriceListActivationPlanBuilder
+     * @var \PHPUnit\Framework\MockObject\MockObject|EventDispatcherInterface
      */
-    protected $planBuilder;
+    protected $eventDispatcher;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry
+     * @var \PHPUnit\Framework\MockObject\MockObject|ManagerRegistry
      */
     protected $registry;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ObjectRepository
+     * @var \PHPUnit\Framework\MockObject\MockObject|ObjectRepository
      */
     protected $repository;
 
     protected function setUp()
     {
         $this->registry = $this->getRegistryMockWithRepository();
-        $className = 'Oro\Bundle\PricingBundle\Builder\CombinedPriceListActivationPlanBuilder';
-        $this->planBuilder = $this->getMockBuilder($className)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
 
-        $this->provider = new CombinedPriceListProvider($this->registry);
-        $this->provider->setClassName('Oro\Bundle\PricingBundle\Entity\CombinedPriceList');
-        $this->provider->setActivationPlanBuilder($this->planBuilder);
+        $this->provider = new CombinedPriceListProvider($this->registry, $this->eventDispatcher);
     }
 
     protected function tearDown()
@@ -58,14 +60,18 @@ class CombinedPriceListProviderTest extends \PHPUnit_Framework_TestCase
             ->method('findOneBy')
             ->willReturn($data['priceListFromRepository']);
 
-        $this->planBuilder->expects($this->exactly($expected['combineCallsCount']))->method('buildByCombinedPriceList');
+        $this->eventDispatcher->expects($this->exactly($expected['combineCallsCount']))
+            ->method('dispatch')
+            ->willReturnCallback(
+                function (string $eventName, CombinedPriceListCreateEvent $event) {
+                    $this->assertEquals(CombinedPriceListCreateEvent::NAME, $eventName);
+                    $this->assertInstanceOf(CombinedPriceList::class, $event->getCombinedPriceList());
+                }
+            );
 
         $priceListsRelations = $this->getPriceListsRelationMocks($data['priceListsRelationsData']);
         $combinedPriceList = $this->provider->getCombinedPriceList($priceListsRelations);
-        $this->assertInstanceOf(
-            'Oro\Bundle\PricingBundle\Entity\CombinedPriceList',
-            $combinedPriceList
-        );
+        $this->assertInstanceOf(CombinedPriceList::class, $combinedPriceList);
         $this->assertEquals($expected['name'], $combinedPriceList->getName());
         $this->assertEquals($expected['currencies'], $combinedPriceList->getCurrencies());
 
@@ -128,8 +134,53 @@ class CombinedPriceListProviderTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
+    public function testActualizeCurrencies()
+    {
+        $pl1 = new PriceList();
+        $pl1->setCurrencies(['USD', 'EUR']);
+
+        $pl2 = new PriceList();
+        $pl2->setCurrencies(['USD', 'UAH']);
+
+        $cpl = new CombinedPriceList();
+
+        $relation1 = new CombinedPriceListToPriceList();
+        $relation1->setCombinedPriceList($cpl);
+        $relation1->setPriceList($pl1);
+
+        $relation2 = new CombinedPriceListToPriceList();
+        $relation2->setCombinedPriceList($cpl);
+        $relation2->setPriceList($pl2);
+        $relations = [
+            $relation1,
+            $relation2
+        ];
+
+        $this->provider->actualizeCurrencies($cpl, $relations);
+
+        $actualCurrencies = $cpl->getCurrencies();
+        sort($actualCurrencies);
+
+        $this->assertEquals(['EUR', 'UAH', 'USD'], $actualCurrencies);
+    }
+
+    public function testActualizeCurrenciesNoCurrencies()
+    {
+        $pl1 = new PriceList();
+        $cpl = new CombinedPriceList();
+
+        $relation1 = new CombinedPriceListToPriceList();
+        $relation1->setCombinedPriceList($cpl);
+        $relation1->setPriceList($pl1);
+        $relations = [$relation1];
+
+        $this->provider->actualizeCurrencies($cpl, $relations);
+
+        $this->assertEquals([], $cpl->getCurrencies());
+    }
+
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|\Symfony\Bridge\Doctrine\RegistryInterface
+     * @return \PHPUnit\Framework\MockObject\MockObject|\Symfony\Bridge\Doctrine\RegistryInterface
      */
     protected function getRegistryMockWithRepository()
     {
@@ -188,7 +239,7 @@ class CombinedPriceListProviderTest extends \PHPUnit_Framework_TestCase
 
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|\Symfony\Bridge\Doctrine\RegistryInterface
+     * @return \PHPUnit\Framework\MockObject\MockObject|\Symfony\Bridge\Doctrine\RegistryInterface
      */
     protected function getRegistryMock()
     {

@@ -21,7 +21,7 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class CheckoutTest extends \PHPUnit_Framework_TestCase
+class CheckoutTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
     use EntityTrait;
@@ -53,6 +53,7 @@ class CheckoutTest extends \PHPUnit_Framework_TestCase
             ['completed', true],
             ['completedData', new CompletedCheckoutData(['test' => 'value']), false],
             ['subtotals', new ArrayCollection([$this->createMock(CheckoutSubtotal::class)]), false],
+            ['registeredCustomerUser', new CustomerUser()]
         ];
 
         $entity = new Checkout();

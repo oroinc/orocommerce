@@ -1,7 +1,7 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: '../templates/widget_checkout.html.twig'
+            themes: 'OroCheckoutBundle:layouts:default/oro_checkout_frontend_checkout/templates/widget_checkout.html.twig'
 
         - '@setOption':
             id: checkout_order_summary_line_items_container

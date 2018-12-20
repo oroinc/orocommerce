@@ -12,7 +12,7 @@ use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class DiscountContextTest extends \PHPUnit_Framework_TestCase
+class DiscountContextTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 
@@ -108,12 +108,12 @@ class DiscountContextTest extends \PHPUnit_Framework_TestCase
 
     public function testGetTotalLineItemsDiscount()
     {
-        /** @var DiscountLineItem|\PHPUnit_Framework_MockObject_MockObject $lineItem1 */
+        /** @var DiscountLineItem|\PHPUnit\Framework\MockObject\MockObject $lineItem1 */
         $lineItem1 = $this->createMock(DiscountLineItem::class);
         $lineItem1->expects($this->once())
             ->method('getDiscountTotal')
             ->willReturn(10.5);
-        /** @var DiscountLineItem|\PHPUnit_Framework_MockObject_MockObject $lineItem2 */
+        /** @var DiscountLineItem|\PHPUnit\Framework\MockObject\MockObject $lineItem2 */
         $lineItem2 = $this->createMock(DiscountLineItem::class);
         $lineItem2->expects($this->once())
             ->method('getDiscountTotal')
@@ -178,5 +178,17 @@ class DiscountContextTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(2, $discounts);
         $this->assertContains($discount1, $discounts);
         $this->assertContains($discount2, $discounts);
+    }
+
+    public function testCloneCreatesNewLineItemInstances()
+    {
+        $originalContext = new DiscountContext();
+        $originalLineItem = new DiscountLineItem();
+        $originalContext->addLineItem($originalLineItem);
+
+        $clonedContext = clone $originalContext;
+
+        $this->assertEquals($originalContext->getLineItems(), $clonedContext->getLineItems());
+        $this->assertNotSame($originalContext->getLineItems(), $clonedContext->getLineItems());
     }
 }

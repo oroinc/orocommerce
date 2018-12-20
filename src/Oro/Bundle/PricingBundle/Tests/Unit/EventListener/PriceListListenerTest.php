@@ -13,7 +13,7 @@ use Oro\Bundle\PricingBundle\Model\PriceListRelationTriggerHandler;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Form\Test\FormInterface;
 
-class PriceListListenerTest extends \PHPUnit_Framework_TestCase
+class PriceListListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
@@ -28,17 +28,17 @@ class PriceListListenerTest extends \PHPUnit_Framework_TestCase
     protected $listener;
 
     /**
-     * @var CombinedPriceListActivationPlanBuilder|\PHPUnit_Framework_MockObject_MockObject
+     * @var CombinedPriceListActivationPlanBuilder|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $builder;
 
     /**
-     * @var PriceListRelationTriggerHandler|\PHPUnit_Framework_MockObject_MockObject
+     * @var PriceListRelationTriggerHandler|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $triggerHandler;
 
     /**
-     * @var PriceRuleLexemeHandler|\PHPUnit_Framework_MockObject_MockObject
+     * @var PriceRuleLexemeHandler|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $priceRuleLexemeHandler;
 
@@ -47,20 +47,9 @@ class PriceListListenerTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->builder = $this
-            ->getMockBuilder(CombinedPriceListActivationPlanBuilder::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->triggerHandler = $this
-            ->getMockBuilder(PriceListRelationTriggerHandler::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->priceRuleLexemeHandler = $this
-            ->getMockBuilder(PriceRuleLexemeHandler::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->builder = $this->createMock(CombinedPriceListActivationPlanBuilder::class);
+        $this->triggerHandler = $this->createMock(PriceListRelationTriggerHandler::class);
+        $this->priceRuleLexemeHandler = $this->createMock(PriceRuleLexemeHandler::class);
 
         $this->listener = new PriceListListener(
             $this->builder,
@@ -74,7 +63,7 @@ class PriceListListenerTest extends \PHPUnit_Framework_TestCase
         $this->listener->beforeSubmit($this->createFormProcessEvent($this->priceList));
     }
 
-    public function testPostSubmit()
+    public function testPostSubmitWithoutCurrencyChange()
     {
         /** @var FormInterface $form */
         $form = $this->createMock('Symfony\Component\Form\FormInterface');
@@ -138,7 +127,7 @@ class PriceListListenerTest extends \PHPUnit_Framework_TestCase
     protected function createPriceList()
     {
         /** @var PriceList $priceList */
-        $priceList = $this->getEntity('Oro\Bundle\PricingBundle\Entity\PriceList', ['id' => 1]);
+        $priceList = $this->getEntity(PriceList::class, ['id' => 1]);
         $schedule1 = new PriceListSchedule(
             new \DateTime('2016-03-01T22:00:00Z'),
             new \DateTime('2016-04-01T22:00:00Z')
@@ -147,6 +136,8 @@ class PriceListListenerTest extends \PHPUnit_Framework_TestCase
             new \DateTime('2016-05-01T22:00:00Z'),
             new \DateTime('2016-06-01T22:00:00Z')
         );
+
+        $priceList->setCurrencies(['USD']);
 
         $priceList->addSchedule($schedule1)
             ->addSchedule($schedule2);

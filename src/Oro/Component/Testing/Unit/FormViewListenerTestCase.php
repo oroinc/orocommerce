@@ -9,20 +9,20 @@ use Oro\Bundle\UIBundle\View\ScrollData;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Translation\TranslatorInterface;
 
-class FormViewListenerTestCase extends \PHPUnit_Framework_TestCase
+class FormViewListenerTestCase extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $translator;
 
     /**
-     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $doctrineHelper;
 
     /**
-     * @var EntityManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var EntityManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $em;
 
@@ -48,7 +48,7 @@ class FormViewListenerTestCase extends \PHPUnit_Framework_TestCase
 
     /**
      * @deprecated Don't mock DTO. Just instantiate it.
-     * @return BeforeListRenderEvent|\PHPUnit_Framework_MockObject_MockObject
+     * @return BeforeListRenderEvent|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function getBeforeListRenderEvent()
     {
@@ -63,7 +63,7 @@ class FormViewListenerTestCase extends \PHPUnit_Framework_TestCase
 
     /**
      * @deprecated Don't mock DTO. Just instantiate it.
-     * @return BeforeListRenderEvent|\PHPUnit_Framework_MockObject_MockObject
+     * @return BeforeListRenderEvent|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function getBeforeListRenderEventMock()
     {
@@ -74,11 +74,11 @@ class FormViewListenerTestCase extends \PHPUnit_Framework_TestCase
 
     /**
      * @deprecated Don't mock DTO. Just instantiate it.
-     * @return \PHPUnit_Framework_MockObject_MockObject|ScrollData
+     * @return \PHPUnit\Framework\MockObject\MockObject|ScrollData
      */
     protected function getScrollData()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|ScrollData $scrollData */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|ScrollData $scrollData */
         $scrollData = $this->createMock(ScrollData::class);
 
         $scrollData->expects($this->once())
@@ -94,7 +94,7 @@ class FormViewListenerTestCase extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Request
+     * @return \PHPUnit\Framework\MockObject\MockObject|Request
      */
     protected function getRequest()
     {

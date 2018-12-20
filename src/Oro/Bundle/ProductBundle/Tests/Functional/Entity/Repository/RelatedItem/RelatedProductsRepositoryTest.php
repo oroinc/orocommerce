@@ -10,6 +10,9 @@ use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadRelatedProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class RelatedProductsRepositoryTest extends WebTestCase
 {
     /**
@@ -120,6 +123,58 @@ class RelatedProductsRepositoryTest extends WebTestCase
             $this->getProductRepository()->findOneBySku(ucfirst(LoadProductData::PRODUCT_5)),
         ];
         $relatedProducts = $this->repository->findRelated($product->getId(), true, 2);
+
+        $this->assertEquals($expectedRelatedProducts, $relatedProducts);
+    }
+
+    public function testFindAllRelatedIdsUnidirectional()
+    {
+        /** @var Product $product */
+        $product = $this->getProductRepository()->findOneBySku(ucfirst(LoadProductData::PRODUCT_3));
+        $expectedRelatedProducts = [
+            $this->getProductRepository()->findOneBySku(ucfirst(LoadProductData::PRODUCT_1))->getId(),
+            $this->getProductRepository()->findOneBySku(ucfirst(LoadProductData::PRODUCT_2))->getId(),
+        ];
+        $relatedProducts = $this->repository->findRelatedIds($product->getId(), false, 10);
+
+        $this->assertEquals($expectedRelatedProducts, $relatedProducts);
+    }
+
+    public function testFindRelatedIdsUnidirectionalWithLimit()
+    {
+        /** @var Product $product */
+        $product = $this->getProductRepository()->findOneBySku(ucfirst(LoadProductData::PRODUCT_3));
+        $expectedRelatedProducts = [
+            $this->getProductRepository()->findOneBySku(ucfirst(LoadProductData::PRODUCT_1))->getId(),
+        ];
+        $relatedProducts = $this->repository->findRelatedIds($product->getId(), false, 1);
+
+        $this->assertEquals($expectedRelatedProducts, $relatedProducts);
+    }
+
+    public function testFindRelatedIdsUnidirectionalWithoutLimit()
+    {
+        /** @var Product $product */
+        $product = $this->getProductRepository()->findOneBySku(ucfirst(LoadProductData::PRODUCT_3));
+        $expectedRelatedProducts = [
+            $this->getProductRepository()->findOneBySku(ucfirst(LoadProductData::PRODUCT_1))->getId(),
+            $this->getProductRepository()->findOneBySku(ucfirst(LoadProductData::PRODUCT_2))->getId(),
+        ];
+        $relatedProducts = $this->repository->findRelatedIds($product->getId(), false);
+
+        $this->assertEquals($expectedRelatedProducts, $relatedProducts);
+    }
+
+    public function testFindRelatedIdsBidirectional()
+    {
+        /** @var Product $product */
+        $product = $this->getProductRepository()->findOneBySku(ucfirst(LoadProductData::PRODUCT_3));
+        $expectedRelatedProducts = [
+            $this->getProductRepository()->findOneBySku(ucfirst(LoadProductData::PRODUCT_1))->getId(),
+            $this->getProductRepository()->findOneBySku(ucfirst(LoadProductData::PRODUCT_2))->getId(),
+            $this->getProductRepository()->findOneBySku(ucfirst(LoadProductData::PRODUCT_4))->getId(),
+        ];
+        $relatedProducts = $this->repository->findRelatedIds($product->getId(), true, 10);
 
         $this->assertEquals($expectedRelatedProducts, $relatedProducts);
     }

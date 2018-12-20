@@ -33,7 +33,7 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
     use EntityTrait;
 
     /**
-     * @var RouterInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var RouterInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $router;
 
@@ -66,7 +66,7 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
-        /** @var ContentVariantTypeRegistry|\PHPUnit_Framework_MockObject_MockObject $variantTypeRegistry */
+        /** @var ContentVariantTypeRegistry|\PHPUnit\Framework\MockObject\MockObject $variantTypeRegistry */
         $variantTypeRegistry = $this->getMockBuilder(ContentVariantTypeRegistry::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -105,7 +105,7 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
                 ],
                 []
             ),
-            $this->getValidatorExtension(true)
+            $this->getValidatorExtension(false)
         ];
     }
 

@@ -9,17 +9,20 @@ use Oro\Bundle\WorkflowBundle\Exception\WorkflowException;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 
+/**
+ * Provides form and form view for Checkout transition
+ */
 class TransitionFormProvider extends AbstractFormProvider
 {
     /**
-     * @var TransitionProvider
+     * @var TransitionProviderInterface
      */
     private $transitionProvider;
 
     /**
-     * @var TransitionProvider
+     * @var TransitionProviderInterface
      */
-    public function setTransitionProvider(TransitionProvider $transitionProvider)
+    public function setTransitionProvider(TransitionProviderInterface $transitionProvider)
     {
         $this->transitionProvider = $transitionProvider;
     }
@@ -102,7 +105,6 @@ class TransitionFormProvider extends AbstractFormProvider
             [
                 'workflow_item' => $workflowItem,
                 'transition_name' => $transition->getName(),
-                'disabled' => !$transitionData->isAllowed(),
                 'allow_extra_fields' => true,
             ]
         );

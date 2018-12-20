@@ -9,12 +9,12 @@ use Oro\Bundle\PromotionBundle\Tests\Unit\Entity\Stub\Checkout;
 use Oro\Bundle\PromotionBundle\Tests\Unit\Entity\Stub\Order;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class OrderMapperDecoratorTest extends \PHPUnit_Framework_TestCase
+class OrderMapperDecoratorTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var MapperInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var MapperInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $orderMapper;
 

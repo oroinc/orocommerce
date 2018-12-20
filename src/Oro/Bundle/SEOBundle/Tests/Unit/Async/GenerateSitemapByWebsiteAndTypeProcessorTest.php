@@ -16,7 +16,7 @@ use Oro\Component\SEO\Tools\SitemapDumperInterface;
 use Oro\Component\Website\WebsiteInterface;
 use Psr\Log\LoggerInterface;
 
-class GenerateSitemapByWebsiteAndTypeProcessorTest extends \PHPUnit_Framework_TestCase
+class GenerateSitemapByWebsiteAndTypeProcessorTest extends \PHPUnit\Framework\TestCase
 {
     const JOB_ID = 123;
     const WEBSITE_ID = 7;
@@ -24,27 +24,27 @@ class GenerateSitemapByWebsiteAndTypeProcessorTest extends \PHPUnit_Framework_Te
     const VERSION = 123;
 
     /**
-     * @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $session;
 
     /**
-     * @var JobRunner|\PHPUnit_Framework_MockObject_MockObject
+     * @var JobRunner|\PHPUnit\Framework\MockObject\MockObject
      */
     private $jobRunner;
 
     /**
-     * @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $logger;
 
     /**
-     * @var SitemapDumperInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var SitemapDumperInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $sitemapDumper;
 
     /**
-     * @var SitemapMessageFactory|\PHPUnit_Framework_MockObject_MockObject
+     * @var SitemapMessageFactory|\PHPUnit\Framework\MockObject\MockObject
      */
     private $messageFactory;
 
@@ -106,7 +106,7 @@ class GenerateSitemapByWebsiteAndTypeProcessorTest extends \PHPUnit_Framework_Te
 
         $this->createProcessorWithTestJobRunner();
 
-        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message */
+        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message */
         $message = $this->createMock(MessageInterface::class);
         $message->expects($this->any())
             ->method('getBody')
@@ -123,7 +123,7 @@ class GenerateSitemapByWebsiteAndTypeProcessorTest extends \PHPUnit_Framework_Te
             SitemapMessageFactory::TYPE => self::TYPE
         ];
 
-        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message */
+        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message */
         $message = $this->createMock(MessageInterface::class);
         $message
             ->expects($this->any())
@@ -159,7 +159,7 @@ class GenerateSitemapByWebsiteAndTypeProcessorTest extends \PHPUnit_Framework_Te
             SitemapMessageFactory::TYPE => self::TYPE
         ];
 
-        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message */
+        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message */
         $message = $this->createMock(MessageInterface::class);
         $message
             ->expects($this->any())
@@ -199,7 +199,7 @@ class GenerateSitemapByWebsiteAndTypeProcessorTest extends \PHPUnit_Framework_Te
             SitemapMessageFactory::TYPE => self::TYPE
         ];
 
-        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message */
+        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message */
         $message = $this->createMock(MessageInterface::class);
         $message
             ->expects($this->any())

@@ -8,8 +8,6 @@ services:
     oro_checkout.data_provider.converter.checkout_line_items:
         class: 'Oro\Bundle\CheckoutBundle\DataProvider\Converter\CheckoutLineItemsConverter'
         public: false
-        arguments:
-            - '@property_accessor'
 
     oro_checkout.data_provider.converter.checkout_to_order:
         class: Oro\Bundle\CheckoutBundle\DataProvider\Converter\CheckoutToOrderConverter
@@ -17,6 +15,25 @@ services:
         arguments:
             - '@oro_checkout.data_provider.manager.checkout_line_items'
             - '@oro_checkout.mapper.order_mapper'
+            - '@oro_checkout.checkout_to_order_converter.cache'
+
+    oro_checkout.checkout_to_order_converter.cache:
+        parent: doctrine_cache.abstract.array
+        public: false
+        calls:
+            - [ setNamespace, [ 'checkout_to_order_converter' ] ]
+
+    oro_checkout.product_availability.cache:
+        parent: doctrine_cache.abstract.array
+        calls:
+            - [ setNamespace, [ 'oro_product_availability' ] ]
+
+    oro_checkout.event_listener.product_availability_cache:
+        class: Oro\Bundle\CheckoutBundle\EventListener\ProductAvailabilityCacheListener
+        arguments:
+            - '@oro_checkout.product_availability.cache'
+        tags:
+            - { name: doctrine.event_listener, event: onFlush }
 
     oro_checkout.data_provider.manager.checkout_line_items:
         class: 'Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager'
@@ -52,6 +69,16 @@ services:
         tags:
             - { name: layout.data_provider, alias: oro_checkout_transition_form }
 
+    oro_checkout.layout.data_provider.single_page_transition_form:
+        class: 'Oro\Bundle\CheckoutBundle\Layout\DataProvider\TransitionFormProvider'
+        arguments:
+            - '@form.factory'
+            - '@router'
+        calls:
+            - [setTransitionProvider, ['@oro_checkout.layout.data_provider.single_page_transition']]
+        tags:
+            - { name: layout.data_provider, alias: oro_checkout_single_page_transition_form }
+
     oro_checkout.layout.data_provider.checkout_steps:
         class: 'Oro\Bundle\CheckoutBundle\Layout\DataProvider\CheckoutStepsProvider'
         arguments:
@@ -66,6 +93,13 @@ services:
         tags:
             - { name: layout.data_provider, alias: oro_checkout_transition }
 
+    oro_checkout.layout.data_provider.single_page_transition:
+        class: 'Oro\Bundle\CheckoutBundle\Layout\DataProvider\SinglePageTransitionProvider'
+        arguments:
+            - '@oro_checkout.layout.data_provider.transition'
+        tags:
+            - { name: layout.data_provider, alias: oro_checkout_single_page_transition }
+
     oro_checkout.model.action.get_order_line_items:
         class: 'Oro\Bundle\CheckoutBundle\Model\Action\GetOrderLineItems'
         arguments:
@@ -78,6 +112,7 @@ services:
         class: 'Oro\Bundle\CheckoutBundle\Layout\DataProvider\CheckoutShippingContextProvider'
         arguments:
             - '@oro_checkout.factory.shipping_context_factory'
+            - '@oro_checkout.checkout_context.cache'
         tags:
             - { name: layout.data_provider, alias: checkout_shipping_context }
 
@@ -85,8 +120,15 @@ services:
         class: 'Oro\Bundle\CheckoutBundle\Layout\DataProvider\CheckoutPaymentContextProvider'
         arguments:
             - '@oro_checkout.factory.payment_context_factory'
+            - '@oro_checkout.checkout_context.cache'
         tags:
             - { name: layout.data_provider, alias: checkout_payment_context }
+
+    oro_checkout.checkout_context.cache:
+        parent: doctrine_cache.abstract.array
+        public: false
+        calls:
+            - [ setNamespace, [ 'checkout_context_cache' ] ]
 
     oro_checkout.expression.acl_granted:
         class: Oro\Bundle\CheckoutBundle\Expression\CheckRequest
@@ -122,12 +164,6 @@ services:
         tags:
             - { name: doctrine.orm.entity_listener, entity: '%oro_shopping_list.entity.shopping_list.class%', event: preRemove }
 
-    oro_checkout.grid_totals_metadata.cache:
-        public: false
-        parent: oro.cache.abstract
-        calls:
-            - [ setNamespace, [ 'oro_checkout_grid_totals_metadata' ] ]
-
     oro_checkout.repository.checkout:
         class: 'Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository'
         parent: oro_entity.abstract_repository
@@ -144,13 +180,19 @@ services:
             - '@oro_entity.doctrine_helper'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-checkouts-grid, method: onBuildBefore }
-            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.frontend-checkouts-grid, method: onBuildAfter }
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-checkouts-grid, method: onResultAfter }
 
     oro_checkout.datagrid.checkout_grid_column_filter:
         class: 'Oro\Bundle\CheckoutBundle\Datagrid\CheckoutGridCustomerUserNameListener'
         arguments:
             - '@oro_customer.security.customer_user_provider'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-checkouts-grid, method: onBuildBefore }
+
+    oro_checkout.datagrid.checkout_grid_customer_visitor_acl_listener:
+        class: 'Oro\Bundle\CheckoutBundle\Datagrid\CheckoutGridCustomerVisitorAclListener'
+        arguments:
+            - '@security.token_storage'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-checkouts-grid, method: onBuildBefore }
 
@@ -175,7 +217,7 @@ services:
 
     oro_checkout.workflow_state.storage.checkout_state_diff_storage:
         class: 'Oro\Bundle\CheckoutBundle\WorkflowState\Storage\CheckoutDiffStorage'
-        pablic: false
+        public: false
         arguments:
             - '@oro_entity.doctrine_helper'
             - '%oro_checkout.entity.checkout_workflow_state.class%'
@@ -355,6 +397,7 @@ services:
             - '@oro_checkout.data_provider.manager.checkout_line_items'
             - '@oro_pricing.subtotal_processor.total_processor_provider'
             - '@oro_order.payment_line_item.converter_basic'
+            - '@oro_shipping.shipping_origin.provider'
             - '@?oro_payment.context.builder_factory_basic'
 
     oro_checkout.provider.privilege_category_provider:
@@ -366,7 +409,7 @@ services:
         class: 'Oro\Bundle\CheckoutBundle\Mapper\OrderMapper'
         public: false
         arguments:
-            - '@oro_entity.entity_field_provider'
+            - '@oro_entity.helper.field_helper'
             - '@property_accessor'
             - '@oro_payment_term.provider.payment_term_association'
 
@@ -461,9 +504,9 @@ services:
     oro_checkout.event_listener.has_price_in_shopping_line_items:
         class: 'Oro\Bundle\CheckoutBundle\EventListener\HasPriceInShoppingLineItemsListener'
         arguments:
-            - '@oro_pricing.provider.combined_product_price'
+            - '@oro_pricing.provider.product_price'
             - '@oro_pricing.user_currency_manager'
-            - '@oro_pricing.model.price_list_request_handler'
+            - '@oro_pricing.model.product_price_scope_criteria_request_handler'
         tags:
             - { name: kernel.event_listener, event: extendable_condition.start_checkout, method: onStartCheckoutConditionCheck }
 
@@ -556,7 +599,8 @@ services:
         public: false
         arguments:
             - '@oro_pricing.provider.frontend_product_prices'
-            - '@doctrine'
+            - '@security.authorization_checker'
+            - '@oro_checkout.product_availability.cache'
         tags:
             - { name: checkout.data_provider.line_item }
 
@@ -565,9 +609,11 @@ services:
         arguments:
             - '@translator'
             - '@oro_currency.rounding.price_rounding_service'
-            - '@oro_pricing.provider.combined_product_price'
+            - '@oro_pricing.provider.product_price'
             - '@oro_pricing.model.price_list_tree_handler'
             - '@oro_pricing.subtotal_processor.provider.arguments'
+            - '@oro_featuretoggle.checker.feature_checker'
+            - '@oro_pricing.model.product_price_scope_criteria_factory'
         tags:
             - { name: oro_pricing.subtotal_provider, priority: 0 }
 
@@ -588,3 +634,83 @@ services:
 
     oro_checkout.provider.checkout_line_items:
         class: 'Oro\Bundle\CheckoutBundle\Provider\CheckoutLineItemsProvider'
+
+    oro_checkout.event_listener.login_on_checkout:
+        class: 'Oro\Bundle\CheckoutBundle\EventListener\LoginOnCheckoutListener'
+        arguments:
+            - '@logger'
+            - '@oro_config.manager'
+            - '@oro_checkout.manager'
+            - '@event_dispatcher'
+        lazy: true
+        tags:
+            - { name: kernel.event_listener, event: security.interactive_login, method: onInteractiveLogin, priority: 255 }
+
+    oro_checkout.event_listener.customer_user_register:
+        class: 'Oro\Bundle\CheckoutBundle\EventListener\CustomerUserListener'
+        arguments:
+            - '@request_stack'
+            - '@oro_checkout.manager'
+            - '@oro_config.manager'
+            - '@oro_customer.security.login_manager'
+            - '%oro_customer.firewall_name%'
+        lazy: true
+        tags:
+            - { name: kernel.event_listener, event: oro.form.update_handler.after_entity_flush.oro_customer_frontend_customer_user_register, method: afterFlush }
+            - { name: kernel.event_listener, event: oro_customer.customer_user_email_send_event, method: onCustomerUserEmailSend }
+
+    oro_checkout.event_listener.customer_user_reset_password_listener:
+        class: 'Oro\Bundle\CheckoutBundle\EventListener\CustomerUserResetPasswordListener'
+        lazy: true
+        arguments:
+            - '@request_stack'
+        tags:
+            - { name: kernel.event_listener, event: oro_customer.customer_user_email_send_event, method: onCustomerUserEmailSend }
+
+    oro_checkout.manager:
+        class: 'Oro\Bundle\CheckoutBundle\Manager\CheckoutManager'
+        arguments:
+            - '@oro_entity.doctrine_helper'
+
+    oro_checkout.action.get_start_checkout_transition:
+        class: 'Oro\Bundle\CheckoutBundle\Action\StartCheckoutTransitionAction'
+        arguments:
+            - '@oro_action.expression.context_accessor'
+            - '@oro_checkout.condition.is_workflow_start_from_shopping_list_allowed'
+        tags:
+            - { name: oro_action.action, alias: get_start_checkout_transition }
+
+    oro_checkout.handler.forgot_password:
+        class: 'Oro\Bundle\CheckoutBundle\Handler\ForgotPasswordHandler'
+        lazy: true
+        arguments:
+            - '@oro_customer.customer_user.password_request.handler'
+            - '@oro_customer.provider.frontend_customer_user_form'
+            - '@session'
+
+    oro_checkout.handler.registration:
+        class: 'Oro\Bundle\CheckoutBundle\Handler\RegistrationHandler'
+        lazy: true
+        arguments:
+            - '@oro_customer.provider.frontend_customer_user_registration_form'
+            - '@oro_customer_user.manager'
+            - '@oro_customer.handler.frontend_customer_user_handler'
+            - '@oro_form.update_handler'
+            - '@translator'
+
+    oro_checkout.provider.forgot_password_check_email:
+        class: 'Oro\Bundle\CheckoutBundle\Layout\DataProvider\CheckoutForgotPasswordCheckEmailProvider'
+        lazy: true
+        arguments:
+            - '@request_stack'
+            - '@session'
+        tags:
+            - { name: layout.data_provider, alias: oro_checkout_forgot_password_check_email }
+
+    oro_checkout.condition.validate_checkout_addresses:
+        class: 'Oro\Bundle\CheckoutBundle\Condition\ValidateCheckoutAddresses'
+        arguments:
+            - '@validator'
+        tags:
+            - { name: oro_workflow.condition, alias: 'validate_checkout_addresses' }
+            - { name: oro_action.condition, alias: 'validate_checkout_addresses' }

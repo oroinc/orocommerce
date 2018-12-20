@@ -5,11 +5,11 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Layout\DataProvider;
 use Oro\Bundle\CheckoutBundle\Layout\DataProvider\OpenOrdersSeparatePageConfigProvider;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
-class OpenOrdersSeparatePageConfigProviderTest extends \PHPUnit_Framework_TestCase
+class OpenOrdersSeparatePageConfigProviderTest extends \PHPUnit\Framework\TestCase
 {
     public function testReturnsValueForOpenOrdersSeparatePageVisibilityIfConfigIsTrue()
     {
-        /** @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject $configManager */
+        /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject $configManager */
         $configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
             ->disableOriginalConstructor()
             ->getMock();
@@ -25,7 +25,7 @@ class OpenOrdersSeparatePageConfigProviderTest extends \PHPUnit_Framework_TestCa
 
     public function testReturnsValueForOpenOrdersSeparatePageVisibilityIfConfigIsFalse()
     {
-        /** @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject $configManager */
+        /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject $configManager */
         $configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
             ->disableOriginalConstructor()
             ->getMock();

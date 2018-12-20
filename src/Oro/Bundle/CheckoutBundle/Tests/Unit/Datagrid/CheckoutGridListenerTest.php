@@ -23,7 +23,7 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
+class CheckoutGridListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
@@ -35,22 +35,22 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
     const TOTAL = 30;
 
     /**
-     * @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $em;
 
     /**
-     * @var UserCurrencyManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var UserCurrencyManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $currencyManager;
 
     /**
-     * @var TotalProcessorProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var TotalProcessorProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $totalProcessor;
 
     /**
-     * @var CheckoutRepository|\PHPUnit_Framework_MockObject_MockObject
+     * @var CheckoutRepository|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $checkoutRepository;
 
@@ -60,12 +60,12 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
     protected $listener;
 
     /**
-     * @var EntityNameResolver|\PHPUnit_Framework_MockObject_MockObject
+     * @var EntityNameResolver|\PHPUnit\Framework\MockObject\MockObject
      */
     private $entityNameResolver;
 
     /**
-     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     private $doctrineHelper;
 
@@ -112,7 +112,7 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
     public function testOnBuildBefore()
     {
         $configuration = $this->getGridConfiguration();
-        /** @var DatagridInterface|\PHPUnit_Framework_MockObject_MockObject $datagrid */
+        /** @var DatagridInterface|\PHPUnit\Framework\MockObject\MockObject $datagrid */
         $datagrid = $this->createMock(DatagridInterface::class);
 
         $parameters = $this->createMock(ParameterBag::class);
@@ -140,7 +140,7 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testOnResultAfter()
     {
-        /** @var OrmResultAfter|\PHPUnit_Framework_MockObject_MockObject $event */
+        /** @var OrmResultAfter|\PHPUnit\Framework\MockObject\MockObject $event */
         $event = $this->getMockBuilder(OrmResultAfter::class)->disableOriginalConstructor()->getMock();
         $event->expects($this->once())->method('getRecords')->will($this->returnValue([]));
         $this->listener->onResultAfter($event);
@@ -174,7 +174,7 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
                 }
             );
 
-        /** @var OrmResultAfter|\PHPUnit_Framework_MockObject_MockObject $event */
+        /** @var OrmResultAfter|\PHPUnit\Framework\MockObject\MockObject $event */
         $event = $this->getMockBuilder(OrmResultAfter::class)->disableOriginalConstructor()->getMock();
         $event->expects($this->atLeastOnce())->method('getRecords')->willReturn($records);
 
@@ -211,7 +211,7 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
             new ResultRecord(['id' => 5, 'completed' => false])
         ];
 
-        /** @var OrmResultAfter|\PHPUnit_Framework_MockObject_MockObject $event */
+        /** @var OrmResultAfter|\PHPUnit\Framework\MockObject\MockObject $event */
         $event = $this->getMockBuilder(OrmResultAfter::class)->disableOriginalConstructor()->getMock();
         $event->expects($this->atLeastOnce())->method('getRecords')->willReturn($records);
 
@@ -318,7 +318,7 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
         $record = new ResultRecord($recordData);
         $records = [$record];
 
-        /** @var OrmResultAfter|\PHPUnit_Framework_MockObject_MockObject $event */
+        /** @var OrmResultAfter|\PHPUnit\Framework\MockObject\MockObject $event */
         $event = $this->getMockBuilder(OrmResultAfter::class)->disableOriginalConstructor()->getMock();
         $event->expects($this->atLeastOnce())->method('getRecords')->willReturn($records);
 

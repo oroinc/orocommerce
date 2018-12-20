@@ -8,28 +8,29 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\EventListener\TotalCalculateListener;
 use Oro\Bundle\OrderBundle\Form\Type\OrderType;
 use Oro\Bundle\PricingBundle\Event\TotalCalculateBeforeEvent;
+use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormFactory;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormRegistryInterface;
 use Symfony\Component\Form\FormTypeInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-class TotalCalculateListenerTest extends \PHPUnit_Framework_TestCase
+class TotalCalculateListenerTest extends \PHPUnit\Framework\TestCase
 {
     const FORM_DATA = ['field' => 'value'];
 
     /**
-     * @var FormFactory|\PHPUnit_Framework_MockObject_MockObject
+     * @var FormFactory|\PHPUnit\Framework\MockObject\MockObject
      */
     private $formFactory;
 
     /**
-     * @var CurrentApplicationProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var CurrentApplicationProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $applicationProvider;
 
     /**
-     * @var FormRegistryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var FormRegistryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $formRegistry;
 
@@ -122,7 +123,7 @@ class TotalCalculateListenerTest extends \PHPUnit_Framework_TestCase
         $formType = $this->createMock(FormTypeInterface::class);
         $formType
             ->expects($this->any())
-            ->method('getName')
+            ->method('getBlockPrefix')
             ->willReturn($formName);
 
         $this->formRegistry

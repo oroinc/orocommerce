@@ -12,15 +12,15 @@ use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-class RestrictedProductsDatagridEventListenerTest extends \PHPUnit_Framework_TestCase
+class RestrictedProductsDatagridEventListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var  ProductManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var  ProductManager|\PHPUnit\Framework\MockObject\MockObject */
     protected $productManager;
 
-    /** @var QueryBuilder|\PHPUnit_Framework_MockObject_MockObject $qb */
+    /** @var QueryBuilder|\PHPUnit\Framework\MockObject\MockObject $qb */
     protected $qb;
 
-    /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
+    /** @var RequestStack|\PHPUnit\Framework\MockObject\MockObject $requestStack */
     protected $requestStack;
 
     /** @var RestrictedProductsDatagridEventListener */
@@ -87,13 +87,13 @@ class RestrictedProductsDatagridEventListenerTest extends \PHPUnit_Framework_Tes
      */
     protected function createEvent()
     {
-        /** @var OrmDatasource|\PHPUnit_Framework_MockObject_MockObject $dataSource */
+        /** @var OrmDatasource|\PHPUnit\Framework\MockObject\MockObject $dataSource */
         $dataSource = $this->getMockBuilder(OrmDatasource::class)
             ->disableOriginalConstructor()
             ->getMock();
         $dataSource->expects($this->once())->method('getQueryBuilder')->willReturn($this->qb);
 
-        /** @var DatagridInterface|\PHPUnit_Framework_MockObject_MockObject $dataGrid */
+        /** @var DatagridInterface|\PHPUnit\Framework\MockObject\MockObject $dataGrid */
         $dataGrid = $this->createMock(DatagridInterface::class);
         $dataGrid->expects($this->once())->method('getDatasource')->willReturn($dataSource);
 

@@ -8,7 +8,7 @@ use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface;
 use Oro\Bundle\CheckoutBundle\Model\Condition\OrderLineItemsHasCount;
 
-class OrderLineItemsHasCountTest extends \PHPUnit_Framework_TestCase
+class OrderLineItemsHasCountTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var OrderLineItemsHasCount
@@ -16,7 +16,7 @@ class OrderLineItemsHasCountTest extends \PHPUnit_Framework_TestCase
     protected $condition;
 
     /**
-     * @var CheckoutLineItemsManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var CheckoutLineItemsManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $manager;
 
@@ -87,7 +87,7 @@ class OrderLineItemsHasCountTest extends \PHPUnit_Framework_TestCase
      */
     public function testEvaluate(Collection $lineItems, $rfpVisibility, $expectedResult, $expectedMessage)
     {
-        /** @var CheckoutInterface|\PHPUnit_Framework_MockObject_MockObject $checkout */
+        /** @var CheckoutInterface|\PHPUnit\Framework\MockObject\MockObject $checkout */
         $checkout = $this->createMock('Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface');
         $context = [];
         $this->condition->initialize(['entity' => $checkout]);

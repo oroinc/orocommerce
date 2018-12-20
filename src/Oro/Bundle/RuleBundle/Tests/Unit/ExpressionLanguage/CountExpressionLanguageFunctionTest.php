@@ -4,7 +4,7 @@ namespace Oro\Bundle\RuleBundle\Tests\Unit\ExpressionLanguage;
 
 use Oro\Bundle\RuleBundle\ExpressionLanguage\CountExpressionLanguageFunction;
 
-class CountExpressionLanguageFunctionTest extends \PHPUnit_Framework_TestCase
+class CountExpressionLanguageFunctionTest extends \PHPUnit\Framework\TestCase
 {
     public function testFunction()
     {

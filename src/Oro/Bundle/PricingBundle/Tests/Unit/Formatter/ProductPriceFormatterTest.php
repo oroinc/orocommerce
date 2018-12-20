@@ -2,36 +2,43 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Formatter;
 
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use Oro\Bundle\PricingBundle\Formatter\ProductPriceFormatter;
-use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
-use Oro\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter;
+use Oro\Bundle\PricingBundle\Model\DTO\ProductPriceDTO;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
+use Oro\Bundle\ProductBundle\Formatter\UnitValueFormatterInterface;
+use Oro\Component\Testing\Unit\EntityTrait;
 
-class ProductPriceFormatterTest extends \PHPUnit_Framework_TestCase
+class ProductPriceFormatterTest extends \PHPUnit\Framework\TestCase
 {
+    use EntityTrait;
+
     /**
      * @var ProductPriceFormatter
      */
     protected $formatter;
 
     /**
-     * @var NumberFormatter|\PHPUnit_Framework_MockObject_MockObject
+     * @var NumberFormatter|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $numberFormatter;
 
     /**
-     * @var ProductUnitLabelFormatter|\PHPUnit_Framework_MockObject_MockObject
+     * @var UnitLabelFormatterInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $unitLabelFormatter;
 
     /**
-     * @var ProductUnitValueFormatter|\PHPUnit_Framework_MockObject_MockObject
+     * @var UnitValueFormatterInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $unitValueFormatter;
 
     protected function setUp()
     {
-        $this->numberFormatter = $this->getMockBuilder('Oro\Bundle\LocaleBundle\Formatter\NumberFormatter')
+        $this->numberFormatter = $this->getMockBuilder(NumberFormatter::class)
             ->disableOriginalConstructor()->getMock();
         $this->numberFormatter->expects($this->any())
             ->method('formatCurrency')
@@ -39,7 +46,7 @@ class ProductPriceFormatterTest extends \PHPUnit_Framework_TestCase
                 return sprintf('%.2f %s formatted_price', $price, $currencyIsoCode);
             }));
         $this->unitLabelFormatter = $this
-            ->getMockBuilder('Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter')
+            ->getMockBuilder(UnitLabelFormatterInterface::class)
             ->disableOriginalConstructor()->getMock();
         $this->unitLabelFormatter->expects($this->any())
             ->method('format')
@@ -47,7 +54,7 @@ class ProductPriceFormatterTest extends \PHPUnit_Framework_TestCase
                 return sprintf('%s formatted_unit', $unit);
             }));
         $this->unitValueFormatter = $this
-            ->getMockBuilder('Oro\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter')
+            ->getMockBuilder(UnitValueFormatterInterface::class)
             ->disableOriginalConstructor()->getMock();
         $this->unitValueFormatter->expects($this->any())
             ->method('formatCode')
@@ -81,27 +88,30 @@ class ProductPriceFormatterTest extends \PHPUnit_Framework_TestCase
                 'products' => [
                     1 => [
                         'item' => [
-                            [
-                                'price' => 14.45,
-                                'currency' => 'USD',
-                                'quantity' => 1,
-                            ]
+                            new ProductPriceDTO(
+                                $this->getEntity(Product::class, ['id' => 1]),
+                                Price::create(14.45, 'USD'),
+                                1,
+                                $this->getEntity(ProductUnit::class, ['code' => 'item'])
+                            )
                         ],
                         'set' => [
-                            [
-                                'price' => 12.45,
-                                'currency' => 'EUR',
-                                'quantity' => 10,
-                            ]
+                            new ProductPriceDTO(
+                                $this->getEntity(Product::class, ['id' => 1]),
+                                Price::create(12.45, 'EUR'),
+                                10,
+                                $this->getEntity(ProductUnit::class, ['code' => 'set'])
+                            )
                         ],
                     ],
                     2 => [
                         'kg' => [
-                            [
-                                'price' => 10.22,
-                                'currency' => 'USD',
-                                'quantity' => 1,
-                            ]
+                            new ProductPriceDTO(
+                                $this->getEntity(Product::class, ['id' => 2]),
+                                Price::create(10.22, 'USD'),
+                                1,
+                                $this->getEntity(ProductUnit::class, ['code' => 'kg'])
+                            )
                         ],
                     ]
                 ],
@@ -136,63 +146,6 @@ class ProductPriceFormatterTest extends \PHPUnit_Framework_TestCase
                             'quantity' => 1,
                             'quantity_with_unit' => '1 kg quantity_with_unit'
                         ],
-                    ]
-                ]
-            ]
-        ];
-    }
-
-    /**
-     * @dataProvider formatProductUnitsDataProvider
-     * @param array $productUnits
-     * @param array $expectedData
-     */
-    public function testFormatProductUnits(array $productUnits, array $expectedData)
-    {
-        $this->assertEquals($expectedData, $this->formatter->formatProductUnits($productUnits));
-    }
-
-    /**
-     * @return array
-     */
-    public function formatProductUnitsDataProvider()
-    {
-        return [
-            [
-                'productUnits' => [
-                    'item' => [
-                        [
-                            'price' => 14.45,
-                            'currency' => 'USD',
-                            'quantity' => 1,
-                        ]
-                    ],
-                    'set' => [
-                        [
-                            'price' => 12.45,
-                            'currency' => 'EUR',
-                            'quantity' => 10,
-                        ]
-                    ],
-                ],
-                'expectedData' => [
-                    'item_1' => [
-                        'price' => 14.45,
-                        'currency' => 'USD',
-                        'formatted_price' => '14.45 USD formatted_price',
-                        'unit' => 'item',
-                        'formatted_unit' => 'item formatted_unit',
-                        'quantity' => 1,
-                        'quantity_with_unit' => '1 item quantity_with_unit'
-                    ],
-                    'set_10' => [
-                        'price' => 12.45,
-                        'currency' => 'EUR',
-                        'formatted_price' => '12.45 EUR formatted_price',
-                        'unit' => 'set',
-                        'formatted_unit' => 'set formatted_unit',
-                        'quantity' => 10,
-                        'quantity_with_unit' => '10 set quantity_with_unit'
                     ]
                 ]
             ]

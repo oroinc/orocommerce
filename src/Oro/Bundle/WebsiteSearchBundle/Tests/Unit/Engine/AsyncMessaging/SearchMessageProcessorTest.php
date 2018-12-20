@@ -2,6 +2,10 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Engine\AsyncMessaging;
 
+use Doctrine\DBAL\Driver\AbstractDriverException;
+use Doctrine\DBAL\Exception\DeadlockException;
+use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Oro\Bundle\SearchBundle\Engine\IndexerInterface;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AsyncIndexer;
@@ -14,26 +18,27 @@ use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Test\JobRunner;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
+use Psr\Log\LoggerInterface;
 
-class SearchMessageProcessorTest extends \PHPUnit_Framework_TestCase
+class SearchMessageProcessorTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var IndexerInterface|\PHPUnit_Framework_MockObject_MockObject $indexer
+     * @var IndexerInterface|\PHPUnit\Framework\MockObject\MockObject $indexer
      */
     private $indexer;
 
     /**
-     * @var MessageProducerInterface|\PHPUnit_Framework_MockObject_MockObject $indexer
+     * @var MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject $indexer
      */
     private $messageProducer;
 
     /**
-     * @var IndexerInputValidator|\PHPUnit_Framework_MockObject_MockObject $indexer
+     * @var IndexerInputValidator|\PHPUnit\Framework\MockObject\MockObject $indexer
      */
     private $indexerInputValidator;
 
     /**
-     * @var ReindexMessageGranularizer|\PHPUnit_Framework_MockObject_MockObject $indexer
+     * @var ReindexMessageGranularizer|\PHPUnit\Framework\MockObject\MockObject $indexer
      */
     private $reindexMessageGranularizer;
 
@@ -43,9 +48,14 @@ class SearchMessageProcessorTest extends \PHPUnit_Framework_TestCase
     private $processor;
 
     /**
-     * @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $session;
+
+    /**
+     * @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $logger;
 
     public function setUp()
     {
@@ -64,12 +74,14 @@ class SearchMessageProcessorTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->logger = $this->createMock(LoggerInterface::class);
+
         $this->processor = new SearchMessageProcessor(
             $this->indexer,
-            new JobRunner(),
             $this->messageProducer,
             $this->indexerInputValidator,
-            $this->reindexMessageGranularizer
+            $this->reindexMessageGranularizer,
+            $this->logger
         );
 
         $this->session = $this->createMock(SessionInterface::class);
@@ -84,7 +96,7 @@ class SearchMessageProcessorTest extends \PHPUnit_Framework_TestCase
      */
     public function testProcessingMessage($messageBody, $topic, $expectedMethod)
     {
-        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message */
+        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message */
         $message = $this->createMock(MessageInterface::class);
 
         $message->method('getBody')
@@ -101,9 +113,10 @@ class SearchMessageProcessorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param $messageBody
-     * @param $topic
-     * @param $expectedMethod
+     * @param array $messageBody
+     * @param array $classesToIndex
+     * @param array $websiteIdsToIndex
+     * @param array $granulizedMessages
      *
      * @dataProvider processingReindexWithGranulizeDataProvider
      */
@@ -113,7 +126,7 @@ class SearchMessageProcessorTest extends \PHPUnit_Framework_TestCase
         array $websiteIdsToIndex,
         array $granulizedMessages
     ) {
-        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message */
+        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message */
         $message = $this->createMock(MessageInterface::class);
 
         $message->method('getBody')
@@ -124,7 +137,7 @@ class SearchMessageProcessorTest extends \PHPUnit_Framework_TestCase
             ->willReturn(AsyncIndexer::TOPIC_REINDEX);
 
         $this->indexerInputValidator->expects($this->once())
-            ->method('validateReindexRequest')
+            ->method('validateRequestParameters')
             ->with($messageBody['class'], $messageBody['context'])
             ->willReturn([$classesToIndex, $websiteIdsToIndex]);
 
@@ -143,9 +156,10 @@ class SearchMessageProcessorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param $messageBody
-     * @param $topic
-     * @param $expectedMethod
+     * @param array $messageBody
+     * @param array $classesToIndex
+     * @param array $websiteIdsToIndex
+     * @param array $granulizedMessages
      *
      * @dataProvider processingReindexWithGranulizeAsyncDataProvider
      */
@@ -155,7 +169,7 @@ class SearchMessageProcessorTest extends \PHPUnit_Framework_TestCase
         array $websiteIdsToIndex,
         array $granulizedMessages
     ) {
-        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message */
+        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message */
         $message = $this->createMock(MessageInterface::class);
 
         $message->method('getBody')
@@ -166,7 +180,7 @@ class SearchMessageProcessorTest extends \PHPUnit_Framework_TestCase
             ->willReturn(AsyncIndexer::TOPIC_REINDEX);
 
         $this->indexerInputValidator->expects($this->once())
-            ->method('validateReindexRequest')
+            ->method('validateRequestParameters')
             ->with($messageBody['class'], $messageBody['context'])
             ->willReturn([$classesToIndex, $websiteIdsToIndex]);
 
@@ -188,7 +202,7 @@ class SearchMessageProcessorTest extends \PHPUnit_Framework_TestCase
     {
         $messageBody = ['class' => null, 'context' => []];
 
-        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message */
+        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message */
         $message = $this->createMock(MessageInterface::class);
 
         $message->method('getBody')
@@ -201,7 +215,7 @@ class SearchMessageProcessorTest extends \PHPUnit_Framework_TestCase
         $message->method('getMessageId')
             ->willReturn(1);
 
-        /** @var JobRunner|\PHPUnit_Framework_MockObject_MockObject $jobRunner */
+        /** @var JobRunner|\PHPUnit\Framework\MockObject\MockObject $jobRunner */
         $jobRunner = $this->createMock(JobRunner::class);
 
         $jobRunner->expects($this->never())
@@ -212,7 +226,7 @@ class SearchMessageProcessorTest extends \PHPUnit_Framework_TestCase
 
     public function testRejectOnUnsupportedTopic()
     {
-        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message */
+        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message */
         $message = $this->createMock(MessageInterface::class);
 
         $message->method('getBody')
@@ -229,7 +243,7 @@ class SearchMessageProcessorTest extends \PHPUnit_Framework_TestCase
     {
         $messageBody = ['class' => null, 'context' => [], 'jobId' => 1];
 
-        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message */
+        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message */
         $message = $this->createMock(MessageInterface::class);
 
         $message->method('getBody')
@@ -540,6 +554,66 @@ class SearchMessageProcessorTest extends \PHPUnit_Framework_TestCase
                     ],
                 ],
             ],
+        ];
+    }
+
+    /**
+     * @param \Exception|\PHPUnit\Framework\MockObject\MockObject $exception
+     * @param bool   $isDeadlock
+     * @param string $result
+     *
+     * @dataProvider getProcessExceptionsDataProvider
+     */
+    public function testProcessExceptions($exception, $isDeadlock, $result)
+    {
+        $messageBody = [
+            'class' => '\StdClass',
+            'context' => []
+        ];
+        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message */
+        $message = $this->createMock(MessageInterface::class);
+        $message->method('getBody')
+            ->will($this->returnValue(json_encode($messageBody)));
+        $message->method('getProperty')
+            ->with(MessageQueConfig::PARAMETER_TOPIC_NAME)
+            ->willReturn(AsyncIndexer::TOPIC_REINDEX);
+
+        $this->indexer->expects($this->once())
+            ->method('reindex')
+            ->willThrowException($exception);
+
+        $this->logger->expects($this->once())
+            ->method('error');
+
+        $this->assertEquals($result, $this->processor->process($message, $this->session));
+    }
+
+    /**
+     * @return array
+     */
+    public function getProcessExceptionsDataProvider()
+    {
+        return [
+            'process deadlock' => [
+                'exception' => $this->createMock(DeadlockException::class),
+                'isDeadlock' => true,
+                'result' => MessageProcessorInterface::REQUEUE
+            ],
+            'process exception' => [
+                'exception' => new \Exception(),
+                'isDeadlock' => false,
+                'result' => MessageProcessorInterface::REJECT
+            ],
+            'process unique constraint exception' => [
+                'exception' => $this->createMock(UniqueConstraintViolationException::class),
+                'isDeadlock' => false,
+                'result' => MessageProcessorInterface::REQUEUE
+            ],
+            'process foreign key constraint exception' => [
+                'exception' => $this->createMock(ForeignKeyConstraintViolationException::class),
+                'isDeadlock' => false,
+                'result' => MessageProcessorInterface::REQUEUE
+            ]
         ];
     }
 }

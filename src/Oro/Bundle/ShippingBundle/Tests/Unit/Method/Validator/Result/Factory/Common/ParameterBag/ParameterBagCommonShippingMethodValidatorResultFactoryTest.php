@@ -6,7 +6,7 @@ use Oro\Bundle\ShippingBundle\Method\Validator\Result\Error;
 use Oro\Bundle\ShippingBundle\Method\Validator\Result\Factory;
 use Oro\Bundle\ShippingBundle\Method\Validator\Result\ParameterBag\ParameterBagShippingMethodValidatorResult;
 
-class ParameterBagCommonShippingMethodValidatorResultFactoryTest extends \PHPUnit_Framework_TestCase
+class ParameterBagCommonShippingMethodValidatorResultFactoryTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var Factory\Common\ParameterBag\ParameterBagCommonShippingMethodValidatorResultFactory

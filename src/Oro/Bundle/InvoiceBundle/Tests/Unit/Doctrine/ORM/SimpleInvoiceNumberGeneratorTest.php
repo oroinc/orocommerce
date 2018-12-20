@@ -6,7 +6,7 @@ use Oro\Bundle\InvoiceBundle\Doctrine\ORM\SimpleInvoiceNumberGenerator;
 use Oro\Bundle\InvoiceBundle\Entity\Invoice;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class SimpleInvoiceNumberGeneratorTest extends \PHPUnit_Framework_TestCase
+class SimpleInvoiceNumberGeneratorTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 

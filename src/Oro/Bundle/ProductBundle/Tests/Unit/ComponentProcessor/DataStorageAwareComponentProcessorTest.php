@@ -17,15 +17,15 @@ use Symfony\Component\Translation\TranslatorInterface;
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class DataStorageAwareComponentProcessorTest extends \PHPUnit_Framework_TestCase
+class DataStorageAwareComponentProcessorTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|UrlGeneratorInterface
+     * @var \PHPUnit\Framework\MockObject\MockObject|UrlGeneratorInterface
      */
     protected $router;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ProductDataStorage
+     * @var \PHPUnit\Framework\MockObject\MockObject|ProductDataStorage
      */
     protected $storage;
 
@@ -35,36 +35,34 @@ class DataStorageAwareComponentProcessorTest extends \PHPUnit_Framework_TestCase
     protected $processor;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|AuthorizationCheckerInterface
+     * @var \PHPUnit\Framework\MockObject\MockObject|AuthorizationCheckerInterface
      */
     private $authorizationChecker;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|TokenAccessorInterface
+     * @var \PHPUnit\Framework\MockObject\MockObject|TokenAccessorInterface
      */
     private $tokenAccessor;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ComponentProcessorFilter
+     * @var \PHPUnit\Framework\MockObject\MockObject|ComponentProcessorFilter
      */
     protected $componentProcessorFilter;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|Session
+     * @var \PHPUnit\Framework\MockObject\MockObject|Session
      */
     protected $session;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface
+     * @var \PHPUnit\Framework\MockObject\MockObject|TranslatorInterface
      */
     protected $translator;
 
     protected function setUp()
     {
         $this->router = $this->createMock('Symfony\Component\Routing\Generator\UrlGeneratorInterface');
-        $this->storage = $this->getMockBuilder('Oro\Bundle\ProductBundle\Storage\ProductDataStorage')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->storage = $this->createMock('Oro\Bundle\ProductBundle\Storage\ProductDataStorage');
 
         $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
         $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
@@ -73,10 +71,7 @@ class DataStorageAwareComponentProcessorTest extends \PHPUnit_Framework_TestCase
             ->getMockBuilder('Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorFilterInterface')
             ->getMockForAbstractClass();
 
-        $this->session = $this->getMockBuilder('Symfony\Component\HttpFoundation\Session\Session')
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $this->session = $this->createMock('Symfony\Component\HttpFoundation\Session\Session');
         $this->translator = $this->createMock('Symfony\Component\Translation\TranslatorInterface');
 
         $this->processor = new DataStorageAwareComponentProcessor(
@@ -477,7 +472,7 @@ class DataStorageAwareComponentProcessorTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param DataStorageAwareComponentProcessor $processor
-     * @param \PHPUnit_Framework_MockObject_MockObject $routerMock
+     * @param \PHPUnit\Framework\MockObject\MockObject $routerMock
      * @param array $data
      * @param string $targetUrl
      */

@@ -2,13 +2,17 @@
 
 namespace Oro\Bundle\ProductBundle\Form\Type;
 
-use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\ChoiceList\View\ChoiceView;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Extends AbstractProductAwareType behavior by formatting
+ * view choices values using UnitLabelFormatterInterface
+ */
 class ProductUnitSelectType extends AbstractProductAwareType
 {
     const NAME = 'oro_product_unit_select';
@@ -19,14 +23,14 @@ class ProductUnitSelectType extends AbstractProductAwareType
     private $entityClass;
 
     /**
-     * @var ProductUnitLabelFormatter
+     * @var UnitLabelFormatterInterface
      */
     private $productUnitFormatter;
 
     /**
-     * @param ProductUnitLabelFormatter $productUnitLabelFormatter
+     * @param UnitLabelFormatterInterface $productUnitLabelFormatter
      */
-    public function __construct(ProductUnitLabelFormatter $productUnitLabelFormatter)
+    public function __construct(UnitLabelFormatterInterface $productUnitLabelFormatter)
     {
         $this->productUnitFormatter = $productUnitLabelFormatter;
     }
@@ -53,8 +57,6 @@ class ProductUnitSelectType extends AbstractProductAwareType
                 'compact' => false,
                 'choices_updated' => false,
                 'required' => true,
-                'empty_label' => 'oro.product.productunit.removed',
-                'sell' => null,
             ]
         );
     }

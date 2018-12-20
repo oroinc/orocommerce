@@ -11,17 +11,17 @@ use Oro\Bundle\PricingBundle\Entity\PriceRule;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerHandler;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class PriceListCurrencyEntityListenerTest extends \PHPUnit_Framework_TestCase
+class PriceListCurrencyEntityListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var Cache|\PHPUnit_Framework_MockObject_MockObject
+     * @var Cache|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $cache;
 
     /**
-     * @var PriceListTriggerHandler|\PHPUnit_Framework_MockObject_MockObject
+     * @var PriceListTriggerHandler|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $priceListTriggerHandler;
 
@@ -30,17 +30,27 @@ class PriceListCurrencyEntityListenerTest extends \PHPUnit_Framework_TestCase
      */
     protected $listener;
 
+    /**
+     * {@inheritdoc}
+     */
     protected function setUp()
     {
         $this->cache = $this->createMock(Cache::class);
-        $this->priceListTriggerHandler = $this->getMockBuilder(PriceListTriggerHandler::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->priceListTriggerHandler = $this->createMock(PriceListTriggerHandler::class);
 
         $this->listener = new PriceListCurrencyEntityListener(
             $this->cache,
             $this->priceListTriggerHandler
         );
+    }
+
+    public function testPostPersistDisabled()
+    {
+        $this->listener->setEnabled(false);
+        $this->priceListTriggerHandler->expects($this->never())
+            ->method($this->anything());
+
+        $this->listener->postPersist(new PriceListCurrency());
     }
 
     public function testPostPersist()
@@ -54,9 +64,12 @@ class PriceListCurrencyEntityListenerTest extends \PHPUnit_Framework_TestCase
         $priceListCurrency = new PriceListCurrency();
         $priceListCurrency->setPriceList($priceList);
 
-        $this->priceListTriggerHandler->expects($this->once())
+        $this->priceListTriggerHandler->expects($this->exactly(2))
             ->method('addTriggerForPriceList')
-            ->with(Topics::RESOLVE_PRICE_RULES, $priceList);
+            ->withConsecutive(
+                [Topics::RESOLVE_COMBINED_CURRENCIES, $priceList],
+                [Topics::RESOLVE_PRICE_RULES, $priceList]
+            );
 
         $this->cache->expects($this->once())
             ->method('delete')
@@ -75,10 +88,21 @@ class PriceListCurrencyEntityListenerTest extends \PHPUnit_Framework_TestCase
         $priceListCurrency = new PriceListCurrency();
         $priceListCurrency->setPriceList($priceList);
 
-        $this->priceListTriggerHandler->expects($this->never())
-            ->method('addTriggerForPriceList');
+        $this->priceListTriggerHandler->expects($this->once())
+            ->method('addTriggerForPriceList')
+            ->with(Topics::RESOLVE_COMBINED_CURRENCIES, $priceList);
+
         $this->listener->postPersist($priceListCurrency);
         $this->assertTrue($priceList->isActual());
+    }
+
+    public function testPreRemoveDisabled()
+    {
+        $this->listener->setEnabled(false);
+        $this->priceListTriggerHandler->expects($this->never())
+            ->method($this->anything());
+
+        $this->listener->preRemove(new PriceListCurrency());
     }
 
     public function testPreRemove()
@@ -92,9 +116,12 @@ class PriceListCurrencyEntityListenerTest extends \PHPUnit_Framework_TestCase
         $priceListCurrency = new PriceListCurrency();
         $priceListCurrency->setPriceList($priceList);
 
-        $this->priceListTriggerHandler->expects($this->once())
+        $this->priceListTriggerHandler->expects($this->exactly(2))
             ->method('addTriggerForPriceList')
-            ->with(Topics::RESOLVE_PRICE_RULES, $priceList);
+            ->withConsecutive(
+                [Topics::RESOLVE_COMBINED_CURRENCIES, $priceList],
+                [Topics::RESOLVE_PRICE_RULES, $priceList]
+            );
 
         $this->cache->expects($this->once())
             ->method('delete')

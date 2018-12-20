@@ -23,7 +23,7 @@ class ProductSelectTypeTest extends FormIntegrationTestCase
     protected $type;
 
     /**
-     * @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $translator;
 
@@ -43,11 +43,6 @@ class ProductSelectTypeTest extends FormIntegrationTestCase
         parent::setUp();
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(ProductSelectType::NAME, $this->type->getName());
-    }
-
     public function testGetParent()
     {
         $this->assertEquals(OroEntitySelectOrCreateInlineType::class, $this->type->getParent());
@@ -55,7 +50,7 @@ class ProductSelectTypeTest extends FormIntegrationTestCase
 
     public function testConfigureOptions()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|OptionsResolver $resolver */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|OptionsResolver $resolver */
         $resolver = $this->createMock('Symfony\Component\OptionsResolver\OptionsResolver');
         $resolver->expects($this->once())
             ->method('setDefaults')
@@ -158,11 +153,11 @@ class ProductSelectTypeTest extends FormIntegrationTestCase
      * @param int $id
      * @param string $productSku
      * @param Product $product
-     * @return \PHPUnit_Framework_MockObject_MockObject|ProductHolderInterface
+     * @return \PHPUnit\Framework\MockObject\MockObject|ProductHolderInterface
      */
     protected function createProductHolder($id, $productSku, Product $product = null)
     {
-        /* @var $productHolder \PHPUnit_Framework_MockObject_MockObject|ProductHolderInterface */
+        /* @var $productHolder \PHPUnit\Framework\MockObject\MockObject|ProductHolderInterface */
         $productHolder = $this->createMock('Oro\Bundle\ProductBundle\Model\ProductHolderInterface');
         $productHolder
             ->expects($this->any())
@@ -205,7 +200,7 @@ class ProductSelectTypeTest extends FormIntegrationTestCase
      */
     public function testFinishView(array $dataParameters)
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|FormInterface $form */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|FormInterface $form */
         $form = $this->createMock('Symfony\Component\Form\FormInterface');
 
         $formView = new FormView();

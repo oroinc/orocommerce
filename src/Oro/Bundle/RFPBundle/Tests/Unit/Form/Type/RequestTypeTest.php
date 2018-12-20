@@ -12,7 +12,6 @@ use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub
 use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
-use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 use Oro\Bundle\RFPBundle\Entity\Request;
@@ -48,7 +47,7 @@ class RequestTypeTest extends AbstractTest
 
     public function testConfigureOptions()
     {
-        /* @var $resolver \PHPUnit_Framework_MockObject_MockObject|OptionsResolver */
+        /* @var $resolver \PHPUnit\Framework\MockObject\MockObject|OptionsResolver */
         $resolver = $this->createMock('Symfony\Component\OptionsResolver\OptionsResolver');
         $resolver->expects($this->once())
             ->method('setDefaults')
@@ -60,11 +59,6 @@ class RequestTypeTest extends AbstractTest
             );
 
         $this->formType->configureOptions($resolver);
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals(RequestType::NAME, $this->formType->getName());
     }
 
     /**
@@ -422,13 +416,6 @@ class RequestTypeTest extends AbstractTest
      */
     protected function getExtensions()
     {
-        /* @var $productUnitLabelFormatter ProductUnitLabelFormatter|\PHPUnit_Framework_MockObject_MockObject */
-        $productUnitLabelFormatter = $this->getMockBuilder(
-            'Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter'
-        )
-            ->disableOriginalConstructor()
-            ->getMock();
-
         $priceType                  = $this->preparePriceType();
         $productSelectType          = $this->prepareProductSelectType();
         $userMultiSelectType        = $this->prepareUserMultiSelectType();
@@ -453,7 +440,7 @@ class RequestTypeTest extends AbstractTest
             CustomerUserSelectType::NAME
         );
 
-        $requestProductType = new RequestProductType($productUnitLabelFormatter);
+        $requestProductType = new RequestProductType();
         $requestProductType->setDataClass('Oro\Bundle\RFPBundle\Entity\RequestProduct');
 
         return [

@@ -5,7 +5,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\SubtotalProviderRegistry;
 
-class SubtotalProviderRegistryTest extends \PHPUnit_Framework_TestCase
+class SubtotalProviderRegistryTest extends \PHPUnit\Framework\TestCase
 {
     public function testRegistry()
     {
@@ -53,7 +53,7 @@ class SubtotalProviderRegistryTest extends \PHPUnit_Framework_TestCase
     /**
      * @param string $name
      *
-     * @return \PHPUnit_Framework_MockObject_MockObject|SubtotalProviderInterface
+     * @return \PHPUnit\Framework\MockObject\MockObject|SubtotalProviderInterface
      */
     protected function getProviderMock($name)
     {

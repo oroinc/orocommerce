@@ -5,6 +5,9 @@ namespace Oro\Bundle\WebsiteSearchBundle\Attribute\Type;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\SearchBundle\Query\Query;
 
+/**
+ * Attribute type provides metadata for boolean attribute for search index.
+ */
 class BooleanSearchableAttributeType extends AbstractSearchableAttributeType
 {
     /**
@@ -12,7 +15,7 @@ class BooleanSearchableAttributeType extends AbstractSearchableAttributeType
      */
     public function getFilterStorageFieldType()
     {
-        throw new \RuntimeException('Not supported');
+        return Query::TYPE_INTEGER;
     }
 
     /**
@@ -28,7 +31,7 @@ class BooleanSearchableAttributeType extends AbstractSearchableAttributeType
      */
     public function getFilterType()
     {
-        throw new \RuntimeException('Not supported');
+        return 'boolean';
     }
 
     /**
@@ -44,7 +47,7 @@ class BooleanSearchableAttributeType extends AbstractSearchableAttributeType
      */
     public function getFilterableFieldName(FieldConfigModel $attribute)
     {
-        throw new \RuntimeException('Not supported');
+        return $attribute->getFieldName();
     }
 
     /**

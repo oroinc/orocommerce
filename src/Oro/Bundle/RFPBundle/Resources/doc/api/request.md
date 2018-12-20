@@ -12,8 +12,6 @@ Retrieve a specific request record.
 
 Retrieve a collection of request records.
 
-The list of records that will be returned, could be limited by filters.
-
 {@inheritdoc}
 
 ### create
@@ -26,12 +24,10 @@ The created record is returned in the response.
 
 **Please note:**
 
-*The fields `internal_status`, `customer_status`, `requestAdditionalNotes` are not configurable by api, because they depend on the workflow states.*
+*The fields **internal_status**, **customer_status**, **requestAdditionalNotes** are not configurable by API, because they depend on the workflow states.*
 
 {@request:json_api}
 Example:
-
-`</admin/api/requests>`
 
 ```JSON
 {
@@ -59,7 +55,7 @@ Example:
       },      
       "customerUser": {
         "data": {
-          "type": "customer_users",
+          "type": "customerusers",
           "id": "5"
         }
       },
@@ -85,12 +81,10 @@ The updated record is returned in the response.
 
 **Please note:**
 
-*The fields `internal_status`, `customer_status`, `requestAdditionalNotes` are not configurable by api, because they depend on the workflow states.*
+*The fields **internal_status**, **customer_status**, **requestAdditionalNotes** are not configurable by API, because they depend on the workflow states.*
 
 {@request:json_api}
 Example:
-
-`</admin/api/requests/1>`
 
 ```JSON
 {
@@ -119,7 +113,7 @@ Example:
       },      
       "customerUser": {
         "data": {
-          "type": "customer_users",
+          "type": "customerusers",
           "id": "5"
         }
       },
@@ -144,8 +138,6 @@ Delete a specific request record.
 ### delete_list
 
 Delete a collection of request records.
-
-The list of records that will be deleted, could be limited by filters.
 
 {@inheritdoc}
 
@@ -234,8 +226,6 @@ Replace the list of assigned user assigned to a specific request record.
 {@request:json_api}
 Example:
 
-`</admin/api/requests/1/relationships/assignedUsers>`
-
 ```JSON
 {
   "data": [
@@ -259,8 +249,6 @@ Set assigned user records for a specific request record.
 {@request:json_api}
 Example:
 
-`</admin/api/requests/1/relationships/assignedUsers>`
-
 ```JSON
 {
   "data": [
@@ -283,8 +271,6 @@ Remove assigned user records from a specific request record.
 
 {@request:json_api}
 Example:
-
-`</admin/api/requests/1/relationships/assignedUsers>`
 
 ```JSON
 {
@@ -319,17 +305,15 @@ Replace the list of assigned customer user assigned to a specific request record
 {@request:json_api}
 Example:
 
-`</admin/api/requests/1/relationships/assignedCustomerUsers>`
-
 ```JSON
 {
   "data": [
     {
-      "type": "customer_users",
+      "type": "customerusers",
       "id": "1"
     },
     {
-      "type": "customer_users",
+      "type": "customerusers",
       "id": "2"
     }
   ]
@@ -344,17 +328,15 @@ Set assigned customer user records for a specific request record.
 {@request:json_api}
 Example:
 
-`</admin/api/requests/1/relationships/assignedCustomerUsers>`
-
 ```JSON
 {
   "data": [
     {
-      "type": "customer_users",
+      "type": "customerusers",
       "id": "1"
     },
     {
-      "type": "customer_users",
+      "type": "customerusers",
       "id": "2"
     }
   ]
@@ -369,17 +351,15 @@ Remove assigned customer user records from a specific request record.
 {@request:json_api}
 Example:
 
-`</admin/api/requests/1/relationships/assignedCustomerUsers>`
-
 ```JSON
 {
   "data": [
     {
-      "type": "customer_users",
+      "type": "customerusers",
       "id": "1"
     },
     {
-      "type": "customer_users",
+      "type": "customerusers",
       "id": "2"
     }
   ]
@@ -403,8 +383,6 @@ Replace the list of request additional note assigned to a specific request recor
 
 {@request:json_api}
 Example:
-
-`</admin/api/requests/1/relationships/requestAdditionalNotes>`
 
 ```JSON
 {
@@ -430,8 +408,6 @@ Set request additional note records for a specific request record.
 {@request:json_api}
 Example:
 
-`</admin/api/requests/1/relationships/requestAdditionalNotes>`
-
 ```JSON
 {
   "data": [
@@ -455,8 +431,6 @@ Remove request additional note records from a specific request record.
 
 {@request:json_api}
 Example:
-
-`</admin/api/requests/1/relationships/requestAdditionalNotes>`
 
 ```JSON
 {
@@ -492,8 +466,6 @@ Replace the list of request product assigned to a specific request record.
 {@request:json_api}
 Example:
 
-`</admin/api/requests/1/relationships/requestProducts>`
-
 ```JSON
 {
   "data": [
@@ -518,8 +490,6 @@ Set request product records for a specific request record.
 {@request:json_api}
 Example:
 
-`</admin/api/requests/1/relationships/requestProducts>`
-
 ```JSON
 {
   "data": [
@@ -543,8 +513,6 @@ Remove request product records from a specific request record.
 
 {@request:json_api}
 Example:
-
-`</admin/api/requests/1/relationships/requestProducts>`
 
 ```JSON
 {
@@ -580,8 +548,6 @@ Replace customer  a specific request record is assigned to.
 {@request:json_api}
 Example:
 
-`</admin/api/requests/1/relationships/customer>`
-
 ```JSON
 {
   "data": {
@@ -609,12 +575,10 @@ Replace customer user a specific request record is assigned to.
 {@request:json_api}
 Example:
 
-`</admin/api/requests/1/relationships/customerUser>`
-
 ```JSON
 {
   "data": {
-    "type": "customer_users",
+    "type": "customerusers",
     "id": "1"
   }
 }
@@ -637,8 +601,6 @@ Replace the list of customer status assigned to a specific request record.
 
 {@request:json_api}
 Example:
-
-`</admin/api/requests/1/relationships/customer_status>`
 
 ```JSON
 {
@@ -667,8 +629,6 @@ Replace the list of internal status assigned to a specific request record.
 {@request:json_api}
 Example:
 
-`</admin/api/requests/1/relationships/internal_status>`
-
 ```JSON
 {
   "data": {
@@ -695,8 +655,6 @@ Replace the organization a specific request record belongs to.
 
 {@request:json_api}
 Example:
-
-`</admin/api/requests/1/relationships/organization>`
 
 ```JSON
 {
@@ -725,8 +683,6 @@ Replace the wesbite where the Request For Quote was created.
 {@request:json_api}
 Example:
 
-`</admin/api/requests/1/relationships/website>`
-
 ```JSON
 {
   "data": {
@@ -754,8 +710,6 @@ Replace the owner of a specific request record.
 {@request:json_api}
 Example:
 
-`</admin/api/requests/1/relationships/owner>`
-
 ```JSON
 {
   "data": {
@@ -765,29 +719,6 @@ Example:
 }
 ```
 {@/request}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 # Extend\Entity\EV_Rfp_Customer_Status
@@ -804,8 +735,6 @@ The request for quote statuses visible to the buyer.
 
 Retrieve a collection of request for quote customer status records.
 
-The list of records that will be returned, could be limited by filters.
-
 The request for quote statuses visible to the buyer.
 
 # Extend\Entity\EV_Rfp_Internal_Status
@@ -821,7 +750,5 @@ The request for quote statuses visible in the management console.
 ### get_list
 
 Retrieve a collection of request for quote internal status records.
-
-The list of records that will be returned, could be limited by filters.
 
 The request for quote statuses visible in the management console.

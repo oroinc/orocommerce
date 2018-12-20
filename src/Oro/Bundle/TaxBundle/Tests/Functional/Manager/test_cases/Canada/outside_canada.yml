@@ -27,7 +27,6 @@ databaseBefore:
             currency: USD
     'Oro\Bundle\OrderBundle\Entity\OrderLineItem':
         order_line_item_1:
-            productSku: order_line_item_1
             order: '@simple_order'
             quantity: 5
             price: '@usd_price_15.99'
@@ -52,28 +51,29 @@ databaseBefore:
             taxJurisdiction: '@canada_ontario_jurisdiction'
             productTaxCode: { class: 'Oro\Bundle\TaxBundle\Entity\ProductTaxCode', query: { code: 'TAX2' } }
             customerTaxCode: { class: 'Oro\Bundle\TaxBundle\Entity\CustomerTaxCode', query: { code: 'TAX1' } }
+databaseBeforeSecondPart: []
 expectedResult:
     total:
-        includingTax: '87.95'  # 79.95 + 8
+        includingTax: '88.26'  # 79.95 + 8.3148 = 88.2648
         excludingTax: '79.95'
-        taxAmount: '8'         # (79.95 * 0.1) with round
-        adjustment: '-0.005'   # 8 - (79.95 * 0.1)
+        taxAmount: '8.31'      # 79.95 * 0.104 = 8.3148
+        adjustment: '0.0048'   # 8.3148 - 8.31 = 0.0048
         currency: 'USD'
     items:
         -
             unit:
-                includingTax: '17.59' # 15.99 + 1.6
+                includingTax: '17.65' # 15.99 + 1.66296 = 17.65296
                 excludingTax: '15.99'
-                taxAmount: '1.6'      # 15.99 * 0.1
-                adjustment: '-0.001'
+                taxAmount: '1.66'     # 15.99 * 0.104 = 1.66296
+                adjustment: '0.00296' # 1.66296 - 1.66 = 0.00296
                 currency: 'USD'
             row:
-                includingTax: '87.95' # 79.95 + 8
-                excludingTax: '79.95' # 15.99 * 5
-                taxAmount: '8'        # 79.95 * 0.1
-                adjustment: '-0.005'
+                includingTax: '88.26' # 79.95 + 8.3148 = 88.2648
+                excludingTax: '79.95' # 15.99 * 5 = 79.95
+                taxAmount: '8.31'     # 79.95 * 0.104 = 8.3148
+                adjustment: '0.0048'  # 8.3148 - 8.31 = 0.0048
                 currency: 'USD'
             taxes:
-                - { tax: 'TAX1', rate: '0.1', taxableAmount: '79.95', taxAmount: '8', currency: 'USD' }
+                - { tax: 'TAX1', rate: '0.104', taxableAmount: '79.95', taxAmount: '8.31', currency: 'USD' }
     taxes:
-        - { tax: 'TAX1', rate: '0.1', taxableAmount: '79.95', taxAmount: '8', currency: 'USD' }
+        - { tax: 'TAX1', rate: '0.104', taxableAmount: '79.95', taxAmount: '8.31', currency: 'USD' }

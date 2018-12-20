@@ -11,14 +11,14 @@ use Oro\Component\ConfigExpression\ContextAccessorInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\PropertyAccess\PropertyPathInterface;
 
-class RfpAllowedTest extends \PHPUnit_Framework_TestCase
+class RfpAllowedTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     const PROPERTY_PATH_NAME = 'testPropertyPath';
 
     /**
-     * @var RequestDataStorageExtension|\PHPUnit_Framework_MockObject_MockObject
+     * @var RequestDataStorageExtension|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $requestDataStorageExtension;
 
@@ -79,7 +79,7 @@ class RfpAllowedTest extends \PHPUnit_Framework_TestCase
 
     public function testSetContextAccessor()
     {
-        /** @var ContextAccessorInterface|\PHPUnit_Framework_MockObject_MockObject $contextAccessor **/
+        /** @var ContextAccessorInterface|\PHPUnit\Framework\MockObject\MockObject $contextAccessor **/
         $contextAccessor = $this->getMockBuilder(ContextAccessorInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -102,7 +102,7 @@ class RfpAllowedTest extends \PHPUnit_Framework_TestCase
         /** @var LineItem[] $lineItems */
         $lineItems = [$lineItem];
 
-        /** @var ContextAccessorInterface|\PHPUnit_Framework_MockObject_MockObject $contextAccessor **/
+        /** @var ContextAccessorInterface|\PHPUnit\Framework\MockObject\MockObject $contextAccessor **/
         $contextAccessor = $this->getMockBuilder(ContextAccessorInterface::class)
             ->disableOriginalConstructor()
             ->getMock();

@@ -1,4 +1,4 @@
-// @theme: blank;
+/* @theme: blank; */
 
 .shopping-list-widget {
     .header-row {
@@ -52,6 +52,10 @@
                 color: get-color('ui', 'normal');
             }
         }
+    }
+
+    &--disabled {
+        pointer-events: none;
     }
 }
 
@@ -138,7 +142,7 @@
             display: none;
         }
 
-        &.open > .header-row__toggle {
+        &.show > .header-row__toggle {
             display: block;
         }
 

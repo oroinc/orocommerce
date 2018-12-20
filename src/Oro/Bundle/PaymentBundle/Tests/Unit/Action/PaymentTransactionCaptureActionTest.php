@@ -4,6 +4,7 @@ namespace Oro\Bundle\PaymentBundle\Tests\Unit\Action;
 
 use Oro\Bundle\PaymentBundle\Action\PaymentTransactionCaptureAction;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
+use Oro\Bundle\PaymentBundle\Method\Action\CaptureActionInterface;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Symfony\Component\PropertyAccess\PropertyPath;
 
@@ -40,7 +41,7 @@ class PaymentTransactionCaptureActionTest extends AbstractActionTest
             $responseValue = $this->throwException($data['response']);
         }
 
-        /** @var PaymentMethodInterface|\PHPUnit_Framework_MockObject_MockObject $paymentMethod */
+        /** @var PaymentMethodInterface|\PHPUnit\Framework\MockObject\MockObject $paymentMethod */
         $paymentMethod = $this->createMock(PaymentMethodInterface::class);
         $paymentMethod->expects(static::once())
             ->method('execute')
@@ -48,13 +49,11 @@ class PaymentTransactionCaptureActionTest extends AbstractActionTest
             ->will($responseValue);
 
         $this->paymentMethodProvider
-            ->expects(static::once())
             ->method('hasPaymentMethod')
             ->with($authorizationPaymentTransaction->getPaymentMethod())
             ->willReturn(true);
 
         $this->paymentMethodProvider
-            ->expects(static::once())
             ->method('getPaymentMethod')
             ->with($authorizationPaymentTransaction->getPaymentMethod())
             ->willReturn($paymentMethod);
@@ -170,5 +169,84 @@ class PaymentTransactionCaptureActionTest extends AbstractActionTest
             $this->paymentTransactionProvider,
             $this->router
         );
+    }
+
+    public function testExecuteFailedWhenPaymentMethodNotExists()
+    {
+        $context = [];
+        $options = [
+            'paymentTransaction' => new PaymentTransaction(),
+            'attribute' => new PropertyPath('test'),
+            'transactionOptions' => [
+                'testOption' => 'testOption',
+            ],
+        ];
+
+        $this->paymentMethodProvider->expects($this->once())->method('hasPaymentMethod')->willReturn(false);
+        $this->contextAccessor->method('getValue')->will($this->returnArgument(1));
+
+        $this->contextAccessor
+            ->expects($this->once())
+            ->method('setValue')
+            ->with(
+                $context,
+                $options['attribute'],
+                [
+                    'transaction' => null,
+                    'successful' => false,
+                    'message' => 'oro.payment.message.error',
+                    'testOption' => 'testOption',
+                ]
+            );
+
+        $this->action->initialize($options);
+        $this->action->execute($context);
+    }
+
+    public function testUseSourcePaymentTransaction()
+    {
+        $context = [];
+        $paymentTransaction = new PaymentTransaction();
+        $paymentTransaction
+            ->setSuccessful(true)
+            ->setActive(true);
+        $options = [
+            'paymentTransaction' => $paymentTransaction,
+            'attribute' => new PropertyPath('test'),
+            'transactionOptions' => [
+                'testOption' => 'testOption',
+            ],
+        ];
+
+        $paymentMethod = $this->createMock([PaymentMethodInterface::class, CaptureActionInterface::class]);
+        $paymentMethod->expects($this->once())->method('useSourcePaymentTransaction')->willReturn(true);
+        $paymentMethod->expects(static::once())
+            ->method('execute')
+            ->with(PaymentMethodInterface::CAPTURE, $paymentTransaction)
+            ->willReturn(['testResponse' => 'testResponse']);
+        $this->paymentMethodProvider->method('hasPaymentMethod')->willReturn(true);
+        $this->paymentMethodProvider->method('getPaymentMethod')->willReturn($paymentMethod);
+        $this->paymentTransactionProvider
+            ->expects($this->never())
+            ->method('createPaymentTransactionByParentTransaction');
+        $this->contextAccessor->method('getValue')->will($this->returnArgument(1));
+
+        $this->contextAccessor
+            ->expects($this->once())
+            ->method('setValue')
+            ->with(
+                $context,
+                $options['attribute'],
+                [
+                    'transaction' => null,
+                    'successful' => true,
+                    'message' => null,
+                    'testOption' => 'testOption',
+                    'testResponse' => 'testResponse',
+                ]
+            );
+
+        $this->action->initialize($options);
+        $this->action->execute($context);
     }
 }

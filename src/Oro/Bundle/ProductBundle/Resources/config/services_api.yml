@@ -16,20 +16,16 @@ services:
     oro_product.api.create.related_product.security_check:
         class: Oro\Bundle\ProductBundle\Api\Processor\RelatedItemSecurityCheck
         arguments:
-            - '@security.authorization_checker'
-            - '@oro_security.acl.group_provider.chain'
+            - '@oro_api.security.authorization_checker'
             - ['VIEW', 'EDIT']
-            - ['oro_related_products_edit']
         tags:
             - { name: oro.api.processor, action: create, group: security_check, class: '%oro_product.entity.related_product.class%', priority: 100}
 
     oro_product.api.delete.related_product.security_check:
         class: Oro\Bundle\ProductBundle\Api\Processor\RelatedItemSecurityCheck
         arguments:
-            - '@security.authorization_checker'
-            - '@oro_security.acl.group_provider.chain'
+            - '@oro_api.security.authorization_checker'
             - ['EDIT']
-            - ['oro_related_products_edit']
         tags:
             - { name: oro.api.processor, action: delete, group: security_check, class: '%oro_product.entity.related_product.class%', priority: 100}
             - { name: oro.api.processor, action: delete_list, group: security_check, class: '%oro_product.entity.related_product.class%', priority: 100}
@@ -37,14 +33,11 @@ services:
     oro_product.api.get.related_product.security_check:
         class: Oro\Bundle\ProductBundle\Api\Processor\RelatedItemSecurityCheck
         arguments:
-            - '@security.authorization_checker'
-            - '@oro_security.acl.group_provider.chain'
+            - '@oro_api.security.authorization_checker'
             - ['VIEW']
-            - ['oro_related_products_edit']
         tags:
             - { name: oro.api.processor, action: get, group: security_check, class: '%oro_product.entity.related_product.class%', priority: 100}
             - { name: oro.api.processor, action: get_list, group: security_check, class: '%oro_product.entity.related_product.class%', priority: 100}
-
 
     oro_product.api.create.add_related_product:
         class: Oro\Bundle\ProductBundle\Api\Processor\Create\AddRelatedProduct
@@ -54,8 +47,8 @@ services:
         tags:
             - { name: oro.api.processor, action: create, group: save_data, class: '%oro_product.entity.related_product.class%', priority: 100}
 
-    oro_product.related_product.processor.acl_query:
-        class: Oro\Bundle\ProductBundle\Api\Processor\Shared\RelatedItemAclCheck
+    oro_product.api.get.related_product.acl_query:
+        class: Oro\Bundle\ProductBundle\Api\Processor\RelatedItemAclCheck
         arguments: ['@oro_api.entity_serializer.doctrine_helper']
         tags:
             - { name: oro.api.processor, action: get, group: build_query, class: '%oro_product.entity.related_product.class%', priority: -200}
@@ -77,8 +70,8 @@ services:
         tags:
             - { name: oro.api.processor, action: delete, group: load_data, class: '%oro_product.entity.related_product.class%', priority: 0 }
 
-    oro_product.related_product.processor.delete_acl_query:
-        class: Oro\Bundle\ProductBundle\Api\Processor\Delete\DeleteRelatedItemAclCheck
+    oro_product.api.delete.related_product.acl_query:
+        class: Oro\Bundle\ProductBundle\Api\Processor\Delete\RelatedItemAclCheck
         arguments: ['@oro_api.entity_serializer.doctrine_helper']
         calls:
             - [setAclHelper, ['@oro_security.acl_helper']]
@@ -86,8 +79,8 @@ services:
             - { name: oro.api.processor, action: delete, group: load_data, class: '%oro_product.entity.related_product.class%', priority: 5}
             - { name: oro.api.processor, action: delete_list, group: build_query, class: '%oro_product.entity.related_product.class%', priority: -200}
 
-    oro_product.api.shared.add_image_path:
-        class: Oro\Bundle\ProductBundle\Api\Processor\Shared\ProcessImagePaths
+    oro_product.api.add_image_path_to_file:
+        class: Oro\Bundle\ProductBundle\Api\Processor\AddImagePathToFile
         arguments:
             - '@oro_attachment.manager'
             - '@oro_api.doctrine_helper'

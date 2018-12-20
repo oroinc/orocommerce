@@ -7,7 +7,7 @@ use Oro\Bundle\WebsiteSearchBundle\Engine\AsyncMessaging\ReindexMessageGranulari
 use Oro\Bundle\WebsiteSearchBundle\Engine\Context\ContextTrait;
 use Oro\Bundle\WebsiteSearchBundle\Entity\Repository\EntityIdentifierRepository;
 
-class ReindexMessageGranularizerTest extends \PHPUnit_Framework_TestCase
+class ReindexMessageGranularizerTest extends \PHPUnit\Framework\TestCase
 {
     const IDS_FROM_REPOSITORY = [11, 23];
 
@@ -24,7 +24,7 @@ class ReindexMessageGranularizerTest extends \PHPUnit_Framework_TestCase
     private $testable;
 
     /**
-     * @var EntityIdentifierRepository|\PHPUnit_Framework_MockObject_MockObject
+     * @var EntityIdentifierRepository|\PHPUnit\Framework\MockObject\MockObject
      */
     private $identifierRepository;
 

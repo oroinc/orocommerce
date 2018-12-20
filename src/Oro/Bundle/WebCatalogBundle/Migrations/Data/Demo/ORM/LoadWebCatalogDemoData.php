@@ -28,6 +28,9 @@ use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Yaml\Yaml;
 
+/**
+ * Web catalog demo data
+ */
 class LoadWebCatalogDemoData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
 {
     use UserUtilityTrait;
@@ -167,6 +170,13 @@ class LoadWebCatalogDemoData extends AbstractFixture implements ContainerAwareIn
 
             if (isset($contentNode['children'])) {
                 $this->loadContentNodes($manager, $webCatalog, $contentNode['children'], $node);
+            }
+
+            if (isset($contentNode['isNavigationRoot'])) {
+                $configManager = $this->container->get('oro_config.global');
+                $configManager->set(OroWebCatalogExtension::ALIAS . '.navigation_root', $node->getId());
+
+                $configManager->flush();
             }
         }
     }

@@ -5,7 +5,7 @@ layout:
         - '@setBlockTheme':
             themes:
                 - 'OroCheckoutBundle:layouts:default/oro_checkout_frontend_checkout/templates/right_buttons.html.twig'
-                - '../templates/approve_request.html.twig'
+                - 'OroAlternativeCheckoutBundle:layouts:default/oro_checkout_frontend_checkout/templates/approve_request.html.twig'
 
         - '@setOption':
             id: checkout_information_title

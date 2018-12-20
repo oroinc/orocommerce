@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Form\Type;
 
+use Oro\Bundle\FormBundle\Form\Type\OroHiddenNumberType;
+use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderDiscount;
 use Oro\Bundle\OrderBundle\Form\Type\OrderDiscountItemType;
@@ -24,7 +26,7 @@ class OrderDiscountItemTypeTest extends FormIntegrationTestCase
     protected $formType;
 
     /**
-     * @var TotalHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var TotalHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $totalHelper;
 
@@ -36,15 +38,10 @@ class OrderDiscountItemTypeTest extends FormIntegrationTestCase
         parent::setUp();
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(OrderDiscountItemType::NAME, $this->formType->getName());
-    }
-
     public function testBuildView()
     {
         $view = new FormView();
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock('Symfony\Component\Form\FormInterface');
 
         $options = [
@@ -133,9 +130,17 @@ class OrderDiscountItemTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
+        $numberFormatter = $this->createMock(NumberFormatter::class);
+
         return [
-            new PreloadedExtension([$this->formType], []),
-            new ValidatorExtension(Validation::createValidator())
+            new ValidatorExtension(Validation::createValidator()),
+            new PreloadedExtension(
+                [
+                    $this->formType,
+                    OroHiddenNumberType::class => new OroHiddenNumberType($numberFormatter),
+                ],
+                []
+            )
         ];
     }
 }

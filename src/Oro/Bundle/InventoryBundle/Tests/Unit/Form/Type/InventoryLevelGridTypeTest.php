@@ -27,12 +27,12 @@ class InventoryLevelGridTypeTest extends FormIntegrationTestCase
     protected $type;
 
     /**
-     * @var FormFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var FormFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $formFactory;
 
     /**
-     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $doctrineHelper;
 
@@ -58,11 +58,6 @@ class InventoryLevelGridTypeTest extends FormIntegrationTestCase
                 DataChangesetType::class => new DataChangesetType()
             ], [])
         ];
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals(InventoryLevelGridType::NAME, $this->type->getName());
     }
 
     public function testGetParent()

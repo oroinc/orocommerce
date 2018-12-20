@@ -44,7 +44,7 @@ use Symfony\Component\Validator\Validation;
 
 class CategoryFormExtensionTest extends FormIntegrationTestCase
 {
-    /** @var CategoryFormExtension|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var CategoryFormExtension|\PHPUnit\Framework\MockObject\MockObject */
     protected $categoryFormExtension;
 
     protected function setUp()
@@ -62,18 +62,18 @@ class CategoryFormExtensionTest extends FormIntegrationTestCase
         /** @var ManagerRegistry $registry */
         $registry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
 
-        /** @var VisibilityPostSetDataListener|\PHPUnit_Framework_MockObject_MockObject $postSetDataListener */
+        /** @var VisibilityPostSetDataListener|\PHPUnit\Framework\MockObject\MockObject $postSetDataListener */
         $postSetDataListener = $this->getMockBuilder(
             'Oro\Bundle\VisibilityBundle\Form\EventListener\VisibilityPostSetDataListener'
         )
             ->disableOriginalConstructor()
             ->getMock();
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|VisibilityChoicesProvider $visibilityChoicesProvider */
-        $visibilityChoicesProvider = $this
-            ->getMockBuilder('Oro\Bundle\VisibilityBundle\Provider\VisibilityChoicesProvider')
-            ->disableOriginalConstructor()
-            ->getMock();
+        /** @var \PHPUnit\Framework\MockObject\MockObject|VisibilityChoicesProvider $visibilityChoicesProvider */
+        $visibilityChoicesProvider = $this->createMock(VisibilityChoicesProvider::class);
+        $visibilityChoicesProvider->expects($this->any())
+            ->method('getFormattedChoices')
+            ->willReturn([]);
 
         /** @var CategoryDefaultProductUnitOptionsVisibilityInterface $defaultProductOptionsVisibility */
         $defaultProductOptionsVisibility = $this

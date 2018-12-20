@@ -26,8 +26,8 @@ class CategoryPageVariantType extends AbstractType
                 [
                     'label' => 'oro.catalog.subcategory.form.exclude_subcategories.label',
                     'choices' => [
-                        'oro.catalog.subcategory.form.exclude_subcategories.include.label',
-                        'oro.catalog.subcategory.form.exclude_subcategories.exclude.label',
+                        'oro.catalog.subcategory.form.exclude_subcategories.include.label' => 0,
+                        'oro.catalog.subcategory.form.exclude_subcategories.exclude.label' => 1,
                     ],
                     'required' => true,
                     'tooltip' => 'oro.catalog.subcategory.form.exclude_subcategories.tooltip',

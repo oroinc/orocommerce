@@ -5,7 +5,7 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Event;
 use Oro\Bundle\ShippingBundle\Event\ShippingMethodConfigDataEvent;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-class ShippingMethodConfigDataEventTest extends \PHPUnit_Framework_TestCase
+class ShippingMethodConfigDataEventTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 

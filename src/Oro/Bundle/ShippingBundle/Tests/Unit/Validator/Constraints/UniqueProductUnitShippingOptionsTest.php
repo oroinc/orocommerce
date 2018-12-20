@@ -10,12 +10,12 @@ use Oro\Bundle\ShippingBundle\Validator\Constraints\UniqueProductUnitShippingOpt
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
-class UniqueProductUnitShippingOptionsTest extends \PHPUnit_Framework_TestCase
+class UniqueProductUnitShippingOptionsTest extends \PHPUnit\Framework\TestCase
 {
     /** @var UniqueProductUnitShippingOptions */
     protected $constraint;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|ExecutionContextInterface */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|ExecutionContextInterface */
     protected $context;
 
     /** @var UniqueProductUnitShippingOptionsValidator */
@@ -96,17 +96,17 @@ class UniqueProductUnitShippingOptionsTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param string $code
-     * @return ProductShippingOptions|\PHPUnit_Framework_MockObject_MockObject
+     * @return ProductShippingOptions|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function createProductShippingOptions($code)
     {
-        /** @var ProductUnit|\PHPUnit_Framework_MockObject_MockObject $unit */
+        /** @var ProductUnit|\PHPUnit\Framework\MockObject\MockObject $unit */
         $unit = $this->getMockBuilder('Oro\Bundle\ProductBundle\Entity\ProductUnit')
             ->disableOriginalConstructor()
             ->getMock();
         $unit->expects($this->atLeastOnce())->method('getCode')->willReturn($code);
 
-        /** @var ProductShippingOptions|\PHPUnit_Framework_MockObject_MockObject $option */
+        /** @var ProductShippingOptions|\PHPUnit\Framework\MockObject\MockObject $option */
         $option = $this->getMockBuilder('Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions')
             ->disableOriginalConstructor()
             ->getMock();

@@ -7,12 +7,20 @@ use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
 use Oro\Bundle\PricingBundle\Entity\BasePriceListRelation;
 use Oro\Bundle\PricingBundle\Filter\PriceListsFilter;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
-abstract class AbstractPriceListRelationDataGridListener
+/**
+ * Adds price list column and filter
+ * Adds price list data to selected records
+ */
+abstract class AbstractPriceListRelationDataGridListener implements FeatureToggleableInterface
 {
+    use FeatureCheckerHolderTrait;
+
     const PRICE_LIST_KEY = 'price_list';
 
     /**
@@ -33,6 +41,10 @@ abstract class AbstractPriceListRelationDataGridListener
      */
     public function onBuildBefore(BuildBefore $event)
     {
+        if (!$this->isFeaturesEnabled()) {
+            return;
+        }
+
         $grid = $event->getDatagrid();
         $config = $grid->getConfig();
         $this->addPriceListColumn($config);
@@ -44,6 +56,10 @@ abstract class AbstractPriceListRelationDataGridListener
      */
     public function onResultAfter(OrmResultAfter $event)
     {
+        if (!$this->isFeaturesEnabled()) {
+            return;
+        }
+
         /** @var ResultRecord[] $records */
         $records = $event->getRecords();
         $priceListHoldersIds = [];
@@ -91,7 +107,7 @@ abstract class AbstractPriceListRelationDataGridListener
                     'field_options' => [
                         'multiple' => false,
                         'class' => 'Oro\Bundle\PricingBundle\Entity\PriceList',
-                        'property' => 'name'
+                        'choice_label' => 'name'
                     ]
                 ]
             ]

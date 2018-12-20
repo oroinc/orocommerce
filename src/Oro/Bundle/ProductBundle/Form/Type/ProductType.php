@@ -27,6 +27,9 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
+/**
+ * The form type for Product entity
+ */
 class ProductType extends AbstractType
 {
     const NAME = 'oro_product';
@@ -185,13 +188,13 @@ class ProductType extends AbstractType
             )
             ->add('featured', ChoiceType::class, [
                 'label' => 'oro.product.featured.label',
-                'choices' => ['oro.product.featured.no', 'oro.product.featured.yes'],
+                'choices' => ['oro.product.featured.no' => 0, 'oro.product.featured.yes' => 1],
                 'placeholder' => false,
             ])
             ->add('newArrival', ChoiceType::class, [
                 'label' => 'oro.product.new_arrival.label',
                 'tooltip' => 'oro.product.form.tooltip.new_arrival',
-                'choices' => ['oro.product.new_arrival.no', 'oro.product.new_arrival.yes'],
+                'choices' => ['oro.product.new_arrival.no' => 0, 'oro.product.new_arrival.yes' => 1],
                 'placeholder' => false,
             ])
             ->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetDataListener'])
@@ -276,9 +279,11 @@ class ProductType extends AbstractType
         $product = $event->getData();
         $form = $event->getForm();
 
+        $primaryUnitPrecision = $product->getPrimaryUnitPrecision();
+
         // manual mapping
         $precisionForm = $form->get('primaryUnitPrecision');
-        if (empty($precisionForm->getData())) {
+        if (empty($precisionForm->getData()) && $primaryUnitPrecision instanceof ProductUnitPrecision) {
             // clone is required to prevent data modification by reference
             $precisionForm->setData(clone $product->getPrimaryUnitPrecision());
         }

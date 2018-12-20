@@ -16,7 +16,7 @@ services:
             - [addSkippedUrlPattern, ['/_wdt']]
             - [addSkippedUrlPattern, ['/_fragment']]
             - [addSkippedUrlPattern, ['/js/']]
-            - [addSkippedUrlPattern, ['/api/']]
+            - [addSkippedUrlPattern, ['%oro_api.rest.prefix%']]
 
     oro_redirect.routing.slug_url_matcher:
         class: Oro\Bundle\RedirectBundle\Routing\SlugUrlMatcher
@@ -43,15 +43,11 @@ services:
             - '%oro_catalog.entity.category.class%'
             - "@doctrine.orm.entity_manager"
 
-    oro_redirect.security.firewall_factory:
-        class: Oro\Bundle\RedirectBundle\Security\FirewallFactory
-
-    security.firewall:
+    oro_redirect.security.firewall:
         class: Oro\Bundle\RedirectBundle\Security\Firewall
         arguments:
             - "@security.firewall.map"
             - "@event_dispatcher"
-            - "@oro_redirect.security.firewall_factory"
             - "@oro_redirect.routing.matched_url_decision_maker"
             - "@router.request_context"
         tags:
@@ -115,6 +111,7 @@ services:
             - '@oro_redirect.generator.unique_slug_resolver'
             - '@oro_redirect.generator.redirect'
             - '@oro_redirect.url_cache'
+            - '@oro_frontend_localization.manager.user_localization'
 
     oro_redirect.generator.redirect:
         class: Oro\Bundle\RedirectBundle\Generator\RedirectGenerator
@@ -145,7 +142,6 @@ services:
             - '@doctrine'
             - '@oro_redirect.generator.slug_entity'
             - '@oro_redirect.direct_url_message_factory'
-            - '@oro_entity.database_exception_helper'
             - '@logger'
             - '@oro_redirect.url_cache'
         tags:
@@ -175,7 +171,6 @@ services:
         arguments:
            - '@doctrine'
            - '@logger'
-           - '@oro_entity.database_exception_helper'
         tags:
             - { name: 'oro_message_queue.client.message_processor' }
 
@@ -259,6 +254,7 @@ services:
             - '@oro_redirect.url_provider'
             - '@oro_redirect.provider.context_url_provider_registry'
             - '@oro_frontend_localization.manager.user_localization'
+            - '@oro_config.manager'
 
     oro_redirect.provider.sluggable_url_cache:
         public: false

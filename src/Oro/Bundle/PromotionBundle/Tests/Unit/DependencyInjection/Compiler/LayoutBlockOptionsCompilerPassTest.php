@@ -6,7 +6,7 @@ use Oro\Bundle\PromotionBundle\DependencyInjection\Compiler\LayoutBlockOptionsCo
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 
-class LayoutBlockOptionsCompilerPassTest extends \PHPUnit_Framework_TestCase
+class LayoutBlockOptionsCompilerPassTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var LayoutBlockOptionsCompilerPass
@@ -20,7 +20,7 @@ class LayoutBlockOptionsCompilerPassTest extends \PHPUnit_Framework_TestCase
 
     public function testProcessWithoutDefinition()
     {
-        /** @var ContainerBuilder|\PHPUnit_Framework_MockObject_MockObject $container */
+        /** @var ContainerBuilder|\PHPUnit\Framework\MockObject\MockObject $container */
         $container = $this->createMock(ContainerBuilder::class);
 
         $container->expects($this->exactly(2))
@@ -38,7 +38,7 @@ class LayoutBlockOptionsCompilerPassTest extends \PHPUnit_Framework_TestCase
 
     public function testProcess()
     {
-        /** @var ContainerBuilder|\PHPUnit_Framework_MockObject_MockObject $container */
+        /** @var ContainerBuilder|\PHPUnit\Framework\MockObject\MockObject $container */
         $container = $this->createMock(ContainerBuilder::class);
 
         $options = [
@@ -74,9 +74,9 @@ class LayoutBlockOptionsCompilerPassTest extends \PHPUnit_Framework_TestCase
     /**
      * @param array $methods
      * @param array $options
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
-    private function getDefinitionMock(array $methods, array $options): \PHPUnit_Framework_MockObject_MockObject
+    private function getDefinitionMock(array $methods, array $options): \PHPUnit\Framework\MockObject\MockObject
     {
         $shoppingListDefinition = $this->createMock(Definition::class);
         $shoppingListDefinition->expects($this->once())

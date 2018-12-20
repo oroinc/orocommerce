@@ -12,8 +12,6 @@
         <echo>                      (clean prepare-reportdir run-code-standards)</echo>
         <echo> functional-tests     Run functional tests.</echo>
         <echo>                      (clean prepare install install-admin-fixture run-functional-tests)</echo>
-        <echo> selenium-tests       Run Selenium tests.</echo>
-        <echo>                      (clean prepare install install-admin-fixture install-test-fixtures run-selenium-tests)</echo>
         <echo/>
         <echo>Build artifacts are created within the "build" directory. All normally</echo>
         <echo>generated reports and logs can be found in "build/reports"</echo>
@@ -196,9 +194,6 @@
     <target name="functional-tests" description="Run functional tests."
             depends="clean,prepare,install,install-admin-fixture,run-functional-tests"/>
 
-    <target name="selenium-tests" description="Run Selenium tests."
-            depends="clean,prepare,install,install-admin-fixture,install-test-fixtures,run-selenium-tests"/>
-
     <!-- END High Level Targets -->
 
 
@@ -290,7 +285,7 @@
         <for list="${run.env}" param="iterate">
             <sequential>
                 <exec dir="${basedir}" executable="php" failonerror="true">
-                    <arg line="app/console"/>
+                    <arg line="bin/console"/>
                     <arg line="doctrine:fixture:load"/>
                     <arg line="--no-debug"/>
                     <arg line="--append"/>
@@ -306,7 +301,7 @@
         <for list="${run.env}" param="iterate">
             <sequential>
                 <exec dir="${basedir}" executable="php" failonerror="true">
-                    <arg line="app/console"/>
+                    <arg line="bin/console"/>
                     <arg line="oro:migration:data:load"/>
                     <arg line="--fixtures-type=demo"/>
                     <arg line="--bundles=AcmeDemoGridBundle"/>
@@ -407,7 +402,7 @@
                 </else>
             </if>
             <exec dir="${basedir}" executable="php" failonerror="true">
-                <arg line="app/console oro:install"/>
+                <arg line="bin/console oro:install"/>
                 <arg line="--env=@{env}"/>
                 <arg line="--user-name=@{user-name}"/>
                 <arg line="--user-email=&quot;@{user-email}&quot;"/>
@@ -544,10 +539,6 @@
 
     <target name="run-functional-tests" extensionOf="run-all-tests">
         <phpunit suite="${testsuite}" defaultsuite="Project Functional Tests"/>
-    </target>
-
-    <target name="run-selenium-tests" extensionOf="run-all-tests">
-        <phpunit suite="${testsuite}" defaultsuite="Project Selenium Tests"/>
     </target>
 
     <!-- Check code standards -->

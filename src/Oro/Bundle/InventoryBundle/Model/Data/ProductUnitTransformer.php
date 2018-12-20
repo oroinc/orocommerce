@@ -30,7 +30,7 @@ class ProductUnitTransformer
     {
         $unit = Inflector::singularize($unit);
 
-        foreach ($this->getUnits() as $code => $name) {
+        foreach ($this->getUnits() as $name => $code) {
             if ($unit == $name) {
                 return $code;
             }

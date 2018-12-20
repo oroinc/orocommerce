@@ -6,9 +6,9 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Layout\DataProvider\ProductVariantProvider;
 use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
 
-class ProductVariantProviderTest extends \PHPUnit_Framework_TestCase
+class ProductVariantProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var ProductVariantAvailabilityProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ProductVariantAvailabilityProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $availabilityProvider;
 
     /** @var ProductVariantProvider */

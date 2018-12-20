@@ -4,28 +4,17 @@ namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\WebsiteSearchBundle\Provider\ResourcesHashProvider;
 use Oro\Component\Config\CumulativeResourceInfo;
+use Oro\Component\Testing\TempDirExtension;
 
-class ResourcesHashProviderTest extends \PHPUnit_Framework_TestCase
+class ResourcesHashProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var string[] */
-    protected $tempFiles;
-
-    protected function setUp()
-    {
-        $this->tempFiles = [];
-    }
-
-    protected function tearDown()
-    {
-        foreach ($this->tempFiles as $tempFile) {
-            unlink($tempFile);
-        }
-    }
+    use TempDirExtension;
 
     public function testGetHash()
     {
-        $resource1 = $this->createResource();
-        $resource2 = $this->createResource();
+        $tempDir = $this->getTempDir('website-search');
+        $resource1 = $this->createResource($tempDir);
+        $resource2 = $this->createResource($tempDir);
 
         $pathsAndTimes = sprintf(
             '%s%d_%s%d',
@@ -44,21 +33,8 @@ class ResourcesHashProviderTest extends \PHPUnit_Framework_TestCase
     /**
      * @return CumulativeResourceInfo
      */
-    private function createResource()
+    private function createResource(string $tempDir)
     {
-        return new CumulativeResourceInfo('', '', $this->createTempFile());
-    }
-
-    /**
-     * Create temp file
-     *
-     * @return string
-     */
-    private function createTempFile()
-    {
-        $fileName = tempnam(sys_get_temp_dir(), 'website-search');
-        $this->tempFiles[] = $fileName;
-
-        return $fileName;
+        return new CumulativeResourceInfo('', '', tempnam($tempDir, 'resource'));
     }
 }

@@ -13,15 +13,15 @@ use Oro\Bundle\WorkflowBundle\Resolver\TransitionOptionsResolver;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class TransitionFormProviderTest extends \PHPUnit_Framework_TestCase
+class TransitionFormProviderTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|\stdClass|TransitionProvider
+     * @var \PHPUnit\Framework\MockObject\MockObject|\stdClass|TransitionProvider
      */
     protected $transitionProvider;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|FormFactoryInterface
+     * @var \PHPUnit\Framework\MockObject\MockObject|FormFactoryInterface
      */
     protected $formFactory;
 
@@ -34,7 +34,7 @@ class TransitionFormProviderTest extends \PHPUnit_Framework_TestCase
     {
         $this->transitionProvider = $this->createMock(TransitionProvider::class);
         $this->formFactory = $this->createMock(FormFactoryInterface::class);
-        /** @var UrlGeneratorInterface|\PHPUnit_Framework_MockObject_MockObject $router */
+        /** @var UrlGeneratorInterface|\PHPUnit\Framework\MockObject\MockObject $router */
         $router = $this->createMock(UrlGeneratorInterface::class);
 
         $this->provider = new TransitionFormProvider($this->formFactory, $router);
@@ -73,7 +73,6 @@ class TransitionFormProviderTest extends \PHPUnit_Framework_TestCase
                     'workflow_item' => $workflowItem,
                     'transition_name' => 'transition3',
                     'attribute_fields' => ['test' => null],
-                    'disabled' => false,
                     'allow_extra_fields' => true,
                 ]
             )

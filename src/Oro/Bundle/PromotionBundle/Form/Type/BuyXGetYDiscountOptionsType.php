@@ -112,7 +112,7 @@ class BuyXGetYDiscountOptionsType extends AbstractType
     {
         $choices = [];
         foreach (self::APPLY_TO_FIELD_CHOICES as $item) {
-            $choices[$item] = 'oro.discount_options.buy_x_get_y_type.apply_to.choices.' . $item;
+            $choices['oro.discount_options.buy_x_get_y_type.apply_to.choices.' . $item] = $item;
         }
 
         return $choices;

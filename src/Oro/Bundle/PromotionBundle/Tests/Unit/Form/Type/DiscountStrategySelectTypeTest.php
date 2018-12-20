@@ -8,10 +8,10 @@ use Oro\Bundle\PromotionBundle\Form\Type\DiscountStrategySelectType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class DiscountStrategySelectTypeTest extends \PHPUnit_Framework_TestCase
+class DiscountStrategySelectTypeTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var StrategyRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var StrategyRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     private $strategyRegistry;
 
@@ -29,11 +29,6 @@ class DiscountStrategySelectTypeTest extends \PHPUnit_Framework_TestCase
         $this->formType = new DiscountStrategySelectType($this->strategyRegistry);
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(DiscountStrategySelectType::NAME, $this->formType->getName());
-    }
-
     public function testGetParent()
     {
         $this->assertEquals(ChoiceType::class, $this->formType->getParent());
@@ -49,11 +44,13 @@ class DiscountStrategySelectTypeTest extends \PHPUnit_Framework_TestCase
             ->method('getStrategies')
             ->willReturn(['test' => $strategy]);
 
-        /* @var $resolver OptionsResolver|\PHPUnit_Framework_MockObject_MockObject */
+        /* @var $resolver OptionsResolver|\PHPUnit\Framework\MockObject\MockObject */
         $resolver = $this->createMock(OptionsResolver::class);
         $resolver->expects($this->once())
-            ->method('setDefault')
-            ->with('choices', ['test' => 'test_strategy']);
+            ->method('setDefaults')
+            ->with([
+                'choices' => ['test_strategy' => 'test'],
+            ]);
 
         $this->formType->configureOptions($resolver);
     }

@@ -16,6 +16,9 @@ use Oro\Bundle\TestFrameworkBundle\Behat\Element\Table;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\TableRow;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
 
+/**
+ * The context for testing Shopping List related features.
+ */
 class FeatureContext extends OroFeatureContext implements OroPageObjectAware, KernelAwareContext
 {
     use PageObjectDictionary, KernelDictionary;
@@ -70,6 +73,33 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
+     * Finds the delete button for a line item by its row number for the given shopping list and clicks it.
+     *
+     * Example: When I delete line item 1 in "Shopping List Line Items Table"
+     *
+     * @param integer   $itemPosition
+     * @param string    $shoppingList
+     *
+     * @When I delete line item :itemPosition in :shoppingList
+     */
+    public function iClickDeleteLineItemNumberIn($itemPosition, $shoppingList)
+    {
+        /** @var Table $shoppingListItemsTableElement */
+        $shoppingListItemsTableElement = $this->elementFactory->createElement($shoppingList);
+        self::assertTrue(
+            $shoppingListItemsTableElement->isValid(),
+            sprintf('Element "%s" was not found', $shoppingList)
+        );
+
+        $rows = $this->getShoppingListLineItemsTableDirectRows($shoppingListItemsTableElement);
+        /** @var TableRow $row */
+        $row = $rows[$itemPosition - 1];
+        $button = $row->find('css', 'button');
+
+        $button->click();
+    }
+
+    /**
      * @param string    $shoppingList
      * @param TableNode $table
      *
@@ -79,6 +109,10 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     {
         /** @var Table $shoppingListItemsTableElement */
         $shoppingListItemsTableElement = $this->elementFactory->createElement($shoppingList);
+        self::assertTrue(
+            $shoppingListItemsTableElement->isValid(),
+            sprintf('Element "%s" was not found', $shoppingList)
+        );
 
         $rows = $this->getShoppingListLineItemsTableDirectRows($shoppingListItemsTableElement);
 
@@ -95,6 +129,22 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
                 )
             );
         }
+    }
+
+    /**
+     * @When /^(?:|I )should see following header in shopping list line items table:$/
+     *
+     * @param TableNode $table
+     */
+    public function iShouldSeeFollowingColumns(TableNode $table)
+    {
+        $rows = $table->getRows();
+        self::assertNotEmpty($rows);
+
+        /* @var $element ShoppingListElement */
+        $element = $this->createElement('ShoppingList');
+
+        self::assertEquals(reset($rows), $element->getLineItemsHeader());
     }
 
     /**
@@ -150,7 +200,12 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      */
     private function getLineItemUnit(TableRow $tableRowElement)
     {
-        return $tableRowElement->find('css', '.select2-chosen')->getText();
+        $select = $tableRowElement->find('css', '.select2-chosen');
+        if ($select) {
+            return $select->getText();
+        } else {
+            return $tableRowElement->find('css', '.product__static-unit')->getText();
+        }
     }
 
     /**
@@ -217,5 +272,20 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     public function iOpenShoppingListWidget()
     {
         $this->createElement('ShoppingListWidget')->click();
+    }
+
+    /**
+     * Opens shopping list from widget
+     * Example: And I click "Shopping List 1" on shopping list widget
+     *
+     * @Given /^(?:|I )click "(?P<name>[\w\s]*)" on shopping list widget$/
+     */
+    public function iClickShoppingListOnListsDropdown($name)
+    {
+        $widget = $this->createElement('ShoppingListWidgetContainer');
+        $link = $widget->find('xpath', "//span[@data-role='shopping-list-title'][text()='{$name}']");
+
+        self::assertNotNull($link, sprintf('"%s" list item was found in shopping list widget', $name));
+        $link->click();
     }
 }

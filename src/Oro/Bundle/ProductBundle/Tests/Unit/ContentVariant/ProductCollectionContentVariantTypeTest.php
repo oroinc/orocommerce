@@ -9,12 +9,12 @@ use Oro\Component\Routing\RouteData;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
-class ProductCollectionContentVariantTypeTest extends \PHPUnit_Framework_TestCase
+class ProductCollectionContentVariantTypeTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var AuthorizationCheckerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var AuthorizationCheckerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $authorizationChecker;
 
@@ -28,11 +28,6 @@ class ProductCollectionContentVariantTypeTest extends \PHPUnit_Framework_TestCas
         $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
 
         $this->type = new ProductCollectionContentVariantType($this->authorizationChecker);
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals('product_collection', $this->type->getName());
     }
 
     public function testGetTitle()

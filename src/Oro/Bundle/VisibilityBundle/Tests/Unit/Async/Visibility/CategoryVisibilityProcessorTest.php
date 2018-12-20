@@ -3,7 +3,6 @@
 namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Async\Visibility;
 
 use Doctrine\ORM\EntityManager;
-use Oro\Bundle\EntityBundle\ORM\DatabaseExceptionHelper;
 use Oro\Bundle\VisibilityBundle\Async\Visibility\CategoryVisibilityProcessor;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CategoryVisibilityResolved;
@@ -17,37 +16,32 @@ use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
-class CategoryVisibilityProcessorTest extends \PHPUnit_Framework_TestCase
+class CategoryVisibilityProcessorTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var RegistryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var RegistryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $registry;
 
     /**
-     * @var MessageFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var MessageFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $messageFactory;
 
     /**
-     * @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $logger;
 
     /**
-     * @var CacheBuilderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var CacheBuilderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $cacheBuilder;
 
     /**
-     * @var ProductMessageHandler|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProductMessageHandler|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $productMessageHandler;
-
-    /**
-     * @var DatabaseExceptionHelper|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $databaseExceptionHelper;
 
     /**
      * @var CategoryVisibilityProcessor
@@ -65,15 +59,11 @@ class CategoryVisibilityProcessorTest extends \PHPUnit_Framework_TestCase
         $this->productMessageHandler = $this->getMockBuilder(ProductMessageHandler::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->databaseExceptionHelper = $this->getMockBuilder(DatabaseExceptionHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
         $this->categoryVisibilityProcessor = new CategoryVisibilityProcessor(
             $this->registry,
             $this->messageFactory,
             $this->logger,
             $this->cacheBuilder,
-            $this->databaseExceptionHelper,
             $this->productMessageHandler
         );
         $this->categoryVisibilityProcessor->setResolvedVisibilityClassName(CategoryVisibilityResolved::class);
@@ -95,12 +85,12 @@ class CategoryVisibilityProcessorTest extends \PHPUnit_Framework_TestCase
             ->method('getManagerForClass')
             ->with(CategoryVisibilityResolved::class)
             ->willReturn($em);
-        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
+        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message **/
         $message = $this->createMock(MessageInterface::class);
         $message->expects($this->any())
             ->method('getBody')
             ->willReturn($body);
-        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
+        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session **/
         $session = $this->createMock(SessionInterface::class);
         $visibilityEntity = new CategoryVisibility();
         $this->messageFactory->expects($this->once())

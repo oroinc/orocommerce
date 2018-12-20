@@ -16,7 +16,7 @@ use Oro\Component\Testing\Unit\PreloadedExtension;
 class OrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
 {
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ProductUnitsProvider
+     * @var \PHPUnit\Framework\MockObject\MockObject|ProductUnitsProvider
      */
     protected $productUnitsProvider;
 
@@ -68,11 +68,6 @@ class OrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
     public function getFormType()
     {
         return new OrderLineItemType($this->productUnitsProvider);
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals(OrderLineItemType::NAME, $this->formType->getName());
     }
 
     /**

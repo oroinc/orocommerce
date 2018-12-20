@@ -67,7 +67,8 @@ class ShoppingListControllerTest extends WebTestCase
 
         /** @var ShoppingList $currentShoppingList */
         $currentShoppingList = $this->getReference(LoadShoppingListACLData::SHOPPING_LIST_ACC_1_USER_BASIC);
-        $this->getContainer()->get('oro_shopping_list.shopping_list.manager')->setCurrent($user, $currentShoppingList);
+        $this->getContainer()->get('oro_shopping_list.manager.current_shopping_list')
+            ->setCurrent($user, $currentShoppingList);
 
         // assert current shopping list
         $crawler = $this->client->request(
@@ -164,10 +165,10 @@ class ShoppingListControllerTest extends WebTestCase
             'no price for selected unit' => [
                 'shoppingList' => LoadShoppingLists::SHOPPING_LIST_5,
                 'expectedLineItemPrice' => [
-                    'N/A',
+                    'Price for requested quantity is not available',
                     '$0.00',
-                    'N/A',
-                    'N/A',
+                    'Price for requested quantity is not available',
+                    'Price for requested quantity is not available',
                 ],
                 'atLeastOneAvailableProduct' => true,
             ],
@@ -203,7 +204,7 @@ class ShoppingListControllerTest extends WebTestCase
 
         $this->assertContains('Create Order', $crawler->html());
 
-        $this->assertLineItemPriceEquals('N/A', $crawler);
+        $this->assertLineItemPriceEquals('Price for requested quantity is not available', $crawler);
     }
 
     public function testQuickAdd()
@@ -212,8 +213,6 @@ class ShoppingListControllerTest extends WebTestCase
             'Waiting for new quick order page to be finished'
         );
 
-        $shoppingListManager = $this->getContainer()
-            ->get('oro_shopping_list.shopping_list.manager');
         $crawler = $this->client->request('GET', $this->getUrl('oro_product_frontend_quick_add'));
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
@@ -226,7 +225,8 @@ class ShoppingListControllerTest extends WebTestCase
         ]];
 
         /** @var ShoppingList $currentShoppingList */
-        $currentShoppingList = $shoppingListManager->getForCurrentUser();
+        $currentShoppingList = $this->getContainer()->get('oro_shopping_list.manager.current_shopping_list')
+            ->getForCurrentUser();
 
         $this->assertQuickAddFormSubmitted($crawler, $products);//add to current
         $this->assertShoppingListItemSaved($currentShoppingList, $product->getSku(), 15);
@@ -419,10 +419,10 @@ class ShoppingListControllerTest extends WebTestCase
     protected function assertLineItemPriceEquals($expected, Crawler $crawler)
     {
         $expected = (array)$expected;
-        $prices = $crawler->filter('[data-name="price-value"]');
+        $prices = $crawler->filter('[data-name="prices-hint"]');
         $this->assertSameSize($expected, $prices);
         foreach ($prices as $value) {
-            $this->assertContains(trim($value->nodeValue), $expected);
+            $this->assertContains(trim($value->textContent), $expected);
         }
     }
 

@@ -13,6 +13,9 @@ use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Entity\ProductImageType;
 use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 
+/**
+ * Contains business specific methods for retrieving product entities.
+ */
 class ProductRepository extends EntityRepository
 {
     /**
@@ -168,19 +171,6 @@ class ProductRepository extends EntityRepository
     }
 
     /**
-     * @return QueryBuilder
-     *
-     * @deprecated Since 1.5 "name" is available as a column in product table
-     */
-    public function getProductWithNamesQueryBuilder()
-    {
-        $queryBuilder = $this->createQueryBuilder('product')
-            ->select('product');
-        $this->selectNames($queryBuilder);
-        return $queryBuilder;
-    }
-
-    /**
      * @param QueryBuilder $queryBuilder
      * @return $this
      *
@@ -330,7 +320,7 @@ class ProductRepository extends EntityRepository
 
     /**
      * @param array $ids
-     * @return Product[]
+     * @return array|Product[]
      */
     public function getProductsByIds(array $ids)
     {
@@ -338,19 +328,6 @@ class ProductRepository extends EntityRepository
             ->orderBy('p.id');
 
         return $queryBuilder->getQuery()->getResult();
-    }
-
-    /**
-     * @param QueryBuilder $queryBuilder
-     */
-    private function filterByImageType(QueryBuilder $queryBuilder)
-    {
-        $queryBuilder->addSelect('product_images, product_images_types, product_images_file')
-            ->join('product.images', 'product_images')
-            ->join('product_images.types', 'product_images_types')
-            ->join('product_images.image', 'product_images_file')
-            ->andWhere($queryBuilder->expr()->eq('product_images_types.type', ':imageType'))
-            ->setParameter('imageType', ProductImageType::TYPE_LISTING);
     }
 
     /**
@@ -428,6 +405,7 @@ class ProductRepository extends EntityRepository
             ->select('product')
             ->setMaxResults($quantity)
             ->orderBy('product.id', 'ASC');
+
         $this->filterByImageType($queryBuilder);
 
         return $queryBuilder;
@@ -443,6 +421,7 @@ class ProductRepository extends EntityRepository
     public function findByAttributeValue($type, $fieldName, $fieldValue, $isRelationField)
     {
         QueryBuilderUtil::checkIdentifier($fieldName);
+
         if ($isRelationField) {
             return $this->createQueryBuilder('p')
                 ->select('p')
@@ -459,6 +438,42 @@ class ProductRepository extends EntityRepository
                 $fieldName => $fieldValue
             ]);
         }
+    }
+
+    /**
+     * @param string $type
+     * @param string $fieldName
+     * @param array $attributeOptions
+     * @return array
+     */
+    public function findParentSkusByAttributeOptions(string $type, string $fieldName, array $attributeOptions)
+    {
+        $qb = $this->createQueryBuilder('p');
+
+        $aliasedFieldName = QueryBuilderUtil::getField('p', $fieldName);
+
+        $result = $qb
+            ->select(['parent_product.sku', 'attr.id'])
+            ->distinct()
+            ->join($aliasedFieldName, 'attr')
+            ->join('p.parentVariantLinks', 'variant_links')
+            ->join('variant_links.parentProduct', 'parent_product')
+            ->where($qb->expr()->in('attr', ':attributeOptions'))
+            ->andWhere('p.type = :type')
+            ->andWhere($qb->expr()->isNotNull($aliasedFieldName))
+            ->orderBy('parent_product.sku')
+            ->setParameter('attributeOptions', $attributeOptions)
+            ->setParameter('type', $type)
+            ->getQuery()
+            ->getArrayResult();
+
+        $flattenedResult = [];
+
+        foreach ($result as $item) {
+            $flattenedResult[$item['id']][] = $item['sku'];
+        }
+
+        return $flattenedResult;
     }
 
     /**
@@ -517,5 +532,25 @@ class ProductRepository extends EntityRepository
             ->getArrayResult();
 
         return array_column($result, 'id');
+    }
+
+    /**
+     * @param QueryBuilder $queryBuilder
+     */
+    private function filterByImageType(QueryBuilder $queryBuilder)
+    {
+        $parentAlias = $queryBuilder->getRootAliases()[0];
+
+        $subQuery = $this->getEntityManager()->createQueryBuilder();
+        $subQuery->select('pi.id')
+            ->from(ProductImage::class, 'pi')
+            ->innerJoin('pi.types', 'types')
+            ->where($subQuery->expr()->eq('pi.product', $parentAlias))
+            ->andWhere($subQuery->expr()->eq('types.type', ':imageType'));
+
+
+        $queryBuilder
+            ->andWhere($queryBuilder->expr()->exists($subQuery->getDQL()))
+            ->setParameter('imageType', ProductImageType::TYPE_LISTING);
     }
 }

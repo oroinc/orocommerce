@@ -17,17 +17,17 @@ use Symfony\Component\Asset\Packages;
 class ShippingMethodTypesChoiceTypeTest extends FormIntegrationTestCase
 {
     /**
-     * @var ShippingMethodProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $provider;
 
     /**
-     * @var ShippingMethodIconProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingMethodIconProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $iconProvider;
 
     /**
-     * @var Packages|\PHPUnit_Framework_MockObject_MockObject
+     * @var Packages|\PHPUnit\Framework\MockObject\MockObject
      */
     private $assetHelper;
 
@@ -130,8 +130,8 @@ class ShippingMethodTypesChoiceTypeTest extends FormIntegrationTestCase
                 'expectedOptions' => [
                     'placeholder' => false,
                     'choices' => [
-                        '{"shipping_method":"ups_4","shipping_method_type":"02"}' => 0,
-                        '{"shipping_method":"ups_4","shipping_method_type":"12"}' => 1
+                        'UPS 2 Day Air' => '{"shipping_method":"ups_4","shipping_method_type":"02"}',
+                        'UPS 3 Day Select' => '{"shipping_method":"ups_4","shipping_method_type":"12"}',
                     ],
                     'configs' => [
                         'showIcon' => true,
@@ -145,11 +145,6 @@ class ShippingMethodTypesChoiceTypeTest extends FormIntegrationTestCase
     public function testGetParent()
     {
         $this->assertEquals(OroChoiceType::class, $this->formType->getParent());
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals(ShippingMethodTypesChoiceType::NAME, $this->formType->getName());
     }
 
     public function testGetBlockPrefix()

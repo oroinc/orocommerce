@@ -1,4 +1,6 @@
 <div id="product_prices">
     {{ form_row(form.productPriceAttributesPrices, { 'attr': {'class': 'price-attributes-collection'}}) }}
-    {{ form_row(form.prices) }}
+    {% if form.prices is defined %}
+        {{ form_row(form.prices) }}
+    {% endif %}
 </div>

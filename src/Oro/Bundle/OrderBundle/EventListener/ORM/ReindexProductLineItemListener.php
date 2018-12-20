@@ -11,12 +11,18 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Search\Reindex\ProductReindexManager;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
+/**
+ * Reindexes related products when line item is created, updated or deleted.
+ */
 class ReindexProductLineItemListener
 {
     use FeatureCheckerHolderTrait;
 
     /** @see \Oro\Bundle\OrderBundle\Entity\OrderLineItem::$product */
     const ORDER_LINE_ITEM_PRODUCT_FIELD = 'product';
+
+    /** @see \Oro\Bundle\OrderBundle\Entity\OrderLineItem::$parentProduct */
+    const ORDER_LINE_ITEM_PARENT_PRODUCT_FIELD = 'parentProduct';
 
     /**
      * @var ProductReindexManager
@@ -56,6 +62,9 @@ class ReindexProductLineItemListener
 
         $websiteId = $lineItem->getOrder()->getWebsite()->getId();
         $this->productReindexManager->reindexProduct($product, $websiteId);
+        if ($lineItem->getParentProduct()) {
+            $this->productReindexManager->reindexProduct($lineItem->getParentProduct(), $websiteId);
+        }
     }
 
     /**
@@ -68,25 +77,10 @@ class ReindexProductLineItemListener
             return;
         }
 
-        if ($event->hasChangedField(static::ORDER_LINE_ITEM_PRODUCT_FIELD)) {
-            $websiteId = $lineItem->getOrder()->getWebsite()->getId();
+        $websiteId = $lineItem->getOrder()->getWebsite()->getId();
 
-            $oldProduct = $event->getOldValue(static::ORDER_LINE_ITEM_PRODUCT_FIELD);
-            if ($oldProduct instanceof Product) {
-                $this->productReindexManager->reindexProduct(
-                    $oldProduct,
-                    $websiteId
-                );
-            }
-
-            $newProduct = $event->getNewValue(static::ORDER_LINE_ITEM_PRODUCT_FIELD);
-            if ($newProduct instanceof Product) {
-                $this->productReindexManager->reindexProduct(
-                    $newProduct,
-                    $websiteId
-                );
-            }
-        }
+        $this->reindexFieldProduct($event, static::ORDER_LINE_ITEM_PRODUCT_FIELD, $websiteId);
+        $this->reindexFieldProduct($event, static::ORDER_LINE_ITEM_PARENT_PRODUCT_FIELD, $websiteId);
     }
 
     /**
@@ -116,5 +110,27 @@ class ReindexProductLineItemListener
         }
 
         return true;
+    }
+
+    /**
+     * @param PreUpdateEventArgs $event
+     * @param string $field
+     * @param int $websiteId
+     */
+    private function reindexFieldProduct(PreUpdateEventArgs $event, string $field, int $websiteId)
+    {
+        if (!$event->hasChangedField($field)) {
+            return;
+        }
+
+        $oldProduct = $event->getOldValue($field);
+        if ($oldProduct instanceof Product) {
+            $this->productReindexManager->reindexProduct($oldProduct, $websiteId);
+        }
+
+        $newProduct = $event->getNewValue($field);
+        if ($newProduct instanceof Product) {
+            $this->productReindexManager->reindexProduct($newProduct, $websiteId);
+        }
     }
 }

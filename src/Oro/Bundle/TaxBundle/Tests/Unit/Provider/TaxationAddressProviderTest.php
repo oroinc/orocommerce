@@ -11,7 +11,7 @@ use Oro\Bundle\TaxBundle\Model\TaxBaseExclusion;
 use Oro\Bundle\TaxBundle\Provider\TaxationAddressProvider;
 use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 
-class TaxationAddressProviderTest extends \PHPUnit_Framework_TestCase
+class TaxationAddressProviderTest extends \PHPUnit\Framework\TestCase
 {
     const EU = 'UK';
     const US = 'US';
@@ -19,7 +19,7 @@ class TaxationAddressProviderTest extends \PHPUnit_Framework_TestCase
     const DIGITAL_TAX_CODE = 'DIGITAL_TAX_CODE';
 
     /**
-     * @var TaxationSettingsProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var TaxationSettingsProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $settingsProvider;
 

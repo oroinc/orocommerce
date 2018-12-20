@@ -9,7 +9,7 @@ use Oro\Bundle\TaxBundle\Model\TaxResultElement;
 use Oro\Bundle\TaxBundle\Resolver\RoundingResolver;
 use Oro\Bundle\TaxBundle\Tests\ResultComparatorTrait;
 
-class RoundingResolverTest extends \PHPUnit_Framework_TestCase
+class RoundingResolverTest extends \PHPUnit\Framework\TestCase
 {
     use ResultComparatorTrait;
 

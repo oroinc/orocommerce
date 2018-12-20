@@ -9,10 +9,10 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Visibility\UnitVisibilityInterface;
 
-class PriceUnitVisibilityProviderTest extends \PHPUnit_Framework_TestCase
+class PriceUnitVisibilityProviderTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var UnitVisibilityInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var UnitVisibilityInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $unitVisibility;
 
@@ -93,7 +93,7 @@ class PriceUnitVisibilityProviderTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param string $unitCode
-     * @return ProductUnitPrecision|\PHPUnit_Framework_MockObject_MockObject
+     * @return ProductUnitPrecision|\PHPUnit\Framework\MockObject\MockObject
      */
     private function createUnitPrecisionMock($unitCode)
     {
@@ -116,7 +116,7 @@ class PriceUnitVisibilityProviderTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param array $unitPrecisions
-     * @return Product|\PHPUnit_Framework_MockObject_MockObject
+     * @return Product|\PHPUnit\Framework\MockObject\MockObject
      */
     private function createProductMock(array $unitPrecisions)
     {

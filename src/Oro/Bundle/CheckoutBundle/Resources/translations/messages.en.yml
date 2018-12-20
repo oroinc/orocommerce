@@ -6,6 +6,7 @@ oro:
         owner.label: Owner
         customer.label: Customer
         customer_user.label: Customer User
+        registered_customer_user.label: Registered Customer User
         organization.label: Organization
         customer_notes.label: Customer Notes
         customer_notes.frontend.label: Notes
@@ -43,6 +44,8 @@ oro:
         deleted.label: Deleted
         completed.label: Completed
         completed_data.label: Completed Data
+        confirm_email_flash_message: Please confirm your email before continue checkout
+        late_registration.label: Save my data and create an account
 
         checkoutlineitem:
             entity_label: 'Checkout Line Item'
@@ -168,9 +171,11 @@ oro:
                     back_to_shipping_method.label: Edit Shipping Method
                     back_to_payment.label: Edit Payment
                     transitions.back_to_payment.label: Edit Payment
+                    continue_checkout_as_guest.label: Continue as a Guest
+                    continue_checkout_as_guest.tooltip: You'll have the option to register for an account after your purchase
                     place_order:
                         label: Submit Order
-                        condition.extendable.message: There was an error while processing the order
+                        condition.extendable.message: There was an error while processing the order.
                     back.label: Back
 
                 form:
@@ -194,8 +199,7 @@ oro:
                             middle_name: ""
                             last_name: ""
                             sufix: ""
-                        visitor:
-                            email: ""
+                        email: ""
         form:
             address.manual: New address
             address.group_label:
@@ -227,6 +231,10 @@ oro:
             content_of_order_was_changed.message: |-
                 There was a change to the contents of your order.
                 Please review the order information before proceeding to the next step.
+            payment_method_was_not_selected.message: Please select payment method.
+            invalid_request.message: Invalid request.
+            invalid_billing_address.message: Please enter correct billing address.
+            invalid_shipping_address.message: Please enter correct shipping address.
 
         order.line_items.line_item_has_no_price_allow_rfp.message: Some products have not been added to this order. Please create an RFQ to request price.
         order.line_items.line_item_has_no_price_not_allow_rfp.message: Some products have not been added to this order.
@@ -237,6 +245,12 @@ oro:
                 guest_checkout:
                     title: 'Enable Guest Checkout'
                     tooltip: 'Enable Guest Checkout'
+                registration_allowed:
+                    title: 'Allow registration'
+                    tooltip: 'Allow customer users registration on checkout page'
+                allow_checkout_without_email_confirmation:
+                    title: 'Allow checkout without email confirmation'
+                    tooltip: 'Gives possibility to proceed checkout after enter registration data without email confirmation'
                 default_guest_checkout_owner:
                     title: 'Default guest checkout owner'
                     tooltip: 'Allows guests to create order'
@@ -245,6 +259,7 @@ oro:
                 checkout.title: 'Checkout'
                 guest_checkout.title: 'Guest Checkout'
                 guest_checkout_owner.title: 'Guest Checkout Owner Settings'
+                customer_users_registration.title: 'Customer Users Registration'
 
         privilege:
             category.checkout.label: 'Checkout'

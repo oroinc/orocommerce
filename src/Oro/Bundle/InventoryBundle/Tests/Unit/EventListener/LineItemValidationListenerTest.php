@@ -7,13 +7,14 @@ use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\InventoryBundle\EventListener\LineItemValidationListener;
 use Oro\Bundle\InventoryBundle\Tests\Unit\EventListener\Stub\ProductStub;
 use Oro\Bundle\InventoryBundle\Validator\QuantityToOrderValidatorService;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Event\LineItemValidateEvent;
 
-class LineItemValidationListenerTest extends \PHPUnit_Framework_TestCase
+class LineItemValidationListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var QuantityToOrderValidatorService|\PHPUnit_Framework_MockObject_MockObject
+     * @var QuantityToOrderValidatorService|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $quantityValidator;
 
@@ -23,7 +24,7 @@ class LineItemValidationListenerTest extends \PHPUnit_Framework_TestCase
     protected $lineItemValidationListener;
 
     /**
-     * @var LineItemValidateEvent|\PHPUnit_Framework_MockObject_MockObject $event *
+     * @var LineItemValidateEvent|\PHPUnit\Framework\MockObject\MockObject $event *
      */
     protected $event;
 
@@ -41,7 +42,7 @@ class LineItemValidationListenerTest extends \PHPUnit_Framework_TestCase
             ->willReturn([]);
 
         $this->event->expects($this->never())
-            ->method('addError');
+            ->method('addErrorByUnit');
         $this->lineItemValidationListener->onLineItemValidate($this->event);
     }
 
@@ -52,7 +53,7 @@ class LineItemValidationListenerTest extends \PHPUnit_Framework_TestCase
             ->willReturn(['xxxx']);
 
         $this->event->expects($this->never())
-            ->method('addError');
+            ->method('addErrorByUnit');
         $this->lineItemValidationListener->onLineItemValidate($this->event);
     }
 
@@ -82,7 +83,9 @@ class LineItemValidationListenerTest extends \PHPUnit_Framework_TestCase
     {
         $maxMessage = 'maxMessage';
         $lineItem = new LineItem();
+        $lineItem->setUnit((new ProductUnit())->setCode('someCode'));
         $product = new ProductStub();
+        $product->setSku('someSku');
         $lineItem->setProduct($product);
         $lineItems = new ArrayCollection();
         $lineItems->add($lineItem);
@@ -97,7 +100,7 @@ class LineItemValidationListenerTest extends \PHPUnit_Framework_TestCase
             ->method('getMinimumErrorIfInvalid');
 
         $this->event->expects($this->once())
-            ->method('addError');
+            ->method('addErrorByUnit');
         $this->lineItemValidationListener->onLineItemValidate($this->event);
     }
 
@@ -105,7 +108,9 @@ class LineItemValidationListenerTest extends \PHPUnit_Framework_TestCase
     {
         $minMessage = 'minMessage';
         $lineItem = new LineItem();
+        $lineItem->setUnit((new ProductUnit())->setCode('someCode'));
         $product = new ProductStub();
+        $product->setSku('someSku');
         $lineItem->setProduct($product);
         $lineItems = new ArrayCollection();
         $lineItems->add($lineItem);
@@ -121,7 +126,7 @@ class LineItemValidationListenerTest extends \PHPUnit_Framework_TestCase
             ->willReturn($minMessage);
 
         $this->event->expects($this->once())
-            ->method('addError');
+            ->method('addErrorByUnit');
         $this->lineItemValidationListener->onLineItemValidate($this->event);
     }
 }

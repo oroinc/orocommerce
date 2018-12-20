@@ -7,15 +7,15 @@ use Oro\Bundle\ProductBundle\Model\QuickAddRow;
 use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
 use Oro\Bundle\ProductBundle\Validator\Constraints\QuickAddRowCollection as QuickAddRowCollectionConstraint;
 use Oro\Bundle\ProductBundle\Validator\Constraints\QuickAddRowCollectionValidator;
-use Oro\Component\Testing\Validator\AbstractConstraintValidatorTest;
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\ConstraintViolationList;
+use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class QuickAddRowCollectionValidatorTest extends AbstractConstraintValidatorTest
+class QuickAddRowCollectionValidatorTest extends ConstraintValidatorTestCase
 {
     /**
-     * @var QuickAddRowCollection|\PHPUnit_Framework_MockObject_MockObject
+     * @var QuickAddRowCollection|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $constraint;
 
@@ -31,7 +31,7 @@ class QuickAddRowCollectionValidatorTest extends AbstractConstraintValidatorTest
 
     protected function setUp()
     {
-        \PHPUnit_Framework_Error_Warning::$enabled = false;
+        \PHPUnit\Framework\Error\Warning::$enabled = false;
         $this->validatorInterface = $this->getMockBuilder(ValidatorInterface::class)
             ->disableOriginalConstructor()
             ->getMock();

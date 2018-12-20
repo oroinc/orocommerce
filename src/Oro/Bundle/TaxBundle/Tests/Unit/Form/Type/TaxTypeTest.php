@@ -53,12 +53,6 @@ class TaxTypeTest extends FormIntegrationTestCase
         parent::tearDown();
     }
 
-    public function testGetName()
-    {
-        $this->assertInternalType('string', $this->formType->getName());
-        $this->assertEquals('oro_tax_type', $this->formType->getName());
-    }
-
     public function testBuildForm()
     {
         $form = $this->factory->create(TaxType::class);
@@ -66,6 +60,10 @@ class TaxTypeTest extends FormIntegrationTestCase
         $this->assertTrue($form->has('code'));
         $this->assertTrue($form->has('description'));
         $this->assertTrue($form->has('rate'));
+
+        $rate = $form->get('rate');
+        $this->assertArrayHasKey('scale', $rate->getConfig()->getOptions());
+        $this->assertEquals(TaxType::TAX_RATE_FIELD_PRECISION, $rate->getConfig()->getOptions()['scale']);
     }
 
     /**

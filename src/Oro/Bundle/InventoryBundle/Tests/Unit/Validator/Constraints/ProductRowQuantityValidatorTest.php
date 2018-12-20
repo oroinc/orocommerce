@@ -14,15 +14,15 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Violation\ConstraintViolationBuilder;
 use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
 
-class ProductRowQuantityValidatorTest extends \PHPUnit_Framework_TestCase
+class ProductRowQuantityValidatorTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var QuantityToOrderValidatorService|\PHPUnit_Framework_MockObject_MockObject
+     * @var QuantityToOrderValidatorService|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $validatorService;
 
     /**
-     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $doctrineHelper;
 
@@ -32,7 +32,7 @@ class ProductRowQuantityValidatorTest extends \PHPUnit_Framework_TestCase
     protected $validator;
 
     /**
-     * @var ExecutionContextInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ExecutionContextInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $context;
 

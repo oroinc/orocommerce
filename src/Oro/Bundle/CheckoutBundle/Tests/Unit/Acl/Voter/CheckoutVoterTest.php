@@ -11,7 +11,7 @@ use Symfony\Component\Security\Acl\Permission\BasicPermissionMap;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
-class CheckoutVoterTest extends \PHPUnit_Framework_TestCase
+class CheckoutVoterTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var CheckoutVoter
@@ -19,12 +19,12 @@ class CheckoutVoterTest extends \PHPUnit_Framework_TestCase
     protected $voter;
 
     /**
-     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $doctrineHelper;
 
     /**
-     * @var AuthorizationCheckerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var AuthorizationCheckerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $authorizationChecker;
 
@@ -43,7 +43,7 @@ class CheckoutVoterTest extends \PHPUnit_Framework_TestCase
             'security.authorization_checker' => $this->authorizationChecker,
         ];
 
-        /* @var $container ContainerInterface|\PHPUnit_Framework_MockObject_MockObject */
+        /* @var $container ContainerInterface|\PHPUnit\Framework\MockObject\MockObject */
         $container = $this->createMock(ContainerInterface::class);
         $container->expects($this->any())
             ->method('get')
@@ -63,7 +63,7 @@ class CheckoutVoterTest extends \PHPUnit_Framework_TestCase
     {
         $object = $this->createMock(CheckoutSourceEntityInterface::class);
 
-        /* @var $token TokenInterface|\PHPUnit_Framework_MockObject_MockObject */
+        /* @var $token TokenInterface|\PHPUnit\Framework\MockObject\MockObject */
         $token = $this->createMock(TokenInterface::class);
 
         $voter = new CheckoutVoter($this->doctrineHelper);
@@ -95,7 +95,7 @@ class CheckoutVoterTest extends \PHPUnit_Framework_TestCase
             ->with($inputData['object'])
             ->willReturn($inputData['object']);
 
-        /* @var $token TokenInterface|\PHPUnit_Framework_MockObject_MockObject */
+        /* @var $token TokenInterface|\PHPUnit\Framework\MockObject\MockObject */
         $token = $this->createMock(TokenInterface::class);
 
         $this->assertEquals(

@@ -24,20 +24,20 @@ class ProductCollectionVariantTypeTest extends FormIntegrationTestCase
     {
         $em = $this->createMock(EntityManagerInterface::class);
 
-        /** @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject $doctrineHelper */
+        /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject $doctrineHelper */
         $doctrineHelper = $this->createMock(DoctrineHelper::class);
         $doctrineHelper->expects($this->any())
             ->method('getEntityManagerForClass')
             ->with(Product::class, false)
             ->willReturn($em);
 
-        /** @var TokenStorageInterface|\PHPUnit_Framework_MockObject_MockObject $tokenStorage */
+        /** @var TokenStorageInterface|\PHPUnit\Framework\MockObject\MockObject $tokenStorage */
         $tokenStorage = $this->createMock(TokenStorageInterface::class);
         $segmentFilterBuilderType = new SegmentFilterBuilderType($doctrineHelper, $tokenStorage);
 
-        /** @var ProductCollectionDefinitionConverter|\PHPUnit_Framework_MockObject_MockObject $definitionConverter */
+        /** @var ProductCollectionDefinitionConverter|\PHPUnit\Framework\MockObject\MockObject $definitionConverter */
         $definitionConverter = $this->createMock(ProductCollectionDefinitionConverter::class);
-        /** @var PropertyAccessor|\PHPUnit_Framework_MockObject_MockObject $propertyAccessor */
+        /** @var PropertyAccessor|\PHPUnit\Framework\MockObject\MockObject $propertyAccessor */
         $propertyAccessor = $this->createMock(PropertyAccessor::class);
         $productCollectionSegmentType = new ProductCollectionSegmentType($definitionConverter, $propertyAccessor);
 
@@ -62,12 +62,6 @@ class ProductCollectionVariantTypeTest extends FormIntegrationTestCase
             ProductCollectionContentVariantType::TYPE,
             $form->getConfig()->getOption('content_variant_type')
         );
-    }
-
-    public function testGetName()
-    {
-        $type = new ProductCollectionVariantType();
-        $this->assertEquals(ProductCollectionVariantType::NAME, $type->getName());
     }
 
     public function testGetBlockPrefix()

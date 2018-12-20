@@ -8,7 +8,7 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\RFPBundle\Api\Processor\UpdateRequestDataForRequestProductItem;
 use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
 
-class UpdateRequestDataForRequestProductItemTest extends \PHPUnit_Framework_TestCase
+class UpdateRequestDataForRequestProductItemTest extends \PHPUnit\Framework\TestCase
 {
     /** @var UpdateRequestDataForRequestProductItem */
     protected $processor;
@@ -23,7 +23,7 @@ class UpdateRequestDataForRequestProductItemTest extends \PHPUnit_Framework_Test
 
     public function testProcessWithoutRequestData()
     {
-        /** @var FormContext|\PHPUnit_Framework_MockObject_MockObject $context */
+        /** @var FormContext|\PHPUnit\Framework\MockObject\MockObject $context */
         $context = $this->createMock(FormContext::class);
         $context->expects($this->any())->method('getRequestData')->willReturn([]);
         $context->expects($this->never())->method('setRequestData');
@@ -33,7 +33,7 @@ class UpdateRequestDataForRequestProductItemTest extends \PHPUnit_Framework_Test
 
     public function testProcessWithoutRequestProductItem()
     {
-        /** @var FormContext|\PHPUnit_Framework_MockObject_MockObject $context */
+        /** @var FormContext|\PHPUnit\Framework\MockObject\MockObject $context */
         $context = $this->createMock(FormContext::class);
         $context->expects($this->any())->method('getRequestData')->willReturn(['currency' => 'USD', 'value' => 10]);
         $context->expects($this->any())->method('getResult')->willReturn(null);
@@ -52,7 +52,7 @@ class UpdateRequestDataForRequestProductItemTest extends \PHPUnit_Framework_Test
     {
         $actualItem = new RequestProductItem();
 
-        /** @var FormContext|\PHPUnit_Framework_MockObject_MockObject $context */
+        /** @var FormContext|\PHPUnit\Framework\MockObject\MockObject $context */
         $context = $this->createMock(FormContext::class);
         $context->expects($this->any())->method('getRequestData')->willReturn($requestData);
         $context->expects($this->any())->method('getResult')->willReturn($actualItem);

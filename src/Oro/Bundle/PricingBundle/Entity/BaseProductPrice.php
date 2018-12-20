@@ -6,16 +6,23 @@ use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Entity\SettablePriceAwareInterface;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\PricingBundle\Model\ProductPriceInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 use Oro\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
 
 /**
+ * Base entity class for product price entities.
+ *
  * @ORM\MappedSuperclass()
  * @ORM\HasLifecycleCallbacks()
  */
-class BaseProductPrice implements ProductUnitHolderInterface, ProductHolderInterface, SettablePriceAwareInterface
+class BaseProductPrice implements
+    ProductUnitHolderInterface,
+    ProductHolderInterface,
+    SettablePriceAwareInterface,
+    ProductPriceInterface
 {
     /**
      * @var integer
@@ -159,7 +166,7 @@ class BaseProductPrice implements ProductUnitHolderInterface, ProductHolderInter
      */
     public function setProduct(Product $product)
     {
-        $this->product    = $product;
+        $this->product = $product;
         $this->productSku = $product->getSku();
 
         return $this;
@@ -247,6 +254,10 @@ class BaseProductPrice implements ProductUnitHolderInterface, ProductHolderInter
      */
     public function getPrice()
     {
+        if (null === $this->price) {
+            $this->loadPrice();
+        }
+
         return $this->price;
     }
 
@@ -255,7 +266,13 @@ class BaseProductPrice implements ProductUnitHolderInterface, ProductHolderInter
      */
     public function loadPrice()
     {
-        $this->price = Price::create($this->value, $this->currency);
+        if (null !== $this->value && null !== $this->currency) {
+            $this->price = Price::create($this->value, $this->currency);
+        } else {
+            $this->price = null;
+        }
+
+        return $this;
     }
 
     /**

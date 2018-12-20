@@ -64,17 +64,17 @@ class ShippingMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
     protected $shippingMethodProvider;
 
     /**
-     * @var ShippingMethodChoicesProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingMethodChoicesProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $choicesProvider;
 
     /**
-     * @var ShippingMethodIconProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingMethodIconProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $iconProvider;
 
     /**
-     * @var AssetHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var AssetHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $assetHelper;
 
@@ -87,6 +87,9 @@ class ShippingMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
         $this->methodConfigCollectionSubscriber = new MethodConfigCollectionSubscriberProxy();
 
         $this->choicesProvider = $this->createMock(ShippingMethodChoicesProviderInterface::class);
+        $this->choicesProvider->expects($this->any())
+            ->method('getMethods')
+            ->willReturn([]);
         $this->iconProvider = $this->createMock(ShippingMethodIconProviderInterface::class);
         $this->assetHelper = $this->createMock(AssetHelper::class);
 
@@ -98,7 +101,7 @@ class ShippingMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
         $this->methodConfigCollectionSubscriber
             ->setFactory($this->factory)->setMethodRegistry($this->shippingMethodProvider);
 
-        /** @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject $translator */
+        /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject $translator */
         $translator = $this->createMock(TranslatorInterface::class);
         $translator->expects(static::any())
             ->method('trans')
@@ -229,7 +232,7 @@ class ShippingMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
             ->method('getCurrencyList')
             ->willReturn(['USD']);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|TranslatableEntityType $registry */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|TranslatableEntityType $registry */
         $translatableEntity = $this->getMockBuilder('Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType')
             ->setMethods(['configureOptions', 'buildForm'])
             ->disableOriginalConstructor()
@@ -238,16 +241,25 @@ class ShippingMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    new ShippingMethodConfigCollectionType($this->methodConfigCollectionSubscriber),
-                    new ShippingMethodConfigType($this->methodConfigSubscriber, $this->shippingMethodProvider),
-                    new ShippingMethodTypeConfigCollectionType($this->methodTypeConfigCollectionSubscriber),
-                    new CurrencySelectionType(
+                    ShippingMethodConfigCollectionType::class
+                    => new ShippingMethodConfigCollectionType($this->methodConfigCollectionSubscriber),
+                    ShippingMethodConfigType::class
+                    => new ShippingMethodConfigType($this->methodConfigSubscriber, $this->shippingMethodProvider),
+                    ShippingMethodTypeConfigCollectionType::class =>
+                        new ShippingMethodTypeConfigCollectionType($this->methodTypeConfigCollectionSubscriber),
+                    CurrencySelectionType::class => new CurrencySelectionType(
                         $currencyProvider,
                         $this->getMockBuilder(LocaleSettings::class)->disableOriginalConstructor()->getMock(),
                         $this->getMockBuilder(CurrencyNameHelper::class)->disableOriginalConstructor()->getMock()
                     ),
-                    new ShippingMethodsConfigsRuleDestinationType(new AddressCountryAndRegionSubscriberStub()),
-                    new ShippingMethodSelectType($this->choicesProvider, $this->iconProvider, $this->assetHelper),
+                    ShippingMethodsConfigsRuleDestinationType::class => new ShippingMethodsConfigsRuleDestinationType(
+                        new AddressCountryAndRegionSubscriberStub()
+                    ),
+                    ShippingMethodSelectType::class => new ShippingMethodSelectType(
+                        $this->choicesProvider,
+                        $this->iconProvider,
+                        $this->assetHelper
+                    ),
                     TranslatableEntityType::class => $translatableEntity
                 ],
                 [FormType::class => [

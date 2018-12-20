@@ -10,17 +10,17 @@ use Oro\Bundle\ShoppingListBundle\DataProvider\ProductShoppingListsDataProvider;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
+use Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListManager;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class ProductShoppingListsDataProviderTest extends \PHPUnit_Framework_TestCase
+class ProductShoppingListsDataProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /** @var ShoppingListManager|\PHPUnit_Framework_MockObject_MockObject */
-    protected $shoppingListManager;
+    /** @var CurrentShoppingListManager|\PHPUnit\Framework\MockObject\MockObject */
+    protected $currentShoppingListManager;
 
-    /** @var LineItemRepository|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var LineItemRepository|\PHPUnit\Framework\MockObject\MockObject */
     protected $lineItemRepository;
 
     /** @var AclHelper */
@@ -31,8 +31,8 @@ class ProductShoppingListsDataProviderTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->shoppingListManager = $this
-            ->getMockBuilder(ShoppingListManager::class)
+        $this->currentShoppingListManager = $this
+            ->getMockBuilder(CurrentShoppingListManager::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -46,18 +46,9 @@ class ProductShoppingListsDataProviderTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $this->provider = new ProductShoppingListsDataProvider(
-            $this->shoppingListManager,
+            $this->currentShoppingListManager,
             $this->lineItemRepository,
             $this->aclHelper
-        );
-    }
-
-    protected function tearDown()
-    {
-        unset(
-            $this->provider,
-            $this->shoppingListManager,
-            $this->lineItemRepository
         );
     }
 
@@ -75,7 +66,7 @@ class ProductShoppingListsDataProviderTest extends \PHPUnit_Framework_TestCase
         array $lineItems = [],
         array $expected = null
     ) {
-        $this->shoppingListManager
+        $this->currentShoppingListManager
             ->expects($this->any())
             ->method('getCurrent')
             ->willReturn($shoppingList);
@@ -193,7 +184,7 @@ class ProductShoppingListsDataProviderTest extends \PHPUnit_Framework_TestCase
     {
         $shoppingList = new ShoppingList();
 
-        $this->shoppingListManager
+        $this->currentShoppingListManager
             ->expects($this->any())
             ->method('getCurrent')
             ->willReturn($shoppingList);
@@ -214,7 +205,7 @@ class ProductShoppingListsDataProviderTest extends \PHPUnit_Framework_TestCase
         $parentProduct = $this->getEntity(Product::class, ['id' => 21]);
         $otherProduct = $this->getEntity(Product::class, ['id' => 31]);
 
-        $this->shoppingListManager
+        $this->currentShoppingListManager
             ->expects($this->once())
             ->method('getCurrent')
             ->willReturn($shoppingList);

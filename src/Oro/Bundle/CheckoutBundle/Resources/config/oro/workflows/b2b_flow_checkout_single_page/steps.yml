@@ -6,8 +6,10 @@ workflows:
                 allowed_transitions:
                     - save_state
                     - create_order
+                    - purchase
                     - finish_checkout
                     - payment_error
+                    - start_from_quickorderform
 
             order_created:
                 order: 20

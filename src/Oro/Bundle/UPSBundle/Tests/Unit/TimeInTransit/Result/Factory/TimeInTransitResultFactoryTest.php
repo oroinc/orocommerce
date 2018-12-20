@@ -9,7 +9,7 @@ use Oro\Bundle\UPSBundle\TimeInTransit\Result\Factory\EstimatedArrivalFactoryInt
 use Oro\Bundle\UPSBundle\TimeInTransit\Result\Factory\TimeInTransitResultFactory;
 use Oro\Bundle\UPSBundle\TimeInTransit\Result\TimeInTransitResult;
 
-class TimeInTransitResultFactoryTest extends \PHPUnit_Framework_TestCase
+class TimeInTransitResultFactoryTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @internal
@@ -102,7 +102,7 @@ class TimeInTransitResultFactoryTest extends \PHPUnit_Framework_TestCase
     const TRANSACTION_IDENTIFIER = 'sample id';
 
     /**
-     * @var EstimatedArrivalFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var EstimatedArrivalFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $estimatedArrivalFactory;
 
@@ -181,6 +181,44 @@ class TimeInTransitResultFactoryTest extends \PHPUnit_Framework_TestCase
         static::assertEquals($expectedTimeInTransitResult, $timeInTransitResult);
     }
 
+    public function testCreateResultByUpsClientResponseWithSingleResult()
+    {
+        $estimatedArrivals = $this->getExpectedEstimatedArrivals();
+
+        $this->estimatedArrivalFactory
+            ->expects(static::exactly(1))
+            ->method('createEstimatedArrival')
+            ->withConsecutive(
+                [
+                    static::isInstanceOf(\DateTime::class),
+                    self::BUSINESS_DAYS_IN_TRANSIT_1,
+                    self::DAY_OF_WEEK_1,
+                    null,
+                    self::CUSTOMER_CENTER_CUTOFF_1,
+                ]
+            )
+            ->willReturnOnConsecutiveCalls(
+                $estimatedArrivals[self::SERVICE_CODE_1]
+            );
+
+        $expectedTimeInTransitResult = new TimeInTransitResult([
+            TimeInTransitResult::STATUS_KEY => self::STATUS,
+            TimeInTransitResult::STATUS_DESCRIPTION_KEY => self::STATUS_DESCRIPTION,
+            TimeInTransitResult::ESTIMATED_ARRIVALS_KEY => [
+                self::SERVICE_CODE_1 => $estimatedArrivals[self::SERVICE_CODE_1]
+            ],
+            TimeInTransitResult::AUTO_DUTY_CODE_KEY => self::AUTO_DUTY_CODE,
+            TimeInTransitResult::CUSTOMER_CONTEXT_KEY => self::CUSTOMER_CONTEXT,
+            TimeInTransitResult::TRANSACTION_IDENTIFIER_KEY => self::TRANSACTION_IDENTIFIER,
+        ]);
+
+        $timeInTransitResult = $this
+            ->timeInTransitResultFactory
+            ->createResultByUpsClientResponse($this->getSuccessSingleServiceRestResponse());
+
+        static::assertEquals($expectedTimeInTransitResult, $timeInTransitResult);
+    }
+
     public function testCreateResultByUpsClientResponseWithMalformedJson()
     {
         static::expectException(\LogicException::class);
@@ -236,7 +274,7 @@ class TimeInTransitResultFactoryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return RestResponseInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return RestResponseInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private function getRestResponseWithMalformedDate()
     {
@@ -316,7 +354,7 @@ class TimeInTransitResultFactoryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return RestResponseInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return RestResponseInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private function getSuccessRestResponse()
     {
@@ -383,10 +421,50 @@ class TimeInTransitResultFactoryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @return RestResponseInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private function getSuccessSingleServiceRestResponse()
+    {
+        $data = [
+            'TimeInTransitResponse' => [
+                'Response' => [
+                    'ResponseStatus' => [
+                        'Code' => self::STATUS_CODE,
+                        'Description' => self::STATUS_DESCRIPTION,
+                    ],
+                    'TransactionReference' => [
+                        'CustomerContext' => self::CUSTOMER_CONTEXT,
+                        'TransactionIdentifier' => self::TRANSACTION_IDENTIFIER,
+                    ],
+                ],
+                'TransitResponse' => [
+                    'ServiceSummary' => [
+                        'Service' => [
+                            'Code' => self::SERVICE_CODE_1,
+                        ],
+                        'EstimatedArrival' => [
+                            'Arrival' => [
+                                'Date' => self::ARRIVAL_DATE_1,
+                                'Time' => self::ARRIVAL_TIME_1,
+                            ],
+                            'BusinessDaysInTransit' => self::BUSINESS_DAYS_IN_TRANSIT_1,
+                            'DayOfWeek' => self::DAY_OF_WEEK_1,
+                            'CustomerCenterCutoff' => self::CUSTOMER_CENTER_CUTOFF_1,
+                        ],
+                    ],
+                    'AutoDutyCode' => self::AUTO_DUTY_CODE,
+                ],
+            ],
+        ];
+
+        return $this->createRestResponse($data);
+    }
+
+    /**
      * @param string $code
      * @param string $description
      *
-     * @return RestResponseInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return RestResponseInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private function getFaultRestResponse($code, $description)
     {
@@ -411,7 +489,7 @@ class TimeInTransitResultFactoryTest extends \PHPUnit_Framework_TestCase
     /**
      * @param array|null $data
      *
-     * @return RestResponseInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return RestResponseInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private function createRestResponse($data)
     {

@@ -5,6 +5,9 @@ namespace Oro\Bundle\TaxBundle\Model;
 use Brick\Math\BigDecimal;
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 
+/**
+ * Object which holds all data related to tax such as line items, destination, amount, etc.
+ */
 class Taxable
 {
     const DIGITAL_PRODUCT = 'digital_product';
@@ -408,5 +411,22 @@ class Taxable
         $this->taxationAddress = $this->origin;
 
         return $this;
+    }
+
+    public function __clone()
+    {
+        $propertiesToExplicitClone = ['price', 'taxationAddress', 'origin', 'amount', 'quantity', 'shippingCost',
+            'result', 'destination'];
+
+        foreach ($propertiesToExplicitClone as $property) {
+            $this->$property = is_object($this->$property) ? clone $this->$property : null;
+        }
+
+        $newItemStorage = new \SplObjectStorage();
+        $this->items->rewind();
+        foreach ($this->items as $item) {
+            $newItemStorage->attach(clone $item);
+        }
+        $this->items = $newItemStorage;
     }
 }

@@ -4,13 +4,17 @@ namespace Oro\Bundle\PricingBundle\Form\Type\Filter;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\FilterBundle\Form\Type\Filter\NumberRangeFilterType;
-use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
 
+/**
+ * Builds form for ProductPriceFilter
+ * adds 'unit' Choice field with choices from OroProductBundle:ProductUnit repository
+ */
 class ProductPriceFilterType extends AbstractType
 {
     const NAME = 'oro_pricing_product_price_filter';
@@ -26,19 +30,19 @@ class ProductPriceFilterType extends AbstractType
     protected $registry;
 
     /**
-     * @var ProductUnitLabelFormatter
+     * @var UnitLabelFormatterInterface
      */
     protected $formatter;
 
     /**
-     * @param TranslatorInterface       $translator
-     * @param ManagerRegistry           $registry
-     * @param ProductUnitLabelFormatter $formatter
+     * @param TranslatorInterface $translator
+     * @param ManagerRegistry     $registry
+     * @param UnitLabelFormatterInterface  $formatter
      */
     public function __construct(
         TranslatorInterface $translator,
         ManagerRegistry $registry,
-        ProductUnitLabelFormatter $formatter
+        UnitLabelFormatterInterface $formatter
     ) {
         $this->translator = $translator;
         $this->registry = $registry;
@@ -90,18 +94,18 @@ class ProductPriceFilterType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $operatorChoices = [
-            NumberRangeFilterType::TYPE_BETWEEN            =>
-                $this->translator->trans('oro.filter.form.label_type_range_between'),
-            NumberRangeFilterType::TYPE_EQUAL              =>
-                $this->translator->trans('oro.filter.form.label_type_range_equals'),
-            NumberRangeFilterType::TYPE_GREATER_THAN       =>
-                $this->translator->trans('oro.filter.form.label_type_range_more_than'),
-            NumberRangeFilterType::TYPE_LESS_THAN          =>
-                $this->translator->trans('oro.filter.form.label_type_range_less_than'),
-            NumberRangeFilterType::TYPE_GREATER_EQUAL      =>
-                $this->translator->trans('oro.filter.form.label_type_range_more_equals'),
-            NumberRangeFilterType::TYPE_LESS_EQUAL         =>
-                $this->translator->trans('oro.filter.form.label_type_range_less_equals'),
+            $this->translator->trans('oro.filter.form.label_type_range_between')
+                => NumberRangeFilterType::TYPE_BETWEEN,
+            $this->translator->trans('oro.filter.form.label_type_range_equals')
+                => NumberRangeFilterType::TYPE_EQUAL,
+            $this->translator->trans('oro.filter.form.label_type_range_more_than')
+                => NumberRangeFilterType::TYPE_GREATER_THAN,
+            $this->translator->trans('oro.filter.form.label_type_range_less_than')
+                => NumberRangeFilterType::TYPE_LESS_THAN,
+            $this->translator->trans('oro.filter.form.label_type_range_more_equals')
+                => NumberRangeFilterType::TYPE_GREATER_EQUAL,
+            $this->translator->trans('oro.filter.form.label_type_range_less_equals')
+                => NumberRangeFilterType::TYPE_LESS_EQUAL,
         ];
 
         $resolver->setDefaults([
@@ -124,7 +128,7 @@ class ProductPriceFilterType extends AbstractType
 
         $choices = [];
         foreach ($unitCodes as $unitCode) {
-            $choices[$unitCode] = $this->formatter->format($unitCode);
+            $choices[$this->formatter->format($unitCode)] = $unitCode;
         }
 
         return $choices;

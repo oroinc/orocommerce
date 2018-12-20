@@ -3,36 +3,48 @@
 namespace Oro\Bundle\SaleBundle\Provider;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\PricingBundle\Entity\BasePriceList;
-use Oro\Bundle\PricingBundle\Model\PriceListTreeHandler;
+use Oro\Bundle\CurrencyBundle\Provider\CurrencyProviderInterface;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
-use Oro\Bundle\PricingBundle\Provider\ProductPriceProvider;
+use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaFactoryInterface;
+use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
 
+/**
+ * Handles logic for getting prices for certain quote
+ */
 class QuoteProductPriceProvider
 {
     /**
-     * @var ProductPriceProvider
+     * @var ProductPriceProviderInterface
      */
     protected $productPriceProvider;
 
     /**
-     * @var PriceListTreeHandler
+     * @var ProductPriceScopeCriteriaFactoryInterface
      */
-    protected $treeHandler;
+    protected $priceScopeCriteriaFactory;
 
     /**
-     * @param ProductPriceProvider $productPriceProvider
-     * @param PriceListTreeHandler $treeHandler
+     * @var CurrencyProviderInterface
+     */
+    protected $currencyProvider;
+
+    /**
+     * @param ProductPriceProviderInterface $productPriceProvider
+     * @param ProductPriceScopeCriteriaFactoryInterface $priceScopeCriteriaFactory
+     * @param CurrencyProviderInterface                 $currencyProvider
      */
     public function __construct(
-        ProductPriceProvider $productPriceProvider,
-        PriceListTreeHandler $treeHandler
+        ProductPriceProviderInterface $productPriceProvider,
+        ProductPriceScopeCriteriaFactoryInterface $priceScopeCriteriaFactory,
+        CurrencyProviderInterface $currencyProvider
     ) {
         $this->productPriceProvider = $productPriceProvider;
-        $this->treeHandler = $treeHandler;
+        $this->priceScopeCriteriaFactory = $priceScopeCriteriaFactory;
+        $this->currencyProvider = $currencyProvider;
     }
 
     /**
@@ -42,52 +54,46 @@ class QuoteProductPriceProvider
      */
     public function getTierPrices(Quote $quote)
     {
-        $productIds = $quote->getQuoteProducts()->filter(
+        $products = $quote->getQuoteProducts()->filter(
             function (QuoteProduct $quoteProduct) {
                 return $quoteProduct->getProduct() !== null;
             }
         )->map(
             function (QuoteProduct $quoteProduct) {
-                return $quoteProduct->getProduct()->getId();
+                return $quoteProduct->getProduct();
             }
         );
 
-        return $this->fetchTierPrices($quote, $productIds->toArray());
+        return $this->fetchTierPrices($quote, $products->toArray());
     }
 
     /**
      * @param Quote $quote
-     * @param array $productIds
+     * @param array|Product[] $products
      *
      * @return array
      */
-    public function getTierPricesForProducts(Quote $quote, array $productIds)
+    public function getTierPricesForProducts(Quote $quote, array $products)
     {
-        return $this->fetchTierPrices($quote, $productIds);
+        return $this->fetchTierPrices($quote, $products);
     }
 
     /**
      * @param Quote $quote
-     * @param array $productIds
+     * @param array|Product[] $products
      *
      * @return array
      */
-    protected function fetchTierPrices(Quote $quote, array $productIds)
+    protected function fetchTierPrices(Quote $quote, array $products)
     {
         $tierPrices = [];
 
-        if ($productIds) {
-            $priceList = $this->getPriceList($quote);
-            if (!$priceList) {
-                return [];
-            }
-            $tierPrices = $this->productPriceProvider->getPriceByPriceListIdAndProductIds(
-                $priceList->getId(),
-                $productIds
+        if (count($products) > 0) {
+            $tierPrices = $this->productPriceProvider->getPricesByScopeCriteriaAndProducts(
+                $this->priceScopeCriteriaFactory->createByContext($quote),
+                $products,
+                $this->currencyProvider->getCurrencyList()
             );
-            if (!$tierPrices) {
-                $tierPrices = [];
-            }
         }
 
         return $tierPrices;
@@ -100,30 +106,23 @@ class QuoteProductPriceProvider
     public function getMatchedPrices(Quote $quote)
     {
         $matchedPrices = [];
-        $priceList = $this->getPriceList($quote);
-        if (!$priceList) {
-            return [];
-        }
         $productsPriceCriteria = $this->getProductsPriceCriteria($quote);
 
         if ($productsPriceCriteria) {
-            $matchedPrices = $this->productPriceProvider->getMatchedPrices(
-                $productsPriceCriteria,
-                $priceList
-            );
+            $scopeCriteria = $this->priceScopeCriteriaFactory->createByContext($quote);
+            $matchedPrices = $this->productPriceProvider->getMatchedPrices($productsPriceCriteria, $scopeCriteria);
         }
 
-        /** @var Price $price */
-        foreach ($matchedPrices as &$price) {
-            if ($price) {
-                $price = [
+        return array_map(function ($price) {
+            if ($price instanceof Price) {
+                return [
                     'value' => $price->getValue(),
                     'currency' => $price->getCurrency()
                 ];
             }
-        }
 
-        return $matchedPrices;
+            return $price;
+        }, $matchedPrices);
     }
 
     /**
@@ -164,11 +163,25 @@ class QuoteProductPriceProvider
     }
 
     /**
+     * Checks whatever quote has line items with no prices set
      * @param Quote $quote
-     * @return BasePriceList
+     * @return bool
      */
-    protected function getPriceList(Quote $quote)
+    public function hasEmptyPrice(Quote $quote)
     {
-        return $this->treeHandler->getPriceList($quote->getCustomer(), $quote->getWebsite());
+        foreach ($quote->getQuoteProducts() as $quoteProduct) {
+            $product = $quoteProduct->getProduct();
+            if (!$product) {
+                continue;
+            }
+
+            foreach ($quoteProduct->getQuoteProductOffers() as $quoteProductOffer) {
+                if ($quoteProductOffer->getPrice() === null || $quoteProductOffer->getPrice()->getValue() === null) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 }

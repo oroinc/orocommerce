@@ -1,4 +1,4 @@
 assets:
     css:
-        'oroshoppinglist':
-            - 'bundles/oroshoppinglist/css/less/style.less'
+        inputs:
+            - 'bundles/oroshoppinglist/css/scss/main.scss'

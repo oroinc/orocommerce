@@ -1,3 +1,6 @@
+include:
+    - '@OroLocaleBundle:LocalizationFixture.yml'
+
 Oro\Bundle\CurrencyBundle\Entity\Price(local):
   price:
     value: '1'
@@ -82,6 +85,9 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     string: 'Product5'
   locValue6:
     string: 'Product6'
+  locValue6_loc1:
+    string: 'Product6 (Localization 1)'
+    localization: '@localization1'
   locValue7:
     string: 'Product7'
   localNewCategory:
@@ -157,7 +163,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
     primaryUnitPrecision: '@precision6'
     unitPrecisions: []
     attributeFamily: '@defaultProductFamily'
-    addName: ['@locValue6']
+    setNames: [['@locValue6' , '@locValue6_loc1']]
     inventoryStatus: '@enumInventoryStatuses'
     status: 'enabled'
     featured: true

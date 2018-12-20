@@ -6,7 +6,7 @@ use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Mapper\OrderMapper;
 use Oro\Bundle\CheckoutBundle\Tests\Unit\Model\Action\CheckoutSourceStub;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\EntityBundle\Provider\EntityFieldProvider;
+use Oro\Bundle\EntityBundle\Helper\FieldHelper;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
@@ -17,7 +17,7 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
-class OrderMapperTest extends \PHPUnit_Framework_TestCase
+class OrderMapperTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
@@ -27,26 +27,24 @@ class OrderMapperTest extends \PHPUnit_Framework_TestCase
     protected $mapper;
 
     /**
-     * @var EntityFieldProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var FieldHelper|\PHPUnit\Framework\MockObject\MockObject
      */
-    protected $provider;
+    protected $fieldHelper;
 
     /**
-     * @var PaymentTermAssociationProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var PaymentTermAssociationProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $paymentTermAssociationProvider;
 
     protected function setUp()
     {
-        $this->provider = $this->getMockBuilder(EntityFieldProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->fieldHelper = $this->createMock(FieldHelper::class);
         $this->paymentTermAssociationProvider = $this->getMockBuilder(PaymentTermAssociationProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->mapper = new OrderMapper(
-            $this->provider,
+            $this->fieldHelper,
             PropertyAccess::createPropertyAccessor(),
             $this->paymentTermAssociationProvider
         );
@@ -54,16 +52,20 @@ class OrderMapperTest extends \PHPUnit_Framework_TestCase
 
     public function testMap()
     {
-        $this->provider->expects($this->once())->method('getFields')->willReturn(
-            [
-                ['name' => 'id', 'identifier' => true],
-                ['name' => 'website'],
-                ['name' => 'paymentTerm'],
-                ['name' => 'shippingAddress'],
-                ['name' => 'billingAddress'],
-                ['name' => 'currency'],
-            ]
-        );
+        $this->fieldHelper->expects($this->once())
+            ->method('getFields')
+            ->with(Order::class, true, false, false, true, true, false)
+            ->willReturn(
+                [
+                    ['name' => 'id', 'identifier' => true],
+                    ['name' => 'website'],
+                    ['name' => 'paymentTerm'],
+                    ['name' => 'shippingAddress'],
+                    ['name' => 'billingAddress'],
+                    ['name' => 'currency'],
+                    ['name' => 'someRelationEntity:someRelationField'],
+                ]
+            );
 
         $website = new Website();
         $address = new OrderAddress();
@@ -102,7 +104,10 @@ class OrderMapperTest extends \PHPUnit_Framework_TestCase
 
     public function testMapWithSourceEntity()
     {
-        $this->provider->expects($this->once())->method('getFields')->willReturn([]);
+        $this->fieldHelper->expects($this->once())
+            ->method('getFields')
+            ->with(Order::class, true, false, false, true, true, false)
+            ->willReturn([]);
 
         $source = new CheckoutSourceStub();
         $source->setId(2);
@@ -119,9 +124,12 @@ class OrderMapperTest extends \PHPUnit_Framework_TestCase
 
     public function testMapIdsIgnored()
     {
-        $this->provider->expects($this->once())->method('getFields')->willReturn(
-            [['name' => 'id', 'identifier' => true]]
-        );
+        $this->fieldHelper->expects($this->once())
+            ->method('getFields')
+            ->with(Order::class, true, false, false, true, true, false)
+            ->willReturn(
+                [['name' => 'id', 'identifier' => true]]
+            );
 
         $checkout = $this->getEntity(Checkout::class, ['id' => 5]);
 

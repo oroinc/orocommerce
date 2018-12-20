@@ -5,7 +5,7 @@ namespace Oro\Bundle\UPSBundle\Tests\Unit\Model;
 use Oro\Bundle\UPSBundle\Model\Package;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-class PackageTest extends \PHPUnit_Framework_TestCase
+class PackageTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 

@@ -14,8 +14,9 @@ services:
     oro_sale.provider.quote_product_price:
         class: 'Oro\Bundle\SaleBundle\Provider\QuoteProductPriceProvider'
         arguments:
-            - "@oro_pricing.provider.combined_product_price"
-            - "@oro_pricing.model.price_list_tree_handler"
+            - "@oro_pricing.provider.product_price"
+            - "@oro_pricing.model.product_price_scope_criteria_factory"
+            - "@oro_currency.config.currency"
 
     oro_sale.validator.quote_product:
         class: 'Oro\Bundle\SaleBundle\Validator\Constraints\QuoteProductValidator'
@@ -27,6 +28,14 @@ services:
         public: false
         arguments:
             - "@service_container"
+        tags:
+            - { name: twig.extension }
+
+    oro_sale.twig.quote_guest_access:
+        class: 'Oro\Bundle\SaleBundle\Twig\QuoteGuestAccessExtension'
+        public: false
+        arguments:
+            - '@service_container'
         tags:
             - { name: twig.extension }
 
@@ -73,9 +82,10 @@ services:
     oro_sale.helper.notification:
         class: 'Oro\Bundle\SaleBundle\Notification\NotificationHelper'
         arguments:
-            - "@doctrine"
-            - "@oro_email.email.model.builder"
-            - "@oro_email.mailer.processor"
+            - '@doctrine'
+            - '@oro_email.email.model.builder'
+            - '@oro_email.mailer.processor'
+            - '@oro_featuretoggle.checker.feature_checker'
         calls:
             - [ setQuoteClassName, [ '%oro_sale.entity.quote.class%' ] ]
             - [ setEmailTemplateClassName, [ '%oro_email.emailtemplate.entity.class%' ] ]
@@ -218,6 +228,14 @@ services:
         tags:
             - { name: security.voter }
 
+    oro_sale.acl.voter.frontend_quote_demand_permission_voter:
+        class: 'Oro\Bundle\SaleBundle\Acl\Voter\FrontendQuoteDemandPermissionVoter'
+        public: false
+        arguments:
+            - '@oro_frontend.request.frontend_helper'
+        tags:
+            - { name: security.voter }
+
     oro_sale.provider.contact_info_source_options_provider:
         class: 'Oro\Bundle\SaleBundle\Provider\ContactInfoSourceOptionsProvider'
         public: false
@@ -260,3 +278,16 @@ services:
         public: false
         arguments:
             - '@oro_locale.formatter.name'
+
+    oro_sale.voter.guest_quote:
+        parent: oro_customer.voter.anonymous_customer_user
+        calls:
+            - [ setFeatureName, ['guest_quote'] ]
+        tags:
+            - { name: oro_featuretogle.voter }
+
+    oro_sale.provider.guest_quote_access:
+        class: 'Oro\Bundle\SaleBundle\Provider\GuestQuoteAccessProvider'
+        arguments:
+            - '@oro_featuretoggle.checker.feature_checker'
+            - '@oro_website.manager'

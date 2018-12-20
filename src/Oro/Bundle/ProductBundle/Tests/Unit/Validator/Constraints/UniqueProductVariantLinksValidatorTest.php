@@ -14,7 +14,7 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class UniqueProductVariantLinksValidatorTest extends \PHPUnit_Framework_TestCase
+class UniqueProductVariantLinksValidatorTest extends \PHPUnit\Framework\TestCase
 {
     const VARIANT_FIELD_KEY_COLOR = 'color';
     const VARIANT_FIELD_KEY_SIZE = 'size';
@@ -26,7 +26,7 @@ class UniqueProductVariantLinksValidatorTest extends \PHPUnit_Framework_TestCase
     protected $service;
 
     /**
-     * @var ExecutionContextInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ExecutionContextInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $context;
 

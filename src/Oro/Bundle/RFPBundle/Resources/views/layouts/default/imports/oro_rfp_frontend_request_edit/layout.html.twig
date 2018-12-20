@@ -134,15 +134,15 @@
                 <div class="request-form-product__item request-form-product__item--quantity">
                     <span class="request-form-quantity">
                         <span class="request-form-quantity__label">{{ 'oro.rfp.frontend.request.lineitem.qty'|trans|e('html')|raw }}:</span>
-                        <span class="request-form-quantity__total"><%= line.quantity %></span>
-                        <span class="request-form-quantity__units"><%= line.unit %></span>
+                        <span class="request-form-quantity__total"><%- line.quantity %></span>
+                        <span class="request-form-quantity__units"><%- _.__('oro.product.product_unit.' + line.unit + '.label.full') %></span>
                     </span>
                 </div>
                 <div class="request-form-product__item request-form-product__item--target">
                     <dl class="request-form-amount">
                         <dt class="request-form-amount__piece">
                             <span class="request-form-amount__label">{{ 'oro.rfp.requestproductitem.price.label'|trans|e('html')|raw }}</span>
-                            <span class="request-form-amount__total"><%= formatter.formatCurrency(line.price, line.currency) %></span>
+                            <span class="request-form-amount__total"><%- formatter.formatCurrency(line.price, line.currency) %></span>
                         </dt>
                     </dl>
                 </div>
@@ -152,9 +152,9 @@
                             <span class="request-form-amount__label">{{ 'oro.pricing.frontend.pricelist.index.listed_price'|trans|e('html')|raw }}</span>
                             <span class="request-form-amount__total">
                             <% if (line.found_price) { %>
-                                <%= formatter.formatCurrency(line.found_price.price, line.currency) %>
+                                <%- formatter.formatCurrency(line.found_price.price, line.currency) %>
                             <% } else { %>
-                                <%= _.__("N/A") %>
+                                <%- _.__("N/A") %>
                             <% } %>
                             </span>
                         </dt>
@@ -164,7 +164,7 @@
         <% }) %>
         <% if (!_.isEmpty(_.trim(comment))) { %>
             <div class="request-form-product__item request-form-product__item--comment">
-                <p class="request-form-note">Note: <%- comment %></p>
+                <p class="request-form-note">{{ 'oro.rfp.requestproductitem.note.label'|trans }}: <%- comment %></p>
             </div>
         <% } %>
     </script>

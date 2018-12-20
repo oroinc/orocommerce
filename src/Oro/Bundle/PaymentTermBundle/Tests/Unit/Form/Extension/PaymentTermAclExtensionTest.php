@@ -7,15 +7,15 @@ use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermAssociationProvider;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
-class PaymentTermAclExtensionTest extends \PHPUnit_Framework_TestCase
+class PaymentTermAclExtensionTest extends \PHPUnit\Framework\TestCase
 {
     /** @var PaymentTermAclExtension */
     protected $extension;
 
-    /** @var PaymentTermAssociationProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var PaymentTermAssociationProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $paymentTermAssociationProvider;
 
-    /** @var PaymentTermAssociationProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var PaymentTermAssociationProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $authorizationChecker;
 
     protected function setUp()

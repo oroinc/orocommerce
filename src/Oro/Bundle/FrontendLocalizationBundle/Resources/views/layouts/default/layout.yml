@@ -1,7 +1,7 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'layout.html.twig'
+            themes: 'OroFrontendLocalizationBundle:layouts:default/layout.html.twig'
         - '@addTree':
             items:
                 localization_switcher_trigger:

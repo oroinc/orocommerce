@@ -1,6 +1,72 @@
 workflows:
     b2b_flow_checkout:
         transition_definitions:
+            start_from_shoppinglist_definition:
+                preactions:
+                    - '@find_entity':
+                        conditions:
+                            '@not_empty': $init_context
+                        parameters:
+                            class: $init_context.entityClass
+                            identifier: $init_context.entityId
+                            attribute: $.result.shoppingList
+                    - '@call_service_method':
+                        service: oro_checkout.condition.is_workflow_start_from_shopping_list_allowed
+                        method: isAllowedForLogged
+                        attribute: $isAllowed
+                preconditions:
+                   '@and':
+                       - '@has_elements': $.result.shoppingList.lineItems
+                       - '@equal': [$isAllowed, true]
+                actions:
+                    - '@run_action_group':
+                        action_group: start_shoppinglist_checkout
+                        parameters_mapping:
+                            shoppingList: $.result.shoppingList
+                            showErrors: true
+                        results:
+                            data.checkout: $.checkout
+                            result.redirectUrl: $.redirectUrl
+
+            start_from_shoppinglist_as_guest_definition:
+                preactions:
+                    - '@find_entity':
+                        conditions:
+                            '@not_empty': $init_context
+                        parameters:
+                            class: $init_context.entityClass
+                            identifier: $init_context.entityId
+                            attribute: $.result.shoppingList
+                    - '@call_service_method':
+                        service: oro_checkout.condition.is_workflow_start_from_shopping_list_allowed
+                        method: isAllowedForGuest
+                        attribute: $isAllowed
+                preconditions:
+                   '@and':
+                       - '@has_elements': $.result.shoppingList.lineItems
+                       - '@equal': [$isAllowed, true]
+                actions:
+                    - '@assign_value': [$is_guest_checkout, true]
+                    - '@run_action_group':
+                        action_group: start_shoppinglist_checkout
+                        parameters_mapping:
+                            shoppingList: $.result.shoppingList
+                            showErrors: true
+                        results:
+                            data.checkout: $.checkout
+                            result.redirectUrl: $.redirectUrl
+                    - '@transit_workflow':
+                       [$checkout, 'start_checkout_as_guest_system', 'b2b_flow_checkout']
+
+            start_checkout_as_guest_system_definition:
+                actions:
+                    - '@redirect':
+                        route: oro_checkout_frontend_checkout
+                        route_parameters:
+                            id: $checkout.id
+
+            continue_checkout_as_guest_definition: ~
+
             back_to_billing_address_definition:
                 preconditions:
                     '@equal': [$checkout.completed, false]
@@ -64,19 +130,26 @@ workflows:
                                     state2: $.result.savedCheckoutState
                 actions:
                     - '@run_action_group':
-                        action_group: b2b_flow_checkout_update_billing_address
+                        action_group: b2b_flow_checkout_update_guest_customer_user
                         parameters_mapping:
-                            checkout: $checkout
-                            disallow_shipping_address_edit: $disallow_shipping_address_edit
-                        results:
-                            data.billing_address_has_shipping: $.billing_address_has_shipping
+                          checkout: $checkout
+                          email: $email
+                          billing_address: $billing_address
 
                     - '@run_action_group':
                         action_group: b2b_flow_checkout_create_guest_customer_user
                         parameters_mapping:
                             checkout: $checkout
-                            visitor_email: $visitor_email
+                            email: $email
                             billing_address: $billing_address
+
+                    - '@run_action_group':
+                        action_group: b2b_flow_checkout_update_billing_address
+                        parameters_mapping:
+                          checkout: $checkout
+                          disallow_shipping_address_edit: $disallow_shipping_address_edit
+                        results:
+                          data.billing_address_has_shipping: $.billing_address_has_shipping
 
                     - '@generate_checkout_state_snapshot':
                         entity: $checkout
@@ -190,11 +263,6 @@ workflows:
                                 state: $.result.currentCheckoutState
                                 token: $state_token
 
-                    - '@call_service_method':
-                        service: oro_checkout.factory.shipping_context_factory
-                        method: create
-                        method_parameters: [$checkout]
-                        attribute: $.result.shippingContext
                 preconditions:
                     '@and':
                         - '@quote_acceptable': [$checkout.sourceEntity, true]
@@ -207,7 +275,6 @@ workflows:
                         - '@shipping_method_has_enabled_shipping_rules':
                             message: oro.checkout.workflow.condition.shipping_method_is_not_available.message
                             method_identifier: $checkout.shippingMethod
-                            context: $.result.paymentContext
                         - '@or':
                             - '@empty': $.result.savedCheckoutState
                             - '@check_checkout_states':
@@ -274,7 +341,6 @@ workflows:
                         - '@shipping_method_has_enabled_shipping_rules':
                             message: oro.checkout.workflow.condition.shipping_method_is_not_available.message
                             method_identifier: $checkout.shippingMethod
-                            context: $.result.paymentContext
                         - '@has_applicable_payment_methods':
                             message: oro.checkout.workflow.condition.payment_method_is_not_applicable.message
                             context: $.result.paymentContext
@@ -289,14 +355,14 @@ workflows:
                                     state1: $.result.initCheckoutState
                                     state2: $.result.savedCheckoutState
                         - '@not_empty':
-                            message: Payment method was not selected
+                            message: oro.checkout.workflow.condition.payment_method_was_not_selected.message
                             parameters: $checkout.paymentMethod
                         - '@payment_method_applicable':
                             message: oro.checkout.workflow.condition.payment_method_is_not_applicable.message
                             payment_method: $checkout.paymentMethod
                             context: $.result.paymentContext
                         - '@check_request':
-                            message: Invalid request
+                            message: oro.checkout.workflow.condition.invalid_request.message
                             parameters:
                                 is_ajax: true
                                 expected_key: _wid
@@ -424,16 +490,20 @@ workflows:
                         - '@shipping_method_has_enabled_shipping_rules':
                             message: oro.checkout.workflow.condition.shipping_method_is_not_available.message
                             method_identifier: $checkout.shippingMethod
-                            context: $.result.paymentContext
                         - '@payment_method_applicable':
                             message: oro.checkout.workflow.condition.payment_method_is_not_applicable.message
                             payment_method: $checkout.paymentMethod
                             context: $.result.paymentContext
+                        - '@extendable':
+                            events:
+                                - 'extendable_condition.checkout'
+                                - 'extendable_condition.pre_order_create'
                 conditions:
                     '@and':
                         - '@extendable':
                             message: 'oro.checkout.workflow.b2b_flow_checkout.transition.place_order.condition.extendable.message'
-                            events: ['extendable_condition.before_order_create']
+                            events:
+                                - 'extendable_condition.before_order_create'
                         - '@or':
                             - '@empty': $.result.savedCheckoutState
                             - '@check_checkout_states':
@@ -553,7 +623,15 @@ workflows:
                     '@and':
                         - '@not_empty': [$order]
                         - '@equal': [$payment_in_progress, true]
+
                 actions:
+                    - '@run_action_group':
+                        action_group: handle_late_registration
+                        parameters_mapping:
+                            checkout: $checkout
+                            order: $order
+                            late_registration_data: $late_registration
+
                     - '@run_action_group':
                         action_group: b2b_flow_checkout_finish_checkout
                         parameters_mapping:
@@ -562,3 +640,4 @@ workflows:
                             auto_remove_source: $auto_remove_source
                             allow_manual_source_remove: $allow_manual_source_remove
                             remove_source: $remove_source
+                            email: $email

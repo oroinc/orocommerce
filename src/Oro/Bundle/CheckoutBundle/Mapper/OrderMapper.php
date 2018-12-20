@@ -2,38 +2,41 @@
 
 namespace Oro\Bundle\CheckoutBundle\Mapper;
 
-use Doctrine\Common\Util\ClassUtils;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\EntityBundle\Provider\EntityFieldProvider;
+use Oro\Bundle\EntityBundle\Helper\FieldHelper;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermAssociationProvider;
 use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
+use Symfony\Component\Security\Acl\Util\ClassUtils;
 
+/**
+ * Maps data from Checkout to Order
+ */
 class OrderMapper implements MapperInterface
 {
     /** @var PropertyAccessorInterface */
     private $propertyAccessor;
 
-    /** @var EntityFieldProvider */
-    private $entityFieldProvider;
+    /** @var FieldHelper */
+    private $entityFieldHelper;
 
     /** @var PaymentTermAssociationProvider */
     private $paymentTermAssociationProvider;
 
     /**
-     * @param EntityFieldProvider $entityFieldProvider
+     * @param FieldHelper $entityFieldHelper
      * @param PropertyAccessorInterface $propertyAccessor
      * @param PaymentTermAssociationProvider $paymentTermAssociationProvider
      */
     public function __construct(
-        EntityFieldProvider $entityFieldProvider,
+        FieldHelper $entityFieldHelper,
         PropertyAccessorInterface $propertyAccessor,
         PaymentTermAssociationProvider $paymentTermAssociationProvider
     ) {
+        $this->entityFieldHelper = $entityFieldHelper;
         $this->propertyAccessor = $propertyAccessor;
-        $this->entityFieldProvider = $entityFieldProvider;
         $this->paymentTermAssociationProvider = $paymentTermAssociationProvider;
     }
 
@@ -53,7 +56,7 @@ class OrderMapper implements MapperInterface
                 [
                     'sourceEntityId' => $sourceEntity->getSourceDocument()->getId(),
                     'sourceEntityIdentifier' => $sourceEntity->getSourceDocumentIdentifier(),
-                    'sourceEntityClass' => ClassUtils::getClass($sourceEntity->getSourceDocument()),
+                    'sourceEntityClass' => ClassUtils::getRealClass($sourceEntity->getSourceDocument()),
                 ]
             );
         }
@@ -76,6 +79,10 @@ class OrderMapper implements MapperInterface
         $result = [];
         $mapFields = $this->getMapFields();
         foreach ($mapFields as $field) {
+            if (false !== strpos($field, ':')) {// Bypass relations in form ClassName::fieldName.
+                continue;
+            }
+
             try {
                 $value = $this->propertyAccessor->getValue($entity, $field);
                 $result[$field] = $value;
@@ -109,7 +116,7 @@ class OrderMapper implements MapperInterface
      */
     protected function getMapFields()
     {
-        $fields = $this->entityFieldProvider->getFields(Order::class, true, true, false, true, true, false);
+        $fields = $this->entityFieldHelper->getFields(Order::class, true, false, false, true, true, false);
 
         $withoutIds = array_filter(
             $fields,

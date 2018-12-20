@@ -1,0 +1,19 @@
+/* @theme: admin.oro; */
+
+.product-container {
+    position: relative;
+
+    .input-append,
+    .input-prepend {
+        display: flex;
+
+        .select2-container {
+            width: 100%;
+            max-width: 100%;
+        }
+    }
+}
+
+.product-primary-unit-controls {
+    @include selector-width(100px);
+}

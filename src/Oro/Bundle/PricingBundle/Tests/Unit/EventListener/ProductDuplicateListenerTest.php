@@ -4,6 +4,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\EventListener;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
@@ -13,15 +14,15 @@ use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Event\ProductDuplicateAfterEvent;
 
-class ProductDuplicateListenerTest extends \PHPUnit_Framework_TestCase
+class ProductDuplicateListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ShardManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShardManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $shardManager;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|DoctrineHelper
+     * @var \PHPUnit\Framework\MockObject\MockObject|DoctrineHelper
      */
     protected $doctrineHelper;
 
@@ -36,19 +37,24 @@ class ProductDuplicateListenerTest extends \PHPUnit_Framework_TestCase
     protected $listener;
 
     /**
-     * @var ProductPriceRepository|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProductPriceRepository|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $productPriceRepository;
 
     /**
-     * @var ObjectManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ObjectManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $objectManager;
 
     /**
-     * @var PriceManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var PriceManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $priceManager;
+
+    /**
+     * @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $featureChecker;
 
     /**
      * @var Product
@@ -65,6 +71,7 @@ class ProductDuplicateListenerTest extends \PHPUnit_Framework_TestCase
         $this->product = new Product();
         $this->sourceProduct = new Product();
 
+        $this->featureChecker = $this->createMock(FeatureChecker::class);
         $this->shardManager = $this->createMock(ShardManager::class);
 
         $this->doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
@@ -99,6 +106,36 @@ class ProductDuplicateListenerTest extends \PHPUnit_Framework_TestCase
         $this->listener->setPriceManager($this->priceManager);
     }
 
+    protected function tearDown()
+    {
+        unset(
+            $this->product,
+            $this->sourceProduct,
+            $this->shardManager,
+            $this->doctrineHelper,
+            $this->productPriceRepository,
+            $this->objectManager,
+            $this->priceManager,
+            $this->listener
+        );
+    }
+
+    public function testOnDuplicateAfterFeatureDisabled()
+    {
+        $this->featureChecker->expects($this->once())
+            ->method('isFeatureEnabled')
+            ->with('feature1', null)
+            ->willReturn(false);
+
+        $this->listener->setFeatureChecker($this->featureChecker);
+        $this->listener->addFeature('feature1');
+
+        $event = $this->createMock(ProductDuplicateAfterEvent::class);
+        $event->expects($this->never())->method('getProduct');
+
+        $this->listener->onDuplicateAfter($event);
+    }
+
     public function testOnDuplicateAfter()
     {
         $price1 = new ProductPrice();
@@ -124,6 +161,13 @@ class ProductDuplicateListenerTest extends \PHPUnit_Framework_TestCase
 
         $event = new ProductDuplicateAfterEvent($this->product, $this->sourceProduct);
 
+        $this->featureChecker->expects($this->once())
+            ->method('isFeatureEnabled')
+            ->with('feature1', null)
+            ->willReturn(true);
+
+        $this->listener->setFeatureChecker($this->featureChecker);
+        $this->listener->addFeature('feature1');
         $this->listener->onDuplicateAfter($event);
     }
 

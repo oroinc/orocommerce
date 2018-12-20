@@ -4,6 +4,9 @@ namespace Oro\Bundle\PromotionBundle\Discount;
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Responsible for configuration, calculation and applying "BuyXGetY" discount
+ */
 class BuyXGetYDiscount extends AbstractDiscount implements DiscountProductUnitCodeAwareInterface
 {
     const APPLY_TO_EACH_Y = 'apply_to_each_y';
@@ -62,7 +65,7 @@ class BuyXGetYDiscount extends AbstractDiscount implements DiscountProductUnitCo
     {
         foreach ($discountContext->getLineItems() as $discountLineItem) {
             foreach ($this->getMatchingProducts() as $discountMatchingProduct) {
-                if ($discountLineItem->getProduct() === $discountMatchingProduct
+                if ($discountLineItem->getProduct()->getId() === $discountMatchingProduct->getId()
                     && $discountLineItem->getProductUnitCode() === $this->discountProductUnitCode
                     && $discountLineItem->getQuantity() >= $this->getRequiredQuantity()
                 ) {

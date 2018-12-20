@@ -6,7 +6,7 @@ use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Oro\Bundle\PaymentBundle\Method\Provider\CompositePaymentMethodProvider;
 use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
 
-class CompositePaymentMethodProviderTest extends \PHPUnit_Framework_TestCase
+class CompositePaymentMethodProviderTest extends \PHPUnit\Framework\TestCase
 {
     const IDENTIFIER1 = 'test1';
     const IDENTIFIER2 = 'test2';
@@ -23,12 +23,12 @@ class CompositePaymentMethodProviderTest extends \PHPUnit_Framework_TestCase
     private $methods;
 
     /**
-     * @var PaymentMethodProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var PaymentMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $firstProvider;
 
     /**
-     * @var PaymentMethodProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var PaymentMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $secondProvider;
 
@@ -110,7 +110,7 @@ class CompositePaymentMethodProviderTest extends \PHPUnit_Framework_TestCase
     /**
      * @param string $identifier
      *
-     * @return PaymentMethodInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return PaymentMethodInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private function getMethodMock($identifier)
     {

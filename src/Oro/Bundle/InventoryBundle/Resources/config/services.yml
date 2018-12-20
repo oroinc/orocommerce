@@ -101,12 +101,16 @@ services:
         arguments:
             - "@oro_entity.fallback.resolver.entity_fallback_resolver"
             - '@oro_entity.doctrine_helper'
+        tags:
+            - { name: layout.data_provider, alias: low_inventory }
 
     oro_inventory.provider.product_upcoming_provider:
         class: Oro\Bundle\InventoryBundle\Provider\ProductUpcomingProvider
         arguments:
              - '@oro_entity.fallback.resolver.entity_fallback_resolver'
              - '@oro_entity.doctrine_helper'
+        tags:
+            - { name: layout.data_provider, alias: product_upcoming }
 
     oro_inventory.twig.low_inventory_extension:
         class: Oro\Bundle\InventoryBundle\Twig\LowInventoryExtension
@@ -141,3 +145,22 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-product-search-grid, method: onPreBuild }
             - { name: kernel.event_listener, event: oro_datagrid.search_datasource.result.after.frontend-product-search-grid, method: onResultAfter }
+
+    oro_inventory.event_listener.product_duplicate:
+        class: Oro\Bundle\InventoryBundle\EventListener\ProductDuplicateListener
+        arguments:
+            - '@property_accessor'
+            -
+                - 'manageInventory'
+                - 'highlightLowInventory'
+                - 'inventoryThreshold'
+                - 'lowInventoryThreshold'
+                - 'minimumQuantityToOrder'
+                - 'maximumQuantityToOrder'
+                - 'decrementQuantity'
+                - 'backOrder'
+                - 'isUpcoming'
+        calls:
+            - [setDoctrineHelper, ['@oro_entity.doctrine_helper']]
+        tags:
+            - { name: kernel.event_listener, event: oro_product.product.duplicate.after, method: onDuplicateAfter }

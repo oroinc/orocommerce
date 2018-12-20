@@ -32,7 +32,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
 
     public function testOnProductEdit()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $env */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|\Twig_Environment $env */
         $env = $this->createMock(\Twig_Environment::class);
 
         $formView = new FormView();
@@ -48,7 +48,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
 
     public function testOnProductView()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|CategoryRepository $repository */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|CategoryRepository $repository */
         $repository = $this->getMockBuilder(CategoryRepository::class)
             ->disableOriginalConstructor()
             ->setMethods(['findOneByProduct'])
@@ -69,7 +69,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
             ->with('OroCatalogBundle:Category')
             ->willReturn($repository);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $env */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|\Twig_Environment $env */
         $env = $this->createMock(\Twig_Environment::class);
         $env->expects($this->once())
             ->method('render')
@@ -86,7 +86,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
 
     public function testOnProductViewWithoutCategory()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|CategoryRepository $repository */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|CategoryRepository $repository */
         $repository = $this->getMockBuilder(CategoryRepository::class)
             ->disableOriginalConstructor()
             ->setMethods(['findOneByProduct'])
@@ -106,7 +106,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
             ->with('OroCatalogBundle:Category')
             ->willReturn($repository);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $env */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|\Twig_Environment $env */
         $env = $this->createMock(\Twig_Environment::class);
         $env->expects($this->never())
             ->method('render');

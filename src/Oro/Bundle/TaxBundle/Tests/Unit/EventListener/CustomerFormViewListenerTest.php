@@ -33,7 +33,7 @@ class CustomerFormViewListenerTest extends AbstractFormViewListenerTest
     {
         $event = $this->getBeforeListRenderEvent();
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $env */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|\Twig_Environment $env */
         $env = $this->getMockBuilder('\Twig_Environment')
             ->disableOriginalConstructor()
             ->getMock();
@@ -72,7 +72,7 @@ class CustomerFormViewListenerTest extends AbstractFormViewListenerTest
             ->method('getEntityReference')
             ->willReturn($customer);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $env */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|\Twig_Environment $env */
         $env = $this->getMockBuilder('\Twig_Environment')
             ->disableOriginalConstructor()
             ->getMock();
@@ -119,7 +119,7 @@ class CustomerFormViewListenerTest extends AbstractFormViewListenerTest
             ->method('getEntityReference')
             ->willReturn($customer);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $env */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|\Twig_Environment $env */
         $env = $this->getMockBuilder('\Twig_Environment')
             ->disableOriginalConstructor()
             ->getMock();
@@ -162,7 +162,7 @@ class CustomerFormViewListenerTest extends AbstractFormViewListenerTest
             ->method('getEntityReference')
             ->willReturn($customer);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $env */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|\Twig_Environment $env */
         $env = $this->getMockBuilder('\Twig_Environment')
             ->disableOriginalConstructor()
             ->getMock();

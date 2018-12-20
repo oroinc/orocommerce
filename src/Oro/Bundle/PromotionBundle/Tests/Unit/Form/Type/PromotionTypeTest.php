@@ -43,16 +43,16 @@ class PromotionTypeTest extends FormIntegrationTestCase
     protected function getExtensions()
     {
         $em = $this->createMock(EntityManagerInterface::class);
-        /** @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject $doctrineHelper */
+        /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject $doctrineHelper */
         $doctrineHelper = $this->createMock(DoctrineHelper::class);
         $doctrineHelper->expects($this->any())
             ->method('getEntityManagerForClass')
             ->with(Product::class, false)
             ->willReturn($em);
 
-        /** @var ConfigProvider|\PHPUnit_Framework_MockObject_MockObject $configProvider */
+        /** @var ConfigProvider|\PHPUnit\Framework\MockObject\MockObject $configProvider */
         $configProvider = $this->createMock(ConfigProvider::class);
-        /** @var Translator|\PHPUnit_Framework_MockObject_MockObject $translator */
+        /** @var Translator|\PHPUnit\Framework\MockObject\MockObject $translator */
         $translator = $this->createMock(Translator::class);
 
         return [
@@ -202,7 +202,7 @@ class PromotionTypeTest extends FormIntegrationTestCase
 
     public function testConfigureOptions()
     {
-        /** @var OptionsResolver|\PHPUnit_Framework_MockObject_MockObject $resolver */
+        /** @var OptionsResolver|\PHPUnit\Framework\MockObject\MockObject $resolver */
         $resolver = $this->createMock(OptionsResolver::class);
         $resolver->expects($this->once())
             ->method('setDefaults')
@@ -214,12 +214,6 @@ class PromotionTypeTest extends FormIntegrationTestCase
 
         $type = new PromotionType();
         $type->configureOptions($resolver);
-    }
-
-    public function testGetName()
-    {
-        $type = new PromotionType();
-        $this->assertEquals(PromotionType::NAME, $type->getName());
     }
 
     public function testGetBlockPrefix()

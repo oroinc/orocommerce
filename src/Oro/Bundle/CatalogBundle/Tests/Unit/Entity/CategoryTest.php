@@ -15,7 +15,7 @@ use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class CategoryTest extends \PHPUnit_Framework_TestCase
+class CategoryTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 

@@ -5,7 +5,7 @@ namespace Oro\Bundle\PromotionBundle\Tests\Unit\Discount\Strategy;
 use Oro\Bundle\PromotionBundle\Discount\Strategy\StrategyInterface;
 use Oro\Bundle\PromotionBundle\Discount\Strategy\StrategyRegistry;
 
-class StrategyRegistryTest extends \PHPUnit_Framework_TestCase
+class StrategyRegistryTest extends \PHPUnit\Framework\TestCase
 {
     public function testRegistry()
     {

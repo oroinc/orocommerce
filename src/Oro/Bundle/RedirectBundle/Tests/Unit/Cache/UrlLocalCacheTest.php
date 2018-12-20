@@ -6,7 +6,7 @@ use Doctrine\Common\Cache\Cache;
 use Oro\Bundle\RedirectBundle\Cache\UrlLocalCache;
 use Oro\Bundle\RedirectBundle\Tests\Unit\Stub\CacheAllCapabilities;
 
-class UrlLocalCacheTest extends \PHPUnit_Framework_TestCase
+class UrlLocalCacheTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var UrlLocalCache
@@ -14,7 +14,7 @@ class UrlLocalCacheTest extends \PHPUnit_Framework_TestCase
     private $urlCache;
 
     /**
-     * @var Cache|\PHPUnit_Framework_MockObject_MockObject
+     * @var Cache|\PHPUnit\Framework\MockObject\MockObject
      */
     private $cache;
 
@@ -157,7 +157,7 @@ class UrlLocalCacheTest extends \PHPUnit_Framework_TestCase
 
     public function testDeleteAllClearable()
     {
-        /** @var Cache|\PHPUnit_Framework_MockObject_MockObject $cache */
+        /** @var Cache|\PHPUnit\Framework\MockObject\MockObject $cache */
         $cache = $this->createMock(CacheAllCapabilities::class);
         $cache->expects($this->once())
             ->method('deleteAll');

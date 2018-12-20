@@ -8,7 +8,7 @@ use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\PricingBundle\EventListener\DatagridListener;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
-class DatagridListenerTest extends \PHPUnit_Framework_TestCase
+class DatagridListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var DatagridListener
@@ -48,7 +48,7 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
                         'field_type' => EntityType::class,
                         'field_options' => [
                             'class' => 'Oro\Bundle\PricingBundle\Entity\PriceList',
-                            'property' => 'name',
+                            'choice_label' => 'name',
                         ]
                     ]
                 ]
@@ -68,7 +68,7 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testOnBuildBeforeCustomers()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $datagrid */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|DatagridInterface $datagrid */
         $datagrid = $this->createMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
         $config = DatagridConfiguration::create([]);
 
@@ -95,7 +95,7 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testOnBuildBeforeCustomerGroups()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $datagrid */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|DatagridInterface $datagrid */
         $datagrid = $this->createMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
         $config = DatagridConfiguration::create([]);
 

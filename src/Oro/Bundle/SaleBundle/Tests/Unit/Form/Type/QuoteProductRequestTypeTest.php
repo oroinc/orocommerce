@@ -41,7 +41,7 @@ class QuoteProductRequestTypeTest extends AbstractTest
 
     public function testConfigureOptions()
     {
-        /* @var $resolver \PHPUnit_Framework_MockObject_MockObject|OptionsResolver */
+        /* @var $resolver \PHPUnit\Framework\MockObject\MockObject|OptionsResolver */
         $resolver = $this->createMock('Symfony\Component\OptionsResolver\OptionsResolver');
         $resolver->expects($this->once())
             ->method('setDefaults')
@@ -55,11 +55,6 @@ class QuoteProductRequestTypeTest extends AbstractTest
         ;
 
         $this->formType->configureOptions($resolver);
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals('oro_sale_quote_product_request', $this->formType->getName());
     }
 
     /**
@@ -157,7 +152,7 @@ class QuoteProductRequestTypeTest extends AbstractTest
      * @param int $id
      * @param ProductUnit[] $productUnits
      * @param string $unitCode
-     * @return \PHPUnit_Framework_MockObject_MockObject|QuoteProductRequest
+     * @return \PHPUnit\Framework\MockObject\MockObject|QuoteProductRequest
      */
     protected function createQuoteProductRequest($id, array $productUnits = [], $unitCode = null)
     {
@@ -172,7 +167,7 @@ class QuoteProductRequestTypeTest extends AbstractTest
             }
         }
 
-        /* @var $item \PHPUnit_Framework_MockObject_MockObject|QuoteProductRequest */
+        /* @var $item \PHPUnit\Framework\MockObject\MockObject|QuoteProductRequest */
         $item = $this->createMock('Oro\Bundle\SaleBundle\Entity\QuoteProductRequest');
         $item
             ->expects($this->any())

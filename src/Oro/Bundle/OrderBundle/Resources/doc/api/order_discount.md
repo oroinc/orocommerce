@@ -12,8 +12,6 @@ Retrieve a specific discount record.
 
 Retrieve a collection of discount records.
 
-The list of records that will be returned, could be limited by filters.
-
 {@inheritdoc}
 
 ### create
@@ -26,8 +24,6 @@ The created record is returned in the response.
 
 {@request:json_api}
 Example:
-
-`</admin/api/orderdiscounts>`
 
 ```JSON
 {
@@ -63,8 +59,6 @@ The updated record is returned in the response.
 {@request:json_api}
 Example:
 
-`</admin/api/orderdiscounts/1>`
-
 ```JSON
 {
   "data": {
@@ -97,8 +91,6 @@ Delete a specific discount record.
 ### delete_list
 
 Delete a collection of discount records.
-
-The list of records that will be deleted, could be limited by filters.
 
 {@inheritdoc}
 
@@ -178,8 +170,6 @@ Replace the order a specific discount record is assigned to.
 
 {@request:json_api}
 Example:
-
-`</admin/api/orderdiscounts/1/relationships/order>`
 
 ```JSON
 {

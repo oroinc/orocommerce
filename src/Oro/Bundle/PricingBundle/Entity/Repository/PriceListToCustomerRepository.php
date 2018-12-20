@@ -72,7 +72,7 @@ class PriceListToCustomerRepository extends EntityRepository implements PriceLis
             ->select('distinct customer')
             ->from('OroCustomerBundle:Customer', 'customer');
 
-        $qb->innerJoin(
+        $qb->leftJoin(
             PriceListToCustomer::class,
             'plToCustomer',
             Join::WITH,
@@ -162,7 +162,7 @@ class PriceListToCustomerRepository extends EntityRepository implements PriceLis
             sprintf('IDENTITY(acc.group) as %s', PriceListRelationTrigger::ACCOUNT_GROUP),
             sprintf('IDENTITY(priceListToCustomer.website) as %s', PriceListRelationTrigger::WEBSITE)
         )
-            ->leftJoin('priceListToCustomer.customer', 'acc')
+            ->innerJoin('priceListToCustomer.customer', 'acc')
             ->where($qb->expr()->in('priceListToCustomer.priceList', ':priceLists'))
             ->groupBy('priceListToCustomer.customer', 'acc.group', 'priceListToCustomer.website')
             ->setParameter('priceLists', $priceLists)

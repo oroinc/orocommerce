@@ -9,20 +9,20 @@ use Oro\Bundle\ProductBundle\EventListener\RestrictIndexProductsEventListener;
 use Oro\Bundle\ProductBundle\Model\ProductVisibilityQueryBuilderModifier;
 use Oro\Bundle\WebsiteSearchBundle\Event\RestrictIndexEntityEvent;
 
-class RestrictIndexProductsEventListenerTest extends \PHPUnit_Framework_TestCase
+class RestrictIndexProductsEventListenerTest extends \PHPUnit\Framework\TestCase
 {
     const CONFIG_PATH = 'config.path';
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|ProductVisibilityQueryBuilderModifier */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|ProductVisibilityQueryBuilderModifier */
     protected $modifier;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|ConfigManager */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|ConfigManager */
     protected $configManager;
 
     /** @var RestrictIndexProductsEventListener */
     protected $listener;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|QueryBuilder */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|QueryBuilder */
     protected $queryBuilder;
 
     protected function setUp()

@@ -12,7 +12,6 @@ use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\EntityExtendBundle\Form\Type\EnumSelectType;
 use Oro\Bundle\FormBundle\Form\Extension\TooltipFormExtension;
-use Oro\Bundle\FormBundle\Form\Type\CollectionType as OroCollectionType;
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 use Oro\Bundle\FrontendBundle\Form\Type\PageTemplateType;
 use Oro\Bundle\LayoutBundle\Provider\ImageTypeProvider;
@@ -25,16 +24,12 @@ use Oro\Bundle\ProductBundle\Form\Extension\IntegerExtension;
 use Oro\Bundle\ProductBundle\Form\Type\BrandSelectType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductCustomVariantFieldsCollectionType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductImageCollectionType;
-use Oro\Bundle\ProductBundle\Form\Type\ProductImageType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductPrimaryUnitPrecisionType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductStatusType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductType;
-use Oro\Bundle\ProductBundle\Form\Type\ProductUnitPrecisionCollectionType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitPrecisionType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectType;
-use Oro\Bundle\ProductBundle\Form\Type\ProductVariantFieldType;
-use Oro\Bundle\ProductBundle\Form\Type\ProductVariantLinksType;
-use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Oro\Bundle\ProductBundle\Provider\ChainDefaultProductUnitProvider;
 use Oro\Bundle\ProductBundle\Provider\ProductStatusProvider;
 use Oro\Bundle\ProductBundle\Provider\VariantField;
@@ -72,12 +67,12 @@ class ProductTypeTest extends FormIntegrationTestCase
     protected $type;
 
     /**
-     * @var UrlGeneratorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var UrlGeneratorInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $urlGenerator;
 
     /**
-     * @var ChainDefaultProductUnitProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var ChainDefaultProductUnitProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $defaultProductUnitProvider;
 
@@ -106,7 +101,7 @@ class ProductTypeTest extends FormIntegrationTestCase
     protected $images = [];
 
     /**
-     * @var ProductUnitLabelFormatter|\PHPUnit_Framework_MockObject_MockObject
+     * @var UnitLabelFormatterInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $productUnitLabelFormatter;
 
@@ -138,10 +133,7 @@ class ProductTypeTest extends FormIntegrationTestCase
 
         $this->images = [$image1, $image2];
 
-        $this->productUnitLabelFormatter = $this->getMockBuilder(ProductUnitLabelFormatter::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $this->productUnitLabelFormatter = $this->createMock(UnitLabelFormatterInterface::class);
 
         parent::setUp();
     }
@@ -167,22 +159,22 @@ class ProductTypeTest extends FormIntegrationTestCase
 
         $stubEnumSelectType = new EnumSelectTypeStub();
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|ConfigProvider $configProvider */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|ConfigProvider $configProvider */
         $configProvider = $this->getMockBuilder(ConfigProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
-        /** @var \PHPUnit_Framework_MockObject_MockObject|Translator $translator */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|Translator $translator */
         $translator = $this->getMockBuilder(Translator::class)
             ->disableOriginalConstructor()
             ->getMock();
-        /** @var \PHPUnit_Framework_MockObject_MockObject|ImageTypeProvider $imageTypeProvider*/
+        /** @var \PHPUnit\Framework\MockObject\MockObject|ImageTypeProvider $imageTypeProvider*/
         $imageTypeProvider = $this->getMockBuilder(ImageTypeProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
         $imageTypeProvider->expects($this->any())
             ->method('getImageTypes')
             ->willReturn([]);
-        /** @var \PHPUnit_Framework_MockObject_MockObject|VariantFieldProvider $variantFieldProvider */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|VariantFieldProvider $variantFieldProvider */
         $variantFieldProvider = $this->getMockBuilder(VariantFieldProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -190,14 +182,14 @@ class ProductTypeTest extends FormIntegrationTestCase
         $variantFieldProvider->expects($this->any())
             ->method('getVariantFields')
             ->willReturn($variantFields);
-        /** @var \PHPUnit_Framework_MockObject_MockObject|EntityFallbackResolver $entityFallbackResolver */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|EntityFallbackResolver $entityFallbackResolver */
         $entityFallbackResolver = $this->getMockBuilder(EntityFallbackResolver::class)
             ->disableOriginalConstructor()
             ->getMock();
         $entityFallbackResolver->expects($this->any())
             ->method('getFallbackConfig')
             ->willReturn([]);
-        /** @var \PHPUnit_Framework_MockObject_MockObject|PageTemplatesManager $pageTemplatesManager */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|PageTemplatesManager $pageTemplatesManager */
         $pageTemplatesManager = $this->getMockBuilder(PageTemplatesManager::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -223,10 +215,8 @@ class ProductTypeTest extends FormIntegrationTestCase
                     $this->type,
                     EnumSelectType::class => $stubEnumSelectType,
                     ImageType::class => new ImageTypeStub(),
-                    OroCollectionType::class => new OroCollectionType(),
                     ProductPrimaryUnitPrecisionType::class => $productPrimaryUnitPrecision,
                     ProductUnitPrecisionType::class => $productUnitPrecision,
-                    ProductUnitPrecisionCollectionType::class => new ProductUnitPrecisionCollectionType(),
                     ProductUnitSelectType::class => new ProductUnitSelectType($this->productUnitLabelFormatter),
                     EntityType::class => $entityType,
                     LocalizedFallbackValueCollectionType::class => new LocalizedFallbackValueCollectionTypeStub(),
@@ -234,12 +224,9 @@ class ProductTypeTest extends FormIntegrationTestCase
                         $variantFieldProvider
                     ),
                     EntityIdentifierType::class => new StubEntityIdentifierType([]),
-                    ProductVariantLinksType::class => new ProductVariantLinksType(),
                     ProductStatusType::class => new ProductStatusType(new ProductStatusProvider()),
                     ProductImageCollectionType::class => new ProductImageCollectionType($imageTypeProvider),
-                    ProductImageType::class => new ProductImageType(),
                     LocalizedSlugType::class => new LocalizedSlugTypeStub(),
-                    ProductVariantFieldType::class => new ProductVariantFieldType(),
                     EntityFieldFallbackValueType::class => new EntityFieldFallbackValueType($entityFallbackResolver),
                     PageTemplateType::class => new PageTemplateType($pageTemplatesManager),
                     LocalizedSlugWithRedirectType::class
@@ -467,11 +454,7 @@ class ProductTypeTest extends FormIntegrationTestCase
             }
         }
 
-        $entityFieldFallbackValue = new EntityFieldFallbackValue();
-        $entityFieldFallbackValue->setArrayValue([
-            'oro_product_frontend_product_view' => null
-        ]);
-        $expectedProduct->setPageTemplate($entityFieldFallbackValue);
+        $expectedProduct->setPageTemplate(new EntityFieldFallbackValue());
         $expectedProduct->setAttributeFamily($this->getAttributeFamily());
 
         return $expectedProduct->setSku('test sku');
@@ -484,11 +467,6 @@ class ProductTypeTest extends FormIntegrationTestCase
         $this->assertTrue($form->has('sku'));
         $this->assertTrue($form->has('primaryUnitPrecision'));
         $this->assertTrue($form->has('additionalUnitPrecisions'));
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals('oro_product', $this->type->getName());
     }
 
     /**

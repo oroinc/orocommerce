@@ -45,8 +45,13 @@ class CombinedPriceListScheduleCommand extends ContainerAwareCommand implements 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $container = $this->getContainer();
+        $triggerHandler = $container->get('oro_pricing.model.combined_price_list_trigger_handler');
+        $triggerHandler->startCollect();
+
         $container->get('oro_pricing.resolver.combined_product_schedule_resolver')->updateRelations();
+
         $this->combinePricesForScheduledCPL();
+        $triggerHandler->commit();
     }
 
     protected function combinePricesForScheduledCPL()

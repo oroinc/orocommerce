@@ -9,18 +9,18 @@ use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Entity\ProductImageType;
 use Oro\Bundle\ProductBundle\Validator\Constraints\ProductImageType as ProductImageTypeConstraint;
 use Oro\Bundle\ProductBundle\Validator\Constraints\ProductImageTypeValidator;
-use Oro\Component\Testing\Validator\AbstractConstraintValidatorTest;
 use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
-class ProductImageTypeValidatorTest extends AbstractConstraintValidatorTest
+class ProductImageTypeValidatorTest extends ConstraintValidatorTestCase
 {
     /**
-     * @var ImageTypeProvider|\PHPUnit_Framework_MockObject_MockObject $imageTypeProvider
+     * @var ImageTypeProvider|\PHPUnit\Framework\MockObject\MockObject $imageTypeProvider
      */
     protected $imageTypeProvider;
 
     /**
-     * @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject $translator
+     * @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject $translator
      */
     protected $translator;
 

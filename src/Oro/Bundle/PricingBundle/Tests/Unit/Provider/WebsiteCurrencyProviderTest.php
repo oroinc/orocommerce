@@ -7,15 +7,15 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PricingBundle\Provider\WebsiteCurrencyProvider;
 use Oro\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
 
-class WebsiteCurrencyProviderTest extends \PHPUnit_Framework_TestCase
+class WebsiteCurrencyProviderTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var CurrencyProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var CurrencyProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $currencyProvider;
 
     /**
-     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $doctrineHelper;
 

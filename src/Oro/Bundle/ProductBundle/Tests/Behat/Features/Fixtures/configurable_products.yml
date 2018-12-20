@@ -1,11 +1,8 @@
-include:
-    - '@OroCustomerBundle:BuyerCustomerFixture.yml'
-
 Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     attribute_family_label:
         string: 'Attribute Family'
     configurable_product_A_name:
-        string: 'Configurable Product A'
+        string: 'ConfigurableProductA'
     product_A_1_name:
         string: 'Product A 1'
     product_A_2_name:
@@ -15,7 +12,7 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     product_A_4_name:
         string: 'Product A 4'
     configurable_product_B_name:
-        string: 'Configurable Product B'
+        string: 'ConfigurableProductB'
     product_B_11_name:
         string: 'Product B 11'
     product_B_12_name:
@@ -41,7 +38,7 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     product_B_43_name:
         string: 'Product B 43'
     configurable_product_C_name:
-        string: 'Configurable Product C'
+        string: 'ConfigurableProductC'
     product_C_111_name:
         string: 'Product C 111'
     product_C_121_name:
@@ -233,7 +230,7 @@ Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
 Oro\Bundle\ProductBundle\Entity\Product:
     configurable_product_A:
         type: 'configurable'
-        sku: 'CNF_A'
+        sku: 'CNFA'
         organization: '@organization'
         attributeFamily: '@attribute_family'
         primaryUnitPrecision: '@unit_precisionA'
@@ -242,7 +239,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
         inventoryStatus: '@enumInventoryStatuses'
     configurable_product_B:
         type: 'configurable'
-        sku: 'CNF_B'
+        sku: 'CNFB'
         organization: '@organization'
         attributeFamily: '@attribute_family'
         primaryUnitPrecision: '@unit_precisionB'
@@ -251,7 +248,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
         inventoryStatus: '@enumInventoryStatuses'
     configurable_product_C:
         type: 'configurable'
-        sku: 'CNF_C'
+        sku: 'CNFC'
         organization: '@organization'
         attributeFamily: '@attribute_family'
         primaryUnitPrecision: '@unit_precisionC'

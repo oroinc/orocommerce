@@ -4,6 +4,7 @@ namespace Oro\Bundle\PaymentBundle;
 
 use Oro\Bundle\PaymentBundle\DBAL\Types\SecureArrayType;
 use Oro\Bundle\PaymentBundle\DependencyInjection\Compiler\CompositePaymentMethodProviderCompilerPass;
+use Oro\Bundle\PaymentBundle\DependencyInjection\Compiler\PaymentGuestAccessUrlPass;
 use Oro\Bundle\PaymentBundle\DependencyInjection\Compiler\PaymentMethodViewProvidersPass;
 use Oro\Bundle\PaymentBundle\DependencyInjection\Compiler\SupportsEntityPaymentContextFactoriesPass;
 use Oro\Bundle\PaymentBundle\DependencyInjection\Compiler\TwigSandboxConfigurationPass;
@@ -11,6 +12,9 @@ use Oro\Bundle\PaymentBundle\DependencyInjection\OroPaymentExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
+/**
+ * This class is setting up bundle configuration
+ */
 class OroPaymentBundle extends Bundle
 {
     /** {@inheritdoc} */
@@ -26,6 +30,7 @@ class OroPaymentBundle extends Bundle
         $container->addCompilerPass(new PaymentMethodViewProvidersPass());
         $container->addCompilerPass(new CompositePaymentMethodProviderCompilerPass());
         $container->addCompilerPass(new SupportsEntityPaymentContextFactoriesPass());
+        $container->addCompilerPass(new PaymentGuestAccessUrlPass());
         parent::build($container);
     }
 
@@ -38,11 +43,11 @@ class OroPaymentBundle extends Bundle
                 SecureArrayType::class
             );
 
-            $mcrypt = $this->container->get('oro_security.encoder.mcrypt');
+            $crypter = $this->container->get('oro_security.encoder.default');
 
             /** @var SecureArrayType $secureArrayType */
             $secureArrayType = SecureArrayType::getType(SecureArrayType::TYPE);
-            $secureArrayType->setMcrypt($mcrypt);
+            $secureArrayType->setCrypter($crypter);
         }
     }
 }

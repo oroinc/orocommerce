@@ -9,14 +9,14 @@ use Oro\Bundle\OrderBundle\Pricing\PriceMatcher;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Form\FormInterface;
 
-class MatchingPriceEventListenerTest extends \PHPUnit_Framework_TestCase
+class MatchingPriceEventListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /** @var MatchingPriceEventListener */
     protected $listener;
 
-    /** @var PriceMatcher|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var PriceMatcher|\PHPUnit\Framework\MockObject\MockObject */
     protected $priceMatcher;
 
     /** @var FormInterface */

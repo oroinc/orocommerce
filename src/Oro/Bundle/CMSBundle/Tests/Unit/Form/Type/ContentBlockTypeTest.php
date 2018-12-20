@@ -17,6 +17,7 @@ use Oro\Bundle\ScopeBundle\Tests\Unit\Form\Type\Stub\ScopeCollectionTypeStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntityValidator;
+use Symfony\Component\Asset\Context\ContextInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidatorFactoryInterface;
 
@@ -28,7 +29,7 @@ class ContentBlockTypeTest extends FormIntegrationTestCase
     protected function getExtensions()
     {
         /**
-         * @var \Oro\Bundle\ConfigBundle\Config\ConfigManager|\PHPUnit_Framework_MockObject_MockObject $configManager
+         * @var \Oro\Bundle\ConfigBundle\Config\ConfigManager|\PHPUnit\Framework\MockObject\MockObject $configManager
          */
         $configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
             ->disableOriginalConstructor()
@@ -39,6 +40,8 @@ class ContentBlockTypeTest extends FormIntegrationTestCase
             ->method('getAllowedElements')
             ->willReturn(['br', 'a']);
 
+        $context = $this->createMock(ContextInterface::class);
+
         return [
             new PreloadedExtension(
                 [
@@ -47,7 +50,7 @@ class ContentBlockTypeTest extends FormIntegrationTestCase
                     LocalizedFallbackValueCollectionType::class => new LocalizedFallbackValueCollectionTypeStub(),
                     new TextContentVariantCollectionType(),
                     new TextContentVariantType(),
-                    OroRichTextType::class => new OroRichTextType($configManager, $htmlTagProvider),
+                    OroRichTextType::class => new OroRichTextType($configManager, $htmlTagProvider, $context),
                 ],
                 []
             ),
@@ -193,11 +196,11 @@ class ContentBlockTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|ConstraintValidatorFactoryInterface
+     * @return \PHPUnit\Framework\MockObject\MockObject|ConstraintValidatorFactoryInterface
      */
     protected function getConstraintValidatorFactory()
     {
-        /* @var $factory \PHPUnit_Framework_MockObject_MockObject|ConstraintValidatorFactoryInterface */
+        /* @var $factory \PHPUnit\Framework\MockObject\MockObject|ConstraintValidatorFactoryInterface */
         $factory = $this->createMock('Symfony\Component\Validator\ConstraintValidatorFactoryInterface');
         $factory->expects($this->any())
             ->method('getInstance')

@@ -20,7 +20,7 @@ class ProductCustomVariantFieldsCollectionTypeTest extends FormIntegrationTestCa
     protected $formType;
 
     /**
-     * @var VariantFieldProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var VariantFieldProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $variantFieldProvider;
 
@@ -223,10 +223,5 @@ class ProductCustomVariantFieldsCollectionTypeTest extends FormIntegrationTestCa
     public function testGetParent()
     {
         $this->assertEquals(CollectionType::class, $this->formType->getParent());
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals(ProductCustomVariantFieldsCollectionType::NAME, $this->formType->getName());
     }
 }

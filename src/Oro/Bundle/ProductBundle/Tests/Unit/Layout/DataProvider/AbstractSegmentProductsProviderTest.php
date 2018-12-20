@@ -20,30 +20,30 @@ use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
-abstract class AbstractSegmentProductsProviderTest extends \PHPUnit_Framework_TestCase
+abstract class AbstractSegmentProductsProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var SegmentManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var SegmentManager|\PHPUnit\Framework\MockObject\MockObject */
     protected $segmentManager;
 
-    /** @var ProductSegmentProviderInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ProductSegmentProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $productSegmentProvider;
 
-    /** @var ProductManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ProductManager|\PHPUnit\Framework\MockObject\MockObject */
     protected $productManager;
 
-    /** @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
     protected $configManager;
 
-    /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $em;
 
-    /** @var TokenStorageInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var TokenStorageInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $tokenStorage;
 
-    /** @var CacheProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var CacheProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $cache;
 
-    /** @var SymmetricCrypterInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var SymmetricCrypterInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $crypter;
 
     /** @var AbstractSegmentProductsProvider */
@@ -83,7 +83,7 @@ abstract class AbstractSegmentProductsProviderTest extends \PHPUnit_Framework_Te
     abstract protected function getCacheKey();
 
     /**
-     * @param QueryBuilder|\PHPUnit_Framework_MockObject_MockObject $queryBuilder
+     * @param QueryBuilder|\PHPUnit\Framework\MockObject\MockObject $queryBuilder
      */
     protected function getProducts(QueryBuilder $queryBuilder)
     {
@@ -137,7 +137,7 @@ abstract class AbstractSegmentProductsProviderTest extends \PHPUnit_Framework_Te
             ->with($dql)
             ->willReturn($hash);
 
-        /** @var Query|\PHPUnit_Framework_MockObject_MockObject $query */
+        /** @var Query|\PHPUnit\Framework\MockObject\MockObject $query */
         $query = $this->createMock(AbstractQuery::class);
         $this->em
             ->expects($this->once())
@@ -177,7 +177,7 @@ abstract class AbstractSegmentProductsProviderTest extends \PHPUnit_Framework_Te
             ->with($dql)
             ->willReturn($hash);
 
-        /** @var Query|\PHPUnit_Framework_MockObject_MockObject $query */
+        /** @var Query|\PHPUnit\Framework\MockObject\MockObject $query */
         $query = $this->createMock(AbstractQuery::class);
         $this->em
             ->expects($this->once())
@@ -217,7 +217,7 @@ abstract class AbstractSegmentProductsProviderTest extends \PHPUnit_Framework_Te
             ->with($dql)
             ->willReturn($hash);
 
-        /** @var Query|\PHPUnit_Framework_MockObject_MockObject $query */
+        /** @var Query|\PHPUnit\Framework\MockObject\MockObject $query */
         $query = $this->createMock(AbstractQuery::class);
         $this->em
             ->expects($this->once())
@@ -234,7 +234,7 @@ abstract class AbstractSegmentProductsProviderTest extends \PHPUnit_Framework_Te
     }
 
     /**
-     * @param QueryBuilder|\PHPUnit_Framework_MockObject_MockObject $queryBuilder
+     * @param QueryBuilder|\PHPUnit\Framework\MockObject\MockObject $queryBuilder
      */
     protected function getProductsWithDisabledCache(QueryBuilder $queryBuilder)
     {
@@ -267,7 +267,7 @@ abstract class AbstractSegmentProductsProviderTest extends \PHPUnit_Framework_Te
             ->method('getParameters')
             ->willReturn($parameters);
 
-        /** @var Query|\PHPUnit_Framework_MockObject_MockObject $query */
+        /** @var Query|\PHPUnit\Framework\MockObject\MockObject $query */
         $query = $this->createMock(AbstractQuery::class);
         $this->em
             ->expects($this->once())
@@ -321,7 +321,7 @@ abstract class AbstractSegmentProductsProviderTest extends \PHPUnit_Framework_Te
     }
 
     /**
-     * @return QueryBuilder|\PHPUnit_Framework_MockObject_MockObject
+     * @return QueryBuilder|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function getQueryBuilder()
     {

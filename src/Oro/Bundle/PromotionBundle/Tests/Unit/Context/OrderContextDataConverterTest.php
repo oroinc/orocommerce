@@ -21,42 +21,43 @@ use Oro\Bundle\PromotionBundle\Entity\Coupon;
 use Oro\Bundle\PromotionBundle\Provider\EntityCouponsProviderInterface;
 use Oro\Bundle\PromotionBundle\Tests\Unit\Entity\Stub\Order;
 use Oro\Bundle\PromotionBundle\ValidationService\CouponValidationService;
+use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class OrderContextDataConverterTest extends \PHPUnit_Framework_TestCase
+class OrderContextDataConverterTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var CriteriaDataProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var CriteriaDataProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     private $criteriaDataProvider;
 
     /**
-     * @var OrderLineItemsToDiscountLineItemsConverter|\PHPUnit_Framework_MockObject_MockObject
+     * @var OrderLineItemsToDiscountLineItemsConverter|\PHPUnit\Framework\MockObject\MockObject
      */
     private $lineItemsConverter;
 
     /**
-     * @var ScopeManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ScopeManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $scopeManager;
 
     /**
-     * @var SubtotalProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var SubtotalProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $lineItemSubtotalProvider;
 
     /**
-     * @var CouponValidationService|\PHPUnit_Framework_MockObject_MockObject
+     * @var CouponValidationService|\PHPUnit\Framework\MockObject\MockObject
      */
     private $couponValidationService;
 
     /**
-     * @var EntityCouponsProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var EntityCouponsProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $entityCouponsProvider;
     /**
@@ -97,6 +98,13 @@ class OrderContextDataConverterTest extends \PHPUnit_Framework_TestCase
     public function testSupports()
     {
         $this->assertTrue($this->converter->supports(new Order()));
+    }
+
+    public function testSupportsWhenOrderWithQuote()
+    {
+        $order = new Order();
+        $order->setSourceEntityClass(Quote::class);
+        $this->assertFalse($this->converter->supports($order));
     }
 
     public function testGetContextDataWhenThrowsException()

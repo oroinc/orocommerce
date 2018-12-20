@@ -42,8 +42,8 @@ datagrids:
                 label:         oro.product.new_arrival.label
                 frontend_type: select
                 choices:
-                    - oro.product.new_arrival.no
-                    - oro.product.new_arrival.yes
+                    oro.product.new_arrival.no: 0
+                    oro.product.new_arrival.yes: 1
                 renderable:    false
             createdAt:
                 label:         oro.ui.created_at
@@ -103,8 +103,8 @@ datagrids:
                     options:
                         field_options:
                             choices:
-                                1: oro.product.new_arrival.yes
-                                2: oro.product.new_arrival.no
+                                oro.product.new_arrival.yes: 1
+                                oro.product.new_arrival.no: 2
                     enabled: false
                 createdAt:
                     type:      datetime
@@ -347,7 +347,7 @@ datagrids:
     product-product-variants-base:
         acl_resource: oro_product_view
         options:
-            entityHint: product varitans
+            entityHint: product variants
             entity_pagination: true
         source:
             type:         orm

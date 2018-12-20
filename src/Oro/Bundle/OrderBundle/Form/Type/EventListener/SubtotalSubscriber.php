@@ -6,6 +6,7 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Pricing\PriceMatcher;
 use Oro\Bundle\OrderBundle\Total\TotalHelper;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Validator\Constraints\Range;
@@ -56,7 +57,7 @@ class SubtotalSubscriber implements EventSubscriberInterface
                 $form->remove('discountsSum');
                 $form->add(
                     'discountsSum',
-                    'hidden',
+                    HiddenType::class,
                     [
                         'mapped' => false,
                         'constraints' => [new Range(

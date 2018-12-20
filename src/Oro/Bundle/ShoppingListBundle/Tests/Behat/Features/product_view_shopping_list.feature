@@ -1,13 +1,16 @@
+@ticket-BB-13978
 @fixture-OroShoppingListBundle:product_shopping_list.yml
 Feature: Product view shopping list
   In order to edit content node
   As an Buyer
-  I want to have ability to create quote on product page
+  I want to have ability to create quote on product page.
+  I need to be able to see localized product name in Shopping Lists widget.
 
   Scenario: Create different window session
     Given sessions active:
       | User  |first_session |
       | Admin |second_session|
+    And I enable the existing localizations
 
   Scenario: Requests a quote button exists in shopping list dropdown after changing units
     Given I proceed as the User
@@ -40,3 +43,14 @@ Feature: Product view shopping list
     And click "View Details" for "PSKU_ITEM" product
     When I click "Add to Shopping List"
     Then I should see "Product has been added to" flash message
+
+  Scenario: Check that product name is localized in shopping lists widget
+    Given I click "Localization Switcher"
+    And I select "Localization 1" localization
+    And type "PSKU_LOCALIZED" in "search"
+    And click "Search Button"
+    And click "View Details" for "PSKU_LOCALIZED" product
+    And I click "Add to Shopping List"
+    When click "In Shopping List"
+    Then I should see "UiDialog" with elements:
+      | Title | Product 3 (Localization1)|

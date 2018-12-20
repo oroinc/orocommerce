@@ -10,7 +10,7 @@ use Oro\Bundle\PromotionBundle\Discount\Converter\OrderLineItemsToDiscountLineIt
 use Oro\Bundle\PromotionBundle\Discount\DiscountLineItem;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class OrderLineItemsToDiscountLineItemsConverterTest extends \PHPUnit_Framework_TestCase
+class OrderLineItemsToDiscountLineItemsConverterTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 

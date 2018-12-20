@@ -10,15 +10,15 @@ use Oro\Bundle\RedirectBundle\Model\MessageFactoryInterface;
 use Oro\Bundle\RedirectBundle\Provider\RoutingInformationProvider;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 
-class ConfigEnableDirectUrlListenerTest extends \PHPUnit_Framework_TestCase
+class ConfigEnableDirectUrlListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var MessageProducerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $messageProducer;
 
     /**
-     * @var RoutingInformationProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var RoutingInformationProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     private $provider;
 
@@ -28,7 +28,7 @@ class ConfigEnableDirectUrlListenerTest extends \PHPUnit_Framework_TestCase
     private $listener;
 
     /**
-     * @var MessageFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var MessageFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $messageFactory;
 
@@ -47,7 +47,7 @@ class ConfigEnableDirectUrlListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testOnUpdateAfterIsNotChanged()
     {
-        /** @var ConfigUpdateEvent|\PHPUnit_Framework_MockObject_MockObject $event */
+        /** @var ConfigUpdateEvent|\PHPUnit\Framework\MockObject\MockObject $event */
         $event = $this->getMockBuilder(ConfigUpdateEvent::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -66,7 +66,7 @@ class ConfigEnableDirectUrlListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testOnUpdateAfterTurnedOff()
     {
-        /** @var ConfigUpdateEvent|\PHPUnit_Framework_MockObject_MockObject $event */
+        /** @var ConfigUpdateEvent|\PHPUnit\Framework\MockObject\MockObject $event */
         $event = $this->getMockBuilder(ConfigUpdateEvent::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -92,7 +92,7 @@ class ConfigEnableDirectUrlListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testOnUpdateAfterTurnedOn()
     {
-        /** @var ConfigUpdateEvent|\PHPUnit_Framework_MockObject_MockObject $event */
+        /** @var ConfigUpdateEvent|\PHPUnit\Framework\MockObject\MockObject $event */
         $event = $this->getMockBuilder(ConfigUpdateEvent::class)
             ->disableOriginalConstructor()
             ->getMock();

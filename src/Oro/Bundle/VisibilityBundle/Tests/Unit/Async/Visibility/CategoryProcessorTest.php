@@ -3,11 +3,10 @@
 namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Async\Visibility;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\DBAL\Driver\PDOException;
+use Doctrine\DBAL\Exception\DeadlockException;
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Model\Exception\InvalidArgumentException;
-use Oro\Bundle\EntityBundle\ORM\DatabaseExceptionHelper;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
@@ -26,37 +25,32 @@ use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Psr\Log\LoggerInterface;
 
-class CategoryProcessorTest extends \PHPUnit_Framework_TestCase
+class CategoryProcessorTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $registry;
 
     /**
-     * @var InsertFromSelectQueryExecutor|\PHPUnit_Framework_MockObject_MockObject
+     * @var InsertFromSelectQueryExecutor|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $insertFromSelectQueryExecutor;
 
     /**
-     * @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $logger;
 
     /**
-     * @var CategoryMessageFactory|\PHPUnit_Framework_MockObject_MockObject
+     * @var CategoryMessageFactory|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $messageFactory;
 
     /**
-     * @var CacheBuilder|\PHPUnit_Framework_MockObject_MockObject
+     * @var CacheBuilder|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $cacheBuilder;
-
-    /**
-     * @var DatabaseExceptionHelper|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $databaseExceptionHelper;
 
     /**
      * @var CategoryProcessor
@@ -64,7 +58,7 @@ class CategoryProcessorTest extends \PHPUnit_Framework_TestCase
     protected $categoryProcessor;
 
     /**
-     * @var ScopeManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ScopeManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $scopeManager;
 
@@ -79,9 +73,6 @@ class CategoryProcessorTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $this->cacheBuilder = $this->createMock(CacheBuilder::class);
-        $this->databaseExceptionHelper = $this->getMockBuilder(DatabaseExceptionHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
         $this->scopeManager = $this->getMockBuilder(ScopeManager::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -91,8 +82,7 @@ class CategoryProcessorTest extends \PHPUnit_Framework_TestCase
             $this->logger,
             $this->messageFactory,
             $this->cacheBuilder,
-            $this->scopeManager,
-            $this->databaseExceptionHelper
+            $this->scopeManager
         );
     }
 
@@ -111,12 +101,12 @@ class CategoryProcessorTest extends \PHPUnit_Framework_TestCase
             ->method('getManagerForClass')
             ->with(CategoryVisibilityResolved::class)
             ->willReturn($em);
-        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message * */
+        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message * */
         $message = $this->createMock(MessageInterface::class);
         $message->expects($this->any())
             ->method('getBody')
             ->willReturn($body);
-        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session * */
+        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session * */
         $session = $this->createMock(SessionInterface::class);
         $category = new Category();
         $this->cacheBuilder->expects($this->once())
@@ -195,13 +185,13 @@ class CategoryProcessorTest extends \PHPUnit_Framework_TestCase
             ->method('getManagerForClass')
             ->willReturn($em);
 
-        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
+        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message **/
         $message = $this->createMock(MessageInterface::class);
         $message->expects($this->any())
             ->method('getBody')
             ->willReturn($body);
 
-        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
+        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session **/
         $session = $this->createMock(SessionInterface::class);
 
         $this->messageFactory->expects($this->once())
@@ -217,10 +207,8 @@ class CategoryProcessorTest extends \PHPUnit_Framework_TestCase
 
     public function testProcessDeadlock()
     {
-        /** @var PDOException $exception */
-        $exception = $this->getMockBuilder(PDOException::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        /** @var DeadlockException $exception */
+        $exception = $this->createMock(DeadlockException::class);
 
         $em = $this->createMock(EntityManagerInterface::class);
         $em->expects($this->once())
@@ -233,7 +221,7 @@ class CategoryProcessorTest extends \PHPUnit_Framework_TestCase
             ->with(CategoryVisibilityResolved::class)
             ->willReturn($em);
 
-        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message * */
+        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message * */
         $message = $this->createMock(MessageInterface::class);
         $message->expects($this->any())
             ->method('getBody')
@@ -242,12 +230,8 @@ class CategoryProcessorTest extends \PHPUnit_Framework_TestCase
             ->method('error')
             ->with('Unexpected exception occurred during Category visibility resolve', ['exception' => $exception]);
 
-        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session * */
+        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session * */
         $session = $this->createMock(SessionInterface::class);
-
-        $this->databaseExceptionHelper->expects($this->once())
-            ->method('isDeadlock')
-            ->willReturn(true);
 
         $this->assertEquals(
             MessageProcessorInterface::REQUEUE,
@@ -267,7 +251,7 @@ class CategoryProcessorTest extends \PHPUnit_Framework_TestCase
             ->method('getManagerForClass')
             ->with(CategoryVisibilityResolved::class)
             ->willReturn($em);
-        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message * */
+        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message * */
         $message = $this->createMock(MessageInterface::class);
         $message->expects($this->any())
             ->method('getBody')
@@ -275,10 +259,8 @@ class CategoryProcessorTest extends \PHPUnit_Framework_TestCase
         $this->logger->expects($this->once())
             ->method('error')
             ->with('Unexpected exception occurred during Category visibility resolve', ['exception' => $exception]);
-        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session * */
+        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session * */
         $session = $this->createMock(SessionInterface::class);
-        $this->databaseExceptionHelper->expects($this->never())
-            ->method('isDeadlock');
         $this->assertEquals(
             MessageProcessorInterface::REJECT,
             $this->categoryProcessor->process($message, $session)
@@ -299,7 +281,7 @@ class CategoryProcessorTest extends \PHPUnit_Framework_TestCase
         $this->messageFactory->expects($this->once())
             ->method('getCategoryFromMessage')
             ->will($this->throwException(new InvalidArgumentException('Wrong message')));
-        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message * */
+        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message * */
         $message = $this->createMock(MessageInterface::class);
         $message->expects($this->any())
             ->method('getBody')
@@ -307,7 +289,7 @@ class CategoryProcessorTest extends \PHPUnit_Framework_TestCase
         $this->logger->expects($this->once())
             ->method('error')
             ->with('Message is invalid: Wrong message');
-        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session * */
+        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session * */
         $session = $this->createMock(SessionInterface::class);
         $this->assertEquals(
             MessageProcessorInterface::REJECT,

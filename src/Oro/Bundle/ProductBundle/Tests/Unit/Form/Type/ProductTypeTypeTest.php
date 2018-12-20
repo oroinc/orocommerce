@@ -15,7 +15,7 @@ class ProductTypeTypeTest extends FormIntegrationTestCase
     /** @var ProductTypeType */
     protected $productTypeType;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|ProductTypeProvider */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|ProductTypeProvider */
     protected $productTypeProvider;
 
     public function setup()
@@ -35,11 +35,6 @@ class ProductTypeTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals('oro_product_type', $this->productTypeType->getName());
-    }
-
     public function testGetParent()
     {
         $this->assertEquals(ChoiceType::class, $this->productTypeType->getParent());
@@ -51,8 +46,8 @@ class ProductTypeTypeTest extends FormIntegrationTestCase
         $availableProductTypes = $this->productTypeProvider->getAvailableProductTypes();
         $choices = [];
 
-        foreach ($availableProductTypes as $key => $value) {
-            $choices[] = new ChoiceView($key, $key, $value);
+        foreach ($availableProductTypes as $label => $value) {
+            $choices[] = new ChoiceView($value, $value, $label);
         }
 
         $this->assertEquals(

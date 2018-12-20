@@ -21,32 +21,32 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-class MenuDataProviderTest extends \PHPUnit_Framework_TestCase
+class MenuDataProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $registry;
 
     /**
-     * @var WebCatalogProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var WebCatalogProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $webCatalogProvider;
 
     /**
-     * @var RequestStack|\PHPUnit_Framework_MockObject_MockObject
+     * @var RequestStack|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $requestStack;
 
     /**
-     * @var ContentNodeTreeResolverInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ContentNodeTreeResolverInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $contentNodeTreeResolverFacade;
 
     /**
-     * @var LocalizationHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var LocalizationHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $localizationHelper;
 
@@ -97,6 +97,10 @@ class MenuDataProviderTest extends \PHPUnit_Framework_TestCase
             ->willReturn($request);
 
         $this->webCatalogProvider->expects($this->once())
+            ->method('getNavigationRoot')
+            ->willReturn(null);
+
+        $this->webCatalogProvider->expects($this->once())
             ->method('getWebCatalog')
             ->willReturn($webCatalog);
 
@@ -118,6 +122,56 @@ class MenuDataProviderTest extends \PHPUnit_Framework_TestCase
             ->method('getManagerForClass')
             ->with(ContentNode::class)
             ->willReturn($em);
+
+        $this->contentNodeTreeResolverFacade->expects($this->once())
+            ->method('getResolvedContentNode')
+            ->with($rootNode, $scope)
+            ->willReturn($resolvedRootNode);
+
+        $this->localizationHelper->expects($this->any())
+            ->method('getLocalizedValue')
+            ->will($this->returnCallback(function (ArrayCollection $collection) {
+                return $collection->first()->getString();
+            }));
+
+        $actual = $this->menuDataProvider->getItems();
+        $this->assertEquals($expectedData, $actual);
+    }
+
+    /**
+     * @dataProvider getItemsDataProvider
+     *
+     * @param ResolvedContentNode $resolvedRootNode
+     * @param array               $expectedData
+     */
+    public function testGetItemsWithNavigationRoot(ResolvedContentNode $resolvedRootNode, array $expectedData)
+    {
+        $rootNode = new ContentNode();
+        $scope = new Scope();
+
+        $request = Request::create('/', Request::METHOD_GET);
+        $request->attributes = new ParameterBag(['_web_content_scope' => $scope]);
+        $this->requestStack->expects($this->once())
+            ->method('getCurrentRequest')
+            ->willReturn($request);
+
+        $this->webCatalogProvider->expects($this->once())
+            ->method('getNavigationRoot')
+            ->willReturn($rootNode);
+
+        $this->webCatalogProvider->expects($this->never())
+            ->method('getWebCatalog');
+
+        $nodeRepository = $this->createMock(ContentNodeRepository::class);
+        $nodeRepository->expects($this->never())
+            ->method('getRootNodeByWebCatalog');
+
+        $em = $this->createMock(EntityManagerInterface::class);
+        $em->expects($this->never())
+            ->method('getRepository');
+
+        $this->registry->expects($this->never())
+            ->method('getManagerForClass');
 
         $this->contentNodeTreeResolverFacade->expects($this->once())
             ->method('getResolvedContentNode')

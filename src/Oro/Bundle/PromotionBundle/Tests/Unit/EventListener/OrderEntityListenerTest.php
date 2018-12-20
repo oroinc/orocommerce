@@ -6,10 +6,10 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PromotionBundle\EventListener\OrderEntityListener;
 use Oro\Bundle\PromotionBundle\Manager\AppliedPromotionManager;
 
-class OrderEntityListenerTest extends \PHPUnit_Framework_TestCase
+class OrderEntityListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var AppliedPromotionManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var AppliedPromotionManager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $appliedPromotionManager;
 

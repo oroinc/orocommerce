@@ -11,7 +11,7 @@ use Oro\Bundle\PricingBundle\Handler\PriceRuleLexemeHandler;
 class UpdateLexemesPriceRuleTest extends FormProcessorTestCase
 {
     /**
-     * @var PriceRuleLexemeHandler|\PHPUnit_Framework_MockObject_MockObject
+     * @var PriceRuleLexemeHandler|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $priceRuleLexemesHandler;
 
@@ -67,7 +67,7 @@ class UpdateLexemesPriceRuleTest extends FormProcessorTestCase
     /**
      * @param PriceList|null $priceList
      *
-     * @return PriceRule|\PHPUnit_Framework_MockObject_MockObject
+     * @return PriceRule|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function createPriceRuleMock(PriceList $priceList = null)
     {
@@ -86,7 +86,7 @@ class UpdateLexemesPriceRuleTest extends FormProcessorTestCase
     }
 
     /**
-     * @return PriceList|\PHPUnit_Framework_MockObject_MockObject
+     * @return PriceList|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function createPriceListMock()
     {

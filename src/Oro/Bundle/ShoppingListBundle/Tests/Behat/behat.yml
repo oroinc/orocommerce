@@ -56,9 +56,17 @@ oro_behat_extension:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector: '[data-role="start-editing"]'
 
+    Shopping List Label Input:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector: '#title-inline-editable .inline-view-editor__input-wrap > input'
+
     Shopping List Line Items Table:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Table
       selector: '#shopping_list_view_container_content > div.cart-table .shopping-list-line-items'
+
+    ShoppingListLineItemsTableHeaderLabel:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector: 'div.shopping-list-line-items__header-label'
 
     ShoppingListLineItem:
       class: Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\ShoppingListLineItem
@@ -73,6 +81,22 @@ oro_behat_extension:
         mapping:
           Quantity: 'product_qty'
           Unit: 'product_unit'
+
+    Shopping List Line Item 2 Form:
+      class: 'Oro\Bundle\TestFrameworkBundle\Behat\Element\Form'
+      selector:
+        locator: '(//div[@class=" shopping-list-line-items__item"])[2]//form'
+        type: xpath
+      options:
+        mapping:
+          Quantity: 'product_qty'
+          Unit: 'product_unit'
+
+    Shopping List Line Item Error:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        type: css
+        locator: 'div.shopping-list-line-items__error'
 
     Shopping List Line Item 1 Quantity:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
@@ -89,7 +113,7 @@ oro_behat_extension:
     Shopping List Dropdown:
       selector:
         type: 'xpath'
-        locator: '//a[contains(@class, "add-to-shopping-list-button")]/following-sibling::a/span[@class="caret"]/..'
+        locator: '//a[contains(@class, "add-to-shopping-list-button")]/following-sibling::a[contains(@class, "dropdown-toggle")]'
 
     Create New Shopping List:
       selector: 'a.add-to-shopping-list-button[title="Create New Shopping List"]'
@@ -160,8 +184,8 @@ oro_behat_extension:
     In Shopping List:
       selector: 'a.shopping-lists__area-trigger'
 
-    Add To Shopping List:
-      selector: 'a.add-to-shopping-list-button'
+    Add to Shopping List:
+      selector: 'a.add-to-shopping-list-button[title="Add to Shopping List"]'
 
     Add a Note to This Shopping List:
       selector: 'input[name=addANote]+.custom-checkbox__icon'
@@ -195,6 +219,15 @@ oro_behat_extension:
       selector: 'div[data-page-component-name="shopping-list-line-items-grid"]'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
 
+    Currency USD dropdown:
+      selector:
+        type: xpath
+        locator: '//div[contains(text(),"$") and @class="oro-toolbar__content"]'
+
+    Default Guest Shopping List Owner:
+      selector: 'input[name="shopping_list[oro_shopping_list___default_guest_shopping_list_owner][value]"]'
+      class: Oro\Bundle\FormBundle\Tests\Behat\Element\Select2Entity
+
   suites:
     OroShoppingListBundle:
       contexts:
@@ -203,6 +236,7 @@ oro_behat_extension:
         - OroFormBundle::FormContext
         - OroProductBundle::FeatureContext
         - OroProductBundle::FrontendProductGridContext
+        - OroProductBundle::QuickOrderFormContext
         - OroRedirectBundle::SlugPrototypesContext
         - OroSEOBundle::FeatureContext
         - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
@@ -212,5 +246,8 @@ oro_behat_extension:
         - OroNavigationBundle::FeatureContext
         - OroCustomerBundle::ACLContext
         - OroShoppingListBundle::ShoppingListContext
+        - OroCustomerBundle::RegistrationInstructionFeatureContext
+        - OroLocaleBundle::LocalizationContext
+        - OroFrontendLocalizationBundle::LocalizationSwitcherContext
       paths:
         - '@OroShoppingListBundle/Tests/Behat/Features'

@@ -15,6 +15,9 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
+/**
+ * Adds upcoming fields to product form.
+ */
 class ProductUpcomingFormExtension extends AbstractTypeExtension
 {
     /**
@@ -39,14 +42,16 @@ class ProductUpcomingFormExtension extends AbstractTypeExtension
                         'choices' => [
                             'oro.inventory.is_upcoming.choice.false' => 0,
                             'oro.inventory.is_upcoming.choice.true' => 1,
-                        ],
-                        // TODO: Remove 'choices_as_values' option in scope of BAP-15236
-                        'choices_as_values' => true,
+                        ]
                     ],
                 ]
             )
             ->add(ProductUpcomingProvider::AVAILABILITY_DATE, OroDateTimeType::class, [
                 'required' => false,
+                'years' => [
+                    date_create('-10 year')->format('Y'),
+                    date_create('+30 year')->format('Y')
+                ],
             ]);
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'onPreSetData']);

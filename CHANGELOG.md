@@ -1,5 +1,30 @@
+## 3.1.0-rc (2018-11-30)
+[Show detailed list of changes](incompatibilities-3-1-rc.md)
+
+### Changed
+#### OrderBundle
+* Changes in `/admin/api/orderaddresses` REST API resource:
+    - the attribute `created` was renamed to `createdAt`
+    - the attribute `updated` was renamed to `updatedAt`
+#### ShoppingListBundle
+* Functionality related to the currently active shopping list was moved from `Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager` to `Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListManager`. The service id for the CurrentShoppingListManager is `oro_shopping_list.manager.current_shopping_list`.
+* Service `oro_shopping_list.shopping_list.manager` was renamed to `oro_shopping_list.manager.shopping_list`.
+
+## 3.1.0-beta (2018-09-27)
+[Show detailed list of changes](incompatibilities-3-1-beta.md)
+
+## 3.0.0 (2018-07-27)
+[Show detailed list of changes](incompatibilities-3-0.md)
+
+## 3.0.0-rc (2018-05-31)
+[Show detailed list of changes](incompatibilities-3-0-rc.md)
+
 ## 3.0.0-beta (2018-03-30)
 [Show detailed list of changes](incompatibilities-3-0-beta.md)
+
+### Changed
+#### ElasticSearchBundle
+* Method `validateReindexRequest` at `Oro\Bundle\WebsiteSearchBundle\Engine\IndexerInputValidator` was renamed to `validateRequestParameters`
 
 ### Added
 #### ProductBundle

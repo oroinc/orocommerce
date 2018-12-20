@@ -6,7 +6,7 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\ShippingBundle\Method\Configuration\Composed\ComposedShippingMethodConfiguration;
 use Oro\Bundle\ShippingBundle\Method\Configuration\Composed\ComposedShippingMethodConfigurationBuilder;
 
-class ComposedShippingMethodConfigurationBuilderTest extends \PHPUnit_Framework_TestCase
+class ComposedShippingMethodConfigurationBuilderTest extends \PHPUnit\Framework\TestCase
 {
     public function testAllSetters()
     {

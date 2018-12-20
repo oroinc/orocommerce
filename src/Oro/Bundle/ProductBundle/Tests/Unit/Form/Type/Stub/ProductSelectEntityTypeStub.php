@@ -27,7 +27,7 @@ class ProductSelectEntityTypeStub extends EntityType
             'create_enabled'  => false,
             'class'           => 'Oro\Bundle\ProductBundle\Entity\Product',
             'data_parameters' => [],
-            'property'        => 'sku',
+            'choice_label'    => 'sku',
             'configs'         => [
                 'placeholder' => null,
             ],

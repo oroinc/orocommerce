@@ -8,23 +8,23 @@ use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Helper\ProductImageHelper;
 use Oro\Bundle\ProductBundle\Validator\Constraints\ProductImageCollection;
 use Oro\Bundle\ProductBundle\Validator\Constraints\ProductImageCollectionValidator;
-use Oro\Component\Testing\Validator\AbstractConstraintValidatorTest;
 use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
-class ProductImageCollectionValidatorTest extends AbstractConstraintValidatorTest
+class ProductImageCollectionValidatorTest extends ConstraintValidatorTestCase
 {
     /**
-     * @var ImageTypeProvider|\PHPUnit_Framework_MockObject_MockObject $imageTypeProvider
+     * @var ImageTypeProvider|\PHPUnit\Framework\MockObject\MockObject $imageTypeProvider
      */
     protected $imageTypeProvider;
 
     /**
-     * @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject $translator
+     * @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject $translator
      */
     protected $translator;
 
     /**
-     * @var ProductImageHelper|\PHPUnit_Framework_MockObject_MockObject $productImageHelper
+     * @var ProductImageHelper|\PHPUnit\Framework\MockObject\MockObject $productImageHelper
      */
     protected $productImageHelper;
 

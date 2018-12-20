@@ -1,7 +1,7 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'oro_promotion_coupon_form.html.twig'
+            themes: 'OroPromotionBundle:layouts:default/imports/oro_promotion_coupon_form/oro_promotion_coupon_form.html.twig'
         - '@addTree':
             items:
                 __container:

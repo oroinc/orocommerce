@@ -2,14 +2,17 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Layout\DataProvider;
 
-use Oro\Bundle\CurrencyBundle\Formatter\NumberFormatter;
+use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListManager;
 use Oro\Bundle\ShoppingListBundle\Manager\MatrixGridOrderManager;
-use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 
+/**
+ * Provides data for matrix order grid for layouts.
+ */
 class MatrixGridOrderProvider
 {
     /**
@@ -28,26 +31,26 @@ class MatrixGridOrderProvider
     private $numberFormatter;
 
     /**
-     * @var ShoppingListManager
+     * @var CurrentShoppingListManager
      */
-    private $shoppingListManager;
+    private $currentShoppingListManager;
 
     /**
      * @param MatrixGridOrderManager $matrixGridManager
      * @param TotalProcessorProvider $totalProvider
      * @param NumberFormatter $numberFormatter
-     * @param ShoppingListManager $shoppingListManager
+     * @param CurrentShoppingListManager $currentShoppingListManager
      */
     public function __construct(
         MatrixGridOrderManager $matrixGridManager,
         TotalProcessorProvider $totalProvider,
         NumberFormatter $numberFormatter,
-        ShoppingListManager $shoppingListManager
+        CurrentShoppingListManager $currentShoppingListManager
     ) {
         $this->matrixGridManager = $matrixGridManager;
         $this->totalProvider = $totalProvider;
         $this->numberFormatter = $numberFormatter;
-        $this->shoppingListManager = $shoppingListManager;
+        $this->currentShoppingListManager = $currentShoppingListManager;
     }
 
     /**
@@ -59,7 +62,7 @@ class MatrixGridOrderProvider
      */
     public function getTotalQuantity(Product $product, ShoppingList $shoppingList = null)
     {
-        $shoppingList = $shoppingList ?: $this->shoppingListManager->getCurrent();
+        $shoppingList = $shoppingList ?: $this->currentShoppingListManager->getCurrent();
 
         $collection = $this->matrixGridManager->getMatrixCollection($product, $shoppingList);
 
@@ -80,7 +83,7 @@ class MatrixGridOrderProvider
      */
     public function getTotalPriceFormatted(Product $product, ShoppingList $shoppingList = null)
     {
-        $shoppingList = $shoppingList ?: $this->shoppingListManager->getCurrent();
+        $shoppingList = $shoppingList ?: $this->currentShoppingListManager->getCurrent();
 
         $collection = $this->matrixGridManager->getMatrixCollection($product, $shoppingList);
 

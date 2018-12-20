@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\TaxBundle\Tests\Unit\Provider;
 
+use Doctrine\Common\Cache\CacheProvider;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\TaxBundle\Factory\AddressModelFactory;
 use Oro\Bundle\TaxBundle\Factory\TaxBaseExclusionFactory;
@@ -13,20 +14,20 @@ use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class TaxationSettingsProviderTest extends \PHPUnit_Framework_TestCase
+class TaxationSettingsProviderTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $configManager;
 
     /**
-     * @var TaxBaseExclusionFactory|\PHPUnit_Framework_MockObject_MockObject
+     * @var TaxBaseExclusionFactory|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $taxBaseExclusionFactory;
 
     /**
-     * @var AddressModelFactory|\PHPUnit_Framework_MockObject_MockObject
+     * @var AddressModelFactory|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $addressModelFactory;
 
@@ -35,27 +36,26 @@ class TaxationSettingsProviderTest extends \PHPUnit_Framework_TestCase
      */
     protected $provider;
 
+    /**
+     * @var CacheProvider|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $cacheProvider;
+
     protected function setUp()
     {
-        $this->configManager = $this
-            ->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->configManager = $this->createMock(ConfigManager::class);
 
-        $this->taxBaseExclusionFactory = $this
-            ->getMockBuilder('Oro\Bundle\TaxBundle\Factory\TaxBaseExclusionFactory')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->taxBaseExclusionFactory = $this->createMock(TaxBaseExclusionFactory::class);
 
-        $this->addressModelFactory = $this
-            ->getMockBuilder('Oro\Bundle\TaxBundle\Factory\AddressModelFactory')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->addressModelFactory = $this->createMock(AddressModelFactory::class);
+
+        $this->cacheProvider = $this->createMock(CacheProvider::class);
 
         $this->provider = new TaxationSettingsProvider(
             $this->configManager,
             $this->taxBaseExclusionFactory,
-            $this->addressModelFactory
+            $this->addressModelFactory,
+            $this->cacheProvider
         );
     }
 
@@ -64,13 +64,41 @@ class TaxationSettingsProviderTest extends \PHPUnit_Framework_TestCase
         unset($this->configManager, $this->taxBaseExclusionFactory, $this->addressModelFactory, $this->provider);
     }
 
-    public function testGetStartCalculationWith()
-    {
+    /**
+     * @param string $optionKey
+     * @param mixed $optionValue
+     * @param string $methodName
+     */
+    private function configureGetCachedExpectations(
+        $optionKey,
+        $optionValue,
+        $methodName
+    ) {
+        $cacheKey = TaxationSettingsProvider::class . '::' . $methodName;
+
         $this->configManager
             ->expects($this->once())
             ->method('get')
-            ->with('oro_tax.start_calculation_with')
-            ->willReturn(TaxationSettingsProvider::START_CALCULATION_UNIT_PRICE);
+            ->with($optionKey)
+            ->willReturn($optionValue);
+
+        $this->cacheProvider->expects($this->exactly(1))
+            ->method('contains')
+            ->with($cacheKey)
+            ->willReturnOnConsecutiveCalls(false);
+
+        $this->cacheProvider->expects($this->once())
+            ->method('save')
+            ->with($cacheKey, $optionValue);
+    }
+
+    public function testGetStartCalculationWith()
+    {
+        $this->configureGetCachedExpectations(
+            'oro_tax.start_calculation_with',
+            TaxationSettingsProvider::START_CALCULATION_UNIT_PRICE,
+            'getStartCalculationWith'
+        );
 
         $this->assertEquals(
             TaxationSettingsProvider::START_CALCULATION_UNIT_PRICE,
@@ -113,11 +141,11 @@ class TaxationSettingsProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetStartCalculationOn()
     {
-        $this->configManager
-            ->expects($this->once())
-            ->method('get')
-            ->with('oro_tax.start_calculation_on')
-            ->willReturn(TaxationSettingsProvider::START_CALCULATION_ON_TOTAL);
+        $this->configureGetCachedExpectations(
+            'oro_tax.start_calculation_on',
+            TaxationSettingsProvider::START_CALCULATION_ON_TOTAL,
+            'getStartCalculationOn'
+        );
 
         $this->assertEquals(
             TaxationSettingsProvider::START_CALCULATION_ON_TOTAL,
@@ -199,11 +227,11 @@ class TaxationSettingsProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function testIsProductPricesIncludeTax($configValue, $expected)
     {
-        $this->configManager
-            ->expects($this->once())
-            ->method('get')
-            ->with('oro_tax.product_prices_include_tax')
-            ->willReturn($configValue);
+        $this->configureGetCachedExpectations(
+            'oro_tax.product_prices_include_tax',
+            $configValue,
+            'isProductPricesIncludeTax'
+        );
 
         $this->assertEquals($expected, $this->provider->isProductPricesIncludeTax());
     }
@@ -229,11 +257,11 @@ class TaxationSettingsProviderTest extends \PHPUnit_Framework_TestCase
     {
         $value = 'value';
 
-        $this->configManager
-            ->expects($this->once())
-            ->method('get')
-            ->with('oro_tax.destination')
-            ->willReturn($value);
+        $this->configureGetCachedExpectations(
+            'oro_tax.destination',
+            $value,
+            'getDestination'
+        );
 
         $this->assertEquals($value, $this->provider->getDestination());
     }
@@ -242,11 +270,11 @@ class TaxationSettingsProviderTest extends \PHPUnit_Framework_TestCase
     {
         $value = ['AAAA', 'BBBB'];
 
-        $this->configManager
-            ->expects($this->once())
-            ->method('get')
-            ->with('oro_tax.digital_products_us')
-            ->willReturn($value);
+        $this->configureGetCachedExpectations(
+            'oro_tax.digital_products_us',
+            $value,
+            'getDigitalProductsTaxCodesUS'
+        );
 
         $this->assertEquals($value, $this->provider->getDigitalProductsTaxCodesUS());
     }
@@ -255,11 +283,11 @@ class TaxationSettingsProviderTest extends \PHPUnit_Framework_TestCase
     {
         $value = ['AAAA', 'BBBB'];
 
-        $this->configManager
-            ->expects($this->once())
-            ->method('get')
-            ->with('oro_tax.digital_products_eu')
-            ->willReturn($value);
+        $this->configureGetCachedExpectations(
+            'oro_tax.digital_products_eu',
+            $value,
+            'getDigitalProductsTaxCodesEU'
+        );
 
         $this->assertEquals($value, $this->provider->getDigitalProductsTaxCodesEU());
     }
@@ -333,11 +361,12 @@ class TaxationSettingsProviderTest extends \PHPUnit_Framework_TestCase
     public function testGetBaseByDefaultAddressType()
     {
         $value = TaxationSettingsProvider::USE_AS_BASE_DESTINATION;
-        $this->configManager
-            ->expects($this->once())
-            ->method('get')
-            ->with('oro_tax.use_as_base_by_default')
-            ->willReturn($value);
+
+        $this->configureGetCachedExpectations(
+            'oro_tax.use_as_base_by_default',
+            $value,
+            'getBaseByDefaultAddressType'
+        );
 
         $this->assertEquals($value, $this->provider->getBaseByDefaultAddressType());
     }
@@ -433,11 +462,11 @@ class TaxationSettingsProviderTest extends \PHPUnit_Framework_TestCase
     {
         $addressData = ['address data'];
 
-        $this->configManager
-            ->expects($this->once())
-            ->method('get')
-            ->with('oro_tax.origin_address')
-            ->willReturn($addressData);
+        $this->configureGetCachedExpectations(
+            'oro_tax.origin_address',
+            $addressData,
+            'getOrigin'
+        );
 
         $address = new Address();
         $this->addressModelFactory
@@ -451,11 +480,29 @@ class TaxationSettingsProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testIsEnabled()
     {
+        $optionKey = 'oro_tax.tax_enable';
+        $isEnabled = true;
+        $cacheKey = TaxationSettingsProvider::class . '::isEnabled';
+
         $this->configManager
-            ->expects($this->atLeastOnce())
+            ->expects($this->once())
             ->method('get')
-            ->with('oro_tax.tax_enable')
-            ->willReturn(true);
+            ->with($optionKey)
+            ->willReturn($isEnabled);
+
+        $this->cacheProvider->expects($this->exactly(2))
+            ->method('contains')
+            ->with($cacheKey)
+            ->willReturnOnConsecutiveCalls(false, true);
+
+        $this->cacheProvider->expects($this->once())
+            ->method('save')
+            ->with($cacheKey, $isEnabled);
+
+        $this->cacheProvider->expects($this->once())
+            ->method('fetch')
+            ->with($cacheKey)
+            ->willReturn($isEnabled);
 
         $this->assertTrue($this->provider->isEnabled());
         $this->assertFalse($this->provider->isDisabled());

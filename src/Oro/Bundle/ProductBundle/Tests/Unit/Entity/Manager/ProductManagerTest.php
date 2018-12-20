@@ -10,9 +10,9 @@ use Oro\Bundle\SearchBundle\Query\Query;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
-class ProductManagerTest extends \PHPUnit_Framework_TestCase
+class ProductManagerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var  EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var  EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $eventDispatcher;
 
     /** @var  ProductManager */
@@ -26,7 +26,7 @@ class ProductManagerTest extends \PHPUnit_Framework_TestCase
 
     public function testRestrictQueryBuilder()
     {
-        /** @var QueryBuilder|\PHPUnit_Framework_MockObject_MockObject $qb */
+        /** @var QueryBuilder|\PHPUnit\Framework\MockObject\MockObject $qb */
         $qb = $this->getMockBuilder(QueryBuilder::class)->disableOriginalConstructor()->getMock();
         $params = ['some' => 'params'];
 

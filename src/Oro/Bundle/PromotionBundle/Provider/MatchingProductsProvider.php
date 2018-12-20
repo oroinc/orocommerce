@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PromotionBundle\Provider;
 
+use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\PromotionBundle\Discount\DiscountLineItem;
@@ -19,11 +20,18 @@ class MatchingProductsProvider
     private $segmentManager;
 
     /**
-     * @param SegmentManager $segmentManager
+     * @var CacheProvider
      */
-    public function __construct(SegmentManager $segmentManager)
+    private $matchingProductsCache;
+
+    /**
+     * @param SegmentManager $segmentManager
+     * @param CacheProvider $matchingProductsCache
+     */
+    public function __construct(SegmentManager $segmentManager, CacheProvider $matchingProductsCache)
     {
         $this->segmentManager = $segmentManager;
+        $this->matchingProductsCache = $matchingProductsCache;
     }
 
     /**
@@ -60,9 +68,20 @@ class MatchingProductsProvider
             return [];
         }
 
+        $cacheKey = $this->getCacheKey($segment, $lineItems);
+
+        $cachedMatchingProducts = $this->matchingProductsCache->fetch($cacheKey);
+        if ($cachedMatchingProducts !== false) {
+            return $cachedMatchingProducts;
+        }
+
         $queryBuilder = $this->modifyQueryBuilder($segment, $lineItems);
 
-        return $queryBuilder->getQuery()->getResult();
+        $matchingProducts = $queryBuilder->getQuery()->getResult();
+
+        $this->matchingProductsCache->save($cacheKey, $matchingProducts);
+
+        return $matchingProducts;
     }
 
     /**
@@ -96,5 +115,24 @@ class MatchingProductsProvider
             ->setParameter('products', $products);
 
         return $queryBuilder;
+    }
+
+    /**
+     * @param Segment $segment
+     * @param array|DiscountLineItem[] $discountLineItems
+     * @return string
+     */
+    private function getCacheKey(Segment $segment, array $discountLineItems)
+    {
+        $lineItemsProductIds = array_map(
+            function (DiscountLineItem $discountLineItem) {
+                return $discountLineItem->getProduct()->getId();
+            },
+            $discountLineItems
+        );
+
+        sort($lineItemsProductIds);
+
+        return $segment->getId() . '_' . md5(implode(',', $lineItemsProductIds));
     }
 }

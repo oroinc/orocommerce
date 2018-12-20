@@ -9,7 +9,7 @@ use Oro\Bundle\PromotionBundle\Entity\AppliedPromotionsAwareInterface;
 use Oro\Bundle\PromotionBundle\Entity\GeneratorExtension\PromotionAwareEntityGeneratorExtension;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
-class PromotionAwareEntityGeneratorExtensionTest extends \PHPUnit_Framework_TestCase
+class PromotionAwareEntityGeneratorExtensionTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @dataProvider classDataProvider
@@ -39,7 +39,7 @@ class PromotionAwareEntityGeneratorExtensionTest extends \PHPUnit_Framework_Test
     {
         $extension = new PromotionAwareEntityGeneratorExtension();
         $schema = [];
-        /** @var PhpClass|\PHPUnit_Framework_MockObject_MockObject $class */
+        /** @var PhpClass|\PHPUnit\Framework\MockObject\MockObject $class */
         $class = $this->createMock(PhpClass::class);
         $class->expects($this->exactly(2))
             ->method('hasProperty')
@@ -61,7 +61,7 @@ class PromotionAwareEntityGeneratorExtensionTest extends \PHPUnit_Framework_Test
     {
         $extension = new PromotionAwareEntityGeneratorExtension();
         $schema = [];
-        /** @var PhpClass|\PHPUnit_Framework_MockObject_MockObject $class */
+        /** @var PhpClass|\PHPUnit\Framework\MockObject\MockObject $class */
         $class = $this->createMock(PhpClass::class);
         $class->expects($this->any())
             ->method('hasProperty')
@@ -81,7 +81,7 @@ class PromotionAwareEntityGeneratorExtensionTest extends \PHPUnit_Framework_Test
     {
         $extension = new PromotionAwareEntityGeneratorExtension();
         $schema = [];
-        /** @var PhpClass|\PHPUnit_Framework_MockObject_MockObject $class */
+        /** @var PhpClass|\PHPUnit\Framework\MockObject\MockObject $class */
         $class = $this->createMock(PhpClass::class);
         $class->expects($this->exactly(2))
             ->method('hasProperty')

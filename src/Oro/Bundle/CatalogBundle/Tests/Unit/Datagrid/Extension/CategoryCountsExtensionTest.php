@@ -15,36 +15,40 @@ use Oro\Bundle\DataGridBundle\Datagrid\Common\MetadataObject;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Datagrid\Manager;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
+use Oro\Bundle\DataGridBundle\Tools\DatagridParametersHelper;
 use Oro\Bundle\FilterBundle\Grid\Extension\AbstractFilterExtension;
 use Oro\Bundle\SearchBundle\Datagrid\Datasource\SearchDatasource;
 use Oro\Bundle\SearchBundle\Query\SearchQueryInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\TestUtils\Mocks\ServiceLink;
 
-class CategoryCountsExtensionTest extends \PHPUnit_Framework_TestCase
+class CategoryCountsExtensionTest extends \PHPUnit\Framework\TestCase
 {
     const CATEGORY_ID = 42;
     const GRID_NAME = 'grid1';
 
     use EntityTrait;
 
-    /** @var Manager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var Manager|\PHPUnit\Framework\MockObject\MockObject */
     protected $datagridManager;
 
-    /** @var CategoryRepository|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var CategoryRepository|\PHPUnit\Framework\MockObject\MockObject */
     protected $categoryRepository;
 
-    /** @var ProductRepository|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ProductRepository|\PHPUnit\Framework\MockObject\MockObject */
     protected $productSearchRepository;
 
-    /** @var CategoryCountsCache|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var CategoryCountsCache|\PHPUnit\Framework\MockObject\MockObject */
     protected $cache;
 
-    /** @var DatagridInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var DatagridInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $datagrid;
 
-    /** @var SearchQueryInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var SearchQueryInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $searchQuery;
+
+    /** @var DatagridParametersHelper|\PHPUnit\Framework\MockObject\MockObject */
+    private $datagridParametersHelper;
 
     /** @var CategoryCountsExtension */
     protected $extension;
@@ -58,10 +62,10 @@ class CategoryCountsExtensionTest extends \PHPUnit_Framework_TestCase
         $this->categoryRepository = $this->createMock(CategoryRepository::class);
         $this->productSearchRepository = $this->createMock(ProductRepository::class);
         $this->cache = $this->createMock(CategoryCountsCache::class);
-
         $this->searchQuery = $this->createMock(SearchQueryInterface::class);
+        $this->datagridParametersHelper = $this->createMock(DatagridParametersHelper::class);
 
-        /** @var SearchDatasource|\PHPUnit_Framework_MockObject_MockObject $searchDatasource */
+        /** @var SearchDatasource|\PHPUnit\Framework\MockObject\MockObject $searchDatasource */
         $searchDatasource = $this->createMock(SearchDatasource::class);
         $searchDatasource->expects($this->any())
             ->method('getSearchQuery')
@@ -81,7 +85,7 @@ class CategoryCountsExtensionTest extends \PHPUnit_Framework_TestCase
             ->with(Category::class)
             ->willReturn($this->categoryRepository);
 
-        /** @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject $registry */
+        /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject $registry */
         $registry = $this->createMock(ManagerRegistry::class);
         $registry->expects($this->any())
             ->method('getManagerForClass')
@@ -92,7 +96,8 @@ class CategoryCountsExtensionTest extends \PHPUnit_Framework_TestCase
             new ServiceLink($this->datagridManager),
             $registry,
             $this->productSearchRepository,
-            $this->cache
+            $this->cache,
+            $this->datagridParametersHelper
         );
         $this->extension->setParameters(
             new ParameterBag(
@@ -107,7 +112,6 @@ class CategoryCountsExtensionTest extends \PHPUnit_Framework_TestCase
                         AbstractFilterExtension::MINIFIED_FILTER_PARAM => [
                             'filter1' => [],
                             SubcategoryFilter::FILTER_TYPE_NAME => ['value' => [4, 5, 6]],
-                            '_' => '%%',
                         ],
                     ],
                 ]
@@ -132,7 +136,10 @@ class CategoryCountsExtensionTest extends \PHPUnit_Framework_TestCase
     public function testIsApplicableSkipped()
     {
         $this->extension->addApplicableGrid(self::GRID_NAME);
-        $this->extension->getParameters()->set(CategoryCountsExtension::SKIP_PARAM, true);
+        $this->datagridParametersHelper->expects($this->once())
+            ->method('isDatagridExtensionSkipped')
+            ->with($this->extension->getParameters())
+            ->willReturn(true);
 
         $config = DatagridConfiguration::create([
             'name' => self::GRID_NAME,
@@ -169,15 +176,6 @@ class CategoryCountsExtensionTest extends \PHPUnit_Framework_TestCase
 
     public function testVisitMetadata()
     {
-        $expectedParameters = array_merge(
-            $this->extension->getParameters()->all(),
-            [CategoryCountsExtension::SKIP_PARAM => true]
-        );
-        unset(
-            $expectedParameters[AbstractFilterExtension::FILTER_ROOT_PARAM][SubcategoryFilter::FILTER_TYPE_NAME],
-            $expectedParameters[ParameterBag::MINIFIED_PARAMETERS]['f'][SubcategoryFilter::FILTER_TYPE_NAME]
-        );
-
         $category = new Category();
 
         $config = DatagridConfiguration::create([
@@ -194,7 +192,7 @@ class CategoryCountsExtensionTest extends \PHPUnit_Framework_TestCase
 
         $this->datagridManager->expects($this->once())
             ->method('getDatagrid')
-            ->with(self::GRID_NAME, new ParameterBag($expectedParameters))
+            ->with(self::GRID_NAME, $this->extension->getParameters())
             ->willReturn($this->datagrid);
 
         $this->productSearchRepository->expects($this->once())
@@ -202,7 +200,7 @@ class CategoryCountsExtensionTest extends \PHPUnit_Framework_TestCase
             ->with($category, $this->searchQuery)
             ->willReturn([1 => 2]);
 
-        $key = 'grid1|{"_filter":{"filter1":[]},"categoryId":42,"skipCategoryCountsExtension":true}';
+        $key = 'grid1|{"_filter":{"filter1":[],"subcategory":{"value":[1,2,3]}},"categoryId":42}';
 
         $this->cache->expects($this->once())
             ->method('getCounts')
@@ -219,6 +217,22 @@ class CategoryCountsExtensionTest extends \PHPUnit_Framework_TestCase
             ],
         ];
         $metadata = MetadataObject::create($metadataArray);
+        $this->datagridParametersHelper->expects($this->once())
+            ->method('setDatagridExtensionSkipped')
+            ->with($this->extension->getParameters());
+        $this->datagridParametersHelper->expects($this->once())
+            ->method('resetFilter')
+            ->with($this->extension->getParameters(), SubcategoryFilter::FILTER_TYPE_NAME);
+
+        $this->datagridParametersHelper->expects($this->once())
+            ->method('getFromParameters')
+            ->willReturn(null);
+        $this->datagridParametersHelper->expects($this->once())
+            ->method('getFromMinifiedParameters')
+            ->willReturn([
+                'filter1' => [],
+                SubcategoryFilter::FILTER_TYPE_NAME => ['value' => [1, 2, 3]],
+            ]);
 
         $this->extension->visitMetadata($config, $metadata);
 
@@ -254,7 +268,7 @@ class CategoryCountsExtensionTest extends \PHPUnit_Framework_TestCase
         $this->productSearchRepository->expects($this->never())
             ->method('getCategoryCountsByCategory');
 
-        $key = 'grid1|{"_filter":{"filter1":[]},"categoryId":42,"skipCategoryCountsExtension":true}';
+        $key = 'grid1|{"_filter":{"filter1":[],"subcategory":{"value":[1,2,3]}},"categoryId":42}';
 
         $this->cache->expects($this->once())
             ->method('getCounts')
@@ -270,6 +284,16 @@ class CategoryCountsExtensionTest extends \PHPUnit_Framework_TestCase
             ],
         ];
         $metadata = MetadataObject::create($metadataArray);
+
+        $this->datagridParametersHelper->expects($this->once())
+            ->method('getFromParameters')
+            ->willReturn([
+                'filter1' => [],
+                SubcategoryFilter::FILTER_TYPE_NAME => ['value' => [1, 2, 3]],
+            ]);
+        $this->datagridParametersHelper->expects($this->once())
+            ->method('getFromMinifiedParameters')
+            ->willReturn(null);
 
         $commonParameters = $this->extension->getParameters()->all();
         $parameters = array_merge($commonParameters, $additionalParameters);

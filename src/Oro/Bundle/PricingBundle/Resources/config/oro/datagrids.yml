@@ -79,9 +79,9 @@ datagrids:
                     options:
                         field_options:
                             choices:
-                                disabled: oro.pricing.pricelist_schedule.disabled
-                                inactive: oro.pricing.pricelist_schedule.inactive
-                                active: oro.pricing.pricelist_schedule.active
+                                oro.pricing.pricelist_schedule.disabled: disabled
+                                oro.pricing.pricelist_schedule.inactive: inactive
+                                oro.pricing.pricelist_schedule.active: active
                     label: oro.pricing.pricelist_schedule.activity.label
 
     pricing-price-list-grid:
@@ -202,7 +202,7 @@ datagrids:
                         field_type: Symfony\Bridge\Doctrine\Form\Type\EntityType
                         field_options:
                             class:    '%oro_customer.entity.customer_group.class%'
-                            property: name
+                            choice_label: name
                 parentName:
                     type:      string
                     data_name: parent.name
@@ -316,7 +316,7 @@ datagrids:
                         field_type: Symfony\Bridge\Doctrine\Form\Type\EntityType
                         field_options:
                             class:    '%oro_customer.entity.customer_group.class%'
-                            property: name
+                            choice_label: name
                 parentName:
                     type:       string
                     data_name:  parentName
@@ -428,6 +428,9 @@ datagrids:
                 template:      OroProductBundle:ProductUnit:Datagrid/unitFullSingle.html.twig
             value:
                 label:         oro.pricing.productprice.value.label
+                type:          twig
+                template:      OroPricingBundle:Datagrid:Column/priceValue.html.twig
+                frontend_type: html
             currency:
                 label:         oro.pricing.productprice.currency.label
             ruleId:
@@ -468,7 +471,7 @@ datagrids:
                     type:      choice
                     data_name: unitCode
                     options:
-                        field_type: oro_product_unit_selection
+                        field_type: Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType
                 value:
                     type:      number
                     data_name: productPrice.value
@@ -485,8 +488,8 @@ datagrids:
                     options:
                         field_options:
                             choices:
-                                generated: oro.pricing.productprice.generated.label
-                                manual: oro.pricing.productprice.manual.label
+                                oro.pricing.productprice.generated.label: generated
+                                oro.pricing.productprice.manual.label: manual
 
         properties:
             id: ~
@@ -576,6 +579,9 @@ datagrids:
                 template:      OroProductBundle:ProductUnit:Datagrid/unitFullSingle.html.twig
             value:
                 label:         oro.pricing.productprice.value.label
+                type:          twig
+                template:      OroPricingBundle:Datagrid:Column/priceValue.html.twig
+                frontend_type: html
             currency:
                 label:         oro.pricing.productprice.currency.label
         sorters:
@@ -604,7 +610,7 @@ datagrids:
                     type:      choice
                     data_name: unitCode
                     options:
-                        field_type: oro_product_unit_selection
+                        field_type: Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType
                 value:
                     type:      number
                     data_name: productPrice.value

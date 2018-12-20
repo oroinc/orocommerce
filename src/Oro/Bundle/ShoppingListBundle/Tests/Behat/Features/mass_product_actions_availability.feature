@@ -53,7 +53,7 @@ Feature: Mass Product Actions Availability
 
   Scenario: Mass actions not available for configurable products
     Given I proceed as the Buyer
-    When I type "shirt_main" in "search"
+    When I type "shirt" in "search"
     And I click "Search Button"
     And I should not see mass action checkbox in row with shirt_main content for "Product Frontend Grid"
     And I should see mass action checkbox in row with gtsh_l content for "Product Frontend Grid"
@@ -101,7 +101,7 @@ Feature: Mass Product Actions Availability
     Then I should see "Product visibility has been saved" flash message
 
     When I proceed as the Buyer
-    And I click "Add to Shopping list" link from mass action dropdown in "Product Frontend Grid"
+    And I click "Add to Shopping List" link from mass action dropdown in "Product Frontend Grid"
     Then I should see "No products were added"
     And I reload the page
     And I should not see "gtsh_l"

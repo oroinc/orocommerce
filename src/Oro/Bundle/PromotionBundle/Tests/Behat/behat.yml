@@ -16,13 +16,19 @@ oro_behat_extension:
         - OroOrderBundle::OrderContext
         - OroShippingBundle::FeatureContext
         - OroShoppingListBundle::FeatureContext
+        - OroSearchBundle::SearchContext
         - OroImportExportBundle::ImportExportContext:
           - '@oro_entity.entity_alias_resolver'
           - '@oro_importexport.processor.registry'
+        - OroSecurityBundle::ACLContext
+        - Oro\Bundle\UserBundle\Tests\Behat\Context\FeatureContext
       paths:
         - '@OroPromotionBundle/Tests/Behat/Features'
 
   pages:
+    All Coupons:
+      class: Oro\Bundle\PromotionBundle\Tests\Behat\Page\AllCoupons
+      route: 'oro_promotion_coupon_index'
     Promotion Create:
       class: Oro\Bundle\PromotionBundle\Tests\Behat\Page\PromotionCreate
       route: 'oro_promotion_create'
@@ -211,5 +217,20 @@ oro_behat_extension:
     Restrictions:
       selector:
         type: xpath
-        locator: '//label[@class="control-label" and text()[contains(.,"Restrictions")]]/following-sibling::div[@class="controls"]'
+        locator: '//label[contains(@class, "attribute-item__term") and text()[contains(.,"Restrictions")]]/following-sibling::div[contains(@class, "attribute-item__description")]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+
+    Apply Segment:
+      selector:
+        type: xpath
+        locator: '//li[@data-criteria="condition-segment" and contains(., "Apply segment")]'
+
+    Choose segment:
+      selector: 'li[data-criteria="condition-segment"] input'
+      class: Oro\Bundle\FormBundle\Tests\Behat\Element\Select2Entity
+
+    Featured Products:
+      selector: 'div.select2-drop-active div.select2-result-label:contains("Featured Products")'
+
+    Select2 results:
+      selector: 'div.select2-drop-active ul.select2-results'

@@ -1,0 +1,67 @@
+workflows:
+    b2b_flow_checkout:
+        attributes:
+            billing_address:
+                property_path: checkout.billingAddress
+            shipping_address:
+                property_path: checkout.shippingAddress
+            save_billing_address:
+                property_path: checkout.saveBillingAddress
+            save_shipping_address:
+                property_path: checkout.saveShippingAddress
+            ship_to_billing_address:
+                property_path: checkout.shipToBillingAddress
+            po_number:
+                property_path: checkout.poNumber
+            ship_until:
+                property_path: checkout.shipUntil
+            customer_notes:
+                property_path: checkout.customerNotes
+            payment_method:
+                property_path: checkout.paymentMethod
+            shipping_method:
+                property_path: checkout.shippingMethod
+            shipping_method_type:
+                property_path: checkout.shippingMethodType
+            billing_address_has_shipping:
+                type: boolean
+            allow_manual_source_remove:
+                type: boolean
+            disallow_billing_address_edit:
+                type: boolean
+            disallow_shipping_address_edit:
+                type: boolean
+            disallow_shipping_method_edit:
+                type: boolean
+            remove_source:
+                type: boolean
+            auto_remove_source:
+                type: boolean
+            source_remove_label:
+                type: string
+            edit_order_link:
+                type: string
+            payment_in_progress:
+                type: bool
+            payment_validate:
+                type: bool
+            payment_save_for_later:
+                type: bool
+            additional_data:
+                type: string
+            state_token:
+                type: string
+            internal_state_token:
+                type: string
+            order:
+                type: entity
+                options:
+                    class: Oro\Bundle\OrderBundle\Entity\Order
+            visitor:
+                type: entity
+                options:
+                    class: Oro\Bundle\CustomerBundle\Entity\CustomerVisitor
+            email:
+                type: string
+            late_registration:
+                type: array

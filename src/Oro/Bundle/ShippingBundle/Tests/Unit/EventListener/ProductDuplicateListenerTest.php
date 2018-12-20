@@ -10,20 +10,20 @@ use Oro\Bundle\ProductBundle\Event\ProductDuplicateAfterEvent;
 use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions;
 use Oro\Bundle\ShippingBundle\EventListener\ProductDuplicateListener;
 
-class ProductDuplicateListenerTest extends \PHPUnit_Framework_TestCase
+class ProductDuplicateListenerTest extends \PHPUnit\Framework\TestCase
 {
     const CLASS_NAME = 'stdClass';
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|DoctrineHelper */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|DoctrineHelper */
     protected $doctrineHelper;
 
     /** @var ProductDuplicateListener */
     protected $listener;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|ObjectManager */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|ObjectManager */
     protected $objectManager;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|ObjectRepository */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|ObjectRepository */
     protected $repository;
 
     /** @var Product */

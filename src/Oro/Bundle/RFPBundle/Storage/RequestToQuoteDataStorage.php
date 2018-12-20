@@ -5,14 +5,18 @@ namespace Oro\Bundle\RFPBundle\Storage;
 use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Bundle\RFPBundle\Entity\Request as RFPRequest;
+use Oro\Bundle\RFPBundle\Entity\RequestProduct;
 
+/**
+ * Extracts data from RFPRequest and puts it into storage. Saved data is used later during Quote creation.
+ */
 class RequestToQuoteDataStorage
 {
     /** @var ProductDataStorage */
     protected $storage;
 
     /**
-     * @param ProductDataStorage $storage
+     * @param ProductDataStorage    $storage
      */
     public function __construct(ProductDataStorage $storage)
     {
@@ -38,20 +42,7 @@ class RequestToQuoteDataStorage
         ];
 
         foreach ($rfpRequest->getRequestProducts() as $requestProduct) {
-            $items = [];
-            foreach ($requestProduct->getRequestProductItems() as $requestProductItem) {
-                $productUnitCode = $requestProductItem->getProductUnit()
-                    ? $requestProductItem->getProductUnit()->getCode()
-                    : null;
-
-                $items[] = [
-                    'price' => $requestProductItem->getPrice(),
-                    'quantity' => $requestProductItem->getQuantity(),
-                    'productUnit' => $productUnitCode,
-                    'productUnitCode' => $productUnitCode,
-                    'requestProductItem' => $requestProductItem->getId(),
-                ];
-            }
+            $items = $this->getRequestProductItems($requestProduct);
 
             $data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY][] = [
                 ProductDataStorage::PRODUCT_SKU_KEY =>  $requestProduct->getProductSku(),
@@ -62,6 +53,30 @@ class RequestToQuoteDataStorage
         }
 
         $this->storage->set($data);
+    }
+
+    /**
+     * @param RequestProduct $requestProduct
+     * @return array
+     */
+    private function getRequestProductItems(RequestProduct $requestProduct)
+    {
+        $items = [];
+        foreach ($requestProduct->getRequestProductItems() as $requestProductItem) {
+            $productUnitCode = $requestProductItem->getProductUnit()
+                ? $requestProductItem->getProductUnit()->getCode()
+                : null;
+
+            $items[] = [
+                'price' => $requestProductItem->getPrice(),
+                'quantity' => $requestProductItem->getQuantity(),
+                'productUnit' => $productUnitCode,
+                'productUnitCode' => $productUnitCode,
+                'requestProductItem' => $requestProductItem->getId(),
+            ];
+        }
+
+        return $items;
     }
 
     /**

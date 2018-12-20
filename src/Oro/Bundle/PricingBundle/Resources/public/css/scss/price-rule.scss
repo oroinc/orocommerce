@@ -1,0 +1,83 @@
+/* @theme: admin.oro; */
+
+/* temporary styles should be removed after new disign implemented */
+.price_rule {
+    margin-bottom: 50px !important;
+
+    &__currency,
+    &__unit,
+    &__quantity {
+        .oro-select2 {
+            max-width: 140px;
+        }
+    }
+
+    > &__row {
+        margin-bottom: 18px;
+    }
+
+    &__row {
+        vertical-align: middle;
+        line-height: 30px;
+        margin: 0 0 10px 0;
+
+        > * {
+            display: inline-block;
+            float: left;
+            margin-right: 7px;
+        }
+    }
+
+    &__row &__quantity {
+        position: relative;
+
+        input {
+            width: 50px !important;
+        }
+    }
+
+    &__row &__quantity .validation-failed {
+        position: absolute;
+        top: 50px;
+        white-space: nowrap;
+        margin-left: 25px;
+    }
+
+    &__unit {
+        @include selector-width(100%);
+
+        input {
+            width: 91px !important;
+            margin: 0 0 0 4px;
+        }
+    }
+
+    &__currency {
+        @include selector-width(100%);
+
+        input {
+            width: 91px !important;
+        }
+    }
+
+    &__in {
+        color: #777;
+    }
+
+    &.error-block {
+        margin-left: 170px;
+        margin-bottom: 0 !important;
+    }
+
+    .input-type-switcher {
+        margin-left: 4px;
+        display: block;
+    }
+
+    .removeRow.icons-holder {
+        margin-top: 1px;
+        margin-left: 15px;
+    }
+}
+
+/* temporary styles should be removed after new disign implemented */

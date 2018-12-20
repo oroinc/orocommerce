@@ -176,12 +176,12 @@ class CouponGenerationType extends AbstractType
     protected function getCodeTypes()
     {
         return [
-            CouponGenerationOptions::NUMERIC_CODE_TYPE =>
-                'oro.promotion.coupon.generation.codeType.numeric.label',
-            CouponGenerationOptions::ALPHANUMERIC_CODE_TYPE =>
-                'oro.promotion.coupon.generation.codeType.alphanumeric.label',
-            CouponGenerationOptions::ALPHABETIC_CODE_TYPE =>
-                'oro.promotion.coupon.generation.codeType.alphabetic.label',
+            'oro.promotion.coupon.generation.codeType.numeric.label' =>
+                CouponGenerationOptions::NUMERIC_CODE_TYPE,
+            'oro.promotion.coupon.generation.codeType.alphanumeric.label' =>
+                CouponGenerationOptions::ALPHANUMERIC_CODE_TYPE,
+            'oro.promotion.coupon.generation.codeType.alphabetic.label' =>
+                CouponGenerationOptions::ALPHABETIC_CODE_TYPE,
         ];
     }
 }

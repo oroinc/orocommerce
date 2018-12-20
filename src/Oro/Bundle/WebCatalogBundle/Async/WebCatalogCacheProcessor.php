@@ -17,6 +17,9 @@ use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\MessageQueue\Util\JSON;
 use Psr\Log\LoggerInterface;
 
+/**
+ * Schedule cache recalculation for web catalogs
+ */
 class WebCatalogCacheProcessor implements MessageProcessorInterface, TopicSubscriberInterface
 {
     /**
@@ -103,7 +106,7 @@ class WebCatalogCacheProcessor implements MessageProcessorInterface, TopicSubscr
      * @param int|array|null $webCatalogId
      * @return array
      */
-    protected function getWebCatalogs($webCatalogId)
+    protected function getWebCatalogs($webCatalogId): array
     {
         $repository = $this->registry
             ->getManagerForClass(WebCatalog::class)
@@ -111,9 +114,9 @@ class WebCatalogCacheProcessor implements MessageProcessorInterface, TopicSubscr
 
         if ($webCatalogId) {
             return $repository->findBy(['id' => $webCatalogId]);
-        } else {
-            return $repository->findAll();
         }
+
+        return $repository->findAll();
     }
 
     /**
@@ -122,43 +125,49 @@ class WebCatalogCacheProcessor implements MessageProcessorInterface, TopicSubscr
      */
     protected function scheduleCacheRecalculationForWebCatalog(JobRunner $jobRunner, WebCatalog $webCatalog)
     {
-        $rootNode = $this->getRootNodeByWebCatalog($webCatalog);
-        if (!$rootNode) {
+        $nodes = $this->getAllNodesByWebCatalog($webCatalog);
+
+        if (!$nodes) {
             return;
         }
         $scopes = $this->scopeMatcher->getUsedScopes($webCatalog);
 
         foreach ($scopes as $scope) {
-            $jobRunner->createDelayed(
-                sprintf(
-                    '%s:%s:%s',
-                    Topics::CALCULATE_CONTENT_NODE_TREE_BY_SCOPE,
-                    $webCatalog->getId(),
-                    $scope->getId()
-                ),
-                function (JobRunner $jobRunner, Job $child) use ($rootNode, $scope) {
-                    $this->producer->send(Topics::CALCULATE_CONTENT_NODE_TREE_BY_SCOPE, [
-                        'contentNode' => $rootNode->getId(),
-                        'scope' => $scope->getId(),
-                        'jobId' => $child->getId(),
-                    ]);
-                }
-            );
+            foreach ($nodes as $node) {
+                $jobRunner->createDelayed(
+                    sprintf(
+                        '%s:%s:%s',
+                        Topics::CALCULATE_CONTENT_NODE_TREE_BY_SCOPE,
+                        $webCatalog->getId(),
+                        $scope->getId()
+                    ),
+                    function (JobRunner $jobRunner, Job $child) use ($node, $scope) {
+                        $this->producer->send(
+                            Topics::CALCULATE_CONTENT_NODE_TREE_BY_SCOPE,
+                            [
+                                'contentNode' => $node->getId(),
+                                'scope'       => $scope->getId(),
+                                'jobId'       => $child->getId(),
+                            ]
+                        );
+                    }
+                );
+            }
         }
     }
 
     /**
      * @param WebCatalog $webCatalog
-     * @return ContentNode
+     * @return ContentNode[]
      */
-    protected function getRootNodeByWebCatalog(WebCatalog $webCatalog)
+    protected function getAllNodesByWebCatalog(WebCatalog $webCatalog): array
     {
         /** @var ContentNodeRepository $contentNodeRepo */
         $contentNodeRepo = $this->registry
             ->getManagerForClass(ContentNode::class)
             ->getRepository(ContentNode::class);
 
-        return $contentNodeRepo->getRootNodeByWebCatalog($webCatalog);
+        return $contentNodeRepo->findBy(['webCatalog' => $webCatalog]);
     }
 
     /**

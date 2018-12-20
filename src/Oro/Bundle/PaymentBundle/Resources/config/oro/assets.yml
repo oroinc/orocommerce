@@ -1,4 +1,4 @@
 assets:
     css:
-        'oropayment':
-            - 'bundles/oropayment/less/style.less'
+        inputs:
+            - 'bundles/oropayment/css/scss/main.scss'

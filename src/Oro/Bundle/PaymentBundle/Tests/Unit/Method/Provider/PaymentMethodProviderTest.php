@@ -10,20 +10,20 @@ use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProvider;
 use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
 use Oro\Bundle\PaymentBundle\Provider\MethodsConfigsRule\Context\MethodsConfigsRulesByContextProviderInterface;
 
-class PaymentMethodProviderTest extends \PHPUnit_Framework_TestCase
+class PaymentMethodProviderTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var PaymentMethodProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var PaymentMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $paymentMethodProviderMock;
 
     /**
-     * @var MethodsConfigsRulesByContextProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var MethodsConfigsRulesByContextProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $paymentMethodsConfigsRulesProviderMock;
 
     /**
-     * @var PaymentContextInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var PaymentContextInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $paymentContextMock;
 
@@ -89,7 +89,7 @@ class PaymentMethodProviderTest extends \PHPUnit_Framework_TestCase
     /**
      * @var string[] $configuredMethodTypes
      *
-     * @return PaymentMethodsConfigsRule|\PHPUnit_Framework_MockObject_MockObject
+     * @return PaymentMethodsConfigsRule|\PHPUnit\Framework\MockObject\MockObject
      */
     private function createPaymentMethodsConfigsRuleMock(array $configuredMethodTypes)
     {
@@ -113,7 +113,7 @@ class PaymentMethodProviderTest extends \PHPUnit_Framework_TestCase
     /**
      * @param string $configuredMethodType
      *
-     * @return PaymentMethodConfig|\PHPUnit_Framework_MockObject_MockObject
+     * @return PaymentMethodConfig|\PHPUnit\Framework\MockObject\MockObject
      */
     private function createPaymentMethodConfigMock($configuredMethodType)
     {
@@ -132,11 +132,11 @@ class PaymentMethodProviderTest extends \PHPUnit_Framework_TestCase
     /**
      * @param string $methodType
      *
-     * @return PaymentMethodInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return PaymentMethodInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private function createPaymentMethodMock($methodType)
     {
-        /** @var PaymentMethodInterface|\PHPUnit_Framework_MockObject_MockObject $method */
+        /** @var PaymentMethodInterface|\PHPUnit\Framework\MockObject\MockObject $method */
         $method = $this->createMock(PaymentMethodInterface::class);
         $method->expects($this->never())
             ->method('getIdentifier')

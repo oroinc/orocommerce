@@ -12,13 +12,13 @@ use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
-abstract class AbstractOrderContextFactoryTest extends \PHPUnit_Framework_TestCase
+abstract class AbstractOrderContextFactoryTest extends \PHPUnit\Framework\TestCase
 {
     const TEST_PAYMENT_METHOD = 'SomePaymentMethod';
     const TEST_SHIPPING_METHOD = 'SomeShippingMethod';
 
     /**
-     * @param \PHPUnit_Framework_MockObject_MockObject $builder
+     * @param \PHPUnit\Framework\MockObject\MockObject $builder
      * @param AddressInterface                         $address
      * @param string                                   $subtotal
      * @param string                                   $currency
@@ -27,7 +27,7 @@ abstract class AbstractOrderContextFactoryTest extends \PHPUnit_Framework_TestCa
      * @param string                                   $customerUser
      */
     protected function prepareContextBuilder(
-        \PHPUnit_Framework_MockObject_MockObject $builder,
+        \PHPUnit\Framework\MockObject\MockObject $builder,
         AddressInterface $address,
         $subtotal,
         $currency,

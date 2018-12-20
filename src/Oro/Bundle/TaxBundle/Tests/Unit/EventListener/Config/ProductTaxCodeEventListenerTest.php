@@ -10,14 +10,14 @@ use Oro\Bundle\TaxBundle\Entity\Repository\AbstractTaxCodeRepository;
 use Oro\Bundle\TaxBundle\EventListener\Config\ProductTaxCodeEventListener;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class ProductTaxCodeEventListenerTest extends \PHPUnit_Framework_TestCase
+class ProductTaxCodeEventListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /** @var ProductTaxCodeEventListener */
     protected $listener;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|DoctrineHelper */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|DoctrineHelper */
     protected $doctrineHelper;
 
     /** @var ConfigManager */
@@ -57,7 +57,7 @@ class ProductTaxCodeEventListenerTest extends \PHPUnit_Framework_TestCase
         $settings = ['oro_tax___digital_products_eu' => ['value' => $this->data]];
         $event = new ConfigSettingsUpdateEvent($this->configManager, $settings);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|AbstractTaxCodeRepository $repository */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|AbstractTaxCodeRepository $repository */
         $repository = $this->getMockBuilder(AbstractTaxCodeRepository::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -98,7 +98,7 @@ class ProductTaxCodeEventListenerTest extends \PHPUnit_Framework_TestCase
 
         $event = new ConfigSettingsUpdateEvent($this->configManager, $settings);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|AbstractTaxCodeRepository $repository */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|AbstractTaxCodeRepository $repository */
         $repository = $this->getMockBuilder(AbstractTaxCodeRepository::class)
             ->disableOriginalConstructor()
             ->getMock();

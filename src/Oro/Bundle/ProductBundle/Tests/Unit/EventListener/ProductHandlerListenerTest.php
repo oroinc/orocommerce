@@ -12,7 +12,7 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
-class ProductHandlerListenerTest extends \PHPUnit_Framework_TestCase
+class ProductHandlerListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var ProductHandlerListener
@@ -82,7 +82,7 @@ class ProductHandlerListenerTest extends \PHPUnit_Framework_TestCase
      */
     protected function createEvent($entity)
     {
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock(FormInterface::class);
         return new AfterFormProcessEvent($form, $entity);
     }

@@ -33,27 +33,27 @@ class ProductCollectionSegmentTypeTest extends FormIntegrationTestCase
     use EntityTrait;
 
     /**
-     * @var EntityProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var EntityProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     private $entityProvider;
 
     /**
-     * @var Manager|\PHPUnit_Framework_MockObject_MockObject
+     * @var Manager|\PHPUnit\Framework\MockObject\MockObject
      */
     private $queryDesignerManager;
 
     /**
-     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
      */
     private $doctrineHelper;
 
     /**
-     * @var TokenStorageInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var TokenStorageInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $tokenStorage;
 
     /**
-     * @var ProductCollectionDefinitionConverter|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProductCollectionDefinitionConverter|\PHPUnit\Framework\MockObject\MockObject
      */
     private $definitionConverter;
 
@@ -72,7 +72,7 @@ class ProductCollectionSegmentTypeTest extends FormIntegrationTestCase
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
         $this->tokenStorage = $this->createMock(TokenStorageInterface::class);
         $this->definitionConverter = $this->createMock(ProductCollectionDefinitionConverter::class);
-        /** @var PropertyAccessor|\PHPUnit_Framework_MockObject_MockObject $propertyAccessor */
+        /** @var PropertyAccessor|\PHPUnit\Framework\MockObject\MockObject $propertyAccessor */
         $propertyAccessor = $this->createMock(PropertyAccessor::class);
 
         $this->type = new ProductCollectionSegmentType($this->definitionConverter, $propertyAccessor);
@@ -95,9 +95,9 @@ class ProductCollectionSegmentTypeTest extends FormIntegrationTestCase
             $this->tokenStorage
         );
 
-        /** @var ConfigProvider|\PHPUnit_Framework_MockObject_MockObject $configProvider */
+        /** @var ConfigProvider|\PHPUnit\Framework\MockObject\MockObject $configProvider */
         $configProvider = $this->createMock(ConfigProvider::class);
-        /** @var Translator|\PHPUnit_Framework_MockObject_MockObject $translator */
+        /** @var Translator|\PHPUnit\Framework\MockObject\MockObject $translator */
         $translator = $this->createMock(Translator::class);
 
         return [
@@ -147,11 +147,6 @@ class ProductCollectionSegmentTypeTest extends FormIntegrationTestCase
             ],
             $form->get('name')->getConfig()->getOptions()
         );
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals(ProductCollectionSegmentType::NAME, $this->type->getName());
     }
 
     public function testGetBlockPrefix()

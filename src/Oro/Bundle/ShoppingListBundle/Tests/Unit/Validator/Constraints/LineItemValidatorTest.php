@@ -9,32 +9,32 @@ use Oro\Bundle\ShoppingListBundle\Validator\Constraints\LineItem as LineItemCons
 use Oro\Bundle\ShoppingListBundle\Validator\Constraints\LineItemValidator;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
-class LineItemValidatorTest extends \PHPUnit_Framework_TestCase
+class LineItemValidatorTest extends \PHPUnit\Framework\TestCase
 {
     const LINE_ITEM_SHORTCUT = 'OroShoppingListBundle:LineItem';
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|Registry
+     * @var \PHPUnit\Framework\MockObject\MockObject|Registry
      */
     protected $registry;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|LineItemRepository
+     * @var \PHPUnit\Framework\MockObject\MockObject|LineItemRepository
      */
     protected $repository;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ExecutionContextInterface
+     * @var \PHPUnit\Framework\MockObject\MockObject|ExecutionContextInterface
      */
     protected $context;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|LineItem
+     * @var \PHPUnit\Framework\MockObject\MockObject|LineItem
      */
     protected $lineItem;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|LineItemConstraint
+     * @var \PHPUnit\Framework\MockObject\MockObject|LineItemConstraint
      */
     protected $constraint;
 

@@ -16,6 +16,9 @@ use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Oro\Component\Routing\RouteData;
 
+/**
+ * Generates slugs and slug redirects for given content node.
+ */
 class SlugGenerator
 {
     const ROOT_URL = '/';
@@ -94,20 +97,26 @@ class SlugGenerator
             $scopes = $contentVariant->getScopes();
 
             $toRemove = [];
+            // Remove slugs if content node scopes list is empty (no restrictions)
+            if ($scopes->isEmpty()) {
+                $contentVariant->resetSlugs();
+                continue;
+            }
+
             foreach ($contentVariant->getSlugs() as $slug) {
                 $localeId = (int)$this->getLocaleId($slug->getLocalization());
                 if ($slugUrls->containsKey($localeId)) {
-                    $previousSlugUrl = $slug->getUrl();
+                    $previousSlug = clone $slug;
 
                     /** @var SlugUrl $slugUrl */
                     $slugUrl = $slugUrls->get($localeId);
                     $slug->resetScopes();
                     $this->fillSlug($slug, $slugUrl, $routeData, $scopes);
 
-                    $this->redirectGenerator->updateRedirects($previousSlugUrl, $slug);
+                    $this->redirectGenerator->updateRedirects($previousSlug->getUrl(), $slug);
 
                     if ($generateRedirects) {
-                        $this->redirectGenerator->generate($previousSlugUrl, $slug);
+                        $this->redirectGenerator->generateForSlug($previousSlug, $slug);
                     }
                 } else {
                     $toRemove[] = $slug;

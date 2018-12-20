@@ -6,11 +6,11 @@ use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListLimitManager;
 use Oro\Bundle\ShoppingListBundle\Twig\ShoppingListLimitExtension;
 use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
 
-class ShoppingListLimitExtensionTest extends \PHPUnit_Framework_TestCase
+class ShoppingListLimitExtensionTest extends \PHPUnit\Framework\TestCase
 {
     use TwigExtensionTestCaseTrait;
 
-    /** @var ShoppingListLimitManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ShoppingListLimitManager|\PHPUnit\Framework\MockObject\MockObject */
     private $shoppingListLimitManager;
 
     /** @var ShoppingListLimitExtension */

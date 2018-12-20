@@ -11,7 +11,7 @@ use Symfony\Component\ExpressionLanguage\SyntaxError;
 /**
  * @SuppressWarnings(PHPMD)
  */
-class ExpressionParserTest extends \PHPUnit_Framework_TestCase
+class ExpressionParserTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var ExpressionParser
@@ -19,7 +19,7 @@ class ExpressionParserTest extends \PHPUnit_Framework_TestCase
     protected $expressionParser;
 
     /**
-     * @var FieldsProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var FieldsProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $fieldsProvider;
 
@@ -52,7 +52,7 @@ class ExpressionParserTest extends \PHPUnit_Framework_TestCase
     {
         $expected = new Node\NameNode('p', 'id');
 
-        /** @var ExpressionLanguageConverter|\PHPUnit_Framework_MockObject_MockObject $converter */
+        /** @var ExpressionLanguageConverter|\PHPUnit\Framework\MockObject\MockObject $converter */
         $converter = $this->getMockBuilder(ExpressionLanguageConverter::class)
             ->disableOriginalConstructor()
             ->getMock();

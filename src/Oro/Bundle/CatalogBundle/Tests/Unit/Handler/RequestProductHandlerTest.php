@@ -6,21 +6,21 @@ use Oro\Bundle\CatalogBundle\Handler\RequestProductHandler;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-class RequestProductHandlerTest extends \PHPUnit_Framework_TestCase
+class RequestProductHandlerTest extends \PHPUnit\Framework\TestCase
 {
     const ROOT_CATEGORY_ID = 1;
 
-    /** @var  Request|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var  Request|\PHPUnit\Framework\MockObject\MockObject */
     protected $request;
 
-    /** @var  RequestProductHandler|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var  RequestProductHandler|\PHPUnit\Framework\MockObject\MockObject */
     protected $requestProductHandler;
 
     public function setUp()
     {
         $this->request = $this->createMock('Symfony\Component\HttpFoundation\Request');
 
-        /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
+        /** @var RequestStack|\PHPUnit\Framework\MockObject\MockObject $requestStack */
         $requestStack = $this->createMock('Symfony\Component\HttpFoundation\RequestStack');
         $requestStack->expects($this->any())->method('getCurrentRequest')->willReturn($this->request);
 

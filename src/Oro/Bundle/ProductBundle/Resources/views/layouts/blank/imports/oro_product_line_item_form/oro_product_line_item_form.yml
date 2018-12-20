@@ -5,7 +5,7 @@ layout:
             root: __line_item_form_buttons
     actions:
         - '@setBlockTheme':
-            themes: 'oro_product_line_item_form.html.twig'
+            themes: 'OroProductBundle:layouts:blank/imports/oro_product_line_item_form/oro_product_line_item_form.html.twig'
         - '@addTree':
             items:
                 __line_item_form:

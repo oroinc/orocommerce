@@ -3,9 +3,8 @@
 namespace Oro\Bundle\VisibilityBundle\Async\Visibility;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\DBAL\Driver\DriverException;
+use Doctrine\DBAL\Exception\RetryableException;
 use Doctrine\ORM\EntityManager;
-use Oro\Bundle\EntityBundle\ORM\DatabaseExceptionHelper;
 use Oro\Bundle\VisibilityBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\VisibilityBundle\Model\MessageFactoryInterface;
 use Oro\Bundle\VisibilityBundle\Model\VisibilityMessageFactory;
@@ -16,6 +15,9 @@ use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\MessageQueue\Util\JSON;
 use Psr\Log\LoggerInterface;
 
+/**
+ * Resolves visibility by Entity
+ */
 abstract class AbstractVisibilityProcessor implements MessageProcessorInterface
 {
     /**
@@ -39,11 +41,6 @@ abstract class AbstractVisibilityProcessor implements MessageProcessorInterface
     protected $logger;
 
     /**
-     * @var DatabaseExceptionHelper
-     */
-    protected $databaseExceptionHelper;
-
-    /**
      * @var string
      */
     protected $resolvedVisibilityClassName = '';
@@ -53,20 +50,17 @@ abstract class AbstractVisibilityProcessor implements MessageProcessorInterface
      * @param MessageFactoryInterface $messageFactory
      * @param LoggerInterface $logger
      * @param CacheBuilderInterface $cacheBuilder
-     * @param DatabaseExceptionHelper $databaseExceptionHelper
      */
     public function __construct(
         ManagerRegistry $registry,
         MessageFactoryInterface $messageFactory,
         LoggerInterface $logger,
-        CacheBuilderInterface $cacheBuilder,
-        DatabaseExceptionHelper $databaseExceptionHelper
+        CacheBuilderInterface $cacheBuilder
     ) {
         $this->registry = $registry;
         $this->logger = $logger;
         $this->messageFactory = $messageFactory;
         $this->cacheBuilder = $cacheBuilder;
-        $this->databaseExceptionHelper = $databaseExceptionHelper;
     }
 
     /**
@@ -95,11 +89,11 @@ abstract class AbstractVisibilityProcessor implements MessageProcessorInterface
                 ['exception' => $e]
             );
 
-            if ($e instanceof DriverException && $this->databaseExceptionHelper->isDeadlock($e)) {
+            if ($e instanceof RetryableException) {
                 return self::REQUEUE;
-            } else {
-                return self::REJECT;
             }
+
+            return self::REJECT;
         }
 
         return self::ACK;

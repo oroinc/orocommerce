@@ -9,7 +9,7 @@ use Oro\Bundle\ShippingBundle\Method\ShippingMethodViewCollection;
 use Oro\Bundle\ShippingBundle\Provider\Price\Configured\Basic\BasicShippingConfiguredPriceProvider;
 use Oro\Bundle\ShippingBundle\Provider\Price\ShippingPriceProviderInterface;
 
-class BasicShippingConfiguredPriceProviderTest extends \PHPUnit_Framework_TestCase
+class BasicShippingConfiguredPriceProviderTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var BasicShippingConfiguredPriceProvider
@@ -17,7 +17,7 @@ class BasicShippingConfiguredPriceProviderTest extends \PHPUnit_Framework_TestCa
     private $testedPriceProvider;
 
     /**
-     * @var ShippingPriceProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingPriceProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $shippingPriceProviderMock;
 
@@ -70,7 +70,7 @@ class BasicShippingConfiguredPriceProviderTest extends \PHPUnit_Framework_TestCa
     }
 
     /**
-     * @return ShippingContext|\PHPUnit_Framework_MockObject_MockObject
+     * @return ShippingContext|\PHPUnit\Framework\MockObject\MockObject
      */
     private function getShippingContextMock()
     {
@@ -78,7 +78,7 @@ class BasicShippingConfiguredPriceProviderTest extends \PHPUnit_Framework_TestCa
     }
 
     /**
-     * @return ComposedShippingMethodConfigurationInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return ComposedShippingMethodConfigurationInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private function getConfigurationMock()
     {

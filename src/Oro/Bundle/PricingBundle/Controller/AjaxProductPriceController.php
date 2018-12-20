@@ -18,13 +18,16 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * Adds actions to update, delete and get prices by customer or matching prices via AJAX
+ */
 class AjaxProductPriceController extends AbstractAjaxProductPriceController
 {
     /**
      * @Route("/get-product-prices-by-customer", name="oro_pricing_price_by_customer")
      * @Method({"GET"})
-     *
-     * {@inheritdoc}
+     * @param Request $request
+     * @return JsonResponse
      */
     public function getProductPricesByCustomerAction(Request $request)
     {
@@ -65,7 +68,7 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
         $priceHandler = $this->get('oro_pricing.handler.product_price_handler');
         return $handler->update(
             $productPrice,
-            PriceListProductPriceType::NAME,
+            PriceListProductPriceType::class,
             null,
             $request,
             $priceHandler,
@@ -85,7 +88,7 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
         $lineItems = $request->get('items', []);
         $matchedPrices = $this->get('oro_pricing.provider.matching_price')->getMatchingPrices(
             $lineItems,
-            $this->get('oro_pricing.model.price_list_request_handler')->getPriceListByCustomer()
+            $this->get('oro_pricing.model.product_price_scope_criteria_request_handler')->getPriceScopeCriteria()
         );
 
         return new JsonResponse($matchedPrices);

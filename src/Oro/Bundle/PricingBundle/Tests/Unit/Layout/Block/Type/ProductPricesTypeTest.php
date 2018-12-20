@@ -20,7 +20,7 @@ class ProductPricesTypeTest extends BlockTypeTestCase
     /** @var AttributeRenderRegistry */
     protected $attributeRenderRegistry;
 
-    /** @var AttributeManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var AttributeManager|\PHPUnit\Framework\MockObject\MockObject */
     protected $attributeManager;
 
     /**
@@ -95,13 +95,6 @@ class ProductPricesTypeTest extends BlockTypeTestCase
         $this->assertEquals($pricesExpression, $view->vars['productPrices']);
         $this->assertFalse($view->vars['isPriceUnitsVisible']);
         $this->assertNull($view->vars['product']);
-    }
-
-    public function testGetName()
-    {
-        $type = $this->getBlockType(ProductPricesType::NAME);
-
-        $this->assertSame(ProductPricesType::NAME, $type->getName());
     }
 
     public function testGetParent()

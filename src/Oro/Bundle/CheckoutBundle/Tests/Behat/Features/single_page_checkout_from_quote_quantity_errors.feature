@@ -10,16 +10,13 @@ Feature: Single Page Checkout From Quote Quantity Errors
   As a buyer
   I want to start checkout from Quote view page and view quantity validation errors before submit order
 
-  Scenario: Enable Single Page Checkout Workflow
+  Scenario: Feature Background
     Given There is USD currency in the system configuration
-    And I login as administrator
-    And go to System/Workflows
-    When I click "Activate" on row "Single Page Checkout" in grid
-    And I click "Activate"
-    Then I should see "Workflow activated" flash message
+    And I activate "Single Page Checkout" workflow
 
   Scenario: Set internal status "Sent to Customer" for Quote with PO number "PO1"
-    Given go to Sales/Quotes
+    Given I login as administrator
+    And go to Sales/Quotes
     And click view PO1 in grid
     When I click "Send to Customer"
     And click "Send"
@@ -39,6 +36,5 @@ Feature: Single Page Checkout From Quote Quantity Errors
     And I select "Fifth avenue, 10115 Berlin, Germany" from "Select Shipping Address"
     And I check "Flat Rate" on the checkout page
     And I check "Payment Terms" on the checkout page
-    And I click "Submit Order"
-    Then I should see "There was an error while processing the order"
-    And I should see "There is not enough quantity for this product"
+    Then I should see "There is not enough quantity for this product"
+    And I should see "Submit Order" button disabled

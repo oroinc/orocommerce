@@ -105,6 +105,6 @@ class PriceListProductAssignmentBuilder
         }
         $this->registry->getManagerForClass(ProductPrice::class)
             ->getRepository(ProductPrice::class)
-            ->deleteInvalidPrices($this->shardManager, $priceList);
+            ->deleteInvalidPricesByProducts($this->shardManager, $priceList, $products);
     }
 }

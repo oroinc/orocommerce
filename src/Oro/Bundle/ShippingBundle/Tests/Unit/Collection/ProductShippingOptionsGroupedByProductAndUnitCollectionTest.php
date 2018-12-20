@@ -60,7 +60,7 @@ class ProductShippingOptionsGroupedByProductAndUnitCollectionTest extends TestCa
     /**
      * @param int $id
      *
-     * @return Product|\PHPUnit_Framework_MockObject_MockObject
+     * @return Product|\PHPUnit\Framework\MockObject\MockObject
      */
     private function createProduct(int $id)
     {

@@ -7,15 +7,15 @@ use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Layout\DataProvider\CategoriesProductsProvider;
 use Oro\Bundle\CatalogBundle\Search\ProductRepository;
 
-class CategoriesProductsProviderTest extends \PHPUnit_Framework_TestCase
+class CategoriesProductsProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var CategoryRepository|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var CategoryRepository|\PHPUnit\Framework\MockObject\MockObject */
     private $categoryRepository;
 
-    /** @var ProductRepository|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ProductRepository|\PHPUnit\Framework\MockObject\MockObject */
     private $searchRepository;
 
-    /** @var CacheProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var CacheProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $cache;
 
     /** @var CategoriesProductsProvider */

@@ -6,8 +6,8 @@ use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
 
 /**
- * @method \PHPUnit_Framework_MockObject_MockBuilder getMock($className)
- * @method \PHPUnit_Framework_MockObject_Matcher_AnyInvokedCount any()
+ * @method \PHPUnit\Framework\MockObject\MockBuilder getMock($className)
+ * @method \PHPUnit\Framework\MockObject\Matcher\AnyInvokedCount any()
  */
 trait QuantityTypeTrait
 {
@@ -17,12 +17,12 @@ trait QuantityTypeTrait
     public static $name = QuantityType::NAME;
 
     /**
-     * @var RoundingServiceInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var RoundingServiceInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $roundingService;
 
     /**
-     * @return RoundingServiceInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return RoundingServiceInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     public function getRoundingService()
     {
@@ -34,7 +34,7 @@ trait QuantityTypeTrait
     }
 
     /**
-     * @return RoundingServiceInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return RoundingServiceInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     public function getQuantityType()
     {

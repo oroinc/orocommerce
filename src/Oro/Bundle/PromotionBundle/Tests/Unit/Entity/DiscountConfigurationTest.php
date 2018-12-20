@@ -5,7 +5,7 @@ namespace Oro\Bundle\PromotionBundle\Tests\Unit\Entity;
 use Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-class DiscountConfigurationTest extends \PHPUnit_Framework_TestCase
+class DiscountConfigurationTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 

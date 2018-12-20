@@ -6,15 +6,15 @@ use Oro\Bundle\CurrencyBundle\Provider\DefaultCurrencyProviderInterface;
 use Oro\Bundle\PricingBundle\Provider\WebsiteCurrencyProvider;
 use Oro\Bundle\ShoppingListBundle\Datagrid\Helper\ShoppingListGridTotalCurrencyHelper;
 
-class ShoppingListGridTotalCurrencyHelperTest extends \PHPUnit_Framework_TestCase
+class ShoppingListGridTotalCurrencyHelperTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var WebsiteCurrencyProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var WebsiteCurrencyProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $websiteCurrencyProvider;
 
     /**
-     * @var DefaultCurrencyProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var DefaultCurrencyProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $defaultCurrencyProvider;
 

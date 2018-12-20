@@ -24,33 +24,33 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\Translation\TranslatorInterface;
 
-class ProductVariantAvailabilityProviderTest extends \PHPUnit_Framework_TestCase
+class ProductVariantAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
 {
     /** @var ProductVariantAvailabilityProvider */
     protected $availabilityProvider;
 
-    /** @var EntityRepository|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var EntityRepository|\PHPUnit\Framework\MockObject\MockObject */
     protected $productRepository;
 
-    /** @var QueryBuilder|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var QueryBuilder|\PHPUnit\Framework\MockObject\MockObject */
     protected $qb;
 
-    /** @var AbstractQuery|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var AbstractQuery|\PHPUnit\Framework\MockObject\MockObject */
     protected $query;
 
-    /** @var CustomFieldProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var CustomFieldProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $customFieldProvider;
 
-    /** @var EnumVariantFieldValueHandler|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var EnumVariantFieldValueHandler|\PHPUnit\Framework\MockObject\MockObject */
     protected $enumHandler;
 
-    /** @var BooleanVariantFieldValueHandler|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var BooleanVariantFieldValueHandler|\PHPUnit\Framework\MockObject\MockObject */
     protected $boolHandler;
 
-    /** @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $dispatcher;
 
-    /** @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $translator;
 
     /**
@@ -67,7 +67,7 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        /** @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject $doctrineHelper */
+        /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject $doctrineHelper */
         $doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -88,7 +88,7 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        /** @var EnumValueProvider|\PHPUnit_Framework_MockObject_MockObject $enumValueProvider */
+        /** @var EnumValueProvider|\PHPUnit\Framework\MockObject\MockObject $enumValueProvider */
         $enumValueProvider = $this->getMockBuilder(EnumValueProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -358,18 +358,18 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit_Framework_TestCase
                     'color' => [
                         'type' => 'enum',
                         'values' => [
-                            'red' => 'Red',
-                            'green' => 'Green',
-                            'blue' => 'Blue',
+                            'Red' => 'red',
+                            'Green' => 'green',
+                            'Blue' => 'blue',
                         ]
                     ],
                     'size' => [
                         'type' => 'enum',
                         'values' => [
-                            's' => 'S',
-                            'm' => 'M',
-                            'l' => 'L',
-                            'xl' => 'XL',
+                            'S' => 's',
+                            'M' => 'm',
+                            'L' => 'l',
+                            'XL' => 'xl',
                         ]
                     ],
                     'slim_fit' => [
@@ -425,9 +425,9 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit_Framework_TestCase
                     'color' => [
                         'type' => 'enum',
                         'values' => [
-                            'red' => 'Red',
-                            'green' => 'Green',
-                            'blue' => 'Blue',
+                            'Red' => 'red',
+                            'Green' => 'green',
+                            'Blue' => 'blue',
                         ]
                     ],
                     'extended_field' => [
@@ -478,6 +478,14 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit_Framework_TestCase
             ->willReturnCallback(
                 function ($fieldName) use ($variantsData) {
                     return isset($variantsData[$fieldName]['values']) ? $variantsData[$fieldName]['values'] : [];
+                }
+            );
+
+        $this->translator->expects($this->any())
+            ->method('trans')
+            ->willReturnCallback(
+                function ($message) {
+                    return $message . '.trans';
                 }
             );
 

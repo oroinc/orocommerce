@@ -10,27 +10,27 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Routing\RouterInterface;
 
-abstract class AbstractActionTest extends \PHPUnit_Framework_TestCase
+abstract class AbstractActionTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var ContextAccessor|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ContextAccessor|\PHPUnit\Framework\MockObject\MockObject */
     protected $contextAccessor;
 
-    /** @var PaymentMethodProviderInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var PaymentMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $paymentMethodProvider;
 
-    /** @var PaymentTransactionProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var PaymentTransactionProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $paymentTransactionProvider;
 
-    /** @var RouterInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var RouterInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $router;
 
     /** @var AbstractPaymentMethodAction */
     protected $action;
 
-    /** @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject $dispatcher */
+    /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject $dispatcher */
     protected $dispatcher;
 
-    /** @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject $dispatcher */
+    /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject $dispatcher */
     protected $logger;
 
     protected function setUp()

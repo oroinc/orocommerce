@@ -6,7 +6,7 @@ use Oro\Bundle\WebCatalogBundle\DependencyInjection\Configuration;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\Processor;
 
-class ConfigurationTest extends \PHPUnit_Framework_TestCase
+class ConfigurationTest extends \PHPUnit\Framework\TestCase
 {
     public function testGetConfigTreeBuilder()
     {
@@ -25,6 +25,10 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
             'settings' => [
                 'resolved' => 1,
                 'web_catalog' => [
+                    'value' => null,
+                    'scope' => 'app'
+                ],
+                'navigation_root' => [
                     'value' => null,
                     'scope' => 'app'
                 ]

@@ -12,14 +12,14 @@ use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\SearchBundle\Query\Result;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class ProductRepositoryTest extends \PHPUnit_Framework_TestCase
+class ProductRepositoryTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /** @var QueryFactoryInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var QueryFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $queryFactory;
 
-    /** @var AbstractSearchMappingProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var AbstractSearchMappingProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $mappingProvider;
 
     /** @var ProductRepository */
@@ -62,6 +62,8 @@ class ProductRepositoryTest extends \PHPUnit_Framework_TestCase
         ];
 
         $query = new Query();
+        $query->getCriteria()->setMaxResults(1);
+
         $query->addAggregate('categoryCounts', 'text.category_path', Query::AGGREGATE_FUNCTION_COUNT);
         $this->createIndexer($query);
 
@@ -108,7 +110,7 @@ class ProductRepositoryTest extends \PHPUnit_Framework_TestCase
 
     protected function createIndexer($query)
     {
-        /** @var Indexer|\PHPUnit_Framework_MockObject_MockObject $indexer */
+        /** @var Indexer|\PHPUnit\Framework\MockObject\MockObject $indexer */
         $indexer = $this->createMock(Indexer::class);
         $indexer->expects($this->once())
             ->method('query')
