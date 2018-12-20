@@ -37,7 +37,7 @@ trusted_data:
                 placeholder: true
             deleteGeneratedPrices:
                 sql: true
-            deleteInvalidPrices:
+            deleteInvalidPricesByProducts:
                 sql: true
         Oro\Bundle\PricingBundle\Entity\Repository\BaseProductPriceRepository:
             deleteByProductUnit:
@@ -68,10 +68,10 @@ trusted_data:
         Oro\Bundle\PricingBundle\Sharding\ShardManager:
             getEnabledShardName: true
             getEntityBaseTable: true
-        Oro\Bundle\PricingBundle\EventListener\PriceAttributeProductPriceDatagridListener:
-            buildJoinAlias: true
-        Oro\Bundle\PricingBundle\EventListener\ProductPriceDatagridListener:
-            buildJoinAlias: true
+        Oro\Bundle\PricingBundle\Datagrid\PriceAttributeProductPriceDatagridExtension:
+            getJoinAlias: true
+        Oro\Bundle\PricingBundle\Datagrid\ProductPriceDatagridExtension:
+            getJoinAlias: true
         Oro\Bundle\PricingBundle\Compiler\PriceListRuleCompiler:
             getRootAlias: true
             getValueByExpression: true
