@@ -15,4 +15,4 @@ api:
                 rowTotalAfterDiscount:
                     data_type: money
                     property_path: _
-                    depends_on: [price, quantity]
+                    depends_on: [value, quantity]

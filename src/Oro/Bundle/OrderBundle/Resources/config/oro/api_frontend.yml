@@ -38,14 +38,15 @@ api:
                 shippingMethod:
                     data_type: object
                     property_path: _
-                    depends_on: [_shippingMethod, shippingMethodType]
+                    depends_on: [shippingMethod, shippingMethodType]
                     exclusion_policy: all
                     fields:
                         code:
                             data_type: string
                         label:
                             data_type: string
-                # make the "shippingMethod" entity property as completely ignored to be able to use the field with such name
+                # declare excluded field for "shippingMethod" entity property
+                # to be able to use "shippingMethod" property in "depends_on" option
                 _shippingMethod:
                     property_path: shippingMethod
                     exclude: true
@@ -90,10 +91,6 @@ api:
                     exclude: true
                 price:
                     property_path: value
-                # make the "price" entity property as completely ignored to be able to use the field with such name
-                _price:
-                    property_path: price
-                    exclude: true
                 shipUntil:
                     property_path: shipBy
             actions:
