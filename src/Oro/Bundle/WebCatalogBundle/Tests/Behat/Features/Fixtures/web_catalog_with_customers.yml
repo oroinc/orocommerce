@@ -1,0 +1,40 @@
+include:
+    - '@OroWebCatalogBundle:web_catalog.yml'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerGroup:
+    customer_group_1:
+        name: 'Customer Group 1'
+        organization: '@organization'
+        owner: '@admin'
+    customer_group_2:
+        name: 'Customer Group 2'
+        organization: '@organization'
+        owner: '@admin'
+
+Oro\Bundle\CustomerBundle\Entity\Customer:
+    customer_1:
+        name: 'Customer 1'
+        organization: '@organization'
+        owner: '@admin'
+        group: '@customer_group_1'
+    customer_2:
+        name: 'Customer 2'
+        organization: '@organization'
+        owner: '@admin'
+        group: '@customer_group_2'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerUser:
+    amanda:
+        email: 'AmandaRCole@example.org'
+        username: 'AmandaRCole@example.org'
+        password: 'gxP1L8r86hrdUMg9wKdfnsS/EZC4a7jOIdn6BMzegqL2S6e+KBIuHCrDVciMdiR/64osNnabmFonwK8l09vQxA=='
+        salt: 'fgswya1kzw0sck8ck48kosowckwo0ws'
+        firstName: 'Amanda'
+        lastName: 'Cole'
+        enabled: '1'
+        confirmed: '1'
+        customer: '@customer_1'
+        organization: '@organization'
+        role: ['@front_admin']
+        owner: '@admin'
+        website: '@website1'
