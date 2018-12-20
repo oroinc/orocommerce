@@ -167,6 +167,10 @@ oro_behat_extension:
     DiscountDescription:
       selector: 'input[name="oro_action_operation[orderDiscount][description]"]'
 
+    Orders Grid:
+      selector: 'div[data-page-component-name="orders-grid"]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
   pages:
     OrderFrontendView:
       class: Oro\Bundle\OrderBundle\Tests\Behat\Page\OrderFrontendViewPage
