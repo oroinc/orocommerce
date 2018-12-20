@@ -8,11 +8,12 @@ use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
 
 /**
- * Computes a value of "shippingMethod" field for Order entity.
+ * Computes a value of "shippingCostAmount" and "shippingMethod" fields for Order entity.
  */
-class ComputeOrderShippingMethod implements ProcessorInterface
+class ComputeOrderShipping implements ProcessorInterface
 {
-    private const FIELD_NAME = 'shippingMethod';
+    private const SHIPPING_METHOD_FIELD_NAME = 'shippingMethod';
+    private const SHIPPING_COST_FIELD_NAME   = 'shippingCostAmount';
 
     /** @var ShippingMethodLabelTranslator|null */
     private $shippingMethodLabelTranslator;
@@ -37,20 +38,26 @@ class ComputeOrderShippingMethod implements ProcessorInterface
             return;
         }
 
-        if (!$context->isFieldRequested(self::FIELD_NAME, $data)) {
-            return;
+        if ($context->isFieldRequested(self::SHIPPING_COST_FIELD_NAME)) {
+            $overriddenShippingCost = $context->getResultFieldValue('overriddenShippingCostAmount', $data);
+            if (null !== $overriddenShippingCost) {
+                $data[self::SHIPPING_COST_FIELD_NAME] = $overriddenShippingCost;
+            }
         }
 
-        $code = $context->getResultFieldValue('shippingMethod', $data);
-        $type = $context->getResultFieldValue('shippingMethodType', $data);
-        $shippingMethod = null;
-        if (null !== $code || null !== $type) {
-            $shippingMethod = [
-                'code'  => $code,
-                'label' => $this->getShippingMethodLabel($code, $type)
-            ];
+        if ($context->isFieldRequested(self::SHIPPING_METHOD_FIELD_NAME, $data)) {
+            $code = $context->getResultFieldValue('shippingMethod', $data);
+            $type = $context->getResultFieldValue('shippingMethodType', $data);
+            $shippingMethod = null;
+            if (null !== $code || null !== $type) {
+                $shippingMethod = [
+                    'code'  => $code,
+                    'label' => $this->getShippingMethodLabel($code, $type)
+                ];
+            }
+            $data[self::SHIPPING_METHOD_FIELD_NAME] = $shippingMethod;
         }
-        $data[self::FIELD_NAME] = $shippingMethod;
+
         $context->setResult($data);
     }
 

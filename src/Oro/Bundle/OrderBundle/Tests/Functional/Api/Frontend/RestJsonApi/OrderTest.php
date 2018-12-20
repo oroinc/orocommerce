@@ -68,6 +68,51 @@ class OrderTest extends FrontendRestJsonApiTestCase
         self::assertResponseStatusCodeEquals($response, Response::HTTP_NOT_FOUND);
     }
 
+    public function testGetShouldReturnCorrectShippingMethodAmountEvenIfOtherFieldsWereNotRequested()
+    {
+        $response = $this->get(
+            ['entity' => 'orders', 'id' => '<toString(@order1->id)>'],
+            ['fields[orders]' => 'shippingMethod']
+        );
+
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    'type'       => 'orders',
+                    'id'         => '<toString(@order1->id)>',
+                    'attributes' => [
+                        'shippingMethod' => [
+                            'code'  => '<("flat_rate_" . @flat_rate_shipping_channel->id)>',
+                            'label' => 'Flat Rate'
+                        ]
+                    ]
+                ]
+            ],
+            $response
+        );
+    }
+
+    public function testGetShouldReturnCorrectShippingCostAmountEvenIfOtherFieldsWereNotRequested()
+    {
+        $response = $this->get(
+            ['entity' => 'orders', 'id' => '<toString(@order1->id)>'],
+            ['fields[orders]' => 'shippingCostAmount']
+        );
+
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    'type'       => 'orders',
+                    'id'         => '<toString(@order1->id)>',
+                    'attributes' => [
+                        'shippingCostAmount' => '7.0000'
+                    ]
+                ]
+            ],
+            $response
+        );
+    }
+
     public function testTryToCreate()
     {
         $response = $this->post(

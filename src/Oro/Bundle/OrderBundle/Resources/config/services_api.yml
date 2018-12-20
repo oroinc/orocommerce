@@ -63,8 +63,8 @@ services:
         tags:
             - { name: oro.api.processor, action: customize_loaded_data, collection: true, requestType: frontend, class: '%oro_order.entity.order.class%' }
 
-    oro_order.api.compute_order_shipping_method:
-        class: Oro\Bundle\OrderBundle\Api\Processor\ComputeOrderShippingMethod
+    oro_order.api.compute_order_shipping:
+        class: Oro\Bundle\OrderBundle\Api\Processor\ComputeOrderShipping
         arguments:
             - '@?oro_shipping.translator.shipping_method_label'
         tags:

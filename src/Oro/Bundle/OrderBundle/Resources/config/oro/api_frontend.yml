@@ -9,6 +9,8 @@ api:
                     exclude: true
                 sourceEntityIdentifier:
                     exclude: true
+                totalDiscountsAmount:
+                    exclude: true
                 lineItems:
                     max_results: -1
                 discounts:
@@ -28,6 +30,11 @@ api:
                     fields:
                         method: ~
                         number: ~
+                shippingCostAmount:
+                    property_path: estimatedShippingCostAmount
+                    depends_on: [overriddenShippingCostAmount]
+                overriddenShippingCostAmount:
+                    exclude: true
                 shippingMethod:
                     data_type: object
                     property_path: _
