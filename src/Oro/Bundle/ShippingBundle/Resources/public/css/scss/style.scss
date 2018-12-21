@@ -110,10 +110,6 @@ table.shipping-options-result-grid {
         }
     }
 
-    input[type="text"] {
-        width: 280px;
-    }
-
     input.method-options-surcharge {
         width: 110px;
     }
@@ -126,6 +122,19 @@ table.shipping-options-result-grid {
 
     .selector.input-widget-select {
         margin-left: 0;
+    }
+}
+
+.oro-shipping-rule-add-method-line {
+    display: flex;
+
+    &:not(:last-of-type) {
+        margin-bottom: $content-padding-medium;
+    }
+
+    .add-method,
+    .add-all-methods {
+        margin-#{$start}: $content-padding-small;
     }
 }
 

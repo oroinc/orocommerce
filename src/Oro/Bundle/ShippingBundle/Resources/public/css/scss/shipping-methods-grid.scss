@@ -101,15 +101,13 @@
     }
 
     &__body {
+        padding-bottom: $content-padding-medium;
+
         .selector.input-widget-select {
             margin: 0;
         }
 
-        .controls {
-            input[type="text"] {
-                width: 280px;
-            }
-        }
+        @include selector-width(294px);
     }
 
     &__item {
@@ -133,7 +131,7 @@
     }
 
     &__global-options {
-        margin: -10px 0 25px -36px;
+        margin: -10px 0 26px -36px;
 
         input {
             width: 290px;
@@ -265,7 +263,7 @@
 }
 
 .mobile-version {
-    .shipping-method-config-grid  {
+    .shipping-method-config-grid {
         &__header {
             padding: 10px;
         }
@@ -340,12 +338,7 @@
     }
 
     .oro-shipping-rule-add-method-select {
-        margin-bottom: 10px;
         min-width: 242px;
-
-        .control-group-choice {
-            width: 92%;
-        }
     }
 
     .controls .selector select {
