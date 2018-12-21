@@ -19,7 +19,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
  *     name="oro_consent_acceptance",
  *     uniqueConstraints={
  *          @ORM\UniqueConstraint(
- *              name="oro_customer_consent_uidx",
+ *              name="oro_customeru_consent_uidx",
  *              columns={"consent_id","customerUser_id"}
  *          )
  *      }

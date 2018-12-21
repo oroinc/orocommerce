@@ -53,7 +53,7 @@ class OroConsentBundleInstaller implements Installation, ExtendExtensionAwareInt
         $this->addConsentAcceptanceCustomerUserRelation($schema);
 
         $table = $schema->getTable(self::CONSENT_CUSTOMER_ACCEPTANCE_TABLE_NAME);
-        $table->addUniqueIndex(['consent_id','customerUser_id'], 'oro_customer_consent_uidx');
+        $table->addUniqueIndex(['consent_id','customerUser_id'], 'oro_customeru_consent_uidx');
     }
 
     /**
@@ -167,18 +167,19 @@ class OroConsentBundleInstaller implements Installation, ExtendExtensionAwareInt
     }
 
     /**
+     * Adds CustomerUser.acceptedConsents and ConsentAcceptance.customerUser Many-To-One bidirectional relation
      * @param Schema $schema
      */
     private function addConsentAcceptanceCustomerUserRelation(Schema $schema): void
     {
-        $table = $schema->getTable('oro_customer_user');
-        $targetTable = $schema->getTable(self::CONSENT_CUSTOMER_ACCEPTANCE_TABLE_NAME);
+        $inverseSideTable = $schema->getTable('oro_customer_user');
+        $owningSideTable = $schema->getTable(self::CONSENT_CUSTOMER_ACCEPTANCE_TABLE_NAME);
 
         $this->extendExtension->addManyToOneRelation(
             $schema,
-            $targetTable,
+            $owningSideTable,
             'customerUser',
-            $table,
+            $inverseSideTable,
             'id',
             [
                 ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_READONLY,
@@ -197,9 +198,9 @@ class OroConsentBundleInstaller implements Installation, ExtendExtensionAwareInt
 
         $this->extendExtension->addManyToOneInverseRelation(
             $schema,
-            $targetTable,
+            $owningSideTable,
             'customerUser',
-            $table,
+            $inverseSideTable,
             'acceptedConsents',
             ['id'],
             ['id'],

@@ -3,14 +3,12 @@
 namespace Oro\Bundle\ConsentBundle\Migrations\Schema\v1_1;
 
 use Doctrine\DBAL\Schema\Schema;
-use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\CMSBundle\Entity\Page;
-use Oro\Bundle\EntityConfigBundle\Migration\UpdateEntityConfigFieldValueQuery;
-use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
-use Oro\Bundle\ProductBundle\Entity\Product;
 
+/**
+ * Removes `name` field from `oro_consent` table
+ */
 class RemoveDefaultName implements Migration
 {
     /**
