@@ -15,6 +15,7 @@ use Oro\Bundle\PromotionBundle\Entity\AppliedPromotion;
 class LoadAppliedPromotionData extends AbstractFixture implements DependentFixtureInterface
 {
     const SIMPLE_APPLIED_PROMOTION = 'simple_applied_promotion';
+    const SHIPPING_APPLIED_PROMOTION = 'shipping_applied_promotion';
     const SIMPLE_APPLIED_PROMOTION_WITH_LINE_ITEM = 'simple_applied_promotion_with_line_item';
 
     /** @var array */
@@ -24,6 +25,14 @@ class LoadAppliedPromotionData extends AbstractFixture implements DependentFixtu
             'order' => LoadOrders::ORDER_1,
             'type' => 'order',
             'amount' => 10.00,
+            'currency' => 'USD',
+            'promotion_name' => 'Some name',
+            'source_promotion_id' => 0
+        ],
+        self::SHIPPING_APPLIED_PROMOTION => [
+            'order' => LoadOrders::ORDER_1,
+            'type' => 'shipping',
+            'amount' => 1.99,
             'currency' => 'USD',
             'promotion_name' => 'Some name',
             'source_promotion_id' => 0

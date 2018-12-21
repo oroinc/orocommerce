@@ -54,6 +54,10 @@ The **label** property is a string contains the shipping method label.
 
 Example of data: **{"code": "ups_3", "label": "UPS"}**
 
+### shippingCostAmount
+
+The shipping cost for the order.
+
 ### paymentStatus
 
 An object represents the payment status that indicates whether the order is already paid in full, the payment for the order is authorized, etc.

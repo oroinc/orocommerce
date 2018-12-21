@@ -33,6 +33,7 @@ class AppliedPromotionRepositoryTest extends WebTestCase
 
         $expected = [
             $this->getReference(LoadAppliedPromotionData::SIMPLE_APPLIED_PROMOTION)->getId(),
+            $this->getReference(LoadAppliedPromotionData::SHIPPING_APPLIED_PROMOTION)->getId(),
             $this->getReference(LoadAppliedPromotionData::SIMPLE_APPLIED_PROMOTION_WITH_LINE_ITEM)->getId()
         ];
 
@@ -50,6 +51,7 @@ class AppliedPromotionRepositoryTest extends WebTestCase
         /** @var Order $order */
         $order = $this->getReference(LoadOrders::ORDER_1);
         $orderDiscount = $this->getReference(LoadAppliedPromotionData::SIMPLE_APPLIED_PROMOTION);
+        $shippingDiscount = $this->getReference(LoadAppliedPromotionData::SHIPPING_APPLIED_PROMOTION);
         $lineItemDiscount = $this->getReference(LoadAppliedPromotionData::SIMPLE_APPLIED_PROMOTION_WITH_LINE_ITEM);
 
         $info = [
@@ -61,6 +63,16 @@ class AppliedPromotionRepositoryTest extends WebTestCase
                 'currency' => 'USD',
                 'type' => 'order',
                 'amount' => '10.0000',
+                'sourcePromotionId' => 0
+            ],
+            [
+                'id' => $shippingDiscount->getId(),
+                'couponCode' => null,
+                'promotionName' => 'Some name',
+                'active' => true,
+                'currency' => 'USD',
+                'type' => 'shipping',
+                'amount' => '1.9900',
                 'sourcePromotionId' => 0
             ],
             [
