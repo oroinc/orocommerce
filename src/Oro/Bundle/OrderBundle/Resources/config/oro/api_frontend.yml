@@ -1,0 +1,130 @@
+api:
+    entities:
+        Oro\Bundle\OrderBundle\Entity\Order:
+            documentation_resource: '@OroOrderBundle/Resources/doc/api_frontend/order.md'
+            fields:
+                sourceEntityClass:
+                    exclude: true
+                sourceEntityId:
+                    exclude: true
+                sourceEntityIdentifier:
+                    exclude: true
+                totalDiscountsAmount:
+                    exclude: true
+                lineItems:
+                    max_results: -1
+                discounts:
+                    data_type: array
+                    max_results: -1
+                    exclusion_policy: all
+                    fields:
+                        type:
+                            data_type: string
+                            property_path: _
+                        description: ~
+                        amount: ~
+                shippingTrackings:
+                    data_type: array
+                    max_results: -1
+                    exclusion_policy: all
+                    fields:
+                        method: ~
+                        number: ~
+                shippingCostAmount:
+                    property_path: estimatedShippingCostAmount
+                    depends_on: [overriddenShippingCostAmount]
+                overriddenShippingCostAmount:
+                    exclude: true
+                shippingMethod:
+                    data_type: object
+                    property_path: _
+                    depends_on: [shippingMethod, shippingMethodType]
+                    exclusion_policy: all
+                    fields:
+                        code:
+                            data_type: string
+                        label:
+                            data_type: string
+                # declare excluded field for "shippingMethod" entity property
+                # to be able to use "shippingMethod" property in "depends_on" option
+                _shippingMethod:
+                    property_path: shippingMethod
+                    exclude: true
+                shippingMethodType:
+                    exclude: true
+                paymentTerm:
+                    property_path: payment_term_7c4f1e8e.label
+                payment_term_7c4f1e8e:
+                    exclude: true
+                paymentStatus:
+                    data_type: object
+                    property_path: _
+                    exclusion_policy: all
+                    fields:
+                        code:
+                            data_type: string
+                        label:
+                            data_type: string
+                paymentMethod:
+                    data_type: array
+                    property_path: _
+                    exclusion_policy: all
+                    fields:
+                        code:
+                            data_type: string
+                        label:
+                            data_type: string
+            actions:
+                create: false
+                update: false
+                delete: false
+                delete_list: false
+
+        Oro\Bundle\OrderBundle\Entity\OrderLineItem:
+            documentation_resource: '@OroOrderBundle/Resources/doc/api_frontend/order_line_item.md'
+            fields:
+                fromExternalSource:
+                    exclude: true
+                priceType:
+                    exclude: true
+                productVariantFields:
+                    exclude: true
+                price:
+                    property_path: value
+                shipUntil:
+                    property_path: shipBy
+            actions:
+                create: false
+                update: false
+                delete: false
+                delete_list: false
+
+        Oro\Bundle\OrderBundle\Entity\OrderAddress:
+            documentation_resource: '@OroOrderBundle/Resources/doc/api_frontend/order_address.md'
+            fields:
+                createdAt:
+                    property_path: created
+                updatedAt:
+                    property_path: updated
+                customRegion:
+                    exclude: false # set manually because this field is marked as excluded in entity.yml
+                    property_path: regionText
+                fromExternalSource:
+                    exclude: true
+            actions:
+                create: false
+                update: false
+                delete: false
+                delete_list: false
+
+        Oro\Bundle\OrderBundle\Entity\OrderDiscount:
+            # this entity does not have own Data API resource,
+            # but it should be defined to correct work of "discounts" property
+            # of the order API resource
+            actions: false
+
+        Oro\Bundle\OrderBundle\Entity\OrderShippingTracking:
+            # this entity does not have own Data API resource,
+            # but it should be defined to correct work of "shippingTrackings" property
+            # of the order API resource
+            actions: false

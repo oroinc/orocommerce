@@ -94,7 +94,7 @@ oro:
         shipping_cost_amount.label:       'Shipping Cost Amount'
         shipping_method:
             label:                        Shipping Method
-            description:                  The shipping method that was selected by the custoemr user for the order.
+            description:                  The shipping method that was selected by the customer user for the order.
         shipping_method_type:
             label:                        Shipping Method Type
             description:                  The flag that indicates whether the shipping method is configured to be used as the primary one.

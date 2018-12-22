@@ -2,27 +2,20 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Functional\Api\RestJsonApi;
 
-use Oro\Bundle\AddressBundle\Tests\Functional\DataFixtures\LoadCountryData;
-use Oro\Bundle\AddressBundle\Tests\Functional\DataFixtures\LoadRegionData;
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
-use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderShippingTracking;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
-use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrderShippingTrackingData;
 
+/**
+ * @dbIsolationPerTest
+ */
 class OrderShippingTrackingTest extends RestJsonApiTestCase
 {
-    /**
-     * {@inheritDoc}
-     */
     protected function setUp()
     {
         parent::setUp();
-
         $this->loadFixtures([
-            LoadOrderShippingTrackingData::class,
-            LoadCountryData::class,
-            LoadRegionData::class,
+            '@OroOrderBundle/Tests/Functional/DataFixtures/order_shipping_tracking.yml'
         ]);
     }
 
@@ -30,156 +23,146 @@ class OrderShippingTrackingTest extends RestJsonApiTestCase
     {
         $response = $this->cget(['entity' => 'ordershippingtrackings']);
 
-        $this->assertResponseContains('shipping_tracking_get_list.yml', $response);
+        $this->assertResponseContains('cget_shipping_tracking.yml', $response);
     }
 
     public function testGet()
     {
         $response = $this->get(
-            [
-                'entity' => 'ordershippingtrackings',
-                'id' => '<toString(@order_shipping_tracking.1->id)>',
-            ]
-        );
-        $this->assertResponseContains('shipping_tracking_get.yml', $response);
-    }
-
-    public function testGetOrderRelationship()
-    {
-        /** @var OrderShippingTracking $orderShippingTracking */
-        $orderShippingTracking = $this->getReference(LoadOrderShippingTrackingData::ORDER_SHIPPING_TRACKING_1);
-
-        $response = $this->getRelationship(
-            ['entity' => 'ordershippingtrackings', 'id' => $orderShippingTracking->getId(), 'association' => 'order']
+            ['entity' => 'ordershippingtrackings', 'id' => '<toString(@order_shipping_tracking.1->id)>']
         );
 
-        $this->assertResponseContains(
-            [
-                'data' => [
-                    'type' => $this->getEntityType(Order::class),
-                    'id' => (string)$this->getReference(LoadOrders::ORDER_1)->getId(),
-                ],
-            ],
-            $response
-        );
+        $this->assertResponseContains('get_shipping_tracking.yml', $response);
     }
 
     public function testCreate()
     {
-        $this->post(
+        $orderId = $this->getReference(LoadOrders::ORDER_1)->getId();
+        $data = [
+            'data' => [
+                'type'          => 'ordershippingtrackings',
+                'attributes'    => [
+                    'method' => 'method 3',
+                    'number' => 'number 3'
+                ],
+                'relationships' => [
+                    'order' => [
+                        'data' => [
+                            'type' => 'orders',
+                            'id'   => (string)$orderId
+                        ]
+                    ]
+                ]
+            ]
+        ];
+        $response = $this->post(
             ['entity' => 'ordershippingtrackings'],
-            'shipping_tracking_create.yml'
+            $data
         );
 
-        /** @var OrderShippingTracking $orderShippingTracking */
-        $orderShippingTracking = $this->getEntityManager()
-            ->getRepository(OrderShippingTracking::class)
-            ->findOneBy(['method' => 'method 3']);
+        $shippingTrackingId = (int)$this->getResourceId($response);
+        $responseContent = $data;
+        $responseContent['data']['id'] = (string)$shippingTrackingId;
+        $this->assertResponseContains($responseContent, $response);
 
-        self::assertSame('number 3', $orderShippingTracking->getNumber());
-        self::assertSame(
-            $this->getReference(LoadOrders::ORDER_1)->getId(),
-            $orderShippingTracking->getOrder()->getId()
-        );
-
-        $this->getEntityManager()->remove($orderShippingTracking);
-        $this->getEntityManager()->flush();
-        $this->getEntityManager()->clear();
+        /** @var OrderShippingTracking $shippingTracking */
+        $shippingTracking = $this->getEntityManager()->find(OrderShippingTracking::class, $shippingTrackingId);
+        self::assertEquals('method 3', $shippingTracking->getMethod());
+        self::assertEquals('number 3', $shippingTracking->getNumber());
+        self::assertEquals($orderId, $shippingTracking->getOrder()->getId());
     }
 
     public function testUpdateMethod()
     {
-        /** @var OrderShippingTracking $orderShippingTracking */
-        $orderShippingTracking = $this->getReference(LoadOrderShippingTrackingData::ORDER_SHIPPING_TRACKING_1);
+        $shippingTrackingId = $this->getReference('order_shipping_tracking.1')->getId();
 
         $this->patch(
-            ['entity' => 'ordershippingtrackings', 'id' => $orderShippingTracking->getId()],
+            ['entity' => 'ordershippingtrackings', 'id' => (string)$shippingTrackingId],
             [
                 'data' => [
-                    'type' => 'ordershippingtrackings',
-                    'id' => (string)$orderShippingTracking->getId(),
+                    'type'       => 'ordershippingtrackings',
+                    'id'         => (string)$shippingTrackingId,
                     'attributes' => [
-                        'method' => 'method 4',
-                    ],
-                ],
+                        'method' => 'method 4'
+                    ]
+                ]
             ]
         );
 
-        /** @var OrderShippingTracking $updatedOrderShippingTracking */
-        $updatedOrderShippingTracking = $this->getEntityManager()
-            ->getRepository(OrderShippingTracking::class)
-            ->find($orderShippingTracking->getId());
-
-        self::assertSame('method 4', $updatedOrderShippingTracking->getMethod());
+        /** @var OrderShippingTracking $shippingTracking */
+        $shippingTracking = $this->getEntityManager()->find(OrderShippingTracking::class, $shippingTrackingId);
+        self::assertEquals('method 4', $shippingTracking->getMethod());
     }
 
     public function testUpdateNumber()
     {
-        /** @var OrderShippingTracking $orderShippingTracking */
-        $orderShippingTracking = $this->getReference(LoadOrderShippingTrackingData::ORDER_SHIPPING_TRACKING_1);
+        $shippingTrackingId = $this->getReference('order_shipping_tracking.1')->getId();
 
         $this->patch(
-            ['entity' => 'ordershippingtrackings', 'id' => $orderShippingTracking->getId()],
+            ['entity' => 'ordershippingtrackings', 'id' => (string)$shippingTrackingId],
             [
                 'data' => [
-                    'type' => 'ordershippingtrackings',
-                    'id' => (string)$orderShippingTracking->getId(),
+                    'type'       => 'ordershippingtrackings',
+                    'id'         => (string)$shippingTrackingId,
                     'attributes' => [
-                        'number' => 'number 4',
-                    ],
-                ],
+                        'number' => 'number 4'
+                    ]
+                ]
             ]
         );
 
-        /** @var OrderShippingTracking $updatedOrderShippingTracking */
-        $updatedOrderShippingTracking = $this->getEntityManager()
-            ->getRepository(OrderShippingTracking::class)
-            ->find($orderShippingTracking->getId());
-
-        self::assertSame('number 4', $updatedOrderShippingTracking->getNumber());
+        /** @var OrderShippingTracking $shippingTracking */
+        $shippingTracking = $this->getEntityManager()->find(OrderShippingTracking::class, $shippingTrackingId);
+        self::assertEquals('number 4', $shippingTracking->getNumber());
     }
 
-    public function testUpdateOrderRelationship()
+    public function testDeleteList()
     {
-        /** @var OrderShippingTracking $orderShippingTracking */
-        $orderShippingTracking = $this->getReference(LoadOrderShippingTrackingData::ORDER_SHIPPING_TRACKING_1);
-
-        /** @var Order $order */
-        $order = $this->getReference(LoadOrders::MY_ORDER);
-
-        $this->patchRelationship(
-            ['entity' => 'ordershippingtrackings', 'id' => $orderShippingTracking->getId(), 'association' => 'order'],
-            [
-                'data' => [
-                    'type' => $this->getEntityType(Order::class),
-                    'id' => (string)$order->getId(),
-                ],
-            ]
-        );
-
-        /** @var OrderShippingTracking $updatedOrderShippingTracking */
-        $updatedOrderShippingTracking = $this->getEntityManager()
-            ->getRepository(OrderShippingTracking::class)
-            ->find($orderShippingTracking->getId());
-
-        self::assertEquals($order->getId(), $updatedOrderShippingTracking->getOrder()->getId());
-    }
-
-    public function testDeleteByFilter()
-    {
-        /** @var OrderShippingTracking $orderShippingTracking */
-        $orderShippingTracking = $this->getReference(LoadOrderShippingTrackingData::ORDER_SHIPPING_TRACKING_1);
-        $orderShippingTrackingId = $orderShippingTracking->getId();
+        $shippingTrackingId = $this->getReference('order_shipping_tracking.1')->getId();
 
         $this->cdelete(
             ['entity' => 'ordershippingtrackings'],
-            ['filter' => ['id' => $orderShippingTrackingId]]
+            ['filter' => ['id' => (string)$shippingTrackingId]]
         );
 
-        $removedOrderShippingTracking = $this->getEntityManager()
-            ->getRepository(OrderShippingTracking::class)
-            ->find($orderShippingTrackingId);
+        $shippingTracking = $this->getEntityManager()->find(OrderShippingTracking::class, $shippingTrackingId);
+        self::assertTrue(null === $shippingTracking);
+    }
 
-        self::assertNull($removedOrderShippingTracking);
+    public function testGetRelationshipForOrder()
+    {
+        /** @var OrderShippingTracking $shippingTracking */
+        $shippingTracking = $this->getReference('order_shipping_tracking.1');
+        $shippingTrackingId = $shippingTracking->getId();
+        $orderId = $shippingTracking->getOrder()->getId();
+
+        $response = $this->getRelationship(
+            ['entity' => 'ordershippingtrackings', 'id' => (string)$shippingTrackingId, 'association' => 'order']
+        );
+
+        $this->assertResponseContains(
+            ['data' => ['type' => 'orders', 'id' => (string)$orderId]],
+            $response
+        );
+    }
+
+    public function testUpdateRelationshipForOrder()
+    {
+        $shippingTrackingId = $this->getReference('order_shipping_tracking.1')->getId();
+        $targetOrderId = $this->getReference(LoadOrders::MY_ORDER)->getId();
+
+        $this->patchRelationship(
+            ['entity' => 'ordershippingtrackings', 'id' => (string)$shippingTrackingId, 'association' => 'order'],
+            [
+                'data' => [
+                    'type' => 'orders',
+                    'id'   => (string)$targetOrderId
+                ]
+            ]
+        );
+
+        /** @var OrderShippingTracking $shippingTracking */
+        $shippingTracking = $this->getEntityManager()->find(OrderShippingTracking::class, $shippingTrackingId);
+        self::assertEquals($targetOrderId, $shippingTracking->getOrder()->getId());
     }
 }

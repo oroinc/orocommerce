@@ -1,0 +1,39 @@
+api:
+    entities:
+        Oro\Bundle\OrderBundle\Entity\Order:
+            documentation_resource: '@OroTaxBundle/Resources/doc/api_frontend/order.md'
+            fields:
+                totalIncludingTax:
+                    data_type: money
+                    property_path: _
+                totalExcludingTax:
+                    data_type: money
+                    property_path: _
+                totalTaxAmount:
+                    data_type: money
+                    property_path: _
+
+        Oro\Bundle\OrderBundle\Entity\OrderLineItem:
+            documentation_resource: '@OroTaxBundle/Resources/doc/api_frontend/order_line_item.md'
+            fields:
+                unitPriceIncludingTax:
+                    data_type: money
+                    property_path: _
+                unitPriceExcludingTax:
+                    data_type: money
+                    property_path: _
+                unitPriceTaxAmount:
+                    data_type: money
+                    property_path: _
+                rowTotalIncludingTax:
+                    data_type: money
+                    property_path: _
+                rowTotalExcludingTax:
+                    data_type: money
+                    property_path: _
+                rowTotalTaxAmount:
+                    data_type: money
+                    property_path: _
+                taxes:
+                    data_type: array
+                    property_path: _

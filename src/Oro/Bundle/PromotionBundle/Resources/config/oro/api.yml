@@ -1,17 +1,14 @@
 api:
     entities:
         Oro\Bundle\OrderBundle\Entity\Order:
+            documentation_resource: '@OroPromotionBundle/Resources/doc/api/order.md'
             fields:
                 discount:
                     data_type: float
-                    form_options:
-                        mapped: false
-                    description: The aggregated amount of the promotion discounts applied to the order.
+                    property_path: _
                 shippingDiscount:
                     data_type: float
-                    form_options:
-                        mapped: false
-                    description: The aggregated amount of the promotion shipping discounts applied to the order.
+                    property_path: _
             actions:
                 create:
                     fields:

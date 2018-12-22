@@ -1,0 +1,418 @@
+dependencies:
+    - Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization
+    - Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadUser
+    - Oro\Bundle\CustomerBundle\Tests\Functional\Api\Frontend\DataFixtures\LoadWebsiteData
+    - Oro\Bundle\CustomerBundle\Tests\Functional\Api\DataFixtures\LoadCustomerUserRoles
+    - Oro\Bundle\AddressBundle\Tests\Functional\DataFixtures\LoadCountriesAndRegions
+    - Oro\Bundle\AddressBundle\Tests\Functional\DataFixtures\LoadAddressTypes
+    - Oro\Bundle\ProductBundle\Tests\Functional\Api\DataFixtures\LoadProductUnits
+
+Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm:
+    payment_term_net_10:
+        label: 'net 10'
+    payment_term_net_20:
+        label: 'net 20'
+
+Oro\Bundle\CustomerBundle\Entity\Customer:
+    customer1:
+        parent: '@customer'
+        name: 'Customer 1'
+        group: '@customer_group'
+        owner: '@user'
+        organization: '@organization'
+    another_customer:
+        name: 'Another Customer'
+        group: '@customer_group'
+        owner: '@user'
+        organization: '@organization'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerUser:
+    customer_user1:
+        confirmed: true
+        enabled: true
+        email: 'user1@example.com'
+        password: 'gxP1L8r86hrdUMg9wKdfnsS/EZC4a7jOIdn6BMzegqL2S6e+KBIuHCrDVciMdiR/64osNnabmFonwK8l09vQxA=='
+        firstName: 'First Name 1'
+        lastName: 'Last Name 1'
+        roles: ['@admin']
+        customer: '@customer1'
+        website: '@website'
+        owner: '@user'
+        organization: '@organization'
+    another_customer_user:
+        confirmed: true
+        enabled: true
+        email: 'another_user@example.com'
+        password: 'gxP1L8r86hrdUMg9wKdfnsS/EZC4a7jOIdn6BMzegqL2S6e+KBIuHCrDVciMdiR/64osNnabmFonwK8l09vQxA=='
+        firstName: 'First Name 1'
+        lastName: 'Last Name 1'
+        roles: ['@admin']
+        customer: '@another_customer'
+        website: '@website'
+        owner: '@user'
+        organization: '@organization'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerAddress:
+    customer_address:
+        label: 'Address 1'
+        street: 'Street 1'
+        street2: 'Street 2'
+        city: 'Los Angeles'
+        postalCode: '90001'
+        country: '@country_usa'
+        region: '@region_usa_california'
+        organization: 'Acme'
+        namePrefix: 'Mr.'
+        nameSuffix: 'M.D.'
+        firstName: 'John'
+        middleName: 'Edgar'
+        lastName: 'Doo'
+        primary: true
+        phone: '123-456'
+        frontendOwner: '@customer'
+        owner: '@user'
+        systemOrganization: '@organization'
+    customer1_address:
+        label: 'Address customer1'
+        street: 'Street customer1'
+        street2: 'Street customer1'
+        city: 'Los Angeles'
+        postalCode: '90001'
+        country: '@country_usa'
+        region: '@region_usa_california'
+        organization: 'Gamma'
+        firstName: 'Clint'
+        lastName: 'Rose'
+        primary: true
+        phone: '858-555'
+        frontendOwner: '@customer1'
+        owner: '@user'
+        systemOrganization: '@organization'
+    another_customer_address:
+        label: 'Address Another customer'
+        street: 'Street Another customer'
+        street2: 'Street Another customer'
+        city: 'Los Angeles'
+        postalCode: '90210'
+        country: '@country_usa'
+        region: '@region_usa_california'
+        organization: 'Beta'
+        firstName: 'Bill'
+        lastName: 'Doe'
+        primary: true
+        phone: '789-123'
+        frontendOwner: '@another_customer'
+        owner: '@user'
+        systemOrganization: '@organization'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress:
+    customer_user_address:
+        label: 'Address'
+        street: 'Street'
+        city: 'Los Angeles'
+        postalCode: '90001'
+        country: '@country_usa'
+        region: '@region_usa_california'
+        organization: 'Acme'
+        firstName: 'John'
+        middleName: 'Edgar'
+        lastName: 'Doo'
+        primary: true
+        phone: '123-456'
+        frontendOwner: '@customer_user'
+        owner: '@user'
+        systemOrganization: '@organization'
+    customer_user1_address:
+        label: 'Another address'
+        street: 'Street 1'
+        city: 'Los Angeles'
+        postalCode: '90210'
+        country: '@country_usa'
+        region: '@region_usa_california'
+        organization: 'Gamma'
+        firstName: 'Clint'
+        lastName: 'Rose'
+        primary: true
+        phone: '888-858'
+        frontendOwner: '@customer_user1'
+        owner: '@user'
+        systemOrganization: '@organization'
+    another_customer_user_address:
+        label: 'Another address'
+        street: 'Street 1'
+        city: 'Los Angeles'
+        postalCode: '90210'
+        country: '@country_usa'
+        region: '@region_usa_california'
+        organization: 'Beta'
+        firstName: 'Bill'
+        lastName: 'Doe'
+        primary: true
+        phone: '789-123'
+        frontendOwner: '@another_customer_user'
+        owner: '@user'
+        systemOrganization: '@organization'
+
+Oro\Bundle\OrderBundle\Entity\OrderAddress:
+    order1_billing_address:
+        customerAddress: '@customer_address'
+        customerUserAddress: '@customer_user_address'
+        label: 'Billing Address 1'
+        street: 'Street 1'
+        street2: 'Street 2'
+        city: 'Los Angeles'
+        postalCode: '90001'
+        country: '@country_usa'
+        region: '@region_usa_california'
+        organization: 'Acme'
+        namePrefix: 'Mr.'
+        nameSuffix: 'M.D.'
+        firstName: 'John'
+        middleName: 'Edgar'
+        lastName: 'Doo'
+        phone: '123-456'
+    order1_shipping_address:
+        customerAddress: '@customer_address'
+        customerUserAddress: '@customer_user_address'
+        label: 'Shipping Address 1'
+        street: 'Street 1'
+        street2: 'Street 2'
+        city: 'Los Angeles'
+        postalCode: '90001'
+        country: '@country_usa'
+        region: '@region_usa_california'
+        organization: 'Acme'
+        namePrefix: 'Mr.'
+        nameSuffix: 'M.D.'
+        firstName: 'John'
+        middleName: 'Edgar'
+        lastName: 'Doo'
+        phone: '123-456'
+    order3_billing_address:
+        customerAddress: '@customer1_address'
+        customerUserAddress: '@customer_user1_address'
+        label: 'Billing Address 3'
+        street: 'Street 3'
+        street2: 'Street 3'
+        city: 'Tel Aviv'
+        postalCode: '80564'
+        country: '@country_israel'
+        region: '@region_israel_telaviv'
+        organization: 'Gamma'
+        firstName: 'John'
+        middleName: 'Edgar'
+        lastName: 'Doo'
+        phone: '888-858'
+    order3_shipping_address:
+        customerAddress: '@customer1_address'
+        customerUserAddress: '@customer_user1_address'
+        label: 'Shipping Address 3'
+        street: 'Street 3'
+        street2: 'Street 3'
+        city: 'Tel Aviv'
+        postalCode: '80564'
+        country: '@country_israel'
+        region: '@region_israel_telaviv'
+        organization: 'Gamma'
+        firstName: 'John'
+        middleName: 'Edgar'
+        lastName: 'Doo'
+        phone: '888-858'
+    another_order_billing_address:
+        customerAddress: '@another_customer_address'
+        customerUserAddress: '@another_customer_user_address'
+        label: 'Billing Address another'
+        street: 'Street 1'
+        street2: 'Street 2'
+        city: 'Los Angeles'
+        postalCode: '90210'
+        country: '@country_usa'
+        region: '@region_usa_california'
+        organization: 'Gamma'
+        firstName: 'Clint'
+        lastName: 'Rose'
+        phone: '888-858'
+    another_order_shipping_address:
+        customerAddress: '@customer_address'
+        customerUserAddress: '@another_customer_user_address'
+        label: 'Shipping Address another'
+        street: 'Street 1'
+        street2: 'Street 2'
+        city: 'Los Angeles'
+        postalCode: '90210'
+        country: '@country_usa'
+        region: '@region_usa_california'
+        organization: 'Beta'
+        firstName: 'Bill'
+        lastName: 'Doe'
+        phone: '789-123'
+
+Oro\Bundle\OrderBundle\Entity\Order:
+    order1:
+        identifier: order1
+        currency: 'USD'
+        poNumber: 'PO1'
+        subtotal: '789.0000'
+        total: '1234.0000'
+        customerNotes: 'Test customer user notes for order 1'
+        estimatedShippingCostAmount: '10.0000'
+        overriddenShippingCostAmount: '7.0000'
+        payment_term_7c4f1e8e: '@payment_term_net_10'
+        billingAddress: '@order1_billing_address'
+        shippingAddress: '@order1_shipping_address'
+        customer: '@customer'
+        customerUser: '@customer_user'
+        website: '@website'
+        owner: '@user'
+        organization: '@organization'
+    order2:
+        identifier: order2
+        currency: 'EUR'
+        poNumber: 'PO2'
+        subtotal: '1500.0000'
+        total: '1700.0000'
+        customerNotes: 'Test customer user notes for order 2'
+        estimatedShippingCostAmount: '5.0000'
+        payment_term_7c4f1e8e: '@payment_term_net_20'
+        customer: '@customer'
+        customerUser: '@customer_user'
+        website: '@website'
+        owner: '@user'
+        organization: '@organization'
+    order3:
+        identifier: order3
+        currency: 'USD'
+        poNumber: 'PO3'
+        subtotal: '123.4567'
+        total: '123.4567'
+        payment_term_7c4f1e8e: '@payment_term_net_10'
+        customer: '@customer1'
+        customerUser: '@customer_user1'
+        website: '@website'
+        owner: '@user'
+        organization: '@organization'
+        billingAddress: '@order3_billing_address'
+        shippingAddress: '@order3_shipping_address'
+    another_order:
+        identifier: another_order
+        currency: 'USD'
+        poNumber: 'ANOTHER_PO'
+        subtotal: '100.0000'
+        total: '200.0000'
+        customer: '@another_customer'
+        customerUser: '@another_customer_user'
+        website: '@website'
+        owner: '@user'
+        organization: '@organization'
+        billingAddress: '@another_order_billing_address'
+        shippingAddress: '@another_order_shipping_address'
+
+Oro\Bundle\OrderBundle\Entity\OrderLineItem:
+    order1_line_item1:
+        order: '@order1'
+        productSku: 'SKU1'
+        productName: 'Product 1'
+        freeFormProduct: 'product_1'
+        quantity: 5
+        productUnit: '@set'
+        value: 15.7
+        currency: 'USD'
+        shipBy: '<(new DateTime("2018-05-20 00:00:00 UTC"))>'
+        comment: 'Test comment for line item 1'
+    order1_line_item2:
+        order: '@order1'
+        productSku: 'SKU2'
+        productName: 'Product 2'
+        quantity: 12
+        productUnit: '@item'
+        value: 30.5
+        currency: 'USD'
+    order2_line_item1:
+        order: '@order2'
+        productSku: 'SKU2'
+        productName: 'Product 2'
+        quantity: 3
+        productUnit: '@item'
+        value: 10.4
+        currency: 'EUR'
+    order3_line_item1:
+        order: '@order3'
+        productSku: 'SKU2'
+        productName: 'Product 2'
+        quantity: 12
+        productUnit: '@item'
+        value: 30.5
+        currency: 'USD'
+    another_order_line_item1:
+        order: '@another_order'
+        productSku: 'SKU2'
+        productName: 'Product 2'
+        quantity: 1
+        productUnit: '@item'
+        value: 1.1
+        currency: 'USD'
+
+Oro\Bundle\OrderBundle\Entity\OrderDiscount:
+    order1_discount_percent:
+        order: '@order1'
+        description: 'Percent Discount'
+        type: oro_order_discount_item_type_percent
+        percent: 20.1
+        amount: '<(@order1->subtotal * 20.1 / 100)>'
+    order1_discount_amount:
+        order: '@order1'
+        description: 'Amount Discount'
+        type: oro_order_discount_item_type_amount
+        percent: 20.1
+        amount: '<(@order1->subtotal * 20.1 / 100)>'
+    order3_discount_amount:
+        order: '@order3'
+        description: 'Amount Discount order 3'
+        type: oro_order_discount_item_type_amount
+        percent: 2.1
+        amount: '<(@order3->subtotal * 2.1 / 100)>'
+    another_order_discount_percent:
+        order: '@another_order'
+        description: 'Percent Discount another order'
+        type: oro_order_discount_item_type_percent
+        percent: 24.1
+        amount: '<(@another_order->subtotal * 24.1 / 100)>'
+
+
+Oro\Bundle\OrderBundle\Entity\OrderShippingTracking:
+    order1_shipping_tracking1:
+        order: '@order1'
+        method: 'method 1'
+        number: 'number 1'
+    order2_shipping_tracking1:
+        order: '@order2'
+        method: 'method 2'
+        number: 'number 2'
+    order3_shipping_tracking1:
+        order: '@order3'
+        method: 'method 1'
+        number: 'number 1'
+    another_order_shipping_tracking1:
+        order: '@another_order'
+        method: 'method 1'
+        number: 'number 1'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerAddressToAddressType:
+    customer_address_billing:
+        address: '@customer_address'
+        type: '@billing'
+        default: false
+    customer_address_shipping:
+        address: '@customer_address'
+        type: '@shipping'
+        default: true
+
+Oro\Bundle\CustomerBundle\Entity\CustomerUserAddressToAddressType:
+    customer_user_address_billing:
+        address: '@customer_user_address'
+        type: '@billing'
+        default: false
+    customer_user_address_shipping:
+        address: '@customer_user_address'
+        type: '@shipping'
+        default: true

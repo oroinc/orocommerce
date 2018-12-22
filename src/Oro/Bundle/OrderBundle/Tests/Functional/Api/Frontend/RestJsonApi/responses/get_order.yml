@@ -1,0 +1,63 @@
+data:
+    type: orders
+    id: '<toString(@order1->id)>'
+    attributes:
+        identifier: order1
+        poNumber: PO1
+        customerNotes: 'Test customer user notes for order 1'
+        shipUntil: null
+        currency: USD
+        subtotalValue: '789.0000'
+        totalValue: '1234.0000'
+        shippingMethod:
+            code: '<("flat_rate_" . @flat_rate_shipping_channel->id)>'
+            label: 'Flat Rate'
+        shippingCostAmount: '7.0000'
+        createdAt: '@order1->createdAt->format("Y-m-d\TH:i:s\Z")'
+        updatedAt: '@order1->updatedAt->format("Y-m-d\TH:i:s\Z")'
+        paymentTerm: 'net 10'
+        paymentStatus:
+            code: 'full'
+            label: 'Paid in full'
+        paymentMethod:
+            -
+                code: '<("money_order_" . @money_order_channel_1->id)>'
+                label: 'Check/Money Order'
+        discounts:
+            -
+                type: 'order'
+                description: 'Percent Discount'
+                amount: '158.5890'
+            -
+                type: 'order'
+                description: 'Amount Discount'
+                amount: '158.5890'
+        shippingTrackings:
+            -
+                method: 'method 1'
+                number: 'number 1'
+    relationships:
+        billingAddress:
+            data:
+                type: orderaddresses
+                id: '<toString(@order1_billing_address->id)>'
+        shippingAddress:
+            data:
+                type: orderaddresses
+                id: '<toString(@order1_shipping_address->id)>'
+        lineItems:
+            data:
+                -
+                    type: orderlineitems
+                    id: '<toString(@order1_line_item1->id)>'
+                -
+                    type: orderlineitems
+                    id: '<toString(@order1_line_item2->id)>'
+        customerUser:
+            data:
+                type: customerusers
+                id: '<toString(@customer_user->id)>'
+        customer:
+            data:
+                type: customers
+                id: '<toString(@customer->id)>'
