@@ -43,7 +43,9 @@ oro_behat_extension:
 
         Content Variant:
             class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
-            selector: 'form[name="oro_web_catalog_content_node"] div[data-content="0"]'
+            selector:
+                type: xpath
+                locator: '//form[@name="oro_web_catalog_content_node"]//div[contains(concat(" ", normalize-space(@class), " "), " content-variant-item ") and position()=1]'
             options:
                 mapping:
                     Product:
