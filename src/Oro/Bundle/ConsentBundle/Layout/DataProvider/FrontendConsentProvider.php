@@ -15,6 +15,8 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
  */
 class FrontendConsentProvider implements FeatureToggleableInterface
 {
+    const CUSTOMER_CONSENTS_STEP = 'customer_consents';
+
     use FeatureCheckerHolderTrait;
 
     /**
@@ -92,6 +94,21 @@ class FrontendConsentProvider implements FeatureToggleableInterface
     public function isCustomerUserCurrentlyLoggedIn(CustomerUser $customerUser)
     {
         return $customerUser === $this->getCustomerUser();
+    }
+
+    /**
+     * @param array $excludedSteps
+     * @param bool $hideConsentsStep
+     *
+     * @return array
+     */
+    public function getExcludedSteps(array $excludedSteps = [], $hideConsentsStep = true)
+    {
+        if (!$this->isFeaturesEnabled() || ($hideConsentsStep && !$this->getNotAcceptedRequiredConsentData())) {
+            $excludedSteps[] = self::CUSTOMER_CONSENTS_STEP;
+        }
+
+        return $excludedSteps;
     }
 
     /**

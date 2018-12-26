@@ -2,18 +2,16 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Layout\DataProvider;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CheckoutBundle\Layout\DataProvider\CheckoutStepsProvider;
-use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
+use Oro\Bundle\WorkflowBundle\Model\Step;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 class CheckoutStepsProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
-
-    /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject */
-    private $featureChecker;
 
     /**
      * @var CheckoutStepsProvider
@@ -32,19 +30,19 @@ class CheckoutStepsProviderTest extends \PHPUnit\Framework\TestCase
     public function setUp()
     {
         $this->workflowManager = $this->createMock(WorkflowManager::class);
-        $this->featureChecker = $this->createMock(FeatureChecker::class);
 
         $this->provider = new CheckoutStepsProvider($this->workflowManager);
-        $this->provider->setFeatureChecker($this->featureChecker);
-        $this->provider->addFeature('consents');
     }
 
     /**
-     * @dataProvider getDataDataProvider
+     * @dataProvider getStepsDataProvider
+     *
      * @param bool $displayOrdered
-     * @param array $expected
+     * @param array $excludedStepNames
+     * @param array $steps
+     * @param array $expectedSteps
      */
-    public function testGetSteps($displayOrdered, array $expected)
+    public function testGetSteps($displayOrdered, $excludedStepNames, $steps, $expectedSteps)
     {
         /** @var WorkflowItem|\PHPUnit\Framework\MockObject\MockObject $workflowItem */
         $workflowItem  = $this->getMockBuilder('Oro\Bundle\WorkflowBundle\Entity\WorkflowItem')
@@ -71,7 +69,7 @@ class CheckoutStepsProviderTest extends \PHPUnit\Framework\TestCase
                 ->getMock();
             $stepManager->expects($this->once())
                 ->method('getOrderedSteps')
-                ->willReturn($expected);
+                ->willReturn($steps);
             $workflow->expects($this->once())
                 ->method('getStepManager')
                 ->willReturn($stepManager);
@@ -79,7 +77,7 @@ class CheckoutStepsProviderTest extends \PHPUnit\Framework\TestCase
             $workflow->expects($this->once())
                 ->method('getPassedStepsByWorkflowItem')
                 ->with($workflowItem)
-                ->willReturn($expected);
+                ->willReturn($steps);
         }
 
         $this->workflowManager->expects($this->once())
@@ -87,79 +85,111 @@ class CheckoutStepsProviderTest extends \PHPUnit\Framework\TestCase
             ->with($workflowItem)
             ->willReturn($workflow);
 
-        $result = $this->provider->getSteps($workflowItem);
-        $this->assertEquals($expected, $result);
+        $result = $this->provider->getSteps($workflowItem, $excludedStepNames);
+        $this->assertEquals($expectedSteps, $result);
     }
 
-    public function testGetExcludedSteps()
-    {
-        $this->featureChecker->expects($this->once())
-            ->method('isFeatureEnabled')
-            ->with('consents', null)
-            ->willReturn(true);
+    /**
+     * @dataProvider getStepsDataProvider
+     *
+     * @param bool $displayOrdered
+     * @param array $excludedStepNames
+     * @param array $steps
+     * @param array $expectedSteps
+     * @param string $currentStepName
+     * @param int $expectedStepOrder
+     */
+    public function testGetStepOrder(
+        $displayOrdered,
+        $excludedStepNames,
+        $steps,
+        $expectedSteps,
+        $currentStepName,
+        $expectedStepOrder
+    ) {
+        /** @var WorkflowItem|\PHPUnit\Framework\MockObject\MockObject $workflowItem */
+        $workflowItem  = $this->getMockBuilder('Oro\Bundle\WorkflowBundle\Entity\WorkflowItem')
+            ->disableOriginalConstructor()
+            ->getMock();
 
-        $this->assertEquals([], $this->provider->getExcludedSteps());
-    }
+        $workflowDefinition = $this->getMockBuilder('Oro\Bundle\WorkflowBundle\Entity\WorkflowDefinition')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $workflowDefinition->expects($this->once())
+            ->method('isStepsDisplayOrdered')
+            ->willReturn($displayOrdered);
 
-    public function testGetExcludedStepsWithPredefinedSteps()
-    {
-        $this->featureChecker->expects($this->once())
-            ->method('isFeatureEnabled')
-            ->with('consents', null)
-            ->willReturn(true);
+        $workflow = $this->getMockBuilder('Oro\Bundle\WorkflowBundle\Model\Workflow')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $workflow->expects($this->once())
+            ->method('getDefinition')
+            ->willReturn($workflowDefinition);
 
-        $this->assertEquals(['another_step'], $this->provider->getExcludedSteps(['another_step']));
-    }
+        if ($displayOrdered) {
+            $stepManager = $this->getMockBuilder('Oro\Bundle\WorkflowBundle\Model\StepManager')
+                ->disableOriginalConstructor()
+                ->getMock();
+            $stepManager->expects($this->once())
+                ->method('getOrderedSteps')
+                ->willReturn($steps);
+            $workflow->expects($this->once())
+                ->method('getStepManager')
+                ->willReturn($stepManager);
+        } else {
+            $workflow->expects($this->once())
+                ->method('getPassedStepsByWorkflowItem')
+                ->with($workflowItem)
+                ->willReturn($steps);
+        }
 
-    public function testGetExcludedStepsFeatureDisabled()
-    {
-        $this->featureChecker->expects($this->once())
-            ->method('isFeatureEnabled')
-            ->with('consents', null)
-            ->willReturn(false);
+        $this->workflowManager->expects($this->once())
+            ->method('getWorkflow')
+            ->with($workflowItem)
+            ->willReturn($workflow);
 
         $this->assertEquals(
-            ['another_step', 'customer_consents'],
-            $this->provider->getExcludedSteps(['another_step'])
+            $expectedStepOrder,
+            $this->provider->getStepOrder($workflowItem, $currentStepName, $excludedStepNames)
         );
-    }
-
-    public function testGetStepOrder()
-    {
-        $this->featureChecker->expects($this->once())
-            ->method('isFeatureEnabled')
-            ->with('consents', null)
-            ->willReturn(true);
-
-        $this->assertEquals(2, $this->provider->getStepOrder(2));
-    }
-
-    public function testGetStepOrderFeatureDisabled()
-    {
-        $this->featureChecker->expects($this->once())
-            ->method('isFeatureEnabled')
-            ->with('consents', null)
-            ->willReturn(false);
-
-        $this->assertEquals(1, $this->provider->getStepOrder(2));
     }
 
     /**
      * @return array
      */
-    public function getDataDataProvider()
+    public function getStepsDataProvider()
     {
-        $step1 = $this->getEntity('Oro\Bundle\WorkflowBundle\Model\Step', ['order' => 100]);
-        $step2 = $this->getEntity('Oro\Bundle\WorkflowBundle\Model\Step', ['order' => 200]);
-        $steps = [$step1, $step2];
+        $step1 = (new Step())->setOrder(100)->setName('first_step');
+        $step2 = (new Step())->setOrder(100)->setName('second_step');
+        $step3 = (new Step())->setOrder(100)->setName('third_step');
+
+        $excludedResult = new ArrayCollection([$step1, $step2, $step3]);
+        $excludedResult->removeElement($step2);
+
         return [
             'displayOrdered' => [
                 'displayOrdered' => true,
-                'expected' => $steps
+                'excludedStepNames' => [],
+                'steps' => new ArrayCollection([$step1, $step2, $step3]),
+                'expectedSteps' => new ArrayCollection([$step1, $step2, $step3]),
+                'currentStepName' => 'third_step',
+                'expectedStepOrder' => 3
             ],
             'displayUnOrdered' => [
                 'displayOrdered' => false,
-                'expected' => $steps
+                'excludedStepNames' => [],
+                'steps' => new ArrayCollection([$step1, $step2, $step3]),
+                'expectedSteps' => new ArrayCollection([$step1, $step2, $step3]),
+                'currentStepName' => 'third_step',
+                'expectedStepOrder' => 3
+            ],
+            'with excluded step names' => [
+                'displayOrdered' => false,
+                'excludedStepNames' => ['second_step'],
+                'steps' => new ArrayCollection([$step1, $step2, $step3]),
+                'expectedSteps' => $excludedResult,
+                'currentStepName' => 'third_step',
+                'expectedStepOrder' => 2
             ],
         ];
     }

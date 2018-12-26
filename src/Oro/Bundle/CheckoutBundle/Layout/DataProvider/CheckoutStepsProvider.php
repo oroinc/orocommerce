@@ -3,7 +3,6 @@
 namespace Oro\Bundle\CheckoutBundle\Layout\DataProvider;
 
 use Doctrine\Common\Collections\Collection;
-use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Exception\WorkflowException;
 use Oro\Bundle\WorkflowBundle\Model\Step;
@@ -14,10 +13,6 @@ use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
  */
 class CheckoutStepsProvider
 {
-    use FeatureCheckerHolderTrait;
-
-    const CUSTOMER_CONSENTS_STEP = 'customer_consents';
-
     /**
      * @var WorkflowManager
      */
@@ -33,11 +28,12 @@ class CheckoutStepsProvider
 
     /**
      * @param WorkflowItem $workflowItem
+     * @param array $excludedStepNames
      *
      * @return Collection|Step[]
      * @throws WorkflowException
      */
-    public function getSteps(WorkflowItem $workflowItem)
+    public function getSteps(WorkflowItem $workflowItem, array $excludedStepNames = [])
     {
         $workflow = $this->workflowManager->getWorkflow($workflowItem);
 
@@ -47,34 +43,33 @@ class CheckoutStepsProvider
             $steps = $workflow->getPassedStepsByWorkflowItem($workflowItem);
         }
 
+        $steps = $steps->filter(function (Step $step) use ($excludedStepNames) {
+            return !in_array($step->getName(), $excludedStepNames, true);
+        });
+
         return $steps;
     }
 
     /**
-     * @param array $excludedSteps
+     * @param WorkflowItem $workflowItem
+     * @param string $stepName
+     * @param array $excludedStepNames
      *
-     * @return array
+     * @return int|null
+     *
      */
-    public function getExcludedSteps(array $excludedSteps = [])
+    public function getStepOrder(WorkflowItem $workflowItem, $stepName, array $excludedStepNames = [])
     {
-        if (!$this->isFeaturesEnabled()) {
-            $excludedSteps[] = self::CUSTOMER_CONSENTS_STEP;
+        $steps = $this->getSteps($workflowItem, $excludedStepNames);
+
+        $i = 0;
+        foreach ($steps as $step) {
+            $i++;
+            if ($step->getName() === $stepName) {
+                return $i;
+            }
         }
 
-        return $excludedSteps;
-    }
-
-    /**
-     * @param int $actualStep
-     *
-     * @return int
-     */
-    public function getStepOrder($actualStep)
-    {
-        if (!$this->isFeaturesEnabled()) {
-            --$actualStep;
-        }
-
-        return $actualStep;
+        return null;
     }
 }

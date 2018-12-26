@@ -196,6 +196,77 @@ class FrontendConsentProviderTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * @dataProvider excludedStepsDataProvider
+     *
+     * @param array $notAcceptedData
+     * @param bool $hideConsentsStep
+     * @param array $excludedSteps
+     * @param array $expected
+     */
+    public function testGetExcludedSteps($notAcceptedData, $hideConsentsStep, $excludedSteps, $expected)
+    {
+        $this->featureChecker->expects($this->any())
+            ->method('isFeatureEnabled')
+            ->with('consents', null)
+            ->willReturn(true);
+
+        $this->consentDataProvider->expects($this->any())
+            ->method('getNotAcceptedRequiredConsentData')
+            ->willReturn($notAcceptedData);
+
+        $this->assertEquals(
+            $expected,
+            $this->frontendConsentProvider->getExcludedSteps($excludedSteps, $hideConsentsStep)
+        );
+    }
+
+    public function testGetExcludedStepsFeatureDisabled()
+    {
+        $this->featureChecker->expects($this->once())
+            ->method('isFeatureEnabled')
+            ->with('consents', null)
+            ->willReturn(false);
+
+        $this->assertEquals(
+            ['another_step', 'customer_consents'],
+            $this->frontendConsentProvider->getExcludedSteps(['another_step'])
+        );
+    }
+
+    /**
+     * @return array
+     */
+    public function excludedStepsDataProvider()
+    {
+        return [
+            'with predefined steps and hide consents step' => [
+                'notAcceptedData' => [],
+                'hideConsentsStep' => true,
+                'excludedSteps' => ['another_step'],
+                'expected' => ['another_step', 'customer_consents'],
+            ],
+            'with predefined steps and show consents step' => [
+                'notAcceptedData' => [],
+                'hideConsentsStep' => false,
+                'excludedSteps' => ['another_step'],
+                'expected' => ['another_step'],
+            ],
+            'with predefined steps and hide consents step and with not accepted data' => [
+                'notAcceptedData' => [new ConsentData(new Consent())],
+                'hideConsentsStep' => true,
+                'excludedSteps' => ['another_step'],
+                'expected' => ['another_step'],
+            ],
+            'without predefined steps and hide consents step' => [
+                'notAcceptedData' => [],
+                'hideConsentsStep' => true,
+                'excludedSteps' => [],
+                'expected' => ['customer_consents'],
+            ]
+        ];
+    }
+
+    /**
      * @param string $consentDefaultName
      * @param int $consentId
      * @param int $cmsPageId

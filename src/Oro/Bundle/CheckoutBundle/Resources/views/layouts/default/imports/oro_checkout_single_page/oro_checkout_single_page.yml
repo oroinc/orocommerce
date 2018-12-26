@@ -237,7 +237,7 @@ layout:
            siblingId: checkout_order_summary_totals_sticky_container
            prepend: true
            options:
-              visible: '=data["feature"].isFeatureEnabled("consents")'
+              visible: '="customer_consents" not in data["oro_frontend_consent_provider"].getExcludedSteps([], !data["workflowItem"].getData().get("consents_available"))'
 
         - '@add':
            id: checkout_consent_message

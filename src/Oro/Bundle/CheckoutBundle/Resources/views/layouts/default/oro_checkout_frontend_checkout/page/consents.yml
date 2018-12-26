@@ -9,11 +9,6 @@ layout:
             themes: '../templates/consents.html.twig'
 
         - '@setOption':
-            id: checkout_information_title
-            optionName: stepOrder
-            optionValue: 1
-
-        - '@setOption':
             id: checkout_consent_wrapper
             optionName: appliedConsents
             optionValue: '=data["workflowItem"].getData().get("customerConsents") ? data["workflowItem"].getData().get("customerConsents").toArray() : []'
