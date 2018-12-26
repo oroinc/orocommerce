@@ -1,6 +1,5 @@
 @ticket-BB-14800
-@fixture-OroPricingBundle:FractionalProductPrices.yml
-@skip
+@fixture-OroPricingBundle:FractionalProductPrice.yml
 Feature: Order product with fractional price in different locales
   In order to use correct decimal separator for fractional prices in different locales
   As an Administrator
@@ -29,7 +28,7 @@ Feature: Order product with fractional price in different locales
       | Price         | 12,99          |
     Then I see next line item taxes for backoffice order:
       | SKU   | Unit Price Incl Tax | Unit Price Excl Tax | Unit Price Tax Amount | Row Total Incl Tax | Row Total Excl Tax | Row Total Tax Amount |
-      | PSKU1 | 12,99 $             | 12,99 $             | 0,00 $                | 6.495,00 $            | 6.495,00 $            | 0,00 $               |
+      | PSKU1 | 12,99 $             | 12,99 $             | 0,00 $                | 6.495,00 $         | 6.495,00 $         | 0,00 $               |
     And I see next line item discounts for backoffice order:
       | SKU   | Row Total Incl Tax | Row Total Excl Tax | Discount |
       | PSKU1 | 6.495,00 $         | 6.495,00 $         | 0,00 $   |
