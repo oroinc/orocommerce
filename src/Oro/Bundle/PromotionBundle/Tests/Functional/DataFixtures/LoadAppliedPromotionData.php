@@ -7,7 +7,6 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
-use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrderLineItems;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
 use Oro\Bundle\PromotionBundle\Entity\AppliedCoupon;
 use Oro\Bundle\PromotionBundle\Entity\AppliedDiscount;
@@ -16,6 +15,7 @@ use Oro\Bundle\PromotionBundle\Entity\AppliedPromotion;
 class LoadAppliedPromotionData extends AbstractFixture implements DependentFixtureInterface
 {
     const SIMPLE_APPLIED_PROMOTION = 'simple_applied_promotion';
+    const SHIPPING_APPLIED_PROMOTION = 'shipping_applied_promotion';
     const SIMPLE_APPLIED_PROMOTION_WITH_LINE_ITEM = 'simple_applied_promotion_with_line_item';
 
     /** @var array */
@@ -29,13 +29,21 @@ class LoadAppliedPromotionData extends AbstractFixture implements DependentFixtu
             'promotion_name' => 'Some name',
             'source_promotion_id' => 0
         ],
+        self::SHIPPING_APPLIED_PROMOTION => [
+            'order' => LoadOrders::ORDER_1,
+            'type' => 'shipping',
+            'amount' => 1.99,
+            'currency' => 'USD',
+            'promotion_name' => 'Some name',
+            'source_promotion_id' => 0
+        ],
         self::SIMPLE_APPLIED_PROMOTION_WITH_LINE_ITEM => [
             'order' => LoadOrders::ORDER_1,
             'type' => 'lineItem',
             'amount' => 10.00,
             'currency' => 'USD',
             'promotion_name' => 'Some line item discount name',
-            'lineItem' => LoadOrderLineItems::ITEM_1,
+            'lineItem' => 'order_line_item.1',
             'source_promotion_id' => 0
         ],
     ];
@@ -48,7 +56,7 @@ class LoadAppliedPromotionData extends AbstractFixture implements DependentFixtu
         return [
             LoadCouponData::class,
             LoadOrders::class,
-            LoadOrderLineItems::class,
+            '@OroOrderBundle/Tests/Functional/DataFixtures/order_line_items.yml'
         ];
     }
 

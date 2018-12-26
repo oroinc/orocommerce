@@ -21,6 +21,7 @@ use Oro\Bundle\PromotionBundle\Entity\Coupon;
 use Oro\Bundle\PromotionBundle\Provider\EntityCouponsProviderInterface;
 use Oro\Bundle\PromotionBundle\Tests\Unit\Entity\Stub\Order;
 use Oro\Bundle\PromotionBundle\ValidationService\CouponValidationService;
+use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
@@ -97,6 +98,13 @@ class OrderContextDataConverterTest extends \PHPUnit\Framework\TestCase
     public function testSupports()
     {
         $this->assertTrue($this->converter->supports(new Order()));
+    }
+
+    public function testSupportsWhenOrderWithQuote()
+    {
+        $order = new Order();
+        $order->setSourceEntityClass(Quote::class);
+        $this->assertFalse($this->converter->supports($order));
     }
 
     public function testGetContextDataWhenThrowsException()

@@ -119,6 +119,9 @@ datagrids:
             default:
                 createdAt: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC'
 
+    all-products-select-grid:
+        extends: products-select-grid-base
+
     products-select-grid:
         extends: products-select-grid-base
         source:
@@ -126,6 +129,10 @@ datagrids:
                 where:
                     and:
                         - product.type = 'simple'
+        filters:
+            columns:
+                type:
+                    visible: false
 
     products-select-grid-frontend:
         acl_resource: oro_product_frontend_view

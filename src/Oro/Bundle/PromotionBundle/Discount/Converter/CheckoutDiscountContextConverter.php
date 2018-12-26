@@ -8,6 +8,9 @@ use Oro\Bundle\PromotionBundle\Discount\DiscountContext;
 use Oro\Bundle\PromotionBundle\Discount\Exception\UnsupportedSourceEntityException;
 use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
 
+/**
+ * Data converter that prepares discount context based on checkout entity to calculate discounts.
+ */
 class CheckoutDiscountContextConverter implements DiscountContextConverterInterface
 {
     /**

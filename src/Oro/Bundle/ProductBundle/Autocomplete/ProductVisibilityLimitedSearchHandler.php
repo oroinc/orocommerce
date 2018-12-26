@@ -19,6 +19,11 @@ use Symfony\Component\HttpFoundation\RequestStack;
  */
 class ProductVisibilityLimitedSearchHandler extends SearchHandler
 {
+    /**
+     * @var bool
+     */
+    private $allowConfigurableProducts = false;
+
     /** @var RequestStack */
     protected $requestStack;
 
@@ -113,6 +118,16 @@ class ProductVisibilityLimitedSearchHandler extends SearchHandler
     }
 
     /**
+     * Enables configurable products selection.
+     * In most forms configurable products require additional option selection which is not implemented yet, thus they
+     * are disabled by default, but can be enabled in forms where no additional functionality for selection is needed.
+     */
+    public function enableConfigurableProducts(): void
+    {
+        $this->allowConfigurableProducts = true;
+    }
+
+    /**
      * {@inheritdoc}
      */
     protected function searchEntities($search, $firstResult, $maxResults)
@@ -141,10 +156,10 @@ class ProductVisibilityLimitedSearchHandler extends SearchHandler
         $queryBuilder = $this->entityRepository->getSearchQueryBuilder($search, $firstResult, $maxResults);
         $this->productManager->restrictQueryBuilder($queryBuilder, $params);
 
-        // Configurable products require additional option selection is not implemented yet
-        // Thus we need to hide configurable products from the product drop-downs
-        $queryBuilder->andWhere($queryBuilder->expr()->neq('p.type', ':configurable_type'))
-            ->setParameter('configurable_type', Product::TYPE_CONFIGURABLE);
+        if (!$this->allowConfigurableProducts) {
+            $queryBuilder->andWhere($queryBuilder->expr()->neq('p.type', ':configurable_type'))
+                ->setParameter('configurable_type', Product::TYPE_CONFIGURABLE);
+        }
 
         $query = $this->aclHelper->apply($queryBuilder);
 
@@ -161,11 +176,11 @@ class ProductVisibilityLimitedSearchHandler extends SearchHandler
     {
         $searchQuery = $this->searchRepository->getSearchQueryBySkuOrName($search, $firstResult, $maxResults);
 
-        // Configurable products require additional option selection is not implemented yet
-        // Thus we need to hide configurable products from the product drop-downs
-        $searchQuery->addWhere(
-            Criteria::expr()->neq('type', Product::TYPE_CONFIGURABLE)
-        );
+        if (!$this->allowConfigurableProducts) {
+            $searchQuery->addWhere(
+                Criteria::expr()->neq('type', Product::TYPE_CONFIGURABLE)
+            );
+        }
 
         $result = $searchQuery->getResult();
 

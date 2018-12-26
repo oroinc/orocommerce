@@ -3,11 +3,14 @@
 .oro-content-variant-collection {
     .content-variant-item {
         position: relative;
-        padding: 10px 40px 10px 40px;
-        margin-bottom: 20px;
-        border: 1px solid #e6e6e6;
+        padding: 10px 40px;
+        border: 1px solid $additional-extra-lighten;
         background: $primary-900;
         border-radius: 4px;
+
+        &:not(:last-of-type) {
+            margin-bottom: $content-padding-small;
+        }
 
         .box-type1 {
             background-color: transparent;
@@ -39,7 +42,7 @@
     }
 
     .content-variant-add-btn-container {
-        margin-bottom: 20px;
+        margin-bottom: $content-padding-medium;
     }
 
     .removeVariantBtn {
@@ -76,4 +79,14 @@
 
 .scope-elements {
     display: none;
+}
+
+.content-node-use-parent {
+    .control-group.control-group-checkbox:first-child {
+        margin-bottom: 0;
+    }
+
+    .scope-elements {
+        margin-top: $content-padding-medium;
+    }
 }

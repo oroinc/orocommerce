@@ -1,0 +1,18 @@
+api:
+    entities:
+        Oro\Bundle\OrderBundle\Entity\OrderLineItem:
+            documentation_resource: '@OroPromotionBundle/Resources/doc/api_frontend/order_line_item.md'
+            fields:
+                rowTotalDiscountAmount:
+                    data_type: money
+                    property_path: _
+                rowTotalAfterDiscountIncludingTax:
+                    data_type: money
+                    property_path: _
+                rowTotalAfterDiscountExcludingTax:
+                    data_type: money
+                    property_path: _
+                rowTotalAfterDiscount:
+                    data_type: money
+                    property_path: _
+                    depends_on: [value, quantity]
