@@ -109,6 +109,10 @@ class AppliedPromotionManagerTest extends \PHPUnit\Framework\TestCase
 
         $executor = $this->getExecutor();
         $executor->expects($this->once())
+            ->method('supports')
+            ->with($order)
+            ->willReturn(true);
+        $executor->expects($this->once())
             ->method('execute')
             ->with($order)
             ->willReturn($discountContext);
@@ -178,6 +182,10 @@ class AppliedPromotionManagerTest extends \PHPUnit\Framework\TestCase
 
         $executor = $this->getExecutor();
         $executor->expects($this->once())
+            ->method('supports')
+            ->with($order)
+            ->willReturn(true);
+        $executor->expects($this->once())
             ->method('execute')
             ->with($order)
             ->willReturn($discountContext);
@@ -210,6 +218,10 @@ class AppliedPromotionManagerTest extends \PHPUnit\Framework\TestCase
             });
 
         $executor = $this->getExecutor();
+        $executor->expects($this->once())
+            ->method('supports')
+            ->with($order)
+            ->willReturn(true);
         $executor->expects($this->once())
             ->method('execute')
             ->with($order)
@@ -256,6 +268,10 @@ class AppliedPromotionManagerTest extends \PHPUnit\Framework\TestCase
 
         $executor = $this->getExecutor();
         $executor->expects($this->once())
+            ->method('supports')
+            ->with($order)
+            ->willReturn(true);
+        $executor->expects($this->once())
             ->method('execute')
             ->with($order)
             ->willReturn(new DiscountContext());
@@ -272,6 +288,21 @@ class AppliedPromotionManagerTest extends \PHPUnit\Framework\TestCase
             ->withConsecutive($firstAppliedPromotion, $secondAppliedPromotion);
 
         $this->manager->createAppliedPromotions($order, true);
+    }
+
+    public function testCreateAppliedPromotionsWhenNoSupports()
+    {
+        $order = new Order();
+        $executor = $this->getExecutor();
+        $executor->expects($this->once())
+            ->method('supports')
+            ->with($order)
+            ->willReturn(false);
+        $executor->expects($this->never())
+            ->method('execute')
+            ->with($order);
+
+        $this->manager->createAppliedPromotions($order);
     }
 
     /**

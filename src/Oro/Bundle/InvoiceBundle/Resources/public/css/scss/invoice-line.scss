@@ -5,14 +5,14 @@
 }
 
 .invoice-lineitems .add-list-item {
-    margin-top: 10px;
+    margin-top: $content-padding-small;
 }
 
 .invoice-lineitems table.grid {
     overflow: visible;
 }
 
-.invoice-line-item-type input[type="text"]{
+.invoice-line-item-type input[type="text"] {
     width: 279px;
 }
 
@@ -23,8 +23,7 @@
 .invoice-line-item-quantity .fields-row input[type="text"],
 .invoice-line-item-price .fields-row input[type="text"],
 .invoice-line-item-quantity select,
-.invoice-line-item-price select
-{
+.invoice-line-item-price select {
     text-align: right;
     width: 80px;
 }
@@ -35,7 +34,6 @@
     width: 80px;
 }
 
-
 .invoice-line-item-quantity input[type="text"] {
     margin-right: 3px;
 }
@@ -44,7 +42,6 @@
     width: 220px;
 }
 
-
 .invoice-line-item-price .fields-row {
     position: relative;
 }
@@ -52,7 +49,6 @@
 .invoice-line-item-price input[type="text"] {
     padding-left: 17px;
 }
-
 
 .invoice-line-item-quantity input[type="text"],
 .invoice-line-item-quantity .input-widget-select,

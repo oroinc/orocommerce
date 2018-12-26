@@ -15,6 +15,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
+/**
+ * Credit card form
+ */
 class CreditCardType extends AbstractType
 {
     const NAME = 'oro_paypal_credit_card';
@@ -62,8 +65,8 @@ class CreditCardType extends AbstractType
                 'label' => 'oro.paypal.credit_card.expiration_date.label',
                 'mapped' => false,
                 'placeholder' => [
-                    'year' => 'Year',
-                    'month' => 'Month',
+                    'year' => 'oro.paypal.credit_card.expiration_date.year',
+                    'month' => 'oro.paypal.credit_card.expiration_date.month',
                 ],
                 'attr' => [
                     'data-expiration-date' => true,

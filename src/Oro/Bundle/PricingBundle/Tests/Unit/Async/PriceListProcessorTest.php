@@ -5,9 +5,8 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Async;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\DBAL\ConnectionException;
 use Doctrine\DBAL\Driver\AbstractDriverException;
-use Doctrine\DBAL\Driver\PDOException;
+use Doctrine\DBAL\Exception\DeadlockException;
 use Doctrine\ORM\EntityManagerInterface;
-use Oro\Bundle\EntityBundle\ORM\DatabaseExceptionHelper;
 use Oro\Bundle\PricingBundle\Async\PriceListProcessor;
 use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Builder\CombinedPriceListsBuilderFacade;
@@ -62,11 +61,6 @@ class PriceListProcessorTest extends \PHPUnit\Framework\TestCase
     protected $repository;
 
     /**
-     * @var DatabaseExceptionHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $databaseExceptionHelper;
-
-    /**
      * @var PriceListProcessor
      */
     protected $priceRuleProcessor;
@@ -79,7 +73,6 @@ class PriceListProcessorTest extends \PHPUnit\Framework\TestCase
         $this->logger = $this->createMock(LoggerInterface::class);
         $this->repository = $this->createMock(CombinedPriceListRepository::class);
         $this->registry = $this->createMock(ManagerRegistry::class);
-        $this->databaseExceptionHelper = $this->createMock(DatabaseExceptionHelper::class);
         $this->triggerHandler = $this->createMock(CombinedPriceListTriggerHandler::class);
 
         $this->priceRuleProcessor = new PriceListProcessor(
@@ -87,7 +80,6 @@ class PriceListProcessorTest extends \PHPUnit\Framework\TestCase
             $this->registry,
             $this->combinedPriceListsBuilderFacade,
             $this->logger,
-            $this->databaseExceptionHelper,
             $this->triggerHandler
         );
     }
@@ -138,10 +130,8 @@ class PriceListProcessorTest extends \PHPUnit\Framework\TestCase
 
     public function testProcessDeadlock()
     {
-        /** @var PDOException $exception */
-        $exception = $this->getMockBuilder(PDOException::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        /** @var DeadlockException $exception */
+        $exception = $this->createMock(DeadlockException::class);
 
         $em = $this->createMock(EntityManagerInterface::class);
 
@@ -171,15 +161,6 @@ class PriceListProcessorTest extends \PHPUnit\Framework\TestCase
 
         $this->triggerFactory->expects($this->never())
             ->method('createFromArray');
-
-        $driverException = $this->createMock(AbstractDriverException::class);
-        $this->databaseExceptionHelper->expects($this->once())
-            ->method('getDriverException')
-            ->with($exception)
-            ->willReturn($driverException);
-        $this->databaseExceptionHelper->expects($this->once())
-            ->method('isDeadlock')
-            ->willReturn(true);
 
         $this->assertEquals(MessageProcessorInterface::REQUEUE, $this->priceRuleProcessor->process($message, $session));
     }
@@ -213,9 +194,6 @@ class PriceListProcessorTest extends \PHPUnit\Framework\TestCase
 
         /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session **/
         $session = $this->createMock(SessionInterface::class);
-
-        $this->databaseExceptionHelper->expects($this->never())
-            ->method('isDeadlock');
 
         $this->assertEquals(
             MessageProcessorInterface::REJECT,
@@ -428,9 +406,6 @@ class PriceListProcessorTest extends \PHPUnit\Framework\TestCase
 
         /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session */
         $session = $this->createMock(SessionInterface::class);
-
-        $this->databaseExceptionHelper->expects($this->never())
-            ->method('isDeadlock');
 
         $this->priceRuleProcessor->process($message, $session);
     }

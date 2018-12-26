@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Unit\EventListener;
 
+use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager;
+use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
@@ -9,10 +11,13 @@ use Oro\Bundle\OrderBundle\EventListener\ExtractLineItemPaymentOptionsListener;
 use Oro\Bundle\PaymentBundle\Event\ExtractLineItemPaymentOptionsEvent;
 use Oro\Bundle\PaymentBundle\Model\LineItemOptionModel;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
+use Oro\Bundle\TranslationBundle\Entity\Language;
 use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
 
 class ExtractLineItemPaymentOptionsListenerTest extends \PHPUnit\Framework\TestCase
 {
+    private const LANGUAGE = 'de_DE';
+
     /** @var ExtractLineItemPaymentOptionsListener */
     private $listener;
 
@@ -21,28 +26,38 @@ class ExtractLineItemPaymentOptionsListenerTest extends \PHPUnit\Framework\TestC
 
     public function setUp()
     {
-        $this->htmlTagHelper = $this->getMockBuilder(HtmlTagHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->htmlTagHelper = $this->createMock(HtmlTagHelper::class);
 
-        $this->listener = new ExtractLineItemPaymentOptionsListener($this->htmlTagHelper);
+        $this->listener = new ExtractLineItemPaymentOptionsListener(
+            $this->htmlTagHelper,
+            $this->getUserLocalizationManager()
+        );
     }
 
     public function testOnExtractLineItemPaymentOptions()
     {
+        $localization = (new Localization())->setLanguage((new Language())->setCode(self::LANGUAGE));
         $itemWithProduct1 = new OrderLineItem();
         $itemWithProduct2 = new OrderLineItem();
 
         $product1 = new Product();
+        $product1Name = new LocalizedFallbackValue();
+        $product1Name->setString('DE Product Name')->setLocalization($localization);
+        $product1Description = new LocalizedFallbackValue();
+        $product1Description->setText('DE Product Description')->setLocalization($localization);
         $product1
             ->setSku('PRSKU')
-            ->addName((new LocalizedFallbackValue())->setString('Product Name'))
-            ->addShortDescription((new LocalizedFallbackValue())->setText('Product Description'));
+            ->addName($product1Name)
+            ->addShortDescription($product1Description);
 
         $product2 = new Product();
+        $product2Name = new LocalizedFallbackValue();
+        $product2Name->setString('DE Product Without SKU')->setLocalization($localization);
+        $product2Description = new LocalizedFallbackValue();
+        $product2Description->setText('DE Product Description')->setLocalization($localization);
         $product2
-            ->addName((new LocalizedFallbackValue())->setString('Product Without SKU'))
-            ->addShortDescription((new LocalizedFallbackValue())->setText('Product Description'));
+            ->addName($product2Name)
+            ->addShortDescription($product2Description);
 
         $itemWithProduct1->setProduct($product1);
         $itemWithProduct1->setValue(123.456);
@@ -64,7 +79,7 @@ class ExtractLineItemPaymentOptionsListenerTest extends \PHPUnit\Framework\TestC
         $this->htmlTagHelper->expects($this->exactly(2))
             ->method('stripTags')
             ->willReturnCallback(function ($shortDescription) {
-                return $shortDescription;
+                return sprintf('Strip %s', $shortDescription);
             });
 
         $event = new ExtractLineItemPaymentOptionsEvent($entity);
@@ -78,8 +93,8 @@ class ExtractLineItemPaymentOptionsListenerTest extends \PHPUnit\Framework\TestC
         /** @var LineItemOptionModel $model1 */
         $model1 = $models[0];
 
-        $this->assertEquals('PRSKU Product Name', $model1->getName());
-        $this->assertEquals('Product Description', $model1->getDescription());
+        $this->assertEquals('PRSKU DE Product Name', $model1->getName());
+        $this->assertEquals('Strip DE Product Description', $model1->getDescription());
         $this->assertEquals(123.456, $model1->getCost(), '', 1e-6);
         $this->assertEquals(2, $model1->getQty(), '', 1e-6);
         $this->assertEquals('USD', $model1->getCurrency());
@@ -88,8 +103,8 @@ class ExtractLineItemPaymentOptionsListenerTest extends \PHPUnit\Framework\TestC
         /** @var LineItemOptionModel $model2 */
         $model2 = $models[1];
 
-        $this->assertEquals('Product Without SKU', $model2->getName());
-        $this->assertEquals('Product Description', $model2->getDescription());
+        $this->assertEquals('DE Product Without SKU', $model2->getName());
+        $this->assertEquals('Strip DE Product Description', $model2->getDescription());
         $this->assertEquals(321.654, $model2->getCost(), '', 1e-6);
         $this->assertEquals(0.1, $model2->getQty(), '', 1e-6);
         $this->assertEquals('EUR', $model2->getCurrency());
@@ -108,5 +123,20 @@ class ExtractLineItemPaymentOptionsListenerTest extends \PHPUnit\Framework\TestC
         $this->assertInternalType('array', $models);
         $this->assertEmpty($models);
         $this->assertContainsOnlyInstancesOf(LineItemOptionModel::class, $models);
+    }
+
+    /**
+     * @return UserLocalizationManager|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private function getUserLocalizationManager()
+    {
+        $localization = (new Localization())->setLanguage((new Language())->setCode(self::LANGUAGE));
+        $userLocalizationManager = $this->createMock(UserLocalizationManager::class);
+        $userLocalizationManager
+            ->expects($this->once())
+            ->method('getCurrentLocalization')
+            ->willReturn($localization);
+
+        return $userLocalizationManager;
     }
 }

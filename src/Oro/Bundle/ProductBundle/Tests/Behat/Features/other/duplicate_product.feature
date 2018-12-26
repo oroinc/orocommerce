@@ -46,8 +46,8 @@ Feature: Duplicate product
     And I should see following product images:
       | cat1.jpg | 1 | 1 | 1 |
     And I should see following "ProductPricesGrid" grid:
-      | Price List   | Quantity  | Unit | Value  | Currency |
-      | Price List 1 | 1         | item | 10     | USD      |
+      | Price List   | Quantity  | Unit | Value | Currency |
+      | Price List 1 | 1         | item | 10.00 | USD      |
     And I should not see "RelatedProductsViewGrid"
     And I should not see "UpsellProductsViewGrid"
     And I should see following product shipping options:
@@ -100,8 +100,8 @@ Feature: Duplicate product
     And I should see following product images:
       | cat2.jpg |  |  | 1 |
     And I should see following "ProductPricesGrid" grid:
-      | Price List   | Quantity  | Unit     | Value  | Currency |
-      | Price List 1 | 2         | kilogram | 20     | USD      |
+      | Price List   | Quantity  | Unit     | Value | Currency |
+      | Price List 1 | 2         | kilogram | 20.00 | USD      |
     And I should not see "RelatedProductsViewGrid"
     And I should not see "UpsellProductsViewGrid"
     And I should see following product shipping options:
@@ -127,8 +127,8 @@ Feature: Duplicate product
     And I should see following product images:
       | cat1.jpg | 1 | 1 | 1 |
     And I should see following "ProductPricesGrid" grid:
-      | Price List   | Quantity  | Unit | Value  | Currency |
-      | Price List 1 | 1         | item | 10     | USD      |
+      | Price List   | Quantity  | Unit | Value | Currency |
+      | Price List 1 | 1         | item | 10.00 | USD      |
     And I should see following "RelatedProductsViewGrid" grid:
       | SKU      | Name     | Inventory Status | Status  |
       | RELATED1 | Related1 | In Stock         | Enabled |

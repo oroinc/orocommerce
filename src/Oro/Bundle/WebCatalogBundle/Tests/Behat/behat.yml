@@ -38,10 +38,24 @@ oro_behat_extension:
                     Title: 'oro_web_catalog_content_node[titles][values][default]'
                     Slug: 'oro_web_catalog_content_node[slugPrototypesWithRedirect][slugPrototypes][values][default]'
                     Meta Title: 'oro_web_catalog_content_node[metaTitles][values][default]'
+                    Restriction1 Customer:
+                        type: 'css'
+                        locator: 'div[id^="oro_web_catalog_content_node_scopes_0_customer-"]'
+                        element: Select2Entity
+                    Restriction2 Customer:
+                        type: 'css'
+                        locator: 'div[id^="oro_web_catalog_content_node_scopes_2_customer-"]'
+                        element: Select2Entity
+                    Restriction1 CustomerGroup:
+                        type: 'css'
+                        locator: 'div[id^="oro_web_catalog_content_node_scopes_0_customerGroup-"]'
+                        element: Select2Entity
 
         Content Variant:
             class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
-            selector: 'form[name="oro_web_catalog_content_node"] div[data-content="0"]'
+            selector:
+                type: xpath
+                locator: '//form[@name="oro_web_catalog_content_node"]//div[contains(concat(" ", normalize-space(@class), " "), " content-variant-item ") and position()=1]'
             options:
                 mapping:
                     Product:
@@ -53,6 +67,7 @@ oro_behat_extension:
             selector:
                 type: xpath
                 locator: '//div[contains(@class, "embedded-list")]//a//dt[contains(text(),"Headlamps")]'
+
         WebCatalogSystemConfigSelect:
             selector: '.oro-select2:contains("Choose a Web Catalog") .select2-offscreen'
             class: Oro\Bundle\FormBundle\Tests\Behat\Element\Select2Entity
@@ -61,6 +76,9 @@ oro_behat_extension:
             selector:
                 type: xpath
                 locator: '//span[@class="main-menu__text"][text()="Clearance"]'
+
+        Inherit Parent:
+            selector: '[name="oro_web_catalog_content_node[parentScopeUsed]"]'
 
     suites:
         OroWebCatalogBundle:

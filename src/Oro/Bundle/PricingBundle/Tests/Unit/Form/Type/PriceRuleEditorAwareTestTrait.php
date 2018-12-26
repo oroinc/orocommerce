@@ -11,6 +11,8 @@ use Oro\Bundle\PricingBundle\Form\Type\PriceRuleEditorType;
 use Oro\Bundle\PricingBundle\Form\Type\RuleEditorCurrencyExpressionType;
 use Oro\Bundle\PricingBundle\Form\Type\RuleEditorUnitExpressionType;
 use Oro\Bundle\ProductBundle\Expression\Autocomplete\AutocompleteFieldsProvider;
+use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectType;
+use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
@@ -49,6 +51,8 @@ trait PriceRuleEditorAwareTestTrait
             $formFactory,
             $twig
         );
+        /** @var \PHPUnit_Framework_MockObject_MockObject|UnitLabelFormatter $formatter */
+        $formatter = self::createMock(UnitLabelFormatter::class);
         $priceRuleEditor = new PriceRuleEditorType($priceRuleOptionsConfigurator);
         $priceRuleEditorText = new PriceRuleEditorTextType($priceRuleOptionsConfigurator);
 
@@ -65,7 +69,8 @@ trait PriceRuleEditorAwareTestTrait
             RuleEditorTextareaType::NAME => $ruleEditor,
             RuleEditorTextType::NAME => $ruleEditorText,
             RuleEditorCurrencyExpressionType::NAME => $currencyExpressionType,
-            RuleEditorUnitExpressionType::NAME => $unitExpressionType
+            RuleEditorUnitExpressionType::NAME => $unitExpressionType,
+            ProductUnitSelectType::NAME => new ProductUnitSelectType($formatter),
         ];
     }
 }

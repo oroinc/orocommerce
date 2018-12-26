@@ -19,40 +19,89 @@ class CustomerPaymentTermTest extends RestJsonApiTestCase
 
     public function testPaymentTermIsReturnedInCustomerGetListResponse()
     {
-        $response = $this->cget(['entity' => $this->getEntityType(Customer::class)]);
-        $responseContent = $response->getContent();
+        $response = $this->cget(
+            ['entity' => 'customers'],
+            ['filter[id]' => '<toString(@customer.level_1->id)>']
+        );
 
-        $this->assertContains('paymentTerm', $responseContent);
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    [
+                        'type'          => 'customers',
+                        'id'            => '<toString(@customer.level_1->id)>',
+                        'relationships' => [
+                            'paymentTerm' => [
+                                'data' => [
+                                    'type' => 'paymentterms',
+                                    'id'   => '<toString(@payment_term_test_data_net 10->id)>'
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+            $response
+        );
     }
 
     public function testCustomerGetResponseContainsAssignedPaymentTerm()
     {
         $response = $this->get([
-            'entity' => $this->getEntityType(Customer::class),
-            'id' => '<toString(@customer.level_1->id)>'
+            'entity' => 'customers',
+            'id'     => '<toString(@customer.level_1->id)>'
         ]);
 
-        $this->assertResponseContains('customer/get.yml', $response);
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    'type'          => 'customers',
+                    'id'            => '<toString(@customer.level_1->id)>',
+                    'relationships' => [
+                        'paymentTerm' => [
+                            'data' => [
+                                'type' => 'paymentterms',
+                                'id'   => '<toString(@payment_term_test_data_net 10->id)>'
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+            $response
+        );
     }
 
     public function testCustomerPaymentTermCanBeModified()
     {
+        $customerId = $this->getReference('customer.level_1')->getId();
+
+        $data = [
+            'data' => [
+                'type'          => 'customers',
+                'id'            => (string)$customerId,
+                'relationships' => [
+                    'paymentTerm' => [
+                        'data' => [
+                            'type' => 'paymentterms',
+                            'id'   => '<toString(@payment_term_test_data_net 20->id)>'
+                        ]
+                    ]
+                ]
+            ]
+        ];
         $response = $this->patch(
-            ['entity' => $this->getEntityType(Customer::class), 'id' => '<toString(@customer.level_1->id)>'],
-            'customer/patch.yml'
+            ['entity' => 'customers', 'id' => (string)$customerId],
+            $data
         );
 
-        $this->assertResponseContains('customer/patch.yml', $response);
-        $responseContent = json_decode($response->getContent());
+        $this->assertResponseContains($data, $response);
 
         /** @var Customer $customer */
-        $customer = $this->getEntityManager()->find(Customer::class, $responseContent->data->id);
-
+        $customer = $this->getEntityManager()->find(Customer::class, $customerId);
         $this->assertNotNull($customer);
 
-        $paymentTermProvider = $this->getContainer()->get('oro_payment_term.provider.payment_term');
+        $paymentTermProvider = self::getContainer()->get('oro_payment_term.provider.payment_term');
         $paymentTerm = $paymentTermProvider->getCustomerPaymentTerm($customer);
-
         $this->assertNotNull($paymentTerm);
         $this->assertEquals(LoadPaymentTermData::TERM_LABEL_NET_20, $paymentTerm->getLabel());
     }

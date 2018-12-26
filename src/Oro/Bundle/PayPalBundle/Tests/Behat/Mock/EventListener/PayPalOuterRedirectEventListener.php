@@ -100,9 +100,10 @@ class PayPalOuterRedirectEventListener
             $request->request->set($key, $value);
         }
 
+        // Master request is required because we need to emulate the real notify request like it is done by paypal
         $this->httpKernel->handle(
             $request,
-            HttpKernelInterface::SUB_REQUEST
+            HttpKernelInterface::MASTER_REQUEST
         );
     }
 

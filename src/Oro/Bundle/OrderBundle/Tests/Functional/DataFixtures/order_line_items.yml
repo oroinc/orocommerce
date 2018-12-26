@@ -1,0 +1,20 @@
+dependencies:
+  - Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData
+  - Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders
+
+Oro\Bundle\OrderBundle\Entity\OrderLineItem:
+    order_line_item.1:
+        order: '@simple_order'
+        product: '@product-1'
+        parentProduct: '@product-3'
+        quantity: 5
+        productUnit: '@product_unit.bottle'
+        value: 15.7
+        currency: USD
+    order_line_item.2:
+        order: '@simple_order'
+        product: '@product-2'
+        quantity: 12
+        productUnit: '@product_unit.box'
+        value: 30.5
+        currency: USD

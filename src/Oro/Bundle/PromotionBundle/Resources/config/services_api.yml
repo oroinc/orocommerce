@@ -1,8 +1,30 @@
 services:
-    oro_promotion.api.add_promotion_discounts_amount:
-        class: Oro\Bundle\PromotionBundle\Api\Processor\AddPromotionDiscounts
+    oro_promotion.api.compute_order_promotion_discounts:
+        class: Oro\Bundle\PromotionBundle\Api\Processor\ComputeOrderPromotionDiscounts
         arguments:
             - '@oro_promotion.provider.applied_discounts_provider'
             - '@oro_entity.doctrine_helper'
         tags:
-            - { name: oro.api.processor, action: customize_loaded_data, class: '%oro_order.entity.order.class%' }
+            - { name: oro.api.processor, action: customize_loaded_data, requestType: !frontend, class: '%oro_order.entity.order.class%' }
+
+    oro_promotion.api.order_line_item_discount_provider:
+        class: Oro\Bundle\PromotionBundle\Api\OrderLineItemDiscountProvider
+        public: false
+        arguments:
+            - '@oro_api.doctrine_helper'
+
+    oro_promotion.api.add_order_promotion_discounts:
+        class: Oro\Bundle\PromotionBundle\Api\Processor\AddOrderPromotionDiscounts
+        arguments:
+            - '@oro_api.doctrine_helper'
+            - '@translator'
+        tags:
+            - { name: oro.api.processor, action: customize_loaded_data, collection: true, requestType: frontend, class: '%oro_order.entity.order.class%' }
+
+    oro_promotion.api.compute_order_line_item_discounts:
+        class: Oro\Bundle\PromotionBundle\Api\Processor\ComputeOrderLineItemDiscounts
+        arguments:
+            - '@oro_promotion.api.order_line_item_discount_provider'
+            - '@oro_tax.api.order_line_item_taxes_provider'
+        tags:
+            - { name: oro.api.processor, action: customize_loaded_data, collection: true, requestType: frontend, class: '%oro_order.entity.order_line_item.class%' }

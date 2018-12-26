@@ -1,0 +1,6 @@
+doctrine:
+    orm:
+        entity_managers:
+            default:
+                hydrators:
+                    oro.redirect.entity.hydrator.matching_slug: Oro\Bundle\RedirectBundle\Entity\Hydrator\MatchingSlugHydrator

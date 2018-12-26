@@ -101,6 +101,7 @@
                      customer: 'input[name$="[customer]"]'
                  }
              }|json_encode }}"
+            class="control-group-container"
         >
             {{ form_row(form.owner) }}
             {{ ownerSelectors }}
@@ -168,7 +169,10 @@
             {% set possibleShippingMethodsView = 'orosale/js/app/views/quote-possible-shipping-methods-view' %}
             {{ UI.renderControlGroup('oro.sale.quote.shipping_method.label'|trans,
                 '<div class="possible_shipping_methods_container">' ~
-                SM.renderPossibleShippingMethods(form, entity, quoteEntryPointEvents, possibleShippingMethodsView) ~ '</div>'
+                SM.renderPossibleShippingMethods(form, entity, quoteEntryPointEvents, possibleShippingMethodsView) ~ '</div>',
+                {
+                    rootClass: null
+                }
             ) }}
 
             {% set options = {

@@ -384,7 +384,9 @@
                 </button>
             {% else %}
                 <div {{- _layout.conditionMessages(transitionData) -}}>
-                    <div class="btn btn--size-m btn--disabled checkout__submit-btn">{{- transitionData.transition.label|trans({},'workflows') -}}</div>
+                    <button class="btn btn--size-m btn--info btn--disabled checkout__submit-btn" disabled="disabled">
+                        {{- transitionData.transition.label|trans({},'workflows') -}}
+                    </button>
                 </div>
             {% endif %}
         </div>

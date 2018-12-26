@@ -3,10 +3,8 @@
 namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Async\Visibility;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\DBAL\Driver\AbstractDriverException;
-use Doctrine\DBAL\Driver\PDOException;
+use Doctrine\DBAL\Exception\DeadlockException;
 use Doctrine\ORM\EntityManagerInterface;
-use Oro\Bundle\EntityBundle\ORM\DatabaseExceptionHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Exception\InvalidArgumentException;
 use Oro\Bundle\VisibilityBundle\Async\Visibility\ProductProcessor;
@@ -41,11 +39,6 @@ class ProductProcessorTest extends \PHPUnit\Framework\TestCase
     protected $logger;
 
     /**
-     * @var DatabaseExceptionHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $databaseExceptionHelper;
-
-    /**
      * @var ProductProcessor
      */
     protected $visibilityProcessor;
@@ -58,15 +51,11 @@ class ProductProcessorTest extends \PHPUnit\Framework\TestCase
             ->getMock();
         $this->cacheBuilder = $this->createMock(ProductCaseCacheBuilderInterface::class);
         $this->logger = $this->createMock(LoggerInterface::class);
-        $this->databaseExceptionHelper = $this->getMockBuilder(DatabaseExceptionHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
         $this->visibilityProcessor = new ProductProcessor(
             $this->registry,
             $this->messageFactory,
             $this->logger,
-            $this->cacheBuilder,
-            $this->databaseExceptionHelper
+            $this->cacheBuilder
         );
         $this->visibilityProcessor->setResolvedVisibilityClassName(ProductVisibilityResolved::class);
     }
@@ -107,10 +96,8 @@ class ProductProcessorTest extends \PHPUnit\Framework\TestCase
     }
     public function testProcessDeadlock()
     {
-        /** @var PDOException $exception */
-        $exception = $this->getMockBuilder(PDOException::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        /** @var DeadlockException $exception */
+        $exception = $this->createMock(DeadlockException::class);
         $em = $this->createMock(EntityManagerInterface::class);
         $em->expects($this->once())
             ->method('beginTransaction');
@@ -133,14 +120,6 @@ class ProductProcessorTest extends \PHPUnit\Framework\TestCase
             );
         /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session **/
         $session = $this->createMock(SessionInterface::class);
-        $driverException = $this->createMock(AbstractDriverException::class);
-        $this->databaseExceptionHelper->expects($this->once())
-            ->method('getDriverException')
-            ->with($exception)
-            ->willReturn($driverException);
-        $this->databaseExceptionHelper->expects($this->once())
-            ->method('isDeadlock')
-            ->willReturn(true);
         $this->assertEquals(
             MessageProcessorInterface::REQUEUE,
             $this->visibilityProcessor->process($message, $session)
@@ -171,8 +150,6 @@ class ProductProcessorTest extends \PHPUnit\Framework\TestCase
             );
         /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session **/
         $session = $this->createMock(SessionInterface::class);
-        $this->databaseExceptionHelper->expects($this->never())
-            ->method('isDeadlock');
         $this->assertEquals(
             MessageProcessorInterface::REJECT,
             $this->visibilityProcessor->process($message, $session)

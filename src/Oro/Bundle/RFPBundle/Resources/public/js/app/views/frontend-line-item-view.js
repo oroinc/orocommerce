@@ -150,7 +150,7 @@ define(function(require) {
                 data.lines.push({
                     quantity: $quantities[i].value,
                     unit: $units[i].value,
-                    price: $prices[i].value,
+                    price: NumberFormatter.unformatStrict($prices[i].value),
                     currency: $currencies[i].value,
                     found_price: $($prices[i]).data('found_price')
                 });
