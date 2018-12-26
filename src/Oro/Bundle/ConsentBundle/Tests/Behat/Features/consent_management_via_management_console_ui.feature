@@ -20,13 +20,13 @@ Feature: Consent management via Management Console UI
     And click "Create Web Catalog"
     And fill form with:
       | Name | Store and Process |
-    And I click "Save and Close"
+    When I click "Save and Close"
     Then I should see "Web Catalog has been saved" flash message
     And I click "Edit Content Tree"
     And I fill "Content Node Form" with:
       | Titles | Home page |
     And I click "Add System Page"
-    And I save form
+    When I save form
     Then I click "Create Content Node"
     And I click on "Show Variants Dropdown"
     And I click "Add Landing Page"
@@ -34,7 +34,7 @@ Feature: Consent management via Management Console UI
       | Titles       | Store and Process Node |
       | Url Slug     | store-and-process-node |
       | Landing Page | Consent Landing        |
-    And I save form
+    When I save form
     Then I should see "Content Node has been saved" flash message
     And I click "Create Content Node"
     And I click on "Show Variants Dropdown"
@@ -43,18 +43,18 @@ Feature: Consent management via Management Console UI
       | Titles       | Test Node     |
       | Url Slug     | test-node     |
       | Landing Page | Test CMS Page |
-    And I save form
+    When I save form
     Then I should see "Content Node has been saved" flash message
 
   Scenario: Enable consent functionality via feature toggle
     Given go to System/ Configuration
-    Then follow "Commerce/Customer/Consents" on configuration sidebar
+    And follow "Commerce/Customer/Consents" on configuration sidebar
     And I should not see a "Sortable Consent List" element
     And fill form with:
       | Use Default                  | false |
       | Enable User Consents Feature | true  |
-    And click "Save settings"
-    And I should see a "Sortable Consent List" element
+    When click "Save settings"
+    Then I should see a "Sortable Consent List" element
 
   Scenario: Admin User is able to CRUD consents
     Given I go to System/ Consent Management
@@ -65,31 +65,31 @@ Feature: Consent management via Management Console UI
     And fill "Consent Form" with:
       | Name | Presenting Personal Data |
       | Type | Optional                 |
-    And I save and close form
+    When I save and close form
     Then should see "Consent has been created" flash message
     And I click "Edit"
     And fill "Consent Form" with:
       | Type | Mandatory |
     When I click "Web Catalog Hamburger Button"
-    And I should see following grid:
+    Then I should see following grid:
       | Id | Name              |
       | 1  | Store and Process |
-    Then close ui dialog
-    And I should see "Please choose a Web Catalog"
+    When close ui dialog
+    Then I should see "Please choose a Web Catalog"
     And I fill form with:
       | Web Catalog | Store and Process |
     And I should not see "Please choose a Web Catalog"
     And I click "Store and Process Node"
     And save and close form
-    Then should see "Consent has been saved" flash message
+    And should see "Consent has been saved" flash message
     When I click "Delete"
     Then I should see "Are you sure you want to delete this consent?"
     And I click "Cancel"
-    And go to System/ Consent Management
-    And I should see following grid:
+    When go to System/ Consent Management
+    Then I should see following grid:
       | Name                     | Type      | Content Node           | Content Source  |
       | Presenting Personal Data | Mandatory | Store and Process Node | Consent Landing |
-    Then I set "Store and Process" as default web catalog
+    And I set "Store and Process" as default web catalog
     And click "Create Consent"
     And fill "Consent Form" with:
       | Name | Email Newsletters |
@@ -105,8 +105,8 @@ Feature: Consent management via Management Console UI
       | Name        | Receive notifications |
       | Type        | Optional              |
     And save and close form
-    Then go to System/ Consent Management
-    And I should see following grid:
+    When go to System/ Consent Management
+    Then I should see following grid:
       | Name                                 | Type      | Content Node           | Content Source  |
       | Receive notifications                | Optional  | N/A                    | N/A             |
       | Collecting and storing personal data | Mandatory | Store and Process Node | Consent Landing |
@@ -118,9 +118,9 @@ Feature: Consent management via Management Console UI
     When follow "Commerce/Customer/Consents" on configuration sidebar
     And fill "Consent Settings Form" with:
       | Enabled User Consents Use Default | false |
-    And click "Save settings"
+    When click "Save settings"
     Then I should see "Configuration saved" flash message
-    When click "Add Consent"
+    And click "Add Consent"
     And click "Add Consent"
     And click "Add Consent"
     And click "Add Consent"
@@ -129,7 +129,7 @@ Feature: Consent management via Management Console UI
     And I choose Consent "Collecting and storing personal data" in 3 row
     And I choose Consent "Receive notifications" in 4 row
     And I drag 2 row to the top in "Consent" table
-    And click "Save settings"
+    When click "Save settings"
     Then I should see "Configuration saved" flash message
     And I should see that "Email Newsletters" is in 1 row
     And I should see that "Presenting Personal Data" is in 2 row
@@ -138,7 +138,7 @@ Feature: Consent management via Management Console UI
   Scenario: Show consents on registration page
     Given I proceed as the User
     And I am on the homepage
-    And click "Register"
+    When click "Register"
     Then I should see 2 elements "Required Consent"
     And I should see 2 elements "Optional Consent"
     And I should not see "Consent Link" in the "Optional Consent" element
@@ -146,14 +146,14 @@ Feature: Consent management via Management Console UI
     And the "Email Newsletters" checkbox should not be checked
     And the "Collecting and storing personal data" checkbox should not be checked
     And the "Receive notifications" checkbox should not be checked
-    Then I fill form with:
+    And I fill form with:
       | Company Name                         | OroCommerce               |
       | First Name                           | Amanda                    |
       | Last Name                            | Cole                      |
       | Email Address                        | AmandaRCole1@example.org  |
       | Password                             | AmandaRCole1@example.org  |
       | Confirm Password                     | AmandaRCole1@example.org  |
-    And press "Create An Account"
+    When press "Create An Account"
     Then I should see that "Required Consent" contains "This agreement is required"
     And I click "Presenting Personal Data"
     Then I should see "UiDialog" with elements:
@@ -206,7 +206,7 @@ Feature: Consent management via Management Console UI
     Then I should see "UiDialog" with elements:
       | Title        | Presenting Personal Data         |
       | cancelButton | Close                            |
-    And click "Close"
+    When click "Close"
     Then I should not see a "Consent Popup" element
     When I click "Edit Profile Button"
     Then the "Email Newsletters" checkbox should not be checked
@@ -217,7 +217,7 @@ Feature: Consent management via Management Console UI
       | Presenting Personal Data             | false |
       | Collecting and storing personal data | false |
       | Email Newsletters                    | true  |
-    And I save form
+    When I save form
     Then I should see "UiWindow" with elements:
       | Title        | Data Protection                                                 |
       | Content      | Are you sure you want to decline the consents accepted earlier? |
@@ -229,32 +229,32 @@ Feature: Consent management via Management Console UI
       | Title             | Presenting Personal Data |
       | Disabled okButton | Agree                    |
       | cancelButton      | Cancel                   |
-    And click "Cancel"
+    When click "Cancel"
     Then the "Presenting Personal Data" checkbox should not be checked
-    When I click "Presenting Personal Data"
+    And I click "Presenting Personal Data"
     And I scroll modal window to bottom
-    And click "Agree"
+    When click "Agree"
     Then I should not see a "Consent Popup" element
     And the "Presenting Personal Data" checkbox should be checked
-    Then the "Email Newsletters" checkbox should be checked
-    Then the "Collecting and storing personal data" checkbox should not be checked
+    And the "Email Newsletters" checkbox should be checked
+    And the "Collecting and storing personal data" checkbox should not be checked
     And I save form
     And click "Yes, Decline"
     Then should see "Customer User profile updated" flash message
     When click "Account"
-    And I should see "Accepted Consent" element with text "Email Newsletters" inside "Data Protection Section" element
+    Then I should see "Accepted Consent" element with text "Email Newsletters" inside "Data Protection Section" element
     And I should see "Accepted Consent" element with text "Presenting Personal Data" inside "Data Protection Section" element
     And I should see "Unaccepted Consent" element with text "Collecting and storing personal data" inside "Data Protection Section" element
 
   Scenario: Check consents section after changing customer user role
     Given I proceed as the User
-    When click "Account"
+    And click "Account"
     And click "Users"
     And click edit AmandaRCole1@example.org in grid
     And I fill form with:
       | Administrator | False |
       | Buyer         | True  |
-    And I click "Save"
+    When I click "Save"
     Then I should see "Customer User has been saved"
     And I proceed as the Admin
     And go to Customers/Customer Users
@@ -267,20 +267,20 @@ Feature: Consent management via Management Console UI
 
   Scenario: Check mandatory consents before creating an RFQ
     Given I proceed as the User
-    And click "Requests For Quote"
+    When click "Requests For Quote"
     Then click "New Quote"
     And I should see 1 elements "Required Consent"
     And I should not see an "Optional Consent" element
     And I should not see "Presenting Personal Data"
     And I should not see "Email Newsletters"
     And the "Collecting and storing personal data" checkbox should not be checked
-    When I fill form with:
+    And I fill form with:
       | First Name    | Amanda                                                                |
       | Last Name     | Cole                                                                  |
       | Email Address | AmandaRCole1@example.org                                              |
       | Company       | Oro Inc                                                               |
       | Notes         | Testing the way required consents are displayed before submitting RFQ |
-    And click "Submit Request"
+    When click "Submit Request"
     Then I should see that "Required Consent" contains "This agreement is required"
     When I click "Collecting and storing personal data"
     Then I should see "UiDialog" with elements:
@@ -289,9 +289,9 @@ Feature: Consent management via Management Console UI
       | cancelButton      | Cancel                               |
     And click "Cancel"
     And the "Collecting and storing personal data" checkbox should not be checked
-    When I click "Collecting and storing personal data"
+    And I click "Collecting and storing personal data"
     And I scroll modal window to bottom
-    And click "Agree"
+    When click "Agree"
     Then I should not see a "Consent Popup" element
     And the "Collecting and storing personal data" checkbox should be checked
     When click "Submit Request"
@@ -300,37 +300,37 @@ Feature: Consent management via Management Console UI
   Scenario: When deleting consent, it should be removed from system config
     Given I proceed as the Admin
     And go to System/ Websites
-    And click "Configuration" on row "Default" in grid
+    When click "Configuration" on row "Default" in grid
     Then follow "Commerce/Customer/Consents" on configuration sidebar
     And uncheck "Use System" for "Enabled user consents" field
-    And submit form
+    When submit form
     Then I should see "Configuration saved" flash message
     And I should see that "Email Newsletters" is in 1 row
     And I should see that "Presenting Personal Data" is in 2 row
     And I should see that "Collecting and storing personal data" is in 3 row
     And I should see that "Receive notifications" is in 4 row
-    Given I go to System/ Consent Management
-    And click delete "Receive notifications" in grid
+    And I go to System/ Consent Management
+    When click delete "Receive notifications" in grid
     Then I should see "Are you sure you want to delete this consent?"
-    And I click "Yes, Delete"
+    When I click "Yes, Delete"
     Then I should not see "Receive notifications"
-    Given go to System/ Configuration
-    Then follow "Commerce/Customer/Consents" on configuration sidebar
+    And go to System/ Configuration
+    And follow "Commerce/Customer/Consents" on configuration sidebar
     And I should not see "Receive notifications"
     And I should see that "Email Newsletters" is in 1 row
     And I should see that "Presenting Personal Data" is in 2 row
     And I should see that "Collecting and storing personal data" is in 3 row
-    Given go to System/ Websites
+    And go to System/ Websites
     And click "Configuration" on row "Default" in grid
-    Then follow "Commerce/Customer/Consents" on configuration sidebar
-    And I should not see "Receive notifications"
+    When follow "Commerce/Customer/Consents" on configuration sidebar
+    Then I should not see "Receive notifications"
     And I should see that "Email Newsletters" is in 1 row
     And I should see that "Presenting Personal Data" is in 2 row
     And I should see that "Collecting and storing personal data" is in 3 row
 
   Scenario: Accepted consents can't be deleted or edited
     Given I go to System/ Consent Management
-    And I should not see following actions for Collecting and storing personal data in grid:
+    Then I should not see following actions for Collecting and storing personal data in grid:
       | Edit   |
       | Delete |
     And I should not see following actions for Presenting Personal Data in grid:
@@ -342,7 +342,7 @@ Feature: Consent management via Management Console UI
 
   Scenario: Admin User is unable to edit/delete CMS page, which has relation to applied consent
     Given I go to Marketing/ Landing Pages
-    And I should see following actions for About in grid:
+    Then I should see following actions for About in grid:
       | View   |
       | Edit   |
       | Delete |
@@ -354,16 +354,16 @@ Feature: Consent management via Management Console UI
 
   Scenario: Accepted consents can be deleted from system config
     Given go to System/ Configuration
-    Then follow "Commerce/Customer/Consents" on configuration sidebar
+    And follow "Commerce/Customer/Consents" on configuration sidebar
     And I remove "Presenting Personal Data" from Consent
-    And click "Save settings"
+    When click "Save settings"
     Then I should see "Configuration saved" flash message
     And I should see that "Email Newsletters" is in 1 row
     And I should see that "Collecting and storing personal data" is in 2 row
 
   Scenario: When User submits the registration form with any removed consent or CMS page, there should be a validation error
     Given I proceed as the Admin
-    When I go to System/ Consent Management
+    And I go to System/ Consent Management
     And click "Create Consent"
     And fill "Consent Form" with:
       | Name        | Test Consent      |
@@ -371,7 +371,7 @@ Feature: Consent management via Management Console UI
       | Web Catalog | Store and Process |
     And click on "Expand Store and Process Node"
     And click "Test Node"
-    And save and close form
+    When save and close form
     Then I should see "Consent has been created" flash message
     And go to System/ Websites
     And click "Configuration" on row "Default" in grid
@@ -415,13 +415,13 @@ Feature: Consent management via Management Console UI
     And I should see 2 elements "Required Consent"
     And I proceed as the Admin
     And I go to System/ Consent Management
-    When click "Create Consent"
+    And click "Create Consent"
     And fill "Consent Form" with:
       | Name        | Test Consent 2    |
       | Type        | Mandatory         |
       | Web Catalog | Store and Process |
     And I click "Test Node"
-    And I save and close form
+    When I save and close form
     Then should see "Consent has been created" flash message
     And go to System/ Websites
     And click "Configuration" on row "Default" in grid
@@ -434,7 +434,7 @@ Feature: Consent management via Management Console UI
     And I am on the homepage
     When click "Register"
     Then I should see 3 elements "Required Consent"
-    When I fill form with:
+    And I fill form with:
       | Company Name                         | OroCommerce                 |
       | First Name                           | Branda                      |
       | Last Name                            | Sanborn                     |
@@ -450,20 +450,20 @@ Feature: Consent management via Management Console UI
     And I click "Test Consent 2"
     And click "Agree"
     # Proceeding to management console
-    When I proceed as the Admin
+    And I proceed as the Admin
     And go to Marketing/ Landing Pages
-    And click delete "Test CMS Page" in grid
+    When click delete "Test CMS Page" in grid
     Then I should see "Are you sure you want to delete this Landing Page?"
-    And I click "Yes, Delete"
+    When I click "Yes, Delete"
     Then should see "Landing Page deleted" flash message
-    When I proceed as the User
+    And I proceed as the User
     When press "Create An Account"
     Then I should see "Some consents were changed. Please reload the page."
 
   @skip
   Scenario: Consent should not be visible when related CMS page was deleted
     Given I should not see "Test Consent 2"
-    And I should see 2 elements "Required Consent"
+    Then I should see 2 elements "Required Consent"
 
   Scenario: Create customer group
     Given I proceed as the Admin
@@ -509,16 +509,16 @@ Feature: Consent management via Management Console UI
       | cancelButton      | Cancel                   |
     When click "Cancel"
     Then the "Presenting Personal Data" checkbox should not be checked
-    When I click "Collecting and storing personal data"
+    And I click "Collecting and storing personal data"
     And I scroll modal window to bottom
-    And click "Agree"
+    When click "Agree"
     Then I should not see a "Consent Popup" element
     And the "Collecting and storing personal data" checkbox should be checked
     When click "Continue"
     Then I should see that "Required Consent" contains "This agreement is required"
-    When I click "Presenting Personal Data"
+    And I click "Presenting Personal Data"
     And I scroll modal window to bottom
-    And click "Agree"
+    When click "Agree"
     Then I should not see a "Consent Popup" element
     And the "Presenting Personal Data" checkbox should be checked
     When click "Continue"
@@ -538,7 +538,7 @@ Feature: Consent management via Management Console UI
       | Type        | Mandatory         |
     When save and close form
     Then I should see "Consent has been created" flash message
-    When go to System/ Websites
+    And go to System/ Websites
     And click "Configuration" on row "Default" in grid
     And follow "Commerce/Customer/Consents" on configuration sidebar
     And click "Add Consent"
@@ -558,12 +558,12 @@ Feature: Consent management via Management Console UI
       | Country         | Germany         |
       | State           | Berlin          |
       | Zip/Postal Code | 10115           |
-    And I click "Continue"
+    When I click "Continue"
     Then I should see "You have been redirected to the Agreements page as a new mandatory consent has been added and requires your attention. Please, review and accept it to proceed." flash message and I close it
-    Then I should see "Agreements" in the "Checkout Step Title" element
+    And I should see "Agreements" in the "Checkout Step Title" element
     And I should see 1 elements "Required Consent"
     And I should see "Test Consent 3"
-    And fill form with:
+    When fill form with:
       | Test Consent 3 | true |
     Then I should not see a "Consent Popup" element
     And the "Test Consent 3" checkbox should be checked
@@ -654,14 +654,14 @@ Feature: Consent management via Management Console UI
     Then the "Presenting Personal Data" checkbox should not be checked
     When I click "Collecting and storing personal data"
     And I scroll modal window to bottom
-    And click "Agree"
+    When click "Agree"
     Then I should not see a "Consent Popup" element
     And the "Collecting and storing personal data" checkbox should be checked
     When click "Continue"
     Then I should see that "Required Consent" contains "This agreement is required"
     When I click "Presenting Personal Data"
     And I scroll modal window to bottom
-    And click "Agree"
+    When click "Agree"
     Then I should not see a "Consent Popup" element
     And the "Presenting Personal Data" checkbox should be checked
     And I should see "Test Consent 3"

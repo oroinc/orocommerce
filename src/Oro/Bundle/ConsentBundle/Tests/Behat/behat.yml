@@ -15,6 +15,8 @@ oro_behat_extension:
         - OroProductBundle::FeatureContext
         - OroCheckoutBundle::FeatureContext
         - OroShoppingListBundle::ShoppingListContext
+        - OroConfigBundle::FeatureContext
+        - OroWorkflowBundle::FeatureContext
       paths:
         - '@OroConsentBundle/Tests/Behat/Features'
 
@@ -63,13 +65,6 @@ oro_behat_extension:
       selector:
         locator: '//div[contains(@id,"oro_consent_webcatalog-uid")]/div/button[contains(@class, "entity-select-btn")]'
         type: xpath
-    Landing Page Form:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
-      selector: "form[name='oro_cms_page']"
-      options:
-        mapping:
-          Titles: oro_cms_page[titles][values][default]
-          URL Slug: oro_cms_page[slugPrototypesWithRedirect][slugPrototypes][values][default]
     Expand Store and Process Node:
       selector:
         type: xpath
