@@ -176,13 +176,6 @@
 
 .content-variant-item,
 .product-collection-segment {
-    div.filter-box {
-        &.oro-clearfix-width {
-            margin-#{$start}: 0;
-            margin-#{$end}: 0;
-        }
-    }
-
     .oro-tabs {
         .tab-pane {
             min-height: 0;
