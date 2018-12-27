@@ -170,7 +170,7 @@ class NotEmptyScopesTest extends \PHPUnit_Framework_TestCase
         $constraintBuilder = $this->createMock(ConstraintViolationBuilderInterface::class);
         $constraintBuilder->expects($this->once())
             ->method('atPath')
-            ->with('[1].scopes[0]')
+            ->with('[1].scopes')
             ->willReturnSelf();
         $constraintBuilder->expects($this->once())
             ->method('addViolation');
