@@ -2,8 +2,6 @@ Oro\Bundle\InventoryBundle\Entity\InventoryLevel:
     properties:
         quantity:
             - NotBlank: ~
-            - Range:
-                min: 0
             - Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
         product:
             - NotBlank: ~
