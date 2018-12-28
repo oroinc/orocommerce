@@ -11,11 +11,11 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\PromotionBundle\Model\ExtendAppliedPromotion;
 
 /**
+ * Represents applied promotions to the order
+ *
  * @Config()
  * @ORM\Table(name="oro_promotion_applied")
  * @ORM\Entity(repositoryClass="Oro\Bundle\PromotionBundle\Entity\Repository\AppliedPromotionRepository")
- *
- * Store Applied Discount in a database
  */
 class AppliedPromotion extends ExtendAppliedPromotion implements DatesAwareInterface
 {
