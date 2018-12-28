@@ -8,6 +8,8 @@ use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 
 /**
+ * Represents a discount applied to order line item.
+ *
  * @ORM\Table(name="oro_promotion_applied_discount")
  * @ORM\Entity(repositoryClass="Oro\Bundle\PromotionBundle\Entity\Repository\AppliedDiscountRepository")
  */
