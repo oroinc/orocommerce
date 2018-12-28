@@ -19,7 +19,7 @@
             <table>
                 <tr>
                     <td>{{ form_widget(form.unit) }}{% if form.unit_disabled is defined %}{{ form_widget(form.unit_disabled) }}{% endif %}</td>
-                    <td><div class="control-label"><label>{{ 'oro.product.productunitprecision.precision.label'|trans }}<em>&nbsp;</em></label></div></td>
+                    <td class="float-holder-label"><div class="control-label"><label>{{ 'oro.product.productunitprecision.precision.label'|trans }}<em>&nbsp;</em></label></div></td>
                     <td>{{ form_widget(form.precision, { 'attr': {'class': 'precision', 'style': 'width: 40px'} }) }}</td>
                     <td>{{ form_widget(form.conversionRate) }}</td>
                     <td>{{ form_widget(form.sell) }}</td>
@@ -88,14 +88,16 @@
     </div>
     {% if tooltip is defined  and tooltip %}
         {% import 'OroUIBundle::macros.html.twig' as ui %}
-        {{ ui.tooltip(
-            tooltip,
-            tooltip_parameters|default({}),
-            tooltip_placement|default(null),
-            tooltip_details_enabled|default(false),
-            tooltip_details_link|default(null),
-            tooltip_details_anchor|default(null)
-        ) }}
+        <div class="tooltip-icon-container">
+            {{ ui.tooltip(
+                tooltip,
+                tooltip_parameters|default({}),
+                tooltip_placement|default(null),
+                tooltip_details_enabled|default(false),
+                tooltip_details_link|default(null),
+                tooltip_details_anchor|default(null)
+            ) }}
+        </div>
     {% endif %}
     {{ form_rest(form) }}
 {% endblock %}
@@ -132,7 +134,7 @@
                 </table>
             </div>
             {% if allow_add and oro_is_adding_additional_units_to_product_available() %}
-                <a class="btn add-list-item" href="javascript: void(0);"><i class="fa-plus"></i>{{ form.vars.add_label|default('oro.form.collection.add')|trans }}</a>
+                <a class="btn add-list-item" href="javascript: void(0);">{{ form.vars.add_label|default('oro.form.collection.add')|trans }}</a>
             {% endif %}
         </div>
     {% endspaceless %}

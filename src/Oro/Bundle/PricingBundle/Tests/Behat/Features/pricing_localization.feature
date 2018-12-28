@@ -15,10 +15,10 @@ Feature: Pricing Localization
     And I select "Localization 1" localization
     When type "PSKU1" in "search"
     And I click "Search Button"
-    Then I should see "Listed Price: $6.00 / item (lang1)" for "PSKU1" product
-    And I should see "Your Price: $6.00 / item (lang1)" for "PSKU1" product
+    Then I should see "Listed Price: US$6.00 / item (lang1)" for "PSKU1" product
+    And I should see "Your Price: US$6.00 / item (lang1)" for "PSKU1" product
 
   Scenario: Check translation of product unit in product catalog in mobile view
     Given I set window size to 320x640
-    Then I should see "Listed Price: $6.00 / item (short, lang1)" for "PSKU1" product
-    And I should see "Your Price: $6.00 / item (short, lang1)" for "PSKU1" product
+    Then I should see "Listed Price: US$6.00 / item (short, lang1)" for "PSKU1" product
+    And I should see "Your Price: US$6.00 / item (short, lang1)" for "PSKU1" product

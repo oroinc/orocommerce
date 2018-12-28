@@ -479,7 +479,6 @@ services:
             - '@oro_filter.filter_utility'
         calls:
             - [setFormatter, ['@oro_product.formatter.product_unit_label']]
-            - [setConfigManager, ['@oro_config.global']]
         tags:
             - { name: oro_search.extension.search_filter.filter, type: frontend-product-price, datasource: search }
 
@@ -963,7 +962,6 @@ services:
             - '@logger'
             - '@oro_pricing.price_list_change_trigger_factory'
             - '@doctrine'
-            - '@oro_entity.database_exception_helper'
             - '@oro_pricing.model.combined_price_list_trigger_handler'
             - '@oro_pricing.builder.combined_price_list_builder_facade'
         tags:
@@ -986,7 +984,6 @@ services:
             - '@doctrine'
             - '@oro_pricing.builder.combined_price_list_builder_facade'
             - '@logger'
-            - '@oro_entity.database_exception_helper'
             - '@oro_pricing.model.combined_price_list_trigger_handler'
         tags:
             - { name: 'oro_message_queue.client.message_processor' }
@@ -1183,7 +1180,6 @@ services:
         arguments:
             - '@oro_entity.doctrine_helper'
             - '@oro_pricing.providers.price_attribute_prices'
-            - '@translator'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.product-price-attributes-grid, method: onBuildBefore }
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.product-price-attributes-grid, method: onBuildAfter }

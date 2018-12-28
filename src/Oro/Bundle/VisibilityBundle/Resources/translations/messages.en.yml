@@ -76,6 +76,7 @@ oro.visibility:
         id.label: ID
         product.label: Product
         visibility.label: Visibility
+        product_visibility.label: Product visibility
         scope.label: Scope
         choice:
             category: Category

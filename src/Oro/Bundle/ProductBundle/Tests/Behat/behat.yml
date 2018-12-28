@@ -526,6 +526,14 @@ oro_behat_extension:
             type: css
             locator: 'div.content-variant-item:first-child input[data-name="field__customer-group"]'
             element: Select2Entity
+          First Content Variant Restrictions Customer:
+            type: css
+            locator: 'div.content-variant-item:first-child .scope-collection input[data-name="field__customer"]'
+            element: Select2Entity
+          Content Node Restrictions Customer:
+            type: css
+            locator: 'div[data-ftid="oro_web_catalog_content_node_scopes"] input[data-name="field__customer"]'
+            element: Select2Entity
 
     RemoveFilterButton:
       selector: '.conditions-group .condition .btn-close'
@@ -857,7 +865,7 @@ oro_behat_extension:
     Brand Filter Toggle Icon:
       selector:
         type: xpath
-        locator: '//div[contains(@class,"filter-item")]/div[contains(@class,"filter-select") and contains(text(),"Filter By Brand")]/div[contains(@class,"filter-criteria-selector-icon-wrap")]'        
+        locator: '//div[contains(@class,"filter-item")]/div[contains(@class,"filter-select") and contains(text(),"Filter By Brand")]/div[contains(@class,"filter-criteria-selector-icon-wrap")]'
 
     Product Item Preview:
       selector: '.product-item .product-item__preview'
@@ -1012,6 +1020,8 @@ oro_behat_extension:
         - OroQueryDesignerBundle::QueryDesignerContext
         - OroLocaleBundle::LocalizationContext
         - OroWorkflowBundle::FeatureContext
+        - OroFrontendLocalizationBundle::LocalizationSwitcherContext
+        - OroShippingBundle::SingleCurrencyContext
       paths:
         - '@OroProductBundle/Tests/Behat/Features/product-collection'
         - '@OroProductBundle/Tests/Behat/Features/product'
@@ -1053,5 +1063,9 @@ oro_behat_extension:
         - OroShippingBundle::FeatureContext
         - OroLocaleBundle::LocalizationContext
         - OroFrontendLocalizationBundle::LocalizationSwitcherContext
+        - OroEntityExtendBundle::FeatureContext
+        - OroImportExportBundle::ImportExportContext:
+            - '@oro_entity.entity_alias_resolver'
+            - '@oro_importexport.processor.registry'
       paths:
         - '@OroProductBundle/Tests/Behat/Features/other'

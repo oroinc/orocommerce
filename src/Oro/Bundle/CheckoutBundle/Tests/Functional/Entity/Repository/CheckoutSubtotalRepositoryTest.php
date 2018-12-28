@@ -23,8 +23,8 @@ class CheckoutSubtotalRepositoryTest extends FrontendWebTestCase
         $this->setCurrentWebsite('default');
         $this->loadFixtures(
             [
-                LoadCheckoutSubtotals::class,
                 LoadCombinedProductPrices::class,
+                LoadCheckoutSubtotals::class
             ]
         );
 

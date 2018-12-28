@@ -21,6 +21,9 @@ use Oro\Bundle\PromotionBundle\Executor\PromotionExecutor;
 use Oro\Bundle\PromotionBundle\Mapper\AppliedPromotionMapper;
 use Oro\Component\DependencyInjection\ServiceLink;
 
+/**
+ * Manager provides useful methods to work with already applied promotions to Order entity.
+ */
 class AppliedPromotionManager
 {
     /**
@@ -64,6 +67,10 @@ class AppliedPromotionManager
      */
     public function createAppliedPromotions(Order $order, $removeOrphans = false)
     {
+        if (!$this->getPromotionExecutor()->supports($order)) {
+            return;
+        }
+
         $discountContext = $this->getPromotionExecutor()->execute($order);
 
         $appliedPromotions = $this->updateAppliedPromotions($discountContext, $order);

@@ -1,0 +1,73 @@
+include:
+    - '@OroCustomerBundle:BuyerCustomerFixture.yml'
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    locvalue1:
+        string: 'Product 1'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    precision1:
+        unit: '@each'
+        precision: '1'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product1:
+        sku: 'PSKU1'
+        status: 'enabled'
+        type: 'simple'
+        organization: '@organization'
+        owner: '@business_unit'
+        primaryUnitPrecision: '@precision1'
+        attributeFamily: '@defaultProductFamily'
+        addName: ['@locvalue1']
+        inventoryStatus: '@enumInventoryStatuses'
+
+Oro\Bundle\PricingBundle\Entity\PriceList:
+    priceListForWebsite:
+        name: 'priceListForWebsite'
+        addCurrencyByCode: ['USD']
+
+Oro\Bundle\PricingBundle\Entity\ProductPrice:
+    price1:
+        product: '@product1'
+        priceList: '@priceListForWebsite'
+        currency: 'USD'
+        quantity: 1
+        unit: '@each'
+        value: 12.99
+    price2:
+        product: '@product1'
+        priceList: '@priceListForWebsite'
+        currency: 'USD'
+        quantity: 100
+        unit: '@each'
+        value: 10.99
+
+Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
+    priceRelation1:
+        product: '@product1'
+        priceList: '@priceListForWebsite'
+
+Oro\Bundle\PricingBundle\Entity\CombinedPriceListToCustomer:
+    combinedPriceListToCustomer:
+        pricelist: '@combinedPriceList'
+        customer: '@customer1'
+        website: '@website1'
+
+Oro\Bundle\PricingBundle\Entity\CombinedProductPrice:
+    combinedProduct1Price:
+        pricelist: '@combinedPriceList'
+        product: '@product1'
+        productSku: 'PSKU1'
+        quantity: 1
+        unit: '@each'
+        value: 12.99
+        currency: 'USD'
+    combinedProduct100Price:
+        pricelist: '@combinedPriceList'
+        product: '@product1'
+        productSku: 'PSKU1'
+        quantity: 100
+        unit: '@each'
+        value: 10.99
+        currency: 'USD'

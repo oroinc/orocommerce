@@ -4,31 +4,37 @@ namespace Oro\Bundle\ProductBundle\Provider;
 
 use Doctrine\Common\Inflector\Inflector;
 use Oro\Bundle\EntityBundle\Model\EntityAlias;
+use Oro\Bundle\EntityBundle\Provider\DuplicateEntityAliasResolver;
 use Oro\Bundle\EntityBundle\Provider\EntityAliasProviderInterface;
-use Oro\Bundle\EntityConfigBundle\Config\AttributeConfigHelper;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
+/**
+ * Provides aliases for target classes for enum and multi-enum product attributes.
+ */
 class ProductEntityAliasProvider implements EntityAliasProviderInterface
 {
-    /** @var AttributeConfigHelper */
-    private $attributeConfigHelper;
-
     /** @var ConfigManager */
     private $configManager;
+
+    /** @var DuplicateEntityAliasResolver */
+    private $duplicateResolver;
 
     /** @var string */
     private $extendedProductPrefix;
 
+    /** @var array [class name => TRUE, ...] */
+    private $classes;
+
     /**
-     * @param AttributeConfigHelper $attributeConfigHelper
-     * @param ConfigManager $configManager
+     * @param ConfigManager                $configManager
+     * @param DuplicateEntityAliasResolver $duplicateResolver
      */
-    public function __construct(AttributeConfigHelper $attributeConfigHelper, ConfigManager $configManager)
+    public function __construct(ConfigManager $configManager, DuplicateEntityAliasResolver $duplicateResolver)
     {
-        $this->attributeConfigHelper = $attributeConfigHelper;
         $this->configManager = $configManager;
+        $this->duplicateResolver = $duplicateResolver;
         $this->extendedProductPrefix = ExtendHelper::ENTITY_NAMESPACE . 'EV_Product_';
     }
 
@@ -37,87 +43,82 @@ class ProductEntityAliasProvider implements EntityAliasProviderInterface
      */
     public function getEntityAlias($entityClass)
     {
-        // Quick check to exclude classes that are not Product extended related
+        // quick check to exclude classes that are not related to Product attributes
         if (false === stripos($entityClass, $this->extendedProductPrefix)) {
             return null;
         }
 
-        // Product attributes are dictionary classes, we have to remove the hash from the class name in API
-        // See #BB-10758
-        $fieldName = $this->getAliasFromEntityClass($entityClass);
-        if ($this->attributeConfigHelper->isFieldAttribute(Product::class, $fieldName)) {
-            list($alias, $plural) = $this->getEntityAliasAndPlural($fieldName);
-
-            return new EntityAlias($alias, $plural);
+        $this->ensureInitialized();
+        if (!isset($this->classes[$entityClass])) {
+            return null;
         }
 
-        return null;
+        $entityAlias = $this->duplicateResolver->getAlias($entityClass);
+        if (null === $entityAlias) {
+            $entityAlias = $this->doGetEntityAlias($entityClass);
+            $this->duplicateResolver->saveAlias($entityClass, $entityAlias);
+        }
+
+        return $entityAlias;
     }
 
     /**
-     * @param string $entityClass ex:Extend\Entity\EV_Product_New_Attribute_8fde6396
-     * @return string
-     */
-    protected function getAliasFromEntityClass($entityClass)
-    {
-        // starting with a FQN like Extend\Entity\EV_Product_New_Attribute_8fde6396 we get a clean entity class name
-        // ex: New_Attribute_8fde6396
-        $cleanEntityClass = str_replace($this->extendedProductPrefix, '', $entityClass);
-
-        // and if we remove the hash from the class name we get the field name
-        // ex: New_Attribute
-        $lastPos = strrpos($cleanEntityClass, '_');
-        $fieldName = substr($cleanEntityClass, 0, $lastPos);
-
-        return $this->getAliasByActualFieldName($fieldName);
-    }
-
-    /**
-     * Method will check Product attributes and see if we can get a match knowing the rules on which the
-     * entity class name is generated from the attribute name.
+     * @param string $entityClass
      *
-     * @param string $fieldName
-     * @return string
+     * @return EntityAlias
      */
-    protected function getAliasByActualFieldName($fieldName)
+    private function doGetEntityAlias(string $entityClass): EntityAlias
     {
-        $productMetadata = $this->configManager->getEntityMetadata(Product::class);
+        // remove namespace to get a short class name
+        // ex: New_Attribute_8fde6396
+        $shortEntityClass = substr($entityClass, strlen($this->extendedProductPrefix));
+        // remove the hash from the class name we get more readable class name
+        // ex: New_Attribute
+        $cleanEntityClass = substr($shortEntityClass, 0, strrpos($shortEntityClass, '_'));
 
-        // start by lowering everything and removing underscores for easier comparisons
-        $lowerProductFieldNames = [];
-        foreach ($productMetadata->propertyMetadata as $property => $fieldMetadata) {
-            $lowerProductFieldNames[$this->normalizeFieldName($property)] = $property;
+        $alias = $this->buildAlias($cleanEntityClass);
+        $pluralAlias = Inflector::pluralize($alias);
+        if ($this->duplicateResolver->hasAlias($alias, $pluralAlias)) {
+            $alias = $this->duplicateResolver->getUniqueAlias($alias, $pluralAlias);
+            $pluralAlias = $alias;
         }
 
-        // normalize fieldName as well
-        $normalizedFieldName = $this->normalizeFieldName($fieldName);
-
-        if (array_key_exists($normalizedFieldName, $lowerProductFieldNames)) {
-            return $lowerProductFieldNames[$normalizedFieldName];
-        }
-
-        return $fieldName;
+        return new EntityAlias($alias, $pluralAlias);
     }
 
     /**
-     * @param string $fieldName
+     * @param string $className The class name without namespace
+     *
      * @return string
      */
-    protected function normalizeFieldName($fieldName)
+    private function buildAlias(string $className): string
     {
-        return str_replace('_', '', strtolower($fieldName));
+        return 'product' . str_replace('_', '', strtolower($className));
     }
 
-    /**
-     * @param string $fieldName
-     * @return array
-     */
-    protected function getEntityAliasAndPlural($fieldName)
+    private function ensureInitialized(): void
     {
-        $alias = 'product' . $this->normalizeFieldName($fieldName);
-        return [
-            $alias,
-            Inflector::pluralize($alias),
-        ];
+        if (null !== $this->classes) {
+            return;
+        }
+
+        $this->classes = [];
+        $fields = $this->configManager->getConfigs('attribute', Product::class, true);
+        foreach ($fields as $field) {
+            if (!$field->is('is_attribute')) {
+                continue;
+            }
+
+            $targetEntityClass = $this->configManager
+                ->getFieldConfig('extend', Product::class, $field->getId()->getFieldName())
+                ->get('target_entity');
+            if (!$targetEntityClass
+                || !$this->configManager->getEntityConfig('enum', $targetEntityClass)->get('code')
+            ) {
+                continue;
+            }
+
+            $this->classes[$targetEntityClass] = true;
+        }
     }
 }

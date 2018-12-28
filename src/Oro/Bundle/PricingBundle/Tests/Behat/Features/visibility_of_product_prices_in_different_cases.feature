@@ -41,7 +41,7 @@ Feature: Visibility of product prices in different cases
   Scenario: Resetting Price Filter
     Given I am on "/product"
     And I filter Price as equals "12,00"
-    And I should see grid with filter hints:
+    And I should see filter hints in frontend grid:
       | Price: equals 1,200.00 / ea |
     When I reset "Price" filter on grid "ProductFrontendGrid"
     And click on "Open Filters Panel Button"

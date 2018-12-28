@@ -5,6 +5,7 @@
 @fixture-OroCheckoutBundle:Checkout.yml
 @fixture-OroCheckoutBundle:ShippingRuleForFlatRate2.yml
 @fixture-OroCheckoutBundle:InventoryLevel.yml
+@regression
 
 Feature: Single Page Checkout With Popup for Guest
   In order to complete the checkout process
@@ -60,7 +61,7 @@ Feature: Single Page Checkout With Popup for Guest
     And I should not see flash messages
     And I uncheck "Save my data and create an account" on the checkout page
     And I click "Submit Order"
-    And I should see "Please enter correct billing address"
+    And I should see "Please enter correct billing address."
     When I click on "Billing Address Select"
     And I click on "New Address Option"
     Then I should see "UiDialog" with elements:
@@ -107,7 +108,7 @@ Feature: Single Page Checkout With Popup for Guest
     And I click "Continue"
     Then I should see "New address (B Prefix B Fname B Mname B Lname B Suffix, B Organization, B Street B Street 2, B CITY HA AL 12345, 12345)" for "Select Single Page Checkout Billing Address" select
     And I click "Submit Order"
-    And I should see "Please enter correct shipping address"
+    And I should see "Please enter correct shipping address."
 
   Scenario: Configure shipping rules
     Given I proceed as the Admin

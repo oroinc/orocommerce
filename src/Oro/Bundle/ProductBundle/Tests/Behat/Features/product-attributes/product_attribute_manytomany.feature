@@ -64,3 +64,12 @@ Feature: Product attribute many-to-many
     When I filter ManyToManyField as contains "Marlene Bradley"
     Then I should see "SKU123" product
     And I should not see "SKU456" product
+
+  Scenario: Delete product attribute
+    Given I login as administrator
+    Given I go to Products/ Product Attributes
+    When I click Remove "ManyToManyField" in grid
+    Then I should see "Are you sure you want to delete this attribute?"
+    And I click "Yes"
+    Then I should see "Attribute successfully deleted" flash message
+    And I should see "Update schema"

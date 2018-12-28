@@ -52,6 +52,8 @@ oro_behat_extension:
         - OroCheckoutBundle::FeatureContext
         - OroShoppingListBundle::ShoppingListContext
         - OroDataGridBundle::GridContext
+        - OroLocaleBundle::LocalizationContext
+        - OroFrontendLocalizationBundle::LocalizationSwitcherContext
         - OroPaymentBundle::FeatureContext
         - OroWorkflowBundle::FeatureContext
       paths:

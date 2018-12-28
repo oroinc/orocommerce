@@ -12,6 +12,9 @@ use Oro\Bundle\WebCatalogBundle\Cache\ResolvedData\ResolvedContentVariant;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 
+/**
+ * Service that collect content nodes tree by scope, including content variants.
+ */
 class ContentNodeTreeResolver implements ContentNodeTreeResolverInterface
 {
     const ROOT_NODE_IDENTIFIER = 'root';
@@ -42,6 +45,8 @@ class ContentNodeTreeResolver implements ContentNodeTreeResolverInterface
      */
     public function getResolvedContentNode(ContentNode $node, Scope $scope)
     {
+        $this->resolveScope($scope);
+
         return $this->getResolvedTree($node, $scope);
     }
 
@@ -171,6 +176,21 @@ class ContentNodeTreeResolver implements ContentNodeTreeResolverInterface
             $localizedUrl->setLocalization($slug->getLocalization());
 
             $resolvedVariant->addLocalizedUrl($localizedUrl);
+        }
+    }
+
+    /**
+     * @param Scope $scope
+     */
+    protected function resolveScope(Scope $scope)
+    {
+        // In order to find content nodes with customer group restrictions to build the tree,
+        // we need to manually set customer's group to scope entity.
+        if (method_exists($scope, 'getCustomer')
+            && method_exists($scope, 'setCustomerGroup')
+            && $scope->getCustomer()
+        ) {
+            $scope->setCustomerGroup($scope->getCustomer()->getGroup());
         }
     }
 }

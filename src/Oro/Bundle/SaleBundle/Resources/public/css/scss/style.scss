@@ -29,9 +29,7 @@
 .sale-quoteproductitem-widget-productunit,
 .quote-lineitem-requested-unit,
 .quote-lineitem-offers-unit {
-    select {
-        width: 60px !important;
-    }
+    @include selector-width(65px);
 }
 
 .quote-lineitem-requested-price,
@@ -43,22 +41,16 @@
 
 .sale-quoteproductitem-widget-price,
 .quote-lineitem-offers-price {
-    select {
-        width: 80px !important;
-    }
+    @include selector-width(65px);
 }
 
 .quote-lineitem-offers-price {
-    padding-left: 6px !important;
-    padding-right: 6px !important;
-
     table {
         position: relative;
     }
 
     input[type="text"] {
         text-align: right;
-        padding-left: 17px;
     }
 }
 
@@ -83,13 +75,13 @@ td.quote-lineitem-notes {
 
 .quote-lineitems {
     .add-list-item {
-        margin-top: 10px;
+        margin-top: $content-padding-small;
     }
 }
 
 .quote-lineitem-offers {
     .add-list-item {
-        margin-left: 0;
+        margin-#{$start}: 0;
     }
 }
 
@@ -137,15 +129,15 @@ table.quote-lineitem-offers {
 .quote-lineitem-notes-customer {
     label {
         font-weight: bold;
+        display: block;
     }
     textarea {
         max-height: 100px;
+        width: 100%;
     }
 }
 
 .quote-lineitem-notes-seller-active {
-    margin: 20px 0 15px;
-
     label {
         font-weight: bold;
     }

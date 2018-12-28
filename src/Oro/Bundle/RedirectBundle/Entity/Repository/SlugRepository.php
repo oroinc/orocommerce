@@ -10,12 +10,16 @@ use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
+use Oro\Bundle\RedirectBundle\Entity\Hydrator\MatchingSlugHydrator;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Entity\SlugAwareInterface;
 use Oro\Bundle\RedirectBundle\Helper\UrlParameterHelper;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
 
+/**
+ * Repository for Slug entity
+ */
 class SlugRepository extends EntityRepository
 {
     /**
@@ -224,6 +228,28 @@ class SlugRepository extends EntityRepository
     }
 
     /**
+     * @param string $routeName
+     *
+     * @return bool
+     */
+    public function isSlugForRouteExists(string $routeName): bool
+    {
+        /** @var Connection $connection */
+        $connection = $this->_em->getConnection();
+
+        $qb = $connection->createQueryBuilder();
+        $qb->select('1')
+            ->from('oro_redirect_slug', 'slug')
+            ->leftJoin('slug', 'oro_slug_scope', 'scope', 'scope.slug_id = slug.id')
+            ->where('scope.slug_id IS NULL')
+            ->andWhere('slug.route_name = :routeName')
+            ->setParameter('routeName', $routeName)
+            ->setMaxResults(1);
+
+        return (bool)$qb->execute()->fetch(\PDO::FETCH_ASSOC);
+    }
+
+    /**
      * @return QueryBuilder
      */
     private function getUsedScopesQueryBuilder()
@@ -336,18 +362,12 @@ class SlugRepository extends EntityRepository
     private function getMatchingSlugForCriteria(QueryBuilder $qb, ScopeCriteria $scopeCriteria)
     {
         $scopeCriteria->applyToJoinWithPriority($qb, 'scopes');
-
-        $results = $qb->getQuery()->getResult();
-        foreach ($results as $result) {
-            /** @var Slug $slug */
-            $slug = $result[0];
-            $matchedScopeId = $result['matchedScopeId'];
-            if ($matchedScopeId || $slug->getScopes()->isEmpty()) {
-                return $slug;
-            }
+        $result = $qb->getQuery()->getResult(MatchingSlugHydrator::NAME);
+        if (!$result) {
+            return null;
         }
 
-        return null;
+        return reset($result);
     }
 
     /**

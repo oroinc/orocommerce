@@ -202,7 +202,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         $enumInputContainer = $entityConfigForm->find(
             'xpath',
             sprintf(
-                '//input[@value="%s"]/../../..',
+                '//input[@value="%s"]/../../../div[contains(@class, "tooltip-icon-container")]',
                 $name
             )
         );
@@ -233,7 +233,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         $enumInputWithTooltip = $entityConfigForm->find(
             'xpath',
             sprintf(
-                '//input[@value="%s"]/../../../i[contains(@class, "fa-info-circle") and contains(@class, "tooltip-icon")]',
+                '//input[@value="%s"]/../../../div[contains(@class, "tooltip-icon-container")]/i[contains(@class, "tooltip-icon")]',
                 $name
             )
         );

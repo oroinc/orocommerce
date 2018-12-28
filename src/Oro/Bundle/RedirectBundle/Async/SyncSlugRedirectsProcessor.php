@@ -3,8 +3,8 @@
 namespace Oro\Bundle\RedirectBundle\Async;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\DBAL\Exception\RetryableException;
 use Doctrine\ORM\EntityManager;
-use Oro\Bundle\EntityBundle\ORM\DatabaseExceptionHelper;
 use Oro\Bundle\RedirectBundle\Entity\Redirect;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
@@ -30,23 +30,15 @@ class SyncSlugRedirectsProcessor implements MessageProcessorInterface, TopicSubs
     protected $logger;
 
     /**
-     * @var DatabaseExceptionHelper
-     */
-    protected $databaseExceptionHelper;
-
-    /**
      * @param ManagerRegistry $registry
      * @param LoggerInterface $logger
-     * @param DatabaseExceptionHelper $databaseExceptionHelper
      */
     public function __construct(
         ManagerRegistry $registry,
-        LoggerInterface $logger,
-        DatabaseExceptionHelper $databaseExceptionHelper
+        LoggerInterface $logger
     ) {
         $this->registry = $registry;
         $this->logger = $logger;
-        $this->databaseExceptionHelper = $databaseExceptionHelper;
     }
 
     /**
@@ -93,12 +85,11 @@ class SyncSlugRedirectsProcessor implements MessageProcessorInterface, TopicSubs
                 ['exception' => $e]
             );
 
-            $driverException = $this->databaseExceptionHelper->getDriverException($e);
-            if ($driverException && $this->databaseExceptionHelper->isDeadlock($driverException)) {
+            if ($e instanceof RetryableException) {
                 return self::REQUEUE;
-            } else {
-                return self::REJECT;
             }
+
+            return self::REJECT;
         }
 
         return self::ACK;

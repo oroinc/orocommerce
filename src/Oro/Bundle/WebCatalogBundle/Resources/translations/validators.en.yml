@@ -2,6 +2,9 @@ oro:
     webcatalog:
         scope:
             unique.message: 'Content Variants contains overlapping Restrictions rules'
+            empty.message: 'Restriction rules must not be empty'
         contentnode:
+            scope:
+                empty.message: 'Content node must have at least one restriction'
             content_variants:
                 blank: 'Please add one or more content variants.'

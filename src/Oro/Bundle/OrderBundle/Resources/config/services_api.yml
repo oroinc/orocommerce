@@ -11,6 +11,20 @@ services:
         arguments:
             - '@oro_product.repository.product'
 
+    oro_order.api.frontend.order_line_item_query_modifier:
+        class: Oro\Bundle\OrderBundle\Api\OrderLineItemQueryModifier
+        arguments:
+            - '@oro_entity.orm.entity_class_resolver'
+        tags:
+            - { name: oro.api.query_modifier, requestType: frontend }
+
+    oro_order.api.frontend.order_address_query_modifier:
+        class: Oro\Bundle\OrderBundle\Api\OrderAddressQueryModifier
+        arguments:
+            - '@oro_entity.orm.entity_class_resolver'
+        tags:
+            - { name: oro.api.query_modifier, requestType: frontend }
+
     oro_order.api.handle_order_included_data:
         class: 'Oro\Bundle\OrderBundle\Api\Processor\HandleOrderIncludedData'
         arguments:
@@ -32,3 +46,31 @@ services:
         tags:
             - { name: oro.api.processor, action: create, group: load_data, priority: -255, class: '%oro_order.entity.order_line_item.class%' }
             - { name: oro.api.processor, action: update, group: load_data, priority: -255, class: '%oro_order.entity.order_line_item.class%' }
+
+    oro_order.api.compute_order_payment_status:
+        class: Oro\Bundle\OrderBundle\Api\Processor\ComputeOrderPaymentStatus
+        arguments:
+            - '@oro_api.doctrine_helper'
+            - '@oro_payment.formatter.payment_status_label'
+        tags:
+            - { name: oro.api.processor, action: customize_loaded_data, collection: true, requestType: frontend, class: '%oro_order.entity.order.class%' }
+
+    oro_order.api.compute_order_payment_method:
+        class: Oro\Bundle\OrderBundle\Api\Processor\ComputeOrderPaymentMethod
+        arguments:
+            - '@oro_api.doctrine_helper'
+            - '@oro_payment.formatter.payment_method_label'
+        tags:
+            - { name: oro.api.processor, action: customize_loaded_data, collection: true, requestType: frontend, class: '%oro_order.entity.order.class%' }
+
+    oro_order.api.compute_order_shipping:
+        class: Oro\Bundle\OrderBundle\Api\Processor\ComputeOrderShipping
+        arguments:
+            - '@?oro_shipping.translator.shipping_method_label'
+        tags:
+            - { name: oro.api.processor, action: customize_loaded_data, requestType: frontend, class: '%oro_order.entity.order.class%' }
+
+    oro_order.api.set_order_default_discount_type:
+        class: Oro\Bundle\OrderBundle\Api\Processor\SetOrderDefaultDiscountType
+        tags:
+            - { name: oro.api.processor, action: customize_loaded_data, requestType: frontend, class: '%oro_order.entity.order.class%' }

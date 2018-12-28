@@ -279,7 +279,7 @@ define(function(require) {
                 item,
                 {
                     amount: 0,
-                    currency: localeSettings.defaults.currency,
+                    currency: localeSettings.getCurrency(),
                     visible: false,
                     template: null,
                     signedAmount: 0,

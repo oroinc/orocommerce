@@ -29,7 +29,7 @@
 .oro-item-collection {
     td {
         white-space: nowrap;
-        vertical-align: middle;
+        vertical-align: top;
 
         .conversion-rate-label {
             position: absolute;
@@ -37,7 +37,17 @@
         }
 
         .sell {
-            margin-top: 8px;
+            margin-top: $content-padding-small;
+        }
+
+        table {
+            thead th > span {
+                padding: 0;
+            }
+
+            td {
+                vertical-align: middle;
+            }
         }
     }
 
@@ -131,7 +141,7 @@
     }
 
     .add-list-item {
-        margin-top: 8px;
+        margin-top: $content-padding-small;
         margin-#{$start}: 0;
     }
 
@@ -166,13 +176,6 @@
 
 .content-variant-item,
 .product-collection-segment {
-    div.filter-box {
-        &.oro-clearfix-width {
-            margin-#{$start}: 0;
-            margin-#{$end}: 0;
-        }
-    }
-
     .oro-tabs {
         .tab-pane {
             min-height: 0;

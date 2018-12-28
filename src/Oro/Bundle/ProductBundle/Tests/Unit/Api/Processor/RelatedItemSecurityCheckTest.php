@@ -4,59 +4,53 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Api\Processor;
 
 use Oro\Bundle\ApiBundle\Tests\Unit\Processor\Get\GetProcessorTestCase;
 use Oro\Bundle\ProductBundle\Api\Processor\RelatedItemSecurityCheck;
-use Oro\Bundle\SecurityBundle\Acl\Group\AclGroupProviderInterface;
 use Oro\Bundle\SecurityBundle\Tests\Unit\Authorization\FakeAuthorizationChecker;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class RelatedItemSecurityCheckTest extends GetProcessorTestCase
 {
     /**
-     * @dataProvider withoutProperCapabilitiesDataProvider
-     * @param array $capabilities
-     * @param array $isGrantedMapping
+     * @expectedException \Symfony\Component\Security\Core\Exception\AccessDeniedException
      */
-    public function testAccessIsDeniedWhenUserDoesNotHaveProperCapability(array $capabilities, array $isGrantedMapping)
+    public function testAccessIsDeniedWhenUserDoesNotHaveCapabilityToEditRelatedProducts()
     {
-        $processor = $this->getSecurityCheck($capabilities, [], $isGrantedMapping);
-
-        $this->expectException(AccessDeniedException::class);
+        $processor = $this->getProcessor([], ['oro_related_products_edit' => false]);
 
         $processor->process($this->context);
+        self::assertEquals([], $this->context->getSkippedGroups());
     }
 
-    /**
-     * @dataProvider withoutProperPermissionsDataProvider
-     * @param array $permissions
-     * @param array $isGrantedMapping
-     */
-    public function testAccessIsDeniedWhenUserDoesNotHaveProperPermissions(array $permissions, array $isGrantedMapping)
+    public function testAccessIsGrantedAndSecurityCheckGroupSkippedWhenUserHasCapabilityToEditRelatedProducts()
     {
-        $processor = $this->getSecurityCheck([], $permissions, $isGrantedMapping);
-
-        $this->expectException(AccessDeniedException::class);
-
-        $processor->process($this->context);
-    }
-
-    public function testAccessGrantedAndSecurityCheckGroupSkippedWhenEmptyArrayPassed()
-    {
-        $processor = $this->getSecurityCheck([], [], []);
+        $processor = $this->getProcessor([], ['oro_related_products_edit' => true]);
 
         $processor->process($this->context);
         self::assertEquals(['security_check'], $this->context->getSkippedGroups());
     }
 
     /**
-     * @return array
+     * @dataProvider withoutProperPermissionsDataProvider
+     * @expectedException \Symfony\Component\Security\Core\Exception\AccessDeniedException
      */
-    public function withoutProperCapabilitiesDataProvider()
+    public function testAccessIsDeniedWhenUserDoesNotHaveProperPermissions(array $permissions, array $isGrantedMapping)
     {
-        return [
-            [['capability_1', 'capability_2'], ['capability_1' => true, 'capability_2' => false]],
-            [['capability_1', 'capability_2'], ['capability_1' => false, 'capability_2' => true]],
-            [['capability_1', 'capability_2'], ['capability_1' => false, 'capability_2' => false]],
-            [['capability_1', 'capability_2'], ['capability_1' => false, 'capability_2' => false]],
+        $isGrantedMapping['oro_related_products_edit'] = true;
+        $processor = $this->getProcessor($permissions, $isGrantedMapping);
+
+        $processor->process($this->context);
+        self::assertEquals([], $this->context->getSkippedGroups());
+    }
+
+    public function testAccessGrantedAndSecurityCheckGroupSkippedWhenAllPermissionsAreGranted()
+    {
+        $isGrantedMapping = [
+            'oro_related_products_edit' => true,
+            'EDIT'                      => true,
+            'VIEW'                      => true
         ];
+        $processor = $this->getProcessor(['EDIT', 'VIEW'], $isGrantedMapping);
+
+        $processor->process($this->context);
+        self::assertEquals(['security_check'], $this->context->getSkippedGroups());
     }
 
     /**
@@ -73,21 +67,16 @@ class RelatedItemSecurityCheckTest extends GetProcessorTestCase
     }
 
     /**
-     * @param array $capabilities
      * @param array $permissions
      * @param array $isGrantedMapping
+     *
      * @return RelatedItemSecurityCheck
      */
-    private function getSecurityCheck(array $capabilities, array $permissions, array $isGrantedMapping)
+    private function getProcessor(array $permissions, array $isGrantedMapping)
     {
         $authChecker = new FakeAuthorizationChecker();
         $authChecker->isGrantedMapping = $isGrantedMapping;
 
-        $aclGroupProvider = $this->createMock(AclGroupProviderInterface::class);
-        $aclGroupProvider->expects(self::any())
-            ->method('getGroup')
-            ->willReturn('');
-
-        return new RelatedItemSecurityCheck($authChecker, $aclGroupProvider, $permissions, $capabilities);
+        return new RelatedItemSecurityCheck($authChecker, $permissions);
     }
 }
