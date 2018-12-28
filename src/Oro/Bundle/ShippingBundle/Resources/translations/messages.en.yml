@@ -61,6 +61,7 @@ oro:
             currency.label: Currency
             organization.label: Organization
             websites.label: Websites
+            method.label: Method
         shippingmethodconfig:
             disabled: Disabled
             entity_label: Shipping Rule Method Config

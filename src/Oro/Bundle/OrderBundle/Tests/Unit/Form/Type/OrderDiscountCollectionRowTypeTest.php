@@ -2,9 +2,12 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Form\Type;
 
+use Oro\Bundle\FormBundle\Form\Type\OroHiddenNumberType;
+use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use Oro\Bundle\OrderBundle\Entity\OrderDiscount;
 use Oro\Bundle\OrderBundle\Form\Type\OrderDiscountCollectionRowType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Symfony\Component\Form\PreloadedExtension;
 
 class OrderDiscountCollectionRowTypeTest extends FormIntegrationTestCase
 {
@@ -93,7 +96,17 @@ class OrderDiscountCollectionRowTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
-        return [$this->getValidatorExtension(false)];
+        $numberFormatter = $this->createMock(NumberFormatter::class);
+
+        return [
+            $this->getValidatorExtension(false),
+            new PreloadedExtension(
+                [
+                    OroHiddenNumberType::class => new OroHiddenNumberType($numberFormatter),
+                ],
+                []
+            ),
+        ];
     }
 
     public function testDefaultOptions()

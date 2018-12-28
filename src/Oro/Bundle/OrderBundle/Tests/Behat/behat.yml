@@ -22,6 +22,17 @@ oro_behat_extension:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Table
       selector: 'table.order-line-items-table'
 
+    Backend Order First Line Item Taxes Items Table:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Table
+      selector: 'tr.order-line-item:first-child div.line-item-taxes-items table.tax-result-grid'
+
+    Backend Order First Line Item Taxes Results Table:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Table
+      selector: 'tr.order-line-item:first-child div.line-item-taxes-results table.tax-result-grid'
+
+    Backend Order Add Product Button:
+      selector: 'div.order-line-items a.add-list-item'
+
     BackendOrderLineItems:
       class: Oro\Bundle\OrderBundle\Tests\Behat\Element\BackendOrderLineItems
       selector: 'table.order-line-items-table'
@@ -156,6 +167,10 @@ oro_behat_extension:
     DiscountDescription:
       selector: 'input[name="oro_action_operation[orderDiscount][description]"]'
 
+    Orders Grid:
+      selector: 'div[data-page-component-name="orders-grid"]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
   pages:
     OrderFrontendView:
       class: Oro\Bundle\OrderBundle\Tests\Behat\Page\OrderFrontendViewPage
@@ -183,5 +198,7 @@ oro_behat_extension:
         - OroProductBundle::FeatureContext
         - OroSecurityBundle::ACLContext
         - OroShoppingListBundle::FeatureContext
+        - OroPromotionBundle::PromotionContext
+        - OroTaxBundle::TaxContext
       paths:
         - '@OroOrderBundle/Tests/Behat/Features'

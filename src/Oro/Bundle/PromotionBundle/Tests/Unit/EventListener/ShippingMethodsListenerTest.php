@@ -12,6 +12,7 @@ use Oro\Bundle\ShippingBundle\Event\ApplicableMethodsEvent;
 use Oro\Bundle\PromotionBundle\EventListener\ShippingMethodsListener;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodViewCollection;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 class ShippingMethodsListenerTest extends \PHPUnit_Framework_TestCase
@@ -51,7 +52,7 @@ class ShippingMethodsListenerTest extends \PHPUnit_Framework_TestCase
         $sourceEntity = $this->createMock(Checkout::class);
         $sourceEntity->expects($this->any())
             ->method('getSourceEntity')
-            ->willReturn(new \stdClass());
+            ->willReturn($this->createMock(CheckoutSourceEntityInterface::class));
 
         $event = new ApplicableMethodsEvent($shippingMethodViewCollection, $sourceEntity);
 
@@ -72,7 +73,7 @@ class ShippingMethodsListenerTest extends \PHPUnit_Framework_TestCase
         ShippingMethodViewCollection $modifiedShippingMethodViewCollection
     ) {
         $sourceEntity = $this->createMock(Checkout::class);
-        $sourceEntity->expects($this->once())
+        $sourceEntity->expects($this->any())
             ->method('getSourceEntity')
             ->willReturn(new ShoppingList());
 

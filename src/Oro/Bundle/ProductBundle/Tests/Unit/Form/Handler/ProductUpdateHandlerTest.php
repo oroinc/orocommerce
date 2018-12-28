@@ -159,9 +159,7 @@ class ProductUpdateHandlerTest extends UpdateHandlerTest
         $savedAndDuplicatedMessage = 'Saved and duplicated';
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|Form $form */
-        $form = $this->getMockBuilder('Symfony\Component\Form\Form')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $form = $this->createMock('Symfony\Component\Form\Form');
         $form->expects($this->once())
             ->method('isValid')
             ->will($this->returnValue(true));
@@ -175,8 +173,7 @@ class ProductUpdateHandlerTest extends UpdateHandlerTest
             ->method('getErrors')
             ->willReturn(new FormErrorIterator($form, []));
 
-        $flashBag = $this->getMockBuilder('Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface')
-            ->getMock();
+        $flashBag = $this->createMock('Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface');
         $flashBag->expects($this->once())
             ->method('add')
             ->with('success', $message);
@@ -197,7 +194,7 @@ class ProductUpdateHandlerTest extends UpdateHandlerTest
                 array_merge($saveAndCloseRoute, ['parameters' => $queryParameters]),
                 $entity
             )
-            ->will($this->returnValue(new RedirectResponse('test_url')));
+            ->willReturn(new RedirectResponse('test_url'));
 
         $this->translator->expects($this->once())
             ->method('trans')
@@ -205,9 +202,7 @@ class ProductUpdateHandlerTest extends UpdateHandlerTest
             ->will($this->returnValue($savedAndDuplicatedMessage));
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|ActionGroup $actionGroup */
-        $actionGroup = $this->getMockBuilder('Oro\Bundle\ActionBundle\Model\ActionGroup')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $actionGroup = $this->createMock('Oro\Bundle\ActionBundle\Model\ActionGroup');
 
         $actionGroup->expects($this->once())
             ->method('execute')
@@ -264,8 +259,7 @@ class ProductUpdateHandlerTest extends UpdateHandlerTest
             ]);
         $entity = $this->getProductMock(0);
 
-        $handler = $this->getMockBuilder('Oro\Bundle\FormBundle\Tests\Unit\Form\Stub\HandlerStub')
-            ->getMock();
+        $handler = $this->createMock('Oro\Bundle\FormBundle\Tests\Unit\Form\Stub\HandlerStub');
         $handler->expects($this->once())
             ->method('process')
             ->with($entity)
@@ -487,9 +481,8 @@ class ProductUpdateHandlerTest extends UpdateHandlerTest
             ->method('get')
             ->with('_wid', false)
             ->will($this->returnValue($wid));
-        $formView = $this->getMockBuilder('Symfony\Component\Form\FormView')
-            ->disableOriginalConstructor()
-            ->getMock();
+
+        $formView = $this->createMock('Symfony\Component\Form\FormView');
         $form->expects($this->any())
             ->method('createView')
             ->will($this->returnValue($formView));
@@ -515,9 +508,7 @@ class ProductUpdateHandlerTest extends UpdateHandlerTest
      */
     private function getSubForm($data = [])
     {
-        $form = $this->getMockBuilder(Form::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $form = $this->createMock(Form::class);
         $form->expects($this->any())
             ->method('getData')
             ->will($this->returnValue($data));
@@ -535,9 +526,7 @@ class ProductUpdateHandlerTest extends UpdateHandlerTest
         FormInterface $removeRelatedSubForm
     ) {
         /** @var \PHPUnit_Framework_MockObject_MockObject|Form $form */
-        $form = $this->getMockBuilder('Symfony\Component\Form\Form')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $form = $this->createMock('Symfony\Component\Form\Form');
         $form->expects($this->any())
             ->method('get')
             ->willReturnMap([
@@ -561,9 +550,7 @@ class ProductUpdateHandlerTest extends UpdateHandlerTest
     private function getFormHandlerMock($entity)
     {
         /** @var FormHandler|\PHPUnit_Framework_MockObject_MockObject $formHandlerMock */
-        $formHandlerMock = $this->getMockBuilder(FormHandler::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $formHandlerMock = $this->createMock(FormHandler::class);
         $formHandlerMock->expects($this->once())
             ->method('process')
             ->with($entity)

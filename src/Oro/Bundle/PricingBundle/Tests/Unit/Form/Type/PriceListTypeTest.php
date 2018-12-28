@@ -16,6 +16,8 @@ use Oro\Bundle\PricingBundle\Form\Type\PriceListType;
 use Oro\Bundle\PricingBundle\Form\Type\PriceRuleType;
 use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectType;
+use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Symfony\Component\Form\PreloadedExtension;
@@ -57,6 +59,9 @@ class PriceListTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
+        /** @var \PHPUnit_Framework_MockObject_MockObject|ProductUnitLabelFormatter $formatter */
+        $formatter = self::createMock(ProductUnitLabelFormatter::class);
+
         /** @var \PHPUnit_Framework_MockObject_MockObject|CurrencyProviderInterface $currencyProvider */
         $currencyProvider = $this->getMockBuilder(CurrencyProviderInterface::class)
             ->disableOriginalConstructor()->getMockForAbstractClass();
@@ -98,6 +103,7 @@ class PriceListTypeTest extends FormIntegrationTestCase
                             $localeSettings,
                             $currencyNameHelper
                         ),
+                        ProductUnitSelectType::NAME => new ProductUnitSelectType($formatter),
                         'entity' => new EntityType(['item' => (new ProductUnit())->setCode('item')]),
                         PriceRuleType::NAME => new PriceRuleType(),
                     ],

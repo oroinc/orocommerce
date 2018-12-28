@@ -6,12 +6,15 @@ Oro\Bundle\WebCatalogBundle\Entity\WebCatalog:
                 max: 255
 
 Oro\Bundle\WebCatalogBundle\Entity\ContentNode:
+    constraints:
+        - Oro\Bundle\WebCatalogBundle\Validator\Constraint\NodeNotEmptyScopes: ~
     properties:
         contentVariants:
             - Count:
                 min: 1
                 minMessage: 'oro.webcatalog.contentnode.content_variants.blank'
-            - Oro\Bundle\WebCatalogBundle\Validator\Constraint\UniqueScope:
+            - Oro\Bundle\WebCatalogBundle\Validator\Constraint\UniqueScope: ~
+            - Oro\Bundle\WebCatalogBundle\Validator\Constraint\NotEmptyScopes: ~
             - Valid: ~
         scopes:
             - Oro\Bundle\CustomerBundle\Validator\Constraints\ScopeWithCustomerGroupAndCustomer: ~

@@ -25,7 +25,10 @@ class ProductPageVariantType extends AbstractType
                 [
                     'label' => 'oro.product.entity_label',
                     'required' => true,
-                    'constraints' => [new NotBlank()]
+                    'constraints' => [new NotBlank()],
+                    // Enable configurable products for select
+                    'autocomplete_alias' => 'oro_all_product_visibility_limited',
+                    'grid_name' => 'all-products-select-grid'
                 ]
             );
     }

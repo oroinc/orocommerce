@@ -2,23 +2,25 @@
 
 namespace Oro\Bundle\OrderBundle\Form\Type;
 
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormView;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints\Range;
-
+use Oro\Bundle\FormBundle\Form\Type\OroHiddenNumberType;
 use Oro\Bundle\OrderBundle\Entity\OrderDiscount;
 use Oro\Bundle\OrderBundle\Provider\DiscountSubtotalProvider;
 use Oro\Bundle\OrderBundle\Total\TotalHelper;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Range;
 
+/**
+ * Form type for order discount item - absolute or relative (percent) discount.
+ */
 class OrderDiscountItemType extends AbstractType
 {
     const NAME = 'oro_order_discount_item';
@@ -113,10 +115,10 @@ class OrderDiscountItemType extends AbstractType
                     'required' => false,
                 ]
             )
-            ->add('percent', 'hidden')
+            ->add('percent', OroHiddenNumberType::class)
             ->add(
                 'amount',
-                HiddenType::class,
+                OroHiddenNumberType::class,
                 [
                     'constraints' => [
                         //range should be used, because this type also is implemented with JS

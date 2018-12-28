@@ -2,21 +2,22 @@
 
 namespace Oro\Bundle\InventoryBundle\Form\Type;
 
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints\Range;
-
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\FormBundle\Form\Type\DataChangesetType;
 use Oro\Bundle\InventoryBundle\Form\DataTransformer\InventoryLevelGridDataTransformer;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal;
 use Oro\Bundle\ValidationBundle\Validator\Constraints\Integer;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for editing product inventory levels
+ */
 class InventoryLevelGridType extends AbstractType
 {
     const NAME = 'oro_inventory_level_grid';
@@ -126,7 +127,6 @@ class InventoryLevelGridType extends AbstractType
             null,
             [
                 'constraints' => [
-                    new Range(['min' => 0]),
                     new Decimal(),
                     new Integer(),
                 ]

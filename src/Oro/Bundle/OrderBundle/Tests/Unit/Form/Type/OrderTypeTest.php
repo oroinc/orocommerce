@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Form\Type;
 
+use Oro\Bundle\FormBundle\Form\Type\OroHiddenNumberType;
+use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\TypeTestCase;
@@ -79,6 +81,9 @@ class OrderTypeTest extends TypeTestCase
     /** @var RateConverterInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $rateConverter;
 
+    /** @var NumberFormatter|\PHPUnit_Framework_MockObject_MockObject */
+    private $numberFormatter;
+
     /** @var ValidatorInterface  */
     private $validator;
 
@@ -119,6 +124,8 @@ class OrderTypeTest extends TypeTestCase
             $this->discountSubtotalProvider,
             $this->rateConverter
         );
+
+        $this->numberFormatter = $this->createMock(NumberFormatter::class);
 
         // create a type instance with the mocked dependencies
         $this->type = new OrderType(
@@ -366,6 +373,7 @@ class OrderTypeTest extends TypeTestCase
                     OrderLineItemType::NAME => $orderLineItemType,
                     OrderDiscountCollectionRowType::NAME => new OrderDiscountCollectionRowType(),
                     QuantityTypeTrait::$name => $this->getQuantityType(),
+                    OroHiddenNumberType::class => new OroHiddenNumberType($this->numberFormatter),
                 ],
                 []
             ),

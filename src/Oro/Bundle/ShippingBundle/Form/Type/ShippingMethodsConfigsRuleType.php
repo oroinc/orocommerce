@@ -34,6 +34,7 @@ class ShippingMethodsConfigsRuleType extends AbstractType
             ])
             ->add('methodConfigs', ShippingMethodConfigCollectionType::class)
             ->add('method', ShippingMethodSelectType::class, [
+                'label' => 'oro.shipping.shippingmethodsconfigsrule.method.label',
                 'mapped' => false,
             ]);
     }

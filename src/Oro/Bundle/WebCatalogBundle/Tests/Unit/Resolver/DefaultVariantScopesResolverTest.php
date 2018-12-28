@@ -5,9 +5,12 @@ namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Resolver;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
+use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Oro\Bundle\WebCatalogBundle\Entity\Repository\ContentNodeRepository;
+use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
+use Oro\Bundle\WebCatalogBundle\Provider\ScopeWebCatalogProvider;
 use Oro\Bundle\WebCatalogBundle\Resolver\DefaultVariantScopesResolver;
 use Oro\Component\Testing\Unit\EntityTrait;
 
@@ -21,6 +24,11 @@ class DefaultVariantScopesResolverTest extends \PHPUnit_Framework_TestCase
     protected $registry;
 
     /**
+     * @var ScopeManager|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $scopeManager;
+
+    /**
      * @var DefaultVariantScopesResolver
      */
     protected $defaultVariantScopesResolver;
@@ -28,7 +36,9 @@ class DefaultVariantScopesResolverTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->registry = $this->createMock(ManagerRegistry::class);
+        $this->scopeManager = $this->createMock(ScopeManager::class);
         $this->defaultVariantScopesResolver = new DefaultVariantScopesResolver($this->registry);
+        $this->defaultVariantScopesResolver->setScopeManager($this->scopeManager);
     }
 
     public function testResolve()
@@ -37,8 +47,12 @@ class DefaultVariantScopesResolverTest extends \PHPUnit_Framework_TestCase
         $scope1 = $this->getEntity(Scope::class, ['id' => 1]);
         /** @var Scope $scope2 */
         $scope2 = $this->getEntity(Scope::class, ['id' => 2]);
+        /** @var Scope $defaultScope */
+        $defaultScope = $this->getEntity(Scope::class, ['id' => 3]);
 
+        $webCatalog = $this->createMock(WebCatalog::class);
         $contentNode = new ContentNode();
+        $contentNode->setWebCatalog($webCatalog);
         $contentNode->addScope($scope1);
         $contentNode->addScope($scope2);
 
@@ -50,6 +64,7 @@ class DefaultVariantScopesResolverTest extends \PHPUnit_Framework_TestCase
         $variantLevel1 = new ContentVariant();
         $variantLevel1->setDefault(false);
         $variantLevel1->addScope($scope1);
+        $variantLevel1->addScope($defaultScope);
 
         $contentNode->addContentVariant($defaultVariantLevel1);
         $contentNode->addContentVariant($variantLevel1);
@@ -58,9 +73,18 @@ class DefaultVariantScopesResolverTest extends \PHPUnit_Framework_TestCase
         $defaultVariantLevel2->setDefault(true);
 
         $childNode = new ContentNode();
+        $childNode->setWebCatalog($webCatalog);
         $childNode->setParentNode($contentNode);
         $childNode->setParentScopeUsed(true);
         $childNode->addContentVariant($defaultVariantLevel2);
+
+        $this->scopeManager->expects($this->any())
+            ->method('findOrCreate')
+            ->with(
+                'web_content',
+                [ScopeWebCatalogProvider::WEB_CATALOG => $webCatalog]
+            )
+            ->willReturn($defaultScope);
 
         $repository = $this->getMockBuilder(ContentNodeRepository::class)
             ->disableOriginalConstructor()
@@ -97,5 +121,8 @@ class DefaultVariantScopesResolverTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(2, $actualDefaultVariantLevel2Scopes);
         $this->assertContains($scope1, $actualDefaultVariantLevel2Scopes);
         $this->assertContains($scope2, $actualDefaultVariantLevel2Scopes);
+
+        $this->assertTrue($variantLevel1->getScopes()->contains($scope1));
+        $this->assertFalse($variantLevel1->getScopes()->contains($defaultScope));
     }
 }

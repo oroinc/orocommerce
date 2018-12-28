@@ -428,6 +428,9 @@ datagrids:
                 template:      OroProductBundle:ProductUnit:Datagrid/unitFullSingle.html.twig
             value:
                 label:         oro.pricing.productprice.value.label
+                type:          twig
+                template:      OroPricingBundle:Datagrid:Column/priceValue.html.twig
+                frontend_type: html
             currency:
                 label:         oro.pricing.productprice.currency.label
             ruleId:
@@ -576,6 +579,9 @@ datagrids:
                 template:      OroProductBundle:ProductUnit:Datagrid/unitFullSingle.html.twig
             value:
                 label:         oro.pricing.productprice.value.label
+                type:          twig
+                template:      OroPricingBundle:Datagrid:Column/priceValue.html.twig
+                frontend_type: html
             currency:
                 label:         oro.pricing.productprice.currency.label
         sorters:

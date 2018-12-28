@@ -2,24 +2,56 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Datagrid\Filter;
 
-use Doctrine\Common\Collections\Expr\CompositeExpression;
 use Doctrine\Common\Collections\Expr\Comparison as BaseComparison;
-use Doctrine\Common\Collections\Expr\Value;
 use Doctrine\Common\Collections\Expr\Comparison as CommonComparision;
-
-use Symfony\Component\Form\FormFactoryInterface;
-
+use Doctrine\Common\Collections\Expr\CompositeExpression;
+use Doctrine\Common\Collections\Expr\Value;
 use Oro\Bundle\FilterBundle\Datasource\FilterDatasourceAdapterInterface;
 use Oro\Bundle\FilterBundle\Filter\FilterUtility;
 use Oro\Bundle\FilterBundle\Form\Type\Filter\NumberFilterType;
 use Oro\Bundle\FilterBundle\Form\Type\Filter\NumberRangeFilterType;
 use Oro\Bundle\PricingBundle\Filter\FrontendProductPriceFilter;
+use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
 use Oro\Bundle\SearchBundle\Datagrid\Filter\Adapter\SearchFilterDatasourceAdapter;
 use Oro\Bundle\SearchBundle\Datagrid\Filter\SearchNumberRangeFilter;
 use Oro\Bundle\SearchBundle\Query\Criteria\Comparison;
+use Symfony\Component\Form\Extension\Core\View\ChoiceView;
+use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Form\FormView;
+use Symfony\Component\Form\Test\FormInterface;
 
 class FrontendProductPriceFilterTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @var string
+     */
+    private $filterName = 'filter-name';
+
+    /**
+     * @var string
+     */
+    private $dataName = 'field-name';
+
+    /**
+     * @var FormInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $form;
+
+    /**
+     * @var FormFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $formFactory;
+
+    /**
+     * @var FilterUtility|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $filterUtility;
+
+    /**
+     * @var UnitLabelFormatter|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $formatter;
+
     /**
      * @var SearchNumberRangeFilter
      */
@@ -30,13 +62,24 @@ class FrontendProductPriceFilterTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        /* @var $formFactory FormFactoryInterface|\PHPUnit_Framework_MockObject_MockObject */
-        $formFactory = $this->createMock(FormFactoryInterface::class);
+        $this->form = $this->createMock(FormInterface::class);
+        $this->formFactory = $this->createMock(FormFactoryInterface::class);
+        $this->formFactory->expects($this->any())
+            ->method('create')
+            ->will($this->returnValue($this->form));
 
-        /* @var $filterUtility FilterUtility|\PHPUnit_Framework_MockObject_MockObject */
-        $filterUtility = $this->createMock(FilterUtility::class);
+        $this->filterUtility = $this->createMock(FilterUtility::class);
+        $this->filterUtility->expects($this->any())
+            ->method('getExcludeParams')
+            ->willReturn([]);
 
-        $this->filter = new FrontendProductPriceFilter($formFactory, $filterUtility);
+        $this->formatter = $this->createMock(UnitLabelFormatter::class);
+
+        $this->filter = new FrontendProductPriceFilter($this->formFactory, $this->filterUtility);
+        $this->filter->setFormatter($this->formatter);
+        $this->filter->init($this->filterName, [
+            FilterUtility::DATA_NAME_KEY => $this->dataName,
+        ]);
     }
 
     /**
@@ -205,5 +248,66 @@ class FrontendProductPriceFilterTest extends \PHPUnit_Framework_TestCase
                 'unit' => 'box',
             ],
         ];
+    }
+
+    public function testGetMetadata()
+    {
+        $this->formatter->expects($this->once())
+            ->method('format')
+            ->with('test value', true)
+            ->willReturn('formatted test label');
+
+        $formView = $this->createFormView();
+        $formView->vars['formatter_options'] = ['decimals' => 0];
+        $formView->vars['array_separator'] = ',';
+        $formView->vars['array_operators'] = [9, 10];
+        $formView->vars['data_type'] = 'data_integer';
+
+        $typeFormView = $this->createFormView($formView);
+        $typeFormView->vars['choices'] = [];
+
+        $unitFormView = $this->createFormView($formView);
+        $unitFormView->vars['choices'] = [new ChoiceView('test data', 'test value', 'test label')];
+
+        $formView->children = ['type' => $typeFormView, 'unit' => $unitFormView];
+
+        $this->form->expects($this->any())
+            ->method('createView')
+            ->willReturn($formView);
+
+        $expected = [
+            'name' => 'filter-name',
+            'label' => 'Filter-name',
+            'choices' => [],
+            'data_name' => 'field-name',
+            'options' => [],
+            'lazy' => false,
+            'precision' => 0,
+            'formatterOptions' => [
+                'decimals' => 0,
+            ],
+            'arraySeparator' => ',',
+            'arrayOperators' => [9, 10],
+            'dataType' => 'data_integer',
+            'unitChoices' => [
+                [
+                    'data' => 'test data',
+                    'value' => 'test value',
+                    'label' => 'test label',
+                    'shortLabel' => 'formatted test label',
+                ]
+            ],
+        ];
+        $this->assertEquals($expected, $this->filter->getMetadata());
+    }
+
+    /**
+     * @param null|FormView $parent
+     *
+     * @return FormView
+     */
+    private function createFormView(?FormView $parent = null)
+    {
+        return new FormView($parent);
     }
 }

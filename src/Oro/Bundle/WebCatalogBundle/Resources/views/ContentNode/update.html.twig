@@ -109,7 +109,10 @@
             'title': 'oro.webcatalog.sections.use_for'|trans,
             'subblocks': [{
                 'title': '',
-                'data': [scopes]
+                'data': [
+                    scopes,
+                    form_errors(form.scopes)
+                ]
             }]
         },
         {

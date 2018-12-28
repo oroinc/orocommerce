@@ -2,23 +2,22 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\EventListener;
 
-use Symfony\Component\Translation\TranslatorInterface;
-
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\DataGridBundle\Datasource\ArrayDatasource\ArrayDatasource;
-use Oro\Bundle\DataGridBundle\Datasource\Orm\OrmDatasource;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
-use Oro\Bundle\DataGridBundle\Event\BuildBefore;
+use Oro\Bundle\DataGridBundle\Datasource\ArrayDatasource\ArrayDatasource;
+use Oro\Bundle\DataGridBundle\Datasource\Orm\OrmDatasource;
 use Oro\Bundle\DataGridBundle\Event\BuildAfter;
+use Oro\Bundle\DataGridBundle\Event\BuildBefore;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PricingBundle\Entity\BaseProductPrice;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
 use Oro\Bundle\PricingBundle\EventListener\ProductPriceAttributesGridListener;
 use Oro\Bundle\PricingBundle\Provider\PriceAttributePricesProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class ProductPriceAttributesGridListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -109,8 +108,16 @@ class ProductPriceAttributesGridListenerTest extends \PHPUnit_Framework_TestCase
         $datagridConfig = $this->createMock(DatagridConfiguration::class);
         $datagridConfig->expects($this->at(0))->method('offsetGetByPath')
             ->with('[columns][USD]', [])->willReturn([]);
+
+        $expectedColumn = [
+            'label' => 'USD',
+            'type' => 'twig',
+            'template' => 'OroPricingBundle:Datagrid:Column/priceValue.html.twig',
+            'frontend_type' => 'html',
+        ];
+
         $datagridConfig->expects($this->at(1))->method('offsetSetByPath')
-            ->with('[columns][USD]', ['label' => 'USD']);
+            ->with('[columns][USD]', $expectedColumn);
 
         $datagridConfig->expects($this->at(2))->method('offsetGetByPath')
             ->with('[sorters][columns][USD]', [])->willReturn([]);
@@ -210,8 +217,6 @@ class ProductPriceAttributesGridListenerTest extends \PHPUnit_Framework_TestCase
                     'set' => ['USD' => $usdPrice, 'EURO' => $euroPrice, 'GBP' => $gbpPrice],
                 ]
             );
-
-        $this->translator->expects($this->never())->method('trans');
 
         $buildAfterEvent = new BuildAfter($this->datagrid);
         $this->productPriceAttributesGridListener->onBuildAfter($buildAfterEvent);

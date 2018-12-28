@@ -59,8 +59,8 @@ class CreditCardType extends AbstractType
                 'label' => 'oro.paypal.credit_card.expiration_date.label',
                 'mapped' => false,
                 'placeholder' => [
-                    'year' => 'Year',
-                    'month' => 'Month',
+                    'year' => 'oro.paypal.credit_card.expiration_date.year',
+                    'month' => 'oro.paypal.credit_card.expiration_date.month',
                 ],
                 'attr' => [
                     'data-expiration-date' => true,
