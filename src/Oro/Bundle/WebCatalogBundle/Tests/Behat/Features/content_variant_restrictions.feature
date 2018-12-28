@@ -60,3 +60,14 @@ Feature: Content Variant restrictions
     Then I should not see "404 Not Found"
     And Page title equals to "Contact Us Node"
     And I should see "PSKU1"
+
+  Scenario: Content node restrictions validation
+    Given I proceed as the Admin
+    When I click on "Content Node Remove First Restriction"
+    And I click "Save"
+    Then I should see "Content node must have at least one restriction"
+
+  Scenario: Saved content variant restrictions validation
+    When I click on "First Content Variant Remove First Restriction"
+    And I click "Save"
+    Then I should see "Restriction rules must not be empty"

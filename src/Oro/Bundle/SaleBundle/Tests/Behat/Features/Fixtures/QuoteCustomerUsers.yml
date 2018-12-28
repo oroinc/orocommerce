@@ -1,0 +1,48 @@
+Oro\Bundle\CustomerBundle\Entity\Customer:
+  customer{1..12}:
+    name: 'Acme_<current()>'
+    organization: '@organization'
+    owner: '@admin'
+    createdAt: '2017-10-01 12:00:00'
+    updatedAt: '2017-10-01 13:00:00'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerUser:
+  customer_user{1..12}:
+    email: 'customer_user_email@example.com<current()>'
+    username: 'Acme_<current()>'
+    password: 'gxP1L8r86hrdUMg9wKdfnsS/EZC4a7jOIdn6BMzegqL2S6e+KBIuHCrDVciMdiR/64osNnabmFonwK8l09vQxA=='
+    salt: 'fgswya1kzw0sck8ck48kosowckwo0ws'
+    firstName: 'Acme_<current()>'
+    enabled: true
+    confirmed: true
+    customer: '@customer<current()>'
+    organization: '@organization'
+    role: ['@buyer']
+    owner: '@admin'
+    website: '@website1'
+
+Oro\Bundle\OrganizationBundle\Entity\BusinessUnit:
+  businessUnit:
+    name: 'Common Business Unit'
+    organization: '@organization'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+  precision:
+    unit: '@item'
+    precision: '1'
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+  locValue:
+    string: '400-Watt Bulb Work Light'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+  product:
+    sku: 'SKU123'
+    type: 'simple'
+    primaryUnitPrecision: '@precision'
+    addName: ['@locValue']
+    attributeFamily: '@defaultProductFamily'
+    inventoryStatus: '@enumInventoryStatuses'
+    organization: '@organization'
+    owner: '@businessUnit'
+    status: 'enabled'
