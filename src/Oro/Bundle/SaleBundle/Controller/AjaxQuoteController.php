@@ -69,7 +69,7 @@ class AjaxQuoteController extends Controller
 
     /**
      * @Route("/entry-point/{id}", name="oro_quote_entry_point", defaults={"id" = 0})
-     * @AclAncestor("oro_order_update")
+     * @AclAncestor("oro_quote_update")
      *
      * @param Request    $request
      * @param Quote|null $quote
