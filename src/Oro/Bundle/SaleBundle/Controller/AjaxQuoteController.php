@@ -20,6 +20,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
+/**
+ * Provides supportive actions for ajax calls during quote creation and editing.
+ */
 class AjaxQuoteController extends Controller
 {
     /**
@@ -67,7 +70,7 @@ class AjaxQuoteController extends Controller
 
     /**
      * @Route("/entry-point/{id}", name="oro_quote_entry_point", defaults={"id" = 0})
-     * @AclAncestor("oro_order_update")
+     * @AclAncestor("oro_quote_update")
      *
      * @param Request    $request
      * @param Quote|null $quote
