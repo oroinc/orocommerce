@@ -36,13 +36,13 @@ class RuleCacheTest extends \PHPUnit_Framework_TestCase
      */
     protected $ruleCache;
 
-
     protected function setUp()
     {
         $this->cache = $this->createMock(Cache::class);
         $this->registry = $this->createMock(ManagerRegistry::class);
         $this->crypter = $this->createMock(SymmetricCrypterInterface::class);
-        $this->ruleCache = new RuleCache($this->cache, $this->registry, $this->crypter);
+        $this->ruleCache = new RuleCache($this->cache, $this->registry);
+        $this->ruleCache->setCrypter($this->crypter);
     }
 
     public function testFetchCorrectHash()

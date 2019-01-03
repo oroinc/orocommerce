@@ -71,6 +71,7 @@ abstract class AbstractSegmentProductsProviderTest extends \PHPUnit_Framework_Te
 
         $this->createSegmentProvider($registry);
 
+        $this->segmentProductsProvider->setCrypter($this->crypter);
         $this->segmentProductsProvider->setCache($this->cache, 3600);
     }
 

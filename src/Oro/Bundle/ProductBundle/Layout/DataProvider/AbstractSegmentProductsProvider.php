@@ -53,7 +53,6 @@ abstract class AbstractSegmentProductsProvider implements ProductsProviderInterf
      * @param ConfigManager $configManager
      * @param RegistryInterface $registry
      * @param TokenStorageInterface $tokenStorage
-     * @param SymmetricCrypterInterface $crypter
      */
     public function __construct(
         SegmentManager $segmentManager,
@@ -61,8 +60,7 @@ abstract class AbstractSegmentProductsProvider implements ProductsProviderInterf
         ProductManager $productManager,
         ConfigManager $configManager,
         RegistryInterface $registry,
-        TokenStorageInterface $tokenStorage,
-        SymmetricCrypterInterface $crypter
+        TokenStorageInterface $tokenStorage
     ) {
         $this->segmentManager = $segmentManager;
         $this->productSegmentProvider = $productSegmentProvider;
@@ -70,7 +68,6 @@ abstract class AbstractSegmentProductsProvider implements ProductsProviderInterf
         $this->configManager = $configManager;
         $this->registry = $registry;
         $this->tokenStorage = $tokenStorage;
-        $this->crypter = $crypter;
     }
 
     /**
@@ -91,6 +88,14 @@ abstract class AbstractSegmentProductsProvider implements ProductsProviderInterf
      * @return QueryBuilder|null
      */
     abstract protected function getQueryBuilder(Segment $segment);
+
+    /**
+     * @param SymmetricCrypterInterface $crypter
+     */
+    public function setCrypter(SymmetricCrypterInterface $crypter)
+    {
+        $this->crypter = $crypter;
+    }
 
     /**
      * {@inheritDoc}

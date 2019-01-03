@@ -64,8 +64,7 @@ class NewArrivalsProviderTest extends AbstractSegmentProductsProviderTest
             $this->productManager,
             $this->configManager,
             $registry,
-            $this->tokenStorage,
-            $this->crypter
+            $this->tokenStorage
         );
     }
 

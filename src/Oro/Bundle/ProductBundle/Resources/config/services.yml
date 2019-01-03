@@ -763,8 +763,8 @@ services:
             - '@oro_config.manager'
             - '@doctrine'
             - '@security.token_storage'
-            - '@oro_security.encoder.mcrypt'
         calls:
+            - [setCrypter, ['@oro_security.encoder.mcrypt']]
             - [setCache, ['@oro_product.layout.data_provider.cache', 3600]]
 
     oro_product.layout.data_provider.featured_products:

@@ -135,4 +135,12 @@ class NewArrivalsProvider extends AbstractSegmentProductsProvider
 
         return $query;
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getResult(array $data)
+    {
+        return parent::getResult($data);
+    }
 }
