@@ -1,0 +1,65 @@
+/* @theme: admin.oro; */
+
+.form-horizontal {
+    .responsive-cell {
+        &:only-child {
+            .price-attributes-collection {
+                display: block;
+
+                .control-group-collection {
+                    width: 100%;
+                    padding: 0;
+
+                    &:not(:last-child) {
+                        &:after {
+                            display: none;
+                        }
+                    }
+                }
+
+                .pricing-price-attribute {
+                    > .row-oro {
+                        overflow-x: auto;
+                        overflow-y: hidden;
+                    }
+                }
+            }
+        }
+    }
+}
+
+.product-price-collection {
+    .oro-item-collection {
+        .row-oro {
+            padding: $content-padding;
+        }
+    }
+
+    .row {
+        display: block;
+    }
+
+    .small-row > div {
+        display: block;
+    }
+
+    .group-field {
+        display: block;
+    }
+
+    .col-widget {
+        width: auto;
+        margin: side-values(0 0 $content-padding-small 0);
+    }
+
+    .small-row {
+        margin-top: $content-padding-small;
+    }
+
+    input[type="text"].quantity,
+    input[type="text"].price-value,
+    .entity-create-or-select-container {
+        width: 100%;
+        margin: 0;
+    }
+}

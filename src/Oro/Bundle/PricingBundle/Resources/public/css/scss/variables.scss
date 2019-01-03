@@ -8,7 +8,7 @@ $product-price-collection-price-currency-offset: 5px !default;
 
 $product-price-collection-multiselect-holder-offset: 50px !default;
 
-$product-price-collection-row-offset: side-values(10px 10px 10px 40px) !default;
+$product-price-collection-row-offset: side-values(25px 34px 25px 34px) !default;
 $product-price-collection-row-border-color: $primary-800 !default;
 $product-price-collection-row-background: $primary-900 !default;
 
@@ -19,7 +19,10 @@ $product-price-collection-validation-multiselect-holder-offset: 50px !default;
 
 $pricing-price-list-controls-offset: 10px !default;
 
-$product-price-collection-large-col-widget-offset: 5px !default;
-$product-price-collection-large-grouped-fields-offset: 25px !default;
+$product-price-collection-large-col-widget-offset: $content-padding-small !default;
+$product-price-collection-large-grouped-fields-offset: 42px !default;
 
 $allow-merge-block-label-offset: 7px !default;
+
+$product-price-collection-large-group-label-width: 100px !default;
+$product-price-collection-large-grouped-fields-width: $field-width + $product-price-collection-large-group-label-width !default;
