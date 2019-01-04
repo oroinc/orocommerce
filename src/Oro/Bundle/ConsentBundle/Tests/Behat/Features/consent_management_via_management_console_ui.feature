@@ -153,7 +153,7 @@ Feature: Consent management via Management Console UI
       | Email Address                        | AmandaRCole1@example.org  |
       | Password                             | AmandaRCole1@example.org  |
       | Confirm Password                     | AmandaRCole1@example.org  |
-    When press "Create An Account"
+    When click "Create An Account"
     Then I should see that "Required Consent" contains "This agreement is required"
     And I click "Presenting Personal Data"
     Then I should see "UiDialog" with elements:
@@ -173,7 +173,7 @@ Feature: Consent management via Management Console UI
     And the "Presenting Personal Data" checkbox should be checked
     And the "Email Newsletters" checkbox should not be checked
     And the "Collecting and storing personal data" checkbox should be checked
-    When press "Create An Account"
+    When click "Create An Account"
     Then I should see "Please check your email to complete registration" flash message
 
   Scenario: Confirmation of registration a new user who has accepted consents
@@ -409,7 +409,7 @@ Feature: Consent management via Management Console UI
     And I click "Yes, Delete"
     And should see "Consent deleted" flash message
     And I proceed as the User
-    When press "Create An Account"
+    When click "Create An Account"
     Then I should see "Some consents were changed. Please reload the page."
     And I should not see "Test Consent"
     And I should see 2 elements "Required Consent"
@@ -457,7 +457,7 @@ Feature: Consent management via Management Console UI
     When I click "Yes, Delete"
     Then should see "Landing Page deleted" flash message
     And I proceed as the User
-    When press "Create An Account"
+    When click "Create An Account"
     Then I should see "Some consents were changed. Please reload the page."
 
   @skip
@@ -534,8 +534,8 @@ Feature: Consent management via Management Console UI
     And I go to System/ Consent Management
     And click "Create Consent"
     And fill "Consent Form" with:
-      | Name        | Test Consent 3    |
-      | Type        | Mandatory         |
+      | Name | Test Consent 3 |
+      | Type | Mandatory      |
     When save and close form
     Then I should see "Consent has been created" flash message
     And go to System/ Websites

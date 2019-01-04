@@ -10,12 +10,10 @@ oro_behat_extension:
         - OroApplicationBundle::CommerceMainContext
         - OroNavigationBundle::FeatureContext
         - OroWebCatalogBundle::FeatureContext
-        - OroWebCatalogBundle::FeatureContext
         - OroProductBundle::QuickOrderFormContext
         - OroProductBundle::FeatureContext
         - OroCheckoutBundle::FeatureContext
         - OroShoppingListBundle::ShoppingListContext
-        - OroConfigBundle::FeatureContext
         - OroWorkflowBundle::FeatureContext
       paths:
         - '@OroConsentBundle/Tests/Behat/Features'

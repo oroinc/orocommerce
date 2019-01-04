@@ -4,9 +4,6 @@
 @fixture-OroProductBundle:gdpr_refactor.yml
 @fixture-OroConsentBundle:ConsentLandingPagesFixture.yml
 @fixture-OroCheckoutBundle:Checkout.yml
-@fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
-@fixture-OroFlatRateShippingBundle:FlatRate2Integration.yml
-@fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
 Feature: Single page checkout with consents
   In order to accept consents on single page checkout
   As an Frontend User
@@ -17,9 +14,9 @@ Feature: Single page checkout with consents
     And sessions active:
       | Admin | first_session  |
       | User  | second_session |
-    And 'oro_consent.consent_feature_enabled' should be enabled
-    And 'oro_shopping_list.availability_for_guests' should be enabled
-    And 'oro_checkout.guest_checkout' should be enabled
+    And I enable 'oro_consent.consent_feature_enabled' configuration option
+    And I enable 'oro_shopping_list.availability_for_guests' configuration option
+    And I enable 'oro_checkout.guest_checkout' configuration option
 
   Scenario: Admin creates Landing Page and Content Node in Web Catalog
     Given I proceed as the Admin
