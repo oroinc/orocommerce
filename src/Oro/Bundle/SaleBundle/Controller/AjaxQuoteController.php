@@ -54,17 +54,19 @@ class AjaxQuoteController extends Controller
             }
         }
 
-        $orderForm = $this->createForm($this->getQuoteFormTypeName(), $quote);
+        $quoteForm = $this->createForm($this->getQuoteFormTypeName(), $quote);
 
-        return new JsonResponse(
-            [
-                'shippingAddress' => $this->renderForm(
-                    $orderForm->get(AddressType::TYPE_SHIPPING . 'Address')->createView()
-                ),
-                'customerPaymentTerm' => $customerPaymentTerm ? $customerPaymentTerm->getId() : null,
-                'customerGroupPaymentTerm' => $customerGroupPaymentTerm ? $customerGroupPaymentTerm->getId() : null,
-            ]
-        );
+        $responseData = [
+            'customerPaymentTerm' => $customerPaymentTerm ? $customerPaymentTerm->getId() : null,
+            'customerGroupPaymentTerm' => $customerGroupPaymentTerm ? $customerGroupPaymentTerm->getId() : null
+        ];
+        if ($quoteForm->has(AddressType::TYPE_SHIPPING . 'Address')) {
+            $responseData['shippingAddress'] = $this->renderForm(
+                $quoteForm->get(AddressType::TYPE_SHIPPING . 'Address')->createView()
+            );
+        }
+
+        return new JsonResponse($responseData);
     }
 
     /**

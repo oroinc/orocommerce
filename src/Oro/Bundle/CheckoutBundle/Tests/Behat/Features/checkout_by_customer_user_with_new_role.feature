@@ -28,6 +28,7 @@ Feature: Checkout by customer user with new role
       | Shopping List Line Item | View:User (Own) | Create:User (Own) | Edit:User (Own) | Delete:User (Own) | Assign:User (Own) |
     And select following permissions:
       | Checkout | View Workflow:User (Own) | Perform transitions:User (Own) |
+    And click "Checkout" tab
     And I check "Use Any Billing Address From The Customer User's Address Book" entity permission
     And I check "Use Any Shipping Address From The Customer User's Address Book" entity permission
     And I save and close form
