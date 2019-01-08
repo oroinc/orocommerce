@@ -4,4 +4,11 @@
     &.view table {
         width: 100%;
     }
+
+    th,
+    td {
+        .checkbox-view {
+            margin-top: $content-padding-small + $content-padding-medium;
+        }
+    }
 }

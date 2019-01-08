@@ -214,6 +214,10 @@ td.quote-lineitem-product-sku {
     width: 160px;
 }
 
+.quote-lineitem-remove {
+    text-align: #{$end};
+}
+
 .quote-lineitem-product-sku-row {
     .quote-lineitem-product-free-form {
         input[type="text"] {

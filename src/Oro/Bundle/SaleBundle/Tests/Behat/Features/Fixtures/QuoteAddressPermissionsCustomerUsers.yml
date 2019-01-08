@@ -1,0 +1,102 @@
+Oro\Bundle\CustomerBundle\Entity\Customer:
+  customer{1..2}:
+    name: 'Acme_<current()>'
+    organization: '@organization'
+    owner: '@admin'
+    createdAt: '2017-10-01 12:00:00'
+    updatedAt: '2017-10-01 13:00:00'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerUser:
+  customer_user{1..2}:
+    email: 'customer_user_email_<current()>@example.com'
+    username: 'Acme_user_<current()>'
+    password: 'gxP1L8r86hrdUMg9wKdfnsS/EZC4a7jOIdn6BMzegqL2S6e+KBIuHCrDVciMdiR/64osNnabmFonwK8l09vQxA=='
+    salt: 'fgswya1kzw0sck8ck48kosowckwo0ws'
+    firstName: 'Acme_User_<current()>'
+    enabled: true
+    confirmed: true
+    customer: '@customer<current()>'
+    organization: '@organization'
+    role: ['@buyer']
+    owner: '@admin'
+    website: '@website1'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerAddress:
+  customer_address1:
+    country: '@germany'
+    region: '@berlin'
+    label: 'Primary address'
+    street: 'Fifth avenue C1'
+    city: 'Berlin'
+    postalCode: '10115'
+    frontendOwner: '@customer1'
+    owner: '@admin'
+    systemOrganization: '@organization'
+    primary: true
+    organization: '@organization'
+  customer_address2:
+    country: '@germany'
+    region: '@berlin'
+    label: 'Primary address'
+    street: 'Fifth avenue C2'
+    city: 'Berlin'
+    postalCode: '10115'
+    frontendOwner: '@customer2'
+    owner: '@admin'
+    systemOrganization: '@organization'
+    primary: true
+    organization: '@organization'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress:
+  customer_user_address1:
+    country: '@germany'
+    region: '@berlin'
+    label: 'Primary address'
+    street: 'Fifth avenue CU1'
+    city: 'Berlin'
+    postalCode: '10115'
+    frontendOwner: '@customer_user1'
+    owner: '@admin'
+    systemOrganization: '@organization'
+    primary: true
+    organization: '@organization'
+  customer_user_address2:
+    country: '@germany'
+    region: '@berlin'
+    label: 'Primary address'
+    street: 'Fifth avenue CU2'
+    city: 'Berlin'
+    postalCode: '10115'
+    frontendOwner: '@customer_user2'
+    owner: '@admin'
+    systemOrganization: '@organization'
+    primary: true
+    organization: '@organization'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerAddressToAddressType:
+    customerAddress1ShippingDefault:
+        address: '@customer_address1'
+        type: 'shipping'
+        default: true
+    customerAddress1BillingDefault:
+        address: '@customer_address1'
+        type: 'billing'
+        default: true
+    customerAddress2BillingDefault:
+        address: '@customer_address2'
+        type: 'billing'
+        default: true
+
+Oro\Bundle\CustomerBundle\Entity\CustomerUserAddressToAddressType:
+    customerUserAddress1ShippingDefault:
+        address: '@customer_user_address1'
+        type: 'shipping'
+        default: true
+    customerUserAddress1BillingDefault:
+        address: '@customer_user_address1'
+        type: 'billing'
+        default: true
+    customerUserAddress2BillingDefault:
+        address: '@customer_user_address2'
+        type: 'billing'
+        default: true

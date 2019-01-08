@@ -1,0 +1,61 @@
+/* @theme: admin.oro; */
+
+@media screen and (max-width: ($medium-screen - 1px)) {
+    .product-price-collection {
+        .oro-item-collection {
+            .row-oro {
+                padding: $content-padding;
+            }
+        }
+
+        .row {
+            display: block;
+        }
+
+        .group-label {
+            width: $product-price-collection-large-group-label-width;
+            flex-shrink: 0;
+        }
+
+        .grouped-fields {
+            width: $product-price-collection-large-grouped-fields-width;
+        }
+
+        .col-widget {
+            width: auto;
+            margin: side-values(0 $content-padding-small 0 0);
+        }
+
+        .small-row {
+            margin-top: $content-padding-small;
+        }
+
+        input[type="text"].quantity,
+        input[type="text"].price-value,
+        .entity-create-or-select-container {
+            width: 100%;
+            margin: 0;
+        }
+    }
+}
+
+@media screen and (min-width: $medium-screen) {
+    .product-price-collection {
+        .row {
+            display: flex;
+        }
+
+        .col-widget {
+            width: auto;
+            margin-#{$end}: $product-price-collection-large-col-widget-offset;
+        }
+
+        .group-label {
+            width: auto;
+        }
+
+        .grouped-fields {
+            margin-#{$start}: $product-price-collection-large-grouped-fields-offset;
+        }
+    }
+}
