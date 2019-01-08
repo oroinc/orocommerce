@@ -28,6 +28,7 @@ oro_behat_extension:
         - OroEmailBundle::EmailContext
         - OroEntityExtendBundle::EntityExtendContext
         - OroActionBundle::OroActionContext
+        - OroNavigationBundle::TabContext
       paths:
         - '@OroSaleBundle/Tests/Behat/Features'
 
@@ -44,6 +45,10 @@ oro_behat_extension:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
       options:
         mapping:
+          Customer:
+            type: 'css'
+            locator: 'input[name="oro_sale_quote[customer]"]'
+            element: Select2Entity
           CustomerUser:
               type: 'css'
               locator: 'input[name="oro_sale_quote[customerUser]"]'

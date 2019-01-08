@@ -49,7 +49,7 @@ class ScopeRequestListener
     public function onKernelRequest(GetResponseEvent $event)
     {
         $request = $event->getRequest();
-        if (!$event->isMasterRequest() || $request->attributes->has('_web_content_scope')) {
+        if ($request->attributes->has('_web_content_scope')) {
             return;
         }
         if (!$this->matchedUrlDecisionMaker->matches($request->getPathInfo())) {

@@ -40,7 +40,7 @@
 
 {% block oro_shipping_weight_widget %}
     <div class="float-holder shipping-weight">
-        <table>
+        <table class="validate-group">
             <tr>
                 <td>{{ form_widget(form.value) }}</td>
                 <td>{{ form_widget(form.unit) }}</td>
@@ -137,7 +137,7 @@
                     {% endif %}
                 </tbody>
             </table>
-            <a class="btn add-list-item" data-container=".product-shipping-options-collection tbody" href="javascript: void(0);"><i class="fa-plus"></i>{{ 'oro.shipping.product_shipping_options.add_label'|trans }}</a>
+            <a class="btn add-list-item" data-container=".product-shipping-options-collection tbody" href="javascript: void(0);">{{ 'oro.shipping.product_shipping_options.add_label'|trans }}</a>
         </div>
     </div>
 {% endblock %}

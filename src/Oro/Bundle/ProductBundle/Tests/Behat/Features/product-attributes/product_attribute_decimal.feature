@@ -62,3 +62,11 @@ Feature: Product attribute decimal
     And I should not see "SKU456" product
     And grid sorter should have "DecimalField" options
 
+  Scenario: Delete product attribute
+    Given I login as administrator
+    Given I go to Products/ Product Attributes
+    When I click Remove "DecimalField" in grid
+    Then I should see "Are you sure you want to delete this attribute?"
+    And I click "Yes"
+    Then I should see "Attribute successfully deleted" flash message
+    And I should not see "Update schema"

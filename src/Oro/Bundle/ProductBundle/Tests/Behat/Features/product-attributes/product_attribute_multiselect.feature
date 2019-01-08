@@ -18,8 +18,8 @@ Feature: Product attribute multiselect
     And I go to Products/ Product Attributes
     When I click "Create Attribute"
     And I fill form with:
-      | Field Name | MultiSelectField  |
-      | Type       | Multi-Select      |
+      | Field Name | MultiSelectField |
+      | Type       | Multi-Select     |
     And I click "Continue"
     Then I should see that "Product Attribute Frontend Options" contains "Searchable"
     And I should see that "Product Attribute Frontend Options" contains "Filterable"
@@ -95,3 +95,12 @@ Feature: Product attribute multiselect
     And I click "Search Button"
     And I click "View Details" for "SKU123" product
     Then I should see "TestMultiValueOne, TestMultiValueThree"
+
+  Scenario: Delete product attribute
+    Given I proceed as the Admin
+    And I go to Products/ Product Attributes
+    When I click Remove "MultiSelectField" in grid
+    Then I should see "Are you sure you want to delete this attribute?"
+    And I click "Yes"
+    Then I should see "Attribute successfully deleted" flash message
+    And I should see "Update schema"

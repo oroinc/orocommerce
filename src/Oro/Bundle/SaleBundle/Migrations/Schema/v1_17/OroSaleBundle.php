@@ -24,9 +24,7 @@ class OroSaleBundle implements Migration
 
         $queries->addPostQuery(new UpdateQuoteGuestAccessIdQuery());
 
-        if (!$table->hasColumn('visitor_id')) {
-            $this->addQuoteDemandCustomerVisitor($schema);
-        }
+        $this->addQuoteDemandCustomerVisitor($schema);
     }
 
     /**
@@ -35,12 +33,14 @@ class OroSaleBundle implements Migration
     private function addQuoteDemandCustomerVisitor(Schema $schema)
     {
         $table = $schema->getTable('oro_quote_demand');
-        $table->addColumn('visitor_id', 'integer', ['notnull' => false]);
-        $table->addForeignKeyConstraint(
-            $schema->getTable('oro_customer_visitor'),
-            ['visitor_id'],
-            ['id'],
-            ['onDelete' => 'SET NULL', 'onUpdate' => null]
-        );
+        if (!$table->hasColumn('visitor_id')) {
+            $table->addColumn('visitor_id', 'integer', ['notnull' => false]);
+            $table->addForeignKeyConstraint(
+                $schema->getTable('oro_customer_visitor'),
+                ['visitor_id'],
+                ['id'],
+                ['onDelete' => 'SET NULL', 'onUpdate' => null]
+            );
+        }
     }
 }

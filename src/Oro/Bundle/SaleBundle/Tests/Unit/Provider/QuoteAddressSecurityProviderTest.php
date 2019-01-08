@@ -3,11 +3,14 @@
 namespace Oro\Bundle\SaleBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Provider\QuoteAddressProvider;
 use Oro\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
+use Oro\Bundle\UserBundle\Entity\User;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Yaml\Parser;
@@ -30,17 +33,14 @@ class QuoteAddressSecurityProviderTest extends \PHPUnit\Framework\TestCase
     {
         $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
         $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
-
-        $this->quoteAddressProvider = $this->getMockBuilder('Oro\Bundle\SaleBundle\Provider\QuoteAddressProvider')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->quoteAddressProvider = $this->createMock(QuoteAddressProvider::class);
 
         $this->provider = new QuoteAddressSecurityProvider(
             $this->authorizationChecker,
             $this->tokenAccessor,
             $this->quoteAddressProvider,
-            'CustomerQuoteClass',
-            'CustomerUserQuoteClass'
+            CustomerAddress::class,
+            CustomerUserAddress::class
         );
     }
 
@@ -77,62 +77,77 @@ class QuoteAddressSecurityProviderTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * @dataProvider userDataProvider
+     * @param object|null $user
+     * @param string $permissionPostfix
+     */
+    public function testIsAddressGrantedWithManualAllowed($user, $permissionPostfix)
+    {
+        $this->quoteAddressProvider->expects($this->never())
+            ->method($this->anything());
+
+        $customer = new Customer();
+        $customerUser = new CustomerUser();
+        $quote = (new Quote())->setCustomer($customer)->setCustomerUser($customerUser);
+
+        $this->tokenAccessor->expects($this->any())
+            ->method('getUser')
+            ->willReturn($user);
+
+        $this->authorizationChecker->expects($this->once())
+            ->method('isGranted')
+            ->with(sprintf(QuoteAddressSecurityProvider::MANUAL_EDIT_ACTION, 'shipping') . $permissionPostfix)
+            ->willReturn(true);
+
+        $this->assertTrue($this->provider->isAddressGranted($quote, 'shipping'));
+    }
+
+    /**
      * @dataProvider permissionsDataProvider
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      *
-     * @param string $userClass
-     * @param string $addressType
-     * @param array|null $isGranted
+     * @param object|null $user
+     * @param array|null $permissions
+     * @param bool $hasCustomer
+     * @param bool $hasCustomerUser
      * @param bool $hasCustomerAddresses
      * @param bool $hasCustomerUserAddresses
-     * @param bool $hasEntity
-     * @param bool $isAddressGranted
-     * @param bool $isCustomerAddressGranted
-     * @param bool $isCustomerUserAddressGranted
+     * @param bool $expected
      */
     public function testIsAddressGranted(
-        $userClass,
-        $addressType,
-        $isGranted,
+        $user,
+        $permissions,
+        $hasCustomer,
+        $hasCustomerUser,
         $hasCustomerAddresses,
         $hasCustomerUserAddresses,
-        $hasEntity,
-        $isAddressGranted,
-        $isCustomerAddressGranted,
-        $isCustomerUserAddressGranted
+        $expected
     ) {
-        $this->quoteAddressProvider->expects($this->any())->method('getCustomerAddresses')
-            ->willReturn($hasCustomerAddresses);
-        $this->quoteAddressProvider->expects($this->any())->method('getCustomerUserAddresses')
-            ->willReturn($hasCustomerUserAddresses);
+        $this->tokenAccessor->expects($this->any())
+            ->method('getUser')
+            ->willReturn($user);
 
-        $this->tokenAccessor->expects($this->any())->method('getUser')->willReturn(new $userClass);
         $this->authorizationChecker->expects($this->any())
             ->method('isGranted')
             ->with($this->isType('string'))
-            ->will($this->returnValueMap((array)$isGranted));
+            ->willReturnMap($permissions);
 
-        $quote = null;
-        $customer = null;
-        $customerUser = null;
-        if ($hasEntity) {
-            $customer = new Customer();
-            $customerUser = new CustomerUser();
+        $this->quoteAddressProvider->expects($this->any())
+            ->method('getCustomerAddresses')
+            ->willReturn($hasCustomerAddresses ? [new CustomerAddress()] : null);
+        $this->quoteAddressProvider->expects($this->any())
+            ->method('getCustomerUserAddresses')
+            ->willReturn($hasCustomerUserAddresses ? [new CustomerUserAddress()] : null);
+
+        $quote = new Quote();
+        if ($hasCustomer) {
+            $quote->setCustomer(new Customer());
         }
-        $quote = (new Quote())->setCustomer($customer)->setCustomerUser($customerUser);
+        if ($hasCustomerUser) {
+            $quote->setCustomerUser(new CustomerUser());
+        }
 
-        $this->assertEquals(
-            $isAddressGranted,
-            $this->provider->isAddressGranted($quote, $addressType)
-        );
-        $this->assertEquals(
-            $isCustomerAddressGranted,
-            $this->provider->isCustomerAddressGranted($addressType, $customer)
-        );
-        $this->assertEquals(
-            $isCustomerUserAddressGranted,
-            $this->provider->isCustomerUserAddressGranted($addressType, $customerUser)
-        );
+        $this->assertEquals($expected, $this->provider->isAddressGranted($quote, 'shipping'));
     }
 
     /**
@@ -148,9 +163,42 @@ class QuoteAddressSecurityProviderTest extends \PHPUnit\Framework\TestCase
 
         $finder->files()->in(__DIR__ . DIRECTORY_SEPARATOR . 'fixtures');
         foreach ($finder as $file) {
-            $data = $data + $yaml->parse(file_get_contents($file));
+            $fixture = $yaml->parse(file_get_contents($file));
+            foreach ($fixture as $fixtureName => $fixtureData) {
+                foreach ($this->userDataProvider() as $name => $userFixture) {
+                    $rowData = ['user' => $userFixture[0]];
+                    $permissionsMap = [];
+                    $fixtureData['permissions']['oro_quote_address_shipping_allow_manual'] = false;
+                    foreach ($fixtureData['permissions'] as $permission => $isGranted) {
+                        if (strpos($permission, ';') === false) {
+                            $permission .= $userFixture[1];
+                        }
+                        $permissionsMap[] = [$permission, null, $isGranted];
+                    }
+                    $rowData['permissions'] = $permissionsMap;
+                    $rowData['hasCustomer'] = $fixtureData['hasCustomer'];
+                    $rowData['hasCustomerUser'] = $fixtureData['hasCustomerUser'];
+                    $rowData['hasCustomerAddresses'] = $fixtureData['hasCustomerAddresses'];
+                    $rowData['hasCustomerUserAddresses'] = $fixtureData['hasCustomerUserAddresses'];
+                    $rowData['expected'] = $fixtureData['expected'];
+
+                    $data[$name . ' ' . $fixtureName] = $rowData;
+                }
+            }
         }
 
         return $data;
+    }
+
+    /**
+     * @return array
+     */
+    public function userDataProvider(): array
+    {
+        return [
+            'user' => [new User(), QuoteAddressProvider::ADMIN_ACL_POSTFIX],
+            'customer_user' => [new CustomerUser(), ''],
+            'none' => [null, QuoteAddressProvider::ADMIN_ACL_POSTFIX]
+        ];
     }
 }

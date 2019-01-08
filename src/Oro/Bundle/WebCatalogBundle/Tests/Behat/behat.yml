@@ -63,6 +63,12 @@ oro_behat_extension:
                         locator: 'input[name="oro_web_catalog_content_node[contentVariants][0][productPageProduct]"]'
                         element: Select2Entity
 
+        First Content Variant Remove First Restriction:
+            selector: '[data-ftid="oro_web_catalog_content_node_contentVariants_1_scopes"] .removeRow'
+
+        Content Node Remove First Restriction:
+            selector: '[data-content="oro_web_catalog_content_node[scopes][0]"] .removeRow'
+
         Headlamps category:
             selector:
                 type: xpath
