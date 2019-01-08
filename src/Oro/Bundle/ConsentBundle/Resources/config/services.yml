@@ -109,7 +109,6 @@ services:
             - '@oro_locale.helper.localization'
             - '@oro_redirect.provider.routing_information_provider'
             - '@router'
-            - '@oro_redirect.generator.canonical_url'
 
     oro_consent.datagrid.landing_page_provider:
         class: 'Oro\Bundle\ConsentBundle\Provider\LandingPageProvider'

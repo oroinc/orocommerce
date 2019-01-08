@@ -700,3 +700,23 @@ Feature: Consent management via Management Console UI
     And I should see "Unaccepted Consent" element with text "Email Newsletters" inside "Data Protection Section" element
     And I should see "Accepted Consent" element with text "Presenting Personal Data" inside "Data Protection Section" element
     And I should see "Accepted Consent" element with text "Collecting and storing personal data" inside "Data Protection Section" element
+
+  Scenario: Set Secure URL and usual URL
+    Given I proceed as the Admin
+    And go to System/ Configuration
+    And follow "System Configuration/Websites/Routing" on configuration sidebar
+    And I fill "Routing Settings Form" with:
+      | URL        | http://localhost  |
+      | Secure URL | https://localhost |
+    When I click "Save settings"
+    Then I should see "Configuration saved" flash message
+
+  Scenario: Consent dialog should open after changing an URL
+    Given I proceed as the User
+    And I click "Sign Out"
+    And I click "Register"
+    When I click "Presenting Personal Data"
+    Then I should see "UiDialog" with elements:
+      | Title             | Presenting Personal Data |
+      | Disabled okButton | Agree                    |
+      | cancelButton      | Cancel                   |

@@ -12,7 +12,6 @@ use Oro\Bundle\ConsentBundle\Helper\CmsPageHelper;
 use Oro\Bundle\ConsentBundle\Model\CmsPageData;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
-use Oro\Bundle\RedirectBundle\Generator\CanonicalUrlGenerator;
 use Oro\Bundle\RedirectBundle\Provider\RoutingInformationProviderInterface;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Component\Routing\RouteData;
@@ -32,9 +31,6 @@ class CmsPageDataBuilderTest extends \PHPUnit\Framework\TestCase
     /** @var CmsPageDataBuilder */
     private $builder;
 
-    /** @var CanonicalUrlGenerator|\PHPUnit\Framework\MockObject\MockObject */
-    private $canonicalUrlGenerator;
-
     /** @var LocalizationHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $localizationHelper;
 
@@ -49,15 +45,13 @@ class CmsPageDataBuilderTest extends \PHPUnit\Framework\TestCase
         $this->cmsPageHelper = $this->createMock(CmsPageHelper::class);
         $this->localizationHelper = $this->createMock(LocalizationHelper::class);
         $this->routingInformationProvider = $this->createMock(RoutingInformationProviderInterface::class);
-        $this->canonicalUrlGenerator = $this->createMock(CanonicalUrlGenerator::class);
         $this->router = $this->createMock(RouterInterface::class);
 
         $this->builder = new CmsPageDataBuilder(
             $this->cmsPageHelper,
             $this->localizationHelper,
             $this->routingInformationProvider,
-            $this->router,
-            $this->canonicalUrlGenerator
+            $this->router
         );
     }
 
@@ -120,21 +114,14 @@ class CmsPageDataBuilderTest extends \PHPUnit\Framework\TestCase
         $consent = $this->getConsent();
         $consentAcceptanceCmsPageId = 15;
         $cmsPage = $this->getEntity(Page::class, ['id' => $consentAcceptanceCmsPageId]);
-        $routerUrl = '/cms-page-url-from-content-acceptance';
         $expectedResult = (new CmsPageData())
             ->setId($consentAcceptanceCmsPageId)
-            ->setUrl($routerUrl);
+            ->setUrl('/cms-page-url-from-content-node');
 
         $this->cmsPageHelper->expects($this->once())
             ->method('getCmsPage')
             ->with($consent, null)
             ->willReturn($cmsPage);
-
-        $this->canonicalUrlGenerator->expects($this->once())
-            ->method('getAbsoluteUrl')
-            ->willReturnCallback(function (LocalizedFallbackValue $fallbackValue) use ($routerUrl) {
-                return $routerUrl;
-            });
 
         $result = $this->builder->build($consent);
         $this->assertEquals($expectedResult, $result);
