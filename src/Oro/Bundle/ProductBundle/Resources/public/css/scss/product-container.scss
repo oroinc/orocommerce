@@ -15,5 +15,9 @@
 }
 
 .product-primary-unit-controls {
-    @include selector-width(100px);
+    table {
+        td {
+            display: block;
+        }
+    }
 }

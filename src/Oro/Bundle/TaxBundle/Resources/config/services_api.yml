@@ -1,0 +1,28 @@
+services:
+    oro_tax.api.order_taxes_provider:
+        class: Oro\Bundle\TaxBundle\Api\OrderTaxesProvider
+        public: false
+        arguments:
+            - '@oro_api.doctrine_helper'
+            - '@oro_tax.provider.taxation_settings_provider'
+
+    oro_tax.api.order_line_item_taxes_provider:
+        class: Oro\Bundle\TaxBundle\Api\OrderLineItemTaxesProvider
+        public: false
+        arguments:
+            - '@oro_api.doctrine_helper'
+            - '@oro_tax.provider.taxation_settings_provider'
+
+    oro_tax.api.compute_order_taxes:
+        class: Oro\Bundle\TaxBundle\Api\Processor\ComputeOrderTaxes
+        arguments:
+            - '@oro_tax.api.order_taxes_provider'
+        tags:
+            - { name: oro.api.processor, action: customize_loaded_data, collection: true, requestType: frontend, class: '%oro_order.entity.order.class%' }
+
+    oro_tax.api.compute_order_line_item_taxes:
+        class: Oro\Bundle\TaxBundle\Api\Processor\ComputeOrderLineItemTaxes
+        arguments:
+            - '@oro_tax.api.order_line_item_taxes_provider'
+        tags:
+            - { name: oro.api.processor, action: customize_loaded_data, collection: true, requestType: frontend, class: '%oro_order.entity.order_line_item.class%' }

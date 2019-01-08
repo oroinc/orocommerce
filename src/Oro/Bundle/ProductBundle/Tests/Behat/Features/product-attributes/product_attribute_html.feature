@@ -23,6 +23,7 @@ Feature: Product attribute html
       | Filterable | Yes |
     And I save and close form
     Then I should see "Attribute was successfully saved" flash message
+    And I should not see "Update schema"
 
   Scenario: Update product family with new attribute
     Given I go to Products/ Product Families
@@ -54,3 +55,12 @@ Feature: Product attribute html
     When I filter HTMLField as contains "TestDaTa NewLiNe"
     Then I should see "SKU123" product
     And I should not see "SKU456" product
+
+  Scenario: Delete product attribute
+    Given I login as administrator
+    Given I go to Products/ Product Attributes
+    When I click Remove "HTMLField" in grid
+    Then I should see "Are you sure you want to delete this attribute?"
+    And I click "Yes"
+    Then I should see "Attribute successfully deleted" flash message
+    And I should not see "Update schema"

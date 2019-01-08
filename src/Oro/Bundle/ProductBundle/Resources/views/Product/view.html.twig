@@ -19,15 +19,15 @@
 
 {% block breadcrumbs %}
     {{ parent() }}
-    <div class="pull-left">
+    <span class="page-title__status">
         {% if not entity.status %}
             {# status not defined #}
         {% elseif entity.status == constant('STATUS_ENABLED', entity) %}
-            <div class="badge badge-pill badge-enabled status-enabled"><i class="icon-status-enabled fa-circle"></i>{{ 'oro.product.status.enabled'|trans }}</div>
+            {{ UI.badge('oro.product.status.enabled'|trans, 'enabled') }}
         {% elseif entity.status == constant('STATUS_DISABLED', entity) %}
-            <div class="badge badge-pill badge-disabled status-disabled"><i class="icon-status-disabled fa-circle"></i>{{ 'oro.product.status.disabled'|trans }}</div>
+            {{ UI.badge('oro.product.status.disabled'|trans, 'disabled') }}
         {% endif %}
-    </div>
+    </span>
 {% endblock breadcrumbs %}
 
 {% block content_data %}
@@ -261,7 +261,7 @@
                 path: path('oro_product_related_items_update', {id: entity.id}),
                 label: 'oro.product.quick_edit.label'|trans,
                 iCss: 'fa-edit',
-                class: 'quick-editable pull-right'
+                class: 'quick-editable'
             }) %}
         {% endif %}
 

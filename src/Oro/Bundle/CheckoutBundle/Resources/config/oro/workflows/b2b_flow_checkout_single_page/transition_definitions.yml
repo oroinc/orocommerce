@@ -162,7 +162,7 @@ workflows:
                         - '@extendable':
                             events:
                                 - 'extendable_condition.checkout'
-                                - 'extendable_condition.before_order_create'
+                                - 'extendable_condition.pre_order_create'
                         - '@order_line_item_has_count': $checkout
                         - '@has_applicable_payment_methods':
                             message: oro.checkout.workflow.condition.payment_method_was_not_selected.message
@@ -173,6 +173,10 @@ workflows:
 
                 conditions:
                     '@and':
+                        - '@extendable':
+                            message: 'oro.checkout.workflow.b2b_flow_checkout.transition.place_order.condition.extendable.message'
+                            events:
+                                - 'extendable_condition.before_order_create'
                         - '@validate_checkout_addresses':
                             parameters: $checkout
                         - '@not_empty':

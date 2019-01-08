@@ -49,8 +49,9 @@
 .order-line-item-sku {
     width: 134px;
 
+    .order-line-item-type-product,
     input {
-        width: 120px !important;
+        width: 70px !important;
     }
 }
 

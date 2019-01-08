@@ -23,7 +23,6 @@ class OroPromotionExtensionTest extends ExtensionTestCase
             'oro_promotion.discount.shipping_discount',
             'oro_promotion.discount.order_discount',
             'oro_promotion.discount.buy_x_get_y_discount',
-            'oro_promotion.api.add_promotion_discounts_amount',
             'oro_promotion.importexport.configuration_provider.coupon',
         ];
         $this->assertDefinitionsLoaded($expectedDefinitions);

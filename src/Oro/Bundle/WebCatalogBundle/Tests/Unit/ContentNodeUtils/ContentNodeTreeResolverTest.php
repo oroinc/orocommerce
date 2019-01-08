@@ -4,17 +4,19 @@ namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\ContentNodeUtils;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping\ClassMetadata;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
-use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\WebCatalogBundle\Cache\ResolvedData\ResolvedContentNode;
 use Oro\Bundle\WebCatalogBundle\Cache\ResolvedData\ResolvedContentVariant;
 use Oro\Bundle\WebCatalogBundle\ContentNodeUtils\ContentNodeTreeResolver;
 use Oro\Bundle\WebCatalogBundle\ContentNodeUtils\ScopeMatcher;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
+use Oro\Bundle\WebCatalogBundle\Tests\Unit\Stub\Scope;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 class ContentNodeTreeResolverTest extends \PHPUnit\Framework\TestCase
@@ -54,14 +56,14 @@ class ContentNodeTreeResolverTest extends \PHPUnit\Framework\TestCase
     public function testShouldSupportContentNodeAndScopeAsArgs()
     {
         $node = new ContentNode();
-        $scope = new Scope();
+        $scope = $this->createScope();
         $this->assertTrue($this->resolver->supports($node, $scope));
     }
 
     public function testShouldReturnNullIfCantMatchScope()
     {
         $node = new ContentNode();
-        $scope = new Scope();
+        $scope = $this->createScope();
 
         $this->scopeMatcher->expects($this->any())
             ->method('getMatchingScopePriority')
@@ -74,8 +76,10 @@ class ContentNodeTreeResolverTest extends \PHPUnit\Framework\TestCase
     {
         /** @var ContentNode $node */
         $node = $this->getEntity(ContentNode::class, ['id' => 2]);
-        /** @var Scope $scope */
-        $scope = $this->getEntity(Scope::class, ['id' => 5]);
+        $customerGroup = new CustomerGroup();
+        $customer = (new Customer())->setGroup($customerGroup);
+        $scope = $this->createScope($customer);
+        self::assertNull($scope->getCustomerGroup());
         $localization = $this->getEntity(Localization::class, ['id' => 42, 'name' => 'test_localization']);
 
         $slugUrl = '/node';
@@ -95,6 +99,7 @@ class ContentNodeTreeResolverTest extends \PHPUnit\Framework\TestCase
             ->willReturn(false);
 
         $this->assertNull($this->resolver->getResolvedContentNode($node, $scope));
+        self::assertSame($customerGroup, $scope->getCustomerGroup());
     }
 
     public function testShouldReturnResolvedNodeIfAllConditionsSatisfied()
@@ -127,8 +132,7 @@ class ContentNodeTreeResolverTest extends \PHPUnit\Framework\TestCase
 
         /** @var ContentNode $childNode */
         $childNode = $this->getEntity(ContentNode::class, ['id' => 3]);
-        /** @var Scope $scope */
-        $scope = $this->getEntity(Scope::class, ['id' => 5]);
+        $scope = $this->createScope();
         $childSlugUrl = '/node/child';
         $childSlug = new Slug();
         $childSlug->setUrl($childSlugUrl);
@@ -192,5 +196,14 @@ class ContentNodeTreeResolverTest extends \PHPUnit\Framework\TestCase
             ->willReturnOnConsecutiveCalls($metadata, $childMetadata);
 
         $this->assertEquals($resolvedNode, $this->resolver->getResolvedContentNode($node, $scope));
+    }
+
+    /**
+     * @param Customer $customer
+     * @return Scope
+     */
+    private function createScope(Customer $customer = null): Scope
+    {
+        return new Scope(['customer' => $customer, 'customerGroup' => null]);
     }
 }

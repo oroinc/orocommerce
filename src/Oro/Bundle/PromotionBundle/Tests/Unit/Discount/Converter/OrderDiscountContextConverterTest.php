@@ -12,6 +12,7 @@ use Oro\Bundle\PromotionBundle\Discount\Converter\OrderLineItemsToDiscountLineIt
 use Oro\Bundle\PromotionBundle\Discount\DiscountContext;
 use Oro\Bundle\PromotionBundle\Discount\DiscountLineItem;
 use Oro\Bundle\PromotionBundle\Discount\Exception\UnsupportedSourceEntityException;
+use Oro\Bundle\SaleBundle\Entity\Quote;
 
 class OrderDiscountContextConverterTest extends \PHPUnit\Framework\TestCase
 {
@@ -100,6 +101,10 @@ class OrderDiscountContextConverterTest extends \PHPUnit\Framework\TestCase
             ],
             'not supported entity' => [
                 'entity' => new \stdClass(),
+                'isSupported' => false
+            ],
+            'not supported order' => [
+                'entity' => (new Order)->setSourceEntityClass(Quote::class),
                 'isSupported' => false
             ],
         ];

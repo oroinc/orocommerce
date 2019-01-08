@@ -6,6 +6,6 @@
         hideField: 'oro_product[availabilityDate]',
     }|json_encode }}"
 >
-    {{ form_row(form.isUpcoming) }}
+    {{ form_row(form.isUpcoming, { 'attr': {'class': 'control-group-compact-fallback'} }) }}
     {{ form_row(form.availabilityDate) }}
 </div>

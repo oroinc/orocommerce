@@ -50,10 +50,9 @@ class NotEmptyScopesValidator extends ConstraintValidator
                 continue;
             }
 
-            $maxIdx = max(array_keys($contentVariant->getScopes()->toArray()));
             $contentVariant->getScopes()->removeElement($defaultScope);
             if ($contentVariant->getScopes()->isEmpty()) {
-                $path = sprintf('[%d].scopes[%d]', $index, $maxIdx);
+                $path = sprintf('[%d].scopes', $index);
                 $this->context->buildViolation($constraint->message)
                     ->atPath($path)
                     ->addViolation();

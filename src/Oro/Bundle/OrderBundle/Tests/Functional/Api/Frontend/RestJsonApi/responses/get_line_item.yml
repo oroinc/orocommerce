@@ -1,0 +1,18 @@
+data:
+    type: orderlineitems
+    id: '<toString(@order1_line_item1->id)>'
+    attributes:
+        productSku: SKU1
+        productName: 'Product 1'
+        freeFormProduct: product_1
+        quantity: 5
+        productUnitCode: set
+        price: '15.7000'
+        currency: USD
+        shipUntil: '2018-05-20'
+        comment: 'Test comment for line item 1'
+    relationships:
+        order:
+            data:
+                type: orders
+                id: '<toString(@order1->id)>'
