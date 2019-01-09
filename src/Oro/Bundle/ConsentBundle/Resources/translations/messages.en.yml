@@ -1,5 +1,6 @@
 oro:
     customer.customeruser.accepted_consents.label: 'Accepted Consents'
+    customer.customeruser.accepted_consents_virtual.label: 'Accepted Consents'
     consent:
         entity_label: Consent
         entity_plural_label: Consents

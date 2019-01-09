@@ -1,7 +1,7 @@
 oro_entity:
     virtual_fields:
         Oro\Bundle\CustomerBundle\Entity\CustomerUser:
-            acceptedConsents:
+            acceptedConsentsVirtual:
                 query:
                     select:
                         expr: accepted_consent.consent
