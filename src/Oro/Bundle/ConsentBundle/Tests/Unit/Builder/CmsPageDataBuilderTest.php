@@ -16,6 +16,7 @@ use Oro\Bundle\RedirectBundle\Provider\RoutingInformationProviderInterface;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Component\Routing\RouteData;
 use Oro\Component\Testing\Unit\EntityTrait;
+use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\RouterInterface;
 
 class CmsPageDataBuilderTest extends \PHPUnit\Framework\TestCase
@@ -114,14 +115,24 @@ class CmsPageDataBuilderTest extends \PHPUnit\Framework\TestCase
         $consent = $this->getConsent();
         $consentAcceptanceCmsPageId = 15;
         $cmsPage = $this->getEntity(Page::class, ['id' => $consentAcceptanceCmsPageId]);
+
+        $baseUrl = '/base-url';
         $expectedResult = (new CmsPageData())
             ->setId($consentAcceptanceCmsPageId)
-            ->setUrl('/cms-page-url-from-content-node');
+            ->setUrl($baseUrl . '/cms-page-url-from-content-node');
 
         $this->cmsPageHelper->expects($this->once())
             ->method('getCmsPage')
             ->with($consent, null)
             ->willReturn($cmsPage);
+
+        $requestContext = $this->createMock(RequestContext::class);
+        $requestContext->expects($this->once())
+            ->method('getBaseUrl')
+            ->willReturn($baseUrl);
+        $this->router->expects($this->once())
+            ->method('getContext')
+            ->willReturn($requestContext);
 
         $result = $this->builder->build($consent);
         $this->assertEquals($expectedResult, $result);

@@ -59,7 +59,7 @@
 {% block __oro_consent_items__link_widget %}
     {% if consent.cmsPageData.url is defined %}
         {% set attr = layout_attr_defaults(attr, {
-            'href': oro_commercemenu_get_url(consent.cmsPageData.url)
+            'href': consent.cmsPageData.url
         }) %}
 
         <a {{ block('block_attributes') }}>

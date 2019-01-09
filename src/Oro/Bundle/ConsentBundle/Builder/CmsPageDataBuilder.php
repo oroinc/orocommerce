@@ -86,7 +86,8 @@ class CmsPageDataBuilder
             );
         } else {
             $localizedUrls = $consent->getContentNode()->getLocalizedUrls();
-            $url = (string) $this->localizationHelper->getLocalizedValue($localizedUrls);
+            $url = $this->router->getContext()->getBaseUrl()
+                . $this->localizationHelper->getLocalizedValue($localizedUrls);
         }
 
         $cmsPageData = new CmsPageData();
