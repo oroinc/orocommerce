@@ -26,7 +26,8 @@ class PropertyPathTitleDataConverterTest extends WebTestCase
 
         $this->converter = new PropertyPathTitleDataConverter(
             $container->get('oro_entity.helper.field_helper'),
-            $container->get('oro_importexport.data_converter.relation_calculator')
+            $container->get('oro_importexport.data_converter.relation_calculator'),
+            $container->get('oro_locale.settings')
         );
         $this->converter->setDispatcher($container->get('event_dispatcher'));
     }

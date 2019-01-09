@@ -4,6 +4,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\ImportExport\DataConverter;
 
 use Oro\Bundle\EntityBundle\Helper\FieldHelper;
 use Oro\Bundle\ImportExportBundle\Converter\RelationCalculator;
+use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 use Oro\Bundle\ProductBundle\ImportExport\DataConverter\ProductDataConverter;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -12,32 +13,34 @@ class ProductDataConverterTest extends \PHPUnit\Framework\TestCase
     /**
      * @var ProductDataConverter
      */
-    protected $dataConverter;
+    private $dataConverter;
 
     /**
      * @var FieldHelper|\PHPUnit\Framework\MockObject\MockObject
      */
-    protected $fieldHelper;
+    private $fieldHelper;
 
     /**
      * @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject
      */
-    protected $eventDispatcher;
+    private $eventDispatcher;
+
+    /**
+     * @var LocaleSettings|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $localeSettings;
 
     protected function setUp()
     {
-        $this->fieldHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\Helper\FieldHelper')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->fieldHelper = $this->createMock(FieldHelper::class);
 
         /** @var \PHPUnit\Framework\MockObject\MockObject|RelationCalculator $relationCalculator */
-        $relationCalculator = $this->getMockBuilder('Oro\Bundle\ImportExportBundle\Converter\RelationCalculator')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $relationCalculator = $this->createMock(RelationCalculator::class);
 
-        $this->eventDispatcher = $this->createMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
+        $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
+        $this->localeSettings = $this->createMock(LocaleSettings::class);
 
-        $this->dataConverter = new ProductDataConverter($this->fieldHelper, $relationCalculator);
+        $this->dataConverter = new ProductDataConverter($this->fieldHelper, $relationCalculator, $this->localeSettings);
         $this->dataConverter->setEntityName('Oro\Bundle\ProductBundle\Entity\Product');
     }
 

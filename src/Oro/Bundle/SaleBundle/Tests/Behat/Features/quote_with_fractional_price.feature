@@ -1,5 +1,6 @@
 @ticket-BB-14800
 @fixture-OroPricingBundle:FractionalProductPrices.yml
+@fixture-OroLocaleBundle:GermanLocalization.yml
 
 Feature: Quote with fractional price
   In order to use correct decimal separator for fractional prices in different locales
@@ -10,8 +11,8 @@ Feature: Quote with fractional price
     When I go to System/Configuration
     And I follow "System Configuration/General Setup/Localization" on configuration sidebar
     And I fill "Configuration Localization Form" with:
-      | Locale Use Default | false            |
-      | Locale             | German (Germany) |
+      | Enabled Localizations | German_Loc |
+      | Default Localization  | German_Loc |
     And I click "Save settings"
     And I should see "Configuration saved" flash message
 
