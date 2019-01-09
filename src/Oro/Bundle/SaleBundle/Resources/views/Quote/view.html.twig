@@ -16,13 +16,13 @@
 
 {% block breadcrumbs %}
     {{ parent() }}
-    <div class="pull-left">
+    <span class="page-title__status">
         {% if entity.expired %}
-            <div class="badge badge-pill badge-disabled status-disabled"><i class="fa-lock"></i>{{ 'oro.sale.quote.expired.label'|trans }}</div>
+            {{ UI.badge('oro.sale.quote.expired.label'|trans, 'disabled', 'fa-lock') }}
         {% else %}
-            <div class="badge badge-pill badge-enabled status-enabled"><i class="fa-unlock"></i>{{ 'oro.sale.quote.not_expired.label'|trans }}</div>
+            {{ UI.badge('oro.sale.quote.not_expired.label'|trans, 'enabled', 'fa-unlock') }}
         {% endif %}
-    </div>
+    </span>
 {% endblock breadcrumbs %}
 
 {% block content_data %}
