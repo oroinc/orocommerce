@@ -11,7 +11,7 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 /**
- * Checks if given QuoteDemand contains valid visitor or user has access to related quote.
+ * Checks if given QuoteDemand contains valid visitor or user has access to related QuoteDemand.
  */
 class FrontendQuoteDemandPermissionVoter extends Voter
 {

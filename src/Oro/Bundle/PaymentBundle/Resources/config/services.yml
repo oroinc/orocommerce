@@ -320,3 +320,10 @@ services:
         public: false
         tags:
             - { name: oro_email.emailtemplate.variable_provider, scope: entity }
+
+    oro_payment.event_listener.payment_transaction_owner:
+        class: Oro\Bundle\PaymentBundle\EventListener\PaymentTransactionOwnerListener
+        arguments:
+            - '@oro_security.token_accessor'
+        tags:
+            - { name: doctrine.event_listener, event: prePersist }

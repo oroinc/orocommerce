@@ -34,11 +34,6 @@ use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
  *                       "total"="total"
  *                  }
  *              }
- *          },
- *          "ownership"={
- *              "frontend_owner_type"="FRONTEND_USER",
- *              "frontend_owner_field_name"="customerUser",
- *              "frontend_owner_column_name"="customer_user_id"
  *          }
  *      }
  * )
