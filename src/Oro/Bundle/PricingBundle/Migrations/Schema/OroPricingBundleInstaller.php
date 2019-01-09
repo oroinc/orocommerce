@@ -32,7 +32,7 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
      */
     public function getMigrationVersion()
     {
-        return 'v1_12_3';
+        return 'v1_12_4';
     }
 
     /**
@@ -1010,7 +1010,7 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
             $schema->getTable('oro_product_unit'),
             ['product_unit_id'],
             ['code'],
-            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_price_list'),
