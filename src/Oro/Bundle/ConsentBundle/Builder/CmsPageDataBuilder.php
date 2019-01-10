@@ -8,7 +8,6 @@ use Oro\Bundle\ConsentBundle\Entity\ConsentAcceptance;
 use Oro\Bundle\ConsentBundle\Helper\CmsPageHelper;
 use Oro\Bundle\ConsentBundle\Model\CmsPageData;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
-use Oro\Bundle\RedirectBundle\Generator\CanonicalUrlGenerator;
 use Oro\Bundle\RedirectBundle\Provider\RoutingInformationProviderInterface;
 use Symfony\Component\Routing\RouterInterface;
 
@@ -29,28 +28,22 @@ class CmsPageDataBuilder
     /** @var RouterInterface */
     protected $router;
 
-    /** @var CanonicalUrlGenerator */
-    private $canonicalUrlGenerator;
-
     /**
      * @param CmsPageHelper $cmsPageHelper
      * @param LocalizationHelper $localizationHelper
      * @param RoutingInformationProviderInterface $routingInformationProvider
      * @param RouterInterface $router
-     * @param CanonicalUrlGenerator $canonicalUrlGenerator
      */
     public function __construct(
         CmsPageHelper $cmsPageHelper,
         LocalizationHelper $localizationHelper,
         RoutingInformationProviderInterface $routingInformationProvider,
-        RouterInterface $router,
-        CanonicalUrlGenerator $canonicalUrlGenerator
+        RouterInterface $router
     ) {
         $this->cmsPageHelper = $cmsPageHelper;
         $this->localizationHelper = $localizationHelper;
         $this->routingInformationProvider = $routingInformationProvider;
         $this->router = $router;
-        $this->canonicalUrlGenerator = $canonicalUrlGenerator;
     }
 
     /**
@@ -93,8 +86,8 @@ class CmsPageDataBuilder
             );
         } else {
             $localizedUrls = $consent->getContentNode()->getLocalizedUrls();
-            $localizedFallbackValue = $this->localizationHelper->getLocalizedValue($localizedUrls);
-            $url = $this->canonicalUrlGenerator->getAbsoluteUrl($localizedFallbackValue);
+            $url = $this->router->getContext()->getBaseUrl()
+                . $this->localizationHelper->getLocalizedValue($localizedUrls);
         }
 
         $cmsPageData = new CmsPageData();
