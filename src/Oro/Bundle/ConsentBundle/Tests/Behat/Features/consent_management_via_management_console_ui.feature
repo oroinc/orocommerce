@@ -640,7 +640,44 @@ Feature: Consent management via Management Console UI
     When I save form
     Then the "Enable Guest Checkout" checkbox should be checked
 
+  Scenario: Remove Test Consent 2
+    Given I go to System/ Consent Management
+    And click delete "Test Consent 2" in grid
+    And I should see "Are you sure you want to delete this consent?"
+    When I click "Yes, Delete"
+    Then I should not see "Test Consent 2"
+
+  Scenario: Guest checks email confirmation required to proceed checkout
+    Given I proceed as the User
+    And I am on homepage
+    And type "Lenovo_Vibe1_sku" in "search"
+    And I click "Search Button"
+    And I click "Add to Shopping List" for "Lenovo_Vibe1_sku" product
+    And I should see "Product has been added to" flash message
+    And I open page with shopping list "Shopping List"
+    And click "Create Order"
+    And I click "Create An Account"
+    And I fill "Registration Form" with:
+      | Company          | Company            |
+      | First Name       | Sue                |
+      | Last Name        | Jackson            |
+      | Email Address    | Sue001@example.com |
+      | Password         | Sue001@example.com |
+      | Confirm Password | Sue001@example.com |
+      | Test Consent 3 | true |
+    And I click "Presenting Personal Data"
+    And I scroll modal window to bottom
+    And click "Agree"
+    And I click "Collecting and storing personal data"
+    And I scroll modal window to bottom
+    And click "Agree"
+    When I click "Create an Account and Continue"
+    Then I should see "Agreements"
+    When click "Continue"
+    Then I should see "Please confirm your email before continue checkout" flash message
+
   Scenario: Disable customer user registration confirmation on management console
+    Given I proceed as the Admin
     Given go to System/ Configuration
     And follow "Commerce/Customer/Customer Users" on configuration sidebar
     And fill "Customer Users Registration Form" with:
@@ -656,15 +693,10 @@ Feature: Consent management via Management Console UI
     When I save form
     Then I should see "Customer group has been saved" flash message
 
-  Scenario: Remove Test Consent 2
-    Given I go to System/ Consent Management
-    And click delete "Test Consent 2" in grid
-    And I should see "Are you sure you want to delete this consent?"
-    When I click "Yes, Delete"
-    Then I should not see "Test Consent 2"
-
   Scenario: Check mandatory consents on Checkout Page as unauthorized user
     Given I proceed as the User
+    And I signed in as AmandaRCole1@example.org on the store frontend
+    And I click "Sign Out"
     And I am on homepage
     And type "Lenovo_Vibe1_sku" in "search"
     And I click "Search Button"
