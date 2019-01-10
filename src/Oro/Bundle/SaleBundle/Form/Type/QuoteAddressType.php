@@ -2,6 +2,13 @@
 
 namespace Oro\Bundle\SaleBundle\Form\Type;
 
+use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
+use Oro\Bundle\AddressBundle\Entity\AddressType;
+use Oro\Bundle\FormBundle\Form\Extension\StripTagsExtension;
+use Oro\Bundle\ImportExportBundle\Serializer\Serializer;
+use Oro\Bundle\LocaleBundle\Formatter\AddressFormatter;
+use Oro\Bundle\SaleBundle\Model\QuoteAddressManager;
+use Oro\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -10,14 +17,9 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
-use Oro\Bundle\AddressBundle\Entity\AddressType;
-use Oro\Bundle\ImportExportBundle\Serializer\Serializer;
-use Oro\Bundle\FormBundle\Form\Extension\StripTagsExtension;
-use Oro\Bundle\LocaleBundle\Formatter\AddressFormatter;
-use Oro\Bundle\SaleBundle\Model\QuoteAddressManager;
-use Oro\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider;
-
+/**
+ * Form type for Quote Address
+ */
 class QuoteAddressType extends AbstractType
 {
     const NAME = 'oro_quote_address_type';
@@ -78,7 +80,7 @@ class QuoteAddressType extends AbstractType
                     'required' => false,
                     'mapped' => false,
                     'choices' => $this->getChoices($addresses),
-                    'configs' => ['placeholder' => 'oro.quote.form.address.choose'],
+                    'configs' => ['placeholder' => 'oro.sale.quote.form.address.choose'],
                     'attr' => [
                         'data-addresses' => json_encode($this->getPlainData($addresses)),
                         'data-default' => $addressCollection->getDefaultAddressKey(),

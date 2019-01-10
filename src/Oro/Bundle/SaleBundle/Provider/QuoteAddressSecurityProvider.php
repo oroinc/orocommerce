@@ -9,6 +9,9 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 
+/**
+ * Provide access availability decision for customer and customer user addresses for given quote.
+ */
 class QuoteAddressSecurityProvider
 {
     const MANUAL_EDIT_ACTION = 'oro_quote_address_%s_allow_manual';
@@ -57,8 +60,8 @@ class QuoteAddressSecurityProvider
      */
     public function isAddressGranted(Quote $quote, $type)
     {
-        return $this->isCustomerAddressGranted($type, $quote->getCustomer()) ||
-            $this->isCustomerUserAddressGranted($type, $quote->getCustomerUser());
+        return $this->isCustomerAddressGranted($type, $quote->getCustomer())
+            || $this->isCustomerUserAddressGranted($type, $quote->getCustomerUser());
     }
 
     /**
@@ -82,7 +85,7 @@ class QuoteAddressSecurityProvider
         }
 
         if (!$customer) {
-            return false;
+            return $hasPermissions;
         }
 
         return (bool)$this->QuoteAddressProvider->getCustomerAddresses($customer, $type);
@@ -109,7 +112,7 @@ class QuoteAddressSecurityProvider
         }
 
         if (!$customerUser) {
-            return false;
+            return $hasPermissions;
         }
 
         return (bool)$this->QuoteAddressProvider->getCustomerUserAddresses($customerUser, $type);
