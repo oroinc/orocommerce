@@ -87,6 +87,10 @@ oro:
                     messages:
                         all_agreements_accepted: All mandatory consents were accepted. Click "Continue" to proceed with the checkout.
                         data_protection.label: 'Data protection'
+            single_page_checkout:
+                form:
+                    messages:
+                        all_agreements_accepted: All mandatory consents were accepted.
 
         customer_user:
             accepted.label: 'Yes'
