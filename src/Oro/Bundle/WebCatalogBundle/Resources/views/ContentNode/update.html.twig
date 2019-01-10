@@ -83,6 +83,7 @@
                  }
              }|json_encode }}"
              data-layout="separate"
+             class="content-node-use-parent"
         >
             {{ form_row(form.parentScopeUsed) }}
             <div class="scope-elements">
@@ -108,7 +109,10 @@
             'title': 'oro.webcatalog.sections.use_for'|trans,
             'subblocks': [{
                 'title': '',
-                'data': [scopes]
+                'data': [
+                    scopes,
+                    form_errors(form.scopes)
+                ]
             }]
         },
         {

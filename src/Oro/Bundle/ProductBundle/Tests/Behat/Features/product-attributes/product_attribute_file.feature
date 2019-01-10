@@ -41,3 +41,12 @@ Feature: Product attribute file
       | FileField | cat1.jpg |
     And I save and close form
     Then I should see "Product has been saved" flash message
+
+  Scenario: Delete product attribute
+    Given I login as administrator
+    Given I go to Products/ Product Attributes
+    When I click Remove "FileField" in grid
+    Then I should see "Are you sure you want to delete this attribute?"
+    And I click "Yes"
+    Then I should see "Attribute successfully deleted" flash message
+    And I should see "Update schema"

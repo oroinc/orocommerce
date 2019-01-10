@@ -69,3 +69,12 @@ Feature: Product attribute image
     And I click "Copyright"
     And I hover on "Product Main Image"
     And I check element "Zoom Container" has width "564"
+
+  Scenario: Delete product attribute
+    Given I proceed as the Admin
+    And I go to Products/ Product Attributes
+    When I click Remove "ImageField" in grid
+    Then I should see "Are you sure you want to delete this attribute?"
+    And I click "Yes"
+    Then I should see "Attribute successfully deleted" flash message
+    And I should see "Update schema"

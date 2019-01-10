@@ -201,19 +201,9 @@ define(function(require) {
         },
 
         /**
-         * Set customer address choices from order related data
-         *
-         * @param {Object} response
+         * Reset address form state
          */
-        loadedRelatedData: function(response) {
-            var address = response[this.options.type + 'Address'] || null;
-            if (!address) {
-                this.loadingEnd();
-                return;
-            }
-
-            var $oldAddress = this.$address;
-            this.setAddress($(address));
+        resetAddressForm: function() {
             this.$fields.each(function() {
                 var $field = $(this);
                 $field.val('');
@@ -222,6 +212,36 @@ define(function(require) {
                     $field.data('selected-data', '').change();
                 }
             });
+        },
+
+        /**
+         * Reset address selector
+         */
+        resetAddressSelector: function() {
+            this.$address.empty();
+            this.$address.data('addresses', {});
+            if (this.$address.data('select2')) {
+                this.$address.data('selected-data', '').change();
+            }
+        },
+
+        /**
+         * Set customer address choices from order related data
+         *
+         * @param {Object} response
+         */
+        loadedRelatedData: function(response) {
+            var address = response[this.options.type + 'Address'] || null;
+            if (!address) {
+                this.resetAddressSelector();
+                this.resetAddressForm();
+                this.loadingEnd();
+                return;
+            }
+
+            var $oldAddress = this.$address;
+            this.setAddress($(address));
+            this.resetAddressForm();
             $oldAddress.parent().trigger('content:remove');
             $oldAddress.inputWidget('dispose');
             $oldAddress.replaceWith(this.$address);

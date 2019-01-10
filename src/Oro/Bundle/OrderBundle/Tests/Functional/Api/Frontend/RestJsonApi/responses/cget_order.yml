@@ -1,0 +1,164 @@
+data:
+    -
+        type: orders
+        id: '<toString(@order1->id)>'
+        attributes:
+            identifier: order1
+            poNumber: PO1
+            customerNotes: 'Test customer user notes for order 1'
+            shipUntil: null
+            currency: USD
+            subtotalValue: '789.0000'
+            totalValue: '1234.0000'
+            shippingMethod:
+                code: '<("flat_rate_" . @flat_rate_shipping_channel->id)>'
+                label: 'Flat Rate'
+            shippingCostAmount: '7.0000'
+            createdAt: '@order1->createdAt->format("Y-m-d\TH:i:s\Z")'
+            updatedAt: '@order1->updatedAt->format("Y-m-d\TH:i:s\Z")'
+            paymentTerm: 'net 10'
+            paymentStatus:
+                code: 'full'
+                label: 'Paid in full'
+            paymentMethod:
+                -
+                    code: '<("money_order_" . @money_order_channel_1->id)>'
+                    label: 'Check/Money Order'
+            discounts:
+                -
+                    type: 'order'
+                    description: 'Amount Discount'
+                    amount: '158.5890'
+                -
+                    type: 'order'
+                    description: 'Percent Discount'
+                    amount: '158.5890'
+            shippingTrackings:
+                -
+                    method: 'method 1'
+                    number: 'number 1'
+        relationships:
+            billingAddress:
+                data:
+                    type: orderaddresses
+                    id: '<toString(@order1_billing_address->id)>'
+            shippingAddress:
+                data:
+                    type: orderaddresses
+                    id: '<toString(@order1_shipping_address->id)>'
+            lineItems:
+                data:
+                    -
+                        type: orderlineitems
+                        id: '<toString(@order1_line_item2->id)>'
+                    -
+                        type: orderlineitems
+                        id: '<toString(@order1_line_item1->id)>'
+            customerUser:
+                data:
+                    type: customerusers
+                    id: '<toString(@customer_user->id)>'
+            customer:
+                data:
+                    type: customers
+                    id: '<toString(@customer->id)>'
+    -
+        type: orders
+        id: '<toString(@order2->id)>'
+        attributes:
+            identifier: order2
+            poNumber: PO2
+            customerNotes: 'Test customer user notes for order 2'
+            shipUntil: null
+            currency: EUR
+            subtotalValue: '1500.0000'
+            totalValue: '1700.0000'
+            shippingMethod: null
+            shippingCostAmount: '5.0000'
+            createdAt: '@order2->createdAt->format("Y-m-d\TH:i:s\Z")'
+            updatedAt: '@order2->updatedAt->format("Y-m-d\TH:i:s\Z")'
+            paymentTerm: 'net 20'
+            paymentStatus:
+                code: 'partially'
+                label: 'Paid partially'
+            paymentMethod:
+                -
+                    code: '<("money_order_" . @money_order_channel_1->id)>'
+                    label: 'Check/Money Order'
+            discounts: []
+            shippingTrackings:
+                -
+                    method: 'method 2'
+                    number: 'number 2'
+        relationships:
+            billingAddress:
+                data: null
+            shippingAddress:
+                data: null
+            lineItems:
+                data:
+                    -
+                        type: orderlineitems
+                        id: '<toString(@order2_line_item1->id)>'
+            customerUser:
+                data:
+                    type: customerusers
+                    id: '<toString(@customer_user->id)>'
+            customer:
+                data:
+                    type: customers
+                    id: '<toString(@customer->id)>'
+    -
+        type: orders
+        id: '<toString(@order3->id)>'
+        attributes:
+            identifier: order3
+            poNumber: PO3
+            customerNotes: null
+            shipUntil: null
+            currency: USD
+            subtotalValue: '123.4567'
+            totalValue: '123.4567'
+            shippingMethod: null
+            shippingCostAmount: null
+            createdAt: '@order3->createdAt->format("Y-m-d\TH:i:s\Z")'
+            updatedAt: '@order3->updatedAt->format("Y-m-d\TH:i:s\Z")'
+            paymentTerm: 'net 10'
+            paymentStatus:
+                code: 'pending'
+                label: 'Pending payment'
+            paymentMethod:
+                -
+                    code: '<("money_order_" . @money_order_channel_1->id)>'
+                    label: 'Check/Money Order'
+            discounts:
+                -
+                    type: 'order'
+                    description: 'Amount Discount order 3'
+                    amount: '2.5926'
+            shippingTrackings:
+                -
+                    method: 'method 1'
+                    number: 'number 1'
+        relationships:
+            billingAddress:
+                data:
+                    type: orderaddresses
+                    id: '<toString(@order3_billing_address->id)>'
+            shippingAddress:
+                data:
+                    type: orderaddresses
+                    id: '<toString(@order3_shipping_address->id)>'
+            lineItems:
+                data:
+                    -
+                        type: orderlineitems
+                        id: '<toString(@order3_line_item1->id)>'
+            customerUser:
+                data:
+                    type: customerusers
+                    id: '<toString(@customer_user1->id)>'
+            customer:
+                data:
+                    type: customers
+                    id: '<toString(@customer1->id)>'
