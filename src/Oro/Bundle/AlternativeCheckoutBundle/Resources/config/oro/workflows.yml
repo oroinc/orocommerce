@@ -241,17 +241,12 @@ workflows:
                             entity: $checkout
                             attribute: $.result.initCheckoutState
                         - '@assign_value': [$customerConsents, null]
-                        - '@assign_value': [$consents_available, false]
                     attribute_fields:
                         customerConsents:
                             form_type: Oro\Bundle\ConsentBundle\Form\Type\ConsentAcceptanceType
                             options:
                                 required: true
                                 property_path: customerConsents
-                        consents_available:
-                            form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
-                            options:
-                                data: true
                         state_token:
                             form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
                             options:
@@ -706,6 +701,7 @@ workflows:
 
             continue_to_billing_address_definition:
                 preactions:
+                    - '@assign_value': [$consents_available, true]
                     - '@generate_checkout_state_snapshot':
                         entity: $checkout
                         attribute: $.result.currentCheckoutState

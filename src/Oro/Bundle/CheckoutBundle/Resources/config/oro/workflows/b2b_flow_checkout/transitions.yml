@@ -67,17 +67,12 @@ workflows:
                                     - '@equal': [$checkout.customerUser.isGuest, false]
                             actions:
                                 - '@assign_value': [$customerConsents, null]
-                        - '@assign_value': [$consents_available, false]
                     attribute_fields:
                         customerConsents:
                             form_type: Oro\Bundle\ConsentBundle\Form\Type\ConsentAcceptanceType
                             options:
                                 required: true
                                 property_path: customerConsents
-                        consents_available:
-                            form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
-                            options:
-                                data: true
                         state_token:
                             form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
                             options:

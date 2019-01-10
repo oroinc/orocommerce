@@ -69,6 +69,7 @@ workflows:
 
             continue_to_billing_address_definition:
                 preactions:
+                    - '@assign_value': [$consents_available, true]
                     - '@generate_checkout_state_snapshot':
                         entity: $checkout
                         attribute: $.result.currentCheckoutState

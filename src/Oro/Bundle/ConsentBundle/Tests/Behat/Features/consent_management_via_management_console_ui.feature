@@ -589,6 +589,41 @@ Feature: Consent management via Management Console UI
     Then I should see "Unaccepted Consent" element with text "Email Newsletters" inside "Data Protection Section" element
     And I should see "Accepted Consent" element with text "Presenting Personal Data" inside "Data Protection Section" element
     And I should see "Accepted Consent" element with text "Collecting and storing personal data" inside "Data Protection Section" element
+
+  Scenario: Check that Agreements step is presenting if it was shown previously
+    Given I click "Account"
+    And I click "Edit Profile Button"
+    And I fill form with:
+      | Test Consent 3 | false |
+    When I save form
+    Then I should see "UiWindow" with elements:
+      | Title        | Data Protection                                                 |
+      | Content      | Are you sure you want to decline the consents accepted earlier? |
+      | okButton     | Yes, Decline                                                    |
+      | cancelButton | No, Cancel                                                      |
+    And I click "Yes, Decline"
+    And I should see "Customer User profile updated" flash message
+    When I click "Quick Order Form"
+    And I fill "QuickAddForm" with:
+      | SKU1 |Lenovo_Vibe1_sku|
+    And I wait for products to load
+    And fill "QuickAddForm" with:
+      | QTY1 | 10  |
+    And I click "Create Order"
+    Then I should see "Agreements" in the "Checkout Step Title" element
+    And I should see 1 elements "Required Consent"
+    And the "Test Consent 3" checkbox should not be checked
+    When I click "Account"
+    And I click "Edit Profile Button"
+    Then I fill form with:
+      | Test Consent 3 | true |
+    When I save form
+    Then I should see "Customer User profile updated" flash message
+    When I open shopping list widget
+    And I click "View Details"
+    And I click "Create Order"
+    Then I should see "Agreements" in the "Checkout Step Title" element
+    And I should see "All mandatory consents were accepted."
     And I click "Sign Out"
 
   Scenario: Enable guest shopping list and guest checkout settings
