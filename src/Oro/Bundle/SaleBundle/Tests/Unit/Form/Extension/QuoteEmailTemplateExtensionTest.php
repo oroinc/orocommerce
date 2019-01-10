@@ -238,7 +238,7 @@ class QuoteEmailTemplateExtensionTest extends FormIntegrationTestCase
             $configManager,
             $translator,
             new EventDispatcher(),
-            new EntityNameResolver('full', ['full' => '']),
+            $this->createMock(EntityNameResolver::class),
             $this->featureChecker
         );
     }
