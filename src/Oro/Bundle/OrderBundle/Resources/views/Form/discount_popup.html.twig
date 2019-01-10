@@ -4,18 +4,18 @@
             <div class="control-label wrap">{{ form_label(form.value) }}</div>
             <div class="controls controls-discount-popup">
                 <div class="discount-popup">
-                    <div class="discount-amount-value input-append">
-                        {{ form_widget(form.value, {attr: {'data-role': 'value'}}) }}
-                        {{ form_widget(form.type, {attr: {'data-role': 'type'}}) }}
-                    </div>
+                    <div class="fields-row">
+                        <div class="discount-amount-value input-append">
+                            {{ form_widget(form.value, {attr: {'data-role': 'value'}}) }}
+                            {{ form_widget(form.type, {attr: {'data-role': 'type'}}) }}
+                        </div>
 
-                    <div class="discount-item-value-calculated">
-                        {% if (form.vars.value is not empty) %}
-                            {{ form.vars.value.amountPrice|oro_format_price }} ({{ form.vars.value.percent|number_format }}%)
-                        {% endif %}
+                        <div class="discount-item-value-calculated">
+                            {% if (form.vars.value is not empty) %}
+                                {{ form.vars.value.amountPrice|oro_format_price }} ({{ form.vars.value.percent|number_format }}%)
+                            {% endif %}
+                        </div>
                     </div>
-                    <div class="js-errors"></div>
-
                     <span data-validation-ignore="">{{ form_widget(form.percent, {attr: {'data-role': 'percent'}}) }}</span>
                     <span data-validation-ignore="">{{ form_widget(form.amount, {attr: {'data-role': 'amount'}}) }}</span>
                 </div>
