@@ -89,12 +89,8 @@ class ProductUnitsTypeTest extends FormIntegrationTestCase
         return [
             'valid' => [
                 'defaultData' => null,
-                'submittedData' => [
-                    'productUnit' => 'kg',
-                ],
-                'expectedData' => [
-                    'productUnit' => 'kg',
-                ],
+                'submittedData' => 'kg',
+                'expectedData' => 'kg'
             ]
         ];
     }

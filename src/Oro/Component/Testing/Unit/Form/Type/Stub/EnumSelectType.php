@@ -27,7 +27,8 @@ class EnumSelectType extends EntityType
             [
                 'choice_list' => $this->choiceList,
                 'enum_code' => null,
-                'configs' => []
+                'configs' => [],
+                'compound' => false
             ]
         );
     }
