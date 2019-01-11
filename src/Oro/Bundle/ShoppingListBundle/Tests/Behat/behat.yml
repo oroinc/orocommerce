@@ -228,6 +228,9 @@ oro_behat_extension:
       selector: 'input[name="shopping_list[oro_shopping_list___default_guest_shopping_list_owner][value]"]'
       class: Oro\Bundle\FormBundle\Tests\Behat\Element\Select2Entity
 
+    Customer Field:
+      selector: '.select2-container.input-widget'
+
   suites:
     OroShoppingListBundle:
       contexts:
