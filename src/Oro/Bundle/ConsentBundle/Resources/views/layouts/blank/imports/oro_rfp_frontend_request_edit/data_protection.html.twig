@@ -1,0 +1,22 @@
+{% block __oro_rfp_frontend_request_edit__rfp_form_data_protection_widget %}
+    <div class="request-form">
+        <h2 class="request-form__title">
+            {{ 'oro.consent.frontend.rfq.form.sections.data_protection.label'|trans }}
+        </h2>
+        <div class="request-form-container customer_user_form">
+            <div class="grid__row grid__row--offset-none">
+                <div class="grid__column grid__column--12">
+                    {{ parent_block_widget(block) }}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block _rfp_form_fields_widget %}
+    {% if form.customerConsents is defined %}
+        {{ form_row(form.customerConsents) }}
+    {% endif %}
+
+    {{ parent_block_widget(block) }}
+{% endblock %}

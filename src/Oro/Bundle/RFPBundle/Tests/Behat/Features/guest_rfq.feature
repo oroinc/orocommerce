@@ -82,7 +82,7 @@ Feature: Guest RFQ
     And click "LineItemDropdown"
     And click "Request a Quote"
     And I fill form with:
-      | First Name             | Tester               |
+      | First Name             | Tester2              |
       | Last Name              | Testerson            |
       | Email Address          | testerson@example.com|
       | Phone Number           | 72 669 62 82         |
@@ -94,7 +94,7 @@ Feature: Guest RFQ
     Then I should see "Request has been saved" flash message
     And I should see "Thank You For Your Request!"
 
-  Scenario: Check that second RFQ assigned to the same customer
+  Scenario: Check that second RFQ assigned to the different customer
     Given I proceed as the Admin
     And go to Customers/ Customers
     And I should see "Tester Testerson" in grid with following data:
@@ -102,7 +102,7 @@ Feature: Guest RFQ
       | Account | Tester Testerson           |
     When I click view "Tester Testerson" in grid
     Then I should see "PO Test 01"
-    And I should see "PO Test 02"
+    And I should not see "PO Test 02"
 
   Scenario: Create RFQ with another localization and check product unit in email
     Given I proceed as the Buyer

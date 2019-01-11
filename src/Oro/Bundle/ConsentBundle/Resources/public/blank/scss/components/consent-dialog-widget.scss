@@ -1,0 +1,11 @@
+/* @theme: blank; */
+
+.consent-dialog-widget {
+    max-height: $consent-dialog-widget-max-height;
+}
+
+@include breakpoint('tablet') {
+    .consent-dialog-widget {
+        max-height: $consent-dialog-widget-tablet-max-height;
+    }
+}

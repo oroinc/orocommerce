@@ -19,6 +19,8 @@ class LoadWebCatalogData extends AbstractFixture
     {
         foreach ([self::CATALOG_1, self::CATALOG_2, self::CATALOG_3] as $catalogReference) {
             $catalog = $this->createCatalog($catalogReference);
+            $organization = $manager->getRepository('OroOrganizationBundle:Organization')->findOneBy([]);
+            $catalog->setOrganization($organization);
             $manager->persist($catalog);
             $this->setReference($catalogReference, $catalog);
         }

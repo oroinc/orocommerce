@@ -1,0 +1,16 @@
+layout:
+    imports:
+        -
+            id: oro_consent_items
+            namespace: registration
+            root: registration_form
+    actions:
+        - '@setOption':
+            id: registration_consent_wrapper
+            optionName: consents
+            optionValue: '=data["oro_frontend_consent_provider"].getAllConsentData()'
+        - '@move':
+            id: registration_consent_wrapper
+            parentId: registration_form
+            siblingId: registration_form_submit_wrapper
+            prepend: true

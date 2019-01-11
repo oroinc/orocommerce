@@ -28,6 +28,13 @@ workflows:
                         - '@generate_checkout_state_snapshot':
                             entity: $checkout
                             attribute: $.result.initCheckoutState
+                        - '@tree':
+                            conditions:
+                                '@and':  #For logged customer user only
+                                    - '@not_empty': $checkout.customerUser
+                                    - '@equal': [$checkout.customerUser.isGuest, false]
+                            actions:
+                                - '@assign_value': [$customerConsents, null]
                     attribute_fields:
                         billing_address:
                             form_type: Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressSelectType
@@ -65,6 +72,11 @@ workflows:
                         late_registration:
                             form_type: Oro\Bundle\CheckoutBundle\Form\Type\LateRegistrationType
                             data: $late_registration_data
+                        customerConsents:
+                            form_type: Oro\Bundle\ConsentBundle\Form\Type\ConsentAcceptanceType
+                            options:
+                                required: true
+                                property_path: customerConsents
                         state_token:
                             form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
                             options:
@@ -109,6 +121,13 @@ workflows:
                             conditions:
                                 '@not_empty': [$.result.validatePaymentTransaction]
                             parameters: [$payment_validate, false]
+                        - '@tree':
+                            conditions:
+                                '@and':  #For logged customer user only
+                                    - '@not_empty': $checkout.customerUser
+                                    - '@equal': [$checkout.customerUser.isGuest, false]
+                            actions:
+                                - '@assign_value': [$customerConsents, null]
                     attribute_fields:
                         billing_address:
                             form_type: Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressSelectType
@@ -154,6 +173,11 @@ workflows:
                                 data: $late_registration
                         customer_notes:
                             form_type: Symfony\Component\Form\Extension\Core\Type\TextareaType
+                        customerConsents:
+                            form_type: Oro\Bundle\ConsentBundle\Form\Type\ConsentAcceptanceType
+                            options:
+                                required: true
+                                property_path: customerConsents
                         state_token:
                             form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
                             options:

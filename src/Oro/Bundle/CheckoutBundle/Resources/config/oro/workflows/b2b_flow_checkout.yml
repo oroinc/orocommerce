@@ -5,6 +5,7 @@ imports:
     - { resource: 'includes/base_transition_definitions.yml' }
     - { resource: 'b2b_flow_checkout/transitions.yml' }
     - { resource: 'b2b_flow_checkout/transition_definitions.yml' }
+    - { resource: '@OroConsentBundle/Resources/config/oro/workflows/b2b_flow_checkout.yml', ignore_errors: true }
 
 workflows:
     b2b_flow_checkout:

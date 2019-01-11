@@ -20,7 +20,8 @@ layout:
                     blockType: checkout_information_title
                     options:
                         workflowStep: '=data["workflowStep"]'
-                        stepOrder: '-'
+                        stepOrder: '=data["oro_checkout_steps"].getStepOrder(data["workflowItem"], context["workflowStepName"], excludedSteps)'
+                        excludedSteps: '=["enter_credentials_step"]'
                 __checkout_information_body:
                     blockType: container
                 __checkout_form:

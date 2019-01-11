@@ -1,0 +1,24 @@
+{% block __oro_customer_user_form__customer_user_form_fields_data_protection_widget %}
+    <div class="form-group">
+        <legend>
+            {{ 'oro.consent.frontend.profile.form.sections.data_protection.label'|trans }}
+        </legend>
+        <div class="grid">
+            <div class="grid__row grid__row--offset-none">
+                <div class="grid__column grid__column--12">
+                    {{ block_widget(block) }}
+                    {% if form.customerConsents is defined %}
+                        {{ form_widget(form.customerConsents) }}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block __oro_customer_user_form__consent_wrapper_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        'data-page-component-view': 'oroconsent/js/app/views/consents-group-view'
+    }) %}
+    {{ parent_block_widget(block) }}
+{% endblock %}

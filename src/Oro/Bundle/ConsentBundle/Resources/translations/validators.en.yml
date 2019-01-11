@@ -1,0 +1,8 @@
+oro:
+    consent:
+        validators:
+            consent:
+                unique_consent.message: 'Consent is duplicated.'
+                required_consents.message: 'To proceed further you must accept all required consents: ({{ consent_names }})!'
+                removed_consents.message: 'Some consents were changed. Please reload the page.'
+                removed_landing_pages.message: 'Some consents were changed. Please reload the page.'
