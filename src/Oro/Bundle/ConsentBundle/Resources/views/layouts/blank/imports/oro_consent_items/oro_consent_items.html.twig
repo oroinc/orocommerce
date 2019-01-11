@@ -49,10 +49,12 @@
     }) %}
 
     <label {{ block('block_attributes') }}>
-        {{ parent_block_widget(block) }}
-        {% if consent.required %}
-            <em class="consent-item__asterisk">*</em>
-        {% endif %}
+        {% spaceless %}
+            {{ parent_block_widget(block) }}
+            {% if consent.required %}
+                <em class="consent-item__asterisk">*</em>
+            {% endif %}
+        {% endspaceless %}
     </label>
 {% endblock %}
 
@@ -62,13 +64,9 @@
             'href': consent.cmsPageData.url
         }) %}
 
-        <a {{ block('block_attributes') }}>
-            {{ consent.title }}
-        </a>
+        <a {{ block('block_attributes') }}>{{ consent.title }}</a>
     {% else %}
-        <span {{ block('block_attributes') }}>
-            {{ consent.title }}
-        </span>
+        <span {{ block('block_attributes') }}>{{ consent.title }}</span>
     {% endif %}
 {% endblock %}
 
