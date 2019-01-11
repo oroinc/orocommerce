@@ -5,6 +5,10 @@ namespace Oro\Component\Testing\Unit\Form\Type\Stub;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * The stub form type that can be used instead of {@see \Oro\Bundle\EntityExtendBundle\Form\Type\EnumSelectType}
+ * in unit tests for form types contains an enum field to simplify such tests.
+ */
 class EnumSelectType extends EntityType
 {
     const NAME = 'oro_enum_select';
@@ -26,7 +30,8 @@ class EnumSelectType extends EntityType
         $resolver->setDefaults(
             [
                 'enum_code' => null,
-                'configs' => []
+                'configs' => [],
+                'compound' => false
             ]
         );
     }

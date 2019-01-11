@@ -166,11 +166,6 @@ class QuantityTypeTest extends FormIntegrationTestCase
                 [],
                 ['\InvalidArgumentException', 'Missing "productUnit" on form'],
             ],
-            'invalid product' => [
-                ['product_field' => 'productField'],
-                ['productField' => 4],
-                ['productUnitField' => null, 'quantityField' => null],
-            ],
             'product from field overrides product from options' => [
                 [
                     'product_field' => 'productField',
@@ -191,14 +186,6 @@ class QuantityTypeTest extends FormIntegrationTestCase
                 ['productField' => 1],
                 [],
                 ['\InvalidArgumentException', 'Missing "productUnitNotExists" on form'],
-            ],
-            'invalid product unit' => [
-                ['product_field' => 'productField', 'product_unit_field' => 'productUnitField'],
-                ['productField' => 2, 'productUnitField' => 'missing'],
-                [
-                    'productField' => $this->getEntity('Oro\Bundle\ProductBundle\Entity\Product', ['id' => 2]),
-                    'quantityField' => null,
-                ],
             ],
             'get precision from unit precision' => [
                 ['product_field' => 'productField', 'product_unit_field' => 'productUnitField'],
@@ -242,6 +229,33 @@ class QuantityTypeTest extends FormIntegrationTestCase
                 ],
             ],
         ];
+    }
+
+    public function testInvalidProduct()
+    {
+        $this->parentType->setQuantityOptions(['product_field' => 'productField']);
+        $form = $this->factory->create(QuantityParentTypeStub::class);
+        $form->submit(['productField' => 4]);
+        $this->assertFalse($form->isValid());
+        $this->assertCount(1, $form->get('productField')->getErrors());
+        $this->assertNull($form->get('productUnitField')->getData());
+        $this->assertNull($form->get('quantityField')->getData());
+    }
+
+    public function testInvalidProductUnit()
+    {
+        $this->parentType->setQuantityOptions(
+            ['product_field' => 'productField', 'product_unit_field' => 'productUnitField']
+        );
+        $form = $this->factory->create(QuantityParentTypeStub::class);
+        $form->submit(['productField' => 2, 'productUnitField' => 'missing']);
+        $this->assertFalse($form->isValid());
+        $this->assertCount(1, $form->get('productUnitField')->getErrors());
+        $this->assertEquals(
+            $this->getEntity('Oro\Bundle\ProductBundle\Entity\Product', ['id' => 2]),
+            $form->get('productField')->getData()
+        );
+        $this->assertNull($form->get('quantityField')->getData());
     }
 
     /**
