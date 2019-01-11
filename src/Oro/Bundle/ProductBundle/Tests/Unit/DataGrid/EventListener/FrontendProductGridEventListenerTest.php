@@ -186,6 +186,10 @@ class FrontendProductGridEventListenerTest extends \PHPUnit_Framework_TestCase
 
         $manyToManyAttribute = new FieldConfigModel('names');
         $manyToManyAttribute->setEntity(new EntityConfigModel());
+
+        $manyToManyAttributeLocalizable = clone $manyToManyAttribute;
+        $manyToManyAttributeLocalizable->fromArray('extend', ['target_entity' => LocalizedFallbackValue::class]);
+
         $manyToManySearchAttributeType = new SearchableType\ManyToManySearchableAttributeType(
             new Type\ManyToManyAttributeType($entityNameResolver, $doctrineHelper)
         );
@@ -195,6 +199,11 @@ class FrontendProductGridEventListenerTest extends \PHPUnit_Framework_TestCase
         $manyToOneSearchAttributeType = new SearchableType\ManyToOneSearchableAttributeType(
             new Type\ManyToOneAttributeType($entityNameResolver, $doctrineHelper)
         );
+
+        $fileAttribute = new FieldConfigModel('image');
+        $fileAttribute->setEntity(new EntityConfigModel());
+
+        $fileSearchAttributeType = new SearchableType\FileSearchableAttributeType(new Type\FileAttributeType('file'));
 
         return [
             'not active attribute' => [
@@ -374,7 +383,7 @@ class FrontendProductGridEventListenerTest extends \PHPUnit_Framework_TestCase
                 ],
             ],
             'attribute filterable and sortable (localized)' => [
-                'attribute' => $manyToManyAttribute,
+                'attribute' => $manyToManyAttributeLocalizable,
                 'attributeType' => $manyToManySearchAttributeType,
                 'extendConfig' => $this->getConfig(['state' => ExtendScope::STATE_ACTIVE]),
                 'attributeConfig' => $this->getConfig(['filterable' => true, 'sortable' => true]),
@@ -434,6 +443,14 @@ class FrontendProductGridEventListenerTest extends \PHPUnit_Framework_TestCase
                         ]
                     ]
                 ],
+            ],
+            'attribute not filterable and not sortable, but incorrect data' => [
+                'attribute' => $fileAttribute,
+                'attributeType' => $fileSearchAttributeType,
+                'extendConfig' => $this->getConfig(['state' => ExtendScope::STATE_ACTIVE]),
+                'attributeConfig' => $this->getConfig(['filterable' => true, 'sortable' => true]),
+                'hasAssociation' => true,
+                'expected' => [],
             ],
         ];
     }

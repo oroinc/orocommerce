@@ -58,22 +58,22 @@ class FrontendProductGridEventListener
     public function onPreBuild(PreBuild $event)
     {
         $config = $event->getConfig();
-        $attributes = $this->attributeManager->getAttributesByClass(Product::class);
+        $attrs = $this->attributeManager->getAttributesByClass(Product::class);
 
-        foreach ($attributes as $attribute) {
-            $attributeType = $this->getAttributeType($attribute);
+        foreach ($attrs as $attr) {
+            $attributeType = $this->getAttributeType($attr);
             if (!$attributeType) {
                 continue;
             }
 
-            $label = $this->configurationProvider->getAttributeLabel($attribute);
+            $label = $this->configurationProvider->getAttributeLabel($attr);
 
-            if ($this->configurationProvider->isAttributeFilterable($attribute)) {
-                $this->addFilter($config, $attribute, $attributeType, $label);
+            if ($attributeType->isFilterable($attr) && $this->configurationProvider->isAttributeFilterable($attr)) {
+                $this->addFilter($config, $attr, $attributeType, $label);
             }
 
-            if ($this->configurationProvider->isAttributeSortable($attribute)) {
-                $this->addSorter($config, $attribute, $attributeType, $label);
+            if ($attributeType->isSortable($attr) && $this->configurationProvider->isAttributeSortable($attr)) {
+                $this->addSorter($config, $attr, $attributeType, $label);
             }
         }
     }
