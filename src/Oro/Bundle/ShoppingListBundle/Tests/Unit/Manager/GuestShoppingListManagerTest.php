@@ -296,14 +296,14 @@ class GuestShoppingListManagerTest extends \PHPUnit\Framework\TestCase
             'organization' => $organization
         ]);
 
-        /** @var ShoppingList|\PHPUnit_Framework_MockObject_MockObject $shoppingList1 */
+        /** @var ShoppingList|\PHPUnit\Framework\MockObject\MockObject $shoppingList1 */
         $shoppingList1 = $this->getEntity(ShoppingList::class, [
             'id' => 25,
             'website' => $website1,
             'organization' => $organization
         ]);
         $expectedShoppingList1 = clone $shoppingList1;
-        /** @var ShoppingList|\PHPUnit_Framework_MockObject_MockObject $shoppingList2 */
+        /** @var ShoppingList|\PHPUnit\Framework\MockObject\MockObject $shoppingList2 */
         $shoppingList2 = $this->getEntity(ShoppingList::class, [
             'id' => 31,
             'website' => $website2,
@@ -391,14 +391,14 @@ class GuestShoppingListManagerTest extends \PHPUnit\Framework\TestCase
             'organization' => $organization
         ]);
 
-        /** @var ShoppingList|\PHPUnit_Framework_MockObject_MockObject $shoppingList1 */
+        /** @var ShoppingList|\PHPUnit\Framework\MockObject\MockObject $shoppingList1 */
         $shoppingList1 = $this->getEntity(ShoppingList::class, [
             'id' => 25,
             'website' => $website,
             'organization' => $organization
         ]);
         $expectedShoppingList = clone $shoppingList1;
-        /** @var ShoppingList|\PHPUnit_Framework_MockObject_MockObject $shoppingList2 */
+        /** @var ShoppingList|\PHPUnit\Framework\MockObject\MockObject $shoppingList2 */
         $shoppingList2 = $this->getEntity(ShoppingList::class, [
             'id' => 31,
             'website' => $website,

@@ -212,7 +212,7 @@ class FrontendQuoteDemandPermissionVoterTest extends \PHPUnit\Framework\TestCase
             $args['quote'] = $quote;
         }
 
-        /** @var QuoteDemand|\PHPUnit_Framework_MockObject_MockObject $quoteDemand */
+        /** @var QuoteDemand|\PHPUnit\Framework\MockObject\MockObject $quoteDemand */
         $quoteDemand = $this->getEntity(QuoteDemand::class, $args);
 
         return $quoteDemand;

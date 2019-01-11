@@ -18,14 +18,7 @@ Feature: RFQ customer status translations
     And I follow "System Configuration/General Setup/Localization" on configuration sidebar
     And I fill form with:
       | Enabled Localizations | [English, German Localization] |
-      | Default Localization  | English                        |
-    And I submit form
-    Then I should see "Configuration saved" flash message
-    When I follow "System Configuration/General Setup/Language Settings" on configuration sidebar
-    And I fill form with:
-      | Supported Languages | [English, German] |
-      | Use Default         | false             |
-      | Default Language    | German            |
+      | Default Localization  | German Localization            |
     And I submit form
     Then I should see "Configuration saved" flash message
     When I go to System / Entities / Entity Management
@@ -55,13 +48,13 @@ Feature: RFQ customer status translations
     And I click "Submit Request"
     And I click "Requests For Quote"
     Then I should see following grid:
-      | PO Number | Status    |
-      | Test RFQ  | Submitted |
-    When I click "Localization Switcher"
-    And I select "German Localization" localization
-    Then I should see following grid:
       | PO Number | Status       |
       | Test RFQ  | Submitted_DE |
+    When I click "Localization Switcher"
+    And I select "English" localization
+    Then I should see following grid:
+      | PO Number | Status    |
+      | Test RFQ  | Submitted |
 
   Scenario: Check RFQ customer status field on backend
     Given I proceed as the Admin
@@ -71,9 +64,9 @@ Feature: RFQ customer status translations
       | PO Number | Customer Status |
       | Test RFQ  | Submitted_DE    |
     When I go to System / Configuration
-    And I follow "System Configuration/General Setup/Language Settings" on configuration sidebar
+    And I follow "System Configuration/General Setup/Localization" on configuration sidebar
     And I fill form with:
-      | Default Language | English |
+      | Default Localization | English |
     And I submit form
     Then I should see "Configuration saved" flash message
     When I go to Sales / Requests For Quote
@@ -84,9 +77,9 @@ Feature: RFQ customer status translations
 
     # Check grid translation again to make sure that the cache works correctly for different languages
     When I go to System / Configuration
-    And I follow "System Configuration/General Setup/Language Settings" on configuration sidebar
+    And I follow "System Configuration/General Setup/Localization" on configuration sidebar
     And I fill form with:
-      | Default Language | German |
+      | Default Localization | German Localization |
     And I submit form
     Then I should see "Configuration saved" flash message
     When I go to Sales / Requests For Quote

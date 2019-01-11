@@ -1,0 +1,16 @@
+/* @theme: blank; */
+
+$consent-list-offset: 0 0 ($offset-y-m * 3) !default;
+
+$consent-list-item-position: relative !default;
+$consent-list-item-offset: 0 0 $offset-y-m !default;
+$consent-list-item-inner-offset: 0 0 0 20px !default;
+$consent-list-item-word-break: break-word !default;
+
+$consent-list-status-position: absolute !default;
+$consent-list-status-left: 0 !default;
+
+$consent-list-status-enabled: $fa-var-check !default;
+$consent-list-status-enabled-color: get-color('secondary', 'lighten') !default;
+$consent-list-status-disabled: $fa-var-minus-circle !default;
+$consent-list-status-disabled-color: get-color('primary', 'dark') !default;

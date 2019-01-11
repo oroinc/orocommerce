@@ -1,0 +1,38 @@
+{
+  "name": "oro/commerce-consents",
+  "description": "OroCommerce Consents Bundle",
+  "homepage": "https://github.com/oroinc/commerce-consents.git",
+  "keywords": ["Oro", "Consent", "GDPR"],
+  "license": "OSL-3.0",
+  "authors": [
+    {
+      "name": "Oro, Inc",
+      "homepage": "http://www.orocommerce.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {"Oro\\Bundle\\ConsentBundle\\": ""},
+    "exclude-from-classmap": ["/Tests/"]
+  },
+  "require": {
+    "oro/platform": "3.1.*",
+    "oro/commerce-crm": "3.1.*"
+  },
+  "repositories": {
+    "oro": {
+      "type": "composer",
+      "url": "https://packagist.orocrm.com"
+    },
+    "asset-packagist": {
+      "type": "composer",
+      "url": "https://asset-packagist.orocrm.com"
+    }
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "extra": {
+    "branch-alias": {
+      "dev-master": "3.1-dev"
+    }
+  }
+}

@@ -29,7 +29,7 @@ class ProductUnitsTypeTest extends FormIntegrationTestCase
             ->method('getAvailableProductUnits')
             ->willReturn([
                 'each' => 'each',
-                'kg' => 'kilogram'
+                'kilogram' => 'kg'
             ]);
 
         $this->productUnitsType = new ProductUnitsType($this->productUnitsProvider);
@@ -95,12 +95,8 @@ class ProductUnitsTypeTest extends FormIntegrationTestCase
         return [
             'valid' => [
                 'defaultData' => null,
-                'submittedData' => [
-                    'productUnit' => 'kg',
-                ],
-                'expectedData' => [
-                    'productUnit' => 'kg',
-                ],
+                'submittedData' => 'kg',
+                'expectedData' => 'kg'
             ]
         ];
     }

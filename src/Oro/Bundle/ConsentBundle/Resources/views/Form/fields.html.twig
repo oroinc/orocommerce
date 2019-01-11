@@ -1,0 +1,30 @@
+{% block oro_consent_collection_widget %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {{ UI.sortable_list_view(form, attr, {
+        collection_class: 'consent-sortable-list',
+        add_btn_label: 'oro.consent.add_consent'|trans,
+        column_label: 'oro.consent.entity_label'|trans,
+        column_options_label: 'oro.consent.options.label'|trans
+    }) }}
+{% endblock %}
+
+{% block oro_consent_select_with_priority_widget %}
+    {% spaceless %}
+        <td>
+            {{ form_widget(form.consent, {'disabled': false}) }}
+            {{ form_errors(form.consent) }}
+        </td>
+        <td>
+            {{ form_widget(form._position) }}
+            <span class="sortable-handle add-on ui-sortable-handle"
+                  data-name="sortable-handle">
+                <i class="fa-arrows-v handle"></i>
+            </span>
+        </td>
+        <td>
+            <button type="button" class="removeRow btn-square-light">
+                <i class="fa-close"></i>
+            </button>
+        </td>
+    {% endspaceless %}
+{% endblock %}

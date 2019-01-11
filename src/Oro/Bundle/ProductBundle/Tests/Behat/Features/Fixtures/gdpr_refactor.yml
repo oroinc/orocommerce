@@ -1,0 +1,45 @@
+include:
+    - '@OroCheckoutBundle:Payment.yml'
+    - '@OroCheckoutBundle:Shipping.yml'
+
+Oro\Bundle\OrganizationBundle\Entity\BusinessUnit:
+  businessUnit:
+    name: 'Common Business Unit'
+    organization: '@organization'
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+  locValue:
+    string: 'Lenovo Vibe1'
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+  precision:
+    unit: '@item'
+    precision: '1'
+Oro\Bundle\ProductBundle\Entity\Product:
+  product:
+    type: 'simple'
+    sku: 'Lenovo_Vibe1_sku'
+    organization: '@organization'
+    attributeFamily: '@defaultProductFamily'
+    owner: '@businessUnit'
+    primaryUnitPrecision: '@precision'
+    addName: ['@locValue']
+    status: 'enabled'
+    inventoryStatus: '@enumInventoryStatuses'
+Oro\Bundle\PricingBundle\Entity\ProductPrice:
+  productPrice:
+    product: '@product'
+    pricelist: '@defaultPriceList'
+    currency: 'USD'
+    quantity: 1
+    unit: '@item'
+    value: 10
+#  priceRelation:
+#    product: '@product'
+#    priceList: '@defaultPriceList'
+Oro\Bundle\PricingBundle\Entity\CombinedProductPrice:
+  1combinedProductPrice:
+    product: '@product'
+    pricelist: '@combinedPriceList'
+    currency: 'USD'
+    quantity: 1
+    unit: '@item'
+    value: 10

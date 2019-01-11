@@ -1,0 +1,27 @@
+{% import 'OroUIBundle::macros.html.twig' as UI %}
+
+<div class="widget-content">
+    <div class="row-fluid form-horizontal">
+        <div class="responsive-block">
+            {% if consents is defined %}
+                {% for consentWithAcceptance in consents %}
+                    {% if (consentWithAcceptance.landingPage) %}
+                        {{ UI.renderHtmlProperty(
+                            consentWithAcceptance.consent.getDefaultName,
+                            UI.entityViewLink(
+                                consentWithAcceptance.landingPage,
+                                (consentWithAcceptance.accepted) ? 'oro.consent.customer_user.accepted.label'|trans : 'oro.consent.customer_user.not_accepted.label'|trans,
+                            'oro_cms_page_view'
+                        )
+                        ) }}
+                    {% else %}
+                        {{ UI.renderProperty(
+                            consentWithAcceptance.consent.getDefaultName,
+                            (consentWithAcceptance.accepted) ? 'oro.consent.customer_user.accepted.label'|trans : 'oro.consent.customer_user.not_accepted.label'|trans
+                        ) }}
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+</div>

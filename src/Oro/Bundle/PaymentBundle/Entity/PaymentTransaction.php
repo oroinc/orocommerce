@@ -15,6 +15,8 @@ use Oro\Bundle\SecurityBundle\Tools\UUIDGenerator;
 use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
 
 /**
+ * Represents history of payment transactions.
+ *
  * @ORM\Table(
  *      name="oro_payment_transaction",
  *      uniqueConstraints={
@@ -23,19 +25,7 @@ use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
  * )
  * @ORM\Entity(repositoryClass="Oro\Bundle\PaymentBundle\Entity\Repository\PaymentTransactionRepository")
  * @Config(
- *       mode="hidden",
- *       defaultValues={
- *          "ownership"={
- *              "owner_type"="USER",
- *              "owner_field_name"="owner",
- *              "owner_column_name"="user_owner_id",
- *              "frontend_owner_type"="FRONTEND_USER",
- *              "frontend_owner_field_name"="frontendOwner",
- *              "frontend_owner_column_name"="frontend_owner_id",
- *              "organization_field_name"="organization",
- *              "organization_column_name"="organization_id"
- *          }
- *      }
+ *       mode="hidden"
  * )
  *
  * @SuppressWarnings(PHPMD.TooManyFields)

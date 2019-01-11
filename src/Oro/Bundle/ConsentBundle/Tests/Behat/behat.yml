@@ -1,0 +1,70 @@
+oro_behat_extension:
+  suites:
+    OroConsentBundle:
+      contexts:
+        - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
+        - OroDataGridBundle::GridContext
+        - OroFormBundle::FormContext
+        - OroFormBundle::FeatureContext
+        - OroConfigBundle::FeatureContext
+        - OroApplicationBundle::CommerceMainContext
+        - OroNavigationBundle::FeatureContext
+        - OroWebCatalogBundle::FeatureContext
+        - OroProductBundle::QuickOrderFormContext
+        - OroProductBundle::FeatureContext
+        - OroCheckoutBundle::FeatureContext
+        - OroShoppingListBundle::ShoppingListContext
+        - OroShoppingListBundle::FeatureContext
+        - OroWorkflowBundle::FeatureContext
+      paths:
+        - '@OroConsentBundle/Tests/Behat/Features'
+
+  elements:
+    Landing Page Form:
+      selector: 'form[name="oro_cms_page"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Titles: 'oro_cms_page[titles][values][default]'
+          URL Slug: 'oro_cms_page[slugPrototypesWithRedirect][slugPrototypes][values][default]'
+    Consent Form:
+      selector: 'form[name="oro_consent"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Name: 'oro_consent[names][values][default]'
+          Type: 'oro_consent[mandatory]'
+    Consent Settings Form:
+        selector: 'form[name="consents"]'
+        class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+        options:
+          mapping:
+            Enabled User Consents Use Default: 'consents[oro_consent___enabled_consents][use_parent_scope_value]'
+    Consent Popup:
+      selector: '.consent-dialog-widget'
+    Accepted Consent:
+      selector: '.consent-list__item.accepted'
+    Unaccepted Consent:
+      selector: '.consent-list__item.unaccepted'
+    Required Consent Checkbox:
+      selector: '.consent-item.required .custom-checkbox__input'
+    Required Consent:
+      selector: '.consent-item.required'
+    Optional Consent:
+      selector: '.consent-item.optional'
+    Consent Link:
+      selector: '.consent-item a'
+    Consent Item Link:
+      selector: '.consent-list__item .consent-list__link'
+    Data Protection Section:
+      selector: '[data-role="profile-consents"]'
+    Sortable Consent List:
+      selector: '.consent-sortable-list'
+    Web Catalog Hamburger Button:
+      selector:
+        locator: '//div[contains(@id,"oro_consent_webcatalog-uid")]/div/button[contains(@class, "entity-select-btn")]'
+        type: xpath
+    Expand Store and Process Node:
+      selector:
+        type: xpath
+        locator: '//a[text()="Store and Process Node"]/../i[@role="presentation"]'

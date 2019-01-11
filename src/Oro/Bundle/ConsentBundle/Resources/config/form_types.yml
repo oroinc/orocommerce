@@ -1,0 +1,39 @@
+services:
+    oro_consent.form.type.consent:
+        class: 'Oro\Bundle\ConsentBundle\Form\Type\ConsentType'
+        arguments:
+            - '@oro_web_catalog.web_catalog_provider'
+            - '@form.factory'
+        tags:
+            - { name: form.type, alias: oro_consent }
+
+    oro_consent.form.type.content_node_select:
+        class: 'Oro\Bundle\ConsentBundle\Form\Type\ContentNodeSelectType'
+        arguments:
+            - '@oro_web_catalog.content_node_tree_handler'
+        tags:
+            - { name: form.type, alias: oro_consent_web_catalog_content_node_select }
+
+    oro_consent.form.type.consent_select:
+        class: 'Oro\Bundle\ConsentBundle\Form\Type\ConsentSelectType'
+        tags:
+            - { name: form.type, alias: oro_consent_select }
+
+    oro_consent.form.type.consent_select_with_priority:
+        class: 'Oro\Bundle\ConsentBundle\Form\Type\ConsentSelectWithPriorityType'
+        tags:
+            - { name: form.type, alias: oro_consent_select_with_priority }
+
+    oro_consent.form.consent_collection:
+        class: 'Oro\Bundle\ConsentBundle\Form\Type\ConsentCollectionType'
+        arguments:
+            - '@oro_consent.form.consent_collection_data_transformer'
+        tags:
+            - { name: form.type, alias: oro_consent_collection }
+
+    oro_consent.form.consent_acceptance:
+        class: 'Oro\Bundle\ConsentBundle\Form\Type\ConsentAcceptanceType'
+        arguments:
+            - '@oro_consent.form.transformer.customer_consents_transformer'
+        tags:
+            - { name: form.type, alias: oro_customer_consents }

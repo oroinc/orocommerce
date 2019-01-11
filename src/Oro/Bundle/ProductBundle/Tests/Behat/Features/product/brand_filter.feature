@@ -18,6 +18,7 @@ Feature: Brand Filter
     And I go to System / Websites
     When I click "Configuration" on row "Default" in grid
     And I follow "System Configuration/General Setup/Localization" on configuration sidebar
+    And uncheck "Use System" for "Default Localization" field
     And fill form with:
       | Enabled Localizations | [English, Localization1] |
       | Default Localization  | English                  |

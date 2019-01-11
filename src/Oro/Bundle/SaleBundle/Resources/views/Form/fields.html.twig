@@ -17,7 +17,7 @@
                     <th><span>{{ 'oro.sale.quote.lineitem.product_sku'|trans }}</span></th>
                     <th><span>{{ 'oro.sale.quote.lineitem.product'|trans }}</span></th>
                     <th><span>{{ 'oro.sale.quote.lineitem.requested.label'|trans }}</span></th>
-                    <th><span>{{ 'oro.sale.quote.lineitem.offers.label'|trans }}</span></th>
+                    <th class="quote-lineitems__offers"><span>{{ 'oro.sale.quote.lineitem.offers.label'|trans }}</span></th>
                     <th><span>{{ 'oro.sale.quote.lineitem.notes'|trans }}</span></th>
                     <th></th>
                 </tr>
@@ -88,8 +88,10 @@
                 {% endif %}
             </div>
             <div class="quote-lineitem-product-free-form{% if not isProductFreeForm %} hide{% endif %}">
-                {{ form_widget(form.freeFormProduct, {attr: attr|merge({class: 'quote-lineitem-product-freeform-input'})}) }}
-                {{ form_errors(form.freeFormProduct) }}
+                <div class="quote-lineitem-product-free-form-input-wrap">
+                    {{ form_widget(form.freeFormProduct, {attr: attr|merge({class: 'quote-lineitem-product-freeform-input'})}) }}
+                    {{ form_errors(form.freeFormProduct) }}
+                </div>
                 {% if allow_add_free_form_items %}
                     <a class="quote-lineitem-product-select-link" href="javascript: void(0);">{{ 'oro.sale.quoteproduct.select.product'|trans }}</a>
                 {% endif %}
@@ -130,8 +132,12 @@
         {% endif %}
         <div class="quote-lineitem-notes-seller-active">
             {{ form_label(form.comment) }}
-            <div data-page-component-module="oroorder/js/app/components/notes-component">
-                {{ form_widget(form.comment) }}
+            <div class="quote-lineitem-notes-seller-field" data-page-component-module="oroorder/js/app/components/notes-component">
+                {{ form_widget(form.comment, {
+                    'attr': {
+                        'class': 'quote-lineitem-notes-seller-textarea'
+                    }
+                }) }}
                 {{ form_errors(form.comment) }}
             </div>
         </div>
@@ -176,7 +182,7 @@
     {% if prototype is defined %}
         {% set prototype_html = _self.oro_sale_quote_product_offer_prototype(form, true) %}
     {% endif %}
-    {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-item-collection grid-container' }) %}
+    {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-item-collection grid-container d-none' }) %}
     {% set id = id ~ '_collection' %}
     <div class="row-oro">
         {% set prototype_name = form.vars.prototype_name %}
@@ -185,7 +191,7 @@
             <table class="table-hover table table-bordered quote-lineitem-offers">
                 <thead>
                 <tr>
-                    <th colspan="3"><span>{{ 'oro.sale.quote.lineitem.offers.quantity'|trans }}</span></th>
+                    <th><span>{{ 'oro.sale.quote.lineitem.offers.quantity'|trans }}</span></th>
                     <th><span>{{ 'oro.sale.quote.lineitem.offers.price'|trans }}</span></th>
                     <th></th>
                 </tr>
@@ -201,7 +207,7 @@
                 </tbody>
             </table>
         </div>
-        <a class="btn add-list-item quote-lineitem-offers-item-add" data-container=".oro-item-collection tbody" href="javascript: void(0);">{{ 'oro.sale.quote.lineitem.offers.add'|trans }}</a>
+        <a class="btn add-list-item quote-lineitem-offers-item-add d-none" data-container=".oro-item-collection tbody" href="javascript: void(0);">{{ 'oro.sale.quote.lineitem.offers.add'|trans }}</a>
     </div>
 {% endblock %}
 
@@ -240,27 +246,32 @@
 {% endmacro %}
 
 {% block oro_sale_quote_product_offer_widget %}
-    <td class="quote-lineitem-offers-quantity">
-        {{ form_widget(form.quantity) }}
-        {{ form_errors(form.quantity) }}
-    </td>
-    <td class="quote-lineitem-offers-unit">
-        {{ form_widget(form.productUnit, {attr: form.productUnit.vars.attr|merge({class: 'quote-lineitem-offer-unit-select'})}) }}
-        {{ form_errors(form.productUnit) }}
-    </td>
-    <td class="quote-lineitem-offers-more">
-        <div class="quote-lineitem-offers-more-fields">
-            {% set attrs = {} %}
-            {% if prototype|default(false) and form.allowIncrements.vars.attr.default is defined %}
-                {% set attrs = attrs|merge({'checked' : 'checked'}) %}
-            {% endif %}
-            {{ form_widget(form.allowIncrements, attrs) }}
-            {{ form_label(form.allowIncrements) }}
-            {{ form_errors(form.allowIncrements) }}
+    <td class="quote-lineitem-offers-quantity-cell">
+        <div class="quote-lineitem-offers-group fields-row">
+            <div class="quote-lineitem-offers-group-item quote-lineitem-offers-quantity">
+                {{ form_widget(form.quantity) }}
+                {{ form_errors(form.quantity) }}
+            </div>
+            <div class="quote-lineitem-offers-group-item quote-lineitem-offers-unit">
+                {{ form_widget(form.productUnit, {attr: form.productUnit.vars.attr|merge({class: 'quote-lineitem-offer-unit-select'})}) }}
+                {{ form_errors(form.productUnit) }}
+            </div>
+            <div class="quote-lineitem-offers-group-item quote-lineitem-offers-more">
+                <div class="quote-lineitem-offers-more-fields">
+                    {% set attrs = {} %}
+                    {% if prototype|default(false) and form.allowIncrements.vars.attr.default is defined %}
+                        {% set attrs = attrs|merge({'checked' : 'checked'}) %}
+                    {% endif %}
+                    {{ form_widget(form.allowIncrements, attrs) }}
+                    {{ form_label(form.allowIncrements) }}
+                    {{ form_errors(form.allowIncrements) }}
+                </div>
+                {{ form_widget(form.priceType) }}
+                {{ form_errors(form.priceType) }}
+            </div>
         </div>
-        {{ form_widget(form.priceType) }}
-        {{ form_errors(form.priceType) }}
     </td>
+
     <td class="quote-lineitem-offers-price line-item-price"
         data-page-component-module="oroui/js/app/components/view-component"
         data-page-component-options="{{ {

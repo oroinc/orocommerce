@@ -66,8 +66,8 @@
 .order-line-item-type {
     width: 290px;
 
-    input[type="text"]{
-        width: 279px !important;
+    input[type="text"] {
+        width: $field-width !important;
         margin-bottom: 0;
     }
 }

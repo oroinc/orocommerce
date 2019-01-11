@@ -58,47 +58,15 @@
 {% endblock %}
 
 {% block oro_pricing_price_list_collection_widget %}
-    {% if prototype is defined %}
-        {% set prototype_html = _self.oro_pricing_price_list_collection_prototype(form) %}
-    {% endif %}
-    {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-item-collection grid-container price-list-grid-form' }) %}
-    {% set id = id ~ '_collection' %}
-    <div class="pricing-price-list" data-page-component-module="oropricing/js/app/components/price-lists-errors-handler">
-        {% import 'OroUIBundle::macros.html.twig' as UI %}
-        <div class="row-oro" {{ UI.renderPageComponentAttributes({
-            module: 'oroui/js/app/components/view-component',
-            options: {
-                view: 'oroui/js/drag-n-drop-sorting',
-                autoRender: true
-            }
-        }) }}>
-            {% set prototype_name = form.vars.prototype_name %}
-            <div {{ block('widget_container_attributes') }}>
-                <table class="grid table-hover table">
-                    <thead>
-                    <tr>
-                        <th><span>{{ 'oro.pricing.pricelist.entity_label'|trans }}</span></th>
-                        <th><span>{{ 'oro.pricing.pricelist.options.label'|trans }}</span></th>
-                        <th></th>
-                        {% if form.mergeAllowed is defined %}
-                        <th></th>
-                        {% endif %}
-                    </tr>
-                    </thead>
-                    <tbody class="sortable-wrapper" data-last-index="{{ form.children|length}}" data-prototype-name="{{ prototype_name }}"{% if prototype_html is defined %} data-prototype="{{ prototype_html|escape }}"{% endif %} data-content>
-                    {% if form.children|length %}
-                        {% for child in form.children %}
-                            {{ _self.oro_pricing_price_list_collection_prototype(child) }}
-                        {% endfor %}
-                    {% elseif show_form_when_empty and prototype_html is defined %}
-                        {{ prototype_html|replace({(prototype_name): '0'})|raw }}
-                    {% endif %}
-                    </tbody>
-                </table>
-            </div>
-            <a class="btn add-list-item" data-container=".oro-item-collection tbody" href="javascript: void(0);">{{ 'oro.pricing.add_price_list'|trans }}</a>
-        </div>
-    </div>
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {{ UI.sortable_list_view(form, attr, {
+        collection_class: 'pricing-price-list',
+        add_btn_label: 'oro.pricing.add_price_list'|trans,
+        column_label: 'oro.pricing.pricelist.entity_label'|trans,
+        column_options_label: 'oro.pricing.pricelist.options.label'|trans,
+        show_form_when_empty: show_form_when_empty,
+        data_page_component_module: "oropricing/js/app/components/price-lists-errors-handler"
+    }) }}
 {% endblock %}
 
 {% macro oro_pricing_price_list_collection_prototype(widget) %}

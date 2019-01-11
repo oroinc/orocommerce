@@ -14,6 +14,15 @@ workflows:
                 actions:
                     - '@assign_value': [$.result.responseData.stateSaved, false]
 
+                    - '@assign_value':
+                        conditions:
+                            '@not':
+                                - '@is_consents_accepted':
+                                    acceptedConsents: $customerConsents
+                        parameters: [$consents_available, true]
+                    - '@save_accepted_consents':
+                        acceptedConsents: $customerConsents
+
                     - '@run_action_group':
                         action_group: b2b_flow_checkout_update_billing_address
                         parameters_mapping:
@@ -173,6 +182,10 @@ workflows:
 
                 conditions:
                     '@and':
+                        - '@is_consents_accepted':
+                            acceptedConsents: $customerConsents
+                            message: oro.checkout.workflow.condition.required_consents_should_be_checked_on_single_page_checkout.message
+                            type: 'warning'
                         - '@extendable':
                             message: 'oro.checkout.workflow.b2b_flow_checkout.transition.place_order.condition.extendable.message'
                             events:
@@ -194,6 +207,9 @@ workflows:
                                 expected_value: ajax_checkout
 
                 actions:
+                    - '@save_accepted_consents':
+                        acceptedConsents: $customerConsents
+
                     - '@run_action_group':
                         action_group: b2b_flow_checkout_update_shipping_method
                         parameters_mapping:

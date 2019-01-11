@@ -2,6 +2,10 @@ layout:
     imports:
         - 'oro_payment_method_options'
         - 'oro_payment_method_order_submit'
+        -
+            id: oro_consent_items
+            namespace: checkout
+            root: checkout_consent_container
 
     actions:
         - '@addTree':
@@ -220,3 +224,24 @@ layout:
 
         - '@remove':
             id: checkout_button_back
+
+        - '@setOption':
+           id: checkout_consent_wrapper
+           optionName: appliedConsents
+           optionValue: '=data["workflowItem"].getData().get("customerConsents") ? data["workflowItem"].getData().get("customerConsents").toArray() : []'
+
+        - '@add':
+           id: checkout_consent_container
+           blockType: container
+           parentId: checkout_order_summary_totals_container
+           siblingId: checkout_order_summary_totals_sticky_container
+           prepend: true
+           options:
+              visible: '="customer_consents" not in data["oro_frontend_consent_provider"].getExcludedSteps([], !data["workflowItem"].getData().get("consents_available"))'
+
+        - '@add':
+           id: checkout_consent_message
+           blockType: consent_acceptance_choice
+           parentId: checkout_consent_container
+           options:
+               appliedConsents: '=data["workflowItem"].getData().get("customerConsents") ? data["workflowItem"].getData().get("customerConsents").toArray() : []'

@@ -1,0 +1,16 @@
+{% import 'OroUIBundle::macros.html.twig' as UI %}
+{% import 'OroEntityConfigBundle::macros.html.twig' as entityConfig %}
+
+<div class="widget-content">
+    <div class="row-fluid form-horizontal">
+        <div class="responsive-block">
+            {{ UI.renderProperty('oro.consent.names.label'|trans, consent.name) }}
+            {{ UI.renderProperty('oro.consent.type.label'|trans, consent.mandatory ? 'oro.consent.type.mandatory'|trans : 'oro.consent.type.optional'|trans) }}
+            {{ UI.renderProperty('oro.consent.declined_notification.label'|trans, consent.declinedNotification ? 'oro.consent.declined_notification.yes.label'|trans : 'oro.consent.declined_notification.no.label'|trans) }}
+            {{ UI.renderProperty('oro.consent.content_node.label'|trans, consent.contentNode) }}
+        </div>
+        <div class="responsive-block">
+            {{ entityConfig.renderDynamicFields(consent) }}
+        </div>
+    </div>
+</div>

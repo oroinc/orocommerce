@@ -453,7 +453,6 @@ action_groups:
                     - '@assign_value': [$visitor.customerUser, $.checkout.customerUser]
                     - '@flush_entity': $visitor
 
-
     b2b_flow_checkout_update_guest_customer_user:
         parameters:
             checkout:
@@ -519,10 +518,17 @@ action_groups:
                         method_parameters:
                           - $.checkout.registeredCustomerUser
 
-                    - '@assign_value': [$.result.confirmationRequired, true]
                     - '@assign_value': [$.order.customerUser, $.checkout.registeredCustomerUser]
                     - '@assign_value': [$.order.customer, $.checkout.registeredCustomerUser.customer]
                     - '@flush_entity': $.order
+                    - '@call_service_method':
+                        service: 'oro_consent.helper.copy_customer_consents'
+                        method: copyConsentsIfTargetHasNoAcceptedConsents
+                        method_parameters:
+                            - $.checkout.customerUser
+                            - $.checkout.registeredCustomerUser
+                    - '@flush_entity': $.checkout.registeredCustomerUser
+                    - '@assign_value': [$.result.confirmationRequired, true]
 
             - '@tree':
                 conditions:

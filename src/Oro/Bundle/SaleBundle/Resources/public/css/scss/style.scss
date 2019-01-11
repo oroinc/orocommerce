@@ -73,6 +73,10 @@ td.quote-lineitem-notes {
     width: 330px;
 }
 
+.quote-lineitem-notes-seller-textarea {
+    display: none;
+}
+
 .quote-lineitems {
     .add-list-item {
         margin-top: $content-padding-small;
@@ -80,6 +84,10 @@ td.quote-lineitem-notes {
 }
 
 .quote-lineitem-offers {
+    &-remove {
+        text-align: #{$end};
+    }
+
     .add-list-item {
         margin-#{$start}: 0;
     }
@@ -123,7 +131,37 @@ td.quote-lineitem-notes {
 }
 
 table.quote-lineitem-offers {
-    width: 560px;
+    width: 500px;
+
+    td {
+        &:last-child {
+            padding: $content-padding-small;
+        }
+    }
+
+    .quote-lineitem-offers-group {
+        display: flex;
+        align-items: center;
+    }
+
+    .quote-lineitem-offers-group-item {
+        &:not(:last-child) {
+            padding-#{$end}: $content-padding-small;
+        }
+    }
+
+    .quote-lineitem-offers-quantity-cell,
+    .quote-lineitem-offers-price {
+        padding-#{$end}: 0;
+    }
+}
+
+.oro-item-collection {
+    table.quote-lineitem-offers {
+        td {
+            vertical-align: top;
+        }
+    }
 }
 
 .quote-lineitem-notes-customer {
@@ -208,20 +246,38 @@ span.quote-product-offer-quantity-unit {
     table.grid {
         overflow: auto;
     }
+
+    &__offers {
+        width: 100%;
+    }
 }
 
 td.quote-lineitem-product-sku {
-    width: 160px;
+    width: 100px;
 }
 
 .quote-lineitem-remove {
     text-align: #{$end};
 }
 
+.oro-item-collection {
+    tbody {
+        .quote-lineitem-remove {
+            padding: $content-padding-small;
+        }
+    }
+}
+
 .quote-lineitem-product-sku-row {
+    .quote-lineitem-product-form {
+        .quote-lineitem-product-sku-label {
+            width: 70px;
+        }
+    }
+
     .quote-lineitem-product-free-form {
         input[type="text"] {
-            width: 120px;
+            width: 70px;
         }
     }
 }
@@ -234,7 +290,7 @@ td.quote-lineitem-product-sku {
 
 .quote-lineitem-product-row {
     input[type="text"] {
-        width: 275px !important;
+        width: $field-width !important;
     }
 }
 

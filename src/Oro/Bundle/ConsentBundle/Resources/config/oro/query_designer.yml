@@ -1,0 +1,6 @@
+query_designer:
+    filters:
+        consents:
+             applicable: [{entity: OroCustomerBundle:CustomerUser, field: acceptedConsentsVirtual}]
+             type:       accepted_consents
+             query_type: [all]

@@ -7,11 +7,18 @@ workflows:
             start_from_shoppinglist:
                 step_to: enter_billing_address
 
-            #Starts checkout as guest
+            continue_checkout_as_registered_user:
+                step_to: enter_billing_address
+                transition_definition: back_to_billing_address_definition
+                frontend_options:
+                    icon: fa-briefcase
+                    is_checkout_continue: true
+
+            # Starts checkout as guest
             start_from_shoppinglist_as_guest:
                 step_to: enter_credentials_step
                 is_start: true
-                is_unavailable_hidden: true #
+                is_unavailable_hidden: true
                 transition_definition: start_from_shoppinglist_as_guest_definition
                 frontend_options:
                     icon: fa-briefcase
@@ -40,6 +47,36 @@ workflows:
 
             payment_error:
                 step_to: enter_payment
+
+            continue_to_billing_address:
+                step_to: enter_billing_address
+                transition_definition: continue_to_billing_address_definition
+                display_type: page
+                frontend_options:
+                    is_checkout_continue: true
+                    is_checkout_show_errors: true
+                form_options:
+                    form_init:
+                        - '@generate_checkout_state_snapshot':
+                            entity: $checkout
+                            attribute: $.result.initCheckoutState
+                        - '@tree':
+                            conditions:
+                                '@and':  #For logged customer user only
+                                    - '@not_empty': $checkout.customerUser
+                                    - '@equal': [$checkout.customerUser.isGuest, false]
+                            actions:
+                                - '@assign_value': [$customerConsents, null]
+                    attribute_fields:
+                        customerConsents:
+                            form_type: Oro\Bundle\ConsentBundle\Form\Type\ConsentAcceptanceType
+                            options:
+                                required: true
+                                property_path: customerConsents
+                        state_token:
+                            form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
+                            options:
+                                data: $internal_state_token
 
             continue_to_shipping_address:
                 step_to: enter_shipping_address
@@ -78,6 +115,7 @@ workflows:
                                 data: $internal_state_token
                         email:
                             form_type: Oro\Bundle\CustomerBundle\Form\Type\CustomerVisitorEmailAddressType
+
             continue_to_shipping_method:
                 step_to: enter_shipping_method
                 transition_definition: continue_to_shipping_method_definition
@@ -179,6 +217,13 @@ workflows:
                         additional_data:
                             form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
 
+            back_to_customer_consents:
+                step_to: customer_consents
+                transition_definition: clear_payment_method_and_recalculate_state_definition
+                is_unavailable_hidden: true
+                frontend_options:
+                    is_checkout_back: true
+
             back_to_billing_address:
                 step_to: enter_billing_address
                 transition_definition: clear_payment_method_and_recalculate_state_definition
@@ -211,6 +256,13 @@ workflows:
                 is_unavailable_hidden: true
                 frontend_options:
                     is_checkout_back: true
+
+            verify_customer_consents:
+                step_to: customer_consents
+                transition_definition: verify_customer_consents_definition
+                is_hidden: true
+                frontend_options:
+                    stop_propagation: true
 
             verify_payment:
                 step_to: enter_payment

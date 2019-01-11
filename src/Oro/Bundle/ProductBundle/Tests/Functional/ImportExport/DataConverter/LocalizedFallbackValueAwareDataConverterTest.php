@@ -112,7 +112,8 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
 
         $this->converter = new LocalizedFallbackValueAwareDataConverter(
             $container->get('oro_entity.helper.field_helper'),
-            $container->get('oro_importexport.data_converter.relation_calculator')
+            $container->get('oro_importexport.data_converter.relation_calculator'),
+            $container->get('oro_locale.settings')
         );
         $this->converter->setDispatcher($container->get('event_dispatcher'));
         $this->converter->setRegistry($container->get('doctrine'));

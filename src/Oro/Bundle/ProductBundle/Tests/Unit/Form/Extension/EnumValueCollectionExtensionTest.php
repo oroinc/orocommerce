@@ -22,22 +22,22 @@ class EnumValueCollectionExtensionTest extends \PHPUnit\Framework\TestCase
 
     const ENUM_FIELD_NAME = 'enumField';
 
-    /** @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $doctrineHelper;
 
     /** @var EnumValueCollectionExtension */
     private $extension;
 
-    /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+    /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
     private $form;
 
-    /** @var FormConfigInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var FormConfigInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $configInterface;
 
-    /** @var ProductRepository|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ProductRepository|\PHPUnit\Framework\MockObject\MockObject */
     private $productRepository;
 
-    /** @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
     private $configManager;
 
     /**
@@ -281,7 +281,7 @@ class EnumValueCollectionExtensionTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|ConfigProvider
+     * @return \PHPUnit\Framework\MockObject\MockObject|ConfigProvider
      */
     private function getAttributeProvider()
     {
