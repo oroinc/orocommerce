@@ -5,6 +5,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\ImportExport\DataConverter;
 use Oro\Bundle\EntityBundle\Helper\FieldHelper;
 use Oro\Bundle\ImportExportBundle\Context\ContextInterface;
 use Oro\Bundle\ImportExportBundle\Converter\RelationCalculator;
+use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 use Oro\Bundle\PricingBundle\ImportExport\DataConverter\ProductPriceDataConverter;
 use PHPUnit\Framework\TestCase;
 
@@ -26,7 +27,8 @@ class ProductPriceDataConverterTest extends TestCase
     {
         $this->converter = new ProductPriceDataConverter(
             $this->createMock(FieldHelper::class),
-            $this->createMock(RelationCalculator::class)
+            $this->createMock(RelationCalculator::class),
+            $this->createMock(LocaleSettings::class)
         );
     }
 

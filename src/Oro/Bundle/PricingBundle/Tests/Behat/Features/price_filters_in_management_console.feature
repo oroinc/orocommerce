@@ -1,6 +1,7 @@
 @fixture-OroPricingBundle:PriceListFilter.yml
 @fixture-OroSalesBundle:OpportunityWithBudgetFixture.yml
 @fixture-OroOrderBundle:OrderWithSubtotalAndTotal.yml
+@fixture-OroLocaleBundle:GermanLocalization.yml
 
 Feature: Price filters in management console
   In order to use correct values for price filter in management console
@@ -12,8 +13,8 @@ Feature: Price filters in management console
     When I go to System/Configuration
     And follow "System Configuration/General Setup/Localization" on configuration sidebar
     And fill "Configuration Localization Form" with:
-      | Locale Use Default | false            |
-      | Locale             | German (Germany) |
+      | Enabled Localizations | German_Loc |
+      | Default Localization  | German_Loc |
     And click "Save settings"
     Then I should see "Configuration saved" flash message
 

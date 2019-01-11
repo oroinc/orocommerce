@@ -1,5 +1,6 @@
 @ticket-BB-15796
 @fixture-OroPricingBundle:PriceListsWithPrices.yml
+@fixture-OroLocaleBundle:LocalizationFixture.yml
 
 Feature: Product prices localized on price list view page
   In order to have prices displayed correctly on price list view page
@@ -11,8 +12,8 @@ Feature: Product prices localized on price list view page
     And I go to System/Configuration
     And follow "System Configuration/General Setup/Localization" on configuration sidebar
     When fill "Configuration Localization Form" with:
-      | Locale Use Default | false            |
-      | Locale             | German (Germany) |
+      | Enabled Localizations | German Localization |
+      | Default Localization  | German Localization |
     And click "Save settings"
     Then I should see "Configuration saved" flash message
 
