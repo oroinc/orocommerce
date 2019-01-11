@@ -5,7 +5,7 @@
         {% endif %}
         {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-item-collection collection-fields-list' }) %}
         {% set id = id ~ '_collection' %}
-        <div class="row-oro">
+        <div class="row-oro tax-zip-code-collection">
             {% set prototype_name = form.vars.prototype_name %}
             <div {{ block('widget_container_attributes') }} data-last-index="{{ form.children|length}}" data-row-count-add="{{ form.vars.row_count_add }}" data-prototype-name="{{ prototype_name }}"{% if prototype_html is defined %} data-prototype="{{ prototype_html|escape }}"{% endif %}>
                 <table class="grid table-hover table table-bordered">
@@ -31,7 +31,7 @@
                 </table>
             </div>
             {% if allow_add %}
-                <a class="btn add-list-item" data-container=".oro-item-collection tbody" href="javascript: void(0);"><i class="fa-plus"></i>{{ form.vars.add_label|default('oro.form.collection.add')|trans }}</a>
+                <a class="btn add-list-item" data-container=".oro-item-collection tbody" href="javascript: void(0);">{{ form.vars.add_label|default('oro.form.collection.add')|trans }}</a>
             {% endif %}
         </div>
     {% endspaceless %}
@@ -56,7 +56,7 @@
 
 {% block oro_tax_zip_code_type_widget %}
     <td>{{ form_widget(form.zipRangeStart) }} {{ form_errors(form.zipRangeStart) }}</td>
-    <td> - </td>
+    <td class="tax-zip-code-divider"> - </td>
     <td>{{ form_widget(form.zipRangeEnd) }} {{ form_errors(form.zipRangeEnd) }}</td>
 {% endblock %}
 
