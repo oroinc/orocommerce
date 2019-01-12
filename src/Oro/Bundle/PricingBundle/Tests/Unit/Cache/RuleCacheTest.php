@@ -12,6 +12,7 @@ use Doctrine\ORM\Query\Parameter;
 use Doctrine\ORM\QueryBuilder;
 
 use Oro\Bundle\PricingBundle\Cache\RuleCache;
+use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 
 class RuleCacheTest extends \PHPUnit_Framework_TestCase
 {
@@ -26,6 +27,11 @@ class RuleCacheTest extends \PHPUnit_Framework_TestCase
     protected $registry;
 
     /**
+     * @var SymmetricCrypterInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $crypter;
+
+    /**
      * @var RuleCache
      */
     protected $ruleCache;
@@ -34,26 +40,37 @@ class RuleCacheTest extends \PHPUnit_Framework_TestCase
     {
         $this->cache = $this->createMock(Cache::class);
         $this->registry = $this->createMock(ManagerRegistry::class);
+        $this->crypter = $this->createMock(SymmetricCrypterInterface::class);
         $this->ruleCache = new RuleCache($this->cache, $this->registry);
+        $this->ruleCache->setCrypter($this->crypter);
     }
 
-    public function testFetch()
+    public function testFetchCorrectHash()
     {
         $id = 'test';
         /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $em */
         $em = $this->createMock(EntityManagerInterface::class);
         $qb = new QueryBuilder($em);
+
+        $parts = [
+            'select' => new Expr\Select(['test.id']),
+            'from' => new Expr\From('TestEntity', 'test'),
+            'where' => new Expr\Andx(['test.id = :testParam']),
+        ];
+
+        $this->crypter->expects($this->once())
+            ->method('encryptData')
+            ->with(serialize($parts))
+            ->willReturn('encrypted');
+
         $this->cache->expects($this->once())
             ->method('contains')
             ->with($id)
             ->willReturn(true);
         $storedData = [
-            RuleCache::DQL_PARTS_KEY => [
-                'select' => new Expr\Select(['test.id']),
-                'from' => new Expr\From('TestEntity', 'test'),
-                'where' => new Expr\Andx(['test.id = :testParam']),
-            ],
+            RuleCache::DQL_PARTS_KEY => $parts,
             RuleCache::PARAMETERS_KEY => ['testParam' => 1],
+            RuleCache::HASH => md5('encrypted')
         ];
         $this->cache->expects($this->once())
             ->method('fetch')
@@ -69,6 +86,40 @@ class RuleCacheTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($qb, $this->ruleCache->fetch($id));
         $this->assertEquals('SELECT test.id FROM TestEntity test WHERE test.id = :testParam', $qb->getDQL());
         $this->assertEquals(new ArrayCollection([new Parameter('testParam', 1)]), $qb->getParameters());
+    }
+
+    public function testFetchIncorrectHash()
+    {
+        $id = 'test';
+
+        $parts = [
+            'select' => new Expr\Select(['test.id']),
+            'from' => new Expr\From('TestEntity', 'test'),
+            'where' => new Expr\Andx(['test.id = :testParam']),
+        ];
+
+        $this->crypter->expects($this->once())
+            ->method('encryptData')
+            ->with(serialize($parts))
+            ->willReturn('encrypted');
+
+        $this->cache->expects($this->once())
+            ->method('contains')
+            ->with($id)
+            ->willReturn(true);
+        $storedData = [
+            RuleCache::DQL_PARTS_KEY => $parts,
+            RuleCache::PARAMETERS_KEY => ['testParam' => 1],
+            RuleCache::HASH => md5('incorrect')
+        ];
+        $this->cache->expects($this->once())
+            ->method('fetch')
+            ->with($id)
+            ->willReturn($storedData);
+
+        $this->registry->expects($this->never())
+            ->method('getManager');
+        $this->assertFalse($this->ruleCache->fetch($id));
     }
 
     public function testFetchFalse()
@@ -117,7 +168,7 @@ class RuleCacheTest extends \PHPUnit_Framework_TestCase
             'from' => new Expr\From('TestEntity', 'test')
         ];
         $parameters = new ArrayCollection([new Parameter('testParam', 1)]);
-        $data->expects($this->once())
+        $data->expects($this->any())
             ->method('getDQLParts')
             ->willReturn($dqlParts);
         $data->expects($this->once())
@@ -125,9 +176,16 @@ class RuleCacheTest extends \PHPUnit_Framework_TestCase
             ->willReturn($parameters);
         $expectedData = [
             RuleCache::DQL_PARTS_KEY => $dqlParts,
-            RuleCache::PARAMETERS_KEY => $parameters
+            RuleCache::PARAMETERS_KEY => $parameters,
+            RuleCache::HASH => md5('encrypted')
         ];
         $lifeTime = 0;
+
+        $this->crypter->expects($this->once())
+            ->method('encryptData')
+            ->with(serialize($dqlParts))
+            ->willReturn('encrypted');
+
         $this->cache->expects($this->once())
             ->method('save')
             ->with($id, $expectedData, $lifeTime)

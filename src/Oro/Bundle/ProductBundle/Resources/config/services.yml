@@ -753,8 +753,9 @@ services:
             - { name: doctrine.orm.entity_listener, entity: '%oro_segment.segment.entity.class%', event: preRemove }
             - { name: doctrine.orm.entity_listener, entity: '%oro_segment.segment.entity.class%', event: postPersist }
 
-    oro_product.layout.data_provider.featured_products:
-        class: 'Oro\Bundle\ProductBundle\Layout\DataProvider\FeaturedProductsProvider'
+    oro_product.layout.data_provider.abstract_segment_products_provider:
+        class: Oro\Bundle\ProductBundle\Layout\DataProvider\AbstractSegmentProductsProvider
+        abstract: true
         arguments:
             - '@oro_segment.segment_manager'
             - '@oro_product.provider.segment'
@@ -763,7 +764,12 @@ services:
             - '@doctrine'
             - '@security.token_storage'
         calls:
+            - [setCrypter, ['@oro_security.encoder.mcrypt']]
             - [setCache, ['@oro_product.layout.data_provider.cache', 3600]]
+
+    oro_product.layout.data_provider.featured_products:
+        class: 'Oro\Bundle\ProductBundle\Layout\DataProvider\FeaturedProductsProvider'
+        parent: oro_product.layout.data_provider.abstract_segment_products_provider
         tags:
             - { name: layout.data_provider, alias: featured_products }
 
@@ -1282,15 +1288,7 @@ services:
 
     oro_product.layout.data_provider.new_arrivals:
         class: 'Oro\Bundle\ProductBundle\Layout\DataProvider\NewArrivalsProvider'
-        arguments:
-            - '@oro_segment.segment_manager'
-            - '@oro_product.provider.segment'
-            - '@oro_product.product.manager'
-            - '@oro_config.manager'
-            - '@doctrine'
-            - '@security.token_storage'
-        calls:
-            - [setCache, ['@oro_product.layout.data_provider.cache', 3600]]
+        parent: oro_product.layout.data_provider.abstract_segment_products_provider
         tags:
             - { name: layout.data_provider, alias: new_arrivals }
 

@@ -15,6 +15,7 @@ use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup;
 use Oro\Bundle\PricingBundle\Model\DTO\PriceListRelationTrigger;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 
 /**
  * Composite primary key fields order:
@@ -45,7 +46,7 @@ class PriceListToCustomerGroupRepository extends EntityRepository implements Pri
             ->where($qb->expr()->eq('relation.customerGroup', ':customerGroup'))
             ->andWhere($qb->expr()->eq('relation.website', ':website'))
             ->andWhere($qb->expr()->eq('priceList.active', ':active'))
-            ->orderBy('relation.sortOrder', $sortOrder)
+            ->orderBy('relation.sortOrder', QueryBuilderUtil::getSortOrder($sortOrder))
             ->setParameters(['customerGroup' => $customerGroup, 'website' => $website, 'active' => true]);
 
         return $qb->getQuery()->getResult();
@@ -186,6 +187,7 @@ class PriceListToCustomerGroupRepository extends EntityRepository implements Pri
         BasePriceList $priceList,
         $parameterName
     ) {
+        QueryBuilderUtil::checkIdentifier($parameterName);
         $parentAlias = $queryBuilder->getRootAliases()[0];
 
         $subQueryBuilder = $this->createQueryBuilder('relation');

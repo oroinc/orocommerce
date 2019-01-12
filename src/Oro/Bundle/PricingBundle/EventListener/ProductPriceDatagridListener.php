@@ -15,6 +15,7 @@ use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use Oro\Bundle\PricingBundle\ORM\Walker\PriceShardWalker;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
@@ -322,6 +323,8 @@ class ProductPriceDatagridListener
      */
     protected function buildJoinAlias($columnName)
     {
+        QueryBuilderUtil::checkIdentifier($columnName);
+
         return $columnName . '_table';
     }
 

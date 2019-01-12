@@ -175,9 +175,10 @@ class VisibilityChangeCategorySubtreeCacheBuilder extends AbstractRelatedEntitie
             ->createQueryBuilder();
 
         $qb->update('OroVisibilityBundle:VisibilityResolved\ProductVisibilityResolved', 'pvr')
-            ->set('pvr.visibility', $visibility)
+            ->set('pvr.visibility', ':visibility')
             ->andWhere($qb->expr()->in('IDENTITY(pvr.category)', ':categoryIds'))
-            ->setParameter('categoryIds', $categoryIds);
+            ->setParameter('categoryIds', $categoryIds)
+            ->setParameter('visibility', $visibility);
 
         $qb->getQuery()->execute();
     }
@@ -198,9 +199,10 @@ class VisibilityChangeCategorySubtreeCacheBuilder extends AbstractRelatedEntitie
             ->createQueryBuilder();
 
         $qb->update('OroVisibilityBundle:VisibilityResolved\CategoryVisibilityResolved', 'cvr')
-            ->set('cvr.visibility', $visibility)
+            ->set('cvr.visibility', ':visibility')
             ->andWhere($qb->expr()->in('IDENTITY(cvr.category)', ':categoryIds'))
-            ->setParameter('categoryIds', $categoryIds);
+            ->setParameter('categoryIds', $categoryIds)
+            ->setParameter('visibility', $visibility);
 
         $qb->getQuery()->execute();
     }

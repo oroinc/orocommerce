@@ -11,6 +11,7 @@ use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Entity\ProductImageType;
+use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 
 /**
  * Contains business specific methods for retrieving product entities.
@@ -363,6 +364,8 @@ class ProductRepository extends EntityRepository
             ->setParameter('parentProduct', $configurableProduct);
 
         foreach ($variantParameters as $variantName => $variantValue) {
+            QueryBuilderUtil::checkIdentifier($variantName);
+            QueryBuilderUtil::checkIdentifier($variantValue);
             $qb
                 ->andWhere(sprintf('p.%s = :variantValue%s', $variantName, $variantName))
                 ->setParameter(sprintf('variantValue%s', $variantName), $variantValue);
@@ -382,6 +385,7 @@ class ProductRepository extends EntityRepository
         $metadata = $this->getClassMetadata();
 
         foreach ($criteria as $fieldName => $fieldValue) {
+            QueryBuilderUtil::checkIdentifier($fieldName);
             if (!is_string($fieldValue)) {
                 throw new \LogicException(sprintf('Value of %s must be string', $fieldName));
             }
@@ -429,6 +433,7 @@ class ProductRepository extends EntityRepository
      */
     public function findByAttributeValue($type, $fieldName, $fieldValue, $isRelationField)
     {
+        QueryBuilderUtil::checkIdentifier($fieldName);
         if ($isRelationField) {
             return $this->createQueryBuilder('p')
                 ->select('p')
@@ -458,7 +463,7 @@ class ProductRepository extends EntityRepository
         $result = $this->createQueryBuilder('p')
             ->select('parent_product.sku')
             ->distinct()
-            ->join('p.' . $fieldName, 'attr')
+            ->join(QueryBuilderUtil::getField('p', $fieldName), 'attr')
             ->join('p.parentVariantLinks', 'variant_links')
             ->join('variant_links.parentProduct', 'parent_product')
             ->where('attr = :valueId')
@@ -490,16 +495,17 @@ class ProductRepository extends EntityRepository
     public function findParentSkusByAttributeOptions(string $type, string $fieldName, array $attributeOptions)
     {
         $qb = $this->createQueryBuilder('p');
+        $aliasedFieldName = QueryBuilderUtil::getField('p', $fieldName);
 
         $result = $qb
             ->select(['parent_product.sku', 'attr.id'])
             ->distinct()
-            ->join('p.' . $fieldName, 'attr')
+            ->join($aliasedFieldName, 'attr')
             ->join('p.parentVariantLinks', 'variant_links')
             ->join('variant_links.parentProduct', 'parent_product')
             ->where($qb->expr()->in('attr', ':attributeOptions'))
             ->andWhere('p.type = :type')
-            ->andWhere($qb->expr()->isNotNull('p.' . $fieldName))
+            ->andWhere($qb->expr()->isNotNull($aliasedFieldName))
             ->orderBy('parent_product.sku')
             ->setParameter('attributeOptions', $attributeOptions)
             ->setParameter('type', $type)

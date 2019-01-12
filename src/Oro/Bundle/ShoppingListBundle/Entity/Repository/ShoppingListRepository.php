@@ -8,6 +8,7 @@ use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 
 class ShoppingListRepository extends EntityRepository
 {
@@ -55,6 +56,7 @@ class ShoppingListRepository extends EntityRepository
         }
 
         foreach ($sortCriteria as $field => $sortOrder) {
+            QueryBuilderUtil::checkField($field);
             if ($sortOrder === Criteria::ASC) {
                 $qb->addOrderBy($qb->expr()->asc($field));
             } elseif ($sortOrder === Criteria::DESC) {
