@@ -42,9 +42,17 @@ Feature: Product attribute file
     And I save and close form
     Then I should see "Product has been saved" flash message
 
+  Scenario: Check file attribute is available at store front
+    Given I login as AmandaRCole@example.org buyer
+    When I type "SKU123" in "search"
+    And I click "Search Button"
+    And I click "View Details" for "SKU123" product
+    Then I should see "cat1.jpg" link with the url matches "/attachment/[^/]+.jpg"
+    And I should not see "cat1.jpg" link with the url matches "/admin/"
+
   Scenario: Delete product attribute
     Given I login as administrator
-    Given I go to Products/ Product Attributes
+    And I go to Products/ Product Attributes
     When I click Remove "FileField" in grid
     Then I should see "Are you sure you want to delete this attribute?"
     And I click "Yes"
