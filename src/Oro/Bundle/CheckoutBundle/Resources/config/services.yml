@@ -709,3 +709,9 @@ services:
         tags:
             - { name: oro_workflow.condition, alias: 'validate_checkout_addresses' }
             - { name: oro_action.condition, alias: 'validate_checkout_addresses' }
+
+    oro_checkout.action.send_order_confirmation_email:
+        class: 'Oro\Bundle\CheckoutBundle\Action\SendOrderConfirmationEmail'
+        parent: oro_email.workflow.action.send_email_template
+        tags:
+            - { name: oro_action.action, alias: send_order_confirmation_email }
