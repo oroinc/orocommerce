@@ -418,7 +418,9 @@ class ProductTypeTest extends FormIntegrationTestCase
     ) {
         $expectedProduct = new Product();
 
-        $expectedProduct->setType(Product::TYPE_SIMPLE);
+        $expectedProduct
+            ->setType(Product::TYPE_SIMPLE)
+            ->setInventoryStatus(new StubEnumValue('in_stock', 'In Stock'));
 
         if ($hasVariants) {
             $expectedProduct->setType(Product::TYPE_CONFIGURABLE);
