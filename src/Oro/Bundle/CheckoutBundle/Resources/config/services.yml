@@ -387,6 +387,7 @@ services:
         class: 'Oro\Bundle\CheckoutBundle\Factory\CheckoutShippingContextFactory'
         arguments:
             - '@oro_checkout.data_provider.manager.checkout_line_items'
+            - '@oro_checkout.provider.checkout_subtotal'
             - '@oro_pricing.subtotal_processor.total_processor_provider'
             - '@oro_order.shipping_line_item.converter_basic'
             - '@?oro_shipping.context.builder_factory_basic'
@@ -395,6 +396,7 @@ services:
         class: 'Oro\Bundle\CheckoutBundle\Factory\CheckoutPaymentContextFactory'
         arguments:
             - '@oro_checkout.data_provider.manager.checkout_line_items'
+            - '@oro_checkout.provider.checkout_subtotal'
             - '@oro_pricing.subtotal_processor.total_processor_provider'
             - '@oro_order.payment_line_item.converter_basic'
             - '@oro_shipping.shipping_origin.provider'

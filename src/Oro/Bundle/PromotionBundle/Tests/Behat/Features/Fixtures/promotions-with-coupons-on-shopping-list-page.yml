@@ -1,11 +1,8 @@
 include:
     - shopping_list.yml
+    - promotions-with-coupons-basic.yml
 
 Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
-    orderPromotionLabel:
-        string: 'First Promotion Label'
-    orderPromotionDesc:
-        string: 'First Promotion Description'
     flatRateShippingPromotionLabel:
         string: 'Flat rate shipping Promotion'
     flatRateShippingPromotionDesc:
@@ -16,14 +13,6 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
         string: 'Flat rate2 shipping Promotion Description'
 
 Oro\Bundle\PromotionBundle\Entity\Coupon:
-    coupon1:
-        owner: '@business_unit'
-        organization: '@organization'
-        code: 'coupon-1'
-        promotion: '@orderDiscountPromotion1'
-        enabled: true
-        usesPerPerson: 100
-        usesPerCoupon: 100
     coupon2:
         owner: '@business_unit'
         organization: '@organization'
@@ -49,22 +38,7 @@ Oro\Bundle\PromotionBundle\Entity\Coupon:
         usesPerPerson: 100
         usesPerCoupon: 100
 
-Oro\Bundle\SegmentBundle\Entity\Segment:
-    promotionSegment:
-        name: 'Promotion Matching Products #1'
-        type: 'dynamic'
-        entity: 'Oro\Bundle\ProductBundle\Entity\Product'
-        definition: '{"filters":[[{"columnName":"id","criterion":{"filter":"number","data":{"value":0,"type":2}}}]],"columns":[{"name":"id","label":"id","sorting":null,"func":null},{"name":"sku","label":"sku","sorting":null,"func":null}]}'
-        organization: '@organization'
-        owner: '@business_unit'
-
 Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration:
-    orderDiscountPromotionDiscountConfiguration1:
-        type: 'order'
-        options:
-            discount_type: 'amount'
-            discount_currency: 'USD'
-            discount_value: 1
     orderDiscountPromotionDiscountConfiguration2:
         type: 'order'
         options:
@@ -91,10 +65,6 @@ Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration:
                 shipping_method_type: 'primary'
 
 Oro\Bundle\RuleBundle\Entity\Rule:
-    orderDiscountPromotionRule1:
-        enabled: true
-        sortOrder: 1
-        name: 'First Promotion Name'
     orderDiscountPromotionRule2:
         enabled: true
         sortOrder: 1
@@ -109,16 +79,6 @@ Oro\Bundle\RuleBundle\Entity\Rule:
         name: 'Flat rate2 shipping Promotion'
 
 Oro\Bundle\PromotionBundle\Entity\Promotion:
-    orderDiscountPromotion1:
-        addLabel: ['@orderPromotionLabel']
-        addDescription: ['@orderPromotionDesc']
-        addScope: [1]
-        productsSegment: '@promotionSegment'
-        rule: '@orderDiscountPromotionRule1'
-        discountConfiguration: '@orderDiscountPromotionDiscountConfiguration1'
-        organization: '@organization'
-        owner: '@admin'
-        useCoupons: true
     orderDiscountPromotion2:
         addScope: [1]
         productsSegment: '@promotionSegment'
