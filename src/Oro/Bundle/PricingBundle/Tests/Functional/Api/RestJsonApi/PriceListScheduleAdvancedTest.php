@@ -4,7 +4,6 @@ namespace Oro\Bundle\PricingBundle\Tests\Functional\Api\RestJsonApi;
 
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListSchedule;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @dbIsolationPerTest
@@ -34,10 +33,12 @@ class PriceListScheduleAdvancedTest extends AbstractPriceListScheduleTest
             false
         );
 
-        static::assertResponseStatusCodeEquals($response, Response::HTTP_BAD_REQUEST);
-        static::assertContains(
-            'Price list schedule segments should not intersect',
-            $response->getContent()
+        $this->assertResponseValidationError(
+            [
+                'title' => 'schedule intervals intersection constraint',
+                'detail' => 'Price list schedule segments should not intersect'
+            ],
+            $response
         );
     }
 
@@ -65,30 +66,31 @@ class PriceListScheduleAdvancedTest extends AbstractPriceListScheduleTest
             false
         );
 
-        static::assertResponseStatusCodeEquals($response, Response::HTTP_BAD_REQUEST);
-        static::assertContains(
-            'Price list schedule segments should not intersect',
-            $response->getContent()
+        $this->assertResponseValidationError(
+            [
+                'title' => 'schedule intervals intersection constraint',
+                'detail' => 'Price list schedule segments should not intersect'
+            ],
+            $response
         );
     }
 
     public function testCreateSchedulesIntersect()
     {
+        $data = $this->getRequestData('price_list_schedule/price_list_schedules_create.yml');
         $response = $this->post(
             ['entity' => 'pricelistschedules'],
-            'price_list_schedule/price_list_schedules_create.yml'
+            $data
         );
+        $this->assertResponseContains($data, $response);
 
-        $this->assertResponseContains('../requests/price_list_schedule/price_list_schedules_create.yml', $response);
-
-        $routeParameters = self::processTemplateData(['entity' => 'pricelistschedules']);
-        $parameters = $this->getRequestData('price_list_schedule/price_list_schedules_create.yml');
-        $response = $this->post($routeParameters, $parameters, [], false);
-
-        static::assertResponseStatusCodeEquals($response, Response::HTTP_BAD_REQUEST);
-        static::assertContains(
-            'Price list schedule segments should not intersect',
-            $response->getContent()
+        $response = $this->post(['entity' => 'pricelistschedules'], $data, [], false);
+        $this->assertResponseValidationError(
+            [
+                'title' => 'schedule intervals intersection constraint',
+                'detail' => 'Price list schedule segments should not intersect'
+            ],
+            $response
         );
     }
 
@@ -181,11 +183,7 @@ class PriceListScheduleAdvancedTest extends AbstractPriceListScheduleTest
 
         $this->cdelete(
             ['entity' => 'pricelistschedules'],
-            [
-                'filter' => [
-                    'id' => $priceListScheduleTwo->getId(),
-                ],
-            ]
+            ['filter' => ['id' => $priceListScheduleTwo->getId()]]
         );
 
         $createdActivationRules = $this->getCombinedPriceListActivationRuleRepository()->findAll();
@@ -226,11 +224,7 @@ class PriceListScheduleAdvancedTest extends AbstractPriceListScheduleTest
 
         $this->cdelete(
             ['entity' => 'pricelistschedules'],
-            [
-                'filter' => [
-                    'priceList' => $priceList->getId(),
-                ],
-            ]
+            ['filter' => ['priceList' => $priceList->getId()]]
         );
 
         $this->assertFalse($priceList->isContainSchedule());

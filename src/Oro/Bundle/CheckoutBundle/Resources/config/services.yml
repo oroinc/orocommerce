@@ -387,6 +387,7 @@ services:
         class: 'Oro\Bundle\CheckoutBundle\Factory\CheckoutShippingContextFactory'
         arguments:
             - '@oro_checkout.data_provider.manager.checkout_line_items'
+            - '@oro_checkout.provider.checkout_subtotal'
             - '@oro_pricing.subtotal_processor.total_processor_provider'
             - '@oro_order.shipping_line_item.converter_basic'
             - '@?oro_shipping.context.builder_factory_basic'
@@ -395,6 +396,7 @@ services:
         class: 'Oro\Bundle\CheckoutBundle\Factory\CheckoutPaymentContextFactory'
         arguments:
             - '@oro_checkout.data_provider.manager.checkout_line_items'
+            - '@oro_checkout.provider.checkout_subtotal'
             - '@oro_pricing.subtotal_processor.total_processor_provider'
             - '@oro_order.payment_line_item.converter_basic'
             - '@oro_shipping.shipping_origin.provider'
@@ -709,3 +711,9 @@ services:
         tags:
             - { name: oro_workflow.condition, alias: 'validate_checkout_addresses' }
             - { name: oro_action.condition, alias: 'validate_checkout_addresses' }
+
+    oro_checkout.action.send_order_confirmation_email:
+        class: 'Oro\Bundle\CheckoutBundle\Action\SendOrderConfirmationEmail'
+        parent: oro_email.workflow.action.send_email_template
+        tags:
+            - { name: oro_action.action, alias: send_order_confirmation_email }

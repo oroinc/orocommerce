@@ -12,10 +12,7 @@ class PriceListScheduleBasicTest extends AbstractPriceListScheduleTest
     public function testGet()
     {
         $response = $this->get(
-            [
-                'entity' => 'pricelistschedules',
-                'id' => '<toString(@schedule.3->id)>',
-            ]
+            ['entity' => 'pricelistschedules', 'id' => '<toString(@schedule.3->id)>']
         );
 
         $this->assertResponseContains('price_list_schedule/price_list_schedules_get.yml', $response);
@@ -30,13 +27,10 @@ class PriceListScheduleBasicTest extends AbstractPriceListScheduleTest
 
     public function testGetListByPriceListFilter()
     {
-        $parameters = [
-            'filter' => [
-                'priceList' => '@price_list_1->id',
-            ],
-        ];
-
-        $response = $this->cget(['entity' => 'pricelistschedules'], $parameters);
+        $response = $this->cget(
+            ['entity' => 'pricelistschedules'],
+            ['filter' => ['priceList' => '@price_list_1->id']]
+        );
 
         $this->assertResponseContains('price_list_schedule/price_list_schedules_get_list_by_pl_filter.yml', $response);
     }
@@ -64,12 +58,13 @@ class PriceListScheduleBasicTest extends AbstractPriceListScheduleTest
 
     public function testCreate()
     {
+        $data = $this->getRequestData('price_list_schedule/price_list_schedules_create.yml');
         $response = $this->post(
             ['entity' => 'pricelistschedules'],
-            'price_list_schedule/price_list_schedules_create.yml'
+            $data
         );
 
-        $this->assertResponseContains('../requests/price_list_schedule/price_list_schedules_create.yml', $response);
+        $this->assertResponseContains($data, $response);
     }
 
     public function testUpdate()
@@ -103,11 +98,7 @@ class PriceListScheduleBasicTest extends AbstractPriceListScheduleTest
 
         $this->cdelete(
             ['entity' => 'pricelistschedules'],
-            [
-                'filter' => [
-                    'priceList' => $priceList->getId(),
-                ],
-            ]
+            ['filter' => ['priceList' => $priceList->getId()]]
         );
 
         $removedSchedules = $this->getSchedulesRepository()->findBy(['priceList' => $priceList->getId()]);
