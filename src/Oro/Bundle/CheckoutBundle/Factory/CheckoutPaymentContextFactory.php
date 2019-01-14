@@ -7,6 +7,7 @@ use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\OrderBundle\Converter\OrderPaymentLineItemConverterInterface;
 use Oro\Bundle\PaymentBundle\Context\Builder\PaymentContextBuilderInterface;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use Oro\Bundle\PaymentBundle\Context\Builder\Factory\PaymentContextBuilderFactoryInterface;
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
@@ -43,6 +44,11 @@ class CheckoutPaymentContextFactory
     private $shippingOriginProvider;
 
     /**
+     * @var SubtotalProviderInterface
+     */
+    protected $checkoutSubtotalProvider;
+
+    /**
      * @param CheckoutLineItemsManager $checkoutLineItemsManager
      * @param TotalProcessorProvider $totalProcessor
      * @param OrderPaymentLineItemConverterInterface $paymentLineItemConverter
@@ -69,6 +75,14 @@ class CheckoutPaymentContextFactory
     }
 
     /**
+     * @param SubtotalProviderInterface $checkoutSubtotalProvider
+     */
+    public function setCheckoutSubtotalProvider(SubtotalProviderInterface $checkoutSubtotalProvider)
+    {
+        $this->checkoutSubtotalProvider = $checkoutSubtotalProvider;
+    }
+
+    /**
      * @param Checkout $checkout
      *
      * @return PaymentContextInterface|null
@@ -87,14 +101,14 @@ class CheckoutPaymentContextFactory
             (string)$checkout->getId()
         );
 
-        $total = $this->totalProcessor->getTotal($checkout);
-        $subtotal = Price::create(
-            $total->getAmount(),
-            $total->getCurrency()
+        $subtotal = $this->checkoutSubtotalProvider->getSubtotal($checkout);
+        $subtotalPrice = Price::create(
+            $subtotal->getAmount(),
+            $subtotal->getCurrency()
         );
 
         $paymentContextBuilder
-            ->setSubTotal($subtotal)
+            ->setSubTotal($subtotalPrice)
             ->setCurrency($checkout->getCurrency());
 
         if (null !== $checkout->getWebsite()) {

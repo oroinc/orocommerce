@@ -386,6 +386,8 @@ services:
             - '@oro_pricing.subtotal_processor.total_processor_provider'
             - '@oro_order.shipping_line_item.converter_basic'
             - '@?oro_shipping.context.builder_factory_basic'
+        calls:
+            - [setCheckoutSubtotalProvider, ['@oro_checkout.provider.checkout_subtotal']]
 
     oro_checkout.factory.payment_context_factory:
         class: 'Oro\Bundle\CheckoutBundle\Factory\CheckoutPaymentContextFactory'
@@ -396,6 +398,7 @@ services:
             - '@?oro_payment.context.builder_factory_basic'
         calls:
             - [setShippingOriginProvider, ['@oro_shipping.shipping_origin.provider']]
+            - [setCheckoutSubtotalProvider, ['@oro_checkout.provider.checkout_subtotal']]
 
     oro_checkout.provider.privilege_category_provider:
         class: 'Oro\Bundle\CheckoutBundle\Provider\PrivilegeCategoryProvider'
