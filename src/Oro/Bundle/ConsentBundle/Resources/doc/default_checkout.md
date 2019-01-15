@@ -1,8 +1,8 @@
-# Example how to add "Agreements" step to custom checkout workflow based on "Default Checkout"
+# Add Agreements Step to Custom Checkout Workflow Based on Default Checkout (Example)
 
-## "Agreements" step
+## Agreements Step
 
-At first, let's add "Agreements" step to `acme_demo_checkout` workflow with name `customer_consents` and allowed transition `continue_to_billing_address`. For all others steps we should add `verify_customer_consents` allowed transition. `verify_customer_consents` helps to redirect to `customer_consents` step if some of consents was not accepted.
+Add the Agreements step to the `acme_demo_checkout` workflow with the `customer_consents` name and the `continue_to_billing_address` allowed transition. For all other steps, add the `verify_customer_consents` allowed transition. `verify_customer_consents` helps to redirect to the `customer_consents` step if some consents were not accepted.
 
 ```yml
 workflows:
@@ -28,7 +28,7 @@ workflows:
 
 ## Transitions
 
-Next let's add `continue_to_billing_address` transition for "Agreements" page, and `verify_customer_consents` transition that check that all required consents is accepted. **stop_propagation** option gives us the opportunity to check required consents before every step and transit workflow to `customer_consents` step.
+Next, add the `continue_to_billing_address` transition to the Agreements page and the `verify_customer_consents` transition that check that all mandatory consents are accepted. The **stop_propagation** option enables you to check the required consents before every step and transit the workflow to the `customer_consents` step.
 
 ```yml
 workflows:
@@ -60,9 +60,9 @@ workflows:
             # ...
 ```
 
-## Transition definitions
+## Transition Definitions
 
-For the above transitions let's add transition definitions that save consents and check that all required consents is accepted.
+For the above transitions, add transition definitions that save consents and check that all required consents are accepted.
 
 ```yml
 workflows:
@@ -96,7 +96,9 @@ workflows:
 
 ## Template
 
-In order to show block with consent items, import layout with consent items and configure it
+To show a block with consent items:
+
+1. Import a layout with consent items and configure it.
 
 ```yml
 layout:
@@ -122,7 +124,7 @@ layout:
             parentId: checkout_consent_container
 ```
 
-and customize templates
+2. Customize the templates, as illustrated below.
 
 ```twig
 {% block _checkout_form_fields_widget %}

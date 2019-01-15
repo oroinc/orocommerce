@@ -1,8 +1,8 @@
-# Example how to add customer consents field
+# Add the Customer Consents Field (Example)
 
 ## Mapped field
 
-If entity contains `customerUser` property, we can add `customerConsents` field to the form using `property_path` in the `form_options`.
+If an entity contains the `customerUser` property, add the `customerConsents` field to the form using `property_path` in the `form_options`.
 
 ```php
 $form->add(
@@ -19,9 +19,11 @@ $form->add(
 );
 ```
 
-## Not-mapped field
+## Non-mapped field
 
-If entity doesn't contains `customerUser` property, we should add `customerConsents` field to the form and set `mapped = false` in the `form_options`.
+If an entity does not contain the `customerUser` property:
+
+1. Add the `customerConsents` field to the form and set `mapped = false` in the `form_options`.
 
 ```php
 $form->add(
@@ -38,7 +40,7 @@ $form->add(
 );
 ```
 
-then create form listener service
+2. Create a form listener service.
 
 ```yml
 acme_demo.event_listener.form_listener:
@@ -49,7 +51,7 @@ acme_demo.event_listener.form_listener:
         - { name: oro_featuretogle.feature, feature: consents }
 ```
 
-and implement logic on before flush event
+3. Implement the logic before the flush event.
 
 ```php
 <?php
@@ -89,9 +91,9 @@ class BeforeFlushFormListener
 }
 ```
 
-## Render form field on the front store
+## Render Form Field in the Storefront
 
-First of all check that `customerConsents` is rendered in ther form template, as a result the input with type `hidden` will be rendered on the page.
+First, check that `customerConsents` is rendered in the form template, the input with type `hidden` should be rendered on the page.
 
 ```twig
 {% if form.customerConsents is defined %}
@@ -99,7 +101,7 @@ First of all check that `customerConsents` is rendered in ther form template, as
 {% endif %}
 ```
 
-In order to show block with consent items, let's import layout with consent items and configure it.
+To show a block with consent items, import the layout with consent items and configure it.
 
 ```yml
 layout:
@@ -123,7 +125,7 @@ layout:
             parentId: consent_container
 ```
 
-if all consents is accepted let's add template with success message
+If all consents are accepted, add a template with a success message.
 
 ```twig
 {% block _checkout_consent_message_widget %}
