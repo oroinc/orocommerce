@@ -14,9 +14,9 @@ The entire functionality of this bundle can be disabled through a feature toggle
 
 ## Examples
 
-* [Add customer consent field to own form](./Resources/doc/add_form_field.md)
-* [Add "Agreements" step to custom checkout workflow based on "Default Checkout"](./Resources/doc/default_checkout.md)
-* [Add "Agreements" section to custom checkout workflow based on "Single Page Checkout"](./Resources/doc/single_page_checkout.md)
+* [Add a customer consent field to a custom form](./Resources/doc/add_form_field.md)
+* [Add the Agreements step to a custom checkout workflow based on Default Checkout](./Resources/doc/default_checkout.md)
+* [Add the Agreements section to a custom checkout workflow based on Single Page Checkout](./Resources/doc/single_page_checkout.md)
 
 ## Dependencies
 
