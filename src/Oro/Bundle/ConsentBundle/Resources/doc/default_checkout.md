@@ -1,4 +1,4 @@
-# Add Agreements Step to Custom Checkout Workflow Based on Default Checkout (Example)
+# Add the Agreements Step to a Custom Checkout Based on the Default Checkout Workflow (Example)
 
 ## Agreements Step
 
@@ -96,9 +96,9 @@ workflows:
 
 ## Template
 
-To show a block with consent items:
+To show a block with the consent items:
 
-1. Import a layout with consent items and configure it.
+1. Import a layout with the consent items and configure it.
 
 ```yml
 layout:

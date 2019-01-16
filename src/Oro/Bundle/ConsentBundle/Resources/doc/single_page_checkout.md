@@ -1,4 +1,4 @@
-# Add Agreements Section to Custom Checkout Workflow Based on Single Page Checkout (Example)
+# Add the Agreements Section to a Custom Checkout Based on the Single Page Checkout Workflow (Example)
 
 ## Agreements Section
 
@@ -36,7 +36,7 @@ workflows:
                        # ...
 ```
 
-Next, add transition definitions that save consents and check that all mandatory consents are accepted.
+Next, add the transition definitions that save consents and check that all mandatory consents are accepted.
 
 ```yml
 workflows:
@@ -76,9 +76,9 @@ workflows:
 
 ## Template
 
-To show block with consent items:
+To show a block with the consent items:
 
-1. Import layout with consent items and configure it.
+1. Import a layout with the consent items and configure it.
 
 ```yml
 layout:
@@ -103,7 +103,7 @@ layout:
            parentId: checkout_consent_container
 ```
 
-2. Customize templates, as illustrated below.
+2. Customize the templates, as illustrated below.
 
 ```twig
 {% block _checkout_consent_container_widget %}

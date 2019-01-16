@@ -1,4 +1,4 @@
-# Add the Customer Consents Field (Example)
+# Add the Customer Consents Field to a Form (Example)
 
 ## Mapped field
 
