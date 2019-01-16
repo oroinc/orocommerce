@@ -332,6 +332,7 @@ oro:
                 configurable_products_variations.title: 'Variations'
                 filters_sorters.title: 'Filters and Sorters'
                 limit_filters_sorters.title: 'Limit Filters and Sorters'
+                disable_filters_sorters.title: 'Disable Filters'
             fields:
                 brand_direct_url_prefix.label: 'Brand URL Prefix'
                 enable_related_products.label: 'Enable Related Products'
@@ -476,6 +477,9 @@ oro:
                 limit_filters_sorters_on_product_listing:
                     label: 'Hide Unrelated Product Filters And Sorting Options'
                     tooltip: 'Limit filters and sorting options on the product catalog page to display only those attributes that are relevant to the selected product family in the current product collection.'
+                disable_filters_on_product_listing:
+                    label: 'Disabled Unrelated Product Filters Options'
+                    tooltip: 'Disable filters options on the product catalog page to disable attributes that are not relevant to filtered product collection.'
             notice:
                 product_image_watermark: >
                    The updated product image watermark settings will be used for the newly uploaded images only.
