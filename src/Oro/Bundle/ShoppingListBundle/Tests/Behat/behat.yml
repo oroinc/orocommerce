@@ -220,6 +220,9 @@ oro_behat_extension:
         type: xpath
         locator: '//div[contains(text(),"$") and @class="oro-toolbar__content"]'
 
+    Customer Field:
+      selector: '.select2-container.input-widget'
+
   suites:
     OroShoppingListBundle:
       contexts:
