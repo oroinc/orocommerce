@@ -1,6 +1,8 @@
 @ticket-BB-14800
 @fixture-OroPricingBundle:FractionalProductPrices.yml
 @fixture-OroLocaleBundle:GermanLocalization.yml
+# Unskip after BB-16093 is fixed
+@skip
 
 Feature: Quote with fractional price
   In order to use correct decimal separator for fractional prices in different locales
