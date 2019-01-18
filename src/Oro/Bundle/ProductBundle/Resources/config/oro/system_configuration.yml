@@ -288,6 +288,16 @@ system_configuration:
                 fileConstraints:
                     - Image: ~
 
+        oro_product.product_image_placeholder:
+            data_type: string
+            type: 'Oro\Bundle\ConfigBundle\Form\Type\ConfigFileType'
+            priority: 50
+            options:
+                label: 'Product Image Placeholder'
+                required: false
+                fileConstraints:
+                    - Image: ~
+
         oro_product.product_image_watermark_size:
             data_type: integer
             type: 'Symfony\Component\Form\Extension\Core\Type\IntegerType'
@@ -668,6 +678,13 @@ system_configuration:
                                     guest_quick_order_form:
                                         children:
                                             - oro_product.guest_quick_order_form
+                    design:
+                        children:
+                            theme:
+                                children:
+                                    theme_settings:
+                                        children:
+                                            - oro_product.product_image_placeholder
 
         organization_configuration:
             commerce:
@@ -707,3 +724,20 @@ system_configuration:
                                     configurable_products_variations:
                                         children:
                                             - oro_product.display_simple_variations
+                    design:
+                        children:
+                            theme:
+                                children:
+                                    theme_settings:
+                                        children:
+                                            - oro_product.product_image_placeholder
+        website_configuration:
+            commerce:
+                children:
+                    design:
+                        children:
+                            theme:
+                                children:
+                                    theme_settings:
+                                        children:
+                                            - oro_product.product_image_placeholder

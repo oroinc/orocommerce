@@ -37,6 +37,7 @@ class Configuration implements ConfigurationInterface
     const PRODUCT_IMAGE_WATERMARK_FILE = 'product_image_watermark_file';
     const PRODUCT_IMAGE_WATERMARK_SIZE = 'product_image_watermark_size';
     const PRODUCT_IMAGE_WATERMARK_POSITION = 'product_image_watermark_position';
+    const PRODUCT_IMAGE_PLACEHOLDER = 'product_image_placeholder';
     const FEATURED_PRODUCTS_SEGMENT_ID = 'featured_products_segment_id';
     const ENABLE_QUICK_ORDER_FORM = 'enable_quick_order_form';
     const GUEST_QUICK_ORDER_FORM = 'guest_quick_order_form';
@@ -115,6 +116,7 @@ class Configuration implements ConfigurationInterface
                 static::PRODUCT_IMAGE_WATERMARK_FILE => ['value' => null],
                 static::PRODUCT_IMAGE_WATERMARK_SIZE => ['value' => 100],
                 static::PRODUCT_IMAGE_WATERMARK_POSITION => ['value' => 'center'],
+                static::PRODUCT_IMAGE_PLACEHOLDER => ['value' => null],
                 static::FEATURED_PRODUCTS_SEGMENT_ID => [
                     'value' => '@oro_product.provider.default_value.featured_products'
                 ],

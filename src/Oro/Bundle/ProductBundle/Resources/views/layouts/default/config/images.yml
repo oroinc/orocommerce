@@ -63,3 +63,6 @@ dimensions:
     category_medium:
         width: 315
         height: 260
+    product_no_image_default:
+        width: 315
+        height: 260

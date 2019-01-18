@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\EventListener;
 
 use Liip\ImagineBundle\Imagine\Cache\CacheManager;
+use Oro\Bundle\LayoutBundle\Provider\NoImageFileProvider;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
@@ -21,8 +22,6 @@ class FrontendProductDatagridListener
     const PRODUCT_IMAGE_FILTER_LARGE = 'product_large';
     const PRODUCT_IMAGE_FILTER_MEDIUM = 'product_medium';
 
-    const DEFAULT_IMAGE = '/bundles/oroproduct/default/images/no_image.png';
-
     /**
      * @var DataGridThemeHelper
      */
@@ -34,15 +33,23 @@ class FrontendProductDatagridListener
     protected $imagineCacheManager;
 
     /**
+     * @var NoImageFileProvider
+     */
+    protected $noImageFileProvider;
+
+    /**
      * @param DataGridThemeHelper $themeHelper
      * @param CacheManager $imagineCacheManager
+     * @param NoImageFileProvider $noImageFileProvider
      */
     public function __construct(
         DataGridThemeHelper $themeHelper,
-        CacheManager $imagineCacheManager
+        CacheManager $imagineCacheManager,
+        NoImageFileProvider $noImageFileProvider
     ) {
         $this->themeHelper = $themeHelper;
         $this->imagineCacheManager = $imagineCacheManager;
+        $this->noImageFileProvider = $noImageFileProvider;
     }
 
     /**
@@ -167,12 +174,9 @@ class FrontendProductDatagridListener
                 return;
         }
 
+        $noImagePath = $this->noImageFileProvider->getNoImagePath();
         foreach ($records as $record) {
-            $productImageUrl = $record->getValue('image_' . $imageFilter);
-
-            if (!$productImageUrl) {
-                $productImageUrl = $this->imagineCacheManager->getBrowserPath(self::DEFAULT_IMAGE, $imageFilter);
-            }
+            $productImageUrl = $record->getValue('image_' . $imageFilter) ?: $noImagePath;
             $record->addData(['image' => $productImageUrl]);
         }
     }
