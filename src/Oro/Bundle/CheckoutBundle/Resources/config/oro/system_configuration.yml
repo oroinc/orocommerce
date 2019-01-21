@@ -42,6 +42,9 @@ system_configuration:
                 label: oro.checkout.system_configuration.fields.default_guest_checkout_owner.title
                 tooltip: oro.checkout.system_configuration.fields.default_guest_checkout_owner.tooltip
                 required: true
+                constraints:
+                    - NotBlank: ~
+
         oro_checkout.single_page_checkout_increase_performance:
             data_type: boolean
             type: oro_config_checkbox

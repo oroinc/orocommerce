@@ -13,6 +13,7 @@ use Symfony\Component\Form\Forms;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Validator\ConstraintViolationList;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class SluggableEntityPrefixTypeTest extends FormIntegrationTestCase
 {
@@ -39,12 +40,12 @@ class SluggableEntityPrefixTypeTest extends FormIntegrationTestCase
             ->getMock();
 
         /**
-         * @var \Symfony\Component\Validator\ValidatorInterface|\PHPUnit_Framework_MockObject_MockObject $validator
+         * @var ValidatorInterface|\PHPUnit_Framework_MockObject_MockObject $validator
          */
         $validator = $this->createMock('\Symfony\Component\Validator\ValidatorInterface');
         $validator->expects($this->any())
             ->method('validate')
-            ->will($this->returnValue(new ConstraintViolationList()));
+            ->willReturn(new ConstraintViolationList());
 
         $this->factory = Forms::createFormFactoryBuilder()
             ->addExtensions($this->getExtensions())
@@ -67,25 +68,32 @@ class SluggableEntityPrefixTypeTest extends FormIntegrationTestCase
     /**
      * @dataProvider submitDataProvider
      *
-     * @param $defaultData
-     * @param $submittedData
-     * @param $expectedData
+     * @param PrefixWithRedirect|null $defaultData
+     * @param array $submittedData
+     * @param PrefixWithRedirect $expectedData
      */
-    public function testSubmit($defaultData, $submittedData, $expectedData)
-    {
+    public function testSubmit(
+        PrefixWithRedirect $defaultData = null,
+        array $submittedData,
+        PrefixWithRedirect $expectedData
+    ) {
         $parentForm = $this->createMock(FormInterface::class);
-        $parentForm->expects($this->once())
-            ->method('getName')
-            ->willReturn('test___config');
-
         $form = $this->factory->create($this->formType, $defaultData);
         $form->setParent($parentForm);
 
         $this->assertEquals($defaultData, $form->getData());
 
-        $this->storage->expects($this->once())
-            ->method('addPrefix')
-            ->with('test.config', $expectedData);
+        if ($defaultData) {
+            $parentForm->expects($this->once())
+                ->method('getName')
+                ->willReturn('test___config');
+            $this->storage->expects($this->once())
+                ->method('addPrefix')
+                ->with('test.config', $expectedData);
+        } else {
+            $this->storage->expects($this->never())
+                ->method('addPrefix');
+        }
 
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());
@@ -117,7 +125,15 @@ class SluggableEntityPrefixTypeTest extends FormIntegrationTestCase
                     'createRedirect' => false
                 ],
                 'expectedData' => (new PrefixWithRedirect())->setPrefix('another-prefix')->setCreateRedirect(false)
-            ]
+            ],
+            'null data' => [
+                'defaultData' => null,
+                'submittedData' => [
+                    'prefix' => 'some-prefix',
+                    'createRedirect' => true
+                ],
+                'expectedData' => (new PrefixWithRedirect())->setPrefix('some-prefix')->setCreateRedirect(true)
+            ],
         ];
     }
 

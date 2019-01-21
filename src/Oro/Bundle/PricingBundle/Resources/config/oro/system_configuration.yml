@@ -57,6 +57,7 @@ system_configuration:
             options:
                 label: oro.pricing.system_configuration.fields.offset_of_processing_cpl_prices.label
                 tooltip: oro.pricing.system_configuration.fields.offset_of_processing_cpl_prices.tooltip
+                required: true
                 constraints:
                     - NotBlank: ~
                     - Type:

@@ -16,6 +16,8 @@ system_configuration:
         oro_shipping.shipping_origin:
             data_type: array
             type: 'Oro\Bundle\ShippingBundle\Form\Type\ShippingOriginConfigType'
+            options:
+                required: false
         oro_shipping.length_units:
             data_type: array
             type: 'Oro\Bundle\ShippingBundle\Form\Type\LengthUnitSelectType'
@@ -24,6 +26,7 @@ system_configuration:
                 multiple: true
                 full_list: true
                 data_transformer: oro_shipping.form.data_transformer.length_unit
+                required: true
                 constraints:
                     - NotBlank: ~
         oro_shipping.weight_units:
@@ -34,6 +37,7 @@ system_configuration:
                 multiple: true
                 full_list: true
                 data_transformer: oro_shipping.form.data_transformer.weight_unit
+                required: true
                 constraints:
                     - NotBlank: ~
         oro_shipping.freight_classes:
@@ -44,6 +48,7 @@ system_configuration:
                 multiple: true
                 full_list: true
                 data_transformer: oro_shipping.form.data_transformer.freight_class
+                required: true
                 constraints:
                     - NotBlank: ~
     tree:
