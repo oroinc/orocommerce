@@ -14,9 +14,10 @@ Feature: Single page checkout with consents
     And sessions active:
       | Admin | first_session  |
       | User  | second_session |
-    And I enable 'oro_consent.consent_feature_enabled' configuration option
-    And I enable 'oro_shopping_list.availability_for_guests' configuration option
-    And I enable 'oro_checkout.guest_checkout' configuration option
+    And I enable configuration options:
+      | oro_consent.consent_feature_enabled       |
+      | oro_shopping_list.availability_for_guests |
+      | oro_checkout.guest_checkout               |
 
   Scenario: Admin creates Landing Page and Content Node in Web Catalog
     Given I proceed as the Admin
