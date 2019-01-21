@@ -200,5 +200,7 @@ oro_behat_extension:
         - OroShoppingListBundle::FeatureContext
         - OroPromotionBundle::PromotionContext
         - OroTaxBundle::TaxContext
+        - OroLocaleBundle::LocalizationContext
+        - OroFrontendLocalizationBundle::LocalizationSwitcherContext
       paths:
         - '@OroOrderBundle/Tests/Behat/Features'
