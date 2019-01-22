@@ -58,11 +58,11 @@ Feature: Brands
     And click edit "PSKU1" in grid
     When click "Brand humburger button"
     And filter Brand as Contains "ACME"
-    Then I should see following grid:
+    Then I should see following "Brand Select Grid" grid:
       | Brand |
       | ACME  |
     And should not see "Spectrum"
-    And click on ACME in grid
+    And click on ACME in grid "Brand Select Grid"
     And save and close form
     Then I should see "Product has been saved" flash message
 

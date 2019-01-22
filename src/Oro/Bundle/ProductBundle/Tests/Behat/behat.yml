@@ -498,11 +498,11 @@ oro_behat_extension:
       selector: 'div.tab-pane.active a:contains("Add")'
 
     ActiveGrid:
-      selector: 'div.tab-pane.active div.grid-container'
+      selector: 'div.tab-pane.active div.oro-datagrid'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
 
     AddProductsPopup:
-      selector: 'div.ui-dialog div.grid-container'
+      selector: 'div.ui-dialog div.oro-datagrid'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
 
     AddProductsPopupFilters:
@@ -598,7 +598,7 @@ oro_behat_extension:
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridToolbarActions
 
     ProductFrontendGridFilterItem:
-      selector: 'div.filter-items-hint span'
+      selector: 'span.filter-criteria-hint-item'
       class: Oro\Bundle\FrontendBundle\Tests\Behat\Element\GridFilterItem
 
     ProductFrontendGridFiltersBlock:
@@ -866,6 +866,10 @@ oro_behat_extension:
       selector:
         type: xpath
         locator: '//label[text()="Name"]/../..//span[@class="fallback-status"]'
+
+    Brand Select Grid:
+      selector: 'div[data-page-component-name="brand-select-grid"] div.oro-datagrid'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
 
     Brand Form:
       selector: 'form[name="oro_product_brand"]'

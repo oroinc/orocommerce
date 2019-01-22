@@ -179,7 +179,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     private function getShoppingListLineItemsTableDirectRows(Table $table)
     {
         return array_map(function (NodeElement $element) {
-            return $this->elementFactory->wrapElement(Table::TABLE_ROW_ELEMENT, $element);
+            return $this->elementFactory->wrapElement(Table::TABLE_ROW_STRICT_ELEMENT, $element);
         }, $table->findAll('css', '.shopping-list-line-items .shopping-list-line-items__item-wrapper'));
     }
 

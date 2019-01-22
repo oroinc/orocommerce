@@ -234,7 +234,7 @@ oro_behat_extension:
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridToolbarActions
 
     Customers Address Book GridFilterItem:
-      selector: 'div.filter-items-hint span'
+      selector: 'span.filter-criteria-hint-item'
       class: Oro\Bundle\FrontendBundle\Tests\Behat\Element\GridFilterItem
 
     Customer Users Address Book Paginator:
@@ -260,7 +260,7 @@ oro_behat_extension:
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridToolbarActions
 
     Customer Users Address Book GridFilterItem:
-      selector: 'div.filter-items-hint span'
+      selector: 'span.filter-criteria-hint-item'
       class: Oro\Bundle\FrontendBundle\Tests\Behat\Element\GridFilterItem
 
     Permissions Dropdown Items:
