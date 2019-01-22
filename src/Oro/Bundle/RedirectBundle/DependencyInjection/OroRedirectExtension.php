@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\RedirectBundle\DependencyInjection;
 
-use Oro\Bundle\RedirectBundle\Routing\NotInstalledMatchedUrlDecisionMaker;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader;
@@ -33,8 +32,6 @@ class OroRedirectExtension extends Extension
                 'Oro\Bundle\RedirectBundle\Routing\Router'
             ]
         );
-
-        $this->configureMatchedUrlDecisionMaker($container);
     }
 
     /**
@@ -43,18 +40,5 @@ class OroRedirectExtension extends Extension
     public function getAlias()
     {
         return self::ALIAS;
-    }
-
-    /**
-     * @param ContainerBuilder $container
-     */
-    private function configureMatchedUrlDecisionMaker(ContainerBuilder $container)
-    {
-        if ($container->hasParameter('installed') && $container->getParameter('installed')) {
-            return;
-        }
-
-        $container->getDefinition('oro_redirect.routing.matched_url_decision_maker')
-            ->setClass(NotInstalledMatchedUrlDecisionMaker::class);
     }
 }
