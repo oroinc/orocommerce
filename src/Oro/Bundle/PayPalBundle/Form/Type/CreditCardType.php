@@ -47,7 +47,7 @@ class CreditCardType extends AbstractType
                     ],
                     'data-credit-card-type-validator' => 'credit-card-type',
                     'data-card-number' => true,
-                    'autocomplete' => 'off',
+                    'autocomplete' => 'cc-number',
                     'data-gateway' => true,
                     'placeholder' => false,
                 ],
@@ -69,7 +69,7 @@ class CreditCardType extends AbstractType
                     'month' => 'oro.paypal.credit_card.expiration_date.month',
                 ],
                 'attr' => [
-                    'data-expiration-date' => true,
+                    'data-expiration-date' => true
                 ],
             ]
         )->add(
