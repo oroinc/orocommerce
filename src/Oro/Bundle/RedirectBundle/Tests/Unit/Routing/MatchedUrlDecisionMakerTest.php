@@ -4,13 +4,12 @@ namespace Oro\Bundle\RedirectBundle\Tests\Unit\Routing;
 
 use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 use Oro\Bundle\RedirectBundle\Routing\MatchedUrlDecisionMaker;
+use Oro\Bundle\RedirectBundle\Routing\NotInstalledMatchedUrlDecisionMaker;
 
 class MatchedUrlDecisionMakerTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var FrontendHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $frontendHelper;
+    /** @var FrontendHelper|\PHPUnit\Framework\MockObject\MockObject */
+    private $frontendHelper;
 
     protected function setUp()
     {
@@ -21,15 +20,10 @@ class MatchedUrlDecisionMakerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider urlDataProvider
-     * @param bool $installed
-     * @param bool $isFrontend
-     * @param array $skippedUrl
-     * @param string $url
-     * @param bool $expected
      */
-    public function testMatches($installed, $isFrontend, array $skippedUrl, $url, $expected)
+    public function testMatches(bool $isFrontend, array $skippedUrl, string $url, bool $expected)
     {
-        $maker = new MatchedUrlDecisionMaker($this->frontendHelper, $installed);
+        $maker = new MatchedUrlDecisionMaker($this->frontendHelper);
         foreach ($skippedUrl as $urlPattern) {
             $maker->addSkippedUrlPattern($urlPattern);
         }
@@ -48,20 +42,11 @@ class MatchedUrlDecisionMakerTest extends \PHPUnit\Framework\TestCase
         return [
             'allowed url' => [
                 true,
-                true,
                 [],
                 '/test',
                 true
             ],
-            'not installed' => [
-                false,
-                true,
-                [],
-                '/test',
-                false
-            ],
             'not frontend' => [
-                true,
                 false,
                 [],
                 '/test',
@@ -69,11 +54,18 @@ class MatchedUrlDecisionMakerTest extends \PHPUnit\Framework\TestCase
             ],
             'skipped frontend' => [
                 true,
-                true,
                 ['/api/'],
                 '/api/test',
                 false
             ],
         ];
+    }
+
+    public function testMatchesForNotInstalled()
+    {
+        $maker = new NotInstalledMatchedUrlDecisionMaker($this->frontendHelper);
+        $this->frontendHelper->expects($this->never())
+            ->method('isFrontendUrl');
+        $this->assertFalse($maker->matches('/frontend'));
     }
 }

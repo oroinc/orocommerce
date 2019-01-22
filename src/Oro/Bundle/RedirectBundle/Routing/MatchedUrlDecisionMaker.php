@@ -4,33 +4,23 @@ namespace Oro\Bundle\RedirectBundle\Routing;
 
 use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 
+/**
+ * Checks if URL is storefront URL and it is not configured to be skipped on storefront.
+ */
 class MatchedUrlDecisionMaker
 {
-    /**
-     * @var bool
-     */
-    protected $installed;
+    /** @var FrontendHelper */
+    private $frontendHelper;
 
-    /**
-     * @var FrontendHelper
-     */
-    protected $frontendHelper;
-
-    /**
-     * @var array
-     */
-    protected $skippedUrlPatterns = [];
+    /** @var string[] */
+    private $skippedUrlPatterns = [];
 
     /**
      * @param FrontendHelper $frontendHelper
-     * @param boolean $installed
      */
-    public function __construct(
-        FrontendHelper $frontendHelper,
-        $installed
-    ) {
+    public function __construct(FrontendHelper $frontendHelper)
+    {
         $this->frontendHelper = $frontendHelper;
-        $this->installed = $installed;
     }
 
     /**
@@ -49,26 +39,16 @@ class MatchedUrlDecisionMaker
      */
     public function matches($url)
     {
-        if (!$this->installed) {
-            return false;
-        }
-
-        if (!$this->frontendHelper->isFrontendUrl($url)) {
-            return false;
-        }
-
-        if ($this->isSkippedUrl($url)) {
-            return false;
-        }
-
-        return true;
+        return
+            $this->frontendHelper->isFrontendUrl($url)
+            && !$this->isSkippedUrl($url);
     }
 
     /**
      * @param string $url
      * @return bool
      */
-    protected function isSkippedUrl($url)
+    private function isSkippedUrl($url)
     {
         foreach ($this->skippedUrlPatterns as $pattern) {
             if (strpos($url, $pattern) === 0) {
