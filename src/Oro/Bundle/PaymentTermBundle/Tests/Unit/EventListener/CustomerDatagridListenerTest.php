@@ -6,7 +6,9 @@ use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
+use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
+use Oro\Bundle\DataGridBundle\Provider\SelectedFields\SelectedFieldsProviderInterface;
 use Oro\Bundle\PaymentTermBundle\EventListener\CustomerDatagridListener;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermAssociationProvider;
 
@@ -18,12 +20,15 @@ class CustomerDatagridListenerTest extends \PHPUnit\Framework\TestCase
     /** @var PaymentTermAssociationProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $associationProvider;
 
+    /** @var SelectedFieldsProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $selectedFieldsProvider;
+
     protected function setUp()
     {
-        $this->associationProvider = $this->getMockBuilder(PaymentTermAssociationProvider::class)
-            ->disableOriginalConstructor()->getMock();
+        $this->associationProvider = $this->createMock(PaymentTermAssociationProvider::class);
+        $this->selectedFieldsProvider = $this->createMock(SelectedFieldsProviderInterface::class);
 
-        $this->listener = new CustomerDatagridListener($this->associationProvider);
+        $this->listener = new CustomerDatagridListener($this->associationProvider, $this->selectedFieldsProvider);
     }
 
     public function testOnBuildBeforeWithoutExtendClass()
@@ -42,8 +47,8 @@ class CustomerDatagridListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testOnBuildBeforeWithoutExtendClassNotCustomer()
     {
-        /** @var \PHPUnit\Framework\MockObject\MockObject|DatagridInterface $datagrid */
-        $datagrid = $this->createMock(DatagridInterface::class);
+        $datagridParameters = new ParameterBag();
+        $datagrid = $this->configureDataGrid($datagridParameters);
         $config = DatagridConfiguration::create(
             ['extended_entity_name' => \stdClass::class]
         );
@@ -59,10 +64,34 @@ class CustomerDatagridListenerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
+    public function testOnBuildBeforeWhenPaymentTermFieldNotSelected()
+    {
+        $datagridParameters = new ParameterBag();
+        $datagrid = $this->configureDataGrid($datagridParameters);
+
+        $configuration = [
+            'extended_entity_name' => Customer::class,
+            'source' => ['query' => ['from' => [['alias' => 'rootAlias']]]],
+        ];
+        $config = DatagridConfiguration::create($configuration);
+
+        $this->configureSelectedFields([], $config, $datagridParameters);
+        $this->associationProvider->expects($this->once())->method('getAssociationNames')
+            ->with(Customer::class)
+            ->willReturn(['customerPaymentTerm']);
+
+        $this->associationProvider->expects($this->never())->method('getTargetField');
+
+        $event = new BuildBefore($datagrid, $config);
+        $this->listener->onBuildBefore($event);
+
+        $this->assertEquals($configuration, $config->toArray());
+    }
+
     public function testOnBuildBeforeWithoutAssociationNames()
     {
-        /** @var \PHPUnit\Framework\MockObject\MockObject|DatagridInterface $datagrid */
-        $datagrid = $this->createMock(DatagridInterface::class);
+        $datagridParameters = new ParameterBag();
+        $datagrid = $this->configureDataGrid($datagridParameters);
         $config = DatagridConfiguration::create(
             ['extended_entity_name' => Customer::class]
         );
@@ -80,12 +109,13 @@ class CustomerDatagridListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testOnBuildBeforeWithoutGroupAssociationNames()
     {
-        /** @var \PHPUnit\Framework\MockObject\MockObject|DatagridInterface $datagrid */
-        $datagrid = $this->createMock(DatagridInterface::class);
+        $datagridParameters = new ParameterBag();
+        $datagrid = $this->configureDataGrid($datagridParameters);
         $config = DatagridConfiguration::create(
             ['extended_entity_name' => Customer::class]
         );
 
+        $this->configureSelectedFields(['customerPaymentTerm'], $config, $datagridParameters);
         $this->associationProvider->expects($this->exactly(2))->method('getAssociationNames')
             ->withConsecutive(
                 [Customer::class],
@@ -104,8 +134,9 @@ class CustomerDatagridListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testOnBuildBeforeSupportCustomerGroupPaymentTermFallback()
     {
-        /** @var \PHPUnit\Framework\MockObject\MockObject|DatagridInterface $datagrid */
-        $datagrid = $this->createMock(DatagridInterface::class);
+        $datagridParameters = new ParameterBag();
+        $datagrid = $this->configureDataGrid($datagridParameters);
+
         $config = DatagridConfiguration::create(
             [
                 'extended_entity_name' => Customer::class,
@@ -113,6 +144,7 @@ class CustomerDatagridListenerTest extends \PHPUnit\Framework\TestCase
             ]
         );
 
+        $this->configureSelectedFields(['customerPaymentTerm'], $config, $datagridParameters);
         $this->associationProvider->expects($this->exactly(2))->method('getAssociationNames')
             ->withConsecutive(
                 [Customer::class],
@@ -124,7 +156,6 @@ class CustomerDatagridListenerTest extends \PHPUnit\Framework\TestCase
 
         $event = new BuildBefore($datagrid, $config);
         $this->listener->onBuildBefore($event);
-
 
         $this->assertEquals(
             [
@@ -169,8 +200,9 @@ class CustomerDatagridListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testOnBuildBeforeSupportCustomerGroupPaymentTermFallbackWithMultipleGroups()
     {
-        /** @var \PHPUnit\Framework\MockObject\MockObject|DatagridInterface $datagrid */
-        $datagrid = $this->createMock(DatagridInterface::class);
+        $datagridParameters = new ParameterBag();
+        $datagrid = $this->configureDataGrid($datagridParameters);
+
         $config = DatagridConfiguration::create(
             [
                 'extended_entity_name' => Customer::class,
@@ -178,6 +210,7 @@ class CustomerDatagridListenerTest extends \PHPUnit\Framework\TestCase
             ]
         );
 
+        $this->configureSelectedFields(['customerPaymentTerm', 'customerPaymentTerm2'], $config, $datagridParameters);
         $this->associationProvider->expects($this->exactly(2))->method('getAssociationNames')
             ->withConsecutive(
                 [Customer::class],
@@ -252,5 +285,38 @@ class CustomerDatagridListenerTest extends \PHPUnit\Framework\TestCase
             ],
             $config->toArray()
         );
+    }
+
+    /**
+     * @param array $selectedFields
+     * @param DatagridConfiguration $configuration
+     * @param ParameterBag $parameters
+     */
+    private function configureSelectedFields(
+        array $selectedFields,
+        DatagridConfiguration $configuration,
+        ParameterBag $parameters
+    ): void {
+        $this->selectedFieldsProvider
+            ->expects(self::atLeastOnce())
+            ->method('getSelectedFields')
+            ->with($configuration, $parameters)
+            ->willReturn($selectedFields);
+    }
+
+    /**
+     * @param ParameterBag $datagridParameters
+     * @return DatagridInterface
+     */
+    private function configureDataGrid(ParameterBag $datagridParameters): DatagridInterface
+    {
+        /** @var \PHPUnit\Framework\MockObject\MockObject|DatagridInterface $datagrid */
+        $datagrid = $this->createMock(DatagridInterface::class);
+        $datagrid
+            ->expects(self::any())
+            ->method('getParameters')
+            ->willReturn($datagridParameters);
+
+        return $datagrid;
     }
 }
