@@ -2,6 +2,10 @@
 
 .consent-dialog-widget {
     max-height: $consent-dialog-widget-max-height;
+
+    .ui-dialog-inner-wrapper {
+        max-height: $consent-dialog-widget-max-height;
+    }
 }
 
 @include breakpoint('tablet') {
