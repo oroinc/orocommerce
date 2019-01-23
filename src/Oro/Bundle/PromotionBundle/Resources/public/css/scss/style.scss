@@ -2,13 +2,6 @@
 @import "oroui/css/scss/variables";
 @import "oroui/css/scss/mixins";
 
-.controls {
-    .control-label.expression-collapse-label {
-        margin-top: 4px;
-        margin-left: -5px;
-    }
-}
-
 .collapse-view {
     .collapse-view__trigger_show {
         display: block;
