@@ -5,19 +5,32 @@ namespace Oro\Bundle\PaymentTermBundle\EventListener;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
+use Oro\Bundle\DataGridBundle\Provider\SelectedFields\SelectedFieldsProviderInterface;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermAssociationProvider;
 
+/**
+ * Modifies grid configuration to display Payment Term association properly.
+ */
 class CustomerDatagridListener
 {
     /** @var PaymentTermAssociationProvider */
     private $paymentTermAssociationProvider;
 
     /**
-     * @param PaymentTermAssociationProvider $paymentTermAssociationProvider
+     * @var SelectedFieldsProviderInterface
      */
-    public function __construct(PaymentTermAssociationProvider $paymentTermAssociationProvider)
-    {
+    private $selectedFieldsProvider;
+
+    /**
+     * @param PaymentTermAssociationProvider $paymentTermAssociationProvider
+     * @param SelectedFieldsProviderInterface $selectedFieldsProvider
+     */
+    public function __construct(
+        PaymentTermAssociationProvider $paymentTermAssociationProvider,
+        SelectedFieldsProviderInterface $selectedFieldsProvider
+    ) {
         $this->paymentTermAssociationProvider = $paymentTermAssociationProvider;
+        $this->selectedFieldsProvider = $selectedFieldsProvider;
     }
 
     /**
@@ -25,13 +38,7 @@ class CustomerDatagridListener
      */
     public function onBuildBefore(BuildBefore $event)
     {
-        $config = $event->getConfig();
-        $className = $config->getExtendedEntityClassName();
-        if (!is_a(Customer::class, $className, true)) {
-            return;
-        }
-
-        $associationNames = $this->paymentTermAssociationProvider->getAssociationNames($className);
+        $associationNames = $this->getSelectedCustomerAssociations($event);
         if (!$associationNames) {
             return;
         }
@@ -43,6 +50,7 @@ class CustomerDatagridListener
             return;
         }
 
+        $config = $event->getConfig();
         $query = $config->getOrmQuery();
         $rootAlias = $query->getRootAlias();
 
@@ -116,5 +124,25 @@ class CustomerDatagridListener
             ),
             $alias
         );
+    }
+
+    /**
+     * @param BuildBefore $event
+     * @return array
+     */
+    private function getSelectedCustomerAssociations(BuildBefore $event): array
+    {
+        $config = $event->getConfig();
+        $className = $config->getExtendedEntityClassName();
+        if (!is_a(Customer::class, $className, true)) {
+            return [];
+        }
+
+        $selectedFields =$this->selectedFieldsProvider
+            ->getSelectedFields($event->getConfig(), $event->getDatagrid()->getParameters());
+
+        $associationNames = $this->paymentTermAssociationProvider->getAssociationNames($className);
+
+        return \array_intersect($associationNames, $selectedFields);
     }
 }

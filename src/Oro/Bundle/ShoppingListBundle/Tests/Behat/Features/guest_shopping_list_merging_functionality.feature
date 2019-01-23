@@ -47,7 +47,7 @@ Feature: Guest shopping list merging functionality
     Given I signed in as AmandaRCole@example.org on the store frontend in old session
     And I should see "Shopping List"
     And I open shopping list widget
-    And I click "View Details"
+    And I click "Shopping List" on shopping list widget
     And I should see "PSKU1"
     And click "Sign Out"
 
@@ -64,6 +64,6 @@ Feature: Guest shopping list merging functionality
     Given I signed in as AmandaRCole@example.org on the store frontend in old session
     And I should see "Shopping List"
     And I open shopping list widget
-    And I click "View Details"
+    And I click "Shopping List" on shopping list widget
     And I should see "PSKU1"
     Then I should see "CONTROL1"

@@ -49,6 +49,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
         addName: ['@locvalue1']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
+        featured: true
     product2:
         sku: 'CONTROL1'
         type: 'simple'
@@ -59,6 +60,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
         addName: ['@locvalue2']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
+        featured: true
     product3:
         sku: 'SKU003'
         type: 'simple'
@@ -70,3 +72,4 @@ Oro\Bundle\ProductBundle\Entity\Product:
         addName: ['@locvalue3']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
+        featured: true

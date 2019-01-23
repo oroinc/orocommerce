@@ -30,6 +30,7 @@ class InlineMatrix extends Table
     const TABLE_HEADER_ELEMENT = 'InlineMatrixHeader';
     const TABLE_ROW_HEADER_ELEMENT = 'InlineMatrixRowHeader';
     const TABLE_ROW_ELEMENT = 'InlineMatrixRow';
+    const TABLE_ROW_STRICT_ELEMENT = 'InlineMatrixRow';
 
     /**
      * @param string $elementName

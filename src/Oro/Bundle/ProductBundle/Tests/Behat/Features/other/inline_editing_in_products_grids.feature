@@ -175,8 +175,6 @@ Feature: Inline Editing in Products Grids
     Given I proceed as the Admin
     When I go to System / Configuration
     And I follow "System Configuration/Websites/Routing" on configuration sidebar
-    And check "Use default" for "URL" field
-    And check "Use default" for "Secure URL" field
     And uncheck "Use default" for "Create Redirects" field
     Then I fill in "Create Redirects" with "Always"
     And I save form

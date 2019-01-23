@@ -8,7 +8,7 @@
         {% if record.getValue('parentProduct') %}
             {% set product = record.getValue('parentProduct') %}
         {% endif %}
-        <a class="product-item__link-in-cart" href="{{ path('oro_product_frontend_product_view', {'id': product.id }) }}">{{ record.getValue('productName') }}</a>
+        <a class="product-item__link-in-cart" href="{{ path('oro_product_frontend_product_view', {'id': product.id }) }}">{{ product.names|localized_value|e }}</a>
     {% else %}
         {{ record.getValue('productName') }}
     {% endif %}
