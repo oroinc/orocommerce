@@ -10,7 +10,6 @@ services:
         class: Oro\Bundle\RedirectBundle\Routing\MatchedUrlDecisionMaker
         arguments:
             - '@oro_frontend.request.frontend_helper'
-            - '%installed%'
         calls:
             - [addSkippedUrlPattern, ['/_profiler']]
             - [addSkippedUrlPattern, ['/_wdt']]

@@ -1622,12 +1622,12 @@ workflows:
                                 conditions:
                                     '@not_empty': $.result.customerShippingAddress
                                 parameters: [$.result.customerShippingAddress]
-                    - '@send_email_template':
-                        parameters:
-                            from: $order.owner.email
-                            to: [$order.customerUser, $email]
-                            template: 'order_confirmation_email'
-                            entity: $order
+                    - '@run_action_group':
+                          action_group: b2b_flow_checkout_send_order_confirmation_email
+                          parameters_mapping:
+                              checkout: $checkout
+                              order: $order
+                              workflow: 'b2b_flow_alternative_checkout'
 
                     - '@assign_value': [$checkout.completed, true]
 

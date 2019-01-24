@@ -18,6 +18,7 @@ use Oro\Bundle\PaymentBundle\Context\Builder\PaymentContextBuilderInterface;
 use Oro\Bundle\PaymentBundle\Context\LineItem\Collection\Doctrine\DoctrinePaymentLineItemCollection;
 use Oro\Bundle\PaymentBundle\Context\PaymentLineItem;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use Oro\Bundle\ShippingBundle\Model\ShippingOrigin;
 use Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider;
@@ -30,6 +31,9 @@ class CheckoutPaymentContextFactoryTest extends \PHPUnit\Framework\TestCase
 
     /** @var CheckoutLineItemsManager|\PHPUnit\Framework\MockObject\MockObject */
     protected $checkoutLineItemsManager;
+
+    /** @var SubtotalProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    protected $checkoutSubtotalProvider;
 
     /** @var TotalProcessorProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $totalProcessorProvider;
@@ -52,6 +56,8 @@ class CheckoutPaymentContextFactoryTest extends \PHPUnit\Framework\TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->checkoutSubtotalProvider = $this->createMock(SubtotalProviderInterface::class);
+
         $this->totalProcessorProvider = $this->getMockBuilder(TotalProcessorProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -66,6 +72,7 @@ class CheckoutPaymentContextFactoryTest extends \PHPUnit\Framework\TestCase
 
         $this->factory = new CheckoutPaymentContextFactory(
             $this->checkoutLineItemsManager,
+            $this->checkoutSubtotalProvider,
             $this->totalProcessorProvider,
             $this->paymentLineItemConverter,
             $this->shippingOriginProvider,
@@ -80,6 +87,7 @@ class CheckoutPaymentContextFactoryTest extends \PHPUnit\Framework\TestCase
             $this->paymentContextBuilderFactoryMock,
             $this->paymentLineItemConverter,
             $this->contextBuilderMock,
+            $this->checkoutSubtotalProvider,
             $this->totalProcessorProvider,
             $this->checkoutLineItemsManager
         );
@@ -212,11 +220,15 @@ class CheckoutPaymentContextFactoryTest extends \PHPUnit\Framework\TestCase
             ->method('getData')
             ->willReturn($checkoutLineItems);
 
-        $this->totalProcessorProvider
+        $this->checkoutSubtotalProvider
             ->expects(static::once())
-            ->method('getTotal')
+            ->method('getSubtotal')
             ->with($checkout)
             ->willReturn($subtotal);
+
+        $this->totalProcessorProvider
+            ->expects($this->never())
+            ->method($this->anything());
 
         return $checkout;
     }

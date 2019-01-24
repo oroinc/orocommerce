@@ -51,14 +51,14 @@ class MatchingProductsProviderTest extends \PHPUnit\Framework\TestCase
     public function testGetMatchingProductsFromCache()
     {
         /** @var Segment $segment */
-        $segment = $this->getEntity(Segment::class, ['id' => 42]);
+        $segment = $this->getEntity(Segment::class, ['definition' => 'some definition']);
         $product = $this->getEntity(Product::class, ['id' => 123]);
 
-        $hash = md5(123);
+        $hash = md5('some definition_123');
 
         $this->matchingProductsCache->expects($this->once())
             ->method('fetch')
-            ->with('42_' . $hash)
+            ->with($hash)
             ->willReturn([
                 $product
             ]);
@@ -75,15 +75,15 @@ class MatchingProductsProviderTest extends \PHPUnit\Framework\TestCase
         $this->expectExceptionMessage('No root alias for segment\'s query builder');
 
         /** @var Segment $segment */
-        $segment = $this->getEntity(Segment::class, ['id' => 42]);
+        $segment = $this->getEntity(Segment::class, ['definition' => 'some definition']);
         $this->expectsQueryBuilderWithNoRootAlias($segment);
 
         $lineItemProduct = $this->getEntity(Product::class, ['id' => 123]);
-        $hash = md5(123);
+        $hash = md5('some definition_123');
 
         $this->matchingProductsCache->expects($this->once())
             ->method('fetch')
-            ->with('42_' . $hash)
+            ->with($hash)
             ->willReturn(false);
 
         $this->provider->getMatchingProducts($segment, [(new DiscountLineItem())->setProduct($lineItemProduct)]);
@@ -106,15 +106,15 @@ class MatchingProductsProviderTest extends \PHPUnit\Framework\TestCase
         $this->expectExceptionMessage('Cannot get query builder for segment');
 
         /** @var Segment $segment */
-        $segment = $this->getEntity(Segment::class, ['id' => 42]);
+        $segment = $this->getEntity(Segment::class, ['definition' => 'some definition']);
         $this->expectsNoQueryBuilder($segment);
 
         $lineItemProduct = $this->getEntity(Product::class, ['id' => 123]);
 
-        $hash = md5(123);
+        $hash = md5('some definition_123');
         $this->matchingProductsCache->expects($this->once())
             ->method('fetch')
-            ->with('42_' . $hash)
+            ->with($hash)
             ->willReturn(false);
 
         $this->provider->getMatchingProducts($segment, [(new DiscountLineItem())->setProduct($lineItemProduct)]);

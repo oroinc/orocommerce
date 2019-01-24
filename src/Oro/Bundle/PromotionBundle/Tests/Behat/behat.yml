@@ -81,7 +81,7 @@ oro_behat_extension:
 
     PromotionBackendOrderLineItem:
       class: Oro\Bundle\PromotionBundle\Tests\Behat\Element\PromotionBackendOrderLineItem
-      selector: 'tr'
+      selector: 'tbody > tr.order-line-item'
 
     PromotionBackendLineItemDiscountTable:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Table
@@ -156,7 +156,7 @@ oro_behat_extension:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
     Coupons Selection:
-      selector: 'div.ui-dialog div.grid-container'
+      selector: 'div.ui-dialog div.oro-datagrid'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
 
     Close Coupons Selection:

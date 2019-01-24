@@ -6,6 +6,7 @@ use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\OrderBundle\Converter\OrderShippingLineItemConverterInterface;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use Oro\Bundle\ShippingBundle\Context\Builder\Factory\ShippingContextBuilderFactoryInterface;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
@@ -19,6 +20,11 @@ class CheckoutShippingContextFactory
      * @var CheckoutLineItemsManager
      */
     protected $checkoutLineItemsManager;
+
+    /**
+     * @var SubtotalProviderInterface
+     */
+    protected $checkoutSubtotalProvider;
 
     /**
      * @var TotalProcessorProvider
@@ -37,17 +43,20 @@ class CheckoutShippingContextFactory
 
     /**
      * @param CheckoutLineItemsManager $checkoutLineItemsManager
+     * @param SubtotalProviderInterface $checkoutSubtotalProvider
      * @param TotalProcessorProvider $totalProcessor
      * @param OrderShippingLineItemConverterInterface $shippingLineItemConverter
      * @param null|ShippingContextBuilderFactoryInterface $shippingContextBuilderFactory
      */
     public function __construct(
         CheckoutLineItemsManager $checkoutLineItemsManager,
+        SubtotalProviderInterface $checkoutSubtotalProvider,
         TotalProcessorProvider $totalProcessor,
         OrderShippingLineItemConverterInterface $shippingLineItemConverter,
         ShippingContextBuilderFactoryInterface $shippingContextBuilderFactory = null
     ) {
         $this->checkoutLineItemsManager = $checkoutLineItemsManager;
+        $this->checkoutSubtotalProvider = $checkoutSubtotalProvider;
         $this->totalProcessor = $totalProcessor;
         $this->shippingLineItemConverter = $shippingLineItemConverter;
         $this->shippingContextBuilderFactory = $shippingContextBuilderFactory;
@@ -72,10 +81,14 @@ class CheckoutShippingContextFactory
             (string)$checkout->getId()
         );
 
-        $total = $this->getTotal($checkout);
+        $subtotal = $this->checkoutSubtotalProvider->getSubtotal($checkout);
+        $subtotalPrice = Price::create(
+            $subtotal->getAmount(),
+            $subtotal->getCurrency()
+        );
 
         $shippingContextBuilder
-            ->setSubTotal($total)
+            ->setSubTotal($subtotalPrice)
             ->setCurrency($checkout->getCurrency());
 
         if (null !== $checkout->getWebsite()) {
@@ -105,26 +118,5 @@ class CheckoutShippingContextFactory
         }
 
         return $shippingContextBuilder->getResult();
-    }
-
-    /**
-     * Get checkout grand total and subtract shipping cost if it exists, because we need to calculate shipping cost
-     * based on total that should not include shipping subtotal.
-     *
-     * @param Checkout $checkout
-     * @return Price
-     */
-    private function getTotal(Checkout $checkout)
-    {
-        $total = $this->totalProcessor->getTotal($checkout);
-
-        $shippingCost = $checkout->getShippingCost();
-        $totalValue = $total->getAmount();
-
-        if ($shippingCost && $total->getCurrency() === $shippingCost->getCurrency()) {
-            $totalValue -= $shippingCost->getValue();
-        }
-
-        return Price::create($totalValue, $total->getCurrency());
     }
 }

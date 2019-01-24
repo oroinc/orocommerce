@@ -82,14 +82,14 @@ Feature: Product Images Import
     Given I proceed as the Admin
     And I upload product images files
     And fill template with data:
-      |SKU |Name                  |Main  |Listing   |Additional|
-      |SKU1|tiger.svg             |1     |1         |1         |
-      |SKU2|dog1.jpg              |0     |0         |1         |
+      |SKU |Name    |Main  |Listing   |Additional|
+      |SKU1|dog1.jpg|1     |1         |1         |
+      |SKU2|dog1.jpg|0     |0         |1         |
     When import file
     #And Email should contains the following "Errors: 0 processed: 2, read: 2, added: 2, updated: 0, replaced: 0" text
     And reload the page
     And click view "SKU1" in grid
-    And should see "tiger.svg"
+    And should see "dog1.jpg"
     And go to Products/Products
     When click view "SKU2" in grid
     Then should see "dog1.jpg"

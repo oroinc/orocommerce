@@ -10,7 +10,6 @@ Feature: Product attribute decimal
 
   Scenario: Create product attribute
     Given I login as administrator
-    And I enable the existing localizations
     And I go to Products/ Product Attributes
     When I click "Create Attribute"
     And I fill form with:
@@ -27,6 +26,7 @@ Feature: Product attribute decimal
     And I save and close form
     Then I should see "Attribute was successfully saved" flash message
     And I should not see "Update schema"
+    And I enable the existing localizations
 
     When I check "Decimal" in "Data Type" filter
     Then I should see following grid:
@@ -54,8 +54,7 @@ Feature: Product attribute decimal
     Given I go to System/Configuration
     And follow "System Configuration/General Setup/Localization" on configuration sidebar
     When fill "Configuration Localization Form" with:
-      | Locale Use Default | false            |
-      | Locale             | German (Germany) |
+      | Default Localization | German_Loc |
     And click "Save settings"
     Then I should see "Configuration saved" flash message
     When I go to Products/ Products
@@ -73,17 +72,17 @@ Feature: Product attribute decimal
     Given I click "NewCategory"
     And I should see "SKU123" product
     And I should see "SKU456" product
-    When I filter DecimalField as equals "0.42"
+    When I filter DecimalField as equals "0,42"
     Then I should see "SKU123" product
     And I should not see "SKU456" product
     And grid sorter should have "DecimalField" options
 
   Scenario: Check product attribute is formatted according to localization on front store
     When I click "View Details" for "SKU123" product
-    Then I should see "0.42"
-    When I click "Localization Switcher"
-    And I select "German Localization" localization
     Then I should see "0,42"
+    When I click "Localization Switcher"
+    And I select "English" localization
+    Then I should see "0.42"
 
   Scenario: Delete product attribute
     Given I login as administrator

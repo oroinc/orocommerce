@@ -79,7 +79,7 @@ oro_behat_extension:
 
     TaxBackendOrderLineItem:
       class: Oro\Bundle\TaxBundle\Tests\Behat\Element\TaxBackendOrderLineItem
-      selector: 'tr'
+      selector: 'tbody > tr.order-line-item'
 
     BackendLineItemTaxTable:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Table

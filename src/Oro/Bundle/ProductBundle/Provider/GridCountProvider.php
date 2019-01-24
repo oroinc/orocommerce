@@ -57,6 +57,7 @@ class GridCountProvider
 
         $dataSource = $this->getDataSource($gridName, $params);
         if ($dataSource instanceof OrmDatasource) {
+            $this->pager->setDatagrid($dataSource->getDatagrid());
             $this->pager->setQueryBuilder($dataSource->getQueryBuilder());
             $countQb = $dataSource->getCountQb();
             if ($countQb) {

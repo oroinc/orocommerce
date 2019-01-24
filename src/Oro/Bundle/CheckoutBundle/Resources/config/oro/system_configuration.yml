@@ -53,6 +53,8 @@ system_configuration:
                 label: oro.checkout.system_configuration.fields.default_guest_checkout_owner.title
                 tooltip: oro.checkout.system_configuration.fields.default_guest_checkout_owner.tooltip
                 required: true
+                constraints:
+                    - NotBlank: ~
 
         oro_checkout.allow_checkout_without_email_confirmation:
             data_type: boolean

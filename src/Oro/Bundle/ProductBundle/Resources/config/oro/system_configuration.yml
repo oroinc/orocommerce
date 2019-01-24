@@ -99,6 +99,7 @@ system_configuration:
             options:
                 label: oro.product.system_configuration.fields.max_number_of_related_products.label
                 tooltip: oro.product.system_configuration.fields.max_number_of_related_products.tooltip
+                required: true
                 constraints:
                     - NotBlank: ~
                     - Range:
@@ -119,6 +120,7 @@ system_configuration:
             options:
                 label: oro.product.system_configuration.fields.max_number_of_upsell_products.label
                 tooltip: oro.product.system_configuration.fields.max_number_of_upsell_products.tooltip
+                required: true
                 constraints:
                     - NotBlank: ~
                     - Range:
@@ -132,6 +134,7 @@ system_configuration:
             options:
                 label: oro.product.system_configuration.fields.related_products_max_items.label
                 tooltip: oro.product.system_configuration.fields.related_products_max_items.tooltip
+                required: true
                 constraints:
                     - NotBlank: ~
                     - Range:
@@ -145,6 +148,7 @@ system_configuration:
             options:
                 label: oro.product.system_configuration.fields.related_products_min_items.label
                 tooltip: oro.product.system_configuration.fields.related_products_min_items.tooltip
+                required: true
                 constraints:
                     - NotBlank: ~
                     - Range:
@@ -174,6 +178,7 @@ system_configuration:
             options:
                 label: oro.product.system_configuration.fields.upsell_products_max_items.label
                 tooltip: oro.product.system_configuration.fields.upsell_products_max_items.tooltip
+                required: true
                 constraints:
                     - NotBlank: ~
                     - Range:
@@ -187,6 +192,7 @@ system_configuration:
             options:
                 label: oro.product.system_configuration.fields.upsell_products_min_items.label
                 tooltip: oro.product.system_configuration.fields.upsell_products_min_items.tooltip
+                required: true
                 constraints:
                     - NotBlank: ~
                     - Range:
@@ -257,6 +263,9 @@ system_configuration:
             priority: 20
             options:
                 label: oro.product.system_configuration.fields.default_unit.label
+                required: true
+                constraints:
+                    - NotBlank: ~
 
         oro_product.default_unit_precision:
             data_type: integer
@@ -265,6 +274,9 @@ system_configuration:
             priority: 10
             options:
                 label: oro.product.system_configuration.fields.default_unit_precision.label
+                required: true
+                constraints:
+                    - NotBlank: ~
 
         oro_product.product_image_watermark_file:
             data_type: string
@@ -284,6 +296,7 @@ system_configuration:
             options:
                 label: oro.product.system_configuration.fields.product_image_watermark_size.label
                 tooltip: oro.product.system_configuration.fields.product_image_watermark_size.tooltip
+                required: true
                 constraints:
                     - NotBlank: ~
                     - Range:
@@ -298,6 +311,9 @@ system_configuration:
             options:
                 label: oro.product.system_configuration.fields.product_image_watermark_position.label
                 choice_translation_domain: messages
+                required: true
+                constraints:
+                    - NotBlank: ~
                 choices:
                     oro.product.system_configuration.fields.product_image_watermark_position.topleft.label: topleft
                     oro.product.system_configuration.fields.product_image_watermark_position.top.label: top
@@ -317,6 +333,7 @@ system_configuration:
                 label: oro.product.system_configuration.fields.featured_products_segment.label
                 tooltip: oro.product.system_configuration.fields.featured_products_segment.tooltip
                 entityClass: 'Oro\Bundle\ProductBundle\Entity\Product'
+                required: false
 
         oro_product.enable_quick_order_form:
             data_type: boolean
@@ -375,6 +392,7 @@ system_configuration:
             options:
                 label: oro.product.system_configuration.fields.product_collection_mass_action_limitation.label
                 tooltip: oro.product.system_configuration.fields.product_collection_mass_action_limitation.tooltip
+                required: true
                 constraints:
                     - GreaterThan:
                         value: 0
@@ -404,6 +422,7 @@ system_configuration:
                 label: oro.product.system_configuration.fields.new_arrivals_products_segment.label
                 tooltip: oro.product.system_configuration.fields.new_arrivals_products_segment.tooltip
                 entityClass: 'Oro\Bundle\ProductBundle\Entity\Product'
+                required: false
 
         oro_product.new_arrivals_max_items:
             data_type: integer
@@ -413,6 +432,7 @@ system_configuration:
             options:
                 label: oro.product.system_configuration.fields.new_arrivals_max_items.label
                 tooltip: oro.product.system_configuration.fields.new_arrivals_max_items.tooltip
+                required: true
                 constraints:
                     - NotBlank: ~
                     - Range:
@@ -426,6 +446,7 @@ system_configuration:
             options:
                 label: oro.product.system_configuration.fields.new_arrivals_min_items.label
                 tooltip: oro.product.system_configuration.fields.new_arrivals_min_items.tooltip
+                required: true
                 constraints:
                     - NotBlank: ~
                     - Range:
