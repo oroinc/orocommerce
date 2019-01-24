@@ -4,7 +4,8 @@ namespace Oro\Bundle\CMSBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
-
+use Symfony\Component\Form\Forms;
+use Symfony\Component\Form\FormInterface;
 use Oro\Bundle\AttachmentBundle\Form\Type\ImageType;
 use Oro\Bundle\CMSBundle\Form\Type\LoginPageType;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ImageTypeStub;
@@ -14,22 +15,17 @@ class LoginPageTypeTest extends FormIntegrationTestCase
     /**
      * @var LoginPageType
      */
-    protected $formType;
+    private $formType;
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function setUp()
+    protected function setUp(): void
     {
-        parent::setUp();
-
         $this->formType = new LoginPageType();
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->formType);
     }
@@ -37,11 +33,12 @@ class LoginPageTypeTest extends FormIntegrationTestCase
     /**
      * @return array
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
         return [
             new PreloadedExtension(
                 [
+                    $this->formType,
                     ImageType::NAME => new ImageTypeStub(),
                 ],
                 []
@@ -49,20 +46,42 @@ class LoginPageTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    public function testGetName()
+    public function testGetName(): void
     {
-        $this->assertInternalType('string', $this->formType->getName());
-        $this->assertEquals(LoginPageType::NAME, $this->formType->getName());
+        self::assertInternalType('string', $this->formType->getName());
+        self::assertEquals(LoginPageType::NAME, $this->formType->getName());
     }
 
-    public function testBuildForm()
+    public function testBuildFormWithCssField(): void
     {
-        $form = $this->factory->create($this->formType);
+        $this->formType = new LoginPageType(true);
+        $form = $this->buildForm();
+        self::assertTrue($form->has('css'));
+    }
 
-        $this->assertTrue($form->has('topContent'));
-        $this->assertTrue($form->has('bottomContent'));
-        $this->assertTrue($form->has('css'));
-        $this->assertTrue($form->has('logoImage'));
-        $this->assertTrue($form->has('backgroundImage'));
+    public function testBuildFormWithoutCssField(): void
+    {
+        $this->formType = new LoginPageType(false);
+        $form = $this->buildForm();
+        self::assertFalse($form->has('css'));
+    }
+
+    /**
+     * @return FormInterface
+     */
+    private function buildForm(): FormInterface
+    {
+        $this->factory = Forms::createFormFactoryBuilder()
+            ->addExtensions($this->getExtensions())
+            ->getFormFactory();
+
+        $form = $this->factory->create(LoginPageType::class);
+
+        self::assertTrue($form->has('topContent'));
+        self::assertTrue($form->has('bottomContent'));
+        self::assertTrue($form->has('logoImage'));
+        self::assertTrue($form->has('backgroundImage'));
+
+        return $form;
     }
 }

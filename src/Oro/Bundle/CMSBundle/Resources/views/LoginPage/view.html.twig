@@ -48,7 +48,7 @@
             {'data' : [
                 UI.renderProperty('oro.cms.loginpage.top_content.label'|trans, entity.topContent|truncate(100)),
                 UI.renderProperty('oro.cms.loginpage.bottom_content.label'|trans, entity.bottomContent|truncate(100)),
-                UI.renderProperty('oro.cms.loginpage.css.label'|trans, entity.css|truncate(100)),
+                entity.css or oro_parameter('oro_cms.direct_editing.login_page_css_field') ? UI.renderProperty('oro.cms.loginpage.css.label'|trans, entity.css|truncate(100)) : '',
                 imageLogoData,
                 backgroundImageData,
             ]},
