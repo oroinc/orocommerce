@@ -193,6 +193,10 @@ define(function(require) {
             mediator.execute('showFlashMessage', 'error', 'Could not perform transition');
         },
 
+        disposeTooltip: function() {
+            this.$el.tooltip('dispose');
+        },
+
         /**
          * @inheritDoc
          */
@@ -201,6 +205,8 @@ define(function(require) {
                 return;
             }
 
+            this.disposeTooltip();
+
             if (this.$form) {
                 this.$form.off('submit', $.proxy(this.onSubmit, this));
             }
@@ -208,7 +214,6 @@ define(function(require) {
             this.$transitionTriggers.off('click', $.proxy(this.transit, this));
 
             mediator.off(null, null, this);
-
             TransitionButtonComponent.__super__.dispose.call(this);
         }
     });
