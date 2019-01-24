@@ -49,9 +49,7 @@ class FrontendProductCleanUpListener
             ->getArrayResult();
 
         if (count($requestedProductIds) != count($existingProductIds)) {
-            foreach ($existingProductIds as $key => $data) {
-                $existingProductIds[$key] = $data['id'];
-            }
+            $existingProductIds = array_column($existingProductIds, 'id');
 
             foreach ($records as $key => $record) {
                 $productId = $record->getValue('id');
