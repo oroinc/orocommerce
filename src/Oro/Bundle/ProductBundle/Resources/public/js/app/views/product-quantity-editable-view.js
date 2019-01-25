@@ -252,7 +252,8 @@ define(function(require) {
 
             var savePromise = this.saveApiAccessor.send(modelData, serverUpdateData, {}, {
                 processingMessage: this.messages.processingMessage,
-                preventWindowUnload: this.messages.preventWindowUnload
+                preventWindowUnload: this.messages.preventWindowUnload,
+                errorHandlerMessage: false
             });
             savePromise
                 .done(_.bind(this.onSaveSuccess, this))
@@ -280,7 +281,7 @@ define(function(require) {
 
             this.restoreSavedState();
 
-            var errors = [];
+            var errors = jqXHR.responseJSON.errors.errors || [];
             switch (errorCode) {
                 case 400:
                     var jqXHRerrors = jqXHR.responseJSON.errors.children;

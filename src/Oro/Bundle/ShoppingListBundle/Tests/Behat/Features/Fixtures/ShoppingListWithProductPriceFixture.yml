@@ -1,0 +1,98 @@
+include:
+    - '@OroCustomerBundle/Tests/Behat/Features/Fixtures/CustomerUserAmandaRCole.yml'
+
+Oro\Bundle\CurrencyBundle\Entity\Price(local):
+    price:
+        value: '10'
+        currency: 'USD'
+
+Oro\Bundle\PricingBundle\Entity\PriceList:
+    pricelist:
+        name: 'pricelist'
+        default: true
+        setCurrencies: [['USD']]
+        active: true
+
+Oro\Bundle\PricingBundle\Entity\PriceListToCustomer:
+    priceListToCustomer:
+        customer: '@Customer_AmandaRCole'
+        pricelist: '@pricelist'
+        website: '@website1'
+        sortOrder: 200
+
+Oro\Bundle\PricingBundle\Entity\ProductPrice:
+    productPrice:
+        pricelist: '@pricelist'
+        product: '@product1'
+        productSku: 'AA1'
+        quantity: 1
+        unit: '@item'
+        value: 1
+        currency: 'USD'
+
+Oro\Bundle\PricingBundle\Entity\CombinedProductPrice:
+    combinedProductPrice:
+        pricelist: '@combinedPriceList'
+        product: '@product1'
+        productSku: 'SKU123'
+        quantity: 1
+        unit: '@item'
+        value: 1
+        currency: 'USD'
+
+Oro\Bundle\PricingBundle\Entity\CombinedPriceListToCustomer:
+    combinedPriceListToCustomer:
+        pricelist: '@combinedPriceList'
+        customer: '@Customer_AmandaRCole'
+        website: '@website1'
+
+Oro\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite:
+    combinedPriceListToWebsite:
+        pricelist: '@combinedPriceList'
+        website: '@website1'
+
+Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
+    priceListToProduct:
+        product: '@product1'
+        pricelist: '@pricelist'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    precision:
+        unit: '@item'
+        precision: '1'
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    locValue:
+        string: 'Product 1'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product1:
+        sku: 'AA1'
+        primaryUnitPrecision: '@precision'
+        addName: ['@locValue']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        organization: '@organization'
+        attributeFamily: '@defaultProductFamily'
+
+Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
+    shoppinglist:
+        label: 'Shopping List 1'
+        customerUser: '@CustomerUser_AmandaRCole'
+        organization: '@organization'
+        website: '@website1'
+
+Oro\Bundle\ShoppingListBundle\Entity\LineItem:
+    lineitem1:
+        product: '@product1'
+        quantity: '1'
+        unit: '@item'
+        customerUser: '@CustomerUser_AmandaRCole'
+        shoppingList: '@shoppinglist'
+        organization: '@organization'
+
+Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal:
+    shoppingListTotal:
+        __construct: ['@shoppinglist','USD']
+        subtotalValue: '1'
+        valid: true
