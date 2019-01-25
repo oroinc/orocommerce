@@ -1,7 +1,6 @@
 @regression
 @smoke-community-edition-only
 Feature: Commerce smoke e2e
-  ToDo: BAP-16103 Add missing descriptions to the Behat features
 
   Scenario: Create different window session
     Given sessions active:
@@ -575,8 +574,7 @@ Feature: Commerce smoke e2e
     And click "List View"
 
   Scenario: Check Contact Us and About us pages, Products views, correct price for the product for customer user and for customer group
-    Given I proceed as the User
-    And I signed in as AmandaRCole1@example.org on the store frontend
+    Given I signed in as AmandaRCole1@example.org on the store frontend
     When click "About"
     Then Page title equals to "About"
     When click "Phones"
@@ -586,6 +584,8 @@ Feature: Commerce smoke e2e
     And should see "Product Name" for "Lenovo_Vibe_sku" product
     And should see "Your Price: $80.00 / item" for "Lenovo_Vibe_sku" product
     And should see "Listed Price: $80.00 / item" for "Lenovo_Vibe_sku" product
+    And click "Add to Shopping List" for "Lenovo_Vibe_sku" product
+    And should see "Product has been added to "
     And should see "Green Box" for "Lenovo_Vibe_sku" product
     And should see "Update Shopping List button" for "Lenovo_Vibe_sku" product
     And should see "View Details" for "Xiaomi_Redmi_3S_sku" product
@@ -615,7 +615,7 @@ Feature: Commerce smoke e2e
     And click "Add to Shopping List"
     And should see 'Shopping list "Shopping list" was updated successfully' flash message
     When I hover on "Shopping Cart"
-    And click "Shopping List"
+    And click "View Details"
     And should see "Subtotal $175.20"
     And click "Sign Out"
     And I signed in as BrandaJSanborn1@example.org on the store frontend
@@ -624,12 +624,14 @@ Feature: Commerce smoke e2e
       |Quantity|10  |
     Then should see "Your Price: $90.00 / item" for "Lenovo_Vibe_sku" product
     And should see "Listed Price: $80.00 / item" for "Lenovo_Vibe_sku" product
-    And click "Add to Shopping List" for "Lenovo_Vibe_sku" product
+    When click "Add to Shopping List" for "Lenovo_Vibe_sku" product
+    Then should see "Product has been added to "
+    And I scroll to top
     When click "View Details" for "Xiaomi_Redmi_3S_sku" product
     Then should see "1 $120.00"
     And should see "10 $135.00"
     When I hover on "Shopping Cart"
-    And click "Shopping List"
+    And click "View Details"
     Then should see "Subtotal $900.00"
 
   Scenario: Create shopping list, update shopping list, delete shopping list from front store
@@ -726,10 +728,9 @@ Feature: Commerce smoke e2e
     And click "Sign Out"
 
   Scenario: Checkout by customer created from front store through the shopping list created by himself and review the submited order
-    Given I proceed as the User
-    And I signed in as AmandaRCole1@example.org on the store frontend
-    When I hover on "Shopping Cart"
-    And click "Shopping List"
+    Given I signed in as AmandaRCole1@example.org on the store frontend
+    And should see "1 Shopping List"
+    When I open page with shopping list "Shopping List"
     And click "Create Order"
     And fill form with:
       |Label          |Home Address  |
@@ -758,7 +759,7 @@ Feature: Commerce smoke e2e
     And should see "Shipping Method Flat_Rate"
     And should see "Payment Method Payment Terms"
     And should see "Payment Term net_10"
-    And should see "Payment Status Paid in full"
+    And should see "Payment Status Pending"
     And should see "Subtotal $175.20"
     And should see "Discount $0.00"
     And should see "Shipping $120.00"
@@ -770,9 +771,9 @@ Feature: Commerce smoke e2e
     And click "Phones"
     And fill "FrontendLineItemForm" with:
       |Quantity|10  |
+    And I scroll to top
     And click "Add to Shopping List"
-    When I hover on "Shopping Cart"
-    And click "Shopping List"
+    When I open page with shopping list "Shopping List"
     And click "Request Quote"
     And fill form with:
       |PO Number|PO00001|
@@ -902,7 +903,7 @@ Feature: Commerce smoke e2e
     And click "Submit Order"
     Then I see the "Thank You" page with "Thank You For Your Purchase!" title
 
-  Scenario: Customer User with Administrator privilegeshave ability to see orders, RFQ, quotes of other users for the same customer
+  Scenario: Customer User with Administrator privileges have ability to see orders, RFQ, quotes of other users for the same customer
     Given I proceed as the User
     And click "Account"
     When click "Requests For Quote"
@@ -927,7 +928,7 @@ Feature: Commerce smoke e2e
     And should see "Shipping Method Flat_Rate"
     And should see "Payment Method Payment Terms"
     And should see "Payment Term net_10"
-    And should see "Payment Status Paid in full"
+    And should see "Payment Status Pending"
     And should see "Subtotal $175.20"
     And should see "Discount $0.00"
     And should see "Shipping $120.00"
@@ -941,6 +942,7 @@ Feature: Commerce smoke e2e
     When click edit "Buyer" in grid
     And fill form with:
       |Role Title|NewByerRole|
+    And I scroll to top
     And click "Save"
     Then should see "Customer User Role has been saved" flash message
     When click "Users"
