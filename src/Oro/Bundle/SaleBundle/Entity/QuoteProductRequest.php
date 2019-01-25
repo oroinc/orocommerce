@@ -9,6 +9,8 @@ use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
 use Oro\Bundle\SaleBundle\Model\BaseQuoteProductItem;
 
 /**
+ * Quote Product Request entity.
+ *
  * @ORM\Table(name="oro_sale_quote_prod_request")
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks()
@@ -19,7 +21,8 @@ use Oro\Bundle\SaleBundle\Model\BaseQuoteProductItem;
  *          },
  *          "security"={
  *              "type"="ACL",
- *              "group_name"=""
+ *              "group_name"="commerce",
+ *              "category"="quotes"
  *          }
  *      }
  * )
