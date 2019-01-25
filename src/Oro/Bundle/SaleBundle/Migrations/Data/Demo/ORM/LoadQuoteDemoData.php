@@ -25,6 +25,9 @@ use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductRequest;
 
+/**
+ * Loading demo data for Quote entity
+ */
 class LoadQuoteDemoData extends AbstractFixture implements
     FixtureInterface,
     ContainerAwareInterface,
@@ -63,6 +66,10 @@ class LoadQuoteDemoData extends AbstractFixture implements
      */
     public function load(ObjectManager $manager)
     {
+        // temporary disable notification rules event listener
+        $notificationListener = $this->container->get('oro_workflow.listener.workflow_transition_record');
+        $notificationListener->setEnabled(false);
+
         $user = $this->getUser($manager);
         $requests = $this->getRequests($manager);
         $organization = $user->getOrganization();
@@ -111,6 +118,9 @@ class LoadQuoteDemoData extends AbstractFixture implements
         }
 
         $manager->flush();
+
+        // enable notification rules event listener after fixtures load
+        $notificationListener->setEnabled();
     }
 
     /**
