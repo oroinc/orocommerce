@@ -1529,3 +1529,10 @@ services:
         public: false
         arguments:
             - '@oro_entity.doctrine_helper'
+
+    oro_product.datagrid.event_listener.frontend_product_clean_up:
+        class: 'Oro\Bundle\ProductBundle\DataGrid\EventListener\FrontendProductCleanUpListener'
+        arguments:
+            - '@oro_entity.doctrine_helper'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.search_datasource.result.after.frontend-product-search-grid, method: onSearchResultAfter}
