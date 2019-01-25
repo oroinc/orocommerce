@@ -58,11 +58,13 @@ class ProductCollectionExtension extends AbstractTypeExtension
                 continue;
             }
 
-            $productCollectionSegmentNameForm = $variantForm->get('productCollectionSegment')->get('name');
-            $productCollectionSegmentName = $productCollectionSegmentNameForm->getData();
+            $productCollectionSegment = $variantForm->get('productCollectionSegment');
+            $productCollectionSegmentName = $productCollectionSegment
+                ->getData()
+                ->getNameLowercase();
 
             if (array_key_exists($productCollectionSegmentName, $names)) {
-                $productCollectionSegmentNameForm->addError(new FormError(
+                $productCollectionSegment->get('name')->addError(new FormError(
                     $this->translator->trans(
                         'oro.product.product_collection.unique_segment_name.message',
                         [],

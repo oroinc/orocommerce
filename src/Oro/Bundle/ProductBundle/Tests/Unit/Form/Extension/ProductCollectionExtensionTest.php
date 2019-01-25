@@ -3,7 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Extension;
 
 use Oro\Bundle\ProductBundle\Form\Extension\ProductCollectionExtension;
-use Oro\Bundle\ProductBundle\Tests\Unit\ContentVariant\Stub\ContentVariantStub;
+use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvent;
@@ -107,10 +107,19 @@ class ProductCollectionExtensionTest extends \PHPUnit\Framework\TestCase
     public function testOnPostSubmitValidationError()
     {
         $nameForm = $this->createMock(FormInterface::class);
-        $firstProductCollectionForm = $this->createProductCollectionForm('Not unique segment name');
-        $secondProductCollectionForm = $this->createProductCollectionForm('Not unique segment name', $nameForm);
+        $firstProductCollectionForm = $this->createProductCollectionForm(
+            'Not unique segment name',
+            null,
+            (new Segment())->setName('Not unique segment name')
+        );
 
-        $validationMessage = 'This name already in use';
+        $secondProductCollectionForm = $this->createProductCollectionForm(
+            'Not unique segment name',
+            $nameForm,
+            (new Segment())->setName('not Unique segment naME')
+        );
+
+        $validationMessage = 'There is another segment with a similar name.';
         $this->translator
             ->expects($this->once())
             ->method('trans')
@@ -145,11 +154,13 @@ class ProductCollectionExtensionTest extends \PHPUnit\Framework\TestCase
     /**
      * @param string $segmentName
      * @param \PHPUnit\Framework\MockObject\MockObject|null $productCollectionSegmentNameForm
+     * @param Segment|null $segment
      * @return \PHPUnit\Framework\MockObject\MockObject|FormInterface
      */
     private function createProductCollectionForm(
         $segmentName,
-        \PHPUnit\Framework\MockObject\MockObject $productCollectionSegmentNameForm = null
+        \PHPUnit\Framework\MockObject\MockObject $productCollectionSegmentNameForm = null,
+        Segment $segment = null
     ) {
         if (!$productCollectionSegmentNameForm) {
             $productCollectionSegmentNameForm = $this->createMock(FormInterface::class);
@@ -174,6 +185,10 @@ class ProductCollectionExtensionTest extends \PHPUnit\Framework\TestCase
             ->willReturnMap([
                 ['name', $productCollectionSegmentNameForm]
             ]);
+
+        $productCollectionSegmentForm->expects($this->atLeastOnce())
+            ->method('getData')
+            ->willReturn($segment ?? new Segment());
 
         $productCollectionForm = $this->createMock(FormInterface::class);
         $productCollectionForm
