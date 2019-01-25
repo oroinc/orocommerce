@@ -1,5 +1,8 @@
 oro:
     product:
+        search:
+            search_title:
+                title: '{0} Search for "All"|]1,Inf] Search for "%text%"'
         entity_label: Product
         entity_plural_label: Products
         entity_description: Represents product information.
