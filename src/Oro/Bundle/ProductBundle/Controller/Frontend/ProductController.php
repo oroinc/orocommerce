@@ -11,6 +11,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * The controller for the product view and search functionality.
+ */
 class ProductController extends Controller
 {
     const GRID_NAME = 'frontend-product-search-grid';
@@ -25,6 +28,27 @@ class ProductController extends Controller
      * @return array
      */
     public function indexAction()
+    {
+        return [
+            'entity_class' => $this->container->getParameter('oro_product.entity.product.class'),
+            'theme_name' => $this->container->get('oro_product.datagrid_theme_helper')
+                ->getTheme('frontend-product-search-grid'),
+            'grid_config' => [
+                'frontend-product-search-grid'
+            ],
+        ];
+    }
+
+    /**
+     * Search products
+     *
+     * @Route("/search", name="oro_product_frontend_product_search")
+     * @Layout(vars={"entity_class", "grid_config", "theme_name"})
+     * @AclAncestor("oro_product_frontend_view")
+     *
+     * @return array
+     */
+    public function searchAction()
     {
         return [
             'entity_class' => $this->container->getParameter('oro_product.entity.product.class'),
