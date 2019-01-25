@@ -30,7 +30,8 @@ use Oro\Bundle\OrderBundle\Model\ExtendOrderAddress;
  *          },
  *          "security"={
  *              "type"="ACL",
- *              "group_name"=""
+ *              "group_name"="commerce",
+ *              "category"="orders",
  *          }
  *      }
  * )
