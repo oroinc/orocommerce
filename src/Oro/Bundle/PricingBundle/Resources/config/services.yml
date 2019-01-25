@@ -76,9 +76,9 @@ services:
         arguments:
             - '@session'
             - '@security.token_storage'
+            - '@doctrine'
             - '@oro_currency.config.currency'
             - '@oro_website.manager'
-            - '@oro_customer_user.manager'
 
     oro_pricing.storage.prices:
         class: 'Oro\Bundle\PricingBundle\Storage\CombinedProductPriceORMStorage'
