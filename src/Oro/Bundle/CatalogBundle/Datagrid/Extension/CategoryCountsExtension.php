@@ -8,6 +8,7 @@ use Oro\Bundle\CatalogBundle\Datagrid\Filter\SubcategoryFilter;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Search\ProductRepository;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\MetadataObject;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
@@ -42,6 +43,9 @@ class CategoryCountsExtension extends AbstractExtension
     /** @var array */
     private $applicableGrids = [];
 
+    /** @var ConfigManager */
+    private $configManager;
+
     /**
      * @param ServiceLink $datagridManagerLink
      * @param ManagerRegistry $registry
@@ -54,13 +58,15 @@ class CategoryCountsExtension extends AbstractExtension
         ManagerRegistry $registry,
         ProductRepository $productSearchRepository,
         CategoryCountsCache $cache,
-        DatagridParametersHelper $datagridParametersHelper
+        DatagridParametersHelper $datagridParametersHelper,
+        ConfigManager $configManager
     ) {
         $this->datagridManagerLink = $datagridManagerLink;
         $this->registry = $registry;
         $this->productSearchRepository = $productSearchRepository;
         $this->cache = $cache;
         $this->datagridParametersHelper = $datagridParametersHelper;
+        $this->configManager = $configManager;
     }
 
     /**
@@ -97,6 +103,18 @@ class CategoryCountsExtension extends AbstractExtension
             }
 
             $filter['counts'] = $categoryCounts;
+
+            if ($this->configManager->get('oro_product.disable_filters_on_product_listing') && $categoryCounts) {
+                $filter['disabledOptions'] = [];
+
+                $countsWithoutFilters = $this->getCounts($config, $resetFilters = true);
+
+                $disabledOptions = array_diff(array_keys($countsWithoutFilters), array_keys($categoryCounts));
+
+                foreach ($disabledOptions as $key => $value) {
+                    $filter['disabledOptions'][$key] = (string) $value;
+                }
+            }
         }
         unset($filter);
 
@@ -107,7 +125,7 @@ class CategoryCountsExtension extends AbstractExtension
      * @param DatagridConfiguration $config
      * @return array
      */
-    protected function getCounts(DatagridConfiguration $config)
+    protected function getCounts(DatagridConfiguration $config, $resetFilters = false)
     {
         if (!filter_var($this->parameters->get('includeSubcategories'), FILTER_VALIDATE_BOOLEAN)) {
             return [];
@@ -120,7 +138,12 @@ class CategoryCountsExtension extends AbstractExtension
 
         // remove filter by category to make sure that filter counts will not be affected by filter itself
         $parameters = clone $this->getParameters();
-        $this->datagridParametersHelper->resetFilter($parameters, SubcategoryFilter::FILTER_TYPE_NAME);
+
+        if ($resetFilters) {
+            $this->datagridParametersHelper->resetFilters($parameters);
+        } else {
+            $this->datagridParametersHelper->resetFilter($parameters, SubcategoryFilter::FILTER_TYPE_NAME);
+        }
 
         // merge common parameters filters with minified parameters filters for
         // create correct cache key after reload the page
