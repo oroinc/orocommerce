@@ -154,9 +154,20 @@
     min-width: 463px;
 
     table {
+        th {
+            .price-list-grid-form__options-label {
+                padding-#{$start}: $content-padding-small;
+            }
+        }
+
         td {
             vertical-align: middle;
         }
+
+    }
+
+    .price-list-grid-form__option-cell {
+        width: 1px;
     }
 }
 
