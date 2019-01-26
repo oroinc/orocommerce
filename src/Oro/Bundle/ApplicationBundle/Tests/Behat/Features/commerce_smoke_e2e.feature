@@ -1,7 +1,7 @@
 @regression
 @smoke-community-edition-only
 Feature: Commerce smoke e2e
-
+  End-to-end smoke tests for commerce functionality
   Scenario: Create different window session
     Given sessions active:
       | Admin  |first_session |
