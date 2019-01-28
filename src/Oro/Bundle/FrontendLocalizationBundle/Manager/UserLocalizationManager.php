@@ -2,13 +2,13 @@
 
 namespace Oro\Bundle\FrontendLocalizationBundle\Manager;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserSettings;
 use Oro\Bundle\LocaleBundle\DependencyInjection\Configuration;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Manager\LocalizationManager;
-use Oro\Bundle\UserBundle\Entity\BaseUserManager;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -24,17 +24,17 @@ class UserLocalizationManager
     /** @var Session */
     protected $session;
 
+    /** @var TokenStorageInterface */
+    protected $tokenStorage;
+
+    /** @var ManagerRegistry */
+    protected $doctrine;
+
     /** @var ConfigManager */
     protected $configManager;
 
     /** @var WebsiteManager */
     protected $websiteManager;
-
-    /** @var TokenStorageInterface */
-    protected $tokenStorage;
-
-    /** @var BaseUserManager */
-    protected $userManager;
 
     /** @var LocalizationManager */
     protected $localizationManager;
@@ -42,24 +42,24 @@ class UserLocalizationManager
     /**
      * @param Session $session
      * @param TokenStorageInterface $tokenStorage
+     * @param ManagerRegistry $doctrine
      * @param ConfigManager $configManager
      * @param WebsiteManager $websiteManager
-     * @param BaseUserManager $userManager
      * @param LocalizationManager $localizationManager
      */
     public function __construct(
         Session $session,
         TokenStorageInterface $tokenStorage,
+        ManagerRegistry $doctrine,
         ConfigManager $configManager,
         WebsiteManager $websiteManager,
-        BaseUserManager $userManager,
         LocalizationManager $localizationManager
     ) {
         $this->session = $session;
         $this->tokenStorage = $tokenStorage;
+        $this->doctrine = $doctrine;
         $this->configManager = $configManager;
         $this->websiteManager = $websiteManager;
-        $this->userManager = $userManager;
         $this->localizationManager = $localizationManager;
     }
 
@@ -170,7 +170,7 @@ class UserLocalizationManager
                 $user->setWebsiteSettings($userWebsiteSettings);
             }
             $userWebsiteSettings->setLocalization($localization);
-            $this->userManager->getStorageManager()->flush();
+            $this->doctrine->getManagerForClass(CustomerUser::class)->flush();
         } elseif ($this->session->isStarted()) {
             $sessionLocalizations = $this->getSessionLocalizations();
             $sessionLocalizations[$website->getId()] = $localization->getId();
@@ -179,7 +179,7 @@ class UserLocalizationManager
     }
 
     /**
-     * @return null|CustomerUser
+     * @return mixed
      */
     protected function getLoggedUser()
     {

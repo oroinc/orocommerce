@@ -40,6 +40,7 @@ class AjaxLineItemController extends AbstractLineItemController
      */
     public function addProductFromViewAction(Request $request, Product $product)
     {
+        $validator = $this->get('validator');
         $currentShoppingListManager = $this->get('oro_shopping_list.manager.current_shopping_list');
         $shoppingList = $currentShoppingListManager->getForCurrentUser($request->get('shoppingListId'));
 
@@ -66,7 +67,8 @@ class AjaxLineItemController extends AbstractLineItemController
             $request,
             $this->getDoctrine(),
             $this->get('oro_shopping_list.manager.shopping_list'),
-            $currentShoppingListManager
+            $currentShoppingListManager,
+            $validator
         );
         $isFormHandled = $handler->process($lineItem);
 

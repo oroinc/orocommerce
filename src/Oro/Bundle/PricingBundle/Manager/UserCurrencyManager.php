@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\PricingBundle\Manager;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\CurrencyBundle\Provider\CurrencyProviderInterface;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserSettings;
-use Oro\Bundle\UserBundle\Entity\BaseUserManager;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -18,50 +18,40 @@ class UserCurrencyManager
 {
     const SESSION_CURRENCIES = 'currency_by_website';
 
-    /**
-     * @var Session
-     */
+    /** @var Session */
     protected $session;
 
-    /**
-     * @var CurrencyProviderInterface
-     */
-    protected $currencyProvider;
-
-    /**
-     * @var WebsiteManager
-     */
-    protected $websiteManager;
-
-    /**
-     * @var TokenStorageInterface
-     */
+    /** @var TokenStorageInterface */
     protected $tokenStorage;
 
-    /**
-     * @var BaseUserManager
-     */
-    protected $userManager;
+    /** @var ManagerRegistry */
+    protected $doctrine;
+
+    /** @var CurrencyProviderInterface */
+    protected $currencyProvider;
+
+    /** @var WebsiteManager */
+    protected $websiteManager;
 
     /**
      * @param Session $session
      * @param TokenStorageInterface $tokenStorage
+     * @param ManagerRegistry $doctrine
      * @param CurrencyProviderInterface $currencyProvider
      * @param WebsiteManager $websiteManager
-     * @param BaseUserManager $userManager
      */
     public function __construct(
         Session $session,
         TokenStorageInterface $tokenStorage,
+        ManagerRegistry $doctrine,
         CurrencyProviderInterface $currencyProvider,
-        WebsiteManager $websiteManager,
-        BaseUserManager $userManager
+        WebsiteManager $websiteManager
     ) {
         $this->session = $session;
         $this->tokenStorage = $tokenStorage;
+        $this->doctrine = $doctrine;
         $this->currencyProvider = $currencyProvider;
         $this->websiteManager = $websiteManager;
-        $this->userManager = $userManager;
     }
 
     /**
@@ -114,7 +104,7 @@ class UserCurrencyManager
                 $user->setWebsiteSettings($userWebsiteSettings);
             }
             $userWebsiteSettings->setCurrency($currency);
-            $this->userManager->getStorageManager()->flush();
+            $this->doctrine->getManagerForClass(CustomerUser::class)->flush();
         } elseif ($this->session->isStarted()) {
             $sessionCurrencies = $this->getSessionCurrencies();
             $sessionCurrencies[$website->getId()] = $currency;
