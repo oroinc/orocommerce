@@ -7,7 +7,6 @@ use Oro\Bundle\ConsentBundle\SystemConfig\ConsentConfigConverter;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints\NotBlank;
 
 /**
  * Form type for Consent select type with ordering

@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ProductBundle\Model;
 
 use Doctrine\ORM\QueryBuilder;
-use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 
 class ProductVisibilityQueryBuilderModifier
 {

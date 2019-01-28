@@ -3,7 +3,6 @@
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Form\Section;
 
 use Oro\Bundle\OrderBundle\Form\Section\SectionProvider;
-use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormRegistryInterface;
 use Symfony\Component\Form\FormTypeInterface;
 

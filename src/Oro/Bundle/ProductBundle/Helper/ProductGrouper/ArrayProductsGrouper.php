@@ -2,8 +2,6 @@
 
 namespace Oro\Bundle\ProductBundle\Helper\ProductGrouper;
 
-use Doctrine\Common\Collections\ArrayCollection;
-
 class ArrayProductsGrouper implements ProductsGrouperInterface
 {
     /**

@@ -6,11 +6,8 @@ use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\ShippingBundle\Entity\ShippingOriginWarehouse;
 use Oro\Bundle\ShippingBundle\Factory\ShippingOriginModelFactory;
-use Oro\Bundle\ShippingBundle\Model\ShippingOrigin;
 use Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider;
-use Oro\Bundle\WarehouseProBundle\Entity\Warehouse;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 class ShippingOriginProviderTest extends \PHPUnit\Framework\TestCase

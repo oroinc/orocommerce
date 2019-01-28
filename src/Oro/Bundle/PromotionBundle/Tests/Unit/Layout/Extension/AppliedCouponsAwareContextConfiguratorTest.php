@@ -7,9 +7,7 @@ use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
 use Oro\Bundle\PromotionBundle\Entity\AppliedCouponsAwareInterface;
 use Oro\Bundle\PromotionBundle\Layout\Extension\AppliedCouponsAwareContextConfigurator;
 use Oro\Bundle\PromotionBundle\Tests\Unit\Entity\Stub\Checkout;
-use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
-use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
 use Oro\Component\Layout\LayoutContext;
 
 class AppliedCouponsAwareContextConfiguratorTest extends \PHPUnit\Framework\TestCase

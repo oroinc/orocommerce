@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\RFPBundle\Tests\Unit\Api\Processor;
 
-use Oro\Bundle\ApiBundle\Processor\ContextInterface;
 use Oro\Bundle\ApiBundle\Processor\FormContext;
 use Oro\Bundle\RFPBundle\Api\Processor\UpdateRequestDataForRequestEntity;
 

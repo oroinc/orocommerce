@@ -5,7 +5,6 @@ namespace Oro\Bundle\CheckoutBundle\Expression;
 use Oro\Component\ConfigExpression\Condition\AbstractCondition;
 use Oro\Component\ConfigExpression\ContextAccessorAwareInterface;
 use Oro\Component\ConfigExpression\ContextAccessorAwareTrait;
-use Oro\Component\ConfigExpression\Exception;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 class CheckRequest extends AbstractCondition implements ContextAccessorAwareInterface

@@ -2,10 +2,6 @@
 
 namespace Oro\Bundle\PaymentBundle\Context;
 
-use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 class PaymentLineItem extends ParameterBag implements PaymentLineItemInterface

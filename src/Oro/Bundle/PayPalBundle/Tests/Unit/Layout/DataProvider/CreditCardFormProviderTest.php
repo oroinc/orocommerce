@@ -5,7 +5,6 @@ namespace Oro\Bundle\PayPalBundle\Tests\Unit\Layout\DataProvider;
 use Oro\Bundle\PayPalBundle\Form\Type\CreditCardType;
 use Oro\Bundle\PayPalBundle\Layout\DataProvider\CreditCardFormProvider;
 use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 

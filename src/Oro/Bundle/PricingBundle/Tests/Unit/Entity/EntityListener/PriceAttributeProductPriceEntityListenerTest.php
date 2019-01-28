@@ -3,10 +3,8 @@
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Entity\EntityListener;
 
 use Doctrine\ORM\Event\PreUpdateEventArgs;
-use Oro\Bundle\PricingBundle\Entity\BaseProductPrice;
 use Oro\Bundle\PricingBundle\Entity\EntityListener\PriceAttributeProductPriceEntityListener;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
-use Oro\Bundle\PricingBundle\Entity\PriceList;
 
 class PriceAttributeProductPriceEntityListenerTest extends BaseProductPriceEntityListenerTest
 {

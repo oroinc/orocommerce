@@ -23,7 +23,6 @@ use Oro\Bundle\PricingBundle\Model\DTO\CustomerWebsiteDTO;
 use Oro\Bundle\PricingBundle\Model\DTO\PriceListRelationTrigger;
 use Oro\Bundle\PricingBundle\PricingStrategy\PriceCombiningStrategyInterface;
 use Oro\Bundle\PricingBundle\PricingStrategy\StrategyRegister;
-use Oro\Bundle\PricingBundle\Tests\Unit\Builder\Stub\PriceCombiningWithPendingProductReindexStrategy;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\Testing\Unit\EntityTrait;

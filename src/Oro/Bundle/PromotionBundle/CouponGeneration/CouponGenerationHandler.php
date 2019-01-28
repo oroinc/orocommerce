@@ -2,10 +2,8 @@
 
 namespace Oro\Bundle\PromotionBundle\CouponGeneration;
 
-use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\PromotionBundle\CouponGeneration\Coupon\CouponGeneratorInterface;
 use Oro\Bundle\PromotionBundle\CouponGeneration\Options\CouponGenerationOptions;
-use Symfony\Component\Form\FormInterface;
 
 /**
  * Service that handles Coupon Generation operation request

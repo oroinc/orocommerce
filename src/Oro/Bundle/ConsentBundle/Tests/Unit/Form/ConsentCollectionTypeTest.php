@@ -10,7 +10,6 @@ use Oro\Bundle\ConsentBundle\Form\DataTransformer\ConsentCollectionTransformer;
 use Oro\Bundle\ConsentBundle\Form\Type\ConsentCollectionType;
 use Oro\Bundle\ConsentBundle\Form\Type\ConsentSelectType;
 use Oro\Bundle\ConsentBundle\Form\Type\ConsentSelectWithPriorityType;
-use Oro\Bundle\ConsentBundle\SystemConfig\ConsentConfig;
 use Oro\Bundle\ConsentBundle\SystemConfig\ConsentConfigConverter;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;

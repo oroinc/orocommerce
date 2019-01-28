@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\ConsentBundle\Tests\Functional\Entity;
 
-use Doctrine\ORM\EntityManager;
 use Oro\Bundle\ConsentBundle\Entity\Consent;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;

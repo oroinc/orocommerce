@@ -6,7 +6,6 @@ use Oro\Bundle\MoneyOrderBundle\Method\Config\MoneyOrderConfigInterface;
 use Oro\Bundle\MoneyOrderBundle\Method\Config\Provider\MoneyOrderConfigProviderInterface;
 use Oro\Bundle\MoneyOrderBundle\Method\View\Factory\MoneyOrderPaymentMethodViewFactoryInterface;
 use Oro\Bundle\MoneyOrderBundle\Method\View\Provider\MoneyOrderMethodViewProvider;
-use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
 use Oro\Bundle\PaymentBundle\Tests\Unit\Method\View\Provider\AbstractMethodViewProviderTest;
 
 class MoneyOrderMethodViewProviderTest extends AbstractMethodViewProviderTest
