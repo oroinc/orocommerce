@@ -121,7 +121,6 @@ class CategoryCountsExtension extends AbstractExtension
             $filter['counts'] = $categoryCounts;
 
             if ($this->searchEngine === ElasticSearch::ENGINE_NAME
-                && $categoryCounts
                 && $this->featureChecker->isFeatureEnabled(self::DISABLE_FILTERS_FEATURE)
                 && $this->featureChecker->isFeatureEnabled(self::LIMIT_FILTERS_FEATURE)
             ) {
