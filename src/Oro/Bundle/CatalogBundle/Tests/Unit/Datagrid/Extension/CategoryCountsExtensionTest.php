@@ -10,13 +10,14 @@ use Oro\Bundle\CatalogBundle\Datagrid\Filter\SubcategoryFilter;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Search\ProductRepository;
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\MetadataObject;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Datagrid\Manager;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 use Oro\Bundle\DataGridBundle\Tools\DatagridParametersHelper;
+use Oro\Bundle\ElasticSearchBundle\Engine\ElasticSearch;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\FilterBundle\Grid\Extension\AbstractFilterExtension;
 use Oro\Bundle\SearchBundle\Datagrid\Datasource\SearchDatasource;
 use Oro\Bundle\SearchBundle\Query\SearchQueryInterface;
@@ -48,11 +49,14 @@ class CategoryCountsExtensionTest extends \PHPUnit\Framework\TestCase
     /** @var SearchQueryInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $searchQuery;
 
+    /** @var SearchQueryInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $searchQueryWithoutFilters;
+
     /** @var DatagridParametersHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $datagridParametersHelper;
 
-    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $configManager;
+    /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject */
+    private $featureChecker;
 
     /** @var CategoryCountsExtension */
     private $extension;
@@ -67,8 +71,9 @@ class CategoryCountsExtensionTest extends \PHPUnit\Framework\TestCase
         $this->productSearchRepository = $this->createMock(ProductRepository::class);
         $this->cache = $this->createMock(CategoryCountsCache::class);
         $this->searchQuery = $this->createMock(SearchQueryInterface::class);
+        $this->searchQueryWithoutFilters = $this->createMock(SearchQueryInterface::class);
         $this->datagridParametersHelper = $this->createMock(DatagridParametersHelper::class);
-        $this->configManager = $this->createMock(ConfigManager::class);
+        $this->featureChecker = $this->createMock(FeatureChecker::class);
 
         /** @var SearchDatasource|\PHPUnit\Framework\MockObject\MockObject $searchDatasource */
         $searchDatasource = $this->createMock(SearchDatasource::class);
@@ -103,7 +108,8 @@ class CategoryCountsExtensionTest extends \PHPUnit\Framework\TestCase
             $this->productSearchRepository,
             $this->cache,
             $this->datagridParametersHelper,
-            $this->configManager
+            $this->featureChecker,
+            ElasticSearch::ENGINE_NAME
         );
         $this->extension->setParameters(
             new ParameterBag(
@@ -125,7 +131,7 @@ class CategoryCountsExtensionTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testIsApplicable()
+    public function testIsApplicable(): void
     {
         $this->extension->addApplicableGrid(self::GRID_NAME);
 
@@ -139,7 +145,7 @@ class CategoryCountsExtensionTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($this->extension->isApplicable($config));
     }
 
-    public function testIsApplicableSkipped()
+    public function testIsApplicableSkipped(): void
     {
         $this->extension->addApplicableGrid(self::GRID_NAME);
         $this->datagridParametersHelper->expects($this->once())
@@ -157,7 +163,7 @@ class CategoryCountsExtensionTest extends \PHPUnit\Framework\TestCase
         $this->assertFalse($this->extension->isApplicable($config));
     }
 
-    public function testIsApplicableWithUnknownDatasource()
+    public function testIsApplicableWithUnknownDatasource(): void
     {
         $this->extension->addApplicableGrid(self::GRID_NAME);
 
@@ -168,7 +174,7 @@ class CategoryCountsExtensionTest extends \PHPUnit\Framework\TestCase
         $this->assertFalse($this->extension->isApplicable($config));
     }
 
-    public function testIsApplicableWithUnknownGrid()
+    public function testIsApplicableWithUnknownGrid(): void
     {
         $config = DatagridConfiguration::create([
             'name' => self::GRID_NAME,
@@ -180,7 +186,7 @@ class CategoryCountsExtensionTest extends \PHPUnit\Framework\TestCase
         $this->assertFalse($this->extension->isApplicable($config));
     }
 
-    public function testVisitMetadata()
+    public function testVisitMetadata(): void
     {
         $category = new Category();
 
@@ -201,10 +207,15 @@ class CategoryCountsExtensionTest extends \PHPUnit\Framework\TestCase
             ->with(self::GRID_NAME, $this->extension->getParameters())
             ->willReturn($this->datagrid);
 
-        $this->productSearchRepository->expects($this->exactly(2))
+        $this->productSearchRepository->expects($this->at(0))
             ->method('getCategoryCountsByCategory')
             ->with($category, $this->searchQuery)
             ->willReturn([1 => 2]);
+
+        $this->productSearchRepository->expects($this->at(1))
+            ->method('getCategoryCountsByCategory')
+            ->with($category, $this->searchQueryWithoutFilters)
+            ->willReturn([1 => 2, 2 => 3]);
 
         $key = 'grid1|{"_filter":{"filter1":[],"subcategory":{"value":[1,2,3]}},"categoryId":42}';
 
@@ -216,13 +227,6 @@ class CategoryCountsExtensionTest extends \PHPUnit\Framework\TestCase
             ->method('setCounts')
             ->with($key);
 
-        $metadataArray = [
-            'filters' => [
-                ['type' => 'filter1'],
-                ['type' => SubcategoryFilter::FILTER_TYPE_NAME],
-            ],
-        ];
-        $metadata = MetadataObject::create($metadataArray);
         $this->datagridParametersHelper->expects($this->exactly(2))
             ->method('setDatagridExtensionSkipped')
             ->with($this->extension->getParameters());
@@ -244,15 +248,33 @@ class CategoryCountsExtensionTest extends \PHPUnit\Framework\TestCase
                 SubcategoryFilter::FILTER_TYPE_NAME => ['value' => [1, 2, 3]],
             ]);
 
-        $this->configManager->expects($this->once())
-            ->method('get')
-            ->with('oro_product.disable_filters_on_product_listing')
+        $this->featureChecker->expects($this->exactly(4))
+            ->method('isFeatureEnabled')
             ->willReturn(true);
+
+
+        $metadataArray = [
+            'filters' => [
+                ['type' => 'filter1'],
+                ['type' => SubcategoryFilter::FILTER_TYPE_NAME],
+            ],
+        ];
+        $metadata = MetadataObject::create($metadataArray);
 
         $this->extension->visitMetadata($config, $metadata);
 
-        $metadataArray['filters'][1]['counts'] = [1 => 2];
-        $metadataArray['filters'][1]['disabledOptions'] = [];
+        $metadataArray = [
+            'filters' => [
+                0 => [
+                    'type' => 'filter1'
+                ],
+                1 => [
+                    'type' => 'subcategory',
+                    'counts' => [1 => 2],
+                    'disabledOptions' => [0 => '2']
+                ]
+            ]
+        ];
 
         $this->assertEquals($metadataArray, $metadata->toArray());
     }
@@ -262,7 +284,7 @@ class CategoryCountsExtensionTest extends \PHPUnit\Framework\TestCase
      *
      * @param array $additionalParameters
      */
-    public function testVisitMetadataFromCache(array $additionalParameters)
+    public function testVisitMetadataFromCache(array $additionalParameters): void
     {
         $category = new Category();
 
@@ -286,20 +308,18 @@ class CategoryCountsExtensionTest extends \PHPUnit\Framework\TestCase
 
         $key = 'grid1|{"_filter":{"filter1":[],"subcategory":{"value":[1,2,3]}},"categoryId":42}';
 
-        $this->cache->expects($this->exactly(2))
+        $this->cache->expects($this->at(0))
             ->method('getCounts')
             ->with($key)
             ->willReturn([1 => 2]);
+
+        $this->cache->expects($this->at(1))
+            ->method('getCounts')
+            ->with($key)
+            ->willReturn([1 => 2, 2 => 3]);
+
         $this->cache->expects($this->never())
             ->method('setCounts');
-
-        $metadataArray = [
-            'filters' => [
-                ['type' => 'filter1'],
-                ['type' => SubcategoryFilter::FILTER_TYPE_NAME],
-            ],
-        ];
-        $metadata = MetadataObject::create($metadataArray);
 
         $this->datagridParametersHelper->expects($this->exactly(2))
             ->method('getFromParameters')
@@ -311,18 +331,36 @@ class CategoryCountsExtensionTest extends \PHPUnit\Framework\TestCase
             ->method('getFromMinifiedParameters')
             ->willReturn(null);
 
-        $this->configManager->expects($this->once())
-            ->method('get')
-            ->with('oro_product.disable_filters_on_product_listing')
+        $this->featureChecker->expects($this->exactly(4))
+            ->method('isFeatureEnabled')
             ->willReturn(true);
 
         $commonParameters = $this->extension->getParameters()->all();
         $parameters = array_merge($commonParameters, $additionalParameters);
         $this->extension->setParameters(new ParameterBag($parameters));
+
+        $metadataArray = [
+            'filters' => [
+                ['type' => 'filter1'],
+                ['type' => SubcategoryFilter::FILTER_TYPE_NAME],
+            ],
+        ];
+        $metadata = MetadataObject::create($metadataArray);
+
         $this->extension->visitMetadata($config, $metadata);
 
-        $metadataArray['filters'][1]['counts'] = [1 => 2];
-        $metadataArray['filters'][1]['disabledOptions'] = [];
+        $metadataArray = [
+            'filters' => [
+                0 => [
+                    'type' => 'filter1'
+                ],
+                1 => [
+                    'type' => 'subcategory',
+                    'counts' => [1 => 2],
+                    'disabledOptions' => [0 => '2']
+                ]
+            ]
+        ];
 
         $this->assertEquals($metadataArray, $metadata->toArray());
     }
@@ -332,7 +370,7 @@ class CategoryCountsExtensionTest extends \PHPUnit\Framework\TestCase
      *
      * @param array $parameters
      */
-    public function testVisitMetadataWithoutCategory(array $parameters)
+    public function testVisitMetadataWithoutCategory(array $parameters): void
     {
         $metadata = MetadataObject::create([
             'filters' => [
@@ -375,7 +413,7 @@ class CategoryCountsExtensionTest extends \PHPUnit\Framework\TestCase
     /**
      * @return array
      */
-    public function visitMetadataProvider()
+    public function visitMetadataProvider(): array
     {
         return [
             'empty parameters' => [
@@ -407,7 +445,7 @@ class CategoryCountsExtensionTest extends \PHPUnit\Framework\TestCase
     /**
      * @return array
      */
-    public function getAdditionalParameters()
+    public function getAdditionalParameters(): array
     {
         return [
             'empty' => [
