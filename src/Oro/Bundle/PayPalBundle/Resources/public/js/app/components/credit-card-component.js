@@ -170,7 +170,6 @@ define(function(require) {
             this.month = e.target.value;
 
             this.setExpirationDate();
-            this.validateIfMonthAndYearNotBlank();
         },
 
         /**
@@ -179,11 +178,6 @@ define(function(require) {
         collectYearDate: function(e) {
             this.year = e.target.value;
             this.setExpirationDate();
-            this.validateIfMonthAndYearNotBlank();
-        },
-
-        validateIfMonthAndYearNotBlank: function() {
-            this.validate(this.options.selectors.expirationDate);
         },
 
         setExpirationDate: function() {
