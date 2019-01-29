@@ -481,8 +481,8 @@ oro:
                     label: 'Hide Unrelated Product Filters And Sorting Options'
                     tooltip: 'Limit filters and sorting options on the product catalog page to display only those attributes that are relevant to the selected product family in the current product collection.'
                 disable_filters_on_product_listing:
-                    label: 'Disabled Unrelated Product Filters Options'
-                    tooltip: 'Disable filters options on the product catalog page to disable attributes that are not relevant to filtered product collection.'
+                    label: "Don't Change Initial Filter State"
+                    tooltip: 'If checked, all relevant filters that have been displayed on the initial page load and their options will remain visible on the page and will be disabled after they become non-relevant as the user refines the search results. Otherwise, any filters and options that become non-relevant, will be hidden.'
             notice:
                 product_image_watermark: >
                    The updated product image watermark settings will be used for the newly uploaded images only.
@@ -813,6 +813,9 @@ oro:
         limit_filters_sorters_on_product_listing:
             label: 'Hide Unrelated Product Filters And Sorting Options'
             description: 'Limit filters and sorting options on the product catalog page to display only those attributes that are relevant to the selected product family in the current product collection.'
+        disable_filters_on_product_listing:
+            label: "Don't Change Initial Filter State"
+            description: 'If checked, all relevant filters that have been displayed on the initial page load and their options will remain visible on the page and will be disabled after they become non-relevant as the user refines the search results. Otherwise, any filters and options that become non-relevant, will be hidden.'
 
     importexport:
         export:
