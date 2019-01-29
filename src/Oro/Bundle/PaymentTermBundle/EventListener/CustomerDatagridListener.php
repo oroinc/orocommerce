@@ -98,7 +98,7 @@ class CustomerDatagridListener
     /**
      * @param SelectedFieldsProviderInterface $selectedFieldsProvider
      */
-    public function setSelectedFieldsProvider(SelectedFieldsProviderInterface $selectedFieldsProvider): void
+    public function setSelectedFieldsProvider(SelectedFieldsProviderInterface $selectedFieldsProvider)
     {
         $this->selectedFieldsProvider = $selectedFieldsProvider;
     }
