@@ -1,5 +1,12 @@
 /* @theme: admin.oro; */
 
+.pricing-price-list {
+    .select2-container {
+        max-width: $input-append-width - 24px;
+        min-width: $input-append-width - 24px;
+    }
+}
+
 .form-horizontal {
     .responsive-cell {
         &:only-child {

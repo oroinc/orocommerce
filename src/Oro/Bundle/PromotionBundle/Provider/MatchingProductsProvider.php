@@ -133,6 +133,6 @@ class MatchingProductsProvider
 
         sort($lineItemsProductIds);
 
-        return $segment->getId() . '_' . md5(implode(',', $lineItemsProductIds));
+        return md5($segment->getDefinition() . '_' . implode(',', $lineItemsProductIds));
     }
 }

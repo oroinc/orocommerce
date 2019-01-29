@@ -97,7 +97,6 @@ class LoginPageControllerTest extends WebTestCase
 
         $this->assertContains(static::TOP_CONTENT_UPDATE, $html);
         $this->assertContains(static::BOTTOM_CONTENT_UPDATE, $html);
-        $this->assertContains(static::CSS_UPDATE, $html);
     }
 
     /**
@@ -106,7 +105,7 @@ class LoginPageControllerTest extends WebTestCase
      * @param string $bottomContent
      * @param string $css
      */
-    protected function assertLoginPageSave(Crawler $crawler, $topContent, $bottomContent, $css)
+    private function assertLoginPageSave(Crawler $crawler, $topContent, $bottomContent, $css)
     {
         $form = $crawler->selectButton('Save and Close')->form();
 
@@ -124,6 +123,8 @@ class LoginPageControllerTest extends WebTestCase
         $this->assertContains('Login form has been saved', $html);
         $this->assertContains($topContent, $html);
         $this->assertContains($bottomContent, $html);
-        $this->assertContains($css, $html);
+
+        self::assertArrayHasKey('oro_cms_login_page[css]', $form);
+        self::assertContains($css, $html);
     }
 }

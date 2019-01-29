@@ -26,6 +26,8 @@ oro_behat_extension:
         - OroUIBundle::DatepickerContext
         - OroEmailBundle::EmailContext
         - OroWorkflowBundle::FeatureContext
+        - OroPromotionBundle::PromotionContext
+        - OroNavigationBundle::TabContext
       paths:
         - '@OroCheckoutBundle/Tests/Behat/Features'
 

@@ -85,6 +85,16 @@
     }
 }
 
+.tax-zip-code-collection {
+    .tax-zip-code-divider {
+        vertical-align: middle;
+    }
+
+    .add-list-item {
+        margin-top: $content-padding-small;
+    }
+}
+
 .tax-zip-code-list-items {
     .tax-zip-code-list-item {
         input[type="text"] {
@@ -93,11 +103,7 @@
     }
 
     .tax-zip-code-list-remove {
-        display: flex;
-
-        .btn {
-            margin: 0 auto;
-        }
+        text-align: #{$end};
     }
 }
 

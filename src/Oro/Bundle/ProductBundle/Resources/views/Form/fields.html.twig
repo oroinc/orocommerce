@@ -405,7 +405,7 @@
                                     <div data-collapse-container class="filter control-group fields-row">
                                         {{ block('oro_segment_filter_builder_row') }}
                                         {# --Apply Query button start--#}
-                                        <div class="clearfix">
+                                        <div class="btn-container clearfix">
                                             <div class="pull-right">
                                                 <a href="#" class="btn btn-primary filter-apply">
                                                     {{ 'oro.product.content_variant.ui.apply_query'|trans }}
@@ -446,7 +446,7 @@
                                     'widgetRouteParameters': excludedWidgetRouteParameters
                                 } %}
 
-                                <div class="{{ excludedControlsBlockAlias }} control-group"
+                                <div class="{{ excludedControlsBlockAlias }}"
                                      data-page-component-module="orodatagrid/js/app/components/grid-sidebar-component"
                                      data-page-component-options="{{ excludedGridSidebarComponentOptions|json_encode }}"
                                 >
@@ -484,7 +484,7 @@
                                     'widgetRouteParameters': includedWidgetRouteParameters
                                 } %}
 
-                                <div class="{{ includedControlsBlockAlias }} control-group"
+                                <div class="{{ includedControlsBlockAlias }}"
                                      data-page-component-module="orodatagrid/js/app/components/grid-sidebar-component"
                                      data-page-component-options="{{ includedGridSidebarComponentOptions|json_encode }}"
                                 >

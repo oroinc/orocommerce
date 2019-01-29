@@ -6,10 +6,14 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\FormBundle\Form\Handler\RequestHandlerTrait;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListManager;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Validator\ConstraintViolation;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * Handles add a product to a shopping list request.
@@ -19,19 +23,22 @@ class LineItemHandler
     use RequestHandlerTrait;
 
     /** @var FormInterface */
-    protected $form;
+    private $form;
 
     /** @var Request */
-    protected $request;
+    private $request;
 
     /** @var ManagerRegistry */
-    protected $doctrine;
+    private $doctrine;
 
     /** @var ShoppingListManager */
-    protected $shoppingListManager;
+    private $shoppingListManager;
 
     /** @var CurrentShoppingListManager */
-    protected $currentShoppingListManager;
+    private $currentShoppingListManager;
+
+    /** @var ValidatorInterface */
+    private $validator;
 
     /**
      * @param FormInterface $form
@@ -39,19 +46,22 @@ class LineItemHandler
      * @param ManagerRegistry $doctrine
      * @param ShoppingListManager $shoppingListManager
      * @param CurrentShoppingListManager $currentShoppingListManager
+     * @param ValidatorInterface $validator
      */
     public function __construct(
         FormInterface $form,
         Request $request,
         ManagerRegistry $doctrine,
         ShoppingListManager $shoppingListManager,
-        CurrentShoppingListManager $currentShoppingListManager
+        CurrentShoppingListManager $currentShoppingListManager,
+        ValidatorInterface $validator
     ) {
         $this->form = $form;
         $this->request = $request;
         $this->doctrine = $doctrine;
         $this->shoppingListManager = $shoppingListManager;
         $this->currentShoppingListManager = $currentShoppingListManager;
+        $this->validator = $validator;
     }
 
     /**
@@ -80,14 +90,52 @@ class LineItemHandler
 
         $this->submitPostPutRequest($this->form, $this->request);
         if ($this->form->isValid()) {
-            $this->shoppingListManager->addLineItem($lineItem, $lineItem->getShoppingList(), true, true);
-            $em->commit();
+            $this->shoppingListManager->addLineItem($lineItem, $lineItem->getShoppingList(), false, true);
 
-            return true;
+            if ($this->isShoppingListValid($lineItem->getShoppingList())) {
+                $em->flush();
+                $em->commit();
+
+                return true;
+            }
         }
 
         $em->rollback();
 
         return false;
+    }
+
+    /**
+     * @param ShoppingList $shoppingList
+     *
+     * @return bool
+     */
+    private function isShoppingListValid(ShoppingList $shoppingList): bool
+    {
+        $constraintViolationList = $this->validator->validate($shoppingList);
+
+        if ($constraintViolationList->count()) {
+            /** @var ConstraintViolation $constraintViolation */
+            foreach ($constraintViolationList as $constraintViolation) {
+                $this->addFormError($constraintViolation);
+            }
+
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * @param ConstraintViolation $constraintViolation
+     */
+    private function addFormError(ConstraintViolation $constraintViolation): void
+    {
+        $this->form->addError(new FormError(
+            $constraintViolation->getMessage(),
+            $constraintViolation->getMessageTemplate(),
+            $constraintViolation->getParameters(),
+            $constraintViolation->getPlural()
+        ));
     }
 }

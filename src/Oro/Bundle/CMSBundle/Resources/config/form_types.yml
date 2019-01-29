@@ -13,6 +13,8 @@ services:
 
     oro_cms.form.type.loginpage:
         class: 'Oro\Bundle\CMSBundle\Form\Type\LoginPageType'
+        arguments:
+            - '%oro_cms.direct_editing.login_page_css_field%'
         tags:
             - { name: form.type, alias: oro_cms_login_page }
 

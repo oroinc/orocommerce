@@ -256,11 +256,14 @@ abstract class CheckoutControllerTestCase extends FrontendWebTestCase
      */
     protected function startCheckoutByData(array $data)
     {
+        $userManager = $this->getContainer()->get('oro_customer_user.manager');
         $this->setCurrentWebsite('default');
         $user = $this->registry
             ->getRepository(CustomerUser::class)
             ->findOneBy(['username' => TestCustomerUserData::AUTH_USER]);
         $user->setCustomer($this->getReference('customer.level_1'));
+        $userManager->updateUser($user, true);
+
         $organization = $this->registry
             ->getRepository(Organization::class)
             ->getFirst();

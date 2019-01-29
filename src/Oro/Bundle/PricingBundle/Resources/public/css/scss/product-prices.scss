@@ -1,5 +1,13 @@
 /* @theme: admin.oro; */
 
+.pricing-price-list {
+    td {
+        &:last-child {
+            padding: $content-padding-small;
+        }
+    }
+}
+
 .line-item-price {
     .multicurrency-fields-wrapper {
         width: 195px;
