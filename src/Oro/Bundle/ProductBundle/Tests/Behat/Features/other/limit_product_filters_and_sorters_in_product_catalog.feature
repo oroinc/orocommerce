@@ -58,7 +58,7 @@ Feature: Limit product filters and sorters in product catalog
   Scenario: Check that feature hides sorters and filters on the search page
     Given I proceed as the Buyer
     Then I signed in as AmandaRCole@example.org on the store frontend
-    And type "SKU1" in "search"
+    And type "SKU3" in "search"
     And click "Search Button"
     Then I check that filter block visible in frontend product grid
     Then I should see "AttrWithFamily" in the "ProductFrontendGridFiltersBlock" element

@@ -15,6 +15,7 @@ oro_behat_extension:
         - OroSecurityBundle::ACLContext
         - OroProductBundle::FeatureContext
         - OroProductBundle::FrontendProductGridContext
+        - OroShoppingListBundle::ShoppingListContext
       paths:
         - '@OroApplicationBundle/Tests/Behat/Features'
   elements:

@@ -533,6 +533,7 @@ datagrids:
                     - order_item.shipBy
                     - order_item.comment
                     - order_item.productName
+                    - order_item.productVariantFields
                 from:
                     - { table: '%oro_order.entity.order_line_item.class%', alias: order_item }
                 join:

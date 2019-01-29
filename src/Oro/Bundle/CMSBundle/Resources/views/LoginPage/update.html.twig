@@ -43,7 +43,7 @@
                     'data': [
                         form_row(form.topContent),
                         form_row(form.bottomContent),
-                        form_row(form.css),
+                        form.css is defined ? form_row(form.css) : '',
                         form_row(form.logoImage),
                         form_row(form.backgroundImage),
                     ]
