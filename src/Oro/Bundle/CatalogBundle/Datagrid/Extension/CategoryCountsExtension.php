@@ -103,6 +103,7 @@ class CategoryCountsExtension extends AbstractExtension
      */
     public function visitMetadata(DatagridConfiguration $config, MetadataObject $data)
     {
+        $countsWithoutFilters = null;
         $categoryCounts = $this->getCounts($config);
 
         if ($this->searchEngine === ElasticSearch::ENGINE_NAME
@@ -120,10 +121,7 @@ class CategoryCountsExtension extends AbstractExtension
 
             $filter['counts'] = $categoryCounts;
 
-            if ($this->searchEngine === ElasticSearch::ENGINE_NAME
-                && $this->featureChecker->isFeatureEnabled(self::DISABLE_FILTERS_FEATURE)
-                && $this->featureChecker->isFeatureEnabled(self::LIMIT_FILTERS_FEATURE)
-            ) {
+            if ($countsWithoutFilters && $categoryCounts) {
                 $filter['disabledOptions'] = array_map(
                     'strval',
                     array_values(array_diff(array_keys($countsWithoutFilters), array_keys($categoryCounts)))
