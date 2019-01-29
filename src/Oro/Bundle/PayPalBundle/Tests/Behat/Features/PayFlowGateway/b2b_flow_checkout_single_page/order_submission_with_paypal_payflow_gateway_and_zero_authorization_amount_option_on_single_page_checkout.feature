@@ -30,7 +30,6 @@ Feature: Order submission with PayPal PayFlow Gateway and zero "authorization am
       | Month            | 11               |
       | Year             | 2027             |
       | CVV              | 123              |
-    And I wait for action
     When I click "Submit Order"
     Then I see the "Thank You" page with "Thank You For Your Purchase!" title
 
