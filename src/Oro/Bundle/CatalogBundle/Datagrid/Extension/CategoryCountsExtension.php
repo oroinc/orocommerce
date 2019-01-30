@@ -54,6 +54,15 @@ class CategoryCountsExtension extends AbstractExtension
     private $searchEngine;
 
     /**
+     * @var bool[] Stores flags about already applied datagrids.
+     * [
+     *      '<datagridName>' => <bool>,
+     *      ...
+     * ]
+     */
+    private $applied = [];
+
+    /**
      * @param ServiceLink $datagridManagerLink
      * @param ManagerRegistry $registry
      * @param ProductRepository $productSearchRepository
@@ -105,6 +114,13 @@ class CategoryCountsExtension extends AbstractExtension
      */
     public function visitMetadata(DatagridConfiguration $config, MetadataObject $data)
     {
+        // Skips handling of metadata if datagrid has been already processed.
+        if (!empty($this->applied[$config->getName()])) {
+            return;
+        }
+
+        $this->applied[$config->getName()] = true;
+
         $countsWithoutFilters = null;
         $categoryCounts = $this->getCounts($config);
 
