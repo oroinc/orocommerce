@@ -257,6 +257,21 @@ class CategoryCountsExtensionTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($metadataArray, $metadata->toArray());
     }
 
+    public function testVisitMetadataWhenExtensionAlreadyApplied(): void
+    {
+        $this->testVisitMetadata();
+
+        $this->featureChecker
+            ->expects(self::never())
+            ->method('isFeatureEnabled');
+
+        $filters = [['name' => 'supported_attribute']];
+        $metadata = MetadataObject::create(['filters' => $filters]);
+        $this->extension->visitMetadata(DatagridConfiguration::createNamed(self::GRID_NAME, []), $metadata);
+
+        self::assertEquals($filters, $metadata->offsetGetByPath('[filters]'));
+    }
+
     /**
      * @dataProvider getAdditionalParameters
      *
@@ -354,7 +369,7 @@ class CategoryCountsExtensionTest extends \PHPUnit\Framework\TestCase
             ->method($this->anything());
 
         $this->extension->setParameters(new ParameterBag($parameters));
-        $this->extension->visitMetadata(DatagridConfiguration::create([]), $metadata);
+        $this->extension->visitMetadata(DatagridConfiguration::createNamed(self::GRID_NAME, []), $metadata);
 
         $this->assertEquals(
             [

@@ -8,7 +8,6 @@ use Oro\Bundle\CatalogBundle\Datagrid\Filter\SubcategoryFilter;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Search\ProductRepository;
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\MetadataObject;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
@@ -16,6 +15,8 @@ use Oro\Bundle\DataGridBundle\Datagrid\Manager;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 use Oro\Bundle\DataGridBundle\Extension\AbstractExtension;
 use Oro\Bundle\DataGridBundle\Tools\DatagridParametersHelper;
+use Oro\Bundle\ElasticSearchBundle\Engine\ElasticSearch;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\FilterBundle\Grid\Extension\AbstractFilterExtension;
 use Oro\Bundle\SearchBundle\Datagrid\Datasource\SearchDatasource;
 use Oro\Component\DependencyInjection\ServiceLink;
@@ -25,6 +26,9 @@ use Oro\Component\DependencyInjection\ServiceLink;
  */
 class CategoryCountsExtension extends AbstractExtension
 {
+    private const DISABLE_FILTERS_FEATURE = 'disable_filters_on_product_listing';
+    private const LIMIT_FILTERS_FEATURE = 'limit_filters_sorters_on_product_listing';
+
     /** @var ServiceLink */
     private $datagridManagerLink;
 
@@ -43,8 +47,20 @@ class CategoryCountsExtension extends AbstractExtension
     /** @var array */
     private $applicableGrids = [];
 
-    /** @var ConfigManager */
-    private $configManager;
+    /** @var FeatureChecker */
+    private $featureChecker;
+
+    /** @var string */
+    private $searchEngine;
+
+    /**
+     * @var bool[] Stores flags about already applied datagrids.
+     * [
+     *      '<datagridName>' => <bool>,
+     *      ...
+     * ]
+     */
+    private $applied = [];
 
     /**
      * @param ServiceLink $datagridManagerLink
@@ -52,6 +68,8 @@ class CategoryCountsExtension extends AbstractExtension
      * @param ProductRepository $productSearchRepository
      * @param CategoryCountsCache $cache
      * @param DatagridParametersHelper $datagridParametersHelper
+     * @param FeatureChecker $featureChecker
+     * @param string $searchEngine
      */
     public function __construct(
         ServiceLink $datagridManagerLink,
@@ -59,14 +77,16 @@ class CategoryCountsExtension extends AbstractExtension
         ProductRepository $productSearchRepository,
         CategoryCountsCache $cache,
         DatagridParametersHelper $datagridParametersHelper,
-        ConfigManager $configManager
+        FeatureChecker $featureChecker,
+        string $searchEngine
     ) {
         $this->datagridManagerLink = $datagridManagerLink;
         $this->registry = $registry;
         $this->productSearchRepository = $productSearchRepository;
         $this->cache = $cache;
         $this->datagridParametersHelper = $datagridParametersHelper;
-        $this->configManager = $configManager;
+        $this->featureChecker = $featureChecker;
+        $this->searchEngine = $searchEngine;
     }
 
     /**
@@ -94,7 +114,20 @@ class CategoryCountsExtension extends AbstractExtension
      */
     public function visitMetadata(DatagridConfiguration $config, MetadataObject $data)
     {
+        // Skips handling of metadata if datagrid has been already processed.
+        if (!empty($this->applied[$config->getName()])) {
+            return;
+        }
+
+        $this->applied[$config->getName()] = true;
+
+        $countsWithoutFilters = null;
         $categoryCounts = $this->getCounts($config);
+
+        $countsWithoutFilters = [];
+        if ($this->isOptionsDisablingApplicable()) {
+            $countsWithoutFilters = $this->getCountsWithoutFilters($config);
+        }
 
         $filters = $data->offsetGetByPath('[filters]', []);
         foreach ($filters as &$filter) {
@@ -104,16 +137,12 @@ class CategoryCountsExtension extends AbstractExtension
 
             $filter['counts'] = $categoryCounts;
 
-            if ($this->configManager->get('oro_product.disable_filters_on_product_listing') && $categoryCounts) {
-                $filter['disabledOptions'] = [];
-
-                $countsWithoutFilters = $this->getCounts($config, $resetFilters = true);
-
-                $disabledOptions = array_diff(array_keys($countsWithoutFilters), array_keys($categoryCounts));
-
-                foreach ($disabledOptions as $key => $value) {
-                    $filter['disabledOptions'][$key] = (string) $value;
-                }
+            $filter['disabledOptions'] = [];
+            if ($countsWithoutFilters) {
+                $filter['disabledOptions'] = array_map(
+                    'strval',
+                    array_values(array_diff(array_keys($countsWithoutFilters), array_keys($categoryCounts)))
+                );
             }
         }
         unset($filter);
@@ -125,7 +154,27 @@ class CategoryCountsExtension extends AbstractExtension
      * @param DatagridConfiguration $config
      * @return array
      */
-    protected function getCounts(DatagridConfiguration $config, $resetFilters = false)
+    protected function getCounts(DatagridConfiguration $config)
+    {
+        return $this->getFilterCounts($config);
+    }
+
+    /**
+     * @param DatagridConfiguration $config
+     * @param bool $resetFilters
+     * @return array
+     */
+    protected function getCountsWithoutFilters(DatagridConfiguration $config, $resetFilters = true): array
+    {
+        return $this->getFilterCounts($config, $resetFilters);
+    }
+
+    /**
+     * @param DatagridConfiguration $config
+     * @param bool $resetFilters
+     * @return array
+     */
+    private function getFilterCounts(DatagridConfiguration $config, $resetFilters = false): array
     {
         if (!filter_var($this->parameters->get('includeSubcategories'), FILTER_VALIDATE_BOOLEAN)) {
             return [];
@@ -274,5 +323,15 @@ class CategoryCountsExtension extends AbstractExtension
             DatagridParametersHelper::DATAGRID_SKIP_EXTENSION_PARAM,
             AbstractFilterExtension::FILTER_ROOT_PARAM
         ];
+    }
+
+    /**
+     * @return bool
+     */
+    private function isOptionsDisablingApplicable(): bool
+    {
+        return $this->searchEngine === ElasticSearch::ENGINE_NAME
+            && $this->featureChecker->isFeatureEnabled(self::DISABLE_FILTERS_FEATURE)
+            && $this->featureChecker->isFeatureEnabled(self::LIMIT_FILTERS_FEATURE);
     }
 }
