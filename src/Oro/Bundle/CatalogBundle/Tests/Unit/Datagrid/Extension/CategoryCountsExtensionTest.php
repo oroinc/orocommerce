@@ -248,7 +248,7 @@ class CategoryCountsExtensionTest extends \PHPUnit\Framework\TestCase
                 SubcategoryFilter::FILTER_TYPE_NAME => ['value' => [1, 2, 3]],
             ]);
 
-        $this->featureChecker->expects($this->exactly(4))
+        $this->featureChecker->expects($this->any())
             ->method('isFeatureEnabled')
             ->willReturn(true);
 
@@ -331,7 +331,7 @@ class CategoryCountsExtensionTest extends \PHPUnit\Framework\TestCase
             ->method('getFromMinifiedParameters')
             ->willReturn(null);
 
-        $this->featureChecker->expects($this->exactly(4))
+        $this->featureChecker->expects($this->any())
             ->method('isFeatureEnabled')
             ->willReturn(true);
 
