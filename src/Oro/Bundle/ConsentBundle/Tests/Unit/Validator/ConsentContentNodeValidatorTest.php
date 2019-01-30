@@ -135,27 +135,16 @@ class ConsentContentNodeValidatorTest extends \PHPUnit\Framework\TestCase
                 'errorMsg' => "",
                 'expectedResult' => false
             ],
-            "Can't resolve content node and log validation error enabled" => [
+            "Can't resolve content node" => [
                 'consent' => $consent,
                 'contentNode' => $contentNode,
                 'scope' => $scope,
                 'logErrorsEnabled' => true,
                 'isContentNodeResolved' => false,
                 'contentVariant' => $contentVariantWithCorrectType,
-                'expectedError' => true,
-                'errorMsg' => "Failed to resolve 'ContentNode' in Consent with id '1' with Scope with id '123'!",
-                'expectedResult' => false
-            ],
-            "Can't resolve content node and log validation error disabled" => [
-                'consent' => $consent,
-                'contentNode' => $contentNode,
-                'scope' => $scope,
-                'logErrorsEnabled' => false,
-                'isContentNodeResolved' => false,
-                'contentVariant' => $contentVariantWithCorrectType,
                 'expectedError' => false,
-                'errorMsg' => "",
-                'expectedResult' => false
+                'errorMsg' => '',
+                'expectedResult' => true
             ],
             "Content variant type is invalid and log validation error enabled" => [
                 'consent' => $consent,

@@ -14,12 +14,12 @@ Feature: Consent management via Management Console UI
       | Admin | first_session  |
       | User  | second_session |
 
-  Scenario: Create Landing Page and Content Node in Web Catalog
+  Scenario: Create Web Catalog
     Given I proceed as the Admin
     And I login as administrator
-    And go to Marketing/ Web Catalogs
-    And click "Create Web Catalog"
-    And fill form with:
+    And I go to Marketing/ Web Catalogs
+    And I click "Create Web Catalog"
+    And I fill form with:
       | Name | Store and Process |
     When I click "Save and Close"
     Then I should see "Web Catalog has been saved" flash message
@@ -28,7 +28,20 @@ Feature: Consent management via Management Console UI
       | Titles | Home page |
     And I click "Add System Page"
     When I save form
-    Then I click "Create Content Node"
+    Then I should see "Content Node has been saved" flash message
+
+  Scenario: Create Landing Pages
+    Given I go to Marketing/ Landing Pages
+    And I click "Create Landing Page"
+    When I fill in Landing Page Titles field with "Page to remove"
+    Then I should see URL Slug field filled with "page-to-remove"
+    When I save and close form
+    Then I should see "Page has been saved" flash message
+
+  Scenario: Create Content Nodes
+    Given I go to Marketing/ Web Catalogs
+    And I click "Edit Content Tree" on row "Store and Process" in grid
+    And I click "Create Content Node"
     And I click on "Show Variants Dropdown"
     And I click "Add Landing Page"
     And I fill "Content Node Form" with:
@@ -37,14 +50,23 @@ Feature: Consent management via Management Console UI
       | Landing Page | Consent Landing        |
     When I save form
     Then I should see "Content Node has been saved" flash message
-    And I click "Create Content Node"
+    When I click "Create Content Node"
     And I click on "Show Variants Dropdown"
     And I click "Add Landing Page"
     And I fill "Content Node Form" with:
       | Titles       | Test Node     |
       | Url Slug     | test-node     |
       | Landing Page | Test CMS Page |
-    When I save form
+    And I save form
+    Then I should see "Content Node has been saved" flash message
+    And I click "Create Content Node"
+    And I click on "Show Variants Dropdown"
+    And I click "Add Landing Page"
+    And I fill "Content Node Form" with:
+      | Titles       | Page to remove |
+      | Url Slug     | page-to-remove |
+      | Landing Page | Page to remove       |
+    And I save form
     Then I should see "Content Node has been saved" flash message
 
   Scenario: Enable consent functionality via feature toggle
@@ -105,10 +127,19 @@ Feature: Consent management via Management Console UI
     And fill "Consent Form" with:
       | Name        | Receive notifications |
       | Type        | Optional              |
+    And I save and create new form
+    And fill "Consent Form" with:
+      | Name        | Without Landing Page |
+      | Type        | Optional             |
+      | Web Catalog | Store and Process    |
+    And I expand "Store and Process" in tree
+    And I expand "Test Node" in tree
+    And I click "Page to remove"
     And save and close form
     When go to System/ Consent Management
     Then I should see following grid:
       | Name                                 | Type      | Content Node           | Content Source  |
+      | Without Landing Page                 | Optional  | Page to remove         | Page to remove |
       | Receive notifications                | Optional  | N/A                    | N/A             |
       | Collecting and storing personal data | Mandatory | Store and Process Node | Consent Landing |
       | Email Newsletters                    | Optional  | N/A                    | N/A             |
@@ -125,10 +156,12 @@ Feature: Consent management via Management Console UI
     And click "Add Consent"
     And click "Add Consent"
     And click "Add Consent"
+    And click "Add Consent"
     And I choose Consent "Presenting Personal Data" in 1 row
     And I choose Consent "Email Newsletters" in 2 row
     And I choose Consent "Collecting and storing personal data" in 3 row
     And I choose Consent "Receive notifications" in 4 row
+    And I choose Consent "Without Landing Page" in 5 row
     And I drag 2 row to the top in "Consent" table
     When click "Save settings"
     Then I should see "Configuration saved" flash message
@@ -141,12 +174,59 @@ Feature: Consent management via Management Console UI
     And I am on the homepage
     When click "Register"
     Then I should see 2 elements "Required Consent"
-    And I should see 2 elements "Optional Consent"
-    And I should not see "Consent Link" in the "Optional Consent" element
+    And I should see 3 elements "Optional Consent"
     And the "Presenting Personal Data" checkbox should not be checked
     And the "Email Newsletters" checkbox should not be checked
     And the "Collecting and storing personal data" checkbox should not be checked
     And the "Receive notifications" checkbox should not be checked
+    And the "Without Landing Page" checkbox should not be checked
+    And I fill form with:
+      | Company Name     | OroCommerce               |
+      | First Name       | Amanda                    |
+      | Last Name        | Cole                      |
+      | Email Address    | AmandaRCole1@example.org  |
+      | Password         | AmandaRCole1@example.org  |
+      | Confirm Password | AmandaRCole1@example.org  |
+    And I click "Presenting Personal Data"
+    And I scroll modal window to bottom
+    And I click "Agree"
+    And I click "Collecting and storing personal data"
+    And I scroll modal window to bottom
+    And click "Agree"
+    When I click "Without Landing Page"
+    Then I should see "UiDialog" with elements:
+      | Title        | Without Landing Page |
+      | okButton     | Agree                |
+      | cancelButton | Cancel               |
+    When I click "Agree"
+    Then the "Without Landing Page" checkbox should be checked
+
+  Scenario: Delete Landing Page
+    Given I proceed as the Admin
+    And I go to Marketing/ Landing Pages
+    When I click delete Page to remove in grid
+    And I confirm deletion
+    Then I should see "Landing Page deleted" flash message
+
+  Scenario: Check consents on registration page
+    Given I proceed as the User
+    When I click "Create An Account"
+    Then I should see "Some consents were changed. Please reload the page."
+    When I reload the page
+    Then the "Without Landing Page" checkbox should not be checked
+    And I should not see "Consent Link" in the "Optional Consent" element
+
+  Scenario: Disable unnecessary consent
+    Given I proceed as the Admin
+    And go to System/ Configuration
+    And follow "Commerce/Customer/Consents" on configuration sidebar
+    And I remove "Without Landing Page" from Consent
+    When click "Save settings"
+    Then I should see "Configuration saved" flash message
+
+  Scenario: Create an account on registration page
+    Given I proceed as the User
+    And I reload the page
     And I fill form with:
       | Company Name                         | OroCommerce               |
       | First Name                           | Amanda                    |
@@ -370,7 +450,7 @@ Feature: Consent management via Management Console UI
       | Name        | Test Consent      |
       | Type        | Mandatory         |
       | Web Catalog | Store and Process |
-    And click on "Expand Store and Process Node"
+    And I expand "Store and Process" in tree
     And click "Test Node"
     When save and close form
     Then I should see "Consent has been created" flash message
@@ -461,10 +541,14 @@ Feature: Consent management via Management Console UI
     When click "Create An Account"
     Then I should see "Some consents were changed. Please reload the page."
 
-  @skip
-  Scenario: Consent should not be visible when related CMS page was deleted
-    Given I should not see "Test Consent 2"
-    Then I should see 2 elements "Required Consent"
+  Scenario: Disable Test Consent 2 for Default Website
+    Given I proceed as the Admin
+    And I go to System/ Websites
+    And I click "Configuration" on row "Default" in grid
+    And I follow "Commerce/Customer/Consents" on configuration sidebar
+    And I remove "Test Consent 2" from Consent
+    When I click "Save settings"
+    Then I should see "Configuration saved" flash message
 
   Scenario: Create customer group
     Given I proceed as the Admin
@@ -543,7 +627,7 @@ Feature: Consent management via Management Console UI
     And click "Configuration" on row "Default" in grid
     And follow "Commerce/Customer/Consents" on configuration sidebar
     And click "Add Consent"
-    And I choose Consent "Test Consent 3" in 5 row
+    And I choose Consent "Test Consent 3" in 4 row
     When click "Save settings"
     Then I should see "Configuration saved" flash message
 
