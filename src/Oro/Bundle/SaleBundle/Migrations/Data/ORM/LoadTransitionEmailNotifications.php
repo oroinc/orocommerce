@@ -15,6 +15,9 @@ use Oro\Bundle\WorkflowBundle\Migrations\Data\ORM\LoadWorkflowNotificationEvents
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
+/**
+ * Fixture for email notifications
+ */
 class LoadTransitionEmailNotifications extends AbstractFixture implements
     DependentFixtureInterface,
     ContainerAwareInterface
@@ -29,7 +32,7 @@ class LoadTransitionEmailNotifications extends AbstractFixture implements
         'quote_approved' => 'approve_transition',
         'quote_approved_and_sent_to_customer' => 'approve_and_send_to_customer_transition',
         'quote_cancelled' => 'cancel_transition',
-        'quote_created' => 'create_new_quote_transition',
+        'quote_created' => '__start__',
         'quote_declined' => 'decline_transition',
         'quote_declined_by_customer' => 'decline_by_customer_transition',
         'quote_deleted' => 'delete_transition',

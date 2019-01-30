@@ -488,6 +488,13 @@ services:
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: "oro_product_visibility_limited" }
 
+    oro_product.autocomplete.configurable_product_visibility_limited.search_handler:
+        parent: oro_product.autocomplete.product_visibility_limited.search_handler
+        calls:
+            - [enableConfigurableProducts]
+        tags:
+            - { name: oro_form.autocomplete.search_handler, alias: "oro_all_product_visibility_limited" }
+
     oro_product.autocomplete.oro_product_visibility_limited_with_prices.search_handler:
         class: 'Oro\Bundle\ProductBundle\Autocomplete\ProductVisibilityLimitedWithPricesSearchHandler'
         public: false
@@ -1411,10 +1418,10 @@ services:
 
     oro_product.entity_alias_provider:
         class: Oro\Bundle\ProductBundle\Provider\ProductEntityAliasProvider
-        arguments:
-            - '@oro_entity_config.config.attributes_config_helper'
-            - '@oro_entity_config.config_manager'
         public: false
+        arguments:
+            - '@oro_entity_config.config_manager'
+            - '@oro_entity.entity_alias_duplicate_resolver'
         tags:
             - { name: oro_entity.alias_provider }
 
@@ -1522,3 +1529,10 @@ services:
         public: false
         arguments:
             - '@oro_entity.doctrine_helper'
+
+    oro_product.datagrid.event_listener.frontend_product_clean_up:
+        class: 'Oro\Bundle\ProductBundle\DataGrid\EventListener\FrontendProductCleanUpListener'
+        arguments:
+            - '@oro_entity.doctrine_helper'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.search_datasource.result.after.frontend-product-search-grid, method: onSearchResultAfter}

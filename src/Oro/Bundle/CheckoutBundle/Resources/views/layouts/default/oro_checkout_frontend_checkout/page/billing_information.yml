@@ -4,11 +4,6 @@ layout:
             themes: 'OroCheckoutBundle:layouts:default/oro_checkout_frontend_checkout/templates/billing_information.html.twig'
 
         - '@setOption':
-            id: checkout_information_title
-            optionName: stepOrder
-            optionValue: 1
-
-        - '@setOption':
             id: checkout_button_continue
             optionName: visible
             optionValue: '=context["is_logged_in"] || !data["checkout"].getRegisteredCustomerUser() || data["feature"].isFeatureEnabled("allow_checkout_without_email_confirmation_feature")'
@@ -24,4 +19,4 @@ layout:
                     flashMessageOnSubmit: '=data["translator"].getTrans("oro.checkout.confirm_email_flash_message")'
                 visible:  '=!context["is_logged_in"] && data["checkout"].getRegisteredCustomerUser() && !data["feature"].isFeatureEnabled("allow_checkout_without_email_confirmation_feature")'
 
-    conditions: 'context["workflowStepName"]=="enter_billing_address" && !context["widget_container"]'
+    conditions: '!context["widget_container"]'

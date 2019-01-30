@@ -1,0 +1,3 @@
+services:
+    oro_product.importexport.normalizer.product_image.test:
+        alias: oro_product.importexport.normalizer.product_image

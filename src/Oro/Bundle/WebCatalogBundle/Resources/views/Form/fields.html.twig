@@ -24,6 +24,7 @@
         <div class="scope-elements">
             <h5>{{ form.scopes.vars.label|trans }}</h5>
             {{ form_widget(form.scopes) }}
+            {{ form_errors(form.scopes) }}
         </div>
 
         <div class="hide">

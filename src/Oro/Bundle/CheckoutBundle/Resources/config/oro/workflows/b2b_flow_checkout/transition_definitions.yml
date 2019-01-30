@@ -56,7 +56,9 @@ workflows:
                             data.checkout: $.checkout
                             result.redirectUrl: $.redirectUrl
                     - '@transit_workflow':
-                       [$checkout, 'start_checkout_as_guest_system', 'b2b_flow_checkout']
+                        entity: $checkout
+                        transition: start_checkout_as_guest_system
+                        workflow: $.definition.name
 
             start_checkout_as_guest_system_definition:
                 actions:
@@ -65,7 +67,59 @@ workflows:
                         route_parameters:
                             id: $checkout.id
 
-            continue_checkout_as_guest_definition: ~
+            continue_to_billing_address_definition:
+                preactions:
+                    - '@assign_value': [$consents_available, true]
+                    - '@generate_checkout_state_snapshot':
+                        entity: $checkout
+                        attribute: $.result.currentCheckoutState
+                    - '@get_checkout_state':
+                        entity: $checkout
+                        token: $state_token
+                        attribute: $.result.tokenCheckoutState
+                    - '@tree':
+                        conditions:
+                            '@not':
+                                - '@check_checkout_states':
+                                    entity: $checkout
+                                    state1: $.result.currentCheckoutState
+                                    state2: $.result.tokenCheckoutState
+                        actions:
+                            - '@assign_value': [$.result.savedCheckoutState, $.result.tokenCheckoutState]
+                            - '@delete_checkout_state':
+                                entity: $checkout
+                                token: $state_token
+                            - '@save_checkout_state':
+                                entity: $checkout
+                                state: $.result.currentCheckoutState
+                                token: $state_token
+                actions:
+                    - '@generate_checkout_state_snapshot':
+                        entity: $checkout
+                        attribute: $.result.actualCheckoutState
+                    - '@save_checkout_state':
+                        entity: $checkout
+                        state: $.result.actualCheckoutState
+                        attribute: $state_token
+                    - '@assign_value': [$internal_state_token, $state_token]
+                    - '@save_accepted_consents':
+                        acceptedConsents: $customerConsents
+
+            verify_customer_consents_definition:
+                preconditions:
+                    '@not':
+                        - '@is_consents_accepted':
+                            acceptedConsents: $customerConsents
+                preactions:
+                    - '@flash_message':
+                        conditions:
+                            '@and':
+                                - '@not':
+                                    - '@is_consents_accepted':
+                                        acceptedConsents: $customerConsents
+                                - '@equal': [$consents_available, true]
+                        message: oro.checkout.workflow.condition.required_consents_should_be_checked.message
+                        type: 'warning'
 
             back_to_billing_address_definition:
                 preconditions:
@@ -83,6 +137,16 @@ workflows:
                         state: $.result.actualCheckoutState
                         attribute: $state_token
                     - '@assign_value': [$internal_state_token, $state_token]
+                    - '@tree':
+                        conditions:
+                            '@not':
+                                - '@is_consents_accepted':
+                                    acceptedConsents: $customerConsents
+                        actions:
+                            - '@transit_workflow':
+                                entity: $checkout
+                                transition: back_to_customer_consents
+                                workflow: $.definition.name
 
             continue_to_shipping_address_definition:
                 preactions:
@@ -172,7 +236,9 @@ workflows:
                             - '@transit_workflow':
                                 entity: $checkout
                                 transition: continue_to_shipping_method
-                                workflow: 'b2b_flow_checkout'
+                                workflow: $.definition.name
+                    - '@save_accepted_consents':
+                        acceptedConsents: $customerConsents
 
             continue_to_shipping_method_definition:
                 preactions:

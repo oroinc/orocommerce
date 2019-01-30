@@ -16,7 +16,7 @@ oro_behat_extension:
 
     BackendOrderLineItem:
       class: Oro\Bundle\OrderBundle\Tests\Behat\Element\BackendOrderLineItem
-      selector: 'tr'
+      selector: 'tbody > tr.order-line-item'
 
     BackendOrderLineItemsTable:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Table
@@ -56,7 +56,7 @@ oro_behat_extension:
       selector: 'h1.page-title .page-title__text'
 
     Order Payment Transaction Grid:
-      selector: "div[id^='grid-order-payment-transactions-grid'] div.grid-container"
+      selector: "div[id^='grid-order-payment-transactions-grid']"
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
 
     Calculate Shipping Button:
@@ -196,5 +196,7 @@ oro_behat_extension:
         - OroShoppingListBundle::FeatureContext
         - OroPromotionBundle::PromotionContext
         - OroTaxBundle::TaxContext
+        - OroLocaleBundle::LocalizationContext
+        - OroFrontendLocalizationBundle::LocalizationSwitcherContext
       paths:
         - '@OroOrderBundle/Tests/Behat/Features'

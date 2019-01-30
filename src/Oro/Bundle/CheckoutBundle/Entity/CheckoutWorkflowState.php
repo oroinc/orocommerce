@@ -3,12 +3,13 @@
 namespace Oro\Bundle\CheckoutBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface; // required by DatesAwareTrait
+use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\SecurityBundle\Tools\UUIDGenerator;
 
 /**
+ * Store Checkout Workflow State in a database
+ *
  * @ORM\Entity(repositoryClass="Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutWorkflowStateRepository")
  * @ORM\Table(name="oro_checkout_workflow_state",
  *     uniqueConstraints={@ORM\UniqueConstraint(

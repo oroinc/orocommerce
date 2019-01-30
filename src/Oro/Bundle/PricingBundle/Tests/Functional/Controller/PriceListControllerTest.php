@@ -23,7 +23,6 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 use Symfony\Component\DomCrawler\Form;
-use Symfony\Component\Intl\Intl;
 
 /**
  * @group CommunityEdition

@@ -3,7 +3,6 @@
 namespace Oro\Bundle\OrderBundle\Converter;
 
 use Doctrine\Common\Collections\Collection;
-use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\PaymentBundle\Context\LineItem\Builder\Factory\PaymentLineItemBuilderFactoryInterface;
 use Oro\Bundle\PaymentBundle\Context\LineItem\Collection\Factory\PaymentLineItemCollectionFactoryInterface;
 

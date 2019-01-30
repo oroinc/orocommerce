@@ -53,6 +53,7 @@ Feature: Mass Product Actions for Guest user
     And I fill line item with "rtsh_m" in frontend product grid:
       | Quantity | 3    |
       | Unit     | item |
+    And I scroll to top
     And I click "Add to current Shopping List" link from mass action dropdown in "Product Frontend Grid"
     And I hover on "Shopping List Widget"
     And I should see "1 Item | $21.00" in the "Shopping List Widget" element

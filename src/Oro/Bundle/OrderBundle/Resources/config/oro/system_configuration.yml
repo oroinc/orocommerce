@@ -18,11 +18,17 @@ system_configuration:
             type: Oro\Bundle\ProductBundle\Form\Type\ProductInventoryStatusSelectType
             options:
                 label: oro.order.system_configuration.fields.backend_product_visibility.title
+                required: true
+                constraints:
+                    - NotBlank: ~
         oro_order.frontend_product_visibility:
             data_type: array
             type: Oro\Bundle\ProductBundle\Form\Type\ProductInventoryStatusSelectType
             options:
                 label: oro.order.system_configuration.fields.frontend_product_visibility.title
+                required: true
+                constraints:
+                    - NotBlank: ~
         oro_order.order_automation_enable_cancellation:
             data_type: boolean
             type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
@@ -78,6 +84,13 @@ system_configuration:
             options:
                 label: oro.order.system_configuration.fields.order_previously_purchased_period.title
                 tooltip: oro.order.system_configuration.fields.order_previously_purchased_period.tooltip
+                required: true
+                constraints:
+                    - NotBlank: ~
+                    - Range:
+                        min: 0
+                    - Type:
+                        type: integer
 
     tree:
         system_configuration:

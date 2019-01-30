@@ -64,7 +64,7 @@ oro:
             type_restriction: 'You cannot choose multiple types with the same value "%type%"'
 
         product_collection:
-            unique_segment_name.message: 'This name already in use'
+            unique_segment_name.message: 'There is another segment with a similar name.'
             blank_filters_or_included: "Should be specified filters or added some products manually."
             blank_condition_item: "Conditions in filters should not be blank."
             blank_condition_group: "Conditions groups in filters should not be blank."

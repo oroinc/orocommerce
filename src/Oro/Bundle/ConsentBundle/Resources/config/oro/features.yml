@@ -1,0 +1,14 @@
+features:
+    consents:
+        label: oro.consent.feature.label
+        description: oro.consent.feature.description
+        toggle: oro_consent.consent_feature_enabled
+        routes:
+            - 'oro_consent_index'
+            - 'oro_consent_create'
+            - 'oro_consent_update'
+            - 'oro_consent_view'
+            - 'oro_consent_info'
+        configuration:
+            - 'oro_consent.enabled_consents'
+            - 'oro_consent.consent_contact_reason'

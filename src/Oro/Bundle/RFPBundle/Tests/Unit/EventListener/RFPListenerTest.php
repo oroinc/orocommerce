@@ -78,10 +78,6 @@ class RFPListenerTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @param string $token
-     * @param Request $request
-     */
     public function testPrePersistSetDefaultOwner()
     {
         $token = $this->createAnonymousToken();
@@ -104,6 +100,43 @@ class RFPListenerTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($newUser, $request->getOwner());
     }
 
+    public function testPrePersistCreatesNewCustomerUser()
+    {
+        $token = $this->createAnonymousToken();
+        $request = new Request();
+        $request->setEmail('Some mail')
+            ->setFirstName('Firstname')
+            ->setLastName('Lastname');
+
+        $this->tokenAccessor
+            ->expects($this->once())
+            ->method('getToken')
+            ->willReturn($token);
+
+        $newUser = new User();
+        $newUser->setFirstName('first_name');
+        $this->defaultUserProvider
+            ->expects($this->once())
+            ->method('getDefaultUser')
+            ->with('oro_rfp', 'default_guest_rfp_owner')
+            ->willReturn($newUser);
+
+        $customerUser = new CustomerUser();
+        $this->customerUserManager->expects($this->once())
+            ->method('generateGuestCustomerUser')
+            ->with(
+                [
+                    'email' => $request->getEmail(),
+                    'first_name' => $request->getFirstName(),
+                    'last_name' => $request->getLastName()
+                ]
+            )
+            ->willReturn($customerUser);
+        $this->listener->prePersist($request);
+        $this->assertSame($newUser, $request->getOwner());
+        $this->assertSame($customerUser, $request->getCustomerUser());
+    }
+
     /**
      * @return AnonymousCustomerUserToken
      */
@@ -111,8 +144,7 @@ class RFPListenerTest extends \PHPUnit\Framework\TestCase
     {
         $visitor = new CustomerVisitor();
         $visitor->setCustomerUser(new CustomerUser);
-        $token = new AnonymousCustomerUserToken('', [], $visitor);
 
-        return $token;
+        return new AnonymousCustomerUserToken('', [], $visitor);
     }
 }

@@ -1,0 +1,7 @@
+styles:
+    inputs:
+        - 'bundles/oroconsent/blank/scss/variables/consent-dialog-widget-config.scss'
+        - 'bundles/oroconsent/blank/scss/variables/consent-item-config.scss'
+        - 'bundles/oroconsent/blank/scss/variables/consent-list-config.scss'
+
+        - 'bundles/oroconsent/blank/scss/styles.scss'

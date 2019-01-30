@@ -4,7 +4,6 @@ namespace Oro\Bundle\CheckoutBundle\EventListener;
 
 use Oro\Bundle\CustomerBundle\Event\CustomerUserEmailSendEvent;
 use Oro\Bundle\CustomerBundle\Mailer\Processor;
-use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**

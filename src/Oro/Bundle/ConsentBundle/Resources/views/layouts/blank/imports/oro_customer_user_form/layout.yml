@@ -1,0 +1,21 @@
+layout:
+    imports:
+        -
+            id: oro_consent_items
+            namespace: edit_profile
+            root: __customer_user_form_fields_data_protection
+    actions:
+        - '@setBlockTheme':
+            themes: 'data_protection.html.twig'
+        - '@setOption':
+            id: edit_profile_consent_wrapper
+            optionName: consents
+            optionValue: '=data["oro_frontend_consent_provider"].getAllConsentData()'
+        - '@add':
+            id: __customer_user_form_fields_data_protection
+            blockType: container
+            parentId: __customer_user_form_fields_container
+            siblingId: __customer_user_form_fields_password
+            prepend: true
+            options:
+                visible: '=data["oro_frontend_consent_provider"].getAllConsentData() and data["oro_frontend_consent_provider"].isCustomerUserCurrentlyLoggedIn(data["entity"])'

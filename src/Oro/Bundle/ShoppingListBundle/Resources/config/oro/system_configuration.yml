@@ -35,6 +35,13 @@ system_configuration:
             options:
                 label: oro.shoppinglist.system_configuration.groups.shopping_list_limit.title
                 tooltip: oro.shoppinglist.system_configuration.fields.shopping_list_limit.tooltip
+                required: true
+                constraints:
+                    - NotBlank: ~
+                    - Range:
+                        min: 0
+                    - Type:
+                        type: integer
 
         oro_shopping_list.default_guest_shopping_list_owner:
             ui_only: true

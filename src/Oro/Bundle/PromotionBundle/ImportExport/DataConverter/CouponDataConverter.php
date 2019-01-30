@@ -5,8 +5,12 @@ namespace Oro\Bundle\PromotionBundle\ImportExport\DataConverter;
 use Oro\Bundle\EntityBundle\Helper\FieldHelper;
 use Oro\Bundle\ImportExportBundle\Converter\ConfigurableTableDataConverter;
 use Oro\Bundle\ImportExportBundle\Converter\RelationCalculatorInterface;
+use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 use Symfony\Component\Translation\TranslatorInterface;
 
+/**
+ * Data converter for promotion data.
+ */
 class CouponDataConverter extends ConfigurableTableDataConverter
 {
     /**
@@ -17,14 +21,16 @@ class CouponDataConverter extends ConfigurableTableDataConverter
     /**
      * @param FieldHelper $fieldHelper
      * @param RelationCalculatorInterface $relationCalculator
+     * @param LocaleSettings $localeSettings
      * @param TranslatorInterface $translator
      */
     public function __construct(
         FieldHelper $fieldHelper,
         RelationCalculatorInterface $relationCalculator,
+        LocaleSettings $localeSettings,
         TranslatorInterface $translator
     ) {
-        parent::__construct($fieldHelper, $relationCalculator);
+        parent::__construct($fieldHelper, $relationCalculator, $localeSettings);
 
         $this->translator = $translator;
     }

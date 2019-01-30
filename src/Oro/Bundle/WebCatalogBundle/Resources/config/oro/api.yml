@@ -1,0 +1,13 @@
+api:
+    entities:
+        Oro\Bundle\WebCatalogBundle\Entity\WebCatalog:
+            documentation_resource: '@OroWebCatalogBundle/Resources/doc/api/web_catalog.md'
+            actions:
+                get_list: false
+                create: false
+                update: false
+                delete: false
+                delete_list: false
+            fields:
+                tree:
+                    data_type: array

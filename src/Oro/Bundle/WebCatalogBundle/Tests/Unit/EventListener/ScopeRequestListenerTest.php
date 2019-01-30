@@ -52,39 +52,12 @@ class ScopeRequestListenerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testOnKernelRequestSubRequest()
-    {
-        /** @var GetResponseEvent|\PHPUnit\Framework\MockObject\MockObject $event */
-        $event = $this->getMockBuilder(GetResponseEvent::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $request = Request::create('/');
-        $event->expects($this->any())
-            ->method('getRequest')
-            ->willReturn($request);
-        $event->expects($this->once())
-            ->method('isMasterRequest')
-            ->willReturn(false);
-
-        $this->scopeManager->expects($this->never())
-            ->method($this->anything());
-
-        $this->matchedUrlDecisionMaker->expects($this->any())
-            ->method('matches')
-            ->willReturn(true);
-
-        $this->scopeRequestListener->onKernelRequest($event);
-    }
-
     public function testOnKernelHasAttribute()
     {
         /** @var GetResponseEvent|\PHPUnit\Framework\MockObject\MockObject $event */
         $event = $this->getMockBuilder(GetResponseEvent::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $event->expects($this->once())
-            ->method('isMasterRequest')
-            ->willReturn(true);
         $request = Request::create('/');
         $scope = new StubScope(['id' => 42]);
         $request->attributes->set('_web_content_scope', $scope);
@@ -110,9 +83,6 @@ class ScopeRequestListenerTest extends \PHPUnit\Framework\TestCase
             ->getMock();
 
         $request = Request::create('/');
-        $event->expects($this->once())
-            ->method('isMasterRequest')
-            ->willReturn(true);
         $event->expects($this->any())
             ->method('getRequest')
             ->willReturn($request);
@@ -138,9 +108,6 @@ class ScopeRequestListenerTest extends \PHPUnit\Framework\TestCase
         $event = $this->getMockBuilder(GetResponseEvent::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $event->expects($this->once())
-            ->method('isMasterRequest')
-            ->willReturn(true);
         $event->expects($this->any())
             ->method('getRequest')
             ->willReturn($request);
@@ -177,9 +144,6 @@ class ScopeRequestListenerTest extends \PHPUnit\Framework\TestCase
         $event = $this->getMockBuilder(GetResponseEvent::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $event->expects($this->once())
-            ->method('isMasterRequest')
-            ->willReturn(true);
         $event->expects($this->any())
             ->method('getRequest')
             ->willReturn($request);

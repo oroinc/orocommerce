@@ -74,7 +74,8 @@ class LineItemController extends RestController implements ClassResourceInterfac
                 $request,
                 $this->getDoctrine(),
                 $this->get('oro_shopping_list.manager.shopping_list'),
-                $this->get('oro_shopping_list.manager.current_shopping_list')
+                $this->get('oro_shopping_list.manager.current_shopping_list'),
+                $this->get('validator')
             );
             $isFormHandled = $handler->process($entity);
             if ($isFormHandled) {

@@ -1,0 +1,29 @@
+layout:
+    imports:
+        -
+            id: oro_consent_items
+            namespace: checkout
+            root: checkout_consent_container
+    actions:
+        - '@setBlockTheme':
+            themes: '../templates/consents.html.twig'
+
+        - '@setOption':
+            id: checkout_consent_wrapper
+            optionName: appliedConsents
+            optionValue: '=data["workflowItem"].getData().get("customerConsents") ? data["workflowItem"].getData().get("customerConsents").toArray() : []'
+
+        - '@add':
+            id: checkout_consent_container
+            blockType: container
+            parentId: checkout_form
+            prepend: true
+
+        - '@add':
+            id: checkout_consent_message
+            blockType: consent_acceptance_choice
+            parentId: checkout_consent_container
+            options:
+                appliedConsents: '=data["workflowItem"].getData().get("customerConsents") ? data["workflowItem"].getData().get("customerConsents").toArray() : []'
+
+    conditions: 'context["workflowStepName"]=="customer_consents"'

@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\SEOBundle\Tests\Functional\Controller;
 
-use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\CMSBundle\Tests\Functional\DataFixtures\LoadPageData;
 use Oro\Bundle\SEOBundle\Tests\Functional\DataFixtures\LoadPageMetaData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;

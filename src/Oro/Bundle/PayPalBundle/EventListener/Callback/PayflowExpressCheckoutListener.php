@@ -5,7 +5,6 @@ namespace Oro\Bundle\PayPalBundle\EventListener\Callback;
 use Oro\Bundle\PaymentBundle\Event\AbstractCallbackEvent;
 use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
 use Oro\Bundle\PayPalBundle\Method\PayPalExpressCheckoutPaymentMethod;
-use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway\Option as GatewayOption;
 use Psr\Log\LoggerAwareTrait;
 
 class PayflowExpressCheckoutListener

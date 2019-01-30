@@ -2,7 +2,8 @@
 
 namespace Oro\Bundle\FrontendLocalizationBundle\Tests\Unit\Manager;
 
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserSettings;
@@ -11,7 +12,6 @@ use Oro\Bundle\LocaleBundle\DependencyInjection\Configuration;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Manager\LocalizationManager;
 use Oro\Bundle\TranslationBundle\Entity\Language;
-use Oro\Bundle\UserBundle\Entity\BaseUserManager;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -36,11 +36,11 @@ class UserLocalizationManagerTest extends \PHPUnit\Framework\TestCase
     /** @var TokenStorageInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $tokenStorage;
 
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
+    private $doctrine;
+
     /** @var WebsiteManager|\PHPUnit\Framework\MockObject\MockObject */
     private $websiteManager;
-
-    /** @var BaseUserManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $userManager;
 
     /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
     private $configManager;
@@ -54,35 +54,22 @@ class UserLocalizationManagerTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    public function setUp()
+    protected function setUp()
     {
-        $this->session = $this->getMockBuilder(Session::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->session = $this->createMock(Session::class);
         $this->tokenStorage = $this->createMock(TokenStorageInterface::class);
-        $this->configManager = $this->getMockBuilder(ConfigManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->websiteManager = $this->getMockBuilder(WebsiteManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->userManager = $this->getMockBuilder(BaseUserManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->configManager = $this->getMockBuilder(ConfigManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->localizationManager = $this->getMockBuilder(LocalizationManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->doctrine = $this->createMock(ManagerRegistry::class);
+        $this->configManager = $this->createMock(ConfigManager::class);
+        $this->websiteManager = $this->createMock(WebsiteManager::class);
+        $this->configManager = $this->createMock(ConfigManager::class);
+        $this->localizationManager = $this->createMock(LocalizationManager::class);
 
         $this->userLocalizationManager = new UserLocalizationManager(
             $this->session,
             $this->tokenStorage,
+            $this->doctrine,
             $this->configManager,
             $this->websiteManager,
-            $this->userManager,
             $this->localizationManager
         );
     }
@@ -179,9 +166,7 @@ class UserLocalizationManagerTest extends \PHPUnit\Framework\TestCase
         $userWebsiteSettings = new CustomerUserSettings($website);
         $userWebsiteSettings->setLocalization($localization1);
 
-        $user = $this->getMockBuilder(CustomerUser::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $user = $this->createMock(CustomerUser::class);
 
         $this->websiteManager->expects($this->never())
             ->method('getCurrentWebsite');
@@ -291,9 +276,7 @@ class UserLocalizationManagerTest extends \PHPUnit\Framework\TestCase
         $localization = $this->getEntity(Localization::class, ['id' => 1]);
         /** @var Website $website **/
         $website = $this->getEntity(Website::class, ['id' => 1]);
-        $user = $this->getMockBuilder(CustomerUser::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $user = $this->createMock(CustomerUser::class);
 
         $this->websiteManager->expects($this->never())
             ->method('getCurrentWebsite');
@@ -306,11 +289,12 @@ class UserLocalizationManagerTest extends \PHPUnit\Framework\TestCase
             ->willReturn($token);
         $user->expects($this->once())
             ->method('setWebsiteSettings');
-        $em = $this->createMock(ObjectManager::class);
+        $em = $this->createMock(EntityManagerInterface::class);
         $em->expects($this->once())
             ->method('flush');
-        $this->userManager->expects($this->once())
-            ->method('getStorageManager')
+        $this->doctrine->expects($this->once())
+            ->method('getManagerForClass')
+            ->with(CustomerUser::class)
             ->willReturn($em);
 
         $this->userLocalizationManager->setCurrentLocalization($localization, $website);

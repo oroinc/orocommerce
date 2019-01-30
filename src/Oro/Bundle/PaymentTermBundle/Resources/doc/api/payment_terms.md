@@ -4,15 +4,15 @@
 
 ### get
 
-Retrieve a single payment term that includes information about its custom label.
+Retrieve a specific payment term record.
 
-**Definition:** Payment terms are the conditions that are used to complete a sale and typically cover a payment due date (e.g. payment ten days after invoice date) and/or payment conditions (e.g. cash before shipment).
+{@inheritdoc}
 
 ### get_list
 
-Retrieve a collection of all available payment terms. An item in the collection is a single payment term that includes information about its custom label.
+Retrieve a collection of all available payment terms.
 
-**Definition:** Payment terms are the conditions that are used to complete a sale and typically cover a payment due date (e.g. payment ten days after invoice date) and/or payment conditions (e.g. cash before shipment).
+{@inheritdoc}
 
 ### create
 
@@ -20,7 +20,7 @@ Create a new payment term record.
 
 The created record is returned in the response.
 
-**Definition:** Payment terms are the conditions that are used to complete a sale and typically covers a payment due date (e.g. payment ten days after invoice date) and/or payment conditions (e.g. cash before shipment).
+{@inheritdoc}
 
 {@request:json_api}
 Example:
@@ -42,7 +42,7 @@ Example:
 
 Update payment term label.
 
-**Definition:** Payment terms are the conditions that are used to complete a sale and typically cover a payment due date (e.g. payment ten days after invoice date) and/or payment conditions (e.g. cash before shipment).
+{@inheritdoc}
 
 {@request:json_api}
 Example:
@@ -65,16 +65,28 @@ Example:
 
 Delete a specific payment term record.
 
-**Definition:** Payment terms are the conditions that are used to complete a sale and typically cover a payment due date (e.g. payment ten days after invoice date) and/or payment conditions (e.g. cash before shipment).
+{@inheritdoc}
 
 ### delete_list
 
 Delete a collection of payment term records.
 
-**Definition:** Payment terms are the conditions that are used to complete a sale and typically cover a payment due date (e.g. payment ten days after invoice date) and/or payment conditions (e.g. cash before shipment).
+{@inheritdoc}
 
 ## FIELDS
 
 ### label
 
-A custom label that describes a payment term, e.g. *Net 10*, *COD* or *CWO*.
+#### create
+
+{@inheritdoc}
+
+**The required field**
+
+#### update
+
+{@inheritdoc}
+
+**Please note:**
+
+*This field is **required** and must remain defined.*

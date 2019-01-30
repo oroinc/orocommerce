@@ -6,10 +6,6 @@ layout:
         - '@setBlockTheme':
             themes:
                 - 'OroCheckoutBundle:layouts:default/oro_checkout_frontend_checkout/templates/payment.html.twig'
-        - '@setOption':
-            id: checkout_information_title
-            optionName: stepOrder
-            optionValue: 4
 
         - '@add':
             id: payment_methods

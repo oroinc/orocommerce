@@ -7,9 +7,23 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 
+/**
+ * Manage customer login page formatting
+ * Covers logic of adding css field to form, field is shown only if it enabled in settings
+ */
 class LoginPageType extends AbstractType
 {
-    const NAME = 'oro_cms_login_page';
+    public const NAME = 'oro_cms_login_page';
+
+    /**
+     * @var bool
+     */
+    private $cssFieldEnable;
+
+    public function __construct(bool $cssFieldEnable = false)
+    {
+        $this->cssFieldEnable = $cssFieldEnable;
+    }
 
     /**
      * {@inheritdoc}
@@ -34,18 +48,10 @@ class LoginPageType extends AbstractType
                 ]
             )
             ->add(
-                'css',
-                TextareaType::class,
-                [
-                    'label' => 'oro.cms.loginpage.css.label',
-                    'required' => false
-                ]
-            )
-            ->add(
                 'logoImage',
                 ImageType::class,
                 [
-                    'label'    => 'oro.cms.loginpage.logo_image.label',
+                    'label' => 'oro.cms.loginpage.logo_image.label',
                     'required' => false
                 ]
             )
@@ -53,10 +59,22 @@ class LoginPageType extends AbstractType
                 'backgroundImage',
                 ImageType::class,
                 [
-                    'label'    => 'oro.cms.loginpage.background_image.label',
+                    'label' => 'oro.cms.loginpage.background_image.label',
                     'required' => false
                 ]
             );
+
+        if ($this->cssFieldEnable) {
+            $builder
+                ->add(
+                    'css',
+                    TextareaType::class,
+                    [
+                        'label' => 'oro.cms.loginpage.css.label',
+                        'required' => false
+                    ]
+                );
+        }
     }
 
     /**

@@ -170,7 +170,6 @@ define(function(require) {
             this.month = e.target.value;
 
             this.setExpirationDate();
-            this.validateIfMonthAndYearNotBlank();
         },
 
         /**
@@ -179,11 +178,6 @@ define(function(require) {
         collectYearDate: function(e) {
             this.year = e.target.value;
             this.setExpirationDate();
-            this.validateIfMonthAndYearNotBlank();
-        },
-
-        validateIfMonthAndYearNotBlank: function() {
-            this.validate(this.options.selectors.expirationDate);
         },
 
         setExpirationDate: function() {
@@ -235,7 +229,6 @@ define(function(require) {
             virtualForm.append(appendElement);
 
             var self = this;
-            // should be refactored in scope https://magecore.atlassian.net/browse/BB-10308
             var validator = virtualForm.validate({
                 ignore: '', // required to validate all fields in virtual form
                 errorPlacement: function(error, element) {

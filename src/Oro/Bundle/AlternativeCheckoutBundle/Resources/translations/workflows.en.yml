@@ -3,6 +3,8 @@ oro:
         b2b_flow_alternative_checkout:
             label: 'Alternative Checkout'
             step:
+                customer_consents:
+                    label: 'Agreements'
                 enter_billing_address:
                     label: 'Billing Information'
                 enter_shipping_address:
@@ -88,6 +90,10 @@ oro:
                     label: 'Save payment data for later use'
                 email:
                     label: 'Email'
+                customer_consents:
+                    label: 'Customer consents'
+                consents_available:
+                    label: 'Is consents available'
             transition:
                 __start__:
                     label: 'Create Order'
@@ -98,6 +104,12 @@ oro:
                 start_from_quickorderform:
                     label: 'Create Order'
                     warning_message: ''
+                continue_to_billing_address:
+                    label: Continue
+                    state_token:
+                        label: ''
+                    customerConsents:
+                        label: 'Customer consents'
                 continue_to_shipping_address:
                     label: Continue
                     warning_message: ''
@@ -168,6 +180,8 @@ oro:
                             label: ''
                         state_token:
                             label: ''
+                back_to_customer_consents:
+                    label: 'Edit Customer Consents'
                 back_to_billing_address:
                     label: 'Edit Billing Information'
                     warning_message: ''
@@ -219,6 +233,9 @@ oro:
                     warning_message: ''
                 payment_error:
                     label: 'Payment error'
+                    warning_message: ''
+                verify_customer_consents:
+                    label: 'Verify Customer Consents'
                     warning_message: ''
                 verify_payment:
                     label: 'Verify Payment'

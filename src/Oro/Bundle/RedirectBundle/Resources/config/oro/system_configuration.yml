@@ -19,6 +19,9 @@ system_configuration:
             priority: 300
             options:
                 label: oro.redirect.system_configuration.fields.canonical_url_type.label
+                required: true
+                constraints:
+                    - NotBlank: ~
                 choices:
                     oro.redirect.system_configuration.fields.canonical_url_type.choice.system.label: system
                     oro.redirect.system_configuration.fields.canonical_url_type.choice.direct.label: direct
@@ -30,6 +33,9 @@ system_configuration:
             priority: 200
             options:
                 label: oro.redirect.system_configuration.fields.redirect_generation_strategy.label
+                required: true
+                constraints:
+                    - NotBlank: ~
                 choices:
                     oro.redirect.system_configuration.fields.redirect_generation_strategy.choice.ask.label: ask
                     oro.redirect.system_configuration.fields.redirect_generation_strategy.choice.always.label: always
@@ -42,6 +48,9 @@ system_configuration:
             priority: 200
             options:
                 label: oro.redirect.system_configuration.fields.canonical_url_security_type.label
+                required: true
+                constraints:
+                    - NotBlank: ~
                 choices:
                     oro.redirect.system_configuration.fields.canonical_url_security_type.choice.insecure.label: insecure
                     oro.redirect.system_configuration.fields.canonical_url_security_type.choice.secure.label: secure

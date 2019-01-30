@@ -262,8 +262,8 @@ define(function(require) {
 
         checkAddButton: function() {
             var enabled = Boolean(this.getProductId()) || (this.isFreeForm && this.options.allowEditFreeForm);
-            this.$addItemButton.toggle(enabled);
-            this.$itemCollection.toggle(enabled);
+            this.$addItemButton.toggleClass('d-none', !enabled);
+            this.$itemCollection.toggleClass('d-none', !enabled);
         },
 
         removeOfferRow: function() {

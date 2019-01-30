@@ -11,7 +11,8 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 /**
- * Checks if given QuoteDemand contains valid visitor or user has access to related quote.
+ * Limits QuoteDemand entity by the logged in customer user or current visitor.
+ * @see \Oro\Bundle\SaleBundle\Acl\AccessRule\FrontendQuoteDemandAccessRule
  */
 class FrontendQuoteDemandPermissionVoter extends Voter
 {

@@ -371,12 +371,13 @@ action_groups:
                             '@not_empty': $.customerShippingAddress
                         parameters: [$.customerShippingAddress]
 
-            - '@send_email_template':
-                parameters:
-                    from: $.order.owner.email
-                    to: [$.order.customerUser, $.checkout.registeredCustomerUser, $.email]
-                    template: 'order_confirmation_email'
-                    entity: $.order
+            - '@run_action_group':
+                action_group: b2b_flow_checkout_send_order_confirmation_email
+                parameters_mapping:
+                    checkout: $.checkout
+                    order: $.order
+                    workflow: 'b2b_flow_checkout'
+                    email: $.email
 
             - '@assign_value': [$.checkout.completed, true]
 
@@ -428,6 +429,24 @@ action_groups:
                             - '@equal': [$.remove_source, true]
                 parameters: [$.checkout.sourceEntity]
 
+    b2b_flow_checkout_send_order_confirmation_email:
+        parameters:
+            checkout:
+                type: Oro\Bundle\CheckoutBundle\Entity\Checkout
+            order:
+                type: Oro\Bundle\OrderBundle\Entity\Order
+            workflow:
+                type: string
+            email:
+                default: null
+        actions:
+            - '@send_order_confirmation_email':
+                  parameters:
+                      from: $.order.owner.email
+                      to: [$.order.customerUser, $.checkout.registeredCustomerUser, $.email]
+                      template: 'order_confirmation_email'
+                      entity: $.order
+
     b2b_flow_checkout_create_guest_customer_user:
         parameters:
             checkout:
@@ -452,7 +471,6 @@ action_groups:
                     - '@flush_entity': $.checkout.customerUser
                     - '@assign_value': [$visitor.customerUser, $.checkout.customerUser]
                     - '@flush_entity': $visitor
-
 
     b2b_flow_checkout_update_guest_customer_user:
         parameters:
@@ -519,10 +537,17 @@ action_groups:
                         method_parameters:
                           - $.checkout.registeredCustomerUser
 
-                    - '@assign_value': [$.result.confirmationRequired, true]
                     - '@assign_value': [$.order.customerUser, $.checkout.registeredCustomerUser]
                     - '@assign_value': [$.order.customer, $.checkout.registeredCustomerUser.customer]
                     - '@flush_entity': $.order
+                    - '@call_service_method':
+                        service: 'oro_consent.helper.copy_customer_consents'
+                        method: copyConsentsIfTargetHasNoAcceptedConsents
+                        method_parameters:
+                            - $.checkout.customerUser
+                            - $.checkout.registeredCustomerUser
+                    - '@flush_entity': $.checkout.registeredCustomerUser
+                    - '@assign_value': [$.result.confirmationRequired, true]
 
             - '@tree':
                 conditions:

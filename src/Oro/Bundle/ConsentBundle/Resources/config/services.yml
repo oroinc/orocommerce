@@ -1,0 +1,290 @@
+parameters:
+    oro_consent.entity.consent.class: Oro\Bundle\ConsentBundle\Entity\Consent
+    oro_consent.entity.consent_acceptance.class: Oro\Bundle\ConsentBundle\Entity\ConsentAcceptance
+
+services:
+    oro_consent.form.autocomplete.consent.search_handler:
+        public: false
+        parent: oro_form.autocomplete.search_handler
+        arguments:
+            - '%oro_consent.entity.consent.class%'
+            - ["defaultName"]
+        tags:
+            - { name: oro_form.autocomplete.search_handler, alias: oro_consent_list, acl_resource: oro_consent_view }
+
+    oro_consent.form.consent_collection_data_transformer:
+        class: 'Oro\Bundle\ConsentBundle\Form\DataTransformer\ConsentCollectionTransformer'
+        public: false
+        arguments:
+            - '@oro_consent.system_config.consent_config_converter'
+
+    oro_consent.form.transformer.customer_consents_transformer:
+        class: 'Oro\Bundle\ConsentBundle\Form\DataTransformer\CustomerConsentsTransformer'
+        public: false
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@oro_consent.provider.consent_acceptance_provider'
+
+    oro_consent.provider.enabled_consent_provider:
+        class: 'Oro\Bundle\ConsentBundle\Provider\EnabledConsentProvider'
+        public: false
+        arguments:
+            - '@oro_config.manager'
+            - '@oro_consent.system_config.consent_config_converter'
+            - '@oro_consent.provider.consent_context_provider'
+        calls:
+            - ['addFilter', ['@oro_consent.filter.admin_consent_content_node_valid_filter']]
+            - ['addFilter', ['@oro_consent.filter.frontend_consent_content_node_valid_filter']]
+            - ['addFilter', ['@oro_consent.filter.required_consent_filter']]
+
+    oro_consent.provider.consent_acceptance_provider:
+        class: 'Oro\Bundle\ConsentBundle\Provider\ConsentAcceptanceProvider'
+        public: false
+        arguments:
+            - '@security.token_storage'
+            - '@doctrine'
+
+    oro_consent.layout.data_provider.consent:
+        class: 'Oro\Bundle\ConsentBundle\Layout\DataProvider\FrontendConsentProvider'
+        arguments:
+            - '@oro_consent.provider.consent_data_provider'
+            - '@security.token_storage'
+        tags:
+            - { name: oro_featuretogle.feature, feature: consents }
+            - { name: layout.data_provider, alias: oro_frontend_consent_provider }
+
+    oro_consent.system_config.consent_config_converter:
+        class: 'Oro\Bundle\ConsentBundle\SystemConfig\ConsentConfigConverter'
+        arguments:
+            - '@doctrine'
+
+    oro_consent.event_listener.remove_consent_from_configuration:
+        class: 'Oro\Bundle\ConsentBundle\EventListener\RemoveFromConfigurationConsentEntityListener'
+        public: false
+        arguments:
+            - '@doctrine'
+            - '@oro_consent.config.consent_config_manager'
+        tags:
+            - { name: doctrine.orm.entity_listener, entity: '%oro_consent.entity.consent.class%', event: preRemove }
+
+    oro_consent.form.extension.frontend_customer_user_registration:
+        class: 'Oro\Bundle\ConsentBundle\Form\Extension\FrontendCustomerUserRegistrationExtension'
+        tags:
+            - { name: oro_featuretogle.feature, feature: consents }
+            - { name: form.type_extension, extended_type: Oro\Bundle\CustomerBundle\Form\Type\FrontendCustomerUserRegistrationType }
+
+    oro_consent.form.extension.frontend_customer_user_profile:
+        class: 'Oro\Bundle\ConsentBundle\Form\Extension\FrontendCustomerUserProfileExtension'
+        arguments:
+            - '@event_dispatcher'
+        tags:
+            - { name: oro_featuretogle.feature, feature: consents }
+            - { name: form.type_extension, extended_type: Oro\Bundle\CustomerBundle\Form\Type\FrontendCustomerUserProfileType }
+
+    oro_consent.form.extension.frontend_rfq:
+        class: 'Oro\Bundle\ConsentBundle\Form\Extension\FrontendRfqExtension'
+        tags:
+            - { name: oro_featuretogle.feature, feature: consents }
+            - { name: form.type_extension, extended_type: Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestType }
+
+    oro_consent.builder.consent_data_builder:
+        class: 'Oro\Bundle\ConsentBundle\Builder\ConsentDataBuilder'
+        public: false
+        arguments:
+            - '@oro_consent.provider.consent_acceptance_provider'
+            - '@oro_locale.helper.localization'
+            - '@oro_consent.builder.cms_page_data_builder'
+
+    oro_consent.helper.cms_page_helper:
+        class: 'Oro\Bundle\ConsentBundle\Helper\CmsPageHelper'
+        arguments:
+            - '@oro_web_catalog.content_node_tree_resolver'
+            - '@oro_consent.provider.consent_context_provider'
+
+    oro_consent.builder.cms_page_data_builder:
+        class: 'Oro\Bundle\ConsentBundle\Builder\CmsPageDataBuilder'
+        public: false
+        arguments:
+            - '@oro_consent.helper.cms_page_helper'
+            - '@oro_locale.helper.localization'
+            - '@oro_redirect.provider.routing_information_provider'
+            - '@router'
+
+    oro_consent.datagrid.landing_page_provider:
+        class: 'Oro\Bundle\ConsentBundle\Provider\LandingPageProvider'
+        arguments:
+            - '@doctrine'
+            - '@oro_locale.helper.localization'
+            - '@translator'
+
+    oro_consent.config.consent_config_manager:
+        class: 'Oro\Bundle\ConsentBundle\SystemConfig\ConsentConfigManager'
+        arguments:
+            - '@oro_config.manager'
+            - '@oro_config.global'
+            - '@oro_consent.system_config.consent_config_converter'
+
+    oro_consent.validator.unique_consent:
+        class: 'Oro\Bundle\ConsentBundle\Validator\Constraints\UniqueConsentValidator'
+        tags:
+            - { name: validator.constraint_validator, alias: oro_consent_unique_consent_validator }
+
+    oro_consent.validator.required_consents:
+        class: 'Oro\Bundle\ConsentBundle\Validator\Constraints\RequiredConsentsValidator'
+        arguments:
+            - '@oro_consent.provider.enabled_consent_provider'
+            - '@oro_locale.helper.localization'
+        tags:
+            - { name: validator.constraint_validator, alias: oro_consent.validator.required_consents }
+
+    oro_consent.validator.removed_consents:
+        class: 'Oro\Bundle\ConsentBundle\Validator\Constraints\RemovedConsentsValidator'
+        arguments:
+            - '@oro_entity.doctrine_helper'
+        tags:
+            - { name: validator.constraint_validator, alias: oro_consent_removed_consents_validator }
+
+    oro_consent.validator.removed_landing_pages:
+        class: 'Oro\Bundle\ConsentBundle\Validator\Constraints\RemovedLandingPagesValidator'
+        arguments:
+            - '@oro_entity.doctrine_helper'
+        tags:
+            - { name: validator.constraint_validator, alias: oro_consent_removed_landing_pages_validator }
+
+    oro_consent.event_listener.rfq_form_listener:
+        class: 'Oro\Bundle\ConsentBundle\EventListener\RfqBeforeFlushFormListener'
+        lazy: true
+        tags:
+            - { name: kernel.event_listener, event: oro.form.update_handler.before_entity_flush.oro_rfp_frontend_request, method: beforeFlush }
+            - { name: oro_featuretogle.feature, feature: consents }
+
+    oro_consent.filter.admin_consent_content_node_valid_filter:
+        class: 'Oro\Bundle\ConsentBundle\Filter\AdminConsentContentNodeValidFilter'
+        public: false
+        arguments:
+            - '@oro_frontend.request.frontend_helper'
+            - '@oro_consent.validator.consent_content_node_validator'
+            - '@oro_consent.provider.consent_acceptance_provider'
+
+    oro_consent.filter.frontend_consent_content_node_valid_filter:
+        class: 'Oro\Bundle\ConsentBundle\Filter\FrontendConsentContentNodeValidFilter'
+        public: false
+        arguments:
+            - '@oro_web_catalog.web_catalog_provider'
+            - '@logger'
+            - '@oro_website.manager'
+            - '@oro_frontend.request.frontend_helper'
+            - '@oro_consent.validator.consent_content_node_validator'
+            - '@oro_consent.provider.consent_acceptance_provider'
+
+    # It public, because it should be accessible for calls from action_group
+    oro_consent.helper.copy_customer_consents:
+        class: 'Oro\Bundle\ConsentBundle\Helper\CopyCustomerConsentsHelper'
+        public: true
+        arguments:
+            - '@oro_entity.doctrine_helper'
+
+    oro_consent.filter.required_consent_filter:
+        class: 'Oro\Bundle\ConsentBundle\Filter\RequiredConsentFilter'
+        public: false
+
+    oro_consent.provider.consent_context_provider:
+        class: 'Oro\Bundle\ConsentBundle\Provider\ConsentContextProvider'
+        public: false
+        arguments:
+            - '@oro_scope.scope_manager'
+            - '@oro_website.manager'
+
+    oro_consent.validator.consent_content_node_validator:
+        class: 'Oro\Bundle\ConsentBundle\Validator\ConsentContentNodeValidator'
+        public: false
+        arguments:
+            - '@logger'
+            - '@oro_consent.provider.consent_context_provider'
+            - '@oro_web_catalog.content_node_tree_resolver'
+
+    oro_consent.security.acl.voter.consent:
+        class: 'Oro\Bundle\ConsentBundle\Acl\Voter\ConsentVoter'
+        arguments:
+            - "@oro_entity.doctrine_helper"
+        calls:
+            - [setClassName, [%oro_consent.entity.consent.class%]]
+        tags:
+            - { name: security.voter, priority: 700 }
+
+    oro_consent.security.acl.voter.landingpage:
+        class: 'Oro\Bundle\ConsentBundle\Acl\Voter\LandingPageVoter'
+        arguments:
+            - "@oro_entity.doctrine_helper"
+        calls:
+            - [setClassName, [%oro_cms.entity.page.class%]]
+        tags:
+            - { name: security.voter, priority: 700 }
+
+    oro_consent.provider.consent_data_provider:
+        class: 'Oro\Bundle\ConsentBundle\Provider\ConsentDataProvider'
+        arguments:
+            - '@oro_consent.provider.enabled_consent_provider'
+            - '@oro_consent.builder.consent_data_builder'
+
+    oro_consent.condition.checkout_has_unaccepted_consents:
+        class: 'Oro\Bundle\ConsentBundle\Condition\IsConsentsAccepted'
+        arguments:
+            - '@oro_consent.provider.enabled_consent_provider'
+            - '@oro_consent.provider.consent_acceptance_provider'
+            - '@security.token_storage'
+        tags:
+            - { name: oro_action.condition, alias: 'is_consents_accepted' }
+            - { name: oro_featuretogle.feature, feature: consents }
+
+    oro_consent.action.save_accepted_consents:
+        class: 'Oro\Bundle\ConsentBundle\Action\SaveAcceptedConsentsAction'
+        arguments:
+            - '@oro_action.expression.context_accessor'
+            - '@security.token_storage'
+            - '@oro_entity.doctrine_helper'
+        tags:
+            - { name: oro_action.action, alias: save_accepted_consents }
+            - { name: oro_featuretogle.feature, feature: consents }
+
+    oro_consent.event_listener.customer_view:
+        class: 'Oro\Bundle\ConsentBundle\EventListener\CustomerUserViewListener'
+        public: true
+        arguments:
+            - '@translator'
+            - '@oro_entity.doctrine_helper'
+            - '@request_stack'
+            - '@oro_consent.provider.customer_user_consent_provider'
+        tags:
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.customer-user-view, method: onCustomerUserView }
+            - { name: oro_featuretogle.feature, feature: consents }
+
+    oro_consent.provider.customer_user_consent_provider:
+        class: 'Oro\Bundle\ConsentBundle\Provider\CustomerUserConsentProvider'
+        arguments:
+            - '@oro_consent.helper.cms_page_helper'
+            - '@oro_consent.provider.enabled_consent_provider'
+            - '@doctrine'
+            - '@oro_consent.provider.consent_context_provider'
+
+    oro_consent.accepted_concents_filter:
+        class: Oro\Bundle\ConsentBundle\Filter\AcceptedConsentsFilter
+        arguments:
+            - '@form.factory'
+            - '@oro_filter.filter_utility'
+            - '@oro_entity.doctrine_helper'
+        tags:
+            - { name: oro_filter.extension.orm_filter.filter, type: accepted_consents, datasource: orm }
+
+    oro_consent.from_extension.field_choice_type_extension:
+        class: 'Oro\Bundle\ConsentBundle\Form\Extension\FieldChoiceTypeExtension'
+        tags:
+            - { name: form.type_extension, extended_type: 'Oro\Bundle\QueryDesignerBundle\Form\Type\FieldChoiceType' }
+
+    oro_consent.feature.voter.feature_voter:
+        class: 'Oro\Bundle\ConsentBundle\Feature\Voter\FeatureVoter'
+        arguments:
+            - '@oro_config.manager'
+            - '@oro_frontend.request.frontend_helper'
+        tags:
+            - { name: oro_featuretogle.voter }

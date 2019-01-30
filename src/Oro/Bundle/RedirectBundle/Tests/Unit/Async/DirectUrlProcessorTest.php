@@ -4,7 +4,6 @@ namespace Oro\Bundle\RedirectBundle\Tests\Unit\Async;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Driver\AbstractDriverException;
 use Doctrine\DBAL\Exception\DeadlockException;
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\RedirectBundle\Async\DirectUrlProcessor;
@@ -244,6 +243,7 @@ class DirectUrlProcessorTest extends \PHPUnit\Framework\TestCase
 
         $this->assertProcessorSuccessfulCalled($message, false);
 
+        /** @var UrlCacheAllCapabilities|\PHPUnit\Framework\MockObject\MockObject $urlCache */
         $urlCache = $this->createMock(UrlCacheAllCapabilities::class);
         $urlCache->expects($this->once())
             ->method('removeUrl')

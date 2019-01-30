@@ -1,0 +1,13 @@
+{% extends 'OroUIBundle:actions:index.html.twig' %}
+{% import 'OroUIBundle::macros.html.twig' as UI %}
+{% set gridName = 'consents-grid' %}
+{% set pageTitle = 'oro.consent.entity_plural_label'|trans %}
+
+{% block navButtons %}
+    {% if is_granted('oro_consent_create') %}
+        {{ UI.addButton({
+            'path': path('oro_consent_create'),
+            'entity_label': 'oro.consent.entity_label'|trans
+        }) }}
+    {% endif %}
+{% endblock %}

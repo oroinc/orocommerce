@@ -1,0 +1,105 @@
+oro:
+    customer.customeruser.accepted_consents.label: 'Accepted Consents'
+    customer.customeruser.accepted_consents_virtual.label: 'Accepted Consents'
+    consent:
+        entity_label: Consent
+        entity_plural_label: Consents
+        entity_description: Consents which are presented to customer users to accept
+        menu:
+            management.label: Consent Management
+            consents.description: List of consents
+        type:
+            label: Type
+            optional: Optional
+            mandatory: Mandatory
+            description: Define whether the user can proceed without giving their consent. The mandatory type is used as the required field for registration, checkout and RFQ.
+        declined_notification:
+            label: Declined Consent Notification
+            yes.label: Yes
+            no.label: No
+            description: If the consent is declined by a customer user in the storefront, a notification is created in the management console as a contact request.
+        mandatory.label: Mandatory
+        id.label: Id
+        content_source.label: Content Source
+        assigned_customer_users.label: Customer Users Accepted
+        content_node:
+            label: Content Node
+            description: The selected web сatalog node can be configured to display different landing pages (content variants) in different languages.
+        webcatalog:
+            label: Web Catalog
+            description: Select the web catalog where you intend to use this consent.
+        names:
+            label: Name
+            description: The name of the consent displayed in the storefront (Use the folder icon next to the option to provide a localized name for the consent)
+        organization.label: Organization
+        owner.label: Owner
+        sections:
+            general: General
+        widgets:
+            consent_information: Consent Information
+        form:
+            messages:
+                saved: Consent has been saved
+                created: Consent has been created
+            choose_consent: Choose a Consent...
+        options.label: Options
+        add_consent: Add Consent
+        declined:
+            message: Consent %consent% declined by customer
+
+        system_configuration:
+            fields:
+                consent:
+                    feature_enabled.label: Enable user consents feature
+                    enabled_consents.label: Enabled user consents
+                    enabled_consents.tooltip: Select which of the available consents to display in the storefront.
+            groups:
+                consents:
+                    title: Consents
+
+        feature:
+            label: User Consents
+            description: User consents functionality asking users for consents (for example to store personal data or receive emails), store and manage these consents.
+        content_source:
+            none: N/A
+
+        frontend:
+            form:
+                agree.label: I Agree with
+                validation:
+                    unaccepted_consent: This agreement is required
+            profile:
+                form:
+                    sections:
+                        data_protection.label: Data protection
+                view:
+                    sections:
+                        data_protection.label: Data protection
+
+            rfq:
+                form:
+                    sections:
+                        data_protection.label: Data protection
+            checkout:
+                form:
+                    sections:
+                        data_protection.label: Agreements
+                    messages:
+                        all_agreements_accepted: All mandatory consents were accepted. Click "Continue" to proceed with the checkout.
+                        data_protection.label: 'Data protection'
+            single_page_checkout:
+                form:
+                    messages:
+                        all_agreements_accepted: All mandatory consents were accepted.
+
+        customer_user:
+            accepted.label: 'Yes'
+            not_accepted.label: 'No'
+
+        consentacceptance.entity_label: 'Consent Acceptance'
+        consentacceptance.entity_plural_label: 'Consent Acceptances'
+        consentacceptance.id.label: 'Id'
+        consentacceptance.consent.label: 'Consent'
+        consentacceptance.customer_user.label: 'Customer User'
+        consentacceptance.landing_page.label: 'Landing Page'
+        acceptances.label: 'Acceptances'

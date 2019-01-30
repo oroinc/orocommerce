@@ -1,0 +1,15 @@
+services:
+    oro_consent.layout.type.consent_acceptance_choice:
+        parent: oro_layout.block_type.abstract_configurable_container
+        calls:
+            -
+                - setOptionsConfig
+                -
+                    -
+                        consents:
+                            required: true
+                            default: '=data["oro_frontend_consent_provider"].getNotAcceptedRequiredConsentData(appliedConsents)'
+                        appliedConsents: {default: []}
+            - [setName, ['consent_acceptance_choice']]
+        tags:
+             - { name: layout.block_type, alias: consent_acceptance_choice }

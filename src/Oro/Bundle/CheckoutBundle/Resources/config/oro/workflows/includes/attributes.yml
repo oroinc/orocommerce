@@ -65,3 +65,9 @@ workflows:
                 type: string
             late_registration:
                 type: array
+            customerConsents:
+                type: object
+                options:
+                    class: Doctrine\Common\Collections\ArrayCollection
+            consents_available:
+                type: boolean

@@ -1,0 +1,26 @@
+layout:
+    imports:
+        -
+            id: oro_consent_items
+            namespace: rfp_form
+            root: __rfp_form_data_protection
+
+    actions:
+        - '@setBlockTheme':
+            themes: 'data_protection.html.twig'
+
+        - '@add':
+            id: __rfp_form_data_protection
+            blockType: container
+            parentId: rfp_form_container
+            siblingId: rfp_form_lineitems_container
+            options:
+                visible: '=data["oro_frontend_consent_provider"].getNotAcceptedRequiredConsentData()'
+
+        - '@add':
+            id: __rfp_form_errros
+            blockType: form_errors
+            parentId: __rfp_form_data_protection
+            prepend: true
+            options:
+                form: '=data["oro_rfp_request_form"].getRequestFormView(data["entity"])'

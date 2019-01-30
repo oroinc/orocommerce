@@ -30,7 +30,13 @@ services:
     oro_checkout.layout.block_type.checkout_information_title:
         parent: oro_layout.block_type.abstract_configurable_container
         calls:
-            - [setOptionsConfig, [{workflowStep: {required: true}, stepOrder: {default: '-'}}]]
+            -
+                - setOptionsConfig
+                -
+                    -
+                        workflowStep: {required: true}
+                        stepOrder: {default: '-'}
+                        excludedSteps: {default: []} # Defines steps which will not be displayed with sidebar and in sidebar
             - [setName, ['checkout_information_title']]
         tags:
             - { name: layout.block_type, alias: checkout_information_title }

@@ -18,34 +18,32 @@
     background: $view-product-gallery-background;
     opacity: $view-product-gallery-opacity;
 
+    width: $view-product-gallery-width;
+    height: $view-product-gallery-height;
+
+    border-radius: $view-product-gallery-border-radius;
+
     @extend %base-transition;
 
     @include fa-icon($view-product-gallery-icon);
 
-    @include element-state('hover') {
-        font-size: $view-product-gallery-hover-icon-size;
+    .product-item__preview:hover > & {
         opacity: $view-product-gallery-hover-opacity;
+    }
+
+    &:before {
+        margin: $view-product-gallery-icon-offset;
     }
 }
 
-@include breakpoint('tablet-small') {
+@include breakpoint('tablet') {
     .view-product-gallery {
-        top: $view-product-gallery-tablet-small-top;
-        left: $view-product-gallery-tablet-small-left;
+        opacity: $view-product-gallery-tablet-opacity;
+    }
+}
 
-        width: $view-product-gallery-tablet-small-width;
-        height: $view-product-gallery-tablet-small-height;
-
-        font-size: $view-product-gallery-icon-tablet-small-size;
-        border-radius: $view-product-gallery-tablet-small-border-radius;
-        opacity: $view-product-gallery-tablet-small-opacity;
-
-        @include element-state('hover') {
-            font-size: $view-product-gallery-icon-tablet-small-size;
-        }
-
-        &:before {
-            margin: $view-product-gallery-icon-tablet-small-offset;
-        }
+@include only-mobile {
+    .view-product-gallery {
+        opacity: $view-product-gallery-mobile-opacity;
     }
 }
