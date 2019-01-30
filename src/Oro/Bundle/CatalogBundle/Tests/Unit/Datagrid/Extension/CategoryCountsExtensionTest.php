@@ -403,6 +403,7 @@ class CategoryCountsExtensionTest extends \PHPUnit\Framework\TestCase
                     [
                         'type' => SubcategoryFilter::FILTER_TYPE_NAME,
                         'counts' => [],
+                        'disabledOptions' => []
                     ],
                 ],
             ],

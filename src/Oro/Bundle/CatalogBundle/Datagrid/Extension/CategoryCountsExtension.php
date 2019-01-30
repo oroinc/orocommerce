@@ -50,7 +50,7 @@ class CategoryCountsExtension extends AbstractExtension
     /** @var FeatureChecker */
     private $featureChecker;
 
-    /** @var array */
+    /** @var string */
     private $searchEngine;
 
     /**
@@ -59,6 +59,8 @@ class CategoryCountsExtension extends AbstractExtension
      * @param ProductRepository $productSearchRepository
      * @param CategoryCountsCache $cache
      * @param DatagridParametersHelper $datagridParametersHelper
+     * @param FeatureChecker $featureChecker
+     * @param string $searchEngine
      */
     public function __construct(
         ServiceLink $datagridManagerLink,
@@ -106,10 +108,8 @@ class CategoryCountsExtension extends AbstractExtension
         $countsWithoutFilters = null;
         $categoryCounts = $this->getCounts($config);
 
-        if ($this->searchEngine === ElasticSearch::ENGINE_NAME
-            && $this->featureChecker->isFeatureEnabled(self::DISABLE_FILTERS_FEATURE)
-            && $this->featureChecker->isFeatureEnabled(self::LIMIT_FILTERS_FEATURE)
-        ) {
+        $countsWithoutFilters = [];
+        if ($this->isOptionsDisablingApplicable()) {
             $countsWithoutFilters = $this->getCountsWithoutFilters($config);
         }
 
@@ -121,7 +121,8 @@ class CategoryCountsExtension extends AbstractExtension
 
             $filter['counts'] = $categoryCounts;
 
-            if ($countsWithoutFilters && $categoryCounts) {
+            $filter['disabledOptions'] = [];
+            if ($countsWithoutFilters) {
                 $filter['disabledOptions'] = array_map(
                     'strval',
                     array_values(array_diff(array_keys($countsWithoutFilters), array_keys($categoryCounts)))
@@ -306,5 +307,15 @@ class CategoryCountsExtension extends AbstractExtension
             DatagridParametersHelper::DATAGRID_SKIP_EXTENSION_PARAM,
             AbstractFilterExtension::FILTER_ROOT_PARAM
         ];
+    }
+
+    /**
+     * @return bool
+     */
+    private function isOptionsDisablingApplicable()
+    {
+        return $this->searchEngine === ElasticSearch::ENGINE_NAME
+            && $this->featureChecker->isFeatureEnabled(self::DISABLE_FILTERS_FEATURE)
+            && $this->featureChecker->isFeatureEnabled(self::LIMIT_FILTERS_FEATURE);
     }
 }
