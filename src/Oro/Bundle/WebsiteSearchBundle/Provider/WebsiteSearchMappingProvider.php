@@ -5,15 +5,17 @@ namespace Oro\Bundle\WebsiteSearchBundle\Provider;
 use Oro\Bundle\SearchBundle\Provider\AbstractSearchMappingProvider;
 use Oro\Bundle\WebsiteSearchBundle\DependencyInjection\MappingConfiguration;
 use Oro\Bundle\WebsiteSearchBundle\Event\WebsiteSearchMappingEvent;
-use Oro\Bundle\WebsiteSearchBundle\Loader\ConfigurationLoaderInterface;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+/**
+ * The provider for website search mappings.
+ */
 class WebsiteSearchMappingProvider extends AbstractSearchMappingProvider
 {
-    /** @var ConfigurationLoaderInterface */
-    private $mappingConfigurationLoader;
+    /** @var MappingConfigurationProvider */
+    private $mappingConfigurationProvider;
 
     /** @var EventDispatcherInterface */
     private $eventDispatcher;
@@ -22,14 +24,14 @@ class WebsiteSearchMappingProvider extends AbstractSearchMappingProvider
     private $configuration;
 
     /**
-     * @param ConfigurationLoaderInterface $mappingConfigurationLoader
+     * @param MappingConfigurationProvider $mappingConfigurationProvider
      * @param EventDispatcherInterface $eventDispatcher
      */
     public function __construct(
-        ConfigurationLoaderInterface $mappingConfigurationLoader,
+        MappingConfigurationProvider $mappingConfigurationProvider,
         EventDispatcherInterface $eventDispatcher
     ) {
-        $this->mappingConfigurationLoader = $mappingConfigurationLoader;
+        $this->mappingConfigurationProvider = $mappingConfigurationProvider;
         $this->eventDispatcher = $eventDispatcher;
     }
 
@@ -40,7 +42,7 @@ class WebsiteSearchMappingProvider extends AbstractSearchMappingProvider
     {
         if (!$this->configuration) {
             $event = new WebsiteSearchMappingEvent();
-            $event->setConfiguration($this->mappingConfigurationLoader->getConfiguration());
+            $event->setConfiguration($this->mappingConfigurationProvider->getConfiguration());
 
             $this->eventDispatcher->dispatch(WebsiteSearchMappingEvent::NAME, $event);
 

@@ -52,32 +52,19 @@ services:
         tags:
             - { name: website_search.placeholder }
 
-    oro_website_search.loader.mapping_configuration_loader:
+    oro_website_search.mapping_configuration.provider:
         public: false
-        class: 'Oro\Bundle\WebsiteSearchBundle\Loader\MappingConfigurationLoader'
-
-    oro_website_search.mapping_configuration.cache:
-        public: false
-        parent: oro.cache.abstract
-        calls:
-            - [ setNamespace, [ 'oro_website_search_mapping_configuration' ] ]
-
-    oro_website_search.loader.mapping_configuration_cache_loader:
-        public: false
-        class: 'Oro\Bundle\WebsiteSearchBundle\Loader\MappingConfigurationCacheLoader'
+        class: 'Oro\Bundle\WebsiteSearchBundle\Provider\MappingConfigurationProvider'
         arguments:
-            - '@oro_website_search.mapping_configuration.cache'
-            - '@oro_website_search.loader.mapping_configuration_loader'
-            - '@oro_website_search.provider.resources_hash'
-            - '%kernel.debug%'
+            - '%kernel.cache_dir%/oro/website_search_mapping.php'
+            - '@oro_cache.config_cache_factory'
 
-    oro_website_search.cache.configuration_cache:
+    oro_website_search.mapping_configuration.warmer:
         public: false
-        class: Oro\Bundle\WebsiteSearchBundle\Cache\ConfigurationCache
+        class: 'Oro\Component\Config\Cache\ConfigCacheWarmer'
         arguments:
-            - '@oro_website_search.loader.mapping_configuration_cache_loader'
+            - '@oro_website_search.mapping_configuration.provider'
         tags:
-            - { name: kernel.cache_clearer }
             - { name: kernel.cache_warmer }
 
     oro_website_search.event_listener.orm.fulltext_index_listener:
@@ -97,7 +84,7 @@ services:
         class: 'Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchMappingProvider'
         public: false
         arguments:
-            - '@oro_website_search.loader.mapping_configuration_cache_loader'
+            - '@oro_website_search.mapping_configuration.provider'
             - '@event_dispatcher'
 
     oro_website_search.query_factory:
@@ -157,10 +144,6 @@ services:
         class: 'Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderDecorator'
         arguments:
             - '@oro_website_search.placeholder.registry'
-
-    oro_website_search.provider.resources_hash:
-        class: 'Oro\Bundle\WebsiteSearchBundle\Provider\ResourcesHashProvider'
-        public: false
 
     oro_website_search.indexer.input_validator:
         class: 'Oro\Bundle\WebsiteSearchBundle\Engine\IndexerInputValidator'

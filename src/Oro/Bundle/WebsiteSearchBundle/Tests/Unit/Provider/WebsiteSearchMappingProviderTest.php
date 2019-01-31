@@ -3,7 +3,7 @@
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\WebsiteSearchBundle\Event\WebsiteSearchMappingEvent;
-use Oro\Bundle\WebsiteSearchBundle\Loader\ConfigurationLoaderInterface;
+use Oro\Bundle\WebsiteSearchBundle\Provider\MappingConfigurationProvider;
 use Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchMappingProvider;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -30,9 +30,6 @@ class WebsiteSearchMappingProviderTest extends \PHPUnit\Framework\TestCase
             ]
         ]
     ];
-
-    /** @var ConfigurationLoaderInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $mappingConfigurationLoader;
 
     /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $eventDispatcher;
@@ -274,11 +271,11 @@ class WebsiteSearchMappingProviderTest extends \PHPUnit\Framework\TestCase
      */
     protected function getProvider()
     {
-        $this->mappingConfigurationLoader = $this->createMock(ConfigurationLoaderInterface::class);
-        $this->mappingConfigurationLoader->expects($this->any())
+        $mappingConfigurationProvider = $this->createMock(MappingConfigurationProvider::class);
+        $mappingConfigurationProvider->expects($this->any())
             ->method('getConfiguration')
             ->willReturn($this->testMapping);
 
-        return new WebsiteSearchMappingProvider($this->mappingConfigurationLoader, $this->eventDispatcher);
+        return new WebsiteSearchMappingProvider($mappingConfigurationProvider, $this->eventDispatcher);
     }
 }
