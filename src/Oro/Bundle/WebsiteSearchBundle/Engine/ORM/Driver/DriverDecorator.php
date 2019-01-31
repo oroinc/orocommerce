@@ -9,6 +9,8 @@ use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\WebsiteSearchBundle\Entity\Item;
 
 /**
+ * Encapsulates currently used database driver. Depending on the current connection to the database
+ * the corresponding driver will be used. Each driver should implement DriverInterface interface.
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class DriverDecorator implements DriverInterface
@@ -107,12 +109,6 @@ class DriverDecorator implements DriverInterface
     public function createItem()
     {
         return $this->getDriver()->createItem();
-    }
-
-    /** {@inheritdoc} */
-    public function saveItems(array $items)
-    {
-        return $this->getDriver()->saveItems($items);
     }
 
     /** {@inheritdoc} */
