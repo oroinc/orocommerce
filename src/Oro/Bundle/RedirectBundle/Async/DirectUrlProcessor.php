@@ -4,7 +4,6 @@ namespace Oro\Bundle\RedirectBundle\Async;
 
 use Doctrine\Common\Cache\FlushableCache;
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\DBAL\Driver\DriverException;
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\EntityBundle\ORM\DatabaseExceptionHelper;
 use Oro\Bundle\RedirectBundle\Cache\UrlCacheInterface;
@@ -82,16 +81,25 @@ class DirectUrlProcessor implements MessageProcessorInterface, TopicSubscriberIn
      */
     public function process(MessageInterface $message, SessionInterface $session)
     {
-        $em = null;
         try {
             $messageData = JSON::decode($message->getBody());
-            $className =  $this->messageFactory->getEntityClassFromMessage($messageData);
+            $className = $this->messageFactory->getEntityClassFromMessage($messageData);
+            $entities = $this->messageFactory->getEntitiesFromMessage($messageData);
+            $createRedirect = $this->messageFactory->getCreateRedirectFromMessage($messageData);
+        } catch (InvalidArgumentException $e) {
+            $this->logger->error(
+                'Queue Message is invalid',
+                ['exception' => $e]
+            );
+
+            return self::REJECT;
+        }
+
+        $em = null;
+        try {
             /** @var EntityManagerInterface $em */
             $em = $this->registry->getManagerForClass($className);
             $em->beginTransaction();
-
-            $entities = $this->messageFactory->getEntitiesFromMessage($messageData);
-            $createRedirect = $this->messageFactory->getCreateRedirectFromMessage($messageData);
             foreach ($entities as $entity) {
                 $this->generator->generate($entity, $createRedirect);
             }
@@ -99,30 +107,22 @@ class DirectUrlProcessor implements MessageProcessorInterface, TopicSubscriberIn
             $em->flush();
             $em->commit();
             $this->actualizeUrlCache();
-        } catch (InvalidArgumentException $e) {
-            if ($em) {
-                $em->rollback();
-            }
-            $this->logger->error(
-                'Queue Message is invalid',
-                ['exception' => $e]
-            );
-
-            return self::REJECT;
         } catch (\Exception $e) {
-            if ($em) {
-                $em->rollback();
-            }
             $this->logger->error(
                 'Unexpected exception occurred during Direct URL generation',
                 ['exception' => $e]
             );
 
-            if ($e instanceof DriverException && $this->databaseExceptionHelper->isDeadlock($e)) {
-                return self::REQUEUE;
-            } else {
-                return self::REJECT;
+            if ($em && $em->getConnection()->getTransactionNestingLevel() > 0) {
+                $em->rollback();
             }
+
+            $driverException = $this->databaseExceptionHelper->getDriverException($e);
+            if ($driverException && $this->databaseExceptionHelper->isDeadlock($driverException)) {
+                return self::REQUEUE;
+            }
+
+            return self::REJECT;
         }
 
         return self::ACK;
