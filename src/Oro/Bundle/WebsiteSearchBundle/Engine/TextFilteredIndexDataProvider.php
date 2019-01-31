@@ -5,7 +5,7 @@ namespace Oro\Bundle\WebsiteSearchBundle\Engine;
 use Oro\Bundle\SearchBundle\Query\Query;
 
 /**
- * TODO: Should be removed after https://magecore.atlassian.net/browse/BB-12955
+ * Should be removed in https://magecore.atlassian.net/browse/BB-12955
  */
 class TextFilteredIndexDataProvider extends IndexDataProvider
 {

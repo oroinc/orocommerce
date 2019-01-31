@@ -21,7 +21,7 @@ class TextFilteredIndexDataProviderTest extends IndexDataProviderTest
     }
 
     /**
-     * @todo Overwritten due to ORM limitations, resolved here: https://magecore.atlassian.net/browse/BB-12955
+     * Overwritten due to ORM limitations, should be fixed in https://magecore.atlassian.net/browse/BB-12955
      *
      * @return array
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
