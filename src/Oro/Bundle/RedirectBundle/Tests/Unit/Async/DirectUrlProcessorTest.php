@@ -3,7 +3,7 @@
 namespace Oro\Bundle\RedirectBundle\Tests\Unit\Async;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\DBAL\Driver\AbstractDriverException;
+use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception\DeadlockException;
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\RedirectBundle\Async\DirectUrlProcessor;
@@ -18,6 +18,11 @@ use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Psr\Log\LoggerInterface;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @SuppressWarnings(PHPMD.ExcessiveClassLength)
+ */
 class DirectUrlProcessorTest extends \PHPUnit\Framework\TestCase
 {
     /**
@@ -74,7 +79,6 @@ class DirectUrlProcessorTest extends \PHPUnit\Framework\TestCase
 
         $exception = new InvalidArgumentException('Test');
         $message = $this->prepareMessageTrowingException($exception);
-        $this->assertTransactionRollback();
 
         $this->logger->expects($this->once())
             ->method('error')
@@ -95,7 +99,6 @@ class DirectUrlProcessorTest extends \PHPUnit\Framework\TestCase
 
         $exception = new InvalidArgumentException('Test');
         $message = $this->prepareMessageTrowingException($exception);
-        $this->assertTransactionRollback();
 
         $this->logger->expects($this->once())
             ->method('error')
@@ -111,23 +114,14 @@ class DirectUrlProcessorTest extends \PHPUnit\Framework\TestCase
 
     public function testProcessExceptionOutsideTransaction()
     {
-        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message */
-        $message = $this->createMock(MessageInterface::class);
-
         /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session */
         $session = $this->createMock(SessionInterface::class);
 
-        $class = \stdClass::class;
-        $id = null;
-        $messageData = ['class' => $class, 'id' => $id];
-        $messageBody = json_encode($messageData);
-        $message->expects($this->any())
-            ->method('getBody')
-            ->willReturn($messageBody);
+        $message = $this->prepareMessage();
         $exception = new \Exception('Test');
-        $this->messageFactory->expects($this->once())
-            ->method('getEntityClassFromMessage')
-            ->with($messageData)
+
+        $this->registry->expects($this->once())
+            ->method('getManagerForClass')
             ->willThrowException($exception);
 
         $this->logger->expects($this->once())
@@ -146,8 +140,46 @@ class DirectUrlProcessorTest extends \PHPUnit\Framework\TestCase
         $session = $this->createMock(SessionInterface::class);
 
         $exception = new \Exception('Test');
-        $message = $this->prepareMessageTrowingException($exception);
+        $message = $this->prepareMessage();
+        $this->generator->expects($this->once())
+            ->method('generate')
+            ->willThrowException($exception);
+
         $this->assertTransactionRollback();
+
+        $this->logger->expects($this->once())
+            ->method('error')
+            ->with(
+                'Unexpected exception occurred during Direct URL generation',
+                ['exception' => $exception]
+            );
+
+        $this->assertEquals(DirectUrlProcessor::REJECT, $this->processor->process($message, $session));
+    }
+
+    public function testProcessExceptionInClosedTransaction()
+    {
+        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session */
+        $session = $this->createMock(SessionInterface::class);
+
+        $exception = new \Exception('Test');
+        $message = $this->prepareMessage();
+        $this->generator->expects($this->once())
+            ->method('generate')
+            ->willThrowException($exception);
+
+        $em = $this->assertTransactionStarted();
+
+        $conn = $this->createMock(Connection::class);
+        $conn->expects($this->once())
+            ->method('getTransactionNestingLevel')
+            ->willReturn(0);
+        $em->expects($this->once())
+            ->method('getConnection')
+            ->willReturn($conn);
+
+        $em->expects($this->never())
+            ->method('rollback');
 
         $this->logger->expects($this->once())
             ->method('error')
@@ -166,7 +198,11 @@ class DirectUrlProcessorTest extends \PHPUnit\Framework\TestCase
 
         /** @var DeadlockException|\PHPUnit\Framework\MockObject\MockObject $exception */
         $exception = $this->createMock(DeadlockException::class);
-        $message = $this->prepareMessageTrowingException($exception);
+
+        $message = $this->prepareMessage();
+        $this->generator->expects($this->once())
+            ->method('generate')
+            ->willThrowException($exception);
         $this->assertTransactionRollback();
 
         $this->logger->expects($this->once())
@@ -207,7 +243,7 @@ class DirectUrlProcessorTest extends \PHPUnit\Framework\TestCase
 
         $this->assertProcessorSuccessfulCalled($message, false);
 
-        /** @var UrlCacheInterface|\PHPUnit\Framework\MockObject\MockObject $urlCache */
+        /** @var UrlCacheAllCapabilities|\PHPUnit\Framework\MockObject\MockObject $urlCache */
         $urlCache = $this->createMock(UrlCacheAllCapabilities::class);
         $urlCache->expects($this->once())
             ->method('removeUrl')
@@ -253,6 +289,24 @@ class DirectUrlProcessorTest extends \PHPUnit\Framework\TestCase
     {
         /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message */
         $message = $this->createMock(MessageInterface::class);
+        $message->expects($this->any())
+            ->method('getBody')
+            ->willReturn(json_encode(['class' => \stdClass::class, 'id' => null]));
+
+        $this->messageFactory->expects($this->once())
+            ->method('getEntityClassFromMessage')
+            ->willThrowException($exception);
+
+        return $message;
+    }
+
+    /**
+     * @return MessageInterface|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private function prepareMessage()
+    {
+        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message */
+        $message = $this->createMock(MessageInterface::class);
 
         $class = \stdClass::class;
         $messageData = ['class' => $class, 'id' => null];
@@ -266,36 +320,37 @@ class DirectUrlProcessorTest extends \PHPUnit\Framework\TestCase
             ->willReturn($class);
 
         $this->messageFactory->expects($this->once())
+            ->method('getCreateRedirectFromMessage')
+            ->willReturn(true);
+
+        $entity = $this->createMock(SluggableInterface::class);
+        $this->messageFactory->expects($this->once())
             ->method('getEntitiesFromMessage')
             ->with($messageData)
-            ->willThrowException($exception);
+            ->willReturn([$entity]);
 
         return $message;
     }
 
     private function assertTransactionCommitted()
     {
-        /** @var EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject $em */
-        $em = $this->createMock(EntityManagerInterface::class);
-        $em->expects($this->once())
-            ->method('beginTransaction');
-
-        $this->registry->expects($this->once())
-            ->method('getManagerForClass')
-            ->willReturn($em);
+        $em = $this->assertTransactionStarted();
         $em->expects($this->once())
             ->method('commit');
     }
 
     private function assertTransactionRollback()
     {
-        /** @var EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject $em */
-        $em = $this->createMock(EntityManagerInterface::class);
+        $em = $this->assertTransactionStarted();
+
+        $conn = $this->createMock(Connection::class);
+        $conn->expects($this->once())
+            ->method('getTransactionNestingLevel')
+            ->willReturn(1);
         $em->expects($this->once())
-            ->method('beginTransaction');
-        $this->registry->expects($this->once())
-            ->method('getManagerForClass')
-            ->willReturn($em);
+            ->method('getConnection')
+            ->willReturn($conn);
+
         $em->expects($this->once())
             ->method('rollback');
     }
@@ -349,5 +404,22 @@ class DirectUrlProcessorTest extends \PHPUnit\Framework\TestCase
         $this->generator->expects($this->once())
             ->method('generate')
             ->with($entity, $createRedirect);
+    }
+
+    /**
+     * @return EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private function assertTransactionStarted()
+    {
+        /** @var EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject $em */
+        $em = $this->createMock(EntityManagerInterface::class);
+        $em->expects($this->once())
+            ->method('beginTransaction');
+
+        $this->registry->expects($this->once())
+            ->method('getManagerForClass')
+            ->willReturn($em);
+
+        return $em;
     }
 }
