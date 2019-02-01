@@ -16,7 +16,6 @@ use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Datagrid\Manager;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 use Oro\Bundle\DataGridBundle\Tools\DatagridParametersHelper;
-use Oro\Bundle\ElasticSearchBundle\Engine\ElasticSearch;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\FilterBundle\Grid\Extension\AbstractFilterExtension;
 use Oro\Bundle\SearchBundle\Datagrid\Datasource\SearchDatasource;
@@ -108,8 +107,7 @@ class CategoryCountsExtensionTest extends \PHPUnit\Framework\TestCase
             $this->productSearchRepository,
             $this->cache,
             $this->datagridParametersHelper,
-            $this->featureChecker,
-            ElasticSearch::ENGINE_NAME
+            $this->featureChecker
         );
         $this->extension->setParameters(
             new ParameterBag(

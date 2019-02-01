@@ -15,7 +15,6 @@ use Oro\Bundle\DataGridBundle\Datagrid\Manager;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 use Oro\Bundle\DataGridBundle\Extension\AbstractExtension;
 use Oro\Bundle\DataGridBundle\Tools\DatagridParametersHelper;
-use Oro\Bundle\ElasticSearchBundle\Engine\ElasticSearch;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\FilterBundle\Grid\Extension\AbstractFilterExtension;
 use Oro\Bundle\SearchBundle\Datagrid\Datasource\SearchDatasource;
@@ -50,9 +49,6 @@ class CategoryCountsExtension extends AbstractExtension
     /** @var FeatureChecker */
     private $featureChecker;
 
-    /** @var string */
-    private $searchEngine;
-
     /**
      * @var bool[] Stores flags about already applied datagrids.
      * [
@@ -69,7 +65,6 @@ class CategoryCountsExtension extends AbstractExtension
      * @param CategoryCountsCache $cache
      * @param DatagridParametersHelper $datagridParametersHelper
      * @param FeatureChecker $featureChecker
-     * @param string $searchEngine
      */
     public function __construct(
         ServiceLink $datagridManagerLink,
@@ -77,8 +72,7 @@ class CategoryCountsExtension extends AbstractExtension
         ProductRepository $productSearchRepository,
         CategoryCountsCache $cache,
         DatagridParametersHelper $datagridParametersHelper,
-        FeatureChecker $featureChecker,
-        string $searchEngine
+        FeatureChecker $featureChecker
     ) {
         $this->datagridManagerLink = $datagridManagerLink;
         $this->registry = $registry;
@@ -86,7 +80,6 @@ class CategoryCountsExtension extends AbstractExtension
         $this->cache = $cache;
         $this->datagridParametersHelper = $datagridParametersHelper;
         $this->featureChecker = $featureChecker;
-        $this->searchEngine = $searchEngine;
     }
 
     /**
@@ -330,8 +323,7 @@ class CategoryCountsExtension extends AbstractExtension
      */
     private function isOptionsDisablingApplicable()
     {
-        return $this->searchEngine === ElasticSearch::ENGINE_NAME
-            && $this->featureChecker->isFeatureEnabled(self::DISABLE_FILTERS_FEATURE)
+        return $this->featureChecker->isFeatureEnabled(self::DISABLE_FILTERS_FEATURE)
             && $this->featureChecker->isFeatureEnabled(self::LIMIT_FILTERS_FEATURE);
     }
 }

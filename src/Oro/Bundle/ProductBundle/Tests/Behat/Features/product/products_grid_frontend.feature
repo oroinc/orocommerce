@@ -5,30 +5,16 @@
 Feature: Products Grid Frontend
   In order to ensure frontend products grid works correctly
   As a buyer
-  I check search product is working and filters are working and sorting is working as designed.
+  I check filters are working and sorting is working as designed.
 
   Scenario: Feature Background
     Given I signed in as AmandaRCole@example.org on the store frontend
     And I go to the homepage
-
-  Scenario: Search product with unique value
-    Given I type "Description20" in "search"
-    When click "Search Button"
-    Then number of records in "Product Frontend Grid" should be 1
-
-  Scenario: Check the product search through a filter from the product subsets found
-    Given I type "Description1" in "search"
-    And click "Search Button"
-    And number of records in "Product Frontend Grid" should be 11
-    When I filter "Any Text" as contains "Description2"
-    Then number of records in "Product Frontend Grid" should be 0
-    When I filter "Any Text" as contains "Description11"
-    Then number of records in "Product Frontend Grid" should be 1
-
-  Scenario: Check Fulltext Filter
     # There is no direct link to get to products catalog so this is the fastest way.
     Given I am on "/product"
-    And number of records in "Product Frontend Grid" should be 19
+
+  Scenario: Check Fulltext Filter
+    Given number of records in "Product Frontend Grid" should be 19
     When I filter "Any Text" as contains "PSKU3"
     Then I should see "PSKU3"
     And I should not see "PSKU1"
