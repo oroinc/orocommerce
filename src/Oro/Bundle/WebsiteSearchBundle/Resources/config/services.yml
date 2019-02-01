@@ -53,19 +53,21 @@ services:
             - { name: website_search.placeholder }
 
     oro_website_search.mapping_configuration.provider:
-        public: false
         class: 'Oro\Bundle\WebsiteSearchBundle\Provider\MappingConfigurationProvider'
+        public: false
         arguments:
             - '%kernel.cache_dir%/oro/website_search_mapping.php'
             - '@oro_cache.config_cache_factory'
 
     oro_website_search.mapping_configuration.warmer:
-        public: false
         class: 'Oro\Component\Config\Cache\ConfigCacheWarmer'
+        public: false
         arguments:
             - '@oro_website_search.mapping_configuration.provider'
         tags:
-            - { name: kernel.cache_warmer }
+            # add the warmer for this System cache at the begin of the warmers chain
+            # to prevent double warmup in case some Application cache depends on this cache
+            - { name: kernel.cache_warmer, priority: 200 }
 
     oro_website_search.event_listener.orm.fulltext_index_listener:
         class: 'Oro\Bundle\SearchBundle\EventListener\ORM\FulltextIndexListener'
