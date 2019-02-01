@@ -257,7 +257,7 @@ services:
             - '@oro_catalog.website_search.repository.product'
             - '@oro_catalog.category_counts.cache'
             - '@oro_datagrid.tools.parameters_helper'
-            - '@oro_config.manager'
+            - '@oro_featuretoggle.checker.feature_checker'
         calls:
             - [addApplicableGrid, ['frontend-product-search-grid']]
         tags:
