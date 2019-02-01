@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\CatalogBundle\Tests\Unit\Provider;
 
-use Doctrine\ORM\Query\Expr;
 use Oro\Bundle\CatalogBundle\Provider\ProductsContentVariantProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Component\WebCatalog\Entity\ContentNodeInterface;

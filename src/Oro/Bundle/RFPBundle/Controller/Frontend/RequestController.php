@@ -4,7 +4,6 @@ namespace Oro\Bundle\RFPBundle\Controller\Frontend;
 
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\RFPBundle\Entity\Request as RFPRequest;
-use Oro\Bundle\RFPBundle\Form\Handler\RequestUpdateHandler;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;

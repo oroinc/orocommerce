@@ -7,7 +7,6 @@ use Oro\Bundle\OrderBundle\Api\Processor\UpdateRequestDataForOrderLineItem;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Provider\SkuCachedProductProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Component\ChainProcessor\ContextInterface;
 
 class UpdateRequestDataForOrderLineItemTest extends \PHPUnit\Framework\TestCase
 {

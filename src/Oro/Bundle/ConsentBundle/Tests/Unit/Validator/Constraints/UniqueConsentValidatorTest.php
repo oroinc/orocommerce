@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\ConsentBundle\Tests\Unit\Validator\Constraints;
 
-use Oro\Bundle\ConsentBundle\Form\Type\ConsentSelectWithPriorityType;
 use Oro\Bundle\ConsentBundle\SystemConfig\ConsentConfig;
 use Oro\Bundle\ConsentBundle\SystemConfig\ConsentConfigConverter;
 use Oro\Bundle\ConsentBundle\Validator\Constraints\UniqueConsent;

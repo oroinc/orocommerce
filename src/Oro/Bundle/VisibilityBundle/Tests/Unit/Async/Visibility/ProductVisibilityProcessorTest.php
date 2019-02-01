@@ -4,7 +4,6 @@ namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Async\Visibility;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Driver\AbstractDriverException;
-use Doctrine\DBAL\Driver\PDOException;
 use Doctrine\DBAL\Exception\DeadlockException;
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\VisibilityBundle\Async\Visibility\ProductVisibilityProcessor;

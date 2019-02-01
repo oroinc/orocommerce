@@ -5,7 +5,6 @@ namespace Oro\Bundle\ShippingBundle\Validator\Constraints;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
 class EnabledTypeConfigsValidationGroupValidator extends ConstraintValidator

@@ -14,12 +14,12 @@
     {{ UI.cancelButton(path('oro_product_brand_index')) }}
 
     {% set html = UI.saveAndCloseButton({'route': 'oro_product_brand_index'}) %}
-    {% if resource_granted('oro_product_brand_create') %}
+    {% if is_granted('oro_product_brand_create') %}
         {% set html = html ~ UI.saveAndNewButton({
         'route': 'oro_product_brand_create'
         }) %}
     {% endif %}
-    {% if form.vars.value.id or resource_granted('oro_product_brand_update') %}
+    {% if form.vars.value.id or is_granted('oro_product_brand_update') %}
         {% set html = html ~ UI.saveAndStayButton({
         'route': 'oro_product_brand_update',
         'params': {'id': '$id'}

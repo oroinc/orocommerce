@@ -3,7 +3,6 @@
 namespace Oro\Bundle\RedirectBundle\Model;
 
 use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 
 class SlugPrototypesWithRedirect

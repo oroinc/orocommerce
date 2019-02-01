@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\TaxBundle\EventListener;
 
-use Doctrine\ORM\Query\Expr;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 
 class CustomerTaxCodeGridListener extends TaxCodeGridListener

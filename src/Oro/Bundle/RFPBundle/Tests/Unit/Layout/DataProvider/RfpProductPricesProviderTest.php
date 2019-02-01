@@ -2,17 +2,9 @@
 
 namespace Oro\Bundle\RFPBundle\Tests\Unit\Factory;
 
-use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\PricingBundle\Entity\ProductPrice;
-use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\PricingBundle\Layout\DataProvider\FrontendProductPricesProvider;
-use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
-use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\RFPBundle\Entity\Request as RFPRequest;
-use Oro\Bundle\RFPBundle\Entity\RequestProduct;
 use Oro\Bundle\RFPBundle\Layout\DataProvider\RfpProductPricesProvider;
-use Oro\Bundle\RFPBundle\Layout\DataProvider\TierPricesProvider;
 
 class RfpProductPricesProviderTest extends \PHPUnit\Framework\TestCase
 {

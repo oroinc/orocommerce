@@ -2,8 +2,6 @@
 
 namespace Oro\Bundle\TaxBundle\Model;
 
-use Oro\Bundle\CurrencyBundle\DependencyInjection\Configuration;
-
 /**
  * Contains tax result and allows to manage it
  */

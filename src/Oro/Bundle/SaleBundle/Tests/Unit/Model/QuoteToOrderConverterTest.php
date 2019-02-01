@@ -16,7 +16,6 @@ use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Handler\OrderCurrencyHandler;
 use Oro\Bundle\OrderBundle\Handler\OrderTotalsHandler;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
-use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;

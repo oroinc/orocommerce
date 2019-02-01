@@ -3,9 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Oro\Bundle\CurrencyBundle\Converter\RateConverterInterface;
 use Oro\Bundle\CurrencyBundle\Entity\CurrencyAwareInterface;
-use Oro\Bundle\CurrencyBundle\Provider\DefaultCurrencyProviderInterface;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;

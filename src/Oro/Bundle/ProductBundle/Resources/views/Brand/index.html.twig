@@ -3,7 +3,7 @@
 {% set pageTitle = 'oro.product.brand.menu.entity_plural_label'|trans %}
 
 {% block navButtons %}
-    {% if resource_granted('oro_product_brand_create') %}
+    {% if is_granted('oro_product_brand_create') %}
         <div class="btn-group">
             {{ UI.addButton({
                 'path': path('oro_product_brand_create'),

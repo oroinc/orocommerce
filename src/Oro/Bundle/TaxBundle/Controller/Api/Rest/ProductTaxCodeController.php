@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\TaxBundle\Controller\Api\Rest;
 
-use Doctrine\ORM\EntityManager;
 use FOS\RestBundle\Controller\Annotations\NamePrefix;
 use FOS\RestBundle\Controller\Annotations\Patch;
 use FOS\RestBundle\Controller\Annotations\RouteResource;

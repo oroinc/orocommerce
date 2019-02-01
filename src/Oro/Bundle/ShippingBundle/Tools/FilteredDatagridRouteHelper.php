@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\ShippingBundle\Tools;
 
-use Oro\Bundle\DataGridBundle\Extension\Pager\PagerInterface;
 use Oro\Bundle\DataGridBundle\Tools\DatagridRouteHelper;
 use Symfony\Component\Routing\RouterInterface;
 

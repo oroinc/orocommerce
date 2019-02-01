@@ -3,7 +3,6 @@
 namespace Oro\Bundle\PayPalBundle\Tests\Unit\PayPal\Payflow\Request;
 
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
-use Oro\Bundle\PayPalBundle\Tests\Unit\PayPal\Payflow\Request\Stub;
 
 class AbstractRequestTest extends \PHPUnit\Framework\TestCase
 {

@@ -2,13 +2,9 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\Placeholder;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Oro\Bundle\PromotionBundle\Placeholder\DiscountInformationPlaceholderFilter;
-use Oro\Bundle\ScopeBundle\Manager\ContextNormalizer;
-use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 
 class DiscountInformationPlaceholderFilterTest extends \PHPUnit\Framework\TestCase
 {

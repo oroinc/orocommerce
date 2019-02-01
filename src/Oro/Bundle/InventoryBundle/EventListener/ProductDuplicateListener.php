@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\InventoryBundle\EventListener;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Event\ProductDuplicateAfterEvent;

@@ -6,7 +6,6 @@ use Oro\Bundle\FrontendLocalizationBundle\Layout\DataProvider\FrontendLocalizati
 use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\TranslationBundle\Entity\Language;
-use Oro\Component\Layout\ContextInterface;
 
 class FrontendLocalizationProviderTest extends \PHPUnit\Framework\TestCase
 {

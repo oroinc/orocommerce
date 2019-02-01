@@ -9,16 +9,6 @@ services:
         tags:
             - { name: form.type, alias: oro_paypal_credit_card_expiration_date }
 
-    oro_paypal.form.type.currency_selection:
-        class: Oro\Bundle\PayPalBundle\Form\Type\CurrencySelectionType
-        public: true
-        arguments:
-            - '@oro_currency.config.currency'
-            - '@oro_locale.settings'
-            - '@oro_currency.helper.currency_name'
-        tags:
-            - { name: form.type, alias: oro_paypal_currency_selection }
-
     oro_paypal.form.type.settings:
         class: Oro\Bundle\PayPalBundle\Form\Type\PayPalSettingsType
         arguments:

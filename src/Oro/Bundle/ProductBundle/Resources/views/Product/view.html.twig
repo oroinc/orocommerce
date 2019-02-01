@@ -196,7 +196,7 @@
     {% set relatedItemsTabsItems = [] %}
     {% set relatedItemsSubblocks = [] %}
 
-    {% if relatedProductsEnabled and resource_granted('oro_related_products_edit') %}
+    {% if relatedProductsEnabled and is_granted('oro_related_products_edit') %}
         {% set relatedItemsTabsItems = relatedItemsTabsItems|merge([{
             'id': 'products-related-products-view',
             'label': 'oro.product.tabs.relatedProducts'|trans}
@@ -225,7 +225,7 @@
         ]) %}
     {% endif %}
 
-    {% if upsellProductsEnabled and resource_granted('oro_upsell_products_edit') %}
+    {% if upsellProductsEnabled and is_granted('oro_upsell_products_edit') %}
         {% set relatedItemsTabsItems = relatedItemsTabsItems|merge([{
             'id': 'products-upsell-products-view',
             'label': 'oro.product.tabs.upsellProducts'|trans
@@ -256,7 +256,7 @@
 
     {% if relatedItemsSubblocks|length %}
         {% set headerLinkContent = '' %}
-        {% if resource_granted('oro_product_update') %}
+        {% if is_granted('oro_product_update') %}
             {% set headerLinkContent = UI.link({
                 path: path('oro_product_related_items_update', {id: entity.id}),
                 label: 'oro.product.quick_edit.label'|trans,

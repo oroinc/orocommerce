@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ShoppingListBundle\Validator\Constraints;
 
 use Oro\Bundle\ShoppingListBundle\Event\LineItemValidateEvent;
-use Oro\Bundle\ShoppingListBundle\Validator\Constraints\LineItemCollection;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
