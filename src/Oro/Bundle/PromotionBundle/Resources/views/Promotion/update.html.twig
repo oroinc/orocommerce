@@ -15,13 +15,13 @@
     {{ UI.cancelButton(path('oro_promotion_index')) }}
 
     {% set html = '' %}
-    {% if resource_granted('oro_promotion_view') %}
+    {% if is_granted('oro_promotion_view') %}
         {% set html = html ~ UI.saveAndCloseButton({
             'route' : 'oro_promotion_view',
             'params' : {'id': '$id'}
         }) %}
     {% endif %}
-    {% if entityId or resource_granted('oro_promotion_update') %}
+    {% if entityId or is_granted('oro_promotion_update') %}
         {% set html = html ~ UI.saveAndStayButton({
             'route' : 'oro_promotion_update',
             'params' : {'id': '$id'}
