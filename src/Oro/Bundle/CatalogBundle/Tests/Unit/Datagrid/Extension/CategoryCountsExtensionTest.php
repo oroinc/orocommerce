@@ -106,9 +106,9 @@ class CategoryCountsExtensionTest extends \PHPUnit\Framework\TestCase
             $registry,
             $this->productSearchRepository,
             $this->cache,
-            $this->datagridParametersHelper,
-            $this->featureChecker
+            $this->datagridParametersHelper
         );
+        $this->extension->setFeatureChecker($this->featureChecker);
         $this->extension->setParameters(
             new ParameterBag(
                 [

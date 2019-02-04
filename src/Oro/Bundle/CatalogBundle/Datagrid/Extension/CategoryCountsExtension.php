@@ -64,21 +64,26 @@ class CategoryCountsExtension extends AbstractExtension
      * @param ProductRepository $productSearchRepository
      * @param CategoryCountsCache $cache
      * @param DatagridParametersHelper $datagridParametersHelper
-     * @param FeatureChecker $featureChecker
      */
     public function __construct(
         ServiceLink $datagridManagerLink,
         ManagerRegistry $registry,
         ProductRepository $productSearchRepository,
         CategoryCountsCache $cache,
-        DatagridParametersHelper $datagridParametersHelper,
-        FeatureChecker $featureChecker
+        DatagridParametersHelper $datagridParametersHelper
     ) {
         $this->datagridManagerLink = $datagridManagerLink;
         $this->registry = $registry;
         $this->productSearchRepository = $productSearchRepository;
         $this->cache = $cache;
         $this->datagridParametersHelper = $datagridParametersHelper;
+    }
+
+    /**
+     * @param FeatureChecker $featureChecker
+     */
+    public function setFeatureChecker(FeatureChecker $featureChecker): void
+    {
         $this->featureChecker = $featureChecker;
     }
 
@@ -323,7 +328,8 @@ class CategoryCountsExtension extends AbstractExtension
      */
     private function isOptionsDisablingApplicable(): bool
     {
-        return $this->featureChecker->isFeatureEnabled(self::DISABLE_FILTERS_FEATURE)
+        return $this->featureChecker
+            && $this->featureChecker->isFeatureEnabled(self::DISABLE_FILTERS_FEATURE)
             && $this->featureChecker->isFeatureEnabled(self::LIMIT_FILTERS_FEATURE);
     }
 }

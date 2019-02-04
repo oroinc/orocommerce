@@ -209,7 +209,7 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
                     'scope' => 'app'
                 ],
                 Configuration::DISABLE_FILTERS_ON_PRODUCT_LISTING => [
-                    'value' => true,
+                    'value' => false,
                     'scope' => 'app'
                 ]
             ]

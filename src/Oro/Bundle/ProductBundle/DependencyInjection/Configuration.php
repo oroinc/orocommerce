@@ -160,7 +160,7 @@ class Configuration implements ConfigurationInterface
                 ],
                 static::DISABLE_FILTERS_ON_PRODUCT_LISTING => [
                     'type' => 'boolean',
-                    'value' => true,
+                    'value' => false,
                 ],
             ]
         );
