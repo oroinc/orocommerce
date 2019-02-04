@@ -236,6 +236,15 @@ services:
         tags:
             - { name: security.voter }
 
+    oro_sale.access_rule.frontend_quote_demand:
+        class: Oro\Bundle\SaleBundle\Acl\AccessRule\FrontendQuoteDemandAccessRule
+        public: false
+        arguments:
+            - '@oro_frontend.request.frontend_helper'
+            - '@oro_security.token_accessor'
+        tags:
+            - { name: oro_security.access_rule }
+
     oro_sale.provider.contact_info_source_options_provider:
         class: 'Oro\Bundle\SaleBundle\Provider\ContactInfoSourceOptionsProvider'
         public: false

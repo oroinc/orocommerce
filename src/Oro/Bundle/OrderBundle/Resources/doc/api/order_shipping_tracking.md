@@ -135,7 +135,6 @@ Delete a collection of order shipping tracking records.
 
 ## SUBRESOURCES
 
-
 ### order
 
 #### get_subresource

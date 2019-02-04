@@ -110,6 +110,9 @@ oro.workflow:
             has_empty_price:
                 label: 'Has empty price'
         transition:
+            __start__:
+                label: 'Start'
+                warning_message: ''
             edit_transition:
                 label: 'Edit'
                 warning_message: ''

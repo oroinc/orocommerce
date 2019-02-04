@@ -1,0 +1,15 @@
+oro:
+    consent:
+        jstree:
+            please_choose_web_catalog: "Please choose a Web Catalog"
+            web_catlog_is_empty: "{{ webCatalog }} doesn't have content nodes"
+        frontend:
+            dialog:
+                accept.label: "Agree"
+                cancel.label: "Cancel"
+                close.label: "Close"
+            confirm_modal:
+                title: "Data protection"
+                message: "Are you sure you want to decline the consents accepted earlier?"
+                ok: "Yes, Decline"
+                cancel: "No, Cancel"

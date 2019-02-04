@@ -40,7 +40,7 @@
 
 {% block content %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
-    <div {{ UI.renderPageComponentAttributes({
+    <div class="scrollable-container" {{ UI.renderPageComponentAttributes({
         view: 'oroform/js/app/views/form-loading-view',
         layout: 'separate'
     }) }} data-skip-input-widgets>

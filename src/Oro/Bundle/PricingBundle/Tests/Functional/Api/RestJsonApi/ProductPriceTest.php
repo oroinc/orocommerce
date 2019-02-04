@@ -29,39 +29,24 @@ class ProductPriceTest extends RestJsonApiTestCase
     protected function setUp()
     {
         parent::setUp();
-
-        $this->loadFixtures(
-            [
-                LoadProductPricesWithRules::class,
-            ]
-        );
+        $this->loadFixtures([LoadProductPricesWithRules::class]);
     }
 
     public function testGetList()
     {
-        $parameters = [
-            'filter' => [
-                'priceList' => ['@price_list_1->id'],
-            ],
-            'sort' => 'product',
-        ];
-        $response = $this->cget(['entity' => $this->getEntityName()], $parameters);
+        $response = $this->cget(
+            ['entity' => 'productprices'],
+            ['filter' => ['priceList' => ['@price_list_1->id']], 'sort' => 'product']
+        );
 
-        $this->assertResponseContains($this->getAliceFolderName().'/get_list.yml', $response);
+        $this->assertResponseContains('product_price/get_list.yml', $response);
     }
 
     public function testGetListWithTotalCount()
     {
-        $parameters = [
-            'filter' => [
-                'priceList' => ['@price_list_1->id'],
-            ],
-            'page' => ['size' => 1],
-            'sort' => 'product',
-        ];
         $response = $this->cget(
-            ['entity' => $this->getEntityName()],
-            $parameters,
+            ['entity' => 'productprices'],
+            ['filter' => ['priceList' => ['@price_list_1->id']], 'page' => ['size' => 1], 'sort' => 'product'],
             ['HTTP_X-Include' => 'totalCount']
         );
 
@@ -69,8 +54,8 @@ class ProductPriceTest extends RestJsonApiTestCase
             [
                 'data' => [
                     [
-                        'type' => $this->getEntityName(),
-                        'id' => '<(implode("-", [@product_price_with_rule_1->id, @price_list_1->id]))>',
+                        'type' => 'productprices',
+                        'id'   => '<(implode("-", [@product_price_with_rule_1->id, @price_list_1->id]))>',
                     ]
                 ]
             ],
@@ -81,14 +66,19 @@ class ProductPriceTest extends RestJsonApiTestCase
 
     public function testGetListWithoutPriceListFilter()
     {
-        $routeParameters = self::processTemplateData(['entity' => $this->getEntityName()]);
+        $response = $this->cget(
+            ['entity' => 'productprices'],
+            [],
+            [],
+            false
+        );
 
-        $response = $this->cget($routeParameters, [], [], false);
-
-        static::assertResponseStatusCodeEquals($response, Response::HTTP_BAD_REQUEST);
-        static::assertContains(
-            'priceList filter is required',
-            $response->getContent()
+        $this->assertResponseValidationError(
+            [
+                'title'  => 'filter constraint',
+                'detail' => 'priceList filter is required'
+            ],
+            $response
         );
     }
 
@@ -97,17 +87,16 @@ class ProductPriceTest extends RestJsonApiTestCase
         $this->cleanScheduledMessages();
 
         $response = $this->post(
-            ['entity' => $this->getEntityName()],
-            $this->getAliceFolderName().'/create.yml'
+            ['entity' => 'productprices'],
+            'product_price/create.yml'
         );
 
         $productPrice = $this->getProductPrice('price_list_3');
+        self::assertNotNull($productPrice);
 
-        static::assertNotNull($productPrice);
-
-        static::assertContains(
-            $productPrice->getId().'-'.$productPrice->getPriceList()->getId(),
-            $response->getContent()
+        self::assertEquals(
+            $productPrice->getId() . '-' . $productPrice->getPriceList()->getId(),
+            $this->getResourceId($response)
         );
 
         $this->assertMessagesSentForCreateRequest('price_list_3');
@@ -115,39 +104,50 @@ class ProductPriceTest extends RestJsonApiTestCase
 
     public function testCreateDuplicate()
     {
-        $routeParameters = self::processTemplateData(['entity' => $this->getEntityName()]);
-        $parameters = $this->getRequestData(
-            $this->getAliceFolderName().'/create.yml'
+        $this->post(
+            ['entity' => 'productprices'],
+            'product_price/create.yml'
         );
 
-        $this->post($routeParameters, $parameters);
+        $response = $this->post(
+            ['entity' => 'productprices'],
+            'product_price/create.yml',
+            [],
+            false
+        );
 
-        $response = $this->post($routeParameters, $parameters, [], false);
-
-        static::assertResponseStatusCodeEquals($response, Response::HTTP_BAD_REQUEST);
-        static::assertContains(
-            'unique entity constraint',
-            $response->getContent()
+        $this->assertResponseValidationError(
+            [
+                'title'  => 'unique entity constraint',
+                'detail' => 'Product has duplication of product prices.'
+                    . ' Set of fields "PriceList", "Quantity" , "Unit" and "Currency" should be unique.'
+            ],
+            $response
         );
     }
 
     public function testCreateWithWrongAttributes()
     {
-        $routeParameters = self::processTemplateData(['entity' => $this->getEntityName()]);
-        $parameters = $this->getRequestData(
-            $this->getAliceFolderName().'/create_wrong.yml'
+        $response = $this->post(
+            ['entity' => 'productprices'],
+            'product_price/create_wrong.yml',
+            [],
+            false
         );
 
-        $response = $this->post($routeParameters, $parameters, [], false);
-
-        static::assertResponseStatusCodeEquals($response, Response::HTTP_BAD_REQUEST);
-        static::assertContains(
-            'Currency \"EUR\" is not valid for current price list',
-            $response->getContent()
-        );
-        static::assertContains(
-            'Unit \"liter\" is not allowed for product',
-            $response->getContent()
+        $this->assertResponseValidationErrors(
+            [
+                [
+                    'title'  => 'product price currency constraint',
+                    'detail' => 'Currency "EUR" is not valid for current price list. Source: price.currency.'
+                ],
+                [
+                    'title'  => 'product price allowed units constraint',
+                    'detail' => 'Unit "liter" is not allowed for product "product-5".',
+                    'source' => ['pointer' => '/data/relationships/unit/data']
+                ]
+            ],
+            $response
         );
     }
 
@@ -158,133 +158,121 @@ class ProductPriceTest extends RestJsonApiTestCase
         $priceList = $this->getReference('price_list_1');
 
         $this->cdelete(
-            ['entity' => $this->getEntityName()],
-            [
-                'filter' => [
-                    'priceList' => $priceList->getId(),
-                ]
-            ]
+            ['entity' => 'productprices'],
+            ['filter' => ['priceList' => $priceList->getId()]]
         );
 
-        static::assertSame(
+        self::assertSame(
             0,
             $this->getEntityManager()->getRepository(ProductPrice::class)->countByPriceList(
-                static::getContainer()->get('oro_pricing.shard_manager'),
+                self::getContainer()->get('oro_pricing.shard_manager'),
                 $priceList
             )
         );
 
         $priceListId = $this->getReference('price_list_1')->getId();
 
-        static::assertMessageSent(
+        self::assertMessageSent(
             Topics::RESOLVE_COMBINED_PRICES,
             [
                 PriceListTriggerFactory::PRODUCT => [
-                    $priceListId => [
-                        $this->getReference('product-1')->getId(),
-                    ]
-                ],
+                    $priceListId => [$this->getReference('product-1')->getId()]
+                ]
             ]
         );
-        static::assertMessageSent(
+        self::assertMessageSent(
             Topics::RESOLVE_COMBINED_PRICES,
             [
                 PriceListTriggerFactory::PRODUCT => [
-                    $priceListId => [
-                        $this->getReference('product-2')->getId(),
-                    ]
-                ],
+                    $priceListId => [$this->getReference('product-2')->getId()]
+                ]
             ]
         );
     }
 
     public function testDeleteListWithoutPriceListFilter()
     {
-        $routeParameters = self::processTemplateData(
-            [
-                'entity' => $this->getEntityName(),
-            ]
+        $response = $this->cdelete(
+            ['entity' => 'productprices'],
+            [],
+            [],
+            false
         );
 
-        $response = $this->cdelete($routeParameters, [], [], false);
-
-        static::assertResponseStatusCodeEquals($response, Response::HTTP_BAD_REQUEST);
-        static::assertContains(
-            'At least one filter must be provided.',
-            $response->getContent()
+        $this->assertResponseValidationError(
+            [
+                'title'  => 'filter constraint',
+                'detail' => 'At least one filter must be provided.'
+            ],
+            $response
         );
     }
 
     public function testGetWithoutPriceListInId()
     {
-        $productPrice = $this->getFirstProductPrice();
-
-        $routeParameters = self::processTemplateData(
-            [
-                'entity' => $this->getEntityName(),
-                'id' => $productPrice->getid(),
-            ]
+        $response = $this->get(
+            ['entity' => 'productprices', 'id' => $this->getFirstProductPrice()->getId()],
+            [],
+            [],
+            false
         );
 
-        $response = $this->get($routeParameters, [], [], false);
-
-        static::assertResponseStatusCodeEquals($response, Response::HTTP_NOT_FOUND);
-        static::assertContains(
-            'An entity with the requested identifier does not exist.',
-            $response->getContent()
+        $this->assertResponseValidationError(
+            [
+                'title'  => 'not found http exception',
+                'detail' => 'An entity with the requested identifier does not exist.'
+            ],
+            $response,
+            Response::HTTP_NOT_FOUND
         );
     }
 
     public function testGetWithWrongPriceListInId()
     {
-        $productPrice = $this->getFirstProductPrice();
-
-        $routeParameters = self::processTemplateData(
-            [
-                'entity' => $this->getEntityName(),
-                'id' => $productPrice->getId().'-'.$this->getReference('price_list_2')->getId(),
-            ]
+        $response = $this->get(
+            ['entity' => 'productprices', 'id' => $this->getFirstProductPriceApiId('price_list_2')],
+            [],
+            [],
+            false
         );
 
-        $response = $this->get($routeParameters, [], [], false);
-
-        static::assertResponseStatusCodeEquals($response, Response::HTTP_NOT_FOUND);
-        static::assertContains(
-            'An entity with the requested identifier does not exist.',
-            $response->getContent()
+        $this->assertResponseValidationError(
+            [
+                'title'  => 'not found http exception',
+                'detail' => 'An entity with the requested identifier does not exist.'
+            ],
+            $response,
+            Response::HTTP_NOT_FOUND
         );
     }
 
     public function testGetWithNotExistingId()
     {
-        $productPrice = $this->getFirstProductPrice();
-
-        $routeParameters = self::processTemplateData(
-            [
-                'entity' => $this->getEntityName(),
-                'id' => $productPrice->getId().'a-'.$this->getReference('price_list_1')->getId(),
-            ]
+        $notExistingId = $this->getFirstProductPrice()->getId() . 'a-' . $this->getReference('price_list_1')->getId();
+        $response = $this->get(
+            ['entity' => 'productprices', 'id' => $notExistingId],
+            [],
+            [],
+            false
         );
 
-        $response = $this->get($routeParameters, [], [], false);
-
-        static::assertResponseStatusCodeEquals($response, Response::HTTP_NOT_FOUND);
-        static::assertContains(
-            'An entity with the requested identifier does not exist.',
-            $response->getContent()
+        $this->assertResponseValidationError(
+            [
+                'title'  => 'not found http exception',
+                'detail' => 'An entity with the requested identifier does not exist.'
+            ],
+            $response,
+            Response::HTTP_NOT_FOUND
         );
     }
 
     public function testGet()
     {
         $response = $this->get(
-            [
-                'entity' => $this->getEntityName(),
-                'id' => $this->getFirstProductPriceApiId(),
-            ]
+            ['entity' => 'productprices', 'id' => $this->getFirstProductPriceApiId()]
         );
 
-        $this->assertResponseContains($this->getAliceFolderName().'/get.yml', $response);
+        $this->assertResponseContains('product_price/get.yml', $response);
     }
 
     public function testUpdate()
@@ -292,20 +280,16 @@ class ProductPriceTest extends RestJsonApiTestCase
         $this->cleanScheduledMessages();
 
         $response = $this->patch(
-            [
-                'entity' => $this->getEntityName(),
-                'id' => $this->getFirstProductPriceApiId(),
-            ],
-            $this->getAliceFolderName().'/update.yml'
+            ['entity' => 'productprices', 'id' => $this->getFirstProductPriceApiId()],
+            'product_price/update.yml'
         );
 
         $productPrice = $this->getProductPrice('price_list_1');
+        self::assertNotNull($productPrice);
 
-        static::assertNotNull($productPrice);
-
-        static::assertContains(
-            $productPrice->getId().'-'.$productPrice->getPriceList()->getId(),
-            $response->getContent()
+        self::assertEquals(
+            $productPrice->getId() . '-' . $productPrice->getPriceList()->getId(),
+            $this->getResourceId($response)
         );
 
         $this->assertMessagesSentForCreateRequest('price_list_1');
@@ -313,45 +297,38 @@ class ProductPriceTest extends RestJsonApiTestCase
 
     public function testUpdateWithPriceList()
     {
-        $routeParameters = self::processTemplateData(
+        $response = $this->patch(
+            ['entity' => 'productprices', 'id' => $this->getFirstProductPriceApiId()],
+            'product_price/update_with_price_list.yml',
+            [],
+            false
+        );
+
+        $this->assertResponseValidationError(
             [
-                'entity' => $this->getEntityName(),
-                'id' => $this->getFirstProductPriceApiId(),
-            ]
-        );
-
-        $parameters = $this->getRequestData($this->getAliceFolderName().'/update_with_price_list.yml');
-
-        $response = $this->patch($routeParameters, $parameters, [], false);
-
-        static::assertResponseStatusCodeEquals($response, Response::HTTP_BAD_REQUEST);
-        static::assertContains(
-            'extra fields constraint',
-            $response->getContent()
-        );
-        static::assertContains(
-            'This form should not contain extra fields: \"priceList\"',
-            $response->getContent()
+                'title'  => 'extra fields constraint',
+                'detail' => 'This form should not contain extra fields: "priceList".'
+            ],
+            $response
         );
     }
 
     public function testUpdateDuplicate()
     {
-        $routeParameters = self::processTemplateData(
-            [
-                'entity' => $this->getEntityName(),
-                'id' => $this->getFirstProductPriceApiId(),
-            ]
+        $response = $this->patch(
+            ['entity' => 'productprices', 'id' => $this->getFirstProductPriceApiId()],
+            'product_price/update_duplicate.yml',
+            [],
+            false
         );
 
-        $parameters = $this->getRequestData($this->getAliceFolderName().'/update_duplicate.yml');
-
-        $response = $this->patch($routeParameters, $parameters, [], false);
-
-        static::assertResponseStatusCodeEquals($response, Response::HTTP_BAD_REQUEST);
-        static::assertContains(
-            'Product has duplication of product prices',
-            $response->getContent()
+        $this->assertResponseValidationError(
+            [
+                'title'  => 'unique entity constraint',
+                'detail' => 'Product has duplication of product prices.'
+                    . ' Set of fields "PriceList", "Quantity" , "Unit" and "Currency" should be unique.'
+            ],
+            $response
         );
     }
 
@@ -360,11 +337,8 @@ class ProductPriceTest extends RestJsonApiTestCase
         $this->cleanScheduledMessages();
 
         $this->patch(
-            [
-                'entity' => $this->getEntityName(),
-                'id' => $this->getFirstProductPriceApiId(),
-            ],
-            $this->getAliceFolderName().'/update_reset_rule.yml'
+            ['entity' => 'productprices', 'id' => $this->getFirstProductPriceApiId()],
+            'product_price/update_reset_rule.yml'
         );
 
         $productPrice = $this->findProductPriceByUniqueKey(
@@ -375,7 +349,7 @@ class ProductPriceTest extends RestJsonApiTestCase
             $this->getReference('product_unit.liter')
         );
 
-        static::assertNull($productPrice->getPriceRule());
+        self::assertNull($productPrice->getPriceRule());
     }
 
     public function testDelete()
@@ -383,10 +357,7 @@ class ProductPriceTest extends RestJsonApiTestCase
         $this->cleanScheduledMessages();
 
         $this->delete(
-            [
-                'entity' => $this->getEntityName(),
-                'id' => $this->getFirstProductPriceApiId(),
-            ]
+            ['entity' => 'productprices', 'id' => $this->getFirstProductPriceApiId()]
         );
 
         $productPrice = $this->findProductPriceByUniqueKey(
@@ -397,25 +368,24 @@ class ProductPriceTest extends RestJsonApiTestCase
             $this->getReference('product_unit.liter')
         );
 
-        static::assertNull($productPrice);
+        self::assertNull($productPrice);
 
-        static::assertMessageSent(
+        self::assertMessageSent(
             Topics::RESOLVE_COMBINED_PRICES,
             [
                 PriceListTriggerFactory::PRODUCT => [
-                    $this->getReference('price_list_1')->getId() => [
-                        $this->getReference('product-1')->getId()
-                    ]
-                ],
+                    $this->getReference('price_list_1')->getId() => [$this->getReference('product-1')->getId()]
+                ]
             ]
         );
     }
 
     /**
-     * @param string $priceListReferece
+     * @param string $priceListReference
+     *
      * @return ProductPrice
      */
-    private function getProductPrice($priceListReferece)
+    private function getProductPrice($priceListReference)
     {
         $queryBuilder = $this->getEntityManager()
             ->getRepository(ProductPrice::class)
@@ -431,15 +401,15 @@ class ProductPriceTest extends RestJsonApiTestCase
             ->setParameter('quantity', 250)
             ->setParameter('value', 150)
             ->setParameter('currency', 'CAD')
-            ->setParameter('priceList', $this->getReference($priceListReferece))
+            ->setParameter('priceList', $this->getReference($priceListReference))
             ->setParameter('product', $this->getReference('product-5'))
             ->setParameter('unit', $this->getReference('product_unit.milliliter'));
 
         $query = $queryBuilder->getQuery();
-        $query->setHint('priceList', $this->getReference($priceListReferece)->getId());
+        $query->setHint('priceList', $this->getReference($priceListReference)->getId());
         $query->setHint(
             PriceShardWalker::ORO_PRICING_SHARD_MANAGER,
-            static::getContainer()->get('oro_pricing.shard_manager')
+            self::getContainer()->get('oro_pricing.shard_manager')
         );
         $query->setHint(Query::HINT_CUSTOM_OUTPUT_WALKER, PriceShardWalker::class);
 
@@ -483,7 +453,7 @@ class ProductPriceTest extends RestJsonApiTestCase
         $query->setHint('priceList', $this->getReference('price_list_3')->getId());
         $query->setHint(
             PriceShardWalker::ORO_PRICING_SHARD_MANAGER,
-            static::getContainer()->get('oro_pricing.shard_manager')
+            self::getContainer()->get('oro_pricing.shard_manager')
         );
         $query->setHint(Query::HINT_CUSTOM_OUTPUT_WALKER, PriceShardWalker::class);
 
@@ -498,7 +468,7 @@ class ProductPriceTest extends RestJsonApiTestCase
         $productId = $this->getReference('product-5')->getId();
         $priceListId = $this->getReference($priceListReference)->getId();
 
-        static::assertMessageSent(
+        self::assertMessageSent(
             Topics::RESOLVE_COMBINED_PRICES,
             [
                 PriceListTriggerFactory::PRODUCT => [
@@ -506,7 +476,7 @@ class ProductPriceTest extends RestJsonApiTestCase
                 ]
             ]
         );
-        static::assertMessageSent(
+        self::assertMessageSent(
             Topics::RESOLVE_PRICE_RULES,
             [
                 PriceListTriggerFactory::PRODUCT => [
@@ -517,11 +487,13 @@ class ProductPriceTest extends RestJsonApiTestCase
     }
 
     /**
+     * @param string $priceListReference
+     *
      * @return string
      */
-    private function getFirstProductPriceApiId()
+    private function getFirstProductPriceApiId($priceListReference = 'price_list_1')
     {
-        return $this->getFirstProductPrice()->getId() . '-' . $this->getReference('price_list_1')->getId();
+        return $this->getFirstProductPrice()->getId() . '-' . $this->getReference($priceListReference)->getId();
     }
 
     /**
@@ -530,21 +502,5 @@ class ProductPriceTest extends RestJsonApiTestCase
     private function getFirstProductPrice()
     {
         return $this->getReference(LoadProductPricesWithRules::PRODUCT_PRICE_1);
-    }
-
-    /**
-     * @return string
-     */
-    private function getEntityName(): string
-    {
-        return 'productprices';
-    }
-
-    /**
-     * @return string
-     */
-    private function getAliceFolderName(): string
-    {
-        return 'product_price';
     }
 }

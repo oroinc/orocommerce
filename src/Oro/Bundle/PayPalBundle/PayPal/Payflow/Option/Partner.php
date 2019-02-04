@@ -36,6 +36,7 @@ class Partner extends AbstractOption
     const VITA = 'VITA';
     const TELN = 'TELN';
     const FIFT = 'FIFT';
+    const VSA  = 'VSA';
     const WPAY = 'WPAY';
     const PAYPAL = Processor\PayPal::CODE;
     const PAYPALCA = Processor\PayPalCA::CODE;
@@ -64,6 +65,7 @@ class Partner extends AbstractOption
         Partner::VITA => 'TSYS',
         Partner::TELN => 'TeleCheck 2',
         Partner::FIFT => 'Vantiv',
+        Partner::VSA  => 'VSA',
         Partner::WPAY => 'World Pay',
     ];
 

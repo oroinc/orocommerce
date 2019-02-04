@@ -2,8 +2,6 @@
 
 namespace Oro\Bundle\OrderBundle\Entity;
 
-use Brick\Math\BigDecimal;
-use Brick\Math\Exception\ArithmeticException;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Entity\SettablePriceAwareInterface;
@@ -15,6 +13,8 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 
 /**
+ * Represents ordered item.
+ *
  * @ORM\Table(name="oro_order_line_item")
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks()
@@ -25,7 +25,8 @@ use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
  *          },
  *          "security"={
  *              "type"="ACL",
- *              "group_name"=""
+ *              "group_name"="commerce",
+ *              "category"="orders"
  *          }
  *      }
  * )
@@ -498,13 +499,6 @@ class OrderLineItem extends ExtendOrderLineItem implements
      */
     public function getValue()
     {
-        if ($this->value !== null) {
-            try {
-                return BigDecimal::of($this->value)->toFloat();
-            } catch (ArithmeticException $e) {
-            }
-        }
-
         return $this->value;
     }
 

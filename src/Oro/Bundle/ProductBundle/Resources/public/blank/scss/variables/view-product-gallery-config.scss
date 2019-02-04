@@ -3,8 +3,8 @@
 $view-product-gallery-background: rgba(get-color('additional', 'dark'), .5) !default;
 $view-product-gallery-display: flex !default;
 $view-product-gallery-position: absolute !default;
-$view-product-gallery-top: 0 !default;
-$view-product-gallery-left: 0 !default;
+$view-product-gallery-top: auto !default;
+$view-product-gallery-left: auto !default;
 $view-product-gallery-right: 0 !default;
 $view-product-gallery-bottom: 0 !default;
 $view-product-gallery-justify-content: center !default;
@@ -16,12 +16,10 @@ $view-product-gallery-icon-text-shadow: 0 0 2px get-color('additional', 'dark') 
 $view-product-gallery-hover-icon-size: 50px !default;
 $view-product-gallery-opacity: 0 !default;
 $view-product-gallery-hover-opacity: 1 !default;
+$view-product-gallery-width: 50px !default;
+$view-product-gallery-height: 50px !default;
+$view-product-gallery-border-radius: 100% 0 0 0 !default;
+$view-product-gallery-icon-offset: 6px 0 0 7px !default;
 
-$view-product-gallery-tablet-small-top: auto !default;
-$view-product-gallery-tablet-small-left: auto !default;
-$view-product-gallery-tablet-small-width: 50px !default;
-$view-product-gallery-tablet-small-height: 50px !default;
-$view-product-gallery-tablet-small-opacity: 1 !default;
-$view-product-gallery-tablet-small-border-radius: 100% 0 0 0 !default;
-$view-product-gallery-icon-tablet-small-size: 20px !default;
-$view-product-gallery-icon-tablet-small-offset: 6px 0 0 7px !default;
+$view-product-gallery-tablet-opacity: 1 !default;
+$view-product-gallery-mobile-opacity: 1 !default;

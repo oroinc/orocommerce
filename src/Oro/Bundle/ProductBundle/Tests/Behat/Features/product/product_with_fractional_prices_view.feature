@@ -51,8 +51,8 @@ Feature: Product with fractional prices view
     And I go to System/Configuration
     And follow "System Configuration/General Setup/Localization" on configuration sidebar
     When fill "Configuration Localization Form" with:
-      | Locale Use Default | false            |
-      | Locale             | German (Germany) |
+      | Enabled Localizations | German_Loc |
+      | Default Localization  | German_Loc |
     And click "Save settings"
     Then I should see "Configuration saved" flash message
 

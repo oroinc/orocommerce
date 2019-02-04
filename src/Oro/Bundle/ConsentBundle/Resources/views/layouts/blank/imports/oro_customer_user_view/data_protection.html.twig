@@ -1,0 +1,25 @@
+{% block _customer_user_view_information_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        'class': 'customer-profile__container'
+    }) %}
+
+    <div{{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _customer_user_view_information_data_protection_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        'class': ' customer-profile__data',
+        'data-role': 'profile-consents'
+    }) %}
+
+    <div{{ block('block_attributes') }}>
+        <div class="info-list__item">
+            <div class="info-list__name">
+                {{ 'oro.consent.frontend.profile.view.sections.data_protection.label'|trans  }}
+            </div>
+            {{ block_widget(block) }}
+        </div>
+    </div>
+{% endblock %}

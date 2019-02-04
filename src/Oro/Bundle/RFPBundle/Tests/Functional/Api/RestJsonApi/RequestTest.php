@@ -7,8 +7,6 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\RFPBundle\Entity\Request;
-use Oro\Bundle\RFPBundle\Entity\RequestProduct;
-use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
 use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
 
 class RequestTest extends RestJsonApiTestCase
@@ -138,7 +136,7 @@ class RequestTest extends RestJsonApiTestCase
                     'requestProducts' => [
                         'data' => [
                             [
-                                'type' => $this->getEntityType(RequestProduct::class),
+                                'type' => 'requestproducts',
                                 'id' => '8da4d8e7-6b25-4c5c-8075-b510f7bbb84f'
                             ]
                         ]
@@ -148,21 +146,21 @@ class RequestTest extends RestJsonApiTestCase
             'included' => [
                 [
                     'id' => '8da4d8e7-6b25-4c5c-8075-b510f7bbb84f',
-                    'type' => $this->getEntityType(RequestProduct::class),
+                    'type' => 'requestproducts',
                     'attributes' => [
                         'comment' => 'Test'
                     ],
                     'relationships' => [
                         'request' => [
-                            'data' => ['type' => $this->getEntityType(Request::class), 'id' => '8da4d8e6']
+                            'data' => ['type' => 'requests', 'id' => '8da4d8e6']
                         ],
                         'product' => [
-                            'data' => ['type' => $this->getEntityType(Product::class), 'id' => $product]
+                            'data' => ['type' => 'products', 'id' => $product]
                         ],
                         'requestProductItems' => [
                             'data' => [
                                 [
-                                    'type' => $this->getEntityType(RequestProductItem::class),
+                                    'type' => 'requestproductitems',
                                     'id' => '707dda0d-35f5-47b9-b2ce-a3e92b9fdee7'
                                 ]
                             ]
@@ -171,7 +169,7 @@ class RequestTest extends RestJsonApiTestCase
                 ],
                 [
                     'id' => '707dda0d-35f5-47b9-b2ce-a3e92b9fdee7',
-                    'type' => $this->getEntityType(RequestProductItem::class),
+                    'type' => 'requestproductitems',
                     'attributes' => [
                         'quantity' => 10,
                         'value' => 100,
@@ -183,7 +181,7 @@ class RequestTest extends RestJsonApiTestCase
                         ],
                         'requestProduct' => [
                             'data' => [
-                                'type' => $this->getEntityType(RequestProduct::class),
+                                'type' => 'requestproducts',
                                 'id' => '8da4d8e7-6b25-4c5c-8075-b510f7bbb84f'
                             ]
                         ]

@@ -175,7 +175,7 @@ Feature: Pricing rounding
     And should see "Total $5"
     And click "Account"
     When click "Order History"
-    Then should see following grid:
+    Then should see following "PastOrdersGrid" grid:
       |Order Number|Total |
       |2           |$8.00 |
       |1           |$10.00|
@@ -303,7 +303,7 @@ Feature: Pricing rounding
     And I see the "Thank You" page with "Thank You For Your Purchase!" title
     And click "Account"
     When click "Order History"
-    Then should see following grid:
+    Then should see following "PastOrdersGrid" grid:
       |Order Number|Total |
       |4           |$7.50 |
       |3           |$10.50|

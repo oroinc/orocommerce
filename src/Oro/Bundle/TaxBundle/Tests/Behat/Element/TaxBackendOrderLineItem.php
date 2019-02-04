@@ -54,14 +54,17 @@ class TaxBackendOrderLineItem extends TableRow
         /** @var Table $taxesTable */
         $taxesTable = $this->elementFactory->createElement('BackendLineItemTaxTable', $cellElement);
 
-        return [
-            $taxesTable->getRowByNumber(1)->getCellValue(self::INCL_TAX_CELL_HEADER),
-            $taxesTable->getRowByNumber(1)->getCellValue(self::EXCL_TAX_CELL_HEADER),
-            $taxesTable->getRowByNumber(1)->getCellValue(self::TAX_AMOUNT_CELL_HEADER),
+        $taxRows = $taxesTable->getRows();
+        self::assertCount(2, $taxRows);
 
-            $taxesTable->getRowByNumber(2)->getCellValue(self::INCL_TAX_CELL_HEADER),
-            $taxesTable->getRowByNumber(2)->getCellValue(self::EXCL_TAX_CELL_HEADER),
-            $taxesTable->getRowByNumber(2)->getCellValue(self::TAX_AMOUNT_CELL_HEADER)
+        return [
+            $taxRows[0]->getCellValue(self::INCL_TAX_CELL_HEADER),
+            $taxRows[0]->getCellValue(self::EXCL_TAX_CELL_HEADER),
+            $taxRows[0]->getCellValue(self::TAX_AMOUNT_CELL_HEADER),
+
+            $taxRows[1]->getCellValue(self::INCL_TAX_CELL_HEADER),
+            $taxRows[1]->getCellValue(self::EXCL_TAX_CELL_HEADER),
+            $taxRows[1]->getCellValue(self::TAX_AMOUNT_CELL_HEADER)
         ];
     }
 }

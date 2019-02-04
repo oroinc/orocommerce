@@ -8,10 +8,10 @@ layout:
                     blockType: checkout_sidebar
                     options:
                         checkout: '=data["checkout"]'
-                        steps: '=data["oro_checkout_steps"].getSteps(data["workflowItem"])'
+                        steps: '=data["oro_checkout_steps"].getSteps(data["workflowItem"], excludedSteps)'
                         currentStep: '=data["workflowStep"]'
                         editTransitions: '=data["oro_checkout_transition"].getBackTransitions(data["workflowItem"])'
-                        excludedSteps: ['enter_credentials_step']
+                        excludedSteps: '=["enter_credentials_step"]'
                 __enter_billing_address_information:
                     blockType: block
                 __enter_shipping_address_information:

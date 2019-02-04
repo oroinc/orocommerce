@@ -1,0 +1,11 @@
+oro_entity:
+    virtual_fields:
+        Oro\Bundle\CustomerBundle\Entity\CustomerUser:
+            acceptedConsentsVirtual:
+                query:
+                    select:
+                        expr: accepted_consent.consent
+                        return_type: dictionary
+                    join:
+                        left:
+                            - { join: 'OroConsentBundle:ConsentAcceptance', alias: 'accepted_consent', conditionType: 'WITH', condition: 'accepted_consent.customerUser = entity' }

@@ -12,17 +12,13 @@ Oro\Bundle\OrderBundle\Entity\Order:
         totalValue:
             - Type:
                 type: numeric
-            - Range:
-                min: 0
-                max: 999999999999999999
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\NumericRange:
                 minMessage: 'oro.order.total.min.error.label'
                 maxMessage: 'oro.order.total.max.error.label'
         subtotalValue:
             - Type:
                 type: numeric
-            - Range:
-                min: 0
-                max: 999999999999999999
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\NumericRange:
                 minMessage: 'oro.order.subtotal.min.error.label'
                 maxMessage: 'oro.order.subtotal.max.error.label'
         customer:
@@ -110,10 +106,9 @@ Oro\Bundle\OrderBundle\Entity\OrderDiscount:
             - Type:
                 groups: [Default, OrderDiscountItemType]
                 type: numeric
-            - Range:
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\NumericRange:
                 groups: [Default, OrderDiscountItemType]
-                min: 0
-                max: 999999999999999999
+                maxMessage: 'oro.order.discounts.item.error.label'
         type:
             - Type:
                 groups: [Default, OrderDiscountItemType]

@@ -1,0 +1,66 @@
+{% block __oro_consent_list__consent_list_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        'class': 'consent-list'
+    }) %}
+
+    {% if consents is defined %}
+        {% do block|merge_context({
+            class_prefix: class_prefix,
+            consents: consents
+        }) %}
+
+
+        <div {{ block('block_attributes') }}>
+            {{ block_widget(block) }}
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block __oro_consent_list__consent_items_widget %}
+    {% for consent in consents %}
+        {% do block|merge_context({
+            class_prefix: class_prefix,
+            consent: consent
+        }) %}
+
+        {% set attr = attr|merge({
+            'class': 'consent-list__item' ~ (consent.accepted ? ' accepted' : ' unaccepted'),
+            'data-page-component-view': 'oroconsent/js/app/views/base-consent-item-view',
+            'data-page-component-options': consent|json_encode
+        }) %}
+
+        <div {{ block('block_attributes') }}>
+            {{ parent_block_widget(block) }}
+        </div>
+    {% endfor %}
+{% endblock %}
+
+{% block __oro_consent_list__consent_items_status_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        'class': 'consent-list__status' ~
+        (consent.accepted ? ' consent-list__status--enabled' : ' consent-list__status--disabled')
+    }) %}
+
+    <i {{ block('block_attributes') }}></i>
+{% endblock %}
+
+{% block __oro_consent_list__consent_items_link_widget %}
+    {% if consent.cmsPageData.url is defined %}
+        {% set attr = layout_attr_defaults(attr, {
+            'class': 'consent-list__link',
+            'href': consent.cmsPageData.url
+        }) %}
+
+        <a {{ block('block_attributes') }}>
+            {{ consent.title }}
+        </a>
+    {% else %}
+        {% set attr = layout_attr_defaults(attr, {
+            'class': 'consent-list__text'
+        }) %}
+
+        <span {{ block('block_attributes') }}>
+            {{ consent.title }}
+        </span>
+    {% endif %}
+{% endblock %}

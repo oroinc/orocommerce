@@ -1,0 +1,7 @@
+api:
+    entities:
+        Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm:
+            # this entity does not have own Data API resource,
+            # but it should be defined to correct work of "paymentTerm" property
+            # of the order API resource
+            actions: false

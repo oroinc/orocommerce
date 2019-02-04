@@ -17,7 +17,6 @@ use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnits;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadVariantFields;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadWorkflowDefinitions;
 use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadProductTaxCodes;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -101,8 +100,7 @@ class ProductTest extends RestJsonApiTestCase
     {
         $product = $this->getReference(LoadProductData::PRODUCT_1);
         $response = $this->get(
-            ['entity' => 'products', 'id' => $product->getId()],
-            []
+            ['entity' => 'products', 'id' => $product->getId()]
         );
 
         $this->assertResponseContains('get_product_by_id.yml', $response);
@@ -623,12 +621,10 @@ class ProductTest extends RestJsonApiTestCase
 
     public function testCreateForConfigurableProduct()
     {
-        $response = $this->post(
-            ['entity' => $this->getEntityType(Product::class)],
+        $this->post(
+            ['entity' => 'products'],
             'create_configurable_product.yml'
         );
-
-        $this->assertResponseStatusCodeEquals($response, Response::HTTP_CREATED);
     }
 
     public function testCreateWithImage()

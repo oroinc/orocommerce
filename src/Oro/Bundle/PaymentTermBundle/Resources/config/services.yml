@@ -45,6 +45,7 @@ services:
         class: 'Oro\Bundle\PaymentTermBundle\EventListener\CustomerDatagridListener'
         arguments:
             - '@oro_payment_term.provider.payment_term_association'
+            - '@oro_datagrid.provider.selected_fields'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.customer-customers-select-grid, method: onBuildBefore, priority: 128 }
 

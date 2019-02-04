@@ -1,0 +1,109 @@
+allowed_for_customer_customer_user_denied:
+    permissions:
+        'VIEW;entity:Oro\Bundle\CustomerBundle\Entity\CustomerAddress': true
+        'VIEW;entity:Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress': false
+        'oro_quote_address_shipping_customer_user_use_any': false
+    hasCustomer: true
+    hasCustomerUser: true
+    hasCustomerAddresses: true
+    hasCustomerUserAddresses: false
+    expected: true
+
+no_customer_addresses:
+    permissions:
+        'VIEW;entity:Oro\Bundle\CustomerBundle\Entity\CustomerAddress': true
+        'VIEW;entity:Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress': false
+        'oro_quote_address_shipping_customer_user_use_any': false
+    hasCustomer: true
+    hasCustomerUser: false
+    hasCustomerAddresses: false
+    hasCustomerUserAddresses: false
+    expected: false
+
+no_customer_address_allowed_customer_user_denied:
+    permissions:
+        'VIEW;entity:Oro\Bundle\CustomerBundle\Entity\CustomerAddress': true
+        'VIEW;entity:Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress': false
+        'oro_quote_address_shipping_customer_user_use_any': false
+    hasCustomer: false
+    hasCustomerUser: true
+    hasCustomerAddresses: false
+    hasCustomerUserAddresses: false
+    expected: true
+
+no_customer_address_denied_customer_user_denied:
+    permissions:
+        'VIEW;entity:Oro\Bundle\CustomerBundle\Entity\CustomerAddress': false
+        'VIEW;entity:Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress': false
+        'oro_quote_address_shipping_customer_user_use_any': false
+    hasCustomer: false
+    hasCustomerUser: true
+    hasCustomerAddresses: false
+    hasCustomerUserAddresses: false
+    expected: false
+
+no_customer_user_address_permissions_customer_denied:
+    permissions:
+        'VIEW;entity:Oro\Bundle\CustomerBundle\Entity\CustomerAddress': false
+        'VIEW;entity:Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress': false
+        'oro_quote_address_shipping_customer_user_use_any': true
+    hasCustomer: true
+    hasCustomerUser: true
+    hasCustomerAddresses: false
+    hasCustomerUserAddresses: true
+    expected: false
+
+no_customer_user_type_permissions_customer_denied:
+    permissions:
+        'VIEW;entity:Oro\Bundle\CustomerBundle\Entity\CustomerAddress': false
+        'VIEW;entity:Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress': true
+        'oro_quote_address_shipping_customer_user_use_any': false
+    hasCustomer: true
+    hasCustomerUser: true
+    hasCustomerAddresses: false
+    hasCustomerUserAddresses: true
+    expected: false
+
+no_customer_address_allowed_user_customer_denied:
+    permissions:
+        'VIEW;entity:Oro\Bundle\CustomerBundle\Entity\CustomerAddress': false
+        'VIEW;entity:Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress': true
+        'oro_quote_address_shipping_customer_user_use_any': true
+    hasCustomer: true
+    hasCustomerUser: false
+    hasCustomerAddresses: false
+    hasCustomerUserAddresses: true
+    expected: true
+
+no_customer_address_denied_user_customer_denied:
+    permissions:
+        'VIEW;entity:Oro\Bundle\CustomerBundle\Entity\CustomerAddress': false
+        'VIEW;entity:Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress': false
+        'oro_quote_address_shipping_customer_user_use_any': false
+    hasCustomer: true
+    hasCustomerUser: false
+    hasCustomerAddresses: false
+    hasCustomerUserAddresses: true
+    expected: false
+
+no_customer_user_allowed:
+    permissions:
+        'VIEW;entity:Oro\Bundle\CustomerBundle\Entity\CustomerAddress': false
+        'VIEW;entity:Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress': true
+        'oro_quote_address_shipping_customer_user_use_any': true
+    hasCustomer: true
+    hasCustomerUser: true
+    hasCustomerAddresses: false
+    hasCustomerUserAddresses: true
+    expected: true
+
+everything_allowed:
+    permissions:
+        'VIEW;entity:Oro\Bundle\CustomerBundle\Entity\CustomerAddress': true
+        'VIEW;entity:Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress': true
+        'oro_quote_address_shipping_customer_user_use_any': true
+    hasCustomer: true
+    hasCustomerUser: true
+    hasCustomerAddresses: true
+    hasCustomerUserAddresses: true
+    expected: true

@@ -36,19 +36,19 @@ use Symfony\Component\Translation\DataCollectorTranslator;
 
 class QuoteEmailTemplateExtensionTest extends FormIntegrationTestCase
 {
-    /** @var EntityManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var EntityManager|\PHPUnit\Framework\MockObject\MockObject */
     private $em;
 
-    /** @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
     private $configManager;
 
-    /** @var EmailTemplateRepository|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var EmailTemplateRepository|\PHPUnit\Framework\MockObject\MockObject */
     private $repository;
 
-    /** @var TokenAccessorInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var TokenAccessorInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $tokenAccessor;
 
-    /** @var FeatureChecker|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject */
     private $featureChecker;
 
     /** @var QuoteEmailTemplateExtension */
@@ -238,7 +238,7 @@ class QuoteEmailTemplateExtensionTest extends FormIntegrationTestCase
             $configManager,
             $translator,
             new EventDispatcher(),
-            new EntityNameResolver('full', ['full' => '']),
+            $this->createMock(EntityNameResolver::class),
             $this->featureChecker
         );
     }
@@ -257,7 +257,7 @@ class QuoteEmailTemplateExtensionTest extends FormIntegrationTestCase
         /** @var MailboxManager $mailboxManager */
         $mailboxManager = $this->createMock(MailboxManager::class);
 
-        /** @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject $registry */
+        /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject $registry */
         $registry = $this->createMock(ManagerRegistry::class);
         $registry
             ->method('getManager')

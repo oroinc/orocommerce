@@ -16,6 +16,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * Handles logic of create, update and move actions for Content Node
+ */
 class ContentNodeController extends Controller
 {
     /**
@@ -43,7 +46,6 @@ class ContentNodeController extends Controller
     /**
      * @Route("/create/parent/{id}", name="oro_content_node_create", requirements={"id"="\d+"})
      *
-     * @AclAncestor("oro_web_catalog_update")
      * @Template("OroWebCatalogBundle:ContentNode:update.html.twig")
      *
      * @param ContentNode $parentNode
@@ -51,6 +53,10 @@ class ContentNodeController extends Controller
      */
     public function createAction(ContentNode $parentNode)
     {
+        if (!$this->isGranted('oro_web_catalog_update', $parentNode->getWebCatalog())) {
+            throw $this->createAccessDeniedException();
+        }
+
         $contentNode = new ContentNode();
         $contentNode->setWebCatalog($parentNode->getWebCatalog());
         $contentNode->setParentNode($parentNode);
@@ -61,7 +67,6 @@ class ContentNodeController extends Controller
     /**
      * @Route("/update/{id}", name="oro_content_node_update", requirements={"id"="\d+"})
      *
-     * @AclAncestor("oro_web_catalog_update")
      * @Template("OroWebCatalogBundle:ContentNode:update.html.twig")
      *
      * @param ContentNode $contentNode
@@ -69,6 +74,10 @@ class ContentNodeController extends Controller
      */
     public function updateAction(ContentNode $contentNode)
     {
+        if (!$this->isGranted('oro_web_catalog_update', $contentNode->getWebCatalog())) {
+            throw $this->createAccessDeniedException();
+        }
+
         return $this->updateTreeNode($contentNode);
     }
 
@@ -102,14 +111,17 @@ class ContentNodeController extends Controller
      *
      * @ParamConverter("newParentContentNode", options={"id" = "newParentId"})
      *
-     * @AclAncestor("oro_web_catalog_update")
-     *
      * @param ContentNode $contentNode
      * @param ContentNode $newParentContentNode
      * @return JsonResponse
      */
     public function getPossibleUrlsAction(ContentNode $contentNode, ContentNode $newParentContentNode)
     {
+        if (!$this->isGranted('oro_web_catalog_update', $contentNode->getWebCatalog())
+            || !$this->isGranted('oro_web_catalog_update', $newParentContentNode->getWebCatalog())) {
+            throw $this->createAccessDeniedException();
+        }
+
         $slugGenerator = $this->get('oro_web_catalog.generator.slug_generator');
 
         return new JsonResponse($slugGenerator->getSlugsUrlForMovedNode($newParentContentNode, $contentNode));
@@ -122,13 +134,16 @@ class ContentNodeController extends Controller
      *     requirements={"id"="\d+"}
      * )
      *
-     * @AclAncestor("oro_web_catalog_update")
-     *
      * @param ContentNode $node
+     * @param Request $request
      * @return JsonResponse
      */
     public function getChangedUrlsAction(ContentNode $node, Request $request)
     {
+        if (!$this->isGranted('oro_web_catalog_update', $node->getWebCatalog())) {
+            throw $this->createAccessDeniedException();
+        }
+
         $slugGenerator = $this->get('oro_web_catalog.generator.slug_generator');
         $oldUrls = $slugGenerator->prepareSlugUrls($node);
 

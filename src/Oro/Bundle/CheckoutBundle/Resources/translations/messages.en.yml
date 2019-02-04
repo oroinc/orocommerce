@@ -235,6 +235,9 @@ oro:
             invalid_request.message: Invalid request.
             invalid_billing_address.message: Please enter correct billing address.
             invalid_shipping_address.message: Please enter correct shipping address.
+            payment_method_is_not_selected.message: Payment method is not selected.
+            required_consents_should_be_checked.message: You have been redirected to the Agreements page as a new mandatory consent has been added and requires your attention. Please, review and accept it to proceed.
+            required_consents_should_be_checked_on_single_page_checkout.message: New mandatory consent has been added and requires your attention. Please, review and accept it to proceed.
 
         order.line_items.line_item_has_no_price_allow_rfp.message: Some products have not been added to this order. Please create an RFQ to request price.
         order.line_items.line_item_has_no_price_not_allow_rfp.message: Some products have not been added to this order.

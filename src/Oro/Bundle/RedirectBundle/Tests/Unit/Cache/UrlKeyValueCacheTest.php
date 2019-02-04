@@ -270,6 +270,25 @@ class UrlKeyValueCacheTest extends \PHPUnit\Framework\TestCase
         $urlCache->flushAll();
     }
 
+    public function testFlushAllMultiNoChanges()
+    {
+        /** @var Cache|\PHPUnit\Framework\MockObject\MockObject $localCache */
+        $localCache = $this->createMock(CacheAllCapabilities::class);
+        /** @var Cache|\PHPUnit\Framework\MockObject\MockObject $persistentCache */
+        $persistentCache = $this->createMock(FilesystemCache::class);
+
+        $urlCache = new UrlKeyValueCache($persistentCache, $localCache, $this->filesystem);
+
+        $localCache->expects($this->once())
+            ->method('fetchMultiple')
+            ->with([])
+            ->willReturn([]);
+        $persistentCache->expects($this->never())
+            ->method('saveMultiple');
+
+        $urlCache->flushAll();
+    }
+
     public function testFlushAllNonMulti()
     {
         $this->urlCache->setUrl('test_1', null, '/test', 'test', 1);

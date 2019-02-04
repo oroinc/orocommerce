@@ -37,7 +37,6 @@ use Oro\Bundle\ProductBundle\Provider\VariantFieldProvider;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProductImage;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\BrandSelectTypeStub;
-use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\EnumSelectTypeStub;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ImageTypeStub;
 use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugType;
 use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugWithRedirectType;
@@ -45,9 +44,11 @@ use Oro\Bundle\RedirectBundle\Helper\ConfirmSlugChangeFormHelper;
 use Oro\Bundle\RedirectBundle\Tests\Unit\Form\Type\Stub\LocalizedSlugTypeStub;
 use Oro\Bundle\TranslationBundle\Translation\Translator;
 use Oro\Component\Layout\Extension\Theme\Manager\PageTemplatesManager;
+use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType as StubEntityIdentifierType;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as EntityTypeStub;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EnumSelectType as EnumSelectTypeStub;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -157,7 +158,9 @@ class ProductTypeTest extends FormIntegrationTestCase
         $productUnitPrecision = new ProductUnitPrecisionType();
         $productUnitPrecision->setDataClass(ProductUnitPrecision::class);
 
-        $stubEnumSelectType = new EnumSelectTypeStub();
+        $stubEnumSelectType = new EnumSelectTypeStub([
+            new StubEnumValue(Product::INVENTORY_STATUS_IN_STOCK, 'In Stock')
+        ]);
 
         /** @var \PHPUnit\Framework\MockObject\MockObject|ConfigProvider $configProvider */
         $configProvider = $this->getMockBuilder(ConfigProvider::class)
@@ -204,6 +207,7 @@ class ProductTypeTest extends FormIntegrationTestCase
 
         $entityType = new EntityTypeStub(
             [
+                'each' => (new ProductUnit())->setCode('each'),
                 'item' => (new ProductUnit())->setCode('item'),
                 'kg' => (new ProductUnit())->setCode('kg')
             ]
@@ -414,7 +418,9 @@ class ProductTypeTest extends FormIntegrationTestCase
     ) {
         $expectedProduct = new Product();
 
-        $expectedProduct->setType(Product::TYPE_SIMPLE);
+        $expectedProduct
+            ->setType(Product::TYPE_SIMPLE)
+            ->setInventoryStatus(new StubEnumValue('in_stock', 'In Stock'));
 
         if ($hasVariants) {
             $expectedProduct->setType(Product::TYPE_CONFIGURABLE);
@@ -456,6 +462,8 @@ class ProductTypeTest extends FormIntegrationTestCase
 
         $expectedProduct->setPageTemplate(new EntityFieldFallbackValue());
         $expectedProduct->setAttributeFamily($this->getAttributeFamily());
+
+        $expectedProduct->setInventoryStatus(new StubEnumValue(Product::INVENTORY_STATUS_IN_STOCK, 'In Stock'));
 
         return $expectedProduct->setSku('test sku');
     }

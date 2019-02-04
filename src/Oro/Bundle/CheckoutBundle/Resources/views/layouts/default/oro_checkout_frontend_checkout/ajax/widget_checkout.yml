@@ -28,6 +28,17 @@ layout:
                         title: ~
                     body:
                         raw_notification: ~
+
+        - '@setOption':
+            id: checkout_information_title
+            optionName: excludedSteps
+            optionValue: '=data["oro_frontend_consent_provider"].getExcludedSteps(["enter_credentials_step"], !data["workflowItem"].getData().get("consents_available"))'
+
+        - '@setOption':
+            id: checkout_sidebar
+            optionName: excludedSteps
+            optionValue: '=data["oro_frontend_consent_provider"].getExcludedSteps(["enter_credentials_step"], !data["workflowItem"].getData().get("consents_available"))'
+
     imports:
         -
             id: oro_checkout_content

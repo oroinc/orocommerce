@@ -5,6 +5,7 @@ define(function(require) {
     var mediator = require('oroui/js/mediator');
     var $ = require('jquery');
     var _ = require('underscore');
+    var DISABLED_CLASS = 'btn--disabled';
 
     var TransitionButtonComponent;
     TransitionButtonComponent = BaseComponent.extend(/** @lends TransitionButtonComponent.prototype */{
@@ -61,12 +62,12 @@ define(function(require) {
 
         enableTransitionButton: function() {
             if (this.options.enabled) {
-                this.$el.prop('disabled', false);
+                this.$el.removeAttr('disabled', false).removeClass(DISABLED_CLASS);
             }
         },
 
         disableTransitionButton: function() {
-            this.$el.prop('disabled', 'disabled');
+            this.$el.attr('disabled', 'disabled').addClass(DISABLED_CLASS);
         },
 
         initializeTriggers: function() {
@@ -192,6 +193,10 @@ define(function(require) {
             mediator.execute('showFlashMessage', 'error', 'Could not perform transition');
         },
 
+        disposeTooltip: function() {
+            this.$el.tooltip('dispose');
+        },
+
         /**
          * @inheritDoc
          */
@@ -200,6 +205,8 @@ define(function(require) {
                 return;
             }
 
+            this.disposeTooltip();
+
             if (this.$form) {
                 this.$form.off('submit', $.proxy(this.onSubmit, this));
             }
@@ -207,7 +214,6 @@ define(function(require) {
             this.$transitionTriggers.off('click', $.proxy(this.transit, this));
 
             mediator.off(null, null, this);
-
             TransitionButtonComponent.__super__.dispose.call(this);
         }
     });

@@ -15,22 +15,26 @@
          data-page-component-module="oroproduct/js/app/components/product-primary-unit-limitations-component"
          data-page-component-options="{{ { 'precisions': precisions, 'initialAdditionalUnits': initialAdditionalUnits }|json_encode  }}">
 
-        <div class="float-holder">
-            <table>
-                <tr>
-                    <td>{{ form_widget(form.unit) }}{% if form.unit_disabled is defined %}{{ form_widget(form.unit_disabled) }}{% endif %}</td>
-                    <td class="float-holder-label"><div class="control-label"><label>{{ 'oro.product.productunitprecision.precision.label'|trans }}<em>&nbsp;</em></label></div></td>
-                    <td>{{ form_widget(form.precision, { 'attr': {'class': 'precision', 'style': 'width: 40px'} }) }}</td>
-                    <td>{{ form_widget(form.conversionRate) }}</td>
-                    <td>{{ form_widget(form.sell) }}</td>
-                </tr>
-                <tr>
-                    <td>{{ form_errors(form.unit) }}</td>
-                    <td></td>
-                    <td>{{ form_errors(form.precision) }}</td>
-                </tr>
-            </table>
+        <div class="entity-fallback-container">
+            <div class="entity-fallback-container__value">
+                {{ form_widget(form.unit) }}{% if form.unit_disabled is defined %}{{ form_widget(form.unit_disabled) }}{% endif %}
+            </div>
+            <div class="entity-fallback-container__line">
+                <div class="entity-fallback-container__use">{{-
+                    'oro.product.productunitprecision.precision.label'|trans
+                -}}</div>
+                <div class="entity-fallback-container__fallback">
+                    {{ form_widget(form.precision, { 'attr': {'class': 'precision'} }) }}
+                </div>
+            </div>
         </div>
+
+        {{ form_widget(form.conversionRate) }}
+
+        {{ form_widget(form.sell) }}
+
+        {{ form_errors(form.unit) }}
+        {{ form_errors(form.precision) }}
     </div>
 {% endblock %}
 
@@ -224,7 +228,7 @@
                 </table>
                 {% if allow_add %}
                     <a class="btn add-list-item" data-container=".image-collection tbody" href="javascript: void(0);">
-                        <i class="fa-plus"></i>{{ 'oro.product.productimage.add.label'|trans }}
+                        {{ 'oro.product.productimage.add.label'|trans }}
                     </a>
                 {% endif %}
             </div>
@@ -234,7 +238,7 @@
 {% endblock %}
 
 {% block oro_product_image_widget %}
-    <td><div class="pull-left">{{ form_widget(form.image) }}{{ form_errors(form) }}</div></td>
+    <td><div>{{ form_widget(form.image) }}{{ form_errors(form) }}</div></td>
 
     {% for imageType in form.vars.imageTypes|keys %}
         <td>{{ form_widget(form[imageType], { attr: {'data-image-type': imageType} }) }}</td>
@@ -401,7 +405,7 @@
                                     <div data-collapse-container class="filter control-group fields-row">
                                         {{ block('oro_segment_filter_builder_row') }}
                                         {# --Apply Query button start--#}
-                                        <div class="clearfix">
+                                        <div class="btn-container clearfix">
                                             <div class="pull-right">
                                                 <a href="#" class="btn btn-primary filter-apply">
                                                     {{ 'oro.product.content_variant.ui.apply_query'|trans }}
@@ -442,7 +446,7 @@
                                     'widgetRouteParameters': excludedWidgetRouteParameters
                                 } %}
 
-                                <div class="{{ excludedControlsBlockAlias }} control-group"
+                                <div class="{{ excludedControlsBlockAlias }}"
                                      data-page-component-module="orodatagrid/js/app/components/grid-sidebar-component"
                                      data-page-component-options="{{ excludedGridSidebarComponentOptions|json_encode }}"
                                 >
@@ -480,7 +484,7 @@
                                     'widgetRouteParameters': includedWidgetRouteParameters
                                 } %}
 
-                                <div class="{{ includedControlsBlockAlias }} control-group"
+                                <div class="{{ includedControlsBlockAlias }}"
                                      data-page-component-module="orodatagrid/js/app/components/grid-sidebar-component"
                                      data-page-component-options="{{ includedGridSidebarComponentOptions|json_encode }}"
                                 >
@@ -533,7 +537,7 @@
             <div class="add-on" title="{{ 'oro.product.variant_field.default.tooltip'|trans }}">
                 {{ form_widget(form.is_selected) }}
             </div>
-            <div class="add-on" title="{{ 'oro.product.variant_field.default.tooltip'|trans }}">
+            <div class="add-on float-width" title="{{ 'oro.product.variant_field.default.tooltip'|trans }}">
                 {{ form_label(form.is_selected) }}
             </div>
         </div>

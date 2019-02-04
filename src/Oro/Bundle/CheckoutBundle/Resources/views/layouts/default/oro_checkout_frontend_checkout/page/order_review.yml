@@ -8,11 +8,6 @@ layout:
                 - 'OroCheckoutBundle:layouts:default/oro_checkout_frontend_checkout/templates/right_buttons.html.twig'
                 - 'OroCheckoutBundle:layouts:default/oro_checkout_frontend_checkout/templates/order_review.html.twig'
 
-        - '@setOption':
-            id: checkout_information_title
-            optionName: stepOrder
-            optionValue: 5
-
         - '@add':
             id: payment_additional_data
             blockType: payment_additional_data

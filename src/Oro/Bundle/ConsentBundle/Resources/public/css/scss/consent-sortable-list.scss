@@ -1,0 +1,9 @@
+/* @theme: admin.oro; */
+
+.consent-sortable-list {
+    td {
+        &:last-child {
+            padding: $content-padding-small;
+        }
+    }
+}

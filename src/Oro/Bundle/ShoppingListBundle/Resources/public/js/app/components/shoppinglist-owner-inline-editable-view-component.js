@@ -42,7 +42,7 @@ define(function(require) {
                     ownerId: ownerId
                 },
                 success: function(response) {
-                    mediator.execute('showFlashMessage', 'success', response);
+                    mediator.execute('showFlashMessage', 'success', _.escape(response));
                 }
             });
         },

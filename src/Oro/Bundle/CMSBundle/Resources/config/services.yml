@@ -136,3 +136,13 @@ services:
         arguments:
             - '@oro_config.global'
             - '@doctrine.dbal.default_connection'
+
+    oro_cms.entity_listener.page:
+        class: Oro\Bundle\CMSBundle\Entity\EntityListener\PageEntityListener
+        public: false
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@oro_message_queue.message_producer'
+        tags:
+            - { name: doctrine.orm.entity_listener, entity: '%oro_cms.entity.page.class%', event: preRemove }
+            - { name: doctrine.orm.entity_listener, entity: '%oro_cms.entity.page.class%', event: postRemove }

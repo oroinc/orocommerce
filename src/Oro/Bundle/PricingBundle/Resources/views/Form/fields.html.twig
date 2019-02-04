@@ -12,19 +12,27 @@
             <div class="small-row">
                 <div class="grouped-fields">
                     <div class="group-label">{{ form_label(form.quantity) }}</div>
-                    <div class="col-widget">{{ form_widget(form.quantity, { 'attr': {'class': 'quantity'} }) }}</div>
-                    <div>{{ form_errors(form.quantity) }}</div>
-                    <div>{{ form_widget(form.unit, { 'attr': {'class': 'unit'} }) }}</div>
-                    <div>{{ form_errors(form.unit) }}</div>
+                    <div class="group-widget">
+                        <div class="group-field fields-row">
+                            <div class="col-widget">{{ form_widget(form.quantity, { 'attr': {'class': 'quantity'} }) }}</div>
+                            <div>{{ form_widget(form.unit, { 'attr': {'class': 'unit'} }) }}</div>
+                        </div>
+                        <div>{{ form_errors(form.quantity) }}</div>
+                        <div>{{ form_errors(form.unit) }}</div>
+                    </div>
                 </div>
             </div>
             <div class="small-row">
                 <div class="grouped-fields">
                     <div class="group-label">{{ form_label(form.price.value) }}</div>
-                    <div class="col-widget">{{ form_widget(form.price.value, { 'attr': {'class': 'price-value'} }) }}</div>
-                    <div>{{ form_errors(form.price.value) }}</div>
-                    <div class="price-currency-div">{{ form_widget(form.price.currency, { 'attr': {'class': 'price-currency'} }) }}</div>
-                    <div>{{ form_errors(form.price.currency) }}</div>
+                    <div class="group-widget">
+                        <div class="group-field fields-row">
+                            <div class="col-widget">{{ form_widget(form.price.value, { 'attr': {'class': 'price-value'} }) }}</div>
+                            <div class="price-currency-div">{{ form_widget(form.price.currency, { 'attr': {'class': 'price-currency'} }) }}</div>
+                        </div>
+                        <div>{{ form_errors(form.price.value) }}</div>
+                        <div>{{ form_errors(form.price.currency) }}</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -50,47 +58,15 @@
 {% endblock %}
 
 {% block oro_pricing_price_list_collection_widget %}
-    {% if prototype is defined %}
-        {% set prototype_html = _self.oro_pricing_price_list_collection_prototype(form) %}
-    {% endif %}
-    {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-item-collection grid-container price-list-grid-form' }) %}
-    {% set id = id ~ '_collection' %}
-    <div class="pricing-price-list" data-page-component-module="oropricing/js/app/components/price-lists-errors-handler">
-        {% import 'OroUIBundle::macros.html.twig' as UI %}
-        <div class="row-oro" {{ UI.renderPageComponentAttributes({
-            module: 'oroui/js/app/components/view-component',
-            options: {
-                view: 'oroui/js/drag-n-drop-sorting',
-                autoRender: true
-            }
-        }) }}>
-            {% set prototype_name = form.vars.prototype_name %}
-            <div {{ block('widget_container_attributes') }}>
-                <table class="grid table-hover table">
-                    <thead>
-                    <tr>
-                        <th><span>{{ 'oro.pricing.pricelist.entity_label'|trans }}</span></th>
-                        <th><span>{{ 'oro.pricing.pricelist.options.label'|trans }}</span></th>
-                        <th></th>
-                        {% if form.mergeAllowed is defined %}
-                        <th></th>
-                        {% endif %}
-                    </tr>
-                    </thead>
-                    <tbody class="sortable-wrapper" data-last-index="{{ form.children|length}}" data-prototype-name="{{ prototype_name }}"{% if prototype_html is defined %} data-prototype="{{ prototype_html|escape }}"{% endif %} data-content>
-                    {% if form.children|length %}
-                        {% for child in form.children %}
-                            {{ _self.oro_pricing_price_list_collection_prototype(child) }}
-                        {% endfor %}
-                    {% elseif show_form_when_empty and prototype_html is defined %}
-                        {{ prototype_html|replace({(prototype_name): '0'})|raw }}
-                    {% endif %}
-                    </tbody>
-                </table>
-            </div>
-            <a class="btn add-list-item" data-container=".oro-item-collection tbody" href="javascript: void(0);">{{ 'oro.pricing.add_price_list'|trans }}</a>
-        </div>
-    </div>
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {{ UI.sortable_list_view(form, attr, {
+        collection_class: 'pricing-price-list',
+        add_btn_label: 'oro.pricing.add_price_list'|trans,
+        column_label: 'oro.pricing.pricelist.entity_label'|trans,
+        column_options_label: 'oro.pricing.pricelist.options.label'|trans,
+        show_form_when_empty: show_form_when_empty,
+        data_page_component_module: "oropricing/js/app/components/price-lists-errors-handler"
+    }) }}
 {% endblock %}
 
 {% macro oro_pricing_price_list_collection_prototype(widget) %}
@@ -119,13 +95,14 @@
             {{ form_errors(form.mergeAllowed) }}
         </td>
         {% endif %}
-        <td>
+        <td class="price-list-grid-form__option-cell">
             {{ form_widget(form._position) }}
-            <span class="sortable-handle add-on ui-sortable-handle" data-name="sortable-handle">
-                <i class="fa-arrows-v handle"></i></span>
-        </td>
-        <td>
-            <button type="button" class="btn btn-icon btn-square-lighter removeRow"><span class="fa-close"></span></button>
+            <span class="btn btn-icon btn-square-light sortable-handle ui-sortable-handle" data-name="sortable-handle">
+                <span class="fa-arrows-v handle"></span>
+            </span>
+            <button type="button" class="btn btn-icon btn-square-lighter removeRow">
+                <span class="fa-close"></span>
+            </button>
         </td>
     {% endspaceless %}
 {% endblock %}

@@ -50,14 +50,14 @@ Feature: Create product with image when workflow enabled
     When I download "Product Images" Data Template file
     And I upload product images files
     And fill template with data:
-      | SKU   | Name      | Main | Listing | Additional |
-      | PSKU2 | tiger.svg | 1    | 1       | 1          |
-      | PSKU3 | dog1.jpg  | 0    | 0       | 1          |
+      | SKU   | Name     | Main | Listing | Additional |
+      | PSKU2 | dog1.jpg | 1    | 1       | 1          |
+      | PSKU3 | dog1.jpg | 0    | 0       | 1          |
     And import file
     Then Email should contains the following "Errors: 0 processed: 2, read: 2, added: 2, updated: 0, replaced: 0" text
     And I click view "PSKU2" in grid
     And I should see "Product Workflow"
-    And I should see "tiger.svg"
+    And I should see "dog1.jpg"
     And I go to Products/ Products
     And I click view "PSKU3" in grid
     And I should see "Product Workflow"

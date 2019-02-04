@@ -33,7 +33,7 @@
         '~class': " checkout__title"
     }) %}
     <h2 {{ block('block_attributes') }}>
-        <span class="checkout__title-icon">{{ stepOrder }}</span>
+        <span class="checkout__title-icon">{{ workflowStep.name not in excludedSteps ? stepOrder : '-' }}</span>
         <span class="checkout__title-text">{{ workflowStep.label|trans({},'workflows') }}</span>
         {{ block_widget(block) }}
     </h2>

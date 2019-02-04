@@ -18,13 +18,14 @@ Oro\Bundle\WebCatalogBundle\Entity\ContentNode:
     nodeClearance:
         addTitle: ['@localValueClearance']
         addSlugPrototype: ['@localValueClearanceSlug']
+        addContentVariant: ['@clearanceVariant']
         ParentNode: '@nodeDefaultWebCatalog'
         webCatalog: '@webCatalog'
 
     nodeByBrand:
         addTitle: ['@localValueByBrand']
         addSlugPrototype: ['@localValueByBrandSlug']
-        addContentVariant: ['@systemPageVariant']
+        addContentVariant: ['@brandVariant']
         ParentNode: '@nodeClearance'
         webCatalog: '@webCatalog'
 
@@ -65,5 +66,11 @@ Oro\Bundle\WebCatalogBundle\Entity\WebCatalog:
 
 Oro\Bundle\WebCatalogBundle\Entity\ContentVariant:
     systemPageVariant:
+        type: 'system_page'
+        systemPageRoute: 'oro_customer_frontend_customer_user_index'
+    clearanceVariant:
+        type: 'system_page'
+        systemPageRoute: 'oro_customer_frontend_customer_user_index'
+    brandVariant:
         type: 'system_page'
         systemPageRoute: 'oro_customer_frontend_customer_user_index'

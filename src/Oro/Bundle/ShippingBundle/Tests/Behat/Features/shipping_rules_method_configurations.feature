@@ -1,6 +1,6 @@
 @regression
 @ticket-BB-15402
-@fixture-OroTranslationBundle:ZuluLanguage.yml
+@fixture-OroLocaleBundle:ZuluLocalization.yml
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 Feature: Shipping rules method configurations
   ToDo: BAP-16103 Add missing descriptions to the Behat features
@@ -59,11 +59,10 @@ Feature: Shipping rules method configurations
 
   Scenario: Change default language to Zulu and translate Disabled flag of shipping method config
     When I go to System / Configuration
-    And I follow "System Configuration/General Setup/Language Settings" on configuration sidebar
+    And I follow "System Configuration/General Setup/Localization" on configuration sidebar
     And I fill form with:
-      | Use Default         | false           |
-      | Supported Languages | [English, Zulu] |
-      | Default Language    | Zulu            |
+      | Enabled Localizations | [English, Zulu_Loc] |
+      | Default Localization  | Zulu_Loc            |
     And I submit form
     Then I should see "Configuration saved" flash message
 

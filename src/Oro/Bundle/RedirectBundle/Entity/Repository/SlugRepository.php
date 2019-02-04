@@ -10,6 +10,7 @@ use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
+use Oro\Bundle\RedirectBundle\Entity\Hydrator\MatchingSlugHydrator;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Entity\SlugAwareInterface;
 use Oro\Bundle\RedirectBundle\Helper\UrlParameterHelper;
@@ -361,18 +362,12 @@ class SlugRepository extends EntityRepository
     private function getMatchingSlugForCriteria(QueryBuilder $qb, ScopeCriteria $scopeCriteria)
     {
         $scopeCriteria->applyToJoinWithPriority($qb, 'scopes');
-
-        $results = $qb->getQuery()->getResult();
-        foreach ($results as $result) {
-            /** @var Slug $slug */
-            $slug = $result[0];
-            $matchedScopeId = $result['matchedScopeId'];
-            if ($matchedScopeId || $slug->getScopes()->isEmpty()) {
-                return $slug;
-            }
+        $result = $qb->getQuery()->getResult(MatchingSlugHydrator::NAME);
+        if (!$result) {
+            return null;
         }
 
-        return null;
+        return reset($result);
     }
 
     /**

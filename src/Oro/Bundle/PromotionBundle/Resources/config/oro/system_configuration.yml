@@ -18,6 +18,9 @@ system_configuration:
             type: Oro\Bundle\PromotionBundle\Form\Type\DiscountStrategySelectType
             options:
                 label: oro.promotion.system_configuration.fields.discount_strategy.label
+                required: true
+                constraints:
+                    - NotBlank: ~
 
     tree:
         system_configuration:

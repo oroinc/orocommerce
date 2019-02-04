@@ -1,0 +1,35 @@
+Oro\Bundle\CMSBundle\Entity\Page:
+    consentLanding:
+        addTitle: ['@consentLandingTitle']
+        content: '<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quae in controversiam veniunt, de iis, si placet, disseramus. Duo Reges constructio interrete. Tamen aberramus a proposito, et, ne longius, prorsus, inquam, Piso, si ista mala sunt, placet. </p> <p>At, illa, ut vobis placet, partem quandam tuetur, reliquam deserit. Inde sermone vario sex illa a Dipylo stadia confecimus. Sed id ne cogitari quidem potest quale sit, ut non repugnet ipsum sibi. Si qua in iis corrigere voluit, deteriora fecit. Audeo dicere, inquit. </p> <p> Ex quo intellegitur officium medium quiddam esse, quod neque in bonis ponatur neque in contrariis. </p> <dl> <dt><dfn>Perge porro;</dfn></dt> <dd>Erat enim Polemonis.</dd> <dt><dfn>Quibus ego vehementer assentior.</dfn></dt> <dd>Sed est forma eius disciplinae, sicut fere ceterarum, triplex una pars est naturae, disserendi altera, vivendi tertia.</dd> <dt><dfn>Nihilo magis.</dfn></dt> <dd>Illud dico, ea, quae dicat, praeclare inter se cohaerere.</dd> <dt><dfn>Certe non potest.</dfn></dt> <dd>Huius, Lyco, oratione locuples, rebus ipsis ielunior.</dd> <dt><dfn>Sed videbimus.</dfn></dt> <dd>Theophrastus mediocriterne delectat, cum tractat locos ab Aristotele ante tractatos?</dd> </dl> <h3>Quam si explicavisset, non tam haesitaret.</h3> <p>Nonne videmus quanta perturbatio rerum omnium consequatur, quanta confusio? Summum ením bonum exposuit vacuitatem doloris; Dici enim nihil potest verius. Sapiens autem semper beatus est et est aliquando in dolore; Aliud igitur esse censet gaudere, aliud non dolere. Sic, et quidem diligentius saepiusque ista loquemur inter nos agemusque communiter. </p> <h2>Plane idem, inquit, et maxima quidem, qua fieri nulla maior potest.</h2> <p>Hoc est vim afferre, Torquate, sensibus, extorquere ex animis cognitiones verborum, quibus inbuti sumus. Pisone in eo gymnasio, quod Ptolomaeum vocatur, unaque nobiscum Q. Levatio igitur vitiorum magna fit in iis, qui habent ad virtutem progressionis aliquantum. Optime, inquam. Utrum igitur tibi litteram videor an totas paginas commovere? </p> <ul> <li>Perturbationes autem nulla naturae vi commoventur, omniaque ea sunt opiniones ac iudicia levitatis.</li> <li>An vero, inquit, quisquam potest probare, quod perceptfum, quod.</li> <li>Nihilne te delectat umquam -video, quicum loquar-, te igitur, Torquate, ipsum per se nihil delectat?</li> <li>Quid ergo attinet gloriose loqui, nisi constanter loquare?</li> <li>Sed tamen omne, quod de re bona dilucide dicitur, mihi praeclare dici videtur.</li> <li>Sunt enim quasi prima elementa naturae, quibus ubertas orationis adhiberi vix potest, nec equidem eam cogito consectari.</li></ul>'
+        organization: '@organization'
+        slugPrototypes: ['@consentLandingSlugPrototype']
+        slugs: ['@consentLandingPageSlug']
+    testCMSPage:
+        addTitle: ['@testCMSPageTitle']
+        content: 'Test landing page description'
+        organization: '@organization'
+        slugPrototypes: ['@testCMSPageSlugPrototype']
+        slugs: ['@testCMSPageSlug']
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    consentLandingSlugPrototype:
+        string: 'consent-landing'
+    consentLandingTitle:
+        string: 'Consent Landing'
+    testCMSPageSlugPrototype:
+        string: 'test-cms-page'
+    testCMSPageTitle:
+        string: 'Test CMS Page'
+
+Oro\Bundle\RedirectBundle\Entity\Slug:
+    consentLandingPageSlug:
+        url: 'consent-landing'
+        slugPrototype: '@consentLandingSlugPrototype'
+        routeName: 'oro_cms_frontend_page_view'
+        routeParameters: []
+    testCMSPageSlug:
+        url: 'test-cms-page'
+        slugPrototype: '@testCMSPageSlugPrototype'
+        routeName: 'oro_cms_frontend_page_view'
+        routeParameters: []

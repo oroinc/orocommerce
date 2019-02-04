@@ -1,8 +1,17 @@
 /* @theme: admin.oro; */
 
+.pricing-price-list {
+    td {
+        &:last-child {
+            padding: $content-padding-small;
+        }
+    }
+}
+
 .line-item-price {
     .multicurrency-fields-wrapper {
-        width: 150px;
+        width: 195px;
+        position: relative;
 
         input[type="text"] {
             text-align: right;
@@ -84,21 +93,89 @@ table.product-price-attributes {
 }
 
 .form-horizontal {
-    .price-attributes-collection {
-        &.control-group > .controls {
-            margin-#{$start}: 0;
 
-            .control-group .control-label.wrap {
-                width: 160px;
+    .pricing-price-attribute {
+        .table {
+            .price-value {
+                width: 100%;
+            }
+
+            thead th > span {
+                padding: 0;
+            }
+        }
+    }
+
+    .responsive-cell {
+        &:only-child {
+            .price-attributes-collection {
+                display: flex;
+
+                .control-group-collection {
+                    width: 50%;
+                    position: relative;
+                    padding: side-values(0 23px);
+
+                    &:first-child {
+                        padding-#{$start}: 0;
+                    }
+
+                    &:last-child {
+                        padding-#{$end}: 0;
+                    }
+
+                    &:not(:last-child) {
+                        &:after {
+                            content: "";
+                            border-left: 1px solid $additional-ultra-light;
+                            position: absolute;
+                            top: 0;
+                            #{$end}: 0;
+                            bottom: 0;
+                            display: block;
+                        }
+                    }
+                }
+
+                &.control-group > .controls {
+                    margin-#{$start}: 0;
+
+                    .control-group .control-label.wrap {
+                        width: 160px;
+                    }
+                }
+            }
+
+            #product_prices {
+                .control-group {
+                    display: block;
+                    width: auto;
+                    max-width: none;
+
+                    > .control-label {
+                        font-size: 20px;
+                        font-weight: 700;
+                        text-align: left;
+                        width: 100%;
+                        margin-bottom: $content-padding-small;
+                        padding-top: 0;
+                    }
+
+                    .controls {
+                        margin-#{$start}: 0;
+                    }
+                }
             }
         }
 
-        .pricing-price-attribute {
-            .table {
-                width: auto;
-
-                .price-value {
-                    width: 100px;
+        &:not(:only-child) {
+            #product_prices {
+                .control-group {
+                    .controls {
+                        &:first-child {
+                            margin-#{$start}: 0;
+                        }
+                    }
                 }
             }
         }

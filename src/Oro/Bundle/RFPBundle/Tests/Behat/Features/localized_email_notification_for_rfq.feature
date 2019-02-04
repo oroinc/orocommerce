@@ -17,26 +17,25 @@ Feature: Localized email notification for RFQ
     When I proceed as the Admin
     And I login as administrator
     And I go to System / Configuration
-    And I follow "System Configuration/General Setup/Language Settings" on configuration sidebar
+    And I follow "System Configuration/General Setup/Localization" on configuration sidebar
     And I fill form with:
-      | Supported Languages | [English, German, French] |
-      | Use Default         | false                     |
-      | Default Language    | French                    |
+      | Enabled Localizations | [English, German Localization, French Localization] |
+      | Default Localization  | French Localization                                 |
     And I submit form
     Then I should see "Configuration saved" flash message
     When I go to System / User Management / Organizations
     And click Configuration "Oro" in grid
-    And I follow "System Configuration/General Setup/Language Settings" on configuration sidebar
+    And I follow "System Configuration/General Setup/Localization" on configuration sidebar
+    And uncheck "Use System" for "Default Localization" field
     And I fill form with:
-      | Use System       | false  |
-      | Default Language | German |
+      | Default Localization | German Localization |
     And I submit form
     Then I should see "Configuration saved" flash message
     When I click My Configuration in user menu
-    And I follow "System Configuration/General Setup/Language Settings" on configuration sidebar
+    And I follow "System Configuration/General Setup/Localization" on configuration sidebar
+    And uncheck "Use Organization" for "Default Localization" field
     And I fill form with:
-      | Use Organization | false   |
-      | Default Language | English |
+      | Default Localization | English |
     And I submit form
     Then I should see "Configuration saved" flash message
     When I go to System / Configuration
@@ -81,20 +80,20 @@ Feature: Localized email notification for RFQ
     When I click Logout in user menu
     And I login as "ethan" user
     And I click My Configuration in user menu
-    And I follow "System Configuration/General Setup/Language Settings" on configuration sidebar
+    And I follow "System Configuration/General Setup/Localization" on configuration sidebar
+    And uncheck "Use Organization" for "Default Localization" field
     And I fill form with:
-      | Use Organization | false  |
-      | Default Language | German |
+      | Default Localization | German Localization |
     And I submit form
     Then I should see "Configuration saved" flash message
 
     When I click Logout in user menu
     And I login as "charlie" user
     And I click My Configuration in user menu
-    And I follow "System Configuration/General Setup/Language Settings" on configuration sidebar
+    And I follow "System Configuration/General Setup/Localization" on configuration sidebar
+    And uncheck "Use Organization" for "Default Localization" field
     And I fill form with:
-      | Use Organization | false  |
-      | Default Language | French |
+      | Default Localization | French Localization |
     And I submit form
     Then I should see "Configuration saved" flash message
 

@@ -387,6 +387,7 @@ services:
         class: 'Oro\Bundle\CheckoutBundle\Factory\CheckoutShippingContextFactory'
         arguments:
             - '@oro_checkout.data_provider.manager.checkout_line_items'
+            - '@oro_checkout.provider.checkout_subtotal'
             - '@oro_pricing.subtotal_processor.total_processor_provider'
             - '@oro_order.shipping_line_item.converter_basic'
             - '@?oro_shipping.context.builder_factory_basic'
@@ -395,6 +396,7 @@ services:
         class: 'Oro\Bundle\CheckoutBundle\Factory\CheckoutPaymentContextFactory'
         arguments:
             - '@oro_checkout.data_provider.manager.checkout_line_items'
+            - '@oro_checkout.provider.checkout_subtotal'
             - '@oro_pricing.subtotal_processor.total_processor_provider'
             - '@oro_order.payment_line_item.converter_basic'
             - '@oro_shipping.shipping_origin.provider'
@@ -473,7 +475,6 @@ services:
         arguments:
             - '@oro_checkout.shipping_method.provider_main'
         tags:
-            - { name: oro_workflow.condition, alias: 'checkout_has_applicable_shipping_methods' }
             - { name: oro_action.condition, alias: 'checkout_has_applicable_shipping_methods' }
 
     oro_checkout.datagrid.action_permission_provider:
@@ -680,24 +681,6 @@ services:
         tags:
             - { name: oro_action.action, alias: get_start_checkout_transition }
 
-    oro_checkout.handler.forgot_password:
-        class: 'Oro\Bundle\CheckoutBundle\Handler\ForgotPasswordHandler'
-        lazy: true
-        arguments:
-            - '@oro_customer.customer_user.password_request.handler'
-            - '@oro_customer.provider.frontend_customer_user_form'
-            - '@session'
-
-    oro_checkout.handler.registration:
-        class: 'Oro\Bundle\CheckoutBundle\Handler\RegistrationHandler'
-        lazy: true
-        arguments:
-            - '@oro_customer.provider.frontend_customer_user_registration_form'
-            - '@oro_customer_user.manager'
-            - '@oro_customer.handler.frontend_customer_user_handler'
-            - '@oro_form.update_handler'
-            - '@translator'
-
     oro_checkout.provider.forgot_password_check_email:
         class: 'Oro\Bundle\CheckoutBundle\Layout\DataProvider\CheckoutForgotPasswordCheckEmailProvider'
         lazy: true
@@ -707,6 +690,20 @@ services:
         tags:
             - { name: layout.data_provider, alias: oro_checkout_forgot_password_check_email }
 
+    oro_checkout.helper.checkout_workflow_helper:
+        class: Oro\Bundle\CheckoutBundle\Helper\CheckoutWorkflowHelper
+        arguments:
+            - '@oro_workflow.manager'
+            - '@oro_action.action_group_registry'
+            - '@oro_checkout.layout.data_provider.transition'
+            - '@oro_checkout.layout.data_provider.transition_form'
+            - '@oro_checkout.workflow_state.handler.checkout_error'
+            - '@oro_checkout.data_provider.manager.checkout_line_items'
+            - '@oro_customer.handler.customer_registration_handler'
+            - '@oro_customer.handler.forgot_password'
+            - '@event_dispatcher'
+            - '@translator'
+
     oro_checkout.condition.validate_checkout_addresses:
         class: 'Oro\Bundle\CheckoutBundle\Condition\ValidateCheckoutAddresses'
         arguments:
@@ -714,3 +711,9 @@ services:
         tags:
             - { name: oro_workflow.condition, alias: 'validate_checkout_addresses' }
             - { name: oro_action.condition, alias: 'validate_checkout_addresses' }
+
+    oro_checkout.action.send_order_confirmation_email:
+        class: 'Oro\Bundle\CheckoutBundle\Action\SendOrderConfirmationEmail'
+        parent: oro_email.workflow.action.send_email_template
+        tags:
+            - { name: oro_action.action, alias: send_order_confirmation_email }

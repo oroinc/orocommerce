@@ -11,8 +11,12 @@ use Oro\Bundle\PromotionBundle\Discount\Exception\UnsupportedSourceEntityExcepti
 use Oro\Bundle\PromotionBundle\Entity\Coupon;
 use Oro\Bundle\PromotionBundle\Provider\EntityCouponsProviderInterface;
 use Oro\Bundle\PromotionBundle\ValidationService\CouponValidationService;
+use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 
+/**
+ * Data converter that prepares promotion context data based on order entity to filter applicable promotions.
+ */
 class OrderContextDataConverter implements ContextDataConverterInterface
 {
     /**
@@ -117,7 +121,7 @@ class OrderContextDataConverter implements ContextDataConverterInterface
      */
     public function supports($entity): bool
     {
-        return $entity instanceof Order;
+        return $entity instanceof Order && $entity->getSourceEntityClass() !== Quote::class;
     }
 
     /**

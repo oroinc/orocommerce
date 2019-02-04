@@ -20,6 +20,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
+/**
+ * Provides supportive actions for ajax calls during quote creation and editing.
+ */
 class AjaxQuoteController extends Controller
 {
     /**
@@ -52,22 +55,24 @@ class AjaxQuoteController extends Controller
             }
         }
 
-        $orderForm = $this->createForm($this->getQuoteFormTypeName(), $quote);
+        $quoteForm = $this->createForm($this->getQuoteFormTypeName(), $quote);
 
-        return new JsonResponse(
-            [
-                'shippingAddress' => $this->renderForm(
-                    $orderForm->get(AddressType::TYPE_SHIPPING . 'Address')->createView()
-                ),
-                'customerPaymentTerm' => $customerPaymentTerm ? $customerPaymentTerm->getId() : null,
-                'customerGroupPaymentTerm' => $customerGroupPaymentTerm ? $customerGroupPaymentTerm->getId() : null,
-            ]
-        );
+        $responseData = [
+            'customerPaymentTerm' => $customerPaymentTerm ? $customerPaymentTerm->getId() : null,
+            'customerGroupPaymentTerm' => $customerGroupPaymentTerm ? $customerGroupPaymentTerm->getId() : null
+        ];
+        if ($quoteForm->has(AddressType::TYPE_SHIPPING . 'Address')) {
+            $responseData['shippingAddress'] = $this->renderForm(
+                $quoteForm->get(AddressType::TYPE_SHIPPING . 'Address')->createView()
+            );
+        }
+
+        return new JsonResponse($responseData);
     }
 
     /**
      * @Route("/entry-point/{id}", name="oro_quote_entry_point", defaults={"id" = 0})
-     * @AclAncestor("oro_order_update")
+     * @AclAncestor("oro_quote_update")
      *
      * @param Request    $request
      * @param Quote|null $quote

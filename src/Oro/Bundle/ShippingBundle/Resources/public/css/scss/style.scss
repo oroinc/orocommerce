@@ -17,38 +17,6 @@
     }
 }
 
-.product-shipping-options-collection {
-    width: 850px;
-
-    .shipping-dimensions td.separator {
-        padding-top: 5px;
-    }
-
-    input[type="text"].value,
-    input[type="text"].length,
-    input[type="text"].width,
-    input[type="text"].height {
-        width: 50px;
-        margin-bottom: 0;
-    }
-
-    @include selector-width(140px);
-
-    table {
-        table {
-            td {
-                border: 0;
-                padding: 0 5px 0 5px;
-                vertical-align: middle;
-
-                &:first-child {
-                    height: auto;
-                }
-            }
-        }
-    }
-}
-
 table.shipping-options-result-grid {
     width: auto;
 }
@@ -110,10 +78,6 @@ table.shipping-options-result-grid {
         }
     }
 
-    input[type="text"] {
-        width: 280px;
-    }
-
     input.method-options-surcharge {
         width: 110px;
     }
@@ -126,6 +90,19 @@ table.shipping-options-result-grid {
 
     .selector.input-widget-select {
         margin-left: 0;
+    }
+}
+
+.oro-shipping-rule-add-method-line {
+    display: flex;
+
+    &:not(:last-of-type) {
+        margin-bottom: $content-padding-medium;
+    }
+
+    .add-method,
+    .add-all-methods {
+        margin-#{$start}: $content-padding-small;
     }
 }
 
