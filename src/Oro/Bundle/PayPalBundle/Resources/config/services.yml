@@ -73,3 +73,11 @@ services:
 
     oro_paypal.settings.card_type.provider:
         class: Oro\Bundle\PayPalBundle\Settings\DataProvider\BasicCardTypesDataProvider
+
+    oro_paypal.validator.unique_express_checkout_name:
+        class: Oro\Bundle\PayPalBundle\Validator\Constraints\UniqueExpressCheckoutNameValidator
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@translator'
+        tags:
+            - { name: validator.constraint_validator, alias: oro_paypal.validator.unique_express_checkout_name_validator }

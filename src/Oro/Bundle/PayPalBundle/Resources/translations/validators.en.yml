@@ -1,0 +1,5 @@
+oro:
+    paypal:
+        express_checkout_name:
+            differs_from_integration_name: 'Express Checkout cannot have the same name as the integration itself.'
+            unique_integration_name: 'The payment method names should be unique. "%name%" is used by a different payment integration.'
