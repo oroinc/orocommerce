@@ -100,7 +100,10 @@ class CustomerUserConsentProvider
      */
     public function hasEnabledConsentsByCustomerUser(CustomerUser $customerUser)
     {
-        $this->consentContextProvider->setWebsite($customerUser->getWebsite());
+        // Set website if CustomerUser has it otherwise it will be resolved by contextProvider itself
+        if ($customerUser->getWebsite()) {
+            $this->consentContextProvider->setWebsite($customerUser->getWebsite());
+        }
 
         $consents = $this->enabledConsentProvider->getConsents();
 

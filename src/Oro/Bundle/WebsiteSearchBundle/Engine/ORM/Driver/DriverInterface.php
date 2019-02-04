@@ -8,6 +8,10 @@ use Oro\Bundle\SearchBundle\Engine\Orm\DBALPersisterInterface;
 use Oro\Bundle\SearchBundle\Entity\AbstractItem;
 use Oro\Bundle\SearchBundle\Query\Query;
 
+/**
+ * Describes the general mandatory set of operations for search operations.
+ * In order to be able to use certain driver for search purposes, it must implements this interface.
+ */
 interface DriverInterface extends DatabaseDriverInterface, DBALPersisterInterface
 {
     /**
@@ -69,12 +73,4 @@ interface DriverInterface extends DatabaseDriverInterface, DBALPersisterInterfac
      * @return AbstractItem
      */
     public function createItem();
-
-    /**
-     * @deprecated Please use writeItem() and flushWrites() instead from the DBALPersister.
-     *
-     * @param AbstractItem[] $items
-     * @return bool
-     */
-    public function saveItems(array $items);
 }

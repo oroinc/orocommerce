@@ -16,6 +16,9 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraint;
 
+/**
+ * Used for creating and editing payment method config rules.
+ */
 class PaymentMethodsConfigsRuleType extends AbstractType
 {
     const BLOCK_PREFIX = 'oro_payment_methods_configs_rule';
@@ -65,7 +68,7 @@ class PaymentMethodsConfigsRuleType extends AbstractType
             ])
             ->add('method', ChoiceType::class, [
                 'mapped'  => false,
-                'choices' => $this->getMethods(),
+                'choices' => $this->getMethods()
             ]);
 
         $builder->addEventSubscriber(new DestinationCollectionTypeSubscriber());
@@ -110,6 +113,12 @@ class PaymentMethodsConfigsRuleType extends AbstractType
             $label = $this->methodViewProvider
                 ->getPaymentMethodView($identifier)
                 ->getAdminLabel();
+
+            // In case there are methods with the same label we add spaces as suffix to show them
+            while (isset($result[$label])) {
+                $label .= ' ';
+            }
+
             $result[$label] = $identifier;
         }
 

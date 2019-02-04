@@ -23,6 +23,13 @@ Feature: Create Content Node under Organization with Global Access
 
   Scenario: Prepare Web Catalog
     Given I set "Default Web Catalog" as default web catalog
+    And I go to Marketing/ Landing Pages
+    And click edit "About" in grid
+    And I fill "Landing Page Form" with:
+      | Titles   | Aboutt |
+      | URL Slug | aboutt |
+    And save and close form
+    And click "Apply"
     And I go to Marketing/ Web Catalogs
     And I click "Edit Content Tree" on row "Default Web Catalog" in grid
     And I click on "Show Variants Dropdown"

@@ -200,6 +200,24 @@ class CustomerUserConsentProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($this->provider->hasEnabledConsentsByCustomerUser($customerUser));
     }
 
+    public function testHasEnabledConsentsByCustomerUserNoWebsite()
+    {
+        /** @var CustomerUser $customerUser */
+        $customerUser = $this->getEntity(CustomerUser::class, ['id' => 42]);
+
+        $this->consentContextProvider->expects($this->never())
+            ->method('setWebsite');
+
+        $this->enabledConsentProvider->expects($this->once())
+            ->method('getConsents')
+            ->with([], [])
+            ->willReturn(
+                [$this->getEntity(Consent::class, ['id' => 11])]
+            );
+
+        $this->assertTrue($this->provider->hasEnabledConsentsByCustomerUser($customerUser));
+    }
+
     public function testHasEnabledConsentsByCustomerUserNoConsents()
     {
         /** @var Website $website */

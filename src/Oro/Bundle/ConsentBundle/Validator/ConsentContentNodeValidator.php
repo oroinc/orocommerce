@@ -60,17 +60,7 @@ class ConsentContentNodeValidator
             $resolvedNode = $this->contentNodeTreeResolver->getResolvedContentNode($contentNode, $scope);
 
             if (!$resolvedNode instanceof ResolvedContentNode) {
-                if ($logValidationErrors) {
-                    $this->logger->error(
-                        sprintf(
-                            "Failed to resolve 'ContentNode' in Consent with id '%d' with Scope with id '%d'!",
-                            $consent->getId(),
-                            $scope->getId()
-                        )
-                    );
-                }
-
-                return false;
+                return true;
             }
 
             $contentVariantType = $resolvedNode->getResolvedContentVariant()->getType();
