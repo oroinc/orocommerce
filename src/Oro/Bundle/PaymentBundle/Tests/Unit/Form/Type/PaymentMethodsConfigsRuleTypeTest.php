@@ -38,11 +38,6 @@ class PaymentMethodsConfigsRuleTypeTest extends AddressFormExtensionTestCase
     const ADMIN_LABEL = 'admin_label1';
 
     /**
-     * @var PaymentMethodsConfigsRuleType
-     */
-    protected $formType;
-
-    /**
      * @var PaymentMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $paymentMethodProvider;
@@ -57,21 +52,22 @@ class PaymentMethodsConfigsRuleTypeTest extends AddressFormExtensionTestCase
      */
     protected function setUp()
     {
-        $this->createMocks();
-        $this->formType = new PaymentMethodsConfigsRuleType(
-            $this->paymentMethodProvider,
-            $this->compositePaymentMethodViewProvider
-        );
+        $this->paymentMethodProvider = $this->createMock(PaymentMethodProviderInterface::class);
+        $this->compositePaymentMethodViewProvider = $this->createMock(CompositePaymentMethodViewProvider::class);
+
         parent::setUp();
     }
 
     public function testGetBlockPrefix()
     {
-        $this->assertEquals(PaymentMethodsConfigsRuleType::BLOCK_PREFIX, $this->formType->getBlockPrefix());
+        $this->configurePaymentMethodProvider();
+        $form = $this->factory->create(PaymentMethodsConfigsRuleType::class);
+        $this->assertEquals(PaymentMethodsConfigsRuleType::BLOCK_PREFIX, $form->getConfig()->getName());
     }
 
     public function testDefaultOptions()
     {
+        $this->configurePaymentMethodProvider();
         $form = $this->factory->create(PaymentMethodsConfigsRuleType::class);
         $options = $form->getConfig()->getOptions();
         $this->assertContains('data_class', $options);
@@ -84,6 +80,7 @@ class PaymentMethodsConfigsRuleTypeTest extends AddressFormExtensionTestCase
      */
     public function testSubmit($data)
     {
+        $this->configurePaymentMethodProvider();
         $form = $this->factory->create(PaymentMethodsConfigsRuleType::class, $data);
 
         $this->assertEquals($data, $form->getData());
@@ -123,6 +120,37 @@ class PaymentMethodsConfigsRuleTypeTest extends AddressFormExtensionTestCase
         ];
     }
 
+    public function testBuildViewForMethodsWithSameAdminLabel()
+    {
+        $firstPaymentMethod = $this->createPaymentMethod('identifier1');
+        $secondPaymentMethod = $this->createPaymentMethod('identifier2');
+
+        $firstPaymentMethodView = $this->createPaymentMethodView(self::ADMIN_LABEL);
+        $secondPaymentMethodView = $this->createPaymentMethodView(self::ADMIN_LABEL);
+
+        $this->paymentMethodProvider
+            ->expects(static::any())
+            ->method('getPaymentMethods')
+            ->willReturn([$firstPaymentMethod, $secondPaymentMethod]);
+
+        $this->compositePaymentMethodViewProvider->expects(static::any())
+            ->method('getPaymentMethodView')
+            ->willReturnMap([
+                ['identifier1', $firstPaymentMethodView],
+                ['identifier2', $secondPaymentMethodView],
+            ]);
+
+        $form = $this->factory->create(PaymentMethodsConfigsRuleType::class, null);
+        $formView = $form->createView();
+
+        $expectedChoices = [
+            'identifier1' => self::ADMIN_LABEL,
+            'identifier2' => self::ADMIN_LABEL . ' '
+        ];
+
+        self::assertEquals($expectedChoices, $formView->vars['methods']);
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -134,8 +162,6 @@ class PaymentMethodsConfigsRuleTypeTest extends AddressFormExtensionTestCase
             ->method('getCurrencyList')
             ->willReturn(['USD']);
 
-        $this->createMocks();
-
         $subscriber = new RuleMethodConfigCollectionSubscriber($this->paymentMethodProvider);
 
         return array_merge(
@@ -143,7 +169,10 @@ class PaymentMethodsConfigsRuleTypeTest extends AddressFormExtensionTestCase
             [
                 new PreloadedExtension(
                     [
-                        PaymentMethodsConfigsRuleType::class => $this->formType,
+                        PaymentMethodsConfigsRuleType::class => new PaymentMethodsConfigsRuleType(
+                            $this->paymentMethodProvider,
+                            $this->compositePaymentMethodViewProvider
+                        ),
                         CollectionType::class => new CollectionType(),
                         RuleType::BLOCK_PREFIX => new RuleType(),
                         PaymentMethodConfigType::class => new PaymentMethodConfigType(
@@ -182,31 +211,11 @@ class PaymentMethodsConfigsRuleTypeTest extends AddressFormExtensionTestCase
         ];
     }
 
-    protected function createMocks()
+    protected function configurePaymentMethodProvider()
     {
-        $this->compositePaymentMethodViewProvider = $this
-            ->getMockBuilder(CompositePaymentMethodViewProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $paymentMethod = $this->createPaymentMethod(self::PAYMENT_TYPE);
+        $paymentMethodView = $this->createPaymentMethodView(self::ADMIN_LABEL);
 
-        /** @var PaymentMethodInterface|\PHPUnit\Framework\MockObject\MockObject $paymentMethod */
-        $paymentMethod = $this->getMockBuilder(PaymentMethodInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $paymentMethod->expects(static::any())->method('getIdentifier')->willReturn(self::PAYMENT_TYPE);
-
-        /** @var PaymentMethodViewInterface|\PHPUnit\Framework\MockObject\MockObject $paymentMethodView */
-        $paymentMethodView = $this->getMockBuilder(PaymentMethodViewInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $paymentMethodView
-            ->expects(static::any())
-            ->method('getAdminLabel')
-            ->willReturn(self::ADMIN_LABEL);
-
-        $this->paymentMethodProvider = $this->getMockBuilder(PaymentMethodProviderInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
         $this->paymentMethodProvider
             ->expects(static::any())
             ->method('getPaymentMethods')
@@ -226,5 +235,34 @@ class PaymentMethodsConfigsRuleTypeTest extends AddressFormExtensionTestCase
             ->method('getPaymentMethodView')
             ->with(self::PAYMENT_TYPE)
             ->willReturn($paymentMethodView);
+    }
+
+    /**
+     * @param string $identifier
+     * @return PaymentMethodInterface|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private function createPaymentMethod(string $identifier)
+    {
+        /** @var PaymentMethodInterface|\PHPUnit\Framework\MockObject\MockObject $paymentMethod */
+        $paymentMethod = $this->createMock(PaymentMethodInterface::class);
+        $paymentMethod->expects(static::any())->method('getIdentifier')->willReturn($identifier);
+
+        return $paymentMethod;
+    }
+
+    /**
+     * @param string $adminLabel
+     * @return PaymentMethodViewInterface|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private function createPaymentMethodView(string $adminLabel)
+    {
+        /** @var PaymentMethodViewInterface|\PHPUnit\Framework\MockObject\MockObject $paymentMethodView */
+        $paymentMethodView = $this->createMock(PaymentMethodViewInterface::class);
+        $paymentMethodView
+            ->expects(static::any())
+            ->method('getAdminLabel')
+            ->willReturn($adminLabel);
+
+        return $paymentMethodView;
     }
 }

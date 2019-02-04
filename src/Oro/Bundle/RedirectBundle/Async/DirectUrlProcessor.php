@@ -73,16 +73,25 @@ class DirectUrlProcessor implements MessageProcessorInterface, TopicSubscriberIn
      */
     public function process(MessageInterface $message, SessionInterface $session)
     {
-        $em = null;
         try {
             $messageData = JSON::decode($message->getBody());
-            $className =  $this->messageFactory->getEntityClassFromMessage($messageData);
+            $className = $this->messageFactory->getEntityClassFromMessage($messageData);
+            $entities = $this->messageFactory->getEntitiesFromMessage($messageData);
+            $createRedirect = $this->messageFactory->getCreateRedirectFromMessage($messageData);
+        } catch (InvalidArgumentException $e) {
+            $this->logger->error(
+                'Queue Message is invalid',
+                ['exception' => $e]
+            );
+
+            return self::REJECT;
+        }
+
+        $em = null;
+        try {
             /** @var EntityManagerInterface $em */
             $em = $this->registry->getManagerForClass($className);
             $em->beginTransaction();
-
-            $entities = $this->messageFactory->getEntitiesFromMessage($messageData);
-            $createRedirect = $this->messageFactory->getCreateRedirectFromMessage($messageData);
             foreach ($entities as $entity) {
                 $this->generator->generate($entity, $createRedirect);
             }
@@ -90,24 +99,15 @@ class DirectUrlProcessor implements MessageProcessorInterface, TopicSubscriberIn
             $em->flush();
             $em->commit();
             $this->actualizeUrlCache();
-        } catch (InvalidArgumentException $e) {
-            if ($em) {
-                $em->rollback();
-            }
-            $this->logger->error(
-                'Queue Message is invalid',
-                ['exception' => $e]
-            );
-
-            return self::REJECT;
         } catch (\Exception $e) {
-            if ($em) {
-                $em->rollback();
-            }
             $this->logger->error(
                 'Unexpected exception occurred during Direct URL generation',
                 ['exception' => $e]
             );
+
+            if ($em && $em->getConnection()->getTransactionNestingLevel() > 0) {
+                $em->rollback();
+            }
 
             if ($e instanceof RetryableException) {
                 return self::REQUEUE;

@@ -288,3 +288,12 @@ services:
             - '@oro_frontend.request.frontend_helper'
         tags:
             - { name: oro_featuretogle.voter }
+
+    oro_consent.guest_access.provider.guest_access_urls_provider:
+        class: 'Oro\Bundle\ConsentBundle\GuestAccess\Provider\GuestAccessAllowedUrlsProvider'
+        public: false
+        arguments:
+            - '@oro_consent.provider.enabled_consent_provider'
+            - '@oro_consent.builder.cms_page_data_builder'
+            - '@router.request_context'
+        tags: [ 'oro_frontend.guest_access_urls_provider' ]
