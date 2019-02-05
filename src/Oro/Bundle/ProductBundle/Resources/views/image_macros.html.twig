@@ -8,7 +8,7 @@
 
 {% macro urlFromString(file, filter) -%}
     {%- if file is empty %}
-        {{ no_image_path(filter) }}
+        {{ product_image_placeholder(filter) }}
     {%- else %}
         {{- file|imagine_filter(filter) -}}
     {% endif %}

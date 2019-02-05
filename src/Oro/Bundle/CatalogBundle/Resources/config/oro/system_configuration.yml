@@ -28,6 +28,17 @@ system_configuration:
                 label: oro.catalog.system_configuration.fields.all_products_page_enabled.label
                 tooltip: oro.catalog.system_configuration.fields.all_products_page_enabled.tooltip
 
+        oro_catalog.category_image_placeholder:
+            data_type: string
+            type: 'Oro\Bundle\ConfigBundle\Form\Type\ConfigFileType'
+            priority: 50
+            options:
+                label: oro.catalog.system_configuration.fields.category_image_placeholder.label
+                tooltip: oro.catalog.system_configuration.fields.category_image_placeholder.tooltip
+                required: false
+                fileConstraints:
+                    - Image: ~
+
     tree:
         system_configuration:
             platform:
@@ -49,3 +60,10 @@ system_configuration:
                                   all_products:
                                       children:
                                           - oro_catalog.all_products_page_enabled
+                    design:
+                        children:
+                            theme:
+                                children:
+                                    theme_settings:
+                                        children:
+                                            - oro_catalog.category_image_placeholder

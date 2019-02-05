@@ -293,7 +293,8 @@ system_configuration:
             type: 'Oro\Bundle\ConfigBundle\Form\Type\ConfigFileType'
             priority: 50
             options:
-                label: 'Product Image Placeholder'
+                label: oro.product.system_configuration.fields.product_image_placeholder.label
+                tooltip: oro.product.system_configuration.fields.product_image_placeholder.tooltip
                 required: false
                 fileConstraints:
                     - Image: ~
@@ -724,20 +725,3 @@ system_configuration:
                                     configurable_products_variations:
                                         children:
                                             - oro_product.display_simple_variations
-                    design:
-                        children:
-                            theme:
-                                children:
-                                    theme_settings:
-                                        children:
-                                            - oro_product.product_image_placeholder
-        website_configuration:
-            commerce:
-                children:
-                    design:
-                        children:
-                            theme:
-                                children:
-                                    theme_settings:
-                                        children:
-                                            - oro_product.product_image_placeholder
