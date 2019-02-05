@@ -231,18 +231,12 @@ define(function(require) {
          * @param {jQuery.Event} e
          */
         askConfirmation: function(e) {
-            if (!this.confirm) {
-                this.confirm = new DeleteConfirmation({
-                    content: __(this.options.deleteMessage)
-                });
-            }
+            var confirmModal = new DeleteConfirmation({
+                content: __(this.options.deleteMessage)
+            });
 
-            this.confirm
-                .off('ok')
-                .on('ok', _.bind(function() {
-                    this.onRemoveItem(e);
-                }, this))
-                .open();
+            confirmModal.on('ok', this.onRemoveItem.bind(this, e));
+            confirmModal.open();
         },
 
         /**
@@ -250,18 +244,13 @@ define(function(require) {
          *
          */
         showError: function() {
-            if (!this.error) {
-                this.error = new DeleteConfirmation({
-                    title: __(this.options.errorTitle),
-                    content: __(this.options.errorMessage),
-                    allowOk: false
-                });
-            }
+            var confirmModal = new DeleteConfirmation({
+                title: __(this.options.errorTitle),
+                content: __(this.options.errorMessage),
+                allowOk: false
+            });
 
-            this.error
-                .off('ok')
-                .on('ok')
-                .open();
+            confirmModal.open();
         },
 
         /**
@@ -362,11 +351,6 @@ define(function(require) {
         dispose: function() {
             if (this.disposed) {
                 return;
-            }
-            if (this.confirm) {
-                this.confirm
-                    .off()
-                    .remove();
             }
 
             this.options._sourceElement.off();
