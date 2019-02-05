@@ -107,6 +107,7 @@ workflows:
                                 - 'checkout_order_summary_totals_wrapper'
                             '[name="shippingMethodType"]':
                                 - 'checkout_order_summary_totals_wrapper'
+                                - 'payment_methods_wrapper'
                             '[name="paymentMethod"]':
                                 - 'checkout_order_summary_totals_wrapper'
                 form_options:

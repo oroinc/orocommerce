@@ -353,6 +353,8 @@ Feature: Backoffice Quote Flow with Approvals
     And I click "Create new Quote"
     And click "Submit"
     Then I should see "Quote #32 successfully created" flash message
+    And email with Subject "Quote #32 has been created" containing the following was sent:
+      | Subject | Quote #32 has been created |
     And should see Quote with:
       | Quote #         | 32    |
       | PO Number       | PO8   |

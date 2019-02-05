@@ -47,7 +47,7 @@ class CreditCardType extends AbstractType
                     ],
                     'data-credit-card-type-validator' => 'credit-card-type',
                     'data-card-number' => true,
-                    'autocomplete' => 'off',
+                    'autocomplete' => 'cc-number',
                     'data-gateway' => true,
                     'placeholder' => false,
                 ],
@@ -70,6 +70,7 @@ class CreditCardType extends AbstractType
                 ],
                 'attr' => [
                     'data-expiration-date' => true,
+                    'data-validation-ignore-onblur' => true,
                 ],
             ]
         )->add(

@@ -57,10 +57,10 @@ Feature: Product collection validation
     Then I should see "Content Node has been saved" flash message
     Then I click "Content Variants"
     And I fill "Content Node Form" with:
-      | Product Collection Segment Name | Some Product Collection Name |
+      | Product Collection Segment Name | somE ProDucT collection namE |
     And I save form
     And I click "Content Variants"
-    Then I should see "This name already in use"
+    Then I should see "There is another segment with a similar name."
 
   Scenario: Change new Product Collection name to unique, allow saving
     When I fill "Content Node Form" with:
@@ -72,7 +72,7 @@ Feature: Product collection validation
     When I click "Content Variants"
     And I fill "Content Node Form" with:
       | Default Product Collection Segment Name | Same Name |
-      | Product Collection Segment Name         | Same Name |
+      | Product Collection Segment Name         | saME naME |
     And I save form
     And I click "Content Variants"
-    Then I should see "This name already in use"
+    Then I should see "There is another segment with a similar name."

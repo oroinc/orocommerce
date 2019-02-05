@@ -8,6 +8,7 @@ class FrontendProductGrid extends Grid
 {
     const DEFAULT_MAPPINGS = [
         'GridRow' => 'ProductFrontendGridRow',
+        'GridRowStrict' => 'ProductFrontendGridRow',
         'GridTable' => 'ProductFrontendGridTable',
         'GridToolbarPaginator' => 'FrontendGridToolbarPaginator',
         'MassActionHeadCheckbox' => 'ProductFrontendMassActionHeadCheckbox',
@@ -22,6 +23,6 @@ class FrontendProductGrid extends Grid
      */
     public function getRows()
     {
-        return $this->getElements($this->getMappedChildElementName(static::TABLE_ROW_ELEMENT));
+        return $this->getElements($this->getMappedChildElementName(static::TABLE_ROW_STRICT_ELEMENT));
     }
 }

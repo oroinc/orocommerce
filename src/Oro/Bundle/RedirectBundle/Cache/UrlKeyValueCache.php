@@ -143,6 +143,10 @@ class UrlKeyValueCache implements UrlCacheInterface, ClearableCache, FlushableCa
      */
     protected function saveMultiToPersistentCache(array $values)
     {
+        if (empty($values)) {
+            return;
+        }
+
         if ($this->persistentCache instanceof MultiPutCache) {
             $this->persistentCache->saveMultiple($values);
         } else {

@@ -24,6 +24,7 @@ class InlineMatrixOneDimensional extends Table
 {
     const TABLE_HEADER_ELEMENT = 'InlineMatrixHeaderOneDimensional';
     const TABLE_ROW_ELEMENT = 'InlineMatrixRowOneDimensional';
+    const TABLE_ROW_STRICT_ELEMENT = 'InlineMatrixRowOneDimensional';
 
     /**
      * @param string $elementName

@@ -13,6 +13,8 @@ oro_behat_extension:
         - OroProductBundle::QuickOrderFormContext
         - OroProductBundle::FeatureContext
         - OroCheckoutBundle::FeatureContext
+        - OroCMSBundle::FeatureContext
+        - OroRedirectBundle::SlugPrototypesContext
         - OroShoppingListBundle::ShoppingListContext
         - OroShoppingListBundle::FeatureContext
         - OroWorkflowBundle::FeatureContext

@@ -14,6 +14,7 @@ use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 
 /**
  * Represents ordered item.
+ *
  * @ORM\Table(name="oro_order_line_item")
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks()
@@ -24,7 +25,8 @@ use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
  *          },
  *          "security"={
  *              "type"="ACL",
- *              "group_name"=""
+ *              "group_name"="commerce",
+ *              "category"="orders"
  *          }
  *      }
  * )

@@ -17,9 +17,18 @@ Feature: Product attribute file
     Then I should see that "Product Attribute Frontend Options" does not contain "Searchable"
     And I should see that "Product Attribute Frontend Options" does not contain "Filterable"
     And I should see that "Product Attribute Frontend Options" does not contain "Sortable"
-
+    And I should see "Allowed MIME Types" with options:
+      | Value                    |
+      | application/pdf          |
+      | application/vnd.ms-excel |
+      | application/msword       |
+      | application/zip          |
+      | image/gif                |
+      | image/jpeg               |
+      | image/png                |
     When I fill form with:
-      | File Size        | 10   |
+    | File Size          | 10                                       |
+    | Allowed MIME types | [application/pdf, image/png, image/jpeg] |
     And I save and close form
     Then I should see "Attribute was successfully saved" flash message
 
@@ -38,6 +47,10 @@ Feature: Product attribute file
     Given I go to Products/ Products
     When I click "Edit" on row "SKU123" in grid
     And I fill "Product Form" with:
+      | FileField | tiger.svg |
+    And I save and close form
+    Then I should see that "Product File Attribute MIME type Validation" contains "The mime type of the file is invalid"
+    Then I fill "Product Form" with:
       | FileField | cat1.jpg |
     And I save and close form
     Then I should see "Product has been saved" flash message

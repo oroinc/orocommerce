@@ -10,6 +10,8 @@ use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 use Oro\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
 
 /**
+ * RFP Request Product Item entity.
+ *
  * @ORM\Table(name="oro_rfp_request_prod_item")
  * @ORM\Entity
  * @Config(
@@ -19,7 +21,8 @@ use Oro\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
  *          },
  *          "security"={
  *              "type"="ACL",
- *              "group_name"=""
+ *              "group_name"="commerce",
+ *              "category"="quotes"
  *          }
  *      }
  * )

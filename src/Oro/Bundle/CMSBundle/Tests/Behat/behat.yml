@@ -42,3 +42,16 @@ oro_behat_extension:
 
         Content Field Data:
             selector: 'div.control-group:contains("Content") .controls>.control-label'
+
+    suites:
+        OroCMSBundle:
+            contexts:
+                - OroDataGridBundle::GridContext
+                - OroFormBundle::FormContext
+                - OroRedirectBundle::SlugPrototypesContext
+                - OroCMSBundle::FeatureContext
+                - OroWebCatalogBundle::FeatureContext
+                - OroApplicationBundle::CommerceMainContext
+                - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
+            paths:
+                - '@OroCMSBundle/Tests/Behat/Features'
