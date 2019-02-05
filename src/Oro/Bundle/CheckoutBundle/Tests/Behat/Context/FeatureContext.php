@@ -234,13 +234,13 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
 
             if ($contains) {
                 self::assertTrue($productFound, sprintf(
-                    'Product %s, QTY: %s %s has not been found',
-                    ...$row
+                    'Product %s has not been found',
+                    implode(', ', $row)
                 ));
             } else {
                 self::assertFalse($productFound, sprintf(
-                    'Product %s, QTY: %s %s has been found',
-                    ...$row
+                    'Product %s has been found',
+                    implode(', ', $row)
                 ));
             }
         }
@@ -290,12 +290,22 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      */
     private function matchProductLine(Element $productLine, array $row, $elementName)
     {
-        list($name, $quantity, $unit) = $row;
-
         try {
-            self::assertContains($name, $productLine->getElement($elementName . 'ProductLineName')->getText());
-            self::assertContains($quantity, $productLine->getElement($elementName . 'ProductLineQuantity')->getText());
-            self::assertContains($unit, $productLine->getElement($elementName . 'ProductLineUnit')->getText());
+            self::assertContains($row[0], $productLine->getElement($elementName . 'ProductLineName')->getText());
+            self::assertContains($row[1], $productLine->getElement($elementName . 'ProductLineQuantity')->getText());
+            self::assertContains($row[2], $productLine->getElement($elementName . 'ProductLineUnit')->getText());
+            if (isset($row[3])) {
+                self::assertContains(
+                    $row[3],
+                    $productLine->getElement($elementName . 'ProductLinePrice')->getText()
+                );
+            }
+            if (isset($row[4])) {
+                self::assertContains(
+                    $row[4],
+                    $productLine->getElement($elementName . 'ProductLineSubtotal')->getText()
+                );
+            }
         } catch (\Exception $exception) {
             return false;
         }
