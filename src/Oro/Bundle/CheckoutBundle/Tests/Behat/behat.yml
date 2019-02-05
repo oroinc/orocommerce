@@ -157,6 +157,12 @@ oro_behat_extension:
     Order Summary Products GridProductLineUnit:
       selector: '.checkout-order-summary__grid-td--qty'
 
+    Order Summary Products GridProductLinePrice:
+      selector: '.checkout-order-summary__grid-td--price'
+
+    Order Summary Products GridProductLineSubtotal:
+      selector: '.checkout-order-summary__grid-td--subtotal'
+
     CheckoutGoBackButton:
         selector: 'div.checkout-sidebar ul.checkout-navigation > li > h3.checkout-navigation__title > a'
 

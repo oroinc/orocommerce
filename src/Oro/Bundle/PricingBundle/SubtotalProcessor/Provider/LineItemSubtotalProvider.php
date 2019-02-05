@@ -113,7 +113,7 @@ class LineItemSubtotalProvider extends AbstractSubtotalProvider implements
         foreach ($entity->getLineItems() as $lineItem) {
             if ($lineItem instanceof PriceAwareInterface && $lineItem->getPrice() instanceof Price) {
                 $rowTotal = $this->getRowTotal($lineItem, $baseCurrency);
-                $subtotalAmount += $this->rounding->round($rowTotal);
+                $subtotalAmount += $rowTotal;
             }
         }
 
@@ -145,6 +145,6 @@ class LineItemSubtotalProvider extends AbstractSubtotalProvider implements
             $rowTotal *= $this->getExchangeRate($rowCurrency, $baseCurrency);
         }
 
-        return $rowTotal;
+        return $this->rounding->round($rowTotal);
     }
 }
