@@ -31,13 +31,3 @@ features:
             - 'oro_product_frontend_quick_add_validation_result'
         dependencies:
             - 'guest_quick_order'
-
-    limit_filters_sorters_on_product_listing:
-        label: oro.product.feature.limit_filters_sorters_on_product_listing.label
-        description: oro.product.feature.limit_filters_sorters_on_product_listing.description
-        toggle: oro_product.limit_filters_sorters_on_product_listing
-
-    disable_filters_on_product_listing:
-        label: oro.product.feature.disable_filters_on_product_listing.label
-        description: oro.product.feature.disable_filters_on_product_listing.description
-        toggle: oro_product.disable_filters_on_product_listing
