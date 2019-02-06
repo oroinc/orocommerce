@@ -8,49 +8,63 @@ use Symfony\Component\Translation\TranslatorInterface;
 
 class SearchProductDataProviderTest extends \PHPUnit\Framework\TestCase
 {
-    private const SEARCH_KEY = 'key';
-
     /** @var SearchProductHandler|\PHPUnit\Framework\MockObject\MockObject */
     private $searchProductHandler;
 
+    /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $translator;
+
     /** @var SearchProductDataProvider */
-    private $searchDataProvider;
+    private $provider;
 
     protected function setUp()
     {
-        $this->searchProductHandler = self::createMock(SearchProductHandler::class);
-        $translator = self::createMock(TranslatorInterface::class);
-        $translator
-            ->expects(self::any())
-            ->method('transChoice')
-            ->willReturn(sprintf('Search for "%s"', self::SEARCH_KEY));
-        $this->searchDataProvider = new SearchProductDataProvider($this->searchProductHandler, $translator);
+        $this->searchProductHandler = $this->createMock(SearchProductHandler::class);
+        $this->translator = $this->createMock(TranslatorInterface::class);
+
+        $this->provider = new SearchProductDataProvider($this->searchProductHandler, $this->translator);
     }
 
-    public function testWithSearchStringExists(): void
+    /**
+     * Test that getSearchString returns exactly what the search product handler returns
+     */
+    public function testGetSearchString(): void
     {
+        $testString = 'Some Test String';
+
         $this->searchProductHandler
             ->expects(self::once())
             ->method('getSearchString')
-            ->willReturn(self::SEARCH_KEY);
-        self::assertEquals(self::SEARCH_KEY, $this->searchDataProvider->getSearchString());
+            ->willReturn($testString);
+
+        self::assertEquals($testString, $this->provider->getSearchString());
     }
 
-    public function testWithSearchStringNotExists(): void
-    {
-        $this->searchProductHandler
-            ->expects(self::once())
-            ->method('getSearchString')
-            ->willReturn('');
-        self::assertEmpty($this->searchDataProvider->getSearchString());
-    }
-
+    /**
+     * Test that getTitle calls transChoice on translator, passing in the correct translation key,
+     * the length of the search string and the search string itself as the [%text% => x] parameter.
+     * Also test that getTitle returns exactly what transChoice returned.
+     */
     public function testGetTitle(): void
     {
+        $testString = 'Some Test String';
+        $testTitle = 'Translated Title';
+
         $this->searchProductHandler
             ->expects(self::once())
             ->method('getSearchString')
-            ->willReturn(self::SEARCH_KEY);
-        self::assertEquals(sprintf('Search for "%s"', self::SEARCH_KEY), $this->searchDataProvider->getTitle());
+            ->willReturn($testString);
+
+        $this->translator
+            ->expects(self::once())
+            ->method('transChoice')
+            ->with(
+                self::equalTo('oro.product.search.search_title.title'),
+                self::equalTo(strlen($testString)),
+                self::equalTo(['%text%' => $testString])
+            )
+            ->willReturn($testTitle);
+
+        self::assertEquals($testTitle, $this->provider->getTitle());
     }
 }

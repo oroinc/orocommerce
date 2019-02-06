@@ -37,6 +37,11 @@ Feature: Product search
   Scenario: Check whether the text in header of the page matches the search text
     Given I type "Search string" in "search"
     And click "Search Button"
-    Then I should see "Search string"
+    Then I should see "Search Results for \"Search string\""
     And number of records in "Product Frontend Grid" should be 0
 
+  Scenario: Check the text in header of the page for the search by empty string
+    Given I type " " in "search"
+    And click "Search Button"
+    Then I should see "All Products"
+    And number of records in "Product Frontend Grid" should be 3
