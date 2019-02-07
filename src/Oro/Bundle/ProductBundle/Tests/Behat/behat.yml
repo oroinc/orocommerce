@@ -932,6 +932,13 @@ oro_behat_extension:
         mapping:
           Green Yes Quantity: 'matrix_collection[rows][0][columns][1][quantity]'
 
+    Product Image Placeholder Config:
+      selector: 'form[name="theme"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Image: 'theme[oro_product___product_image_placeholder][value][file]'
+
     Display Simple Variations Form:
           selector: 'form[name="configurable_products"]'
           class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
@@ -941,7 +948,9 @@ oro_behat_extension:
               Display Simple Variations: 'configurable_products[oro_product___display_simple_variations][value]'
 
     Uploaded Product Image:
-      selector: 'img[src^="/media/cache/attachment"]'
+      selector:
+        type: xpath
+        locator: '//img[contains (@src,"/media/cache/attachment")]'
 
     Empty Product Image:
       selector:
