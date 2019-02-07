@@ -1,0 +1,25 @@
+services:
+    oro_catalog.provider.category_image_placeholder.config:
+        parent: oro_layout.provider.image_placeholder.config.abstract
+        public: false
+        arguments:
+            - 'oro_catalog.category_image_placeholder'
+
+    oro_catalog.provider.category_image_placeholder.theme:
+        parent: oro_layout.provider.image_placeholder.theme.abstract
+        public: false
+        arguments:
+            - 'category'
+
+    oro_catalog.provider.category_image_placeholder.default:
+        parent: oro_layout.provider.image_placeholder.default.abstract
+        public: false
+        arguments:
+            - '/bundles/orocatalog/images/no_image.png'
+
+    oro_catalog.provider.category_image_placeholder:
+        parent: oro_layout.provider.image_placeholder.chain.abstract
+        calls:
+            - [addProvider, ['@oro_catalog.provider.category_image_placeholder.config']]
+            - [addProvider, ['@oro_catalog.provider.category_image_placeholder.theme']]
+            - [addProvider, ['@oro_catalog.provider.category_image_placeholder.default']]

@@ -7,6 +7,7 @@ use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\DataGridBundle\Extension\Formatter\Property\PropertyInterface;
+use Oro\Bundle\LayoutBundle\Provider\Image\ImagePlaceholderProviderInterface;
 use Oro\Bundle\LocaleBundle\Datagrid\Formatter\Property\LocalizedValueProperty;
 use Oro\Bundle\ProductBundle\DataGrid\DataGridThemeHelper;
 use Oro\Bundle\SearchBundle\Datagrid\Event\SearchResultAfter;
@@ -34,6 +35,11 @@ class FrontendProductDatagridListener
     protected $imagineCacheManager;
 
     /**
+     * @var ImagePlaceholderProviderInterface
+     */
+    protected $imagePlaceholderProvider;
+
+    /**
      * @param DataGridThemeHelper $themeHelper
      * @param CacheManager $imagineCacheManager
      */
@@ -43,6 +49,14 @@ class FrontendProductDatagridListener
     ) {
         $this->themeHelper = $themeHelper;
         $this->imagineCacheManager = $imagineCacheManager;
+    }
+
+    /**
+     * @param ImagePlaceholderProviderInterface $imagePlaceholderProvider
+     */
+    public function setImagePlaceholderProvider(ImagePlaceholderProviderInterface $imagePlaceholderProvider): void
+    {
+        $this->imagePlaceholderProvider = $imagePlaceholderProvider;
     }
 
     /**
@@ -167,12 +181,14 @@ class FrontendProductDatagridListener
                 return;
         }
 
-        foreach ($records as $record) {
-            $productImageUrl = $record->getValue('image_' . $imageFilter);
+        if ($this->imagePlaceholderProvider) {
+            $noImagePath = $this->imagePlaceholderProvider->getPath($imageFilter);
+        } else {
+            $noImagePath = $this->imagineCacheManager->getBrowserPath(self::DEFAULT_IMAGE, $imageFilter);
+        }
 
-            if (!$productImageUrl) {
-                $productImageUrl = $this->imagineCacheManager->getBrowserPath(self::DEFAULT_IMAGE, $imageFilter);
-            }
+        foreach ($records as $record) {
+            $productImageUrl = $record->getValue('image_' . $imageFilter) ?: $noImagePath;
             $record->addData(['image' => $productImageUrl]);
         }
     }

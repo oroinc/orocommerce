@@ -41,7 +41,7 @@
         }) %}
     {% else %}
         {% set attr = layout_attr_defaults(attr, {
-            src: Image.urlFromString('/bundles/orocatalog/default/images/no_image_315x260.png', 'category_medium')
+            src: category_image_placeholder('category_medium')
         }) %}
     {% endif %}
 

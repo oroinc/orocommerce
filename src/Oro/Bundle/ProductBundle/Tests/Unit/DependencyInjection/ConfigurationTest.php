@@ -207,6 +207,10 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
                 Configuration::LIMIT_FILTERS_SORTERS_ON_PRODUCT_LISTING => [
                     'value' => true,
                     'scope' => 'app'
+                ],
+                'product_image_placeholder' => [
+                    'value' => null,
+                    'scope' => 'app',
                 ]
             ]
         ];
