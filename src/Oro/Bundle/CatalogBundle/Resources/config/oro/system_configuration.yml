@@ -31,7 +31,7 @@ system_configuration:
         oro_catalog.category_image_placeholder:
             data_type: string
             type: 'Oro\Bundle\ConfigBundle\Form\Type\ConfigFileType'
-            priority: 50
+            priority: 40
             options:
                 label: oro.catalog.system_configuration.fields.category_image_placeholder.label
                 tooltip: oro.catalog.system_configuration.fields.category_image_placeholder.tooltip

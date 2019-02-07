@@ -15,7 +15,7 @@ services:
         parent: oro_layout.provider.image_placeholder.default.abstract
         public: false
         arguments:
-            - '/bundles/orocatalog/default/images/no_image_315x260.png'
+            - '/bundles/orocatalog/images/no_image.png'
 
     oro_catalog.provider.category_image_placeholder:
         parent: oro_layout.provider.image_placeholder.chain.abstract
