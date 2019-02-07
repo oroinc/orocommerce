@@ -2,9 +2,14 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Controller;
 
+use Oro\Bundle\CustomerBundle\Tests\Functional\Api\Frontend\DataFixtures\LoadWebsiteData;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomers;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups;
 use Oro\Bundle\PricingBundle\Entity\BasePriceListRelation;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceListCustomerFallback;
 use Oro\Bundle\PricingBundle\PricingStrategy\MergePricesCombiningStrategy;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Symfony\Component\DomCrawler\Crawler;
@@ -56,10 +61,10 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
             ->set('oro_pricing.price_strategy', MergePricesCombiningStrategy::NAME);
         $this->loadFixtures(
             [
-                'Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData',
-                'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomers',
-                'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups',
-                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists',
+                LoadWebsiteData::class,
+                LoadCustomers::class,
+                LoadGroups::class,
+                LoadPriceLists::class
             ]
         );
         $this->formExtensionPath = sprintf('%s[priceListsByWebsites]', $this->getMainFormName());
@@ -120,23 +125,23 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
         return [
             [
                 'submittedData' => [
-                    1 => [
-                        'fallback' => 0,
+                    LoadWebsiteData::DEFAULT_WEBSITE => [
+                        'fallback' => PriceListCustomerFallback::ACCOUNT_GROUP,
                         'priceLists' => [
                             ['priceList' => 'price_list_1', '_position' => 3, 'mergeAllowed' => false],
                             ['priceList' => 'price_list_2', '_position' => 23, 'mergeAllowed' => true],
-                            ['priceList' => 'price_list_3', '_position' => 22, 'mergeAllowed' => true],
+                            ['priceList' => 'price_list_3', '_position' => 22, 'mergeAllowed' => true]
                         ],
                     ],
                 ],
 
                 'expectedData' => [
-                    1 => [
-                        'fallback' => 0,
+                    LoadWebsiteData::DEFAULT_WEBSITE => [
+                        'fallback' => PriceListCustomerFallback::ACCOUNT_GROUP,
                         'priceLists' => [
                             ['priceList' => 'price_list_1', '_position' => 3, 'mergeAllowed' => false],
                             ['priceList' => 'price_list_3', '_position' => 22, 'mergeAllowed' => true],
-                            ['priceList' => 'price_list_2', '_position' => 23, 'mergeAllowed' => true],
+                            ['priceList' => 'price_list_2', '_position' => 23, 'mergeAllowed' => true]
                         ],
                     ],
                 ],
@@ -157,18 +162,11 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
     }
 
     /**
-     * @param string|integer $identifier
+     * @param string $identifier
      * @return null|Website
      */
     protected function getWebsite($identifier)
     {
-        if (is_int($identifier)) {
-            return $this->getContainer()
-                ->get('doctrine')
-                ->getRepository('OroWebsiteBundle:Website')
-                ->find($identifier);
-        }
-
         return $this->getReference($identifier);
     }
 
@@ -183,26 +181,19 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
             'GET',
             $this->getViewUrl()
         );
-        
+
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        
+
         foreach ($expectedData as $websiteReference => $priceListsWithFallback) {
             $priceListSection = $crawler->filter('div #priceLists');
             $fallbackText = $priceListSection->filter('p strong')->text();
-
             $this->assertNotContains('only', $fallbackText);
 
             foreach ($priceListsWithFallback['priceLists'] as $priceListRelation) {
                 /** @var PriceList $priceList */
                 $priceList = $this->getReference($priceListRelation['priceList']);
                 $row = $priceListSection->filter(sprintf('.price_list%s', $priceList->getId()));
-                $mergeAllowedText = $row->filter('.price_list_merge_allowed')->text();
-                if ($priceListRelation['mergeAllowed']) {
-                    $this->assertContains('Yes', $mergeAllowedText);
-                } else {
-                    $this->assertContains('No', $mergeAllowedText);
-                }
                 $this->assertContains($priceList->getName(), $row->filter('.price_list_link')->text());
             }
         }
@@ -219,7 +210,10 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
         $form = $this->getUpdateForm();
         $this->assertTrue($form->has($this->formExtensionPath));
         //Test remove one price list
-        $path = sprintf('[%s][priceListCollection][1]', $this->getDefaultWebsite()->getId());
+        $path = sprintf(
+            '[%s][priceListCollection][1]',
+            $this->getWebsite(LoadWebsiteData::DEFAULT_WEBSITE)->getId()
+        );
         $form->remove($this->formExtensionPath . $path);
         $this->client->submit($form);
         $priceListsRelations = $this->getPriceListsByEntity();
@@ -234,7 +228,7 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
      */
     protected function checkPriceListRelationExist(array $priceListsRelations, $priceListReference)
     {
-        $website = $this->getDefaultWebsite();
+        $website = $this->getWebsite(LoadWebsiteData::DEFAULT_WEBSITE);
         
         $priceList = $this->getReference($priceListReference);
         foreach ($priceListsRelations as $priceListRelation) {
@@ -253,7 +247,7 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
         $form = $this->getUpdateForm();
         $formValues = $form->getValues();
         /** @var Website $website */
-        $website = $this->getDefaultWebsite();
+        $website = $this->getWebsite(LoadWebsiteData::DEFAULT_WEBSITE);
         /** @var PriceList $priceList */
         $priceList = $this->getReference('price_list_1');
         $collectionElementPath1 = sprintf(
@@ -316,6 +310,22 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
      * @param null|integer $id
      * @return Form
      */
+    protected function getCreateForm()
+    {
+        $crawler = $this->client->request(
+            'GET',
+            $this->getCreateUrl()
+        );
+        $result = $this->client->getResponse();
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+
+        return $crawler->selectButton('Save and Close')->form();
+    }
+
+    /**
+     * @param null|integer $id
+     * @return Form
+     */
     protected function getUpdateForm($id = null)
     {
         $crawler = $this->client->request(
@@ -367,7 +377,6 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
                 $priceListEntity = $this->getReference($priceList['priceList']);
                 $formValues[sprintf('%s[priceList]', $collectionElementPath)] = $priceListEntity->getId();
                 $formValues[sprintf('%s[_position]', $collectionElementPath)] = $priceList['_position'];
-                $formValues[sprintf('%s[mergeAllowed]', $collectionElementPath)] = $priceList['mergeAllowed'];
             }
         }
 
@@ -385,20 +394,11 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
         foreach ($expectedData as $websiteReference => $expectedFallbackWithPriceLists) {
             $websiteId = $this->getWebsite($websiteReference)->getId();
             $this->assertTrue(isset($priceListsByWebsite[$websiteId]));
-            $this->assertEquals(
-                $this->getOrderIndex($websiteReference, $expectedData),
-                $this->getOrderIndex($websiteId, $priceListsByWebsite)
-            );
             $actualFallbackWithPriceLists = $priceListsByWebsite[$websiteId];
             $this->assertEquals($expectedFallbackWithPriceLists['fallback'], $actualFallbackWithPriceLists['fallback']);
             if ($expectedFallbackWithPriceLists['priceLists']) {
                 foreach ($expectedFallbackWithPriceLists['priceLists'] as $key => $expectedPriceListRelation) {
                     $actualPriceListRelation = $actualFallbackWithPriceLists['priceListCollection'][$key];
-                    if (!$expectedPriceListRelation['mergeAllowed']) {
-                        $this->assertFalse(isset($actualPriceListRelation['mergeAllowed']));
-                    } else {
-                        $this->assertTrue(isset($actualPriceListRelation['mergeAllowed']));
-                    }
                     $this->assertEquals(
                         $expectedPriceListRelation['_position'],
                         $actualPriceListRelation['_position']
@@ -423,16 +423,5 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
         preg_match_all('#/update/(.+?)\"#is', $crawler->html(), $arr);
 
         return max($arr[1]);
-    }
-
-    /**
-     * @return Website
-     */
-    protected function getDefaultWebsite()
-    {
-        return $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroWebsiteBundle:Website')
-            ->getRepository('OroWebsiteBundle:Website')
-            ->findOneBy(['name' => 'Default']);
     }
 }

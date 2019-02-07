@@ -3,8 +3,9 @@ define(function(require) {
 
     var TotalsComponent;
     var mediator = require('oroui/js/mediator');
+    var $ = require('jquery');
     var _ = require('underscore');
-    var BaseComponent = require('oropricing/js/app/components/totals-component');
+    var PricingTotalsComponent = require('oropricing/js/app/components/totals-component');
     var LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
 
     /**
@@ -12,7 +13,7 @@ define(function(require) {
      * @extends oropricing.app.components.TotalsComponent
      * @class oroorder.app.components.TotalsComponent
      */
-    TotalsComponent = BaseComponent.extend({
+    TotalsComponent = PricingTotalsComponent.extend({
         /**
          * @property {Object}
          */
@@ -29,7 +30,19 @@ define(function(require) {
          * @inheritDoc
          */
         initialize: function(options) {
+            this._deferredInit();
+            $.when.apply($, _.compact(options._subPromises)).then(function() {
+                this.handleSubLayoutInit();
+                this._resolveDeferredInit();
+            }.bind(this));
+
             this.options = _.defaults(options || {}, this.options);
+        },
+
+        /**
+         * Handles sub-layout initialization
+         */
+        handleSubLayoutInit: function() {
             this.currentTotals = this._getDefaultTotals();
 
             mediator.on('entry-point:order:load:before', this.showLoadingMask, this);
@@ -46,7 +59,7 @@ define(function(require) {
 
             this.loadingMaskView = new LoadingMaskView({container: this.options._sourceElement});
 
-            this.setTotals(options);
+            this.setTotals(this.options);
         },
 
         _getDefaultTotals: function() {

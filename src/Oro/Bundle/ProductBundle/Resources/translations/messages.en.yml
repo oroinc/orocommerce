@@ -637,6 +637,7 @@ oro:
                     sections:
                         general:    'General'
                         seo:        'SEO'
+                        additional: 'Additional'
                     messages:
                         saved:      'Brand has been saved'
                         notBlank:   'This field cannot be blank'

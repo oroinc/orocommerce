@@ -4,6 +4,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Provider;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
+use Oro\Bundle\PricingBundle\Entity\PriceTypeAwareInterface;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\Provider\WebsiteCurrencyProvider;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
@@ -229,5 +230,37 @@ class LineItemSubtotalProviderTest extends \PHPUnit\Framework\TestCase
     {
         $entity = new LineItemStub();
         $this->assertFalse($this->provider->isSupported($entity));
+    }
+
+    public function testGetRowTotalWhenNoPrice()
+    {
+        $lineItem = new LineItemStub();
+        self::assertEquals(0, $this->provider->getRowTotal($lineItem, 'USD'));
+    }
+
+    public function testGetRowTotalWithSameCurrency()
+    {
+        $lineItem = new LineItemStub();
+        $lineItem->setPrice(Price::create(10.499, 'USD'));
+        $lineItem->setPriceType(PriceTypeAwareInterface::PRICE_TYPE_BUNDLED);
+        $this->roundingService->expects($this->once())
+            ->method('round')
+            ->with(10.499)
+            ->willReturn(10.50);
+
+        self::assertEquals(10.50, $this->provider->getRowTotal($lineItem, 'USD'));
+    }
+
+    public function testGetRowTotal()
+    {
+        $lineItem = new LineItemStub();
+        $lineItem->setPrice(Price::create(10.499, 'USD'));
+        $lineItem->setQuantity(2);
+        $this->roundingService->expects($this->once())
+            ->method('round')
+            ->with(20.998)
+            ->willReturn(21.00);
+
+        self::assertEquals(21.00, $this->provider->getRowTotal($lineItem, 'USD'));
     }
 }

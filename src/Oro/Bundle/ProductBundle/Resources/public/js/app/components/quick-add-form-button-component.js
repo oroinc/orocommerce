@@ -95,7 +95,6 @@ define(function(require) {
             }
 
             delete this.messages;
-            delete this.confirmModal;
 
             QuickAddFormButtonComponent.__super__.dispose.apply(this, arguments);
         },
@@ -137,17 +136,16 @@ define(function(require) {
          * @return {Function}
          */
         getConfirmDialog: function(callback) {
-            if (!this.confirmModal) {
-                this.confirmModal = (new this.confirmModalConstructor({
-                    title: __(this.messages.confirm_title),
-                    content: this.confirmMessage,
-                    okText: __(this.messages.confirm_ok),
-                    cancelText: __(this.messages.confirm_cancel)
-                }));
-                this.listenTo(this.confirmModal, 'ok', callback);
-            }
+            var confirmModal = new this.confirmModalConstructor({
+                title: __(this.messages.confirm_title),
+                content: this.confirmMessage,
+                okText: __(this.messages.confirm_ok),
+                cancelText: __(this.messages.confirm_cancel)
+            });
 
-            return this.confirmModal;
+            confirmModal.on('ok', callback);
+
+            return confirmModal;
         },
 
         executeConfiguredAction: function() {
