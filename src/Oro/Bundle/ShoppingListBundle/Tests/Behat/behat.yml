@@ -151,6 +151,9 @@ oro_behat_extension:
           Attributes_3:
             type: 'xpath'
             locator: '//select[@name= "oro_product_product_variant_frontend_variant_field[Attribute_3]"]'
+          Color:
+            type: 'xpath'
+            locator: '//select[@name= "oro_product_product_variant_frontend_variant_field[Color]"]'
 
     LineItemQuantity:
       selector:
