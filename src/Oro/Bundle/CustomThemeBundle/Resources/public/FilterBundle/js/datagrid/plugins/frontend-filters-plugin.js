@@ -7,6 +7,10 @@ define(function(require) {
     var FrontendFiltersTogglePlugin = require('orofrontend/js/app/datafilter/plugins/frontend-filters-plugin');
     var viewportManager = require('oroui/js/viewport-manager');
 
+    function isApplicableWithViewport() {
+        return !_.contains(['desktop', 'tablet', 'tablet-small'], viewportManager.getViewport().type);
+    }
+
     FrontendCustomFiltersTogglePlugin = FrontendFiltersTogglePlugin.extend({
         /**
          * @inheritDoc
@@ -32,24 +36,19 @@ define(function(require) {
          * @inheritDoc
          */
         enable: function() {
-            if (this.changeBehavior()) {
-                switch (viewportManager.getViewport().type) {
-                    case 'desktop':
-                    case 'tablet':
-                    case 'tablet-small':
-                        this.disable();
-                        break;
-                    default:
-                        FrontendFiltersTogglePlugin.__super__.enable.call(this);
-                        break;
-                }
-            } else {
+            if (!this.changeBehavior() || isApplicableWithViewport()) {
                 FrontendFiltersTogglePlugin.__super__.enable.call(this);
+            } else {
+                this.disable();
             }
         },
 
         changeBehavior: function() {
             return !_.isUndefined(this.main.$el.parent().attr('data-server-render'));
+        }
+    }, {
+        isApplicable: function(options) {
+            return options.metadata.options.frontend !== true || isApplicableWithViewport();
         }
     });
     return FrontendCustomFiltersTogglePlugin;
