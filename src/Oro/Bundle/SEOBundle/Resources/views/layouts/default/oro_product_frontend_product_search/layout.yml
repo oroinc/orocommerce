@@ -1,0 +1,6 @@
+layout:
+    actions:
+        - '@setOption':
+            id: title
+            optionName: value
+            optionValue: '=data["oro_product_search"].getTitle()'

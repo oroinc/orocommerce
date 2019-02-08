@@ -19,19 +19,14 @@ class WebsiteSearchControllerTest extends WebTestCase
 
     public function testSearchResultsAction()
     {
-        $crawler = $this->client->request('GET', $this->getUrl('oro_frontend_root'));
-
-        // assert search widget exists on page
-        $searchFieldBlock = $crawler->filter('form.search-widget');
-        $this->assertGreaterThan(0, $searchFieldBlock->count());
-
-        // search form processing
-        $searchForm           = $searchFieldBlock->selectButton('oro_website_search_search_button')->form();
-        $searchForm['search'] = static::SEARCH_STRING;
-
-        // submit the form
         $this->client->followRedirects(true);
-        $this->client->submit($searchForm);
+        $this->client->request(
+            'GET',
+            $this->getUrl(
+                'oro_website_search_results',
+                ['search' => static::SEARCH_STRING]
+            )
+        );
 
         // assert product page has been rendered
         $result = $this->client->getResponse();
