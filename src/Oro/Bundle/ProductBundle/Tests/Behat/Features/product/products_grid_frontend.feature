@@ -3,7 +3,6 @@
 @ticket-BAP-17648
 
 Feature: Products Grid Frontend
-
   In order to ensure frontend products grid works correctly
   As a buyer
   I check filters are working and sorting is working as designed.

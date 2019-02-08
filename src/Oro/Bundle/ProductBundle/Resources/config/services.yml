@@ -1170,6 +1170,10 @@ services:
         arguments:
             - "@request_stack"
 
+    oro_product.handler.search_product_handler:
+        class: Oro\Bundle\ProductBundle\Handler\SearchProductHandler
+        arguments: ['@request_stack', '@oro_ui.html_tag_helper']
+
     oro_product.helper.product_grouper.factory:
         class: Oro\Bundle\ProductBundle\Helper\ProductGrouper\ProductsGrouperFactory
         public: false
@@ -1181,6 +1185,15 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-product-search-grid, method: onPreBuild }
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.frontend-product-search-grid, method: onBuildAfter }
+
+    oro_product.datagrid.event_listener.search_event_listener:
+        class: Oro\Bundle\ProductBundle\DataGrid\EventListener\SearchEventListener
+        arguments:
+            - '@oro_product.handler.search_product_handler'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-product-search-grid, method: onPreBuild }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.frontend-product-search-grid, method: onBuildAfter }
+
 
     oro_product.datagrid.event_listener.frontend_product_grid:
         class: 'Oro\Bundle\ProductBundle\DataGrid\EventListener\FrontendProductGridEventListener'
@@ -1203,10 +1216,10 @@ services:
             - '@oro_datagrid.datagrid.manager.link'
             - '@oro_filter.provider.state.filters'
             - '@oro_datagrid.provider.state.sorters'
+            - '@oro_config.manager'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.search_datasource.result.before.frontend-product-search-grid, method: onSearchResultBefore }
             - { name: kernel.event_listener, event: oro_datagrid.search_datasource.result.after.frontend-product-search-grid, method: onSearchResultAfter }
-            - { name: oro_featuretogle.feature, feature: limit_filters_sorters_on_product_listing }
 
     oro_product.provider.catalog_context_url_provider:
         class: Oro\Bundle\ProductBundle\Provider\ContentVariantContextUrlProvider
@@ -1284,6 +1297,14 @@ services:
         parent: oro_product.layout.data_provider.abstract_segment_products_provider
         tags:
             - { name: layout.data_provider, alias: new_arrivals }
+
+    oro_product.layout.data_provider.search_product:
+        class: Oro\Bundle\ProductBundle\Layout\DataProvider\SearchProductDataProvider
+        arguments:
+            - "@oro_product.handler.search_product_handler"
+            - "@translator"
+        tags:
+            - { name: layout.data_provider, alias: oro_product_search }
 
     oro_product.layout.data_provider.new_arrivals.cache_decorator:
         parent: oro_product.doctrine.abstract_cached_provider_decorator
