@@ -8,6 +8,7 @@ use Oro\Bundle\CatalogBundle\Datagrid\Filter\SubcategoryFilter;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Search\ProductRepository;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\MetadataObject;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
@@ -15,8 +16,8 @@ use Oro\Bundle\DataGridBundle\Datagrid\Manager;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 use Oro\Bundle\DataGridBundle\Extension\AbstractExtension;
 use Oro\Bundle\DataGridBundle\Tools\DatagridParametersHelper;
-use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\FilterBundle\Grid\Extension\AbstractFilterExtension;
+use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\SearchBundle\Datagrid\Datasource\SearchDatasource;
 use Oro\Component\DependencyInjection\ServiceLink;
 
@@ -25,9 +26,6 @@ use Oro\Component\DependencyInjection\ServiceLink;
  */
 class CategoryCountsExtension extends AbstractExtension
 {
-    private const DISABLE_FILTERS_FEATURE = 'disable_filters_on_product_listing';
-    private const LIMIT_FILTERS_FEATURE = 'limit_filters_sorters_on_product_listing';
-
     /** @var ServiceLink */
     private $datagridManagerLink;
 
@@ -46,8 +44,8 @@ class CategoryCountsExtension extends AbstractExtension
     /** @var array */
     private $applicableGrids = [];
 
-    /** @var FeatureChecker */
-    private $featureChecker;
+    /** @var ConfigManager */
+    private $configManager;
 
     /**
      * @var bool[] Stores flags about already applied datagrids.
@@ -80,11 +78,11 @@ class CategoryCountsExtension extends AbstractExtension
     }
 
     /**
-     * @param FeatureChecker $featureChecker
+     * @param ConfigManager $configManager
      */
-    public function setFeatureChecker(FeatureChecker $featureChecker): void
+    public function setConfigManager(ConfigManager $configManager): void
     {
-        $this->featureChecker = $featureChecker;
+        $this->configManager = $configManager;
     }
 
     /**
@@ -119,7 +117,6 @@ class CategoryCountsExtension extends AbstractExtension
 
         $this->applied[$config->getName()] = true;
 
-        $countsWithoutFilters = null;
         $categoryCounts = $this->getCounts($config);
 
         $countsWithoutFilters = [];
@@ -183,12 +180,12 @@ class CategoryCountsExtension extends AbstractExtension
             return [];
         }
 
-        // remove filter by category to make sure that filter counts will not be affected by filter itself
         $parameters = clone $this->getParameters();
 
         if ($resetFilters) {
             $this->datagridParametersHelper->resetFilters($parameters);
         } else {
+            // remove filter by category to make sure that filter counts will not be affected by filter itself
             $this->datagridParametersHelper->resetFilter($parameters, SubcategoryFilter::FILTER_TYPE_NAME);
         }
 
@@ -270,7 +267,7 @@ class CategoryCountsExtension extends AbstractExtension
      * @param array $parameters
      * @return string
      */
-    private function getDataKey($gridName, array $parameters)
+    private function getDataKey($gridName, array $parameters): string
     {
         $this->sort($parameters);
 
@@ -296,7 +293,7 @@ class CategoryCountsExtension extends AbstractExtension
      *
      * @return string
      */
-    private function getCacheKey($gridName, ParameterBag $datagridParameters)
+    private function getCacheKey($gridName, ParameterBag $datagridParameters): string
     {
         $parameters = clone $datagridParameters;
         $applicableParameters = $this->getApplicableParameters();
@@ -314,7 +311,7 @@ class CategoryCountsExtension extends AbstractExtension
      *
      * @return array
      */
-    private function getApplicableParameters()
+    private function getApplicableParameters(): array
     {
         return [
             'categoryId',
@@ -326,10 +323,13 @@ class CategoryCountsExtension extends AbstractExtension
     /**
      * @return bool
      */
-    private function isOptionsDisablingApplicable(): bool
+    private function isOptionsDisablingApplicable():bool
     {
-        return $this->featureChecker
-            && $this->featureChecker->isFeatureEnabled(self::DISABLE_FILTERS_FEATURE)
-            && $this->featureChecker->isFeatureEnabled(self::LIMIT_FILTERS_FEATURE);
+        $limitFilters = Configuration::getConfigKeyByName(Configuration::LIMIT_FILTERS_SORTERS_ON_PRODUCT_LISTING);
+        $disableFilters = Configuration::getConfigKeyByName(Configuration::DISABLE_FILTERS_ON_PRODUCT_LISTING);
+
+        return $this->configManager
+            && $this->configManager->get($limitFilters)
+            && $this->configManager->get($disableFilters);
     }
 }

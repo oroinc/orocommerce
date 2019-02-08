@@ -259,7 +259,7 @@ services:
             - '@oro_datagrid.tools.parameters_helper'
         calls:
             - [addApplicableGrid, ['frontend-product-search-grid']]
-            - [setFeatureChecker, ['@oro_featuretoggle.checker.feature_checker']]
+            - [setConfigManager, ['@oro_config.manager']]
         tags:
             - { name: oro_datagrid.extension }
 
