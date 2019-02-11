@@ -10,7 +10,7 @@
         'alias': 'oro_coupon'
     } %}
 
-    {% if resource_granted('oro_promotion_coupon_create') %}
+    {% if is_granted('oro_promotion_coupon_create') %}
         {% include 'OroActionBundle:Widget:_widget.html.twig' %}
     {% endif %}
 

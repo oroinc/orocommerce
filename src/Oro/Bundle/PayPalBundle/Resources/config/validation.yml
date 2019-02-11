@@ -32,3 +32,7 @@ Oro\Bundle\PayPalBundle\Entity\PayPalSettings:
             - NotBlank: ~
             - Length:
                 min: 7
+
+Oro\Bundle\IntegrationBundle\Entity\Channel:
+    constraints:
+        - Oro\Bundle\PayPalBundle\Validator\Constraints\UniqueExpressCheckoutName: ~

@@ -8,6 +8,7 @@ use Oro\Bundle\CatalogBundle\Datagrid\Filter\SubcategoryFilter;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Search\ProductRepository;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\MetadataObject;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
@@ -16,6 +17,7 @@ use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 use Oro\Bundle\DataGridBundle\Extension\AbstractExtension;
 use Oro\Bundle\DataGridBundle\Tools\DatagridParametersHelper;
 use Oro\Bundle\FilterBundle\Grid\Extension\AbstractFilterExtension;
+use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\SearchBundle\Datagrid\Datasource\SearchDatasource;
 use Oro\Component\DependencyInjection\ServiceLink;
 
@@ -42,31 +44,46 @@ class CategoryCountsExtension extends AbstractExtension
     /** @var array */
     private $applicableGrids = [];
 
+    /** @var ConfigManager */
+    private $configManager;
+
+    /**
+     * @var bool[] Stores flags about already applied datagrids.
+     * [
+     *      '<datagridName>' => <bool>,
+     *      ...
+     * ]
+     */
+    private $applied = [];
+
     /**
      * @param ServiceLink $datagridManagerLink
      * @param ManagerRegistry $registry
      * @param ProductRepository $productSearchRepository
      * @param CategoryCountsCache $cache
      * @param DatagridParametersHelper $datagridParametersHelper
+     * @param ConfigManager $configManager
      */
     public function __construct(
         ServiceLink $datagridManagerLink,
         ManagerRegistry $registry,
         ProductRepository $productSearchRepository,
         CategoryCountsCache $cache,
-        DatagridParametersHelper $datagridParametersHelper
+        DatagridParametersHelper $datagridParametersHelper,
+        ConfigManager $configManager
     ) {
         $this->datagridManagerLink = $datagridManagerLink;
         $this->registry = $registry;
         $this->productSearchRepository = $productSearchRepository;
         $this->cache = $cache;
         $this->datagridParametersHelper = $datagridParametersHelper;
+        $this->configManager = $configManager;
     }
 
     /**
      * @param string $gridName
      */
-    public function addApplicableGrid($gridName)
+    public function addApplicableGrid($gridName): void
     {
         $this->applicableGrids[] = $gridName;
     }
@@ -88,7 +105,19 @@ class CategoryCountsExtension extends AbstractExtension
      */
     public function visitMetadata(DatagridConfiguration $config, MetadataObject $data)
     {
+        // Skips handling of metadata if datagrid has been already processed.
+        if (!empty($this->applied[$config->getName()])) {
+            return;
+        }
+
+        $this->applied[$config->getName()] = true;
+
         $categoryCounts = $this->getCounts($config);
+
+        $countsWithoutFilters = [];
+        if ($this->isOptionsDisablingApplicable()) {
+            $countsWithoutFilters = $this->getCountsWithoutFilters($config);
+        }
 
         $filters = $data->offsetGetByPath('[filters]', []);
         foreach ($filters as &$filter) {
@@ -97,6 +126,14 @@ class CategoryCountsExtension extends AbstractExtension
             }
 
             $filter['counts'] = $categoryCounts;
+
+            $filter['disabledOptions'] = [];
+            if ($countsWithoutFilters) {
+                $filter['disabledOptions'] = array_map(
+                    'strval',
+                    array_values(array_diff(array_keys($countsWithoutFilters), array_keys($categoryCounts)))
+                );
+            }
         }
         unset($filter);
 
@@ -107,7 +144,27 @@ class CategoryCountsExtension extends AbstractExtension
      * @param DatagridConfiguration $config
      * @return array
      */
-    protected function getCounts(DatagridConfiguration $config)
+    protected function getCounts(DatagridConfiguration $config): array
+    {
+        return $this->getFilterCounts($config);
+    }
+
+    /**
+     * @param DatagridConfiguration $config
+     * @param bool $resetFilters
+     * @return array
+     */
+    protected function getCountsWithoutFilters(DatagridConfiguration $config, $resetFilters = true): array
+    {
+        return $this->getFilterCounts($config, $resetFilters);
+    }
+
+    /**
+     * @param DatagridConfiguration $config
+     * @param bool $resetFilters
+     * @return array
+     */
+    private function getFilterCounts(DatagridConfiguration $config, $resetFilters = false): array
     {
         if (!filter_var($this->parameters->get('includeSubcategories'), FILTER_VALIDATE_BOOLEAN)) {
             return [];
@@ -120,7 +177,12 @@ class CategoryCountsExtension extends AbstractExtension
 
         // remove filter by category to make sure that filter counts will not be affected by filter itself
         $parameters = clone $this->getParameters();
-        $this->datagridParametersHelper->resetFilter($parameters, SubcategoryFilter::FILTER_TYPE_NAME);
+
+        if ($resetFilters) {
+            $this->datagridParametersHelper->resetFilters($parameters);
+        } else {
+            $this->datagridParametersHelper->resetFilter($parameters, SubcategoryFilter::FILTER_TYPE_NAME);
+        }
 
         // merge common parameters filters with minified parameters filters for
         // create correct cache key after reload the page
@@ -177,7 +239,7 @@ class CategoryCountsExtension extends AbstractExtension
      *
      * @return DatagridInterface
      */
-    protected function getGrid(DatagridConfiguration $config, ParameterBag $datagridParameters)
+    protected function getGrid(DatagridConfiguration $config, ParameterBag $datagridParameters): DatagridInterface
     {
         /** @var Manager $datagridManager */
         $datagridManager = $this->datagridManagerLink->getService();
@@ -188,7 +250,7 @@ class CategoryCountsExtension extends AbstractExtension
     /**
      * @return CategoryRepository
      */
-    protected function getCategoryRepository()
+    protected function getCategoryRepository(): CategoryRepository
     {
         return $this->registry
             ->getManagerForClass(Category::class)
@@ -200,7 +262,7 @@ class CategoryCountsExtension extends AbstractExtension
      * @param array $parameters
      * @return string
      */
-    private function getDataKey($gridName, array $parameters)
+    private function getDataKey($gridName, array $parameters): string
     {
         $this->sort($parameters);
 
@@ -226,7 +288,7 @@ class CategoryCountsExtension extends AbstractExtension
      *
      * @return string
      */
-    private function getCacheKey($gridName, ParameterBag $datagridParameters)
+    private function getCacheKey($gridName, ParameterBag $datagridParameters): string
     {
         $parameters = clone $datagridParameters;
         $applicableParameters = $this->getApplicableParameters();
@@ -244,12 +306,23 @@ class CategoryCountsExtension extends AbstractExtension
      *
      * @return array
      */
-    private function getApplicableParameters()
+    private function getApplicableParameters(): array
     {
         return [
             'categoryId',
             DatagridParametersHelper::DATAGRID_SKIP_EXTENSION_PARAM,
             AbstractFilterExtension::FILTER_ROOT_PARAM
         ];
+    }
+
+    /**
+     * @return bool
+     */
+    private function isOptionsDisablingApplicable()
+    {
+        $limitFilters = Configuration::getConfigKeyByName(Configuration::LIMIT_FILTERS_SORTERS_ON_PRODUCT_LISTING);
+        $disableFilters = Configuration::getConfigKeyByName(Configuration::DISABLE_FILTERS_ON_PRODUCT_LISTING);
+
+        return $this->configManager->get($limitFilters) && $this->configManager->get($disableFilters);
     }
 }

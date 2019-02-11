@@ -1,5 +1,8 @@
 oro:
     product:
+        search:
+            search_title:
+                title: '{0} All Products|]1,Inf] Search Results for "%text%"'
         entity_label: Product
         entity_plural_label: Products
         entity_description: Represents product information.
@@ -476,6 +479,9 @@ oro:
                 limit_filters_sorters_on_product_listing:
                     label: 'Hide Unrelated Product Filters And Sorting Options'
                     tooltip: 'Limit filters and sorting options on the product catalog page to display only those attributes that are relevant to the selected product family in the current product collection.'
+                disable_filters_on_product_listing:
+                    label: "Don't Change Initial Filter State"
+                    tooltip: 'If checked, all relevant filters that have been displayed on the initial page load and their options will remain visible on the page and will be disabled after they become non-relevant as the user refines the search results. Otherwise, any filters and options that become non-relevant, will be hidden.'
             notice:
                 product_image_watermark: >
                    The updated product image watermark settings will be used for the newly uploaded images only.
@@ -631,6 +637,7 @@ oro:
                     sections:
                         general:    'General'
                         seo:        'SEO'
+                        additional: 'Additional'
                     messages:
                         saved:      'Brand has been saved'
                         notBlank:   'This field cannot be blank'
@@ -803,9 +810,6 @@ oro:
                 message: Enter item numbers in Column A and quantities needed in Column B. Please do not include any prefixes, dashes, or other punctuation in the item numbers.
             save_the_file:
                 message: Save the file on your computer. CSV format (.csv) is recommended and click Upload.
-        limit_filters_sorters_on_product_listing:
-            label: 'Hide Unrelated Product Filters And Sorting Options'
-            description: 'Limit filters and sorting options on the product catalog page to display only those attributes that are relevant to the selected product family in the current product collection.'
 
     importexport:
         export:

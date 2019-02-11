@@ -14,12 +14,12 @@
     {{ UI.cancelButton(path('oro_product_brand_index')) }}
 
     {% set html = UI.saveAndCloseButton({'route': 'oro_product_brand_index'}) %}
-    {% if resource_granted('oro_product_brand_create') %}
+    {% if is_granted('oro_product_brand_create') %}
         {% set html = html ~ UI.saveAndNewButton({
         'route': 'oro_product_brand_create'
         }) %}
     {% endif %}
-    {% if form.vars.value.id or resource_granted('oro_product_brand_update') %}
+    {% if form.vars.value.id or is_granted('oro_product_brand_update') %}
         {% set html = html ~ UI.saveAndStayButton({
         'route': 'oro_product_brand_update',
         'params': {'id': '$id'}
@@ -61,9 +61,24 @@
         }
     ] %}
 
+    {% set additionalData = [] %}
+    {% for child in form.children if child.vars.extra_field is defined and child.vars.extra_field %}
+        {% set additionalData = additionalData|merge([form_row(child)]) %}
+    {% endfor %}
+    {% if additionalData is not empty %}
+        {% set dataBlocks = dataBlocks|merge([{
+            'title': 'oro.product.brand.form.update.sections.additional'|trans,
+            'subblocks': [{
+                'title': '',
+                'useSpan': false,
+                'data' : additionalData
+            }]
+        }] ) %}
+    {% endif %}
+
     {% set data = {
-    'formErrors': form_errors(form),
-    'dataBlocks': dataBlocks
+        'formErrors': form_errors(form),
+        'dataBlocks': dataBlocks
     }%}
 
     {{ parent() }}

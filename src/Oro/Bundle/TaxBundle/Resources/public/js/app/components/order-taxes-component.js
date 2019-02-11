@@ -42,7 +42,7 @@ define(function(require) {
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
 
-            mediator.on('entry-point:order:trigger:totals', this.appendTaxResult, this);
+            this.listenTo(mediator, 'entry-point:order:trigger:totals', this.appendTaxResult);
 
             this.totalsTemplate = $(this.options.selectors.totalsTemplate).html();
         },
@@ -65,19 +65,6 @@ define(function(require) {
 
             item.data.show = $(this.options.selectors.collapseSelector).eq(index).hasClass('show');
             item.template = this.totalsTemplate;
-        },
-
-        /**
-         * @inheritDoc
-         */
-        dispose: function() {
-            if (this.disposed) {
-                return;
-            }
-
-            mediator.off('entry-point:order:trigger:totals', this.appendTaxResult, this);
-
-            OrderTaxesComponent.__super__.dispose.call(this);
         }
     });
 

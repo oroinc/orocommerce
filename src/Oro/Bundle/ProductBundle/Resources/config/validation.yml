@@ -96,6 +96,7 @@ Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
 Oro\Bundle\ProductBundle\Entity\ProductImage:
     constraints:
         - Oro\Bundle\ProductBundle\Validator\Constraints\ProductImage: ~
+        - Oro\Bundle\ProductBundle\Validator\Constraints\ProductImageCurrentCollection: ~
     properties:
         product:
             - NotBlank: ~

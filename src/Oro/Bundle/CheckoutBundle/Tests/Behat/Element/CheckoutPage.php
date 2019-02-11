@@ -18,10 +18,13 @@ class CheckoutPage extends EntityPage
         if (!$rowElement->isIsset()) {
             self::fail(sprintf('Can\'t find "%s" label', $label));
         }
-        if ($rowElement->getCellByNumber(1)->getText() === Form::normalizeValue($value)) {
-            return;
-        }
 
-        self::fail(sprintf('Found "%s" label, but it doesn\'t have "%s" value', $label, $value));
+        $cellValueIsValid = $this->spin(function () use ($rowElement, $value) {
+            return $rowElement->getCellByNumber(1)->getText() === Form::normalizeValue($value);
+        }, 3);
+
+        if (!$cellValueIsValid) {
+            self::fail(sprintf('Found "%s" label, but it doesn\'t have "%s" value', $label, $value));
+        }
     }
 }
