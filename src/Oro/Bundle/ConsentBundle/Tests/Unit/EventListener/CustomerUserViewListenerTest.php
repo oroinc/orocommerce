@@ -8,17 +8,28 @@ use Oro\Bundle\ConsentBundle\Entity\Consent;
 use Oro\Bundle\ConsentBundle\EventListener\CustomerUserViewListener;
 use Oro\Bundle\ConsentBundle\Provider\CustomerUserConsentProvider;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Component\Testing\Unit\FormViewListenerTestCase;
 use Symfony\Component\Form\FormView;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Translation\TranslatorInterface;
 
-class CustomerUserViewListenerTest extends FormViewListenerTestCase
+class CustomerUserViewListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
+
+    /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $translator;
+
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
+    private $doctrineHelper;
+
+    /** @var \Twig_Environment|\PHPUnit\Framework\MockObject\MockObject */
+    private $env;
 
     /** @var CustomerUserViewListener */
     private $listener;
@@ -26,18 +37,24 @@ class CustomerUserViewListenerTest extends FormViewListenerTestCase
     /** @var RequestStack|\PHPUnit\Framework\MockObject\MockObject */
     private $requestStack;
 
-    /** @var \Twig_Environment|\PHPUnit\Framework\MockObject\MockObject */
-    private $environment;
-
     /** @var CustomerUserConsentProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $customerUserConsentProvider;
 
     public function setUp()
     {
-        parent::setUp();
+        $this->translator = $this->createMock(TranslatorInterface::class);
+        $this->translator->expects($this->any())
+            ->method('trans')
+            ->willReturnCallback(
+                function ($id) {
+                    return $id . '.trans';
+                }
+            );
+
+        $this->env = $this->createMock(\Twig_Environment::class);
+        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
 
         $this->requestStack = $this->createMock(RequestStack::class);
-        $this->environment = $this->createMock(\Twig_Environment::class);
         $this->customerUserConsentProvider = $this->createMock(CustomerUserConsentProvider::class);
 
         $this->listener = new CustomerUserViewListener(
@@ -51,7 +68,7 @@ class CustomerUserViewListenerTest extends FormViewListenerTestCase
     public function testOnCustomerUserView()
     {
         $scrollData = new ScrollData();
-        $event = new BeforeListRenderEvent($this->environment, $scrollData, new \stdClass(), new FormView());
+        $event = new BeforeListRenderEvent($this->env, $scrollData, new \stdClass(), new FormView());
 
         $this->expectRequestWithId(35);
 
@@ -82,7 +99,7 @@ class CustomerUserViewListenerTest extends FormViewListenerTestCase
             ->with($customerUser)
             ->willReturn($consentsWithAcceptances);
 
-        $this->environment->expects($this->once())
+        $this->env->expects($this->once())
             ->method('render')
             ->with(
                 'OroConsentBundle:CustomerUser:consent_view.html.twig',
@@ -104,8 +121,8 @@ class CustomerUserViewListenerTest extends FormViewListenerTestCase
                             'data' => ['template'],
                         ]
                     ],
-                    'title' => 'oro.consent.entity_plural_label.trans',
-                    'useSubBlockDivider' => true,
+                    ScrollData::TITLE => 'oro.consent.entity_plural_label.trans',
+                    ScrollData::USE_SUB_BLOCK_DIVIDER => true,
                 ],
             ],
         ], $scrollData->getData());
@@ -114,7 +131,7 @@ class CustomerUserViewListenerTest extends FormViewListenerTestCase
     public function testOnCustomerUserViewFeatureDisabled()
     {
         $scrollData = new ScrollData();
-        $event = new BeforeListRenderEvent($this->environment, $scrollData, new \stdClass(), new FormView());
+        $event = new BeforeListRenderEvent($this->env, $scrollData, new \stdClass(), new FormView());
 
         $this->requestStack->expects($this->never())
             ->method('getCurrentRequest');
@@ -125,7 +142,7 @@ class CustomerUserViewListenerTest extends FormViewListenerTestCase
         $this->customerUserConsentProvider->expects($this->never())
             ->method('hasEnabledConsentsByCustomerUser');
 
-        $this->environment->expects($this->never())
+        $this->env->expects($this->never())
             ->method('render');
 
         $this->assertFalse($scrollData->hasBlock(0));
@@ -147,7 +164,7 @@ class CustomerUserViewListenerTest extends FormViewListenerTestCase
     public function testOnCustomerUserViewNoConsents()
     {
         $scrollData = new ScrollData();
-        $event = new BeforeListRenderEvent($this->environment, $scrollData, new \stdClass(), new FormView());
+        $event = new BeforeListRenderEvent($this->env, $scrollData, new \stdClass(), new FormView());
 
         $this->expectRequestWithId(35);
 
@@ -168,7 +185,7 @@ class CustomerUserViewListenerTest extends FormViewListenerTestCase
             ->with($customerUser)
             ->willReturn(false);
 
-        $this->environment->expects($this->never())
+        $this->env->expects($this->never())
             ->method('render');
 
         $this->assertFalse($scrollData->hasBlock(0));
@@ -181,7 +198,7 @@ class CustomerUserViewListenerTest extends FormViewListenerTestCase
     public function testOnCustomerUserViewNoRequest()
     {
         $scrollData = new ScrollData();
-        $event = new BeforeListRenderEvent($this->environment, $scrollData, new \stdClass(), new FormView());
+        $event = new BeforeListRenderEvent($this->env, $scrollData, new \stdClass(), new FormView());
 
         $this->requestStack->expects($this->once())
             ->method('getCurrentRequest')
@@ -193,7 +210,7 @@ class CustomerUserViewListenerTest extends FormViewListenerTestCase
         $this->customerUserConsentProvider->expects($this->never())
             ->method('hasEnabledConsentsByCustomerUser');
 
-        $this->environment->expects($this->never())
+        $this->env->expects($this->never())
             ->method('render');
 
         $this->assertFalse($scrollData->hasBlock(0));
@@ -206,7 +223,7 @@ class CustomerUserViewListenerTest extends FormViewListenerTestCase
     public function testOnCustomerUserViewNoEntityId()
     {
         $scrollData = new ScrollData();
-        $event = new BeforeListRenderEvent($this->environment, $scrollData, new \stdClass(), new FormView());
+        $event = new BeforeListRenderEvent($this->env, $scrollData, new \stdClass(), new FormView());
 
         $this->expectRequestWithId(null);
 
@@ -216,7 +233,7 @@ class CustomerUserViewListenerTest extends FormViewListenerTestCase
         $this->customerUserConsentProvider->expects($this->never())
             ->method('hasEnabledConsentsByCustomerUser');
 
-        $this->environment->expects($this->never())
+        $this->env->expects($this->never())
             ->method('render');
 
         $this->assertFalse($scrollData->hasBlock(0));
@@ -229,7 +246,7 @@ class CustomerUserViewListenerTest extends FormViewListenerTestCase
     public function testOnCustomerUserViewNoEntity()
     {
         $scrollData = new ScrollData();
-        $event = new BeforeListRenderEvent($this->environment, $scrollData, new \stdClass(), new FormView());
+        $event = new BeforeListRenderEvent($this->env, $scrollData, new \stdClass(), new FormView());
 
         $this->expectRequestWithId(35);
 
@@ -246,7 +263,7 @@ class CustomerUserViewListenerTest extends FormViewListenerTestCase
         $this->customerUserConsentProvider->expects($this->never())
             ->method('hasEnabledConsentsByCustomerUser');
 
-        $this->environment->expects($this->never())
+        $this->env->expects($this->never())
             ->method('render');
 
         $this->assertFalse($scrollData->hasBlock(0));
@@ -261,7 +278,7 @@ class CustomerUserViewListenerTest extends FormViewListenerTestCase
      */
     private function expectRequestWithId($id)
     {
-        $request = $this->getRequest();
+        $request = $this->createMock(Request::class);
         $this->requestStack->expects($this->once())
             ->method('getCurrentRequest')
             ->willReturn($request);

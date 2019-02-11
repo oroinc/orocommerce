@@ -5,14 +5,30 @@ namespace Oro\Bundle\CatalogBundle\Tests\Unit\EventListener;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\EventListener\FormViewListener;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
-use Oro\Component\Testing\Unit\FormViewListenerTestCase;
 use Symfony\Component\Form\FormView;
+use Symfony\Component\Translation\TranslatorInterface;
 
-class FormViewListenerTest extends FormViewListenerTestCase
+class FormViewListenerTest extends \PHPUnit\Framework\TestCase
 {
+    /**
+     * @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $translator;
+
+    /**
+     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $doctrineHelper;
+
+    /**
+     * @var \Twig_Environment|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $env;
+
     /**
      * @var FormViewListener
      */
@@ -20,7 +36,18 @@ class FormViewListenerTest extends FormViewListenerTestCase
 
     protected function setUp()
     {
-        parent::setUp();
+        $this->translator = $this->createMock(TranslatorInterface::class);
+        $this->translator->expects($this->any())
+            ->method('trans')
+            ->willReturnCallback(
+                function ($id) {
+                    return $id . '.trans';
+                }
+            );
+
+        $this->env = $this->createMock(\Twig_Environment::class);
+        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
+
         $this->listener = new FormViewListener($this->translator, $this->doctrineHelper);
     }
 
@@ -32,17 +59,14 @@ class FormViewListenerTest extends FormViewListenerTestCase
 
     public function testOnProductEdit()
     {
-        /** @var \PHPUnit\Framework\MockObject\MockObject|\Twig_Environment $env */
-        $env = $this->createMock(\Twig_Environment::class);
-
         $formView = new FormView();
 
-        $env->expects($this->once())
+        $this->env->expects($this->once())
             ->method('render')
             ->with('OroCatalogBundle:Product:category_update.html.twig', ['form' => $formView])
             ->willReturn('');
 
-        $event = new BeforeListRenderEvent($env, new ScrollData(), new Product(), $formView);
+        $event = new BeforeListRenderEvent($this->env, new ScrollData(), new Product(), $formView);
         $this->listener->onProductEdit($event);
     }
 
@@ -68,17 +92,15 @@ class FormViewListenerTest extends FormViewListenerTestCase
             ->method('getEntityRepository')
             ->with('OroCatalogBundle:Category')
             ->willReturn($repository);
-
-        /** @var \PHPUnit\Framework\MockObject\MockObject|\Twig_Environment $env */
-        $env = $this->createMock(\Twig_Environment::class);
-        $env->expects($this->once())
+        
+        $this->env->expects($this->once())
             ->method('render')
             ->with('OroCatalogBundle:Product:category_view.html.twig', ['entity' => $category])
             ->willReturn('');
 
         $scrollData = $this->getPreparedScrollData();
 
-        $event = new BeforeListRenderEvent($env, $scrollData, new Product());
+        $event = new BeforeListRenderEvent($this->env, $scrollData, new Product());
 
         $this->listener->onProductView($event);
         $this->assertScrollData($scrollData);
@@ -105,13 +127,11 @@ class FormViewListenerTest extends FormViewListenerTestCase
             ->method('getEntityRepository')
             ->with('OroCatalogBundle:Category')
             ->willReturn($repository);
-
-        /** @var \PHPUnit\Framework\MockObject\MockObject|\Twig_Environment $env */
-        $env = $this->createMock(\Twig_Environment::class);
-        $env->expects($this->never())
+        
+        $this->env->expects($this->never())
             ->method('render');
 
-        $event = new BeforeListRenderEvent($env, new ScrollData(), new Product());
+        $event = new BeforeListRenderEvent($this->env, new ScrollData(), new Product());
 
         $this->listener->onProductView($event);
     }
@@ -121,10 +141,9 @@ class FormViewListenerTest extends FormViewListenerTestCase
      */
     public function testOnProductViewInvalidEntity()
     {
-        $env = $this->createMock(\Twig_Environment::class);
         $scrollData = new ScrollData();
 
-        $event = new BeforeListRenderEvent($env, $scrollData, new \stdClass());
+        $event = new BeforeListRenderEvent($this->env, $scrollData, new \stdClass());
 
         $this->listener->onProductView($event);
     }

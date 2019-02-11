@@ -16,7 +16,7 @@ class BrandFormViewListenerTest extends BaseFormViewListenerTestCase
     {
         parent::setUp();
 
-        $this->listener = new BrandFormViewListener($this->translator, $this->doctrineHelper);
+        $this->listener = new BrandFormViewListener($this->translator);
     }
 
     protected function tearDown()

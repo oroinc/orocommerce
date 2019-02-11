@@ -3,9 +3,12 @@
 namespace Oro\Bundle\TaxBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\CustomerBundle\Entity\Customer;
-use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\TaxBundle\Entity\CustomerTaxCode;
 use Oro\Bundle\TaxBundle\EventListener\CustomerFormViewListener;
+use Oro\Bundle\TaxBundle\Tests\Unit\Entity\CustomerGroupStub;
+use Oro\Bundle\TaxBundle\Tests\Unit\Entity\CustomerStub;
+use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
+use Oro\Bundle\UIBundle\View\ScrollData;
 use Symfony\Component\Form\FormView;
 
 class CustomerFormViewListenerTest extends AbstractFormViewListenerTest
@@ -23,34 +26,56 @@ class CustomerFormViewListenerTest extends AbstractFormViewListenerTest
         return new CustomerFormViewListener(
             $this->doctrineHelper,
             $this->requestStack,
-            'Oro\Bundle\TaxBundle\Entity\CustomerTaxCode',
-            'Oro\Bundle\CustomerBundle\Entity\Customer'
+            CustomerTaxCode::class,
+            Customer::class
         );
     }
 
     public function testOnEdit()
     {
-        $event = $this->getBeforeListRenderEvent();
+        $formView = new FormView();
 
-        /** @var \PHPUnit\Framework\MockObject\MockObject|\Twig_Environment $env */
-        $env = $this->getMockBuilder('\Twig_Environment')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $env->expects($this->once())
+        $this->env->expects($this->once())
             ->method('render')
-            ->with('OroTaxBundle:Customer:tax_code_update.html.twig', ['form' => new FormView()])
-            ->willReturn('');
+            ->with('OroTaxBundle:Customer:tax_code_update.html.twig', ['form' => $formView])
+            ->willReturn('rendered');
 
-        $event->expects($this->once())
-            ->method('getEnvironment')
-            ->willReturn($env);
+        $scrollData = new ScrollData([
+            ScrollData::DATA_BLOCKS => [
+                [
+                    ScrollData::SUB_BLOCKS => [
+                        [
+                            ScrollData::DATA => []
+                        ]
+                    ]
+                ]
+            ]
+        ]);
 
-        $event->expects($this->once())
-            ->method('getFormView')
-            ->willReturn(new FormView());
+        $event = new BeforeListRenderEvent(
+            $this->env,
+            $scrollData,
+            new \stdClass(),
+            $formView
+        );
 
         $this->getListener()->onEdit($event);
+
+        $expectedData = [
+            ScrollData::DATA_BLOCKS => [
+                0 => [
+                    ScrollData::SUB_BLOCKS => [
+                        0 => [
+                            ScrollData::DATA => [
+                                0 => 'rendered',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        $this->assertEquals($expectedData, $scrollData->getData());
     }
 
     public function testOnCustomerView()
@@ -62,20 +87,16 @@ class CustomerFormViewListenerTest extends AbstractFormViewListenerTest
             ->willReturn(1);
 
         $taxCode = new CustomerTaxCode();
-        $customer = $this->getMockBuilder(Customer::class)
-            ->setMethods(['getTaxCode'])
-            ->getMock();
-        $customer->expects($this->once())->method('getTaxCode')->willReturn($taxCode);
+
+        $customer = new CustomerStub();
+        $customer->setTaxCode($taxCode);
         $this->doctrineHelper
             ->expects($this->once())
             ->method('getEntityReference')
+            ->with(Customer::class, 1)
             ->willReturn($customer);
 
-        /** @var \PHPUnit\Framework\MockObject\MockObject|\Twig_Environment $env */
-        $env = $this->getMockBuilder('\Twig_Environment')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $env->expects($this->once())
+        $this->env->expects($this->once())
             ->method('render')
             ->with(
                 'OroTaxBundle:Customer:tax_code_view.html.twig',
@@ -84,14 +105,43 @@ class CustomerFormViewListenerTest extends AbstractFormViewListenerTest
                     'groupCustomerTaxCode' => null,
                 ]
             )
-            ->willReturn('');
+            ->willReturn('rendered');
 
-        $event = $this->getBeforeListRenderEvent();
-        $event->expects($this->once())
-            ->method('getEnvironment')
-            ->willReturn($env);
+        $scrollData = new ScrollData([
+            ScrollData::DATA_BLOCKS => [
+                [
+                    ScrollData::SUB_BLOCKS => [
+                        [
+                            ScrollData::DATA => []
+                        ]
+                    ]
+                ]
+            ]
+        ]);
+
+        $event = new BeforeListRenderEvent(
+            $this->env,
+            $scrollData,
+            new \stdClass()
+        );
 
         $this->getListener()->onView($event);
+
+        $expectedData = [
+            ScrollData::DATA_BLOCKS => [
+                0 => [
+                    ScrollData::SUB_BLOCKS => [
+                        0 => [
+                            ScrollData::DATA => [
+                                0 => 'rendered',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        $this->assertEquals($expectedData, $scrollData->getData());
     }
 
     public function testOnCustomerViewWithCustomerGroupTaxCode()
@@ -104,25 +154,21 @@ class CustomerFormViewListenerTest extends AbstractFormViewListenerTest
 
         $customerTaxCode = new CustomerTaxCode();
 
-        $customerGroup = $this->getMockBuilder(CustomerGroup::class)
-            ->setMethods(['getTaxCode'])
-            ->getMock();
-        $customerGroup->method('getTaxCode')->willReturn($customerTaxCode);
-        $customer = $this->getMockBuilder(Customer::class)
-            ->setMethods(['getTaxCode', 'getGroup'])
-            ->getMock();
-        $customer->method('getGroup')->willReturn($customerGroup);
+        $customerGroup = new CustomerGroupStub();
+        $customerGroup->setTaxCode($customerTaxCode);
+
+        $customer = new CustomerStub();
+        $customer->setGroup($customerGroup);
+        // customer doesn't have tax code
+        $customer->setTaxCode(null);
 
         $this->doctrineHelper
             ->expects($this->once())
             ->method('getEntityReference')
+            ->with(Customer::class, 1)
             ->willReturn($customer);
 
-        /** @var \PHPUnit\Framework\MockObject\MockObject|\Twig_Environment $env */
-        $env = $this->getMockBuilder('\Twig_Environment')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $env->expects($this->once())
+        $this->env->expects($this->once())
             ->method('render')
             ->with(
                 'OroTaxBundle:Customer:tax_code_view.html.twig',
@@ -131,14 +177,43 @@ class CustomerFormViewListenerTest extends AbstractFormViewListenerTest
                     'groupCustomerTaxCode' => $customerTaxCode,
                 ]
             )
-            ->willReturn('');
+            ->willReturn('rendered');
 
-        $event = $this->getBeforeListRenderEvent();
-        $event->expects($this->once())
-            ->method('getEnvironment')
-            ->willReturn($env);
+        $scrollData = new ScrollData([
+            ScrollData::DATA_BLOCKS => [
+                [
+                    ScrollData::SUB_BLOCKS => [
+                        [
+                            ScrollData::DATA => []
+                        ]
+                    ]
+                ]
+            ]
+        ]);
+
+        $event = new BeforeListRenderEvent(
+            $this->env,
+            $scrollData,
+            $customerTaxCode
+        );
 
         $this->getListener()->onView($event);
+
+        $expectedData = [
+            ScrollData::DATA_BLOCKS => [
+                0 => [
+                    ScrollData::SUB_BLOCKS => [
+                        0 => [
+                            ScrollData::DATA => [
+                                0 => 'rendered',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        $this->assertEquals($expectedData, $scrollData->getData());
     }
 
     public function testOnCustomerViewAllEmpty()
@@ -149,23 +224,18 @@ class CustomerFormViewListenerTest extends AbstractFormViewListenerTest
             ->with('id')
             ->willReturn(1);
 
-        $customerGroup = $this->getMockBuilder(CustomerGroup::class)
-            ->setMethods(['getTaxCode'])
-            ->getMock();
-        $customer = $this->getMockBuilder(Customer::class)
-            ->setMethods(['getTaxCode', 'getGroup'])
-            ->getMock();
-        $customer->method('getGroup')->willReturn($customerGroup);
+        $customerGroup = new CustomerGroupStub();
+
+        $customer = new CustomerStub();
+        $customer->setGroup($customerGroup);
+
         $this->doctrineHelper
             ->expects($this->once())
             ->method('getEntityReference')
+            ->with(Customer::class, 1)
             ->willReturn($customer);
 
-        /** @var \PHPUnit\Framework\MockObject\MockObject|\Twig_Environment $env */
-        $env = $this->getMockBuilder('\Twig_Environment')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $env->expects($this->once())
+        $this->env->expects($this->once())
             ->method('render')
             ->with(
                 'OroTaxBundle:Customer:tax_code_view.html.twig',
@@ -174,13 +244,42 @@ class CustomerFormViewListenerTest extends AbstractFormViewListenerTest
                     'groupCustomerTaxCode' => null,
                 ]
             )
-            ->willReturn('');
+            ->willReturn('rendered');
 
-        $event = $this->getBeforeListRenderEvent();
-        $event->expects($this->once())
-            ->method('getEnvironment')
-            ->willReturn($env);
+        $scrollData = new ScrollData([
+            ScrollData::DATA_BLOCKS => [
+                [
+                    ScrollData::SUB_BLOCKS => [
+                        [
+                            ScrollData::DATA => []
+                        ]
+                    ]
+                ]
+            ]
+        ]);
+
+        $event = new BeforeListRenderEvent(
+            $this->env,
+            $scrollData,
+            new \stdClass()
+        );
 
         $this->getListener()->onView($event);
+
+        $expectedData = [
+            ScrollData::DATA_BLOCKS => [
+                0 => [
+                    ScrollData::SUB_BLOCKS => [
+                        0 => [
+                            ScrollData::DATA => [
+                                0 => 'rendered',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        $this->assertEquals($expectedData, $scrollData->getData());
     }
 }

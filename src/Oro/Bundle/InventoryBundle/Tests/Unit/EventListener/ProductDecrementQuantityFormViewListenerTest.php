@@ -42,7 +42,14 @@ class ProductDecrementQuantityFormViewListenerTest extends AbstractFallbackField
      */
     protected function getExpectedScrollData()
     {
-        return [ScrollData::DATA_BLOCKS => [1 => [ScrollData::TITLE => 'oro.product.sections.inventory.trans']]];
+        return [
+            ScrollData::DATA_BLOCKS => [
+                1 => [
+                    ScrollData::TITLE => 'oro.product.sections.inventory.trans',
+                    ScrollData::SUB_BLOCKS => [[]]
+                ]
+            ]
+        ];
     }
 
     /**

@@ -7,12 +7,18 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
 use Oro\Bundle\VisibilityBundle\Form\EventListener\FormViewListener;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Translation\TranslatorInterface;
 
 class FormViewListenerTest extends \PHPUnit\Framework\TestCase
 {
+    /**
+     * @var \PHPUnit\Framework\MockObject\MockObject|\Twig_Environment
+     */
+    protected $env;
+
     /**
      * @var FormViewListener
      */
@@ -29,26 +35,34 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
     protected $requestStack;
 
     /**
+     * @var \PHPUnit\Framework\MockObject\MockObject|TranslatorInterface
+     */
+    protected $translator;
+
+    /**
      * {@inheritdoc}
      */
     public function setUp()
     {
-        /** @var \PHPUnit\Framework\MockObject\MockObject|TranslatorInterface $translator */
-        $translator = $this->createMock('Symfony\Component\Translation\TranslatorInterface');
+        $this->env = $this->createMock(\Twig_Environment::class);
+        $this->translator = $this->createMock(TranslatorInterface::class);
+        $this->translator->expects($this->any())
+            ->method('trans')
+            ->willReturnCallback(
+                function ($id) {
+                    return $id . '.trans';
+                }
+            );
 
-        $this->doctrineHelper = $this->getDoctrineHelper();
+        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
+        $this->requestStack = $this->createMock(RequestStack::class);
 
-        $this->requestStack = $this->createMock('Symfony\Component\HttpFoundation\RequestStack');
-
-        $listener = new FormViewListener($translator, $this->doctrineHelper, $this->requestStack);
-        $this->listener = $listener;
+        $this->listener = new FormViewListener($this->translator, $this->doctrineHelper, $this->requestStack);
     }
 
     public function testOnCategoryEditNoRequest()
     {
-        $event = $this->getBeforeListRenderEvent();
-        $event->expects($this->never())
-            ->method('getScrollData');
+        $event = new BeforeListRenderEvent($this->env, new ScrollData(), new \stdClass());
 
         $this->doctrineHelper->expects($this->never())
             ->method('getEntityReference');
@@ -59,85 +73,48 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testOnCategoryEdit()
     {
-        $event = $this->getBeforeListRenderEvent();
-        $event->expects($this->once())
-            ->method('getScrollData')
-            ->willReturn($this->getScrollData());
+        $request = $this->createMock(Request::class);
+        $request->expects($this->any())->method('get')->with('id')->willReturn(1);
+        $this->requestStack->expects($this->once())->method('getCurrentRequest')->willReturn($request);
 
+        $scrollData = new ScrollData();
+
+        $formView = new FormView();
+        $event = new BeforeListRenderEvent($this->env, $scrollData, new \stdClass(), $formView);
+
+        $category = new Category();
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityReference')
-            ->with('OroCatalogBundle:Category')
-            ->willReturn(new Category());
+            ->with('OroCatalogBundle:Category', 1)
+            ->willReturn($category);
 
-        /** @var \PHPUnit\Framework\MockObject\MockObject|\Twig_Environment $env */
-        $env = $this->getMockBuilder('\Twig_Environment')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $env->expects($this->once())
+        $this->env->expects($this->once())
             ->method('render')
-            ->willReturn('');
-        $event->expects($this->once())
-            ->method('getEnvironment')
-            ->willReturn($env);
+            ->with(
+                'OroVisibilityBundle:Category:customer_category_visibility_edit.html.twig',
+                ['entity' => $category, 'form' => $formView]
+            )
+            ->willReturn('rendered');
 
-        $this->requestStack->expects($this->once())->method('getCurrentRequest')->willReturn($this->getRequest());
+
         $this->listener->onCategoryEdit($event);
-    }
 
-    /**
-     * @return \PHPUnit\Framework\MockObject\MockObject|DoctrineHelper
-     */
-    protected function getDoctrineHelper()
-    {
-        $helper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $expectedData = [
+            ScrollData::DATA_BLOCKS => [
+                0 => [
+                    ScrollData::SUB_BLOCKS => [
+                        0 => [
+                            ScrollData::DATA => [
+                                0 => 'rendered',
+                            ],
+                        ],
+                    ],
+                    ScrollData::TITLE => 'oro.visibility.categoryvisibility.visibility.label.trans',
+                    ScrollData::USE_SUB_BLOCK_DIVIDER => true,
+                ],
+            ],
+        ];
 
-        return $helper;
-    }
-
-    /**
-     * @return BeforeListRenderEvent|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected function getBeforeListRenderEvent()
-    {
-        /** @var \PHPUnit\Framework\MockObject\MockObject|BeforeListRenderEvent $event */
-        $event = $this->getMockBuilder('Oro\Bundle\UIBundle\Event\BeforeListRenderEvent')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        return $event;
-    }
-
-    /**
-     * @return \PHPUnit\Framework\MockObject\MockObject|ScrollData
-     */
-    protected function getScrollData()
-    {
-        /** @var \PHPUnit\Framework\MockObject\MockObject|ScrollData $scrollData */
-        $scrollData = $this->createMock('Oro\Bundle\UIBundle\View\ScrollData');
-
-        $scrollData->expects($this->once())
-            ->method('addBlock');
-
-        $scrollData->expects($this->once())
-            ->method('addSubBlock');
-
-        $scrollData->expects($this->once())
-            ->method('addSubBlockData');
-
-        return $scrollData;
-    }
-
-    /**
-     * @return \PHPUnit\Framework\MockObject\MockObject|Request
-     */
-    protected function getRequest()
-    {
-        $request = $this->getMockBuilder('Symfony\Component\HttpFoundation\Request')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        return $request;
+        $this->assertEquals($expectedData, $scrollData->getData());
     }
 }
