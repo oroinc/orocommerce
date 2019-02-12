@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\SaleBundle\Migrations\Schema\v1_18;
+namespace Oro\Bundle\SaleBundle\Migrations\Schema\v1_19;
 
 use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
@@ -9,9 +9,9 @@ use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\WorkflowBundle\Migration\UpdateNotificationRuleWorkflowTransitionQuery;
 
 /**
- * Change email notification in Backoffice Quote Flow with Approvals on create_new_quote_transition
+ * Updates transition name for email notification on Quote's auto expiration.
  */
-class OroSaleBundle implements Migration
+class UpdateTransitionForQuoteAutoExpireNotification implements Migration
 {
     /**
      * {@inheritdoc}
@@ -21,9 +21,9 @@ class OroSaleBundle implements Migration
         $queries->addQuery(new UpdateNotificationRuleWorkflowTransitionQuery(
             Quote::class,
             'b2b_quote_backoffice_approvals',
-            'quote_created',
-            'create_new_quote_transition',
-            '__start__'
+            'quote_expired_automatic',
+            'expire_transition',
+            'auto_expire_transition'
         ));
     }
 }

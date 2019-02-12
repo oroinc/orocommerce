@@ -37,7 +37,7 @@ class LoadTransitionEmailNotifications extends AbstractFixture implements
         'quote_declined_by_customer' => 'decline_by_customer_transition',
         'quote_deleted' => 'delete_transition',
         'quote_edited' => 'edit_transition',
-        'quote_expired_automatic' => 'expire_transition',
+        'quote_expired_automatic' => 'auto_expire_transition',
         'quote_expired_manual' => 'expire_transition',
         'quote_not_approved' => 'decline_by_reviewer_transition',
         'quote_reopened' => 'reopen_transition',
