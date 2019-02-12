@@ -2,18 +2,26 @@
 
 namespace Oro\Bundle\TaxBundle\Tests\Unit\EventListener;
 
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\TaxBundle\EventListener\AbstractFormViewListener;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
-use Oro\Component\Testing\Unit\FormViewListenerTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Translation\TranslatorInterface;
 
-abstract class AbstractFormViewListenerTest extends FormViewListenerTestCase
+abstract class AbstractFormViewListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var AbstractFormViewListener
-     */
+    /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
+    protected $translator;
+
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
+    protected $doctrineHelper;
+
+    /** @var \Twig_Environment|\PHPUnit\Framework\MockObject\MockObject */
+    protected $env;
+
+    /** @var AbstractFormViewListener */
     protected $listener;
 
     /** @var Request|\PHPUnit\Framework\MockObject\MockObject */
@@ -24,10 +32,20 @@ abstract class AbstractFormViewListenerTest extends FormViewListenerTestCase
 
     protected function setUp()
     {
-        parent::setUp();
+        $this->translator = $this->createMock(TranslatorInterface::class);
+        $this->translator->expects($this->any())
+            ->method('trans')
+            ->willReturnCallback(
+                function ($id) {
+                    return $id . '.trans';
+                }
+            );
 
-        $this->request = $this->getRequest();
-        $this->requestStack = $this->createMock('Symfony\Component\HttpFoundation\RequestStack');
+        $this->env = $this->createMock(\Twig_Environment::class);
+        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
+
+        $this->request = $this->createMock(Request::class);
+        $this->requestStack = $this->createMock(RequestStack::class);
         $this->requestStack->expects($this->any())->method('getCurrentRequest')->willReturn($this->request);
     }
 
@@ -45,10 +63,7 @@ abstract class AbstractFormViewListenerTest extends FormViewListenerTestCase
 
     public function testOnViewInvalidId()
     {
-        /** @var \PHPUnit\Framework\MockObject\MockObject|BeforeListRenderEvent $event */
-        $event = $this->getMockBuilder('Oro\Bundle\UIBundle\Event\BeforeListRenderEvent')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $event = new BeforeListRenderEvent($this->env, new ScrollData(), new \stdClass());
 
         $this->doctrineHelper
             ->expects($this->never())
@@ -67,10 +82,7 @@ abstract class AbstractFormViewListenerTest extends FormViewListenerTestCase
 
     public function testOnViewEmpty()
     {
-        /** @var \PHPUnit\Framework\MockObject\MockObject|BeforeListRenderEvent $event */
-        $event = $this->getMockBuilder('Oro\Bundle\UIBundle\Event\BeforeListRenderEvent')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $event = new BeforeListRenderEvent($this->env, new ScrollData(), new \stdClass());
 
         $this->doctrineHelper
             ->expects($this->once())
@@ -93,31 +105,14 @@ abstract class AbstractFormViewListenerTest extends FormViewListenerTestCase
 
     public function testEmptyRequest()
     {
-        $this->requestStack = $this->createMock('Symfony\Component\HttpFoundation\RequestStack');
+        $this->requestStack = $this->createMock(RequestStack::class);
         $this->requestStack->expects($this->any())->method('getCurrentRequest')->willReturn(null);
 
-        /** @var \PHPUnit\Framework\MockObject\MockObject|BeforeListRenderEvent $event */
-        $event = $this->getMockBuilder('Oro\Bundle\UIBundle\Event\BeforeListRenderEvent')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $event = new BeforeListRenderEvent($this->env, new ScrollData(), new \stdClass());
 
         $this->doctrineHelper->expects($this->never())->method($this->anything());
         $this->request->expects($this->never())->method($this->anything());
 
         $this->getListener()->onView($event);
-    }
-
-    /**
-     * @return \PHPUnit\Framework\MockObject\MockObject|ScrollData
-     */
-    protected function getScrollData()
-    {
-        /** @var \PHPUnit\Framework\MockObject\MockObject|ScrollData $scrollData */
-        $scrollData = $this->createMock('Oro\Bundle\UIBundle\View\ScrollData');
-
-        $scrollData->expects($this->once())
-            ->method('addSubBlockData');
-
-        return $scrollData;
     }
 }

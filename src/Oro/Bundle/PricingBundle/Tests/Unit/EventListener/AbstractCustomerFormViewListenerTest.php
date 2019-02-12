@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\EventListener;
 
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\PricingBundle\Entity\BasePriceListRelation;
 use Oro\Bundle\PricingBundle\EventListener\AbstractCustomerFormViewListener;
@@ -9,13 +10,28 @@ use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface;
-use Oro\Component\Testing\Unit\FormViewListenerTestCase;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Translation\TranslatorInterface;
 
-abstract class AbstractCustomerFormViewListenerTest extends FormViewListenerTestCase
+abstract class AbstractCustomerFormViewListenerTest extends \PHPUnit\Framework\TestCase
 {
+    /**
+     * @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $translator;
+
+    /**
+     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $doctrineHelper;
+
+    /**
+     * @var \Twig_Environment|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $env;
+
     /**
      * @var WebsiteProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
@@ -25,11 +41,6 @@ abstract class AbstractCustomerFormViewListenerTest extends FormViewListenerTest
      * @var RequestStack|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $requestStack;
-
-    /**
-     * @var \Twig_Environment|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $env;
 
     /**
      * @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject
@@ -61,7 +72,17 @@ abstract class AbstractCustomerFormViewListenerTest extends FormViewListenerTest
      */
     protected function setUp()
     {
-        parent::setUp();
+        $this->translator = $this->createMock(TranslatorInterface::class);
+        $this->translator->expects($this->any())
+            ->method('trans')
+            ->willReturnCallback(
+                function ($id) {
+                    return $id . '.trans';
+                }
+            );
+
+        $this->env = $this->createMock(\Twig_Environment::class);
+        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
 
         $this->websiteProvider = $this->getMockBuilder(WebsiteProviderInterface::class)
             ->disableOriginalConstructor()
@@ -70,28 +91,20 @@ abstract class AbstractCustomerFormViewListenerTest extends FormViewListenerTest
         $this->websiteProvider->method('getWebsites')->willReturn([$website]);
 
         $this->requestStack = $this->createMock(RequestStack::class);
-        $this->env = $this->createMock(\Twig_Environment::class);
         $this->featureChecker = $this->createMock(FeatureChecker::class);
-    }
-
-    protected function tearDown()
-    {
-        unset($this->websiteProvider, $this->requestStack, $this->env, $this->featureChecker);
-
-        parent::tearDown();
     }
 
     public function testSetUpdateTemplate()
     {
         $listener = $this->getListener();
 
-        $listener->setUpdateTemplate("test");
+        $listener->setUpdateTemplate('test');
 
         $reflection = new \ReflectionObject($listener);
         $relationClass = $reflection->getProperty('updateTemplate');
         $relationClass->setAccessible(true);
 
-        $this->assertSame("test", $relationClass->getValue($listener));
+        $this->assertSame('test', $relationClass->getValue($listener));
     }
 
     public function testOnEntityEditFeatureDisabled()

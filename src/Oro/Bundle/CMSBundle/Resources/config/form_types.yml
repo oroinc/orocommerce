@@ -35,5 +35,7 @@ services:
 
     oro_cms.form.type.content_block:
         class: 'Oro\Bundle\CMSBundle\Form\Type\ContentBlockType'
+        arguments:
+            - '@oro_cms.content_block.default_content_variant_scopes_resolver'
         tags:
             - { name: form.type }

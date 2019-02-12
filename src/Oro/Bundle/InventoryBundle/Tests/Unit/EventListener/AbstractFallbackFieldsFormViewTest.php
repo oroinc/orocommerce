@@ -4,16 +4,38 @@ namespace Oro\Bundle\InventoryBundle\Tests\Unit\EventListener;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Util\ClassUtils;
+use Doctrine\ORM\EntityManager;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
-use Oro\Component\Testing\Unit\FormViewListenerTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Translation\TranslatorInterface;
 
-abstract class AbstractFallbackFieldsFormViewTest extends FormViewListenerTestCase
+abstract class AbstractFallbackFieldsFormViewTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var RequestStack|\PHPUnit\Framework\MockObject\MockObject
+     * @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $translator;
+
+    /**
+     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $doctrineHelper;
+
+    /**
+     * @var EntityManager|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $em;
+
+    /**
+     * @var \Twig_Environment|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $env;
+
+    /**
+     * @var RequestStack
      */
     protected $requestStack;
 
@@ -23,7 +45,7 @@ abstract class AbstractFallbackFieldsFormViewTest extends FormViewListenerTestCa
     protected $request;
 
     /**
-     * @var BeforeListRenderEvent|\PHPUnit\Framework\MockObject\MockObject
+     * @var BeforeListRenderEvent
      */
     protected $event;
 
@@ -46,21 +68,31 @@ abstract class AbstractFallbackFieldsFormViewTest extends FormViewListenerTestCa
 
     protected function setUp()
     {
-        parent::setUp();
+        $this->translator = $this->createMock(TranslatorInterface::class);
+        $this->translator->expects($this->any())
+            ->method('trans')
+            ->willReturnCallback(
+                function ($id) {
+                    return $id . '.trans';
+                }
+            );
 
+        $this->env = $this->createMock(\Twig_Environment::class);
+        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
+        $this->em = $this->createMock(EntityManager::class);
+
+
+        $this->request = $this->createMock(Request::class);
         $this->requestStack = new RequestStack();
-
-        $this->request = $this->getMockBuilder(Request::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
         $this->requestStack->push($this->request);
 
-        $this->doctrine = $this->getMockBuilder('Doctrine\Common\Persistence\ManagerRegistry')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->doctrine = $this->createMock(ManagerRegistry::class);
 
-        $this->event = $this->getBeforeListRenderEventMock();
+        $this->event = new BeforeListRenderEvent(
+            $this->env,
+            new ScrollData(),
+            new \stdClass()
+        );
     }
 
     protected function tearDown()
@@ -117,29 +149,10 @@ abstract class AbstractFallbackFieldsFormViewTest extends FormViewListenerTestCa
             ->with(ClassUtils::getClass($entity))
             ->willReturn($this->em);
 
-        $env = $this->getMockBuilder(\Twig_Environment::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->event->getScrollData()->setData($this->getExpectedScrollData());
 
-        $this->event->expects($this->once())
-            ->method('getEnvironment')
-            ->willReturn($env);
-
-        $scrollData = $this->createMock(ScrollData::class);
-
-        $this->event->expects($this->once())
-            ->method('getScrollData')
-            ->willReturn($scrollData);
-
-        $env->expects($this->once())
+        $this->env->expects($this->once())
             ->method('render');
-
-        $scrollData->expects($this->once())
-            ->method('addSubBlockData');
-
-        $scrollData->expects($this->once())
-            ->method('getData')
-            ->willReturn($this->getExpectedScrollData());
 
         $this->callTestMethod();
     }

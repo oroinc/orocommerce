@@ -298,6 +298,9 @@ oro:
             requestproduct:
                 product_sku.label: 'Item #:'
                 comment.label: 'Notes'
+                action:
+                    edit: 'Edit'
+                    delete: 'Delete'
             action:
                 request.edit: 'Edit'
             data_storage:

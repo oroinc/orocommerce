@@ -8,12 +8,12 @@ use Oro\Bundle\TaxBundle\Entity\CustomerTaxCode;
 class CustomerStub extends Customer
 {
     /**
-     * @var TaxCode
+     * @var CustomerTaxCode
      */
     protected $taxCode;
 
     /**
-     * @return TaxCode|null
+     * @return CustomerTaxCode|null
      */
     public function getTaxCode()
     {
@@ -21,7 +21,7 @@ class CustomerStub extends Customer
     }
 
     /**
-     * @param mixed $taxCode
+     * @param CustomerTaxCode|null $taxCode
      */
     public function setTaxCode(CustomerTaxCode $taxCode = null)
     {

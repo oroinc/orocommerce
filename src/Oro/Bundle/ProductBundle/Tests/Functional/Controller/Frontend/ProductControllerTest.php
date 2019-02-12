@@ -53,7 +53,19 @@ class ProductControllerTest extends WebTestCase
 
     public function testIndexAction()
     {
-        $this->client->request('GET', $this->getUrl('oro_product_frontend_product_index'));
+        $this->client->request('GET', $this->getUrl('oro_product_frontend_product_search'));
+        $result = $this->client->getResponse();
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        $content = $result->getContent();
+        $this->assertNotEmpty($content);
+        $this->assertContains(LoadProductData::PRODUCT_1, $content);
+        $this->assertContains(LoadProductData::PRODUCT_2, $content);
+        $this->assertContains(LoadProductData::PRODUCT_3, $content);
+    }
+
+    public function testSearchAction(): void
+    {
+        $this->client->request('GET', $this->getUrl('oro_product_frontend_product_search'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $content = $result->getContent();

@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Tests\Unit\EventListener;
 
 use Doctrine\ORM\EntityRepository;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
@@ -11,37 +12,49 @@ use Oro\Bundle\PricingBundle\Provider\PriceAttributePricesProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
-use Oro\Component\Testing\Unit\FormViewListenerTestCase;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Component\Translation\TranslatorInterface;
 
-class FormViewListenerTest extends FormViewListenerTestCase
+class FormViewListenerTest extends \PHPUnit\Framework\TestCase
 {
+    /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
+    protected $translator;
+
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
+    protected $doctrineHelper;
+
+    /** @var \Twig_Environment|\PHPUnit\Framework\MockObject\MockObject */
+    protected $env;
+
     /** @var FormViewListener */
-    private $listener;
+    protected $listener;
 
     /** @var AuthorizationCheckerInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $authorizationChecker;
-
-    /** @var \PHPUnit\Framework\MockObject\MockObject|\Twig_Environment */
-    private $environment;
+    protected $authorizationChecker;
 
     /** @var PriceAttributePricesProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $priceAttributePricesProvider;
 
-    /**
-     * @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject */
     protected $featureChecker;
 
     protected function setUp()
     {
+        $this->translator = $this->createMock(TranslatorInterface::class);
+        $this->translator->expects($this->any())
+            ->method('trans')
+            ->willReturnCallback(
+                function ($id) {
+                    return $id . '.trans';
+                }
+            );
+
+        $this->env = $this->createMock(\Twig_Environment::class);
+        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
+
         $this->priceAttributePricesProvider = $this->createMock(PriceAttributePricesProvider::class);
-        $this->environment = $this->createMock(\Twig_Environment::class);
         $this->featureChecker = $this->createMock(FeatureChecker::class);
-
-        parent::setUp();
-
         $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
 
         $this->listener = new FormViewListener(
@@ -57,7 +70,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
         unset(
             $this->listener,
             $this->authorizationChecker,
-            $this->environment,
+            $this->env,
             $this->priceAttributePricesProvider,
             $this->featureChecker
         );
@@ -75,9 +88,9 @@ class FormViewListenerTest extends FormViewListenerTestCase
         $this->listener->setFeatureChecker($this->featureChecker);
         $this->listener->addFeature('feature1');
 
-        $this->environment->expects($this->never())->method('render');
+        $this->env->expects($this->never())->method('render');
 
-        $event = $this->createEvent($this->environment, new Product());
+        $event = $this->createEvent($this->env, new Product());
         $this->listener->onProductEdit($event);
     }
 
@@ -105,7 +118,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
 
         $this->authorizationChecker->expects($this->never())->method('isGranted');
 
-        $event = $this->createEvent($this->environment, new Product());
+        $event = $this->createEvent($this->env, new Product());
         $this->listener->onProductView($event);
     }
 
@@ -304,10 +317,10 @@ class FormViewListenerTest extends FormViewListenerTestCase
      */
     private function getEnvironment()
     {
-        if (null === $this->environment) {
-            $this->environment = $this->createMock(\Twig_Environment::class);
+        if (null === $this->env) {
+            $this->env = $this->createMock(\Twig_Environment::class);
         }
 
-        return $this->environment;
+        return $this->env;
     }
 }

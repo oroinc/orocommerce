@@ -81,7 +81,7 @@ Feature: Mass Product Actions Availability
     And I click "Create and Add"
     Then I should see "No products were added"
     And I reload the page
-    And I should not see "rtsh_m"
+    And there is no records in "Product Frontend Grid"
 
   Scenario: Non visible products can not be added with mass actions
     Given I proceed as the Buyer
@@ -104,4 +104,4 @@ Feature: Mass Product Actions Availability
     And I click "Add to Shopping List" link from mass action dropdown in "Product Frontend Grid"
     Then I should see "No products were added"
     And I reload the page
-    And I should not see "gtsh_l"
+    And there is no records in "Product Frontend Grid"
