@@ -264,6 +264,10 @@ oro:
             updated:
                 label:                    Updated at
                 description:              The date and time when the order address was updated.
+            country_name.label:           Country name
+            country_iso2_code.label:      Country ISO2 code
+            country_iso3_code.label:      Country ISO3 code
+            region_name.label:            State name
 
         orderlineitem:
             entity_label: 'Order Line Item'

@@ -77,6 +77,9 @@ workflows:
                             options:
                                 required: true
                                 property_path: customerConsents
+                                constraints:
+                                    - Oro\Bundle\ConsentBundle\Validator\Constraints\RemovedConsents: ~
+                                    - Oro\Bundle\ConsentBundle\Validator\Constraints\RemovedLandingPages: ~
                         state_token:
                             form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
                             options:
@@ -179,6 +182,9 @@ workflows:
                             options:
                                 required: true
                                 property_path: customerConsents
+                                constraints:
+                                    - Oro\Bundle\ConsentBundle\Validator\Constraints\RemovedConsents: ~
+                                    - Oro\Bundle\ConsentBundle\Validator\Constraints\RemovedLandingPages: ~
                         state_token:
                             form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
                             options:

@@ -9,6 +9,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * It is just a simple temporary implementation of search . Proper one should be implemented in BB-5220
+ */
 class WebsiteSearchController extends Controller
 {
     /**
@@ -21,7 +24,6 @@ class WebsiteSearchController extends Controller
     {
         $searchString = trim($request->get('search'));
 
-        // @todo It is just a simple temporary implementation of search . Proper one should be implemented in BB-5220
         $urlParams = [];
         if ($searchString) {
             $urlParams['grid']['frontend-product-search-grid'] = http_build_query([

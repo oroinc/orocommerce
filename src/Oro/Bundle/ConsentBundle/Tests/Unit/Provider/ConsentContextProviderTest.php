@@ -124,4 +124,30 @@ class ConsentContextProviderTest extends \PHPUnit\Framework\TestCase
             $this->provider->getWebsite()
         );
     }
+
+    public function testGetDefaultWebsite()
+    {
+        /** @var Website $website */
+        $website = $this->getEntity(Website::class, ['id' => 1]);
+        $contentScope = new StubScope();
+        $contentScope->setWebsite(null);
+
+        $this->scopeManager->expects($this->once())
+            ->method('findOrCreate')
+            ->with('web_content')
+            ->willReturn($contentScope);
+
+        $this->websiteManager->expects($this->once())
+            ->method('getCurrentWebsite')
+            ->willReturn(null);
+
+        $this->websiteManager->expects($this->once())
+            ->method('getDefaultWebsite')
+            ->willReturn($website);
+
+        $this->assertSame(
+            $website,
+            $this->provider->getWebsite()
+        );
+    }
 }

@@ -50,6 +50,9 @@ oro.workflow:
             expire_transition:
                 label: 'Expire'
                 warning_message: ''
+            auto_expire_transition:
+                label: 'Auto Expire'
+                warning_message: ''
             create_new_quote_transition:
                 label: 'Create new Quote'
                 warning_message: ''
@@ -166,6 +169,9 @@ oro.workflow:
                 warning_message: ''
             expire_transition:
                 label: 'Expire'
+                warning_message: ''
+            auto_expire_transition:
+                label: 'Auto Expire'
                 warning_message: ''
             create_new_quote_transition:
                 label: 'Create new Quote'

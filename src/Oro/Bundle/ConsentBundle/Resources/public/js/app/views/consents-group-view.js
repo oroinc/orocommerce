@@ -82,7 +82,8 @@ define(function(require) {
                 okText: this.confirmModalOkText,
                 cancelText: this.confirmModalCancelText,
                 okButtonClass: this.confirmModalOkButtonClass,
-                cancelButtonClass: this.confirmModalCancelButtonClass
+                cancelButtonClass: this.confirmModalCancelButtonClass,
+                disposeOnHidden: false
             });
 
             this.listenTo(this.confirmModal, 'ok', _.bind(this._onModalConfirmed, this));
@@ -154,6 +155,11 @@ define(function(require) {
 
             delete this.$form;
             delete this.$consents;
+
+            if (this.confirmModal) {
+                this.confirmModal.dispose();
+                delete this.confirmModal;
+            }
 
             ConsentsGroupView.__super__.dispose.apply(this, arguments);
         }
