@@ -15,12 +15,17 @@ Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
   precision2:
     unit: '@item'
     precision: '1'
+  precision3:
+    unit: '@item'
+    precision: '1'
 
 Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
   locValue1:
     string: 'Phone'
   locValue2:
     string: 'Light'
+  locValue3:
+    string: 'TV'
   localNewCategory:
     string: 'NewCategory'
 
@@ -40,6 +45,16 @@ Oro\Bundle\ProductBundle\Entity\Product:
     type: 'simple'
     primaryUnitPrecision: '@precision2'
     addName: ['@locValue2']
+    attributeFamily: '@defaultProductFamily'
+    inventoryStatus: '@enumInventoryStatuses'
+    organization: '@organization'
+    owner: '@businessUnit'
+    status: 'enabled'
+  product3:
+    sku: 'SKU789'
+    type: 'simple'
+    primaryUnitPrecision: '@precision3'
+    addName: ['@locValue3']
     attributeFamily: '@defaultProductFamily'
     inventoryStatus: '@enumInventoryStatuses'
     organization: '@organization'

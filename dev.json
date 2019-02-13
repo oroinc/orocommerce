@@ -1,0 +1,67 @@
+{
+    "name": "oro/commerce",
+    "description": "OroCommerce - an open-source Business to Business Commerce application. \\nThis package contains bundles and needs to be added as a dependency in an OroCommerce application.",
+    "homepage": "https://github.com/orocommerce/orocommerce",
+    "license": "OSL-3.0",
+    "authors": [
+        {
+            "name": "Oro, Inc",
+            "homepage": "http://www.orocommerce.com"
+        }
+    ],
+    "require": {
+        "oro/platform": "3.1-dev",
+        "oro/platform-serialised-fields": "3.1-dev",
+        "oro/calendar-bundle": "3.1-dev",
+        "oro/marketing": "3.1-dev",
+        "oro/customer-portal": "3.1-dev",
+        "box/spout": "2.7.*",
+        "myclabs/deep-copy": "1.8.*",
+        "bower-asset/jquery-creditcardvalidator": "1.0",
+        "bower-asset/elevatezoom3": "3.0.8.1",
+        "besimple/soap-client": "^0.2.6"
+    },
+    "require-dev": {
+        "sensio/generator-bundle": "3.1.*",
+        "behat/behat": "3.4.*",
+        "behat/mink-extension": "2.3.*",
+        "behat/mink-selenium2-driver": "1.*",
+        "behat/symfony2-extension": "2.1.*",
+        "nelmio/alice": "2.3.*",
+        "phpunit/phpunit": "6.5.*",
+        "johnkary/phpunit-speedtrap": "2.0.*",
+        "mybuilder/phpunit-accelerator": "2.0.*",
+        "squizlabs/php_codesniffer": "3.3.*",
+        "phpmd/phpmd": "2.6.*",
+        "sebastian/phpcpd": "3.0.*",
+        "phpunit/phpcov": "4.0.*",
+        "symfony/phpunit-bridge": "3.4.*",
+        "friendsofphp/php-cs-fixer": "2.12.*",
+        "oro/twig-inspector": "3.1-dev"
+    },
+    "repositories": {
+        "monorepo": {
+            "type": "path",
+            "url": "../*"
+        },
+        "oro": {
+            "type": "composer",
+            "url": "https://packagist.orocrm.com"
+        },
+        "asset-packagist": {
+            "type": "composer",
+            "url": "https://asset-packagist.orocrm.com"
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "extra": {
+        "branch-alias": {
+            "dev-master": "3.1-dev"
+        }
+    },
+    "autoload": {
+        "psr-4": {"": "src/"},
+        "exclude-from-classmap": ["/Tests/"]
+    }
+}

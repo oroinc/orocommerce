@@ -1,5 +1,6 @@
 @regression
 @ticket-BB-13406
+@ticket-BB-16195
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
 @fixture-OroPricingBundle:PricingRounding.yml
@@ -474,3 +475,44 @@ Feature: Pricing rounding
     And click "Accept and Submit to Order"
     Then should see "Subtotal $4"
     And should see "Total $4"
+
+  Scenario: Set Pricing Precision value to 2 (Half Up)
+    Given I proceed as the admin
+    And go to System/ Configuration
+    And follow "Commerce/Catalog/Pricing" on configuration sidebar
+    When fill "PricingConfigurationForm" with:
+      | Pricing Precision System     | false   |
+      | Pricing Precision            | 2       |
+      | Pricing Rounding Type System | false   |
+      | Pricing Rounding Type        | Half Up |
+    And I save form
+    Then I should see "Configuration saved" flash message
+    When go to Products / Products
+    And click edit "SKU789" in grid
+    And click "Product Prices"
+    And click "Add Product Price"
+    And fill "Product Price Form" with:
+      | Price List | Default Price List |
+      | Quantity   | 1                  |
+      | Value      | 33.495             |
+      | Currency   | $                  |
+    And I save and close form
+    Then I should see "Product has been saved" flash message
+
+    When I proceed as the customer
+    And type "SKU789" in "search"
+    And I click "Search Button"
+    And I click "Add to Shopping List" for "SKU789" product
+    And I hover on "Shopping Cart"
+    And I click "Shopping List" on shopping list widget
+    And I scroll to top
+    And I wait line items are initialized
+    And I type "3" in "Shopping List Line Item 1 Quantity"
+    And I scroll to "Create Order"
+    Then I should see "Record has been successfully updated" flash message
+    When I scroll to top
+    And I click "Create Order"
+    Then Checkout "Order Summary Products Grid" should contain products:
+      | TV | 3 | items | $33.50 | $100.49 |
+    And I should see Checkout Totals with data:
+      | Subtotal | $100.49 |

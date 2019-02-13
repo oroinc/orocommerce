@@ -64,6 +64,7 @@ class Configuration implements ConfigurationInterface
     const DISPLAY_SIMPLE_VARIATIONS_EVERYWHERE = 'everywhere';
     const DISPLAY_SIMPLE_VARIATIONS_HIDE_COMPLETELY = 'hide_completely';
     const LIMIT_FILTERS_SORTERS_ON_PRODUCT_LISTING = 'limit_filters_sorters_on_product_listing';
+    const DISABLE_FILTERS_ON_PRODUCT_LISTING = 'disable_filters_on_product_listing';
 
     /**
      * {@inheritDoc}
@@ -156,6 +157,10 @@ class Configuration implements ConfigurationInterface
                     'value' => static::DISPLAY_SIMPLE_VARIATIONS_HIDE_COMPLETELY
                 ],
                 static::LIMIT_FILTERS_SORTERS_ON_PRODUCT_LISTING => [
+                    'type' => 'boolean',
+                    'value' => true,
+                ],
+                static::DISABLE_FILTERS_ON_PRODUCT_LISTING => [
                     'type' => 'boolean',
                     'value' => true,
                 ],

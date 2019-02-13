@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\CustomerBundle\Tests\Unit\Entity;
+namespace Oro\Bundle\TaxBundle\Tests\Unit\Entity;
 
 use Oro\Bundle\TaxBundle\Entity\Tax;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;

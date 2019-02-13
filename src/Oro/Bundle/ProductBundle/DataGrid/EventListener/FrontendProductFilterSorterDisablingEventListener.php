@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\DataGrid\EventListener;
 
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Datagrid\Manager;
@@ -13,7 +14,7 @@ use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\EntityConfigBundle\Entity\Repository\AttributeFamilyRepository;
 use Oro\Bundle\EntityConfigBundle\Manager\AttributeManager;
-use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
+use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Search\ProductRepository;
 use Oro\Bundle\SearchBundle\Datagrid\Datasource\SearchDatasource;
@@ -32,8 +33,6 @@ use Oro\Component\DependencyInjection\ServiceLink;
  */
 class FrontendProductFilterSorterDisablingEventListener
 {
-    use FeatureCheckerHolderTrait;
-
     /** @var string */
     const PRODUCT_FAMILIES_COUNT_ALIAS = 'familyAttributesCount';
 
@@ -64,6 +63,9 @@ class FrontendProductFilterSorterDisablingEventListener
     /** @var DatagridStateProviderInterface */
     private $sortersStateProvider;
 
+    /** @var ConfigManager */
+    private $configManager;
+
     /**
      * @param AttributeManager $attributeManager
      * @param AttributeTypeRegistry $attributeTypeRegistry
@@ -82,7 +84,8 @@ class FrontendProductFilterSorterDisablingEventListener
         DoctrineHelper $doctrineHelper,
         ServiceLink $datagridManagerLink,
         DatagridStateProviderInterface $filtersStateProvider,
-        DatagridStateProviderInterface $sortersStateProvider
+        DatagridStateProviderInterface $sortersStateProvider,
+        ConfigManager $configManager
     ) {
         $this->attributeManager = $attributeManager;
         $this->attributeTypeRegistry = $attributeTypeRegistry;
@@ -92,6 +95,7 @@ class FrontendProductFilterSorterDisablingEventListener
         $this->datagridManagerLink = $datagridManagerLink;
         $this->filtersStateProvider = $filtersStateProvider;
         $this->sortersStateProvider = $sortersStateProvider;
+        $this->configManager = $configManager;
     }
 
     /**
@@ -99,7 +103,8 @@ class FrontendProductFilterSorterDisablingEventListener
      */
     public function onSearchResultBefore(SearchResultBefore $event)
     {
-        if (!$this->isFeaturesEnabled()) {
+        $limitFilters = Configuration::getConfigKeyByName(Configuration::LIMIT_FILTERS_SORTERS_ON_PRODUCT_LISTING);
+        if (!$this->configManager->get($limitFilters)) {
             return;
         }
 
@@ -134,7 +139,8 @@ class FrontendProductFilterSorterDisablingEventListener
      */
     public function onSearchResultAfter(SearchResultAfter $event)
     {
-        if (!$this->isFeaturesEnabled()) {
+        $limitFilters = Configuration::getConfigKeyByName(Configuration::LIMIT_FILTERS_SORTERS_ON_PRODUCT_LISTING);
+        if (!$this->configManager->get($limitFilters)) {
             return;
         }
 

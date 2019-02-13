@@ -1043,6 +1043,7 @@ oro_behat_extension:
       paths:
         - '@OroProductBundle/Tests/Behat/Features/product-collection'
         - '@OroProductBundle/Tests/Behat/Features/product'
+        - '@OroProductBundle/Tests/Behat/Features/product-search'
         - '@OroProductBundle/Tests/Behat/Features/product-attributes'
     OroProductBundleRelatedItems:
       contexts:

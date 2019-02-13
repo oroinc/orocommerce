@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\DataGrid\EventListener;
 
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\Datagrid;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
@@ -17,7 +18,6 @@ use Oro\Bundle\EntityConfigBundle\Attribute\Type\StringAttributeType;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\EntityConfigBundle\Entity\Repository\AttributeFamilyRepository;
 use Oro\Bundle\EntityConfigBundle\Manager\AttributeManager;
-use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\ProductBundle\DataGrid\EventListener\FrontendProductFilterSorterDisablingEventListener;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Search\ProductRepository;
@@ -34,6 +34,8 @@ use Oro\Component\Testing\Unit\EntityTrait;
 class FrontendProductFilterSorterDisablingEventListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
+
+    private const LIMIT_FILTERS_SORTERS = 'oro_product.limit_filters_sorters_on_product_listing';
 
     /** @var AttributeManager|\PHPUnit\Framework\MockObject\MockObject */
     private $attributeManager;
@@ -71,6 +73,9 @@ class FrontendProductFilterSorterDisablingEventListenerTest extends \PHPUnit\Fra
     /** @var DatagridStateProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $sortersStateProvider;
 
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $configManager;
+
     /** @var FrontendProductFilterSorterDisablingEventListener */
     private $listener;
 
@@ -88,6 +93,7 @@ class FrontendProductFilterSorterDisablingEventListenerTest extends \PHPUnit\Fra
         $this->gridQuery = $this->createMock(SearchQueryInterface::class);
         $this->filtersStateProvider = $this->createMock(DatagridStateProviderInterface::class);
         $this->sortersStateProvider = $this->createMock(DatagridStateProviderInterface::class);
+        $this->configManager = $this->createMock(ConfigManager::class);
 
         $gridParameters = new ParameterBag([]);
         $this->datagridConfig = $this->createMock(DatagridConfiguration::class);
@@ -105,7 +111,8 @@ class FrontendProductFilterSorterDisablingEventListenerTest extends \PHPUnit\Fra
             $this->doctrineHelper,
             $this->datagridManagerLink,
             $this->filtersStateProvider,
-            $this->sortersStateProvider
+            $this->sortersStateProvider,
+            $this->configManager
         );
     }
 
@@ -113,12 +120,9 @@ class FrontendProductFilterSorterDisablingEventListenerTest extends \PHPUnit\Fra
     {
         $event = new SearchResultBefore($this->datagrid, $this->gridQuery);
 
-        $this->listener->addFeature('feature');
-        $featureChecker = $this->createMock(FeatureChecker::class);
-        $this->listener->setFeatureChecker($featureChecker);
-        $featureChecker->expects($this->once())
-            ->method('isFeatureEnabled')
-            ->with('feature', null)
+        $this->configManager->expects($this->any())
+            ->method('get')
+            ->with(self::LIMIT_FILTERS_SORTERS)
             ->willReturn(false);
 
         $this->gridQuery->expects($this->never())
@@ -130,8 +134,16 @@ class FrontendProductFilterSorterDisablingEventListenerTest extends \PHPUnit\Fra
         $this->listener->onSearchResultBefore($event);
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
     public function testOnSearchResultBeforeSameQueries()
     {
+        $this->configManager->expects($this->any())
+            ->method('get')
+            ->with(self::LIMIT_FILTERS_SORTERS)
+            ->willReturn(true);
+
         $this->filtersStateProvider->expects($this->once())
             ->method('getState')
             ->with($this->datagridConfig, $this->datagrid->getParameters())
@@ -234,6 +246,11 @@ class FrontendProductFilterSorterDisablingEventListenerTest extends \PHPUnit\Fra
     {
         $event = new SearchResultBefore($this->datagrid, $this->gridQuery);
 
+        $this->configManager->expects($this->any())
+            ->method('get')
+            ->with(self::LIMIT_FILTERS_SORTERS)
+            ->willReturn(true);
+
         $datagridManager = $this->createMock(ManagerInterface::class);
         $this->datagridManagerLink->expects($this->once())
             ->method('getService')
@@ -271,12 +288,9 @@ class FrontendProductFilterSorterDisablingEventListenerTest extends \PHPUnit\Fra
     {
         $event = new SearchResultAfter($this->datagrid, $this->gridQuery, []);
 
-        $this->listener->addFeature('feature');
-        $featureChecker = $this->createMock(FeatureChecker::class);
-        $this->listener->setFeatureChecker($featureChecker);
-        $featureChecker->expects($this->once())
-            ->method('isFeatureEnabled')
-            ->with('feature', null)
+        $this->configManager->expects($this->any())
+            ->method('get')
+            ->with(self::LIMIT_FILTERS_SORTERS)
             ->willReturn(false);
 
         $this->attributeManager->expects($this->never())
@@ -303,6 +317,11 @@ class FrontendProductFilterSorterDisablingEventListenerTest extends \PHPUnit\Fra
     public function testOnSearchResultAfterEmptyQueryWithAggregate()
     {
         $eventBefore = new SearchResultBefore($this->datagrid, $this->gridQuery);
+
+        $this->configManager->expects($this->any())
+            ->method('get')
+            ->with(self::LIMIT_FILTERS_SORTERS)
+            ->willReturn(true);
 
         $datagridManager = $this->createMock(ManagerInterface::class);
         $this->datagridManagerLink->expects($this->once())

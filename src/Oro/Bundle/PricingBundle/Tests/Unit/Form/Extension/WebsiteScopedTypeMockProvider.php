@@ -3,8 +3,12 @@
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Form\Extension;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\QueryBuilder;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
+use Oro\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Form\Type\WebsiteScopedDataType;
-use Oro\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 class WebsiteScopedTypeMockProvider extends \PHPUnit\Framework\TestCase
@@ -16,46 +20,44 @@ class WebsiteScopedTypeMockProvider extends \PHPUnit\Framework\TestCase
      */
     public function getWebsiteScopedDataType()
     {
-        $website = $this->getEntity('Oro\Bundle\WebsiteBundle\Entity\Website', ['id' => 1, 'name' => 'US']);
-
-        $em = $this->getMockBuilder('Doctrine\ORM\EntityManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $websites = [1 => $this->getEntity(Website::class, ['id' => 1])];
+        $em = $this->createMock(EntityManager::class);
         $em->expects($this->any())
             ->method('getReference')
-            ->with('Oro\Bundle\WebsiteBundle\Entity\Website', 1)
-            ->willReturn($website);
+            ->with(Website::class, 1)
+            ->willReturn($this->getEntity(Website::class, ['id' => 1]));
 
-        $repository = $this->getMockBuilder('Oro\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository')
+        $websiteQB = $this->getMockBuilder(QueryBuilder::class)
             ->disableOriginalConstructor()
+            ->setMethods(['getResult'])
             ->getMock();
+        $websiteQB
+            ->expects($this->any())
+            ->method('getResult')
+            ->willReturn($websites);
 
-        $repository->expects($this->any())
-            ->method('getAllWebsites')
-            ->willReturn([$website]);
+        $websiteRepository = $this->createMock(WebsiteRepository::class);
+        $websiteRepository->expects($this->any())
+            ->method('createQueryBuilder')
+            ->with('website')
+            ->willReturn($websiteQB);
 
-        /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject $registry */
-        $registry = $this->getMockBuilder('\Doctrine\Common\Persistence\ManagerRegistry')
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject $registry*/
+        $registry = $this->createMock(ManagerRegistry::class);
         $registry->expects($this->any())
             ->method('getRepository')
-            ->with('Oro\Bundle\WebsiteBundle\Entity\Website')
-            ->willReturn($repository);
-
+            ->with(Website::class)
+            ->willReturn($websiteRepository);
         $registry->expects($this->any())
             ->method('getManagerForClass')
-            ->with('Oro\Bundle\WebsiteBundle\Entity\Website')
+            ->with(Website::class)
             ->willReturn($em);
 
-        /** @var WebsiteProviderInterface|\PHPUnit\Framework\MockObject\MockObject $websiteProvider */
-        $websiteProvider = $this->createMock('Oro\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface');
-        $websiteProvider->expects($this->any())
-            ->method('getWebsites')
-            ->willReturn([$website]);
+        $aclHelper = $this->createMock(AclHelper::class);
+        $aclHelper->expects($this->any())
+            ->method('apply')
+            ->willReturn($websiteQB);
 
-        return new WebsiteScopedDataType($registry, $websiteProvider);
+        return new WebsiteScopedDataType($registry, $aclHelper);
     }
 }
