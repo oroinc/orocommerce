@@ -19,6 +19,10 @@
     &__image {
         max-width: 100%;
         max-height: $product-view-media-gallery-image-max-height;
+
+        &[data-lazy] {
+            display: none;
+        }
     }
 
     &__image-item {
@@ -39,8 +43,37 @@
         opacity: 0;
         transition: all .4s;
         visibility: hidden;
+        overflow: hidden;
+
+        > * {
+            transition: opacity .4s;
+        }
+
+        &.loading {
+            opacity: 1;
+            visibility: visible;
+            background: white url('#{$global-url}/orofrontend/blank/images/loader.gif') no-repeat center center;
+            transition: opacity .4s;
+
+            > * {
+                display: none;
+            }
+
+            &:before {
+                content: '';
+                display: block;
+            }
+
+            @for $i from 1 to 9 {
+                &.slides-to-show-#{$i}:before {
+                    margin-top: calc(100% / #{$i} - #{$product-view-media-gallery-nav-item-offset-h * 2});
+                }
+            }
+        }
 
         &.slick-initialized {
+            margin: $product-view-media-gallery-nav-offset;
+
             opacity: 1;
             visibility: visible;
         }
