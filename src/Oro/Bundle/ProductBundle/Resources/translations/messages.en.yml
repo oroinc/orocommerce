@@ -413,6 +413,9 @@ oro:
                     bottomleft.label: 'Bottom Left'
                     bottom.label: 'Bottom'
                     bottomright.label: 'Bottom Right'
+                product_image_placeholder:
+                    label: 'Product Image Placeholder'
+                    tooltip: 'This image will be displayed on the product listing and product view pages for the products that do not have any associated images.'
                 featured_products_segment:
                     label: Segment
                     tooltip: |

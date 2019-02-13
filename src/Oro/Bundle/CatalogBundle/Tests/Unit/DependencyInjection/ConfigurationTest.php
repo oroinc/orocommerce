@@ -31,6 +31,10 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
                 'all_products_page_enabled' => [
                     'value' => false,
                     'scope' => 'app',
+                ],
+                'category_image_placeholder' => [
+                    'value' => null,
+                    'scope' => 'app',
                 ]
             ]
         ];

@@ -8,9 +8,10 @@
 
 {% macro urlFromString(file, filter) -%}
     {%- if file is empty %}
-        {% set file = '/bundles/oroproduct/default/images/no_image.png' %}
+        {{ product_image_placeholder(filter) }}
+    {%- else %}
+        {{- file|imagine_filter(filter) -}}
     {% endif %}
-    {{- file|imagine_filter(filter) -}}
 {%- endmacro -%}
 
 {% macro image(file, filter) -%}

@@ -8,6 +8,7 @@ use Oro\Bundle\DataGridBundle\Datagrid\Datagrid;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
+use Oro\Bundle\LayoutBundle\Provider\Image\ImagePlaceholderProviderInterface;
 use Oro\Bundle\LocaleBundle\Datagrid\Formatter\Property\LocalizedValueProperty;
 use Oro\Bundle\ProductBundle\DataGrid\DataGridThemeHelper;
 use Oro\Bundle\ProductBundle\EventListener\FrontendProductDatagridListener;
@@ -33,12 +34,22 @@ class FrontendProductDatagridListenerTest extends \PHPUnit\Framework\TestCase
      */
     protected $imagineCacheManager;
 
+    /**
+     * @var ImagePlaceholderProviderInterface|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $imagePlaceholderProvider;
+
     public function setUp()
     {
         $this->themeHelper = $this->createMock(DataGridThemeHelper::class);
         $this->imagineCacheManager = $this->createMock(CacheManager::class);
+        $this->imagePlaceholderProvider = $this->createMock(ImagePlaceholderProviderInterface::class);
 
-        $this->listener = new FrontendProductDatagridListener($this->themeHelper, $this->imagineCacheManager);
+        $this->listener = new FrontendProductDatagridListener(
+            $this->themeHelper,
+            $this->imagineCacheManager,
+            $this->imagePlaceholderProvider
+        );
     }
 
     /**
@@ -164,6 +175,11 @@ class FrontendProductDatagridListenerTest extends \PHPUnit\Framework\TestCase
             ->method('getTheme')
             ->willReturn($themeName);
 
+        $this->imagePlaceholderProvider->expects($this->any())
+            ->method('getPath')
+            ->with('product_medium')
+            ->willReturn('/some/test/url.png');
+
         $event->expects($this->once())
             ->method('getDatagrid')
             ->willReturn($datagrid);
@@ -211,7 +227,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit\Framework\TestCase
                     ],
                     [
                         'id'            => 2,
-                        'image'         => null,
+                        'image'         => '/some/test/url.png',
                         'expectedUnits' => [
                             'bottle' => 0
                         ]
@@ -246,7 +262,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit\Framework\TestCase
                     ],
                     [
                         'id'            => 2,
-                        'image'         => null,
+                        'image'         => '/some/test/url.png',
                         'expectedUnits' => []
                     ],
                     [

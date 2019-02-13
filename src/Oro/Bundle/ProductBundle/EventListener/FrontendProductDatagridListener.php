@@ -7,6 +7,7 @@ use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\DataGridBundle\Extension\Formatter\Property\PropertyInterface;
+use Oro\Bundle\LayoutBundle\Provider\Image\ImagePlaceholderProviderInterface;
 use Oro\Bundle\LocaleBundle\Datagrid\Formatter\Property\LocalizedValueProperty;
 use Oro\Bundle\ProductBundle\DataGrid\DataGridThemeHelper;
 use Oro\Bundle\SearchBundle\Datagrid\Event\SearchResultAfter;
@@ -21,8 +22,6 @@ class FrontendProductDatagridListener
     const PRODUCT_IMAGE_FILTER_LARGE = 'product_large';
     const PRODUCT_IMAGE_FILTER_MEDIUM = 'product_medium';
 
-    const DEFAULT_IMAGE = '/bundles/oroproduct/default/images/no_image.png';
-
     /**
      * @var DataGridThemeHelper
      */
@@ -34,15 +33,23 @@ class FrontendProductDatagridListener
     protected $imagineCacheManager;
 
     /**
+     * @var ImagePlaceholderProviderInterface
+     */
+    protected $imagePlaceholderProvider;
+
+    /**
      * @param DataGridThemeHelper $themeHelper
      * @param CacheManager $imagineCacheManager
+     * @param ImagePlaceholderProviderInterface $imagePlaceholderProvider
      */
     public function __construct(
         DataGridThemeHelper $themeHelper,
-        CacheManager $imagineCacheManager
+        CacheManager $imagineCacheManager,
+        ImagePlaceholderProviderInterface $imagePlaceholderProvider
     ) {
         $this->themeHelper = $themeHelper;
         $this->imagineCacheManager = $imagineCacheManager;
+        $this->imagePlaceholderProvider = $imagePlaceholderProvider;
     }
 
     /**
@@ -167,12 +174,9 @@ class FrontendProductDatagridListener
                 return;
         }
 
+        $noImagePath = $this->imagePlaceholderProvider->getPath($imageFilter);
         foreach ($records as $record) {
-            $productImageUrl = $record->getValue('image_' . $imageFilter);
-
-            if (!$productImageUrl) {
-                $productImageUrl = $this->imagineCacheManager->getBrowserPath(self::DEFAULT_IMAGE, $imageFilter);
-            }
+            $productImageUrl = $record->getValue('image_' . $imageFilter) ?: $noImagePath;
             $record->addData(['image' => $productImageUrl]);
         }
     }

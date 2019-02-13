@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Twig;
 
+use Oro\Bundle\LayoutBundle\Provider\Image\ImagePlaceholderProviderInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Twig\ProductExtension;
@@ -12,12 +13,21 @@ class ProductImageExtensionTest extends \PHPUnit\Framework\TestCase
 {
     use TwigExtensionTestCaseTrait;
 
+    /** @var ImagePlaceholderProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $imagePlaceholderProvider;
+
     /** @var ProductExtension */
-    protected $extension;
+    private $extension;
 
     protected function setUp()
     {
-        $this->extension = new ProductImageExtension();
+        $this->imagePlaceholderProvider = $this->createMock(ImagePlaceholderProviderInterface::class);
+
+        $container = self::getContainerBuilder()
+            ->add('oro_product.provider.product_image_placeholder', $this->imagePlaceholderProvider)
+            ->getContainer($this);
+
+        $this->extension = new ProductImageExtension($container);
     }
 
     public function testGetName()
@@ -43,6 +53,9 @@ class ProductImageExtensionTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedResult, array_values($actualResult));
     }
 
+    /**
+     * @return array
+     */
     public function collectProductImageByTypesProvider()
     {
         $product = new Product();
@@ -72,6 +85,22 @@ class ProductImageExtensionTest extends \PHPUnit\Framework\TestCase
                 'expectedResult' => []
             ]
         ];
+    }
+
+    public function testGetProductImagePlaceholder()
+    {
+        $filter = 'product_large';
+        $path = '/some/test/path.npg';
+
+        $this->imagePlaceholderProvider->expects($this->once())
+            ->method('getPath')
+            ->with($filter)
+            ->willReturn($path);
+
+        $this->assertEquals(
+            $path,
+            self::callTwigFunction($this->extension, 'product_image_placeholder', [$filter])
+        );
     }
 
     /**
