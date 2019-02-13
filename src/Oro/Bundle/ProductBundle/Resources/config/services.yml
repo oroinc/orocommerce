@@ -598,6 +598,8 @@ services:
         arguments:
             - '@oro_product.datagrid_theme_helper'
             - '@liip_imagine.cache.manager'
+        calls:
+            - [setImagePlaceholderProvider, ['@oro_product.provider.product_image_placeholder']]
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-product-search-grid, method: onPreBuild }
             - { name: kernel.event_listener, event: oro_datagrid.search_datasource.result.after.frontend-product-search-grid, method: onResultAfter }
@@ -1076,6 +1078,8 @@ services:
     oro_product.twig.product_image_extension:
         class: Oro\Bundle\ProductBundle\Twig\ProductImageExtension
         public: false
+        arguments:
+            - '@service_container'
         tags:
             - { name: twig.extension }
 
