@@ -10,6 +10,7 @@ use Doctrine\Common\Persistence\ObjectRepository;
 use Oro\Bundle\CheckoutBundle\Tests\Behat\Element\CheckoutStep;
 use Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid;
 use Oro\Bundle\EmailBundle\Tests\Behat\Context\EmailContext;
+use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\NavigationBundle\Tests\Behat\Element\MainMenu;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
@@ -19,6 +20,9 @@ use Oro\Bundle\TestFrameworkBundle\Behat\Fixtures\FixtureLoaderDictionary;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class FeatureContext extends OroFeatureContext implements
     OroPageObjectAware,
     KernelAwareContext,
@@ -37,6 +41,11 @@ class FeatureContext extends OroFeatureContext implements
     private $emailContext;
 
     /**
+     * @var \Oro\Bundle\WorkflowBundle\Tests\Behat\Context\FeatureContext
+     */
+    private $workflowContext;
+
+    /**
      * @BeforeScenario
      */
     public function gatherContexts(BeforeScenarioScope $scope)
@@ -44,6 +53,8 @@ class FeatureContext extends OroFeatureContext implements
         $environment = $scope->getEnvironment();
         $this->oroMainContext = $environment->getContext(OroMainContext::class);
         $this->emailContext = $environment->getContext(EmailContext::class);
+        $this->workflowContext = $environment
+            ->getContext(\Oro\Bundle\WorkflowBundle\Tests\Behat\Context\FeatureContext::class);
     }
 
     /**
@@ -185,6 +196,35 @@ class FeatureContext extends OroFeatureContext implements
         ));
 
         $this->oroMainContext->clickLink($guestLink);
+    }
+
+    /**
+     * @When automatic expiration of old quotes has been performed
+     */
+    public function processAutomaticOldQuotesExpirationProcess()
+    {
+        $this->workflowContext->processScheduledCronTriggers();
+    }
+
+    /**
+     * Example: When Quote "9" is marked as accepted by customer
+     *
+     * @When /^Quote "(?P<quoteId>(?:\d+))" is marked as accepted by customer/
+     *
+     * @param int $quoteId
+     */
+    public function markQuoteAsAcceptedByCustomer(int $quoteId)
+    {
+        $managerRegistry = $this->getContainer()->get('doctrine');
+        $manager = $managerRegistry->getManagerForClass(Quote::class);
+
+        $className = ExtendHelper::buildEnumValueClassName(Quote::CUSTOMER_STATUS_CODE);
+        $enumValue = $manager->getReference($className, 'accepted');
+
+        $quote = $manager->getRepository(Quote::class)->find($quoteId);
+        $quote->setCustomerStatus($enumValue);
+
+        $manager->flush();
     }
 
     /**

@@ -11,6 +11,9 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
+/**
+ * CMS Content Block Controller
+ */
 class ContentBlockController extends Controller
 {
     /**
@@ -43,7 +46,12 @@ class ContentBlockController extends Controller
      */
     public function viewAction(ContentBlock $contentBlock)
     {
-        return ['entity' => $contentBlock];
+        $scopeEntities = $this->get('oro_scope.scope_manager')->getScopeEntities('cms_content_block');
+
+        return [
+            'entity' => $contentBlock,
+            'scopeEntities' => array_reverse($scopeEntities)
+        ];
     }
 
     /**

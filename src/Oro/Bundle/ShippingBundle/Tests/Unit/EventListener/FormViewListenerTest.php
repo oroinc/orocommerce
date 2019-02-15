@@ -2,29 +2,37 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\EventListener;
 
+use Doctrine\ORM\EntityRepository;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions;
 use Oro\Bundle\ShippingBundle\EventListener\FormViewListener;
-use Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
-use Oro\Component\Testing\Unit\FormViewListenerTestCase;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
-class FormViewListenerTest extends FormViewListenerTestCase
+class FormViewListenerTest extends \PHPUnit\Framework\TestCase
 {
+    /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
+    protected $translator;
+
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
+    protected $doctrineHelper;
+
+    /** @var \Twig_Environment|\PHPUnit\Framework\MockObject\MockObject */
+    protected $env;
+
     /** @var Request|\PHPUnit\Framework\MockObject\MockObject */
     protected $request;
 
     /** @var RequestStack|\PHPUnit\Framework\MockObject\MockObject */
     protected $requestStack;
-
-    /** @var ShippingOriginProvider|\PHPUnit\Framework\MockObject\MockObject */
-    protected $shippingOriginProvider;
 
     /** @var FormViewListener */
     protected $listener;
@@ -34,16 +42,20 @@ class FormViewListenerTest extends FormViewListenerTestCase
      */
     public function setUp()
     {
-        parent::setUp();
+        $this->translator = $this->createMock(TranslatorInterface::class);
+        $this->translator->expects($this->any())
+            ->method('trans')
+            ->willReturnCallback(
+                function ($id) {
+                    return $id . '.trans';
+                }
+            );
 
-        $this->shippingOriginProvider = $this
-            ->getMockBuilder('Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->env = $this->createMock(\Twig_Environment::class);
+        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
 
-        $this->request = $this->getRequest();
-
-        $this->requestStack = $this->createMock('Symfony\Component\HttpFoundation\RequestStack');
+        $this->request = $this->createMock(Request::class);
+        $this->requestStack = $this->createMock(RequestStack::class);
 
         $this->listener = new FormViewListener(
             $this->translator,
@@ -58,9 +70,14 @@ class FormViewListenerTest extends FormViewListenerTestCase
             ->method('getCurrentRequest')
             ->willReturn(null);
 
-        $event = $this->getBeforeListRenderEventMock();
-        $event->expects($this->never())
-            ->method('getScrollData');
+        $this->request->expects($this->never())
+            ->method('get');
+
+        $event = new BeforeListRenderEvent(
+            $this->env,
+            new ScrollData(),
+            new \stdClass()
+        );
 
         $this->listener->onProductView($event);
     }
@@ -71,9 +88,18 @@ class FormViewListenerTest extends FormViewListenerTestCase
             ->method('getCurrentRequest')
             ->willReturn($this->request);
 
-        $event = $this->getBeforeListRenderEventMock();
-        $event->expects($this->never())
-            ->method('getScrollData');
+        $this->request->expects($this->once())
+            ->method('get')
+            ->willReturn(null);
+
+        $this->doctrineHelper->expects($this->never())
+            ->method('getEntityReference');
+
+        $event = new BeforeListRenderEvent(
+            $this->env,
+            new ScrollData(),
+            new \stdClass()
+        );
 
         $this->listener->onProductView($event);
     }
@@ -88,8 +114,14 @@ class FormViewListenerTest extends FormViewListenerTestCase
             ->with('OroProductBundle:Product', 42)
             ->willReturn(null);
 
-        $event = $this->getBeforeListRenderEventMock();
-        $event->expects($this->never())->method('getScrollData');
+        $this->doctrineHelper->expects($this->never())
+            ->method('getEntityRepositoryForClass');
+
+        $event = new BeforeListRenderEvent(
+            $this->env,
+            new ScrollData(),
+            new \stdClass()
+        );
 
         $this->listener->onProductView($event);
     }
@@ -112,11 +144,8 @@ class FormViewListenerTest extends FormViewListenerTestCase
             ->with('OroProductBundle:Product', 47)
             ->willReturn($product);
 
-        $mockRepo = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $mockRepo->expects($this->once())
+        $productShippingOptionsRepository = $this->createMock(EntityRepository::class);
+        $productShippingOptionsRepository->expects($this->once())
             ->method('findBy')
             ->with(['product' => 47])
             ->willReturn([]);
@@ -124,10 +153,16 @@ class FormViewListenerTest extends FormViewListenerTestCase
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityRepositoryForClass')
             ->with('OroShippingBundle:ProductShippingOptions')
-            ->willReturn($mockRepo);
+            ->willReturn($productShippingOptionsRepository);
 
-        $event = $this->getBeforeListRenderEventMock();
-        $event->expects($this->never())->method('getScrollData');
+        $this->env->expects($this->never())
+            ->method('render');
+
+        $event = new BeforeListRenderEvent(
+            $this->env,
+            new ScrollData(),
+            $product
+        );
 
         $this->listener->onProductView($event);
     }
@@ -150,11 +185,9 @@ class FormViewListenerTest extends FormViewListenerTestCase
             ->with('OroProductBundle:Product', 47)
             ->willReturn($product);
 
-        $mockRepo = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $productShippingOptionsRepository = $this->createMock(EntityRepository::class);
 
-        $mockRepo->expects($this->once())
+        $productShippingOptionsRepository->expects($this->once())
             ->method('findBy')
             ->with(['product' => 47])
             ->willReturn(
@@ -167,13 +200,12 @@ class FormViewListenerTest extends FormViewListenerTestCase
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityRepositoryForClass')
             ->with('OroShippingBundle:ProductShippingOptions')
-            ->willReturn($mockRepo);
+            ->willReturn($productShippingOptionsRepository);
 
         $renderedHtml = 'rendered_html';
 
         /** @var \Twig_Environment|\PHPUnit\Framework\MockObject\MockObject $twig */
-        $twig = $this->getMockBuilder('\Twig_Environment')->disableOriginalConstructor()->getMock();
-        $twig->expects($this->once())
+        $this->env->expects($this->once())
             ->method('render')
             ->with(
                 'OroShippingBundle:Product:shipping_options_view.html.twig',
@@ -184,51 +216,65 @@ class FormViewListenerTest extends FormViewListenerTestCase
             )
             ->willReturn($renderedHtml);
 
-        $event = new BeforeListRenderEvent($twig, $this->getScrollData(), new \stdClass());
+        $scrollData = new ScrollData();
+
+        $event = new BeforeListRenderEvent($this->env, $scrollData, new \stdClass());
 
         $this->listener->onProductView($event);
 
-        $scrollData = $event->getScrollData()->getData();
-        $this->assertEquals(
-            [$renderedHtml],
-            $scrollData[ScrollData::DATA_BLOCKS][1][ScrollData::SUB_BLOCKS][0][ScrollData::DATA]
-        );
+        $expectedData = [
+            ScrollData::DATA_BLOCKS => [
+                0 => [
+                    ScrollData::SUB_BLOCKS => [
+                        0 => [
+                            ScrollData::DATA => [
+                                0 => $renderedHtml,
+                            ],
+                        ],
+                    ],
+                    ScrollData::TITLE => 'oro.shipping.product.section.shipping_options.trans',
+                    ScrollData::USE_SUB_BLOCK_DIVIDER => true,
+                    ScrollData::PRIORITY => 600
+                ],
+            ],
+        ];
+
+        $this->assertEquals($expectedData, $scrollData->getData());
     }
 
     public function testOnProductEdit()
     {
+        $formView = $this->createMock(FormView::class);
         $renderedHtml = 'rendered_html';
 
-        /** @var \Twig_Environment|\PHPUnit\Framework\MockObject\MockObject $twig */
-        $twig = $this->getMockBuilder('\Twig_Environment')->disableOriginalConstructor()->getMock();
-        $twig->expects($this->once())->method('render')->willReturn($renderedHtml);
+        $this->env->expects($this->once())
+            ->method('render')
+            ->with('OroShippingBundle:Product:shipping_options_update.html.twig', ['form' => $formView])
+            ->willReturn($renderedHtml);
 
-        $event = new BeforeListRenderEvent($twig, $this->getScrollData(), new \stdClass());
+        $scrollData = new ScrollData();
+
+        $event = new BeforeListRenderEvent($this->env, $scrollData, new \stdClass(), $formView);
 
         $this->listener->onProductEdit($event);
 
-        $scrollData = $event->getScrollData()->getData();
-        $this->assertEquals(
-            [$renderedHtml],
-            $scrollData[ScrollData::DATA_BLOCKS][1][ScrollData::SUB_BLOCKS][0][ScrollData::DATA]
-        );
-    }
-
-    /**
-     * @return ScrollData
-     */
-    protected function getScrollData()
-    {
-        return new ScrollData([
+        $expectedData = [
             ScrollData::DATA_BLOCKS => [
-                [
+                0 => [
                     ScrollData::SUB_BLOCKS => [
-                        [
-                            ScrollData::DATA => []
-                        ]
-                    ]
-                ]
-            ]
-        ]);
+                        0 => [
+                            ScrollData::DATA => [
+                                0 => $renderedHtml,
+                            ],
+                        ],
+                    ],
+                    ScrollData::TITLE => 'oro.shipping.product.section.shipping_options.trans',
+                    ScrollData::USE_SUB_BLOCK_DIVIDER => true,
+                    ScrollData::PRIORITY => 100
+                ],
+            ],
+        ];
+
+        $this->assertEquals($expectedData, $scrollData->getData());
     }
 }

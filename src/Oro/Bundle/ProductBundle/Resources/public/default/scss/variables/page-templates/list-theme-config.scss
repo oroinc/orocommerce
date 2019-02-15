@@ -11,22 +11,20 @@ $list-theme-product-view-attribute-box-margin-right-desktop: 0 !default;
 $list-theme-product-view-tab-content-margin-bottom-desktop: 30px !default;
 
 $list-theme-product-view-line-item-form-border-desktop: 1px solid get-color('additional', 'light') !default;
+$list-theme-product-view-line-item-form-margin-top-desktop: 20px !default;
 $list-theme-product-view-line-item-form-padding-top-desktop: 20px !default;
 $list-theme-product-view-line-item-form-display-desktop: flex !default;
 $list-theme-product-view-line-item-form-div-flex-desktop: 1 1 100% !default;
 $list-theme-product-view-line-item-form-margin-left-desktop: 20px !default;
 
-$list-theme-product-view-shopping-lists-content-min-height-desktop: 46px !default;
+$list-theme-product-view-shopping-lists-content-min-height-desktop: 43px !default;
 $list-theme-product-view-shopping-lists-icon-top-desktop: 12px !default;
 $list-theme-product-view-shopping-lists-wrapper-order-desktop: 3 !default;
 
-$list-theme-product-view-quantity-unit-select2-inner-offset-desktop: 15px 11px !default;
-$list-theme-product-view-quantity-value-input-inner-offset-desktop: 14px 8px !default;
+$list-theme-product-view-quantity-unit-select2-inner-offset-desktop: 14px 11px 13px !default;
+$list-theme-product-view-quantity-value-input-inner-offset-desktop: 13px 8px 12px !default;
 
 $list-theme-product-view-shipping-list-button-padding-y-desktop: 6px !default;
 
 // desktop
-$list-theme-product-view-aside-width: 240px !default;
-$list-theme-product-view-aside-offset-y: 35px !default;
-
 $list-theme-product-view-related-items-offset-y: 60px !default;

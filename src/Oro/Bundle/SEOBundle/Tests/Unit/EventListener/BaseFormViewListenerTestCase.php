@@ -2,11 +2,28 @@
 
 namespace Oro\Bundle\SEOBundle\Tests\Unit\EventListener;
 
-use Oro\Component\Testing\Unit\FormViewListenerTestCase;
 use Symfony\Component\Form\FormView;
+use Symfony\Component\Translation\TranslatorInterface;
 
-abstract class BaseFormViewListenerTestCase extends FormViewListenerTestCase
+abstract class BaseFormViewListenerTestCase extends \PHPUnit\Framework\TestCase
 {
+    /**
+     * @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $translator;
+
+    protected function setUp()
+    {
+        $this->translator = $this->createMock(TranslatorInterface::class);
+        $this->translator->expects($this->any())
+            ->method('trans')
+            ->willReturnCallback(
+                function ($id) {
+                    return $id . '.trans';
+                }
+            );
+    }
+
     /**
      * @param object $entityObject
      * @param string $labelPrefix
@@ -15,9 +32,7 @@ abstract class BaseFormViewListenerTestCase extends FormViewListenerTestCase
     protected function getEnvironmentForView($entityObject, $labelPrefix)
     {
         /** @var \PHPUnit\Framework\MockObject\MockObject|\Twig_Environment $env */
-        $env = $this->getMockBuilder(\Twig_Environment::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $env = $this->createMock(\Twig_Environment::class);
 
         $env->expects($this->exactly(3))
             ->method('render')
@@ -56,9 +71,7 @@ abstract class BaseFormViewListenerTestCase extends FormViewListenerTestCase
     protected function getEnvironmentForEdit()
     {
         /** @var \PHPUnit\Framework\MockObject\MockObject|\Twig_Environment $env */
-        $env = $this->getMockBuilder(\Twig_Environment::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $env = $this->createMock(\Twig_Environment::class);
 
         $env->expects($this->exactly(3))
             ->method('render')

@@ -383,7 +383,7 @@ Feature: Consent management via Management Console UI
     And go to System/ Websites
     When click "Configuration" on row "Default" in grid
     Then follow "Commerce/Customer/Consents" on configuration sidebar
-    And uncheck "Use System" for "Enabled user consents" field
+    And uncheck "Use Organization" for "Enabled user consents" field
     When submit form
     Then I should see "Configuration saved" flash message
     And I should see that "Email Newsletters" is in 1 row

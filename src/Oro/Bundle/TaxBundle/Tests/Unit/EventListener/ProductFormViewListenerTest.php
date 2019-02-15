@@ -5,6 +5,7 @@ namespace Oro\Bundle\TaxBundle\Tests\Unit\EventListener;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\TaxBundle\Entity\ProductTaxCode;
 use Oro\Bundle\TaxBundle\EventListener\ProductFormViewListener;
+use Oro\Bundle\TaxBundle\Tests\Unit\Entity\ProductStub;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
 use Symfony\Component\Form\FormView;
@@ -24,25 +25,22 @@ class ProductFormViewListenerTest extends AbstractFormViewListenerTest
         return new ProductFormViewListener(
             $this->doctrineHelper,
             $this->requestStack,
-            'Oro\Bundle\TaxBundle\Entity\ProductTaxCode',
-            'Oro\Bundle\ProductBundle\Entity\Product'
+            ProductTaxCode::class,
+            Product::class
         );
     }
 
     public function testOnEdit()
     {
-        /** @var \PHPUnit\Framework\MockObject\MockObject|\Twig_Environment $env */
-        $env = $this->getMockBuilder('\Twig_Environment')
-            ->disableOriginalConstructor()
-            ->getMock();
-
         $htmlTemplate = 'tax_code_update_template';
-        $env->expects($this->once())
+        $formView = new FormView();
+
+        $this->env->expects($this->once())
             ->method('render')
-            ->with('OroTaxBundle:Product:tax_code_update.html.twig', ['form' => new FormView()])
+            ->with('OroTaxBundle:Product:tax_code_update.html.twig', ['form' => $formView])
             ->willReturn($htmlTemplate);
 
-        $data = [
+        $scrollData = new ScrollData([
             ScrollData::DATA_BLOCKS => [
                 'firstBlock' => [
                     ScrollData::TITLE => 'first block',
@@ -59,15 +57,31 @@ class ProductFormViewListenerTest extends AbstractFormViewListenerTest
                     ScrollData::SUB_BLOCKS => []
                 ]
             ]
-        ];
+        ]);
 
-        $scrollData = new ScrollData($data);
-        $event = new BeforeListRenderEvent($env, $scrollData, new \stdClass(), new FormView());
+        $event = new BeforeListRenderEvent($this->env, $scrollData, new \stdClass(), $formView);
 
         $this->getListener()->onEdit($event);
-        $expectedData = $data;
-        $expectedData[ScrollData::DATA_BLOCKS]['firstBlock'][ScrollData::SUB_BLOCKS][0][ScrollData::DATA][] =
-            $htmlTemplate;
+
+        $expectedData = [
+            ScrollData::DATA_BLOCKS => [
+                'firstBlock' => [
+                    ScrollData::TITLE => 'first block',
+                    ScrollData::SUB_BLOCKS => [
+                        0 => [
+                            ScrollData::DATA => [
+                                'first subblock data',
+                                $htmlTemplate
+                            ]
+                        ],
+                    ]
+                ],
+                0 => [
+                    ScrollData::TITLE => 'first block',
+                    ScrollData::SUB_BLOCKS => []
+                ]
+            ]
+        ];
 
         $this->assertEquals($expectedData, $scrollData->getData());
     }
@@ -82,31 +96,59 @@ class ProductFormViewListenerTest extends AbstractFormViewListenerTest
 
         $taxCode = new ProductTaxCode();
 
-        $product = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['getTaxCode'])
-            ->getMock();
-        $product->method('getTaxCode')->willReturn($taxCode);
+        $product = new ProductStub();
+        $product->setTaxCode($taxCode);
 
         $this->doctrineHelper
             ->expects($this->once())
             ->method('getEntityReference')
+            ->with(Product::class, 1)
             ->willReturn($product);
 
-        /** @var \PHPUnit\Framework\MockObject\MockObject|\Twig_Environment $env */
-        $env = $this->getMockBuilder('\Twig_Environment')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $env->expects($this->once())
+        $this->env->expects($this->once())
             ->method('render')
             ->with('OroTaxBundle:Product:tax_code_view.html.twig', ['entity' => $taxCode])
-            ->willReturn('');
+            ->willReturn('rendered');
 
-        $event = $this->getBeforeListRenderEvent();
-        $event->expects($this->once())
-            ->method('getEnvironment')
-            ->willReturn($env);
+        $scrollData = new ScrollData([
+            ScrollData::DATA_BLOCKS => [
+                'general' => [
+                    ScrollData::TITLE => 'first block',
+                    ScrollData::SUB_BLOCKS => [
+                        0 => [
+                            ScrollData::DATA => [
+                                'first subblock data',
+                            ]
+                        ],
+                    ],
+                ],
+            ],
+        ]);
+
+        $event = new BeforeListRenderEvent(
+            $this->env,
+            $scrollData,
+            $taxCode
+        );
 
         $this->getListener()->onView($event);
+
+        $expectedData = [
+            ScrollData::DATA_BLOCKS => [
+                'general' => [
+                    ScrollData::TITLE => 'first block',
+                    ScrollData::SUB_BLOCKS => [
+                        0 => [
+                            ScrollData::DATA => [
+                                'first subblock data',
+                                'rendered'
+                            ]
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        $this->assertEquals($expectedData, $scrollData->getData());
     }
 }

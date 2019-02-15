@@ -3,18 +3,34 @@
 namespace Oro\Bundle\InventoryBundle\Tests\Unit\EventListener;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManager;
 use Oro\Bundle\InventoryBundle\EventListener\ProductBackOrderFormViewListener;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
-use Oro\Component\Testing\Unit\FormViewListenerTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Translation\TranslatorInterface;
 
-class ProductInventoryBackorderFormViewListenerTest extends FormViewListenerTestCase
+class ProductInventoryBackorderFormViewListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var RequestStack|\PHPUnit\Framework\MockObject\MockObject
+     * @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $translator;
+
+    /**
+     * @var EntityManager|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $em;
+
+    /**
+     * @var \Twig_Environment|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $env;
+
+    /**
+     * @var RequestStack
      */
     protected $requestStack;
 
@@ -28,7 +44,9 @@ class ProductInventoryBackorderFormViewListenerTest extends FormViewListenerTest
      */
     protected $productBackOrderFormViewListener;
 
-    /** @var BeforeListRenderEvent|\PHPUnit\Framework\MockObject\MockObject * */
+    /**
+     * @var BeforeListRenderEvent
+     */
     protected $event;
 
     /**
@@ -38,21 +56,36 @@ class ProductInventoryBackorderFormViewListenerTest extends FormViewListenerTest
 
     protected function setUp()
     {
-        parent::setUp();
+        $this->translator = $this->createMock(TranslatorInterface::class);
+        $this->translator->expects($this->any())
+            ->method('trans')
+            ->willReturnCallback(
+                function ($id) {
+                    return $id . '.trans';
+                }
+            );
+
+        $this->env = $this->createMock(\Twig_Environment::class);
+        $this->em = $this->createMock(EntityManager::class);
+
+        $this->request = $this->createMock(Request::class);
+
         $this->requestStack = new RequestStack();
-        $this->request = $this->getMockBuilder(Request::class)
-            ->disableOriginalConstructor()
-            ->getMock();
         $this->requestStack->push($this->request);
-        $this->doctrine = $this->getMockBuilder('Doctrine\Common\Persistence\ManagerRegistry')
-            ->disableOriginalConstructor()
-            ->getMock();
+
+        $this->doctrine = $this->createMock(ManagerRegistry::class);
+
         $this->productBackOrderFormViewListener = new ProductBackOrderFormViewListener(
             $this->requestStack,
             $this->doctrine,
             $this->translator
         );
-        $this->event = $this->getBeforeListRenderEventMock();
+
+        $this->event = new BeforeListRenderEvent(
+            $this->env,
+            new ScrollData(),
+            new \stdClass()
+        );
     }
 
     public function testOnProductViewIgnoredIfNoProductId()
@@ -74,8 +107,6 @@ class ProductInventoryBackorderFormViewListenerTest extends FormViewListenerTest
         $this->request->expects($this->once())
             ->method('get')
             ->willReturn('1');
-        $this->event->expects($this->never())
-            ->method('getEnvironment');
         $this->productBackOrderFormViewListener->onProductView($this->event);
     }
 
@@ -92,25 +123,15 @@ class ProductInventoryBackorderFormViewListenerTest extends FormViewListenerTest
             ->method('getManagerForClass')
             ->with(Product::class)
             ->willReturn($this->em);
-        $env = $this->getMockBuilder(\Twig_Environment::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->event->expects($this->once())
-            ->method('getEnvironment')
-            ->willReturn($env);
-        $scrollData = $this->createMock(ScrollData::class);
-        $scrollData->expects($this->once())
-            ->method('addSubBlockData');
-        $this->event->expects($this->once())
-            ->method('getScrollData')
-            ->willReturn($scrollData);
-        $scrollData->expects($this->once())
-            ->method('getData')
-            ->wilLReturn(
-                [
-                    ScrollData::DATA_BLOCKS => [1 => [ScrollData::TITLE => 'oro.product.sections.inventory.trans']],
+
+        $this->event->getScrollData()->setData([
+            ScrollData::DATA_BLOCKS => [
+                1 => [
+                    ScrollData::TITLE => 'oro.product.sections.inventory.trans',
+                    ScrollData::SUB_BLOCKS => [[]]
                 ]
-            );
+            ],
+        ]);
 
         $this->productBackOrderFormViewListener->onProductView($this->event);
     }

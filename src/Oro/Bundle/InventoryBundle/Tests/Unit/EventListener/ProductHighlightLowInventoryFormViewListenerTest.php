@@ -4,6 +4,7 @@ namespace Oro\Bundle\InventoryBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\InventoryBundle\EventListener\ProductHighlightLowInventoryFormViewListener;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\UIBundle\View\ScrollData;
 
 class ProductHighlightLowInventoryFormViewListenerTest extends AbstractFallbackFieldsFormViewTest
 {
@@ -47,7 +48,14 @@ class ProductHighlightLowInventoryFormViewListenerTest extends AbstractFallbackF
      */
     protected function getExpectedScrollData()
     {
-        return ['dataBlocks' => [1 => ['title' => 'oro.product.sections.inventory.trans']]];
+        return [
+            ScrollData::DATA_BLOCKS => [
+                1 => [
+                    ScrollData::TITLE => 'oro.product.sections.inventory.trans',
+                    ScrollData::SUB_BLOCKS => [[]]
+                ]
+            ]
+        ];
     }
 
     /**

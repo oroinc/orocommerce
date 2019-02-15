@@ -76,6 +76,10 @@ workflows:
                         title: oro.sale.quote.actions.quote_expire_title
                         message: oro.sale.quote.actions.quote_expire_confirm
                         okText: oro.sale.quote.actions.mark_as_expired
+            auto_expire_transition:
+                step_to: closed
+                transition_definition: expire_transition_definition
+                is_hidden: true
                 triggers:
                     -
                         entity_class: 'Oro\Bundle\SaleBundle\Entity\Quote'

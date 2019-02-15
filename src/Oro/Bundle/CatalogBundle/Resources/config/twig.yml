@@ -7,3 +7,11 @@ services:
             - "@service_container"
         tags:
             - { name: twig.extension }
+
+    oro_catalog.twig.category_image_extension:
+        class: 'Oro\Bundle\CatalogBundle\Twig\CategoryImageExtension'
+        public: false
+        arguments:
+            - '@service_container'
+        tags:
+            - { name: twig.extension }

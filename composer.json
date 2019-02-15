@@ -22,20 +22,22 @@
         "besimple/soap-client": "^0.2.6"
     },
     "require-dev": {
-        "sensio/generator-bundle": "3.1.2",
-        "behat/behat": "3.2.2",
-        "behat/mink-extension": "2.2.*",
+        "sensio/generator-bundle": "3.1.*",
+        "behat/behat": "3.4.*",
+        "behat/mink-extension": "2.3.*",
         "behat/mink-selenium2-driver": "1.*",
-        "behat/symfony2-extension": "2.1.1",
-        "phpunit/phpunit": "5.7.*",
-        "johnkary/phpunit-speedtrap": "1.0.*",
-        "mybuilder/phpunit-accelerator": "1.2.*",
-        "squizlabs/php_codesniffer": "2.8.*",
+        "behat/symfony2-extension": "2.1.*",
+        "nelmio/alice": "2.3.*",
+        "phpunit/phpunit": "6.5.*",
+        "johnkary/phpunit-speedtrap": "2.0.*",
+        "mybuilder/phpunit-accelerator": "2.0.*",
+        "squizlabs/php_codesniffer": "3.3.*",
         "phpmd/phpmd": "2.6.*",
-        "sebastian/phpcpd": "dev-master#cff7f36c2ae89d59987de25d14fd41a72dd4a703 as 3.1.0",
-        "phpunit/phpcov": "3.1.*",
+        "sebastian/phpcpd": "3.0.*",
+        "phpunit/phpcov": "4.0.*",
         "symfony/phpunit-bridge": "3.4.*",
-        "friendsofphp/php-cs-fixer": "2.1.*"
+        "friendsofphp/php-cs-fixer": "2.12.*",
+        "oro/twig-inspector": "1.0.*"
     },
     "repositories": {
         "oro": {
