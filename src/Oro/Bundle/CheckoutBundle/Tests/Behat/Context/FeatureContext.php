@@ -54,6 +54,8 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         $page = $this->getSession()->getPage();
         $page->selectFieldOption(self::$formMapping[$step], $value);
 
+        $this->waitContinueButton();
+
         $page->pressButton($button);
         $this->waitForAjax();
     }
@@ -71,6 +73,9 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         $this->checkValueOnCheckoutPage($value);
 
         $page = $this->getSession()->getPage();
+
+        $this->waitContinueButton();
+
         $page->pressButton($button);
         $this->waitForAjax();
     }
@@ -280,6 +285,11 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     public function iWaitSubmitOrderButton()
     {
         $this->getSession()->getDriver()->wait(30000, "0 == $('button.checkout__submit-btn:disabled').length");
+    }
+
+    private function waitContinueButton()
+    {
+        $this->getSession()->getDriver()->wait(30000, "0 == $('button.checkout-form__submit:disabled').length");
     }
 
     /**
