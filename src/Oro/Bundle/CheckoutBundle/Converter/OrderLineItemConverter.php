@@ -38,21 +38,26 @@ class OrderLineItemConverter implements CheckoutLineItemConverterInterface
      * @param ConfigManager $configManager
      * @param InventoryQuantityProviderInterface $quantityProvider
      * @param AuthorizationCheckerInterface $authorizationChecker
-     * @param EntityFallbackResolver $entityFallbackResolver
      * @param string $configPath
      */
     public function __construct(
         ConfigManager $configManager,
         InventoryQuantityProviderInterface $quantityProvider,
         AuthorizationCheckerInterface $authorizationChecker,
-        EntityFallbackResolver $entityFallbackResolver,
         $configPath
     ) {
         $this->configManager = $configManager;
         $this->quantityProvider = $quantityProvider;
         $this->authorizationChecker = $authorizationChecker;
-        $this->entityFallbackResolver = $entityFallbackResolver;
         $this->configPath = $configPath;
+    }
+
+    /**
+     * @param EntityFallbackResolver $entityFallbackResolver
+     */
+    public function setEntityFallbackResolver(EntityFallbackResolver $entityFallbackResolver)
+    {
+        $this->entityFallbackResolver = $entityFallbackResolver;
     }
 
     /**

@@ -57,9 +57,9 @@ class OrderLineItemConverterTest extends \PHPUnit_Framework_TestCase
             $this->configManager,
             $this->quantityProvider,
             $this->authorizationChecker,
-            $this->entityFallbackResolver,
             self::CONFIG_PATH
         );
+        $this->converter->setEntityFallbackResolver($this->entityFallbackResolver);
     }
 
     public function testIsSourceSupported()
