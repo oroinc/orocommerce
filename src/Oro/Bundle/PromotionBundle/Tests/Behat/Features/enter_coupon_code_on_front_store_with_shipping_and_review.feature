@@ -3,8 +3,6 @@
 @fixture-OroCheckoutBundle:ShippingRuleForFlatRate2.yml
 @fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
 @fixture-OroPromotionBundle:promotions-with-coupons-on-shopping-list-page.yml
-@skip
-# Unskip after fix BB-13327
 
 Feature: Enter coupon code on Front Store with shipping and review
   In order to apply discount coupons on Front Store
