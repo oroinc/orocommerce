@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Command;
 
-use Oro\Bundle\LayoutBundle\DependencyInjection\Configuration;
+use Oro\Bundle\LayoutBundle\Layout\Extension\ThemeConfiguration;
 use Oro\Bundle\LayoutBundle\Model\ThemeImageTypeDimension;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Entity\ProductImageType;
@@ -96,13 +96,13 @@ class ImageResizeMessageProcessorTest extends WebTestCase
         $expectedWidth = $dimension->getWidth() ?: $originalImageSize->getWidth();
         $expectedHeight = $dimension->getHeight() ?: $originalImageSize->getHeight();
 
-        if (Configuration::AUTO === $expectedWidth) {
+        if (ThemeConfiguration::AUTO === $expectedWidth) {
             $expectedWidth = round(
                 $originalImageSize->getWidth() * $dimension->getHeight() / $originalImageSize->getHeight()
             );
         }
 
-        if (Configuration::AUTO === $expectedHeight) {
+        if (ThemeConfiguration::AUTO === $expectedHeight) {
             $expectedHeight = round(
                 $originalImageSize->getHeight() * $dimension->getWidth() / $originalImageSize->getWidth()
             );
