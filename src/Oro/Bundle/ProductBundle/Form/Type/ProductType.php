@@ -169,6 +169,7 @@ class ProductType extends AbstractType
                 'pageTemplate',
                 EntityFieldFallbackValueType::class,
                 [
+                    'label' => 'oro.product.page_template.label',
                     'value_type' => PageTemplateType::class,
                     'value_options' => [
                         'route_name' => self::PAGE_TEMPLATE_ROUTE_NAME
