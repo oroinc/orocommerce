@@ -161,7 +161,7 @@ define(function(require) {
                 return _.reduce(variant, function(memo, attr, key) {
                     memo[this._extractName(key)] = (
                         this._extractName(key) + '_' + this._normalizeBool(attr)
-                    ).toLowerCase();
+                    );
                     return memo;
                 }, {}, this);
             }, this);

@@ -4,9 +4,15 @@
 Feature: Guest shopping lists owner
   As administrator I should have a possibility to change default guest shopping list owner in configuration
 
+  Scenario: Feature Background
+    Given sessions active:
+      | Admin | first_session  |
+      | Buyer | second_session |
+
   Scenario: Change default owner to new user
-    Given I login as administrator
-    And I go to System/Configuration
+    Given I proceed as the Admin
+    And I login as administrator
+    When I go to System/Configuration
     And I follow "Commerce/Sales/Shopping List" on configuration sidebar
     And uncheck "Use default" for "Enable guest shopping list" field
     And I check "Enable guest shopping list"
@@ -16,23 +22,24 @@ Feature: Guest shopping lists owner
     And I fill in "Default Guest Shopping List Owner" with "newadmin@example.com"
     And I should see "Admin User"
     And I save setting
-    And I should see "Configuration saved" flash message
+    Then I should see "Configuration saved" flash message
 
   Scenario: Create shopping list on frontend
-    Given I am on homepage
-    And I should see "Shopping list"
-    And type "PSKU1" in "search"
+    Given I proceed as the Buyer
+    When I am on homepage
+    Then I should see "Shopping list"
+    When type "PSKU1" in "search"
     And I click "Search Button"
-    And I should see "Product1"
+    Then I should see "Product1"
     And I should see "Add to Shopping List"
-    And I click "View Details" for "PSKU1" product
-    And I should see "Add to Shopping List"
-    And I click "Add to Shopping List"
-    And I should see "Product has been added to" flash message
-    Then I should see "In shopping list"
+    When I click "View Details" for "PSKU1" product
+    Then I should see "Add to Shopping List"
+    When I click "Add to Shopping List"
+    Then I should see "Product has been added to" flash message
+    And I should see "In shopping list"
 
   Scenario: Check shopping list saved with correct owner
-    Given I login as administrator
-    And I go to Sales/Shopping Lists
+    Given I proceed as the Admin
+    When I go to Sales/Shopping Lists
     And I click View Shopping List in grid
     Then I should see "Owner: Admin User (Main)"

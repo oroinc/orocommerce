@@ -230,6 +230,10 @@ oro:
             street.label: Street
             street2.label: Street 2
             phone.label: Phone
+            country_name.label: Country name
+            country_iso2_code.label: Country ISO2 code
+            country_iso3_code.label: Country ISO3 code
+            region_name.label: State name
 
             no_exist: No shipping address found
 
@@ -244,6 +248,7 @@ oro:
             customer.label: 'Customer'
             customer_user.label: 'Customer User'
             visitor.label: 'Customer Visitor'
+            demand_products.label: 'Demand Products'
 
         controller:
             quote:

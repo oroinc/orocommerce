@@ -78,11 +78,6 @@ define(function(require) {
         confirmed: false,
 
         /**
-         * @property {Boolean}
-         */
-        confirmModalInitialized: false,
-
-        /**
          * @property {jQuery.Element}
          */
         $form: null,
@@ -346,21 +341,13 @@ define(function(require) {
          * @private
          */
         _showConfirmModal: function() {
-            if (!this.confirmModalInitialized) {
-                if (!this.$form.data('productCollectionApplyQueryModal')) {
-                    this.$form.data(
-                        'productCollectionApplyQueryModal',
-                        new StandardConfirmation({
-                            content: __('oro.product.product_collection.filter_query.confirmation_modal_content'),
-                            okText: __('oro.product.product_collection.filter_query.continue')
-                        })
-                    );
-                }
-                this.$form.data('productCollectionApplyQueryModal').on('ok', _.bind(this.onConfirmModalOk, this));
-                this.confirmModalInitialized = true;
-            }
+            var confirmModal = new StandardConfirmation({
+                content: __('oro.product.product_collection.filter_query.confirmation_modal_content'),
+                okText: __('oro.product.product_collection.filter_query.continue')
+            });
 
-            this.$form.data('productCollectionApplyQueryModal').open();
+            confirmModal.on('ok', _.bind(this.onConfirmModalOk, this));
+            confirmModal.open();
         },
 
         /**
@@ -442,9 +429,6 @@ define(function(require) {
                 return;
             }
 
-            if (this.$form.data('productCollectionApplyQueryModal')) {
-                this.$form.data('productCollectionApplyQueryModal').off('ok', _.bind(this.onConfirmModalOk, this));
-            }
             this.$form.off(this.eventNamespace());
             mediator.off('grid-sidebar:load:' + this.options.controlsBlockAlias);
             mediator.off(this.applyQueryEventName);

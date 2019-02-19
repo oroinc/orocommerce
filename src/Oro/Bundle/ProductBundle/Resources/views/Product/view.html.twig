@@ -299,7 +299,7 @@
     {% else %}
         {% set pageTemplatesData = UI.renderProperty(
             'oro.product.page_template.label'|trans,
-            pageTemplate.label
+            pageTemplate.label|trans
         ) %}
     {% endif %}
 

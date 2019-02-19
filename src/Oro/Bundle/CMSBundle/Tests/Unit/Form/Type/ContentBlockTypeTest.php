@@ -2,13 +2,16 @@
 
 namespace Oro\Bundle\CMSBundle\Tests\Unit\Form\Type;
 
+use Oro\Bundle\CMSBundle\ContentBlock\DefaultContentVariantScopesResolver;
 use Oro\Bundle\CMSBundle\Entity\ContentBlock;
 use Oro\Bundle\CMSBundle\Entity\TextContentVariant;
 use Oro\Bundle\CMSBundle\Form\Type\ContentBlockType;
 use Oro\Bundle\CMSBundle\Form\Type\TextContentVariantCollectionType;
 use Oro\Bundle\CMSBundle\Form\Type\TextContentVariantType;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
+use Oro\Bundle\FormBundle\Provider\HtmlTagProvider;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizedFallbackValueCollectionTypeStub;
@@ -19,27 +22,51 @@ use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntityValidator;
 use Symfony\Component\Asset\Context\ContextInterface;
 use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\Constraints\CollectionValidator;
 use Symfony\Component\Validator\ConstraintValidatorFactoryInterface;
 
 class ContentBlockTypeTest extends FormIntegrationTestCase
 {
     /**
+     * @var DefaultContentVariantScopesResolver|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $defaultVariantScopesResolver;
+
+    protected function getTypes()
+    {
+        $this->defaultVariantScopesResolver = $this->createMock(DefaultContentVariantScopesResolver::class);
+
+        $type = new ContentBlockType();
+        $type->setDefaultVariantScopesResolver($this->defaultVariantScopesResolver);
+
+        return [$type];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function tearDown()
+    {
+        unset($this->type);
+    }
+
+    /**
      * @return array
      */
     protected function getExtensions()
     {
-        /**
-         * @var \Oro\Bundle\ConfigBundle\Config\ConfigManager|\PHPUnit\Framework\MockObject\MockObject $configManager
-         */
-        $configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
+        /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject $configManager */
+        $configManager = $this->getMockBuilder(ConfigManager::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $htmlTagProvider = $this->createMock('Oro\Bundle\FormBundle\Provider\HtmlTagProvider');
+        /** @var HtmlTagProvider|\PHPUnit\Framework\MockObject\MockObject $htmlTagProvider */
+        $htmlTagProvider = $this->createMock(HtmlTagProvider::class);
         $htmlTagProvider->expects($this->any())
             ->method('getAllowedElements')
             ->willReturn(['br', 'a']);
 
+        /** @var ContextInterface|\PHPUnit\Framework\MockObject\MockObject $context */
         $context = $this->createMock(ContextInterface::class);
 
         return [
@@ -81,6 +108,8 @@ class ContentBlockTypeTest extends FormIntegrationTestCase
     {
         $form = $this->factory->create(ContentBlockType::class, $existingData);
 
+        $this->defaultVariantScopesResolver->expects($this->once())
+            ->method('resolve');
         $this->assertEquals($existingData, $form->getData());
 
         $form->submit($submittedData);
@@ -200,8 +229,8 @@ class ContentBlockTypeTest extends FormIntegrationTestCase
      */
     protected function getConstraintValidatorFactory()
     {
-        /* @var $factory \PHPUnit\Framework\MockObject\MockObject|ConstraintValidatorFactoryInterface */
-        $factory = $this->createMock('Symfony\Component\Validator\ConstraintValidatorFactoryInterface');
+        /* @var \PHPUnit\Framework\MockObject\MockObject|ConstraintValidatorFactoryInterface $factory */
+        $factory = $this->createMock(ConstraintValidatorFactoryInterface::class);
         $factory->expects($this->any())
             ->method('getInstance')
             ->willReturnCallback(
@@ -214,9 +243,7 @@ class ContentBlockTypeTest extends FormIntegrationTestCase
                             ->getMock();
                     }
 
-                    if (!isset($this->validators[$className]) ||
-                        $className === 'Symfony\Component\Validator\Constraints\CollectionValidator'
-                    ) {
+                    if (!isset($this->validators[$className]) || $className === CollectionValidator::class) {
                         $this->validators[$className] = new $className();
                     }
 

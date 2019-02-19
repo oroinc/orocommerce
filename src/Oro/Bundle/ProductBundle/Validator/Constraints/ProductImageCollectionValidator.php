@@ -11,6 +11,9 @@ use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
+/**
+ * Validate current product images collection
+ */
 class ProductImageCollectionValidator extends ConstraintValidator
 {
     const ALIAS = 'oro_product_image_collection_validator';
@@ -58,8 +61,20 @@ class ProductImageCollectionValidator extends ConstraintValidator
      */
     public function validate($value, Constraint $constraint)
     {
+        if ($value instanceof EntityProductImage) {
+            $product = $value->getProduct();
+
+            if (null === $product) {
+                return;
+            }
+
+            $product->addImage($value);
+            $imagesByTypeCounter = $this->productImageHelper->countImagesByType($product->getImages());
+        } else {
+            $imagesByTypeCounter = $this->productImageHelper->countImagesByType($value);
+        }
+
         $maxNumberByType = $this->imageTypeProvider->getMaxNumberByType();
-        $imagesByTypeCounter = $this->productImageHelper->countImagesByType($value);
 
         foreach ($maxNumberByType as $name => $maxTypeValues) {
             if (array_key_exists($name, $imagesByTypeCounter) &&

@@ -123,7 +123,7 @@
 
     <div id="zoom-container"></div>
     {% if productImages|length > 1 %}
-        <div class="product-view-media-gallery__nav" {{ UI.attributes(slideNavAttr) }}>
+        <div class="product-view-media-gallery__nav loading slides-to-show-{{ navListOptions.slidesToShow }}" {{ UI.attributes(slideNavAttr) }}>
             {% for productImage in productImages %}
                 <div class="product-view-media-gallery__nav__item">
                     <img class="product-view-media-gallery__nav__image"

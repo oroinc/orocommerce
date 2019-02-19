@@ -18,6 +18,7 @@ oro:
         items.label: 'Item|Items'
         subtotal.label: Subtotal
         total.label: Grand Total
+        totals.label: Totals
         currency.label: Currency
         website.label: Website
         contact_information.label: Contact Information

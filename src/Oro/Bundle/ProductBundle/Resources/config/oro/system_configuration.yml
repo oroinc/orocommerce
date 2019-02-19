@@ -74,6 +74,8 @@ system_configuration:
             icon: 'fa-list'
         limit_filters_sorters:
             title: oro.product.system_configuration.groups.limit_filters_sorters.title
+        disable_filters:
+            title: oro.product.system_configuration.groups.disable_filters.title
 
     fields:
         oro_product.related_products_enabled:
@@ -284,6 +286,17 @@ system_configuration:
             priority: 30
             options:
                 label: oro.product.system_configuration.fields.product_image_watermark_file.label
+                required: false
+                fileConstraints:
+                    - Image: ~
+
+        oro_product.product_image_placeholder:
+            data_type: string
+            type: 'Oro\Bundle\ConfigBundle\Form\Type\ConfigFileType'
+            priority: 50
+            options:
+                label: oro.product.system_configuration.fields.product_image_placeholder.label
+                tooltip: oro.product.system_configuration.fields.product_image_placeholder.tooltip
                 required: false
                 fileConstraints:
                     - Image: ~
@@ -540,6 +553,14 @@ system_configuration:
                 label: oro.product.system_configuration.fields.limit_filters_sorters_on_product_listing.label
                 tooltip: oro.product.system_configuration.fields.limit_filters_sorters_on_product_listing.tooltip
 
+        oro_product.disable_filters_on_product_listing:
+            data_type: boolean
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
+            priority: 5
+            options:
+                label: oro.product.system_configuration.fields.disable_filters_on_product_listing.label
+                tooltip: oro.product.system_configuration.fields.disable_filters_on_product_listing.tooltip
+
     tree:
         system_configuration:
             platform:
@@ -562,6 +583,7 @@ system_configuration:
                                     limit_filters_sorters:
                                         children:
                                             - oro_product.limit_filters_sorters_on_product_listing
+                                            - oro_product.disable_filters_on_product_listing
                             related_items:
                                 priority: 100
                                 children:
@@ -668,6 +690,13 @@ system_configuration:
                                     guest_quick_order_form:
                                         children:
                                             - oro_product.guest_quick_order_form
+                    design:
+                        children:
+                            theme:
+                                children:
+                                    theme_settings:
+                                        children:
+                                            - oro_product.product_image_placeholder
 
         organization_configuration:
             commerce:

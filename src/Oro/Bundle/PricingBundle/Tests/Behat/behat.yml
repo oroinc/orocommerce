@@ -20,6 +20,7 @@ oro_behat_extension:
         - OroShoppingListBundle::FeatureContext
         - OroLocaleBundle::LocalizationContext
         - OroFrontendLocalizationBundle::LocalizationSwitcherContext
+        - OroShoppingListBundle::ShoppingListContext
       paths:
         - '@OroPricingBundle/Tests/Behat/Features'
 

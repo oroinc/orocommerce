@@ -96,6 +96,23 @@ oro_behat_extension:
         type: xpath
         locator: '//div[contains(@class,"filter-item")]/div[contains(@class,"filter-select") and contains(text(),"Filter By Sub-Categories")]/select'
 
+    Uploaded Featured Category Image:
+      selector:
+        type: xpath
+        locator: '//a[contains(@class,"featured-category")]/img[contains (@src,"/media/cache/attachment")]'
+
+    Empty Featured Category Image:
+      selector:
+        type: xpath
+        locator: '//a[contains(@class,"featured-category")]/img[contains (@src,"no_image.png")]'
+
+    Category Image Placeholder Config:
+      selector: 'form[name="theme"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Image: 'theme[oro_catalog___category_image_placeholder][value][file]'
+
   suites:
     OroCatalogBundle:
       contexts:

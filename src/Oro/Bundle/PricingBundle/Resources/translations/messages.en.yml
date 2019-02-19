@@ -162,6 +162,7 @@ oro.pricing:
         product_sku.label: Product SKU
         product_name.label: Product name
         price_list.label: Price List
+        price_rule.label: Price Calculation Rule
         currency.label: Currency
         quantity.label: Quantity
         value.label: Value

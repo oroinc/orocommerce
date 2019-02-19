@@ -1,5 +1,8 @@
 oro:
     product:
+        search:
+            search_title:
+                title: '{0} All Products|]1,Inf] Search Results for "%text%"'
         entity_label: Product
         entity_plural_label: Products
         entity_description: Represents product information.
@@ -83,8 +86,18 @@ oro:
             no: No
         time_period.label: Time Period
         page_template:
+            title: Product Page
             label: Page Template
             description: Page Template style used for displaying product in frontend store
+            short:
+                label: Short page
+                description: Short page template of product page (no additional attributes groups are displayed at all)
+            two_columns:
+                label: Two columns page
+                description: Two columns template of product page (additional attribute groups are displayed in two columns)
+            list:
+                label: List page
+                description: List template of product page (additional attribute groups are displayed in column one below another)
         slugs:
             label:              'Slugs'
             singular_label:     'Slug'
@@ -332,6 +345,7 @@ oro:
                 configurable_products_variations.title: 'Variations'
                 filters_sorters.title: 'Filters and Sorters'
                 limit_filters_sorters.title: 'Limit Filters and Sorters'
+                disable_filters_sorters.title: 'Disable Filters'
             fields:
                 brand_direct_url_prefix.label: 'Brand URL Prefix'
                 enable_related_products.label: 'Enable Related Products'
@@ -410,6 +424,9 @@ oro:
                     bottomleft.label: 'Bottom Left'
                     bottom.label: 'Bottom'
                     bottomright.label: 'Bottom Right'
+                product_image_placeholder:
+                    label: 'Product Image Placeholder'
+                    tooltip: 'This image will be displayed on the product listing and product view pages for the products that do not have any associated images.'
                 featured_products_segment:
                     label: Segment
                     tooltip: |
@@ -476,6 +493,9 @@ oro:
                 limit_filters_sorters_on_product_listing:
                     label: 'Hide Unrelated Product Filters And Sorting Options'
                     tooltip: 'Limit filters and sorting options on the product catalog page to display only those attributes that are relevant to the selected product family in the current product collection.'
+                disable_filters_on_product_listing:
+                    label: "Don't Change Initial Filter State"
+                    tooltip: 'If checked, all relevant filters that have been displayed on the initial page load and their options will remain visible on the page and will be disabled after they become non-relevant as the user refines the search results. Otherwise, any filters and options that become non-relevant, will be hidden.'
             notice:
                 product_image_watermark: >
                    The updated product image watermark settings will be used for the newly uploaded images only.
@@ -635,7 +655,6 @@ oro:
                     messages:
                         saved:      'Brand has been saved'
                         notBlank:   'This field cannot be blank'
-
 
     product_unit.each:
         label:

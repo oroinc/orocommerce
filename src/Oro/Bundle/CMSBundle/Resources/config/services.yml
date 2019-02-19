@@ -27,6 +27,10 @@ services:
         arguments:
             - "@property_accessor"
 
+    oro_cms.content_block.default_content_variant_scopes_resolver:
+        class: 'Oro\Bundle\CMSBundle\ContentBlock\DefaultContentVariantScopesResolver'
+        public: false
+
     oro_cms.provider.content_block_provider:
         class: 'Oro\Bundle\CMSBundle\Layout\DataProvider\ContentBlockDataProvider'
         arguments:
