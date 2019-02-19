@@ -10,7 +10,6 @@ use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListSchedule;
 use Oro\Bundle\PricingBundle\Form\Type\PriceListType;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as EntityTypeStub;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -43,8 +42,7 @@ class PriceListTypeTest extends FormIntegrationTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        /** @var TODO: Investigate $entityIdentifierType usage */
-        $entityIdentifierType = new EntityIdentifierType(
+        $entityIdentifierType = new EntityTypeStub(
             [
                 1 => $this->getEntity(self::ACCOUNT_CLASS, 1),
                 2 => $this->getEntity(self::ACCOUNT_CLASS, 2),

@@ -46,7 +46,6 @@ use Oro\Bundle\TranslationBundle\Translation\Translator;
 use Oro\Component\Layout\Extension\Theme\Manager\PageTemplatesManager;
 use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType as StubEntityIdentifierType;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as EntityTypeStub;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EnumSelectType as EnumSelectTypeStub;
 use Oro\Component\Testing\Unit\PreloadedExtension;
@@ -227,7 +226,7 @@ class ProductTypeTest extends FormIntegrationTestCase
                     ProductCustomVariantFieldsCollectionType::class => new ProductCustomVariantFieldsCollectionType(
                         $variantFieldProvider
                     ),
-                    EntityIdentifierType::class => new StubEntityIdentifierType([]),
+                    EntityIdentifierType::class => new EntityTypeStub([]),
                     ProductStatusType::class => new ProductStatusType(new ProductStatusProvider()),
                     ProductImageCollectionType::class => new ProductImageCollectionType($imageTypeProvider),
                     LocalizedSlugType::class => new LocalizedSlugTypeStub(),

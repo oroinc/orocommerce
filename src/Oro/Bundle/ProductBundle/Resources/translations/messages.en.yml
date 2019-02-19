@@ -86,8 +86,18 @@ oro:
             no: No
         time_period.label: Time Period
         page_template:
+            title: Product Page
             label: Page Template
             description: Page Template style used for displaying product in frontend store
+            short:
+                label: Short page
+                description: Short page template of product page (no additional attributes groups are displayed at all)
+            two_columns:
+                label: Two columns page
+                description: Two columns template of product page (additional attribute groups are displayed in two columns)
+            list:
+                label: List page
+                description: List template of product page (additional attribute groups are displayed in column one below another)
         slugs:
             label:              'Slugs'
             singular_label:     'Slug'
@@ -644,7 +654,6 @@ oro:
                     messages:
                         saved:      'Brand has been saved'
                         notBlank:   'This field cannot be blank'
-
 
     product_unit.each:
         label:

@@ -21,7 +21,7 @@ use Oro\Bundle\RedirectBundle\Helper\ConfirmSlugChangeFormHelper;
 use Oro\Bundle\RedirectBundle\Tests\Unit\Form\Type\Stub\LocalizedSlugTypeStub;
 use Oro\Bundle\VisibilityBundle\Tests\Unit\Form\Extension\Stub\CategoryStub;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType as StubEntityIdentifierType;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Form;
@@ -215,7 +215,7 @@ class CategoryTypeTest extends FormIntegrationTestCase
                 [
                     $this->type,
                     ImageType::class => new ImageTypeStub(),
-                    EntityIdentifierType::class => new StubEntityIdentifierType([
+                    EntityIdentifierType::class => new EntityType([
                         1 => $this->getEntity(Category::class, ['id' => 1])
                     ]),
                     LocalizedFallbackValueCollectionType::class => new LocalizedFallbackValueCollectionTypeStub(),
