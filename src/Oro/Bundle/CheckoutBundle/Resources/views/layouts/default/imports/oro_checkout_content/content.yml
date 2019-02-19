@@ -111,7 +111,7 @@ layout:
                 __checkout_order_summary_notes:
                     blockType: order_summary_notes
                     options:
-                        visible: '=context["workflowStepName"]!="order_review"'
+                        visible: '=context["workflowStepName"]!="order_review" && context["workflowName"]!="b2b_flow_checkout_single_page"'
                         notes: '=data["checkout"].getCustomerNotes()'
 
                 __checkout_order_summary_totals_container:
