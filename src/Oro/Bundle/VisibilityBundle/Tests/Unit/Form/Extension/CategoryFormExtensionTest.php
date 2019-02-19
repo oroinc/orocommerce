@@ -34,7 +34,7 @@ use Oro\Bundle\VisibilityBundle\Form\Extension\CategoryFormExtension;
 use Oro\Bundle\VisibilityBundle\Form\Type\EntityVisibilityType;
 use Oro\Bundle\VisibilityBundle\Provider\VisibilityChoicesProvider;
 use Oro\Bundle\VisibilityBundle\Tests\Unit\Form\Extension\Stub\CategoryStub;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType as EntityIdentifierTypeStub;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
@@ -111,7 +111,7 @@ class CategoryFormExtensionTest extends FormIntegrationTestCase
                             'kg' => (new ProductUnit())->setCode('kg')
                         ]
                     ),
-                    EntityIdentifierType::class => new EntityIdentifierTypeStub([]),
+                    EntityIdentifierType::class => new EntityType([]),
                     LocalizedFallbackValueCollectionType::class => new LocalizedFallbackValueCollectionType($registry),
                     LocalizedPropertyType::class => new LocalizedPropertyType(),
                     LocalizationCollectionType::class => new LocalizationCollectionTypeStub(),

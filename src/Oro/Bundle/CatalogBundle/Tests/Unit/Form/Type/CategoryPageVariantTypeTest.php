@@ -11,7 +11,7 @@ use Oro\Bundle\FormBundle\Form\Extension\TooltipFormExtension;
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 use Oro\Bundle\TranslationBundle\Translation\Translator;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType as EntityIdentifierTypeStub;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Oro\Component\Tree\Handler\AbstractTreeHandler;
@@ -60,7 +60,7 @@ class CategoryPageVariantTypeTest extends FormIntegrationTestCase
             new PreloadedExtension(
                 [
                     CategoryTreeType::class => new CategoryTreeType($treeHandler),
-                    EntityIdentifierType::class => new EntityIdentifierTypeStub(
+                    EntityIdentifierType::class => new EntityType(
                         [
                             1001 => $this->getCategory(1001),
                             2002 => $this->getCategory(2002),
