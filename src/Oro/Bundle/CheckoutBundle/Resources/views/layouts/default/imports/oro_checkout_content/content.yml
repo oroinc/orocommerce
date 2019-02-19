@@ -166,8 +166,8 @@ layout:
                                             __checkout_order_summary_line_item_row:
                                                 __checkout_order_summary_line_item_info_column:
                                                     __checkout_order_summary_line_item_name: ~
-                                                    __checkout_order_summary_line_item_note: ~
                                                     __checkout_order_summary_line_item_configurable_products: ~
+                                                    __checkout_order_summary_line_item_note: ~
                                                 __checkout_order_summary_line_item_sku_column:
                                                     __checkout_order_summary_line_item_sku: ~
                                                 __checkout_order_summary_line_item_quantity_column:
