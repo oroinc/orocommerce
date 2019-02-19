@@ -302,7 +302,7 @@
 
             {% if workflowItem.data.get('allow_manual_source_remove') %}
                 {% set removeElementOptions = {} %}
-                {% set removeLabel = workflowItem.data.get('source_remove_label') %}
+                {% set removeLabel = workflowItem.data.get('source_remove_label')|trans %}
                 {% if removeLabel %}
                     {% set removeElementOptions = removeElementOptions|merge({label: removeLabel}) %}
                 {% endif %}

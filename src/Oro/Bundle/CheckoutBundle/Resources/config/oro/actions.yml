@@ -199,9 +199,7 @@ action_groups:
                 attribute: $.editLink
                 route: oro_shopping_list_frontend_view
                 route_parameters: {id: $.shoppingList.id}
-            - '@translate':
-                id: 'oro.frontend.shoppinglist.workflow.remove_source.label'
-                attribute: $.sourceRemoveLabel
+            - '@assign_value': [$.sourceRemoveLabel, 'oro.frontend.shoppinglist.workflow.remove_source.label']
             - '@run_action_group':
                 action_group: start_checkout
                 parameters_mapping:
