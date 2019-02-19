@@ -8,7 +8,6 @@ use Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Provider\Fixture\Bundle\TestBundle
 use Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Provider\Fixture\Bundle\TestBundle3\TestBundle3;
 use Oro\Component\Config\CumulativeResourceManager;
 use Oro\Component\Testing\TempDirExtension;
-use Symfony\Component\Config\ConfigCacheFactory;
 
 class MappingConfigurationProviderTest extends \PHPUnit\Framework\TestCase
 {
@@ -35,10 +34,7 @@ class MappingConfigurationProviderTest extends \PHPUnit\Framework\TestCase
 
         $this->cacheFile = $this->getTempFile('ConfigurationProvider');
 
-        $this->configurationProvider = new MappingConfigurationProvider(
-            $this->cacheFile,
-            new ConfigCacheFactory(false)
-        );
+        $this->configurationProvider = new MappingConfigurationProvider($this->cacheFile, false);
     }
 
     public function testGetConfigurationWithCache()
