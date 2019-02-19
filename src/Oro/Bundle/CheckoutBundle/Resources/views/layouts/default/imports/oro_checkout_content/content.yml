@@ -83,6 +83,8 @@ layout:
                     blockType: container
                 __checkout_order_summary_line_item_name:
                     blockType: block
+                __checkout_order_summary_line_item_note:
+                    blockType: block
                 __checkout_order_summary_line_item_sku_column:
                     blockType: container
                 __checkout_order_summary_line_item_sku:
@@ -103,6 +105,14 @@ layout:
                     blockType: block
                 __checkout_order_summary_line_item_edit:
                     blockType: block
+
+                __checkout_order_summary_notes_container:
+                    blockType: container
+                __checkout_order_summary_notes:
+                    blockType: order_summary_notes
+                    options:
+                        visible: '=context["workflowStepName"]!="order_review"'
+                        notes: '=data["checkout"].getCustomerNotes()'
 
                 __checkout_order_summary_totals_container:
                     blockType: container
@@ -156,6 +166,7 @@ layout:
                                             __checkout_order_summary_line_item_row:
                                                 __checkout_order_summary_line_item_info_column:
                                                     __checkout_order_summary_line_item_name: ~
+                                                    __checkout_order_summary_line_item_note: ~
                                                     __checkout_order_summary_line_item_configurable_products: ~
                                                 __checkout_order_summary_line_item_sku_column:
                                                     __checkout_order_summary_line_item_sku: ~
@@ -165,5 +176,7 @@ layout:
                                                     __checkout_order_summary_line_item_price_per_item: ~
                                                 __checkout_order_summary_line_item_price_total_column:
                                                     __checkout_order_summary_line_item_price_total: ~
+                                    __checkout_order_summary_notes_container:
+                                        __checkout_order_summary_notes: ~
                                     __checkout_order_summary_totals_container:
                                         __checkout_order_summary_totals: ~

@@ -65,6 +65,7 @@ class CheckoutLineItemsDataProvider extends AbstractCheckoutProvider
 
             $data[] = [
                 'productSku' => $lineItem->getProductSku(),
+                'comment' => $lineItem->getComment(),
                 'quantity' => $lineItem->getQuantity(),
                 'productUnit' => $lineItem->getProductUnit(),
                 'productUnitCode' => $unitCode,
