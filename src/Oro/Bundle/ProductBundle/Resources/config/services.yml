@@ -1175,7 +1175,7 @@ services:
 
     oro_product.handler.search_product_handler:
         class: Oro\Bundle\ProductBundle\Handler\SearchProductHandler
-        arguments: ['@request_stack', '@oro_ui.html_tag_helper']
+        arguments: ['@request_stack']
 
     oro_product.helper.product_grouper.factory:
         class: Oro\Bundle\ProductBundle\Helper\ProductGrouper\ProductsGrouperFactory
