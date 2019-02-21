@@ -53,8 +53,6 @@ class SearchProductHandler
             return false;
         }
 
-        $value = $this->htmlTagHelper->escape($value);
-
         return trim($value);
     }
 }
