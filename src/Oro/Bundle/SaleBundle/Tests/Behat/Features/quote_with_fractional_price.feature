@@ -1,4 +1,5 @@
 @ticket-BB-14800
+@ticket-BB-16295
 @fixture-OroPricingBundle:FractionalProductPrices.yml
 @fixture-OroLocaleBundle:GermanLocalization.yml
 
@@ -6,6 +7,7 @@ Feature: Quote with fractional price
   In order to use correct decimal separator for fractional prices in different locales
   As an Administrator
   I want to have ability to use fractional prices with appropriate decimal separator for create and edit Quotes in different locales.
+
   Scenario: Feature Background
     Given I enable the existing localizations
     And I login as administrator
@@ -33,3 +35,16 @@ Feature: Quote with fractional price
     And I click "Save" in modal window
     Then I should see "Quote has been saved" flash message
     And I should see "10,99 $"
+
+  Scenario: Edit and view Quote with fractional price
+    When I click "Edit"
+    And I fill "Quote Form" with:
+      | LineItemPrice | 14.503,99 |
+    When I click "Submit"
+    And I click "Save" in modal window
+    Then I should see "Quote #1 successfully updated" flash message
+    And I should see "14.503,99 $"
+
+    When I click "Edit"
+    Then "Quote Form" must contains values:
+      | LineItemPrice | 14.503,9900 |
