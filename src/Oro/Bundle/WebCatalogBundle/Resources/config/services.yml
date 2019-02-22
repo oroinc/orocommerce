@@ -384,3 +384,8 @@ services:
             - '@oro_config.manager'
         tags:
             - { name: form.type, alias: oro_web_catalog_content_node_select }
+
+    oro_web_catalog.form.data_transformer.navigation_root_option:
+        class: 'Oro\Bundle\WebCatalogBundle\Form\DataTransformer\NavigationRootOptionTransformer'
+        arguments:
+            - '@oro_entity.doctrine_helper'
