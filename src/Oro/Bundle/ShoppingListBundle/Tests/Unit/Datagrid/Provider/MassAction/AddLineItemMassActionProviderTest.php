@@ -14,26 +14,42 @@ use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Security\Core\Authentication\Token\AbstractToken;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
 class AddLineItemMassActionProviderTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|ShoppingListManager */
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|ShoppingListManager
+     */
     protected $manager;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface */
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface
+     */
     protected $translator;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|TokenStorageInterface */
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|TokenStorageInterface
+     */
     protected $tokenStorage;
 
-    /** @var AddLineItemMassActionProvider */
+    /**
+     * @var AddLineItemMassActionProvider
+     */
     protected $provider;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|FeatureChecker */
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|FeatureChecker
+     */
     protected $featureChecker;
+
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|AuthorizationCheckerInterface
+     */
+    protected $authorizationChecker;
 
     protected function setUp()
     {
@@ -41,6 +57,7 @@ class AddLineItemMassActionProviderTest extends \PHPUnit_Framework_TestCase
         $this->translator = $this->createMock(TranslatorInterface::class);
         $this->tokenStorage = $this->createMock(TokenStorageInterface::class);
         $this->featureChecker = $this->createMock(FeatureChecker::class);
+        $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
 
         $this->translator->expects($this->any())
             ->method('trans')
@@ -48,7 +65,12 @@ class AddLineItemMassActionProviderTest extends \PHPUnit_Framework_TestCase
                 return $label;
             });
 
-        $this->provider = new AddLineItemMassActionProvider($this->manager, $this->translator, $this->tokenStorage);
+        $this->provider = new AddLineItemMassActionProvider(
+            $this->manager,
+            $this->translator,
+            $this->tokenStorage
+        );
+        $this->provider->setAuthorizationChecker($this->authorizationChecker);
         $this->provider->setFeatureChecker($this->featureChecker);
         $this->provider->addFeature('shopping_list_create');
     }
@@ -87,10 +109,17 @@ class AddLineItemMassActionProviderTest extends \PHPUnit_Framework_TestCase
         if ($isGuest) {
             $this->manager->expects($this->never())
                 ->method('getShoppingLists');
+
+            $this->authorizationChecker->expects($this->never())
+                ->method('isGranted');
         } else {
             $this->manager->expects($this->once())
                 ->method('getShoppingLists')
                 ->willReturn($shoppingLists);
+
+            $this->authorizationChecker->expects($this->once())
+                ->method('isGranted')
+                ->willReturn(true);
         }
 
         $this->assertEquals($expected, $this->provider->getActions());
@@ -310,6 +339,10 @@ class AddLineItemMassActionProviderTest extends \PHPUnit_Framework_TestCase
             ->method('getShoppingLists')
             ->willReturn($shoppingLists);
 
+        $this->authorizationChecker->expects($this->once())
+            ->method('isGranted')
+            ->willReturn(true);
+
         $this->assertArrayNotHasKey('new', $this->provider->getActions());
     }
 
@@ -343,6 +376,18 @@ class AddLineItemMassActionProviderTest extends \PHPUnit_Framework_TestCase
         ];
 
         $this->assertEquals($expectedActions, $this->provider->getActions());
+    }
+
+    public function testGetActionsWithoutPermissions()
+    {
+        $this->featureChecker->expects($this->never())
+            ->method('isFeatureEnabled');
+
+        $this->authorizationChecker->expects($this->once())
+            ->method('isGranted')
+            ->willReturn(false);
+
+        $this->assertEmpty($this->provider->getActions());
     }
 
     /**

@@ -9,6 +9,7 @@ use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
 class AddLineItemMassActionProvider implements MassActionProviderInterface
@@ -17,14 +18,25 @@ class AddLineItemMassActionProvider implements MassActionProviderInterface
 
     use FeatureCheckerHolderTrait;
 
-    /** @var ShoppingListManager */
+    /**
+     * @var ShoppingListManager
+     */
     protected $manager;
 
-    /** @var TranslatorInterface */
+    /**
+     * @var TranslatorInterface
+     */
     protected $translator;
 
-    /** @var TokenStorageInterface */
+    /**
+     * @var TokenStorageInterface
+     */
     protected $tokenStorage;
+
+    /**
+     * @var AuthorizationCheckerInterface
+     */
+    private $authorizationChecker;
 
     /**
      * @param ShoppingListManager $manager
@@ -54,6 +66,10 @@ class AddLineItemMassActionProvider implements MassActionProviderInterface
                 'is_current' => true
             ]);
         } else {
+            if (!$this->isAllowed()) {
+                return [];
+            }
+
             $shoppingLists = $this->manager->getShoppingLists(['list.id' => Criteria::ASC]);
 
             /** @var ShoppingList $shoppingList */
@@ -110,6 +126,14 @@ class AddLineItemMassActionProvider implements MassActionProviderInterface
     }
 
     /**
+     * @param AuthorizationCheckerInterface $authorizationChecker
+     */
+    public function setAuthorizationChecker(AuthorizationCheckerInterface $authorizationChecker): void
+    {
+        $this->authorizationChecker = $authorizationChecker;
+    }
+
+    /**
      * @param array $options
      * @return array
      */
@@ -145,5 +169,13 @@ class AddLineItemMassActionProvider implements MassActionProviderInterface
     private function isGuestCustomerUser(): bool
     {
         return $this->tokenStorage->getToken() instanceof AnonymousCustomerUserToken;
+    }
+
+    /**
+     * @return bool
+     */
+    private function isAllowed(): bool
+    {
+        return $this->authorizationChecker->isGranted('oro_shopping_list_frontend_update');
     }
 }

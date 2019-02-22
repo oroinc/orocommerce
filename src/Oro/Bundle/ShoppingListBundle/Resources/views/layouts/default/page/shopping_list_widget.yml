@@ -7,7 +7,7 @@ layout:
                 header_row_shopping_trigger:
                     blockType: container
                     options:
-                        visible: '=data["feature"].isFeatureEnabled("guest_shopping_list") || context["is_logged_in"]'
+                        visible: '=data["acl"].isGranted("oro_shopping_list_frontend_update") || (data["feature"].isFeatureEnabled("guest_shopping_list") && !context["is_logged_in"])'
                 header_row_shopping_toggle:
                      blockType: container
                 main_menu_shopping_lists_wrapper:
@@ -46,4 +46,4 @@ layout:
         - '@setOption':
             id: header_row_shopping
             optionName: visible
-            optionValue: '=data["feature"].isFeatureEnabled("guest_shopping_list") || context["is_logged_in"]'
+            optionValue: '=data["acl"].isGranted("oro_shopping_list_frontend_update") || data["feature"].isFeatureEnabled("guest_shopping_list") && !context["is_logged_in"]'
