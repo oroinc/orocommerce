@@ -5,7 +5,7 @@
 Feature: Product attribute multiselect
   In order to have custom attributes for Product entity
   As an Administrator
-  I need to be able to add product attribute and have attribute data in search and filter
+  I need to be able to add product attribute and have attribute data in search, filter and product view page
 
   Scenario: Feature Background
     Given sessions active:
@@ -93,8 +93,49 @@ Feature: Product attribute multiselect
     Given I proceed as the Buyer
     When I type "SKU123" in "search"
     And I click "Search Button"
-    And I click "View Details" for "SKU123" product
-    Then I should see "TestMultiValueOne, TestMultiValueThree"
+
+  Scenario: Check attributes in product page with "Default Page" template
+    When I click "View Details" for "SKU123" product
+    Then I should see "MultiSelectField: TestMultiValueOne, TestMultiValueThree"
+
+  Scenario: Change product page view to "Short Page"
+    Given I proceed as the Admin
+    And I go to System / Configuration
+    And I follow "Commerce/Design/Theme" on configuration sidebar
+    When fill "Page Templates form" with:
+      | Use Default  | false      |
+      | Product Page | Short page |
+    And save form
+    Then I should see "Configuration saved" flash message
+
+  Scenario: Check attribute in product page with "Short Page" template
+    Given I proceed as the Buyer
+    When I reload the page
+    Then I should see "MultiSelectField: TestMultiValueOne, TestMultiValueThree"
+
+  Scenario: Change product page template to "Two columns page"
+    Given I proceed as the Admin
+    When fill "Page Templates form" with:
+      | Product Page | Two columns page |
+    And save form
+    Then I should see "Configuration saved" flash message
+
+  Scenario: Check attribute in product page with "Two columns page" template
+    Given I proceed as the Buyer
+    When I reload the page
+    Then I should see "MultiSelectField: TestMultiValueOne, TestMultiValueThree"
+
+  Scenario: Change product page view to "List Page"
+    Given I proceed as the Admin
+    When fill "Page Templates form" with:
+      | Product Page | List page |
+    And save form
+    Then I should see "Configuration saved" flash message
+
+  Scenario: Check attribute in product page with "List Page" template
+    Given I proceed as the Buyer
+    When I reload the page
+    Then I should see "MultiSelectField: TestMultiValueOne, TestMultiValueThree"
 
   Scenario: Delete product attribute
     Given I proceed as the Admin

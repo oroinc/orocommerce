@@ -148,6 +148,18 @@
     {% endif %}
 {% endblock %}
 
+{% block _product_view_attribute_group_general_widget %}
+    {% if block.children is not empty %}
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': ' product-view__general'
+        }) %}
+
+        <div {{ block('block_attributes') }}>
+            {{ block_widget(block) }}
+        </div>
+    {% endif %}
+{% endblock %}
+
 {% block _product_view_additional_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' product-view__additional'
@@ -181,7 +193,16 @@
     {% set attr = layout_attr_defaults(attr, {'~class': ' brand'}) %}
     <div {{ block('block_attributes') }}>
         <span class="product-view-brand">{{ label|trans }}:</span>
-        <span class="product-view-brand-title" itemprop="brand">{{ block_widget(block) }}</span>
+        <span class="product-view-brand-title" itemprop="brand">{{ block('attribute_localized_fallback_widget') }}</span>
+    </div>
+{% endblock %}
+
+{% block attribute_group_general_widget %}
+    {% set fieldName = block.vars.fieldName|lower %}
+    {% set attr = layout_attr_defaults(attr, {'~class': ' product-view__' ~ fieldName} ) %}
+    <div {{ block('block_attributes') }}>
+        <span class="product-view-attribute">{{ label|trans }}:</span>
+        <span>{{ block_widget(block) }}</span>
     </div>
 {% endblock %}
 
