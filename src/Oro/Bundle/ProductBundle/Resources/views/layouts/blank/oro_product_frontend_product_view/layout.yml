@@ -51,6 +51,8 @@ layout:
                         entity: '=data["product"]'
                         attribute_family: '=context["attribute_family"]'
                         group: 'general'
+                        attribute_options:
+                            additional_block_prefixes: ['attribute_group_general']
                 product_view_main_attributes_container:
                     blockType: container
             tree:

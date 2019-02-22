@@ -4,10 +4,16 @@
 Feature: Product attribute integer
   In order to have custom attributes for Product entity
   As an Administrator
-  I need to be able to add product attribute and have attribute data in search, filter and sorter
+  I need to be able to add product attribute and have attribute data in search, filter, sorter and product view page
+
+  Scenario: Feature Background
+    Given sessions active:
+      | Admin | first_session  |
+      | Buyer | second_session |
 
   Scenario: Create product attribute
-    Given I login as administrator
+    Given I proceed as the Admin
+    And I login as administrator
     And I go to Products/ Product Attributes
     When I click "Create Attribute"
     And I fill form with:
@@ -47,7 +53,8 @@ Feature: Product attribute integer
     Then I should see "Product has been saved" flash message
 
   Scenario: Check product grid search
-    Given I login as AmandaRCole@example.org buyer
+    Given I proceed as the Buyer
+    And I login as AmandaRCole@example.org buyer
     And I am on the homepage
     When I type "32167" in "search"
     And I click "Search Button"
@@ -62,6 +69,49 @@ Feature: Product attribute integer
     Then I should see "SKU123" product
     And I should not see "SKU456" product
     And grid sorter should have "IntegerField" options
+
+  Scenario: Check attributes in product page with "Default Page" template
+    When I click "View Details" for "SKU123" product
+    Then I should see "IntegerField: 32167"
+
+  Scenario: Change product page view to "Short Page"
+    Given I proceed as the Admin
+    And I go to System / Configuration
+    And I follow "Commerce/Design/Theme" on configuration sidebar
+    When fill "Page Templates form" with:
+      | Use Default  | false      |
+      | Product Page | Short page |
+    And save form
+    Then I should see "Configuration saved" flash message
+
+  Scenario: Check attribute in product page with "Short Page" template
+    Given I proceed as the Buyer
+    When I reload the page
+    Then I should see "IntegerField: 32167"
+
+  Scenario: Change product page template to "Two columns page"
+    Given I proceed as the Admin
+    When fill "Page Templates form" with:
+      | Product Page | Two columns page |
+    And save form
+    Then I should see "Configuration saved" flash message
+
+  Scenario: Check attribute in product page with "Two columns page" template
+    Given I proceed as the Buyer
+    When I reload the page
+    Then I should see "IntegerField: 32167"
+
+  Scenario: Change product page view to "List Page"
+    Given I proceed as the Admin
+    When fill "Page Templates form" with:
+      | Product Page | List page |
+    And save form
+    Then I should see "Configuration saved" flash message
+
+  Scenario: Check attribute in product page with "List Page" template
+    Given I proceed as the Buyer
+    When I reload the page
+    Then I should see "IntegerField: 32167"
 
   Scenario: Delete product attribute
     Given I login as administrator
