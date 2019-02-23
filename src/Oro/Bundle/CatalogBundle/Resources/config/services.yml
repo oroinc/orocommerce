@@ -114,6 +114,15 @@ services:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-product-search-grid, method: onPreBuild }
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.frontend-product-search-grid, method: onBuildAfter }
 
+    oro_catalog.datagrid.subcategory_filter:
+        class: 'Oro\Bundle\CatalogBundle\Datagrid\Filter\SubcategoryFilter'
+        public: false
+        arguments:
+            - '@form.factory'
+            - '@oro_filter.filter_utility'
+        tags:
+            - { name: oro_search.extension.search_filter.filter, type: subcategory }
+
     oro_catalog.manager.product_index_scheduler:
         class: 'Oro\Bundle\CatalogBundle\Manager\ProductIndexScheduler'
         public: false

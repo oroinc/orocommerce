@@ -1,8 +1,0 @@
-services:
-    oro_catalog.datagrid.subcategory_filter:
-        class: 'Oro\Bundle\CatalogBundle\Datagrid\Filter\SubcategoryFilter'
-        arguments:
-            - '@form.factory'
-            - '@oro_filter.filter_utility'
-        tags:
-            - { name: oro_search.extension.search_filter.filter, type: subcategory, datasource: search }

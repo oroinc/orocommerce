@@ -269,12 +269,13 @@ services:
 
     oro_consent.accepted_concents_filter:
         class: Oro\Bundle\ConsentBundle\Filter\AcceptedConsentsFilter
+        public: false
         arguments:
             - '@form.factory'
             - '@oro_filter.filter_utility'
             - '@oro_entity.doctrine_helper'
         tags:
-            - { name: oro_filter.extension.orm_filter.filter, type: accepted_consents, datasource: orm }
+            - { name: oro_filter.extension.orm_filter.filter, type: accepted_consents }
 
     oro_consent.from_extension.field_choice_type_extension:
         class: 'Oro\Bundle\ConsentBundle\Form\Extension\FieldChoiceTypeExtension'

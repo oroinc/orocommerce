@@ -19,6 +19,8 @@ class MappingConfigurationProvider extends PhpArrayConfigProvider
 
     /**
      * Gets website search mapping configuration.
+     *
+     * @return array
      */
     public function getConfiguration(): array
     {

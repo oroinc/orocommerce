@@ -449,6 +449,7 @@ services:
             - '@oro_pricing.model.price_list_request_handler'
 
     oro_pricing.filter.price_attribute_product_price:
+        public: false
         parent: oro_pricing.filter.abstract_product_price
         calls:
             - [setProductPriceClass, ['%oro_pricing.entity.price_attribute_product_price.class%']]
@@ -456,6 +457,7 @@ services:
             - { name: oro_filter.extension.orm_filter.filter, type: price-attribute-product-price }
 
     oro_pricing.filter.product_price:
+        public: false
         parent: oro_pricing.filter.abstract_product_price
         calls:
             - [setProductPriceClass, ['%oro_pricing.entity.product_price.class%']]
@@ -475,13 +477,14 @@ services:
 
     oro_pricing.filter.frontend_product_price:
         class: 'Oro\Bundle\PricingBundle\Filter\FrontendProductPriceFilter'
+        public: false
         arguments:
             - '@form.factory'
             - '@oro_filter.filter_utility'
         calls:
             - [setFormatter, ['@oro_product.formatter.product_unit_label']]
         tags:
-            - { name: oro_search.extension.search_filter.filter, type: frontend-product-price, datasource: search }
+            - { name: oro_search.extension.search_filter.filter, type: frontend-product-price }
 
     oro_pricing.event_listener.product_duplicate:
         class: 'Oro\Bundle\PricingBundle\EventListener\ProductDuplicateListener'
@@ -1154,11 +1157,12 @@ services:
 
     oro_pricing.filter.price_list_filter:
         class: Oro\Bundle\PricingBundle\Filter\PriceListFilter
+        public: false
         arguments:
             - '@form.factory'
             - '@oro_filter.filter_utility'
         tags:
-            - { name: oro_filter.extension.orm_filter.filter, type: price_list, datasource: orm }
+            - { name: oro_filter.extension.orm_filter.filter, type: price_list }
 
     oro_pricing.provider.price_list_provider:
         class: Oro\Bundle\PricingBundle\Provider\PriceListProvider

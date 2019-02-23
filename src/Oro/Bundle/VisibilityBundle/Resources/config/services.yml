@@ -73,7 +73,8 @@ services:
 
     oro_visibility.filter.visibility_type_choice:
         class: 'Oro\Bundle\VisibilityBundle\Filter\VisibilityChoiceFilter'
-        parent: 'oro_filter.choice_filter'
+        public: false
+        parent: oro_filter.choice_filter
         calls:
             - [ setRegistry, ['@doctrine']]
         tags:

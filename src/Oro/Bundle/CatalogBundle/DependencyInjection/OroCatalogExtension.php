@@ -26,7 +26,6 @@ class OroCatalogExtension extends Extension
         $loader->load('twig.yml');
         $loader->load('layout.yml');
         $loader->load('fallbacks.yml');
-        $loader->load('filters.yml');
         $loader->load('image_placeholder.yml');
 
         $container->prependExtensionConfig($this->getAlias(), array_intersect_key($config, array_flip(['settings'])));
