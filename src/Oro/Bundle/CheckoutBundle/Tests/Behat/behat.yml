@@ -354,3 +354,8 @@ oro_behat_extension:
           State: 'oro_action_operation[address][region]'
           Postal Code: 'oro_action_operation[address][postalCode]'
           Save Address: 'oro_action_operation[save_address]'
+
+  pages:
+    Checkout:
+      class: Oro\Bundle\CheckoutBundle\Tests\Behat\Page\CheckoutPage
+      route: oro_checkout_frontend_checkout
