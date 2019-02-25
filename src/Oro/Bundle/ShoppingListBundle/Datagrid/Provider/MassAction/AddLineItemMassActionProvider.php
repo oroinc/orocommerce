@@ -12,6 +12,9 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
+/**
+ * Provides mass actions available for shopping list line items.
+ */
 class AddLineItemMassActionProvider implements MassActionProviderInterface
 {
     const NAME_PREFIX = 'oro_shoppinglist_frontend_addlineitem';
