@@ -41,7 +41,6 @@ Feature: Promotions with coupons on Order page
     And I should see "Conditions"
     Then I click "Close Line Item Discount Promotion Details"
 
-  @skip
   Scenario: Delete added coupon from grid
     When I click "Promotions and Discounts"
     And I click "Remove" on row "Line Item Discount Promotion" in "Promotions"
@@ -57,7 +56,6 @@ Feature: Promotions with coupons on Order page
       | Subtotal | $50.00  |
       | Total    | $50.00  |
 
-  @skip
   Scenario: Coupon applying on order view page
     When go to Sales / Orders
     And click view SimpleOrder in grid
@@ -79,7 +77,6 @@ Feature: Promotions with coupons on Order page
       | Discount | -$10.00 |
       | Total    | $40.00  |
 
-  @skip
   Scenario: "Cancel" button do not save selected coupons
     When go to Sales / Orders
     And click view SecondOrder in grid
@@ -94,7 +91,6 @@ Feature: Promotions with coupons on Order page
     And I click "Cancel" in modal window
     Then I should see no records in "Promotions" table
 
-  @skip
   Scenario: Deactivate button in Promotions grid
     When go to Sales / Orders
     And click edit SimpleOrder in grid
@@ -108,7 +104,6 @@ Feature: Promotions with coupons on Order page
       | Subtotal | $50.00 |
       | Total    | $50.00 |
 
-  @skip
   Scenario: Activate button in Promotions grid
     When I click "Activate" on row "Line Item Discount Promotion" in "Promotions"
     Then I should see next rows in "Promotions" table
@@ -120,7 +115,6 @@ Feature: Promotions with coupons on Order page
       | Discount | -$10.00 |
       | Total    | $40.00  |
 
-  @skip
   Scenario: If Line item was deleted from order, applied Line Item promotion should be deleted from order as well
     When I click "Remove" on row "AA1" in "Backend Order Line Items"
     Then I should see no records in "Promotions" table
@@ -129,7 +123,6 @@ Feature: Promotions with coupons on Order page
       | Total    | $0.00  |
     And click "Cancel"
 
-  @skip
   Scenario: Product was changed in order
     Given I click edit SimpleOrder in grid
     Then I should see next rows in "Promotions" table
@@ -148,7 +141,6 @@ Feature: Promotions with coupons on Order page
       | Total    | $0.00  |
     And click "Cancel"
 
-  @skip
   Scenario: Promotion is applied, Order was saved. Promotion was deleted, order promotions should not be changed
     Given I go to Marketing / Promotions / Promotions
     And click delete Line Item Discount Promotion in grid
