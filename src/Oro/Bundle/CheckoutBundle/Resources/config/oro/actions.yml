@@ -456,9 +456,8 @@ action_groups:
                     - '@assign_value': [$.checkout.website, $.currentWebsite]
                     # update custom data
                     - '@copy_values': [$.checkout, $.checkoutData]
-            - '@tree':
-                actions:
-                    - '@assign_value': [$.checkout.customer_notes, $.sourceCriteria.shoppingList.notes]
+
+            - '@assign_value': [$.checkout.customer_notes, $.sourceCriteria.shoppingList.notes]
 
             # actualize user currency
             - '@call_service_method':
