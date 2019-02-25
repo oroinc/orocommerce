@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\CheckoutBundle\Model\CheckoutLineItemConverterInterface;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\EntityBundle\Fallback\EntityFallbackResolver;
 use Oro\Bundle\InventoryBundle\Provider\InventoryQuantityProviderInterface;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
@@ -30,6 +31,9 @@ class OrderLineItemConverter implements CheckoutLineItemConverterInterface
     /** @var string */
     protected $configPath;
 
+    /** @var EntityFallbackResolver */
+    protected $entityFallbackResolver;
+
     /**
      * @param ConfigManager $configManager
      * @param InventoryQuantityProviderInterface $quantityProvider
@@ -46,6 +50,14 @@ class OrderLineItemConverter implements CheckoutLineItemConverterInterface
         $this->quantityProvider = $quantityProvider;
         $this->authorizationChecker = $authorizationChecker;
         $this->configPath = $configPath;
+    }
+
+    /**
+     * @param EntityFallbackResolver $entityFallbackResolver
+     */
+    public function setEntityFallbackResolver(EntityFallbackResolver $entityFallbackResolver)
+    {
+        $this->entityFallbackResolver = $entityFallbackResolver;
     }
 
     /**
@@ -71,7 +83,7 @@ class OrderLineItemConverter implements CheckoutLineItemConverterInterface
             }
 
             $availableQuantity = $this->getAvailableProductQuantity($lineItem);
-            if (!$availableQuantity) {
+            if ($availableQuantity <= 0) {
                 continue;
             }
 
@@ -126,6 +138,12 @@ class OrderLineItemConverter implements CheckoutLineItemConverterInterface
      */
     protected function getAvailableProductQuantity(ProductLineItemInterface $lineItem)
     {
+        if ($lineItem->getProduct()
+            && $this->entityFallbackResolver->getFallbackValue($lineItem->getProduct(), 'backOrder')
+        ) {
+            return $lineItem->getQuantity();
+        }
+
         if (!$this->quantityProvider->canDecrement($lineItem->getProduct())) {
             return $lineItem->getQuantity();
         }
