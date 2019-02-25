@@ -1,0 +1,80 @@
+# Configuration for https://github.com/oroinc/phpstan-rules/
+trusted_data:
+    variables:
+        Oro\Bundle\PricingBundle\Model\FrontendProductListModifier:
+            applyPriceListLimitations:
+                rootAlias: true
+                limitationQb: true
+        Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository:
+            getUnusedPriceListsIds:
+                entityName: true
+                alias: true
+            hasOtherRelations:
+                alias: true
+                class: true
+        Oro\Bundle\PricingBundle\Expression\PriceListQueryConverterExtension:
+            joinPriceListPrices:
+                priceListTableAlias: true
+        Oro\Bundle\PricingBundle\Sharding\ShardManager:
+            getShardsAttributes:
+                targetFieldName: true
+            create:
+                query: true
+        Oro\Bundle\PricingBundle\Compiler\ProductAssignmentRuleCompiler:
+            restrictByManualPrices:
+                rootAlias: true
+                subQb: true
+        Oro\Bundle\PricingBundle\Compiler\PriceListRuleCompiler:
+            restrictByManualPrices:
+                rootAlias: true
+            restrictByAssignedProducts:
+                rootAlias: true
+            restrictBySupportedUnits:
+                rootAlias: true
+        Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository:
+            save:
+                column: true
+                placeholder: true
+            deleteGeneratedPrices:
+                sql: true
+            deleteInvalidPricesByProducts:
+                sql: true
+        Oro\Bundle\PricingBundle\Entity\Repository\BaseProductPriceRepository:
+            deleteByProductUnit:
+                sql: true
+            deleteByPriceList:
+                sql: true
+        Oro\Bundle\PricingBundle\Filter\ProductPriceFilter:
+            addEqExpr:
+                fieldName: true
+                parameterName: true
+        Oro\Bundle\PricingBundle\Expression\QueryExpressionConverter\AssignedProductsConverter:
+            convert:
+                limitationDql: true
+        Oro\Bundle\PricingBundle\Cache\RuleCache:
+            restoreQueryBuilder:
+                part: true
+                elements: true
+    properties:
+        Oro\Bundle\PricingBundle\Filter\ProductPriceFilter:
+            qbPrepare:
+                productPriceClass: true
+        Oro\Bundle\PricingBundle\Compiler\PriceListRuleCompiler:
+            restrictByManualPrices:
+                qbSelectPart: true
+    safe_methods:
+        Oro\Bundle\PricingBundle\Expression\PriceListQueryConverterExtension:
+            generateTableAlias: true
+        Oro\Bundle\PricingBundle\Sharding\ShardManager:
+            getEnabledShardName: true
+            getEntityBaseTable: true
+        Oro\Bundle\PricingBundle\Datagrid\PriceAttributeProductPriceDatagridExtension:
+            getJoinAlias: true
+        Oro\Bundle\PricingBundle\Datagrid\ProductPriceDatagridExtension:
+            getJoinAlias: true
+        Oro\Bundle\PricingBundle\Compiler\PriceListRuleCompiler:
+            getRootAlias: true
+            getValueByExpression: true
+    check_methods_safety:
+        Oro\Bundle\PricingBundle\Model\FrontendProductListModifier:
+            getParameterName: true
