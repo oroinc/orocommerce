@@ -86,6 +86,6 @@ Feature: Notes from shopping list are transferred to the checkout
     Then I should see "Customer Notes My shopping list notes"
     And I should see that Notes in 1 row is equal to "SKU123 Product Note"
     When I go to Sales/Orders
-    And click view "1" in grid
+    And click view "2" in grid
     Then I should see "Customer Notes My shopping list notes"
     And I should see that Notes in 1 row is equal to "SKU123 Product Note"
