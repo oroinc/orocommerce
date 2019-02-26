@@ -15,6 +15,9 @@ use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
+/**
+ * Validate relations expressions from price lists with price rules.
+ */
 class PriceRuleRelationExpressionsValidator extends ConstraintValidator
 {
     const QUANTITY_FIELD_NAME = 'oro.pricing.pricerule.quantity.label';
@@ -145,9 +148,41 @@ class PriceRuleRelationExpressionsValidator extends ConstraintValidator
         PriceRuleRelationExpressions $constraint
     ) {
         return 0 !== count($nodes) &&
+        $this->validateIsFieldExistInRelationNode($nodes[0], $path, $fieldName, $constraint) &&
         $this->validateNodesCount($nodes, $path, $fieldName, $constraint) &&
         $this->validateIsRelationNode($nodes[0], $path, $fieldName, $constraint) &&
         $this->validateIsRelationInRule($rule, $nodes[0], $path, $fieldName, $constraint);
+    }
+
+    /**
+     * @param $node
+     * @return bool
+     */
+    protected function validateIsFieldExistInRelationNode($node, $path, $inputName, $constraint)
+    {
+        if ($node instanceof Node\RelationNode) {
+            $numericOnly = false;
+            $withRelations = true;
+            $fields = $this->fieldsProvider->getDetailedFieldsInformation(
+                $node->getContainer(),
+                $numericOnly,
+                $withRelations
+            );
+
+            if (!array_key_exists($node->getField(), $fields)) {
+                $this->addError(
+                    $path,
+                    $constraint->messageFieldIsNotAllowed,
+                    [
+                        '%fieldName%' => $node->getField(),
+                        '%inputName%' => $inputName,
+                    ]
+                );
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
