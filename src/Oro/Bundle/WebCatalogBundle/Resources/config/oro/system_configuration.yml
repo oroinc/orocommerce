@@ -19,6 +19,7 @@ system_configuration:
                 label: oro.webcatalog.system_configuration.fields.navigation_root.label
                 tooltip: oro.webcatalog.system_configuration.fields.navigation_root.tooltip
                 required: false
+                data_transformer: oro_web_catalog.form.data_transformer.navigation_root_option
 
     tree:
         system_configuration:

@@ -70,7 +70,6 @@ Feature: Quote expiration email notification
     When I click "Create new Quote"
     And I fill form with:
       | Expire Existing Quote | Upon Acceptance |
-    And I wait for action
     And I click "Submit"
     Then I should see "Quote #34 successfully created" flash message
 

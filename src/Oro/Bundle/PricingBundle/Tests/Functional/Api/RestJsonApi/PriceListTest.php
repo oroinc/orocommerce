@@ -13,10 +13,12 @@ use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListSchedule
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceRules;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
 use Oro\Bundle\PricingBundle\Tests\Functional\Entity\EntityListener\MessageQueueTrait;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @dbIsolationPerTest
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  */
 class PriceListTest extends RestJsonApiTestCase
 {
@@ -52,31 +54,66 @@ class PriceListTest extends RestJsonApiTestCase
         $this->assertResponseContains('price_list/get_list.yml', $response);
     }
 
-    public function testCreateScheduleIntersection()
+    public function testTryToCreateWithScheduleIntersection()
     {
-        $routeParameters = self::processTemplateData(['entity' => 'pricelists']);
-        $parameters = $this->getRequestData('price_list/create_wrong_schedules.yml');
+        $response = $this->post(
+            ['entity' => 'pricelists'],
+            'price_list/create_wrong_schedules.yml',
+            [],
+            false
+        );
 
-        $response = $this->post($routeParameters, $parameters, [], false);
-
-        static::assertResponseStatusCodeEquals($response, Response::HTTP_BAD_REQUEST);
-        static::assertContains(
-            'Price list schedule segments should not intersect',
-            $response->getContent()
+        $this->assertResponseValidationErrors(
+            [
+                [
+                    'title'  => 'schedule intervals intersection constraint',
+                    'detail' => 'Price list schedule segments should not intersect',
+                    'source' => ['pointer' => '/data/relationships/schedules/data/0']
+                ],
+                [
+                    'title'  => 'schedule intervals intersection constraint',
+                    'detail' => 'Price list schedule segments should not intersect',
+                    'source' => ['pointer' => '/data/relationships/schedules/data/1']
+                ]
+            ],
+            $response
         );
     }
 
-    public function testCreateNoCurrencies()
+    public function testTryToCreateWithoutCurrencies()
     {
-        $routeParameters = self::processTemplateData(['entity' => 'pricelists']);
-        $parameters = $this->getRequestData('price_list/create_no_currencies.yml');
+        $response = $this->post(
+            ['entity' => 'pricelists'],
+            'price_list/create_no_currencies.yml',
+            [],
+            false
+        );
 
-        $response = $this->post($routeParameters, $parameters, [], false);
+        $this->assertResponseValidationError(
+            [
+                'title'  => 'count constraint',
+                'detail' => 'This collection should contain 1 element or more. Source: currencies.'
+            ],
+            $response
+        );
+    }
 
-        static::assertResponseStatusCodeEquals($response, Response::HTTP_BAD_REQUEST);
-        static::assertContains(
-            'This collection should contain 1 element or more. Source: currencies.',
-            $response->getContent()
+    public function testTryToCreateWithInvalidProductUnitExpression()
+    {
+        $response = $this->post(
+            ['entity' => 'pricelists'],
+            'price_list/create_with_invalid_expressions.yml',
+            [],
+            false
+        );
+
+        $this->assertResponseValidationError(
+            [
+                'title'  => 'price rule relation expressions constraint',
+                'detail' => 'Field "test" is not allowed to be used as "Product Unit"',
+                'source' => ['pointer' => '/included/0/attributes/productUnitExpression']
+            ],
+            $response
         );
     }
 

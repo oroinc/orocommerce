@@ -63,6 +63,18 @@ class PriceRuleRelationExpressionsValidatorTest extends \PHPUnit\Framework\TestC
 
         $this->parser = $this->getMockBuilder(ExpressionParser::class)->disableOriginalConstructor()->getMock();
         $this->fieldsProvider = $this->createMock(FieldsProviderInterface::class);
+        $this->fieldsProvider->method('getDetailedFieldsInformation')
+            ->willReturn(
+                [
+                    'msrp' => [
+                        'name' => 'msrp',
+                        'type' => 'manyToOne',
+                        'label' => 'MSRP',
+                        'relation_type' => 'manyToOne',
+                        'related_entity_name' => 'Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice'
+                    ]
+                ]
+            );
         $this->translator = $this->createMock(TranslatorInterface::class);
 
         $this->translator->expects($this->any())
@@ -192,7 +204,7 @@ class PriceRuleRelationExpressionsValidatorTest extends \PHPUnit\Framework\TestC
                 'currencyExpression' => 'product.msrp.currency',
                 'currencyNode' => new RelationNode(Product::class, 'msrp', 'currency'),
                 'unitExpression' => 'product.primaryUnit.unit',
-                'unitNode' => new RelationNode(Product::class, 'primaryUnit', 'unit'),
+                'unitNode' => new RelationNode(Product::class, 'msrp', 'unit'),
                 'qtyExpression' => 'product.msrp.quantity',
                 'qtyNode' => new RelationNode(Product::class, 'msrp', 'quantity')
             ],
@@ -703,6 +715,76 @@ class PriceRuleRelationExpressionsValidatorTest extends \PHPUnit\Framework\TestC
                 'parsedUnitExpression' => new RelationNode(Product::class, 'msrp', 'unit'),
                 'parsedRuleExpression' => new RelationNode(Product::class, 'map', 'value')
             ],
+        ];
+    }
+
+    /**
+     * @dataProvider validateProductUnitWithInvalidNodeRelationFieldFailDataProvider
+     *
+     * @param string $productUnitExpression
+     * @param string $ruleExpression
+     * @param NodeInterface $parsedUnitExpression
+     * @param string $message
+     * @param array $messageParams
+     */
+    public function testValidateProductUnitFailWithInvalidNodeRelationField(
+        $productUnitExpression,
+        $ruleExpression,
+        $message,
+        array $messageParams,
+        NodeInterface $parsedUnitExpression
+    ) {
+        $this->fieldsProvider->expects($this->any())
+            ->method('getRealClassName')
+            ->with(Product::class, 'msrp')
+            ->willReturn(PriceAttributeProductPrice::class);
+
+        $rule = new PriceRule();
+        $rule->setProductUnitExpression($productUnitExpression)
+            ->setRule($ruleExpression);
+
+        $this->parser->expects($this->at(0))
+            ->method('parse')
+            ->with(null)
+            ->willReturn(null);
+
+        $this->parser->expects($this->at(1))
+            ->method('parse')
+            ->with($productUnitExpression)
+            ->willReturn($parsedUnitExpression);
+
+        $this->parser->expects($this->at(2))
+            ->method('parse')
+            ->with(null)
+            ->willReturn(null);
+
+        $builder = $this->createMock(ConstraintViolationBuilderInterface::class);
+        $builder->expects($this->at(0))->method('atPath')->with('productUnitExpression')->willReturn($builder);
+        $builder->expects($this->at(1))->method('addViolation');
+        $this->context->expects($this->once())
+            ->method('buildViolation')
+            ->with($message, $messageParams)
+            ->willReturn($builder);
+
+        $this->validator->validate($rule, new PriceRuleRelationExpressions());
+    }
+
+    /**
+     * @return array
+     */
+    public function validateProductUnitWithInvalidNodeRelationFieldFailDataProvider()
+    {
+        return [
+            'test_relation_not_product_unit_holder' => [
+                'productUnitExpression' => 'product.test.unit',
+                'ruleExpression' => 'product.msrp.value',
+                'message' => 'oro.pricing.validators.field_is_not_allowed_as.message',
+                'messageParams' => [
+                    '%fieldName%' => 'test',
+                    '%inputName%' => 'oro.pricing.pricerule.product_unit.label' . $this->translatedLabel
+                ],
+                'parsedUnitExpression' => new RelationNode(Product::class, 'test', 'unit')
+            ]
         ];
     }
 }
