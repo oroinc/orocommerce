@@ -77,6 +77,7 @@ class CheckoutLineItemsDataProvider extends AbstractCheckoutProvider
             if ($this->isLineItemNeeded($lineItem)) {
                 $data[] = [
                     'productSku' => $lineItem->getProductSku(),
+                    'comment' => $lineItem->getComment(),
                     'quantity' => $lineItem->getQuantity(),
                     'productUnit' => $lineItem->getProductUnit(),
                     'productUnitCode' => $unitCode,

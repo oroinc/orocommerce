@@ -103,6 +103,7 @@ class CheckoutLineItemsDataProviderTest extends \PHPUnit\Framework\TestCase
                 'productUnit' => $productUnit,
                 'price' => $price,
                 'fromExternalSource' => true,
+                'comment' => 'line item comment',
             ]
         );
         $lineItem->setPriceFixed($isPriceFixed)
@@ -115,6 +116,7 @@ class CheckoutLineItemsDataProviderTest extends \PHPUnit\Framework\TestCase
                 'product' => $product,
                 'parentProduct' => $parentProduct,
                 'productSku' => 'PRODUCT_SKU',
+                'comment' => 'line item comment',
                 'freeFormProduct' => $freeFormProduct,
                 'quantity' => 10,
                 'productUnit' => $productUnit,
@@ -142,6 +144,7 @@ class CheckoutLineItemsDataProviderTest extends \PHPUnit\Framework\TestCase
                 'product' => null,
                 'parentProduct' => null,
                 'productSku' => null,
+                'comment' => null,
                 'freeFormProduct' => null,
                 'quantity' => null,
                 'productUnit' => null,
@@ -197,6 +200,7 @@ class CheckoutLineItemsDataProviderTest extends \PHPUnit\Framework\TestCase
         $expected = [
             [
                 'productSku' => null,
+                'comment' => null,
                 'quantity' => null,
                 'productUnit' => null,
                 'productUnitCode' => null,
