@@ -45,6 +45,7 @@ class ProductDataStorageTest extends \PHPUnit\Framework\TestCase
         $quantity = 100;
         $comment = 'Test Comment';
         $unitCode = 'kg';
+        $note = 'Note';
 
         /** @var Customer $customer */
         $customer = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Customer', ['id' => $customerId]);
@@ -65,13 +66,14 @@ class ProductDataStorageTest extends \PHPUnit\Framework\TestCase
             ->setProduct($product)
             ->setUnit($productUnit);
 
-        $shoppingList = new ShoppingList();
-
-        $this->setId($shoppingList, 1);
-        $shoppingList
-            ->setCustomer($customer)
-            ->setCustomerUser($customerUser)
-            ->addLineItem($lineItem);
+        /** @var ShoppingList $shoppingList */
+        $shoppingList = $this->getEntity(ShoppingList::class, [
+            'id' => 1,
+            'customer' => $customer,
+            'customerUser' => $customerUser,
+            'lineItems' => [$lineItem],
+            'notes' => $note,
+        ]);
 
         $this->storage->expects($this->once())
             ->method('set')
@@ -82,7 +84,8 @@ class ProductDataStorageTest extends \PHPUnit\Framework\TestCase
                         'customerUser' => $customerUserId,
                         'sourceEntityId' => 1,
                         'sourceEntityClass' => ClassUtils::getClass($shoppingList),
-                        'sourceEntityIdentifier' => 1
+                        'sourceEntityIdentifier' => 1,
+                        'note' => $note
                     ],
                     Storage::ENTITY_ITEMS_DATA_KEY => [
                         [
@@ -97,18 +100,5 @@ class ProductDataStorageTest extends \PHPUnit\Framework\TestCase
             );
 
         $this->productDataStorage->saveToStorage($shoppingList);
-    }
-
-    /**
-     * @param mixed $obj
-     * @param mixed $val
-     */
-    protected function setId($obj, $val)
-    {
-        $class = new \ReflectionClass($obj);
-        $prop  = $class->getProperty('id');
-        $prop->setAccessible(true);
-
-        $prop->setValue($obj, $val);
     }
 }
