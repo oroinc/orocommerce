@@ -1,11 +1,13 @@
 @community-edition-only
 @regression
 @ticket-BB-11426
+@ticket-BB-16275
 @fixture-OroCheckoutBundle:Products_quick_order_form_ce.yml
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
 @fixture-OroCheckoutBundle:Checkout.yml
-Feature: Guest quick order form
+  
+  Feature: Guest quick order form
   In order to promote quick purchases by non-registered customers
   As a Sales rep
   I want quick order form to be accessible to guest customers
@@ -104,9 +106,9 @@ Feature: Guest quick order form
     And I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
     And I check "Payment Terms" on the "Payment" checkout step and press Continue
     And "Order Review" checkout step "Order Summary Products Grid" contains products
-      | Product1 | 2 | items |
-      | Product2 | 4 | sets  |
-      | Product3 | 2 | items |
+      | Product1`"'&>йёщ | 2 | items |
+      | Product2         | 4 | sets  |
+      | Product3         | 2 | items |
     And I uncheck "Save my data and create an account" on the checkout page
     When I click "Submit Order"
     Then I see the "Thank You" page with "Thank You For Your Purchase!" title
@@ -192,10 +194,10 @@ Feature: Guest quick order form
       | Notes                  | Test note for quote. |
       | PO Number              | PO Test 01           |
     And Request a Quote contains products
-      | Product2 | 2 | item |
-      | Product2 | 4 | set  |
-      | Product3 | 2 | item |
-      | Product1 | 5 | item |
+      | Product2         | 2 | item |
+      | Product2         | 4 | set  |
+      | Product3         | 2 | item |
+      | Product1`"'&>йёщ | 5 | item |
     And I click "Submit Request"
     And I should see "Request has been saved" flash message
 

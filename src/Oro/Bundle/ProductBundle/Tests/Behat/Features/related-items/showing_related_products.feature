@@ -1,6 +1,7 @@
 @feature-BB-8714
 @ticket-BB-13978
-@fixture-OroProductBundle:related_items_products.yml
+@ticket-BB-16275
+@fixture-OroProductBundle:showing_related_items_products.yml
 @fixture-OroProductBundle:related_items_system_users.yml
 @fixture-OroProductBundle:related_items_customer_users.yml
 @regression
@@ -162,55 +163,28 @@ Feature: Showing related products
       Then I should see "Related Products"
       And I should see "PSKU1"
 
-    Scenario: "Add to Shopping List" button restrictions
-      Given I proceed as the Buyer
-      And type "PSKU1" in "search"
-      And click "Search Button"
-      And I should see "PSKU1" product
-      And I click "View Details" for "PSKU1" product
-      And I should see "Related Products"
-      And I should see "Add to Shopping List" in related products
-      And I proceed as the Admin
-      And go to System/ Configuration
-      And I follow "Commerce/Catalog/Related Items" on configuration sidebar
-      And I fill "RelatedProductsConfig" with:
-        | Show Add Button Use Default | false |
-        | Show Add Button             | false |
-      And I click "Save settings"
-      And I proceed as the Buyer
-      And type "PSKU1" in "search"
-      And click "Search Button"
-      And I should see "PSKU1" product
-      And I click "View Details" for "PSKU1" product
-      And I should see "Related Products"
-      Then I should not see "Add to Shopping List" in related products
-
-    Scenario: Check that product name is localized
+    Scenario: Check that product name is localized and displayed properly
       Given I click "Localization Switcher"
       When I select "Localization 1" localization
+      When type "PSKU1" in "search"
+      And click "Search Button"
+      Then I should see "PSKU1" product
+      When I click "View Details" for "PSKU1" product
       Then should see the following products in the "Related Products Block":
-        | Title                     |
-        | Product2 (Localization 1) |
+        | Title                         |
+        | Product2Localization1`"'&>йёщ |
 
-    Scenario: Check that alt attributes are localized
+    Scenario: Check that alt attributes are localized and displayed properly
       Given I open product gallery for "PSKU2" product
-      Then I should see gallery image with alt "Product2 (Localization 1)"
+      Then I should see gallery image with alt "Product2Localization1`\"'&>йёщ"
       When I click "Popup Gallery Widget Close"
-      Then I should see preview image with alt "Product2 (Localization 1)" for "PSKU2" product
+      Then I should see preview image with alt "Product2Localization1`\"'&>йёщ" for "PSKU2" product
 
-    Scenario: Check that product name is localized in shopping lists widget
-      Given I proceed as the Admin
-      And go to System/ Configuration
-      And I follow "Commerce/Catalog/Related Items" on configuration sidebar
-      And I fill "RelatedProductsConfig" with:
-        | Show Add Button | true |
-      And I click "Save settings"
-      And I proceed as the Buyer
-      And reload the page
-      And click "Add to Shopping List" for "PSKU2" product
-      When click "In Shopping List" for "PSKU2" product
+    Scenario: Check that product name is localized and displayed properly in shopping lists widget
+      When I click "Add to Shopping List" for "PSKU2" product
+      And I click "In Shopping List" for "PSKU2" product
       Then I should see "UiDialog" with elements:
-        | Title | Product2 (Localization 1) |
+        | Title | Product2Localization1`"'&>йёщ |
       And I close ui dialog
 
 #  Scenario: Check related items are displayed as slider when "use slider on mobile" option is checked
@@ -259,11 +233,11 @@ Feature: Showing related products
     When I click "View Details" for "PSKU1" product
     Then I should see "Related Products"
     Then should see the following products in the "Related Products Block":
-      | Title                     |
-      | Product2 (Localization 1) |
+      | Title                         |
+      | Product2Localization1`"'&>йёщ |
     When click "In Shopping List" for "PSKU2" product
     Then I should see "UiDialog" with elements:
-      | Title | Product2 (Localization 1) |
+      | Title | Product2Localization1`"'&>йёщ |
     And I close ui dialog
 
   Scenario: Verify that "Related Products" block is displayed in "Two columns page" layout view
@@ -281,11 +255,11 @@ Feature: Showing related products
     When I click "View Details" for "PSKU1" product
     Then I should see "Related Products"
     Then should see the following products in the "Related Products Block":
-      | Title                     |
-      | Product2 (Localization 1) |
+      | Title                         |
+      | Product2Localization1`"'&>йёщ |
     When click "In Shopping List" for "PSKU2" product
     Then I should see "UiDialog" with elements:
-      | Title | Product2 (Localization 1) |
+      | Title | Product2Localization1`"'&>йёщ |
     And I close ui dialog
 
   Scenario: Verify that "Related Products" block is displayed in "List page" layout view
@@ -303,8 +277,25 @@ Feature: Showing related products
     When I click "View Details" for "PSKU1" product
     Then I should see "Related Products"
     Then should see the following products in the "Related Products Block":
-      | Title                     |
-      | Product2 (Localization 1) |
+      | Title                         |
+      | Product2Localization1`"'&>йёщ |
     When click "In Shopping List" for "PSKU2" product
     Then I should see "UiDialog" with elements:
-      | Title | Product2 (Localization 1) |
+      | Title | Product2Localization1`"'&>йёщ |
+    And I close ui dialog
+
+  Scenario: "Add to Shopping List" button restrictions
+    Given I proceed as the Admin
+    And go to System/ Configuration
+    And I follow "Commerce/Catalog/Related Items" on configuration sidebar
+    And I fill "RelatedProductsConfig" with:
+      | Show Add Button Use Default | false |
+      | Show Add Button             | false |
+    And I click "Save settings"
+    And I proceed as the Buyer
+    And type "PSKU1" in "search"
+    And click "Search Button"
+    And I should see "PSKU1" product
+    And I click "View Details" for "PSKU1" product
+    And I should see "Related Products"
+    Then I should not see "Add to Shopping List" in related products

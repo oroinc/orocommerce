@@ -1,6 +1,8 @@
 @ticket-BB-13978
+@ticket-BB-16275
 @fixture-OroProductBundle:new_arrivals_block.yml
 @regression
+
 Feature: New Arrivals Block
   In order to promote new arrivals on the store homepage
   As an Administrator
@@ -257,8 +259,26 @@ Feature: New Arrivals Block
       |SKU6|
       |SKU7|
 
-  Scenario: Check that product name is localized
+  Scenario: Check that product name is displayed properly
     Given I proceed as the User
+    Then should see the following products in the "New Arrivals Block":
+      | Title            |
+      | Product6`"'&>йёщ |
+
+  Scenario: Check that alt attributes contain proper product name
+    Given I open product gallery for "SKU6" product
+    Then I should see gallery image with alt "Product6`\"'&>йёщ"
+    When I click "Popup Gallery Widget Close"
+    Then I should see preview image with alt "Product6`\"'&>йёщ" for "SKU6" product
+
+  Scenario: Check that product name is localized in shopping lists widget
+    When I click "Add to Shopping List" for "SKU6" product
+    And click "In Shopping List" for "SKU6" product
+    Then I should see "UiDialog" with elements:
+      | Title | Product6`"'&>йёщ |
+    And I close ui dialog
+
+  Scenario: Check that product name is localized
     When I click "Localization Switcher"
     And I select "Localization 1" localization
     Then should see the following products in the "New Arrivals Block":
@@ -272,8 +292,6 @@ Feature: New Arrivals Block
     Then I should see preview image with alt "Product6 (Localization 1)" for "SKU6" product
 
   Scenario: Check that product name is localized in shopping lists widget
-    Given I proceed as the User
-    And click "Add to Shopping List" for "SKU6" product
-    When click "In Shopping List" for "SKU6" product
+    When I click "In Shopping List" for "SKU6" product
     Then I should see "UiDialog" with elements:
       | Title | Product6 (Localization 1) |

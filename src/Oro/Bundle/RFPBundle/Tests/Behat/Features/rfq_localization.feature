@@ -1,11 +1,13 @@
 @ticket-BB-14699
-@fixture-OroRFPBundle:RFQ_product_unit_translation.yml
+@ticket-BB-16275
+@fixture-OroRFPBundle:RFQ_localization.yml
 @regression
 
-Feature: RFQ Product Unit Translation
+Feature: RFQ Localization
   In order to ensure product units are transalatable
   As a Buyer
   I need to see translated product unit on Request a Quote page
+  I need to see that product name is displayed properly on Request a Quote page
 
   Scenario: Feature Background
     Given I enable the existing localizations
@@ -17,4 +19,9 @@ Feature: RFQ Product Unit Translation
     Given I open page with shopping list "Shopping List 4"
     When I click "Request Quote"
     Then Request a Quote contains products
-      | Product1 | 10 | item (lang1) |
+      | Product1`"'&>йёщ | 10 | item (lang1) |
+
+  Scenario: Create RFQ and ensure product name is displayed properly
+    When I click "Submit Request"
+    Then I should see "Product1`\"'&>йёщ"
+    And I wait for action

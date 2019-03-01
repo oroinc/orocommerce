@@ -11,6 +11,9 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     localProductAttributeFamily:
         string: 'Product Attribute Family'
 
+    localProduct1Name:
+        string: "Product1`\"'&>йёщ"
+
 Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
     productUnitPrecision{1..3}:
         unit: '@item'
