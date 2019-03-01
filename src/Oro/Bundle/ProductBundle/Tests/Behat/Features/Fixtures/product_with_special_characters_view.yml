@@ -1,0 +1,6 @@
+include:
+    - '@OroShoppingListBundle:ProductFixture.yml'
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    locvalue1:
+        string: "Product1`\"'&>йёщ"
