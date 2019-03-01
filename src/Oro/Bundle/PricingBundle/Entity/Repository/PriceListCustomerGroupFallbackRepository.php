@@ -6,14 +6,16 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Expr\Join;
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedIdentityQueryResultIterator;
-use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIteratorInterface;
 use Oro\Bundle\PricingBundle\Entity\PriceListCustomerGroupFallback;
 
+/**
+ * Repository for PriceListCustomerGroupFallback entity
+ */
 class PriceListCustomerGroupFallbackRepository extends EntityRepository
 {
     /**
      * @param int $websiteId
-     * @return BufferedQueryResultIteratorInterface|array
+     * @return \Iterator
      */
     public function getCustomerIdentityByWebsite($websiteId)
     {

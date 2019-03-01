@@ -2,35 +2,45 @@
 
 namespace Oro\Bundle\PricingBundle\EventListener;
 
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Event\CustomerEvent;
+use Oro\Bundle\CustomerBundle\Event\CustomerMassEvent;
 use Oro\Bundle\PricingBundle\Entity\PriceListCustomerFallback;
-use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToCustomerRepository;
+use Oro\Bundle\PricingBundle\Entity\PriceListToCustomer;
+use Oro\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
+/**
+ * Schedule Combined Price List updates on Customer Price List sequence and fallback changes.
+ * Schedule Combined Price List updates for all websites on Customer Group changes.
+ */
 class CustomerListener extends AbstractPriceListCollectionAwareListener
 {
     /**
      * @var string
      */
-    protected $relationClass = 'Oro\Bundle\PricingBundle\Entity\PriceListToCustomer';
+    protected $relationClass = PriceListToCustomer::class;
 
     /**
      * @var string
      */
-    protected $fallbackClass = 'Oro\Bundle\PricingBundle\Entity\PriceListCustomerFallback';
+    protected $fallbackClass = PriceListCustomerFallback::class;
 
     /**
      * @param CustomerEvent $event
      */
     public function onCustomerGroupChange(CustomerEvent $event)
     {
-        /** @var PriceListToCustomerRepository $repository */
-        $repository = $this->doctrineHelper->getEntityRepository($this->relationClass);
+        $this->handleSingleCustomerGroupChange($event->getCustomer());
+    }
 
-        $customerWebsitePairs = $repository->getCustomerWebsitePairsByCustomer($event->getCustomer());
-        foreach ($customerWebsitePairs as $customerWebsitePair) {
-            $this->triggerHandler
-                ->handleCustomerChange($customerWebsitePair->getCustomer(), $customerWebsitePair->getWebsite());
+    /**
+     * @param CustomerMassEvent $event
+     */
+    public function onCustomerGroupMassChange(CustomerMassEvent $event)
+    {
+        foreach ($event->getCustomers() as $customer) {
+            $this->handleSingleCustomerGroupChange($customer);
         }
     }
 
@@ -93,5 +103,17 @@ class CustomerListener extends AbstractPriceListCollectionAwareListener
     protected function handleCollectionChanges($targetEntity, Website $website)
     {
         $this->triggerHandler->handleCustomerChange($targetEntity, $website);
+    }
+
+    /**
+     * @param Customer $customer
+     */
+    protected function handleSingleCustomerGroupChange(Customer $customer)
+    {
+        /** @var WebsiteRepository $websiteRepo */
+        $websiteRepo = $this->doctrineHelper->getEntityRepository(Website::class);
+        foreach ($websiteRepo->getAllWebsites() as $website) {
+            $this->triggerHandler->handleCustomerChange($customer, $website);
+        }
     }
 }

@@ -6,6 +6,9 @@ use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
+/**
+ * DTO to store Price list relations used to trigger MQ message
+ */
 class PriceListRelationTrigger
 {
     const WEBSITE = 'website';
@@ -115,9 +118,9 @@ class PriceListRelationTrigger
     public function toArray()
     {
         return [
-            self::WEBSITE => null !== $this->website ? $this->website->getId() : null,
-            self::ACCOUNT => null !== $this->customer ? $this->customer->getId() : null,
-            self::ACCOUNT_GROUP => null !== $this->customerGroup ? $this->customerGroup->getId() : null,
+            self::WEBSITE => $this->website,
+            self::ACCOUNT => $this->customer,
+            self::ACCOUNT_GROUP => $this->customerGroup,
             self::FORCE => $this->force,
         ];
     }
