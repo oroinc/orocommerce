@@ -195,6 +195,9 @@ oro_behat_extension:
       selector: 'div[data-page-component-name="shopping-list-line-items-grid"]'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
 
+    Customer Select Field:
+      selector: 'select[name="oro_customer_frontend_owner_select"]'
+
   suites:
     OroShoppingListBundle:
       contexts:
