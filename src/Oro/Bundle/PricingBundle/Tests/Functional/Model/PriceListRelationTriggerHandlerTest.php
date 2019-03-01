@@ -14,10 +14,12 @@ use Oro\Bundle\PricingBundle\Model\PriceListRelationTriggerHandler;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelationsForTriggers;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
 /**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @dbIsolationPerTest
  */
 class PriceListRelationTriggerHandlerTest extends WebTestCase
@@ -66,6 +68,32 @@ class PriceListRelationTriggerHandlerTest extends WebTestCase
         );
     }
 
+    public function testHandleNewWebsite()
+    {
+        $website = new Website();
+        $website->setName('TEST WS');
+        $this->handler->handleWebsiteChange($website);
+
+        $registry = $this->getContainer()->get('doctrine');
+        $em = $registry->getManagerForClass(Website::class);
+        $em->persist($website);
+        $em->flush();
+
+        $this->handler->sendScheduledTriggers();
+
+        self::assertNotEmpty($website->getId());
+        self::assertMessagesCount(Topics::REBUILD_COMBINED_PRICE_LISTS, 1);
+        self::assertMessageSent(
+            Topics::REBUILD_COMBINED_PRICE_LISTS,
+            [
+                PriceListRelationTrigger::WEBSITE => $website->getId(),
+                PriceListRelationTrigger::ACCOUNT => null,
+                PriceListRelationTrigger::ACCOUNT_GROUP => null,
+                PriceListRelationTrigger::FORCE => false,
+            ]
+        );
+    }
+
     public function testHandleCustomerChange()
     {
         /** @var Website $website */
@@ -85,6 +113,77 @@ class PriceListRelationTriggerHandlerTest extends WebTestCase
                 PriceListRelationTrigger::WEBSITE => $website->getId(),
                 PriceListRelationTrigger::ACCOUNT => $customer->getId(),
                 PriceListRelationTrigger::ACCOUNT_GROUP => $customer->getGroup()->getId(),
+                PriceListRelationTrigger::FORCE => false,
+            ]
+        );
+    }
+
+    public function testHandleNewCustomer()
+    {
+        /** @var Website $website */
+        $website = $this->getReference(LoadWebsiteData::WEBSITE1);
+        /** @var User $owner */
+        $owner = $this->getReference('user');
+
+        $customer = new Customer();
+        $customer->setName('CUSTOMER');
+        $customer->setOwner($owner);
+        $customer->setOrganization($owner->getOrganization());
+
+        $this->handler->handleCustomerChange($customer, $website);
+
+        $registry = $this->getContainer()->get('doctrine');
+        $em = $registry->getManagerForClass(Customer::class);
+        $em->persist($customer);
+        $em->flush();
+
+        $this->handler->sendScheduledTriggers();
+
+        self::assertNotEmpty($customer->getId());
+        self::assertMessagesCount(Topics::REBUILD_COMBINED_PRICE_LISTS, 1);
+        self::assertMessageSent(
+            Topics::REBUILD_COMBINED_PRICE_LISTS,
+            [
+                PriceListRelationTrigger::WEBSITE => $website->getId(),
+                PriceListRelationTrigger::ACCOUNT => $customer->getId(),
+                PriceListRelationTrigger::ACCOUNT_GROUP => null,
+                PriceListRelationTrigger::FORCE => false,
+            ]
+        );
+    }
+
+    public function testHandleNewCustomerWithGroup()
+    {
+        /** @var Website $website */
+        $website = $this->getReference(LoadWebsiteData::WEBSITE1);
+        /** @var CustomerGroup $group */
+        $group = $this->getReference('customer_group.group1');
+        /** @var User $owner */
+        $owner = $this->getReference('user');
+
+        $customer = new Customer();
+        $customer->setName('CUSTOMER');
+        $customer->setOwner($owner);
+        $customer->setGroup($group);
+        $customer->setOrganization($owner->getOrganization());
+
+        $this->handler->handleCustomerChange($customer, $website);
+
+        $registry = $this->getContainer()->get('doctrine');
+        $em = $registry->getManagerForClass(Customer::class);
+        $em->persist($customer);
+        $em->flush();
+
+        $this->handler->sendScheduledTriggers();
+
+        self::assertNotEmpty($customer->getId());
+        self::assertMessagesCount(Topics::REBUILD_COMBINED_PRICE_LISTS, 1);
+        self::assertMessageSent(
+            Topics::REBUILD_COMBINED_PRICE_LISTS,
+            [
+                PriceListRelationTrigger::WEBSITE => $website->getId(),
+                PriceListRelationTrigger::ACCOUNT => $customer->getId(),
+                PriceListRelationTrigger::ACCOUNT_GROUP => $group->getId(),
                 PriceListRelationTrigger::FORCE => false,
             ]
         );
@@ -118,6 +217,104 @@ class PriceListRelationTriggerHandlerTest extends WebTestCase
         $this->handler->sendScheduledTriggers();
 
         self::assertMessagesCount(Topics::REBUILD_COMBINED_PRICE_LISTS, 1);
+        self::assertMessageSent(
+            Topics::REBUILD_COMBINED_PRICE_LISTS,
+            [
+                PriceListRelationTrigger::WEBSITE => $website->getId(),
+                PriceListRelationTrigger::ACCOUNT => null,
+                PriceListRelationTrigger::ACCOUNT_GROUP => $customerGroup->getId(),
+                PriceListRelationTrigger::FORCE => false,
+            ]
+        );
+    }
+
+    public function testHandleNewCustomerGroup()
+    {
+        /** @var Website $website */
+        $website = $this->getReference(LoadWebsiteData::WEBSITE1);
+        /** @var User $owner */
+        $owner = $this->getReference('user');
+
+        $group = new CustomerGroup();
+        $group->setName('CUSTOMER GR');
+        $group->setOwner($owner);
+        $group->setOrganization($owner->getOrganization());
+
+        $this->handler->handleCustomerGroupChange($group, $website);
+
+        $registry = $this->getContainer()->get('doctrine');
+        $em = $registry->getManagerForClass(CustomerGroup::class);
+        $em->persist($group);
+        $em->flush();
+
+        $this->handler->sendScheduledTriggers();
+
+        self::assertNotEmpty($group->getId());
+        self::assertMessagesCount(Topics::REBUILD_COMBINED_PRICE_LISTS, 1);
+        self::assertMessageSent(
+            Topics::REBUILD_COMBINED_PRICE_LISTS,
+            [
+                PriceListRelationTrigger::WEBSITE => $website->getId(),
+                PriceListRelationTrigger::ACCOUNT => null,
+                PriceListRelationTrigger::ACCOUNT_GROUP => $group->getId(),
+                PriceListRelationTrigger::FORCE => false,
+            ]
+        );
+    }
+
+    public function testHandleMoreThanOneCustomerGroup()
+    {
+        /** @var Website $website */
+        $website = $this->getReference(LoadWebsiteData::WEBSITE1);
+        /** @var User $owner */
+        $owner = $this->getReference('user');
+
+        /** @var CustomerGroup $customerGroup */
+        $customerGroup = $this->getReference(LoadGroups::GROUP1);
+
+        $group1 = new CustomerGroup();
+        $group1->setName('CUSTOMER GR 1');
+        $group1->setOwner($owner);
+        $group1->setOrganization($owner->getOrganization());
+
+        $group2 = new CustomerGroup();
+        $group2->setName('CUSTOMER GR 2');
+        $group2->setOwner($owner);
+        $group2->setOrganization($owner->getOrganization());
+
+        $this->handler->handleCustomerGroupChange($customerGroup, $website);
+        $this->handler->handleCustomerGroupChange($group1, $website);
+        $this->handler->handleCustomerGroupChange($group2, $website);
+
+        $registry = $this->getContainer()->get('doctrine');
+        $em = $registry->getManagerForClass(CustomerGroup::class);
+        $em->persist($group1);
+        $em->persist($group2);
+        $em->flush();
+
+        $this->handler->sendScheduledTriggers();
+
+        self::assertNotEmpty($group1->getId());
+        self::assertNotEmpty($group2->getId());
+        self::assertMessagesCount(Topics::REBUILD_COMBINED_PRICE_LISTS, 3);
+        self::assertMessageSent(
+            Topics::REBUILD_COMBINED_PRICE_LISTS,
+            [
+                PriceListRelationTrigger::WEBSITE => $website->getId(),
+                PriceListRelationTrigger::ACCOUNT => null,
+                PriceListRelationTrigger::ACCOUNT_GROUP => $group1->getId(),
+                PriceListRelationTrigger::FORCE => false,
+            ]
+        );
+        self::assertMessageSent(
+            Topics::REBUILD_COMBINED_PRICE_LISTS,
+            [
+                PriceListRelationTrigger::WEBSITE => $website->getId(),
+                PriceListRelationTrigger::ACCOUNT => null,
+                PriceListRelationTrigger::ACCOUNT_GROUP => $group2->getId(),
+                PriceListRelationTrigger::FORCE => false,
+            ]
+        );
         self::assertMessageSent(
             Topics::REBUILD_COMBINED_PRICE_LISTS,
             [
