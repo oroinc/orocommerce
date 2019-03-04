@@ -1,0 +1,17 @@
+ACME_BUYER:
+    permissions:
+        entity|Oro\Bundle\CheckoutBundle\Entity\Checkout: [VIEW_BASIC, CREATE_BASIC, EDIT_BASIC, DELETE_BASIC]
+        workflow|b2b_flow_checkout: [VIEW_WORKFLOW_BASIC, PERFORM_TRANSITIONS_BASIC]
+        workflow|b2b_flow_checkout_single_page: [VIEW_WORKFLOW_BASIC, PERFORM_TRANSITIONS_BASIC]
+
+ACME_ADMINISTRATOR:
+    permissions:
+        entity|Oro\Bundle\CheckoutBundle\Entity\Checkout: [VIEW_DEEP, CREATE_DEEP, EDIT_DEEP, DELETE_DEEP, ASSIGN_DEEP]
+        workflow|b2b_flow_checkout: [VIEW_WORKFLOW_DEEP, PERFORM_TRANSITIONS_DEEP]
+        workflow|b2b_flow_checkout_single_page: [VIEW_WORKFLOW_DEEP, PERFORM_TRANSITIONS_DEEP]
+
+ACME_ANONYMOUS:
+    permissions:
+        entity|Oro\Bundle\CheckoutBundle\Entity\Checkout: [VIEW_BASIC, CREATE_BASIC, EDIT_BASIC, DELETE_BASIC]
+        workflow|b2b_flow_checkout: [VIEW_WORKFLOW_BASIC, PERFORM_TRANSITIONS_BASIC]
+        workflow|b2b_flow_checkout_single_page: [VIEW_WORKFLOW_BASIC, PERFORM_TRANSITIONS_BASIC]
