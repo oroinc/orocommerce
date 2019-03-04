@@ -656,6 +656,10 @@ oro:
                         saved:      'Brand has been saved'
                         notBlank:   'This field cannot be blank'
 
+        override_variant_configuration:
+            label: Override Product Variant Configuration
+            tooltip: If selected, all simple product variants included into this product collection will be displayed on the page regardless of "Display Simple Variations" setting in the system configuration. Please note that this applies only to the products included via "Advanced Filter", as both "Manually Added" and "Excluded" products do not depend on this configuration option.
+
     product_unit.each:
         label:
             full: each

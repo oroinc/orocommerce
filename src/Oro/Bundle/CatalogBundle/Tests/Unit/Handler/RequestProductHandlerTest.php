@@ -261,6 +261,79 @@ class RequestProductHandlerTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
+    /**
+     * @dataProvider getOverrideVariantConfigurationDataProvider
+     *
+     * @param string|int|bool $value
+     * @param bool $expected
+     */
+    public function testGetOverrideVariantConfiguration($value, $expected)
+    {
+        $this->request->expects($this->once())
+            ->method('get')
+            ->with(RequestProductHandler::OVERRIDE_VARIANT_CONFIGURATION_KEY)
+            ->willReturn($value);
+        $actual = $this->requestProductHandler->getOverrideVariantConfiguration();
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * @return array
+     */
+    public function getOverrideVariantConfigurationDataProvider()
+    {
+        return [
+            [
+                'value' => true,
+                'expected' => true,
+            ],
+            [
+                'value' => false,
+                'expected' => false,
+            ],
+            [
+                'value' => 'true',
+                'expected' => true,
+            ],
+            [
+                'value' => 'false',
+                'expected' => false,
+            ],
+            [
+                'value' => 1,
+                'expected' => true,
+            ],
+            [
+                'value' => 0,
+                'expected' => false,
+            ],
+            [
+                'value' => -1,
+                'expected' => false,
+            ],
+            [
+                'value' => '1',
+                'expected' => true,
+            ],
+            [
+                'value' => '0',
+                'expected' => false,
+            ],
+            [
+                'value' => '-1',
+                'expected' => false,
+            ],
+            [
+                'value' => null,
+                'expected' => false,
+            ],
+            [
+                'value' => 'test',
+                'expected' => false,
+            ],
+        ];
+    }
+
     public function testGetIncludeSubcategoriesChoiceWithEmptyRequest()
     {
         $requestProductHandler = new RequestProductHandler(new RequestStack());
@@ -277,5 +350,11 @@ class RequestProductHandlerTest extends \PHPUnit\Framework\TestCase
             RequestProductHandler::INCLUDE_NOT_CATEGORIZED_PRODUCTS_DEFAULT_VALUE,
             $requestProductHandler->getIncludeNotCategorizedProductsChoice()
         );
+    }
+
+    public function testGetOverrideVariantConfigurationWithEmptyRequest()
+    {
+        $requestProductHandler = new RequestProductHandler(new RequestStack());
+        $this->assertFalse($requestProductHandler->getOverrideVariantConfiguration());
     }
 }

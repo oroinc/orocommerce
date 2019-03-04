@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener\Visibility\Restrictions;
 
-use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
@@ -10,6 +9,7 @@ use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\Event\ProductDBQueryRestrictionEvent;
 use Oro\Bundle\ProductBundle\Event\ProductSearchQueryRestrictionEvent;
 use Oro\Bundle\ProductBundle\EventListener\Visibility\Restrictions\RestrictProductVariationsEventListener;
+use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
 use Oro\Bundle\SearchBundle\Query\Modifier\QueryBuilderModifierInterface;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Symfony\Component\HttpFoundation\ParameterBag;
@@ -84,6 +84,34 @@ class RestrictProductVariationsEventListenerTest extends \PHPUnit\Framework\Test
                 "No expression must be applicable !"
             );
         }
+    }
+
+    public function testOnSearchQueryWithVariantCriteriaExist()
+    {
+        $this->configManager
+            ->expects($this->once())
+            ->method('get')
+            ->with('oro_product.display_simple_variations')
+            ->willReturn(Configuration::DISPLAY_SIMPLE_VARIATIONS_HIDE_COMPLETELY);
+
+        $this->frontendHelper
+            ->method('isFrontendRequest')
+            ->willReturn(true);
+
+        $expression = Criteria::expr()->eq('integer.is_variant', 1);
+        $criteria = Criteria::create();
+        $criteria->andWhere($expression);
+
+        $query = new Query();
+        $query->setCriteria($criteria);
+
+        $event = new ProductSearchQueryRestrictionEvent($query);
+        $this->listener->onSearchQuery($event);
+
+        $this->assertEquals(
+            $expression,
+            $event->getQuery()->getCriteria()->getWhereExpression()
+        );
     }
 
     /**

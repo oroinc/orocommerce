@@ -113,6 +113,8 @@ class ProductCollectionVariantReindexMessageSendListenerTest extends \PHPUnit\Fr
         $this->listener->scheduleSegment($segmentWithWebsiteWithIsFull, $isFull);
         $this->listener->scheduleSegment($segmentWithWebsiteWithIsFull, false);
 
+        $this->listener->scheduleAdditionalProductsBySegment($segmentWithWebsite, [42]);
+
         $websiteIds = [1, 3];
 
         $this->productCollectionSegmentHelper->expects($this->exactly(3))
@@ -124,13 +126,23 @@ class ProductCollectionVariantReindexMessageSendListenerTest extends \PHPUnit\Fr
                     [$segmentWithWebsiteWithIsFull, $websiteIds],
                 ]
             );
-        $messageForSegmentWithWebsiteWithIsFull = ['id' => 3, 'website_ids' => $websiteIds, 'is_full' => $isFull];
-        $messageForSegmentWithWebsite = ['id' => 1, 'website_ids' => $websiteIds, 'is_full' => false];
+        $messageForSegmentWithWebsiteWithIsFull = [
+            'id' => 3,
+            'website_ids' => $websiteIds,
+            'is_full' => $isFull,
+            'additional_products' => []
+        ];
+        $messageForSegmentWithWebsite = [
+            'id' => 1,
+            'website_ids' => $websiteIds,
+            'is_full' => false,
+            'additional_products' => [42]
+        ];
         $this->messageFactory->expects($this->exactly(2))
             ->method('createMessage')
             ->withConsecutive(
                 [$websiteIds, $segmentWithWebsiteWithIsFull, null, $isFull],
-                [$websiteIds, $segmentWithWebsite]
+                [$websiteIds, $segmentWithWebsite, null, false]
             )
             ->willReturnOnConsecutiveCalls($messageForSegmentWithWebsiteWithIsFull, $messageForSegmentWithWebsite);
         $this->messageProducer->expects($this->exactly(2))

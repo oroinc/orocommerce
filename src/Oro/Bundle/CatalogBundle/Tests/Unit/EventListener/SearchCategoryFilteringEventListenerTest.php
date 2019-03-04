@@ -49,7 +49,7 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit\Framework\TestCa
     protected function setUp()
     {
         $this->requestProductHandler = $this->getMockBuilder(RequestProductHandler::class)
-            ->setMethods(['getCategoryId', 'getIncludeSubcategoriesChoice'])
+            ->setMethods(['getCategoryId', 'getIncludeSubcategoriesChoice', 'getOverrideVariantConfiguration'])
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -90,6 +90,10 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit\Framework\TestCa
             ->method('getIncludeSubcategoriesChoice')
             ->willReturn(null);
 
+        $this->requestProductHandler->expects($this->once())
+            ->method('getOverrideVariantConfiguration')
+            ->willReturn(null);
+
         $this->config->expects($this->never())
             ->method($this->anything());
 
@@ -101,21 +105,32 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit\Framework\TestCa
     /**
      * @dataProvider preBuildDataProvider
      *
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     *
      * @param array $parameters
      * @param int $categoryId
      * @param bool $includeSubcategories
+     * @param bool $overrideVariantConfiguration
      */
-    public function testPreBuildWithCategoryId(array $parameters, $categoryId, $includeSubcategories)
-    {
+    public function testPreBuildWithCategoryId(
+        array $parameters,
+        $categoryId,
+        $includeSubcategories,
+        $overrideVariantConfiguration
+    ) {
         $parameters = new ParameterBag($parameters);
 
-        $this->requestProductHandler->expects($this->any())
+        $this->requestProductHandler->expects($this->atLeastOnce())
             ->method('getCategoryId')
             ->willReturn($categoryId);
 
-        $this->requestProductHandler->expects($this->any())
+        $this->requestProductHandler->expects($this->atLeastOnce())
             ->method('getIncludeSubcategoriesChoice')
             ->willReturn($includeSubcategories);
+
+        $this->requestProductHandler->expects($this->atLeastOnce())
+            ->method('getOverrideVariantConfiguration')
+            ->willReturn($overrideVariantConfiguration);
 
         /** @var PreBuild|\PHPUnit\Framework\MockObject\MockObject $event */
         $event = $this->createMock(PreBuild::class);
@@ -160,7 +175,14 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit\Framework\TestCa
                 true
             );
 
-        $this->config->expects($this->at(3))
+        $this->config->expects($this->at(2))
+            ->method('offsetSetByPath')
+            ->with(
+                SearchCategoryFilteringEventListener::OVERRIDE_VARIANT_CONFIGURATION_CONFIG_PATH,
+                $overrideVariantConfiguration
+            );
+
+        $this->config->expects($this->at(4))
             ->method('offsetSetByPath')
             ->with(
                 Configuration::FILTERS_PATH,
@@ -192,7 +214,11 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit\Framework\TestCa
         $this->listener->onPreBuild($event);
 
         $this->assertEquals(
-            ['categoryId' => self::CATEGORY_ID, 'includeSubcategories' => true],
+            [
+                'categoryId' => self::CATEGORY_ID,
+                'includeSubcategories' => true,
+                'overrideVariantConfiguration' => $overrideVariantConfiguration,
+            ],
             $parameters->all()
         );
     }
@@ -207,17 +233,21 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit\Framework\TestCa
                 'parameters' => [
                     'categoryId' => -100,
                     'includeSubcategories' => false,
+                    'overrideVariantConfiguration' => false,
                 ],
                 'categoryId' => self::CATEGORY_ID,
-                'includeSubcategories' => true
+                'includeSubcategories' => true,
+                'overrideVariantConfiguration' => true,
             ],
             'categoryId in parameters' => [
                 'parameters' => [
                     'categoryId' => self::CATEGORY_ID,
                     'includeSubcategories' => true,
+                    'overrideVariantConfiguration' => false,
                 ],
                 'categoryId' => false,
-                'includeSubcategories' => false
+                'includeSubcategories' => false,
+                'overrideVariantConfiguration' => false,
             ]
         ];
     }
@@ -226,6 +256,7 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit\Framework\TestCa
     {
         $categoryId = self::CATEGORY_ID;
         $includeSubcategories = false;
+        $overrideVariantConfiguration = false;
         $parameters = new ParameterBag();
 
         /** @var PreBuild|\PHPUnit\Framework\MockObject\MockObject $event */
@@ -243,13 +274,21 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit\Framework\TestCa
             ->method('getIncludeSubcategoriesChoice')
             ->willReturn($includeSubcategories);
 
+        $this->requestProductHandler->expects($this->atLeastOnce())
+            ->method('getOverrideVariantConfiguration')
+            ->willReturn($overrideVariantConfiguration);
+
         $event->method('getConfig')
             ->willReturn($this->config);
 
         $this->listener->onPreBuild($event);
 
         $this->assertEquals(
-            ['categoryId' => $categoryId, 'includeSubcategories' => $includeSubcategories],
+            [
+                'categoryId' => $categoryId,
+                'includeSubcategories' => $includeSubcategories,
+                'overrideVariantConfiguration' => $overrideVariantConfiguration,
+            ],
             $parameters->all()
         );
     }
