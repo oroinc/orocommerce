@@ -12,7 +12,7 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
         string: 'Product Attribute Family'
 
     localProduct1Name:
-        string: "Product1`\"'&>йёщ"
+        string: "Product1`\"'&йёщ>"
 
 Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
     productUnitPrecision{1..3}:

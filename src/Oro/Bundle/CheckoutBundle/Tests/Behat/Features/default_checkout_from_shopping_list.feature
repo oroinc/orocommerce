@@ -24,7 +24,7 @@ Feature: Default Checkout From Shopping List
     And I wait line items are initialized
     And I click "Create Order"
     Then Checkout "Order Summary Products Grid" should contain products:
-      | Product1`"'&>йёщ | 5 | items |
+      | Product1`"'&йёщ> | 5 | items |
     And I should see Checkout Totals with data:
       | Subtotal | $10.00 |
 
@@ -41,7 +41,7 @@ Feature: Default Checkout From Shopping List
     And I scroll to top
     And I click "Create Order"
     Then Checkout "Order Summary Products Grid" should contain products:
-      | Product1`"'&>йёщ | 10 | items |
+      | Product1`"'&йёщ> | 10 | items |
     And I should see Checkout Totals with data:
       | Subtotal | $20.00 |
 
@@ -64,16 +64,16 @@ Feature: Default Checkout From Shopping List
   Scenario: Process checkout
     When I select "Fifth avenue, 10115 Berlin, Germany" on the "Billing Information" checkout step and press Continue
     Then Checkout "Order Summary Products Grid" should contain products:
-      | Product1`"'&>йёщ | 10 | items |
+      | Product1`"'&йёщ> | 10 | items |
     When I select "Fifth avenue, 10115 Berlin, Germany" on the "Shipping Information" checkout step and press Continue
     Then Checkout "Order Summary Products Grid" should contain products:
-      | Product1`"'&>йёщ | 10 | items |
+      | Product1`"'&йёщ> | 10 | items |
     When I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
     Then Checkout "Order Summary Products Grid" should contain products:
-      | Product1`"'&>йёщ | 10 | items |
+      | Product1`"'&йёщ> | 10 | items |
     When I check "Payment Terms" on the "Payment" checkout step and press Continue
     Then Checkout "Order Summary Products Grid" should contain products:
-      | Product1`"'&>йёщ | 10 | items |
+      | Product1`"'&йёщ> | 10 | items |
     And I should see following header in "Do not ship later than Datepicker":
       | S | M | T | W | T | F | S |
     And I click "Localization Switcher"
@@ -87,11 +87,11 @@ Feature: Default Checkout From Shopping List
 
     When I follow "click here to review"
     Then I should be on Order Frontend View page
-    And I should see "Product1`\"'&>йёщ"
+    And I should see "Product1`\"'&йёщ>"
 
   Scenario: Checking Order History grid with Open Orders
     Given I open Order History page on the store frontend
     When there is no records in "OpenOrdersGrid"
     And I click "View" on row "1" in grid "PastOrdersGrid"
     Then I should be on Order Frontend View page
-    And I should see "Product1`\"'&>йёщ"
+    And I should see "Product1`\"'&йёщ>"

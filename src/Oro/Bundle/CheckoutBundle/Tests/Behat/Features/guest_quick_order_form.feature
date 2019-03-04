@@ -106,7 +106,7 @@
     And I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
     And I check "Payment Terms" on the "Payment" checkout step and press Continue
     And "Order Review" checkout step "Order Summary Products Grid" contains products
-      | Product1`"'&>йёщ | 2 | items |
+      | Product1`"'&йёщ> | 2 | items |
       | Product2         | 4 | sets  |
       | Product3         | 2 | items |
     And I uncheck "Save my data and create an account" on the checkout page
@@ -197,7 +197,7 @@
       | Product2         | 2 | item |
       | Product2         | 4 | set  |
       | Product3         | 2 | item |
-      | Product1`"'&>йёщ | 5 | item |
+      | Product1`"'&йёщ> | 5 | item |
     And I click "Submit Request"
     And I should see "Request has been saved" flash message
 
