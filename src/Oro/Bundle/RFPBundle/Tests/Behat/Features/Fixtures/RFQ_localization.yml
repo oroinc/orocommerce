@@ -2,6 +2,10 @@ include:
     - '@OroLocaleBundle:LocalizationFixture.yml'
     - '@OroShoppingListBundle:ShoppingListFixture.yml'
 
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    locvalue1:
+        string: "Product1`\"'&йёщ>"
+
 Oro\Bundle\TranslationBundle\Entity\Translation:
     translation_product_unit_item_lang1:
         translationKey: '@translation_key_jsmessages_oro_product_product_unit_item_label_full'
