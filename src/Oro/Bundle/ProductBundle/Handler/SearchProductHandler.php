@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\ProductBundle\Handler;
 
-use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
@@ -23,18 +22,11 @@ class SearchProductHandler
     private $requestStack;
 
     /**
-     * @var HtmlTagHelper
-     */
-    private $htmlTagHelper;
-
-    /**
      * @param RequestStack $requestStack
-     * @param HtmlTagHelper $htmlTagHelper
      */
-    public function __construct(RequestStack $requestStack, HtmlTagHelper $htmlTagHelper)
+    public function __construct(RequestStack $requestStack)
     {
         $this->requestStack = $requestStack;
-        $this->htmlTagHelper = $htmlTagHelper;
     }
 
     /**
@@ -52,8 +44,6 @@ class SearchProductHandler
         if (!is_string($value)) {
             return false;
         }
-
-        $value = $this->htmlTagHelper->escape($value);
 
         return trim($value);
     }

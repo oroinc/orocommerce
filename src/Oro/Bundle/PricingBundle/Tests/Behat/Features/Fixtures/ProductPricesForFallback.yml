@@ -1,0 +1,112 @@
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    locvalue1:
+        string: 'Product 1'
+    localNewCategory:
+        string: 'NewCategory'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    precision1:
+        unit: '@item'
+        precision: '1'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product1:
+        sku: 'PSKU1'
+        status: 'enabled'
+        type: 'simple'
+        organization: '@organization'
+        owner: '@business_unit'
+        primaryUnitPrecision: '@precision1'
+        attributeFamily: '@defaultProductFamily'
+        addName: ['@locvalue1']
+        inventoryStatus: '@enumInventoryStatuses'
+
+Oro\Bundle\CatalogBundle\Entity\Category:
+    categoryLightingProducts:
+        addTitle: ['@localNewCategory']
+        setParentCategory: [1]
+        addProduct: ['@product1']
+
+Oro\Bundle\PricingBundle\Entity\PriceList:
+    priceListForConfig:
+        name: 'priceListForConfig'
+        addCurrencyByCode: ['USD']
+    priceListForWebsite:
+        name: 'priceListForWebsite'
+        addCurrencyByCode: ['USD']
+    priceListForCustomerGroup1:
+        name: 'priceListForCustomerGroup1'
+        addCurrencyByCode: ['USD']
+    priceListForCustomerGroup2:
+        name: 'priceListForCustomerGroup2'
+        addCurrencyByCode: ['USD']
+    priceListForCustomer1:
+        name: 'priceListForCustomer1'
+        addCurrencyByCode: ['USD']
+    priceListForCustomer2:
+        name: 'priceListForCustomer2'
+        addCurrencyByCode: ['USD']
+
+Oro\Bundle\PricingBundle\Entity\ProductPrice:
+    price1:
+        product: '@product1'
+        priceList: '@priceListForConfig'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 1000
+    price2:
+        product: '@product1'
+        priceList: '@priceListForWebsite'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 100
+    price3:
+        product: '@product1'
+        priceList: '@priceListForCustomerGroup1'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 11
+    price4:
+        product: '@product1'
+        priceList: '@priceListForCustomerGroup2'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 12
+    price5:
+        product: '@product1'
+        priceList: '@priceListForCustomer1'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 1
+    price6:
+        product: '@product1'
+        priceList: '@priceListForCustomer2'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 2
+
+Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
+    priceRelation1:
+        product: '@product1'
+        priceList: '@priceListForConfig'
+    priceRelation2:
+        product: '@product1'
+        priceList: '@priceListForWebsite'
+    priceRelation3:
+        product: '@product1'
+        priceList: '@priceListForCustomerGroup1'
+    priceRelation4:
+        product: '@product1'
+        priceList: '@priceListForCustomerGroup2'
+    priceRelation5:
+        product: '@product1'
+        priceList: '@priceListForCustomer1'
+    priceRelation6:
+        product: '@product1'
+        priceList: '@priceListForCustomer2'

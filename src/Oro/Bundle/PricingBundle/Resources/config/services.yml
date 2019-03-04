@@ -779,6 +779,7 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro.form.update_handler.before_entity_flush.oro_customer_type, method: onPostSubmit }
             - { name: kernel.event_listener, event: oro_customer.customer.on_customer_group_change, method: onCustomerGroupChange }
+            - { name: kernel.event_listener, event: oro_customer.customer.on_customer_group_mass_change, method: onCustomerGroupMassChange }
             - { name: oro_featuretogle.feature, feature: oro_price_lists }
 
     oro_pricing.entity_listener.product_form:

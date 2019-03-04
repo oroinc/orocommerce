@@ -129,15 +129,15 @@
             {{ form_widget(form) }}
             {{ form_errors(form) }}
         </div>
+        {% set hasNotes = form.comment.vars.value is not empty %}
         <div class="request-form-editline__footer">
             <div class="request-form-editline__note">
                 <div class="request-form-editnote">
-                    {% set notes = form.comment %}
-                    <label for="{{ 'lineItem-'~prototype_name }}" class="custom-checkbox">
+                    <label for="{{ 'lineItem-'~prototype_name }}" class="custom-checkbox{% if hasNotes %} checked{% endif %}">
                         <input type="checkbox"
                                name="{{ 'lineItem'~id }}"
                                data-role="field__comment-checkbox"
-                               id="{{ 'lineItem-'~prototype_name }}"{% if notes is not empty %} checked="checked"{% endif %}
+                               id="{{ 'lineItem-'~prototype_name }}"{% if hasNotes %} checked="checked"{% endif %}
                                class="custom-checkbox__input custom-checkbox__input"
                         >
                         <span class="custom-checkbox__icon"></span>
@@ -256,7 +256,7 @@
         {{ form_errors(form.requestProductItems) }}
     </td>
     <td class="rfp-lineitem-notes">
-        <div data-page-component-module="oroorder/js/app/components/notes-component" style="display: none;">
+        <div data-page-component-module="oroorder/js/app/components/notes-component">
             {{ form_widget(form.comment) }}
             {{ form_errors(form.comment) }}
         </div>

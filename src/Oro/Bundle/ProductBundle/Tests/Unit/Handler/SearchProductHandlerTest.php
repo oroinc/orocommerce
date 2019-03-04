@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Handler;
 
 use Oro\Bundle\ProductBundle\Handler\SearchProductHandler;
-use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -21,16 +20,10 @@ class SearchProductHandlerTest extends \PHPUnit\Framework\TestCase
      */
     private $requestStack;
 
-    /**
-     * @var HtmlTagHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $htmlTagHelper;
-
     protected function setUp()
     {
         $this->requestStack = self::createMock(RequestStack::class);
-        $this->htmlTagHelper = self::createMock(HtmlTagHelper::class);
-        $this->searchProductHandler = new SearchProductHandler($this->requestStack, $this->htmlTagHelper);
+        $this->searchProductHandler = new SearchProductHandler($this->requestStack);
     }
 
     public function testSearchKey()
@@ -79,13 +72,6 @@ class SearchProductHandlerTest extends \PHPUnit\Framework\TestCase
             ->method('getCurrentRequest')
             ->willReturn($request);
 
-        $this->htmlTagHelper
-            ->expects(self::once())
-            ->method('escape')
-            ->with(sprintf(' %s ', self::KEY))
-            ->willReturn(sprintf('%s_escaped', self::KEY));
-
-
-        self::assertEquals('search_escaped', $this->searchProductHandler->getSearchString());
+        self::assertEquals('search', $this->searchProductHandler->getSearchString());
     }
 }
