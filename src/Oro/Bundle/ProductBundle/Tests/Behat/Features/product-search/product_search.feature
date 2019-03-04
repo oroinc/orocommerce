@@ -1,15 +1,17 @@
 @regression
 @ticket-BB-16057
+@ticket-BB-16275
 @fixture-OroCustomerBundle:CustomerUserAmandaRCole.yml
 @fixture-OroProductBundle:product_search/products.yml
 
 Feature: Product search
   In order to be able to search for products on frontstore
-  As a bayer
+  As a buyer
   I search for products through the main product search functionality
 
   Scenario: Feature Background
-    Given I signed in as AmandaRCole@example.org on the store frontend
+    Given I enable the existing localizations
+    And I signed in as AmandaRCole@example.org on the store frontend
     And I go to the homepage
 
   Scenario: Check the search results match the specified criteria (search text).
@@ -26,13 +28,13 @@ Feature: Product search
 
   Scenario: Results using the search and through the filter "all_text" should be equal
     Given I click "Search Button"
-    When I filter "Any Text" as contains "Product1"
+    When I filter "Any Text" as contains "Product1`\"'&йёщ>"
     Then number of records in "Product Frontend Grid" should be 1
-    And I should see "Product1" in grid "Product Frontend Grid"
-    When I type "Product1" in "search"
+    And I should see "Product1`\"'&йёщ>" in grid "Product Frontend Grid"
+    When I type "Product1`\"'&йёщ>" in "search"
     And click "Search Button"
     Then number of records in "Product Frontend Grid" should be 1
-    And I should see "Product1" in grid "Product Frontend Grid"
+    And I should see "Product1`\"'&йёщ>" in grid "Product Frontend Grid"
 
   Scenario: Check whether the text in header of the page matches the search text
     Given I type "Search string" in "search"

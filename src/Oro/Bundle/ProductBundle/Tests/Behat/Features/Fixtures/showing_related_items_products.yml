@@ -1,0 +1,7 @@
+include:
+    - '@OroProductBundle:related_items_products.yml'
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    locvalue2_loc1:
+        string: "Product2Localization1`\"'&йёщ>"
+        localization: '@localization1'

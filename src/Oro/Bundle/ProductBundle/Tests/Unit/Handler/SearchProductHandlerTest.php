@@ -80,12 +80,9 @@ class SearchProductHandlerTest extends \PHPUnit\Framework\TestCase
             ->willReturn($request);
 
         $this->htmlTagHelper
-            ->expects(self::once())
-            ->method('escape')
-            ->with(sprintf(' %s ', self::KEY))
-            ->willReturn(sprintf('%s_escaped', self::KEY));
+            ->expects(self::never())
+            ->method('escape');
 
-
-        self::assertEquals('search_escaped', $this->searchProductHandler->getSearchString());
+        self::assertEquals('search', $this->searchProductHandler->getSearchString());
     }
 }

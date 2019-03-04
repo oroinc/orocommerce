@@ -2,6 +2,7 @@
 @ticket-BB-7523
 @ticket-BB-13978
 @ticket-BB-14758
+@ticket-BB-16275
 @fixture-OroCheckoutBundle:Products_quick_order_form_ce.yml
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
@@ -96,9 +97,9 @@ Feature: Quick order form
     And I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
     And I check "Payment Terms" on the "Payment" checkout step and press Continue
     And "Order Review" checkout step "Order Summary Products Grid" contains products
-      | Product1 | 2 | items |
-      | Product2 | 4 | sets  |
-      | Product3 | 2 | items |
+      | Product1`"'&йёщ> | 2 | items |
+      | Product2         | 4 | sets  |
+      | Product3         | 2 | items |
     And I check "Delete this shopping list after submitting order" on the "Order Review" checkout step and press Submit Order
     Then I see the "Thank You" page with "Thank You For Your Purchase!" title
 
@@ -154,7 +155,7 @@ Feature: Quick order form
     Then Page title equals to "Billing Information - Checkout"
     And I should see "Some products have not been added to this order. Please create an RFQ to request price." flash message
     And "Billing Information" checkout step "Order Summary Products Grid" contains products
-      | Product1 | 2 | items |
+      | Product1`"'&йёщ> | 2 | items |
 
   Scenario: Verify disabled products are cannot be added via quick order form
     Given I click "Quick Order Form"
@@ -191,7 +192,7 @@ Feature: Quick order form
     And I click "Get Quote"
     Then Page title equals to "Request A Quote - Requests For Quote - My Account"
     And Request a Quote contains products
-      | Product1 | 5 | item |
+      | Product1`"'&йёщ> | 5 | item |
     And I click "Submit Request"
     And I should see "Request has been saved" flash message
 
@@ -246,20 +247,20 @@ Feature: Quick order form
     And I click "Verify Order"
     And I wait for products to load
     And "QuickAddForm" must contains values:
-      | SKU1  | psku1 - Product1 |
-      | QTY1  | 2                |
-      | UNIT1 | item             |
+      | SKU1  | psku1 - Product1`"'&йёщ> |
+      | QTY1  | 2                        |
+      | UNIT1 | item                     |
     When I fill "Quick Add Copy Paste Form" with:
       | Paste your order | PSKU2;2;item |
     And I click "Verify Order"
     And I wait for products to load
     And "QuickAddForm" must contains values:
-      | SKU1  | psku1 - Product1 |
-      | QTY1  | 2                |
-      | UNIT1 | item             |
-      | SKU2  | PSKU2 - Product2 |
-      | QTY2  | 2                |
-      | UNIT2 | item             |
+      | SKU1  | psku1 - Product1`"'&йёщ> |
+      | QTY1  | 2                        |
+      | UNIT1 | item                     |
+      | SKU2  | PSKU2 - Product2         |
+      | QTY2  | 2                        |
+      | UNIT2 | item                     |
 
   Scenario: Check upload import validation with empty file
     Given I click "Quick Order Form"

@@ -1183,13 +1183,14 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     /**
      * Example: I should see preview image with alt "alt" for "SKU" product
      *
-     * @Then /^(?:|I )should see preview image with alt "(?P<alt>[^"]+)" for "(?P<SKU>[^"]*)" product$/
+     * @Then /^(?:|I )should see preview image with alt "(?P<alt>(?:[^"]|\\")*)" for "(?P<SKU>[^"]*)" product$/
      *
      * @param string $alt
-     * @param string $SKU
+     * @param string|null $SKU
      */
     public function iShouldSeeImageWithAlt($alt, $SKU)
     {
+        $alt = $this->fixStepArgument($alt);
         $productItem = $this->findProductItem($SKU);
 
         $image = $this->createElement('Product Preview Image', $productItem);
@@ -1222,12 +1223,13 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     /**
      * Example: I should see gallery image with alt "alt"
      *
-     * @Then /^(?:|I )should see gallery image with alt "(?P<alt>[^"]*)"$/
+     * @Then /^(?:|I )should see gallery image with alt "(?P<alt>(?:[^"]|\\")*)"$/
      *
      * @param string $alt
      */
     public function iShouldSeeGalleryImageWithAlt($alt)
     {
+        $alt = $this->fixStepArgument($alt);
         $galleryWidgetImage = $this->createElement('Popup Gallery Widget Image');
 
         self::assertEquals(
