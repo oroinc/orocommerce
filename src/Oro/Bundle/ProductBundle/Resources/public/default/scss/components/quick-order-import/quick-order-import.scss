@@ -35,6 +35,10 @@
 
   &__content {
     margin-bottom: $offset-y-m;
+
+    > input[type="file"] {
+      visibility: hidden;
+    }
   }
 
   .filename {

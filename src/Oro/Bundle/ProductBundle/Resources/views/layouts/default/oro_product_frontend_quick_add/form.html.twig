@@ -100,10 +100,7 @@
 {% block oro_product_quick_add_import_from_file_widget %}
     {% spaceless %}
         <div class="quick-order-import__content">
-            <label class="btn btn--large">
-                {{ 'oro.product.frontend.quick_add.import_from_file.choose_file.label'|trans }}
-                {{ form_widget(form.file, {attr: {class:'hidden'}}) }}
-            </label>
+            {{ form_widget(form.file) }}
         </div>
     {% endspaceless %}
 {% endblock %}
