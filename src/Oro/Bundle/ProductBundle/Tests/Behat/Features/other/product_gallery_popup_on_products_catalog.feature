@@ -30,10 +30,10 @@ Feature: Product Gallery Popup On Products Catalog
     Given I proceed as the User
     When I am on the homepage
     And I click "NewCategory"
-    And I should see preview image with alt "Product1`\"'&>йёщ" for "PSKU1" product
+    And I should see preview image with alt "Product1`\"'&йёщ>" for "PSKU1" product
     And I hover on "Product Item Preview"
     When I click "Product Item Gallery Trigger"
-    Then I should see gallery image with alt "Product1`\"'&>йёщ"
+    Then I should see gallery image with alt "Product1`\"'&йёщ>"
     And I click "Popup Gallery Widget Close"
     Then I should not see an "Popup Gallery Widget" element
 

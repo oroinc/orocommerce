@@ -12,5 +12,5 @@ Feature: Quotes View Frontend
     Given I signed in as AmandaRCole@example.org on the store frontend
     When I click "Quotes"
     And click view "Q123" in grid
-    Then I should see "Product1`\"'&>йёщ"
+    Then I should see "Product1`\"'&йёщ>"
 

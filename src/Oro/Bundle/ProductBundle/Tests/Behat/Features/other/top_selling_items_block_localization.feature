@@ -30,19 +30,19 @@ Feature: Top Selling Items Block Localization
     And I signed in as AmandaRCole@example.org on the store frontend
     Then should see the following products in the "Top Selling Items Block":
       | Title            |
-      | Product1`"'&>йёщ |
+      | Product1`"'&йёщ> |
 
   Scenario: Check that alt attributes contain proper product name
     Given I open product gallery for "SKU1" product
-    Then I should see gallery image with alt "Product1`\"'&>йёщ"
+    Then I should see gallery image with alt "Product1`\"'&йёщ>"
     When I click "Popup Gallery Widget Close"
-    Then I should see preview image with alt "Product1`\"'&>йёщ" for "SKU1" product
+    Then I should see preview image with alt "Product1`\"'&йёщ>" for "SKU1" product
 
   Scenario: Check that product name is displayed properly in shopping lists widget
     When click "Add to Shopping List" for "SKU1" product
     And click "In Shopping List" for "SKU1" product
     Then I should see "UiDialog" with elements:
-      | Title | Product1`"'&>йёщ |
+      | Title | Product1`"'&йёщ> |
     And I close ui dialog
 
   Scenario: Check that product name is localized

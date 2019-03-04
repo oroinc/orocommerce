@@ -19,9 +19,9 @@ Feature: RFQ Localization
     Given I open page with shopping list "Shopping List 4"
     When I click "Request Quote"
     Then Request a Quote contains products
-      | Product1`"'&>йёщ | 10 | item (lang1) |
+      | Product1`"'&йёщ> | 10 | item (lang1) |
 
   Scenario: Create RFQ and ensure product name is displayed properly
     When I click "Submit Request"
-    Then I should see "Product1`\"'&>йёщ"
+    Then I should see "Product1`\"'&йёщ>"
     And I wait for action

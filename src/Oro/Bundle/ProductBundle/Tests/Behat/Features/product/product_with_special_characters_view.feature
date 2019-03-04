@@ -26,16 +26,16 @@ Feature: Product with special characters view
     When type "PSKU1" in "search"
     And I click "Search Button"
     And I click "View Details" for "PSKU1" product
-    Then I should see "Product1`\"'&>йёщ"
+    Then I should see "Product1`\"'&йёщ>"
     When I click on "Product View Gallery Trigger"
-    Then I should see gallery image with alt "Product1`\"'&>йёщ"
+    Then I should see gallery image with alt "Product1`\"'&йёщ>"
     And I click "Popup Gallery Widget Close"
 
   Scenario: Check that product name is displayed properly in shopping lists widget
     When I click "Add to Shopping List"
     And click "In Shopping List"
     Then I should see "UiDialog" with elements:
-      | Title | Product1`"'&>йёщ |
+      | Title | Product1`"'&йёщ> |
     And I close ui dialog
 
   Scenario: Check that product name is displayed properly in "Short page" layout view
@@ -48,15 +48,15 @@ Feature: Product with special characters view
     And I click "Save settings"
     Given I proceed as the Buyer
     And I reload the page
-    Then I should see "Product1`\"'&>йёщ"
+    Then I should see "Product1`\"'&йёщ>"
     When I click on "Product View Gallery Trigger"
-    Then I should see gallery image with alt "Product1`\"'&>йёщ"
+    Then I should see gallery image with alt "Product1`\"'&йёщ>"
     And I click "Popup Gallery Widget Close"
 
   Scenario: Check that product name is displayed properly in shopping lists widget
     When click "In Shopping List"
     Then I should see "UiDialog" with elements:
-      | Title | Product1`"'&>йёщ |
+      | Title | Product1`"'&йёщ> |
     And I close ui dialog
 
   Scenario: Check that product name is displayed properly in "Two columns page" layout view
@@ -69,15 +69,15 @@ Feature: Product with special characters view
     And I click "Save settings"
     Given I proceed as the Buyer
     And I reload the page
-    Then I should see "Product1`\"'&>йёщ"
+    Then I should see "Product1`\"'&йёщ>"
     When I click on "Product View Gallery Trigger"
-    Then I should see gallery image with alt "Product1`\"'&>йёщ"
+    Then I should see gallery image with alt "Product1`\"'&йёщ>"
     And I click "Popup Gallery Widget Close"
 
   Scenario: Check that product name is displayed properly in shopping lists widget
     When click "In Shopping List"
     Then I should see "UiDialog" with elements:
-      | Title | Product1`"'&>йёщ |
+      | Title | Product1`"'&йёщ> |
     And I close ui dialog
 
   Scenario: Check that product name is displayed properly in "List page" layout view
@@ -90,12 +90,12 @@ Feature: Product with special characters view
     And I click "Save settings"
     Given I proceed as the Buyer
     And I reload the page
-    Then I should see "Product1`\"'&>йёщ"
+    Then I should see "Product1`\"'&йёщ>"
     When I click on "Product View Gallery Trigger"
-    Then I should see gallery image with alt "Product1`\"'&>йёщ"
+    Then I should see gallery image with alt "Product1`\"'&йёщ>"
     And I click "Popup Gallery Widget Close"
 
   Scenario: Check that product name is displayed properly in shopping lists widget
     When click "In Shopping List"
     Then I should see "UiDialog" with elements:
-      | Title | Product1`"'&>йёщ |
+      | Title | Product1`"'&йёщ> |
