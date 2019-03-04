@@ -43,14 +43,16 @@ class SegmentMessageFactoryTest extends \PHPUnit\Framework\TestCase
         $segment = $this->getEntity(Segment::class, ['id' => $segmentId]);
         $websiteIds = [333];
         $isFull = false;
+        $additionalProducts = [42];
 
-        $message = $this->factory->createMessage($websiteIds, $segment, null, $isFull);
+        $message = $this->factory->createMessage($websiteIds, $segment, null, $isFull, $additionalProducts);
         $this->assertEquals(
             [
                 SegmentMessageFactory::ID => $segmentId,
                 SegmentMessageFactory::WEBSITE_IDS => $websiteIds,
                 SegmentMessageFactory::DEFINITION => null,
                 SegmentMessageFactory::IS_FULL => $isFull,
+                SegmentMessageFactory::ADDITIONAL_PRODUCTS => $additionalProducts,
             ],
             $message
         );
@@ -136,6 +138,20 @@ class SegmentMessageFactoryTest extends \PHPUnit\Framework\TestCase
         ]);
     }
 
+    public function testGetAdditionalProductsFromMessage()
+    {
+        $this->expectsRegistryGetRepository();
+        $additionalProducts = [42];
+
+        $segment = $this->factory->getAdditionalProductsFromMessage([
+            SegmentMessageFactory::ID => 777,
+            SegmentMessageFactory::WEBSITE_IDS => [333],
+            SegmentMessageFactory::IS_FULL => true,
+            SegmentMessageFactory::ADDITIONAL_PRODUCTS => $additionalProducts,
+        ]);
+        $this->assertSame($additionalProducts, $segment);
+    }
+
     /**
      * @dataProvider getSegmentFromMessageWhenThrowsExceptionProvider
      * @param array $data
@@ -167,10 +183,11 @@ class SegmentMessageFactoryTest extends \PHPUnit\Framework\TestCase
                     SegmentMessageFactory::WEBSITE_IDS => [888],
                     SegmentMessageFactory::DEFINITION => 'segment definition',
                     SegmentMessageFactory::IS_FULL => true,
+                    SegmentMessageFactory::ADDITIONAL_PRODUCTS => [42],
                     'someExtraData' => 888,
                 ],
                 'message' => 'The option "someExtraData" does not exist.'
-                    . ' Defined options are: "definition", "id", "is_full", "website_ids".'
+                    . ' Defined options are: "additional_products", "definition", "id", "is_full", "website_ids".'
             ],
             'wrong data type for id' => [
                 'data' => [
@@ -178,6 +195,7 @@ class SegmentMessageFactoryTest extends \PHPUnit\Framework\TestCase
                     SegmentMessageFactory::WEBSITE_IDS => [888],
                     SegmentMessageFactory::DEFINITION => 'segment definition',
                     SegmentMessageFactory::IS_FULL => true,
+                    SegmentMessageFactory::ADDITIONAL_PRODUCTS => [42],
                 ],
                 'message' => 'The option "id" with value "someString" is expected to be of type "null" or "int",'
                     .' but is of type "string".',
@@ -188,6 +206,7 @@ class SegmentMessageFactoryTest extends \PHPUnit\Framework\TestCase
                     SegmentMessageFactory::WEBSITE_IDS => [888],
                     SegmentMessageFactory::DEFINITION => true,
                     SegmentMessageFactory::IS_FULL => true,
+                    SegmentMessageFactory::ADDITIONAL_PRODUCTS => [42],
                 ],
                 'message' => 'The option "definition" with value true is expected to be of type "null" or "string",'
                     .' but is of type "boolean".',
@@ -198,6 +217,7 @@ class SegmentMessageFactoryTest extends \PHPUnit\Framework\TestCase
                     SegmentMessageFactory::WEBSITE_IDS => 'someString',
                     SegmentMessageFactory::DEFINITION => 'segment definition',
                     SegmentMessageFactory::IS_FULL => true,
+                    SegmentMessageFactory::ADDITIONAL_PRODUCTS => [42],
                 ],
                 'message' => 'The option "website_ids" with value "someString" is expected to be of type "array",'
                     .' but is of type "string".',
@@ -208,9 +228,21 @@ class SegmentMessageFactoryTest extends \PHPUnit\Framework\TestCase
                     SegmentMessageFactory::WEBSITE_IDS => [777],
                     SegmentMessageFactory::DEFINITION => 'segment definition',
                     SegmentMessageFactory::IS_FULL => 'someString',
+                    SegmentMessageFactory::ADDITIONAL_PRODUCTS => [42],
                 ],
                 'message' => 'The option "is_full" with value "someString" is expected to be of type "boolean",'
                     .' but is of type "string".',
+            ],
+            'wrong data type for additional_products' => [
+                'data' => [
+                    SegmentMessageFactory::ID => null,
+                    SegmentMessageFactory::WEBSITE_IDS => [777],
+                    SegmentMessageFactory::DEFINITION => 'segment definition',
+                    SegmentMessageFactory::IS_FULL => false,
+                    SegmentMessageFactory::ADDITIONAL_PRODUCTS => 'someString',
+                ],
+                'message' => 'The option "additional_products" with value "someString" is expected to be of'
+                    .' type "array", but is of type "string".',
             ],
         ];
     }

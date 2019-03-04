@@ -53,11 +53,15 @@ class ProductCollectionContentVariantTypeTest extends \PHPUnit\Framework\TestCas
     {
         /** @var ContentVariantStub **/
         $contentVariant = new ContentVariantStub();
+        $contentVariant->setOverrideVariantConfiguration(true);
 
         $this->assertEquals(
             new RouteData(
                 ProductCollectionContentVariantType::PRODUCT_COLLECTION_ROUTE_NAME,
-                [ProductCollectionContentVariantType::CONTENT_VARIANT_ID_KEY => $contentVariant->getId()]
+                [
+                    ProductCollectionContentVariantType::CONTENT_VARIANT_ID_KEY => $contentVariant->getId(),
+                    ProductCollectionContentVariantType::OVERRIDE_VARIANT_CONFIGURATION_KEY => true
+                ]
             ),
             $this->type->getRouteData($contentVariant)
         );

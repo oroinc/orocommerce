@@ -154,6 +154,10 @@ oro:
             subcategory:
                 label: 'Sub-Categories'
 
+        override_variant_configuration:
+            label: Override Product Variant Configuration
+            tooltip: If selected, all simple product variants assigned to this category will be displayed on the page regardless of "Display Simple Variations" setting in the system configuration.
+
     product:
         category:
             label: 'Category'

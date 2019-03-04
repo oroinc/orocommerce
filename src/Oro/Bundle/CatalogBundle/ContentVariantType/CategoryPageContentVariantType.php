@@ -4,12 +4,16 @@ namespace Oro\Bundle\CatalogBundle\ContentVariantType;
 
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Form\Type\CategoryPageVariantType;
+use Oro\Bundle\CatalogBundle\Handler\RequestProductHandler;
 use Oro\Component\Routing\RouteData;
 use Oro\Component\WebCatalog\ContentVariantTypeInterface;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
+/**
+ * Content variant type for category
+ */
 class CategoryPageContentVariantType implements ContentVariantTypeInterface
 {
     const TYPE = 'category_page';
@@ -76,7 +80,9 @@ class CategoryPageContentVariantType implements ContentVariantTypeInterface
             'oro_product_frontend_product_index',
             [
                 'categoryId' => $category->getId(),
-                'includeSubcategories' => !$this->propertyAccessor->getValue($contentVariant, 'excludeSubcategories')
+                'includeSubcategories' => !$this->propertyAccessor->getValue($contentVariant, 'excludeSubcategories'),
+                RequestProductHandler::OVERRIDE_VARIANT_CONFIGURATION_KEY =>
+                    $contentVariant->isOverrideVariantConfiguration(),
             ]
         );
     }

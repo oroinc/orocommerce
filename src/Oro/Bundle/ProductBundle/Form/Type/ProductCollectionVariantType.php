@@ -5,9 +5,13 @@ namespace Oro\Bundle\ProductBundle\Form\Type;
 use Oro\Bundle\ProductBundle\ContentVariantType\ProductCollectionContentVariantType;
 use Oro\Component\WebCatalog\Form\PageVariantType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for manager product collection variant type
+ */
 class ProductCollectionVariantType extends AbstractType
 {
     const NAME = 'oro_product_collection_variant';
@@ -25,6 +29,14 @@ class ProductCollectionVariantType extends AbstractType
                 [
                     'add_name_field' => true,
                     'scope_value' => $builder->getName()
+                ]
+            )
+            ->add(
+                'overrideVariantConfiguration',
+                CheckboxType::class,
+                [
+                    'label' => 'oro.product.override_variant_configuration.label',
+                    'tooltip' => 'oro.product.override_variant_configuration.tooltip',
                 ]
             );
     }
