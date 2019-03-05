@@ -473,3 +473,11 @@ services:
         lazy: true
         tags:
             - { name: kernel.event_listener, event: oro_checkout.login_on_guest_checkout, method: onCheckoutLogin }
+
+    oro_shopping_list.updater.customer_user_reassign.shopping_list_updater:
+        parent: oro_customer.updater.customer_user_reassign.abstract
+        calls:
+            - [ setEntityClass, [ '%oro_shopping_list.entity.shopping_list.class%' ] ]
+        tags:
+            - { name: oro_customer.updater.customer_user_reassign }
+        public: false

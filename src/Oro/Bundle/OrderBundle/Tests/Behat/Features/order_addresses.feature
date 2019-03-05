@@ -11,10 +11,8 @@ Feature: Order Addresses
       | Value                                           | Type   |
       | Customer Address Book                           | Group  |
       | ORO, 801 Scenic Hwy, HAINES CITY FL US 33844    | Option |
-      | ORO, 23400 Caldwell Road, ROCHESTER NY US 14608 | Option |
       | User Address Book                               | Group  |
       | ORO, 801 Scenic Hwy, HAINES CITY FL US 33844    | Option |
-      | ORO, 23400 Caldwell Road, ROCHESTER NY US 14608 | Option |
       | Enter other address                             | Option |
     Then I should see "Order Shipping Address Select" with options:
       | Value                                        | Type   |

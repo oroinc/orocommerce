@@ -719,3 +719,11 @@ services:
         parent: oro_email.workflow.action.send_email_template
         tags:
             - { name: oro_action.action, alias: send_order_confirmation_email }
+
+    oro_checkout.updater.customer_user_reassign.checkout_updater:
+        parent: oro_customer.updater.customer_user_reassign.abstract
+        calls:
+            - [ setEntityClass, [ '%oro_checkout.entity.checkout.class%' ] ]
+        tags:
+            - { name: oro_customer.updater.customer_user_reassign }
+        public: false

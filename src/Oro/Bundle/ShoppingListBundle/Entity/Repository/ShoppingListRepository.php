@@ -6,6 +6,8 @@ use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\QueryBuilder;
+use Oro\Bundle\CustomerBundle\Entity\Repository\ResetCustomerUserTrait;
+use Oro\Bundle\CustomerBundle\Entity\Repository\ResettableCustomerUserRepositoryInterface;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
@@ -14,8 +16,10 @@ use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 /**
  * A repository for ShoppingList entities.
  */
-class ShoppingListRepository extends EntityRepository
+class ShoppingListRepository extends EntityRepository implements ResettableCustomerUserRepositoryInterface
 {
+    use ResetCustomerUserTrait;
+
     /**
      * @param AclHelper $aclHelper
      * @param bool $selectRelations
