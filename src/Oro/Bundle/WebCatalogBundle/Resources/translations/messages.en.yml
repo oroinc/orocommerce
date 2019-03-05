@@ -46,9 +46,11 @@ oro:
             scopes.label: Restrictions
             slugs.label: Slugs
             default.label: Default Variant
+            override_variant_configuration.label: Override Product Variant Configuration
 
             variant_type:
                 system_page.label: System Page
+            options.label: Options
         sections:
             general: 'General'
             use_for: 'Restrictions'

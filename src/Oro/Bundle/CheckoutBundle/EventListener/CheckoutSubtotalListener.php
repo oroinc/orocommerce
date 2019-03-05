@@ -81,10 +81,6 @@ class CheckoutSubtotalListener
         $fallbackRepository = $this->getRepository(PriceListCustomerFallback::class);
         foreach ($customersData as $data) {
             $customers = $fallbackRepository->getCustomerIdentityByGroup($data['customerGroups'], $data['websiteId']);
-
-            if (is_array($customers)) {
-                $customers = new \ArrayIterator($customers);
-            }
             $this->invalidateSubtotalsByCustomers($customers, $data['websiteId']);
         }
 
@@ -101,10 +97,6 @@ class CheckoutSubtotalListener
         $fallbackRepository = $this->getRepository(PriceListCustomerGroupFallback::class);
         foreach ($websiteIds as $websiteId) {
             $customers = $fallbackRepository->getCustomerIdentityByWebsite($websiteId);
-
-            if (is_array($customers)) {
-                $customers = new \ArrayIterator($customers);
-            }
             $this->invalidateSubtotalsByCustomers($customers, $websiteId);
         }
 
@@ -123,10 +115,6 @@ class CheckoutSubtotalListener
         $websitesData = $fallbackWebsiteRepository->getWebsiteIdByDefaultFallback();
         foreach ($websitesData as $websiteData) {
             $customers = $fallbackRepository->getCustomerIdentityByWebsite($websiteData['id']);
-
-            if (is_array($customers)) {
-                $customers = new \ArrayIterator($customers);
-            }
             $this->invalidateSubtotalsByCustomers($customers, $websiteData['id']);
         }
 

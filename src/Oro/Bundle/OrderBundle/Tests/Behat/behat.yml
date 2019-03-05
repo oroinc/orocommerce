@@ -167,6 +167,16 @@ oro_behat_extension:
     DiscountDescription:
       selector: 'input[name="oro_action_operation[orderDiscount][description]"]'
 
+    Discount Popup:
+      selector:
+        locator: '//div[@class="ui-dialog-inner-wrapper"]'
+        type: xpath
+
+    Discount Popup Cancel Button:
+      selector:
+        locator: '//div[contains(@class,"widget-actions-section")]/..//button[contains(text(),"Cancel")]'
+        type: xpath
+
   pages:
     OrderFrontendView:
       class: Oro\Bundle\OrderBundle\Tests\Behat\Page\OrderFrontendViewPage

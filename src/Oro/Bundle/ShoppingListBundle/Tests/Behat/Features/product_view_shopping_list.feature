@@ -1,5 +1,6 @@
 @ticket-BB-13978
 @fixture-OroShoppingListBundle:product_shopping_list.yml
+
 Feature: Product view shopping list
   In order to edit content node
   As an Buyer
@@ -43,6 +44,19 @@ Feature: Product view shopping list
     And click "View Details" for "PSKU_ITEM" product
     When I click "Add to Shopping List"
     Then I should see "Product has been added to" flash message
+
+  Scenario: Check that product name is displayed properly in shopping cart dropdown
+    And type "PSKU1" in "search"
+    And click "Search Button"
+    And click "View Details" for "PSKU1" product
+    And I click "Add to Shopping List"
+    And I am on the homepage
+    When I hover on "Shopping Cart"
+    Then I should see "Product1`\"'&йёщ>"
+
+  Scenario: Check that product name is displayed properly on shopping list view page
+    When I open page with shopping list Shopping List
+    Then I should see "Product1`\"'&йёщ>"
 
   Scenario: Check that product name is localized in shopping lists widget
     Given I click "Localization Switcher"

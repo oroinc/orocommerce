@@ -269,6 +269,14 @@
     {% endif %}
 {% endblock %}
 
+{% block __oro_checkout_content__checkout_order_summary_line_item_note_widget %}
+    {% if lineItem.comment is not null %}
+        <div>
+            {{ 'oro.checkout.order_summary.note'|trans }}: {{ lineItem.comment }}
+        </div>
+    {% endif %}
+{% endblock %}
+
 {% block __oro_checkout_content__checkout_order_summary_line_item_sku_column_widget %}
     <td class="checkout-order-summary__grid-td checkout-order-summary__grid-td--sku">
         {% spaceless %}{{ block('container_widget') }}{% endspaceless %}
@@ -325,6 +333,21 @@
         '~class': " checkout-order-summary__lineitem-total"
     }) %}
     <div {{ block('block_attributes') }}>{{ lineItemInfo.total|oro_format_price }}</div>
+{% endblock %}
+
+{% block __oro_checkout_content__checkout_order_summary_notes_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' checkout-order-summary__notes-container'
+    }) %}
+    <div {{ block('block_attributes') }}>{{ block_widget(block) }}</div>
+{% endblock %}
+
+{% block __oro_checkout_content__checkout_order_summary_notes_widget %}
+    {% if notes is not null %}
+        <div>
+            {{ 'oro.checkout.order_summary.notes'|trans }}: {{ notes }}
+        </div>
+    {% endif %}
 {% endblock %}
 
 {% block __oro_checkout_content__checkout_order_summary_totals_container_widget %}

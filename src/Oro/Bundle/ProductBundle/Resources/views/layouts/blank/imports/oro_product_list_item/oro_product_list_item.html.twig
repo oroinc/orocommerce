@@ -63,7 +63,7 @@
             ajaxRoute: 'oro_product_frontend_ajax_images_by_id',
             id: product.id,
             galleryFilter: 'product_gallery_popup',
-            alt: product.names|localized_value|e
+            alt: product.names|localized_value
         } %}
 
         {% set attr = layout_attr_defaults(attr, {
@@ -124,12 +124,12 @@
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' product-item__title product-item__title--{{ class_prefix }}'
     }) %}
-    {% set productName = product.names|localized_value|e %}
+    {% set productName = product.names|localized_value %}
     <h3 {{ block('block_attributes') }} itemprop="productID" content="{{ product.id }}">
         <a href="{{ path('oro_product_frontend_product_view', {id: product.id}) }}"
            class="view-product"
            itemprop="url"
-           title="{{ productName }}"
+           title="{{ productName|e('html_attr') }}"
            data-page-component-line-clamp><span itemprop="name">{{ productName }}</span></a>
     </h3>
 {% endblock %}

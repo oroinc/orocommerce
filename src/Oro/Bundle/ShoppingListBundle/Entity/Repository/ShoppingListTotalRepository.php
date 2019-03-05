@@ -2,11 +2,14 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Entity\Repository;
 
+use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
-use Oro\Bundle\BatchBundle\ORM\Query\BufferedIdentityQueryResultIterator;
+use Oro\Bundle\CustomerBundle\Entity\CustomerVisitor;
+use Oro\Component\DoctrineUtils\ORM\ResultSetMappingUtil;
+use Oro\Component\DoctrineUtils\ORM\SqlQueryBuilder;
 
 /**
  * Doctrine repository for Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal entity
@@ -38,18 +41,18 @@ class ShoppingListTotalRepository extends EntityRepository
                 $subQuery->expr()->in('productPrice.priceList', ':priceLists')
             );
 
-        $qb = $this->createQueryBuilder('total');
-        $qb->select('total.id')
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->update($this->getEntityName(), 'total')
+            ->set('total.valid', ':newIsValid')
             ->where(
                 $qb->expr()->eq('total.valid', ':isValid'),
                 $qb->expr()->exists($subQuery)
             )
-            ->setParameter('priceLists', $combinedPriceListIds)
-            ->setParameter('isValid', true);
+            ->setParameter('newIsValid', false, Type::BOOLEAN)
+            ->setParameter('priceLists', $combinedPriceListIds, Connection::PARAM_INT_ARRAY)
+            ->setParameter('isValid', true, Type::BOOLEAN);
 
-        $iterator = new BufferedIdentityQueryResultIterator($qb);
-        $iterator->setHydrationMode(Query::HYDRATE_SCALAR);
-        $this->invalidateTotals($iterator);
+        $qb->getQuery()->execute();
     }
 
     /**
@@ -61,13 +64,13 @@ class ShoppingListTotalRepository extends EntityRepository
         if (empty($customerIds)) {
             return;
         }
-        $qb = $this->getBaseInvalidateQb($websiteId);
-        $qb->andWhere($qb->expr()->in('shoppingList.customer', ':customers'))
-            ->setParameter('customers', $customerIds);
 
-        $iterator = new BufferedIdentityQueryResultIterator($qb);
-        $iterator->setHydrationMode(Query::HYDRATE_SCALAR);
-        $this->invalidateTotals($iterator);
+        $expr = $this->getEntityManager()->getExpressionBuilder();
+        $updateQB = $this->getBaseInvalidateUpdateQb($websiteId);
+        $updateQB->andWhere($expr->in('sl.customer_id', ':customerIds'));
+        $updateQB->setParameter('customerIds', $customerIds, Connection::PARAM_INT_ARRAY);
+
+        $updateQB->execute();
     }
 
     /**
@@ -75,12 +78,46 @@ class ShoppingListTotalRepository extends EntityRepository
      */
     public function invalidateGuestShoppingLists($websiteId)
     {
-        $qb = $this->getBaseInvalidateQb($websiteId);
-        $qb->join('shoppingList.visitors', 'visitor');
+        $visitorMetadata = $this->getEntityManager()->getClassMetadata(CustomerVisitor::class);
+        $customerVisitorsJoinTable = $visitorMetadata->getAssociationMapping('shoppingLists')['joinTable']['name'];
 
-        $iterator = new BufferedIdentityQueryResultIterator($qb);
-        $iterator->setHydrationMode(Query::HYDRATE_SCALAR);
-        $this->invalidateTotals($iterator);
+        $expr = $this->getEntityManager()->getExpressionBuilder();
+        $visitorSubQB = $this->getEntityManager()->getConnection()->createQueryBuilder();
+        $visitorSubQB->select($visitorSubQB->expr()->literal(1, Type::INTEGER))
+            ->from($customerVisitorsJoinTable, 'slv')
+            ->where($expr->eq('slv.shoppinglist_id', 'sl.id'));
+
+        $updateQB = $this->getBaseInvalidateUpdateQb($websiteId);
+        $updateQB->andWhere($expr->exists($visitorSubQB->getSQL()));
+
+        $updateQB->execute();
+    }
+
+    /**
+     * @param int $websiteId
+     * @return SqlQueryBuilder
+     */
+    protected function getBaseInvalidateUpdateQb($websiteId)
+    {
+        $expr = $this->getEntityManager()->getExpressionBuilder();
+        $rsm = ResultSetMappingUtil::createResultSetMapping(
+            $this->getEntityManager()->getConnection()->getDatabasePlatform()
+        );
+        $updateQB = new SqlQueryBuilder($this->getEntityManager(), $rsm);
+        $updateQB->update('oro_shopping_list_total', 'st')
+            ->innerJoin('st', 'oro_shopping_list', 'sl', $expr->eq('st.shopping_list_id', 'sl.id'))
+            ->set('is_valid', ':newIsValid')
+            ->where(
+                $expr->andX(
+                    $expr->eq('st.is_valid', ':isValid'),
+                    $expr->eq('sl.website_id', ':websiteId')
+                )
+            )
+            ->setParameter('newIsValid', false, Type::BOOLEAN)
+            ->setParameter('isValid', true, Type::BOOLEAN)
+            ->setParameter('websiteId', $websiteId, Type::INTEGER);
+
+        return $updateQB;
     }
 
     /**

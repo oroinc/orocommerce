@@ -43,9 +43,9 @@ class PriceListRelationTriggerTest extends \PHPUnit\Framework\TestCase
 
         $this->assertEquals(
             [
-                'website' => 1,
-                'customer' => 1,
-                'customerGroup' => 1,
+                'website' => $website,
+                'customer' => $customer,
+                'customerGroup' => $customerGroup,
                 'force' => false,
             ],
             $trigger->toArray()

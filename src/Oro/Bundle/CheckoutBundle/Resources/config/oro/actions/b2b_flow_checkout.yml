@@ -458,7 +458,9 @@ action_groups:
         actions:
             - '@tree':
                 conditions:
-                    '@empty': $.checkout.customerUser
+                    '@and':
+                        - '@empty': $.checkout.customerUser
+                        - '@empty': $.checkout.customer
                 actions:
                     - '@get_active_visitor': $visitor
                     - '@call_service_method':

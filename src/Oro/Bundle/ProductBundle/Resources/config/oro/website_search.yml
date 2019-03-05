@@ -46,6 +46,9 @@ Oro\Bundle\ProductBundle\Entity\Product:
         -
             name: attribute_family_id
             type: integer
+        -
+            name: manually_added_to_ASSIGN_TYPE_ASSIGN_ID
+            type: integer
 
 Oro\Bundle\ProductBundle\Entity\Brand:
     alias: oro_brand_WEBSITE_ID

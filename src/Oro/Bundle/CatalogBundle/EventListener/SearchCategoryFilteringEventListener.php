@@ -17,10 +17,14 @@ use Oro\Bundle\SearchBundle\Datagrid\Datasource\SearchDatasource;
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
 use Oro\Bundle\SearchBundle\Query\SearchQueryInterface;
 
+/**
+ * Search event listener for category datagrid
+ */
 class SearchCategoryFilteringEventListener
 {
     const CATEGORY_ID_CONFIG_PATH = '[options][urlParams][categoryId]';
     const INCLUDE_CAT_CONFIG_PATH = '[options][urlParams][includeSubcategories]';
+    const OVERRIDE_VARIANT_CONFIGURATION_CONFIG_PATH = '[options][urlParams][overrideVariantConfiguration]';
     const VIEW_LINK_PARAMS_CONFIG_PATH = '[properties][view_link][direct_params]';
 
     /** @var RequestProductHandler $requestProductHandler */
@@ -54,15 +58,18 @@ class SearchCategoryFilteringEventListener
     {
         $categoryId = $this->requestProductHandler->getCategoryId();
         $isIncludeSubcategories = $this->requestProductHandler->getIncludeSubcategoriesChoice();
+        $overrideVariantConfiguration = $this->requestProductHandler->getOverrideVariantConfiguration();
 
         $parameters = $event->getParameters();
 
         if (!$categoryId) {
             $categoryId = $this->getCategoryId($parameters);
             $isIncludeSubcategories = $this->getIncludeSubcategories($parameters);
+            $overrideVariantConfiguration = $this->getOverrideVariantConfiguration($parameters);
         } else {
             $parameters->set('categoryId', $categoryId);
             $parameters->set('includeSubcategories', $isIncludeSubcategories);
+            $parameters->set(RequestProductHandler::OVERRIDE_VARIANT_CONFIGURATION_KEY, $overrideVariantConfiguration);
         }
 
         if (!$categoryId) {
@@ -72,6 +79,7 @@ class SearchCategoryFilteringEventListener
         $config = $event->getConfig();
         $config->offsetSetByPath(self::CATEGORY_ID_CONFIG_PATH, $categoryId);
         $config->offsetSetByPath(self::INCLUDE_CAT_CONFIG_PATH, $isIncludeSubcategories);
+        $config->offsetSetByPath(self::OVERRIDE_VARIANT_CONFIGURATION_CONFIG_PATH, $overrideVariantConfiguration);
 
         $this->addSubcategoryFilter($config, $categoryId, $isIncludeSubcategories);
     }
@@ -139,6 +147,10 @@ class SearchCategoryFilteringEventListener
             $categoryId,
             $this->getIncludeSubcategories($parameters)
         );
+
+        if ($parameters->get(RequestProductHandler::OVERRIDE_VARIANT_CONFIGURATION_KEY)) {
+            $datasource->getSearchQuery()->addWhere(Criteria::expr()->gte('integer.is_variant', 0));
+        }
     }
 
     /**
@@ -174,5 +186,17 @@ class SearchCategoryFilteringEventListener
     private function getIncludeSubcategories(ParameterBag $parameters)
     {
         return filter_var($parameters->get('includeSubcategories', false), FILTER_VALIDATE_BOOLEAN);
+    }
+
+    /**
+     * @param ParameterBag $parameters
+     * @return bool
+     */
+    private function getOverrideVariantConfiguration(ParameterBag $parameters)
+    {
+        return filter_var(
+            $parameters->get(RequestProductHandler::OVERRIDE_VARIANT_CONFIGURATION_KEY, false),
+            FILTER_VALIDATE_BOOLEAN
+        );
     }
 }

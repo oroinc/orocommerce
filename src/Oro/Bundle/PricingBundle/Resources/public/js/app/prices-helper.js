@@ -22,11 +22,17 @@ define(function(require) {
 
          * @param prices {Object}
          * @param unit {String}
-         * @param quantity {Number}
+         * @param quantity {Number|String}
          * @returns {Object}
          */
         findPrice: function(prices, unit, quantity) {
-            if (_.isEmpty(quantity) || _.isEmpty(prices)) {
+            if (_.isEmpty(prices) || isNaN(quantity) || quantity === '') {
+                return null;
+            }
+
+            quantity = parseFloat(quantity);
+
+            if (quantity < 0) {
                 return null;
             }
 

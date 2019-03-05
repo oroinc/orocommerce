@@ -65,7 +65,7 @@ Feature: Check CPL after remove manual product price
 
   Scenario: Recalculate Price List
     When I click "Recalculate"
-    Then I should see "Price List Rules were Recalculates successful" flash message
+    Then I should see "Product Prices have been successfully recalculated" flash message
 
     When I reload the page
     Then number of records in "Price list Product prices Grid" should be 3

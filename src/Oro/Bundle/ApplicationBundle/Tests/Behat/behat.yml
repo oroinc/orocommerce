@@ -141,15 +141,23 @@ oro_behat_extension:
           Price List:
             type: 'xpath'
             locator: '//div[contains(@id,"s2id_oro_customer_type_priceListsByWebsites_1_priceListCollection_0_priceList-uid")]//input'
+            element: Select2Entity
+          Price List Fallback: 'oro_customer_type[priceListsByWebsites][1][fallback]'
+          Group:
+            type: 'xpath'
+            locator: '//input[@name="oro_customer_type[group]"]'
+            element: Select2Entity
 
     Customer Group Form:
       selector: 'form[name="oro_customer_group_type"]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
       options:
         mapping:
+          Price List Fallback: 'oro_customer_group_type[priceListsByWebsites][1][fallback]'
           Price List:
             type: 'xpath'
             locator: '//div[contains(@id,"s2id_oro_customer_group_type_priceListsByWebsites_1_priceListCollection_0_priceList-uid")]//input'
+            element: Select2Entity
           Name: 'oro_customer_group_type[name]'
 
     Enter expression unit:

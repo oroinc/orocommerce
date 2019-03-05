@@ -8,10 +8,14 @@ use Oro\Bundle\ProductBundle\Model\SegmentMessageFactory;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 
+/**
+ * Listener that sends product segment data to reindex.
+ */
 class ProductCollectionVariantReindexMessageSendListener
 {
     const SEGMENT = 'segment';
     const IS_FULL = 'is_full';
+    const ADDITIONAL_PRODUCTS = 'additional_products';
 
     /**
      * @var MessageProducerInterface
@@ -70,12 +74,35 @@ class ProductCollectionVariantReindexMessageSendListener
         if (!array_key_exists($segment->getId(), $this->segments)) {
             $this->segments[$segment->getId()] = [
                 self::SEGMENT => $segment,
-                self::IS_FULL => $isFull
+                self::IS_FULL => $isFull,
+                self::ADDITIONAL_PRODUCTS => [],
             ];
         }
 
         if ($isFull) {
             $this->segments[$segment->getId()][self::IS_FULL] = true;
+        }
+    }
+
+    /**
+     * @param Segment $segment
+     * @param array $additionalProducts
+     */
+    public function scheduleAdditionalProductsBySegment(Segment $segment, array $additionalProducts = [])
+    {
+        if (!array_key_exists($segment->getId(), $this->segments)) {
+            $this->segments[$segment->getId()] = [
+                self::SEGMENT => $segment,
+                self::IS_FULL => false,
+                self::ADDITIONAL_PRODUCTS => [],
+            ];
+        }
+
+        if ($additionalProducts) {
+            $this->segments[$segment->getId()][self::ADDITIONAL_PRODUCTS] = array_unique(array_merge(
+                $additionalProducts,
+                $this->segments[$segment->getId()][self::ADDITIONAL_PRODUCTS]
+            ));
         }
     }
 
@@ -105,6 +132,7 @@ class ProductCollectionVariantReindexMessageSendListener
                     null,
                     $segmentData[self::IS_FULL]
                 );
+                $message[SegmentMessageFactory::ADDITIONAL_PRODUCTS] = $segmentData[self::ADDITIONAL_PRODUCTS];
                 $this->scheduledMessages[$this->getMessageKey($message)] = $message;
             }
         }

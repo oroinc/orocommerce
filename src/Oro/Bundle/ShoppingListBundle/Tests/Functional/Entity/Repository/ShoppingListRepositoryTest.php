@@ -4,7 +4,8 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\Entity\Repository;
 
 use Doctrine\Common\Collections\Criteria;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
-use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
+use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData as LoadAuthCustomerUserData;
 use Oro\Bundle\SecurityBundle\Authentication\Token\UsernamePasswordOrganizationToken;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
@@ -109,7 +110,7 @@ class ShoppingListRepositoryTest extends WebTestCase
         return $this->getContainer()
             ->get('doctrine')
             ->getRepository(CustomerUser::class)
-            ->findOneBy(['username' => LoadCustomerUserData::AUTH_USER]);
+            ->findOneBy(['username' => LoadAuthCustomerUserData::AUTH_USER]);
     }
 
     /**
@@ -163,5 +164,40 @@ class ShoppingListRepositoryTest extends WebTestCase
         );
 
         $this->assertEquals(1, $count);
+    }
+
+    public function testGetRelatedEntitiesCount()
+    {
+        $customerUser = $this->getReference(LoadCustomerUserData::LEVEL_1_EMAIL);
+
+        self::assertSame(1, $this->getRepository()->getRelatedEntitiesCount($customerUser));
+    }
+
+    public function testGetRelatedEntitiesCountZero()
+    {
+        $customerUserWithoutRelatedEntities = $this->getReference(LoadCustomerUserData::EMAIL);
+
+        self::assertSame(0, $this->getRepository()->getRelatedEntitiesCount($customerUserWithoutRelatedEntities));
+    }
+
+    public function testResetCustomerUserForSomeEntities()
+    {
+        $customerUser = $this->getCustomerUser();
+        $this->getRepository()->resetCustomerUser($customerUser, [
+            $this->getReference(LoadShoppingLists::SHOPPING_LIST_1),
+            $this->getReference(LoadShoppingLists::SHOPPING_LIST_2),
+        ]);
+
+        $shoppingLists = $this->getRepository()->findBy(['customerUser' => null]);
+        $this->assertCount(2, $shoppingLists);
+    }
+
+    public function testResetCustomerUser()
+    {
+        $customerUser = $this->getCustomerUser();
+        $this->getRepository()->resetCustomerUser($customerUser);
+
+        $shoppingLists = $this->getRepository()->findBy(['customerUser' => null]);
+        $this->assertCount(7, $shoppingLists);
     }
 }

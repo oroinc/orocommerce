@@ -90,29 +90,20 @@ class ReindexProductCollectionProcessor implements MessageProcessorInterface, To
             $segment = $this->messageFactory->getSegmentFromMessage($body);
             $websiteIds = $this->messageFactory->getWebsiteIdsFromMessage($body);
             $isFull = $this->messageFactory->getIsFull($body);
+            $additionalProducts = $this->messageFactory->getAdditionalProductsFromMessage($body) ?? [];
             $jobName = $this->getUniqueJobName($segment, $websiteIds);
             $result = $this->jobRunner->runUnique(
                 $message->getMessageId(),
                 $jobName,
-                function (JobRunner $jobRunner, Job $job) use ($segment, $websiteIds, $isFull) {
-                    $i = 0;
+                function (JobRunner $jobRunner, Job $job) use ($segment, $websiteIds, $isFull, $additionalProducts) {
+                    $index = 0;
                     foreach ($this->getAllProductIdsForReindex($segment, $isFull) as $batch) {
-                        $reindexMsgData = $this->reindexMessageGranularizer->process(
-                            [Product::class],
-                            $websiteIds,
-                            [AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => $batch]
-                        );
+                        $additionalProducts = array_diff($additionalProducts, $batch);
+                        $this->sendToReindex($jobRunner, $job, $batch, $websiteIds, $index);
+                    }
 
-                        foreach ($reindexMsgData as $msgData) {
-                            $jobRunner->createDelayed(
-                                sprintf('%s:reindex:%s', $job->getName(), ++$i),
-                                function (JobRunner $jobRunner, Job $child) use ($msgData) {
-                                    $msgData['jobId'] = $child->getId();
-                                    $message = new Message($msgData, AsyncIndexer::DEFAULT_PRIORITY_REINDEX);
-                                    $this->producer->send(AsyncIndexer::TOPIC_REINDEX, $message);
-                                }
-                            );
-                        }
+                    if ($additionalProducts) {
+                        $this->sendToReindex($jobRunner, $job, $additionalProducts, $websiteIds, $index);
                     }
 
                     return true;
@@ -169,6 +160,33 @@ class ReindexProductCollectionProcessor implements MessageProcessorInterface, To
             foreach ($this->segmentSnapshotDeltaProvider->getRemovedEntityIds($segment) as $batch) {
                 yield array_map('reset', $batch);
             }
+        }
+    }
+
+    /**
+     * @param JobRunner $jobRunner
+     * @param Job $job
+     * @param array $batch
+     * @param array $websiteIds
+     * @param int $index
+     */
+    private function sendToReindex(JobRunner $jobRunner, Job $job, array $batch, array $websiteIds, &$index)
+    {
+        $reindexMsgData = $this->reindexMessageGranularizer->process(
+            [Product::class],
+            $websiteIds,
+            [AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => $batch]
+        );
+
+        foreach ($reindexMsgData as $msgData) {
+            $jobRunner->createDelayed(
+                sprintf('%s:reindex:%s', $job->getName(), ++$index),
+                function (JobRunner $jobRunner, Job $child) use ($msgData) {
+                    $msgData['jobId'] = $child->getId();
+                    $message = new Message($msgData, AsyncIndexer::DEFAULT_PRIORITY_REINDEX);
+                    $this->producer->send(AsyncIndexer::TOPIC_REINDEX, $message);
+                }
+            );
         }
     }
 

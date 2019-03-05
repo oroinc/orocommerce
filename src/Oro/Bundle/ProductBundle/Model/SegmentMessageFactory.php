@@ -19,6 +19,7 @@ class SegmentMessageFactory
     const WEBSITE_IDS = 'website_ids';
     const DEFINITION = 'definition';
     const IS_FULL = 'is_full';
+    const ADDITIONAL_PRODUCTS = 'additional_products';
 
     /**
      * @var OptionsResolver
@@ -50,13 +51,17 @@ class SegmentMessageFactory
      * @param bool $isFull
      * @return array
      */
-    public function createMessage(array $websiteIds, Segment $segment = null, $definition = null, $isFull = true)
-    {
+    public function createMessage(
+        array $websiteIds,
+        Segment $segment = null,
+        $definition = null,
+        $isFull = true
+    ) {
         return $this->getResolvedData([
             self::ID => $segment ? $segment->getId() : null,
             self::WEBSITE_IDS => $websiteIds,
             self::DEFINITION => $definition,
-            self::IS_FULL => $isFull,
+            self::IS_FULL => $isFull
         ]);
     }
 
@@ -108,6 +113,17 @@ class SegmentMessageFactory
     }
 
     /**
+     * @param array $data
+     * @return array
+     */
+    public function getAdditionalProductsFromMessage(array $data)
+    {
+        $data = $this->getResolvedData($data);
+
+        return $data[self::ADDITIONAL_PRODUCTS] ?? [];
+    }
+
+    /**
      * @return OptionsResolver
      */
     private function getOptionsResolver()
@@ -122,13 +138,15 @@ class SegmentMessageFactory
 
             $resolver->setDefined([
                 self::ID,
-                self::DEFINITION
+                self::DEFINITION,
+                self::ADDITIONAL_PRODUCTS,
             ]);
 
             $resolver->setAllowedTypes(self::WEBSITE_IDS, 'array');
             $resolver->setAllowedTypes(self::ID, ['null','int']);
             $resolver->setAllowedTypes(self::DEFINITION, ['null', 'string']);
             $resolver->setAllowedTypes(self::IS_FULL, ['boolean']);
+            $resolver->setAllowedTypes(self::ADDITIONAL_PRODUCTS, ['array']);
 
             $this->resolver = $resolver;
         }
