@@ -477,6 +477,14 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.order-line-items-grid-frontend, method: onBuildBefore }
 
+    oro_order.updater.customer_user_reassign.order_updater:
+        parent: oro_customer.updater.customer_user_reassign.abstract
+        calls:
+            - [ setEntityClass, [ '%oro_order.entity.order.class%' ] ]
+        tags:
+            - { name: oro_customer.updater.customer_user_reassign }
+        public: false
+
     oro_order.datagrid.order_line_items_grid_frontend_order_object_access_listener:
         class: 'Oro\Bundle\OrderBundle\Datagrid\OrderLineItemsOrderObjectAccessListener'
         arguments:

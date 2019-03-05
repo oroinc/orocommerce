@@ -195,3 +195,11 @@ services:
             - '@service_container'
         tags:
             - { name: twig.extension }
+
+    oro_rfp.updater.customer_user_reassign.request_updater:
+        parent: oro_customer.updater.customer_user_reassign.abstract
+        calls:
+            - [ setEntityClass, [ '%oro_rfp.entity.request.class%' ] ]
+        tags:
+            - { name: oro_customer.updater.customer_user_reassign }
+        public: false

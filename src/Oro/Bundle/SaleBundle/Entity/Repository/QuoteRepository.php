@@ -7,14 +7,18 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\QueryBuilder;
+use Oro\Bundle\CustomerBundle\Entity\Repository\ResetCustomerUserTrait;
+use Oro\Bundle\CustomerBundle\Entity\Repository\ResettableCustomerUserRepositoryInterface;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 
 /**
  * Doctrine repository for Quote entity.
  */
-class QuoteRepository extends EntityRepository
+class QuoteRepository extends EntityRepository implements ResettableCustomerUserRepositoryInterface
 {
+    use ResetCustomerUserTrait;
+
     /**
      * @return QueryBuilder
      */

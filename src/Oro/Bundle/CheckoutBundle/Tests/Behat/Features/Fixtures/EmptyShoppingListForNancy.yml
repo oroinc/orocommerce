@@ -1,0 +1,7 @@
+Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
+    emptyShoppingListForNancy:
+        label: 'Empty Shopping List'
+        customerUser: '@nancy'
+        customer: '@customer1'
+        organization: '@organization'
+        website: '@website1'

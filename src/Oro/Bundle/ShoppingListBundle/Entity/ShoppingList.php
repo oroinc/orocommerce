@@ -6,7 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
 use Oro\Bundle\CustomerBundle\Entity\CustomerVisitorOwnerAwareInterface;
-use Oro\Bundle\CustomerBundle\Entity\Ownership\FrontendCustomerUserAwareTrait;
+use Oro\Bundle\CustomerBundle\Entity\Ownership\AuditableFrontendCustomerUserAwareTrait;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
@@ -21,6 +21,8 @@ use Oro\Bundle\WebsiteBundle\Entity\WebsiteBasedCurrencyAwareInterface;
 use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
 
 /**
+ * Shopping List entity
+ *
  * @ORM\Table(
  *      name="oro_shopping_list",
  *      indexes={
@@ -81,7 +83,7 @@ class ShoppingList extends ExtendShoppingList implements
     ProductLineItemsHolderInterface
 {
     use DatesAwareTrait;
-    use FrontendCustomerUserAwareTrait;
+    use AuditableFrontendCustomerUserAwareTrait;
     use UserAwareTrait;
 
     /**
