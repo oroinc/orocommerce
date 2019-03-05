@@ -20,7 +20,8 @@ class SendOrderConfirmationEmailTest extends AbstractSendEmailTemplateTest
             $this->entityNameResolver,
             $this->renderer,
             $this->objectManager,
-            $this->validator
+            $this->validator,
+            $this->emailOriginHelper
         );
 
         $this->action->setLogger($this->logger);
