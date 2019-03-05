@@ -35,14 +35,24 @@
 
   &__content {
     margin-bottom: $offset-y-m;
-
-    > input[type="file"] {
-      visibility: hidden;
-    }
   }
 
-  .filename {
-    display: none;
+  label > input[type="file"] {
+    // style the file input while uniform input is not initialized yet
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+  }
+
+  .uploader {
+    display: block;
+
+    .action,
+    .filename {
+      display: none;
+    }
   }
 
   .mobile-version & {
