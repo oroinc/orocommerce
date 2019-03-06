@@ -4,156 +4,272 @@ namespace Oro\Bundle\OrderBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\OrderBundle\EventListener\FormViewListener;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
-use Oro\Component\Testing\Unit\FormViewListenerTestCase;
+use Oro\Bundle\UIBundle\View\ScrollData;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Translation\TranslatorInterface;
 
-class FormViewListenerTest extends FormViewListenerTestCase
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
+class FormViewListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var FormViewListener
-     */
-    protected $listener;
+    private const EXPECTED_SCROLL_DATA = [
+        ScrollData::DATA_BLOCKS => [
+            0 => [
+                ScrollData::SUB_BLOCKS => [
+                    0 => [
+                        ScrollData::DATA => [
+                            0 => 'rendered',
+                        ],
+                    ],
+                ],
+                ScrollData::TITLE => 'oro.order.sales_orders.label.trans',
+                ScrollData::USE_SUB_BLOCK_DIVIDER => true,
+            ],
+        ],
+    ];
 
-    /** @var  Request|\PHPUnit\Framework\MockObject\MockObject */
-    protected $request;
+    /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $translator;
+
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
+    private $doctrineHelper;
+
+    /** @var \Twig_Environment|\PHPUnit\Framework\MockObject\MockObject */
+    private $env;
+
+    /** @var FormViewListener */
+    private $listener;
+
+    /** @var RequestStack */
+    private $requestStack;
 
     /**
      * {@inheritdoc}
      */
     public function setUp()
     {
-        parent::setUp();
-        $this->request = $this->getRequest();
-        /** @var RequestStack|\PHPUnit\Framework\MockObject\MockObject $requestStack */
-        $requestStack = $this->createMock('Symfony\Component\HttpFoundation\RequestStack');
-        $requestStack->expects($this->any())->method('getCurrentRequest')->willReturn($this->request);
-        $this->listener = new FormViewListener($this->translator, $this->doctrineHelper, $requestStack);
+        $this->translator = $this->createMock(TranslatorInterface::class);
+        $this->translator->expects($this->any())
+            ->method('trans')
+            ->willReturnCallback(
+                function ($id) {
+                    return $id . '.trans';
+                }
+            );
+
+        $this->env = $this->createMock(\Twig_Environment::class);
+        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
+        $this->requestStack = new RequestStack();
+
+        $this->listener = new FormViewListener($this->translator, $this->doctrineHelper, $this->requestStack);
     }
 
-    public function testOnCustomerUserView()
+    public function testOnCustomerUserView(): void
     {
-        $this->request
-            ->expects($this->any())
-            ->method('get')
-            ->with('id')
-            ->willReturn(1);
+        $this->assertRequestCalled(1);
 
         $customerUser = new CustomerUser();
 
-        $this->doctrineHelper
-            ->expects($this->once())
+        $this->doctrineHelper->expects($this->once())
             ->method('getEntityReference')
+            ->with('OroCustomerBundle:CustomerUser', 1)
             ->willReturn($customerUser);
 
-        /** @var \PHPUnit\Framework\MockObject\MockObject|\Twig_Environment $env */
-        $env = $this->getMockBuilder('\Twig_Environment')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $env->expects($this->once())
+        $this->env->expects($this->once())
             ->method('render')
             ->with('OroOrderBundle:CustomerUser:orders_view.html.twig', ['entity' => $customerUser])
-            ->willReturn('');
+            ->willReturn('rendered');
 
-        $event = $this->getBeforeListRenderEvent();
-        $event->expects($this->once())
-            ->method('getEnvironment')
-            ->willReturn($env);
+        $scrollData = new ScrollData();
+
+        $this->listener->onCustomerUserView(new BeforeListRenderEvent($this->env, $scrollData, new \stdClass()));
+
+        $this->assertEquals(self::EXPECTED_SCROLL_DATA, $scrollData->getData());
+    }
+
+    public function testOnCustomerUserViewWithoutId(): void
+    {
+        $this->assertRequestCalled(null);
+
+        $this->doctrineHelper->expects($this->never())
+            ->method($this->anything());
+
+        $this->env->expects($this->never())
+            ->method($this->anything());
+
+        $event = new BeforeListRenderEvent($this->env, new ScrollData(), new \stdClass());
 
         $this->listener->onCustomerUserView($event);
     }
 
-    public function testOnCustomerUserViewWithEmptyRequest()
+    public function testOnCustomerUserViewWithoutEntity(): void
     {
-        /** @var \PHPUnit\Framework\MockObject\MockObject|BeforeListRenderEvent $event */
-        $event = $this->getMockBuilder('Oro\Bundle\UIBundle\Event\BeforeListRenderEvent')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->assertRequestCalled(1);
 
-        $event->expects($this->never())
-            ->method('getScrollData');
-
-        $this->listener->onCustomerUserView($event);
-    }
-
-    public function testOnCustomerView()
-    {
-        $this->request->expects($this->any())->method('get')->with('id')->willReturn(1);
-
-        $customer = new Customer();
-
-        $this->doctrineHelper
-            ->expects($this->once())
+        $this->doctrineHelper->expects($this->once())
             ->method('getEntityReference')
-            ->willReturn($customer);
-
-        /** @var \PHPUnit\Framework\MockObject\MockObject|\Twig_Environment $env */
-        $env = $this->getMockBuilder('\Twig_Environment')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $env->expects($this->once())
-            ->method('render')
-            ->with('OroOrderBundle:Customer:orders_view.html.twig', ['entity' => $customer])
-            ->willReturn('');
-
-        $event = $this->getBeforeListRenderEvent();
-        $event->expects($this->once())
-            ->method('getEnvironment')
-            ->willReturn($env);
-
-        $this->listener->onCustomerView($event);
-    }
-
-    public function testOnCustomerViewWithoutId()
-    {
-        $this->request->expects($this->any())->method('get')->with('id')->willReturn(null);
-
-        $customer = new Customer();
-
-        $this->doctrineHelper
-            ->expects($this->never())
-            ->method('getEntityReference')
-            ->willReturn($customer);
-
-        /** @var \PHPUnit\Framework\MockObject\MockObject|BeforeListRenderEvent $event */
-        $event = $this->getMockBuilder('Oro\Bundle\UIBundle\Event\BeforeListRenderEvent')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $event->expects($this->never())->method('getScrollData');
-
-        $this->listener->onCustomerView($event);
-    }
-
-    public function testOnCustomerViewWithoutEntity()
-    {
-        $this->request->expects($this->any())->method('get')->with('id')->willReturn(1);
-
-        $this->doctrineHelper
-            ->expects($this->once())
-            ->method('getEntityReference')
+            ->with('OroCustomerBundle:CustomerUser', 1)
             ->willReturn(null);
 
-        /** @var \PHPUnit\Framework\MockObject\MockObject|BeforeListRenderEvent $event */
-        $event = $this->getMockBuilder('Oro\Bundle\UIBundle\Event\BeforeListRenderEvent')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $event->expects($this->never())->method('getScrollData');
+        $this->env->expects($this->never())
+            ->method($this->anything());
 
-        $this->listener->onCustomerView($event);
+        $this->listener->onCustomerUserView(new BeforeListRenderEvent($this->env, new ScrollData(), new \stdClass()));
     }
 
-    public function testOnCustomerViewWithEmptyRequest()
+    public function testOnCustomerUserViewWithEmptyRequest(): void
     {
-        /** @var \PHPUnit\Framework\MockObject\MockObject|BeforeListRenderEvent $event */
-        $event = $this->getMockBuilder('Oro\Bundle\UIBundle\Event\BeforeListRenderEvent')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->doctrineHelper->expects($this->never())
+            ->method($this->anything());
 
-        $event->expects($this->never())
-            ->method('getScrollData');
+        $this->env->expects($this->never())
+            ->method($this->anything());
 
-        $this->listener->onCustomerView($event);
+        $this->listener->onCustomerUserView(new BeforeListRenderEvent($this->env, new ScrollData(), new \stdClass()));
+    }
+
+    public function testOnCustomerView(): void
+    {
+        $this->assertRequestCalled(1);
+
+        $customer = new Customer();
+
+        $this->doctrineHelper->expects($this->once())
+            ->method('getEntityReference')
+            ->with('OroCustomerBundle:Customer', 1)
+            ->willReturn($customer);
+
+        $this->env->expects($this->once())
+            ->method('render')
+            ->with('OroOrderBundle:Customer:orders_view.html.twig', ['entity' => $customer])
+            ->willReturn('rendered');
+
+        $scrollData = new ScrollData();
+
+        $this->listener->onCustomerView(new BeforeListRenderEvent($this->env, $scrollData, $customer));
+
+        $this->assertEquals(self::EXPECTED_SCROLL_DATA, $scrollData->getData());
+    }
+
+    public function testOnCustomerViewWithoutId(): void
+    {
+        $this->assertRequestCalled(null);
+
+        $this->doctrineHelper->expects($this->never())
+            ->method($this->anything());
+
+        $this->env->expects($this->never())
+            ->method($this->anything());
+
+        $this->listener->onCustomerView(new BeforeListRenderEvent($this->env, new ScrollData(), new \stdClass()));
+    }
+
+    public function testOnCustomerViewWithoutEntity(): void
+    {
+        $this->assertRequestCalled(1);
+
+        $this->doctrineHelper->expects($this->once())
+            ->method('getEntityReference')
+            ->with('OroCustomerBundle:Customer', 1)
+            ->willReturn(null);
+
+        $this->env->expects($this->never())
+            ->method($this->anything());
+
+        $this->listener->onCustomerView(new BeforeListRenderEvent($this->env, new ScrollData(), new \stdClass()));
+    }
+
+    public function testOnCustomerViewWithEmptyRequest(): void
+    {
+        $this->doctrineHelper->expects($this->never())
+            ->method($this->anything());
+
+        $this->env->expects($this->never())
+            ->method($this->anything());
+
+        $this->listener->onCustomerView(new BeforeListRenderEvent($this->env, new ScrollData(), new \stdClass()));
+    }
+
+    public function testOnShoppingListView(): void
+    {
+        $this->assertRequestCalled(1);
+
+        $shoppingList = new ShoppingList();
+
+        $this->doctrineHelper->expects($this->once())
+            ->method('getEntityReference')
+            ->with('OroShoppingListBundle:ShoppingList', 1)
+            ->willReturn($shoppingList);
+
+        $this->env->expects($this->once())
+            ->method('render')
+            ->with('OroOrderBundle:ShoppingList:orders_view.html.twig', ['entity' => $shoppingList])
+            ->willReturn('rendered');
+
+        $scrollData = new ScrollData();
+
+        $this->listener->onShoppingListView(new BeforeListRenderEvent($this->env, $scrollData, $shoppingList));
+
+        $this->assertEquals(self::EXPECTED_SCROLL_DATA, $scrollData->getData());
+    }
+
+    public function testOnShoppingListViewWithoutId(): void
+    {
+        $this->assertRequestCalled(null);
+
+        $this->doctrineHelper->expects($this->never())
+            ->method($this->anything());
+
+        $this->env->expects($this->never())
+            ->method($this->anything());
+
+        $this->listener->onShoppingListView(new BeforeListRenderEvent($this->env, new ScrollData(), new \stdClass()));
+    }
+
+    public function testOnShoppingListViewWithoutEntity(): void
+    {
+        $this->assertRequestCalled(1);
+
+        $this->doctrineHelper->expects($this->once())
+            ->method('getEntityReference')
+            ->with('OroShoppingListBundle:ShoppingList', 1)
+            ->willReturn(null);
+
+        $this->env->expects($this->never())
+            ->method($this->anything());
+
+        $this->listener->onShoppingListView(new BeforeListRenderEvent($this->env, new ScrollData(), new \stdClass()));
+    }
+
+    public function testOnShoppingListViewWithEmptyRequest(): void
+    {
+        $this->doctrineHelper->expects($this->never())
+            ->method($this->anything());
+
+        $this->env->expects($this->never())
+            ->method($this->anything());
+
+        $this->listener->onShoppingListView(new BeforeListRenderEvent($this->env, new ScrollData(), new \stdClass()));
+    }
+
+    /**
+     * @param int|null $id
+     */
+    private function assertRequestCalled(?int $id): void
+    {
+        /** @var Request|\PHPUnit\Framework\MockObject\MockObject $request */
+        $request = $this->createMock(Request::class);
+        $request->expects($this->once())
+            ->method('get')
+            ->with('id')
+            ->willReturn($id);
+
+        $this->requestStack->push($request);
     }
 }
