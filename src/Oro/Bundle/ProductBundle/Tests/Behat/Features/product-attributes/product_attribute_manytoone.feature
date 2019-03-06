@@ -57,6 +57,7 @@ Feature: Product attribute many-to-one
     Given I click "NewCategory"
     And I should see "SKU123" product
     And I should see "SKU456" product
+    And I click "Grid Filters Button"
     When I check "Nancy Sallee" in ManyToOneField filter in frontend product grid
     Then I should see "SKU123" product
     And I should not see "SKU456" product

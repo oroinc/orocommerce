@@ -57,6 +57,7 @@ Feature: Product attribute boolean
 
   Scenario: Check product grid filter
     Given I proceed as the Buyer
+    And I click "Grid Filters Button"
     When I check "Yes" in BooleanField filter in frontend product grid
     Then I should see "SKU123" product
     And I should not see "SKU456" product
