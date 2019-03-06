@@ -113,21 +113,21 @@ class ProductImageImportTest extends WebTestCase
     {
         $this->assertPreImportActionExecuted($importFilePath);
 
-        $preImportMessageData = $this->getOneSentMessageWithTopic(Topics::PRE_HTTP_IMPORT);
+        $preImportMessageData = $this->getOneSentMessageWithTopic(Topics::PRE_IMPORT);
         $this->clearMessageCollector();
 
         $this->assertMessageProcessorExecuted(
-            'oro_importexport.async.pre_http_import',
+            'oro_importexport.async.pre_import',
             $preImportMessageData
         );
 
-        static::assertMessageSent(Topics::HTTP_IMPORT);
+        static::assertMessageSent(Topics::IMPORT);
 
-        $importMessageData = $this->getOneSentMessageWithTopic(Topics::HTTP_IMPORT);
+        $importMessageData = $this->getOneSentMessageWithTopic(Topics::IMPORT);
         $this->clearMessageCollector();
 
         $this->assertMessageProcessorExecuted(
-            'oro_importexport.async.http_import',
+            'oro_importexport.async.import',
             $importMessageData
         );
 
@@ -226,7 +226,7 @@ class ProductImageImportTest extends WebTestCase
         static::assertTrue($response['success']);
 
         static::assertMessageSent(
-            Topics::PRE_HTTP_IMPORT,
+            Topics::PRE_IMPORT,
             [
                 'fileName' => $fileName,
                 'process' => ProcessorRegistry::TYPE_IMPORT,
