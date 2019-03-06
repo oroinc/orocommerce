@@ -177,6 +177,10 @@ oro_behat_extension:
         locator: '//div[contains(@class,"widget-actions-section")]/..//button[contains(text(),"Cancel")]'
         type: xpath
 
+    Shopping list Orders Grid:
+      selector: 'div[data-page-component-name="shopping-list-orders-grid"]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
   pages:
     OrderFrontendView:
       class: Oro\Bundle\OrderBundle\Tests\Behat\Page\OrderFrontendViewPage
