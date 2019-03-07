@@ -498,7 +498,7 @@ oro:
                     tooltip: 'If checked, all relevant filters that have been displayed on the initial page load and their options will remain visible on the page and will be disabled after they become non-relevant as the user refines the search results. Otherwise, any filters and options that become non-relevant, will be hidden.'
                 filters_display_settings:
                     label: 'Default Filter Panel State'
-                    tooltip: 'Select whether to display the filter panel in storefront product grids as collapsed or expanded. When the panel is collapsed, the list of all applied filters is displayed textually above the grid.'
+                    tooltip: 'Set the default state of the filter panel in storefront product grids either to collapsed or expanded. When the panel is collapsed, the list of all applied filters is displayed textually above the grid.'
                     options:
                         collapsed: 'Collapsed'
                         expanded: 'Expanded'
