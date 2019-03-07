@@ -237,6 +237,14 @@ oro_behat_extension:
     Shopping List Product Note:
       selector: '[name="copy_paste_order"]'
 
+    Customer Shopping lists Grid:
+      selector: 'div[data-page-component-name="customer-shopping-lists-grid"]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
+    Customer User Shopping lists Grid:
+      selector: 'div[data-page-component-name="customer-user-shopping-lists-grid"]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
   suites:
     OroShoppingListBundle:
       contexts:

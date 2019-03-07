@@ -1,9 +1,9 @@
 <?php
 
-namespace Oro\Bundle\SaleBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\CustomerBundle\Tests\Unit\EventListener\AbstractCustomerViewListenerTest;
-use Oro\Bundle\SaleBundle\EventListener\CustomerViewListener;
+use Oro\Bundle\ShoppingListBundle\EventListener\CustomerViewListener;
 
 class CustomerViewListenerTest extends AbstractCustomerViewListenerTest
 {
@@ -24,7 +24,7 @@ class CustomerViewListenerTest extends AbstractCustomerViewListenerTest
      */
     protected function getCustomerViewTemplate()
     {
-        return 'OroSaleBundle:Customer:quote_view.html.twig';
+        return 'OroShoppingListBundle:Customer:shopping_lists_view.html.twig';
     }
 
     /**
@@ -32,7 +32,7 @@ class CustomerViewListenerTest extends AbstractCustomerViewListenerTest
      */
     protected function getCustomerLabel()
     {
-        return 'oro.sale.quote.datagrid.customer.label';
+        return 'oro.shoppinglist.entity_plural_label';
     }
 
     /**
@@ -40,7 +40,7 @@ class CustomerViewListenerTest extends AbstractCustomerViewListenerTest
      */
     protected function getCustomerUserViewTemplate()
     {
-        return 'OroSaleBundle:CustomerUser:quote_view.html.twig';
+        return 'OroShoppingListBundle:CustomerUser:shopping_lists_view.html.twig';
     }
 
     /**
@@ -48,6 +48,6 @@ class CustomerViewListenerTest extends AbstractCustomerViewListenerTest
      */
     protected function getCustomerUserLabel()
     {
-        return 'oro.sale.quote.datagrid.customer_user.label';
+        return 'oro.shoppinglist.entity_plural_label';
     }
 }

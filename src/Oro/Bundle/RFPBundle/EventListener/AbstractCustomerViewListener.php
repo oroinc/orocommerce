@@ -10,6 +10,10 @@ use Oro\Bundle\UIBundle\View\ScrollData;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Translation\TranslatorInterface;
 
+/**
+ * Abstract class for the listener which are used to display additional block on the Customer or CustomerUser view pages
+ * @deprecated since 4.0-beta will be removed in 4.0. Please use AbstractCustomerViewListener from CustomerBundle.
+ */
 abstract class AbstractCustomerViewListener
 {
     /**
@@ -48,7 +52,7 @@ abstract class AbstractCustomerViewListener
     public function onCustomerView(BeforeListRenderEvent $event)
     {
         /** @var Customer $customer */
-        $customer = $this->getEntityFromRequestId('OroCustomerBundle:Customer');
+        $customer = $this->getEntityFromRequestId(Customer::class);
         if ($customer) {
             $template = $event->getEnvironment()->render(
                 $this->getCustomerViewTemplate(),
@@ -68,7 +72,7 @@ abstract class AbstractCustomerViewListener
     public function onCustomerUserView(BeforeListRenderEvent $event)
     {
         /** @var CustomerUser $customer */
-        $customer = $this->getEntityFromRequestId('OroCustomerBundle:CustomerUser');
+        $customer = $this->getEntityFromRequestId(CustomerUser::class);
         if ($customer) {
             $template = $event->getEnvironment()->render(
                 $this->getCustomerUserViewTemplate(),
