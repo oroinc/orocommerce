@@ -11,7 +11,8 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 class ProductPageTemplateValidatorTest extends \PHPUnit\Framework\TestCase
 {
-    protected $validChoices = ["short", "two-columns", "list"];
+    /** @var array */
+    protected static $validChoices = ['short', 'two-columns', 'list'];
 
     /**
      * @var \PHPUnit\Framework\MockObject\MockObject|PageTemplatesManager
@@ -49,7 +50,7 @@ class ProductPageTemplateValidatorTest extends \PHPUnit\Framework\TestCase
         $this->pageTemplatesManager->expects($this->any())
             ->method('getRoutePageTemplates')
             ->willReturn([
-                ProductType::PAGE_TEMPLATE_ROUTE_NAME => ["choices" => $this->validChoices]
+                ProductType::PAGE_TEMPLATE_ROUTE_NAME => ['choices' => array_flip(self::$validChoices)]
             ]);
 
         $this->constraint = new ProductPageTemplate(['route' => ProductType::PAGE_TEMPLATE_ROUTE_NAME]);
@@ -65,7 +66,7 @@ class ProductPageTemplateValidatorTest extends \PHPUnit\Framework\TestCase
      */
     public function testValidate($scalarValue)
     {
-        $valueIsValid = (null == $scalarValue) || in_array($scalarValue, $this->validChoices);
+        $valueIsValid = (null == $scalarValue) || in_array($scalarValue, self::$validChoices, true);
         $this->context
             ->expects($valueIsValid ? $this->never() : $this->once())
             ->method('addViolation')
@@ -83,12 +84,12 @@ class ProductPageTemplateValidatorTest extends \PHPUnit\Framework\TestCase
     public function validateProvider()
     {
         return [
-            ["short"],
-            ["two-columns"],
-            ["list"],
-            ["short-invalid"],
-            ["LIST"],
-            ["two"],
+            ['short'],
+            ['two-columns'],
+            ['list'],
+            ['short-invalid'],
+            ['LIST'],
+            ['two'],
             [null],
             [123]
         ];
