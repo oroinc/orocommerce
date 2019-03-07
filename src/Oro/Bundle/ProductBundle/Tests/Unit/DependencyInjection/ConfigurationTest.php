@@ -215,6 +215,10 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
                 'product_image_placeholder' => [
                     'value' => null,
                     'scope' => 'app',
+                ],
+                'filters_display_settings_state' => [
+                    'value' => 'collapsed',
+                    'scope' => 'app'
                 ]
             ]
         ];

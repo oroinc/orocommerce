@@ -72,6 +72,7 @@ Feature: Product attribute multiselect
     Given I click "NewCategory"
     And I should see "SKU123" product
     And I should see "SKU456" product
+    And I click "Grid Filters Button"
     When I check "TestMultiValueOne" in MultiSelectField filter in frontend product grid
     Then I should see "SKU123" product
     And I should not see "SKU456" product

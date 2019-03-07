@@ -19,6 +19,21 @@ layout:
             optionName: split_to_cells
             optionValue: true
 
+        - '@setOption':
+            id: __datagrid
+            optionName: grid_render_parameters.defaultFiltersViewMode
+            optionValue: '=data["system_config_provider"].getValue("oro_product.filters_display_settings_state")'
+
+        - '@setOption':
+            id: __datagrid
+            optionName: grid_render_parameters.filtersStateStorageKey
+            optionValue: 'frontstore-product-filters-state'
+
+        - '@setOption':
+            id: __datagrid
+            optionName: grid_render_parameters.useFiltersStateAnimationOnInit
+            optionValue: true
+
         - '@move':
             id: __datagrid_toolbar
             parentId: __datagrid

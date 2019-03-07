@@ -65,9 +65,12 @@ class Configuration implements ConfigurationInterface
     const DISPLAY_SIMPLE_VARIATIONS_HIDE_COMPLETELY = 'hide_completely';
     const LIMIT_FILTERS_SORTERS_ON_PRODUCT_LISTING = 'limit_filters_sorters_on_product_listing';
     const DISABLE_FILTERS_ON_PRODUCT_LISTING = 'disable_filters_on_product_listing';
+    const FILTERS_DISPLAY_SETTINGS_STATE_COLLAPSED = 'collapsed';
+    const FILTERS_DISPLAY_SETTINGS_STATE_EXPANDED = 'expanded';
 
     /**
      * {@inheritDoc}
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function getConfigTreeBuilder()
     {
@@ -161,6 +164,10 @@ class Configuration implements ConfigurationInterface
                     'value' => true,
                 ],
                 static::DISABLE_FILTERS_ON_PRODUCT_LISTING => ['type' => 'boolean', 'value' => true],
+                'filters_display_settings_state' => [
+                    'type' => 'string',
+                    'value' => static::FILTERS_DISPLAY_SETTINGS_STATE_COLLAPSED
+                ]
             ]
         );
 

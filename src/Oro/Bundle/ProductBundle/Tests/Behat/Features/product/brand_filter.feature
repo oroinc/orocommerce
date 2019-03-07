@@ -62,6 +62,7 @@ Feature: Brand Filter
     Given I proceed as the Buyer
     And I signed in as AmandaRCole@example.org on the store frontend
     And I click "NewCategory"
+    And I click "Grid Filters Button"
     When I check "ACME" in Brand filter in frontend product grid
     Then I should see "PSKU2" product
     And I should not see "PSKU1" product
