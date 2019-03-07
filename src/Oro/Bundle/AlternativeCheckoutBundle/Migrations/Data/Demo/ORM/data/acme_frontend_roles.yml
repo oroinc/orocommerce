@@ -1,0 +1,12 @@
+ACME_BUYER:
+    permissions:
+        action|oro_alternativecheckout_checkout_approve: [NONE]
+        workflow|b2b_flow_alternative_checkout: [VIEW_WORKFLOW_BASIC, PERFORM_TRANSITIONS_BASIC]
+
+ACME_ADMINISTRATOR:
+    permissions:
+        workflow|b2b_flow_alternative_checkout: [VIEW_WORKFLOW_DEEP, PERFORM_TRANSITIONS_DEEP]
+
+ACME_ANONYMOUS:
+    permissions:
+        workflow|b2b_flow_alternative_checkout: [VIEW_WORKFLOW_BASIC, PERFORM_TRANSITIONS_BASIC]
