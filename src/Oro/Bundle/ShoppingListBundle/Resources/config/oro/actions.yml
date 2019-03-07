@@ -210,11 +210,22 @@ operations:
                 parameters:
                     route: oro_rfp_frontend_request_create
                     route_parameters: {'storage': true}
+
+    UPDATE:
+        exclude_entities:
+            - Oro\Bundle\ShoppingListBundle\Entity\ShoppingList
+        exclude_datagrids:
+            - shopping-list-grid
+            - customer-shopping-lists-grid
+            - customer-user-shopping-lists-grid
+
     DELETE:
         exclude_entities:
             - Oro\Bundle\ShoppingListBundle\Entity\ShoppingList
         exclude_datagrids:
             - shopping-list-grid
+            - customer-shopping-lists-grid
+            - customer-user-shopping-lists-grid
 
     oro_shoppinglist_delete:
         extends: DELETE

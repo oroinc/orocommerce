@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\RFPBundle\Tests\Unit\EventListener;
 
+use Oro\Bundle\CustomerBundle\Tests\Unit\EventListener\AbstractCustomerViewListenerTest;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\RFPBundle\EventListener\CustomerViewListener;
 
@@ -9,6 +10,9 @@ class CustomerViewListenerTest extends AbstractCustomerViewListenerTest
 {
     /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject */
     protected $featureChecker;
+
+    /** @var CustomerViewListener */
+    protected $customerViewListener;
 
     protected function setUp()
     {

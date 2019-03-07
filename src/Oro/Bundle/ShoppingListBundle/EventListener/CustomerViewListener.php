@@ -1,11 +1,11 @@
 <?php
 
-namespace Oro\Bundle\SaleBundle\EventListener;
+namespace Oro\Bundle\ShoppingListBundle\EventListener;
 
 use Oro\Bundle\CustomerBundle\EventListener\AbstractCustomerViewListener;
 
 /**
- * Adds additional block with quotes grid on the Customer and CustomerUser view pages.
+ * Adds grid with related shopping lists to view pages of Customer and CustomerUser entities.
  */
 class CustomerViewListener extends AbstractCustomerViewListener
 {
@@ -14,7 +14,7 @@ class CustomerViewListener extends AbstractCustomerViewListener
      */
     protected function getCustomerViewTemplate()
     {
-        return 'OroSaleBundle:Customer:quote_view.html.twig';
+        return 'OroShoppingListBundle:Customer:shopping_lists_view.html.twig';
     }
 
     /**
@@ -22,7 +22,7 @@ class CustomerViewListener extends AbstractCustomerViewListener
      */
     protected function getCustomerLabel()
     {
-        return 'oro.sale.quote.datagrid.customer.label';
+        return 'oro.shoppinglist.entity_plural_label';
     }
 
     /**
@@ -30,7 +30,7 @@ class CustomerViewListener extends AbstractCustomerViewListener
      */
     protected function getCustomerUserViewTemplate()
     {
-        return 'OroSaleBundle:CustomerUser:quote_view.html.twig';
+        return 'OroShoppingListBundle:CustomerUser:shopping_lists_view.html.twig';
     }
 
     /**
@@ -38,6 +38,6 @@ class CustomerViewListener extends AbstractCustomerViewListener
      */
     protected function getCustomerUserLabel()
     {
-        return 'oro.sale.quote.datagrid.customer_user.label';
+        return 'oro.shoppinglist.entity_plural_label';
     }
 }
