@@ -2,6 +2,16 @@ Please refer first to [UPGRADE.md](UPGRADE.md) for the most important items that
 
 The current file describes significant changes in the code that may affect the upgrade of your customizations.
 
+## 4.0-beta
+
+### Removed
+#### WebsiteSearchBundle
+* Service `oro_website_search.async_messaging.search_message.processor.job_runner` was removed, that trigger duplicated messages to the message queue with topics:
+    - `oro.website.search.indexer.save`
+    - `oro.website.search.indexer.delete`
+    - `oro.website.search.indexer.reset_index`
+    - `oro.website.search.indexer.reindex`
+
 ## 3.1.0-rc (2018-11-30)
 [Show detailed list of changes](incompatibilities-3-1-rc.md)
 

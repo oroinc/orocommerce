@@ -188,18 +188,8 @@ services:
             - '@oro_message_queue.client.message_producer'
             - '@oro_website_search.indexer.input_validator'
             - '@oro_website_search.async.indexer.message_granularizer.reindex'
-            - '@logger'
-        tags:
-            - { name: 'oro_message_queue.client.message_processor', topicName: 'oro.website.search.indexer.save' }
-            - { name: 'oro_message_queue.client.message_processor', topicName: 'oro.website.search.indexer.delete' }
-            - { name: 'oro_message_queue.client.message_processor', topicName: 'oro.website.search.indexer.reset_index' }
-            - { name: 'oro_message_queue.client.message_processor', topicName: 'oro.website.search.indexer.reindex' }
-
-    oro_website_search.async_messaging.search_message.processor.job_runner:
-        class: Oro\Component\MessageQueue\Job\DelayedJobRunnerDecoratingProcessor
-        arguments:
             - '@oro_message_queue.job.runner'
-            - '@oro_website_search.async_messaging.search_message.processor'
+            - '@logger'
         tags:
             - { name: 'oro_message_queue.client.message_processor', topicName: 'oro.website.search.indexer.save' }
             - { name: 'oro_message_queue.client.message_processor', topicName: 'oro.website.search.indexer.delete' }
