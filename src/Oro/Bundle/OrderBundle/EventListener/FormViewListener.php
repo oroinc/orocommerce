@@ -5,11 +5,15 @@ namespace Oro\Bundle\OrderBundle\EventListener;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Translation\TranslatorInterface;
 
+/**
+ * Adds grid with related orders to view pages of Customer, CustomerUser and ShoppingList entities.
+ */
 class FormViewListener
 {
     /**
@@ -69,6 +73,22 @@ class FormViewListener
             $template = $event->getEnvironment()->render(
                 'OroOrderBundle:Customer:orders_view.html.twig',
                 ['entity' => $customer]
+            );
+            $this->addSalesOrdersBlock($event->getScrollData(), $template);
+        }
+    }
+
+    /**
+     * @param BeforeListRenderEvent $event
+     */
+    public function onShoppingListView(BeforeListRenderEvent $event)
+    {
+        /** @var ShoppingList $shoppingList */
+        $shoppingList = $this->getEntityFromRequestId('OroShoppingListBundle:ShoppingList');
+        if ($shoppingList) {
+            $template = $event->getEnvironment()->render(
+                'OroOrderBundle:ShoppingList:orders_view.html.twig',
+                ['entity' => $shoppingList]
             );
             $this->addSalesOrdersBlock($event->getScrollData(), $template);
         }

@@ -9,6 +9,7 @@ use Oro\Bundle\OrderBundle\Converter\OrderShippingLineItemConverterInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use Oro\Bundle\ShippingBundle\Context\Builder\Factory\ShippingContextBuilderFactoryInterface;
+use Oro\Bundle\ShippingBundle\Context\Builder\ShippingContextBuilderInterface;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 
 /**
@@ -91,9 +92,25 @@ class CheckoutShippingContextFactory
             ->setSubTotal($subtotalPrice)
             ->setCurrency($checkout->getCurrency());
 
+        $this->configureShippingContextBuilderFromCheckout($shippingContextBuilder, $checkout);
+
+        if (null !== $convertedLineItems) {
+            $shippingContextBuilder->setLineItems($convertedLineItems);
+        }
+
+        return $shippingContextBuilder->getResult();
+    }
+
+    /**
+     * @param ShippingContextBuilderInterface $shippingContextBuilder
+     * @param Checkout $checkout
+     */
+    private function configureShippingContextBuilderFromCheckout(
+        ShippingContextBuilderInterface $shippingContextBuilder,
+        Checkout $checkout
+    ) {
         if (null !== $checkout->getWebsite()) {
-            $shippingContextBuilder
-                ->setWebsite($checkout->getWebsite());
+            $shippingContextBuilder->setWebsite($checkout->getWebsite());
         }
 
         if (null !== $checkout->getShippingAddress()) {
@@ -108,15 +125,12 @@ class CheckoutShippingContextFactory
             $shippingContextBuilder->setPaymentMethod($checkout->getPaymentMethod());
         }
 
-        if (null !== $convertedLineItems) {
-            $shippingContextBuilder->setLineItems($convertedLineItems);
-        }
-
         if (null !== $checkout->getCustomer()) {
             $shippingContextBuilder->setCustomer($checkout->getCustomer());
-            $shippingContextBuilder->setCustomerUser($checkout->getCustomerUser());
         }
 
-        return $shippingContextBuilder->getResult();
+        if (null !== $checkout->getCustomerUser()) {
+            $shippingContextBuilder->setCustomerUser($checkout->getCustomerUser());
+        }
     }
 }

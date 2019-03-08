@@ -141,31 +141,27 @@ class CheckoutShippingContextFactoryTest extends \PHPUnit\Framework\TestCase
             ->setCustomerUser($customerUser)
             ->setWebsite($websiteMock);
 
-        $this->contextBuilderMock
+        $this->contextBuilderMock->expects($address ? $this->once() : $this->never())
             ->method('setShippingAddress')
             ->with($address);
 
-        $this->contextBuilderMock
+        $this->contextBuilderMock->expects($address ? $this->once() : $this->never())
             ->method('setBillingAddress')
             ->with($address);
 
-        $this->contextBuilderMock
-            ->expects($this->once())
+        $this->contextBuilderMock->expects($paymentMethod ? $this->once() : $this->never())
             ->method('setPaymentMethod')
             ->with($paymentMethod);
 
-        $this->contextBuilderMock
-            ->expects($this->once())
+        $this->contextBuilderMock->expects($customer ? $this->once() : $this->never())
             ->method('setCustomer')
             ->with($customer);
 
-        $this->contextBuilderMock
-            ->expects($this->once())
+        $this->contextBuilderMock->expects($customerUser ? $this->once() : $this->never())
             ->method('setCustomerUser')
             ->with($customerUser);
 
-        $this->contextBuilderMock
-            ->expects($this->once())
+        $this->contextBuilderMock->expects($this->once())
             ->method('getResult');
 
         $this->contextBuilderMock
@@ -174,24 +170,20 @@ class CheckoutShippingContextFactoryTest extends \PHPUnit\Framework\TestCase
             ->with(Price::create($subtotal->getAmount(), $subtotal->getCurrency()))
             ->willReturnSelf();
 
-        $this->contextBuilderMock
-            ->expects($this->once())
+        $this->contextBuilderMock->expects($this->once())
             ->method('setCurrency')
             ->with($checkout->getCurrency());
 
-        $this->contextBuilderMock
-            ->expects($this->once())
+        $this->contextBuilderMock->expects($websiteMock ? $this->once() : $this->never())
             ->method('setWebsite')
-            ->with($checkout->getWebsite());
+            ->with($websiteMock);
 
-        $this->shippingContextBuilderFactoryMock
-            ->expects($this->once())
+        $this->shippingContextBuilderFactoryMock->expects($this->once())
             ->method('createShippingContextBuilder')
             ->with($checkout, (string)$checkout->getId())
             ->willReturn($this->contextBuilderMock);
 
-        $this->checkoutLineItemsManager
-            ->expects(static::once())
+        $this->checkoutLineItemsManager->expects($this->once())
             ->method('getData')
             ->willReturn($checkoutLineItems);
 

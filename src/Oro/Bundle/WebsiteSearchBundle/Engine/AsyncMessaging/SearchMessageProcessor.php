@@ -11,6 +11,7 @@ use Oro\Bundle\WebsiteSearchBundle\Engine\IndexerInputValidator;
 use Oro\Component\MessageQueue\Client\Config as MessageQueConfig;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
+use Oro\Component\MessageQueue\Job\JobRunner;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\MessageQueue\Util\JSON;
@@ -47,10 +48,16 @@ class SearchMessageProcessor implements MessageProcessorInterface
     private $logger;
 
     /**
+     * @var JobRunner
+     */
+    private $jobRunner;
+
+    /**
      * @param IndexerInterface $indexer
      * @param MessageProducerInterface $messageProducer
      * @param IndexerInputValidator $indexerInputValidator
      * @param ReindexMessageGranularizer $reindexMessageGranularizer
+     * @param JobRunner $jobRunner
      * @param LoggerInterface $logger
      */
     public function __construct(
@@ -58,12 +65,14 @@ class SearchMessageProcessor implements MessageProcessorInterface
         MessageProducerInterface $messageProducer,
         IndexerInputValidator $indexerInputValidator,
         ReindexMessageGranularizer $reindexMessageGranularizer,
+        JobRunner $jobRunner,
         LoggerInterface $logger
     ) {
         $this->indexer                    = $indexer;
         $this->messageProducer            = $messageProducer;
         $this->inputValidator             = $indexerInputValidator;
         $this->reindexMessageGranularizer = $reindexMessageGranularizer;
+        $this->jobRunner                  = $jobRunner;
         $this->logger                     = $logger;
     }
 
@@ -72,8 +81,19 @@ class SearchMessageProcessor implements MessageProcessorInterface
      */
     public function process(MessageInterface $message, SessionInterface $session)
     {
+        $data = JSON::decode($message->getBody());
+        $topicName = $message->getProperty(MessageQueConfig::PARAMETER_TOPIC_NAME);
+
         try {
-            $result = $this->processMessage($message);
+            if (!empty($data['jobId'])) {
+                $processResult = $this->jobRunner->runDelayed($data['jobId'], function () use ($topicName, $data) {
+                    return $this->processMessage($topicName, $data);
+                });
+            } else {
+                $processResult = $this->processMessage($topicName, $data);
+            }
+
+            $result = $processResult ? self::ACK : self::REJECT;
         } catch (\Exception $e) {
             $this->logger->error(
                 'An unexpected exception occurred during indexation',
@@ -83,9 +103,9 @@ class SearchMessageProcessor implements MessageProcessorInterface
             if ($e instanceof RetryableException
                 || $e instanceof UniqueConstraintViolationException
                 || $e instanceof ForeignKeyConstraintViolationException) {
-                $result = static::REQUEUE;
+                $result = self::REQUEUE;
             } else {
-                $result = static::REJECT;
+                $result = self::REJECT;
             }
         }
 
@@ -93,46 +113,33 @@ class SearchMessageProcessor implements MessageProcessorInterface
     }
 
     /**
-     * @param MessageInterface $message
+     * @param string $topicName
+     * @param array $data
      *
      * @return string
      */
-    private function processMessage(MessageInterface $message)
+    private function processMessage($topicName, array $data)
     {
-        $data = JSON::decode($message->getBody());
-
-        $result = static::REJECT;
-        // REJECT messages that are a part of job
-        if (!empty($data['jobId'])) {
-            return $result;
-        }
-        switch ($message->getProperty(MessageQueConfig::PARAMETER_TOPIC_NAME)) {
+        switch ($topicName) {
             case AsyncIndexer::TOPIC_SAVE:
                 $this->indexer->save($data['entity'], $data['context']);
 
-                $result = static::ACK;
-                break;
-
+                return true;
             case AsyncIndexer::TOPIC_DELETE:
                 $this->indexer->delete($data['entity'], $data['context']);
 
-                $result = static::ACK;
-                break;
-
+                return true;
             case AsyncIndexer::TOPIC_REINDEX:
                 $this->processReindex($data);
 
-                $result = static::ACK;
-                break;
-
+                return true;
             case AsyncIndexer::TOPIC_RESET_INDEX:
                 $this->indexer->resetIndex($data['class'], $data['context']);
 
-                $result = static::ACK;
-                break;
+                return true;
         }
 
-        return $result;
+        return false;
     }
 
     /**

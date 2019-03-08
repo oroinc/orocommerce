@@ -71,6 +71,7 @@ class ProductCollectionsIndexCronCommandTest extends WebTestCase
                     'website_ids' => [$defaultWebsite->getId()],
                     'definition' => null,
                     'is_full' => true,
+                    'additional_products' => [],
                 ]
             ],
             [
@@ -80,6 +81,7 @@ class ProductCollectionsIndexCronCommandTest extends WebTestCase
                     'website_ids' => [$defaultWebsite->getId()],
                     'definition' => null,
                     'is_full' => true,
+                    'additional_products' => [],
                 ]
             ],
             [
@@ -89,6 +91,7 @@ class ProductCollectionsIndexCronCommandTest extends WebTestCase
                     'website_ids' => [$defaultWebsite->getId()],
                     'definition' => null,
                     'is_full' => true,
+                    'additional_products' => [],
                 ]
             ],
         ];

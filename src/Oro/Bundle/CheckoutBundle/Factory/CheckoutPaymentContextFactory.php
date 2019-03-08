@@ -118,6 +118,9 @@ class CheckoutPaymentContextFactory
 
         if (null !== $checkout->getCustomer()) {
             $paymentContextBuilder->setCustomer($checkout->getCustomer());
+        }
+
+        if (null !== $checkout->getCustomerUser()) {
             $paymentContextBuilder->setCustomerUser($checkout->getCustomerUser());
         }
 

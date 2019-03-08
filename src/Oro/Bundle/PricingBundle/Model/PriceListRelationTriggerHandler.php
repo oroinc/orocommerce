@@ -19,6 +19,7 @@ use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 
 /**
  * Handle price list collection changes.
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class PriceListRelationTriggerHandler
 {
@@ -214,6 +215,7 @@ class PriceListRelationTriggerHandler
 
         if (\in_array($priceList->getId(), $configPriceListIds)) {
             $this->handleFullRebuild();
+
             return;
         }
 
@@ -264,6 +266,8 @@ class PriceListRelationTriggerHandler
         $preserveCustomers = $this->getPreservedCustomers();
 
         foreach ($this->scheduledTriggers as $scheduledTrigger) {
+            $this->resolveTriggerValues($scheduledTrigger);
+
             $website = $scheduledTrigger[PriceListRelationTrigger::WEBSITE] ?? null;
             $group = $scheduledTrigger[PriceListRelationTrigger::ACCOUNT_GROUP] ?? null;
             $customer = $scheduledTrigger[PriceListRelationTrigger::ACCOUNT] ?? null;
@@ -358,14 +362,41 @@ class PriceListRelationTriggerHandler
      */
     protected function getTriggerKey(array $trigger): string
     {
-        $key = sprintf(
-            '%d_%d_%d',
-            $trigger[PriceListRelationTrigger::WEBSITE],
-            $trigger[PriceListRelationTrigger::ACCOUNT_GROUP],
-            $trigger[PriceListRelationTrigger::ACCOUNT]
+        return sprintf(
+            '%s_%s_%s',
+            $this->resolveValueForKey($trigger[PriceListRelationTrigger::WEBSITE]),
+            $this->resolveValueForKey($trigger[PriceListRelationTrigger::ACCOUNT_GROUP]),
+            $this->resolveValueForKey($trigger[PriceListRelationTrigger::ACCOUNT])
         );
+    }
 
-        return $key;
+    /**
+     * @param int|null|object $value
+     * @return string
+     */
+    protected function resolveValueForKey($value)
+    {
+        if (is_object($value)) {
+            if ($value->getId()) {
+                return $value->getId();
+            }
+
+            return spl_object_hash($value);
+        }
+
+        return (int)$value;
+    }
+
+    /**
+     * @param array $trigger
+     */
+    protected function resolveTriggerValues(array &$trigger)
+    {
+        foreach ($trigger as &$value) {
+            if (is_object($value)) {
+                $value = $value->getId();
+            }
+        }
     }
 
     /**

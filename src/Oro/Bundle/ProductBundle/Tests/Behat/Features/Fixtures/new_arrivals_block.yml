@@ -84,7 +84,7 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
   locValue5:
     string: 'Product5'
   locValue6:
-    string: 'Product6'
+    string: "Product6`\"'&йёщ>"
   locValue6_loc1:
     string: 'Product6 (Localization 1)'
     localization: '@localization1'

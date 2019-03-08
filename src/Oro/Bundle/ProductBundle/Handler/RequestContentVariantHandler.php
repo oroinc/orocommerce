@@ -5,6 +5,9 @@ namespace Oro\Bundle\ProductBundle\Handler;
 use Oro\Bundle\ProductBundle\ContentVariantType\ProductCollectionContentVariantType;
 use Symfony\Component\HttpFoundation\RequestStack;
 
+/**
+ * Request content variant handler class
+ */
 class RequestContentVariantHandler
 {
     /**
@@ -42,5 +45,21 @@ class RequestContentVariantHandler
         }
 
         return false;
+    }
+
+    /**
+     * @return bool|integer
+     */
+    public function getOverrideVariantConfiguration()
+    {
+        $request = $this->requestStack->getCurrentRequest();
+        if (!$request) {
+            return false;
+        }
+
+        return filter_var(
+            $request->get(ProductCollectionContentVariantType::OVERRIDE_VARIANT_CONFIGURATION_KEY),
+            FILTER_VALIDATE_BOOLEAN
+        );
     }
 }

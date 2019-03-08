@@ -458,6 +458,7 @@ action_groups:
                             currentUser: $.currentUser
                             currentWebsite: $.currentWebsite
                             checkoutData: $.checkoutData
+                            sourceCriteria: $.sourceCriteria
 
                     - '@assign_value': [$.checkoutActualizationRequired, false]
                     - '@flush_entity': $.checkout
@@ -479,6 +480,7 @@ action_groups:
                             currentUser: $.currentUser
                             currentWebsite: $.currentWebsite
                             checkoutData: $.checkoutData
+                            sourceCriteria: $.sourceCriteria
                     - '@flush_entity': $.checkout
 
     actualize_checkout:
@@ -495,6 +497,8 @@ action_groups:
             checkoutData:
                 type: array
                 default: []
+            sourceCriteria:
+                type: array
         actions:
             # update checkout data
             - '@tree':
@@ -508,6 +512,8 @@ action_groups:
                     - '@assign_value': [$.checkout.website, $.currentWebsite]
                     # update custom data
                     - '@copy_values': [$.checkout, $.checkoutData]
+
+            - '@assign_value': [$.checkout.customer_notes, $.sourceCriteria.shoppingList.notes]
 
             # actualize user currency
             - '@call_service_method':

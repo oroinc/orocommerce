@@ -110,7 +110,8 @@ Feature: Discounts for Order
     And I type "51" in "Discount Value"
     And I type "Amount is greater than remaining subtotal" in "Discount Description"
     Then I should see "The discount amount cannot exceed the order grand total amount."
-    When I click "Cancel"
+    When I force click on cancel button in discount popup
+    And I should not see a "Discount Popup" element
     Then I should see next rows in "Discounts" table
       | Description               | Discount |
       | <script>alert(1)</script> | -$3.00   |

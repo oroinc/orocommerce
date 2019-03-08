@@ -154,9 +154,9 @@
         <a href="{{ product.view_link }}"
            class="view-product"{% if 'gallery-view' in class_prefix %} data-page-component-line-clamp{% endif %}
            itemprop="url"
-           title="{{- block('container_widget')|trim -}}"
+           title="{{ block('container_widget')|trim|raw }}"
         >
-            <span itemprop="name">{{- block('container_widget')|trim -}}</span>
+            <span itemprop="name">{{ block('container_widget')|trim|raw }}</span>
         </a>
     </h3>
 {% endblock %}

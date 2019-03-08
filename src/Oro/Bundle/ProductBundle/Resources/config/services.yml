@@ -1161,6 +1161,7 @@ services:
         class: Oro\Bundle\ProductBundle\EventListener\ProductCollectionAwareContentVariantEntityListener
         arguments:
             - '@oro_product.entity.event_listener.product_collection_variant_reindex_message_send_listener'
+            - '@oro_product.service.product_collection_definition_converter'
         tags:
             - { name: doctrine.orm.entity_listener, entity: '%oro_segment.segment.entity.class%', event: postPersist }
             - { name: doctrine.orm.entity_listener, entity: '%oro_segment.segment.entity.class%', event: preUpdate }
@@ -1173,7 +1174,7 @@ services:
 
     oro_product.handler.search_product_handler:
         class: Oro\Bundle\ProductBundle\Handler\SearchProductHandler
-        arguments: ['@request_stack', '@oro_ui.html_tag_helper']
+        arguments: ['@request_stack']
 
     oro_product.helper.product_grouper.factory:
         class: Oro\Bundle\ProductBundle\Helper\ProductGrouper\ProductsGrouperFactory
@@ -1182,7 +1183,8 @@ services:
     oro_product.datagrid.event_listener.search_content_variant_filtering:
         class: Oro\Bundle\ProductBundle\DataGrid\EventListener\SearchContentVariantFilteringEventListener
         arguments:
-            - "@oro_product.handler.request_content_variant"
+            - '@oro_product.handler.request_content_variant'
+            - '@oro_config.manager'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-product-search-grid, method: onPreBuild }
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.frontend-product-search-grid, method: onBuildAfter }
@@ -1557,3 +1559,14 @@ services:
             - '@oro_entity.doctrine_helper'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.search_datasource.result.after.frontend-product-search-grid, method: onSearchResultAfter}
+
+    oro_product.event_listener.manually_added_product_collection_indexer_listener:
+        class: Oro\Bundle\ProductBundle\EventListener\ManuallyAddedProductCollectionIndexerListener
+        arguments:
+            - '@doctrine'
+            - '@oro_config.manager'
+            - '@oro_website_search.manager.website_context_manager'
+            - '@oro_web_catalog.content_variant_provider'
+            - '@oro_product.service.product_collection_definition_converter'
+        tags:
+            - { name: kernel.event_listener, event: oro_website_search.event.index_entity, method: onWebsiteSearchIndex, priority: -100 }

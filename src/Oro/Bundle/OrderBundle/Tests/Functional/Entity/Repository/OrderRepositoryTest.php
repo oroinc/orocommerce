@@ -4,6 +4,7 @@ namespace Oro\Bundle\OrderBundle\Tests\Functional\Entity\Respository;
 
 use Doctrine\Common\Collections\AbstractLazyCollection;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\Repository\OrderRepository;
 use Oro\Bundle\OrderBundle\Provider\OrderStatusesProviderInterface;
@@ -170,5 +171,40 @@ class OrderRepositoryTest extends WebTestCase
             ->get('doctrine')
             ->getManagerForClass(Order::class)
             ->getRepository(Order::class);
+    }
+
+    public function testGetRelatedEntitiesCount()
+    {
+        $customerUser = $this->getReference(LoadOrders::ACCOUNT_USER);
+
+        self::assertSame(6, $this->repository->getRelatedEntitiesCount($customerUser));
+    }
+
+    public function testGetRelatedEntitiesCountZero()
+    {
+        $customerUserWithoutRelatedEntities = $this->getReference(LoadCustomerUserData::LEVEL_1_EMAIL);
+
+        self::assertSame(0, $this->repository->getRelatedEntitiesCount($customerUserWithoutRelatedEntities));
+    }
+
+    public function testResetCustomerUserForSomeEntities()
+    {
+        $customerUser = $this->getReference(LoadOrders::ACCOUNT_USER);
+        $this->getRepository()->resetCustomerUser($customerUser, [
+            $this->getReference(LoadOrders::ORDER_1),
+            $this->getReference(LoadOrders::ORDER_2),
+        ]);
+
+        $orders = $this->getRepository()->findBy(['customerUser' => null]);
+        $this->assertCount(2, $orders);
+    }
+
+    public function testResetCustomerUser()
+    {
+        $customerUser = $this->getReference(LoadOrders::ACCOUNT_USER);
+        $this->getRepository()->resetCustomerUser($customerUser);
+
+        $orders = $this->getRepository()->findBy(['customerUser' => null]);
+        $this->assertCount(6, $orders);
     }
 }

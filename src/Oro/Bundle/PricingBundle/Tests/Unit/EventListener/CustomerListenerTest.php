@@ -12,7 +12,7 @@ use Oro\Bundle\PricingBundle\Entity\PriceListFallback;
 use Oro\Bundle\PricingBundle\Entity\PriceListToCustomer;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToCustomerRepository;
 use Oro\Bundle\PricingBundle\EventListener\CustomerListener;
-use Oro\Bundle\PricingBundle\Model\DTO\CustomerWebsiteDTO;
+use Oro\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormInterface;
@@ -293,21 +293,19 @@ class CustomerListenerTest extends AbstractPriceListCollectionAwareListenerTest
         $customerEvent = $this->createMock(CustomerEvent::class);
         $customer = $this->getEntity(Customer::class, ['id' => 1]);
         $website = new Website();
-        $sustomerWebsiteDTO = new CustomerWebsiteDTO($customer, $website);
 
         $customerEvent->expects($this->once())
             ->method('getCustomer')
             ->willReturn($customer);
 
-        $relationRepository = $this->createMock($this->getRelationRepositoryClass());
-        $relationRepository->expects($this->once())
-            ->method('getCustomerWebsitePairsByCustomer')
-            ->with($customer)
-            ->willReturn([$sustomerWebsiteDTO]);
+        $websiteRepository = $this->createMock(WebsiteRepository::class);
+        $websiteRepository->expects($this->once())
+            ->method('getAllWebsites')
+            ->willReturn([$website]);
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityRepository')
-            ->with($this->getRelationClass())
-            ->willReturn($relationRepository);
+            ->with(Website::class)
+            ->willReturn($websiteRepository);
 
         $this->triggerHandler->expects($this->once())
             ->method('handleCustomerChange')

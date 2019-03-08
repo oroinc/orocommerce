@@ -64,4 +64,78 @@ class RequestContentVariantHandlerTest extends \PHPUnit\Framework\TestCase
 
         $this->assertEquals($value, $this->handler->getContentVariantId());
     }
+
+    /**
+     * @dataProvider overrideVariantConfigurationDataProvider
+     *
+     * @param string|int|bool $value
+     * @param bool $expected
+     */
+    public function testGetOverrideVariantConfiguration($value, $expected)
+    {
+        $request = new Request([ProductCollectionContentVariantType::OVERRIDE_VARIANT_CONFIGURATION_KEY => $value]);
+        $this->requestStack->expects($this->once())
+            ->method('getCurrentRequest')
+            ->willReturn($request);
+
+        $actual = $this->handler->getOverrideVariantConfiguration();
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * @return array
+     */
+    public function overrideVariantConfigurationDataProvider()
+    {
+        return [
+            [
+                'value' => true,
+                'expected' => true,
+            ],
+            [
+                'value' => false,
+                'expected' => false,
+            ],
+            [
+                'value' => 'true',
+                'expected' => true,
+            ],
+            [
+                'value' => 'false',
+                'expected' => false,
+            ],
+            [
+                'value' => 1,
+                'expected' => true,
+            ],
+            [
+                'value' => 0,
+                'expected' => false,
+            ],
+            [
+                'value' => -1,
+                'expected' => false,
+            ],
+            [
+                'value' => '1',
+                'expected' => true,
+            ],
+            [
+                'value' => '0',
+                'expected' => false,
+            ],
+            [
+                'value' => '-1',
+                'expected' => false,
+            ],
+            [
+                'value' => null,
+                'expected' => false,
+            ],
+            [
+                'value' => 'test',
+                'expected' => false,
+            ],
+        ];
+    }
 }

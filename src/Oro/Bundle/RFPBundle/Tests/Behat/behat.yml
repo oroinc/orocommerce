@@ -54,6 +54,10 @@ oro_behat_extension:
             class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
             selector: '.line-item-form .dropdown-toggle'
 
+        Request Notes:
+            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+            selector: 'textarea[name="oro_rfp_frontend_request[note]"]'
+
     pages:
         RequestViewBackendPage:
             class: Oro\Bundle\RFPBundle\Tests\Behat\Page\RequestViewPage

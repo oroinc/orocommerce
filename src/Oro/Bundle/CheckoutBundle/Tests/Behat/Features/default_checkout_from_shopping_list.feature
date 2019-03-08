@@ -1,7 +1,8 @@
 @ticket-BB-7164
+@ticket-BB-16275
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
-@fixture-OroCheckoutBundle:Checkout.yml
+@fixture-OroCheckoutBundle:DefaultCheckoutFromShoppingList.yml
 @fixture-OroCheckoutBundle:InventoryLevel.yml
 @fixture-OroLocaleBundle:GermanLocalization.yml
 @community-edition-only
@@ -23,7 +24,7 @@ Feature: Default Checkout From Shopping List
     And I wait line items are initialized
     And I click "Create Order"
     Then Checkout "Order Summary Products Grid" should contain products:
-      | 400-Watt Bulb Work Light | 5 | items |
+      | Product1`"'&йёщ> | 5 | items |
     And I should see Checkout Totals with data:
       | Subtotal | $10.00 |
 
@@ -40,7 +41,7 @@ Feature: Default Checkout From Shopping List
     And I scroll to top
     And I click "Create Order"
     Then Checkout "Order Summary Products Grid" should contain products:
-      | 400-Watt Bulb Work Light | 10 | items |
+      | Product1`"'&йёщ> | 10 | items |
     And I should see Checkout Totals with data:
       | Subtotal | $20.00 |
 
@@ -61,10 +62,18 @@ Feature: Default Checkout From Shopping List
     And I click "Check Out" on row "List 1" in grid "OpenOrdersGrid"
 
   Scenario: Process checkout
-    Given I select "Fifth avenue, 10115 Berlin, Germany" on the "Billing Information" checkout step and press Continue
-    And I select "Fifth avenue, 10115 Berlin, Germany" on the "Shipping Information" checkout step and press Continue
-    And I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
-    And I check "Payment Terms" on the "Payment" checkout step and press Continue
+    When I select "Fifth avenue, 10115 Berlin, Germany" on the "Billing Information" checkout step and press Continue
+    Then Checkout "Order Summary Products Grid" should contain products:
+      | Product1`"'&йёщ> | 10 | items |
+    When I select "Fifth avenue, 10115 Berlin, Germany" on the "Shipping Information" checkout step and press Continue
+    Then Checkout "Order Summary Products Grid" should contain products:
+      | Product1`"'&йёщ> | 10 | items |
+    When I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
+    Then Checkout "Order Summary Products Grid" should contain products:
+      | Product1`"'&йёщ> | 10 | items |
+    When I check "Payment Terms" on the "Payment" checkout step and press Continue
+    Then Checkout "Order Summary Products Grid" should contain products:
+      | Product1`"'&йёщ> | 10 | items |
     And I should see following header in "Do not ship later than Datepicker":
       | S | M | T | W | T | F | S |
     And I click "Localization Switcher"
@@ -78,9 +87,11 @@ Feature: Default Checkout From Shopping List
 
     When I follow "click here to review"
     Then I should be on Order Frontend View page
+    And I should see "Product1`\"'&йёщ>"
 
   Scenario: Checking Order History grid with Open Orders
     Given I open Order History page on the store frontend
     When there is no records in "OpenOrdersGrid"
     And I click "View" on row "1" in grid "PastOrdersGrid"
     Then I should be on Order Frontend View page
+    And I should see "Product1`\"'&йёщ>"

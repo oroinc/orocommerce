@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\EventListener;
 
 use Doctrine\ORM\Event\PreUpdateEventArgs;
+use Oro\Bundle\ProductBundle\Service\ProductCollectionDefinitionConverter;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 
 /**
@@ -17,12 +18,20 @@ class ProductCollectionAwareContentVariantEntityListener
     private $reindexEventListener;
 
     /**
+     * @var ProductCollectionDefinitionConverter
+     */
+    private $productCollectionDefinitionConverter;
+
+    /**
      * @param ProductCollectionVariantReindexMessageSendListener $reindexEventListener
+     * @param ProductCollectionDefinitionConverter $productCollectionDefinitionConverter
      */
     public function __construct(
-        ProductCollectionVariantReindexMessageSendListener $reindexEventListener
+        ProductCollectionVariantReindexMessageSendListener $reindexEventListener,
+        ProductCollectionDefinitionConverter $productCollectionDefinitionConverter
     ) {
         $this->reindexEventListener = $reindexEventListener;
+        $this->productCollectionDefinitionConverter = $productCollectionDefinitionConverter;
     }
 
     /**
@@ -40,7 +49,14 @@ class ProductCollectionAwareContentVariantEntityListener
     public function preUpdate(Segment $segment, PreUpdateEventArgs $args)
     {
         if ($args->hasChangedField('definition')) {
-            $this->reindexEventListener->scheduleSegment($segment);
+            $oldIncludedIds = $this->getIncludedIds($args->getOldValue('definition'));
+            $newIncludedIds = $this->getIncludedIds($args->getNewValue('definition'));
+            $additionalProducts = array_merge(
+                array_diff($oldIncludedIds, $newIncludedIds),
+                array_diff($newIncludedIds, $oldIncludedIds)
+            );
+
+            $this->reindexEventListener->scheduleSegment($segment, false, $additionalProducts);
         }
     }
 
@@ -50,5 +66,19 @@ class ProductCollectionAwareContentVariantEntityListener
     public function preRemove(Segment $segment)
     {
         $this->reindexEventListener->scheduleMessageBySegmentDefinition($segment);
+    }
+
+    /**
+     * @param string $definition
+     * @return array
+     */
+    protected function getIncludedIds(string $definition): array
+    {
+        $definitionParts = $this->productCollectionDefinitionConverter->getDefinitionParts($definition);
+
+        return array_filter(array_map(
+            'intval',
+            explode(',', $definitionParts[ProductCollectionDefinitionConverter::INCLUDED_FILTER_KEY])
+        ));
     }
 }

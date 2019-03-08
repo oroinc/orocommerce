@@ -17,7 +17,7 @@ use Symfony\Component\Translation\TranslatorInterface;
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
-class FormViewListenerTest extends \PHPUnit\Framework\TestCase
+class CustomerViewListenerTest extends \PHPUnit\Framework\TestCase
 {
     /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $translator;

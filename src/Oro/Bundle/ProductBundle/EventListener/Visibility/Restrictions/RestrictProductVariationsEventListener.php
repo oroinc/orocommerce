@@ -2,6 +2,9 @@
 
 namespace Oro\Bundle\ProductBundle\EventListener\Visibility\Restrictions;
 
+use Doctrine\Common\Collections\Expr\Comparison;
+use Doctrine\Common\Collections\Expr\CompositeExpression;
+use Doctrine\Common\Collections\Expr\Expression;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
@@ -45,7 +48,9 @@ class RestrictProductVariationsEventListener
      */
     public function onSearchQuery(ProductSearchQueryRestrictionEvent $event)
     {
-        if ($this->isRestrictionApplicable()) {
+        if ($this->isRestrictionApplicable() &&
+            !$this->isVariantCriteriaExist($event->getQuery()->getCriteria()->getWhereExpression())
+        ) {
             $event->getQuery()->getCriteria()->andWhere(
                 Criteria::expr()->eq('integer.is_variant', 0)
             );
@@ -80,5 +85,27 @@ class RestrictProductVariationsEventListener
     {
         return $this->configManager
             ->get(sprintf('%s.%s', Configuration::ROOT_NODE, Configuration::DISPLAY_SIMPLE_VARIATIONS));
+    }
+
+    /**
+     * @param Expression|null $expression
+     * @return bool
+     */
+    private function isVariantCriteriaExist(?Expression $expression)
+    {
+        if ($expression instanceof Comparison && $expression->getField() === 'integer.is_variant') {
+            return true;
+        }
+
+        if ($expression instanceof CompositeExpression) {
+            foreach ($expression->getExpressionList() as $childExpression) {
+                $result = $this->isVariantCriteriaExist($childExpression);
+                if ($result) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 }

@@ -77,13 +77,13 @@ define(function(require) {
         },
 
         updater: function(item) {
-            var sku = this.resultsMapping[item].sku;
+            var resultMapping = this.resultsMapping[item];
 
             this.resetProduct();
             this.previousValue = item;
-            this.validateProduct(sku);
+            this.validateProduct(resultMapping.sku);
 
-            return item;
+            return [resultMapping.sku, resultMapping['defaultName.string']].join(' - ');
         },
 
         validateProduct: function(val) {

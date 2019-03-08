@@ -300,3 +300,11 @@ services:
         arguments:
             - '@oro_featuretoggle.checker.feature_checker'
             - '@oro_website.manager'
+
+    oro_sale.updater.customer_user_reassign.quote_updater:
+        parent: oro_customer.updater.customer_user_reassign.abstract
+        calls:
+            - [ setEntityClass, [ '%oro_sale.entity.quote.class%' ] ]
+        tags:
+            - { name: oro_customer.updater.customer_user_reassign }
+        public: false
