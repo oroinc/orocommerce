@@ -1310,7 +1310,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
             }
 
             $filterState = $this->elementFactory->createElement('GridFiltersState');
-            if ($filterState->isValid()) {
+            if ($filterState->isValid() && $filterState->isVisible()) {
                 $filterState->click();
             }
         }

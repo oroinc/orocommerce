@@ -4,9 +4,11 @@ namespace Oro\Bundle\CatalogBundle\Datagrid\Cache;
 
 use Doctrine\Common\Cache\CacheProvider;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessor;
+use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 
 /**
  * The cache for different kind of aggregated info for categories.
+ * Cache counts by website and customer user id.
  */
 class CategoryCountsCache
 {
@@ -16,14 +18,27 @@ class CategoryCountsCache
     /** @var TokenAccessor */
     protected $tokenAccessor;
 
+    /** @var WebsiteManager */
+    private $websiteManager;
+
     /**
      * @param CacheProvider $cacheProvider
      * @param TokenAccessor $tokenAccessor
      */
-    public function __construct(CacheProvider $cacheProvider, TokenAccessor $tokenAccessor)
-    {
+    public function __construct(
+        CacheProvider $cacheProvider,
+        TokenAccessor $tokenAccessor
+    ) {
         $this->cacheProvider = $cacheProvider;
         $this->tokenAccessor = $tokenAccessor;
+    }
+
+    /**
+     * @param WebsiteManager $websiteManager
+     */
+    public function setWebsiteManager(WebsiteManager $websiteManager)
+    {
+        $this->websiteManager = $websiteManager;
     }
 
     /**
@@ -56,6 +71,12 @@ class CategoryCountsCache
      */
     protected function getDataKey($key)
     {
-        return sprintf('%s|%d', $key, $this->tokenAccessor->getUserId());
+        $websiteId = null;
+        $website = $this->websiteManager->getCurrentWebsite();
+        if ($website) {
+            $websiteId = $website->getId();
+        }
+
+        return sprintf('%s|%d|%d', $key, $websiteId, $this->tokenAccessor->getUserId());
     }
 }
