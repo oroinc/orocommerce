@@ -91,8 +91,8 @@ Feature: Shopping list without permissions
     And I reload the page
     When I check PSKU1 record in "Product Frontend Grid" grid
     And I click "ProductFrontendMassActionButton"
-    Then I should not see "Add to Shopping List 1" in the "ProductFrontendGridMassActionMenu" element
-    And I should see "Create New Shopping List" in the "ProductFrontendGridMassActionMenu" element
+    Then I should not see "Add to Shopping List 1" in the "ProductFrontendGridFloatingMenu" element
+    And I should see "Create New Shopping List" in the "ProductFrontendGridFloatingMenu" element
     And I uncheck PSKU1 record in "Product Frontend Grid" grid
 
   Scenario: Set edit shopping list permissions
@@ -105,8 +105,8 @@ Feature: Shopping list without permissions
     And I reload the page
     When I check PSKU1 record in "Product Frontend Grid" grid
     And I click "ProductFrontendMassActionButton"
-    Then I should see "Add to Shopping List 1" in the "ProductFrontendGridMassActionMenu" element
-    And I should see "Create New Shopping List" in the "ProductFrontendGridMassActionMenu" element
+    Then I should see "Add to Shopping List 1" in the "ProductFrontendGridFloatingMenu" element
+    And I should see "Create New Shopping List" in the "ProductFrontendGridFloatingMenu" element
     And I uncheck PSKU1 record in "Product Frontend Grid" grid
 
   Scenario: Set edit shopping list permissions

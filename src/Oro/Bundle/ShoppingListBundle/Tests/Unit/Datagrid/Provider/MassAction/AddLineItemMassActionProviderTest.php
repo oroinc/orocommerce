@@ -142,35 +142,35 @@ class AddLineItemMassActionProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function getActionsDataProvider()
     {
+        $newData = [
+            'is_current' => false,
+            'type' => 'window',
+            'label' => 'oro.shoppinglist.product.create_new_shopping_list.label',
+            'icon' => 'plus',
+            'data_identifier' => 'product.id',
+            'frontend_type' => 'add-products-mass',
+            'handler' => 'oro_shopping_list.mass_action.add_products_handler',
+            'route' => 'oro_shopping_list_add_products_to_new_massaction',
+            'frontend_options' => [
+                'title' => 'oro.shoppinglist.product.add_to_shopping_list.label',
+                'regionEnabled' => false,
+                'incrementalPosition' => false,
+                'dialogOptions' => [
+                    'modal' => true,
+                    'resizable' => false,
+                    'width' => 480,
+                    'autoResize' => true,
+                    'dialogClass' => 'shopping-list-dialog'
+                ],
+                'alias' => 'add_products_to_new_shopping_list_mass_action',
+            ],
+            'frontend_handle' => 'shopping-list-create',
+        ];
+
         return [
             'no shopping lists and registered customer' => [
                 'shoppingLists' => [],
-                'expected' => [
-                    'new' => [
-                        'is_current' => false,
-                        'type' => 'window',
-                        'label' => 'oro.shoppinglist.product.create_new_shopping_list.label',
-                        'icon' => 'plus',
-                        'data_identifier' => 'product.id',
-                        'frontend_type' => 'add-products-mass',
-                        'handler' => 'oro_shopping_list.mass_action.add_products_handler',
-                        'route' => 'oro_shopping_list_add_products_to_new_massaction',
-                        'frontend_options' => [
-                            'title' => 'oro.shoppinglist.product.add_to_shopping_list.label',
-                            'regionEnabled' => false,
-                            'incrementalPosition' => false,
-                            'dialogOptions' => [
-                                'modal' => true,
-                                'resizable' => false,
-                                'width' => 480,
-                                'autoResize' => true,
-                                'dialogClass' => 'shopping-list-dialog'
-                            ],
-                            'alias' => 'add_products_to_new_shopping_list_mass_action',
-                        ],
-                        'frontend_handle' => 'shopping-list-create',
-                    ]
-                ],
+                'expected' => ['new' => $newData],
                 'isGuest' => false,
                 'isShoppingListCreateFeatureEnabled' => true,
                 'editAllowed' => true,
@@ -214,30 +214,7 @@ class AddLineItemMassActionProviderTest extends \PHPUnit_Framework_TestCase
                             'shoppingList' => 2
                         ]
                     ],
-                    'new' => [
-                        'is_current' => false,
-                        'type' => 'window',
-                        'label' => 'oro.shoppinglist.product.create_new_shopping_list.label',
-                        'icon' => 'plus',
-                        'data_identifier' => 'product.id',
-                        'frontend_type' => 'add-products-mass',
-                        'handler' => 'oro_shopping_list.mass_action.add_products_handler',
-                        'route' => 'oro_shopping_list_add_products_to_new_massaction',
-                        'frontend_options' => [
-                            'title' => 'oro.shoppinglist.product.add_to_shopping_list.label',
-                            'regionEnabled' => false,
-                            'incrementalPosition' => false,
-                            'dialogOptions' => [
-                                'modal' => true,
-                                'resizable' => false,
-                                'width' => 480,
-                                'autoResize' => true,
-                                'dialogClass' => 'shopping-list-dialog'
-                            ],
-                            'alias' => 'add_products_to_new_shopping_list_mass_action',
-                        ],
-                        'frontend_handle' => 'shopping-list-create',
-                    ]
+                    'new' => $newData
                 ],
                 'isGuest' => false,
                 'isShoppingListCreateFeatureEnabled' => true,
