@@ -4,10 +4,14 @@ namespace Oro\Bundle\SaleBundle\Provider;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Provider\CurrencyProviderInterface;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaFactoryInterface;
 use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
@@ -33,9 +37,14 @@ class QuoteProductPriceProvider
     protected $currencyProvider;
 
     /**
+     * @var DoctrineHelper
+     */
+    protected $doctrineHelper;
+
+    /**
      * @param ProductPriceProviderInterface $productPriceProvider
      * @param ProductPriceScopeCriteriaFactoryInterface $priceScopeCriteriaFactory
-     * @param CurrencyProviderInterface                 $currencyProvider
+     * @param CurrencyProviderInterface $currencyProvider
      */
     public function __construct(
         ProductPriceProviderInterface $productPriceProvider,
@@ -45,6 +54,30 @@ class QuoteProductPriceProvider
         $this->productPriceProvider = $productPriceProvider;
         $this->priceScopeCriteriaFactory = $priceScopeCriteriaFactory;
         $this->currencyProvider = $currencyProvider;
+    }
+
+    /**
+     * @param DoctrineHelper $doctrineHelper
+     */
+    public function setDoctrineHelper(DoctrineHelper $doctrineHelper)
+    {
+        $this->doctrineHelper = $doctrineHelper;
+    }
+
+    /**
+     * @return DoctrineHelper
+     * @throws \InvalidArgumentException
+     */
+    private function getDoctrineHelper()
+    {
+        if (!is_a($this->doctrineHelper, DoctrineHelper::class)) {
+            throw new \InvalidArgumentException(sprintf(
+                'doctrineHelper should be instance of %s',
+                DoctrineHelper::class
+            ));
+        }
+
+        return $this->doctrineHelper;
     }
 
     /**
@@ -183,5 +216,48 @@ class QuoteProductPriceProvider
         }
 
         return false;
+    }
+
+    /**
+     * @param Quote $quote
+     * @param string $sku
+     * @param string $unitCode
+     * @param int $quantity
+     * @param string $currencyCode
+     * @return Price|null
+     */
+    public function getMatchedProductPrice(
+        Quote $quote,
+        string $sku,
+        string $unitCode,
+        int $quantity,
+        string $currencyCode
+    ) {
+        /** @var ProductRepository $productRepository */
+        $productRepository = $this->getDoctrineHelper()->getEntityRepository(Product::class);
+        $product = $productRepository->findOneBySku($sku);
+        if ($product === null) {
+            return null;
+        }
+
+        /** @var ProductUnitRepository $unitRepository */
+        $unitRepository = $this->getDoctrineHelper()->getEntityRepository(ProductUnit::class);
+        /** @var ProductUnit $unit */
+        $unit = $unitRepository->findOneBy(['code' => $unitCode]);
+        if ($unit === null) {
+            return null;
+        }
+
+        $productPriceCriteria = new ProductPriceCriteria(
+            $product,
+            $unit,
+            $quantity,
+            $currencyCode
+        );
+        $scopeCriteria = $this->priceScopeCriteriaFactory->createByContext($quote);
+
+        $matchedPrices = $this->productPriceProvider->getMatchedPrices([$productPriceCriteria], $scopeCriteria);
+
+        return $matchedPrices[$productPriceCriteria->getIdentifier()];
     }
 }

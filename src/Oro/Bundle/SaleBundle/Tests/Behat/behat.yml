@@ -80,6 +80,10 @@ oro_behat_extension:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector: 'input[name="oro_sale_quote[quoteProducts][0][quoteProductOffers][0][price][value]"]'
 
+    LineItemNote:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector: 'textarea[name="oro_sale_quote[quoteProducts][0][comment]"]'
+
     Tier prices button:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector: '.product-tier-prices'
