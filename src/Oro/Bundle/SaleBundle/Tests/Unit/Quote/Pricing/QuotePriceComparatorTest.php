@@ -3,102 +3,80 @@
 namespace Oro\Bundle\SaleBundle\Tests\Unit\Quote\Pricing;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\SaleBundle\Entity\Quote;
-use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
-use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
+use Oro\Bundle\SaleBundle\Provider\QuoteProductPriceProvider;
 use Oro\Bundle\SaleBundle\Quote\Pricing\QuotePriceComparator;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 class QuotePriceComparatorTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @dataProvider isPriceChangedDataProvider
-     *
-     * @param Quote $quote
-     * @param bool $expected
-     */
-    public function testIsQuoteProductOfferPriceChanged(Quote $quote, $expected)
-    {
-        $comparator = new QuotePriceComparator($quote);
+    use EntityTrait;
 
-        $this->assertEquals($expected, $comparator->isQuoteProductOfferPriceChanged('psku', 'punit', 42, 'USD', 100));
+    /** @var QuotePriceComparator */
+    private $comparator;
+
+    /** @var Quote */
+    private $quote;
+
+    /** @var QuoteProductPriceProvider|\PHPUnit\Framework\MockObject\MockObject $provider */
+    private $provider;
+
+    protected function setUp()
+    {
+        $this->quote = new Quote();
+        $this->provider = $this->createMock(QuoteProductPriceProvider::class);
+        $this->comparator = new QuotePriceComparator($this->quote, $this->provider);
     }
 
-    /**
-     * @return \Generator
-     */
-    public function isPriceChangedDataProvider()
+    public function testIsQuoteProductOfferPriceChangedNotChanged()
     {
-        yield 'no data' => [
-            'quote' => $this->getQuote(null, null, null, null, null),
-            'expected' => true
-        ];
+        $matchedPrice = $this->getEntity(Price::class, ['value' => 99.99]);
 
-        yield 'empty sku' => [
-            'quote' => $this->getQuote(null, 'punit', 42, 'USD', 100),
-            'expected' => true
-        ];
+        $this->provider->expects($this->once())
+            ->method('getMatchedProductPrice')
+            ->with(
+                $this->quote,
+                'psku',
+                'punit',
+                42,
+                'USD'
+            )
+            ->willReturn($matchedPrice);
 
-        yield 'empty unit' => [
-            'quote' => $this->getQuote('psku', null, 42, 'USD', 100),
-            'expected' => true
-        ];
-
-        yield 'empty quantity' => [
-            'quote' => $this->getQuote('psku', 'punit', null, 'USD', 100),
-            'expected' => true
-        ];
-
-        yield 'empty currency' => [
-            'quote' => $this->getQuote('psku', 'punit', 42, null, 100),
-            'expected' => true
-        ];
-
-        yield 'empty price' => [
-            'quote' => $this->getQuote('psku', 'punit', 42, 'USD', null),
-            'expected' => true
-        ];
-
-        yield 'price changed' => [
-            'quote' => $this->getQuote('psku', 'punit', 42, 'USD', 100.5),
-            'expected' => true
-        ];
-
-        yield 'the same data' => [
-            'quote' => $this->getQuote('psku', 'punit', 42, 'USD', 100),
-            'expected' => false
-        ];
+        $this->assertFalse($this->comparator->isQuoteProductOfferPriceChanged('psku', 'punit', 42, 'USD', 99.99));
     }
 
-    /**
-     * @param string $sku
-     * @param string $unit
-     * @param int $qty
-     * @param string $currency
-     * @param float $price
-     *
-     * @return Quote|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function getQuote($sku, $unit, $qty, $currency, $price)
+    public function testIsQuoteProductOfferPriceChangedChanged()
     {
-        $productUnit = new ProductUnit();
-        $productUnit->setCode($unit);
+        $matchedPrice = $this->getEntity(Price::class, ['value' => 50.00]);
 
-        $product = $this->createMock(Product::class);
-        $product->expects($this->any())->method('getSku')->willReturn($sku);
+        $this->provider->expects($this->once())
+            ->method('getMatchedProductPrice')
+            ->with(
+                $this->quote,
+                'psku',
+                'punit',
+                42,
+                'USD'
+            )
+            ->willReturn($matchedPrice);
 
-        $quoteProductOffer = new QuoteProductOffer();
-        $quoteProductOffer->setPrice(Price::create($price, $currency))
-            ->setProductUnit($productUnit)
-            ->setQuantity($qty);
+        $this->assertTrue($this->comparator->isQuoteProductOfferPriceChanged('psku', 'punit', 42, 'USD', 99.99));
+    }
 
-        $quoteProduct = new QuoteProduct();
-        $quoteProduct->setProduct($product)->addQuoteProductOffer($quoteProductOffer);
+    public function testIsQuoteProductOfferPriceChangedNoMatchedPrice()
+    {
+        $this->provider->expects($this->once())
+            ->method('getMatchedProductPrice')
+            ->with(
+                $this->quote,
+                'psku',
+                'punit',
+                42,
+                'USD'
+            )
+            ->willReturn(null);
 
-        $quote = new Quote();
-        $quote->addQuoteProduct($quoteProduct);
-
-        return $quote;
+        $this->assertTrue($this->comparator->isQuoteProductOfferPriceChanged('psku', 'punit', 42, 'USD', 99.99));
     }
 }

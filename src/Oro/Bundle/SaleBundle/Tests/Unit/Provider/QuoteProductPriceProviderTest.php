@@ -5,11 +5,14 @@ namespace Oro\Bundle\SaleBundle\Tests\Unit\Provider;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Provider\CurrencyProviderInterface;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaFactoryInterface;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaInterface;
 use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
@@ -34,16 +37,21 @@ class QuoteProductPriceProviderTest extends \PHPUnit\Framework\TestCase
     /** @var CurrencyProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $currencyProvider;
 
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
+    protected $doctrineHelper;
+
     protected function setUp()
     {
         $this->productPriceProvider = $this->createMock(ProductPriceProviderInterface::class);
         $this->priceScopeCriteriaFactory = $this->createMock(ProductPriceScopeCriteriaFactoryInterface::class);
         $this->currencyProvider = $this->createMock(CurrencyProviderInterface::class);
+        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
 
         $this->quoteProductPriceProvider = new QuoteProductPriceProvider(
             $this->productPriceProvider,
             $this->priceScopeCriteriaFactory,
-            $this->currencyProvider
+            $this->currencyProvider,
+            $this->doctrineHelper
         );
     }
 
@@ -364,5 +372,172 @@ class QuoteProductPriceProviderTest extends \PHPUnit\Framework\TestCase
 
         $quote->addQuoteProduct($quoteProduct);
         $this->assertFalse($this->quoteProductPriceProvider->hasEmptyPrice($quote));
+    }
+
+    /**
+     * @param array $matchedPrices
+     * @param Price|null $expectedResult
+     *
+     * @dataProvider getMatchedProductPriceProvider
+     */
+    public function testGetMatchedProductPrice(array $matchedPrices, Price $expectedResult = null)
+    {
+        $quote = new Quote();
+
+        /** @var Product $product */
+        $product = $this->getEntity(Product::class, ['id' => 12, 'sku' => 'psku']);
+        /** @var ProductUnit $unit */
+        $unit = $this->getEntity(ProductUnit::class, ['code' => 'punit']);
+
+        $productRepository = $this->createMock(ProductRepository::class);
+        $unitRepository = $this->createMock(ProductUnitRepository::class);
+        $this->doctrineHelper->expects($this->exactly(2))
+            ->method('getEntityRepository')
+            ->withConsecutive(
+                [\Oro\Bundle\ProductBundle\Entity\Product::class],
+                [ProductUnit::class]
+            )
+            ->willReturnOnConsecutiveCalls(
+                $productRepository,
+                $unitRepository
+            );
+        $productRepository->expects($this->once())
+            ->method('findOneBySku')
+            ->with('psku')
+            ->willReturn($product);
+        $unitRepository->expects($this->once())
+            ->method('findOneBy')
+            ->with(['code' => 'punit'])
+            ->willReturn($unit);
+
+        $productPriceCriteria = new ProductPriceCriteria(
+            $product,
+            $unit,
+            32,
+            'USD'
+        );
+
+        $scopeCriteria = $this->createMock(ProductPriceScopeCriteriaInterface::class);
+        $this->priceScopeCriteriaFactory->expects($this->once())
+            ->method('createByContext')
+            ->with($quote)
+            ->willReturn($scopeCriteria);
+
+        $this->productPriceProvider->expects($this->once())
+            ->method('getMatchedPrices')
+            ->with([$productPriceCriteria], $scopeCriteria)
+            ->willReturn($matchedPrices);
+
+        $result = $this->quoteProductPriceProvider->getMatchedProductPrice(
+            $quote,
+            'psku',
+            'punit',
+            32,
+            'USD'
+        );
+
+        $this->assertEquals($expectedResult, $result);
+    }
+
+    /**
+     * @return array
+     */
+    public function getMatchedProductPriceProvider()
+    {
+        $expectedPrice = Price::create(9.99, 'USD');
+
+        return [
+            'Matched price found' => [
+                [
+                    '12-punit-32-USD' => $expectedPrice,
+                ],
+                $expectedPrice
+            ],
+            'Matched price not found' => [
+                [
+                    '12-punit-32-USD' => null,
+                ],
+                null
+            ],
+        ];
+    }
+
+    public function testGetMatchedProductPriceNoProductBySku()
+    {
+        $quote = new Quote();
+
+        $productRepository = $this->createMock(ProductRepository::class);
+        $unitRepository = $this->createMock(ProductUnitRepository::class);
+        $this->doctrineHelper->expects($this->once())
+            ->method('getEntityRepository')
+            ->with(\Oro\Bundle\ProductBundle\Entity\Product::class)
+            ->willReturn($productRepository);
+        $productRepository->expects($this->once())
+            ->method('findOneBySku')
+            ->with('psku')
+            ->willReturn(null);
+        $unitRepository->expects($this->never())
+            ->method('findOneBy');
+
+        $this->priceScopeCriteriaFactory->expects($this->never())
+            ->method('createByContext');
+
+        $this->productPriceProvider->expects($this->never())
+            ->method('getMatchedPrices');
+
+        $result = $this->quoteProductPriceProvider->getMatchedProductPrice(
+            $quote,
+            'psku',
+            'punit',
+            32,
+            'USD'
+        );
+
+        $this->assertNull($result);
+    }
+
+    public function testGetMatchedProductPriceNoUnitByCode()
+    {
+        $quote = new Quote();
+
+        /** @var Product $product */
+        $product = $this->getEntity(Product::class, ['id' => 12, 'sku' => 'psku']);
+
+        $productRepository = $this->createMock(ProductRepository::class);
+        $unitRepository = $this->createMock(ProductUnitRepository::class);
+        $this->doctrineHelper->expects($this->exactly(2))
+            ->method('getEntityRepository')
+            ->withConsecutive(
+                [\Oro\Bundle\ProductBundle\Entity\Product::class],
+                [ProductUnit::class]
+            )
+            ->willReturnOnConsecutiveCalls(
+                $productRepository,
+                $unitRepository
+            );
+        $productRepository->expects($this->once())
+            ->method('findOneBySku')
+            ->with('psku')
+            ->willReturn($product);
+        $unitRepository->expects($this->once())
+            ->method('findOneBy')
+            ->with(['code' => 'punit'])
+            ->willReturn(null);
+
+        $this->priceScopeCriteriaFactory->expects($this->never())
+            ->method('createByContext');
+
+        $this->productPriceProvider->expects($this->never())
+            ->method('getMatchedPrices');
+
+        $result = $this->quoteProductPriceProvider->getMatchedProductPrice(
+            $quote,
+            'psku',
+            'punit',
+            32,
+            'USD'
+        );
+
+        $this->assertNull($result);
     }
 }
