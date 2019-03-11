@@ -140,7 +140,9 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      */
     public function iShouldSeeOnShoppingListWidget($name)
     {
-        $this->getShoppingListLinkFromShoppingListWidgetByName($name);
+        $link = $this->getShoppingListLinkFromShoppingListWidgetByName($name);
+
+        self::assertNotNull($link, sprintf('"%s" list item was not found in shopping list widget', $name));
     }
 
     /**
@@ -150,8 +152,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      */
     public function iShouldNotSeeOnShoppingListWidget($name)
     {
-        $widget = $this->createElement('ShoppingListWidgetContainer');
-        $link = $widget->find('xpath', "//span[@data-role='shopping-list-title'][text()='{$name}']");
+        $link = $this->getShoppingListLinkFromShoppingListWidgetByName($name);
 
         self::assertNull($link, sprintf('"%s" list item was found in shopping list widget', $name));
     }
@@ -282,10 +283,14 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     protected function getShoppingListLinkFromShoppingListWidgetByName($name)
     {
         $widget = $this->createElement('ShoppingListWidgetContainer');
-        $link = $widget->find('xpath', "//span[@data-role='shopping-list-title'][text()='{$name}']");
+        $xpath = sprintf(
+            '//span[' .
+                "@data-role='shopping-list-title'" .
+                "and translate(text(),'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz')='%s'" .
+            ']',
+            strtolower($name)
+        );
 
-        self::assertNotNull($link, sprintf('"%s" list item was not found in shopping list widget', $name));
-
-        return $link;
+        return $widget->find('xpath', $xpath);
     }
 }

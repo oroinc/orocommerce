@@ -527,8 +527,8 @@ oro_behat_extension:
       selector: '.datagrid-massaction button.dropdown-toggle'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
-    ProductFrontendGridFloatingMenu:
-      selector: '.datagrid-massaction__dropdown-menu'
+    ProductFrontendGridMassActionMenu:
+      selector: 'div.datagrid-massaction__dropdown-menu'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
     ProductFrontendGridRow:

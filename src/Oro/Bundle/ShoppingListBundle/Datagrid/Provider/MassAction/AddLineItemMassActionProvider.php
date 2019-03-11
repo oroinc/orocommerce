@@ -63,32 +63,30 @@ class AddLineItemMassActionProvider implements MassActionProviderInterface
     {
         $actions = [];
 
-        if ($this->isGuestCustomerUser()) {
-            $actions['current'] = $this->getConfig([
-                'label' => $this->translator->trans('oro.shoppinglist.actions.add_to_current_shopping_list'),
-                'is_current' => true
-            ]);
-        } else {
-            if (!$this->isAllowed()) {
-                return [];
-            }
-
-            $shoppingLists = $this->manager->getShoppingLists(['list.id' => Criteria::ASC]);
-
-            /** @var ShoppingList $shoppingList */
-            foreach ($shoppingLists as $shoppingList) {
-                $name = 'list' . $shoppingList->getId();
-
-                $actions[$name] = $this->getConfig([
-                    'label' => $this->getLabel($shoppingList),
-                    'route_parameters' => [
-                        'shoppingList' => $shoppingList->getId(),
-                    ],
+        if ($this->isEditAllowed()) {
+            if ($this->isGuestCustomerUser()) {
+                $actions['current'] = $this->getConfig([
+                    'label' => $this->translator->trans('oro.shoppinglist.actions.add_to_current_shopping_list'),
+                    'is_current' => true
                 ]);
+            } else {
+                $shoppingLists = $this->manager->getShoppingLists(['list.id' => Criteria::ASC]);
+
+                /** @var ShoppingList $shoppingList */
+                foreach ($shoppingLists as $shoppingList) {
+                    $name = 'list' . $shoppingList->getId();
+
+                    $actions[$name] = $this->getConfig([
+                        'label' => $this->getLabel($shoppingList),
+                        'route_parameters' => [
+                            'shoppingList' => $shoppingList->getId(),
+                        ],
+                    ]);
+                }
             }
         }
 
-        if ($this->isFeaturesEnabled()) {
+        if ($this->isFeaturesEnabled() && $this->isCreateAllowed()) {
             $actions['new'] = $this->getConfig([
                 'type' => 'window',
                 'label' => $this->translator->trans('oro.shoppinglist.product.create_new_shopping_list.label'),
@@ -177,7 +175,15 @@ class AddLineItemMassActionProvider implements MassActionProviderInterface
     /**
      * @return bool
      */
-    private function isAllowed(): bool
+    private function isCreateAllowed(): bool
+    {
+        return $this->authorizationChecker->isGranted('oro_shopping_list_frontend_create');
+    }
+
+    /**
+     * @return bool
+     */
+    private function isEditAllowed(): bool
     {
         return $this->authorizationChecker->isGranted('oro_shopping_list_frontend_update');
     }
