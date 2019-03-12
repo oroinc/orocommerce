@@ -111,7 +111,6 @@ Feature: Shopping list without permissions
 
   Scenario: Set edit shopping list permissions
     Given I proceed as the Admin
-    And I click "Edit"
     And select following permissions:
       | Shopping List | Edit:User |
     And I save and close form

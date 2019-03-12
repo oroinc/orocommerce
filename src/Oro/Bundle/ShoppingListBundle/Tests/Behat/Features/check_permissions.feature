@@ -194,7 +194,6 @@ Feature: Check permissions
 
   Scenario: Set edit permission to Department
     Given I proceed as the Admin
-    And I click "Edit"
     And select following permissions:
       | Shopping List | Edit:Department |
     When I save form
