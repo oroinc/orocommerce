@@ -1,5 +1,6 @@
 @regression
 @ticket-BB-13580
+@ticket-BB-16438
 @fixture-OroProductBundle:ProductConfigurableFixture.yml
 
 Feature: Product view page for configurable product
@@ -53,7 +54,6 @@ Feature: Product view page for configurable product
 
   Scenario: Prepare first simple product
     Given I go to Products/Products
-    And I filter SKU as is equal to "tpc_b_r"
     And I click Edit tpc_b_r in grid
     When I fill in product attribute "Color" with "Black"
     And I fill in product attribute "Refurbished" with "Yes"
@@ -62,7 +62,6 @@ Feature: Product view page for configurable product
 
   Scenario: Prepare second simple product
     Given I go to Products/Products
-    And I filter SKU as is equal to "tpc_w"
     And I click Edit tpc_w in grid
     When I fill in product attribute "Color" with "White"
     And I fill in product attribute "Refurbished" with "No"
@@ -75,6 +74,8 @@ Feature: Product view page for configurable product
     And I click Edit tpc in grid
     When I fill "ProductForm" with:
       | Configurable Attributes | [Color,Refurbished] |
+      | Is Featured             | Yes                 |
+      | URL Slug                | tablet_pc           |
     And I check tpc_b_r and tpc_w in grid
     And I save form
     Then I should see "Product has been saved" flash message
@@ -100,3 +101,9 @@ Feature: Product view page for configurable product
     When I click "Add to Shopping List"
     Then I should see "Product has been added to" flash message
     And I should see "In shopping list"
+
+  Scenario: Configurable Product View Details link is accessible for featured products
+    Given I am on homepage
+    Then I should see "tpc" featured product
+    When I click "View Details" for "tpc" product
+    Then the url should match "/tablet_pc"

@@ -158,7 +158,7 @@
 
 {% block __oro_product_line_item_form__line_item_view_details_widget %}
     {% if is_configurable_product_type(product.type) and matrixFormType == 'none' %}
-        {% set path = product.view_link|default('') %}
+        {% set path = product.view_link|default(path('oro_product_frontend_product_view', {id: product.id})) %}
         {% set attr = layout_attr_defaults(attr, {
             '~class': " btn btn--info full"
         }) %}
