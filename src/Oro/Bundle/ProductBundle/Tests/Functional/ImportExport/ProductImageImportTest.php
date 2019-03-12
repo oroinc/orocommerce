@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Tests\Functional\ImportExport;
 
 use Doctrine\ORM\EntityRepository;
+use Gaufrette\File;
 use Oro\Bundle\ImportExportBundle\Async\Topics;
 use Oro\Bundle\ImportExportBundle\File\FileManager;
 use Oro\Bundle\ImportExportBundle\Job\JobExecutor;
@@ -70,20 +71,20 @@ class ProductImageImportTest extends WebTestCase
      */
     protected function assertExportTemplateWorks(string $expectedCsvFilePath)
     {
+        $from = new \DateTime('now', new \DateTimeZone('UTC'));
         $this->client->request(
             'GET',
             $this->getUrl('oro_importexport_export_template', [
                 'processorAlias' => self::EXPORT_TEMPLATE_PROCESSOR_ALIAS
             ])
         );
-        $this->client->followRedirect();
 
         static::assertContains(
             $this->getFileContent($expectedCsvFilePath),
             $this->client->getResponse()->getContent()
         );
-
-        $this->deleteImportExportFile($this->client->getRequest()->attributes->get('fileName'));
+        $to = new \DateTime('now', new \DateTimeZone('UTC'));
+        $this->deleteImportExportFileByPeriod($from, $to);
     }
 
     /**
@@ -94,6 +95,21 @@ class ProductImageImportTest extends WebTestCase
         static::getContainer()
             ->get('oro_importexport.file.file_manager')
             ->deleteFile($filename);
+    }
+
+    /**
+     * @param \DateTime $from
+     * @param \DateTime $to
+     */
+    protected function deleteImportExportFileByPeriod(\DateTime $from, \DateTime $to)
+    {
+        /** @var FileManager $fileManager */
+        $fileManager = static::getContainer()->get('oro_importexport.file.file_manager');
+        $files = $fileManager->getFilesByPeriod($from, $to);
+        /** @var File $file */
+        foreach ($files as $file) {
+            $fileManager->deleteFile($file);
+        }
     }
 
     /**
