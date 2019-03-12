@@ -985,6 +985,15 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
+     * @Given /^(?:|I )should see "([^"]*)" featured product$/
+     */
+    public function iShouldSeeFeaturedProduct($productSku)
+    {
+        $this->oroMainContext
+            ->iShouldSeeStringInElementUnderElements($productSku, 'ProductFrontendRowSku', 'Featured Products Block');
+    }
+
+    /**
      * @Then /^(?:|I )should not see "([^"]*)" product$/
      *
      * @param string $productSku
