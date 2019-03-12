@@ -1,5 +1,5 @@
 datagrids:
-    shopping-list-grid:
+    base-shopping-list-grid:
         acl_resource: oro_shopping_list_view
         extended_entity_name: '%oro_shopping_list.entity.shopping_list.class%'
         options:
@@ -16,44 +16,35 @@ datagrids:
                     - cachedTotal.currency
                     - shopping_list.createdAt
                     - shopping_list.updatedAt
-                    - shopping_list_customer.name as customer
-                    - CONCAT(shopping_list_acc_user.firstName, ' ', shopping_list_acc_user.lastName) as customer_user
                 from:
                     - { table: '%oro_shopping_list.entity.shopping_list.class%', alias: shopping_list }
                 join:
                     left:
-                        - { join: shopping_list.customer, alias: shopping_list_customer }
-                        - { join: shopping_list.customerUser, alias: shopping_list_acc_user }
                         - { join: '%oro_shopping_list.entity.shopping_list_total.class%', alias: cachedTotal, conditionType: WITH, condition: "cachedTotal.shoppingList = shopping_list AND cachedTotal.currency = @oro_shopping_list.datagrid.total_currency_helper->getCurrencyStatement()" }
-
         columns:
             id:
                 label:         oro.shoppinglist.id.label
+                order:         10
             label:
                 label:         oro.shoppinglist.label.label
+                order:         20
             notes:
                 label:         oro.shoppinglist.notes.label
-            customer:
-                label:         oro.shoppinglist.customer.label
-                type:          twig
-                frontend_type: html
-                template:      OroShoppingListBundle:Datagrid:Column/customer.html.twig
-            customer_user:
-                label:         oro.shoppinglist.customer_user.label
-                type:          twig
-                frontend_type: html
-                template:      OroShoppingListBundle:Datagrid:Column/customer_user.html.twig
+                order:         30
             subtotal:
                 label:         oro.shoppinglist.subtotal.label
                 type:          twig
                 frontend_type: html
                 template:      OroPricingBundle:Datagrid:Column/subtotal.html.twig
+                order:         60
             createdAt:
                 label:         oro.ui.created_at
                 frontend_type: datetime
+                order:         70
             updatedAt:
                 label:         oro.ui.updated_at
                 frontend_type: datetime
+                order:         80
         properties:
             view_link:
                 type:  url
@@ -65,10 +56,6 @@ datagrids:
                     data_name: shopping_list.id
                 label:
                     data_name: shopping_list.label
-                customer:
-                    data_name: customer
-                customer_user:
-                    data_name: customer_user
                 subtotal:
                     data_name: subtotal
                 createdAt:
@@ -85,12 +72,6 @@ datagrids:
                 label:
                     type:      string
                     data_name: shopping_list.label
-                customer:
-                    type:      string
-                    data_name: customer
-                customer_user:
-                    type:      string
-                    data_name: customer_user
                 subtotal:
                     type:      number
                     data_name: subtotal
@@ -108,6 +89,87 @@ datagrids:
                 icon:          eye
                 acl_resource:  oro_shopping_list_view
                 rowAction:     true
+
+    shopping-list-grid:
+        extends: base-shopping-list-grid
+        source:
+            query:
+                select:
+                    - shopping_list_customer.name as customer
+                    - CONCAT(shopping_list_acc_user.firstName, ' ', shopping_list_acc_user.lastName) as customer_user
+                join:
+                    left:
+                        - { join: shopping_list.customer, alias: shopping_list_customer }
+                        - { join: shopping_list.customerUser, alias: shopping_list_acc_user }
+        columns:
+            customer:
+                label:         oro.shoppinglist.customer.label
+                type:          twig
+                frontend_type: html
+                template:      OroShoppingListBundle:Datagrid:Column/customer.html.twig
+                order:         40
+            customer_user:
+                label:         oro.shoppinglist.customer_user.label
+                type:          twig
+                frontend_type: html
+                template:      OroShoppingListBundle:Datagrid:Column/customer_user.html.twig
+                order:         50
+        sorters:
+            columns:
+                customer:
+                    data_name: customer
+                customer_user:
+                    data_name: customer_user
+        filters:
+            columns:
+                customer:
+                    type:      string
+                    data_name: customer
+                customer_user:
+                    type:      string
+                    data_name: customer_user
+
+    customer-shopping-lists-grid:
+        extends: base-shopping-list-grid
+        source:
+            query:
+                select:
+                    - CONCAT(shopping_list_acc_user.firstName, ' ', shopping_list_acc_user.lastName) as customer_user
+                join:
+                    left:
+                        - { join: shopping_list.customerUser, alias: shopping_list_acc_user }
+                where:
+                    or:
+                        - shopping_list_acc_user.customer = :customer_id
+                        - shopping_list.customer = :customer_id
+            bind_parameters:
+                - customer_id
+        columns:
+            customer_user:
+                label:         oro.shoppinglist.customer_user.label
+                type:          twig
+                frontend_type: html
+                template:      OroShoppingListBundle:Datagrid:Column/customer_user.html.twig
+                order:         0
+        sorters:
+            columns:
+                customer_user:
+                    data_name: customer_user
+        filters:
+            columns:
+                customer_user:
+                    type:      string
+                    data_name: customer_user
+
+    customer-user-shopping-lists-grid:
+        extends: base-shopping-list-grid
+        source:
+            query:
+                where:
+                    and:
+                        - shopping_list.customerUser = :customer_user_id
+            bind_parameters:
+                - customer_user_id
 
     shopping-list-line-items-grid:
         acl_resource:      oro_shopping_list_view

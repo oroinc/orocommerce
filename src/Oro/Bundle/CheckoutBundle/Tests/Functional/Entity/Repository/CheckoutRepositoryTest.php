@@ -4,11 +4,16 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Functional\Entity\Repository;
 
 use Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository;
 use Oro\Bundle\CheckoutBundle\Tests\Functional\DataFixtures\LoadShoppingListsCheckoutsData;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
+use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData as LoadAuthCustomerUserData;
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\FrontendWebTestCase;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class CheckoutRepositoryTest extends FrontendWebTestCase
 {
     /**
@@ -168,5 +173,44 @@ class CheckoutRepositoryTest extends FrontendWebTestCase
         }
 
         $manager->flush();
+    }
+
+    public function testGetRelatedEntitiesCount()
+    {
+        $customerUser = $this->getReference(LoadCustomerUserData::LEVEL_1_EMAIL);
+
+        self::assertSame(1, $this->repository->getRelatedEntitiesCount($customerUser));
+    }
+
+    public function testGetRelatedEntitiesCountZero()
+    {
+        $customerUserWithoutRelatedEntities = $this->getReference(LoadCustomerUserData::LEVEL_1_1_EMAIL);
+
+        self::assertSame(0, $this->repository->getRelatedEntitiesCount($customerUserWithoutRelatedEntities));
+    }
+
+    public function testResetCustomerUserForSomeEntities()
+    {
+        $customerUser = $this->getContainer()
+            ->get('doctrine')
+            ->getRepository(CustomerUser::class)
+            ->findOneBy(['username' => LoadAuthCustomerUserData::AUTH_USER]);
+
+        $this->getRepository()->resetCustomerUser($customerUser, [
+            $this->getReference(LoadShoppingListsCheckoutsData::CHECKOUT_1),
+            $this->getReference(LoadShoppingListsCheckoutsData::CHECKOUT_2),
+        ]);
+
+        $checkouts = $this->getRepository()->findBy(['customerUser' => null]);
+        $this->assertCount(2, $checkouts);
+    }
+
+    public function testResetCustomerUser()
+    {
+        $customerUser = $this->getReference(LoadCustomerUserData::LEVEL_1_EMAIL);
+        $this->getRepository()->resetCustomerUser($customerUser);
+
+        $checkouts = $this->getRepository()->findBy(['customerUser' => null]);
+        $this->assertCount(3, $checkouts);
     }
 }

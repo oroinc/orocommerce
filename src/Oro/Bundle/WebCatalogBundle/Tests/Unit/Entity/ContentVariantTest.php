@@ -21,7 +21,8 @@ class ContentVariantTest extends \PHPUnit\Framework\TestCase
             ['type', 'productPage'],
             ['systemPageRoute', 'some_route'],
             ['node', new ContentNode()],
-            ['default', true]
+            ['default', true],
+            ['overrideVariantConfiguration', true],
         ]);
 
         $this->assertPropertyCollections(new ContentVariant(), [

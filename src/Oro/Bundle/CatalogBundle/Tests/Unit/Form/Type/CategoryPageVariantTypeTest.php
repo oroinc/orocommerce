@@ -83,7 +83,8 @@ class CategoryPageVariantTypeTest extends FormIntegrationTestCase
         $form->submit(
             [
                 'excludeSubcategories' => true,
-                'categoryPageCategory' => 2002
+                'categoryPageCategory' => 2002,
+                'overrideVariantConfiguration' => false
             ]
         );
 
@@ -93,7 +94,8 @@ class CategoryPageVariantTypeTest extends FormIntegrationTestCase
         $this->assertEquals(
             [
                 'excludeSubcategories' => true,
-                'categoryPageCategory' => $this->getCategory(2002)
+                'categoryPageCategory' => $this->getCategory(2002),
+                'overrideVariantConfiguration' => false
             ],
             $form->getData()
         );

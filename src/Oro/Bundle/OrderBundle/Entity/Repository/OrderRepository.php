@@ -4,14 +4,18 @@ namespace Oro\Bundle\OrderBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
+use Oro\Bundle\CustomerBundle\Entity\Repository\ResetCustomerUserTrait;
+use Oro\Bundle\CustomerBundle\Entity\Repository\ResettableCustomerUserRepositoryInterface;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 
 /**
  * Repository for Order entity provides methods to extract order related info.
  */
-class OrderRepository extends EntityRepository
+class OrderRepository extends EntityRepository implements ResettableCustomerUserRepositoryInterface
 {
+    use ResetCustomerUserTrait;
+
     /**
      * @param array             $removingCurrencies
      * @param Organization|null $organization

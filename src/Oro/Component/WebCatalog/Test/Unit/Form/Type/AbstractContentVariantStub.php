@@ -7,6 +7,9 @@ use Oro\Component\WebCatalog\Entity\ContentNodeAwareInterface;
 use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 
+/**
+ * Stub content variant that can be used for unit testing.
+ */
 abstract class AbstractContentVariantStub implements ContentVariantInterface, ContentNodeAwareInterface
 {
     /**
@@ -19,13 +22,20 @@ abstract class AbstractContentVariantStub implements ContentVariantInterface, Co
      */
     protected $scopes;
 
-    /** @var ContentNodeInterface */
+    /**
+     * @var ContentNodeInterface
+     */
     protected $node;
 
     /**
      * @var bool
      */
     protected $default;
+
+    /**
+     * @var bool
+     */
+    protected $overrideVariantConfiguration;
 
     public function __construct()
     {
@@ -125,5 +135,24 @@ abstract class AbstractContentVariantStub implements ContentVariantInterface, Co
     public function isDefault()
     {
         return $this->default;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isOverrideVariantConfiguration(): bool
+    {
+        return $this->overrideVariantConfiguration;
+    }
+
+    /**
+     * @param bool $overrideVariantConfiguration
+     * @return self
+     */
+    public function setOverrideVariantConfiguration(bool $overrideVariantConfiguration): self
+    {
+        $this->overrideVariantConfiguration = $overrideVariantConfiguration;
+
+        return $this;
     }
 }

@@ -2,17 +2,28 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Functional\Entity\Repository;
 
+use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\Logging\SQLLogger;
 use Doctrine\ORM\EntityManager;
 use Gedmo\Tool\Logging\DBAL\QueryAnalyzer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\SaleBundle\Entity\Quote;
+use Oro\Bundle\SaleBundle\Entity\Repository\QuoteRepository;
 use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData;
+use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class QuoteRepositoryTest extends WebTestCase
 {
+    /** @var QuoteRepository */
+    private $repository;
+
     /** @var EntityManager */
     private $em;
+
+    /** @var Configuration */
+    private $configuration;
 
     /** @var QueryAnalyzer */
     private $queryAnalyzer;
@@ -29,21 +40,22 @@ class QuoteRepositoryTest extends WebTestCase
         $this->client->useHashNavigation(true);
         $this->loadFixtures(
             [
-                'Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData',
+                LoadQuoteData::class,
             ]
         );
 
         $this->em = $this->getContainer()
             ->get('doctrine')
             ->getManagerForClass(Quote::class);
+        $this->repository = $this->em->getRepository(Quote::class);
 
         $connection = $this->em->getConnection();
-        $configuration = $connection->getConfiguration();
+        $this->configuration = $connection->getConfiguration();
 
-        $this->prevLogger = $configuration->getSQLLogger();
+        $this->prevLogger = $this->configuration->getSQLLogger();
         $this->queryAnalyzer = new QueryAnalyzer($connection->getDatabasePlatform());
 
-        $configuration->setSQLLogger($this->queryAnalyzer);
+        $this->configuration->setSQLLogger($this->queryAnalyzer);
     }
 
     protected function tearDown()
@@ -112,5 +124,44 @@ class QuoteRepositoryTest extends WebTestCase
         $quoteProductOfferMetadata = $this->em
             ->getClassMetadata($this->getContainer()->getParameter('oro_sale.entity.quote_product_offer.class'));
         $this->assertContains(sprintf('LEFT JOIN %s', $quoteProductOfferMetadata->getTableName()), $query);
+    }
+
+    public function testGetRelatedEntitiesCount()
+    {
+        $customerUser = $this->getReference(LoadUserData::ACCOUNT1_USER1);
+
+        self::assertSame(1, $this->repository->getRelatedEntitiesCount($customerUser));
+    }
+
+    public function testGetRelatedEntitiesCountZero()
+    {
+        $customerUserWithoutRelatedEntities = $this->getContainer()->get('doctrine')
+            ->getManagerForClass(CustomerUser::class)
+            ->getRepository(CustomerUser::class)
+            ->findOneBy(['username' => LoadCustomerUserData::AUTH_USER]);
+
+        self::assertSame(0, $this->repository->getRelatedEntitiesCount($customerUserWithoutRelatedEntities));
+    }
+
+    public function testResetCustomerUserForSomeEntities()
+    {
+        $this->configuration->setSQLLogger(null);
+
+        $customerUser = $this->getReference(LoadUserData::ACCOUNT1_USER2);
+        $this->repository->resetCustomerUser($customerUser, [
+            $this->getReference(LoadQuoteData::QUOTE4),
+        ]);
+
+        $quotes = $this->repository->findBy(['customerUser' => null]);
+        $this->assertCount(4, $quotes);
+    }
+
+    public function testResetCustomerUser()
+    {
+        $customerUser = $this->getReference(LoadUserData::ACCOUNT1_USER2);
+        $this->repository->resetCustomerUser($customerUser);
+
+        $quotes = $this->repository->findBy(['customerUser' => null]);
+        $this->assertCount(5, $quotes);
     }
 }

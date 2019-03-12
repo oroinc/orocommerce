@@ -2,10 +2,14 @@
 
 namespace Oro\Bundle\RFPBundle\EventListener;
 
+use Oro\Bundle\CustomerBundle\EventListener\AbstractCustomerViewListener;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 
+/**
+ * Adds additional block with RFP grid on the Customer and CustomerUser view page.
+ */
 class CustomerViewListener extends AbstractCustomerViewListener implements FeatureToggleableInterface
 {
     use FeatureCheckerHolderTrait;

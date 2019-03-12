@@ -243,6 +243,16 @@ services:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-product-search-grid, method: onPreBuild }
             - { name: kernel.event_listener, event: oro_datagrid.search_datasource.result.after.frontend-product-search-grid, method: onResultAfter }
 
+    oro_shopping_list.event_listener.form_view:
+        class: 'Oro\Bundle\ShoppingListBundle\EventListener\CustomerViewListener'
+        arguments:
+            - '@translator'
+            - '@oro_entity.doctrine_helper'
+            - '@request_stack'
+        tags:
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.customer-user-view, method: onCustomerUserView }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.customer-view, method: onCustomerView }
+
     oro_shopping_list.data_provider.product_shopping_lists:
         class: 'Oro\Bundle\ShoppingListBundle\DataProvider\ProductShoppingListsDataProvider'
         arguments:
@@ -473,3 +483,11 @@ services:
         lazy: true
         tags:
             - { name: kernel.event_listener, event: oro_checkout.login_on_guest_checkout, method: onCheckoutLogin }
+
+    oro_shopping_list.updater.customer_user_reassign.shopping_list_updater:
+        parent: oro_customer.updater.customer_user_reassign.abstract
+        calls:
+            - [ setEntityClass, [ '%oro_shopping_list.entity.shopping_list.class%' ] ]
+        tags:
+            - { name: oro_customer.updater.customer_user_reassign }
+        public: false

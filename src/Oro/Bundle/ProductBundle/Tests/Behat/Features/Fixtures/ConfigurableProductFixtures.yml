@@ -5,6 +5,13 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
         string: 'White Slip-On Clog M'
     configurableProductLoc:
         string: 'Slip-On Clog'
+    clogCategoryLoc:
+        string: 'Clogs'
+
+Oro\Bundle\CatalogBundle\Entity\Category:
+    clogsCategory:
+        addTitle: ['@clogCategoryLoc']
+        setParentCategory: [1]
 
 Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
     simpleUnitPrecision1:
@@ -28,6 +35,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         addName: ['@simpleProductLoc1']
         status: 'enabled'
         inventoryStatus: '@enumInventoryStatuses'
+        newArrival: true
+        featured: true
     simpleProduct2:
         type: 'simple'
         sku: '1GB82'
@@ -38,6 +47,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         addName: ['@simpleProductLoc2']
         status: 'enabled'
         inventoryStatus: '@enumInventoryStatuses'
+        newArrival: true
+        featured: true
     configurableProduct:
         type: 'configurable'
         sku: '1GB83'
@@ -48,6 +59,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         addName: ['@configurableProductLoc']
         status: 'enabled'
         inventoryStatus: '@enumInventoryStatuses'
+        newArrival: true
+        featured: true
 
 Oro\Bundle\PricingBundle\Entity\ProductPrice:
     simpleProductItemPrice1:

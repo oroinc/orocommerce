@@ -345,6 +345,7 @@ oro:
                 configurable_products_variations.title: 'Variations'
                 filters_sorters.title: 'Filters and Sorters'
                 limit_filters_sorters.title: 'Limit Filters and Sorters'
+                filters_display_settings.title: 'Display Settings'
             fields:
                 brand_direct_url_prefix.label: 'Brand URL Prefix'
                 enable_related_products.label: 'Enable Related Products'
@@ -495,6 +496,12 @@ oro:
                 disable_filters_on_product_listing:
                     label: "Don't Change Initial Filter State"
                     tooltip: 'If checked, all relevant filters that have been displayed on the initial page load and their options will remain visible on the page and will be disabled after they become non-relevant as the user refines the search results. Otherwise, any filters and options that become non-relevant, will be hidden.'
+                filters_display_settings:
+                    label: 'Default Filter Panel State'
+                    tooltip: 'Set the default state of the filter panel in storefront product grids either to collapsed or expanded. When the panel is collapsed, the list of all applied filters is displayed textually above the grid.'
+                    options:
+                        collapsed: 'Collapsed'
+                        expanded: 'Expanded'
             notice:
                 product_image_watermark: >
                    The updated product image watermark settings will be used for the newly uploaded images only.
@@ -654,6 +661,10 @@ oro:
                     messages:
                         saved:      'Brand has been saved'
                         notBlank:   'This field cannot be blank'
+
+        override_variant_configuration:
+            label: Override Product Variant Configuration
+            tooltip: If selected, all simple product variants included into this product collection will be displayed on the page regardless of "Display Simple Variations" setting in the system configuration. Please note that this applies only to the products included via "Advanced Filter", as both "Manually Added" and "Excluded" products do not depend on this configuration option.
 
     product_unit.each:
         label:

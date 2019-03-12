@@ -8,15 +8,18 @@ use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Entity\Repository\ResetCustomerUserTrait;
+use Oro\Bundle\CustomerBundle\Entity\Repository\ResettableCustomerUserRepositoryInterface;
 use Oro\Bundle\WorkflowBundle\Helper\WorkflowQueryTrait;
 use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 
 /**
  * Handles logic for fetching checkout and checkout items by ids and different criteria
  */
-class CheckoutRepository extends EntityRepository
+class CheckoutRepository extends EntityRepository implements ResettableCustomerUserRepositoryInterface
 {
     use WorkflowQueryTrait;
+    use ResetCustomerUserTrait;
 
     /**
      * @param int $checkoutId

@@ -510,6 +510,11 @@
 
 {% block oro_product_collection_variant_widget %}
     {{ form_widget(form.productCollectionSegment) }}
+
+    <div class="section-content">
+        <span class="widget-title">{{ 'oro.webcatalog.contentvariant.options.label'|trans }}</span>
+        {{ form_row(form.overrideVariantConfiguration) }}
+    </div>
 {% endblock %}
 
 {% block oro_product_custom_variant_fields_collection_widget %}
@@ -542,4 +547,8 @@
             </div>
         </div>
     </div>
+{% endblock %}
+
+{% block _oro_product_pageTemplate_scalarValue_widget %}
+    {{ block('choice_widget') }}
 {% endblock %}

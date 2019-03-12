@@ -56,6 +56,11 @@ class SearchMessageProcessorTest extends \PHPUnit\Framework\TestCase
      */
     private $logger;
 
+    /**
+     * @var JobRunner|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $jobRunner;
+
     public function setUp()
     {
         $this->indexer = $this->createMock(IndexerInterface::class);
@@ -64,15 +69,9 @@ class SearchMessageProcessorTest extends \PHPUnit\Framework\TestCase
             ->willReturn(1);
 
         $this->messageProducer = $this->createMock(MessageProducerInterface::class);
-
-        $this->indexerInputValidator = $this->getMockBuilder(IndexerInputValidator::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->reindexMessageGranularizer = $this->getMockBuilder(ReindexMessageGranularizer::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $this->indexerInputValidator = $this->createMock(IndexerInputValidator::class);
+        $this->reindexMessageGranularizer = $this->createMock(ReindexMessageGranularizer::class);
+        $this->jobRunner = $this->createMock(JobRunner::class);
         $this->logger = $this->createMock(LoggerInterface::class);
 
         $this->processor = new SearchMessageProcessor(
@@ -80,10 +79,34 @@ class SearchMessageProcessorTest extends \PHPUnit\Framework\TestCase
             $this->messageProducer,
             $this->indexerInputValidator,
             $this->reindexMessageGranularizer,
+            $this->jobRunner,
             $this->logger
         );
 
         $this->session = $this->createMock(SessionInterface::class);
+    }
+
+    public function testProcessDelayedMessage()
+    {
+        $messageBody = ['jobId' => 1];
+
+        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message */
+        $message = $this->createMock(MessageInterface::class);
+
+        $message->expects($this->once())
+            ->method('getBody')
+            ->will($this->returnValue(json_encode($messageBody)));
+
+        $message->expects($this->once())
+            ->method('getProperty')
+            ->with(MessageQueConfig::PARAMETER_TOPIC_NAME)
+            ->willReturn(AsyncIndexer::TOPIC_REINDEX);
+
+        $this->jobRunner->expects($this->once())
+            ->method('runDelayed')
+            ->willReturn(true);
+
+        $this->assertEquals(MessageProcessorInterface::ACK, $this->processor->process($message, $this->session));
     }
 
     /**
@@ -107,6 +130,9 @@ class SearchMessageProcessorTest extends \PHPUnit\Framework\TestCase
 
         $this->indexer->expects($this->once())
             ->method($expectedMethod);
+
+        $this->jobRunner->expects($this->never())
+            ->method('runDelayed');
 
         $this->assertEquals(MessageProcessorInterface::ACK, $this->processor->process($message, $this->session));
     }
@@ -151,6 +177,9 @@ class SearchMessageProcessorTest extends \PHPUnit\Framework\TestCase
         $this->messageProducer->expects($this->never())
             ->method('send');
 
+        $this->jobRunner->expects($this->never())
+            ->method('runDelayed');
+
         $this->assertEquals(MessageProcessorInterface::ACK, $this->processor->process($message, $this->session));
     }
 
@@ -194,6 +223,9 @@ class SearchMessageProcessorTest extends \PHPUnit\Framework\TestCase
         $this->messageProducer->expects($this->exactly(count($granulizedMessages)))
             ->method('send');
 
+        $this->jobRunner->expects($this->never())
+            ->method('runDelayed');
+
         $this->assertEquals(MessageProcessorInterface::ACK, $this->processor->process($message, $this->session));
     }
 
@@ -214,11 +246,8 @@ class SearchMessageProcessorTest extends \PHPUnit\Framework\TestCase
         $message->method('getMessageId')
             ->willReturn(1);
 
-        /** @var JobRunner|\PHPUnit\Framework\MockObject\MockObject $jobRunner */
-        $jobRunner = $this->createMock(JobRunner::class);
-
-        $jobRunner->expects($this->never())
-            ->method('runUnique');
+        $this->jobRunner->expects($this->never())
+            ->method('runDelayed');
 
         $this->processor->process($message, $this->session);
     }
@@ -229,28 +258,14 @@ class SearchMessageProcessorTest extends \PHPUnit\Framework\TestCase
         $message = $this->createMock(MessageInterface::class);
 
         $message->method('getBody')
-            ->will($this->returnValue(json_encode('body')));
+            ->will($this->returnValue(json_encode(['body'])));
 
         $message->method('getProperty')
             ->with(MessageQueConfig::PARAMETER_TOPIC_NAME)
             ->willReturn('unsupported-topic');
 
-        $this->assertEquals(MessageProcessorInterface::REJECT, $this->processor->process($message, $this->session));
-    }
-
-    public function testRejectOnJobMessage()
-    {
-        $messageBody = ['class' => null, 'context' => [], 'jobId' => 1];
-
-        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message */
-        $message = $this->createMock(MessageInterface::class);
-
-        $message->method('getBody')
-            ->will($this->returnValue(json_encode($messageBody)));
-
-        $message->method('getProperty')
-            ->with(MessageQueConfig::PARAMETER_TOPIC_NAME)
-            ->willReturn(AsyncIndexer::TOPIC_REINDEX);
+        $this->jobRunner->expects($this->never())
+            ->method('runDelayed');
 
         $this->assertEquals(MessageProcessorInterface::REJECT, $this->processor->process($message, $this->session));
     }

@@ -3,21 +3,29 @@
 namespace Oro\Bundle\SaleBundle\Quote\Pricing;
 
 use Oro\Bundle\SaleBundle\Entity\Quote;
+use Oro\Bundle\SaleBundle\Provider\QuoteProductPriceProvider;
 
+/**
+ * Decides if product prices in the quote were changed
+ */
 class QuotePriceComparator
 {
     /** @var Quote */
     protected $quote;
 
-    /** @var array */
-    protected $quotePrices;
+    /** @var QuoteProductPriceProvider */
+    protected $provider;
 
     /**
      * @param Quote $quote
+     * @param QuoteProductPriceProvider $provider
      */
-    public function __construct(Quote $quote)
-    {
+    public function __construct(
+        Quote $quote,
+        QuoteProductPriceProvider $provider
+    ) {
         $this->quote = $quote;
+        $this->provider = $provider;
     }
 
     /**
@@ -30,49 +38,18 @@ class QuotePriceComparator
      */
     public function isQuoteProductOfferPriceChanged($productSku, $productUnit, $quantity, $currency, $price)
     {
-        $this->ensureQuotePrices();
+        $matchedPrice = $this->provider->getMatchedProductPrice(
+            $this->quote,
+            $productSku,
+            $productUnit,
+            $quantity,
+            $currency
+        );
 
-        $key = $this->getKey($productSku, $productUnit, $quantity, $currency);
-
-        return !isset($this->quotePrices[$key]) || $this->quotePrices[$key] !== (float)$price;
-    }
-
-    private function ensureQuotePrices()
-    {
-        if ($this->quotePrices !== null) {
-            return;
+        if ($matchedPrice === null) {
+            return true;
         }
 
-        $this->quotePrices = [];
-        foreach ($this->quote->getQuoteProducts() as $quoteProduct) {
-            foreach ($quoteProduct->getQuoteProductOffers() as $quoteProductOffer) {
-                $price = $quoteProductOffer->getPrice();
-                if (!$price) {
-                    continue;
-                }
-
-                $key = $this->getKey(
-                    $quoteProduct->getProductSku(),
-                    $quoteProductOffer->getProductUnitCode(),
-                    $quoteProductOffer->getQuantity(),
-                    $price->getCurrency()
-                );
-
-                $this->quotePrices[$key] = (float)$price->getValue();
-            }
-        }
-    }
-
-    /**
-     * @param string $productSku
-     * @param string $productUnit
-     * @param int $quantity
-     * @param string $currency
-     *
-     * @return string
-     */
-    private function getKey($productSku, $productUnit, $quantity, $currency)
-    {
-        return sprintf('%s_%s_%s_%s', $productSku, $productUnit, $quantity, $currency);
+        return abs((float)$price - (float)$matchedPrice->getValue()) > 1e-6;
     }
 }

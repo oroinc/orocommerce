@@ -76,6 +76,8 @@ system_configuration:
             title: oro.product.system_configuration.groups.limit_filters_sorters.title
         disable_filters:
             title: oro.product.system_configuration.groups.disable_filters.title
+        filters_display_settings:
+            title: oro.product.system_configuration.groups.filters_display_settings.title
 
     fields:
         oro_product.related_products_enabled:
@@ -561,6 +563,17 @@ system_configuration:
                 label: oro.product.system_configuration.fields.disable_filters_on_product_listing.label
                 tooltip: oro.product.system_configuration.fields.disable_filters_on_product_listing.tooltip
 
+        oro_product.filters_display_settings_state:
+            data_type: string
+            type: Symfony\Component\Form\Extension\Core\Type\ChoiceType
+            priority: 10
+            options:
+                label: oro.product.system_configuration.fields.filters_display_settings.label
+                tooltip: oro.product.system_configuration.fields.filters_display_settings.tooltip
+                choices:
+                    oro.product.system_configuration.fields.filters_display_settings.options.collapsed: collapsed
+                    oro.product.system_configuration.fields.filters_display_settings.options.expanded: expanded
+
     tree:
         system_configuration:
             platform:
@@ -584,6 +597,9 @@ system_configuration:
                                         children:
                                             - oro_product.limit_filters_sorters_on_product_listing
                                             - oro_product.disable_filters_on_product_listing
+                                    filters_display_settings:
+                                        children:
+                                            - oro_product.filters_display_settings_state
                             related_items:
                                 priority: 100
                                 children:

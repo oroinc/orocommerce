@@ -2,8 +2,11 @@
 
 namespace Oro\Bundle\SaleBundle\EventListener;
 
-use Oro\Bundle\RFPBundle\EventListener\AbstractCustomerViewListener;
+use Oro\Bundle\CustomerBundle\EventListener\AbstractCustomerViewListener;
 
+/**
+ * Adds additional block with quotes grid on the Customer and CustomerUser view pages.
+ */
 class CustomerViewListener extends AbstractCustomerViewListener
 {
     /**

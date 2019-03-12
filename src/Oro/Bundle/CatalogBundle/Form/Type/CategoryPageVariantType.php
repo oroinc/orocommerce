@@ -6,10 +6,14 @@ use Oro\Bundle\CatalogBundle\ContentVariantType\CategoryPageContentVariantType;
 use Oro\Bundle\FormBundle\Form\Type\OroChoiceType;
 use Oro\Component\WebCatalog\Form\PageVariantType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
+/**
+ * Form type for manager category page variant type
+ */
 class CategoryPageVariantType extends AbstractType
 {
     const NAME = 'oro_catalog_category_page_variant';
@@ -40,6 +44,14 @@ class CategoryPageVariantType extends AbstractType
                     'label' => 'oro.catalog.category.entity_label',
                     'required' => true,
                     'constraints' => [new NotBlank()]
+                ]
+            )
+            ->add(
+                'overrideVariantConfiguration',
+                CheckboxType::class,
+                [
+                    'label' => 'oro.catalog.override_variant_configuration.label',
+                    'tooltip' => 'oro.catalog.override_variant_configuration.tooltip',
                 ]
             );
     }

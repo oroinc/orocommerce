@@ -4,6 +4,9 @@ namespace Oro\Bundle\CatalogBundle\Handler;
 
 use Symfony\Component\HttpFoundation\RequestStack;
 
+/**
+ * Request product handler class
+ */
 class RequestProductHandler
 {
     const CATEGORY_ID_KEY = 'categoryId';
@@ -11,6 +14,7 @@ class RequestProductHandler
     const INCLUDE_SUBCATEGORIES_DEFAULT_VALUE = false;
     const INCLUDE_NOT_CATEGORIZED_PRODUCTS_DEFAULT_VALUE = false;
     const INCLUDE_NOT_CATEGORIZED_PRODUCTS_KEY = 'includeNotCategorizedProducts';
+    const OVERRIDE_VARIANT_CONFIGURATION_KEY = 'overrideVariantConfiguration';
 
     /** @var RequestStack */
     protected $requestStack;
@@ -45,6 +49,19 @@ class RequestProductHandler
         }
 
         return false;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getOverrideVariantConfiguration()
+    {
+        $request = $this->requestStack->getCurrentRequest();
+        if (!$request) {
+            return false;
+        }
+
+        return filter_var($request->get(self::OVERRIDE_VARIANT_CONFIGURATION_KEY), FILTER_VALIDATE_BOOLEAN);
     }
 
     /**

@@ -17,9 +17,7 @@
         }) %}
     {% endif %}
 
-    {% set datagridData = oro_datagrid_data(datagrid) %}
-
-    {% set datagridData = datagridData|merge({
+    {% set datagridData = oro_datagrid_data(datagrid)|merge({
         backendGrid: true
     }) %}
 
@@ -27,14 +25,12 @@
 
     {% set datagridMetaData = datagridMetaData|merge({
         GridView: 'productServerRenderGrid',
-        PageableCollection: 'productPageableCollection'
-    })%}
-
-    {% set datagridMetaData = datagridMetaData|merge({
-        GridView: 'productServerRenderGrid',
         PageableCollection: 'productPageableCollection',
         options: datagridMetaData.options|merge({
             multiSelectRowEnabled: renderParams.multiSelectRowEnabled is defined ? renderParams.multiSelectRowEnabled : false,
+            defaultFiltersViewMode: renderParams.defaultFiltersViewMode|default(null),
+            filtersStateStorageKey: renderParams.filtersStateStorageKey|default(null),
+            useFiltersStateAnimationOnInit: renderParams.useFiltersStateAnimationOnInit|default(false)
         })
     })%}
 
