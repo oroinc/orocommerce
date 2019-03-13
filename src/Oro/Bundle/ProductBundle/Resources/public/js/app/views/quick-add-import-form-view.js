@@ -2,16 +2,15 @@ define(function(require) {
     'use strict';
 
     var QuickAddImportFormView;
-    var $ = require('jquery');
     var _ = require('underscore');
     var QuickAddImportWidget = require('oro/quick-add-import-widget');
     var BaseView = require('oroui/js/app/views/base/view');
 
     QuickAddImportFormView = BaseView.extend({
         /**
-         * @type {Boolean}
+         * @type {string}
          */
-        droppableBody: true,
+        droppableContainer: '#container',
 
         events: {
             'change input:file': 'onFileChange',
@@ -33,7 +32,7 @@ define(function(require) {
          * @inheritDoc
          */
         initialize: function(options) {
-            _.extend(this, _.pick(options, 'droppableBody'));
+            _.extend(this, _.pick(options, 'droppableContainer'));
             QuickAddImportFormView.__super__.initialize.call(this, options);
         },
 
@@ -43,7 +42,7 @@ define(function(require) {
         delegateEvents: function() {
             QuickAddImportFormView.__super__.delegateEvents.call(this);
 
-            if (this.droppableBody) {
+            if (this.droppableContainer) {
                 var events = _.reduce({
                     dragenter: 'onDragenter',
                     dragover: 'onDragover',
@@ -54,7 +53,7 @@ define(function(require) {
                     return result;
                 }, {}, this);
 
-                $('body').on(events);
+                this.$el.closest(this.droppableContainer).on(events);
             }
 
             return this;
@@ -65,7 +64,9 @@ define(function(require) {
          */
         undelegateEvents: function() {
             QuickAddImportFormView.__super__.undelegateEvents.call(this);
-            $('body').off(this.eventNamespace());
+            if (this.$el && this.droppableContainer) {
+                this.$el.closest(this.droppableContainer).off(this.eventNamespace());
+            }
             return this;
         },
 
