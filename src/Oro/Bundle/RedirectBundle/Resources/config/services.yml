@@ -16,6 +16,7 @@ services:
             - [addSkippedUrlPattern, ['/_fragment']]
             - [addSkippedUrlPattern, ['/js/']]
             - [addSkippedUrlPattern, ['%oro_api.rest.prefix%']]
+            - [addSkippedUrlPattern, ['/media/']]
 
     oro_redirect.routing.slug_url_matcher:
         class: Oro\Bundle\RedirectBundle\Routing\SlugUrlMatcher
