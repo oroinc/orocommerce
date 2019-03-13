@@ -71,7 +71,6 @@ class ProductImageImportTest extends WebTestCase
      */
     protected function assertExportTemplateWorks(string $expectedCsvFilePath)
     {
-        $from = new \DateTime('now', new \DateTimeZone('UTC'));
         $this->client->request(
             'GET',
             $this->getUrl('oro_importexport_export_template', [
@@ -79,12 +78,16 @@ class ProductImageImportTest extends WebTestCase
             ])
         );
 
+        // Take the name of the file from the header because there is no alternative way to know the filename
+        $contentDisposition = $this->client->getResponse()->headers->get('Content-Disposition');
+        preg_match('/^.*"(export_template_[a-z0-9_]+.csv)"$/', $contentDisposition, $matches);
+
         static::assertContains(
             $this->getFileContent($expectedCsvFilePath),
             $this->client->getResponse()->getContent()
         );
-        $to = new \DateTime('now', new \DateTimeZone('UTC'));
-        $this->deleteImportExportFileByPeriod($from, $to);
+
+        $this->deleteImportExportFile($matches[1]);
     }
 
     /**
@@ -95,21 +98,6 @@ class ProductImageImportTest extends WebTestCase
         static::getContainer()
             ->get('oro_importexport.file.file_manager')
             ->deleteFile($filename);
-    }
-
-    /**
-     * @param \DateTime $from
-     * @param \DateTime $to
-     */
-    protected function deleteImportExportFileByPeriod(\DateTime $from, \DateTime $to)
-    {
-        /** @var FileManager $fileManager */
-        $fileManager = static::getContainer()->get('oro_importexport.file.file_manager');
-        $files = $fileManager->getFilesByPeriod($from, $to);
-        /** @var File $file */
-        foreach ($files as $file) {
-            $fileManager->deleteFile($file);
-        }
     }
 
     /**
