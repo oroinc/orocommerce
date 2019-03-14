@@ -97,6 +97,7 @@ Feature: Check permissions
   Scenario: Check buyer assign without permission
     Given I open page with shopping list Shopping List 1
     Then should not see "Customer Field"
+    And I should see "Customer: Amanda Cole"
 
   Scenario: Set assign permission to User
     Given I proceed as the Admin
@@ -186,6 +187,8 @@ Feature: Check permissions
   Scenario Outline: Check that buyer cannot edit shopping list
     Given I open page with shopping list <name>
     Then I should not see "Edit Shopping List Label"
+    Then I should not see "Add a Note to This Shopping List"
+    And I should see "Notes: Simple note"
 
     Examples:
       | name            |

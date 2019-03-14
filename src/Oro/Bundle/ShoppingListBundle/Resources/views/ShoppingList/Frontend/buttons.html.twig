@@ -86,7 +86,9 @@
 {% macro getButtonsHtml(options) %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
     {% import _self as buttons %}
-    <div class="btn-group full"
+    {% set isShoppingListCreateEnabled = (feature_enabled('shopping_list_create') and is_granted('oro_shopping_list_frontend_create')) %}
+    {% set showSingleAddToShoppingListButton = isShoppingListCreateEnabled or not app.user %}
+    <div class="btn-group product-add-to-shopping-list-container full"
          {{ UI.renderPageComponentAttributes({
              module: 'oroui/js/app/components/view-component',
              options: {
@@ -94,7 +96,8 @@
                  buttonTemplate: '<%#' ~ buttons.buttonTemplate(options.current) ~ '#%>',
                  removeButtonTemplate: options.remove is defined ? '<%#' ~ buttons.buttonTemplate(options.remove) ~ '#%>',
                  createNewButtonTemplate: '<%#' ~ buttons.buttonTemplate(options.new) ~ '#%>',
-                 shoppingListCreateEnabled: feature_enabled('shopping_list_create'),
+                 shoppingListCreateEnabled: isShoppingListCreateEnabled,
+                 showSingleAddToShoppingListButton: showSingleAddToShoppingListButton,
                  emptyMatrixAllowed: oro_config_value('oro_product.matrix_form_allow_empty')
              }|merge(options.componentOptions|default({}))
          }) }}
@@ -111,10 +114,10 @@
             {% for shoppingList in existingShoppingLists %}
                 {{ buttons.addToButton(options.existing|merge({shoppingList: shoppingList})) }}
             {% endfor %}
-            {% if feature_enabled('shopping_list_create') %}
+            {% if isShoppingListCreateEnabled %}
                 {{ buttons.addToNewButton(options.new) }}
             {% endif %}
-        {% else %}
+        {% elseif showSingleAddToShoppingListButton %}
             {% set aCss = options.singleButtonACss is defined ? options.singleButtonACss : "" %}
             {{ buttons.addToCurrentButton(options.current|merge({shoppingList: null, aCss: aCss})) }}
         {% endif %}

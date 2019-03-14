@@ -69,6 +69,7 @@ Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
         customerUser: '@ruth'
         organization: '@organization'
         website: '@website1'
+        notes: 'Simple note'
     shoppinglist4:
         label: 'Shopping List 4'
         customerUser: '@juana'
@@ -79,6 +80,7 @@ Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
         customerUser: '@nancy'
         organization: '@organization'
         website: '@website1'
+        notes: 'Simple note'
 
 Oro\Bundle\ShoppingListBundle\Entity\LineItem:
     lineitem1:

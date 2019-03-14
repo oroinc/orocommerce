@@ -1,14 +1,18 @@
 {% block _shopping_list_owner_widget %}
     {% set options = {
-    shoppingListId: shoppingList.id
+        shoppingListId: shoppingList.id
     } %}
     {% set attr = layout_attr_defaults(attr, {
-    '~class': ' shopping-list-owner',
-    'data-page-component-module': "oroshoppinglist/js/app/components/shoppinglist-owner-inline-editable-view-component",
-    'data-page-component-options': options|json_encode()
+        '~class': ' shopping-list-owner',
+        'data-page-component-module': "oroshoppinglist/js/app/components/shoppinglist-owner-inline-editable-view-component",
+        'data-page-component-options': options|json_encode()
     }) %}
     <div{{ block('block_attributes') }}>
-        {{ form_label(form, 'oro.frontend.shoppinglist.view.owner.label') }}
-        {{ form_widget(form) }}
+        {% if is_granted('oro_shopping_list_frontend_assign', shoppingList) %}
+            {{ form_label(form, 'oro.frontend.shoppinglist.view.owner.label') }}
+            {{ form_widget(form) }}
+        {% else %}
+            {{ 'oro.frontend.shoppinglist.view.owner.label'|trans}}: {{ shoppingList.customerUser.fullName }}
+        {% endif %}
     </div>
 {% endblock %}

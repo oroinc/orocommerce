@@ -7,7 +7,7 @@ layout:
             parentId: shopping_list_line_items
             blockType: shopping_list_owner_select_block
             options:
-                visible: '=data["entity"]!=null && data["acl"].isGranted("oro_shopping_list_frontend_assign", data["entity"])'
+                visible: '=data["entity"]!=null'
                 form: '=data["oro_customer_frontend_customer_user_form"].getCustomerUserSelectFormView(data["entity"].getCustomerUser(), data["entity"])'
                 shoppingList: '=data["entity"]'
 

@@ -118,3 +118,22 @@ Feature: Shopping list without permissions
     And I proceed as the Buyer
     When I open product with sku "PSKU1" on the store frontend
     Then I should see "Add to Shopping List"
+
+  Scenario: Ensure that buyer can not create shopping list with update and without create permission
+    Given I proceed as the Admin
+    And I go to Customers/ Customer User Roles
+    And I click edit "Buyer" in grid
+    And select following permissions:
+      | Shopping List | View:User | Create:None | Edit:User | Delete:User | Assign:None | Duplicate:None |
+    When I save form
+    Then I should see "Customer User Role has been saved" flash message
+    And I proceed as the Buyer
+    When I open product with sku "PSKU1" on the store frontend
+    Then I should see "Add to Shopping List"
+    And I should not see "Create New Shopping List"
+    And I open page with shopping list Shopping List 1
+    And I click "Delete"
+    When I confirm deletion
+    Then I should see "Shopping List deleted" flash message
+    When I open product with sku "PSKU1" on the store frontend
+    Then I should not see "Add to Shopping List"
