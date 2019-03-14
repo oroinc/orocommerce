@@ -12,6 +12,7 @@ services:
             - '@oro_importexport.file.file_manager'
             - '@oro_importexport.handler.import'
             - '@oro_message_queue.client.message_producer'
+            - 'oro_user.manager'
         tags:
             - { name: console.command }
 

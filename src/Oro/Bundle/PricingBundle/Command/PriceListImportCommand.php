@@ -7,6 +7,7 @@ use Oro\Bundle\ImportExportBundle\File\FileManager;
 use Oro\Bundle\ImportExportBundle\Handler\ImportHandler;
 use Oro\Bundle\ImportExportBundle\Processor\ProcessorRegistry;
 use Oro\Bundle\UserBundle\Entity\User;
+use Oro\Bundle\UserBundle\Entity\UserManager;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -44,18 +45,26 @@ class PriceListImportCommand extends Command
     private $messageProducer;
 
     /**
+     * @var UserManager
+     */
+    private $userManager;
+
+    /**
      * @param FileManager $fileManager
      * @param ImportHandler $importHandler
      * @param MessageProducerInterface $messageProducer
+     * @param UserManager $userManager
      */
     public function __construct(
         FileManager $fileManager,
         ImportHandler $importHandler,
-        MessageProducerInterface $messageProducer
+        MessageProducerInterface $messageProducer,
+        UserManager $userManager
     ) {
         $this->fileManager = $fileManager;
         $this->importHandler = $importHandler;
         $this->messageProducer = $messageProducer;
+        $this->userManager = $userManager;
 
         parent::__construct();
     }
@@ -150,7 +159,7 @@ class PriceListImportCommand extends Command
             throw new \InvalidArgumentException('The --email option is required.');
         }
 
-        $importOwner = $this->getContainer()->get('oro_user.manager')->findUserByEmail($email);
+        $importOwner = $this->userManager->findUserByEmail($email);
         if (!$importOwner instanceof User) {
             throw new \InvalidArgumentException(sprintf('Invalid email. There is no user with %s email!', $email));
         }
