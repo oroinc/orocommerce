@@ -79,6 +79,7 @@ oro:
             groups:
                 product_options.title: Product Options
                 product_inventory_options.title: Product Inventory Options
+                upcoming_products.title: Upcoming Products
                 product_quantity_limitations.title: Quantity Limitations
                 limitations.title: Limitations
             fields:
@@ -96,6 +97,9 @@ oro:
                     tooltip: Decrement inventory when order is created
                 minimum_quantity_to_order.label: Minimum Quantity To Order
                 maximum_quantity_to_order.label: Maximum Quantity To Order
+                hide_labels_past_availability_date:
+                    label: Hide Labels Past Availability Date
+                    tooltip: The upcoming products will not be labeled as upcoming if the availability date has already passed. Otherwise, the upcoming product label will be displayed as long as the product is marked as upcoming regardless of its availability date.
 
         manage_inventory:
             label: Managed Inventory
