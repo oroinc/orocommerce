@@ -1,4 +1,5 @@
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
+@fixture-OroCheckoutBundle:Shipping.yml
 @fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
 @fixture-OroCheckoutBundle:Payment.yml
 @fixture-OroTaxBundle:taxes_should_work_with_zero_rate.yml
