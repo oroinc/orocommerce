@@ -10,4 +10,4 @@ layout:
             options:
                 vars:
                     product: '=data["product"]'
-                    visible: '=data["product_upcoming"].isUpcoming(data["product"])'
+                    visible: '=data["upcoming_product"].isUpcoming(data["product"])'

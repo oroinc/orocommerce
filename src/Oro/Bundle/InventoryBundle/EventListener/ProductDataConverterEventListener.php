@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\InventoryBundle\EventListener;
 
-use Oro\Bundle\InventoryBundle\Provider\ProductUpcomingProvider;
+use Oro\Bundle\InventoryBundle\Provider\UpcomingProductProvider;
 use Oro\Bundle\ProductBundle\ImportExport\Event\ProductDataConverterEvent;
 
 /**
@@ -17,8 +17,8 @@ class ProductDataConverterEventListener
     public function modifyBackendHeader(ProductDataConverterEvent $event)
     {
         $data = $event->getData();
-        if (!in_array(ProductUpcomingProvider::IS_UPCOMING, $data)) {
-            $data[] = ProductUpcomingProvider::IS_UPCOMING;
+        if (!in_array(UpcomingProductProvider::IS_UPCOMING, $data)) {
+            $data[] = UpcomingProductProvider::IS_UPCOMING;
             $event->setData($data);
         }
     }

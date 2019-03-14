@@ -38,7 +38,7 @@ services:
     oro_inventory.validator.upcoming_label_checkout_line_item_validator:
         class: Oro\Bundle\InventoryBundle\Validator\UpcomingLabelCheckoutLineItemValidator
         arguments:
-            - '@oro_inventory.provider.product_upcoming_provider'
+            - '@oro_inventory.provider.upcoming_product_provider'
             - '@translator'
             - '@oro_locale.formatter.date_time'
 
@@ -61,7 +61,7 @@ services:
     oro_inventory.validator.checkout_ship_until_validator:
         class: Oro\Bundle\InventoryBundle\Validator\Constraints\CheckoutShipUntilValidator
         arguments:
-            - '@oro_inventory.provider.product_upcoming_provider'
+            - '@oro_inventory.provider.upcoming_product_provider'
             - '@oro_checkout.data_provider.manager.checkout_line_items'
         tags:
             - { name: validator.constraint_validator, alias: oro_inventory_checkout_ship_until_validator }
@@ -104,13 +104,14 @@ services:
         tags:
             - { name: layout.data_provider, alias: low_inventory }
 
-    oro_inventory.provider.product_upcoming_provider:
-        class: Oro\Bundle\InventoryBundle\Provider\ProductUpcomingProvider
+    oro_inventory.provider.upcoming_product_provider:
+        class: Oro\Bundle\InventoryBundle\Provider\UpcomingProductProvider
         arguments:
              - '@oro_entity.fallback.resolver.entity_fallback_resolver'
              - '@oro_entity.doctrine_helper'
+             - '@oro_config.manager'
         tags:
-            - { name: layout.data_provider, alias: product_upcoming }
+            - { name: layout.data_provider, alias: upcoming_product }
 
     oro_inventory.twig.low_inventory_extension:
         class: Oro\Bundle\InventoryBundle\Twig\LowInventoryExtension
@@ -124,7 +125,7 @@ services:
         class: Oro\Bundle\InventoryBundle\Twig\ProductUpcomingExtension
         public: false
         arguments:
-            - "@oro_inventory.provider.product_upcoming_provider"
+            - "@oro_inventory.provider.upcoming_product_provider"
         tags:
             - { name: twig.extension }
 
@@ -140,7 +141,7 @@ services:
     oro_inventory.event_listener.frontend_product_datagrid_upcoming_label:
         class: Oro\Bundle\InventoryBundle\EventListener\Frontend\ProductDatagridUpcomingLabelListener
         arguments:
-            - "@oro_inventory.provider.product_upcoming_provider"
+            - "@oro_inventory.provider.upcoming_product_provider"
             - '@oro_entity.doctrine_helper'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-product-search-grid, method: onPreBuild }

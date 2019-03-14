@@ -4,7 +4,7 @@ namespace Oro\Bundle\InventoryBundle\EventListener;
 
 use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
 use Oro\Bundle\ImportExportBundle\Event\LoadTemplateFixturesEvent;
-use Oro\Bundle\InventoryBundle\Provider\ProductUpcomingProvider;
+use Oro\Bundle\InventoryBundle\Provider\UpcomingProductProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
@@ -30,10 +30,10 @@ class ProductImportTemplateFixtureEventListener
             $fallbackEntity->setScalarValue(1);
 
             $accessor = PropertyAccess::createPropertyAccessor();
-            $accessor->setValue($entity, ProductUpcomingProvider::IS_UPCOMING, $fallbackEntity);
+            $accessor->setValue($entity, UpcomingProductProvider::IS_UPCOMING, $fallbackEntity);
             $accessor->setValue(
                 $entity,
-                ProductUpcomingProvider::AVAILABILITY_DATE,
+                UpcomingProductProvider::AVAILABILITY_DATE,
                 new \DateTime('tomorrow', new \DateTimeZone('UTC'))
             );
         }

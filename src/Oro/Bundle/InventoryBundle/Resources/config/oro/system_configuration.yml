@@ -5,6 +5,8 @@ system_configuration:
             icon: 'fa-cogs'
         product_inventory_options:
             title: oro.inventory.system_configuration.groups.product_inventory_options.title
+        upcoming_products:
+            title: oro.inventory.system_configuration.groups.upcoming_products.title
         limitations:
             title: oro.inventory.system_configuration.groups.limitations.title
             icon: 'fa-minus'
@@ -99,8 +101,13 @@ system_configuration:
                 scale: 2
                 constraints:
                     - Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
-
-
+        oro_inventory.hide_labels_past_availability_date:
+            data_type: boolean
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
+            options:
+                required: false
+                tooltip: oro.inventory.system_configuration.fields.hide_labels_past_availability_date.tooltip
+                label: oro.inventory.system_configuration.fields.hide_labels_past_availability_date.label
     tree:
         system_configuration:
             commerce:
@@ -118,6 +125,9 @@ system_configuration:
                                             - oro_inventory.decrement_inventory
                                             - oro_inventory.highlight_low_inventory
                                             - oro_inventory.low_inventory_threshold
+                                    upcoming_products:
+                                        children:
+                                            - oro_inventory.hide_labels_past_availability_date
                             limitations:
                                 priority: 80
                                 children:

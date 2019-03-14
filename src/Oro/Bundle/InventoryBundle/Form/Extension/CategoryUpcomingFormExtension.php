@@ -8,7 +8,7 @@ use Oro\Bundle\CatalogBundle\Form\Type\CategoryType;
 use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
 use Oro\Bundle\EntityBundle\Form\Type\EntityFieldFallbackValueType;
 use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
-use Oro\Bundle\InventoryBundle\Provider\ProductUpcomingProvider;
+use Oro\Bundle\InventoryBundle\Provider\UpcomingProductProvider;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -35,7 +35,7 @@ class CategoryUpcomingFormExtension extends AbstractTypeExtension
     {
         $builder
             ->add(
-                ProductUpcomingProvider::IS_UPCOMING,
+                UpcomingProductProvider::IS_UPCOMING,
                 EntityFieldFallbackValueType::class,
                 [
                     'value_options' => [
@@ -46,7 +46,7 @@ class CategoryUpcomingFormExtension extends AbstractTypeExtension
                     ],
                 ]
             )
-            ->add(ProductUpcomingProvider::AVAILABILITY_DATE, OroDateTimeType::class, [
+            ->add(UpcomingProductProvider::AVAILABILITY_DATE, OroDateTimeType::class, [
                 'required' => false,
                 'years' => [
                     date_create('-10 year')->format('Y'),
@@ -67,12 +67,12 @@ class CategoryUpcomingFormExtension extends AbstractTypeExtension
         $category = $event->getData();
 
         $propertyAccessor = PropertyAccess::createPropertyAccessor();
-        if (!$propertyAccessor->getValue($category, ProductUpcomingProvider::IS_UPCOMING)) {
+        if (!$propertyAccessor->getValue($category, UpcomingProductProvider::IS_UPCOMING)) {
             $entityFallback = new EntityFieldFallbackValue();
             if ($category->getParentCategory()) {
                 $entityFallback->setFallback(ParentCategoryFallbackProvider::FALLBACK_ID);
             }
-            $propertyAccessor->setValue($category, ProductUpcomingProvider::IS_UPCOMING, $entityFallback);
+            $propertyAccessor->setValue($category, UpcomingProductProvider::IS_UPCOMING, $entityFallback);
         }
     }
 
@@ -86,10 +86,10 @@ class CategoryUpcomingFormExtension extends AbstractTypeExtension
         /** @var Category $category */
         $category = $event->getData();
         /** @var EntityFieldFallbackValue|null $entityFallback */
-        $entityFallback = $accessor->getValue($category, ProductUpcomingProvider::IS_UPCOMING);
+        $entityFallback = $accessor->getValue($category, UpcomingProductProvider::IS_UPCOMING);
 
         if (!$entityFallback || $entityFallback->getFallback() || !$entityFallback->getOwnValue()) {
-            $accessor->setValue($category, ProductUpcomingProvider::AVAILABILITY_DATE, null);
+            $accessor->setValue($category, UpcomingProductProvider::AVAILABILITY_DATE, null);
         }
     }
 }

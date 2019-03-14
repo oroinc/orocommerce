@@ -12,7 +12,7 @@ use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\EntityExtendBundle\Migration\OroOptions;
-use Oro\Bundle\InventoryBundle\Provider\ProductUpcomingProvider;
+use Oro\Bundle\InventoryBundle\Provider\UpcomingProductProvider;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\ProductBundle\Migrations\Schema\OroProductBundleInstaller;
@@ -54,10 +54,10 @@ class AddUpcomingOptions implements Migration, ExtendExtensionAwareInterface
             $schema,
             $this->extendExtension,
             OroProductBundleInstaller::PRODUCT_TABLE_NAME,
-            ProductUpcomingProvider::IS_UPCOMING,
+            UpcomingProductProvider::IS_UPCOMING,
             'oro.inventory.is_upcoming.label',
             [
-                CategoryFallbackProvider::FALLBACK_ID => ['fieldName' => ProductUpcomingProvider::IS_UPCOMING],
+                CategoryFallbackProvider::FALLBACK_ID => ['fieldName' => UpcomingProductProvider::IS_UPCOMING],
             ],
             EntityFallbackResolver::TYPE_BOOLEAN
         );
@@ -72,10 +72,10 @@ class AddUpcomingOptions implements Migration, ExtendExtensionAwareInterface
             $schema,
             $this->extendExtension,
             OroCatalogBundleInstaller::ORO_CATALOG_CATEGORY_TABLE_NAME,
-            ProductUpcomingProvider::IS_UPCOMING,
+            UpcomingProductProvider::IS_UPCOMING,
             'oro.inventory.is_upcoming.label',
             [
-                ParentCategoryFallbackProvider::FALLBACK_ID => ['fieldName' => ProductUpcomingProvider::IS_UPCOMING],
+                ParentCategoryFallbackProvider::FALLBACK_ID => ['fieldName' => UpcomingProductProvider::IS_UPCOMING],
             ],
             EntityFallbackResolver::TYPE_BOOLEAN
         );

@@ -10,7 +10,7 @@ use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\DataGridBundle\Extension\Formatter\Property\PropertyInterface;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\InventoryBundle\EventListener\Frontend\ProductDatagridUpcomingLabelListener;
-use Oro\Bundle\InventoryBundle\Provider\ProductUpcomingProvider;
+use Oro\Bundle\InventoryBundle\Provider\UpcomingProductProvider;
 use Oro\Bundle\InventoryBundle\Tests\Unit\Inventory\Stub\ProductStub;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\SearchBundle\Datagrid\Event\SearchResultAfter;
@@ -22,7 +22,7 @@ class ProductDatagridUpcomingLabelListenerTest extends \PHPUnit\Framework\TestCa
     use EntityTrait;
 
     /**
-     * @var ProductUpcomingProvider|\PHPUnit\Framework\MockObject\MockObject
+     * @var UpcomingProductProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     private $productUpcomingProvider;
 
@@ -41,7 +41,7 @@ class ProductDatagridUpcomingLabelListenerTest extends \PHPUnit\Framework\TestCa
      */
     public function setUp()
     {
-        $this->productUpcomingProvider = $this->createMock(ProductUpcomingProvider::class);
+        $this->productUpcomingProvider = $this->createMock(UpcomingProductProvider::class);
 
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
 

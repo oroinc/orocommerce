@@ -22,7 +22,7 @@ use Oro\Bundle\InventoryBundle\Migrations\Schema\v1_0\RenameInventoryConfigSecti
 use Oro\Bundle\InventoryBundle\Migrations\Schema\v1_0\UpdateEntityConfigExtendClassQuery;
 use Oro\Bundle\InventoryBundle\Migrations\Schema\v1_0\UpdateFallbackEntitySystemOptionConfig;
 use Oro\Bundle\InventoryBundle\Model\Inventory;
-use Oro\Bundle\InventoryBundle\Provider\ProductUpcomingProvider;
+use Oro\Bundle\InventoryBundle\Provider\UpcomingProductProvider;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
@@ -706,10 +706,10 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
             $schema,
             $this->extendExtension,
             OroProductBundleInstaller::PRODUCT_TABLE_NAME,
-            ProductUpcomingProvider::IS_UPCOMING,
+            UpcomingProductProvider::IS_UPCOMING,
             'oro.inventory.is_upcoming.label',
             [
-                CategoryFallbackProvider::FALLBACK_ID => ['fieldName' => ProductUpcomingProvider::IS_UPCOMING],
+                CategoryFallbackProvider::FALLBACK_ID => ['fieldName' => UpcomingProductProvider::IS_UPCOMING],
             ],
             EntityFallbackResolver::TYPE_BOOLEAN
         );
@@ -724,10 +724,10 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
             $schema,
             $this->extendExtension,
             OroCatalogBundleInstaller::ORO_CATALOG_CATEGORY_TABLE_NAME,
-            ProductUpcomingProvider::IS_UPCOMING,
+            UpcomingProductProvider::IS_UPCOMING,
             'oro.inventory.is_upcoming.label',
             [
-                ParentCategoryFallbackProvider::FALLBACK_ID => ['fieldName' => ProductUpcomingProvider::IS_UPCOMING],
+                ParentCategoryFallbackProvider::FALLBACK_ID => ['fieldName' => UpcomingProductProvider::IS_UPCOMING],
             ],
             EntityFallbackResolver::TYPE_BOOLEAN
         );

@@ -3,7 +3,7 @@
 namespace Oro\Bundle\InventoryBundle\Tests\Unit\Validator;
 
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
-use Oro\Bundle\InventoryBundle\Provider\ProductUpcomingProvider;
+use Oro\Bundle\InventoryBundle\Provider\UpcomingProductProvider;
 use Oro\Bundle\InventoryBundle\Validator\UpcomingLabelCheckoutLineItemValidator;
 use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatter;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -17,7 +17,7 @@ class UpcomingLabelCheckoutLineItemValidatorTest extends \PHPUnit\Framework\Test
     /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $translator;
 
-    /** @var ProductUpcomingProvider|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var UpcomingProductProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $provider;
 
     /** @var DateTimeFormatter|\PHPUnit\Framework\MockObject\MockObject */
@@ -26,7 +26,7 @@ class UpcomingLabelCheckoutLineItemValidatorTest extends \PHPUnit\Framework\Test
     protected function setUp()
     {
         $this->translator = $this->createMock(TranslatorInterface::class);
-        $this->provider = $this->createMock(ProductUpcomingProvider::class);
+        $this->provider = $this->createMock(UpcomingProductProvider::class);
         $this->dateFormatter = $this->createMock(DateTimeFormatter::class);
 
         $this->validator = new UpcomingLabelCheckoutLineItemValidator(
