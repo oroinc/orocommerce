@@ -134,7 +134,7 @@ class PriceListImportCommand extends Command
             [
                 'fileName'       => $fileName,
                 'originFileName' => $originFileName,
-                'userId     '    => $importOwner->getId(),
+                'userId'         => $importOwner->getId(),
                 'jobName'        => $validation ? self::DEFAULT_VALIDATION_JOB_NAME : self::DEFAULT_JOB_NAME,
                 'processorAlias' => self::DEFAULT_PROCESSOR,
                 'process'        => $process,
