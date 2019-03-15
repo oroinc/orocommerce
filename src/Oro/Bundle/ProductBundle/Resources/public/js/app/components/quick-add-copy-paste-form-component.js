@@ -2,14 +2,14 @@ define(function(require) {
     'use strict';
 
     var QuickAddCopyPasteFormComponent;
-    var QuickAddImportFormComponent = require('oroproduct/js/app/components/quick-add-import-form-component');
+    var BaseComponent = require('oroui/js/app/components/base/component');
     var ProductHelper = require('oroproduct/js/app/product-helper');
     var mediator = require('oroui/js/mediator');
     var _ = require('underscore');
     var __ = require('orotranslation/js/translator');
     var $ = require('jquery');
 
-    QuickAddCopyPasteFormComponent = QuickAddImportFormComponent.extend({
+    QuickAddCopyPasteFormComponent = BaseComponent.extend({
         /**
          * {@inheritDoc}
          */
@@ -30,11 +30,6 @@ define(function(require) {
          */
         fieldEvent: 'change blur keyup',
 
-        /**
-         * {@inheritDoc}
-         */
-        isAdoptedFormSubmit: false,
-
         validator: null,
 
         /**
@@ -48,7 +43,12 @@ define(function(require) {
          * @inheritDoc
          */
         initialize: function(options) {
-            QuickAddCopyPasteFormComponent.__super__.initialize.apply(this, arguments);
+            this.options = _.defaults(options || {}, this.options);
+            this.$form = this.options._sourceElement;
+            var $field = this.$form.find(this.field);
+
+            this.$form.on('submit', _.bind(this._onSubmit, this));
+            $field.on(this.fieldEvent, _.bind(this._handleFieldEvent, this));
 
             this.validator = this.$form.validate();
             delete this.validator.settings.onkeyup; // validate only on change/blur/submit
