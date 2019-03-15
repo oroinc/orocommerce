@@ -195,6 +195,9 @@ oro_behat_extension:
       selector: 'div[data-page-component-name="shopping-list-line-items-grid"]'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
 
+    Shopping List Product Note:
+      selector: '[name="copy_paste_order"]'
+
   suites:
     OroShoppingListBundle:
       contexts:

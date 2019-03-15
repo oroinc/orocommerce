@@ -457,6 +457,8 @@ action_groups:
                     # update custom data
                     - '@copy_values': [$.checkout, $.checkoutData]
 
+            - '@assign_value': [$.checkout.customer_notes, $.sourceCriteria.shoppingList.notes]
+
             # actualize user currency
             - '@call_service_method':
                 attribute: $.checkout.currency

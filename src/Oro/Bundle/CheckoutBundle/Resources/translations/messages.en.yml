@@ -133,6 +133,8 @@ oro:
             quantity_short: Qty
             price: Price
             total_qty: Total QTY
+            note: Note
+            notes: Notes
 
         title:
             step.label: '%step_label%'
