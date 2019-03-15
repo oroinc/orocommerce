@@ -222,3 +222,7 @@ oro_behat_extension:
       selector:
         locator: '//input[contains(@id,"oro_rfp_frontend_request_assignedCustomerUsers-uid")]'
         type: xpath
+  pages:
+    Checkout:
+      class: Oro\Bundle\CheckoutBundle\Tests\Behat\Page\CheckoutPage
+      route: oro_checkout_frontend_checkout
