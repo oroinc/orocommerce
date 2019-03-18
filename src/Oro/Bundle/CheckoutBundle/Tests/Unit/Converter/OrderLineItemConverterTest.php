@@ -7,6 +7,7 @@ use Oro\Bundle\CheckoutBundle\Converter\OrderLineItemConverter;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\EntityBundle\Fallback\EntityFallbackResolver;
 use Oro\Bundle\InventoryBundle\Provider\InventoryQuantityProviderInterface;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
@@ -31,6 +32,9 @@ class OrderLineItemConverterTest extends \PHPUnit_Framework_TestCase
     /** @var AuthorizationCheckerInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $authorizationChecker;
 
+    /** @var EntityFallbackResolver|\PHPUnit\Framework\MockObject\MockObject */
+    protected $entityFallbackResolver;
+
     /** @var OrderLineItemConverter */
     protected $converter;
 
@@ -47,6 +51,7 @@ class OrderLineItemConverterTest extends \PHPUnit_Framework_TestCase
 
         $this->quantityProvider = $this->createMock(InventoryQuantityProviderInterface::class);
         $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
+        $this->entityFallbackResolver = $this->createMock(EntityFallbackResolver::class);
 
         $this->converter = new OrderLineItemConverter(
             $this->configManager,
@@ -54,6 +59,7 @@ class OrderLineItemConverterTest extends \PHPUnit_Framework_TestCase
             $this->authorizationChecker,
             self::CONFIG_PATH
         );
+        $this->converter->setEntityFallbackResolver($this->entityFallbackResolver);
     }
 
     public function testIsSourceSupported()
@@ -76,7 +82,8 @@ class OrderLineItemConverterTest extends \PHPUnit_Framework_TestCase
         $canDecrement,
         $availableQuantity,
         $isVisible,
-        array $checkoutLineItems
+        array $checkoutLineItems,
+        $allowBackorders = false
     ) {
         $this->quantityProvider->expects($this->any())
             ->method('canDecrement')
@@ -101,6 +108,11 @@ class OrderLineItemConverterTest extends \PHPUnit_Framework_TestCase
                     return $isVisible && $argument === 'VIEW' && $product->getId() === 3;
                 }
             );
+
+        $this->entityFallbackResolver->expects($this->any())
+            ->method('getFallbackValue')
+            ->with($this->isInstanceOf(Product::class), 'backOrder')
+            ->willReturn($allowBackorders);
 
         $order = new Order();
         $order->setLineItems(new ArrayCollection($orderLineItems));
@@ -154,6 +166,7 @@ class OrderLineItemConverterTest extends \PHPUnit_Framework_TestCase
                 'availableQuantity' => 10,
                 'isVisible' => true,
                 'checkoutLineItems' => [],
+                'allowBackorders' => false
             ],
             'can decrement with available quantity' => [
                 'orderLineItems' => [
@@ -178,6 +191,7 @@ class OrderLineItemConverterTest extends \PHPUnit_Framework_TestCase
                         ]
                     ),
                 ],
+                'allowBackorders' => false
             ],
             'can not decrement with available quantity' => [
                 'orderLineItems' => [
@@ -202,6 +216,7 @@ class OrderLineItemConverterTest extends \PHPUnit_Framework_TestCase
                         ]
                     ),
                 ],
+                'allowBackorders' => false
             ],
             'can decrement without available quantity' => [
                 'orderLineItems' => [
@@ -213,6 +228,32 @@ class OrderLineItemConverterTest extends \PHPUnit_Framework_TestCase
                 'availableQuantity' => 0,
                 'isVisible' => true,
                 'checkoutLineItems' => [],
+                'allowBackorders' => false
+            ],
+            'can decrement without available quantity backorders allowed' => [
+                'orderLineItems' => [
+                    $this->getEntity(OrderLineItem::class, ['product' => $product1, 'productUnit' => $productUnit]),
+                    $this->getEntity(OrderLineItem::class, ['product' => $product2, 'productUnit' => $productUnit]),
+                    $orderLineItem
+                ],
+                'canDecrement' => true,
+                'availableQuantity' => 0,
+                'isVisible' => true,
+                'checkoutLineItems' => [
+                    $this->getEntity(
+                        CheckoutLineItem::class,
+                        [
+                            'parentProduct' => $parentProduct,
+                            'product' => $product3,
+                            'productUnit' => $productUnit,
+                            'freeFormProduct' => 'free form product',
+                            'fromExternalSource' => false,
+                            'quantity' => 10,
+                            'comment' => 'test comment',
+                        ]
+                    ),
+                ],
+                'allowBackorders' => true
             ],
             'can decrement with less available quantity' => [
                 'orderLineItems' => [
@@ -237,6 +278,7 @@ class OrderLineItemConverterTest extends \PHPUnit_Framework_TestCase
                         ]
                     ),
                 ],
+                'allowBackorders' => false
             ],
             'can decrement not visible' => [
                 'orderLineItems' => [
@@ -248,6 +290,7 @@ class OrderLineItemConverterTest extends \PHPUnit_Framework_TestCase
                 'availableQuantity' => 100,
                 'isVisible' => false,
                 'checkoutLineItems' => [],
+                'allowBackorders' => false
             ],
         ];
     }

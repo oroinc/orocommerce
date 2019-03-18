@@ -566,6 +566,8 @@ services:
             - '@oro_inventory.provider.inventory_quantity'
             - '@security.authorization_checker'
             - 'oro_product.general_frontend_product_visibility'
+        calls:
+            - ['setEntityFallbackResolver', ['@oro_entity.fallback.resolver.entity_fallback_resolver']]
         tags:
             - { name: oro.checkout.line_item.converter, alias: order }
 

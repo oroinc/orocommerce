@@ -202,6 +202,9 @@ oro_behat_extension:
     Customer Select Field:
       selector: 'select[name="oro_customer_frontend_owner_select"]'
 
+    Shopping List Product Note:
+      selector: '[name="copy_paste_order"]'
+
   suites:
     OroShoppingListBundle:
       contexts:
