@@ -2,6 +2,7 @@
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
 @fixture-OroCheckoutBundle:Payment.yml
+@fixture-OroCheckoutBundle:Shipping.yml
 @fixture-OroTaxBundle:digital_products_taxes.yml
 Feature: Digital Products Taxes
   In order to sell digital products with taxes

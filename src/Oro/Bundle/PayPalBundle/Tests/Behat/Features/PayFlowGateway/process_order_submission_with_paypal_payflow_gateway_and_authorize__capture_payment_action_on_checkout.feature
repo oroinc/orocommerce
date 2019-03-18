@@ -2,6 +2,7 @@
 @ticket-BB-8806
 @ticket-BB-14390
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
+@fixture-OroCheckoutBundle:Shipping.yml
 @fixture-OroAuthorizeNetBundle:AuthorizeNetFixture.yml
 
 Feature: Process order submission with PayPal PayFlow Gateway and Authorize & Capture payment action on Checkout

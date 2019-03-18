@@ -178,11 +178,19 @@ class ShippingMethodsConfigsRuleRepository extends EntityRepository
             return $queryBuilder;
         }
 
-        return $queryBuilder
+        $queryBuilder
             ->addSelect('websites')
             ->leftJoin('methodsConfigsRule.websites', 'websites')
             ->andWhere('websites.id is null or websites = :website')
             ->setParameter('website', $website);
+
+        if ($website->getOrganization() === null) {
+            return $queryBuilder;
+        }
+
+        return $queryBuilder
+            ->andWhere($queryBuilder->expr()->eq('methodsConfigsRule.organization', ':organization'))
+            ->setParameter('organization', $website->getOrganization());
     }
 
     /**

@@ -1,6 +1,7 @@
 @regression
 @ticket-BB-15562
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
+@fixture-OroCheckoutBundle:Shipping.yml
 @fixture-OroPayPalBundle:PayPalExpressProduct.yml
 Feature: Payment Pro Express payments should display products with localized data
   In order to be able to see localized products in the payment

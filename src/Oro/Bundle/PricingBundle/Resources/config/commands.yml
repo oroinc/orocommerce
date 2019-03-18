@@ -8,6 +8,11 @@ services:
     Oro\Bundle\PricingBundle\Command\PriceListImportCommand:
         public: false
         class: Oro\Bundle\PricingBundle\Command\PriceListImportCommand
+        arguments:
+            - '@oro_importexport.file.file_manager'
+            - '@oro_importexport.handler.import'
+            - '@oro_message_queue.client.message_producer'
+            - '@oro_user.manager'
         tags:
             - { name: console.command }
 

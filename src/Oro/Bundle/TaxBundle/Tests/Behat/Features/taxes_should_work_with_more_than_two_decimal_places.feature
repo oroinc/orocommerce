@@ -1,6 +1,7 @@
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
 @fixture-OroCheckoutBundle:Payment.yml
+@fixture-OroCheckoutBundle:Shipping.yml
 @fixture-OroTaxBundle:taxes_should_work_with_more_than_two_decimal_places.yml
 @ticket-BB-15155
 
