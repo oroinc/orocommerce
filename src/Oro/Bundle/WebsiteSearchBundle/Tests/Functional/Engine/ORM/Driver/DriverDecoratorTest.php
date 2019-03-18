@@ -57,11 +57,11 @@ class DriverDecoratorTest extends WebTestCase
 
         $expectedProducts = [
             [
-                'item' => $this->convertItemToArray($goodProductReference),
+                'item' => $this->convertItemToArray($betterProductReference),
                 'value' => null,
             ],
             [
-                'item' => $this->convertItemToArray($betterProductReference),
+                'item' => $this->convertItemToArray($goodProductReference),
                 'value' => null,
             ],
         ];
