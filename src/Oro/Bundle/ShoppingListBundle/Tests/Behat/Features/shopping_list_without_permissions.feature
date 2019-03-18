@@ -121,7 +121,6 @@ Feature: Shopping list without permissions
 
   Scenario: Ensure that buyer can not create shopping list with update and without create permission
     Given I proceed as the Admin
-    And I click "Edit"
     And select following permissions:
       | Shopping List | View:User | Create:None | Edit:User | Delete:User | Assign:None | Duplicate:None |
     When I save form
