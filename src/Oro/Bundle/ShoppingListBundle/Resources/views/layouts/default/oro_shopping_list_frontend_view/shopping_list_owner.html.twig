@@ -12,7 +12,7 @@
             {{ form_label(form, 'oro.frontend.shoppinglist.view.owner.label') }}
             {{ form_widget(form) }}
         {% else %}
-            {{ 'oro.frontend.shoppinglist.view.owner.label'|trans}}: {{ shoppingList.customerUser.fullName }}
+            {{ 'oro.frontend.shoppinglist.view.owner.label'|trans}}: {{ shoppingList.customerUser|oro_format_name|default('N/A'|trans)|escape }}
         {% endif %}
     </div>
 {% endblock %}

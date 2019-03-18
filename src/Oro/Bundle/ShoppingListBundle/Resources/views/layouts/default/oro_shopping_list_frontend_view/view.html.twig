@@ -155,8 +155,8 @@
                       rows="3" cols="30" name="shopping_list_notes" disabled="disabled"
                       class="textarea textarea--full">{{ notes }}</textarea>
             </div>
-            {% elseif hasNotes %}
-                {{ 'oro.shoppinglist.notes.label'|trans }}: {{ notes }}
+            {% else %}
+                {{ 'oro.shoppinglist.notes.label'|trans }}: {{ notes|default('N/A'|trans) }}
             {% endif %}
         </div>
     </div>
