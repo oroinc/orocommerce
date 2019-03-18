@@ -4,6 +4,11 @@ The current file describes significant changes in the code that may affect the u
 
 ## 4.0-beta
 
+### Changed
+#### PricingBundle
+* Introduced concept of import/export owner. Applied approach with role-based owner-based permissions to the export and import functionality.
+* Option `--email` has become required for `oro:import:price-list:file` command.
+
 ### Removed
 #### WebsiteSearchBundle
 * Service `oro_website_search.async_messaging.search_message.processor.job_runner` was removed, that trigger duplicated messages to the message queue with topics:
