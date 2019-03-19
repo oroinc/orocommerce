@@ -1,4 +1,6 @@
+@ticket-BB-16409
 @fixture-OroOrderBundle:OrderBackofficeDefaultFixture.yml
+
 Feature: Order Backoffice Default
   ToDo: BAP-16103 Add missing descriptions to the Behat features
 
@@ -91,3 +93,19 @@ Feature: Order Backoffice Default
     Then I should not see "OrderWithoutCustomerUser"
     And I should see following records in grid:
       | OrderWithCustomerAndCustomerUser |
+
+  Scenario: Check recipient full name and email address when sending email from the order
+    Given I operate as the Admin
+    And go to Sales/Orders
+    And click view OrderWithChildCustomerAndWithCustomerUser in grid
+    And click "More actions"
+    And click "Send email"
+    Then I should see "To \"Ruth Maxwell\" <RuthWMaxwell@example.org>"
+    When I fill "Email Form" with:
+      | Subject | Order email subject |
+    And click "Send"
+    Then I should see "The email was sent" flash message
+    When I click My Emails in user menu
+    And click view "Order email subject" in grid
+    Then I should see "Emails / Order email subject"
+    And I should see "To: Ruth Maxwell"
