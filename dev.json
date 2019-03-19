@@ -50,7 +50,7 @@
         },
         "asset-packagist": {
             "type": "composer",
-            "url": "https://asset-packagist.org"
+            "url": "https://asset-packagist.orocrm.com"
         }
     },
     "minimum-stability": "dev",
