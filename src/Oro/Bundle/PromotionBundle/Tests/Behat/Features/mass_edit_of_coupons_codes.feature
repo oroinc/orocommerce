@@ -54,9 +54,8 @@ Feature: Mass edit of Coupons codes
     When I fill form with:
       |Uses per Coupon   |99        |
       |Uses per Person   |100       |
-    And I fill form with:
-      | Valid From  | <DateTime:Jul 09, 2017, 10:00 AM> |
-      | Valid Until | <DateTime:Jul 10, 2017, 10:00 AM> |
+      | Valid From       | <DateTime:Jul 09, 2017, 10:00 AM> |
+      | Valid Until      | <DateTime:Jul 10, 2017, 10:00 AM> |
     And I click "Apply"
     Then I should see "100 entities were edited" flash message
     And I filter Uses per Coupon as equals "99"
