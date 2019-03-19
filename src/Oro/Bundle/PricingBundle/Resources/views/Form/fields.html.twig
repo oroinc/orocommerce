@@ -86,17 +86,17 @@
 {% block oro_pricing_price_list_select_with_priority_widget %}
     {% spaceless %}
         <td>{{ form_widget(form.priceList) }} {{ form_errors(form.priceList) }}</td>
-        {% if form.mergeAllowed is defined %}
-        <td>
-            <div class="allow-merge-block">
-                {{ form_widget(form.mergeAllowed, { 'attr': {'class': 'merge-allowed-checkbox'} }) }}
-                <span class="merge-allowed-label">{{ 'oro.pricing.pricelist.merge_allowed.label'|trans }}</span>
-            </div>
-            {{ form_errors(form.mergeAllowed) }}
-        </td>
-        {% endif %}
         <td class="price-list-grid-form__option-cell">
             {{ form_widget(form._position) }}
+            {% if form.mergeAllowed is defined %}
+                <span class="allow-merge-block">
+                    <span class="allow-merge-block__inner">
+                        {{ form_widget(form.mergeAllowed, { 'attr': {'class': 'merge-allowed-checkbox'} }) }}
+                        <span class="merge-allowed-label">{{ 'oro.pricing.pricelist.merge_allowed.label'|trans }}</span>
+                    </span>
+                    {{ form_errors(form.mergeAllowed) }}
+                </span>
+            {% endif %}
             <span class="btn btn-icon btn-square-light sortable-handle ui-sortable-handle" data-name="sortable-handle">
                 <span class="fa-arrows-v handle"></span>
             </span>
