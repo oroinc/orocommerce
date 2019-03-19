@@ -2,7 +2,7 @@
 @ticket-BB-15117
 @fixture-OroShoppingListBundle:ShoppingListFixtureWithCustomers.yml
 
-Feature: Check permissions
+Feature: Storefront acl for shopping lists
   In order to check frontstore shopping list acl
   As a customer user
   I want to check user and guest permissions
