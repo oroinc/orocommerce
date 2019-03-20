@@ -148,6 +148,50 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
+     * @Then I open shopping list widget
+     */
+    public function iOpenShoppingListWidget()
+    {
+        $this->createElement('ShoppingListWidget')->click();
+    }
+
+    /**
+     * Opens shopping list from widget
+     * Example: And I click "Shopping List 1" on shopping list widget
+     *
+     * @Given /^(?:|I )click "(?P<name>[\w\s]*)" on shopping list widget$/
+     */
+    public function iClickShoppingListOnListsDropdown($name)
+    {
+        $link = $this->getShoppingListLinkFromShoppingListWidgetByName($name);
+        $link->click();
+    }
+
+    /**
+     * Example: I should see "Shopping List 1" on shopping list widget
+     *
+     * @Given /^(?:|I )should see "(?P<name>[\w\s\W\S]*)" on shopping list widget$/
+     */
+    public function iShouldSeeOnShoppingListWidget($name)
+    {
+        $link = $this->getShoppingListLinkFromShoppingListWidgetByName($name);
+
+        self::assertNotNull($link, sprintf('"%s" list item was not found in shopping list widget', $name));
+    }
+
+    /**
+     * Example: I should not see "Shopping List 1" on shopping list widget
+     *
+     * @Given /^(?:|I )should not see "(?P<name>[\w\s\W\S]*)" on shopping list widget$/
+     */
+    public function iShouldNotSeeOnShoppingListWidget($name)
+    {
+        $link = $this->getShoppingListLinkFromShoppingListWidgetByName($name);
+
+        self::assertNull($link, sprintf('"%s" list item was found in shopping list widget', $name));
+    }
+
+    /**
      * @param string $label
      * @return null|ShoppingList
      */
@@ -267,25 +311,20 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
-     * @Then I open shopping list widget
+     * @param $name
+     * @return null|NodeElement
      */
-    public function iOpenShoppingListWidget()
-    {
-        $this->createElement('ShoppingListWidget')->click();
-    }
-
-    /**
-     * Opens shopping list from widget
-     * Example: And I click "Shopping List 1" on shopping list widget
-     *
-     * @Given /^(?:|I )click "(?P<name>[\w\s]*)" on shopping list widget$/
-     */
-    public function iClickShoppingListOnListsDropdown($name)
+    protected function getShoppingListLinkFromShoppingListWidgetByName($name)
     {
         $widget = $this->createElement('ShoppingListWidgetContainer');
-        $link = $widget->find('xpath', "//span[@data-role='shopping-list-title'][text()='{$name}']");
+        $xpath = sprintf(
+            '//span[' .
+                "@data-role='shopping-list-title'" .
+                "and translate(text(),'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz')='%s'" .
+            ']',
+            strtolower($name)
+        );
 
-        self::assertNotNull($link, sprintf('"%s" list item was found in shopping list widget', $name));
-        $link->click();
+        return $widget->find('xpath', $xpath);
     }
 }

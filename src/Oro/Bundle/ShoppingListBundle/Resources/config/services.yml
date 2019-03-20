@@ -230,6 +230,8 @@ services:
             - "@oro_shopping_list.manager.current_shopping_list"
             - "@translator"
             - "@security.token_storage"
+        calls:
+            - [setAuthorizationChecker, ['@security.authorization_checker']]
         tags:
             - { name: oro_action.datagrid.mass_action_provider, alias: oro_shopping_list_add_products }
             - { name: oro_featuretogle.feature, feature: 'shopping_list_create' }

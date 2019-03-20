@@ -2,12 +2,14 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Controller\Frontend;
 
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\ShoppingListBundle\Datagrid\Provider\MassAction\AddLineItemMassActionProvider;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
+/**
+ * Controller for getting mass actions for datagrid
+ */
 class AjaxMassActionController extends Controller
 {
     /**
@@ -17,7 +19,6 @@ class AjaxMassActionController extends Controller
      *      "/get-mass-actions",
      *      name="oro_shopping_list_frontend_get_mass_actions",
      * )
-     * @AclAncestor("oro_shopping_list_frontend_update")
      *
      * @return JsonResponse
      */
