@@ -7,6 +7,7 @@ use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\Type\FrontendLineItemType;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\SecurityBundle\Annotation\CsrfProtection;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Form\Handler\LineItemHandler;
@@ -19,6 +20,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Controller that manages products and line items for a shopping list via AJAX requests.
+ * @CsrfProtection()
  */
 class AjaxLineItemController extends AbstractLineItemController
 {
@@ -32,6 +34,7 @@ class AjaxLineItemController extends AbstractLineItemController
      * )
      * @AclAncestor("oro_product_frontend_view")
      * @ParamConverter("product", class="OroProductBundle:Product", options={"id" = "productId"})
+     * @Method("POST")
      *
      * @param Request $request
      * @param Product $product
@@ -165,6 +168,7 @@ class AjaxLineItemController extends AbstractLineItemController
     /**
      * @Route("/{gridName}/massAction/{actionName}", name="oro_shopping_list_add_products_massaction")
      * @AclAncestor("oro_shopping_list_frontend_update")
+     * @Method("POST")
      *
      * @param Request $request
      * @param string $gridName

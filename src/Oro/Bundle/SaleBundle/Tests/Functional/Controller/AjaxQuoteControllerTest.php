@@ -5,8 +5,10 @@ namespace Oro\Bundle\SaleBundle\Tests\Functional\Controller;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteType;
+use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 class AjaxQuoteControllerTest extends WebTestCase
 {
@@ -17,7 +19,7 @@ class AjaxQuoteControllerTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData'
+                LoadQuoteData::class
             ]
         );
     }
@@ -48,7 +50,7 @@ class AjaxQuoteControllerTest extends WebTestCase
         );
 
         $response = $this->client->getResponse();
-        $this->assertInstanceOf('Symfony\Component\HttpFoundation\JsonResponse', $response);
+        $this->assertInstanceOf(JsonResponse::class, $response);
 
         $result = $this->getJsonResponseContent($response, 200);
         $this->assertCount(3, $result);
@@ -98,14 +100,14 @@ class AjaxQuoteControllerTest extends WebTestCase
         );
 
         $response = $this->client->getResponse();
-        $this->assertInstanceOf('Symfony\Component\HttpFoundation\Response', $response);
+        $this->assertInstanceOf(Response::class, $response);
 
         $this->assertResponseStatusCodeEquals($response, 400);
     }
 
     public function testEntryPoint()
     {
-        $this->client->request('GET', $this->getUrl('oro_quote_entry_point'));
+        $this->ajaxRequest('POST', $this->getUrl('oro_quote_entry_point'));
         $response = $this->client->getResponse();
 
         static::assertInstanceOf(JsonResponse::class, $response);
@@ -113,8 +115,8 @@ class AjaxQuoteControllerTest extends WebTestCase
 
     public function testEntryPointAction()
     {
-        $this->client->request(
-            'GET',
+        $this->ajaxRequest(
+            'POST',
             $this->getUrl('oro_quote_entry_point'),
             [
                 QuoteType::NAME => [
@@ -124,7 +126,7 @@ class AjaxQuoteControllerTest extends WebTestCase
         );
 
         $response = $this->client->getResponse();
-        $this->assertInstanceOf('Symfony\Component\HttpFoundation\JsonResponse', $response);
+        $this->assertInstanceOf(JsonResponse::class, $response);
 
         $result = $this->getJsonResponseContent($response, 200);
         $this->assertArrayHasKey('possibleShippingMethods', $result);

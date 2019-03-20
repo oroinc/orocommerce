@@ -10,6 +10,7 @@ use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\PricingBundle\Form\Type\PriceListProductPriceType;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\SecurityBundle\Annotation\CsrfProtection;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -106,6 +107,8 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
      *      class="OroPricingBundle:ProductPrice",
      *      permission="DELETE"
      * )
+     * @Method({"DELETE"})
+     * @CsrfProtection()
      *
      * {@inheritdoc}
      */

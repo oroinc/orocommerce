@@ -46,8 +46,8 @@ class ImportExportTest extends WebTestCase
     public function testShouldExportData()
     {
         $this->client->followRedirects(false);
-        $this->client->request(
-            'GET',
+        $this->ajaxRequest(
+            'POST',
             $this->getUrl(
                 'oro_importexport_export_instant',
                 [
@@ -75,8 +75,8 @@ class ImportExportTest extends WebTestCase
             'This test will be completely removed and replaced with a set of smaller functional tests (see BAP-13064)'
         );
         $this->client->followRedirects(false);
-        $this->client->request(
-            'GET',
+        $this->ajaxRequest(
+            'POST',
             $this->getUrl(
                 'oro_importexport_export_instant',
                 [

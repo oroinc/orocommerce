@@ -27,7 +27,7 @@ class ShippingRuleControllerTest extends WebTestCase
         /** @var ShippingMethodsConfigsRule $shippingRule */
         $shippingRule = $this->getReference('shipping_rule.1');
         $this->client->request(
-            'GET',
+            'POST',
             $this->getUrl('oro_api_disable_shippingrules', ['id' => $shippingRule->getId()]),
             [],
             [],
@@ -43,7 +43,7 @@ class ShippingRuleControllerTest extends WebTestCase
         /** @var ShippingMethodsConfigsRule $shippingRule */
         $shippingRule = $this->getReference('shipping_rule.3');
         $this->client->request(
-            'GET',
+            'POST',
             $this->getUrl('oro_api_enable_shippingrules', ['id' => $shippingRule->getId()]),
             [],
             [],

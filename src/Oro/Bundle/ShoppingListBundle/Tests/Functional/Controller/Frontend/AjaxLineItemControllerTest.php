@@ -62,7 +62,7 @@ class AjaxLineItemControllerTest extends WebTestCase
         /** @var ShoppingList $shoppingList */
         $shoppingList = $this->getReference($shoppingListRef);
 
-        $this->client->request(
+        $this->ajaxRequest(
             'POST',
             $this->getUrl(
                 'oro_shopping_list_frontend_add_product',
@@ -75,7 +75,7 @@ class AjaxLineItemControllerTest extends WebTestCase
                 'oro_product_frontend_line_item' => [
                     'quantity' => $quantity,
                     'unit' => $unit->getCode(),
-                    '_token' => $this->getCsrfToken('oro_product_frontend_line_item')->getValue(),
+                    '_token' => $this->getCsrfToken('oro_product_frontend_line_item')->getValue()
                 ],
             ]
         );
@@ -155,14 +155,13 @@ class AjaxLineItemControllerTest extends WebTestCase
         /** @var Product $product */
         $product = $this->getReference('product-1');
 
-        $this->client->request(
+        $this->ajaxRequest(
             'POST',
             $this->getUrl('oro_shopping_list_frontend_add_product', ['productId' => $product->getId()]),
             [
                 'oro_product_frontend_line_item' => [
                     'quantity' => null,
-                    'unit' => null,
-                    '_token' => $this->getCsrfToken('oro_product_frontend_line_item')->getValue(),
+                    'unit' => null
                 ],
             ]
         );
@@ -228,7 +227,7 @@ class AjaxLineItemControllerTest extends WebTestCase
             $this->setShoppingListCurrent($shoppingList, false);
         }
 
-        $this->client->request(
+        $this->ajaxRequest(
             'POST',
             $this->getUrl(
                 'oro_shopping_list_frontend_remove_product',
@@ -366,8 +365,8 @@ class AjaxLineItemControllerTest extends WebTestCase
         /** @var ShoppingList $shoppingList */
         $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_3);
 
-        $this->client->request(
-            'GET',
+        $this->ajaxRequest(
+            'POST',
             $this->getUrl(
                 'oro_shopping_list_add_products_massaction',
                 [
@@ -397,8 +396,8 @@ class AjaxLineItemControllerTest extends WebTestCase
 
         $shoppingListsCount = count($this->getShoppingListRepository()->findAll());
 
-        $crawler = $this->client->request(
-            'GET',
+        $crawler = $this->ajaxRequest(
+            'POST',
             $this->getUrl(
                 'oro_shopping_list_add_products_to_new_massaction',
                 [
@@ -415,7 +414,7 @@ class AjaxLineItemControllerTest extends WebTestCase
         $form = $crawler->selectButton('Create and Add')->form();
         $form['oro_shopping_list_type[label]'] = 'TestShoppingList';
 
-        $this->client->request(
+        $this->ajaxRequest(
             $form->getMethod(),
             $this->getUrl(
                 'oro_shopping_list_add_products_to_new_massaction',
@@ -481,7 +480,7 @@ class AjaxLineItemControllerTest extends WebTestCase
         $product = $this->getReference(LoadProductData::PRODUCT_3);
         $unit = $this->getReference('product_unit.liter');
 
-        $this->client->request(
+        $this->ajaxRequest(
             'POST',
             $this->getUrl(
                 'oro_shopping_list_frontend_add_product',
@@ -495,7 +494,7 @@ class AjaxLineItemControllerTest extends WebTestCase
                 'oro_product_frontend_line_item' => [
                     'quantity' => 10,
                     'unit' => $unit->getCode(),
-                    '_token' => $this->getCsrfToken('oro_product_frontend_line_item')->getValue(),
+                    '_token' => $this->getCsrfToken('oro_product_frontend_line_item')->getValue()
                 ],
             ]
         );

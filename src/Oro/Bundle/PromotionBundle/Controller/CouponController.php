@@ -12,6 +12,7 @@ use Oro\Bundle\PromotionBundle\Form\Type\CouponGenerationType;
 use Oro\Bundle\PromotionBundle\Form\Type\CouponType;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\SecurityBundle\Annotation\CsrfProtection;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -19,6 +20,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * Promotion Coupon Controller
+ */
 class CouponController extends Controller
 {
     const COUPONS_GRID = 'promotion-coupons-grid';
@@ -139,6 +143,7 @@ class CouponController extends Controller
     /**
      * @Route("/coupon-generation-preview", name="oro_promotion_coupon_generation_preview", methods={"POST"})
      * @AclAncestor("oro_promotion_coupon_view")
+     * @CsrfProtection()
      * @param Request $request
      * @return JsonResponse
      */

@@ -3,7 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Controller\Frontend;
 
 use Oro\Bundle\PricingBundle\Controller\AbstractAjaxProductPriceController;
-use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\SecurityBundle\Annotation\CsrfProtection;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -45,6 +45,7 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
     /**
      * @Route("/set-current-currency", name="oro_pricing_frontend_set_current_currency")
      * @Method({"POST"})
+     * @CsrfProtection()
      *
      * {@inheritdoc}
      */

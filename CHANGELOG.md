@@ -2,7 +2,38 @@ Please refer first to [UPGRADE.md](UPGRADE.md) for the most important items that
 
 The current file describes significant changes in the code that may affect the upgrade of your customizations.
 
-## 4.0-beta
+## 4.0.0-beta
+
+### Changed
+#### PaymentBundle
+* In `Oro\Bundle\PaymentBundle\Controller\Api\Rest\PaymentMethodsConfigsRuleController::enableAction` 
+ (`/paymentrules/{id}/enable` path)
+ action the request method was changed to POST. 
+* In `Oro\Bundle\PaymentBundle\Controller\Api\Rest\PaymentMethodsConfigsRuleController::disableAction` 
+ (`/paymentrules/{id}/disable` path)
+ action the request method was changed to POST.
+#### PricingBundle
+* In `Oro\Bundle\PricingBundle\Controller\AjaxPriceListController::defaultAction` 
+ (`oro_pricing_price_list_default` route)
+ action the request method was changed to POST.
+* In `Oro\Bundle\PricingBundle\Controller\AjaxProductPriceController::deleteAction` 
+ (`oro_pricing_price_list_default` route)
+ action the request method was changed to DELETE.
+#### SaleBundle
+* In `Oro\Bundle\SaleBundle\Controller\AjaxQuoteController::entryPointAction` 
+ (`oro_quote_entry_point` route)
+ action the request method was changed to POST.
+#### ShippingBundle
+* In `Oro\Bundle\ShippingBundle\Controller\Api\Rest\ShippingMethodsConfigsRuleController::enableAction` 
+ (`/shippingrules/{id}/enable` path)
+ action the request method was changed to POST.
+* In `Oro\Bundle\ShippingBundle\Controller\Api\Rest\ShippingMethodsConfigsRuleController::disableAction` 
+ (`/shippingrules/{id}/disable` path)
+ action the request method was changed to POST.
+#### ShoppingListBundle
+* In `Oro\Bundle\ShoppingListBundle\Controller\Frontend\AjaxLineItemController::addProductFromViewAction` 
+ (`oro_shopping_list_frontend_add_product` route)
+ action the request method was changed to POST.
 
 ### Changed
 #### PricingBundle
