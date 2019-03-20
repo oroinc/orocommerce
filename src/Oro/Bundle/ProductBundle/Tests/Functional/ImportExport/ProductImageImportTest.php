@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Tests\Functional\ImportExport;
 
 use Doctrine\ORM\EntityRepository;
+use Gaufrette\File;
 use Oro\Bundle\ImportExportBundle\Async\Topics;
 use Oro\Bundle\ImportExportBundle\File\FileManager;
 use Oro\Bundle\ImportExportBundle\Job\JobExecutor;
@@ -76,14 +77,17 @@ class ProductImageImportTest extends WebTestCase
                 'processorAlias' => self::EXPORT_TEMPLATE_PROCESSOR_ALIAS
             ])
         );
-        $this->client->followRedirect();
+
+        // Take the name of the file from the header because there is no alternative way to know the filename
+        $contentDisposition = $this->client->getResponse()->headers->get('Content-Disposition');
+        preg_match('/^.*"(export_template_[a-z0-9_]+.csv)"$/', $contentDisposition, $matches);
 
         static::assertContains(
             $this->getFileContent($expectedCsvFilePath),
             $this->client->getResponse()->getContent()
         );
 
-        $this->deleteImportExportFile($this->client->getRequest()->attributes->get('fileName'));
+        $this->deleteImportExportFile($matches[1]);
     }
 
     /**
@@ -113,21 +117,21 @@ class ProductImageImportTest extends WebTestCase
     {
         $this->assertPreImportActionExecuted($importFilePath);
 
-        $preImportMessageData = $this->getOneSentMessageWithTopic(Topics::PRE_HTTP_IMPORT);
+        $preImportMessageData = $this->getOneSentMessageWithTopic(Topics::PRE_IMPORT);
         $this->clearMessageCollector();
 
         $this->assertMessageProcessorExecuted(
-            'oro_importexport.async.pre_http_import',
+            'oro_importexport.async.pre_import',
             $preImportMessageData
         );
 
-        static::assertMessageSent(Topics::HTTP_IMPORT);
+        static::assertMessageSent(Topics::IMPORT);
 
-        $importMessageData = $this->getOneSentMessageWithTopic(Topics::HTTP_IMPORT);
+        $importMessageData = $this->getOneSentMessageWithTopic(Topics::IMPORT);
         $this->clearMessageCollector();
 
         $this->assertMessageProcessorExecuted(
-            'oro_importexport.async.http_import',
+            'oro_importexport.async.import',
             $importMessageData
         );
 
@@ -226,7 +230,7 @@ class ProductImageImportTest extends WebTestCase
         static::assertTrue($response['success']);
 
         static::assertMessageSent(
-            Topics::PRE_HTTP_IMPORT,
+            Topics::PRE_IMPORT,
             [
                 'fileName' => $fileName,
                 'process' => ProcessorRegistry::TYPE_IMPORT,

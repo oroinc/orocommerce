@@ -8,6 +8,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\FlatRateShippingBundle\Tests\Functional\DataFixtures\LoadFlatRateIntegration;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\RuleBundle\Entity\Rule;
 use Oro\Bundle\RuleBundle\Entity\RuleInterface;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
@@ -16,11 +17,15 @@ use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestination;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestinationPostalCode;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig;
 use Oro\Bundle\ShippingBundle\Tests\Functional\Helper\FlatRateIntegrationTrait;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Symfony\Component\Yaml\Yaml;
 
-class LoadShippingMethodsConfigsRulesWithConfigs extends AbstractFixture implements DependentFixtureInterface
+class LoadShippingMethodsConfigsRulesWithConfigs extends AbstractFixture implements
+    DependentFixtureInterface,
+    ContainerAwareInterface
 {
-    use FlatRateIntegrationTrait;
+    use FlatRateIntegrationTrait, ContainerAwareTrait;
 
     /**
      * {@inheritdoc}
@@ -85,7 +90,8 @@ class LoadShippingMethodsConfigsRulesWithConfigs extends AbstractFixture impleme
 
         $configRule
             ->setRule($rule)
-            ->setCurrency($data['currency']);
+            ->setCurrency($data['currency'])
+            ->setOrganization($this->getOrganization());
 
         $this->setDestinations($configRule, $manager, $data);
         $this->setMethodConfigs($configRule, $manager, $data);
@@ -203,5 +209,15 @@ class LoadShippingMethodsConfigsRulesWithConfigs extends AbstractFixture impleme
             ->setMethod($this->getFlatRateIdentifier());
 
         return $methodConfig;
+    }
+
+    /**
+     * @return Organization
+     */
+    private function getOrganization()
+    {
+        return $this->container->get('doctrine')
+            ->getRepository('OroOrganizationBundle:Organization')
+            ->getFirst();
     }
 }

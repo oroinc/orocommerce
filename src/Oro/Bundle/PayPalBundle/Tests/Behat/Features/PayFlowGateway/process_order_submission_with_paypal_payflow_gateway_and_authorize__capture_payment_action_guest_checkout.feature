@@ -1,5 +1,6 @@
 @regression
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
+@fixture-OroCheckoutBundle:Shipping.yml
 @fixture-OroAuthorizeNetBundle:AuthorizeNetFixture.yml
 
 Feature: Process order submission with PayPal PayFlow Gateway and Authorize & Capture payment action guest checkout

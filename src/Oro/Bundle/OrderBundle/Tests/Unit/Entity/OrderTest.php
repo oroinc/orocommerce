@@ -111,6 +111,19 @@ class OrderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($email, $order->getEmail());
     }
 
+    public function testGetEmailHolderName()
+    {
+        $order = new Order();
+        $this->assertEmpty($order->getEmailHolderName());
+
+        $customerUser = new CustomerUser();
+        $customerUser->setFirstName('First');
+        $customerUser->setLastName('Last');
+        $order->setCustomerUser($customerUser);
+
+        $this->assertEquals('First Last', $order->getEmailHolderName());
+    }
+
     public function testCustomerUserToCustomerRelation()
     {
         $order = new Order();
