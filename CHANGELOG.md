@@ -17,6 +17,12 @@ The current file describes significant changes in the code that may affect the u
     - `oro.website.search.indexer.reset_index`
     - `oro.website.search.indexer.reindex`
 
+## 3.1.2 (2019-02-05)
+[Show detailed list of changes](incompatibilities-3-1-2.md)
+
+## 3.1.0 (2019-01-30)
+[Show detailed list of changes](incompatibilities-3-1.md)
+
 ## 3.1.0-rc (2018-11-30)
 [Show detailed list of changes](incompatibilities-3-1-rc.md)
 
