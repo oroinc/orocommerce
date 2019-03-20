@@ -125,3 +125,7 @@ oro_behat_extension:
       selector:
         type: 'xpath'
         locator: "//input[@name='possibleShippingMethodType']"
+
+    Shipping Method Configurations Select:
+      selector: 'select[name="oro_shipping_methods_configs_rule[method]"]'
+      class: Oro\Bundle\FormBundle\Tests\Behat\Element\Select2Entity
