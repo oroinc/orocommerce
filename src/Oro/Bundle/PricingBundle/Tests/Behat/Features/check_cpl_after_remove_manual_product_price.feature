@@ -56,6 +56,7 @@ Feature: Check CPL after remove manual product price
 
   Scenario: Remove Price for fourth product
     When I click delete "PSKU4" in grid
+    And I click "Yes" in confirmation dialogue
     Then number of records in "Price list Product prices Grid" should be 3
     And I should see following grid:
       | Product SKU | Product name | Quantity | Unit | Value | Currency | Type      |

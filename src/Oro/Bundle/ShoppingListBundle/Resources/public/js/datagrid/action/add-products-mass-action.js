@@ -21,6 +21,7 @@ define(function(require) {
          */
         constructor: function AddProductsAction() {
             AddProductsAction.__super__.constructor.apply(this, arguments);
+            this.requestType = 'POST';
         },
 
         /**

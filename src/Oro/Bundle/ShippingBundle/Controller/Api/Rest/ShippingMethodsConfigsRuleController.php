@@ -2,9 +2,7 @@
 
 namespace Oro\Bundle\ShippingBundle\Controller\Api\Rest;
 
-use FOS\RestBundle\Controller\Annotations\Get;
-use FOS\RestBundle\Controller\Annotations\NamePrefix;
-use FOS\RestBundle\Controller\Annotations\RouteResource;
+use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\Routing\ClassResourceInterface;
 use FOS\RestBundle\Util\Codes;
 use FOS\RestBundle\View\View;
@@ -15,8 +13,9 @@ use Oro\Bundle\SoapBundle\Controller\Api\Rest\RestController;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * @RouteResource("shippingrules")
- * @NamePrefix("oro_api_")
+ * REST API Shipping Methods Configs Rule Controller
+ * @Rest\RouteResource("shippingrules")
+ * @Rest\NamePrefix("oro_api_")
  */
 class ShippingMethodsConfigsRuleController extends RestController implements ClassResourceInterface
 {
@@ -26,7 +25,7 @@ class ShippingMethodsConfigsRuleController extends RestController implements Cla
      * Returns
      * - HTTP_OK (200)
      *
-     * @Get(
+     * @Rest\Post(
      *      "/shippingrules/{id}/enable",
      *      requirements={"version"="latest|v1"},
      *      defaults={"version"="latest", "_format"="json"}
@@ -75,7 +74,7 @@ class ShippingMethodsConfigsRuleController extends RestController implements Cla
      * Returns
      * - HTTP_OK (200)
      *
-     * @Get(
+     * @Rest\Post(
      *      "/shippingrules/{id}/disable",
      *      requirements={"version"="latest|v1"},
      *      defaults={"version"="latest", "_format"="json"}

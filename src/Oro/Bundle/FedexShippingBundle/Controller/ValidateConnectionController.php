@@ -7,6 +7,7 @@ use Oro\Bundle\FedexShippingBundle\Client\RateService\Response\FedexRateServiceR
 use Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\IntegrationBundle\Form\Type\ChannelType;
+use Oro\Bundle\SecurityBundle\Annotation\CsrfProtection;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -14,12 +15,16 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * FedEx Validate Connection Controller
+ */
 class ValidateConnectionController extends Controller
 {
     /**
      * @Route("/validate-connection/{channelId}/", name="oro_fedex_validate_connection")
      * @ParamConverter("channel", class="OroIntegrationBundle:Channel", options={"id" = "channelId"})
      * @Method("POST")
+     * @CsrfProtection()
      *
      * @param Request      $request
      * @param Channel|null $channel

@@ -210,8 +210,8 @@ class ProductImageImportTest extends WebTestCase
             ->get('oro_importexport.file.file_manager')
             ->saveImportingFile($file);
 
-        $this->client->request(
-            'GET',
+        $this->ajaxRequest(
+            'POST',
             $this->getUrl(
                 'oro_importexport_import_process',
                 [

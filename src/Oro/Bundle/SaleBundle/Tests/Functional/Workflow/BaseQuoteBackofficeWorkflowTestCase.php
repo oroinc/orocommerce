@@ -238,8 +238,8 @@ abstract class BaseQuoteBackofficeWorkflowTestCase extends WebTestCase
         $link = $this->selectExactLink($linkTitle, $crawler);
         $this->assertNotEmpty($link, 'Transit button not found ' . $linkTitle);
 
-        $this->client->request(
-            'GET',
+        $this->ajaxRequest(
+            'POST',
             $link->attr('data-transition-url'),
             [],
             [],

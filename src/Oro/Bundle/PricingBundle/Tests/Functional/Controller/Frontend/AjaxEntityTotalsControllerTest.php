@@ -83,7 +83,7 @@ class AjaxEntityTotalsControllerTest extends WebTestCase
 
     public function testRecalculateTotalsAction()
     {
-        $this->client->request('POST', $this->getUrl('oro_pricing_frontend_recalculate_entity_totals'));
+        $this->ajaxRequest('POST', $this->getUrl('oro_pricing_frontend_recalculate_entity_totals'));
         $result = $this->client->getResponse();
         $this->assertJsonResponseStatusCodeEquals($result, 404);
     }

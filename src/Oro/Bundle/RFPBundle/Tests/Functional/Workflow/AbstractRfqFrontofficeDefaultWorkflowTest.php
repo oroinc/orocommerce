@@ -102,7 +102,7 @@ abstract class AbstractRfqFrontofficeDefaultWorkflowTest extends FrontendWebTest
             $this->client->followRedirects(true);
             $this->client->submit($form);
         } else {
-            $this->client->request('GET', $transitionUrl, [], [], $this->getWsseAuthHeader());
+            $this->ajaxRequest('POST', $transitionUrl, [], [], $this->getWsseAuthHeader());
             $this->assertJsonResponseStatusCodeEquals($this->client->getResponse(), 200);
         }
 
