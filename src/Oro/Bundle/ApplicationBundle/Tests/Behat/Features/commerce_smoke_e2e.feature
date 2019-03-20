@@ -705,7 +705,6 @@ Feature: Commerce smoke e2e
     When click "Create Order"
     And fill form with:
       |SELECT BILLING ADDRESS|New address|
-    And fill form with:
       |Label          |Home Address  |
       |First name     |NewFname      |
       |Last name      |NewLname      |
