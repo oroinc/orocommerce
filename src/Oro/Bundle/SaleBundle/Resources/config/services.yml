@@ -17,6 +17,8 @@ services:
             - "@oro_pricing.provider.product_price"
             - "@oro_pricing.model.product_price_scope_criteria_factory"
             - "@oro_currency.config.currency"
+        calls:
+            - [setDoctrineHelper, ['@oro_entity.doctrine_helper']]
 
     oro_sale.validator.quote_product:
         class: 'Oro\Bundle\SaleBundle\Validator\Constraints\QuoteProductValidator'

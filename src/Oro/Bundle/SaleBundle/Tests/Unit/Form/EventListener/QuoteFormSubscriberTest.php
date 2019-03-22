@@ -3,6 +3,8 @@
 namespace Oro\Bundle\SaleBundle\Tests\Unit\Form\EventListener;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\Repository\CustomerRepository;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PricingBundle\Model\DTO\ProductPriceDTO;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -13,6 +15,8 @@ use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use Oro\Bundle\SaleBundle\Form\EventListener\QuoteFormSubscriber;
 use Oro\Bundle\SaleBundle\Provider\QuoteProductPriceProvider;
+use Oro\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Form\FormConfigInterface;
 use Symfony\Component\Form\FormError;
@@ -101,7 +105,19 @@ class QuoteFormSubscriberTest extends \PHPUnit\Framework\TestCase
 
         $this->productRepository->expects($this->never())->method('findBy');
 
-        $this->provider->expects($this->never())->method('getTierPricesForProducts');
+        if (!$data['quoteProducts']) {
+            $this->provider->expects($this->never())
+                ->method('getMatchedProductPrice');
+        } else {
+            $price = $this->getEntity(Price::class, ['value' => self::PRICE1]);
+            $matchedPrice = $expectPriceChange ? null : $price;
+            $this->provider->expects($this->once())
+                ->method('getMatchedProductPrice')
+                ->willReturn($matchedPrice);
+        }
+
+        $this->provider->expects($this->never())
+            ->method('getTierPricesForProducts');
 
         $this->subscriber->onPreSubmit(new FormEvent($form, $data));
     }
@@ -280,15 +296,133 @@ class QuoteFormSubscriberTest extends \PHPUnit\Framework\TestCase
                 'quote' => null,
                 'data' => $this->getData(self::PRICE2)
             ],
-            'no quote id' => [
-                'quote' => $this->getQuote(null),
-                'data' => $this->getData(self::PRICE2)
-            ],
             'no data' => [
                 'quote' => $this->getQuote(42),
                 'data' => []
             ],
         ];
+    }
+
+    public function testOnPreSubmitNewQuoteWithoutWebsiteAndCustomerData()
+    {
+        $config = $this->createMock(FormConfigInterface::class);
+        $config->expects($this->any())->method('getOptions')->willReturn([]);
+
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
+        $form = $this->createMock(FormInterface::class);
+        $quote = new Quote();
+        $form->expects($this->once())->method('getData')->willReturn($quote);
+        $form->expects($this->any())->method('getConfig')->willReturn($config);
+        $form->expects($this->never())->method('addError');
+
+        $this->doctrineHelper->expects($this->never())
+            ->method('getEntityRepository')
+            ->with(Website::class);
+        $this->doctrineHelper->expects($this->never())
+            ->method('getEntityRepository')
+            ->with(Customer::class);
+
+        $tierPrices = [
+            1 => [
+                new ProductPriceDTO(
+                    $this->getEntity(Product::class, ['id' => 1]),
+                    Price::create(self::PRICE2, self::CURRENCY),
+                    1,
+                    $this->getEntity(ProductUnit::class, ['code' => self::UNIT2])
+                ),
+                new ProductPriceDTO(
+                    $this->getEntity(Product::class, ['id' => 1]),
+                    Price::create(self::PRICE2, self::CURRENCY),
+                    20,
+                    $this->getEntity(ProductUnit::class, ['code' => self::UNIT2])
+                )
+            ]
+        ];
+
+        $products = [$this->getEntity(Product::class, ['id' => 1])];
+        $this->provider->expects($this->once())
+            ->method('getTierPricesForProducts')
+            ->with($quote, $products)
+            ->willReturn($tierPrices);
+        $this->productRepository->expects($this->once())
+            ->method('findBy')
+            ->with(['id' => [1]])
+            ->willReturn($products);
+
+        $data = $this->getData(self::PRICE2, self::CURRENCY, 5, self::UNIT2);
+
+        $this->subscriber->onPreSubmit(new FormEvent($form, $data));
+    }
+
+    public function testOnPreSubmitNewQuoteWithWebsiteAndCustomerData()
+    {
+        $config = $this->createMock(FormConfigInterface::class);
+        $config->expects($this->any())->method('getOptions')->willReturn([]);
+
+        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
+        $form = $this->createMock(FormInterface::class);
+        $quote = new Quote();
+        $form->expects($this->once())->method('getData')->willReturn($quote);
+        $form->expects($this->any())->method('getConfig')->willReturn($config);
+        $form->expects($this->never())->method('addError');
+
+        $website = $this->getEntity(Website::class, ['id' => 1]);
+        $websiteRepository = $this->createMock(WebsiteRepository::class);
+        $websiteRepository->expects($this->once())
+            ->method('find')
+            ->with(1)
+            ->willReturn($website);
+
+        $customer = $this->getEntity(Customer::class, ['id' => 2]);
+        $customerRepository = $this->createMock(CustomerRepository::class);
+        $customerRepository->expects($this->once())
+            ->method('find')
+            ->with(2)
+            ->willReturn($customer);
+
+        $this->doctrineHelper->expects($this->exactly(2))
+            ->method('getEntityRepository')
+            ->withConsecutive(
+                [Website::class],
+                [Customer::class]
+            )
+            ->willReturnOnConsecutiveCalls(
+                $websiteRepository,
+                $customerRepository
+            );
+
+        $tierPrices = [
+            1 => [
+                new ProductPriceDTO(
+                    $this->getEntity(Product::class, ['id' => 1]),
+                    Price::create(self::PRICE2, self::CURRENCY),
+                    1,
+                    $this->getEntity(ProductUnit::class, ['code' => self::UNIT2])
+                ),
+                new ProductPriceDTO(
+                    $this->getEntity(Product::class, ['id' => 1]),
+                    Price::create(self::PRICE2, self::CURRENCY),
+                    20,
+                    $this->getEntity(ProductUnit::class, ['code' => self::UNIT2])
+                )
+            ]
+        ];
+
+        $products = [$this->getEntity(Product::class, ['id' => 1])];
+        $this->provider->expects($this->once())
+            ->method('getTierPricesForProducts')
+            ->with($quote, $products)
+            ->willReturn($tierPrices);
+        $this->productRepository->expects($this->once())
+            ->method('findBy')
+            ->with(['id' => [1]])
+            ->willReturn($products);
+
+        $data = $this->getData(self::PRICE2, self::CURRENCY, 5, self::UNIT2);
+        $data['website'] = 1;
+        $data['customer'] = 2;
+
+        $this->subscriber->onPreSubmit(new FormEvent($form, $data));
     }
 
     /**

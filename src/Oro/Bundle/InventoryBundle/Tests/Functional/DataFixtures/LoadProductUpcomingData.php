@@ -23,7 +23,7 @@ class LoadProductUpcomingData extends AbstractFixture implements DependentFixtur
         ],
         LoadCategoryData::THIRD_LEVEL2 => [
             ProductUpcomingProvider::IS_UPCOMING => true,
-            ProductUpcomingProvider::AVAILABILITY_DATE => '2060-10-10'
+            ProductUpcomingProvider::AVAILABILITY_DATE => '2000-10-10'
         ]
     ];
 
@@ -40,10 +40,6 @@ class LoadProductUpcomingData extends AbstractFixture implements DependentFixtur
             ProductUpcomingProvider::IS_UPCOMING => true,
             ProductUpcomingProvider::AVAILABILITY_DATE => '1900-10-10'
         ],
-        LoadProductData::PRODUCT_4 => [
-            ProductUpcomingProvider::IS_UPCOMING => true,
-            ProductUpcomingProvider::AVAILABILITY_DATE => '2090-10-10'
-        ]
     ];
 
     /**

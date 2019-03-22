@@ -67,7 +67,7 @@ class ContentNodeControllerTest extends WebTestCase
         /** @var ContentNode $newParentContentNode */
         $newParentContentNode = $this->getReference(LoadContentNodesData::CATALOG_1_ROOT_SUBNODE_2);
 
-        $this->client->request(
+        $this->ajaxRequest(
             'PUT',
             $this->getUrl(
                 'oro_content_node_move',

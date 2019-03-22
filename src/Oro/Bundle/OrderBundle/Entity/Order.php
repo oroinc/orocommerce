@@ -12,6 +12,7 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
 use Oro\Bundle\CustomerBundle\Entity\Ownership\AuditableFrontendCustomerUserAwareTrait;
 use Oro\Bundle\EmailBundle\Model\EmailHolderInterface;
+use Oro\Bundle\EmailBundle\Model\EmailHolderNameInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
@@ -78,6 +79,7 @@ use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
 class Order extends ExtendOrder implements
     OrganizationAwareInterface,
     EmailHolderInterface,
+    EmailHolderNameInterface,
     CustomerOwnerAwareInterface,
     LineItemsAwareInterface,
     ShippingAwareInterface,
@@ -911,6 +913,21 @@ class Order extends ExtendOrder implements
     {
         if (null !== $this->getCustomerUser()) {
             return $this->getCustomerUser()->getEmail();
+        }
+
+        return '';
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getEmailHolderName()
+    {
+        if (null !== $this->getCustomerUser()) {
+            return implode(' ', [
+                $this->getCustomerUser()->getFirstName(),
+                $this->getCustomerUser()->getLastName(),
+            ]);
         }
 
         return '';

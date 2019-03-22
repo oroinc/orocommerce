@@ -28,7 +28,7 @@ class PaymentMethodsConfigsRuleControllerTest extends WebTestCase
         /** @var PaymentMethodsConfigsRule $paymentRule */
         $paymentRule = $this->getReference('payment.payment_methods_configs_rule.1');
         $this->client->request(
-            'GET',
+            'POST',
             $this->getUrl('oro_api_disable_paymentmethodsconfigsrules', ['id' => $paymentRule->getId()]),
             [],
             [],
@@ -50,7 +50,7 @@ class PaymentMethodsConfigsRuleControllerTest extends WebTestCase
         /** @var PaymentMethodsConfigsRule $paymentRule */
         $paymentRule = $this->getReference('payment.payment_methods_configs_rule.1');
         $this->client->request(
-            'GET',
+            'POST',
             $this->getUrl('oro_api_enable_paymentmethodsconfigsrules', ['id' => $paymentRule->getId()]),
             [],
             [],

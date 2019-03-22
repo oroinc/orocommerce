@@ -11,6 +11,11 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
+/**
+ * Provides information on product's upcoming status and availability date.
+ *
+ * @deprecated to be removed in 4.0. Use UpcomingProductProvider instead.
+ */
 class ProductUpcomingProvider
 {
     const IS_UPCOMING = 'isUpcoming';

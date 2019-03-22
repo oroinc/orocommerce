@@ -119,6 +119,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
     public function testPreUpdate()
     {
         $product = new Product();
+        $product->setSku('sample-sku');
         $product->setType(Product::TYPE_SIMPLE);
         $product->setVariantFields(['field']);
         $product->addVariantLink(new ProductVariantLink(new Product(), new Product()));
@@ -128,6 +129,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
 
         $this->assertInstanceOf('\DateTime', $product->getUpdatedAt());
         $this->assertCount(0, $product->getVariantFields());
+        $this->assertEquals('SAMPLE-SKU', $product->getSkuUppercase());
     }
 
     public function testPreUpdateWithoutDefaultName()

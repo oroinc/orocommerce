@@ -22,8 +22,9 @@ oro_behat_extension:
       options:
         mapping:
           Visibility To All:
-            locator: '#product-visibility-all select'
-            type: css
+            # Locate Visibility To All select that is inside active tab (multi-website) or first one that is not inside any tabs (single website)
+            locator: '//select[@data-name="field__all" and (ancestor::div[(contains(@class, "tab-pane") and contains(@class, "active"))] or ancestor::form[@name="oro_scoped_data_type" and not(descendant::div[contains(@class, "tab-pane") and descendant::select[@data-name="field__all"]])])]'
+            type: xpath
           Visibility To Customers First:
             locator: '#product-visibility-customer tr:contains(first) .grid-body-cell-visibility select'
             type: css

@@ -19,6 +19,7 @@ define(function(require) {
             createNewButtonTemplate: '',
             removeButtonTemplate: '',
             shoppingListCreateEnabled: true,
+            showSingleAddToShoppingListButton: true,
             buttonsSelector: '.add-to-shopping-list-button',
             quantityField: '[data-name="field__quantity"]',
             messages: {
@@ -150,6 +151,10 @@ define(function(require) {
             var buttons = [];
 
             if (!this.shoppingListCollection.length) {
+                if (!this.options.showSingleAddToShoppingListButton) {
+                    return [];
+                }
+
                 var $addNewButton = $(this.options.buttonTemplate({
                     id: null,
                     label: _.__('oro.shoppinglist.entity_label')

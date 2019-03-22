@@ -8,12 +8,16 @@ use Oro\Bundle\PaymentBundle\Form\Handler\PaymentMethodsConfigsRuleHandler;
 use Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodsConfigsRuleType;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\SecurityBundle\Annotation\CsrfProtection;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * Payment Methods Configs Rule Controller
+ */
 class PaymentMethodsConfigsRuleController extends Controller
 {
     /**
@@ -125,6 +129,8 @@ class PaymentMethodsConfigsRuleController extends Controller
      *     permission="EDIT",
      *     class="OroPaymentBundle:PaymentMethodsConfigsRule"
      * )
+     * @CsrfProtection()
+     *
      * @param string $gridName
      * @param string $actionName
      * @param Request $request

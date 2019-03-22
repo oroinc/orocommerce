@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Functional;
 
-use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
 use Oro\Bundle\FrontendBundle\Tests\Functional\FrontendActionTestCase;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData as LoadBaseCustomerUserData;
@@ -91,7 +90,7 @@ class ShoppingListFrontendActionsTest extends FrontendActionTestCase
         $link = $crawler->selectLink('Create Order');
         $this->assertCount(2, $link);
         $this->assertNotEmpty($link->attr('data-transition-url'));
-        $this->client->request('GET', $link->attr('data-transition-url'));
+        $this->ajaxRequest('POST', $link->attr('data-transition-url'));
 
         $this->assertJsonResponseStatusCodeEquals($this->client->getResponse(), 200);
 

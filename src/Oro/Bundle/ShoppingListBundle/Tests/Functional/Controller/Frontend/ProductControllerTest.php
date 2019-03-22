@@ -63,7 +63,7 @@ class ProductControllerTest extends WebTestCase
 
         $tokenManager = $this->getContainer()->get('security.csrf.token_manager');
 
-        $this->client->request(
+        $this->ajaxRequest(
             'POST',
             $this->getUrl(
                 'oro_shopping_list_frontend_add_product',

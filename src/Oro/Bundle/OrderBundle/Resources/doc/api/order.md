@@ -43,12 +43,6 @@ Example:
           "id": "18"
         }
       },
-      "website": {
-        "data": {
-          "type": "websites",
-          "id": "1"
-        }
-      },
       "lineItems": {
         "data": [
           {
@@ -91,12 +85,6 @@ Example:
       "shipUntil": "2017-08-15"
     },
     "relationships": {      
-      "website": {
-        "data": {
-          "type": "websites",
-          "id": "1"
-        }
-      },
       "lineItems": {
         "data": [
           {
@@ -508,33 +496,6 @@ Example:
       "id": "3"
     }
   ]
-}
-```
-{@/request}
-
-### website
-
-#### get_subresource
-
-Retrieve a record of website assigned to a specific order record.
-
-#### get_relationship
-
-Retrieve ID of website record assigned to a specific order record.
-
-#### update_relationship
-
-Replace website assigned to a specific order record.
-
-{@request:json_api}
-Example:
-
-```JSON
-{
-  "data": {
-    "type": "websites",
-    "id": "1"
-  }
 }
 ```
 {@/request}
