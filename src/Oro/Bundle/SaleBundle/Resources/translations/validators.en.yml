@@ -16,4 +16,4 @@ oro:
                     blank: 'Please enter valid quantity'
                 quantity:
                     equal: 'Quantity should be equal to offered quantity'
-                    less: 'Quantity should be grater than or equal to offered quantity'
+                    less: 'Quantity should be greater than or equal to offered quantity'
