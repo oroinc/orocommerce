@@ -66,7 +66,9 @@ system_configuration:
                 scale: 1
                 constraints:
                     - NotBlank: ~
-                    - Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
+                    - Oro\Bundle\ValidationBundle\Validator\Constraints\NumericRange:
+                        min: -100000000
+                        max: 100000000
         oro_inventory.low_inventory_threshold:
             data_type: decimal
             type: Symfony\Component\Form\Extension\Core\Type\NumberType
@@ -78,7 +80,9 @@ system_configuration:
                 scale: 1
                 constraints:
                     - NotBlank: ~
-                    - Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
+                    - Oro\Bundle\ValidationBundle\Validator\Constraints\NumericRange:
+                        min: -100000000
+                        max: 100000000
         oro_inventory.minimum_quantity_to_order:
             data_type: decimal
             type: Symfony\Component\Form\Extension\Core\Type\NumberType
@@ -89,7 +93,9 @@ system_configuration:
                 required: false
                 scale: 2
                 constraints:
-                    - Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
+                    - Oro\Bundle\ValidationBundle\Validator\Constraints\NumericRange:
+                        min: -100000000
+                        max: 100000000
         oro_inventory.maximum_quantity_to_order:
             data_type: decimal
             type: Symfony\Component\Form\Extension\Core\Type\NumberType
@@ -100,7 +106,9 @@ system_configuration:
                 required: false
                 scale: 2
                 constraints:
-                    - Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
+                    - Oro\Bundle\ValidationBundle\Validator\Constraints\NumericRange:
+                        min: -100000000
+                        max: 100000000
         oro_inventory.hide_labels_past_availability_date:
             data_type: boolean
             type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
