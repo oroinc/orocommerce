@@ -1,0 +1,35 @@
+/* @theme: admin.oro; */
+
+.rfp-lineitem-requested {
+    td,
+    th {
+        &:first-child {
+            padding-#{$start}: $content-padding-medium;
+        }
+
+        &:last-child {
+            padding-#{$end}: $content-padding-medium;
+        }
+    }
+
+    th {
+        padding: (($content-padding-medium - 1) * 2) $content-padding-small;
+    }
+
+    td {
+        padding: $content-padding-medium $content-padding-small;
+    }
+
+    .rfp-lineitem-requested-quantity,
+    .rfp-lineitem-requested-unit,
+    .rfp-lineitem-requested-price  {
+        input[type=text],
+        select {
+            min-width: 100%;
+        }
+    }
+
+    .rfp-lineitem-requested-remove {
+        width: $btn-icon-mobile-width + $content-padding-medium + $content-padding-small;
+    }
+}
