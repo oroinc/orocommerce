@@ -5,7 +5,7 @@ namespace Oro\Bundle\InventoryBundle\EventListener;
 use Oro\Bundle\InventoryBundle\Provider\UpcomingProductProvider;
 use Oro\Bundle\ProductBundle\ImportExport\Event\ProductNormalizerEvent;
 
-/** This event listener normalizes and denormalizes 'isUpcoming' field data during product import/export */
+/** This event listener normalizes and denormalizes 'availabilityDate' field data during product import/export */
 class ProductNormalizerEventListener
 {
     /**
@@ -29,7 +29,6 @@ class ProductNormalizerEventListener
         $object = $event->getProduct();
         if ($this->productUpcomingProvider->isUpcoming($object)) {
             $data = $event->getPlainData();
-            $data[UpcomingProductProvider::IS_UPCOMING] = '1';
             $date = $this->productUpcomingProvider->getAvailabilityDate($object);
             if ($date) {
                 $data['availability_date'] = $date->format('Y-m-d\TH:i:sO');
