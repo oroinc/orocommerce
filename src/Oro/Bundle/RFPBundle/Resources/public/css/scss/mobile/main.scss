@@ -1,0 +1,8 @@
+/* @theme: admin.oro; */
+
+.mobile-version {
+    @import "oroui/css/scss/mobile/variables/variables";
+    @import "oroui/css/scss/mixins";
+
+    @import "rfp";
+}
