@@ -235,7 +235,8 @@ td.order-discount-item-remove {
         }
 
         input {
-            width: ($field-width - 73px);
+            width: auto;
+            flex-grow: 1;
             margin-right: -2px;
         }
 
