@@ -91,6 +91,15 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
         'featured' => '',
         'newArrival' => '',
         'availability_date' => '',
+        'backOrder.value' => '',
+        'decrementQuantity.value' => '',
+        'highlightLowInventory.value' => '',
+        'inventoryThreshold.value' => '',
+        'lowInventoryThreshold.value' => '',
+        'manageInventory.value' => '',
+        'maximumQuantityToOrder.value' => '',
+        'minimumQuantityToOrder.value' => '',
+        'isUpcoming.value' => '',
     ];
 
     /**

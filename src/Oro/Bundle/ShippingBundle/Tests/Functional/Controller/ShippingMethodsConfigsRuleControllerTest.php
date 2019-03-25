@@ -416,7 +416,7 @@ class ShippingMethodsConfigsRuleControllerTest extends WebTestCase
                 )
             ]
         );
-        $this->client->request('POST', $url);
+        $this->ajaxRequest('POST', $url);
         $result = $this->client->getResponse();
         $data = json_decode($result->getContent(), true);
         $this->assertTrue($data['successful']);
@@ -458,7 +458,7 @@ class ShippingMethodsConfigsRuleControllerTest extends WebTestCase
                 )
             ]
         );
-        $this->client->request('POST', $url);
+        $this->ajaxRequest('POST', $url);
         $result = $this->client->getResponse();
         $data = json_decode($result->getContent(), true);
         $this->assertTrue($data['successful']);

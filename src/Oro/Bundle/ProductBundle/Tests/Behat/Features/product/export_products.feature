@@ -10,8 +10,7 @@ Feature: Export Products
     And I go to Products/ Products
     When I click "Export"
     Then I should see "Export started successfully. You will receive email notification upon completion." flash message
-    #todo: to be implemented in scope of CRM-7599.
-    #And Email should contains the following "Export performed successfully. 5 products were exported. Download" text
+    And Email should contains the following "Export performed successfully. 5 products were exported. Download" text
     And Exported file with Products contains at least the following data:
       | sku   | names.default.value | status   |
       | PSKU1 | Product 1           | enabled  |

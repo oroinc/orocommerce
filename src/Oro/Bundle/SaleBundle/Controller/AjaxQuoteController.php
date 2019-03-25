@@ -12,6 +12,7 @@ use Oro\Bundle\SaleBundle\Event\QuoteEvent;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteType;
 use Oro\Bundle\SaleBundle\Model\QuoteRequestHandler;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\SecurityBundle\Annotation\CsrfProtection;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -73,6 +74,8 @@ class AjaxQuoteController extends Controller
     /**
      * @Route("/entry-point/{id}", name="oro_quote_entry_point", defaults={"id" = 0})
      * @AclAncestor("oro_quote_update")
+     * @Method("POST")
+     * @CsrfProtection()
      *
      * @param Request    $request
      * @param Quote|null $quote

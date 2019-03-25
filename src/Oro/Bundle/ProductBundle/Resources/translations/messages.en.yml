@@ -176,6 +176,7 @@ oro:
         productunitprecision:
             entity_label: 'Product Unit Precision'
             entity_plural_label: 'Product Unit Precisions'
+            entity_description: 'Precision represents a number of digits after the decimal point for the number of products that a customer can order or add to the shopping list.'
             id.label: 'Id'
             product:
                 label: 'Product'

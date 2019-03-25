@@ -90,7 +90,7 @@ class ShoppingListFrontendActionsTest extends FrontendActionTestCase
         $link = $crawler->selectLink('Create Order');
         $this->assertCount(2, $link);
         $this->assertNotEmpty($link->attr('data-transition-url'));
-        $this->client->request('GET', $link->attr('data-transition-url'));
+        $this->ajaxRequest('POST', $link->attr('data-transition-url'));
 
         $this->assertJsonResponseStatusCodeEquals($this->client->getResponse(), 200);
 

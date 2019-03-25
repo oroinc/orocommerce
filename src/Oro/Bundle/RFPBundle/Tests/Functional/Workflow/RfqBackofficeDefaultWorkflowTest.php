@@ -314,8 +314,8 @@ class RfqBackofficeDefaultWorkflowTest extends WebTestCase
         $link = $crawler->selectLink($linkTitle);
         $this->assertNotEmpty($link, 'Transit button not found');
 
-        $this->client->request(
-            'GET',
+        $this->ajaxRequest(
+            'POST',
             $link->attr('data-transition-url'),
             [],
             [],

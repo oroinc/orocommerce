@@ -20,6 +20,7 @@ oro_behat_extension:
                 - OroEmailBundle::EmailContext
                 - OroShippingBundle::SingleCurrencyContext
                 - OroCustomerBundle::FrontendGridContext
+                - OroQueryDesignerBundle::QueryDesignerContext
             paths:
                 - '@OroRFPBundle/Tests/Behat/Features'
 
