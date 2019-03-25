@@ -36,7 +36,6 @@ class ProductNormalizerEventListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener->normalize($event);
 
         $this->assertEquals([
-            'isUpcoming' => '1',
             'availability_date' => $date->format('Y-m-d\TH:i:sO')
         ], $event->getPlainData());
     }
