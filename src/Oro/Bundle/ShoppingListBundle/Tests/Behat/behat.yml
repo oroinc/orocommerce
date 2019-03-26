@@ -222,11 +222,6 @@ oro_behat_extension:
       selector: 'div[data-page-component-name="shopping-list-line-items-grid"]'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
 
-    Currency USD dropdown:
-      selector:
-        type: xpath
-        locator: '//div[contains(text(),"$") and @class="oro-toolbar__content"]'
-
     Default Guest Shopping List Owner:
       selector: 'input[name="shopping_list[oro_shopping_list___default_guest_shopping_list_owner][value]"]'
       class: Oro\Bundle\FormBundle\Tests\Behat\Element\Select2Entity
