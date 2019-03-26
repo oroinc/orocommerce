@@ -45,6 +45,11 @@ Feature: Product attribute float
     Given I go to Products/ Products
     When I click "Edit" on row "SKU123" in grid
     And I fill "Product Form" with:
+      | FloatField | 321,67 |
+    And I save form
+    Then I should see validation errors:
+      | FloatField | This value is not valid. |
+    When I fill "Product Form" with:
       | FloatField | 321.67 |
     And I save and close form
     Then I should see "Product has been saved" flash message
@@ -58,8 +63,17 @@ Feature: Product attribute float
     And click "Save settings"
     Then I should see "Configuration saved" flash message
     When I go to Products/ Products
-    And I click "View" on row "SKU123" in grid
-    Then I should see "321,67"
+    And I click "Edit" on row "SKU123" in grid
+    And I fill "Product Form" with:
+      | FloatField | 321.67 |
+    And I save form
+    Then I should see validation errors:
+      | FloatField | This value is not valid. |
+    When I fill "Product Form" with:
+      | FloatField | 321,67 |
+    And I save and close form
+    Then I should see "Product has been saved" flash message
+    And I should see "321,67"
 
   Scenario: Check product grid search
     Given I login as AmandaRCole@example.org buyer
