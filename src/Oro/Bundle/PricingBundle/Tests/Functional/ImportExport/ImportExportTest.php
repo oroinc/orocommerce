@@ -3,19 +3,21 @@
 namespace Oro\Bundle\PricingBundle\Tests\Functional\ImportExport;
 
 use Oro\Bundle\ImportExportBundle\Async\Export\ExportMessageProcessor;
+use Oro\Bundle\ImportExportBundle\Async\Topics as ImportExportTopics;
+use Oro\Bundle\ImportExportBundle\Configuration\ImportExportConfiguration;
 use Oro\Bundle\ImportExportBundle\Processor\ProcessorRegistry;
+use Oro\Bundle\ImportExportBundle\Tests\Functional\AbstractImportExportTest;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
 use Oro\Bundle\NotificationBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Component\MessageQueue\Transport\Null\NullMessage;
-use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Symfony\Component\DomCrawler\Form;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class ImportExportTest extends WebTestCase
+class ImportExportTest extends AbstractImportExportTest
 {
     use MessageQueueExtension;
 
@@ -31,8 +33,7 @@ class ImportExportTest extends WebTestCase
 
     protected function setUp()
     {
-        $this->initClient([], $this->generateBasicAuthHeader());
-        $this->client->useHashNavigation(true);
+        parent::setUp();
         $this->loadFixtures(
             [
                 'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices',
@@ -46,8 +47,8 @@ class ImportExportTest extends WebTestCase
     public function testShouldExportData()
     {
         $this->client->followRedirects(false);
-        $this->client->request(
-            'GET',
+        $this->ajaxRequest(
+            'POST',
             $this->getUrl(
                 'oro_importexport_export_instant',
                 [
@@ -69,14 +70,32 @@ class ImportExportTest extends WebTestCase
         $this->assertCount(9, $content);
     }
 
+    public function testCountEntitiesThatWillBeExportedInOnePriceList(): void
+    {
+        $priceListId = $this->getReference('price_list_1')->getId();
+        $this->assertPreExportActionExecuted($this->getExportImportConfiguration());
+        $preExportMessageData = $this->getOneSentMessageWithTopic(ImportExportTopics::PRE_EXPORT);
+
+        $this->assertMessageProcessorExecuted('oro_importexport.async.pre_export', $preExportMessageData);
+        $this->assertMessageSent(ImportExportTopics::EXPORT);
+
+        $exportMessageData = $this->getOneSentMessageWithTopic(ImportExportTopics::EXPORT);
+        $this->assertMessageProcessorExecuted('oro_importexport.async.export', $exportMessageData);
+
+        // We have only 8 prices that are related to the price_list_1
+        $this->assertCount(8, $exportMessageData['options']['ids']);
+        $this->assertEquals($priceListId, $exportMessageData['options']['price_list_id']);
+        $this->clearMessageCollector();
+    }
+
     public function testShouldExportCorrectDataWithRelations()
     {
         $this->markTestSkipped(
             'This test will be completely removed and replaced with a set of smaller functional tests (see BAP-13064)'
         );
         $this->client->followRedirects(false);
-        $this->client->request(
-            'GET',
+        $this->ajaxRequest(
+            'POST',
             $this->getUrl(
                 'oro_importexport_export_instant',
                 [
@@ -410,10 +429,16 @@ class ImportExportTest extends WebTestCase
     }
 
     /**
-     * @return \PHPUnit\Framework\MockObject\MockObject|SessionInterface
+     * @return ImportExportConfiguration
      */
-    private function createSessionInterfaceMock()
+    private function getExportImportConfiguration(): ImportExportConfiguration
     {
-        return $this->createMock(SessionInterface::class);
+        $priceListId = $this->getReference('price_list_1')->getId();
+
+        return new ImportExportConfiguration([
+            ImportExportConfiguration::FIELD_EXPORT_PROCESSOR_ALIAS => 'oro_pricing_product_price',
+            ImportExportConfiguration::FIELD_EXPORT_JOB_NAME => 'price_list_product_prices_export_to_csv',
+            ImportExportConfiguration::FIELD_ROUTE_OPTIONS => ['price_list_id' => $priceListId],
+        ]);
     }
 }

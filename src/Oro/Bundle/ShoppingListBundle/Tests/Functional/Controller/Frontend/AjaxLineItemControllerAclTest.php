@@ -43,8 +43,8 @@ class AjaxLineItemControllerAclTest extends WebTestCase
 
     public function testAddProductFromView()
     {
-        $this->client->request(
-            'GET',
+        $this->ajaxRequest(
+            'POST',
             $this->getUrl(
                 'oro_shopping_list_frontend_add_product',
                 [
@@ -62,7 +62,7 @@ class AjaxLineItemControllerAclTest extends WebTestCase
      */
     public function testRemoveProductFromView()
     {
-        $this->client->request(
+        $this->ajaxRequest(
             'POST',
             $this->getUrl(
                 'oro_shopping_list_frontend_remove_product',
@@ -80,8 +80,8 @@ class AjaxLineItemControllerAclTest extends WebTestCase
     {
         $this->markTestSkipped('Enable in BB-5144');
 
-        $this->client->request(
-            'GET',
+        $this->ajaxRequest(
+            'POST',
             $this->getUrl(
                 'oro_shopping_list_add_products_massaction',
                 [
@@ -99,8 +99,8 @@ class AjaxLineItemControllerAclTest extends WebTestCase
 
     public function testAddProductsToNewMassAction()
     {
-        $this->client->request(
-            'GET',
+        $this->ajaxRequest(
+            'POST',
             $this->getUrl(
                 'oro_shopping_list_add_products_to_new_massaction',
                 [

@@ -3,6 +3,7 @@
 namespace Oro\Bundle\WebCatalogBundle\Controller;
 
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\SecurityBundle\Annotation\CsrfProtection;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Oro\Bundle\WebCatalogBundle\Form\Type\ContentNodeType;
@@ -84,6 +85,7 @@ class ContentNodeController extends Controller
     /**
      * @Route("/move", name="oro_content_node_move")
      * @Method({"PUT"})
+     * @CsrfProtection()
      * @AclAncestor("oro_web_catalog_update")
      *
      * @param Request $request

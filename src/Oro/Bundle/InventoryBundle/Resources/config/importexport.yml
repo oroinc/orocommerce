@@ -123,11 +123,6 @@ services:
         tags:
             - { name: oro_importexport.configuration, alias: oro_inventory_level }
 
-    oro_inventory.event_listener.product_data_converter:
-        class: 'Oro\Bundle\InventoryBundle\EventListener\ProductDataConverterEventListener'
-        tags:
-            - { name: kernel.event_listener, event: oro_product.data_converter.backend_header, method: modifyBackendHeader }
-
     oro_inventory.event_listener.product_normalizer:
         class: 'Oro\Bundle\InventoryBundle\EventListener\ProductNormalizerEventListener'
         arguments: ['@oro_inventory.provider.upcoming_product_provider']

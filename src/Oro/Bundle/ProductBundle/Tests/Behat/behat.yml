@@ -607,7 +607,7 @@ oro_behat_extension:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
     ProductFrontendGridMassActionMenu:
-      selector: '.datagrid-massaction__dropdown-menu'
+      selector: 'div.datagrid-massaction__dropdown-menu'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
     ProductFrontendGridRow:

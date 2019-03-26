@@ -41,9 +41,14 @@ class LineItemController extends RestController implements ClassResourceInterfac
             ->find($id);
 
         $view = $this->view(null, Codes::HTTP_NO_CONTENT);
+
         if ($lineItem) {
-            $this->get('oro_shopping_list.manager.shopping_list')->removeLineItem($lineItem);
-            $success = true;
+            if (!$this->isGranted('EDIT', $lineItem->getShoppingList())) {
+                $view = $this->view(null, Codes::HTTP_FORBIDDEN);
+            } else {
+                $this->get('oro_shopping_list.manager.shopping_list')->removeLineItem($lineItem);
+                $success = true;
+            }
         }
 
         return $this->buildResponse($view, self::ACTION_DELETE, ['id' => $lineItem->getId(), 'success' => $success]);
@@ -85,6 +90,10 @@ class LineItemController extends RestController implements ClassResourceInterfac
                 );
             } else {
                 $view = $this->view($form, Codes::HTTP_BAD_REQUEST);
+            }
+
+            if (!$this->isGranted('EDIT', $entity->getShoppingList())) {
+                $view = $this->view(null, Codes::HTTP_FORBIDDEN);
             }
         } else {
             $view = $this->view(null, Codes::HTTP_NOT_FOUND);

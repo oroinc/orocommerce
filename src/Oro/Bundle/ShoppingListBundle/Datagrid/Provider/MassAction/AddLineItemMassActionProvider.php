@@ -9,6 +9,7 @@ use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListManager;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
 /**
@@ -20,28 +21,42 @@ class AddLineItemMassActionProvider implements MassActionProviderInterface
 
     use FeatureCheckerHolderTrait;
 
-    /** @var CurrentShoppingListManager */
+    /**
+     * @var CurrentShoppingListManager
+     */
     protected $currentShoppingListManager;
 
-    /** @var TranslatorInterface */
+    /**
+     * @var TranslatorInterface
+     */
     protected $translator;
 
-    /** @var TokenStorageInterface */
+    /**
+     * @var TokenStorageInterface
+     */
     protected $tokenStorage;
+
+    /**
+     * @var AuthorizationCheckerInterface
+     */
+    private $authorizationChecker;
 
     /**
      * @param CurrentShoppingListManager $currentShoppingListManager
      * @param TranslatorInterface $translator
      * @param TokenStorageInterface $tokenStorage
+     * @param AuthorizationCheckerInterface $authorizationChecker
      */
     public function __construct(
         CurrentShoppingListManager $currentShoppingListManager,
         TranslatorInterface $translator,
-        TokenStorageInterface $tokenStorage
+        TokenStorageInterface $tokenStorage,
+        AuthorizationCheckerInterface $authorizationChecker
     ) {
         $this->currentShoppingListManager = $currentShoppingListManager;
         $this->translator = $translator;
         $this->tokenStorage = $tokenStorage;
+        $this->authorizationChecker = $authorizationChecker;
     }
 
     /**
@@ -51,28 +66,30 @@ class AddLineItemMassActionProvider implements MassActionProviderInterface
     {
         $actions = [];
 
-        if ($this->isGuestCustomerUser()) {
-            $actions['current'] = $this->getConfig([
-                'label' => $this->translator->trans('oro.shoppinglist.actions.add_to_current_shopping_list'),
-                'is_current' => true
-            ]);
-        } else {
-            $shoppingLists = $this->currentShoppingListManager->getShoppingLists(['list.id' => Criteria::ASC]);
-
-            /** @var ShoppingList $shoppingList */
-            foreach ($shoppingLists as $shoppingList) {
-                $name = 'list' . $shoppingList->getId();
-
-                $actions[$name] = $this->getConfig([
-                    'label' => $this->getLabel($shoppingList),
-                    'route_parameters' => [
-                        'shoppingList' => $shoppingList->getId(),
-                    ],
+        if ($this->isEditAllowed()) {
+            if ($this->isGuestCustomerUser()) {
+                $actions['current'] = $this->getConfig([
+                    'label' => $this->translator->trans('oro.shoppinglist.actions.add_to_current_shopping_list'),
+                    'is_current' => true
                 ]);
+            } else {
+                $shoppingLists = $this->currentShoppingListManager->getShoppingLists(['list.id' => Criteria::ASC]);
+
+                /** @var ShoppingList $shoppingList */
+                foreach ($shoppingLists as $shoppingList) {
+                    $name = 'list' . $shoppingList->getId();
+
+                    $actions[$name] = $this->getConfig([
+                        'label' => $this->getLabel($shoppingList),
+                        'route_parameters' => [
+                            'shoppingList' => $shoppingList->getId(),
+                        ],
+                    ]);
+                }
             }
         }
 
-        if ($this->isFeaturesEnabled()) {
+        if ($this->isFeaturesEnabled() && $this->isCreateAllowed()) {
             $actions['new'] = $this->getConfig([
                 'type' => 'window',
                 'label' => $this->translator->trans('oro.shoppinglist.product.create_new_shopping_list.label'),
@@ -148,5 +165,21 @@ class AddLineItemMassActionProvider implements MassActionProviderInterface
     private function isGuestCustomerUser(): bool
     {
         return $this->tokenStorage->getToken() instanceof AnonymousCustomerUserToken;
+    }
+
+    /**
+     * @return bool
+     */
+    private function isCreateAllowed(): bool
+    {
+        return $this->authorizationChecker->isGranted('oro_shopping_list_frontend_create');
+    }
+
+    /**
+     * @return bool
+     */
+    private function isEditAllowed(): bool
+    {
+        return $this->authorizationChecker->isGranted('oro_shopping_list_frontend_update');
     }
 }

@@ -21,8 +21,8 @@ class AjaxPriceListControllerTest extends WebTestCase
         /** @var PriceList $priceList */
         $priceList = $this->getReference('price_list_1');
 
-        $this->client->request(
-            'GET',
+        $this->ajaxRequest(
+            'POST',
             $this->getUrl('oro_pricing_price_list_default', ['id' => $priceList->getId()])
         );
 

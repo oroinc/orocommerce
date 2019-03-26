@@ -5,6 +5,7 @@ namespace Oro\Bundle\ShippingBundle\Controller;
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionDispatcher;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\SecurityBundle\Annotation\CsrfProtection;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 use Oro\Bundle\ShippingBundle\Form\Handler\ShippingMethodsConfigsRuleHandler;
 use Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodsConfigsRuleType;
@@ -14,6 +15,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * Shipping Methods Configs Rule Controller
+ */
 class ShippingMethodsConfigsRuleController extends Controller
 {
     /**
@@ -125,6 +129,8 @@ class ShippingMethodsConfigsRuleController extends Controller
      *     permission="EDIT",
      *     class="OroShippingBundle:ShippingMethodsConfigsRule"
      * )
+     * @CsrfProtection()
+     *
      * @param string $gridName
      * @param string $actionName
      * @param Request $request

@@ -59,7 +59,9 @@ class AddUpcomingOptions implements Migration, ExtendExtensionAwareInterface
             [
                 CategoryFallbackProvider::FALLBACK_ID => ['fieldName' => UpcomingProductProvider::IS_UPCOMING],
             ],
-            EntityFallbackResolver::TYPE_BOOLEAN
+            [
+                'fallback' => ['fallbackType' => EntityFallbackResolver::TYPE_BOOLEAN],
+            ]
         );
     }
 
@@ -77,7 +79,9 @@ class AddUpcomingOptions implements Migration, ExtendExtensionAwareInterface
             [
                 ParentCategoryFallbackProvider::FALLBACK_ID => ['fieldName' => UpcomingProductProvider::IS_UPCOMING],
             ],
-            EntityFallbackResolver::TYPE_BOOLEAN
+            [
+                'fallback' => ['fallbackType' => EntityFallbackResolver::TYPE_BOOLEAN],
+            ]
         );
     }
 

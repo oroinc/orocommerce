@@ -387,7 +387,7 @@ class PaymentMethodsConfigsRuleControllerTest extends WebTestCase
                 )
             ]
         );
-        $this->client->request('POST', $url);
+        $this->ajaxRequest('POST', $url);
         $result = $this->client->getResponse();
         $data = json_decode($result->getContent(), true);
         static::assertTrue($data['successful']);
@@ -423,7 +423,7 @@ class PaymentMethodsConfigsRuleControllerTest extends WebTestCase
                 )
             ]
         );
-        $this->client->request('POST', $url);
+        $this->ajaxRequest('POST', $url);
         $result = $this->client->getResponse();
         $data = json_decode($result->getContent(), true);
         static::assertTrue($data['successful']);

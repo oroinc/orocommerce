@@ -29,6 +29,15 @@ class LoadUserData extends AbstractLoadMultipleUserData implements ContainerAwar
                     ],
                 ],
             ],
+            [
+                'class' => 'oro_integration.entity.class',
+                'acls'  => [
+                    [
+                        AbstractLoadMultipleUserData::ACL_PERMISSION => 'VIEW',
+                        AbstractLoadMultipleUserData::ACL_LEVEL => 'SYSTEM',
+                    ],
+                ],
+            ],
         ],
         self::ROLE_EDIT => [
             [
@@ -72,7 +81,7 @@ class LoadUserData extends AbstractLoadMultipleUserData implements ContainerAwar
             'password'  => self::USER_EDITOR,
             'firstname' => 'ShippingUser2FN',
             'lastname'  => 'ShippingUser2LN',
-            'roles'     => [self::ROLE_EDIT],
+            'roles'     => [self::ROLE_VIEW, self::ROLE_EDIT],
         ],
         [
             'email'     => 'shipping-user-viewer-creator@example.com',

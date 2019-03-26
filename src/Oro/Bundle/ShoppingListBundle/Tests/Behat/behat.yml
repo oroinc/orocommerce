@@ -234,6 +234,9 @@ oro_behat_extension:
     Customer Field:
       selector: '.select2-container.input-widget'
 
+    Customer Select Field:
+      selector: 'select[name="oro_customer_frontend_owner_select"]'
+
     Shopping List Product Note:
       selector: '[name="copy_paste_order"]'
 

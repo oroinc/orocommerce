@@ -5,12 +5,13 @@ namespace Oro\Bundle\InventoryBundle\Form\Extension;
 use Oro\Bundle\CatalogBundle\Form\Extension\AbstractFallbackCategoryTypeExtension;
 use Oro\Bundle\EntityBundle\Form\Type\EntityFieldFallbackValueType;
 use Oro\Bundle\InventoryBundle\Inventory\LowInventoryProvider;
-use Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Validator\Constraints\NotBlank;
 
+/**
+ * This extension adds 'lowInventoryThreshold' field to category form
+ */
 class CategoryLowInventoryThresholdFormExtension extends AbstractFallbackCategoryTypeExtension
 {
     /**
@@ -36,12 +37,6 @@ class CategoryLowInventoryThresholdFormExtension extends AbstractFallbackCategor
             [
                 'label' => 'oro.inventory.low_inventory_threshold.label',
                 'required' => true,
-                'value_options' => [
-                    'constraints' => [
-                        new Decimal(),
-                        new NotBlank(),
-                    ]
-                ]
             ]
         );
         $builder->addEventListener(

@@ -532,7 +532,7 @@ datagrids:
                         dialogOptions:
                             width: 650
             delete:
-                type:         ajax
+                type:         ajaxdelete
                 acl_resource: oro_pricing_product_price_delete
                 label:        oro.grid.action.delete
                 icon:         trash

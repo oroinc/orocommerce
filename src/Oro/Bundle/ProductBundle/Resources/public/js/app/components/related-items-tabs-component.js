@@ -62,13 +62,8 @@ define(function(require) {
 
         _showGrid: function(gridName) {
             var $grid = this._getGrid(gridName);
-            var $mCustomScrollContainer = $grid.find('.grid-scrollable-container');
 
             $grid.show();
-
-            if ($mCustomScrollContainer.length > 0) {
-                $mCustomScrollContainer.mCustomScrollbar('update');
-            }
         },
 
         _hideGrid: function(gridName) {
