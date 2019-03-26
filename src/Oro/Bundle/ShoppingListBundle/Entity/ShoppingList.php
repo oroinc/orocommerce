@@ -71,6 +71,7 @@ use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
  *      }
  * )
  * @ORM\HasLifecycleCallbacks()
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class ShoppingList extends ExtendShoppingList implements
     OrganizationAwareInterface,
@@ -446,5 +447,14 @@ class ShoppingList extends ExtendShoppingList implements
             'label' => $this->getLabel(),
             'is_current' => $this->isCurrent(),
         ];
+    }
+
+    public function __clone()
+    {
+        if ($this->id) {
+            $this->id = null;
+            $this->lineItems = clone $this->lineItems;
+            $this->totals = clone $this->totals;
+        }
     }
 }

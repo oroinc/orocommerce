@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Layout\DataProvider;
 
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
@@ -127,8 +128,13 @@ class MatrixGridOrderProviderTest extends \PHPUnit\Framework\TestCase
         $collection->rows[1]->columns[0]->quantity = 4;
         $collection->rows[1]->columns[0]->product = $simpleProduct10;
 
+        $customerUser = $this->getEntity(CustomerUser::class);
+
         /** @var ShoppingList $shoppingList */
-        $shoppingList = $this->getEntity(ShoppingList::class);
+        $shoppingList = $this->getEntity(ShoppingList::class, [
+            'customerUser' => $customerUser,
+            'lineItems' => [$this->getEntity(LineItem::class)]
+        ]);
 
         $this->currentShoppingListManager->expects($this->never())
             ->method('getCurrent');
@@ -150,6 +156,7 @@ class MatrixGridOrderProviderTest extends \PHPUnit\Framework\TestCase
         ]);
 
         $tempShoppingList = $this->getEntity(ShoppingList::class, [
+            'customerUser' => $customerUser,
             'lineItems' => [$lineItem00, $lineItem10]
         ]);
 
@@ -187,8 +194,13 @@ class MatrixGridOrderProviderTest extends \PHPUnit\Framework\TestCase
         $collection->rows[1]->columns[0]->quantity = 4;
         $collection->rows[1]->columns[0]->product = $simpleProduct10;
 
+        $customerUser = $this->getEntity(CustomerUser::class);
+
         /** @var ShoppingList $shoppingList */
-        $shoppingList = $this->getEntity(ShoppingList::class);
+        $shoppingList = $this->getEntity(ShoppingList::class, [
+            'customerUser' => $customerUser,
+            'lineItems' => [$this->getEntity(LineItem::class)]
+        ]);
 
         $this->currentShoppingListManager->expects($this->once())
             ->method('getCurrent')
@@ -206,6 +218,7 @@ class MatrixGridOrderProviderTest extends \PHPUnit\Framework\TestCase
         ]);
 
         $tempShoppingList = $this->getEntity(ShoppingList::class, [
+            'customerUser' => $customerUser,
             'lineItems' => [$lineItem00, $lineItem10]
         ]);
 
@@ -261,7 +274,7 @@ class MatrixGridOrderProviderTest extends \PHPUnit\Framework\TestCase
             'quantity' => 0
         ]);
 
-        $shoppingList = $this->getEntity(ShoppingList::class, [
+        $tempShoppingList = $this->getEntity(ShoppingList::class, [
             'lineItems' => [$lineItem00, $lineItem10]
         ]);
 
@@ -270,12 +283,17 @@ class MatrixGridOrderProviderTest extends \PHPUnit\Framework\TestCase
 
         $this->totalProvider->expects($this->once())
             ->method('getTotal')
-            ->with($shoppingList)
+            ->with($tempShoppingList)
             ->willReturn($subtotal);
 
         $this->numberFormatter->expects($this->once())
             ->method('formatCurrency')
             ->with(0);
+
+        $this->currentShoppingListManager
+            ->expects($this->once())
+            ->method('getCurrent')
+            ->willReturn(null);
 
         $this->provider->getTotalPriceFormatted($product);
     }

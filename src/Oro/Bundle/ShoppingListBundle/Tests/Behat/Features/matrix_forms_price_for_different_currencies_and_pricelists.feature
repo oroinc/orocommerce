@@ -1,10 +1,11 @@
 @ticket-BB-14915
+@ticket-BB-15680
 @regression
 @fixture-OroCustomerBundle:CustomerUserAmandaRCole.yml
 Feature: Matrix forms price for different currencies
   In order to check total price is calculated and displayed correctly on matrix form
   As a buyer
-  I want the matrix form to display total price correctly when I change currency
+  I want the matrix form to display total price correctly depending on currency and price list
 
   Scenario: Feature background
     Given sessions active:
@@ -134,10 +135,60 @@ Feature: Matrix forms price for different currencies
       | Value 1 | -       | 1       |
       | Value 2 | 1       | -       |
     Then I should see "Total QTY 2 | Total $24.00" in the "Matrix Grid Form" element
-    And I click on "Currency USD dropdown"
+    When I click "Currency Switcher"
     And I click "Euro"
     When I fill "Matrix Grid Form" with:
       |         | Value 1 | Value 2 |
       | Value 1 | -       | 1       |
       | Value 2 | 1       | -       |
     Then I should see "Total QTY 2 | Total €20.00" in the "Matrix Grid Form" element
+
+  Scenario: Create custom price list and attach to customer
+    Given I proceed as the Admin
+
+    When I go to Sales/ Price Lists
+    And I click "Create Price List"
+    And I fill form with:
+      | Name       | Customer Price List |
+      | Currencies | US Dollar ($)       |
+      | Active     | true                |
+    And I save and close form
+    Then I should see "Price List has been saved" flash message
+
+    When I click "Add Product Price"
+    And fill "Add Product Price Form" with:
+      | Product  | Simple_1 |
+      | Quantity | 1        |
+      | Unit     | item     |
+      | Price    | 7        |
+    And click "Save"
+    Then I should see "Product Price has been added" flash message
+
+    When I click "Add Product Price"
+    And fill "Add Product Price Form" with:
+      | Product  | Simple_2 |
+      | Quantity | 1        |
+      | Unit     | item     |
+      | Price    | 5        |
+    And click "Save"
+    Then I should see "Product Price has been added" flash message
+
+    When I go to Customers/ Customers
+    And click edit "AmandaRCole" in grid
+    And fill "Customer Form" with:
+      | Price List | Customer Price List |
+    And save and close form
+    Then should see "Customer has been saved" flash message
+
+  Scenario: Check custom price list is successfully applied
+    Given I proceed as the User
+    And type "Simple_3" in "search"
+    And click "Search Button"
+    And click "View Details" for "Simple_3" product
+    When I click "Currency Switcher"
+    And I click "US Dollar"
+    When I fill "Matrix Grid Form" with:
+      |         | Value 1 | Value 2 |
+      | Value 1 | -       | 1       |
+      | Value 2 | 1       | -       |
+    Then I should see "Total QTY 2 | Total $12.00" in the "Matrix Grid Form" element
