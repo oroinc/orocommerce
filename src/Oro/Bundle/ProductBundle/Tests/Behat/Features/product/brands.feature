@@ -141,12 +141,33 @@ Feature: Brands
     And I save and close form
     Then I should see "Product has been saved" flash message
 
-  Scenario: Check Brand visibility for the third product with changed language
+  Scenario: Check Brand label is visible
     Given I proceed as the User
     And I signed in as NancyJSallee@example.org on the store frontend
     When I click "NewCategory"
     And I click "View Details" for "PSKU3" product
-    Then I should see "ACME (Default locale)"
+    Then I should see "Brand: ACME (Default locale)"
+
+  Scenario: Check Brand visibility for the third product with changed language
     When I click on "Localization dropdown"
     And I click "Zulu"
+    Then I should see "Brand: ACME (Zulu locale)"
+
+  Scenario: Hide brand label
+    Given I proceed as the Admin
+    And go to Products/ Product Attributes
+    And I click on Brand in grid
+    When fill form with:
+      | Label | _Brand |
+    And I save and close form
+    Then I should see "Translation cache update is required. Click here to update" flash message
+    When I go to System / Localization / Translations
+    And I click "Update Cache"
+    Then I should see "Translation Cache has been updated" flash message
+
+  Scenario: Check Brand label is not visible
+    Given I proceed as the User
+    When I click "NewCategory"
+    And I click "View Details" for "PSKU3" product
+    Then I should not see "Brand: ACME (Zulu locale)"
     Then I should see "ACME (Zulu locale)"
