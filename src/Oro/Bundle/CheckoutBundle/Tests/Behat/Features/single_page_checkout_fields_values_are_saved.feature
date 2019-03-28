@@ -40,6 +40,15 @@ Feature: Single Page Checkout Fields Values Are Saved
       | Notes                  | Some Notes  |
       | Do not ship later than | Jul 1, 2018 |
 
+  Scenario: Check that "PO Number", "Notes" and "Do not ship later than" fields are not cleared after checkout is started from shopping list again
+    Given I click "Account"
+    And I open page with shopping list List 1
+    When I click "Create Order"
+    Then "Checkout Order Review Form" must contains values:
+      | PO Number              | PO15        |
+      | Notes                  | Some Notes  |
+      | Do not ship later than | Jul 1, 2018 |
+
   Scenario: Check that "PO Number", "Notes" and "Do not ship later than" fields are not cleared after user returns to the checkout from other page
     Given I click "Account"
     And click "Orders"
