@@ -20,12 +20,26 @@
         padding: $content-padding-medium $content-padding-small;
     }
 
-    .rfp-lineitem-requested-quantity,
-    .rfp-lineitem-requested-unit,
-    .rfp-lineitem-requested-price  {
-        input[type=text],
+    .rfp-lineitem-requested-quantity {
+        width: $rfp-lineitem-requested-quantity-width;
+    }
+
+    .rfp-lineitem-requested-unit {
+        width: $rfp-lineitem-requested-unit-width;
+    }
+
+    .rfp-lineitem-requested-currency {
+        width: $rfp-lineitem-requested-currency-width;
+    }
+
+    td.rfp-lineitem-requested-currency,
+    td.rfp-lineitem-requested-quantity,
+    td.rfp-lineitem-requested-unit,
+    td.rfp-lineitem-requested-price  {
+        input,
         select {
             min-width: 100%;
+            width: 100%;
         }
     }
 
