@@ -174,3 +174,10 @@ services:
             - '@translator'
         tags:
             - { name: oro_importexport.configuration, alias: oro_product_index }
+
+    oro_product.event_listener.product_strategy.empty_slug:
+        class: Oro\Bundle\ProductBundle\EventListener\EmptySlugProductStrategyEventListener
+        arguments:
+            - '@oro_entity_config.slug.generator'
+        tags:
+            - { name: kernel.event_listener, event: oro_product.strategy.process_after, method: onProcessAfter }
