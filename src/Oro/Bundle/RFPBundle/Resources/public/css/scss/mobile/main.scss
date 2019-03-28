@@ -3,6 +3,7 @@
 .mobile-version {
     @import "oroui/css/scss/mobile/variables/variables";
     @import "oroui/css/scss/mixins";
+    @import "variables";
 
     @import "rfp";
 }
