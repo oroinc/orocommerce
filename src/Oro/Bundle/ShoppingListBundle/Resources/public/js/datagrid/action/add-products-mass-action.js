@@ -132,7 +132,7 @@ define(function(require) {
                 var productModel = datagrid.collection.get(product.id);
 
                 if (productModel) {
-                    newModels.push(productModel)
+                    newModels.push(productModel);
                 }
 
                 return newModels;
