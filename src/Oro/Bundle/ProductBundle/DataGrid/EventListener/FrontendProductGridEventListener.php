@@ -111,16 +111,15 @@ class FrontendProductGridEventListener
     ) {
         $name = $attributeType->getFilterableFieldName($attribute);
         $alias = $this->clearName($name);
+        $type = $attributeType->getFilterStorageFieldType();
 
         $params = [
             'type' => $attributeType->getFilterType(),
-            'data_name' => sprintf('%s.%s', $attributeType->getFilterStorageFieldType(), $name),
+            'data_name' => sprintf('%s.%s', $type, $name),
             'label' => $label
         ];
 
-        if ($attributeType->getFilterStorageFieldType() &&
-            $this->configurationProvider->isAttributeFilterByExactValue($attribute)
-        ) {
+        if ($type && $this->configurationProvider->isAttributeFilterByExactValue($attribute)) {
             $params['force_like'] = true;
         }
 
@@ -139,13 +138,14 @@ class FrontendProductGridEventListener
         array $params
     ) {
         $fieldType = $attributeType->getFilterStorageFieldType();
+
         $entityFilterTypes = [
             SearchableAttributeTypeInterface::FILTER_TYPE_ENUM,
             SearchableAttributeTypeInterface::FILTER_TYPE_MULTI_ENUM,
             SearchableAttributeTypeInterface::FILTER_TYPE_ENTITY,
         ];
 
-        if (in_array($attributeType->getFilterType(), $entityFilterTypes, true)) {
+        if (\in_array($attributeType->getFilterType(), $entityFilterTypes, true)) {
             $params['class'] = $this->getEntityClass($attribute);
         } elseif ($fieldType === Query::TYPE_TEXT) {
             $params['max_length'] = 255;

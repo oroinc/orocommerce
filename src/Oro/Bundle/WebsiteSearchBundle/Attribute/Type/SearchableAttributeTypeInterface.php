@@ -5,6 +5,9 @@ namespace Oro\Bundle\WebsiteSearchBundle\Attribute\Type;
 use Oro\Bundle\EntityConfigBundle\Attribute\Type\AttributeTypeInterface;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 
+/**
+ * Attribute type that can be used at website search index to filter and sort data.
+ */
 interface SearchableAttributeTypeInterface extends AttributeTypeInterface
 {
     const FILTER_TYPE_NUMBER_RANGE = 'number-range';

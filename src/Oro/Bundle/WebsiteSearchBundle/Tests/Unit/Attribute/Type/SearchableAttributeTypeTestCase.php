@@ -8,6 +8,7 @@ use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\TestFrameworkBundle\Entity\Item;
 use Oro\Bundle\WebsiteSearchBundle\Attribute\Type\SearchableAttributeTypeInterface;
+use Oro\Bundle\WebsiteSearchBundle\Attribute\Type\SearchAttributeTypeInterface;
 
 abstract class SearchableAttributeTypeTestCase extends \PHPUnit\Framework\TestCase
 {
@@ -41,7 +42,7 @@ abstract class SearchableAttributeTypeTestCase extends \PHPUnit\Framework\TestCa
     abstract protected function getSearchableAttributeTypeClassName();
 
     /**
-     * @return SearchableAttributeTypeInterface
+     * @return SearchAttributeTypeInterface|SearchableAttributeTypeInterface
      */
     protected function getSearchableAttributeType()
     {
