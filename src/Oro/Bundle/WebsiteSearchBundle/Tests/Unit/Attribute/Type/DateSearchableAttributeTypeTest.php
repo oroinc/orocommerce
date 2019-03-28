@@ -19,9 +19,9 @@ class DateSearchableAttributeTypeTest extends SearchableAttributeTypeTestCase
      * @expectedException \RuntimeException
      * @expectedExceptionMessage Not supported
      */
-    public function testGetFilterStorageFieldType()
+    public function testGetFilterStorageFieldTypes()
     {
-        $this->getSearchableAttributeType()->getFilterStorageFieldType();
+        $this->getSearchableAttributeType()->getFilterStorageFieldTypes();
     }
 
     public function testGetSorterStorageFieldType()
@@ -52,7 +52,7 @@ class DateSearchableAttributeTypeTest extends SearchableAttributeTypeTestCase
      */
     public function testGetFilterableFieldNameException()
     {
-        $this->getSearchableAttributeType()->getFilterableFieldName($this->attribute);
+        $this->getSearchableAttributeType()->getFilterableFieldNames($this->attribute);
     }
 
     public function testGetSortableFieldName()

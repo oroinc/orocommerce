@@ -7,7 +7,7 @@ use Oro\Bundle\EntityConfigBundle\Entity\EntityConfigModel;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\TestFrameworkBundle\Entity\Item;
-use Oro\Bundle\WebsiteSearchBundle\Attribute\Type\SearchableAttributeTypeInterface;
+use Oro\Bundle\WebsiteSearchBundle\Attribute\Type\SearchAttributeTypeInterface;
 
 abstract class SearchableAttributeTypeTestCase extends \PHPUnit\Framework\TestCase
 {
@@ -41,7 +41,7 @@ abstract class SearchableAttributeTypeTestCase extends \PHPUnit\Framework\TestCa
     abstract protected function getSearchableAttributeTypeClassName();
 
     /**
-     * @return SearchableAttributeTypeInterface
+     * @return SearchAttributeTypeInterface
      */
     protected function getSearchableAttributeType()
     {
@@ -60,13 +60,13 @@ abstract class SearchableAttributeTypeTestCase extends \PHPUnit\Framework\TestCa
         $this->assertTrue(
             is_a(
                 $className,
-                SearchableAttributeTypeInterface::class,
+                SearchAttributeTypeInterface::class,
                 true
             ),
             sprintf(
                 'Class "%s" should extend the "%s" interface',
                 $className,
-                SearchableAttributeTypeInterface::class
+                SearchAttributeTypeInterface::class
             )
         );
     }

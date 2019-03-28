@@ -4,6 +4,7 @@ namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Attribute\Type;
 
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\WebsiteSearchBundle\Attribute\Type\BooleanSearchableAttributeType;
+use Oro\Bundle\WebsiteSearchBundle\Attribute\Type\SearchAttributeTypeInterface;
 
 class BooleanSearchableAttributeTypeTest extends SearchableAttributeTypeTestCase
 {
@@ -15,11 +16,11 @@ class BooleanSearchableAttributeTypeTest extends SearchableAttributeTypeTestCase
         return BooleanSearchableAttributeType::class;
     }
 
-    public function testGetFilterStorageFieldType()
+    public function testGetFilterStorageFieldTypes()
     {
         $this->assertSame(
-            Query::TYPE_INTEGER,
-            $this->getSearchableAttributeType()->getFilterStorageFieldType()
+            [SearchAttributeTypeInterface::VALUE_MAIN => Query::TYPE_INTEGER],
+            $this->getSearchableAttributeType()->getFilterStorageFieldTypes()
         );
     }
 
@@ -47,8 +48,8 @@ class BooleanSearchableAttributeTypeTest extends SearchableAttributeTypeTestCase
     public function testGetFilterableFieldNameException()
     {
         $this->assertSame(
-            self::FIELD_NAME,
-            $this->getSearchableAttributeType()->getFilterableFieldName($this->attribute)
+            [SearchAttributeTypeInterface::VALUE_MAIN => self::FIELD_NAME],
+            $this->getSearchableAttributeType()->getFilterableFieldNames($this->attribute)
         );
     }
 

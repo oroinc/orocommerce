@@ -39,6 +39,8 @@ The current file describes significant changes in the code that may affect the u
 #### PricingBundle
 * Introduced concept of import/export owner. Applied approach with role-based owner-based permissions to the export and import functionality.
 * Option `--email` has become required for `oro:import:price-list:file` command.
+* `Oro\Bundle\WebsiteSearchBundle\Attribute\Type\SearchAttributeTypeInterface`:
+	- all methods from the removed `Oro\Bundle\WebsiteSearchBundle\Attribute\Type\SearchableAttributeTypeInterface` except `getFilterStorageFieldType` and `getFilterableFieldName` are moved to this interface.
 
 ### Removed
 #### WebsiteSearchBundle

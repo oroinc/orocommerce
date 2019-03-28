@@ -238,7 +238,7 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
                     'filters' => [
                         'columns' => [
                             'sku' => [
-                                'type' => SearchableType\SearchableAttributeTypeInterface::FILTER_TYPE_STRING,
+                                'type' => SearchableType\SearchAttributeTypeInterface::FILTER_TYPE_STRING,
                                 'data_name' => Query::TYPE_TEXT . '.sku',
                                 'label' => self::LABEL,
                                 'max_length' => 255
@@ -280,7 +280,7 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
                     'filters' => [
                         'columns' => [
                             'internalStatus' => [
-                                'type' => SearchableType\SearchableAttributeTypeInterface::FILTER_TYPE_MULTI_ENUM,
+                                'type' => SearchableType\SearchAttributeTypeInterface::FILTER_TYPE_MULTI_ENUM,
                                 'data_name' => Query::TYPE_INTEGER . '.internalStatus_' . EnumIdPlaceholder::NAME,
                                 'force_like' => true,
                                 'label' => self::LABEL,
@@ -314,7 +314,7 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
                     'filters' => [
                         'columns' => [
                             'weight' => [
-                                'type' => SearchableType\SearchableAttributeTypeInterface::FILTER_TYPE_NUMBER_RANGE,
+                                'type' => SearchableType\SearchAttributeTypeInterface::FILTER_TYPE_NUMBER_RANGE,
                                 'data_name' => Query::TYPE_DECIMAL . '.weight',
                                 'force_like' => true,
                                 'label' => self::LABEL,
@@ -350,7 +350,7 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
                     'filters' => [
                         'columns' => [
                             'internalStatus' => [
-                                'type' => SearchableType\SearchableAttributeTypeInterface::FILTER_TYPE_MULTI_ENUM,
+                                'type' => SearchableType\SearchAttributeTypeInterface::FILTER_TYPE_MULTI_ENUM,
                                 'data_name' => Query::TYPE_INTEGER . '.internalStatus_' . EnumIdPlaceholder::NAME,
                                 'force_like' => true,
                                 'label' => self::LABEL,
@@ -372,7 +372,7 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
                     'filters' => [
                         'columns' => [
                             'internalStatus' => [
-                                'type' => SearchableType\SearchableAttributeTypeInterface::FILTER_TYPE_MULTI_ENUM,
+                                'type' => SearchableType\SearchAttributeTypeInterface::FILTER_TYPE_MULTI_ENUM,
                                 'data_name' => Query::TYPE_INTEGER . '.internalStatus_' . EnumIdPlaceholder::NAME,
                                 'force_like' => true,
                                 'label' => self::LABEL,
@@ -392,7 +392,7 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
                     'filters' => [
                         'columns' => [
                             'names' => [
-                                'type' => SearchableType\SearchableAttributeTypeInterface::FILTER_TYPE_STRING,
+                                'type' => SearchableType\SearchAttributeTypeInterface::FILTER_TYPE_STRING,
                                 'data_name' => Query::TYPE_TEXT . '.names_' . LocalizationIdPlaceholder::NAME,
                                 'label' => self::LABEL,
                                 'max_length' => 255
@@ -423,7 +423,7 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
                     'filters' => [
                         'columns' => [
                             'manytoone' => [
-                                'type' => SearchableType\SearchableAttributeTypeInterface::FILTER_TYPE_ENTITY,
+                                'type' => SearchableType\SearchAttributeTypeInterface::FILTER_TYPE_ENTITY,
                                 'data_name' => Query::TYPE_INTEGER . '.manytoone',
                                 'label' => self::LABEL,
                                 'class' => StubEnumValue::class,

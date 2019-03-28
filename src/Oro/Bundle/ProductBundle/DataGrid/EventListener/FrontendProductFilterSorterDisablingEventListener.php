@@ -22,7 +22,7 @@ use Oro\Bundle\SearchBundle\Datagrid\Event\SearchResultAfter;
 use Oro\Bundle\SearchBundle\Datagrid\Event\SearchResultBefore;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\SearchBundle\Query\SearchQueryInterface;
-use Oro\Bundle\WebsiteSearchBundle\Attribute\Type\SearchableAttributeTypeInterface;
+use Oro\Bundle\WebsiteSearchBundle\Attribute\Type\SearchAttributeTypeInterface;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\EnumIdPlaceholder;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
 use Oro\Component\DependencyInjection\ServiceLink;
@@ -213,7 +213,7 @@ class FrontendProductFilterSorterDisablingEventListener
             $this->configurationProvider->isAttributeSortable($attribute)
         ) {
             $attributeType = $this->attributeTypeRegistry->getAttributeType($attribute);
-            if ($attributeType instanceof SearchableAttributeTypeInterface) {
+            if ($attributeType instanceof SearchAttributeTypeInterface) {
                 return true;
             }
         }
@@ -234,9 +234,10 @@ class FrontendProductFilterSorterDisablingEventListener
                 continue;
             }
 
-            /** @var SearchableAttributeTypeInterface $attributeType */
+            /** @var SearchAttributeTypeInterface $attributeType */
             $attributeType = $this->attributeTypeRegistry->getAttributeType($attribute);
-            $name = $attributeType->getFilterableFieldName($attribute);
+            $name = $attributeType->getFilterableFieldNames($attribute)[SearchAttributeTypeInterface::VALUE_MAIN] ?? '';
+
             $alias = $this->clearName($name);
 
             // these filters already have data
@@ -262,7 +263,7 @@ class FrontendProductFilterSorterDisablingEventListener
                 continue;
             }
 
-            /** @var SearchableAttributeTypeInterface $attributeType */
+            /** @var SearchAttributeTypeInterface $attributeType */
             $attributeType = $this->attributeTypeRegistry->getAttributeType($attribute);
             $name = $attributeType->getSortableFieldName($attribute);
             $alias = $this->clearName($name);
