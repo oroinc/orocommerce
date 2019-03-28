@@ -41,6 +41,9 @@ oro:
             products:
                 label:                              'Products'
                 description:                        The relationship between the category and the products in it.
+            organization:
+                label:                              'Organization'
+                description:                        The relationship on organization.
             default_product_options.label:          Default options for products
             categories.label:                       'Product categories'
             include_subcategories.label:            'Include Sub-Categories'
