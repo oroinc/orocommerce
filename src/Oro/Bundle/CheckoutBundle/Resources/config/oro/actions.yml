@@ -513,7 +513,12 @@ action_groups:
                     # update custom data
                     - '@copy_values': [$.checkout, $.checkoutData]
 
-            - '@assign_value': [$.checkout.customer_notes, $.sourceCriteria.shoppingList.notes]
+            # Update notes from shopping list if not empty to leave previously set notes if checkout was created before
+            - '@tree':
+                conditions:
+                    '@not_empty': $.sourceCriteria.shoppingList.notes
+                actions:
+                    - '@assign_value': [$.checkout.customer_notes, $.sourceCriteria.shoppingList.notes]
 
             # actualize user currency
             - '@call_service_method':
