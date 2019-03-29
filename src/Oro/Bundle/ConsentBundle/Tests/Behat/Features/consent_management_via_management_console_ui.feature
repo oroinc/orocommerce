@@ -581,6 +581,7 @@ Feature: Consent management via Management Console UI
       | QTY1 | 10  |
     When click "Create Order"
     Then I should see "Agreements" in the "Checkout Step Title" element
+    And I should not see "Back"
     And I should see 2 elements "Required Consent"
     And the "Presenting Personal Data" checkbox should not be checked
     And the "Collecting and storing personal data" checkbox should not be checked
@@ -608,6 +609,7 @@ Feature: Consent management via Management Console UI
     And the "Presenting Personal Data" checkbox should be checked
     When click "Continue"
     Then I should see "Billing Information" in the "Checkout Step Title" element
+    And I should see "Back"
     When on the "Billing Information" checkout step I go back to "Edit Customer Consents"
     Then I should see "Agreements" in the "Checkout Step Title" element
     And I should see "All mandatory consents were accepted."
@@ -757,7 +759,8 @@ Feature: Consent management via Management Console UI
     And I scroll modal window to bottom
     And click "Agree"
     When I click "Create an Account and Continue"
-    Then I should see "Agreements"
+    Then Page title equals to "Agreements - Checkout"
+    And I should not see "Back"
     When click "Continue"
     Then I should see "Please confirm your email before continue checkout" flash message
 
@@ -792,6 +795,7 @@ Feature: Consent management via Management Console UI
     And I click "Continue as a Guest"
     And I should see "Agreements" in the "Checkout Step Title" element
     And I should see 3 elements "Required Consent"
+    And I should not see "Back"
     And the "Presenting Personal Data" checkbox should not be checked
     And the "Collecting and storing personal data" checkbox should not be checked
     And I should not see "Email Newsletters"
@@ -821,6 +825,7 @@ Feature: Consent management via Management Console UI
       | Test Consent 3 | true |
     When click "Continue"
     Then I should see "Billing Information" in the "Checkout Step Title" element
+    And I should see "Back"
     When on the "Billing Information" checkout step I go back to "Edit Customer Consents"
     Then I should see "Agreements" in the "Checkout Step Title" element
     And I should see "All mandatory consents were accepted."

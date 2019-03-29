@@ -99,17 +99,18 @@ oro:
                     button_label: 'Create Order'
                     button_title: ''
                     warning_message: ''
-                continue_checkout_as_registered_user:
-                    label: Continue
-                start_checkout_as_guest_system:
-                    label: Continue
-                start_from_shoppinglist:
-                    label: 'Start Checkout From Shopping List'
+                start_from_quote:
+                    label: 'Start Checkout From Quote'
                     button_label: 'Create Order'
                     button_title: ''
                     warning_message: ''
-                start_from_shoppinglist_as_guest:
-                    label: 'Start Guest Checkout From Shopping List'
+                start_from_quote_as_guest:
+                    label: 'Start Checkout From Quote As Guest'
+                    button_label: 'Create Order'
+                    button_title: ''
+                    warning_message: ''
+                start_from_shoppinglist:
+                    label: 'Start Checkout From Shopping List'
                     button_label: 'Create Order'
                     button_title: ''
                     warning_message: ''
@@ -118,6 +119,8 @@ oro:
                     button_label: 'Create Order'
                     button_title: ''
                     warning_message: ''
+                continue_to_billing_address_as_guest:
+                    label: Continue
                 continue_to_billing_address:
                     label: Continue
                     state_token:
@@ -174,6 +177,9 @@ oro:
                             label: ''
                         additional_data:
                             label: ''
+                back_to_enter_credentials:
+                    label: 'Back to Enter Credentials'
+                    warning_message: ''
                 back_to_customer_consents:
                     label: 'Edit Customer Consents'
                     warning_message: ''
@@ -296,6 +302,16 @@ oro:
             transition:
                 __start__:
                     label: 'Start Checkout (System)'
+                    button_label: 'Create Order'
+                    button_title: ''
+                    warning_message: ''
+                start_from_quote:
+                    label: 'Start Checkout From Quote'
+                    button_label: 'Create Order'
+                    button_title: ''
+                    warning_message: ''
+                start_from_quote_as_guest:
+                    label: 'Start Checkout From Quote As Guest'
                     button_label: 'Create Order'
                     button_title: ''
                     warning_message: ''
