@@ -28,26 +28,6 @@ class MappingConfigurationTest extends \PHPUnit\Framework\TestCase
         return $processor->processConfiguration($configuration, $configs);
     }
 
-    public function testDefaultFieldsValueIsEmptyArray()
-    {
-        $configs = [
-            [
-                'Oro\Page' => [
-                    'alias' => 'PageAlias'
-                ]
-            ]
-        ];
-
-        $expected = [
-            'Oro\Page' => [
-                'alias' => 'PageAlias',
-                'fields' => []
-            ]
-        ];
-
-        $this->assertEquals($expected, $this->processConfiguration($configs));
-    }
-
     public function testFieldsAreMerged()
     {
         $configs = [

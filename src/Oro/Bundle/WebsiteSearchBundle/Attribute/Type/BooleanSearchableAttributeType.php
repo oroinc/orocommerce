@@ -13,7 +13,7 @@ class BooleanSearchableAttributeType extends AbstractSearchableAttributeType
     /**
      * {@inheritdoc}
      */
-    public function getFilterStorageFieldType()
+    protected function getFilterStorageFieldTypeMain(): string
     {
         return Query::TYPE_INTEGER;
     }
@@ -21,7 +21,7 @@ class BooleanSearchableAttributeType extends AbstractSearchableAttributeType
     /**
      * {@inheritdoc}
      */
-    public function getSorterStorageFieldType()
+    public function getSorterStorageFieldType(): string
     {
         return Query::TYPE_INTEGER;
     }
@@ -29,7 +29,7 @@ class BooleanSearchableAttributeType extends AbstractSearchableAttributeType
     /**
      * {@inheritdoc}
      */
-    public function getFilterType()
+    public function getFilterType(): string
     {
         return 'boolean';
     }
@@ -37,7 +37,7 @@ class BooleanSearchableAttributeType extends AbstractSearchableAttributeType
     /**
      * {@inheritdoc}
      */
-    public function isLocalizable(FieldConfigModel $attribute)
+    public function isLocalizable(FieldConfigModel $attribute): bool
     {
         return false;
     }
@@ -45,7 +45,7 @@ class BooleanSearchableAttributeType extends AbstractSearchableAttributeType
     /**
      * {@inheritdoc}
      */
-    public function getFilterableFieldName(FieldConfigModel $attribute)
+    protected function getFilterableFieldNameMain(FieldConfigModel $attribute): string
     {
         return $attribute->getFieldName();
     }
@@ -53,7 +53,7 @@ class BooleanSearchableAttributeType extends AbstractSearchableAttributeType
     /**
      * {@inheritdoc}
      */
-    public function getSortableFieldName(FieldConfigModel $attribute)
+    public function getSortableFieldName(FieldConfigModel $attribute): string
     {
         return $attribute->getFieldName();
     }

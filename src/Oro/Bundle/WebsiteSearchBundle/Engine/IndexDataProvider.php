@@ -113,10 +113,6 @@ class IndexDataProvider
     {
         $preparedIndexData = [];
 
-        if (!array_key_exists('fields', $entityConfig)) {
-            return $preparedIndexData;
-        }
-
         $allText = $this->getFieldConfig($entityConfig, self::ALL_TEXT_FIELD, 'name', self::ALL_TEXT_FIELD);
         $allTextL10N = $this->getFieldConfig(
             $entityConfig,
@@ -126,44 +122,50 @@ class IndexDataProvider
         );
 
         foreach ($indexData as $entityId => $fieldsValues) {
-            $allTextL10NFieldNames = [];
+            $allTextFieldNames = [];
 
             foreach ($this->toArray($fieldsValues) as $fieldName => $values) {
                 $type = $this->getFieldConfig($entityConfig, $fieldName, 'type');
 
                 foreach ($this->toArray($values) as $value) {
+                    $allTextFieldName = $allText;
                     $singleValueFieldName = $fieldName;
                     $addToAllText = $value['all_text'];
                     $value = $value['value'];
+                    $placeholders = [];
 
                     if ($value instanceof PlaceholderValue) {
                         $placeholders = $value->getPlaceholders();
                         $value = $value->getValue();
-
-                        if ($this->isAllTextCollected($type, $addToAllText)) {
-                            $allTextL10NFieldName = $this->placeholder->replace($allTextL10N, $placeholders);
-                            $allTextL10NFieldNames[$allTextL10NFieldName] = $allTextL10NFieldName;
-                            $this->setIndexValue($preparedIndexData, $entityId, $allTextL10NFieldName, $value, $type);
-                        }
-
-                        $singleValueFieldName = $this->placeholder->replace($singleValueFieldName, $placeholders);
-                    } elseif ($this->isAllTextCollected($type, $addToAllText)) {
-                        $this->setIndexValue($preparedIndexData, $entityId, $allText, $value, $type);
+                        $allTextFieldName = $allTextL10N;
                     }
 
-                    $this->setIndexValue($preparedIndexData, $entityId, $singleValueFieldName, $value, $type);
+                    if ($this->isAllTextCollected($type, $addToAllText)) {
+                        $allTextFieldName = $this->placeholder->replace($allTextFieldName, $placeholders);
+                        $allTextFieldNames[$allTextFieldName] = $allTextFieldName;
+                        $this->setIndexValue($preparedIndexData, $entityId, $allTextFieldName, $value, $type);
+                    }
+
+                    if (strpos($fieldName, $allText) !== 0) {
+                        $singleValueFieldName = $this->placeholder->replace($singleValueFieldName, $placeholders);
+                        $this->setIndexValue($preparedIndexData, $entityId, $singleValueFieldName, $value, $type);
+                    }
                 }
             }
 
+            unset($allTextFieldNames[$allText]);
+
             $allTextValue = $this->getIndexValue($preparedIndexData, $entityId, $allText);
-            foreach ($allTextL10NFieldNames as $allTextL10NFieldName) {
-                $fieldsValue = $this->getIndexValue($preparedIndexData, $entityId, $allTextL10NFieldName);
+            foreach ($allTextFieldNames as $allTextFieldName) {
+                $fieldsValue = $this->getIndexValue($preparedIndexData, $entityId, $allTextFieldName);
                 $this->setIndexValue($preparedIndexData, $entityId, $allText, $fieldsValue);
-                $this->setIndexValue($preparedIndexData, $entityId, $allTextL10NFieldName, $allTextValue);
+                $this->setIndexValue($preparedIndexData, $entityId, $allTextFieldName, $allTextValue);
             }
+
+            $preparedIndexData[$entityId] = $this->squashAllTextFields($preparedIndexData[$entityId]);
         }
 
-        return $this->squashTextFields($preparedIndexData);
+        return $preparedIndexData;
     }
 
     /**
@@ -190,22 +192,20 @@ class IndexDataProvider
     }
 
     /**
-     * @param array $preparedIndexData
+     * @param array $fieldsValues
      * @return array
      */
-    private function squashTextFields(array $preparedIndexData)
+    private function squashAllTextFields(array $fieldsValues)
     {
-        foreach ($preparedIndexData as $entityId => $fieldsValues) {
-            if (!empty($fieldsValues[Query::TYPE_TEXT])) {
-                foreach ($fieldsValues[Query::TYPE_TEXT] as $fieldName => $fieldValue) {
-                    if (is_array($fieldValue)) {
-                        $preparedIndexData[$entityId][Query::TYPE_TEXT][$fieldName] = implode(' ', $fieldValue);
-                    }
+        if (!empty($fieldsValues[Query::TYPE_TEXT])) {
+            foreach ($fieldsValues[Query::TYPE_TEXT] as $fieldName => $fieldValue) {
+                if (strpos($fieldName, self::ALL_TEXT_FIELD) === 0) {
+                    $fieldsValues[Query::TYPE_TEXT][$fieldName] = $this->updateAllTextFieldValue($fieldValue);
                 }
             }
         }
 
-        return $preparedIndexData;
+        return $fieldsValues;
     }
 
     /**
@@ -217,74 +217,61 @@ class IndexDataProvider
      */
     private function setIndexValue(array &$preparedIndexData, $entityId, $fieldName, $value, $type = Query::TYPE_TEXT)
     {
-        if (is_array($value)) {
-            foreach ($value as $data) {
-                $this->setIndexValue($preparedIndexData, $entityId, $fieldName, $data, $type);
-            }
-            return;
-        }
-
         $value = $this->clearValue($type, $fieldName, $value);
 
-        if ($value === null || $value === '') {
+        if ($value === null || $value === '' || $value === []) {
             return;
         }
 
-        if ($type === Query::TYPE_TEXT) {
-            $existingValues = $this->getIndexValue($preparedIndexData, $entityId, $fieldName);
-            if (strpos($fieldName, self::ALL_TEXT_FIELD) === 0) {
-                $value = $this->updateAllTextFieldValue($existingValues, $value);
-            } else {
-                $value = $this->updateRegularTextFieldValue($existingValues, $value);
-            }
+        $existingValue = $this->getIndexValue($preparedIndexData, $entityId, $fieldName, $type);
+        if ($existingValue) {
+            $value = $this->updateFieldValue($existingValue, $value, $type);
         }
 
         $preparedIndexData[$entityId][$type][$fieldName] = $value;
     }
 
     /**
-     * @param string|array  $existingValues
-     * @param string        $value
+     * @param string|array $value
      *
      * @return array
      */
-    private function updateAllTextFieldValue(&$existingValues, string $value)
+    private function updateAllTextFieldValue($value)
     {
-        $value = explode(' ', $value);
-        if ($existingValues) {
-            $value = array_merge($existingValues, $value);
+        if (is_array($value)) {
+            $value = implode(' ', $value);
         }
 
-        return array_unique($value);
+        return implode(' ', array_unique(explode(' ', $value)));
     }
 
     /**
      * @param string|array  $existingValues
      * @param string        $value
      *
-     * @return array
+     * @return string|array
      */
-    private function updateRegularTextFieldValue($existingValues, string $value)
+    private function updateFieldValue($existingValue, $value, $type)
     {
-        if ($existingValues) {
-            $existingValues[] = $value;
-
-            return $existingValues;
+        if ($type === Query::TYPE_TEXT && is_string($existingValue) && is_string($value)) {
+            return $existingValue . ' ' . $value;
         }
 
-        return [$value];
+        // array_values is required here to make sure that array can be properly converted to json
+        return array_values(array_unique(array_merge((array)$existingValue, (array)$value)));
     }
 
     /**
      * @param array $preparedIndexData
      * @param int $entityId
      * @param string $fieldName
+     * @param string $type
      * @return string|array
      */
-    private function getIndexValue(array &$preparedIndexData, $entityId, $fieldName)
+    private function getIndexValue(array &$preparedIndexData, $entityId, $fieldName, $type = Query::TYPE_TEXT)
     {
-        return isset($preparedIndexData[$entityId][Query::TYPE_TEXT][$fieldName])
-            ? $preparedIndexData[$entityId][Query::TYPE_TEXT][$fieldName] : '';
+        return isset($preparedIndexData[$entityId][$type][$fieldName])
+            ? $preparedIndexData[$entityId][$type][$fieldName] : '';
     }
 
     /**
@@ -349,6 +336,13 @@ class IndexDataProvider
      */
     protected function clearValue($type, $fieldName, $value)
     {
+        if (is_array($value)) {
+            foreach ($value as $key => $element) {
+                $value[$key] = $this->clearValue($type, $fieldName, $element);
+            }
+            return $value;
+        }
+
         if ($type === Query::TYPE_TEXT && strpos($fieldName, self::ALL_TEXT_FIELD) === 0) {
             $value = $this->htmlTagHelper->stripTags((string)$value);
             $value = $this->htmlTagHelper->stripLongWords($value);

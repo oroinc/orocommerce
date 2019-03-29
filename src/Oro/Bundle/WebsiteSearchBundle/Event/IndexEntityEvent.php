@@ -5,6 +5,9 @@ namespace Oro\Bundle\WebsiteSearchBundle\Event;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderValue;
 use Symfony\Component\EventDispatcher\Event;
 
+/**
+ * Event used to collect website search index data per entity
+ */
 class IndexEntityEvent extends Event
 {
     const NAME = 'oro_website_search.event.index_entity';
@@ -68,7 +71,7 @@ class IndexEntityEvent extends Event
     /**
      * @param int $entityId
      * @param string $fieldName
-     * @param string|int|float|\DateTime $value
+     * @param string|int|float|\DateTime|array $value
      * @param bool $addToAllText
      * @return $this
      * @throws \InvalidArgumentException if value is array
@@ -111,6 +114,13 @@ class IndexEntityEvent extends Event
      */
     protected function validate($value)
     {
+        if (is_array($value)) {
+            foreach ($value as $element) {
+                $this->validate($element);
+            }
+            return;
+        }
+
         if (!is_scalar($value) && !$value instanceof \DateTime) {
             throw new \InvalidArgumentException(
                 sprintf(

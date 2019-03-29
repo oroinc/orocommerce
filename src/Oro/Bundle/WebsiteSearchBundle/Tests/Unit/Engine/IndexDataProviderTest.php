@@ -288,11 +288,6 @@ class IndexDataProviderTest extends \PHPUnit\Framework\TestCase
                     ],
                 ],
             ],
-            'empty config field' => [
-                'entityConfig' => [],
-                'indexData' => [[1, 'qty', 1, true]],
-                'expected' => [],
-            ],
             'do not drop value in all_text and all_text_localization fields, like metadata' => [
                 'entityConfig' => [
                     'fields' => [
@@ -437,6 +432,61 @@ class IndexDataProviderTest extends \PHPUnit\Framework\TestCase
                                 ' ' .
                                 'zUWidBOhT9IzqNyPhYvchY QJfPB2teh0ukQ',
                             'all_text' => 'The long entry zUWidBOhT9IzqNyPhYvchY QJfPB2teh0ukQ',
+                        ],
+                    ],
+                ],
+            ],
+            'single array value without all_text' => [
+                'entityConfig' => [
+                    'fields' => [
+                        [
+                            'name' => 'title',
+                            'type' => Query::TYPE_TEXT,
+                        ],
+                        [
+                            'name' => 'color',
+                            'type' => Query::TYPE_TEXT,
+                        ],
+                    ],
+                ],
+                'indexData' => [
+                    [1, 'title', 'The fox', true],
+                    [1, 'color', ['red', 'green', 'blue'], false],
+                ],
+                'expected' => [
+                    1 => [
+                        'text' => [
+                            'title' => 'The fox',
+                            'color' => ['red', 'green', 'blue'],
+                            'all_text' => 'The fox',
+                        ],
+                    ],
+                ],
+            ],
+            'multiple array values with all_text' => [
+                'entityConfig' => [
+                    'fields' => [
+                        [
+                            'name' => 'title',
+                            'type' => Query::TYPE_TEXT,
+                        ],
+                        [
+                            'name' => 'color',
+                            'type' => Query::TYPE_TEXT,
+                        ],
+                    ],
+                ],
+                'indexData' => [
+                    [1, 'title', 'The fox', true],
+                    [1, 'color', ['Red', 'Green', 'Blue'], true],
+                    [1, 'color', ['Red', 'White', 'Black'], true],
+                ],
+                'expected' => [
+                    1 => [
+                        'text' => [
+                            'title' => 'The fox',
+                            'color' => ['Red', 'Green', 'Blue', 'White', 'Black'],
+                            'all_text' => 'The fox Red Green Blue White Black',
                         ],
                     ],
                 ],

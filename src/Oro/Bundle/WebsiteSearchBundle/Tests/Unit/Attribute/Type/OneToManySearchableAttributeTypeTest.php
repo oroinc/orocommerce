@@ -4,7 +4,7 @@ namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Attribute\Type;
 
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\WebsiteSearchBundle\Attribute\Type\OneToManySearchableAttributeType;
-use Oro\Bundle\WebsiteSearchBundle\Attribute\Type\SearchableAttributeTypeInterface;
+use Oro\Bundle\WebsiteSearchBundle\Attribute\Type\SearchAttributeTypeInterface;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
 
 class OneToManySearchableAttributeTypeTest extends SearchableAttributeTypeTestCase
@@ -17,11 +17,11 @@ class OneToManySearchableAttributeTypeTest extends SearchableAttributeTypeTestCa
         return OneToManySearchableAttributeType::class;
     }
 
-    public function testGetFilterStorageFieldType()
+    public function testGetFilterStorageFieldTypes()
     {
         $this->assertSame(
-            Query::TYPE_TEXT,
-            $this->getSearchableAttributeType()->getFilterStorageFieldType()
+            [SearchAttributeTypeInterface::VALUE_MAIN => Query::TYPE_TEXT],
+            $this->getSearchableAttributeType()->getFilterStorageFieldTypes()
         );
     }
 
@@ -37,7 +37,7 @@ class OneToManySearchableAttributeTypeTest extends SearchableAttributeTypeTestCa
     public function testGetFilterType()
     {
         $this->assertSame(
-            SearchableAttributeTypeInterface::FILTER_TYPE_STRING,
+            SearchAttributeTypeInterface::FILTER_TYPE_STRING,
             $this->getSearchableAttributeType()->getFilterType()
         );
     }
@@ -47,11 +47,11 @@ class OneToManySearchableAttributeTypeTest extends SearchableAttributeTypeTestCa
         $this->assertTrue($this->getSearchableAttributeType()->isLocalizable($this->attribute));
     }
 
-    public function testGetFilterableFieldName()
+    public function testGetFilterableFieldNames()
     {
         $this->assertSame(
-            self::FIELD_NAME . '_' . LocalizationIdPlaceholder::NAME,
-            $this->getSearchableAttributeType()->getFilterableFieldName($this->attribute)
+            [SearchAttributeTypeInterface::VALUE_MAIN => self::FIELD_NAME . '_' . LocalizationIdPlaceholder::NAME],
+            $this->getSearchableAttributeType()->getFilterableFieldNames($this->attribute)
         );
     }
 
