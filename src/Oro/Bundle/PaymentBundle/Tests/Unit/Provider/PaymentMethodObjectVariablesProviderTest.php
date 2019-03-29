@@ -18,12 +18,6 @@ class PaymentMethodObjectVariablesProviderTest extends \PHPUnit\Framework\TestCa
     public function testGetVariableDefinitions()
     {
         self::assertSame([], $this->provider->getVariableDefinitions());
-        self::assertSame([], $this->provider->getVariableDefinitions(PaymentMethodObject::class));
-    }
-
-    public function testGetVariableProcessors()
-    {
-        self::assertSame([], $this->provider->getVariableProcessors(PaymentMethodObject::class));
     }
 
     public function testGetVariableGetters()
@@ -37,5 +31,10 @@ class PaymentMethodObjectVariablesProviderTest extends \PHPUnit\Framework\TestCa
             ],
             $this->provider->getVariableGetters()
         );
+    }
+
+    public function testGetVariableProcessors()
+    {
+        self::assertSame([], $this->provider->getVariableProcessors(PaymentMethodObject::class));
     }
 }

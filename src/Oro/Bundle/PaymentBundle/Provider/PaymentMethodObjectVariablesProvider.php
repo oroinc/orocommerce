@@ -13,15 +13,7 @@ class PaymentMethodObjectVariablesProvider implements EntityVariablesProviderInt
     /**
      * {@inheritdoc}
      */
-    public function getVariableDefinitions(string $entityClass = null): array
-    {
-        return [];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getVariableProcessors(string $entityClass): array
+    public function getVariableDefinitions(): array
     {
         return [];
     }
@@ -37,5 +29,13 @@ class PaymentMethodObjectVariablesProvider implements EntityVariablesProviderInt
                 'options' => 'getOptions'
             ]
         ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getVariableProcessors(string $entityClass): array
+    {
+        return [];
     }
 }
