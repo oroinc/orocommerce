@@ -7,6 +7,7 @@ use Oro\Bundle\CatalogBundle\Entity\CategoryDefaultProductOptions;
 use Oro\Bundle\CatalogBundle\Tests\Unit\Entity\Stub\Category;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
@@ -45,6 +46,7 @@ class CategoryTest extends \PHPUnit\Framework\TestCase
             ['updatedAt', $date, false],
             ['defaultProductOptions', new CategoryDefaultProductOptions()],
             ['slugPrototypesWithRedirect', new SlugPrototypesWithRedirect(new ArrayCollection(), false), false],
+            ['organization', new Organization(), null]
         ];
 
         $this->assertPropertyAccessors(new Category(), $properties);

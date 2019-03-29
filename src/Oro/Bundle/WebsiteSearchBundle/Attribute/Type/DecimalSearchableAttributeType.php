@@ -5,12 +5,15 @@ namespace Oro\Bundle\WebsiteSearchBundle\Attribute\Type;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\SearchBundle\Query\Query;
 
+/**
+ * Attribute type provides metadata for decimal attribute for search index.
+ */
 class DecimalSearchableAttributeType extends AbstractSearchableAttributeType
 {
     /**
      * {@inheritdoc}
      */
-    public function getFilterStorageFieldType()
+    protected function getFilterStorageFieldTypeMain(): string
     {
         return Query::TYPE_DECIMAL;
     }
@@ -18,7 +21,7 @@ class DecimalSearchableAttributeType extends AbstractSearchableAttributeType
     /**
      * {@inheritdoc}
      */
-    public function getSorterStorageFieldType()
+    public function getSorterStorageFieldType(): string
     {
         return Query::TYPE_DECIMAL;
     }
@@ -26,7 +29,7 @@ class DecimalSearchableAttributeType extends AbstractSearchableAttributeType
     /**
      * {@inheritdoc}
      */
-    public function getFilterType()
+    public function getFilterType(): string
     {
         return self::FILTER_TYPE_NUMBER_RANGE;
     }
@@ -34,7 +37,7 @@ class DecimalSearchableAttributeType extends AbstractSearchableAttributeType
     /**
      * {@inheritdoc}
      */
-    public function isLocalizable(FieldConfigModel $attribute)
+    public function isLocalizable(FieldConfigModel $attribute): bool
     {
         return false;
     }
@@ -42,7 +45,7 @@ class DecimalSearchableAttributeType extends AbstractSearchableAttributeType
     /**
      * {@inheritdoc}
      */
-    public function getFilterableFieldName(FieldConfigModel $attribute)
+    protected function getFilterableFieldNameMain(FieldConfigModel $attribute): string
     {
         return $attribute->getFieldName();
     }
@@ -50,7 +53,7 @@ class DecimalSearchableAttributeType extends AbstractSearchableAttributeType
     /**
      * {@inheritdoc}
      */
-    public function getSortableFieldName(FieldConfigModel $attribute)
+    public function getSortableFieldName(FieldConfigModel $attribute): string
     {
         return $attribute->getFieldName();
     }

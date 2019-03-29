@@ -4,7 +4,7 @@ namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Attribute\Type;
 
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\WebsiteSearchBundle\Attribute\Type\EnumSearchableAttributeType;
-use Oro\Bundle\WebsiteSearchBundle\Attribute\Type\SearchableAttributeTypeInterface;
+use Oro\Bundle\WebsiteSearchBundle\Attribute\Type\SearchAttributeTypeInterface;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\EnumIdPlaceholder;
 
 class EnumSearchableAttributeTypeTest extends SearchableAttributeTypeTestCase
@@ -17,11 +17,11 @@ class EnumSearchableAttributeTypeTest extends SearchableAttributeTypeTestCase
         return EnumSearchableAttributeType::class;
     }
 
-    public function testGetFilterStorageFieldType()
+    public function testGetFilterStorageFieldTypes()
     {
         $this->assertSame(
-            Query::TYPE_INTEGER,
-            $this->getSearchableAttributeType()->getFilterStorageFieldType()
+            [SearchAttributeTypeInterface::VALUE_MAIN => Query::TYPE_INTEGER],
+            $this->getSearchableAttributeType()->getFilterStorageFieldTypes()
         );
     }
 
@@ -36,7 +36,7 @@ class EnumSearchableAttributeTypeTest extends SearchableAttributeTypeTestCase
     public function testGetFilterType()
     {
         $this->assertSame(
-            SearchableAttributeTypeInterface::FILTER_TYPE_MULTI_ENUM,
+            SearchAttributeTypeInterface::FILTER_TYPE_MULTI_ENUM,
             $this->getSearchableAttributeType()->getFilterType()
         );
     }
@@ -46,11 +46,11 @@ class EnumSearchableAttributeTypeTest extends SearchableAttributeTypeTestCase
         $this->assertFalse($this->getSearchableAttributeType()->isLocalizable($this->attribute));
     }
 
-    public function testGetFilterableFieldName()
+    public function testGetFilterableFieldNames()
     {
         $this->assertSame(
-            self::FIELD_NAME . '_' . EnumIdPlaceholder::NAME,
-            $this->getSearchableAttributeType()->getFilterableFieldName($this->attribute)
+            [SearchAttributeTypeInterface::VALUE_MAIN => self::FIELD_NAME . '_' . EnumIdPlaceholder::NAME],
+            $this->getSearchableAttributeType()->getFilterableFieldNames($this->attribute)
         );
     }
 

@@ -5,12 +5,15 @@ namespace Oro\Bundle\WebsiteSearchBundle\Attribute\Type;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\SearchBundle\Query\Query;
 
+/**
+ * Attribute type provides metadata for date attribute for search index.
+ */
 class DateSearchableAttributeType extends AbstractSearchableAttributeType
 {
     /**
      * {@inheritdoc}
      */
-    public function getFilterStorageFieldType()
+    public function getFilterStorageFieldTypes(): array
     {
         throw new \RuntimeException('Not supported');
     }
@@ -18,7 +21,7 @@ class DateSearchableAttributeType extends AbstractSearchableAttributeType
     /**
      * {@inheritdoc}
      */
-    public function getSorterStorageFieldType()
+    public function getSorterStorageFieldType(): string
     {
         return Query::TYPE_DATETIME;
     }
@@ -26,7 +29,7 @@ class DateSearchableAttributeType extends AbstractSearchableAttributeType
     /**
      * {@inheritdoc}
      */
-    public function getFilterType()
+    public function getFilterType(): string
     {
         throw new \RuntimeException('Not supported');
     }
@@ -34,7 +37,7 @@ class DateSearchableAttributeType extends AbstractSearchableAttributeType
     /**
      * {@inheritdoc}
      */
-    public function isLocalizable(FieldConfigModel $attribute)
+    public function isLocalizable(FieldConfigModel $attribute): bool
     {
         return false;
     }
@@ -42,7 +45,7 @@ class DateSearchableAttributeType extends AbstractSearchableAttributeType
     /**
      * {@inheritdoc}
      */
-    public function getFilterableFieldName(FieldConfigModel $attribute)
+    public function getFilterableFieldNames(FieldConfigModel $attribute): array
     {
         throw new \RuntimeException('Not supported');
     }
@@ -50,7 +53,7 @@ class DateSearchableAttributeType extends AbstractSearchableAttributeType
     /**
      * {@inheritdoc}
      */
-    public function getSortableFieldName(FieldConfigModel $attribute)
+    public function getSortableFieldName(FieldConfigModel $attribute): string
     {
         return $attribute->getFieldName();
     }

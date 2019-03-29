@@ -9,6 +9,7 @@ define(function(require) {
     var $ = require('jquery');
     var _ = require('underscore');
     var __ = require('orotranslation/js/translator');
+    var ENTER_KEY_CODE = 13;
 
     ProductQuantityEditableView = BaseView.extend({
         options: {
@@ -104,9 +105,29 @@ define(function(require) {
         },
 
         _bindEvents: function() {
-            this.elements.unit.on('change.' + this.cid, _.bind(function() {
+            this.elements.unit.on('change' + this.eventNamespace(), _.bind(function() {
                 mediator.trigger('unitChanged');
             }, this));
+
+            // Emulate change event on blur and press enter in MS browsers
+            if (tools.isIE11() || tools.isEDGE()) {
+                var valueBeforeInput = this.elements.quantity.val();
+
+                this.elements.quantity
+                    .on('focus' + this.eventNamespace(), function(e) {
+                        valueBeforeInput = e.target.value;
+                    })
+                    .on('blur' + this.eventNamespace(), function(e) {
+                        if (valueBeforeInput !== e.target.value) {
+                            $(e.target).trigger('change');
+                        }
+                    })
+                    .on('keydown' + this.eventNamespace(), function(e) {
+                        if (e.keyCode === ENTER_KEY_CODE && !e.ctrlKey && valueBeforeInput !== e.target.value) {
+                            $(e.target).trigger('change');
+                        }
+                    });
+            }
 
             mediator.on('unitChanged', this.disableOptions, this);
         },
@@ -168,19 +189,6 @@ define(function(require) {
             if (this.elements.saveButton) {
                 this.elements.saveButton.on('click', _.bind(this.onViewChange, this));
                 changeAction = this.enableAccept;
-            }
-
-            // Fix bug with no fire change event in EDGE
-            if (tools.isEDGE()) {
-                var awaitBlur = false;
-                this.elements.quantity.on('input', function() {
-                    if (!awaitBlur) {
-                        $(this).one('blur', function() {
-                            $(this).trigger('change');
-                        });
-                    }
-                    awaitBlur = true;
-                });
             }
 
             this.$el.on('change', this.elements.quantity, _.bind(changeAction, this));
@@ -312,7 +320,8 @@ define(function(require) {
             }
 
             mediator.off('unitChanged', this.disableOptions, this);
-            this.elements.unit.off('change.' + this.cid);
+            this.elements.unit.off('change' + this.eventNamespace());
+            this.elements.quantity.off(this.eventNamespace());
 
             ProductQuantityEditableView.__super__.dispose.call(this);
         }

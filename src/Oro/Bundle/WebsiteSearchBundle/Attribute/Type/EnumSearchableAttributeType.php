@@ -14,7 +14,7 @@ class EnumSearchableAttributeType extends AbstractSearchableAttributeType
     /**
      * {@inheritdoc}
      */
-    public function getFilterStorageFieldType()
+    protected function getFilterStorageFieldTypeMain(): string
     {
         return Query::TYPE_INTEGER;
     }
@@ -22,7 +22,7 @@ class EnumSearchableAttributeType extends AbstractSearchableAttributeType
     /**
      * {@inheritdoc}
      */
-    public function getSorterStorageFieldType()
+    public function getSorterStorageFieldType(): string
     {
         return Query::TYPE_INTEGER;
     }
@@ -32,7 +32,7 @@ class EnumSearchableAttributeType extends AbstractSearchableAttributeType
      *
      * {@inheritdoc}
      */
-    public function getFilterType()
+    public function getFilterType(): string
     {
         return self::FILTER_TYPE_MULTI_ENUM;
     }
@@ -40,7 +40,7 @@ class EnumSearchableAttributeType extends AbstractSearchableAttributeType
     /**
      * {@inheritdoc}
      */
-    public function isLocalizable(FieldConfigModel $attribute)
+    public function isLocalizable(FieldConfigModel $attribute): bool
     {
         return false;
     }
@@ -48,7 +48,7 @@ class EnumSearchableAttributeType extends AbstractSearchableAttributeType
     /**
      * {@inheritdoc}
      */
-    public function getFilterableFieldName(FieldConfigModel $attribute)
+    protected function getFilterableFieldNameMain(FieldConfigModel $attribute): string
     {
         return $attribute->getFieldName() . '_' . EnumIdPlaceholder::NAME;
     }
@@ -56,7 +56,7 @@ class EnumSearchableAttributeType extends AbstractSearchableAttributeType
     /**
      * {@inheritdoc}
      */
-    public function getSortableFieldName(FieldConfigModel $attribute)
+    public function getSortableFieldName(FieldConfigModel $attribute): string
     {
         return $attribute->getFieldName() . '_priority';
     }
