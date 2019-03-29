@@ -685,23 +685,6 @@ workflows:
                         message: oro.checkout.workflow.condition.required_consents_should_be_checked.message
                         type: 'warning'
 
-            back_to_billing_address_definition:
-                preconditions:
-                    '@equal': [$checkout.completed, false]
-                actions:
-                    - '@assign_value': [$billing_address_has_shipping, true]
-                    - '@assign_value': [$payment_method, null]
-                    - '@assign_value': [$shipping_method, null]
-                    - '@assign_value': [$allowed, false]
-                    - '@generate_checkout_state_snapshot':
-                        entity: $checkout
-                        attribute: $.result.actualCheckoutState
-                    - '@save_checkout_state':
-                        entity: $checkout
-                        state: $.result.actualCheckoutState
-                        attribute: $state_token
-                    - '@assign_value': [$internal_state_token, $state_token]
-
             continue_to_billing_address_definition:
                 preactions:
                     - '@assign_value': [$consents_available, true]

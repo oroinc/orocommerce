@@ -110,7 +110,7 @@ class CustomerUserListener
                 'route' => 'oro_checkout_frontend_checkout',
                 'params' => [
                     'id' => $checkoutId,
-                    'transition' => 'continue_checkout_as_registered_user'
+                    'transition' => 'back_to_billing_address'
                 ]
             ]);
             $event->setEmailTemplateParams($params);

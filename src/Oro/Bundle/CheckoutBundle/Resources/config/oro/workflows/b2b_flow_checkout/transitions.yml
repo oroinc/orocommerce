@@ -4,49 +4,30 @@ workflows:
             __start__:
                 step_to: enter_billing_address
 
+            start_from_quote:
+                step_to: enter_billing_address
+
+            start_from_quote_as_guest:
+                step_to: enter_credentials_step
+
             start_from_shoppinglist:
-                step_to: enter_billing_address
-
-            continue_checkout_as_registered_user:
-                step_to: enter_billing_address
-                transition_definition: back_to_billing_address_definition
-                frontend_options:
-                    icon: fa-briefcase
-                    is_checkout_continue: true
-
-            # Starts checkout as guest
-            start_from_shoppinglist_as_guest:
                 step_to: enter_credentials_step
-                is_start: true
-                is_unavailable_hidden: true
-                transition_definition: start_from_shoppinglist_as_guest_definition
-                frontend_options:
-                    icon: fa-briefcase
-                init_routes:
-                    - oro_shopping_list_frontend_view
-                acl_resource: [CHECKOUT_CREATE, $.result.shoppingList]
-
-            # Continue checkout as guest from credentias step
-            continue_checkout_as_guest:
-                step_to: enter_billing_address
-                transition_definition: back_to_billing_address_definition
-                frontend_options:
-                    icon: fa-briefcase
-                    is_checkout_continue: true
-
-            start_checkout_as_guest_system:
-                step_to: enter_credentials_step
-                is_hidden: true
-                transition_definition: start_checkout_as_guest_system_definition
 
             start_from_quickorderform:
-                step_to: enter_billing_address
+                step_to: enter_credentials_step
 
             finish_checkout:
                 step_to: order_created
 
             payment_error:
                 step_to: enter_payment
+
+            continue_to_billing_address_as_guest:
+                step_to: enter_billing_address
+                transition_definition: continue_to_billing_address_as_guest_definition
+                frontend_options:
+                    icon: fa-briefcase
+                    is_checkout_continue: true
 
             continue_to_billing_address:
                 step_to: enter_billing_address
@@ -219,6 +200,11 @@ workflows:
                                 data: $internal_state_token
                         additional_data:
                             form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
+
+            back_to_enter_credentials:
+                step_to: enter_credentials_step
+                transition_definition: clear_payment_method_and_recalculate_state_definition
+                is_unavailable_hidden: true
 
             back_to_customer_consents:
                 step_to: customer_consents
