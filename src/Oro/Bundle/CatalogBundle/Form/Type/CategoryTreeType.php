@@ -33,7 +33,7 @@ class CategoryTreeType extends AbstractType
         $resolver->setDefaults([
             'class' => Category::class,
             'tree_key' => 'commerce-category',
-            'tree_data' => [$this->treeHandler, 'createTree']
+            'tree_data' => [$this->treeHandler, 'createTreeByCurrentOrganizationMasterCatalogRoot']
         ]);
     }
 
