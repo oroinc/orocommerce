@@ -6,6 +6,7 @@ use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Component\Tree\Entity\Repository\NestedTreeRepository;
 
@@ -20,15 +21,21 @@ class CategoryRepository extends NestedTreeRepository
     private $masterCatalog;
 
     /**
+     * @param Organization|null $organization
      * @return Category
      */
-    public function getMasterCatalogRoot()
+    public function getMasterCatalogRoot(Organization $organization = null)
     {
         if (!$this->masterCatalog) {
-            $this->masterCatalog = $this->createQueryBuilder('category')
+            $qb = $this->createQueryBuilder('category')
                 ->andWhere('category.parentCategory IS NULL')
-                ->orderBy('category.id', 'ASC')
-                ->setMaxResults(1)
+                ->orderBy('category.id', 'ASC');
+            if ($organization !== null) {
+                $qb->andWhere('category.organization = :organization');
+                $qb->setParameter('organization', $organization);
+            }
+
+            $this->masterCatalog = $qb->setMaxResults(1)
                 ->getQuery()
                 ->getSingleResult();
         }

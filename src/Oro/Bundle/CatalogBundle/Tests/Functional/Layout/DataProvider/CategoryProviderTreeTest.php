@@ -11,6 +11,7 @@ use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadMasterCatalogLocalizedTitles;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 
 class CategoryProviderTreeTest extends WebTestCase
 {
@@ -29,6 +30,11 @@ class CategoryProviderTreeTest extends WebTestCase
      */
     protected $categoryProvider;
 
+    /**
+     * @var WebsiteManager
+     */
+    private $websiteManager;
+
     protected function setUp()
     {
         $this->initClient();
@@ -43,6 +49,7 @@ class CategoryProviderTreeTest extends WebTestCase
 
         $this->registry = $this->getContainer()->get('doctrine');
         $this->repository = $this->registry->getRepository('OroCatalogBundle:Category');
+        $this->websiteManager = $this->getContainer()->get('oro_website.manager');
     }
 
     /**
@@ -61,7 +68,8 @@ class CategoryProviderTreeTest extends WebTestCase
         return new CategoryProvider(
             $requestProductHandler,
             $this->repository,
-            $this->createMock(CategoryTreeProvider::class)
+            $this->createMock(CategoryTreeProvider::class),
+            $this->websiteManager
         );
     }
 

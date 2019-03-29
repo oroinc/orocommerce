@@ -9,6 +9,7 @@ use Oro\Bundle\CatalogBundle\Handler\RequestProductHandler;
 use Oro\Bundle\CatalogBundle\Provider\CategoryTreeProvider;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
+use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Oro\Component\Cache\Layout\DataProviderCacheTrait;
 
 /**
@@ -36,19 +37,25 @@ class CategoryProvider
     /** @var LocalizationHelper */
     protected $localizationHelper;
 
+    /** @var WebsiteManager */
+    private $websiteManager;
+
     /**
      * @param RequestProductHandler $requestProductHandler
      * @param CategoryRepository $categoryRepository
      * @param CategoryTreeProvider $categoryTreeProvider
+     * @param WebsiteManager $websiteManager
      */
     public function __construct(
         RequestProductHandler $requestProductHandler,
         CategoryRepository $categoryRepository,
-        CategoryTreeProvider $categoryTreeProvider
+        CategoryTreeProvider $categoryTreeProvider,
+        WebsiteManager $websiteManager
     ) {
         $this->requestProductHandler = $requestProductHandler;
         $this->categoryRepository = $categoryRepository;
         $this->categoryTreeProvider = $categoryTreeProvider;
+        $this->websiteManager = $websiteManager;
     }
 
     /**
@@ -208,7 +215,10 @@ class CategoryProvider
             if ($categoryId) {
                 $this->categories[$categoryId] = $this->categoryRepository->find($categoryId);
             } else {
-                $this->categories[$categoryId] = $this->categoryRepository->getMasterCatalogRoot();
+                $website = $this->websiteManager->getCurrentWebsite();
+                $organization = $website ? $website->getOrganization() : null;
+
+                $this->categories[$categoryId] = $this->categoryRepository->getMasterCatalogRoot($organization);
             }
         }
 

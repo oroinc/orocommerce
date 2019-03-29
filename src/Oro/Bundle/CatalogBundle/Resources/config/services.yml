@@ -274,3 +274,9 @@ services:
         class: 'Oro\Bundle\CatalogBundle\EventListener\ORM\ProductMetadataBuilder'
         tags:
             - { name: oro_entity_extend.entity_metadata_builder }
+
+    oro_catalog.provider.master_catalog_root:
+        class: 'Oro\Bundle\CatalogBundle\Provider\MasterCatalogRootProvider'
+        arguments:
+            - '@oro_catalog.repository.category'
+            - '@oro_security.token_accessor'

@@ -13,6 +13,9 @@ use Oro\Bundle\CatalogBundle\Provider\CategoryTreeProvider;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 
 class CategoryProviderTest extends \PHPUnit\Framework\TestCase
 {
@@ -37,6 +40,11 @@ class CategoryProviderTest extends \PHPUnit\Framework\TestCase
     protected $localizationHelper;
 
     /**
+     * @var WebsiteManager|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $websiteManager;
+
+    /**
      * @var CategoryProvider
      */
     protected $categoryProvider;
@@ -49,16 +57,25 @@ class CategoryProviderTest extends \PHPUnit\Framework\TestCase
         $this->requestProductHandler = $this->createMock(RequestProductHandler::class);
         $this->categoryRepository = $this->createMock(CategoryRepository::class);
         $this->categoryTreeProvider = $this->createMock(CategoryTreeProvider::class);
+        $this->websiteManager = $this->createMock(WebsiteManager::class);
 
         $this->categoryProvider = new CategoryProvider(
             $this->requestProductHandler,
             $this->categoryRepository,
-            $this->categoryTreeProvider
+            $this->categoryTreeProvider,
+            $this->websiteManager
         );
     }
 
-    public function testGetCurrentCategoryUsingMasterCatalogRoot()
-    {
+    /**
+     * @param Website|null $website
+     * @param Organization|null $organization
+     * @dataProvider getCurrentCategoryUsingMasterCatalogRootDataProvider
+     */
+    public function testGetCurrentCategoryUsingMasterCatalogRoot(
+        Website $website = null,
+        Organization $organization = null
+    ) {
         $category = new Category();
 
         $this->requestProductHandler
@@ -66,13 +83,40 @@ class CategoryProviderTest extends \PHPUnit\Framework\TestCase
             ->method('getCategoryId')
             ->willReturn(null);
 
+        $this->websiteManager
+            ->expects($this->once())
+            ->method('getCurrentWebsite')
+            ->willReturn($website);
+
         $this->categoryRepository
             ->expects($this->once())
             ->method('getMasterCatalogRoot')
+            ->with($organization)
             ->willReturn($category);
 
         $result = $this->categoryProvider->getCurrentCategory();
         $this->assertSame($category, $result);
+    }
+
+    /**
+     * @return array
+     */
+    public function getCurrentCategoryUsingMasterCatalogRootDataProvider()
+    {
+        $organization = new Organization();
+        $website = new Website();
+        $website->setOrganization($organization);
+
+        return [
+            'without website' => [
+                'website' => null,
+                'organization' => null
+            ],
+            'with website' => [
+                'website' => $website,
+                'organization' => $website->getOrganization()
+            ]
+        ];
     }
 
     public function testGetCurrentCategoryUsingFind()
