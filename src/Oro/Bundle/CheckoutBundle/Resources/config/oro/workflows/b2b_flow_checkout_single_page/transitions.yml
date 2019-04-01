@@ -4,6 +4,12 @@ workflows:
             __start__:
                 step_to: checkout
 
+            start_from_quote:
+                step_to: checkout
+
+            start_from_quote_as_guest:
+                step_to: checkout
+
             start_from_shoppinglist:
                 step_to: checkout
 

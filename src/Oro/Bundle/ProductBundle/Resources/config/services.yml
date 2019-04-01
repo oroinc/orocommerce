@@ -827,7 +827,6 @@ services:
         class: 'Oro\Bundle\ProductBundle\MessageProcessor\ImageResizeMessageProcessor'
         arguments:
             - '@oro_product.repository.product_image'
-            - '@oro_layout.loader.image_filter'
             - '@oro_product.provider.product_images_dimensions'
             - '@oro_attachment.image_resizer'
             - '@oro_attachment.media_cache_manager'
