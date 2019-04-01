@@ -228,9 +228,7 @@ workflows:
                                     state1: $.result.initCheckoutState
                                     state2: $.result.savedCheckoutState
                         - '@or':
-                            - '@and':
-                                - '@equal': [$billing_address_has_shipping, true]
-                                - '@equal': [$checkout.shipToBillingAddress, true]
+                            - '@equal': [$checkout.shipToBillingAddress, true]
                             - '@and':
                                 - '@equal': [$checkout.shipToBillingAddress, false]
                                 - '@not_empty': $checkout.shippingAddress
