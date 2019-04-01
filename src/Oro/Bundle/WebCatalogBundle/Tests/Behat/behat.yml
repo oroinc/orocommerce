@@ -86,6 +86,16 @@ oro_behat_extension:
         Inherit Parent:
             selector: '[name="oro_web_catalog_content_node[parentScopeUsed]"]'
 
+        NewCategory2 category:
+            selector:
+                type: xpath
+                locator: '//div[contains(@class, "embedded-list")]//a//dt[contains(text(),"NewCategory2")]'
+
+        NewCategory2 breadcrumb item:
+            selector:
+                type: xpath
+                locator: '//span[contains(@class, "breadcrumbs__item")]/a[contains(., "NewCategory2")]'
+
     suites:
         OroWebCatalogBundle:
             contexts:
