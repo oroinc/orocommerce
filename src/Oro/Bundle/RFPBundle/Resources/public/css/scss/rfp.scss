@@ -57,6 +57,8 @@
 .rfp-lineitem-requested {
     .oro-item-collection {
         td {
+            white-space: normal;
+
             &.rfp-lineitem-requested-price {
                 input[type="text"] {
                     width: 50px;
