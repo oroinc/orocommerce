@@ -4,10 +4,9 @@ namespace Oro\Bundle\CatalogBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
-use Oro\Bundle\CatalogBundle\Provider\CategoryTreeProvider;
-use Oro\Bundle\SecurityBundle\Authentication\TokenAccessor;
 use Oro\Bundle\CatalogBundle\Provider\MasterCatalogRootProvider;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessor;
 
 class MasterCatalogRootProviderTest extends \PHPUnit\Framework\TestCase
 {
