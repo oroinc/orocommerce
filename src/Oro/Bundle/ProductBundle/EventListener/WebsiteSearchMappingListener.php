@@ -9,8 +9,12 @@ use Oro\Bundle\EntityConfigBundle\Manager\AttributeManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Search\ProductIndexFieldsProvider;
 use Oro\Bundle\WebsiteSearchBundle\Attribute\Type\SearchableAttributeTypeInterface;
+use Oro\Bundle\WebsiteSearchBundle\Attribute\Type\SearchAttributeTypeInterface;
 use Oro\Bundle\WebsiteSearchBundle\Event\WebsiteSearchMappingEvent;
 
+/**
+ * Adds dynamical information about product attributes to website search index mapping
+ */
 class WebsiteSearchMappingListener
 {
     /** @var AttributeManager */
@@ -60,9 +64,17 @@ class WebsiteSearchMappingListener
             $isForceIndexed = $this->fieldsProvider->isForceIndexed($attribute->getFieldName());
 
             if ($this->isFilterable($attribute, $attributeType, $isForceIndexed)) {
-                $name = $attributeType->getFilterableFieldName($attribute);
+                if ($attributeType instanceof SearchAttributeTypeInterface) {
+                    $names = $attributeType->getFilterableFieldNames($attribute);
+                    $types = $attributeType->getFilterStorageFieldTypes();
+                } else {
+                    $names = [$attributeType->getFilterableFieldName($attribute)];
+                    $types = [$attributeType->getFilterStorageFieldType()];
+                }
 
-                $fields[$name] = ['name' => $name, 'type' => $attributeType->getFilterStorageFieldType()];
+                foreach ($names as $key => $scalarName) {
+                    $fields[$scalarName] = ['name' => $scalarName, 'type' => $types[$key]];
+                }
             }
 
             if ($this->isSortable($attribute, $attributeType, $isForceIndexed)) {
@@ -77,15 +89,7 @@ class WebsiteSearchMappingListener
         }
 
         if ($fields) {
-            $config = $event->getConfiguration();
-
-            if (isset($config[Product::class]['fields'])) {
-                $config[Product::class]['fields'] = array_merge($config[Product::class]['fields'], $fields);
-            } else {
-                $config[Product::class]['fields'] = $fields;
-            }
-
-            $event->setConfiguration($config);
+            $this->setConfiguration($event, $fields);
         }
     }
 
@@ -106,6 +110,23 @@ class WebsiteSearchMappingListener
         }
 
         return $attributeType;
+    }
+
+    /**
+     * @param WebsiteSearchMappingEvent $event
+     * @param array $fields
+     */
+    private function setConfiguration(WebsiteSearchMappingEvent $event, array $fields)
+    {
+        $config = $event->getConfiguration();
+
+        if (isset($config[Product::class]['fields'])) {
+            $config[Product::class]['fields'] = array_merge($config[Product::class]['fields'], $fields);
+        } else {
+            $config[Product::class]['fields'] = $fields;
+        }
+
+        $event->setConfiguration($config);
     }
 
     /**

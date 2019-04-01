@@ -2,6 +2,17 @@ Please refer first to [UPGRADE.md](UPGRADE.md) for the most important items that
 
 The current file describes significant changes in the code that may affect the upgrade of your customizations.
 
+## 3.1.5
+
+### Added
+#### WebsiteSearchBundle
+* Interface `Oro\Bundle\WebsiteSearchBundle\Attribute\Type\SearchAttributeTypeInterface` to support multiple fields for filtering.
+
+### Changed
+#### WebsiteSearchBundle
+* Class `Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent`:
+ 	* method `addField()` can accept array values. This feature makes sense only for search engines that support array values (e.g. Elasticsearch).
+
 ## 3.1.4
 ### Changed
 #### PaymentBundle

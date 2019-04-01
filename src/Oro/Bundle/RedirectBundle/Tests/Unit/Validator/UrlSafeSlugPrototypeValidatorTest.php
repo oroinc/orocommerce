@@ -1,0 +1,74 @@
+<?php
+
+namespace Oro\Bundle\RedirectBundle\Tests\Unit\Validator;
+
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\RedirectBundle\Validator\Constraints\UrlSafeSlugPrototype;
+use Oro\Bundle\RedirectBundle\Validator\UrlSafeSlugPrototypeValidator;
+use Oro\Bundle\ValidationBundle\Validator\Constraints\UrlSafe;
+use PHPUnit\Framework\MockObject\MockObject;
+use Symfony\Component\Validator\ConstraintViolation;
+use Symfony\Component\Validator\ConstraintViolationList;
+use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
+
+class UrlSafeSlugPrototypeValidatorTest extends ConstraintValidatorTestCase
+{
+    private const ERROR_MESSAGE = 'This value should contain only latin letters, numbers and symbols "-._~".';
+
+    /**
+     * @var ValidatorInterface|MockObject
+     */
+    private $externalValidator;
+
+    protected function setUp()
+    {
+        $this->externalValidator = $this->createMock(ValidatorInterface::class);
+
+        parent::setUp();
+    }
+
+    protected function createValidator()
+    {
+        return new UrlSafeSlugPrototypeValidator($this->externalValidator);
+    }
+
+    public function testValidateWhenNull(): void
+    {
+        $this->validator->validate(null, new UrlSafeSlugPrototype());
+
+        $this->assertNoViolation();
+    }
+
+    public function testValidateWhenValidPrototype(): void
+    {
+        $this->externalValidator
+            ->expects(self::once())
+            ->method('validate')
+            ->with('some_value', new UrlSafe())
+            ->willReturn(new ConstraintViolationList());
+
+        $slugPrototype = new LocalizedFallbackValue();
+        $slugPrototype->setString('some_value');
+        $this->validator->validate($slugPrototype, new UrlSafeSlugPrototype());
+
+        $this->assertNoViolation();
+    }
+
+    public function testValidateWhenInvalidPrototype(): void
+    {
+        $this->externalValidator
+            ->expects(self::once())
+            ->method('validate')
+            ->with('inval,id', new UrlSafe())
+            ->willReturn(new ConstraintViolationList([
+                new ConstraintViolation(self::ERROR_MESSAGE, '', [], '', '', '')
+            ]));
+
+        $slugPrototype = new LocalizedFallbackValue();
+        $slugPrototype->setString('inval,id');
+        $this->validator->validate($slugPrototype, new UrlSafeSlugPrototype());
+
+        $this->buildViolation(self::ERROR_MESSAGE)->assertRaised();
+    }
+}

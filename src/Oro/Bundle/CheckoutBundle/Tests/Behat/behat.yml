@@ -36,6 +36,10 @@ oro_behat_extension:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector: '[name="oro_workflow_transition[billing_address][customerAddress]"]'
 
+    Billing Address:
+      selector: 'select[name="oro_workflow_transition[billing_address][customerAddress]"]'
+      class: Oro\Bundle\FormBundle\Tests\Behat\Element\Select
+
     Select Shipping Address:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector: '[name="oro_workflow_transition[shipping_address][customerAddress]"]'
@@ -354,6 +358,10 @@ oro_behat_extension:
           State: 'oro_action_operation[address][region]'
           Postal Code: 'oro_action_operation[address][postalCode]'
           Save Address: 'oro_action_operation[save_address]'
+
+    Checkout Address Fields:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector: '#checkout-address-fields-container'
 
   pages:
     Checkout:

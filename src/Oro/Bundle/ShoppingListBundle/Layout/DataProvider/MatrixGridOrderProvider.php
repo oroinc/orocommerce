@@ -87,7 +87,12 @@ class MatrixGridOrderProvider
 
         $collection = $this->matrixGridManager->getMatrixCollection($product, $shoppingList);
 
-        $tempShoppingList = new ShoppingList();
+        if (!$shoppingList) {
+            $tempShoppingList = new ShoppingList();
+        } else {
+            $tempShoppingList = clone $shoppingList;
+            $tempShoppingList->getLineItems()->clear();
+        }
 
         foreach ($collection->rows as $row) {
             foreach ($row->columns as $column) {

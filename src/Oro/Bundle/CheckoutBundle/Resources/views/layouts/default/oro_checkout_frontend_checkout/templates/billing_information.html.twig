@@ -35,7 +35,7 @@
 
             {{ address.address_form(form.billing_address, form.save_billing_address, hasCustomAddress, form.email) }}
 
-            {% set hideShipping = false %}
+            {% set hideShipping = true %}
             {% if billingAddress %}
                 {% set typedAddress = billingAddress.customerAddress %}
                 {% if typedAddress is empty %}

@@ -26,6 +26,9 @@ use Symfony\Component\Validator\Exception\ConstraintDefinitionException;
 use Symfony\Component\Validator\Exception\InvalidOptionsException;
 use Symfony\Component\Validator\Exception\MissingOptionsException;
 
+/**
+ * UPS integration settings form type.
+ */
 class UPSTransportSettingsType extends AbstractType
 {
     const BLOCK_PREFIX = 'oro_ups_transport_settings';
@@ -86,7 +89,8 @@ class UPSTransportSettingsType extends AbstractType
             TextType::class,
             [
                 'label' => 'oro.ups.transport.api_user.label',
-                'required' => true
+                'required' => true,
+                'attr' => ['autocomplete' => 'off'],
             ]
         );
         $builder->add(
@@ -102,7 +106,8 @@ class UPSTransportSettingsType extends AbstractType
             TextType::class,
             [
                 'label' => 'oro.ups.transport.api_key.label',
-                'required' => true
+                'required' => true,
+                'attr' => ['autocomplete' => 'off'],
             ]
         );
         $builder->add(
