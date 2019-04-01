@@ -807,7 +807,7 @@ class QuoteControllerTest extends WebTestCase
         $this->assertCount(
             1,
             $crawler->filter(
-                '.validation-failed:contains("Quantity should be grater than or equal to offered quantity")'
+                '.validation-failed:contains("Quantity should be greater than or equal to offered quantity")'
             )
         );
     }
