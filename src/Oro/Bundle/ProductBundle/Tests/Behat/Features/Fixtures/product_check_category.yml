@@ -143,6 +143,7 @@ Oro\Bundle\CatalogBundle\Entity\Category:
         addTitle: ['@localNewCategory3']
         setParentCategory: ['@category2']
         organization: '@organization'
+        addProduct: ['@product3']
 
 Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     locvalue1:
