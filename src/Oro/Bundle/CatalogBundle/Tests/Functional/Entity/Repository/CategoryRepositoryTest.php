@@ -9,12 +9,14 @@ use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadMasterCatalogLocalizedTitles;
-use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\OrganizationBundle\Tests\Functional\OrganizationTrait;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class CategoryRepositoryTest extends WebTestCase
 {
+    use OrganizationTrait;
+
     /**
      * @var ManagerRegistry
      */
@@ -42,7 +44,7 @@ class CategoryRepositoryTest extends WebTestCase
 
     public function testGetMasterCatalogRoot()
     {
-        $root = $this->repository->getMasterCatalogRoot();
+        $root = $this->repository->getMasterCatalogRoot($this->getOrganization());
         $this->assertInstanceOf(Category::class, $root);
 
         $defaultTitle = $root->getDefaultTitle();
@@ -87,14 +89,10 @@ class CategoryRepositoryTest extends WebTestCase
 
     public function testFindOneByDefaultTitle()
     {
-        $expectedCategory = $this->repository->getMasterCatalogRoot();
+        $expectedCategory = $this->repository->getMasterCatalogRoot($this->getOrganization());
         $expectedTitle = $expectedCategory->getDefaultTitle()->getString();
-        $organizationRepo = $this->getContainer()
-            ->get('doctrine')
-            ->getRepository(Organization::class);
 
-        $defaultOrganization = $organizationRepo->getFirst();
-
+        $defaultOrganization = $this->getOrganization();
         $actualCategory = $this->repository->findOneByDefaultTitle($expectedTitle, $defaultOrganization);
 
         $this->assertInstanceOf(Category::class, $actualCategory);

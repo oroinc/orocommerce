@@ -3,6 +3,7 @@
 namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Entity\Visibility\Repository;
 
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
+use Oro\Bundle\OrganizationBundle\Tests\Functional\OrganizationTrait;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\CategoryVisibilityRepository;
@@ -10,6 +11,8 @@ use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadCategoryVisibi
 
 class CategoryVisibilityRepositoryTest extends WebTestCase
 {
+    use OrganizationTrait;
+
     const ROOT_CATEGORY = 'All Products';
 
     /**
@@ -135,7 +138,7 @@ class CategoryVisibilityRepositoryTest extends WebTestCase
     {
         if ($reference === self::ROOT_CATEGORY) {
             return $this->getContainer()->get('doctrine')->getRepository('OroCatalogBundle:Category')
-                ->getMasterCatalogRoot()->getId();
+                ->getMasterCatalogRoot($this->getOrganization())->getId();
         }
 
         return $reference ? $this->getReference($reference)->getId() : null;

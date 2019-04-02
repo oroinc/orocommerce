@@ -560,7 +560,7 @@ class CustomerCategoryRepositoryTest extends AbstractCategoryRepositoryTest
     {
         return $this->getContainer()->get('doctrine')->getManagerForClass('OroCatalogBundle:Category')
             ->getRepository('OroCatalogBundle:Category')
-            ->getMasterCatalogRoot();
+            ->getMasterCatalogRoot($this->getOrganization());
     }
 
     /**
