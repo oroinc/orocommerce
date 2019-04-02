@@ -10,6 +10,7 @@ use Oro\Bundle\CatalogBundle\Provider\CategoryTreeProvider;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadMasterCatalogLocalizedTitles;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 
@@ -78,7 +79,13 @@ class CategoryProviderTreeTest extends WebTestCase
      */
     public function testGetParentTraverseToRootCategories()
     {
-        $categoryId = $this->repository->findOneByDefaultTitle('category_1_2_3')->getId();
+        $organizationRepo = $this->getContainer()
+            ->get('doctrine')
+            ->getRepository(Organization::class);
+
+        $defaultOrganization = $organizationRepo->getFirst();
+
+        $categoryId = $this->repository->findOneByDefaultTitle('category_1_2_3', $defaultOrganization)->getId();
         $categoryProvider = $this->getCategoryProviderForNode($categoryId);
         $parents = $categoryProvider->getParentCategories();
 

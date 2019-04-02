@@ -9,6 +9,7 @@ use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadMasterCatalogLocalizedTitles;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
@@ -88,13 +89,19 @@ class CategoryRepositoryTest extends WebTestCase
     {
         $expectedCategory = $this->repository->getMasterCatalogRoot();
         $expectedTitle = $expectedCategory->getDefaultTitle()->getString();
+        $organizationRepo = $this->getContainer()
+            ->get('doctrine')
+            ->getRepository(Organization::class);
 
-        $actualCategory = $this->repository->findOneByDefaultTitle($expectedTitle);
+        $defaultOrganization = $organizationRepo->getFirst();
+
+        $actualCategory = $this->repository->findOneByDefaultTitle($expectedTitle, $defaultOrganization);
+
         $this->assertInstanceOf(Category::class, $actualCategory);
         $this->assertEquals($expectedCategory->getId(), $actualCategory->getId());
         $this->assertEquals($expectedTitle, $actualCategory->getDefaultTitle()->getString());
 
-        $this->assertNull($this->repository->findOneByDefaultTitle('Not existing category'));
+        $this->assertNull($this->repository->findOneByDefaultTitle('Not existing category', $defaultOrganization));
     }
 
     public function testGetCategoryMapByProducts()

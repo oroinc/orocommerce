@@ -5,6 +5,7 @@ namespace Oro\Bundle\CatalogBundle\Tests\Functional\Action;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class CategoryActionTest extends WebTestCase
@@ -51,10 +52,15 @@ class CategoryActionTest extends WebTestCase
         ];
 
         /** @var CategoryRepository $repo */
-        $repo = $this->getContainer()->get('doctrine')->getRepository('OroCatalogBundle:Category');
+        $categoryRepo = $this->getContainer()->get('doctrine')->getRepository(Category::class);
+        $organizationRepo = $this->getContainer()
+            ->get('doctrine')
+            ->getRepository(Organization::class);
+
+        $defaultOrganization = $organizationRepo->getFirst();
 
         foreach ($removedChildCategories as $removedChildCategory) {
-            $this->assertEmpty($repo->findOneByDefaultTitle($removedChildCategory));
+            $this->assertEmpty($categoryRepo->findOneByDefaultTitle($removedChildCategory, $defaultOrganization));
         }
     }
 

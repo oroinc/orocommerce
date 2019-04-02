@@ -11,6 +11,7 @@ use Oro\Bundle\InventoryBundle\Inventory\LowInventoryProvider;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -308,7 +309,7 @@ class CategoryControllerTest extends WebTestCase
 
         $this->client->followRedirects(true);
 
-        /** TODO Change after BAP-1813 */
+        /** Change after BAP-1813 */
         $form->getFormNode()->setAttribute(
             'action',
             $form->getFormNode()->getAttribute('action') . '&_widgetContainer=dialog'
@@ -323,7 +324,14 @@ class CategoryControllerTest extends WebTestCase
         $repository = $this->getContainer()->get('doctrine')
             ->getManagerForClass('OroCatalogBundle:Category')
             ->getRepository('OroCatalogBundle:Category');
-        $category = $repository->findOneByDefaultTitle(LoadCategoryData::THIRD_LEVEL1);
+
+        $organizationRepo = $this->getContainer()
+            ->get('doctrine')
+            ->getRepository(Organization::class);
+
+        $defaultOrganization = $organizationRepo->getFirst();
+
+        $category = $repository->findOneByDefaultTitle(LoadCategoryData::THIRD_LEVEL1, $defaultOrganization);
         $this->assertEquals(LoadCategoryData::FIRST_LEVEL, $category->getParentCategory()->getTitle()->getString());
     }
 

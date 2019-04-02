@@ -5,8 +5,13 @@ namespace Oro\Bundle\CatalogBundle\EventListener;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
+/**
+ * Gets categories depending on different criterias
+ */
 abstract class AbstractProductImportEventListener
 {
     const CATEGORY_KEY = 'category.default.title';
@@ -56,15 +61,18 @@ abstract class AbstractProductImportEventListener
 
     /**
      * @param string $categoryDefaultTitle
+     * @param OrganizationInterface $organization
      * @return null|Category
+     * @throws \Doctrine\ORM\NonUniqueResultException
      */
-    protected function getCategoryByDefaultTitle($categoryDefaultTitle)
+    protected function getCategoryByDefaultTitle($categoryDefaultTitle, OrganizationInterface $organization)
     {
         if (array_key_exists($categoryDefaultTitle, $this->categoriesByTitle)) {
             return $this->categoriesByTitle[$categoryDefaultTitle];
         }
 
-        $category = $this->getCategoryRepository()->findOneByDefaultTitle($categoryDefaultTitle);
+        /** @var Organization $organization */
+        $category = $this->getCategoryRepository()->findOneByDefaultTitle($categoryDefaultTitle, $organization);
         if (!$category) {
             $this->categoriesByTitle[$categoryDefaultTitle] = null;
 
