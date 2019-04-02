@@ -1,71 +1,45 @@
 workflows:
     b2b_flow_checkout:
         transition_definitions:
-            start_from_shoppinglist_definition:
-                preactions:
-                    - '@find_entity':
-                        conditions:
-                            '@not_empty': $init_context
-                        parameters:
-                            class: $init_context.entityClass
-                            identifier: $init_context.entityId
-                            attribute: $.result.shoppingList
-                    - '@call_service_method':
-                        service: oro_checkout.condition.is_workflow_start_from_shopping_list_allowed
-                        method: isAllowedForLogged
-                        attribute: $isAllowed
-                preconditions:
-                   '@and':
-                       - '@has_elements': $.result.shoppingList.lineItems
-                       - '@equal': [$isAllowed, true]
+            start_from_quickorderform_definition:
                 actions:
-                    - '@run_action_group':
-                        action_group: start_shoppinglist_checkout
-                        parameters_mapping:
-                            shoppingList: $.result.shoppingList
-                            showErrors: true
-                        results:
-                            data.checkout: $.checkout
-                            result.redirectUrl: $.redirectUrl
-
-            start_from_shoppinglist_as_guest_definition:
-                preactions:
-                    - '@find_entity':
-                        conditions:
-                            '@not_empty': $init_context
-                        parameters:
-                            class: $init_context.entityClass
-                            identifier: $init_context.entityId
-                            attribute: $.result.shoppingList
-                    - '@call_service_method':
-                        service: oro_checkout.condition.is_workflow_start_from_shopping_list_allowed
-                        method: isAllowedForGuest
-                        attribute: $isAllowed
-                preconditions:
-                   '@and':
-                       - '@has_elements': $.result.shoppingList.lineItems
-                       - '@equal': [$isAllowed, true]
-                actions:
-                    - '@assign_value': [$is_guest_checkout, true]
-                    - '@run_action_group':
-                        action_group: start_shoppinglist_checkout
-                        parameters_mapping:
-                            shoppingList: $.result.shoppingList
-                            showErrors: true
-                        results:
-                            data.checkout: $.checkout
-                            result.redirectUrl: $.redirectUrl
                     - '@transit_workflow':
-                        entity: $checkout
-                        transition: start_checkout_as_guest_system
-                        workflow: $.definition.name
+                        conditions:
+                            '@and':
+                                - '@current_step_name_is_equal':
+                                      main_entity: $checkout
+                                      step_name: 'enter_credentials_step'
+                                      workflow: $.definition.name
+                                - '@not_empty': $checkout.customerUser
+                                - '@not_equal': [$checkout.customerUser.isGuest, true]
+                        parameters:
+                            entity: $checkout
+                            transition: 'back_to_billing_address'
+                            workflow: $.definition.name
 
-            start_checkout_as_guest_system_definition:
+            start_from_shoppinglist_definition:
                 actions:
-                    - '@redirect':
-                        route: oro_checkout_frontend_checkout
-                        route_parameters:
-                            id: $checkout.id
+                    - '@transit_workflow':
+                        conditions:
+                            '@or':
+                                - '@empty': $.result.shoppingList.customerUser
+                                - '@equal': [$.result.shoppingList.customerUser.isGuest, true]
+                        parameters:
+                            entity: $checkout
+                            transition: 'back_to_enter_credentials'
+                            workflow: $.definition.name
+
+            continue_to_billing_address_as_guest_definition:
+                actions:
+                    - '@transit_workflow':
+                        conditions:
+                            '@not':
+                                - '@is_consents_accepted':
+                                    acceptedConsents: $customerConsents
+                        parameters:
+                            entity: $checkout
+                            transition: 'back_to_customer_consents'
+                            workflow: $.definition.name
 
             continue_to_billing_address_definition:
                 preactions:
@@ -120,33 +94,6 @@ workflows:
                                 - '@equal': [$consents_available, true]
                         message: oro.checkout.workflow.condition.required_consents_should_be_checked.message
                         type: 'warning'
-
-            back_to_billing_address_definition:
-                preconditions:
-                    '@equal': [$checkout.completed, false]
-                actions:
-                    - '@assign_value': [$billing_address_has_shipping, true]
-                    - '@assign_value': [$payment_method, null]
-                    - '@assign_value': [$shipping_method, null]
-
-                    - '@generate_checkout_state_snapshot':
-                        entity: $checkout
-                        attribute: $.result.actualCheckoutState
-                    - '@save_checkout_state':
-                        entity: $checkout
-                        state: $.result.actualCheckoutState
-                        attribute: $state_token
-                    - '@assign_value': [$internal_state_token, $state_token]
-                    - '@tree':
-                        conditions:
-                            '@not':
-                                - '@is_consents_accepted':
-                                    acceptedConsents: $customerConsents
-                        actions:
-                            - '@transit_workflow':
-                                entity: $checkout
-                                transition: back_to_customer_consents
-                                workflow: $.definition.name
 
             continue_to_shipping_address_definition:
                 preactions:
@@ -281,9 +228,7 @@ workflows:
                                     state1: $.result.initCheckoutState
                                     state2: $.result.savedCheckoutState
                         - '@or':
-                            - '@and':
-                                - '@equal': [$billing_address_has_shipping, true]
-                                - '@equal': [$checkout.shipToBillingAddress, true]
+                            - '@equal': [$checkout.shipToBillingAddress, true]
                             - '@and':
                                 - '@equal': [$checkout.shipToBillingAddress, false]
                                 - '@not_empty': $checkout.shippingAddress

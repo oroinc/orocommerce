@@ -146,7 +146,7 @@ class ShoppingListLimitManager
      */
     private function getShoppingListLimit(Website $website = null)
     {
-        return $this->configManager->get('oro_shopping_list.shopping_list_limit', false, false, $website);
+        return (int) $this->configManager->get('oro_shopping_list.shopping_list_limit', false, false, $website);
     }
 
     /**

@@ -58,7 +58,7 @@ class BaseProductController extends Controller
     public function sidebarAction()
     {
         $masterCatalogRoot = $this->get('oro_catalog.provider.master_catalog_root')
-            ->getMasterCatalogRootByOrganization();
+            ->getMasterCatalogRootForCurrentOrganization();
 
         return [
             'defaultCategoryId' => $this->getCatalogRequestHandler()->getCategoryId(),

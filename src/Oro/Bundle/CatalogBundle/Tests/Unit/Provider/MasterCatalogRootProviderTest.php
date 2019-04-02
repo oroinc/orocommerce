@@ -30,26 +30,8 @@ class MasterCatalogRootProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testGetMasterCatalogRootWithoutOrganization()
+    public function testGetMasterCatalogRootForCurrentOrganization()
     {
-        $organization = null;
-        $category = new Category();
-
-        $this->tokenAccessor->expects($this->once())
-            ->method('getOrganization')
-            ->willReturn(null);
-
-        $this->categoryRepository->expects($this->once())
-            ->method('getMasterCatalogRoot')
-            ->with($organization)
-            ->willReturn($category);
-
-        $this->provider->getMasterCatalogRootByOrganization($organization);
-    }
-
-    public function testGetMasterCatalogRootWithOrganizationFromToken()
-    {
-        $organization = null;
         $organizationFromToken = new Organization();
         $category = new Category();
 
@@ -62,22 +44,6 @@ class MasterCatalogRootProviderTest extends \PHPUnit\Framework\TestCase
             ->with($organizationFromToken)
             ->willReturn($category);
 
-        $this->provider->getMasterCatalogRootByOrganization($organization);
-    }
-
-    public function testGetMasterCatalogRootWithOrganization()
-    {
-        $organization = new Organization();
-        $category = new Category();
-
-        $this->tokenAccessor->expects($this->never())
-            ->method('getOrganization');
-
-        $this->categoryRepository->expects($this->once())
-            ->method('getMasterCatalogRoot')
-            ->with($organization)
-            ->willReturn($category);
-
-        $this->provider->getMasterCatalogRootByOrganization($organization);
+        $this->provider->getMasterCatalogRootForCurrentOrganization();
     }
 }

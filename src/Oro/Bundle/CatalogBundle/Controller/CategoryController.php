@@ -76,7 +76,7 @@ class CategoryController extends Controller
     {
         return [
             'rootCategory' => $this->get('oro_catalog.provider.master_catalog_root')
-                ->getMasterCatalogRootByOrganization()
+                ->getMasterCatalogRootForCurrentOrganization()
         ];
     }
 
@@ -98,7 +98,7 @@ class CategoryController extends Controller
     {
         $handler = $this->get('oro_catalog.category_tree_handler');
 
-        $root = $this->get('oro_catalog.provider.master_catalog_root')->getMasterCatalogRootByOrganization();
+        $root = $this->get('oro_catalog.provider.master_catalog_root')->getMasterCatalogRootForCurrentOrganization();
         $treeItems = $handler->getTreeItemList($root, true);
 
         $collection = new TreeCollection();
@@ -187,7 +187,7 @@ class CategoryController extends Controller
 
         if (is_array($result)) {
             $result['rootCategory'] = $this->get('oro_catalog.provider.master_catalog_root')
-                ->getMasterCatalogRootByOrganization();
+                ->getMasterCatalogRootForCurrentOrganization();
         }
 
         return $result;

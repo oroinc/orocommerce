@@ -21,24 +21,23 @@ class CategoryRepository extends NestedTreeRepository
     private $masterCatalog;
 
     /**
-     * @param Organization|null $organization
+     * @param Organization $organization
      * @return Category
      */
-    public function getMasterCatalogRoot(Organization $organization = null)
+    public function getMasterCatalogRoot(Organization $organization)
     {
         if (!$this->masterCatalog) {
             $qb = $this->createQueryBuilder('category')
                 ->andWhere('category.parentCategory IS NULL')
                 ->orderBy('category.id', 'ASC');
-            if ($organization !== null) {
-                $qb->andWhere('category.organization = :organization');
-                $qb->setParameter('organization', $organization);
-            }
+            $qb->andWhere('category.organization = :organization');
+            $qb->setParameter('organization', $organization);
 
             $this->masterCatalog = $qb->setMaxResults(1)
                 ->getQuery()
                 ->getSingleResult();
         }
+
         return $this->masterCatalog;
     }
 

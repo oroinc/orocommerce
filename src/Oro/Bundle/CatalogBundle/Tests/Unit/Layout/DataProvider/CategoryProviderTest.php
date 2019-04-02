@@ -67,15 +67,11 @@ class CategoryProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @param Website|null $website
-     * @param Organization|null $organization
-     * @dataProvider getCurrentCategoryUsingMasterCatalogRootDataProvider
-     */
-    public function testGetCurrentCategoryUsingMasterCatalogRoot(
-        Website $website = null,
-        Organization $organization = null
-    ) {
+    public function testGetCurrentCategoryUsingMasterCatalogRoot()
+    {
+        $organization = new Organization();
+        $website = new Website();
+        $website->setOrganization($organization);
         $category = new Category();
 
         $this->requestProductHandler
@@ -99,22 +95,41 @@ class CategoryProviderTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * @dataProvider getEmptyCurrentCateDataProvider
+     *
+     * @param Website $website
+     */
+    public function testGetCurrentCategoryNull(Website $website = null)
+    {
+        $this->requestProductHandler
+            ->expects($this->once())
+            ->method('getCategoryId')
+            ->willReturn(null);
+
+        $this->websiteManager
+            ->expects($this->once())
+            ->method('getCurrentWebsite')
+            ->willReturn($website);
+
+        $this->categoryRepository
+            ->expects($this->never())
+            ->method('getMasterCatalogRoot');
+
+        $result = $this->categoryProvider->getCurrentCategory();
+        $this->assertNull($result);
+    }
+
+    /**
      * @return array
      */
-    public function getCurrentCategoryUsingMasterCatalogRootDataProvider()
+    public function getEmptyCurrentCateDataProvider()
     {
-        $organization = new Organization();
-        $website = new Website();
-        $website->setOrganization($organization);
-
         return [
             'without website' => [
-                'website' => null,
-                'organization' => null
+                'website' => null
             ],
-            'with website' => [
-                'website' => $website,
-                'organization' => $website->getOrganization()
+            'without organization' => [
+                'website' => new Website(),
             ]
         ];
     }
@@ -141,7 +156,15 @@ class CategoryProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testGetRootCategory()
     {
+        $organization = new Organization();
+        $website = new Website();
+        $website->setOrganization($organization);
         $category = new Category();
+
+        $this->websiteManager
+            ->expects($this->once())
+            ->method('getCurrentWebsite')
+            ->willReturn($website);
 
         $this->categoryRepository
             ->expects($this->once())
@@ -174,6 +197,14 @@ class CategoryProviderTest extends \PHPUnit\Framework\TestCase
         $rootCategory->addChildCategory($mainCategory);
 
         $user = new CustomerUser();
+        $organization = new Organization();
+        $website = new Website();
+        $website->setOrganization($organization);
+
+        $this->websiteManager
+            ->expects($this->once())
+            ->method('getCurrentWebsite')
+            ->willReturn($website);
 
         $this->categoryRepository
             ->expects($this->once())
@@ -193,6 +224,9 @@ class CategoryProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(new ArrayCollection([$expectedDTO]), $actual);
     }
 
+    /**
+     * @return CustomerUser
+     */
     private function prepareGetCategoryTreeArray()
     {
         $childCategory = new Category();
@@ -212,6 +246,14 @@ class CategoryProviderTest extends \PHPUnit\Framework\TestCase
         $rootCategory->addChildCategory($mainCategory);
 
         $user = new CustomerUser();
+        $organization = new Organization();
+        $website = new Website();
+        $website->setOrganization($organization);
+
+        $this->websiteManager
+            ->expects($this->once())
+            ->method('getCurrentWebsite')
+            ->willReturn($website);
 
         $this->categoryRepository
             ->expects($this->once())

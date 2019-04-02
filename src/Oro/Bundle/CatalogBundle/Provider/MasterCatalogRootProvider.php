@@ -35,14 +35,11 @@ class MasterCatalogRootProvider
     }
 
     /**
-     * @param Organization|null $organization
      * @return Category
      */
-    public function getMasterCatalogRootByOrganization(Organization $organization = null)
+    public function getMasterCatalogRootForCurrentOrganization()
     {
-        if ($organization === null) {
-            $organization = $this->tokenAccessor->getOrganization();
-        }
+        $organization = $this->tokenAccessor->getOrganization();
 
         return $this->categoryRepository->getMasterCatalogRoot($organization);
     }

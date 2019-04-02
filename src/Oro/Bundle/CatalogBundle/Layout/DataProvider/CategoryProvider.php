@@ -9,6 +9,7 @@ use Oro\Bundle\CatalogBundle\Handler\RequestProductHandler;
 use Oro\Bundle\CatalogBundle\Provider\CategoryTreeProvider;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Oro\Component\Cache\Layout\DataProviderCacheTrait;
 
@@ -215,10 +216,7 @@ class CategoryProvider
             if ($categoryId) {
                 $this->categories[$categoryId] = $this->categoryRepository->find($categoryId);
             } else {
-                $website = $this->websiteManager->getCurrentWebsite();
-                $organization = $website ? $website->getOrganization() : null;
-
-                $this->categories[$categoryId] = $this->categoryRepository->getMasterCatalogRoot($organization);
+                $this->categories[$categoryId] = $this->getCurrentMasterCatalogRoot();
             }
         }
 
@@ -234,5 +232,24 @@ class CategoryProvider
             $this->localizationHelper->getCurrentLocalization()->getId() : 0;
 
         return $localization_id;
+    }
+
+    /**
+     * @return Category|null
+     */
+    private function getCurrentMasterCatalogRoot()
+    {
+        $website = $this->websiteManager->getCurrentWebsite();
+        if (!$website) {
+            return null;
+        }
+
+        /** @var Organization $organization */
+        $organization = $website->getOrganization();
+        if (!$organization) {
+            return null;
+        }
+
+        return $this->categoryRepository->getMasterCatalogRoot($organization);
     }
 }

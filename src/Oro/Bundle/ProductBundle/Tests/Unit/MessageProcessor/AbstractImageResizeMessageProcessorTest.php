@@ -8,7 +8,6 @@ use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
 use Oro\Bundle\AttachmentBundle\Manager\MediaCacheManager;
 use Oro\Bundle\AttachmentBundle\Resizer\ImageResizer;
-use Oro\Bundle\LayoutBundle\Loader\ImageFilterLoader;
 use Oro\Bundle\LayoutBundle\Model\ThemeImageTypeDimension;
 use Oro\Bundle\ProductBundle\Entity\ProductImageType;
 use Oro\Bundle\ProductBundle\MessageProcessor\ImageResizeMessageProcessor;
@@ -40,11 +39,6 @@ abstract class AbstractImageResizeMessageProcessorTest extends \PHPUnit\Framewor
     protected $imageRepository;
 
     /**
-     * @var ImageFilterLoader
-     */
-    protected $filterLoader;
-
-    /**
      * @var ProductImagesDimensionsProvider
      */
     protected $imageDimensionsProvider;
@@ -67,7 +61,6 @@ abstract class AbstractImageResizeMessageProcessorTest extends \PHPUnit\Framewor
     public function setUp()
     {
         $this->imageRepository = $this->prophesize(EntityRepository::class);
-        $this->filterLoader = $this->prophesize(ImageFilterLoader::class);
         $this->imageDimensionsProvider = $this->prophesize(ProductImagesDimensionsProvider::class);
         $this->imageResizer = $this->prophesize(ImageResizer::class);
         $this->attachmentManager = $this->prophesize(AttachmentManager::class);
@@ -75,7 +68,6 @@ abstract class AbstractImageResizeMessageProcessorTest extends \PHPUnit\Framewor
 
         $this->processor = new ImageResizeMessageProcessor(
             $this->imageRepository->reveal(),
-            $this->filterLoader->reveal(),
             $this->imageDimensionsProvider->reveal(),
             $this->imageResizer->reveal(),
             $this->mediaCacheManager->reveal(),
@@ -147,7 +139,6 @@ abstract class AbstractImageResizeMessageProcessorTest extends \PHPUnit\Framewor
                 ]
             );
 
-        $this->filterLoader->load()->shouldBeCalled();
         $this->imageRepository->find(self::PRODUCT_IMAGE_ID)->willReturn($productImage->reveal());
 
         $this->attachmentManager->getFilteredImageUrl($image, self::ORIGINAL)->willReturn(self::PATH_ORIGINAL);

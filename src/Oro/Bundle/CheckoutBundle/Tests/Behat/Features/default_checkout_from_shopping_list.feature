@@ -27,6 +27,7 @@ Feature: Default Checkout From Shopping List
       | Product1`"'&йёщ> | 5 | items |
     And I should see Checkout Totals with data:
       | Subtotal | $10.00 |
+    And I should not see "Back"
 
     When I open Order History page on the store frontend
     Then I should see following grid:

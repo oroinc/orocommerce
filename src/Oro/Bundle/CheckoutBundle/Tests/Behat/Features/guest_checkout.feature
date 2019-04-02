@@ -119,8 +119,9 @@ Feature: Guest Checkout
     And I click "Add to Shopping List"
     And I click "Shopping List"
     And I click "Create Order"
-    And I click "Continue as a Guest"
-    And I fill form with:
+    When I click "Continue as a Guest"
+    Then I should not see "Back"
+    When I fill form with:
       | First Name           | Tester1         |
       | Last Name            | Testerson       |
       | Email                | tester@test.com |
@@ -134,7 +135,7 @@ Feature: Guest Checkout
     And I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
     And I check "Payment Terms" on the "Payment" checkout step and press Continue
     And I uncheck "Save my data and create an account" on the checkout page
-    When I click "Submit Order"
+    And I click "Submit Order"
     Then I should see "Thank You For Your Purchase!"
 
   Scenario: Check guest orders on management console

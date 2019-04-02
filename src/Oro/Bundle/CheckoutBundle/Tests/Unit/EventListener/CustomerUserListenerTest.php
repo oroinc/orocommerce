@@ -165,7 +165,7 @@ class CustomerUserListenerTest extends \PHPUnit\Framework\TestCase
             'route' => 'oro_checkout_frontend_checkout',
             'params' => [
                 'id' => 777,
-                'transition' => 'continue_checkout_as_registered_user'
+                'transition' => 'back_to_billing_address'
             ]
         ]);
         $this->assertSame($params, $event->getEmailTemplateParams());
