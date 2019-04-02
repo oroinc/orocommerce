@@ -4,6 +4,8 @@ namespace Oro\Bundle\CatalogBundle\Tests\Functional\JsTree;
 
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\SecurityBundle\Authentication\Token\UsernamePasswordOrganizationToken;
 use Oro\Component\Tree\Handler\AbstractTreeHandler;
 use Oro\Component\Tree\Test\AbstractTreeHandlerTestCase;
 
@@ -195,6 +197,9 @@ class CategoryTreeHandlerTest extends AbstractTreeHandlerTestCase
                 'text' => $fourthLevel2->getDefaultTitle()->getString()
             ]
         ];
+
+        $this->setAdminToken();
+
         $actualTree = $this->handler->createTreeByCurrentOrganizationMasterCatalogRoot();
         $actualTree = array_reduce($actualTree, function ($result, $data) {
             $result[] = $data;
@@ -277,5 +282,24 @@ class CategoryTreeHandlerTest extends AbstractTreeHandlerTestCase
             }
             return $result;
         }, []);
+    }
+
+    private function setAdminToken()
+    {
+        $container = self::getContainer();
+        $organizationRepository = $container->get('doctrine')
+            ->getManagerForClass(Organization::class)
+            ->getRepository(Organization::class);
+        /** @var Organization $organization */
+        $organization = $organizationRepository->getFirst();
+
+        $adminToken = new UsernamePasswordOrganizationToken(
+            'admin',
+            'admin',
+            'key',
+            $organization
+        );
+
+        $container->get('security.token_storage')->setToken($adminToken);
     }
 }

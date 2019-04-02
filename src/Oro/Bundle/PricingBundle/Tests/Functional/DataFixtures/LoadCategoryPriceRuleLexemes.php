@@ -7,6 +7,7 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\PricingBundle\Entity\PriceRuleLexeme;
 
 class LoadCategoryPriceRuleLexemes extends AbstractFixture implements DependentFixtureInterface
@@ -16,9 +17,12 @@ class LoadCategoryPriceRuleLexemes extends AbstractFixture implements DependentF
      */
     public function load(ObjectManager $manager)
     {
+        /** @var Organization $organization */
+        $organization = $manager->getRepository(Organization::class)->getFirst();
+
         $data = [
             [
-                'category' => $manager->getRepository(Category::class)->getMasterCatalogRoot(),
+                'category' => $manager->getRepository(Category::class)->getMasterCatalogRoot($organization),
                 'priceList' => $this->getReference(LoadPriceLists::PRICE_LIST_1),
                 'field' => 'id',
             ],

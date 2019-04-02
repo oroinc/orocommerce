@@ -10,11 +10,14 @@ use Oro\Bundle\CatalogBundle\Provider\CategoryTreeProvider;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadMasterCatalogLocalizedTitles;
+use Oro\Bundle\OrganizationBundle\Tests\Functional\OrganizationTrait;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 
 class CategoryProviderTreeTest extends WebTestCase
 {
+    use OrganizationTrait;
+
     /**
      * @var ManagerRegistry
      */
@@ -99,7 +102,7 @@ class CategoryProviderTreeTest extends WebTestCase
      */
     public function testGetParentRootHasNoPath()
     {
-        $root = $this->repository->getMasterCatalogRoot();
+        $root = $this->repository->getMasterCatalogRoot($this->getOrganization());
         $categoryProvider = $this->getCategoryProviderForNode($root->getId());
         $parents = $categoryProvider->getParentCategories();
 

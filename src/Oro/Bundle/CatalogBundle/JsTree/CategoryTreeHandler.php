@@ -59,7 +59,7 @@ class CategoryTreeHandler extends AbstractTreeHandler
      */
     public function createTreeByCurrentOrganizationMasterCatalogRoot($includeRoot = true)
     {
-        $root = $this->masterCatalogRootProvider->getMasterCatalogRootByOrganization();
+        $root = $this->masterCatalogRootProvider->getMasterCatalogRootForCurrentOrganization();
         $tree = $this->getNodes($root, $includeRoot);
 
         return $this->formatTree($tree, $root, $includeRoot);

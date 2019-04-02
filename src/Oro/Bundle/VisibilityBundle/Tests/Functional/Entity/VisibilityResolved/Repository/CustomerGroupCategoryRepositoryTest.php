@@ -433,7 +433,7 @@ class CustomerGroupCategoryRepositoryTest extends AbstractCategoryRepositoryTest
         if ($reference === self::ROOT_CATEGORY) {
             return $this->getContainer()->get('doctrine')
                 ->getRepository('OroCatalogBundle:Category')
-                ->getMasterCatalogRoot()
+                ->getMasterCatalogRoot($this->getOrganization())
                 ->getId();
         }
 

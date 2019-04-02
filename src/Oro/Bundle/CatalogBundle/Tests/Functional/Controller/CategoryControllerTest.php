@@ -11,6 +11,7 @@ use Oro\Bundle\InventoryBundle\Inventory\LowInventoryProvider;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData;
+use Oro\Bundle\OrganizationBundle\Tests\Functional\OrganizationTrait;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -23,6 +24,8 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
  */
 class CategoryControllerTest extends WebTestCase
 {
+    use OrganizationTrait;
+
     const DEFAULT_CATEGORY_TITLE = 'Category Title';
     const DEFAULT_SUBCATEGORY_TITLE = 'Subcategory Title';
     const DEFAULT_CATEGORY_SHORT_DESCRIPTION = 'Category Short Description';
@@ -66,7 +69,7 @@ class CategoryControllerTest extends WebTestCase
         $this->masterCatalog = $this->getContainer()
             ->get('doctrine')
             ->getRepository('OroCatalogBundle:Category')
-            ->getMasterCatalogRoot();
+            ->getMasterCatalogRoot($this->getOrganization());
     }
 
     public function testGetChangedUrlsWhenSlugChanged()
@@ -142,7 +145,9 @@ class CategoryControllerTest extends WebTestCase
      */
     public function testCreateCategory()
     {
-        $this->getContainer()->get('doctrine')->getRepository('OroCatalogBundle:Category')->getMasterCatalogRoot();
+        $this->getContainer()->get('doctrine')
+            ->getRepository('OroCatalogBundle:Category')
+            ->getMasterCatalogRoot($this->getOrganization());
 
         return $this->assertCreate($this->masterCatalog->getId());
     }
