@@ -55,18 +55,15 @@ class ShippingOptionLabelExtension extends \Twig_Extension
         return [
             new \Twig_SimpleFilter(
                 'oro_length_unit_format_label',
-                [$this, 'formatLengthUnit'],
-                ['is_safe' => ['html']]
+                [$this, 'formatLengthUnit']
             ),
             new \Twig_SimpleFilter(
                 'oro_weight_unit_format_label',
-                [$this, 'formatWeightUnit'],
-                ['is_safe' => ['html']]
+                [$this, 'formatWeightUnit']
             ),
             new \Twig_SimpleFilter(
                 'oro_freight_class_format_label',
-                [$this, 'formatFreightClass'],
-                ['is_safe' => ['html']]
+                [$this, 'formatFreightClass']
             ),
         ];
     }
