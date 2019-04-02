@@ -38,11 +38,6 @@ abstract class AbstractCategoryFixture extends AbstractFixture implements Contai
     protected $container;
 
     /**
-     * @var Organization
-     */
-    private $defaultOrganization;
-
-    /**
      * {@inheritdoc}
      */
     public function setContainer(ContainerInterface $container = null)
@@ -55,10 +50,11 @@ abstract class AbstractCategoryFixture extends AbstractFixture implements Contai
      */
     public function load(ObjectManager $manager)
     {
-        $this->defaultOrganization = $manager->getRepository(Organization::class)->getFirst();
+        $defaultOrganization = $manager->getRepository(Organization::class)->getFirst();
+
         /** @var CategoryRepository $categoryRepository */
         $categoryRepository = $manager->getRepository('OroCatalogBundle:Category');
-        $root               = $categoryRepository->getMasterCatalogRoot($this->defaultOrganization);
+        $root               = $categoryRepository->getMasterCatalogRoot($defaultOrganization);
 
         $this->addCategories($root, $this->categories, $this->categoryImages, $manager);
 
@@ -85,6 +81,7 @@ abstract class AbstractCategoryFixture extends AbstractFixture implements Contai
             return;
         }
 
+        $defaultOrganization = $root->getOrganization();
         $slugGenerator = $this->container->get('oro_entity_config.slug.generator');
 
         foreach ($categories as $title => $nestedCategories) {
@@ -93,7 +90,7 @@ abstract class AbstractCategoryFixture extends AbstractFixture implements Contai
 
             $category = new Category();
             $category->addTitle($categoryTitle);
-            $category->setOrganization($this->defaultOrganization);
+            $category->setOrganization($defaultOrganization);
 
             $slugPrototype = new LocalizedFallbackValue();
             $slugPrototype->setString($slugGenerator->slugify($title));

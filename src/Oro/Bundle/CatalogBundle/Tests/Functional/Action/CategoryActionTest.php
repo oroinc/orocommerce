@@ -54,10 +54,10 @@ class CategoryActionTest extends WebTestCase
         ];
 
         /** @var CategoryRepository $repo */
-        $repo = $this->getContainer()->get('doctrine')->getRepository('OroCatalogBundle:Category');
+        $categoryRepo = $this->getContainer()->get('doctrine')->getRepository(Category::class);
 
         foreach ($removedChildCategories as $removedChildCategory) {
-            $this->assertEmpty($repo->findOneByDefaultTitle($removedChildCategory));
+            $this->assertEmpty($categoryRepo->findOneByDefaultTitle($removedChildCategory, $this->getOrganization()));
         }
     }
 

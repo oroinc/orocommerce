@@ -9,6 +9,7 @@ use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CMSBundle\ContentVariantType\CmsPageContentVariantType;
 use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\ProductBundle\ContentVariantType\ProductCollectionContentVariantType;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
@@ -144,14 +145,16 @@ abstract class AbstractLoadWebCatalogDemoData extends AbstractFixture implements
 
         $variant->setType($type);
 
+        $doctrine = $this->container->get('doctrine');
         if ($type === CategoryPageContentVariantType::TYPE && method_exists($variant, 'setCategoryPageCategory')) {
-            $category = $this->container->get('doctrine')
+            $defaultOrganization = $doctrine->getRepository(Organization::class)->getFirst();
+            $category = $doctrine
                 ->getRepository(Category::class)
-                ->findOneByDefaultTitle($params['title']);
+                ->findOneByDefaultTitle($params['title'], $defaultOrganization);
             $variant->setCategoryPageCategory($category);
             $variant->setExcludeSubcategories($params['excludeSubcategories'] ?? true);
         } elseif ($type === CmsPageContentVariantType::TYPE && method_exists($variant, 'setCmsPage')) {
-            $page = $this->container->get('doctrine')
+            $page = $doctrine
                 ->getRepository(Page::class)
                 ->findOneByTitle($params['title']);
             $variant->setCmsPage($page);
@@ -160,8 +163,7 @@ abstract class AbstractLoadWebCatalogDemoData extends AbstractFixture implements
         } elseif ($type === ProductCollectionContentVariantType::TYPE
             && method_exists($variant, 'setProductCollectionSegment')
         ) {
-            $segment = $this->container
-                ->get('doctrine')
+            $segment = $doctrine
                 ->getRepository(Segment::class)
                 ->findOneByName($params['title']);
             $variant->setProductCollectionSegment($segment);

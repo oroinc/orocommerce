@@ -8,6 +8,7 @@ use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\EventListener\AbstractProductImportEventListener;
 use Oro\Bundle\CatalogBundle\EventListener\ProductStrategyEventListener;
 use Oro\Bundle\CatalogBundle\Tests\Unit\Entity\Stub\Product;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\ProductBundle\ImportExport\Event\ProductStrategyEvent;
 
 class ProductStrategyEventListenerTest extends \PHPUnit\Framework\TestCase
@@ -41,6 +42,8 @@ class ProductStrategyEventListenerTest extends \PHPUnit\Framework\TestCase
     public function testOnProcessAfterWithoutCategory()
     {
         $product = new Product();
+        $organization = new Organization();
+        $product->setOrganization($organization);
 
         $title = 'some title';
 
@@ -50,7 +53,7 @@ class ProductStrategyEventListenerTest extends \PHPUnit\Framework\TestCase
         $categoryRepo = $this->createMock(CategoryRepository::class);
         $categoryRepo->expects($this->once())
             ->method('findOneByDefaultTitle')
-            ->with($title)
+            ->with($title, $organization)
             ->willReturn(null);
         $this->registry->expects($this->once())
             ->method('getRepository')
@@ -65,6 +68,8 @@ class ProductStrategyEventListenerTest extends \PHPUnit\Framework\TestCase
     {
         $product = new Product();
         $category = new Category();
+        $organization = new Organization();
+        $product->setOrganization($organization);
 
         $title = 'some title';
 
@@ -74,7 +79,7 @@ class ProductStrategyEventListenerTest extends \PHPUnit\Framework\TestCase
         $categoryRepo = $this->createMock(CategoryRepository::class);
         $categoryRepo->expects($this->once())
             ->method('findOneByDefaultTitle')
-            ->with($title)
+            ->with($title, $organization)
             ->willReturn($category);
         $this->registry->expects($this->once())
             ->method('getRepository')

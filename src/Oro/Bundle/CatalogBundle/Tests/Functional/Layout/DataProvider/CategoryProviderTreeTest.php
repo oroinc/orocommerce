@@ -81,7 +81,7 @@ class CategoryProviderTreeTest extends WebTestCase
      */
     public function testGetParentTraverseToRootCategories()
     {
-        $categoryId = $this->repository->findOneByDefaultTitle('category_1_2_3')->getId();
+        $categoryId = $this->repository->findOneByDefaultTitle('category_1_2_3', $this->getOrganization())->getId();
         $categoryProvider = $this->getCategoryProviderForNode($categoryId);
         $parents = $categoryProvider->getParentCategories();
 

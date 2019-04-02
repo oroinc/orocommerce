@@ -92,12 +92,14 @@ class CategoryRepositoryTest extends WebTestCase
         $expectedCategory = $this->repository->getMasterCatalogRoot($this->getOrganization());
         $expectedTitle = $expectedCategory->getDefaultTitle()->getString();
 
-        $actualCategory = $this->repository->findOneByDefaultTitle($expectedTitle);
+        $defaultOrganization = $this->getOrganization();
+        $actualCategory = $this->repository->findOneByDefaultTitle($expectedTitle, $defaultOrganization);
+
         $this->assertInstanceOf(Category::class, $actualCategory);
         $this->assertEquals($expectedCategory->getId(), $actualCategory->getId());
         $this->assertEquals($expectedTitle, $actualCategory->getDefaultTitle()->getString());
 
-        $this->assertNull($this->repository->findOneByDefaultTitle('Not existing category'));
+        $this->assertNull($this->repository->findOneByDefaultTitle('Not existing category', $defaultOrganization));
     }
 
     public function testGetCategoryMapByProducts()

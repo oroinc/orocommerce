@@ -313,7 +313,7 @@ class CategoryControllerTest extends WebTestCase
 
         $this->client->followRedirects(true);
 
-        /** TODO Change after BAP-1813 */
+        /** Change after BAP-1813 */
         $form->getFormNode()->setAttribute(
             'action',
             $form->getFormNode()->getAttribute('action') . '&_widgetContainer=dialog'
@@ -328,7 +328,7 @@ class CategoryControllerTest extends WebTestCase
         $repository = $this->getContainer()->get('doctrine')
             ->getManagerForClass('OroCatalogBundle:Category')
             ->getRepository('OroCatalogBundle:Category');
-        $category = $repository->findOneByDefaultTitle(LoadCategoryData::THIRD_LEVEL1);
+        $category = $repository->findOneByDefaultTitle(LoadCategoryData::THIRD_LEVEL1, $this->getOrganization());
         $this->assertEquals(LoadCategoryData::FIRST_LEVEL, $category->getParentCategory()->getTitle()->getString());
     }
 

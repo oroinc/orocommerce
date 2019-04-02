@@ -11,7 +11,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Component\Tree\Entity\Repository\NestedTreeRepository;
 
 /**
- * Provides methods to retrieve information about Catalog entity form the DB
+ * Provides methods to retrieve information about Category entity form the DB
  */
 class CategoryRepository extends NestedTreeRepository
 {
@@ -98,16 +98,20 @@ class CategoryRepository extends NestedTreeRepository
 
     /**
      * @param string $title
+     * @param Organization $organization
      * @return Category|null
+     * @throws \Doctrine\ORM\NonUniqueResultException
      */
-    public function findOneByDefaultTitle($title)
+    public function findOneByDefaultTitle(string $title, Organization $organization)
     {
         $qb = $this->createQueryBuilder('category');
 
         return $qb
             ->select('partial category.{id}')
             ->andWhere('category.denormalizedDefaultTitle = :title')
+            ->andWhere('category.organization = :organization')
             ->setParameter('title', $title)
+            ->setParameter('organization', $organization)
             ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult();
