@@ -9,6 +9,9 @@ use Oro\Bundle\SaleBundle\Entity\QuoteProductRequest;
 use Oro\Bundle\SaleBundle\Formatter\QuoteProductFormatter;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * Twig extension for Quote
+ */
 class QuoteExtension extends \Twig_Extension
 {
     const NAME = 'oro_sale_quote';
@@ -49,18 +52,15 @@ class QuoteExtension extends \Twig_Extension
         return [
             new \Twig_SimpleFilter(
                 'oro_format_sale_quote_product_offer',
-                [$this, 'formatProductOffer'],
-                ['is_safe' => ['html']]
+                [$this, 'formatProductOffer']
             ),
             new \Twig_SimpleFilter(
                 'oro_format_sale_quote_product_type',
-                [$this, 'formatProductType'],
-                ['is_safe' => ['html']]
+                [$this, 'formatProductType']
             ),
             new \Twig_SimpleFilter(
                 'oro_format_sale_quote_product_request',
-                [$this, 'formatProductRequest'],
-                ['is_safe' => ['html']]
+                [$this, 'formatProductRequest']
             ),
         ];
     }
