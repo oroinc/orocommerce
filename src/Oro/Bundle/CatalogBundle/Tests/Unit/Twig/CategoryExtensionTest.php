@@ -51,6 +51,7 @@ class CategoryExtensionTest extends \PHPUnit\Framework\TestCase
 
         $this->categoryTreeHandler->expects($this->once())
             ->method('createTree')
+            ->with(null)
             ->willReturn($tree);
 
         $this->assertEquals(
@@ -74,7 +75,8 @@ class CategoryExtensionTest extends \PHPUnit\Framework\TestCase
 
         $this->categoryTreeHandler->expects($this->once())
             ->method('createTree')
-            ->will($this->returnValue($tree));
+            ->with(null)
+            ->willReturn($tree);
 
         $this->assertEquals(
             $tree,
@@ -82,6 +84,35 @@ class CategoryExtensionTest extends \PHPUnit\Framework\TestCase
                 $this->extension,
                 'oro_category_list',
                 ['oro.catalog.frontend.category.master_category.label']
+            )
+        );
+    }
+
+    public function testGetCategoryListWithRoot()
+    {
+        $tree = [
+            [
+                'id' => 1,
+                'parent' => '#',
+                'text' => 'oro.catalog.frontend.category.master_category.label',
+                'state' => [
+                    'opened' => true,
+                ],
+            ],
+        ];
+
+        $rootId = 1;
+        $this->categoryTreeHandler->expects($this->once())
+            ->method('createTree')
+            ->with($rootId)
+            ->willReturn($tree);
+
+        $this->assertEquals(
+            $tree,
+            self::callTwigFunction(
+                $this->extension,
+                'oro_category_list',
+                ['oro.catalog.frontend.category.master_category.label', $rootId]
             )
         );
     }

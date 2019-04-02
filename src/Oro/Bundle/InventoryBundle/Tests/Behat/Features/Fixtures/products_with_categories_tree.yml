@@ -126,14 +126,18 @@ Oro\Bundle\CatalogBundle\Entity\Category:
     category1:
         addTitle: ['@localNewCategory']
         addProduct: ['@product1']
+        organization: '@organization'
+        setParentCategory: [1]
     category2:
         addTitle: ['@localNewCategory2']
         setParentCategory: ['@category1']
         addProduct: ['@product2']
+        organization: '@organization'
     category3:
         addTitle: ['@localNewCategory3']
         setParentCategory: ['@category2']
         addProduct: ['@product3']
+        organization: '@organization'
 
 Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     locValue1:

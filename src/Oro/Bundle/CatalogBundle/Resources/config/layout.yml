@@ -22,6 +22,7 @@ services:
             - "@oro_catalog.handler.request_product"
             - "@oro_catalog.repository.category"
             - '@oro_catalog.provider.category_tree_provider'
+            - '@oro_website.manager'
         calls:
             - [setLocalizationHelper, ['@oro_locale.helper.localization']]
             - [setCache, ['@oro_catalog.layout.data_provider.category.cache', 3600]]

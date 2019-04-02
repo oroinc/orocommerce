@@ -53,6 +53,7 @@ Feature: Upcoming product highlights
     Then I should see "Upcoming No"
     And I should not see "Availability Date"
     When I go to Products/ Master Catalog
+    And expand "NewCategory" in tree
     And I click "NewCategory2"
     Then I should see "Is Upcoming"
     And I should not see "Availability Date"
@@ -83,7 +84,7 @@ Feature: Upcoming product highlights
     Given I proceed as the User
     And I signed in as AmandaRCole@example.org on the store frontend
     And I scroll to text "NewCategory2"
-    And click "NewCategory2"
+    And I click on "NewCategory2 category"
     Then I should see "This product will be available on Dec 1, 2040" for "SKU2" product
     Then I should see "This product will be available later" for "SKU3" product
     When I click "View Details" for "SKU2" product

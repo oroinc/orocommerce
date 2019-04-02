@@ -6,6 +6,9 @@ use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\JsTree\CategoryTreeHandler;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * Twig extension that provides category list, product category full path and product category title
+ */
 class CategoryExtension extends \Twig_Extension
 {
     const NAME = 'oro_catalog_category_extension';
@@ -51,12 +54,13 @@ class CategoryExtension extends \Twig_Extension
 
     /**
      * @param string|null $rootLabel
+     * @param object|null $root
      *
      * @return array
      */
-    public function getCategoryList($rootLabel = null)
+    public function getCategoryList($rootLabel = null, $root = null)
     {
-        $tree = $this->getCategoryTreeHandler()->createTree();
+        $tree = $this->getCategoryTreeHandler()->createTree($root);
         if ($rootLabel && array_key_exists(0, $tree)) {
             $tree[0]['text'] = $rootLabel;
         }

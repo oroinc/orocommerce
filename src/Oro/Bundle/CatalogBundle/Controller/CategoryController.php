@@ -16,6 +16,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * CRUD controller for Category entity
+ */
 class CategoryController extends Controller
 {
     /**
@@ -72,7 +75,8 @@ class CategoryController extends Controller
     public function indexAction()
     {
         return [
-            'rootCategory' => $this->getMasterRootCategory()
+            'rootCategory' => $this->get('oro_catalog.provider.master_catalog_root')
+                ->getMasterCatalogRootForCurrentOrganization()
         ];
     }
 
@@ -94,7 +98,7 @@ class CategoryController extends Controller
     {
         $handler = $this->get('oro_catalog.category_tree_handler');
 
-        $root = $this->getMasterRootCategory();
+        $root = $this->get('oro_catalog.provider.master_catalog_root')->getMasterCatalogRootForCurrentOrganization();
         $treeItems = $handler->getTreeItemList($root, true);
 
         $collection = new TreeCollection();
@@ -182,18 +186,11 @@ class CategoryController extends Controller
         );
 
         if (is_array($result)) {
-            $result['rootCategory'] = $this->getMasterRootCategory();
+            $result['rootCategory'] = $this->get('oro_catalog.provider.master_catalog_root')
+                ->getMasterCatalogRootForCurrentOrganization();
         }
 
         return $result;
-    }
-
-    /**
-     * @return Category
-     */
-    protected function getMasterRootCategory()
-    {
-        return $this->getDoctrine()->getRepository('OroCatalogBundle:Category')->getMasterCatalogRoot();
     }
 
     /**
