@@ -11,7 +11,7 @@ class WorkflowDefinitionCheckoutTestCase extends WebTestCase
     . "text()='Exclusive Record Groups']/following-sibling::div//li";
     const XPATH_FLOW_NAME = "//label[contains(@class, 'attribute-item__term') and "
     . "text()='Name']/following-sibling::div/div";
-    const XPATH_FLOWCHART = "//div[@class = 'workflow-flowchart-container']";
+    const XPATH_FLOWCHART = "//div[@data-page-component-name = 'flowchart-container' ]";
 
     public function setUp()
     {
