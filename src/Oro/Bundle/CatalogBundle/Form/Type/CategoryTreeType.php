@@ -8,6 +8,9 @@ use Oro\Component\Tree\Handler\AbstractTreeHandler;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type provides functionality to select an existing category from the tree
+ */
 class CategoryTreeType extends AbstractType
 {
     const NAME = 'oro_catalog_category_tree';

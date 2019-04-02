@@ -9,6 +9,9 @@ use Oro\Bundle\CatalogBundle\Provider\MasterCatalogRootProvider;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Component\Tree\Handler\AbstractTreeHandler;
 
+/**
+ * Provides actions that can be performed with the category tree
+ */
 class CategoryTreeHandler extends AbstractTreeHandler
 {
     /** @var TokenAccessorInterface */
