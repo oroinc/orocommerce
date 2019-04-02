@@ -77,7 +77,9 @@ define(function(require) {
             } else if (response.products && _.isArray(model)) {
                 model = _.indexBy(model, 'id');
                 _.each(response.products, function(product) {
-                    updateModel(model[product.id], product);
+                    if (model[product.id]) {
+                        updateModel(model[product.id], product);
+                    }
                     _.each(product.shopping_lists, updateShoppingListCollection);
                 });
             }
