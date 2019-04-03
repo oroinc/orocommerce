@@ -15,10 +15,6 @@ use Oro\Component\Tree\Entity\Repository\NestedTreeRepository;
  */
 class CategoryRepository extends NestedTreeRepository
 {
-    /**
-     * @var Category
-     */
-    private $masterCatalog;
 
     /**
      * @param Organization $organization
@@ -26,19 +22,15 @@ class CategoryRepository extends NestedTreeRepository
      */
     public function getMasterCatalogRoot(Organization $organization)
     {
-        if (!$this->masterCatalog) {
-            $qb = $this->createQueryBuilder('category')
-                ->andWhere('category.parentCategory IS NULL')
-                ->orderBy('category.id', 'ASC');
-            $qb->andWhere('category.organization = :organization');
-            $qb->setParameter('organization', $organization);
+        $qb = $this->createQueryBuilder('category')
+            ->andWhere('category.parentCategory IS NULL')
+            ->orderBy('category.id', 'ASC');
+        $qb->andWhere('category.organization = :organization');
+        $qb->setParameter('organization', $organization);
 
-            $this->masterCatalog = $qb->setMaxResults(1)
-                ->getQuery()
-                ->getSingleResult();
-        }
-
-        return $this->masterCatalog;
+        return $qb->setMaxResults(1)
+            ->getQuery()
+            ->getSingleResult();
     }
 
     /**
