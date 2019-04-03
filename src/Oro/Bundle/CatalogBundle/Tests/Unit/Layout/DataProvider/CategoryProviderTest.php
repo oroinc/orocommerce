@@ -251,7 +251,7 @@ class CategoryProviderTest extends \PHPUnit\Framework\TestCase
         $website->setOrganization($organization);
 
         $this->websiteManager
-            ->expects($this->once())
+            ->expects($this->exactly(2))
             ->method('getCurrentWebsite')
             ->willReturn($website);
 
