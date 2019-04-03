@@ -7,9 +7,7 @@ use Oro\Bundle\PaymentBundle\Twig\DTO\PaymentMethodObject;
 
 class PaymentMethodObjectVariablesProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var PaymentMethodObjectVariablesProvider
-     */
+    /** @var PaymentMethodObjectVariablesProvider */
     private $provider;
 
     protected function setUp()
@@ -19,15 +17,24 @@ class PaymentMethodObjectVariablesProviderTest extends \PHPUnit\Framework\TestCa
 
     public function testGetVariableDefinitions()
     {
-        self::assertCount(0, $this->provider->getVariableDefinitions());
+        self::assertSame([], $this->provider->getVariableDefinitions());
     }
 
     public function testGetVariableGetters()
     {
-        self::assertCount(1, $this->provider->getVariableGetters());
         self::assertEquals(
-            [PaymentMethodObject::class => ['getLabel', 'getOptions']],
+            [
+                PaymentMethodObject::class => [
+                    'label'   => 'getLabel',
+                    'options' => 'getOptions'
+                ]
+            ],
             $this->provider->getVariableGetters()
         );
+    }
+
+    public function testGetVariableProcessors()
+    {
+        self::assertSame([], $this->provider->getVariableProcessors(PaymentMethodObject::class));
     }
 }
