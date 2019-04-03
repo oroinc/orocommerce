@@ -184,6 +184,18 @@
                 </div>
                 {% for lineItem in lineItems %}
                     <div class="shopping-list-line-items__item-wrapper">
+                        {% set itemErrors = [] %}
+                        {% if lineItemErrors is defined and lineItemErrors is iterable %}
+                            {% set errorPaths = [] %}
+                            {% for subItem in lineItem.lineItems %}
+                                {% set errorPaths = errorPaths|merge(['product.' ~ subItem.productSku ~ '.' ~ subItem.productUnitCode]) %}
+                            {% endfor %}
+                            {% for errorKey, lineItemError in lineItemErrors %}
+                                {% if errorKey in errorPaths and lineItemError is iterable %}
+                                    {% set itemErrors = itemErrors|merge(lineItemError) %}
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
                         {% set matrixForm = lineItem.matrixForm|default(null) %}
                         {% set matrixFormType = lineItem.matrixFormType|default(null) %}
                         {% set lineItem = lineItem.lineItems|first %}
@@ -194,6 +206,7 @@
                         {% do block|merge_context({
                             shoppingList: shoppingList,
                             lineItem: lineItem,
+                            itemErrors: itemErrors,
                             mainProduct: mainProduct,
                             parent: block.vars,
                             loop: loop,
@@ -491,13 +504,11 @@
             </span>
         </div>
     {% endif %}
-
-    {% set errorPath = 'product.' ~ lineItem.productSku ~ '.' ~ lineItem.productUnitCode %}
-    {% if parent.lineItemErrors is iterable and parent.lineItemErrors[errorPath] is defined and parent.lineItemErrors[errorPath] is iterable %}
+    {% if itemErrors|length %}
         <div class="shopping-list-line-items__error">
-        {% for error in parent.lineItemErrors[errorPath] %}
-            <span class="validation-error">{{ error.message }}</span>
-        {% endfor %}
+            {% for error in itemErrors %}
+                <span class="validation-error">{{ error.message }}</span>
+            {% endfor %}
         </div>
     {% endif %}
 {% endblock %}
