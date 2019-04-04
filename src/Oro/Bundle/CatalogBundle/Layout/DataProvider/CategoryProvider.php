@@ -92,6 +92,7 @@ class CategoryProvider
     {
         $customer = $user ? $user->getCustomer() : null;
         $customerGroup = $customer ? $customer->getGroup() : null;
+        $currentOrganization = $this->getOrganization();
 
         $this->initCache([
             'category',
@@ -99,8 +100,18 @@ class CategoryProvider
             $this->getCurrentLocalization(),
             $customer ? $customer->getId() : 0,
             $customerGroup ? $customerGroup->getId() : 0,
+            $currentOrganization ? $currentOrganization->getId() : 0
         ]);
 
+        return $this->fetchFromCache($user);
+    }
+
+    /**
+     * @param CustomerUser|null $user
+     * @return array|false
+     */
+    private function fetchFromCache(CustomerUser $user = null)
+    {
         $useCache = $this->isCacheUsed();
 
         if (true === $useCache) {
@@ -117,6 +128,7 @@ class CategoryProvider
         if (true === $useCache) {
             $this->saveToCache($result);
         }
+
         return $result;
     }
 
@@ -239,6 +251,16 @@ class CategoryProvider
      */
     private function getCurrentMasterCatalogRoot()
     {
+        $organization = $this->getOrganization();
+
+        return $organization ? $this->categoryRepository->getMasterCatalogRoot($organization) : null;
+    }
+
+    /**
+     * @return null|Organization
+     */
+    private function getOrganization()
+    {
         $website = $this->websiteManager->getCurrentWebsite();
         if (!$website) {
             return null;
@@ -250,6 +272,6 @@ class CategoryProvider
             return null;
         }
 
-        return $this->categoryRepository->getMasterCatalogRoot($organization);
+        return $organization;
     }
 }
