@@ -19,6 +19,7 @@ services:
         arguments:
             - '@oro_catalog.repository.category'
             - '@event_dispatcher'
+            - '@oro_catalog.provider.master_catalog_root'
 
     oro_catalog.provider.subcategory_provider:
         class: 'Oro\Bundle\CatalogBundle\Provider\SubcategoryProvider'

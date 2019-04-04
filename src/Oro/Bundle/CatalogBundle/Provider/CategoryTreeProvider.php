@@ -8,6 +8,10 @@ use Oro\Bundle\CatalogBundle\Event\CategoryTreeCreateAfterEvent;
 use Oro\Bundle\UserBundle\Entity\UserInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+/**
+ * Returns category tree restricted by certain user as well as category root (will be suggested by current organization
+ * if no passed explicitly )
+ */
 class CategoryTreeProvider
 {
     /**
@@ -21,15 +25,23 @@ class CategoryTreeProvider
     protected $eventDispatcher;
 
     /**
+     * @var MasterCatalogRootProvider
+     */
+    private $masterCatalogRootProvider;
+
+    /**
      * @param CategoryRepository $categoryRepository
      * @param EventDispatcherInterface $eventDispatcher
+     * @param MasterCatalogRootProvider $masterCatalogRootProvider
      */
     public function __construct(
         CategoryRepository $categoryRepository,
-        EventDispatcherInterface $eventDispatcher
+        EventDispatcherInterface $eventDispatcher,
+        MasterCatalogRootProvider $masterCatalogRootProvider
     ) {
         $this->categoryRepository = $categoryRepository;
         $this->eventDispatcher = $eventDispatcher;
+        $this->masterCatalogRootProvider = $masterCatalogRootProvider;
     }
 
     /**
@@ -40,6 +52,9 @@ class CategoryTreeProvider
      */
     public function getCategories($user, $root = null, $includeRoot = true)
     {
+        if (!$root) {
+            $root = $this->masterCatalogRootProvider->getMasterCatalogRootForCurrentOrganization();
+        }
         $categories = $this->categoryRepository->getChildren($root, false, 'left', 'ASC', $includeRoot);
 
         $event = new CategoryTreeCreateAfterEvent($categories);

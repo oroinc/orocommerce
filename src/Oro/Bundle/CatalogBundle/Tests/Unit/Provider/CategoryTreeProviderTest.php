@@ -6,6 +6,7 @@ use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Event\CategoryTreeCreateAfterEvent;
 use Oro\Bundle\CatalogBundle\Provider\CategoryTreeProvider;
+use Oro\Bundle\CatalogBundle\Provider\MasterCatalogRootProvider;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -20,6 +21,9 @@ class CategoryTreeProviderTest extends \PHPUnit\Framework\TestCase
     /** @var CategoryTreeProvider */
     protected $provider;
 
+    /** @var MasterCatalogRootProvider|\PHPUnit_Framework_MockObject_MockObject */
+    private $masterCatalogRootProvider;
+
     public function setUp()
     {
         $this->categoryRepository = $this->getMockBuilder(
@@ -32,9 +36,12 @@ class CategoryTreeProviderTest extends \PHPUnit\Framework\TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->masterCatalogRootProvider = $this->createMock(MasterCatalogRootProvider::class);
+
         $this->provider = new CategoryTreeProvider(
             $this->categoryRepository,
-            $this->eventDispatcher
+            $this->eventDispatcher,
+            $this->masterCatalogRootProvider
         );
     }
 
@@ -66,6 +73,49 @@ class CategoryTreeProviderTest extends \PHPUnit\Framework\TestCase
             ->method('dispatch')
             ->with(CategoryTreeCreateAfterEvent::NAME, $event)
             ->willReturn($visibleCategories);
+
+        $this->masterCatalogRootProvider
+            ->expects($this->never())
+            ->method('getMasterCatalogRootForCurrentOrganization');
+
+        $actual = $this->provider->getCategories($user, $rootCategory, false);
+
+        $this->assertEquals($visibleCategories, $actual);
+    }
+
+    public function testGetCategoriesWithNoRootPassed()
+    {
+        $user = new CustomerUser();
+
+        $childCategory = new Category();
+        $childCategory->setLevel(2);
+
+        $mainCategory = new Category();
+        $mainCategory->setLevel(1);
+        $mainCategory->addChildCategory($childCategory);
+
+        $rootCategory = new Category();
+        $rootCategory->setLevel(0);
+        $rootCategory->addChildCategory($mainCategory);
+
+        $categories = [$rootCategory, $mainCategory, $childCategory];
+        $visibleCategories = [$rootCategory, $mainCategory, $childCategory];
+
+        $this->categoryRepository->expects($this->once())
+            ->method('getChildren')
+            ->willReturn($categories);
+
+        $event = new CategoryTreeCreateAfterEvent($categories);
+        $event->setUser($user);
+        $this->eventDispatcher->expects($this->once())
+            ->method('dispatch')
+            ->with(CategoryTreeCreateAfterEvent::NAME, $event)
+            ->willReturn($visibleCategories);
+
+        $this->masterCatalogRootProvider
+            ->expects($this->once())
+            ->method('getMasterCatalogRootForCurrentOrganization')
+            ->willReturn($rootCategory);
 
         $actual = $this->provider->getCategories($user, null, false);
 
