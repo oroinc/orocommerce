@@ -17,6 +17,9 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * Creates QuickAddRowCollection based on either request, file or text.
+ */
 class QuickAddRowCollectionBuilder
 {
     /**
@@ -156,7 +159,6 @@ class QuickAddRowCollectionBuilder
 
         // Configurable products require additional option selection is not implemented yet
         // Thus we need to hide configurable products from the product drop-downs
-        // @TODO remove after configurable products require additional option selection implementation
         $restricted->andWhere($restricted->expr()->neq('product.type', ':configurable_type'))
             ->setParameter('configurable_type', Product::TYPE_CONFIGURABLE);
 
@@ -167,7 +169,7 @@ class QuickAddRowCollectionBuilder
         $productsBySku = [];
 
         foreach ($products as $product) {
-            $productsBySku[strtoupper($product->getSku())] = $product;
+            $productsBySku[mb_strtoupper($product->getSku())] = $product;
         }
 
         return $productsBySku;

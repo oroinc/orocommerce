@@ -19,18 +19,18 @@ class ArrayProductsGrouperTest extends \PHPUnit\Framework\TestCase
     public function testProcess()
     {
         $products = [
-            $this->createProductRowArray('SKU1', 2, 'item'),
+            $this->createProductRowArray('SKU1Абв', 2, 'item'),
             $this->createProductRowArray('SKU2', 3, 'item'),
-            $this->createProductRowArray('SKU1', 3, 'item'),
-            $this->createProductRowArray('SKU1', 2, 'kg'),
-            $this->createProductRowArray('sku1', 1, 'item'),
+            $this->createProductRowArray('SKU1Абв', 3, 'item'),
+            $this->createProductRowArray('SKU1Абв', 2, 'kg'),
+            $this->createProductRowArray('sku1абв', 1, 'item'),
             ['productQuantity' => 10],
         ];
 
         $expectedResult = [
-            $this->createProductRowArray('SKU1', 6, 'item'),
+            $this->createProductRowArray('SKU1Абв', 6, 'item'),
             $this->createProductRowArray('SKU2', 3, 'item'),
-            $this->createProductRowArray('SKU1', 2, 'kg'),
+            $this->createProductRowArray('SKU1Абв', 2, 'kg'),
             ['productQuantity' => 10],
         ];
 

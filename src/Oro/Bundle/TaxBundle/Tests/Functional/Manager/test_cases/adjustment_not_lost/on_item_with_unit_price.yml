@@ -62,7 +62,7 @@ databaseBefore:
             order: '@simple_order'
             quantity: 1
             price: '@usd_price_22.21'
-            product: { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product-7' } }
+            product: { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'продукт-7' } }
         order_line_item_5:
             productSku: order_line_item_5
             order: '@simple_order'

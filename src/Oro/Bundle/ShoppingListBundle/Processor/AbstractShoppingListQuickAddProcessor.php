@@ -77,7 +77,7 @@ abstract class AbstractShoppingListQuickAddProcessor implements ComponentProcess
 
             $productUnit = $product['productUnit'];
 
-            $upperSku = strtoupper($product['productSku']);
+            $upperSku = mb_strtoupper($product['productSku']);
             if (array_key_exists($upperSku, $productUnitsWithQuantities)) {
                 if (isset($productUnitsWithQuantities[$upperSku][$productUnit])) {
                     $productQuantity += $productUnitsWithQuantities[$upperSku][$productUnit];

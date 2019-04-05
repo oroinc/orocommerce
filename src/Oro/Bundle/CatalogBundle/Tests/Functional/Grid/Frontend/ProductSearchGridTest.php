@@ -220,7 +220,10 @@ class ProductSearchGridTest extends FrontendWebTestCase
                 ],
             ],
             'sku not like inside' => [
-                'sku', substr(LoadProductData::PRODUCT_8, 3, 4), [],
+                'sku', substr(LoadProductData::PRODUCT_8, 3, 4), [
+                    LoadProductData::PRODUCT_7,
+                    LoadProductData::PRODUCT_9,
+                ],
             ],
             'names not like inside' => [
                 'names', substr(LoadProductData::PRODUCT_1_DEFAULT_NAME, 6, 12), [

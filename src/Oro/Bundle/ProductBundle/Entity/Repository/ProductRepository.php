@@ -28,7 +28,7 @@ class ProductRepository extends EntityRepository
         $queryBuilder = $this->createQueryBuilder('product');
 
         $queryBuilder->andWhere('product.skuUppercase = :sku')
-            ->setParameter('sku', strtoupper($sku));
+            ->setParameter('sku', mb_strtoupper($sku));
 
         return $queryBuilder->getQuery()->getOneOrNullResult();
     }
@@ -90,7 +90,7 @@ class ProductRepository extends EntityRepository
 
         if ($productSkus) {
             // Convert to uppercase for insensitive search in all DB
-            $upperCaseSkus = array_map("strtoupper", $productSkus);
+            $upperCaseSkus = array_map('mb_strtoupper', $productSkus);
 
             $productsQueryBuilder
                 ->where($productsQueryBuilder->expr()->in('p.skuUppercase', ':product_skus'))
@@ -158,11 +158,14 @@ class ProductRepository extends EntityRepository
             ->innerJoin('p.names', 'pn', Expr\Join::WITH, $productsQueryBuilder->expr()->isNull('pn.localization'))
             ->where(
                 $productsQueryBuilder->expr()->orX(
-                    $productsQueryBuilder->expr()->like('LOWER(p.sku)', ':search'),
-                    $productsQueryBuilder->expr()->like('LOWER(pn.string)', ':search')
+                    $productsQueryBuilder->expr()->like('p.skuUppercase', ':search_upper'),
+                    $productsQueryBuilder->expr()->like('LOWER(pn.string)', ':search_lower')
                 )
             )
-            ->setParameter('search', '%' . strtolower($search) . '%')
+            ->setParameters([
+                'search_upper' => '%' . mb_strtoupper($search) . '%',
+                'search_lower' => '%' . mb_strtolower($search) . '%',
+            ])
             ->addOrderBy('p.id')
             ->setFirstResult($firstResult)
             ->setMaxResults($maxResults);
@@ -197,7 +200,7 @@ class ProductRepository extends EntityRepository
     public function getProductWithNamesBySkuQueryBuilder(array $skus)
     {
         // Convert to uppercase for insensitive search in all DB
-        $upperCaseSkus = array_map("strtoupper", $skus);
+        $upperCaseSkus = array_map('mb_strtoupper', $skus);
 
         $qb = $this->createQueryBuilder('product')
             ->select('product');
@@ -225,7 +228,7 @@ class ProductRepository extends EntityRepository
     public function getFilterSkuQueryBuilder(array $skus)
     {
         // Convert to uppercase for insensitive search in all DB
-        $upperCaseSkus = array_map("strtoupper", $skus);
+        $upperCaseSkus = array_map('mb_strtoupper', $skus);
 
         $queryBuilder = $this->createQueryBuilder('product');
         $queryBuilder
@@ -313,7 +316,7 @@ class ProductRepository extends EntityRepository
             ->select('IDENTITY(productPrecision.unit)')
             ->innerJoin('product.primaryUnitPrecision', 'productPrecision')
             ->where($qb->expr()->eq('product.skuUppercase', ':sku'))
-            ->setParameter('sku', strtoupper($sku))
+            ->setParameter('sku', mb_strtoupper($sku))
             ->getQuery()
             ->getOneOrNullResult(AbstractQuery::HYDRATE_SINGLE_SCALAR);
     }

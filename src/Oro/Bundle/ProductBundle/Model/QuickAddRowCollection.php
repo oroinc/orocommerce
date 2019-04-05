@@ -8,6 +8,9 @@ use Oro\Bundle\ProductBundle\Event\QuickAddRowCollectionValidateEvent;
 use Oro\Bundle\ProductBundle\Form\Type\QuickAddType;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+/**
+ * Collection of QuickAddRow models.
+ */
 class QuickAddRowCollection extends ArrayCollection
 {
     use QuickAddFieldTrait;
@@ -90,7 +93,7 @@ class QuickAddRowCollection extends ArrayCollection
     {
         /** @var QuickAddRow $row */
         foreach ($this->getIterator() as $row) {
-            $sku = strtoupper($row->getSku());
+            $sku = mb_strtoupper($row->getSku());
 
             if (array_key_exists($sku, $products)) {
                 $row->setProduct($products[$sku]);
@@ -110,7 +113,7 @@ class QuickAddRowCollection extends ArrayCollection
         /** @var QuickAddRow $row */
         foreach ($this->getIterator() as $row) {
             if ($product = $row->getProduct()) {
-                $products[strtoupper($product->getSku())] = $product;
+                $products[mb_strtoupper($product->getSku())] = $product;
             }
         }
 

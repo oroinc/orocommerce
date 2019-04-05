@@ -11,6 +11,9 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Product row type which is used in quick add form.
+ */
 class ProductRowType extends AbstractProductAwareType
 {
     const NAME = 'oro_product_row';
@@ -105,7 +108,7 @@ class ProductRowType extends AbstractProductAwareType
     {
         $product = parent::getProduct($form);
         if (!$product && $form->getParent()) {
-            $sku = strtoupper($form->get(ProductDataStorage::PRODUCT_SKU_KEY)->getData());
+            $sku = mb_strtoupper($form->get(ProductDataStorage::PRODUCT_SKU_KEY)->getData());
             $products = $form->getParent()->getConfig()->getOption('products', []);
             if ($products && isset($products[$sku])) {
                 $product = $products[$sku];

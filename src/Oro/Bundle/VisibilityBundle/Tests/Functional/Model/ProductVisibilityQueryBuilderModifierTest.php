@@ -90,8 +90,8 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
                     'product-1',
                     'product-5',
                     'product-6',
-                    'product-7',
-                    'product-9',
+                    'продукт-7',
+                    'продукт-9',
                 ]
             ],
             'config hidden' => [
@@ -99,7 +99,7 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
                 'user' => LoadCustomerUserData::EMAIL,
                 'expectedData' => [
                     'product-1',
-                    'product-7',
+                    'продукт-7',
                 ]
             ],
             'anonymous config visible' => [
@@ -110,9 +110,9 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
                     'product-3',
                     'product-5',
                     'product-6',
-                    'product-7',
                     'product-8',
-                    'product-9',
+                    'продукт-7',
+                    'продукт-9',
                 ]
             ],
             'anonymous config hidden' => [
@@ -130,9 +130,9 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
                     'product-1',
                     'product-3',
                     'product-6',
-                    'product-7',
                     'product-8',
-                    'product-9',
+                    'продукт-7',
+                    'продукт-9',
                 ]
             ],
             'customer without group and config visible' => [
@@ -145,9 +145,9 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
                     'product-4',
                     'product-5',
                     'product-6',
-                    'product-7',
                     'product-8',
-                    'product-9',
+                    'продукт-7',
+                    'продукт-9',
                 ]
             ],
             'customer without group and config hidden' => [

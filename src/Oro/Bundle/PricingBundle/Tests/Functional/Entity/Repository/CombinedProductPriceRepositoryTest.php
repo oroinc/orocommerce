@@ -115,7 +115,7 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
             ],
             'test getting price lists 3' => [
                 'combinedPriceList' => '2t_3f_1t',
-                'product' => 'product-7',
+                'product' => 'продукт-7',
                 'expectedExists' => false,
             ],
         ];
@@ -464,7 +464,7 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
             ],
             'test getting price lists 3' => [
                 'combinedPriceList' => '2t_3f_1t',
-                'product' => 'product-7',
+                'product' => 'продукт-7',
                 'prices' => [],
             ],
         ];

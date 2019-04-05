@@ -102,24 +102,6 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
         $this->processor->setActionGroupName('start_shoppinglist_checkout');
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function tearDown()
-    {
-        parent::tearDown();
-
-        unset(
-            $this->shoppingListManager,
-            $this->shoppingListLimitManager,
-            $this->currentShoppingListManager,
-            $this->actionGroupRegistry,
-            $this->actionGroup,
-            $this->translator,
-            $this->dateFormatter
-        );
-    }
-
     public function testIsAllowed()
     {
         $this->handler->expects($this->once())->method('isAllowed')->willReturn(true);
@@ -180,8 +162,8 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
     {
         $data = $this->getProductData();
 
-        $productIds = ['sku1' => 1, 'sku2' => 2];
-        $productUnitsQuantities = ['SKU1' => ['kg' => 2], 'SKU2' => ['liter' => 3]];
+        $productIds = ['sku1абв' => 1, 'sku2' => 2];
+        $productUnitsQuantities = ['SKU1АБВ' => ['kg' => 2], 'SKU2' => ['liter' => 3]];
 
         $this->shoppingListLimitManager
             ->expects($this->once())
@@ -250,8 +232,8 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
     {
         $data = $this->getProductData();
 
-        $productIds = ['sku1' => 1, 'sku2' => 2];
-        $productUnitsQuantities = ['SKU1' => ['kg' => 2], 'SKU2' => ['liter' => 3]];
+        $productIds = ['sku1абв' => 1, 'sku2' => 2];
+        $productUnitsQuantities = ['SKU1АБВ' => ['kg' => 2], 'SKU2' => ['liter' => 3]];
 
         $this->shoppingListLimitManager
             ->expects($this->once())
@@ -311,8 +293,8 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
     {
         $data = $this->getProductData();
 
-        $productIds = ['sku1' => 1, 'sku2' => 2];
-        $productUnitsQuantities = ['SKU1' => ['kg' => 2], 'SKU2' => ['liter' => 3]];
+        $productIds = ['sku1абв' => 1, 'sku2' => 2];
+        $productUnitsQuantities = ['SKU1АБВ' => ['kg' => 2], 'SKU2' => ['liter' => 3]];
 
         $shoppingList = new ShoppingList();
 
@@ -403,8 +385,8 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
     {
         $data = $this->getProductData();
 
-        $productIds = ['sku1' => 1, 'sku2' => 2];
-        $productUnitsQuantities = ['SKU1' => ['kg' => 2], 'SKU2' => ['liter' => 3]];
+        $productIds = ['sku1абв' => 1, 'sku2' => 2];
+        $productUnitsQuantities = ['SKU1АБВ' => ['kg' => 2], 'SKU2' => ['liter' => 3]];
 
         $shoppingList = new ShoppingList();
 
@@ -476,7 +458,7 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
     {
         return [
             ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
-                ['productSku' => 'sku1', 'productQuantity' => 2, 'productUnit' => 'kg'],
+                ['productSku' => 'sku1абв', 'productQuantity' => 2, 'productUnit' => 'kg'],
                 ['productSku' => 'sku2', 'productQuantity' => 3, 'productUnit' => 'liter'],
             ]
         ];
