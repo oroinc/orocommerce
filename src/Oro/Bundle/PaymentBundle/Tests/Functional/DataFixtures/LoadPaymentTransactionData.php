@@ -28,7 +28,7 @@ class LoadPaymentTransactionData extends AbstractFixture implements DependentFix
      */
     public function getDependencies()
     {
-        return ['Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData'];
+        return [LoadCustomerUserData::class];
     }
 
     /**

@@ -12,33 +12,34 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class LoadPayPalChannelData extends AbstractFixture implements ContainerAwareInterface
 {
+    public const PAYPAL_PAYFLOW_GATAWAY1 = 'paypal:channel_1';
+    public const PAYPAL_PAYFLOW_GATAWAY2 = 'paypal:channel_2';
+    public const PAYPAL_PAYMENTS_PRO1 = 'paypal:channel_3';
+    public const PAYPAL_PAYMENTS_PRO2 = 'paypal:channel_4';
+
     /**
      * @var array Channels configuration
      */
-    protected $channelData = [
-        [
+    private $channelData = [
+        self::PAYPAL_PAYFLOW_GATAWAY1 => [
             'name' => 'PayPal1',
             'type' => 'paypal_payflow_gateway',
             'enabled' => true,
-            'reference' => 'paypal:channel_1',
         ],
-        [
+        self::PAYPAL_PAYFLOW_GATAWAY2 => [
             'name' => 'PayPal2',
             'type' => 'paypal_payflow_gateway',
             'enabled' => false,
-            'reference' => 'paypal:channel_2',
         ],
-        [
+        self::PAYPAL_PAYMENTS_PRO1 => [
             'name' => 'PayPal3',
             'type' => 'paypal_payments_pro',
             'enabled' => true,
-            'reference' => 'paypal:channel_3',
         ],
-        [
+        self::PAYPAL_PAYMENTS_PRO2 => [
             'name' => 'PayPal4',
             'type' => 'paypal_payments_pro',
             'enabled' => true,
-            'reference' => 'paypal:channel_4',
         ],
     ];
 
@@ -64,7 +65,7 @@ class LoadPayPalChannelData extends AbstractFixture implements ContainerAwareInt
         $admin = $userManager->findUserByEmail(LoadAdminUserData::DEFAULT_ADMIN_EMAIL);
         $organization = $manager->getRepository('OroOrganizationBundle:Organization')->getFirst();
 
-        foreach ($this->channelData as $data) {
+        foreach ($this->channelData as $reference => $data) {
             $entity = new Channel();
             $entity->setName($data['name']);
             $entity->setType($data['type']);
@@ -72,7 +73,7 @@ class LoadPayPalChannelData extends AbstractFixture implements ContainerAwareInt
             $entity->setDefaultUserOwner($admin);
             $entity->setOrganization($organization);
             $entity->setTransport(new PayPalSettings());
-            $this->setReference($data['reference'], $entity);
+            $this->setReference($reference, $entity);
 
             $manager->persist($entity);
         }

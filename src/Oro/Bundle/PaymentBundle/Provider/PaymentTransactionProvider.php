@@ -42,7 +42,7 @@ class PaymentTransactionProvider
         DoctrineHelper $doctrineHelper,
         CustomerUserProvider $customerUserProvider,
         EventDispatcherInterface $dispatcher,
-        $paymentTransactionClass
+        string $paymentTransactionClass
     ) {
         $this->doctrineHelper = $doctrineHelper;
         $this->customerUserProvider = $customerUserProvider;
@@ -56,11 +56,11 @@ class PaymentTransactionProvider
      * @param array $orderBy
      * @return PaymentTransaction|null
      */
-    public function getPaymentTransaction($object, array $criteria = [], array $orderBy = [])
+    public function getPaymentTransaction($object, array $criteria = [], array $orderBy = []): ?PaymentTransaction
     {
         $paymentTransactions = $this->getPaymentTransactions($object, $criteria, $orderBy, 1);
 
-        return reset($paymentTransactions);
+        return reset($paymentTransactions) ?: null;
     }
 
     /**
@@ -75,9 +75,9 @@ class PaymentTransactionProvider
         $object,
         array $criteria = [],
         array $orderBy = [],
-        $limit = null,
-        $offset = null
-    ) {
+        int $limit = null,
+        int $offset = null
+    ): array {
         $className = $this->doctrineHelper->getEntityClass($object);
         $identifier = $this->doctrineHelper->getSingleEntityIdentifier($object);
 
@@ -99,7 +99,7 @@ class PaymentTransactionProvider
      * @param object $object
      * @return array
      */
-    public function getPaymentMethods($object)
+    public function getPaymentMethods($object): array
     {
         $className = $this->doctrineHelper->getEntityClass($object);
         $identifier = $this->doctrineHelper->getSingleEntityIdentifier($object);
@@ -117,8 +117,12 @@ class PaymentTransactionProvider
      * @param string|null $paymentMethod
      * @return null|PaymentTransaction
      */
-    public function getActiveAuthorizePaymentTransaction($object, $amount, $currency, $paymentMethod = null)
-    {
+    public function getActiveAuthorizePaymentTransaction(
+        $object,
+        float $amount,
+        string $currency,
+        ?string $paymentMethod = null
+    ): ?PaymentTransaction {
         $criteria = [
             'active' => true,
             'successful' => true,
@@ -135,10 +139,10 @@ class PaymentTransactionProvider
     }
 
     /**
-     * @param string $paymentMethod
+     * @param string|null $paymentMethod
      * @return PaymentTransaction|null
      */
-    public function getActiveValidatePaymentTransaction($paymentMethod)
+    public function getActiveValidatePaymentTransaction(?string $paymentMethod): ?PaymentTransaction
     {
         $customerUser = $this->customerUserProvider->getLoggedUser(true);
         if (!$customerUser) {
@@ -163,7 +167,7 @@ class PaymentTransactionProvider
      * @param object $object
      * @return PaymentTransaction
      */
-    public function createPaymentTransaction($paymentMethod, $type, $object)
+    public function createPaymentTransaction(string $paymentMethod, string $type, $object): PaymentTransaction
     {
         $className = $this->doctrineHelper->getEntityClass($object);
         $identifier = $this->doctrineHelper->getSingleEntityIdentifier($object);
@@ -184,8 +188,10 @@ class PaymentTransactionProvider
      *
      * @return PaymentTransaction
      */
-    public function createPaymentTransactionByParentTransaction($action, PaymentTransaction $parentPaymentTransaction)
-    {
+    public function createPaymentTransactionByParentTransaction(
+        string $action,
+        PaymentTransaction $parentPaymentTransaction
+    ): PaymentTransaction {
         $paymentTransaction = $this->createEmptyPaymentTransaction()
             ->setAction($action)
             ->setPaymentMethod($parentPaymentTransaction->getPaymentMethod())
@@ -201,10 +207,12 @@ class PaymentTransactionProvider
 
     /**
      * @param PaymentTransaction $paymentTransaction
+     * @throws \Throwable
      */
-    public function savePaymentTransaction(PaymentTransaction $paymentTransaction)
+    public function savePaymentTransaction(PaymentTransaction $paymentTransaction): void
     {
         $em = $this->doctrineHelper->getEntityManager($paymentTransaction);
+
         try {
             $em->transactional(
                 function (EntityManagerInterface $em) use ($paymentTransaction) {
@@ -216,21 +224,19 @@ class PaymentTransactionProvider
 
             $event = new TransactionCompleteEvent($paymentTransaction);
             $this->dispatcher->dispatch(TransactionCompleteEvent::NAME, $event);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             if ($this->logger) {
-                $this->logger->error($e->getMessage(), $e->getTrace());
+                $this->logger->critical('Can not save payment transaction', ['exception' => $e]);
             }
-        } catch (\Error $e) {
-            if ($this->logger) {
-                $this->logger->error($e->getMessage(), $e->getTrace());
-            }
+
+            throw $e;
         }
     }
 
     /**
      * @return PaymentTransaction
      */
-    private function createEmptyPaymentTransaction()
+    private function createEmptyPaymentTransaction(): PaymentTransaction
     {
         return new $this->paymentTransactionClass();
     }

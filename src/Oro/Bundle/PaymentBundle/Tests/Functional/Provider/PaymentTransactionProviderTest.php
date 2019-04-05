@@ -9,7 +9,6 @@ use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Oro\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadPaymentTransactionData;
-use Oro\Bundle\TestFrameworkBundle\Entity\Item;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Psr\Log\LoggerInterface;
@@ -175,14 +174,17 @@ class PaymentTransactionProviderTest extends WebTestCase
         $this->assertEquals(LoadCustomerUserData::EMAIL, $paymentTransaction->getFrontendOwner()->getEmail());
     }
 
-    public function testTransactionSaveExceptionDoNotBreakThings()
+    /**
+     * @expectedException \Doctrine\DBAL\Exception\NotNullConstraintViolationException
+     */
+    public function testTransactionSaveDatabaseException()
     {
         $this->initClient();
 
         $paymentTransactionProvider = $this->getContainer()->get('oro_payment.provider.payment_transaction');
         /** @var \PHPUnit\Framework\MockObject\MockObject|LoggerInterface $logger */
         $logger = $this->createMock('\Psr\Log\LoggerInterface');
-        $logger->expects($this->once())->method('error');
+        $logger->expects($this->once())->method('critical');
 
         $paymentTransactionProvider->setLogger($logger);
         $paymentTransactionProvider->savePaymentTransaction(new PaymentTransaction());
@@ -202,24 +204,6 @@ class PaymentTransactionProviderTest extends WebTestCase
             'paymentMethod',
             'authorize',
             new \stdClass()
-        );
-        $paymentTransactionProvider->savePaymentTransaction($paymentTransaction);
-    }
-
-    public function testCreatePaymentTransactionWithoutId()
-    {
-        $this->initClient();
-
-        $paymentTransactionProvider = $this->getContainer()->get('oro_payment.provider.payment_transaction');
-        /** @var \PHPUnit\Framework\MockObject\MockObject|LoggerInterface $logger */
-        $logger = $this->createMock('\Psr\Log\LoggerInterface');
-        $logger->expects($this->once())->method('error');
-
-        $paymentTransactionProvider->setLogger($logger);
-        $paymentTransaction = $paymentTransactionProvider->createPaymentTransaction(
-            'paymentMethod',
-            'authorize',
-            new Item()
         );
         $paymentTransactionProvider->savePaymentTransaction($paymentTransaction);
     }
