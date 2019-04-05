@@ -312,3 +312,12 @@ services:
         class: 'Oro\Bundle\SearchBundle\EventListener\LimitResultsListener'
         tags:
             - { name: kernel.event_listener, event: oro_website_search.before_search, method: onBeforeSearch, priority: -255 }
+
+    oro_website_search.extension.no_data_messages:
+        class: Oro\Bundle\WebsiteSearchBundle\Datagrid\Extension\NoDataMessagesExtension
+        decorates: oro_datagrid.extension.no_data_messages
+        arguments:
+            - '@oro_website_search.extension.no_data_messages.inner'
+            - '@oro_frontend.request.frontend_helper'
+            - '@oro_website_search.provider.search_mapping'
+

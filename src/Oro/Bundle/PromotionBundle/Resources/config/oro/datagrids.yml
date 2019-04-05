@@ -3,7 +3,7 @@ datagrids:
         acl_resource: oro_promotion_view
         extended_entity_name: '%oro_promotion.entity.promotion.class%'
         options:
-            entityHint: 'promotions'
+            entityHint: oro.promotion.entity_plural_label
         source:
             type: orm
             query:
@@ -99,7 +99,7 @@ datagrids:
     promotion-coupons-grid:
         extended_entity_name: '%oro_promotion.entity.coupon.class%'
         options:
-            entityHint: coupon
+            entityHint: oro.promotion.coupon.entity_plural_label
             export: true
         properties:
             id: ~
@@ -234,7 +234,7 @@ datagrids:
     promotion-coupons-assigned-to-promotion-grid:
         extended_entity_name: '%oro_promotion.entity.coupon.class%'
         options:
-            entityHint: coupon
+            entityHint: oro.promotion.coupon.entity_plural_label
             export: true
         properties:
             id: ~
@@ -349,7 +349,7 @@ datagrids:
     promotion-coupons-select-grid:
         extended_entity_name: '%oro_promotion.entity.coupon.class%'
         options:
-            entityHint: coupon
+            entityHint: oro.promotion.coupon.entity_plural_label
         source:
             type: orm
             query:

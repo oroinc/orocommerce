@@ -3,7 +3,7 @@ datagrids:
         acl_resource: oro_sale_quote_view
         extended_entity_name: '%oro_sale.entity.quote.class%'
         options:
-            entityHint:        quotes
+            entityHint: oro.sale.quote.entity_plural_label
             entity_pagination: true
         source:
             type:         orm
@@ -257,7 +257,7 @@ datagrids:
         extended_entity_name: '%oro_sale.entity.quote.class%'
         options:
             frontend: true
-            entityHint:        quotes
+            entityHint: oro.sale.quote.entity_plural_label
             entity_pagination: true
         source:
             type:         orm

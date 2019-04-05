@@ -62,7 +62,7 @@ datagrids:
         acl_resource: oro_tax_product_tax_code_view
         extends: tax-base-tax-codes-grid
         options:
-            entityHint: product tax codes
+            entityHint: oro.tax.producttaxcode.entity_plural_label
         source:
             query:
                 from:
@@ -83,7 +83,7 @@ datagrids:
         acl_resource: oro_tax_customer_tax_code_view
         extends: tax-base-tax-codes-grid
         options:
-            entityHint: customer tax codes
+            entityHint: oro.tax.customertaxcode.entity_plural_label
         source:
             query:
                 from:
@@ -113,7 +113,7 @@ datagrids:
     tax-taxes-grid:
         acl_resource: oro_tax_view
         options:
-            entityHint: taxes
+            entityHint: oro.tax.entity_plural_label
         source:
             type:         orm
             query:
@@ -195,7 +195,7 @@ datagrids:
     tax-taxe-rules-grid:
         acl_resource: oro_tax_rule_view
         options:
-            entityHint: taxes
+            entityHint: oro.tax.entity_plural_label
         source:
             type:         orm
             query:
