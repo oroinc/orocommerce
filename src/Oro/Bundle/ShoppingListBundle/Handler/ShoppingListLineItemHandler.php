@@ -106,14 +106,14 @@ class ShoppingListLineItemHandler
         $iterableResult = $queryBuilder->getQuery()->iterate();
         $lineItems = [];
 
-        $skus = array_map('strtoupper', array_keys($productUnitsWithQuantities));
+        $skus = array_map('mb_strtoupper', array_keys($productUnitsWithQuantities));
         $values = array_values($productUnitsWithQuantities);
         $productUnitsWithQuantities = array_combine($skus, $values);
 
         foreach ($iterableResult as $entityArray) {
             /** @var Product $product */
             $product = reset($entityArray);
-            $upperSku = strtoupper($product->getSku());
+            $upperSku = mb_strtoupper($product->getSku());
             if (isset($productUnitsWithQuantities[$upperSku])) {
                 $productLineItems = $this->createLineItemsWithQuantityAndUnit(
                     $product,

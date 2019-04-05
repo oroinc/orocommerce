@@ -53,7 +53,7 @@ class ComponentProcessorFilterTest extends \PHPUnit\Framework\TestCase
 
     public function testFilterData()
     {
-        $skus           = ['visibleSku1', 'invisibleSku1', 'visibleSku2'];
+        $skus           = ['visibleSku1', 'invisibleSku1', 'visibleSku2Абв'];
         $data           = [
             ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
                 ['productSku' => $skus[0]],
@@ -83,7 +83,7 @@ class ComponentProcessorFilterTest extends \PHPUnit\Framework\TestCase
                             null,
                             [
                                 'sku'           => $sku,
-                                'sku_uppercase' => strtoupper($sku)
+                                'sku_uppercase' => mb_strtoupper($sku)
                             ]
                         );
                     }
@@ -93,7 +93,7 @@ class ComponentProcessorFilterTest extends \PHPUnit\Framework\TestCase
 
         $this->getProductRepository()->expects($this->once())
             ->method('getFilterSkuQuery')
-            ->with(array_map('strtoupper', $skus))
+            ->with(array_map('mb_strtoupper', $skus))
             ->willReturn($searchQuery);
 
         $filteredData = $this->filter->filterData($data, $dataParameters);

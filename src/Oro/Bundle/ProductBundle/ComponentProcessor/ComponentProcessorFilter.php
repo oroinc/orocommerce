@@ -6,6 +6,9 @@ use Oro\Bundle\ProductBundle\Search\ProductRepository;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Bundle\SearchBundle\Query\Result\Item;
 
+/**
+ * Filters given products, removes those which cannot be found through search.
+ */
 class ComponentProcessorFilter implements ComponentProcessorFilterInterface
 {
     /** @var ProductRepository */
@@ -26,7 +29,7 @@ class ComponentProcessorFilter implements ComponentProcessorFilterInterface
     {
         $products = [];
         foreach ($data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY] as $product) {
-            $upperSku = strtoupper($product[ProductDataStorage::PRODUCT_SKU_KEY]);
+            $upperSku = mb_strtoupper($product[ProductDataStorage::PRODUCT_SKU_KEY]);
 
             if (!isset($products[$upperSku])) {
                 $products[$upperSku] = [];
@@ -54,7 +57,7 @@ class ComponentProcessorFilter implements ComponentProcessorFilterInterface
         foreach ($filteredProducts as $productEntry) {
             $product = $productEntry->getSelectedData();
             if (isset($product['sku'])) {
-                $upperSku = strtoupper($productEntry->getSelectedData()['sku']);
+                $upperSku = mb_strtoupper($productEntry->getSelectedData()['sku']);
                 foreach ($products[$upperSku] as $product) {
                     $data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY][] = $product;
                 }

@@ -34,11 +34,26 @@ class FrontendProductSelectTypeTest extends AbstractFrontendScopedProductSelectT
         return [
             [
                 ['availableInventoryStatuses' => ['in_stock', 'out_of_stock']],
-                'expectedProducts' => LoadProductData::PRODUCTS_1_2_3_6_7_8_9
+                'expectedProducts' => [
+                    LoadProductData::PRODUCT_1,
+                    LoadProductData::PRODUCT_2,
+                    LoadProductData::PRODUCT_3,
+                    LoadProductData::PRODUCT_6,
+                    LoadProductData::PRODUCT_8,
+                    LoadProductData::PRODUCT_7,
+                    LoadProductData::PRODUCT_9,
+                ],
             ],
             [
                 ['availableInventoryStatuses' => ['in_stock']],
-                'expectedProducts' => LoadProductData::PRODUCTS_1_2_6_7_8_9
+                'expectedProducts' => [
+                    LoadProductData::PRODUCT_1,
+                    LoadProductData::PRODUCT_2,
+                    LoadProductData::PRODUCT_6,
+                    LoadProductData::PRODUCT_8,
+                    LoadProductData::PRODUCT_7,
+                    LoadProductData::PRODUCT_9,
+                ],
             ],
             [
                 ['availableInventoryStatuses' => ['out_of_stock']],
@@ -52,7 +67,14 @@ class FrontendProductSelectTypeTest extends AbstractFrontendScopedProductSelectT
             ],
             [
                 ['availableInventoryStatuses' => ['in_stock', 'discontinued']],
-                'expectedProducts' => LoadProductData::PRODUCTS_1_2_6_7_8_9
+                'expectedProducts' => [
+                    LoadProductData::PRODUCT_1,
+                    LoadProductData::PRODUCT_2,
+                    LoadProductData::PRODUCT_6,
+                    LoadProductData::PRODUCT_8,
+                    LoadProductData::PRODUCT_7,
+                    LoadProductData::PRODUCT_9,
+                ]
             ],
         ];
     }
