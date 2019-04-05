@@ -5,9 +5,8 @@ namespace Oro\Bundle\CatalogBundle\EventListener;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
-use Oro\Bundle\OrganizationBundle\Entity\Organization;
-use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessor;
 
 /**
  * Gets categories depending on different criterias
@@ -22,6 +21,9 @@ abstract class AbstractProductImportEventListener
     /** @var string */
     protected $categoryClass;
 
+    /** @var TokenAccessor */
+    private $tokenAccessor;
+
     /** @var CategoryRepository */
     protected $categoryRepository;
 
@@ -33,11 +35,13 @@ abstract class AbstractProductImportEventListener
 
     /**
      * @param ManagerRegistry $registry
+     * @param TokenAccessor $tokenAccessor
      * @param string $categoryClass
      */
-    public function __construct(ManagerRegistry $registry, $categoryClass)
+    public function __construct(ManagerRegistry $registry, TokenAccessor $tokenAccessor, $categoryClass)
     {
         $this->registry = $registry;
+        $this->tokenAccessor = $tokenAccessor;
         $this->categoryClass = $categoryClass;
     }
 
@@ -61,17 +65,16 @@ abstract class AbstractProductImportEventListener
 
     /**
      * @param string $categoryDefaultTitle
-     * @param OrganizationInterface $organization
      * @return null|Category
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
-    protected function getCategoryByDefaultTitle($categoryDefaultTitle, OrganizationInterface $organization)
+    protected function getCategoryByDefaultTitle($categoryDefaultTitle)
     {
         if (array_key_exists($categoryDefaultTitle, $this->categoriesByTitle)) {
             return $this->categoriesByTitle[$categoryDefaultTitle];
         }
 
-        /** @var Organization $organization */
+        $organization = $this->tokenAccessor->getOrganization();
         $category = $this->getCategoryRepository()->findOneByDefaultTitle($categoryDefaultTitle, $organization);
         if (!$category) {
             $this->categoriesByTitle[$categoryDefaultTitle] = null;

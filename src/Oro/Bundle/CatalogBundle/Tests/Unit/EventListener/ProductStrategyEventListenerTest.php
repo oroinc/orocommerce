@@ -10,6 +10,7 @@ use Oro\Bundle\CatalogBundle\EventListener\ProductStrategyEventListener;
 use Oro\Bundle\CatalogBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\ProductBundle\ImportExport\Event\ProductStrategyEvent;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessor;
 
 class ProductStrategyEventListenerTest extends \PHPUnit\Framework\TestCase
 {
@@ -18,15 +19,22 @@ class ProductStrategyEventListenerTest extends \PHPUnit\Framework\TestCase
      */
     private $registry;
 
+    /** @var TokenAccessor|\PHPUnit\Framework\MockObject\MockObject */
+    private $tokenAccessor;
+
     /**
      * @var ProductStrategyEventListener
      */
     private $listener;
 
+    /**
+     * {@inheritdoc}
+     */
     public function setUp()
     {
         $this->registry = $this->createMock(ManagerRegistry::class);
-        $this->listener = new ProductStrategyEventListener($this->registry, Category::class);
+        $this->tokenAccessor = $this->createMock(TokenAccessor::class);
+        $this->listener = new ProductStrategyEventListener($this->registry, $this->tokenAccessor, Category::class);
     }
 
     public function testOnProcessAfterWithoutCategoryKey()
@@ -43,12 +51,16 @@ class ProductStrategyEventListenerTest extends \PHPUnit\Framework\TestCase
     {
         $product = new Product();
         $organization = new Organization();
-        $product->setOrganization($organization);
 
         $title = 'some title';
 
         $rawData = [AbstractProductImportEventListener::CATEGORY_KEY => $title];
         $event = new ProductStrategyEvent($product, $rawData);
+
+        $this->tokenAccessor
+            ->expects($this->once())
+            ->method('getOrganization')
+            ->willReturn($organization);
 
         $categoryRepo = $this->createMock(CategoryRepository::class);
         $categoryRepo->expects($this->once())
@@ -69,12 +81,16 @@ class ProductStrategyEventListenerTest extends \PHPUnit\Framework\TestCase
         $product = new Product();
         $category = new Category();
         $organization = new Organization();
-        $product->setOrganization($organization);
 
         $title = 'some title';
 
         $rawData = [AbstractProductImportEventListener::CATEGORY_KEY => $title];
         $event = new ProductStrategyEvent($product, $rawData);
+
+        $this->tokenAccessor
+            ->expects($this->once())
+            ->method('getOrganization')
+            ->willReturn($organization);
 
         $categoryRepo = $this->createMock(CategoryRepository::class);
         $categoryRepo->expects($this->once())
