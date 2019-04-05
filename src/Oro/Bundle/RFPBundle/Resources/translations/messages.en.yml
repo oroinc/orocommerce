@@ -153,6 +153,9 @@ oro:
             created_at.label: 'Created At'
             updated_at.label: 'Updated At'
 
+            datagrid:
+                entity_hint: 'Additional Notes'
+
         menu:
             request_list.description:   'List of Requests'
             shortcut_request_list.description: 'Shows list of existing Requests'

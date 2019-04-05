@@ -3,7 +3,7 @@ datagrids:
         acl_resource: oro_rfp_request_view
         extended_entity_name: '%oro_rfp.entity.request.class%'
         options:
-            entityHint:        requests
+            entityHint: oro.rfp.request.entity_plural_label
             entity_pagination: true
         source:
             type:         orm
@@ -273,7 +273,7 @@ datagrids:
         extended_entity_name: '%oro_rfp.entity.request.class%'
         options:
             frontend: true
-            entityHint:        requests
+            entityHint: oro.rfp.request.entity_plural_label
             entity_pagination: true
         source:
             type: orm
@@ -378,7 +378,7 @@ datagrids:
         acl_resource: oro_rfp_request_view
         extended_entity_name: '%oro_rfp.entity.request.additional_note.class%'
         options:
-            entityHint: additional notes
+            entityHint: oro.rfp.requestadditionalnote.datagrid.entity_hint
         source:
             type: orm
             query:

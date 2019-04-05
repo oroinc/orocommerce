@@ -3,7 +3,7 @@ datagrids:
         extended_entity_name: '%oro_pricing.entity.price_list.class%'
         acl_resource:      oro_pricing_price_list_view
         options:
-            entityHint:        price lists
+            entityHint: oro.pricing.pricelist.entity_plural_label
         source:
             type:              orm
             query:
@@ -384,7 +384,7 @@ datagrids:
     price-list-product-prices-grid:
         acl_resource:      oro_pricing_product_price_view
         options:
-            entityHint:        product prices
+            entityHint: oro.pricing.productprice.entity_plural_label
         source:
             type:              orm
             query:
@@ -541,7 +541,7 @@ datagrids:
     product-prices-grid:
         acl_resource:      oro_pricing_product_price_view
         options:
-            entityHint:        prices
+            entityHint: oro.pricing.productprice.entity_plural_label
         source:
             type:              orm
             query:
@@ -641,7 +641,7 @@ datagrids:
     pricing-price-attribute-price-list-grid:
         acl_resource:      oro_pricing_price_attribute_price_list_view
         options:
-            entityHint:        price attributes
+            entityHint: oro.pricing.priceattributepricelist.entity_plural_label
         source:
             type:              orm
             query:
