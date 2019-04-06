@@ -6,33 +6,31 @@ use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Component\Tree\Entity\Repository\NestedTreeRepository;
 
 /**
- * Provides methods to retrieve information about Catalog entity form the DB
+ * Provides methods to retrieve information about Category entity form the DB
  */
 class CategoryRepository extends NestedTreeRepository
 {
-    /**
-     * @var Category
-     */
-    private $masterCatalog;
 
     /**
+     * @param Organization $organization
      * @return Category
      */
-    public function getMasterCatalogRoot()
+    public function getMasterCatalogRoot(Organization $organization)
     {
-        if (!$this->masterCatalog) {
-            $this->masterCatalog = $this->createQueryBuilder('category')
-                ->andWhere('category.parentCategory IS NULL')
-                ->orderBy('category.id', 'ASC')
-                ->setMaxResults(1)
-                ->getQuery()
-                ->getSingleResult();
-        }
-        return $this->masterCatalog;
+        $qb = $this->createQueryBuilder('category')
+            ->andWhere('category.parentCategory IS NULL')
+            ->orderBy('category.id', 'ASC');
+        $qb->andWhere('category.organization = :organization');
+        $qb->setParameter('organization', $organization);
+
+        return $qb->setMaxResults(1)
+            ->getQuery()
+            ->getSingleResult();
     }
 
     /**
@@ -92,16 +90,20 @@ class CategoryRepository extends NestedTreeRepository
 
     /**
      * @param string $title
+     * @param Organization $organization
      * @return Category|null
+     * @throws \Doctrine\ORM\NonUniqueResultException
      */
-    public function findOneByDefaultTitle($title)
+    public function findOneByDefaultTitle(string $title, Organization $organization)
     {
         $qb = $this->createQueryBuilder('category');
 
         return $qb
             ->select('partial category.{id}')
             ->andWhere('category.denormalizedDefaultTitle = :title')
+            ->andWhere('category.organization = :organization')
             ->setParameter('title', $title)
+            ->setParameter('organization', $organization)
             ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult();

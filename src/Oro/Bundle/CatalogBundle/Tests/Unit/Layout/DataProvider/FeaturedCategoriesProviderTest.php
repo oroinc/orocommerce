@@ -8,9 +8,9 @@ use Oro\Bundle\CatalogBundle\Provider\CategoryTreeProvider;
 use Oro\Bundle\CatalogBundle\Tests\Unit\Entity\Stub\Category;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessor;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class FeaturedCategoriesProviderTest extends \PHPUnit\Framework\TestCase
 {
@@ -19,12 +19,12 @@ class FeaturedCategoriesProviderTest extends \PHPUnit\Framework\TestCase
     /**
      * @var CategoryTreeProvider|\PHPUnit\Framework\MockObject\MockObject
      */
-    protected $categoryTreeProvider;
+    private $categoryTreeProvider;
 
     /**
-     * @var TokenStorageInterface|\PHPUnit\Framework\MockObject\MockObject
+     * @var TokenAccessor|\PHPUnit\Framework\MockObject\MockObject
      */
-    protected $tokenStorage;
+    private $tokenAccessor;
 
     /**
      * @var LocalizationHelper|\PHPUnit\Framework\MockObject\MockObject
@@ -46,12 +46,12 @@ class FeaturedCategoriesProviderTest extends \PHPUnit\Framework\TestCase
         $this->categoryTreeProvider = $this->getMockBuilder(CategoryTreeProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->tokenStorage = $this->createMock(TokenStorageInterface::class);
+        $this->tokenAccessor = $this->createMock(TokenAccessor::class);
         $this->localizationHelper = $this->createMock(LocalizationHelper::class);
 
         $this->featuredCategoriesProvider = new FeaturedCategoriesProvider(
             $this->categoryTreeProvider,
-            $this->tokenStorage,
+            $this->tokenAccessor,
             $this->localizationHelper
         );
 
@@ -68,23 +68,25 @@ class FeaturedCategoriesProviderTest extends \PHPUnit\Framework\TestCase
      */
     public function testGetAll($data, $categoryIds, $result)
     {
-        $token = $this->createMock(TokenInterface::class);
-        $token->expects($this->any())
-            ->method('getUser')
-            ->will($this->returnValue(new CustomerUser()));
-
         $categories = [];
         foreach ($data as $categoryData) {
             $categories[] = $this->getEntity(Category::class, $categoryData);
         }
 
-        $this->tokenStorage->expects($this->any())
-            ->method('getToken')
-            ->will($this->returnValue($token));
+        $user = new CustomerUser();
+        $organization = $this->getEntity(Organization::class, ['id' => 7]);
+
+        $this->tokenAccessor->expects($this->once())
+            ->method('getUser')
+            ->willReturn($user);
+
+        $this->tokenAccessor->expects($this->once())
+            ->method('getOrganization')
+            ->willReturn($organization);
 
         $this->categoryTreeProvider->expects($this->once())
             ->method('getCategories')
-            ->with($this->tokenStorage->getToken()->getUser())
+            ->with($user)
             ->willReturn($categories);
 
         $this->cache->expects($this->exactly(2))
@@ -96,21 +98,23 @@ class FeaturedCategoriesProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testGetAllCached()
     {
-        $token = $this->createMock(TokenInterface::class);
-        $token->expects($this->any())
-            ->method('getUser')
-            ->will($this->returnValue(new CustomerUser()));
-
         $result = ['id' => 1, 'title' => '', 'small_image' => null];
 
         $this->cache->expects($this->once())
             ->method('fetch')
-            ->with('cacheVal_featured_categories__0_0_0_1')
+            ->with('cacheVal_featured_categories__0_0_0_1_7')
             ->willReturn($result);
 
-        $this->tokenStorage->expects($this->any())
-            ->method('getToken')
-            ->will($this->returnValue($token));
+        $user = new CustomerUser();
+        $organization = $this->getEntity(Organization::class, ['id' => 7]);
+
+        $this->tokenAccessor->expects($this->once())
+            ->method('getUser')
+            ->willReturn($user);
+
+        $this->tokenAccessor->expects($this->once())
+            ->method('getOrganization')
+            ->willReturn($organization);
 
         $this->categoryTreeProvider->expects($this->never())
             ->method('getCategories');

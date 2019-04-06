@@ -6,8 +6,8 @@ use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Provider\CategoryTreeProvider as CategoriesProvider;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessor;
 use Oro\Component\Cache\Layout\DataProviderCacheTrait;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 /**
  * Provides Featured Category data for layouts
@@ -22,9 +22,9 @@ class FeaturedCategoriesProvider
     private $categoryTreeProvider;
 
     /**
-     * @var TokenStorageInterface
+     * @var TokenAccessor
      */
-    private $tokenStorage;
+    private $tokenAccessor;
 
     /**
      * @var LocalizationHelper
@@ -33,16 +33,16 @@ class FeaturedCategoriesProvider
 
     /**
      * @param CategoriesProvider $categoryTreeProvider
-     * @param TokenStorageInterface $tokenStorage
+     * @param TokenAccessor $tokenAccessor
      * @param LocalizationHelper $localizationHelper
      */
     public function __construct(
         CategoriesProvider $categoryTreeProvider,
-        TokenStorageInterface $tokenStorage,
+        TokenAccessor $tokenAccessor,
         LocalizationHelper $localizationHelper
     ) {
         $this->categoryTreeProvider = $categoryTreeProvider;
-        $this->tokenStorage = $tokenStorage;
+        $this->tokenAccessor = $tokenAccessor;
         $this->localizationHelper = $localizationHelper;
     }
 
@@ -55,6 +55,7 @@ class FeaturedCategoriesProvider
         $user = $this->getCurrentUser();
         $customer = $user ? $user->getCustomer() : null;
         $customerGroup = $customer ? $customer->getGroup() : null;
+        $organization = $this->tokenAccessor->getOrganization();
 
         $this->initCache([
             'featured_categories',
@@ -63,18 +64,20 @@ class FeaturedCategoriesProvider
             $customer ? $customer->getId() : 0,
             $customerGroup ? $customerGroup->getId() : 0,
             implode('_', $categoryIds),
+            $organization->getId()
         ]);
 
-        return $this->getCategories($categoryIds);
+        return $this->getCategories($categoryIds, $user);
     }
 
     /**
      * Retrieve data in format [['id' => %d, 'title' => %s, 'small_image' => %s], [...], ...]
      *
      * @param array $categoryIds
+     * @param CustomerUser|null $user
      * @return Category[]
      */
-    private function getCategories(array $categoryIds = [])
+    private function getCategories(array $categoryIds = [], CustomerUser $user = null)
     {
         $useCache = $this->isCacheUsed();
         if (true === $useCache) {
@@ -86,7 +89,7 @@ class FeaturedCategoriesProvider
 
         $data = [];
 
-        $categories = $this->categoryTreeProvider->getCategories($this->getCurrentUser());
+        $categories = $this->categoryTreeProvider->getCategories($user);
         foreach ($categories as $category) {
             if ($category->getLevel() !== 0 && (!$categoryIds || in_array($category->getId(), $categoryIds, true))) {
                 $data[] = [
@@ -109,9 +112,9 @@ class FeaturedCategoriesProvider
      */
     private function getCurrentUser()
     {
-        $token = $this->tokenStorage->getToken();
-        if ($token && $token->getUser() instanceof CustomerUser) {
-            return $token->getUser();
+        $tokenUser = $this->tokenAccessor->getUser();
+        if ($tokenUser instanceof CustomerUser) {
+            return $tokenUser;
         }
 
         return null;

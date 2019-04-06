@@ -114,7 +114,7 @@
     {% set treeOptions = {
         'view' : 'orocatalog/js/app/views/tree-manage-view',
         'key' : 'commerce-category',
-        'data' : oro_category_list(),
+        'data' : oro_category_list(null, rootCategory),
         'nodeId' : entityId ? entityId : parentCategoryId,
         'updateAllowed' : is_granted('oro_catalog_category_update'),
         'onSelectRoute' : 'oro_catalog_category_update',

@@ -123,7 +123,7 @@ class ProductControllerTest extends WebTestCase
 
     public function testSidebarAction()
     {
-        $categoryId = 2;
+        $categoryId = 1;
         $crawler = $this->client->request(
             'GET',
             $this->getUrl(

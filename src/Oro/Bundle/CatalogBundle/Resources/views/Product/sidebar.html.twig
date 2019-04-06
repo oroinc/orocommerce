@@ -1,7 +1,7 @@
 {% import 'OroUIBundle::macros.html.twig' as UI %}
 
 {% set treeOptions = {
-    'data' : oro_category_list(),
+    'data' : oro_category_list(null, rootCategory),
     'defaultCategoryId': defaultCategoryId,
     'nodeId': defaultCategoryId,
     'view' : 'orocatalog/js/app/views/product-sidebar-view'

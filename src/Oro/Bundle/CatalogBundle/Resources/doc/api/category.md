@@ -225,3 +225,13 @@ Retrieve the service records that store category low inventory threshold data.
 #### get_relationship
 
 Retrieve the IDs of the service records that store category low inventory threshold data.
+
+### organization
+
+#### get_subresource
+
+Retrieve the record of the organization a specific category belongs to.
+
+#### get_relationship
+
+Retrieve the ID of the organization that a specific category belongs to.

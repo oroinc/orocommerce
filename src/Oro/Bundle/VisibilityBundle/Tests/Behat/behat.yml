@@ -50,6 +50,8 @@ oro_behat_extension:
           Inventory Threshold Use: 'oro_catalog_category[inventoryThreshold][useFallback]'
           Inventory Threshold: 'oro_catalog_category[inventoryThreshold][scalarValue]'
           Low Inventory Threshold: 'oro_catalog_category[lowInventoryThreshold][scalarValue]'
+          Managed Inventory Fallback: 'oro_catalog_category[manageInventory][fallback]'
+          Backorders Fallback: 'oro_catalog_category[backOrder][fallback]'
     Visibility Settings Form:
       selector: 'form[name="visibility_title"]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form

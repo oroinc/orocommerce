@@ -67,7 +67,7 @@ class OroCatalogBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_11';
+        return 'v1_12';
     }
 
     /**
@@ -141,6 +141,7 @@ class OroCatalogBundleInstaller implements
         $table->addColumn('default_product_options_id', 'integer', ['notnull' => false]);
         $table->addColumn('materialized_path', 'string', ['length' => 255, 'notnull' => false]);
         $table->addColumn('title', 'string', ['length' => 255, 'notnull' => true]);
+        $table->addColumn('organization_id', 'integer', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['default_product_options_id']);
         $table->addIndex(['title'], 'idx_oro_category_default_title', []);
@@ -222,6 +223,13 @@ class OroCatalogBundleInstaller implements
             ['default_product_options_id'],
             ['id'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
+        );
+
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_organization'),
+            ['organization_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'SET NULL']
         );
     }
 

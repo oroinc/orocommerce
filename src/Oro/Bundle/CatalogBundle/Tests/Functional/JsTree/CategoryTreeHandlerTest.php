@@ -4,6 +4,8 @@ namespace Oro\Bundle\CatalogBundle\Tests\Functional\JsTree;
 
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\SecurityBundle\Authentication\Token\UsernamePasswordOrganizationToken;
 use Oro\Component\Tree\Handler\AbstractTreeHandler;
 use Oro\Component\Tree\Test\AbstractTreeHandlerTestCase;
 
@@ -14,7 +16,7 @@ class CategoryTreeHandlerTest extends AbstractTreeHandlerTestCase
      */
     protected function getFixtures()
     {
-        return 'Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData';
+        return LoadCategoryData::class;
     }
 
     /**
@@ -111,6 +113,103 @@ class CategoryTreeHandlerTest extends AbstractTreeHandlerTestCase
         ];
     }
 
+    public function testCreateTreeByCurrentOrganizationMasterCatalogRoot()
+    {
+        $rootId = 1;
+        /** @var Category $firstLevel */
+        $firstLevel = $this->getReference(LoadCategoryData::FIRST_LEVEL);
+        /** @var Category $secondLevel1 */
+        $secondLevel1 = $this->getReference(LoadCategoryData::SECOND_LEVEL1);
+        /** @var Category $thirdLevel1 */
+        $thirdLevel1 = $this->getReference(LoadCategoryData::THIRD_LEVEL1);
+        /** @var Category $fourthLevel1 */
+        $fourthLevel1 = $this->getReference(LoadCategoryData::FOURTH_LEVEL1);
+        /** @var Category $secondLevel2 */
+        $secondLevel2 = $this->getReference(LoadCategoryData::SECOND_LEVEL2);
+        /** @var Category $thirdLevel2 */
+        $thirdLevel2 = $this->getReference(LoadCategoryData::THIRD_LEVEL2);
+        /** @var Category $fourthLevel2 */
+        $fourthLevel2 = $this->getReference(LoadCategoryData::FOURTH_LEVEL2);
+
+        $expectedData = [
+            [
+                'id' => $rootId,
+                'parent' => AbstractTreeHandler::ROOT_PARENT_VALUE,
+                'state' => [
+                    'opened' => true
+                ],
+                'text' => 'All Products'
+            ],
+            [
+                'id' => $firstLevel->getId(),
+                'parent' => $rootId,
+                'state' => [
+                    'opened' => false
+                ],
+                'text' => $firstLevel->getDefaultTitle()->getString()
+            ],
+            [
+                'id' => $secondLevel1->getId(),
+                'parent' => $firstLevel->getId(),
+                'state' => [
+                    'opened' => false
+                ],
+                'text' => $secondLevel1->getDefaultTitle()->getString()
+            ],
+            [
+                'id' => $thirdLevel1->getId(),
+                'parent' => $secondLevel1->getId(),
+                'state' => [
+                    'opened' => false
+                ],
+                'text' => $thirdLevel1->getDefaultTitle()->getString()
+            ],
+            [
+                'id' => $fourthLevel1->getId(),
+                'parent' => $thirdLevel1->getId(),
+                'state' => [
+                    'opened' => false
+                ],
+                'text' => $fourthLevel1->getDefaultTitle()->getString()
+            ],
+            [
+                'id' => $secondLevel2->getId(),
+                'parent' => $firstLevel->getId(),
+                'state' => [
+                    'opened' => false
+                ],
+                'text' => $secondLevel2->getDefaultTitle()->getString()
+            ],
+            [
+                'id' => $thirdLevel2->getId(),
+                'parent' => $secondLevel2->getId(),
+                'state' => [
+                    'opened' => false
+                ],
+                'text' => $thirdLevel2->getDefaultTitle()->getString()
+            ],
+            [
+                'id' => $fourthLevel2->getId(),
+                'parent' => $thirdLevel2->getId(),
+                'state' => [
+                    'opened' => false
+                ],
+                'text' => $fourthLevel2->getDefaultTitle()->getString()
+            ]
+        ];
+
+        $this->setAdminToken();
+
+        $actualTree = $this->handler->createTreeByCurrentOrganizationMasterCatalogRoot();
+        $actualTree = array_reduce($actualTree, function ($result, $data) {
+            $result[] = $data;
+            return $result;
+        }, []);
+        ksort($expectedData);
+        ksort($actualTree);
+        $this->assertEquals($expectedData, $actualTree);
+    }
+
     /**
      * @dataProvider moveDataProvider
      * @param string $entityReference
@@ -183,5 +282,24 @@ class CategoryTreeHandlerTest extends AbstractTreeHandlerTestCase
             }
             return $result;
         }, []);
+    }
+
+    private function setAdminToken()
+    {
+        $container = self::getContainer();
+        $organizationRepository = $container->get('doctrine')
+            ->getManagerForClass(Organization::class)
+            ->getRepository(Organization::class);
+        /** @var Organization $organization */
+        $organization = $organizationRepository->getFirst();
+
+        $adminToken = new UsernamePasswordOrganizationToken(
+            'admin',
+            'admin',
+            'key',
+            $organization
+        );
+
+        $container->get('security.token_storage')->setToken($adminToken);
     }
 }

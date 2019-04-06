@@ -7,6 +7,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Form;
 
+/**
+ * Contains base actions for Product
+ */
 class BaseProductController extends Controller
 {
     /**
@@ -54,10 +57,14 @@ class BaseProductController extends Controller
      */
     public function sidebarAction()
     {
+        $masterCatalogRoot = $this->get('oro_catalog.provider.master_catalog_root')
+            ->getMasterCatalogRootForCurrentOrganization();
+
         return [
             'defaultCategoryId' => $this->getCatalogRequestHandler()->getCategoryId(),
             'includeSubcategoriesForm' => $this->createIncludeSubcategoriesForm()->createView(),
-            'includeNotCategorizedProductForm' => $this->createIncludeNotCategorizedProductForm()->createView()
+            'includeNotCategorizedProductForm' => $this->createIncludeNotCategorizedProductForm()->createView(),
+            'rootCategory' => $masterCatalogRoot
         ];
     }
 }

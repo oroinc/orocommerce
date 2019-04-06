@@ -7,6 +7,7 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadScopeCustomerDemoData;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerCategoryVisibility;
@@ -14,6 +15,9 @@ use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupCategoryVisibilit
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * Sets proper visibility setting to demo categories
+ */
 class LoadCategoryVisibilityDemoData extends AbstractFixture implements
     DependentFixtureInterface,
     ContainerAwareInterface
@@ -46,9 +50,10 @@ class LoadCategoryVisibilityDemoData extends AbstractFixture implements
         $filePath = $locator->locate('@OroVisibilityBundle/Migrations/Data/Demo/ORM/data/categories-visibility.csv');
         $handler = fopen($filePath, 'r');
         $headers = fgetcsv($handler, 1000, ',');
+        $defaultOrganization = $manager->getRepository(Organization::class)->getFirst();
         while (($data = fgetcsv($handler, 1000, ',')) !== false) {
             $row = array_combine($headers, array_values($data));
-            $category = $this->getCategory($manager, $row['category']);
+            $category = $this->getCategory($manager, $row['category'], $defaultOrganization);
             $visibility = $row['visibility'];
 
             if ($row['all']) {
@@ -76,14 +81,17 @@ class LoadCategoryVisibilityDemoData extends AbstractFixture implements
         $manager->flush();
         $this->container->get('oro_visibility.visibility.cache.product.category.cache_builder')->buildCache();
     }
+
     /**
      * @param ObjectManager $manager
      * @param string $title
+     * @param Organization $organization
      * @return Category
+     * @throws \Doctrine\ORM\NonUniqueResultException
      */
-    protected function getCategory(ObjectManager $manager, $title)
+    protected function getCategory(ObjectManager $manager, string  $title, Organization $organization): Category
     {
-        return $manager->getRepository('OroCatalogBundle:Category')->findOneByDefaultTitle($title);
+        return $manager->getRepository(Category::class)->findOneByDefaultTitle($title, $organization);
     }
     /**
      * @param ObjectManager $manager

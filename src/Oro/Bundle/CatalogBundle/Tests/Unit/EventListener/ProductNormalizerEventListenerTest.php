@@ -5,6 +5,7 @@ namespace Oro\Bundle\CatalogBundle\Tests\Unit\EventListener;
 use Oro\Bundle\CatalogBundle\EventListener\ProductNormalizerEventListener;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\ImportExport\Event\ProductNormalizerEvent;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessor;
 
 class ProductNormalizerEventListenerTest extends AbstractProductImportEventListenerTest
 {
@@ -15,10 +16,15 @@ class ProductNormalizerEventListenerTest extends AbstractProductImportEventListe
      */
     protected $listener;
 
+    /**
+     * {@inheritdoc}
+     */
     public function setUp()
     {
         parent::setUp();
-        $this->listener = new ProductNormalizerEventListener($this->registry, self::CATEGORY_CLASS);
+
+        $tokenAccessor = $this->createMock(TokenAccessor::class);
+        $this->listener = new ProductNormalizerEventListener($this->registry, $tokenAccessor, self::CATEGORY_CLASS);
     }
 
     public function tearDown()
