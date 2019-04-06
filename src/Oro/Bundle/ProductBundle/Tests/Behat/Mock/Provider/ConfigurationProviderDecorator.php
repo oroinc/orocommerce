@@ -2,19 +2,18 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Behat\Mock\Provider;
 
-use Oro\Bundle\DataGridBundle\Provider\ConfigurationProvider;
+use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
+use Oro\Bundle\DataGridBundle\Provider\ConfigurationProviderInterface;
 
-class ConfigurationProviderDecorator extends ConfigurationProvider
+class ConfigurationProviderDecorator implements ConfigurationProviderInterface
 {
-    /**
-     * @var ConfigurationProvider
-     */
+    /** @var ConfigurationProviderInterface */
     private $configurationProvider;
 
     /**
-     * @param ConfigurationProvider $configurationProvider
+     * @param ConfigurationProviderInterface $configurationProvider
      */
-    public function __construct(ConfigurationProvider $configurationProvider)
+    public function __construct(ConfigurationProviderInterface $configurationProvider)
     {
         $this->configurationProvider = $configurationProvider;
     }
@@ -22,7 +21,7 @@ class ConfigurationProviderDecorator extends ConfigurationProvider
     /**
      * {@inheritDoc}
      */
-    public function getConfiguration($gridName)
+    public function getConfiguration(string $gridName): DatagridConfiguration
     {
         $configuration = $this->configurationProvider->getConfiguration($gridName);
 
@@ -44,18 +43,8 @@ class ConfigurationProviderDecorator extends ConfigurationProvider
     /**
      * {@inheritDoc}
      */
-    public function isApplicable($gridName)
+    public function isApplicable(string $gridName): bool
     {
         return $this->configurationProvider->isApplicable($gridName);
-    }
-
-    /**
-     * @param string $gridName
-     *
-     * @return array
-     */
-    public function getRawConfiguration(string $gridName): array
-    {
-        return $this->configurationProvider->getRawConfiguration($gridName);
     }
 }
