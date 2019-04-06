@@ -8,6 +8,9 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
+/**
+ * Checks if product with given SKU exists.
+ */
 class ProductBySkuValidator extends ConstraintValidator
 {
     /**
@@ -39,7 +42,7 @@ class ProductBySkuValidator extends ConstraintValidator
         if ($value) {
             $products = $this->getProducts();
             if ($products !== null) {
-                $valid = isset($products[strtoupper($value)]);
+                $valid = isset($products[mb_strtoupper($value)]);
             } else {
                 $product = $this->registry->getRepository('OroProductBundle:Product')->findOneBySku($value);
                 $valid = !empty($product);

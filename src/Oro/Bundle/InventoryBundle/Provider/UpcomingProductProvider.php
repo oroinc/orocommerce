@@ -4,48 +4,78 @@ namespace Oro\Bundle\InventoryBundle\Provider;
 
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
 use Oro\Bundle\EntityBundle\Exception\Fallback\FallbackFieldConfigurationMissingException;
+use Oro\Bundle\EntityBundle\Exception\Fallback\InvalidFallbackKeyException;
 use Oro\Bundle\EntityBundle\Fallback\EntityFallbackResolver;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\InventoryBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
-class ProductUpcomingProvider
+/**
+ * Provides information on product's upcoming status and availability date.
+ * If oro_inventory.hide_labels_past_availability_date config option is on then product looses upcoming status after
+ * availability date if it's given.
+ */
+class UpcomingProductProvider
 {
-    const IS_UPCOMING = 'isUpcoming';
-    const AVAILABILITY_DATE = 'availabilityDate';
+    public const IS_UPCOMING = 'isUpcoming';
+    public const AVAILABILITY_DATE = 'availabilityDate';
 
     /**
      * @var EntityFallbackResolver
      */
-    protected $entityFallbackResolver;
+    private $entityFallbackResolver;
 
     /**
      * @var DoctrineHelper
      */
-    protected $doctrineHelper;
+    private $doctrineHelper;
+
+    /**
+     * @var ConfigManager
+     */
+    private $configManager;
 
     /**
      * @param EntityFallbackResolver $entityFallbackResolver
+     * @param DoctrineHelper $doctrineHelper
+     * @param ConfigManager $configManager
      */
-    public function __construct(EntityFallbackResolver $entityFallbackResolver, DoctrineHelper $doctrineHelper)
-    {
+    public function __construct(
+        EntityFallbackResolver $entityFallbackResolver,
+        DoctrineHelper $doctrineHelper,
+        ConfigManager $configManager
+    ) {
         $this->entityFallbackResolver = $entityFallbackResolver;
         $this->doctrineHelper = $doctrineHelper;
+        $this->configManager = $configManager;
     }
 
     /**
      * @param Product $product
      * @return bool
      */
-    public function isUpcoming(Product $product)
+    public function isUpcoming(Product $product): bool
     {
-        try {
-            return (bool)$this->entityFallbackResolver->getFallbackValue($product, self::IS_UPCOMING);
-        } catch (FallbackFieldConfigurationMissingException $e) {
+        $isUpcoming = $this->getIsUpcomingValue($product);
+
+        if (!$isUpcoming) {
             return false;
         }
+
+        if (!$this->isUpcomingStatusOffPastAvailabilityDate()) {
+            return $isUpcoming;
+        }
+
+        $availabilityDate = $this->extractDate($product);
+        if ($availabilityDate && $availabilityDate < new \DateTime('now', new \DateTimeZone('UTC'))) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -53,21 +83,25 @@ class ProductUpcomingProvider
      * @throws \LogicException
      * @return \DateTime|null
      */
-    public function getAvailabilityDate(Product $product)
+    public function getAvailabilityDate(Product $product): ?\DateTime
     {
         if (!$this->isUpcoming($product)) {
             throw new \LogicException('You cant get Availability Date for product, which is not upcoming');
         }
 
         $date = $this->extractDate($product);
-        return $date && $date >= new \DateTime('now', new \DateTimeZone('UTC')) ? clone $date : null;
+        if (!$this->isUpcomingStatusOffPastAvailabilityDate()) {
+            return $date && $date >= new \DateTime('now', new \DateTimeZone('UTC')) ? clone $date : null;
+        }
+
+        return $date;
     }
 
     /**
      * @param Product[]|iterable $products
      * @return \DateTime|null
      */
-    public function getLatestAvailabilityDate($products)
+    public function getLatestAvailabilityDate($products): ?\DateTime
     {
         $latestDate = null;
         foreach ($products as $product) {
@@ -111,5 +145,30 @@ class ProductUpcomingProvider
         } while ($category = $category->getParentCategory());
 
         return null;
+    }
+
+    /**
+     * @param Product $product
+     * @return bool
+     */
+    private function getIsUpcomingValue(Product $product): bool
+    {
+        try {
+            return (bool)$this->entityFallbackResolver->getFallbackValue($product, self::IS_UPCOMING);
+        } catch (FallbackFieldConfigurationMissingException $e) {
+            return false;
+        } catch (InvalidFallbackKeyException $e) {
+            return false;
+        }
+    }
+
+    /**
+     * @return bool
+     */
+    private function isUpcomingStatusOffPastAvailabilityDate(): bool
+    {
+        return $this->configManager->get(
+            sprintf('%s.%s', Configuration::ROOT_NODE, Configuration::HIDE_LABELS_PAST_AVAILABILITY_DATE)
+        );
     }
 }

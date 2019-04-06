@@ -6,6 +6,9 @@ use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PayPalBundle\Tests\Functional\DataFixtures\LoadPaymentTransactionData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
+/**
+ * @dbIsolationPerTest
+ */
 class CallbackControllerTest extends WebTestCase
 {
     const ALLOWED_REMOTE_ADDR = '173.0.81.1';
@@ -15,7 +18,7 @@ class CallbackControllerTest extends WebTestCase
         $this->initClient();
         $this->client->useHashNavigation(true);
 
-        $this->loadFixtures(['Oro\Bundle\PayPalBundle\Tests\Functional\DataFixtures\LoadPaymentTransactionData']);
+        $this->loadFixtures([LoadPaymentTransactionData::class]);
     }
 
     public function testNotifyChangeState()
@@ -28,9 +31,9 @@ class CallbackControllerTest extends WebTestCase
         ];
 
         /** @var PaymentTransaction $paymentTransaction */
-        $paymentTransaction = $this->getReference(LoadPaymentTransactionData::PAYFLOW_AUTHORIZE_TRANSACTION);
-        $this->assertFalse($paymentTransaction->isActive());
-        $this->assertFalse($paymentTransaction->isSuccessful());
+        $paymentTransaction = $this->getReference(LoadPaymentTransactionData::PAYFLOW_CHARGE_TRANSACTION);
+        $this->assertTrue($paymentTransaction->isActive());
+        $this->assertTrue($paymentTransaction->isSuccessful());
 
         $expectedData = $parameters + $paymentTransaction->getRequest();
         $this->client->request(
@@ -47,13 +50,14 @@ class CallbackControllerTest extends WebTestCase
             ['REMOTE_ADDR' => self::ALLOWED_REMOTE_ADDR]
         );
 
-        $objectManager = $this->getContainer()->get('doctrine')
+        $paymentTransactionRepository = $this->getContainer()->get('doctrine')
             ->getRepository('OroPaymentBundle:PaymentTransaction');
 
         /** @var PaymentTransaction $paymentTransaction */
-        $paymentTransaction = $objectManager->find($paymentTransaction->getId());
+        $paymentTransaction = $paymentTransactionRepository->find($paymentTransaction->getId());
 
-        $this->assertTrue($paymentTransaction->isActive());
+        // Active flag of charge transaction after complete(notify request) action should be changed to false
+        $this->assertFalse($paymentTransaction->isActive());
         $this->assertTrue($paymentTransaction->isSuccessful());
         $this->assertEquals($expectedData, $paymentTransaction->getResponse());
     }
@@ -89,7 +93,7 @@ class CallbackControllerTest extends WebTestCase
     public function testNotifyAllowedIPFiltering($remoteAddress)
     {
         /** @var PaymentTransaction $paymentTransaction */
-        $paymentTransaction = $this->getReference(LoadPaymentTransactionData::PAYFLOW_AUTHORIZE_TRANSACTION_IP_FILTER);
+        $paymentTransaction = $this->getReference(LoadPaymentTransactionData::PAYFLOW_AUTHORIZE_TRANSACTION);
 
         $this->client->request(
             'POST',
@@ -115,7 +119,8 @@ class CallbackControllerTest extends WebTestCase
     public function testNotifyNotAllowedIPFiltering($remoteAddress)
     {
         /** @var PaymentTransaction $paymentTransaction */
-        $paymentTransaction = $this->getReference(LoadPaymentTransactionData::PAYFLOW_AUTHORIZE_TRANSACTION_IP_FILTER);
+        $paymentTransaction = $this->getReference(LoadPaymentTransactionData::PAYFLOW_AUTHORIZE_TRANSACTION);
+        $this->assertTrue($paymentTransaction->isActive());
 
         $this->client->request(
             'POST',
@@ -130,6 +135,9 @@ class CallbackControllerTest extends WebTestCase
             [],
             ['REMOTE_ADDR' => $remoteAddress]
         );
+
+        // Check that original active flag was not changed
+        $this->assertTrue($paymentTransaction->isActive());
 
         $this->assertResponseStatusCodeEquals($this->client->getResponse(), 403);
     }

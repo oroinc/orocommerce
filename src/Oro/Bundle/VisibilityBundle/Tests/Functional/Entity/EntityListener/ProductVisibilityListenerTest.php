@@ -262,7 +262,7 @@ class ProductVisibilityListenerTest extends WebTestCase
     public function testChangeCustomerGroupProductVisibilityToCurrentProduct()
     {
         // Already exists customer group product visibility with `CATEGORY` value
-        $visibility = $this->getReference('product-7.visibility.customer_group.group1');
+        $visibility = $this->getReference('продукт-7.visibility.customer_group.group1');
         $visibility->setVisibility(CustomerGroupProductVisibility::CURRENT_PRODUCT);
 
         $entityManager = $this->getManagerForCustomerGroupProductVisibility();

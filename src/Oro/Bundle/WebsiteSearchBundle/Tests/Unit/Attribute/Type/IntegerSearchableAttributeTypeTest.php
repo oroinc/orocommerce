@@ -4,7 +4,7 @@ namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Attribute\Type;
 
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\WebsiteSearchBundle\Attribute\Type\IntegerSearchableAttributeType;
-use Oro\Bundle\WebsiteSearchBundle\Attribute\Type\SearchableAttributeTypeInterface;
+use Oro\Bundle\WebsiteSearchBundle\Attribute\Type\SearchAttributeTypeInterface;
 
 class IntegerSearchableAttributeTypeTest extends SearchableAttributeTypeTestCase
 {
@@ -16,11 +16,11 @@ class IntegerSearchableAttributeTypeTest extends SearchableAttributeTypeTestCase
         return IntegerSearchableAttributeType::class;
     }
 
-    public function testGetFilterStorageFieldType()
+    public function testGetFilterStorageFieldTypes()
     {
         $this->assertSame(
-            Query::TYPE_INTEGER,
-            $this->getSearchableAttributeType()->getFilterStorageFieldType()
+            [SearchAttributeTypeInterface::VALUE_MAIN => Query::TYPE_INTEGER],
+            $this->getSearchableAttributeType()->getFilterStorageFieldTypes()
         );
     }
 
@@ -35,7 +35,7 @@ class IntegerSearchableAttributeTypeTest extends SearchableAttributeTypeTestCase
     public function testGetFilterType()
     {
         $this->assertSame(
-            SearchableAttributeTypeInterface::FILTER_TYPE_NUMBER_RANGE,
+            SearchAttributeTypeInterface::FILTER_TYPE_NUMBER_RANGE,
             $this->getSearchableAttributeType()->getFilterType()
         );
     }
@@ -45,11 +45,11 @@ class IntegerSearchableAttributeTypeTest extends SearchableAttributeTypeTestCase
         $this->assertFalse($this->getSearchableAttributeType()->isLocalizable($this->attribute));
     }
 
-    public function testGetFilterableFieldName()
+    public function testGetFilterableFieldNames()
     {
         $this->assertSame(
-            self::FIELD_NAME,
-            $this->getSearchableAttributeType()->getFilterableFieldName($this->attribute)
+            [SearchAttributeTypeInterface::VALUE_MAIN => self::FIELD_NAME],
+            $this->getSearchableAttributeType()->getFilterableFieldNames($this->attribute)
         );
     }
 

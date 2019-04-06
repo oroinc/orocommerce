@@ -12,7 +12,7 @@ use Oro\Bundle\EntityConfigBundle\Manager\AttributeManager;
 use Oro\Bundle\FilterBundle\Form\Type\Filter\NumberFilterTypeInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SearchBundle\Query\Query;
-use Oro\Bundle\WebsiteSearchBundle\Attribute\Type\SearchableAttributeTypeInterface;
+use Oro\Bundle\WebsiteSearchBundle\Attribute\Type\SearchAttributeTypeInterface;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\EnumIdPlaceholder;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
 
@@ -81,7 +81,7 @@ class FrontendProductGridEventListener
     /**
      * @param FieldConfigModel $attribute
      *
-     * @return null|SearchableAttributeTypeInterface
+     * @return null|SearchAttributeTypeInterface
      */
     protected function getAttributeType(FieldConfigModel $attribute)
     {
@@ -90,7 +90,7 @@ class FrontendProductGridEventListener
         }
 
         $attributeType = $this->attributeTypeRegistry->getAttributeType($attribute);
-        if (!$attributeType instanceof SearchableAttributeTypeInterface) {
+        if (!$attributeType instanceof SearchAttributeTypeInterface) {
             return null;
         }
 
@@ -100,27 +100,26 @@ class FrontendProductGridEventListener
     /**
      * @param DatagridConfiguration $config
      * @param FieldConfigModel $attribute
-     * @param SearchableAttributeTypeInterface $attributeType
+     * @param SearchAttributeTypeInterface $attributeType
      * @param string $label
      */
     protected function addFilter(
         DatagridConfiguration $config,
         FieldConfigModel $attribute,
-        SearchableAttributeTypeInterface $attributeType,
+        SearchAttributeTypeInterface $attributeType,
         $label
     ) {
-        $name = $attributeType->getFilterableFieldName($attribute);
+        $name = $attributeType->getFilterableFieldNames($attribute)[SearchAttributeTypeInterface::VALUE_MAIN] ?? '';
         $alias = $this->clearName($name);
+        $type = $attributeType->getFilterStorageFieldTypes()[SearchAttributeTypeInterface::VALUE_MAIN] ?? '';
 
         $params = [
             'type' => $attributeType->getFilterType(),
-            'data_name' => sprintf('%s.%s', $attributeType->getFilterStorageFieldType(), $name),
+            'data_name' => sprintf('%s.%s', $type, $name),
             'label' => $label
         ];
 
-        if ($attributeType->getFilterStorageFieldType() &&
-            $this->configurationProvider->isAttributeFilterByExactValue($attribute)
-        ) {
+        if ($type && $this->configurationProvider->isAttributeFilterByExactValue($attribute)) {
             $params['force_like'] = true;
         }
 
@@ -129,23 +128,24 @@ class FrontendProductGridEventListener
 
     /**
      * @param FieldConfigModel $attribute
-     * @param SearchableAttributeTypeInterface $attributeType
+     * @param SearchAttributeTypeInterface $attributeType
      * @param array $params
      * @return array
      */
     protected function applyAdditionalParams(
         FieldConfigModel $attribute,
-        SearchableAttributeTypeInterface $attributeType,
+        SearchAttributeTypeInterface $attributeType,
         array $params
     ) {
-        $fieldType = $attributeType->getFilterStorageFieldType();
+        $fieldType = $attributeType->getFilterStorageFieldTypes()[SearchAttributeTypeInterface::VALUE_MAIN] ?? '';
+
         $entityFilterTypes = [
-            SearchableAttributeTypeInterface::FILTER_TYPE_ENUM,
-            SearchableAttributeTypeInterface::FILTER_TYPE_MULTI_ENUM,
-            SearchableAttributeTypeInterface::FILTER_TYPE_ENTITY,
+            SearchAttributeTypeInterface::FILTER_TYPE_ENUM,
+            SearchAttributeTypeInterface::FILTER_TYPE_MULTI_ENUM,
+            SearchAttributeTypeInterface::FILTER_TYPE_ENTITY,
         ];
 
-        if (in_array($attributeType->getFilterType(), $entityFilterTypes, true)) {
+        if (\in_array($attributeType->getFilterType(), $entityFilterTypes, true)) {
             $params['class'] = $this->getEntityClass($attribute);
         } elseif ($fieldType === Query::TYPE_TEXT) {
             $params['max_length'] = 255;
@@ -159,13 +159,13 @@ class FrontendProductGridEventListener
     /**
      * @param DatagridConfiguration $config
      * @param FieldConfigModel $attribute
-     * @param SearchableAttributeTypeInterface $attributeType
+     * @param SearchAttributeTypeInterface $attributeType
      * @param string $label
      */
     protected function addSorter(
         DatagridConfiguration $config,
         FieldConfigModel $attribute,
-        SearchableAttributeTypeInterface $attributeType,
+        SearchAttributeTypeInterface $attributeType,
         $label
     ) {
         $name = $attributeType->getSortableFieldName($attribute);

@@ -71,17 +71,15 @@ class ShoppingListTypeTest extends FormIntegrationTestCase
      */
     public function submitDataProvider()
     {
-        $defaultShoppingList = new ShoppingList();
-
-        $expectedShoppingList = clone $defaultShoppingList;
+        $expectedShoppingList = new ShoppingList();
         $expectedShoppingList
             ->setLabel('new label');
 
-        $existingShoppingList = $this->getEntity('Oro\Bundle\ShoppingListBundle\Entity\ShoppingList', 1);
+        $existingShoppingList = $this->getEntity(ShoppingList::class, 1);
         $existingShoppingList
             ->setLabel('existing label');
 
-        $expectedShoppingList2 = clone $existingShoppingList;
+        $expectedShoppingList2 = $this->getEntity(ShoppingList::class, 1);
         $expectedShoppingList2
             ->setLabel('updated label');
 

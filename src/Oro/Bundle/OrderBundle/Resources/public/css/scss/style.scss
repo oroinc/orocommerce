@@ -232,14 +232,11 @@ td.order-discount-item-remove {
         div.selector {
             width: 74px;
             min-width: 0;
-
-            > span {
-                width: 74px;
-            }
         }
 
         input {
-            width: ($field-width - 73px);
+            width: auto;
+            flex-grow: 1;
             margin-right: -2px;
         }
 

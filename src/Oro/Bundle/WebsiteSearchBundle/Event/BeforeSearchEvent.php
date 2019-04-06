@@ -2,10 +2,14 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Event;
 
+use Oro\Bundle\SearchBundle\Event\SearchQueryAwareEventInterface;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Symfony\Component\EventDispatcher\Event;
 
-class BeforeSearchEvent extends Event
+/**
+ * Event which is triggered before search query is executed and gives possibility to adjust search query.
+ */
+class BeforeSearchEvent extends Event implements SearchQueryAwareEventInterface
 {
     const EVENT_NAME = 'oro_website_search.before_search';
 

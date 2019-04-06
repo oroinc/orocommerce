@@ -108,7 +108,7 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
     public function testSetCurrentCurrencyAction($currency, $expectedResult)
     {
         $params = ['currency' => $currency];
-        $this->client->request('POST', $this->getUrl('oro_pricing_frontend_set_current_currency'), $params);
+        $this->ajaxRequest('POST', $this->getUrl('oro_pricing_frontend_set_current_currency'), $params);
         $result = $this->client->getResponse();
 
         $this->assertJsonResponseStatusCodeEquals($result, 200);

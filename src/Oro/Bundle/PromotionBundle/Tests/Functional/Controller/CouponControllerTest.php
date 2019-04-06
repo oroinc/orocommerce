@@ -70,7 +70,7 @@ class CouponControllerTest extends WebTestCase
                 'codeLength' => 3,
             ],
         ];
-        $this->client->request('POST', $this->getUrl('oro_promotion_coupon_generation_preview'), $request);
+        $this->ajaxRequest('POST', $this->getUrl('oro_promotion_coupon_generation_preview'), $request);
         $this->getJsonResponseContent($this->client->getResponse(), 200);
     }
 }

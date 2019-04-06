@@ -257,6 +257,7 @@ services:
         arguments:
             - '@oro_catalog.category_counts.cache_provider'
             - '@oro_security.token_accessor'
+            - '@oro_website.manager'
 
     oro_catalog.datagrid.extension.category_counts:
         class: 'Oro\Bundle\CatalogBundle\Datagrid\Extension\CategoryCountsExtension'

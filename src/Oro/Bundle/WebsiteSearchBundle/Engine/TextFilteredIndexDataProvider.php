@@ -5,7 +5,8 @@ namespace Oro\Bundle\WebsiteSearchBundle\Engine;
 use Oro\Bundle\SearchBundle\Query\Query;
 
 /**
- * Should be removed in https://magecore.atlassian.net/browse/BB-12955
+ * Data provider for website search index data, used by ORM engine to filter all HTML tags
+ * Should be removed after the implementation of BB-12955
  */
 class TextFilteredIndexDataProvider extends IndexDataProvider
 {
@@ -19,6 +20,13 @@ class TextFilteredIndexDataProvider extends IndexDataProvider
      */
     protected function clearValue($type, $fieldName, $value)
     {
+        if (is_array($value)) {
+            foreach ($value as $key => $element) {
+                $value[$key] = $this->clearValue($type, $fieldName, $element);
+            }
+            return $value;
+        }
+
         if ($type === Query::TYPE_TEXT) {
             $value = $this->htmlTagHelper->stripTags((string)$value);
             $value = $this->htmlTagHelper->stripLongWords($value);

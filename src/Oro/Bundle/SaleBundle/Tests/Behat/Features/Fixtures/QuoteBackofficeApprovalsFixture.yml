@@ -5,24 +5,32 @@ Oro\Bundle\UserBundle\Entity\User:
   john:
     firstName: John
     lastName: Michell
-    username (unique): john
+    username: john
     organization: '@organization'
     organizations: ['@organization']
     roles: ['@userRole']
     owner: '@business_unit'
     businessUnits: ['@business_unit']
-    email (unique): john@example.com
+    email: john@example.com
     password: cnyz4CP6XePO745+/Y5yrMbn0aNTDXZhZs8nIRpwC7kHsuB96L8Jtkte3rOluqI5sFvDUrtuDjBSZLcVlXOpFw==
     salt: r4LYCE9OZsyWs/B+smmSVt2r+uHn+ITlKlqLsCGD
 
 Oro\Bundle\PricingBundle\Entity\CombinedProductPrice:
-   combinedProductPrice:
+   combinedProductPrice0:
+        pricelist: '@combinedPriceList'
+        product: '@product1'
+        productSku: 'AA1'
+        quantity: 1
+        unit: '@item'
+        value: 2
+        currency: 'USD'
+   combinedProductPrice1:
         pricelist: '@combinedPriceList'
         product: '@product1'
         productSku: 'AA1'
         quantity: 5
         unit: '@item'
-        value: 1
+        value: 5
         currency: 'USD'
 
 Oro\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite:

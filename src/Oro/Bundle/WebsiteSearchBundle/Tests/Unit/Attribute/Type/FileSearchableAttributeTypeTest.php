@@ -18,9 +18,9 @@ class FileSearchableAttributeTypeTest extends SearchableAttributeTypeTestCase
      * @expectedException \RuntimeException
      * @expectedExceptionMessage Not supported
      */
-    public function testGetFilterStorageFieldType()
+    public function testGetFilterStorageFieldTypes()
     {
-        $this->getSearchableAttributeType()->getFilterStorageFieldType();
+        $this->getSearchableAttributeType()->getFilterStorageFieldTypes();
     }
 
     /**
@@ -52,7 +52,7 @@ class FileSearchableAttributeTypeTest extends SearchableAttributeTypeTestCase
      */
     public function testGetFilterableFieldNameException()
     {
-        $this->getSearchableAttributeType()->getFilterableFieldName($this->attribute);
+        $this->getSearchableAttributeType()->getFilterableFieldNames($this->attribute);
     }
 
     /**

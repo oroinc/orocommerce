@@ -320,7 +320,7 @@ class ProductTest extends RestJsonApiTestCase
             'type'       => 'entityfieldfallbackvalues',
             'id'         => 'is-upcoming',
             'attributes' => [
-                'scalarValue' => 'test',
+                'scalarValue' => '1',
                 'arrayValue'  => ['key' => 'value']
             ]
         ];
@@ -352,14 +352,18 @@ class ProductTest extends RestJsonApiTestCase
         ];
         $response = $this->post(['entity' => 'products'], $data, [], false);
 
-        $this->assertResponseValidationError(
+        $this->assertResponseValidationErrors([
+            [
+                'title'  => 'related entity field fallback value constraint',
+                'detail' => 'The value is not valid. Acceptable values: category.',
+                'source' => ['pointer' => '/data/relationships/isUpcoming/data']
+            ],
             [
                 'title'  => 'choice constraint',
                 'detail' => 'The value is not valid. Acceptable values: category.',
                 'source' => ['pointer' => sprintf('/included/%d/attributes/fallback', count($data['included']) - 1)]
-            ],
-            $response
-        );
+            ]
+        ], $response);
     }
 
     public function testCreateWithInvalidIsUpcomingBecauseOfFallbackValueIsArrayValueInsteadOfScalarValue()

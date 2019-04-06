@@ -156,18 +156,18 @@ class ProductVisibilityLimitedWithPricesSearchHandlerTest extends TestCase
             'pricing results match' => [
                 [
                     'more' => false,
-                    'results' => [['sku' => 'test', 'name' => 'test name']]
+                    'results' => [['sku' => 'SkuАбв', 'name' => 'test name']]
                 ],
                 [
                     'more' => false,
                     'results' => [
-                        ['sku' => 'test', 'name' => 'test name', 'prices' => [['value' => 10, 'unit' => 'item']]]
+                        ['sku' => 'SkuАбв', 'name' => 'test name', 'prices' => [['value' => 10, 'unit' => 'item']]]
                     ]
                 ],
                 [
                     'more' => false,
                     'results' => [
-                        ['sku' => 'test', 'name' => 'test name', 'prices' => [['value' => 10, 'unit' => 'item']]]
+                        ['sku' => 'SkuАбв', 'name' => 'test name', 'prices' => [['value' => 10, 'unit' => 'item']]]
                     ]
                 ]
             ],

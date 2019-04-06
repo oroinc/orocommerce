@@ -3,10 +3,13 @@
 namespace Oro\Bundle\InventoryBundle\Validator;
 
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
-use Oro\Bundle\InventoryBundle\Provider\ProductUpcomingProvider;
+use Oro\Bundle\InventoryBundle\Provider\UpcomingProductProvider;
 use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatter;
 use Symfony\Component\Translation\TranslatorInterface;
 
+/**
+ * Provides upcoming notification message for checkout line item.
+ */
 class UpcomingLabelCheckoutLineItemValidator
 {
     /**
@@ -20,17 +23,17 @@ class UpcomingLabelCheckoutLineItemValidator
     protected $dateFormatter;
 
     /**
-     * @var ProductUpcomingProvider
+     * @var UpcomingProductProvider
      */
     protected $productUpcomingProvider;
 
     /**
-     * @param ProductUpcomingProvider $ProductUpcomingProvider
+     * @param UpcomingProductProvider $ProductUpcomingProvider
      * @param TranslatorInterface $translator
      * @param DateTimeFormatter $dateFormatter
      */
     public function __construct(
-        ProductUpcomingProvider $ProductUpcomingProvider,
+        UpcomingProductProvider $ProductUpcomingProvider,
         TranslatorInterface $translator,
         DateTimeFormatter $dateFormatter
     ) {

@@ -10,11 +10,14 @@ use Oro\Bundle\CatalogBundle\Fallback\Provider\CategoryFallbackProvider;
 use Oro\Bundle\CatalogBundle\Fallback\Provider\ParentCategoryFallbackProvider;
 use Oro\Bundle\CatalogBundle\Migrations\Data\Demo\ORM\LoadProductCategoryDemoData;
 use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
-use Oro\Bundle\InventoryBundle\Provider\ProductUpcomingProvider;
+use Oro\Bundle\InventoryBundle\Provider\UpcomingProductProvider;
 use Oro\Bundle\MigrationBundle\Fixture\AbstractEntityReferenceFixture;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
+/**
+ * Demo data for Upcoming status.
+ */
 class LoadUpcomingDemoData extends AbstractEntityReferenceFixture implements DependentFixtureInterface
 {
     /**
@@ -55,7 +58,7 @@ class LoadUpcomingDemoData extends AbstractEntityReferenceFixture implements Dep
                     $fallbackEntity = new EntityFieldFallbackValue();
                     $fallbackEntity->setScalarValue(1);
                     $manager->persist($fallbackEntity);
-                    $accessor->setValue($product, ProductUpcomingProvider::IS_UPCOMING, $fallbackEntity);
+                    $accessor->setValue($product, UpcomingProductProvider::IS_UPCOMING, $fallbackEntity);
                 }
             }
         }
@@ -73,7 +76,7 @@ class LoadUpcomingDemoData extends AbstractEntityReferenceFixture implements Dep
     {
         $accessor = PropertyAccess::createPropertyAccessor();
         $fallbackEntity = $this->createFallbackEntity($manager, $fallbackId);
-        $accessor->setValue($entity, ProductUpcomingProvider::IS_UPCOMING, $fallbackEntity);
+        $accessor->setValue($entity, UpcomingProductProvider::IS_UPCOMING, $fallbackEntity);
         return $entity;
     }
 

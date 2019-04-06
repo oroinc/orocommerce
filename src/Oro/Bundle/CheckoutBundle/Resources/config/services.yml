@@ -674,14 +674,6 @@ services:
         arguments:
             - '@oro_entity.doctrine_helper'
 
-    oro_checkout.action.get_start_checkout_transition:
-        class: 'Oro\Bundle\CheckoutBundle\Action\StartCheckoutTransitionAction'
-        arguments:
-            - '@oro_action.expression.context_accessor'
-            - '@oro_checkout.condition.is_workflow_start_from_shopping_list_allowed'
-        tags:
-            - { name: oro_action.action, alias: get_start_checkout_transition }
-
     oro_checkout.provider.forgot_password_check_email:
         class: 'Oro\Bundle\CheckoutBundle\Layout\DataProvider\CheckoutForgotPasswordCheckEmailProvider'
         lazy: true

@@ -45,6 +45,11 @@ Feature: Product attribute decimal
     Given I go to Products/ Products
     When I click "Edit" on row "SKU123" in grid
     And I fill "Product Form" with:
+      | DecimalField | 0,42 |
+    And I save form
+    Then I should see validation errors:
+      | DecimalField | This value is not valid. |
+    When I fill "Product Form" with:
       | DecimalField | 0.42 |
     And I save and close form
     Then I should see "Product has been saved" flash message
@@ -58,8 +63,17 @@ Feature: Product attribute decimal
     And click "Save settings"
     Then I should see "Configuration saved" flash message
     When I go to Products/ Products
-    And I click "View" on row "SKU123" in grid
-    Then I should see "0,42"
+    And I click "Edit" on row "SKU123" in grid
+    And I fill "Product Form" with:
+      | DecimalField | 0.42 |
+    And I save form
+    Then I should see validation errors:
+      | DecimalField | This value is not valid. |
+    When I fill "Product Form" with:
+      | DecimalField | 0,42 |
+    And I save and close form
+    Then I should see "Product has been saved" flash message
+    And I should see "0,42"
 
   Scenario: Check product grid search
     Given I login as AmandaRCole@example.org buyer

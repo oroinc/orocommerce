@@ -1,3 +1,4 @@
+@ticket-BB-16265
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
 @fixture-OroInventoryBundle:checkout.yml
@@ -12,9 +13,20 @@ Feature: Upcoming product highlights
       | Admin | first_session  |
       | User  | second_session |
 
+  Scenario: Set "Hide Labels Past Availability Date" configuration option to false
+    Given I login as administrator
+    And I go to System/ Configuration
+    When I follow "Commerce/Inventory/Product Options" on configuration sidebar
+    Then "OroForm" must contains values:
+      | Hide Labels Past Availability Date | true |
+    When uncheck "Use default" for "Hide Labels Past Availability Date" field
+    And fill form with:
+      | Hide Labels Past Availability Date | false |
+    And I click "Save settings"
+    Then I should see "Configuration saved" flash message
+
   Scenario: Set 'Upcoming' flag to product
     Given I proceed as the Admin
-    And I login as administrator
     And I disable inventory management
     When I go to Products/Products
     And click edit "SKU1" in grid

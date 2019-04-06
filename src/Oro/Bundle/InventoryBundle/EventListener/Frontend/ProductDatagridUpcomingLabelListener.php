@@ -6,7 +6,7 @@ use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\DataGridBundle\Extension\Formatter\Property\PropertyInterface;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\InventoryBundle\Provider\ProductUpcomingProvider;
+use Oro\Bundle\InventoryBundle\Provider\UpcomingProductProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\SearchBundle\Datagrid\Event\SearchResultAfter;
@@ -19,18 +19,18 @@ class ProductDatagridUpcomingLabelListener
     const COLUMN_IS_UPCOMING = 'is_upcoming';
     const COLUMN_AVAILABLE_DATE = 'availability_date';
 
-    /** @var ProductUpcomingProvider */
+    /** @var UpcomingProductProvider */
     private $productUpcomingProvider;
 
     /** DoctrineHelper */
     private $doctrineHelper;
 
     /**
-     * @param ProductUpcomingProvider $productUpcomingProvider
+     * @param UpcomingProductProvider $productUpcomingProvider
      * @param DoctrineHelper $doctrineHelper
      */
     public function __construct(
-        ProductUpcomingProvider $productUpcomingProvider,
+        UpcomingProductProvider $productUpcomingProvider,
         DoctrineHelper $doctrineHelper
     ) {
         $this->productUpcomingProvider = $productUpcomingProvider;

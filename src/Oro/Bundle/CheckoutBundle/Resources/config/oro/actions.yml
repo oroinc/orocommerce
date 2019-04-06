@@ -298,6 +298,7 @@ action_groups:
                     checkoutData: $.data
                     updateData: $.force
                     forceStartCheckout: $.forceStartCheckout
+                    startTransition: $.startTransition
                 results:
                     checkout: $.checkout
                     force: $.updateData
@@ -331,35 +332,15 @@ action_groups:
                 actions:
                     - '@assign_value': [$.checkout.registeredCustomerUser, null]
                     - '@flush_entity': $.checkout
-            - '@get_start_checkout_transition':
-                attribute: $.startTransition
-            - '@tree':
+            - '@redirect':
                 conditions:
-                    '@not_empty': $.startTransition
-                actions:
-                    - '@redirect':
-                        conditions:
-                            '@extendable':
-                                events: [extendable_condition.start_checkout]
-                                showErrors: $.showErrors
-                        parameters:
-                            route: oro_checkout_frontend_checkout
-                            route_parameters:
-                                id: $.checkout.id
-                                transition: $.startTransition
-            - '@tree':
-                conditions:
-                    '@empty': $.startTransition
-                actions:
-                    - '@redirect':
-                        conditions:
-                            '@extendable':
-                                events: [extendable_condition.start_checkout]
-                                showErrors: $.showErrors
-                        parameters:
-                            route: oro_checkout_frontend_checkout
-                            route_parameters:
-                                id: $.checkout.id
+                    '@extendable':
+                        events: [extendable_condition.start_checkout]
+                        showErrors: $.showErrors
+                parameters:
+                    route: oro_checkout_frontend_checkout
+                    route_parameters:
+                        id: $.checkout.id
 
     find_checkout:
         parameters:
@@ -374,6 +355,9 @@ action_groups:
             forceStartCheckout:
                 type: bool
                 default: false
+            startTransition:
+                type: string
+                default: ''
         actions:
             # find or create checkout and checkout source
             - '@get_available_workflow_by_record_group':
@@ -467,6 +451,7 @@ action_groups:
                         attribute: $.workflowItem
                         name: $.currentWorkflow.name
                         entity: $.checkout
+                        transition: $.startTransition
 
             - '@tree':
                 conditions:
@@ -513,7 +498,12 @@ action_groups:
                     # update custom data
                     - '@copy_values': [$.checkout, $.checkoutData]
 
-            - '@assign_value': [$.checkout.customer_notes, $.sourceCriteria.shoppingList.notes]
+            # Update notes from shopping list if not empty to leave previously set notes if checkout was created before
+            - '@tree':
+                conditions:
+                    '@not_empty': $.sourceCriteria.shoppingList.notes
+                actions:
+                    - '@assign_value': [$.checkout.customer_notes, $.sourceCriteria.shoppingList.notes]
 
             # actualize user currency
             - '@call_service_method':

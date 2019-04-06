@@ -2,7 +2,45 @@ Please refer first to [UPGRADE.md](UPGRADE.md) for the most important items that
 
 The current file describes significant changes in the code that may affect the upgrade of your customizations.
 
-## 4.0-beta
+## 4.0.0-beta
+
+### Changed
+#### PaymentBundle
+* In `Oro\Bundle\PaymentBundle\Controller\Api\Rest\PaymentMethodsConfigsRuleController::enableAction` 
+ (`/paymentrules/{id}/enable` path)
+ action the request method was changed to POST. 
+* In `Oro\Bundle\PaymentBundle\Controller\Api\Rest\PaymentMethodsConfigsRuleController::disableAction` 
+ (`/paymentrules/{id}/disable` path)
+ action the request method was changed to POST.
+#### PricingBundle
+* In `Oro\Bundle\PricingBundle\Controller\AjaxPriceListController::defaultAction` 
+ (`oro_pricing_price_list_default` route)
+ action the request method was changed to POST.
+* In `Oro\Bundle\PricingBundle\Controller\AjaxProductPriceController::deleteAction` 
+ (`oro_pricing_price_list_default` route)
+ action the request method was changed to DELETE.
+#### SaleBundle
+* In `Oro\Bundle\SaleBundle\Controller\AjaxQuoteController::entryPointAction` 
+ (`oro_quote_entry_point` route)
+ action the request method was changed to POST.
+#### ShippingBundle
+* In `Oro\Bundle\ShippingBundle\Controller\Api\Rest\ShippingMethodsConfigsRuleController::enableAction` 
+ (`/shippingrules/{id}/enable` path)
+ action the request method was changed to POST.
+* In `Oro\Bundle\ShippingBundle\Controller\Api\Rest\ShippingMethodsConfigsRuleController::disableAction` 
+ (`/shippingrules/{id}/disable` path)
+ action the request method was changed to POST.
+#### ShoppingListBundle
+* In `Oro\Bundle\ShoppingListBundle\Controller\Frontend\AjaxLineItemController::addProductFromViewAction` 
+ (`oro_shopping_list_frontend_add_product` route)
+ action the request method was changed to POST.
+
+### Changed
+#### PricingBundle
+* Introduced concept of import/export owner. Applied approach with role-based owner-based permissions to the export and import functionality.
+* Option `--email` has become required for `oro:import:price-list:file` command.
+* `Oro\Bundle\WebsiteSearchBundle\Attribute\Type\SearchAttributeTypeInterface`:
+	- all methods from the removed `Oro\Bundle\WebsiteSearchBundle\Attribute\Type\SearchableAttributeTypeInterface` except `getFilterStorageFieldType` and `getFilterableFieldName` are moved to this interface.
 
 ### Removed
 #### WebsiteSearchBundle
@@ -11,6 +49,12 @@ The current file describes significant changes in the code that may affect the u
     - `oro.website.search.indexer.delete`
     - `oro.website.search.indexer.reset_index`
     - `oro.website.search.indexer.reindex`
+
+## 3.1.2 (2019-02-05)
+[Show detailed list of changes](incompatibilities-3-1-2.md)
+
+## 3.1.0 (2019-01-30)
+[Show detailed list of changes](incompatibilities-3-1.md)
 
 ## 3.1.0-rc (2018-11-30)
 [Show detailed list of changes](incompatibilities-3-1-rc.md)

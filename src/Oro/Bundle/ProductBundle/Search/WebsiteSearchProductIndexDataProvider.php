@@ -7,7 +7,7 @@ use Oro\Bundle\EntityConfigBundle\Attribute\AttributeTypeRegistry;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\WebsiteSearchBundle\Attribute\Type\SearchableAttributeTypeInterface;
+use Oro\Bundle\WebsiteSearchBundle\Attribute\Type\SearchAttributeTypeInterface;
 use Oro\Bundle\WebsiteSearchBundle\Engine\IndexDataProvider;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
@@ -78,7 +78,7 @@ class WebsiteSearchProductIndexDataProvider implements ProductIndexDataProviderI
     /**
      * @param Product $product
      * @param FieldConfigModel $attribute
-     * @param SearchableAttributeTypeInterface $attributeType
+     * @param SearchAttributeTypeInterface $attributeType
      * @param Localization|null $localization
      *
      * @return array|ProductIndexDataModel[]
@@ -86,7 +86,7 @@ class WebsiteSearchProductIndexDataProvider implements ProductIndexDataProviderI
     protected function getFields(
         Product $product,
         FieldConfigModel $attribute,
-        SearchableAttributeTypeInterface $attributeType,
+        SearchAttributeTypeInterface $attributeType,
         Localization $localization = null
     ) {
         $fields = [];
@@ -98,7 +98,8 @@ class WebsiteSearchProductIndexDataProvider implements ProductIndexDataProviderI
 
         $filterFieldName = null;
         if ($this->isFilterable($attribute, $attributeType, $isForceIndexed)) {
-            $filterFieldName = $attributeType->getFilterableFieldName($attribute);
+            $filterFieldName = $attributeType
+                ->getFilterableFieldNames($attribute)[SearchAttributeTypeInterface::VALUE_MAIN] ?? '';
 
             $fields = $this->addToFields(
                 $fields,
@@ -150,7 +151,7 @@ class WebsiteSearchProductIndexDataProvider implements ProductIndexDataProviderI
      */
     private function addToFields(array $fields, $fieldName, $fieldValue, array $placeholders, $localized, $searchable)
     {
-        if (!is_array($fieldValue)) {
+        if (!\is_array($fieldValue)) {
             $fieldValue = [$fieldName => $fieldValue];
         }
 
@@ -170,7 +171,7 @@ class WebsiteSearchProductIndexDataProvider implements ProductIndexDataProviderI
     /**
      * @param FieldConfigModel $attribute
      *
-     * @return null|SearchableAttributeTypeInterface
+     * @return null|SearchAttributeTypeInterface
      */
     protected function getAttributeType(FieldConfigModel $attribute)
     {
@@ -179,7 +180,7 @@ class WebsiteSearchProductIndexDataProvider implements ProductIndexDataProviderI
         }
 
         $attributeType = $this->attributeTypeRegistry->getAttributeType($attribute);
-        if (!$attributeType instanceof SearchableAttributeTypeInterface) {
+        if (!$attributeType instanceof SearchAttributeTypeInterface) {
             return null;
         }
 
@@ -188,12 +189,12 @@ class WebsiteSearchProductIndexDataProvider implements ProductIndexDataProviderI
 
     /**
      * @param FieldConfigModel $attribute
-     * @param SearchableAttributeTypeInterface $type
+     * @param SearchAttributeTypeInterface $type
      * @param bool $force
      *
      * @return bool
      */
-    private function isFilterable(FieldConfigModel $attribute, SearchableAttributeTypeInterface $type, $force)
+    private function isFilterable(FieldConfigModel $attribute, SearchAttributeTypeInterface $type, $force)
     {
         return $type->isFilterable($attribute) &&
             ($force || $this->configurationProvider->isAttributeFilterable($attribute));
@@ -201,12 +202,12 @@ class WebsiteSearchProductIndexDataProvider implements ProductIndexDataProviderI
 
     /**
      * @param FieldConfigModel $attribute
-     * @param SearchableAttributeTypeInterface $type
+     * @param SearchAttributeTypeInterface $type
      * @param bool $force
      *
      * @return bool
      */
-    private function isSortable(FieldConfigModel $attribute, SearchableAttributeTypeInterface $type, $force)
+    private function isSortable(FieldConfigModel $attribute, SearchAttributeTypeInterface $type, $force)
     {
         return $type->isSortable($attribute) &&
             ($force || $this->configurationProvider->isAttributeSortable($attribute));

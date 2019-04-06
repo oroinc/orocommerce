@@ -21,6 +21,8 @@ use Oro\Bundle\RedirectBundle\Entity\SluggableTrait;
 use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
 
 /**
+ * Product entity class.
+ *
  * @ORM\Table(
  *      name="oro_product",
  *      indexes={
@@ -1310,7 +1312,7 @@ class Product extends ExtendProduct implements
     public function preUpdate()
     {
         $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
-        $this->skuUppercase = strtoupper($this->sku);
+        $this->skuUppercase = mb_strtoupper($this->sku);
         if (!$this->getDefaultName()) {
             throw new \RuntimeException('Product has to have a default name');
         }

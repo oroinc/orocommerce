@@ -618,7 +618,7 @@ class ProductControllerTest extends ProductHelperTestCase
     public function testFeaturedProductsOnFrontendRootAfterUpdatingProduct()
     {
         $this->loadFixtures([LoadProductData::class]);
-        $product = $this->getProductDataBySku('product-7');
+        $product = $this->getProductDataBySku('продукт-7');
         $crawler = $this->client->request(
             'GET',
             $this->getUrl('oro_product_update', ['id' => $product->getId()])

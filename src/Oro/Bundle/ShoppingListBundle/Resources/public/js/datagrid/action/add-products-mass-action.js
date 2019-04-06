@@ -21,6 +21,7 @@ define(function(require) {
          */
         constructor: function AddProductsAction() {
             AddProductsAction.__super__.constructor.apply(this, arguments);
+            this.requestType = 'POST';
         },
 
         /**
@@ -127,9 +128,15 @@ define(function(require) {
         _onAjaxSuccess: function(data, textStatus, jqXHR) {
             var datagrid = this.datagrid;
 
-            var models = _.map(data.products, function(product) {
-                return datagrid.collection.get(product.id);
-            });
+            var models = _.reduce(data.products, function(newModels, product) {
+                var productModel = datagrid.collection.get(product.id);
+
+                if (productModel) {
+                    newModels.push(productModel);
+                }
+
+                return newModels;
+            }, []);
 
             datagrid.resetSelectionState();
 

@@ -110,7 +110,7 @@ class WebsiteSearchProductIndexerListener
             }
 
             $event->addField($product->getId(), 'product_id', $product->getId());
-            $event->addField($product->getId(), 'sku_uppercase', strtoupper($product->getSku()), true);
+            $event->addField($product->getId(), 'sku_uppercase', mb_strtoupper($product->getSku()), true);
             $event->addField($product->getId(), 'status', $product->getStatus());
             $event->addField($product->getId(), 'type', $product->getType());
             $event->addField(
@@ -157,22 +157,21 @@ class WebsiteSearchProductIndexerListener
     private function processIndexData(IndexEntityEvent $event, $productId, $data)
     {
         foreach ($data as $content) {
-            $values = $this->toArray($content->getValue());
+            $value = $this->cleanUpStrings($content->getValue());
+            if (null === $value) {
+                continue;
+            }
 
-            foreach ($values as $value) {
-                $value = $this->cleanUpString($value);
-
-                if ($content->isLocalized()) {
-                    $event->addPlaceholderField(
-                        $productId,
-                        $content->getFieldName(),
-                        $value,
-                        $content->getPlaceholders(),
-                        $content->isSearchable()
-                    );
-                } else {
-                    $event->addField($productId, $content->getFieldName(), $value, $content->isSearchable());
-                }
+            if ($content->isLocalized()) {
+                $event->addPlaceholderField(
+                    $productId,
+                    $content->getFieldName(),
+                    $value,
+                    $content->getPlaceholders(),
+                    $content->isSearchable()
+                );
+            } else {
+                $event->addField($productId, $content->getFieldName(), $value, $content->isSearchable());
             }
         }
     }
@@ -196,23 +195,6 @@ class WebsiteSearchProductIndexerListener
         $attributeFamily = $product->getAttributeFamily();
 
         return !$attributeFamily || in_array($attributeFamily->getId(), $attributeFamilies[$attribute->getId()], true);
-    }
-
-    /**
-     * @param mixed $value
-     * @return array|\Traversable
-     */
-    private function toArray($value)
-    {
-        if (is_array($value) || $value instanceof \Traversable) {
-            return $value;
-        }
-
-        if (is_object($value)) {
-            return [$value];
-        }
-
-        return (array)$value;
     }
 
     /**
@@ -249,12 +231,20 @@ class WebsiteSearchProductIndexerListener
     /**
      * Cleans up a unicode string from control characters
      *
-     * @param string $string
+     * @param string|array $data
      * @return string
      */
-    private function cleanUpString($string)
+    private function cleanUpStrings($data)
     {
-        return is_string($string) ? preg_replace(['/[[:cntrl:]]/', '/\s+/'], ' ', $string) : $string;
+        if (is_array($data)) {
+            foreach ($data as $key => $value) {
+                $data[$key] = $this->cleanUpStrings($value);
+            }
+
+            return $data;
+        }
+
+        return is_string($data) ? preg_replace(['/[[:cntrl:]]/', '/\s+/'], ' ', $data) : $data;
     }
 
     /**

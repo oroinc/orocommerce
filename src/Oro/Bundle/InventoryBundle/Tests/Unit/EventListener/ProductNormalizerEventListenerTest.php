@@ -3,7 +3,7 @@
 namespace Oro\Bundle\InventoryBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\InventoryBundle\EventListener\ProductNormalizerEventListener;
-use Oro\Bundle\InventoryBundle\Provider\ProductUpcomingProvider;
+use Oro\Bundle\InventoryBundle\Provider\UpcomingProductProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\ImportExport\Event\ProductNormalizerEvent;
 
@@ -12,12 +12,12 @@ class ProductNormalizerEventListenerTest extends \PHPUnit\Framework\TestCase
     /** @var  ProductNormalizerEventListener */
     protected $listener;
 
-    /** @var  ProductUpcomingProvider|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var  UpcomingProductProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $productUpcomingProvider;
 
     protected function setUp()
     {
-        $this->productUpcomingProvider = $this->createMock(ProductUpcomingProvider::class);
+        $this->productUpcomingProvider = $this->createMock(UpcomingProductProvider::class);
         $this->listener = new ProductNormalizerEventListener($this->productUpcomingProvider);
     }
 
@@ -36,7 +36,6 @@ class ProductNormalizerEventListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener->normalize($event);
 
         $this->assertEquals([
-            'isUpcoming' => '1',
             'availability_date' => $date->format('Y-m-d\TH:i:sO')
         ], $event->getPlainData());
     }

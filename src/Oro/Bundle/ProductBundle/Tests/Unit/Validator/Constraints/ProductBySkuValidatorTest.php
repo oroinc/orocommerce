@@ -66,7 +66,7 @@ class ProductBySkuValidatorTest extends \PHPUnit\Framework\TestCase
         if ($useOptions) {
             $products = [];
             if ($product) {
-                $products[strtoupper($sku)] = $product;
+                $products[mb_strtoupper($sku)] = $product;
             }
         } else {
             $products = null;
@@ -141,10 +141,10 @@ class ProductBySkuValidatorTest extends \PHPUnit\Framework\TestCase
     public function validateProvider()
     {
         return [
-            'fail repo' => [false, 'S12', null],
-            'success repo' => [false, 'S12_1099', new Product()],
-            'fail options' => [true, 'S12', null],
-            'success options' => [true, 'S12_1099', new Product()],
+            'fail repo' => [false, 'sku1', null],
+            'success repo' => [false, 'sku1абв', new Product()],
+            'fail options' => [true, 'Sku2', null],
+            'success options' => [true, 'Sku2Абв', new Product()],
         ];
     }
 }

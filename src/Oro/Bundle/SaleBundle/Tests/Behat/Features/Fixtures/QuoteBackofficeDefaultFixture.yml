@@ -27,7 +27,28 @@ Oro\Bundle\SaleBundle\Entity\QuoteProduct:
         product: '@product1'
         quote: '@quoteWithoutCustomerUser'
 
+Oro\Bundle\PricingBundle\Entity\ProductPrice:
+    productPrice0:
+        pricelist: '@pricelist1'
+        product: '@product1'
+        productSku: 'AA1'
+        quantity: 1
+        unit: '@item'
+        value: 2
+        currency: 'USD'
+    productPrice1:
+        pricelist: '@pricelist1'
+        product: '@product1'
+        productSku: 'AA1'
+        quantity: 5
+        unit: '@item'
+        value: 5
+        currency: 'USD'
+
 Oro\Bundle\CurrencyBundle\Entity\Price (local):
+    price0:
+        value: 2
+        currency: USD
     price1:
         value: 5
         currency: USD

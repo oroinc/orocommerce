@@ -77,28 +77,28 @@ class SourceDocumentFormatterTest extends \PHPUnit\Framework\TestCase
             'empty class and empty identifier' => [
                 'sourceDocumentClass' => null,
                 'sourceDocumentId' => null,
-                '$sourceDocumentIdentifier' => null,
+                'sourceDocumentIdentifier' => null,
                 'expectedFormat' => '',
                 'expectUseGetEntityClassName' => false
             ],
             'order without identifier' => [
                 'sourceDocumentClass' => 'Order',
                 'sourceDocumentId' => 1,
-                '$sourceDocumentIdentifier' => null,
+                'sourceDocumentIdentifier' => null,
                 'expectedFormat' => 'Order 1',
                 'expectUseGetEntityClassName' => true
             ],
             'order with identifier' => [
                 'sourceDocumentClass' => 'Order',
                 'sourceDocumentId' => 1,
-                '$sourceDocumentIdentifier' => 'FR1012401',
-                'expectedFormat' => 'Order FR1012401',
+                'sourceDocumentIdentifier' => 'FR1012401',
+                'expectedFormat' => 'Order "FR1012401"',
                 'expectUseGetEntityClassName' => true
             ],
             'order without identifier and id' => [
                 'sourceDocumentClass' => 'Order',
                 'sourceDocumentId' => null,
-                '$sourceDocumentIdentifier' => null,
+                'sourceDocumentIdentifier' => null,
                 'expectedFormat' => 'Order',
                 'expectUseGetEntityClassName' => true
             ]

@@ -37,7 +37,7 @@ class AjaxLocalizationControllerTest extends WebTestCase
     {
         $localization = $this->getLocalizationByCode($code);
 
-        $this->client->request(
+        $this->ajaxRequest(
             Request::METHOD_POST,
             $this->getUrl('oro_frontend_localization_frontend_set_current_localization'),
             ['localization' => $localization->getId()]

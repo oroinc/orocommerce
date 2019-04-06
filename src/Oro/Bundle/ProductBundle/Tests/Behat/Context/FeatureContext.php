@@ -985,6 +985,15 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
+     * @Given /^(?:|I )should see "([^"]*)" featured product$/
+     */
+    public function iShouldSeeFeaturedProduct($productSku)
+    {
+        $this->oroMainContext
+            ->iShouldSeeStringInElementUnderElements($productSku, 'ProductFrontendRowSku', 'Featured Products Block');
+    }
+
+    /**
      * @Then /^(?:|I )should not see "([^"]*)" product$/
      *
      * @param string $productSku
@@ -1314,7 +1323,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
             }
 
             $filterState = $this->elementFactory->createElement('GridFiltersState');
-            if ($filterState->isValid()) {
+            if ($filterState->isValid() && $filterState->isVisible()) {
                 $filterState->click();
             }
         }

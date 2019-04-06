@@ -16,6 +16,7 @@ services:
             - [addSkippedUrlPattern, ['/_fragment']]
             - [addSkippedUrlPattern, ['/js/']]
             - [addSkippedUrlPattern, ['%oro_api.rest.prefix%']]
+            - [addSkippedUrlPattern, ['/media/']]
 
     oro_redirect.routing.slug_url_matcher:
         class: Oro\Bundle\RedirectBundle\Routing\SlugUrlMatcher
@@ -381,3 +382,10 @@ services:
             - '@oro_redirect.routing.matched_url_decision_maker'
         tags:
             - { name: kernel.event_listener, event: kernel.exception }
+
+    oro_redirect.validator.url_safe_slug_prototype:
+        class: Oro\Bundle\RedirectBundle\Validator\UrlSafeSlugPrototypeValidator
+        arguments:
+            - "@validator"
+        tags:
+            - { name: validator.constraint_validator, alias: oro_redirect_url_safe_slug_prototype_validator }

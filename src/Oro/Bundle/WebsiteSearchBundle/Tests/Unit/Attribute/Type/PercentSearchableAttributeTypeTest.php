@@ -3,7 +3,7 @@
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Attribute\Type;
 
 use Oro\Bundle\WebsiteSearchBundle\Attribute\Type\PercentSearchableAttributeType;
-use Oro\Bundle\WebsiteSearchBundle\Attribute\Type\SearchableAttributeTypeInterface;
+use Oro\Bundle\WebsiteSearchBundle\Attribute\Type\SearchAttributeTypeInterface;
 
 class PercentSearchableAttributeTypeTest extends DecimalSearchableAttributeTypeTest
 {
@@ -18,7 +18,7 @@ class PercentSearchableAttributeTypeTest extends DecimalSearchableAttributeTypeT
     public function testGetFilterType()
     {
         $this->assertSame(
-            SearchableAttributeTypeInterface::FILTER_TYPE_PERCENT,
+            SearchAttributeTypeInterface::FILTER_TYPE_PERCENT,
             $this->getSearchableAttributeType()->getFilterType()
         );
     }

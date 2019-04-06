@@ -93,9 +93,7 @@ action_groups:
         actions:
             - '@tree':
                 conditions:
-                    '@and':
-                        - '@equal': [$.checkout.shipToBillingAddress, true]
-                        - '@equal': [$.billing_address_has_shipping, true]
+                    '@equal': [$.checkout.shipToBillingAddress, true]
                 actions:
                     - '@remove_entity':
                         conditions:

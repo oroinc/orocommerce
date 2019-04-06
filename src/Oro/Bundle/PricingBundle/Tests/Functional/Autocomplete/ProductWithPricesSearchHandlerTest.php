@@ -91,7 +91,7 @@ class ProductWithPricesSearchHandlerTest extends FrontendWebTestCase
         $localizationCode = LoadLocalizationData::getLocalizations()[0]['language'];
         $localization = $this->getReference($localizationCode);
 
-        $this->client->request(
+        $this->ajaxRequest(
             Request::METHOD_POST,
             $this->getUrl('oro_frontend_localization_frontend_set_current_localization'),
             ['localization' => $localization->getId()]

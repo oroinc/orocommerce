@@ -5,6 +5,7 @@ Oro\Bundle\SaleBundle\Entity\Quote:
     quote1:
         currency: 'USD'
         customer: '@customer1'
+        customerUser: '@amanda'
         owner: '@admin'
         organization: '@organization'
         poNumber: 'Q123'

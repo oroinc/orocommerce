@@ -4,7 +4,7 @@ namespace Oro\Bundle\InventoryBundle\Tests\Unit\Validator\Constraints;
 
 use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\InventoryBundle\Provider\ProductUpcomingProvider;
+use Oro\Bundle\InventoryBundle\Provider\UpcomingProductProvider;
 use Oro\Bundle\InventoryBundle\Validator\Constraints\CheckoutShipUntil;
 use Oro\Bundle\InventoryBundle\Validator\Constraints\CheckoutShipUntilValidator;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
@@ -14,7 +14,7 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 class CheckoutShipUntilValidatorTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ProductUpcomingProvider|\PHPUnit\Framework\MockObject\MockObject
+     * @var UpcomingProductProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $upcomingProvider;
 
@@ -35,7 +35,7 @@ class CheckoutShipUntilValidatorTest extends \PHPUnit\Framework\TestCase
 
     public function setUp()
     {
-        $this->upcomingProvider = $this->createMock(ProductUpcomingProvider::class);
+        $this->upcomingProvider = $this->createMock(UpcomingProductProvider::class);
         $this->checkoutLineItemsManager = $this->createMock(CheckoutLineItemsManager::class);
         $this->context = $this->createMock(ExecutionContextInterface::class);
 

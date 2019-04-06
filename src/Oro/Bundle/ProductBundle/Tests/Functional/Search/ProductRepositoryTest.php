@@ -94,10 +94,10 @@ class ProductRepositoryTest extends WebTestCase
         }
 
         $productsFromSearch = $searchRepository->searchFilteredBySkus($skus);
-        $this->assertEquals(count($productsFromOrm), count($productsFromSearch));
+        $this->assertCount(count($productsFromOrm), $productsFromSearch);
 
         foreach ($productsFromOrm as $productFromOrm) {
-            $found = $foundName = false;
+            $found = false;
             foreach ($productsFromSearch as $productFromSearch) {
                 if ($productFromSearch->getSelectedData()['sku'] === $productFromOrm['sku']) {
                     $found = true;
@@ -137,11 +137,11 @@ class ProductRepositoryTest extends WebTestCase
 
         $productsFromOrm = $ormRepository->createQueryBuilder('p')
             ->where('p.sku = :sku')
-            ->setParameter('sku', 'product-8')
+            ->setParameter('sku', LoadProductData::PRODUCT_7)
             ->getQuery()
             ->getResult(Query::HYDRATE_ARRAY);
 
-        $productsFromSearch = $searchRepository->findBySkuOrName('product-8');
+        $productsFromSearch = $searchRepository->findBySkuOrName(LoadProductData::PRODUCT_7);
 
         $this->assertTrue(count($productsFromSearch) > 0);
 
@@ -171,11 +171,14 @@ class ProductRepositoryTest extends WebTestCase
 
         $productsFromOrm = $ormRepository->createQueryBuilder('p')
             ->where('p.sku = :sku')
-            ->setParameter('sku', 'product-8')
+            ->setParameter('sku', LoadProductData::PRODUCT_7)
             ->getQuery()
             ->getResult(Query::HYDRATE_ARRAY);
 
-        $productsFromSearch = $searchRepository->getSearchQueryBySkuOrName('product-8')->getResult()->getElements();
+        $productsFromSearch = $searchRepository
+            ->getSearchQueryBySkuOrName(LoadProductData::PRODUCT_7)
+            ->getResult()
+            ->getElements();
 
         $this->assertTrue(count($productsFromSearch) > 0);
 

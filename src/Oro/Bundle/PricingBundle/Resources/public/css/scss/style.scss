@@ -229,10 +229,12 @@
 }
 
 .allow-merge-block {
-    margin-top: 5px;
+    display: inline-block;
+    vertical-align: middle;
+    margin-#{$end}: $allow-merge-block-label-offset;
 
-    .merge-allowed-checkbox {
-        margin-bottom: 5px;
+    &__inner {
+        display: block;
     }
 
     .merge-allowed-label {

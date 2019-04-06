@@ -116,9 +116,21 @@ class ProductTest extends \PHPUnit\Framework\TestCase
         $product->prePersist();
     }
 
+    public function testPrePersistWithMultibyteChars()
+    {
+        $product = new Product();
+        $this->addDefaultName($product, 'default');
+
+        $product->setSku('Aбв123');
+        $product->prePersist();
+        $this->assertEquals('Aбв123', $product->getSku());
+        $this->assertEquals('AБВ123', $product->getSkuUppercase());
+    }
+
     public function testPreUpdate()
     {
         $product = new Product();
+        $product->setSku('sample-sku');
         $product->setType(Product::TYPE_SIMPLE);
         $product->setVariantFields(['field']);
         $product->addVariantLink(new ProductVariantLink(new Product(), new Product()));
@@ -128,6 +140,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
 
         $this->assertInstanceOf('\DateTime', $product->getUpdatedAt());
         $this->assertCount(0, $product->getVariantFields());
+        $this->assertEquals('SAMPLE-SKU', $product->getSkuUppercase());
     }
 
     public function testPreUpdateWithoutDefaultName()

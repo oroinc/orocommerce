@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\SaleBundle\Form\EventListener;
 
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PricingBundle\Model\ProductPriceInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -9,6 +10,7 @@ use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Provider\QuoteProductPriceProvider;
 use Oro\Bundle\SaleBundle\Quote\Pricing\QuotePriceComparator;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormConfigInterface;
 use Symfony\Component\Form\FormError;
@@ -64,16 +66,40 @@ class QuoteFormSubscriber implements EventSubscriberInterface
         $form = $event->getForm();
 
         $quote = $form->getData();
-        if (!$quote instanceof Quote || !$quote->getId()) {
+        $data = $event->getData();
+
+        if (!$quote instanceof Quote || !is_array($data) || !isset($data['quoteProducts'])) {
             return;
         }
 
-        $data = $event->getData();
-        if (!is_array($data) || !isset($data['quoteProducts'])) {
-            return;
-        }
+        $this->setQuoteWebsite($quote, $data);
+        $this->setQuoteCustomer($quote, $data);
 
         $this->processPriceChanges($form, $quote, $data['quoteProducts']);
+    }
+
+    /**
+     * @param Quote $quote
+     * @param array $data
+     */
+    private function setQuoteWebsite(Quote $quote, array $data)
+    {
+        if ($quote->getWebsite() === null && isset($data['website']) && $data['website']) {
+            $websiteRepository = $this->doctrineHelper->getEntityRepository(Website::class);
+            $quote->setWebsite($websiteRepository->find($data['website']));
+        }
+    }
+
+    /**
+     * @param Quote $quote
+     * @param array $data
+     */
+    private function setQuoteCustomer(Quote $quote, array $data)
+    {
+        if ($quote->getCustomer() === null && isset($data['customer']) && $data['customer']) {
+            $customerRepository = $this->doctrineHelper->getEntityRepository(Customer::class);
+            $quote->setCustomer($customerRepository->find($data['customer']));
+        }
     }
 
     /**
@@ -88,7 +114,7 @@ class QuoteFormSubscriber implements EventSubscriberInterface
         $allowPricesOverride = $this->isAllowedPricesOverride($config);
         $allowFreeForm = $this->isAllowedAddFreeFormItems($config);
 
-        $priceComparator = new QuotePriceComparator($quote);
+        $priceComparator = new QuotePriceComparator($quote, $this->provider);
 
         foreach ($quoteProducts as $productData) {
             $allowChanges = $allowPricesOverride && ($productData['product'] || $allowFreeForm);

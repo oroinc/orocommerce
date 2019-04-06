@@ -29,7 +29,7 @@ class AjaxCouponControllerTest extends WebTestCase
 
     public function testValidateCouponApplicabilityAction()
     {
-        $this->client->request(
+        $this->ajaxRequest(
             'POST',
             $this->getUrl('oro_promotion_frontend_add_coupon'),
             [

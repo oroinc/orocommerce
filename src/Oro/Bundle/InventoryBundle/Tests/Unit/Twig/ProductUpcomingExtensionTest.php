@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\InventoryBundle\Tests\Unit\Twig;
 
-use Oro\Bundle\InventoryBundle\Provider\ProductUpcomingProvider;
+use Oro\Bundle\InventoryBundle\Provider\UpcomingProductProvider;
 use Oro\Bundle\InventoryBundle\Twig\ProductUpcomingExtension;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
@@ -17,7 +17,7 @@ class ProductUpcomingExtensionTest extends \PHPUnit\Framework\TestCase
     protected $productUpcomingExtension;
 
     /**
-     * @var ProductUpcomingProvider|\PHPUnit\Framework\MockObject\MockObject
+     * @var UpcomingProductProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $provider;
 
@@ -26,68 +26,86 @@ class ProductUpcomingExtensionTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp()
     {
-        $this->provider = $this->createMock(ProductUpcomingProvider::class);
+        $this->provider = $this->createMock(UpcomingProductProvider::class);
         $this->productUpcomingExtension = new ProductUpcomingExtension($this->provider);
     }
 
-    public function testIsUpcomingTrue()
+    /**
+     * @dataProvider isUpcomingDataProvider
+     * @param bool $expected
+     * @param bool $isUpcoming
+     */
+    public function testIsUpcomingProduct(bool $expected, bool $isUpcoming): void
     {
         $product = new Product();
         $this->provider->expects($this->once())->method('isUpcoming')->with($product)
-            ->willReturn(true);
+            ->willReturn($isUpcoming);
 
         $result = self::callTwigFunction(
             $this->productUpcomingExtension,
-            'oro_inventory_product_is_upcoming',
+            'oro_inventory_is_product_upcoming',
             [$product]
         );
 
-        $this->assertTrue($result);
+        self::assertEquals($expected, $result);
     }
 
-    public function testIsUpcomingFalse()
+    /**
+     * @return array
+     */
+    public function isUpcomingDataProvider(): array
     {
-        $product = new Product();
-        $this->provider->expects($this->once())->method('isUpcoming')->with($product)
-            ->willReturn(false);
-
-        $result = self::callTwigFunction(
-            $this->productUpcomingExtension,
-            'oro_inventory_product_is_upcoming',
-            [$product]
-        );
-
-        $this->assertFalse($result);
+        return [
+            'product is upcoming' => [
+                'expected' => true,
+                'isUpcoming' => true
+            ],
+            'product is not upcoming' => [
+                'expected' => false,
+                'isUpcoming' => false
+            ],
+        ];
     }
 
-    public function testGetAvailabilityDateEmpty()
+    /**
+     * @dataProvider upcomingAvailabilityDateDataProvider
+     * @param \DateTime|null $expected
+     * @param \DateTime|null $availabilityDate
+     */
+    public function testGetUpcomingAvailabilityDate(?\DateTime $expected, ?\DateTime $availabilityDate): void
     {
         $product = new Product();
-        $this->provider->expects($this->once())->method('getAvailabilityDate')->with($product)
-            ->willReturn(null);
+        $this->provider
+            ->expects($this->once())
+            ->method('getAvailabilityDate')
+            ->with($product)
+            ->willReturn($availabilityDate);
 
         $result = self::callTwigFunction(
             $this->productUpcomingExtension,
-            'oro_inventory_product_availability_date',
+            'oro_inventory_upcoming_product_availability_date',
             [$product]
         );
 
-        $this->assertNull($result);
+        self::assertEquals($expected, $result);
     }
 
-    public function testGetAvailabilityDate()
+    /**
+     * @return array
+     */
+    public function upcomingAvailabilityDateDataProvider(): array
     {
-        $product = new Product();
-        $date = new \DateTime();
-        $this->provider->expects($this->once())->method('getAvailabilityDate')->with($product)
-            ->willReturn($date);
+        $date = new \DateTime('2001-01-03');
 
-        $result = self::callTwigFunction(
-            $this->productUpcomingExtension,
-            'oro_inventory_product_availability_date',
-            [$product]
-        );
-
-        $this->assertSame($date, $result);
+        return [
+            'empty upcoming availability date' => [
+                'expected' => null,
+                'availabilityDate' => null
+            ],
+            'not empty upcoming availability date' => [
+                'expected' => $date,
+                'availabilityDate' => $date
+            ]
+        ];
     }
 }

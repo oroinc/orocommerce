@@ -14,26 +14,42 @@ use Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListManager;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Security\Core\Authentication\Token\AbstractToken;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
 class AddLineItemMassActionProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject|CurrentShoppingListManager */
+    /**
+     * @var \PHPUnit\Framework\MockObject\MockObject|CurrentShoppingListManager
+     */
     protected $currentShoppingListManager;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject|TranslatorInterface */
+    /**
+     * @var \PHPUnit\Framework\MockObject\MockObject|TranslatorInterface
+     */
     protected $translator;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject|TokenStorageInterface */
+    /**
+     * @var \PHPUnit\Framework\MockObject\MockObject|TokenStorageInterface
+     */
     protected $tokenStorage;
 
-    /** @var AddLineItemMassActionProvider */
+    /**
+     * @var AddLineItemMassActionProvider
+     */
     protected $provider;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject|FeatureChecker */
+    /**
+     * @var \PHPUnit\Framework\MockObject\MockObject|FeatureChecker
+     */
     protected $featureChecker;
+
+    /**
+     * @var \PHPUnit\Framework\MockObject\MockObject|AuthorizationCheckerInterface
+     */
+    protected $authorizationChecker;
 
     protected function setUp()
     {
@@ -41,6 +57,7 @@ class AddLineItemMassActionProviderTest extends \PHPUnit\Framework\TestCase
         $this->translator = $this->createMock(TranslatorInterface::class);
         $this->tokenStorage = $this->createMock(TokenStorageInterface::class);
         $this->featureChecker = $this->createMock(FeatureChecker::class);
+        $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
 
         $this->translator->expects($this->any())
             ->method('trans')
@@ -51,7 +68,8 @@ class AddLineItemMassActionProviderTest extends \PHPUnit\Framework\TestCase
         $this->provider = new AddLineItemMassActionProvider(
             $this->currentShoppingListManager,
             $this->translator,
-            $this->tokenStorage
+            $this->tokenStorage,
+            $this->authorizationChecker
         );
         $this->provider->setFeatureChecker($this->featureChecker);
         $this->provider->addFeature('shopping_list_create');
@@ -64,9 +82,17 @@ class AddLineItemMassActionProviderTest extends \PHPUnit\Framework\TestCase
      * @param array $expected
      * @param bool  $isGuest
      * @param bool  $isShoppingListCreateFeatureEnabled
+     * @param bool  $editAllowed
+     * @param bool  $createAllowed
      */
-    public function testGetActions(array $shoppingLists, array $expected, $isGuest, $isShoppingListCreateFeatureEnabled)
-    {
+    public function testGetActions(
+        array $shoppingLists,
+        array $expected,
+        $isGuest,
+        $isShoppingListCreateFeatureEnabled,
+        $editAllowed,
+        $createAllowed
+    ) {
         $this->featureChecker->expects($this->once())
             ->method('isFeatureEnabled')
             ->willReturn($isShoppingListCreateFeatureEnabled);
@@ -79,11 +105,21 @@ class AddLineItemMassActionProviderTest extends \PHPUnit\Framework\TestCase
         );
 
         $this->tokenStorage
-            ->expects($this->any())
             ->method('getToken')
             ->willReturn($token);
 
-        if ($isGuest) {
+        $this->authorizationChecker
+            ->method('isGranted')
+            ->withConsecutive(
+                ['oro_shopping_list_frontend_update'],
+                ['oro_shopping_list_frontend_create']
+            )
+            ->willReturnOnConsecutiveCalls(
+                $editAllowed,
+                $createAllowed
+            );
+
+        if ($isGuest || !$editAllowed) {
             $this->currentShoppingListManager->expects($this->never())
                 ->method('getShoppingLists');
         } else {
@@ -131,13 +167,17 @@ class AddLineItemMassActionProviderTest extends \PHPUnit\Framework\TestCase
                     ]
                 ],
                 'isGuest' => false,
-                'isShoppingListCreateFeatureEnabled' => true
+                'isShoppingListCreateFeatureEnabled' => true,
+                'editAllowed' => true,
+                'createAllowed' => true,
             ],
             'no shopping lists, registered customer and feature disabled' => [
                 'shoppingLists' => [],
                 'expected' => [],
                 'isGuest' => false,
-                'isShoppingListCreateFeatureEnabled' => false
+                'isShoppingListCreateFeatureEnabled' => false,
+                'editAllowed' => false,
+                'createAllowed' => false,
             ],
             'shopping lists, registered customer' => [
                 'shoppingLists' => [
@@ -195,7 +235,9 @@ class AddLineItemMassActionProviderTest extends \PHPUnit\Framework\TestCase
                     ]
                 ],
                 'isGuest' => false,
-                'isShoppingListCreateFeatureEnabled' => true
+                'isShoppingListCreateFeatureEnabled' => true,
+                'editAllowed' => true,
+                'createAllowed' => true,
             ],
             'shopping lists, registered customer and feature disabled' => [
                 'shoppingLists' => [
@@ -229,7 +271,9 @@ class AddLineItemMassActionProviderTest extends \PHPUnit\Framework\TestCase
                     ]
                 ],
                 'isGuest' => false,
-                'isShoppingListCreateFeatureEnabled' => false
+                'isShoppingListCreateFeatureEnabled' => false,
+                'editAllowed' => true,
+                'createAllowed' => false,
             ],
             'shopping lists, guest customer' => [
                 'shoppingLists' => [
@@ -271,7 +315,9 @@ class AddLineItemMassActionProviderTest extends \PHPUnit\Framework\TestCase
                     ]
                 ],
                 'isGuest' => true,
-                'isShoppingListCreateFeatureEnabled' => true
+                'isShoppingListCreateFeatureEnabled' => true,
+                'editAllowed' => true,
+                'createAllowed' => true,
             ],
             'shopping lists, guest customer and feature disabled' => [
                 'shoppingLists' => [
@@ -289,59 +335,43 @@ class AddLineItemMassActionProviderTest extends \PHPUnit\Framework\TestCase
                     ]
                 ],
                 'isGuest' => true,
-                'isShoppingListCreateFeatureEnabled' => false
+                'isShoppingListCreateFeatureEnabled' => false,
+                'editAllowed' => true,
+                'createAllowed' => false,
+            ],
+            'feature enabled without user permission' => [
+                'shoppingLists' => [],
+                'expected' => [],
+                'isGuest' => false,
+                'isShoppingListCreateFeatureEnabled' => true,
+                'editAllowed' => false,
+                'createAllowed' => false,
+            ],
+            'user permission without feature enabled' => [
+                'shoppingLists' => [],
+                'expected' => [],
+                'isGuest' => false,
+                'isShoppingListCreateFeatureEnabled' => false,
+                'editAllowed' => false,
+                'createAllowed' => true,
+            ],
+            'feature enabled without guest permission' => [
+                'shoppingLists' => [],
+                'expected' => [],
+                'isGuest' => true,
+                'isShoppingListCreateFeatureEnabled' => true,
+                'editAllowed' => false,
+                'createAllowed' => false,
+            ],
+            'guest permission without feature enabled' => [
+                'shoppingLists' => [],
+                'expected' => [],
+                'isGuest' => true,
+                'isShoppingListCreateFeatureEnabled' => false,
+                'editAllowed' => false,
+                'createAllowed' => true,
             ]
         ];
-    }
-
-    public function testGetActionsCreateShoppingListFeatureOff()
-    {
-        $this->featureChecker->expects($this->once())
-            ->method('isFeatureEnabled')
-            ->willReturn(false);
-
-        $shoppingLists = [
-            $this->createShoppingList(1),
-            $this->createShoppingList(2),
-        ];
-
-        $this->currentShoppingListManager->expects($this->once())
-            ->method('getShoppingLists')
-            ->willReturn($shoppingLists);
-
-        $this->assertArrayNotHasKey('new', $this->provider->getActions());
-    }
-
-    public function testGetActionsForAnonymousCustomerUser()
-    {
-        $this->featureChecker->expects($this->once())
-            ->method('isFeatureEnabled')
-            ->willReturn(false);
-
-        /** @var AnonymousCustomerUserToken $token */
-        $token = $this->createMock(AnonymousCustomerUserToken::class);
-        $this->tokenStorage
-            ->expects($this->any())
-            ->method('getToken')
-            ->willReturn($token);
-
-        $this->currentShoppingListManager
-            ->expects($this->never())
-            ->method('getShoppingLists');
-
-        $expectedActions = [
-            'current' => [
-                'is_current' => true,
-                'type' => 'addproducts',
-                'label' => 'oro.shoppinglist.actions.add_to_current_shopping_list',
-                'icon' => 'shopping-cart',
-                'data_identifier' => 'product.id',
-                'frontend_type' => 'add-products-mass',
-                'handler' => 'oro_shopping_list.mass_action.add_products_handler'
-            ]
-        ];
-
-        $this->assertEquals($expectedActions, $this->provider->getActions());
     }
 
     /**

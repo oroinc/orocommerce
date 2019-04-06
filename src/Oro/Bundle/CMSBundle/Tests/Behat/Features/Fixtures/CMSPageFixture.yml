@@ -1,0 +1,12 @@
+Oro\Bundle\CMSBundle\Entity\Page:
+    testCMSPage:
+        addTitle: ['@testCMSPageTitle']
+        content: 'Test landing page description'
+        organization: '@organization'
+        slugPrototypes: ['@testCMSPageSlugPrototype']
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    testCMSPageSlugPrototype:
+        string: 'test-cms-page'
+    testCMSPageTitle:
+        string: 'Test CMS Page'

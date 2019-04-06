@@ -501,6 +501,13 @@ action_groups:
                 conditions:
                       '@empty': $.checkoutData
                 parameters: [$.checkoutData, []]
+            - '@assign_value': [$.startTransition, 'start_from_quote_as_guest']
+            - '@assign_value':
+                conditions:
+                    '@and':
+                        - '@not_empty': $.data.quote.customerUser
+                        - '@not_equal': [$.data.quote.customerUser.isGuest, true]
+                parameters: [$.startTransition, 'start_from_quote']
             - '@run_action_group':
                 action_group: start_checkout
                 parameters_mapping:
@@ -514,5 +521,6 @@ action_groups:
                         edit_order_link: $.editLink
                         disallow_shipping_address_edit: $.disallow_shipping_address_edit
                         disallow_shipping_method_edit: $.disallow_shipping_method_edit
+                    startTransition: $.startTransition
                 results:
                     redirectUrl: $.redirectUrl

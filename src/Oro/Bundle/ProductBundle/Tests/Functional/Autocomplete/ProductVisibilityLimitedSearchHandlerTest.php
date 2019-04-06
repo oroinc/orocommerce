@@ -105,7 +105,6 @@ class ProductVisibilityLimitedSearchHandlerTest extends FrontendWebTestCase
             'handler for simple products only' => [
                 'searchHandlerName' => 'oro_product_visibility_limited',
                 'expectedProductsResult' => [
-                    'PRODUCT_7',
                     'PRODUCT_6',
                     'PRODUCT_3',
                     'PRODUCT_2',
@@ -115,9 +114,7 @@ class ProductVisibilityLimitedSearchHandlerTest extends FrontendWebTestCase
             'handler for simple and configurable products' => [
                 'searchHandlerName' => 'oro_all_product_visibility_limited',
                 'expectedProductsResult' => [
-                    'PRODUCT_9',
                     'PRODUCT_8',
-                    'PRODUCT_7',
                     'PRODUCT_6',
                     'PRODUCT_3',
                     'PRODUCT_2',
@@ -188,7 +185,6 @@ class ProductVisibilityLimitedSearchHandlerTest extends FrontendWebTestCase
                     'PRODUCT_3',
                     'PRODUCT_4',
                     'PRODUCT_6',
-                    'PRODUCT_7',
                 ]
             ],
             'handler for simple and configurable products' => [
@@ -199,9 +195,7 @@ class ProductVisibilityLimitedSearchHandlerTest extends FrontendWebTestCase
                     'PRODUCT_3',
                     'PRODUCT_4',
                     'PRODUCT_6',
-                    'PRODUCT_7',
                     'PRODUCT_8',
-                    'PRODUCT_9',
                 ]
             ],
         ];

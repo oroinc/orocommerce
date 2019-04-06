@@ -321,7 +321,6 @@ services:
 
     oro_payment.provider.payment_method_object_variables:
         class: 'Oro\Bundle\PaymentBundle\Provider\PaymentMethodObjectVariablesProvider'
-        lazy: true
         public: false
         tags:
             - { name: oro_email.emailtemplate.variable_provider, scope: entity }

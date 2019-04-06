@@ -4,53 +4,51 @@ workflows:
             enter_credentials_step:
                 order: 10
                 allowed_transitions:
+                    - back_to_enter_credentials
                     - back_to_billing_address
-                    - continue_checkout_as_registered_user
-                    - continue_checkout_as_guest
-                    - start_checkout_as_guest_system
+                    - continue_to_billing_address_as_guest
+                    - start_from_quickorderform
             customer_consents:
                 order: 20
                 allowed_transitions:
+                    - back_to_enter_credentials
                     - continue_to_billing_address
-                    - start_checkout_as_guest_system
             enter_billing_address:
                 order: 30
                 allowed_transitions:
                     - verify_customer_consents
+                    - back_to_enter_credentials
                     - back_to_customer_consents
                     - continue_to_shipping_address
-                    - continue_checkout_as_registered_user
-                    - continue_checkout_as_guest
-                    - start_checkout_as_guest_system
                     - start_from_quickorderform
             enter_shipping_address:
                 order: 40
                 allowed_transitions:
                     - verify_customer_consents
                     - continue_to_shipping_method
+                    - back_to_enter_credentials
                     - back_to_customer_consents
                     - back_to_billing_address
-                    - start_checkout_as_guest_system
             enter_shipping_method:
                 order: 50
                 allowed_transitions:
                     - verify_customer_consents
                     - continue_to_payment
+                    - back_to_enter_credentials
                     - back_to_customer_consents
                     - back_to_billing_address
                     - back_to_shipping_address
-                    - start_checkout_as_guest_system
             enter_payment:
                 order: 60
                 allowed_transitions:
                     - payment_error
                     - verify_customer_consents
                     - continue_to_order_review
+                    - back_to_enter_credentials
                     - back_to_customer_consents
                     - back_to_billing_address
                     - back_to_shipping_address
                     - back_to_shipping_method
-                    - start_checkout_as_guest_system
             order_review:
                 order: 70
                 allowed_transitions:
@@ -59,13 +57,13 @@ workflows:
                     - verify_payment
                     - finish_checkout
                     - payment_error
+                    - back_to_enter_credentials
                     - back_to_customer_consents
                     - back_to_billing_address
                     - back_to_shipping_address
                     - back_to_shipping_method
                     - back_to_payment
                     - back_to_shipping_address_on_fail_address
-                    - start_checkout_as_guest_system
             order_created:
                 order: 80
                 is_final: true

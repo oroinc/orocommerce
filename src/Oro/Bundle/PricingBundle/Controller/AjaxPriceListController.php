@@ -5,19 +5,29 @@ namespace Oro\Bundle\PricingBundle\Controller;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\SecurityBundle\Annotation\CsrfProtection;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Intl\Intl;
 use Symfony\Component\Translation\TranslatorInterface;
 
+/**
+ * Price list AJAX controller.
+ */
 class AjaxPriceListController extends Controller
 {
     /**
+     * Set given price list as default.
+     *
      * @Route("/default/{id}", name="oro_pricing_price_list_default", requirements={"id"="\d+"})
      * @AclAncestor("oro_pricing_price_list_update")
+     * @Method({"POST"})
+     * @CsrfProtection()
      *
      * @param PriceList $priceList
+     *
      * @return JsonResponse
      */
     public function defaultAction(PriceList $priceList)
@@ -50,6 +60,8 @@ class AjaxPriceListController extends Controller
     }
 
     /**
+     * Get price list currencies.
+     *
      * @Route("/get-pricelist-currency-list/{id}",
      *      name="oro_pricing_price_list_currency_list",
      *      requirements={"id"="\d+"})

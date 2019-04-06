@@ -6,12 +6,15 @@ use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\EnumIdPlaceholder;
 
+/**
+ * Attribute type provides metadata for multiEnum attribute for search index.
+ */
 class MultiEnumSearchableAttributeType extends AbstractSearchableAttributeType
 {
     /**
      * {@inheritdoc}
      */
-    public function getFilterStorageFieldType()
+    protected function getFilterStorageFieldTypeMain(): string
     {
         return Query::TYPE_INTEGER;
     }
@@ -19,7 +22,7 @@ class MultiEnumSearchableAttributeType extends AbstractSearchableAttributeType
     /**
      * {@inheritdoc}
      */
-    public function getSorterStorageFieldType()
+    public function getSorterStorageFieldType(): string
     {
         throw new \RuntimeException('Not supported');
     }
@@ -27,7 +30,7 @@ class MultiEnumSearchableAttributeType extends AbstractSearchableAttributeType
     /**
      * {@inheritdoc}
      */
-    public function getFilterType()
+    public function getFilterType(): string
     {
         return self::FILTER_TYPE_MULTI_ENUM;
     }
@@ -35,7 +38,7 @@ class MultiEnumSearchableAttributeType extends AbstractSearchableAttributeType
     /**
      * {@inheritdoc}
      */
-    public function isLocalizable(FieldConfigModel $attribute)
+    public function isLocalizable(FieldConfigModel $attribute): bool
     {
         return false;
     }
@@ -43,7 +46,7 @@ class MultiEnumSearchableAttributeType extends AbstractSearchableAttributeType
     /**
      * {@inheritdoc}
      */
-    public function getFilterableFieldName(FieldConfigModel $attribute)
+    protected function getFilterableFieldNameMain(FieldConfigModel $attribute): string
     {
         return $attribute->getFieldName() . '_' . EnumIdPlaceholder::NAME;
     }
@@ -51,7 +54,7 @@ class MultiEnumSearchableAttributeType extends AbstractSearchableAttributeType
     /**
      * {@inheritdoc}
      */
-    public function getSortableFieldName(FieldConfigModel $attribute)
+    public function getSortableFieldName(FieldConfigModel $attribute): string
     {
         throw new \RuntimeException('Not supported');
     }

@@ -22,7 +22,7 @@ use Oro\Bundle\InventoryBundle\Migrations\Schema\v1_0\RenameInventoryConfigSecti
 use Oro\Bundle\InventoryBundle\Migrations\Schema\v1_0\UpdateEntityConfigExtendClassQuery;
 use Oro\Bundle\InventoryBundle\Migrations\Schema\v1_0\UpdateFallbackEntitySystemOptionConfig;
 use Oro\Bundle\InventoryBundle\Model\Inventory;
-use Oro\Bundle\InventoryBundle\Provider\ProductUpcomingProvider;
+use Oro\Bundle\InventoryBundle\Provider\UpcomingProductProvider;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
@@ -366,7 +366,8 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
             [
                 CategoryFallbackProvider::FALLBACK_ID => ['fieldName' => 'manageInventory'],
                 SystemConfigFallbackProvider::FALLBACK_ID => ['configName' => 'oro_inventory.manage_inventory'],
-            ]
+            ],
+            ['importexport' => ['full' => true]]
         );
     }
 
@@ -390,7 +391,8 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
                     'fieldName' => LowInventoryProvider::HIGHLIGHT_LOW_INVENTORY_OPTION
                 ],
                 SystemConfigFallbackProvider::FALLBACK_ID => ['configName' => 'oro_inventory.highlight_low_inventory'],
-            ]
+            ],
+            ['importexport' => ['full' => true]]
         );
     }
 
@@ -460,7 +462,8 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
                 SystemConfigFallbackProvider::FALLBACK_ID => [
                     'configName' => 'oro_inventory.inventory_threshold'
                 ],
-            ]
+            ],
+            ['importexport' => ['full' => true]]
         );
     }
 
@@ -486,7 +489,8 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
                 SystemConfigFallbackProvider::FALLBACK_ID => [
                     'configName' => 'oro_inventory.low_inventory_threshold'
                 ],
-            ]
+            ],
+            ['importexport' => ['full' => true]]
         );
     }
 
@@ -558,7 +562,8 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
                 SystemConfigFallbackProvider::FALLBACK_ID => [
                     'configName' => 'oro_inventory.minimum_quantity_to_order',
                 ],
-            ]
+            ],
+            ['importexport' => ['full' => true]]
         );
 
         $this->addFallbackRelation(
@@ -574,7 +579,8 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
                 SystemConfigFallbackProvider::FALLBACK_ID => [
                     'configName' => 'oro_inventory.maximum_quantity_to_order',
                 ],
-            ]
+            ],
+            ['importexport' => ['full' => true]]
         );
     }
 
@@ -627,7 +633,8 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
             [
                 CategoryFallbackProvider::FALLBACK_ID => ['fieldName' => 'decrementQuantity'],
                 SystemConfigFallbackProvider::FALLBACK_ID => ['configName' => 'oro_inventory.decrement_inventory'],
-            ]
+            ],
+            ['importexport' => ['full' => true]]
         );
     }
 
@@ -671,7 +678,8 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
             [
                 CategoryFallbackProvider::FALLBACK_ID => ['fieldName' => 'backOrder'],
                 SystemConfigFallbackProvider::FALLBACK_ID => ['configName' => 'oro_inventory.backorders'],
-            ]
+            ],
+            ['importexport' => ['full' => true]]
         );
     }
 
@@ -706,12 +714,15 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
             $schema,
             $this->extendExtension,
             OroProductBundleInstaller::PRODUCT_TABLE_NAME,
-            ProductUpcomingProvider::IS_UPCOMING,
+            UpcomingProductProvider::IS_UPCOMING,
             'oro.inventory.is_upcoming.label',
             [
-                CategoryFallbackProvider::FALLBACK_ID => ['fieldName' => ProductUpcomingProvider::IS_UPCOMING],
+                CategoryFallbackProvider::FALLBACK_ID => ['fieldName' => UpcomingProductProvider::IS_UPCOMING],
             ],
-            EntityFallbackResolver::TYPE_BOOLEAN
+            [
+                'importexport' => ['full' => true],
+                'fallback' => ['fallbackType' => EntityFallbackResolver::TYPE_BOOLEAN]
+            ]
         );
     }
 
@@ -724,12 +735,14 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
             $schema,
             $this->extendExtension,
             OroCatalogBundleInstaller::ORO_CATALOG_CATEGORY_TABLE_NAME,
-            ProductUpcomingProvider::IS_UPCOMING,
+            UpcomingProductProvider::IS_UPCOMING,
             'oro.inventory.is_upcoming.label',
             [
-                ParentCategoryFallbackProvider::FALLBACK_ID => ['fieldName' => ProductUpcomingProvider::IS_UPCOMING],
+                ParentCategoryFallbackProvider::FALLBACK_ID => ['fieldName' => UpcomingProductProvider::IS_UPCOMING],
             ],
-            EntityFallbackResolver::TYPE_BOOLEAN
+            [
+                'fallback' => ['fallbackType' => EntityFallbackResolver::TYPE_BOOLEAN]
+            ]
         );
     }
 
@@ -796,6 +809,6 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
      */
     public function getMigrationVersion()
     {
-        return 'v1_2';
+        return 'v1_3';
     }
 }

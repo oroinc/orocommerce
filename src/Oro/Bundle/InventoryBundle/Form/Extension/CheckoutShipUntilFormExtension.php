@@ -5,7 +5,7 @@ namespace Oro\Bundle\InventoryBundle\Form\Extension;
 use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Form\Type\CheckoutShipUntilType;
-use Oro\Bundle\InventoryBundle\Provider\ProductUpcomingProvider;
+use Oro\Bundle\InventoryBundle\Provider\UpcomingProductProvider;
 use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatter;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Symfony\Component\Form\AbstractTypeExtension;
@@ -18,7 +18,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class CheckoutShipUntilFormExtension extends AbstractTypeExtension
 {
     /**
-     * @var ProductUpcomingProvider
+     * @var UpcomingProductProvider
      */
     protected $provider;
 
@@ -33,12 +33,12 @@ class CheckoutShipUntilFormExtension extends AbstractTypeExtension
     protected $dateTimeFormatter;
 
     /**
-     * @param ProductUpcomingProvider $provider
+     * @param UpcomingProductProvider $provider
      * @param CheckoutLineItemsManager $checkoutLineItemsManager
      * @param DateTimeFormatter $dateTimeFormatter
      */
     public function __construct(
-        ProductUpcomingProvider $provider,
+        UpcomingProductProvider $provider,
         CheckoutLineItemsManager $checkoutLineItemsManager,
         DateTimeFormatter $dateTimeFormatter
     ) {

@@ -33,7 +33,7 @@ class RfqFrontofficeDefaultWorkflowTest extends AbstractRfqFrontofficeDefaultWor
 
     public function testApiStartBackoffice()
     {
-        $this->client->request('GET', $this->getUrl('oro_api_frontend_workflow_start', [
+        $this->ajaxRequest('POST', $this->getUrl('oro_api_frontend_workflow_start', [
             'workflowName' => 'b2b_rfq_backoffice_default',
             'transitionName' => '__start__',
         ]));
@@ -46,7 +46,7 @@ class RfqFrontofficeDefaultWorkflowTest extends AbstractRfqFrontofficeDefaultWor
         $backoffice = $this->systemManager->getWorkflow('b2b_rfq_backoffice_default');
         $item = $backoffice->getWorkflowItemByEntityId($this->request->getId());
 
-        $this->client->request('GET', $this->getUrl('oro_api_frontend_workflow_transit', [
+        $this->ajaxRequest('POST', $this->getUrl('oro_api_frontend_workflow_transit', [
             'workflowItemId' => $item->getId(),
             'transitionName' => 'process_transition',
         ]));

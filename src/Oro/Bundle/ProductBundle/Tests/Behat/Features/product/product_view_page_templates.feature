@@ -75,12 +75,17 @@ Feature: Product View Page Templates
   #    variant: Red shirt M
   #    remark: Test text for configurable product
 
+  Scenario: Feature Background
+    Given sessions active:
+      | Admin | first_session  |
+      | Buyer | second_session |
+
   Scenario: Prepare product attributes
-    Given I login as AmandaRCole@example.org the "Buyer" at "first_session" session
-    When I login as administrator and use in "second_session" as "Admin"
+    Given I operate as the Admin
+    And login as administrator
 
     # Create Color attribute
-    And I go to Products / Product Attributes
+    When I go to Products / Product Attributes
     And I click "Create Attribute"
     And I fill form with:
       | Field Name | Color  |
@@ -166,6 +171,7 @@ Feature: Product View Page Templates
 
   Scenario: Open, fill and submit Matrix Order Form
     Given I operate as the Buyer
+    And I signed in as AmandaRCole@example.org on the store frontend
     When I open product with sku "shirt_main" on the store frontend
     Then I should see an "Matrix Grid Form" element
     And I should see "Green"
@@ -328,24 +334,27 @@ Feature: Product View Page Templates
     And I should see "List Page" with "Remark group" containing data:
       | Remark | Test text for configurable product |
 
-  # TODO: Should be uncommented after BB-9990 is done
-#  Scenario: "Product View Page Templates 5A" > Check that the label is hiding if the condition _name
-#    Given I login as administrator
-#    And go to Products/ Product Attributes
-#    And I click on Remark in grid
-#    And fill form with:
-#      | Label | _Remark |
-#    And I save and close form
-#    And go to System / Configuration
-#    And I follow "Commerce/Design/Theme" on configuration sidebar
-#    And fill "Page Templates form" with:
-#      | Use Default  | false     |
-#      | Product Page | List page |
-#    And save form
-#    Then I should see "Configuration saved" flash message
-#    Then I should see "List page"
-#    And I click Logout in user menu
-#    And I signed in as AmandaRCole@example.org on the store frontend
-#    When I open product with sku "gtsh_l" on the store frontend
-#    Then I should not see "Remark"
-#    And I should see "Test text for Green simple product"
+  Scenario: "Product View Page Templates 5A" > Check that the label is hiding if the condition _name
+    Given I operate as the Admin
+    And go to Products/ Product Attributes
+    And I click on Remark in grid
+    And fill form with:
+      | Label | _Remark |
+    And I save and close form
+    When I operate as the Buyer
+    And I open product with sku "gtsh_l" on the store frontend
+    Then I should not see "Remark"
+    And I should see "Test text for Green simple product"
+    When I operate as the Admin
+    And go to System / Configuration
+    And I follow "Commerce/Design/Theme" on configuration sidebar
+    And fill "Page Templates form" with:
+      | Use Default  | false     |
+      | Product Page | List page |
+    And save form
+    Then I should see "Configuration saved" flash message
+    Then I should see "List page"
+    And I operate as the Buyer
+    When I open product with sku "gtsh_l" on the store frontend
+    Then I should not see "Remark"
+    And I should see "Test text for Green simple product"

@@ -4,15 +4,18 @@ namespace Oro\Bundle\InventoryBundle\Validator\Constraints;
 
 use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\InventoryBundle\Provider\ProductUpcomingProvider;
+use Oro\Bundle\InventoryBundle\Provider\UpcomingProductProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
+/**
+ * Validates if all upcoming products will be available for a defined shipping date.
+ */
 class CheckoutShipUntilValidator extends ConstraintValidator
 {
     /**
-     * @var ProductUpcomingProvider
+     * @var UpcomingProductProvider
      */
     protected $upcomingProvider;
 
@@ -22,11 +25,11 @@ class CheckoutShipUntilValidator extends ConstraintValidator
     protected $checkoutLineItemsManager;
 
     /**
-     * @param ProductUpcomingProvider $upcomingProvider
+     * @param UpcomingProductProvider $upcomingProvider
      * @param CheckoutLineItemsManager $checkoutLineItemsManager
      */
     public function __construct(
-        ProductUpcomingProvider $upcomingProvider,
+        UpcomingProductProvider $upcomingProvider,
         CheckoutLineItemsManager $checkoutLineItemsManager
     ) {
         $this->upcomingProvider = $upcomingProvider;

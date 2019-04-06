@@ -5,21 +5,20 @@ namespace Oro\Bundle\OrderBundle\Tests\Functional\Controller;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadChargeAuthorizedPaymentsPermissionUserData;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
-use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadPaymentAuthorizeTransactionData;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadPaymentHistoryUserData;
+use Oro\Bundle\PayPalBundle\Tests\Functional\DataFixtures\LoadPaymentTransactionData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class OrderPaymentCaptureTest extends WebTestCase
 {
-    /** @internal */
-    const PAYMENT_HISTORY_SECTION_NAME = 'Payment History';
+    private const PAYMENT_HISTORY_SECTION_NAME = 'Payment History';
 
     protected function setUp()
     {
         $this->initClient();
         $this->loadFixtures([
             LoadChargeAuthorizedPaymentsPermissionUserData::class,
-            LoadPaymentAuthorizeTransactionData::class
+            LoadPaymentTransactionData::class,
         ]);
     }
 

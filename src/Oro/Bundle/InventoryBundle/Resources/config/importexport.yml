@@ -123,14 +123,9 @@ services:
         tags:
             - { name: oro_importexport.configuration, alias: oro_inventory_level }
 
-    oro_inventory.event_listener.product_data_converter:
-        class: 'Oro\Bundle\InventoryBundle\EventListener\ProductDataConverterEventListener'
-        tags:
-            - { name: kernel.event_listener, event: oro_product.data_converter.backend_header, method: modifyBackendHeader }
-
     oro_inventory.event_listener.product_normalizer:
         class: 'Oro\Bundle\InventoryBundle\EventListener\ProductNormalizerEventListener'
-        arguments: ['@oro_inventory.provider.product_upcoming_provider']
+        arguments: ['@oro_inventory.provider.upcoming_product_provider']
         tags:
             - { name: kernel.event_listener, event: oro_product.normalizer.normalizer, method: normalize }
 
@@ -141,6 +136,6 @@ services:
 
     oro_inventory.importexport.normalizer.is_upcoming:
         class: 'Oro\Bundle\InventoryBundle\ImportExport\Serializer\ProductUpcomingNormalizer'
-        arguments: ['@oro_inventory.provider.product_upcoming_provider']
+        arguments: ['@oro_inventory.provider.upcoming_product_provider']
         tags:
             - { name: oro_importexport.normalizer }

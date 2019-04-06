@@ -4,17 +4,17 @@ namespace Oro\Bundle\InventoryBundle\ImportExport\Serializer;
 
 use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
 use Oro\Bundle\ImportExportBundle\Serializer\Normalizer\DenormalizerInterface;
-use Oro\Bundle\InventoryBundle\Provider\ProductUpcomingProvider;
+use Oro\Bundle\InventoryBundle\Provider\UpcomingProductProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
 /** This class is used to transform scalar value from csv file to fallback value */
 class ProductUpcomingNormalizer implements DenormalizerInterface
 {
-    /** @var ProductUpcomingProvider */
+    /** @var UpcomingProductProvider */
     protected $productUpcomingProvider;
 
-    /** @param ProductUpcomingProvider $productUpcomingProvider */
-    public function __construct(ProductUpcomingProvider $productUpcomingProvider)
+    /** @param UpcomingProductProvider $productUpcomingProvider */
+    public function __construct(UpcomingProductProvider $productUpcomingProvider)
     {
         $this->productUpcomingProvider = $productUpcomingProvider;
     }
@@ -25,7 +25,7 @@ class ProductUpcomingNormalizer implements DenormalizerInterface
         return is_a($type, EntityFieldFallbackValue::class, true) &&
             $context['entityName'] === Product::class &&
             !empty($context['fieldName']) &&
-            $context['fieldName'] === ProductUpcomingProvider::IS_UPCOMING;
+            $context['fieldName'] === UpcomingProductProvider::IS_UPCOMING;
     }
 
     /** {@inheritdoc} */

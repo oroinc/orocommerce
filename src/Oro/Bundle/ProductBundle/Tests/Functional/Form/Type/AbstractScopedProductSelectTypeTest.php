@@ -40,11 +40,20 @@ abstract class AbstractScopedProductSelectTypeTest extends AbstractProductSelect
         return [
             [
                 ['availableInventoryStatuses' => ['in_stock', 'out_of_stock']],
-                'expectedProducts' => LoadProductData::PRODUCTS_1_2_3_6_7
+                'expectedProducts' => [
+                    LoadProductData::PRODUCT_1,
+                    LoadProductData::PRODUCT_2,
+                    LoadProductData::PRODUCT_3,
+                    LoadProductData::PRODUCT_6,
+                ]
             ],
             [
                 ['availableInventoryStatuses' => ['in_stock']],
-                'expectedProducts' => LoadProductData::PRODUCTS_1_2_6_7
+                'expectedProducts' => [
+                    LoadProductData::PRODUCT_1,
+                    LoadProductData::PRODUCT_2,
+                    LoadProductData::PRODUCT_6,
+                ]
             ],
             [
                 ['availableInventoryStatuses' => ['out_of_stock']],
@@ -65,7 +74,6 @@ abstract class AbstractScopedProductSelectTypeTest extends AbstractProductSelect
                     LoadProductData::PRODUCT_2,
                     LoadProductData::PRODUCT_4,
                     LoadProductData::PRODUCT_6,
-                    LoadProductData::PRODUCT_7,
                 ]
             ]
         ];
@@ -79,11 +87,22 @@ abstract class AbstractScopedProductSelectTypeTest extends AbstractProductSelect
         return [
             [
                 ['availableInventoryStatuses' => ['in_stock', 'out_of_stock']],
-                'expectedProducts' => LoadProductData::PRODUCTS_1_2_3_6_7
+                'expectedProducts' => [
+                    LoadProductData::PRODUCT_1,
+                    LoadProductData::PRODUCT_2,
+                    LoadProductData::PRODUCT_3,
+                    LoadProductData::PRODUCT_6,
+                    LoadProductData::PRODUCT_7,
+                ]
             ],
             [
                 ['availableInventoryStatuses' => ['in_stock']],
-                'expectedProducts' => LoadProductData::PRODUCTS_1_2_6_7
+                'expectedProducts' => [
+                    LoadProductData::PRODUCT_1,
+                    LoadProductData::PRODUCT_2,
+                    LoadProductData::PRODUCT_6,
+                    LoadProductData::PRODUCT_7,
+                ]
             ],
             [
                 ['availableInventoryStatuses' => ['out_of_stock']],

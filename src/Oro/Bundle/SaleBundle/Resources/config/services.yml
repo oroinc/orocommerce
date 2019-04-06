@@ -17,6 +17,7 @@ services:
             - "@oro_pricing.provider.product_price"
             - "@oro_pricing.model.product_price_scope_criteria_factory"
             - "@oro_currency.config.currency"
+            - "@oro_entity.doctrine_helper"
 
     oro_sale.validator.quote_product:
         class: 'Oro\Bundle\SaleBundle\Validator\Constraints\QuoteProductValidator'
@@ -110,7 +111,7 @@ services:
 
     oro_sale.privider.form_template_data.quote:
         class: 'Oro\Bundle\SaleBundle\Form\QuoteFormTemplateDataProvider'
-        lazy: true
+        public: false
         arguments:
             - '@event_dispatcher'
             - '@oro_sale.provider.quote_product_price'
