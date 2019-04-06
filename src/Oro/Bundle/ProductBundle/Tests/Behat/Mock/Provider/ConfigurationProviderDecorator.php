@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ProductBundle\Tests\Behat\Mock\Provider;
 
 use Oro\Bundle\DataGridBundle\Provider\ConfigurationProvider;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class ConfigurationProviderDecorator extends ConfigurationProvider
 {
@@ -55,16 +54,8 @@ class ConfigurationProviderDecorator extends ConfigurationProvider
      *
      * @return array
      */
-    public function getRawConfiguration($gridName)
+    public function getRawConfiguration(string $gridName): array
     {
         return $this->configurationProvider->getRawConfiguration($gridName);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function loadConfiguration(ContainerBuilder $container = null)
-    {
-        $this->configurationProvider->loadConfiguration($container);
     }
 }
