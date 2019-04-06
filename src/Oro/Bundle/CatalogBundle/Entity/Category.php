@@ -12,13 +12,14 @@ use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
-use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\OrganizationBundle\Entity\Ownership\OrganizationAwareTrait;
 use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
 use Oro\Bundle\RedirectBundle\Entity\SluggableTrait;
 use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
 use Oro\Component\Tree\Entity\TreeTrait;
 
 /**
+ * Represents product categories
  * @ORM\Table(
  *      name="oro_catalog_category",
  *      indexes={
@@ -74,7 +75,12 @@ use Oro\Component\Tree\Entity\TreeTrait;
  *          },
  *          "dataaudit"={
  *              "auditable"=true
- *          }
+ *          },
+ *          "ownership"={
+ *              "owner_type"="ORGANIZATION",
+ *              "owner_field_name"="organization",
+ *              "owner_column_name"="organization_id"
+ *          },
  *      }
  * )
  * @ORM\HasLifecycleCallbacks()
@@ -86,6 +92,7 @@ class Category extends ExtendCategory implements SluggableInterface, DatesAwareI
     use DatesAwareTrait;
     use TreeTrait;
     use SluggableTrait;
+    use OrganizationAwareTrait;
 
     const MATERIALIZED_PATH_DELIMITER = '_';
 

@@ -6,7 +6,11 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessor;
 
+/**
+ * Gets categories depending on different criterias
+ */
 abstract class AbstractProductImportEventListener
 {
     const CATEGORY_KEY = 'category.default.title';
@@ -16,6 +20,9 @@ abstract class AbstractProductImportEventListener
 
     /** @var string */
     protected $categoryClass;
+
+    /** @var TokenAccessor */
+    private $tokenAccessor;
 
     /** @var CategoryRepository */
     protected $categoryRepository;
@@ -28,11 +35,13 @@ abstract class AbstractProductImportEventListener
 
     /**
      * @param ManagerRegistry $registry
+     * @param TokenAccessor $tokenAccessor
      * @param string $categoryClass
      */
-    public function __construct(ManagerRegistry $registry, $categoryClass)
+    public function __construct(ManagerRegistry $registry, TokenAccessor $tokenAccessor, $categoryClass)
     {
         $this->registry = $registry;
+        $this->tokenAccessor = $tokenAccessor;
         $this->categoryClass = $categoryClass;
     }
 
@@ -57,6 +66,7 @@ abstract class AbstractProductImportEventListener
     /**
      * @param string $categoryDefaultTitle
      * @return null|Category
+     * @throws \Doctrine\ORM\NonUniqueResultException
      */
     protected function getCategoryByDefaultTitle($categoryDefaultTitle)
     {
@@ -64,7 +74,8 @@ abstract class AbstractProductImportEventListener
             return $this->categoriesByTitle[$categoryDefaultTitle];
         }
 
-        $category = $this->getCategoryRepository()->findOneByDefaultTitle($categoryDefaultTitle);
+        $organization = $this->tokenAccessor->getOrganization();
+        $category = $this->getCategoryRepository()->findOneByDefaultTitle($categoryDefaultTitle, $organization);
         if (!$category) {
             $this->categoriesByTitle[$categoryDefaultTitle] = null;
 

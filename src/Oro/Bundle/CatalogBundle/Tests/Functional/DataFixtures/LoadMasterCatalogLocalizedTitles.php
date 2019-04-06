@@ -8,6 +8,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 
 class LoadMasterCatalogLocalizedTitles extends AbstractFixture implements DependentFixtureInterface
 {
@@ -18,9 +19,11 @@ class LoadMasterCatalogLocalizedTitles extends AbstractFixture implements Depend
      */
     public function load(ObjectManager $manager)
     {
+        /** @var Organization $organization */
+        $organization = $manager->getRepository(Organization::class)->getFirst();
         /** @var CategoryRepository $categoryRepository */
         $categoryRepository = $manager->getRepository('OroCatalogBundle:Category');
-        $root               = $categoryRepository->getMasterCatalogRoot();
+        $root               = $categoryRepository->getMasterCatalogRoot($organization);
         $localizations      = $manager->getRepository('OroLocaleBundle:Localization')->findAll();
 
         $title = new LocalizedFallbackValue();

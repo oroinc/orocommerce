@@ -9,10 +9,14 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * Loads product categories demo data
+ */
 class LoadProductCategoryDemoData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
 {
     /**
@@ -74,11 +78,13 @@ class LoadProductCategoryDemoData extends AbstractFixture implements ContainerAw
         $handler = fopen($filePath, 'r');
         $headers = fgetcsv($handler, 1000, ',');
 
+        $defaultOrganization = $manager->getRepository(Organization::class)->getFirst();
+
         while (($data = fgetcsv($handler, 1000, ',')) !== false) {
             $row = array_combine($headers, array_values($data));
 
             $product = $this->getProductBySku($manager, $row['sku']);
-            $category = $this->getCategoryByDefaultTitle($manager, $row['category']);
+            $category = $this->getCategoryByDefaultTitle($manager, $row['category'], $defaultOrganization);
             if ($category) {
                 $category->addProduct($product);
                 $manager->persist($category);
@@ -103,14 +109,17 @@ class LoadProductCategoryDemoData extends AbstractFixture implements ContainerAw
 
     /**
      * @param EntityManager $manager
-     * @param string        $title
+     * @param string $title
      *
+     * @param Organization $organization
      * @return Category|null
+     * @throws \Doctrine\ORM\NonUniqueResultException
      */
-    protected function getCategoryByDefaultTitle(EntityManager $manager, $title)
+    protected function getCategoryByDefaultTitle(EntityManager $manager, string $title, Organization $organization)
     {
         if (!array_key_exists($title, $this->categories)) {
-            $this->categories[$title] = $this->getCategoryRepository($manager)->findOneByDefaultTitle($title);
+            $this->categories[$title] = $this->getCategoryRepository($manager)
+                ->findOneByDefaultTitle($title, $organization);
         }
 
         return $this->categories[$title];

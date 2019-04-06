@@ -8,10 +8,14 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\RedirectBundle\Generator\SlugEntityGenerator;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * Loads categories from predefined list
+ */
 abstract class AbstractCategoryFixture extends AbstractFixture implements ContainerAwareInterface
 {
     /**
@@ -46,9 +50,11 @@ abstract class AbstractCategoryFixture extends AbstractFixture implements Contai
      */
     public function load(ObjectManager $manager)
     {
+        $defaultOrganization = $manager->getRepository(Organization::class)->getFirst();
+
         /** @var CategoryRepository $categoryRepository */
         $categoryRepository = $manager->getRepository('OroCatalogBundle:Category');
-        $root               = $categoryRepository->getMasterCatalogRoot();
+        $root               = $categoryRepository->getMasterCatalogRoot($defaultOrganization);
 
         $this->addCategories($root, $this->categories, $this->categoryImages, $manager);
 
@@ -75,6 +81,7 @@ abstract class AbstractCategoryFixture extends AbstractFixture implements Contai
             return;
         }
 
+        $defaultOrganization = $root->getOrganization();
         $slugGenerator = $this->container->get('oro_entity_config.slug.generator');
 
         foreach ($categories as $title => $nestedCategories) {
@@ -83,6 +90,7 @@ abstract class AbstractCategoryFixture extends AbstractFixture implements Contai
 
             $category = new Category();
             $category->addTitle($categoryTitle);
+            $category->setOrganization($defaultOrganization);
 
             $slugPrototype = new LocalizedFallbackValue();
             $slugPrototype->setString($slugGenerator->slugify($title));

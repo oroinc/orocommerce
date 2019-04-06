@@ -19,8 +19,9 @@ class ProductStrategyEventListener extends AbstractProductImportEventListener
             return;
         }
 
-        $category = $this->getCategoryByDefaultTitle($rawData[self::CATEGORY_KEY]);
         $product = $event->getProduct();
+
+        $category = $this->getCategoryByDefaultTitle($rawData[self::CATEGORY_KEY]);
 
         if ($category) {
             $product->setCategory($category);
