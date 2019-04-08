@@ -35,7 +35,7 @@ class OroPromotionBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_4';
+        return 'v1_4_1';
     }
 
     /**
@@ -634,7 +634,8 @@ class OroPromotionBundleInstaller implements
                     'is_extend' => true,
                     'owner' => ExtendScope::OWNER_CUSTOM,
                     'without_default' => true,
-                    'on_delete' => 'CASCADE'
+                    'on_delete' => 'CASCADE',
+                    'cascade' => ['remove'],
                 ],
                 'form' => ['is_enabled' => false],
                 'view' => ['is_displayable' => false]
