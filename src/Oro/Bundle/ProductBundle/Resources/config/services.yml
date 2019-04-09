@@ -1103,6 +1103,14 @@ services:
         tags:
             - { name: security.voter, priority: 100 }
 
+    oro_product.event_listener.restrict_product_view_by_inventory_status:
+        class: Oro\Bundle\ProductBundle\EventListener\RestrictProductViewByInventoryStatusListener
+        public: false
+        arguments:
+            - "@oro_config.manager"
+        tags:
+            - { name: kernel.event_listener, event: kernel.controller, method: onKernelController, priority: -100 }
+
     oro_product.provider.content_variant_segment_provider:
         class: Oro\Bundle\ProductBundle\Provider\ContentVariantSegmentProvider
         arguments:
