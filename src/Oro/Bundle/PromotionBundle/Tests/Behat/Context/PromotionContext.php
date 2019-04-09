@@ -23,6 +23,9 @@ use Oro\Bundle\TestFrameworkBundle\Behat\Element\OroPageObjectAware;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class PromotionContext extends OroFeatureContext implements OroPageObjectAware
 {
     use PageObjectDictionary;
@@ -168,6 +171,30 @@ class PromotionContext extends OroFeatureContext implements OroPageObjectAware
         $this->waitForAjax();
         $this->oroMainContext->pressButton('Create Order');
         $this->waitForAjax();
+        $this->oroMainContext->pressButton('Continue');
+        $this->waitForAjax();
+        $this->oroMainContext->assertPageTitle('Shipping Information - Checkout');
+        $this->oroMainContext->pressButton('Continue');
+        $this->waitForAjax();
+        $this->oroMainContext->assertPageTitle('Shipping Method - Checkout');
+        $this->oroMainContext->pressButton('Continue');
+        $this->waitForAjax();
+        $this->oroMainContext->assertPageTitle('Payment - Checkout');
+        $this->oroMainContext->pressButton('Continue');
+        $this->waitForAjax();
+        $this->oroMainContext->assertPageTitle('Order Review - Checkout');
+        $this->oroMainContext->pressButton('Submit Order');
+        $this->waitForAjax();
+        $this->oroMainContext->clickLink('click here to review');
+        $this->waitForAjax();
+        $this->oroMainContext->assertPage('Order Frontend View');
+    }
+
+    /**
+     * @Given /^(?:|I )go through the order completion, and should be on order view page$/
+     */
+    public function iGoThroughTheOrderCompletionAndShouldBeOnOrderViewPage()
+    {
         $this->oroMainContext->pressButton('Continue');
         $this->waitForAjax();
         $this->oroMainContext->assertPageTitle('Shipping Information - Checkout');
