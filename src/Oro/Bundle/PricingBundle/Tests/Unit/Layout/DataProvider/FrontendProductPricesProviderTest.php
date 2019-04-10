@@ -457,17 +457,10 @@ class FrontendProductPricesProviderTest extends \PHPUnit\Framework\TestCase
             ->with($scopeCriteria, $products, [$currency])
             ->willReturn($prices);
 
-        $parentProducts = array_filter($products, function (Product $product) {
-            return $product->getType() === Product::TYPE_CONFIGURABLE;
-        });
-
         $this->productVariantAvailabilityProvider
             ->expects($this->any())
-            ->method('getSimpleProductsByVariantFields')
-            ->withConsecutive(...$parentProducts)
-            ->willReturnCallback(function (Product $parentProduct) use ($variants) {
-                return $variants[$parentProduct->getId()] ?? [];
-            });
+            ->method('getSimpleProductsGroupedByConfigurable')
+            ->willReturn($variants);
 
         $this->productPriceFormatter->expects($this->any())
             ->method('formatProducts')
