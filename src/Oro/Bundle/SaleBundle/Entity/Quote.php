@@ -9,6 +9,8 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\Ownership\AuditableFrontendCustomerUserAwareTrait;
+use Oro\Bundle\EmailBundle\Entity\EmailOwnerAwareInterface;
+use Oro\Bundle\EmailBundle\Entity\EmailOwnerInterface;
 use Oro\Bundle\EmailBundle\Model\EmailHolderInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
@@ -71,6 +73,7 @@ use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 class Quote extends ExtendQuote implements
     CustomerOwnerAwareInterface,
     EmailHolderInterface,
+    EmailOwnerAwareInterface,
     OrganizationAwareInterface,
     MethodLockedShippingMethodConfigurationInterface,
     AllowUnlistedShippingMethodConfigurationInterface,
@@ -971,6 +974,14 @@ class Quote extends ExtendQuote implements
     public function isOverriddenShippingCost()
     {
         return null !== $this->overriddenShippingCostAmount;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getEmailOwner(): EmailOwnerInterface
+    {
+        return $this->customerUser;
     }
 
     private function generateGuestAccessId(): void
