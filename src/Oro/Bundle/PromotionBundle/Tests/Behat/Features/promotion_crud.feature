@@ -84,3 +84,13 @@ Feature: Promotion CRUD
       | Customer       | first customer      |
     And I save and close form
     Then I should see "first customer" in the "Restrictions" element
+
+  Scenario: Ensure note is successfully added to promotion
+    Given I go to Marketing / Promotions / Promotions
+    And I click view Promotion for first customer in grid
+    When I click "Add note"
+    And I fill "Note Form" with:
+      | Message | Decrease after New Year |
+    And I click "Add Note Button"
+    Then I should see "Note saved" flash message
+    And I should see "Decrease after New Year" note in activity list
