@@ -74,6 +74,12 @@ class CustomerControllerTest extends WebTestCase
         $customerTaxCode = $this->getReference(LoadCustomerTaxCodes::REFERENCE_PREFIX.'.'.LoadCustomerTaxCodes::TAX_1);
 
         $this->assertContains($customerTaxCode->getCode(), $html);
+
+        $customerTaxCodeLink = $this->getContainer()->get('router')->generate('oro_tax_customer_tax_code_view', [
+            'id' => $customerTaxCode->getId(),
+        ]);
+
+        $this->assertContains($customerTaxCodeLink, $html);
     }
 
     /**
