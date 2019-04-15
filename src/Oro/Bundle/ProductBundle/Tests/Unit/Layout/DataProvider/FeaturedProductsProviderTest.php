@@ -22,6 +22,13 @@ class FeaturedProductsProviderTest extends AbstractSegmentProductsProviderTest
         $this->getProductsWithCache();
     }
 
+    public function testGetProductsWithInvalidCache(): void
+    {
+        $this->prepare();
+
+        $this->getProductsWithInvalidCache($this->getQueryBuilder());
+    }
+
     public function testGetProductsWithDisabledCache()
     {
         $this->prepare();
