@@ -9,6 +9,9 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemNotPricedSubtota
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal;
 
+/**
+ * Provides methods to manage shopping list totals.
+ */
 class ShoppingListTotalManager
 {
     /**
@@ -127,7 +130,7 @@ class ShoppingListTotalManager
      */
     protected function getTotalRepository()
     {
-        return $this->getEntityManager()->getRepository('OroShoppingListBundle:ShoppingListTotal');
+        return $this->getEntityManager()->getRepository(ShoppingListTotal::class);
     }
 
     /**
@@ -136,7 +139,7 @@ class ShoppingListTotalManager
     protected function getEntityManager()
     {
         if (!$this->em) {
-            $this->em = $this->registry->getManagerForClass('OroShoppingListBundle:ShoppingListTotal');
+            $this->em = $this->registry->getManagerForClass(ShoppingListTotal::class);
         }
 
         return $this->em;
