@@ -15,6 +15,11 @@ use Oro\Component\Cache\Layout\DataProviderCacheTrait;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
+/**
+ * Responsible for saving, processing and return the results of segment from the cache and
+ * checking the integrity of the data coming.
+ * Ensures that the cached data is not used in case of substitution by a third party
+ */
 abstract class AbstractSegmentProductsProvider implements ProductsProviderInterface
 {
     const DQL = 'dql';
@@ -134,12 +139,7 @@ abstract class AbstractSegmentProductsProvider implements ProductsProviderInterf
     {
         $data = $this->loadFromCache();
 
-        // Check cache data consistency
-        if ($data
-            && !empty($data[self::DQL])
-            && !empty($data[self::HASH])
-            && $this->getHash($data[self::DQL]) === $data[self::HASH]
-        ) {
+        if (is_array($data) && $this->checkCacheDataConsistency($data)) {
             return $data;
         }
 
@@ -224,18 +224,85 @@ abstract class AbstractSegmentProductsProvider implements ProductsProviderInterf
         $result = [
             self::DQL => $dql,
             self::PARAMETERS => $resultParameters,
-            self::HASH => $this->getHash($dql)
+            self::HASH => $this->getEncryptedData($dql, $resultParameters),
         ];
 
         return $result;
     }
 
     /**
+     * @param array $data
+     *
+     * @return bool
+     */
+    private function checkCacheDataConsistency(array $data): bool
+    {
+        if (!empty($data[self::DQL]) &&
+            !empty($data[self::HASH]) &&
+            !empty($data[self::PARAMETERS])
+        ) {
+            $hash = $this->getDecryptedData($data[self::HASH]);
+
+            return $hash === $this->getHashData($data[self::DQL], $data[self::PARAMETERS]);
+        }
+
+        return false;
+    }
+
+    /**
+     * @param string $dql
+     * @param array $parameters
+     *
+     * @return string|null
+     */
+    private function getEncryptedData(string $dql, array $parameters = []): ?string
+    {
+        $data = $this->getHashData($dql, $parameters);
+
+        return $this->getEncryptedHash($data);
+    }
+
+    /**
+     * @param $hash
+     *
+     * @return string|null
+     */
+    private function getDecryptedData(string $hash): ?string
+    {
+        return $this->crypter->decryptData($hash);
+    }
+
+    /**
+     * @param string $dql
+     * @param array $parameters
+     *
+     * @return string
+     */
+    private function getHashData(string $dql, array $parameters = []): string
+    {
+        return md5(serialize([
+            self::DQL => $dql,
+            self::PARAMETERS => $parameters,
+        ]));
+    }
+
+    /**
+     * @param string $data
+     *
+     * @return string|null
+     */
+    private function getEncryptedHash(string $data): ?string
+    {
+        return $this->crypter->encryptData($data);
+    }
+
+    /**
      * @param $dql
+     *
      * @return string
      */
     private function getHash($dql)
     {
-        return md5($this->crypter->encryptData($dql));
+        return $this->getEncryptedHash($dql);
     }
 }
