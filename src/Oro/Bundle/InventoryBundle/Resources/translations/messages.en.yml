@@ -114,7 +114,7 @@ oro:
         is_upcoming:
             label: 'Upcoming'
             notification: 'This product will be available later'
-            notification_with_date: 'This product will be available on '
+            notification_with_date: 'This product will be available on %date%'
             choice:
                 'true': 'Yes'
                 'false': 'No'

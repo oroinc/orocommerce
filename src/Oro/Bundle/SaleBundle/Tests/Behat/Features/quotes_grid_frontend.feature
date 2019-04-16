@@ -4,7 +4,6 @@
 @ticket-BAP-17648
 
 Feature: Quotes Grid Frontend
-
   In order to ensure frontend quotes grid works correctly
   As a buyer
   I check filters, sorting and columns config are working as designed.
@@ -313,20 +312,20 @@ Feature: Quotes Grid Frontend
       | Quote13 | PO13      | Amanda Cole  |
     When I reset "AllQuotes" grid
     Then I should see following grid with exact columns order:
-      | Quote # | PO Number | DNSLT        |
-      | Quote1  | PO1       |              |
-      | Quote2  | PO2       |              |
-      | Quote3  | PO3       |              |
-      | Quote4  | PO4       |              |
-      | Quote5  | PO5       |              |
-      | Quote6  | PO6       |              |
-      | Quote7  | PO7       |              |
-      | Quote8  | PO8       |              |
-      | Quote9  | PO9       |              |
-      | Quote10 | PO10      |              |
-      | Quote11 | PO11      |              |
-      | Quote12 | PO12      |              |
-      | Quote13 | PO13      | today +1 day |
+      | Quote # | PO Number |
+      | Quote1  | PO1       |
+      | Quote2  | PO2       |
+      | Quote3  | PO3       |
+      | Quote4  | PO4       |
+      | Quote5  | PO5       |
+      | Quote6  | PO6       |
+      | Quote7  | PO7       |
+      | Quote8  | PO8       |
+      | Quote9  | PO9       |
+      | Quote10 | PO10      |
+      | Quote11 | PO11      |
+      | Quote12 | PO12      |
+      | Quote13 | PO13      |
 
   Scenario: Check Grid View is Saved and Restored Properly
     Given I hide all columns in "AllQuotes" frontend grid except Quote #
@@ -358,17 +357,17 @@ Feature: Quotes Grid Frontend
     And I confirm deletion
     Then I should see "View has been successfully deleted" flash message
     And I should see following grid with exact columns order:
-      | Quote # | PO Number | DNSLT        |
-      | Quote1  | PO1       |              |
-      | Quote2  | PO2       |              |
-      | Quote3  | PO3       |              |
-      | Quote4  | PO4       |              |
-      | Quote5  | PO5       |              |
-      | Quote6  | PO6       |              |
-      | Quote7  | PO7       |              |
-      | Quote8  | PO8       |              |
-      | Quote9  | PO9       |              |
-      | Quote10 | PO10      |              |
-      | Quote11 | PO11      |              |
-      | Quote12 | PO12      |              |
-      | Quote13 | PO13      | today +1 day |
+      | Quote # | PO Number |
+      | Quote1  | PO1       |
+      | Quote2  | PO2       |
+      | Quote3  | PO3       |
+      | Quote4  | PO4       |
+      | Quote5  | PO5       |
+      | Quote6  | PO6       |
+      | Quote7  | PO7       |
+      | Quote8  | PO8       |
+      | Quote9  | PO9       |
+      | Quote10 | PO10      |
+      | Quote11 | PO11      |
+      | Quote12 | PO12      |
+      | Quote13 | PO13      |
