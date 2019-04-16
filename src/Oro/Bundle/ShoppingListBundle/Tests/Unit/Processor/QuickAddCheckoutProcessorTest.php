@@ -5,7 +5,7 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Processor;
 use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\ActionBundle\Model\ActionGroup;
 use Oro\Bundle\ActionBundle\Model\ActionGroupRegistry;
-use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatter;
+use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatterInterface;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListManager;
@@ -51,7 +51,7 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
     protected $translator;
 
     /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|DateTimeFormatter
+     * @var \PHPUnit\Framework\MockObject\MockObject|DateTimeFormatterInterface
      */
     protected $dateFormatter;
 
@@ -87,7 +87,7 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
             ->disableOriginalConstructor()->getMock();
         $this->translator = $this->getMockBuilder(TranslatorInterface::class)
             ->disableOriginalConstructor()->getMock();
-        $this->dateFormatter = $this->getMockBuilder(DateTimeFormatter::class)
+        $this->dateFormatter = $this->getMockBuilder(DateTimeFormatterInterface::class)
             ->disableOriginalConstructor()->getMock();
 
         $this->processor = new QuickAddCheckoutProcessor($this->handler, $this->registry, $this->messageGenerator);

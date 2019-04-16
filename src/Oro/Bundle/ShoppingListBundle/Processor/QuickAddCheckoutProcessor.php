@@ -7,7 +7,7 @@ use Doctrine\ORM\EntityManager;
 use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\ActionBundle\Model\ActionGroup;
 use Oro\Bundle\ActionBundle\Model\ActionGroupRegistry;
-use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatter;
+use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatterInterface;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListManager;
@@ -40,7 +40,7 @@ class QuickAddCheckoutProcessor extends AbstractShoppingListQuickAddProcessor
     /** @var TranslatorInterface */
     protected $translator;
 
-    /** @var DateTimeFormatter */
+    /** @var DateTimeFormatterInterface */
     protected $dateFormatter;
 
     /** @var string */
@@ -105,10 +105,10 @@ class QuickAddCheckoutProcessor extends AbstractShoppingListQuickAddProcessor
     }
 
     /**
-     * @param DateTimeFormatter $dateFormatter
+     * @param DateTimeFormatterInterface $dateFormatter
      * @return QuickAddCheckoutProcessor
      */
-    public function setDateFormatter(DateTimeFormatter $dateFormatter)
+    public function setDateFormatter(DateTimeFormatterInterface $dateFormatter)
     {
         $this->dateFormatter = $dateFormatter;
 
