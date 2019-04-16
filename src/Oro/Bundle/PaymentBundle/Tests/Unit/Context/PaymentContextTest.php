@@ -78,6 +78,7 @@ class PaymentContextTest extends \PHPUnit\Framework\TestCase
         $shippingMethod = 'shippingMethod';
         $currency = 'usd';
         $entityId = '12';
+        $totalAmount = 10.0;
 
         $params = [
             PaymentContext::FIELD_CUSTOMER => $this->customerMock,
@@ -91,6 +92,7 @@ class PaymentContextTest extends \PHPUnit\Framework\TestCase
             PaymentContext::FIELD_SOURCE_ENTITY => $this->sourceEntityMock,
             PaymentContext::FIELD_SOURCE_ENTITY_ID => $entityId,
             PaymentContext::FIELD_WEBSITE => $this->websiteMock,
+            PaymentContext::FIELD_TOTAL => $totalAmount
         ];
 
         $paymentContext = new PaymentContext($params);
@@ -107,6 +109,7 @@ class PaymentContextTest extends \PHPUnit\Framework\TestCase
             PaymentContext::FIELD_SOURCE_ENTITY => $paymentContext->getSourceEntity(),
             PaymentContext::FIELD_SOURCE_ENTITY_ID => $paymentContext->getSourceEntityIdentifier(),
             PaymentContext::FIELD_WEBSITE => $paymentContext->getWebsite(),
+            PaymentContext::FIELD_TOTAL => $paymentContext->getTotal()
         ];
 
         static::assertEquals($params, $getterValues);

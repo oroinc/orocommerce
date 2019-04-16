@@ -159,11 +159,37 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
         $this->assertSame('payflow_express_checkout', $this->expressCheckout->getIdentifier());
     }
 
-    public function testIsApplicable()
+    /**
+     * @param float $amount
+     * @param bool $expectedIsApplicable
+     * @dataProvider isApplicableDataProvider
+     */
+    public function testIsApplicable($amount, $expectedIsApplicable)
     {
         /** @var PaymentContextInterface|\PHPUnit\Framework\MockObject\MockObject $context */
         $context = $this->createMock(PaymentContextInterface::class);
-        $this->assertTrue($this->expressCheckout->isApplicable($context));
+        $context->expects($this->once())
+            ->method('getTotal')
+            ->willReturn($amount);
+
+        $this->assertEquals($expectedIsApplicable, $this->expressCheckout->isApplicable($context));
+    }
+
+    /**
+     * @return array
+     */
+    public function isApplicableDataProvider()
+    {
+        return [
+            'not applicable if order total is zero' => [
+                'amount' => 0.0,
+                'expectedIsApplicable' => false
+            ],
+            'applicable if order total is greater than zero' => [
+                'amount' => 0.1,
+                'expectedIsApplicable' => true
+            ]
+        ];
     }
 
     /**
