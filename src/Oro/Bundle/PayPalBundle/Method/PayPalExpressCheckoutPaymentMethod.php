@@ -20,6 +20,9 @@ use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
 
+/**
+ * PayPal Express payment method
+ */
 class PayPalExpressCheckoutPaymentMethod implements PaymentMethodInterface
 {
     const COMPLETE = 'complete';
@@ -107,7 +110,14 @@ class PayPalExpressCheckoutPaymentMethod implements PaymentMethodInterface
      */
     public function isApplicable(PaymentContextInterface $context)
     {
-        return true;
+        if (!method_exists($context, 'getTotal')) {
+            return true;
+        }
+
+        $amount = round($context->getTotal(), self::AMOUNT_PRECISION);
+        $zeroAmount = round(0, self::AMOUNT_PRECISION);
+
+        return !($amount === $zeroAmount);
     }
 
     /**

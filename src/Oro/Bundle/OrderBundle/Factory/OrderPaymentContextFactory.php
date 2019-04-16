@@ -6,8 +6,12 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\OrderBundle\Converter\OrderPaymentLineItemConverterInterface;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PaymentBundle\Context\Builder\Factory\PaymentContextBuilderFactoryInterface;
+use Oro\Bundle\PaymentBundle\Context\Builder\PaymentContextBuilderInterface;
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 
+/**
+ *  Gets parameters needed to create PaymentContext from Order and other sources
+ */
 class OrderPaymentContextFactory
 {
     /**
@@ -81,6 +85,19 @@ class OrderPaymentContextFactory
             $paymentContextBuilder->setLineItems($convertedLineItems);
         }
 
+        $this->setTotal($paymentContextBuilder, $order);
+
         return $paymentContextBuilder->getResult();
+    }
+
+    /**
+     * @param PaymentContextBuilderInterface $paymentContextBuilder
+     * @param Order                          $order
+     */
+    private function setTotal(PaymentContextBuilderInterface $paymentContextBuilder, Order $order)
+    {
+        if (method_exists($paymentContextBuilder, 'setTotal')) {
+            $paymentContextBuilder->setTotal((float)$order->getTotal());
+        }
     }
 }

@@ -118,6 +118,7 @@ class BasicPaymentContextBuilderTest extends \PHPUnit\Framework\TestCase
             $this->paymentLineItemCollectionFactoryMock
         );
 
+        $totalAmount = 10.0;
         $builder
             ->setCurrency($currency)
             ->setSubTotal($this->subtotalMock)
@@ -128,12 +129,14 @@ class BasicPaymentContextBuilderTest extends \PHPUnit\Framework\TestCase
             ->setCustomerUser($this->customerUserMock)
             ->setShippingMethod($shippingMethod)
             ->setWebsite($this->websiteMock)
-            ->setShippingOrigin($this->shippingOriginMock);
+            ->setShippingOrigin($this->shippingOriginMock)
+            ->setTotal($totalAmount);
 
         $expectedContext = $this->getExpectedFullContext(
             $shippingMethod,
             $currency,
-            $entityId
+            $entityId,
+            $totalAmount
         );
         $context = $builder->getResult();
 
@@ -168,10 +171,11 @@ class BasicPaymentContextBuilderTest extends \PHPUnit\Framework\TestCase
      * @param $shippingMethod
      * @param $currency
      * @param $entityId
+     * @param float $total
      *
      * @return PaymentContext
      */
-    private function getExpectedFullContext($shippingMethod, $currency, $entityId)
+    private function getExpectedFullContext($shippingMethod, $currency, $entityId, $total)
     {
         $params = [
             PaymentContext::FIELD_CUSTOMER => $this->customerMock,
@@ -186,6 +190,7 @@ class BasicPaymentContextBuilderTest extends \PHPUnit\Framework\TestCase
             PaymentContext::FIELD_SOURCE_ENTITY_ID => $entityId,
             PaymentContext::FIELD_WEBSITE => $this->websiteMock,
             PaymentContext::FIELD_SHIPPING_ORIGIN => $this->shippingOriginMock,
+            PaymentContext::FIELD_TOTAL => $total
         ];
 
         return new PaymentContext($params);
