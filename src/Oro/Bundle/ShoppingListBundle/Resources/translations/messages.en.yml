@@ -140,6 +140,7 @@ oro:
             duplicate_shopping_list.label: Duplicate
         duplicate:
             success.message: 'The shopping list has been duplicated'
+            error.customer_user_is_guest: 'Unable to duplicate as only one shopping list is allowed for unregistered users'
             restricted_products.message: 'Some products are not available and cannot be added to shopping list'
             list.label: Duplicate List
 
