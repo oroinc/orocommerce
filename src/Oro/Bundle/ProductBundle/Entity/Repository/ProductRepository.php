@@ -11,6 +11,7 @@ use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Entity\ProductImageType;
+use Oro\Bundle\ProductBundle\Entity\ProductVariantLink;
 use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 
 /**
@@ -28,7 +29,7 @@ class ProductRepository extends EntityRepository
         $queryBuilder = $this->createQueryBuilder('product');
 
         $queryBuilder->andWhere('product.skuUppercase = :sku')
-            ->setParameter('sku', strtoupper($sku));
+            ->setParameter('sku', mb_strtoupper($sku));
 
         return $queryBuilder->getQuery()->getOneOrNullResult();
     }
@@ -90,7 +91,7 @@ class ProductRepository extends EntityRepository
 
         if ($productSkus) {
             // Convert to uppercase for insensitive search in all DB
-            $upperCaseSkus = array_map("strtoupper", $productSkus);
+            $upperCaseSkus = array_map('mb_strtoupper', $productSkus);
 
             $productsQueryBuilder
                 ->where($productsQueryBuilder->expr()->in('p.skuUppercase', ':product_skus'))
@@ -158,11 +159,14 @@ class ProductRepository extends EntityRepository
             ->innerJoin('p.names', 'pn', Expr\Join::WITH, $productsQueryBuilder->expr()->isNull('pn.localization'))
             ->where(
                 $productsQueryBuilder->expr()->orX(
-                    $productsQueryBuilder->expr()->like('LOWER(p.sku)', ':search'),
-                    $productsQueryBuilder->expr()->like('LOWER(pn.string)', ':search')
+                    $productsQueryBuilder->expr()->like('p.skuUppercase', ':search_upper'),
+                    $productsQueryBuilder->expr()->like('LOWER(pn.string)', ':search_lower')
                 )
             )
-            ->setParameter('search', '%' . strtolower($search) . '%')
+            ->setParameters([
+                'search_upper' => '%' . mb_strtoupper($search) . '%',
+                'search_lower' => '%' . mb_strtolower($search) . '%',
+            ])
             ->addOrderBy('p.id')
             ->setFirstResult($firstResult)
             ->setMaxResults($maxResults);
@@ -197,7 +201,7 @@ class ProductRepository extends EntityRepository
     public function getProductWithNamesBySkuQueryBuilder(array $skus)
     {
         // Convert to uppercase for insensitive search in all DB
-        $upperCaseSkus = array_map("strtoupper", $skus);
+        $upperCaseSkus = array_map('mb_strtoupper', $skus);
 
         $qb = $this->createQueryBuilder('product')
             ->select('product');
@@ -225,7 +229,7 @@ class ProductRepository extends EntityRepository
     public function getFilterSkuQueryBuilder(array $skus)
     {
         // Convert to uppercase for insensitive search in all DB
-        $upperCaseSkus = array_map("strtoupper", $skus);
+        $upperCaseSkus = array_map('mb_strtoupper', $skus);
 
         $queryBuilder = $this->createQueryBuilder('product');
         $queryBuilder
@@ -313,7 +317,7 @@ class ProductRepository extends EntityRepository
             ->select('IDENTITY(productPrecision.unit)')
             ->innerJoin('product.primaryUnitPrecision', 'productPrecision')
             ->where($qb->expr()->eq('product.skuUppercase', ':sku'))
-            ->setParameter('sku', strtoupper($sku))
+            ->setParameter('sku', mb_strtoupper($sku))
             ->getQuery()
             ->getOneOrNullResult(AbstractQuery::HYDRATE_SINGLE_SCALAR);
     }
@@ -357,6 +361,22 @@ class ProductRepository extends EntityRepository
                 ->andWhere(sprintf('p.%s = :variantValue%s', $variantName, $variantName))
                 ->setParameter(sprintf('variantValue%s', $variantName), $variantValue);
         }
+
+        return $qb;
+    }
+
+    /**
+     * @param array $configurableProducts
+     * @return QueryBuilder
+     */
+    public function getSimpleProductIdsByParentProductsQueryBuilder(array $configurableProducts)
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->select('p.id')
+            ->from($this->getEntityName(), 'p')
+            ->innerJoin('p.parentVariantLinks', 'l')
+            ->andWhere($qb->expr()->in('l.parentProduct', ':configurableProducts'))
+            ->setParameter('configurableProducts', $configurableProducts);
 
         return $qb;
     }
@@ -532,6 +552,45 @@ class ProductRepository extends EntityRepository
             ->getArrayResult();
 
         return array_column($result, 'id');
+    }
+
+    /**
+     * @param array|int[]|Product[] $products
+     * @return array
+     */
+    public function getConfigurableProductIds(array $products): array
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->from($this->getEntityName(), 'p')
+            ->select('p.id')
+            ->where($qb->expr()->in('p', ':products'))
+            ->andWhere($qb->expr()->eq('p.type', ':type'))
+            ->setParameter('products', $products)
+            ->setParameter('type', Product::TYPE_CONFIGURABLE);
+
+        return array_column($qb->getQuery()->getArrayResult(), 'id');
+    }
+
+    /**
+     * @param array $configurableProducts
+     * @return array
+     * [variantId:int => parentProductIds:int[]]
+     */
+    public function getVariantsMapping(array $configurableProducts): array
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->from(ProductVariantLink::class, 'pvl')
+            ->select('IDENTITY(pvl.parentProduct) as parentId', 'IDENTITY(pvl.product) as variantId')
+            ->where($qb->expr()->in('pvl.parentProduct', ':parentProduct'))
+            ->setParameter('parentProduct', $configurableProducts);
+
+        $mappingData = $qb->getQuery()->getArrayResult();
+        $mapping = [];
+        foreach ($mappingData as $mappingRow) {
+            $mapping[$mappingRow['variantId']][] = $mappingRow['parentId'];
+        }
+
+        return $mapping;
     }
 
     /**

@@ -13,6 +13,7 @@ oro:
         qty_sold.label: "Qty Sold"
         skip_empty_periods.label: "Exclude Empty Periods"
         item_number.label: "Item #"
+        variant.plural_label: Product Variants
         sku:
             label: SKU
             placeholder: "Enter Product Name or Item Number"

@@ -23,7 +23,7 @@ class LoadProductBrandData extends AbstractFixture implements ContainerAwareInte
         ],
         LoadBrandData::BRAND_2 => [
             'product-3',
-            'product-9',
+            'продукт-9',
         ]
     ];
 

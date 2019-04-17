@@ -12,16 +12,16 @@ use Symfony\Component\Translation\TranslatorInterface;
 class UpcomingLabelCheckoutLineItemValidatorTest extends \PHPUnit\Framework\TestCase
 {
     /** @var  UpcomingLabelCheckoutLineItemValidator */
-    protected $validator;
+    private $validator;
 
     /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $translator;
+    private $translator;
 
     /** @var ProductUpcomingProvider|\PHPUnit\Framework\MockObject\MockObject */
-    protected $provider;
+    private $provider;
 
     /** @var DateTimeFormatter|\PHPUnit\Framework\MockObject\MockObject */
-    protected $dateFormatter;
+    private $dateFormatter;
 
     protected function setUp()
     {
@@ -71,12 +71,12 @@ class UpcomingLabelCheckoutLineItemValidatorTest extends \PHPUnit\Framework\Test
         $this->translator->expects($this->once())
             ->method('trans')
             ->with('oro.inventory.is_upcoming.notification_with_date')
-            ->willReturn('This product will be available on ');
+            ->willReturn('This product will be available on 1/1/19');
 
-        $this->dateFormatter->expects($this->once())->method('formatDate')->with($today)->willReturn('01-01-2100');
+        $this->dateFormatter->expects($this->once())->method('formatDate')->with($today)->willReturn('1/1/19');
 
         $this->assertSame(
-            'This product will be available on 01-01-2100',
+            'This product will be available on 1/1/19',
             $this->validator->getMessageIfLineItemUpcoming($lineItem)
         );
     }

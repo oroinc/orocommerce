@@ -73,7 +73,7 @@ class CombinedPriceListToPriceListRepositoryTest extends WebTestCase
             ],
             'test getting price lists 3' => [
                 'combinedPriceList' => '2f_1t_3t',
-                'product' => 'product-7',
+                'product' => 'продукт-7',
                 'expectedPriceLists' => [],
             ],
         ];

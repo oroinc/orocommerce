@@ -41,12 +41,12 @@
                 - category_1_2_3_4
         hiddenProducts:
             - product-4
-            - product-7
             - product-8
+            - продукт-7
         hiddenProductsByCustomerGroups:
             customer_group.group2:
-                - product-7
                 - product-8
+                - продукт-7
             customer_group.group3:
                 - product-3
                 - product-6
@@ -57,20 +57,20 @@
                 - product-3
                 - product-6
                 - product-4
-                - product-7
                 - product-8
+                - продукт-7
             customer.level_1.2:
-                - product-7
                 - product-8
+                - продукт-7
             customer.level_1.2.1:
-                - product-7
                 - product-8
+                - продукт-7
             customer.level_1.3.1:
                 - product-3
                 - product-6
                 - product-4
-                - product-7
                 - product-8
+                - продукт-7
             customer.level_1.3.1.1:
                 - product-2
                 - product-3
@@ -120,12 +120,12 @@
                 - category_1_2_3_4
         hiddenProducts:
             - product-4
-            - product-7
             - product-8
+            - продукт-7
         hiddenProductsByCustomerGroups:
             customer_group.group2:
-                - product-7
                 - product-8
+                - продукт-7
             customer_group.group3:
                 - product-3
                 - product-6
@@ -136,20 +136,20 @@
                 - product-3
                 - product-6
                 - product-4
-                - product-7
                 - product-8
+                - продукт-7
             customer.level_1.2:
-                - product-7
                 - product-8
+                - продукт-7
             customer.level_1.2.1:
-                - product-7
                 - product-8
+                - продукт-7
             customer.level_1.3.1:
                 - product-3
                 - product-6
                 - product-4
-                - product-7
                 - product-8
+                - продукт-7
             customer.level_1.3.1.1:
                 - product-2
                 - product-3
@@ -225,15 +225,15 @@
             - product-2
             - product-5
             - product-4
-            - product-7
             - product-8
+            - продукт-7
         hiddenProductsByCustomerGroups:
             customer_group.group2:
                 - product-1
                 - product-2
                 - product-5
-                - product-7
                 - product-8
+                - продукт-7
             customer_group.group3:
                 - product-2
                 - product-3
@@ -246,33 +246,33 @@
                 - product-6
                 - product-5
                 - product-4
-                - product-7
                 - product-8
+                - продукт-7
             customer.level_1.2:
-                - product-7
                 - product-8
+                - продукт-7
             customer.level_1.2.1:
                 - product-1
                 - product-2
                 - product-3
                 - product-6
                 - product-5
-                - product-7
                 - product-8
+                - продукт-7
             customer.level_1.2.1.1:
                 - product-1
                 - product-2
                 - product-5
                 - product-4
-                - product-7
                 - product-8
+                - продукт-7
             customer.level_1.3.1:
                 - product-2
                 - product-3
                 - product-6
                 - product-4
-                - product-7
                 - product-8
+                - продукт-7
             customer.level_1.3.1.1:
                 - product-1
                 - product-2
@@ -332,20 +332,20 @@
                 - category_1_2_3_4
         hiddenProducts:
             - product-4
-            - product-7
             - product-8
+            - продукт-7
         hiddenProductsByCustomerGroups:
             customer_group.group2:
-                - product-7
                 - product-8
+                - продукт-7
             customer_group.group3:
                 - product-1
                 - product-3
                 - product-6
                 - product-5
                 - product-4
-                - product-7
                 - product-8
+                - продукт-7
         hiddenProductsByCustomers:
             customer.level_1.1:
                 - product-1
@@ -353,28 +353,28 @@
                 - product-3
                 - product-6
                 - product-4
-                - product-7
                 - product-8
+                - продукт-7
             customer.level_1.2:
-                - product-7
                 - product-8
+                - продукт-7
             customer.level_1.2.1:
-                - product-7
                 - product-8
+                - продукт-7
             customer.level_1.3.1:
                 - product-1
                 - product-3
                 - product-6
                 - product-5
                 - product-4
-                - product-7
                 - product-8
+                - продукт-7
             customer.level_1.3.1.1:
                 - product-2
                 - product-3
                 - product-6
-                - product-7
                 - product-8
+                - продукт-7
             customer.level_1.4:
                 - product-3
                 - product-4
@@ -422,12 +422,12 @@
                 - category_1_2_3_4
         hiddenProducts:
             - product-4
-            - product-7
             - product-8
+            - продукт-7
         hiddenProductsByCustomerGroups:
             customer_group.group2:
-                - product-7
                 - product-8
+                - продукт-7
             customer_group.group3:
                 - product-3
                 - product-6
@@ -438,20 +438,20 @@
                 - product-3
                 - product-6
                 - product-4
-                - product-7
                 - product-8
+                - продукт-7
             customer.level_1.2:
-                - product-7
                 - product-8
+                - продукт-7
             customer.level_1.2.1:
-                - product-7
                 - product-8
+                - продукт-7
             customer.level_1.3.1:
                 - product-3
                 - product-6
                 - product-4
-                - product-7
                 - product-8
+                - продукт-7
             customer.level_1.3.1.1:
                 - product-2
                 - product-3
@@ -502,12 +502,12 @@
                 - category_1_2_3_4
         hiddenProducts:
             - product-4
-            - product-7
             - product-8
+            - продукт-7
         hiddenProductsByCustomerGroups:
             customer_group.group2:
-                - product-7
                 - product-8
+                - продукт-7
             customer_group.group3:
                 - product-3
                 - product-6
@@ -518,20 +518,20 @@
                 - product-3
                 - product-6
                 - product-4
-                - product-7
                 - product-8
+                - продукт-7
             customer.level_1.2:
-                - product-7
                 - product-8
+                - продукт-7
             customer.level_1.2.1:
-                - product-7
                 - product-8
+                - продукт-7
             customer.level_1.3.1:
                 - product-3
                 - product-6
                 - product-4
-                - product-7
                 - product-8
+                - продукт-7
             customer.level_1.3.1.1:
                 - product-2
                 - product-3
@@ -582,12 +582,12 @@
                 - category_1_2_3_4
         hiddenProducts:
             - product-4
-            - product-7
             - product-8
+            - продукт-7
         hiddenProductsByCustomerGroups:
             customer_group.group2:
-                - product-7
                 - product-8
+                - продукт-7
             customer_group.group3:
                 - product-3
                 - product-6
@@ -598,20 +598,20 @@
                 - product-3
                 - product-6
                 - product-4
-                - product-7
                 - product-8
+                - продукт-7
             customer.level_1.2:
-                - product-7
                 - product-8
+                - продукт-7
             customer.level_1.2.1:
-                - product-7
                 - product-8
+                - продукт-7
             customer.level_1.3.1:
                 - product-3
                 - product-6
                 - product-4
-                - product-7
                 - product-8
+                - продукт-7
             customer.level_1.3.1.1:
                 - product-2
                 - product-3
@@ -662,12 +662,12 @@
                 - category_1_2_3_4
         hiddenProducts:
             - product-4
-            - product-7
             - product-8
+            - продукт-7
         hiddenProductsByCustomerGroups:
             customer_group.group2:
-                - product-7
                 - product-8
+                - продукт-7
             customer_group.group3:
                 - product-3
                 - product-6
@@ -678,20 +678,20 @@
                 - product-3
                 - product-6
                 - product-4
-                - product-7
                 - product-8
+                - продукт-7
             customer.level_1.2:
-                - product-7
                 - product-8
+                - продукт-7
             customer.level_1.2.1:
-                - product-7
                 - product-8
+                - продукт-7
             customer.level_1.3.1:
                 - product-3
                 - product-6
                 - product-4
-                - product-7
                 - product-8
+                - продукт-7
             customer.level_1.3.1.1:
                 - product-2
                 - product-3
@@ -747,12 +747,12 @@
                 - category_1_2_3_4
         hiddenProducts:
             - product-4
-            - product-7
             - product-8
+            - продукт-7
         hiddenProductsByCustomerGroups:
             customer_group.group2:
-                - product-7
                 - product-8
+                - продукт-7
             customer_group.group3:
                 - product-3
                 - product-6
@@ -763,26 +763,26 @@
                 - product-3
                 - product-6
                 - product-4
-                - product-7
                 - product-8
+                - продукт-7
             customer.level_1.2:
-                - product-7
                 - product-8
+                - продукт-7
             customer.level_1.2.1:
-                - product-7
                 - product-8
+                - продукт-7
             customer.level_1.2.1.1:
                 - product-1
                 - product-5
                 - product-4
-                - product-7
                 - product-8
+                - продукт-7
             customer.level_1.3.1:
                 - product-3
                 - product-6
                 - product-4
-                - product-7
                 - product-8
+                - продукт-7
             customer.level_1.3.1.1:
                 - product-2
                 - product-3
@@ -831,12 +831,12 @@
                 - category_1_2_3_4
         hiddenProducts:
             - product-4
-            - product-7
             - product-8
+            - продукт-7
         hiddenProductsByCustomerGroups:
             customer_group.group2:
-                - product-7
                 - product-8
+                - продукт-7
             customer_group.group3:
                 - product-3
                 - product-6
@@ -845,20 +845,20 @@
                 - product-1
                 - product-2
                 - product-4
-                - product-7
                 - product-8
+                - продукт-7
             customer.level_1.2:
-                - product-7
                 - product-8
+                - продукт-7
             customer.level_1.2.1:
-                - product-7
                 - product-8
+                - продукт-7
             customer.level_1.3.1:
                 - product-3
                 - product-6
                 - product-4
-                - product-7
                 - product-8
+                - продукт-7
             customer.level_1.3.1.1:
                 - product-2
                 - product-3
@@ -912,12 +912,12 @@
                 - category_1_2_3_4
         hiddenProducts:
             - product-4
-            - product-7
             - product-8
+            - продукт-7
         hiddenProductsByCustomerGroups:
             customer_group.group2:
-                - product-7
                 - product-8
+                - продукт-7
             customer_group.group3:
                 - product-3
                 - product-6
@@ -928,24 +928,24 @@
                 - product-3
                 - product-6
                 - product-4
-                - product-7
                 - product-8
+                - продукт-7
             customer.level_1.2:
-                - product-7
                 - product-8
+                - продукт-7
             customer.level_1.2.1:
-                - product-7
                 - product-8
+                - продукт-7
             customer.level_1.2.1.1:
                 - product-4
-                - product-7
                 - product-8
+                - продукт-7
             customer.level_1.3.1:
                 - product-3
                 - product-6
                 - product-4
-                - product-7
                 - product-8
+                - продукт-7
             customer.level_1.3.1.1:
                 - product-2
                 - product-3
@@ -995,12 +995,12 @@
                 - category_1_2_3_4
         hiddenProducts:
             - product-4
-            - product-7
             - product-8
+            - продукт-7
         hiddenProductsByCustomerGroups:
             customer_group.group2:
-                - product-7
                 - product-8
+                - продукт-7
             customer_group.group3:
                 - product-3
                 - product-6
@@ -1011,20 +1011,20 @@
                 - product-3
                 - product-6
                 - product-4
-                - product-7
                 - product-8
+                - продукт-7
             customer.level_1.2:
-                - product-7
                 - product-8
+                - продукт-7
             customer.level_1.2.1:
-                - product-7
                 - product-8
+                - продукт-7
             customer.level_1.3.1:
                 - product-3
                 - product-6
                 - product-4
-                - product-7
                 - product-8
+                - продукт-7
             customer.level_1.3.1.1:
                 - product-2
                 - product-3

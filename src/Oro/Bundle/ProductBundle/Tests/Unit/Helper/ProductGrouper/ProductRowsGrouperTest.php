@@ -20,17 +20,17 @@ class ProductRowsGrouperTest extends \PHPUnit\Framework\TestCase
     public function testProcess()
     {
         $products = [
-            $this->createProductRowObject('SKU1', 2, 'item'),
+            $this->createProductRowObject('SKU1Абв', 2, 'item'),
             $this->createProductRowObject('SKU2', 3, 'item'),
-            $this->createProductRowObject('SKU1', 3, 'item'),
-            $this->createProductRowObject('SKU1', 2, 'kg'),
-            $this->createProductRowObject('sku1', 1, 'item'),
+            $this->createProductRowObject('SKU1Абв', 3, 'item'),
+            $this->createProductRowObject('SKU1Абв', 2, 'kg'),
+            $this->createProductRowObject('sku1абв', 1, 'item'),
         ];
 
         $expectedResult = [
-            $this->createProductRowObject('SKU1', 6, 'item'),
+            $this->createProductRowObject('SKU1Абв', 6, 'item'),
             $this->createProductRowObject('SKU2', 3, 'item'),
-            $this->createProductRowObject('SKU1', 2, 'kg'),
+            $this->createProductRowObject('SKU1Абв', 2, 'kg'),
         ];
 
         $result = $this->grouper->process($products);

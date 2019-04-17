@@ -19,6 +19,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class ClearExpiredShoppingListsCommand extends ContainerAwareCommand implements CronCommandInterface
 {
     const NAME = 'oro:cron:shopping-list:clear-expired';
+    const CHUNK_SIZE = 10000;
 
     /**
      * {@inheritdoc}
@@ -45,19 +46,28 @@ class ClearExpiredShoppingListsCommand extends ContainerAwareCommand implements 
             ShoppingList::class
         );
 
-        $existsQB = $connection->createQueryBuilder();
-        $existsQB->select(1)
-            ->from('oro_customer_visitor', 'cv')
-            ->innerJoin('cv', $customerVisitorToShoppingListRelationTableName, 'rel', 'cv.id = rel.customervisitor_id')
-            ->where($existsQB->expr()->lte('cv.last_visit', ':expiredLastVisitDate'))
-            ->andWhere($existsQB->expr()->eq('oro_shopping_list.id', 'rel.shoppinglist_id'));
+        do {
+            $visitorsQB = $connection->createQueryBuilder();
+            $visitorsQB->select('rel.shoppinglist_id')
+                ->from('oro_customer_visitor', 'cv')
+                ->innerJoin(
+                    'cv',
+                    $customerVisitorToShoppingListRelationTableName,
+                    'rel',
+                    'cv.id = rel.customervisitor_id'
+                )
+                ->where($visitorsQB->expr()->lte('cv.last_visit', ':expiredLastVisitDate'))
+                ->setParameter('expiredLastVisitDate', $this->getExpiredLastVisitDate(), Type::DATETIME)
+                ->setMaxResults(self::CHUNK_SIZE);
+            $visitorIds = $visitorsQB->execute()->fetchAll(\PDO::FETCH_COLUMN);
 
-        $deleteQB = $connection->createQueryBuilder();
-        $deleteQB->delete('oro_shopping_list')
-            ->where('EXISTS(' . $existsQB->getSQL() . ')');
-        $deleteQB->setParameter('expiredLastVisitDate', $this->getExpiredLastVisitDate(), Type::DATETIME);
+            $deleteQB = $connection->createQueryBuilder();
+            $deleteQB->delete('oro_shopping_list')
+                ->where('id IN (:visitorIds)');
+            $deleteQB->setParameter('visitorIds', $visitorIds, Connection::PARAM_INT_ARRAY);
 
-        $deleteQB->execute();
+            $deletedCount = $deleteQB->execute();
+        } while ($deletedCount > 0);
 
         $output->writeln('<info>Clear expired guest shopping lists completed</info>');
     }

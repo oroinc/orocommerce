@@ -2,7 +2,7 @@ datagrids:
     products-select-grid-base-without-default-sorting:
         extended_entity_name: '%oro_product.entity.product.class%'
         options:
-            entityHint:        products
+            entityHint: oro.product.entity_plural_label
         source:
             type:         orm
             query:
@@ -137,7 +137,7 @@ datagrids:
     products-select-grid-frontend:
         acl_resource: oro_product_frontend_view
         options:
-            entityHint:        products
+            entityHint: oro.product.entity_plural_label
             frontend: true
         source:
             type: search
@@ -354,7 +354,7 @@ datagrids:
     product-product-variants-base:
         acl_resource: oro_product_view
         options:
-            entityHint: product variants
+            entityHint: oro.product.variant.plural_label
             entity_pagination: true
         source:
             type:         orm
@@ -518,7 +518,7 @@ datagrids:
     products-related-items-base:
         extended_entity_name: '%oro_product.entity.product.class%'
         options:
-            entityHint:        products
+            entityHint: oro.product.entity_plural_label
         source:
             type:         orm
             query:
@@ -686,7 +686,7 @@ datagrids:
     products-related-items-select:
         extends: products-select-grid-base-without-default-sorting
         options:
-            entityHint: products
+            entityHint: oro.product.entity_plural_label
         source:
             query:
                 select:
@@ -742,7 +742,7 @@ datagrids:
 
     frontend-product-search-grid:
         options:
-            entityHint:        products
+            entityHint: oro.product.entity_plural_label
             displayOptions:
                 selector: '.catalog__filter-controls__item_display-options'
             requireJSModules:
@@ -862,7 +862,7 @@ datagrids:
         extended_entity_name: '%oro_product.entity.brand.class%'
         acl_resource: oro_product_brand_update
         options:
-            entityHint:        brands
+            entityHint: oro.product.brand.entity_plural_label
         source:
             type:         orm
             query:

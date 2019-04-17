@@ -55,7 +55,7 @@ class FrontendProductPriceFilterTest extends FrontendWebTestCase
         return [
             'sort by price' => [
                 'expected' => [
-                    'product-7',
+                    'продукт-7',
                     'product-3',
                     'product-1',
                     'product-2',

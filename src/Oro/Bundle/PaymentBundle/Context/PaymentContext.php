@@ -4,6 +4,9 @@ namespace Oro\Bundle\PaymentBundle\Context;
 
 use Symfony\Component\HttpFoundation\ParameterBag;
 
+/**
+ * Implements PaymentContextInterface and provides the ability to save and manage parameters for payment
+ */
 class PaymentContext extends ParameterBag implements PaymentContextInterface
 {
     const FIELD_CUSTOMER = 'customer';
@@ -18,6 +21,7 @@ class PaymentContext extends ParameterBag implements PaymentContextInterface
     const FIELD_SOURCE_ENTITY = 'source_entity';
     const FIELD_SOURCE_ENTITY_ID = 'source_entity_id';
     const FIELD_WEBSITE = 'website';
+    const FIELD_TOTAL = 'total';
 
     /**
      * @param array $params
@@ -121,5 +125,13 @@ class PaymentContext extends ParameterBag implements PaymentContextInterface
     public function getWebsite()
     {
         return $this->get(self::FIELD_WEBSITE);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getTotal()
+    {
+        return $this->get(self::FIELD_TOTAL);
     }
 }

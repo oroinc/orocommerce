@@ -1,7 +1,7 @@
 datagrids:
     consents-grid:
         options:
-            entityHint:        consents
+            entityHint: oro.consent.entity_plural_label
             entity_pagination: true
         source:
             type:         orm

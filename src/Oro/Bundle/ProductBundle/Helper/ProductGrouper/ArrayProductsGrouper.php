@@ -2,8 +2,9 @@
 
 namespace Oro\Bundle\ProductBundle\Helper\ProductGrouper;
 
-use Doctrine\Common\Collections\ArrayCollection;
-
+/**
+ * Groups array/ArrayCollection of products by SKU and Unit
+ */
 class ArrayProductsGrouper implements ProductsGrouperInterface
 {
     /**
@@ -42,7 +43,7 @@ class ArrayProductsGrouper implements ProductsGrouperInterface
             && !empty($productRow['productUnit'])
             && !empty($productRow['productQuantity'])
         ) {
-            return sprintf('%s_%s', strtoupper($productRow['productSku']), $productRow['productUnit']);
+            return sprintf('%s_%s', mb_strtoupper($productRow['productSku']), $productRow['productUnit']);
         }
 
         return null;

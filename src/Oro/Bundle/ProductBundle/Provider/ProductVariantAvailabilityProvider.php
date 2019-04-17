@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Provider;
 
+use Doctrine\Common\Persistence\Proxy;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
@@ -10,6 +11,10 @@ use Oro\Bundle\ProductBundle\ProductVariant\Registry\ProductVariantFieldValueHan
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
+/**
+ * Get product variants by configurable products.
+ * Get products fields availability for given configurable products.
+ */
 class ProductVariantAvailabilityProvider
 {
     /** @var DoctrineHelper */
@@ -200,6 +205,110 @@ class ProductVariantAvailabilityProvider
         $handler = $this->fieldValueHandlerRegistry->getVariantFieldValueHandler($fieldType);
 
         return $handler->getScalarValue($variantValue);
+    }
+
+    /**
+     * Return array of simple products grouped by configurable product ids by given configurable products.
+     *
+     * @param array|Product[] $products
+     * @return array|Product[]
+     *
+     * [configurableProductId:int => simpleProducts:Product[]]
+     */
+    public function getSimpleProductsGroupedByConfigurable(array $products): array
+    {
+        $configurableProducts = $this->filterConfigurableProducts($products);
+        if (!$configurableProducts) {
+            return [];
+        }
+
+        $simpleProducts = $this->getSimpleProductsByConfigurable($configurableProducts);
+        if (!$simpleProducts) {
+            return [];
+        }
+
+        /** @var ProductRepository $productRepository */
+        $productRepository = $this->doctrineHelper->getEntityRepository(Product::class);
+        $mapping = $productRepository->getVariantsMapping($configurableProducts);
+        $simpleByConfigurable = [];
+        foreach ($simpleProducts as $simpleProduct) {
+            $id = $simpleProduct->getId();
+            if (empty($mapping[$id])) {
+                continue;
+            }
+            foreach ($mapping[$id] as $parentId) {
+                $simpleByConfigurable[$parentId][] = $simpleProduct;
+            }
+        }
+
+        return $simpleByConfigurable;
+    }
+
+    /**
+     * Return array of simple products by given configurable products.
+     *
+     * @param array $configurableProducts
+     * @return array|Product[]
+     */
+    public function getSimpleProductsByConfigurable(array $configurableProducts): array
+    {
+        /** @var ProductRepository $productRepository */
+        $productRepository = $this->doctrineHelper->getEntityRepository(Product::class);
+        $qb = $productRepository->getSimpleProductIdsByParentProductsQueryBuilder($configurableProducts);
+
+        $restrictProductVariantEvent = new RestrictProductVariantEvent($qb);
+        $this->eventDispatcher->dispatch(RestrictProductVariantEvent::NAME, $restrictProductVariantEvent);
+
+        $em = $this->doctrineHelper->getEntityManager(Product::class);
+
+        return array_map(
+            static function ($id) use ($em) {
+                return $em->getReference(Product::class, $id);
+            },
+            array_column($restrictProductVariantEvent->getQueryBuilder()->getQuery()->getArrayResult(), 'id')
+        );
+    }
+
+    /**
+     * @param array|Product[] $products
+     * @return array|Product[]
+     */
+    public function filterConfigurableProducts(array $products): array
+    {
+        $productsToLoadFromDb = [];
+        $configurableProducts = [];
+        // To not load proxies in loop collect all uninitialized products to load them all later by 1 query
+        foreach ($products as $product) {
+            if (!$product instanceof Proxy || ($product instanceof Proxy && $product->__isInitialized())) {
+                if ($product->isConfigurable()) {
+                    $configurableProducts[] = $product;
+                }
+            } else {
+                $productsToLoadFromDb[] = $product;
+            }
+        }
+
+        // Load information about configurable products from DB for non-initialized proxies
+        if ($productsToLoadFromDb) {
+            /** @var ProductRepository $productRepository */
+            $productRepository = $this->doctrineHelper->getEntityRepository(Product::class);
+            $configurableProductIds = $productRepository->getConfigurableProductIds($productsToLoadFromDb);
+            if (!$configurableProductIds) {
+                return $configurableProducts;
+            }
+
+            $configurableProducts = array_merge(
+                $configurableProducts,
+                array_filter(
+                    $productsToLoadFromDb,
+                    static function (Product $product) use ($configurableProductIds) {
+                        return \in_array($product->getId(), $configurableProductIds, true);
+                    }
+                )
+            );
+        }
+
+        return $configurableProducts;
     }
 
     /**

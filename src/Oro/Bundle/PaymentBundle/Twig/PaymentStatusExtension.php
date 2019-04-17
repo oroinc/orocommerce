@@ -56,8 +56,7 @@ class PaymentStatusExtension extends \Twig_Extension
         return [
             new \Twig_SimpleFunction(
                 'get_payment_status_label',
-                [$this, 'formatPaymentStatusLabel'],
-                ['is_safe' => ['html']]
+                [$this, 'formatPaymentStatusLabel']
             ),
             new \Twig_SimpleFunction(
                 'get_payment_status',

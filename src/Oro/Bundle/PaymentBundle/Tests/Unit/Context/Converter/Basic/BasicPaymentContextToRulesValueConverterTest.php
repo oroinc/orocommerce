@@ -71,6 +71,8 @@ class BasicPaymentContextToRulesValueConverterTest extends \PHPUnit\Framework\Te
             $this->createMock(VirtualFieldsProductDecoratorFactory::class)
         );
 
+        $totalAmount = 10.0;
+
         $paymentContext = new PaymentContext([
             PaymentContext::FIELD_LINE_ITEMS => new DoctrinePaymentLineItemCollection([
                 new PaymentLineItem([PaymentLineItem::FIELD_PRODUCT => $this->getEntity(Product::class, ['id' => 1])]),
@@ -83,7 +85,8 @@ class BasicPaymentContextToRulesValueConverterTest extends \PHPUnit\Framework\Te
             PaymentContext::FIELD_CURRENCY => 'USD',
             PaymentContext::FIELD_SUBTOTAL => $this->subtotalMock,
             PaymentContext::FIELD_CUSTOMER => $this->customerMock,
-            PaymentContext::FIELD_CUSTOMER_USER => $this->customerUserMock
+            PaymentContext::FIELD_CUSTOMER_USER => $this->customerUserMock,
+            PaymentContext::FIELD_TOTAL => $totalAmount
         ]);
 
 
@@ -105,6 +108,7 @@ class BasicPaymentContextToRulesValueConverterTest extends \PHPUnit\Framework\Te
             'subtotal' => $this->subtotalMock,
             'customer' => $this->customerMock,
             'customerUser' => $this->customerUserMock,
+            'total' => $totalAmount
         ], $converter->convert($paymentContext));
     }
 }

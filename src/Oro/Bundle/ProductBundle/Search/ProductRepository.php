@@ -73,7 +73,7 @@ class ProductRepository extends WebsiteSearchRepository
         $searchQuery = $this->createQuery();
 
         // Convert to uppercase for insensitive search in all DB
-        $upperCaseSkus = array_map("strtoupper", $skus);
+        $upperCaseSkus = array_map('mb_strtoupper', $skus);
 
         $searchQuery
             ->addSelect('sku')
@@ -146,7 +146,7 @@ class ProductRepository extends WebsiteSearchRepository
             ->getCriteria()
             ->andWhere(
                 Criteria::expr()->orX(
-                    Criteria::expr()->in('sku_uppercase', [strtoupper($search)]),
+                    Criteria::expr()->in('sku_uppercase', [mb_strtoupper($search)]),
                     Criteria::expr()->contains('names_LOCALIZATION_ID', $search)
                 )
             )

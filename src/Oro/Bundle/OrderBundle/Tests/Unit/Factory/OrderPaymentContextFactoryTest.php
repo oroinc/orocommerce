@@ -7,8 +7,8 @@ use Oro\Bundle\OrderBundle\Converter\OrderPaymentLineItemConverterInterface;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Factory\OrderPaymentContextFactory;
+use Oro\Bundle\PaymentBundle\Context\Builder\Basic\BasicPaymentContextBuilder;
 use Oro\Bundle\PaymentBundle\Context\Builder\Factory\PaymentContextBuilderFactoryInterface;
-use Oro\Bundle\PaymentBundle\Context\Builder\PaymentContextBuilderInterface;
 use Oro\Bundle\PaymentBundle\Context\LineItem\Collection\Doctrine\DoctrinePaymentLineItemCollection;
 use Oro\Bundle\PaymentBundle\Context\PaymentLineItem;
 
@@ -30,7 +30,7 @@ class OrderPaymentContextFactoryTest extends AbstractOrderContextFactoryTest
     private $paymentContextBuilderFactoryMock;
 
     /**
-     * @var PaymentContextBuilderInterface|\PHPUnit\Framework\MockObject\MockObject
+     * @var BasicPaymentContextBuilder|\PHPUnit\Framework\MockObject\MockObject
      */
     private $contextBuilder;
 
@@ -40,7 +40,7 @@ class OrderPaymentContextFactoryTest extends AbstractOrderContextFactoryTest
 
         $this->paymentContextBuilderFactoryMock = $this->createMock(PaymentContextBuilderFactoryInterface::class);
 
-        $this->contextBuilder = $this->createMock(PaymentContextBuilderInterface::class);
+        $this->contextBuilder = $this->createMock(BasicPaymentContextBuilder::class);
 
         $this->factory = new OrderPaymentContextFactory(
             $this->paymentLineItemConverterMock,
@@ -91,6 +91,11 @@ class OrderPaymentContextFactoryTest extends AbstractOrderContextFactoryTest
             ->expects($this->once())
             ->method('setShippingMethod')
             ->with(self::TEST_SHIPPING_METHOD);
+
+        $this->contextBuilder
+            ->expects($this->once())
+            ->method('setTotal')
+            ->with($order->getTotal());
 
         $this->paymentContextBuilderFactoryMock
             ->expects($this->once())

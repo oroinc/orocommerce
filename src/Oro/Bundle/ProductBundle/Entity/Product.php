@@ -1296,8 +1296,7 @@ class Product extends ExtendProduct implements
     {
         $this->createdAt = new \DateTime('now', new \DateTimeZone('UTC'));
         $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
-        // No need in using mb_* function here because SKU must contain only latin letters, numbers and "-" or "_".
-        $this->skuUppercase = strtoupper($this->sku);
+        $this->skuUppercase = mb_strtoupper($this->sku);
         if (!$this->getDefaultName()) {
             throw new \RuntimeException('Product has to have a default name');
         }
@@ -1313,8 +1312,7 @@ class Product extends ExtendProduct implements
     public function preUpdate()
     {
         $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
-        // No need in using mb_* function here because SKU must contain only latin letters, numbers and "-" or "_".
-        $this->skuUppercase = strtoupper($this->sku);
+        $this->skuUppercase = mb_strtoupper($this->sku);
         if (!$this->getDefaultName()) {
             throw new \RuntimeException('Product has to have a default name');
         }

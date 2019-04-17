@@ -40,18 +40,15 @@ class WeightUnitValueExtension extends \Twig_Extension
         return [
             new \Twig_SimpleFilter(
                 'oro_weight_unit_format_value',
-                [$this, 'format'],
-                ['is_safe' => ['html']]
+                [$this, 'format']
             ),
             new \Twig_SimpleFilter(
                 'oro_weight_unit_format_value_short',
-                [$this, 'formatShort'],
-                ['is_safe' => ['html']]
+                [$this, 'formatShort']
             ),
             new \Twig_SimpleFilter(
                 'oro_weight_unit_format_code',
-                [$this, 'formatCode'],
-                ['is_safe' => ['html']]
+                [$this, 'formatCode']
             ),
         ];
     }

@@ -28,7 +28,7 @@ Feature: Single Page Checkout Fields Values Are Saved
   Scenario: Check that "PO Number", "Notes" and "Do not ship later than" fields are not cleared after page reload
     Given I fill "Checkout Order Review Form" with:
       | Notes                  | Some Notes  |
-      | Do not ship later than | Jul 1, 2018 |
+      | Do not ship later than | 7/1/18      |
     And I type "PO15" in "PO Number" from "Checkout Order Review Form"
     And I click on empty space
     # Wait till ajax query for state save transition will be triggered
@@ -38,7 +38,7 @@ Feature: Single Page Checkout Fields Values Are Saved
     Then "Checkout Order Review Form" must contains values:
       | PO Number              | PO15        |
       | Notes                  | Some Notes  |
-      | Do not ship later than | Jul 1, 2018 |
+      | Do not ship later than | 7/1/18      |
 
   Scenario: Check that "PO Number", "Notes" and "Do not ship later than" fields are not cleared after checkout is started from shopping list again
     Given I click "Account"
@@ -47,7 +47,7 @@ Feature: Single Page Checkout Fields Values Are Saved
     Then "Checkout Order Review Form" must contains values:
       | PO Number              | PO15        |
       | Notes                  | Some Notes  |
-      | Do not ship later than | Jul 1, 2018 |
+      | Do not ship later than | 7/1/18      |
 
   Scenario: Check that "PO Number", "Notes" and "Do not ship later than" fields are not cleared after user returns to the checkout from other page
     Given I click "Account"
@@ -56,7 +56,7 @@ Feature: Single Page Checkout Fields Values Are Saved
     Then "Checkout Order Review Form" must contains values:
       | PO Number              | PO15        |
       | Notes                  | Some Notes  |
-      | Do not ship later than | Jul 1, 2018 |
+      | Do not ship later than | 7/1/18      |
 
   Scenario: Complete checkout and verify fields values for Order from History
     Given I click "Submit Order"

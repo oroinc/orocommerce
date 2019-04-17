@@ -116,7 +116,7 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
             ProductWithInventoryStatus::class,
             [
                 'id' => 777,
-                'sku' => 'sku123',
+                'sku' => 'sku123Абв',
                 'status' => Product::STATUS_ENABLED,
                 'type' => Product::TYPE_CONFIGURABLE,
                 'inventoryStatus' => new InventoryStatusStub('in_stock', 'In Stock'),
@@ -254,8 +254,8 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
 
         $expected[$product->getId()] = [
             'product_id' => [['value' => $product->getId(), 'all_text' => false]],
-            'sku' => [['value' => 'sku123', 'all_text' => true]],
-            'sku_uppercase' => [['value' => 'SKU123', 'all_text' => true]],
+            'sku' => [['value' => 'sku123Абв', 'all_text' => true]],
+            'sku_uppercase' => [['value' => 'SKU123АБВ', 'all_text' => true]],
             'status' => [['value' => Product::STATUS_ENABLED, 'all_text' => false]],
             'type' => [['value' => Product::TYPE_CONFIGURABLE, 'all_text' => false]],
             'inventory_status' => [['value' => 'in_stock', 'all_text' => false]],

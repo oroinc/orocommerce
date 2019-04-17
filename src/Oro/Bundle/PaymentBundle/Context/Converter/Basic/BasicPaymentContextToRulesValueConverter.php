@@ -7,6 +7,9 @@ use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Context\PaymentLineItemInterface;
 use Oro\Bundle\PaymentBundle\ExpressionLanguage\DecoratedProductLineItemFactory;
 
+/**
+ * Converts PaymentContext to an array
+ */
 class BasicPaymentContextToRulesValueConverter implements PaymentContextToRulesValueConverterInterface
 {
     /**
@@ -42,6 +45,7 @@ class BasicPaymentContextToRulesValueConverter implements PaymentContextToRulesV
             'subtotal' => $paymentContext->getSubtotal(),
             'customer' => $paymentContext->getCustomer(),
             'customerUser' => $paymentContext->getCustomerUser(),
+            'total' => $paymentContext->getTotal(),
         ];
     }
 }

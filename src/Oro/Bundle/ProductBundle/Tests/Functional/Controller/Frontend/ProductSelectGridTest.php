@@ -79,19 +79,51 @@ class ProductSelectGridTest extends WebTestCase
         return [
             [
                 [self::DATAGRID_NAME.'[_sort_by][productName]' => 'DESC'],
-                array_reverse(LoadProductData::PRODUCTS_1_2_3_6_7_8_9)
+                array_reverse([
+                    LoadProductData::PRODUCT_1,
+                    LoadProductData::PRODUCT_2,
+                    LoadProductData::PRODUCT_3,
+                    LoadProductData::PRODUCT_6,
+                    LoadProductData::PRODUCT_8,
+                    LoadProductData::PRODUCT_7,
+                    LoadProductData::PRODUCT_9
+                ])
             ],
             [
                 [self::DATAGRID_NAME.'[_sort_by][productName]' => 'ASC'],
-                LoadProductData::PRODUCTS_1_2_3_6_7_8_9
+                [
+                    LoadProductData::PRODUCT_1,
+                    LoadProductData::PRODUCT_2,
+                    LoadProductData::PRODUCT_3,
+                    LoadProductData::PRODUCT_6,
+                    LoadProductData::PRODUCT_8,
+                    LoadProductData::PRODUCT_7,
+                    LoadProductData::PRODUCT_9
+                ]
             ],
             [
                 [self::DATAGRID_NAME.'[_sort_by][sku]' => 'DESC'],
-                array_reverse(LoadProductData::PRODUCTS_1_2_3_6_7_8_9)
+                array_reverse([
+                    LoadProductData::PRODUCT_1,
+                    LoadProductData::PRODUCT_2,
+                    LoadProductData::PRODUCT_3,
+                    LoadProductData::PRODUCT_6,
+                    LoadProductData::PRODUCT_8,
+                    LoadProductData::PRODUCT_7,
+                    LoadProductData::PRODUCT_9
+                ])
             ],
             [
                 [self::DATAGRID_NAME.'[_sort_by][sku]' => 'ASC'],
-                LoadProductData::PRODUCTS_1_2_3_6_7_8_9
+                [
+                    LoadProductData::PRODUCT_1,
+                    LoadProductData::PRODUCT_2,
+                    LoadProductData::PRODUCT_3,
+                    LoadProductData::PRODUCT_6,
+                    LoadProductData::PRODUCT_8,
+                    LoadProductData::PRODUCT_7,
+                    LoadProductData::PRODUCT_9
+                ]
             ]
         ];
     }
@@ -107,9 +139,15 @@ class ProductSelectGridTest extends WebTestCase
                     self::DATAGRID_NAME.'[_filter][productName][value]' => 'product',
                     self::DATAGRID_NAME.'[_filter][productName][type]' => TextFilterType::TYPE_CONTAINS,
                 ],
-                LoadProductData::PRODUCTS_1_2_3_6_7_8_9
+                [
+                    LoadProductData::PRODUCT_1,
+                    LoadProductData::PRODUCT_2,
+                    LoadProductData::PRODUCT_3,
+                    LoadProductData::PRODUCT_6,
+                    LoadProductData::PRODUCT_8,
+                ]
             ],
-//            @todo uncomment after fix BAP-16099
+            // Uncomment after fix BAP-16099.
 //            [
 //                [
 //                    self::DATAGRID_NAME.'[_filter][productName][value]' => 'product-1.names',

@@ -4,7 +4,7 @@ namespace Oro\Bundle\PayPalBundle\Tests\Unit\Method;
 
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
+use Oro\Bundle\PaymentBundle\Context\PaymentContext;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Oro\Bundle\PaymentBundle\Model\AddressOptionModel;
@@ -159,11 +159,37 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
         $this->assertSame('payflow_express_checkout', $this->expressCheckout->getIdentifier());
     }
 
-    public function testIsApplicable()
+    /**
+     * @param float $amount
+     * @param bool $expectedIsApplicable
+     * @dataProvider isApplicableDataProvider
+     */
+    public function testIsApplicable($amount, $expectedIsApplicable)
     {
-        /** @var PaymentContextInterface|\PHPUnit\Framework\MockObject\MockObject $context */
-        $context = $this->createMock(PaymentContextInterface::class);
-        $this->assertTrue($this->expressCheckout->isApplicable($context));
+        /** @var PaymentContext|\PHPUnit\Framework\MockObject\MockObject $context */
+        $context = $this->createMock(PaymentContext::class);
+        $context->expects($this->once())
+            ->method('getTotal')
+            ->willReturn($amount);
+
+        $this->assertEquals($expectedIsApplicable, $this->expressCheckout->isApplicable($context));
+    }
+
+    /**
+     * @return array
+     */
+    public function isApplicableDataProvider()
+    {
+        return [
+            'not applicable if order total is zero' => [
+                'amount' => 0.0,
+                'expectedIsApplicable' => false
+            ],
+            'applicable if order total is greater than zero' => [
+                'amount' => 0.1,
+                'expectedIsApplicable' => true
+            ]
+        ];
     }
 
     /**

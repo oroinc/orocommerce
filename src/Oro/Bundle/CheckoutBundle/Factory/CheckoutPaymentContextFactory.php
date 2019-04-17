@@ -124,6 +124,11 @@ class CheckoutPaymentContextFactory
             $paymentContextBuilder->setCustomerUser($checkout->getCustomerUser());
         }
 
+        if (method_exists($paymentContextBuilder, 'setTotal')) {
+            $total = $this->totalProcessor->getTotal($checkout);
+            $paymentContextBuilder->setTotal($total->getAmount());
+        }
+
         return $paymentContextBuilder->getResult();
     }
 

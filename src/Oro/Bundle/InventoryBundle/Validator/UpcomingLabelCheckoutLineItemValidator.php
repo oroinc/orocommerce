@@ -7,22 +7,25 @@ use Oro\Bundle\InventoryBundle\Provider\ProductUpcomingProvider;
 use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatter;
 use Symfony\Component\Translation\TranslatorInterface;
 
+/**
+ * Provides upcoming notification message for checkout line item.
+ */
 class UpcomingLabelCheckoutLineItemValidator
 {
     /**
      * @var TranslatorInterface
      */
-    protected $translator;
+    private $translator;
 
     /**
      * @var DateTimeFormatter
      */
-    protected $dateFormatter;
+    private $dateFormatter;
 
     /**
      * @var ProductUpcomingProvider
      */
-    protected $productUpcomingProvider;
+    private $productUpcomingProvider;
 
     /**
      * @param ProductUpcomingProvider $ProductUpcomingProvider
@@ -47,11 +50,14 @@ class UpcomingLabelCheckoutLineItemValidator
     public function getMessageIfLineItemUpcoming(CheckoutLineItem $lineItem)
     {
         $product = $lineItem->getProduct();
+
         if ($this->productUpcomingProvider->isUpcoming($product)) {
             $availabilityDate = $this->productUpcomingProvider->getAvailabilityDate($product);
             if ($availabilityDate) {
-                $message = $this->translator->trans('oro.inventory.is_upcoming.notification_with_date');
-                return $message . $this->dateFormatter->formatDate($availabilityDate);
+                return $this->translator->trans(
+                    'oro.inventory.is_upcoming.notification_with_date',
+                    ['%date%' => $this->dateFormatter->formatDate($availabilityDate)]
+                );
             }
 
             return $this->translator->trans('oro.inventory.is_upcoming.notification');

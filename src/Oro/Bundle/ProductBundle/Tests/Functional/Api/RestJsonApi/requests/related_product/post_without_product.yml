@@ -4,4 +4,4 @@ data:
         relatedItem:
             data:
                 type: products
-                id: '<toString(@product-7->id)>'
+                id: '<toString(@продукт-7->id)>'

@@ -483,7 +483,7 @@ oro_behat_extension:
       selector: 'div.tab-pane.active div.oro-datagrid'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
 
-    AddProductsPopup:
+    Add Products Popup:
       selector: 'div.ui-dialog div.oro-datagrid'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
 
@@ -1083,6 +1083,7 @@ oro_behat_extension:
         - OroLocaleBundle::LocalizationContext
         - OroFrontendLocalizationBundle::LocalizationSwitcherContext
         - OroEntityExtendBundle::FeatureContext
+        - OroPromotionBundle::PromotionContext
         - OroImportExportBundle::ImportExportContext:
             - '@oro_entity.entity_alias_resolver'
             - '@oro_importexport.processor.registry'

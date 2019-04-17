@@ -11,10 +11,11 @@ use Oro\Bundle\RFPBundle\Entity\RequestProduct;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 class RequestTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTestCaseTrait;
+    use EntityTestCaseTrait, EntityTrait;
 
     public function testConstruct()
     {
@@ -116,5 +117,20 @@ class RequestTest extends \PHPUnit\Framework\TestCase
         $request->setPoNumber($poNumber);
 
         $this->assertEquals($poNumber, $request->getIdentifier());
+    }
+
+    public function testOwnerEmailInterface()
+    {
+        $request = $this->getEntity(Request::class, [
+            'id' => 74,
+            'firstName' => 'first',
+            'lastName' => 'last'
+        ]);
+
+        $this->assertEquals(74, $request->getId());
+        $this->assertEquals('first', $request->getFirstName());
+        $this->assertEquals('last', $request->getLastName());
+        $this->assertEquals(['email'], $request->getEmailFields());
+        $this->assertEquals(Request::class, $request->getClass());
     }
 }

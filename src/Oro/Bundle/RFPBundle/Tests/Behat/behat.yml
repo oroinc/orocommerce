@@ -59,6 +59,16 @@ oro_behat_extension:
             class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
             selector: 'textarea[name="oro_rfp_frontend_request[note]"]'
 
+        Request Form:
+            selector: 'form[name^="oro_rfp_request"]'
+            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+            options:
+                mapping:
+                    Line Item Product:
+                        type: 'css'
+                        locator: 'input[name="oro_rfp_request[requestProducts][0][product]"]'
+                        element: Select2Entity
+
     pages:
         RequestViewBackendPage:
             class: Oro\Bundle\RFPBundle\Tests\Behat\Page\RequestViewPage

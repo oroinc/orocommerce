@@ -30,13 +30,11 @@ class ProductUnitLabelExtension extends \Twig_Extension
         return [
             new \Twig_SimpleFilter(
                 'oro_format_product_unit_label',
-                [$this, 'format'],
-                ['is_safe' => ['html']]
+                [$this, 'format']
             ),
             new \Twig_SimpleFilter(
                 'oro_format_short_product_unit_label',
-                [$this, 'formatShort'],
-                ['is_safe' => ['html']]
+                [$this, 'formatShort']
             ),
         ];
     }

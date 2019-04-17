@@ -164,6 +164,7 @@ class ProductRowTypeTest extends FormIntegrationTestCase
     public function testBuildView()
     {
         $product = new Product();
+        $product->setSku('sku123Абв');
 
         $view = new FormView();
 
@@ -192,7 +193,7 @@ class ProductRowTypeTest extends FormIntegrationTestCase
     public function testGetProductFromParent()
     {
         $product = new Product();
-        $product->setSku('sku1');
+        $product->setSku('sku1Абв');
 
         $view = new FormView();
 
@@ -212,7 +213,7 @@ class ProductRowTypeTest extends FormIntegrationTestCase
             ->with('products')
             ->willReturn(
                 [
-                    'SKU1' => $product,
+                    'SKU1АБВ' => $product,
                 ]
             );
 
@@ -222,7 +223,7 @@ class ProductRowTypeTest extends FormIntegrationTestCase
 
         /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $skuField = $this->createMock('Symfony\Component\Form\FormInterface');
-        $skuField->expects($this->once())->method('getData')->willReturn('sku1');
+        $skuField->expects($this->once())->method('getData')->willReturn('sku1Абв');
 
         /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock('Symfony\Component\Form\FormInterface');

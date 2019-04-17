@@ -216,7 +216,7 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit\Framework\TestCase
         array $expectedLineItems = []
     ) {
         /** @var \PHPUnit\Framework\MockObject\MockObject|ShoppingList $shoppingList */
-        $shoppingList = $this->createMock('Oro\Bundle\ShoppingListBundle\Entity\ShoppingList');
+        $shoppingList = $this->createMock(ShoppingList::class);
         $shoppingList->expects($this->any())
             ->method('getId')
             ->willReturn(1);
@@ -255,11 +255,8 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit\Framework\TestCase
                         $this->assertEquals($expectedLineItem->getQuantity(), $lineItem->getQuantity());
                         $this->assertEquals($customerUser, $lineItem->getCustomerUser());
                         $this->assertEquals($organization, $lineItem->getOrganization());
-                        $this->assertInstanceOf('Oro\Bundle\ProductBundle\Entity\Product', $lineItem->getProduct());
-                        $this->assertInstanceOf(
-                            'Oro\Bundle\ProductBundle\Entity\ProductUnit',
-                            $lineItem->getUnit()
-                        );
+                        $this->assertInstanceOf(Product::class, $lineItem->getProduct());
+                        $this->assertInstanceOf(ProductUnit::class, $lineItem->getUnit());
                     }
 
                     return true;
@@ -285,7 +282,7 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit\Framework\TestCase
             ],
             'lower case sku is acceptable in productUnitsWithQuantities too' => [
                 'productIds' => [1, 2],
-                'productUnitsWithQuantities' => ['SKU1' => ['item' => 5], 'sku2' => ['item' => 3]],
+                'productUnitsWithQuantities' => ['SKU1' => ['item' => 5], 'sku2абв' => ['item' => 3]],
                 'expectedLineItems' => [(new LineItem())->setQuantity(5), (new LineItem())->setQuantity(3)]
             ]
         ];
@@ -317,11 +314,10 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit\Framework\TestCase
      */
     protected function getManagerRegistry()
     {
-        /** @var EntityManager|\PHPUnit\Framework\MockObject\MockObject $em */
-        $em = $this->getMockBuilder('Doctrine\ORM\EntityManager')->disableOriginalConstructor()->getMock();
+        $em = $this->createMock(EntityManager::class);
 
         /** @var AbstractQuery|\PHPUnit\Framework\MockObject\MockObject $query */
-        $query = $this->getMockBuilder('Doctrine\ORM\AbstractQuery')
+        $query = $this->getMockBuilder(AbstractQuery::class)
             ->disableOriginalConstructor()
             ->setMethods(['iterate'])
             ->getMockForAbstractClass();
@@ -329,12 +325,14 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit\Framework\TestCase
         $product1 = $this->getEntity(Product::class, [
             'id' => 1,
             'sku' => 'sku1',
+            'skuUppercase' => 'SKU1',
             'primaryUnitPrecision' => (new ProductUnitPrecision())->setUnit(new ProductUnit())
         ]);
 
         $product2 = $this->getEntity(Product::class, [
             'id' => 2,
-            'sku' => 'sku2',
+            'sku' => 'sku2абв',
+            'skuUppercase' => 'SKU2АБВ',
             'primaryUnitPrecision' => (new ProductUnitPrecision())->setUnit(new ProductUnit())
         ]);
 
@@ -343,17 +341,12 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit\Framework\TestCase
             ->method('iterate')
             ->willReturn($iterableResult);
 
-        /** @var QueryBuilder|\PHPUnit\Framework\MockObject\MockObject $queryBuilder */
-        $queryBuilder = $this->getMockBuilder('Doctrine\ORM\QueryBuilder')
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $queryBuilder = $this->createMock(QueryBuilder::class);
         $queryBuilder->expects($this->any())
             ->method('getQuery')
             ->willReturn($query);
 
-        /** @var EntityRepository|\PHPUnit\Framework\MockObject\MockObject $productRepository */
-        $productRepository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
+        $productRepository = $this->getMockBuilder(EntityRepository::class)
             ->disableOriginalConstructor()
             ->setMethods(['getProductsQueryBuilder', 'findOneBy'])
             ->getMock();
@@ -362,16 +355,8 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit\Framework\TestCase
             ->method('getProductsQueryBuilder')
             ->willReturn($queryBuilder);
 
-        /** @var EntityRepository|\PHPUnit\Framework\MockObject\MockObject $shoppingListRepository */
-        $shoppingListRepository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        /** @var EntityRepository|\PHPUnit\Framework\MockObject\MockObject $productUnitRepository */
-        $productUnitRepository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
-            ->disableOriginalConstructor()
-            ->setMethods(['findOneBy'])
-            ->getMock();
+        $shoppingListRepository = $this->createMock(EntityRepository::class);
+        $productUnitRepository = $this->createMock(EntityRepository::class);
 
         $productUnitRepository->expects($this->any())
             ->method('findOneBy')
@@ -384,9 +369,9 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit\Framework\TestCase
             ->will(
                 $this->returnValueMap(
                     [
-                        ['Oro\Bundle\ShoppingListBundle\Entity\ShoppingList', $shoppingListRepository],
-                        ['Oro\Bundle\ProductBundle\Entity\Product', $productRepository],
-                        ['Oro\Bundle\ProductBundle\Entity\ProductUnit', $productUnitRepository],
+                        [ShoppingList::class, $shoppingListRepository],
+                        [Product::class, $productRepository],
+                        [ProductUnit::class, $productUnitRepository],
                     ]
                 )
             );
@@ -399,11 +384,7 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit\Framework\TestCase
             )
         );
 
-        /** @var \PHPUnit\Framework\MockObject\MockObject|Registry $managerRegistry */
-        $managerRegistry = $this->getMockBuilder('Doctrine\Bundle\DoctrineBundle\Registry')
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $managerRegistry = $this->createMock(Registry::class);
         $managerRegistry->expects($this->any())
             ->method('getManagerForClass')
             ->willReturn($em);

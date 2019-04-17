@@ -109,11 +109,9 @@ class FeatureContext extends OroFeatureContext implements
      */
     public function openQuote($qid)
     {
-        $quote = $this->getQuote($qid);
-
         $url = $this->getContainer()
             ->get('router')
-            ->generate('oro_sale_quote_view', ['id' => $quote->getId()]);
+            ->generate('oro_sale_quote_view', ['id' => $qid]);
 
         $this->visitPath($url);
         $this->waitForAjax();

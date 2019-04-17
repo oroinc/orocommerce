@@ -77,8 +77,7 @@ class PaymentMethodExtension extends \Twig_Extension
             ),
             new \Twig_SimpleFunction(
                 'get_payment_method_admin_label',
-                [$this, 'formatPaymentMethodAdminLabel'],
-                ['is_safe' => ['html']]
+                [$this, 'formatPaymentMethodAdminLabel']
             ),
             new \Twig_SimpleFunction(
                 'oro_payment_method_config_template',

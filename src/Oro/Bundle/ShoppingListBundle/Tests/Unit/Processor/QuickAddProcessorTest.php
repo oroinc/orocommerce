@@ -126,16 +126,16 @@ class QuickAddProcessorTest extends AbstractQuickAddProcessorTest
             'shopping list with same products couple of times' => [
                 [
                     ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
-                        ['productSku' => 'sku1', 'productQuantity' => 2, 'productUnit' => 'item'],
-                        ['productSku' => 'sku1', 'productQuantity' => 3, 'productUnit' => 'kg'],
-                        ['productSku' => 'sku1', 'productQuantity' => 4, 'productUnit' => 'set'],
+                        ['productSku' => 'sku1абв', 'productQuantity' => 2, 'productUnit' => 'item'],
+                        ['productSku' => 'sku1Абв', 'productQuantity' => 3, 'productUnit' => 'kg'],
+                        ['productSku' => 'sku1абВ', 'productQuantity' => 4, 'productUnit' => 'set'],
                         ['productSku' => 'sku2', 'productQuantity' => 5, 'productUnit' => 'item'],
                         ['productSku' => 'sku2', 'productQuantity' => 6, 'productUnit' => 'kg'],
                     ]
                 ],
                 new Request(),
-                ['sku1' => 1, 'sku2' => 2],
-                ['SKU1' => ['item' => 2, 'kg' => 3, 'set' => 4], 'SKU2' => ['item' => 5, 'kg' => 6]]
+                ['sku1абв' => 1, 'sku2' => 2],
+                ['SKU1АБВ' => ['item' => 2, 'kg' => 3, 'set' => 4], 'SKU2' => ['item' => 5, 'kg' => 6]]
             ],
             'shopping list with products skus in descending order' => [
                 [
