@@ -1,6 +1,6 @@
 @regression
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
-@fixture-OroAuthorizeNetBundle:AuthorizeNetFixture.yml
+@fixture-OroPaymentBundle:ProductsAndShoppingListsForPayments.yml
 
 Feature: Process order submission with PayPal Payments Pro and Authorize & Capture payment action guest checkout
   In order to purchase goods using PayPal Payments Pro payment system
