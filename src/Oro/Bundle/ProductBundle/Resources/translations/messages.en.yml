@@ -131,6 +131,9 @@ oro:
             description: The product attribute family, which defines the configurable attributes that can be used o a configurable product.
             plural_label: Product Families
 
+        product_attributes:
+            plural_label: Product Attributes
+
         entity_config:
             block_titles:
                 backend.label: Backoffice options

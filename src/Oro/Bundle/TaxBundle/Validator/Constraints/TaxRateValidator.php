@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\TaxBundle\Validator\Constraints;
 
-use Oro\Bundle\TaxBundle\Form\Type\TaxType;
 use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
@@ -25,7 +24,7 @@ class TaxRateValidator extends ConstraintValidator
             return;
         }
 
-        if (!$this->isNoMoreDecimalPlacesThan($value, TaxationSettingsProvider::CALCULATION_SCALE)) {
+        if ($this->isMoreDecimalPlacesThan($value, TaxationSettingsProvider::CALCULATION_SCALE)) {
             $this->context->addViolation($constraint->taxRateToManyDecimalPlaces);
         }
     }
@@ -35,22 +34,13 @@ class TaxRateValidator extends ConstraintValidator
      * @param int $decimalPlaces
      * @return bool
      */
-    private function isNoMoreDecimalPlacesThan($value, $decimalPlaces)
+    private function isMoreDecimalPlacesThan($value, $decimalPlaces): bool
     {
-        $formattedValue = rtrim(number_format($value, TaxType::TAX_RATE_FIELD_PRECISION, '.', ''), '0');
+        [$mantissa, $exponent] = explode('e', sprintf('%.14e', $value));
 
-        // Covers case when $value has TaxType::TAX_RATE_FIELD_PRECISION or more zeros after decimal separator.
-        if ((float) $formattedValue < (float) $value) {
-            return false;
-        }
+        $mantissa = rtrim($mantissa, '0');
+        $fractionLength = strlen($mantissa) - $exponent - 2; // we subtract 2 because of the dot and a digit before it
 
-        $decimalLength = \strlen(
-            substr(
-                strrchr($formattedValue, '.'),
-                1
-            )
-        );
-
-        return $decimalLength <= $decimalPlaces;
+        return $fractionLength > $decimalPlaces;
     }
 }

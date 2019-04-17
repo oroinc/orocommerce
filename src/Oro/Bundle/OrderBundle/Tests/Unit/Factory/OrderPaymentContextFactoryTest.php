@@ -92,6 +92,11 @@ class OrderPaymentContextFactoryTest extends AbstractOrderContextFactoryTest
             ->method('setShippingMethod')
             ->with(self::TEST_SHIPPING_METHOD);
 
+        $this->contextBuilder
+            ->expects($this->once())
+            ->method('setTotal')
+            ->with($order->getTotal());
+
         $this->paymentContextBuilderFactoryMock
             ->expects($this->once())
             ->method('createPaymentContextBuilder')

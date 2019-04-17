@@ -10,6 +10,7 @@ use Oro\Bundle\CustomerBundle\Doctrine\SoftDeleteableTrait;
 use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\Ownership\AuditableFrontendCustomerUserAwareTrait;
+use Oro\Bundle\EmailBundle\Entity\EmailOwnerInterface;
 use Oro\Bundle\EmailBundle\Model\EmailHolderInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
@@ -65,6 +66,7 @@ use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 class Request extends ExtendRequest implements
     CustomerOwnerAwareInterface,
     EmailHolderInterface,
+    EmailOwnerInterface,
     SoftDeleteableInterface,
     OrganizationAwareInterface,
     WebsiteAwareInterface
@@ -734,5 +736,21 @@ class Request extends ExtendRequest implements
         $this->website = $website;
 
         return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getEmailFields()
+    {
+        return ['email'];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getClass()
+    {
+        return self::class;
     }
 }

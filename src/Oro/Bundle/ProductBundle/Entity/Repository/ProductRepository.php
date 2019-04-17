@@ -11,6 +11,7 @@ use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Entity\ProductImageType;
+use Oro\Bundle\ProductBundle\Entity\ProductVariantLink;
 use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 
 /**
@@ -365,6 +366,22 @@ class ProductRepository extends EntityRepository
     }
 
     /**
+     * @param array $configurableProducts
+     * @return QueryBuilder
+     */
+    public function getSimpleProductIdsByParentProductsQueryBuilder(array $configurableProducts)
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->select('p.id')
+            ->from($this->getEntityName(), 'p')
+            ->innerJoin('p.parentVariantLinks', 'l')
+            ->andWhere($qb->expr()->in('l.parentProduct', ':configurableProducts'))
+            ->setParameter('configurableProducts', $configurableProducts);
+
+        return $qb;
+    }
+
+    /**
      * @param array $criteria
      * @return Product[]
      * @throws \LogicException
@@ -535,6 +552,45 @@ class ProductRepository extends EntityRepository
             ->getArrayResult();
 
         return array_column($result, 'id');
+    }
+
+    /**
+     * @param array|int[]|Product[] $products
+     * @return array
+     */
+    public function getConfigurableProductIds(array $products): array
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->from($this->getEntityName(), 'p')
+            ->select('p.id')
+            ->where($qb->expr()->in('p', ':products'))
+            ->andWhere($qb->expr()->eq('p.type', ':type'))
+            ->setParameter('products', $products)
+            ->setParameter('type', Product::TYPE_CONFIGURABLE);
+
+        return array_column($qb->getQuery()->getArrayResult(), 'id');
+    }
+
+    /**
+     * @param array $configurableProducts
+     * @return array
+     * [variantId:int => parentProductIds:int[]]
+     */
+    public function getVariantsMapping(array $configurableProducts): array
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->from(ProductVariantLink::class, 'pvl')
+            ->select('IDENTITY(pvl.parentProduct) as parentId', 'IDENTITY(pvl.product) as variantId')
+            ->where($qb->expr()->in('pvl.parentProduct', ':parentProduct'))
+            ->setParameter('parentProduct', $configurableProducts);
+
+        $mappingData = $qb->getQuery()->getArrayResult();
+        $mapping = [];
+        foreach ($mappingData as $mappingRow) {
+            $mapping[$mappingRow['variantId']][] = $mappingRow['parentId'];
+        }
+
+        return $mapping;
     }
 
     /**

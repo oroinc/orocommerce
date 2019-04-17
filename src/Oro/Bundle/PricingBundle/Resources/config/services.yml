@@ -120,6 +120,7 @@ services:
 
     oro_pricing.provider.product_virtual_relation_provider.config:
         class: 'Oro\Bundle\PricingBundle\Provider\ProductVirtualRelationProvider'
+        public: false
         arguments:
             - '@oro_entity.doctrine_helper'
         tags:

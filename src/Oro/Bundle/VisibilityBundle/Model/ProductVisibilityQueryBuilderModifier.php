@@ -11,10 +11,15 @@ use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\SearchBundle\Query\Modifier\QueryBuilderModifierInterface;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerGroupProductVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerProductVisibilityResolved;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Visibility\ProductVisibilityTrait;
 use Oro\Component\Website\WebsiteInterface;
 
+/**
+ * Adds visibility resolved terms restrictions to product query builder.
+ */
 class ProductVisibilityQueryBuilderModifier implements QueryBuilderModifierInterface
 {
     use ProductVisibilityTrait;
@@ -85,12 +90,8 @@ class ProductVisibilityQueryBuilderModifier implements QueryBuilderModifierInter
      */
     protected function getProductVisibilityResolvedTerm(QueryBuilder $queryBuilder)
     {
-        $scope = $this->scopeManager->find(ProductVisibility::VISIBILITY_TYPE);
-        if (!$scope) {
-            $scope = 0;
-        }
         $queryBuilder->leftJoin(
-            'Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\ProductVisibilityResolved',
+            ProductVisibilityResolved::class,
             'product_visibility_resolved',
             Join::WITH,
             $queryBuilder->expr()->andX(
@@ -99,7 +100,10 @@ class ProductVisibilityQueryBuilderModifier implements QueryBuilderModifierInter
             )
         );
 
-        $queryBuilder->setParameter('scope_all', $scope);
+        $queryBuilder->setParameter(
+            'scope_all',
+            $this->getScopeId(ProductVisibility::VISIBILITY_TYPE)
+        );
 
         return sprintf(
             'COALESCE(%s, %s)',
@@ -115,12 +119,8 @@ class ProductVisibilityQueryBuilderModifier implements QueryBuilderModifierInter
     protected function getCustomerGroupProductVisibilityResolvedTerm(
         QueryBuilder $queryBuilder
     ) {
-        $scope = $this->scopeManager->find(CustomerGroupProductVisibility::VISIBILITY_TYPE);
-        if (!$scope) {
-            $scope = 0;
-        }
         $queryBuilder->leftJoin(
-            'Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerGroupProductVisibilityResolved',
+            CustomerGroupProductVisibilityResolved::class,
             'customer_group_product_visibility_resolved',
             Join::WITH,
             $queryBuilder->expr()->andX(
@@ -132,7 +132,10 @@ class ProductVisibilityQueryBuilderModifier implements QueryBuilderModifierInter
             )
         );
 
-        $queryBuilder->setParameter('scope_group', $scope);
+        $queryBuilder->setParameter(
+            'scope_group',
+            $this->getScopeId(CustomerGroupProductVisibility::VISIBILITY_TYPE)
+        );
 
         return sprintf(
             'COALESCE(%s, 0) * 10',
@@ -146,12 +149,8 @@ class ProductVisibilityQueryBuilderModifier implements QueryBuilderModifierInter
      */
     protected function getCustomerProductVisibilityResolvedTerm(QueryBuilder $queryBuilder)
     {
-        $scope = $this->scopeManager->find('customer_product_visibility');
-        if (!$scope) {
-            $scope = 0;
-        }
         $queryBuilder->leftJoin(
-            'Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerProductVisibilityResolved',
+            CustomerProductVisibilityResolved::class,
             'customer_product_visibility_resolved',
             Join::WITH,
             $queryBuilder->expr()->andX(
@@ -162,7 +161,10 @@ class ProductVisibilityQueryBuilderModifier implements QueryBuilderModifierInter
                 $queryBuilder->expr()->eq('customer_product_visibility_resolved.scope', ':scope_customer')
             )
         );
-        $queryBuilder->setParameter('scope_customer', $scope);
+        $queryBuilder->setParameter(
+            'scope_customer',
+            $this->getScopeId('customer_product_visibility')
+        );
 
         $productFallback = $this->addCategoryConfigFallback('product_visibility_resolved.visibility');
         $customerFallback = $this->addCategoryConfigFallback('customer_product_visibility_resolved.visibility');
@@ -195,5 +197,19 @@ TERM;
             ->find($anonymousGroupId);
 
         return $customerGroup;
+    }
+
+    /**
+     * @param string $scopeType
+     *
+     * @return int The scope ID or 0 if the given scope does not exist
+     */
+    private function getScopeId($scopeType)
+    {
+        $scope = $this->scopeManager->find($scopeType);
+
+        return null !== $scope
+            ? $scope->getId()
+            : 0;
     }
 }

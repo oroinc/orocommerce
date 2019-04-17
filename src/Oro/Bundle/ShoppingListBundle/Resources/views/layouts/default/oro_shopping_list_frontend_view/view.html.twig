@@ -497,7 +497,7 @@
             <i class="fa-exclamation-circle"></i>
             <span class="notification__text">
             {% if availableDate is not null %}
-                {{ 'oro.inventory.is_upcoming.notification_with_date'|trans ~ availableDate|oro_format_date({'timeZone': oro_timezone()}) }}
+                {{ 'oro.inventory.is_upcoming.notification_with_date'|trans({'%date%': availableDate|oro_format_date({'timeZone': oro_timezone()})}) }}
             {% else %}
                 {{ 'oro.inventory.is_upcoming.notification'|trans }}
             {% endif %}

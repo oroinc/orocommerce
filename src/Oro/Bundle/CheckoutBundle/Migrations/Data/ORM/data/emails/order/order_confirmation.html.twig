@@ -12,7 +12,7 @@
 
 <h3>Please see your order #{{ entity.identifier }} details below.</h3>
 
-<strong>Order Date: </strong>{{ entity.createdAt|oro_format_date }}<br/>
+<strong>Order Date: </strong>{{ entity.createdAt|oro_format_date({dateType: 'short'}) }}<br/>
 
 <strong>Billing Information:</strong>
 {{ entity.billingAddress|oro_format_address }}<br/>
@@ -47,7 +47,7 @@
     <h3>Additional Information:</h3>
 
     {% if entity.shipUntil %}
-        <strong>Do Not Ship Later Than: </strong>{{ entity.shipUntil|oro_format_date }}<br/>
+        <strong>Do Not Ship Later Than: </strong>{{ entity.shipUntil|oro_format_date({dateType: 'short'}) }}<br/>
     {% endif %}
 
     {% if entity.customerNotes %}

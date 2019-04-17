@@ -415,6 +415,13 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_seo.event.restrict_sitemap_entity.product, method: restrictQueryBuilder }
 
+    oro_seo.event_listener.restrict_sitemap_product_by_inventory_status:
+        class: Oro\Bundle\SEOBundle\EventListener\RestrictSitemapProductByInventoryStatusListener
+        arguments:
+            - '@oro_config.manager'
+        tags:
+            - { name: kernel.event_listener, event: oro_seo.event.restrict_sitemap_entity.product, method: restrictQueryBuilder }
+
     oro_seo.sitemap.provider.router_sitemap_urls_provider:
         class: Oro\Bundle\SEOBundle\Sitemap\Provider\RouterSitemapUrlsProvider
         public: false

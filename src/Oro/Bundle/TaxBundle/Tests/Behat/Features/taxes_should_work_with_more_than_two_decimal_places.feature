@@ -4,6 +4,7 @@
 @fixture-OroCheckoutBundle:Shipping.yml
 @fixture-OroTaxBundle:taxes_should_work_with_more_than_two_decimal_places.yml
 @ticket-BB-15155
+@ticket-BB-15969
 
 Feature: Taxes should work with more than two decimal places
   In order to be able to make purchases
@@ -31,7 +32,7 @@ Feature: Taxes should work with more than two decimal places
       | Rate | Tax rate can't have more than 4 decimal places |
     Given I fill form with:
       | Code | Correct_tax_rate |
-      | Rate | 0.1234 |
+      | Rate | 0.1234           |
     And I save form
     Then I should not see validation errors:
       | Rate | Tax rate can't have more than 4 decimal places |
@@ -72,3 +73,18 @@ Feature: Taxes should work with more than two decimal places
     And I click "Continue"
     And I click "Submit Order"
     Then I see the "Thank You" page with "Thank You For Your Purchase!" title
+
+  Scenario: Tax creation with some specific value
+    Given I operate as the Admin
+    And I go to Taxes/Taxes
+    And I click "Create Tax"
+    When I fill form with:
+      | Code | Specific_tax_rate |
+      | Rate | 9.598             |
+    And I save form
+    Then I should not see validation errors:
+      | Rate | Tax rate can't have more than 4 decimal places |
+    And I should see "Tax has been saved" flash message
+    When I go to Taxes/Taxes
+    And click view "Specific_tax_rate" in grid
+    Then I should see "Rate 9.598%"

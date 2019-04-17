@@ -124,6 +124,9 @@ class CheckoutPaymentContextFactory
             $paymentContextBuilder->setCustomerUser($checkout->getCustomerUser());
         }
 
+        $total = $this->totalProcessor->getTotal($checkout);
+        $paymentContextBuilder->setTotal($total->getAmount());
+
         return $paymentContextBuilder->getResult();
     }
 

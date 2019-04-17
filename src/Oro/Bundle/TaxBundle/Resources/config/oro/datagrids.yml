@@ -195,7 +195,7 @@ datagrids:
     tax-taxe-rules-grid:
         acl_resource: oro_tax_rule_view
         options:
-            entityHint: oro.tax.entity_plural_label
+            entityHint: oro.tax.taxrule.entity_plural_label
         source:
             type:         orm
             query:

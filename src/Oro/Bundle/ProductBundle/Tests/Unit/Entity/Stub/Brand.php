@@ -4,17 +4,10 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub;
 
 use Oro\Bundle\LocaleBundle\Tests\Unit\Entity\Stub\LocalizedEntityTrait;
 use Oro\Bundle\ProductBundle\Entity\Brand as BaseBrand;
-use Oro\Component\PropertyAccess\PropertyAccessor;
-use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class Brand extends BaseBrand
 {
     use LocalizedEntityTrait;
-
-    /**
-     * @var PropertyAccessor
-     */
-    private $propertyAccessor;
 
     /**
      * @var array
@@ -40,11 +33,13 @@ class Brand extends BaseBrand
     {
         if (array_key_exists($name, $this->localizedFields)) {
             return $this->localizedFieldGet($this->localizedFields, $name);
-        } else {
-            $this->getPropertyAccessor()->getValue($this, $name);
         }
 
-        return null;
+        if (property_exists($this, $name)) {
+            return $this->$name;
+        }
+
+        throw new \RuntimeException('It\'s not expected to get non-existing property');
     }
 
     /**
@@ -53,26 +48,33 @@ class Brand extends BaseBrand
     public function __set($name, $value)
     {
         if (array_key_exists($name, $this->localizedFields)) {
-            return $this->localizedFieldSet($this->localizedFields, $name, $value);
-        } else {
-            //PropertyAccessor::setValue() not work in this case
-            $reflection = new \ReflectionProperty(self::class, $name);
-            $reflection->setAccessible(true);
-            $reflection->setValue($this, $value);
+            $this->localizedFieldSet($this->localizedFields, $name, $value);
+
+            return;
         }
 
-        return null;
+        if (property_exists($this, $name)) {
+            $this->$name = $value;
+
+            return;
+        }
+
+        throw new \RuntimeException('It\'s not expected to set non-existing property');
     }
 
     /**
-     * @return PropertyAccessor
+     * {@inheritdoc}
      */
-    private function getPropertyAccessor()
+    public function __isset($name)
     {
-        if (!$this->propertyAccessor) {
-            $this->propertyAccessor = PropertyAccess::createPropertyAccessor();
+        if (array_key_exists($name, $this->localizedFields)) {
+            return (bool)$this->localizedFieldGet($this->localizedFields, $name);
         }
 
-        return $this->propertyAccessor;
+        if (property_exists($this, $name)) {
+            return true;
+        }
+
+        return false;
     }
 }

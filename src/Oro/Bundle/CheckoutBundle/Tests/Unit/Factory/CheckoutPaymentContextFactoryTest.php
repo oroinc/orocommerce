@@ -291,6 +291,12 @@ class CheckoutPaymentContextFactoryTest extends \PHPUnit\Framework\TestCase
 
         $this->contextBuilderMock
             ->expects($this->once())
+            ->method('setTotal')
+            ->with($subtotal->getAmount())
+            ->willReturnSelf();
+
+        $this->contextBuilderMock
+            ->expects($this->once())
             ->method('getResult');
 
         $this->paymentContextBuilderFactoryMock
@@ -311,8 +317,10 @@ class CheckoutPaymentContextFactoryTest extends \PHPUnit\Framework\TestCase
             ->willReturn($subtotal);
 
         $this->totalProcessorProvider
-            ->expects($this->never())
-            ->method($this->anything());
+            ->expects(static::once())
+            ->method('getTotal')
+            ->with($checkout)
+            ->willReturn($subtotal);
 
         return $checkout;
     }

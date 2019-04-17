@@ -39,3 +39,10 @@ services:
             - [setClassName, ['%oro_locale.entity.localization.class%']]
         tags:
             - { name: security.voter }
+
+    oro_locale.formatter.date_time.decorator:
+        class: Oro\Bundle\FrontendLocalizationBundle\Formatter\DateTimeFormatterDecorator
+        decorates: oro_locale.formatter.date_time
+        arguments:
+            - '@oro_locale.formatter.date_time.decorator.inner'
+            - '@oro_frontend.request.frontend_helper'

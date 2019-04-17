@@ -4,8 +4,6 @@ namespace Oro\Bundle\ConsentBundle\Tests\Unit\Entity\Stub;
 
 use Oro\Bundle\ConsentBundle\Entity\Consent as BaseConsent;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Entity\Stub\LocalizedEntityTrait;
-use Oro\Component\PropertyAccess\PropertyAccessor;
-use Symfony\Component\PropertyAccess\PropertyAccess;
 
 /**
  * Stub entity that adds extended functionality for the tests
@@ -15,16 +13,16 @@ class Consent extends BaseConsent
     use LocalizedEntityTrait;
 
     /**
-     * @var PropertyAccessor
-     */
-    private $propertyAccessor;
-
-    /**
      * @var array
      */
     private $localizedFields = [
         'name' => 'names',
     ];
+
+    /**
+     * @var string
+     */
+    private $defaultName;
 
     /**
      * {@inheritdoc}
@@ -41,11 +39,13 @@ class Consent extends BaseConsent
     {
         if (array_key_exists($name, $this->localizedFields)) {
             return $this->localizedFieldGet($this->localizedFields, $name);
-        } else {
-            $this->getPropertyAccessor()->getValue($this, $name);
         }
 
-        return null;
+        if (property_exists($this, $name)) {
+            return $this->$name;
+        }
+
+        throw new \RuntimeException('It\'s not expected to get non-existing property');
     }
 
     /**
@@ -54,26 +54,33 @@ class Consent extends BaseConsent
     public function __set($name, $value)
     {
         if (array_key_exists($name, $this->localizedFields)) {
-            return $this->localizedFieldSet($this->localizedFields, $name, $value);
-        } else {
-            //PropertyAccessor::setValue() doesn't work in this case
-            $reflection = new \ReflectionProperty(self::class, $name);
-            $reflection->setAccessible(true);
-            $reflection->setValue($this, $value);
+            $this->localizedFieldSet($this->localizedFields, $name, $value);
+
+            return;
         }
 
-        return null;
+        if (property_exists($this, $name)) {
+            $this->$name = $value;
+
+            return;
+        }
+
+        throw new \RuntimeException('It\'s not expected to set non-existing property');
     }
 
     /**
-     * @return PropertyAccessor
+     * {@inheritdoc}
      */
-    private function getPropertyAccessor()
+    public function __isset($name)
     {
-        if (!$this->propertyAccessor) {
-            $this->propertyAccessor = PropertyAccess::createPropertyAccessor();
+        if (array_key_exists($name, $this->localizedFields)) {
+            return (bool)$this->localizedFieldGet($this->localizedFields, $name);
         }
 
-        return $this->propertyAccessor;
+        if (property_exists($this, $name)) {
+            return true;
+        }
+
+        return false;
     }
 }

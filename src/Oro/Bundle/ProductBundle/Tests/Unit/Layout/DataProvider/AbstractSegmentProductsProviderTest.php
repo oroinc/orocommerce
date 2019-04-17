@@ -89,7 +89,8 @@ abstract class AbstractSegmentProductsProviderTest extends \PHPUnit\Framework\Te
     {
         $result = [new Product()];
         $dql = 'DQL SELECT';
-        $hash = 'hash';
+        $qbParameters = new ArrayCollection([new Parameter('parameter', 1)]);
+        $hash = $this->getHashData($dql, ['parameter' => 1]);
 
         $segment = new Segment();
         $this->productSegmentProvider
@@ -108,10 +109,9 @@ abstract class AbstractSegmentProductsProviderTest extends \PHPUnit\Framework\Te
             ->method('getDQL')
             ->willReturn($dql);
 
-        $parameters = new ArrayCollection([new Parameter('parameter', 1)]);
         $queryBuilder->expects($this->once())
             ->method('getParameters')
-            ->willReturn($parameters);
+            ->willReturn($qbParameters);
 
         $this->cache
             ->expects($this->at(1))
@@ -128,14 +128,18 @@ abstract class AbstractSegmentProductsProviderTest extends \PHPUnit\Framework\Te
             ->method('save')
             ->with(
                 $this->getCacheKey(),
-                ['dql' => $dql, 'parameters' => ['parameter' => 1], 'hash' => md5($hash)],
+                [
+                    'dql' => $dql,
+                    'parameters' => ['parameter' => 1],
+                    'hash' => sprintf('encrypt_%s', $hash),
+                ],
                 3600
             );
 
         $this->crypter->expects($this->any())
             ->method('encryptData')
-            ->with($dql)
-            ->willReturn($hash);
+            ->with($hash)
+            ->willReturn(sprintf('encrypt_%s', $hash));
 
         /** @var Query|\PHPUnit\Framework\MockObject\MockObject $query */
         $query = $this->createMock(AbstractQuery::class);
@@ -157,7 +161,7 @@ abstract class AbstractSegmentProductsProviderTest extends \PHPUnit\Framework\Te
     {
         $result = [new Product()];
         $dql = 'DQL SELECT';
-        $hash = 'hash';
+        $hash = $this->getHashData($dql, ['parameter' => 1]);
 
         $segment = new Segment();
         $this->productSegmentProvider
@@ -170,11 +174,91 @@ abstract class AbstractSegmentProductsProviderTest extends \PHPUnit\Framework\Te
             ->expects($this->once())
             ->method('fetch')
             ->with($this->getCacheKey())
-            ->willReturn(['dql' => $dql, 'parameters' => ['parameter' => 1], 'hash' => md5($hash)]);
+            ->willReturn(['dql' => $dql, 'parameters' => ['parameter' => 1], 'hash' =>  sprintf('encrypt_%s', $hash)]);
 
         $this->crypter->expects($this->any())
             ->method('encryptData')
             ->with($dql)
+            ->willReturn($hash);
+
+        $this->crypter->expects($this->any())
+            ->method('decryptData')
+            ->with(sprintf('encrypt_%s', $hash))
+            ->willReturn($hash);
+
+        /** @var Query|\PHPUnit\Framework\MockObject\MockObject $query */
+        $query = $this->createMock(AbstractQuery::class);
+        $this->em
+            ->expects($this->once())
+            ->method('createQuery')
+            ->with($dql)
+            ->willReturn($query);
+
+        $query->expects($this->once())
+            ->method('execute')
+            ->with(['parameter' => 1])
+            ->willReturn($result);
+
+        $this->assertEquals($result, $this->segmentProductsProvider->getProducts());
+    }
+
+    protected function getProductsWithInvalidCache(QueryBuilder $queryBuilder)
+    {
+        $result = [new Product()];
+        $dql = 'DQL SELECT';
+        $invalidDql = 'INVALID DQL SELECT';
+        $qbParameters = new ArrayCollection([new Parameter('parameter', 1)]);
+        $hash = $this->getHashData($dql, ['parameter' => 1]);
+
+        $segment = new Segment();
+        $this->productSegmentProvider
+            ->expects($this->once())
+            ->method('getProductSegmentById')
+            ->with(1)
+            ->willReturn($segment);
+
+        $this->cache
+            ->expects($this->exactly(2))
+            ->method('fetch')
+            ->willReturnOnConsecutiveCalls(
+                ['dql' => $invalidDql, 'parameters' => ['parameter' => 1], 'hash' =>  sprintf('encrypt_%s', $hash)],
+                false
+            );
+
+        $this->cache
+            ->expects($this->at(2))
+            ->method('save')
+            ->with('_keyBunch', sprintf('["%s"]', $this->getCacheKey()));
+
+        $this->cache
+            ->expects($this->at(3))
+            ->method('save')
+            ->with(
+                $this->getCacheKey(),
+                [
+                    'dql' => $dql,
+                    'parameters' => ['parameter' => 1],
+                    'hash' => sprintf('encrypt_%s', $hash),
+                ],
+                3600
+            );
+
+        $queryBuilder->expects($this->once())
+            ->method('getDQL')
+            ->willReturn($dql);
+
+        $queryBuilder->expects($this->once())
+            ->method('getParameters')
+            ->willReturn($qbParameters);
+
+        $this->crypter->expects($this->once())
+            ->method('encryptData')
+            ->with($hash)
+            ->willReturn(sprintf('encrypt_%s', $hash));
+
+        $this->crypter->expects($this->once())
+            ->method('decryptData')
+            ->with(sprintf('encrypt_%s', $hash))
             ->willReturn($hash);
 
         /** @var Query|\PHPUnit\Framework\MockObject\MockObject $query */
@@ -335,5 +419,19 @@ abstract class AbstractSegmentProductsProviderTest extends \PHPUnit\Framework\Te
             ->willReturn($queryBuilder);
 
         return $queryBuilder;
+    }
+
+    /**
+     * @param $dql
+     * @param $parameters
+     *
+     * @return string
+     */
+    private function getHashData($dql, $parameters): string
+    {
+        return md5(serialize([
+            AbstractSegmentProductsProvider::DQL => $dql,
+            AbstractSegmentProductsProvider::PARAMETERS => $parameters,
+        ]));
     }
 }
