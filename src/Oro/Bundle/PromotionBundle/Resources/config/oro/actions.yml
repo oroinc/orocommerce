@@ -175,6 +175,13 @@ operations:
                         service: oro_promotion.applied_promotion_manager
                         method: createAppliedPromotions
                         method_parameters: [$.data]
+                    - '@call_service_method':
+                        conditions:
+                            '@instanceof': [$.data, Oro\Bundle\OrderBundle\Entity\Order]
+                        parameters:
+                            service: oro_order.order.total.total_helper
+                            method: fillTotal
+                            method_parameters: [$.data]
                     - '@flush_entity': $.data
                     - '@flash_message':
                         message: oro.promotion.ui.order_add_coupon.added.message

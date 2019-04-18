@@ -69,6 +69,9 @@ oro_behat_extension:
         locator: '//label[contains(text(),"Flat Rate")]'
         type: xpath
 
+    Flat Rate:
+      selector: '[id*="flat_rate"]'
+
     Order DPD Classic:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
