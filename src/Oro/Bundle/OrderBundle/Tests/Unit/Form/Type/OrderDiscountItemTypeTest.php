@@ -113,6 +113,11 @@ class OrderDiscountItemTypeTest extends FormIntegrationTestCase
             ->method('fillDiscounts')
             ->with($order);
 
+        $this->totalHelper
+            ->expects($this->once())
+            ->method('fillTotal')
+            ->with($order);
+
         $expectedData = new OrderDiscount();
         $expectedData->setAmount('9.99')
             ->setDescription('some test description')
