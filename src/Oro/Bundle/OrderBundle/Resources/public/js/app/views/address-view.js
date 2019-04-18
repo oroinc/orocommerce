@@ -108,6 +108,12 @@ define(function(require) {
             if (this.options.selectors.address) {
                 this.setAddress(this.$el.find(this.options.selectors.address));
 
+                this.$fields.each(function() {
+                    var $field = $(this);
+                    if ($field.data('select2')) {
+                        $field.data('selected-data', $field.select2('val'));
+                    }
+                });
                 this.customerAddressChange();
             } else {
                 this._setReadOnlyMode(true);
@@ -150,7 +156,7 @@ define(function(require) {
          * Implement customer address change logic
          */
         customerAddressChange: function(e) {
-            if (this.$address.val() !== this.options.enterManuallyValue) {
+            if (this.$address.val() && this.$address.val() !== this.options.enterManuallyValue) {
                 this._setReadOnlyMode(true);
 
                 var address = this.$address.data('addresses')[this.$address.val()] || null;
@@ -172,6 +178,10 @@ define(function(require) {
                 }
             } else {
                 this._setReadOnlyMode(false);
+                var $country = this.fieldsByName.country;
+                if ($country) {
+                    $country.trigger('redraw');
+                }
             }
         },
 
