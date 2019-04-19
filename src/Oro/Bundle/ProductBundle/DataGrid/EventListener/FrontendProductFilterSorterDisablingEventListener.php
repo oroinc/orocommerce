@@ -19,7 +19,6 @@ use Oro\Bundle\ProductBundle\Search\ProductRepository;
 use Oro\Bundle\SearchBundle\Datagrid\Datasource\SearchDatasource;
 use Oro\Bundle\SearchBundle\Datagrid\Event\SearchResultAfter;
 use Oro\Bundle\SearchBundle\Datagrid\Event\SearchResultBefore;
-use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\SearchBundle\Query\SearchQueryInterface;
 use Oro\Bundle\WebsiteSearchBundle\Attribute\Type\SearchableAttributeTypeInterface;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\EnumIdPlaceholder;
@@ -99,34 +98,6 @@ class FrontendProductFilterSorterDisablingEventListener
      */
     public function onSearchResultBefore(SearchResultBefore $event)
     {
-        if (!$this->isFeaturesEnabled()) {
-            return;
-        }
-
-        $queryWithoutFilters = $this->getSearchQueryFromGridWithoutAppliedFilters($event->getDatagrid());
-        /** we assume that the objects won't be the same, but will be equal in some cases */
-        if ($queryWithoutFilters == $event->getQuery()
-            && $queryWithoutFilters instanceof SearchQueryInterface
-            && $event->getQuery() instanceof SearchQueryInterface
-        ) {
-            // calculate category counts
-            $event->getQuery()->addAggregate(
-                self::PRODUCT_FAMILIES_COUNT_ALIAS,
-                'integer.attribute_family_id',
-                Query::AGGREGATE_FUNCTION_COUNT
-            );
-
-            $this->queryWithAggregate = $event->getQuery();
-
-            return;
-        }
-
-        $searchQuery = $this->productRepository->getFamilyAttributeCountsQuery(
-            $queryWithoutFilters,
-            self::PRODUCT_FAMILIES_COUNT_ALIAS
-        );
-
-        $this->queryWithAggregate = $searchQuery;
     }
 
     /**
@@ -134,27 +105,6 @@ class FrontendProductFilterSorterDisablingEventListener
      */
     public function onSearchResultAfter(SearchResultAfter $event)
     {
-        if (!$this->isFeaturesEnabled()) {
-            return;
-        }
-
-        if (null === $this->queryWithAggregate) {
-            return;
-        }
-
-        $aggregateData = $this->queryWithAggregate->getResult()->getAggregatedData();
-        $this->queryWithAggregate = null;
-
-        if (empty($aggregateData[self::PRODUCT_FAMILIES_COUNT_ALIAS])) {
-            return;
-        }
-
-        $activeAttributeFamilyIds = array_keys($aggregateData[self::PRODUCT_FAMILIES_COUNT_ALIAS]);
-        $disabledAttributes = $this->getDisabledSortAndFilterAttributes($activeAttributeFamilyIds);
-
-        $datagrid = $event->getDatagrid();
-        $this->disableFilters($datagrid, $disabledAttributes);
-        $this->disableSorters($datagrid, $disabledAttributes);
     }
 
     /**

@@ -1216,6 +1216,12 @@ services:
             - '@oro_entity_config.registry.attribute_type'
             - '@oro_entity_config.provider.attribute_configuration'
             - '@oro_entity.doctrine_helper'
+        calls:
+            - [setProductRepository, ['@oro_product.website_search.repository.product']]
+            - [setDatagridManagerLink, ['@oro_datagrid.datagrid.manager.link']]
+            - [setFiltersStateProvider, ['@oro_filter.provider.state.filters']]
+            - [setSortersStateProvider, ['@oro_datagrid.provider.state.sorters']]
+            - [setConfigManager, ['@oro_config.manager']]
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-product-search-grid, method: onPreBuild }
 
