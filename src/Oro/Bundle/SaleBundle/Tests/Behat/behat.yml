@@ -63,8 +63,20 @@ oro_behat_extension:
           LineItemQuantity: 'oro_sale_quote[quoteProducts][0][quoteProductOffers][0][quantity]'
           Overridden shipping cost amount: 'oro_sale_quote[overriddenShippingCostAmount][value]'
           Shipping Address:
-            locator: '//h4[text()="Shipping Address"]/../..//div[contains(@id,"s2id_oro_sale_quote-uid")]/input'
+            locator: '//h4[text()="Shipping Address"]/..//div[contains(@id,"s2id_oro_sale_quote")]/input'
             type: xpath
+
+    Quote Shipping Address State Selector:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        locator: '//div[contains(@id,"s2id_oro_sale_quote_shippingAddress_region-uid")]'
+        type: xpath
+
+    Quote Shipping Address State Text Field:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        locator: '//input[contains(@id,"oro_sale_quote_shippingAddress_region_text-uid")]'
+        type: xpath
 
     Send to Customer Form:
       selector: "form[name='oro_workflow_transition'][action*='send_to_customer']"

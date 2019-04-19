@@ -6,6 +6,7 @@ define(function(require) {
     var $ = require('jquery');
     var __ = require('orotranslation/js/translator');
     var mediator = require('oroui/js/mediator');
+    var pageStateChecker = require('oronavigation/js/app/services/page-state-checker');
     var Grid = require('orodatagrid/js/datagrid/grid');
     var BackendToolbar = require('oroproduct/js/app/datagrid/backend-toolbar');
     var BackendSelectAllHeaderCell = require('oroproduct/js/app/datagrid/header-cell/backend-select-all-header-cell');
@@ -67,6 +68,9 @@ define(function(require) {
             mediator.on('widget:notFound', function() {
                 $(window).off('beforeunload');
             });
+
+            this.hasSelections = this.hasSelections.bind(this);
+            pageStateChecker.registerChecker(this.hasSelections);
 
             this._listenToDocumentEvents();
         },
@@ -251,9 +255,13 @@ define(function(require) {
         },
 
         onWindowUnload: function() {
-            if (!this.selectState.isEmpty()) {
+            if (this.hasSelections()) {
                 return __('oro.ui.leave_page_with_unsaved_data_confirm');
             }
+        },
+
+        hasSelections: function() {
+            return !this.selectState.isEmpty();
         },
 
         checkUnSavedData: function(obj) {
@@ -282,6 +290,7 @@ define(function(require) {
          * @inheritDoc
          */
         dispose: function() {
+            pageStateChecker.removeChecker(this.hasSelections);
             BackendGrid.__super__.dispose.apply(this, arguments);
             $(window).off('.' + this.cid);
         }
