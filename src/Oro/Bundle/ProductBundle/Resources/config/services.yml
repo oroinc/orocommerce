@@ -1101,6 +1101,14 @@ services:
         tags:
             - { name: security.voter, priority: 100 }
 
+    oro_product.event_listener.restrict_product_view_by_inventory_status:
+        class: Oro\Bundle\ProductBundle\EventListener\RestrictProductViewByInventoryStatusListener
+        public: false
+        arguments:
+            - "@oro_config.manager"
+        tags:
+            - { name: kernel.event_listener, event: kernel.controller, method: onKernelController, priority: -100 }
+
     oro_product.provider.content_variant_segment_provider:
         class: Oro\Bundle\ProductBundle\Provider\ContentVariantSegmentProvider
         arguments:
@@ -1203,16 +1211,6 @@ services:
             - '@oro_entity_config.manager.attribute_manager'
             - '@oro_entity_config.registry.attribute_type'
             - '@oro_entity_config.provider.attribute_configuration'
-            - '@oro_entity.doctrine_helper'
-        tags:
-            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-product-search-grid, method: onPreBuild }
-
-    oro_product.datagrid.event_listener.frontend_product_filter_sorted_disabling:
-        class: 'Oro\Bundle\ProductBundle\DataGrid\EventListener\FrontendProductFilterSorterDisablingEventListener'
-        arguments:
-            - '@oro_entity_config.manager.attribute_manager'
-            - '@oro_entity_config.registry.attribute_type'
-            - '@oro_entity_config.provider.attribute_configuration'
             - '@oro_product.website_search.repository.product'
             - '@oro_entity.doctrine_helper'
             - '@oro_datagrid.datagrid.manager.link'
@@ -1220,8 +1218,7 @@ services:
             - '@oro_datagrid.provider.state.sorters'
             - '@oro_config.manager'
         tags:
-            - { name: kernel.event_listener, event: oro_datagrid.search_datasource.result.before.frontend-product-search-grid, method: onSearchResultBefore }
-            - { name: kernel.event_listener, event: oro_datagrid.search_datasource.result.after.frontend-product-search-grid, method: onSearchResultAfter }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-product-search-grid, method: onPreBuild }
 
     oro_product.provider.catalog_context_url_provider:
         class: Oro\Bundle\ProductBundle\Provider\ContentVariantContextUrlProvider

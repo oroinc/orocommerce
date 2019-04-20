@@ -9,27 +9,15 @@ use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Entity\Stub\LocalizedEntityTrait;
 use Oro\Bundle\ProductBundle\Entity\Product as BaseProduct;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use Oro\Component\PropertyAccess\PropertyAccessor;
-use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class Product extends BaseProduct
 {
     use LocalizedEntityTrait;
 
     /**
-     * @var PropertyAccessor
-     */
-    private $propertyAccessor;
-
-    /**
      * @var AbstractEnumValue
      */
     private $inventoryStatus;
-
-    /**
-     * @var mixed
-     */
-    private $visibility = [];
 
     /**
      * @var string
@@ -92,11 +80,13 @@ class Product extends BaseProduct
     {
         if (array_key_exists($name, $this->localizedFields)) {
             return $this->localizedFieldGet($this->localizedFields, $name);
-        } else {
-            $this->getPropertyAccessor()->getValue($this, $name);
         }
 
-        return null;
+        if (property_exists($this, $name)) {
+            return $this->$name;
+        }
+
+        throw new \RuntimeException('It\'s not expected to get non-existing property');
     }
 
     /**
@@ -105,46 +95,34 @@ class Product extends BaseProduct
     public function __set($name, $value)
     {
         if (array_key_exists($name, $this->localizedFields)) {
-            return $this->localizedFieldSet($this->localizedFields, $name, $value);
-        } else {
-            //PropertyAccessor::setValue() not work in this case
-            $reflection = new \ReflectionProperty(self::class, $name);
-            $reflection->setAccessible(true);
-            $reflection->setValue($this, $value);
+            $this->localizedFieldSet($this->localizedFields, $name, $value);
+
+            return;
         }
 
-        return null;
-    }
+        if (property_exists($this, $name)) {
+            $this->$name = $value;
 
-    /**
-     * @return PropertyAccessor
-     */
-    private function getPropertyAccessor()
-    {
-        if (!$this->propertyAccessor) {
-            $this->propertyAccessor = PropertyAccess::createPropertyAccessor();
+            return;
         }
 
-        return $this->propertyAccessor;
+        throw new \RuntimeException('It\'s not expected to set non-existing property');
     }
 
     /**
-     * @return AbstractEnumValue
+     * {@inheritdoc}
      */
-    public function getVisibility()
+    public function __isset($name)
     {
-        return $this->visibility;
-    }
+        if (array_key_exists($name, $this->localizedFields)) {
+            return (bool)$this->localizedFieldGet($this->localizedFields, $name);
+        }
 
-    /**
-     * @param mixed $visibility
-     * @return AbstractEnumValue
-     */
-    public function setVisibility($visibility)
-    {
-        $this->visibility = $visibility;
+        if (property_exists($this, $name)) {
+            return true;
+        }
 
-        return $this;
+        return false;
     }
 
     /**

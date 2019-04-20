@@ -5,29 +5,29 @@ namespace Oro\Bundle\InventoryBundle\Tests\Unit\Validator;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\InventoryBundle\Provider\UpcomingProductProvider;
 use Oro\Bundle\InventoryBundle\Validator\UpcomingLabelCheckoutLineItemValidator;
-use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatter;
+use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatterInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Symfony\Component\Translation\TranslatorInterface;
 
 class UpcomingLabelCheckoutLineItemValidatorTest extends \PHPUnit\Framework\TestCase
 {
     /** @var  UpcomingLabelCheckoutLineItemValidator */
-    protected $validator;
+    private $validator;
 
     /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $translator;
+    private $translator;
 
     /** @var UpcomingProductProvider|\PHPUnit\Framework\MockObject\MockObject */
-    protected $provider;
+    private $provider;
 
-    /** @var DateTimeFormatter|\PHPUnit\Framework\MockObject\MockObject */
-    protected $dateFormatter;
+    /** @var DateTimeFormatterInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $dateFormatter;
 
     protected function setUp()
     {
         $this->translator = $this->createMock(TranslatorInterface::class);
         $this->provider = $this->createMock(UpcomingProductProvider::class);
-        $this->dateFormatter = $this->createMock(DateTimeFormatter::class);
+        $this->dateFormatter = $this->createMock(DateTimeFormatterInterface::class);
 
         $this->validator = new UpcomingLabelCheckoutLineItemValidator(
             $this->provider,
@@ -71,12 +71,12 @@ class UpcomingLabelCheckoutLineItemValidatorTest extends \PHPUnit\Framework\Test
         $this->translator->expects($this->once())
             ->method('trans')
             ->with('oro.inventory.is_upcoming.notification_with_date')
-            ->willReturn('This product will be available on ');
+            ->willReturn('This product will be available on 1/1/19');
 
-        $this->dateFormatter->expects($this->once())->method('formatDate')->with($today)->willReturn('01-01-2100');
+        $this->dateFormatter->expects($this->once())->method('formatDate')->with($today)->willReturn('1/1/19');
 
         $this->assertSame(
-            'This product will be available on 01-01-2100',
+            'This product will be available on 1/1/19',
             $this->validator->getMessageIfLineItemUpcoming($lineItem)
         );
     }

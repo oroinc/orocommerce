@@ -4,6 +4,7 @@ datagrids:
         update: false
         delete: false
         options:
+            entityHint: oro.checkout.open_order.plural_label
             frontend: true
         source:
             type: orm

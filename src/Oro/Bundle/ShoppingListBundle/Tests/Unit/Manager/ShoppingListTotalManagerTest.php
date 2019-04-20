@@ -82,10 +82,14 @@ class ShoppingListTotalManagerTest extends \PHPUnit\Framework\TestCase
         $repository->expects($this->once())->method('findBy')->willReturn([$total]);
 
         $em = $this->createMock(ObjectManager::class);
-        $em->expects($this->once())->method('getRepository')->willReturn($repository);
+        $em->expects($this->once())->method('getRepository')
+            ->with(ShoppingListTotal::class)
+            ->willReturn($repository);
         $em->expects($this->exactly(2))->method('persist');
         $em->expects($this->once())->method('flush');
-        $this->registry->expects($this->once())->method('getManagerForClass')->willReturn($em);
+        $this->registry->expects($this->once())->method('getManagerForClass')
+            ->with(ShoppingListTotal::class)
+            ->willReturn($em);
 
         $this->subtotalProvider->expects($this->at(0))
             ->method('getSubtotalByCurrency')
@@ -121,10 +125,14 @@ class ShoppingListTotalManagerTest extends \PHPUnit\Framework\TestCase
             ->willReturn([$totalUSD, $totalEUR]);
 
         $em = $this->createMock(ObjectManager::class);
-        $em->expects($this->once())->method('getRepository')->willReturn($repository);
+        $em->expects($this->once())->method('getRepository')
+            ->with(ShoppingListTotal::class)
+            ->willReturn($repository);
         $em->expects($this->once())->method('persist');
         $em->expects($this->once())->method('flush');
-        $this->registry->expects($this->once())->method('getManagerForClass')->willReturn($em);
+        $this->registry->expects($this->once())->method('getManagerForClass')
+            ->with(ShoppingListTotal::class)
+            ->willReturn($em);
 
         $this->subtotalProvider->expects($this->exactly(3))
             ->method('getSubtotalByCurrency')

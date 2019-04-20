@@ -94,6 +94,12 @@ class ProductControllerTest extends WebTestCase
 
         $html = $crawler->html();
         $this->assertContains($productTaxCode->getCode(), $html);
+
+        $productTaxCodeLink = $this->getContainer()->get('router')->generate('oro_tax_product_tax_code_view', [
+            'id' => $productTaxCode->getId(),
+        ]);
+
+        $this->assertContains($productTaxCodeLink, $html);
     }
 
     /**

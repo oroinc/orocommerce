@@ -84,6 +84,11 @@ class BasicPaymentContextBuilder implements PaymentContextBuilderInterface
     private $website;
 
     /**
+     * @var float
+     */
+    private $total;
+
+    /**
      * @param object                                    $sourceEntity
      * @param string                                    $sourceEntityIdentifier
      * @param PaymentLineItemCollectionFactoryInterface $paymentLineItemCollectionFactory
@@ -220,6 +225,16 @@ class BasicPaymentContextBuilder implements PaymentContextBuilderInterface
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public function setTotal($total)
+    {
+        $this->total = $total;
+
+        return $this;
+    }
+
+    /**
      * @return array
      */
     private function getMandatoryParams()
@@ -249,6 +264,7 @@ class BasicPaymentContextBuilder implements PaymentContextBuilderInterface
             PaymentContext::FIELD_CUSTOMER_USER => $this->customerUser,
             PaymentContext::FIELD_WEBSITE => $this->website,
             PaymentContext::FIELD_SHIPPING_ORIGIN => $this->shippingOrigin,
+            PaymentContext::FIELD_TOTAL => $this->total,
         ];
 
         // Exclude NULL elements.

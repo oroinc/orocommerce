@@ -2,10 +2,12 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Entity\Repository;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\EntityConfigBundle\Tests\Functional\DataFixtures\LoadAttributeData;
 use Oro\Bundle\EntityConfigBundle\Tests\Functional\DataFixtures\LoadAttributeFamilyData;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductVariantLink;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -13,6 +15,7 @@ use Oro\Component\Testing\Unit\EntityTrait;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @dbIsolationPerTest
  */
 class ProductRepositoryTest extends WebTestCase
 {
@@ -300,7 +303,7 @@ class ProductRepositoryTest extends WebTestCase
     /**
      * @dataProvider getImagesFilesByProductIdDataProvider
      *
-     * @param int   $productId
+     * @param int $productId
      * @param array $expectedImages
      */
     public function testImagesFilesByProductId($productId, array $expectedImages)
@@ -540,5 +543,107 @@ class ProductRepositoryTest extends WebTestCase
                 ]
             )
         );
+    }
+
+    public function testGetConfigurableProductIds()
+    {
+        /** @var Product $product1 */
+        $product1 = $this->getReference(LoadProductData::PRODUCT_1);
+        /** @var Product $product8 */
+        $product8 = $this->getReference(LoadProductData::PRODUCT_8);
+
+        $this->assertEquals(
+            [$product8->getId()],
+            $this->getRepository()->getConfigurableProductIds([$product1, $product8])
+        );
+    }
+
+    public function testGetSimpleProductIdsByParentProductsQueryBuilder()
+    {
+        /** @var Product $product1 */
+        $product1 = $this->getReference(LoadProductData::PRODUCT_1);
+        /** @var Product $product2 */
+        $product2 = $this->getReference(LoadProductData::PRODUCT_2);
+        /** @var Product $product3 */
+        $product3 = $this->getReference(LoadProductData::PRODUCT_3);
+        /** @var Product $product8 */
+        $product8 = $this->getReference(LoadProductData::PRODUCT_8);
+        /** @var Product $product9 */
+        $product9 = $this->getReference(LoadProductData::PRODUCT_9);
+
+        $this->prepareConfigurableVariants();
+
+        $qb = $this->getRepository()->getSimpleProductIdsByParentProductsQueryBuilder([$product8, $product9]);
+        $qb->orderBy('p.id');
+        $result = $qb->getQuery()->getArrayResult();
+
+        $this->assertEquals(
+            [
+                ['id' => $product1->getId()],
+                ['id' => $product2->getId()],
+                ['id' => $product3->getId()]
+            ],
+            $result
+        );
+    }
+
+    public function testGetVariantsMapping()
+    {
+        /** @var Product $product1 */
+        $product1 = $this->getReference(LoadProductData::PRODUCT_1);
+        /** @var Product $product2 */
+        $product2 = $this->getReference(LoadProductData::PRODUCT_2);
+        /** @var Product $product3 */
+        $product3 = $this->getReference(LoadProductData::PRODUCT_3);
+        /** @var Product $product8 */
+        $product8 = $this->getReference(LoadProductData::PRODUCT_8);
+        /** @var Product $product9 */
+        $product9 = $this->getReference(LoadProductData::PRODUCT_9);
+
+        $this->prepareConfigurableVariants();
+
+        $expected = [];
+        $expected[$product1->getId()] = [$product8->getId()];
+        $expected[$product2->getId()] = [$product8->getId()];
+        $expected[$product3->getId()] = [$product9->getId()];
+        $this->assertEquals(
+            $expected,
+            $this->getRepository()->getVariantsMapping([$product8, $product9])
+        );
+    }
+
+    protected function prepareConfigurableVariants()
+    {
+        /** @var Product $product1 */
+        $product1 = $this->getReference(LoadProductData::PRODUCT_1);
+        /** @var Product $product2 */
+        $product2 = $this->getReference(LoadProductData::PRODUCT_2);
+        /** @var Product $product3 */
+        $product3 = $this->getReference(LoadProductData::PRODUCT_3);
+        /** @var Product $product8 */
+        $product8 = $this->getReference(LoadProductData::PRODUCT_8);
+        /** @var Product $product9 */
+        $product9 = $this->getReference(LoadProductData::PRODUCT_9);
+
+        /** @var ManagerRegistry $registry */
+        $registry = $this->getContainer()->get('doctrine');
+        $em = $registry->getManagerForClass(Product::class);
+
+        $variantLink81 = new ProductVariantLink();
+        $variantLink81->setParentProduct($product8);
+        $variantLink81->setProduct($product1);
+        $product8->addVariantLink($variantLink81);
+
+        $variantLink82 = new ProductVariantLink();
+        $variantLink82->setParentProduct($product8);
+        $variantLink82->setProduct($product2);
+        $product8->addVariantLink($variantLink82);
+
+        $variantLink93 = new ProductVariantLink();
+        $variantLink93->setParentProduct($product9);
+        $variantLink93->setProduct($product3);
+        $product9->addVariantLink($variantLink93);
+
+        $em->flush();
     }
 }

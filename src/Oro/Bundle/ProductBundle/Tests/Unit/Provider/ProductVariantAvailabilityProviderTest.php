@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Provider;
 
 use Doctrine\ORM\AbstractQuery;
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
@@ -17,17 +18,31 @@ use Oro\Bundle\ProductBundle\ProductVariant\VariantFieldValueHandler\BooleanVari
 use Oro\Bundle\ProductBundle\ProductVariant\VariantFieldValueHandler\EnumVariantFieldValueHandler;
 use Oro\Bundle\ProductBundle\Provider\CustomFieldProvider;
 use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
+use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductProxyStub;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
 use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
+use Oro\Component\Testing\Unit\EntityTrait;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\Translation\TranslatorInterface;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
+ * @SuppressWarnings(PHPMD.ExcessiveClassLength)
+ */
 class ProductVariantAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
 {
+    use EntityTrait;
+
     /** @var ProductVariantAvailabilityProvider */
     protected $availabilityProvider;
+
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
+    protected $doctrineHelper;
 
     /** @var EntityRepository|\PHPUnit\Framework\MockObject\MockObject */
     protected $productRepository;
@@ -63,20 +78,16 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
         $this->translator = $this->createMock(TranslatorInterface::class);
         $this->boolHandler = new BooleanVariantFieldValueHandler($this->translator);
 
-        $this->productRepository = $this->getMockBuilder(ProductRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->productRepository = $this->createMock(ProductRepository::class);
 
-        /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject $doctrineHelper */
-        $doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
 
-        $doctrineHelper->expects($this->any())
+        $this->doctrineHelper->expects($this->any())
             ->method('getEntityRepository')
+            ->with(Product::class)
             ->willReturn($this->productRepository);
 
-        $doctrineHelper->expects($this->any())
+        $this->doctrineHelper->expects($this->any())
             ->method('getSingleEntityIdentifier')
             ->willReturnCallback(
                 function ($variantValue) {
@@ -98,7 +109,7 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
         $configManager = $this->createMock(ConfigManager::class);
 
         $this->enumHandler = $this->getMockBuilder(EnumVariantFieldValueHandler::class)
-            ->setConstructorArgs([$doctrineHelper, $enumValueProvider, $logger, $configManager])
+            ->setConstructorArgs([$this->doctrineHelper, $enumValueProvider, $logger, $configManager])
             ->setMethods(['getPossibleValues'])
             ->getMock();
 
@@ -123,7 +134,7 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
             ->willReturn($this->query);
 
         $this->availabilityProvider = new ProductVariantAvailabilityProvider(
-            $doctrineHelper,
+            $this->doctrineHelper,
             $this->customFieldProvider,
             $propertyAccessor,
             $this->dispatcher,
@@ -462,6 +473,178 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
+    public function testGetSimpleProductsGroupedByConfigurableNoConfigurable()
+    {
+        $products = [
+            $this->getEntity(Product::class, ['id' => 1, 'type' => Product::TYPE_SIMPLE])
+        ];
+
+        $this->assertSame([], $this->availabilityProvider->getSimpleProductsGroupedByConfigurable($products));
+    }
+
+    public function testGetSimpleProductsGroupedByConfigurableNoSimple()
+    {
+        $products = [
+            $this->getEntity(Product::class, ['id' => 1, 'type' => Product::TYPE_CONFIGURABLE])
+        ];
+
+        $simpleProductResult = [];
+        $this->assertGetSimpleProductsCall($simpleProductResult);
+
+        $this->assertSame([], $this->availabilityProvider->getSimpleProductsGroupedByConfigurable($products));
+    }
+
+    public function testGetSimpleProductsGroupedByConfigurable()
+    {
+        $products = [
+            $this->getEntity(Product::class, ['id' => 1, 'type' => Product::TYPE_CONFIGURABLE]),
+            $this->getEntity(Product::class, ['id' => 2, 'type' => Product::TYPE_CONFIGURABLE]),
+            $this->getEntity(Product::class, ['id' => 3, 'type' => Product::TYPE_CONFIGURABLE]),
+        ];
+
+        $simpleProductResult = [
+            ['id' => 11],
+            ['id' => 12],
+            ['id' => 13]
+        ];
+        $this->assertGetSimpleProductsCall($simpleProductResult);
+
+        $variantsMapping = [
+            11 => [1],
+            12 => [2],
+            13 => [1,2]
+        ];
+        $this->productRepository->expects($this->once())
+            ->method('getVariantsMapping')
+            ->with($products)
+            ->willReturn($variantsMapping);
+
+        $expected = [
+            1 => [
+                $this->getEntity(Product::class, ['id' => 11]),
+                $this->getEntity(Product::class, ['id' => 13])
+            ],
+            2 => [
+                $this->getEntity(Product::class, ['id' => 12]),
+                $this->getEntity(Product::class, ['id' => 13])
+            ]
+        ];
+        $this->assertEquals($expected, $this->availabilityProvider->getSimpleProductsGroupedByConfigurable($products));
+    }
+
+    public function testGetSimpleProductsByConfigurable()
+    {
+        $simpleProductResult = [
+            ['id' => 1],
+            ['id' => 2]
+        ];
+
+        $this->assertGetSimpleProductsCall($simpleProductResult);
+
+        $products = [
+            $this->getEntity(Product::class, ['id' => 11, 'type' => Product::TYPE_CONFIGURABLE]),
+            $this->getEntity(Product::class, ['id' => 12, 'type' => Product::TYPE_CONFIGURABLE])
+        ];
+
+        $expected = [
+            $this->getEntity(Product::class, ['id' => 1, 'type' => Product::TYPE_SIMPLE]),
+            $this->getEntity(Product::class, ['id' => 2, 'type' => Product::TYPE_SIMPLE])
+        ];
+
+        $this->assertEquals(
+            $expected,
+            $this->availabilityProvider->getSimpleProductsByConfigurable($products)
+        );
+    }
+
+    public function testFilterConfigurableProductsAllInitialized()
+    {
+        $loadedConfigurableProduct = $this->getEntity(
+            Product::class,
+            ['id' => 1, 'type' => Product::TYPE_CONFIGURABLE]
+        );
+        $loadedConfigurableProxy = $this->getEntity(
+            ProductProxyStub::class,
+            ['id' => 2, 'type' => Product::TYPE_CONFIGURABLE, 'initialized' => true]
+        );
+        $simpleProduct = $this->getEntity(
+            Product::class,
+            ['id' => 11, 'type' => Product::TYPE_SIMPLE]
+        );
+
+        $this->productRepository->expects($this->never())
+            ->method($this->anything());
+
+        $products = [
+            $loadedConfigurableProduct,
+            $loadedConfigurableProxy,
+            $simpleProduct
+        ];
+
+        $expected = [
+            $loadedConfigurableProduct,
+            $loadedConfigurableProxy
+        ];
+
+        $this->assertEquals(
+            $expected,
+            $this->availabilityProvider->filterConfigurableProducts($products)
+        );
+    }
+
+    public function testFilterConfigurableProductsNotAllInitialized()
+    {
+        $loadedConfigurableProduct = $this->getEntity(
+            Product::class,
+            ['id' => 1, 'type' => Product::TYPE_CONFIGURABLE]
+        );
+        $loadedConfigurableProxy = $this->getEntity(
+            ProductProxyStub::class,
+            ['id' => 2, 'type' => Product::TYPE_CONFIGURABLE, 'initialized' => true]
+        );
+        $loadedSimpleProxy = $this->getEntity(
+            ProductProxyStub::class,
+            ['id' => 3, 'type' => Product::TYPE_SIMPLE, 'initialized' => true]
+        );
+        $notLoadedProxy1 = $this->getEntity(
+            ProductProxyStub::class,
+            ['id' => 4, 'initialized' => false]
+        );
+        $notLoadedProxy2 = $this->getEntity(
+            ProductProxyStub::class,
+            ['id' => 5, 'initialized' => false]
+        );
+        $simpleProduct = $this->getEntity(
+            Product::class,
+            ['id' => 11, 'type' => Product::TYPE_SIMPLE]
+        );
+
+        $this->productRepository->expects($this->once())
+            ->method('getConfigurableProductIds')
+            ->with([$notLoadedProxy1, $notLoadedProxy2])
+            ->willReturn([5]);
+
+        $products = [
+            $loadedConfigurableProduct,
+            $loadedConfigurableProxy,
+            $loadedSimpleProxy,
+            $notLoadedProxy1,
+            $notLoadedProxy2,
+            $simpleProduct
+        ];
+
+        $expected = [
+            $loadedConfigurableProduct,
+            $loadedConfigurableProxy,
+            $notLoadedProxy2
+        ];
+
+        $this->assertEquals(
+            $expected,
+            $this->availabilityProvider->filterConfigurableProducts($products)
+        );
+    }
+
     /**
      * @param array $variantsData
      * @param array $productData
@@ -567,5 +750,43 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
         }
 
         return $products;
+    }
+
+    /**
+     * @param array $simpleProductResult
+     */
+    protected function assertGetSimpleProductsCall(array $simpleProductResult)
+    {
+        $query = $this->createMock(AbstractQuery::class);
+        $query->expects($this->once())
+            ->method('getArrayResult')
+            ->willReturn($simpleProductResult);
+
+        /** @var QueryBuilder|\PHPUnit\Framework\MockObject\MockObject $qb */
+        $qb = $this->createMock(QueryBuilder::class);
+        $qb->expects($this->once())
+            ->method('getQuery')
+            ->willReturn($query);
+
+        $this->productRepository->expects($this->once())
+            ->method('getSimpleProductIdsByParentProductsQueryBuilder')
+            ->willReturn($qb);
+
+        $event = new RestrictProductVariantEvent($qb);
+        $this->dispatcher->expects($this->once())
+            ->method('dispatch')
+            ->with(RestrictProductVariantEvent::NAME, $event);
+
+        $em = $this->createMock(EntityManager::class);
+        $em->expects($this->any())
+            ->method('getReference')
+            ->with(Product::class)
+            ->willReturnCallback(function ($class, $id) {
+                return $this->getEntity($class, ['id' => $id]);
+            });
+        $this->doctrineHelper->expects($this->once())
+            ->method('getEntityManager')
+            ->with(Product::class)
+            ->willReturn($em);
     }
 }

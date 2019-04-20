@@ -152,3 +152,28 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
         string: 'NewCategory2'
     localNewCategory3:
         string: 'NewCategory3'
+
+Oro\Bundle\RFPBundle\Entity\Request:
+    request1:
+        po_number: '0111'
+        first_name: 'Amanda'
+        last_name: 'Cole'
+        email: 'AmandaRCole@example.org'
+        company: 'Company A'
+        organization: '@organization'
+        owner: '@admin'
+        customer_user: '@amanda'
+
+Oro\Bundle\RFPBundle\Entity\RequestProduct:
+    requestproduct1:
+        request: '@request1'
+        product: '@product3'
+        product_sku: 'SKU3'
+
+Oro\Bundle\RFPBundle\Entity\RequestProductItem:
+    requestproductitem1:
+        request_product: '@requestproduct1'
+        quantity: 1
+        product_unit_code: 'item'
+        value: 2
+        currency: 'USD'

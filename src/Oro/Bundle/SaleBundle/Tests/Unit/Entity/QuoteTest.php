@@ -106,6 +106,15 @@ class QuoteTest extends AbstractTest
         $this->assertInstanceOf('\DateTime', $quote->getUpdatedAt());
     }
 
+    public function testGetEmailOwner(): void
+    {
+        $customerUser = new CustomerUser();
+        $quote = new Quote();
+        $quote->setCustomerUser($customerUser);
+
+        $this->assertEquals($customerUser, $quote->getEmailOwner());
+    }
+
     public function testAddQuoteProduct(): void
     {
         $quote          = new Quote();

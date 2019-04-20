@@ -11,6 +11,7 @@ oro_behat_extension:
         - OroPromotionBundle::PromotionContext
         - OroEmailBundle::EmailContext
         - OroApplicationBundle::CommerceMainContext
+        - OroActivityListBundle::ActivityContext
         - OroCustomerBundle::FrontendGridContext
         - OroConfigBundle::FeatureContext
         - OroOrderBundle::OrderContext

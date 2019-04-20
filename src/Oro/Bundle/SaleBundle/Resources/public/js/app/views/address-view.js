@@ -84,8 +84,6 @@ define(function(require) {
 
             this.ftid = this.$el.find('div[data-ftid]:first').data('ftid');
 
-            this.setAddress(this.$el.find(this.options.selectors.address));
-
             this.$fields = this.$el.find(':input[data-ftid]').filter(':not(' + this.options.selectors.address + ')');
             this.fieldsByName = {};
             this.$fields.each(function() {
@@ -104,6 +102,18 @@ define(function(require) {
 
                 mediator.trigger('entry-point:quote:init');
             }
+
+            if (this.options.selectors.address) {
+                this.setAddress(this.$el.find(this.options.selectors.address));
+
+                this.$fields.each(function() {
+                    var $field = $(this);
+                    if ($field.data('select2')) {
+                        $field.data('selected-data', $field.select2('val'));
+                    }
+                });
+                this.customerAddressChange();
+            }
         },
 
         /**
@@ -116,8 +126,6 @@ define(function(require) {
                 var name = self.normalizeName($field.data('ftid').replace(self.ftid + '_', ''));
                 self.fieldsByName[name] = $field;
             });
-
-            this.customerAddressChange();
         },
 
         /**
@@ -153,7 +161,7 @@ define(function(require) {
          * Implement customer address change logic
          */
         customerAddressChange: function() {
-            if (this.$address.val() !== this.options.enterManuallyValue) {
+            if (this.$address.val() && this.$address.val() !== this.options.enterManuallyValue) {
                 this.$fields.each(function() {
                     var $field = $(this);
 
@@ -183,6 +191,10 @@ define(function(require) {
 
                     $field.prop('readonly', false).inputWidget('refresh');
                 });
+                var $country = this.fieldsByName.country;
+                if ($country) {
+                    $country.trigger('redraw');
+                }
             }
         },
 

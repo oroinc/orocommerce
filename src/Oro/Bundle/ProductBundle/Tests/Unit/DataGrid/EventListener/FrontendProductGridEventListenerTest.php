@@ -4,20 +4,28 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\DataGrid\EventListener;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping\ClassMetadata;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
+use Oro\Bundle\DataGridBundle\Datagrid\Datagrid;
+use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
+use Oro\Bundle\DataGridBundle\Datagrid\ManagerInterface;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
+use Oro\Bundle\DataGridBundle\Extension\Acceptor;
+use Oro\Bundle\DataGridBundle\Provider\State\DatagridStateProviderInterface;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityBundle\Provider\EntityNameResolver;
 use Oro\Bundle\EntityConfigBundle\Attribute\AttributeConfigurationProvider;
 use Oro\Bundle\EntityConfigBundle\Attribute\AttributeTypeRegistry;
+use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityConfigBundle\Attribute\Type;
 use Oro\Bundle\EntityConfigBundle\Config\Config;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigInterface;
-use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
+use Oro\Bundle\EntityConfigBundle\Config\ConfigManager as EntityConfigManager;
 use Oro\Bundle\EntityConfigBundle\Config\Id\ConfigIdInterface;
 use Oro\Bundle\EntityConfigBundle\Entity\EntityConfigModel;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
+use Oro\Bundle\EntityConfigBundle\Entity\Repository\AttributeFamilyRepository;
 use Oro\Bundle\EntityConfigBundle\Manager\AttributeManager;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
@@ -25,33 +33,66 @@ use Oro\Bundle\FilterBundle\Form\Type\Filter\NumberFilterTypeInterface;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\ProductBundle\DataGrid\EventListener\FrontendProductGridEventListener;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Search\ProductRepository;
+use Oro\Bundle\SearchBundle\Datagrid\Datasource\SearchDatasource;
 use Oro\Bundle\SearchBundle\Query\Query;
+use Oro\Bundle\SearchBundle\Query\Result;
+use Oro\Bundle\SearchBundle\Query\SearchQueryInterface;
 use Oro\Bundle\WebsiteSearchBundle\Attribute\Type as SearchableType;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\EnumIdPlaceholder;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
+use Oro\Component\DependencyInjection\ServiceLink;
 use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
 {
-    const LABEL = 'oro.test.label';
+    use EntityTrait;
+
+    private const LABEL = 'oro.test.label';
+    private const LIMIT_FILTERS_SORTERS = 'oro_product.limit_filters_sorters_on_product_listing';
 
     /** @var AttributeManager|\PHPUnit\Framework\MockObject\MockObject */
-    protected $attributeManager;
+    private $attributeManager;
 
     /** @var AttributeTypeRegistry|\PHPUnit\Framework\MockObject\MockObject */
-    protected $attributeTypeRegistry;
+    private $attributeTypeRegistry;
 
     /** @var ConfigProvider|\PHPUnit\Framework\MockObject\MockObject */
-    protected $extendConfigProvider;
+    private $extendConfigProvider;
 
     /** @var ConfigProvider|\PHPUnit\Framework\MockObject\MockObject */
-    protected $attributeConfigProvider;
+    private $attributeConfigProvider;
+
+    /** @var ProductRepository|\PHPUnit\Framework\MockObject\MockObject */
+    private $productRepository;
 
     /** @var ClassMetadata|\PHPUnit\Framework\MockObject\MockObject */
-    protected $metadata;
+    private $metadata;
+
+    /** @var AttributeFamilyRepository|\PHPUnit\Framework\MockObject\MockObject */
+    private $attributeFamilyRepository;
+
+    /** @var DatagridConfiguration|\PHPUnit\Framework\MockObject\MockObject */
+    private $datagridConfig;
+
+    /** @var SearchQueryInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $searchQuery;
+
+    /** @var DatagridInterface */
+    private $datagrid;
+
+    /** @var DatagridStateProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $filtersStateProvider;
+
+    /** @var DatagridStateProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $sortersStateProvider;
+
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $configManager;
 
     /** @var FrontendProductGridEventListener */
-    protected $listener;
+    private $listener;
 
     protected function setUp()
     {
@@ -68,8 +109,8 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
         $this->extendConfigProvider = $this->createMock(ConfigProvider::class);
         $this->attributeConfigProvider = $this->createMock(ConfigProvider::class);
 
-        /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject $configManager */
-        $configManager = $this->createMock(ConfigManager::class);
+        /** @var EntityConfigManager|\PHPUnit\Framework\MockObject\MockObject $configManager */
+        $configManager = $this->createMock(EntityConfigManager::class);
         $configManager->expects($this->any())
             ->method('getProvider')
             ->willReturnMap(
@@ -80,26 +121,68 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
                 ]
             );
 
+        $this->productRepository = $this->createMock(ProductRepository::class);
+
         $this->metadata = $this->createMock(ClassMetadata::class);
         $this->metadata->expects($this->any())
             ->method('getAssociationMapping')
             ->willReturn(['targetEntity' => StubEnumValue::class]);
+
+        $this->attributeFamilyRepository = $this->createMock(AttributeFamilyRepository::class);
 
         /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject $doctrineHelper */
         $doctrineHelper = $this->createMock(DoctrineHelper::class);
         $doctrineHelper->expects($this->any())
             ->method('getEntityMetadata')
             ->willReturn($this->metadata);
+        $doctrineHelper->expects($this->any())
+            ->method('getEntityRepository')
+            ->with(AttributeFamily::class)
+            ->willReturn($this->attributeFamilyRepository);
+
+        $this->datagridConfig = DatagridConfiguration::create(['name' => 'test_name']);
+        $this->searchQuery = $this->createMock(SearchQueryInterface::class);
+
+        /** @var SearchDatasource|\PHPUnit\Framework\MockObject\MockObject $gridDatasource */
+        $gridDatasource = $this->createMock(SearchDatasource::class);
+        $gridDatasource->expects($this->any())
+            ->method('getSearchQuery')
+            ->willReturn($this->searchQuery);
+
+        $this->datagrid = new Datagrid('datagrid', $this->datagridConfig, new ParameterBag([]));
+        $this->datagrid->setDatasource($gridDatasource);
+        $this->datagrid->setAcceptor(new Acceptor());
+
+        $datagridManager = $this->createMock(ManagerInterface::class);
+        $datagridManager->expects($this->any())
+            ->method('getDatagrid')
+            ->willReturn($this->datagrid);
+
+        /** @var ServiceLink|\PHPUnit\Framework\MockObject\MockObject $datagridManagerLink */
+        $datagridManagerLink = $this->createMock(ServiceLink::class);
+        $datagridManagerLink->expects($this->any())
+            ->method('getService')
+            ->willReturn($datagridManager);
+
+        $this->filtersStateProvider = $this->createMock(DatagridStateProviderInterface::class);
+        $this->sortersStateProvider = $this->createMock(DatagridStateProviderInterface::class);
+        $this->configManager = $this->createMock(ConfigManager::class);
 
         $this->listener = new FrontendProductGridEventListener(
             $this->attributeManager,
             $this->attributeTypeRegistry,
             new AttributeConfigurationProvider($configManager),
-            $doctrineHelper
+            $this->productRepository,
+            $doctrineHelper,
+            $datagridManagerLink,
+            $this->filtersStateProvider,
+            $this->sortersStateProvider,
+            $this->configManager
         );
     }
 
     /**
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      * @dataProvider onPreBuildDataProvider
      *
      * @param FieldConfigModel $attribute
@@ -107,6 +190,10 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
      * @param ConfigInterface $extendConfig
      * @param ConfigInterface $attributeConfig
      * @param bool $hasAssociation
+     * @param bool $limitFiltersSorters
+     * @param array $aggregatedData
+     * @param array $filtersState
+     * @param array $sortersState
      * @param array $expected
      */
     public function testOnPreBuild(
@@ -115,6 +202,10 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
         ConfigInterface $extendConfig,
         ConfigInterface $attributeConfig,
         $hasAssociation = true,
+        $limitFiltersSorters = false,
+        array $aggregatedData = [],
+        array $filtersState = [],
+        array $sortersState = [],
         array $expected = []
     ) {
         $this->attributeManager->expects($this->any())
@@ -134,13 +225,44 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
             ->method('hasAssociation')
             ->willReturn($hasAssociation);
 
-        $config = DatagridConfiguration::create([]);
+        $this->configManager->expects($this->any())
+            ->method('get')
+            ->with(self::LIMIT_FILTERS_SORTERS)
+            ->willReturn($limitFiltersSorters);
 
-        $event = new PreBuild($config, new ParameterBag());
+        $this->productRepository->expects($this->any())
+            ->method('getFamilyAttributeCountsQuery')
+            ->with($this->searchQuery, 'familyAttributesCount')
+            ->willReturnArgument(0);
+
+        $this->searchQuery->expects($this->any())
+            ->method('getResult')
+            ->willReturn(new Result(new Query(), [], 0, ['familyAttributesCount' => $aggregatedData]));
+
+        $this->attributeFamilyRepository->expects($this->any())
+            ->method('getFamilyIdsForAttributes')
+            ->with([$attribute->getId()])
+            ->willReturn(
+                [
+                    $attribute->getId() => [$attribute->getId() + 1000, $attribute->getId() + 2000],
+                ]
+            );
+
+        $this->filtersStateProvider->expects($this->any())
+            ->method('getState')
+            ->with($this->datagridConfig, $this->datagrid->getParameters())
+            ->willReturn($filtersState);
+
+        $this->sortersStateProvider->expects($this->any())
+            ->method('getState')
+            ->with($this->datagridConfig, $this->datagrid->getParameters())
+            ->willReturn($sortersState);
+
+        $event = new PreBuild($this->datagridConfig, $this->datagrid->getParameters());
 
         $this->listener->onPreBuild($event);
 
-        $this->assertEquals($expected, $config->toArray());
+        $this->assertEquals(array_merge(['name' => 'test_name'], $expected), $this->datagridConfig->toArray());
     }
 
     /**
@@ -150,22 +272,22 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
      */
     public function onPreBuildDataProvider()
     {
-        $stringAttribute = new FieldConfigModel('sku');
+        $stringAttribute = $this->getEntity(FieldConfigModel::class, ['id' => 101, 'fieldName' => 'sku']);
         $stringAttribute->setEntity(new EntityConfigModel());
         $stringSearchAttributeType = new SearchableType\StringSearchableAttributeType(new Type\StringAttributeType());
 
-        $enumAttribute = new FieldConfigModel('internalStatus');
+        $enumAttribute = $this->getEntity(FieldConfigModel::class, ['id' => 202, 'fieldName' => 'internalStatus']);
         $enumAttribute->setEntity(new EntityConfigModel())
             ->fromArray('extend', ['target_entity' => StubEnumValue::class]);
         $enumSearchAttributeType = new SearchableType\EnumSearchableAttributeType(new Type\EnumAttributeType());
 
-        $decimalAttribute = new FieldConfigModel('weight');
+        $decimalAttribute = $this->getEntity(FieldConfigModel::class, ['id' => 303, 'fieldName' => 'weight']);
         $decimalAttribute->setEntity(new EntityConfigModel());
         $decimalSearchAttributeType = new SearchableType\DecimalSearchableAttributeType(
             new Type\DecimalAttributeType('decimal')
         );
 
-        $multiEnumAttribute = new FieldConfigModel('internalStatus');
+        $multiEnumAttribute = $this->getEntity(FieldConfigModel::class, ['id' => 404, 'fieldName' => 'internalStatus']);
         $multiEnumAttribute->setEntity(new EntityConfigModel());
         $multiEnumSearchAttributeType = new SearchableType\MultiEnumSearchableAttributeType(
             new Type\MultiEnumAttributeType()
@@ -184,7 +306,7 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
         /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject $doctrineHelper */
         $doctrineHelper = $this->createMock(DoctrineHelper::class);
 
-        $manyToManyAttribute = new FieldConfigModel('names');
+        $manyToManyAttribute = $this->getEntity(FieldConfigModel::class, ['id' => 505, 'fieldName' => 'names']);
         $manyToManyAttribute->setEntity(new EntityConfigModel());
 
         $manyToManyAttributeLocalizable = clone $manyToManyAttribute;
@@ -194,13 +316,13 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
             new Type\ManyToManyAttributeType($entityNameResolver, $doctrineHelper)
         );
 
-        $manyToOneAttribute = new FieldConfigModel('manytoone');
+        $manyToOneAttribute = $this->getEntity(FieldConfigModel::class, ['id' => 606, 'fieldName' => 'manytoone']);
         $manyToOneAttribute->setEntity(new EntityConfigModel());
         $manyToOneSearchAttributeType = new SearchableType\ManyToOneSearchableAttributeType(
             new Type\ManyToOneAttributeType($entityNameResolver, $doctrineHelper)
         );
 
-        $fileAttribute = new FieldConfigModel('image');
+        $fileAttribute = $this->getEntity(FieldConfigModel::class, ['id' => 707, 'fieldName' => 'image']);
         $fileAttribute->setEntity(new EntityConfigModel());
 
         $fileSearchAttributeType = new SearchableType\FileSearchableAttributeType(new Type\FileAttributeType('file'));
@@ -234,6 +356,10 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
                     ['filterable' => true, 'filter_by' => 'fuzzy_search', 'sortable' => false]
                 ),
                 'hasAssociation' => true,
+                'limitFiltersSorters' => false,
+                'aggregatedData' => [],
+                'filtersState' => [],
+                'sortersState' => [],
                 'expected' => [
                     'filters' => [
                         'columns' => [
@@ -253,6 +379,10 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
                 'extendConfig' => $this->getConfig(['state' => ExtendScope::STATE_ACTIVE]),
                 'attributeConfig' => $this->getConfig(['filterable' => false, 'sortable' => true]),
                 'hasAssociation' => true,
+                'limitFiltersSorters' => false,
+                'aggregatedData' => [],
+                'filtersState' => [],
+                'sortersState' => [],
                 'expected' => [
                     'columns' => [
                         'sku' => [
@@ -276,6 +406,138 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
                     ['filterable' => true, 'filter_by' => 'exact_value', 'sortable' => true]
                 ),
                 'hasAssociation' => true,
+                'limitFiltersSorters' => false,
+                'aggregatedData' => [],
+                'filtersState' => [],
+                'sortersState' => [],
+                'expected' => [
+                    'filters' => [
+                        'columns' => [
+                            'internalStatus' => [
+                                'type' => SearchableType\SearchAttributeTypeInterface::FILTER_TYPE_MULTI_ENUM,
+                                'data_name' => Query::TYPE_INTEGER . '.internalStatus_' . EnumIdPlaceholder::NAME,
+                                'force_like' => true,
+                                'label' => self::LABEL,
+                                'class' => StubEnumValue::class
+                            ]
+                        ]
+                    ],
+                    'columns' => [
+                        'internalStatus_priority' => [
+                            'label' => self::LABEL,
+                        ]
+                    ],
+                    'sorters' => [
+                        'columns' => [
+                            'internalStatus_priority' => [
+                                'data_name' => Query::TYPE_INTEGER . '.internalStatus_priority',
+                            ]
+                        ]
+                    ]
+                ],
+            ],
+            'attribute filterable and sortable, limit without product family' => [
+                'attribute' => $enumAttribute,
+                'attributeType' => $enumSearchAttributeType,
+                'extendConfig' => $this->getConfig(['state' => ExtendScope::STATE_ACTIVE]),
+                'attributeConfig' => $this->getConfig(
+                    ['filterable' => true, 'filter_by' => 'exact_value', 'sortable' => true]
+                ),
+                'hasAssociation' => true,
+                'limitFiltersSorters' => true,
+                'aggregatedData' => [$enumAttribute->getId() + 3000 => \random_int(1, 1000)],
+                'filtersState' => [],
+                'sortersState' => [],
+                'expected' => [
+                    'filters' => [
+                        'columns' => []
+                    ],
+                    'columns' => [
+                        'internalStatus_priority' => [
+                            'label' => self::LABEL,
+                        ]
+                    ],
+                    'sorters' => [
+                        'columns' => []
+                    ]
+                ],
+            ],
+            'attribute filterable and sortable, limit without product family, but filter state' => [
+                'attribute' => $enumAttribute,
+                'attributeType' => $enumSearchAttributeType,
+                'extendConfig' => $this->getConfig(['state' => ExtendScope::STATE_ACTIVE]),
+                'attributeConfig' => $this->getConfig(
+                    ['filterable' => true, 'filter_by' => 'exact_value', 'sortable' => true]
+                ),
+                'hasAssociation' => true,
+                'limitFiltersSorters' => true,
+                'aggregatedData' => [$enumAttribute->getId() + 3000 => \random_int(1, 1000)],
+                'filtersState' => ['internalStatus' => ['state']],
+                'sortersState' => [],
+                'expected' => [
+                    'filters' => [
+                        'columns' => [
+                            'internalStatus' => [
+                                'type' => SearchableType\SearchAttributeTypeInterface::FILTER_TYPE_MULTI_ENUM,
+                                'data_name' => Query::TYPE_INTEGER . '.internalStatus_' . EnumIdPlaceholder::NAME,
+                                'force_like' => true,
+                                'label' => self::LABEL,
+                                'class' => StubEnumValue::class
+                            ]
+                        ]
+                    ],
+                    'columns' => [
+                        'internalStatus_priority' => [
+                            'label' => self::LABEL,
+                        ]
+                    ],
+                    'sorters' => [
+                        'columns' => []
+                    ]
+                ],
+            ],
+            'attribute filterable and sortable, limit without product family, but sorter state' => [
+                'attribute' => $enumAttribute,
+                'attributeType' => $enumSearchAttributeType,
+                'extendConfig' => $this->getConfig(['state' => ExtendScope::STATE_ACTIVE]),
+                'attributeConfig' => $this->getConfig(
+                    ['filterable' => true, 'filter_by' => 'exact_value', 'sortable' => true]
+                ),
+                'hasAssociation' => true,
+                'limitFiltersSorters' => true,
+                'aggregatedData' => [$enumAttribute->getId() + 3000 => \random_int(1, 1000)],
+                'filtersState' => [],
+                'sortersState' => ['internalStatus_priority' => ['state']],
+                'expected' => [
+                    'filters' => [
+                        'columns' => []
+                    ],
+                    'columns' => [
+                        'internalStatus_priority' => [
+                            'label' => self::LABEL,
+                        ]
+                    ],
+                    'sorters' => [
+                        'columns' => [
+                            'internalStatus_priority' => [
+                                'data_name' => Query::TYPE_INTEGER . '.internalStatus_priority',
+                            ]
+                        ]
+                    ]
+                ],
+            ],
+            'attribute filterable and sortable, limit with product family' => [
+                'attribute' => $enumAttribute,
+                'attributeType' => $enumSearchAttributeType,
+                'extendConfig' => $this->getConfig(['state' => ExtendScope::STATE_ACTIVE]),
+                'attributeConfig' => $this->getConfig(
+                    ['filterable' => true, 'filter_by' => 'exact_value', 'sortable' => true]
+                ),
+                'hasAssociation' => true,
+                'limitFiltersSorters' => true,
+                'aggregatedData' => [$enumAttribute->getId() + 2000 => \random_int(1, 1000)],
+                'filtersState' => [],
+                'sortersState' => [],
                 'expected' => [
                     'filters' => [
                         'columns' => [
@@ -310,6 +572,10 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
                     ['filterable' => true, 'filter_by' => 'exact_value', 'sortable' => true]
                 ),
                 'hasAssociation' => false,
+                'limitFiltersSorters' => false,
+                'aggregatedData' => [],
+                'filtersState' => [],
+                'sortersState' => [],
                 'expected' => [
                     'filters' => [
                         'columns' => [
@@ -346,6 +612,10 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
                     ['filterable' => true, 'filter_by' => 'exact_value', 'sortable' => false]
                 ),
                 'hasAssociation' => true,
+                'limitFiltersSorters' => false,
+                'aggregatedData' => [],
+                'filtersState' => [],
+                'sortersState' => [],
                 'expected' => [
                     'filters' => [
                         'columns' => [
@@ -368,6 +638,10 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
                     ['filterable' => true, 'filter_by' => 'exact_value', 'sortable' => false]
                 ),
                 'hasAssociation' => false,
+                'limitFiltersSorters' => false,
+                'aggregatedData' => [],
+                'filtersState' => [],
+                'sortersState' => [],
                 'expected' => [
                     'filters' => [
                         'columns' => [
@@ -388,6 +662,10 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
                 'extendConfig' => $this->getConfig(['state' => ExtendScope::STATE_ACTIVE]),
                 'attributeConfig' => $this->getConfig(['filterable' => true, 'sortable' => true]),
                 'hasAssociation' => true,
+                'limitFiltersSorters' => false,
+                'aggregatedData' => [],
+                'filtersState' => [],
+                'sortersState' => [],
                 'expected' => [
                     'filters' => [
                         'columns' => [
@@ -419,6 +697,10 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
                 'extendConfig' => $this->getConfig(['state' => ExtendScope::STATE_ACTIVE]),
                 'attributeConfig' => $this->getConfig(['filterable' => true, 'sortable' => true]),
                 'hasAssociation' => true,
+                'limitFiltersSorters' => false,
+                'aggregatedData' => [],
+                'filtersState' => [],
+                'sortersState' => [],
                 'expected' => [
                     'filters' => [
                         'columns' => [
@@ -449,8 +731,6 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
                 'attributeType' => $fileSearchAttributeType,
                 'extendConfig' => $this->getConfig(['state' => ExtendScope::STATE_ACTIVE]),
                 'attributeConfig' => $this->getConfig(['filterable' => true, 'sortable' => true]),
-                'hasAssociation' => true,
-                'expected' => [],
             ],
         ];
     }

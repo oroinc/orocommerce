@@ -3,7 +3,7 @@ Oro\Bundle\PromotionBundle\Entity\Promotion:
         rule:
             - Valid: ~
         useCoupons:
-            - NotBlank: ~
+            - NotNull: ~
         schedules:
             - Valid: ~
         scopes:
