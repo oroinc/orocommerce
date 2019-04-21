@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\DependencyInjection;
 
+use Oro\Component\Config\Loader\ContainerBuilderAdapter;
 use Oro\Component\Config\Loader\CumulativeConfigLoader;
 use Oro\Component\Config\Loader\YamlCumulativeFileLoader;
 use Symfony\Component\Config\FileLocator;
@@ -28,15 +29,13 @@ class OroWebsiteSearchExtension extends Extension
         $loader->load('attribute_types.yml');
         $loader->load('commands.yml');
 
-        $ymlLoader = new YamlCumulativeFileLoader(
-            'Resources/config/oro/website_search_engine/' . $config['engine'] . '.yml'
+        $configLoader = new CumulativeConfigLoader(
+            'oro_website_search',
+            new YamlCumulativeFileLoader('Resources/config/oro/website_search_engine/' . $config['engine'] . '.yml')
         );
-
-        $engineLoader = new CumulativeConfigLoader('oro_website_search', $ymlLoader);
-        $engineResources = $engineLoader->load($container);
-
-        foreach ($engineResources as $engineResource) {
-            $loader->load($engineResource->path);
+        $resources = $configLoader->load(new ContainerBuilderAdapter($container));
+        foreach ($resources as $resource) {
+            $loader->load($resource->path);
         }
 
         if ('test' === $container->getParameter('kernel.environment')) {
