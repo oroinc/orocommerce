@@ -1,8 +1,7 @@
 <?php
 
-namespace Oro\Bundle\WebsiteSearchBundle\Provider;
+namespace Oro\Bundle\WebsiteSearchBundle\Configuration;
 
-use Oro\Bundle\WebsiteSearchBundle\DependencyInjection\MappingConfiguration;
 use Oro\Component\Config\Cache\PhpArrayConfigProvider;
 use Oro\Component\Config\Loader\CumulativeConfigLoader;
 use Oro\Component\Config\Loader\CumulativeConfigProcessorUtil;

@@ -53,7 +53,7 @@ services:
             - { name: website_search.placeholder }
 
     oro_website_search.mapping_configuration.provider:
-        class: 'Oro\Bundle\WebsiteSearchBundle\Provider\MappingConfigurationProvider'
+        class: 'Oro\Bundle\WebsiteSearchBundle\Configuration\MappingConfigurationProvider'
         public: false
         parent: oro.static_config_provider.abstract
         arguments:

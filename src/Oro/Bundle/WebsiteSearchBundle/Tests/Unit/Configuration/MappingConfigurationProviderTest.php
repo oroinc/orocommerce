@@ -1,8 +1,8 @@
 <?php
 
-namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Loader;
+namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Configuration;
 
-use Oro\Bundle\WebsiteSearchBundle\Provider\MappingConfigurationProvider;
+use Oro\Bundle\WebsiteSearchBundle\Configuration\MappingConfigurationProvider;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Provider\Fixture\Bundle\TestBundle1\TestBundle1;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Provider\Fixture\Bundle\TestBundle2\TestBundle2;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Provider\Fixture\Bundle\TestBundle3\TestBundle3;

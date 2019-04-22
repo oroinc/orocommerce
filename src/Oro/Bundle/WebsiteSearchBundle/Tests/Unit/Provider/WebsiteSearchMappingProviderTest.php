@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Provider;
 
+use Oro\Bundle\WebsiteSearchBundle\Configuration\MappingConfigurationProvider;
 use Oro\Bundle\WebsiteSearchBundle\Event\WebsiteSearchMappingEvent;
-use Oro\Bundle\WebsiteSearchBundle\Provider\MappingConfigurationProvider;
 use Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchMappingProvider;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 

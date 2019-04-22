@@ -3,7 +3,8 @@
 namespace Oro\Bundle\WebsiteSearchBundle\Provider;
 
 use Oro\Bundle\SearchBundle\Provider\AbstractSearchMappingProvider;
-use Oro\Bundle\WebsiteSearchBundle\DependencyInjection\MappingConfiguration;
+use Oro\Bundle\WebsiteSearchBundle\Configuration\MappingConfiguration;
+use Oro\Bundle\WebsiteSearchBundle\Configuration\MappingConfigurationProvider;
 use Oro\Bundle\WebsiteSearchBundle\Event\WebsiteSearchMappingEvent;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Symfony\Component\Config\Definition\Processor;

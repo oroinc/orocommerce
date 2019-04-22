@@ -1,11 +1,14 @@
 <?php
 
-namespace Oro\Bundle\WebsiteSearchBundle\DependencyInjection;
+namespace Oro\Bundle\WebsiteSearchBundle\Configuration;
 
 use Oro\Bundle\SearchBundle\Query\Query;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
+/**
+ * Provides schema for configuration that is loaded from "Resources/config/oro/website_search.yml" files.
+ */
 class MappingConfiguration implements ConfigurationInterface
 {
     /**
