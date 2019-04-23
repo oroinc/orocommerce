@@ -5,6 +5,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Layout\DataProvider;
 use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\AbstractQuery;
+use Doctrine\ORM\Configuration;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Parameter;
@@ -90,9 +91,10 @@ abstract class AbstractSegmentProductsProviderTest extends \PHPUnit\Framework\Te
         $result = [new Product()];
         $dql = 'DQL SELECT';
         $qbParameters = new ArrayCollection([new Parameter('parameter', 1)]);
-        $hash = $this->getHashData($dql, ['parameter' => 1]);
+        $hash = $this->getHashData($dql, ['parameter' => 1], ['hint' => 1]);
 
         $segment = new Segment();
+        $segment->setRecordsLimit(1);
         $this->productSegmentProvider
             ->expects($this->once())
             ->method('getProductSegmentById')
@@ -113,6 +115,10 @@ abstract class AbstractSegmentProductsProviderTest extends \PHPUnit\Framework\Te
             ->method('getParameters')
             ->willReturn($qbParameters);
 
+        $queryBuilder->expects($this->once())
+            ->method('getEntityManager')
+            ->willReturn($this->em);
+
         $this->cache
             ->expects($this->at(1))
             ->method('fetch')
@@ -131,6 +137,7 @@ abstract class AbstractSegmentProductsProviderTest extends \PHPUnit\Framework\Te
                 [
                     'dql' => $dql,
                     'parameters' => ['parameter' => 1],
+                    'hints' => ['hint' => 1],
                     'hash' => sprintf('encrypt_%s', $hash),
                 ],
                 3600
@@ -140,6 +147,18 @@ abstract class AbstractSegmentProductsProviderTest extends \PHPUnit\Framework\Te
             ->method('encryptData')
             ->with($hash)
             ->willReturn(sprintf('encrypt_%s', $hash));
+
+        $configuration = $this->createMock(Configuration::class);
+        $configuration->expects($this->once())
+            ->method('getDefaultQueryHints')
+            ->willReturn(['hint' => 1]);
+        $configuration->expects($this->once())
+            ->method('setDefaultQueryHint')
+            ->with('hint', 1);
+
+        $this->em->expects($this->atLeastOnce())
+            ->method('getConfiguration')
+            ->willReturn($configuration);
 
         /** @var Query|\PHPUnit\Framework\MockObject\MockObject $query */
         $query = $this->createMock(AbstractQuery::class);
@@ -161,9 +180,10 @@ abstract class AbstractSegmentProductsProviderTest extends \PHPUnit\Framework\Te
     {
         $result = [new Product()];
         $dql = 'DQL SELECT';
-        $hash = $this->getHashData($dql, ['parameter' => 1]);
+        $hash = $this->getHashData($dql, ['parameter' => 1], ['hint' => 1]);
 
         $segment = new Segment();
+        $segment->setRecordsLimit(1);
         $this->productSegmentProvider
             ->expects($this->once())
             ->method('getProductSegmentById')
@@ -174,7 +194,12 @@ abstract class AbstractSegmentProductsProviderTest extends \PHPUnit\Framework\Te
             ->expects($this->once())
             ->method('fetch')
             ->with($this->getCacheKey())
-            ->willReturn(['dql' => $dql, 'parameters' => ['parameter' => 1], 'hash' =>  sprintf('encrypt_%s', $hash)]);
+            ->willReturn([
+                'dql' => $dql,
+                'parameters' => ['parameter' => 1],
+                'hints' => ['hint' => 1],
+                'hash' =>  sprintf('encrypt_%s', $hash)
+            ]);
 
         $this->crypter->expects($this->any())
             ->method('encryptData')
@@ -185,6 +210,18 @@ abstract class AbstractSegmentProductsProviderTest extends \PHPUnit\Framework\Te
             ->method('decryptData')
             ->with(sprintf('encrypt_%s', $hash))
             ->willReturn($hash);
+
+        $configuration = $this->createMock(Configuration::class);
+        $configuration->expects($this->never())
+            ->method('getDefaultQueryHints')
+            ->willReturn(['hint' => 1]);
+        $configuration->expects($this->once())
+            ->method('setDefaultQueryHint')
+            ->with('hint', 1);
+
+        $this->em->expects($this->atLeastOnce())
+            ->method('getConfiguration')
+            ->willReturn($configuration);
 
         /** @var Query|\PHPUnit\Framework\MockObject\MockObject $query */
         $query = $this->createMock(AbstractQuery::class);
@@ -208,9 +245,10 @@ abstract class AbstractSegmentProductsProviderTest extends \PHPUnit\Framework\Te
         $dql = 'DQL SELECT';
         $invalidDql = 'INVALID DQL SELECT';
         $qbParameters = new ArrayCollection([new Parameter('parameter', 1)]);
-        $hash = $this->getHashData($dql, ['parameter' => 1]);
+        $hash = $this->getHashData($dql, ['parameter' => 1], ['hint' => 1]);
 
         $segment = new Segment();
+        $segment->setRecordsLimit(1);
         $this->productSegmentProvider
             ->expects($this->once())
             ->method('getProductSegmentById')
@@ -221,7 +259,12 @@ abstract class AbstractSegmentProductsProviderTest extends \PHPUnit\Framework\Te
             ->expects($this->exactly(2))
             ->method('fetch')
             ->willReturnOnConsecutiveCalls(
-                ['dql' => $invalidDql, 'parameters' => ['parameter' => 1], 'hash' =>  sprintf('encrypt_%s', $hash)],
+                [
+                    'dql' => $invalidDql,
+                    'parameters' => ['parameter' => 1],
+                    'hints' => ['hint' => 1],
+                    'hash' =>  sprintf('encrypt_%s', $hash)
+                ],
                 false
             );
 
@@ -238,6 +281,7 @@ abstract class AbstractSegmentProductsProviderTest extends \PHPUnit\Framework\Te
                 [
                     'dql' => $dql,
                     'parameters' => ['parameter' => 1],
+                    'hints' => ['hint' => 1],
                     'hash' => sprintf('encrypt_%s', $hash),
                 ],
                 3600
@@ -251,6 +295,10 @@ abstract class AbstractSegmentProductsProviderTest extends \PHPUnit\Framework\Te
             ->method('getParameters')
             ->willReturn($qbParameters);
 
+        $queryBuilder->expects($this->once())
+            ->method('getEntityManager')
+            ->willReturn($this->em);
+
         $this->crypter->expects($this->once())
             ->method('encryptData')
             ->with($hash)
@@ -260,6 +308,18 @@ abstract class AbstractSegmentProductsProviderTest extends \PHPUnit\Framework\Te
             ->method('decryptData')
             ->with(sprintf('encrypt_%s', $hash))
             ->willReturn($hash);
+
+        $configuration = $this->createMock(Configuration::class);
+        $configuration->expects($this->once())
+            ->method('getDefaultQueryHints')
+            ->willReturn(['hint' => 1]);
+        $configuration->expects($this->once())
+            ->method('setDefaultQueryHint')
+            ->with('hint', 1);
+
+        $this->em->expects($this->atLeastOnce())
+            ->method('getConfiguration')
+            ->willReturn($configuration);
 
         /** @var Query|\PHPUnit\Framework\MockObject\MockObject $query */
         $query = $this->createMock(AbstractQuery::class);
@@ -284,6 +344,7 @@ abstract class AbstractSegmentProductsProviderTest extends \PHPUnit\Framework\Te
         $hash = 'hash';
 
         $segment = new Segment();
+        $segment->setRecordsLimit(1);
         $this->productSegmentProvider
             ->expects($this->once())
             ->method('getProductSegmentById')
@@ -294,12 +355,26 @@ abstract class AbstractSegmentProductsProviderTest extends \PHPUnit\Framework\Te
             ->expects($this->once())
             ->method('fetch')
             ->with($this->getCacheKey())
-            ->willReturn(['dql' => $dql, 'parameters' => ['parameter' => 1], 'hash' => md5('invalid')]);
+            ->willReturn([
+                'dql' => $dql,
+                'parameters' => ['parameter' => 1],
+                'hints' => ['hint' => 1],
+                'hash' => md5('invalid')
+            ]);
 
         $this->crypter->expects($this->any())
             ->method('encryptData')
             ->with($dql)
             ->willReturn($hash);
+
+        $configuration = $this->createMock(Configuration::class);
+        $configuration->expects($this->once())
+            ->method('setDefaultQueryHint')
+            ->with('hint', 1);
+
+        $this->em->expects($this->atLeastOnce())
+            ->method('getConfiguration')
+            ->willReturn($configuration);
 
         /** @var Query|\PHPUnit\Framework\MockObject\MockObject $query */
         $query = $this->createMock(AbstractQuery::class);
@@ -328,6 +403,7 @@ abstract class AbstractSegmentProductsProviderTest extends \PHPUnit\Framework\Te
         $this->segmentProductsProvider->disableCache();
 
         $segment = new Segment();
+        $segment->setRecordsLimit(1);
         $this->productSegmentProvider
             ->expects($this->once())
             ->method('getProductSegmentById')
@@ -350,6 +426,22 @@ abstract class AbstractSegmentProductsProviderTest extends \PHPUnit\Framework\Te
         $queryBuilder->expects($this->once())
             ->method('getParameters')
             ->willReturn($parameters);
+
+        $queryBuilder->expects($this->once())
+            ->method('getEntityManager')
+            ->willReturn($this->em);
+
+        $configuration = $this->createMock(Configuration::class);
+        $configuration->expects($this->once())
+            ->method('getDefaultQueryHints')
+            ->willReturn(['hint' => 1]);
+        $configuration->expects($this->once())
+            ->method('setDefaultQueryHint')
+            ->with('hint', 1);
+
+        $this->em->expects($this->atLeastOnce())
+            ->method('getConfiguration')
+            ->willReturn($configuration);
 
         /** @var Query|\PHPUnit\Framework\MockObject\MockObject $query */
         $query = $this->createMock(AbstractQuery::class);
@@ -381,6 +473,7 @@ abstract class AbstractSegmentProductsProviderTest extends \PHPUnit\Framework\Te
     protected function getProductsQueryBuilderIsNull()
     {
         $segment = new Segment();
+        $segment->setRecordsLimit(1);
         $this->productSegmentProvider
             ->expects($this->once())
             ->method('getProductSegmentById')
@@ -427,11 +520,12 @@ abstract class AbstractSegmentProductsProviderTest extends \PHPUnit\Framework\Te
      *
      * @return string
      */
-    private function getHashData($dql, $parameters): string
+    private function getHashData($dql, $parameters, $queryHints): string
     {
         return md5(serialize([
             AbstractSegmentProductsProvider::DQL => $dql,
             AbstractSegmentProductsProvider::PARAMETERS => $parameters,
+            AbstractSegmentProductsProvider::HINTS => $queryHints,
         ]));
     }
 }

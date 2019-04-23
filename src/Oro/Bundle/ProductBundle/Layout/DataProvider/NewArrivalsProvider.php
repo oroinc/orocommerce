@@ -8,6 +8,9 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Bundle\UserBundle\Entity\AbstractUser;
 
+/**
+ * Provide new arrivals products
+ */
 class NewArrivalsProvider extends AbstractSegmentProductsProvider
 {
     /**
@@ -33,7 +36,7 @@ class NewArrivalsProvider extends AbstractSegmentProductsProvider
             $userId = $user->getId();
         }
 
-        return ['new_arrivals_products', $userId, $segment->getId()];
+        return ['new_arrivals_products', $userId, $segment->getId(), $segment->getRecordsLimit()];
     }
 
     /**
