@@ -1,0 +1,21 @@
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    productUnitPrecision{1..3}:
+        unit: '@item'
+        precision: '1'
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    localProduct{1..3}Name:
+        string: 'Product <current()>'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product{1..3}:
+        type: 'simple'
+        sku: 'SKU<current()>'
+        primaryUnitPrecision: '@productUnitPrecision<current()>'
+        addName: ['@localProduct<current()>Name']
+        organization: '@organization'
+        owner: '@business_unit'
+        attributeFamily: '@defaultProductFamily'
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        featured: true

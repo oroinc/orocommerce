@@ -80,7 +80,7 @@ class NewArrivalsProviderTest extends AbstractSegmentProductsProviderTest
      */
     protected function getCacheKey()
     {
-        return 'cacheVal_new_arrivals_products_0_';
+        return 'cacheVal_new_arrivals_products_0__1';
     }
 
     private function prepare()
