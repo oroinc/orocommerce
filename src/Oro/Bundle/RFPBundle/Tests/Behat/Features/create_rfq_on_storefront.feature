@@ -1,3 +1,4 @@
+@fixture-OroRFPBundle:RFQCustomer.yml
 @ticket-BB-16463
 Feature: Create RFQ on storefront
 
