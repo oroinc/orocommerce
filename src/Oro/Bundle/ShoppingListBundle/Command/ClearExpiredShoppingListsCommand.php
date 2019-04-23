@@ -46,6 +46,7 @@ class ClearExpiredShoppingListsCommand extends ContainerAwareCommand implements 
             ShoppingList::class
         );
 
+        $expiredLastVisitDate = $this->getExpiredLastVisitDate();
         do {
             $visitorsQB = $connection->createQueryBuilder();
             $visitorsQB->select('rel.shoppinglist_id')
@@ -57,7 +58,7 @@ class ClearExpiredShoppingListsCommand extends ContainerAwareCommand implements 
                     'cv.id = rel.customervisitor_id'
                 )
                 ->where($visitorsQB->expr()->lte('cv.last_visit', ':expiredLastVisitDate'))
-                ->setParameter('expiredLastVisitDate', $this->getExpiredLastVisitDate(), Type::DATETIME)
+                ->setParameter('expiredLastVisitDate', $expiredLastVisitDate, Type::DATETIME)
                 ->setMaxResults(self::CHUNK_SIZE);
             $visitorIds = $visitorsQB->execute()->fetchAll(\PDO::FETCH_COLUMN);
 
