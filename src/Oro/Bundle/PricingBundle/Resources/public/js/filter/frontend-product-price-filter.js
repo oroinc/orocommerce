@@ -17,6 +17,13 @@ define([
      */
     FrontendProductPriceFilter = ProductPriceFilter.extend({
         /**
+         * @property {Object}
+         */
+        criteriaValueSelectors: _.defaults({
+            type: 'select[data-choice-value-select]'
+        }, ProductPriceFilter.prototype.criteriaValueSelectors),
+
+        /**
          * @inheritDoc
          */
         constructor: function FrontendProductPriceFilter() {
