@@ -143,7 +143,6 @@ Feature: Default RFQ Workflows
       | Internal Status | Open      |
       | Customer Status | Submitted |
 
- #TODO add check html in note
   Scenario: Create RFQ and Check Internal status: More Info Requested and Customer status: Requires Attention
     Given I act like a Admin
     And I go to Sales/Requests For Quote
