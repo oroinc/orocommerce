@@ -47,7 +47,6 @@ services:
         class: 'Oro\Bundle\PayPalBundle\Method\Config\Factory\PayPalCreditCardConfigFactory'
         public: false
         arguments:
-            - '@oro_security.encoder.default'
             - '@oro_locale.helper.localization'
             - '@oro_paypal.method.generator.identifier.payflow_gateway.credit_card'
 
@@ -55,7 +54,6 @@ services:
         class: 'Oro\Bundle\PayPalBundle\Method\Config\Factory\PayPalExpressCheckoutConfigFactory'
         public: false
         arguments:
-            - '@oro_security.encoder.default'
             - '@oro_locale.helper.localization'
             - '@oro_paypal.method.generator.identifier.payflow_gateway.express_checkout'
 
@@ -63,7 +61,6 @@ services:
         class: 'Oro\Bundle\PayPalBundle\Method\Config\Factory\PayPalCreditCardConfigFactory'
         public: false
         arguments:
-            - '@oro_security.encoder.default'
             - '@oro_locale.helper.localization'
             - '@oro_paypal.method.generator.identifier.payments_pro.credit_card'
 
@@ -71,7 +68,6 @@ services:
         class: 'Oro\Bundle\PayPalBundle\Method\Config\Factory\PayPalExpressCheckoutConfigFactory'
         public: false
         arguments:
-            - '@oro_security.encoder.default'
             - '@oro_locale.helper.localization'
             - '@oro_paypal.method.generator.identifier.payments_pro.express_checkout'
 

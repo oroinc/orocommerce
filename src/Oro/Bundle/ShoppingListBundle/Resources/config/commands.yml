@@ -4,3 +4,9 @@ services:
         class: Oro\Bundle\ShoppingListBundle\Command\ClearExpiredShoppingListsCommand
         tags:
             - { name: console.command }
+
+    Oro\Bundle\ShoppingListBundle\Command\ClearExpiredCustomerVisitorsCommand:
+        public: false
+        class: Oro\Bundle\ShoppingListBundle\Command\ClearExpiredCustomerVisitorsCommand
+        tags:
+            - { name: console.command }

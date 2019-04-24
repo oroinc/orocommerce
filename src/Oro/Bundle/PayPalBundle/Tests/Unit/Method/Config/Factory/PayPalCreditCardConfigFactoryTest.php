@@ -10,17 +10,11 @@ use Oro\Bundle\PayPalBundle\Entity\PayPalSettings;
 use Oro\Bundle\PayPalBundle\Method\Config\Factory\PayPalCreditCardConfigFactory;
 use Oro\Bundle\PayPalBundle\Method\Config\PayPalCreditCardConfig;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
-use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 class PayPalCreditCardConfigFactoryTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
-
-    /**
-     * @var SymmetricCrypterInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $encoder;
 
     /**
      * @var LocalizationHelper|\PHPUnit\Framework\MockObject\MockObject
@@ -39,11 +33,9 @@ class PayPalCreditCardConfigFactoryTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->encoder = $this->createMock(SymmetricCrypterInterface::class);
         $this->localizationHelper = $this->createMock(LocalizationHelper::class);
         $this->identifierGenerator = $this->createMock(IntegrationIdentifierGeneratorInterface::class);
         $this->payPalCreditCardConfigFactory = new PayPalCreditCardConfigFactory(
-            $this->encoder,
             $this->localizationHelper,
             $this->identifierGenerator
         );
@@ -51,14 +43,6 @@ class PayPalCreditCardConfigFactoryTest extends \PHPUnit\Framework\TestCase
 
     public function testCreateConfig()
     {
-        $this->encoder->expects(static::any())
-            ->method('decryptData')
-            ->willReturnMap([
-                ['string', 'string'],
-                ['proxy host', 'proxy host'],
-                ['8099', '8099']
-            ]);
-
         /** @var Channel $channel */
         $channel = $this->getEntity(
             Channel::class,

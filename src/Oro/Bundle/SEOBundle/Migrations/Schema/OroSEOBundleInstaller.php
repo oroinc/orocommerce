@@ -38,7 +38,7 @@ class OroSEOBundleInstaller implements Installation, ExtendExtensionAwareInterfa
      */
     public function getMigrationVersion()
     {
-        return 'v1_5';
+        return 'v1_6';
     }
 
     /**
@@ -63,7 +63,7 @@ class OroSEOBundleInstaller implements Installation, ExtendExtensionAwareInterfa
     private function addMetaInformation(Schema $schema, $ownerTable)
     {
         if ($schema->hasTable($ownerTable)) {
-            $this->addMetaInformationField($schema, $ownerTable, self::METAINFORMATION_TITLES);
+            $this->addMetaInformationField($schema, $ownerTable, self::METAINFORMATION_TITLES, true);
             $this->addMetaInformationField($schema, $ownerTable, self::METAINFORMATION_DESCRIPTIONS);
             $this->addMetaInformationField($schema, $ownerTable, self::METAINFORMATION_KEYWORDS);
         }

@@ -125,16 +125,11 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      */
     private function createTransport(array $settings): PayPalSettings
     {
-        $encoder = $this->getContainer()->get('oro_security.encoder.default');
         $propertyAccessor = $this->getContainer()->get('property_accessor');
         $transport = new PayPalSettings();
         foreach ($settings as $key => $value) {
             if ($this->isLocalizedProperty($key)) {
                 $value = [(new LocalizedFallbackValue())->setString($value)];
-            }
-
-            if ($this->isEncodedProperty($key)) {
-                $value = $encoder->encryptData($value);
             }
 
             $propertyAccessor->setValue($transport, $key, $value);
@@ -164,16 +159,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
             ->setTransport($transport);
 
         return $channel;
-    }
-
-    /**
-     * @param string $name
-     *
-     * @return bool
-     */
-    private function isEncodedProperty(string $name): bool
-    {
-        return \in_array($name, ['vendor', 'user', 'password', 'partner']);
     }
 
     /**
