@@ -8,15 +8,12 @@ use Oro\Bundle\IntegrationBundle\Generator\IntegrationIdentifierGeneratorInterfa
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\PayPalBundle\Entity\PayPalSettings;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
-use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 
+/**
+ * Abstract config factory class PayPal integrations
+ */
 abstract class AbstractPayPalConfigFactory
 {
-    /**
-     * @var SymmetricCrypterInterface
-     */
-    private $encoder;
-
     /**
      * @var LocalizationHelper
      */
@@ -28,16 +25,13 @@ abstract class AbstractPayPalConfigFactory
     private $identifierGenerator;
 
     /**
-     * @param SymmetricCrypterInterface $encoder
      * @param LocalizationHelper $localizationHelper
      * @param IntegrationIdentifierGeneratorInterface $identifierGenerator
      */
     public function __construct(
-        SymmetricCrypterInterface $encoder,
         LocalizationHelper $localizationHelper,
         IntegrationIdentifierGeneratorInterface $identifierGenerator
     ) {
-        $this->encoder = $encoder;
         $this->localizationHelper = $localizationHelper;
         $this->identifierGenerator = $identifierGenerator;
     }
@@ -49,10 +43,10 @@ abstract class AbstractPayPalConfigFactory
     protected function getCredentials(PayPalSettings $settings)
     {
         return [
-            Option\Vendor::VENDOR => $this->getDecryptedValue($settings->getVendor()),
-            Option\User::USER => $this->getDecryptedValue($settings->getUser()),
-            Option\Password::PASSWORD => $this->getDecryptedValue($settings->getPassword()),
-            Option\Partner::PARTNER => $this->getDecryptedValue($settings->getPartner()),
+            Option\Vendor::VENDOR => $settings->getVendor(),
+            Option\User::USER => $settings->getUser(),
+            Option\Password::PASSWORD => $settings->getPassword(),
+            Option\Partner::PARTNER => $settings->getPartner(),
         ];
     }
 
@@ -63,15 +57,6 @@ abstract class AbstractPayPalConfigFactory
     protected function getLocalizedValue(Collection $values)
     {
         return (string)$this->localizationHelper->getLocalizedValue($values);
-    }
-
-    /**
-     * @param string $value
-     * @return string
-     */
-    protected function getDecryptedValue($value)
-    {
-        return (string)$this->encoder->decryptData($value);
     }
 
     /**

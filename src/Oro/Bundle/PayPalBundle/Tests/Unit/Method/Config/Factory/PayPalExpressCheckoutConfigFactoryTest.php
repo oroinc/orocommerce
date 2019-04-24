@@ -11,17 +11,11 @@ use Oro\Bundle\PayPalBundle\Entity\PayPalSettings;
 use Oro\Bundle\PayPalBundle\Method\Config\Factory\PayPalExpressCheckoutConfigFactory;
 use Oro\Bundle\PayPalBundle\Method\Config\PayPalExpressCheckoutConfig;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
-use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 class PayPalExpressCheckoutConfigFactoryTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
-
-    /**
-     * @var SymmetricCrypterInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $encoder;
 
     /**
      * @var LocalizationHelper|\PHPUnit\Framework\MockObject\MockObject
@@ -40,11 +34,9 @@ class PayPalExpressCheckoutConfigFactoryTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->encoder = $this->createMock(SymmetricCrypterInterface::class);
         $this->localizationHelper = $this->createMock(LocalizationHelper::class);
         $this->identifierGenerator = $this->createMock(IntegrationIdentifierGeneratorInterface::class);
         $this->payPalExpressCheckoutConfigFactory = new PayPalExpressCheckoutConfigFactory(
-            $this->encoder,
             $this->localizationHelper,
             $this->identifierGenerator
         );
@@ -59,14 +51,6 @@ class PayPalExpressCheckoutConfigFactoryTest extends \PHPUnit\Framework\TestCase
         $short_label = (new LocalizedFallbackValue())->setString('test short label');
         $short_labels = new ArrayCollection();
         $short_labels->add($short_label);
-
-        $this->encoder->expects(static::any())
-            ->method('decryptData')
-            ->willReturnMap([
-                ['string', 'string'],
-                ['proxy host', 'proxy host'],
-                ['8099', '8099']
-            ]);
 
         /** @var Channel $channel */
         $channel = $this->getEntity(

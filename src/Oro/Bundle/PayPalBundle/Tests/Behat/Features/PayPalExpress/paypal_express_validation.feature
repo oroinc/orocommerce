@@ -1,5 +1,6 @@
 @regression
 @ticket-BB-16146
+@ticket-BB-16431
 Feature: Paypal express validation
   In order to be sure that express checkout names are always unique
   As a administrator
@@ -28,7 +29,12 @@ Feature: Paypal express validation
     Then I should see "Express Checkout cannot have the same name as the integration itself."
     And I fill "PayPalForm" with:
       | Express Checkout Name | NewPayPalPro |
-    And I save form
+    When I save form
+    Then I should see validation errors:
+      | Password | This value should not be blank. |
+    And I fill "PayPalForm" with:
+      | Password | qwer123423r23r |
+    When I save form
     Then I should see "Integration saved" flash message
 
   Scenario: Create new PayPal Integration with name used in express checkout and see validation error

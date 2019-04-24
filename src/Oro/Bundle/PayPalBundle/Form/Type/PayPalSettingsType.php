@@ -2,14 +2,12 @@
 
 namespace Oro\Bundle\PayPalBundle\Form\Type;
 
-use Oro\Bundle\FormBundle\Form\Type\OroEncodedPlaceholderPasswordType;
+use Oro\Bundle\FormBundle\Form\Type\OroPlaceholderPasswordType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\PayPalBundle\Entity\PayPalSettings;
 use Oro\Bundle\PayPalBundle\Settings\DataProvider\CreditCardTypesDataProviderInterface;
 use Oro\Bundle\PayPalBundle\Settings\DataProvider\PaymentActionsDataProviderInterface;
-use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -25,6 +23,8 @@ use Symfony\Component\Validator\Exception\InvalidOptionsException;
 use Symfony\Component\Validator\Exception\MissingOptionsException;
 
 /**
+ * PayPal configuration form
+ *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
  */
@@ -38,11 +38,6 @@ class PayPalSettingsType extends AbstractType
     protected $translator;
 
     /**
-     * @var SymmetricCrypterInterface
-     */
-    protected $encoder;
-
-    /**
      * @var CreditCardTypesDataProviderInterface
      */
     private $creditCardTypesDataProvider;
@@ -54,18 +49,15 @@ class PayPalSettingsType extends AbstractType
 
     /**
      * @param TranslatorInterface                  $translator
-     * @param SymmetricCrypterInterface            $encoder
      * @param CreditCardTypesDataProviderInterface $creditCardTypesDataProvider
      * @param PaymentActionsDataProviderInterface  $paymentActionsDataProvider
      */
     public function __construct(
         TranslatorInterface $translator,
-        SymmetricCrypterInterface $encoder,
         CreditCardTypesDataProviderInterface $creditCardTypesDataProvider,
         PaymentActionsDataProviderInterface $paymentActionsDataProvider
     ) {
         $this->translator = $translator;
-        $this->encoder = $encoder;
         $this->creditCardTypesDataProvider = $creditCardTypesDataProvider;
         $this->paymentActionsDataProvider = $paymentActionsDataProvider;
     }
@@ -149,7 +141,7 @@ class PayPalSettingsType extends AbstractType
                 'label' => 'oro.paypal.settings.user.label',
                 'required' => true,
             ])
-            ->add('password', OroEncodedPlaceholderPasswordType::class, [
+            ->add('password', OroPlaceholderPasswordType::class, [
                 'label' => 'oro.paypal.settings.password.label',
                 'required' => true,
             ])
@@ -189,11 +181,6 @@ class PayPalSettingsType extends AbstractType
                 'label' => 'oro.paypal.settings.enable_ssl_verification.label',
                 'required' => false,
             ]);
-        $this->transformWithEncodedValue($builder, 'vendor');
-        $this->transformWithEncodedValue($builder, 'partner');
-        $this->transformWithEncodedValue($builder, 'user');
-        $this->transformWithEncodedValue($builder, 'proxyHost');
-        $this->transformWithEncodedValue($builder, 'proxyPort');
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetData']);
     }
@@ -228,29 +215,5 @@ class PayPalSettingsType extends AbstractType
     public function getBlockPrefix()
     {
         return self::BLOCK_PREFIX;
-    }
-
-    /**
-     * @param FormBuilderInterface $builder
-     * @param string               $field
-     * @param bool                 $decrypt
-     *
-     * @throws \InvalidArgumentException
-     */
-    protected function transformWithEncodedValue(FormBuilderInterface $builder, $field, $decrypt = true)
-    {
-        // TODO: BB-9260 Reuse EncryptionTransformer
-        $builder->get($field)->addModelTransformer(new CallbackTransformer(
-            function ($value) use ($decrypt) {
-                if ($decrypt === true) {
-                    return $this->encoder->decryptData($value);
-                }
-
-                return $value;
-            },
-            function ($value) {
-                return $this->encoder->encryptData($value);
-            }
-        ));
     }
 }

@@ -13,7 +13,6 @@ services:
         class: Oro\Bundle\PayPalBundle\Form\Type\PayPalSettingsType
         arguments:
             - '@translator.default'
-            - '@oro_security.encoder.default'
             - '@oro_paypal.settings.card_type.provider'
             - '@oro_paypal.settings.payment_action.provider'
         tags:
