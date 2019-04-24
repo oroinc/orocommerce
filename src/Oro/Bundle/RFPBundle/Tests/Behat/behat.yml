@@ -69,19 +69,6 @@ oro_behat_extension:
                         locator: 'input[name="oro_rfp_request[requestProducts][0][product]"]'
                         element: Select2Entity
 
-        Frontend Request Form:
-            selector: 'form[name^="oro_rfp_frontend_request"]'
-            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
-            options:
-                mapping:
-                    First Name: 'oro_rfp_frontend_request[firstName]'
-                    Last Name: 'oro_rfp_frontend_request[lastName]'
-                    Phone Number: 'oro_rfp_frontend_request[phone]'
-                    Company: 'oro_rfp_frontend_request[company]'
-                    Role: 'oro_rfp_frontend_request[role]'
-                    Notes: 'oro_rfp_frontend_request[note]'
-                    PoNumber: 'oro_rfp_frontend_request[poNumber]'
-
     pages:
         RequestViewBackendPage:
             class: Oro\Bundle\RFPBundle\Tests\Behat\Page\RequestViewPage

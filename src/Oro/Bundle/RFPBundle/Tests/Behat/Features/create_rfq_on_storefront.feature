@@ -1,6 +1,9 @@
 @fixture-OroRFPBundle:RFQCustomer.yml
 @ticket-BB-16463
 Feature: Create RFQ on storefront
+  In order to control RFQ content
+  As an administrator
+  I need to be able to see correct RFQ content on view page
 
   Scenario: Feature background
     Given sessions active:
@@ -13,12 +16,12 @@ Feature: Create RFQ on storefront
     And I click "Account"
     And I click "Requests For Quote"
     And I click "New Quote"
-    And I fill "Frontend Request Form" with:
+    And fill form with:
       | First Name | First Name    |
       | Last Name  | Last Name     |
       | Company    | Company New   |
       | Notes      | <h1>note</h1> |
-      | PoNumber   | 007           |
+      | PO Number  | 007           |
     And I click "Submit Request"
     Then I should see "Request has been saved" flash message
 
