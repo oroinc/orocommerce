@@ -2,7 +2,7 @@
 @ticket-BB-16463
 Feature: Create RFQ on storefront
   In order to control RFQ content
-  As an administrator
+  As an Administrator
   I need to be able to see correct RFQ content on view page
 
   Scenario: Feature background
