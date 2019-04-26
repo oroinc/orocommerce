@@ -8,7 +8,8 @@ The current file describes significant changes in the code that may affect the u
  * Event `oro_payment.event.extract_line_item_options` will no longer be dispatched. Implementations of `Oro\Bundle\PayPalBundle\OptionsProvider\OptionsProviderInterface` will be used instead.
  * Event `oro_payment.event.extract_address_options` will no longer be dispatched. Class `PaymentOrderShippingAddressOptionsProvider` will be used instead.
 
-## 4.0.0-beta
+## 4.0.0-beta (2019-03-28)
+[Show detailed list of changes](incompatibilities-4-0-beta.md)
 
 ### Changed
 #### PaymentBundle
