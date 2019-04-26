@@ -3,11 +3,11 @@
 namespace Oro\Bundle\PayPalBundle\Tests\Unit\Method\Factory;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\PaymentBundle\Provider\ExtractOptionsProvider;
 use Oro\Bundle\PaymentBundle\Provider\SurchargeProvider;
 use Oro\Bundle\PayPalBundle\Method\Config\PayPalExpressCheckoutConfigInterface;
 use Oro\Bundle\PayPalBundle\Method\Factory\BasicPayPalExpressCheckoutPaymentMethodFactory;
 use Oro\Bundle\PayPalBundle\Method\PayPalExpressCheckoutPaymentMethod;
+use Oro\Bundle\PayPalBundle\OptionsProvider\OptionsProvider;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Routing\RouterInterface;
@@ -35,7 +35,7 @@ class BasicPayPalExpressCheckoutPaymentMethodFactoryTest extends \PHPUnit\Framew
     private $doctrineHelper;
 
     /**
-     * @var ExtractOptionsProvider|\PHPUnit\Framework\MockObject\MockObject
+     * @var OptionsProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     private $optionsProvider;
 
@@ -54,7 +54,7 @@ class BasicPayPalExpressCheckoutPaymentMethodFactoryTest extends \PHPUnit\Framew
         $this->gateway = $this->createMock(Gateway::class);
         $this->router = $this->createMock(RouterInterface::class);
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
-        $this->optionsProvider = $this->createMock(ExtractOptionsProvider::class);
+        $this->optionsProvider = $this->createMock(OptionsProvider::class);
         $this->surchargeProvider = $this->createMock(SurchargeProvider::class);
         $this->propertyAccessor = $this->createMock(PropertyAccessor::class);
 

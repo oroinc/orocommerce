@@ -1,30 +1,30 @@
 <?php
 
-namespace Oro\Bundle\OrderBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\PaymentBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
-use Oro\Bundle\OrderBundle\EventListener\ExtractAddressOptionsListener;
-use Oro\Bundle\PaymentBundle\Event\ExtractAddressOptionsEvent;
 use Oro\Bundle\PaymentBundle\Model\AddressOptionModel;
+use Oro\Bundle\PaymentBundle\Provider\PaymentOrderShippingAddressOptionsProvider;
+use PHPUnit\Framework\TestCase;
 
-class ExtractAddressOptionsListenerTest extends \PHPUnit\Framework\TestCase
+class PaymentOrderShippingAddressOptionsProviderTest extends TestCase
 {
-    /** @var ExtractAddressOptionsListener */
-    private $listener;
+    /**
+     * @var PaymentOrderShippingAddressOptionsProvider
+     */
+    private $provider;
 
-    public function setUp()
+    /**
+     * {@inheritdoc}
+     */
+    public function setUp(): void
     {
-        $this->listener = new ExtractAddressOptionsListener();
+        $this->provider = new PaymentOrderShippingAddressOptionsProvider();
     }
     
-    public function tearDown()
-    {
-        unset($this->listener);
-    }
-
-    public function testOnExtractShippingAddressOptions()
+    public function testGetShippingAddressOptions(): void
     {
         $region = new Region('Region');
         $region->setCode('regionCode');
@@ -40,10 +40,7 @@ class ExtractAddressOptionsListenerTest extends \PHPUnit\Framework\TestCase
             ->setRegion($region)
             ->setCountry(new Country('IsoCode'));
 
-        $event = new ExtractAddressOptionsEvent($address);
-        $this->listener->onExtractShippingAddressOptions($event);
-
-        $addressOptionModel = $event->getModel();
+        $addressOptionModel = $this->provider->getShippingAddressOptions($address);
 
         $this->assertInstanceOf(AddressOptionModel::class, $addressOptionModel);
         $this->assertEquals('First name', $addressOptionModel->getFirstName());
@@ -56,14 +53,11 @@ class ExtractAddressOptionsListenerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('IsoCode', $addressOptionModel->getCountryIso2());
     }
 
-    public function testOnExtractShippingAddressOptionsWitEmptyAddress()
+    public function testGetShippingAddressOptionsWitEmptyAddress(): void
     {
         $address = new OrderAddress();
 
-        $event = new ExtractAddressOptionsEvent($address);
-        $this->listener->onExtractShippingAddressOptions($event);
-
-        $addressOptionModel = $event->getModel();
+        $addressOptionModel = $this->provider->getShippingAddressOptions($address);
 
         $this->assertInstanceOf(AddressOptionModel::class, $addressOptionModel);
         $this->assertEquals('', $addressOptionModel->getFirstName());

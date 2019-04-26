@@ -1,70 +1,92 @@
 <?php
 
-namespace Oro\Bundle\OrderBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\PaymentBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
-use Oro\Bundle\OrderBundle\EventListener\ExtractLineItemPaymentOptionsListener;
-use Oro\Bundle\PaymentBundle\Event\ExtractLineItemPaymentOptionsEvent;
 use Oro\Bundle\PaymentBundle\Model\LineItemOptionModel;
+use Oro\Bundle\PaymentBundle\Provider\PaymentOrderLineItemOptionsProvider;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Bundle\TranslationBundle\Entity\Language;
 use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class ExtractLineItemPaymentOptionsListenerTest extends \PHPUnit\Framework\TestCase
+class PaymentOrderLineItemOptionsProviderTest extends TestCase
 {
     private const LANGUAGE = 'de_DE';
 
-    /** @var ExtractLineItemPaymentOptionsListener */
-    private $listener;
+    /**
+     * @var PaymentOrderLineItemOptionsProvider
+     */
+    private $provider;
 
-    /** @var HtmlTagHelper|\PHPUnit\Framework\MockObject\MockObject */
+    /**
+     * @var HtmlTagHelper|MockObject
+     */
     private $htmlTagHelper;
 
-    public function setUp()
+    /**
+     * {@inheritdoc}
+     */
+    public function setUp(): void
     {
         $this->htmlTagHelper = $this->createMock(HtmlTagHelper::class);
 
-        $this->listener = new ExtractLineItemPaymentOptionsListener(
+        $this->provider = new PaymentOrderLineItemOptionsProvider(
             $this->htmlTagHelper,
             $this->getUserLocalizationManager()
         );
     }
 
-    public function testOnExtractLineItemPaymentOptions()
+    public function testGetLineItemOptions(): void
     {
-        $localization = (new Localization())->setLanguage((new Language())->setCode(self::LANGUAGE));
-        $itemWithProduct1 = new OrderLineItem();
-        $itemWithProduct2 = new OrderLineItem();
+        $language = (new Language())
+            ->setCode(self::LANGUAGE);
+        $localization = (new Localization())
+            ->setLanguage($language);
+
+        $product1Name = new LocalizedFallbackValue();
+        $product1Name
+            ->setString('DE Product Name')
+            ->setLocalization($localization);
+
+        $product1Description = new LocalizedFallbackValue();
+        $product1Description
+            ->setText('DE Product Description')
+            ->setLocalization($localization);
 
         $product1 = new Product();
-        $product1Name = new LocalizedFallbackValue();
-        $product1Name->setString('DE Product Name')->setLocalization($localization);
-        $product1Description = new LocalizedFallbackValue();
-        $product1Description->setText('DE Product Description')->setLocalization($localization);
         $product1
             ->setSku('PRSKU')
             ->addName($product1Name)
             ->addShortDescription($product1Description);
 
-        $product2 = new Product();
         $product2Name = new LocalizedFallbackValue();
-        $product2Name->setString('DE Product Without SKU')->setLocalization($localization);
+        $product2Name
+            ->setString('DE Product Without SKU')
+            ->setLocalization($localization);
         $product2Description = new LocalizedFallbackValue();
-        $product2Description->setText('DE Product Description')->setLocalization($localization);
+        $product2Description
+            ->setText('DE Product Description')
+            ->setLocalization($localization);
+
+        $product2 = new Product();
         $product2
             ->addName($product2Name)
             ->addShortDescription($product2Description);
 
+        $itemWithProduct1 = new OrderLineItem();
         $itemWithProduct1->setProduct($product1);
         $itemWithProduct1->setValue(123.456);
         $itemWithProduct1->setQuantity(2);
         $itemWithProduct1->setCurrency('USD');
         $itemWithProduct1->setProductUnitCode('item');
 
+        $itemWithProduct2 = new OrderLineItem();
         $itemWithProduct2->setProduct($product2);
         $itemWithProduct2->setValue(321.654);
         $itemWithProduct2->setQuantity(0.1);
@@ -74,18 +96,15 @@ class ExtractLineItemPaymentOptionsListenerTest extends \PHPUnit\Framework\TestC
         $entity = new Order();
         $entity->addLineItem($itemWithProduct1);
         $entity->addLineItem($itemWithProduct2);
-        $entity->addLineItem(new OrderLineItem());
 
-        $this->htmlTagHelper->expects($this->exactly(2))
+        $this->htmlTagHelper
+            ->expects($this->exactly(2))
             ->method('stripTags')
             ->willReturnCallback(function ($shortDescription) {
                 return sprintf('Strip %s', $shortDescription);
             });
 
-        $event = new ExtractLineItemPaymentOptionsEvent($entity);
-        $this->listener->onExtractLineItemPaymentOptions($event);
-
-        $models = $event->getModels();
+        $models = $this->provider->getLineItemOptions($entity);
 
         $this->assertInternalType('array', $models);
         $this->assertContainsOnlyInstancesOf(LineItemOptionModel::class, $models);
@@ -111,26 +130,36 @@ class ExtractLineItemPaymentOptionsListenerTest extends \PHPUnit\Framework\TestC
         $this->assertEquals('kg', $model2->getUnit());
     }
 
-    public function testOnExtractLineItemPaymentOptionsWithoutLineItems()
+    public function testGetLineItemOptionsWithoutLineItems(): void
     {
         $entity = new Order();
 
-        $event = new ExtractLineItemPaymentOptionsEvent($entity);
-        $this->listener->onExtractLineItemPaymentOptions($event);
-
-        $models = $event->getModels();
+        $models = $this->provider->getLineItemOptions($entity);
 
         $this->assertInternalType('array', $models);
         $this->assertEmpty($models);
-        $this->assertContainsOnlyInstancesOf(LineItemOptionModel::class, $models);
+    }
+
+    public function testGetLineItemOptionsWithoutProduct()
+    {
+        $entity = new Order();
+        $entity->addLineItem(new OrderLineItem());
+
+        $models = $this->provider->getLineItemOptions($entity);
+
+        $this->assertInternalType('array', $models);
+        $this->assertEmpty($models);
     }
 
     /**
-     * @return UserLocalizationManager|\PHPUnit_Framework_MockObject_MockObject
+     * @return UserLocalizationManager|MockObject
      */
     private function getUserLocalizationManager()
     {
-        $localization = (new Localization())->setLanguage((new Language())->setCode(self::LANGUAGE));
+        $language = (new Language())
+            ->setCode(self::LANGUAGE);
+        $localization = (new Localization())
+            ->setLanguage($language);
         $userLocalizationManager = $this->createMock(UserLocalizationManager::class);
         $userLocalizationManager
             ->expects($this->once())

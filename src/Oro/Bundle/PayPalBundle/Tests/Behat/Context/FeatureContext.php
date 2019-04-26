@@ -234,7 +234,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     public function assertExistsProductDataBeforePay(TableNode $table)
     {
         $lineItems = $this->getContainer()
-            ->get('oro_paypal.express_payment.cache')
+            ->get('oro_paypal.test.express_payment.cache')
             ->fetch(NVPClientMock::LINE_ITEM_CACHE_KEY);
         foreach ($table as $row) {
             foreach ($row as $columnName => $rowValue) {
@@ -254,7 +254,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     public function assertNotExistsProductDataBeforePay(TableNode $table)
     {
         $lineItems = $this->getContainer()
-            ->get('oro_paypal.express_payment.cache')
+            ->get('oro_paypal.test.express_payment.cache')
             ->fetch(NVPClientMock::LINE_ITEM_CACHE_KEY);
         foreach ($table as $row) {
             foreach ($row as $columnName => $rowValue) {

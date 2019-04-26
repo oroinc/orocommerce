@@ -30,13 +30,29 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_payment.require_payment_redirect, method: onRequirePaymentRedirect }
 
-    oro_paypal.event_listener.modify_line_item_option:
-        class: 'Oro\Bundle\PayPalBundle\EventListener\ExtractLineItemPaymentOptionsListener'
+    oro_paypal.options_provider.options:
+        class: 'Oro\Bundle\PayPalBundle\OptionsProvider\OptionsProvider'
+        public: false
+        arguments:
+            - '@oro_payment.provider.payment_order_shipping_address_options'
+            - '@oro_paypal.options_provider.line_item_options'
+
+    oro_paypal.options_provider.line_item_options:
+        class: 'Oro\Bundle\PayPalBundle\OptionsProvider\LineItemOptionsProvider'
+        public: false
+        arguments:
+            - '@oro_payment.provider.payment_order_line_item_options'
+            - '@oro_tax.provider.tax_amount'
+            - '@oro_tax.provider.taxation_settings_provider'
+            - '@translator'
+            - '@oro_paypal.options_provider.line_item_options.formatter'
+
+    oro_paypal.options_provider.line_item_options.formatter:
+        class: 'Oro\Bundle\PayPalBundle\OptionsProvider\LineItemOptionsFormatter'
+        public: false
         arguments:
             - '@oro_locale.formatter.number'
             - '@oro_pricing.rounding.price_rounding_service'
-        tags:
-            - { name: kernel.event_listener, event: oro_payment.event.extract_line_item_options, priority: -50, method: onExtractLineItemPaymentOptions }
 
     oro_paypal.integation.payflow_gateway.channel:
         class: 'Oro\Bundle\PayPalBundle\Integration\PayPalPayflowGatewayChannelType'

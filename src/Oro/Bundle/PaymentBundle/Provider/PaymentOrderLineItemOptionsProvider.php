@@ -1,22 +1,26 @@
 <?php
 
-namespace Oro\Bundle\OrderBundle\EventListener;
+namespace Oro\Bundle\PaymentBundle\Provider;
 
 use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
-use Oro\Bundle\PaymentBundle\Event\ExtractLineItemPaymentOptionsEvent;
 use Oro\Bundle\PaymentBundle\Model\LineItemOptionModel;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
 use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
 
 /**
- * Converted items from order to payment line item option model
+ * Converts items from order to payment line item option model.
  */
-class ExtractLineItemPaymentOptionsListener
+class PaymentOrderLineItemOptionsProvider
 {
-    /** @var HtmlTagHelper */
+    /**
+     * @var HtmlTagHelper
+     */
     private $htmlTagHelper;
 
-    /** @var UserLocalizationManager */
+    /**
+     * @var UserLocalizationManager
+     */
     private $userLocalizationManager;
 
     /**
@@ -30,14 +34,15 @@ class ExtractLineItemPaymentOptionsListener
     }
 
     /**
-     * @param ExtractLineItemPaymentOptionsEvent $event
+     * @param LineItemsAwareInterface $entity
+     * @return LineItemOptionModel[]
      */
-    public function onExtractLineItemPaymentOptions(ExtractLineItemPaymentOptionsEvent $event)
+    public function getLineItemOptions(LineItemsAwareInterface $entity): array
     {
-        $entity = $event->getEntity();
         $lineItems = $entity->getLineItems();
         $localization = $this->userLocalizationManager->getCurrentLocalization();
 
+        $result = [];
         foreach ($lineItems as $lineItem) {
             if (!$lineItem instanceof OrderLineItem) {
                 continue;
@@ -49,18 +54,18 @@ class ExtractLineItemPaymentOptionsListener
                 continue;
             }
 
-            $lineItemModel = new LineItemOptionModel();
             $name = implode(' ', array_filter([$product->getSku(), (string)$product->getName($localization)]));
             $description = $this->htmlTagHelper->stripTags((string)$product->getShortDescription($localization));
-            $lineItemModel
+
+            $result[] = (new LineItemOptionModel())
                 ->setName($name)
                 ->setDescription($description)
                 ->setCost($lineItem->getValue())
                 ->setQty($lineItem->getQuantity())
                 ->setCurrency($lineItem->getCurrency())
                 ->setUnit($lineItem->getProductUnitCode());
-
-            $event->addModel($lineItemModel);
         }
+
+        return $result;
     }
 }
