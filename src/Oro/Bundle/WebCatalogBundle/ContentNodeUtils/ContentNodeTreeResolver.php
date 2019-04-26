@@ -43,11 +43,11 @@ class ContentNodeTreeResolver implements ContentNodeTreeResolverInterface
     /**
      * {@inheritdoc}
      */
-    public function getResolvedContentNode(ContentNode $node, Scope $scope)
+    public function getResolvedContentNode(ContentNode $node, Scope $scope, int $maxNodesNestedLevel = null)
     {
         $this->resolveScope($scope);
 
-        return $this->getResolvedTree($node, $scope);
+        return $this->getResolvedTree($node, $scope, $maxNodesNestedLevel);
     }
 
     /**
@@ -61,10 +61,16 @@ class ContentNodeTreeResolver implements ContentNodeTreeResolverInterface
     /**
      * @param ContentNode $node
      * @param Scope $scope
+     * @param int|null $maxNodesNestedLevel
+     * @param int $currentNestingLevel
      * @return null|ResolvedContentNode
      */
-    protected function getResolvedTree(ContentNode $node, Scope $scope)
-    {
+    protected function getResolvedTree(
+        ContentNode $node,
+        Scope $scope,
+        int $maxNodesNestedLevel = null,
+        int $currentNestingLevel = 0
+    ) {
         if (false === $this->scopeMatcher->getMatchingScopePriority($node->getScopesConsideringParent(), $scope)) {
             return null;
         }
@@ -82,10 +88,20 @@ class ContentNodeTreeResolver implements ContentNodeTreeResolverInterface
             $node->isRewriteVariantTitle()
         );
 
-        foreach ($node->getChildNodes() as $childNode) {
-            $resolvedChildNode = $this->getResolvedTree($childNode, $scope);
-            if ($resolvedChildNode) {
-                $resolvedNode->addChildNode($resolvedChildNode);
+        //Increase current nodes nesting level
+        $currentNestingLevel++;
+
+        if (!$maxNodesNestedLevel || $currentNestingLevel <= $maxNodesNestedLevel) {
+            foreach ($node->getChildNodes() as $childNode) {
+                $resolvedChildNode = $this->getResolvedTree(
+                    $childNode,
+                    $scope,
+                    $maxNodesNestedLevel,
+                    $currentNestingLevel
+                );
+                if ($resolvedChildNode) {
+                    $resolvedNode->addChildNode($resolvedChildNode);
+                }
             }
         }
 

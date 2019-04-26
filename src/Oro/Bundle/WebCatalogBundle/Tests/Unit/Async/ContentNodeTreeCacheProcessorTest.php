@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Async;
 
+use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
@@ -43,6 +44,11 @@ class ContentNodeTreeCacheProcessorTest extends \PHPUnit\Framework\TestCase
      */
     private $processor;
 
+    /**
+     * @var CacheProvider|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $layoutCacheProvider;
+
     protected function setUp()
     {
         $this->jobRunner = $this->getMockBuilder(JobRunner::class)
@@ -53,12 +59,14 @@ class ContentNodeTreeCacheProcessorTest extends \PHPUnit\Framework\TestCase
             ->getMock();
         $this->registry = $this->createMock(ManagerRegistry::class);
         $this->logger = $this->createMock(LoggerInterface::class);
+        $this->layoutCacheProvider = $this->createMock(CacheProvider::class);
 
         $this->processor = new ContentNodeTreeCacheProcessor(
             $this->jobRunner,
             $this->dumper,
             $this->registry,
-            $this->logger
+            $this->logger,
+            $this->layoutCacheProvider
         );
     }
 
@@ -190,6 +198,9 @@ class ContentNodeTreeCacheProcessorTest extends \PHPUnit\Framework\TestCase
             ->method('dump')
             ->with($node, $scope);
 
+        $this->layoutCacheProvider->expects($this->once())
+            ->method('deleteAll');
+
         $this->assertEquals(MessageProcessorInterface::ACK, $this->processor->process($message, $session));
     }
 
@@ -223,6 +234,8 @@ class ContentNodeTreeCacheProcessorTest extends \PHPUnit\Framework\TestCase
         $this->dumper->expects($this->once())
             ->method('dump')
             ->willThrowException(new \Exception('Test exception'));
+
+        $this->layoutCacheProvider->expects($this->never())->method('deleteAll');
 
         $this->logger->expects($this->once())
             ->method('error')

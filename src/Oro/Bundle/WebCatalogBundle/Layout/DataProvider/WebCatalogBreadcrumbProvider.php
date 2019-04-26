@@ -11,6 +11,9 @@ use Oro\Component\WebCatalog\Entity\ContentNodeAwareInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
+/**
+ * Returns breadcrumb items
+ */
 class WebCatalogBreadcrumbProvider extends AbstractWebCatalogDataProvider
 {
     /**
@@ -37,9 +40,9 @@ class WebCatalogBreadcrumbProvider extends AbstractWebCatalogDataProvider
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
-    public function getItems()
+    public function getItems(int $maxNodesNestedLevel = null)
     {
         $request = $this->requestStack->getCurrentRequest();
 

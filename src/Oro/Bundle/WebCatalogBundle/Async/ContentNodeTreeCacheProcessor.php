@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Async;
 
+use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\WebCatalogBundle\Cache\Dumper\ContentNodeTreeDumper;
@@ -17,6 +18,10 @@ use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Dumps content node cache
+ * Resets cache for cached node items
+ */
 class ContentNodeTreeCacheProcessor implements MessageProcessorInterface, TopicSubscriberInterface
 {
     const JOB_ID = 'jobId';
@@ -49,21 +54,29 @@ class ContentNodeTreeCacheProcessor implements MessageProcessorInterface, TopicS
     private $resolver;
 
     /**
+     * @var CacheProvider
+     */
+    private $layoutCacheProvider;
+
+    /**
      * @param JobRunner $jobRunner
      * @param ContentNodeTreeDumper $dumper
      * @param ManagerRegistry $registry
      * @param LoggerInterface $logger
+     * @param CacheProvider $layoutCacheProvider
      */
     public function __construct(
         JobRunner $jobRunner,
         ContentNodeTreeDumper $dumper,
         ManagerRegistry $registry,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        CacheProvider $layoutCacheProvider
     ) {
         $this->jobRunner = $jobRunner;
         $this->dumper = $dumper;
         $this->registry = $registry;
         $this->logger = $logger;
+        $this->layoutCacheProvider = $layoutCacheProvider;
     }
 
     /**
@@ -75,6 +88,8 @@ class ContentNodeTreeCacheProcessor implements MessageProcessorInterface, TopicS
             $data = $this->getOptionsResolver()->resolve(JSON::decode($message->getBody()));
             $result = $this->jobRunner->runDelayed($data[self::JOB_ID], function () use ($data, $message) {
                 $this->dumper->dump($data[self::CONTENT_NODE], $data[self::SCOPE]);
+                //Remove all cached layout data provider web catalog node items
+                $this->layoutCacheProvider->deleteAll();
 
                 return true;
             });

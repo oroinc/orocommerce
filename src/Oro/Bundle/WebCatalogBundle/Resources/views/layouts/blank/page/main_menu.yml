@@ -12,7 +12,7 @@ layout:
                     siblingId: ~
                     prepend: true
                     options:
-                        categories: '=data["web_catalog_menu"].getItems()'
+                        categories: '=data["web_catalog_menu"].getItems(4)'
                         max_size: 6
                 web_catalog_menu_first_level_item_simple:
                     blockType: menu_item

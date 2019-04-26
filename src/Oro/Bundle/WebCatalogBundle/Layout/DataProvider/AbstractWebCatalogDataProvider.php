@@ -8,6 +8,9 @@ use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\Repository\ContentNodeRepository;
 use Symfony\Component\HttpFoundation\RequestStack;
 
+/**
+ * Returns nodes items
+ */
 abstract class AbstractWebCatalogDataProvider
 {
     /**
@@ -26,9 +29,10 @@ abstract class AbstractWebCatalogDataProvider
     protected $requestStack;
 
     /**
+     * @param int|null $maxNodesNestedLevel
      * @return array
      */
-    abstract public function getItems();
+    abstract public function getItems(int $maxNodesNestedLevel = null);
 
     /**
      * @return ContentNodeRepository
