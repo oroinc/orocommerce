@@ -6,7 +6,7 @@ services:
     oro_paypal.paypal.payflow.client.nvp:
         class: 'Oro\Bundle\PayPalBundle\Tests\Behat\Mock\PayPal\Payflow\Client\NVPClientMock'
         arguments:
-            - '@oro_paypal.express_payment.cache'
+            - '@oro_paypal.test.express_payment.cache'
         public: false
 
     oro_paypal.test.fake_controller_mock.listener:
@@ -49,7 +49,7 @@ services:
             - '@oro_payment.provider.surcharge'
             - '@property_accessor'
 
-    oro_paypal.express_payment.cache:
+    oro_paypal.test.express_payment.cache:
         parent: oro.cache.abstract
         public: true
         arguments:

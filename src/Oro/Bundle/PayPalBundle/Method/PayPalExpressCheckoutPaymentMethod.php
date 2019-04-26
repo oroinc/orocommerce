@@ -21,7 +21,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
 
 /**
- * PayPal Express payment method
+ * Paypal Payflow Express Checkout payment method
  */
 class PayPalExpressCheckoutPaymentMethod implements PaymentMethodInterface
 {
@@ -34,6 +34,13 @@ class PayPalExpressCheckoutPaymentMethod implements PaymentMethodInterface
     const PRODUCTION_REDIRECT_URL = 'https://www.paypal.com/webscr?cmd=_express-checkout&useraction=commit&token=%s';
 
     const AMOUNT_PRECISION = 2;
+
+    /**
+     * Payment method type is used as value for ExtractOptionsProvider::CONTEXT_PAYMENT_METHOD_TYPE
+     * during event chain in ExtractOptionsProvider
+     * It allows to identify call from specific payment method in the evfent listener
+     */
+    public const CONTEXT_PAYMENT_METHOD_TYPE = 'oro_paypal_payflow_express_checkout';
 
     /** @var Gateway */
     protected $gateway;
@@ -426,9 +433,13 @@ class PayPalExpressCheckoutPaymentMethod implements PaymentMethodInterface
             return [];
         }
 
-        $options = [];
-        $lineItemOptions = $this->optionsProvider->getLineItemPaymentOptions($entity);
+        $context = [
+            ExtractOptionsProvider::CONTEXT_PAYMENT_METHOD_TYPE => self::CONTEXT_PAYMENT_METHOD_TYPE
+        ];
 
+        $lineItemOptions = $this->optionsProvider->getLineItemPaymentOptionsWithContext($entity, $context);
+
+        $options = [];
         foreach ($lineItemOptions as $lineItemOption) {
             $options[] = [
                 Option\LineItems::NAME => $lineItemOption->getName(),

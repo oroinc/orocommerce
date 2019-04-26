@@ -361,8 +361,10 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
 
         $this->optionsProvider
             ->expects($this->once())
-            ->method('getLineItemPaymentOptions')
-            ->with($entity)
+            ->method('getLineItemPaymentOptionsWithContext')
+            ->with($entity, [
+                ExtractOptionsProvider::CONTEXT_PAYMENT_METHOD_TYPE => 'oro_paypal_payflow_express_checkout'
+            ])
             ->willReturn([$this->getLineItemOptionModel()]);
     }
 
@@ -536,7 +538,7 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
 
         $this->optionsProvider
             ->expects($this->exactly($calls))
-            ->method('getLineItemPaymentOptions')
+            ->method('getLineItemPaymentOptionsWithContext')
             ->willReturn([]);
 
         $this->configureShippingAddressOptions();
@@ -558,7 +560,7 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
                     $this->getShippingAddressOptions(),
                     $this->getSurchargeOptions()
                 ),
-                'getLineItemPaymentOptions calls' => 0
+                'getLineItemPaymentOptionsWithContext calls' => 0
 
             ],
             'lineItem without product' => [
@@ -571,7 +573,7 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
                     $this->getSurchargeOptions(),
                     ['ITEMAMT' => 0, 'TAXAMT' => 0]
                 ),
-                'getLineItemPaymentOptions calls' => 1
+                'getLineItemPaymentOptionsWithContext calls' => 1
             ],
         ];
     }

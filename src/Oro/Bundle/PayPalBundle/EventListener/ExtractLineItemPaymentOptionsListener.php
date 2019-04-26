@@ -6,6 +6,8 @@ use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use Oro\Bundle\PaymentBundle\Event\ExtractLineItemPaymentOptionsEvent;
 use Oro\Bundle\PaymentBundle\Model\LineItemOptionModel;
+use Oro\Bundle\PaymentBundle\Provider\ExtractOptionsProvider;
+use Oro\Bundle\PayPalBundle\Method\PayPalExpressCheckoutPaymentMethod;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\LineItems;
 
 /**
@@ -36,6 +38,16 @@ class ExtractLineItemPaymentOptionsListener
      */
     public function onExtractLineItemPaymentOptions(ExtractLineItemPaymentOptionsEvent $event)
     {
+        $context = $event->getContext();
+        $paymentMethodType = $context[ExtractOptionsProvider::CONTEXT_PAYMENT_METHOD_TYPE] ?? null;
+
+        /**
+         * Skip listener logic in case this is not PayPalExpressCheckoutPaymentMethod
+         */
+        if ($paymentMethodType !== PayPalExpressCheckoutPaymentMethod::CONTEXT_PAYMENT_METHOD_TYPE) {
+            return;
+        }
+
         $lineItemModels = $event->getModels();
 
         /** @var LineItemOptionModel $lineItemModel */
