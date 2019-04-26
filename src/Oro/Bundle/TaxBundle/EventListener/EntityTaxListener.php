@@ -11,6 +11,10 @@ use Oro\Bundle\TaxBundle\Exception\TaxationDisabledException;
 use Oro\Bundle\TaxBundle\Provider\TaxProviderInterface;
 use Oro\Bundle\TaxBundle\Provider\TaxProviderRegistry;
 
+/**
+ * Doctrine ORM entity listener for Order and OrderLineItem entities
+ * This listener handle tax saving/removing/update by calling correspond methods of tax provider
+ */
 class EntityTaxListener
 {
     /** @var TaxProviderRegistry */
@@ -31,7 +35,7 @@ class EntityTaxListener
     }
 
     /**
-     * TODO: This method is workaround and should be removed after BB-11299
+     * This method is workaround and should be removed after BB-11299
      *
      * @param boolean $enabled
      *
@@ -130,7 +134,11 @@ class EntityTaxListener
             return;
         }
 
-        $this->getProvider()->removeTax($entity);
+        try {
+            $this->getProvider()->removeTax($entity);
+        } catch (TaxationDisabledException $e) {
+            // Taxation disabled, skip tax removing
+        }
     }
 
     /**

@@ -14,4 +14,10 @@ Oro\Bundle\TaxBundle\Entity\CustomerTaxCode:
 Oro\Bundle\TaxBundle\Entity\Tax:
     tax_1:
         code: 'tax1'
-        rate: 10
+        rate: 0.1
+Oro\Bundle\TaxBundle\Entity\TaxRule:
+    tax_rule1:
+        productTaxCode: '@product_tax_code_1'
+        customerTaxCode: '@customer_tax_code_1'
+        tax: '@tax_1'
+        taxJurisdiction: '@tax_jurisdiction_1'

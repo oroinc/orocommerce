@@ -7,11 +7,12 @@ Feature: Products Grid Frontend
   As a buyer
   I check filters are working and sorting is working as designed.
 
-  Scenario: Feature Background
+  Scenario: Visit page with incorrect number
     Given I signed in as AmandaRCole@example.org on the store frontend
-    And I go to the homepage
-    # There is no direct link to get to products catalog so this is the fastest way.
-    Given I am on "/product"
+    When open page number test of frontend product grid
+    Then should not see "There was an error performing the requested operation. Please try again or contact us for assistance." flash message
+    And I should see "PSKU1"
+    And number of records in "Product Frontend Grid" should be 19
 
   Scenario: Check Fulltext Filter
     Given number of records in "Product Frontend Grid" should be 19
