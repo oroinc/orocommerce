@@ -3,6 +3,8 @@
 namespace Oro\Bundle\ProductBundle\Tests\Behat\Context;
 
 use Behat\Gherkin\Node\TableNode;
+use Behat\Symfony2Extension\Context\KernelAwareContext;
+use Behat\Symfony2Extension\Context\KernelDictionary;
 use Oro\Bundle\ProductBundle\Tests\Behat\Element\FrontendProductGrid;
 use Oro\Bundle\ProductBundle\Tests\Behat\Element\FrontendProductGridFilters;
 use Oro\Bundle\ProductBundle\Tests\Behat\Element\FrontendProductGridRow;
@@ -11,9 +13,9 @@ use Oro\Bundle\TestFrameworkBundle\Behat\Element\Form;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\OroPageObjectAware;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
 
-class FrontendProductGridContext extends OroFeatureContext implements OroPageObjectAware
+class FrontendProductGridContext extends OroFeatureContext implements OroPageObjectAware, KernelAwareContext
 {
-    use PageObjectDictionary;
+    use PageObjectDictionary, KernelDictionary;
 
     /**
      * Updates line item form for a given row in frontend product grid.
@@ -97,5 +99,28 @@ class FrontendProductGridContext extends OroFeatureContext implements OroPageObj
             $gridFilters->hasFilterHint($filterName),
             sprintf('There is a hint for "%s" filter in frontend product grid', $filterName)
         );
+    }
+
+    /**
+     * Example: (?:|I )open page number 3 of frontend product grid
+     *
+     * @When /^(?:|I )open page number (?P<pageNumber>[\w]+) of frontend product grid$/
+     *
+     * @param string $pageNumber
+     */
+    public function generateUrlForFrontendProductSearchGrid($pageNumber)
+    {
+        $path = $this->getContainer()
+            ->get('oro_datagrid.helper.route')
+            ->generate(
+                'oro_product_frontend_product_index',
+                'frontend-product-search-grid',
+                [
+                    'i' => $pageNumber,
+                    'p' => 25
+                ]
+            );
+
+        $this->visitPath($path);
     }
 }

@@ -1040,6 +1040,7 @@ oro_behat_extension:
         - OroWorkflowBundle::FeatureContext
         - OroFrontendLocalizationBundle::LocalizationSwitcherContext
         - OroShippingBundle::SingleCurrencyContext
+        - OroProductBundle::FrontendProductGridContext
       paths:
         - '@OroProductBundle/Tests/Behat/Features/product-collection'
         - '@OroProductBundle/Tests/Behat/Features/product'
