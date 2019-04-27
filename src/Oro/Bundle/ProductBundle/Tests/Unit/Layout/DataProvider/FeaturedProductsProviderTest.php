@@ -76,7 +76,7 @@ class FeaturedProductsProviderTest extends AbstractSegmentProductsProviderTest
      */
     protected function getCacheKey()
     {
-        return 'cacheVal_featured_products_0_';
+        return 'cacheVal_featured_products_0__1';
     }
 
     private function prepare()

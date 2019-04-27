@@ -14,7 +14,7 @@ class PayPalExpressCheckoutPaymentMethodMock extends PayPalExpressCheckoutPaymen
     /**
      * {@inheritdoc}
      */
-    protected function purchase(PaymentTransaction $paymentTransaction)
+    protected function purchase(PaymentTransaction $paymentTransaction): array
     {
         return array_merge(
             parent::purchase($paymentTransaction),

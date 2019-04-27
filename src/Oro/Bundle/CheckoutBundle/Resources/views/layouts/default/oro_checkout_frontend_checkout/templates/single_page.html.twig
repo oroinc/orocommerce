@@ -327,7 +327,11 @@
                               }
                           }|json_encode }}">
                     <div class="grid__column grid__column--6">
-                        {{ form_row(form.late_registration.offsetGet('is_late_registration_enabled')) }}
+                        <div id="checkout-late-registration-toggler">
+                            <div class="form-row">
+                                {{ form_row(form.late_registration.offsetGet('is_late_registration_enabled')) }}
+                            </div>
+                        </div>
                         <div id="checkout-late-registration-fields">
                             {{ form_widget(form.late_registration) }}
                         </div>

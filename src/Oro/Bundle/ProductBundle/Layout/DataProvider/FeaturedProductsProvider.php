@@ -6,6 +6,9 @@ use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Bundle\UserBundle\Entity\AbstractUser;
 
+/**
+ * Provide featured products
+ */
 class FeaturedProductsProvider extends AbstractSegmentProductsProvider
 {
     const FEATURED_PRODUCTS_CACHE_KEY = 'oro_product.layout.data_provider.featured_products_featured_products';
@@ -21,7 +24,7 @@ class FeaturedProductsProvider extends AbstractSegmentProductsProvider
             $userId = $user->getId();
         }
 
-        return ['featured_products', $userId, $segment->getId()];
+        return ['featured_products', $userId, $segment->getId(), $segment->getRecordsLimit()];
     }
 
     /**

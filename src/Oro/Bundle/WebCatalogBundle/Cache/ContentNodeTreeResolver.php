@@ -12,6 +12,9 @@ use Oro\Bundle\WebCatalogBundle\Cache\ResolvedData\ResolvedContentVariant;
 use Oro\Bundle\WebCatalogBundle\ContentNodeUtils\ContentNodeTreeResolverInterface;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 
+/**
+ * Restores content nodes tree from cache
+ */
 class ContentNodeTreeResolver implements ContentNodeTreeResolverInterface
 {
     /**
@@ -47,13 +50,13 @@ class ContentNodeTreeResolver implements ContentNodeTreeResolverInterface
     /**
      * {@inheritdoc}
      */
-    public function getResolvedContentNode(ContentNode $node, Scope $scope)
+    public function getResolvedContentNode(ContentNode $node, Scope $scope, int $maxNodesNestedLevel = null)
     {
         $cachedData = $this->cache->fetch(self::getCacheKey($node, $scope));
         if ($cachedData) {
             $this->resolveReferences($cachedData);
 
-            return $this->deserializeCachedNode($cachedData);
+            return $this->deserializeCachedNode($cachedData, $maxNodesNestedLevel);
         }
 
         return null;
@@ -69,10 +72,16 @@ class ContentNodeTreeResolver implements ContentNodeTreeResolverInterface
 
     /**
      * @param array $nodeData
+     * @param int|null $maxNodesNestedLevel
+     * @param int $currentNestingLevel  Represents current node nesting level
+     * which is used when $maxNodesNestedLevel parameter passed
      * @return ResolvedContentNode
      */
-    private function deserializeCachedNode(array $nodeData)
-    {
+    private function deserializeCachedNode(
+        array $nodeData,
+        int $maxNodesNestedLevel = null,
+        int $currentNestingLevel = 0
+    ) {
         $resolvedVariant = new ResolvedContentVariant();
         $resolvedVariant->setData($nodeData['contentVariant']['data']);
 
@@ -92,8 +101,18 @@ class ContentNodeTreeResolver implements ContentNodeTreeResolverInterface
             $resolvedVariant,
             $nodeData['resolveVariantTitle']
         );
-        foreach ($nodeData['childNodes'] as $childNodeData) {
-            $resolvedNode->addChildNode($this->deserializeCachedNode($childNodeData));
+
+        //Increase current nodes nesting level
+        $currentNestingLevel++;
+
+        if (!$maxNodesNestedLevel || $currentNestingLevel <= $maxNodesNestedLevel) {
+            foreach ($nodeData['childNodes'] as $childNodeData) {
+                $resolvedNode->addChildNode($this->deserializeCachedNode(
+                    $childNodeData,
+                    $maxNodesNestedLevel,
+                    $currentNestingLevel
+                ));
+            }
         }
 
         return $resolvedNode;

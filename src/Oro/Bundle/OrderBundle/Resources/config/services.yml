@@ -316,19 +316,6 @@ services:
             - '@oro.cache.memory_cache_chain'
             - 'oro_order.layout.provider.top_selling_items'
 
-    oro_order.event_listener.extract_line_item_options:
-        class: 'Oro\Bundle\OrderBundle\EventListener\ExtractLineItemPaymentOptionsListener'
-        arguments:
-            - '@oro_ui.html_tag_helper'
-            - '@oro_frontend_localization.manager.user_localization'
-        tags:
-            - { name: kernel.event_listener, event: oro_payment.event.extract_line_item_options, priority: 0, method: onExtractLineItemPaymentOptions }
-
-    oro_order.event_listener.extract_address_options.orderaddress:
-        class: 'Oro\Bundle\OrderBundle\EventListener\ExtractAddressOptionsListener'
-        tags:
-            - { name: kernel.event_listener, event: oro_payment.event.extract_address_options.orderaddress, method: onExtractShippingAddressOptions }
-
     oro_order.factory.shipping_context:
         class: 'Oro\Bundle\OrderBundle\Factory\OrderShippingContextFactory'
         arguments:

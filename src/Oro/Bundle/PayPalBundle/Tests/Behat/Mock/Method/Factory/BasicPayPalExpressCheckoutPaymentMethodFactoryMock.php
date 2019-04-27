@@ -3,10 +3,10 @@
 namespace Oro\Bundle\PayPalBundle\Tests\Behat\Mock\Method\Factory;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\PaymentBundle\Provider\ExtractOptionsProvider;
 use Oro\Bundle\PaymentBundle\Provider\SurchargeProvider;
 use Oro\Bundle\PayPalBundle\Method\Config\PayPalExpressCheckoutConfigInterface;
 use Oro\Bundle\PayPalBundle\Method\Factory\BasicPayPalExpressCheckoutPaymentMethodFactory;
+use Oro\Bundle\PayPalBundle\OptionsProvider\OptionsProviderInterface;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway;
 use Oro\Bundle\PayPalBundle\Tests\Behat\Mock\Method\PayPalExpressCheckoutPaymentMethodMock;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
@@ -23,7 +23,7 @@ class BasicPayPalExpressCheckoutPaymentMethodFactoryMock extends BasicPayPalExpr
     /** @var DoctrineHelper */
     private $doctrineHelper;
 
-    /** @var ExtractOptionsProvider */
+    /** @var OptionsProviderInterface */
     private $optionsProvider;
 
     /** @var SurchargeProvider */
@@ -36,7 +36,7 @@ class BasicPayPalExpressCheckoutPaymentMethodFactoryMock extends BasicPayPalExpr
      * @param Gateway $gateway
      * @param RouterInterface $router
      * @param DoctrineHelper $doctrineHelper
-     * @param ExtractOptionsProvider $optionsProvider
+     * @param OptionsProviderInterface $optionsProvider
      * @param SurchargeProvider $surchargeProvider
      * @param PropertyAccessor $propertyAccessor
      */
@@ -44,7 +44,7 @@ class BasicPayPalExpressCheckoutPaymentMethodFactoryMock extends BasicPayPalExpr
         Gateway $gateway,
         RouterInterface $router,
         DoctrineHelper $doctrineHelper,
-        ExtractOptionsProvider $optionsProvider,
+        OptionsProviderInterface $optionsProvider,
         SurchargeProvider $surchargeProvider,
         PropertyAccessor $propertyAccessor
     ) {

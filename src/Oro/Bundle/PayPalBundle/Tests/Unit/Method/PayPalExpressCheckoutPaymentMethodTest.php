@@ -10,11 +10,11 @@ use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Oro\Bundle\PaymentBundle\Model\AddressOptionModel;
 use Oro\Bundle\PaymentBundle\Model\LineItemOptionModel;
 use Oro\Bundle\PaymentBundle\Model\Surcharge;
-use Oro\Bundle\PaymentBundle\Provider\ExtractOptionsProvider;
 use Oro\Bundle\PaymentBundle\Provider\SurchargeProvider;
 use Oro\Bundle\PaymentBundle\Tests\Unit\Method\EntityStub;
 use Oro\Bundle\PayPalBundle\Method\Config\PayPalExpressCheckoutConfigInterface;
 use Oro\Bundle\PayPalBundle\Method\PayPalExpressCheckoutPaymentMethod;
+use Oro\Bundle\PayPalBundle\OptionsProvider\OptionsProviderInterface;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\Response;
 use Symfony\Component\PropertyAccess\PropertyAccess;
@@ -51,7 +51,7 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
     /** @var PayPalExpressCheckoutConfigInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $paymentConfig;
 
-    /** @var ExtractOptionsProvider|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var OptionsProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $optionsProvider;
 
     /** @var SurchargeProvider|\PHPUnit\Framework\MockObject\MockObject */
@@ -62,19 +62,12 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->gateway = $this->getMockBuilder(Gateway::class)->disableOriginalConstructor()->getMock();
+        $this->gateway = $this->createMock(Gateway::class);
         $this->router = $this->createMock(RouterInterface::class);
         $this->paymentConfig = $this->createMock(PayPalExpressCheckoutConfigInterface::class);
-        $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)->disableOriginalConstructor()->getMock();
-
-        $this->optionsProvider = $this->getMockBuilder(ExtractOptionsProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->surchargeProvider = $this->getMockBuilder(SurchargeProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
+        $this->optionsProvider = $this->createMock(OptionsProviderInterface::class);
+        $this->surchargeProvider = $this->createMock(SurchargeProvider::class);
         $this->propertyAccessor = PropertyAccess::createPropertyAccessor();
 
         $this->expressCheckout = new PayPalExpressCheckoutPaymentMethod(
@@ -347,11 +340,10 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
     {
         $entity = $this->getEntity();
 
-        $this->doctrineHelper->expects($this->once())->method('getEntityClass')->with($entity->getShippingAddress())
-            ->willReturn(AbstractAddress::class);
-
-        $this->optionsProvider->expects($this->once())->method('getShippingAddressOptions')
-            ->with(AbstractAddress::class, $entity->getShippingAddress())
+        $this->optionsProvider
+            ->expects($this->once())
+            ->method('getShippingAddressOptions')
+            ->with($entity->getShippingAddress())
             ->willReturn($this->getAddressOptionModel());
     }
 
@@ -361,7 +353,7 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
 
         $this->optionsProvider
             ->expects($this->once())
-            ->method('getLineItemPaymentOptions')
+            ->method('getLineItemOptions')
             ->with($entity)
             ->willReturn([$this->getLineItemOptionModel()]);
     }
@@ -536,7 +528,7 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
 
         $this->optionsProvider
             ->expects($this->exactly($calls))
-            ->method('getLineItemPaymentOptions')
+            ->method('getLineItemOptions')
             ->willReturn([]);
 
         $this->configureShippingAddressOptions();
@@ -580,21 +572,14 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
     {
         $this->configCredentials();
 
-        $transactionRequest = [
-            'AMT' => '10',
-            'TOKEN' => self::TOKEN,
-            'ACTION' => 'D',
-            'PAYERID' => 'payerIdTest',
-        ];
-
-        $transactionRequest = array_merge($transactionRequest, $this->getCredentials(), $this->getAdditionalOptions());
-
+        // Prepare authorize transaction to use it then for complete action
         $transaction = $this->createTransaction(PaymentMethodInterface::AUTHORIZE);
 
-        $this->gateway->expects($this->exactly(2))
+        $authorizeTransactionRequest = array_merge(['ACTION' => 'S'], $this->getAdditionalOptions());
+        $this->gateway->expects($this->at(1))
             ->method('request')
-            ->withConsecutive(['A'], ['A', $transactionRequest])
-            ->willReturnOnConsecutiveCalls(
+            ->with('A', $authorizeTransactionRequest)
+            ->willReturn(
                 new Response(
                     [
                         'RESPMSG' => 'Approved',
@@ -602,8 +587,7 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
                         'TOKEN' => self::TOKEN,
                         'PayerID' => 'payerIdTest',
                     ]
-                ),
-                new Response(['RESPMSG' => 'Approved', 'RESULT' => '0'])
+                )
             );
 
         $this->gateway->expects($this->any())
@@ -612,7 +596,48 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
 
         $this->expressCheckout->execute($transaction->getAction(), $transaction);
 
+        // Start complete logic
+
+        $this->configureLineItemOptions();
+        $entity = $this->getEntity();
+
+        $surcharge = new Surcharge();
+        $surcharge->setShippingAmount(self::SHIPPING_COST);
+        $surcharge->setDiscountAmount(self::DISCOUNT_AMOUNT);
+
+        $this->surchargeProvider->expects($this->once())
+            ->method('getSurcharges')
+            ->with($entity)
+            ->willReturn($surcharge);
+
+        $this->doctrineHelper->expects($this->any())
+            ->method('getEntityReference')
+            ->with(self::ENTITY_CLASS, self::ENTITY_ID)
+            ->willReturn($entity);
+
+        $completeTransactionRequest = [
+            'AMT' => '10',
+            'TOKEN' => self::TOKEN,
+            'ACTION' => 'D',
+            'PAYERID' => 'payerIdTest',
+        ];
+
         $transaction->setAction(PayPalExpressCheckoutPaymentMethod::COMPLETE);
+
+        $completeTransactionRequest = array_merge(
+            $completeTransactionRequest,
+            $this->getCredentials(),
+            $this->getAdditionalOptions(),
+            $this->getLineItemOptions(),
+            $this->getSurchargeOptions()
+        );
+
+        $this->gateway->expects($this->at(1))
+            ->method('request')
+            ->with('A', $completeTransactionRequest)
+            ->willReturn(
+                new Response(['RESPMSG' => 'Approved', 'RESULT' => '0'])
+            );
 
         $this->expressCheckout->execute($transaction->getAction(), $transaction);
 
@@ -952,7 +977,7 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
     protected function getEntity()
     {
         /** @var AbstractAddress|\PHPUnit\Framework\MockObject\MockObject $abstractAddressMock */
-        $abstractAddressMock = $this->getMockBuilder(AbstractAddress::class)->getMock();
+        $abstractAddressMock = $this->getMockForAbstractClass(AbstractAddress::class);
 
         return new EntityStub($abstractAddressMock);
     }

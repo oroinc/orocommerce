@@ -11,6 +11,7 @@ use Doctrine\ORM\UnitOfWork;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\TaxBundle\Entity\TaxValue;
 use Oro\Bundle\TaxBundle\EventListener\EntityTaxListener;
+use Oro\Bundle\TaxBundle\Exception\TaxationDisabledException;
 use Oro\Bundle\TaxBundle\Provider\TaxProviderInterface;
 use Oro\Bundle\TaxBundle\Provider\TaxProviderRegistry;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -134,6 +135,17 @@ class EntityTaxListenerTest extends \PHPUnit\Framework\TestCase
 
         $order = new Order();
         $this->taxProvider->expects($this->exactly((int) $expected))->method('removeTax')->with($order);
+
+        $this->listener->preRemove($order);
+    }
+
+    public function testPreRemoveWithDisabledTaxesCatchException()
+    {
+        $order = new Order();
+        $this->taxProvider->expects($this->once())
+            ->method('removeTax')
+            ->with($order)
+            ->willThrowException(new TaxationDisabledException());
 
         $this->listener->preRemove($order);
     }

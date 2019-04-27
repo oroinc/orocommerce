@@ -6,6 +6,7 @@ define(function(require) {
     var $ = require('jquery');
     var ViewComponent = require('oroui/js/app/components/view-component');
     var error = require('oroui/js/error');
+    var tools = require('oroui/js/tools');
 
     ProductVariantFieldComponent = ViewComponent.extend({
         /**
@@ -24,20 +25,23 @@ define(function(require) {
          * All options without default disabled
          * @property {Array}
          */
-        filteredOptions: [],
+        filteredOptions: null,
 
         /**
          * Filtered options after resolving
+         * @property {Array}
          */
         _filtered: null,
 
         /**
          * Hierarchy stack of product variants
+         * @property {Array}
          */
-        _hierarchy: [],
+        _hierarchy: null,
 
         /**
          * Current state
+         * @property {Object}
          */
         state: null,
 
@@ -52,7 +56,11 @@ define(function(require) {
          * @inheritDoc
          */
         initialize: function(options) {
-            this.options = _.defaults(options || {}, this.options);
+            this.filteredOptions = [];
+            this._hierarchy = [];
+            this.state = {};
+
+            this.options = _.defaults(options || {}, tools.deepClone(this.options));
             ProductVariantFieldComponent.__super__.initialize.apply(this, arguments);
 
             // _sourceElement is a form element which contains selects
@@ -73,10 +81,6 @@ define(function(require) {
         setState: function(name, value) {
             if (_.isUndefined(value)) {
                 return error.showErrorInConsole('The value should be defined');
-            }
-
-            if (!this.state) {
-                this.state = {};
             }
 
             this.state[name] = value;

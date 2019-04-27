@@ -83,15 +83,6 @@ services:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-edit, method: onEdit }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-create-step-two, method: onEdit }
 
-    oro_tax.event_listener.extract_line_item_payment_options:
-        lazy: true
-        class: 'Oro\Bundle\TaxBundle\EventListener\ExtractLineItemPaymentOptionsListener'
-        arguments:
-            - '@translator'
-            - '@oro_tax.provider.tax_provider_registry'
-        tags:
-            - { name: kernel.event_listener, event: oro_payment.event.extract_line_item_options, method: onExtractLineItemPaymentOptions, priority: -200 }
-
     oro_tax.form.autocomplete.tax.search_handler:
         public: false
         parent: oro_form.autocomplete.search_handler
@@ -593,3 +584,9 @@ services:
         class: Oro\Bundle\TaxBundle\Validator\Constraints\TaxRateValidator
         tags:
             - { name: validator.constraint_validator, alias: oro_tax_tax_rate }
+
+    oro_tax.provider.tax_amount:
+        class: Oro\Bundle\TaxBundle\Provider\TaxAmountProvider
+        public: false
+        arguments:
+            - '@oro_tax.provider.tax_provider_registry'

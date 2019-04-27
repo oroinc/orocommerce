@@ -2,6 +2,7 @@ operations:
     oro_sale_expire_quote:
         label: oro.sale.quote.actions.quote_expire
         enabled: true
+        acl_resource: oro_sale_quote_update
         applications: [default]
         routes:
             - oro_sale_quote_view

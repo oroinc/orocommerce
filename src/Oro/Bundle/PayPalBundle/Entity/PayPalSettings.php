@@ -10,6 +10,7 @@ use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
+ * PayPalSettings entity
  * @ORM\Entity(repositoryClass="Oro\Bundle\PayPalBundle\Entity\Repository\PayPalSettingsRepository")
  * @SuppressWarnings(PHPMD.TooManyFields)
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -162,28 +163,28 @@ class PayPalSettings extends Transport
     /**
      * @var string
      *
-     * @ORM\Column(name="pp_partner", type="string", length=255, nullable=false)
+     * @ORM\Column(name="pp_partner", type="crypted_string", length=255, nullable=false)
      */
     protected $partner;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="pp_vendor", type="string", length=255, nullable=false)
+     * @ORM\Column(name="pp_vendor", type="crypted_string", length=255, nullable=false)
      */
     protected $vendor;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="pp_user", type="string", length=255, nullable=false)
+     * @ORM\Column(name="pp_user", type="crypted_string", length=255, nullable=false)
      */
     protected $user;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="pp_password", type="string", length=255, nullable=false)
+     * @ORM\Column(name="pp_password", type="crypted_string", length=255, nullable=false)
      */
     protected $password;
 
@@ -232,14 +233,14 @@ class PayPalSettings extends Transport
     /**
      * @var string
      *
-     * @ORM\Column(name="pp_proxy_host", type="string", length=255, nullable=false)
+     * @ORM\Column(name="pp_proxy_host", type="crypted_string", length=255, nullable=false)
      */
     protected $proxyHost;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="pp_proxy_port", type="string", length=255, nullable=false)
+     * @ORM\Column(name="pp_proxy_port", type="crypted_string", length=255, nullable=false)
      */
     protected $proxyPort;
 

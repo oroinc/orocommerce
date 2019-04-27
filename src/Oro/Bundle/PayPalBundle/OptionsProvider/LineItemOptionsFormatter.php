@@ -1,25 +1,33 @@
 <?php
 
-namespace Oro\Bundle\PayPalBundle\EventListener;
+namespace Oro\Bundle\PayPalBundle\OptionsProvider;
 
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
-use Oro\Bundle\PaymentBundle\Event\ExtractLineItemPaymentOptionsEvent;
 use Oro\Bundle\PaymentBundle\Model\LineItemOptionModel;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\LineItems;
 
 /**
- * Modify payment line items to fit PayPal requirements.
+ * PayPal doesn't support float quantities for line items.
+ * This class handles such case and modify line item's quantity to 1, update price of this item accordingly.
+ * Also it updates line item's name to mention this changes.
+ * E.g.:
+ *   before: qty=0.5, price=5, name="Some item name"
+ *   after: qty=1, price=2.5, name="Some item name - $5x0.5 case"
  */
-class ExtractLineItemPaymentOptionsListener
+class LineItemOptionsFormatter
 {
-    const PAYPAL_PRICE_PRECISION_LIMIT = 2;
+    private const PRICE_PRECISION_LIMIT = 2;
 
-    /** @var NumberFormatter */
-    protected $currencyFormatter;
+    /**
+     * @var NumberFormatter
+     */
+    private $currencyFormatter;
 
-    /** @var RoundingServiceInterface */
-    protected $rounder;
+    /**
+     * @var RoundingServiceInterface
+     */
+    private $rounder;
 
     /**
      * @param NumberFormatter $currencyFormatter
@@ -32,19 +40,17 @@ class ExtractLineItemPaymentOptionsListener
     }
 
     /**
-     * @param ExtractLineItemPaymentOptionsEvent $event
+     * @param LineItemOptionModel[] $lineItemOptions
+     * @return LineItemOptionModel[]
      */
-    public function onExtractLineItemPaymentOptions(ExtractLineItemPaymentOptionsEvent $event)
+    public function formatLineItemOptions(array $lineItemOptions): array
     {
-        $lineItemModels = $event->getModels();
-
-        /** @var LineItemOptionModel $lineItemModel */
-        foreach ($lineItemModels as $lineItemModel) {
+        foreach ($lineItemOptions as $lineItemModel) {
             $name = $lineItemModel->getName();
             $cost = $lineItemModel->getCost();
             $qty = $lineItemModel->getQty();
 
-            // PayPal doesn't support float quantities and prices with precision more than 2.
+            // PayPal doesn't support float quantities and prices with precision more than 2
             // Multiply qty by cost and add information about actual qty and price to line item name
             if ($this->isPrecisionMoreThan($qty, 0) || $this->isPrecisionMoreThan($cost, 2)) {
                 $additionalNameInfo = sprintf(
@@ -70,8 +76,10 @@ class ExtractLineItemPaymentOptionsListener
             $lineItemModel
                 ->setName($name)
                 ->setQty($qty)
-                ->setCost($this->roundForPayPal($cost));
+                ->setCost($this->roundCost($cost));
         }
+
+        return $lineItemOptions;
     }
 
     /**
@@ -79,7 +87,7 @@ class ExtractLineItemPaymentOptionsListener
      * @param int $precision
      * @return bool
      */
-    protected function isPrecisionMoreThan($number, $precision)
+    private function isPrecisionMoreThan(float $number, int $precision): bool
     {
         return (bool) ($number - round($number, $precision));
     }
@@ -88,14 +96,11 @@ class ExtractLineItemPaymentOptionsListener
      * @param float $number
      * @return float|int
      */
-    protected function roundForPayPal($number)
+    private function roundCost(float $number)
     {
         $precision = $this->rounder->getPrecision();
+        $resultPrecision = $precision > self::PRICE_PRECISION_LIMIT ? self::PRICE_PRECISION_LIMIT : $precision;
 
-        if ($precision > self::PAYPAL_PRICE_PRECISION_LIMIT) {
-            $precision = self::PAYPAL_PRICE_PRECISION_LIMIT;
-        }
-
-        return $this->rounder->round($number, $precision);
+        return $this->rounder->round($number, $resultPrecision);
     }
 }

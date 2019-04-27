@@ -198,6 +198,102 @@ class ContentNodeTreeResolverTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($resolvedNode, $this->resolver->getResolvedContentNode($node, $scope));
     }
 
+    public function testesolvedNodeIfAllConditionsSatisfied()
+    {
+        $localization = $this->getEntity(Localization::class, ['id' => 42, 'name' => 'test_localization']);
+        $resolvedNode = new ResolvedContentNode(
+            2,
+            'root__node',
+            new ArrayCollection([
+                (new LocalizedFallbackValue())
+                    ->setString('some-title')
+                    ->setLocalization($localization)
+            ]),
+            (new ResolvedContentVariant())
+                ->setData(['id' => 2, 'type' => 'test_type', 'associations' => ['anything']])
+                ->addLocalizedUrl((new LocalizedFallbackValue())->setString('/node')->setLocalization($localization))
+        );
+        $resolvedNode->addChildNode(
+            new ResolvedContentNode(
+                3,
+                'root__node__child',
+                new ArrayCollection([]),
+                (new ResolvedContentVariant())
+                    ->setData(['id' => 3, 'type' => 'test_type'])
+                    ->addLocalizedUrl(
+                        (new LocalizedFallbackValue())->setString('/node/child')->setLocalization($localization)
+                    )
+            )
+        );
+
+        /** @var ContentNode $childNode */
+        $childNode = $this->getEntity(ContentNode::class, ['id' => 3]);
+        $scope = $this->createScope();
+        $childSlugUrl = '/node/child';
+        $childSlug = new Slug();
+        $childSlug->setUrl($childSlugUrl);
+        $childSlug->setLocalization($localization);
+        /** @var ContentVariant $defaultChildVariant */
+        $defaultChildVariant = $this->getEntity(ContentVariant::class, ['id' => 3, 'type' => 'test_type']);
+        $defaultChildVariant->setDefault(true)
+            ->addSlug($childSlug);
+        $childNode->addContentVariant($defaultChildVariant);
+        $childNode->addLocalizedUrl((new LocalizedFallbackValue())->setText($childSlugUrl));
+
+        /** @var ContentNode $node */
+        $node = $this->getEntity(ContentNode::class, ['id' => 2]);
+        $slugUrl = '/node';
+        $slug = new Slug();
+        $slug->setUrl($slugUrl);
+        $slug->setLocalization($localization);
+        /** @var ContentVariant $defaultVariant */
+        $defaultVariant = $this->getEntity(ContentVariant::class, ['id' => 2, 'type' => 'test_type']);
+        $defaultVariant
+            ->setDefault(true)
+            ->addSlug($slug);
+        $node->addContentVariant($defaultVariant);
+        $node->addChildNode($childNode);
+        $node->addTitle((new LocalizedFallbackValue())->setString('some-title')->setLocalization($localization));
+        $node->addLocalizedUrl((new LocalizedFallbackValue())->setText($slugUrl));
+        $childNode->setParentNode($node);
+
+        $this->scopeMatcher->expects($this->any())
+            ->method('getMatchingScopePriority')
+            ->willReturn(12345);
+        $this->scopeMatcher->expects($this->any())
+            ->method('getBestMatchByScope')
+            ->willReturn($defaultVariant);
+
+        /** @var ClassMetadata|\PHPUnit\Framework\MockObject\MockObject $metadata */
+        $metadata = $this->getMockBuilder(ClassMetadata::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $metadata->expects($this->once())->method('getFieldNames')->willReturn(['id', 'type']);
+        $metadata->expects($this->once())->method('getAssociationNames')->willReturn(['slugs', 'associations']);
+        $metadata->expects($this->any())->method('getFieldValue')
+            ->willReturnOnConsecutiveCalls(2, 'test_type', (new ArrayCollection([$slug])), ['anything']);
+
+        /** @var ClassMetadata|\PHPUnit\Framework\MockObject\MockObject $childMetadata */
+        $childMetadata = $this->getMockBuilder(ClassMetadata::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $childMetadata->expects($this->once())->method('getFieldNames')->willReturn(['id', 'type']);
+        $childMetadata->expects($this->once())->method('getAssociationNames')->willReturn(['slugs', 'scopes']);
+        $childMetadata->expects($this->any())->method('getFieldValue')
+            ->willReturnOnConsecutiveCalls(
+                3,
+                'test_type',
+                new ArrayCollection([$childSlug]),
+                new ArrayCollection([$scope])
+            );
+
+        $this->doctrineHelper->expects($this->any())
+            ->method('getEntityMetadata')
+            ->willReturnOnConsecutiveCalls($metadata, $childMetadata);
+
+        $this->assertEquals($resolvedNode, $this->resolver->getResolvedContentNode($node, $scope));
+    }
+
     /**
      * @param Customer $customer
      * @return Scope

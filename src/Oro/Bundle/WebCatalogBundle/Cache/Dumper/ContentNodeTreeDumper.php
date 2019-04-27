@@ -13,6 +13,10 @@ use Oro\Bundle\WebCatalogBundle\Cache\ResolvedData\ResolvedContentVariant;
 use Oro\Bundle\WebCatalogBundle\ContentNodeUtils\ContentNodeTreeResolverInterface;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 
+/**
+ * Creates dump of content nodes tree
+ * Saves it to cache
+ */
 class ContentNodeTreeDumper
 {
     /**
@@ -48,10 +52,11 @@ class ContentNodeTreeDumper
     /**
      * @param ContentNode $node
      * @param Scope $scope
+     * @param int|null $maxNodesNestedLevel
      */
-    public function dump(ContentNode $node, Scope $scope)
+    public function dump(ContentNode $node, Scope $scope, int $maxNodesNestedLevel = null)
     {
-        $resolvedNode = $this->nodeTreeResolver->getResolvedContentNode($node, $scope);
+        $resolvedNode = $this->nodeTreeResolver->getResolvedContentNode($node, $scope, $maxNodesNestedLevel);
         $convertedData = [];
         if ($resolvedNode) {
             $convertedData = $this->convertResolvedContentNode($resolvedNode);
