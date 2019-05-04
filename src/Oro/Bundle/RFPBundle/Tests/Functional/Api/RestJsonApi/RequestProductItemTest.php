@@ -83,6 +83,7 @@ class RequestProductItemTest extends RestJsonApiTestCase
 
         $entityId = $this->getResourceId($response);
         $data['data']['id'] = $entityId;
+        $data['data']['attributes']['value'] = '100.0000';
         $this->assertResponseContains($data, $response);
 
         return (int)$entityId;

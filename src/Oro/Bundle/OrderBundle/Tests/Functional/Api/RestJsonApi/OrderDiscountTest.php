@@ -71,7 +71,7 @@ class OrderDiscountTest extends RestJsonApiTestCase
         $discountId = (int)$this->getResourceId($response);
         $responseContent = $data;
         $responseContent['data']['id'] = (string)$discountId;
-        $responseContent['data']['attributes']['amount'] = '180';
+        $responseContent['data']['attributes']['amount'] = '180.0000';
         $this->assertResponseContains($responseContent, $response);
 
         /** @var OrderDiscount $discount */

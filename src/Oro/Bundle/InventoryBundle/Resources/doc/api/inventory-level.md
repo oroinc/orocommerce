@@ -31,7 +31,7 @@ Example:
     "type": "inventorylevels",
     "id": "1",
     "attributes": {
-      "quantity": "51.0000000000"
+      "quantity": "51"
     },
     "relationships": {
       "product": {
