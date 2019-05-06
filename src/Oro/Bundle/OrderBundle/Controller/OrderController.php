@@ -17,6 +17,9 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * Backend(admin) controller which handles CRUD operation for Order entity
+ */
 class OrderController extends AbstractOrderController
 {
     /**
@@ -166,7 +169,6 @@ class OrderController extends AbstractOrderController
                 $this->get('event_dispatcher')->dispatch(OrderEvent::NAME, $event);
                 $orderData = $event->getData()->getArrayCopy();
 
-                $view = $form->createView();
                 return [
                     'form' => $form->createView(),
                     'entity' => $order,
