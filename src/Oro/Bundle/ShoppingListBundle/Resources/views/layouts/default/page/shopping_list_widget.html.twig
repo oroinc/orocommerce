@@ -21,15 +21,14 @@
         '~data-page-component-options': {
             view: 'oroui/js/app/views/layout-subtree-view',
             blockId: id,
-            reloadEvents: ['shopping-list:refresh', 'frontend:item:delete'],
+            reloadEvents: ['shopping-list:refresh', 'frontend:shopping-list-item-quantity:update', 'frontend:item:delete'],
         },
         '~class': " header-row__toggle header-row__wrapper",
         'data-header-row-toggle': '',
         'aria-labelledby': togglerId|default('')
     }) %}
     <div {{ block('block_attributes') }}>
-        <div class="header-row__dropdown"
-             data-page-component-module="oroshoppinglist/js/app/views/shoppinglist-widget-view">
+        <div class="header-row__dropdown">
             {{ block_widget(block) }}
         </div>
     </div>
