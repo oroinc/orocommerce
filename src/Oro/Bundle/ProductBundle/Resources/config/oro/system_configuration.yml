@@ -290,7 +290,7 @@ system_configuration:
                 label: oro.product.system_configuration.fields.product_image_watermark_file.label
                 required: false
                 fileConstraints:
-                    - Image: ~
+                    - Oro\Bundle\AttachmentBundle\Validator\Constraints\Image: ~
 
         oro_product.product_image_placeholder:
             data_type: string
@@ -301,7 +301,7 @@ system_configuration:
                 tooltip: oro.product.system_configuration.fields.product_image_placeholder.tooltip
                 required: false
                 fileConstraints:
-                    - Image: ~
+                    - Oro\Bundle\AttachmentBundle\Validator\Constraints\Image: ~
 
         oro_product.product_image_watermark_size:
             data_type: integer
