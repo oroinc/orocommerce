@@ -9,7 +9,7 @@ use Oro\Component\Config\CumulativeResourceInfo;
 /**
  * The website search configuration loader.
  */
-class MappingConfigurationCacheLoader implements ConfigurationLoaderInterface
+class MappingConfigurationCacheLoader extends MappingConfigurationLoaderCachingProxy
 {
     const CACHE_KEY_HASH = 'cache_key_hash';
     const CACHE_KEY_CONFIGURATION = 'cache_key_configuration';
@@ -67,6 +67,10 @@ class MappingConfigurationCacheLoader implements ConfigurationLoaderInterface
      */
     public function getConfiguration()
     {
+        if ($this->isCachingProxyFullyConfigured()) {
+            return parent::getConfiguration();
+        }
+
         if (null !== $this->configuration) {
             return $this->configuration;
         }
@@ -93,12 +97,19 @@ class MappingConfigurationCacheLoader implements ConfigurationLoaderInterface
 
     public function warmUpCache()
     {
+        if ($this->isCachingProxyFullyConfigured()) {
+            return parent::warmUpCache();
+        }
         $this->clearCache();
         $this->warmUpConfiguration();
     }
 
     public function clearCache()
     {
+        if ($this->isCachingProxyFullyConfigured()) {
+            return parent::clearCache();
+        }
+
         $this->cacheProvider->delete(self::CACHE_KEY_HASH);
         $this->cacheProvider->delete(self::CACHE_KEY_CONFIGURATION);
     }
@@ -108,6 +119,10 @@ class MappingConfigurationCacheLoader implements ConfigurationLoaderInterface
      */
     public function getResources()
     {
+        if ($this->isCachingProxyFullyConfigured()) {
+            return parent::getResources();
+        }
+
         if (null === $this->resources) {
             $this->resources = $this->configurationProvider->getResources();
         }

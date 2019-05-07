@@ -14,3 +14,15 @@ services:
 
     oro_promotion.alias.provider.matching_products_provider:
         alias: oro_promotion.provider.matching_products_provider
+
+    oro_website_search.alias.loader.mapping_configuration_cache_loader:
+        alias: oro_website_search.loader.mapping_configuration_cache_loader
+
+    oro_website_search.alias.cache.mapping_configuration_cache_provider:
+        alias: oro_website_search.cache.mapping_configuration_cache_provider
+
+    oro_website_search.event_listener.search_mapping_provider:
+        class: Oro\Bundle\FrontendTestFrameworkBundle\EventListener\WebsiteSearchMappingListener
+        public: true
+        tags:
+            - { name: kernel.event_listener, event: oro_website_search.event.website_search_mapping.configuration, method: onWebsiteSearchMapping }
