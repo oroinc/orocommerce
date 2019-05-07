@@ -1377,13 +1377,6 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_website_search.event.website_search_mapping.configuration, method: onWebsiteSearchMapping }
 
-    oro_product.event_listener.entity_config:
-        class: 'Oro\Bundle\ProductBundle\Search\EventListener\WebsiteSearchEntityConfigListener'
-        arguments:
-            - '@oro_website_search.provider.search_mapping'
-        tags:
-            - { name: kernel.event_listener, event: oro.entity_config.post_flush, method: postFlush, priority: -255 }
-
     oro_product.voter.guest_quick_order:
         parent: oro_customer.voter.anonymous_customer_user
         calls:
