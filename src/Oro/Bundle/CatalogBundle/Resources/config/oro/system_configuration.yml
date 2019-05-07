@@ -37,7 +37,7 @@ system_configuration:
                 tooltip: oro.catalog.system_configuration.fields.category_image_placeholder.tooltip
                 required: false
                 fileConstraints:
-                    - Image: ~
+                    - Oro\Bundle\AttachmentBundle\Validator\Constraints\Image: ~
 
     tree:
         system_configuration:

@@ -49,7 +49,8 @@ Feature: Product attribute file
     And I fill "Product Form" with:
       | FileField | tiger.svg |
     And I save and close form
-    Then I should see that "Product File Attribute MIME type Validation" contains "The mime type of the file is invalid"
+    Then I should see "Product Form" validation errors:
+      | FileField | The mime type of the file is invalid ("image/svg+xml"). Allowed mime types are "application/pdf", "image/jpeg", "image/png". |
     Then I fill "Product Form" with:
       | FileField | cat1.jpg |
     And I save and close form
