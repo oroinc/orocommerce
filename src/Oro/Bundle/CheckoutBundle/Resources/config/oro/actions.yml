@@ -156,6 +156,30 @@ action_groups:
                 type: string
                 default: null
         actions:
+             # remove existing checkout for guest customer user to start new checkout from updated shopping list
+             - '@get_active_user_or_null': $.currentUser
+
+             - '@tree':
+                  conditions:
+                      '@and':
+                          - '@not_empty': $.currentUser
+                          - '@equal': [$.currentUser.isGuest, true]
+                  actions:
+                      - '@call_service_method':
+                          attribute: $.checkout
+                          service: 'oro_checkout.repository.checkout'
+                          method: findCheckoutByCustomerUserAndSourceCriteria
+                          method_parameters:
+                              - $.currentUser
+                              - { shoppingList: $.shoppingList }
+                              - 'b2b_flow_checkout'
+                      - '@tree':
+                          conditions:
+                              '@not_empty': $.checkout
+                          actions:
+                              - '@remove_entity': $.checkout
+                              - '@flush_entity': $.checkout
+
              - '@run_action_group':
                  action_group: start_shoppinglist_checkout
                  parameters_mapping:
