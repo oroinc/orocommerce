@@ -417,6 +417,11 @@ define(function(require) {
                 data: formData,
                 success: function(response) {
                     mediator.trigger('shopping-list:line-items:update-response', self.model, response);
+
+                    mediator.trigger('shopping-list:add-product', {
+                        id: self.model.get("id"),
+                        quantity: [self.model.get("quantity"), self.model._previousAttributes.quantity]
+                    });
                 },
                 complete: function() {
                     mediator.execute('hideLoading');
@@ -468,6 +473,10 @@ define(function(require) {
                         refresh: true
                     });
                     mediator.execute('showFlashMessage', 'success', _.__(this.options.messages.success));
+                    mediator.trigger('shopping-list:add-product', {
+                        id: this.model.get("id"),
+                        quantity: [this.model.get("quantity"), this.model._previousAttributes.quantity]
+                    });
                 }, this))
                 .always(function() {
                     mediator.execute('hideLoading');
