@@ -65,6 +65,10 @@ oro_behat_extension:
       class: Oro\Bundle\CheckoutBundle\Tests\Behat\Element\CheckoutStep
       selector: 'div[data-role="checkout-content"]'
 
+    Single Page Checkout Step:
+      class: Oro\Bundle\CheckoutBundle\Tests\Behat\Element\CheckoutStep
+      selector: 'div[class=" checkout-order-summary__totals"]'
+
     CheckoutStepTitle:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector: 'h2.checkout__title'

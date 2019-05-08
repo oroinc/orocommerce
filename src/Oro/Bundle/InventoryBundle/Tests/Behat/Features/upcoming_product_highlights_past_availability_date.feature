@@ -1,4 +1,5 @@
 @ticket-BB-16265
+@ticket-BB-16591
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
 @fixture-OroInventoryBundle:checkout.yml
@@ -107,9 +108,11 @@ Feature: Upcoming product highlights past availability date
     And I click "Submit Order"
     Then I should see "There was an error while processing the order"
     When I fill "Checkout Order Review Form" with:
+      | PO Number              | PONumber 121 |
       | Do not ship later than | 12/1/40 |
     And I click "Submit Order"
     Then I should see "Thank You For Your Purchase"
+    And should see "Your order number is 1"
 
   Scenario: Check that upcoming products with unknown availability date is correctly handled during checkout process
     Given I open page with shopping list List 2

@@ -2,6 +2,7 @@
 @ticket-BB-9841
 @ticket-BB-12064
 @ticket-BB-14232
+@ticket-BB-16591
 Feature: RFQ from Shipping List
   ToDo: BAP-16103 Add missing descriptions to the Behat features
   Scenario: Create different window session
@@ -21,6 +22,7 @@ Feature: RFQ from Shipping List
     And I click "Add a Note to This Item"
     When I fill in "Shopping List Product Note" with "This item was missed in the previous request"
     Then I should see "Record has been successfully updated" flash message
+    And I scroll to top
     When I click "Request Quote"
     Then the "Request Notes" field element should contain "Parish so enable innate in formed missed. Hand two was eat busy fail."
     And I should see "Note: This item was missed in the previous request"
@@ -70,3 +72,20 @@ Feature: RFQ from Shipping List
     And I proceed as the Admin
     And I reload the page
     Then I should see "alert(1)"
+
+  Scenario: Create Quote from RFQ with note and line item note
+    Given I click "Create Quote"
+    And fill "Quote Form" with:
+      | LineItemPrice    | 12 |
+    And save and close form
+    And click "Save on conf window"
+    And click "Line Items"
+    Then should see "This item was missed in the previous request"
+    And click "Send to Customer"
+    And click "Send"
+    And I should see "Quote #1 successfully sent to customer" flash message
+    And I proceed as the User
+    And I click "Account"
+    And click "Quotes"
+    When click view "PO Test 01" in grid
+    Then should see "My Notes: This item was missed in the previous request"

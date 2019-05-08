@@ -1,5 +1,6 @@
 @regression
 @ticket-BB-15562
+@ticket-BB-16591
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroCheckoutBundle:Shipping.yml
 @fixture-OroPayPalBundle:PayPalExpressProduct.yml
@@ -20,8 +21,18 @@ Feature: Payflow Gateway Express payments should display products with localized
   Scenario: Successful first order payment with  PayPal PayFlow Gateway
     Given I login as AmandaRCole@example.org the "Buyer" at "first_session" session
     And I am on the homepage
+    When I type "SKU123" in "search"
+    And click "Search Button"
+    Then I should not see "ZU product shortdesc" for "SKU123" product
+    When click "View Details" for "SKU123" product
+    Then I should not see "ZU product desc"
     And I click "Localization Switcher"
     And I select "Zulu" localization
+    When I type "SKU123" in "search"
+    And click "Search Button"
+    Then I should see "ZU product shortdesc" for "SKU123" product
+    When click "View Details" for "SKU123" product
+    Then I should see "ZU product desc"
     And I open page with shopping list List 1
     And I click "Create Order"
     And I select "Fifth avenue, 10115 Berlin, Germany" on the "Billing Information" checkout step and press Continue
@@ -30,6 +41,6 @@ Feature: Payflow Gateway Express payments should display products with localized
     And I check "ExpressPayPal" on the "Payment" checkout step and press Continue
     When I click "Submit Order"
     Then I should see the following products before pay:
-      | NAME              | DESCRIPTION     |
-      | SKU123 ZU product | ZU product desc |
+      | NAME              | DESCRIPTION          |
+      | SKU123 ZU product | ZU product shortdesc |
     And I see the "Thank You" page with "Thank You For Your Purchase!" title

@@ -1,5 +1,7 @@
 @regression
 @ticket-BB-9989
+@ticket-BB-16686
+@ticket-BB-16591
 @fixture-OroProductBundle:ProductAttributesFixture.yml
 Feature: Product attribute boolean
   In order to have custom attributes for Product entity
@@ -14,6 +16,12 @@ Feature: Product attribute boolean
   Scenario: Create product attribute
     Given I proceed as the Admin
     And I login as administrator
+    And go to System/Configuration
+    And follow "Commerce/Product/Configurable Products" on configuration sidebar
+    And I fill "Display Simple Variations Form" with:
+      | Display Simple Variations Default | false      |
+      | Display Simple Variations         | everywhere |
+    And I save setting
     And I go to Products/ Product Attributes
     When I click "Create Attribute"
     And I fill form with:
@@ -49,15 +57,35 @@ Feature: Product attribute boolean
     And I save and close form
     Then I should see "Product has been saved" flash message
 
+  Scenario: Create configurable product
+    Given I go to Products/ Products
+    And click "Create Product"
+    And fill form with:
+      | Type           | Configurable |
+    And click "NewCategory"
+    And click "Continue"
+    And fill "Create Product Form" with:
+      | Name                                 | ConfigurableProd |
+      | SKU                                  | Conf_Sku         |
+      | Status                               | Enable           |
+      | Unit Of Quantity                     | set              |
+      | Configurable Attributes BooleanField | true             |
+    And save and close form
+    And click "Edit Product"
+    And click on SKU123 in grid
+    And save and close form
+    Then should see "Product has been saved" flash message
+
   Scenario: Check product grid sorter
     Given I proceed as the Buyer
     And I login as AmandaRCole@example.org buyer
     When I click "NewCategory"
     Then grid sorter should have "BooleanField" options
 
+  @skip
+#  Unskip when BB-16686 will be fixed
   Scenario: Check product grid filter
-    Given I proceed as the Buyer
-    And I click "Grid Filters Button"
+    Given I click "Grid Filters Button"
     When I check "Yes" in BooleanField filter in frontend product grid
     Then I should see "SKU123" product
     And I should not see "SKU456" product
@@ -65,8 +93,18 @@ Feature: Product attribute boolean
     Then I should see "SKU123" product
     And I should see "SKU456" product
 
+  @skip
+#  Unskip when BB-16686 will be fixed
+  Scenario: Check configurable product view
+    Given I click "View Details" for "Conf_Sku" product
+    Then should see an "BooleanField" element
+    And should not see "BooleanField: No"
+
   Scenario: Delete product attribute
     Given I proceed as the Admin
+    And I go to Products/ Products
+    And click delete "Conf_Sku" in grid
+    And click "Yes, Delete"
     And I go to Products/ Product Attributes
     When I click Remove "BooleanField" in grid
     Then I should see "Are you sure you want to delete this attribute?"

@@ -61,6 +61,10 @@ oro_behat_extension:
           LineItemFreeFormProduct: 'oro_sale_quote[quoteProducts][0][freeFormProduct]'
           LineItemPrice: 'oro_sale_quote[quoteProducts][0][quoteProductOffers][0][price][value]'
           LineItemQuantity: 'oro_sale_quote[quoteProducts][0][quoteProductOffers][0][quantity]'
+          LineItemFreeFormSku2: 'oro_sale_quote[quoteProducts][1][productSku]'
+          LineItemFreeFormProduct2: 'oro_sale_quote[quoteProducts][1][freeFormProduct]'
+          LineItemPrice2: 'oro_sale_quote[quoteProducts][1][quoteProductOffers][0][price][value]'
+          LineItemQuantity2: 'oro_sale_quote[quoteProducts][1][quoteProductOffers][0][quantity]'
           Overridden shipping cost amount: 'oro_sale_quote[overriddenShippingCostAmount][value]'
           Shipping Address:
             locator: '//h4[text()="Shipping Address"]/..//div[contains(@id,"s2id_oro_sale_quote")]/input'
@@ -87,6 +91,30 @@ oro_behat_extension:
             type: 'xpath'
             locator: '//select[contains(@id, "oro_workflow_transition_email_template")]'
             element: Select2Entity
+
+    Free-form_line_item2:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        locator: '//tr[@data-content="oro_sale_quote[quoteProducts][1]"]//div[@class="quote-lineitem-product-select quote-lineitem-product-form"]//a[text()="Free-form entry"]'
+        type: xpath
+
+    Free-form_line_item3_order:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        locator: '//tr[@data-content="oro_order_type[lineItems][2]"]//div[@class="order-line-item-type-product"]//a[text()="Free-form entry"]'
+        type: xpath
+
+    Add Offer line item2:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        locator: '//tr[@data-content="oro_sale_quote[quoteProducts][1]"]//a[text()="Add Offer"]'
+        type: xpath
+
+    Select Shipping Address element:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        locator: '//div[contains(@id,"s2id_oro_workflow_transition_shipping_address_customerAddress-uid")]'
+        type: xpath
 
     LineItemPrice:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
@@ -132,6 +160,12 @@ oro_behat_extension:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
         locator: '//td[contains(text(),"DPD Classic")]/../td/label[contains(text(),"DPD")]'
+        type: xpath
+
+    Quote Flat Rate 2:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        locator: '//label[contains(text(),"Flat Rate 2")]'
         type: xpath
 
     Quote Line Item Grid:
