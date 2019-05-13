@@ -320,8 +320,11 @@
                  data-page-component-options="{{ gridSidebarComponentOptions|json_encode }}"
             >
                 {% import 'OroProductBundle::product_collection_macros.html.twig' as ProductCollection %}
+                {% import 'OroUIBundle::macros.html.twig' as UI %}
                 {% set uniqueId = 'dropdown-'|uniqid %}
-                <div class="oro-tabs">
+                <div class="oro-tabs"  {{ UI.renderPageComponentAttributes({
+                    module: 'oroui/js/app/components/tabs-component'
+                }) }}>
                     <div class="oro-tabs__head">
                         <ul class="nav nav-tabs" role="tablist">
                             <li class="nav-item">

@@ -175,7 +175,7 @@ oro_behat_extension:
     Upsell Products View Tab:
       selector:
         type: xpath
-        locator: '//div[contains(@class, "oro-tabs")]/ul/li/a[contains(text(), "Up-sell Products")]'
+        locator: '//div[contains(@class, "oro-tabs")]/div/ul/li/a[contains(text(), "Up-sell Products")]'
 
     ProductForm Step One:
       selector: 'form[name="oro_product_step_one"]'
