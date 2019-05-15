@@ -1,3 +1,4 @@
+@elasticsearch
 @fixture-OroProductBundle:Products_view_page_templates.yml
 Feature: Mass Product Actions Availability
   In order to allow mass actions only when expected

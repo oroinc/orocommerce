@@ -1,4 +1,5 @@
 @regression
+@elasticsearch
 @fixture-OroProductBundle:Products_view_page_templates.yml
 Feature: Mass Product Actions for not enabled products
   In order to be able to add only enabled products with help of mass actions
