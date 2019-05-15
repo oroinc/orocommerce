@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\TaxBundle\Provider;
 
-use Oro\Bundle\TaxBundle\Entity\TaxValue;
 use Oro\Bundle\TaxBundle\Exception\TaxationDisabledException;
 use Oro\Bundle\TaxBundle\Model\Result;
 
@@ -33,15 +32,6 @@ interface TaxProviderInterface
     public function getLabel();
 
     /**
-     * Creates new or returns existing TaxValue instance based on object
-     *
-     * @param object $object
-     *
-     * @return TaxValue
-     */
-    public function createTaxValue($object);
-
-    /**
      * Load tax and return Result by object
      *
      * @param object $object
@@ -65,7 +55,6 @@ interface TaxProviderInterface
      * Save tax and return Result by object
      *
      * @param object $object
-     *
      * @return Result|null
      * @throws TaxationDisabledException if taxation disabled in system configuration
      */
