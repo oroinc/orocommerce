@@ -17,7 +17,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
             - Length:
                 min: 3
                 max: 255
-            - Oro\Bundle\ValidationBundle\Validator\Constraints\AlphanumericDashUnderscore: ~
+            - Oro\Bundle\ProductBundle\Validator\Constraints\SkuRegex: ~
         unitPrecisions:
             - Count:
                 min: 1

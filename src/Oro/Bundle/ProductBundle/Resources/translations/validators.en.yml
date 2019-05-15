@@ -27,6 +27,7 @@ oro:
         at_least_one_item: Please add at least one item
 
         sku.blank: SKU should not be blank.
+        sku.not_match_regex: 'This value should contain only latin letters, numbers and symbols "-" or "_".'
 
         names.blank: Product Name should not be blank.
 

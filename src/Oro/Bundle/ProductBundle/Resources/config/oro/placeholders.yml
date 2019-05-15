@@ -1,5 +1,9 @@
 placeholders:
     placeholders:
+        requirejs_config_extend:
+            items:
+                oro_product_requirejs_config:
+                    order: 100
         oro_product_quick_add_buttons:
             items:
                 quick_add_actions_buttons: ~
@@ -22,4 +26,6 @@ placeholders:
         oro_product_select_upsell_products_button:
             template: OroProductBundle:Product:selectUpsellProductsButton.html.twig
         oro_product_requirejs_config:
-            template: OroProductBundle::requirejs.config.js.twig
+            template: OroProductBundle:Product:requirejs.config.js.twig
+            applicable: "@oro_layout.helper->isTemplateRequest()"
+            data: '%oro_product.sku.regex_pattern%'
