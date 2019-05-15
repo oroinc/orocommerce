@@ -17,7 +17,11 @@ config:
         'oroproduct/js/app/components/related-items-tabs-component': 'bundles/oroproduct/js/app/components/related-items-tabs-component.js'
         'oroproduct/js/app/components/product-variant-component': 'bundles/oroproduct/js/app/components/product-variant-component.js'
         'oroproduct/js/app/components/config-single-unit-component': 'bundles/oroproduct/js/app/components/config-single-unit-component.js'
+        'oroproduct/js/app/modules/validator-constraints-module': 'bundles/oroproduct/js/app/modules/validator-constraints-module.js'
+        'oroproduct/js/validator/sku-regex': 'bundles/oroproduct/js/validator/sku-regex.js'
     shim:
         'oroproduct/js/app/components/product-unit-selection-limitations-component':
             deps:
                 - 'oroproduct/js/app/components/product-primary-unit-limitations-component'
+    appmodules:
+        - oroproduct/js/app/modules/validator-constraints-module
