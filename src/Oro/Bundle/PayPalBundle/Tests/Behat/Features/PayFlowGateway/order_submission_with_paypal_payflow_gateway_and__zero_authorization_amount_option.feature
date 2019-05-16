@@ -1,6 +1,6 @@
 @regression
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
-@fixture-OroAuthorizeNetBundle:AuthorizeNetFixture.yml
+@fixture-OroPaymentBundle:ProductsAndShoppingListsForPayments.yml
 Feature: Order submission with PayPal PayFlow Gateway and  zero "authorization amount" option
   ToDo: BAP-16103 Add missing descriptions to the Behat features
   Scenario: Create new PayPal PayFlow Gateway Integration

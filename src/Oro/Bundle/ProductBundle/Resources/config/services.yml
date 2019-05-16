@@ -8,6 +8,7 @@ parameters:
     oro_product.entity.product_image_type.class: Oro\Bundle\ProductBundle\Entity\ProductImageType
     oro_product.event_listener.scoped_product_db_query_restriction.common_class: Oro\Bundle\ProductBundle\EventListener\ScopedProductDBQueryRestrictionEventListener
     oro_product.event_listener.scoped_product_search_query_restriction.common_class: Oro\Bundle\ProductBundle\EventListener\ScopedProductSearchQueryRestrictionEventListener
+    oro_product.sku.regex_pattern: '/^[-_a-zA-Z0-9]*$/'
 
 services:
     oro_product.product.manager.api:
@@ -1216,6 +1217,12 @@ services:
             - '@oro_entity_config.registry.attribute_type'
             - '@oro_entity_config.provider.attribute_configuration'
             - '@oro_entity.doctrine_helper'
+        calls:
+            - [setProductRepository, ['@oro_product.website_search.repository.product']]
+            - [setDatagridManagerLink, ['@oro_datagrid.datagrid.manager.link']]
+            - [setFiltersStateProvider, ['@oro_filter.provider.state.filters']]
+            - [setSortersStateProvider, ['@oro_datagrid.provider.state.sorters']]
+            - [setConfigManager, ['@oro_config.manager']]
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-product-search-grid, method: onPreBuild }
 
@@ -1391,13 +1398,6 @@ services:
             - '@oro_product.provider.index_fields'
         tags:
             - { name: kernel.event_listener, event: oro_website_search.event.website_search_mapping.configuration, method: onWebsiteSearchMapping }
-
-    oro_product.event_listener.entity_config:
-        class: 'Oro\Bundle\ProductBundle\Search\EventListener\WebsiteSearchEntityConfigListener'
-        arguments:
-            - '@oro_website_search.provider.search_mapping'
-        tags:
-            - { name: kernel.event_listener, event: oro.entity_config.post_flush, method: postFlush, priority: -255 }
 
     oro_product.voter.guest_quick_order:
         parent: oro_customer.voter.anonymous_customer_user
@@ -1581,3 +1581,10 @@ services:
             - '@oro_product.service.product_collection_definition_converter'
         tags:
             - { name: kernel.event_listener, event: oro_website_search.event.index_entity, method: onWebsiteSearchIndex, priority: -100 }
+
+    oro_product.validator_constraints.sku_regex_validator:
+        class: Oro\Bundle\ProductBundle\Validator\Constraints\SkuRegexValidator
+        arguments:
+            - '%oro_product.sku.regex_pattern%'
+        tags:
+            - { name: validator.constraint_validator, alias: oro_product.validator_constraints.sku_regex_validator }

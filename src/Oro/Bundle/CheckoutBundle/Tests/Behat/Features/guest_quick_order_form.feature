@@ -2,12 +2,13 @@
 @regression
 @ticket-BB-11426
 @ticket-BB-16275
+@ticket-BB-15931
 @fixture-OroCheckoutBundle:Products_quick_order_form_ce.yml
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
 @fixture-OroCheckoutBundle:Checkout.yml
-  
-  Feature: Guest quick order form
+
+Feature: Guest quick order form
   In order to promote quick purchases by non-registered customers
   As a Sales rep
   I want quick order form to be accessible to guest customers
@@ -28,8 +29,8 @@
     And go to System/ Configuration
     And I follow "Commerce/Sales/Quick Order Form" on configuration sidebar
     And fill "Quick Order Configuration Form" with:
-      |Enable Guest Quick Order Form Default|false|
-      |Enable Guest Quick Order Form        |true |
+      | Enable Guest Quick Order Form Default | false |
+      | Enable Guest Quick Order Form         | true  |
     And click "Save settings"
 
   Scenario: Quick order form for guest is disabled due to disabled dependant features
@@ -41,18 +42,18 @@
     Given I proceed as the Admin
     And follow "Commerce/Sales/Shopping List" on configuration sidebar
     And fill "Shopping List Configuration Form" with:
-      |Enable Guest Shopping List Default|false|
-      |Enable Guest Shopping List        |true |
+      | Enable Guest Shopping List Default | false |
+      | Enable Guest Shopping List         | true  |
     And click "Save settings"
     And follow "Commerce/Sales/Request For Quote" on configuration sidebar
     And fill "Request For Quote Configuration Form" with:
-      |Enable Guest RFQ Default|false|
-      |Enable Guest RFQ        |true |
+      | Enable Guest RFQ Default | false |
+      | Enable Guest RFQ         | true  |
     And click "Save settings"
     And follow "Commerce/Sales/Checkout" on configuration sidebar
     And fill "Checkout Configuration Form" with:
-      |Enable Guest Checkout Default|false|
-      |Enable Guest Checkout        |true |
+      | Enable Guest Checkout Default | false |
+      | Enable Guest Checkout         | true  |
     And click "Save settings"
     And go to Customers/ Customer Groups
     And I click Edit Non-Authenticated Visitors in grid
@@ -60,7 +61,30 @@
       | Payment Term | net 10 |
     And I save form
 
-  Scenario: Create Order from Quick order
+  Scenario: Create checkout from Shopping list and proceed till shipping method step
+    Given I proceed as the Guest
+    And I am on the homepage
+    When I type "PSKU1" in "search"
+    And I click "Search Button"
+    Then I should see "PSKU1"
+    And I click "Add to Shopping List"
+    When I open page with shopping list "Shopping List"
+    And I click "Create Order"
+    And I click "Continue as a Guest"
+    And I fill form with:
+      | First Name      | Tester          |
+      | Last Name       | Testerson       |
+      | Email           | tester@test.com |
+      | Street          | Fifth avenue    |
+      | City            | Berlin          |
+      | Country         | Germany         |
+      | State           | Berlin          |
+      | Zip/Postal Code | 10115           |
+    And I click "Ship to This Address"
+    And I click "Continue"
+    Then Buyer is on Shipping Method Checkout step
+
+  Scenario: Create Order from Quick order when there is a started checkout from shopping list
     Given I proceed as the Guest
     And I am on the homepage
     And I should see text matching "Quick Order Form"
@@ -80,6 +104,8 @@
       | UNIT2 | set |
       | QTY3  | 1   |
       | QTY4  | 1   |
+    When I click "Create Order"
+    Then I should see "You can have only 1 shopping list(s)."
     When I click "Create Order"
     And click "Continue as a Guest"
     And I fill form with:

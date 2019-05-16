@@ -204,6 +204,16 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
+     * @Then Buyer is on Shipping Method Checkout step
+     */
+    public function assertBuyerIsOnShippingMethodCheckoutStep()
+    {
+        /** @var CheckoutStep $checkoutStep */
+        $checkoutStep = $this->createElement('CheckoutStep');
+        $checkoutStep->assertTitle('Shipping Method');
+    }
+
+    /**
      * @When Buyer is again on Shipping Method Checkout step on :shoppingListName
      */
     public function buyerIsAgainOnShippingMethodCheckoutStepOn($shoppingListName)

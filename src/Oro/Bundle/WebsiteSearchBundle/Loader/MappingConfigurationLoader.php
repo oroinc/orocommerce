@@ -2,15 +2,25 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Loader;
 
-use Oro\Bundle\SearchBundle\DependencyInjection\Merger\SearchConfigMerger;
 use Oro\Bundle\WebsiteSearchBundle\DependencyInjection\MappingConfiguration;
+use Oro\Bundle\WebsiteSearchBundle\Event\WebsiteSearchMappingEvent;
 use Oro\Component\Config\Loader\CumulativeConfigLoader;
 use Oro\Component\Config\Loader\YamlCumulativeFileLoader;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Symfony\Component\Config\Definition\Processor;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+/**
+ * Loads website search mapping configuration based on configuration defined in website_search.yml files and allows to
+ * also add configuration by listening to WebsiteSearchMappingEvent.
+ */
 class MappingConfigurationLoader implements ConfigurationLoaderInterface
 {
+    /**
+     * @var EventDispatcherInterface
+     */
+    private $eventDispatcher;
+
     /**
      * {@inheritdoc}
      */
@@ -32,7 +42,22 @@ class MappingConfigurationLoader implements ConfigurationLoaderInterface
             $configs[] = $resource->data;
         }
 
+        if ($this->eventDispatcher) {
+            $event = new WebsiteSearchMappingEvent();
+            $this->eventDispatcher->dispatch(WebsiteSearchMappingEvent::NAME, $event);
+
+            $configs[] = $event->getConfiguration();
+        }
+
         return $this->processConfiguration(new MappingConfiguration(), $configs);
+    }
+
+    /**
+     * @param EventDispatcherInterface $eventDispatcher
+     */
+    public function setEventDispatcher(EventDispatcherInterface $eventDispatcher): void
+    {
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**

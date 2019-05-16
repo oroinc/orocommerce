@@ -1,5 +1,6 @@
 @regression
 @ticket-BB-15927
+@ticket-BB-16015
 @fixture-OroProductBundle:ProductAttributesFixture.yml
 
 Feature: Product attributes import with incorrect configuration
@@ -47,8 +48,8 @@ Feature: Product attributes import with incorrect configuration
   Scenario: Import Product Attributes as "Serialized fields"
     Given I fill template with data:
       | fieldName     | type     | entity.label  | entity.description | form.is_enabled | importexport.header | importexport.order | importexport.identity | importexport.excluded | attachment.mimetypes | attribute.searchable | attribute.filterable | attribute.filter_by | attribute.sortable | attribute.enabled | attribute.visible | email.available_in_template | datagrid.is_visible | datagrid.show_filter | datagrid.order | view.is_displayable | view.priority | search.searchable |
-      | DateTimeField | datetime | DateTimeField | description_value  | yes             | header_value1       | 19                 | no                    | no                    |                      | yes                  | yes                  | exact_value         | yes                | yes               | yes               | yes                         | 0                   | no                   | 9              | yes                 | 7             | yes               |
-      | TextField     | text     | TextField     | description_value  | yes             | header_value2       | 5                  | no                    | no                    |                      | yes                  | yes                  | exact_value         | yes                | yes               | yes               | yes                         | 0                   | no                   | 20             | yes                 | 10            | yes               |
+      | DateTimeField | datetime | DateTimeField | description_value  | yes             | header_value1       | 19                 | no                    | no                    |                      | no                   | no                   | exact_value         | yes                | yes               | yes               | yes                         | 0                   | no                   | 9              | yes                 | 7             | yes               |
+      | TextField     | text     | TextField     | description_value  | yes             | header_value2       | 5                  | no                    | no                    |                      | yes                  | yes                  | exact_value         | no                 | yes               | yes               | yes                         | 0                   | no                   | 20             | yes                 | 10            | yes               |
     When I import file
     And Email should contains the following "Errors: 0 processed: 2, read: 2, added: 2, updated: 0, replaced: 0" text
     When I reload the page
@@ -79,3 +80,31 @@ Feature: Product attributes import with incorrect configuration
     Given I login as AmandaRCole@example.org buyer
     When I am on "/product"
     Then I should see "SKU123" product
+
+  Scenario: Validation for attribute configuration like filterable/sortable/searchable
+    Given I login as administrator
+    And I go to Products / Product Attributes
+    And I fill template with data:
+      | fieldName       | type     | entity.label      | attribute.filterable | attribute.searchable | attribute.sortable |
+      | validationtest1 | datetime | validation test 1 | yes                  | yes                  | yes                |
+      | validationtest2 | text     | validation test 2 | yes                  | yes                  | yes                |
+
+  @skipWait
+  Scenario: Check import error page from the email after importing file
+    Given I import file
+    Then Email should contains the following "Errors: 3 processed: 0, read: 2, added: 0, updated: 0, replaced: 0" text
+    When I follow "Error log" link from the email
+    Then I should see "Error in row #1. Attribute with datetime type cannot be filterable."
+    And I should see "Error in row #1. Attribute with datetime type cannot be searchable."
+    And I should see "Error in row #2. Attribute with text type cannot be sortable."
+    And I login as administrator
+
+  Scenario: Check that with right config validation will be passed without any errors
+    When I go to Products / Product Attributes
+    Then I should not see "Update schema"
+    When I fill template with data:
+      | fieldName       | type     | entity.label      | attribute.filterable | attribute.searchable | attribute.sortable |
+      | validationtest1 | datetime | validation test 1 | no                   | no                   | yes                |
+      | validationtest2 | text     | validation test 2 | yes                  | yes                  | no                 |
+    When I try import file
+    Then Email should contains the following "Errors: 0 processed: 2, read: 2, added: 2, updated: 0, replaced: 0" text

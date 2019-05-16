@@ -8,6 +8,9 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
+/**
+ * Reindex command for front store search
+ */
 class ReindexCommand extends ContainerAwareCommand
 {
     const COMMAND_NAME = 'oro:website-search:reindex';

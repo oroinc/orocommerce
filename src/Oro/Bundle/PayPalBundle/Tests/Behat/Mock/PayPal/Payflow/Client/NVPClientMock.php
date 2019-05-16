@@ -23,9 +23,9 @@ class NVPClientMock implements ClientInterface
     /**
      * NVPClientMock constructor.
      *
-     * @param $cache
+     * @param Cache $cache
      */
-    public function __construct($cache)
+    public function __construct(Cache $cache)
     {
         $this->cache = $cache;
     }

@@ -2,9 +2,11 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Layout\DataProvider;
 
+use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
+use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
@@ -16,6 +18,8 @@ use Oro\Bundle\WebCatalogBundle\Entity\Repository\ContentNodeRepository;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Oro\Bundle\WebCatalogBundle\Layout\DataProvider\MenuDataProvider;
 use Oro\Bundle\WebCatalogBundle\Provider\WebCatalogProvider;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request;
@@ -55,6 +59,16 @@ class MenuDataProviderTest extends \PHPUnit\Framework\TestCase
      */
     protected $menuDataProvider;
 
+    /**
+     * @var CacheProvider|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $cacheProvider;
+
+    /**
+     * @var WebsiteManager|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $websiteManager;
+
     protected function setUp()
     {
         $this->registry = $this->createMock(ManagerRegistry::class);
@@ -74,6 +88,12 @@ class MenuDataProviderTest extends \PHPUnit\Framework\TestCase
             $this->localizationHelper,
             $this->requestStack
         );
+
+        $this->cacheProvider = $this->createMock(CacheProvider::class);
+        $this->menuDataProvider->setCache($this->cacheProvider);
+
+        $this->websiteManager = $this->createMock(WebsiteManager::class);
+        $this->menuDataProvider->setWebsiteManager($this->websiteManager);
     }
 
     /**
@@ -96,7 +116,7 @@ class MenuDataProviderTest extends \PHPUnit\Framework\TestCase
             ->method('getCurrentRequest')
             ->willReturn($request);
 
-        $this->webCatalogProvider->expects($this->once())
+        $this->webCatalogProvider->expects($this->any())
             ->method('getNavigationRoot')
             ->willReturn(null);
 
@@ -134,6 +154,20 @@ class MenuDataProviderTest extends \PHPUnit\Framework\TestCase
                 return $collection->first()->getString();
             }));
 
+        $localization = $this->getEntity(Localization::class, ['id' => 42]);
+        $this->localizationHelper->expects($this->once())
+            ->method('getCurrentLocalization')
+            ->willReturn($localization);
+
+        $website = $this->getEntity(Website::class, ['id' => 123]);
+        $this->websiteManager->expects($this->any())
+            ->method('getCurrentWebsite')
+            ->willReturn($website);
+
+        $this->cacheProvider->expects($this->any())
+            ->method('fetch')
+            ->willReturn(false);
+
         $actual = $this->menuDataProvider->getItems();
         $this->assertEquals($expectedData, $actual);
     }
@@ -155,7 +189,7 @@ class MenuDataProviderTest extends \PHPUnit\Framework\TestCase
             ->method('getCurrentRequest')
             ->willReturn($request);
 
-        $this->webCatalogProvider->expects($this->once())
+        $this->webCatalogProvider->expects($this->any())
             ->method('getNavigationRoot')
             ->willReturn($rootNode);
 
@@ -183,6 +217,62 @@ class MenuDataProviderTest extends \PHPUnit\Framework\TestCase
             ->will($this->returnCallback(function (ArrayCollection $collection) {
                 return $collection->first()->getString();
             }));
+
+        $localization = $this->getEntity(Localization::class, ['id' => 42]);
+        $this->localizationHelper->expects($this->once())
+            ->method('getCurrentLocalization')
+            ->willReturn($localization);
+
+        $website = $this->getEntity(Website::class, ['id' => 123]);
+        $this->websiteManager->expects($this->any())
+            ->method('getCurrentWebsite')
+            ->willReturn($website);
+
+        $this->cacheProvider->expects($this->any())
+            ->method('fetch')
+            ->willReturn(false);
+
+        $actual = $this->menuDataProvider->getItems();
+        $this->assertEquals($expectedData, $actual);
+    }
+
+    public function testGetItemsCached()
+    {
+        $scope = $this->getEntity(Scope::class, ['id' => 1]);
+
+        $expectedData = [
+            MenuDataProvider::IDENTIFIER => 'root__node2',
+            MenuDataProvider::LABEL => 'node2',
+            MenuDataProvider::URL => '/node2',
+            MenuDataProvider::CHILDREN => []
+        ];
+
+        $request = Request::create('/', Request::METHOD_GET);
+        $request->attributes = new ParameterBag(['_web_content_scope' => $scope]);
+        $this->requestStack->expects($this->once())
+            ->method('getCurrentRequest')
+            ->willReturn($request);
+
+        $localization = $this->getEntity(Localization::class, ['id' => 42]);
+        $this->localizationHelper->expects($this->once())
+            ->method('getCurrentLocalization')
+            ->willReturn($localization);
+
+        $website = $this->getEntity(Website::class, ['id' => 123]);
+        $this->websiteManager->expects($this->any())
+            ->method('getCurrentWebsite')
+            ->willReturn($website);
+
+        $rootNode = $this->getEntity(ContentNode::class, ['id' => 77]);
+        $this->webCatalogProvider->expects($this->any())
+            ->method('getNavigationRoot')
+            ->with($website)
+            ->willReturn($rootNode);
+
+        $this->cacheProvider->expects($this->at(0))
+            ->method('fetch')
+            ->with('cacheVal_menu_items_1_77_42')
+            ->willReturn([MenuDataProvider::CHILDREN => $expectedData]);
 
         $actual = $this->menuDataProvider->getItems();
         $this->assertEquals($expectedData, $actual);

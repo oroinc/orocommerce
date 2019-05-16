@@ -175,7 +175,7 @@ oro_behat_extension:
     Upsell Products View Tab:
       selector:
         type: xpath
-        locator: '//div[contains(@class, "oro-tabs")]/ul/li/a[contains(text(), "Up-sell Products")]'
+        locator: '//div[contains(@class, "oro-tabs")]/div/ul/li/a[contains(text(), "Up-sell Products")]'
 
     ProductForm Step One:
       selector: 'form[name="oro_product_step_one"]'
@@ -317,11 +317,6 @@ oro_behat_extension:
           Show Add Button: 'related_items[oro_product___upsell_products_show_add_button][value]'
           Use Slider On Mobile Use Default: 'related_items[oro_product___upsell_products_use_slider_on_mobile][use_parent_scope_value]'
           Use Slider On Mobile: 'related_items[oro_product___upsell_products_use_slider_on_mobile][value]'
-
-    Product File Attribute MIME type Validation:
-      selector:
-        type: 'xpath'
-        locator: "//form[@name='oro_product']//span[@class='validation-failed']/span/span"
 
     Product Family Form:
       selector: 'form[name="oro_attribute_family"]'
@@ -1007,6 +1002,13 @@ oro_behat_extension:
     Remove Image 1:
         selector: 'tr[data-content="oro_product[images][0]"] .removeRow'
 
+    Product Image Watermark Config:
+      selector: 'form[name="product_images"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          File: 'product_images[oro_product___product_image_watermark_file][value][file]'
+
   pages:
     Product View:
       class: Oro\Bundle\ProductBundle\Tests\Behat\Page\ProductView
@@ -1087,5 +1089,6 @@ oro_behat_extension:
         - OroImportExportBundle::ImportExportContext:
             - '@oro_entity.entity_alias_resolver'
             - '@oro_importexport.processor.registry'
+        - OroNavigationBundle::FeatureContext
       paths:
         - '@OroProductBundle/Tests/Behat/Features/other'

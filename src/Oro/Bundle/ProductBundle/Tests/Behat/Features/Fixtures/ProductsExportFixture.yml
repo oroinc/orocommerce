@@ -21,6 +21,9 @@ Oro\Bundle\ProductBundle\Entity\Product:
         primaryUnitPrecision: '@precision1'
         attributeFamily: '@defaultProductFamily'
         addName: ['@locvalue1']
+        addMetaTitl: ['@metaTitle']
+        addMetaDescription: ['@metaDescription']
+        addMetaKeyword: ['@metaKeywords']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
         organization: '@organization'
@@ -73,3 +76,9 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
         string: 'Product 4'
     locvalue5:
         string: 'Product5(disabled)'
+    metaTitle:
+        string: 'Meta Title 1'
+    metaDescription:
+        text: 'Meta Description 1'
+    metaKeywords:
+        text: 'Meta Keywords 1'

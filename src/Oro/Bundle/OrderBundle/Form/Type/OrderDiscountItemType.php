@@ -166,6 +166,7 @@ class OrderDiscountItemType extends AbstractType
         $data = $event->getData();
         if ($data->getOrder()) {
             $this->totalHelper->fillDiscounts($data->getOrder());
+            $this->totalHelper->fillTotal($data->getOrder());
         }
     }
 

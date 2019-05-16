@@ -37,9 +37,15 @@ Feature: Discounts for Order
       | Amount (Discount)                    | -$2.00 |
       | Total                                | $45.00 |
 
-  Scenario: Add special discount from Order edit page
+  Scenario: Check whether the discounts have affected the total amount
     Given go to Sales/Orders
-    And click edit SimpleOrder in grid
+    Then I should see SimpleOrder in grid with following data:
+      | Currency  | USD    |
+      | Total     | $45.00 |
+      | Total ($) | $45.00 |
+
+  Scenario: Add special discount from Order edit page
+    Given click edit SimpleOrder in grid
     And click "Promotions and Discounts"
     And click "Add Special Discount"
     And I fill "Order Discount Form" with:

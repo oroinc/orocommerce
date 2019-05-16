@@ -4,16 +4,23 @@ namespace Oro\Bundle\WebCatalogBundle\Layout\DataProvider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
+use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\WebCatalogBundle\Cache\ResolvedData\ResolvedContentNode;
 use Oro\Bundle\WebCatalogBundle\ContentNodeUtils\ContentNodeTreeResolverInterface;
+use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Provider\WebCatalogProvider;
+use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
+use Oro\Component\Cache\Layout\DataProviderCacheTrait;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Layout data provider that helps to build main navigation menu on the front store
+ * Cashes resolved webcatalog root items
  */
 class MenuDataProvider extends AbstractWebCatalogDataProvider
 {
+    use DataProviderCacheTrait;
+
     const IDENTIFIER = 'identifier';
     const LABEL = 'label';
     const URL = 'url';
@@ -28,6 +35,16 @@ class MenuDataProvider extends AbstractWebCatalogDataProvider
      * @var ContentNodeTreeResolverInterface
      */
     protected $contentNodeTreeResolverFacade;
+
+    /**
+     * @var WebsiteManager
+     */
+    private $websiteManager;
+
+    /**
+     * @var ContentNode
+     */
+    private $rootNode = false;
 
     /**
      * @param ManagerRegistry $registry
@@ -51,27 +68,28 @@ class MenuDataProvider extends AbstractWebCatalogDataProvider
     }
 
     /**
+     * @param WebsiteManager $websiteManager
+     */
+    public function setWebsiteManager(WebsiteManager $websiteManager)
+    {
+        $this->websiteManager = $websiteManager;
+    }
+
+    /**
      * @return array
      */
     public function getItems()
     {
         $request = $this->requestStack->getCurrentRequest();
 
-        $rootItem = [];
+        /** @var Scope $scope */
         if ($request && $scope = $request->attributes->get('_web_content_scope')) {
-            $rootNode = $this->webCatalogProvider->getNavigationRoot();
-            if (!$rootNode) {
-                $webCatalog = $this->webCatalogProvider->getWebCatalog();
-                if ($webCatalog) {
-                    $rootNode = $this->getContentNodeRepository()->getRootNodeByWebCatalog($webCatalog);
-                }
-            }
+            $rootItem = $this->getCachedRootItem($scope);
 
-            if ($rootNode) {
-                $resolvedNode = $this->contentNodeTreeResolverFacade->getResolvedContentNode($rootNode, $scope);
-
-                if ($resolvedNode) {
-                    $rootItem = $this->prepareItemsData($resolvedNode);
+            if ($rootItem === false) {
+                $rootItem = $this->getResolvedRootItem($scope);
+                if ($this->isCacheUsed()) {
+                    $this->saveToCache($rootItem);
                 }
             }
         }
@@ -81,6 +99,54 @@ class MenuDataProvider extends AbstractWebCatalogDataProvider
         }
 
         return [];
+    }
+
+    /**
+     * @param Scope $scope
+     * @return array
+     */
+    private function getResolvedRootItem(Scope $scope)
+    {
+        $rootItem = [];
+        $rootNode = $this->getRootNode();
+        if (!$rootNode) {
+            $webCatalog = $this->webCatalogProvider->getWebCatalog();
+            if ($webCatalog) {
+                $rootNode = $this->getContentNodeRepository()->getRootNodeByWebCatalog($webCatalog);
+            }
+        }
+
+        if ($rootNode) {
+            $resolvedNode = $this->contentNodeTreeResolverFacade->getResolvedContentNode($rootNode, $scope);
+
+            if ($resolvedNode) {
+                $rootItem = $this->prepareItemsData($resolvedNode);
+            }
+        }
+
+        return $rootItem;
+    }
+
+    /**
+     * @param Scope $scope
+     * @return array|bool|false
+     */
+    private function getCachedRootItem(Scope $scope)
+    {
+        if ($this->isCacheUsed()) {
+            $rootNode = $this->getRootNode();
+            $localization = $this->localizationHelper->getCurrentLocalization();
+            $this->initCache([
+                'menu_items',
+                $scope ? $scope->getId() : 0,
+                $rootNode ? $rootNode->getId() : 0,
+                $localization ? $localization->getId() : 0
+            ]);
+
+            return $this->getFromCache();
+        }
+
+        return false;
     }
 
     /**
@@ -102,5 +168,18 @@ class MenuDataProvider extends AbstractWebCatalogDataProvider
         }
 
         return $result;
+    }
+
+    /**
+     * @return ContentNode|null
+     */
+    private function getRootNode()
+    {
+        if ($this->rootNode === false) {
+            $website = $this->websiteManager ? $this->websiteManager->getCurrentWebsite() : null;
+            $this->rootNode = $this->webCatalogProvider->getNavigationRoot($website);
+        }
+
+        return $this->rootNode;
     }
 }

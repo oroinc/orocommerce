@@ -25,6 +25,7 @@ abstract class AbstractSegmentProductsProvider implements ProductsProviderInterf
     const DQL = 'dql';
     const PARAMETERS = 'parameters';
     const HASH = 'hash';
+    const HINTS = 'hints';
 
     use DataProviderCacheTrait {
         getFromCache as loadFromCache;
@@ -120,7 +121,11 @@ abstract class AbstractSegmentProductsProvider implements ProductsProviderInterf
 
             $qb = $this->getQueryBuilder($segment);
             if ($qb) {
-                $data = $this->getCachedData($qb->getDQL(), $qb->getParameters()->toArray());
+                $data = $this->getCachedData(
+                    $qb->getDQL(),
+                    $qb->getParameters()->toArray(),
+                    $qb->getEntityManager()->getConfiguration()->getDefaultQueryHints()
+                );
                 if (true === $useCache) {
                     $this->saveToCache($data);
                 }
@@ -192,9 +197,16 @@ abstract class AbstractSegmentProductsProvider implements ProductsProviderInterf
      */
     protected function restoreQuery(array $data)
     {
-        return $this->getRegistry()
-            ->getEntityManager()
-            ->createQuery($data[self::DQL]);
+        $em = $this->getRegistry()->getEntityManager();
+
+        if (!empty($data[self::HINTS])) {
+            $configuration = $em->getConfiguration();
+            foreach ($data[self::HINTS] as $name => $value) {
+                $configuration->setDefaultQueryHint($name, $value);
+            }
+        }
+
+        return $em->createQuery($data[self::DQL]);
     }
 
     /**
@@ -210,10 +222,11 @@ abstract class AbstractSegmentProductsProvider implements ProductsProviderInterf
     /**
      * @param string $dql
      * @param Parameter[] $parameters
+     * @param array $queryHints
      *
      * @return array
      */
-    private function getCachedData($dql, array $parameters)
+    private function getCachedData($dql, array $parameters, array $queryHints)
     {
         /** @var Parameter $parameter */
         $resultParameters = [];
@@ -224,7 +237,8 @@ abstract class AbstractSegmentProductsProvider implements ProductsProviderInterf
         $result = [
             self::DQL => $dql,
             self::PARAMETERS => $resultParameters,
-            self::HASH => $this->getEncryptedData($dql, $resultParameters),
+            self::HINTS => $queryHints,
+            self::HASH => $this->getEncryptedData($dql, $resultParameters, $queryHints),
         ];
 
         return $result;
@@ -243,7 +257,11 @@ abstract class AbstractSegmentProductsProvider implements ProductsProviderInterf
         ) {
             $hash = $this->getDecryptedData($data[self::HASH]);
 
-            return $hash === $this->getHashData($data[self::DQL], $data[self::PARAMETERS]);
+            return $hash === $this->getHashData(
+                $data[self::DQL],
+                $data[self::PARAMETERS],
+                $data[self::HINTS] ?? []
+            );
         }
 
         return false;
@@ -252,12 +270,13 @@ abstract class AbstractSegmentProductsProvider implements ProductsProviderInterf
     /**
      * @param string $dql
      * @param array $parameters
+     * @param array $queryHints
      *
      * @return string|null
      */
-    private function getEncryptedData(string $dql, array $parameters = []): ?string
+    private function getEncryptedData(string $dql, array $parameters = [], array $queryHints = []): ?string
     {
-        $data = $this->getHashData($dql, $parameters);
+        $data = $this->getHashData($dql, $parameters, $queryHints);
 
         return $this->getEncryptedHash($data);
     }
@@ -275,14 +294,16 @@ abstract class AbstractSegmentProductsProvider implements ProductsProviderInterf
     /**
      * @param string $dql
      * @param array $parameters
+     * @param array $queryHints
      *
      * @return string
      */
-    private function getHashData(string $dql, array $parameters = []): string
+    private function getHashData(string $dql, array $parameters = [], array $queryHints = []): string
     {
         return md5(serialize([
             self::DQL => $dql,
             self::PARAMETERS => $parameters,
+            self::HINTS => $queryHints,
         ]));
     }
 

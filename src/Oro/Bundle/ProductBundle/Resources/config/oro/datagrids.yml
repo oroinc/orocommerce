@@ -887,3 +887,7 @@ datagrids:
                 defaultTitle:
                     type:      string
                     data_name: brand.defaultTitle
+
+    attributes-grid:
+        options:
+            entityHint: oro.product.product_attributes.plural_label

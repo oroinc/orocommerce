@@ -1,6 +1,6 @@
 @regression
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
-@fixture-OroAuthorizeNetBundle:AuthorizeNetFixture.yml
+@fixture-OroPaymentBundle:ProductsAndShoppingListsForPayments.yml
 @ticket-BB-13932
 
 Feature: Order submission with PayPal PayFlow Gateway and zero "authorization amount" option on single page checkout

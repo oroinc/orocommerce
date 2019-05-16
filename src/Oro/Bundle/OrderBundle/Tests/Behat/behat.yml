@@ -69,6 +69,9 @@ oro_behat_extension:
         locator: '//label[contains(text(),"Flat Rate")]'
         type: xpath
 
+    Flat Rate:
+      selector: '[id*="flat_rate"]'
+
     Order DPD Classic:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
@@ -131,6 +134,19 @@ oro_behat_extension:
           PO Number:
             locator: '//input[contains(@id,"oro_order_type_poNumber-uid")]'
             type: xpath
+
+    Order Billing Address State Selector:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        locator: '//div[contains(@id,"s2id_oro_order_type_billingAddress_region-uid")]'
+        type: xpath
+
+    Order Billing Address State Text Field:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        locator: '//input[contains(@id,"oro_order_type_billingAddress_region_text-uid")]'
+        type: xpath
+
     Purchase History Settings Form:
       selector: 'form[name="purchase_history"]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form

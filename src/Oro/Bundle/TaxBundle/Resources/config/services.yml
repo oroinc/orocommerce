@@ -89,6 +89,8 @@ services:
         arguments:
             - '@translator'
             - '@oro_tax.provider.tax_provider_registry'
+        calls:
+            - [setTaxationSettingsProvider, ['@oro_tax.provider.taxation_settings_provider']]
         tags:
             - { name: kernel.event_listener, event: oro_payment.event.extract_line_item_options, method: onExtractLineItemPaymentOptions, priority: -200 }
 

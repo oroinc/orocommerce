@@ -11,8 +11,13 @@ use Oro\Bundle\PaymentBundle\Model\LineItemOptionModel;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+/**
+ * Provides additional information for payment systems like line item models or shipping address model
+ */
 class ExtractOptionsProvider
 {
+    public const CONTEXT_PAYMENT_METHOD_TYPE = 'payment_method_type';
+
     /** @var EventDispatcherInterface */
     protected $dispatcher;
 
@@ -52,7 +57,18 @@ class ExtractOptionsProvider
      */
     public function getLineItemPaymentOptions(LineItemsAwareInterface $entity)
     {
+        return $this->getLineItemPaymentOptionsWithContext($entity, []);
+    }
+
+    /**
+     * @param LineItemsAwareInterface $entity
+     * @param array $context
+     * @return LineItemOptionModel[]
+     */
+    public function getLineItemPaymentOptionsWithContext(LineItemsAwareInterface $entity, array $context): array
+    {
         $event = new ExtractLineItemPaymentOptionsEvent($entity);
+        $event->setContext($context);
         $this->dispatcher->dispatch(ExtractLineItemPaymentOptionsEvent::NAME, $event);
 
         return $event->getModels();

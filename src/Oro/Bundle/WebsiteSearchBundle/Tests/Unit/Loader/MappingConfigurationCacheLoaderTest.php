@@ -3,11 +3,15 @@
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Loader;
 
 use Doctrine\Common\Cache\CacheProvider;
+use Oro\Bundle\WebsiteSearchBundle\Cache\MappingConfigurationCacheProvider;
 use Oro\Bundle\WebsiteSearchBundle\Loader\ConfigurationLoaderInterface;
 use Oro\Bundle\WebsiteSearchBundle\Loader\MappingConfigurationCacheLoader;
 use Oro\Bundle\WebsiteSearchBundle\Provider\ResourcesHashProvider;
 use Oro\Component\Config\CumulativeResourceInfo;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class MappingConfigurationCacheLoaderTest extends \PHPUnit\Framework\TestCase
 {
     const GET_HASH_RESULT = 'some_hash';
@@ -38,6 +42,11 @@ class MappingConfigurationCacheLoaderTest extends \PHPUnit\Framework\TestCase
     private $cacheProvider;
 
     /**
+     * @var MappingConfigurationCacheProvider|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $mappingCacheProvider;
+
+    /**
      * @var MappingConfigurationCacheLoader
      */
     private $configurationCacheLoader;
@@ -51,6 +60,7 @@ class MappingConfigurationCacheLoaderTest extends \PHPUnit\Framework\TestCase
     {
         $this->resourceHashProvider = $this->createMock(ResourcesHashProvider::class);
         $this->cacheProvider = $this->createMock(CacheProvider::class);
+        $this->mappingCacheProvider = $this->createMock(MappingConfigurationCacheProvider::class);
 
         $this->configurationLoader = $this->createMock(ConfigurationLoaderInterface::class);
         $this->configurationLoader
@@ -266,6 +276,50 @@ class MappingConfigurationCacheLoaderTest extends \PHPUnit\Framework\TestCase
 
         $this->assertEquals([], $this->configurationCacheLoader->getResources());
         $this->assertEquals([], $this->configurationCacheLoader->getResources());
+    }
+
+    public function testGetConfigurationFallback()
+    {
+        $this->initConfigurationCacheLoader(false);
+        $this->configurationCacheLoader->setMappingConfigurationCacheProvider($this->mappingCacheProvider);
+        $this->configureResourcesAndHash();
+
+        $this->mappingCacheProvider
+            ->expects(self::once())
+            ->method('fetchConfiguration')
+            ->willReturn([false, []]);
+
+        self::assertEquals(self::$configuration, $this->configurationCacheLoader->getConfiguration());
+    }
+
+    public function testClearCacheFallback()
+    {
+        $this->initConfigurationCacheLoader(false);
+        $this->configurationCacheLoader->setMappingConfigurationCacheProvider($this->mappingCacheProvider);
+
+        $this->mappingCacheProvider
+            ->expects(self::once())
+            ->method('deleteConfiguration');
+
+        $this->configurationCacheLoader->clearCache();
+    }
+
+    public function testWarmUpCacheFallback()
+    {
+        $this->initConfigurationCacheLoader(false);
+        $this->configurationCacheLoader->setMappingConfigurationCacheProvider($this->mappingCacheProvider);
+        $this->configureResourcesAndHash();
+
+        $this->mappingCacheProvider
+            ->expects(self::once())
+            ->method('deleteConfiguration');
+
+        $this->mappingCacheProvider
+            ->expects(self::once())
+            ->method('fetchConfiguration')
+            ->willReturn([false, []]);
+
+        $this->configurationCacheLoader->warmUpCache();
     }
 
     /**

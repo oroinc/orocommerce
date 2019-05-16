@@ -2,14 +2,21 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Loader;
 
+use Oro\Bundle\WebsiteSearchBundle\Event\WebsiteSearchMappingEvent;
 use Oro\Bundle\WebsiteSearchBundle\Loader\MappingConfigurationLoader;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Loader\Fixture\Bundle\TestBundle1\TestBundle1;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Loader\Fixture\Bundle\TestBundle2\TestBundle2;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Loader\Fixture\Bundle\TestBundle3\TestBundle3;
 use Oro\Component\Config\CumulativeResourceManager;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class MappingConfigurationLoaderTest extends \PHPUnit\Framework\TestCase
 {
+    /**
+     * @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $eventDispatcher;
+
     /**
      * @var MappingConfigurationLoader
      */
@@ -28,6 +35,8 @@ class MappingConfigurationLoaderTest extends \PHPUnit\Framework\TestCase
                 $bundle1->getName() => get_class($bundle1),
                 $bundle3->getName() => get_class($bundle3),
             ]);
+
+        $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
 
         $this->loader = new MappingConfigurationLoader();
     }
@@ -94,6 +103,71 @@ class MappingConfigurationLoaderTest extends \PHPUnit\Framework\TestCase
                 ],
             ],
         ];
+
+        $this->assertEquals($expectedConfiguration, $this->loader->getConfiguration());
+    }
+
+    public function testGetConfigurationWhenEventDispatcherSet()
+    {
+        $expectedConfiguration = [
+            'Oro\Bundle\TestBundle2\Entity\Page' => [
+                'alias' => 'page_WEBSITE_ID',
+                'fields' => [
+                    'title_LOCALIZATION_ID' => [
+                        'name' => 'title_LOCALIZATION_ID',
+                        'type' => 'text',
+                    ],
+                    'test_first_repeating_field' => [
+                        'name' => 'test_first_repeating_field',
+                        'type' => 'integer',
+                    ],
+                    'test_second_repeating_field' => [
+                        'name' => 'test_second_repeating_field',
+                        'type' => 'integer',
+                    ],
+                    'custom_field' => [
+                        'name' => 'custom_field',
+                        'type' => 'text',
+                    ],
+                ],
+            ],
+            'Oro\Bundle\TestBundle3\Entity\Product' => [
+                'alias' => 'product_WEBSITE_ID',
+                'fields' => [
+                    'title_LOCALIZATION_ID' => [
+                        'name' => 'title_LOCALIZATION_ID',
+                        'type' => 'text',
+                    ],
+                    'price' => [
+                        'name' => 'price',
+                        'type' => 'decimal',
+                    ],
+                    'additional_field' => [
+                        'name' => 'additional_field',
+                        'type' => 'text'
+                    ]
+                ],
+            ],
+        ];
+
+        $this->eventDispatcher
+            ->expects(self::once())
+            ->method('dispatch')
+            ->willReturnCallback(function (string $eventName, WebsiteSearchMappingEvent $event) {
+                $this->assertEquals($eventName, WebsiteSearchMappingEvent::NAME);
+
+                $configuration = $event->getConfiguration();
+                $configuration['Oro\Bundle\TestBundle3\Entity\Product']['fields'] = [
+                    [
+                        'name' => 'additional_field',
+                        'type' => 'text'
+                    ]
+                ];
+
+                $event->setConfiguration($configuration);
+            });
+
+        $this->loader->setEventDispatcher($this->eventDispatcher);
 
         $this->assertEquals($expectedConfiguration, $this->loader->getConfiguration());
     }

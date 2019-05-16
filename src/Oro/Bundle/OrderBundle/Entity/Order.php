@@ -957,7 +957,7 @@ class Order extends ExtendOrder implements
     public function getShippingCost()
     {
         $amount = $this->estimatedShippingCostAmount;
-        if ($this->overriddenShippingCostAmount) {
+        if ($this->overriddenShippingCostAmount !== null) {
             $amount = $this->overriddenShippingCostAmount;
         }
         if ($amount && $this->currency) {

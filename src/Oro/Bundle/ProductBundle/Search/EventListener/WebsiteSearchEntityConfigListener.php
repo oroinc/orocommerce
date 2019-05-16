@@ -7,6 +7,11 @@ use Oro\Bundle\EntityConfigBundle\Event\PostFlushConfigEvent;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchMappingProvider;
 
+/**
+ * Clears mapping provider's cache if attribute's field config has changed.
+ *
+ * @deprecated will be remove in 4.0
+ */
 class WebsiteSearchEntityConfigListener
 {
     /** @var WebsiteSearchMappingProvider */

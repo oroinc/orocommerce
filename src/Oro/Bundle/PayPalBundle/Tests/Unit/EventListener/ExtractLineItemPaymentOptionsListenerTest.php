@@ -7,7 +7,9 @@ use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PaymentBundle\Event\ExtractLineItemPaymentOptionsEvent;
 use Oro\Bundle\PaymentBundle\Model\LineItemOptionModel;
+use Oro\Bundle\PaymentBundle\Provider\ExtractOptionsProvider;
 use Oro\Bundle\PayPalBundle\EventListener\ExtractLineItemPaymentOptionsListener;
+use Oro\Bundle\PayPalBundle\Method\PayPalExpressCheckoutPaymentMethod;
 
 class ExtractLineItemPaymentOptionsListenerTest extends \PHPUnit\Framework\TestCase
 {
@@ -173,6 +175,16 @@ class ExtractLineItemPaymentOptionsListenerTest extends \PHPUnit\Framework\TestC
         $entity = new Order();
         $event = new ExtractLineItemPaymentOptionsEvent($entity);
 
+        /**
+         * Listener should be applied only for PayPal Payflow Express Checkout
+         */
+        $context = [
+            ExtractOptionsProvider::CONTEXT_PAYMENT_METHOD_TYPE =>
+                PayPalExpressCheckoutPaymentMethod::CONTEXT_PAYMENT_METHOD_TYPE
+        ];
+
+        $event->setContext($context);
+
         $this->assertEmpty($event->getModels());
         $event->addModel($lineItemModel);
 
@@ -186,5 +198,62 @@ class ExtractLineItemPaymentOptionsListenerTest extends \PHPUnit\Framework\TestC
         $this->assertEquals($expected['qty'], $result->getQty(), '', 1e-6);
         $this->assertEquals($expected['currency'], $result->getCurrency());
         $this->assertEquals($expected['unit'], $result->getUnit());
+    }
+
+    /**
+     * @dataProvider onExtractLineItemPaymentOptionsData
+     * @param array $lineItemModelData
+     */
+    public function testOnExtractLineItemPaymentOptionsWithoutSpecifiedMethod(array $lineItemModelData)
+    {
+        $lineItemModel = new LineItemOptionModel();
+
+        $lineItemModel->setName($lineItemModelData['name']);
+        $lineItemModel->setDescription($lineItemModelData['description']);
+        $lineItemModel->setCost($lineItemModelData['cost']);
+        $lineItemModel->setQty($lineItemModelData['qty']);
+        $lineItemModel->setCurrency($lineItemModelData['currency']);
+        $lineItemModel->setUnit($lineItemModelData['unit']);
+
+        // original object can be modified
+        $expectedItemModel = clone $lineItemModel;
+
+        $entity = new Order();
+        $event = new ExtractLineItemPaymentOptionsEvent($entity);
+        $this->assertEmpty($event->getModels());
+        $event->addModel($lineItemModel);
+
+        $this->listener->onExtractLineItemPaymentOptions($event);
+
+        $this->assertEquals($expectedItemModel, $event->getModels()[0]);
+    }
+
+    /**
+     * @dataProvider onExtractLineItemPaymentOptionsData
+     * @param array $lineItemModelData
+     */
+    public function testOnExtractLineItemPaymentOptionsForNonPayPalExpressMethod(array $lineItemModelData)
+    {
+        $lineItemModel = new LineItemOptionModel();
+
+        $lineItemModel->setName($lineItemModelData['name']);
+        $lineItemModel->setDescription($lineItemModelData['description']);
+        $lineItemModel->setCost($lineItemModelData['cost']);
+        $lineItemModel->setQty($lineItemModelData['qty']);
+        $lineItemModel->setCurrency($lineItemModelData['currency']);
+        $lineItemModel->setUnit($lineItemModelData['unit']);
+
+        // original object can be modified
+        $expectedItemModel = clone $lineItemModel;
+
+        $entity = new Order();
+        $event = new ExtractLineItemPaymentOptionsEvent($entity);
+        $event->setContext([ExtractOptionsProvider::CONTEXT_PAYMENT_METHOD_TYPE => 'non_pp_method']);
+        $this->assertEmpty($event->getModels());
+        $event->addModel($lineItemModel);
+
+        $this->listener->onExtractLineItemPaymentOptions($event);
+
+        $this->assertEquals($expectedItemModel, $event->getModels()[0]);
     }
 }

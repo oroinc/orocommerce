@@ -55,12 +55,20 @@ services:
     oro_website_search.loader.mapping_configuration_loader:
         public: false
         class: 'Oro\Bundle\WebsiteSearchBundle\Loader\MappingConfigurationLoader'
+        calls:
+            - [ setEventDispatcher, [ '@event_dispatcher' ] ]
 
     oro_website_search.mapping_configuration.cache:
         public: false
         parent: oro.cache.abstract
         calls:
             - [ setNamespace, [ 'oro_website_search_mapping_configuration' ] ]
+
+    oro_website_search.cache.mapping_configuration_cache_provider:
+        public: false
+        class: 'Oro\Bundle\WebsiteSearchBundle\Cache\MappingConfigurationCacheProvider'
+        arguments:
+            - '@oro_website_search.mapping_configuration.cache'
 
     oro_website_search.loader.mapping_configuration_cache_loader:
         public: false
@@ -70,6 +78,8 @@ services:
             - '@oro_website_search.loader.mapping_configuration_loader'
             - '@oro_website_search.provider.resources_hash'
             - '%kernel.debug%'
+        calls:
+            - ['setMappingConfigurationCacheProvider', ['@oro_website_search.cache.mapping_configuration_cache_provider']]
 
     oro_website_search.cache.configuration_cache:
         public: false
@@ -271,6 +281,14 @@ services:
             # do reindexation of website index after reindexation of search index
             - { name: kernel.event_listener, event: installer.database_preparation.after, method: onAfterDatabasePreparation, priority: -10 }
 
+    oro_website_search.event_listener.clear_mapping_cache:
+        class: Oro\Bundle\WebsiteSearchBundle\EventListener\ClearMappingCacheListener
+        arguments:
+            - '@oro_website_search.cache.mapping_configuration_cache_provider'
+        tags:
+            # clear website search mapping cahe after database preparation
+            - { name: kernel.event_listener, event: installer.database_preparation.after, method: onAfterDatabasePreparation, priority: 10 }
+
     oro_website_search.migration.demo_data_fixtures_listener.reindex:
         parent: oro_platform.event_listener.data_fixtures_listener.abstract
         calls:
@@ -330,3 +348,10 @@ services:
         class: 'Oro\Bundle\SearchBundle\EventListener\LimitResultsListener'
         tags:
             - { name: kernel.event_listener, event: oro_website_search.before_search, method: onBeforeSearch, priority: -255 }
+
+    oro_website_search.event_listener.entity_config:
+        class: Oro\Bundle\WebsiteSearchBundle\EventListener\EntityConfigListener
+        arguments:
+            - '@oro_website_search.cache.mapping_configuration_cache_provider'
+        tags:
+            - { name: kernel.event_listener, event: oro.entity_config.post_flush, method: clearMappingCache }
