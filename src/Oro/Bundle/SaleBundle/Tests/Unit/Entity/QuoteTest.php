@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Unit\Entity;
 
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
@@ -309,5 +310,61 @@ class QuoteTest extends AbstractTest
             '/^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i',
             $actual
         );
+    }
+
+
+    /**
+     * @dataProvider shippingCostDataProvider
+     * @param $estimated
+     * @param $overridden
+     * @param $expected
+     */
+    public function testGetShippingCost($estimated, $overridden, $expected)
+    {
+        $currency = 'USD';
+        $item = new Quote();
+        $item->setCurrency($currency);
+        $item->setEstimatedShippingCostAmount($estimated);
+        $item->setOverriddenShippingCostAmount($overridden);
+
+        if (null !== $expected) {
+            static::assertEquals(Price::create($expected, $currency), $item->getShippingCost());
+        } else {
+            static::assertNull($item->getShippingCost());
+        }
+    }
+
+    /**
+     * @return array
+     */
+    public function shippingCostDataProvider()
+    {
+        return [
+            [
+                'estimated' => 10,
+                'overridden' => null,
+                'expected' => 10
+            ],
+            [
+                'estimated' => null,
+                'overridden' => 20,
+                'expected' => 20
+            ],
+            [
+                'estimated' => 10,
+                'overridden' => 30,
+                'expected' => 30
+            ],
+            [
+                'estimated' => 10,
+                'overridden' => 0,
+                'expected' => null
+            ]
+        ];
+    }
+
+    public function testGetShippingCostNull()
+    {
+        static::assertNull((new Quote())->getShippingCost());
     }
 }

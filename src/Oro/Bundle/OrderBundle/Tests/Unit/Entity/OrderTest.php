@@ -196,7 +196,12 @@ class OrderTest extends \PHPUnit\Framework\TestCase
         $item->setCurrency($currency);
         $item->setEstimatedShippingCostAmount($estimated);
         $item->setOverriddenShippingCostAmount($overridden);
-        static::assertEquals(Price::create($expected, $currency), $item->getShippingCost());
+
+        if (null !== $expected) {
+            static::assertEquals(Price::create($expected, $currency), $item->getShippingCost());
+        } else {
+            static::assertNull($item->getShippingCost());
+        }
     }
 
     /**
@@ -219,6 +224,16 @@ class OrderTest extends \PHPUnit\Framework\TestCase
                 'estimated' => 10,
                 'overridden' => 30,
                 'expected' => 30
+            ],
+            [
+                'estimated' => 10,
+                'overridden' => 0,
+                'expected' => 0
+            ],
+            [
+                'estimated' => null,
+                'overridden' => null,
+                'expected' => null
             ]
         ];
     }
