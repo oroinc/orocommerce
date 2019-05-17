@@ -145,7 +145,7 @@
 
 {% block __oro_promotion_coupon_form__applied_coupons_list_row_promotion_name_widget %}
     {% if promotion is not null %}
-        <span>{{ promotion.labels|localized_value ? promotion.labels|localized_value : promotion.rule.name  }}</span>
+        <span>{{ promotion.labels|localized_value ? promotion.labels|localized_value|oro_html_sanitize : promotion.rule.name  }}</span>
     {% endif %}
 {% endblock %}
 

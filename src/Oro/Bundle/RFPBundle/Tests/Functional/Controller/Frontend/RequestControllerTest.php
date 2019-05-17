@@ -579,7 +579,9 @@ class RequestControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('oro_rfp_frontend_request_create'));
         $form = $crawler->selectButton('Submit Request')->form();
 
-        $crfToken = $this->getContainer()->get('security.csrf.token_manager')->getToken('oro_rfp_frontend_request');
+        $crfToken = $this->getContainer()->get('security.csrf.token_manager')
+            ->getToken('oro_rfp_frontend_request')
+            ->getValue();
 
         /** @var ProductPrice $productPrice */
         $productPrice = $this->getPriceByReference('product_price.1');

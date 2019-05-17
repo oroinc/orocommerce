@@ -147,7 +147,8 @@ class PageTypeTest extends FormIntegrationTestCase
             ->method('setDefaults')
             ->with(
                 [
-                    'data_class' => Page::class
+                    'data_class' => Page::class,
+                    'csrf_token_id' => 'cms_page',
                 ]
             );
 

@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PaymentBundle\Form\Type;
 
+use Oro\Bundle\FormBundle\Form\Type\OroUnstructuredHiddenType;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodConfig;
 use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
 use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewProviderInterface;
@@ -12,6 +13,9 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for PaymentMethodConfig entity
+ */
 class PaymentMethodConfigType extends AbstractType
 {
     const NAME = 'oro_payment_method_config';
@@ -52,7 +56,7 @@ class PaymentMethodConfigType extends AbstractType
                 'attr' => ['placeholder' => 'oro.payment.paymentmethodconfig.type.label']
             ]
         );
-        $builder->add('options', HiddenType::class);
+        $builder->add('options', OroUnstructuredHiddenType::class);
     }
 
     /**

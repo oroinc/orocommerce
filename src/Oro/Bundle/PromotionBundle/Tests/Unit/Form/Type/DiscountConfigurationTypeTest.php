@@ -5,6 +5,8 @@ namespace Oro\Bundle\PromotionBundle\Tests\Unit\Form\Type;
 use Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration;
 use Oro\Bundle\PromotionBundle\Form\Type\DiscountConfigurationType;
 use Oro\Bundle\PromotionBundle\Provider\DiscountFormTypeProvider;
+use Oro\Bundle\PromotionBundle\Tests\Unit\Entity\ScopeStub;
+use Oro\Bundle\PromotionBundle\Tests\Unit\Form\Type\Stub\ScopeCollectionTypeStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -34,8 +36,8 @@ class DiscountConfigurationTypeTest extends FormIntegrationTestCase
      */
     public function testSubmit($defaultData, array $submittedData, DiscountConfiguration $expectedData)
     {
-        $this->discountFormTypeProvider->addFormType('discount_type', TextType::class);
-        $this->discountFormTypeProvider->setDefaultFormType(TextType::class);
+        $this->discountFormTypeProvider->addFormType('discount_type', ScopeCollectionTypeStub::class);
+        $this->discountFormTypeProvider->setDefaultFormType(ScopeCollectionTypeStub::class);
 
         $form = $this->factory->create(DiscountConfigurationType::class, $defaultData);
 
@@ -54,20 +56,21 @@ class DiscountConfigurationTypeTest extends FormIntegrationTestCase
      */
     public function submitDataProvider()
     {
+        $scope = (new ScopeStub())->setLocale('zu');
         $discountType = 'discount_type';
         $discountOptions = [
-            'option' => 'value'
+            'locale' => [
+                'locale' => 'zu',
+            ]
         ];
 
         $expectedConfiguration = new DiscountConfiguration();
         $expectedConfiguration->setType($discountType);
-        $expectedConfiguration->setOptions($discountOptions);
+        $expectedConfiguration->setOptions(["locale" => $scope]);
 
         $existingConfiguration = new DiscountConfiguration();
         $existingConfiguration->setType('existing_type');
-        $existingConfiguration->setOptions([
-            'existing_type_option' => 'some_value'
-        ]);
+        $existingConfiguration->setOptions(["locale" => $scope]);
 
         return [
             'new discount configuration' => [

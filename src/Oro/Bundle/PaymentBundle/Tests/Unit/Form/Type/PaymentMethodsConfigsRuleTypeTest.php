@@ -86,7 +86,7 @@ class PaymentMethodsConfigsRuleTypeTest extends AddressFormExtensionTestCase
         $this->assertEquals($data, $form->getData());
 
         $form->submit([
-            'methodConfigs' => [['type' => self::PAYMENT_TYPE, 'options' => []]],
+            'methodConfigs' => [['type' => self::PAYMENT_TYPE, 'options' => ['option' => 1]]],
             'destinations' => [['country' => 'US']],
             'currency' => 'USD',
             'rule' => [
@@ -101,7 +101,11 @@ class PaymentMethodsConfigsRuleTypeTest extends AddressFormExtensionTestCase
                 ->setCurrency('USD')
                 ->setRule((new Rule())->setSortOrder(1)->setName('rule2')->setEnabled(false))
                 ->addDestination((new PaymentMethodsConfigsRuleDestination())->setCountry(new Country('US')))
-                ->addMethodConfig((new PaymentMethodConfig())->setType(self::PAYMENT_TYPE)),
+                ->addMethodConfig(
+                    (new PaymentMethodConfig())
+                    ->setType(self::PAYMENT_TYPE)
+                    ->setOptions(['option' => 1])
+                ),
             $form->getData()
         );
     }

@@ -22,6 +22,8 @@ class CategoryControllerTest extends WebTestCase
         $categoryId = $this->getReference(LoadCategoryData::FIRST_LEVEL)->getId();
         $crawler = $this->updateCategory($categoryId, '123', '321', null, null);
         $form = $crawler->selectButton('Save')->form();
+
+        $this->assertNotContains('The CSRF token is invalid. Please try to resubmit the form.', $crawler->html());
         $this->assertEquals(
             '123',
             $form['oro_catalog_category[minimumQuantityToOrder][scalarValue]']->getValue()
@@ -38,6 +40,7 @@ class CategoryControllerTest extends WebTestCase
         $crawler = $this->updateCategory($categoryId, null, null, 'systemConfig', 'systemConfig');
         $form = $crawler->selectButton('Save')->form();
 
+        $this->assertNotContains('The CSRF token is invalid. Please try to resubmit the form.', $crawler->html());
         $this->assertEquals(
             'systemConfig',
             $form['oro_catalog_category[minimumQuantityToOrder][fallback]']->getValue()
@@ -66,7 +69,8 @@ class CategoryControllerTest extends WebTestCase
         $values = $form->getPhpValues();
         $values['oro_catalog_category']['_token'] = $this->getContainer()
             ->get('security.csrf.token_manager')
-            ->getToken('category');
+            ->getToken('category')
+            ->getValue();
 
         $this->client->followRedirects();
 

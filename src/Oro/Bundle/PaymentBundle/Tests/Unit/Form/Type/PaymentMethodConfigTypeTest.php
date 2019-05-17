@@ -61,8 +61,7 @@ class PaymentMethodConfigTypeTest extends FormIntegrationTestCase
 
         $paymentMethodConfig = (new PaymentMethodConfig())
             ->setType('MO')
-            ->setOptions(['client_id' => 3])
-        ;
+            ->setOptions(['client_id' => 3]);
 
         $this->assertTrue($form->isValid());
         $this->assertEquals($paymentMethodConfig, $form->getData());
@@ -76,7 +75,7 @@ class PaymentMethodConfigTypeTest extends FormIntegrationTestCase
         return [
             [new PaymentMethodConfig()],
             [
-                (new PaymentMethodConfig())->setType('PP')->setOptions(['client_id' => 5])
+                (new PaymentMethodConfig())->setType('PP')->setOptions(['client_id' => 3])
             ],
         ];
     }
