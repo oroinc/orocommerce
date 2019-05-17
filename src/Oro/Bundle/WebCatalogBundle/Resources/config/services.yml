@@ -256,6 +256,8 @@ services:
         class: Oro\Bundle\WebCatalogBundle\Cache\ContentNodeTreeCacheWarmer
         arguments:
             - '@oro_message_queue.client.message_producer'
+            - '@oro_entity.doctrine_helper'
+            - '@oro_config.manager'
         tags:
             - { name: 'kernel.cache_warmer' }
 
@@ -322,9 +324,19 @@ services:
         arguments:
             - '@oro_message_queue.job.runner'
             - '@oro_message_queue.client.message_producer'
+            - '@doctrine'
+            - '@oro_config.manager'
+            - '@logger'
+        tags:
+            - { name: 'oro_message_queue.client.message_processor' }
+
+    oro_web_catalog.async.content_node_cache_processor:
+        class: Oro\Bundle\WebCatalogBundle\Async\ContentNodeCacheProcessor
+        arguments:
+            - '@oro_message_queue.job.runner'
+            - '@oro_message_queue.client.message_producer'
             - '@oro_web_catalog.scope_matcher'
             - '@doctrine'
-            - '@logger'
         tags:
             - { name: 'oro_message_queue.client.message_processor' }
 
@@ -404,5 +416,14 @@ services:
         class: 'Oro\Bundle\WebCatalogBundle\EventListener\NavigationRootConfigChangeListener'
         arguments:
             - '@oro_web_catalog.layout.data_provider.menu_data.cache'
+            - '@oro_message_queue.client.message_producer'
         tags:
             - { name: kernel.event_listener, event: oro_config.update_after, method: onConfigUpdate }
+
+    oro_web_catalog.migration.demo_data_fixtures_listener.disable_navigation_root_listener:
+        parent: oro_platform.event_listener.demo_data_fixtures_listener.abstract
+        calls:
+            - [disableListener, ['oro_web_catalog.event_listener.navigation_root']]
+        tags:
+            - { name: kernel.event_listener, event: oro_migration.data_fixtures.pre_load, method: onPreLoad }
+            - { name: kernel.event_listener, event: oro_migration.data_fixtures.post_load, method: onPostLoad }
