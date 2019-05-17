@@ -132,6 +132,29 @@ class ShippingResolverTest extends \PHPUnit\Framework\TestCase
         $this->resolver->resolve($taxable);
     }
 
+    public function testTaxableWithoutShippingCost()
+    {
+        $taxable = new Taxable();
+        $item = new Taxable();
+        $taxable->addItem($item);
+        $taxable->getContext()->offsetSet(Taxable::ACCOUNT_TAX_CODE, 'ACCOUNT_TAX_CODE');
+
+        $shippingAddress = new ShippingAddressStub();
+        $taxable->setTaxationAddress($shippingAddress);
+
+        $this->taxationSettingsProvider->expects($this->never())
+            ->method('isShippingRatesIncludeTax');
+
+        $this->matcher->expects($this->never())
+            ->method('match');
+        $this->incTaxCalculator->expects($this->never())
+            ->method('calculate');
+        $this->excTaxCalculator->expects($this->never())
+            ->method('calculate');
+
+        $this->resolver->resolve($taxable);
+    }
+
     public function testTaxableWithoutAddress()
     {
         $taxable = new Taxable();
@@ -153,10 +176,11 @@ class ShippingResolverTest extends \PHPUnit\Framework\TestCase
         $this->resolver->resolve($taxable);
     }
 
-    public function testTaxableWithoutShippingCost()
+    public function testTaxableNegativeShippingCost()
     {
         $taxable = new Taxable();
         $item = new Taxable();
+        $taxable->setShippingCost('-10');
         $taxable->addItem($item);
         $taxable->getContext()->offsetSet(Taxable::ACCOUNT_TAX_CODE, 'ACCOUNT_TAX_CODE');
 

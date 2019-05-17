@@ -135,6 +135,11 @@ oro_behat_extension:
             locator: '//input[contains(@id,"oro_order_type_poNumber-uid")]'
             type: xpath
 
+    First Product Quantity Field In Order:
+      selector:
+        locator: '//input[@name="oro_order_type[lineItems][0][quantity]"]'
+        type: xpath
+
     Order Billing Address State Selector:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
