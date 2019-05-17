@@ -28,7 +28,7 @@ class CategoryControllerTest extends WebTestCase
 
         $this->checkSeoSectionExistence($crawler);
 
-        $crfToken = $this->getContainer()->get('security.csrf.token_manager')->getToken('category');
+        $crfToken = $this->getContainer()->get('security.csrf.token_manager')->getToken('category')->getValue();
         $parameters = [
             'input_action' => 'save_and_stay',
             'oro_catalog_category' => ['_token' => $crfToken],
@@ -47,6 +47,7 @@ class CategoryControllerTest extends WebTestCase
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $html = $crawler->html();
+        $this->assertNotContains('The CSRF token is invalid. Please try to resubmit the form.', $html);
 
         $this->assertContains(LoadCategoryMetaData::META_DESCRIPTIONS, $html);
         $this->assertContains(LoadCategoryMetaData::META_KEYWORDS, $html);

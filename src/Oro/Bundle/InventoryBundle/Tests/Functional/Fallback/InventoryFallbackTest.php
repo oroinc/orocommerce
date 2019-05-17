@@ -182,7 +182,7 @@ abstract class InventoryFallbackTest extends WebTestCase
         $formValues['oro_catalog_category']['inventoryThreshold']['useFallback'] = '1';
         $formValues['oro_catalog_category'][$lowInventoryThresholdOption]['useFallback'] = '1';
         $formValues['oro_catalog_category']['_token'] =
-            $this->getContainer()->get('security.csrf.token_manager')->getToken('category');
+            $this->getContainer()->get('security.csrf.token_manager')->getToken('category')->getValue();
 
         $this->client->followRedirects(true);
 
