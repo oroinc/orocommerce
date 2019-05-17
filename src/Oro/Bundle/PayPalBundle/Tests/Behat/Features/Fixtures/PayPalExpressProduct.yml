@@ -68,6 +68,9 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
   zuluLocDescription:
     text: 'ZU product desc'
     localization: '@localization_zulu'
+  zuluLocShortDescription:
+    text: 'ZU product shortdesc'
+    localization: '@localization_zulu'
 
 Oro\Bundle\ProductBundle\Entity\Product:
   product:
@@ -80,7 +83,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
     attributeFamily: '@defaultProductFamily'
     setNames: [['@locValue', '@zuluLocValue']]
     addDescription: ['@zuluLocDescription']
-    addShortDescription: ['@zuluLocDescription']
+    addShortDescription: ['@zuluLocShortDescription']
 
 Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
   shoppinglist:

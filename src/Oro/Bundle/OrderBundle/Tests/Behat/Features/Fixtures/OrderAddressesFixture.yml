@@ -1,12 +1,176 @@
-include:
-    - '@OroCustomerBundle:CustomerUserAddressFixture.yml'
+
+Oro\Bundle\CustomerBundle\Entity\Customer:
+    customer1:
+        name: 'first customer'
+        organization: '@organization'
+        owner: '@admin'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerUser:
+    amanda:
+        email: 'AmandaRCole@example.org'
+        username: 'AmandaRCole@example.org'
+        password: 'gxP1L8r86hrdUMg9wKdfnsS/EZC4a7jOIdn6BMzegqL2S6e+KBIuHCrDVciMdiR/64osNnabmFonwK8l09vQxA=='
+        salt: 'fgswya1kzw0sck8ck48kosowckwo0ws'
+        firstName: 'Amanda'
+        lastName: 'Cole'
+        enabled: '1'
+        confirmed: '1'
+        customer: '@customer1'
+        organization: '@organization'
+        role: ['@front_admin']
+        owner: '@admin'
+        website: '@website1'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress:
+    amandaAddress1:
+        region: 'US-FL'
+        frontendOwner: '@amanda'
+        country: 'US'
+        owner: '@admin'
+        systemOrganization: '@organization'
+        primary: false
+        label: 'Address 1'
+        street: '801 Scenic Hwy'
+        city: 'Haines City'
+        postalCode: '33844'
+        organization: '@organization'
+    amandaAddress2:
+        region: 'US-NY'
+        frontendOwner: '@amanda'
+        country: 'US'
+        owner: '@admin'
+        systemOrganization: '@organization'
+        primary: true
+        label: 'Address 2'
+        street: '23400 Caldwell Road'
+        city: 'Rochester'
+        postalCode: '14608'
+        organization: '@organization'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerAddress:
+    customerAddress1:
+        region: 'US-FL'
+        frontendOwner: '@customer1'
+        country: 'US'
+        owner: '@admin'
+        systemOrganization: '@organization'
+        primary: false
+        label: 'Address 1'
+        street: '905 New Street'
+        city: 'Gamburg'
+        postalCode: '33987'
+        organization: '@organization'
+    customerAddress2:
+        region: 'US-NY'
+        frontendOwner: '@customer1'
+        country: 'US'
+        owner: '@admin'
+        systemOrganization: '@organization'
+        primary: true
+        label: 'Address 2'
+        street: '23555 Hard Road'
+        city: 'York'
+        postalCode: '12103'
+        organization: '@organization'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerUserAddressToAddressType:
+    amandaAddress1ShippingDefault:
+        address: '@amandaAddress1'
+        type: 'shipping'
+        default: true
+    amandaAddress1BillingDefault:
+        address: '@amandaAddress2'
+        type: 'billing'
+        default: true
+
+Oro\Bundle\CustomerBundle\Entity\CustomerAddressToAddressType:
+    customerAddress1ShippingDefault:
+        address: '@customerAddress1'
+        type: 'shipping'
+        default: true
+    customerAddress1BillingDefault:
+        address: '@customerAddress2'
+        type: 'billing'
+        default: true
+
+Oro\Bundle\OrderBundle\Entity\OrderAddress:
+    order1_billing_address:
+        label: 'Billing Address 1'
+        street: 'Street 1'
+        street2: 'Street 2'
+        city: 'Los Angeles'
+        postalCode: '90001'
+        country: 'US'
+        region: 'US-CA'
+        organization: 'Acme'
+        namePrefix: 'Mr.'
+        nameSuffix: 'M.D.'
+        firstName: 'John'
+        middleName: 'Edgar'
+        lastName: 'Doo'
+        phone: '123-456'
+    order1_shipping_address:
+        label: 'Shipping Address 1'
+        street: 'NewStreet 1'
+        street2: 'Street 2'
+        city: 'London'
+        postalCode: '90002'
+        country: 'US'
+        region: 'US-CA'
+        organization: 'Acme'
+        namePrefix: 'Mr.'
+        nameSuffix: 'M.D.'
+        firstName: 'John'
+        middleName: 'Edgar'
+        lastName: 'Doo'
+        phone: '123-456'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    precision1:
+        unit: '@item'
+        precision: '1'
+        sell: true
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    locvalue1:
+        string: Product1
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product1:
+        organization: '@organization'
+        owner: '@business_unit'
+        sku: 'AA1'
+        primaryUnitPrecision: '@precision1'
+        addName: ['@locvalue1']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        attributeFamily: '@defaultProductFamily'
 
 Oro\Bundle\OrderBundle\Entity\Order:
     order1:
-        organization: '@organization'
-        owner: '@admin'
+        identifier: order1
+        currency: 'USD'
+        poNumber: 'PO1'
+#        subtotal: '789.0000'
+#        total: '1234.0000'
+        billingAddress: '@order1_billing_address'
+        shippingAddress: '@order1_shipping_address'
         customer: '@customer1'
         customerUser: '@amanda'
-        identifier: 'Order1'
         website: '@website1'
+        owner: '@admin'
+        organization: '@organization'
+
+Oro\Bundle\CurrencyBundle\Entity\Price (local):
+    price1:
+        value: 5
         currency: USD
+
+Oro\Bundle\OrderBundle\Entity\OrderLineItem:
+    order1_line_item1:
+        product: '@product1'
+        order: '@order1'
+        price: '@price1'
+        quantity: 10
+        productUnit: '@item'
+        productUnitCode: item

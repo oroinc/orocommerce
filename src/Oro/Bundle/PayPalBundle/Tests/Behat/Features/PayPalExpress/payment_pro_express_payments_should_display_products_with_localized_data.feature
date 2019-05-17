@@ -30,6 +30,6 @@ Feature: Payment Pro Express payments should display products with localized dat
     And I check "ExpressPayPal" on the "Payment" checkout step and press Continue
     When I click "Submit Order"
     Then I should see the following products before pay:
-      | NAME              | DESCRIPTION     |
-      | SKU123 ZU product | ZU product desc |
+      | NAME              | DESCRIPTION          |
+      | SKU123 ZU product | ZU product shortdesc |
     And I see the "Thank You" page with "Thank You For Your Purchase!" title

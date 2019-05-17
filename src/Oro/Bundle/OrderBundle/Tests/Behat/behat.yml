@@ -131,6 +131,15 @@ oro_behat_extension:
           Price2:
             locator: '//input[@name="oro_order_type[lineItems][1][price][value]"]'
             type: xpath
+          FreeProduct3:
+            locator: '//input[contains(@id,"oro_order_type_lineItems_2_freeFormProduct-uid")]'
+            type: xpath
+          Quantity3:
+            locator: '//input[@name="oro_order_type[lineItems][2][quantity]"]'
+            type: xpath
+          Price3:
+            locator: '//input[@name="oro_order_type[lineItems][2][price][value]"]'
+            type: xpath
           PO Number:
             locator: '//input[contains(@id,"oro_order_type_poNumber-uid")]'
             type: xpath

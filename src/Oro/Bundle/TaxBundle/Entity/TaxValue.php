@@ -8,6 +8,8 @@ use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\TaxBundle\Model\Result;
 
 /**
+ * Represents calculated taxes in database
+ *
  * @ORM\Entity
  * @ORM\Table(
  *     name="oro_tax_value",

@@ -45,6 +45,10 @@ oro_behat_extension:
             class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
             selector: div.ui-dialog form
 
+        Customer Users RFQ:
+            selector: "div[id^='grid-customer-user-view-rfq-grid']"
+            class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
         RequestNotesBlock:
             class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
             selector: .page-content div.notes
@@ -68,6 +72,12 @@ oro_behat_extension:
                         type: 'css'
                         locator: 'input[name="oro_rfp_request[requestProducts][0][product]"]'
                         element: Select2Entity
+
+        Requests For Quote tab:
+            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+            selector:
+              type: 'xpath'
+              locator: '//a[text()="Requests For Quote"]'
 
     pages:
         RequestViewBackendPage:

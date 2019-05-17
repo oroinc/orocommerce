@@ -1,6 +1,9 @@
 {% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
+{% import 'OroUIBundle::macros.html.twig' as UI %}
 
-<div class="oro-tabs" id="categoryVisibilityTabs">
+<div class="oro-tabs" id="categoryVisibilityTabs" {{ UI.renderPageComponentAttributes({
+    module: 'oroui/js/app/components/tabs-component'
+}) }}>
     <div class="oro-tabs__head">
         <ul class="nav nav-tabs" role="tablist">
             <li class="nav-item">

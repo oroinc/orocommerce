@@ -59,6 +59,7 @@ services:
         arguments:
             - '%kernel.cache_dir%/oro/website_search_mapping.php'
             - '%kernel.debug%'
+            - '@event_dispatcher'
 
     oro_website_search.event_listener.orm.fulltext_index_listener:
         class: 'Oro\Bundle\SearchBundle\EventListener\ORM\FulltextIndexListener'
@@ -78,7 +79,6 @@ services:
         public: false
         arguments:
             - '@oro_website_search.mapping_configuration.provider'
-            - '@event_dispatcher'
 
     oro_website_search.query_factory:
         class: 'Oro\Bundle\WebsiteSearchBundle\Query\Factory\WebsiteQueryFactory'
@@ -237,6 +237,14 @@ services:
             # do reindexation of website index after reindexation of search index
             - { name: kernel.event_listener, event: installer.database_preparation.after, method: onAfterDatabasePreparation, priority: -10 }
 
+    oro_website_search.event_listener.clear_mapping_cache:
+        class: Oro\Bundle\WebsiteSearchBundle\EventListener\ClearMappingCacheListener
+        arguments:
+            - '@oro_website_search.mapping_configuration.provider'
+        tags:
+            # clear website search mapping cahe after database preparation
+            - { name: kernel.event_listener, event: installer.database_preparation.after, method: onAfterDatabasePreparation, priority: 10 }
+
     oro_website_search.migration.demo_data_fixtures_listener.reindex:
         parent: oro_platform.event_listener.data_fixtures_listener.abstract
         calls:
@@ -285,6 +293,13 @@ services:
             - '@oro_entity.doctrine_helper'
         public: false
 
+    oro_website_search.event_listener.entity_config:
+        class: Oro\Bundle\WebsiteSearchBundle\EventListener\EntityConfigListener
+        arguments:
+            - '@oro_website_search.mapping_configuration.provider'
+        tags:
+            - { name: kernel.event_listener, event: oro.entity_config.post_flush, method: clearMappingCache, priority: -255 }
+
     oro_website.event_listener.limit_results:
         class: 'Oro\Bundle\SearchBundle\EventListener\LimitResultsListener'
         tags:
@@ -297,4 +312,3 @@ services:
             - '@oro_website_search.extension.no_data_messages.inner'
             - '@oro_frontend.request.frontend_helper'
             - '@oro_website_search.provider.search_mapping'
-

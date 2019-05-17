@@ -118,6 +118,9 @@ Feature: Previously purchased products
     And I click "Account"
     And I click "Previously Purchased"
     And I should not see "Product 3"
+    When I type "Product" in "search"
+    And I click "Search Button"
+    Then should not see "SKU3"
 
   Scenario: Order was cancelled by Admin in Management console and should not be displayed in "Previously purchased products"
     Given I proceed as the Admin
