@@ -17,6 +17,9 @@ use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\MessageQueue\Util\JSON;
 use Psr\Log\LoggerInterface;
 
+/**
+ * Schedule content node slug generation
+ */
 class ContentNodeSlugsProcessor implements MessageProcessorInterface, TopicSubscriberInterface
 {
     /**
@@ -96,7 +99,9 @@ class ContentNodeSlugsProcessor implements MessageProcessorInterface, TopicSubsc
             $em->flush();
             $em->commit();
 
-            $this->messageProducer->send(Topics::CALCULATE_WEB_CATALOG_CACHE, $contentNode->getWebCatalog()->getId());
+            $this->messageProducer->send(Topics::CALCULATE_WEB_CATALOG_CACHE, [
+                'webCatalogId' => $contentNode->getWebCatalog()->getId()
+            ]);
         } catch (\Exception $e) {
             $em->rollback();
             $this->logger->error(
