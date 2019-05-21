@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub;
 
+use Oro\Bundle\FormBundle\Form\Type\OroUnstructuredHiddenType;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 
 class ShippingMethodStub implements ShippingMethodInterface
 {
@@ -30,7 +30,7 @@ class ShippingMethodStub implements ShippingMethodInterface
     /**
      * @var string
      */
-    protected $optionsConfigurationFormType = HiddenType::class;
+    protected $optionsConfigurationFormType = OroUnstructuredHiddenType::class;
 
     /**
      * @var bool

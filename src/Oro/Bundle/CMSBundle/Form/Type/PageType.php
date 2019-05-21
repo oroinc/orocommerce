@@ -14,6 +14,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
+/**
+ * CMS Page form type
+ */
 class PageType extends AbstractType
 {
     const NAME = 'oro_cms_page';
@@ -100,7 +103,8 @@ class PageType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => Page::class
+            'data_class' => Page::class,
+            'csrf_token_id' => 'cms_page',
         ]);
     }
 

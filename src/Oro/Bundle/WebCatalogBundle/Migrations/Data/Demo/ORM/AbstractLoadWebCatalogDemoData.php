@@ -14,14 +14,12 @@ use Oro\Bundle\ProductBundle\ContentVariantType\ProductCollectionContentVariantT
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
-use Oro\Bundle\WebCatalogBundle\Async\Topics;
 use Oro\Bundle\WebCatalogBundle\ContentVariantType\SystemPageContentVariantType;
 use Oro\Bundle\WebCatalogBundle\DependencyInjection\OroWebCatalogExtension;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Oro\Bundle\WebCatalogBundle\Entity\Repository\ContentNodeRepository;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
-use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Yaml\Yaml;
@@ -182,19 +180,6 @@ abstract class AbstractLoadWebCatalogDemoData extends AbstractFixture implements
         $fileName = $locator->locate($filePath);
 
         return Yaml::parse(file_get_contents($fileName));
-    }
-
-    /**
-     * Site is available without web catalog cache, but it's performance is lower.
-     * Schedule cache calculation in background by async message processor.
-     *
-     * @param WebCatalog $webCatalog
-     */
-    protected function scheduleCacheCalculation(WebCatalog $webCatalog)
-    {
-        /** @var MessageProducerInterface $messageProducer */
-        $messageProducer = $this->container->get('oro_message_queue.client.message_producer');
-        $messageProducer->send(Topics::CALCULATE_WEB_CATALOG_CACHE, $webCatalog->getId());
     }
 
     /**

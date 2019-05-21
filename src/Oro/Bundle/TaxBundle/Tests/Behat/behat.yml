@@ -84,3 +84,13 @@ oro_behat_extension:
     BackendLineItemTaxTable:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Table
       selector: 'table.tax-result-grid'
+
+    Tax Shipping Form:
+      selector: 'form[name="tax_shipping"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Tax Code:
+            locator: '//input[contains(@class, "select2-input")]'
+            type: xpath
+            element: Select2Entities

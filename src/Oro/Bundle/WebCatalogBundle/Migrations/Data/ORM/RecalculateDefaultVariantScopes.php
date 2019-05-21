@@ -38,7 +38,7 @@ class RecalculateDefaultVariantScopes extends AbstractFixture implements Contain
 
             $manager->flush();
 
-            $messageProducer->send(Topics::CALCULATE_WEB_CATALOG_CACHE, $webCatalog->getId());
+            $messageProducer->send(Topics::CALCULATE_WEB_CATALOG_CACHE, ['webCatalogId' => $webCatalog->getId()]);
         }
     }
 

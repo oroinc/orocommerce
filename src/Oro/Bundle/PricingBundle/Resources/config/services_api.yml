@@ -15,8 +15,8 @@ services:
             - { name: oro.api.processor, action: update, priority: -40, group: save_data, class: '%oro_pricing.entity.price_list.class%' }
             - { name: oro.api.processor, action: create, priority: -40, group: save_data, class: '%oro_pricing.entity.price_list.class%' }
 
-    oro_pricing.api.build_combined_price_list_on_schedule_save:
-        class: 'Oro\Bundle\PricingBundle\Api\PriceListSchedule\Processor\BuildCombinedPriceListOnScheduleSave'
+    oro_pricing.api.build_combined_price_list:
+        class: 'Oro\Bundle\PricingBundle\Api\PriceListSchedule\Processor\BuildCombinedPriceList'
         arguments:
             - '@oro_pricing.builder.combined_price_list_activation_plan_builder'
         tags:
@@ -50,47 +50,33 @@ services:
     oro_pricing.api_form_subscriber.add_schedules_to_price_list:
         class: 'Oro\Bundle\PricingBundle\Api\PriceListSchedule\Form\AddSchedulesToPriceListApiFormSubscriber'
 
-    oro_pricing.api.on_schedule_delete_list:
-        parent: 'oro_api.delete_list.delete_data_by_handler'
+    oro_pricing.api.save_price_list_schedules_to_context:
+        class: 'Oro\Bundle\PricingBundle\Api\PriceListSchedule\Processor\SavePriceListSchedulesToContext'
         tags:
-            - { name: oro.api.processor, action: delete_list, priority: -15, group: delete_data, class: '%oro_pricing.entity.price_list_schedule.class%' }
+            - { name: oro.api.processor, action: delete, group: delete_data, class: '%oro_pricing.entity.price_list_schedule.class%' }
+            - { name: oro.api.processor, action: delete_list, group: delete_data, class: '%oro_pricing.entity.price_list_schedule.class%' }
 
-    oro_pricing.api.build_combined_price_list_on_schedule_delete_list:
-        class: 'Oro\Bundle\PricingBundle\Api\PriceListSchedule\Processor\BuildCombinedPriceListOnScheduleDeleteList'
-        public: false
-        decorates: oro_pricing.api.on_schedule_delete_list
+    oro_pricing.api.build_combined_price_lists:
+        class: 'Oro\Bundle\PricingBundle\Api\PriceListSchedule\Processor\BuildCombinedPriceLists'
         arguments:
             - '@oro_pricing.builder.combined_price_list_activation_plan_builder'
-            - '@oro_pricing.api.build_combined_price_list_on_schedule_delete_list.inner'
-
-    oro_pricing.api.update_price_list_contains_schedule_on_schedule_delete_list:
-        class: 'Oro\Bundle\PricingBundle\Api\PriceListSchedule\Processor\UpdatePriceListContainsScheduleOnScheduleDeleteList'
-        public: false
-        decorates: oro_pricing.api.on_schedule_delete_list
-        arguments:
-            - '@oro_entity.doctrine_helper'
-            - '@oro_pricing.api.update_price_list_contains_schedule_on_schedule_delete_list.inner'
-
-    oro_pricing.api.on_schedule_delete:
-        parent: 'oro_api.delete.delete_data_by_handler'
         tags:
-            - { name: oro.api.processor, action: delete, priority: 10, group: delete_data, class: '%oro_pricing.entity.price_list_schedule.class%' }
+            - { name: oro.api.processor, action: delete, group: delete_data, priority: -40, class: '%oro_pricing.entity.price_list_schedule.class%' }
+            - { name: oro.api.processor, action: delete_list, group: delete_data, priority: -40, class: '%oro_pricing.entity.price_list_schedule.class%' }
 
-    oro_pricing.api.update_price_list_contains_schedule_on_schedule_delete:
-        class: 'Oro\Bundle\PricingBundle\Api\PriceListSchedule\Processor\UpdatePriceListContainsScheduleOnScheduleDelete'
-        public: false
-        decorates: oro_pricing.api.on_schedule_delete
+    oro_pricing.api.update_price_lists_contain_schedule:
+        class: 'Oro\Bundle\PricingBundle\Api\PriceListSchedule\Processor\UpdatePriceListsContainSchedule'
         arguments:
-            - '@oro_entity.doctrine_helper'
-            - '@oro_pricing.api.update_price_list_contains_schedule_on_schedule_delete.inner'
+            - '@oro_api.doctrine_helper'
+        tags:
+            - { name: oro.api.processor, action: delete, group: delete_data, priority: -45, class: '%oro_pricing.entity.price_list_schedule.class%' }
+            - { name: oro.api.processor, action: delete_list, group: delete_data, priority: -45, class: '%oro_pricing.entity.price_list_schedule.class%' }
 
-    oro_pricing.api.build_combined_price_list_on_schedule_delete:
-        class: 'Oro\Bundle\PricingBundle\Api\PriceListSchedule\Processor\BuildCombinedPriceListOnScheduleDelete'
-        public: false
-        decorates: oro_pricing.api.on_schedule_delete
-        arguments:
-            - '@oro_pricing.builder.combined_price_list_activation_plan_builder'
-            - '@oro_pricing.api.build_combined_price_list_on_schedule_delete.inner'
+    oro_pricing.api.remove_price_list_schedules_from_context:
+        class: 'Oro\Bundle\PricingBundle\Api\PriceListSchedule\Processor\RemovePriceListSchedulesFromContext'
+        tags:
+            - { name: oro.api.processor, action: delete, group: delete_data, priority: -50, class: '%oro_pricing.entity.price_list_schedule.class%' }
+            - { name: oro.api.processor, action: delete_list, group: delete_data, priority: -50, class: '%oro_pricing.entity.price_list_schedule.class%' }
 
     oro_pricing.api.price_list_relation_trigger_handler_for_website_and_customer_group:
         class: 'Oro\Bundle\PricingBundle\Api\Processor\PriceListRelationTriggerHandlerForWebsiteAndCustomerGroup'

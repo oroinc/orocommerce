@@ -2,28 +2,18 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Api\PriceListSchedule\Processor;
 
-use Oro\Bundle\ApiBundle\Tests\Unit\Processor\Delete\DeleteProcessorTestCase;
-use Oro\Bundle\PricingBundle\Api\PriceListSchedule\Processor\BuildCombinedPriceListOnScheduleDelete;
+use Oro\Bundle\ApiBundle\Tests\Unit\Processor\FormProcessorTestCase;
+use Oro\Bundle\PricingBundle\Api\PriceListSchedule\Processor\BuildCombinedPriceList;
 use Oro\Bundle\PricingBundle\Builder\CombinedPriceListActivationPlanBuilder;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListSchedule;
-use Oro\Component\ChainProcessor\ProcessorInterface;
 
-class BuildCombinedPriceListOnScheduleDeleteTest extends DeleteProcessorTestCase
+class BuildCombinedPriceListTest extends FormProcessorTestCase
 {
-    /**
-     * @var CombinedPriceListActivationPlanBuilder|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var CombinedPriceListActivationPlanBuilder|\PHPUnit\Framework\MockObject\MockObject */
     private $combinedPriceListBuilder;
 
-    /**
-     * @var ProcessorInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $deleteHandler;
-
-    /**
-     * @var BuildCombinedPriceListOnScheduleDelete
-     */
+    /** @var BuildCombinedPriceList */
     private $processor;
 
     protected function setUp()
@@ -31,11 +21,9 @@ class BuildCombinedPriceListOnScheduleDeleteTest extends DeleteProcessorTestCase
         parent::setUp();
 
         $this->combinedPriceListBuilder = $this->createMock(CombinedPriceListActivationPlanBuilder::class);
-        $this->deleteHandler = $this->createMock(ProcessorInterface::class);
 
-        $this->processor = new BuildCombinedPriceListOnScheduleDelete(
-            $this->combinedPriceListBuilder,
-            $this->deleteHandler
+        $this->processor = new BuildCombinedPriceList(
+            $this->combinedPriceListBuilder
         );
     }
 
@@ -44,18 +32,12 @@ class BuildCombinedPriceListOnScheduleDeleteTest extends DeleteProcessorTestCase
         $this->combinedPriceListBuilder->expects(static::never())
             ->method('buildByPriceList');
 
-        $this->deleteHandler->expects(static::once())
-            ->method('process');
-
         $this->processor->process($this->context);
     }
 
     public function testProcess()
     {
         $priceList = new PriceList();
-
-        $this->deleteHandler->expects(static::once())
-            ->method('process');
 
         $this->combinedPriceListBuilder->expects(static::once())
             ->method('buildByPriceList')

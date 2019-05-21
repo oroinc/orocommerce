@@ -91,7 +91,7 @@ class ShippingMethodsConfigsRuleControllerTest extends WebTestCase
             [
                 [
                     'method' => $this->getFlatRateIdentifier(),
-                    'options' => [],
+                    'options' => '',
                     'typeConfigs' => [
                         [
                             'enabled' => '1',
@@ -287,7 +287,7 @@ class ShippingMethodsConfigsRuleControllerTest extends WebTestCase
             [
                 [
                     'method' => $this->getFlatRateIdentifier(),
-                    'options' => [],
+                    'options' => '',
                     'typeConfigs' => [
                         [
                             'enabled' => '1',

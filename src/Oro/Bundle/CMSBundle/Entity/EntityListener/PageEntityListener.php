@@ -57,7 +57,7 @@ class PageEntityListener
     public function postRemove(Page $entity, LifecycleEventArgs $args)
     {
         foreach ($this->webCatalogIds as $webCatalogId) {
-            $this->messageProducer->send(Topics::CALCULATE_WEB_CATALOG_CACHE, $webCatalogId);
+            $this->messageProducer->send(Topics::CALCULATE_WEB_CATALOG_CACHE, ['webCatalogId' => $webCatalogId]);
         }
 
         $this->webCatalogIds = [];

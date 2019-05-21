@@ -7,28 +7,21 @@ use Oro\Bundle\PricingBundle\Entity\PriceListSchedule;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
 
-class BuildCombinedPriceListOnScheduleDelete implements ProcessorInterface
+/**
+ * Builds combined price list for a price list schedule
+ * stored in "result" attribute of the context.
+ */
+class BuildCombinedPriceList implements ProcessorInterface
 {
-    /**
-     * @var CombinedPriceListActivationPlanBuilder
-     */
+    /** @var CombinedPriceListActivationPlanBuilder */
     private $combinedPriceListBuilder;
 
     /**
-     * @var ProcessorInterface
-     */
-    private $deleteHandler;
-
-    /**
      * @param CombinedPriceListActivationPlanBuilder $combinedPriceListBuilder
-     * @param ProcessorInterface                     $deleteHandler
      */
-    public function __construct(
-        CombinedPriceListActivationPlanBuilder $combinedPriceListBuilder,
-        ProcessorInterface $deleteHandler
-    ) {
+    public function __construct(CombinedPriceListActivationPlanBuilder $combinedPriceListBuilder)
+    {
         $this->combinedPriceListBuilder = $combinedPriceListBuilder;
-        $this->deleteHandler = $deleteHandler;
     }
 
     /**
@@ -37,9 +30,6 @@ class BuildCombinedPriceListOnScheduleDelete implements ProcessorInterface
     public function process(ContextInterface $context)
     {
         $schedule = $context->getResult();
-
-        $this->deleteHandler->process($context);
-
         if (!$schedule instanceof PriceListSchedule) {
             return;
         }

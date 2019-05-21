@@ -837,7 +837,7 @@ class Quote extends ExtendQuote implements
     public function getShippingCost()
     {
         $amount = $this->estimatedShippingCostAmount;
-        if ($this->overriddenShippingCostAmount) {
+        if (null !== $this->overriddenShippingCostAmount) {
             $amount = $this->overriddenShippingCostAmount;
         }
         if ($amount && $this->currency) {
