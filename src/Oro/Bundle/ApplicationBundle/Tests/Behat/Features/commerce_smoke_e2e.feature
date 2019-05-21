@@ -656,7 +656,7 @@ Feature: Commerce smoke e2e
     And should see "Subtotal $4,680.00"
     Then I should see "Record has been successfully updated" flash message
     When I click on "Flash Message Close Button"
-    And I click "Edit Shoppping List Label"
+    And I click "Edit Shopping List Label"
     And type "Updated Shopping List" in "Shopping List Label"
     And click "Save"
     Then should see "Record has been successfully updated" flash message

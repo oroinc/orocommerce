@@ -54,7 +54,9 @@ oro_behat_extension:
 
     Edit Shopping List Label:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
-      selector: '[data-role="start-editing"]'
+      selector:
+        locator: '//button[@data-title="Edit Shopping List Label"]'
+        type: xpath
 
     Shopping List Label Input:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
@@ -199,7 +201,7 @@ oro_behat_extension:
     ShoppingListEditTitleField:
       selector: '#title-inline-editable input[name="value"]'
 
-    EditShopppingListLabel:
+    EditShoppingListLabel:
       selector: '#title-inline-editable [data-role="start-editing"]'
 
     View Shopping List Details:
