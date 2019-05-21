@@ -320,12 +320,6 @@ oro_behat_extension:
         locator: '//input[@type="text" and @name="value"]'
         type: xpath
 
-    Edit Shoppping List Label:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
-      selector:
-        locator: '//button[@data-title="Edit Shoppping List Label"]'
-        type: xpath
-
     Add Line Item Popup:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:

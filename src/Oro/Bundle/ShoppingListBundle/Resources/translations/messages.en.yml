@@ -6,7 +6,7 @@ oro:
         id.label: ID
         label:
             label: Label
-            edit.tooltip: Edit Shoppping List Label
+            edit.tooltip: Edit Shopping List Label
         notes.label: Notes
         customer.label: Customer
         customer_user.label: Customer User
