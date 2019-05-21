@@ -23,7 +23,7 @@
             <td><%= price.quantity %></td>
             <td>
                 <% if (clickable) { %>
-                <a href="javascript: void(0);"
+                <a href="#"
                    data-price="<%= parseFloat(price.price) %>"
                    data-unit="<%= unit %>"
                 ><%= formatter.formatCurrency(price.price, price.currency) %></a>

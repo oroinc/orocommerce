@@ -58,7 +58,7 @@
         {% set variant = form.vars.prototypes[contentVarientTypeName] %}
 
         {% set buttonsHtml = UI.button({
-            'path': 'javascript: void(0);',
+            'path': '#',
             'label': 'oro.webcatalog.form.add_variant.label'|trans({'%variantName%': variant.title|trans }),
             'data': {
                 'content-variant-type-name': contentVarientTypeName,
@@ -70,7 +70,7 @@
             {% set variant = form.vars.prototypes[contentVarientTypeName] %}
 
             {% set buttonsHtml = buttonsHtml ~ UI.button({
-                'path': 'javascript: void(0);',
+                'path': '#',
                 'label': 'oro.webcatalog.form.add_variant.label'|trans({'%variantName%': variant.title|trans }),
                 'data': {
                     'content-variant-type-name': contentVarientTypeName,

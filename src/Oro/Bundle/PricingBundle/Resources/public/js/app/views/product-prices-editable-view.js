@@ -50,10 +50,13 @@ define(function(require) {
             var eventNamespace = this.eventNamespace();
             var onShow = function(clickHandler, event) {
                 var popover = $(event.target).data(Popover.DATA_KEY);
-                $(popover.getTipElement()).on('click' + eventNamespace, 'a', function() {
-                    popover.hide();
-                    clickHandler(this);
-                });
+                $(popover.getTipElement())
+                    .off(eventNamespace)
+                    .on('click' + eventNamespace, 'a', function(e) {
+                        e.preventDefault();
+                        popover.hide();
+                        clickHandler(this);
+                    });
             };
 
             events[Popover.Event.SHOWN + ' .product-price-overridden'] = _.wrap(this.useFoundPrice.bind(this), onShow);

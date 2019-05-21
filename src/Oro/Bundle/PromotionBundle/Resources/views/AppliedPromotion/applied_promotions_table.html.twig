@@ -86,7 +86,7 @@
                     </td>
                     {% if editable is defined and editable %}
                         <td class="action">
-                            <a data-role="applied-promotion-change-active-button" href="javascript:void(0);">
+                            <a data-role="applied-promotion-change-active-button" href="#">
                                 {% if item.active %}
                                     <i class="fa-close hide-text" title="{{ 'oro.promotion.appliedpromotion.actions.deactivate'|trans }}">
                                         {{ 'oro.promotion.appliedpromotion.actions.deactivate'|trans }}
@@ -99,7 +99,7 @@
                             </a>
                         </td>
                         <td class="action">
-                            <a data-role="applied-promotion-remove-button" href="javascript:void(0);">
+                            <a data-role="applied-promotion-remove-button" href="#">
                                 <i class="fa-trash hide-text" title="{{ 'oro.promotion.appliedpromotion.actions.remove'|trans }}">
                                     {{ 'oro.promotion.appliedpromotion.actions.remove'|trans }}
                                 </i>
