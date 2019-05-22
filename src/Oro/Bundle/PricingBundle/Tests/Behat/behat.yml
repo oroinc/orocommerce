@@ -28,10 +28,8 @@ oro_behat_extension:
   elements:
     AddPrice:
       selector: '.product-price-collection .add-list-item'
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
     UnassignPriceList:
       selector: '.pricing-price-list .removeRow'
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
     ProductPriceForm:
       selector:
         type: xpath
@@ -95,7 +93,6 @@ oro_behat_extension:
         class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridToolbarActions
     ProductPricesGridFiltersState:
         selector: 'div[data-page-component-name="product-prices-grid"] div.filters-state'
-        class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
     ProductPricesGridFilterItem:
       selector: 'div.filter-item'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilterItem
@@ -165,7 +162,6 @@ oro_behat_extension:
         locator: '//div[contains(@data-bound-component, "currency-switcher")]'
 
     Export Button:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
         locator: '//a[@role="button" and contains(text(),"Export")]'
         type: xpath

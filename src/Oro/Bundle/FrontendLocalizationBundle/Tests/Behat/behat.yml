@@ -17,11 +17,9 @@ oro_behat_extension:
             selector: 'div.oro-localization-switcher .oro-toolbar__content'
 
         LocalizationSwitcherOptions:
-            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
             selector: 'div.oro-localization-switcher ul'
 
         LocalizationSwitcherActiveOption:
-            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
             selector: 'div.oro-localization-switcher .oro-toolbar__link--active'
 
         CreateLocalizationForm:

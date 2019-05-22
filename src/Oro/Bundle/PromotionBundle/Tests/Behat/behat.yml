@@ -123,24 +123,20 @@ oro_behat_extension:
 
     CouponCodePreview:
       selector: 'div#coupon-code-preview'
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
     Promotions Grid Button:
       selector: '.entity-select-btn'
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
     Assigned Coupons Grid:
       selector: 'div[data-page-component-name="promotion-coupons-assigned-to-promotion-grid"]'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
 
     Export Grid:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
         locator: '//div[contains(@id,"grid-promotion-coupons-assigned-to-promotion-grid")]//a/../../../../div[@class="extra-actions-panel"]'
         type: xpath
 
     CSV:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
         locator: '//div[contains(@id,"grid-promotion-coupons-assigned-to-promotion-grid")]//a[@title="CSV"]'
         type: xpath
@@ -155,7 +151,6 @@ oro_behat_extension:
 
     Coupons Selection Button:
       selector: '.coupon-select .entity-select-btn'
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
     Coupons Selection:
       selector: 'div.ui-dialog div.oro-datagrid'
@@ -165,11 +160,9 @@ oro_behat_extension:
       selector:
         type: xpath
         locator: '//span[@class="ui-dialog-title" and text()[contains(.,"Select Coupon Code")]]/following-sibling::div[@class="ui-dialog-titlebar-buttonpane"]/button[contains(@class,"ui-dialog-titlebar-close")]'
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
     Highlighted Suggestion:
       selector: '.select2-highlighted'
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
     Product:
       selector: '.order-line-item-type-product .select2-offscreen'
@@ -177,50 +170,39 @@ oro_behat_extension:
 
     Quantity:
       selector: '[data-name="field__quantity"]'
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
     Coupon Validation Error:
         selector: '.select-coupon-validation-container'
-        class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
     Close Line Item Discount Promotion Details:
       selector:
         type: xpath
         locator: '//span[@class="ui-dialog-title" and text()[contains(.,"Line Item Discount Promotion")]]/following-sibling::div[@class="ui-dialog-titlebar-buttonpane"]/button[contains(@class,"ui-dialog-titlebar-close")]'
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
     CouponCodeInput:
       selector: 'input[data-role="coupon-code"]'
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
     IHaveACouponCode:
       selector: 'div.collapse-view__trigger:contains("I have a Coupon Code")'
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
     CouponsList:
       selector: 'ul.coupons-list'
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
     Coupon Delete Button:
       selector: 'button[data-role="remove-coupon"]'
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
     FlatRateShippingMethod:
       selector: 'label:contains("Flat Rate:")'
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
     FlatRate2ShippingMethod:
       selector: 'label:contains("Flat Rate 2:")'
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
     BackendFlatRate2ShippingMethod:
       selector: 'label:contains("Flat Rate 2")'
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
     Restrictions:
       selector:
         type: xpath
         locator: '//label[contains(@class, "attribute-item__term") and text()[contains(.,"Restrictions")]]/following-sibling::div[contains(@class, "attribute-item__description")]'
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
     Apply Segment:
       selector:

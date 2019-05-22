@@ -71,13 +71,11 @@ oro_behat_extension:
             type: xpath
 
     Quote Shipping Address State Selector:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
         locator: '//div[contains(@id,"s2id_oro_sale_quote_shippingAddress_region-uid")]'
         type: xpath
 
     Quote Shipping Address State Text Field:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
         locator: '//input[contains(@id,"oro_sale_quote_shippingAddress_region_text-uid")]'
         type: xpath
@@ -93,51 +91,41 @@ oro_behat_extension:
             element: Select2Entity
 
     Free-form_line_item2:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
         locator: '//tr[@data-content="oro_sale_quote[quoteProducts][1]"]//div[@class="quote-lineitem-product-select quote-lineitem-product-form"]//a[text()="Free-form entry"]'
         type: xpath
 
     Free-form_line_item3_order:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
         locator: '//tr[@data-content="oro_order_type[lineItems][2]"]//div[@class="order-line-item-type-product"]//a[text()="Free-form entry"]'
         type: xpath
 
     Add Offer line item2:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
         locator: '//tr[@data-content="oro_sale_quote[quoteProducts][1]"]//a[text()="Add Offer"]'
         type: xpath
 
     Select Shipping Address element:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
         locator: '//div[contains(@id,"s2id_oro_workflow_transition_shipping_address_customerAddress-uid")]'
         type: xpath
 
     LineItemPrice:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector: 'input[name="oro_sale_quote[quoteProducts][0][quoteProductOffers][0][price][value]"]'
 
     LineItemNote:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector: 'textarea[name="oro_sale_quote[quoteProducts][0][comment]"]'
 
     Tier prices button:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector: '.product-tier-prices'
 
     Disabled price overridden button:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector: '.product-tier-prices.disabled'
 
     Price overridden button:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector: '.product-price-overridden'
 
     Sales Representative Info:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
         locator: '#sales-contact-info'
         type: css
@@ -147,23 +135,19 @@ oro_behat_extension:
       class: Oro\Bundle\FrontendBundle\Tests\Behat\Element\Grid
 
     First Product Quantity on Quote:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector: 'input[name="oro_sale_quote_demand[demandProducts][0][quantity]"]'
 
     Quote Flat Rate:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
         locator: '//label[contains(text(),"Flat Rate")]'
         type: xpath
 
     Quote DPD Classic:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
         locator: '//td[contains(text(),"DPD Classic")]/../td/label[contains(text(),"DPD")]'
         type: xpath
 
     Quote Flat Rate 2:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
         locator: '//label[contains(text(),"Flat Rate 2")]'
         type: xpath
