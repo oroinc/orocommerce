@@ -281,14 +281,6 @@ services:
             # do reindexation of website index after reindexation of search index
             - { name: kernel.event_listener, event: installer.database_preparation.after, method: onAfterDatabasePreparation, priority: -10 }
 
-    oro_website_search.event_listener.clear_mapping_cache:
-        class: Oro\Bundle\WebsiteSearchBundle\EventListener\ClearMappingCacheListener
-        arguments:
-            - '@oro_website_search.cache.mapping_configuration_cache_provider'
-        tags:
-            # clear website search mapping cahe after database preparation
-            - { name: kernel.event_listener, event: installer.database_preparation.after, method: onAfterDatabasePreparation, priority: 10 }
-
     oro_website_search.migration.demo_data_fixtures_listener.reindex:
         parent: oro_platform.event_listener.data_fixtures_listener.abstract
         calls:
