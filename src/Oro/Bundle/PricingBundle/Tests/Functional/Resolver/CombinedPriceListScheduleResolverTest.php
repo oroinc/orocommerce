@@ -41,16 +41,6 @@ class CombinedPriceListScheduleResolverTest extends WebTestCase
     protected $configManager;
 
     /**
-     * @var int|null
-     */
-    protected $defaultPriceListId;
-
-    /**
-     * @var int|null
-     */
-    protected $defaultFullPriceListId;
-
-    /**
      * {@inheritdoc}
      */
     protected function setUp()
@@ -70,12 +60,10 @@ class CombinedPriceListScheduleResolverTest extends WebTestCase
         $this->priceRepository = $this->getContainer()->get('doctrine')
             ->getManagerForClass(CombinedProductPrice::class)
             ->getRepository(CombinedProductPrice::class);
-
-        $this->saveDefaultConfigValue();
     }
 
     /**
-     * @dataProvider CPLSwitchingDataProvider
+     * @dataProvider cplSwitchingDataProvider
      * @param array $cplRelationsExpected
      * @param array $cplConfig
      * @param \DateTime $now
@@ -121,7 +109,7 @@ class CombinedPriceListScheduleResolverTest extends WebTestCase
     /**
      * @return array
      */
-    public function CPLSwitchingDataProvider()
+    public function cplSwitchingDataProvider()
     {
         return [
             [
@@ -135,7 +123,7 @@ class CombinedPriceListScheduleResolverTest extends WebTestCase
                     'expectedActualCpl' => '2f_1t_3t',
                     'expectedFullCpl' => '2f_1t_3t',
                 ],
-                'now' => $this->createDateTime('+2 day'),
+                'now' => $this->createDateTime('+11 hours'),
             ],
             [
                 'cplRelationsExpected' => [
@@ -249,11 +237,5 @@ class CombinedPriceListScheduleResolverTest extends WebTestCase
         }
         $this->assertEquals($expectedActualCpl, $this->configManager->get($actualCPLConfigKey));
         $this->assertEquals($expectedFullCpl, $this->configManager->get($fullCPLConfigKey));
-    }
-
-    protected function saveDefaultConfigValue()
-    {
-        $this->defaultPriceListId = $this->configManager->get(Configuration::getConfigKeyToPriceList());
-        $this->defaultFullPriceListId = $this->configManager->get(Configuration::getConfigKeyToFullPriceList());
     }
 }
