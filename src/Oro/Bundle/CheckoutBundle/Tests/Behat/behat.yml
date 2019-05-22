@@ -33,7 +33,6 @@ oro_behat_extension:
 
   elements:
     Select Billing Address:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector: '[name="oro_workflow_transition[billing_address][customerAddress]"]'
 
     Billing Address:
@@ -41,15 +40,12 @@ oro_behat_extension:
       class: Oro\Bundle\FormBundle\Tests\Behat\Element\Select
 
     Select Shipping Address:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector: '[name="oro_workflow_transition[shipping_address][customerAddress]"]'
 
     Select Single Page Checkout Billing Address:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector: '[name="oro_workflow_transition[billing_address]"]'
 
     Select Single Page Checkout Shipping Address:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector: '[name="oro_workflow_transition[shipping_address]"]'
 
     Edit Billing Information:
@@ -66,7 +62,6 @@ oro_behat_extension:
       selector: 'div[data-role="checkout-content"]'
 
     CheckoutStepTitle:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector: 'h2.checkout__title'
 
     CheckoutSuccessStep:
@@ -74,7 +69,6 @@ oro_behat_extension:
       selector: '.checkout__success'
 
     CheckoutSuccessStepTitle:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector: 'h1.checkout__success__title'
 
     Checkout Order Review Form:
@@ -110,7 +104,6 @@ oro_behat_extension:
 
     OpenOrdersGridFiltersState:
         selector: 'div[data-page-component-name="frontend-checkouts-grid"] div.filters-state'
-        class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
     OpenOrdersGridFilterItem:
       selector: 'div.filter-items-hint span'
@@ -137,7 +130,6 @@ oro_behat_extension:
       selector: 'table[data-scrollable-inner-content] tr'
 
     CheckoutStepLineItemProductSku:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector: 'td.checkout-order-summary__grid-td--sku div'
 
     Ship to This Address:
@@ -219,43 +211,35 @@ oro_behat_extension:
 
     Checkout Edit Order Link:
       selector: '.checkout-order-summary__edit-link'
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
     Submit Order:
       selector: '.order-checkout-widget button:contains("Submit Order")'
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
     # Disabled Submit order button is actually other element (div)
     Disabled Submit Order Button:
       selector: '.order-checkout-widget .btn--disabled.checkout__submit-btn:contains("Submit Order")'
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
     Customer Users List button:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
         locator: '//div[contains(@id,"oro_sale_quote_customerUser-uid")]/div/button[contains(@class, "entity-select-btn")]'
         type: xpath
 
     Product Line Item Input Field:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
         locator: '//input[contains(@id,"oro_product_quick_add_products_1_productDisplayName-uid")]'
         type: xpath
 
     Qty Line Item Input Field:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
         locator: '//input[contains(@id,"oro_product_quick_add_products_1_productQuantity-uid")]'
         type: xpath
 
     Paste Your Order Input Field:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
         locator: '//textarea[contains(@id,"oro_product_quick_add_copy_paste_copyPaste-uid")]'
         type: xpath
 
     Assigned To Input Field:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
         locator: '//input[contains(@id,"oro_rfp_frontend_request_assignedCustomerUsers-uid")]'
         type: xpath
@@ -320,19 +304,16 @@ oro_behat_extension:
       selector: '.dropdown-menu__permissions-item a'
 
     Billing Address Select:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
         type: xpath
         locator: '//*[contains(@id, "s2id_oro_workflow_transition_billing_address-uid-")]/a'
 
     Shipping Address Select:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
         type: xpath
         locator: '//*[contains(@id, "s2id_oro_workflow_transition_shipping_address-uid-")]/a'
 
     New Address Option:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
         type: xpath
         locator: '//ul[@class="select2-results"]/li/div[contains(., "New address")]'
@@ -360,7 +341,6 @@ oro_behat_extension:
           Save Address: 'oro_action_operation[save_address]'
 
     Checkout Address Fields:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector: '#checkout-address-fields-container'
 
   pages:

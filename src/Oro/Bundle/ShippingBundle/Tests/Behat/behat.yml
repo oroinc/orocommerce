@@ -28,23 +28,18 @@ oro_behat_extension:
 
     CheckoutTotalTrigger:
       selector: '.checkout-order-summary__header [data-collapse-trigger]'
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
     CheckoutTotalSum:
       selector: 'td.order-checkout-widget__total span.blue'
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
     CheckoutFormRow:
       selector: '.checkout-form span.custom-radio__text'
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
     Flat Rate Shipping Method Icon:
       selector: '.shipping-method-config .fa-plus-square-o'
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
     Flat Rate Shipping Method Body:
       selector: '.shipping-method-config .shipping-method-config__body'
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
     Shipping Rule:
       selector: 'form[name="oro_shipping_methods_configs_rule"]'
@@ -101,10 +96,8 @@ oro_behat_extension:
 
     Notification Alert:
       selector: '.notification--alert .notification__text'
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
     CreateOrderFlashMessage:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector: '#flash-messages div.notification-flash__text'
 
     Integration Form:
@@ -119,7 +112,6 @@ oro_behat_extension:
 
     Deactivate Integration Confirm Button:
       selector: '.modal-footer .btn-primary'
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
     Shipping Method Flat Rate Radio Button:
       selector:
