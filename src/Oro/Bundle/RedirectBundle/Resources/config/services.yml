@@ -27,6 +27,8 @@ services:
             - '@oro_redirect.routing.matched_url_decision_maker'
         calls:
             - [addUrlToMatchSlugFirst, ['/']]
+        tags:
+            - { name: container.hot_path }
 
     oro_redirect.routing.slug_url_mathcer:
         alias: oro_redirect.routing.slug_url_matcher
@@ -54,6 +56,7 @@ services:
             - { name: kernel.event_listener, event: kernel.request, method: onKernelRequestBeforeRouting, priority: 50 }
             - { name: kernel.event_listener, event: kernel.request, method: onKernelRequestAfterRouting, priority: 8 }
             - { name: kernel.event_listener, event: kernel.finish_request, method: onKernelFinishRequest }
+            - { name: container.hot_path }
 
     oro_redirect.migration.extension.slug:
         class: Oro\Bundle\RedirectBundle\Migration\Extension\SlugExtension
@@ -255,6 +258,8 @@ services:
             - '@oro_redirect.provider.context_url_provider_registry'
             - '@oro_frontend_localization.manager.user_localization'
             - '@oro_config.manager'
+        tags:
+            - { name: container.hot_path }
 
     oro_redirect.provider.sluggable_url_cache:
         public: false
@@ -292,6 +297,7 @@ services:
             - [ 'setContainer', ['@service_container'] ]
         tags:
             - { name: 'monolog.logger', channel: 'router' }
+            - { name: container.hot_path }
 
     oro_redirect.slug_url.cache.persistent:
         class: Oro\Bundle\CacheBundle\Provider\PhpFileCache

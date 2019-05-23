@@ -24,14 +24,6 @@ class OroRedirectExtension extends Extension
         $loader->load('form_types.yml');
 
         $container->prependExtensionConfig($this->getAlias(), array_intersect_key($config, array_flip(['settings'])));
-        $this->addClassesToCompile(
-            [
-                'Oro\Bundle\RedirectBundle\Security\Firewall',
-                'Oro\Bundle\RedirectBundle\Routing\SlugUrlMatcher',
-                'Oro\Bundle\RedirectBundle\Routing\SluggableUrlGenerator',
-                'Oro\Bundle\RedirectBundle\Routing\Router'
-            ]
-        );
     }
 
     /**
