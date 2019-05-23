@@ -1,8 +1,5 @@
 oro:
     pricing:
-        product_price_save:
-            flash:
-                success: Product Price has been added
         filter:
             product_price:
                 per: '/'
