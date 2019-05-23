@@ -158,3 +158,10 @@ oro_behat_extension:
       selector:
         type: 'xpath'
         locator: '//div[@class="btn-group not-expand frontend-datagrid__panel"]/a[@title="Filters"]'
+
+    Price Modal Window Form:
+      selector: 'form[id^="oro_pricing_price_list_product_price"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Price: 'oro_pricing_price_list_product_price[price][value]'
