@@ -47,6 +47,10 @@ layout:
             id: product_view_related_products_container
             optionName: visible
             optionValue: '=data["oro_product_related_products"].getRelatedItems(data["product"])'
+        - '@setOption':
+            id: related_products
+            optionName: attr.data-page-component-name
+            optionValue: 'related-products-list'
         - '@add':
             id: product_view_related_products_container
             parentId: product_view_container
