@@ -1,8 +1,8 @@
 services:
-    oro_webcatalog.api.webcatalog.customize_loaded_data.tree:
-        class: Oro\Bundle\WebCatalogBundle\Api\Processor\WebCatalogTree
+    oro_webcatalog.api.compute_web_catalog_tree:
+        class: Oro\Bundle\WebCatalogBundle\Api\Processor\ComputeWebCatalogTree
         arguments:
             - '@oro_web_catalog.content_node_tree_handler'
-            - '@oro_entity.doctrine_helper'
+            - '@oro_api.doctrine_helper'
         tags:
             - { name: oro.api.processor, action: customize_loaded_data, class: Oro\Bundle\WebCatalogBundle\Entity\WebCatalog }

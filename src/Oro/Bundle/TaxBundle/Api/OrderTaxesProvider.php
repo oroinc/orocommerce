@@ -115,9 +115,8 @@ class OrderTaxesProvider
      */
     private function loadTaxes(array $orderIds): array
     {
-        $qb = $this->doctrineHelper->getEntityManagerForClass(TaxValue::class)
-            ->createQueryBuilder()
-            ->from(TaxValue::class, 'taxValue')
+        $qb = $this->doctrineHelper
+            ->createQueryBuilder(TaxValue::class, 'taxValue')
             ->select('taxValue.entityId, taxValue.result AS taxes')
             ->where('taxValue.entityClass = :entityClass AND taxValue.entityId IN (:entityIds)')
             ->setParameter('entityClass', Order::class)

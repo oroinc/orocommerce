@@ -156,7 +156,6 @@ services:
         class: Oro\Bundle\ApiBundle\Processor\Shared\BuildSingleItemQuery
         arguments:
             - '@oro_api.doctrine_helper'
-            - '@oro_api.criteria_connector'
             - '@oro_api.entity_id_helper'
         tags:
             - { name: oro.api.processor, action: update, group: load_data, priority: 10, class: '%oro_pricing.entity.product_price.class%' }

@@ -96,9 +96,8 @@ class ComputeOrderPaymentStatus implements ProcessorInterface
      */
     private function loadPaymentStatuses(array $ordersIds): array
     {
-        $qb = $this->doctrineHelper->getEntityManagerForClass(PaymentStatus::class)
-            ->createQueryBuilder()
-            ->from(PaymentStatus::class, 'ps')
+        $qb = $this->doctrineHelper
+            ->createQueryBuilder(PaymentStatus::class, 'ps')
             ->select('ps.entityIdentifier, ps.paymentStatus')
             ->where('ps.entityIdentifier IN (:orderIds) AND ps.entityClass = :orderClass')
             ->setParameter('orderIds', $ordersIds)

@@ -94,12 +94,11 @@ class AddOrderPromotionDiscounts implements ProcessorInterface
      */
     private function loadPromotionDiscounts(array $ordersIds): array
     {
-        $qb = $this->doctrineHelper->getEntityManagerForClass(AppliedDiscount::class)
-            ->createQueryBuilder()
-            ->from(AppliedDiscount::class, 'discounts')
+        $qb = $this->doctrineHelper
+            ->createQueryBuilder(AppliedDiscount::class, 'discounts')
+            ->select('orders.id AS orderId, promotions.type AS promotionType, discounts.amount AS discountAmount')
             ->innerJoin('discounts.appliedPromotion', 'promotions')
             ->innerJoin('promotions.order', 'orders')
-            ->select('orders.id AS orderId, promotions.type AS promotionType, discounts.amount AS discountAmount')
             ->where('orders.id IN (:orderIds) AND discounts.lineItem IS NULL')
             ->setParameter('orderIds', $ordersIds);
 

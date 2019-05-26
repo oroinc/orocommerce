@@ -58,7 +58,6 @@ services:
         class: Oro\Bundle\ApiBundle\Processor\Shared\BuildSingleItemQuery
         arguments:
             - '@oro_api.doctrine_helper'
-            - '@oro_api.criteria_connector'
             - '@oro_api.entity_id_helper'
         tags:
             - { name: oro.api.processor, action: delete, group: load_data, class: '%oro_product.entity.related_product.class%', priority: 10 }

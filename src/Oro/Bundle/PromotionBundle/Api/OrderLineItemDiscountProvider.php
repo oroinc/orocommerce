@@ -50,11 +50,10 @@ class OrderLineItemDiscountProvider
             return [];
         }
 
-        $qb = $this->doctrineHelper->getEntityManagerForClass(AppliedDiscount::class)
-            ->createQueryBuilder()
-            ->from(AppliedDiscount::class, 'discount')
-            ->innerJoin('discount.lineItem', 'lineItem')
+        $qb = $this->doctrineHelper
+            ->createQueryBuilder(AppliedDiscount::class, 'discount')
             ->select('lineItem.id AS lineItemId, SUM(discount.amount) AS amount')
+            ->innerJoin('discount.lineItem', 'lineItem')
             ->groupBy('lineItem.id')
             ->where('lineItem.id IN (:lineItemIds)')
             ->setParameter('lineItemIds', $lineItemIds);
