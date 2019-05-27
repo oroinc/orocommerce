@@ -138,7 +138,7 @@
                 </table>
             </div>
             {% if allow_add and oro_is_adding_additional_units_to_product_available() %}
-                <a class="btn add-list-item" href="javascript: void(0);">{{ form.vars.add_label|default('oro.form.collection.add')|trans }}</a>
+                <a class="btn add-list-item" href="#">{{ form.vars.add_label|default('oro.form.collection.add')|trans }}</a>
             {% endif %}
         </div>
     {% endspaceless %}
@@ -227,7 +227,7 @@
                     </tbody>
                 </table>
                 {% if allow_add %}
-                    <a class="btn add-list-item" data-container=".image-collection tbody" href="javascript: void(0);">
+                    <a class="btn add-list-item" data-container=".image-collection tbody" href="#">
                         {{ 'oro.product.productimage.add.label'|trans }}
                     </a>
                 {% endif %}

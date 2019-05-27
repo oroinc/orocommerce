@@ -105,7 +105,7 @@
             </div>
 
             {% if allow_add %}
-                <a class="btn add-list-item" data-container=".oro-item-collection tbody" href="javascript: void(0);">{{ form.vars.add_label|default('oro.form.collection.add')|trans }}</a>
+                <a class="btn add-list-item" data-container=".oro-item-collection tbody" href="#">{{ form.vars.add_label|default('oro.form.collection.add')|trans }}</a>
             {% endif %}
         </div>
     {% endspaceless %}
@@ -126,13 +126,13 @@
         <div class="fields-row">
             <div class="order-line-item-type-product">
                 {{ form_widget(form.product) }}
-                <a class="order-line-item-type-free-form" href="javascript: void(0);">{{ 'oro.order.orderlineitem.select.free_form'|trans }}</a>
+                <a class="order-line-item-type-free-form" href="#">{{ 'oro.order.orderlineitem.select.free_form'|trans }}</a>
             </div>
             <div class="order-line-item-type-free-form" style="display: none;">
                 <div class="order-line-item-type-free-input-wrap">
                     {{ form_widget(form.freeFormProduct) }}
                 </div>
-                <a class="order-line-item-type-product" href="javascript: void(0);">{{ 'oro.order.orderlineitem.select.product'|trans }}</a>
+                <a class="order-line-item-type-product" href="#">{{ 'oro.order.orderlineitem.select.product'|trans }}</a>
             </div>
         </div>
         {{ form_errors(form.product) }}
@@ -252,7 +252,7 @@
                 </table>
             </div>
             {% if allow_add %}
-                <a class="btn add-list-item" href="javascript: void(0);">{{ form.vars.add_label|default('oro.form.collection.add')|trans }}</a>
+                <a class="btn add-list-item" href="#">{{ form.vars.add_label|default('oro.form.collection.add')|trans }}</a>
             {% endif %}
         </div>
     {% endspaceless %}

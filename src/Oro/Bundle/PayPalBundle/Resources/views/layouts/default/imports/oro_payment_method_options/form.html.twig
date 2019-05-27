@@ -10,7 +10,7 @@
 
     {%- set type = type|default('text') -%}
     <input type="{{ type }}" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}" {% endif %}/>
-    <a href="javascript: void(0);"
+    <a href="#"
        data-toggle="tooltip"
        data-title="{{ 'oro.paypal.credit_card.tooltip'|trans }}"
        data-html="true"
@@ -35,7 +35,7 @@
                 <p>
                     {{ 'oro.paypal.payflow.authorized_card'|trans({'{{ last4 }}': creditCardComponentOptions.acct}) }}
                 </p>
-                <a href="javascript: void(0);" class="{{ class_prefix }}-form__payment-methods-different-card-handle" data-different-card-handle>
+                <a href="#" class="{{ class_prefix }}-form__payment-methods-different-card-handle" data-different-card-handle>
                     {{ 'oro.paypal.payflow.use_different_card'|trans }}
                 </a>
             </div>
@@ -43,7 +43,7 @@
         <div {% if isAuthorizedCard %} style="display: none;" data-different-card{% endif %}>
             {% if isAuthorizedCard %}
                 <div class="{{ class_prefix }}-form__payment-methods-different-card">
-                    <a href="javascript: void(0);" class="{{ class_prefix }}-form__payment-methods-authorized-card-handle" data-authorized-card-handle>
+                    <a href="#" class="{{ class_prefix }}-form__payment-methods-authorized-card-handle" data-authorized-card-handle>
                         {{ 'oro.paypal.payflow.use_authorized_card'|trans }}
                     </a>
                 </div>

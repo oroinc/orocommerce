@@ -75,7 +75,7 @@
             </div>
 
             {% if allow_add %}
-                <a class="btn add-list-item" data-container=".oro-item-collection tbody" href="javascript: void(0);"><i class="fa-plus"></i>{{ form.vars.add_label|default('oro.form.collection.add')|trans }}</a>
+                <a class="btn add-list-item" data-container=".oro-item-collection tbody" href="#"><i class="fa-plus"></i>{{ form.vars.add_label|default('oro.form.collection.add')|trans }}</a>
             {% endif %}
         </div>
     {% endspaceless %}
@@ -96,11 +96,11 @@
         <div class="fields-row">
             <div class="invoice-line-item-type-product">
                 {{ form_widget(form.product) }}
-                <a class="invoice-line-item-type-free-form" href="javascript: void(0);">{{ 'oro.invoice.invoicelineitem.select.free_form'|trans }}</a>
+                <a class="invoice-line-item-type-free-form" href="#">{{ 'oro.invoice.invoicelineitem.select.free_form'|trans }}</a>
             </div>
             <div class="invoice-line-item-type-free-form" style="display: none;">
                 {{ form_widget(form.freeFormProduct) }}
-                <br/><a class="invoice-line-item-type-product" href="javascript: void(0);">{{ 'oro.invoice.invoicelineitem.select.product'|trans }}</a>
+                <br/><a class="invoice-line-item-type-product" href="#">{{ 'oro.invoice.invoicelineitem.select.product'|trans }}</a>
             </div>
         </div>
         {{ form_errors(form.product) }}
