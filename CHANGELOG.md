@@ -2,7 +2,9 @@ Please refer first to [UPGRADE.md](UPGRADE.md) for the most important items that
 
 The current file describes significant changes in the code that may affect the upgrade of your customizations.
 
-## 4.0.0-rc
+## 4.0.0-rc (2019-05-29)
+[Show detailed list of changes](incompatibilities-4-0-rc.md)
+
 ### Removed
 #### PaymentBundle
  * Event `oro_payment.event.extract_line_item_options` will no longer be dispatched. Implementations of `Oro\Bundle\PayPalBundle\OptionsProvider\OptionsProviderInterface` will be used instead.
