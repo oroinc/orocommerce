@@ -28,6 +28,7 @@ oro_behat_extension:
         - OroWorkflowBundle::FeatureContext
         - OroPromotionBundle::PromotionContext
         - OroNavigationBundle::TabContext
+        - OroFlatRateShippingBundle::FeatureContext
       paths:
         - '@OroCheckoutBundle/Tests/Behat/Features'
 
