@@ -17,7 +17,8 @@ define(function(require) {
             unit: '[data-name="field__product-unit"]',
             buttons: '[data-role="quick-order-add-buttons"]',
             clear: '[data-role="quick-order-add-clear"]',
-            remove: '[data-role="row-remove"]'
+            remove: '[data-role="row-remove"]',
+            add: '.add-list-item'
         },
 
         elementsEvents: {
@@ -37,7 +38,8 @@ define(function(require) {
 
         listen: {
             'quick-add-copy-paste-form:submit mediator': 'addQuickAddRows',
-            'quick-add-import-form:submit mediator': 'addQuickAddRows'
+            'quick-add-import-form:submit mediator': 'addQuickAddRows',
+            'quick-add-form-item:unit-invalid mediator': 'addOneRow'
         },
 
         newRows: [],
@@ -171,6 +173,12 @@ define(function(require) {
         getRowsCount: function() {
             this.clearElementsCache();
             return this.getElement('rows').length;
+        },
+
+        addOneRow: function() {
+            var addButton = this.getElement('add');
+            addButton.data('row-add-only-one', true);
+            addButton.click();
         },
 
         dispose: function() {
