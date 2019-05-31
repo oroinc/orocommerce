@@ -208,7 +208,7 @@ class ContentNodeListenerTest extends \PHPUnit\Framework\TestCase
             ->method('createMessage');
         $this->messageProducer->expects($this->once())
             ->method('send')
-            ->with(Topics::CALCULATE_WEB_CATALOG_CACHE, 42);
+            ->with(Topics::CALCULATE_WEB_CATALOG_CACHE, ['webCatalogId' => 42]);
         /** @var LifecycleEventArgs|\PHPUnit\Framework\MockObject\MockObject $event */
         $event = $this->getMockBuilder(LifecycleEventArgs::class)
             ->disableOriginalConstructor()

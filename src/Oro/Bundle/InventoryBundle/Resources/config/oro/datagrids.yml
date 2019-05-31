@@ -167,7 +167,7 @@ datagrids:
                     type:            number
                 unit:
                     type:            choice
-                    data_name:       precisionUnit
+                    data_name:       unit
                     options:
                         field_options:
                             choices: "@oro_product.provider.product_units_provider->getAvailableProductUnits"

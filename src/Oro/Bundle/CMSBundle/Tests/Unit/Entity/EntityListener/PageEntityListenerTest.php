@@ -76,12 +76,12 @@ class PageEntityListenerTest extends \PHPUnit\Framework\TestCase
         $this->messageProducer
             ->expects($this->at(0))
             ->method('send')
-            ->with('oro.web_catalog.calculate_cache', 3);
+            ->with('oro.web_catalog.calculate_cache', ['webCatalogId' => 3]);
 
         $this->messageProducer
             ->expects($this->at(1))
             ->method('send')
-            ->with('oro.web_catalog.calculate_cache', 5);
+            ->with('oro.web_catalog.calculate_cache', ['webCatalogId' => 5]);
 
         $entity = $this->getEntity(Page::class, ['id' => 2]);
         $lifecycleEventArgs = $this->createMock(LifecycleEventArgs::class);

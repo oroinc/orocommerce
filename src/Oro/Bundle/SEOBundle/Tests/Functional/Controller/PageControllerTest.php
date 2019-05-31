@@ -31,10 +31,10 @@ class PageControllerTest extends WebTestCase
 
         $this->checkSeoSectionExistence($crawler);
 
-        $crfToken = $this->getContainer()->get('security.csrf.token_manager')->getToken('category');
+        $crfToken = $this->getContainer()->get('security.csrf.token_manager')->getToken('cms_page')->getValue();
         $parameters = [
             'input_action' => 'save_and_stay',
-            'oro_catalog_category' => ['_token' => $crfToken],
+            'oro_cms_page' => ['_token' => $crfToken],
         ];
         $parameters['oro_cms_page']['metaTitles']['values']['default'] = LoadPageMetaData::META_TITLES;
         $parameters['oro_cms_page']['metaDescriptions']['values']['default'] = LoadPageMetaData::META_DESCRIPTIONS;
@@ -48,6 +48,7 @@ class PageControllerTest extends WebTestCase
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $html = $crawler->html();
+        $this->assertNotContains('The CSRF token is invalid. Please try to resubmit the form.', $html);
 
         $this->assertContains(LoadPageMetaData::META_TITLES, $html);
         $this->assertContains(LoadPageMetaData::META_DESCRIPTIONS, $html);

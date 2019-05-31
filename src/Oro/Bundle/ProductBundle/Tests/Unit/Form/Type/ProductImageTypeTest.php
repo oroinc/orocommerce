@@ -45,7 +45,7 @@ class ProductImageTypeTest extends FormIntegrationTestCase
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());
         /** @var ProductImage $productImage */
-        $productImage  = $form->getData();
+        $productImage = $form->getData();
         $this->assertEquals($expectedTypes, array_keys($productImage->getTypes()->toArray()));
     }
 
@@ -54,16 +54,16 @@ class ProductImageTypeTest extends FormIntegrationTestCase
         $imageTypes = [
             new ThemeImageType('main', 'Main', []),
             new ThemeImageType('listing', 'Listing', []),
+            new ThemeImageType('additional', 'Additional', []),
         ];
 
         $defaultProductImage = new StubProductImage();
-        $defaultProductImage->addType('test');
 
         return [
             'without default data' => [
                 'defaultData' => null,
                 'submittedData' => [
-                    'main' => 1
+                    'main' => true
                 ],
                 'expectedTypes' => ['main'],
                 'options' => ['image_types' => $imageTypes]
@@ -71,10 +71,11 @@ class ProductImageTypeTest extends FormIntegrationTestCase
             'with default data' => [
                 'defaultData' => $defaultProductImage,
                 'submittedData' => [
-                    'main' => 1,
-                    'listing' => 1
+                    'main' => true,
+                    'listing' => true,
+                    'additional' => true
                 ],
-                'expectedTypes' => ['main', 'listing'],
+                'expectedTypes' => ['main', 'listing', 'additional'],
                 'options' => ['image_types' => $imageTypes]
             ]
         ];

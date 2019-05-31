@@ -12,6 +12,7 @@ OroProductBundle adds the Product entity to the OroCommerce application, provide
     - [Default Product Unit](./Resources/doc/default-product-unit.md)
  - [Product Attributes](./Resources/doc/product-attributes.md)
  - [Customize products using layouts](./Resources/doc/customize-products.md)
+ - [Customize product SKU validation pattern](./Resources/doc/customize-products-sku-validation.md)
  - [Related items](./Resources/doc/related-items.md)
  - [Actions](./Resources/doc/actions.md)
  - [Product Variant Search](./Resources/doc/product-variant-search.md)

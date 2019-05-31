@@ -16,10 +16,8 @@ oro_behat_extension:
       class: Oro\Bundle\ProductBundle\Tests\Behat\Element\OptionCollection
     InStockInventoryStatus:
         selector: "span.product-inventory-status-in_stock"
-        class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
     OutOfStockInventoryStatus:
         selector: "span.product-inventory-status-out_of_stock"
-        class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
     Configurable Attributes:
       class: Oro\Bundle\ProductBundle\Tests\Behat\Element\ProductCustomVariantFieldsCollection
       selector: 'div[id^="oro_product_variantFields"]'
@@ -39,7 +37,6 @@ oro_behat_extension:
 
     Products GridFilterManagerButton:
       selector: 'div[data-page-component-name="products-grid"] button.select-filter-widget'
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
     Products GridFilterManager:
       selector: 'div[data-page-component-name="products-grid"] div.filter-container>div.dropdown-menu'
@@ -69,7 +66,6 @@ oro_behat_extension:
 
     RelatedProductsViewGridFiltersState:
       selector: 'div[data-page-component-name="products-related-products-view"] div.filters-state'
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
     RelatedProductsViewGridFilterItem:
       selector: 'div[data-page-component-name="products-related-products-view"] div.filter-item'
@@ -89,7 +85,6 @@ oro_behat_extension:
 
     SelectRelatedProductsGridFiltersState:
         selector: 'div[data-page-component-name="products-related-products-select"] div.filters-state'
-        class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
     SelectRelatedProductsGridFilterItem:
       selector: 'div[data-page-component-name="products-related-products-select"] div.filter-item'
@@ -109,7 +104,6 @@ oro_behat_extension:
 
     RelatedProductsEditGridFiltersState:
         selector: 'div[data-page-component-name="products-related-products-edit"] div.filters-state'
-        class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
     RelatedProductsEditGridFilterItem:
       selector: 'div[data-page-component-name="products-related-products-edit"] div.filter-item'
@@ -142,7 +136,6 @@ oro_behat_extension:
 
     SelectUpsellProductsGridFiltersState:
         selector: 'div[data-page-component-name="products-upsell-products-select"] div.filters-state'
-        class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
     SelectUpsellProductsGridFilterItem:
       selector: 'div[data-page-component-name="products-upsell-products-select"] div.filter-item'
@@ -162,7 +155,6 @@ oro_behat_extension:
 
     UpsellProductsEditGridFiltersState:
         selector: 'div[data-page-component-name="products-upsell-products-edit"] div.filters-state'
-        class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
     UpsellProductsEditGridFilterItem:
       selector: 'div[data-page-component-name="products-upsell-products-edit"] div.filter-item'
@@ -175,7 +167,7 @@ oro_behat_extension:
     Upsell Products View Tab:
       selector:
         type: xpath
-        locator: '//div[contains(@class, "oro-tabs")]/ul/li/a[contains(text(), "Up-sell Products")]'
+        locator: '//div[contains(@class, "oro-tabs")]/div/ul/li/a[contains(text(), "Up-sell Products")]'
 
     ProductForm Step One:
       selector: 'form[name="oro_product_step_one"]'
@@ -318,11 +310,6 @@ oro_behat_extension:
           Use Slider On Mobile Use Default: 'related_items[oro_product___upsell_products_use_slider_on_mobile][use_parent_scope_value]'
           Use Slider On Mobile: 'related_items[oro_product___upsell_products_use_slider_on_mobile][value]'
 
-    Product File Attribute MIME type Validation:
-      selector:
-        type: 'xpath'
-        locator: "//form[@name='oro_product']//span[@class='validation-failed']/span/span"
-
     Product Family Form:
       selector: 'form[name="oro_attribute_family"]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
@@ -412,7 +399,6 @@ oro_behat_extension:
 
     Quick Order Import File Field:
       selector: "input[name='oro_product_quick_add_import_from_file[file]']"
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
     Add More Rows:
       selector: ".add-list-item"
@@ -553,15 +539,12 @@ oro_behat_extension:
 
     Remove Variant Button:
       selector: 'button.removeVariantBtn'
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
     Remove First Product Collection Variant Button:
       selector: 'button.removeVariantBtn[data-related="oro_web_catalog_content_node[contentVariants][0]"]'
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
     Search Button:
       selector: 'button[name="oro_website_search_search_button"]'
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
     # front products grid
     ProductFrontendGrid:
@@ -600,15 +583,12 @@ oro_behat_extension:
 
     ProductFrontendMassActionHeadCheckbox:
       selector: 'div.datagrid-massaction button'
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
     ProductFrontendMassActionButton:
       selector: '.datagrid-massaction button.dropdown-toggle'
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
     ProductFrontendGridMassActionMenu:
       selector: 'div.datagrid-massaction__dropdown-menu'
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
     ProductFrontendGridRow:
       selector: '.grid-row'
@@ -690,7 +670,6 @@ oro_behat_extension:
 
     Edit within Web Catalog:
       selector: 'a.operation-button[title="Edit within Web Catalog"]'
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
     AttributeGroupCollection:
       class: Oro\Bundle\ProductBundle\Tests\Behat\Element\AttributeGroupCollection
@@ -801,13 +780,11 @@ oro_behat_extension:
           Unit: 'oro_product_frontend_line_item[unit]'
 
     New Arrivals Block:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
         type: xpath
         locator: '//div[contains(concat(" ", @class, " "), " embedded-list ")]/h2/span[text()="New Arrivals"]/../../div'
 
     Featured Products Block:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
         type: xpath
         locator: '//div[contains(concat(" ", @class, " "), " embedded-list ")]/h2/span[text()="Featured Products"]/../../div'
@@ -818,13 +795,11 @@ oro_behat_extension:
         locator: '//div[contains(concat(" ", @class, " "), " embedded-list ")]/h2/span[text()="Top Selling Items"]/../../div'
 
     Related Products Block:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
         type: xpath
         locator: '//div[contains(concat(" ", @class, " "), " embedded-list ")]/h2/span[text()="Related Products"]/../../div'
 
     Upsell Products Block:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
         type: xpath
         locator: '//div[contains(concat(" ", @class, " "), " embedded-list ")]/h2/span[text()="Up-sell Products"]/../../div'
@@ -892,11 +867,9 @@ oro_behat_extension:
 
     Product Slider:
       selector: '.product-view-media-container .product-view-media-slider'
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
     Product View Gallery Trigger:
       selector: '.product-view-media-container [data-trigger-gallery-open]'
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
     Product Main Image:
       selector: '.tab-content__wrapper .product-view-media-gallery__image'
@@ -966,13 +939,11 @@ oro_behat_extension:
       selector: 'div[id*="uniform-oro_product_prices_1_unit-"]'
 
     Add Product Price:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
         type: 'xpath'
         locator: '//div[contains (@id,"oro_product_prices-uid")]/../a'
 
     Remove Product Price Button:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
         type: 'xpath'
         locator: '//div[contains (@id,"oro_product_prices-uid")]//button[contains(@class,"removeRow")]'
@@ -992,13 +963,11 @@ oro_behat_extension:
       class: Oro\Bundle\ProductBundle\Tests\Behat\Element\FrontendProductGridFilters
 
     Product unit dropdown:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
         type: 'xpath'
         locator: '//form[@class="product__qty-container cart-table__form"]//span[@class="select2-chosen"]'
 
     Shopping list line item:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector: 'div.shopping-list-line-items__item-wrapper'
 
     Remove Additional Unit Precision 1:
@@ -1006,6 +975,13 @@ oro_behat_extension:
 
     Remove Image 1:
         selector: 'tr[data-content="oro_product[images][0]"] .removeRow'
+
+    Product Image Watermark Config:
+      selector: 'form[name="product_images"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          File: 'product_images[oro_product___product_image_watermark_file][value][file]'
 
   pages:
     Product View:
@@ -1087,5 +1063,6 @@ oro_behat_extension:
         - OroImportExportBundle::ImportExportContext:
             - '@oro_entity.entity_alias_resolver'
             - '@oro_importexport.processor.registry'
+        - OroNavigationBundle::FeatureContext
       paths:
         - '@OroProductBundle/Tests/Behat/Features/other'

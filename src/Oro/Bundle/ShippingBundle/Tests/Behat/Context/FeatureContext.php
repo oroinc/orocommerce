@@ -65,15 +65,18 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      * Assert that given shippingType is shown
      *
      * @Then Shipping Type :shippingType is shown for Buyer selection
+     * @param string $shippingType
      */
     public function shippingTypeFlatRateIsShownForBuyerSelection($shippingType)
     {
-        $element= $this->createElement('CheckoutFormRow');
-        self::assertContains(
-            $shippingType,
-            $element->getText(),
-            "Shipping type '$shippingType' not found on checkout form"
-        );
+        $elements = $this->findAllElements('CheckoutFormRow');
+        foreach ($elements as $element) {
+            if (strpos($element->getText(), $shippingType) !== false) {
+                return;
+            }
+        }
+
+        self::fail(sprintf('Shipping type "%s" not found on checkout form', $shippingType));
     }
 
     /**
@@ -201,6 +204,16 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     public function buyerIsOnViewShoppingListPageAndClicksCreateOrderButton($shoppingListName)
     {
         $this->createOrderFromShoppingList($shoppingListName);
+    }
+
+    /**
+     * @Then Buyer is on Shipping Method Checkout step
+     */
+    public function assertBuyerIsOnShippingMethodCheckoutStep()
+    {
+        /** @var CheckoutStep $checkoutStep */
+        $checkoutStep = $this->createElement('CheckoutStep');
+        $checkoutStep->assertTitle('Shipping Method');
     }
 
     /**

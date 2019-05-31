@@ -48,11 +48,9 @@ oro_behat_extension:
       selector: '.page-content'
 
     OrderLineItemProductSku:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector: 'div:contains("Item #:") > span'
 
     OrderTitle:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector: 'h1.page-title .page-title__text'
 
     Order Payment Transaction Grid:
@@ -60,11 +58,9 @@ oro_behat_extension:
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
 
     Calculate Shipping Button:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector: 'span[id="possible_shipping_methods_btn"]'
 
     Order Flat Rate:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
         locator: '//label[contains(text(),"Flat Rate")]'
         type: xpath
@@ -73,7 +69,6 @@ oro_behat_extension:
       selector: '[id*="flat_rate"]'
 
     Order DPD Classic:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
         locator: '//td[contains(text(),"DPD Classic")]/../td/label[contains(text(),"DPD")]'
         type: xpath
@@ -135,14 +130,17 @@ oro_behat_extension:
             locator: '//input[contains(@id,"oro_order_type_poNumber-uid")]'
             type: xpath
 
+    First Product Quantity Field In Order:
+      selector:
+        locator: '//input[@name="oro_order_type[lineItems][0][quantity]"]'
+        type: xpath
+
     Order Billing Address State Selector:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
         locator: '//div[contains(@id,"s2id_oro_order_type_billingAddress_region-uid")]'
         type: xpath
 
     Order Billing Address State Text Field:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
         locator: '//input[contains(@id,"oro_order_type_billingAddress_region_text-uid")]'
         type: xpath

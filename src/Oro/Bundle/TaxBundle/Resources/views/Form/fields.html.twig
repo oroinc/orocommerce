@@ -31,7 +31,7 @@
                 </table>
             </div>
             {% if allow_add %}
-                <a class="btn add-list-item" data-container=".oro-item-collection tbody" href="javascript: void(0);">{{ form.vars.add_label|default('oro.form.collection.add')|trans }}</a>
+                <a class="btn add-list-item" data-container=".oro-item-collection tbody" href="#">{{ form.vars.add_label|default('oro.form.collection.add')|trans }}</a>
             {% endif %}
         </div>
     {% endspaceless %}
@@ -117,7 +117,7 @@
                 {% endif %}
             </div>
             {% if allow_add %}
-                <a class="btn add-list-item" href="javascript: void(0);" {{ disabled ? 'disabled=disabled' : '' }}>
+                <a class="btn add-list-item" href="#" {{ disabled ? 'disabled=disabled' : '' }}>
                     {{ form.vars.add_label|default('oro.form.collection.add')|trans }}
                 </a>
             {% endif %}

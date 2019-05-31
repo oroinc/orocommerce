@@ -8,6 +8,7 @@ parameters:
     oro_product.entity.product_image_type.class: Oro\Bundle\ProductBundle\Entity\ProductImageType
     oro_product.event_listener.scoped_product_db_query_restriction.common_class: Oro\Bundle\ProductBundle\EventListener\ScopedProductDBQueryRestrictionEventListener
     oro_product.event_listener.scoped_product_search_query_restriction.common_class: Oro\Bundle\ProductBundle\EventListener\ScopedProductSearchQueryRestrictionEventListener
+    oro_product.sku.regex_pattern: '/^[-_a-zA-Z0-9]*$/'
 
 services:
     oro_product.product.manager.api:
@@ -1580,3 +1581,10 @@ services:
             - '@oro_product.service.product_collection_definition_converter'
         tags:
             - { name: kernel.event_listener, event: oro_website_search.event.index_entity, method: onWebsiteSearchIndex, priority: -100 }
+
+    oro_product.validator_constraints.sku_regex_validator:
+        class: Oro\Bundle\ProductBundle\Validator\Constraints\SkuRegexValidator
+        arguments:
+            - '%oro_product.sku.regex_pattern%'
+        tags:
+            - { name: validator.constraint_validator, alias: oro_product.validator_constraints.sku_regex_validator }

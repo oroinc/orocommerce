@@ -131,12 +131,13 @@ class ShippingMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
             'rule' => [
                 'name' => 'new rule',
                 'sortOrder' => '1',
+                'enabled' => false
             ],
             'currency' => 'USD',
             'methodConfigs' => [
                 [
                     'method' => ShippingMethodProviderStub::METHOD_IDENTIFIER,
-                    'options' => [],
+                    'options' => ['option' => 1],
                     'typeConfigs' => [
                         [
                             'enabled' => true,
@@ -144,6 +145,7 @@ class ShippingMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
                             'options' => [
                                 'price' => 12,
                                 'type' => 'per_item',
+                                'handling_fee' => 100
                             ],
                         ]
                     ]
@@ -162,7 +164,7 @@ class ShippingMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
             ->addMethodConfig(
                 (new ShippingMethodConfig())
                     ->setMethod(ShippingMethodProviderStub::METHOD_IDENTIFIER)
-                    ->setOptions([])
+                    ->setOptions(['option' => 1])
                     ->addTypeConfig(
                         (new ShippingMethodTypeConfig())
                             ->setEnabled(true)
@@ -170,6 +172,7 @@ class ShippingMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
                             ->setOptions([
                                 'price' => 12,
                                 'type' => 'per_item',
+                                'handling_fee' => 100
                             ])
                     )
             );
@@ -191,6 +194,7 @@ class ShippingMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
                         (new Rule())
                             ->setName('old name')
                             ->setSortOrder(0)
+                            ->setEnabled(false)
                     )
                     ->setCurrency('EUR')
             ],

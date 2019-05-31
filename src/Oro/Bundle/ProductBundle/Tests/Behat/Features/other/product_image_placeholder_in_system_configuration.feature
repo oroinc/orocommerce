@@ -1,5 +1,6 @@
 @regression
 @ticket-BB-16135
+@ticket-BB-16669
 @fixture-OroProductBundle:highlighting_new_products.yml
 Feature: Product Image Placeholder in system configuration
   In order to manage product images
@@ -36,6 +37,11 @@ Feature: Product Image Placeholder in system configuration
     And go to System/Configuration
     And follow "Commerce/Design/Theme" on configuration sidebar
     When uncheck "Use default" for "Product Image Placeholder" field
+    And fill "Product Image Placeholder Config" with:
+      | Image | tiger.svg |
+    And save form
+    Then I should see "Product Image Placeholder Config" validation errors:
+      | Image | This file is not a valid image. |
     And fill "Product Image Placeholder Config" with:
       | Image | cat1.jpg |
     And save form

@@ -25,7 +25,6 @@ Feature: Product import validation
       | default_family       | Product 2           | PSKU2 | enabled | simple | in_stock            | set                            | 1                              | valid-slug                   |
       | default_family       | Product 3           | PSKU3 | enabled | simple | in_stock            | set                            | 1                              |                              |
 
-  @skipWait
   Scenario: Check import error page from the email after validating import file
     Given I validate file
     Then Email should contains the following "Errors: 1 processed: 2, read: 3" text
@@ -42,7 +41,6 @@ Feature: Product import validation
       | default_family       | Product 2           | Product 2 Ukr         | PSKU2 | enabled | simple | in_stock            | set                            | 1                              | valid-slug                   |
       | default_family       | Product 3           | Product 3 Ukr         | PSKU3 | enabled | simple | in_stock            | set                            | 1                              |                              |
 
-  @skipWait
   Scenario: Check import error page from the email after importing file
     Given I import file
     Then Email should contains the following "Errors: 1 processed: 2, read: 3" text

@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CheckoutBundle\Tests\Behat\Context;
 
 use Behat\Gherkin\Node\TableNode;
+use Behat\Mink\Element\NodeElement;
 use Behat\Symfony2Extension\Context\KernelAwareContext;
 use Behat\Symfony2Extension\Context\KernelDictionary;
 use Oro\Bundle\CheckoutBundle\Tests\Behat\Element\CheckoutStep;
@@ -50,13 +51,19 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     public function selectValueOnCheckoutStepAndPressButton($value, $step, $button)
     {
         $this->assertTitle($step);
-
         $page = $this->getSession()->getPage();
         $page->selectFieldOption(self::$formMapping[$step], $value);
 
-        $this->waitContinueButton();
+        /** @var NodeElement $element */
+        $element = $this->spin(function () use ($page, $button) {
+            $element = $page->findButton($button);
 
-        $page->pressButton($button);
+            return $element->isVisible() && null === $element->getAttribute('disabled') ? $element : false;
+        }, 5);
+
+        self::assertNotNull($element, sprintf('Button "%s" not found', $button));
+
+        $element->press();
         $this->waitForAjax();
     }
 
@@ -71,12 +78,18 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     {
         $this->assertTitle($step);
         $this->checkValueOnCheckoutPage($value);
-
         $page = $this->getSession()->getPage();
 
-        $this->waitContinueButton();
+        /** @var NodeElement $element */
+        $element = $this->spin(function () use ($page, $button) {
+            $element = $page->findButton($button);
 
-        $page->pressButton($button);
+            return $element->isVisible() && null === $element->getAttribute('disabled') ? $element : false;
+        }, 5);
+
+        self::assertNotNull($element, sprintf('Button "%s" not found', $button));
+
+        $element->press();
         $this->waitForAjax();
     }
 
@@ -285,11 +298,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     public function iWaitSubmitOrderButton()
     {
         $this->getSession()->getDriver()->wait(30000, "0 == $('button.checkout__submit-btn:disabled').length");
-    }
-
-    private function waitContinueButton()
-    {
-        $this->getSession()->getDriver()->wait(30000, "0 == $('button.checkout-form__submit:disabled').length");
     }
 
     /**

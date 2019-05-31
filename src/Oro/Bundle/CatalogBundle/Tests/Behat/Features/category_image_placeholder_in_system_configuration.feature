@@ -1,10 +1,11 @@
 @regression
 @ticket-BB-16135
+@ticket-BB-16669
 @fixture-OroProductBundle:highlighting_new_products.yml
 Feature: Category Image Placeholder in system configuration
   In order to manage category images
   As an Administrator
-  I want to be able to to override the default placeholder for category image in the system configuration
+  I want to be able to override the default placeholder for category image in the system configuration
 
   Scenario: Feature Background
     Given sessions active:
@@ -24,6 +25,11 @@ Feature: Category Image Placeholder in system configuration
     And go to System/Configuration
     And follow "Commerce/Design/Theme" on configuration sidebar
     When uncheck "Use default" for "Category Image Placeholder" field
+    And fill "Category Image Placeholder Config" with:
+      | Image | tiger.svg |
+    And save form
+    Then I should see "Category Image Placeholder Config" validation errors:
+      | Image | This file is not a valid image. |
     And fill "Category Image Placeholder Config" with:
       | Image | cat1.jpg |
     And save form
