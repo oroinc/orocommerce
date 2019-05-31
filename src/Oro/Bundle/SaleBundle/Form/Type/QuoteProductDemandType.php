@@ -16,6 +16,9 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
+/**
+ * Quote product quote demand type which represents all data related to quote demand
+ */
 class QuoteProductDemandType extends AbstractType
 {
     const NAME = 'oro_sale_quote_product_demand';
@@ -113,7 +116,7 @@ class QuoteProductDemandType extends AbstractType
         $quantityView = $view->children[self::FIELD_QUANTITY];
         $quantityView->vars['attr']['data-validation'] = json_encode(
             array_merge(
-                ['AllowedQuoteDemandQuantity' => []],
+                ['AllowedQuoteDemandQuantity' => [['message' => null ]] ],
                 json_decode($quantityView->vars['attr']['data-validation'], true)
             )
         );

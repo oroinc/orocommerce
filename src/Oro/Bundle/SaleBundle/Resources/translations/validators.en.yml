@@ -13,7 +13,7 @@ oro:
         quoteproductoffer:
             configurable:
                 offer:
-                    blank: 'Please enter valid quantity'
+                    blank: 'Please enter valid quantity according to the offer options'
                 quantity:
                     equal: 'Quantity should be equal to offered quantity'
                     less: 'Quantity should be greater than or equal to offered quantity'

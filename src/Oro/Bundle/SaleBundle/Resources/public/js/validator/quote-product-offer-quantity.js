@@ -4,7 +4,7 @@ define([
     'use strict';
 
     var defaultParam = {
-        blankOfferMessage: 'Please enter valid quantity'
+        blankOfferMessage: 'oro.sale.quoteproductoffer.configurable.offer.blank'
     };
 
     return [

@@ -21,7 +21,8 @@ define(function(require) {
                 unit: 'unit',
                 formatted_unit: 'formatted-unit',
                 quantity: 'quantity',
-                price: 'price'
+                price: 'price',
+                allow_increment: 'allow-increment'
             },
             matchOfferRoute: 'oro_sale_quote_frontend_quote_product_match_offer',
             quoteProductId: null,
@@ -163,10 +164,18 @@ define(function(require) {
         setValidAttribute: function(field, value) {
             var $field = $(field);
             $field.data('valid', value);
+            $field.attr('data-valid', value.toString());
             $field.valid();
         },
 
         addQuantityEvents: function() {
+            var disableFixedQuoteQuantityChange = Boolean(_.reduce(this.$offerSelector, function(disable, element) {
+                return disable &= !$(element).data(this.options.data_attributes.allow_increment);
+            }, true, this));
+
+            this.$quantity.prop('readonly', disableFixedQuoteQuantityChange);
+            this.$quantity.toggleClass('disabled', disableFixedQuoteQuantityChange);
+
             this.$quantity.on('change', _.bind(function() {
                 if (!this.quantityEventsEnabled) {
                     return;
