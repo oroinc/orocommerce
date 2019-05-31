@@ -65,6 +65,7 @@ class ProductVariantLinksTypeTest extends FormIntegrationTestCase
         $this->assertEquals($this->defaultData, $form->getData());
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());
+        $this->assertTrue($form->isSynchronized());
 
         $this->assertEquals($expectedData, $form->getData());
     }

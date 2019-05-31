@@ -78,6 +78,7 @@ class QuickAddTypeTest extends FormIntegrationTestCase
         $this->assertEquals($products, $collectionProducts);
 
         $this->assertTrue($form->isValid());
+        $this->assertTrue($form->isSynchronized());
         $this->assertEquals($expectedData, $form->getData());
     }
 
@@ -119,6 +120,7 @@ class QuickAddTypeTest extends FormIntegrationTestCase
         $form = $this->factory->create(QuickAddType::class);
         $form->submit([]);
         $this->assertFalse($form->isValid());
+        $this->assertTrue($form->isSynchronized());
     }
 
     public function testConfigureOptions()

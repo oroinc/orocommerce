@@ -77,6 +77,7 @@ class SlugWithRedirectTypeTest extends FormIntegrationTestCase
         $this->assertEquals($defaultData, $form->getData());
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());
+        $this->assertTrue($form->isSynchronized());
 
         /** @var TextSlugPrototypeWithRedirect $data */
         $data = $form->getData();

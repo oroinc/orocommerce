@@ -65,6 +65,7 @@ class ZipCodeTypeTest extends FormIntegrationTestCase
 
         $form->submit($submittedData);
         $this->assertEquals($valid, $form->isValid());
+        $this->assertTrue($form->isSynchronized());
         $this->assertEquals($expectedData, $form->getData());
     }
 

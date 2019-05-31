@@ -116,6 +116,7 @@ class PriceListTypeTest extends FormIntegrationTestCase
 
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());
+        $this->assertTrue($form->isSynchronized());
 
         /** @var PriceList $result */
         $result = $form->getData();

@@ -44,6 +44,7 @@ class FlatRateOptionsTypeTest extends FormIntegrationTestCase
         $form->submit($data);
 
         $this->assertTrue($form->isValid());
+        $this->assertTrue($form->isSynchronized());
         $this->assertEquals($data, $form->getData());
     }
 
@@ -63,6 +64,7 @@ class FlatRateOptionsTypeTest extends FormIntegrationTestCase
         $form->submit($data);
 
         $this->assertTrue($form->isValid());
+        $this->assertTrue($form->isSynchronized());
         $this->assertEquals($data, $form->getData());
     }
 

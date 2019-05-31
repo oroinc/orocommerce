@@ -104,6 +104,7 @@ class LineItemTypeTest extends AbstractFormIntegrationTestCase
 
         $this->assertEmpty($form->getErrors(true)->count());
         $this->assertTrue($form->isValid());
+        $this->assertTrue($form->isSynchronized());
         $this->assertEquals($expectedData, $form->getData());
     }
 

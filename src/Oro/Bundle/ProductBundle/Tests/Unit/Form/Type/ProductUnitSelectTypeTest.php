@@ -85,6 +85,7 @@ class ProductUnitSelectTypeTest extends FormIntegrationTestCase
 
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());
+        $this->assertTrue($form->isSynchronized());
 
         /** @var ProductUnit $data */
         $data = $form->getData();

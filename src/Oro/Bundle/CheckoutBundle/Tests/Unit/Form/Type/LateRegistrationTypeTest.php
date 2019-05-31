@@ -62,6 +62,7 @@ class LateRegistrationTypeTest extends FormIntegrationTestCase
 
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());
+        $this->assertTrue($form->isSynchronized());
 
         $formData = $form->getData();
         $submittedData['password'] = 'Q1foobar';

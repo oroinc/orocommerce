@@ -139,6 +139,7 @@ class CustomerFormExtensionTest extends FormIntegrationTestCase
         $form->submit([AbstractPriceListCollectionAwareListener::PRICE_LISTS_COLLECTION_FORM_FIELD_NAME => $submitted]);
         $data = $form->get(CustomerListener::PRICE_LISTS_COLLECTION_FORM_FIELD_NAME)->getData();
         $this->assertTrue($form->isValid());
+        $this->assertTrue($form->isSynchronized());
         $this->assertEquals($expected, $data);
     }
 

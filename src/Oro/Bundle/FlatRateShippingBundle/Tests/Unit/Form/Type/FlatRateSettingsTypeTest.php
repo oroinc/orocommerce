@@ -115,6 +115,7 @@ class FlatRateSettingsTypeTest extends FormIntegrationTestCase
                 'Label 1'
             ));
         $this->assertTrue($form->isValid());
+        $this->assertTrue($form->isSynchronized());
         $this->assertEquals($expected, $form->getData());
     }
 

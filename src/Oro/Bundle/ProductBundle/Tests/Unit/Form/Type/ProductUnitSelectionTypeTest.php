@@ -258,6 +258,7 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
         $this->assertNull($form->getData());
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());
+        $this->assertTrue($form->isSynchronized());
         $this->assertEquals($submittedData, $form->getData());
     }
 

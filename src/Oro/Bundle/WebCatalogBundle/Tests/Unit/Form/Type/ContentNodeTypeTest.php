@@ -169,6 +169,7 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
         );
         $this->assertEquals([], $errors);
         $this->assertTrue($form->isValid());
+        $this->assertTrue($form->isSynchronized());
 
         /** @var ContentNode $data */
         $data = $form->getData();

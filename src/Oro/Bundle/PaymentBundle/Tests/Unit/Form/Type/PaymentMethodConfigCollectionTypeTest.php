@@ -57,6 +57,7 @@ class PaymentMethodConfigCollectionTypeTest extends FormIntegrationTestCase
         $form->submit($submitted);
 
         static::assertTrue($form->isValid());
+        static::assertTrue($form->isSynchronized());
         static::assertEquals($expected, $form->getData());
     }
 

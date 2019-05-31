@@ -37,6 +37,7 @@ class PriceListCollectionTypeTest extends FormIntegrationTestCase
         $form->submit($submitted);
 
         $this->assertTrue($form->isValid());
+        $this->assertTrue($form->isSynchronized());
         $this->assertEquals($expected, $form->getData());
     }
 

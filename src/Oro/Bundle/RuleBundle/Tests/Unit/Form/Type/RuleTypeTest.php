@@ -42,6 +42,7 @@ class RuleTypeTest extends FormIntegrationTestCase
         ;
 
         $this->assertTrue($form->isValid());
+        $this->assertTrue($form->isSynchronized());
         $this->assertEquals($newRule, $form->getData());
     }
 

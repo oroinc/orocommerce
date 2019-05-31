@@ -76,6 +76,7 @@ class InventoryLevelGridTypeTest extends FormIntegrationTestCase
         $form = $this->factory->create(InventoryLevelGridType::class, null, $options);
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());
+        $this->assertTrue($form->isSynchronized());
         $this->assertEquals($expectedData, $form->getData());
     }
 

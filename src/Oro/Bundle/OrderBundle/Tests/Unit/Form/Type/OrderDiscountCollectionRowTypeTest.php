@@ -48,9 +48,8 @@ class OrderDiscountCollectionRowTypeTest extends FormIntegrationTestCase
         $form->submit($submitted);
 
         static::assertTrue($form->isValid());
-        if ($form->isValid()) {
-            static::assertEquals($expected, $form->getData());
-        }
+        static::assertTrue($form->isSynchronized());
+        static::assertEquals($expected, $form->getData());
     }
 
     /**

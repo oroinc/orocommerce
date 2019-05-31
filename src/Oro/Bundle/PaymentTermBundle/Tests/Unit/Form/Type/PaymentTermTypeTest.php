@@ -58,6 +58,7 @@ class PaymentTermTypeTest extends FormIntegrationTestCase
 
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());
+        $this->assertTrue($form->isSynchronized());
 
         /** @var PaymentTerm $result */
         $result = $form->getData();

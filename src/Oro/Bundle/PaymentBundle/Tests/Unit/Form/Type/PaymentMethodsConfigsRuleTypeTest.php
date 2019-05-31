@@ -96,6 +96,7 @@ class PaymentMethodsConfigsRuleTypeTest extends AddressFormExtensionTestCase
         ]);
 
         $this->assertTrue($form->isValid());
+        $this->assertTrue($form->isSynchronized());
         $this->assertEquals(
             (new PaymentMethodsConfigsRule())
                 ->setCurrency('USD')

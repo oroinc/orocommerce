@@ -77,6 +77,7 @@ class PriceRuleTypeTest extends FormIntegrationTestCase
             ->setProductUnit((new ProductUnit())->setCode('item'));
 
         $this->assertTrue($form->isValid());
+        $this->assertTrue($form->isSynchronized());
         $this->assertEquals($expected, $form->getData());
     }
 }

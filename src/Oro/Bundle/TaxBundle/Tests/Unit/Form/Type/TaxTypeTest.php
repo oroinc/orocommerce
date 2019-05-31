@@ -91,6 +91,7 @@ class TaxTypeTest extends FormIntegrationTestCase
 
         $form->submit($submittedData);
         $this->assertEquals($isValid, $form->isValid());
+        $this->assertTrue($form->isSynchronized());
 
         foreach ($expectedData as $field => $data) {
             $this->assertTrue($form->has($field));

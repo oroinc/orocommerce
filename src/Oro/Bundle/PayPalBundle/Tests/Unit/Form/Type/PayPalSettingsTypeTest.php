@@ -130,6 +130,7 @@ class PayPalSettingsTypeTest extends FormIntegrationTestCase
         $form->submit($submitData);
 
         static::assertTrue($form->isValid());
+        static::assertTrue($form->isSynchronized());
         static::assertEquals($payPalSettings, $form->getData());
     }
 

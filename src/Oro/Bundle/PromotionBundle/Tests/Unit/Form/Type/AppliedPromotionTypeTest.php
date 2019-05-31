@@ -28,6 +28,7 @@ class AppliedPromotionTypeTest extends FormIntegrationTestCase
         $form = $this->factory->create(AppliedPromotionType::class, $defaultData);
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());
+        $this->assertTrue($form->isSynchronized());
 
         $this->assertEquals($expectedData, $form->getData());
     }

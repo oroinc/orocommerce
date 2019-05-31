@@ -106,6 +106,7 @@ class ContentBlockTypeTest extends FormIntegrationTestCase
         $form->submit($submittedData);
 
         $this->assertEquals($isValid, $form->isValid());
+        $this->assertTrue($form->isSynchronized());
 
         if ($isValid) {
             $this->assertEquals($expectedData, $form->getData());

@@ -139,6 +139,7 @@ class FrontendLineItemWidgetTypeTest extends AbstractFormIntegrationTestCase
 
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());
+        $this->assertTrue($form->isSynchronized());
         $this->assertEquals($expectedData, $form->getData());
         $this->assertEquals($expectedShoppingList, $form->get('shoppingList')->getData());
     }

@@ -45,6 +45,7 @@ class MoneyOrderSettingsTypeTest extends FormIntegrationTestCase
         $form->submit($submitData);
 
         $this->assertTrue($form->isValid());
+        $this->assertTrue($form->isSynchronized());
         $this->assertEquals($settings, $form->getData());
     }
 

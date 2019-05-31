@@ -121,6 +121,7 @@ abstract class AbstractShippingOptionSelectTypeTest extends FormIntegrationTestC
         $form->submit($submittedData);
 
         $this->assertTrue($form->isValid());
+        $this->assertTrue($form->isSynchronized());
         $this->assertEquals($expectedData, $form->getData());
     }
 

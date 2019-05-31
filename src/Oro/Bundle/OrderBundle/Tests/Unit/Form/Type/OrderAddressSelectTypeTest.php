@@ -157,6 +157,7 @@ class OrderAddressSelectTypeTest extends FormIntegrationTestCase
 
         $form->submit($key);
         $this->assertTrue($form->isValid());
+        $this->assertTrue($form->isSynchronized());
 
         $this->assertEquals($orderAddress, $form->getData());
     }

@@ -36,6 +36,7 @@ class ProductAttributePriceTypeTest extends FormIntegrationTestCase
 
         $form->submit([ProductAttributePriceType::PRICE => '500']);
         $this->assertTrue($form->isValid());
+        $this->assertTrue($form->isSynchronized());
     }
 
     public function testSubmittedDataMapping()
@@ -58,6 +59,7 @@ class ProductAttributePriceTypeTest extends FormIntegrationTestCase
 
         $form->submit([ProductAttributePriceType::PRICE => '500.1234']);
         $this->assertTrue($form->isValid());
+        $this->assertTrue($form->isSynchronized());
         $this->assertEquals('500.1234', $form->get(ProductAttributePriceType::PRICE)->getData());
     }
 }

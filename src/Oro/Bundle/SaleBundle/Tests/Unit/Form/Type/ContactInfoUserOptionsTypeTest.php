@@ -99,6 +99,7 @@ class ContactInfoUserOptionsTypeTest extends FormIntegrationTestCase
         static::assertEquals($expectedOptions['choices'], $form->createView()->vars['choices']);
         $form->submit($submittedData);
         static::assertTrue($form->isValid());
+        static::assertTrue($form->isSynchronized());
         static::assertEquals($submittedData, $form->getData());
 
         return $form;

@@ -49,6 +49,7 @@ class QuantityTypeTest extends FormIntegrationTestCase
         $this->assertEquals($expectedBefore, $form->getData());
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());
+        $this->assertTrue($form->isSynchronized());
         $this->assertEquals($expectedAfter, $form->getData());
     }
 
@@ -134,6 +135,7 @@ class QuantityTypeTest extends FormIntegrationTestCase
         $form = $this->factory->create(QuantityParentTypeStub::class);
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());
+        $this->assertTrue($form->isSynchronized());
         $this->assertEquals($expectedData, $form->getData());
     }
 
@@ -237,6 +239,7 @@ class QuantityTypeTest extends FormIntegrationTestCase
         $form = $this->factory->create(QuantityParentTypeStub::class);
         $form->submit(['productField' => 4]);
         $this->assertFalse($form->isValid());
+        $this->assertTrue($form->isSynchronized());
         $this->assertCount(1, $form->get('productField')->getErrors());
         $this->assertNull($form->get('productUnitField')->getData());
         $this->assertNull($form->get('quantityField')->getData());
@@ -250,6 +253,7 @@ class QuantityTypeTest extends FormIntegrationTestCase
         $form = $this->factory->create(QuantityParentTypeStub::class);
         $form->submit(['productField' => 2, 'productUnitField' => 'missing']);
         $this->assertFalse($form->isValid());
+        $this->assertTrue($form->isSynchronized());
         $this->assertCount(1, $form->get('productUnitField')->getErrors());
         $this->assertEquals(
             $this->getEntity('Oro\Bundle\ProductBundle\Entity\Product', ['id' => 2]),

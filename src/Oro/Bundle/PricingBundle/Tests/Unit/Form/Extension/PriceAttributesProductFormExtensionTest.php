@@ -91,6 +91,7 @@ class PriceAttributesProductFormExtensionTest extends FormIntegrationTestCase
 
         $form->submit([]);
         $this->assertTrue($form->isValid());
+        $this->assertTrue($form->isSynchronized());
     }
 
     public function testDataAddedOnPostSetData()

@@ -116,6 +116,7 @@ class BrandTypeTest extends WebTestCase
         $form = $this->formFactory->create(BrandType::class, new Brand());
         $form->submit($submitData);
         $this->assertTrue($form->isValid());
+        $this->assertTrue($form->isSynchronized());
 
         /** @var Brand $brand */
         $brand = $form->getData();

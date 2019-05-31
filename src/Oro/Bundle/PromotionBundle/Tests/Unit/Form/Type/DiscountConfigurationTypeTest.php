@@ -46,6 +46,7 @@ class DiscountConfigurationTypeTest extends FormIntegrationTestCase
 
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());
+        $this->assertTrue($form->isSynchronized());
 
         $result = $form->getData();
         $this->assertEquals($expectedData, $result);

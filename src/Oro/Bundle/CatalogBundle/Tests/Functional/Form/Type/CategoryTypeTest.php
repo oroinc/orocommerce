@@ -113,6 +113,7 @@ class CategoryTypeTest extends WebTestCase
         $form = $this->formFactory->create(CategoryType::class, new Category());
         $form->submit($submitData);
         $this->assertTrue($form->isValid());
+        $this->assertTrue($form->isSynchronized());
 
         // assert category entity
         /** @var Category $category */
@@ -180,6 +181,7 @@ class CategoryTypeTest extends WebTestCase
         $form = $this->formFactory->create(CategoryType::class, new Category());
         $form->submit($submitData);
         $this->assertFalse($form->isValid());
+        $this->assertTrue($form->isSynchronized());
         $this->assertStringStartsWith('inventoryThreshold', (string)$form->getErrors(true, false));
 
         $this->assertEquals(

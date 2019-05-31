@@ -64,6 +64,7 @@ class PaymentMethodConfigTypeTest extends FormIntegrationTestCase
             ->setOptions(['client_id' => 3]);
 
         $this->assertTrue($form->isValid());
+        $this->assertTrue($form->isSynchronized());
         $this->assertEquals($paymentMethodConfig, $form->getData());
     }
 

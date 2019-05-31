@@ -24,7 +24,8 @@ class MatrixCollectionTypeTest extends FormIntegrationTestCase
     {
         $form = $this->factory->create(MatrixCollectionType::class, $defaultData);
         $form->submit($submittedData);
-        $this->assertEquals(true, $form->isValid());
+        $this->assertTrue($form->isValid());
+        $this->assertTrue($form->isSynchronized());
         $this->assertEquals($expectedData, $form->getData());
     }
 

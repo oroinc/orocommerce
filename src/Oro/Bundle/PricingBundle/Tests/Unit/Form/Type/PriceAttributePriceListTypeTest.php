@@ -66,6 +66,7 @@ class PriceAttributePriceListTypeTest extends FormIntegrationTestCase
 
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());
+        $this->assertTrue($form->isSynchronized());
 
         /** @var PriceAttributePriceList $result */
         $result = $form->getData();
@@ -107,6 +108,7 @@ class PriceAttributePriceListTypeTest extends FormIntegrationTestCase
 
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());
+        $this->assertTrue($form->isSynchronized());
 
         /** @var PriceAttributePriceList $result */
         $result = $form->getData();

@@ -77,9 +77,8 @@ class ShippingMethodsConfigsRuleDestinationTypeTest extends AddressFormExtension
             'postalCodes' => 'code3, code4',
         ]);
 
-        $form->isValid();
-
         $this->assertTrue($form->isValid());
+        $this->assertTrue($form->isSynchronized());
 
         /** @var ShippingMethodsConfigsRuleDestination $actual */
         $actual = $form->getData();

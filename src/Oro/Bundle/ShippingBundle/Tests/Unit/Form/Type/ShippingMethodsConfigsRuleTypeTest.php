@@ -178,6 +178,7 @@ class ShippingMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
             );
 
         $this->assertTrue($form->isValid());
+        $this->assertTrue($form->isSynchronized());
         $this->assertEquals($shippingRule, $form->getData());
     }
 

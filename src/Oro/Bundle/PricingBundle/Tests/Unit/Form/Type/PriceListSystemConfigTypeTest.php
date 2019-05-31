@@ -110,6 +110,7 @@ class PriceListSystemConfigTypeTest extends FormIntegrationTestCase
             ]
         );
         $this->assertTrue($form->isValid());
+        $this->assertTrue($form->isSynchronized());
 
         $this->assertEquals($this->testPriceListConfigs, $form->getData());
     }

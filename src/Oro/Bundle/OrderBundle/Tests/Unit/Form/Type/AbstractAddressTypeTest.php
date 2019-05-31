@@ -30,6 +30,7 @@ abstract class AbstractAddressTypeTest extends AddressFormExtensionTestCase
         $form->submit($submittedData);
 
         $this->assertEquals($isValid, $form->isValid());
+        $this->assertTrue($form->isSynchronized());
 
         if ($form->getErrors(true)->count()) {
             $this->assertNotEmpty($formErrors);

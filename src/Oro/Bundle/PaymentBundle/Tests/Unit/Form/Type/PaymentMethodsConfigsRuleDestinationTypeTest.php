@@ -79,9 +79,8 @@ class PaymentMethodsConfigsRuleDestinationTypeTest extends AddressFormExtensionT
             'postalCodes' => 'code3, code4',
         ]);
 
-        $form->isValid();
-
         $this->assertTrue($form->isValid());
+        $this->assertTrue($form->isSynchronized());
 
         /** @var PaymentMethodsConfigsRuleDestination $actual */
         $actual = $form->getData();

@@ -74,6 +74,7 @@ class CouponTypeTest extends FormIntegrationTestCase
         $form = $this->factory->create(CouponType::class);
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());
+        $this->assertTrue($form->isSynchronized());
 
         /** @var Coupon $data */
         $data = $form->getData();

@@ -39,6 +39,7 @@ class PaymentMethodsConfigsRuleDestinationCollectionTypeTest extends AddressForm
         $form->submit($submitted);
 
         static::assertTrue($form->isValid());
+        static::assertTrue($form->isSynchronized());
         static::assertEquals($expected, $form->getData());
     }
 

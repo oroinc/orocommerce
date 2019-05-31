@@ -178,6 +178,7 @@ class ProductCustomVariantFieldsCollectionTypeTest extends FormIntegrationTestCa
         $this->assertEquals($this->emptyFieldsValues, $form->getData());
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());
+        $this->assertTrue($form->isSynchronized());
         $this->assertEquals($expectedData, $form->getData());
     }
 

@@ -153,6 +153,7 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
         $form->submit($submittedData);
         $this->assertCount(0, $form->getErrors(true, true));
         $this->assertTrue($form->isValid());
+        $this->assertTrue($form->isSynchronized());
 
         $this->assertEquals($expectedData, $form->getData());
     }
@@ -257,6 +258,7 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
         $errors = $form->getErrors(true, true);
         $this->assertCount(1, $errors);
         $this->assertFalse($form->isValid());
+        $this->assertTrue($form->isSynchronized());
         $error = $errors->current();
         $this->assertEquals('This value is not valid.', $error->getMessage());
         $this->assertEquals(['{{ value }}' => 'CAD'], $error->getMessageParameters());
