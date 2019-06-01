@@ -18,6 +18,9 @@ services:
             - [addSkippedUrlPattern, ['%oro_api.rest.prefix%']]
             - [addSkippedUrlPattern, ['/media/']]
 
+    Oro\Bundle\RedirectBundle\Routing\MatchedUrlDecisionMaker:
+        alias: oro_redirect.routing.matched_url_decision_maker
+
     oro_redirect.routing.slug_url_matcher:
         class: Oro\Bundle\RedirectBundle\Routing\SlugUrlMatcher
         arguments:
@@ -30,7 +33,7 @@ services:
         tags:
             - { name: container.hot_path }
 
-    oro_redirect.routing.slug_url_mathcer:
+    Oro\Bundle\RedirectBundle\Routing\SlugUrlMatcher:
         alias: oro_redirect.routing.slug_url_matcher
 
     oro_redirect.slug.manager:
@@ -261,6 +264,9 @@ services:
         tags:
             - { name: container.hot_path }
 
+    Oro\Bundle\RedirectBundle\Routing\SluggableUrlGenerator:
+        alias: oro_redirect.routing.sluggable_url_generator
+
     oro_redirect.provider.sluggable_url_cache:
         public: false
         class: 'Oro\Bundle\RedirectBundle\Provider\SluggableUrlCacheAwareProvider'
@@ -290,14 +296,16 @@ services:
 
     oro_redirect.routing.router:
         class: Oro\Bundle\RedirectBundle\Routing\Router
+        public: true
         parent: router.default
         decorates: router
         calls:
-            - [ 'setMatchedUrlDecisionMaker', ['@oro_redirect.routing.matched_url_decision_maker'] ]
-            - [ 'setContainer', ['@service_container'] ]
+            - [ 'setContainer', ['@Psr\Container\ContainerInterface'] ]
         tags:
+            - { name: 'container.service_subscriber' }
+            - { name: 'container.service_subscriber', id: 'routing.loader' }
             - { name: 'monolog.logger', channel: 'router' }
-            - { name: container.hot_path }
+            - { name: 'container.hot_path' }
 
     oro_redirect.slug_url.cache.persistent:
         class: Oro\Bundle\CacheBundle\Provider\PhpFileCache

@@ -35,7 +35,6 @@ class RouterTest extends \PHPUnit\Framework\TestCase
         $this->urlDecisionMaker = $this->createMock(MatchedUrlDecisionMaker::class);
 
         $this->router = new Router($this->container, 'some_resource');
-        $this->router->setMatchedUrlDecisionMaker($this->urlDecisionMaker);
         $this->router->setContainer($this->container);
     }
 
@@ -46,10 +45,16 @@ class RouterTest extends \PHPUnit\Framework\TestCase
             ->method('matches')
             ->willReturn(false);
 
-        $this->container->expects($this->once())
+        $this->container->expects($this->exactly(2))
             ->method('get')
-            ->with('routing.loader')
-            ->willReturn($this->getLoaderMock());
+            ->withConsecutive(
+                [MatchedUrlDecisionMaker::class],
+                ['routing.loader']
+            )
+            ->willReturn(
+                $this->urlDecisionMaker,
+                $this->getLoaderMock()
+            );
 
         $matcher = $this->router->getMatcher();
         $this->assertInstanceOf(UrlMatcherInterface::class, $matcher);
@@ -71,13 +76,15 @@ class RouterTest extends \PHPUnit\Framework\TestCase
             ->method('setBaseMatcher')
             ->with($this->isInstanceOf(UrlMatcherInterface::class));
 
-        $this->container->expects($this->exactly(2))
+        $this->container->expects($this->exactly(3))
             ->method('get')
             ->withConsecutive(
-                ['oro_redirect.routing.slug_url_matcher'],
+                [MatchedUrlDecisionMaker::class],
+                [SlugUrlMatcher::class],
                 ['routing.loader']
             )
             ->willReturnOnConsecutiveCalls(
+                $this->urlDecisionMaker,
                 $slugUrlMatcher,
                 $this->getLoaderMock()
             );
@@ -93,10 +100,17 @@ class RouterTest extends \PHPUnit\Framework\TestCase
             ->method('matches')
             ->willReturn(false);
 
-        $this->container->expects($this->once())
+        $this->container->expects($this->exactly(2))
             ->method('get')
-            ->with('routing.loader')
-            ->willReturn($this->getLoaderMock());
+            ->withConsecutive(
+                [MatchedUrlDecisionMaker::class],
+                ['routing.loader']
+            )
+            ->willReturn(
+                $this->urlDecisionMaker,
+                $this->getLoaderMock()
+            );
+
 
         $generator = $this->router->getGenerator();
 
@@ -119,13 +133,15 @@ class RouterTest extends \PHPUnit\Framework\TestCase
             ->method('setBaseGenerator')
             ->with($this->isInstanceOf(UrlGeneratorInterface::class));
 
-        $this->container->expects($this->exactly(2))
+        $this->container->expects($this->exactly(3))
             ->method('get')
             ->withConsecutive(
-                ['oro_redirect.routing.sluggable_url_generator'],
+                [MatchedUrlDecisionMaker::class],
+                [SluggableUrlGenerator::class],
                 ['routing.loader']
             )
             ->willReturnOnConsecutiveCalls(
+                $this->urlDecisionMaker,
                 $sluggableUrlGenerator,
                 $this->getLoaderMock()
             );
