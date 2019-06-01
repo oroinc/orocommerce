@@ -148,36 +148,48 @@ class OrderForBuyerTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testGetSubresourceForLineItemsOfOrderForChildCustomer()
+    public function testTryToGetSubresourceForLineItemsOfOrderForChildCustomer()
     {
         $response = $this->getSubresource(
-            ['entity' => 'orders', 'id' => '<toString(@order3->id)>', 'association' => 'lineItems']
+            ['entity' => 'orders', 'id' => '<toString(@order3->id)>', 'association' => 'lineItems'],
+            [],
+            [],
+            false
         );
-        $this->assertResponseContains(['data' => []], $response);
+        self::assertResponseStatusCodeEquals($response, Response::HTTP_NOT_FOUND);
     }
 
-    public function testGetRelationshipForLineItemsOfOrderForChildCustomer()
+    public function testTryToGetRelationshipForLineItemsOfOrderForChildCustomer()
     {
         $response = $this->getRelationship(
-            ['entity' => 'orders', 'id' => '<toString(@order3->id)>', 'association' => 'lineItems']
+            ['entity' => 'orders', 'id' => '<toString(@order3->id)>', 'association' => 'lineItems'],
+            [],
+            [],
+            false
         );
-        $this->assertResponseContains(['data' => []], $response);
+        self::assertResponseStatusCodeEquals($response, Response::HTTP_NOT_FOUND);
     }
 
     public function testTryToGetSubresourceForLineItemsOfOrderForCustomerFromAnotherDepartment()
     {
         $response = $this->getSubresource(
-            ['entity' => 'orders', 'id' => '<toString(@another_order->id)>', 'association' => 'lineItems']
+            ['entity' => 'orders', 'id' => '<toString(@another_order->id)>', 'association' => 'lineItems'],
+            [],
+            [],
+            false
         );
-        $this->assertResponseContains(['data' => []], $response);
+        self::assertResponseStatusCodeEquals($response, Response::HTTP_NOT_FOUND);
     }
 
     public function testTryToGetRelationshipForLineItemsOfOrderForCustomerFromAnotherDepartment()
     {
         $response = $this->getRelationship(
-            ['entity' => 'orders', 'id' => '<toString(@another_order->id)>', 'association' => 'lineItems']
+            ['entity' => 'orders', 'id' => '<toString(@another_order->id)>', 'association' => 'lineItems'],
+            [],
+            [],
+            false
         );
-        $this->assertResponseContains(['data' => []], $response);
+        self::assertResponseStatusCodeEquals($response, Response::HTTP_NOT_FOUND);
     }
 
     public function testTryToUpdateRelationshipForLineItems()
@@ -235,36 +247,48 @@ class OrderForBuyerTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testGetSubresourceForCustomerOfOrderForChildCustomer()
+    public function testTryToGetSubresourceForCustomerOfOrderForChildCustomer()
     {
         $response = $this->getSubresource(
-            ['entity' => 'orders', 'id' => '<toString(@order3->id)>', 'association' => 'customer']
+            ['entity' => 'orders', 'id' => '<toString(@order3->id)>', 'association' => 'customer'],
+            [],
+            [],
+            false
         );
-        $this->assertResponseContains(['data' => null], $response);
+        self::assertResponseStatusCodeEquals($response, Response::HTTP_NOT_FOUND);
     }
 
-    public function testGetRelationshipForCustomerOfOrderForChildCustomer()
+    public function testTryToGetRelationshipForCustomerOfOrderForChildCustomer()
     {
         $response = $this->getRelationship(
-            ['entity' => 'orders', 'id' => '<toString(@order3->id)>', 'association' => 'customer']
+            ['entity' => 'orders', 'id' => '<toString(@order3->id)>', 'association' => 'customer'],
+            [],
+            [],
+            false
         );
-        $this->assertResponseContains(['data' => null], $response);
+        self::assertResponseStatusCodeEquals($response, Response::HTTP_NOT_FOUND);
     }
 
     public function testTryToGetSubresourceForCustomerOfOrderForCustomerFromAnotherDepartment()
     {
         $response = $this->getSubresource(
-            ['entity' => 'orders', 'id' => '<toString(@another_order->id)>', 'association' => 'customer']
+            ['entity' => 'orders', 'id' => '<toString(@another_order->id)>', 'association' => 'customer'],
+            [],
+            [],
+            false
         );
-        $this->assertResponseContains(['data' => null], $response);
+        self::assertResponseStatusCodeEquals($response, Response::HTTP_NOT_FOUND);
     }
 
     public function testTryToGetRelationshipForCustomerOfOrderForCustomerFromAnotherDepartment()
     {
         $response = $this->getRelationship(
-            ['entity' => 'orders', 'id' => '<toString(@another_order->id)>', 'association' => 'customer']
+            ['entity' => 'orders', 'id' => '<toString(@another_order->id)>', 'association' => 'customer'],
+            [],
+            [],
+            false
         );
-        $this->assertResponseContains(['data' => null], $response);
+        self::assertResponseStatusCodeEquals($response, Response::HTTP_NOT_FOUND);
     }
 
     public function testTryToUpdateRelationshipForCustomer()
@@ -300,36 +324,48 @@ class OrderForBuyerTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testGetSubresourceForCustomerUserOfOrderForChildCustomer()
+    public function testTryToGetSubresourceForCustomerUserOfOrderForChildCustomer()
     {
         $response = $this->getSubresource(
-            ['entity' => 'orders', 'id' => '<toString(@order3->id)>', 'association' => 'customerUser']
+            ['entity' => 'orders', 'id' => '<toString(@order3->id)>', 'association' => 'customerUser'],
+            [],
+            [],
+            false
         );
-        $this->assertResponseContains(['data' => null], $response);
+        self::assertResponseStatusCodeEquals($response, Response::HTTP_NOT_FOUND);
     }
 
-    public function testGetRelationshipForCustomerUserOfOrderForChildCustomer()
+    public function testTryToGetRelationshipForCustomerUserOfOrderForChildCustomer()
     {
         $response = $this->getRelationship(
-            ['entity' => 'orders', 'id' => '<toString(@order3->id)>', 'association' => 'customerUser']
+            ['entity' => 'orders', 'id' => '<toString(@order3->id)>', 'association' => 'customerUser'],
+            [],
+            [],
+            false
         );
-        $this->assertResponseContains(['data' => null], $response);
+        self::assertResponseStatusCodeEquals($response, Response::HTTP_NOT_FOUND);
     }
 
     public function testTryToGetSubresourceForCustomerUserOfOrderForCustomerFromAnotherDepartment()
     {
         $response = $this->getSubresource(
-            ['entity' => 'orders', 'id' => '<toString(@another_order->id)>', 'association' => 'customerUser']
+            ['entity' => 'orders', 'id' => '<toString(@another_order->id)>', 'association' => 'customerUser'],
+            [],
+            [],
+            false
         );
-        $this->assertResponseContains(['data' => null], $response);
+        self::assertResponseStatusCodeEquals($response, Response::HTTP_NOT_FOUND);
     }
 
     public function testTryToGetRelationshipForCustomerUserOfOrderForCustomerFromAnotherDepartment()
     {
         $response = $this->getRelationship(
-            ['entity' => 'orders', 'id' => '<toString(@another_order->id)>', 'association' => 'customerUser']
+            ['entity' => 'orders', 'id' => '<toString(@another_order->id)>', 'association' => 'customerUser'],
+            [],
+            [],
+            false
         );
-        $this->assertResponseContains(['data' => null], $response);
+        self::assertResponseStatusCodeEquals($response, Response::HTTP_NOT_FOUND);
     }
 
     public function testTryToUpdateRelationshipForCustomerUser()
@@ -365,36 +401,48 @@ class OrderForBuyerTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testGetSubresourceForBillingAddressOfOrderForChildCustomer()
+    public function testTryToGetSubresourceForBillingAddressOfOrderForChildCustomer()
     {
         $response = $this->getSubresource(
-            ['entity' => 'orders', 'id' => '<toString(@order3->id)>', 'association' => 'billingAddress']
+            ['entity' => 'orders', 'id' => '<toString(@order3->id)>', 'association' => 'billingAddress'],
+            [],
+            [],
+            false
         );
-        $this->assertResponseContains(['data' => null], $response);
+        self::assertResponseStatusCodeEquals($response, Response::HTTP_NOT_FOUND);
     }
 
-    public function testGetRelationshipForBillingAddressOfOrderForChildCustomer()
+    public function testTryToGetRelationshipForBillingAddressOfOrderForChildCustomer()
     {
         $response = $this->getRelationship(
-            ['entity' => 'orders', 'id' => '<toString(@order3->id)>', 'association' => 'billingAddress']
+            ['entity' => 'orders', 'id' => '<toString(@order3->id)>', 'association' => 'billingAddress'],
+            [],
+            [],
+            false
         );
-        $this->assertResponseContains(['data' => null], $response);
+        self::assertResponseStatusCodeEquals($response, Response::HTTP_NOT_FOUND);
     }
 
     public function testTryToGetSubresourceForBillingAddressOfOrderForCustomerFromAnotherDepartment()
     {
         $response = $this->getSubresource(
-            ['entity' => 'orders', 'id' => '<toString(@another_order->id)>', 'association' => 'billingAddress']
+            ['entity' => 'orders', 'id' => '<toString(@another_order->id)>', 'association' => 'billingAddress'],
+            [],
+            [],
+            false
         );
-        $this->assertResponseContains(['data' => null], $response);
+        self::assertResponseStatusCodeEquals($response, Response::HTTP_NOT_FOUND);
     }
 
     public function testTryToGetRelationshipForBillingAddressOfOrderForCustomerFromAnotherDepartment()
     {
         $response = $this->getRelationship(
-            ['entity' => 'orders', 'id' => '<toString(@another_order->id)>', 'association' => 'billingAddress']
+            ['entity' => 'orders', 'id' => '<toString(@another_order->id)>', 'association' => 'billingAddress'],
+            [],
+            [],
+            false
         );
-        $this->assertResponseContains(['data' => null], $response);
+        self::assertResponseStatusCodeEquals($response, Response::HTTP_NOT_FOUND);
     }
 
     public function testTryToUpdateRelationshipForBillingAddress()
@@ -430,36 +478,48 @@ class OrderForBuyerTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testGetSubresourceForShippingAddressOfOrderForChildCustomer()
+    public function testTryToGetSubresourceForShippingAddressOfOrderForChildCustomer()
     {
         $response = $this->getSubresource(
-            ['entity' => 'orders', 'id' => '<toString(@order3->id)>', 'association' => 'shippingAddress']
+            ['entity' => 'orders', 'id' => '<toString(@order3->id)>', 'association' => 'shippingAddress'],
+            [],
+            [],
+            false
         );
-        $this->assertResponseContains(['data' => null], $response);
+        self::assertResponseStatusCodeEquals($response, Response::HTTP_NOT_FOUND);
     }
 
-    public function testGetRelationshipForShippingAddressOfOrderForChildCustomer()
+    public function testTryToGetRelationshipForShippingAddressOfOrderForChildCustomer()
     {
         $response = $this->getRelationship(
-            ['entity' => 'orders', 'id' => '<toString(@order3->id)>', 'association' => 'shippingAddress']
+            ['entity' => 'orders', 'id' => '<toString(@order3->id)>', 'association' => 'shippingAddress'],
+            [],
+            [],
+            false
         );
-        $this->assertResponseContains(['data' => null], $response);
+        self::assertResponseStatusCodeEquals($response, Response::HTTP_NOT_FOUND);
     }
 
     public function testTryToGetSubresourceForShippingAddressOfOrderForCustomerFromAnotherDepartment()
     {
         $response = $this->getSubresource(
-            ['entity' => 'orders', 'id' => '<toString(@another_order->id)>', 'association' => 'shippingAddress']
+            ['entity' => 'orders', 'id' => '<toString(@another_order->id)>', 'association' => 'shippingAddress'],
+            [],
+            [],
+            false
         );
-        $this->assertResponseContains(['data' => null], $response);
+        self::assertResponseStatusCodeEquals($response, Response::HTTP_NOT_FOUND);
     }
 
     public function testTryToGetRelationshipForShippingAddressOfOrderForCustomerFromAnotherDepartment()
     {
         $response = $this->getRelationship(
-            ['entity' => 'orders', 'id' => '<toString(@another_order->id)>', 'association' => 'shippingAddress']
+            ['entity' => 'orders', 'id' => '<toString(@another_order->id)>', 'association' => 'shippingAddress'],
+            [],
+            [],
+            false
         );
-        $this->assertResponseContains(['data' => null], $response);
+        self::assertResponseStatusCodeEquals($response, Response::HTTP_NOT_FOUND);
     }
 
     public function testTryToUpdateRelationshipForShippingAddress()
