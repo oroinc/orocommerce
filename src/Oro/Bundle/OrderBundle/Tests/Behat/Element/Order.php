@@ -9,6 +9,9 @@ use Oro\Bundle\TestFrameworkBundle\Behat\Element\EntityPage;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\Form;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\TableRow;
 
+/**
+ * Base Order element for the frontend usage.
+ */
 class Order extends EntityPage implements LineItemsAwareInterface, SubtotalAwareInterface
 {
     /**
@@ -36,11 +39,14 @@ class Order extends EntityPage implements LineItemsAwareInterface, SubtotalAware
      */
     public function assertPageContainsValue($label, $value)
     {
-        /* @var $rowElement TableRow */
-        $rowElement = $this->findElementContains('TableRow', $label);
-        if (!$rowElement->isIsset()) {
+        $rowColumn = $this->findElementContains('FirstTableRowColumn', $label);
+        if (!$rowColumn->isIsset()) {
             self::fail(sprintf('Can\'t find "%s" label', $label));
         }
+
+        /** @var TableRow $rowElement */
+        $rowElement = $this->elementFactory->wrapElement('TableRow', $rowColumn->getParent());
+
         if ($rowElement->getCellByNumber(1)->getText() === Form::normalizeValue($value)) {
             return;
         }

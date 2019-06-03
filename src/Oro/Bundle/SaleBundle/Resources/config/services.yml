@@ -199,6 +199,12 @@ services:
         arguments:
             - '@doctrine'
 
+    oro_sale.provider.payment_term_decorator:
+        class: Oro\Bundle\SaleBundle\Provider\PaymentTermProviderDecorator
+        decorates: oro_payment_term.provider.payment_term
+        arguments:
+            - '@oro_sale.provider.payment_term_decorator.inner'
+
     oro_sale.event_listener.quote_product:
         class: 'Oro\Bundle\SaleBundle\Entity\Listener\QuoteProductListener'
         arguments: ["@request_stack"]
