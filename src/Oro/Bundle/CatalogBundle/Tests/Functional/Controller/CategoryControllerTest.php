@@ -308,7 +308,7 @@ class CategoryControllerTest extends WebTestCase
 
         $this->client->followRedirects(true);
 
-        /** TODO Change after BAP-1813 */
+        /** Change after BAP-1813 */
         $form->getFormNode()->setAttribute(
             'action',
             $form->getFormNode()->getAttribute('action') . '&_widgetContainer=dialog'
@@ -541,7 +541,7 @@ class CategoryControllerTest extends WebTestCase
         if ($title === self::DEFAULT_SUBCATEGORY_TITLE) {
             $appendProduct = $testProductFour;
         };
-        $crfToken = $this->getContainer()->get('security.csrf.token_manager')->getToken('category');
+        $crfToken = $this->getContainer()->get('security.csrf.token_manager')->getToken('category')->getValue();
         $parameters = [
             'input_action' => 'save_and_stay',
             'oro_catalog_category' => [

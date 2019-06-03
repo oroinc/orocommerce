@@ -34,11 +34,9 @@ oro_behat_extension:
             selector: '.page-content'
 
         RequestForQuoteTitle:
-            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
             selector: 'span.page-title__text'
 
         RequestForQuoteFlashMessage:
-            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
             selector: '#flash-messages div.notification-flash__text'
 
         RequestMoreInformationPopupForm:
@@ -46,17 +44,13 @@ oro_behat_extension:
             selector: div.ui-dialog form
 
         RequestNotesBlock:
-            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
             selector: .page-content div.notes
         TargetPriceField:
-            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
             selector: 'input[name="oro_rfp_frontend_request[requestProducts][0][requestProductItems][0][price][value]"]'
         LineItemDropdown:
-            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
             selector: '.line-item-form .dropdown-toggle'
 
         Request Notes:
-            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
             selector: 'textarea[name="oro_rfp_frontend_request[note]"]'
 
         Request Form:

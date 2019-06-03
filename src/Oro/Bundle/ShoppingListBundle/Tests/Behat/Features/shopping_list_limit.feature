@@ -65,6 +65,7 @@ Feature: Shopping list limit
     When go to System/ Websites
     And click "Set default" on row "NewSite" in grid
     And click "Configuration" on row "Default" in grid
+    And I follow "System Configuration/Websites/Routing" on configuration sidebar
     And I fill "Routing General form" with fictional website
     And submit form
     Then I should see "Configuration saved" flash message

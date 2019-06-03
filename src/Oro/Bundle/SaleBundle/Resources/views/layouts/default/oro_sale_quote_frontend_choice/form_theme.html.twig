@@ -63,8 +63,10 @@
                     {% endif %}
                 </span>
             </div>
-            {{ form_errors(form.quantity) }}
-            {{ form_errors(form.unit) }}
+            <div data-role="error-container">
+                {{ form_errors(form.quantity) }}
+                {{ form_errors(form.unit) }}
+            </div>
         </td>
         <td class="grid-cell grid-cell--offset-l-none-mobile">
             <span class="hide-on-desktop hide-on-strict-tablet" aria-hidden="true">
@@ -136,6 +138,7 @@
 
                         {% set attr = {
                             'data-value': offer.id,
+                            'data-allow-increment': offer.allowIncrements ? 'true' : 'false',
                             'data-unit': offer.productUnitCode,
                             'data-formatted-unit': formattedUnitCode,
                             'data-quantity': offer.quantity,

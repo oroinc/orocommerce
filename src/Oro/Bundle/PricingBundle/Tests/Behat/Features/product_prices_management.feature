@@ -1,4 +1,6 @@
 @fixture-OroPricingBundle:ProductPricesManagement.yml
+@ticket-BB-11635
+
 Feature: Product prices management
   In order to have flexibility of configuring product prices
   As admin
@@ -27,6 +29,17 @@ Feature: Product prices management
       | Default Price List | 1              | item          | 7.0000 |
     When I save form
     Then I should see "Product has been saved" flash message
+
+  Scenario: Check success flash message when update product price
+    Given I go to Sales/ Price Lists
+    And click view "Default Price List" in grid
+    And click "Product Prices"
+    And click edit "PSKU1" in grid
+    And fill "Price Modal Window Form" with:
+      | Price | 777 |
+    When I click "Save"
+    Then I should see "Product Price has been added" flash message
+    And I should see "777" in grid
 
   Scenario: Validation error appears for not unique prices (have same values for PriceList, quantity, unit and currency)
     Given I go to Products/ Products

@@ -54,7 +54,7 @@
                     {% endif %}
 
                     {% set tab = {
-                        'alias': scope.id,
+                        'alias': 'tab-'|uniqid ~ '-' ~ scope.id,
                         'widgetType': 'block',
                         'label': label,
                         'url': path(

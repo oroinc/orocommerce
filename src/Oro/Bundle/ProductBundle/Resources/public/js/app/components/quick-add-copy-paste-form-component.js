@@ -144,24 +144,46 @@ define(function(require) {
             };
         },
 
+        _rowMatcher: function(data) {
+            var dataItem = {
+                sku: data.item.sku || '',
+                unit: data.item.unit || '',
+                unit_deferred: data.item.unit_deferred || ''
+            };
+
+            return function(parsedItem) {
+                var parsedSku = parsedItem.sku.toUpperCase();
+                var parsedUnit = (parsedItem.unit || '').toLowerCase();
+
+                if (parsedUnit) {
+                    return parsedSku === dataItem.sku.toUpperCase() && (
+                        parsedUnit === dataItem.unit.toLowerCase() ||
+                        parsedUnit === dataItem.unit_deferred.toLowerCase()
+                    );
+                } else {
+                    return parsedSku === dataItem.sku.toUpperCase();
+                }
+            };
+        },
+
         /**
          * @param {object} data
          */
         onAutocompleteSuccess: function(data) {
-            this._updateField(_.matcher({sku: data.item.sku.toUpperCase()}));
+            this._updateField(data);
         },
 
         /**
          * @param {object} data
          */
         onProductUpdate: function(data) {
-            this._updateField(_.matcher({sku: data.sku.toUpperCase()}));
+            this._updateField(data);
         },
 
-        _updateField: function(skuMatcher) {
+        _updateField: function(data) {
             var form = this.$form;
             var newInputValueLines = [];
-            var itemIndex = _.findIndex(this.parsedItems, skuMatcher);
+            var itemIndex = _.findIndex(this.parsedItems, this._rowMatcher(data));
 
             if (itemIndex === -1) {
                 return;
@@ -188,18 +210,12 @@ define(function(require) {
          * @param {object} data
          * @param {boolean} forceRemove
          */
-        onAutocompleteError: function(data, forceRemove) {
-            if (forceRemove || _.findIndex(this.parsedItems, _.matcher({sku: data.$el.val()})) !== -1) {
-                data.$el.closest('[data-role="row"]').find('[data-role="row-remove"]').click();
-                var addMoreRowsButton = $('.add-list-item');
-                addMoreRowsButton.data('row-add-only-one', true);
-                addMoreRowsButton.click();
-            }
+        onAutocompleteError: function(data) {
             this._showErrorMessage();
         },
 
         onUnitError: function(data) {
-            this.onAutocompleteError(data, true);
+            this.onAutocompleteError(data);
         },
 
         _showErrorMessage: function() {

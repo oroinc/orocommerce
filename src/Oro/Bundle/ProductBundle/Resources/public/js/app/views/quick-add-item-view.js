@@ -165,7 +165,10 @@ define(function(require) {
             });
 
             if (canBeUpdated) {
-                mediator.trigger('quick-add-copy-paste-form:update-product', obj);
+                mediator.trigger('quick-add-copy-paste-form:update-product', {
+                    $el: this.$el,
+                    item: obj
+                });
             }
 
             this.updateUI(true);
@@ -318,13 +321,16 @@ define(function(require) {
 
             this.getElement('unit').inputWidget('refresh');
 
+            var eventData = {$el: this.$el, item: this.model.attributes};
+
             if (this.model.get('sku') && this.unitInvalid()) {
                 this.showUnitError();
                 _.defer(_.bind(function() {
-                    mediator.trigger('quick-add-form-item:unit-invalid', {$el: this.$el});
+                    mediator.trigger('quick-add-form-item:unit-invalid', eventData);
+                    this.getElement('remove').click();
                 }, this));
             } else if (this.model.get('sku') && this.model.get('units_loaded')) {
-                mediator.trigger('quick-add-form-item:item-valid', {item: this.model.attributes});
+                mediator.trigger('quick-add-form-item:item-valid', eventData);
             }
 
             this.getElement('remove').toggle(this.model.get('sku') !== this.modelAttr.sku);

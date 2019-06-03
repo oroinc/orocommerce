@@ -55,7 +55,7 @@ class Taxable
     protected $amount;
 
     /**
-     * @var BigDecimal
+     * @var BigDecimal|null
      */
     protected $shippingCost;
 
@@ -84,7 +84,7 @@ class Taxable
         $this->quantity = BigDecimal::one();
         $this->price = BigDecimal::zero();
         $this->amount = BigDecimal::zero();
-        $this->shippingCost = BigDecimal::zero();
+        $this->shippingCost = null;
 
         $this->items = new \SplObjectStorage();
         $this->result = new Result();
@@ -206,7 +206,7 @@ class Taxable
     }
 
     /**
-     * @return BigDecimal
+     * @return BigDecimal|null
      */
     public function getShippingCost()
     {

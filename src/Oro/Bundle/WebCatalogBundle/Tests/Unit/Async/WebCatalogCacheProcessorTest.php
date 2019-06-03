@@ -4,8 +4,8 @@ namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Async;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\MessageQueueBundle\Entity\Job;
-use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\WebCatalogBundle\Async\Topics;
 use Oro\Bundle\WebCatalogBundle\Async\WebCatalogCacheProcessor;
 use Oro\Bundle\WebCatalogBundle\ContentNodeUtils\ScopeMatcher;
@@ -13,9 +13,13 @@ use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\Repository\ContentNodeRepository;
 use Oro\Bundle\WebCatalogBundle\Entity\Repository\WebCatalogRepository;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
+use Oro\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
+use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Job\JobRunner;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
+use Oro\Component\MessageQueue\Transport\Null\NullMessage;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Psr\Log\LoggerInterface;
@@ -35,44 +39,40 @@ class WebCatalogCacheProcessorTest extends \PHPUnit\Framework\TestCase
     private $producer;
 
     /**
-     * @var ScopeMatcher|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $scopeMatcher;
-
-    /**
      * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     private $registry;
 
     /**
-     * @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject
+     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
      */
-    private $logger;
+    private $configManager;
 
     /**
      * @var WebCatalogCacheProcessor
      */
     private $processor;
 
+    /**
+     * {@inheritdoc}
+     */
     protected function setUp()
     {
-        $this->jobRunner = $this->getMockBuilder(JobRunner::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->jobRunner = $this->createMock(JobRunner::class);
         $this->producer = $this->createMock(MessageProducerInterface::class);
-        $this->scopeMatcher = $this->getMockBuilder(ScopeMatcher::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $scopeMatcher = $this->createMock(ScopeMatcher::class);
         $this->registry = $this->createMock(ManagerRegistry::class);
-        $this->logger = $this->createMock(LoggerInterface::class);
+        $logger = $this->createMock(LoggerInterface::class);
+        $this->configManager = $this->createMock(ConfigManager::class);
 
         $this->processor = new WebCatalogCacheProcessor(
             $this->jobRunner,
             $this->producer,
-            $this->scopeMatcher,
+            $scopeMatcher,
             $this->registry,
-            $this->logger
+            $logger
         );
+        $this->processor->setConfigManager($this->configManager);
     }
 
     public function testGetSubscribedTopics()
@@ -80,245 +80,129 @@ class WebCatalogCacheProcessorTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals([Topics::CALCULATE_WEB_CATALOG_CACHE], $this->processor->getSubscribedTopics());
     }
 
-    public function testProcessException()
+    /**
+     * @dataProvider webCatalogDataProvider
+     *
+     * @param string|array $messageBody
+     */
+    public function testProcess($messageBody)
     {
         /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session */
         $session = $this->createMock(SessionInterface::class);
-        $message = $this->createMessage('');
+        $message = $this->createMessage('mid-42', $messageBody);
 
-        $e = new \Exception('Test exception');
-        $this->jobRunner->expects($this->once())
-            ->method('runUnique')
-            ->willThrowException($e);
-
-        $this->logger->expects($this->once())
-            ->method('error')
-            ->with(
-                'Unexpected exception occurred during queue message processing',
-                [
-                    'topic' => Topics::CALCULATE_WEB_CATALOG_CACHE,
-                    'exception' => $e
-                ]
-            );
-
-        $this->assertEquals(WebCatalogCacheProcessor::REJECT, $this->processor->process($message, $session));
-    }
-
-    public function testProcessSingleWebCatalog()
-    {
-        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session */
-        $session = $this->createMock(SessionInterface::class);
-        $message = $this->createMessage('1');
-
-        /** @var WebCatalog $webCatalog */
         $webCatalog = $this->getEntity(WebCatalog::class, ['id' => 1]);
-        /** @var ContentNode $node */
-        $node = $this->getEntity(ContentNode::class, ['id' => 2]);
-
-        /** @var WebCatalogRepository|\PHPUnit\Framework\MockObject\MockObject $webCatalogRepository */
-        $webCatalogRepository = $this->getMockBuilder(WebCatalogRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $website1 = $this->getEntity(Website::class, ['id' => 1]);
+        $website2 = $this->getEntity(Website::class, ['id' => 2]);
+        $websites = [1 => $website1, 2 => $website2];
+        $node = $this->getEntity(ContentNode::class, ['id' => 3]);
+        $webCatalogRepository = $this->createMock(WebCatalogRepository::class);
         $webCatalogRepository->expects($this->once())
-            ->method('findBy')
+            ->method('findOneBy')
             ->with(['id' => '1'])
-            ->willReturn([$webCatalog]);
-
-        $this->assertProcessCalled($webCatalogRepository, $webCatalog, $node);
-
-        $this->assertEquals(WebCatalogCacheProcessor::ACK, $this->processor->process($message, $session));
-    }
-
-    public function testProcessWebCatalogWithRemovedRoot()
-    {
-        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session */
-        $session = $this->createMock(SessionInterface::class);
-        $message = $this->createMessage('1');
-
-        /** @var WebCatalog $webCatalog */
-        $webCatalog = $this->getEntity(WebCatalog::class, ['id' => 1]);
-
-        /** @var WebCatalogRepository|\PHPUnit\Framework\MockObject\MockObject $webCatalogRepository */
-        $webCatalogRepository = $this->getMockBuilder(WebCatalogRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $webCatalogRepository->expects($this->once())
+            ->willReturn($webCatalog);
+        $websiteRepository = $this->createMock(WebsiteRepository::class);
+        $websiteRepository->expects($this->once())
+            ->method('getAllWebsites')
+            ->willReturn($websites);
+        $contentNodeRepo = $this->createMock(ContentNodeRepository::class);
+        $contentNodeRepo->expects($this->once())
+            ->method('findOneBy')
+            ->with(['id' => 3])
+            ->willReturn($node);
+        $contentNodeRepo->expects($this->once())
             ->method('findBy')
-            ->with(['id' => '1'])
-            ->willReturn([$webCatalog]);
+            ->with(['id' => [3]])
+            ->willReturn([$node]);
 
-        $this->assertRepositoryCalls($webCatalogRepository, $webCatalog);
+        $this->configManager
+            ->expects($this->once())
+            ->method('getValues')
+            ->with('oro_web_catalog.web_catalog', $websites)
+            ->willReturn([1 => 1, 2 => 3]);
 
-        /** @var Job|\PHPUnit\Framework\MockObject\MockObject $job */
-        $this->assertUniqueJobExecuted();
-        $this->jobRunner->expects($this->never())
-            ->method('createDelayed');
-
-        $this->logger->expects($this->never())
-            ->method($this->anything());
-        $this->producer->expects($this->never())
-            ->method('send');
-
-        $this->assertEquals(WebCatalogCacheProcessor::ACK, $this->processor->process($message, $session));
-    }
-
-    public function testProcessAllWebCatalogs()
-    {
-        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session */
-        $session = $this->createMock(SessionInterface::class);
-        $message = $this->createMessage('');
-
-        /** @var WebCatalog $webCatalog */
-        $webCatalog = $this->getEntity(WebCatalog::class, ['id' => 1]);
-        /** @var ContentNode $rootNode */
-        $rootNode = $this->getEntity(ContentNode::class, ['id' => 2]);
-
-        /** @var WebCatalogRepository|\PHPUnit\Framework\MockObject\MockObject $webCatalogRepository */
-        $webCatalogRepository = $this->getMockBuilder(WebCatalogRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $webCatalogRepository->expects($this->once())
-            ->method('findAll')
-            ->willReturn([$webCatalog]);
-
-        $this->assertProcessCalled($webCatalogRepository, $webCatalog, $rootNode);
-
-        $this->assertEquals(WebCatalogCacheProcessor::ACK, $this->processor->process($message, $session));
-    }
-
-    /**
-     * @param WebCatalogRepository|\PHPUnit\Framework\MockObject\MockObject $webCatalogRepository
-     * @param WebCatalog $webCatalog
-     * @param ContentNode $node
-     */
-    private function assertProcessCalled(
-        $webCatalogRepository,
-        WebCatalog $webCatalog,
-        ContentNode $node
-    ) {
-        $this->assertRepositoryCalls($webCatalogRepository, $webCatalog, [$node]);
-
-        $this->logger->expects($this->never())
-            ->method($this->anything());
-
-        /** @var Scope $scope */
-        $scope = $this->getEntity(Scope::class, ['id' => 21]);
-        $scopes = [$scope];
-        $this->scopeMatcher->expects($this->once())
-            ->method('getUsedScopes')
-            ->with($webCatalog)
-            ->willReturn($scopes);
-
-        $this->producer->expects($this->once())
-            ->method('send')
-            ->with(
-                Topics::CALCULATE_CONTENT_NODE_TREE_BY_SCOPE,
-                [
-                    'contentNode' => $node->getId(),
-                    'scope' => $scope->getId(),
-                    'jobId' => 123
-                ]
-            );
-        $this->assertUniqueJobExecuted();
-        $this->assertChildJobCreated($webCatalog, $scope);
-    }
-
-    /**
-     * @param string $body
-     * @return MessageInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function createMessage($body)
-    {
-        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message */
-        $message = $this->createMock(MessageInterface::class);
-        $message->expects($this->any())
-            ->method('getBody')
-            ->willReturn($body);
-        $message->expects($this->once())
-            ->method('getMessageId')
-            ->willReturn('mid-42');
-
-        return $message;
-    }
-
-    /**
-     * @param WebCatalogRepository|\PHPUnit\Framework\MockObject\MockObject $webCatalogRepository
-     * @param WebCatalog $webCatalog
-     * @param ContentNode[]|[] $nodes
-     */
-    private function assertRepositoryCalls($webCatalogRepository, WebCatalog $webCatalog, array $nodes = [])
-    {
-        /** @var ContentNodeRepository|\PHPUnit\Framework\MockObject\MockObject $contentNodeRepo */
-        $contentNodeRepo = $this->getMockBuilder(ContentNodeRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $contentNodeRepo->expects($this->any())
-            ->method('findBy')
-            ->with(['webCatalog' => $webCatalog])
-            ->willReturn($nodes);
+        $this->configManager
+            ->expects($this->once())
+            ->method('get')
+            ->with('oro_web_catalog.navigation_root', false, false, $website1)
+            ->willReturn(3);
 
         $em = $this->createMock(EntityManagerInterface::class);
         $em->expects($this->any())
             ->method('getRepository')
             ->withConsecutive(
                 [WebCatalog::class],
+                [Website::class],
+                [ContentNode::class],
                 [ContentNode::class]
             )
             ->willReturnOnConsecutiveCalls(
                 $webCatalogRepository,
+                $websiteRepository,
+                $contentNodeRepo,
                 $contentNodeRepo
             );
         $this->registry->expects($this->any())
             ->method('getManagerForClass')
             ->willReturn($em);
+
+        $this->assertProcessCalled($node);
+        $this->assertEquals(MessageProcessorInterface::ACK, $this->processor->process($message, $session));
+    }
+
+    /**
+     * @return array
+     */
+    public function webCatalogDataProvider()
+    {
+        return [
+            'scalar' => [
+                'messageBody' => '1'
+            ],
+            'array' => [
+                'messageBody' => '{"webCatalogId": 1}'
+            ]
+        ];
+    }
+
+    /**
+     * @param ContentNode $node
+     */
+    private function assertProcessCalled(ContentNode $node)
+    {
+        $this->producer->expects($this->once())
+            ->method('send')
+            ->with(Topics::CALCULATE_CONTENT_NODE_CACHE, ['contentNodeId' => $node->getId()]);
+        $this->assertUniqueJobExecuted();
+    }
+
+    /**
+     * @param string $messageId
+     * @param string $body
+     *
+     * @return MessageInterface
+     */
+    private function createMessage($messageId, $body)
+    {
+        $message = new NullMessage();
+        $message->setMessageId($messageId);
+        $message->setBody($body);
+
+        return $message;
     }
 
     private function assertUniqueJobExecuted()
     {
         /** @var Job|\PHPUnit\Framework\MockObject\MockObject $job */
-        $job = $this->getMockBuilder(Job::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $job = $this->createMock(Job::class);
         $this->jobRunner->expects($this->once())
             ->method('runUnique')
             ->willReturnCallback(
                 function ($ownerId, $name, $closure) use ($job) {
                     $this->assertEquals('mid-42', $ownerId);
-                    $this->assertEquals(Topics::CALCULATE_WEB_CATALOG_CACHE, $name);
+                    $this->assertEquals(Topics::CALCULATE_WEB_CATALOG_CACHE . ':1', $name);
 
                     return $closure($this->jobRunner, $job);
-                }
-            );
-    }
-
-    /**
-     * @param WebCatalog $webCatalog
-     * @param Scope $scope
-     */
-    private function assertChildJobCreated(WebCatalog $webCatalog, Scope $scope)
-    {
-        /** @var Job|\PHPUnit\Framework\MockObject\MockObject $job */
-        $childJob = $this->getMockBuilder(Job::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $childJob->expects($this->once())
-            ->method('getId')
-            ->willReturn(123);
-        $this->jobRunner->expects($this->once())
-            ->method('createDelayed')
-            ->willReturnCallback(
-                function ($name, $closure) use ($childJob, $webCatalog, $scope) {
-                    $this->assertEquals(
-                        sprintf(
-                            '%s:%s:%s',
-                            Topics::CALCULATE_CONTENT_NODE_TREE_BY_SCOPE,
-                            $webCatalog->getId(),
-                            $scope->getId()
-                        ),
-                        $name
-                    );
-
-                    return $closure($this->jobRunner, $childJob);
                 }
             );
     }

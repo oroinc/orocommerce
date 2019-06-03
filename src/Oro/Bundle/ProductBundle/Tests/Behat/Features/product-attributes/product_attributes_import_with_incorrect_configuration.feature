@@ -89,7 +89,6 @@ Feature: Product attributes import with incorrect configuration
       | validationtest1 | datetime | validation test 1 | yes                  | yes                  | yes                |
       | validationtest2 | text     | validation test 2 | yes                  | yes                  | yes                |
 
-  @skipWait
   Scenario: Check import error page from the email after importing file
     Given I import file
     Then Email should contains the following "Errors: 3 processed: 0, read: 2, added: 0, updated: 0, replaced: 0" text

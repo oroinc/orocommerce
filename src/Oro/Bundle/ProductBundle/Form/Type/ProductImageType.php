@@ -5,12 +5,14 @@ namespace Oro\Bundle\ProductBundle\Form\Type;
 use Oro\Bundle\AttachmentBundle\Form\Type\ImageType;
 use Oro\Bundle\ProductBundle\Form\EventSubscriber\ProductImageTypesSubscriber;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Responsible for image and image types for the product.
+ */
 class ProductImageType extends AbstractType
 {
     const NAME = 'oro_product_image';
@@ -28,11 +30,7 @@ class ProductImageType extends AbstractType
             ]
         );
 
-        $builder->add(
-            'types',
-            HiddenType::class
-        );
-
+        $builder->add('types', ProductImageTypesType::class, ['image_types' => $options['image_types']]);
         $builder->addEventSubscriber(new ProductImageTypesSubscriber($options['image_types']));
     }
 

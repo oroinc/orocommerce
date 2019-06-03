@@ -12,6 +12,9 @@ use Oro\Bundle\WebCatalogBundle\Model\ContentNodeMaterializedPathModifier;
 use Oro\Bundle\WebCatalogBundle\Model\ResolveNodeSlugsMessageFactory;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 
+/**
+ * Resolve content node slugs on entity create, remove or fields update
+ */
 class ContentNodeListener
 {
     /**
@@ -86,12 +89,14 @@ class ContentNodeListener
      */
     public function postRemove(ContentNode $contentNode, LifecycleEventArgs $args)
     {
-        if ($contentNode->getParentNode()) {
+        if ($contentNode->getParentNode() && $contentNode->getParentNode()->getId()) {
             if (!$args->getEntityManager()->getUnitOfWork()->isScheduledForDelete($contentNode->getParentNode())) {
                 $this->scheduleContentNodeRecalculation($contentNode->getParentNode());
             }
         } else {
-            $this->messageProducer->send(Topics::CALCULATE_WEB_CATALOG_CACHE, $contentNode->getWebCatalog()->getId());
+            $this->messageProducer->send(Topics::CALCULATE_WEB_CATALOG_CACHE, [
+                'webCatalogId' => $contentNode->getWebCatalog()->getId()
+            ]);
         }
     }
 

@@ -5,23 +5,18 @@ oro_behat_extension:
       selector: '#shopping_list_view_container_content'
 
     ShoppingListWidgetContainer:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector: 'div.shopping-list-widget__container'
 
     ShoppingListWidgetItemName:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector: 'div.shopping-list-dropdown__item span.shopping-list-dropdown__name-inner'
 
     ShoppingListTitle:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector: 'h1.cart-order-title span'
 
     ShoppingListEdit:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector: '.shopping-lists__area-trigger'
 
     ShoppingListAdd:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector: '.add-to-shopping-list-button'
 
     ShoppingListForm:
@@ -37,27 +32,23 @@ oro_behat_extension:
       selector: '[name="oro_shopping_list_type[label]"]'
 
     ItemAdd:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector: '[data-role="add-form-accept"]'
 
     ItemEdit:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector: '[data-role="edit"]'
 
     ItemEditUnit:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector: '.shopping-lists-modify .select2-choice'
 
     ItemDisabled:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector: '#select2-drop .select2-disabled .select2-result-label:contains("set")'
 
     Edit Shopping List Label:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
-      selector: '[data-role="start-editing"]'
+      selector:
+        locator: '//button[@data-title="Edit Shopping List Label"]'
+        type: xpath
 
     Shopping List Label Input:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector: '#title-inline-editable .inline-view-editor__input-wrap > input'
 
     Shopping List Line Items Table:
@@ -65,7 +56,6 @@ oro_behat_extension:
       selector: '#shopping_list_view_container_content > div.cart-table .shopping-list-line-items'
 
     ShoppingListLineItemsTableHeaderLabel:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector: 'div.shopping-list-line-items__header-label'
 
     ShoppingListLineItem:
@@ -93,19 +83,16 @@ oro_behat_extension:
           Unit: 'product_unit'
 
     Shopping List Line Item Error:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
         type: css
         locator: 'div.shopping-list-line-items__error'
 
     Shopping List Line Item 1 Quantity:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
         type: css
         locator: 'form.product__qty-container:first-child input[name=product_qty]'
 
     ShoppingListLineItemProductSku:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
           type: 'xpath'
           locator: '//span[@class="product-item__sku-value"]'
@@ -199,7 +186,7 @@ oro_behat_extension:
     ShoppingListEditTitleField:
       selector: '#title-inline-editable input[name="value"]'
 
-    EditShopppingListLabel:
+    EditShoppingListLabel:
       selector: '#title-inline-editable [data-role="start-editing"]'
 
     View Shopping List Details:

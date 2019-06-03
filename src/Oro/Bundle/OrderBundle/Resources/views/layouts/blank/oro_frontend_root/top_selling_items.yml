@@ -33,3 +33,7 @@ layout:
             id: top_selling_items_container
             parentId: page_content
             blockType: container
+        - '@setOption':
+            id: top_selling_products
+            optionName: attr.data-page-component-name
+            optionValue: 'top-selling-list'

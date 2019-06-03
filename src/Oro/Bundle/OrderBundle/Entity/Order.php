@@ -960,7 +960,7 @@ class Order extends ExtendOrder implements
         if ($this->overriddenShippingCostAmount !== null) {
             $amount = $this->overriddenShippingCostAmount;
         }
-        if ($amount && $this->currency) {
+        if (null !== $amount && $this->currency) {
             return Price::create($amount, $this->currency);
         }
         return null;
