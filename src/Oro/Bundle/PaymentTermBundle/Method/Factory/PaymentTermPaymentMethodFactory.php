@@ -6,16 +6,19 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PaymentTermBundle\Method\Config\PaymentTermConfigInterface;
 use Oro\Bundle\PaymentTermBundle\Method\PaymentTerm;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermAssociationProvider;
-use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider;
+use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProviderInterface;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
 
+/**
+ * Factory for a payment term method.
+ */
 class PaymentTermPaymentMethodFactory implements PaymentTermPaymentMethodFactoryInterface
 {
     use LoggerAwareTrait;
 
     /**
-     * @var PaymentTermProvider
+     * @var PaymentTermProviderInterface
      */
     protected $paymentTermProvider;
 
@@ -30,13 +33,13 @@ class PaymentTermPaymentMethodFactory implements PaymentTermPaymentMethodFactory
     protected $doctrineHelper;
 
     /**
-     * @param PaymentTermProvider $paymentTermProvider
+     * @param PaymentTermProviderInterface $paymentTermProvider
      * @param PaymentTermAssociationProvider $paymentTermAssociationProvider
      * @param DoctrineHelper $doctrineHelper
      * @param LoggerInterface $logger
      */
     public function __construct(
-        PaymentTermProvider $paymentTermProvider,
+        PaymentTermProviderInterface $paymentTermProvider,
         PaymentTermAssociationProvider $paymentTermAssociationProvider,
         DoctrineHelper $doctrineHelper,
         LoggerInterface $logger

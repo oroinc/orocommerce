@@ -4,14 +4,17 @@ namespace Oro\Bundle\PaymentTermBundle\Form\Extension;
 
 use Oro\Bundle\CustomerBundle\Form\Type\CustomerType;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermAssociationProvider;
-use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider;
+use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProviderInterface;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
+/**
+ * This form extension adds payment term association field to the Customer's form.
+ */
 class CustomerFormExtension extends AbstractTypeExtension
 {
-    /** @var PaymentTermProvider */
+    /** @var PaymentTermProviderInterface */
     protected $paymentTermProvider;
 
     /** @var TranslatorInterface */
@@ -21,12 +24,12 @@ class CustomerFormExtension extends AbstractTypeExtension
     private $paymentTermAssociationProvider;
 
     /**
-     * @param PaymentTermProvider $paymentTermProvider
+     * @param PaymentTermProviderInterface $paymentTermProvider
      * @param PaymentTermAssociationProvider $paymentTermAssociationProvider
      * @param TranslatorInterface $translator
      */
     public function __construct(
-        PaymentTermProvider $paymentTermProvider,
+        PaymentTermProviderInterface $paymentTermProvider,
         PaymentTermAssociationProvider $paymentTermAssociationProvider,
         TranslatorInterface $translator
     ) {

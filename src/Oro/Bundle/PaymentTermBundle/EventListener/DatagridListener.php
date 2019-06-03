@@ -7,23 +7,26 @@ use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermAssociationProvider;
-use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider;
+use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProviderInterface;
 
+/**
+ * Adds appropriate payment term data to the grid.
+ */
 class DatagridListener
 {
     /** @var PaymentTermAssociationProvider */
     private $paymentTermAssociationProvider;
 
-    /** @var PaymentTermProvider */
+    /** @var PaymentTermProviderInterface */
     private $paymentTermProvider;
 
     /**
      * @param PaymentTermAssociationProvider $paymentTermAssociationProvider
-     * @param PaymentTermProvider $paymentTermProvider
+     * @param PaymentTermProviderInterface $paymentTermProvider
      */
     public function __construct(
         PaymentTermAssociationProvider $paymentTermAssociationProvider,
-        PaymentTermProvider $paymentTermProvider
+        PaymentTermProviderInterface $paymentTermProvider
     ) {
         $this->paymentTermAssociationProvider = $paymentTermAssociationProvider;
         $this->paymentTermProvider = $paymentTermProvider;

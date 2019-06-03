@@ -3,20 +3,20 @@
 namespace Oro\Bundle\PaymentTermBundle\Twig;
 
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
-use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider;
+use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProviderInterface;
 
 /**
  * Twig extension that provides payment term
  */
 class PaymentTermExtension extends \Twig_Extension
 {
-    /** @var PaymentTermProvider */
+    /** @var PaymentTermProviderInterface */
     protected $dataProvider;
 
     /**
-     * @param PaymentTermProvider $dataProvider
+     * @param PaymentTermProviderInterface $dataProvider
      */
-    public function __construct(PaymentTermProvider $dataProvider)
+    public function __construct(PaymentTermProviderInterface $dataProvider)
     {
         $this->dataProvider = $dataProvider;
     }

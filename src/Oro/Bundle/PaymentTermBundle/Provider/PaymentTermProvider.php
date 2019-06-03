@@ -8,12 +8,14 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
-use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentTermBundle\Event\ResolvePaymentTermEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
-class PaymentTermProvider
+/**
+ * This provider allows to get PaymentTerm entity from different sources.
+ */
+class PaymentTermProvider implements PaymentTermProviderInterface
 {
     /** @var TokenStorageInterface */
     protected $tokenStorage;
@@ -40,8 +42,7 @@ class PaymentTermProvider
     }
 
     /**
-     * @param Customer $customer
-     * @return PaymentTerm|null
+     * {@inheritdoc}
      */
     public function getPaymentTerm(Customer $customer)
     {
@@ -55,7 +56,7 @@ class PaymentTermProvider
     }
 
     /**
-     * @return PaymentTerm|null
+     * {@inheritdoc}
      */
     public function getCurrentPaymentTerm()
     {
@@ -85,8 +86,7 @@ class PaymentTermProvider
     }
 
     /**
-     * @param Customer $customer
-     * @return PaymentTerm|null
+     * {@inheritdoc}
      */
     public function getCustomerPaymentTerm(Customer $customer)
     {
@@ -94,8 +94,7 @@ class PaymentTermProvider
     }
 
     /**
-     * @param CustomerGroup $customerGroup
-     * @return PaymentTerm|null
+     * {@inheritdoc}
      */
     public function getCustomerGroupPaymentTerm(CustomerGroup $customerGroup)
     {
@@ -103,8 +102,7 @@ class PaymentTermProvider
     }
 
     /**
-     * @param CustomerOwnerAwareInterface $customerOwnerAware
-     * @return PaymentTerm|null
+     * {@inheritdoc}
      */
     public function getCustomerPaymentTermByOwner(CustomerOwnerAwareInterface $customerOwnerAware)
     {
@@ -117,8 +115,7 @@ class PaymentTermProvider
     }
 
     /**
-     * @param CustomerOwnerAwareInterface $customerOwnerAware
-     * @return PaymentTerm|null
+     * {@inheritdoc}
      */
     public function getCustomerGroupPaymentTermByOwner(CustomerOwnerAwareInterface $customerOwnerAware)
     {
@@ -131,9 +128,7 @@ class PaymentTermProvider
     }
 
     /**
-     * @param object $object
-     * @return null|PaymentTerm
-     * @throws \InvalidArgumentException if argument is not an object
+     * {@inheritdoc}
      */
     public function getObjectPaymentTerm($object)
     {

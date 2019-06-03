@@ -6,11 +6,14 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
-use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider;
+use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProviderInterface;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\UserBundle\Entity\User;
 use Symfony\Component\HttpFoundation\RequestStack;
 
+/**
+ * Order data handler for front store.
+ */
 class FrontendOrderDataHandler
 {
     /** @var RequestStack */
@@ -22,20 +25,20 @@ class FrontendOrderDataHandler
     /** @var TokenAccessorInterface */
     protected $tokenAccessor;
 
-    /** @var PaymentTermProvider  */
+    /** @var PaymentTermProviderInterface  */
     protected $paymentTermProvider;
 
     /**
      * @param ManagerRegistry        $registry
      * @param RequestStack           $requestStack
      * @param TokenAccessorInterface $tokenAccessor
-     * @param PaymentTermProvider    $paymentTermProvider
+     * @param PaymentTermProviderInterface $paymentTermProvider
      */
     public function __construct(
         ManagerRegistry $registry,
         RequestStack $requestStack,
         TokenAccessorInterface $tokenAccessor,
-        PaymentTermProvider $paymentTermProvider
+        PaymentTermProviderInterface $paymentTermProvider
     ) {
         $this->registry = $registry;
         $this->requestStack = $requestStack;
@@ -79,7 +82,6 @@ class FrontendOrderDataHandler
      */
     public function getOwner()
     {
-        //TODO: BB-3825 set correct owner
         return $this->registry->getManagerForClass('OroUserBundle:User')
             ->getRepository('OroUserBundle:User')
             ->findOneBy([]);

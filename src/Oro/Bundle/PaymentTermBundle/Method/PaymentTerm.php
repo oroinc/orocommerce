@@ -10,7 +10,7 @@ use Oro\Bundle\PaymentBundle\Method\Action\PurchaseActionInterface;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Oro\Bundle\PaymentTermBundle\Method\Config\PaymentTermConfigInterface;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermAssociationProvider;
-use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider;
+use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProviderInterface;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
 
@@ -22,7 +22,7 @@ class PaymentTerm implements PaymentMethodInterface, CaptureActionInterface, Pur
     use LoggerAwareTrait;
 
     /**
-     * @var PaymentTermProvider
+     * @var PaymentTermProviderInterface
      */
     protected $paymentTermProvider;
 
@@ -42,13 +42,13 @@ class PaymentTerm implements PaymentMethodInterface, CaptureActionInterface, Pur
     protected $config;
 
     /**
-     * @param PaymentTermProvider $paymentTermProvider
+     * @param PaymentTermProviderInterface $paymentTermProvider
      * @param PaymentTermAssociationProvider $paymentTermAssociationProvider
      * @param DoctrineHelper $doctrineHelper
      * @param PaymentTermConfigInterface $config
      */
     public function __construct(
-        PaymentTermProvider $paymentTermProvider,
+        PaymentTermProviderInterface $paymentTermProvider,
         PaymentTermAssociationProvider $paymentTermAssociationProvider,
         DoctrineHelper $doctrineHelper,
         PaymentTermConfigInterface $config
