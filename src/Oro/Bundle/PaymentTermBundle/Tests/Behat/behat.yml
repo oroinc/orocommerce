@@ -8,6 +8,17 @@ oro_behat_extension:
           Label: 'oro_integration_channel_form[transport][labels][values][default]'
           Short Label: 'oro_integration_channel_form[transport][shortLabels][values][default]'
 
+    Payment Term Create New:
+      selector:
+        locator: '//label[text()="Payment Term"]/../..//button[contains(@class,"entity-create-btn")]'
+        type: xpath
+
+    Payment Term Form:
+      selector: 'form[name="oro_payment_term"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Label: 'oro_payment_term[label]'
   suites:
     OroPaymentTermBundle:
       contexts:

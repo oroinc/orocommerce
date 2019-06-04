@@ -2,12 +2,14 @@
 
 namespace Oro\Bundle\PaymentTermBundle\Tests\Unit\Method\View;
 
+use Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentTermBundle\Method\Config\PaymentTermConfigInterface;
 use Oro\Bundle\PaymentTermBundle\Method\View\PaymentTermView;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider;
+use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
 use Symfony\Bundle\FrameworkBundle\Tests\Templating\Helper\Fixtures\StubTranslator;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -86,6 +88,33 @@ class PaymentTermViewTest extends \PHPUnit\Framework\TestCase
             ->method('getPaymentTerm')
             ->with($customer)
             ->willReturn(new PaymentTerm());
+
+        $this->assertEquals(
+            ['value' => '[trans]oro.paymentterm.payment_terms.label[/trans]'],
+            $this->methodView->getOptions($context)
+        );
+    }
+
+    public function testGetOptionsWithCheckout()
+    {
+        $paymentTerm = new PaymentTerm();
+        $paymentTerm->setLabel('testLabel');
+
+        $checkoutSourceEntity = $this->createMock(CheckoutSourceEntityInterface::class);
+        $sourceEntity = $this->createMock(CheckoutInterface::class);
+        $sourceEntity->expects($this->once())
+            ->method('getSourceEntity')
+            ->willReturn($checkoutSourceEntity);
+        /** @var PaymentContextInterface|\PHPUnit\Framework\MockObject\MockObject $context */
+        $context = $this->createMock(PaymentContextInterface::class);
+        $context->expects(static::any())
+            ->method('getSourceEntity')
+            ->willReturn($sourceEntity);
+
+        $this->paymentTermProvider->expects($this->once())
+            ->method('getObjectPaymentTerm')
+            ->with($checkoutSourceEntity)
+            ->willReturn($paymentTerm);
 
         $this->assertEquals(
             ['value' => '[trans]oro.paymentterm.payment_terms.label[/trans]'],

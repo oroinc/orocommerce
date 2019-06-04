@@ -54,6 +54,7 @@ Feature: Payment Term payment status
     And I click "Submit Order"
     Then I see the "Thank You" page with "Thank You For Your Purchase!" title
 
+  @skip
   Scenario: Capture order payment with Payment Term
     Given I operate as the Admin
     When I go to Sales/ Orders
