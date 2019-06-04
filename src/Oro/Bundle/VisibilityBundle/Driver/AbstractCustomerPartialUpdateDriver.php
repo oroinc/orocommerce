@@ -16,9 +16,12 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\WebsiteIdPlaceholder;
 use Oro\Bundle\WebsiteSearchBundle\Provider\PlaceholderProvider;
 
+/**
+ * Abstract driver for the partial update of the customer visibility in the website search index
+ */
 abstract class AbstractCustomerPartialUpdateDriver implements CustomerPartialUpdateDriverInterface
 {
-    const PRODUCT_BATCH_SIZE = 100000;
+    const PRODUCT_BATCH_SIZE = 1000;
 
     /**
      * @var PlaceholderProvider
