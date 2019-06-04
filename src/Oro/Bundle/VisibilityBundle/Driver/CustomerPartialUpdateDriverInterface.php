@@ -4,6 +4,9 @@ namespace Oro\Bundle\VisibilityBundle\Driver;
 
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 
+/**
+ * Interface for the partial update driver of the customer visibility in the website search index
+ */
 interface CustomerPartialUpdateDriverInterface
 {
     /**
