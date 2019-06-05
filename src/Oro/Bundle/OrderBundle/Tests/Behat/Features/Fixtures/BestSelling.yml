@@ -92,8 +92,8 @@ Oro\Bundle\OrderBundle\Entity\Order:
     order5:
         organization: '@organization'
         customerUser: '@branda'
-        createdAt: '<date("02.01.2016 11:00")>'
-        updatedAt: '<date("02.01.2016 11:00")>'
+        createdAt: '<date("10.01.2016 11:00")>'
+        updatedAt: '<date("10.01.2016 11:00")>'
     order6:
         organization: '@organization'
         customerUser: '@branda'
