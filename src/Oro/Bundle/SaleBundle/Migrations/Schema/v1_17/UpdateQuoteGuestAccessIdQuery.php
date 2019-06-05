@@ -42,7 +42,8 @@ class UpdateQuoteGuestAccessIdQuery extends ParametrizedMigrationQuery
         $query = 'UPDATE oro_sale_quote SET guest_access_id = :guest_access_id WHERE id = :id';
         $types = ['guest_access_id' => Type::STRING, 'id' => Type::INTEGER];
 
-        foreach ($this->getQuoteIds($logger) as $id) {
+        $quoteIds = $this->getQuoteIds($logger, $dryRun);
+        foreach ($quoteIds as $id) {
             $params = ['id' => $id, 'guest_access_id' => UUIDGenerator::v4()];
 
             $this->logQuery($logger, $query, $params, $types);
@@ -54,14 +55,16 @@ class UpdateQuoteGuestAccessIdQuery extends ParametrizedMigrationQuery
 
     /**
      * @param LoggerInterface $logger
+     * @param bool            $dryRun
+     *
      * @return array
      */
-    private function getQuoteIds(LoggerInterface $logger): array
+    private function getQuoteIds(LoggerInterface $logger, $dryRun = false): array
     {
         $query = 'SELECT id FROM oro_sale_quote WHERE guest_access_id IS NULL';
 
         $this->logQuery($logger, $query);
 
-        return array_column($this->connection->fetchAll($query), 'id');
+        return $dryRun ? [] : array_column($this->connection->fetchAll($query), 'id');
     }
 }
