@@ -10,12 +10,15 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFunction;
 
 /**
- * Twig extension that provides Order entity's data for checkout process
- * Returns all products from order with accrued amounts and subtotals
+ * Provides a Twig function to retrieve order data for checkout process,
+ * including all products with amounts and subtotals:
+ *   - order_line_items
  */
-class LineItemsExtension extends \Twig_Extension
+class LineItemsExtension extends AbstractExtension
 {
     const NAME = 'oro_checkout_order_line_items';
 
@@ -67,7 +70,7 @@ class LineItemsExtension extends \Twig_Extension
      */
     public function getFunctions()
     {
-        return [new \Twig_SimpleFunction('order_line_items', [$this, 'getOrderLineItems'])];
+        return [new TwigFunction('order_line_items', [$this, 'getOrderLineItems'])];
     }
 
     /**

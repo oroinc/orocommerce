@@ -4,8 +4,14 @@ namespace Oro\Bundle\RFPBundle\Twig;
 
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFunction;
 
-class RequestProductsExtension extends \Twig_Extension
+/**
+ * Provides a Twig function to retrieve products from a request for quote:
+ *   - rfp_products
+ */
+class RequestProductsExtension extends AbstractExtension
 {
     const NAME = 'oro_rfp_request_products';
 
@@ -25,7 +31,7 @@ class RequestProductsExtension extends \Twig_Extension
      */
     public function getFunctions()
     {
-        return [new \Twig_SimpleFunction('rfp_products', [$this, 'getRequestProducts'])];
+        return [new TwigFunction('rfp_products', [$this, 'getRequestProducts'])];
     }
 
     /**

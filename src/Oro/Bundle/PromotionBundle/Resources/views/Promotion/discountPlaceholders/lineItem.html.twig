@@ -1,6 +1,8 @@
 {% extends 'OroPromotionBundle:Promotion/discountPlaceholders:baseDiscountPlaceholder.html.twig' %}
 
 {% block content %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+
     {% set options = entity.discountConfiguration.options %}
     {% set data = [
         UI.renderProperty('oro.discount_options.line_item_type.apply_to.label'|trans, ('oro.discount_options.line_item_type.apply_to.choices.' ~ options['apply_to'])|trans),

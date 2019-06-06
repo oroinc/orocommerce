@@ -1,4 +1,4 @@
-{% macro oro_rfp_frontend_request_lineitem_requested_prototype(widget) %}
+{% macro oro_rfp_frontend_request_lineitem_requested_prototype(widget, attributes) %}
     {% if 'collection' in widget.vars.block_prefixes %}
         {% set form = widget.vars.prototype %}
         {% set name = widget.vars.full_name ~ '[' ~ widget.vars.prototype.vars.name ~ ']' %}
@@ -8,7 +8,7 @@
     {% endif %}
     <div data-content="{{ name }}"
         data-validation-optional-group
-        data-role="lineitem" {{ block('widget_container_attributes') }}
+        data-role="lineitem" {{ attributes }}
         class="request-form-lineitem fields-row"
         data-page-component-module="oroui/js/app/components/view-component"
         data-page-component-options="{{ {
@@ -36,8 +36,13 @@
 {% endblock %}
 
 {% block oro_rfp_frontend_request_product_collection_widget %}
+    {% import _self as fields %}
+
+    {% set widgetContainerAttributes %}
+        {% with {'id': '', 'attr': []} %}{{ block('widget_container_attributes') }}{% endwith %}
+    {% endset %}
     {% if prototype is defined %}
-        {% set prototype_html = _self.oro_rfp_frontend_request_lineitem_prototype(form, prototype_name) %}
+        {% set prototype_html = fields.oro_rfp_frontend_request_lineitem_prototype(form, prototype_name, null, widgetContainerAttributes) %}
     {% endif %}
     {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'grid-container' }) %}
     {% set id = id ~ '_collection' %}
@@ -58,7 +63,7 @@
 
                     {% if form.children|length %}
                         {% for key, child in form.children %}
-                            {{ _self.oro_rfp_frontend_request_lineitem_prototype(child, prototype_name, key) }}
+                            {{ fields.oro_rfp_frontend_request_lineitem_prototype(child, prototype_name, key, widgetContainerAttributes) }}
                         {% endfor %}
                     {% elseif show_form_when_empty and prototype_html is defined %}
                         {{ prototype_html|replace({(prototype_name): '0'})|raw }}
@@ -74,7 +79,7 @@
     </div>
 {% endblock %}
 
-{% macro oro_rfp_frontend_request_lineitem_prototype(widget, prototype_name, key) %}
+{% macro oro_rfp_frontend_request_lineitem_prototype(widget, prototype_name, key, attributes) %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
 
     {% if 'collection' in widget.vars.block_prefixes %}
@@ -121,7 +126,7 @@
 
     {% set page_component_options = form.vars.page_component_options|merge(form.vars.componentOptions|default({})) %}
     <div class="request-form-editline" data-role="line-item-edit">
-        <div data-content="{{ name }}" data-validation-optional-group {{ block('widget_container_attributes') }}
+        <div data-content="{{ name }}" data-validation-optional-group {{ attributes }}
              class="request-form-editline__inner"
              data-page-component-module="{{ form.vars.page_component }}"
              data-page-component-options="{{ page_component_options|json_encode }}"
@@ -178,8 +183,13 @@
 {% endblock %}
 
 {% block oro_rfp_lineitem_collection_widget %}
+    {% import _self as fields %}
+
+    {% set widgetContainerAttributes %}
+        {% with {'id': '', 'attr': []} %}{{ block('widget_container_attributes') }}{% endwith %}
+    {% endset %}
     {% if prototype is defined %}
-        {% set prototype_html = _self.oro_rfp_request_lineitem_prototype(form) %}
+        {% set prototype_html = fields.oro_rfp_request_lineitem_prototype(form, widgetContainerAttributes) %}
     {% endif %}
     {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-item-collection grid-container' }) %}
     {% set id = id ~ '_collection' %}
@@ -198,7 +208,7 @@
                 <tbody data-last-index="{{ form.children|length}}" data-prototype-name="{{ prototype_name }}"{% if prototype_html is defined %} data-prototype="{{ prototype_html|escape }}"{% endif %}>
                 {% if form.children|length %}
                     {% for child in form.children %}
-                        {{ _self.oro_rfp_request_lineitem_prototype(child) }}
+                        {{ fields.oro_rfp_request_lineitem_prototype(child, widgetContainerAttributes) }}
                     {% endfor %}
                 {% elseif show_form_when_empty and prototype_html is defined %}
                     {{ prototype_html|replace({(prototype_name): '0'})|raw }}
@@ -210,7 +220,7 @@
     </div>
 {% endblock %}
 
-{% macro oro_rfp_request_lineitem_prototype(widget) %}
+{% macro oro_rfp_request_lineitem_prototype(widget, attributes) %}
     {% if 'collection' in widget.vars.block_prefixes %}
         {% set form = widget.vars.prototype %}
         {% set name = widget.vars.full_name ~ '[' ~ widget.vars.prototype.vars.name ~ ']' %}
@@ -219,7 +229,7 @@
         {% set name = widget.vars.full_name %}
     {% endif %}
     {% set page_component_options = form.vars.page_component_options|merge(form.vars.componentOptions|default({})) %}
-    <tr data-content="{{ name }}" data-validation-optional-group {{ block('widget_container_attributes') }}
+    <tr data-content="{{ name }}" data-validation-optional-group {{ attributes }}
         class="rfp-lineitem"
         data-page-component-module="{{ form.vars.page_component }}"
         data-page-component-options="{{ page_component_options|json_encode }}"
@@ -264,8 +274,13 @@
 {% endblock %}
 
 {% block oro_rfp_request_frontend_product_item_collection_widget %}
+    {% import _self as fields %}
+
+    {% set widgetContainerAttributes %}
+        {% with {'id': '', 'attr': []} %}{{ block('widget_container_attributes') }}{% endwith %}
+    {% endset %}
     {% if prototype is defined %}
-        {% set prototype_html = _self.oro_rfp_frontend_request_lineitem_requested_prototype(form) %}
+        {% set prototype_html = fields.oro_rfp_frontend_request_lineitem_requested_prototype(form, widgetContainerAttributes) %}
     {% endif %}
     {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-item-collection grid-container' }) %}
     {% set id = id ~ '_collection' %}
@@ -283,7 +298,7 @@
                 <tbody class="rfp-lineitem-requested-items" data-last-index="{{ form.children|length}}" data-prototype-name="{{ prototype_name }}"{% if prototype_html is defined %} data-prototype="{{ prototype_html|escape }}"{% endif %} data-content>
                 {% if form.children|length %}
                     {% for child in form.children %}
-                        {{ _self.oro_rfp_frontend_request_lineitem_requested_prototype(child) }}
+                        {{ fields.oro_rfp_frontend_request_lineitem_requested_prototype(child, widgetContainerAttributes) }}
                     {% endfor %}
                 {% elseif show_form_when_empty and prototype_html is defined %}
                     {{ prototype_html|replace({(prototype_name): '0'})|raw }}
@@ -296,8 +311,13 @@
 {% endblock %}
 
 {% block oro_rfp_frontend_request_product_item_collection_widget %}
+    {% import _self as fields %}
+
+    {% set widgetContainerAttributes %}
+        {% with {'id': '', 'attr': []} %}{{ block('widget_container_attributes') }}{% endwith %}
+    {% endset %}
     {% if prototype is defined %}
-        {% set prototype_html = _self.oro_rfp_frontend_request_lineitem_requested_prototype(form) %}
+        {% set prototype_html = fields.oro_rfp_frontend_request_lineitem_requested_prototype(form, widgetContainerAttributes) %}
     {% endif %}
     {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'grid-container' }) %}
     {% set id = id ~ '_collection' %}
@@ -314,7 +334,7 @@
             data-role="lineitems">
             {% if form.children|length %}
                 {% for child in form.children %}
-                    {{ _self.oro_rfp_frontend_request_lineitem_requested_prototype(child) }}
+                    {{ fields.oro_rfp_frontend_request_lineitem_requested_prototype(child, widgetContainerAttributes) }}
                 {% endfor %}
             {% elseif show_form_when_empty and prototype_html is defined %}
                 {{ prototype_html|replace({(prototype_name): '0'})|raw }}
@@ -326,8 +346,13 @@
 {% endblock %}
 
 {% block oro_rfp_request_product_item_collection_widget %}
+    {% import _self as fields %}
+
+    {% set widgetContainerAttributes %}
+        {% with {'id': '', 'attr': []} %}{{ block('widget_container_attributes') }}{% endwith %}
+    {% endset %}
     {% if prototype is defined %}
-        {% set prototype_html = _self.oro_rfp_request_lineitem_requested_prototype(form) %}
+        {% set prototype_html = fields.oro_rfp_request_lineitem_requested_prototype(form, widgetContainerAttributes) %}
     {% endif %}
     {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-item-collection grid-container' }) %}
     {% set id = id ~ '_collection' %}
@@ -346,7 +371,7 @@
                 <tbody class="rfp-lineitem-requested-items" data-last-index="{{ form.children|length}}" data-prototype-name="{{ prototype_name }}"{% if prototype_html is defined %} data-prototype="{{ prototype_html|escape }}"{% endif %} data-content>
                 {% if form.children|length %}
                     {% for child in form.children %}
-                        {{ _self.oro_rfp_request_lineitem_requested_prototype(child) }}
+                        {{ fields.oro_rfp_request_lineitem_requested_prototype(child, widgetContainerAttributes) }}
                     {% endfor %}
                 {% elseif show_form_when_empty and prototype_html is defined %}
                     {{ prototype_html|replace({(prototype_name): '0'})|raw }}
@@ -358,7 +383,7 @@
     </div>
 {% endblock %}
 
-{% macro oro_rfp_request_lineitem_requested_prototype(widget) %}
+{% macro oro_rfp_request_lineitem_requested_prototype(widget, attributes) %}
     {% if 'collection' in widget.vars.block_prefixes %}
         {% set form = widget.vars.prototype %}
         {% set name = widget.vars.full_name ~ '[' ~ widget.vars.prototype.vars.name ~ ']' %}
@@ -366,7 +391,7 @@
         {% set form = widget %}
         {% set name = widget.vars.full_name %}
     {% endif %}
-    <tr data-content="{{ name }}" data-validation-optional-group {{ block('widget_container_attributes') }}
+    <tr data-content="{{ name }}" data-validation-optional-group {{ attributes }}
         class="rfp-lineitem-requested rfp-lineitem-requested-item">
         {{ form_widget(form) }}
         <td class="rfp-lineitem-requested-remove">

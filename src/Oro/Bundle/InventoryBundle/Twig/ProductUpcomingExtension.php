@@ -4,11 +4,15 @@ namespace Oro\Bundle\InventoryBundle\Twig;
 
 use Oro\Bundle\InventoryBundle\Provider\UpcomingProductProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFunction;
 
 /**
- * Provides twig functions to determine upcoming product status and availability date.
+ * Provides Twig functions to determine upcoming product status and availability date:
+ *   - oro_inventory_is_product_upcoming
+ *   - oro_inventory_upcoming_product_availability_date
  */
-class ProductUpcomingExtension extends \Twig_Extension
+class ProductUpcomingExtension extends AbstractExtension
 {
     /**
      * @var UpcomingProductProvider
@@ -26,8 +30,8 @@ class ProductUpcomingExtension extends \Twig_Extension
     public function getFunctions()
     {
         return [
-            new \Twig_SimpleFunction('oro_inventory_is_product_upcoming', [$this, 'isUpcomingProduct']),
-            new \Twig_SimpleFunction(
+            new TwigFunction('oro_inventory_is_product_upcoming', [$this, 'isUpcomingProduct']),
+            new TwigFunction(
                 'oro_inventory_upcoming_product_availability_date',
                 [$this, 'getUpcomingAvailabilityDate']
             )

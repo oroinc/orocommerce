@@ -6,6 +6,7 @@ use Oro\Bundle\CheckoutBundle\Action\SendOrderConfirmationEmail;
 use Oro\Bundle\EmailBundle\Model\EmailTemplateCriteria;
 use Oro\Bundle\EmailBundle\Tests\Unit\Workflow\Action\AbstractSendEmailTemplateTest;
 use Oro\Bundle\EmailBundle\Tools\EmailAddressHelper;
+use Twig\Error\RuntimeError;
 
 class SendOrderConfirmationEmailTest extends AbstractSendEmailTemplateTest
 {
@@ -40,7 +41,7 @@ class SendOrderConfirmationEmailTest extends AbstractSendEmailTemplateTest
 
         $this->renderer
             ->method('compileMessage')
-            ->will($this->throwException(new \Twig_Error_Runtime('Twig_Error_Runtime')));
+            ->will($this->throwException(new RuntimeError('Twig_Error_Runtime')));
 
         $this->logger->expects($this->once())
             ->method('error')

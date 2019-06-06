@@ -14,6 +14,7 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Translation\TranslatorInterface;
+use Twig\Environment;
 
 abstract class AbstractCustomerFormViewListenerTest extends \PHPUnit\Framework\TestCase
 {
@@ -28,7 +29,7 @@ abstract class AbstractCustomerFormViewListenerTest extends \PHPUnit\Framework\T
     protected $doctrineHelper;
 
     /**
-     * @var \Twig_Environment|\PHPUnit\Framework\MockObject\MockObject
+     * @var Environment|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $env;
 
@@ -81,7 +82,7 @@ abstract class AbstractCustomerFormViewListenerTest extends \PHPUnit\Framework\T
                 }
             );
 
-        $this->env = $this->createMock(\Twig_Environment::class);
+        $this->env = $this->createMock(Environment::class);
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
 
         $this->websiteProvider = $this->getMockBuilder(WebsiteProviderInterface::class)
@@ -195,11 +196,11 @@ abstract class AbstractCustomerFormViewListenerTest extends \PHPUnit\Framework\T
     }
 
     /**
-     * @param \Twig_Environment $environment
+     * @param Environment $environment
      * @param FormView $formView
      * @return BeforeListRenderEvent
      */
-    protected function createEvent(\Twig_Environment $environment, FormView $formView = null)
+    protected function createEvent(Environment $environment, FormView $formView = null)
     {
         $defaultData = [
             ScrollData::DATA_BLOCKS => [

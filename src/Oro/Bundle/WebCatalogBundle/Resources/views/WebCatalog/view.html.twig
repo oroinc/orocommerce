@@ -14,6 +14,8 @@
 {% endblock pageHeader %}
 
 {% block content_data %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+
     {% set dataBlocks = [
         {
             'title': 'oro.webcatalog.sections.general'|trans,

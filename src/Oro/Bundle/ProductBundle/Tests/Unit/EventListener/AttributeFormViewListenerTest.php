@@ -12,13 +12,14 @@ use Oro\Bundle\TestFrameworkBundle\Entity\TestActivityTarget;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
 use Oro\Component\Testing\Unit\EntityTrait;
+use Twig\Environment;
 
 class AttributeFormViewListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /**
-     * @var \Twig_Environment|\PHPUnit\Framework\MockObject\MockObject
+     * @var Environment|\PHPUnit\Framework\MockObject\MockObject
      */
     private $environment;
 
@@ -37,7 +38,7 @@ class AttributeFormViewListenerTest extends \PHPUnit\Framework\TestCase
      */
     public function setUp()
     {
-        $this->environment = $this->getMockBuilder(\Twig_Environment::class)
+        $this->environment = $this->getMockBuilder(Environment::class)
             ->disableOriginalConstructor()
             ->getMock();
 

@@ -4,8 +4,14 @@ namespace Oro\Bundle\InventoryBundle\Twig;
 
 use Oro\Bundle\InventoryBundle\Inventory\LowInventoryProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFunction;
 
-class LowInventoryExtension extends \Twig_Extension
+/**
+ * Provides a Twig function to check if the product is a "low inventory" item:
+ *   - oro_is_low_inventory_product
+ */
+class LowInventoryExtension extends AbstractExtension
 {
     /**
      * @var LowInventoryProvider
@@ -26,7 +32,7 @@ class LowInventoryExtension extends \Twig_Extension
     public function getFunctions()
     {
         return [
-            new \Twig_SimpleFunction(
+            new TwigFunction(
                 'oro_is_low_inventory_product',
                 [$this, 'isLowInventory']
             )

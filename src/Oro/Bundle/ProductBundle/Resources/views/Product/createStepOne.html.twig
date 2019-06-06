@@ -6,6 +6,8 @@
 {% set formAction = path('oro_product_create')  %}
 
 {% block navButtons %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+
     {{ parent() }}
 
     {{ UI.cancelButton(path('oro_product_index')) }}

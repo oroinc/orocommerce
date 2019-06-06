@@ -1,8 +1,10 @@
 {% macro url(file, filter) -%}
+    {% import _self as imageMacros %}
+
     {%- if file is not null %}
         {{- filtered_image_url(file, filter) -}}
     {% else %}
-        {{- _self.urlFromString('', filter) -}}
+        {{- imageMacros.urlFromString('', filter) -}}
     {% endif %}
 {%- endmacro -%}
 
@@ -15,7 +17,9 @@
 {%- endmacro -%}
 
 {% macro image(file, filter) -%}
-    <img src="{{ _self.url(file, filter) }}"/>
+    {% import _self as imageMacros %}
+
+    <img src="{{ imageMacros.url(file, filter) }}"/>
 {%- endmacro -%}
 
 {% macro renderProductImages(productImages, imageTypes) %}

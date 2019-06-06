@@ -5,11 +5,16 @@ namespace Oro\Bundle\CatalogBundle\Twig;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\JsTree\CategoryTreeHandler;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFunction;
 
 /**
- * Twig extension that provides category list, product category full path and product category title
+ * Provides Twig functions to work with categories:
+ *   - oro_category_list
+ *   - oro_product_category_full_path
+ *   - oro_product_category_title
  */
-class CategoryExtension extends \Twig_Extension
+class CategoryExtension extends AbstractExtension
 {
     const NAME = 'oro_catalog_category_extension';
 
@@ -46,9 +51,9 @@ class CategoryExtension extends \Twig_Extension
     public function getFunctions()
     {
         return [
-            new \Twig_SimpleFunction('oro_category_list', [$this, 'getCategoryList']),
-            new \Twig_SimpleFunction('oro_product_category_full_path', [$this, 'getProductCategoryPath']),
-            new \Twig_SimpleFunction('oro_product_category_title', [$this, 'getProductCategoryTitle'])
+            new TwigFunction('oro_category_list', [$this, 'getCategoryList']),
+            new TwigFunction('oro_product_category_full_path', [$this, 'getProductCategoryPath']),
+            new TwigFunction('oro_product_category_title', [$this, 'getProductCategoryTitle'])
         ];
     }
 

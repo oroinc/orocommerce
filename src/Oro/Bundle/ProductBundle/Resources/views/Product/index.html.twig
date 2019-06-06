@@ -4,6 +4,7 @@
 {% set pageTitle = 'oro.product.entity_plural_label'|trans %}
 
 {% block navButtons %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
 
     {% include 'OroImportExportBundle:ImportExport:buttons_from_configuration.html.twig' with {
         'alias': 'oro_product_index'

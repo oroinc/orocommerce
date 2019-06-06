@@ -5,11 +5,16 @@ namespace Oro\Bundle\ShippingBundle\Twig;
 use Oro\Bundle\ProductBundle\Entity\MeasureUnitInterface;
 use Oro\Bundle\ProductBundle\Formatter\UnitValueFormatterInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFilter;
 
 /**
- * Add filters which format using \Oro\Bundle\ShippingBundle\Formatter\DimensionsValueFormatter
+ * Provides Twig filters to format dimensional units:
+ *   - oro_dimensions_unit_format_value
+ *   - oro_dimensions_unit_format_value_short
+ *   - oro_dimensions_unit_format_code
  */
-class DimensionsUnitValueExtension extends \Twig_Extension
+class DimensionsUnitValueExtension extends AbstractExtension
 {
     const NAME = 'oro_dimensions_unit_value';
 
@@ -38,15 +43,15 @@ class DimensionsUnitValueExtension extends \Twig_Extension
     public function getFilters()
     {
         return [
-            new \Twig_SimpleFilter(
+            new TwigFilter(
                 'oro_dimensions_unit_format_value',
                 [$this, 'format']
             ),
-            new \Twig_SimpleFilter(
+            new TwigFilter(
                 'oro_dimensions_unit_format_value_short',
                 [$this, 'formatShort']
             ),
-            new \Twig_SimpleFilter(
+            new TwigFilter(
                 'oro_dimensions_unit_format_code',
                 [$this, 'formatCode']
             ),

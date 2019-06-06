@@ -4,6 +4,7 @@
 
 {% block text_content_variant_collection_widget %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% import _self as formfields %}
 
     {% spaceless %}
         {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-content-variant-collection' }) %}
@@ -12,7 +13,7 @@
                 data-page-component-module="orocms/js/app/components/content-variant-collection-component"
                 data-last-index="{{ form.children|length}}"
                 data-prototype-name="{{ prototype_name }}"
-                {{ _self.oro_cms_content_variant_attributes(form) }}
+                {{ formfields.oro_cms_content_variant_attributes(form) }}
         >
             <input type="hidden" name="validate_{{ full_name }}" data-collection-name="{{ full_name }}" data-name="collection-validation" disabled data-validate-element>
 
@@ -37,7 +38,7 @@
             >
                 {% if form.children|length %}
                     {% for child in form.children %}
-                        {{ _self.oro_cms_content_variant_collection_item(child, child.vars.full_name, form.vars.disabled) }}
+                        {{ formfields.oro_cms_content_variant_collection_item(child, child.vars.full_name, form.vars.disabled) }}
                     {% endfor %}
                 {% endif %}
             </div>
@@ -93,7 +94,8 @@
 {% endmacro %}
 
 {% macro oro_cms_content_variant_attributes(form) %}
-    {% set prototype = _self.oro_cms_content_variant_collection_item(
+    {% import _self as formfields %}
+    {% set prototype = formfields.oro_cms_content_variant_collection_item(
         form.vars.prototype,
         form.vars.prototype.vars.name,
         form.vars.disabled

@@ -6,11 +6,15 @@ use Oro\Bundle\LayoutBundle\Provider\Image\ImagePlaceholderProviderInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFunction;
 
 /**
- * Introduces the functions to get the image placeholder and types images for the product entity.
+ * Provides Twig functions to get image placeholder and type images for a product entity:
+ *   - collect_product_images_by_types
+ *   - product_image_placeholder
  */
-class ProductImageExtension extends \Twig_Extension
+class ProductImageExtension extends AbstractExtension
 {
     const NAME = 'oro_product_image';
 
@@ -34,11 +38,11 @@ class ProductImageExtension extends \Twig_Extension
     public function getFunctions()
     {
         return [
-            new \Twig_SimpleFunction(
+            new TwigFunction(
                 'collect_product_images_by_types',
                 [$this, 'collectProductImagesByTypes']
             ),
-            new \Twig_SimpleFunction('product_image_placeholder', [$this, 'getProductImagePlaceholder'])
+            new TwigFunction('product_image_placeholder', [$this, 'getProductImagePlaceholder'])
         ];
     }
 

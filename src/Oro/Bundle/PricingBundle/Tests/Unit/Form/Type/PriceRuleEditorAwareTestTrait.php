@@ -17,6 +17,7 @@ use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
+use Twig\Environment;
 
 trait PriceRuleEditorAwareTestTrait
 {
@@ -42,8 +43,8 @@ trait PriceRuleEditorAwareTestTrait
         $formFactory->expects($this->any())
             ->method('createNamed')
             ->willReturn($priceListSelectForm);
-        /** @var \Twig_Environment|\PHPUnit\Framework\MockObject\MockObject $twig */
-        $twig = $this->getMockBuilder(\Twig_Environment::class)
+        /** @var Environment|\PHPUnit\Framework\MockObject\MockObject $twig */
+        $twig = $this->getMockBuilder(Environment::class)
             ->disableOriginalConstructor()
             ->getMock();
         $priceRuleOptionsConfigurator = new PriceRuleEditorOptionsConfigurator(

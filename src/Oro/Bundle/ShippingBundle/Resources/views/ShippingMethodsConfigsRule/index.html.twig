@@ -4,6 +4,8 @@
 {% set pageTitle = 'oro.shipping.shippingmethodsconfigsrule.entity_plural_label'|trans %}
 
 {% block navButtons %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+
     {% if is_granted('oro_shipping_methods_configs_rule_create') %}
         <div class="btn-group pull-right">
             {{ UI.addButton({

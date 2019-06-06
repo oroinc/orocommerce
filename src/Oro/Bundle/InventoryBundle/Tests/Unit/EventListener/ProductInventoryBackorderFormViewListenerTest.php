@@ -11,6 +11,7 @@ use Oro\Bundle\UIBundle\View\ScrollData;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Translation\TranslatorInterface;
+use Twig\Environment;
 
 class ProductInventoryBackorderFormViewListenerTest extends \PHPUnit\Framework\TestCase
 {
@@ -25,7 +26,7 @@ class ProductInventoryBackorderFormViewListenerTest extends \PHPUnit\Framework\T
     protected $em;
 
     /**
-     * @var \Twig_Environment|\PHPUnit\Framework\MockObject\MockObject
+     * @var Environment|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $env;
 
@@ -65,7 +66,7 @@ class ProductInventoryBackorderFormViewListenerTest extends \PHPUnit\Framework\T
                 }
             );
 
-        $this->env = $this->createMock(\Twig_Environment::class);
+        $this->env = $this->createMock(Environment::class);
         $this->em = $this->createMock(EntityManager::class);
 
         $this->request = $this->createMock(Request::class);

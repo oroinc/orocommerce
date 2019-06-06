@@ -6,8 +6,18 @@ use Oro\Bundle\ShippingBundle\Checker\ShippingMethodEnabledByIdentifierCheckerIn
 use Oro\Bundle\ShippingBundle\Event\ShippingMethodConfigDataEvent;
 use Oro\Bundle\ShippingBundle\Formatter\ShippingMethodLabelFormatter;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFunction;
 
-class ShippingMethodExtension extends \Twig_Extension
+/**
+ * Provides Twig functions to retrieve shipping method configuration:
+ *   - get_shipping_method_label
+ *   - get_shipping_method_type_label
+ *   - oro_shipping_method_with_type_label
+ *   - oro_shipping_method_config_template
+ *   - oro_shipping_method_enabled
+ */
+class ShippingMethodExtension extends AbstractExtension
 {
     const SHIPPING_METHOD_EXTENSION_NAME = 'oro_shipping_method';
     const DEFAULT_METHOD_CONFIG_TEMPLATE
@@ -92,23 +102,23 @@ class ShippingMethodExtension extends \Twig_Extension
     public function getFunctions()
     {
         return [
-            new \Twig_SimpleFunction(
+            new TwigFunction(
                 'get_shipping_method_label',
                 [$this->shippingMethodLabelFormatter, 'formatShippingMethodLabel']
             ),
-            new \Twig_SimpleFunction(
+            new TwigFunction(
                 'get_shipping_method_type_label',
                 [$this->shippingMethodLabelFormatter, 'formatShippingMethodTypeLabel']
             ),
-            new \Twig_SimpleFunction(
+            new TwigFunction(
                 'oro_shipping_method_with_type_label',
                 [$this->shippingMethodLabelFormatter, 'formatShippingMethodWithTypeLabel']
             ),
-            new \Twig_SimpleFunction(
+            new TwigFunction(
                 'oro_shipping_method_config_template',
                 [$this, 'getShippingMethodConfigRenderData']
             ),
-            new \Twig_SimpleFunction(
+            new TwigFunction(
                 'oro_shipping_method_enabled',
                 [$this, 'isShippingMethodEnabled']
             )

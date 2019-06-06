@@ -1,11 +1,12 @@
 {% block oro_consent_collection_widget %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% set widgetContainerAttributes = block('widget_container_attributes') %}
     {{ UI.sortable_list_view(form, attr, {
         collection_class: 'consent-sortable-list',
         add_btn_label: 'oro.consent.add_consent'|trans,
         column_label: 'oro.consent.entity_label'|trans,
         column_options_label: 'oro.consent.options.label'|trans
-    }) }}
+    }, widgetContainerAttributes) }}
 {% endblock %}
 
 {% block oro_consent_select_with_priority_widget %}

@@ -13,6 +13,7 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Translation\TranslatorInterface;
+use Twig\Environment;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -25,7 +26,7 @@ class CustomerViewListenerTest extends \PHPUnit\Framework\TestCase
     /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
     protected $doctrineHelper;
 
-    /** @var \Twig_Environment|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var Environment|\PHPUnit\Framework\MockObject\MockObject */
     protected $env;
 
     /** @var Request|\PHPUnit\Framework\MockObject\MockObject */
@@ -51,7 +52,7 @@ class CustomerViewListenerTest extends \PHPUnit\Framework\TestCase
                 }
             );
 
-        $this->env = $this->createMock(\Twig_Environment::class);
+        $this->env = $this->createMock(Environment::class);
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
 
         $this->request = $this->createMock(Request::class);
@@ -204,7 +205,7 @@ class CustomerViewListenerTest extends \PHPUnit\Framework\TestCase
 
         $renderedHtml = 'rendered_html';
 
-        /** @var \Twig_Environment|\PHPUnit\Framework\MockObject\MockObject $twig */
+        /** @var Environment|\PHPUnit\Framework\MockObject\MockObject $twig */
         $this->env->expects($this->once())
             ->method('render')
             ->with(

@@ -11,31 +11,45 @@
 {% endblock %}
 
 {% block _shipping_origin_oro_shipping___shipping_origin_value_country_row %}
-    {{ _self.shipping_origin_block(form, use_parent_scope_value) }}
+    {% import _self as fields %}
+
+    {{ fields.shipping_origin_block(form, use_parent_scope_value) }}
 {% endblock %}
 
 {% block _shipping_origin_oro_shipping___shipping_origin_value_region_row %}
-    {{ _self.shipping_origin_block(form, use_parent_scope_value) }}
+    {% import _self as fields %}
+
+    {{ fields.shipping_origin_block(form, use_parent_scope_value) }}
 {% endblock %}
 
 {% block _shipping_origin_oro_shipping___shipping_origin_value_region_text_row %}
-    {{ _self.shipping_origin_block(form, use_parent_scope_value) }}
+    {% import _self as fields %}
+
+    {{ fields.shipping_origin_block(form, use_parent_scope_value) }}
 {% endblock %}
 
 {% block _shipping_origin_oro_shipping___shipping_origin_value_postalCode_row %}
-    {{ _self.shipping_origin_block(form, use_parent_scope_value) }}
+    {% import _self as fields %}
+
+    {{ fields.shipping_origin_block(form, use_parent_scope_value) }}
 {% endblock %}
 
 {% block _shipping_origin_oro_shipping___shipping_origin_value_city_row %}
-    {{ _self.shipping_origin_block(form, use_parent_scope_value) }}
+    {% import _self as fields %}
+
+    {{ fields.shipping_origin_block(form, use_parent_scope_value) }}
 {% endblock %}
 
 {% block _shipping_origin_oro_shipping___shipping_origin_value_street_row %}
-    {{ _self.shipping_origin_block(form, use_parent_scope_value) }}
+    {% import _self as fields %}
+
+    {{ fields.shipping_origin_block(form, use_parent_scope_value) }}
 {% endblock %}
 
 {% block _shipping_origin_oro_shipping___shipping_origin_value_street2_row %}
-    {{ _self.shipping_origin_block(form, use_parent_scope_value) }}
+    {% import _self as fields %}
+
+    {{ fields.shipping_origin_block(form, use_parent_scope_value) }}
 {% endblock %}
 
 {% block oro_shipping_weight_widget %}
@@ -103,8 +117,13 @@
 {% endblock %}
 
 {% block oro_shipping_product_shipping_options_collection_widget %}
+    {% import _self as fields %}
+
+    {% set widgetContainerAttributes %}
+        {% with {'id': '', 'attr': []} %}{{ block('widget_container_attributes') }}{% endwith %}
+    {% endset %}
     {% if prototype is defined %}
-        {% set prototype_html = _self.oro_shipping_product_shipping_options_prototype(form) %}
+        {% set prototype_html = fields.oro_shipping_product_shipping_options_prototype(form, widgetContainerAttributes) %}
     {% endif %}
     <div class="row-oro">
         {% set prototype_name = form.vars.prototype_name %}
@@ -130,7 +149,7 @@
                 >
                     {% if form.children|length %}
                         {% for child in form.children %}
-                            {{ _self.oro_shipping_product_shipping_options_prototype(child) }}
+                            {{ fields.oro_shipping_product_shipping_options_prototype(child, widgetContainerAttributes) }}
                         {% endfor %}
                     {% elseif show_form_when_empty and prototype_html is defined %}
                         {{ prototype_html|replace({(prototype_name): '0'})|raw }}
@@ -142,7 +161,7 @@
     </div>
 {% endblock %}
 
-{% macro oro_shipping_product_shipping_options_prototype(widget) %}
+{% macro oro_shipping_product_shipping_options_prototype(widget, attributes) %}
     {% if 'collection' in widget.vars.block_prefixes %}
         {% set form = widget.vars.prototype %}
         {% set name = widget.vars.full_name ~ '[' ~ widget.vars.prototype.vars.name ~ ']' %}
@@ -151,7 +170,7 @@
         {% set name = widget.vars.full_name %}
     {% endif %}
 
-    <tr class="list-item" data-content="{{ name }}" data-validation-optional-group {{ block('widget_container_attributes') }}
+    <tr class="list-item" data-content="{{ name }}" data-validation-optional-group {{ attributes }}
         data-page-component-module="oroshipping/js/app/components/product-shipping-freight-classes-component">
         {{ form_widget(form) }}
         <td class="product-shipping-options-remove">

@@ -7,6 +7,8 @@
 {% set formAction = entity.id ? path('oro_pricing_price_list_update', { 'id': entity.id }) : path('oro_pricing_price_list_create')  %}
 
 {% block navButtons %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+
     {{ parent() }}
 
     {{ UI.cancelButton(path('oro_pricing_price_list_index')) }}

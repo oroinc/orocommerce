@@ -28,6 +28,9 @@
 {% endblock %}
 
 {% block _product_view_media_gallery_widget %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% import 'OroProductBundle::image_macros.html.twig' as Image %}
+
     {% set zoomOptions = {
         viewport: {
             minScreenType: 'desktop'
@@ -88,6 +91,7 @@
             'content': product.id
         } %}
         <div {{ UI.attributes(popupGalleryAttr) }}>
+        <div>
             <div class="product-view-media-gallery" {{ UI.attributes(slideImageAttr) }}>
                 {% for productImage in productImages %}
                     <div class="product-view-media-gallery__image-item" data-trigger-gallery-open>
@@ -135,6 +139,9 @@
 {% endblock %}
 
 {% block _product_view_media_slider_widget %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% import 'OroProductBundle::image_macros.html.twig' as Image %}
+
     {% set imageListOptions = {
         slidesToShow: 1,
         slidesToScroll: 1,

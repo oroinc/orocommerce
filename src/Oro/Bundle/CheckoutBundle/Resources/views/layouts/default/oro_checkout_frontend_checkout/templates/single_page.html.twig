@@ -252,7 +252,9 @@
     {% set blockPrefix = options.block_prefix %}
     {% for paymentMethod,view in options.views %}
         {% set options = {payment_method: paymentMethod} %}
-        {{ block('_' ~ blockPrefix ~ view.block) }}
+        {% if block('_' ~ blockPrefix ~ view.block) is defined %}
+            {{ block('_' ~ blockPrefix ~ view.block) }}
+        {% endif %}
     {% endfor %}
 {% endblock %}
 

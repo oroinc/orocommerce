@@ -5,8 +5,21 @@ namespace Oro\Bundle\OrderBundle\Twig;
 use Oro\Bundle\OrderBundle\Formatter\ShippingTrackingFormatter;
 use Oro\Bundle\OrderBundle\Formatter\SourceDocumentFormatter;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Twig\Environment;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFilter;
+use Twig\TwigFunction;
 
-class OrderExtension extends \Twig_Extension
+/**
+ * Provides Twig functions to format shipping tracking information and a function to render another template's content:
+ *   - oro_order_format_shipping_tracking_method
+ *   - oro_order_format_shipping_tracking_link
+ *   - oro_order_get_template_content
+ *
+ * Provides a Twig filter to display source document name:
+ *   - oro_order_format_source_document
+ */
+class OrderExtension extends AbstractExtension
 {
     const NAME = 'oro_order_order';
 
@@ -43,7 +56,7 @@ class OrderExtension extends \Twig_Extension
     public function getFilters()
     {
         return [
-            new \Twig_SimpleFilter(
+            new TwigFilter(
                 'oro_order_format_source_document',
                 [$this, 'formatSourceDocument']
             )
@@ -56,15 +69,15 @@ class OrderExtension extends \Twig_Extension
     public function getFunctions()
     {
         return [
-            new \Twig_SimpleFunction(
+            new TwigFunction(
                 'oro_order_format_shipping_tracking_method',
                 [$this, 'formatShippingTrackingMethod']
             ),
-            new \Twig_SimpleFunction(
+            new TwigFunction(
                 'oro_order_format_shipping_tracking_link',
                 [$this, 'formatShippingTrackingLink']
             ),
-            new \Twig_SimpleFunction(
+            new TwigFunction(
                 'oro_order_get_template_content',
                 [$this, 'getTemplateContent'],
                 ['needs_environment' => true, 'is_safe' => ['html']]
@@ -81,12 +94,12 @@ class OrderExtension extends \Twig_Extension
     }
 
     /**
-     * @param \Twig_Environment $environment
+     * @param Environment $environment
      * @param string $templateName
      * @param array $context
      * @return string
      */
-    public function getTemplateContent(\Twig_Environment $environment, $templateName, array $context)
+    public function getTemplateContent(Environment $environment, $templateName, array $context)
     {
         $template = $environment->resolveTemplate($templateName);
 

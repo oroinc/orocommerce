@@ -11,6 +11,7 @@ use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Translation\TranslatorInterface;
+use Twig\Environment;
 
 class FormViewListenerTest extends \PHPUnit\Framework\TestCase
 {
@@ -25,7 +26,7 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
     protected $doctrineHelper;
 
     /**
-     * @var \Twig_Environment|\PHPUnit\Framework\MockObject\MockObject
+     * @var Environment|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $env;
 
@@ -45,7 +46,7 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
                 }
             );
 
-        $this->env = $this->createMock(\Twig_Environment::class);
+        $this->env = $this->createMock(Environment::class);
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
 
         $this->listener = new FormViewListener($this->translator, $this->doctrineHelper);
@@ -92,7 +93,7 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
             ->method('getEntityRepository')
             ->with('OroCatalogBundle:Category')
             ->willReturn($repository);
-        
+
         $this->env->expects($this->once())
             ->method('render')
             ->with('OroCatalogBundle:Product:category_view.html.twig', ['entity' => $category])
@@ -127,7 +128,7 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
             ->method('getEntityRepository')
             ->with('OroCatalogBundle:Category')
             ->willReturn($repository);
-        
+
         $this->env->expects($this->never())
             ->method('render');
 

@@ -9,11 +9,17 @@ use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
 use Oro\Bundle\PaymentBundle\Twig\DTO\PaymentMethodObject;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFunction;
 
 /**
- * Twig extension that provides data based on payment method or entity that was participated in payment transactions
+ * Provides Twig functions to work with payment method information:
+ *   - get_payment_methods
+ *   - get_payment_method_label
+ *   - get_payment_method_admin_label
+ *   - oro_payment_method_config_template
  */
-class PaymentMethodExtension extends \Twig_Extension
+class PaymentMethodExtension extends AbstractExtension
 {
     const DEFAULT_METHOD_CONFIG_TEMPLATE =
         'OroPaymentBundle:PaymentMethodsConfigsRule:paymentMethodWithOptions.html.twig';
@@ -70,16 +76,16 @@ class PaymentMethodExtension extends \Twig_Extension
     public function getFunctions()
     {
         return [
-            new \Twig_SimpleFunction('get_payment_methods', [$this, 'getPaymentMethods']),
-            new \Twig_SimpleFunction(
+            new TwigFunction('get_payment_methods', [$this, 'getPaymentMethods']),
+            new TwigFunction(
                 'get_payment_method_label',
                 [$this, 'formatPaymentMethodLabel']
             ),
-            new \Twig_SimpleFunction(
+            new TwigFunction(
                 'get_payment_method_admin_label',
                 [$this, 'formatPaymentMethodAdminLabel']
             ),
-            new \Twig_SimpleFunction(
+            new TwigFunction(
                 'oro_payment_method_config_template',
                 [$this, 'getPaymentMethodConfigRenderData']
             )

@@ -12,6 +12,7 @@ use Oro\Bundle\PromotionBundle\Entity\Repository\AppliedPromotionRepository;
 use Oro\Bundle\PromotionBundle\Tests\Unit\Entity\Stub\Order;
 use Oro\Bundle\PromotionBundle\Twig\AppliedPromotionsExtension;
 use Oro\Component\Testing\Unit\EntityTrait;
+use Twig\TwigFunction;
 
 class AppliedPromotionsExtensionTest extends \PHPUnit\Framework\TestCase
 {
@@ -49,8 +50,8 @@ class AppliedPromotionsExtensionTest extends \PHPUnit\Framework\TestCase
         $extensionFunctions = $this->appliedDiscountsExtension->getFunctions();
 
         static::assertCount(2, $extensionFunctions);
-        static::assertInstanceOf(\Twig_SimpleFunction::class, $extensionFunctions[0]);
-        static::assertInstanceOf(\Twig_SimpleFunction::class, $extensionFunctions[1]);
+        static::assertInstanceOf(TwigFunction::class, $extensionFunctions[0]);
+        static::assertInstanceOf(TwigFunction::class, $extensionFunctions[1]);
     }
 
     public function testPrepareAppliedPromotionsInfo()

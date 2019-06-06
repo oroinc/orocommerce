@@ -4,6 +4,8 @@
 {% set pageTitle = 'oro.pricing.priceattributepricelist.entity_plural_label'|trans %}
 
 {% block navButtons %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+
     {% if is_granted('oro_pricing_price_attribute_price_list_create') %}
         <div class="btn-group">
             {{ UI.addButton({

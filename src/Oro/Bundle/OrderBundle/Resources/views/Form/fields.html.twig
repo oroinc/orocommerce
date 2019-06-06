@@ -23,7 +23,7 @@
     {% if form.parent is not empty %}</div>{% endif %}
 {% endblock %}
 
-{% macro oro_order_line_items_collection_item_prototype(widget) %}
+{% macro oro_order_line_items_collection_item_prototype(widget, attributes) %}
     {% if 'collection' in widget.vars.block_prefixes %}
         {% set form = widget.vars.prototype %}
         {% set name = widget.vars.full_name ~ '[' ~ widget.vars.prototype.vars.name ~ ']' %}
@@ -46,7 +46,7 @@
 
     <tr data-content="{{ name }}"
         {% if form.vars.value is not empty %}data-validation-ignore{# item is only validated once it got changed #}{% endif %}
-        {{ block('widget_container_attributes') }}
+        {{ attributes }}
         class="order-line-item"
         data-page-component-module="{{ form.vars.page_component }}"
         data-page-component-options="{{ page_component_options|json_encode }}"
@@ -64,9 +64,14 @@
 {% endmacro %}
 
 {% block oro_order_line_items_collection_widget %}
+    {% import _self as fields %}
+
     {% spaceless %}
+        {% set widgetContainerAttributes %}
+            {% with {'id': '', 'attr': []} %}{{ block('widget_container_attributes') }}{% endwith %}
+        {% endset %}
         {% if prototype is defined %}
-            {% set prototype_html = _self.oro_order_line_items_collection_item_prototype(form) %}
+            {% set prototype_html = fields.oro_order_line_items_collection_item_prototype(form, widgetContainerAttributes) %}
         {% endif %}
         {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-item-collection grid-container' }) %}
         {% set id = id ~ '_collection' %}
@@ -95,7 +100,7 @@
                     <tbody data-last-index="{{ form.children|length}}" data-prototype-name="{{ prototype_name }}"{% if prototype_html is defined %} data-prototype="{{ prototype_html|escape }}"{% endif %}>
                     {% if form.children|length %}
                         {% for child in form.children %}
-                            {{ _self.oro_order_line_items_collection_item_prototype(child) }}
+                            {{ fields.oro_order_line_items_collection_item_prototype(child, widgetContainerAttributes) }}
                         {% endfor %}
                     {% elseif show_form_when_empty and prototype_html is defined %}
                         {{ prototype_html|replace({(prototype_name): '0'})|raw }}
@@ -112,6 +117,8 @@
 {% endblock %}
 
 {% block oro_order_line_item_widget %}
+    {% import _self as fields %}
+
     <td class="order-line-item-sku">
         <div class="order-line-item-type-product">
             {% if form.vars.value is not empty %}
@@ -139,7 +146,7 @@
         {{ form_errors(form.freeFormProduct) }}
     </td>
 
-    {{ _self.render_form_sections(form.vars.sections, form) }}
+    {{ fields.render_form_sections(form.vars.sections, form) }}
 {% endblock %}
 
 {% macro render_form_sections(sections, form, overrides) %}
@@ -216,9 +223,12 @@
 {% endmacro %}
 
 {% block oro_order_shipping_tracking_collection_widget %}
+    {% import _self as fields %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+
     {% spaceless %}
         {% if prototype is defined %}
-            {% set prototype_html = _self.oro_order_shipping_tracking_collection_item_prototype(form) %}
+            {% set prototype_html = fields.oro_order_shipping_tracking_collection_item_prototype(form) %}
         {% endif %}
         {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-item-collection collection-fields-list' }) %}
         {% set id = id ~ '_collection' %}
@@ -241,7 +251,7 @@
                     <tbody {{ block('widget_container_attributes') }} data-last-index="{{ form.children|length}}" data-row-count-add="{{ form.vars.row_count_add }}" data-prototype-name="{{ prototype_name }}"{% if prototype_html is defined %} data-prototype="{{ prototype_html|escape }}"{% endif %}>
                         {% if form.children|length %}
                             {% for child in form.children %}
-                                {{ _self.oro_order_shipping_tracking_collection_item_prototype(child) }}
+                                {{ fields.oro_order_shipping_tracking_collection_item_prototype(child) }}
                             {% endfor %}
                         {% elseif show_form_when_empty and prototype_html is defined %}
                             {% for i in 0..(form.vars.row_count_initial - 1) %}

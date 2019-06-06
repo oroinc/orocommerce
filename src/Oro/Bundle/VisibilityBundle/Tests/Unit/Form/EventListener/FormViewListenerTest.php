@@ -11,11 +11,12 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Translation\TranslatorInterface;
+use Twig\Environment;
 
 class FormViewListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|\Twig_Environment
+     * @var \PHPUnit\Framework\MockObject\MockObject|Environment
      */
     protected $env;
 
@@ -44,7 +45,7 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
      */
     public function setUp()
     {
-        $this->env = $this->createMock(\Twig_Environment::class);
+        $this->env = $this->createMock(Environment::class);
         $this->translator = $this->createMock(TranslatorInterface::class);
         $this->translator->expects($this->any())
             ->method('trans')

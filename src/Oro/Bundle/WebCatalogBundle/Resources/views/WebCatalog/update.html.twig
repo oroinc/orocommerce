@@ -6,6 +6,8 @@
 {% set formAction = entity.id ? path('oro_web_catalog_update', { 'id': entity.id }) : path('oro_web_catalog_create')  %}
 
 {% block navButtons %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+
     {{ parent() }}
 
     {{ UI.cancelButton(path('oro_web_catalog_index')) }}

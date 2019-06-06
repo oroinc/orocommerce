@@ -6,6 +6,7 @@ use Oro\Bundle\InventoryBundle\EventListener\ProductUpcomingFormViewListener;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\UIBundle\Tests\Unit\Fallback\AbstractFallbackFieldsFormViewTest;
 use Oro\Bundle\UIBundle\View\ScrollData;
+use Twig\Environment;
 
 class ProductUpcomingFormViewListenerTest extends AbstractFallbackFieldsFormViewTest
 {
@@ -27,7 +28,7 @@ class ProductUpcomingFormViewListenerTest extends AbstractFallbackFieldsFormView
 
     public function testOnProductView()
     {
-        $env = $this->createMock(\Twig_Environment::class);
+        $env = $this->createMock(Environment::class);
         $env->expects($this->once())->method('render')->willReturn('Rendered template');
         $this->event->expects($this->once())->method('getEnvironment')->willReturn($env);
 
@@ -49,7 +50,7 @@ class ProductUpcomingFormViewListenerTest extends AbstractFallbackFieldsFormView
 
     public function testOnProductEdit()
     {
-        $env = $this->getMockBuilder(\Twig_Environment::class)->disableOriginalConstructor()->getMock();
+        $env = $this->getMockBuilder(Environment::class)->disableOriginalConstructor()->getMock();
         $env->expects($this->once())->method('render')->willReturn('Rendered template');
 
         $this->event->expects($this->once())->method('getEnvironment')->willReturn($env);

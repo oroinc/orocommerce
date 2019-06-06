@@ -33,6 +33,8 @@
 {% endset %}
 
 {% block content_data %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+
     {% set dataBlocks = [
         {
             'title': 'oro.cms.contentblock.sections.general.label'|trans,

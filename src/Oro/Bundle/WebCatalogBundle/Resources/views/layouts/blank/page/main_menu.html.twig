@@ -127,7 +127,6 @@
         <ul class="main-menu-column__inner-{{ loop.index % 2 ? 'left' : 'right' }}">
         {% endif %}
             {{ block('_web_catalog_menu_second_level_item') }}
-            {{ block('_web_catalog_menu_children') }}
             {% set hasSublist = category.children is not empty %}
             {% if hasSublist %}
                 {% do block|merge_context({'categories': category.children }) %}

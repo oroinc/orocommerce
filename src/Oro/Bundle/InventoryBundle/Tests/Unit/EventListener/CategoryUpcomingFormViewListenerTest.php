@@ -4,6 +4,7 @@ namespace Oro\Bundle\CatalogBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\InventoryBundle\EventListener\CategoryUpcomingFormViewListener;
 use Oro\Bundle\UIBundle\Tests\Unit\Fallback\AbstractFallbackFieldsFormViewTest;
+use Twig\Environment;
 
 class CategoryUpcomingFormViewListenerTest extends AbstractFallbackFieldsFormViewTest
 {
@@ -25,7 +26,7 @@ class CategoryUpcomingFormViewListenerTest extends AbstractFallbackFieldsFormVie
 
     public function testOnCategoryEdit()
     {
-        $env = $this->getMockBuilder(\Twig_Environment::class)->disableOriginalConstructor()->getMock();
+        $env = $this->getMockBuilder(Environment::class)->disableOriginalConstructor()->getMock();
         $env->expects($this->once())->method('render')->willReturn('Rendered template');
         $this->event->expects($this->once())->method('getEnvironment')->willReturn($env);
 

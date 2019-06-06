@@ -1,5 +1,7 @@
 {% block payment_additional_data_widget %}
-    {{ block(block_name) }}
+    {% if block(block_name) is defined %}
+        {{ block(block_name) }}
+    {% endif %}
 {% endblock %}
 
 {% block _payment_methods_widget %}
@@ -21,7 +23,9 @@
                                 <span class="custom-radio__text">{{ view.label }}</span>
                             </label>
                             <div class="{{ class_prefix }}-form__payment-container" data-form-container {% if not selected %} style="display: none;" {% endif %}>
-                                {{ block(view.block) }}
+                                {% if block(view.block) is defined %}
+                                    {{ block(view.block) }}
+                                {% endif %}
                             </div>
                         </div>
                     {% endfor %}

@@ -18,6 +18,8 @@
 {% endblock pageHeader %}
 
 {% block breadcrumbs %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+
     {{ parent() }}
     <span class="page-title__status">
         {% if not entity.status %}
@@ -31,6 +33,8 @@
 {% endblock breadcrumbs %}
 
 {% block content_data %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+
     {% set productInformationWidget %}
         {{ oro_widget_render({
             'widgetType': 'block',

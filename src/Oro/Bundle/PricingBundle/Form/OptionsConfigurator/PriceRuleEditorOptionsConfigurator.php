@@ -9,7 +9,11 @@ use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Twig\Environment;
 
+/**
+ * Configurator for price rule editor autocomplete data.
+ */
 class PriceRuleEditorOptionsConfigurator
 {
     /**
@@ -23,19 +27,19 @@ class PriceRuleEditorOptionsConfigurator
     private $formFactory;
 
     /**
-     * @var \Twig_Environment
+     * @var Environment
      */
     private $twig;
 
     /**
      * @param AutocompleteFieldsProviderInterface $autocompleteFieldsProvider
      * @param FormFactoryInterface $formFactory
-     * @param \Twig_Environment $environment
+     * @param Environment $environment
      */
     public function __construct(
         AutocompleteFieldsProviderInterface $autocompleteFieldsProvider,
         FormFactoryInterface $formFactory,
-        \Twig_Environment $environment
+        Environment $environment
     ) {
         $this->autocompleteFieldsProvider = $autocompleteFieldsProvider;
         $this->formFactory = $formFactory;

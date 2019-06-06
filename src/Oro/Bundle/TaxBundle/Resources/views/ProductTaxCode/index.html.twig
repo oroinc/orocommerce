@@ -6,6 +6,8 @@
 {% set pageTitle = 'oro.tax.producttaxcode.entity_plural_label'|trans %}
 
 {% block navButtons %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+
     {% if is_granted('oro_tax_product_tax_code_create') %}
         <div class="btn-group">
             {{ UI.addButton({

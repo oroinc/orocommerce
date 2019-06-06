@@ -3,6 +3,8 @@
 {% set pageTitle = 'oro.catalog.category.entity_plural_label'|trans %}
 
 {% block navButtons %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+
     {% if is_granted('oro_catalog_category_create') %}
         <div class="btn-group">
             {{ UI.addButton({
@@ -14,6 +16,8 @@
 {% endblock %}
 
 {% block content %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+
     {{ parent() }}
 
     {% set treeOptions = {
@@ -23,12 +27,13 @@
         'onSelectRoute' : 'oro_catalog_category_update',
         'onMoveRoute' : 'oro_catalog_category_move'
     } %}
-    
+
     <div class="sidebar-container">
         {% embed "OroUIBundle::content_sidebar.html.twig" with {options: {
             scrollbar: '[data-role="jstree-container"]'
         }} %}
             {% block sidebar %}
+                {% import 'OroUIBundle::macros.html.twig' as UI %}
                 {{ UI.renderJsTree(
                     {
                         'label': 'oro.catalog.category.entity_plural_label'|trans,

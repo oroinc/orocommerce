@@ -37,9 +37,11 @@
 {% endmacro %}
 
 {% macro oro_web_catalog_content_variant_prototype_attributes(form) %}
+    {% import _self as fields %}
+
     {% for contentVarientTypeName, contentVariantPrototypeData in form.vars.prototypes %}
         {% set contentVariantPrototypeForm = contentVariantPrototypeData.form %}
-        {% set contentVariantPrototypeFormHtml = _self.oro_web_catalog_content_variant_collection_item_prototype(
+        {% set contentVariantPrototypeFormHtml = fields.oro_web_catalog_content_variant_collection_item_prototype(
             contentVariantPrototypeForm,
             contentVariantPrototypeForm.vars.name,
             form.vars.disabled
@@ -85,6 +87,8 @@
 {% endmacro %}
 
 {% block oro_web_catalog_content_variant_collection_widget %}
+    {% import _self as fields %}
+
     {% spaceless %}
         {% set prototype_name = form.vars.prototype_name %}
         {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-content-variant-collection' }) %}
@@ -93,12 +97,12 @@
             data-page-component-module="orowebcatalog/js/app/components/content-variant-collection-component"
             data-last-index="{{ form.children|length}}"
             data-prototype-name="{{ prototype_name }}"
-            {{ _self.oro_web_catalog_content_variant_prototype_attributes(form) }}
+            {{ fields.oro_web_catalog_content_variant_prototype_attributes(form) }}
         >
             <input type="hidden" name="validate_{{ full_name }}" data-collection-name="{{ full_name }}" data-name="collection-validation" disabled data-validate-element>
 
             <div class="content-variant-add-btn-container clearfix-oro">
-                {{ _self.oro_web_catalog_content_variant_button(form) }}
+                {{ fields.oro_web_catalog_content_variant_button(form) }}
             </div>
 
             <div class="variant-collection" data-role="collection-container"
@@ -110,12 +114,12 @@
             >
                 {% if form.children|length %}
                     {% for child in form.children %}
-                        {{ _self.oro_web_catalog_content_variant_collection_item_prototype(child, child.vars.full_name, form.vars.disabled) }}
+                        {{ fields.oro_web_catalog_content_variant_collection_item_prototype(child, child.vars.full_name, form.vars.disabled) }}
                     {% endfor %}
                 {% endif %}
             </div>
         </div>
-        {{ _self.content_vriant_default_js(_context) }}
+        {{ fields.content_vriant_default_js(_context) }}
     {% endspaceless %}
 {% endblock %}
 

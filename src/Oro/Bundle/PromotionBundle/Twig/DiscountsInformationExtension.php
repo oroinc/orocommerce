@@ -4,11 +4,14 @@ namespace Oro\Bundle\PromotionBundle\Twig;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\PromotionBundle\Layout\DataProvider\DiscountsInformationDataProvider;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFunction;
 
 /**
- * Twig extension that provides line items discounts information
+ * Provides a Twig functios to retrieve line item discounts information:
+ *   - line_items_discounts
  */
-class DiscountsInformationExtension extends \Twig_Extension
+class DiscountsInformationExtension extends AbstractExtension
 {
     /** @var DiscountsInformationDataProvider */
     protected $dataProvider;
@@ -26,7 +29,7 @@ class DiscountsInformationExtension extends \Twig_Extension
      */
     public function getFunctions()
     {
-        return [new \Twig_SimpleFunction('line_items_discounts', [$this, 'getLineItemsDiscounts'])];
+        return [new TwigFunction('line_items_discounts', [$this, 'getLineItemsDiscounts'])];
     }
 
     /**

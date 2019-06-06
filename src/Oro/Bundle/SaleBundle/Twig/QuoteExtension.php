@@ -8,11 +8,20 @@ use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductRequest;
 use Oro\Bundle\SaleBundle\Formatter\QuoteProductFormatter;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFilter;
+use Twig\TwigFunction;
 
 /**
- * Twig extension for Quote
+ * Provides a Twig function to check visibility of a sales quote:
+ *   - is_quote_visible
+ *
+ * Provides Twig filters to format sales quote data:
+ *   - oro_format_sale_quote_product_offer
+ *   - oro_format_sale_quote_product_type
+ *   - oro_format_sale_quote_product_request
  */
-class QuoteExtension extends \Twig_Extension
+class QuoteExtension extends AbstractExtension
 {
     const NAME = 'oro_sale_quote';
     const FRONTEND_SYSTEM_CONFIG_PATH = 'oro_rfp.frontend_product_visibility';
@@ -50,15 +59,15 @@ class QuoteExtension extends \Twig_Extension
     public function getFilters()
     {
         return [
-            new \Twig_SimpleFilter(
+            new TwigFilter(
                 'oro_format_sale_quote_product_offer',
                 [$this, 'formatProductOffer']
             ),
-            new \Twig_SimpleFilter(
+            new TwigFilter(
                 'oro_format_sale_quote_product_type',
                 [$this, 'formatProductType']
             ),
-            new \Twig_SimpleFilter(
+            new TwigFilter(
                 'oro_format_sale_quote_product_request',
                 [$this, 'formatProductRequest']
             ),
@@ -71,7 +80,7 @@ class QuoteExtension extends \Twig_Extension
     public function getFunctions()
     {
         return [
-            new \Twig_SimpleFunction('is_quote_visible', [$this, 'isQuoteVisible'])
+            new TwigFunction('is_quote_visible', [$this, 'isQuoteVisible'])
         ];
     }
 

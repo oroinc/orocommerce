@@ -5,11 +5,15 @@ namespace Oro\Bundle\PaymentBundle\Twig;
 use Oro\Bundle\PaymentBundle\Formatter\PaymentStatusLabelFormatter;
 use Oro\Bundle\PaymentBundle\Provider\PaymentStatusProvider;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFunction;
 
 /**
- * Twig extension that provides payment status
+ * Provides Twig functions to render payment status:
+ *   - get_payment_status_label
+ *   - getPaymentStatus
  */
-class PaymentStatusExtension extends \Twig_Extension
+class PaymentStatusExtension extends AbstractExtension
 {
     const PAYMENT_STATUS_EXTENSION_NAME = 'oro_payment_status';
 
@@ -54,11 +58,11 @@ class PaymentStatusExtension extends \Twig_Extension
     public function getFunctions()
     {
         return [
-            new \Twig_SimpleFunction(
+            new TwigFunction(
                 'get_payment_status_label',
                 [$this, 'formatPaymentStatusLabel']
             ),
-            new \Twig_SimpleFunction(
+            new TwigFunction(
                 'get_payment_status',
                 [$this, 'getPaymentStatus']
             )

@@ -22,6 +22,8 @@
 {% endblock pageHeader %}
 
 {% block navButtons %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+
     {{ parent() }}
 
     {{ UI.cancelButton(path('oro_sale_quote_index')) }}
@@ -39,6 +41,8 @@
 {% endblock navButtons %}
 
 {% block content_data %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+
     {% set id = 'quote-edit' %}
 
     {% set quoteEntryPointEvents = {
