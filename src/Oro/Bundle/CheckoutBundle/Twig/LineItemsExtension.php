@@ -9,7 +9,8 @@ use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Psr\Container\ContainerInterface;
+use Symfony\Component\DependencyInjection\ServiceSubscriberInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
@@ -18,7 +19,7 @@ use Twig\TwigFunction;
  * including all products with amounts and subtotals:
  *   - order_line_items
  */
-class LineItemsExtension extends AbstractExtension
+class LineItemsExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
     const NAME = 'oro_checkout_order_line_items';
 
@@ -38,7 +39,7 @@ class LineItemsExtension extends AbstractExtension
      */
     private function getTotalsProvider()
     {
-        return $this->container->get('oro_pricing.subtotal_processor.total_processor_provider');
+        return $this->container->get(TotalProcessorProvider::class);
     }
 
     /**
@@ -46,7 +47,7 @@ class LineItemsExtension extends AbstractExtension
      */
     private function getLineItemSubtotalProvider()
     {
-        return $this->container->get('oro_pricing.subtotal_processor.provider.subtotal_line_item');
+        return $this->container->get(LineItemSubtotalProvider::class);
     }
 
     /**
@@ -54,7 +55,7 @@ class LineItemsExtension extends AbstractExtension
      */
     private function getLocalizationHelper()
     {
-        return $this->container->get('oro_locale.helper.localization');
+        return $this->container->get(LocalizationHelper::class);
     }
 
     /**
@@ -62,7 +63,7 @@ class LineItemsExtension extends AbstractExtension
      */
     private function getEntityNameResolver()
     {
-        return $this->container->get('oro_entity.entity_name_resolver');
+        return $this->container->get(EntityNameResolver::class);
     }
 
     /**
@@ -152,6 +153,19 @@ class LineItemsExtension extends AbstractExtension
         return [
             'label' => $total->getLabel(),
             'totalPrice' => $total->getTotalPrice()
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return [
+            TotalProcessorProvider::class,
+            LineItemSubtotalProvider::class,
+            LocalizationHelper::class,
+            EntityNameResolver::class,
         ];
     }
 }

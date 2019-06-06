@@ -46,10 +46,10 @@ class LineItemsExtensionTest extends \PHPUnit\Framework\TestCase
             });
 
         $container = self::getContainerBuilder()
-            ->add('oro_pricing.subtotal_processor.total_processor_provider', $this->totalsProvider)
-            ->add('oro_pricing.subtotal_processor.provider.subtotal_line_item', $this->lineItemSubtotalProvider)
-            ->add('oro_locale.helper.localization', $this->localizedHelper)
-            ->add('oro_entity.entity_name_resolver', $this->entityNameResolver)
+            ->add(TotalProcessorProvider::class, $this->totalsProvider)
+            ->add(LineItemSubtotalProvider::class, $this->lineItemSubtotalProvider)
+            ->add(LocalizationHelper::class, $this->localizedHelper)
+            ->add(EntityNameResolver::class, $this->entityNameResolver)
             ->getContainer($this);
 
         $this->extension = new LineItemsExtension($container);
