@@ -3,8 +3,13 @@
 {% endblock %}
 
 {% block oro_sale_quote_product_collection_widget %}
+    {% import _self as fields %}
+
+    {% set widgetContainerAttributes %}
+        {% with {'id': '', 'attr': []} %}{{ block('widget_container_attributes') }}{% endwith %}
+    {% endset %}
     {% if prototype is defined %}
-        {% set prototype_html = _self.oro_sale_quote_lineitem_prototype(form) %}
+        {% set prototype_html = fields.oro_sale_quote_lineitem_prototype(form, widgetContainerAttributes) %}
     {% endif %}
     {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-item-collection grid-container' }) %}
     {% set id = id ~ '_collection' %}
@@ -25,7 +30,7 @@
                 <tbody data-last-index="{{ form.children|length}}" data-prototype-name="{{ prototype_name }}"{% if prototype_html is defined %} data-prototype="{{ prototype_html|escape }}"{% endif %} class="1">
                 {% if form.children|length %}
                     {% for child in form.children %}
-                        {{ _self.oro_sale_quote_lineitem_prototype(child) }}
+                        {{ fields.oro_sale_quote_lineitem_prototype(child, widgetContainerAttributes) }}
                     {% endfor %}
                 {% elseif show_form_when_empty and prototype_html is defined %}
                     {{ prototype_html|replace({(prototype_name): '0'})|raw }}
@@ -37,7 +42,7 @@
     </div>
 {% endblock %}
 
-{% macro oro_sale_quote_lineitem_prototype(widget) %}
+{% macro oro_sale_quote_lineitem_prototype(widget, attributes) %}
     {% if 'collection' in widget.vars.block_prefixes %}
         {% set form = widget.vars.prototype %}
         {% set name = widget.vars.full_name ~ '[' ~ widget.vars.prototype.vars.name ~ ']' %}
@@ -46,7 +51,7 @@
         {% set name = widget.vars.full_name %}
     {% endif %}
     {% set page_component_options = form.vars.page_component_options|merge(form.vars.componentOptions|default({})) %}
-    <tr data-content="{{ name }}" data-validation-optional-group {{ block('widget_container_attributes') }}
+    <tr data-content="{{ name }}" data-validation-optional-group {{ attributes }}
         class="quote-lineitem"
         data-page-component-module="{{ form.vars.page_component }}"
         data-page-component-options="{{ page_component_options|json_encode }}">
@@ -179,8 +184,13 @@
 {% endblock %}
 
 {% block oro_sale_quote_product_offer_collection_widget %}
+    {% import _self as fields %}
+
+    {% set widgetContainerAttributes %}
+        {% with {'id': '', 'attr': []} %}{{ block('widget_container_attributes') }}{% endwith %}
+    {% endset %}
     {% if prototype is defined %}
-        {% set prototype_html = _self.oro_sale_quote_product_offer_prototype(form, true) %}
+        {% set prototype_html = fields.oro_sale_quote_product_offer_prototype(form, true, widgetContainerAttributes) %}
     {% endif %}
     {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-item-collection grid-container d-none' }) %}
     {% set id = id ~ '_collection' %}
@@ -199,7 +209,7 @@
                 <tbody class="quote-lineitem-offers-items" data-last-index="{{ form.children|length}}" data-prototype-name="{{ prototype_name }}"{% if prototype_html is defined %} data-prototype="{{ prototype_html|escape }}"{% endif %} data-content>
                 {% if form.children|length %}
                     {% for child in form.children %}
-                        {{ _self.oro_sale_quote_product_offer_prototype(child) }}
+                        {{ fields.oro_sale_quote_product_offer_prototype(child, false, widgetContainerAttributes) }}
                     {% endfor %}
                 {% elseif show_form_when_empty and prototype_html is defined %}
                     {{ prototype_html|replace({(prototype_name): '0'})|raw }}
@@ -211,7 +221,7 @@
     </div>
 {% endblock %}
 
-{% macro oro_sale_quote_product_offer_prototype(widget, prototype) %}
+{% macro oro_sale_quote_product_offer_prototype(widget, prototype, attributes) %}
     {% if 'collection' in widget.vars.block_prefixes %}
         {% set form = widget.vars.prototype %}
         {% set name = widget.vars.full_name ~ '[' ~ widget.vars.prototype.vars.name ~ ']' %}
@@ -221,7 +231,7 @@
     {% endif %}
     {% set productForm = form.parent.parent %}
     <tr data-content="{{ name }}"
-        data-validation-optional-group {{ block('widget_container_attributes') }}
+        data-validation-optional-group {{ attributes }}
         class="quote-lineitem-offers quote-lineitem-offers-item"
         data-page-component-module="oroui/js/app/components/view-component"
         data-page-component-options="{{ {

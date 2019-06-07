@@ -1,6 +1,8 @@
 {% extends 'OroPromotionBundle:Promotion/discountPlaceholders:baseDiscountPlaceholder.html.twig' %}
 
 {% block content %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+
     {% set options = entity.discountConfiguration.options %}
     {% set data = [
         UI.renderProperty(

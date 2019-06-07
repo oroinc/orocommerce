@@ -4,6 +4,8 @@
 {% set gridName = 'cms-page-grid' %}
 
 {% block navButtons %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+
     {% if is_granted('oro_cms_page_create') %}
         <div class="btn-group">
             {{ UI.addButton({

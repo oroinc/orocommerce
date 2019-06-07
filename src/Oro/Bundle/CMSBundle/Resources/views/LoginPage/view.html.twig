@@ -15,6 +15,8 @@
 {% endblock pageHeader %}
 
 {% block content_data %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+
     {% set imageLogoData %}
         {% if entity.logoImage %}
             {% set logoImageContent %}

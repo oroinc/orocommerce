@@ -12,6 +12,8 @@
 {% set formAction = entityId ? path('oro_catalog_category_update', { 'id': entityId }) : path('oro_catalog_category_create', { 'id': parentCategoryId })  %}
 
 {% block navButtons %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+
     {% if entityId %}
         {% if is_granted('oro_catalog_category_create') %}
             {{ UI.button({
@@ -46,6 +48,8 @@
 {% endblock pageHeader %}
 
 {% block content_data %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+
     {% set id = 'category-edit' %}
 
     {% set dataBlocks = [{
@@ -128,6 +132,7 @@
             scrollbar: '[data-role="jstree-container"]'
         }} %}
             {% block sidebar %}
+                {% import 'OroUIBundle::macros.html.twig' as UI %}
                 {{ UI.renderJsTree(
                     {
                         'label': 'oro.catalog.category.entity_plural_label'|trans,

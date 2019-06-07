@@ -17,6 +17,7 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Translation\TranslatorInterface;
+use Twig\Environment;
 
 class CustomerUserViewListenerTest extends \PHPUnit\Framework\TestCase
 {
@@ -28,7 +29,7 @@ class CustomerUserViewListenerTest extends \PHPUnit\Framework\TestCase
     /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $doctrineHelper;
 
-    /** @var \Twig_Environment|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var Environment|\PHPUnit\Framework\MockObject\MockObject */
     private $env;
 
     /** @var CustomerUserViewListener */
@@ -51,7 +52,7 @@ class CustomerUserViewListenerTest extends \PHPUnit\Framework\TestCase
                 }
             );
 
-        $this->env = $this->createMock(\Twig_Environment::class);
+        $this->env = $this->createMock(Environment::class);
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
 
         $this->requestStack = $this->createMock(RequestStack::class);

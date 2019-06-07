@@ -7,6 +7,7 @@ use Oro\Bundle\ShippingBundle\Event\ShippingMethodConfigDataEvent;
 use Oro\Bundle\ShippingBundle\Formatter\ShippingMethodLabelFormatter;
 use Oro\Bundle\ShippingBundle\Twig\ShippingMethodExtension;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Twig\TwigFunction;
 
 class ShippingMethodExtensionTest extends \PHPUnit\Framework\TestCase
 {
@@ -49,23 +50,23 @@ class ShippingMethodExtensionTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertEquals(
             [
-                new \Twig_SimpleFunction(
+                new TwigFunction(
                     'get_shipping_method_label',
                     [$this->shippingMethodLabelFormatter, 'formatShippingMethodLabel']
                 ),
-                new \Twig_SimpleFunction(
+                new TwigFunction(
                     'get_shipping_method_type_label',
                     [$this->shippingMethodLabelFormatter, 'formatShippingMethodTypeLabel']
                 ),
-                new \Twig_SimpleFunction(
+                new TwigFunction(
                     'oro_shipping_method_with_type_label',
                     [$this->shippingMethodLabelFormatter, 'formatShippingMethodWithTypeLabel']
                 ),
-                new \Twig_SimpleFunction(
+                new TwigFunction(
                     'oro_shipping_method_config_template',
                     [$this->extension, 'getShippingMethodConfigRenderData']
                 ),
-                new \Twig_SimpleFunction(
+                new TwigFunction(
                     'oro_shipping_method_enabled',
                     [$this->extension, 'isShippingMethodEnabled']
                 )

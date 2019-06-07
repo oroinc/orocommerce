@@ -6,6 +6,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SEOBundle\EventListener\ProductFormViewListener;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
+use Twig\Environment;
 
 class ProductFormViewListenerTest extends BaseFormViewListenerTestCase
 {
@@ -53,12 +54,12 @@ class ProductFormViewListenerTest extends BaseFormViewListenerTestCase
     /**
      * @param object $entityObject
      * @param string $labelPrefix
-     * @return \PHPUnit\Framework\MockObject\MockObject|\Twig_Environment
+     * @return \PHPUnit\Framework\MockObject\MockObject|Environment
      */
     protected function getEnvironmentForView($entityObject, $labelPrefix)
     {
-        /** @var \PHPUnit\Framework\MockObject\MockObject|\Twig_Environment $env */
-        $env = $this->getMockBuilder(\Twig_Environment::class)
+        /** @var \PHPUnit\Framework\MockObject\MockObject|Environment $env */
+        $env = $this->getMockBuilder(Environment::class)
             ->disableOriginalConstructor()
             ->getMock();
 

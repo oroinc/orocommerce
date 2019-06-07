@@ -4,8 +4,16 @@ namespace Oro\Bundle\PaymentTermBundle\Twig;
 
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFunction;
 
-class DeleteMessageTextExtension extends \Twig_Extension
+/**
+ * Provides Twig functions to get text of the message about deletion of a payment term
+ * with links to the affected customers and customer groups:
+ *   - get_payment_term_delete_message
+ *   - get_payment_term_delete_message_datagrid
+ */
+class DeleteMessageTextExtension extends AbstractExtension
 {
     const DELETE_MESSAGE_TEXT_EXTENSION_NAME = 'oro_payment_term_delete_message';
 
@@ -42,8 +50,8 @@ class DeleteMessageTextExtension extends \Twig_Extension
     public function getFunctions()
     {
         return [
-            new \Twig_SimpleFunction('get_payment_term_delete_message', [$this, 'getDeleteMessageText']),
-            new \Twig_SimpleFunction('get_payment_term_delete_message_datagrid', [$this, 'getDeleteMessageDatagrid']),
+            new TwigFunction('get_payment_term_delete_message', [$this, 'getDeleteMessageText']),
+            new TwigFunction('get_payment_term_delete_message_datagrid', [$this, 'getDeleteMessageDatagrid']),
         ];
     }
 

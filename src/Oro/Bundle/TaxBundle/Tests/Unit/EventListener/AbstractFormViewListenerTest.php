@@ -9,6 +9,7 @@ use Oro\Bundle\UIBundle\View\ScrollData;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Translation\TranslatorInterface;
+use Twig\Environment;
 
 abstract class AbstractFormViewListenerTest extends \PHPUnit\Framework\TestCase
 {
@@ -18,7 +19,7 @@ abstract class AbstractFormViewListenerTest extends \PHPUnit\Framework\TestCase
     /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
     protected $doctrineHelper;
 
-    /** @var \Twig_Environment|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var Environment|\PHPUnit\Framework\MockObject\MockObject */
     protected $env;
 
     /** @var AbstractFormViewListener */
@@ -41,7 +42,7 @@ abstract class AbstractFormViewListenerTest extends \PHPUnit\Framework\TestCase
                 }
             );
 
-        $this->env = $this->createMock(\Twig_Environment::class);
+        $this->env = $this->createMock(Environment::class);
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
 
         $this->request = $this->createMock(Request::class);

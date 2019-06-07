@@ -406,6 +406,7 @@ datagrids:
                         field_options:
                             choices: "@oro_product.provider.product_status_provider->getAvailableProductStatuses"
                 inventoryStatusId:
+                    label:     oro.product.inventory_status.label
                     type:      enum
                     data_name: inventoryStatusId
                     enum_code: prod_inventory_status

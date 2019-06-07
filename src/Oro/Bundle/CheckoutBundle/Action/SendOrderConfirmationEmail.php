@@ -4,6 +4,7 @@ namespace Oro\Bundle\CheckoutBundle\Action;
 
 use Doctrine\ORM\EntityNotFoundException;
 use Oro\Bundle\EmailBundle\Workflow\Action\SendEmailTemplate;
+use Twig\Error\Error;
 
 /**
  * A wrapper over @send_email_template
@@ -19,7 +20,7 @@ class SendOrderConfirmationEmail extends SendEmailTemplate
     {
         try {
             parent::executeAction($context);
-        } catch (\Twig_Error $exception) {
+        } catch (Error $exception) {
             $this->logger->error(
                 'Twig exception in @send_order_confirmation_email action',
                 ['exception' => $exception]

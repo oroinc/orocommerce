@@ -12,6 +12,7 @@ use Oro\Bundle\UIBundle\View\ScrollData;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Translation\TranslatorInterface;
+use Twig\Environment;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
@@ -40,7 +41,7 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
     /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $doctrineHelper;
 
-    /** @var \Twig_Environment|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var Environment|\PHPUnit\Framework\MockObject\MockObject */
     private $env;
 
     /** @var FormViewListener */
@@ -63,7 +64,7 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
                 }
             );
 
-        $this->env = $this->createMock(\Twig_Environment::class);
+        $this->env = $this->createMock(Environment::class);
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
         $this->requestStack = new RequestStack();
 

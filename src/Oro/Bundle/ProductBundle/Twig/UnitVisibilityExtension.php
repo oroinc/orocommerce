@@ -4,8 +4,14 @@ namespace Oro\Bundle\ProductBundle\Twig;
 
 use Oro\Bundle\ProductBundle\Visibility\UnitVisibilityInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFunction;
 
-class UnitVisibilityExtension extends \Twig_Extension
+/**
+ * Provides a Twig function to get check oro_product.visibility.unit container parameter value:
+ *   - oro_is_unit_code_visible
+ */
+class UnitVisibilityExtension extends AbstractExtension
 {
     /** @var ContainerInterface */
     protected $container;
@@ -32,7 +38,7 @@ class UnitVisibilityExtension extends \Twig_Extension
     public function getFunctions()
     {
         return [
-            new \Twig_SimpleFunction(
+            new TwigFunction(
                 'oro_is_unit_code_visible',
                 [$this, 'isUnitCodeVisible']
             ),

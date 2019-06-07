@@ -15,6 +15,7 @@ use Oro\Bundle\UIBundle\View\ScrollData;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Translation\TranslatorInterface;
+use Twig\Environment;
 
 class FormViewListenerTest extends \PHPUnit\Framework\TestCase
 {
@@ -24,7 +25,7 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
     /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
     protected $doctrineHelper;
 
-    /** @var \Twig_Environment|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var Environment|\PHPUnit\Framework\MockObject\MockObject */
     protected $env;
 
     /** @var FormViewListener */
@@ -50,7 +51,7 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
                 }
             );
 
-        $this->env = $this->createMock(\Twig_Environment::class);
+        $this->env = $this->createMock(Environment::class);
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
 
         $this->priceAttributePricesProvider = $this->createMock(PriceAttributePricesProvider::class);
@@ -228,8 +229,8 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
         $formView = new FormView();
         $templateHtml = 'template_html';
 
-        /** @var \PHPUnit\Framework\MockObject\MockObject|\Twig_Environment $environment */
-        $environment = $this->createMock(\Twig_Environment::class);
+        /** @var \PHPUnit\Framework\MockObject\MockObject|Environment $environment */
+        $environment = $this->createMock(Environment::class);
         $environment->expects($this->once())
             ->method('render')
             ->with('OroPricingBundle:Product:prices_update.html.twig', ['form' => $formView])
@@ -255,12 +256,12 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param \Twig_Environment $environment
+     * @param Environment $environment
      * @param object $entity
      * @param FormView $formView
      * @return BeforeListRenderEvent
      */
-    protected function createEvent(\Twig_Environment $environment, $entity, FormView $formView = null)
+    protected function createEvent(Environment $environment, $entity, FormView $formView = null)
     {
         $defaultData = [
             ScrollData::DATA_BLOCKS => [
@@ -297,7 +298,7 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
             ->with($priceList, $product)
             ->willReturn(['Test' => ['item' => ['USD' => 100]]]);
 
-        /** @var \PHPUnit\Framework\MockObject\MockObject|\Twig_Environment $environment */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|Environment $environment */
         $environment = $this->getEnvironment();
         $environment->expects($this->at(0))
             ->method('render')
@@ -313,12 +314,12 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return \PHPUnit\Framework\MockObject\MockObject|\Twig_Environment
+     * @return \PHPUnit\Framework\MockObject\MockObject|Environment
      */
     private function getEnvironment()
     {
         if (null === $this->env) {
-            $this->env = $this->createMock(\Twig_Environment::class);
+            $this->env = $this->createMock(Environment::class);
         }
 
         return $this->env;

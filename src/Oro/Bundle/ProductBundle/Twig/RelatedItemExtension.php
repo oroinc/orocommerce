@@ -3,8 +3,14 @@
 namespace Oro\Bundle\ProductBundle\Twig;
 
 use Oro\Bundle\ProductBundle\RelatedItem\Helper\RelatedItemConfigHelper;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFunction;
 
-class RelatedItemExtension extends \Twig_Extension
+/**
+ * Provides a Twig function to find out the translation key of a "related items" relation label:
+ *   - get_related_items_translation_key
+ */
+class RelatedItemExtension extends AbstractExtension
 {
     /** @var RelatedItemConfigHelper */
     private $helper;
@@ -23,7 +29,7 @@ class RelatedItemExtension extends \Twig_Extension
     public function getFunctions()
     {
         return [
-            new \Twig_SimpleFunction(
+            new TwigFunction(
                 'get_related_items_translation_key',
                 [$this, 'getRelatedItemsTranslationKey']
             ),

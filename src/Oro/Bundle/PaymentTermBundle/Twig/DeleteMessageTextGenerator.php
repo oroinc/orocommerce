@@ -8,7 +8,13 @@ use Oro\Bundle\FilterBundle\Grid\Extension\OrmFilterExtension;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentTermBundle\Manager\PaymentTermManager;
 use Symfony\Component\Routing\RouterInterface;
+use Twig\Environment;
 
+/**
+ * Generates text of the message about deletion of a payment term with links to the affected customers
+ * and customer groups. This text is available in Twig templates via get_payment_term_delete_message and
+ * get_payment_term_delete_message_datagrid Twig functions.
+ */
 class DeleteMessageTextGenerator
 {
     const ACCOUNT_GROUP_GRID_NAME = 'customer-groups-grid';
@@ -19,7 +25,7 @@ class DeleteMessageTextGenerator
     /** @var RouterInterface */
     protected $router;
 
-    /** @var \Twig_Environment */
+    /** @var Environment */
     protected $twig;
 
     /** @var PaymentTermManager */
@@ -27,12 +33,12 @@ class DeleteMessageTextGenerator
 
     /**
      * @param RouterInterface $router
-     * @param \Twig_Environment $twig
+     * @param Environment $twig
      * @param PaymentTermManager $paymentTermManager
      */
     public function __construct(
         RouterInterface $router,
-        \Twig_Environment $twig,
+        Environment $twig,
         PaymentTermManager $paymentTermManager
     ) {
         $this->router = $router;

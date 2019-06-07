@@ -6,6 +6,7 @@ use Oro\Bundle\SEOBundle\EventListener\ContentNodeFormViewListener;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
+use Twig\Environment;
 
 class ContentNodeFormViewListenerTest extends BaseFormViewListenerTestCase
 {
@@ -30,7 +31,7 @@ class ContentNodeFormViewListenerTest extends BaseFormViewListenerTestCase
     {
         $page = new ContentNode();
 
-        /** @var \PHPUnit\Framework\MockObject\MockObject|\Twig_Environment $env */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|Environment $env */
         $env = $this->getEnvironmentForView($page, $this->listener->getMetaFieldLabelPrefix());
 
         $event = new BeforeListRenderEvent($env, new ScrollData(), $page);

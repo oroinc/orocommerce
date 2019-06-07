@@ -15,6 +15,8 @@
 {% endblock pageHeader %}
 
 {% block content_data %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+
     {% set productTaxCodeInfo %}
         {{ UI.renderProperty('oro.tax.producttaxcode.code.label'|trans, entity.code) }}
         {{ UI.renderProperty('oro.tax.producttaxcode.description.label'|trans, entity.description) }}

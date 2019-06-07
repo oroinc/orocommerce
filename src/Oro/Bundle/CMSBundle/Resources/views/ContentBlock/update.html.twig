@@ -26,6 +26,8 @@
 {% endblock pageHeader %}
 
 {% block navButtons %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+
     {{ parent() }}
 
     {{ UI.cancelButton(path('oro_cms_content_block_index')) }}

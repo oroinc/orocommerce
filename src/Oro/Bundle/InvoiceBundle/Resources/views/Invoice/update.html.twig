@@ -10,6 +10,8 @@
 {% form_theme form with ['OroInvoiceBundle:Form:fields.html.twig'] %}
 
 {% block navButtons %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+
     {{ parent() }}
 
     {{ UI.cancelButton(path('oro_invoice_index')) }}

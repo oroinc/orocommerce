@@ -3,11 +3,15 @@
 namespace Oro\Bundle\ProductBundle\Twig;
 
 use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFilter;
 
 /**
- * Provides TWIG functions for product unit label formatting.
+ * Provides Twig filters to format product unit labels:
+ *   - oro_format_product_unit_label
+ *   - oro_format_short_product_unit_label
  */
-class ProductUnitLabelExtension extends \Twig_Extension
+class ProductUnitLabelExtension extends AbstractExtension
 {
     const NAME = 'oro_product_unit_label';
 
@@ -28,11 +32,11 @@ class ProductUnitLabelExtension extends \Twig_Extension
     public function getFilters()
     {
         return [
-            new \Twig_SimpleFilter(
+            new TwigFilter(
                 'oro_format_product_unit_label',
                 [$this, 'format']
             ),
-            new \Twig_SimpleFilter(
+            new TwigFilter(
                 'oro_format_short_product_unit_label',
                 [$this, 'formatShort']
             ),

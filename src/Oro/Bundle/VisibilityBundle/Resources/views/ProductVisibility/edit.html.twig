@@ -6,6 +6,8 @@
 {% set formAction = path('oro_product_visibility_edit', { 'id': entity.id })  %}
 
 {% block navButtons %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+
     {{ UI.cancelButton(path('oro_product_index')) }}
     {% set html = UI.saveAndCloseButton() %}
     {% if entity.id or is_granted('oro_product_update') %}
@@ -16,6 +18,7 @@
 
 {% block pageHeader %}
     {% if entity.id %}
+        {% import 'OroUIBundle::macros.html.twig' as UI %}
         {% set breadcrumbs = {
             'entity':      entity,
             'indexPath':   path('oro_product_index'),

@@ -6,6 +6,8 @@
 {% oro_title_set({params : {"%code%": entity.code, "%entityName%": 'oro.promotion.coupon.entity_label'|trans}}) %}
 
 {% block navButtons %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+
     {{ parent() }}
 
     {{ UI.cancelButton(path('oro_promotion_coupon_index')) }}

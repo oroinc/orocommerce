@@ -147,7 +147,7 @@
         '~class': ' product-prices'
     }) %}
 
-    {% if not is_configurable_product_type(product.type) or matrixFormType == 'none' %}
+    {% if not is_configurable_product_type(product.type) or matrixFormType|default(false) == 'none' %}
         {# Use to modify quantity in case when it not enough quantity to show the price #}
         {# We use this component as single entry point for price extendability #}
         {% set attr = layout_attr_defaults(attr, {

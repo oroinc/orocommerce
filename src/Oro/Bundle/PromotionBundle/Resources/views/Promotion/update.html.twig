@@ -12,6 +12,8 @@
 {% set formAction = entityId ? path('oro_promotion_update', { 'id': entityId }) : path('oro_promotion_create')  %}
 
 {% block navButtons %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+
     {{ UI.cancelButton(path('oro_promotion_index')) }}
 
     {% set html = '' %}

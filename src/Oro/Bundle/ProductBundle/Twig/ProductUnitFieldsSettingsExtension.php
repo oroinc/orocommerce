@@ -5,8 +5,16 @@ namespace Oro\Bundle\ProductBundle\Twig;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Visibility\ProductUnitFieldsSettingsInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFunction;
 
-class ProductUnitFieldsSettingsExtension extends \Twig_Extension
+/**
+ * Provides Twig functions to retrieve product unit display configuration for a product:
+ *   - oro_is_product_unit_selection_visible
+ *   - oro_is_product_primary_unit_visible
+ *   - oro_is_adding_additional_units_to_product_available
+ */
+class ProductUnitFieldsSettingsExtension extends AbstractExtension
 {
     /** @var ContainerInterface */
     protected $container;
@@ -33,15 +41,15 @@ class ProductUnitFieldsSettingsExtension extends \Twig_Extension
     public function getFunctions()
     {
         return [
-            new \Twig_SimpleFunction(
+            new TwigFunction(
                 'oro_is_product_unit_selection_visible',
                 [$this, 'isProductUnitSelectionVisible']
             ),
-            new \Twig_SimpleFunction(
+            new TwigFunction(
                 'oro_is_product_primary_unit_visible',
                 [$this, 'isProductPrimaryUnitVisible']
             ),
-            new \Twig_SimpleFunction(
+            new TwigFunction(
                 'oro_is_adding_additional_units_to_product_available',
                 [$this, 'isAddingAdditionalUnitsToProductAvailable']
             ),

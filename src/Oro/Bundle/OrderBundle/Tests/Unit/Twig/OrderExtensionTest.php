@@ -6,6 +6,10 @@ use Oro\Bundle\OrderBundle\Formatter\ShippingTrackingFormatter;
 use Oro\Bundle\OrderBundle\Formatter\SourceDocumentFormatter;
 use Oro\Bundle\OrderBundle\Twig\OrderExtension;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Twig\Environment;
+use Twig\Template;
+use Twig\TwigFilter;
+use Twig\TwigFunction;
 
 class OrderExtensionTest extends \PHPUnit\Framework\TestCase
 {
@@ -29,7 +33,7 @@ class OrderExtensionTest extends \PHPUnit\Framework\TestCase
     {
         $filters = $this->orderExtension->getFilters();
         $this->assertCount(1, $filters);
-        $this->assertInstanceOf(\Twig_SimpleFilter::class, $filters[0]);
+        $this->assertInstanceOf(TwigFilter::class, $filters[0]);
     }
 
     public function testGetFunctions()
@@ -37,9 +41,9 @@ class OrderExtensionTest extends \PHPUnit\Framework\TestCase
         $filters = $this->orderExtension->getFunctions();
 
         $this->assertCount(3, $filters);
-        $this->assertInstanceOf(\Twig_SimpleFunction::class, $filters[0]);
-        $this->assertInstanceOf(\Twig_SimpleFunction::class, $filters[1]);
-        $this->assertInstanceOf(\Twig_SimpleFunction::class, $filters[2]);
+        $this->assertInstanceOf(TwigFunction::class, $filters[0]);
+        $this->assertInstanceOf(TwigFunction::class, $filters[1]);
+        $this->assertInstanceOf(TwigFunction::class, $filters[2]);
     }
 
     public function testGetName()
@@ -49,13 +53,13 @@ class OrderExtensionTest extends \PHPUnit\Framework\TestCase
 
     public function testGetTemplateContent()
     {
-        /** @var \Twig_Environment|\PHPUnit\Framework\MockObject\MockObject $environment **/
-        $environment = $this->createMock(\Twig_Environment::class);
+        /** @var Environment|\PHPUnit\Framework\MockObject\MockObject $environment **/
+        $environment = $this->createMock(Environment::class);
 
         $context = ['parameter' => 'value'];
         $content = 'html conten';
-        /** @var \Twig_Template|\PHPUnit\Framework\MockObject\MockObject $template */
-        $template = $this->createMock(\Twig_Template::class);
+        /** @var Template|\PHPUnit\Framework\MockObject\MockObject $template */
+        $template = $this->createMock(Template::class);
         $template
             ->expects($this->once())
             ->method('render')

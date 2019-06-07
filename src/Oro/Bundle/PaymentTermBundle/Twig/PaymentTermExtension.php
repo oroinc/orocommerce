@@ -4,11 +4,14 @@ namespace Oro\Bundle\PaymentTermBundle\Twig;
 
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProviderInterface;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFunction;
 
 /**
- * Twig extension that provides payment term
+ * Provides a Twig function to get payment term from an entity:
+ *   - get_payment_term
  */
-class PaymentTermExtension extends \Twig_Extension
+class PaymentTermExtension extends AbstractExtension
 {
     /** @var PaymentTermProviderInterface */
     protected $dataProvider;
@@ -26,7 +29,7 @@ class PaymentTermExtension extends \Twig_Extension
      */
     public function getFunctions()
     {
-        return [new \Twig_SimpleFunction('get_payment_term', [$this, 'getPaymentTerm'])];
+        return [new TwigFunction('get_payment_term', [$this, 'getPaymentTerm'])];
     }
 
     /**

@@ -19,12 +19,13 @@
 {% endmacro %}
 
 {% macro renderProductShippingOptions(shippingOptions) %}
+    {% import _self as shippingMacros %}
     {% if shippingOptions and shippingOptions|length > 0 %}
         <table class="grid table table-condensed table-bordered shipping-options-result-grid">
-            {{ _self._renderItemsHead() }}
+            {{ shippingMacros._renderItemsHead() }}
             <tbody>
                 {% for key, options in shippingOptions %}
-                    {{ _self._renderItemRow(options) }}
+                    {{ shippingMacros._renderItemRow(options) }}
                 {% endfor %}
             </tbody>
         </table>

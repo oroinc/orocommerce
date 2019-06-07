@@ -7,12 +7,19 @@ use Oro\Bundle\ProductBundle\Expression\Autocomplete\AutocompleteFieldsProvider;
 use Oro\Bundle\ProductBundle\RelatedItem\FinderStrategyInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Form\FormView;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFunction;
 
 /**
- * Introduces function to get products' related/upsell items ids, check if product type is configurable, generate
- * form id for line items form and get data for rendering autocomplete input.
+ * Provides Twig functions to get product related/upsell items IDs, check if product type is configurable, generate
+ * form ID for line items form and get data for rendering autocomplete input:
+ *   - oro_product_expression_autocomplete_data
+ *   - is_configurable_product_type
+ *   - get_upsell_products_ids
+ *   - get_related_products_ids
+ *   - set_unique_line_item_form_id
  */
-class ProductExtension extends \Twig_Extension
+class ProductExtension extends AbstractExtension
 {
     const NAME = 'oro_product';
 
@@ -41,23 +48,23 @@ class ProductExtension extends \Twig_Extension
     public function getFunctions()
     {
         return [
-            new \Twig_SimpleFunction(
+            new TwigFunction(
                 'oro_product_expression_autocomplete_data',
                 [$this, 'getAutocompleteData']
             ),
-            new \Twig_SimpleFunction(
+            new TwigFunction(
                 'is_configurable_product_type',
                 [$this, 'isConfigurableType']
             ),
-            new \Twig_SimpleFunction(
+            new TwigFunction(
                 'get_upsell_products_ids',
                 [$this, 'getUpsellProductsIds']
             ),
-            new \Twig_SimpleFunction(
+            new TwigFunction(
                 'get_related_products_ids',
                 [$this, 'getRelatedProductsIds']
             ),
-            new \Twig_SimpleFunction(
+            new TwigFunction(
                 'set_unique_line_item_form_id',
                 [$this, 'setUniqueLineItemFormId']
             ),

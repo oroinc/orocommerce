@@ -9,6 +9,7 @@ use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Twig\Environment;
 
 class PriceRuleEditorOptionsConfiguratorTest extends \PHPUnit\Framework\TestCase
 {
@@ -23,7 +24,7 @@ class PriceRuleEditorOptionsConfiguratorTest extends \PHPUnit\Framework\TestCase
     private $formFactory;
 
     /**
-     * @var \Twig_Environment|\PHPUnit\Framework\MockObject\MockObject
+     * @var Environment|\PHPUnit\Framework\MockObject\MockObject
      */
     private $twig;
 
@@ -36,7 +37,7 @@ class PriceRuleEditorOptionsConfiguratorTest extends \PHPUnit\Framework\TestCase
     {
         $this->autocompleteFieldsProvider = $this->createMock(AutocompleteFieldsProviderInterface::class);
         $this->formFactory = $this->createMock(FormFactoryInterface::class);
-        $this->twig = $this->getMockBuilder(\Twig_Environment::class)
+        $this->twig = $this->getMockBuilder(Environment::class)
             ->disableOriginalConstructor()
             ->getMock();
 

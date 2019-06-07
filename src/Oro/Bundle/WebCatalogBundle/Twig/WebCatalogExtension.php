@@ -6,8 +6,15 @@ use Oro\Bundle\WebCatalogBundle\ContentVariantType\ContentVariantTypeRegistry;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Oro\Bundle\WebCatalogBundle\JsTree\ContentNodeTreeHandler;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFunction;
 
-class WebCatalogExtension extends \Twig_Extension
+/**
+ * Provides Twig functions to render web catalog content tree:
+ *   - oro_web_catalog_tree
+ *   - oro_web_catalog_content_variant_title
+ */
+class WebCatalogExtension extends AbstractExtension
 {
     const NAME = 'oro_web_catalog_extension';
 
@@ -52,8 +59,8 @@ class WebCatalogExtension extends \Twig_Extension
     public function getFunctions()
     {
         return [
-            new \Twig_SimpleFunction('oro_web_catalog_tree', [$this, 'getNodesTree']),
-            new \Twig_SimpleFunction('oro_web_catalog_content_variant_title', [$this, 'getContentVariantTitle']),
+            new TwigFunction('oro_web_catalog_tree', [$this, 'getNodesTree']),
+            new TwigFunction('oro_web_catalog_content_variant_title', [$this, 'getContentVariantTitle']),
         ];
     }
 

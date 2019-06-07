@@ -4,6 +4,7 @@ namespace Oro\Bundle\CMSBundle\Tests\Unit\Twig;
 
 use Oro\Bundle\CMSBundle\Twig\TwigInVariablesExtension;
 use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
+use Twig\Environment;
 
 class TwigInVariablesExtensionTest extends \PHPUnit\Framework\TestCase
 {
@@ -12,12 +13,12 @@ class TwigInVariablesExtensionTest extends \PHPUnit\Framework\TestCase
     /** @var TwigInVariablesExtension */
     private $extension;
 
-    /** @var \Twig_Environment|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var Environment|\PHPUnit\Framework\MockObject\MockObject */
     private $twig;
 
     protected function setUp()
     {
-        $this->twig = $this->createMock(\Twig_Environment::class);
+        $this->twig = $this->createMock(Environment::class);
         $this->extension = new TwigInVariablesExtension($this->twig);
     }
 

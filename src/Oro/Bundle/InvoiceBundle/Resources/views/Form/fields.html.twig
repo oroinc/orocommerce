@@ -1,4 +1,4 @@
-{% macro oro_invoice_line_items_collection_item_prototype(widget, index) %}
+{% macro oro_invoice_line_items_collection_item_prototype(widget, index, attributes) %}
     {% if 'collection' in widget.vars.block_prefixes %}
         {% set form = widget.vars.prototype %}
         {% set name = widget.vars.full_name ~ '[' ~ widget.vars.prototype.vars.name ~ ']' %}
@@ -19,7 +19,7 @@
         'disabled': not allow_delete
     }) %}
 
-    <tr data-content="{{ name }}" data-validation-optional-group {{ block('widget_container_attributes') }}
+    <tr data-content="{{ name }}" data-validation-optional-group {{ attributes }}
         class="invoice-line-item"
         data-page-component-module="{{ form.vars.page_component }}"
         data-page-component-options="{{ page_component_options|json_encode }}"
@@ -38,9 +38,13 @@
 {% endmacro %}
 
 {% block oro_invoice_line_items_collection_widget %}
+    {% import _self as formFields %}
     {% spaceless %}
+        {% set widgetContainerAttributes %}
+            {% with {'id': '', 'attr': []} %}{{ block('widget_container_attributes') }}{% endwith %}
+        {% endset %}
         {% if prototype is defined %}
-            {% set prototype_html = _self.oro_invoice_line_items_collection_item_prototype(form) %}
+            {% set prototype_html = formFields.oro_invoice_line_items_collection_item_prototype(form, 1, widgetContainerAttributes) %}
         {% endif %}
         {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-item-collection grid-container' }) %}
         {% set id = id ~ '_collection' %}
@@ -65,7 +69,7 @@
                     <tbody data-last-index="{{ form.children|length}}" data-prototype-name="{{ prototype_name }}"{% if prototype_html is defined %} data-prototype="{{ prototype_html|escape }}"{% endif %}>
                     {% if form.children|length %}
                         {% for child in form.children %}
-                            {{ _self.oro_invoice_line_items_collection_item_prototype(child, loop.index) }}
+                            {{ formFields.oro_invoice_line_items_collection_item_prototype(child, loop.index, widgetContainerAttributes) }}
                         {% endfor %}
                     {% elseif show_form_when_empty and prototype_html is defined %}
                         {{ prototype_html|replace({(prototype_name): '0'})|raw }}

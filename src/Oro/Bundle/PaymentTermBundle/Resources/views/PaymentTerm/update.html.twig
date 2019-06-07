@@ -10,6 +10,8 @@
 %}
 
 {% block navButtons %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+
     {% placeholder update_navButtons with {entity: entity} %}
     {{ UI.cancelButton(path('oro_payment_term_index')) }}
     {% set html = UI.saveAndCloseButton() %}

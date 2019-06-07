@@ -9,6 +9,7 @@ use Oro\Bundle\PaymentTermBundle\Manager\PaymentTermManager;
 use Oro\Bundle\PaymentTermBundle\Twig\DeleteMessageTextGenerator;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Routing\RouterInterface;
+use Twig\Environment;
 
 class DeleteMessageTextGeneratorTest extends \PHPUnit\Framework\TestCase
 {
@@ -35,8 +36,8 @@ class DeleteMessageTextGeneratorTest extends \PHPUnit\Framework\TestCase
                 }
             );
 
-        /** @var \Twig_Environment|\PHPUnit\Framework\MockObject\MockObject $twig */
-        $twig = $this->getMockBuilder('\Twig_Environment')
+        /** @var Environment|\PHPUnit\Framework\MockObject\MockObject $twig */
+        $twig = $this->getMockBuilder(Environment::class)
             ->disableOriginalConstructor()
             ->getMock();
         $twig->expects($this->any())

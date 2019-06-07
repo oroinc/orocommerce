@@ -5,11 +5,16 @@ namespace Oro\Bundle\ShippingBundle\Twig;
 use Oro\Bundle\ProductBundle\Entity\MeasureUnitInterface;
 use Oro\Bundle\ProductBundle\Formatter\UnitValueFormatterInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFilter;
 
 /**
- * Add filters for formatting weight unit value
+ * Provides Twig filters to format weight units:
+ *   - oro_weight_unit_format_value
+ *   - oro_weight_unit_format_value_short
+ *   - oro_weight_unit_format_code
  */
-class WeightUnitValueExtension extends \Twig_Extension
+class WeightUnitValueExtension extends AbstractExtension
 {
     const NAME = 'oro_weight_unit_value';
 
@@ -38,15 +43,15 @@ class WeightUnitValueExtension extends \Twig_Extension
     public function getFilters()
     {
         return [
-            new \Twig_SimpleFilter(
+            new TwigFilter(
                 'oro_weight_unit_format_value',
                 [$this, 'format']
             ),
-            new \Twig_SimpleFilter(
+            new TwigFilter(
                 'oro_weight_unit_format_value_short',
                 [$this, 'formatShort']
             ),
-            new \Twig_SimpleFilter(
+            new TwigFilter(
                 'oro_weight_unit_format_code',
                 [$this, 'formatCode']
             ),

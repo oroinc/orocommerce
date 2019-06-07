@@ -59,6 +59,7 @@
 
 {% block oro_pricing_price_list_collection_widget %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% set widgetContainerAttributes = block('widget_container_attributes') %}
     {{ UI.sortable_list_view(form, attr, {
         collection_class: 'pricing-price-list',
         add_btn_label: 'oro.pricing.add_price_list'|trans,
@@ -66,7 +67,7 @@
         column_options_label: 'oro.pricing.pricelist.options.label'|trans,
         show_form_when_empty: show_form_when_empty,
         data_page_component_module: "oropricing/js/app/components/price-lists-errors-handler"
-    }) }}
+    }, widgetContainerAttributes) }}
 {% endblock %}
 
 {% macro oro_pricing_price_list_collection_prototype(widget) %}
@@ -286,9 +287,10 @@
 {% endmacro %}
 
 {% block _oro_pricing_price_list_priceRules_widget %}
+    {% import _self as fields %}
     {% spaceless %}
         {% if prototype is defined %}
-            {% set prototype_html = _self.oro_pricing_price_rule_widget_prototype(form) %}
+            {% set prototype_html = fields.oro_pricing_price_rule_widget_prototype(form) %}
         {% endif %}
         {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-item-collection collection-fields-list' }) %}
         {% set id = id ~ '_collection' %}
@@ -302,7 +304,7 @@
             >
                 {% if form.children|length %}
                     {% for child in form.children %}
-                        {{ _self.oro_pricing_price_rule_widget_prototype(child) }}
+                        {{ fields.oro_pricing_price_rule_widget_prototype(child) }}
                     {% endfor %}
                 {% endif %}
             </div>
@@ -313,7 +315,7 @@
             </div>
         </div>
         {% if handle_primary and (prototype is not defined or prototype.primary is defined) %}
-            {{ _self.oro_collection_validate_primary_js(_context) }}
+            {{ fields.oro_collection_validate_primary_js(_context) }}
         {% endif %}
     {% endspaceless %}
 {% endblock %}

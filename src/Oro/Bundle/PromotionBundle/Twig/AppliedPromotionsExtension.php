@@ -7,11 +7,15 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PromotionBundle\Entity\AppliedPromotion;
 use Oro\Bundle\PromotionBundle\Entity\Repository\AppliedPromotionRepository;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFunction;
 
 /**
- * This extension introduces function to get promotions' information for displaying as a table.
+ * Provides Twig functions to retrieve information about applied promotions:
+ *   - oro_promotion_prepare_applied_promotions_info
+ *   - oro_promotion_get_applied_promotions_info
  */
-class AppliedPromotionsExtension extends \Twig_Extension
+class AppliedPromotionsExtension extends AbstractExtension
 {
     /**
      * @var ManagerRegistry
@@ -32,11 +36,11 @@ class AppliedPromotionsExtension extends \Twig_Extension
     public function getFunctions()
     {
         return [
-            new \Twig_SimpleFunction(
+            new TwigFunction(
                 'oro_promotion_prepare_applied_promotions_info',
                 [$this, 'prepareAppliedPromotionsInfo']
             ),
-            new \Twig_SimpleFunction('oro_promotion_get_applied_promotions_info', [$this, 'getAppliedPromotionsInfo'])
+            new TwigFunction('oro_promotion_get_applied_promotions_info', [$this, 'getAppliedPromotionsInfo'])
         ];
     }
 

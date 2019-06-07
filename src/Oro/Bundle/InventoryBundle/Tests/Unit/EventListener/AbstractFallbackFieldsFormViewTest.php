@@ -11,6 +11,7 @@ use Oro\Bundle\UIBundle\View\ScrollData;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Translation\TranslatorInterface;
+use Twig\Environment;
 
 abstract class AbstractFallbackFieldsFormViewTest extends \PHPUnit\Framework\TestCase
 {
@@ -30,7 +31,7 @@ abstract class AbstractFallbackFieldsFormViewTest extends \PHPUnit\Framework\Tes
     protected $em;
 
     /**
-     * @var \Twig_Environment|\PHPUnit\Framework\MockObject\MockObject
+     * @var Environment|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $env;
 
@@ -77,7 +78,7 @@ abstract class AbstractFallbackFieldsFormViewTest extends \PHPUnit\Framework\Tes
                 }
             );
 
-        $this->env = $this->createMock(\Twig_Environment::class);
+        $this->env = $this->createMock(Environment::class);
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
         $this->em = $this->createMock(EntityManager::class);
 

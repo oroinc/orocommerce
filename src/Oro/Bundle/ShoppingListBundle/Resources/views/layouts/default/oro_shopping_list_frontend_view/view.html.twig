@@ -248,6 +248,8 @@
 {% endblock %}
 
 {% block _shopping_list_line_items_list_item_matrix_popup_button_widget %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+
     {% if matrixFormType == 'popup' %}
         {% import 'OroUIBundle::macros.html.twig' as UI %}
         {{ UI.clientLink({

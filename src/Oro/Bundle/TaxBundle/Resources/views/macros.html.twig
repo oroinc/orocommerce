@@ -1,6 +1,7 @@
 {% macro renderResult(result) %}
-    {{ _self.renderItems(result) }}
-    {{ _self.renderTaxes(result) }}
+    {% import _self as taxMacros %}
+    {{ taxMacros.renderItems(result) }}
+    {{ taxMacros.renderTaxes(result) }}
 {% endmacro %}
 
 {% macro _renderItemsHead() %}
@@ -15,9 +16,11 @@
 {% endmacro %}
 
 {% macro renderItems(result) %}
+    {% import _self as taxMacros %}
+
     {% if result is defined and result|length %}
         <table class="grid table table-condensed table-bordered tax-result-grid">
-            {{ _self._renderItemsHead() }}
+            {{ taxMacros._renderItemsHead() }}
             <tbody>
             {% for type, data in result if data.includingTax is defined %}
                 <tr>
@@ -44,6 +47,8 @@
 {% endmacro %}
 
 {% macro renderTaxes(result) %}
+    {% import _self as taxMacros %}
+
     {% if result.taxes is defined and result.taxes|length %}
         {% set FRACTION_DIGITS = constant('\\NumberFormatter::FRACTION_DIGITS') %}
         {% set MIN_FRACTION_DIGITS = constant('\\NumberFormatter::MIN_FRACTION_DIGITS') %}
@@ -51,7 +56,7 @@
         {% set CALCULATION_SCALE_AS_PERCENT = constant('Oro\\Bundle\\TaxBundle\\Provider\\TaxationSettingsProvider::CALCULATION_SCALE_AS_PERCENT') %}
 
         <table class="grid table table-condensed table-bordered tax-result-grid">
-            {{ _self._renderTaxesHead() }}
+            {{ taxMacros._renderTaxesHead() }}
             <tbody>
             {% for tax in result.taxes %}
                 <tr>
@@ -73,6 +78,8 @@
 {% endmacro %}
 
 {% macro renderJsItems() %}
+    {% import _self as taxMacros %}
+
     <% var translations = {
         unit: '{{ 'oro.tax.result.unit'|trans }}',
         row: '{{ 'oro.tax.result.row'|trans }}',
@@ -87,7 +94,7 @@
     <% var data = _.pick(object, _.identity); %>
     <% if (data) { %>
     <table class="grid table table-condensed table-bordered tax-result-grid">
-        {{ _self._renderItemsHead() }}
+        {{ taxMacros._renderItemsHead() }}
         <tbody>
         <% _.each(data, function(item, key) { %>
         <tr>
@@ -103,10 +110,12 @@
 {% endmacro %}
 
 {% macro renderJsTaxes() %}
+    {% import _self as taxMacros %}
+
     <% var taxes = taxes; %>
     <% if (!_.isEmpty(taxes)) { %>
     <table class="grid table table-condensed table-bordered tax-result-grid">
-        {{ _self._renderTaxesHead() }}
+        {{ taxMacros._renderTaxesHead() }}
         <tbody>
         <% _.each(taxes, function(tax) { %>
         <tr>

@@ -3,8 +3,14 @@
 namespace Oro\Bundle\ShoppingListBundle\Twig;
 
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListLimitManager;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFunction;
 
-class ShoppingListLimitExtension extends \Twig_Extension
+/**
+ * Provides a Twig function to check if only one shopping list is enabled for the current storefront user:
+ *   - is_one_shopping_list_enabled
+ */
+class ShoppingListLimitExtension extends AbstractExtension
 {
     const NAME = 'oro_shopping_list_limit';
 
@@ -25,7 +31,7 @@ class ShoppingListLimitExtension extends \Twig_Extension
     public function getFunctions()
     {
         return [
-            new \Twig_SimpleFunction(
+            new TwigFunction(
                 'is_one_shopping_list_enabled',
                 [$this->shoppingListLimitManager, 'isOnlyOneEnabled']
             ),

@@ -5,6 +5,8 @@
 {% set pageTitle = 'oro.cms.contentblock.entity_plural_label'|trans %}
 
 {% block navButtons %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+
     {% if is_granted('oro_cms_content_block_create') %}
         <div class="btn-group">
             {{ UI.addButton({

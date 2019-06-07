@@ -1,6 +1,6 @@
-{% import 'OroUIBundle::macros.html.twig' as UI %}
-
 {% block content %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+
     {% set options = entity.discountConfiguration.options %}
     {% if options['discount_type'] == constant('Oro\\Bundle\\PromotionBundle\\Discount\\DiscountInterface::TYPE_AMOUNT') %}
         {% set discountValue = options['discount_value']|oro_format_currency({currency: options['discount_currency']}) %}

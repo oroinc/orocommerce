@@ -4,8 +4,14 @@ namespace Oro\Bundle\OrderBundle\Twig;
 
 use Oro\Bundle\ShippingBundle\Translator\ShippingMethodLabelTranslator;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFunction;
 
-class OrderShippingExtension extends \Twig_Extension
+/**
+ * Provides a Twig function to display the name of a shipping method:
+ *   - oro_order_shipping_method_label
+ */
+class OrderShippingExtension extends AbstractExtension
 {
     /** @var ContainerInterface */
     protected $container;
@@ -35,7 +41,7 @@ class OrderShippingExtension extends \Twig_Extension
     public function getFunctions()
     {
         return [
-            new \Twig_SimpleFunction(
+            new TwigFunction(
                 'oro_order_shipping_method_label',
                 [$this, 'getShippingMethodLabel']
             ),

@@ -4,11 +4,14 @@ namespace Oro\Bundle\CatalogBundle\Twig;
 
 use Oro\Bundle\LayoutBundle\Provider\Image\ImagePlaceholderProviderInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFunction;
 
 /**
- * Introduces the function to get the image placeholder for the category entity.
+ * Provides a Twig function to get an image placeholder for a category:
+ *   - category_image_placeholder
  */
-class CategoryImageExtension extends \Twig_Extension
+class CategoryImageExtension extends AbstractExtension
 {
     /** @var ContainerInterface */
     private $container;
@@ -30,7 +33,7 @@ class CategoryImageExtension extends \Twig_Extension
     public function getFunctions()
     {
         return [
-            new \Twig_SimpleFunction('category_image_placeholder', [$this, 'getCategoryImagePlaceholder'])
+            new TwigFunction('category_image_placeholder', [$this, 'getCategoryImagePlaceholder'])
         ];
     }
 

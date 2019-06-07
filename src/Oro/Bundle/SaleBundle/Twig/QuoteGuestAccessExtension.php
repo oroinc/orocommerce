@@ -6,11 +6,14 @@ use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\WebsiteBundle\Resolver\WebsiteUrlResolver;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFunction;
 
 /**
- * Provides link to get quote of frontend by guest access id.
+ * Provides a Twig function to create a storefront link for accessing a quote by using its guest access identifier:
+ *   - quote_guest_access_link
  */
-class QuoteGuestAccessExtension extends \Twig_Extension
+class QuoteGuestAccessExtension extends AbstractExtension
 {
     const NAME = 'oro_sale_quote_guest_access';
 
@@ -31,7 +34,7 @@ class QuoteGuestAccessExtension extends \Twig_Extension
     public function getFunctions()
     {
         return [
-            new \Twig_SimpleFunction('quote_guest_access_link', [$this, 'getGuestAccessLink'])
+            new TwigFunction('quote_guest_access_link', [$this, 'getGuestAccessLink'])
         ];
     }
 

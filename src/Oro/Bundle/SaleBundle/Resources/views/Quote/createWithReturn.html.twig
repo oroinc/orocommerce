@@ -4,6 +4,8 @@
 {% set formAction = path('oro_sale_quote_create', {'redirect_back': true}) %}
 
 {% block navButtons %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+
     {{ UI.cancelButton(path(
         return_route.route|default('oro_sale_quote_index'),
         return_route.parameters|default({})

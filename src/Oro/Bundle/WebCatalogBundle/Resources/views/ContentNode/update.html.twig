@@ -13,6 +13,8 @@
 {% oro_title_set({params : {'%webCatalogName%': web_catalog.name} }) %}
 
 {% block ownerLink %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+
     {% if isDesktopVersion() and web_catalog is not null %}
         {% set ownerLink = UI.entityOwnerLink(web_catalog) %}
         <li>{{ ownerLink }}{% placeholder additional_owner_info with {entity: web_catalog} %}</li>
@@ -38,6 +40,8 @@
 {% endblock pageHeader %}
 
 {% block navButtons %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+
     {{ parent() }}
 
     {% if entity.parentNode is empty %}
@@ -61,6 +65,8 @@
 {% endblock navButtons %}
 
 {% block content_data %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+
     {% set id = 'web-catalog-tree-edit' %}
 
     {% set formRows = [
@@ -154,6 +160,7 @@
             scrollbar: '[data-role="jstree-container"]'
         }} %}
             {% block sidebar %}
+                {% import 'OroUIBundle::macros.html.twig' as UI %}
                 {{ UI.renderJsTree(
                     {
                         'label': 'oro.webcatalog.contentnode.entity_plural_label'|trans,

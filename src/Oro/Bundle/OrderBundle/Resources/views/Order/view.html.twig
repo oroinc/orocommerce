@@ -16,6 +16,8 @@
 {% endblock pageHeader %}
 
 {% block content_data %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+
     {% set orderInformationWidget %}
         {{ oro_widget_render({
             'widgetType': 'block',
