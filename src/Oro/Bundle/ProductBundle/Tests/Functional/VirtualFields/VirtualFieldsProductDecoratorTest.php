@@ -30,4 +30,18 @@ class VirtualFieldsProductDecoratorTest extends WebTestCase
 
         $this->assertTrue($decoratedProduct->category instanceof Category);
     }
+
+    public function testGetProperty()
+    {
+        $factory = $this->getContainer()->get('oro_product.virtual_fields.decorator_factory');
+
+        $productOne = $this->getReference(LoadProductData::PRODUCT_1);
+        $productTwo = $this->getReference(LoadProductData::PRODUCT_2);
+
+        $decoratedProduct1 = $factory->createDecoratedProduct([$productOne, $productTwo], $productOne);
+        $decoratedProduct2 = $factory->createDecoratedProduct([$productOne, $productTwo], $productTwo);
+
+        $this->assertEquals(LoadProductData::PRODUCT_1, $decoratedProduct1->sku);
+        $this->assertEquals(LoadProductData::PRODUCT_2, $decoratedProduct2->sku);
+    }
 }
